@@ -1,22 +1,22 @@
 {
-  "modelId": "openai/gpt-5.4",
+  "modelId": "openai/gpt-5.5",
   "results": [
     {
       "steps": [
         {
-          "conclusion": "None. The curriculum opens with real, beginner-accessible JavaScript programs rather than a definition or overview, stays in US English, covers a serious progression from beginner work to real practice, includes practical workflow/tooling, and ends with a JavaScript-specific navigation chapter covering roles, entry paths, proof of competence, and staying current.",
+          "conclusion": "None",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "One description uses “SQL and NoSQL basics,” which comes close to the forbidden filler wording around “basics of,” though it is not the exact banned phrase. The chapter titled “Modern Browser APIs” also bundles several distinct browser capabilities in one place; this is not clearly a major catch-all recent-developments chapter, but it slightly risks being too broad.",
+          "conclusion": "The closing navigation chapter is subject-specific and strong, but its description does not clearly include two required elements: concrete contribution/entry paths such as jobs, internships, open source, communities, or mentorship, and how JavaScript practitioners keep skills current through docs, standards, release notes, conferences, communities, or continuing practice. There is also minor vendor/framework naming in places such as Express, React, Vue, Svelte, Next.js, and others; this is useful context but slightly against the preference for concept-first naming in non-vendor courses.",
           "kind": "minorErrors",
-          "score": 8.5
+          "score": 8.4
         },
         {
-          "conclusion": "The curriculum could be strengthened by making a few core JavaScript language pillars more explicit, such as scope and closures, the event loop, error handling, browser compatibility, and ECMAScript/web standards. The “Modern Browser APIs” chapter could also have sharper scope or be split if those APIs are meant to be taught in depth.",
+          "conclusion": "The curriculum could be improved by making the final chapter explicitly cover entry paths and staying current in JavaScript. It could also add or surface a small chapter on JavaScript standards, browser compatibility, and the web platform’s evolution, since that is a practical part of serious JavaScript work. Some broad chapters, especially build tools and component/full-stack frameworks, could be sharpened to make clear which concepts are taught rather than reading partly like tool lists.",
           "kind": "potentialImprovements",
-          "score": 8.5
+          "score": 8.6
         }
       ],
       "testCase": {
@@ -31,19 +31,19 @@
     {
       "steps": [
         {
-          "conclusion": "No major errors found. The first chapter opens with a concrete beginner-accessible Kanban artifact and task: building a simple board for real work. The curriculum stays in the subject, covers practical Kanban pillars such as boards, WIP limits, flow metrics, classes of service, policies, cadences, scaling, upstream/downstream work, and includes an end-to-end workflow plus a field-navigation closing chapter. It is in Brazilian Portuguese and avoids forbidden first-chapter patterns.",
+          "conclusion": "None. The curriculum is in Brazilian Portuguese, starts with a beginner-accessible real Kanban artifact/task, avoids the forbidden first-chapter patterns, and covers Kanban as a serious practical discipline with foundations, workflow, metrics, tools, scaling, ethics, and a field-navigation closing chapter.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Minor issues: the curriculum is somewhat light on Kanban history and formal foundations, such as its origins in manufacturing/Toyota-style pull systems and the later Kanban Method lineage. It also does not explicitly name important adoption frameworks such as STATIK, which many Kanban practitioners would expect. A few vendor names appear in the software chapter, which is acceptable but slightly less concept-focused than requested.",
+          "conclusion": "Minor issues: the digital tools chapter lists several vendor products in the description; this is useful for modern toolchain coverage, but it slightly departs from the preference for concept names over vendor names. The chapter 'Automação e IA no fluxo Kanban' bundles automation and AI together; for a narrow subject this is acceptable, but they could be separated if deeper treatment of AI-assisted Kanban is desired.",
           "kind": "minorErrors",
-          "score": 8.4
+          "score": 9
         },
         {
-          "conclusion": "Potential improvements: add a dedicated chapter after the hands-on opening on pull systems, Kanban's origins, and the difference between physical replenishment Kanban and the Kanban Method for knowledge work. Add or sharpen coverage of STATIK/system design, service delivery principles, and Kanban maturity in a practical way. The closing chapter could be a little more specific about competence artifacts for Kanban practitioners, such as before/after system designs, flow metric evidence, policy sets, case studies, and facilitation records.",
+          "conclusion": "The course could be improved by giving the final chapter a slightly more explicit competence artifact for Kanban, such as documented service policies, flow metrics, case studies, or before/after system improvements. It could also split AI-assisted workflows from ordinary tool automation if the app wants modern developments treated with more depth.",
           "kind": "potentialImprovements",
-          "score": 8.5
+          "score": 9
         }
       ],
       "testCase": {
@@ -58,19 +58,19 @@
     {
       "steps": [
         {
-          "conclusion": "The first chapter satisfies the core hook rule: it starts inside Brazilian law with a realistic cobrança indevida case, real documents, facts, proof, requests, and applicable norms, and it is beginner-accessible. The curriculum is in Brazilian Portuguese and is clearly focused on Brazilian Law. It also covers many required pillars: constitutional, civil, criminal, labor, tax, consumer, administrative, procedural law, legal writing, research, ethics, electronic filing, LGPD, digital evidence, AI, and an end-to-end case workflow. However, one concrete required academic pillar is not clearly covered: legal history/history of Brazilian law or the development of Brazilian legal institutions. The prompt explicitly requires academic pillars including history, so this is a substantive coverage gap in a broad field course.",
+          "conclusion": "None. The curriculum is in Brazilian Portuguese, focuses specifically on Brazilian law, and the first chapter satisfies the core hook requirement: it starts with a concrete, beginner-accessible consumer-law problem involving an improper credit-card charge, evidence, the CDC, and a simple complaint. It also covers many major Brazilian legal pillars, including constitutional, civil, criminal, labor, tax, consumer, administrative, business, environmental, human rights/international law, civil and criminal procedure, legal research, digital filing, LGPD, legaltech/AI, ethics/OAB, practical workflows, and a field-navigation closing chapter.",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "Some important Brazilian legal areas are missing or only implied, especially Direito Previdenciário, Direito Ambiental, Direitos Humanos, Direito da Criança e do Adolescente, and possibly Direito Eleitoral or Direito Internacional, depending on the intended breadth. There is also some overlap between 'Administração Pública e Regras do Estado' and 'Princípios do Direito Administrativo'; their scopes could be sharpened. The closing chapter is subject-specific and covers the expected categories, but the competence artifact is phrased vaguely as 'produção que prova competência' rather than naming concrete legal artifacts such as peças, pareceres, casos acompanhados, publicações, estágio supervisionado, aprovação na OAB, or atuação em núcleos de prática.",
+          "conclusion": "Some minor coverage and scope issues reduce completeness. Brazilian law practice would benefit from a clearer dedicated chapter on social security/INSS law, which is a major practical area in Brazil. Labor law is split into two chapters with some overlap, but neither clearly covers labor procedure from filing a reclamação trabalhista through hearing, judgment, and execution. Criminal law coverage focuses mainly on the general part and criminal procedure, with little explicit coverage of crimes in species such as crimes against life, property, public administration, drugs, domestic violence, or economic crimes. The closing chapter mentions artifacts proving competence only briefly as 'peças que provam competência', which is correct but somewhat vague for a final navigation chapter.",
           "kind": "minorErrors",
-          "score": 8.2
+          "score": 8.4
         },
         {
-          "conclusion": "Add a chapter on the history and formation of Brazilian law, preferably grounded in concrete legal artifacts such as constitutions, codes, court decisions, or institutional changes. Add or consider separate chapters for Previdenciário, Ambiental, Direitos Humanos, Criança e Adolescente, and other high-frequency Brazilian practice areas. Sharpen the administrative law chapters to avoid overlap. Make the final navigation chapter more explicit about proof of competence in law, such as peças jurídicas, pareceres, experiência em estágio, atuação em clínica jurídica, aprovação na OAB, concursos, publicações, and case records where appropriate.",
+          "conclusion": "The curriculum could be strengthened by adding or sharpening a few chapters: a dedicated 'INSS e seguridade social' chapter; a 'Processo do trabalho do início ao fim' chapter; a chapter on key criminal offenses in Brazilian practice; and a more concrete closing description naming legal artifacts such as petitions, pareceres, case records, research memos, hearing notes, contract drafts, and approved practical experience. The two labor chapters could also be separated more cleanly into substantive labor rights versus labor litigation and workplace enforcement.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 8.6
         }
       ],
       "testCase": {
@@ -85,19 +85,19 @@
     {
       "steps": [
         {
-          "conclusion": "The curriculum avoids the biggest failure modes: the first chapter opens with a concrete, beginner-accessible clinical encounter rather than a definition or overview; it includes the full care workflow in a dedicated chapter; it covers major foundations such as anatomy, physiology, pathology, microbiology/immunology, pharmacology, diagnosis, exams, specialties, prevention, ethics, documentation, EMR, telemedicine, AI, and genomics; and it ends with a field-navigation chapter specific to Brazilian medical careers. No severe structural violation is present.",
+          "conclusion": "The curriculum is very strong overall: it is in Brazilian Portuguese, starts with a concrete beginner-accessible clinical task, covers the clinical workflow, includes core biomedical foundations, major clinical areas, SUS, telemedicine, LGPD, electronic records, AI, and a field-navigation closing chapter. The main major issue is that the Brazilian regulatory/practical reality is incomplete against the explicit expectation: CFM rules and Brazilian prescription rules are not clearly covered as their own substantive content. There are related chapters on medical law, records, telemedicine, and safe prescribing, but they do not explicitly cover CFM resolutions, controlled-substance prescription types, digital prescription validity, mandatory documents, or Brazilian prescribing/legal requirements. Given the prompt specifically named CFM and prescription rules, this is a meaningful coverage gap.",
           "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Some required Brazilian practice details are under-specified. SUS is covered clearly, but CFM/CRM rules are not named directly, and prescription rules in Brazil are only implied through prescribing/documentation chapters rather than given their own explicit treatment. The final career chapter mentions roles, residency, title exams, professional networks, and staying current, but the artifact that proves competence is vague as “produção que demonstra competência” rather than naming concrete medical artifacts such as supervised clinical hours, case logs, clinical records, residency evaluations, or CRM/residency requirements. A few canonical areas are somewhat compressed or absent as standalone clinical chapters, especially infectious diseases, dermatology, otolaryngology/ophthalmology/urology, and occupational medicine, though the overall coverage remains strong.",
-          "kind": "minorErrors",
-          "score": 8.2
-        },
-        {
-          "conclusion": "The curriculum would be stronger with a dedicated chapter on Brazilian medical regulation and everyday legal practice, including CFM/CRM duties, LGPD in health data, telemedicine rules, controlled-substance prescriptions, certificates, sick notes, referrals, and digital signatures. It could also add a standalone clinical infectious diseases chapter, especially given Brazilian realities such as dengue, tuberculosis, HIV, antimicrobial stewardship, and vaccination. The closing chapter should make the competence artifacts more concrete and name how physicians stay current through societies, CFM/CRM updates, journals, congresses, protocols, continuing education, and residency/preceptorship paths.",
-          "kind": "potentialImprovements",
           "score": 8
+        },
+        {
+          "conclusion": "Several descriptions make learner-performance claims such as “Você aprende” and “Você passa a reconhecer,” which the expectations discourage. Some chapter descriptions are also slightly broad and could hide multiple topics without making the practical Brazilian rules visible. The curriculum is long but justified for Medicine and does not appear padded. No first-chapter violation, language violation, or catch-all modern-developments chapter issue was found.",
+          "kind": "minorErrors",
+          "score": 8.4
+        },
+        {
+          "conclusion": "Add a dedicated chapter such as “Regras do CFM no cuidado médico” covering professional conduct, telemedicine resolutions, advertising limits, autonomy, documentation, and physician responsibility. Add or sharpen a chapter on “Receitas e documentos médicos no Brasil” covering receita simples, controle especial, notificações, atestados, laudos, dispensação, prescrição digital, and common legal errors. Consider adding explicit coverage of ophthalmology/ENT common complaints if the course aims to prepare broad day-one clinical practice. Replace “Você aprende” style phrasing with concrete descriptions of what the chapter does.",
+          "kind": "potentialImprovements",
+          "score": 8.3
         }
       ],
       "testCase": {
@@ -112,19 +112,19 @@
     {
       "steps": [
         {
-          "conclusion": "The curriculum strongly preserves Computer Science as the subject and covers programming, algorithms, data structures, systems, databases, networks, software engineering, security, AI/ML, and theory. The first chapter is concrete, beginner-accessible, and starts with writing tiny programs rather than defining the field. It includes an end-to-end workflow chapter and a subject-specific closing career/navigation chapter. However, there is one explicit major-rule issue: several descriptions use Portuguese equivalents of the forbidden filler verb “understand” such as “entender” and “entende.” The prompt labels use of these forbidden description words as a major error, even though the surrounding curriculum content remains high quality.",
+          "conclusion": "None. The curriculum is in Brazilian Portuguese, keeps Ciência da Computação as the subject, opens with a simple real programming task, and covers the expected major pillars: programming, algorithms, data structures, systems, databases, networks, software engineering, security, AI, and theory. It also includes practical workflow, modern toolchain topics, and a subject-specific closing chapter about navigating the field.",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "Minor issues: the curriculum lacks a clear chapter on the history of computing, even though the prompt asks for academic pillars including history. The title “Containers com Docker” uses a vendor/tool name where a concept-first title like “Containers e Empacotamento de Aplicações” would better match the preference, though Docker is highly relevant in practice. Some broad chapters, such as ethics/privacy/impact and security, may need sharper internal separation in a full course, but they are still recognizable pillars.",
+          "conclusion": "A few minor issues are present. Some descriptions use vendor/tool names where concept-first wording would be cleaner, such as Docker, PostgreSQL, Redis, MongoDB, and Elasticsearch, though these are contextually useful and not severe. A few descriptions lean on broad enablement phrases like 'Você entende' or 'Você aprende', which are less concrete than the prompt prefers, but the descriptions generally still name real skills and artifacts.",
           "kind": "minorErrors",
-          "score": 8.3
+          "score": 8.6
         },
         {
-          "conclusion": "Improvements: add a concrete history-of-computing chapter placed after the learner has done some programming, revise descriptions to remove “entender/entende” and replace them with more action-based phrasing, and consider making cloud deployment/infrastructure more explicit alongside containers, CI/CD, and distributed systems. The curriculum is otherwise broad, practical, modern, and welcoming.",
+          "conclusion": "The curriculum could be improved by making a few canonical areas more explicit, especially programming paradigms such as object-oriented and functional programming, software architecture/design patterns, and more breadth within machine learning such as unsupervised learning, recommender systems, time series, and causal experimentation. The final navigation chapter is good but could more explicitly mention conferences, journals, mentorship, and continuing education as ways CS practitioners stay current.",
           "kind": "potentialImprovements",
-          "score": 8.5
+          "score": 8.4
         }
       ],
       "testCase": {
@@ -139,19 +139,19 @@
     {
       "steps": [
         {
-          "conclusion": "None. The curriculum is in Brazilian Portuguese, the first chapter opens inside biology with a concrete, beginner-accessible activity using real cells under a microscope, and the course covers the expected major biology pillars: molecules, cells, genetics, evolution, physiology, ecology, biodiversity-related groups, lab methods, biotechnology, sequencing, CRISPR, bioinformatics, data analysis, ethics, workflow, and field navigation.",
+          "conclusion": "None. The curriculum follows the required language, opens with a concrete beginner-accessible biology task rather than a meta-introduction, covers biology as a broad scientific field, includes practical lab and data workflows, includes modern bioinformatics/biotechnology topics, and ends with a field-specific navigation chapter.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "A few minor gaps reduce completeness. Biodiversity and conservation are covered indirectly through microbes, plants, animals, ecology, and applications, but there is no clearly named chapter focused on biodiversity, systematics, conservation biology, or the scale of life across ecosystems. Developmental biology is only lightly present, mostly in plants, rather than treated as a broader pillar across organisms. The final chapter includes the required career-navigation elements, but the artifact proving competence is vague as “registros de competência” instead of concrete biology artifacts such as lab notebooks, field records, datasets, protocols, publications, sequence analyses, or validated pipelines.",
+          "conclusion": "A few minor issues reduce precision. The academic history of biology is not clearly represented as its own chapter or recurring stated strand, even though the instructions ask for history among academic pillars. Some modern biomedical developments are bundled together in one chapter, such as gene therapy, CAR-T, mRNA, and personalized medicine; this is not a catch-all 'recent developments' chapter, but these could be separated if the course aims for deeper practitioner-level biotechnology coverage. The closing chapter mentions 'registros de competência' somewhat generically instead of naming concrete biology artifacts such as lab notebooks, datasets, protocols, field reports, posters, publications, specimen records, or analysis repositories.",
           "kind": "minorErrors",
-          "score": 8.5
+          "score": 8.6
         },
         {
-          "conclusion": "The curriculum could be improved by adding or sharpening a dedicated biodiversity/conservation chapter, giving developmental biology clearer space across animals and plants, and making the closing chapter more specific about proof of competence in biology. It could also name current practitioner tools a bit more concretely in descriptions, such as lab notebooks, databases, reproducible pipelines, and field/lab documentation, while still avoiding vendor-heavy wording.",
+          "conclusion": "The curriculum could be improved by adding a concrete historical chapter grounded in real artifacts or cases, such as Darwin's specimens, Mendel's pea data, early microscopy drawings, or the DNA model, without making it a detached overview. It could also sharpen the modern therapeutics coverage into separate chapters for mRNA platforms, cell therapies, and gene delivery if the intended depth includes biotechnology practice. The final navigation chapter would be stronger if it named the specific artifacts biologists use to prove competence.",
           "kind": "potentialImprovements",
-          "score": 8.4
+          "score": 8.7
         }
       ],
       "testCase": {
@@ -166,19 +166,19 @@
     {
       "steps": [
         {
-          "conclusion": "None. The curriculum follows the required language, opens with a real and beginner-accessible F1 engineering artifact/problem using telemetry and lap data, avoids forbidden first-chapter patterns, covers academic and practical pillars, includes modern toolchain topics, includes an end-to-end development workflow, and ends with a field-specific career/navigation chapter.",
+          "conclusion": "One notable rule violation: at least one description uses the Portuguese equivalent of the forbidden wording “understand” (“Você entende…”), and many descriptions rely on “Você aprende…”. The curriculum otherwise avoids forbidden first-chapter patterns, opens with a real beginner-accessible artifact, stays in Brazilian Portuguese, and covers the field seriously.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8.5
         },
         {
-          "conclusion": "A few minor issues reduce precision slightly: the closing chapter mentions 'entregas que provam competência' but does not name concrete F1 engineering artifacts such as telemetry analyses, CAD/CFD studies, setup reports, simulation notebooks, or race strategy models. Some chapter descriptions rely on insider terms like yaw, wake, blistering, undercut, overcut, ATR, and driver-in-the-loop without plain-language support, which may feel less welcoming to true beginners, though these are valid F1 terms. Chapter 3 is somewhat broad as a systems map, but it is still concrete and appropriate after the hands-on opening.",
+          "conclusion": "Minor issues include some repeated description phrasing such as “Cobre”, “Mostra”, “Trata” and “Você aprende”, which can feel a bit catalog-like. Several descriptions include dense acronyms or specialist terms such as MGU-K, MGU-H, CAE, CFD, PLM, FMEA and parc fermé without much soft landing for true beginners. The closing chapter includes the required elements, but the phrase “artefatos que provam competência” is a little generic compared with naming concrete examples such as telemetry notebooks, design reports, CAD/CAE studies, race-strategy analyses, or Formula Student work.",
           "kind": "minorErrors",
-          "score": 8.8
+          "score": 8.4
         },
         {
-          "conclusion": "The curriculum could be improved by making the learner-facing artifacts more explicit in several chapters, especially the final navigation chapter and practical workflow chapters. It could also add slightly more plain-language framing for technical jargon and perhaps include more explicit coverage of race engineering documentation, test reports, and versioned engineering decisions as everyday professional outputs. Overall, the structure is strong and serious, with only modest refinements needed.",
+          "conclusion": "The curriculum could be improved by replacing filler outcome phrases with more concrete actions, defining or easing into key acronyms, and making the final navigation chapter’s competence artifacts more specific to Formula 1 engineering. Overall, it has a strong beginner-to-practitioner arc, excellent coverage of academic and practical pillars, modern tools, workflow, regulations, race operations, safety, sustainability, and career navigation.",
           "kind": "potentialImprovements",
-          "score": 8.7
+          "score": 8.8
         }
       ],
       "testCase": {
@@ -193,19 +193,19 @@
     {
       "steps": [
         {
-          "conclusion": "None. The curriculum follows the core requirements: the first chapter opens with a real, hands-on Google Cloud task rather than an overview; it is in US English; it covers academic/practical pillars, modern toolchain, end-to-end delivery, modern AI/cloud developments, operations, security, data, and governance; and it ends with a Google Cloud-specific field navigation chapter rather than a generic portfolio chapter.",
+          "conclusion": "None. The curriculum opens with a beginner-accessible real Google Cloud artifact, stays inside the subject, avoids forbidden first-chapter patterns, covers a serious Google Cloud arc, includes modern toolchain topics, includes an end-to-end delivery workflow, and ends with a subject-specific navigation chapter.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "A few minor gaps reduce completeness slightly. Some core Google Cloud areas that many practitioners may encounter are not clearly represented, such as API management/API Gateway or Apigee, App Engine/Firebase-style app platforms, Cloud Armor/security perimeter details, and data governance tools such as Dataplex/Data Catalog. The closing chapter mentions entry paths and proof of competence, but only briefly; it could be more concrete about internships, junior roles, open source, labs, certifications, and specific project artifacts.",
+          "conclusion": "The closing navigation chapter covers roles, entry paths, and staying current, but it does not clearly name the specific artifacts that prove competence in Google Cloud work, such as deployed systems, Terraform repos, architecture diagrams, runbooks, incident notes, or certification-backed lab records. A few broad chapters also bundle several major products together, such as Dataflow, Dataproc, Dataform, Datastream, and Cloud Composer in one data pipelines chapter, which slightly reduces the sense of depth.",
           "kind": "minorErrors",
-          "score": 8.7
+          "score": 8.6
         },
         {
-          "conclusion": "The course could be improved by adding or sharpening chapters for API management, app platform choices beyond Cloud Run/GKE/Functions, cloud migration/hybrid patterns, and data governance/BI tools. It could also make the first chapter slightly more beginner-friendly by limiting the number of new concepts introduced at once, and make the final navigation chapter more explicit about real entry routes and evidence employers trust for Google Cloud work.",
+          "conclusion": "The course could be improved by adding or sharpening coverage for some day-one Google Cloud practitioner topics that are only implied or missing, such as Cloud DNS, Cloud CDN, Cloud Armor, Cloud NAT, Spanner, data governance with tools like Dataplex, and compliance/privacy practices. The final chapter should explicitly include the competence artifacts Google Cloud practitioners use to prove ability.",
           "kind": "potentialImprovements",
-          "score": 8.6
+          "score": 8.5
         }
       ],
       "testCase": {
@@ -220,19 +220,19 @@
     {
       "steps": [
         {
-          "conclusion": "The first chapter is strong: it opens with Goku meeting Bulma, the Dragon Radar, and the first Dragon Ball hunt, which is concrete, chronological, beginner-accessible, and inside the subject. The course also avoids a career/navigation chapter, which is correct for a hobby topic. The main major-level issue is scope: expectations state that this hobby/interest course should fit the 8–15 chapter band, but the result has 28 chapters. Many chapters are useful, but the curriculum is over-fragmented for the stated hobby scope and would likely feel too long for the intended learner.",
+          "conclusion": "The first chapter is strong: it opens with a real Dragon Ball artifact, the first manga chapter, and starts at the natural chronological beginning in a beginner-accessible way. The curriculum is in US English, avoids a career/navigation chapter as expected for a hobby topic, and covers many core pillars of Dragon Ball fandom: manga arcs, anime adaptation, dubs, canon, games, collecting, fan research, community spaces, and recent franchise material. The main major issue is scope: the result has 34 chapters despite the expectation that this hobby/interest topic should fit the hobby scope band of roughly 8–15 chapters. This makes the curriculum feel more like an exhaustive franchise encyclopedia than a focused learning-app course, and it likely violates the instruction not to add chapters just to look thorough.",
           "kind": "majorErrors",
           "score": 8
         },
         {
-          "conclusion": "Minor issues include some overlap or near-overlap between chapters such as “Manga vs Anime,” “Dubs, Subs, and Editions,” and parts of “Dragon Ball Fandom,” which could be sharpened or merged. A few descriptions use slightly dense fan/critical vocabulary such as “lineage,” “retcons,” “in-universe rules,” and “theatrical storytelling,” which is mostly acceptable but a little less plain and welcoming than ideal. No forbidden description phrases like “explore,” “understand,” “learn about,” “introduction to,” or “basics of” appear.",
+          "conclusion": "Several chapters are broad list-style chapters rather than tightly focused learning units, such as “Dragon Ball in Games,” “Editions, Merch, and Collecting,” and “Dragon Ball Fandom and Community Tools.” They are useful topics, but the descriptions bundle many items at once. There is also some repeated phrasing like “Study,” “Cover,” and “You’ll see,” which is not forbidden but makes many chapters feel similar. Some arc-by-arc chapters could overlap in lesson goals and could be merged without losing the serious fan-learning arc.",
           "kind": "minorErrors",
-          "score": 8.5
+          "score": 8.3
         },
         {
-          "conclusion": "The strongest improvement would be to condense the curriculum into about 12–15 chapters by merging closely related franchise, fandom, edition, and merchandise topics while preserving the clear chronological arc. It could also make the end-to-end fan workflow more central rather than one chapter among many late-stage topics. Overall, the content is accurate, concrete, and well sequenced, but it is too expansive for the expected hobby-course scope.",
+          "conclusion": "The curriculum would be stronger if compressed into about 12–15 chapters by merging adjacent story arcs into larger eras, while keeping the excellent concrete opening chapter. It should preserve the practical pillars—adaptation comparison, source checking, collecting, fandom tools, and fan research workflow—but make them fewer and sharper. The modern material could also be grouped more cleanly without becoming a vague catch-all, for example by separating “Super and modern films” from “Daima and current fandom.”",
           "kind": "potentialImprovements",
-          "score": 7.5
+          "score": 7.7
         }
       ],
       "testCase": {
@@ -247,19 +247,19 @@
     {
       "steps": [
         {
-          "conclusion": "The curriculum has no failure in the first-chapter hook: it opens with direct sky observation, a real beginner-accessible astronomy activity, and avoids the forbidden 'what is astronomy' pattern. It also covers many core astronomy pillars and includes an end-to-end workflow plus a field-navigation closing chapter. The main major concern is that 'Observatorios y misiones de esta década' functions like a bundled recent-developments chapter, grouping Gaia, TESS, JWST, and Rubin Observatory together instead of giving major modern shifts their own substantive treatment. This conflicts with the instruction against catch-all modern-development chapters, though the issue is limited because other modern topics like multi-messenger astronomy and data/AI workflows are separated.",
+          "conclusion": "None. The first chapter opens with a concrete, beginner-accessible astronomy task: observing and recording the Moon. The curriculum is in Latin American Spanish, covers a serious path from first observation to real practice, includes academic foundations, practical tools, end-to-end workflow, modern developments as substantive chapters, and a field-specific closing navigation chapter.",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "A few minor issues reduce completeness. The course does not clearly include a history-of-astronomy chapter, despite the requirement to cover academic pillars including history; topics like ancient sky records, geocentric/heliocentric models, Galileo, Kepler, and the rise of modern observational astronomy are not explicitly covered. Some descriptions rely on light instructional filler such as 'Verás' and 'Aprenderás', which is not as strong or concrete as the prompt prefers, though it does not use the exact forbidden phrases. The 'Python, archivos abiertos e IA en astronomía' chapter also bundles several practical toolchain topics that could be sharpened.",
+          "conclusion": "Minor issues: the closing chapter is strong but could be a bit more explicit about entry paths such as internships, observatory volunteering, citizen-science projects, undergraduate research, graduate school, and technical roles. A few descriptions use broad phrasing like “Aprenderás,” which is not as concrete as the prompt prefers, though it does not use the exact forbidden English phrases and is usually tied to specific skills. The curriculum also names many specific tools, missions, and archives; this is mostly appropriate for astronomy, but some titles/descriptions lean slightly tool-list-heavy.",
           "kind": "minorErrors",
-          "score": 8
+          "score": 9
         },
         {
-          "conclusion": "The curriculum would improve by adding a concrete history chapter after the first observational chapters, such as working with an early sky chart or Galileo's telescope notes, without making chapter 1 historical or abstract. It should also split the modern missions/surveys chapter into more substantive units or integrate each mission into the relevant science area: Gaia for astrometry and the Milky Way, TESS for exoplanet surveys, JWST for infrared deep-field and early-galaxy work, and Rubin for time-domain survey astronomy. A separate chapter on uncertainty, error bars, reproducible analysis, and scientific claims from noisy data would also strengthen the practical research arc.",
+          "conclusion": "Potential improvements: add or sharpen coverage of multiwavelength astronomy beyond radio and optical—infrared, ultraviolet, X-ray, and gamma-ray observing—as its own substantive chapter. A dedicated chapter on relativity in astronomy could also strengthen the bridge between gravity, black holes, cosmology, and precision measurements. The closing chapter could more clearly separate roles, entry routes, proof-of-skill artifacts, and staying current.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 8.8
         }
       ],
       "testCase": {
@@ -274,19 +274,19 @@
     {
       "steps": [
         {
-          "conclusion": "None. The curriculum follows the required language, opens with a concrete beginner-accessible musical task, covers both academic and practical pillars, includes modern tools and AI, has an end-to-end workflow chapter, and closes with a field-specific navigation chapter covering roles, entry paths, proof of competence, and staying current.",
+          "conclusion": "None. The curriculum follows the required language, opens with a beginner-accessible real musical task, covers both academic and practical pillars, includes modern music tools and workflows, has an end-to-end release chapter, and ends with a subject-specific navigation chapter for music careers and practice paths.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "A few minor issues reduce precision: the music history chapter compresses many eras into one broad chapter, which may be thin for a serious music course; the 'Especialidades musicales' chapter is somewhat survey-like and overlaps with the final navigation chapter; streaming/distribution is mentioned inside business rather than treated with much depth despite being central to current music work. These do not break the core requirements but leave some coverage less developed.",
+          "conclusion": "A few minor issues: some descriptions use vendor names such as MuseScore, iReal Pro, Ableton Live, Logic, Pro Tools, Spotify, TikTok, etc., where concept-based wording is preferred. The closing chapter covers roles, evidence of competence, and staying current well, but its entry paths could be a bit more explicit about auditions, gigs, teaching work, studio assisting, internships, residencies, or community routes.",
           "kind": "minorErrors",
-          "score": 8.5
+          "score": 9
         },
         {
-          "conclusion": "The course could be improved by splitting music history into a few concrete repertoire-based chapters, sharpening or merging the specialties chapter with the final navigation chapter, and adding a more substantive chapter on digital distribution, streaming platforms, audience building, and release workflows. It could also reduce repeated phrasing like 'Aprendes...' for warmer, more action-based descriptions.",
+          "conclusion": "The curriculum could be improved by making the closing navigation chapter slightly more concrete about how musicians actually enter different paths, and by replacing some brand/platform lists with more general tool categories while keeping examples optional. Otherwise, the sequence is strong, welcoming, and broad without feeling like a shallow survey.",
           "kind": "potentialImprovements",
-          "score": 8.4
+          "score": 9
         }
       ],
       "testCase": {
@@ -301,19 +301,19 @@
     {
       "steps": [
         {
-          "conclusion": "None. The curriculum is in US English, stays specific to Brazilian history, opens with concrete early-period sources rather than a meta-introduction, follows a serious chronological arc, includes practical historical work and modern tools, and ends with a subject-specific navigating-the-field chapter covering roles, entry paths, proof of competence, and staying current.",
+          "conclusion": "None. The curriculum follows the required language, opens with a concrete early artifact from Brazilian history rather than a meta-overview, maintains chronology, covers both academic history and practical historical work, includes modern tools/workflow, and ends with a field-specific navigation chapter.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "A few minor issues reduce completeness slightly. The first chapter's phrase \"royal letter\" is a bit imprecise for the famous 1500 source, which was a letter to the king rather than necessarily a royal letter. Some major Brazilian-history topics are only implied rather than clearly named, especially the Paraguayan War and its effects on the Empire, the military, abolition, and the monarchy. Several chapter descriptions use broad survey wording such as \"covers\" and group many items together, though they do not violate the forbidden wording rules.",
+          "conclusion": "A few canonical topics are underemphasized or not named clearly enough. The Dutch occupation of the Northeast and the War of the Triple Alliance/Paraguayan War are major Brazilian history topics that would ideally appear explicitly rather than possibly being folded into broader chapters. Gender history and cultural/intellectual history are also mostly handled through later debates rather than integrated as substantive historical chapters.",
           "kind": "minorErrors",
-          "score": 8.7
+          "score": 8.3
         },
         {
-          "conclusion": "The curriculum could be improved by adding or explicitly naming a chapter on the Paraguayan War and imperial foreign policy, since that is a major pillar of nineteenth-century Brazilian history. It could also give cultural history a sharper place, including Modernism, popular music, religion, media, football, and national identity, rather than leaving culture scattered across political and social chapters. The modern-methods coverage could be sharpened by separating digital research methods from public history and AI-assisted workflows if the app wants deeper practitioner preparation.",
+          "conclusion": "The source-reading and historical-method chapters could appear earlier so learners can use those skills throughout the chronological chapters. The curriculum would be stronger with separate, explicit chapters for Dutch Brazil, the Paraguayan War, and gender/family/citizenship across Brazilian history. Some broad later chapters could also be sharpened to avoid feeling like surveys, especially the twenty-first-century politics chapter.",
           "kind": "potentialImprovements",
-          "score": 8.6
+          "score": 8.4
         }
       ],
       "testCase": {
@@ -328,17 +328,17 @@
     {
       "steps": [
         {
-          "conclusion": "None. The curriculum follows the core requirements: the first chapter opens inside machine learning with concrete beginner-accessible model training, not a definition or overview; it covers canonical ML pillars such as linear models, trees, SVMs/kernels, Bayesian methods, unsupervised learning, neural networks, time-series, recommenders, reinforcement learning, and causal inference; it gives separate substantive chapters to required modern topics like transformers, LLMs, RAG, diffusion, and fine-tuning; it includes practical toolchain, production, MLOps, end-to-end workflow, responsible ML, research practice, and a subject-specific navigation chapter.",
+          "conclusion": "None. The curriculum satisfies the core requirements: the first chapter opens inside machine learning with a concrete, beginner-accessible prediction task; it includes canonical ML pillars alongside modern developments; modern shifts such as transformers, LLMs, RAG, fine-tuning, and diffusion are separate substantive chapters; it includes practical toolchain, deployment, monitoring, governance, and an end-to-end workflow; and it closes with a field-specific navigation chapter.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "The main minor gap is that the academic-history pillar is not made explicit. The curriculum covers the evolution of methods through many model families, but it does not include a clear chapter on how machine learning developed historically or how major paradigms replaced or extended each other. This does not seriously harm practical usefulness, but it is a small mismatch with the instruction to cover academic pillars including history.",
+          "conclusion": "Minor issues are limited. A few chapter titles or descriptions use specific vendor/tool names such as PyTorch, XGBoost, LightGBM, MLflow, Weights & Biases, FastAPI, Docker, Airflow, and Dagster. This is generally useful for a modern ML course, but the prompt prefers concept names over vendor names in non-vendor courses, so this is a small stylistic/content issue rather than a serious flaw.",
           "kind": "minorErrors",
           "score": 9
         },
         {
-          "conclusion": "A small improvement would be to add or weave in a more explicit history/evolution chapter, such as the path from statistical learning to deep learning to foundation models. It could also slightly strengthen modern infrastructure coverage by naming data labeling, dataset governance, GPU/cloud training, and inference-cost optimization more clearly, though much of this is already implied across the systems and MLOps chapters.",
+          "conclusion": "The curriculum could be slightly improved by adding or naming a few additional classical/deep-learning topics that many ML practitioners encounter, such as autoencoders, GANs, calibration, and model selection theory. However, the current coverage is already broad, practical, and well aligned with the stated expectations, so these are refinements rather than gaps that undermine usefulness.",
           "kind": "potentialImprovements",
           "score": 9
         }

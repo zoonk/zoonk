@@ -1,0 +1,95 @@
+{
+  "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Kanban is the subject itself, so naming Kanban-specific artifacts (board, WIP limits, classes of service, etc.) is expected and not a vendor violation\n\n      \n  - Mission context: this curriculum is for learners OUTSIDE privileged environments — people who doubt they can become serious practitioners. Chapters should feel welcoming and legible, not gate-kept by academic vocabulary\n  - MAJOR ERROR: the first chapter must hook the learner IN the subject with REAL problems, REAL artifacts, REAL techniques, REAL cases, or REAL tools. After chapter 1 the learner should think \"I want to learn how to do this\", not \"OK, now I know what this field is about\"\n  - MAJOR ERROR: forbidden first-chapter patterns — \"What is X\" / \"Introduction to X\" / \"Overview of X\" / \"Panorama of X\" / \"Why X matters\" / \"When human effort isn't enough\" / any chapter whose lessons would be ABOUT the field (its definition, taxonomy, history from the outside) rather than IN the field\n  - MAJOR ERROR: hands-on does NOT mean advanced. The first chapter must ALSO be beginner-accessible — the simplest concrete entry point a true beginner can follow without prerequisites the course hasn't taught yet. Opening with a dramatic, specialized, or impressive-sounding example that requires skipped prerequisites (e.g., \"acute chest pain in the emergency room\" as chapter 1 of Medicine before anatomy/physiology, or \"detect an exoplanet via light curve\" as chapter 1 of Astronomy before the learner knows what a light curve is) is a major error — even though the example is real and concrete\n  - MAJOR ERROR: ignoring natural starting points. For chronological subjects (history, long narratives), chapter 1 must open in the EARLY period of the course's chronology through a concrete document, figure, or artifact — skipping ahead to a dramatic later event (e.g., opening a \"Brazilian History\" course with the 1964 military coup instead of the colonial period) is a major error. For subjects with a skill progression (music, medicine, crafts), chapter 1 must start at the simplest real task a beginner can actually do, not a specialized scenario\n  - First-chapter sanity test: \"would a true beginner plausibly encounter this first?\" If the answer requires skipping prerequisites or skipping the natural chronology/progression of the field, the hook is wrong\n  - The curriculum must be a serious arc from beginner to real competence, not a shallow tour\n  - Chapter count is a RESULT of coverage, not a target. Do not penalize or reward specific counts. Evaluate whether every canonical pillar of the field has at least one chapter — if any pillar is missing, the curriculum is incomplete regardless of count. Broad fields naturally need many chapters; narrow tools and hobby topics naturally need fewer\n  - MAJOR ERROR: trading breadth for recency. Modern topics must ADD coverage without REPLACING canonical foundations. For example, a machine learning curriculum that covers transformers/LLMs/RAG/diffusion/fine-tuning but drops reinforcement learning, time-series forecasting, recommender systems, or causal inference is incomplete — those are canonical ML pillars. A medicine curriculum that covers telemedicine and modern EMRs but drops anatomy, physiology, pathology, or pharmacology is incomplete. If covering everything needs more chapters, more chapters is the correct answer\n  - Must cover BOTH academic AND practical pillars:\n    - Academic pillars: theory, foundations, history, canonical body of knowledge\n    - Modern toolchain: what working practitioners in this field actually use this year\n    - End-to-end workflow: at least one chapter walking through how real work in the field gets delivered start to finish\n    - Last-decade shifts: what's been added to the field in the past 10 years that a textbook wouldn't have covered 10 years ago (new regulations, new platforms, new techniques, AI changes, etc.)\n  - The \"junior practitioner test\": if a junior would be embarrassed on day 1 of real practice because a topic is missing, that topic must exist as its own chapter\n  - Cover core pillars before specialized or frontier topics\n  - Stay tightly focused on the course title. Generic cross-disciplinary chapters that could be copied unchanged into many unrelated courses are a major error unless the topic IS the subject of the course\n  - MAJOR ERROR: meta-chapters that describe, taxonomize, or survey the field from the outside instead of teaching it\n  - MAJOR ERROR: survey chapters that list many areas as bullet points without teaching any of them — each topic that matters deserves its own chapter with real depth\n  - MAJOR ERROR: catch-all \"recent developments\" chapters. Titles like \"Catch up with the last decade of X\", \"What's new in X\", \"Recent developments in X\", \"The last decade of X\", or \"Modern X\" that bundle multiple distinct modern techniques into a single chapter are a major error. Each modern shift (transformers, LLMs, RAG, diffusion, fine-tuning for ML; LGPD/GDPR, digital filing for Law; telemedicine, EMRs for Medicine; etc.) deserves its own substantive chapter\n  - Avoid overlap. If two chapters would naturally share most of their lessons, they should be merged or their scopes sharpened\n  - Prefer concept names over vendor names in chapter titles/descriptions (e.g., \"Package management\" instead of a specific tool name). Foundational tools that ARE the subject of the course are an allowed exception. Vendor name usage in non-vendor courses is a minor issue, never a major error\n  - For courses covering a field, profession, or serious practice, a \"navigating the field\" closing chapter is expected. It must cover ROLES AND SPECIALTIES (what kinds of practitioners exist and what they do differently), CONTRIBUTION/ENTRY PATHS (how people actually join — jobs, residencies, open source, communities), the ARTIFACT THAT PROVES COMPETENCE in this field (code repos, case records, clinical hours, recordings), and HOW PRACTITIONERS KEEP SKILLS CURRENT. A narrow \"Build a Portfolio\" or \"Build a Project\" closing chapter is a major error — a portfolio is just one small part of navigating a field. The closing chapter must be specific to the subject, not generic career advice\n  - For hobby / pop-culture topics, no closing navigation chapter is expected\n  - Titles: short, specific, concrete. Prefer titles that name a real thing or answer a real question. Avoid \"I / II / Part 1\" — use descriptive subtitles instead. Academic catalog-style titles that read like a university transcript are a minor issue\n  - Descriptions: 1–2 sentences describing what the chapter covers and, when natural, what it enables\n  - MAJOR ERROR in descriptions: using the words \"explore\", \"understand\", \"learn about\", \"introduction to\", or \"basics of\". The prompt forbids them outright because they are warm-sounding filler that doesn't describe anything\n  - Warm, plain language throughout. Avoid academic vocabulary\n  - Language output must follow the language parameter. For `en`: US English. For `pt`: Brazilian Portuguese. For `es`: Latin American Spanish\n  - Titles and descriptions must not leak prompt instructions or make claims about the learner's performance\n  - Don't evaluate output format — focus on chapter content quality only\n\n    ",
+  "judgedAt": "2026-04-26T16:24:07.412Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Strong hands-on first chapter with simplest entry point, comprehensive coverage including STATIK, KMM, Flight Levels, ethics of metrics, antipatterns, and a proper field-navigation closing chapter. Modern topics (AI, automation, remote) get their own chapters without sacrificing canonical pillars.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Excellent first chapter and very thorough coverage including upstream/downstream, AI, scaling, Scrumban, and proper closing chapter. Slight redundancy between some chapters (e.g., practices central + policies + cadências overlap) but overall strong and well-structured.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Good hands-on opener and broad coverage with clear closing chapter on certifications/communities. However, chapter 2 ('De onde vem o Kanban') is history-from-outside placed early, and the description for chapter 4 uses forbidden phrasing close to 'aprenda'/'descubra' patterns repeatedly. Missing some depth on STATIK, scaling nuances.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Solid hands-on first chapter and decent practical arc, but coverage is thinner — missing topics like Scrum/Scrumban comparison, AI, remote work, KMM, antipatterns, history/origins. Closing chapter is somewhat generic ('Gestão Ágil') rather than Kanban-specific navigation.",
+          "score": 6.8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Exceptional curriculum that perfectly balances practical execution with canonical academic pillars (Toyota origins, STATIK, KMM) and modern shifts (AI, remote work). The first chapter provides a highly accessible, concrete hook, and the tone remains warm and actionable throughout without relying on any forbidden filler words.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "A very comprehensive and well-structured curriculum that successfully includes modern shifts like AI and remote work alongside an end-to-end workflow. However, it omits the canonical academic pillar of Kanban's history/origins, and its descriptions lean slightly repetitive and catalog-like.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Features an engaging, action-oriented tone that strictly follows all negative constraints regarding forbidden words. However, the curriculum trades breadth for brevity, missing canonical pillars like STATIK and the method's origins, as well as critical modern developments like remote work and AI.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Offers a solid progression and covers both academic history and practical applications well. However, it commits a major error by explicitly using the forbidden word 'Entenda' (Understand) in Chapter 3's description, which triggers a severe penalty according to the prompt's strict negative constraints.",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "A very complete Kanban curriculum with a strong beginner-friendly first chapter, real artifacts, core practices, history, STATIK, metrics, forecasting, cadences, scaling, digital tools, remote work, AI, ethics, and end-to-end delivery. The closing chapter is specific to Kanban and covers roles, entry paths, evidence of competence, communities, certifications, and staying current. Minor weakness: automation and AI are bundled together rather than separated, but overall it best satisfies the prompt.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Strong practical arc from first board to real competence, with excellent coverage of WIP, policies, metrics, forecasting, upstream/downstream, remote work, AI, culture, antipatterns, workflow, and career navigation. It falls short on the academic pillar by omitting Kanban’s Toyota/Lean history and does not clearly name the cumulative flow diagram, a canonical Kanban artifact. Still, it is broad, current, and well aligned with the learner mission.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "The first chapter is concrete and accessible, and the curriculum covers many important pillars: history, cards, WIP, flow, CFD, forecasting, classes of service, cadences, scaling, tools, and a full implementation case. However, it is weaker on modern developments like remote/hybrid Kanban, AI-assisted workflows, and deeper automation, and the closing chapter lacks clear roles/specialties and concrete evidence of competence. Some descriptions also lean on filler verbs like “Conheça”, “Entenda” and “Aprenda.”",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "It starts well with a real workflow board and covers several Kanban essentials such as WIP limits, policies, bottlenecks, metrics, cadences, tools, upstream work, portfolio Kanban, and an end-to-end chapter. But it is noticeably incomplete: it lacks Kanban history, card design, STATIK, forecasting/probabilistic delivery, SLEs, remote/AI/automation shifts, and a fully specific navigation chapter. A few claims are also too strong or misleading, such as measuring exact delivery times and proving stability from a CFD.",
+          "score": 6.8
+        }
+      ]
+    }
+  ],
+  "taskId": "course-chapters",
+  "testCaseId": "pt-kanban-1"
+}

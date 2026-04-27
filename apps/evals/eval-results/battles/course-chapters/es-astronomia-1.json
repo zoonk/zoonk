@@ -1,0 +1,95 @@
+{
+  "expectations": "\n      - MUST be in Latin American Spanish\n\n      \n  - Mission context: this curriculum is for learners OUTSIDE privileged environments — people who doubt they can become serious practitioners. Chapters should feel welcoming and legible, not gate-kept by academic vocabulary\n  - MAJOR ERROR: the first chapter must hook the learner IN the subject with REAL problems, REAL artifacts, REAL techniques, REAL cases, or REAL tools. After chapter 1 the learner should think \"I want to learn how to do this\", not \"OK, now I know what this field is about\"\n  - MAJOR ERROR: forbidden first-chapter patterns — \"What is X\" / \"Introduction to X\" / \"Overview of X\" / \"Panorama of X\" / \"Why X matters\" / \"When human effort isn't enough\" / any chapter whose lessons would be ABOUT the field (its definition, taxonomy, history from the outside) rather than IN the field\n  - MAJOR ERROR: hands-on does NOT mean advanced. The first chapter must ALSO be beginner-accessible — the simplest concrete entry point a true beginner can follow without prerequisites the course hasn't taught yet. Opening with a dramatic, specialized, or impressive-sounding example that requires skipped prerequisites (e.g., \"acute chest pain in the emergency room\" as chapter 1 of Medicine before anatomy/physiology, or \"detect an exoplanet via light curve\" as chapter 1 of Astronomy before the learner knows what a light curve is) is a major error — even though the example is real and concrete\n  - MAJOR ERROR: ignoring natural starting points. For chronological subjects (history, long narratives), chapter 1 must open in the EARLY period of the course's chronology through a concrete document, figure, or artifact — skipping ahead to a dramatic later event (e.g., opening a \"Brazilian History\" course with the 1964 military coup instead of the colonial period) is a major error. For subjects with a skill progression (music, medicine, crafts), chapter 1 must start at the simplest real task a beginner can actually do, not a specialized scenario\n  - First-chapter sanity test: \"would a true beginner plausibly encounter this first?\" If the answer requires skipping prerequisites or skipping the natural chronology/progression of the field, the hook is wrong\n  - The curriculum must be a serious arc from beginner to real competence, not a shallow tour\n  - Chapter count is a RESULT of coverage, not a target. Do not penalize or reward specific counts. Evaluate whether every canonical pillar of the field has at least one chapter — if any pillar is missing, the curriculum is incomplete regardless of count. Broad fields naturally need many chapters; narrow tools and hobby topics naturally need fewer\n  - MAJOR ERROR: trading breadth for recency. Modern topics must ADD coverage without REPLACING canonical foundations. For example, a machine learning curriculum that covers transformers/LLMs/RAG/diffusion/fine-tuning but drops reinforcement learning, time-series forecasting, recommender systems, or causal inference is incomplete — those are canonical ML pillars. A medicine curriculum that covers telemedicine and modern EMRs but drops anatomy, physiology, pathology, or pharmacology is incomplete. If covering everything needs more chapters, more chapters is the correct answer\n  - Must cover BOTH academic AND practical pillars:\n    - Academic pillars: theory, foundations, history, canonical body of knowledge\n    - Modern toolchain: what working practitioners in this field actually use this year\n    - End-to-end workflow: at least one chapter walking through how real work in the field gets delivered start to finish\n    - Last-decade shifts: what's been added to the field in the past 10 years that a textbook wouldn't have covered 10 years ago (new regulations, new platforms, new techniques, AI changes, etc.)\n  - The \"junior practitioner test\": if a junior would be embarrassed on day 1 of real practice because a topic is missing, that topic must exist as its own chapter\n  - Cover core pillars before specialized or frontier topics\n  - Stay tightly focused on the course title. Generic cross-disciplinary chapters that could be copied unchanged into many unrelated courses are a major error unless the topic IS the subject of the course\n  - MAJOR ERROR: meta-chapters that describe, taxonomize, or survey the field from the outside instead of teaching it\n  - MAJOR ERROR: survey chapters that list many areas as bullet points without teaching any of them — each topic that matters deserves its own chapter with real depth\n  - MAJOR ERROR: catch-all \"recent developments\" chapters. Titles like \"Catch up with the last decade of X\", \"What's new in X\", \"Recent developments in X\", \"The last decade of X\", or \"Modern X\" that bundle multiple distinct modern techniques into a single chapter are a major error. Each modern shift (transformers, LLMs, RAG, diffusion, fine-tuning for ML; LGPD/GDPR, digital filing for Law; telemedicine, EMRs for Medicine; etc.) deserves its own substantive chapter\n  - Avoid overlap. If two chapters would naturally share most of their lessons, they should be merged or their scopes sharpened\n  - Prefer concept names over vendor names in chapter titles/descriptions (e.g., \"Package management\" instead of a specific tool name). Foundational tools that ARE the subject of the course are an allowed exception. Vendor name usage in non-vendor courses is a minor issue, never a major error\n  - For courses covering a field, profession, or serious practice, a \"navigating the field\" closing chapter is expected. It must cover ROLES AND SPECIALTIES (what kinds of practitioners exist and what they do differently), CONTRIBUTION/ENTRY PATHS (how people actually join — jobs, residencies, open source, communities), the ARTIFACT THAT PROVES COMPETENCE in this field (code repos, case records, clinical hours, recordings), and HOW PRACTITIONERS KEEP SKILLS CURRENT. A narrow \"Build a Portfolio\" or \"Build a Project\" closing chapter is a major error — a portfolio is just one small part of navigating a field. The closing chapter must be specific to the subject, not generic career advice\n  - For hobby / pop-culture topics, no closing navigation chapter is expected\n  - Titles: short, specific, concrete. Prefer titles that name a real thing or answer a real question. Avoid \"I / II / Part 1\" — use descriptive subtitles instead. Academic catalog-style titles that read like a university transcript are a minor issue\n  - Descriptions: 1–2 sentences describing what the chapter covers and, when natural, what it enables\n  - MAJOR ERROR in descriptions: using the words \"explore\", \"understand\", \"learn about\", \"introduction to\", or \"basics of\". The prompt forbids them outright because they are warm-sounding filler that doesn't describe anything\n  - Warm, plain language throughout. Avoid academic vocabulary\n  - Language output must follow the language parameter. For `en`: US English. For `pt`: Brazilian Portuguese. For `es`: Latin American Spanish\n  - Titles and descriptions must not leak prompt instructions or make claims about the learner's performance\n  - Don't evaluate output format — focus on chapter content quality only\n\n    ",
+  "judgedAt": "2026-04-26T16:23:23.589Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Excellent first chapter (observing the Moon tonight) — concrete, beginner-accessible. Comprehensive coverage with separate chapters for each modern development (Gaia, EHT, gravitational waves, multi-messenger, AI, transient surveys, exoplanet atmospheres). Strong end-to-end workflow chapter and detailed navigating-the-field closing. Best balance of canonical foundations and modern toolchain.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Strong beginner-accessible first chapter and good practical orientation. Covers exoplanets, multi-messenger, missions, citizen science, and closes with a navigation chapter. However, it bundles some modern shifts and lacks dedicated chapters for Gaia, Rubin/transients, and a clean separated end-to-end workflow chapter; misses some depth on data/Python tools.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Good beginner-accessible opener and coherent progression. However, it bundles modern developments (Python+archives+IA in one chapter, all multi-wavelength in one, all current observatories in one), violating the rule against catch-all modern chapters. Missing dedicated coverage of Gaia, transients/Rubin as their own topics.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "First chapter is reasonable (naked-eye sky) but the second jumps to Kepler's laws and gravitational mechanics, which is dense for beginners. Lacks dedicated chapters for several modern shifts (JWST/exoplanet atmospheres bundled, no Gaia chapter, no transient astronomy chapter). Some titles are academic catalog-style. Closing chapter is thinner on roles/specialties.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Model A is exceptional. It fully embraces the 'chapter count is a result of coverage' rule, meticulously unbundling canonical foundations and modern shifts (Gaia, Event Horizon Telescope, gravitational waves, AI) into their own distinct chapters. It includes a perfect end-to-end workflow chapter, a highly specific closing chapter that meets all prompt requirements, and successfully avoids all forbidden filler words.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model C provides a very strong, well-structured curriculum with excellent action-oriented descriptions that avoid all forbidden words. It correctly includes a professional end-to-end workflow and avoids the major error of catch-all chapters. However, it misses a few key modern pillars for a junior practitioner (such as AI/machine learning applied to astronomy and large-scale sky surveys), making it slightly less comprehensive than Model A.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model B has solid foundational coverage but commits a major prompt error by bundling multiple modern topics together. Creating catch-all chapters like 'Observatorios y misiones de esta década' and bundling Python, archives, and AI into a single chapter directly violates the negative constraint against survey-style modern chapters.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Model D commits several major errors. It bundles space missions into a catch-all chapter, uses the forbidden word 'Entenderás' (understand), and completely lacks a professional end-to-end workflow chapter, opting instead for amateur and citizen science over real professional practice.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Excelente primera unidad: empieza con una observación real, simple y accesible de la Luna. Cubre con mucha amplitud los pilares académicos, la práctica, herramientas modernas, flujo completo de trabajo, desarrollos recientes separados y una buena navegación final del campo; solo tiene leves momentos de lenguaje algo escolar o cargado de nombres de herramientas.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Tiene un inicio adecuado y accesible, y cubre muchos temas centrales de astronomía con buen tono. Sin embargo, agrupa demasiados desarrollos modernos en capítulos catch-all, reduce bastante el trabajo práctico con datos y herramientas, y la navegación final queda más general que específica.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Incluye varios pilares importantes, herramientas reales y un flujo de trabajo profesional, pero el tono es mucho menos accesible y salta pronto a tareas avanzadas para principiantes. También faltan o quedan débiles historia del campo, astrobiología, estadística, comunicación/publicación, IA y varios desarrollos recientes tratados como capítulos propios; algunas descripciones exageran capacidades como medir valores “exactos”.",
+          "score": 5.9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "El primer capítulo funciona bien y el curso es claro para principiantes, pero la cobertura es demasiado breve para una competencia seria en astronomía. Faltan pilares prácticos clave como Python, FITS, archivos astronómicos, análisis estadístico, publicación científica y un flujo completo de investigación, además de varios capítulos que agrupan demasiados temas modernos.",
+          "score": 5.1
+        }
+      ]
+    }
+  ],
+  "taskId": "course-chapters",
+  "testCaseId": "es-astronomia-1"
+}

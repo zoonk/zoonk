@@ -17,7 +17,7 @@ const BATTLES_DIR = path.join(EVAL_RESULTS_DIR, "battles");
 const BATTLE_JUDGES_CONFIG: readonly string[] = [
   "anthropic/claude-opus-4.7",
   "google/gemini-3.1-pro-preview",
-  "openai/gpt-5.4",
+  "openai/gpt-5.5",
 ];
 
 async function ensureBattlesDir(taskId: string) {
@@ -117,10 +117,9 @@ type AnonymizedOutput = { anonymousId: string; output: string }[];
 function collectModelOutputsForTestCase(
   testCaseId: string,
   allOutputs: Map<string, ModelOutputs>,
-): { outputs: ModelOutput[]; userPrompt: string; systemPrompt: string } {
+): { outputs: ModelOutput[]; userPrompt: string } {
   const outputs: ModelOutput[] = [];
   let userPrompt = "";
-  let systemPrompt = "";
 
   for (const [modelId, modelOutputs] of allOutputs) {
     const output = getOutputForTestCase(modelOutputs, testCaseId);
@@ -129,12 +128,11 @@ function collectModelOutputsForTestCase(
 
       if (!userPrompt) {
         userPrompt = output.userPrompt;
-        systemPrompt = output.systemPrompt;
       }
     }
   }
 
-  return { outputs, systemPrompt, userPrompt };
+  return { outputs, userPrompt };
 }
 
 function getAnonymizationForBattle(
@@ -157,12 +155,10 @@ async function runJudges(params: {
   judgesToRun: readonly string[];
   anonymizedOutputs: AnonymizedOutput;
   expectations: string;
-  systemPrompt: string;
   userPrompt: string;
   mapping: Mapping;
 }): Promise<BattleMatchup["judgments"]> {
-  const { judgesToRun, anonymizedOutputs, expectations, systemPrompt, userPrompt, mapping } =
-    params;
+  const { judgesToRun, anonymizedOutputs, expectations, userPrompt, mapping } = params;
 
   return Promise.all(
     judgesToRun.map(async (judgeId) => ({
@@ -172,7 +168,6 @@ async function runJudges(params: {
         expectations,
         judgeId,
         mapping,
-        systemPrompt,
         userPrompt,
       }),
     })),
@@ -186,11 +181,10 @@ async function runBattleForTestCase(
   existingMatchup: BattleMatchup | null,
 ): Promise<BattleMatchup> {
   const testCaseId = `${testCase.id}-1`;
-  const {
-    outputs: modelOutputs,
-    userPrompt,
-    systemPrompt,
-  } = collectModelOutputsForTestCase(testCaseId, allOutputs);
+  const { outputs: modelOutputs, userPrompt } = collectModelOutputsForTestCase(
+    testCaseId,
+    allOutputs,
+  );
 
   if (modelOutputs.length < 2) {
     throw new Error(`Need at least 2 models with outputs for test case ${testCaseId}`);
@@ -217,7 +211,6 @@ async function runBattleForTestCase(
     expectations: testCase.expectations,
     judgesToRun,
     mapping,
-    systemPrompt,
     userPrompt,
   });
   const allJudgments = effectiveExisting

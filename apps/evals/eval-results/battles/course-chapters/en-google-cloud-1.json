@@ -1,0 +1,95 @@
+{
+  "expectations": "\n      - MUST be in US English\n      - Naming Google Cloud vendor and its product names IS expected here — the vendor IS the subject, so it's an allowed exception to the vendor-naming rule\n\n      \n  - Mission context: this curriculum is for learners OUTSIDE privileged environments — people who doubt they can become serious practitioners. Chapters should feel welcoming and legible, not gate-kept by academic vocabulary\n  - MAJOR ERROR: the first chapter must hook the learner IN the subject with REAL problems, REAL artifacts, REAL techniques, REAL cases, or REAL tools. After chapter 1 the learner should think \"I want to learn how to do this\", not \"OK, now I know what this field is about\"\n  - MAJOR ERROR: forbidden first-chapter patterns — \"What is X\" / \"Introduction to X\" / \"Overview of X\" / \"Panorama of X\" / \"Why X matters\" / \"When human effort isn't enough\" / any chapter whose lessons would be ABOUT the field (its definition, taxonomy, history from the outside) rather than IN the field\n  - MAJOR ERROR: hands-on does NOT mean advanced. The first chapter must ALSO be beginner-accessible — the simplest concrete entry point a true beginner can follow without prerequisites the course hasn't taught yet. Opening with a dramatic, specialized, or impressive-sounding example that requires skipped prerequisites (e.g., \"acute chest pain in the emergency room\" as chapter 1 of Medicine before anatomy/physiology, or \"detect an exoplanet via light curve\" as chapter 1 of Astronomy before the learner knows what a light curve is) is a major error — even though the example is real and concrete\n  - MAJOR ERROR: ignoring natural starting points. For chronological subjects (history, long narratives), chapter 1 must open in the EARLY period of the course's chronology through a concrete document, figure, or artifact — skipping ahead to a dramatic later event (e.g., opening a \"Brazilian History\" course with the 1964 military coup instead of the colonial period) is a major error. For subjects with a skill progression (music, medicine, crafts), chapter 1 must start at the simplest real task a beginner can actually do, not a specialized scenario\n  - First-chapter sanity test: \"would a true beginner plausibly encounter this first?\" If the answer requires skipping prerequisites or skipping the natural chronology/progression of the field, the hook is wrong\n  - The curriculum must be a serious arc from beginner to real competence, not a shallow tour\n  - Chapter count is a RESULT of coverage, not a target. Do not penalize or reward specific counts. Evaluate whether every canonical pillar of the field has at least one chapter — if any pillar is missing, the curriculum is incomplete regardless of count. Broad fields naturally need many chapters; narrow tools and hobby topics naturally need fewer\n  - MAJOR ERROR: trading breadth for recency. Modern topics must ADD coverage without REPLACING canonical foundations. For example, a machine learning curriculum that covers transformers/LLMs/RAG/diffusion/fine-tuning but drops reinforcement learning, time-series forecasting, recommender systems, or causal inference is incomplete — those are canonical ML pillars. A medicine curriculum that covers telemedicine and modern EMRs but drops anatomy, physiology, pathology, or pharmacology is incomplete. If covering everything needs more chapters, more chapters is the correct answer\n  - Must cover BOTH academic AND practical pillars:\n    - Academic pillars: theory, foundations, history, canonical body of knowledge\n    - Modern toolchain: what working practitioners in this field actually use this year\n    - End-to-end workflow: at least one chapter walking through how real work in the field gets delivered start to finish\n    - Last-decade shifts: what's been added to the field in the past 10 years that a textbook wouldn't have covered 10 years ago (new regulations, new platforms, new techniques, AI changes, etc.)\n  - The \"junior practitioner test\": if a junior would be embarrassed on day 1 of real practice because a topic is missing, that topic must exist as its own chapter\n  - Cover core pillars before specialized or frontier topics\n  - Stay tightly focused on the course title. Generic cross-disciplinary chapters that could be copied unchanged into many unrelated courses are a major error unless the topic IS the subject of the course\n  - MAJOR ERROR: meta-chapters that describe, taxonomize, or survey the field from the outside instead of teaching it\n  - MAJOR ERROR: survey chapters that list many areas as bullet points without teaching any of them — each topic that matters deserves its own chapter with real depth\n  - MAJOR ERROR: catch-all \"recent developments\" chapters. Titles like \"Catch up with the last decade of X\", \"What's new in X\", \"Recent developments in X\", \"The last decade of X\", or \"Modern X\" that bundle multiple distinct modern techniques into a single chapter are a major error. Each modern shift (transformers, LLMs, RAG, diffusion, fine-tuning for ML; LGPD/GDPR, digital filing for Law; telemedicine, EMRs for Medicine; etc.) deserves its own substantive chapter\n  - Avoid overlap. If two chapters would naturally share most of their lessons, they should be merged or their scopes sharpened\n  - Prefer concept names over vendor names in chapter titles/descriptions (e.g., \"Package management\" instead of a specific tool name). Foundational tools that ARE the subject of the course are an allowed exception. Vendor name usage in non-vendor courses is a minor issue, never a major error\n  - For courses covering a field, profession, or serious practice, a \"navigating the field\" closing chapter is expected. It must cover ROLES AND SPECIALTIES (what kinds of practitioners exist and what they do differently), CONTRIBUTION/ENTRY PATHS (how people actually join — jobs, residencies, open source, communities), the ARTIFACT THAT PROVES COMPETENCE in this field (code repos, case records, clinical hours, recordings), and HOW PRACTITIONERS KEEP SKILLS CURRENT. A narrow \"Build a Portfolio\" or \"Build a Project\" closing chapter is a major error — a portfolio is just one small part of navigating a field. The closing chapter must be specific to the subject, not generic career advice\n  - For hobby / pop-culture topics, no closing navigation chapter is expected\n  - Titles: short, specific, concrete. Prefer titles that name a real thing or answer a real question. Avoid \"I / II / Part 1\" — use descriptive subtitles instead. Academic catalog-style titles that read like a university transcript are a minor issue\n  - Descriptions: 1–2 sentences describing what the chapter covers and, when natural, what it enables\n  - MAJOR ERROR in descriptions: using the words \"explore\", \"understand\", \"learn about\", \"introduction to\", or \"basics of\". The prompt forbids them outright because they are warm-sounding filler that doesn't describe anything\n  - Warm, plain language throughout. Avoid academic vocabulary\n  - Language output must follow the language parameter. For `en`: US English. For `pt`: Brazilian Portuguese. For `es`: Latin American Spanish\n  - Titles and descriptions must not leak prompt instructions or make claims about the learner's performance\n  - Don't evaluate output format — focus on chapter content quality only\n\n    ",
+  "judgedAt": "2026-04-26T16:23:43.132Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Strong beginner-accessible chapter 1 (host an HTML page on Cloud Storage), excellent coverage of canonical pillars plus modern shifts each as their own chapter (Gemini, RAG, BigQuery ML), end-to-end workflow chapter, and a thorough closing navigation chapter covering roles, entry paths, artifacts, and currency. Descriptions avoid forbidden words and are concrete.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Chapter 1 deploys a real app on Cloud Run which is concrete but slightly heavier for a true beginner (containers, IAM in first hour). Otherwise excellent breadth: separate chapters for Gemini, RAG, incident response, governance, end-to-end, and a strong closing navigation chapter. Avoids forbidden words.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Solid beginner-accessible first chapter (first VM via console + SSH), comprehensive coverage including migration, hybrid networking, end-to-end system, and Gemini/RAG as separate chapter. Closing chapter is decent but less detailed on artifacts/currency than D or B. Description for chapter 2 uses 'learn' which is borderline acceptable.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good beginner-accessible chapter 1 and reasonable coverage, but missing some pillars: no end-to-end workflow chapter, no reliability/DR, no hybrid networking, no migration, no incident response. Generative AI and RAG are bundled into one chapter rather than separate. Closing chapter is reasonable but brief.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Model D provides an exceptional, exhaustive curriculum that perfectly balances canonical cloud pillars with modern developments. It correctly splits Gemini and RAG into separate chapters, provides a highly beginner-accessible first chapter (Cloud Storage web page), and meticulously follows every negative constraint and formatting rule.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model B offers a superb curriculum that strictly adheres to the prompt's rules, including splitting foundation models and RAG into separate chapters and including a dedicated end-to-end workflow chapter. It scores slightly lower than D only because its closing chapter is missing explicit mention of entry paths (internships, open source, etc.), though it remains an excellent output.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A fails the 'modern developments' rule by bundling Gemini and RAG into a single catch-all 'Generative AI' chapter, which is a major error. It also lacks a dedicated end-to-end workflow chapter and its closing chapter misses the required 'keeping skills current' element.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Model C commits two major errors. It uses the explicitly forbidden word 'Understand' in the description of Chapter 3. Additionally, it violates the modern topics rule by bundling Gemini and RAG into a single chapter.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "This is the strongest curriculum: the first chapter is concrete, beginner-accessible, and immediately in Google Cloud, and the overall arc covers core platform work, security, reliability, data, ML, GenAI, RAG, migration, governance, CI/CD, IaC, and end-to-end delivery. The closing chapter is specific to Google Cloud roles and entry paths, though the repeated “You will” phrasing is a minor style issue and the competence artifact could be named more directly.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "This is a very complete and practical Google Cloud path with strong coverage of projects, IAM, networking, compute, storage, databases, delivery, observability, data, ML, Gemini, RAG, compliance, architecture, and an end-to-end workflow. The first chapter is real and hands-on, though Cloud Run plus containers, IAM, logs, and failed deployment may be slightly dense for a true beginner, and the descriptions lean too much on meta-language about “the learner.”",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "The curriculum covers many important Google Cloud pillars and has a solid hands-on arc from VM work through data, security, reliability, migration, and production delivery. It is hurt by a direct forbidden-word violation in a description, bundles generative AI and RAG into one chapter instead of giving each real depth, and the closing chapter is less complete on proof of competence and keeping current.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The first chapter is concrete and beginner-friendly, and the course touches several key Google Cloud areas such as IAM, VPCs, Cloud Run, GKE, Terraform, CI/CD, observability, BigQuery, Vertex AI, and cost control. However, the curriculum is too shallow for real competence: it misses or undercovers project hierarchy, CLI workflow, load balancing, NoSQL databases, reliability, incident response, governance, migrations, API management, and separates too few modern topics; the closing chapter is also too narrow.",
+          "score": 5.8
+        }
+      ]
+    }
+  ],
+  "taskId": "course-chapters",
+  "testCaseId": "en-google-cloud-1"
+}

@@ -4,8 +4,12 @@ import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
 import systemPrompt from "./chapter-lessons.prompt.md";
 
-const DEFAULT_MODEL = "openai/gpt-5.4";
-const FALLBACK_MODELS = ["anthropic/claude-opus-4.6"];
+const DEFAULT_MODEL = "openai/gpt-5.5";
+const FALLBACK_MODELS = [
+  "openai/gpt-5.4",
+  "google/gemini-3.1-pro-preview",
+  "anthropic/claude-opus-4.7",
+];
 
 const schema = z.object({
   lessons: z.array(

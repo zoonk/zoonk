@@ -75,6 +75,26 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese
+      - Must preserve computer science as the subject, with recognizable coverage of programming, algorithms, data structures, systems, databases, networks, software engineering, security, AI, and theory — not generic digital literacy or productivity with computers
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-ciencia-da-computacao",
+    userInput: { courseTitle: "Ciência da Computação", language: "pt" },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Must cover biology as a full scientific field: molecules and cells, genetics, evolution, physiology, ecology, biodiversity, lab methods, and modern bioinformatics/biotechnology. A curriculum that only surveys animals/plants/ecology, or only stays at textbook taxonomy, is incomplete
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-biologia",
+    userInput: { courseTitle: "Biologia", language: "pt" },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
 
       ${SHARED_EXPECTATIONS}
     `,

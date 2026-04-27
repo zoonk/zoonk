@@ -1,5 +1,5 @@
 {
-  "modelId": "openai/gpt-5.4",
+  "modelId": "google/gemini-3.1-pro-preview",
   "results": [
     {
       "steps": [
@@ -9,12 +9,12 @@
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The functions lesson is cohesive and avoids the required false-granularity problem, but it does not explicitly name core first-class moves like declaring and calling functions, which could make coverage slightly less clear. The filter wording is a little imprecise: filter returns a new array of all matching items, not a single specific item.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8.5
         },
         {
-          "conclusion": "Could be slightly stronger by explicitly naming modern function forms such as function expressions and arrow functions within the existing functions lesson, and by clarifying which array/object operations are core versus optional practice. Overall the lesson boundaries are cohesive and avoid the JavaScript false-granularity problem.",
+          "conclusion": "Clarify the functions lesson concepts to include defining/calling functions and choosing between function declarations and arrow functions in context. Tighten the array-of-objects lesson by distinguishing map, filter, and possibly find based on whether learners transform lists, select matching subsets, or retrieve one item.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -56,12 +56,12 @@
           "score": 10
         },
         {
-          "conclusion": "There is some mild overlap between Lesson 1 and Lesson 4 around repeated code, extracting functions, legibility, and testability, so the learner arcs could feel slightly repetitive unless Lesson 1 focuses on recognizing good function boundaries and Lesson 4 focuses on a refactoring workflow. Mentions of tests are acceptable in context but sit near a neighboring chapter's scope.",
+          "conclusion": "The plan is well scoped and avoids the prohibited over-splitting of declaration, calls, parameters, and returns. Minor issues: the call stack concept could drift toward debugging if expanded too much, and shadowing/lifecycle may be a bit advanced compared with the chapter's core organization goal.",
           "kind": "minorErrors",
-          "score": 8.5
+          "score": 8.8
         },
         {
-          "conclusion": "Make the distinction between the first and fourth lessons sharper: one could emphasize deciding what should become a function and naming responsibilities, while the other could emphasize safely refactoring an existing program while preserving behavior. Also consider framing testability as simple verification of function outputs rather than expanding into testing/debugging.",
+          "conclusion": "Could be improved by making the function-interface design angle slightly more explicit, such as choosing inputs/outputs to avoid hidden global dependencies and distinguishing returning values from causing side effects.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -103,12 +103,12 @@
           "score": 10
         },
         {
-          "conclusion": "The plan is usable and has sound lesson boundaries, but it stays somewhat generic for a chapter that could benefit from concrete named anchors. It mentions language families but does not include many specific peoples, archaeological cultures, or sites that would make precolonial Indigenous Brazil more historically grounded, such as sambaquis, Marajoara, Tapajônica/Santarém, Tupinambá, Guarani, or Xingu examples. There is also slight overlap between community organization and warfare around alliances/captives, though not enough to create false granularity.",
+          "conclusion": "The plan does not explicitly include colonial records as a source type, even though the chapter description names them alongside archaeology and oral traditions; ethnohistory partly implies this, but learners would benefit from seeing the source limitations and biases stated directly. One lesson title/description slightly overstates the geographic scale with phrases like “the continent” and “continent-spanning pathways” for a Brazil-focused chapter.",
           "kind": "minorErrors",
           "score": 8.5
         },
         {
-          "conclusion": "Add a few named case studies inside the existing lessons rather than creating many extra lessons: for example, sambaquis for archaeology and coastal foodways, Marajoara or Santarém/Tapajônica for Amazonian material culture, and Tupinambá/Guarani examples for warfare, ritual, and colonial-source interpretation. The lesson titles could also be made a bit more learner-action-oriented, such as asking learners to interpret evidence or compare regional lifeways.",
+          "conclusion": "Add a clearer source-criticism component about using colonial records without letting first-contact narratives dominate this pre-1500 chapter. Consider making regional diversity a little more explicit, especially Amazonian, coastal, central plateau, and southern/grassland contexts. The social-world lesson could also clarify how kinship, leadership, ritual, alliance, and warfare connect rather than listing them as separate topics.",
           "kind": "potentialImprovements",
           "score": 8.5
         }
@@ -150,14 +150,14 @@
           "score": 10
         },
         {
-          "conclusion": "Minor scope-adjacent concepts appear in lesson 4, especially percentiles and classes of service, which could drift toward the neighboring forecasting/prioritization chapters if expanded too much. However, they are framed as interpretation cautions rather than full lesson topics, so this does not materially harm the plan.",
+          "conclusion": "Some lesson boundaries are still somewhat metric-category driven rather than fully organized around learner questions or diagnostic moves, especially the Lead Time/Cycle Time lesson. The phrase about Cycle Time as the team's “real execution time” could slightly mislead learners, because cycle time in Kanban usually includes elapsed flow time through the system, including waiting, not just active execution effort. A few concept labels are also fairly technical or glossary-like, such as “lagging indicators” and “leading indicators,” though they do not break the plan.",
           "kind": "minorErrors",
-          "score": 8.5
+          "score": 8.4
         },
         {
-          "conclusion": "The plan could be improved by making the learner move of choosing the right metric for a specific flow question more explicit, and by clarifying that item age is taught as a measurement for active work rather than as the later chart-reading topic from the neighboring chapter.",
+          "conclusion": "The plan would be stronger if each metric lesson were framed more explicitly around practical questions learners can ask, such as “Which metric answers this flow question?”, “Where is work piling up?”, or “What should we look at without blaming people?” It could also add small scenario-based practice prompts, for example choosing between lead time, cycle time, throughput, WIP, and item age in concrete team situations.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8.6
         }
       ],
       "testCase": {
@@ -192,19 +192,19 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "The plan has one substantive legal accuracy problem: the appeals lesson says learners will choose a procedural tool to challenge “despachos,” but under Brazilian civil procedure despachos are generally not appealable; appeals target decisions such as interlocutory decisions and judgments. Otherwise, the lesson boundaries are coherent, in Brazilian Portuguese, and cover the stated chapter pillars without false-granularity problems.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "The lesson plan is usable and well-scoped, but there is some concept overlap between the procedure lesson and the acts/prajazos lesson, especially around citação. The lesson on parties is also quite dense, combining capacity, legitimacy, litisconsortium, and several third-party intervention mechanisms in one arc, which may make it harder to teach cleanly without subdivision or tighter framing.",
+          "conclusion": "Some lesson scopes are a bit broad or slightly imprecise: the lesson from initial petition to defense also includes saneamento, which is a later organizational step and may make the learning arc crowded. The competence description’s phrasing around “tribunal, comarca ou vara” is serviceable but could be more technically precise for first-instance jurisdiction and original jurisdiction. A few concept labels are broad, such as “papel do juiz e do Ministério Público.”",
           "kind": "minorErrors",
-          "score": 8.5
+          "score": 8.4
         },
         {
-          "conclusion": "It could be improved by adding explicit treatment of Brazil’s modern civil-procedure precedent system, such as precedentes vinculantes, IRDR, IAC, and repetitive appeals, if the chapter is meant to reflect contemporary CPC/2015 practice. The appeals lesson could also mention special and extraordinary appeals at least as part of the learner’s map of the system. A clearer separation between the flow of the procedimento comum and the general validity/timing rules for atos processuais would reduce repetition.",
+          "conclusion": "The plan would improve by adding or foregrounding modern and canonical CPC practice such as conciliation/mediation hearings, cooperative case management/saneamento as a distinct workflow, and the role of binding precedents/repetitive cases if the chapter is meant to be comprehensive. The appeals lesson should explicitly distinguish appealable interlocutory decisions and judgments from non-appealable dispatches.",
           "kind": "potentialImprovements",
-          "score": 8.5
+          "score": 8.6
         }
       ],
       "testCase": {
@@ -244,14 +244,14 @@
           "score": 10
         },
         {
-          "conclusion": "The opening lesson is a broad overview of the whole chapter and may overlap with later lessons rather than supporting a fully distinct practice arc. There is also a small accuracy/scope nuance: transcrição is described with 'núcleo' as if universal, though this applies to eukaryotic cells and not prokaryotes. The plan also simplifies genes as DNA segments leading to proteins, which is acceptable for this chapter but does not acknowledge that some genes produce functional RNAs.",
+          "conclusion": "The plan largely avoids false granularity and uses cohesive mechanisms as lesson boundaries. Minor issues: chromosomes are named in the chapter context but not explicitly included as a concept, so the DNA/gene organization lesson is slightly incomplete. The final lesson may lean a bit heavily into mutation taxonomy instead of emphasizing how protein structure/function produces traits, though it remains within scope.",
           "kind": "minorErrors",
           "score": 8.5
         },
         {
-          "conclusion": "It could improve by making the first lesson a more concrete diagnostic/model-building activity, adding a brief eukaryote/prokaryote caveat for where transcription and translation occur, and optionally mentioning RNA processing or gene-expression regulation if appropriate for the course level. The mutation lesson is useful, but could more explicitly tie examples back to the DNA → RNA → protein → trait chain.",
+          "conclusion": "Add explicit chromosome/genome packaging context to the first lesson, and strengthen the final lesson with protein folding/shape, active sites or binding, and examples connecting altered protein function to observable traits. A sequence-to-trait practice arc across the lessons would make the learner capability especially clear.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8.5
         }
       ],
       "testCase": {
@@ -291,14 +291,14 @@
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "A few scientific phrasings are imprecise: transits do not give an “exact” planetary size without stellar-radius assumptions, and the orbital period comes from repeated transit timing rather than the transit geometry alone. The radial-velocity lesson’s “cambio de color” is a simplified way to describe spectral line shifts and could be more precise.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8.5
         },
         {
-          "conclusion": "The plan could be improved by explicitly distinguishing the first pulsar exoplanets from 51 Pegasi b as the first around a Sun-like star, and by adding a little more emphasis on candidate validation, false positives in detection, and stellar activity as practical limits of transit and radial-velocity evidence.",
+          "conclusion": "The plan could be strengthened by adding or emphasizing how combining transit and radial-velocity data yields density and composition constraints, and by briefly including validation/false-positive handling for planet detections. Direct imaging and microlensing are both valid, but they could be separated or more clearly framed if the product needs deeper practice on each detection method.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8.5
         }
       ],
       "testCase": {
@@ -338,14 +338,14 @@
           "score": 10
         },
         {
-          "conclusion": "The plan is broadly usable and well scoped, but audio coverage is quite light compared with text, vision, and multimodal coverage. A few concepts are also somewhat broad or adjacent to neighboring chapters, such as \"scaling laws\" and \"efficient attention variants,\" though they do not become out-of-scope lesson topics.",
+          "conclusion": "The plan is usable and avoids false granularity, but it slightly underplays the chapter goal of explaining why transformers replaced older architectures; that idea appears mainly as context in the first lesson rather than as a learner-facing comparison of recurrence, convolution, parallelism, and long-range dependency handling. The encoder-decoder lesson also names T5 but does not clearly surface cross-attention and masking as core architectural decisions for sequence-to-sequence transformers.",
           "kind": "minorErrors",
-          "score": 8.8
+          "score": 8.5
         },
         {
-          "conclusion": "The plan could be improved by naming the original Transformer paper or architecture as an anchor, adding one concrete audio transformer example or task, and making the final lesson's efficiency discussion slightly more concrete by distinguishing long-context costs from efficient-attention approaches.",
+          "conclusion": "Add a little more explicit coverage of practical transformer design decisions, such as attention masks, sequence length/computation tradeoffs, and how encoder-only, decoder-only, and encoder-decoder models map to tasks. Consider mentioning the original Transformer paper or sequence-to-sequence translation as historical context, without turning it into a separate glossary-style lesson.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8.5
         }
       ],
       "testCase": {

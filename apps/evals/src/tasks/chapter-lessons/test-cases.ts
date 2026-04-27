@@ -1,48 +1,76 @@
 const SHARED_EXPECTATIONS = `
-  # How to evaluate
+  # Goal
 
-  You are evaluating a CURRICULUM, not a glossary. Think like a curriculum designer reviewing a colleague's work — use domain expertise and professional judgment, not mechanical rule-checking.
+  Evaluate whether the result is a usable lesson plan for the requested chapter.
 
-  **Only three things should meaningfully drive the score down. Everything else is minor.**
+  A strong lesson plan turns the chapter scope into cohesive learner capabilities. Each lesson should be large enough to support its own explanation activities, practice, quiz, and review without repeating neighboring lessons. Coverage matters, but only when the lesson boundaries would produce a good learning experience in this product.
 
-  # Major penalties
+  # What Good Looks Like
 
-  ## 1. Dry, textbook lesson titles
+  - Lessons are capability-sized: each one teaches a distinct mechanism, decision, artifact, workflow, or real learner move.
+  - Related concepts that are mutually defining stay together in one lesson.
+  - The plan covers the chapter's canonical fundamentals, important modern practice, and required named entities from the domain.
+  - Lessons stay inside this chapter's scope and avoid concepts that primarily belong to neighboring chapters.
+  - Titles are concrete and learner-facing, not dry textbook categories.
+  - Descriptions explain what the learner will do or be able to reason through.
+  - Concepts are specific enough to guide content generation, but they are raw material inside a lesson, not automatic lesson candidates.
 
-  Titles must be **active and hands-on** — a learner action, a question, or a concrete outcome. Noun-phrase categories that read like a table of contents are a major failure even when the content underneath is correct.
+  # Major Failures
 
-  - Dry (major issue): "Types of levers", "Warfare and conflict", "Landmark model families", "Fundamentals of catalysts", "Modalidades de pedido"
-  - Active (good): "Picking a lever for heavy loads", "Why communities went to war", "How BERT, GPT, and T5 differ", "Speeding up a reaction with a catalyst", "Escolhendo o tipo certo de pedido"
+  ## False Granularity
 
-  Ask: would a learner pick this title feeling pulled in, or like they're pushing through a syllabus? A curriculum dominated by dry titles is a major penalty, not a style nit.
+  False granularity is the main failure this eval must catch. It happens when the output looks comprehensive because it split the chapter into many tiny lessons, but those lessons would generate repetitive activities.
 
-  ## 2. Factual errors
+  Use this test: if the explanation or practice for lesson A must teach lesson B's core idea for lesson A to make sense, A and B should probably be one lesson.
 
-  Anything in a lesson title, description, or concept that is factually wrong, historically inaccurate, technically incorrect, or would mislead a learner. Use your domain expertise — if a practitioner would catch it as wrong, it is a major penalty.
+  Penalize as a major failure when the output:
 
-  ## 3. Important missing topics
+  - splits one input -> process -> result chain into separate lessons
+  - splits first-exposure parts that define each other, such as variable/name/value/output, function declaration/call/parameter/return, or loop/condition/body
+  - creates many adjacent lessons that would use the same example with slightly different labels
+  - turns every method, subtopic, phase, or label into its own lesson even though the learner experience would be repetitive
+  - rewards glossary completeness over teachable lesson boundaries
 
-  The curriculum must cover:
+  Do not confuse false granularity with valid domain decomposition. Adjacent lessons can be separate when they teach different evidence types, interpretive tasks, mechanisms, source categories, workflows, or real-world decisions. Examples that can be valid:
 
-  - **Canonical fundamentals** of the chapter's topic — the pillars a serious learner must know, whether or not the description lists them explicitly. If a junior practitioner would be embarrassed on day 1 because a pillar is missing, that is a major penalty.
-  - **Modern practice** — the tools, idioms, and conventions actually in use today. If the topic has evolved meaningfully in the last 15–20 years and the curriculum teaches only the pre-change textbook version, that is a major penalty.
-  - **Specific named entities** that populate the domain — people, missions, tools, models, compounds, works, peoples, landmark systems — must appear as concepts, not only abstract category labels. An exoplanets chapter that names no specific exoplanet or mission, or a catalysts chapter that names no specific catalyst, has this failure.
+  - history lessons that use artifacts, landscapes, languages, trade goods, rituals, warfare, and diplomacy for different kinds of historical reasoning
+  - astronomy lessons that separate detection methods, signal validation, physical inference, atmospheric characterization, habitability, missions, and telescope capabilities
+  - law lessons that separate procedural moves with different legal effects, deadlines, parties, remedies, or courts
+  - technical lessons that separate mechanisms only when each can be practiced without re-teaching the neighboring mechanism
 
-  # Minor notes
+  Named-entity lessons are not automatically false granularity. They are valid when the named people, sites, missions, models, cases, tools, or works anchor a distinct comparison, interpretation, evidence source, or practical decision. Penalize them as false granularity only when the lesson is mostly a memorization list or would repeat the same teaching move as a neighboring lesson.
 
-  Everything else is a minor note and should NOT dominate the score:
+  Score caps:
 
-  - Lesson sizes (ideal is 3–6 concepts with natural variation)
-  - Concept title wording: abstract bare terms, verbosity, thesis-style framing
-  - Conjunctions (AND/OR/VS) inside concept titles — flag them, but minor
-  - Description openers and style — "introduces / covers / explores", "You will..."
-  - Progression polish, summary/review lessons, minor scope bleed into neighboring chapters
+  - Clear false-granularity cluster: \`majorErrors\` score must be 7.5 or lower.
+  - Repeated false granularity across the output, after excluding valid domain decomposition: \`majorErrors\` score must be 6.5 or lower.
+  - Glossary-expanded syllabus where many lessons are too small to support distinct activities: \`majorErrors\` score must be 6.5 or lower.
 
-  Mention these in a single consolidated minor-issues note. A curriculum that nails active titles, accurate facts, and comprehensive coverage of fundamentals and modern practice is strong even with wording nits.
+  ## Coverage, Accuracy, and Scope
 
-  # Scope and neighboring chapters
+  Penalize as major failures when the output:
 
-  Neighboring chapters are guardrails against scope creep, not vetoes. Judge by framing, not by keywords — a lesson belongs here if its primary teaching purpose serves this chapter's goals, even if it mentions words that appear in a neighbor's title.
+  - misses canonical chapter pillars or modern practices a serious learner needs
+  - omits important named entities in domains built around specific people, tools, missions, models, works, groups, cases, or landmark systems
+  - includes factual, historical, legal, scientific, technical, or linguistic errors
+  - drifts into neighboring-chapter material as lesson topics rather than brief context
+  - uses mostly dry textbook headings that feel like a table of contents instead of learner-facing actions or outcomes
+
+  # Minor Issues
+
+  Treat these as minor unless they make the lesson plan hard to use:
+
+  - isolated awkward title wording
+  - concept titles that are slightly broad, abstract, verbose, or compound
+  - lesson sizes that are uneven or mechanically uniform when the boundaries are otherwise sound
+  - small progression or phrasing issues
+  - small scope-adjacent mentions that do not become lesson topics
+
+  # Scoring Order
+
+  First check whether the lesson boundaries would produce distinct, non-repetitive learning arcs. Then check coverage, accuracy, scope, and title quality. Do not reward extra length, exhaustive lists, or high concept count by themselves.
+
+  If the output has no concrete major failures, the \`majorErrors\` conclusion should be "None" and the score should be 10.
 `;
 
 export const TEST_CASES = [
@@ -50,6 +78,8 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in US English
+      - JavaScript-specific false-granularity check: separate adjacent lessons for calling a function, passing data into a function, returning a result, and choosing a function shape are over-split. Those ideas are mutually defining parts of using functions and should mostly be one cohesive lesson, or at most a very small number of lessons. If you see this pattern, the \`majorErrors\` score must be 6.5 or lower.
+      - Do not reward this case for adding many narrow lessons about every array/object method or function subtopic. The lesson list should feel like teachable learner capabilities, not a glossary expanded into a syllabus.
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -80,6 +110,46 @@ export const TEST_CASES = [
           description:
             "Handle forms, validate input, save data in the browser, and build interactions that feel complete to a user. The work here looks much closer to everyday front-end tasks.",
           title: "Forms, Validation, and Local Storage",
+        },
+      ],
+    },
+  },
+  // Early chapter: beginner-level computer science from GPT-5.5 course-chapters output
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Ciência da Computação-specific false-granularity check: separate adjacent lessons for declaring a function, naming it, calling it, passing inputs, returning values, and reusing code are over-split. Those ideas are mutually defining parts of using functions to organize code and should mostly be one cohesive lesson, or at most a very small number of lessons. If you see this pattern, the \`majorErrors\` score must be 6.5 or lower.
+      - Keep this chapter focused on functions as a programming organization tool. Do not drift into collections, files, Git, testing, or debugging except as brief context because neighboring chapters own those topics.
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-ciencia-da-computacao-funcoes-que-organizam-o-codigo",
+    userInput: {
+      chapterDescription:
+        "Funções ajudam a dividir um programa em pedaços menores, dar nomes claros às tarefas e reutilizar código. Você pratica transformar código repetido em partes testáveis.",
+      chapterTitle: "Funções que organizam o código",
+      courseTitle: "Ciência da Computação",
+      language: "pt",
+      neighboringChapters: [
+        {
+          description:
+            "Variáveis, tipos simples, entrada, saída e expressões aparecem em problemas pequenos: converter temperatura, somar uma conta e formatar uma mensagem. Você passa a guardar dados e usá-los sem mistério.",
+          title: "Valores, textos e contas",
+        },
+        {
+          description:
+            "Condições e laços entram em tarefas reais, como validar uma senha, repetir tentativas e percorrer uma lista de itens. Você começa a controlar o caminho que o programa segue.",
+          title: "Decisões e repetições",
+        },
+        {
+          description:
+            "Listas, mapas, registros e arquivos aparecem em pequenos cadastros e relatórios. Você passa a guardar coleções de dados, buscar informações e salvar resultados fora do programa.",
+          title: "Coleções e arquivos",
+        },
+        {
+          description:
+            "Erros de sintaxe, falhas em tempo de execução e respostas erradas são tratados com leitura de mensagens, depurador e testes manuais. Você ganha um método para consertar código sem depender de adivinhação.",
+          title: "Caçando bugs sem pânico",
         },
       ],
     },
@@ -122,6 +192,46 @@ export const TEST_CASES = [
       ],
     },
   },
+  // Mid-course chapter: focused Kanban method depth from GPT-5.5 course-chapters output
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Kanban-specific false-granularity check: separate adjacent lessons for lead time, cycle time, throughput, WIP, and item age are over-split when they only teach isolated definitions. These metrics form one flow-measurement toolkit and should be grouped by learner use, such as reading flow health, diagnosing bottlenecks, or asking better forecasting questions. If the output creates one glossary lesson per metric, the \`majorErrors\` score must be 6.5 or lower.
+      - Do not penalize separate lessons for genuinely different learner moves, such as choosing which metric answers a question, spotting a bottleneck, or using measurements without pressuring people.
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-kanban-metricas-de-fluxo-que-ajudam",
+    userInput: {
+      chapterDescription:
+        "Lead time, cycle time, throughput, WIP e idade do item mostram como o fluxo se comporta. Você usa essas medidas para fazer perguntas melhores, não para pressionar pessoas.",
+      chapterTitle: "Métricas de fluxo que ajudam",
+      courseTitle: "Kanban",
+      language: "pt",
+      neighboringChapters: [
+        {
+          description:
+            "Políticas explícitas dizem quando um cartão entra, muda de coluna, bloqueia ou está pronto. Isso reduz discussão escondida e deixa o sistema mais justo para o time.",
+          title: "Regras claras para mover cartões",
+        },
+        {
+          description:
+            "Nem todo pedido deve entrar direto no quadro. Você cria uma fila de entrada, separa ideias de compromissos e decide o que puxar com base em capacidade real.",
+          title: "Reabastecimento e priorização",
+        },
+        {
+          description:
+            "Diagramas de fluxo cumulativo, dispersão de cycle time e gráficos de envelhecimento mostram padrões que a opinião não revela. Você lê esses gráficos para detectar filas crescendo, variação alta e risco de atraso.",
+          title: "Gráficos que contam a história do fluxo",
+        },
+        {
+          description:
+            "Kanban trabalha melhor com probabilidade do que com promessas rígidas. Você usa percentis, SLE e simulações simples de Monte Carlo para responder perguntas como “quando isso provavelmente fica pronto?”.",
+          title: "Previsão sem chute",
+        },
+      ],
+    },
+  },
   // Mid-course chapter: mid-level domain depth
   {
     expectations: `
@@ -156,6 +266,46 @@ export const TEST_CASES = [
           description:
             "Apresenta proteção ao consumidor, oferta, publicidade, vício, defeito, responsabilidade do fornecedor e tutela coletiva. Mostra um dos campos mais presentes no dia a dia forense e consultivo.",
           title: "Direito do Consumidor",
+        },
+      ],
+    },
+  },
+  // Mid-course chapter: biology mechanism from GPT-5.5 course-chapters output
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Biology-specific false-granularity check: separate adjacent lessons for DNA, RNA, genes, chromosomes, and proteins are over-split when they only define labels in the same information-flow mechanism. This chapter should teach how molecular information becomes a protein and then a trait, not turn each molecule name into a separate mini-lesson. If the output creates a glossary-expanded syllabus around those labels, the \`majorErrors\` score must be 6.5 or lower.
+      - Do not penalize separate lessons for genuinely different mechanisms inside the flow, such as transcription, translation, genetic code, or how protein structure affects traits, when each lesson can be explained and practiced without re-teaching the others from scratch.
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-biologia-do-dna-a-proteina",
+    userInput: {
+      chapterDescription:
+        "DNA, RNA, genes, cromossomos e proteínas são conectados pelo fluxo de informação dentro da célula. O capítulo mostra como uma sequência molecular pode virar uma característica observável.",
+      chapterTitle: "Do DNA à proteína",
+      courseTitle: "Biologia",
+      language: "pt",
+      neighboringChapters: [
+        {
+          description:
+            "Enzimas, ATP, respiração celular e fermentação são explicadas pelo caminho da energia nos seres vivos. Exemplos incluem músculo em esforço, fermento produzindo gás e células usando alimento.",
+          title: "Como a célula obtém energia",
+        },
+        {
+          description:
+            "Cloroplastos, luz, pigmentos, gás carbônico e produção de açúcar entram em uma sequência clara. Você liga fotossíntese a plantas, algas, cadeias alimentares e atmosfera.",
+          title: "Folhas que capturam luz",
+        },
+        {
+          description:
+            "Mitose, meiose, fecundação e separação de cromossomos aparecem por meio de desenhos, cariótipos e casos simples. Você vê como células mantêm ou embaralham informação genética.",
+          title: "Células se dividindo",
+        },
+        {
+          description:
+            "Cruzamentos simples, alelos dominantes e recessivos, heredogramas e probabilidade genética entram com exemplos de plantas, animais e famílias. O foco é prever padrões sem tratar genética como destino fixo.",
+          title: "Hereditariedade em famílias e linhagens",
         },
       ],
     },

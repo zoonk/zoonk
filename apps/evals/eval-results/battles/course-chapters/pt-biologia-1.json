@@ -1,0 +1,95 @@
+{
+  "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Must cover biology as a full scientific field: molecules and cells, genetics, evolution, physiology, ecology, biodiversity, lab methods, and modern bioinformatics/biotechnology. A curriculum that only surveys animals/plants/ecology, or only stays at textbook taxonomy, is incomplete\n\n      \n  - Mission context: this curriculum is for learners OUTSIDE privileged environments — people who doubt they can become serious practitioners. Chapters should feel welcoming and legible, not gate-kept by academic vocabulary\n  - MAJOR ERROR: the first chapter must hook the learner IN the subject with REAL problems, REAL artifacts, REAL techniques, REAL cases, or REAL tools. After chapter 1 the learner should think \"I want to learn how to do this\", not \"OK, now I know what this field is about\"\n  - MAJOR ERROR: forbidden first-chapter patterns — \"What is X\" / \"Introduction to X\" / \"Overview of X\" / \"Panorama of X\" / \"Why X matters\" / \"When human effort isn't enough\" / any chapter whose lessons would be ABOUT the field (its definition, taxonomy, history from the outside) rather than IN the field\n  - MAJOR ERROR: hands-on does NOT mean advanced. The first chapter must ALSO be beginner-accessible — the simplest concrete entry point a true beginner can follow without prerequisites the course hasn't taught yet. Opening with a dramatic, specialized, or impressive-sounding example that requires skipped prerequisites (e.g., \"acute chest pain in the emergency room\" as chapter 1 of Medicine before anatomy/physiology, or \"detect an exoplanet via light curve\" as chapter 1 of Astronomy before the learner knows what a light curve is) is a major error — even though the example is real and concrete\n  - MAJOR ERROR: ignoring natural starting points. For chronological subjects (history, long narratives), chapter 1 must open in the EARLY period of the course's chronology through a concrete document, figure, or artifact — skipping ahead to a dramatic later event (e.g., opening a \"Brazilian History\" course with the 1964 military coup instead of the colonial period) is a major error. For subjects with a skill progression (music, medicine, crafts), chapter 1 must start at the simplest real task a beginner can actually do, not a specialized scenario\n  - First-chapter sanity test: \"would a true beginner plausibly encounter this first?\" If the answer requires skipping prerequisites or skipping the natural chronology/progression of the field, the hook is wrong\n  - The curriculum must be a serious arc from beginner to real competence, not a shallow tour\n  - Chapter count is a RESULT of coverage, not a target. Do not penalize or reward specific counts. Evaluate whether every canonical pillar of the field has at least one chapter — if any pillar is missing, the curriculum is incomplete regardless of count. Broad fields naturally need many chapters; narrow tools and hobby topics naturally need fewer\n  - MAJOR ERROR: trading breadth for recency. Modern topics must ADD coverage without REPLACING canonical foundations. For example, a machine learning curriculum that covers transformers/LLMs/RAG/diffusion/fine-tuning but drops reinforcement learning, time-series forecasting, recommender systems, or causal inference is incomplete — those are canonical ML pillars. A medicine curriculum that covers telemedicine and modern EMRs but drops anatomy, physiology, pathology, or pharmacology is incomplete. If covering everything needs more chapters, more chapters is the correct answer\n  - Must cover BOTH academic AND practical pillars:\n    - Academic pillars: theory, foundations, history, canonical body of knowledge\n    - Modern toolchain: what working practitioners in this field actually use this year\n    - End-to-end workflow: at least one chapter walking through how real work in the field gets delivered start to finish\n    - Last-decade shifts: what's been added to the field in the past 10 years that a textbook wouldn't have covered 10 years ago (new regulations, new platforms, new techniques, AI changes, etc.)\n  - The \"junior practitioner test\": if a junior would be embarrassed on day 1 of real practice because a topic is missing, that topic must exist as its own chapter\n  - Cover core pillars before specialized or frontier topics\n  - Stay tightly focused on the course title. Generic cross-disciplinary chapters that could be copied unchanged into many unrelated courses are a major error unless the topic IS the subject of the course\n  - MAJOR ERROR: meta-chapters that describe, taxonomize, or survey the field from the outside instead of teaching it\n  - MAJOR ERROR: survey chapters that list many areas as bullet points without teaching any of them — each topic that matters deserves its own chapter with real depth\n  - MAJOR ERROR: catch-all \"recent developments\" chapters. Titles like \"Catch up with the last decade of X\", \"What's new in X\", \"Recent developments in X\", \"The last decade of X\", or \"Modern X\" that bundle multiple distinct modern techniques into a single chapter are a major error. Each modern shift (transformers, LLMs, RAG, diffusion, fine-tuning for ML; LGPD/GDPR, digital filing for Law; telemedicine, EMRs for Medicine; etc.) deserves its own substantive chapter\n  - Avoid overlap. If two chapters would naturally share most of their lessons, they should be merged or their scopes sharpened\n  - Prefer concept names over vendor names in chapter titles/descriptions (e.g., \"Package management\" instead of a specific tool name). Foundational tools that ARE the subject of the course are an allowed exception. Vendor name usage in non-vendor courses is a minor issue, never a major error\n  - For courses covering a field, profession, or serious practice, a \"navigating the field\" closing chapter is expected. It must cover ROLES AND SPECIALTIES (what kinds of practitioners exist and what they do differently), CONTRIBUTION/ENTRY PATHS (how people actually join — jobs, residencies, open source, communities), the ARTIFACT THAT PROVES COMPETENCE in this field (code repos, case records, clinical hours, recordings), and HOW PRACTITIONERS KEEP SKILLS CURRENT. A narrow \"Build a Portfolio\" or \"Build a Project\" closing chapter is a major error — a portfolio is just one small part of navigating a field. The closing chapter must be specific to the subject, not generic career advice\n  - For hobby / pop-culture topics, no closing navigation chapter is expected\n  - Titles: short, specific, concrete. Prefer titles that name a real thing or answer a real question. Avoid \"I / II / Part 1\" — use descriptive subtitles instead. Academic catalog-style titles that read like a university transcript are a minor issue\n  - Descriptions: 1–2 sentences describing what the chapter covers and, when natural, what it enables\n  - MAJOR ERROR in descriptions: using the words \"explore\", \"understand\", \"learn about\", \"introduction to\", or \"basics of\". The prompt forbids them outright because they are warm-sounding filler that doesn't describe anything\n  - Warm, plain language throughout. Avoid academic vocabulary\n  - Language output must follow the language parameter. For `en`: US English. For `pt`: Brazilian Portuguese. For `es`: Latin American Spanish\n  - Titles and descriptions must not leak prompt instructions or make claims about the learner's performance\n  - Don't evaluate output format — focus on chapter content quality only\n\n    ",
+  "judgedAt": "2026-04-26T16:23:46.990Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Comprehensive coverage of all canonical pillars (cells, molecules, genetics, evolution, physiology, ecology, biodiversity) plus extensive modern toolchain split into separate chapters (CRISPR, single-cell, spatial, metagenomics, AlphaFold, synthetic biology, organoids, gene therapies). Strong beginner-accessible hands-on first chapter with mold growth observation. Excellent navigating-the-field closing chapter and ethics chapter.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Strong beginner-accessible first chapter (onion cells microscope) and good coverage of foundations, modern tools (CRISPR, genomics, bioinformatics). However, bundles some modern shifts and lacks separate chapters for synthetic biology, single-cell, mRNA therapies, spatial biology. Closing chapter is reasonably specific to Brazil.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Solid coverage of canonical pillars and includes separate chapters for CRISPR, sequencing, bioinformatics, microbiome, biotech. First chapter (microscope cells) is hands-on and beginner-accessible. Some chapters slightly survey-like but generally good depth and a proper navigation closing chapter.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "First chapter (DNA extraction) is hands-on and accessible. However, severely under-covers the field at only 16 chapters — missing dedicated chapters for biodiversity/taxonomy of plants and animals as separate topics, reproduction/development, plant biology, single-cell, microbiome/metagenomics, and several canonical pillars are bundled. Not enough depth for a full biology curriculum.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "An outstanding curriculum that perfectly captures the target audience's needs. The first chapter (a bread mold experiment) is incredibly clever, teaching the scientific method and biology with zero privileged equipment. It also exhaustively covers classical foundations while dedicating distinct, substantive chapters to modern breakthroughs like AlphaFold, single-cell genomics, spatial biology, and CRISPR, perfectly following the recency and breadth rules.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "A very strong and well-structured curriculum. It covers the canonical and practical pillars thoroughly and includes a great end-to-end workflow chapter. The first chapter requires a microscope, which is slightly less accessible for the unprivileged target demographic compared to Model A, and it lacks some of the most recent frontier topics (like protein folding/AlphaFold), but it remains a highly effective course.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Features an excellent, accessible first chapter (extracting fruit DNA). However, it drops major canonical pillars of the field: it completely skips plant and animal biodiversity, form, and function, focusing its physiology solely on humans. A biology curriculum without botany and zoology is fundamentally incomplete.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Covers the required pillars but suffers from poor scoping and overlap (Chapter 15 introduces sequencing and gene editing as its core topics, only for Chapters 16 and 17 to repeat them as dedicated lessons). Additionally, the descriptions rely heavily on repetitive, meta-language filler ('Este capítulo trata...', 'Esta parte organiza...') instead of directly describing the learning experience.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Excelente currículo em português, com primeiro capítulo concreto, seguro e acessível, além de uma progressão forte de moléculas e células até ecologia, evolução, laboratório, bioinformática e biotecnologia moderna. Trata muitos avanços recentes em capítulos próprios e inclui fluxo de pesquisa, ética e navegação da área; só há pequenas melhorias possíveis na precisão do fechamento sobre artefatos de competência.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Cumpre bem a maior parte do pedido: começa dentro da prática biológica, cobre os pilares centrais e inclui laboratório, dados, bioinformática, CRISPR, sequenciamento e microbioma. Fica menos completo que o melhor porque agrupa algumas áreas modernas e práticas em capítulos amplos demais e deixa de fora temas recentes relevantes como célula única, biologia espacial, leituras longas, AlphaFold e organoides.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Tem um início prático e acessível e cobre muitos fundamentos clássicos de biologia, incluindo células, genética, evolução, fisiologia, ecologia e alguma bioinformática. Porém é mais parecido com um curso escolar ampliado: falta mais profundidade em métodos de laboratório, análise de dados, biotecnologia moderna e avanços recentes tratados em capítulos próprios, e o capítulo final não cobre bem artefatos de competência nem atualização profissional.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "O primeiro capítulo é concreto e atraente, e há bons tópicos modernos como sequenciamento, bioinformática, CRISPR, biologia sintética e RNAm. Ainda assim, o currículo é curto demais para Biologia como campo completo: quase não cobre plantas, animais, biodiversidade, conservação, fisiologia ampla, métodos laboratoriais, dados, ética e navegação profissional específica; também há algumas formulações exageradas ou simplificadoras.",
+          "score": 5.8
+        }
+      ]
+    }
+  ],
+  "taskId": "course-chapters",
+  "testCaseId": "pt-biologia-1"
+}
