@@ -1,0 +1,112 @@
+apps/api/src/workflows/lesson-generation/steps/add-activities-step.ts
+  d608b8294bdea97b 4
+packages/player/src/player-step.test.ts
+  d608b8294bdea97b 3
+packages/player/src/player-step-behavior.ts
+  d608b8294bdea97b 195
+packages/core/src/player/contracts/validate-answers.ts
+  d608b8294bdea97b 52
+packages/core/src/player/queries/get-review-steps.ts
+  d608b8294bdea97b 7
+packages/player/src/components/feedback-screen.tsx
+  d608b8294bdea97b 95-106
+packages/ai/src/provider-options.test.ts
+  d608b8294bdea97b 71,78,108,115
+apps/api/src/workflows/activity-generation/core-activity-workflow.ts
+  d608b8294bdea97b 8,10-12,30-35
+packages/player/src/player-screen.ts
+  d608b8294bdea97b 11,184
+packages/db/src/prisma/migrations/20260427175822_remove_applied_activities/migration.sql
+  d608b8294bdea97b 1-29
+packages/player/src/components/player-read-scene.tsx
+  d608b8294bdea97b 5,18-20,45-46,68-69,94-95
+apps/admin/src/data/stats/ai/ai-task-catalog.ts
+  d608b8294bdea97b 162,166-167
+packages/core/src/player/contracts/prepare-activity-data.ts
+  d608b8294bdea97b 166-167
+packages/player/src/player-reducer.ts
+  d608b8294bdea97b 7,153-154
+packages/player/src/player-selectors.test.ts
+  d608b8294bdea97b 3-4,191
+packages/player/src/components/step-intro-hero-layout.tsx
+  d608b8294bdea97b 15,17-20,86,107-108
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.test.ts
+  d608b8294bdea97b 301
+packages/player/src/components/step-action-button.tsx
+  d608b8294bdea97b 10,12
+packages/player/src/components/stage-content.tsx
+  d608b8294bdea97b 64
+packages/core/src/player/contracts/compute-score.ts
+  d608b8294bdea97b 16-19
+  h_1cda88fc21fe9c 11,13-15,20-21,26-28
+packages/player/src/player-completion.ts
+  d608b8294bdea97b 2,11-12,15-17
+  h_1cda88fc21fe9c 18
+packages/core/src/player/contracts/compute-score.test.ts
+  d608b8294bdea97b 2,63
+packages/player/src/player-step.ts
+  d608b8294bdea97b 158-160
+packages/player/src/components/player-shell.tsx
+  d608b8294bdea97b 70
+packages/player/src/player-haptics.ts
+  d608b8294bdea97b 37-39,41-42,52-53,69,71-72,76
+packages/player/src/components/choice-step-layout.tsx
+  d608b8294bdea97b 127
+packages/core/src/player/commands/submit-player-completion.ts
+  d608b8294bdea97b 5,98,123
+packages/player/src/components/player-feedback-scene.tsx
+  d608b8294bdea97b 9-10
+apps/admin/src/data/stats/ai/_utils/build-ai-lesson-cost-estimates.ts
+  d608b8294bdea97b 24-25,93
+packages/player/src/components/player-choice-scene.tsx
+  d608b8294bdea97b 25-27,75-76,91-93,107
+packages/player/src/player-reducer.test.ts
+  d608b8294bdea97b 370-379
+packages/player/src/player-context.tsx
+  d608b8294bdea97b 83
+apps/main/src/app/generate/l/[id]/generation-phases.ts
+  d608b8294bdea97b 53
+packages/player/src/components/verdict-label.tsx
+  d608b8294bdea97b 3,6,32-34
+apps/api/src/workflows/activity-generation/core-activity-workflow.test.ts
+  d608b8294bdea97b 503,529
+packages/player/src/player-selectors.ts
+  d608b8294bdea97b 4,113,123
+apps/admin/src/data/stats/ai/_utils/get-ai-cost-estimate-structure.ts
+  d608b8294bdea97b 296
+apps/main/src/app/generate/a/[id]/use-phase-thinking-generators.ts
+  d608b8294bdea97b 11-12
+packages/player/src/components/step-layouts.tsx
+  d608b8294bdea97b 7-9
+packages/core/src/steps/contract/content.test.ts
+  d608b8294bdea97b 268,291
+apps/api/src/workflows/lesson-generation/steps/_utils/get-activities-for-kind.ts
+  h_1cda88fc21fe9c 121
+packages/player/src/player-completion.test.ts
+  d608b8294bdea97b 4,44-49,51-61,64-67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "4f10b7c3b0c1d30f4b706c33a138f85e1fcb2012",
+  "prompts": {
+    "d608b8294bdea97b": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dcff4-e44b-7183-bf1e-56345afdf5fb",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 321,
+      "total_deletions": 33911,
+      "accepted_lines": 245,
+      "overriden_lines": 1
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
