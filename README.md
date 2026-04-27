@@ -17,30 +17,12 @@
 >
 > This project is still in early development and **not ready for use**. There will be breaking changes before stable that won't be backwards compatible. Star this repository or follow us on social media to stay updated.
 
-### Project Status
-
-| Feature                  | Not Started | In Progress | Beta | Stable |
-| ------------------------ | :---------: | :---------: | :--: | :----: |
-| Learn Anything (Catalog) |             |  :hammer:   |      |        |
-| Personalized Lessons     | :calendar:  |             |      |        |
-| Editor                   |             |  :hammer:   |      |        |
-| Brands                   | :calendar:  |             |      |        |
-| Public Profiles          | :calendar:  |             |      |        |
-| Teams                    | :calendar:  |             |      |        |
-| Schools                  | :calendar:  |             |      |        |
-| White-Label (Creators)   | :calendar:  |             |      |        |
-| iOS App                  | :calendar:  |             |      |        |
-| Android App              | :calendar:  |             |      |        |
-| API                      |             |  :hammer:   |      |        |
-
 ## Table of Contents
 
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
   - [Local Development](#local-development)
-- [Translations](#translations)
-- [Remote Caching](#remote-caching)
 - [Supporters](#supporters)
 
 ## Getting Started
@@ -68,26 +50,6 @@ We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm
 - `pnpm knip --production` to check for unused code
 - `pnpm test` to run tests with Vitest
 - `pnpm e2e` to run end-to-end tests with Playwright
-
-## i18n
-
-You can use [lingo.dev](https://lingo.dev/) to manage translations for this project. Run `pnpm i18n` from the root directory to translate missing keys.
-
-This is optional. If using `lingo.dev`, make sure to set the `LINGO_API_KEY` environment variable in your local `.env` file.
-
-## Remote Caching
-
-We're using [Vercel's Remote Caching](https://vercel.com/docs/monorepos/remote-caching) to speed up our Turborepo tasks. To enable remote caching, authenticate the Turborepo CLI with your Vercel account:
-
-```sh
-pnpm turbo login
-```
-
-Then, link to the remote cache:
-
-```sh
-pnpm turbo link
-```
 
 ## Supporters
 

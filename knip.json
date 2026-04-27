@@ -21,10 +21,6 @@
     "apps/api": {
       "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts", "!**/_test-utils/**!"]
     },
-    "apps/editor": {
-      "ignore": ["e2e/mocks/**"],
-      "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts"]
-    },
     "apps/blog": {
       "project": ["src/**/*.{ts,tsx}!"]
     },

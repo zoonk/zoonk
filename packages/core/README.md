@@ -11,7 +11,6 @@ App-specific data fetching that is not shared across apps should live in the app
 
 For example:
 
-- `apps/editor/src/data/courses/` - Editor-specific course queries with permission checks
 - `apps/main/src/data/courses/` - Public course queries
 
 ## Guidelines

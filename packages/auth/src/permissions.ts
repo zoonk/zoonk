@@ -11,8 +11,6 @@ const statement = {
   course: ["create", "read", "update", "delete"],
 } as const;
 
-export type CoursePermission = (typeof statement.course)[number];
-
 export const ac = createAccessControl(statement);
 
 export const member = ac.newRole({
