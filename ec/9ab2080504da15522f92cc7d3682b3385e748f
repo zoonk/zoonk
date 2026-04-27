@@ -1,0 +1,76 @@
+apps/api/src/workflows/lesson-generation/steps/set-lesson-as-completed-step.ts
+  ffa0136a05c0a6b6 3,7
+apps/api/src/workflows/activity-generation/activity-generation-workflow.ts
+  ffa0136a05c0a6b6 18,24
+  h_1cda88fc21fe9c 94
+apps/api/src/workflows/activity-generation/steps/_utils/fetch-lesson-activities.ts
+  ffa0136a05c0a6b6 25
+packages/core/src/progress/get-chapter-progress.ts
+  ffa0136a05c0a6b6 13-15
+apps/editor/src/data/activities/import-activities.test.ts
+  ffa0136a05c0a6b6 9
+apps/api/src/workflows/activity-generation/steps/get-lesson-activities-step.ts
+  ffa0136a05c0a6b6 5,7,12-13,24
+packages/core/src/player/queries/get-next-lesson.ts
+  ffa0136a05c0a6b6 13,82-83,85
+packages/core/src/content/lifecycle.ts
+  ffa0136a05c0a6b6 11,135-136
+packages/core/src/player/commands/submit-player-completion.test.ts
+  ffa0136a05c0a6b6 138
+packages/db/src/prisma/migrations/20260427201458_remove_content_regeneration/migration.sql
+  ffa0136a05c0a6b6 1-27
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.ts
+  ffa0136a05c0a6b6 41,50,86-88,90,96-97,112,123,150,152,155,164,177
+  h_1cda88fc21fe9c 183
+apps/admin/src/data/stats/ai/_utils/get-ai-cost-estimate-structure.ts
+  h_1cda88fc21fe9c 315-316
+apps/main/src/data/courses/_utils/continue-learning-candidates.ts
+  ffa0136a05c0a6b6 177-178,228-229
+packages/core/src/progress/_utils/durable-completion-queries.ts
+  ffa0136a05c0a6b6 7-8
+packages/core/src/progress/get-lesson-progress.test.ts
+  ffa0136a05c0a6b6 317
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/submit-completion-action.ts
+  ffa0136a05c0a6b6 62-64
+apps/main/src/data/courses/get-continue-learning.test.ts
+  ffa0136a05c0a6b6 101,186,220-221,282,286
+packages/core/src/player/queries/get-next-lesson.test.ts
+  ffa0136a05c0a6b6 339,358
+apps/api/src/workflows/lesson-preload/lesson-preload-workflow.test.ts
+  ffa0136a05c0a6b6 15,33,35-36,43,45,52,59-60
+apps/api/src/workflows/activity-generation/steps/handle-workflow-failure-step.ts
+  ffa0136a05c0a6b6 10-11
+apps/api/src/workflows/activity-generation/kinds/practice-workflow.test.ts
+  ffa0136a05c0a6b6 739
+apps/editor/src/data/chapters/import-chapters.ts
+  ffa0136a05c0a6b6 7
+apps/editor/src/data/courses/create-course.test.ts
+  ffa0136a05c0a6b6 4
+apps/main/src/data/courses/_utils/continue-learning-queries.ts
+  ffa0136a05c0a6b6 30-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "ec9ab2080504da15522f92cc7d3682b3385e748f",
+  "prompts": {
+    "ffa0136a05c0a6b6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dd088-4388-72a3-9dd9-93f616e0eb20",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 119,
+      "total_deletions": 2278,
+      "accepted_lines": 103,
+      "overriden_lines": 1
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
