@@ -1,0 +1,31 @@
+apps/main/e2e/learn.test.ts
+  614f7a4000ebdb60 1-2,4,7-8,13-58,60-71,100-106,138-139
+  h_1cda88fc21fe9c 59
+.agents/skills/zoonk-commit/SKILL.md
+  h_1cda88fc21fe9c 57,84
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "02ca3988639099e8bd6cd16fc65ecdeb4e3bd763",
+  "prompts": {
+    "614f7a4000ebdb60": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dd2f8-6c1b-7400-9023-d612d01c3862",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 75,
+      "total_deletions": 3,
+      "accepted_lines": 73,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
