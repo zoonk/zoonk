@@ -1,17 +1,20 @@
 "use client";
 
-import { isValidChartPayload } from "@zoonk/utils/chart";
 import { useExtracted } from "next-intl";
 import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  ReferenceLine,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+  PerformanceAreaChart,
+  PerformanceChartArea,
+  PerformanceChartAverageLine,
+  PerformanceChartFigure,
+  PerformanceChartGradient,
+  PerformanceChartGrid,
+  PerformanceChartPercentYAxis,
+  PerformanceChartTooltip,
+  PerformanceChartTooltipContent,
+  PerformanceChartTooltipLabel,
+  PerformanceChartTooltipValue,
+  PerformanceChartXAxis,
+} from "../_components/performance-area-chart";
 
 type SerializedDataPoint = {
   date: string;
@@ -27,79 +30,41 @@ export function EnergyChartClient({
   dataPoints: SerializedDataPoint[];
 }) {
   const t = useExtracted();
+  const color = "var(--energy)";
+  const gradientId = "energyGradient";
 
   return (
-    <figure aria-label={t("Energy chart")} className="h-64 w-full">
-      <ResponsiveContainer height="100%" width="100%">
-        <AreaChart data={dataPoints} margin={{ bottom: 0, left: 0, right: 0, top: 10 }}>
-          <defs>
-            <linearGradient id="energyGradient" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="5%" stopColor="var(--energy)" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="var(--energy)" stopOpacity={0} />
-            </linearGradient>
-          </defs>
+    <PerformanceChartFigure label={t("Energy chart")}>
+      <PerformanceAreaChart data={dataPoints}>
+        <defs>
+          <PerformanceChartGradient color={color} id={gradientId} />
+        </defs>
 
-          <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />
+        <PerformanceChartGrid />
+        <PerformanceChartXAxis />
+        <PerformanceChartPercentYAxis />
 
-          <XAxis
-            axisLine={false}
-            dataKey="label"
-            fontSize={12}
-            stroke="var(--muted-foreground)"
-            tickLine={false}
-            tickMargin={8}
-          />
+        <PerformanceChartTooltip<SerializedDataPoint>>
+          {(data) => {
+            const value = data.energy.toFixed(1);
 
-          <YAxis
-            axisLine={false}
-            domain={[0, 100]}
-            fontSize={12}
-            stroke="var(--muted-foreground)"
-            tickLine={false}
-            tickMargin={8}
-            width={40}
-          />
+            return (
+              <PerformanceChartTooltipContent>
+                <PerformanceChartTooltipLabel>{data.label}</PerformanceChartTooltipLabel>
+                <PerformanceChartTooltipValue className="text-energy">
+                  {t("{value}%", { value })}
+                </PerformanceChartTooltipValue>
+              </PerformanceChartTooltipContent>
+            );
+          }}
+        </PerformanceChartTooltip>
 
-          <Tooltip
-            content={({ active, payload }) => {
-              if (!(active && isValidChartPayload<SerializedDataPoint>(payload))) {
-                return null;
-              }
+        <PerformanceChartAverageLine y={average}>
+          {`${t("Avg")}: ${average.toFixed(1)}%`}
+        </PerformanceChartAverageLine>
 
-              const data = payload[0].payload;
-              const value = data.energy.toFixed(1);
-
-              return (
-                <div className="bg-background rounded-lg border px-3 py-2 shadow-sm">
-                  <p className="text-muted-foreground text-xs">{data.label}</p>
-                  <p className="text-energy text-sm font-medium">{t("{value}%", { value })}</p>
-                </div>
-              );
-            }}
-          />
-
-          <ReferenceLine
-            label={{
-              fill: "var(--muted-foreground)",
-              fontSize: 11,
-              position: "insideBottomRight",
-              value: `${t("Avg")}: ${average.toFixed(1)}%`,
-            }}
-            stroke="var(--muted-foreground)"
-            strokeDasharray="3 3"
-            y={average}
-          />
-
-          <Area
-            dataKey="energy"
-            fill="url(#energyGradient)"
-            fillOpacity={1}
-            stroke="var(--energy)"
-            strokeWidth={2}
-            type="monotone"
-          />
-        </AreaChart>
-      </ResponsiveContainer>
-    </figure>
+        <PerformanceChartArea color={color} dataKey="energy" gradientId={gradientId} />
+      </PerformanceAreaChart>
+    </PerformanceChartFigure>
   );
 }
