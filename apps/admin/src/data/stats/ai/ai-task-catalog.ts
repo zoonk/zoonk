@@ -41,7 +41,7 @@ const AI_TASK_CATALOG_GROUP_DEFINITIONS = [
   },
   {
     description: "Lesson content tasks for explanations, practice, quiz, and tutorial work.",
-    taskNames: ["lesson-explanation", "lesson-practice", "lesson-quiz", "lesson-custom"],
+    taskNames: ["lesson-explanation", "lesson-practice", "lesson-quiz", "lesson-tutorial"],
     title: "Lesson Content",
   },
   {
@@ -60,8 +60,8 @@ const AI_TASK_CATALOG_GROUP_DEFINITIONS = [
     title: "Language Content",
   },
   {
-    description: "Image-selection and step image generation tasks.",
-    taskNames: ["step-select-image", "step-content-image"],
+    description: "Image-selection, step image prompt, and step image generation tasks.",
+    taskNames: ["step-select-image", "step-image-prompts", "step-content-image"],
     title: "Step Media",
   },
 ] satisfies AiTaskCatalogGroupDefinition[];

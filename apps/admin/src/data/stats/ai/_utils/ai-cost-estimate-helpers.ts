@@ -4,8 +4,12 @@ import {
   estimateGeminiTtsCost,
   formatAiTaskLabel,
 } from "../ai-task-stats";
-import { LANGUAGE_TTS_HEURISTIC_NOTE } from "./ai-cost-estimate-constants";
-import { type EstimateLineItem } from "./ai-cost-estimate-types";
+import { LANGUAGE_TTS_HEURISTIC_NOTE, STEP_CONTENT_IMAGE_TASK } from "./ai-cost-estimate-constants";
+import {
+  type EstimateLineItem,
+  type StepImageUsageRow,
+  type StructureStats,
+} from "./ai-cost-estimate-types";
 
 /**
  * The UI cards show one total, but the totals should still be explainable. Each
@@ -98,6 +102,32 @@ export function buildTtsLineItem({
 }
 
 /**
+ * Step image generation runs once per saved step with an embedded image. The
+ * lesson kind identifies which content workflow produced that image now that
+ * steps are owned directly by lessons.
+ */
+export function buildStepImageLineItem({
+  entityCount,
+  lessonKind,
+  structureStats,
+  usageByTask,
+}: {
+  entityCount: number;
+  lessonKind: StepImageUsageRow["lessonKind"];
+  structureStats: StructureStats;
+  usageByTask: TaskUsageByName;
+}): EstimateLineItem | null {
+  return buildGatewayLineItem({
+    averageRequestsPerRun: calculateAverageRequestsPerEntity({
+      entityCount,
+      requestCount: structureStats.stepImageCountsByLessonKind[lessonKind] ?? 0,
+    }),
+    taskName: STEP_CONTENT_IMAGE_TASK,
+    usageByTask,
+  });
+}
+
+/**
  * Some workflows use historical task counts directly instead of persisted
  * content records. This helper centralizes the "requests per entity" math so
  * the builders all normalize task usage the same way.
@@ -132,6 +162,17 @@ export function sumLineItems(items: EstimateLineItem[]): number {
  */
 export function isEstimateLineItem(item: EstimateLineItem | null): item is EstimateLineItem {
   return item !== null;
+}
+
+/**
+ * The SQL step-image query returns one row per lesson kind. Flattening that
+ * into a predictable key-value map keeps estimate builders from scanning rows
+ * and makes missing combinations naturally fall back to zero.
+ */
+export function buildStepImageCountMap(
+  rows: StepImageUsageRow[],
+): Partial<Record<StepImageUsageRow["lessonKind"], number>> {
+  return Object.fromEntries(rows.map((row) => [row.lessonKind, toNumber(row.count)]));
 }
 
 /**

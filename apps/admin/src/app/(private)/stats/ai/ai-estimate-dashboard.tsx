@@ -137,7 +137,7 @@ function getEstimateSummary({
   estimate: AiGenerationCostEstimate;
 }) {
   if (estimate.kind === "regularCourse") {
-    return `${courseInputs.regularChapterCount.toLocaleString()} chapters, ${courseInputs.regularCoreLessonsPerChapter.toLocaleString()} core/chapter, ${courseInputs.regularCustomLessonsPerChapter.toLocaleString()} custom/chapter.`;
+    return `${courseInputs.regularChapterCount.toLocaleString()} chapters, ${courseInputs.regularCoreLessonsPerChapter.toLocaleString()} explanation/chapter, ${courseInputs.regularTutorialLessonsPerChapter.toLocaleString()} tutorial/chapter.`;
   }
 
   if (estimate.kind === "languageCourse") {
@@ -160,8 +160,8 @@ function isLessonEstimate(
 ): estimate is AiGenerationCostEstimate {
   return (
     estimate.kind === "coreLesson" ||
-    estimate.kind === "customLesson" ||
-    estimate.kind === "languageLesson"
+    estimate.kind === "languageLesson" ||
+    estimate.kind === "tutorialLesson"
   );
 }
 

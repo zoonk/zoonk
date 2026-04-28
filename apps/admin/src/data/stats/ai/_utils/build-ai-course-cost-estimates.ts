@@ -23,21 +23,21 @@ import {
 export function buildRegularCourseEstimate({
   courseInputs,
   coreLessonEstimate,
-  customLessonEstimate,
+  tutorialLessonEstimate,
   usageByTask,
 }: {
   courseInputs: AiCourseEstimateInputs;
   coreLessonEstimate: AiGenerationCostEstimate;
-  customLessonEstimate: AiGenerationCostEstimate;
+  tutorialLessonEstimate: AiGenerationCostEstimate;
   usageByTask: TaskUsageByName;
 }): AiGenerationCostEstimate {
   const totalLessonCount =
     courseInputs.regularChapterCount *
-    (courseInputs.regularCoreLessonsPerChapter + courseInputs.regularCustomLessonsPerChapter);
+    (courseInputs.regularCoreLessonsPerChapter + courseInputs.regularTutorialLessonsPerChapter);
   const totalLessonCost =
     courseInputs.regularChapterCount *
     (courseInputs.regularCoreLessonsPerChapter * coreLessonEstimate.totalEstimatedCost +
-      courseInputs.regularCustomLessonsPerChapter * customLessonEstimate.totalEstimatedCost);
+      courseInputs.regularTutorialLessonsPerChapter * tutorialLessonEstimate.totalEstimatedCost);
   const lineItems = [
     buildGatewayLineItem({ averageRequestsPerRun: 1, taskName: "course-description", usageByTask }),
     buildGatewayLineItem({ averageRequestsPerRun: 1, taskName: "course-thumbnail", usageByTask }),
@@ -140,7 +140,7 @@ export function buildLanguageCourseEstimate({
  * plain language so the admin can confirm the input assumptions at a glance.
  */
 function buildRegularCourseInputNote({ courseInputs }: { courseInputs: AiCourseEstimateInputs }) {
-  return `Uses ${courseInputs.regularChapterCount.toLocaleString()} chapters with ${courseInputs.regularCoreLessonsPerChapter.toLocaleString()} core lessons and ${courseInputs.regularCustomLessonsPerChapter.toLocaleString()} custom lessons per chapter.`;
+  return `Uses ${courseInputs.regularChapterCount.toLocaleString()} chapters with ${courseInputs.regularCoreLessonsPerChapter.toLocaleString()} explanation lessons and ${courseInputs.regularTutorialLessonsPerChapter.toLocaleString()} tutorial lessons per chapter.`;
 }
 
 /**

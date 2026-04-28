@@ -3,9 +3,11 @@ import { describe, expect, test } from "vitest";
 import { calculateWeightedProgress, getPhaseOrder, getPhaseStatus } from "./generation-phases";
 
 describe(isGeneratedLessonKind, () => {
-  test("keeps review lessons out of lesson generation", () => {
+  test("keeps non-generated lesson rows out of lesson generation", () => {
+    expect(isGeneratedLessonKind("custom")).toBe(false);
     expect(isGeneratedLessonKind("review")).toBe(false);
     expect(isGeneratedLessonKind("explanation")).toBe(true);
+    expect(isGeneratedLessonKind("tutorial")).toBe(true);
   });
 });
 

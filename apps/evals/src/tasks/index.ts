@@ -7,7 +7,6 @@ import { courseDescriptionTask } from "./course-description/task";
 import { courseSuggestionsTask } from "./course-suggestions/task";
 import { languageChapterLessonsTask } from "./language-chapter-lessons/task";
 import { languageCourseChaptersTask } from "./language-course-chapters/task";
-import { lessonCustomTask } from "./lesson-custom/task";
 import { lessonDistractorsTask } from "./lesson-distractors/task";
 import { lessonExplanationTask } from "./lesson-explanation/task";
 import { lessonGrammarContentTask } from "./lesson-grammar-content/task";
@@ -19,10 +18,10 @@ import { lessonQuizTask } from "./lesson-quiz/task";
 import { lessonRomanizationTask } from "./lesson-romanization/task";
 import { lessonSentencesTask } from "./lesson-sentences/task";
 import { lessonTranslationTask } from "./lesson-translation/task";
+import { lessonTutorialTask } from "./lesson-tutorial/task";
 import { lessonVocabularyTask } from "./lesson-vocabulary/task";
 
 export const TASKS: readonly Task[] = [
-  lessonCustomTask,
   lessonDistractorsTask,
   lessonQuizTask,
   lessonExplanationTask,
@@ -34,6 +33,7 @@ export const TASKS: readonly Task[] = [
   lessonSentencesTask,
   lessonPracticeTask,
   lessonRomanizationTask,
+  lessonTutorialTask,
   lessonVocabularyTask,
   alternativeTitlesTask,
   chapterLessonsTask,

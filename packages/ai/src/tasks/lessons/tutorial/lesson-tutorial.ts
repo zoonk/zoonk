@@ -3,9 +3,9 @@ import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-o
 import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import systemPrompt from "./lesson-custom.prompt.md";
+import systemPrompt from "./lesson-tutorial.prompt.md";
 
-const taskName = "lesson-custom";
+const taskName = "lesson-tutorial";
 const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
 const schema = z.object({
@@ -17,9 +17,9 @@ const schema = z.object({
   ),
 });
 
-export type LessonCustomSchema = z.infer<typeof schema>;
+export type LessonTutorialSchema = z.infer<typeof schema>;
 
-export type LessonCustomParams = {
+export type LessonTutorialParams = {
   lessonTitle: string;
   lessonDescription: string;
   chapterTitle: string;
@@ -30,7 +30,7 @@ export type LessonCustomParams = {
   reasoningEffort?: ReasoningEffort;
 };
 
-export async function generateLessonCustom({
+export async function generateLessonTutorial({
   lessonTitle,
   lessonDescription,
   chapterTitle,
@@ -39,7 +39,7 @@ export async function generateLessonCustom({
   model = defaultModel,
   useFallback = true,
   reasoningEffort,
-}: LessonCustomParams) {
+}: LessonTutorialParams) {
   const userPrompt = `
     LESSON_TITLE: ${lessonTitle}
     LESSON_DESCRIPTION: ${lessonDescription}

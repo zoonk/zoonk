@@ -17,6 +17,9 @@ import { setLessonAsCompletedStep } from "./steps/set-lesson-as-completed-step";
 import { setLessonAsRunningStep } from "./steps/set-lesson-as-running-step";
 
 type LessonGenerationContext = Awaited<ReturnType<typeof getLessonStep>>;
+type GeneratedLessonContext = LessonGenerationContext & {
+  kind: Exclude<LessonGenerationContext["kind"], "custom" | "review">;
+};
 
 type LessonGenerationResult = "filtered" | "ready";
 
@@ -38,14 +41,22 @@ function shouldStreamExistingCompletion(context: LessonGenerationContext): boole
 
 /**
  * A lesson with saved steps but a stale status should be repaired instead of
- * generating a duplicate step set.
+ * generating a duplicate step set. Failed lessons are excluded because a failed
+ * save may leave partial steps behind; those need a clean retry.
  */
 function shouldRepairExistingSteps(context: LessonGenerationContext): boolean {
-  return context._count.steps > 0;
+  return context.generationStatus !== "failed" && context._count.steps > 0;
 }
 
-async function generateLessonForKind(context: LessonGenerationContext): Promise<void> {
-  if (context.kind === "custom" || context.kind === "tutorial") {
+/** Custom and review lesson rows are not AI-generated lesson content. */
+function isGeneratedLessonContext(
+  context: LessonGenerationContext,
+): context is GeneratedLessonContext {
+  return context.kind !== "custom" && context.kind !== "review";
+}
+
+async function generateLessonForKind(context: GeneratedLessonContext): Promise<void> {
+  if (context.kind === "tutorial") {
     await tutorialLessonWorkflow(context);
     return;
   }
@@ -109,8 +120,13 @@ async function runLessonGeneration(input: {
     return "ready";
   }
 
+  if (!isGeneratedLessonContext(input.context)) {
+    return "filtered";
+  }
+
   await setLessonAsRunningStep({
     lessonId: input.lessonId,
+    resetExistingSteps: input.context.generationStatus === "failed",
     workflowRunId: input.workflowRunId,
   });
 

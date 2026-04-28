@@ -48,10 +48,6 @@ export const AI_TASK_MODEL_CONFIG = {
     defaultModel: "openai/gpt-5.4",
     fallbackModels: ["google/gemini-3.1-pro-preview", "anthropic/claude-sonnet-4.6"],
   },
-  "lesson-custom": {
-    defaultModel: "google/gemini-3-flash",
-    fallbackModels: ["anthropic/claude-opus-4.6", "openai/gpt-5.4"],
-  },
   "lesson-distractors": {
     defaultModel: "openai/gpt-5.4",
     fallbackModels: ["google/gemini-3.1-flash-lite-preview", "anthropic/claude-sonnet-4.6"],
@@ -99,6 +95,10 @@ export const AI_TASK_MODEL_CONFIG = {
   "lesson-translation": {
     defaultModel: "openai/gpt-5.4-mini",
     fallbackModels: ["google/gemini-3-flash", "anthropic/claude-opus-4.6"],
+  },
+  "lesson-tutorial": {
+    defaultModel: "google/gemini-3-flash",
+    fallbackModels: ["anthropic/claude-opus-4.6", "openai/gpt-5.4"],
   },
   "lesson-vocabulary": {
     defaultModel: "google/gemini-3-flash",

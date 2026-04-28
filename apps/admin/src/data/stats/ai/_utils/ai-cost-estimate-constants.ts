@@ -10,6 +10,10 @@ export const LANGUAGE_TTS_ESTIMATE_NOTE =
 export const LANGUAGE_TTS_HEURISTIC_NOTE =
   "Audio cost assumes Gemini TTS pricing for all clips, about 70 words per 100 text tokens, 32 audio tokens per second, and a 0.75s minimum for single-word clips.";
 
+export const STEP_CONTENT_IMAGE_TASK = "step-content-image" as const;
+export const STEP_IMAGE_PROMPTS_TASK = "step-image-prompts" as const;
+export const STEP_SELECT_IMAGE_TASK = "step-select-image" as const;
+
 export const LANGUAGE_GATEWAY_TASKS = [
   "lesson-vocabulary",
   "lesson-distractors",

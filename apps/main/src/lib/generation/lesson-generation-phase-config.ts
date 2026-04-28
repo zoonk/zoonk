@@ -40,16 +40,15 @@ export type PhaseName =
   | "creatingImages"
   | "saving";
 
-export type GeneratedLessonKind = Exclude<LessonKind, "review">;
+export type GeneratedLessonKind = Exclude<LessonKind, "custom" | "review">;
 
 /** Tells generation routes whether a lesson kind has a workflow-owned generation path. */
 export function isGeneratedLessonKind(kind: LessonKind): kind is GeneratedLessonKind {
-  return kind !== "review";
+  return kind !== "custom" && kind !== "review";
 }
 
 const PHASE_ORDER_MAP: Record<GeneratedLessonKind, PhaseName[]> = {
   alphabet: VOCABULARY_PHASE_ORDER,
-  custom: TUTORIAL_PHASE_ORDER,
   explanation: EXPLANATION_PHASE_ORDER,
   grammar: GRAMMAR_PHASE_ORDER,
   listening: LISTENING_PHASE_ORDER,
@@ -103,7 +102,6 @@ function toFullPhaseSteps(
 
 const PHASE_STEPS_MAP: Record<GeneratedLessonKind, Record<PhaseName, readonly LessonStepName[]>> = {
   alphabet: toFullPhaseSteps(VOCABULARY_PHASE_STEPS),
-  custom: toFullPhaseSteps(TUTORIAL_PHASE_STEPS),
   explanation: toFullPhaseSteps(EXPLANATION_PHASE_STEPS),
   grammar: toFullPhaseSteps(GRAMMAR_PHASE_STEPS),
   listening: toFullPhaseSteps(LISTENING_PHASE_STEPS),

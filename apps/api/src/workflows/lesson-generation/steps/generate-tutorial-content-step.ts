@@ -1,5 +1,5 @@
 import { createStepStream, getAIResultErrorReason } from "@/workflows/_shared/stream-status";
-import { generateLessonCustom } from "@zoonk/ai/tasks/lessons/custom";
+import { generateLessonTutorial } from "@zoonk/ai/tasks/lessons/tutorial";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { type StaticLessonStep } from "./_utils/generated-lesson-content";
@@ -13,9 +13,9 @@ export async function generateTutorialContentStep(
   await using stream = createStepStream<LessonStepName>();
   await stream.status({ status: "started", step: "generateTutorialContent" });
 
-  const { data: result, error }: SafeReturn<Awaited<ReturnType<typeof generateLessonCustom>>> =
+  const { data: result, error }: SafeReturn<Awaited<ReturnType<typeof generateLessonTutorial>>> =
     await safeAsync(() =>
-      generateLessonCustom({
+      generateLessonTutorial({
         chapterTitle: context.chapter.title,
         courseTitle: context.chapter.course.title,
         language: context.language,

@@ -8,9 +8,12 @@ import {
   LANGUAGE_GATEWAY_TASKS,
   LANGUAGE_TTS_ESTIMATE_NOTE,
   LANGUAGE_TTS_HEURISTIC_NOTE,
+  STEP_IMAGE_PROMPTS_TASK,
+  STEP_SELECT_IMAGE_TASK,
 } from "./ai-cost-estimate-constants";
 import {
   buildGatewayLineItem,
+  buildStepImageLineItem,
   buildTtsLineItem,
   getAverageTaskRequestsPerRun,
   isEstimateLineItem,
@@ -55,15 +58,44 @@ export function buildCoreLessonEstimate({
       taskName: "lesson-quiz",
       usageByTask,
     }),
+    buildGatewayLineItem({
+      averageRequestsPerRun: getAverageLessonCount({
+        entityCount: coreLessonCount,
+        totalCount: structureStats.coreLessonExplanationCount,
+      }),
+      taskName: STEP_IMAGE_PROMPTS_TASK,
+      usageByTask,
+    }),
+    buildStepImageLineItem({
+      entityCount: coreLessonCount,
+      lessonKind: "explanation",
+      structureStats,
+      usageByTask,
+    }),
+    buildStepImageLineItem({
+      entityCount: coreLessonCount,
+      lessonKind: "practice",
+      structureStats,
+      usageByTask,
+    }),
+    buildGatewayLineItem({
+      averageRequestsPerRun: getAverageTaskRequestsPerRun({
+        entityCount: coreLessonCount,
+        taskName: STEP_SELECT_IMAGE_TASK,
+        usageByTask,
+      }),
+      taskName: STEP_SELECT_IMAGE_TASK,
+      usageByTask,
+    }),
   ].filter((item): item is NonNullable<typeof item> => isEstimateLineItem(item));
 
   return {
     description:
-      "Explanation lesson generation plus the practice and quiz lessons inserted from recent explanations.",
+      "Explanation lesson generation plus practice, quiz, step image prompts, generated step images, and select-image quiz media.",
     kind: "coreLesson",
     lineItems,
     notes: [],
-    runLabel: "completed core lessons",
+    runLabel: "completed explanation lessons",
     sampleCount: coreLessonCount,
     title: "Explanation Lesson",
     totalEstimatedCost: sumLineItems(lineItems),
@@ -73,29 +105,40 @@ export function buildCoreLessonEstimate({
 /**
  * Tutorial lessons use one procedural content-generation call.
  */
-export function buildCustomLessonEstimate({
+export function buildTutorialLessonEstimate({
   structureStats,
   usageByTask,
 }: {
   structureStats: StructureStats;
   usageByTask: TaskUsageByName;
 }): AiGenerationCostEstimate {
-  const customLessonCount = structureStats.customLessonCount;
+  const tutorialLessonCount = structureStats.tutorialLessonCount;
   const lineItems = [
     buildGatewayLineItem({
       averageRequestsPerRun: 1,
-      taskName: "lesson-custom",
+      taskName: "lesson-tutorial",
+      usageByTask,
+    }),
+    buildGatewayLineItem({
+      averageRequestsPerRun: 1,
+      taskName: STEP_IMAGE_PROMPTS_TASK,
+      usageByTask,
+    }),
+    buildStepImageLineItem({
+      entityCount: tutorialLessonCount,
+      lessonKind: "tutorial",
+      structureStats,
       usageByTask,
     }),
   ].filter((item): item is NonNullable<typeof item> => isEstimateLineItem(item));
 
   return {
     description: "Tutorial lesson generation using the procedural content task.",
-    kind: "customLesson",
+    kind: "tutorialLesson",
     lineItems,
     notes: [],
-    runLabel: "completed custom lessons",
-    sampleCount: customLessonCount,
+    runLabel: "completed tutorial lessons",
+    sampleCount: tutorialLessonCount,
     title: "Tutorial Lesson",
     totalEstimatedCost: sumLineItems(lineItems),
   };

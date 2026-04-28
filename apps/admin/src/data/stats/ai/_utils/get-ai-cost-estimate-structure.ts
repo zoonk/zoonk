@@ -1,8 +1,12 @@
 import { type LessonKind, prisma, sql } from "@zoonk/db";
 import { MS_PER_DAY, parseLocalDate } from "@zoonk/utils/date";
 import { safeAsync } from "@zoonk/utils/error";
-import { toNumber } from "./ai-cost-estimate-helpers";
-import { type LanguageAudioUsageRow, type StructureStats } from "./ai-cost-estimate-types";
+import { buildStepImageCountMap, toNumber } from "./ai-cost-estimate-helpers";
+import {
+  type LanguageAudioUsageRow,
+  type StepImageUsageRow,
+  type StructureStats,
+} from "./ai-cost-estimate-types";
 
 type DateWindow = {
   endExclusive: Date;
@@ -22,17 +26,20 @@ export async function getStructureStats({
   startDate: string;
 }): Promise<StructureStats> {
   const dateWindow = buildDateWindow({ endDate, startDate });
-  const [lessonKindCounts, courseShapeCounts, languageAudioUsage] = await Promise.all([
-    getLessonKindCounts({ dateWindow }),
-    getCourseShapeCounts({ dateWindow }),
-    getLanguageAudioUsage({ dateWindow }),
-  ]);
+  const [lessonKindCounts, courseShapeCounts, stepImageRows, languageAudioUsage] =
+    await Promise.all([
+      getLessonKindCounts({ dateWindow }),
+      getCourseShapeCounts({ dateWindow }),
+      getStepImageUsageRows({ dateWindow }),
+      getLanguageAudioUsage({ dateWindow }),
+    ]);
 
   return {
     ...lessonKindCounts,
     ...courseShapeCounts,
     languageAudioSentenceWordCount: toNumber(languageAudioUsage.sentenceWordCount),
     languageAudioWordClipCount: toNumber(languageAudioUsage.wordClipCount),
+    stepImageCountsByLessonKind: buildStepImageCountMap(stepImageRows),
   };
 }
 
@@ -64,15 +71,15 @@ async function getLessonKindCounts({ dateWindow }: { dateWindow: DateWindow }) {
 
   const [
     coreLessonCount,
-    customLessonCount,
     languageLessonCount,
+    tutorialLessonCount,
     coreLessonExplanationCount,
     coreLessonPracticeCount,
     coreLessonQuizCount,
   ] = await Promise.all([
     prisma.lesson.count({ where: { ...completedLessonWhere, kind: "explanation" } }),
-    prisma.lesson.count({ where: { ...completedLessonWhere, kind: "tutorial" } }),
     prisma.lesson.count({ where: { ...completedLessonWhere, kind: { in: getLanguageKinds() } } }),
+    prisma.lesson.count({ where: { ...completedLessonWhere, kind: "tutorial" } }),
     prisma.lesson.count({ where: { ...completedLessonWhere, kind: "explanation" } }),
     prisma.lesson.count({ where: { ...completedLessonWhere, kind: "practice" } }),
     prisma.lesson.count({ where: { ...completedLessonWhere, kind: "quiz" } }),
@@ -83,8 +90,8 @@ async function getLessonKindCounts({ dateWindow }: { dateWindow: DateWindow }) {
     coreLessonExplanationCount,
     coreLessonPracticeCount,
     coreLessonQuizCount,
-    customLessonCount,
     languageLessonCount,
+    tutorialLessonCount,
   };
 }
 
@@ -111,7 +118,7 @@ async function getCourseShapeCounts({ dateWindow }: { dateWindow: DateWindow }) 
     completedRegularChapterCount,
     completedLanguageChapterCount,
     regularCoreLessonCountInCourses,
-    regularCustomLessonCountInCourses,
+    regularTutorialLessonCountInCourses,
     languageLessonCountInCourses,
   ] = await Promise.all([
     prisma.course.count({ where: regularCourseWhere }),
@@ -154,8 +161,42 @@ async function getCourseShapeCounts({ dateWindow }: { dateWindow: DateWindow }) 
     regularCoreLessonCountInCourses,
     regularCourseChapterCount,
     regularCourseCount,
-    regularCustomLessonCountInCourses,
+    regularTutorialLessonCountInCourses,
   };
+}
+
+/**
+ * Text and practice image costs cannot be attributed from Gateway task rows
+ * alone because the same image task is reused by multiple lesson workflows.
+ * Persisted step content tells us which lesson kind each generated image served.
+ */
+async function getStepImageUsageRows({
+  dateWindow,
+}: {
+  dateWindow: DateWindow;
+}): Promise<StepImageUsageRow[]> {
+  const { data, error } = await safeAsync(() =>
+    prisma.$queryRaw<StepImageUsageRow[]>(sql`
+      SELECT
+        l.kind AS "lessonKind",
+        COUNT(*)::bigint AS "count"
+      FROM steps s
+      JOIN lessons l ON l.id = s.lesson_id
+      WHERE s.content->'image' IS NOT NULL
+        AND l.generation_run_id IS NOT NULL
+        AND l.generation_status = 'completed'
+        AND l.created_at >= ${dateWindow.startAt}
+        AND l.created_at < ${dateWindow.endExclusive}
+        AND l.kind IN ('explanation', 'practice', 'tutorial')
+      GROUP BY l.kind
+    `),
+  );
+
+  if (error) {
+    throw new Error("Failed to load step image usage for AI estimates", { cause: error });
+  }
+
+  return data;
 }
 
 /**

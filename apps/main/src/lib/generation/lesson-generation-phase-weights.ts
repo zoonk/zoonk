@@ -65,7 +65,7 @@ export function getPhaseWeights(kind: GeneratedLessonKind): Record<PhaseName, nu
     };
   }
 
-  if (kind === "custom" || kind === "tutorial") {
+  if (kind === "tutorial") {
     return {
       ...ZERO_WEIGHTS,
       creatingImages: 35,
