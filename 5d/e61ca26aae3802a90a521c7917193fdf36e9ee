@@ -1,0 +1,21 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "5de61ca26aae3802a90a521c7917193fdf36e9ee",
+  "prompts": {
+    "36121c8f3b7c1ae4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dd4b7-fb4f-7fb2-a9af-80c1e0075446",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 475,
+      "accepted_lines": 2654,
+      "overriden_lines": 0
+    }
+  }
+}
