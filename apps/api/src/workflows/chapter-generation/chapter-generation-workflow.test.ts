@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
-import { activityGenerationWorkflow } from "@/workflows/activity-generation/activity-generation-workflow";
+import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-generation-workflow";
 import { generateChapterLessons } from "@zoonk/ai/tasks/chapters/lessons";
 import { CHAPTER_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
@@ -15,8 +15,8 @@ vi.mock("@zoonk/ai/tasks/chapters/lessons", () => ({
   generateChapterLessons: vi.fn().mockResolvedValue({
     data: {
       lessons: [
-        { description: "Lesson 1 description", title: "Lesson 1" },
-        { description: "Lesson 2 description", title: "Lesson 2" },
+        { description: "Lesson 1 description", kind: "explanation", title: "Lesson 1" },
+        { description: "Lesson 2 description", kind: "explanation", title: "Lesson 2" },
       ],
     },
   }),
@@ -26,40 +26,15 @@ vi.mock("@zoonk/ai/tasks/chapters/language-lessons", () => ({
   generateLanguageChapterLessons: vi.fn().mockResolvedValue({
     data: {
       lessons: [
-        { description: "Lang Lesson 1 description", title: "Lang Lesson 1" },
-        { description: "Lang Lesson 2 description", title: "Lang Lesson 2" },
+        { description: "Lang Lesson 1 description", kind: "vocabulary", title: "Lang Lesson 1" },
+        { description: "Lang Lesson 2 description", kind: "vocabulary", title: "Lang Lesson 2" },
       ],
     },
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/lessons/kind", () => ({
-  generateLessonKind: vi.fn().mockResolvedValue({
-    data: { kind: "core" },
-  }),
-}));
-
-vi.mock("@/workflows/activity-generation/activity-generation-workflow", () => ({
-  activityGenerationWorkflow: vi.fn().mockResolvedValue({}),
-}));
-
-vi.mock("@zoonk/ai/tasks/lessons/custom-activities", () => ({
-  generateLessonCustomActivities: vi.fn().mockResolvedValue({
-    data: { activities: [] },
-  }),
-}));
-
-vi.mock("@zoonk/ai/tasks/lessons/core-activities", () => ({
-  generateLessonCoreActivities: vi.fn().mockResolvedValue({
-    data: {
-      activities: [
-        {
-          goal: "spot the repeated pattern before turning it into a reusable rule",
-          title: "Reading the pattern",
-        },
-      ],
-    },
-  }),
+vi.mock("@/workflows/lesson-generation/lesson-generation-workflow", () => ({
+  lessonGenerationWorkflow: vi.fn().mockResolvedValue("ready"),
 }));
 
 describe(chapterGenerationWorkflow, () => {
@@ -146,8 +121,8 @@ describe(chapterGenerationWorkflow, () => {
   });
 
   describe("happy path", () => {
-    test("calls activityGenerationWorkflow with first lesson's ID", async () => {
-      const title = `Activity Gen Chapter ${randomUUID()}`;
+    test("calls lessonGenerationWorkflow with first lesson's ID", async () => {
+      const title = `Lesson Gen Chapter ${randomUUID()}`;
       const chapter = await chapterFixture({
         courseId: course.id,
         generationStatus: "pending",
@@ -162,10 +137,10 @@ describe(chapterGenerationWorkflow, () => {
         where: { chapterId: chapter.id },
       });
 
-      expect(activityGenerationWorkflow).toHaveBeenCalledWith(lessons[0]?.id);
+      expect(lessonGenerationWorkflow).toHaveBeenCalledWith(lessons[0]?.id);
     });
 
-    test("sets chapter as completed BEFORE lesson/activity generation runs", async () => {
+    test("sets chapter as completed before the first lesson generation runs", async () => {
       const title = `Completed Before Lesson Gen ${randomUUID()}`;
       const chapter = await chapterFixture({
         courseId: course.id,
@@ -174,18 +149,19 @@ describe(chapterGenerationWorkflow, () => {
         title,
       });
 
-      let chapterStatusDuringActivityGen: string | null = null;
+      let chapterStatusDuringLessonGen: string | null = null;
 
-      vi.mocked(activityGenerationWorkflow).mockImplementationOnce(async () => {
+      vi.mocked(lessonGenerationWorkflow).mockImplementationOnce(async () => {
         const dbChapter = await prisma.chapter.findUnique({
           where: { id: chapter.id },
         });
-        chapterStatusDuringActivityGen = dbChapter?.generationStatus ?? null;
+        chapterStatusDuringLessonGen = dbChapter?.generationStatus ?? null;
+        return "ready";
       });
 
       await chapterGenerationWorkflow(chapter.id);
 
-      expect(chapterStatusDuringActivityGen).toBe("completed");
+      expect(chapterStatusDuringLessonGen).toBe("completed");
     });
 
     test("updates chapter status: pending → running → completed", async () => {
@@ -212,12 +188,12 @@ describe(chapterGenerationWorkflow, () => {
   });
 
   describe("error handling", () => {
-    test("chapter stays completed when activity generation throws", async () => {
-      vi.mocked(activityGenerationWorkflow).mockRejectedValueOnce(
-        new Error("Activity generation failed"),
+    test("chapter stays completed when first lesson generation throws", async () => {
+      vi.mocked(lessonGenerationWorkflow).mockRejectedValueOnce(
+        new Error("Lesson generation failed"),
       );
 
-      const title = `Activity Fail Chapter ${randomUUID()}`;
+      const title = `Lesson Fail Chapter ${randomUUID()}`;
       const chapter = await chapterFixture({
         courseId: course.id,
         generationStatus: "pending",
@@ -226,7 +202,7 @@ describe(chapterGenerationWorkflow, () => {
       });
 
       await expect(chapterGenerationWorkflow(chapter.id)).rejects.toThrow(
-        "Activity generation failed",
+        "Lesson generation failed",
       );
 
       const dbChapter = await prisma.chapter.findUnique({

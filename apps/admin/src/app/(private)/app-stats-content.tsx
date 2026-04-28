@@ -40,13 +40,6 @@ export async function ContentStats() {
       />
 
       <Stats
-        help="Total activity count"
-        icon={<LayersIcon />}
-        title="Activities"
-        value={content.activities.toLocaleString()}
-      />
-
-      <Stats
         help="Total step count"
         icon={<LayersIcon />}
         title="Steps"

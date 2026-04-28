@@ -14,7 +14,7 @@ export async function getLessonForGeneration(lessonId: string) {
 
   return prisma.lesson.findFirst({
     include: {
-      _count: { select: { activities: true } },
+      _count: { select: { steps: true } },
       chapter: {
         include: { course: true },
       },

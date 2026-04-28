@@ -1,7 +1,7 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { usePlayerMilestone, usePlayerRuntime } from "../player-context";
+import { usePlayerRuntime } from "../player-context";
 import {
   getCurrentResult,
   getCurrentStep,
@@ -44,7 +44,6 @@ function getStageResetKey({ screenKind, stepId }: { screenKind: string; stepId?:
 export function PlayerShell() {
   const t = useExtracted();
   const { screen, state } = usePlayerRuntime();
-  const milestone = usePlayerMilestone();
 
   const currentResult = getCurrentResult(state);
   const currentStep = getCurrentStep(state);
@@ -62,7 +61,6 @@ export function PlayerShell() {
       result: currentResult,
       step: currentStep,
     },
-    milestoneKind: milestone.kind,
   });
 
   return (

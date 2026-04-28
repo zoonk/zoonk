@@ -11,9 +11,9 @@ describe("reporting tags", () => {
     expect(
       buildGatewayReportingTags({
         model: "openai/gpt-5.4",
-        taskName: "activity-explanation",
+        taskName: "lesson-explanation",
       }),
-    ).toEqual(["task:activity-explanation", "default-model:openai/gpt-5.4"]);
+    ).toEqual(["task:lesson-explanation", "default-model:openai/gpt-5.4"]);
   });
 
   test("extracts a task name from a task tag", () => {

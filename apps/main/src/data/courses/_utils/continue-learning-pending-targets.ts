@@ -10,8 +10,8 @@ export type PendingTarget = {
 
 /**
  * Once a course is still active but the shared next-state reports it as
- * completed, the feed needs a chapter-or-lesson shell target instead of an
- * activity deep link. This helper only resolves those fallback targets for the
+ * completed, the feed needs a chapter-or-lesson target instead of a completed
+ * lesson deep link. This helper only resolves those fallback targets for the
  * rows that actually need them.
  */
 export async function listPendingTargets({
@@ -34,7 +34,7 @@ export async function listPendingTargets({
 /**
  * Pending fallback targets only matter when the shared next-state says the
  * course is complete for now but not durably completed overall. Every other
- * state can be rendered directly from the current activity or lesson data.
+ * state can be rendered directly from the current lesson or lesson data.
  */
 function shouldLoadPendingTarget({ state }: { state: ContinueLearningState }) {
   return Boolean(state?.completed && !state.scopeDurablyCompleted);
@@ -59,9 +59,9 @@ async function listPendingTarget({
 }
 
 /**
- * When a course has no actionable next activity, the feed should still point
- * the learner to the next lesson shell if one exists, otherwise to the next
- * chapter shell. That keeps the card useful even while generation is pending.
+ * When a course has no actionable next lesson, the feed should still point
+ * the learner to the next lesson player if one exists, otherwise to the next
+ * chapter. That keeps the card useful even while generation is pending.
  */
 async function findPendingTarget({
   row,

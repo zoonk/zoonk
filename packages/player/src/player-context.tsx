@@ -1,6 +1,6 @@
 "use client";
 
-import { type ActivityKind } from "@zoonk/core/steps/contract/content";
+import { type LessonKind } from "@zoonk/core/steps/contract/content";
 import { createContext, useContext } from "react";
 import { type PlayerState } from "./player-reducer";
 import { type PlayerScreenModel } from "./player-screen";
@@ -21,11 +21,11 @@ export type PlayerNavigation = {
   lessonHref: PlayerRoute;
   levelHref?: PlayerRoute;
   loginHref?: PlayerRoute;
-  nextActivityHref: PlayerRoute | null;
+  nextLessonHref: PlayerRoute | null;
 };
 
 type ReviewMilestone = {
-  kind: "chapter" | "lesson";
+  kind: "chapter";
   nextHref: PlayerRoute | null;
   reviewHref: PlayerRoute;
 };
@@ -36,7 +36,7 @@ type CourseMilestone = {
   secondaryReviewHref: PlayerRoute;
 };
 
-export type PlayerMilestone = { kind: "activity" } | ReviewMilestone | CourseMilestone;
+export type PlayerMilestone = ReviewMilestone | CourseMilestone;
 
 export type PlayerRuntimeContextValue = {
   actions: PlayerActions;
@@ -44,23 +44,23 @@ export type PlayerRuntimeContextValue = {
   state: PlayerState;
 };
 
-type PlayerActivityMeta = {
+type PlayerLessonMeta = {
   chapterTitle: string;
   description: string;
-  kind: ActivityKind;
+  kind: LessonKind;
   lessonTitle: string;
   title: string | null;
 };
 
-type PlayerActivityMetaInput = Omit<PlayerActivityMeta, "description"> & {
-  activityDescription: string | null;
-  lessonDescription: string;
+type PlayerLessonMetaInput = Omit<PlayerLessonMeta, "description"> & {
+  fallbackDescription: string;
+  lessonDescription: string | null;
 };
 
 type PlayerConfigContextValue = {
-  activityMeta: PlayerActivityMetaInput;
+  lessonMeta: PlayerLessonMetaInput;
   escape: () => void;
-  milestone: PlayerMilestone;
+  milestone: PlayerMilestone | null;
   navigation: PlayerNavigation;
   next: () => void;
   viewer: PlayerViewer;
@@ -80,8 +80,8 @@ function usePlayerConfig(): PlayerConfigContextValue {
 }
 
 /**
- * Intro steps are the generated setup for practice-style activities.
- * When an activity has no explicit description, the first intro gives the info
+ * Intro steps are the generated setup for practice-style lessons.
+ * When a lesson has no explicit description, the first intro gives the info
  * popover a concrete premise instead of falling back to broad lesson copy.
  */
 function getFirstIntroText(state: PlayerState | null): string | null {
@@ -96,21 +96,21 @@ function getFirstIntroText(state: PlayerState | null): string | null {
 
 /**
  * Builds the single description string consumed by the header info popover.
- * The order keeps authored activity goals authoritative, then uses activity
+ * The order keeps authored lesson goals authoritative, then uses lesson
  * setup data, and only falls back to the broader lesson description when the
- * activity itself has no useful premise.
+ * lesson itself has no useful premise.
  */
-function getActivityMetaDescription({
-  activityDescription,
+function getLessonMetaDescription({
+  fallbackDescription,
   lessonDescription,
   state,
 }: {
-  activityDescription: string | null;
-  lessonDescription: string;
+  fallbackDescription: string;
+  lessonDescription: string | null;
   state: PlayerState | null;
 }) {
-  if (activityDescription) {
-    return activityDescription;
+  if (lessonDescription) {
+    return lessonDescription;
   }
 
   const introText = getFirstIntroText(state);
@@ -119,27 +119,26 @@ function getActivityMetaDescription({
     return introText;
   }
 
-  return lessonDescription;
+  return fallbackDescription;
 }
 
-export function usePlayerActivityMeta(): PlayerActivityMeta {
-  const { activityDescription, lessonDescription, ...activityMeta } =
-    usePlayerConfig().activityMeta;
+export function usePlayerLessonMeta(): PlayerLessonMeta {
+  const { fallbackDescription, lessonDescription, ...lessonMeta } = usePlayerConfig().lessonMeta;
 
   const runtimeContext = useContext(PlayerRuntimeContext);
   const state = runtimeContext?.state ?? null;
 
   return {
-    ...activityMeta,
-    description: getActivityMetaDescription({
-      activityDescription,
+    ...lessonMeta,
+    description: getLessonMetaDescription({
+      fallbackDescription,
       lessonDescription,
       state,
     }),
   };
 }
 
-export function usePlayerMilestone(): PlayerMilestone {
+export function usePlayerMilestone(): PlayerMilestone | null {
   return usePlayerConfig().milestone;
 }
 

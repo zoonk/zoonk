@@ -7,8 +7,8 @@ function getLocalDate(now: Date): string {
 
 export function buildCompletionInput(state: PlayerState, now: Date = new Date()): CompletionInput {
   return {
-    activityId: state.activityId,
     answers: state.selectedAnswers,
+    lessonId: state.lessonId,
     localDate: getLocalDate(now),
     startedAt: state.startedAt,
     stepTimings: state.stepTimings,

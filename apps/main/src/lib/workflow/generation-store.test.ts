@@ -162,7 +162,7 @@ describe(handleStepStreamMessage, () => {
     expect(state.status).toBe("completed");
   });
 
-  it("triggers streamEnded when entityId matches the completed activity", () => {
+  it("triggers streamEnded when entityId matches the completed lesson", () => {
     const actions: GenerationAction[] = [];
     handleStepStreamMessage({
       completionStep: "done",
@@ -186,7 +186,7 @@ describe(handleStepStreamMessage, () => {
     expect(state.status).toBe("streaming");
   });
 
-  it("triggers streamEnded when no entityId filter is set (non-activity workflows)", () => {
+  it("triggers streamEnded when no entityId filter is set (non-lesson workflows)", () => {
     const actions: GenerationAction[] = [];
     handleStepStreamMessage({
       completionStep: "done",
@@ -251,7 +251,7 @@ describe(handleStepStreamMessage, () => {
       expect(state.completedSteps).toEqual(["generateExplanationContent"]);
     });
 
-    it("tracks stepCompleted when viewer has no entityId (non-activity workflow)", () => {
+    it("tracks stepCompleted when viewer has no entityId (non-lesson workflow)", () => {
       const actions: GenerationAction[] = [];
 
       handleStepStreamMessage({
@@ -299,12 +299,12 @@ describe(handleStepStreamMessage, () => {
       handleStepStreamMessage({
         dispatch: (a) => actions.push(a),
         entityId: "235",
-        message: { status: "started", step: "getLessonActivities" },
+        message: { status: "started", step: "getLesson" },
       });
 
       const state = applyActions(actions, initialGenerationState());
 
-      expect(state.currentStep).toBe("getLessonActivities");
+      expect(state.currentStep).toBe("getLesson");
     });
   });
 

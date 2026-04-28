@@ -1,7 +1,7 @@
 "use client";
 
 import { type CompletionInput } from "@zoonk/core/player/contracts/completion-input-schema";
-import { type SerializedActivity } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { useCallback, useMemo, useReducer } from "react";
 import {
   PlayerConfigContext,
@@ -18,7 +18,7 @@ import { usePlayerKeyboard } from "./use-player-keyboard";
 import { UserNameProvider } from "./user-name-context";
 
 export function PlayerProvider({
-  activity,
+  lesson,
   chapterTitle,
   children,
   lessonDescription,
@@ -31,12 +31,12 @@ export function PlayerProvider({
   totalBrainPower,
   viewer,
 }: {
-  activity: SerializedActivity;
+  lesson: SerializedLesson;
   chapterTitle: string;
   children: React.ReactNode;
   lessonDescription: string;
   lessonTitle: string;
-  milestone: PlayerMilestone;
+  milestone: PlayerMilestone | null;
   navigation: PlayerNavigation;
   onComplete: (input: CompletionInput) => void;
   onEscape: () => void;
@@ -45,8 +45,8 @@ export function PlayerProvider({
   viewer: PlayerViewer;
 }) {
   const initInput: InitialStateInput = useMemo(
-    () => ({ activity, totalBrainPower }),
-    [activity, totalBrainPower],
+    () => ({ lesson, totalBrainPower }),
+    [lesson, totalBrainPower],
   );
   const [state, dispatch] = useReducer(playerReducer, initInput, createInitialState);
   const actions = usePlayerActions(state, dispatch, onComplete, viewer.isAuthenticated);
@@ -69,24 +69,24 @@ export function PlayerProvider({
 
   const configValue = useMemo(
     () => ({
-      activityMeta: {
-        activityDescription: activity.description,
-        chapterTitle,
-        kind: activity.kind,
-        lessonDescription,
-        lessonTitle,
-        title: activity.title,
-      },
       escape: onEscape,
+      lessonMeta: {
+        chapterTitle,
+        fallbackDescription: lessonDescription,
+        kind: lesson.kind,
+        lessonDescription: lesson.description,
+        lessonTitle,
+        title: lesson.title,
+      },
       milestone,
       navigation,
       next: handleNext,
       viewer,
     }),
     [
-      activity.description,
-      activity.kind,
-      activity.title,
+      lesson.description,
+      lesson.kind,
+      lesson.title,
       chapterTitle,
       handleNext,
       lessonDescription,

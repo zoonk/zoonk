@@ -55,7 +55,9 @@ describe(addLessonsStep, () => {
       id: randomUUID(),
     };
 
-    const lessons = [{ concepts: ["A"], description: "Desc", title: `Lesson ${randomUUID()}` }];
+    const lessons = [
+      { description: "Desc", kind: "explanation" as const, title: `Lesson ${randomUUID()}` },
+    ];
 
     await expect(addLessonsStep({ context: brokenContext, lessons })).rejects.toThrow();
 
@@ -81,26 +83,38 @@ describe(addLessonsStep, () => {
     };
 
     const lessons = [
-      { concepts: ["A", "B"], description: "First lesson", title: `Lesson 1 ${randomUUID()}` },
-      { concepts: ["C"], description: "Second lesson", title: `Lesson 2 ${randomUUID()}` },
+      {
+        description: "First lesson",
+        kind: "explanation" as const,
+        title: `Lesson 1 ${randomUUID()}`,
+      },
+      {
+        description: "Second lesson",
+        kind: "tutorial" as const,
+        title: `Lesson 2 ${randomUUID()}`,
+      },
     ];
 
     const result = await addLessonsStep({ context: chapterContext, lessons });
 
-    expect(result).toHaveLength(2);
+    expect(result).toHaveLength(5);
 
     const dbLessons = await prisma.lesson.findMany({
       orderBy: { position: "asc" },
       where: { chapterId: chapter.id },
     });
 
-    expect(dbLessons).toHaveLength(2);
+    expect(dbLessons).toHaveLength(5);
     expect(dbLessons[0]!.title).toBe(lessons[0]!.title);
     expect(dbLessons[0]!.description).toBe("First lesson");
     expect(dbLessons[0]!.generationStatus).toBe("pending");
     expect(dbLessons[0]!.isPublished).toBe(true);
     expect(dbLessons[0]!.position).toBe(0);
     expect(dbLessons[1]!.position).toBe(1);
+    expect(dbLessons[2]!.kind).toBe("tutorial");
+    expect(dbLessons[3]!.kind).toBe("quiz");
+    expect(dbLessons[4]!.kind).toBe("review");
+    expect(dbLessons[4]!.generationStatus).toBe("completed");
 
     const events = getStreamedEvents(writeMock);
 

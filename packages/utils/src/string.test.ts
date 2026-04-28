@@ -2,7 +2,6 @@ import { describe, expect, test } from "vitest";
 import {
   deduplicateNormalizedTexts,
   deduplicateSlugs,
-  emptyToNull,
   ensureLocaleSuffix,
   extractUniqueSentenceWords,
   normalizePunctuation,
@@ -73,28 +72,6 @@ describe(normalizeString, () => {
 
   test("handles string with only spaces", () => {
     expect(normalizeString("   ")).toBe("");
-  });
-});
-
-describe(emptyToNull, () => {
-  test("converts empty string to null", () => {
-    expect(emptyToNull("")).toBeNull();
-  });
-
-  test("converts whitespace-only string to null", () => {
-    expect(emptyToNull("  ")).toBeNull();
-  });
-
-  test("converts null to null", () => {
-    expect(emptyToNull(null)).toBeNull();
-  });
-
-  test("converts undefined to null", () => {
-    expect(emptyToNull()).toBeNull();
-  });
-
-  test("returns non-empty string as-is", () => {
-    expect(emptyToNull("romaji")).toBe("romaji");
   });
 });
 

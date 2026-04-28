@@ -27,10 +27,10 @@ async function getHeaderLabel(item: ContinueLearningItem, kindLabels: Map<string
     return t("Continue");
   }
 
-  const defaultLabel = t("Activity");
-  const activityLabel = item.activity.title ?? kindLabels.get(item.activity.kind) ?? defaultLabel;
+  const defaultLabel = t("Lesson");
+  const lessonLabel = item.lesson.title ?? kindLabels.get(item.lesson.kind) ?? defaultLabel;
 
-  return t("Next: {activity}", { activity: activityLabel });
+  return t("Next: {lesson}", { lesson: lessonLabel });
 }
 
 function getHrefs(item: ContinueLearningItem) {
@@ -50,7 +50,7 @@ function getHrefs(item: ContinueLearningItem) {
   if (item.status === "completed") {
     return {
       courseHref,
-      headerHref: `${lessonHref}/a/${item.activity.position}` as const,
+      headerHref: lessonHref,
       lessonHref,
       prefetch: true,
     };

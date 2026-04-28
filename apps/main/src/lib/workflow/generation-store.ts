@@ -91,7 +91,7 @@ export function generationReducer<TStep extends string>(
 /**
  * Checks if an SSE event is relevant to the entity the viewer is tracking.
  * Events without entityId are shared/batch events that apply to all entities.
- * When the viewer has no entityId (non-activity workflows), everything matches.
+ * When the viewer has no entityId (non-lesson workflows), everything matches.
  */
 function isEventRelevantToViewer(messageEntityId?: string, viewerEntityId?: string): boolean {
   if (messageEntityId === undefined) {

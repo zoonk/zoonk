@@ -14,17 +14,46 @@ import {
   SparklesIcon,
 } from "lucide-react";
 
-export type PhaseName =
-  | "gettingStarted"
-  | "figuringOutApproach"
-  | "settingUpActivities"
-  | "finishing";
+export type PhaseName = "gettingStarted" | "creatingContent" | "savingContent" | "finishing";
 
 const PHASE_STEPS = {
-  figuringOutApproach: ["determineLessonKind", "updateLessonKind", "removeNonLanguageLesson"],
+  creatingContent: [
+    "generateExplanationContent",
+    "generateImagePrompts",
+    "generateStepImages",
+    "generateTutorialContent",
+    "generatePracticeContent",
+    "generateQuizContent",
+    "generateQuizImages",
+    "generateVocabularyContent",
+    "generateVocabularyDistractors",
+    "generateVocabularyPronunciation",
+    "generateVocabularyAudio",
+    "generateVocabularyRomanization",
+    "generateReadingContent",
+    "generateReadingAudio",
+    "generateReadingRomanization",
+    "generateSentenceDistractors",
+    "generateSentenceWordMetadata",
+    "generateSentenceWordAudio",
+    "generateSentenceWordPronunciation",
+    "generateGrammarContent",
+    "generateGrammarUserContent",
+    "generateGrammarRomanization",
+  ],
   finishing: ["setLessonAsCompleted"],
   gettingStarted: ["getLesson", "setLessonAsRunning"],
-  settingUpActivities: ["generateCoreActivities", "generateCustomActivities", "addActivities"],
+  savingContent: [
+    "saveExplanationLesson",
+    "saveTutorialLesson",
+    "savePracticeLesson",
+    "saveQuizLesson",
+    "saveVocabularyLesson",
+    "saveTranslationLesson",
+    "saveReadingLesson",
+    "saveListeningLesson",
+    "saveGrammarLesson",
+  ],
 } as const satisfies Record<PhaseName, readonly LessonStepName[]>;
 
 // Compile-time check: typecheck fails with the exact missing step names.
@@ -34,23 +63,23 @@ type _ValidateLesson = AssertAllCovered<
 
 export const PHASE_ORDER: PhaseName[] = [
   "gettingStarted",
-  "figuringOutApproach",
-  "settingUpActivities",
+  "creatingContent",
+  "savingContent",
   "finishing",
 ];
 
 export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
-  figuringOutApproach: SearchIcon,
+  creatingContent: SparklesIcon,
   finishing: CheckCircleIcon,
   gettingStarted: BookOpenIcon,
-  settingUpActivities: SparklesIcon,
+  savingContent: SearchIcon,
 };
 
 const PHASE_WEIGHTS: Record<PhaseName, number> = {
-  figuringOutApproach: 20,
+  creatingContent: 80,
   finishing: 5,
   gettingStarted: 5,
-  settingUpActivities: 70,
+  savingContent: 10,
 };
 
 export function getPhaseStatus(

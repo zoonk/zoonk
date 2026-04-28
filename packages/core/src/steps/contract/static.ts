@@ -3,7 +3,7 @@ import { stepImageSchema } from "./image";
 
 /**
  * Static steps are the readable teaching surface for explanation and custom
- * activities. They can optionally carry a generated illustration so the player
+ * lessons. They can optionally carry a generated illustration so the player
  * can render text and image together inside one step instead of splitting them
  * across separate rows.
  */

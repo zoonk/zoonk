@@ -74,48 +74,23 @@ vi.mock("@zoonk/ai/tasks/chapters/lessons", () => ({
   generateChapterLessons: vi.fn().mockResolvedValue({
     data: {
       lessons: [
-        { description: "Lesson 1 description", title: "Lesson 1" },
-        { description: "Lesson 2 description", title: "Lesson 2" },
+        { description: "Lesson 1 description", kind: "explanation", title: "Lesson 1" },
+        { description: "Lesson 2 description", kind: "explanation", title: "Lesson 2" },
       ],
     },
   }),
 }));
 
-vi.mock("@/workflows/activity-generation/activity-generation-workflow", () => ({
-  activityGenerationWorkflow: vi.fn().mockResolvedValue({}),
+vi.mock("@/workflows/lesson-generation/lesson-generation-workflow", () => ({
+  lessonGenerationWorkflow: vi.fn().mockResolvedValue("ready"),
 }));
 
 vi.mock("@zoonk/ai/tasks/chapters/language-lessons", () => ({
   generateLanguageChapterLessons: vi.fn().mockResolvedValue({
     data: {
       lessons: [
-        { description: "Lang Lesson 1 description", title: "Lang Lesson 1" },
-        { description: "Lang Lesson 2 description", title: "Lang Lesson 2" },
-      ],
-    },
-  }),
-}));
-
-vi.mock("@zoonk/ai/tasks/lessons/kind", () => ({
-  generateLessonKind: vi.fn().mockResolvedValue({
-    data: { kind: "core" },
-  }),
-}));
-
-vi.mock("@zoonk/ai/tasks/lessons/custom-activities", () => ({
-  generateLessonCustomActivities: vi.fn().mockResolvedValue({
-    data: { activities: [] },
-  }),
-}));
-
-vi.mock("@zoonk/ai/tasks/lessons/core-activities", () => ({
-  generateLessonCoreActivities: vi.fn().mockResolvedValue({
-    data: {
-      activities: [
-        {
-          goal: "spot the repeated pattern before turning it into a reusable rule",
-          title: "Reading the pattern",
-        },
+        { description: "Lang Lesson 1 description", kind: "vocabulary", title: "Lang Lesson 1" },
+        { description: "Lang Lesson 2 description", kind: "vocabulary", title: "Lang Lesson 2" },
       ],
     },
   }),
@@ -283,7 +258,7 @@ describe(courseGenerationWorkflow, () => {
 
       const firstChapter = course?.chapters[0];
       expect(firstChapter?.generationStatus).toBe("completed");
-      expect(firstChapter?.lessons).toHaveLength(2);
+      expect(firstChapter?.lessons).toHaveLength(5);
 
       const secondChapter = course?.chapters[1];
       expect(secondChapter?.generationStatus).toBe("pending");

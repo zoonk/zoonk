@@ -21,10 +21,10 @@ export function useGenerationPhases(
   const t = useExtracted();
 
   const labels: Record<PhaseName, string> = {
-    figuringOutApproach: t("Figuring out the best approach"),
+    creatingContent: t("Creating lesson content"),
     finishing: t("Almost done"),
     gettingStarted: t("Getting started"),
-    settingUpActivities: t("Setting up activities"),
+    savingContent: t("Saving lesson"),
   };
 
   const rawPhases: {
@@ -49,16 +49,13 @@ export function useGenerationPhases(
     .map((phase) => phase.name);
 
   const thinkingGenerators: Record<PhaseName, ThinkingMessageGenerator> = {
-    figuringOutApproach: (index) =>
-      cycleMessage(
-        [t("Thinking about how to teach this..."), t("Choosing the right approach...")],
-        index,
-      ),
+    creatingContent: (index: number) =>
+      cycleMessage([t("Writing the lesson..."), t("Building the practice flow...")], index),
     finishing: (index) => cycleMessage([t("Wrapping up..."), t("Almost there...")], index),
     gettingStarted: (index) =>
       cycleMessage([t("Getting everything ready..."), t("Setting things up...")], index),
-    settingUpActivities: (index) =>
-      cycleMessage([t("Designing practice exercises..."), t("Making it interactive...")], index),
+    savingContent: (index: number) =>
+      cycleMessage([t("Saving your lesson..."), t("Preparing the player...")], index),
   };
 
   return { activePhaseNames, phases, progress, targetProgress, thinkingGenerators };

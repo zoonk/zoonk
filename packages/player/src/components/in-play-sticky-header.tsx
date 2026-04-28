@@ -1,7 +1,7 @@
 "use client";
 
-import { usePlayerActivityMeta, usePlayerNavigation } from "../player-context";
-import { useActivityKindLabel } from "../use-activity-kind-label";
+import { usePlayerLessonMeta, usePlayerNavigation } from "../player-context";
+import { useLessonKindLabel } from "../use-lesson-kind-label";
 import { LessonInfoPopover } from "./lesson-info-popover";
 import { PlayerCloseLink, PlayerHeader } from "./player-header";
 import { PlayerProgressBar } from "./player-progress-bar";
@@ -13,9 +13,9 @@ export function InPlayStickyHeader({
   centerContent?: React.ReactNode;
   progressValue: number;
 }) {
-  const { kind, title } = usePlayerActivityMeta();
+  const { kind, title } = usePlayerLessonMeta();
   const { lessonHref } = usePlayerNavigation();
-  const kindLabel = useActivityKindLabel(kind);
+  const kindLabel = useLessonKindLabel(kind);
   const displayTitle = title ?? kindLabel;
 
   return (

@@ -1,16 +1,26 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { generateLanguageChapterLessons } from "@zoonk/ai/tasks/chapters/language-lessons";
+import {
+  type LanguageChapterLesson,
+  generateLanguageChapterLessons,
+} from "@zoonk/ai/tasks/chapters/language-lessons";
 import { type ChapterLesson, generateChapterLessons } from "@zoonk/ai/tasks/chapters/lessons";
 import { type ChapterStepName } from "@zoonk/core/workflows/steps";
 import { safeAsync } from "@zoonk/utils/error";
+import { getLanguageCourseTargetLanguage } from "./_utils/language-course";
 import { type ChapterContext } from "./get-chapter-step";
 
-function generateLessons(context: ChapterContext) {
-  if (context.course.targetLanguage) {
+export type GeneratedChapterLesson = ChapterLesson | LanguageChapterLesson;
+
+type GeneratedLessonsResponse = { data: { lessons: GeneratedChapterLesson[] } };
+
+async function generateLessons(context: ChapterContext): Promise<GeneratedLessonsResponse> {
+  const targetLanguage = await getLanguageCourseTargetLanguage({ course: context.course });
+
+  if (targetLanguage) {
     return generateLanguageChapterLessons({
       chapterDescription: context.description,
       chapterTitle: context.title,
-      targetLanguage: context.course.targetLanguage,
+      targetLanguage,
       userLanguage: context.language,
     });
   }
@@ -24,7 +34,9 @@ function generateLessons(context: ChapterContext) {
   });
 }
 
-export async function generateLessonsStep(context: ChapterContext): Promise<ChapterLesson[]> {
+export async function generateLessonsStep(
+  context: ChapterContext,
+): Promise<GeneratedChapterLesson[]> {
   "use step";
 
   await using stream = createStepStream<ChapterStepName>();

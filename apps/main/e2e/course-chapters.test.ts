@@ -8,15 +8,16 @@ import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
 
-const uniqueId = randomUUID();
-
 let courseUrl: string;
 let ptCourseUrl: string;
+let chapterSlugs: { first: string };
 let chapterNames: { first: string; second: string; third: string };
 let ptChapterNames: { first: string; second: string };
+let unpublishedChapterName: string;
 
 test.beforeAll(async () => {
   const org = await getAiOrganization();
+  const uniqueId = randomUUID();
 
   const enCourse = await courseFixture({
     isPublished: true,
@@ -32,6 +33,8 @@ test.beforeAll(async () => {
     second: `Beta Chapter ${uniqueId}`,
     third: `Gamma Chapter ${uniqueId}`,
   };
+  chapterSlugs = { first: `e2e-alpha-${uniqueId}` };
+  unpublishedChapterName = `Unpublished Chapter ${uniqueId}`;
 
   // Create first chapter separately so we can add a lesson (prevents redirect to /generate)
   const firstChapter = await chapterFixture({
@@ -40,7 +43,7 @@ test.beforeAll(async () => {
     normalizedTitle: normalizeString(chapterNames.first),
     organizationId: org.id,
     position: 0,
-    slug: `e2e-alpha-${uniqueId}`,
+    slug: chapterSlugs.first,
     title: chapterNames.first,
   });
 
@@ -74,11 +77,11 @@ test.beforeAll(async () => {
     chapterFixture({
       courseId: enCourse.id,
       isPublished: false,
-      normalizedTitle: normalizeString(`Unpublished Chapter ${uniqueId}`),
+      normalizedTitle: normalizeString(unpublishedChapterName),
       organizationId: org.id,
       position: 3,
       slug: `e2e-unpublished-${uniqueId}`,
-      title: `Unpublished Chapter ${uniqueId}`,
+      title: unpublishedChapterName,
     }),
   ]);
 
@@ -145,7 +148,7 @@ test.describe("Course Chapters List", () => {
     await expect(chapterLink).toBeVisible();
     await chapterLink.click();
 
-    await expect(page).toHaveURL(new RegExp(`${courseUrl}/ch/e2e-alpha-${uniqueId}`));
+    await expect(page).toHaveURL(new RegExp(`${courseUrl}/ch/${chapterSlugs.first}`));
 
     await expect(page.getByRole("heading", { level: 1, name: chapterNames.first })).toBeVisible();
   });
@@ -154,9 +157,7 @@ test.describe("Course Chapters List", () => {
     await page.goto(courseUrl);
 
     await expect(page.getByRole("link", { name: chapterNames.first })).toBeVisible();
-    await expect(
-      page.getByRole("link", { name: `Unpublished Chapter ${uniqueId}` }),
-    ).not.toBeVisible();
+    await expect(page.getByRole("link", { name: unpublishedChapterName })).not.toBeVisible();
     await expect(page.getByText("04", { exact: true })).not.toBeVisible();
   });
 });

@@ -1,13 +1,6 @@
 import { isJsonObject } from "./json";
 
 /**
- * Extracts a single Promise.allSettled result with a fallback for rejected promises.
- */
-export function settled<T>(result: PromiseSettledResult<T>, fallback: T): T {
-  return result.status === "fulfilled" ? result.value : fallback;
-}
-
-/**
  * Extracts every failure carried by Promise.allSettled results. This keeps the
  * real thrown reasons for rejected promises and also supports older helpers
  * that resolve to `{ data, error }` instead of throwing.
@@ -97,11 +90,4 @@ function toError(value: unknown): Error {
   }
 
   return new Error(String(value), { cause: value });
-}
-
-/**
- * Extracts the fulfilled values from a Promise.allSettled array, dropping rejections.
- */
-export function settledValues<T>(results: PromiseSettledResult<T>[]): T[] {
-  return results.flatMap((result) => (result.status === "fulfilled" ? [result.value] : []));
 }

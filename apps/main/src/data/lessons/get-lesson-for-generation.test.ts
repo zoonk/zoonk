@@ -31,7 +31,7 @@ describe(getLessonForGeneration, () => {
 
     expect(result).toMatchObject({
       _count: {
-        activities: 0,
+        steps: 0,
       },
       chapter: {
         course: {

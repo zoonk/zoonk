@@ -3,9 +3,8 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
 /**
- * Lesson completion is durable once earned, even if the lesson's current
- * activities change later. Read paths keep this lookup separate so they can
- * merge durable completion with current activity counts as needed.
+ * Lesson completion lives on lesson progress and stays durable for read paths
+ * that need to merge current curriculum state with completed lessons.
  */
 export async function listDurableLessonCompletionIds({
   lessonIds,
@@ -19,8 +18,9 @@ export async function listDurableLessonCompletionIds({
   }
 
   const { data } = await safeAsync(() =>
-    prisma.lessonCompletion.findMany({
+    prisma.lessonProgress.findMany({
       where: {
+        completedAt: { not: null },
         lessonId: { in: lessonIds },
         userId,
       },

@@ -21,9 +21,6 @@ if (process.env.NODE_ENV !== "production") {
 /** @public */
 export type {
   ContentReview,
-  Activity,
-  ActivityKind,
-  ActivityProgress,
   Chapter,
   ChapterCompletion,
   Course,
@@ -34,7 +31,7 @@ export type {
   CourseUser,
   GenerationStatus,
   Lesson,
-  LessonCompletion,
+  LessonProgress,
   LessonKind,
   LessonSentence,
   LessonWord,
@@ -47,7 +44,6 @@ export type {
   WordPronunciation,
 } from "./generated/prisma/client";
 
-export type { ActivityCreateManyInput } from "./generated/prisma/models/Activity";
 export type { ChapterCreateManyInput } from "./generated/prisma/models/Chapter";
 export type { CourseGetPayload } from "./generated/prisma/models/Course";
 export type { LessonCreateManyInput } from "./generated/prisma/models/Lesson";
@@ -61,11 +57,9 @@ export type Sql = Prisma.Sql;
 export type TransactionClient = Parameters<Parameters<typeof prisma.$transaction>[0]>[0];
 
 export {
-  getAiGenerationActivityWhere,
   getAiGenerationChapterWhere,
   getAiGenerationCourseWhere,
   getAiGenerationLessonWhere,
-  getPublishedActivityWhere,
   getPublishedChapterWhere,
   getPublishedCourseWhere,
   getPublishedLessonWhere,

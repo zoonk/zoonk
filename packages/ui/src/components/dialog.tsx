@@ -10,7 +10,7 @@ import type * as React from "react";
 
 /**
  * Passes the `open` state from Dialog to DialogPortal so it can hide the portal
- * on Activity cleanup (preventing flash on back-navigation) and only remove
+ * during route-state cleanup (preventing flash on back-navigation) and only remove
  * the hidden class on genuine close-to-open transitions.
  *
  * Workaround for: https://github.com/vercel/next.js/issues/86577

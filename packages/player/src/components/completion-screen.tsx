@@ -4,7 +4,12 @@ import { type CompletionResult } from "@zoonk/core/player/contracts/completion-i
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleCheck } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type PlayerRoute, usePlayerMilestone, usePlayerViewer } from "../player-context";
+import {
+  type PlayerMilestone,
+  type PlayerRoute,
+  usePlayerMilestone,
+  usePlayerViewer,
+} from "../player-context";
 import { AuthBranch } from "./completion-auth-branch";
 import { PlayerSupportingText } from "./player-supporting-text";
 import { PlayerContentFrame } from "./step-layouts";
@@ -46,20 +51,15 @@ function CompletionSignal() {
   );
 }
 
-function MilestoneHeading() {
+function MilestoneHeading({ milestone }: { milestone: PlayerMilestone }) {
   const t = useExtracted();
-  const milestone = usePlayerMilestone();
 
   function getHeading() {
     if (milestone.kind === "course") {
       return t("Course Complete");
     }
 
-    if (milestone.kind === "chapter") {
-      return t("Chapter Complete");
-    }
-
-    return t("Lesson Complete");
+    return t("Chapter Complete");
   }
 
   return <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{getHeading()}</h2>;
@@ -68,28 +68,28 @@ function MilestoneHeading() {
 export function CompletionScreenContent({
   completionResult,
   lessonHref,
-  nextActivityHref,
+  nextLessonHref,
   onRestart,
 }: {
   completionResult: CompletionResult | null;
   lessonHref: PlayerRoute;
-  nextActivityHref: PlayerRoute | null;
+  nextLessonHref: PlayerRoute | null;
   onRestart: () => void;
 }) {
   const t = useExtracted();
   const milestone = usePlayerMilestone();
   const { completionFooter } = usePlayerViewer();
 
-  if (milestone.kind !== "activity") {
+  if (milestone) {
     return (
       <CompletionScreen className="min-h-[60vh] justify-center gap-10 sm:gap-12">
-        <MilestoneHeading />
+        <MilestoneHeading milestone={milestone} />
 
         <div className="flex w-full flex-col gap-3">
           <AuthBranch
             completionResult={completionResult}
             lessonHref={lessonHref}
-            nextActivityHref={nextActivityHref}
+            nextLessonHref={nextLessonHref}
             onRestart={onRestart}
             showRewards={false}
           />
@@ -118,7 +118,7 @@ export function CompletionScreenContent({
       <AuthBranch
         completionResult={completionResult}
         lessonHref={lessonHref}
-        nextActivityHref={nextActivityHref}
+        nextLessonHref={nextLessonHref}
         onRestart={onRestart}
       />
 

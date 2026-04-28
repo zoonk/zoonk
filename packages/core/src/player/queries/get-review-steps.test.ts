@@ -1,4 +1,3 @@
-import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -40,8 +39,8 @@ describe(getReviewSteps, () => {
       organizationId: org.id,
     });
 
-    // Create a source activity with 12 interactive steps
-    const sourceActivity = await activityFixture({
+    // Create a source lesson with 12 interactive steps
+    const sourceLesson = await lessonFixture({
       generationStatus: "completed",
       isPublished: true,
       kind: "explanation",
@@ -53,10 +52,10 @@ describe(getReviewSteps, () => {
 
     const stepPromises = Array.from({ length: 12 }, (_, i) =>
       stepFixture({
-        activityId: sourceActivity.id,
         content: { kind: "core", options: [], question: `Q${i}`, text: `Step ${i}` },
         isPublished: true,
         kind: "multipleChoice",
+        lessonId: sourceLesson.id,
         position: i,
       }),
     );
@@ -64,10 +63,10 @@ describe(getReviewSteps, () => {
     // Also create an unpublished step (should be excluded)
     stepPromises.push(
       stepFixture({
-        activityId: sourceActivity.id,
         content: { kind: "core", options: [], question: "Unpub Q", text: "Unpub step" },
         isPublished: false,
         kind: "multipleChoice",
+        lessonId: sourceLesson.id,
         position: 13,
       }),
     );
@@ -321,10 +320,10 @@ describe(getReviewSteps, () => {
    * step will always appear in the result.
    */
 
-  test("excludes review activity steps", async () => {
+  test("excludes review lesson steps", async () => {
     const isolated = await createLessonWithSteps(org.id, 3);
 
-    const reviewActivity = await activityFixture({
+    const reviewLesson = await lessonFixture({
       generationStatus: "completed",
       isPublished: true,
       kind: "review",
@@ -334,10 +333,10 @@ describe(getReviewSteps, () => {
     });
 
     const reviewStep = await stepFixture({
-      activityId: reviewActivity.id,
       content: { kind: "core", options: [], question: "Review Q" },
       isPublished: true,
       kind: "multipleChoice",
+      lessonId: reviewLesson.id,
       position: 0,
     });
 
@@ -356,10 +355,10 @@ describe(getReviewSteps, () => {
     const isolated = await createLessonWithSteps(org.id, 3);
 
     await stepFixture({
-      activityId: isolated.activity.id,
       content: { text: "Static content", title: "Static" },
       isPublished: true,
       kind: "static",
+      lessonId: isolated.lesson.id,
       position: 10,
     });
 
@@ -638,14 +637,14 @@ describe(getReviewValidationSteps, () => {
       ],
     };
 
-    const [quizActivity, reviewActivity] = await Promise.all([
-      activityFixture({
+    const [quizLesson, reviewLesson] = await Promise.all([
+      lessonFixture({
         isPublished: true,
         kind: "quiz",
         lessonId: lesson.id,
         organizationId: org.id,
       }),
-      activityFixture({
+      lessonFixture({
         isPublished: true,
         kind: "review",
         lessonId: lesson.id,
@@ -655,27 +654,27 @@ describe(getReviewValidationSteps, () => {
 
     [quizStep, reviewStep, staticStep] = await Promise.all([
       stepFixture({
-        activityId: quizActivity.id,
         content: mcContent,
         isPublished: true,
         kind: "multipleChoice",
+        lessonId: quizLesson.id,
       }),
       stepFixture({
-        activityId: reviewActivity.id,
         content: mcContent,
         isPublished: true,
         kind: "multipleChoice",
+        lessonId: reviewLesson.id,
       }),
       stepFixture({
-        activityId: quizActivity.id,
         content: mcContent,
         isPublished: true,
         kind: "static",
+        lessonId: quizLesson.id,
       }),
     ]);
   });
 
-  test("excludes steps from review activities", async () => {
+  test("excludes steps from review lessons", async () => {
     const steps = await getReviewValidationSteps({
       lessonId: lesson.id,
       stepIds: [quizStep.id, reviewStep.id],
@@ -711,7 +710,7 @@ describe(getReviewValidationSteps, () => {
       userLanguage: "en",
     });
 
-    const readingActivity = await activityFixture({
+    const readingLesson = await lessonFixture({
       isPublished: true,
       kind: "reading",
       lessonId: lesson.id,
@@ -719,10 +718,10 @@ describe(getReviewValidationSteps, () => {
     });
 
     const readingStep = await stepFixture({
-      activityId: readingActivity.id,
       content: {},
       isPublished: true,
       kind: "reading",
+      lessonId: readingLesson.id,
       sentenceId: sentence.id,
     });
 
@@ -756,17 +755,10 @@ async function createLessonWithSteps(orgId: string, stepCount: number) {
 
   const lesson = await lessonFixture({
     chapterId: chapter.id,
-    isPublished: true,
-    language: "en",
-    organizationId: orgId,
-  });
-
-  const activity = await activityFixture({
     generationStatus: "completed",
     isPublished: true,
     kind: "explanation",
     language: "en",
-    lessonId: lesson.id,
     organizationId: orgId,
     position: 0,
   });
@@ -774,14 +766,14 @@ async function createLessonWithSteps(orgId: string, stepCount: number) {
   const steps = await Promise.all(
     Array.from({ length: stepCount }, (_, i) =>
       stepFixture({
-        activityId: activity.id,
         content: { kind: "core", options: [], question: `Q${i}`, text: `Step ${i}` },
         isPublished: true,
         kind: "multipleChoice",
+        lessonId: lesson.id,
         position: i,
       }),
     ),
   );
 
-  return { activity, lesson, steps };
+  return { lesson, steps };
 }

@@ -1,21 +1,16 @@
 import { randomUUID } from "node:crypto";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { expect, test } from "./fixtures";
 
 /**
- * Create a course with 3 chapters, each having multiple lessons with activities.
- * This allows testing partial completion (fraction indicators).
- *
- * Structure per chapter:
- * - Chapter 1: 3 lessons × 1 activity each
- * - Chapter 2: 2 lessons × 1 activity each
- * - Chapter 3: 2 lessons × 1 activity each
+ * Course pages aggregate progress from the direct lessons inside each chapter.
+ * This fixture keeps the hierarchy the same as the UI: course, chapters, and
+ * direct lesson rows only.
  */
-async function createTestCourseWithChapters(userId: string) {
+async function createCourseProgressScenario() {
   const org = await getAiOrganization();
   const uniqueId = randomUUID().slice(0, 8);
 
@@ -56,123 +51,67 @@ async function createTestCourseWithChapters(userId: string) {
     }),
   ]);
 
-  // Chapter 1: 3 lessons
-  const [ch1Lesson1, ch1Lesson2, ch1Lesson3] = await Promise.all([
-    lessonFixture({
-      chapterId: chapter1.id,
-      isPublished: true,
-      organizationId: org.id,
-      position: 0,
-    }),
-    lessonFixture({
-      chapterId: chapter1.id,
-      isPublished: true,
-      organizationId: org.id,
-      position: 1,
-    }),
-    lessonFixture({
-      chapterId: chapter1.id,
-      isPublished: true,
-      organizationId: org.id,
-      position: 2,
-    }),
-  ]);
-
-  // Chapter 2: 2 lessons
-  const [ch2Lesson1, ch2Lesson2] = await Promise.all([
-    lessonFixture({
-      chapterId: chapter2.id,
-      isPublished: true,
-      organizationId: org.id,
-      position: 0,
-    }),
-    lessonFixture({
-      chapterId: chapter2.id,
-      isPublished: true,
-      organizationId: org.id,
-      position: 1,
-    }),
-  ]);
-
-  // Chapter 3: 2 lessons
-  const [ch3Lesson1, ch3Lesson2] = await Promise.all([
-    lessonFixture({
-      chapterId: chapter3.id,
-      isPublished: true,
-      organizationId: org.id,
-      position: 0,
-    }),
-    lessonFixture({
-      chapterId: chapter3.id,
-      isPublished: true,
-      organizationId: org.id,
-      position: 1,
-    }),
-  ]);
-
-  // 1 activity per lesson
-  const [ch1Act1, ch1Act2, ch1Act3, ch2Act1, ch2Act2, ch3Act1, ch3Act2] = await Promise.all([
-    activityFixture({
-      isPublished: true,
-      lessonId: ch1Lesson1.id,
-      organizationId: org.id,
-      position: 0,
-    }),
-    activityFixture({
-      isPublished: true,
-      lessonId: ch1Lesson2.id,
-      organizationId: org.id,
-      position: 0,
-    }),
-    activityFixture({
-      isPublished: true,
-      lessonId: ch1Lesson3.id,
-      organizationId: org.id,
-      position: 0,
-    }),
-    activityFixture({
-      isPublished: true,
-      lessonId: ch2Lesson1.id,
-      organizationId: org.id,
-      position: 0,
-    }),
-    activityFixture({
-      isPublished: true,
-      lessonId: ch2Lesson2.id,
-      organizationId: org.id,
-      position: 0,
-    }),
-    activityFixture({
-      isPublished: true,
-      lessonId: ch3Lesson1.id,
-      organizationId: org.id,
-      position: 0,
-    }),
-    activityFixture({
-      isPublished: true,
-      lessonId: ch3Lesson2.id,
-      organizationId: org.id,
-      position: 0,
-    }),
-  ]);
+  const [ch1Lesson1, ch1Lesson2, ch1Lesson3, ch2Lesson1, ch2Lesson2, ch3Lesson1, ch3Lesson2] =
+    await Promise.all([
+      lessonFixture({
+        chapterId: chapter1.id,
+        isPublished: true,
+        organizationId: org.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter1.id,
+        isPublished: true,
+        organizationId: org.id,
+        position: 1,
+      }),
+      lessonFixture({
+        chapterId: chapter1.id,
+        isPublished: true,
+        organizationId: org.id,
+        position: 2,
+      }),
+      lessonFixture({
+        chapterId: chapter2.id,
+        isPublished: true,
+        organizationId: org.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter2.id,
+        isPublished: true,
+        organizationId: org.id,
+        position: 1,
+      }),
+      lessonFixture({
+        chapterId: chapter3.id,
+        isPublished: true,
+        organizationId: org.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter3.id,
+        isPublished: true,
+        organizationId: org.id,
+        position: 1,
+      }),
+    ]);
 
   return {
-    activities: { ch1Act1, ch1Act2, ch1Act3, ch2Act1, ch2Act2, ch3Act1, ch3Act2 },
     chapter1,
     chapter2,
     chapter3,
     course,
-    userId,
+    lessons: { ch1Lesson1, ch1Lesson2, ch1Lesson3, ch2Lesson1, ch2Lesson2, ch3Lesson1, ch3Lesson2 },
   };
 }
 
 /**
- * This creates the exact regression case from the catalog page:
- * one lesson is fully completed, while another published lesson still has no
- * activities yet. The course page should keep the chapter in progress and show
- * a fraction instead of a completed checkmark.
+ * This creates a chapter with one completed lesson and one incomplete lesson.
+ * The chapter should remain in progress because chapter completion is based on
+ * every published lesson in the chapter, not only the latest progress row.
  */
-async function createCourseWithChapterWaitingOnAnotherLesson(userId: string) {
+async function createCourseWithIncompleteChapter() {
   const org = await getAiOrganization();
   const uniqueId = randomUUID().slice(0, 8);
 
@@ -210,22 +149,29 @@ async function createCourseWithChapterWaitingOnAnotherLesson(userId: string) {
     }),
   ]);
 
-  const activity = await activityFixture({
-    isPublished: true,
-    lessonId: completedLesson.id,
-    organizationId: org.id,
-    position: 0,
-  });
+  return { chapter, completedLesson, course };
+}
 
-  return { activity, chapter, course, userId };
+/**
+ * Direct lesson completion is the only progress signal these catalog tests
+ * need. This helper keeps the setup consistent across aggregate scenarios.
+ */
+async function completeLessons({ lessons, userId }: { lessons: { id: string }[]; userId: string }) {
+  await Promise.all(
+    lessons.map((lesson) =>
+      lessonProgressFixture({
+        completedAt: new Date(),
+        durationSeconds: 60,
+        lessonId: lesson.id,
+        userId,
+      }),
+    ),
+  );
 }
 
 test.describe("Course Progress Indicators", () => {
-  test("shows no indicators when user has no progress", async ({
-    authenticatedPage,
-    withProgressUser,
-  }) => {
-    const { course } = await createTestCourseWithChapters(withProgressUser.id);
+  test("shows no indicators when user has no progress", async ({ authenticatedPage }) => {
+    const { course } = await createCourseProgressScenario();
 
     await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
 
@@ -241,53 +187,9 @@ test.describe("Course Progress Indicators", () => {
     authenticatedPage,
     withProgressUser,
   }) => {
-    const { activities, course } = await createTestCourseWithChapters(withProgressUser.id);
+    const { lessons, course } = await createCourseProgressScenario();
 
-    // Complete all activities across all chapters
-    await Promise.all([
-      activityProgressFixture({
-        activityId: activities.ch1Act1.id,
-        completedAt: new Date(),
-        durationSeconds: 60,
-        userId: withProgressUser.id,
-      }),
-      activityProgressFixture({
-        activityId: activities.ch1Act2.id,
-        completedAt: new Date(),
-        durationSeconds: 60,
-        userId: withProgressUser.id,
-      }),
-      activityProgressFixture({
-        activityId: activities.ch1Act3.id,
-        completedAt: new Date(),
-        durationSeconds: 60,
-        userId: withProgressUser.id,
-      }),
-      activityProgressFixture({
-        activityId: activities.ch2Act1.id,
-        completedAt: new Date(),
-        durationSeconds: 60,
-        userId: withProgressUser.id,
-      }),
-      activityProgressFixture({
-        activityId: activities.ch2Act2.id,
-        completedAt: new Date(),
-        durationSeconds: 60,
-        userId: withProgressUser.id,
-      }),
-      activityProgressFixture({
-        activityId: activities.ch3Act1.id,
-        completedAt: new Date(),
-        durationSeconds: 60,
-        userId: withProgressUser.id,
-      }),
-      activityProgressFixture({
-        activityId: activities.ch3Act2.id,
-        completedAt: new Date(),
-        durationSeconds: 60,
-        userId: withProgressUser.id,
-      }),
-    ]);
+    await completeLessons({ lessons: Object.values(lessons), userId: withProgressUser.id });
 
     await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
 
@@ -295,29 +197,17 @@ test.describe("Course Progress Indicators", () => {
       authenticatedPage.getByRole("heading", { level: 1, name: course.title }),
     ).toBeVisible();
 
-    const completedIndicators = authenticatedPage.getByRole("img", { name: /^completed$/i });
-    await expect(completedIndicators).toHaveCount(3);
+    await expect(authenticatedPage.getByRole("img", { name: /^completed$/i })).toHaveCount(3);
   });
 
   test("shows fraction text for partially completed chapters", async ({
     authenticatedPage,
     withProgressUser,
   }) => {
-    const { activities, course } = await createTestCourseWithChapters(withProgressUser.id);
+    const { lessons, course } = await createCourseProgressScenario();
 
-    // Chapter 1 (3 lessons): complete 1 of 3 lessons
-    await activityProgressFixture({
-      activityId: activities.ch1Act1.id,
-      completedAt: new Date(),
-      durationSeconds: 60,
-      userId: withProgressUser.id,
-    });
-
-    // Chapter 2 (2 lessons): complete 1 of 2 lessons
-    await activityProgressFixture({
-      activityId: activities.ch2Act1.id,
-      completedAt: new Date(),
-      durationSeconds: 60,
+    await completeLessons({
+      lessons: [lessons.ch1Lesson1, lessons.ch2Lesson1],
       userId: withProgressUser.id,
     });
 
@@ -335,39 +225,12 @@ test.describe("Course Progress Indicators", () => {
     authenticatedPage,
     withProgressUser,
   }) => {
-    const { activities, course } = await createTestCourseWithChapters(withProgressUser.id);
+    const { lessons, course } = await createCourseProgressScenario();
 
-    // Chapter 1 (3 lessons): complete all -> checkmark
-    await Promise.all([
-      activityProgressFixture({
-        activityId: activities.ch1Act1.id,
-        completedAt: new Date(),
-        durationSeconds: 60,
-        userId: withProgressUser.id,
-      }),
-      activityProgressFixture({
-        activityId: activities.ch1Act2.id,
-        completedAt: new Date(),
-        durationSeconds: 60,
-        userId: withProgressUser.id,
-      }),
-      activityProgressFixture({
-        activityId: activities.ch1Act3.id,
-        completedAt: new Date(),
-        durationSeconds: 60,
-        userId: withProgressUser.id,
-      }),
-    ]);
-
-    // Chapter 2 (2 lessons): complete 1 of 2 -> fraction
-    await activityProgressFixture({
-      activityId: activities.ch2Act1.id,
-      completedAt: new Date(),
-      durationSeconds: 60,
+    await completeLessons({
+      lessons: [lessons.ch1Lesson1, lessons.ch1Lesson2, lessons.ch1Lesson3, lessons.ch2Lesson1],
       userId: withProgressUser.id,
     });
-
-    // Chapter 3: no progress -> nothing shown
 
     await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
 
@@ -375,28 +238,17 @@ test.describe("Course Progress Indicators", () => {
       authenticatedPage.getByRole("heading", { level: 1, name: course.title }),
     ).toBeVisible();
 
-    // Chapter 1: fully completed -> checkmark
-    const completedIndicators = authenticatedPage.getByRole("img", { name: /^completed$/i });
-    await expect(completedIndicators).toHaveCount(1);
-
-    // Chapter 2: partially completed -> fraction
+    await expect(authenticatedPage.getByRole("img", { name: /^completed$/i })).toHaveCount(1);
     await expect(authenticatedPage.getByLabel("1 of 2 completed")).toBeVisible();
   });
 
-  test("keeps a chapter in progress when another published lesson has no activities", async ({
+  test("keeps a chapter in progress when another published lesson is incomplete", async ({
     authenticatedPage,
     withProgressUser,
   }) => {
-    const { activity, chapter, course } = await createCourseWithChapterWaitingOnAnotherLesson(
-      withProgressUser.id,
-    );
+    const { completedLesson, chapter, course } = await createCourseWithIncompleteChapter();
 
-    await activityProgressFixture({
-      activityId: activity.id,
-      completedAt: new Date(),
-      durationSeconds: 60,
-      userId: withProgressUser.id,
-    });
+    await completeLessons({ lessons: [completedLesson], userId: withProgressUser.id });
 
     await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
 

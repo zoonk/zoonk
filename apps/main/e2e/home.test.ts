@@ -2,10 +2,9 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { expect, test } from "./fixtures";
 
@@ -62,7 +61,7 @@ test.describe("Home Page - Authenticated", () => {
     ).toBeVisible();
   });
 
-  test("shows pending course when next lesson has no generated activities", async ({
+  test("shows pending course when next lesson has no generated lessons", async ({
     baseURL,
     browser,
   }) => {
@@ -101,7 +100,7 @@ test.describe("Home Page - Authenticated", () => {
       title: `E2E Pending Lesson ${uniqueId}`,
     });
 
-    const activity = await activityFixture({
+    const lesson = await lessonFixture({
       generationStatus: "completed",
       isPublished: true,
       lessonId: lesson1.id,
@@ -110,10 +109,10 @@ test.describe("Home Page - Authenticated", () => {
     });
 
     await Promise.all([
-      activityProgressFixture({
-        activityId: activity.id,
+      lessonProgressFixture({
         completedAt: new Date(),
         durationSeconds: 60,
+        lessonId: lesson.id,
         userId: user.id,
       }),
       userProgressFixture({ totalBrainPower: 100n, userId: user.id }),

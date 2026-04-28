@@ -105,22 +105,9 @@ async function seedStepAttempts(
     return;
   }
 
-  const activity = await prisma.activity.findFirst({
-    orderBy: { position: "asc" },
-    where: {
-      kind: "quiz",
-      lessonId: lesson.id,
-      steps: { some: {} },
-    },
-  });
-
-  if (!activity) {
-    return;
-  }
-
   const steps = await prisma.step.findMany({
     orderBy: { position: "asc" },
-    where: { activityId: activity.id },
+    where: { lessonId: lesson.id },
   });
 
   const firstStep = steps[0];
@@ -143,18 +130,18 @@ async function seedStepAttempts(
     data: attemptData,
   });
 
-  await prisma.activityProgress.upsert({
+  await prisma.lessonProgress.upsert({
     create: {
-      activityId: activity.id,
       completedAt: now,
       durationSeconds: 180,
+      lessonId: lesson.id,
       startedAt: new Date(now.getTime() - 3 * 60 * 1000),
       userId: users.owner.id,
     },
     update: {},
     where: {
-      userActivity: {
-        activityId: activity.id,
+      userLesson: {
+        lessonId: lesson.id,
         userId: users.owner.id,
       },
     },

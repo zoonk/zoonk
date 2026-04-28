@@ -16,7 +16,7 @@ export async function LevelExplanation() {
 
       <ExplanationText>
         {t(
-          "Every time you complete an activity, you earn Brain Power. As you accumulate BP, you progress through 10 belt colors, each with 10 levels.",
+          "Every time you complete an lesson, you earn Brain Power. As you accumulate BP, you progress through 10 belt colors, each with 10 levels.",
         )}
       </ExplanationText>
 

@@ -1,7 +1,6 @@
 import { logError } from "@zoonk/utils/logger";
 import { prisma } from "../index";
 import { seedAccounts } from "./seed/accounts";
-import { seedActivities } from "./seed/activities";
 import { seedAlternativeTitles } from "./seed/alternative-titles";
 import { seedCategories } from "./seed/categories";
 import { seedChapters } from "./seed/chapters";
@@ -30,7 +29,6 @@ async function main() {
   await seedSentences(prisma, orgs.ai);
   await seedAlternativeTitles(prisma, orgs.ai);
   await seedCourseUsers(prisma, orgs.ai, users);
-  await seedActivities(prisma, orgs.ai);
   await seedSteps(prisma, orgs.ai);
   await seedProgress(prisma, orgs.ai, users);
   await seedCourseSuggestions(prisma);

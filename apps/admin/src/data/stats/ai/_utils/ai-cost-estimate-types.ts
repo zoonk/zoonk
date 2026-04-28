@@ -45,11 +45,6 @@ export type AiCostEstimateReport = {
   estimates: AiGenerationCostEstimate[];
 };
 
-export type StepImageUsageRow = {
-  activityKind: "custom" | "explanation";
-  count: bigint;
-};
-
 export type LanguageAudioUsageRow = {
   sentenceWordCount: bigint | null;
   wordClipCount: bigint | null;
@@ -62,7 +57,6 @@ export type StructureStats = {
   coreLessonExplanationCount: number;
   coreLessonPracticeCount: number;
   coreLessonQuizCount: number;
-  customActivityCount: number;
   customLessonCount: number;
   languageAudioSentenceWordCount: number;
   languageAudioWordClipCount: number;
@@ -74,5 +68,4 @@ export type StructureStats = {
   regularCourseChapterCount: number;
   regularCourseCount: number;
   regularCustomLessonCountInCourses: number;
-  stepImageCountsByActivityKind: Record<string, number>;
 };

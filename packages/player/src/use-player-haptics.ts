@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { useWebHaptics } from "web-haptics/react";
-import { type PlayerMilestone } from "./player-context";
 import { type PlayerHapticSnapshot, getPlayerHapticSequence } from "./player-haptics";
 
 /**
@@ -12,13 +11,7 @@ import { type PlayerHapticSnapshot, getPlayerHapticSequence } from "./player-hap
  * translate meaningful state changes into tactile feedback without leaking
  * haptic rules into individual step components.
  */
-export function usePlayerHaptics({
-  current,
-  milestoneKind,
-}: {
-  current: PlayerHapticSnapshot;
-  milestoneKind: PlayerMilestone["kind"];
-}) {
+export function usePlayerHaptics({ current }: { current: PlayerHapticSnapshot }) {
   const { trigger } = useWebHaptics();
   const previousRef = useRef(current);
 
@@ -28,12 +21,11 @@ export function usePlayerHaptics({
 
     const sequence = getPlayerHapticSequence({
       current,
-      milestoneKind,
       previous,
     });
 
     for (const haptic of sequence) {
       void trigger(haptic);
     }
-  }, [current, milestoneKind, trigger]);
+  }, [current, trigger]);
 }

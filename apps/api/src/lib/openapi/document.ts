@@ -3,14 +3,14 @@ import { createDocument } from "zod-openapi";
 import { paginationSchema } from "./schemas/common";
 import { courseResultSchema, courseSearchQuerySchema } from "./schemas/courses";
 import {
-  activityCompletionQuerySchema,
-  activityCompletionResponseSchema,
   chapterCompletionQuerySchema,
   chapterCompletionResponseSchema,
   courseCompletionQuerySchema,
   courseCompletionResponseSchema,
-  nextActivityQuerySchema,
-  nextActivityResponseSchema,
+  lessonCompletionQuerySchema,
+  lessonCompletionResponseSchema,
+  nextLessonQuerySchema,
+  nextLessonResponseSchema,
 } from "./schemas/progress";
 import {
   validationErrorResponse,
@@ -18,7 +18,6 @@ import {
   workflowTriggerEndpoint,
 } from "./schemas/responses";
 import {
-  activityGenerationTriggerSchema,
   chapterGenerationTriggerSchema,
   courseGenerationTriggerSchema,
   lessonGenerationTriggerSchema,
@@ -70,24 +69,6 @@ export const openAPIDocument = createDocument({
         tags: ["Courses"],
       },
     },
-    "/progress/activity-completion": {
-      get: {
-        requestParams: { query: activityCompletionQuerySchema },
-        responses: {
-          "200": {
-            content: {
-              "application/json": {
-                schema: activityCompletionResponseSchema,
-              },
-            },
-            description: "Completed activity IDs for a lesson",
-          },
-          "400": validationErrorResponse,
-        },
-        summary: "Get completed activities for a lesson",
-        tags: ["Progress"],
-      },
-    },
     "/progress/chapter-completion": {
       get: {
         requestParams: { query: chapterCompletionQuerySchema },
@@ -124,32 +105,42 @@ export const openAPIDocument = createDocument({
         tags: ["Progress"],
       },
     },
-    "/progress/next-activity": {
+    "/progress/lesson-completion": {
       get: {
-        requestParams: { query: nextActivityQuerySchema },
+        requestParams: { query: lessonCompletionQuerySchema },
         responses: {
           "200": {
             content: {
               "application/json": {
-                schema: nextActivityResponseSchema,
+                schema: lessonCompletionResponseSchema,
               },
             },
-            description: "Next activity to complete",
+            description: "Completed lesson IDs for a lesson",
           },
           "400": validationErrorResponse,
         },
-        summary: "Get next activity for a course, chapter, or lesson",
+        summary: "Get completed lessons for a lesson",
         tags: ["Progress"],
       },
     },
-    "/workflows/activity-generation/status": workflowStatusEndpoint(
-      "Stream activity generation status (SSE)",
-    ),
-    "/workflows/activity-generation/trigger": workflowTriggerEndpoint({
-      requiresSubscription: true,
-      schema: activityGenerationTriggerSchema,
-      summary: "Trigger activity generation workflow",
-    }),
+    "/progress/next-lesson": {
+      get: {
+        requestParams: { query: nextLessonQuerySchema },
+        responses: {
+          "200": {
+            content: {
+              "application/json": {
+                schema: nextLessonResponseSchema,
+              },
+            },
+            description: "Next lesson to complete",
+          },
+          "400": validationErrorResponse,
+        },
+        summary: "Get next lesson for a course, chapter, or lesson",
+        tags: ["Progress"],
+      },
+    },
     "/workflows/chapter-generation/status": workflowStatusEndpoint(
       "Stream chapter generation status (SSE)",
     ),

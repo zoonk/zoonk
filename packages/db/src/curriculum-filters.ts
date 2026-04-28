@@ -4,8 +4,7 @@ import { type Prisma } from "./generated/prisma/client";
 type CourseWhere = Prisma.CourseWhereInput;
 type ChapterWhere = Omit<Prisma.ChapterWhereInput, "course">;
 type LessonWhere = Omit<Prisma.LessonWhereInput, "chapter">;
-type ActivityWhere = Omit<Prisma.ActivityWhereInput, "lesson">;
-type StepWhere = Omit<Prisma.StepWhereInput, "activity">;
+type StepWhere = Omit<Prisma.StepWhereInput, "lesson">;
 
 /**
  * Generation entry points are only supposed to operate on the public AI
@@ -109,61 +108,15 @@ export function getPublishedLessonWhere({
 }
 
 /**
- * Activity generation loads activities from a lesson id rather than a branded
- * URL. This helper ensures those background reads only see activity rows that
- * live under the public AI curriculum branch.
- */
-export function getAiGenerationActivityWhere({
-  activityWhere = {},
-  chapterWhere = {},
-  courseWhere = {},
-  lessonWhere = {},
-}: {
-  activityWhere?: ActivityWhere;
-  chapterWhere?: ChapterWhere;
-  courseWhere?: CourseWhere;
-  lessonWhere?: LessonWhere;
-} = {}): Prisma.ActivityWhereInput {
-  return {
-    ...activityWhere,
-    lesson: getAiGenerationLessonWhere({ chapterWhere, courseWhere, lessonWhere }),
-  };
-}
-
-/**
- * Public activity reads need the activity itself plus its entire ancestor path
- * to be published.
- */
-export function getPublishedActivityWhere({
-  activityWhere = {},
-  chapterWhere = {},
-  courseWhere = {},
-  lessonWhere = {},
-}: {
-  activityWhere?: ActivityWhere;
-  chapterWhere?: ChapterWhere;
-  courseWhere?: CourseWhere;
-  lessonWhere?: LessonWhere;
-} = {}): Prisma.ActivityWhereInput {
-  return {
-    ...activityWhere,
-    isPublished: true,
-    lesson: getPublishedLessonWhere({ chapterWhere, courseWhere, lessonWhere }),
-  };
-}
-
-/**
- * Public step reads need both the step and the containing activity tree to be
+ * Public step reads need both the step and the containing lesson tree to be
  * published because callers often start from raw ids or positions.
  */
 export function getPublishedStepWhere({
-  activityWhere = {},
   chapterWhere = {},
   courseWhere = {},
   lessonWhere = {},
   stepWhere = {},
 }: {
-  activityWhere?: ActivityWhere;
   chapterWhere?: ChapterWhere;
   courseWhere?: CourseWhere;
   lessonWhere?: LessonWhere;
@@ -171,7 +124,7 @@ export function getPublishedStepWhere({
 } = {}): Prisma.StepWhereInput {
   return {
     ...stepWhere,
-    activity: getPublishedActivityWhere({ activityWhere, chapterWhere, courseWhere, lessonWhere }),
     isPublished: true,
+    lesson: getPublishedLessonWhere({ chapterWhere, courseWhere, lessonWhere }),
   };
 }

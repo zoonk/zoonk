@@ -1,7 +1,7 @@
 import { type AnswerResult } from "@zoonk/core/player/contracts/check-answer";
 import { type CompletionResult } from "@zoonk/core/player/contracts/completion-input-schema";
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
-import { type ActivityKind } from "@zoonk/core/steps/contract/content";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { type LessonKind } from "@zoonk/core/steps/contract/content";
 import { computeLocalCompletion } from "./player-completion";
 import { buildInitialAnswers } from "./player-initial-state";
 import { describePlayerStep } from "./player-step";
@@ -34,8 +34,8 @@ export type StepTiming = {
 };
 
 export type PlayerState = {
-  activityId: string;
-  activityKind: ActivityKind;
+  lessonId: string;
+  lessonKind: LessonKind;
   completion: CompletionResult | null;
   currentStepIndex: number;
   phase: PlayerPhase;
@@ -149,7 +149,7 @@ function handleContinue(state: PlayerState): PlayerState {
 }
 
 /**
- * Moves the player to the next step, or completes the activity if there
+ * Moves the player to the next step, or completes the lesson if there
  * are no more steps. Static forward navigation and hero CTAs share this to
  * avoid duplicating the advance-or-complete logic.
  */

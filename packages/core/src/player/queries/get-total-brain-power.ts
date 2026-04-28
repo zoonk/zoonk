@@ -6,7 +6,7 @@ import { cache } from "react";
 /**
  * Returns the total brain power accumulated by the current user.
  *
- * Used at activity page load to pass to the player, which computes
+ * Used at player page load to pass to the player, which computes
  * completion metrics (belt level, BP to next level) client-side for
  * instant display without waiting for a server round-trip.
  */

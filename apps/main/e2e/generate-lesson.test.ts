@@ -2,10 +2,10 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { type Page, type Route } from "@zoonk/e2e/fixtures";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
@@ -197,15 +197,19 @@ test.describe("Generate Lesson Page - No Subscription", () => {
 
 test.describe("Generate Lesson Page - With Subscription", () => {
   test("shows completion UI before redirecting when lesson is already ready", async ({ page }) => {
-    const { lesson, organizationId } = await createPendingLesson();
+    const { lesson } = await createPendingLesson();
     const uniqueId = randomUUID().slice(0, 8);
 
     await Promise.all([
-      activityFixture({
+      stepFixture({
+        content: {
+          text: `E2E Ready Lesson ${uniqueId}`,
+          title: `E2E Ready Lesson ${uniqueId}`,
+          variant: "text",
+        },
         isPublished: true,
+        kind: "static",
         lessonId: lesson.id,
-        organizationId,
-        title: `E2E Ready Activity ${uniqueId}`,
       }),
       prisma.lesson.update({
         data: { generationStatus: "completed" },
@@ -228,15 +232,18 @@ test.describe("Generate Lesson Page - With Subscription", () => {
     noProgressUser,
   }) => {
     await createTestSubscription(noProgressUser.id);
-    const { lesson, organizationId } = await createPendingLesson();
+    const { lesson } = await createPendingLesson();
 
-    // Create an activity so the lesson page doesn't redirect back to /generate
     const uniqueId = randomUUID().slice(0, 8);
-    await activityFixture({
+    await stepFixture({
+      content: {
+        text: `E2E Generated Lesson ${uniqueId}`,
+        title: `E2E Generated Lesson ${uniqueId}`,
+        variant: "text",
+      },
       isPublished: true,
+      kind: "static",
       lessonId: lesson.id,
-      organizationId,
-      title: `E2E Generated Activity ${uniqueId}`,
     });
 
     await setupMockApis(userWithoutProgress, {
@@ -245,14 +252,14 @@ test.describe("Generate Lesson Page - With Subscription", () => {
         { status: "completed", step: "getLesson" },
         { status: "started", step: "setLessonAsRunning" },
         { status: "completed", step: "setLessonAsRunning" },
-        { status: "started", step: "determineLessonKind" },
-        { status: "completed", step: "determineLessonKind" },
-        { status: "started", step: "updateLessonKind" },
-        { status: "completed", step: "updateLessonKind" },
-        { status: "started", step: "generateCustomActivities" },
-        { status: "completed", step: "generateCustomActivities" },
-        { status: "started", step: "addActivities" },
-        { status: "completed", step: "addActivities" },
+        { status: "started", step: "generateExplanationContent" },
+        { status: "completed", step: "generateExplanationContent" },
+        { status: "started", step: "generateImagePrompts" },
+        { status: "completed", step: "generateImagePrompts" },
+        { status: "started", step: "generateStepImages" },
+        { status: "completed", step: "generateStepImages" },
+        { status: "started", step: "saveExplanationLesson" },
+        { status: "completed", step: "saveExplanationLesson" },
         { status: "started", step: "setLessonAsCompleted" },
         { status: "completed", step: "setLessonAsCompleted" },
       ],
@@ -260,21 +267,18 @@ test.describe("Generate Lesson Page - With Subscription", () => {
 
     await userWithoutProgress.goto(`/generate/l/${lesson.id}`);
 
-    // Should show completion message
     await expect(userWithoutProgress.getByText(/your lesson is ready/i)).toBeVisible({
       timeout: 10_000,
     });
 
     await expect(userWithoutProgress.getByText(/taking you to your lesson/i)).toBeVisible();
 
-    // Update lesson status - the redirect will happen in ~1.5s via location.href
     await prisma.lesson.update({
       data: { generationStatus: "completed" },
       where: { id: lesson.id },
     });
 
-    // Should redirect to lesson page
-    await userWithoutProgress.waitForURL(/\/b\/ai\/c\//, { timeout: 10_000 });
+    await userWithoutProgress.waitForURL(/\/b\/ai\/c\/.+\/ch\/.+\/l\/.+$/, { timeout: 10_000 });
   });
 
   test("shows time estimate during generation", async ({ userWithoutProgress, noProgressUser }) => {

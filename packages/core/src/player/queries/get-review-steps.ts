@@ -1,15 +1,24 @@
 import "server-only";
-import { type ActivityKind, type StepKind, getPublishedStepWhere, prisma } from "@zoonk/db";
+import { type LessonKind, type StepKind, getPublishedStepWhere, prisma } from "@zoonk/db";
 import { shuffle } from "@zoonk/utils/shuffle";
 
 const REVIEW_TARGET_COUNT = 10;
-const EXCLUDED_ACTIVITY_KINDS: ActivityKind[] = ["review"];
+const EXCLUDED_LESSON_KINDS: LessonKind[] = ["review"];
 const NON_REVIEWABLE_STEP_KINDS: StepKind[] = ["static", "visual"];
 
-function reviewableStepFilter(lessonId: string) {
+async function getReviewChapterId(lessonId: string) {
+  const lesson = await prisma.lesson.findUnique({
+    select: { chapterId: true },
+    where: { id: lessonId },
+  });
+
+  return lesson?.chapterId ?? null;
+}
+
+function reviewableStepFilter(chapterId: string) {
   return getPublishedStepWhere({
-    activityWhere: { kind: { notIn: EXCLUDED_ACTIVITY_KINDS } },
-    lessonWhere: { id: lessonId },
+    chapterWhere: { id: chapterId },
+    lessonWhere: { kind: { notIn: EXCLUDED_LESSON_KINDS } },
     stepWhere: { kind: { notIn: NON_REVIEWABLE_STEP_KINDS } },
   });
 }
@@ -33,7 +42,13 @@ export async function getReviewSteps({
   lessonId: string;
   userId: string | null;
 }) {
-  const lessonStepFilter = reviewableStepFilter(lessonId);
+  const chapterId = await getReviewChapterId(lessonId);
+
+  if (!chapterId) {
+    return [];
+  }
+
+  const lessonStepFilter = reviewableStepFilter(chapterId);
 
   if (!userId) {
     const allSteps = await prisma.step.findMany({
@@ -89,13 +104,19 @@ export async function getReviewSteps({
 }
 
 /**
- * Fetches steps for validating a review activity submission.
+ * Fetches steps for validating a review lesson submission.
  * Only returns steps that are eligible for review — excludes
- * steps from review activities and static steps.
+ * steps from review lessons and static steps.
  */
 export async function getReviewValidationSteps(params: { lessonId: string; stepIds: string[] }) {
+  const chapterId = await getReviewChapterId(params.lessonId);
+
+  if (!chapterId) {
+    return [];
+  }
+
   return prisma.step.findMany({
     include: { sentence: true, word: true },
-    where: { ...reviewableStepFilter(params.lessonId), id: { in: params.stepIds } },
+    where: { ...reviewableStepFilter(chapterId), id: { in: params.stepIds } },
   });
 }

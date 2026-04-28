@@ -8,7 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     description: t(
-      "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses, lessons, and activities.",
+      "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses, lessons, and lessons.",
     ),
     title: { absolute: t("Zoonk: AI Learning Platform") },
   };

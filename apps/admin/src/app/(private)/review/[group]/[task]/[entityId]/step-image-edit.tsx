@@ -10,7 +10,7 @@ export function StepImageEdit({
   item: {
     id: string;
     content: { prompt: string; url?: string };
-    activity: { title: string | null };
+    lesson: { title: string };
   };
 }) {
   const params = { imageTarget: "step" as const, stepId: item.id };
@@ -19,7 +19,7 @@ export function StepImageEdit({
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <Badge variant="outline">image</Badge>
-        <span className="text-muted-foreground text-sm">{item.activity.title}</span>
+        <span className="text-muted-foreground text-sm">{item.lesson.title}</span>
       </div>
 
       <p className="text-muted-foreground font-mono text-sm">{item.content.prompt}</p>

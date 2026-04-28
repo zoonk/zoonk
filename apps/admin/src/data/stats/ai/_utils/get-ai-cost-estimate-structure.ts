@@ -1,12 +1,8 @@
-import { prisma, sql } from "@zoonk/db";
+import { type LessonKind, prisma, sql } from "@zoonk/db";
 import { MS_PER_DAY, parseLocalDate } from "@zoonk/utils/date";
 import { safeAsync } from "@zoonk/utils/error";
-import { buildStepImageCountMap, toNumber } from "./ai-cost-estimate-helpers";
-import {
-  type LanguageAudioUsageRow,
-  type StepImageUsageRow,
-  type StructureStats,
-} from "./ai-cost-estimate-types";
+import { toNumber } from "./ai-cost-estimate-helpers";
+import { type LanguageAudioUsageRow, type StructureStats } from "./ai-cost-estimate-types";
 
 type DateWindow = {
   endExclusive: Date;
@@ -26,20 +22,17 @@ export async function getStructureStats({
   startDate: string;
 }): Promise<StructureStats> {
   const dateWindow = buildDateWindow({ endDate, startDate });
-  const [lessonAndActivityCounts, courseShapeCounts, stepImageRows, languageAudioUsage] =
-    await Promise.all([
-      getLessonAndActivityCounts({ dateWindow }),
-      getCourseShapeCounts({ dateWindow }),
-      getStepImageUsageRows({ dateWindow }),
-      getLanguageAudioUsage({ dateWindow }),
-    ]);
+  const [lessonKindCounts, courseShapeCounts, languageAudioUsage] = await Promise.all([
+    getLessonKindCounts({ dateWindow }),
+    getCourseShapeCounts({ dateWindow }),
+    getLanguageAudioUsage({ dateWindow }),
+  ]);
 
   return {
-    ...lessonAndActivityCounts,
+    ...lessonKindCounts,
     ...courseShapeCounts,
     languageAudioSentenceWordCount: toNumber(languageAudioUsage.sentenceWordCount),
     languageAudioWordClipCount: toNumber(languageAudioUsage.wordClipCount),
-    stepImageCountsByActivityKind: buildStepImageCountMap(stepImageRows),
   };
 }
 
@@ -63,10 +56,10 @@ function buildDateWindow({
 }
 
 /**
- * Lesson-level estimates care about how many activities of each kind actually
- * got created inside completed AI-managed lessons during the selected period.
+ * Lesson-level estimates care about how many lessons of each generated kind
+ * were created during the selected period.
  */
-async function getLessonAndActivityCounts({ dateWindow }: { dateWindow: DateWindow }) {
+async function getLessonKindCounts({ dateWindow }: { dateWindow: DateWindow }) {
   const completedLessonWhere = buildCompletedLessonWhere({ dateWindow });
 
   const [
@@ -76,19 +69,13 @@ async function getLessonAndActivityCounts({ dateWindow }: { dateWindow: DateWind
     coreLessonExplanationCount,
     coreLessonPracticeCount,
     coreLessonQuizCount,
-    customActivityCount,
   ] = await Promise.all([
-    prisma.lesson.count({ where: { ...completedLessonWhere, kind: "core" } }),
-    prisma.lesson.count({ where: { ...completedLessonWhere, kind: "custom" } }),
-    prisma.lesson.count({ where: { ...completedLessonWhere, kind: "language" } }),
-    countActivities({
-      activityKind: "explanation",
-      lessonKind: "core",
-      where: completedLessonWhere,
-    }),
-    countActivities({ activityKind: "practice", lessonKind: "core", where: completedLessonWhere }),
-    countActivities({ activityKind: "quiz", lessonKind: "core", where: completedLessonWhere }),
-    countActivities({ activityKind: "custom", lessonKind: "custom", where: completedLessonWhere }),
+    prisma.lesson.count({ where: { ...completedLessonWhere, kind: "explanation" } }),
+    prisma.lesson.count({ where: { ...completedLessonWhere, kind: "tutorial" } }),
+    prisma.lesson.count({ where: { ...completedLessonWhere, kind: { in: getLanguageKinds() } } }),
+    prisma.lesson.count({ where: { ...completedLessonWhere, kind: "explanation" } }),
+    prisma.lesson.count({ where: { ...completedLessonWhere, kind: "practice" } }),
+    prisma.lesson.count({ where: { ...completedLessonWhere, kind: "quiz" } }),
   ]);
 
   return {
@@ -96,7 +83,6 @@ async function getLessonAndActivityCounts({ dateWindow }: { dateWindow: DateWind
     coreLessonExplanationCount,
     coreLessonPracticeCount,
     coreLessonQuizCount,
-    customActivityCount,
     customLessonCount,
     languageLessonCount,
   };
@@ -140,21 +126,21 @@ async function getCourseShapeCounts({ dateWindow }: { dateWindow: DateWindow }) 
       where: {
         ...completedLessonWhere,
         chapter: { course: { targetLanguage: null } },
-        kind: "core",
+        kind: "explanation",
       },
     }),
     prisma.lesson.count({
       where: {
         ...completedLessonWhere,
         chapter: { course: { targetLanguage: null } },
-        kind: "custom",
+        kind: "tutorial",
       },
     }),
     prisma.lesson.count({
       where: {
         ...completedLessonWhere,
         chapter: { course: { targetLanguage: { not: null } } },
-        kind: "language",
+        kind: { in: getLanguageKinds() },
       },
     }),
   ]);
@@ -170,43 +156,6 @@ async function getCourseShapeCounts({ dateWindow }: { dateWindow: DateWindow }) 
     regularCourseCount,
     regularCustomLessonCountInCourses,
   };
-}
-
-/**
- * Explanation and custom activities share the same step-image task family, so
- * Gateway counts alone cannot tell us which workflow those requests belonged
- * to. Grouping persisted readable steps with embedded images by parent activity
- * kind lets each lesson estimate claim only its own image workload.
- */
-async function getStepImageUsageRows({
-  dateWindow,
-}: {
-  dateWindow: DateWindow;
-}): Promise<StepImageUsageRow[]> {
-  const { data, error } = await safeAsync(() =>
-    prisma.$queryRaw<StepImageUsageRow[]>(sql`
-      SELECT
-        a.kind AS "activityKind",
-        COUNT(*)::bigint AS "count"
-      FROM steps s
-      JOIN activities a ON a.id = s.activity_id
-      JOIN lessons l ON l.id = a.lesson_id
-      WHERE s.kind = 'static'
-        AND s.content->'image' IS NOT NULL
-        AND l.generation_run_id IS NOT NULL
-        AND l.generation_status = 'completed'
-        AND l.created_at >= ${dateWindow.startAt}
-        AND l.created_at < ${dateWindow.endExclusive}
-        AND a.kind IN ('explanation', 'custom')
-      GROUP BY a.kind
-    `),
-  );
-
-  if (error) {
-    throw new Error("Failed to load step image usage for AI estimates", { cause: error });
-  }
-
-  return data;
 }
 
 /**
@@ -227,7 +176,7 @@ async function getLanguageAudioUsage({
         FROM lessons l
         JOIN chapters ch ON ch.id = l.chapter_id
         JOIN courses c ON c.id = ch.course_id
-        WHERE l.kind = 'language'
+        WHERE l.kind IN ('alphabet', 'grammar', 'listening', 'reading', 'translation', 'vocabulary')
           AND l.generation_run_id IS NOT NULL
           AND l.generation_status = 'completed'
           AND l.created_at >= ${dateWindow.startAt}
@@ -280,27 +229,10 @@ async function getLanguageAudioUsage({
 }
 
 /**
- * Activity counts all follow the same "completed generated activity inside a
- * completed generated lesson" rule. Centralizing it keeps the main aggregate
- * query readable.
+ * These are the lesson kinds that make up language-course content.
  */
-function countActivities({
-  activityKind,
-  lessonKind,
-  where,
-}: {
-  activityKind: "custom" | "explanation" | "practice" | "quiz";
-  lessonKind: "core" | "custom";
-  where: ReturnType<typeof buildCompletedLessonWhere>;
-}) {
-  return prisma.activity.count({
-    where: {
-      generationRunId: { not: null },
-      generationStatus: "completed",
-      kind: activityKind,
-      lesson: { ...where, kind: lessonKind },
-    },
-  });
+function getLanguageKinds(): LessonKind[] {
+  return ["alphabet", "grammar", "listening", "reading", "translation", "vocabulary"];
 }
 
 /**

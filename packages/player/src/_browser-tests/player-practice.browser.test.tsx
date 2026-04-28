@@ -1,14 +1,14 @@
 import { describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
 import { buildInlineImageUrl } from "../_test-utils/build-inline-image-url";
-import { buildSerializedActivity, buildSerializedStep } from "../_test-utils/player-test-data";
+import { buildSerializedLesson, buildSerializedStep } from "../_test-utils/player-test-data";
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { buildNavigation, renderPlayer } from "../_test-utils/render-player";
 
-describe("player browser integration: practice activities", () => {
+describe("player browser integration: practice lessons", () => {
   test("renders a leading static scenario step and still completes with question scoring", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         kind: "practice",
         steps: [
           buildSerializedStep({
@@ -61,7 +61,7 @@ describe("player browser integration: practice activities", () => {
           }),
         ],
       }),
-      navigation: buildNavigation({ nextActivityHref: null }),
+      navigation: buildNavigation({ nextLessonHref: null }),
       viewer: buildAuthenticatedViewer(),
     });
 

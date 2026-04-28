@@ -48,7 +48,7 @@ export async function listPublishedChaptersForCourse({
 }
 
 /**
- * Course, chapter, and lesson pages all need the same published progress row
+ * Course, chapter, and player pages all need the same published progress row
  * shape. The only difference is which scope boundary trims the live lesson
  * tree, so this helper keeps one SQL statement and swaps only a whitelisted
  * predicate for the requested scope.
@@ -61,7 +61,7 @@ async function queryPublishedLessonProgressRows({
   userId?: string;
 }) {
   const scopeFilter = getPublishedLessonProgressScopeFilter({ scope });
-  const progressUserFilter = userId ? sql`ap.user_id = ${userId}` : sql`FALSE`;
+  const progressUserFilter = userId ? sql`lp.user_id = ${userId}` : sql`FALSE`;
 
   const { data } = await safeAsync(
     () =>
@@ -71,17 +71,18 @@ async function queryPublishedLessonProgressRows({
           ch.id AS "chapterId",
           ch.position AS "chapterPosition",
           ch.slug AS "chapterSlug",
-          COUNT(DISTINCT ap.activity_id)::int AS "completedActivities",
+          COUNT(lp.lesson_id)::int AS "completedLessons",
           c.id AS "courseId",
           c.slug AS "courseSlug",
           l.description AS "lessonDescription",
           l.generation_status AS "lessonGenerationStatus",
           l.id AS "lessonId",
+          l.kind AS "lessonKind",
           l.position AS "lessonPosition",
           l.slug AS "lessonSlug",
           l.title AS "lessonTitle",
-          COUNT(DISTINCT CASE WHEN a.generation_status <> 'completed' THEN a.id END)::int AS "pendingActivities",
-          COUNT(DISTINCT a.id)::int AS "totalActivities"
+          CASE WHEN l.generation_status <> 'completed' THEN 1 ELSE 0 END AS "pendingLessons",
+          1 AS "totalLessons"
         FROM lessons l
         JOIN chapters ch
           ON ch.id = l.chapter_id
@@ -90,13 +91,10 @@ async function queryPublishedLessonProgressRows({
           ON c.id = ch.course_id
           AND c.is_published = true
         LEFT JOIN organizations o ON o.id = c.organization_id
-        LEFT JOIN activities a
-          ON a.lesson_id = l.id
-          AND a.is_published = true
-        LEFT JOIN activity_progress ap
-          ON ap.activity_id = a.id
+        LEFT JOIN lesson_progress lp
+          ON lp.lesson_id = l.id
           AND ${progressUserFilter}
-          AND ap.completed_at IS NOT NULL
+          AND lp.completed_at IS NOT NULL
         WHERE l.is_published = true
           AND ${scopeFilter}
         GROUP BY o.slug, ch.id, c.id, l.id

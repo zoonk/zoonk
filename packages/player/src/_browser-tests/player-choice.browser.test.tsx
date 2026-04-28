@@ -3,7 +3,7 @@ import { describe, expect, test, vi } from "vitest";
 import { page } from "vitest/browser";
 import { buildInlineImageUrl } from "../_test-utils/build-inline-image-url";
 import {
-  buildSerializedActivity,
+  buildSerializedLesson,
   buildSerializedStep,
   buildSerializedWord,
 } from "../_test-utils/player-test-data";
@@ -15,7 +15,7 @@ describe("player browser integration: choice steps", () => {
     const onComplete = vi.fn();
 
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         steps: [
           buildSerializedStep({
             content: {
@@ -50,7 +50,7 @@ describe("player browser integration: choice steps", () => {
 
   test("renders translation options, plays the selection flow, and completes", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         kind: "translation",
         steps: [
           buildSerializedStep({
@@ -109,7 +109,7 @@ describe("player browser integration: choice steps", () => {
 
   test("selects an image option and shows inline feedback", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         steps: [
           buildSerializedStep({
             content: {
@@ -147,7 +147,7 @@ describe("player browser integration: choice steps", () => {
 
   test("lets multiple-choice users toggle selections and shows the correct answer on mistakes", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         steps: [
           buildSerializedStep({
             content: {
@@ -192,7 +192,7 @@ describe("player browser integration: choice steps", () => {
 
   test("lets users expand image-led multiple-choice evidence", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         steps: [
           buildSerializedStep({
             content: {
@@ -243,7 +243,7 @@ describe("player browser integration: choice steps", () => {
 
   test("shows translation pronunciation, romanization, and feedback audio without app wiring", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         kind: "translation",
         steps: [
           buildSerializedStep({
@@ -310,7 +310,7 @@ describe("player browser integration: choice steps", () => {
 
   test("falls back to prompt text for missing select-image URLs and highlights the correct answer", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         steps: [
           buildSerializedStep({
             content: {
@@ -354,7 +354,7 @@ describe("player browser integration: choice steps", () => {
 
   test("replaces {{NAME}} placeholders for authenticated viewers", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         steps: [
           buildSerializedStep({
             content: {
@@ -386,7 +386,7 @@ describe("player browser integration: choice steps", () => {
 
   test("strips {{NAME}} placeholders for unauthenticated viewers", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         steps: [
           buildSerializedStep({
             content: {

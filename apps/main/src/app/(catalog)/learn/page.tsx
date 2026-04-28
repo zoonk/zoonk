@@ -11,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     description: t(
-      "Tell Zoonk what you want to learn and get a course created with AI. Start learning any subject with interactive lessons and activities.",
+      "Tell Zoonk what you want to learn and get a course created with AI. Start learning any subject with interactive lessons and lessons.",
     ),
     title: t("Learn Anything with AI"),
   };

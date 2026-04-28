@@ -1,5 +1,4 @@
 import { prisma } from "@zoonk/db";
-import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -59,18 +58,14 @@ async function createTestStep(orgId: string) {
     chapterId: chapter.id,
     organizationId: orgId,
   });
-  const activity = await activityFixture({
-    lessonId: lesson.id,
-    organizationId: orgId,
-  });
   const step = await prisma.step.create({
     data: {
-      activityId: activity.id,
       content: {
         kind: "core",
         options: [{ feedback: "Yes", isCorrect: true, text: "A" }],
       },
       kind: "multipleChoice",
+      lessonId: lesson.id,
       position: 0,
     },
   });

@@ -6,7 +6,7 @@ export const getActivationRate = cache(async () => {
   const [activatedResult, total] = await Promise.all([
     prisma.$queryRaw<[{ count: bigint }]>`
       SELECT COUNT(DISTINCT user_id) as count
-      FROM activity_progress
+      FROM lesson_progress
       WHERE completed_at IS NOT NULL
     `,
     prisma.user.count(),

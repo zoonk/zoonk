@@ -67,7 +67,7 @@ export function GenerationClient({
     return (
       <GenerationTimeline>
         <GenerationTimelineHeader>
-          <GenerationTimelineTitle>{t("Creating your activities")}</GenerationTimelineTitle>
+          <GenerationTimelineTitle>{t("Creating your lessons")}</GenerationTimelineTitle>
           <GenerationTimelineSubtitle>
             {t("This usually takes a few seconds")}
           </GenerationTimelineSubtitle>

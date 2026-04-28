@@ -59,7 +59,7 @@ export function buildRegularCourseEstimate({
 
   return {
     description:
-      "Course setup plus the full chapter, lesson, and activity workload for a typical non-language AI course.",
+      "Course setup plus the full chapter and lesson content workload for a typical non-language AI course.",
     kind: "regularCourse",
     lineItems,
     notes: [
@@ -114,7 +114,7 @@ export function buildLanguageCourseEstimate({
 
   return {
     description:
-      "Course setup plus the full chapter, lesson, activity, and inferred TTS workload for a typical language course.",
+      "Course setup plus the full chapter, lesson content, and inferred TTS workload for a typical language course.",
     kind: "languageCourse",
     lineItems,
     notes: [

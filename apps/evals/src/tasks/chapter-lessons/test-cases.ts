@@ -3,7 +3,7 @@ const SHARED_EXPECTATIONS = `
 
   Evaluate whether the result is a usable lesson plan for the requested chapter.
 
-  A strong lesson plan turns the chapter scope into cohesive learner capabilities. Each lesson should be large enough to support its own explanation activities, practice, quiz, and review without repeating neighboring lessons. Coverage matters, but only when the lesson boundaries would produce a good learning experience in this product.
+  A strong lesson plan turns the chapter scope into cohesive learner capabilities. Each lesson should be large enough to support its own explanation lessons, practice, quiz, and review without repeating neighboring lessons. Coverage matters, but only when the lesson boundaries would produce a good learning experience in this product.
 
   # What Good Looks Like
 
@@ -19,7 +19,7 @@ const SHARED_EXPECTATIONS = `
 
   ## False Granularity
 
-  False granularity is the main failure this eval must catch. It happens when the output looks comprehensive because it split the chapter into many tiny lessons, but those lessons would generate repetitive activities.
+  False granularity is the main failure this eval must catch. It happens when the output looks comprehensive because it split the chapter into many tiny lessons, but those lessons would generate repetitive lessons.
 
   Use this test: if the explanation or practice for lesson A must teach lesson B's core idea for lesson A to make sense, A and B should probably be one lesson.
 
@@ -44,7 +44,7 @@ const SHARED_EXPECTATIONS = `
 
   - Clear false-granularity cluster: \`majorErrors\` score must be 7.5 or lower.
   - Repeated false granularity across the output, after excluding valid domain decomposition: \`majorErrors\` score must be 6.5 or lower.
-  - Glossary-expanded syllabus where many lessons are too small to support distinct activities: \`majorErrors\` score must be 6.5 or lower.
+  - Glossary-expanded syllabus where many lessons are too small to support distinct lessons: \`majorErrors\` score must be 6.5 or lower.
 
   ## Coverage, Accuracy, and Scope
 

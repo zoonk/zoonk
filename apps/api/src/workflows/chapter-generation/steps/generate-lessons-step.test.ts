@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { generateLessonsStep } from "./generate-lessons-step";
@@ -45,6 +45,7 @@ describe(generateLessonsStep, () => {
       organizationId: organization.id,
       targetLanguage: "es",
     });
+    await courseCategoryFixture({ category: "languages", courseId: languageCourse.id });
 
     const chapter = await chapterFixture({
       courseId: course.id,
@@ -79,8 +80,8 @@ describe(generateLessonsStep, () => {
 
   test("calls generateChapterLessons for non-language courses and returns lessons", async () => {
     const lessons = [
-      { concepts: ["A"], description: "Intro", title: "Lesson 1" },
-      { concepts: ["B"], description: "Basics", title: "Lesson 2" },
+      { description: "Intro", kind: "explanation" as const, title: "Lesson 1" },
+      { description: "Basics", kind: "tutorial" as const, title: "Lesson 2" },
     ];
 
     generateChapterLessonsMock.mockResolvedValue({ data: { lessons } });
@@ -109,7 +110,7 @@ describe(generateLessonsStep, () => {
   });
 
   test("calls generateLanguageChapterLessons for language courses", async () => {
-    const lessons = [{ concepts: [], description: "Vocab", title: "Words" }];
+    const lessons = [{ description: "Vocab", kind: "vocabulary" as const, title: "Words" }];
 
     generateLanguageChapterLessonsMock.mockResolvedValue({ data: { lessons } });
 
@@ -123,6 +124,22 @@ describe(generateLessonsStep, () => {
       targetLanguage: "es",
       userLanguage: languageContext.language,
     });
+  });
+
+  test("uses the standard lesson generator when a course has no language category", async () => {
+    const targetOnlyContext: ChapterContext = {
+      ...context,
+      course: { ...context.course, targetLanguage: "es" },
+    };
+    const lessons = [{ description: "Intro", kind: "explanation" as const, title: "Lesson 1" }];
+
+    generateChapterLessonsMock.mockResolvedValue({ data: { lessons } });
+
+    const result = await generateLessonsStep(targetOnlyContext);
+
+    expect(result).toEqual(lessons);
+    expect(generateChapterLessonsMock).toHaveBeenCalledOnce();
+    expect(generateLanguageChapterLessonsMock).not.toHaveBeenCalled();
   });
 
   test("throws without streaming error when AI generation fails", async () => {

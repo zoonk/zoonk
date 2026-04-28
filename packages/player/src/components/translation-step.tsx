@@ -3,7 +3,7 @@
 import {
   type SerializedStep,
   type TranslationOption,
-} from "@zoonk/core/player/contracts/prepare-activity-data";
+} from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { useExtracted } from "next-intl";
 import { type SelectedAnswer } from "../player-reducer";
 import { useWordAudio } from "../use-word-audio";

@@ -35,7 +35,7 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
 
   const initialStatus = getInitialGenerationPageStatus({
     generationStatus: lesson.generationStatus,
-    isReadyForRedirect: lesson._count.activities > 0,
+    isReadyForRedirect: lesson.generationStatus === "completed" || lesson._count.steps > 0,
   });
 
   if (!session && !hasStarted) {

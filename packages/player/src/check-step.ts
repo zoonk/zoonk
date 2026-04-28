@@ -9,7 +9,7 @@ import {
   checkSortOrderAnswer,
   checkTranslationAnswer,
 } from "@zoonk/core/player/contracts/check-answer";
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { segmentWords } from "@zoonk/utils/string";
 import { type SelectedAnswer } from "./player-reducer";

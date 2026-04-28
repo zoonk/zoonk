@@ -4,12 +4,8 @@ import {
   estimateGeminiTtsCost,
   formatAiTaskLabel,
 } from "../ai-task-stats";
-import { LANGUAGE_TTS_HEURISTIC_NOTE, STEP_CONTENT_IMAGE_TASK } from "./ai-cost-estimate-constants";
-import {
-  type EstimateLineItem,
-  type StepImageUsageRow,
-  type StructureStats,
-} from "./ai-cost-estimate-types";
+import { LANGUAGE_TTS_HEURISTIC_NOTE } from "./ai-cost-estimate-constants";
+import { type EstimateLineItem } from "./ai-cost-estimate-types";
 
 /**
  * The UI cards show one total, but the totals should still be explainable. Each
@@ -102,32 +98,6 @@ export function buildTtsLineItem({
 }
 
 /**
- * Step image generation runs once per saved readable step, so persisted static
- * steps with embedded images are the cleanest way to attribute those requests
- * back to explanation versus custom workflows.
- */
-export function buildStepImageLineItem({
-  activityKind,
-  entityCount,
-  structureStats,
-  usageByTask,
-}: {
-  activityKind: "custom" | "explanation";
-  entityCount: number;
-  structureStats: StructureStats;
-  usageByTask: TaskUsageByName;
-}): EstimateLineItem | null {
-  return buildGatewayLineItem({
-    averageRequestsPerRun: calculateAverageRequestsPerEntity({
-      entityCount,
-      requestCount: structureStats.stepImageCountsByActivityKind[activityKind] ?? 0,
-    }),
-    taskName: STEP_CONTENT_IMAGE_TASK,
-    usageByTask,
-  });
-}
-
-/**
  * Some workflows use historical task counts directly instead of persisted
  * content records. This helper centralizes the "requests per entity" math so
  * the builders all normalize task usage the same way.
@@ -162,22 +132,6 @@ export function sumLineItems(items: EstimateLineItem[]): number {
  */
 export function isEstimateLineItem(item: EstimateLineItem | null): item is EstimateLineItem {
   return item !== null;
-}
-
-/**
- * The SQL step-image query returns one row per activity kind. Flattening that
- * into a predictable key-value map keeps the estimate builders free from
- * row-scanning logic and makes missing combinations naturally fall back to
- * zero.
- */
-export function buildStepImageCountMap(rows: StepImageUsageRow[]): Record<string, number> {
-  const counts: Record<string, number> = {};
-
-  for (const row of rows) {
-    counts[row.activityKind] = toNumber(row.count);
-  }
-
-  return counts;
 }
 
 /**

@@ -63,7 +63,7 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
      * If status is already "completed", handleStepStreamMessage already confirmed
      * both the completion step AND the entityId matched. No need to re-check
      * completedSteps (which doesn't track entityId and could match a different
-     * activity of the same kind).
+     * lesson of the same kind).
      */
     const isComplete = state.status === "completed" || !completionStep;
 

@@ -1,325 +1,507 @@
 import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
-import { generateLessonCoreActivities } from "@zoonk/ai/tasks/lessons/core-activities";
-import { generateLessonCustomActivities } from "@zoonk/ai/tasks/lessons/custom-activities";
-import { generateLessonKind } from "@zoonk/ai/tasks/lessons/kind";
+import { generateLessonExplanation } from "@zoonk/ai/tasks/lessons/core/explanation";
+import { generateLessonPractice } from "@zoonk/ai/tasks/lessons/core/practice";
+import { generateLessonQuiz } from "@zoonk/ai/tasks/lessons/core/quiz";
+import { generateLessonDistractors } from "@zoonk/ai/tasks/lessons/language/distractors";
+import { generateLessonPronunciation } from "@zoonk/ai/tasks/lessons/language/pronunciation";
+import { generateLessonRomanization } from "@zoonk/ai/tasks/lessons/language/romanization";
+import { generateLessonVocabulary } from "@zoonk/ai/tasks/lessons/language/vocabulary";
+import { generateStepImagePrompts } from "@zoonk/ai/tasks/steps/image-prompts";
+import { generateLanguageAudio } from "@zoonk/core/audio/generate";
+import { generateContentStepImage } from "@zoonk/core/steps/content-image";
+import { assertStepContent, parseStepContent } from "@zoonk/core/steps/contract/content";
+import { generateStepImage } from "@zoonk/core/steps/image";
 import { prisma } from "@zoonk/db";
-import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { beforeAll, describe, expect, test, vi } from "vitest";
 import { lessonGenerationWorkflow } from "./lesson-generation-workflow";
 
-vi.mock("@zoonk/ai/tasks/lessons/kind", () => ({
-  generateLessonKind: vi.fn().mockResolvedValue({
-    data: { kind: "core" },
+const languageMockState = vi.hoisted(() => ({
+  distractors: Object.fromEntries([
+    ["水", ["火", "土"]],
+    ["猫", ["犬", "鳥"]],
+  ]) as Record<string, string[]>,
+  words: [
+    { translation: "cat", word: "猫" },
+    { translation: "water", word: "水" },
+  ],
+}));
+
+vi.mock("@zoonk/ai/tasks/lessons/core/explanation", () => ({
+  generateLessonExplanation: vi.fn().mockResolvedValue({
+    data: {
+      anchor: { text: "Apply the idea in a new case.", title: "Transfer" },
+      explanation: [
+        { text: "Explain the first idea.", title: "First idea" },
+        { text: "Explain the second idea.", title: "Second idea" },
+      ],
+    },
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/lessons/core-activities", () => ({
-  generateLessonCoreActivities: vi.fn().mockResolvedValue({
+vi.mock("@zoonk/ai/tasks/lessons/core/practice", () => ({
+  generateLessonPractice: vi.fn().mockResolvedValue({
     data: {
-      activities: [
+      scenario: {
+        imagePrompt: "practice scenario image",
+        text: "A concrete situation for applying the explanations.",
+        title: "Scenario",
+      },
+      steps: [
         {
-          goal: "spot the repeated pattern before turning it into a reusable rule",
-          title: "Reading the pattern",
+          context: "Use the scenario details.",
+          imagePrompt: "practice question image",
+          options: [
+            { feedback: "Correct.", isCorrect: true, text: "Use the rule." },
+            { feedback: "Not yet.", isCorrect: false, text: "Ignore the rule." },
+          ],
+          question: "What should happen next?",
         },
+      ],
+      title: "Practice",
+    },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/lessons/core/quiz", () => ({
+  generateLessonQuiz: vi.fn().mockResolvedValue({
+    data: {
+      questions: [
         {
-          goal: "turn the pattern into a rule you can apply to new cases",
-          title: "Turning it into a rule",
+          format: "selectImage",
+          options: [
+            { feedback: "Correct.", isCorrect: true, prompt: "correct quiz option" },
+            { feedback: "Not yet.", isCorrect: false, prompt: "wrong quiz option" },
+          ],
+          question: "Pick the correct image.",
         },
       ],
     },
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/lessons/custom-activities", () => ({
-  generateLessonCustomActivities: vi.fn().mockResolvedValue({
+vi.mock("@zoonk/ai/tasks/lessons/language/vocabulary", () => ({
+  generateLessonVocabulary: vi.fn().mockResolvedValue({
     data: {
-      activities: [
-        { description: "Custom activity 1 description", title: "Custom Activity 1" },
-        { description: "Custom activity 2 description", title: "Custom Activity 2" },
-      ],
+      words: languageMockState.words,
     },
   }),
 }));
+
+vi.mock("@zoonk/ai/tasks/lessons/language/distractors", () => ({
+  generateLessonDistractors: vi.fn().mockImplementation(({ input }) =>
+    Promise.resolve({
+      data: { distractors: languageMockState.distractors[input] ?? [] },
+    }),
+  ),
+}));
+
+vi.mock("@zoonk/ai/tasks/lessons/language/pronunciation", () => ({
+  generateLessonPronunciation: vi.fn().mockImplementation(({ word }) =>
+    Promise.resolve({
+      data: { pronunciation: `${word} pronunciation` },
+    }),
+  ),
+}));
+
+vi.mock("@zoonk/ai/tasks/lessons/language/romanization", () => ({
+  generateLessonRomanization: vi.fn().mockImplementation(({ texts }) =>
+    Promise.resolve({
+      data: { romanizations: texts.map((text: string) => `${text} romanized`) },
+    }),
+  ),
+}));
+
+vi.mock("@zoonk/ai/tasks/steps/image-prompts", () => ({
+  generateStepImagePrompts: vi.fn().mockResolvedValue({
+    data: {
+      prompts: ["first image prompt", "second image prompt", "anchor image prompt"],
+    },
+  }),
+}));
+
+vi.mock("@zoonk/core/steps/content-image", () => ({
+  generateContentStepImage: vi.fn().mockImplementation(({ prompt }) =>
+    Promise.resolve({
+      data: `https://example.com/content/${encodeURIComponent(prompt)}.webp`,
+      error: null,
+    }),
+  ),
+}));
+
+vi.mock("@zoonk/core/audio/generate", () => ({
+  generateLanguageAudio: vi.fn().mockImplementation(({ text }) =>
+    Promise.resolve({
+      data: `https://example.com/audio/${encodeURIComponent(text)}.mp3`,
+      error: null,
+    }),
+  ),
+}));
+
+vi.mock("@zoonk/core/steps/image", () => ({
+  generateStepImage: vi.fn().mockImplementation(({ prompt }) =>
+    Promise.resolve({
+      data: `https://example.com/select/${encodeURIComponent(prompt)}.webp`,
+      error: null,
+    }),
+  ),
+}));
+
+/**
+ * Creates the minimum published course tree a lesson-generation workflow needs.
+ * Keeping this setup local prevents tests from depending on seed data or route fixtures.
+ */
+async function createWorkflowTree({ organizationId }: { organizationId: string }) {
+  const course = await courseFixture({
+    isPublished: true,
+    organizationId,
+    title: `Workflow Course ${randomUUID()}`,
+  });
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    isPublished: true,
+    organizationId,
+    title: `Workflow Chapter ${randomUUID()}`,
+  });
+
+  return { chapter, course };
+}
+
+/**
+ * Persists one completed explanation lesson so practice and quiz generation
+ * can read the same static steps they use in production.
+ */
+async function completedExplanationLesson({
+  chapterId,
+  organizationId,
+  position,
+  text,
+  title,
+}: {
+  chapterId: string;
+  organizationId: string;
+  position: number;
+  text: string;
+  title: string;
+}) {
+  const lesson = await lessonFixture({
+    chapterId,
+    generationStatus: "completed",
+    isPublished: true,
+    kind: "explanation",
+    organizationId,
+    position,
+    title: `Explanation ${randomUUID()}`,
+  });
+
+  await stepFixture({
+    content: assertStepContent("static", { text, title, variant: "text" }),
+    isPublished: true,
+    kind: "static",
+    lessonId: lesson.id,
+    position: 0,
+  });
+
+  return lesson;
+}
 
 describe(lessonGenerationWorkflow, () => {
   let organizationId: string;
-  let course: Awaited<ReturnType<typeof courseFixture>>;
-  let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 
   beforeAll(async () => {
     const org = await aiOrganizationFixture();
     organizationId = org.id;
-    course = await courseFixture({ organizationId });
-    chapter = await chapterFixture({
-      courseId: course.id,
+  });
+
+  test("runs the explanation image workflow and saves images on static steps", async () => {
+    const { chapter } = await createWorkflowTree({ organizationId });
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "explanation",
       organizationId,
-      title: `Test Chapter ${randomUUID()}`,
+      title: `Explanation Lesson ${randomUUID()}`,
     });
+
+    await lessonGenerationWorkflow(lesson.id);
+
+    expect(generateLessonExplanation).toHaveBeenCalledOnce();
+    expect(generateStepImagePrompts).toHaveBeenCalledOnce();
+    expect(generateContentStepImage).toHaveBeenCalledTimes(3);
+
+    const steps = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      where: { lessonId: lesson.id },
+    });
+    const contents = steps.map((step) => parseStepContent("static", step.content));
+    const imageUrls = contents.map((content) => content.image?.url);
+
+    expect(steps).toHaveLength(3);
+    expect(imageUrls).toEqual([
+      "https://example.com/content/first%20image%20prompt.webp",
+      "https://example.com/content/second%20image%20prompt.webp",
+      "https://example.com/content/anchor%20image%20prompt.webp",
+    ]);
+
+    const dbLesson = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
+    expect(dbLesson.generationStatus).toBe("completed");
+    expect(dbLesson.generationRunId).toBe("test-run-id");
   });
 
-  describe("early returns", () => {
-    test("returns early when generationStatus is 'running'", async () => {
-      const lesson = await lessonFixture({
-        chapterId: chapter.id,
-        generationStatus: "running",
-        organizationId,
-        title: `Running Lesson ${randomUUID()}`,
-      });
+  test("practice generation uses only explanation steps since the previous practice", async () => {
+    const { chapter } = await createWorkflowTree({ organizationId });
 
-      await lessonGenerationWorkflow(lesson.id);
-
-      const dbLesson = await prisma.lesson.findUnique({
-        where: { id: lesson.id },
-      });
-
-      expect(dbLesson?.generationStatus).toBe("running");
-      expect(generateLessonKind).not.toHaveBeenCalled();
+    await completedExplanationLesson({
+      chapterId: chapter.id,
+      organizationId,
+      position: 0,
+      text: "Old explanation",
+      title: "Old",
+    });
+    await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "practice",
+      organizationId,
+      position: 1,
+      title: `Completed Practice ${randomUUID()}`,
+    });
+    await completedExplanationLesson({
+      chapterId: chapter.id,
+      organizationId,
+      position: 2,
+      text: "New explanation",
+      title: "New",
+    });
+    const practice = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "practice",
+      organizationId,
+      position: 3,
+      title: `Practice Lesson ${randomUUID()}`,
     });
 
-    test("streams completion when generationStatus is 'completed' and has activities", async () => {
-      const lesson = await lessonFixture({
-        chapterId: chapter.id,
-        generationStatus: "completed",
-        organizationId,
-        title: `Completed Lesson ${randomUUID()}`,
-      });
+    await lessonGenerationWorkflow(practice.id);
 
-      await activityFixture({
-        lessonId: lesson.id,
-        organizationId,
-        title: `Existing Activity ${randomUUID()}`,
-      });
+    expect(generateLessonPractice).toHaveBeenCalledWith(
+      expect.objectContaining({
+        explanationSteps: [{ text: "New explanation", title: "New" }],
+      }),
+    );
+    expect(generateContentStepImage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        preset: "practice",
+        prompt: "practice scenario image",
+      }),
+    );
 
-      await lessonGenerationWorkflow(lesson.id);
-
-      const dbLesson = await prisma.lesson.findUnique({
-        where: { id: lesson.id },
-      });
-
-      expect(dbLesson?.generationStatus).toBe("completed");
-      expect(generateLessonKind).not.toHaveBeenCalled();
-
-      const completionEvent = getStreamedEvents().find(
-        (event) => event.step === "setLessonAsCompleted" && event.status === "completed",
-      );
-      expect(completionEvent).toBeDefined();
+    const steps = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      where: { lessonId: practice.id },
     });
+    const intro = parseStepContent("static", steps[0]?.content);
+    const question = parseStepContent("multipleChoice", steps[1]?.content);
 
-    test("sets as completed and returns when lesson has existing activities but status not completed", async () => {
-      const lesson = await lessonFixture({
-        chapterId: chapter.id,
-        generationStatus: "pending",
-        organizationId,
-        title: `Lesson with Activities ${randomUUID()}`,
-      });
-
-      await activityFixture({
-        lessonId: lesson.id,
-        organizationId,
-        title: `Existing Activity ${randomUUID()}`,
-      });
-
-      await lessonGenerationWorkflow(lesson.id);
-
-      const dbLesson = await prisma.lesson.findUnique({
-        where: { id: lesson.id },
-      });
-
-      expect(dbLesson?.generationStatus).toBe("completed");
-      expect(dbLesson?.generationRunId).toBeNull();
-      expect(generateLessonKind).not.toHaveBeenCalled();
-    });
+    expect(intro.variant).toBe("intro");
+    expect(intro.image?.url).toBe("https://example.com/content/practice%20scenario%20image.webp");
+    expect(question.image?.url).toBe(
+      "https://example.com/content/practice%20question%20image.webp",
+    );
   });
 
-  describe("error handling", () => {
-    test("marks lesson as 'failed' when AI generation throws after retries", async () => {
-      vi.mocked(generateLessonKind).mockRejectedValueOnce(new Error("AI generation failed"));
+  test("quiz generation uses explanations since the previous quiz and saves select-image URLs", async () => {
+    const { chapter } = await createWorkflowTree({ organizationId });
 
-      const title = `Error Lesson ${randomUUID()}`;
-      const lesson = await lessonFixture({
-        chapterId: chapter.id,
-        generationStatus: "pending",
-        organizationId,
-        title,
-      });
-
-      await expect(lessonGenerationWorkflow(lesson.id)).rejects.toThrow("AI generation failed");
-
-      const dbLesson = await prisma.lesson.findUnique({
-        where: { id: lesson.id },
-      });
-
-      expect(dbLesson?.generationStatus).toBe("failed");
-      expect(dbLesson?.generationRunId).toBe("test-run-id");
-
-      const errorEvent = getStreamedEvents().find(
-        (event) => event.status === "error" && event.step === "workflowError",
-      );
-      expect(errorEvent).toBeDefined();
+    await completedExplanationLesson({
+      chapterId: chapter.id,
+      organizationId,
+      position: 0,
+      text: "Already quizzed explanation",
+      title: "Old Quiz Scope",
+    });
+    await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "quiz",
+      organizationId,
+      position: 1,
+      title: `Completed Quiz ${randomUUID()}`,
+    });
+    await completedExplanationLesson({
+      chapterId: chapter.id,
+      organizationId,
+      position: 2,
+      text: "Unquizzed explanation",
+      title: "New Quiz Scope",
+    });
+    const quiz = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "quiz",
+      organizationId,
+      position: 3,
+      title: `Quiz Lesson ${randomUUID()}`,
     });
 
-    test("marks lesson as 'failed' when custom activities generation throws", async () => {
-      vi.mocked(generateLessonKind).mockResolvedValueOnce({
-        data: { kind: "custom" },
-      } as Awaited<ReturnType<typeof generateLessonKind>>);
+    await lessonGenerationWorkflow(quiz.id);
 
-      vi.mocked(generateLessonCustomActivities).mockRejectedValueOnce(
-        new Error("Activities generation failed"),
-      );
+    expect(generateLessonQuiz).toHaveBeenCalledWith(
+      expect.objectContaining({
+        explanationSteps: [{ text: "Unquizzed explanation", title: "New Quiz Scope" }],
+      }),
+    );
+    expect(generateStepImage).toHaveBeenCalledTimes(2);
 
-      const title = `Custom Error Lesson ${randomUUID()}`;
-      const lesson = await lessonFixture({
-        chapterId: chapter.id,
-        generationStatus: "pending",
-        organizationId,
-        title,
-      });
+    const [step] = await prisma.step.findMany({ where: { lessonId: quiz.id } });
+    const content = parseStepContent("selectImage", step?.content);
 
-      await expect(lessonGenerationWorkflow(lesson.id)).rejects.toThrow(
-        "Activities generation failed",
-      );
-
-      const dbLesson = await prisma.lesson.findUnique({
-        where: { id: lesson.id },
-      });
-
-      expect(dbLesson?.generationStatus).toBe("failed");
-    });
-
-    test("marks lesson as 'failed' when core activities generation throws", async () => {
-      vi.mocked(generateLessonKind).mockResolvedValueOnce({
-        data: { kind: "core" },
-      } as Awaited<ReturnType<typeof generateLessonKind>>);
-
-      vi.mocked(generateLessonCoreActivities).mockRejectedValueOnce(
-        new Error("Core activities generation failed"),
-      );
-
-      const title = `Core Error Lesson ${randomUUID()}`;
-      const lesson = await lessonFixture({
-        chapterId: chapter.id,
-        generationStatus: "pending",
-        organizationId,
-        title,
-      });
-
-      await expect(lessonGenerationWorkflow(lesson.id)).rejects.toThrow(
-        "Core activities generation failed",
-      );
-
-      const dbLesson = await prisma.lesson.findUnique({
-        where: { id: lesson.id },
-      });
-
-      expect(dbLesson?.generationStatus).toBe("failed");
-    });
-
-    test("throws FatalError when lesson not found", async () => {
-      const nonExistentId = randomUUID();
-
-      await expect(lessonGenerationWorkflow(nonExistentId)).rejects.toThrow("Lesson not found");
-    });
+    expect(content.options.map((option) => option.url)).toEqual([
+      "https://example.com/select/correct%20quiz%20option.webp",
+      "https://example.com/select/wrong%20quiz%20option.webp",
+    ]);
   });
 
-  describe("status transitions", () => {
-    test("updates lesson status: pending → running → completed", async () => {
-      vi.mocked(generateLessonKind).mockResolvedValueOnce({
-        data: { kind: "core" },
-      } as Awaited<ReturnType<typeof generateLessonKind>>);
+  test("vocabulary generation keeps audio, pronunciation, romanization, and distractor enrichment", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const catWord = `猫-${uniqueId}`;
+    const waterWord = `水-${uniqueId}`;
+    const dogWord = `犬-${uniqueId}`;
+    const birdWord = `鳥-${uniqueId}`;
+    const fireWord = `火-${uniqueId}`;
+    const earthWord = `土-${uniqueId}`;
+    const targetWords = [catWord, waterWord];
+    const distractorWords = [dogWord, birdWord, fireWord, earthWord];
+    const allRenderedWords = [...targetWords, ...distractorWords];
 
-      const title = `Status Transition Lesson ${randomUUID()}`;
-      const lesson = await lessonFixture({
-        chapterId: chapter.id,
-        generationStatus: "pending",
-        organizationId,
-        title,
-      });
+    languageMockState.words.splice(
+      0,
+      languageMockState.words.length,
+      { translation: `cat ${uniqueId}`, word: catWord },
+      { translation: `water ${uniqueId}`, word: waterWord },
+    );
+    languageMockState.distractors = {
+      [catWord]: [dogWord, birdWord],
+      [waterWord]: [fireWord, earthWord],
+    };
 
-      const initialLesson = await prisma.lesson.findUnique({
-        where: { id: lesson.id },
-      });
-      expect(initialLesson?.generationStatus).toBe("pending");
-
-      await lessonGenerationWorkflow(lesson.id);
-
-      const finalLesson = await prisma.lesson.findUnique({
-        where: { id: lesson.id },
-      });
-      expect(finalLesson?.generationStatus).toBe("completed");
-      expect(finalLesson?.generationRunId).toBe("test-run-id");
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId,
+      targetLanguage: "ja",
+      title: `Language Workflow Course ${uniqueId}`,
     });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId,
+      title: `Language Workflow Chapter ${uniqueId}`,
+    });
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "vocabulary",
+      organizationId,
+      title: `Vocabulary Lesson ${uniqueId}`,
+    });
+
+    await lessonGenerationWorkflow(lesson.id);
+
+    expect(generateLessonVocabulary).toHaveBeenCalledOnce();
+    expect(generateLessonDistractors).toHaveBeenCalledTimes(2);
+    expect(generateLanguageAudio).toHaveBeenCalledTimes(6);
+    expect(generateLessonPronunciation).toHaveBeenCalledTimes(6);
+    expect(generateLessonRomanization).toHaveBeenCalledWith(
+      expect.objectContaining({
+        targetLanguage: "ja",
+        texts: allRenderedWords,
+      }),
+    );
+
+    const lessonWords = await prisma.lessonWord.findMany({
+      include: {
+        word: {
+          include: { pronunciations: true },
+        },
+      },
+      orderBy: { word: { word: "asc" } },
+      where: { lessonId: lesson.id },
+    });
+    const words = lessonWords
+      .map((row) => ({
+        audioUrl: row.word.audioUrl,
+        distractors: row.distractors,
+        pronunciation: row.word.pronunciations[0]?.pronunciation,
+        romanization: row.word.romanization,
+        translation: row.translation,
+        word: row.word.word,
+      }))
+      .toSorted((a, b) => a.translation.localeCompare(b.translation));
+
+    expect(words).toEqual([
+      {
+        audioUrl: `https://example.com/audio/${encodeURIComponent(catWord)}.mp3`,
+        distractors: [dogWord, birdWord],
+        pronunciation: `${catWord} pronunciation`,
+        romanization: `${catWord} romanized`,
+        translation: `cat ${uniqueId}`,
+        word: catWord,
+      },
+      {
+        audioUrl: `https://example.com/audio/${encodeURIComponent(waterWord)}.mp3`,
+        distractors: [fireWord, earthWord],
+        pronunciation: `${waterWord} pronunciation`,
+        romanization: `${waterWord} romanized`,
+        translation: `water ${uniqueId}`,
+        word: waterWord,
+      },
+    ]);
   });
 
-  describe("lesson kind storage", () => {
-    test("updates the stored lesson kind during initial generation", async () => {
-      vi.mocked(generateLessonKind).mockResolvedValueOnce({
-        data: { kind: "custom" },
-      } as Awaited<ReturnType<typeof generateLessonKind>>);
-
-      const lesson = await lessonFixture({
-        chapterId: chapter.id,
-        generationStatus: "pending",
-        kind: "core",
-        organizationId,
-        title: `Kind Rewrite Lesson ${randomUUID()}`,
-      });
-
-      await lessonGenerationWorkflow(lesson.id);
-
-      const updatedLesson = await prisma.lesson.findUniqueOrThrow({
-        where: { id: lesson.id },
-      });
-
-      const activities = await prisma.activity.findMany({
-        orderBy: { position: "asc" },
-        where: { lessonId: lesson.id },
-      });
-
-      expect(updatedLesson.kind).toBe("custom");
-      expect(activities).toHaveLength(2);
-      expect(activities.every((activity) => activity.kind === "custom")).toBe(true);
+  test("repairs a pending lesson with existing steps without calling AI", async () => {
+    const { chapter } = await createWorkflowTree({ organizationId });
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "explanation",
+      organizationId,
+      title: `Repair Lesson ${randomUUID()}`,
     });
-  });
 
-  describe("filtered lessons", () => {
-    test("deletes invalid non-language lessons during initial generation in language courses", async () => {
-      vi.mocked(generateLessonKind).mockResolvedValueOnce({
-        data: { kind: "core" },
-      } as Awaited<ReturnType<typeof generateLessonKind>>);
-
-      const languageCourse = await courseFixture({
-        organizationId,
-        targetLanguage: "es",
-      });
-
-      const languageChapter = await chapterFixture({
-        courseId: languageCourse.id,
-        organizationId,
-        title: `Filtered Language Chapter ${randomUUID()}`,
-      });
-
-      const lesson = await lessonFixture({
-        chapterId: languageChapter.id,
-        generationStatus: "pending",
-        organizationId,
-        title: `Filtered Language Lesson ${randomUUID()}`,
-      });
-
-      const result = await lessonGenerationWorkflow(lesson.id);
-
-      const [deletedLesson, createdActivities] = await Promise.all([
-        prisma.lesson.findUnique({ where: { id: lesson.id } }),
-        prisma.activity.findMany({ where: { lessonId: lesson.id } }),
-      ]);
-
-      expect(result).toBe("filtered");
-      expect(deletedLesson).toBeNull();
-      expect(createdActivities).toHaveLength(0);
+    await stepFixture({
+      content: assertStepContent("static", {
+        text: "Already saved.",
+        title: "Saved",
+        variant: "text",
+      }),
+      isPublished: true,
+      kind: "static",
+      lessonId: lesson.id,
+      position: 0,
     });
+
+    await lessonGenerationWorkflow(lesson.id);
+
+    expect(generateLessonExplanation).not.toHaveBeenCalled();
+
+    const dbLesson = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
+    expect(dbLesson.generationStatus).toBe("completed");
+
+    const completionEvent = getStreamedEvents().find(
+      (event) => event.step === "setLessonAsCompleted" && event.status === "completed",
+    );
+    expect(completionEvent).toBeDefined();
   });
 });

@@ -1,9 +1,9 @@
 import {
-  type SerializedActivity,
+  type SerializedLesson,
   type SerializedSentence,
   type SerializedStep,
   type SerializedWord,
-} from "@zoonk/core/player/contracts/prepare-activity-data";
+} from "@zoonk/core/player/contracts/prepare-lesson-data";
 
 /**
  * Shared browser tests need a tiny canonical word shape so each scenario can
@@ -67,22 +67,20 @@ export function buildSerializedStep(overrides: Partial<SerializedStep> = {}): Se
 }
 
 /**
- * Rendering the full provider and shell only requires serialized activity data.
- * This helper keeps activity-level noise out of the browser tests.
+ * Rendering the full provider and shell only requires serialized lesson data.
+ * This helper keeps lesson-level noise out of the browser tests.
  */
-export function buildSerializedActivity(
-  overrides: Partial<SerializedActivity> = {},
-): SerializedActivity {
+export function buildSerializedLesson(overrides: Partial<SerializedLesson> = {}): SerializedLesson {
   return {
     description: null,
-    id: "activity-1",
+    id: "lesson-1",
     kind: "quiz",
     language: "en",
     lessonSentences: [],
     lessonWords: [],
     organizationId: "org-1",
     steps: [buildSerializedStep()],
-    title: "Test Activity",
+    title: "Test Lesson",
     ...overrides,
   };
 }
