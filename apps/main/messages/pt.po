@@ -8,43 +8,43 @@ msgstr ""
 #: ../../packages/player/src/components/arrange-words-answer-area.tsx
 msgctxt "1nJY2/"
 msgid "Your answer"
-msgstr ""
+msgstr "Sua resposta"
 
 #: ../../packages/player/src/components/arrange-words-answer-area.tsx
 #: ../../packages/player/src/components/fill-blank-step.tsx
 #: ../../packages/player/src/components/sort-order-step.tsx
 msgctxt "6NoIUl"
 msgid "Correct"
-msgstr ""
+msgstr "Correto"
 
 #: ../../packages/player/src/components/arrange-words-answer-area.tsx
 msgctxt "7R/rOB"
 msgid "Tap words to build your answer"
-msgstr ""
+msgstr "Toque nas palavras para construir sua resposta"
 
 #: ../../packages/player/src/components/arrange-words-answer-area.tsx
 #: ../../packages/player/src/components/sort-order-step.tsx
 msgctxt "hFFOe+"
 msgid "{item}. {result}."
-msgstr ""
+msgstr "{item}. {result}."
 
 #: ../../packages/player/src/components/arrange-words-answer-area.tsx
 msgctxt "vPyO9S"
 msgid "Position {position}: {item}. Tap to remove."
-msgstr ""
+msgstr "Posição {position}: {item}. Toque para remover."
 
 #: ../../packages/player/src/components/arrange-words-answer-area.tsx
 #: ../../packages/player/src/components/fill-blank-step.tsx
 #: ../../packages/player/src/components/sort-order-step.tsx
 msgctxt "Ypr9T5"
 msgid "Incorrect"
-msgstr ""
+msgstr "Incorreto"
 
 #: ../../packages/player/src/components/arrange-words.tsx
 #: ../../packages/player/src/components/fill-blank-step.tsx
 msgctxt "e7WNdK"
 msgid "Word bank"
-msgstr ""
+msgstr "Banco de palavras"
 
 #: ../../packages/player/src/components/belt-progress.tsx
 #: src/app/(catalog)/(home)/level.tsx
@@ -56,28 +56,28 @@ msgstr "faixa {color}"
 #: ../../packages/player/src/components/belt-progress.tsx
 msgctxt "IGs0wl"
 msgid "Level progress"
-msgstr ""
+msgstr "Progresso do nível"
 
 #: ../../packages/player/src/components/belt-progress.tsx
 msgctxt "oMEE4o"
 msgid "{value} BP to level up"
-msgstr ""
+msgstr "{value} PM para subir de nível"
 
 #: ../../packages/player/src/components/belt-progress.tsx
 msgctxt "xiSVL4"
 msgid "{color} Belt — Level {level}"
-msgstr ""
+msgstr "Faixa {color} — Nível {level}"
 
 #: ../../packages/player/src/components/completion-auth-branch.tsx
 #: ../../packages/player/src/components/completion-milestone-actions.tsx
 msgctxt "9+Ddtu"
 msgid "Next"
-msgstr ""
+msgstr "Próxima"
 
 #: ../../packages/player/src/components/completion-auth-branch.tsx
 msgctxt "Ak+bLZ"
 msgid "All Lessons"
-msgstr ""
+msgstr "Todas as aulas"
 
 #: ../../packages/player/src/components/completion-auth-branch.tsx
 #: ../../packages/player/src/components/completion-milestone-actions.tsx
@@ -94,7 +94,7 @@ msgstr "Entrar"
 #: ../../packages/player/src/components/completion-milestone-actions.tsx
 msgctxt "e1M39C"
 msgid "Sign up to track your progress"
-msgstr ""
+msgstr "Cadastre-se para acompanhar seu progresso"
 
 #: ../../packages/player/src/components/completion-auth-branch.tsx
 #: src/app/generate/ch/[id]/generation-client.tsx
@@ -107,22 +107,22 @@ msgstr "Tentar de novo"
 #: ../../packages/player/src/components/completion-milestone-actions.tsx
 msgctxt "DiIkZH"
 msgid "Next Chapter"
-msgstr ""
+msgstr "Próximo Capítulo"
 
 #: ../../packages/player/src/components/completion-milestone-actions.tsx
 msgctxt "w0D7HC"
 msgid "Review Course"
-msgstr ""
+msgstr "Revisar Curso"
 
 #: ../../packages/player/src/components/completion-milestone-actions.tsx
 msgctxt "wm/M34"
 msgid "Review Chapter"
-msgstr ""
+msgstr "Revisar Capítulo"
 
 #: ../../packages/player/src/components/completion-screen.tsx
 msgctxt "2wDWd0"
 msgid "Course Complete"
-msgstr ""
+msgstr "Curso Concluído"
 
 #: ../../packages/player/src/components/completion-screen.tsx
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
@@ -134,123 +134,123 @@ msgstr "Concluída"
 #: ../../packages/player/src/components/completion-screen.tsx
 msgctxt "P768k7"
 msgid "correct"
-msgstr ""
+msgstr "correto"
 
 #: ../../packages/player/src/components/completion-screen.tsx
 msgctxt "t2VOpl"
 msgid "Chapter Complete"
-msgstr ""
+msgstr "Capítulo Concluído"
 
 #: ../../packages/player/src/components/expandable-step-image-stage.tsx
 msgctxt "3Pgbio"
 msgid "Full image"
-msgstr ""
+msgstr "Imagem completa"
 
 #: ../../packages/player/src/components/expandable-step-image-stage.tsx
 msgctxt "pumVIo"
 msgid "Open full image"
-msgstr ""
+msgstr "Abrir imagem completa"
 
 #: ../../packages/player/src/components/expandable-step-image-stage.tsx
 msgctxt "vqV+x5"
 msgid "Shows the full uncropped step image."
-msgstr ""
+msgstr "Mostra a imagem completa sem cortes da etapa."
 
 #: ../../packages/player/src/components/expandable-step-image-stage.tsx
 msgctxt "ZYZr+P"
 msgid "Close full image"
-msgstr ""
+msgstr "Fechar imagem completa"
 
 #: ../../packages/player/src/components/feedback-answer-blocks.tsx
 msgctxt "3nOd8f"
 msgid "Your answer:"
-msgstr ""
+msgstr "Sua resposta:"
 
 #: ../../packages/player/src/components/feedback-answer-blocks.tsx
 msgctxt "QAJ/Tl"
 msgid "Correct answer:"
-msgstr ""
+msgstr "Resposta correta:"
 
 #: ../../packages/player/src/components/feedback-screen.tsx
 msgctxt "fpO9TK"
 msgid "Translate:"
-msgstr ""
+msgstr "Traduzir:"
 
 #: ../../packages/player/src/components/fill-blank-step.tsx
 msgctxt "FmmJ/j"
 msgid "Blank {position}"
-msgstr ""
+msgstr "Espaço {position}"
 
 #: ../../packages/player/src/components/fill-blank-step.tsx
 msgctxt "SL2Bob"
 msgid "Blank {position}: {item}. {result}."
-msgstr ""
+msgstr "Lacuna {position}: {item}. {result}."
 
 #: ../../packages/player/src/components/fill-blank-step.tsx
 msgctxt "wUEGVH"
 msgid "Blank {position}: {item}. Tap to remove."
-msgstr ""
+msgstr "Espaço {position}: {item}. Toque para remover."
 
 #: ../../packages/player/src/components/fill-blank-step.tsx
 msgctxt "xvWuPP"
 msgid "Correct answer: {answer}"
-msgstr ""
+msgstr "Resposta correta: {answer}"
 
 #: ../../packages/player/src/components/inline-feedback.tsx
 msgctxt "HvLGEN"
 msgid "Answer feedback"
-msgstr ""
+msgstr "Resultado da resposta"
 
 #: ../../packages/player/src/components/lesson-info-popover.tsx
 msgctxt "RwePAQ"
 msgid "Lesson info"
-msgstr ""
+msgstr "Informações da aula"
 
 #: ../../packages/player/src/components/listening-step.tsx
 #: ../../packages/player/src/components/reading-step.tsx
 msgctxt "19nXyC"
 msgid "Translate this sentence:"
-msgstr ""
+msgstr "Traduza esta frase:"
 
 #: ../../packages/player/src/components/listening-step.tsx
 msgctxt "aAmWaS"
 msgid "What do you hear?"
-msgstr ""
+msgstr "O que você ouve?"
 
 #: ../../packages/player/src/components/match-columns-step.tsx
 msgctxt "ja1JDt"
 msgid "All pairs matched. Press Check to continue."
-msgstr ""
+msgstr "Todos os pares combinados. Pressione Verificar para continuar."
 
 #: ../../packages/player/src/components/play-audio-button.tsx
 msgctxt "lYWSeP"
 msgid "Play pronunciation"
-msgstr ""
+msgstr "Reproduzir pronúncia"
 
 #: ../../packages/player/src/components/play-audio-button.tsx
 msgctxt "WGft2H"
 msgid "Pause pronunciation"
-msgstr ""
+msgstr "Pausar pronúncia"
 
 #: ../../packages/player/src/components/player-choice-scene.tsx
 msgctxt "akd+cv"
 msgid "Answer options"
-msgstr ""
+msgstr "Opções de resposta"
 
 #: ../../packages/player/src/components/player-header.tsx
 msgctxt "rbrahO"
 msgid "Close"
-msgstr ""
+msgstr "Fechar"
 
 #: ../../packages/player/src/components/player-progress-bar.tsx
 msgctxt "dYp90P"
 msgid "Lesson progress"
-msgstr ""
+msgstr "Progresso da aula"
 
 #: ../../packages/player/src/components/player-shell.tsx
 msgctxt "tJtNzs"
 msgid "Player screen"
-msgstr ""
+msgstr "Tela do jogador"
 
 #: ../../packages/player/src/components/reward-badges.tsx
 #: src/app/(performance)/level/level-stats.tsx
@@ -269,22 +269,22 @@ msgstr "Energia"
 #: ../../packages/player/src/components/select-image-step.tsx
 msgctxt "NA6C/+"
 msgid "Image options"
-msgstr ""
+msgstr "Opções de imagem"
 
 #: ../../packages/player/src/components/sort-order-step.tsx
 msgctxt "9lc1oV"
 msgid "Drag items into the correct order"
-msgstr ""
+msgstr "Arraste os itens para a ordem correta"
 
 #: ../../packages/player/src/components/sort-order-step.tsx
 msgctxt "p5llOK"
 msgid "Sort items"
-msgstr ""
+msgstr "Ordenar itens"
 
 #: ../../packages/player/src/components/sort-order-step.tsx
 msgctxt "VA8c/A"
 msgid "Correct order:"
-msgstr ""
+msgstr "Ordem correta:"
 
 #: ../../packages/player/src/components/step-action-button.tsx
 #: src/app/(catalog)/(home)/continue-learning-card.tsx
@@ -296,27 +296,27 @@ msgstr "Continuar"
 #: ../../packages/player/src/components/step-action-button.tsx
 msgctxt "PVe26p"
 msgid "Begin"
-msgstr ""
+msgstr "Começar"
 
 #: ../../packages/player/src/components/step-action-button.tsx
 msgctxt "RDZVQL"
 msgid "Check"
-msgstr ""
+msgstr "Verificar"
 
 #: ../../packages/player/src/components/translation-step.tsx
 msgctxt "MxLxkr"
 msgid "Translate this word:"
-msgstr ""
+msgstr "Traduza esta palavra:"
 
 #: ../../packages/player/src/components/verdict-label.tsx
 msgctxt "++l7ni"
 msgid "Not quite"
-msgstr ""
+msgstr "Não exatamente"
 
 #: ../../packages/player/src/components/verdict-label.tsx
 msgctxt "xmF49T"
 msgid "Correct!"
-msgstr ""
+msgstr "Correto!"
 
 #: ../../packages/player/src/components/vocabulary-step.tsx
 #: ../../packages/player/src/use-lesson-kind-label.ts
@@ -425,13 +425,13 @@ msgstr "Quiz"
 #: src/lib/lessons.ts
 msgctxt "Ox+Z+K"
 msgid "Tutorial"
-msgstr ""
+msgstr "Tutorial"
 
 #: ../../packages/player/src/use-lesson-kind-label.ts
 #: src/app/(catalog)/(home)/continue-learning-card.tsx
 msgctxt "PJivSX"
 msgid "Lesson"
-msgstr ""
+msgstr "Aula"
 
 #: ../../packages/player/src/use-lesson-kind-label.ts
 #: src/lib/lessons.ts
@@ -450,7 +450,7 @@ msgstr "Revisão"
 #: src/lib/lessons.ts
 msgctxt "w0J/gv"
 msgid "Alphabet"
-msgstr ""
+msgstr "Alfabeto"
 
 #: src/app/(catalog)/_components/command-palette.tsx
 #: src/app/(catalog)/_components/logout-dropdown-item.tsx
@@ -636,7 +636,7 @@ msgstr "{period} com {value}%"
 #: src/app/(catalog)/(home)/continue-learning-card.tsx
 msgctxt "NubPSk"
 msgid "Next: {lesson}"
-msgstr ""
+msgstr "Próxima: {lesson}"
 
 #: src/app/(catalog)/(home)/continue-learning.tsx
 msgctxt "0X+xfW"
@@ -708,7 +708,7 @@ msgstr "Nível"
 #: src/app/(catalog)/(home)/page.tsx
 msgctxt "htyKxZ"
 msgid "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses, lessons, and lessons."
-msgstr ""
+msgstr "Zoonk é uma plataforma de aprendizado com IA onde você pode aprender qualquer coisa por meio de cursos interativos, aulas e aulas."
 
 #: src/app/(catalog)/(home)/page.tsx
 msgctxt "qsfeMJ"
@@ -806,7 +806,7 @@ msgstr "Cursos online usando IA"
 #: src/app/(catalog)/courses/page.tsx
 msgctxt "ujsArd"
 msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons and lessons to learn subjects like science, math, technology, and more."
-msgstr ""
+msgstr "Explore todos os cursos da Zoonk para aprender qualquer coisa usando IA. Encontre aulas e aulas interativas para aprender assuntos como ciência, matemática, tecnologia e muito mais."
 
 #: src/app/(catalog)/learn/[prompt]/course-suggestion-item.tsx
 msgctxt "VzzYJk"
@@ -842,7 +842,7 @@ msgstr "Mudar assunto"
 #: src/app/(catalog)/learn/[prompt]/page.tsx
 msgctxt "U6/c8l"
 msgid "Discover personalized courses and resources to learn {prompt}. Zoonk uses AI to create interactive lessons and lessons tailored to you."
-msgstr ""
+msgstr "Descubra cursos e recursos personalizados para aprender {prompt}. A Zoonk usa IA para criar aulas interativas e aulas feitas para você."
 
 #: src/app/(catalog)/learn/[prompt]/page.tsx
 msgctxt "X2b6pH"
@@ -954,7 +954,7 @@ msgstr "Assuntos sugeridos"
 #: src/app/(catalog)/learn/page.tsx
 msgctxt "o+Unq4"
 msgid "Tell Zoonk what you want to learn and get a course created with AI. Start learning any subject with interactive lessons and lessons."
-msgstr ""
+msgstr "Conte à Zoonk o que você quer aprender e receba um curso criado com IA. Comece a aprender qualquer assunto com aulas interativas e aulas."
 
 #: src/app/(catalog)/learn/page.tsx
 msgctxt "O9mDkA"
@@ -1034,7 +1034,7 @@ msgstr "História mundial"
 #: src/app/(catalog)/my/page.tsx
 msgctxt "B+9gB2"
 msgid "View all the courses you started on Zoonk. Continue where you left off and track your progress across interactive lessons and lessons."
-msgstr ""
+msgstr "Veja todos os cursos que você começou na Zoonk. Continue de onde parou e acompanhe seu progresso em aulas interativas e aulas."
 
 #: src/app/(catalog)/my/page.tsx
 msgctxt "Dr13kE"
@@ -1189,7 +1189,7 @@ msgstr "{value} PM"
 #: src/app/(performance)/level/level-explanation.tsx
 msgctxt "5eLdgO"
 msgid "Every time you complete an lesson, you earn Brain Power. As you accumulate BP, you progress through 10 belt colors, each with 10 levels."
-msgstr ""
+msgstr "Toda vez que você conclui uma aula, você ganha poder mental. À medida que acumula PM, você avança por 10 cores de faixa, cada uma com 10 níveis."
 
 #: src/app/(performance)/level/level-explanation.tsx
 msgctxt "C6bCZT"
@@ -1547,17 +1547,17 @@ msgstr "Contatar suporte"
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
 msgctxt "A/VPtF"
 msgid "Lesson not available"
-msgstr ""
+msgstr "A aula não está disponível"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
 msgctxt "bHscXj"
 msgid "This lesson hasn't been created yet."
-msgstr ""
+msgstr "Esta aula ainda não foi criada."
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
 msgctxt "ZzznjM"
 msgid "Create lesson"
-msgstr ""
+msgstr "Criar aula"
 
 #: src/app/generate/ch/[id]/generate-chapter-content.tsx
 msgctxt "qNiSDe"
@@ -1792,12 +1792,12 @@ msgstr "Isso geralmente leva alguns segundos"
 #: src/app/generate/l/[id]/use-generation-phases.ts
 msgctxt "4GF8N3"
 msgid "Creating lesson content"
-msgstr ""
+msgstr "Criando o conteúdo da aula"
 
 #: src/app/generate/l/[id]/use-generation-phases.ts
 msgctxt "7CgRbK"
 msgid "Preparing the player..."
-msgstr ""
+msgstr "Preparando o player..."
 
 #: src/app/generate/l/[id]/use-generation-phases.ts
 msgctxt "aeeXxf"
@@ -1807,12 +1807,12 @@ msgstr "Finalizando..."
 #: src/app/generate/l/[id]/use-generation-phases.ts
 msgctxt "BszFlm"
 msgid "Saving your lesson..."
-msgstr ""
+msgstr "Salvando sua aula..."
 
 #: src/app/generate/l/[id]/use-generation-phases.ts
 msgctxt "dxmIps"
 msgid "Writing the lesson..."
-msgstr ""
+msgstr "Escrevendo a aula..."
 
 #: src/app/generate/l/[id]/use-generation-phases.ts
 msgctxt "EKtClK"
@@ -1832,12 +1832,12 @@ msgstr "Quase lá..."
 #: src/app/generate/l/[id]/use-generation-phases.ts
 msgctxt "VhkkUW"
 msgid "Building the practice flow..."
-msgstr ""
+msgstr "Montando o fluxo de prática..."
 
 #: src/app/generate/l/[id]/use-generation-phases.ts
 msgctxt "w7ccSo"
 msgid "Saving lesson"
-msgstr ""
+msgstr "Salvando a aula"
 
 #: src/app/generate/layout.tsx
 msgctxt "/tq5fR"
@@ -2078,7 +2078,7 @@ msgstr "Aprenda novas palavras de {topic} com flashcards — veja cada palavra, 
 #: src/lib/lessons.ts
 msgctxt "3bJDQa"
 msgid "Learn {topic} with a guided step-by-step tutorial."
-msgstr ""
+msgstr "Aprenda {topic} com um tutorial guiado passo a passo."
 
 #: src/lib/lessons.ts
 msgctxt "bzFQEy"
@@ -2098,12 +2098,12 @@ msgstr "Teste sua compreensão de {topic} com perguntas projetadas para verifica
 #: src/lib/lessons.ts
 msgctxt "MOpDCK"
 msgid "{kind} {lesson}"
-msgstr ""
+msgstr "{kind} {lesson}"
 
 #: src/lib/lessons.ts
 msgctxt "OjyuQ+"
 msgid "Learn the writing system for {topic} with focused practice."
-msgstr ""
+msgstr "Aprenda o sistema de escrita de {topic} com prática focada."
 
 #: src/lib/lessons.ts
 msgctxt "pDtxFt"
@@ -2113,12 +2113,12 @@ msgstr "Teste seu vocabulário de {topic} traduzindo palavras que você aprendeu
 #: src/lib/lessons.ts
 msgctxt "pSQZ7W"
 msgid "Learn about {topic} through an interactive lesson."
-msgstr ""
+msgstr "Aprenda sobre {topic} por meio de uma aula interativa."
 
 #: src/lib/lessons.ts
 msgctxt "qHbgYB"
 msgid "{lesson} - {course}"
-msgstr ""
+msgstr "{lesson} - {course}"
 
 #: src/lib/lessons.ts
 msgctxt "THPcKi"
