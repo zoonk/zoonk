@@ -1,62 +1,57 @@
 "use client";
 
 import { type PhaseStatus, enforcePhaseProgression } from "@/lib/generation-phases";
-import { type ThinkingMessageGenerator, cycleMessage } from "@/lib/workflow/use-thinking-messages";
+import { type GeneratedLessonKind } from "@/lib/generation/lesson-generation-phase-config";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
-import { useExtracted } from "next-intl";
 import {
   PHASE_ICONS,
-  PHASE_ORDER,
   type PhaseName,
   calculateTargetProgress,
   calculateWeightedProgress,
+  getPhaseOrder,
   getPhaseStatus,
 } from "./generation-phases";
+import { usePhaseLabels } from "./use-phase-labels";
+import { usePhaseThinkingGenerators } from "./use-phase-thinking-generators";
 
+/** Returns the visible timeline state for the selected lesson generation workflow. */
 export function useGenerationPhases(
   completedSteps: LessonStepName[],
   currentStep: LessonStepName | null,
+  lessonKind: GeneratedLessonKind,
   startedSteps?: LessonStepName[],
 ) {
-  const t = useExtracted();
-
-  const labels: Record<PhaseName, string> = {
-    creatingContent: t("Creating lesson content"),
-    finishing: t("Almost done"),
-    gettingStarted: t("Getting started"),
-    savingContent: t("Saving lesson"),
-  };
+  const labels = usePhaseLabels();
+  const phaseOrder = getPhaseOrder(lessonKind);
 
   const rawPhases: {
     name: PhaseName;
     label: string;
     status: PhaseStatus;
     icon: (typeof PHASE_ICONS)[PhaseName];
-  }[] = PHASE_ORDER.map((phase) => ({
+  }[] = phaseOrder.map((phase) => ({
     icon: PHASE_ICONS[phase],
     label: labels[phase],
     name: phase,
-    status: getPhaseStatus(phase, completedSteps, currentStep, startedSteps),
+    status: getPhaseStatus(phase, completedSteps, currentStep, lessonKind, startedSteps),
   }));
 
   const phases = enforcePhaseProgression(rawPhases);
 
-  const progress = calculateWeightedProgress(completedSteps, currentStep, startedSteps);
-  const targetProgress = calculateTargetProgress(completedSteps, currentStep, startedSteps);
+  const progress = calculateWeightedProgress(completedSteps, currentStep, lessonKind, startedSteps);
+
+  const targetProgress = calculateTargetProgress(
+    completedSteps,
+    currentStep,
+    lessonKind,
+    startedSteps,
+  );
 
   const activePhaseNames = phases
     .filter((phase) => phase.status === "active")
     .map((phase) => phase.name);
 
-  const thinkingGenerators: Record<PhaseName, ThinkingMessageGenerator> = {
-    creatingContent: (index: number) =>
-      cycleMessage([t("Writing the lesson..."), t("Building the practice flow...")], index),
-    finishing: (index) => cycleMessage([t("Wrapping up..."), t("Almost there...")], index),
-    gettingStarted: (index) =>
-      cycleMessage([t("Getting everything ready..."), t("Setting things up...")], index),
-    savingContent: (index: number) =>
-      cycleMessage([t("Saving your lesson..."), t("Preparing the player...")], index),
-  };
+  const thinkingGenerators = usePhaseThinkingGenerators();
 
   return { activePhaseNames, phases, progress, targetProgress, thinkingGenerators };
 }

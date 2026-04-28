@@ -806,7 +806,7 @@ msgstr "Cursos online usando IA"
 #: src/app/(catalog)/courses/page.tsx
 msgctxt "ujsArd"
 msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons and lessons to learn subjects like science, math, technology, and more."
-msgstr "Explore todos os cursos da Zoonk para aprender qualquer coisa usando IA. Encontre aulas e aulas interativas para aprender assuntos como ciência, matemática, tecnologia e muito mais."
+msgstr "Explore todos os cursos da Zoonk para aprender qualquer coisa usando IA. Encontre aulas interativas e aulas para aprender assuntos como ciência, matemática, tecnologia e muito mais."
 
 #: src/app/(catalog)/learn/[prompt]/course-suggestion-item.tsx
 msgctxt "VzzYJk"
@@ -842,7 +842,7 @@ msgstr "Mudar assunto"
 #: src/app/(catalog)/learn/[prompt]/page.tsx
 msgctxt "U6/c8l"
 msgid "Discover personalized courses and resources to learn {prompt}. Zoonk uses AI to create interactive lessons and lessons tailored to you."
-msgstr "Descubra cursos e recursos personalizados para aprender {prompt}. A Zoonk usa IA para criar aulas interativas e aulas feitas para você."
+msgstr "Descubra cursos e recursos personalizados para aprender {prompt}. A Zoonk usa IA para criar aulas interativas e aulas feitas pra você."
 
 #: src/app/(catalog)/learn/[prompt]/page.tsx
 msgctxt "X2b6pH"
@@ -954,7 +954,7 @@ msgstr "Assuntos sugeridos"
 #: src/app/(catalog)/learn/page.tsx
 msgctxt "o+Unq4"
 msgid "Tell Zoonk what you want to learn and get a course created with AI. Start learning any subject with interactive lessons and lessons."
-msgstr "Conte à Zoonk o que você quer aprender e receba um curso criado com IA. Comece a aprender qualquer assunto com aulas interativas e aulas."
+msgstr "Conte pra Zoonk o que você quer aprender e receba um curso criado com IA. Comece a aprender qualquer assunto com aulas interativas e aulas."
 
 #: src/app/(catalog)/learn/page.tsx
 msgctxt "O9mDkA"
@@ -1034,7 +1034,7 @@ msgstr "História mundial"
 #: src/app/(catalog)/my/page.tsx
 msgctxt "B+9gB2"
 msgid "View all the courses you started on Zoonk. Continue where you left off and track your progress across interactive lessons and lessons."
-msgstr "Veja todos os cursos que você começou na Zoonk. Continue de onde parou e acompanhe seu progresso em aulas interativas e aulas."
+msgstr "Veja todos os cursos que você começou na Zoonk. Continue de onde parou e acompanhe seu progresso nas aulas interativas e nas aulas."
 
 #: src/app/(catalog)/my/page.tsx
 msgctxt "Dr13kE"
@@ -1189,7 +1189,7 @@ msgstr "{value} PM"
 #: src/app/(performance)/level/level-explanation.tsx
 msgctxt "5eLdgO"
 msgid "Every time you complete an lesson, you earn Brain Power. As you accumulate BP, you progress through 10 belt colors, each with 10 levels."
-msgstr "Toda vez que você conclui uma aula, você ganha poder mental. À medida que acumula PM, você avança por 10 cores de faixa, cada uma com 10 níveis."
+msgstr "Toda vez que você conclui uma aula, você ganha poder mental. Conforme acumula PM, você avança por 10 cores de faixa, cada uma com 10 níveis."
 
 #: src/app/(performance)/level/level-explanation.tsx
 msgctxt "C6bCZT"
@@ -1547,7 +1547,7 @@ msgstr "Contatar suporte"
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
 msgctxt "A/VPtF"
 msgid "Lesson not available"
-msgstr "A aula não está disponível"
+msgstr "Aula indisponível"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
 msgctxt "bHscXj"
@@ -1600,7 +1600,6 @@ msgid "Progress"
 msgstr "Progresso"
 
 #: src/app/generate/ch/[id]/generation-client.tsx
-#: src/app/generate/l/[id]/generation-client.tsx
 msgctxt "ViO6Dt"
 msgid "Creating your lessons"
 msgstr "Criando suas aulas"
@@ -1614,7 +1613,7 @@ msgstr "Algo deu errado. Por favor, tente novamente."
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
 #: src/app/generate/cs/[id]/use-generation-phases.ts
-#: src/app/generate/l/[id]/use-generation-phases.ts
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "5nJVpw"
 msgid "Getting everything ready..."
 msgstr "Preparando tudo..."
@@ -1658,7 +1657,7 @@ msgstr "Mapeando o caminho de aprendizado..."
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
 #: src/app/generate/cs/[id]/use-generation-phases.ts
-#: src/app/generate/l/[id]/use-generation-phases.ts
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "xrLiIe"
 msgid "Setting things up..."
 msgstr "Configurando as coisas..."
@@ -1780,6 +1779,11 @@ msgid "Your lesson is ready"
 msgstr "Sua aula está pronta"
 
 #: src/app/generate/l/[id]/generation-client.tsx
+msgctxt "mFR5UU"
+msgid "Creating your lesson"
+msgstr "Criando sua aula"
+
+#: src/app/generate/l/[id]/generation-client.tsx
 msgctxt "T2TGxR"
 msgid "Taking you to your lesson..."
 msgstr "Levando você para sua aula..."
@@ -1789,55 +1793,490 @@ msgctxt "THvPMp"
 msgid "This usually takes a few seconds"
 msgstr "Isso geralmente leva alguns segundos"
 
-#: src/app/generate/l/[id]/use-generation-phases.ts
-msgctxt "4GF8N3"
-msgid "Creating lesson content"
-msgstr "Criando o conteúdo da aula"
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "+QrqeN"
+msgid "Writing the explanation first..."
+msgstr "Escrevendo a explicação primeiro..."
 
-#: src/app/generate/l/[id]/use-generation-phases.ts
-msgctxt "7CgRbK"
-msgid "Preparing the player..."
-msgstr "Preparando o player..."
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "0AWsLH"
+msgid "Explaining the topic..."
+msgstr "Explicando o tópico..."
 
-#: src/app/generate/l/[id]/use-generation-phases.ts
-msgctxt "aeeXxf"
-msgid "Wrapping up..."
-msgstr "Finalizando..."
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "0Zum4g"
+msgid "Putting words in context..."
+msgstr "Colocando as palavras em contexto..."
 
-#: src/app/generate/l/[id]/use-generation-phases.ts
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "19fPwV"
+msgid "Making it clear..."
+msgstr "Esclarecendo..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "2e5abC"
+msgid "Wrapping things up..."
+msgstr "Finalizando as coisas..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "2Tovpk"
+msgid "Planning each image..."
+msgstr "Planejando cada imagem..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "4wkMNX"
+msgid "Getting answer options ready..."
+msgstr "Preparando as alternativas de resposta..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "5Jyenk"
+msgid "Getting ready for the next step..."
+msgstr "Preparando pro próximo passo..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "65JXIy"
+msgid "Putting together the lesson..."
+msgstr "Montando a aula..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "6hjA6/"
+msgid "Creating examples to try..."
+msgstr "Criando exemplos pra tentar..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "6xEJTk"
+msgid "Designing practice exercises..."
+msgstr "Criando exercícios de prática..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "a08k7g"
+msgid "Generating the images..."
+msgstr "Gerando as imagens..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "BBwnPG"
+msgid "Adding more options..."
+msgstr "Adicionando mais alternativas..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "bC9979"
+msgid "Almost done..."
+msgstr "Quase pronto..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "bJVUNz"
+msgid "Adding some color..."
+msgstr "Adicionando um pouco de cor..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "BszFlm"
 msgid "Saving your lesson..."
 msgstr "Salvando sua aula..."
 
-#: src/app/generate/l/[id]/use-generation-phases.ts
-msgctxt "dxmIps"
-msgid "Writing the lesson..."
-msgstr "Escrevendo a aula..."
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "C05+tM"
+msgid "Building interactive tasks..."
+msgstr "Criando tarefas interativas..."
 
-#: src/app/generate/l/[id]/use-generation-phases.ts
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "cVoRCh"
+msgid "Preparing options..."
+msgstr "Preparando alternativas..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "EAqAX/"
+msgid "Thinking about what to illustrate..."
+msgstr "Pensando no que ilustrar..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "epxxAx"
+msgid "Building the foundation..."
+msgstr "Construindo a base..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "GyThaR"
+msgid "Preparing background context..."
+msgstr "Preparando contexto de fundo..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "iUUJom"
+msgid "Planning the illustrations..."
+msgstr "Planejando as ilustrações..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "JGNN92"
+msgid "Drawing an illustration..."
+msgstr "Desenhando uma ilustração..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "jH56mP"
+msgid "Storing prerequisite content..."
+msgstr "Guardando o conteúdo pré-requisito..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "jixTNM"
+msgid "Building natural sentences..."
+msgstr "Construindo frases naturais..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "JUr8Er"
+msgid "Finishing up..."
+msgstr "Finalizando..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "K/JznZ"
+msgid "Writing the explanation..."
+msgstr "Escrevendo a explicação..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "KddvJw"
+msgid "Writing fill-in-the-blanks..."
+msgstr "Escrevendo preencher os espaços..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "l486Kx"
+msgid "Checking what we need..."
+msgstr "Verificando o que a gente precisa..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "nwi1Ym"
+msgid "Crafting the content..."
+msgstr "Criando o conteúdo..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "r8xznK"
+msgid "Researching the topic..."
+msgstr "Pesquisando o tópico..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "SHIHyL"
+msgid "Creating reading passages..."
+msgstr "Criando os textos de leitura..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "sQsQbH"
+msgid "Choosing the right scenes..."
+msgstr "Escolhendo as cenas certas..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "txIcop"
+msgid "Loading lesson data..."
+msgstr "Carregando os dados da aula..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "uDzgwu"
+msgid "Writing example sentences..."
+msgstr "Escrevendo frases de exemplo..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "WsjFV2"
+msgid "Preparing the word bank..."
+msgstr "Preparando o banco de palavras..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "xBaVAH"
+msgid "Finishing the artwork..."
+msgstr "Finalizando a arte..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "Yoev2R"
+msgid "Refining the details..."
+msgstr "Refinando os detalhes..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "ZRt4oT"
+msgid "Saving earlier lessons..."
+msgstr "Salvando as aulas anteriores..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "/Fl7bm"
+msgid "Finding the right sounds..."
+msgstr "Encontrando os sons certos..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "1aPaHZ"
+msgid "Making vocabulary easier to read..."
+msgstr "Deixando o vocabulário mais fácil de ler..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "1vO+bV"
+msgid "Recording vocabulary audio..."
+msgstr "Gravando áudio do vocabulário..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "4xvh9e"
+msgid "Getting the pronunciation right..."
+msgstr "Acertando a pronúncia..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "5InW8H"
+msgid "Recording the audio..."
+msgstr "Gravando o áudio..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "6BQo6o"
+msgid "Translating individual words..."
+msgstr "Traduzindo palavras individuais..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "AQMVYX"
+msgid "Making it easier to read..."
+msgstr "Facilitando a leitura..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "boocfl"
+msgid "Adding reading aids..."
+msgstr "Adicionando auxílios de leitura..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "C2ELVi"
+msgid "Making each word listenable..."
+msgstr "Deixando cada palavra audível..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "Ch9BcP"
+msgid "Converting vocabulary to Latin script..."
+msgstr "Convertendo vocabulário para escrita latina..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "DLZ9fl"
+msgid "Converting to Latin script..."
+msgstr "Convertendo para escrita latina..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "FahI7K"
+msgid "Preparing vocabulary audio..."
+msgstr "Preparando áudio do vocabulário..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "GILb0l"
+msgid "Converting grammar text to Latin script..."
+msgstr "Convertendo texto de gramática para escrita latina..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "HDNFHk"
+msgid "Checking how to say each word..."
+msgstr "Verificando como dizer cada palavra..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "hZLCkp"
+msgid "Finding word meanings..."
+msgstr "Encontrando significados das palavras..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "i+rNdh"
+msgid "Picking the key vocabulary..."
+msgstr "Escolhendo o vocabulário principal..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "IdWf9/"
+msgid "Choosing words to practice..."
+msgstr "Escolhendo palavras para praticar..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "JfNFGM"
+msgid "Making words listenable..."
+msgstr "Deixando palavras audíveis..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "jV2zI1"
+msgid "Getting the sound for each word..."
+msgstr "Pegando o som de cada palavra..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "k0Q/Ph"
+msgid "Looking up each term..."
+msgstr "Pesquisando cada termo..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "KL34l5"
+msgid "Adding romanization for grammar..."
+msgstr "Adicionando romanização para gramática..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "kxBeWt"
+msgid "Adding romanization for vocabulary..."
+msgstr "Adicionando romanização para vocabulário..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "L6f1Zq"
+msgid "Recording pronunciation info..."
+msgstr "Gravando informações de pronúncia..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "muXaEm"
+msgid "Recording pronunciation for each word..."
+msgstr "Gravando pronúncia de cada palavra..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "oB01Wc"
+msgid "Preparing the voice..."
+msgstr "Preparando a voz..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "OFH7dE"
+msgid "Making grammar content easier to read..."
+msgstr "Deixando o conteúdo de gramática mais fácil de ler..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "OJkDgV"
+msgid "Preparing word-by-word audio..."
+msgstr "Preparando o áudio palavra por palavra..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "QDv0wS"
+msgid "Getting the audio for each term..."
+msgstr "Pegando o áudio de cada termo..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "SC0o7J"
+msgid "Building the vocabulary guide..."
+msgstr "Montando o guia de vocabulário..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "ScA7Xm"
+msgid "Making it sound natural..."
+msgstr "Deixando mais natural..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "ud2yWh"
+msgid "Writing out the sounds..."
+msgstr "Escrevendo os sons..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "UFDKHM"
+msgid "Finding the most useful words..."
+msgstr "Encontrando as palavras mais úteis..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "VADOBa"
+msgid "Looking up how each word sounds..."
+msgstr "Procurando como cada palavra soa..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "VQ3+C2"
+msgid "Noting how each word sounds..."
+msgstr "Anotando como cada palavra soa..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "WnqJeL"
+msgid "Mapping out the pronunciation..."
+msgstr "Mapeando a pronúncia..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "YgG70c"
+msgid "Selecting important terms..."
+msgstr "Selecionando termos importantes..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "YWB+K/"
+msgid "Detailing the word sounds..."
+msgstr "Detalhando os sons das palavras..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+msgctxt "zYx0UG"
+msgid "Adding pronunciation for each word..."
+msgstr "Adicionando a pronúncia de cada palavra..."
+
+#: src/app/generate/l/[id]/use-phase-labels.ts
+msgctxt "0zeST/"
+msgid "Looking up words"
+msgstr "Procurando palavras"
+
+#: src/app/generate/l/[id]/use-phase-labels.ts
+msgctxt "2ZPUqg"
+msgid "Saving your lesson"
+msgstr "Salvando sua aula"
+
+#: src/app/generate/l/[id]/use-phase-labels.ts
+msgctxt "4OjRPB"
+msgid "Adding word pronunciation"
+msgstr "Adicionando pronúncia das palavras"
+
+#: src/app/generate/l/[id]/use-phase-labels.ts
+msgctxt "58heST"
+msgid "Adding grammar romanization"
+msgstr "Adicionando romanização da gramática"
+
+#: src/app/generate/l/[id]/use-phase-labels.ts
+msgctxt "aKNA/b"
+msgid "Creating images"
+msgstr "Criando imagens"
+
+#: src/app/generate/l/[id]/use-phase-labels.ts
+msgctxt "c7xJGQ"
+msgid "Creating exercises"
+msgstr "Criando exercícios"
+
+#: src/app/generate/l/[id]/use-phase-labels.ts
 msgctxt "EKtClK"
 msgid "Getting started"
 msgstr "Começando"
 
-#: src/app/generate/l/[id]/use-generation-phases.ts
-msgctxt "HYmCaW"
-msgid "Almost done"
-msgstr "Quase pronto"
+#: src/app/generate/l/[id]/use-phase-labels.ts
+msgctxt "HXMA75"
+msgid "Adding vocabulary romanization"
+msgstr "Adicionando romanização do vocabulário"
 
-#: src/app/generate/l/[id]/use-generation-phases.ts
-msgctxt "MNQpiA"
-msgid "Almost there..."
-msgstr "Quase lá..."
+#: src/app/generate/l/[id]/use-phase-labels.ts
+msgctxt "j+pO55"
+msgid "Recording word audio"
+msgstr "Gravando áudio das palavras"
 
-#: src/app/generate/l/[id]/use-generation-phases.ts
-msgctxt "VhkkUW"
-msgid "Building the practice flow..."
-msgstr "Montando o fluxo de prática..."
+#: src/app/generate/l/[id]/use-phase-labels.ts
+msgctxt "mIpv67"
+msgid "Creating sentences"
+msgstr "Criando frases"
 
-#: src/app/generate/l/[id]/use-generation-phases.ts
-msgctxt "w7ccSo"
-msgid "Saving lesson"
-msgstr "Salvando a aula"
+#: src/app/generate/l/[id]/use-phase-labels.ts
+msgctxt "RXfSEl"
+msgid "Building word list"
+msgstr "Montando lista de palavras"
+
+#: src/app/generate/l/[id]/use-phase-labels.ts
+msgctxt "T00GEW"
+msgid "Recording audio"
+msgstr "Gravando áudio"
+
+#: src/app/generate/l/[id]/use-phase-labels.ts
+msgctxt "TlrPFF"
+msgid "Adding pronunciation"
+msgstr "Adicionando pronúncia"
+
+#: src/app/generate/l/[id]/use-phase-labels.ts
+msgctxt "V0mPLK"
+msgid "Adding romanization"
+msgstr "Adicionando romanização"
+
+#: src/app/generate/l/[id]/use-phase-labels.ts
+msgctxt "v2DAdY"
+msgid "Recording vocabulary audio"
+msgstr "Gravando áudio do vocabulário"
+
+#: src/app/generate/l/[id]/use-phase-labels.ts
+msgctxt "v4iFHN"
+msgid "Writing the content"
+msgstr "Escrevendo o conteúdo"
+
+#: src/app/generate/l/[id]/use-phase-labels.ts
+msgctxt "v7HGj3"
+msgid "Planning the images"
+msgstr "Planejando as imagens"
+
+#: src/app/generate/l/[id]/use-phase-labels.ts
+msgctxt "viluaR"
+msgid "Preparing options"
+msgstr "Preparando alternativas"
+
+#: src/app/generate/l/[id]/use-phase-labels.ts
+msgctxt "ZA0/P+"
+msgid "Writing the explanation"
+msgstr "Escrevendo a explicação"
+
+#: src/app/generate/l/[id]/use-phase-labels.ts
+msgctxt "ZZMstH"
+msgid "Saving earlier lessons"
+msgstr "Salvando as aulas anteriores"
 
 #: src/app/generate/layout.tsx
 msgctxt "/tq5fR"

@@ -210,6 +210,13 @@ async function completedExplanationLesson({
   return lesson;
 }
 
+/** Returns completed streamed step names from the current workflow test run. */
+function completedStreamedSteps() {
+  return getStreamedEvents()
+    .filter((event) => event.status === "completed")
+    .map((event) => event.step);
+}
+
 describe(lessonGenerationWorkflow, () => {
   let organizationId: string;
 
@@ -234,6 +241,15 @@ describe(lessonGenerationWorkflow, () => {
     expect(generateLessonExplanation).toHaveBeenCalledOnce();
     expect(generateStepImagePrompts).toHaveBeenCalledOnce();
     expect(generateContentStepImage).toHaveBeenCalledTimes(3);
+    expect(completedStreamedSteps()).toEqual(
+      expect.arrayContaining([
+        "generateExplanationContent",
+        "generateImagePrompts",
+        "generateStepImages",
+        "saveExplanationLesson",
+        "setLessonAsCompleted",
+      ]),
+    );
 
     const steps = await prisma.step.findMany({
       orderBy: { position: "asc" },
@@ -303,6 +319,14 @@ describe(lessonGenerationWorkflow, () => {
         prompt: "practice scenario image",
       }),
     );
+    expect(completedStreamedSteps()).toEqual(
+      expect.arrayContaining([
+        "generatePracticeContent",
+        "generateStepImages",
+        "savePracticeLesson",
+        "setLessonAsCompleted",
+      ]),
+    );
 
     const steps = await prisma.step.findMany({
       orderBy: { position: "asc" },
@@ -362,6 +386,14 @@ describe(lessonGenerationWorkflow, () => {
       }),
     );
     expect(generateStepImage).toHaveBeenCalledTimes(2);
+    expect(completedStreamedSteps()).toEqual(
+      expect.arrayContaining([
+        "generateQuizContent",
+        "generateQuizImages",
+        "saveQuizLesson",
+        "setLessonAsCompleted",
+      ]),
+    );
 
     const [step] = await prisma.step.findMany({ where: { lessonId: quiz.id } });
     const content = parseStepContent("selectImage", step?.content);
@@ -427,6 +459,17 @@ describe(lessonGenerationWorkflow, () => {
         targetLanguage: "ja",
         texts: allRenderedWords,
       }),
+    );
+    expect(completedStreamedSteps()).toEqual(
+      expect.arrayContaining([
+        "generateVocabularyContent",
+        "generateVocabularyDistractors",
+        "generateVocabularyPronunciation",
+        "generateVocabularyAudio",
+        "generateVocabularyRomanization",
+        "saveVocabularyLesson",
+        "setLessonAsCompleted",
+      ]),
     );
 
     const lessonWords = await prisma.lessonWord.findMany({
