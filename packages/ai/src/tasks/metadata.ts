@@ -68,6 +68,14 @@ export const AI_TASK_MODEL_CONFIG = {
     defaultModel: "openai/gpt-5.4",
     fallbackModels: ["anthropic/claude-opus-4.6", "google/gemini-3-flash"],
   },
+  "lesson-kind": {
+    defaultModel: "openai/gpt-5.4-nano",
+    fallbackModels: [
+      "google/gemini-3.1-flash-lite-preview",
+      "meta/llama-4-scout",
+      "anthropic/claude-haiku-4.5",
+    ],
+  },
   "lesson-practice": {
     defaultModel: "openai/gpt-5.4",
     fallbackModels: ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"],

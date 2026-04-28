@@ -49,6 +49,11 @@ export function buildRegularCourseEstimate({
       taskName: "chapter-lessons",
       usageByTask,
     }),
+    buildGatewayLineItem({
+      averageRequestsPerRun: totalLessonCount,
+      taskName: "lesson-kind",
+      usageByTask,
+    }),
     buildAggregateLineItem({
       averageRequestsPerRun: totalLessonCount,
       estimatedCost: totalLessonCost,

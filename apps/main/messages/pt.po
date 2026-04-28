@@ -1612,6 +1612,11 @@ msgid "Something went wrong. Please try again."
 msgstr "Algo deu errado. Por favor, tente novamente."
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
+msgctxt "0xCLwv"
+msgid "Choosing type for lesson {number}..."
+msgstr "Escolhendo o tipo da aula {number}..."
+
+#: src/app/generate/ch/[id]/use-generation-phases.ts
 #: src/app/generate/cs/[id]/use-generation-phases.ts
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "5nJVpw"
@@ -1623,6 +1628,11 @@ msgstr "Preparando tudo..."
 msgctxt "aJev/w"
 msgid "Getting things ready"
 msgstr "Preparando as coisas"
+
+#: src/app/generate/ch/[id]/use-generation-phases.ts
+msgctxt "gnxL73"
+msgid "Choosing lesson types"
+msgstr "Escolhendo os tipos de aulas"
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
 msgctxt "HWSnYS"
@@ -1640,6 +1650,11 @@ msgid "Exploring your topic..."
 msgstr "Explorando seu tópico..."
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
+msgctxt "Sbsm52"
+msgid "Checking how each lesson should be taught..."
+msgstr "Verificando como cada aula deve ser ensinada..."
+
+#: src/app/generate/ch/[id]/use-generation-phases.ts
 msgctxt "SF9AtA"
 msgid "Preparing lessons"
 msgstr "Preparando aulas"
@@ -1649,6 +1664,11 @@ msgstr "Preparando aulas"
 msgctxt "txvxwS"
 msgid "Saving your progress..."
 msgstr "Salvando seu progresso..."
+
+#: src/app/generate/ch/[id]/use-generation-phases.ts
+msgctxt "Vbn5Wz"
+msgid "Reviewing the lesson mix..."
+msgstr "Revisando a combinação de aulas..."
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
 msgctxt "VKFa/t"

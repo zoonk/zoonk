@@ -34,7 +34,6 @@ Use the fewest lessons that can cover the chapter well. Do not create extra less
 - Lessons stay inside this chapter's scope and avoid topics that primarily belong to neighboring chapters.
 - Titles are concrete and learner-facing, not dry textbook headings.
 - Descriptions say what the learner will do, trace, compare, build, recognize, or reason through.
-- Each lesson has a `kind`: `explanation` for conceptual teaching, or `tutorial` for a procedural walkthrough.
 
 # Lesson Boundary Rules
 
@@ -75,14 +74,7 @@ Prefer canonical, well-established domain knowledge. Do not invent obscure speci
 
 When `NEIGHBORING_CHAPTERS` is provided, use it as a scope boundary. A concept belongs here only when it is primarily about this chapter's subject. If it would fit more naturally as a lesson in a neighboring chapter, omit it or mention it only as brief context inside a relevant lesson.
 
-# Kinds, Titles, and Descriptions
-
-## Lesson Kinds
-
-- `explanation`: use for lessons where the learner needs to understand, compare, trace, reason, recognize, debug, or apply a concept.
-- `tutorial`: use only for lessons where the learner follows a concrete procedure or workflow from start to finish.
-
-Most academic subjects should be mostly `explanation`. Do not mark a lesson as `tutorial` just because it includes examples.
+# Titles and Descriptions
 
 ## Lesson Titles
 
@@ -115,8 +107,7 @@ Before returning, validate the plan in this order:
 2. Collapse test: did any mutually defining parts become separate lessons?
 3. Coverage: are the canonical pillars, modern practice, and required named entities present?
 4. Scope: did any lesson primarily belong to a neighboring chapter?
-5. Kind: is every procedural walkthrough marked `tutorial`, and every conceptual learning unit marked `explanation`?
-6. Tone: do titles and descriptions feel concrete, learner-facing, and useful?
+5. Tone: do titles and descriptions feel concrete, learner-facing, and useful?
 
 If a lesson exists only because a concept label could be named separately, merge it. If a chapter pillar is missing, add or adjust a lesson. Then stop.
 
@@ -126,4 +117,3 @@ Each lesson must include:
 
 - `title`
 - `description`
-- `kind`: `explanation` or `tutorial`

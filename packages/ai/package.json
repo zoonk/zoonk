@@ -11,6 +11,7 @@
     "./tasks/lessons/core/practice": "./src/tasks/lessons/core/lesson-practice.ts",
     "./tasks/lessons/core/quiz": "./src/tasks/lessons/core/lesson-quiz.ts",
     "./tasks/lessons/custom": "./src/tasks/lessons/custom/lesson-custom.ts",
+    "./tasks/lessons/kind": "./src/tasks/lessons/lesson-kind.ts",
     "./tasks/lessons/language/distractors": "./src/tasks/lessons/language/lesson-distractors.ts",
     "./tasks/lessons/language/grammar-content": "./src/tasks/lessons/language/lesson-grammar-content.ts",
     "./tasks/lessons/language/grammar-user-content": "./src/tasks/lessons/language/lesson-grammar-user-content.ts",

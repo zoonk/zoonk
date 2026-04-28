@@ -12,7 +12,6 @@ const schema = z.object({
   lessons: z.array(
     z.object({
       description: z.string(),
-      kind: z.enum(["explanation", "tutorial"]),
       title: z.string(),
     }),
   ),

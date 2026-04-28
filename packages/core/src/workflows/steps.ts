@@ -39,6 +39,7 @@ export const CHAPTER_STEPS = [
   "getChapter",
   "setChapterAsRunning",
   "generateLessons",
+  "generateLessonKind",
   "addLessons",
   "setChapterAsCompleted",
 ] as const;

@@ -12,6 +12,7 @@ import { lessonDistractorsTask } from "./lesson-distractors/task";
 import { lessonExplanationTask } from "./lesson-explanation/task";
 import { lessonGrammarContentTask } from "./lesson-grammar-content/task";
 import { lessonGrammarUserContentTask } from "./lesson-grammar-user-content/task";
+import { lessonKindTask } from "./lesson-kind/task";
 import { lessonPracticeTask } from "./lesson-practice/task";
 import { lessonPronunciationTask } from "./lesson-pronunciation/task";
 import { lessonQuizTask } from "./lesson-quiz/task";
@@ -27,6 +28,7 @@ export const TASKS: readonly Task[] = [
   lessonExplanationTask,
   lessonGrammarContentTask,
   lessonGrammarUserContentTask,
+  lessonKindTask,
   lessonPronunciationTask,
   lessonTranslationTask,
   lessonSentencesTask,

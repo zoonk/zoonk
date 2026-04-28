@@ -74,11 +74,15 @@ vi.mock("@zoonk/ai/tasks/chapters/lessons", () => ({
   generateChapterLessons: vi.fn().mockResolvedValue({
     data: {
       lessons: [
-        { description: "Lesson 1 description", kind: "explanation", title: "Lesson 1" },
-        { description: "Lesson 2 description", kind: "explanation", title: "Lesson 2" },
+        { description: "Lesson 1 description", title: "Lesson 1" },
+        { description: "Lesson 2 description", title: "Lesson 2" },
       ],
     },
   }),
+}));
+
+vi.mock("@zoonk/ai/tasks/lessons/kind", () => ({
+  generateLessonKind: vi.fn().mockResolvedValue({ data: { kind: "explanation" } }),
 }));
 
 vi.mock("@/workflows/lesson-generation/lesson-generation-workflow", () => ({

@@ -36,7 +36,7 @@ const AI_TASK_CATALOG_GROUP_DEFINITIONS = [
   },
   {
     description: "Chapter-level planning tasks that decide which lessons should exist next.",
-    taskNames: ["chapter-lessons", "language-chapter-lessons"],
+    taskNames: ["chapter-lessons", "lesson-kind", "language-chapter-lessons"],
     title: "Chapter Planning",
   },
   {
