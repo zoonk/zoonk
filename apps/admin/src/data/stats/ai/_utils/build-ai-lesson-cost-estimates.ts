@@ -8,6 +8,8 @@ import {
   LANGUAGE_GATEWAY_TASKS,
   LANGUAGE_TTS_ESTIMATE_NOTE,
   LANGUAGE_TTS_HEURISTIC_NOTE,
+  STEP_IMAGE_PROMPTS_TASK,
+  STEP_SELECT_IMAGE_TASK,
 } from "./ai-cost-estimate-constants";
 import {
   buildGatewayLineItem,
@@ -20,9 +22,8 @@ import {
 import { type AiGenerationCostEstimate, type StructureStats } from "./ai-cost-estimate-types";
 
 /**
- * Core lessons combine lesson classification, a fixed explanation/practice/quiz
- * pipeline, explanation-specific image prompts/images, and quiz image
- * generation.
+ * Explanation lessons now carry the main teaching content, while practice and
+ * quiz lessons are deterministic companions generated from recent explanations.
  */
 export function buildCoreLessonEstimate({
   structureStats,
@@ -33,125 +34,112 @@ export function buildCoreLessonEstimate({
 }): AiGenerationCostEstimate {
   const coreLessonCount = structureStats.coreLessonCount;
   const lineItems = [
-    buildGatewayLineItem({ averageRequestsPerRun: 1, taskName: "lesson-kind", usageByTask }),
     buildGatewayLineItem({
-      averageRequestsPerRun: 1,
-      taskName: "lesson-core-activities",
-      usageByTask,
-    }),
-    buildGatewayLineItem({
-      averageRequestsPerRun: getAverageActivityCount({
+      averageRequestsPerRun: getAverageLessonCount({
         entityCount: coreLessonCount,
         totalCount: structureStats.coreLessonExplanationCount,
       }),
-      taskName: "activity-explanation",
+      taskName: "lesson-explanation",
       usageByTask,
     }),
     buildGatewayLineItem({
-      averageRequestsPerRun: getAverageActivityCount({
+      averageRequestsPerRun: getAverageLessonCount({
         entityCount: coreLessonCount,
         totalCount: structureStats.coreLessonPracticeCount,
       }),
-      taskName: "activity-practice",
+      taskName: "lesson-practice",
       usageByTask,
     }),
     buildGatewayLineItem({
-      averageRequestsPerRun: getAverageActivityCount({
+      averageRequestsPerRun: getAverageLessonCount({
         entityCount: coreLessonCount,
         totalCount: structureStats.coreLessonQuizCount,
       }),
-      taskName: "activity-quiz",
+      taskName: "lesson-quiz",
       usageByTask,
     }),
     buildGatewayLineItem({
-      averageRequestsPerRun: getAverageActivityCount({
+      averageRequestsPerRun: getAverageLessonCount({
         entityCount: coreLessonCount,
         totalCount: structureStats.coreLessonExplanationCount,
       }),
-      taskName: "step-image-prompts",
+      taskName: STEP_IMAGE_PROMPTS_TASK,
       usageByTask,
     }),
     buildStepImageLineItem({
-      activityKind: "explanation",
       entityCount: coreLessonCount,
+      lessonKind: "explanation",
+      structureStats,
+      usageByTask,
+    }),
+    buildStepImageLineItem({
+      entityCount: coreLessonCount,
+      lessonKind: "practice",
       structureStats,
       usageByTask,
     }),
     buildGatewayLineItem({
       averageRequestsPerRun: getAverageTaskRequestsPerRun({
         entityCount: coreLessonCount,
-        taskName: "step-select-image",
+        taskName: STEP_SELECT_IMAGE_TASK,
         usageByTask,
       }),
-      taskName: "step-select-image",
+      taskName: STEP_SELECT_IMAGE_TASK,
       usageByTask,
     }),
   ].filter((item): item is NonNullable<typeof item> => isEstimateLineItem(item));
 
   return {
     description:
-      "Lesson classification, core activity planning, explanation/practice/quiz generation, explanation step images, and quiz image generation.",
+      "Explanation lesson generation plus practice, quiz, step image prompts, generated step images, and select-image quiz media.",
     kind: "coreLesson",
     lineItems,
     notes: [],
-    runLabel: "completed core lessons",
+    runLabel: "completed explanation lessons",
     sampleCount: coreLessonCount,
-    title: "Full Core Lesson",
+    title: "Explanation Lesson",
     totalEstimatedCost: sumLineItems(lineItems),
   };
 }
 
 /**
- * Custom lessons use a simpler workflow: classify the lesson, plan the custom
- * activities, generate each activity, then run the step-image pass for those
- * activities.
+ * Tutorial lessons use one procedural content-generation call.
  */
-export function buildCustomLessonEstimate({
+export function buildTutorialLessonEstimate({
   structureStats,
   usageByTask,
 }: {
   structureStats: StructureStats;
   usageByTask: TaskUsageByName;
 }): AiGenerationCostEstimate {
-  const customLessonCount = structureStats.customLessonCount;
-  const averageCustomActivities = getAverageActivityCount({
-    entityCount: customLessonCount,
-    totalCount: structureStats.customActivityCount,
-  });
+  const tutorialLessonCount = structureStats.tutorialLessonCount;
   const lineItems = [
-    buildGatewayLineItem({ averageRequestsPerRun: 1, taskName: "lesson-kind", usageByTask }),
     buildGatewayLineItem({
       averageRequestsPerRun: 1,
-      taskName: "lesson-custom-activities",
+      taskName: "lesson-tutorial",
       usageByTask,
     }),
     buildGatewayLineItem({
-      averageRequestsPerRun: averageCustomActivities,
-      taskName: "activity-custom",
-      usageByTask,
-    }),
-    buildGatewayLineItem({
-      averageRequestsPerRun: averageCustomActivities,
-      taskName: "step-image-prompts",
+      averageRequestsPerRun: 1,
+      taskName: STEP_IMAGE_PROMPTS_TASK,
       usageByTask,
     }),
     buildStepImageLineItem({
-      activityKind: "custom",
-      entityCount: customLessonCount,
+      entityCount: tutorialLessonCount,
+      lessonKind: "tutorial",
       structureStats,
       usageByTask,
     }),
   ].filter((item): item is NonNullable<typeof item> => isEstimateLineItem(item));
 
   return {
-    description:
-      "Lesson classification, custom activity planning, custom activity generation, and the step-image pass for those activities.",
-    kind: "customLesson",
+    description: "Tutorial lesson generation using the procedural content task.",
+    kind: "tutorialLesson",
     lineItems,
     notes: [],
-    runLabel: "completed custom lessons",
-    sampleCount: customLessonCount,
-    title: "Full Custom Lesson",
+    runLabel: "completed tutorial lessons",
+    sampleCount: tutorialLessonCount,
+    title: "Tutorial Lesson",
     totalEstimatedCost: sumLineItems(lineItems),
   };
 }
@@ -168,11 +156,11 @@ export function buildLanguageLessonEstimate({
   usageByTask: TaskUsageByName;
 }): AiGenerationCostEstimate {
   const languageLessonCount = structureStats.languageLessonCount;
-  const averageWordClipCount = getAverageActivityCount({
+  const averageWordClipCount = getAverageLessonCount({
     entityCount: languageLessonCount,
     totalCount: structureStats.languageAudioWordClipCount,
   });
-  const averageSentenceWordCount = getAverageActivityCount({
+  const averageSentenceWordCount = getAverageLessonCount({
     entityCount: languageLessonCount,
     totalCount: structureStats.languageAudioSentenceWordCount,
   });
@@ -180,7 +168,6 @@ export function buildLanguageLessonEstimate({
     estimateWordAudioSeconds(averageWordClipCount) +
     estimateSentenceAudioSeconds(averageSentenceWordCount);
   const lineItems = [
-    buildGatewayLineItem({ averageRequestsPerRun: 1, taskName: "lesson-kind", usageByTask }),
     ...LANGUAGE_GATEWAY_TASKS.map((taskName) =>
       buildGatewayLineItem({
         averageRequestsPerRun: getAverageTaskRequestsPerRun({
@@ -200,7 +187,7 @@ export function buildLanguageLessonEstimate({
 
   return {
     description:
-      "Vocabulary, grammar, reading, translation/romanization/pronunciation helpers, and a separate inferred TTS cost for generated audio.",
+      "Vocabulary, grammar, reading, translation/romanization/pronunciation helpers, and inferred TTS cost for generated audio.",
     kind: "languageLesson",
     lineItems,
     notes: [LANGUAGE_TTS_ESTIMATE_NOTE, LANGUAGE_TTS_HEURISTIC_NOTE],
@@ -215,7 +202,7 @@ export function buildLanguageLessonEstimate({
  * Lesson-level builders repeatedly need the same normalization from raw counts
  * into "average generated items per lesson" ratios.
  */
-function getAverageActivityCount({
+function getAverageLessonCount({
   entityCount,
   totalCount,
 }: {

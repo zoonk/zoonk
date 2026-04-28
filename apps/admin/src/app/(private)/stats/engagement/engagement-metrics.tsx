@@ -1,8 +1,8 @@
-import { getAvgTimeByActivityKind } from "@/data/stats/get-avg-time-by-activity-kind";
+import { getAvgTimeByLessonKind } from "@/data/stats/get-avg-time-by-lesson-kind";
 import { getDailyActiveLearners } from "@/data/stats/get-daily-active-learners";
 import { getPeriodAccuracyRate } from "@/data/stats/get-period-accuracy-rate";
 import { getPeriodActiveLearners } from "@/data/stats/get-period-active-learners";
-import { getPeriodAvgActivityTime } from "@/data/stats/get-period-avg-activity-time";
+import { getPeriodAvgLessonTime } from "@/data/stats/get-period-avg-lesson-time";
 import { getPeriodCompletionRate } from "@/data/stats/get-period-completion-rate";
 import { getPeriodLearningTime } from "@/data/stats/get-period-learning-time";
 import { formatDuration } from "@/lib/format-duration";
@@ -10,10 +10,10 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { buildChartData } from "@zoonk/utils/chart";
 import { calculateDateRanges, validatePeriod } from "@zoonk/utils/date-ranges";
 import { validateOffset } from "@zoonk/utils/number";
-import { ActivityIcon, CheckCircleIcon, ClockIcon, TargetIcon, TimerIcon } from "lucide-react";
+import { BookOpenIcon, CheckCircleIcon, ClockIcon, TargetIcon, TimerIcon } from "lucide-react";
 import { AdminMetricCard, AdminMetricCardSkeleton } from "../_components/admin-metric-card";
 import { AdminTrendChart } from "../_components/admin-trend-chart";
-import { ActivityBreakdownTable } from "./activity-breakdown-table";
+import { LessonBreakdownTable } from "./lesson-breakdown-table";
 
 export async function EngagementMetrics({
   searchParams,
@@ -37,20 +37,20 @@ export async function EngagementMetrics({
     currentLearningTime,
     previousLearningTime,
     dailyActive,
-    activityBreakdown,
+    lessonBreakdown,
   ] = await Promise.all([
     getPeriodActiveLearners(current.start, current.end),
     getPeriodActiveLearners(previous.start, previous.end),
     getPeriodAccuracyRate(current.start, current.end),
     getPeriodAccuracyRate(previous.start, previous.end),
-    getPeriodAvgActivityTime(current.start, current.end),
-    getPeriodAvgActivityTime(previous.start, previous.end),
+    getPeriodAvgLessonTime(current.start, current.end),
+    getPeriodAvgLessonTime(previous.start, previous.end),
     getPeriodCompletionRate(current.start, current.end),
     getPeriodCompletionRate(previous.start, previous.end),
     getPeriodLearningTime(current.start, current.end),
     getPeriodLearningTime(previous.start, previous.end),
     getDailyActiveLearners(current.start, current.end),
-    getAvgTimeByActivityKind(current.start, current.end),
+    getAvgTimeByLessonKind(current.start, current.end),
   ]);
 
   const { average: chartAverage, dataPoints: chartData } = buildChartData(
@@ -65,7 +65,7 @@ export async function EngagementMetrics({
         <AdminMetricCard
           change={{ current: currentActiveLearners, period, previous: previousActiveLearners }}
           help="Distinct users with learning activity"
-          icon={<ActivityIcon />}
+          icon={<BookOpenIcon />}
           title="Active Learners"
           value={currentActiveLearners.toLocaleString()}
         />
@@ -80,7 +80,7 @@ export async function EngagementMetrics({
 
         <AdminMetricCard
           change={{ current: currentCompletionRate, period, previous: previousCompletionRate }}
-          help="Activities completed vs started"
+          help="Lessons completed vs started"
           icon={<CheckCircleIcon />}
           title="Completion Rate"
           value={`${currentCompletionRate.toFixed(1)}%`}
@@ -88,9 +88,9 @@ export async function EngagementMetrics({
 
         <AdminMetricCard
           change={{ current: currentAvgTime, period, previous: previousAvgTime }}
-          help="Average time to complete an activity"
+          help="Average time to complete a lesson"
           icon={<ClockIcon />}
-          title="Avg Time / Activity"
+          title="Avg Time / Lesson"
           value={formatDuration(currentAvgTime)}
         />
 
@@ -111,12 +111,12 @@ export async function EngagementMetrics({
         />
       )}
 
-      {activityBreakdown.length > 0 && (
+      {lessonBreakdown.length > 0 && (
         <div className="flex flex-col gap-3">
-          <h3 className="text-base font-semibold tracking-tight">Activity Time Breakdown</h3>
+          <h3 className="text-base font-semibold tracking-tight">Lesson Time Breakdown</h3>
 
           <div className="rounded-lg border">
-            <ActivityBreakdownTable data={activityBreakdown} />
+            <LessonBreakdownTable data={lessonBreakdown} />
           </div>
         </div>
       )}

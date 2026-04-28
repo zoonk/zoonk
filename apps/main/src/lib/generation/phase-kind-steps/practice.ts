@@ -1,22 +1,21 @@
 import { type AssertAllCovered } from "@/lib/generation-phases";
-import { type ActivityStepName } from "@zoonk/core/workflows/steps";
-import { type PhaseName } from "../activity-generation-phase-config";
+import { type LessonStepName } from "@zoonk/core/workflows/steps";
+import { type PhaseName } from "../lesson-generation-phase-config";
 
 type PracticeSteps =
-  | "getLessonActivities"
-  | "setActivityAsRunning"
-  | "generateExplanationContent"
+  | "getLesson"
+  | "setLessonAsRunning"
   | "generatePracticeContent"
   | "generateStepImages"
-  | "savePracticeActivity";
+  | "savePracticeLesson"
+  | "setLessonAsCompleted";
 
 export const PRACTICE_PHASE_STEPS = {
   creatingImages: ["generateStepImages"],
-  gettingStarted: ["getLessonActivities", "setActivityAsRunning"],
-  saving: ["savePracticeActivity"],
+  gettingStarted: ["getLesson", "setLessonAsRunning"],
+  saving: ["savePracticeLesson", "setLessonAsCompleted"],
   writingContent: ["generatePracticeContent"],
-  writingExplanation: ["generateExplanationContent"],
-} as const satisfies Record<string, readonly ActivityStepName[]>;
+} as const satisfies Record<string, readonly LessonStepName[]>;
 
 type _ValidatePractice = AssertAllCovered<
   Exclude<PracticeSteps, (typeof PRACTICE_PHASE_STEPS)[keyof typeof PRACTICE_PHASE_STEPS][number]>
@@ -24,7 +23,6 @@ type _ValidatePractice = AssertAllCovered<
 
 export const PRACTICE_PHASE_ORDER: PhaseName[] = [
   "gettingStarted",
-  "writingExplanation",
   "writingContent",
   "creatingImages",
   "saving",

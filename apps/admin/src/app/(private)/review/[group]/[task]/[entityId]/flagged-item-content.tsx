@@ -77,9 +77,7 @@ export async function FlaggedItemContent({
       notFound();
     }
 
-    return (
-      <StepImageEdit item={{ activity: step.activity, content: content.image, id: step.id }} />
-    );
+    return <StepImageEdit item={{ content: content.image, id: step.id, lesson: step.lesson }} />;
   }
 
   if (taskType === "stepSelectImage") {
@@ -90,7 +88,7 @@ export async function FlaggedItemContent({
     }
 
     const content = parseStepContent("selectImage", step.content);
-    return <StepSelectImageEdit item={{ activity: step.activity, content, id: step.id }} />;
+    return <StepSelectImageEdit item={{ content, id: step.id, lesson: step.lesson }} />;
   }
 
   if (taskType === "courseSuggestions") {

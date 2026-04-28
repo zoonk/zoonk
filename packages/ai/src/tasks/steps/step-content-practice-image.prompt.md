@@ -1,4 +1,4 @@
-Generate a realistic image for an interactive practice activity in a modern learning app.
+Generate a realistic image for an interactive practice lesson in a modern learning app.
 
 Style: Grounded, believable realism with clean composition, readable details, and practical visual evidence. The image should feel like a real screen, document, device, workspace, object, or situation the learner could inspect to solve a problem. Keep it polished and clear, not decorative.
 

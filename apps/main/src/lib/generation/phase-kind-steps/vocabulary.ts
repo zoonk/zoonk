@@ -1,27 +1,27 @@
 import { type AssertAllCovered } from "@/lib/generation-phases";
-import { type ActivityStepName } from "@zoonk/core/workflows/steps";
-import { type PhaseName } from "../activity-generation-phase-config";
+import { type LessonStepName } from "@zoonk/core/workflows/steps";
+import { type PhaseName } from "../lesson-generation-phase-config";
 
 type VocabularySteps =
-  | "getLessonActivities"
-  | "getNeighboringConcepts"
-  | "setActivityAsRunning"
+  | "getLesson"
+  | "setLessonAsRunning"
   | "generateVocabularyContent"
   | "generateVocabularyDistractors"
   | "generateVocabularyPronunciation"
   | "generateVocabularyRomanization"
   | "generateVocabularyAudio"
-  | "saveVocabularyActivity";
+  | "saveVocabularyLesson"
+  | "setLessonAsCompleted";
 
 export const VOCABULARY_PHASE_STEPS = {
   addingPronunciation: ["generateVocabularyPronunciation"],
   addingRomanization: ["generateVocabularyRomanization"],
   buildingWordList: ["generateVocabularyContent"],
   creatingExercises: ["generateVocabularyDistractors"],
-  gettingStarted: ["getLessonActivities", "getNeighboringConcepts", "setActivityAsRunning"],
+  gettingStarted: ["getLesson", "setLessonAsRunning"],
   recordingAudio: ["generateVocabularyAudio"],
-  saving: ["saveVocabularyActivity"],
-} as const satisfies Record<string, readonly ActivityStepName[]>;
+  saving: ["saveVocabularyLesson", "setLessonAsCompleted"],
+} as const satisfies Record<string, readonly LessonStepName[]>;
 
 type _ValidateVocabulary = AssertAllCovered<
   Exclude<

@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     description: t(
-      "View all the courses you started on Zoonk. Continue where you left off and track your progress across interactive lessons and activities.",
+      "View all the courses you started on Zoonk. Continue where you left off and track your progress across interactive lessons and lessons.",
     ),
     title: t("My Courses"),
   };

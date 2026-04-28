@@ -17,8 +17,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { UserAccount } from "./user-account";
-import { UserActivity } from "./user-activity";
 import { UserHeader } from "./user-header";
+import { UserLesson } from "./user-lesson";
 import { UserSubscription } from "./user-subscription";
 
 function UserBreadcrumb() {
@@ -90,7 +90,7 @@ export default async function UserDetailPage({ params }: PageProps<"/users/[id]"
         </Suspense>
 
         <Suspense fallback={<SectionSkeleton />}>
-          <UserActivity userId={userId} />
+          <UserLesson userId={userId} />
         </Suspense>
       </ContainerBody>
     </Container>

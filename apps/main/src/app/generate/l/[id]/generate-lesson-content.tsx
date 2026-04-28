@@ -1,6 +1,7 @@
 import { LoginRequired } from "@/components/auth/login-required";
 import { SubscriptionGate } from "@/components/subscription/subscription-gate";
 import { getLessonForGeneration } from "@/data/lessons/get-lesson-for-generation";
+import { isGeneratedLessonKind } from "@/lib/generation/lesson-generation-phase-config";
 import { getInitialGenerationPageStatus } from "@/lib/workflow/get-initial-generation-page-status";
 import { getSession } from "@zoonk/core/users/session/get";
 import {
@@ -21,7 +22,7 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
   const { id } = await params;
   const [session, lesson] = await Promise.all([getSession(), getLessonForGeneration(id)]);
 
-  if (!lesson) {
+  if (!lesson || !isGeneratedLessonKind(lesson.kind)) {
     notFound();
   }
 
@@ -35,7 +36,7 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
 
   const initialStatus = getInitialGenerationPageStatus({
     generationStatus: lesson.generationStatus,
-    isReadyForRedirect: lesson._count.activities > 0,
+    isReadyForRedirect: lesson.generationStatus === "completed" || lesson._count.steps > 0,
   });
 
   if (!session && !hasStarted) {
@@ -59,6 +60,7 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
             generationRunId={lesson.generationRunId}
             initialStatus={initialStatus}
             lessonId={id}
+            lessonKind={lesson.kind}
             lessonSlug={lesson.slug}
           />
         </SubscriptionGate>

@@ -1,5 +1,5 @@
 import { type CompletionResult } from "@zoonk/core/player/contracts/completion-input-schema";
-import { computeActivityScore } from "@zoonk/core/player/contracts/compute-score";
+import { computeLessonScore } from "@zoonk/core/player/contracts/compute-score";
 import { calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { type PlayerState } from "./player-reducer";
 
@@ -12,7 +12,7 @@ import { type PlayerState } from "./player-reducer";
  * so local preview and saved progress stay aligned.
  */
 export function computeLocalCompletion(state: PlayerState): CompletionResult {
-  const score = computeActivityScore({
+  const score = computeLessonScore({
     results: Object.values(state.results).map((stepResult) => stepResult.result),
   });
 

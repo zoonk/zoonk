@@ -10,11 +10,6 @@ const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
 const imagePromptSchema = z.string().min(1);
 
-/**
- * The workflow generates exactly one image for each readable teaching step.
- * Matching the schema length to the input keeps prompt generation aligned with
- * the saved step order, which prevents image/step mismatches downstream.
- */
 function buildSchema(stepCount: number) {
   return z.object({
     prompts: z.array(imagePromptSchema).length(stepCount),
@@ -33,11 +28,6 @@ type StepImagePromptsParams = {
   reasoningEffort?: ReasoningEffort;
 };
 
-/**
- * Generates one illustration prompt per step. The downstream image task owns
- * rendering style and file generation; this task only decides what scene each
- * step should show.
- */
 export async function generateStepImagePrompts({
   lessonTitle,
   lessonDescription,

@@ -1,6 +1,6 @@
 "use client";
 
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { useExtracted } from "next-intl";
 import { PlayAudioButton } from "./play-audio-button";
 import { PlayerReadScene, PlayerReadSceneBody, PlayerReadSceneStack } from "./player-read-scene";

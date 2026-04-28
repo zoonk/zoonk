@@ -8,14 +8,12 @@ import {
 const stepsData: {
   lessonSlug: string;
   language: string;
-  activityPosition: number;
   steps: {
     kind: StepKind;
     content: Prisma.InputJsonValue;
   }[];
 }[] = [
   {
-    activityPosition: 0,
     language: "en",
     lessonSlug: "what-is-machine-learning",
     steps: [
@@ -95,7 +93,6 @@ const stepsData: {
     ],
   },
   {
-    activityPosition: 1, // Quiz activity
     language: "en",
     lessonSlug: "what-is-machine-learning",
     steps: [
@@ -211,19 +208,8 @@ export async function seedSteps(prisma: PrismaClient, org: Organization): Promis
       return;
     }
 
-    const activity = await prisma.activity.findFirst({
-      where: {
-        lessonId: lesson.id,
-        position: data.activityPosition,
-      },
-    });
-
-    if (!activity) {
-      return;
-    }
-
     const existingCount = await prisma.step.count({
-      where: { activityId: activity.id },
+      where: { lessonId: lesson.id },
     });
 
     if (existingCount > 0) {
@@ -234,10 +220,10 @@ export async function seedSteps(prisma: PrismaClient, org: Organization): Promis
       data.steps.map((stepData, position) =>
         prisma.step.create({
           data: {
-            activityId: activity.id,
             content: stepData.content,
             isPublished: true,
             kind: stepData.kind,
+            lessonId: lesson.id,
             position,
           },
         }),

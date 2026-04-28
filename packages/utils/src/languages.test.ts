@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { getLanguageName, isTTSSupportedLanguage, needsRomanization } from "./languages";
+import { getLanguageName, isTTSSupportedLanguage } from "./languages";
 
 describe(isTTSSupportedLanguage, () => {
   test("returns true for a valid language code", () => {
@@ -20,42 +20,6 @@ describe(isTTSSupportedLanguage, () => {
 
   test("returns false for a number", () => {
     expect(isTTSSupportedLanguage(42)).toBe(false);
-  });
-});
-
-describe(needsRomanization, () => {
-  test.each([
-    "ja",
-    "zh",
-    "ko",
-    "ar",
-    "ru",
-    "el",
-    "he",
-    "hi",
-    "th",
-    "fa",
-    "bn",
-    "ka",
-    "km",
-    "my",
-    "am",
-    "pa",
-    "te",
-    "ml",
-  ])("returns true for non-Roman script language: %s", (code) => {
-    expect(needsRomanization(code)).toBe(true);
-  });
-
-  test.each(["en", "es", "fr", "de", "pt", "it"])(
-    "returns false for Roman script language: %s",
-    (code) => {
-      expect(needsRomanization(code)).toBe(false);
-    },
-  );
-
-  test("returns false for unknown language codes", () => {
-    expect(needsRomanization("xyz")).toBe(false);
   });
 });
 

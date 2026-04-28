@@ -28,8 +28,8 @@ export default async function AiEstimatesPage({ searchParams }: PageProps<"/stat
     regularCoreLessonsPerChapter: getSingleSearchParamValue(
       resolvedSearchParams.regularCoreLessonsPerChapter,
     ),
-    regularCustomLessonsPerChapter: getSingleSearchParamValue(
-      resolvedSearchParams.regularCustomLessonsPerChapter,
+    regularTutorialLessonsPerChapter: getSingleSearchParamValue(
+      resolvedSearchParams.regularTutorialLessonsPerChapter,
     ),
   };
 

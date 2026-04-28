@@ -1,9 +1,6 @@
-import {
-  type NextActivityInCourse,
-  getNextActivityInCourse,
-} from "@zoonk/core/activities/next-in-course";
+import { type NextLessonInCourse, getNextLessonInCourse } from "@zoonk/core/lessons/next-in-course";
 import { prisma } from "@zoonk/db";
-import { type ContinueLearningState, listNextActivityStates } from "./continue-learning-next-state";
+import { type ContinueLearningState, listNextLessonStates } from "./continue-learning-next-state";
 import { type PendingTarget, listPendingTargets } from "./continue-learning-pending-targets";
 import { type ContinueLearningRow } from "./continue-learning-queries";
 
@@ -11,7 +8,7 @@ export type ContinueLearningCandidate = {
   isSequentialNextBlocked: boolean;
   pendingTarget: PendingTarget | null;
   row: ContinueLearningRow;
-  sequentialNext: NextActivityInCourse | null;
+  sequentialNext: NextLessonInCourse | null;
   state: ContinueLearningState;
 };
 
@@ -27,7 +24,7 @@ type SequentialTargetIds = {
 
 /**
  * The feed needs several derived signals per course anchor: the sequential
- * next activity, the durable-completion-aware next state, whether that
+ * next lesson, the durable-completion-aware next state, whether that
  * sequential target belongs to a durably completed chapter, and any pending
  * fallback destination. Loading all of that in one helper keeps the main feed
  * function focused on choosing the final card for each course.
@@ -39,14 +36,14 @@ export async function listContinueLearningCandidates({
   rows: ContinueLearningRow[];
   userId: string;
 }): Promise<ContinueLearningCandidate[]> {
-  const [sequentialNextActivities, nextStates] = await Promise.all([
-    listSequentialNextActivities({ rows }),
-    listNextActivityStates({ rows, userId }),
+  const [sequentialNextLessons, nextStates] = await Promise.all([
+    listSequentialNextLessons({ rows }),
+    listNextLessonStates({ rows, userId }),
   ]);
 
   const [blockedSequentialTargetIds, pendingTargets] = await Promise.all([
     listBlockedSequentialTargetIds({
-      sequentialNextActivities,
+      sequentialNextLessons,
       userId,
     }),
     listPendingTargets({
@@ -60,22 +57,21 @@ export async function listContinueLearningCandidates({
       blockedSequentialTargetIds,
       pendingTarget: pendingTargets[idx] ?? null,
       row,
-      sequentialNext: sequentialNextActivities[idx] ?? null,
+      sequentialNext: sequentialNextLessons[idx] ?? null,
       state: nextStates[idx] ?? null,
     }),
   );
 }
 
 /**
- * The feed preserves the familiar "continue to the next activity" behavior by
- * first resolving the structural next activity after the learner's most recent
+ * The feed preserves the familiar "continue to the next lesson" behavior by
+ * first resolving the structural next lesson after the learner's most recent
  * completion in each course.
  */
-async function listSequentialNextActivities({ rows }: { rows: ContinueLearningRow[] }) {
+async function listSequentialNextLessons({ rows }: { rows: ContinueLearningRow[] }) {
   return Promise.all(
     rows.map((row) =>
-      getNextActivityInCourse({
-        activityPosition: row.activityPosition,
+      getNextLessonInCourse({
         chapterId: row.chapterId,
         chapterPosition: row.chapterPosition,
         courseId: row.courseId,
@@ -95,7 +91,7 @@ function toContinueLearningCandidate(input: {
   blockedSequentialTargetIds: BlockedSequentialTargetIds;
   pendingTarget: PendingTarget | null;
   row: ContinueLearningRow;
-  sequentialNext: NextActivityInCourse | null;
+  sequentialNext: NextLessonInCourse | null;
   state: ContinueLearningState;
 }): ContinueLearningCandidate {
   return {
@@ -116,13 +112,13 @@ function toContinueLearningCandidate(input: {
  * completion, the shared next-state is the more trustworthy source of truth.
  */
 async function listBlockedSequentialTargetIds({
-  sequentialNextActivities,
+  sequentialNextLessons,
   userId,
 }: {
-  sequentialNextActivities: (NextActivityInCourse | null)[];
+  sequentialNextLessons: (NextLessonInCourse | null)[];
   userId: string;
 }): Promise<BlockedSequentialTargetIds> {
-  const targetIds = getSequentialTargetIds({ sequentialNextActivities });
+  const targetIds = getSequentialTargetIds({ sequentialNextLessons });
 
   if (hasNoSequentialTargetIds({ targetIds })) {
     return getEmptyBlockedSequentialTargetIds();
@@ -151,38 +147,38 @@ async function listBlockedSequentialTargetIds({
  * rule easier to read.
  */
 function getSequentialTargetIds({
-  sequentialNextActivities,
+  sequentialNextLessons,
 }: {
-  sequentialNextActivities: (NextActivityInCourse | null)[];
+  sequentialNextLessons: (NextLessonInCourse | null)[];
 }): SequentialTargetIds {
   return {
-    chapterIds: getUniqueSequentialChapterIds({ sequentialNextActivities }),
-    lessonIds: getUniqueSequentialLessonIds({ sequentialNextActivities }),
+    chapterIds: getUniqueSequentialChapterIds({ sequentialNextLessons }),
+    lessonIds: getUniqueSequentialLessonIds({ sequentialNextLessons }),
   };
 }
 
 /**
- * Chapter-level durable completion should prevent a sequential activity from
+ * Chapter-level durable completion should prevent a sequential lesson from
  * reopening content inside that chapter.
  */
 function getUniqueSequentialChapterIds({
-  sequentialNextActivities,
+  sequentialNextLessons,
 }: {
-  sequentialNextActivities: (NextActivityInCourse | null)[];
+  sequentialNextLessons: (NextLessonInCourse | null)[];
 }) {
-  return [...new Set(sequentialNextActivities.flatMap((next) => (next ? [next.chapterId] : [])))];
+  return [...new Set(sequentialNextLessons.flatMap((next) => (next ? [next.chapterId] : [])))];
 }
 
 /**
  * Lesson-level durable completion is the guard for completed lessons that
- * gained more current activities after the learner already finished them.
+ * gained more current lessons after the learner already finished them.
  */
 function getUniqueSequentialLessonIds({
-  sequentialNextActivities,
+  sequentialNextLessons,
 }: {
-  sequentialNextActivities: (NextActivityInCourse | null)[];
+  sequentialNextLessons: (NextLessonInCourse | null)[];
 }) {
-  return [...new Set(sequentialNextActivities.flatMap((next) => (next ? [next.lessonId] : [])))];
+  return [...new Set(sequentialNextLessons.flatMap((next) => (next ? [next.lessonId] : [])))];
 }
 
 /**
@@ -225,8 +221,8 @@ async function listBlockedSequentialChapterIds({
 }
 
 /**
- * Lesson completions are loaded alongside chapter completions so lessons that
- * are already durably completed do not win the sequential branch.
+ * Completed lessons are loaded alongside chapter completions so they do not
+ * win the sequential branch again.
  */
 async function listBlockedSequentialLessonIds({
   lessonIds,
@@ -239,8 +235,9 @@ async function listBlockedSequentialLessonIds({
     return [];
   }
 
-  return prisma.lessonCompletion.findMany({
+  return prisma.lessonProgress.findMany({
     where: {
+      completedAt: { not: null },
       lessonId: { in: lessonIds },
       userId,
     },
@@ -260,8 +257,7 @@ function toBlockedChapterIdSet({
 }
 
 /**
- * Lesson completion is stored separately from raw activity progress, so this
- * helper turns the bulk query rows into a fast membership check.
+ * Completed lesson rows become a fast membership check for the selection pass.
  */
 function toBlockedLessonIdSet({
   lessonCompletions,
@@ -281,7 +277,7 @@ function isSequentialTargetBlocked({
   sequentialNext,
 }: {
   blockedSequentialTargetIds: BlockedSequentialTargetIds;
-  sequentialNext: NextActivityInCourse | null;
+  sequentialNext: NextLessonInCourse | null;
 }) {
   if (!sequentialNext) {
     return false;

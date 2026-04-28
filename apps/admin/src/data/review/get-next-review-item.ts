@@ -49,8 +49,8 @@ async function getNextStepImage(): Promise<ReviewQueueResult> {
     select: { content: true, id: true },
     where: {
       NOT: { id: { in: excludeIds } },
-      activity: { organization: { slug: AI_ORG_SLUG } },
       kind: "static",
+      lesson: { organization: { slug: AI_ORG_SLUG } },
     },
   });
 
@@ -97,8 +97,8 @@ async function getNextStepSelectImage(): Promise<ReviewQueueResult> {
 
   const where = {
     NOT: { id: { in: excludeIds } },
-    activity: { organization: { slug: AI_ORG_SLUG } },
     kind: "selectImage" as const,
+    lesson: { organization: { slug: AI_ORG_SLUG } },
   };
 
   const [next, remaining] = await Promise.all([

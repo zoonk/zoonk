@@ -66,6 +66,10 @@ export function deduplicateNormalizedTexts(texts: string[]): string[] {
   ];
 }
 
+/**
+ * Converts optional free-text fields into the database representation for missing text.
+ * This keeps blank generated fields from being saved as meaningful strings.
+ */
 export function emptyToNull(value?: string | null): string | null {
   return value?.trim() || null;
 }
@@ -143,7 +147,7 @@ function segmentNonSpaceText(text: string): string[] {
 }
 
 /**
- * Segments text into display tokens for word-based activities. Space-delimited text
+ * Segments text into display tokens for word-based lessons. Space-delimited text
  * keeps punctuation attached to the preceding word, while non-space text uses
  * `Intl.Segmenter` and then merges connector-linked runs back together.
  */

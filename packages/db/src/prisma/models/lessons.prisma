@@ -7,19 +7,18 @@ model Lesson {
   isLocked          Boolean               @default(false) @map("is_locked")
   isPublished       Boolean               @default(false) @map("is_published")
   language          String                @db.VarChar(10)
-  kind              LessonKind            @default(core)
+  kind              LessonKind            @default(custom)
   slug              String
   title             String
   normalizedTitle   String                @map("normalized_title")
   description       String
-  concepts          String[]              @default([])
   generationStatus  GenerationStatus      @default(pending) @map("generation_status")
   generationRunId   String?               @map("generation_run_id")
   position          Int
   createdAt         DateTime              @default(now()) @map("created_at")
   updatedAt         DateTime              @default(now()) @updatedAt @map("updated_at")
-  activities        Activity[]
-  completions       LessonCompletion[]
+  progress          LessonProgress[]
+  steps             Step[]
   words             LessonWord[]
   sentences         LessonSentence[]
 
@@ -30,35 +29,10 @@ model Lesson {
   @@map("lessons")
 }
 
-model Activity {
-  id               String                @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  organizationId   String?               @map("organization_id") @db.Uuid
-  organization     Organization?         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  lessonId         String                @map("lesson_id") @db.Uuid
-  lesson           Lesson                @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  isPublished      Boolean               @default(false) @map("is_published")
-  language         String                @db.VarChar(10)
-  kind             ActivityKind          @default(custom)
-  title            String?
-  description      String?
-  generationStatus GenerationStatus      @default(pending) @map("generation_status")
-  generationRunId  String?               @map("generation_run_id")
-  position         Int
-  createdAt        DateTime              @default(now()) @map("created_at")
-  updatedAt        DateTime              @default(now()) @updatedAt @map("updated_at")
-  steps            Step[]
-  progress         ActivityProgress[]
-
-  @@index([lessonId, position])
-  @@index([lessonId, generationStatus])
-  @@index([organizationId, kind])
-  @@map("activities")
-}
-
 model Step {
   id          String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  activityId  String        @map("activity_id") @db.Uuid
-  activity    Activity      @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  lessonId    String        @map("lesson_id") @db.Uuid
+  lesson      Lesson        @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   wordId      String?       @map("word_id") @db.Uuid
   word        Word?         @relation(fields: [wordId], references: [id], onDelete: Cascade)
   sentenceId  String?       @map("sentence_id") @db.Uuid
@@ -71,8 +45,8 @@ model Step {
   updatedAt   DateTime      @default(now()) @updatedAt @map("updated_at")
   attempts    StepAttempt[]
 
-  @@index([activityId, position])
-  @@index([activityId, kind, position])
+  @@index([lessonId, position])
+  @@index([lessonId, kind, position])
   @@index([wordId])
   @@index([sentenceId])
   @@map("steps")

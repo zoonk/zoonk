@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -17,8 +16,8 @@ const CURRENT_MONTH_ENERGY = 75;
 const PREVIOUS_MONTH_ENERGY = 65;
 const CURRENT_MONTH_INCORRECT = 3;
 const PREVIOUS_MONTH_INCORRECT = 7;
-const COMPLETED_ACTIVITY_DURATION_SECONDS = 120;
-const COMPLETED_ACTIVITY_START_OFFSET_SECONDS = 180;
+const COMPLETED_LESSON_DURATION_SECONDS = 120;
+const COMPLETED_LESSON_START_OFFSET_SECONDS = 180;
 
 const ALL_PERIODS = ["month", "6months", "year"] as const;
 
@@ -120,7 +119,7 @@ async function createStepAttempts(stepId: string, userId: string, now: Date) {
 /**
  * Seed the minimal progress graph data used by account-level e2e tests.
  * This creates one published course path, enough attempts for score and best-
- * time widgets, and a partially completed activity so continue-learning UI has
+ * time widgets, and a partially completed lesson so continue-learning UI has
  * a stable "next" target.
  */
 export async function createE2EProgressData(userId: string): Promise<void> {
@@ -154,32 +153,32 @@ export async function createE2EProgressData(userId: string): Promise<void> {
     title: `E2E Progress Lesson ${uniqueId}`,
   });
 
-  const [completedActivity, _nextActivity] = await Promise.all([
-    activityFixture({
+  const [completedLesson, _nextLesson] = await Promise.all([
+    lessonFixture({
       generationStatus: "completed",
       isPublished: true,
       kind: "explanation",
       lessonId: lesson.id,
       organizationId: org.id,
       position: 0,
-      title: `E2E Completed Activity ${uniqueId}`,
+      title: `E2E Completed Lesson ${uniqueId}`,
     }),
-    activityFixture({
+    lessonFixture({
       generationStatus: "completed",
       isPublished: true,
       kind: "quiz",
       lessonId: lesson.id,
       organizationId: org.id,
       position: 1,
-      title: `E2E Next Activity ${uniqueId}`,
+      title: `E2E Next Lesson ${uniqueId}`,
     }),
   ]);
 
   const step = await stepFixture({
-    activityId: completedActivity.id,
     content: { text: "E2E step content", title: "E2E Step" },
     isPublished: true,
     kind: "multipleChoice",
+    lessonId: completedLesson.id,
   });
 
   await userProgressFixture({
@@ -192,12 +191,12 @@ export async function createE2EProgressData(userId: string): Promise<void> {
   await createStepAttempts(step.id, userId, now);
 
   await Promise.all([
-    prisma.activityProgress.create({
+    prisma.lessonProgress.create({
       data: {
-        activityId: completedActivity.id,
         completedAt: new Date(now.getTime() - 60 * 1000),
-        durationSeconds: COMPLETED_ACTIVITY_DURATION_SECONDS,
-        startedAt: new Date(now.getTime() - COMPLETED_ACTIVITY_START_OFFSET_SECONDS * 1000),
+        durationSeconds: COMPLETED_LESSON_DURATION_SECONDS,
+        lessonId: completedLesson.id,
+        startedAt: new Date(now.getTime() - COMPLETED_LESSON_START_OFFSET_SECONDS * 1000),
         userId,
       },
     }),

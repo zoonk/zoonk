@@ -1,6 +1,6 @@
 import { type TransactionClient } from "@zoonk/db";
 import {
-  getActivityCurriculumContext,
+  getLessonCurriculumContext,
   listDurableCourseChapterIds,
   listDurableCourseLessonIds,
   listPublishedCourseChapters,
@@ -13,23 +13,20 @@ import {
   groupRowsByChapter,
   isCurrentChapterCompleted,
   isCurrentCourseCompleted,
-  isCurrentLessonCompleted,
 } from "./durable-curriculum-completion-rules";
 
 /**
- * Durable completion is append-only and intentionally does not copy or rewrite
- * raw activity progress rows. It simply adds lesson, chapter, and course
- * completion rows once the current published curriculum crosses a completion
- * boundary for the learner during a normal completion write.
+ * Completion rollups are derived from lesson progress and append-only chapter
+ * and course rows once the current published curriculum crosses a boundary.
  */
 export async function syncDurableCurriculumCompletion(
   tx: TransactionClient,
   params: {
-    activityId: string;
+    lessonId: string;
     userId: string;
   },
 ): Promise<{ courseId: string }> {
-  const context = await getActivityCurriculumContext({ activityId: params.activityId, tx });
+  const context = await getLessonCurriculumContext({ lessonId: params.lessonId, tx });
 
   const [chapters, rows, durableLessonIds, durableChapterIds] = await Promise.all([
     listPublishedCourseChapters({ courseId: context.courseId, tx }),
@@ -80,8 +77,6 @@ export async function syncDurableCurriculumCompletion(
       context,
       courseCompleted,
       durableChapterIds,
-      durableLessonIds,
-      lessonRow,
       tx,
       userId: params.userId,
     }),
@@ -101,38 +96,17 @@ function getDurableCompletionWrites({
   context,
   courseCompleted,
   durableChapterIds,
-  durableLessonIds,
-  lessonRow,
   tx,
   userId,
 }: {
   chapterCompleted: boolean;
-  context: Awaited<ReturnType<typeof getActivityCurriculumContext>>;
+  context: Awaited<ReturnType<typeof getLessonCurriculumContext>>;
   courseCompleted: boolean;
   durableChapterIds: Set<string>;
-  durableLessonIds: Set<string>;
-  lessonRow: NonNullable<ReturnType<typeof getLessonRow>>;
   tx: TransactionClient;
   userId: string;
 }) {
   return [
-    ...(isCurrentLessonCompleted({ row: lessonRow }) && !durableLessonIds.has(context.lessonId)
-      ? [
-          tx.lessonCompletion.upsert({
-            create: {
-              lessonId: context.lessonId,
-              userId,
-            },
-            update: {},
-            where: {
-              userLessonCompletion: {
-                lessonId: context.lessonId,
-                userId,
-              },
-            },
-          }),
-        ]
-      : []),
     ...(chapterCompleted && !durableChapterIds.has(context.chapterId)
       ? [
           tx.chapterCompletion.upsert({

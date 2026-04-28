@@ -2,15 +2,14 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { expect, test } from "./fixtures";
 
-async function createCourseWithThreeActivities() {
+async function createCourseWithThreeLessons() {
   const org = await getAiOrganization();
   const uniqueId = randomUUID().slice(0, 8);
 
@@ -29,77 +28,69 @@ async function createCourseWithThreeActivities() {
     title: `E2E CL Reval Chapter ${uniqueId}`,
   });
 
-  const lesson = await lessonFixture({
+  // Lesson 0: will be pre-completed by the user
+  const lesson0 = await lessonFixture({
     chapterId: chapter.id,
-    description: `E2E continue learning revalidation lesson ${uniqueId}`,
-    isPublished: true,
-    organizationId: org.id,
-    slug: `e2e-cl-reval-lesson-${uniqueId}`,
-    title: `E2E CL Reval Lesson ${uniqueId}`,
-  });
-
-  // Activity 0: will be pre-completed by the user
-  const activity0 = await activityFixture({
     generationStatus: "completed",
     isPublished: true,
     kind: "explanation",
-    lessonId: lesson.id,
     organizationId: org.id,
     position: 0,
-    title: `Completed Act ${uniqueId}`,
+    slug: `e2e-cl-reval-completed-${uniqueId}`,
+    title: `Completed Lesson ${uniqueId}`,
   });
 
-  // Activity 1: the current "next" activity (static, user will complete it in the test)
-  const activity1 = await activityFixture({
+  // Lesson 1: the current "next" lesson (static, user will complete it in the test)
+  const lesson1 = await lessonFixture({
+    chapterId: chapter.id,
     generationStatus: "completed",
     isPublished: true,
     kind: "explanation",
-    lessonId: lesson.id,
     organizationId: org.id,
     position: 1,
+    slug: `e2e-cl-reval-current-${uniqueId}`,
     title: `Current Next ${uniqueId}`,
   });
 
-  // Activity 2: will become "next" after completing activity 1
-  const activity2 = await activityFixture({
+  // Lesson 2: will become "next" after completing lesson 1
+  const lesson2 = await lessonFixture({
+    chapterId: chapter.id,
     generationStatus: "completed",
     isPublished: true,
     kind: "explanation",
-    lessonId: lesson.id,
     organizationId: org.id,
     position: 2,
+    slug: `e2e-cl-reval-next-${uniqueId}`,
     title: `After Next ${uniqueId}`,
   });
 
-  // Add a static step to activity 1 so we can complete it
+  // Add a static step to lesson 1 so we can complete it
   await stepFixture({
-    activityId: activity1.id,
     content: { text: `Step body ${uniqueId}`, title: `Step Title ${uniqueId}`, variant: "text" },
     isPublished: true,
+    lessonId: lesson1.id,
     position: 0,
   });
 
-  const activityUrl = `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/1`;
-
-  return { activity0, activity1, activity2, activityUrl, course, uniqueId };
+  return { course, lesson0, lesson1, lesson2, uniqueId };
 }
 
 test.describe("Continue Learning Revalidation", () => {
-  test("home page updates continue learning after completing an activity", async ({
+  test("home page updates continue learning after completing a lesson", async ({
     baseURL,
     browser,
   }) => {
     const user = await createE2EUser(baseURL!);
     const browserContext = await browser.newContext({ storageState: user.storageState });
     const page = await browserContext.newPage();
-    const { activity0, course, uniqueId } = await createCourseWithThreeActivities();
+    const { lesson0, course, uniqueId } = await createCourseWithThreeLessons();
 
-    // Pre-complete activity 0 so getContinueLearning returns this course with activity 1 as "next"
+    // Pre-complete lesson 0 so getContinueLearning returns this course with lesson 1 as "next"
     await Promise.all([
-      activityProgressFixture({
-        activityId: activity0.id,
+      lessonProgressFixture({
         completedAt: new Date(),
         durationSeconds: 60,
+        lessonId: lesson0.id,
         userId: user.id,
       }),
       userProgressFixture({ totalBrainPower: 100n, userId: user.id }),
@@ -119,7 +110,7 @@ test.describe("Continue Learning Revalidation", () => {
 
     // 2. Click the continue learning card link (client-side navigation)
     await nextLink.first().click();
-    await page.waitForURL(new RegExp(`/a/1`));
+    await page.waitForURL(new RegExp(`/l/e2e-cl-reval-current-${uniqueId}$`));
     await page.waitForLoadState("networkidle");
 
     // Listen for the server action response BEFORE triggering completion.
@@ -129,7 +120,7 @@ test.describe("Continue Learning Revalidation", () => {
       (resp) => resp.request().method() === "POST" && resp.ok(),
     );
 
-    // 3. Complete the static activity — retry handles hydration delay under parallel load
+    // 3. Complete the static lesson — retry handles hydration delay under parallel load
     await expect(async () => {
       await page.keyboard.press("ArrowRight");
       await expect(page.getByRole("status")).toBeVisible({ timeout: 1000 });
@@ -140,16 +131,16 @@ test.describe("Continue Learning Revalidation", () => {
     // Wait for the server action response (includes the revalidatePath signal for Router Cache)
     await serverActionResponse;
 
-    // 4. Click "All Activities" (client-side navigation)
-    await page.getByRole("link", { name: /all activities/i }).click();
-    await page.waitForURL(new RegExp(`e2e-cl-reval-lesson-${uniqueId}`));
+    // 4. Click "All Lessons" (client-side navigation)
+    await page.getByRole("link", { name: /all lessons/i }).click();
+    await page.waitForURL(new RegExp(`e2e-cl-reval-chapter-${uniqueId}$`));
 
     // 5. Click the Home link in the navbar (client-side navigation — Router Cache)
     await page.getByRole("link", { name: /home page/i }).click();
     await page.waitForURL(/\/$/);
     await page.waitForLoadState("networkidle");
 
-    // 6. Continue learning should show the NEW next activity, not the old one
+    // 6. Continue learning should show the NEW next lesson, not the old one
     await expect(page.getByText(new RegExp(`Next:.*After Next ${uniqueId}`)).first()).toBeVisible();
 
     await browserContext.close();

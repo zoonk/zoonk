@@ -1,5 +1,5 @@
 import { type CompletionResult } from "@zoonk/core/player/contracts/completion-input-schema";
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type PlayerState } from "./player-reducer";
 import { describePlayerStep, getPlayerStepImage } from "./player-step";
 
@@ -12,7 +12,7 @@ function computeProgress(currentIndex: number, total: number): number {
   return Math.round(((currentIndex + 1) / total) * 100);
 }
 
-/** Returns the completion payload once the activity is finished, or null while still playing. */
+/** Returns the completion payload once the lesson is finished, or null while still playing. */
 export function getCompletionResult(state: PlayerState): CompletionResult | null {
   return state.completion;
 }

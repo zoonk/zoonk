@@ -1,13 +1,7 @@
 import "server-only";
-import { type NextActivityInCourse } from "@zoonk/core/activities/next-in-course";
+import { type NextLessonInCourse } from "@zoonk/core/lessons/next-in-course";
 import { getSession } from "@zoonk/core/users/session/get";
-import {
-  type Activity,
-  type Chapter,
-  type Course,
-  type Lesson,
-  type Organization,
-} from "@zoonk/db";
+import { type Chapter, type Course, type LessonKind, type Organization } from "@zoonk/db";
 import { cache } from "react";
 import {
   type ContinueLearningCandidate,
@@ -24,13 +18,23 @@ export const MAX_CONTINUE_LEARNING_ITEMS = 4;
 type ContinueLearningResolvedState = NonNullable<ContinueLearningState>;
 
 type PrefetchableContinueLearningState = ContinueLearningResolvedState & {
-  activityId: string;
-  activityKind: NonNullable<ContinueLearningResolvedState["activityKind"]>;
+  lessonId: string;
+  lessonKind: NonNullable<ContinueLearningResolvedState["lessonKind"]>;
 };
 
-type ContinueLearningActivity = Pick<Activity, "id" | "kind" | "title" | "position">;
+type ContinueLearningLesson = {
+  description: string;
+  id: string;
+  kind: LessonKind;
+  position: number;
+  slug: string;
+  title: string | null;
+};
 
-type ContinueLearningLesson = Pick<Lesson, "id" | "slug" | "title" | "description">;
+type ContinueLearningPendingLesson = Pick<
+  ContinueLearningLesson,
+  "description" | "id" | "slug" | "title"
+>;
 
 type ContinueLearningChapter = Pick<Chapter, "id" | "slug">;
 
@@ -40,17 +44,16 @@ type ContinueLearningCourse = Pick<Course, "id" | "slug" | "title" | "imageUrl">
 
 export type ContinueLearningCompletedItem = {
   status: "completed";
-  activity: ContinueLearningActivity;
+  lesson: ContinueLearningLesson;
   chapter: ContinueLearningChapter;
   course: ContinueLearningCourse;
-  lesson: ContinueLearningLesson;
 };
 
 export type ContinueLearningPendingItem = {
   status: "pending";
   chapter: ContinueLearningChapter;
   course: ContinueLearningCourse;
-  lesson: ContinueLearningLesson | null;
+  lesson: ContinueLearningPendingLesson | null;
 };
 
 export type ContinueLearningItem = ContinueLearningCompletedItem | ContinueLearningPendingItem;
@@ -71,7 +74,7 @@ function toCourse(row: ContinueLearningRow): ContinueLearningCourse {
 }
 
 /**
- * When the shared next-state already points at a current activity, the feed can
+ * When the shared next-state already points at a current lesson, the feed can
  * rebuild the card directly from that state without any extra course-specific
  * navigation logic.
  */
@@ -83,12 +86,6 @@ function toCompletedItemFromState({
   state: PrefetchableContinueLearningState;
 }): ContinueLearningCompletedItem {
   return {
-    activity: {
-      id: state.activityId,
-      kind: state.activityKind,
-      position: state.activityPosition,
-      title: state.activityTitle,
-    },
     chapter: {
       id: state.chapterId,
       slug: state.chapterSlug,
@@ -97,6 +94,8 @@ function toCompletedItemFromState({
     lesson: {
       description: state.lessonDescription,
       id: state.lessonId,
+      kind: state.lessonKind,
+      position: state.lessonPosition,
       slug: state.lessonSlug,
       title: state.lessonTitle,
     },
@@ -105,23 +104,17 @@ function toCompletedItemFromState({
 }
 
 /**
- * The feed prefers the natural sequential next activity whenever that target
+ * The feed prefers the natural sequential next lesson whenever that target
  * still belongs to an open chapter in the current course tree.
  */
 function toCompletedItemFromNext({
   next,
   row,
 }: {
-  next: NextActivityInCourse;
+  next: NextLessonInCourse;
   row: ContinueLearningRow;
 }): ContinueLearningCompletedItem {
   return {
-    activity: {
-      id: next.activityId,
-      kind: next.activityKind,
-      position: next.activityPosition,
-      title: next.activityTitle,
-    },
     chapter: {
       id: next.chapterId,
       slug: next.chapterSlug,
@@ -130,6 +123,8 @@ function toCompletedItemFromNext({
     lesson: {
       description: next.lessonDescription,
       id: next.lessonId,
+      kind: next.lessonKind,
+      position: next.lessonPosition,
       slug: next.lessonSlug,
       title: next.lessonTitle,
     },
@@ -146,9 +141,9 @@ function shouldHideCandidate({ state }: { state: ContinueLearningResolvedState }
 }
 
 /**
- * Some states are best rendered as lesson or chapter shells instead of direct
- * activity links. Keeping that card shape in one helper avoids rebuilding the
- * pending payload inline inside the main item-selection branch.
+ * Some states are best rendered as pending lesson or chapter targets instead of
+ * completed-player links. Keeping that card shape in one helper avoids rebuilding
+ * the pending payload inline inside the main item-selection branch.
  */
 function toPendingItem({
   chapter,
@@ -157,7 +152,7 @@ function toPendingItem({
 }: {
   chapter: ContinueLearningChapter;
   course: ContinueLearningCourse;
-  lesson: ContinueLearningLesson | null;
+  lesson: ContinueLearningPendingLesson | null;
 }): ContinueLearningPendingItem {
   return {
     chapter,
@@ -168,8 +163,8 @@ function toPendingItem({
 }
 
 /**
- * When the next actionable state has no ready activity yet, the feed should
- * still point at the current lesson shell so the learner can see that work is
+ * When the next actionable state has no ready lesson yet, the feed should
+ * still point at the current lesson player so the learner can see that work is
  * pending or continue once generation finishes.
  */
 function toPendingItemFromState({
@@ -193,7 +188,7 @@ function toPendingItemFromState({
 
 /**
  * A completed shared next-state only becomes a useful pending card when the
- * candidate loader already found a next lesson or chapter shell to point at.
+ * candidate loader already found a next lesson or chapter target to point at.
  */
 function toPendingItemFromTarget({
   course,
@@ -210,20 +205,20 @@ function toPendingItemFromTarget({
 }
 
 /**
- * The shared next-state only produces a completed activity card when it can
- * deep-link into a real current activity. Making that guard explicit keeps the
+ * The shared next-state only produces a completed lesson card when it can
+ * deep-link into a real current lesson. Making that guard explicit keeps the
  * item-selection branch honest about when those fields are actually present.
  */
-function hasPrefetchableActivity(
+function hasPrefetchableLesson(
   state: ContinueLearningResolvedState,
 ): state is PrefetchableContinueLearningState {
-  return Boolean(state.canPrefetch && state.activityId && state.activityKind);
+  return Boolean(state.canPrefetch && state.lessonId && state.lessonKind);
 }
 
 /**
  * Continue-learning always chooses exactly one card shape per course anchor:
- * sequential activity, pending fallback target, current activity from the
- * shared state, or a pending lesson shell. Returning null here means the course
+ * sequential lesson, pending fallback target, current lesson from the
+ * shared state, or a pending lesson target. Returning null here means the course
  * should not appear in the feed at all.
  */
 function toContinueLearningItem({
@@ -255,7 +250,7 @@ function toContinueLearningItem({
       : null;
   }
 
-  if (hasPrefetchableActivity(state)) {
+  if (hasPrefetchableLesson(state)) {
     return toCompletedItemFromState({
       row: candidate.row,
       state,

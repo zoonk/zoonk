@@ -1,16 +1,4 @@
 import { type Task } from "@/lib/types";
-import { activityCustomTask } from "./activity-custom/task";
-import { activityDistractorsTask } from "./activity-distractors/task";
-import { activityExplanationTask } from "./activity-explanation/task";
-import { activityGrammarContentTask } from "./activity-grammar-content/task";
-import { activityGrammarUserContentTask } from "./activity-grammar-user-content/task";
-import { activityPracticeTask } from "./activity-practice/task";
-import { activityPronunciationTask } from "./activity-pronunciation/task";
-import { activityQuizTask } from "./activity-quiz/task";
-import { activityRomanizationTask } from "./activity-romanization/task";
-import { activitySentencesTask } from "./activity-sentences/task";
-import { activityTranslationTask } from "./activity-translation/task";
-import { activityVocabularyTask } from "./activity-vocabulary/task";
 import { alternativeTitlesTask } from "./alternative-titles/task";
 import { chapterLessonsTask } from "./chapter-lessons/task";
 import { courseCategoriesTask } from "./course-categories/task";
@@ -19,34 +7,42 @@ import { courseDescriptionTask } from "./course-description/task";
 import { courseSuggestionsTask } from "./course-suggestions/task";
 import { languageChapterLessonsTask } from "./language-chapter-lessons/task";
 import { languageCourseChaptersTask } from "./language-course-chapters/task";
-import { lessonCoreActivitiesTask } from "./lesson-core-activities/task";
-import { lessonCustomActivitiesTask } from "./lesson-custom-activities/task";
+import { lessonDistractorsTask } from "./lesson-distractors/task";
+import { lessonExplanationTask } from "./lesson-explanation/task";
+import { lessonGrammarContentTask } from "./lesson-grammar-content/task";
+import { lessonGrammarUserContentTask } from "./lesson-grammar-user-content/task";
 import { lessonKindTask } from "./lesson-kind/task";
+import { lessonPracticeTask } from "./lesson-practice/task";
+import { lessonPronunciationTask } from "./lesson-pronunciation/task";
+import { lessonQuizTask } from "./lesson-quiz/task";
+import { lessonRomanizationTask } from "./lesson-romanization/task";
+import { lessonSentencesTask } from "./lesson-sentences/task";
+import { lessonTranslationTask } from "./lesson-translation/task";
+import { lessonTutorialTask } from "./lesson-tutorial/task";
+import { lessonVocabularyTask } from "./lesson-vocabulary/task";
 
 export const TASKS: readonly Task[] = [
-  activityCustomTask,
-  activityDistractorsTask,
-  activityQuizTask,
-  activityExplanationTask,
-  activityGrammarContentTask,
-  activityGrammarUserContentTask,
-  activityPronunciationTask,
-  activityTranslationTask,
-  activitySentencesTask,
-  activityPracticeTask,
-  activityRomanizationTask,
-  activityVocabularyTask,
+  lessonDistractorsTask,
+  lessonQuizTask,
+  lessonExplanationTask,
+  lessonGrammarContentTask,
+  lessonGrammarUserContentTask,
+  lessonKindTask,
+  lessonPronunciationTask,
+  lessonTranslationTask,
+  lessonSentencesTask,
+  lessonPracticeTask,
+  lessonRomanizationTask,
+  lessonTutorialTask,
+  lessonVocabularyTask,
   alternativeTitlesTask,
   chapterLessonsTask,
   courseCategoriesTask,
   courseChaptersTask,
   courseDescriptionTask,
   courseSuggestionsTask,
-  lessonCoreActivitiesTask,
-  lessonCustomActivitiesTask,
   languageChapterLessonsTask,
   languageCourseChaptersTask,
-  lessonKindTask,
 ];
 
 // Number of times each test case should be run for more reliable results

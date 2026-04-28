@@ -3,7 +3,6 @@ import { prisma } from "@zoonk/db";
 import { cache } from "react";
 
 export type DailyContentRow = {
-  activities: number;
   chapters: number;
   courses: number;
   date: Date;
@@ -34,13 +33,6 @@ export const getDailyContentCreated = cache(async (start: Date, end: Date) => {
 
     UNION ALL
 
-    SELECT DATE(created_at) as date, 'activities' as type, COUNT(*) as count
-    FROM activities
-    WHERE created_at >= ${start} AND created_at <= ${end}
-    GROUP BY DATE(created_at)
-
-    UNION ALL
-
     SELECT DATE(created_at) as date, 'steps' as type, COUNT(*) as count
     FROM steps
     WHERE created_at >= ${start} AND created_at <= ${end}
@@ -50,12 +42,11 @@ export const getDailyContentCreated = cache(async (start: Date, end: Date) => {
   `;
 
   const dateMap = new Map<string, DailyContentRow>();
-  const contentTypes: readonly string[] = ["courses", "chapters", "lessons", "activities", "steps"];
+  const contentTypes: readonly string[] = ["courses", "chapters", "lessons", "steps"];
 
   for (const row of results) {
     const key = row.date.toISOString().slice(0, 10);
     const existing = dateMap.get(key) ?? {
-      activities: 0,
       chapters: 0,
       courses: 0,
       date: row.date,

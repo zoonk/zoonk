@@ -1,24 +1,21 @@
 const SHARED_EXPECTATIONS = `
-  - Choose from the fixed set only: core, language, custom
-  - Language is strict: ONLY when the lesson teaches a foreign/new language
-  - Custom is reserved for tool/product/environment-specific tutorials where steps ARE the lesson
-  - Active phrasing ("Setting up...", "Building...", "Montando...") is NOT a signal for custom — it is the default style for core lessons too
-  - If the lesson teaches transferable concepts that would apply across tools/environments, it is core — even if the title sounds hands-on
+  - Choose from the fixed set only: explanation, tutorial.
+  - Tutorial is reserved for tool/product/platform/environment-specific lessons where the concrete steps are the lesson.
+  - Active phrasing ("Setting up...", "Building...", "Montando...", "Escrevendo...") is NOT a signal for tutorial.
+  - If the lesson teaches transferable concepts that would apply across tools/environments, it is explanation even if the title sounds hands-on.
+  - When in doubt, choose explanation.
 `;
 
 export const TEST_CASES = [
-  // Core: hands-on title, transferable concept (the Kanban regression case).
-  // This lesson teaches what a board, column, card, and work lane ARE —
-  // transferable across Trello, Jira, a whiteboard. NOT a product tutorial.
   {
     expectations: `
-      - MUST return 'core' (teaches transferable Kanban concepts: board, column, card, work lane)
-      - MUST NOT return 'custom' — "Montando" is an active gerund, not a signal for a product tutorial
-      - A junior practitioner needs to understand what each element represents, not follow UI steps
+      - MUST return 'explanation' because this teaches transferable Kanban concepts: board, column, card, and work lane.
+      - MUST NOT return 'tutorial' because "Montando" is active phrasing, not a signal for a product-specific tutorial.
+      - A junior practitioner needs to understand what each element represents, not follow UI steps.
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-core-kanban-board-structure",
+    id: "pt-explanation-kanban-board-structure",
     userInput: {
       chapterTitle: "Montando um quadro Kanban que mostra o trabalho",
       courseTitle: "Kanban",
@@ -28,16 +25,14 @@ export const TEST_CASES = [
       lessonTitle: "Montando a estrutura visível do quadro",
     },
   },
-  // Core: active JavaScript lesson — teaches the concept of a function,
-  // which is transferable across any editor, runtime, or language.
   {
     expectations: `
-      - MUST return 'core' (teaches the concept of a function, transferable across editors and runtimes)
-      - "Turning repeated code into a function" sounds active but is teaching a concept
+      - MUST return 'explanation' because this teaches the concept of a function, transferable across editors and runtimes.
+      - "Turning repeated code into a function" sounds active but is teaching a concept.
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-core-js-function-concept",
+    id: "en-explanation-js-function-concept",
     userInput: {
       chapterTitle: "Functions, Arrays, and Objects",
       courseTitle: "JavaScript",
@@ -47,15 +42,14 @@ export const TEST_CASES = [
       lessonTitle: "Turning repeated code into a function",
     },
   },
-  // Core: ML / transformers — concept (attention) wrapped in active framing.
   {
     expectations: `
-      - MUST return 'core' (teaches the attention mechanism — a transferable architectural concept)
-      - "Following how..." is active phrasing, not a signal for custom
+      - MUST return 'explanation' because this teaches attention as a transferable architectural concept.
+      - "Following how..." is active phrasing, not a signal for tutorial.
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-core-transformer-attention",
+    id: "en-explanation-transformer-attention",
     userInput: {
       chapterTitle: "Transformers",
       courseTitle: "Machine Learning",
@@ -65,17 +59,14 @@ export const TEST_CASES = [
       lessonTitle: "Following how one token attends to others",
     },
   },
-  // Core: law / civil procedure — "Escrevendo uma petição..." teaches structure
-  // that applies across any court or filing system. Contrast with the custom
-  // case below that targets a specific e-filing platform.
   {
     expectations: `
-      - MUST return 'core' (teaches petition structure — transferable across any court or platform)
-      - Active gerund "Escrevendo" does not make it a custom tutorial
+      - MUST return 'explanation' because this teaches petition structure that transfers across courts and platforms.
+      - Active gerund "Escrevendo" does not make it a tutorial.
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-core-petition-structure",
+    id: "pt-explanation-petition-structure",
     userInput: {
       chapterTitle: "Processo Civil",
       courseTitle: "Direito",
@@ -85,14 +76,13 @@ export const TEST_CASES = [
       lessonTitle: "Escrevendo uma petição inicial que se sustenta",
     },
   },
-  // Core: astronomy — active framing, domain concept (transit photometry).
   {
     expectations: `
-      - MUST return 'core' (teaches transit photometry — a transferable detection method)
+      - MUST return 'explanation' because this teaches transit photometry as a transferable detection method.
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "es-core-exoplanet-transit",
+    id: "es-explanation-exoplanet-transit",
     userInput: {
       chapterTitle: "Exoplanetas",
       courseTitle: "Astronomía",
@@ -102,14 +92,13 @@ export const TEST_CASES = [
       lessonTitle: "Leyendo un planeta cuando cruza su estrella",
     },
   },
-  // Core: humanities — conceptual content about pre-colonial indigenous life.
   {
     expectations: `
-      - MUST return 'core' (conceptual history content — not a procedural tutorial)
+      - MUST return 'explanation' because this is conceptual history content, not a procedural tutorial.
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-core-indigenous-trade-networks",
+    id: "en-explanation-indigenous-trade-networks",
     userInput: {
       chapterTitle: "Indigenous Brazil Before Colonization",
       courseTitle: "Brazilian History",
@@ -119,43 +108,10 @@ export const TEST_CASES = [
       lessonTitle: "Following trade across rivers, trails, and coasts",
     },
   },
-  // Language: teaching Spanish vocabulary in an English-language course.
   {
     expectations: `
-      - MUST return 'language' (teaching Spanish vocabulary)
-
-      ${SHARED_EXPECTATIONS}
-    `,
-    id: "en-language-spanish-greetings",
-    userInput: {
-      chapterTitle: "Getting Started",
-      courseTitle: "Spanish for Beginners",
-      language: "en",
-      lessonDescription: "Learn how to say hello, goodbye, and common greetings in Spanish",
-      lessonTitle: "Basic Greetings in Spanish",
-    },
-  },
-  // Language: teaching English grammar to Portuguese speakers.
-  {
-    expectations: `
-      - MUST return 'language' (teaching English grammar to Portuguese speakers)
-
-      ${SHARED_EXPECTATIONS}
-    `,
-    id: "pt-language-english-past-tense",
-    userInput: {
-      chapterTitle: "Tempos Verbais",
-      courseTitle: "Inglês Intermediário",
-      language: "pt",
-      lessonDescription: "Aprenda a usar o passado simples em inglês",
-      lessonTitle: "Past Tense in English",
-    },
-  },
-  // Edge: content ABOUT a language (etymology) is core, not language.
-  {
-    expectations: `
-      - MUST return 'core' (academic study of language history, not language learning)
-      - MUST NOT return 'language'
+      - MUST return 'explanation' because this is academic study of language history, not a product-specific tutorial.
+      - The output must not invent a language-learning kind.
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -168,15 +124,13 @@ export const TEST_CASES = [
       lessonTitle: "Word Origins and Etymology",
     },
   },
-  // Custom: tied to a specific product (Git on your computer).
-  // Steps ARE the lesson; switching tools would require a different lesson.
   {
     expectations: `
-      - MUST return 'custom' (installing a specific tool on a specific computer)
+      - MUST return 'tutorial' because installing and configuring Git is tied to a specific tool and computer environment.
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-custom-git-setup",
+    id: "en-tutorial-git-setup",
     userInput: {
       chapterTitle: "Getting Started",
       courseTitle: "Git and GitHub",
@@ -185,14 +139,13 @@ export const TEST_CASES = [
       lessonTitle: "How to Set Up Git",
     },
   },
-  // Custom: tied to a specific framework's CLI.
   {
     expectations: `
-      - MUST return 'custom' (creating a project with a specific framework's scaffolding)
+      - MUST return 'tutorial' because creating a project with React's scaffolding depends on a specific framework/tooling path.
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-custom-react-app",
+    id: "en-tutorial-react-app",
     userInput: {
       chapterTitle: "Project Setup",
       courseTitle: "React Development",
@@ -201,11 +154,10 @@ export const TEST_CASES = [
       lessonTitle: "Creating Your First React App",
     },
   },
-  // Custom: Spanish-language lesson teaching a specific install, NOT teaching Spanish.
   {
     expectations: `
-      - MUST return 'custom' (installing a specific runtime on a computer)
-      - MUST NOT return 'language' (Spanish is the course language, not the subject)
+      - MUST return 'tutorial' because installing Node.js is tied to a specific runtime and computer environment.
+      - MUST NOT infer any language-learning kind because Spanish is the course language, not the subject.
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -218,18 +170,14 @@ export const TEST_CASES = [
       lessonTitle: "Instalando Node.js",
     },
   },
-  // Custom contrast case: same domain (Kanban) as the first test, but tied to
-  // a specific product. This lesson teaches Trello's UI, not transferable ideas.
-  // Having both the Kanban-core and Trello-custom cases guards the model from
-  // collapsing the two on surface cues (both use "board", both are hands-on).
   {
     expectations: `
-      - MUST return 'custom' (tied to Trello's specific UI; switching to another tool requires a different lesson)
-      - Contrast with pt-core-kanban-board-structure: same domain, but this teaches product steps, not transferable concepts
+      - MUST return 'tutorial' because this is tied to Trello's specific UI and switching tools would require different steps.
+      - Contrast with pt-explanation-kanban-board-structure: same domain, but this teaches product steps rather than transferable concepts.
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-custom-trello-first-board",
+    id: "en-tutorial-trello-first-board",
     userInput: {
       chapterTitle: "Getting Started with Trello",
       courseTitle: "Trello for Teams",

@@ -1,31 +1,31 @@
 import { type AssertAllCovered } from "@/lib/generation-phases";
-import { type ActivityStepName } from "@zoonk/core/workflows/steps";
-import { type PhaseName } from "../activity-generation-phase-config";
+import { type LessonStepName } from "@zoonk/core/workflows/steps";
+import { type PhaseName } from "../lesson-generation-phase-config";
 
 type ReadingSteps =
-  | "getLessonActivities"
-  | "getNeighboringConcepts"
-  | "setActivityAsRunning"
-  | "generateSentences"
+  | "getLesson"
+  | "setLessonAsRunning"
+  | "generateReadingContent"
   | "generateSentenceDistractors"
-  | "generateAudio"
+  | "generateReadingAudio"
   | "generateReadingRomanization"
   | "generateSentenceWordMetadata"
   | "generateSentenceWordAudio"
   | "generateSentenceWordPronunciation"
-  | "saveReadingActivity";
+  | "saveReadingLesson"
+  | "setLessonAsCompleted";
 
 export const READING_PHASE_STEPS = {
   addingRomanization: ["generateReadingRomanization"],
   addingWordPronunciation: ["generateSentenceWordPronunciation"],
   creatingExercises: ["generateSentenceDistractors"],
-  creatingSentences: ["generateSentences"],
-  gettingStarted: ["getLessonActivities", "getNeighboringConcepts", "setActivityAsRunning"],
+  creatingSentences: ["generateReadingContent"],
+  gettingStarted: ["getLesson", "setLessonAsRunning"],
   lookingUpWords: ["generateSentenceWordMetadata"],
-  recordingAudio: ["generateAudio"],
+  recordingAudio: ["generateReadingAudio"],
   recordingWordAudio: ["generateSentenceWordAudio"],
-  saving: ["saveReadingActivity"],
-} as const satisfies Record<string, readonly ActivityStepName[]>;
+  saving: ["saveReadingLesson", "setLessonAsCompleted"],
+} as const satisfies Record<string, readonly LessonStepName[]>;
 
 type _ValidateReading = AssertAllCovered<
   Exclude<ReadingSteps, (typeof READING_PHASE_STEPS)[keyof typeof READING_PHASE_STEPS][number]>

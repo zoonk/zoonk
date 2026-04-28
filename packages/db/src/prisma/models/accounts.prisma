@@ -22,10 +22,9 @@ model User {
   courses            CourseUser[]
   ownedCourses       Course[]
   learningProfile    UserLearningProfile?
-  activityProgress   ActivityProgress[]
+  lessonProgress     LessonProgress[]
   chapterCompletions ChapterCompletion[]
   courseCompletions  CourseCompletion[]
-  lessonCompletions  LessonCompletion[]
   stepAttempts       StepAttempt[]
   progress           UserProgress?
   dailyProgress      DailyProgress[]
@@ -100,7 +99,6 @@ model Organization {
   courses          Course[]
   chapters         Chapter[]
   lessons          Lesson[]
-  activities       Activity[]
   stripeCustomerId String?      @map("stripe_customer_id")
   words            Word[]
   sentences        Sentence[]

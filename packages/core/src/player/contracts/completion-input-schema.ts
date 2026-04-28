@@ -64,8 +64,8 @@ const stepTimingSchema = z.object({
 });
 
 export const completionInputSchema = z.object({
-  activityId: z.string(),
   answers: z.record(z.string(), selectedAnswerSchema),
+  lessonId: z.string(),
   localDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   startedAt: z.number(),
   stepTimings: z.record(z.string(), stepTimingSchema),

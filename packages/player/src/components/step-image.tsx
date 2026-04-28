@@ -21,8 +21,8 @@ function StepImageFallback({ prompt }: { prompt: string }) {
 }
 
 /**
- * Readable activity steps now own their illustration directly. This component
- * keeps the render/fallback behavior shared between explanation and custom
+ * Readable lesson steps now own their illustration directly. This component
+ * keeps the render/fallback behavior shared between explanation and tutorial
  * steps so a missing upload still leaves the learner with the intended prompt.
  * Story screens also reuse it for larger hero scenes by switching the image fit
  * from the default contained illustration mode to cover.

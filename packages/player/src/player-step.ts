@@ -1,4 +1,4 @@
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type StepImage } from "@zoonk/core/steps/contract/image";
 
 type StepDescriptorBase<Kind extends SerializedStep["kind"], Name extends string> = {

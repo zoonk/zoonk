@@ -1,4 +1,4 @@
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type PlayerStepDescriptor, type PlayerStepKind, describePlayerStep } from "./player-step";
 
 export type PlayerCheckBehavior =

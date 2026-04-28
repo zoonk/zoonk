@@ -4,7 +4,7 @@ import {
   type SerializedSentence,
   type SerializedStep,
   type SerializedWord,
-} from "./prepare-activity-data";
+} from "./prepare-lesson-data";
 import { type DistractorWord } from "./translation-options";
 
 vi.mock("@zoonk/utils/shuffle", () => ({

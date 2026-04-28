@@ -4,54 +4,6 @@ type AiTaskModelConfig = {
 };
 
 export const AI_TASK_MODEL_CONFIG = {
-  "activity-custom": {
-    defaultModel: "google/gemini-3-flash",
-    fallbackModels: ["anthropic/claude-opus-4.6", "openai/gpt-5.4"],
-  },
-  "activity-distractors": {
-    defaultModel: "openai/gpt-5.4",
-    fallbackModels: ["google/gemini-3.1-flash-lite-preview", "anthropic/claude-sonnet-4.6"],
-  },
-  "activity-explanation": {
-    defaultModel: "openai/gpt-5.4",
-    fallbackModels: ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"],
-  },
-  "activity-grammar-content": {
-    defaultModel: "google/gemini-3.1-pro-preview",
-    fallbackModels: ["openai/gpt-5.4", "anthropic/claude-opus-4.6"],
-  },
-  "activity-grammar-user-content": {
-    defaultModel: "openai/gpt-5.4",
-    fallbackModels: ["anthropic/claude-opus-4.6", "google/gemini-3-flash"],
-  },
-  "activity-practice": {
-    defaultModel: "openai/gpt-5.4",
-    fallbackModels: ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"],
-  },
-  "activity-pronunciation": {
-    defaultModel: "google/gemini-3-flash",
-    fallbackModels: ["anthropic/claude-sonnet-4.6", "openai/gpt-5.1-instant"],
-  },
-  "activity-quiz": {
-    defaultModel: "openai/gpt-5.4",
-    fallbackModels: ["anthropic/claude-opus-4.6"],
-  },
-  "activity-romanization": {
-    defaultModel: "openai/gpt-5.4",
-    fallbackModels: ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"],
-  },
-  "activity-sentences": {
-    defaultModel: "openai/gpt-5.4",
-    fallbackModels: ["google/gemini-3.1-pro-preview", "anthropic/claude-opus-4.6"],
-  },
-  "activity-translation": {
-    defaultModel: "openai/gpt-5.4-mini",
-    fallbackModels: ["google/gemini-3-flash", "anthropic/claude-opus-4.6"],
-  },
-  "activity-vocabulary": {
-    defaultModel: "google/gemini-3-flash",
-    fallbackModels: ["google/gemini-3.1-pro-preview", "openai/gpt-5.4"],
-  },
   "alternative-titles": {
     defaultModel: "openai/gpt-5.4",
     fallbackModels: ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"],
@@ -96,13 +48,21 @@ export const AI_TASK_MODEL_CONFIG = {
     defaultModel: "openai/gpt-5.4",
     fallbackModels: ["google/gemini-3.1-pro-preview", "anthropic/claude-sonnet-4.6"],
   },
-  "lesson-core-activities": {
+  "lesson-distractors": {
     defaultModel: "openai/gpt-5.4",
-    fallbackModels: ["anthropic/claude-opus-4.7", "google/gemini-3.1-pro-preview"],
+    fallbackModels: ["google/gemini-3.1-flash-lite-preview", "anthropic/claude-sonnet-4.6"],
   },
-  "lesson-custom-activities": {
-    defaultModel: "google/gemini-3-flash",
-    fallbackModels: ["anthropic/claude-opus-4.6", "openai/gpt-5.4"],
+  "lesson-explanation": {
+    defaultModel: "openai/gpt-5.4",
+    fallbackModels: ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"],
+  },
+  "lesson-grammar-content": {
+    defaultModel: "google/gemini-3.1-pro-preview",
+    fallbackModels: ["openai/gpt-5.4", "anthropic/claude-opus-4.6"],
+  },
+  "lesson-grammar-user-content": {
+    defaultModel: "openai/gpt-5.4",
+    fallbackModels: ["anthropic/claude-opus-4.6", "google/gemini-3-flash"],
   },
   "lesson-kind": {
     defaultModel: "openai/gpt-5.4-nano",
@@ -111,6 +71,38 @@ export const AI_TASK_MODEL_CONFIG = {
       "meta/llama-4-scout",
       "anthropic/claude-haiku-4.5",
     ],
+  },
+  "lesson-practice": {
+    defaultModel: "openai/gpt-5.4",
+    fallbackModels: ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"],
+  },
+  "lesson-pronunciation": {
+    defaultModel: "google/gemini-3-flash",
+    fallbackModels: ["anthropic/claude-sonnet-4.6", "openai/gpt-5.1-instant"],
+  },
+  "lesson-quiz": {
+    defaultModel: "openai/gpt-5.4",
+    fallbackModels: ["anthropic/claude-opus-4.6"],
+  },
+  "lesson-romanization": {
+    defaultModel: "openai/gpt-5.4",
+    fallbackModels: ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"],
+  },
+  "lesson-sentences": {
+    defaultModel: "openai/gpt-5.4",
+    fallbackModels: ["google/gemini-3.1-pro-preview", "anthropic/claude-opus-4.6"],
+  },
+  "lesson-translation": {
+    defaultModel: "openai/gpt-5.4-mini",
+    fallbackModels: ["google/gemini-3-flash", "anthropic/claude-opus-4.6"],
+  },
+  "lesson-tutorial": {
+    defaultModel: "google/gemini-3-flash",
+    fallbackModels: ["anthropic/claude-opus-4.6", "openai/gpt-5.4"],
+  },
+  "lesson-vocabulary": {
+    defaultModel: "google/gemini-3-flash",
+    fallbackModels: ["google/gemini-3.1-pro-preview", "openai/gpt-5.4"],
   },
   "step-content-image": {
     defaultModel: "openai/gpt-image-2",

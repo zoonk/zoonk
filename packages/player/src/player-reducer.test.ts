@@ -1,7 +1,7 @@
 import {
-  type SerializedActivity,
+  type SerializedLesson,
   type SerializedStep,
-} from "@zoonk/core/player/contracts/prepare-activity-data";
+} from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import {
   type PlayerState,
@@ -42,27 +42,27 @@ function buildMultipleChoiceStep(overrides: Partial<SerializedStep> = {}): Seria
   return buildStep({ content: coreMultipleChoiceContent, kind: "multipleChoice", ...overrides });
 }
 
-function buildActivity(overrides: Partial<SerializedActivity> = {}): SerializedActivity {
+function buildLesson(overrides: Partial<SerializedLesson> = {}): SerializedLesson {
   return {
     description: null,
-    id: "activity-1",
+    id: "lesson-1",
     kind: "quiz",
     language: "en",
     lessonSentences: [],
     lessonWords: [],
     organizationId: "org-1",
     steps: [buildStep()],
-    title: "Test Activity",
+    title: "Test Lesson",
     ...overrides,
   };
 }
 
 function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
   return {
-    activityId: "activity-1",
-    activityKind: "quiz",
     completion: null,
     currentStepIndex: 0,
+    lessonId: "lesson-1",
+    lessonKind: "quiz",
     phase: "playing",
     results: {},
     selectedAnswers: {},
@@ -82,35 +82,35 @@ const multipleChoiceAnswer: SelectedAnswer = {
 
 describe(createInitialState, () => {
   test("sets phase to playing and index to 0", () => {
-    const activity = buildActivity();
-    const state = createInitialState({ activity, totalBrainPower: 0 });
+    const lesson = buildLesson();
+    const state = createInitialState({ lesson, totalBrainPower: 0 });
     expect(state.phase).toBe("playing");
     expect(state.currentStepIndex).toBe(0);
   });
 
-  test("copies activityId and steps", () => {
+  test("copies lessonId and steps", () => {
     const steps = [buildStep({ id: "s1" }), buildStep({ id: "s2", position: 1 })];
-    const activity = buildActivity({ steps });
-    const state = createInitialState({ activity, totalBrainPower: 0 });
-    expect(state.activityId).toBe("activity-1");
+    const lesson = buildLesson({ steps });
+    const state = createInitialState({ lesson, totalBrainPower: 0 });
+    expect(state.lessonId).toBe("lesson-1");
     expect(state.steps).toEqual(steps);
   });
 
   test("initializes empty maps", () => {
-    const state = createInitialState({ activity: buildActivity(), totalBrainPower: 0 });
+    const state = createInitialState({ lesson: buildLesson(), totalBrainPower: 0 });
     expect(state.selectedAnswers).toEqual({});
     expect(state.results).toEqual({});
   });
 
   test("stores totalBrainPower from input", () => {
-    const state = createInitialState({ activity: buildActivity(), totalBrainPower: 500 });
+    const state = createInitialState({ lesson: buildLesson(), totalBrainPower: 500 });
     expect(state.totalBrainPower).toBe(500);
   });
 
   test("pre-populates selectedAnswers for sortOrder steps", () => {
     const sortItems = ["Banana", "Apple", "Cherry"];
     const steps = [buildStep({ id: "sort-1", kind: "sortOrder", sortOrderItems: sortItems })];
-    const state = createInitialState({ activity: buildActivity({ steps }), totalBrainPower: 0 });
+    const state = createInitialState({ lesson: buildLesson({ steps }), totalBrainPower: 0 });
     expect(state.selectedAnswers["sort-1"]).toEqual({
       kind: "sortOrder",
       userOrder: sortItems,
@@ -122,7 +122,7 @@ describe(createInitialState, () => {
       buildStep({ id: "s1", kind: "static" }),
       buildMultipleChoiceStep({ id: "mc-1" }),
     ];
-    const state = createInitialState({ activity: buildActivity({ steps }), totalBrainPower: 0 });
+    const state = createInitialState({ lesson: buildLesson({ steps }), totalBrainPower: 0 });
     expect(state.selectedAnswers).toEqual({});
   });
 });
@@ -380,7 +380,7 @@ describe("NAVIGATE_STEP", () => {
       buildMultipleChoiceStep({ id: "question-1", position: 1 }),
     ];
 
-    const state = buildState({ activityKind: "practice", steps });
+    const state = buildState({ lessonKind: "practice", steps });
     const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });
 
     expect(next.currentStepIndex).toBe(1);
@@ -527,16 +527,16 @@ describe("RESTART", () => {
     expect(next.selectedAnswers).toEqual({});
   });
 
-  test("preserves activityId and steps", () => {
+  test("preserves lessonId and steps", () => {
     const steps = [buildStep({ id: "s1" }), buildStep({ id: "s2", position: 1 })];
     const state = buildState({
-      activityId: "my-activity",
+      lessonId: "my-lesson",
       phase: "completed",
       steps,
     });
 
     const next = playerReducer(state, { type: "RESTART" });
-    expect(next.activityId).toBe("my-activity");
+    expect(next.lessonId).toBe("my-lesson");
     expect(next.steps).toEqual(steps);
   });
 
@@ -605,7 +605,7 @@ describe("timing", () => {
 
   test("createInitialState sets startedAt and stepStartedAt", () => {
     vi.setSystemTime(new Date("2026-03-15T10:00:00"));
-    const state = createInitialState({ activity: buildActivity(), totalBrainPower: 0 });
+    const state = createInitialState({ lesson: buildLesson(), totalBrainPower: 0 });
     expect(state.startedAt).toBe(Date.now());
     expect(state.stepStartedAt).toBe(Date.now());
     expect(state.stepTimings).toEqual({});
@@ -711,8 +711,8 @@ describe("edge cases", () => {
   });
 
   test("empty steps array sets phase to completed", () => {
-    const activity = buildActivity({ steps: [] });
-    const state = createInitialState({ activity, totalBrainPower: 0 });
+    const lesson = buildLesson({ steps: [] });
+    const state = createInitialState({ lesson, totalBrainPower: 0 });
     expect(state.steps).toEqual([]);
     expect(state.currentStepIndex).toBe(0);
     expect(state.phase).toBe("completed");

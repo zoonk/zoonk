@@ -2,7 +2,7 @@
 
 import { render } from "@testing-library/react";
 import { type CompletionInput } from "@zoonk/core/player/contracts/completion-input-schema";
-import { type SerializedActivity } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { PlayerShell } from "../components/player-shell";
 import { type PlayerMilestone, type PlayerNavigation, type PlayerViewer } from "../player-context";
 import { PlayerProvider } from "../player-provider";
@@ -15,11 +15,11 @@ const noop = () => null;
  * the full shared player flow instead of leaf components.
  */
 export function renderPlayer({
-  activity,
+  lesson,
   chapterTitle = "Test Chapter",
   lessonDescription = "Test lesson description",
   lessonTitle = "Test Lesson",
-  milestone = { kind: "activity" },
+  milestone = null,
   navigation = buildNavigation(),
   onComplete = noop,
   onEscape = noop,
@@ -27,11 +27,11 @@ export function renderPlayer({
   totalBrainPower = 0,
   viewer = { isAuthenticated: false, userName: null },
 }: {
-  activity: SerializedActivity;
+  lesson: SerializedLesson;
   chapterTitle?: string;
   lessonDescription?: string;
   lessonTitle?: string;
-  milestone?: PlayerMilestone;
+  milestone?: PlayerMilestone | null;
   navigation?: PlayerNavigation;
   onComplete?: (input: CompletionInput) => void;
   onEscape?: () => void;
@@ -41,7 +41,7 @@ export function renderPlayer({
 }) {
   return render(
     <PlayerProvider
-      activity={activity}
+      lesson={lesson}
       chapterTitle={chapterTitle}
       lessonDescription={lessonDescription}
       lessonTitle={lessonTitle}
@@ -69,7 +69,7 @@ export function buildNavigation(overrides: Partial<PlayerNavigation> = {}): Play
     lessonHref: "/lesson",
     levelHref: "/level",
     loginHref: "/login",
-    nextActivityHref: "/lesson/a/1",
+    nextLessonHref: "/lesson/play",
     ...overrides,
   };
 }

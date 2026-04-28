@@ -102,25 +102,25 @@ export function buildTtsLineItem({
 }
 
 /**
- * Step image generation runs once per saved readable step, so persisted static
- * steps with embedded images are the cleanest way to attribute those requests
- * back to explanation versus custom workflows.
+ * Step image generation runs once per saved step with an embedded image. The
+ * lesson kind identifies which content workflow produced that image now that
+ * steps are owned directly by lessons.
  */
 export function buildStepImageLineItem({
-  activityKind,
   entityCount,
+  lessonKind,
   structureStats,
   usageByTask,
 }: {
-  activityKind: "custom" | "explanation";
   entityCount: number;
+  lessonKind: StepImageUsageRow["lessonKind"];
   structureStats: StructureStats;
   usageByTask: TaskUsageByName;
 }): EstimateLineItem | null {
   return buildGatewayLineItem({
     averageRequestsPerRun: calculateAverageRequestsPerEntity({
       entityCount,
-      requestCount: structureStats.stepImageCountsByActivityKind[activityKind] ?? 0,
+      requestCount: structureStats.stepImageCountsByLessonKind[lessonKind] ?? 0,
     }),
     taskName: STEP_CONTENT_IMAGE_TASK,
     usageByTask,
@@ -165,19 +165,14 @@ export function isEstimateLineItem(item: EstimateLineItem | null): item is Estim
 }
 
 /**
- * The SQL step-image query returns one row per activity kind. Flattening that
- * into a predictable key-value map keeps the estimate builders free from
- * row-scanning logic and makes missing combinations naturally fall back to
- * zero.
+ * The SQL step-image query returns one row per lesson kind. Flattening that
+ * into a predictable key-value map keeps estimate builders from scanning rows
+ * and makes missing combinations naturally fall back to zero.
  */
-export function buildStepImageCountMap(rows: StepImageUsageRow[]): Record<string, number> {
-  const counts: Record<string, number> = {};
-
-  for (const row of rows) {
-    counts[row.activityKind] = toNumber(row.count);
-  }
-
-  return counts;
+export function buildStepImageCountMap(
+  rows: StepImageUsageRow[],
+): Partial<Record<StepImageUsageRow["lessonKind"], number>> {
+  return Object.fromEntries(rows.map((row) => [row.lessonKind, toNumber(row.count)]));
 }
 
 /**

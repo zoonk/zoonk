@@ -1,32 +1,18 @@
-model ActivityProgress {
+model LessonProgress {
   id              String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId          String    @map("user_id") @db.Uuid
   user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  activityId      String    @map("activity_id") @db.Uuid
-  activity        Activity  @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  lessonId        String    @map("lesson_id") @db.Uuid
+  lesson          Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   startedAt       DateTime  @default(now()) @map("started_at")
   completedAt     DateTime? @map("completed_at")
   durationSeconds Int?      @map("duration_seconds")
 
-  @@unique([userId, activityId], name: "userActivity")
-  @@index([activityId])
-  @@index([userId, completedAt])
-  @@index([startedAt])
-  @@map("activity_progress")
-}
-
-model LessonCompletion {
-  id          String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  userId      String   @map("user_id") @db.Uuid
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lessonId    String   @map("lesson_id") @db.Uuid
-  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  completedAt DateTime @default(now()) @map("completed_at")
-
-  @@unique([userId, lessonId], name: "userLessonCompletion")
+  @@unique([userId, lessonId], name: "userLesson")
   @@index([lessonId])
   @@index([userId, completedAt])
-  @@map("lesson_completions")
+  @@index([startedAt])
+  @@map("lesson_progress")
 }
 
 model ChapterCompletion {

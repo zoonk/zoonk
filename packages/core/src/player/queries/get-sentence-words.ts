@@ -1,13 +1,15 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { extractUniqueSentenceWords } from "@zoonk/utils/string";
-import { cache } from "react";
+import { getLessonSentencesForLessons } from "./get-lesson-sentences";
 
-const cachedGetSentenceWords = cache(async (lessonId: string) => {
-  const lessonSentences = await prisma.lessonSentence.findMany({
-    include: { sentence: true },
-    where: { lessonId },
-  });
+/**
+ * Sentence word banks are derived from the sentence rows attached to the
+ * lesson content. Review lessons need this derivation across the source
+ * lessons whose steps are being replayed.
+ */
+async function listSentenceWordsForLessons({ lessonIds }: { lessonIds: string[] }) {
+  const lessonSentences = await getLessonSentencesForLessons({ lessonIds });
 
   const firstSentence = lessonSentences[0];
 
@@ -32,20 +34,16 @@ const cachedGetSentenceWords = cache(async (lessonId: string) => {
       },
     },
     where: {
-      lessonId,
+      lessonId: { in: lessonIds },
       word: { word: { in: uniqueWords, mode: "insensitive" } },
     },
   });
-});
+}
 
 /**
- * Returns `LessonWord` records whose surface form appears in any of the
- * lesson's sentences. The save workflow creates `LessonWord` records for
- * every word that appears in a sentence, so we can query `LessonWord`
- * directly (filtered by surface form match) instead of querying the
- * Word table with text matching. This keeps the return type consistent
- * with getLessonWords, which prepareActivityData also consumes.
+ * Fetches sentence word-bank metadata for a group of lessons so review steps
+ * can reuse the exact words generated for their source lessons.
  */
-export function getSentenceWords(params: { lessonId: string }) {
-  return cachedGetSentenceWords(params.lessonId);
+export function getSentenceWordsForLessons(params: { lessonIds: string[] }) {
+  return listSentenceWordsForLessons({ lessonIds: params.lessonIds });
 }

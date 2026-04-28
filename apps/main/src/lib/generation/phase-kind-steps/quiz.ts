@@ -1,22 +1,21 @@
 import { type AssertAllCovered } from "@/lib/generation-phases";
-import { type ActivityStepName } from "@zoonk/core/workflows/steps";
-import { type PhaseName } from "../activity-generation-phase-config";
+import { type LessonStepName } from "@zoonk/core/workflows/steps";
+import { type PhaseName } from "../lesson-generation-phase-config";
 
 type QuizSteps =
-  | "getLessonActivities"
-  | "setActivityAsRunning"
-  | "generateExplanationContent"
+  | "getLesson"
+  | "setLessonAsRunning"
   | "generateQuizContent"
   | "generateQuizImages"
-  | "saveQuizActivity";
+  | "saveQuizLesson"
+  | "setLessonAsCompleted";
 
 export const QUIZ_PHASE_STEPS = {
   creatingImages: ["generateQuizImages"],
-  gettingStarted: ["getLessonActivities", "setActivityAsRunning"],
-  saving: ["saveQuizActivity"],
+  gettingStarted: ["getLesson", "setLessonAsRunning"],
+  saving: ["saveQuizLesson", "setLessonAsCompleted"],
   writingContent: ["generateQuizContent"],
-  writingExplanation: ["generateExplanationContent"],
-} as const satisfies Record<string, readonly ActivityStepName[]>;
+} as const satisfies Record<string, readonly LessonStepName[]>;
 
 type _ValidateQuiz = AssertAllCovered<
   Exclude<QuizSteps, (typeof QUIZ_PHASE_STEPS)[keyof typeof QUIZ_PHASE_STEPS][number]>
@@ -24,7 +23,6 @@ type _ValidateQuiz = AssertAllCovered<
 
 export const QUIZ_PHASE_ORDER: PhaseName[] = [
   "gettingStarted",
-  "writingExplanation",
   "writingContent",
   "creatingImages",
   "saving",

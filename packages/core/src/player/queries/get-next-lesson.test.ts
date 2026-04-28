@@ -1,5 +1,4 @@
 import { randomUUID } from "node:crypto";
-import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -17,10 +16,6 @@ describe(getNextLesson, () => {
   let lesson1Id: string;
   let lesson2Id: string;
   let lesson3Id: string;
-
-  let activity1Id: string;
-  let activity2Id: string;
-  let activity3Id: string;
 
   beforeAll(async () => {
     const org = await organizationFixture({ kind: "brand" });
@@ -63,49 +58,24 @@ describe(getNextLesson, () => {
     });
 
     lesson3Id = ls3.id;
-
-    const [act1, act2, act3] = await Promise.all([
-      activityFixture({
-        isPublished: true,
-        lessonId: lesson1Id,
-        organizationId: orgId,
-        position: 0,
-      }),
-      activityFixture({
-        isPublished: true,
-        lessonId: lesson2Id,
-        organizationId: orgId,
-        position: 0,
-      }),
-      activityFixture({
-        isPublished: true,
-        lessonId: lesson3Id,
-        organizationId: orgId,
-        position: 0,
-      }),
-    ]);
-
-    activity1Id = act1.id;
-    activity2Id = act2.id;
-    activity3Id = act3.id;
   });
 
   test("returns next lesson in same chapter", async () => {
-    const result = await getNextLesson(activity1Id);
+    const result = await getNextLesson(lesson1Id);
     expect(result).toEqual({ id: lesson2Id, needsGeneration: false });
   });
 
   test("returns first lesson of next chapter when current is last in chapter", async () => {
-    const result = await getNextLesson(activity2Id);
+    const result = await getNextLesson(lesson2Id);
     expect(result).toEqual({ id: lesson3Id, needsGeneration: false });
   });
 
   test("returns null when on last lesson of course", async () => {
-    const result = await getNextLesson(activity3Id);
+    const result = await getNextLesson(lesson3Id);
     expect(result).toBeNull();
   });
 
-  test("returns null for non-existent activity", async () => {
+  test("returns null for non-existent lesson", async () => {
     const result = await getNextLesson(randomUUID());
     expect(result).toBeNull();
   });
@@ -141,14 +111,7 @@ describe(getNextLesson, () => {
       }),
     ]);
 
-    const testActivity = await activityFixture({
-      isPublished: true,
-      lessonId: publishedLesson.id,
-      organizationId: testOrg.id,
-      position: 0,
-    });
-
-    const result = await getNextLesson(testActivity.id);
+    const result = await getNextLesson(publishedLesson.id);
     expect(result).toEqual({ id: nextPublishedLesson.id, needsGeneration: false });
   });
 
@@ -198,14 +161,7 @@ describe(getNextLesson, () => {
       }),
     ]);
 
-    const testActivity = await activityFixture({
-      isPublished: true,
-      lessonId: currentLesson.id,
-      organizationId: testOrg.id,
-      position: 0,
-    });
-
-    const result = await getNextLesson(testActivity.id);
+    const result = await getNextLesson(currentLesson.id);
     expect(result).toEqual({ id: nextLesson.id, needsGeneration: false });
   });
 
@@ -236,14 +192,7 @@ describe(getNextLesson, () => {
         }),
       ]);
 
-      const testActivity = await activityFixture({
-        isPublished: true,
-        lessonId: currentLesson.id,
-        organizationId: testOrg.id,
-        position: 0,
-      });
-
-      const result = await getNextLesson(testActivity.id);
+      const result = await getNextLesson(currentLesson.id);
       expect(result).toEqual({ id: pendingLesson.id, needsGeneration: true });
     });
 
@@ -273,18 +222,11 @@ describe(getNextLesson, () => {
         }),
       ]);
 
-      const testActivity = await activityFixture({
-        isPublished: true,
-        lessonId: currentLesson.id,
-        organizationId: testOrg.id,
-        position: 0,
-      });
-
-      const result = await getNextLesson(testActivity.id);
+      const result = await getNextLesson(currentLesson.id);
       expect(result).toEqual({ id: failedLesson.id, needsGeneration: true });
     });
 
-    test("returns needsGeneration true when some activities are pending", async () => {
+    test("returns needsGeneration false when next lesson is completed", async () => {
       const testOrg = await organizationFixture({ kind: "brand" });
       const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
       const testChapter = await chapterFixture({
@@ -310,30 +252,8 @@ describe(getNextLesson, () => {
         }),
       ]);
 
-      await Promise.all([
-        activityFixture({
-          generationStatus: "completed",
-          isPublished: true,
-          lessonId: nextLesson.id,
-          organizationId: testOrg.id,
-        }),
-        activityFixture({
-          generationStatus: "pending",
-          isPublished: true,
-          lessonId: nextLesson.id,
-          organizationId: testOrg.id,
-        }),
-      ]);
-
-      const testActivity = await activityFixture({
-        isPublished: true,
-        lessonId: currentLesson.id,
-        organizationId: testOrg.id,
-        position: 0,
-      });
-
-      const result = await getNextLesson(testActivity.id);
-      expect(result).toEqual({ id: nextLesson.id, needsGeneration: true });
+      const result = await getNextLesson(currentLesson.id);
+      expect(result).toEqual({ id: nextLesson.id, needsGeneration: false });
     });
 
     test("returns needsGeneration false when lesson generation is already in flight", async () => {
@@ -357,20 +277,13 @@ describe(getNextLesson, () => {
           chapterId: testChapter.id,
           generationStatus: "running",
           isPublished: true,
-          kind: "core",
+          kind: "explanation",
           organizationId: testOrg.id,
           position: 1,
         }),
       ]);
 
-      const testActivity = await activityFixture({
-        isPublished: true,
-        lessonId: currentLesson.id,
-        organizationId: testOrg.id,
-        position: 0,
-      });
-
-      const result = await getNextLesson(testActivity.id);
+      const result = await getNextLesson(currentLesson.id);
       expect(result).toEqual({ id: runningLesson.id, needsGeneration: false });
     });
   });

@@ -41,7 +41,7 @@ function buildFillBlankStep(overrides: Record<string, unknown> = {}) {
   };
 }
 
-// Wrapper that holds real state, mimicking ActivityPlayerShell.
+// Wrapper that holds real state, mimicking LessonPlayerShell.
 // The bug triggers when onSelectAnswer dispatches a state update
 // to this parent while FillBlankStep's state updater is running.
 function ParentWithState({

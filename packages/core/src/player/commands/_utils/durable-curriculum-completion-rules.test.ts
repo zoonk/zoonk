@@ -7,7 +7,6 @@ import {
   groupRowsByChapter,
   isCurrentChapterCompleted,
   isCurrentCourseCompleted,
-  isCurrentLessonCompleted,
 } from "./durable-curriculum-completion-rules";
 
 function createTestUuid(id: number): string {
@@ -15,7 +14,7 @@ function createTestUuid(id: number): string {
 }
 
 /**
- * These rule tests only care about lesson/chapter completion counts, so this
+ * These rule tests only care about lesson/chapter completion state, so this
  * helper builds the smallest row shape that still exercises the pure logic.
  */
 function createRow(
@@ -23,9 +22,8 @@ function createRow(
 ): PublishedLessonCompletionRow {
   return {
     chapterId: createTestUuid(1),
-    completedActivities: 0,
+    isCompleted: false,
     lessonId: createTestUuid(101),
-    totalActivities: 1,
     ...overrides,
   };
 }
@@ -56,24 +54,6 @@ function createChapters(ids: string[]): Parameters<typeof isCurrentCourseComplet
 }
 
 describe("durable curriculum completion rules", () => {
-  test("isCurrentLessonCompleted requires at least one activity and all of them completed", () => {
-    expect(
-      isCurrentLessonCompleted({
-        row: createRow({ completedActivities: 0, totalActivities: 0 }),
-      }),
-    ).toBe(false);
-    expect(
-      isCurrentLessonCompleted({
-        row: createRow({ completedActivities: 1, totalActivities: 2 }),
-      }),
-    ).toBe(false);
-    expect(
-      isCurrentLessonCompleted({
-        row: createRow({ completedActivities: 2, totalActivities: 2 }),
-      }),
-    ).toBe(true);
-  });
-
   test("groupRowsByChapter groups rows by chapter id", () => {
     const chapter1 = createTestUuid(1);
     const chapter2 = createTestUuid(2);
@@ -111,9 +91,8 @@ describe("durable curriculum completion rules", () => {
       getEffectiveDurableLessonIds({
         durableLessonIds,
         lessonRow: createRow({
-          completedActivities: 1,
+          isCompleted: true,
           lessonId: currentLessonId,
-          totalActivities: 1,
         }),
       }),
     ).toEqual(new Set([durableLessonId, currentLessonId]));
@@ -122,9 +101,8 @@ describe("durable curriculum completion rules", () => {
       getEffectiveDurableLessonIds({
         durableLessonIds,
         lessonRow: createRow({
-          completedActivities: 0,
+          isCompleted: false,
           lessonId: currentLessonId,
-          totalActivities: 1,
         }),
       }),
     ).toBe(durableLessonIds);
@@ -139,15 +117,13 @@ describe("durable curriculum completion rules", () => {
       rows: [
         createRow({
           chapterId,
-          completedActivities: 1,
+          isCompleted: true,
           lessonId: lesson10,
-          totalActivities: 1,
         }),
         createRow({
           chapterId,
-          completedActivities: 0,
+          isCompleted: false,
           lessonId: lesson11,
-          totalActivities: 2,
         }),
       ],
     });
@@ -209,15 +185,13 @@ describe("durable curriculum completion rules", () => {
       rows: [
         createRow({
           chapterId: chapter1,
-          completedActivities: 1,
+          isCompleted: true,
           lessonId: lesson10,
-          totalActivities: 1,
         }),
         createRow({
           chapterId: chapter2,
-          completedActivities: 0,
+          isCompleted: false,
           lessonId: lesson20,
-          totalActivities: 2,
         }),
       ],
     });
@@ -259,15 +233,13 @@ describe("durable curriculum completion rules", () => {
       rows: [
         createRow({
           chapterId: chapter1,
-          completedActivities: 1,
+          isCompleted: true,
           lessonId: lesson10,
-          totalActivities: 1,
         }),
         createRow({
           chapterId: chapter2,
-          completedActivities: 0,
+          isCompleted: false,
           lessonId: lesson20,
-          totalActivities: 2,
         }),
       ],
     });

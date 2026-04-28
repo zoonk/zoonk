@@ -10,7 +10,7 @@ import {
   CatalogListItemTitle,
   CatalogListSearch,
 } from "@/components/catalog/catalog-list";
-import { getLessonProgress } from "@zoonk/core/progress/lessons";
+import { getChapterLessonProgress } from "@zoonk/core/progress/lessons";
 import { type Lesson } from "@zoonk/db";
 import { formatPosition } from "@zoonk/utils/number";
 import { getExtracted } from "next-intl/server";
@@ -33,7 +33,7 @@ export async function LessonList({
   }
 
   const t = await getExtracted();
-  const completionData = await getLessonProgress({ chapterId });
+  const completionData = await getChapterLessonProgress({ chapterId });
   const completionMap = new Map(completionData.map((row) => [row.lessonId, row]));
 
   return (
@@ -45,8 +45,8 @@ export async function LessonList({
             const completion = completionMap.get(lesson.id);
             const isCompleted =
               completion !== undefined &&
-              completion.totalActivities > 0 &&
-              completion.completedActivities >= completion.totalActivities;
+              completion.totalLessons > 0 &&
+              completion.completedLessons >= completion.totalLessons;
 
             return (
               <CatalogListItem
@@ -66,9 +66,9 @@ export async function LessonList({
 
                 {completion && (
                   <CatalogListItemProgress
-                    completed={completion.completedActivities}
+                    completed={completion.completedLessons}
                     completedLabel={t("Completed")}
-                    total={completion.totalActivities}
+                    total={completion.totalLessons}
                   />
                 )}
               </CatalogListItem>

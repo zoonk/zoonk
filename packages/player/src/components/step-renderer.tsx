@@ -1,7 +1,7 @@
 /* oxlint-disable max-lines-per-function, max-statements */
 "use client";
 
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { Fragment } from "react";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type PlayerStepDescriptor, describePlayerStep, getPlayerStepImage } from "../player-step";

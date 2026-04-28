@@ -1,5 +1,5 @@
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
-import { type ActivityKind } from "@zoonk/core/steps/contract/content";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { type LessonKind } from "@zoonk/core/steps/contract/content";
 import { describe, expect, test } from "vitest";
 import { type PlayerState } from "./player-reducer";
 import { getPlayerScreenModel } from "./player-screen";
@@ -25,10 +25,10 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
 
 function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
   return {
-    activityId: "activity-1",
-    activityKind: "quiz",
     completion: null,
     currentStepIndex: 0,
+    lessonId: "lesson-1",
+    lessonKind: "quiz",
     phase: "playing",
     results: {},
     selectedAnswers: {},
@@ -42,13 +42,13 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
 }
 
 function buildScreen({
-  activityKind = "quiz",
+  lessonKind = "quiz",
   state = buildState(),
 }: {
-  activityKind?: ActivityKind;
+  lessonKind?: LessonKind;
   state?: PlayerState;
 } = {}) {
-  return getPlayerScreenModel({ ...state, activityKind });
+  return getPlayerScreenModel({ ...state, lessonKind });
 }
 
 describe(getPlayerScreenModel, () => {
@@ -64,7 +64,7 @@ describe(getPlayerScreenModel, () => {
 
   test("uses primary action mode for the practice scenario intro", () => {
     const screen = buildScreen({
-      activityKind: "practice",
+      lessonKind: "practice",
       state: buildState({
         steps: [
           buildStep({ content: { text: "Hello", title: "Intro", variant: "intro" as const } }),

@@ -8,7 +8,7 @@ export function StepSelectImageReview({
   item: {
     id: string;
     content: unknown;
-    activity: { title: string | null };
+    lesson: { title: string };
   };
 }) {
   const content = parseStepContent("selectImage", item.content);
@@ -17,7 +17,7 @@ export function StepSelectImageReview({
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <Badge variant="outline">selectImage</Badge>
-        <span className="text-muted-foreground text-sm">{item.activity.title}</span>
+        <span className="text-muted-foreground text-sm">{item.lesson.title}</span>
       </div>
 
       <p className="text-lg font-medium">{content.question}</p>

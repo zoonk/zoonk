@@ -9,28 +9,33 @@ const taskName = "lesson-kind";
 const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
 const schema = z.object({
-  kind: z.enum(["core", "language", "custom"]),
+  kind: z.enum(["explanation", "tutorial"]),
 });
 
 export type LessonKindSchema = z.infer<typeof schema>;
 
-export type LessonKindParams = {
-  lessonTitle: string;
-  lessonDescription: string;
+type LessonKindParams = {
   chapterTitle: string;
   courseTitle: string;
   language: string;
+  lessonDescription: string;
+  lessonTitle: string;
   model?: string;
   useFallback?: boolean;
   reasoningEffort?: ReasoningEffort;
 };
 
+/**
+ * Classifying one lesson at a time lets chapter generation classify all planned
+ * lessons in parallel while keeping the AI task focused on the specific lesson
+ * title and description.
+ */
 export async function generateLessonKind({
-  lessonTitle,
-  lessonDescription,
   chapterTitle,
   courseTitle,
   language,
+  lessonDescription,
+  lessonTitle,
   model = defaultModel,
   useFallback = true,
   reasoningEffort,

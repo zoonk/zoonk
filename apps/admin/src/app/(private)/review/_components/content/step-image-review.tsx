@@ -17,7 +17,7 @@ export function StepImageReview({
   item: {
     id: string;
     content: unknown;
-    activity: { title: string | null };
+    lesson: { title: string };
   };
 }) {
   const prompt = getStringField(item.content, "prompt");
@@ -27,7 +27,7 @@ export function StepImageReview({
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <Badge variant="outline">image</Badge>
-        <span className="text-muted-foreground text-sm">{item.activity.title}</span>
+        <span className="text-muted-foreground text-sm">{item.lesson.title}</span>
       </div>
 
       {imageUrl && (

@@ -1,7 +1,7 @@
 "use client";
 
 import { checkSingleMatchPair } from "@zoonk/core/player/contracts/check-answer";
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";

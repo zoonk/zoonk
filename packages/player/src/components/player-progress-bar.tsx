@@ -13,7 +13,7 @@ export function PlayerProgressBar({
 
   return (
     <ProgressRoot
-      aria-label={t("Activity progress")}
+      aria-label={t("Lesson progress")}
       className={cn("gap-0", className)}
       data-slot="player-progress-bar"
       value={value}

@@ -1,4 +1,4 @@
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { describe, expect, test } from "vitest";
 import { type PlayerState } from "./player-reducer";
 import { getUpcomingImages } from "./player-selectors";
@@ -24,10 +24,10 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
 
 function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
   return {
-    activityId: "activity-1",
-    activityKind: "quiz",
     completion: null,
     currentStepIndex: 0,
+    lessonId: "lesson-1",
+    lessonKind: "quiz",
     phase: "playing",
     results: {},
     selectedAnswers: {},

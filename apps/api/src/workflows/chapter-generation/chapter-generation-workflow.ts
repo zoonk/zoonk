@@ -1,6 +1,5 @@
 import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { serializeWorkflowError } from "@/workflows/_shared/workflow-error";
-import { activityGenerationWorkflow } from "@/workflows/activity-generation/activity-generation-workflow";
 import { handleChapterFailureStep } from "@/workflows/course-generation/steps/handle-failure-step";
 import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-generation-workflow";
 import { CHAPTER_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
@@ -57,15 +56,11 @@ export async function chapterGenerationWorkflow(chapterId: string): Promise<void
   // Chapter is complete once its lesson list exists
   await setChapterAsCompletedStep({ context, workflowRunId });
 
-  // Lesson and activity generation outside chapter failure handling.
-  // Each has its own error handling that marks specific resources as failed.
+  // Generate the first lesson outside chapter failure handling so lesson
+  // failures mark that lesson without rolling back the completed chapter plan.
   const firstLesson = createdLessons[0];
 
   if (firstLesson) {
-    const lessonGenerationResult = await lessonGenerationWorkflow(firstLesson.id);
-
-    if (lessonGenerationResult === "ready") {
-      await activityGenerationWorkflow(firstLesson.id);
-    }
+    await lessonGenerationWorkflow(firstLesson.id);
   }
 }

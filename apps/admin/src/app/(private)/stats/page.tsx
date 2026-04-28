@@ -15,7 +15,7 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@zoonk/ui/components/item";
-import { ActivityIcon, ArrowRightIcon, BookOpenIcon, BotIcon, TrendingUpIcon } from "lucide-react";
+import { ArrowRightIcon, BookOpenIcon, BotIcon, TrendingUpIcon } from "lucide-react";
 import { type Metadata } from "next";
 import Link from "next/link";
 
@@ -32,9 +32,9 @@ const sections = [
   },
   {
     description:
-      "Active learners, accuracy rate, time per activity, learning time trends, and activity breakdown.",
+      "Active learners, accuracy rate, time per lesson, learning time trends, and lesson breakdown.",
     href: "/stats/engagement",
-    icon: ActivityIcon,
+    icon: BookOpenIcon,
     title: "Engagement & Learning",
   },
   {

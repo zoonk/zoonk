@@ -30,15 +30,16 @@ export type StepStreamMessage<TStep extends string = string> = {
  *
  * When adding a new step:
  * 1. Add the step name to the appropriate array below
- * 2. The API uses the type in `createStepStream<ActivityStepName>()`
+ * 2. The API uses the type in `createStepStream<...>()`
  * 3. The main app's phase validation will fail if the new step isn't assigned to a phase
- *    in `activity-generation-phase-config.ts` — add it there too
+ *    in the matching generation phase config — add it there too
  */
 
 export const CHAPTER_STEPS = [
   "getChapter",
   "setChapterAsRunning",
   "generateLessons",
+  "generateLessonKind",
   "addLessons",
   "setChapterAsCompleted",
 ] as const;
@@ -47,105 +48,50 @@ export type ChapterStepName = (typeof CHAPTER_STEPS)[number];
 
 export const CHAPTER_COMPLETION_STEP: ChapterStepName = "setChapterAsCompleted";
 
+export const WORKFLOW_ERROR_STEP = "workflowError" as const;
+
+export type WorkflowErrorStepName = typeof WORKFLOW_ERROR_STEP;
+
 export const LESSON_STEPS = [
   "getLesson",
   "setLessonAsRunning",
-  "determineLessonKind",
-  "updateLessonKind",
-  "removeNonLanguageLesson",
-  "generateCoreActivities",
-  "generateCustomActivities",
-  "addActivities",
+  "generateExplanationContent",
+  "generateImagePrompts",
+  "generateStepImages",
+  "saveExplanationLesson",
+  "generateTutorialContent",
+  "saveTutorialLesson",
+  "generatePracticeContent",
+  "savePracticeLesson",
+  "generateQuizContent",
+  "generateQuizImages",
+  "saveQuizLesson",
+  "generateVocabularyContent",
+  "generateVocabularyDistractors",
+  "generateVocabularyPronunciation",
+  "generateVocabularyAudio",
+  "generateVocabularyRomanization",
+  "saveVocabularyLesson",
+  "saveTranslationLesson",
+  "generateReadingContent",
+  "generateReadingAudio",
+  "generateReadingRomanization",
+  "generateSentenceDistractors",
+  "generateSentenceWordMetadata",
+  "generateSentenceWordAudio",
+  "generateSentenceWordPronunciation",
+  "saveReadingLesson",
+  "saveListeningLesson",
+  "generateGrammarContent",
+  "generateGrammarUserContent",
+  "generateGrammarRomanization",
+  "saveGrammarLesson",
   "setLessonAsCompleted",
 ] as const;
 
 export type LessonStepName = (typeof LESSON_STEPS)[number];
 
 export const LESSON_COMPLETION_STEP: LessonStepName = "setLessonAsCompleted";
-
-export const ACTIVITY_STEPS = [
-  // Shared setup
-  "getLessonActivities",
-  "getNeighboringConcepts",
-  "setActivityAsRunning",
-
-  // Content generation (pure data producers — no DB writes)
-  "generateCustomContent",
-  "generateExplanationContent",
-  "generateQuizContent",
-  "generatePracticeContent",
-  "generateGrammarContent",
-  "generateGrammarUserContent",
-  "generateGrammarRomanization",
-  "generateVocabularyContent",
-  "generateSentences",
-  "generateVocabularyDistractors",
-  "generateVocabularyPronunciation",
-  "generateSentenceDistractors",
-  "generateSentenceWordPronunciation",
-  "generateVocabularyRomanization",
-  "generateVocabularyAudio",
-  "generateAudio",
-  "generateReadingRomanization",
-  "generateSentenceWordMetadata",
-  "generateSentenceWordAudio",
-  "generateImagePrompts",
-  "generateStepImages",
-  "generateQuizImages",
-
-  // Listening (copies steps from vocabulary/reading)
-  "copyListeningSteps",
-
-  // Per-entity save steps (write to DB + mark activity completed)
-  "saveVocabularyActivity",
-  "saveReadingActivity",
-  "saveQuizActivity",
-  "savePracticeActivity",
-  "saveExplanationActivity",
-  "saveCustomActivity",
-  "saveGrammarActivity",
-  "saveListeningActivity",
-
-  // Error
-  "workflowError",
-] as const;
-
-export type ActivityStepName = (typeof ACTIVITY_STEPS)[number];
-
-type ActivityCompletionStep = Extract<
-  ActivityStepName,
-  | "saveCustomActivity"
-  | "saveExplanationActivity"
-  | "saveGrammarActivity"
-  | "saveListeningActivity"
-  | "savePracticeActivity"
-  | "saveQuizActivity"
-  | "saveReadingActivity"
-  | "saveVocabularyActivity"
->;
-
-const activityCompletionSteps: Partial<Record<string, ActivityCompletionStep>> = {
-  custom: "saveCustomActivity",
-  explanation: "saveExplanationActivity",
-  grammar: "saveGrammarActivity",
-  listening: "saveListeningActivity",
-  practice: "savePracticeActivity",
-  quiz: "saveQuizActivity",
-  reading: "saveReadingActivity",
-  translation: "saveVocabularyActivity",
-  vocabulary: "saveVocabularyActivity",
-};
-
-/**
- * Get the completion step name for an activity kind.
- * Used by the UI to detect when generation is complete and trigger redirect.
- *
- * Each activity kind's save step doubles as its completion signal —
- * when the save step completes, the activity is both persisted and done.
- */
-export function getActivityCompletionStep(kind: string): ActivityCompletionStep {
-  return activityCompletionSteps[kind] ?? "saveExplanationActivity";
-}
 
 export const COURSE_STEPS = [
   "getCourseSuggestion",
@@ -171,14 +117,14 @@ export const COURSE_COMPLETION_STEP: CourseStepName = "completeCourseSetup";
 
 /**
  * All step names the SSE stream can emit during chapter generation.
- * The chapter workflow also generates the first lesson and activity,
- * so the stream includes lesson and activity step events.
+ * The chapter workflow also generates the first lesson, so the stream includes
+ * both chapter and lesson step events.
  */
-export type ChapterWorkflowStepName = ChapterStepName | LessonStepName | ActivityStepName;
+export type ChapterWorkflowStepName = ChapterStepName | LessonStepName | WorkflowErrorStepName;
 
 /**
  * All step names the SSE stream can emit during course generation.
- * The course workflow also generates the first chapter, lesson, and activity,
- * so the stream includes all downstream step events.
+ * The course workflow also generates the first chapter and lesson, so the
+ * stream includes all downstream step events.
  */
 export type CourseWorkflowStepName = CourseStepName | ChapterWorkflowStepName;

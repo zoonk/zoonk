@@ -1,16 +1,16 @@
 import { describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
-import { buildSerializedActivity, buildSerializedStep } from "../_test-utils/player-test-data";
+import { buildSerializedLesson, buildSerializedStep } from "../_test-utils/player-test-data";
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { buildNavigation, renderPlayer } from "../_test-utils/render-player";
 
 /**
  * Completion browser tests all start from the same one-step quiz because it is
- * the smallest activity that reaches the shared completion screen while still
+ * the smallest lesson that reaches the shared completion screen while still
  * producing a real score and rewards. Keeping that shape in one place lets
  * each scenario focus on the completion branch it is verifying.
  */
-function buildCompletionQuizActivity({
+function buildCompletionQuizLesson({
   correctText = "Correct answer",
   question = "Completion question",
   wrongText = "Wrong answer",
@@ -19,7 +19,7 @@ function buildCompletionQuizActivity({
   question?: string;
   wrongText?: string;
 } = {}) {
-  return buildSerializedActivity({
+  return buildSerializedLesson({
     kind: "quiz",
     steps: [
       buildSerializedStep({
@@ -44,7 +44,7 @@ function buildCompletionQuizActivity({
  * feedback, completion scoring, and the final completion chrome. This helper
  * avoids seeding fake completed state and proves the real workflow still works.
  */
-async function completeSingleChoiceActivity({
+async function completeSingleChoiceLesson({
   optionName = "Correct answer",
 }: {
   optionName?: string;
@@ -55,10 +55,10 @@ async function completeSingleChoiceActivity({
 }
 
 describe("player browser integration: completion", () => {
-  test("renders authenticated activity completion rewards, actions, footer, and hidden chrome", async () => {
+  test("renders authenticated lesson completion rewards, actions, footer, and hidden chrome", async () => {
     renderPlayer({
-      activity: buildCompletionQuizActivity(),
-      navigation: buildNavigation({ nextActivityHref: "/lesson/a/2" }),
+      lesson: buildCompletionQuizLesson(),
+      navigation: buildNavigation({ nextLessonHref: "/lesson/play" }),
       totalBrainPower: 240,
       viewer: buildAuthenticatedViewer({
         completionFooter: <p>Custom completion footer</p>,
@@ -67,10 +67,10 @@ describe("player browser integration: completion", () => {
 
     await expect.element(page.getByRole("link", { name: /close/i })).toBeInTheDocument();
     await expect
-      .element(page.getByRole("progressbar", { name: /activity progress/i }))
+      .element(page.getByRole("progressbar", { name: /lesson progress/i }))
       .toBeInTheDocument();
 
-    await completeSingleChoiceActivity();
+    await completeSingleChoiceLesson();
 
     const completionScreen = page.getByRole("status");
 
@@ -81,7 +81,7 @@ describe("player browser integration: completion", () => {
       .toBeInTheDocument();
     await expect.element(completionScreen.getByRole("link", { name: "Next" })).toBeInTheDocument();
     await expect
-      .element(completionScreen.getByRole("link", { name: /all activities/i }))
+      .element(completionScreen.getByRole("link", { name: /all lessons/i }))
       .toBeInTheDocument();
     await expect
       .element(completionScreen.getByRole("button", { name: /try again/i }))
@@ -89,7 +89,7 @@ describe("player browser integration: completion", () => {
     await expect.element(page.getByText("Custom completion footer")).toBeInTheDocument();
     await expect.element(page.getByRole("link", { name: /close/i })).not.toBeInTheDocument();
     await expect
-      .element(page.getByRole("progressbar", { name: /activity progress/i }))
+      .element(page.getByRole("progressbar", { name: /lesson progress/i }))
       .not.toBeInTheDocument();
 
     await completionScreen.getByRole("button", { name: /try again/i }).click();
@@ -100,20 +100,20 @@ describe("player browser integration: completion", () => {
     await expect.element(page.getByRole("link", { name: /close/i })).toBeInTheDocument();
   });
 
-  test("omits next activity and level progress when optional activity links are missing", async () => {
+  test("omits next lesson and level progress when optional lesson links are missing", async () => {
     renderPlayer({
-      activity: buildCompletionQuizActivity(),
-      navigation: buildNavigation({ levelHref: undefined, nextActivityHref: null }),
+      lesson: buildCompletionQuizLesson(),
+      navigation: buildNavigation({ levelHref: undefined, nextLessonHref: null }),
       viewer: buildAuthenticatedViewer(),
     });
 
-    await completeSingleChoiceActivity();
+    await completeSingleChoiceLesson();
 
     const completionScreen = page.getByRole("status");
 
     await expect.element(completionScreen.getByText(/\+10\s*BP/i)).toBeInTheDocument();
     await expect
-      .element(completionScreen.getByRole("link", { name: /all activities/i }))
+      .element(completionScreen.getByRole("link", { name: /all lessons/i }))
       .toBeInTheDocument();
     await expect
       .element(completionScreen.getByRole("button", { name: /try again/i }))
@@ -127,14 +127,14 @@ describe("player browser integration: completion", () => {
     await expect.element(completionScreen.getByText(/belt/i)).not.toBeInTheDocument();
   });
 
-  test("shows guest activity completion login prompt without rewards and falls back to /login", async () => {
+  test("shows guest lesson completion login prompt without rewards and falls back to /login", async () => {
     renderPlayer({
-      activity: buildCompletionQuizActivity(),
-      navigation: buildNavigation({ loginHref: undefined, nextActivityHref: "/lesson/a/2" }),
+      lesson: buildCompletionQuizLesson(),
+      navigation: buildNavigation({ loginHref: undefined, nextLessonHref: "/lesson/play" }),
       viewer: { isAuthenticated: false, userName: null },
     });
 
-    await completeSingleChoiceActivity();
+    await completeSingleChoiceLesson();
 
     const completionScreen = page.getByRole("status");
     const loginLink = completionScreen.getByRole("link", { name: /login/i });
@@ -145,11 +145,11 @@ describe("player browser integration: completion", () => {
       .element(completionScreen.getByText(/sign up to track your progress/i))
       .toBeInTheDocument();
     await expect.element(nextLink).toBeInTheDocument();
-    await expect.element(nextLink).toHaveAttribute("href", "/lesson/a/2");
+    await expect.element(nextLink).toHaveAttribute("href", "/lesson/play");
     await expect.element(loginLink).toBeInTheDocument();
     await expect.element(loginLink).toHaveAttribute("href", "/login");
     await expect
-      .element(completionScreen.getByRole("link", { name: /all activities/i }))
+      .element(completionScreen.getByRole("link", { name: /all lessons/i }))
       .toBeInTheDocument();
     await expect
       .element(completionScreen.getByRole("button", { name: /try again/i }))
@@ -160,40 +160,9 @@ describe("player browser integration: completion", () => {
       .not.toBeInTheDocument();
   });
 
-  test("renders lesson completion milestone actions without score, rewards, or footer", async () => {
-    renderPlayer({
-      activity: buildCompletionQuizActivity(),
-      milestone: {
-        kind: "lesson",
-        nextHref: "/next-lesson",
-        reviewHref: "/review-lesson",
-      },
-      viewer: buildAuthenticatedViewer({
-        completionFooter: <p>Only activity completions render this footer</p>,
-      }),
-    });
-
-    await completeSingleChoiceActivity();
-
-    const completionScreen = page.getByRole("status");
-
-    await expect.element(completionScreen.getByText(/lesson complete/i)).toBeInTheDocument();
-    await expect
-      .element(completionScreen.getByRole("link", { name: /next lesson/i }))
-      .toBeInTheDocument();
-    await expect
-      .element(completionScreen.getByRole("link", { name: /review lesson/i }))
-      .toBeInTheDocument();
-    await expect.element(completionScreen.getByText("1/1")).not.toBeInTheDocument();
-    await expect.element(completionScreen.getByText(/\+10\s*BP/i)).not.toBeInTheDocument();
-    await expect
-      .element(page.getByText("Only activity completions render this footer"))
-      .not.toBeInTheDocument();
-  });
-
   test("falls back to review-only chapter completion when there is no next chapter", async () => {
     renderPlayer({
-      activity: buildCompletionQuizActivity(),
+      lesson: buildCompletionQuizLesson(),
       milestone: {
         kind: "chapter",
         nextHref: null,
@@ -202,7 +171,7 @@ describe("player browser integration: completion", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    await completeSingleChoiceActivity();
+    await completeSingleChoiceLesson();
 
     const completionScreen = page.getByRole("status");
 
@@ -217,7 +186,7 @@ describe("player browser integration: completion", () => {
 
   test("renders course completion review actions", async () => {
     renderPlayer({
-      activity: buildCompletionQuizActivity(),
+      lesson: buildCompletionQuizLesson(),
       milestone: {
         kind: "course",
         reviewHref: "/review-course",
@@ -226,7 +195,7 @@ describe("player browser integration: completion", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    await completeSingleChoiceActivity();
+    await completeSingleChoiceLesson();
 
     const completionScreen = page.getByRole("status");
 
@@ -241,17 +210,17 @@ describe("player browser integration: completion", () => {
 
   test("shows guest milestone actions without exposing authenticated next links", async () => {
     renderPlayer({
-      activity: buildCompletionQuizActivity(),
+      lesson: buildCompletionQuizLesson(),
       milestone: {
-        kind: "lesson",
-        nextHref: "/next-lesson",
-        reviewHref: "/review-lesson",
+        kind: "chapter",
+        nextHref: "/next-chapter",
+        reviewHref: "/review-chapter",
       },
       navigation: buildNavigation({ loginHref: "/sign-in" }),
       viewer: { isAuthenticated: false, userName: null },
     });
 
-    await completeSingleChoiceActivity();
+    await completeSingleChoiceLesson();
 
     const completionScreen = page.getByRole("status");
     const loginLink = completionScreen.getByRole("link", { name: /login/i });
@@ -261,10 +230,10 @@ describe("player browser integration: completion", () => {
       .toBeInTheDocument();
     await expect.element(loginLink).toHaveAttribute("href", "/sign-in");
     await expect
-      .element(completionScreen.getByRole("link", { name: /review lesson/i }))
+      .element(completionScreen.getByRole("link", { name: /review chapter/i }))
       .toBeInTheDocument();
     await expect
-      .element(completionScreen.getByRole("link", { name: /next lesson/i }))
+      .element(completionScreen.getByRole("link", { name: /next chapter/i }))
       .not.toBeInTheDocument();
   });
 });

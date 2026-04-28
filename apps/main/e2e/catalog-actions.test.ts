@@ -1,14 +1,13 @@
 import { randomUUID } from "node:crypto";
 import { type Page } from "@playwright/test";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { expect, test } from "./fixtures";
 
-async function createTestCourseWithActivity() {
+async function createTestCourseWithLesson() {
   const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
@@ -38,13 +37,13 @@ async function createTestCourseWithActivity() {
     title: `E2E CA Lesson ${uniqueId}`,
   });
 
-  await activityFixture({
+  await lessonFixture({
     isPublished: true,
     kind: "explanation",
     lessonId: lesson.id,
     organizationId: org.id,
     position: 0,
-    title: `E2E CA Activity ${uniqueId}`,
+    title: `E2E CA Lesson ${uniqueId}`,
   });
 
   return { chapter, course, lesson };
@@ -69,7 +68,7 @@ async function openMoreOptions(page: Page) {
 
 test.describe("Catalog Actions", () => {
   test("course page shows actions button", async ({ page }) => {
-    const { course } = await createTestCourseWithActivity();
+    const { course } = await createTestCourseWithLesson();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -77,7 +76,7 @@ test.describe("Catalog Actions", () => {
   });
 
   test("dropdown opens with feedback item", async ({ page }) => {
-    const { course } = await createTestCourseWithActivity();
+    const { course } = await createTestCourseWithLesson();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -86,7 +85,7 @@ test.describe("Catalog Actions", () => {
   });
 
   test("feedback dialog opens from dropdown", async ({ page }) => {
-    const { course } = await createTestCourseWithActivity();
+    const { course } = await createTestCourseWithLesson();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -99,23 +98,15 @@ test.describe("Catalog Actions", () => {
   });
 
   test("chapter page has actions button", async ({ page }) => {
-    const { chapter, course } = await createTestCourseWithActivity();
+    const { chapter, course } = await createTestCourseWithLesson();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
 
     await expect(page.getByRole("button", { name: /more options/i })).toBeVisible();
   });
 
-  test("lesson page has actions button", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestCourseWithActivity();
-
-    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
-
-    await expect(page.getByRole("button", { name: /more options/i })).toBeVisible();
-  });
-
   test("dropdown shows feedback items on course page", async ({ page }) => {
-    const { course } = await createTestCourseWithActivity();
+    const { course } = await createTestCourseWithLesson();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -125,7 +116,7 @@ test.describe("Catalog Actions", () => {
   });
 
   test("clicking helpful shows toast confirmation", async ({ page }) => {
-    const { course } = await createTestCourseWithActivity();
+    const { course } = await createTestCourseWithLesson();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -136,7 +127,7 @@ test.describe("Catalog Actions", () => {
   });
 
   test("clicking helpful marks it as selected", async ({ page }) => {
-    const { course } = await createTestCourseWithActivity();
+    const { course } = await createTestCourseWithLesson();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -150,7 +141,7 @@ test.describe("Catalog Actions", () => {
   });
 
   test("switching feedback changes selection", async ({ page }) => {
-    const { course } = await createTestCourseWithActivity();
+    const { course } = await createTestCourseWithLesson();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -169,7 +160,7 @@ test.describe("Catalog Actions", () => {
   });
 
   test("chapter page shows feedback items", async ({ page }) => {
-    const { chapter, course } = await createTestCourseWithActivity();
+    const { chapter, course } = await createTestCourseWithLesson();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
 
@@ -178,18 +169,8 @@ test.describe("Catalog Actions", () => {
     await expect(page.getByRole("menuitemradio", { name: /not helpful/i })).toBeVisible();
   });
 
-  test("lesson page shows feedback items", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestCourseWithActivity();
-
-    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
-
-    await openMoreOptions(page);
-    await expect(page.getByRole("menuitemradio", { name: /^helpful$/i })).toBeVisible();
-    await expect(page.getByRole("menuitemradio", { name: /not helpful/i })).toBeVisible();
-  });
-
   test("send feedback dialog still works after selecting feedback", async ({ page }) => {
-    const { course } = await createTestCourseWithActivity();
+    const { course } = await createTestCourseWithLesson();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 

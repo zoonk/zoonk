@@ -36,34 +36,28 @@ const AI_TASK_CATALOG_GROUP_DEFINITIONS = [
   },
   {
     description: "Chapter-level planning tasks that decide which lessons should exist next.",
-    taskNames: ["chapter-lessons", "language-chapter-lessons"],
+    taskNames: ["chapter-lessons", "lesson-kind", "language-chapter-lessons"],
     title: "Chapter Planning",
   },
   {
-    description:
-      "Lesson scaffolding tasks that shape the structure before activity generation starts.",
-    taskNames: ["lesson-kind", "lesson-core-activities", "lesson-custom-activities"],
-    title: "Lesson Flow",
-  },
-  {
-    description: "Core lesson activities, including explanations, practice, quiz, and custom work.",
-    taskNames: ["activity-explanation", "activity-practice", "activity-quiz", "activity-custom"],
-    title: "Core Activities",
+    description: "Lesson content tasks for explanations, practice, quiz, and tutorial work.",
+    taskNames: ["lesson-explanation", "lesson-practice", "lesson-quiz", "lesson-tutorial"],
+    title: "Lesson Content",
   },
   {
     description:
-      "Language-specific tasks for vocabulary, grammar, pronunciation, and translation work.",
+      "Language lesson tasks for vocabulary, grammar, pronunciation, and translation work.",
     taskNames: [
-      "activity-vocabulary",
-      "activity-translation",
-      "activity-grammar-content",
-      "activity-grammar-user-content",
-      "activity-distractors",
-      "activity-pronunciation",
-      "activity-sentences",
-      "activity-romanization",
+      "lesson-vocabulary",
+      "lesson-translation",
+      "lesson-grammar-content",
+      "lesson-grammar-user-content",
+      "lesson-distractors",
+      "lesson-pronunciation",
+      "lesson-sentences",
+      "lesson-romanization",
     ],
-    title: "Language Activities",
+    title: "Language Content",
   },
   {
     description: "Image-selection, step image prompt, and step image generation tasks.",

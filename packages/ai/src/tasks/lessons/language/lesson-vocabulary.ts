@@ -1,0 +1,78 @@
+import "server-only";
+import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
+import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
+import { Output, generateText } from "ai";
+import { z } from "zod";
+import { formatConceptLines } from "../config";
+import { getLanguagePromptContext } from "./_utils/language-prompt-context";
+import systemPrompt from "./lesson-vocabulary.prompt.md";
+
+const taskName = "lesson-vocabulary";
+const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
+
+const schema = z.object({
+  words: z.array(
+    z.object({
+      translation: z.string(),
+      word: z.string(),
+    }),
+  ),
+});
+
+export type LessonVocabularySchema = z.infer<typeof schema>;
+export type VocabularyWord = LessonVocabularySchema["words"][number];
+
+export type LessonVocabularyParams = {
+  chapterTitle: string;
+  concepts?: string[];
+  lessonDescription: string;
+  lessonTitle: string;
+  model?: string;
+  neighboringConcepts?: string[];
+  reasoningEffort?: ReasoningEffort;
+  targetLanguage: string;
+  userLanguage: string;
+  useFallback?: boolean;
+};
+
+export async function generateLessonVocabulary({
+  chapterTitle,
+  concepts = [],
+  lessonDescription,
+  lessonTitle,
+  model = defaultModel,
+  neighboringConcepts = [],
+  reasoningEffort,
+  targetLanguage,
+  userLanguage,
+  useFallback = true,
+}: LessonVocabularyParams) {
+  const promptContext = getLanguagePromptContext({ targetLanguage, userLanguage });
+
+  const userPrompt = `
+    TARGET_LANGUAGE: ${promptContext.targetLanguageName}
+    USER_LANGUAGE: ${promptContext.userLanguage}
+    CHAPTER_TITLE: ${chapterTitle}
+    LESSON_TITLE: ${lessonTitle}
+    LESSON_DESCRIPTION: ${lessonDescription}
+    ${formatConceptLines(concepts, neighboringConcepts)}
+  `;
+
+  const providerOptions = buildProviderOptions({
+    fallbackModels,
+    model,
+    reasoningEffort,
+    taskName,
+    useFallback,
+  });
+
+  const { output, usage } = await generateText({
+    model,
+    output: Output.object({ schema }),
+    prompt: userPrompt,
+    providerOptions,
+    system: systemPrompt,
+  });
+
+  return { data: output, systemPrompt, usage, userPrompt };
+}

@@ -6,9 +6,9 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { lessonSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { lessonWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, test } from "vitest";
-import { getSentenceWords } from "./get-sentence-words";
+import { getSentenceWordsForLessons } from "./get-sentence-words";
 
-describe(getSentenceWords, () => {
+describe(getSentenceWordsForLessons, () => {
   let org: Awaited<ReturnType<typeof organizationFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 
@@ -65,7 +65,7 @@ describe(getSentenceWords, () => {
       lessonWordFixture({ lessonId: newLesson.id, wordId: word2.id }),
     ]);
 
-    const result = await getSentenceWords({ lessonId: newLesson.id });
+    const result = await getSentenceWordsForLessons({ lessonIds: [newLesson.id] });
 
     expect(result).toHaveLength(2);
 
@@ -82,12 +82,12 @@ describe(getSentenceWords, () => {
       organizationId: org.id,
     });
 
-    const result = await getSentenceWords({ lessonId: emptyLesson.id });
+    const result = await getSentenceWordsForLessons({ lessonIds: [emptyLesson.id] });
     expect(result).toEqual([]);
   });
 
   test("returns empty array for non-existent lesson", async () => {
-    const result = await getSentenceWords({ lessonId: randomUUID() });
+    const result = await getSentenceWordsForLessons({ lessonIds: [randomUUID()] });
     expect(result).toEqual([]);
   });
 
@@ -108,7 +108,7 @@ describe(getSentenceWords, () => {
 
     await lessonSentenceFixture({ lessonId: newLesson.id, sentenceId: sentence.id });
 
-    const result = await getSentenceWords({ lessonId: newLesson.id });
+    const result = await getSentenceWordsForLessons({ lessonIds: [newLesson.id] });
     expect(result).toEqual([]);
   });
 
@@ -140,7 +140,7 @@ describe(getSentenceWords, () => {
       lessonWordFixture({ lessonId: newLesson.id, wordId: word.id }),
     ]);
 
-    const result = await getSentenceWords({ lessonId: newLesson.id });
+    const result = await getSentenceWordsForLessons({ lessonIds: [newLesson.id] });
 
     expect(result).toHaveLength(1);
     expect(result[0]?.word.word).toBe(word.word);
@@ -181,7 +181,7 @@ describe(getSentenceWords, () => {
     ]);
 
     // extractUniqueSentenceWords lowercases to "hola...", but Word record has "Hola..."
-    const result = await getSentenceWords({ lessonId: newLesson.id });
+    const result = await getSentenceWordsForLessons({ lessonIds: [newLesson.id] });
 
     const match = result.find((item) => item.word.word.toLowerCase() === wordText.toLowerCase());
     expect(match).toBeDefined();
@@ -222,7 +222,7 @@ describe(getSentenceWords, () => {
       lessonWordFixture({ lessonId: newLesson.id, wordId: word.id }),
     ]);
 
-    const result = await getSentenceWords({ lessonId: newLesson.id });
+    const result = await getSentenceWordsForLessons({ lessonIds: [newLesson.id] });
 
     const matchingWords = result.filter((item) => item.word.word === word.word);
     expect(matchingWords).toHaveLength(1);

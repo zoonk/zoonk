@@ -1,6 +1,5 @@
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type HapticInput } from "web-haptics";
-import { type PlayerMilestone } from "./player-context";
 import { type PlayerPhase, type StepResult } from "./player-reducer";
 
 export type PlayerHapticSnapshot = {
@@ -16,27 +15,18 @@ const MILESTONE_COMPLETE_PATTERN: HapticInput = [
 ];
 
 /**
- * Returns the milestone completion haptic.
- *
- * Finishing an activity should feel affirmative, while finishing a lesson,
- * chapter, or course deserves a stronger celebratory pattern.
+ * Returns the completion haptic for the whole lesson surface.
+ * Completion is a larger state change than inline feedback, so it uses a
+ * stronger tactile pattern than the generic success signal.
  */
-function getCompletionHaptic({
-  milestoneKind,
-}: {
-  milestoneKind: PlayerMilestone["kind"];
-}): HapticInput {
-  if (milestoneKind === "activity") {
-    return "success";
-  }
-
+function getCompletionHaptic(): HapticInput {
   return MILESTONE_COMPLETE_PATTERN;
 }
 
 /**
  * Maps feedback reveals to a generic tactile signal.
  * All remaining checked steps resolve to a single correct/incorrect result,
- * so the haptic layer no longer needs activity-specific interpretation.
+ * so the haptic layer no longer needs lesson-specific interpretation.
  */
 function getFeedbackRevealHaptic({ result }: { result?: StepResult }): HapticInput | null {
   if (!result) {
@@ -54,15 +44,13 @@ function getFeedbackRevealHaptic({ result }: { result?: StepResult }): HapticInp
  */
 export function getPlayerHapticSequence({
   current,
-  milestoneKind,
   previous,
 }: {
   current: PlayerHapticSnapshot;
-  milestoneKind: PlayerMilestone["kind"];
   previous: PlayerHapticSnapshot;
 }): HapticInput[] {
   if (previous.phase !== "completed" && current.phase === "completed") {
-    return [getCompletionHaptic({ milestoneKind })];
+    return [getCompletionHaptic()];
   }
 
   if (previous.phase === "playing" && current.phase === "feedback") {

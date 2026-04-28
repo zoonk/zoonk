@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { Activity } from "react";
 import { SELECT_IMAGE_PROPS, STEP_IMAGE_PRELOAD_PROPS } from "../image-config";
 import { type PreloadableImage } from "../player-selectors";
 
@@ -11,9 +10,8 @@ import { type PreloadableImage } from "../player-selectors";
  * When the real step mounts with the same props, the browser serves the image
  * from its HTTP cache — making it appear instantly.
  *
- * Uses React's `<Activity mode="hidden">` to render at lower priority
- * (doesn't compete with the current step) while keeping DOM nodes alive
- * so `loading="eager"` can trigger the fetch.
+ * The wrapper keeps the preloaded images mounted but visually unavailable, so
+ * `loading="eager"` can trigger the fetch without adding visible layout.
  */
 export function StepImagePreloader({ images }: { images: PreloadableImage[] }) {
   if (images.length === 0) {
@@ -21,11 +19,14 @@ export function StepImagePreloader({ images }: { images: PreloadableImage[] }) {
   }
 
   return (
-    <Activity mode="hidden">
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute size-px overflow-hidden opacity-0"
+    >
       {images.map((image) => {
         const props = image.kind === "step" ? STEP_IMAGE_PRELOAD_PROPS : SELECT_IMAGE_PROPS;
         return <Image alt="" key={image.url} loading="eager" src={image.url} {...props} />;
       })}
-    </Activity>
+    </div>
   );
 }

@@ -31,8 +31,8 @@ async function countPendingStepImage(excludeIds: string[]): Promise<number> {
     select: { content: true },
     where: {
       NOT: { id: { in: excludeIds } },
-      activity: { organization: { slug: AI_ORG_SLUG } },
       kind: "static",
+      lesson: { organization: { slug: AI_ORG_SLUG } },
     },
   });
 
@@ -81,8 +81,8 @@ export const countPendingForTask = cache(async function countPendingForTask(
     return prisma.step.count({
       where: {
         NOT: { id: { in: excludeIds } },
-        activity: { organization: { slug: AI_ORG_SLUG } },
         kind: "selectImage",
+        lesson: { organization: { slug: AI_ORG_SLUG } },
       },
     });
   }

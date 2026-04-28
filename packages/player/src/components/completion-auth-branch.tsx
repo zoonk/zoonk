@@ -51,7 +51,7 @@ function SecondaryActions({
       )}
       href={lessonHref}
     >
-      {t("All Activities")}
+      {t("All Lessons")}
       {isInline ? <SecondaryKbd>Esc</SecondaryKbd> : <PrimaryKbd>Esc</PrimaryKbd>}
     </PlayerLink>
   );
@@ -87,20 +87,20 @@ function SecondaryActions({
 function AuthenticatedContent({
   completionResult,
   lessonHref,
-  nextActivityHref,
+  nextLessonHref,
   onRestart,
   showRewards,
 }: {
   completionResult: CompletionResult | null;
   lessonHref: PlayerRoute;
-  nextActivityHref: PlayerRoute | null;
+  nextLessonHref: PlayerRoute | null;
   onRestart: () => void;
   showRewards: boolean;
 }) {
   const t = useExtracted();
   const milestone = usePlayerMilestone();
 
-  if (milestone.kind !== "activity") {
+  if (milestone) {
     return (
       <CompletionActions>
         <MilestoneActions />
@@ -124,9 +124,9 @@ function AuthenticatedContent({
       )}
 
       <CompletionActions>
-        {nextActivityHref ? (
+        {nextLessonHref ? (
           <>
-            <PrimaryActionLink href={nextActivityHref} shortcut="Enter">
+            <PrimaryActionLink href={nextLessonHref} shortcut="Enter">
               {t("Next")}
             </PrimaryActionLink>
 
@@ -143,18 +143,18 @@ function AuthenticatedContent({
 function UnauthenticatedContent({
   lessonHref,
   loginHref,
-  nextActivityHref,
+  nextLessonHref,
   onRestart,
 }: {
   lessonHref: PlayerRoute;
   loginHref: PlayerRoute;
-  nextActivityHref: PlayerRoute | null;
+  nextLessonHref: PlayerRoute | null;
   onRestart: () => void;
 }) {
   const t = useExtracted();
   const milestone = usePlayerMilestone();
 
-  if (milestone.kind !== "activity") {
+  if (milestone) {
     return <UnauthenticatedMilestoneActions loginHref={loginHref} />;
   }
 
@@ -165,7 +165,7 @@ function UnauthenticatedContent({
       <CompletionActions>
         <PlayerLink
           className={cn(
-            buttonVariants({ variant: nextActivityHref ? "outline" : undefined }),
+            buttonVariants({ variant: nextLessonHref ? "outline" : undefined }),
             "w-full",
           )}
           href={loginHref}
@@ -173,8 +173,8 @@ function UnauthenticatedContent({
           {t("Login")}
         </PlayerLink>
 
-        {nextActivityHref && (
-          <PrimaryActionLink href={nextActivityHref} shortcut="Enter">
+        {nextLessonHref && (
+          <PrimaryActionLink href={nextLessonHref} shortcut="Enter">
             {t("Next")}
           </PrimaryActionLink>
         )}
@@ -188,13 +188,13 @@ function UnauthenticatedContent({
 export function AuthBranch({
   completionResult,
   lessonHref,
-  nextActivityHref,
+  nextLessonHref,
   onRestart,
   showRewards = true,
 }: {
   completionResult: CompletionResult | null;
   lessonHref: PlayerRoute;
-  nextActivityHref: PlayerRoute | null;
+  nextLessonHref: PlayerRoute | null;
   onRestart: () => void;
   showRewards?: boolean;
 }) {
@@ -206,7 +206,7 @@ export function AuthBranch({
       <UnauthenticatedContent
         lessonHref={lessonHref}
         loginHref={loginHref ?? "/login"}
-        nextActivityHref={nextActivityHref}
+        nextLessonHref={nextLessonHref}
         onRestart={onRestart}
       />
     );
@@ -216,7 +216,7 @@ export function AuthBranch({
     <AuthenticatedContent
       completionResult={completionResult}
       lessonHref={lessonHref}
-      nextActivityHref={nextActivityHref}
+      nextLessonHref={nextLessonHref}
       onRestart={onRestart}
       showRewards={showRewards}
     />

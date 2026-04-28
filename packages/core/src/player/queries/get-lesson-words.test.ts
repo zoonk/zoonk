@@ -9,9 +9,9 @@ import {
   wordPronunciationFixture,
 } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, test } from "vitest";
-import { getLessonWords } from "./get-lesson-words";
+import { getLessonWordsForLessons } from "./get-lesson-words";
 
-describe(getLessonWords, () => {
+describe(getLessonWordsForLessons, () => {
   let org: Awaited<ReturnType<typeof organizationFixture>>;
   let course: Awaited<ReturnType<typeof courseFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
@@ -60,7 +60,7 @@ describe(getLessonWords, () => {
       lessonWordFixture({ lessonId: lesson.id, wordId: word2.id }),
     ]);
 
-    const result = await getLessonWords({ lessonId: lesson.id });
+    const result = await getLessonWordsForLessons({ lessonIds: [lesson.id] });
 
     expect(result).toHaveLength(2);
 
@@ -99,7 +99,7 @@ describe(getLessonWords, () => {
       wordId: word.id,
     });
 
-    const result = await getLessonWords({ lessonId: newLesson.id });
+    const result = await getLessonWordsForLessons({ lessonIds: [newLesson.id] });
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
@@ -126,12 +126,12 @@ describe(getLessonWords, () => {
       organizationId: org.id,
     });
 
-    const result = await getLessonWords({ lessonId: emptyLesson.id });
+    const result = await getLessonWordsForLessons({ lessonIds: [emptyLesson.id] });
     expect(result).toEqual([]);
   });
 
   test("returns empty array for non-existent lesson", async () => {
-    const result = await getLessonWords({ lessonId: randomUUID() });
+    const result = await getLessonWordsForLessons({ lessonIds: [randomUUID()] });
     expect(result).toEqual([]);
   });
 
@@ -170,7 +170,7 @@ describe(getLessonWords, () => {
       wordId: word.id,
     });
 
-    const result = await getLessonWords({ lessonId: newLesson.id });
+    const result = await getLessonWordsForLessons({ lessonIds: [newLesson.id] });
 
     // Should only include the English pronunciation (matching userLanguage
     // on the LessonWord), not the Portuguese one

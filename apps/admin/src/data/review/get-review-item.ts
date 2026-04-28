@@ -27,7 +27,7 @@ export const getStepImageReview = cache(async function getStepImageReview(entity
   }
 
   return prisma.step.findUnique({
-    include: { activity: { select: { title: true } } },
+    include: { lesson: { select: { title: true } } },
     where: { id: entityId },
   });
 });

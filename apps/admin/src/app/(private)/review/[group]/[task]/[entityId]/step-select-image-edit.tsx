@@ -45,14 +45,14 @@ export function StepSelectImageEdit({
       question: string;
       options: { prompt: string; url?: string; feedback: string; isCorrect: boolean }[];
     };
-    activity: { title: string | null };
+    lesson: { title: string };
   };
 }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <Badge variant="outline">selectImage</Badge>
-        <span className="text-muted-foreground text-sm">{item.activity.title}</span>
+        <span className="text-muted-foreground text-sm">{item.lesson.title}</span>
       </div>
 
       <p className="text-lg font-medium">{item.content.question}</p>
