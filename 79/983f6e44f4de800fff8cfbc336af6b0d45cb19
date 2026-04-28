@@ -1,0 +1,59 @@
+apps/ios/Zoonk/Assets.xcassets/AppIcon.appiconset/Contents.json
+  7b7710e856aef60f 2,4-7,10,12-13,16-19,22,24-25,28-31,34-37,40-43,46-49,52-55,58-61,64-67,70-73,76-79,82-85,88-91,94-96
+  37031a8bfdee5b7e 1,3,8-9,11,14-15,20-21,23,26-27,32-33,38-39,44-45,50-51,56-57,62-63,68-69,74-75,80-81,86-87,92-93,97-98
+apps/ios/Zoonk/ContentView.swift
+  37031a8bfdee5b7e 1-4,6-7
+  7b7710e856aef60f 5,8-11
+apps/ios/Zoonk.xcodeproj/project.xcworkspace/contents.xcworkspacedata
+  37031a8bfdee5b7e 1-7
+apps/ios/Zoonk/Assets.xcassets/AccentColor.colorset/Contents.json
+  7b7710e856aef60f 2,4-13,16-18
+  37031a8bfdee5b7e 1,3,14-15,19-20
+apps/ios/Zoonk.xcodeproj/project.pbxproj
+  7b7710e856aef60f 1-358
+apps/ios/Zoonk/ZoonkApp.swift
+  37031a8bfdee5b7e 1-10
+apps/ios/.gitignore
+  h_1cda88fc21fe9c 1-7
+apps/ios/Zoonk/Assets.xcassets/Contents.json
+  7b7710e856aef60f 2-4
+  37031a8bfdee5b7e 1,5-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "79983f6e44f4de800fff8cfbc336af6b0d45cb19",
+  "prompts": {
+    "37031a8bfdee5b7e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dd364-21c5-7171-9dd5-d00b712c877e",
+        "model": "unknown"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 955,
+      "total_deletions": 0,
+      "accepted_lines": 68,
+      "overriden_lines": 0
+    },
+    "7b7710e856aef60f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dd363-0606-71b1-9d0f-216b7d4f3ab4",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 753,
+      "total_deletions": 504,
+      "accepted_lines": 442,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
