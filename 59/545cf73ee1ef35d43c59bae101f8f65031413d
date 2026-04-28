@@ -1,0 +1,69 @@
+packages/ai/src/tasks/lessons/lesson-kind.prompt.md
+  36121c8f3b7c1ae4 1,5-8,31-32,35-37,39,52
+  h_1cda88fc21fe9c 2-4,9-30,33-34,38,40-51,53-54
+apps/main/messages/pt.po
+  h_1cda88fc21fe9c 1615-1618,1632-1635,1653-1656,1668-1671
+apps/api/src/workflows/chapter-generation/chapter-generation-workflow.test.ts
+  36121c8f3b7c1ae4 18-19,25-26
+packages/ai/package.json
+  36121c8f3b7c1ae4 14
+packages/ai/src/tasks/chapters/chapter-lessons.prompt.md
+  36121c8f3b7c1ae4 77,110
+apps/api/src/workflows/chapter-generation/steps/generate-lessons-step.test.ts
+  36121c8f3b7c1ae4 24-29,39-42,89-90,94-96,100-103,113-128,138-145,163-169,177,180,184,186,190-201
+apps/api/src/workflows/course-generation/course-generation-workflow.test.ts
+  36121c8f3b7c1ae4 77-78,84-85
+apps/main/messages/en.po
+  36121c8f3b7c1ae4 1615-1618,1632-1636,1652-1656,1668-1671
+packages/core/src/workflows/steps.ts
+  36121c8f3b7c1ae4 42
+apps/evals/src/tasks/lesson-kind/task.ts
+  36121c8f3b7c1ae4 1-14
+apps/admin/src/data/stats/ai/_utils/build-ai-course-cost-estimates.ts
+  36121c8f3b7c1ae4 52-56
+apps/main/src/app/generate/ch/[id]/generation-phases.ts
+  36121c8f3b7c1ae4 9-15,17-21,24,33-38,45,52,54
+apps/main/messages/es.po
+  36121c8f3b7c1ae4 1615-1618,1632-1636,1652-1656,1668-1671
+apps/api/src/workflows/chapter-generation/steps/generate-lessons-step.ts
+  36121c8f3b7c1ae4 7,13,15,17-31,33-45,49-50,52-56,65-66,69-84,86-100,104-114,116
+apps/evals/src/tasks/lesson-kind/test-cases.ts
+  36121c8f3b7c1ae4 1-190
+apps/main/src/app/generate/ch/[id]/use-generation-phases.ts
+  36121c8f3b7c1ae4 28,58-62
+apps/main/src/app/generate/ch/[id]/generation-phases.test.ts
+  h_1cda88fc21fe9c 5,11-12,31-35,48,68
+apps/admin/src/data/stats/ai/ai-task-catalog.ts
+  36121c8f3b7c1ae4 39
+packages/ai/src/tasks/metadata.ts
+  36121c8f3b7c1ae4 71-78
+packages/ai/src/tasks/lessons/lesson-kind.ts
+  36121c8f3b7c1ae4 1-68
+apps/evals/src/tasks/index.ts
+  36121c8f3b7c1ae4 15,31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "59545cf73ee1ef35d43c59bae101f8f65031413d",
+  "prompts": {
+    "36121c8f3b7c1ae4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dd4b7-fb4f-7fb2-a9af-80c1e0075446",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 603,
+      "total_deletions": 133,
+      "accepted_lines": 3194,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
