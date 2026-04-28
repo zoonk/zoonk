@@ -54,6 +54,7 @@ Example:
 - `agents` - CLAUDE.md, AGENTS.md, `.claude/` folder
 - `ci` - GitHub workflows, CI/CD configuration
 - `deps` - dependency updates across multiple packages
+- `test` - when only test files are changed
 
 ### Good Scope Choices
 
@@ -80,6 +81,7 @@ refactor(db): use enum for status field
 chore(deps): update react to v19
 chore(agents): add commit skill
 fix(ci): update node version in workflow
+fix(test): fix e2e test flakiness for course chapters
 ```
 
 ## Rules
