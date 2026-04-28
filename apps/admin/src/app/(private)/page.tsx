@@ -20,7 +20,7 @@ export default function Home() {
       <ContainerHeader variant="sidebar">
         <ContainerHeaderGroup>
           <ContainerTitle>Admin Dashboard</ContainerTitle>
-          <ContainerDescription>Overview of platform metrics and lesson.</ContainerDescription>
+          <ContainerDescription>Overview of platform metrics and activity.</ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 

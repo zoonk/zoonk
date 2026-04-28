@@ -4,7 +4,7 @@ import { AiTaskTable } from "./ai-task-table";
 import { formatAiStatsDate } from "./format-ai-cost";
 
 /**
- * The task index should stay focused on raw Gateway lesson. This server
+ * The task index should stay focused on raw Gateway activity. This server
  * component loads the selected-period task summaries and links out to the
  * dedicated estimates page for workflow-level cost modeling.
  */

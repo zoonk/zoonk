@@ -39,7 +39,7 @@ export async function EngagementStats() {
     <StatsSection subtitle="How learners interact with content" title="Engagement & Learning">
       <Stats
         description={`vs ${activeLearners.last30Days.toLocaleString()} in last 30d`}
-        help="Users with lesson in the last 7 days"
+        help="Users with activity in the last 7 days"
         href="/stats/engagement"
         icon={<BookOpenIcon />}
         title="Active Learners (7d)"

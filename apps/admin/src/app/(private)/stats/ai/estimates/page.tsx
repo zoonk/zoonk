@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 /**
  * Workflow cost modeling lives on its own page so the task index can stay
- * focused on raw Gateway lesson while this route concentrates on lesson and
+ * focused on raw Gateway activity while this route concentrates on lesson and
  * course cost estimation.
  */
 export default async function AiEstimatesPage({ searchParams }: PageProps<"/stats/ai/estimates">) {

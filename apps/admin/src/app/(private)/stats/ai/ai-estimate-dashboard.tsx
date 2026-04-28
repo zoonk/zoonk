@@ -12,7 +12,7 @@ import { AiEstimateFilters } from "./ai-estimate-filters";
 import { formatAiCost, formatAiStatsDate } from "./format-ai-cost";
 
 /**
- * The estimates page focuses on workflow costs rather than raw task lesson.
+ * The estimates page focuses on workflow costs rather than raw task activity.
  * It loads the selected-period lesson averages, resolves the editable course
  * structure inputs, and renders the resulting lesson and course totals.
  */

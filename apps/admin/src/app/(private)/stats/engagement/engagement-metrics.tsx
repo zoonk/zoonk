@@ -64,7 +64,7 @@ export async function EngagementMetrics({
       <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-5">
         <AdminMetricCard
           change={{ current: currentActiveLearners, period, previous: previousActiveLearners }}
-          help="Distinct users with learning lesson"
+          help="Distinct users with learning activity"
           icon={<BookOpenIcon />}
           title="Active Learners"
           value={currentActiveLearners.toLocaleString()}
