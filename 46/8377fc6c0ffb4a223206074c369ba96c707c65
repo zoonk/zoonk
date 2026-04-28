@@ -1,0 +1,822 @@
+packages/core/src/player/queries/get-sentence-words.test.ts
+  36121c8f3b7c1ae4 9,11,68,85,90,111,143,184,225
+packages/player/src/components/reading-step.tsx
+  5d7fd1fee4f5be2a 7
+apps/api/src/workflows/lesson-generation/steps/_utils/generate-word-audio-urls.ts
+  36121c8f3b7c1ae4 2,4-10,12,14-17,21-24,27-32,34-37,39-42
+packages/player/src/components/arrange-words-answer-area.tsx
+  5d7fd1fee4f5be2a 16
+apps/api/src/workflows/chapter-generation/steps/generate-lessons-step.test.ts
+  36121c8f3b7c1ae4 4,48,83-84,113,129-142
+packages/player/src/player-controller.ts
+  5d7fd1fee4f5be2a 11
+apps/admin/src/app/(private)/users/[id]/user-lesson.tsx
+  5d7fd1fee4f5be2a 5,16
+apps/api/src/workflows/lesson-generation/steps/_utils/generate-step-images.ts
+  36121c8f3b7c1ae4 1-2,5-8,10-13,18-50
+apps/api/src/workflows/chapter-generation/chapter-generation-workflow.test.ts
+  5d7fd1fee4f5be2a 3,18-19,29-30,36-37,124-125,140,143,152,154,158-159,164,191-193,196,205
+packages/core/src/player/commands/submit-lesson-completion.test.ts
+  5d7fd1fee4f5be2a 4,11,18,42-43,57,65,67,87,91,93,102-103,111,128,137,141,144,148,150,159-160,179,181,201,203,230,232,251,253,272,281-282,293,297,303,305,327,329,343,349,351,375,384,387,417,419,444-446,449-450,455,457,466-467,487,489,515,517,533,535,560,562,603,605
+packages/ai/src/tasks/lessons/core/_utils/format-explanation-steps.test.ts
+  36121c8f3b7c1ae4 2,4-7,9-10,12-18,20-21,23-24,27-29,31-32,34-40,42-43,46-47,49-50
+packages/core/src/steps/contract/static.ts
+  5d7fd1fee4f5be2a 6
+apps/api/src/workflows/chapter-generation/steps/_utils/language-course.ts
+  36121c8f3b7c1ae4 2-8,11-12,14-29,32-33,36
+packages/ai/src/tasks/lessons/language/lesson-vocabulary.ts
+  5d7fd1fee4f5be2a 8,10,22-23,25,38,49
+packages/core/src/workflows/steps.ts
+  36121c8f3b7c1ae4 58-62,64-67,72-76,78,81-87
+  5d7fd1fee4f5be2a 33,35,50-53,119-120,122,126-127
+apps/main/src/data/courses/_utils/continue-learning-candidates.ts
+  5d7fd1fee4f5be2a 1,3,11,27,39-41,46,60,67-68,71,74,94,115,118,121,150,152,155-156,161,165,167,169,174,177,179,181,224-225,238,240,260,280
+apps/api/src/workflows/lesson-generation/steps/save-practice-lesson-step.ts
+  36121c8f3b7c1ae4 2,4-6,9-17,21,23-24,26
+packages/core/src/lessons/find-last-completed.ts
+  5d7fd1fee4f5be2a 2,5,7,19-22,24,30,35,41-42,46-47,49,51,53,55,63-64,68,78
+apps/api/src/lib/openapi/schemas/progress.ts
+  5d7fd1fee4f5be2a 5,9,11,13,15,17,50,52,59,74,76,80,83,86
+packages/player/src/components/fill-blank-step.tsx
+  5d7fd1fee4f5be2a 6
+apps/admin/src/data/review/count-pending-reviews.ts
+  5d7fd1fee4f5be2a 35,85
+apps/main/src/lib/workflow/generation-store.ts
+  5d7fd1fee4f5be2a 94
+packages/player/src/components/translation-step.tsx
+  5d7fd1fee4f5be2a 6
+packages/player/src/_browser-tests/player-practice.browser.test.tsx
+  5d7fd1fee4f5be2a 4,8,11,64
+packages/player/src/components/multiple-choice-step.tsx
+  5d7fd1fee4f5be2a 3
+packages/player/src/_browser-tests/player-explanation.browser.test.tsx
+  5d7fd1fee4f5be2a 5,9,12
+packages/core/src/steps/contract/content.ts
+  36121c8f3b7c1ae4 16
+packages/core/src/steps/contract/image.ts
+  5d7fd1fee4f5be2a 4
+apps/main/e2e/lesson-start-tracking.test.ts
+  5d7fd1fee4f5be2a 43,68-69,75,81,84,89,91,100-101,110-111,123,128-129
+  36121c8f3b7c1ae4 79,85,122
+packages/ai/src/tasks/lessons/language/lesson-pronunciation.prompt.md
+  5d7fd1fee4f5be2a 1-283
+apps/api/src/workflows/lesson-generation/kinds/explanation-workflow.ts
+  36121c8f3b7c1ae4 1-5,7,10-12,14
+apps/api/src/workflows/lesson-generation/kinds/translation-workflow.ts
+  36121c8f3b7c1ae4 1-8
+apps/admin/src/app/(private)/stats/page.tsx
+  5d7fd1fee4f5be2a 18,35,37
+apps/main/e2e/review-step.test.ts
+  36121c8f3b7c1ae4 35-47,50,52,54,68,84,119,350-357
+  5d7fd1fee4f5be2a 12,102,112,327
+apps/evals/src/tasks/lesson-explanation/test-cases.ts
+  5d7fd1fee4f5be2a 10,12,14-15,26,36,54,62,78,88,92,104,117,121,133,145,161,172,188
+apps/evals/src/tasks/lesson-pronunciation/task.ts
+  5d7fd1fee4f5be2a 3-6,9,11-13
+packages/player/src/player-screen.test.ts
+  5d7fd1fee4f5be2a 1-2,30-31,45,48,51,67
+packages/core/src/player/contracts/_utils/lesson-data-mappers.ts
+  5d7fd1fee4f5be2a 1-239
+apps/evals/src/tasks/lesson-quiz/test-cases.ts
+  5d7fd1fee4f5be2a 2-70,76,78-91,93,95-109,113-114,119,121-132,134-136,138,140-150,154-155,160,162-166,168-171,173,175,177,179-193,197-198,203,205-220,222,224-238,242-243,248-250,252-265,267,269-281,283-284,289-301,303-305,307,309-325,327-328
+apps/api/src/workflows/lesson-generation/steps/save-vocabulary-lesson-step.ts
+  36121c8f3b7c1ae4 2,4,10-20,33,35-36,39-40,42-43,45,61-74,76-96,100,109,112-113,115-116,120-122,125-126,133-135,140,142,150-151
+apps/main/messages/pt.po
+  36121c8f3b7c1ae4 11,18,23,29,34,41,47,59,64,69,72,75-80,97,110,115,120,125,137,142,147,152,157,162,167,172,177,182,187,192,197,202,207,213,218,223,228,233,238,243,246-248,253,272,277,282,287,291,299,304,309,314,319,322-323,388-453,1547,1552,1557
+  5d7fd1fee4f5be2a 454,637-639,708-712,807-809,843-845,954-958,1034-1038,1189-1192,1548-1550,1553-1555,1558-1581,1602-1607,1659-1665,1792-1801,1808-1820,1833-1835,1838-1840,1898,2072-2141
+apps/api/src/workflows/chapter-generation/steps/add-lessons-step.test.ts
+  36121c8f3b7c1ae4 58-60,86-95,100,107,114-117
+apps/main/src/lib/workflow/use-workflow-generation.ts
+  5d7fd1fee4f5be2a 66
+apps/evals/src/tasks/lesson-vocabulary/task.ts
+  5d7fd1fee4f5be2a 3-6,9,11-13
+apps/evals/src/tasks/lesson-practice/test-cases.ts
+  5d7fd1fee4f5be2a 27,192
+apps/api/src/workflows/lesson-generation/steps/generate-grammar-romanization-step.ts
+  36121c8f3b7c1ae4 2,4-5,8-16,19,21-22,25-38,40
+apps/api/src/lib/openapi/document.ts
+  5d7fd1fee4f5be2a 10-13,72,74,79,82,86,90,92,97,100,104,108,110,115,118,122,126,128,133,136,140
+apps/evals/src/tasks/lesson-custom/task.ts
+  5d7fd1fee4f5be2a 3-6,9-13
+apps/api/src/workflows/lesson-generation/steps/generate-explanation-content-step.ts
+  36121c8f3b7c1ae4 1-42
+apps/admin/src/data/stats/ai/ai-task-catalog.ts
+  5d7fd1fee4f5be2a 43-45,49,51-58,60,63-64
+packages/ai/src/tasks/lessons/core/lesson-practice.prompt.md
+  5d7fd1fee4f5be2a 3,7,203,205,207,209,268,270,369
+packages/ui/src/hooks/use-hide-element.ts
+  36121c8f3b7c1ae4 6,10
+apps/admin/src/app/(private)/stats/engagement/engagement-metrics.tsx
+  5d7fd1fee4f5be2a 1,5,13,16,40,46-47,53,67-68,83,91,93,114,116,119
+apps/main/src/app/privacy/en.mdx
+  5d7fd1fee4f5be2a 16,25
+packages/utils/src/settled.test.ts
+  5d7fd1fee4f5be2a 2
+apps/admin/src/data/stats/get-period-completion-rate.ts
+  36121c8f3b7c1ae4 9-10
+apps/admin/src/data/stats/get-completion-rate.ts
+  36121c8f3b7c1ae4 7-8
+packages/player/src/_browser-tests/player-choice.browser.test.tsx
+  5d7fd1fee4f5be2a 6,18,53,112,150,195,246,313,357,389
+apps/api/src/workflows/lesson-preload/lesson-preload-workflow.test.ts
+  36121c8f3b7c1ae4 16,22
+apps/evals/src/tasks/lesson-romanization/task.ts
+  5d7fd1fee4f5be2a 3-6,9,11-13
+packages/db/src/prisma/models/lessons.prisma
+  5d7fd1fee4f5be2a 10,20-21,34-35,48-49
+apps/api/src/workflows/lesson-generation/steps/generate-vocabulary-content-step.ts
+  36121c8f3b7c1ae4 1-18,20-21,24,27-37,39-40,44-45
+packages/player/src/components/player-progress-bar.tsx
+  5d7fd1fee4f5be2a 16
+packages/player/src/player-step.test.ts
+  5d7fd1fee4f5be2a 1
+packages/player/src/_browser-tests/player-word-bank.browser.test.tsx
+  5d7fd1fee4f5be2a 4,14,50,84,122,162,201
+packages/core/src/progress/get-lesson-progress.ts
+  5d7fd1fee4f5be2a 1-2,9-50,58,60,76,83-87
+packages/player/src/_test-utils/render-player.tsx
+  5d7fd1fee4f5be2a 5,18,30,44,72
+  36121c8f3b7c1ae4 22,34
+apps/main/messages/en.po
+  5d7fd1fee4f5be2a 78-81,246-248,291,322-323,388-454,637-639,708-712,807-809,843-845,954-958,1034-1038,1189-1192,1548-1550,1553-1555,1558-1581,1602-1607,1659-1665,1792-1801,1808-1820,1833-1835,1838-1840,1898,2072-2141
+  36121c8f3b7c1ae4 72,1547,1552,1557
+packages/player/src/components/_utils/feedback-romanization.test.ts
+  5d7fd1fee4f5be2a 1
+packages/player/src/check-step.test.ts
+  5d7fd1fee4f5be2a 1
+packages/player/src/use-player-actions.test.tsx
+  5d7fd1fee4f5be2a 3,31-32
+packages/ai/src/tasks/chapters/language-chapter-lessons.ts
+  36121c8f3b7c1ae4 16,22-23
+packages/player/src/components/completion-screen.tsx
+  36121c8f3b7c1ae4 8-9,54,62,83,86
+  5d7fd1fee4f5be2a 7,10-12,71,76,92,121
+apps/evals/src/tasks/lesson-grammar-user-content/test-cases.ts
+  36121c8f3b7c1ae4 1-258
+packages/ai/src/reporting-tags.test.ts
+  5d7fd1fee4f5be2a 14,16
+apps/admin/src/app/(private)/review/_components/content/step-select-image-review.tsx
+  36121c8f3b7c1ae4 11,20
+packages/ai/src/tasks/chapters/chapter-lessons.prompt.md
+  h_1cda88fc21fe9c 5,25,37,41,78,80-85,118-119,122-129
+packages/core/src/progress/_utils/durable-completion-queries.ts
+  36121c8f3b7c1ae4 6-7,21,23
+apps/main/e2e/continue-learning-revalidation.test.ts
+  5d7fd1fee4f5be2a 7,12,31-32,43-44,55-56,67,71,86,88,90,93,123,134-135,143
+  36121c8f3b7c1ae4 39-40,45,51,57,63,75,79,113,136
+packages/ai/src/tasks/lessons/language/lesson-distractors.prompt.md
+  5d7fd1fee4f5be2a 1,71
+apps/admin/src/data/stats/ai/_utils/get-ai-cost-estimate-structure.ts
+  36121c8f3b7c1ae4 1,4-5,25-29,32,59-60,62,73-78,129,136,143,179,232,234-235
+apps/api/src/workflows/lesson-generation/steps/generate-sentence-word-audio-step.ts
+  36121c8f3b7c1ae4 1-2,5-13,16,18,22,25,33,38
+packages/core/src/player/contracts/completion-input-schema.ts
+  36121c8f3b7c1ae4 68
+apps/admin/src/app/(private)/stats/ai/estimates/page.tsx
+  5d7fd1fee4f5be2a 13
+packages/ai/src/tasks/chapters/chapter-lessons.ts
+  36121c8f3b7c1ae4 15
+apps/api/src/workflows/lesson-generation/steps/_utils/generate-audio-for-text.ts
+  36121c8f3b7c1ae4 1,3-12,14-15,18
+apps/api/src/workflows/lesson-generation/steps/save-quiz-lesson-step.ts
+  36121c8f3b7c1ae4 4-8,10-16,20,22-23,25
+apps/main/src/app/(catalog)/learn/[prompt]/page.tsx
+  5d7fd1fee4f5be2a 16
+apps/evals/src/tasks/lesson-romanization/test-cases.ts
+  36121c8f3b7c1ae4 1-252
+apps/main/e2e/catalog-actions.test.ts
+  5d7fd1fee4f5be2a 10,40,46,71,79,88,101,109,119,130,144,163,173
+apps/main/src/app/generate/l/[id]/generation-phases.ts
+  36121c8f3b7c1ae4 20-43,46-56
+  5d7fd1fee4f5be2a 17,66-67,72,75,79,82
+packages/ai/src/tasks/lessons/language/lesson-grammar-user-content.ts
+  5d7fd1fee4f5be2a 7,9,32,34,48,56,67
+apps/main/src/data/courses/_utils/continue-learning-queries.ts
+  5d7fd1fee4f5be2a 50,53-54
+packages/player/src/components/player-shell.tsx
+  36121c8f3b7c1ae4 4
+packages/player/src/components/static-step.tsx
+  5d7fd1fee4f5be2a 3
+apps/api/src/workflows/lesson-generation/steps/_utils/generate-lesson-romanizations.ts
+  36121c8f3b7c1ae4 1,5,16
+apps/evals/src/tasks/lesson-grammar-content/task.ts
+  5d7fd1fee4f5be2a 3-6,9-11,15-17
+apps/admin/src/app/(private)/stats/content/content-chart-filter.tsx
+  36121c8f3b7c1ae4 10,22
+apps/api/src/workflows/chapter-generation/steps/_utils/lesson-plan-expansion.ts
+  5d7fd1fee4f5be2a 1,4-7,10-118,122-124,126-129,131-133,135,137-138,142-230,233-235,240-271,273-277,280,284-286,288-305,308-342,344-346,349-353,356
+packages/player/src/player-reducer.ts
+  5d7fd1fee4f5be2a 3-4,37-38,152
+apps/api/src/workflows/lesson-generation/steps/generate-step-images-step.ts
+  36121c8f3b7c1ae4 1-2,4,6-16,19,28-30
+packages/ai/src/tasks/lessons/core/lesson-explanation.prompt.md
+  5d7fd1fee4f5be2a 3,5,13,21,59,74,76,78-79,83,115-116,126-128,146-147,153,157-158
+packages/core/src/player/commands/start-lesson.test.ts
+  5d7fd1fee4f5be2a 8,10-11,17-18,24,28,30-31,44,46-47,50,52-53,81-87,90,92-93
+  36121c8f3b7c1ae4 59-75
+apps/api/src/workflows/lesson-generation/steps/_utils/upsert-word-with-pronunciation.ts
+  36121c8f3b7c1ae4 15-19,22-23,26-30,34,36-47
+packages/core/src/player/commands/_utils/durable-curriculum-completion.ts
+  5d7fd1fee4f5be2a 3,19-20,25,29,103
+packages/core/src/lessons/get-next-lesson-in-course.test.ts
+  5d7fd1fee4f5be2a 6,8,85-86,102-103,119-120,132,143-144,152-153,158,170-172,178-179,185-186,194,196,200,206-208,212,224-226,232-233,239-240,248,250,254,260-262,266,279,300,310-311,316,344,365,375-376
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-player-model.ts
+  36121c8f3b7c1ae4 1,4,15,19,25,28-29,31-32,35-37,48-49,60,76,84,87,89
+apps/main/src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+  36121c8f3b7c1ae4 13,36,48-49,69,71
+packages/utils/src/brain-power.ts
+  5d7fd1fee4f5be2a 1
+packages/player/src/step-navigation.ts
+  5d7fd1fee4f5be2a 1
+apps/admin/src/app/(private)/page.tsx
+  5d7fd1fee4f5be2a 23
+packages/player/src/check-step.ts
+  5d7fd1fee4f5be2a 12
+packages/player/src/components/in-play-sticky-header.tsx
+  5d7fd1fee4f5be2a 3-4,16,18
+apps/admin/src/data/stats/get-period-avg-lesson-time.ts
+  5d7fd1fee4f5be2a 5-6
+apps/admin/src/data/stats/get-period-content-created.ts
+  36121c8f3b7c1ae4 6,11
+packages/core/src/player/commands/submit-player-completion.ts
+  5d7fd1fee4f5be2a 4,9,79-80,88,91,96,107,120,139,141,149
+  36121c8f3b7c1ae4 6,22,54-68,95,97-106,108-110,113-116
+packages/player/src/player-context.tsx
+  36121c8f3b7c1ae4 28,39,63,141
+  5d7fd1fee4f5be2a 3,24,47,50,55-57,61,83-84,99,101,103-104,108-109,112-113,122,125-126,132-134
+packages/player/src/components/sort-order-step.tsx
+  5d7fd1fee4f5be2a 23
+packages/player/src/player-reducer.test.ts
+  5d7fd1fee4f5be2a 2,4,45,48,55,64-65,85-86,91,93-95,100,106,113,125,383,530,533,539,608,714-715
+packages/core/src/player/queries/get-lesson-sentences.ts
+  36121c8f3b7c1ae4 4-14,16-18,21-22,24-25
+apps/api/src/workflows/chapter-generation/chapter-generation-workflow.ts
+  36121c8f3b7c1ae4 59-60,64
+apps/api/src/workflows/lesson-generation/steps/_utils/explanation-source-steps.ts
+  36121c8f3b7c1ae4 2-3,5-8,10-74,78,81
+apps/api/src/workflows/lesson-generation/steps/generate-grammar-user-content-step.ts
+  36121c8f3b7c1ae4 1-4,6-17,20,23,25-35,38-39,41,43,46,50-51
+packages/player/src/_browser-tests/player-vocabulary.browser.test.tsx
+  5d7fd1fee4f5be2a 5,15,42,68,83,85,99
+packages/db/src/curriculum-filters.ts
+  5d7fd1fee4f5be2a 7,111,128
+apps/api/src/workflows/lesson-generation/steps/_utils/get-practice-image-prompts.ts
+  36121c8f3b7c1ae4 1-4,24,26
+packages/player/src/_browser-tests/player-static.browser.test.tsx
+  5d7fd1fee4f5be2a 5,93,107,129,153,169,191,230,252,263,285,302,316
+packages/core/src/player/queries/get-lesson-sentences.test.ts
+  36121c8f3b7c1ae4 8,10,59,93,118,123
+packages/ai/src/tasks/lessons/language/lesson-pronunciation.ts
+  5d7fd1fee4f5be2a 7,9,16,18,27,34
+packages/ai/src/tasks/lessons/language/lesson-translation.prompt.md
+  5d7fd1fee4f5be2a 1-46
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-data-loaders.ts
+  36121c8f3b7c1ae4 1-2,4,7-8,10-11,14,16-20,22-33,35-36,39-45
+apps/admin/src/data/stats/get-activation-rate.ts
+  36121c8f3b7c1ae4 9
+apps/main/src/lib/track-feedback.ts
+  5d7fd1fee4f5be2a 3
+packages/core/src/progress/get-next-lesson.ts
+  5d7fd1fee4f5be2a 1,3,5,9,12,25,48
+apps/main/e2e/home.test.ts
+  5d7fd1fee4f5be2a 7,64,103,112,115
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.test.ts
+  36121c8f3b7c1ae4 3-14,20,24-43,47-48,50-55,57-63,65-74,76-81,88-89,91,96-102,104-110,112-118,120-126,128-135,137-144,146-153,155-169,172-200,202-208,210-211,213-214,216-219,221-229,232,234-236,238-255,257-258,260-290,293-319,321-322,324-355,357,359-364,366-367,369-373,375-416,419-439,441-469,472-480,483-492,494-505
+apps/api/src/app/v1/progress/chapter-completion/route.ts
+  36121c8f3b7c1ae4 4,16
+apps/api/src/app/v1/progress/lesson-completion/route.ts
+  5d7fd1fee4f5be2a 2,4,9,16,21
+apps/api/src/workflows/lesson-generation/steps/_utils/save-reading-target-words.ts
+  36121c8f3b7c1ae4 2-15,17-19,21-30,33-36,38,40-53,56-59,61-70,75-82,84-91,93-96,98-102,105-106,108-132,134-149
+packages/db/src/prisma/seed/progress.ts
+  36121c8f3b7c1ae4 110,133,137,143-144
+packages/core/src/player/contracts/prepare-lesson-data.ts
+  5d7fd1fee4f5be2a 7,12,14,24,79,81,91,94,97,101-103,107,140,156,218,248-249,251,262,271,309-312,315,317,322,326-327,329,331
+packages/player/src/components/feedback-screen.tsx
+  5d7fd1fee4f5be2a 3,40
+apps/main/src/app/(catalog)/(home)/page.tsx
+  5d7fd1fee4f5be2a 11
+packages/core/src/progress/get-next-lesson-state.ts
+  36121c8f3b7c1ae4 189-190,200,230,240-241,243
+  5d7fd1fee4f5be2a 2,9,18,26-30,50,55,58,161,165,180-181,209,222-223,268-269
+packages/player/src/components/lesson-info-popover.tsx
+  36121c8f3b7c1ae4 21-22
+  5d7fd1fee4f5be2a 15,26
+apps/evals/src/tasks/lesson-custom/test-cases.ts
+  5d7fd1fee4f5be2a 30,61-62,87-88,113-114,139-140,164-165,190-191,215-217,244-245,272-273,299-301,306,328,333-334,339,357,362-364
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/submit-completion-action.ts
+  36121c8f3b7c1ae4 1-9,11-13,16-20,22-32,34-35,38-68
+packages/ai/src/tasks/lessons/core/lesson-quiz.ts
+  5d7fd1fee4f5be2a 7,9,77,79,91,101
+apps/main/src/app/(catalog)/learn/page.tsx
+  5d7fd1fee4f5be2a 14
+packages/player/src/components/completion-milestone-actions.tsx
+  36121c8f3b7c1ae4 14,21-26,28,32,42,62-63,66-67,95
+packages/player/src/components/step-image-preloader.tsx
+  5d7fd1fee4f5be2a 13-14,22-25,30
+apps/main/src/app/(performance)/level/level-explanation.tsx
+  5d7fd1fee4f5be2a 19
+packages/player/src/player-completion.test.ts
+  5d7fd1fee4f5be2a 1,29-30
+packages/core/src/player/contracts/build-word-bank-options.test.ts
+  5d7fd1fee4f5be2a 7
+packages/ai/src/tasks/lessons/language/lesson-romanization.ts
+  5d7fd1fee4f5be2a 6,8,15,17,30,36
+packages/player/src/components/fill-blank-step.test.tsx
+  5d7fd1fee4f5be2a 44
+packages/ai/src/tasks/lessons/language/_utils/language-prompt-context.ts
+  36121c8f3b7c1ae4 1,3,5-9
+packages/core/src/player/queries/get-lesson-words.ts
+  36121c8f3b7c1ae4 4-13,16,31,33,36-38,40-41
+packages/ai/src/tasks/lessons/language/lesson-sentences.prompt.md
+  5d7fd1fee4f5be2a 57
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-player-model.test.ts
+  36121c8f3b7c1ae4 2,4-15,18-20,23-33,36-52,54-68,70-78,81-95
+packages/ai/src/tasks/steps/step-content-practice-image.prompt.md
+  5d7fd1fee4f5be2a 1
+packages/core/src/player/contracts/translation-options.ts
+  5d7fd1fee4f5be2a 66,76
+packages/player/src/_browser-tests/player-arrangement.browser.test.tsx
+  5d7fd1fee4f5be2a 3,10,45,70,107
+apps/main/e2e/course-chapters.test.ts
+  36121c8f3b7c1ae4 13,16,20,36-37,46,80,84,151,160
+packages/core/src/player/queries/get-lesson-words.test.ts
+  36121c8f3b7c1ae4 12,14,63,102,129,134,173
+apps/admin/src/data/stats/ai/_utils/ai-cost-estimate-constants.ts
+  5d7fd1fee4f5be2a 14-21
+packages/player/src/components/match-columns-step.tsx
+  5d7fd1fee4f5be2a 4
+packages/core/src/progress/get-chapter-progress.ts
+  5d7fd1fee4f5be2a 59
+apps/evals/src/tasks/lesson-sentences/test-cases.ts
+  5d7fd1fee4f5be2a 185,382,390,423,468,628
+apps/main/src/data/lessons/get-lesson-for-generation.test.ts
+  5d7fd1fee4f5be2a 34
+packages/player/src/_browser-tests/player-completion.browser.test.tsx
+  36121c8f3b7c1ae4 215-217,233,236
+  5d7fd1fee4f5be2a 3,9,13,22,47,58,60-61,70,73,84,92,103,105-106,110,116,130,132-133,137,148,152,165,174,189,198,213,223
+packages/ai/src/tasks/lessons/language/lesson-distractors.ts
+  5d7fd1fee4f5be2a 8,10,17,19,39,46
+apps/api/src/workflows/lesson-generation/steps/generate-reading-romanization-step.ts
+  36121c8f3b7c1ae4 1-2,4-14,17,19,23,26-27,37
+apps/api/src/app/v1/progress/next-lesson/route.ts
+  5d7fd1fee4f5be2a 2,4-5,12,26,34
+apps/api/src/workflows/lesson-generation/steps/_utils/save-core-lesson-content.ts
+  36121c8f3b7c1ae4 3,9-15,17-19,21-30,38,42,45-46,48-63,73,77,79-81,84,95-96,99-105,107-109,124,140
+  5d7fd1fee4f5be2a 1,5-8,34,36-37,39-41,43-44,47,64,68,70-72,75-76,78,82-83,85-94,112-113,117,119-120,123,126-135,137-139,141-142,144-149,151-156,159-160
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.ts
+  36121c8f3b7c1ae4 3,5-13,24-25,27,32-33,36,40-41,43-44,47-50,53-56,58-60,63-66,68-71,73-90,98,103,107-108,118
+packages/ai/src/tasks/lessons/language/lesson-grammar-content.prompt.md
+  5d7fd1fee4f5be2a 3,79
+packages/core/src/player/queries/get-next-lesson.ts
+  36121c8f3b7c1ae4 8,12,14-16,18,21,26,59
+packages/core/src/player/queries/get-review-steps.test.ts
+  5d7fd1fee4f5be2a 42-43,58,69,323,326,339,361,640-641,647,660,666,672,677,713,724,772,778
+packages/db/src/prisma/migrations/20260428052713_move_content_to_lessons/migration.sql
+  36121c8f3b7c1ae4 1-136
+apps/evals/src/tasks/lesson-grammar-content/test-cases.ts
+  36121c8f3b7c1ae4 1-155
+apps/api/src/workflows/lesson-generation/steps/save-grammar-lesson-step.ts
+  36121c8f3b7c1ae4 1-39
+packages/e2e/src/fixtures/progress.ts
+  5d7fd1fee4f5be2a 19-20,122,156-157,164,166,173,181,194,197-199
+packages/ai/src/tasks/lessons/custom/lesson-custom.ts
+  5d7fd1fee4f5be2a 6,8,20,22,33,42
+apps/api/src/workflows/lesson-generation/steps/save-translation-lesson-step.ts
+  36121c8f3b7c1ae4 1-68
+apps/api/src/workflows/lesson-generation/steps/generate-quiz-content-step.ts
+  36121c8f3b7c1ae4 1-3,6-8,10,13-14,16-19,22,25-35,42-43
+apps/api/src/workflows/lesson-generation/steps/generate-tutorial-content-step.ts
+  36121c8f3b7c1ae4 1-34
+packages/ai/src/tasks/lessons/core/lesson-practice.ts
+  5d7fd1fee4f5be2a 7,9,35,37,49,59
+apps/main/src/app/generate/l/[id]/generate-lesson-content.tsx
+  36121c8f3b7c1ae4 38
+apps/admin/src/data/stats/count-content.ts
+  36121c8f3b7c1ae4 6,13
+packages/core/src/player/commands/_utils/durable-curriculum-completion-rules.test.ts
+  36121c8f3b7c1ae4 17,25,94,104,120,125,188,193,236,241
+apps/evals/src/tasks/lesson-sentences/task.ts
+  5d7fd1fee4f5be2a 3-6,9,11-13
+apps/api/src/workflows/lesson-generation/steps/_utils/generate-word-pronunciations.ts
+  36121c8f3b7c1ae4 1,5-8,10-18,20-28,30-41,43-60,62-68,70-81,83,85-87,89-94
+packages/ai/src/tasks/lessons/config.ts
+  36121c8f3b7c1ae4 1-4
+packages/player/src/player-selectors.test.ts
+  5d7fd1fee4f5be2a 1,29-30
+apps/api/src/workflows/lesson-generation/steps/generate-vocabulary-romanization-step.ts
+  36121c8f3b7c1ae4 1-2,4-13,16,18,22,25,32
+packages/player/src/components/arrange-words.tsx
+  5d7fd1fee4f5be2a 5
+apps/admin/src/app/(private)/stats/content/content-totals-table.tsx
+  36121c8f3b7c1ae4 14-15
+apps/api/src/workflows/lesson-generation/steps/save-static-lesson-step.ts
+  36121c8f3b7c1ae4 2,4-6,9-14,16-18,21,23-24,26-27,29-38,40-46,48-57,59-64
+apps/main/e2e/continue-lesson-link.test.ts
+  36121c8f3b7c1ae4 44,52-53,61-62,70-71,121-122,130-132,144,149-150,152,156-157,169-170,182,246,270
+  5d7fd1fee4f5be2a 5,9,37-38,41,77,104-105,111,113,136,145,186,200,203,221,223-224,230,233,236,250,263,266,313,332,335,349,353,355,358
+packages/player/src/player-step.ts
+  5d7fd1fee4f5be2a 1
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/loading.tsx
+  36121c8f3b7c1ae4 1,3,5-20
+packages/core/src/player/contracts/compute-score.ts
+  5d7fd1fee4f5be2a 1,18,21,31
+packages/core/src/player/queries/get-review-steps.ts
+  5d7fd1fee4f5be2a 2,6,9-18,20-21,45-51,107,109,112-117,120
+packages/player/src/player-provider.tsx
+  5d7fd1fee4f5be2a 4,21,34,48-49,72-73,75-77,79,87-89
+  36121c8f3b7c1ae4 39
+apps/evals/src/tasks/lesson-translation/task.ts
+  5d7fd1fee4f5be2a 6,9,12-13
+apps/admin/src/app/(private)/stats/engagement/lesson-breakdown-table.tsx
+  5d7fd1fee4f5be2a 11-12,22,26,33,38,46,53,56
+apps/api/src/workflows/lesson-generation/kinds/listening-workflow.ts
+  36121c8f3b7c1ae4 1-8
+apps/main/src/components/catalog/catalog-list.tsx
+  36121c8f3b7c1ae4 168
+apps/main/src/lib/workflow/generation-store.test.ts
+  5d7fd1fee4f5be2a 165,189,254,302,307
+apps/evals/src/tasks/chapter-lessons/test-cases.ts
+  5d7fd1fee4f5be2a 6,22,47
+packages/ai/src/tasks/lessons/language/lesson-grammar-user-content.prompt.md
+  5d7fd1fee4f5be2a 3
+packages/player/src/components/vocabulary-step.tsx
+  5d7fd1fee4f5be2a 3
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
+  36121c8f3b7c1ae4 1-10,16-35,37-38,41-42,44,48,50,54,57-58,60,62,66-80,82,86,89,94-106,108,112,116,120-121,123,129
+packages/core/src/progress/_utils/published-lesson-progress-queries.ts
+  36121c8f3b7c1ae4 51
+  5d7fd1fee4f5be2a 64,74,80,84-85,94-95,97
+packages/player/src/components/listening-step.tsx
+  5d7fd1fee4f5be2a 7
+packages/core/src/progress/_utils/published-lesson-progress.ts
+  5d7fd1fee4f5be2a 11,17-29,33-34,43,58
+packages/player/src/components/step-image.tsx
+  5d7fd1fee4f5be2a 24
+apps/main/src/app/(catalog)/courses/page.tsx
+  5d7fd1fee4f5be2a 20
+apps/evals/src/tasks/lesson-pronunciation/test-cases.ts
+  36121c8f3b7c1ae4 2-47,53-54,56-65,67-73,75,77-79,84-97,99-105,107,109-111,116-130,132-138,140,142-144,149-162,164-170,172,174-176,181-190,192-203,205,207-209,214-223,225-237,239,241-243,248-257,259-270,272,274-276,281-290,292-303,305,307-309,314-317,319-336,338,340-342,347-350,352-369,371,373-375,380-383,385-400,402,404-406,411-429,431,433,435-437
+packages/core/package.json
+  5d7fd1fee4f5be2a 6-7,26-28,34,36-37
+packages/ai/src/tasks/lessons/core/_utils/format-explanation-steps.ts
+  5d7fd1fee4f5be2a 7
+packages/testing/src/fixtures/lessons.ts
+  5d7fd1fee4f5be2a 2,5-7,12-13,18,29-48,51-68
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
+  36121c8f3b7c1ae4 1,3-11,13,15,17,20,23,26-30,32,34-35,37-50
+apps/evals/src/tasks/lesson-distractors/task.ts
+  5d7fd1fee4f5be2a 3-6,9-13
+apps/main/messages/es.po
+  36121c8f3b7c1ae4 11,18,23,29,34,41,47,59,64,69,72,75-80,97,110,115,120,125,137,142,147,152,157,162,167,172,177,182,187,192,197,202,207,213,218,223,228,233,238,243,246-248,253,272,277,282,287,291,299,304,309,314,319,322-323,388-453,1547,1552,1557
+  5d7fd1fee4f5be2a 454,637-639,708-712,807-809,843-845,954-958,1034-1038,1189-1192,1548-1550,1553-1555,1558-1581,1602-1607,1659-1665,1792-1801,1808-1820,1833-1835,1838-1840,1898,2072-2141
+apps/admin/src/data/stats/get-avg-lesson-time.ts
+  5d7fd1fee4f5be2a 5-6
+apps/api/src/workflows/lesson-generation/kinds/vocabulary-workflow.ts
+  36121c8f3b7c1ae4 7-8,10-16,23,26-40,42-49
+packages/player/src/player-completion.ts
+  5d7fd1fee4f5be2a 2,15
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/flagged-item-content.tsx
+  36121c8f3b7c1ae4 80,91
+apps/api/src/workflows/lesson-generation/steps/_utils/save-lesson-content-helpers.ts
+  36121c8f3b7c1ae4 1-6,8,19-40
+packages/testing/src/fixtures/steps.ts
+  5d7fd1fee4f5be2a 7,17
+packages/player/src/components/select-image-step.tsx
+  5d7fd1fee4f5be2a 3
+packages/core/src/player/contracts/prepare-lesson-data.test.ts
+  5d7fd1fee4f5be2a 4,10-12,15-18,122,130,135-136,138,146,152,154,169,194,212,241,260,327,376-382,420,436,466,515-524,607,650,699,712,739,765,767,770
+apps/api/src/workflows/course-generation/steps/handle-failure-step.ts
+  5d7fd1fee4f5be2a 3,64,96
+apps/api/src/workflows/lesson-generation/steps/handle-failure-step.ts
+  36121c8f3b7c1ae4 3,35
+apps/main/src/data/progress/get-best-time.test.ts
+  5d7fd1fee4f5be2a 68
+apps/evals/src/tasks/lesson-explanation/task.ts
+  5d7fd1fee4f5be2a 3-6,9,11-14
+packages/player/src/player-step-behavior.test.ts
+  5d7fd1fee4f5be2a 1
+apps/evals/src/tasks/lesson-practice/task.ts
+  5d7fd1fee4f5be2a 3-6,9,11-14
+apps/evals/src/tasks/lesson-distractors/test-cases.ts
+  5d7fd1fee4f5be2a 2
+apps/main/src/app/generate/l/[id]/use-generation-phases.ts
+  36121c8f3b7c1ae4 24,27,52-53,57-58
+apps/main/e2e/chapter-progress.test.ts
+  5d7fd1fee4f5be2a 5
+  36121c8f3b7c1ae4 9-11,13,64-65,67-82,86-87,99,103,105,113,116,120,122,130-131
+packages/core/src/player/commands/submit-player-completion.test.ts
+  5d7fd1fee4f5be2a 27,49,54,72,75,84,99,114,117,142,149,155-156,158-159,176
+apps/main/e2e/lesson-completion.test.ts
+  36121c8f3b7c1ae4 43,55,66-68,90,107-110,112,118,121,161,176,181,213,219,224,230,232,242-243,245-246,251,257,265-266,356,382,396,398,403-404,433,444,451-452,454,458-459,461,468
+  5d7fd1fee4f5be2a 7,187,235,237,259,279,281,300,302,319,321,340,342,465
+apps/api/src/workflows/lesson-generation/kinds/tutorial-workflow.ts
+  36121c8f3b7c1ae4 1-5,7,10-12,14
+packages/ai/src/tasks/lessons/core/lesson-quiz.prompt.md
+  5d7fd1fee4f5be2a 1-138
+packages/core/src/player/queries/get-total-brain-power.ts
+  36121c8f3b7c1ae4 9
+packages/core/src/player/queries/get-sentence-words.ts
+  36121c8f3b7c1ae4 4,6-12,37,41,44-45,47-48
+apps/admin/src/app/(private)/app-stats-engagement.tsx
+  5d7fd1fee4f5be2a 5-6,10,26,32-33,42,44,58,66,69,74,76-77
+apps/main/src/app/(catalog)/(home)/continue-learning.tsx
+  5d7fd1fee4f5be2a 6,59,62
+packages/db/src/prisma/seed/lessons.ts
+  5d7fd1fee4f5be2a 45,223
+packages/utils/src/languages.test.ts
+  36121c8f3b7c1ae4 2
+apps/evals/src/tasks/lesson-grammar-user-content/task.ts
+  5d7fd1fee4f5be2a 3-6,9-11,14-17
+packages/core/src/player/contracts/compute-score.test.ts
+  5d7fd1fee4f5be2a 2,4,6,25,44,62-63
+apps/admin/src/data/stats/get-avg-lessons-per-learner.ts
+  5d7fd1fee4f5be2a 5,10
+packages/db/src/prisma/seed/steps.ts
+  5d7fd1fee4f5be2a 212,226
+apps/main/src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+  36121c8f3b7c1ae4 5-7,68-69
+apps/api/src/workflows/chapter-generation/steps/generate-lessons-step.ts
+  5d7fd1fee4f5be2a 2-5,9,12-19,23,37-39
+packages/player/src/player-initial-state.ts
+  5d7fd1fee4f5be2a 2,4,28,32,38-40,42,46
+apps/api/src/workflows/lesson-generation/steps/generate-sentence-word-pronunciation-step.ts
+  36121c8f3b7c1ae4 1-2,4-12,15,19,23-25,30
+apps/main/src/data/lessons/get-lesson-for-generation.ts
+  36121c8f3b7c1ae4 17
+apps/api/src/workflows/lesson-generation/steps/_utils/fetch-existing-word-casing.ts
+  36121c8f3b7c1ae4 1-18
+apps/api/src/workflows/lesson-generation/steps/generate-image-prompts-step.ts
+  36121c8f3b7c1ae4 1,3-5,7-13,16,25-29,33-34
+apps/evals/src/tasks/index.ts
+  5d7fd1fee4f5be2a 10-21,24-35
+packages/utils/src/languages.ts
+  36121c8f3b7c1ae4 104,150
+packages/player/src/_browser-tests/player-header-info.browser.test.tsx
+  5d7fd1fee4f5be2a 3,7-8,10,17,19,26,28-29,49
+apps/admin/src/app/(private)/stats/ai/ai-task-list.tsx
+  5d7fd1fee4f5be2a 7
+apps/api/src/workflows/lesson-generation/steps/generate-grammar-content-step.ts
+  36121c8f3b7c1ae4 1-2,4-5,8,10,14,16,18-26,30,34-35,38,40
+apps/api/src/workflows/lesson-generation/steps/save-listening-lesson-step.ts
+  36121c8f3b7c1ae4 1-54
+apps/main/src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/page.tsx
+  36121c8f3b7c1ae4 5-7,81-82
+apps/api/src/workflows/lesson-generation/steps/_utils/save-language-lesson-content.ts
+  5d7fd1fee4f5be2a 1-2,5,7-12,15,17-19,21,23,25-29,31-35,52,54-56,58-61,63-66,72-76,80-81,85,87,96,98,123
+  36121c8f3b7c1ae4 6,20,22,24,30,57,62,101,103-106,113-114,117,119
+apps/admin/src/data/review/get-review-item.ts
+  36121c8f3b7c1ae4 30
+apps/api/src/workflows/lesson-generation/steps/generate-practice-content-step.ts
+  36121c8f3b7c1ae4 1-3,6-8,11-12,15-16,18-21,24,27-31,33-35,37,44,46
+packages/player/src/components/completion-auth-branch.tsx
+  36121c8f3b7c1ae4 103,157
+  5d7fd1fee4f5be2a 54,90,96,127,129,146,151,168,176-177,191,197,209,219
+packages/ai/package.json
+  5d7fd1fee4f5be2a 10-21
+apps/admin/src/data/stats/get-daily-content-created.ts
+  36121c8f3b7c1ae4 45
+packages/core/src/lessons/get-next-lesson-in-course.ts
+  5d7fd1fee4f5be2a 2,6-10,17,24-42,45,48-51,55,60-67,73,75,81-82
+packages/ai/src/provider-options.test.ts
+  5d7fd1fee4f5be2a 15,35,42,53,71,78,108,115
+apps/main/src/components/catalog/continue-lesson-link.tsx
+  5d7fd1fee4f5be2a 1-2,14,27,30,45,67,69,93,142
+  36121c8f3b7c1ae4 117
+packages/ai/src/tasks/lessons/custom/lesson-custom.prompt.md
+  5d7fd1fee4f5be2a 3,9,21,39-40,76,80,82-83,88,100,122,124
+packages/player/src/components/_utils/feedback-romanization.ts
+  5d7fd1fee4f5be2a 1
+apps/main/src/data/courses/_utils/continue-learning-next-state.ts
+  5d7fd1fee4f5be2a 2-4,7,14,23
+packages/core/src/progress/_utils/next-lesson-state-helpers.ts
+  36121c8f3b7c1ae4 171-173,182
+  5d7fd1fee4f5be2a 6,29,133,164,176,181,186,218,232
+apps/evals/src/tasks/lesson-quiz/task.ts
+  5d7fd1fee4f5be2a 3-6,9,11-14
+apps/api/src/workflows/lesson-generation/kinds/grammar-workflow.ts
+  36121c8f3b7c1ae4 4-5,7,10-21
+packages/player/src/player-haptics.ts
+  5d7fd1fee4f5be2a 1,18-20,22,29,53
+apps/api/src/workflows/lesson-generation/steps/generate-sentence-distractors-step.ts
+  36121c8f3b7c1ae4 1-2,4-13,19,23,32,40
+packages/core/src/player/commands/_utils/durable-curriculum-completion-queries.ts
+  5d7fd1fee4f5be2a 3,11,16-17,19-20,23,25-28,30,33-34,36,39-40,44-46,52-53,67-68,73-75,103-104,115,117
+packages/db/src/prisma/models/progress.prisma
+  5d7fd1fee4f5be2a 1,5-6,11,14-15
+packages/ai/src/tasks/lessons/core/lesson-explanation.ts
+  5d7fd1fee4f5be2a 6,8,32,34,40,46,52,56,63-64
+packages/player/src/use-lesson-kind-label.ts
+  5d7fd1fee4f5be2a 1,5-7,9,12-14,23
+apps/main/src/app/generate/l/[id]/generation-client.tsx
+  5d7fd1fee4f5be2a 70
+apps/blog/src/app/(post)/2026/future-of-education/page.mdx
+  5d7fd1fee4f5be2a 84
+packages/testing/package.json
+  5d7fd1fee4f5be2a 6
+packages/core/src/player/queries/get-lesson-distractor-words.test.ts
+  36121c8f3b7c1ae4 12,14,106,177,190
+apps/api/src/workflows/lesson-generation/steps/save-reading-lesson-step.ts
+  36121c8f3b7c1ae4 1,3,7-10,12-15,27,29,33-34,38,40-41,43,45-59,62-72,74,78,89-90,92-93,97-98,101-102,106,109,117,119,127-128,132,136,140,148-149
+apps/api/src/workflows/lesson-generation/kinds/practice-workflow.ts
+  36121c8f3b7c1ae4 3-5,7,10-19,21
+apps/evals/src/tasks/lesson-translation/test-cases.ts
+  36121c8f3b7c1ae4 2,4-9,11-14,16-19,21-24,26-36,38,40-42,44-47,49-105,108-109,111,113-121,123,125-127,132-139,141-145,147,149-151,156-168,170,172,174-176,181-182,184-194,196,198-200,205-208,210-218,220,222-224,229-236,238-243,245,247-249,254-265,267,269,271-273,278-279,281-292,294,296-298,303-306,308-316,318,320-322,327-328,330,332-334,336-340,342,344-346,351-354,356-358,360-364,366,368-370,375-382,384-386,388,390,392-394
+apps/admin/src/app/(private)/users/[id]/page.tsx
+  5d7fd1fee4f5be2a 21,93
+packages/utils/src/string.ts
+  5d7fd1fee4f5be2a 150
+  36121c8f3b7c1ae4 69-72
+apps/main/src/lib/lessons.ts
+  5d7fd1fee4f5be2a 1,4,8-9,22,25-27,52,62-63,67-68,75,80-81,84-85,88,94-95,98-99,102
+apps/main/e2e/generate-lesson.test.ts
+  36121c8f3b7c1ae4 8,200,204-209,211,235,238-243,245,255-262,281
+apps/main/src/data/courses/_utils/continue-learning-pending-targets.ts
+  5d7fd1fee4f5be2a 14,37,62
+  36121c8f3b7c1ae4 13,63-64
+apps/api/src/workflows/lesson-generation/kinds/quiz-workflow.ts
+  36121c8f3b7c1ae4 3-4,6,9-13,15
+packages/core/src/progress/get-lesson-progress.test.ts
+  5d7fd1fee4f5be2a 4,17,26,32,34-39,45-46,49,51-52,54-55,57-61,65,67-68,70-71,73-76,81-83,86,99,115-119,121-125,130,132
+apps/api/src/workflows/lesson-preload/lesson-preload-workflow.ts
+  36121c8f3b7c1ae4 6
+packages/ai/src/tasks/courses/language-course-chapters.prompt.md
+  5d7fd1fee4f5be2a 30,51,91
+packages/core/src/player/commands/submit-lesson-completion.ts
+  5d7fd1fee4f5be2a 12,14,61,65,74-75,82
+apps/admin/src/data/stats/ai/_utils/ai-cost-estimate-helpers.ts
+  36121c8f3b7c1ae4 7-8
+packages/core/src/progress/get-chapter-progress.test.ts
+  5d7fd1fee4f5be2a 5,40,52,65-67,72-73,80,83,89,91,94,99,123,139,142,154,175,178,187,215,218,246,271,299,302,325
+apps/evals/src/tasks/lesson-vocabulary/test-cases.ts
+  36121c8f3b7c1ae4 1-216
+apps/main/e2e/course-progress.test.ts
+  5d7fd1fee4f5be2a 5
+  36121c8f3b7c1ae4 9-11,13,54-98,105,110-112,114,152-153,155-169,173-174,190,192,200,207,209-210,228,230-231,241,245,249-251
+packages/player/src/use-player-haptics.ts
+  5d7fd1fee4f5be2a 14,30
+packages/core/src/player/queries/get-lesson-distractor-words.ts
+  5d7fd1fee4f5be2a 1-3,6,13,16-49,58
+  36121c8f3b7c1ae4 4-5,7-12,14-15,50-57
+apps/api/src/lib/openapi/schemas/workflows.ts
+  36121c8f3b7c1ae4 19
+packages/player/src/_test-utils/player-test-data.ts
+  5d7fd1fee4f5be2a 2,6,70-71,73,76,83
+packages/player/src/player-selectors.ts
+  5d7fd1fee4f5be2a 2,15
+apps/main/src/data/courses/get-continue-learning.test.ts
+  36121c8f3b7c1ae4 490
+  5d7fd1fee4f5be2a 5,11,24-26,32-33,41,66,70,72,75,85,90,107,120-121,124,129,132,135-139,154,157,164-165,170,173,176,179,197,205,208,223,226,229,232,235,269,285,288,304,331,345,348,357,367,370,373,376,379,407-409,415-416,424,427,436,441,472,475,530,533,579,582
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/step-image-edit.tsx
+  36121c8f3b7c1ae4 13,22
+packages/core/src/player/queries/get-lesson.test.ts
+  5d7fd1fee4f5be2a 10,12,38,45,52,58,64-65,68-70,76,85,90-92,100,106,112,118-119,126-128,146,151,162-164,182,187,198,219,225,231,236,256,260
+apps/api/src/workflows/lesson-generation/steps/generate-quiz-images-step.ts
+  36121c8f3b7c1ae4 1-2,4-6,8-9,16,19,22,24-28,38,41-47,50,53-57,59-63
+packages/player/src/components/step-renderer.tsx
+  5d7fd1fee4f5be2a 4
+apps/admin/src/data/review/get-next-review-item.ts
+  5d7fd1fee4f5be2a 53,101
+apps/main/src/data/courses/get-continue-learning.ts
+  36121c8f3b7c1ae4 144-146,167,191,221
+  5d7fd1fee4f5be2a 2,4,21-22,25-32,34-37,47,56,77,97-98,107,114,126-127,155,166,208-209,212,215,220,253
+packages/ai/src/tasks/lessons/language/lesson-grammar-content.ts
+  5d7fd1fee4f5be2a 8,10,29,31,44,50,60
+apps/api/src/workflows/course-generation/course-generation-workflow.test.ts
+  36121c8f3b7c1ae4 77-78,84-85,92-93,261
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/step-select-image-edit.tsx
+  36121c8f3b7c1ae4 48,55
+apps/api/src/workflows/_shared/stream-status.ts
+  5d7fd1fee4f5be2a 39
+apps/api/src/workflows/lesson-generation/steps/generate-vocabulary-distractors-step.ts
+  36121c8f3b7c1ae4 1-3,5-13,16,20,28,33
+apps/api/src/workflows/lesson-generation/kinds/reading-workflow.ts
+  36121c8f3b7c1ae4 9-10,12-15,20-21,25,28-49,51-61
+packages/core/src/player/queries/get-lesson.ts
+  5d7fd1fee4f5be2a 2,5-6,14-15,20-21
+apps/admin/src/app/(private)/review/_components/content/step-image-review.tsx
+  36121c8f3b7c1ae4 20,30
+packages/db/src/prisma/models/accounts.prisma
+  5d7fd1fee4f5be2a 25
+packages/ai/src/tasks/lessons/language/lesson-romanization.prompt.md
+  5d7fd1fee4f5be2a 3,7,9,11,13-22,24,26,28,30,32,34-36,38,40-42,44,46,48,50,52,54,56,58-61,63,65,67-71,73,75-77,79,81-83,85,87,89-93
+packages/ai/src/tasks/lessons/language/lesson-translation.ts
+  5d7fd1fee4f5be2a 7,9,30
+apps/admin/src/data/stats/ai/_utils/build-ai-lesson-cost-estimates.ts
+  5d7fd1fee4f5be2a 22-23,35,39,43,47,51,55,62,68,74,87,93,99,116,120,147,162
+packages/core/src/player/contracts/build-word-bank-options.ts
+  5d7fd1fee4f5be2a 8,160
+apps/api/e2e/next-lesson.test.ts
+  5d7fd1fee4f5be2a 6,17-18,27,39,49,57,60,82,84,95,105,143,145,156,200,202,213,219,224,232,235,240
+packages/core/src/progress/get-next-lesson.test.ts
+  5d7fd1fee4f5be2a 4,8,10-16,20,23-32,41-61,64-72,76-78,81-83,86-94,98-100,102-106,110-120,122,124-126,129-130,132,135-136,138,144-155,158-160,162-166,169-180,182,184-186,188-192,196-207
+apps/api/src/workflows/lesson-generation/steps/get-lesson-step.ts
+  36121c8f3b7c1ae4 9-10
+packages/player/src/player-controller.test.ts
+  5d7fd1fee4f5be2a 1,29-30,107
+packages/player/src/player-step-behavior.ts
+  5d7fd1fee4f5be2a 1
+packages/ai/src/tasks/metadata.ts
+  5d7fd1fee4f5be2a 51-67,69,71-75,77,79-95
+packages/core/src/player/commands/start-lesson.ts
+  36121c8f3b7c1ae4 5-14,21-31
+  5d7fd1fee4f5be2a 15,20
+apps/api/src/workflows/lesson-generation/steps/generate-reading-content-step.ts
+  36121c8f3b7c1ae4 1-79
+packages/db/src/index.ts
+  5d7fd1fee4f5be2a 34
+packages/player/src/components/stage-content.tsx
+  5d7fd1fee4f5be2a 1,73,85
+packages/ai/src/tasks/chapters/language-chapter-lessons.prompt.md
+  36121c8f3b7c1ae4 3,5,22,24,26,28,30-32,34,36,38-44,46,48,50-54,56,58-64,66,68,70-72,74,76-78,80,82,84-89,95-97
+apps/api/src/workflows/lesson-generation/steps/generate-reading-audio-step.ts
+  36121c8f3b7c1ae4 1-2,6-15,18,22-23,25-27,29-30,37,42,50,54,56-61
+apps/api/src/workflows/lesson-generation/steps/_utils/generated-lesson-content.ts
+  5d7fd1fee4f5be2a 1-66
+apps/api/src/workflows/lesson-generation/steps/_utils/generate-direct-distractors.ts
+  36121c8f3b7c1ae4 1-2,5-21,23-34,36,40
+apps/admin/src/app/(private)/stats/ai/ai-estimate-dashboard.tsx
+  5d7fd1fee4f5be2a 15
+packages/db/src/prisma/enums.prisma
+  5d7fd1fee4f5be2a 10,14-15
+apps/main/e2e/lesson-detail.test.ts
+  5d7fd1fee4f5be2a 6,9-12,20-21,28-29,35,39-60,62,67-69,73-74,77-80,84,86-87,89,92-95,99-101,103-105,108,110,114-115,121-122,124,126-127,129-130,135-136,140-142,146,148-149,154,158-159,163-165,169,172,174,180,187,192,194,199
+  36121c8f3b7c1ae4 65-66,71,82,88,97,133,139,144,151,155,157,162,167,197
+packages/db/src/prisma/seed/chapters.ts
+  5d7fd1fee4f5be2a 124
+packages/core/src/player/queries/get-next-lesson.test.ts
+  5d7fd1fee4f5be2a 64,69,74,78,114,164,195,225,229,255-256,280,286
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-player-client.tsx
+  36121c8f3b7c1ae4 1,3-14,16,18-26,28,30,32-50,52-61,63-66,68-95
+packages/core/src/lessons/find-last-completed.test.ts
+  5d7fd1fee4f5be2a 4,35,64,67,76,87-89,95-96,105,108,111,114,127-129,134,145-147,153-154,165,168,171,174,181,209,224,227,230,233,274,289,292,295,298,337,352,355,358,361,391,401,406,409,412,415,424,429,440-442,448-449,458,461,464,467,474,505,508,511,514,551,566,569,572,575,612,615
+packages/ai/src/tasks/lessons/language/lesson-sentences.ts
+  5d7fd1fee4f5be2a 8,10,23,25,39,51
+apps/api/src/workflows/chapter-generation/steps/add-lessons-step.ts
+  36121c8f3b7c1ae4 6-8,13,20-29,31,34,36
+packages/ui/src/components/dialog.tsx
+  36121c8f3b7c1ae4 13
+packages/player/src/player-haptics.test.ts
+  5d7fd1fee4f5be2a 1
+apps/admin/src/data/stats/get-avg-time-by-lesson-kind.ts
+  5d7fd1fee4f5be2a 5,10-12,14-17
+apps/admin/src/data/stats/ai/_utils/build-ai-course-cost-estimates.ts
+  36121c8f3b7c1ae4 62,117
+apps/api/src/workflows/lesson-generation/steps/generate-sentence-word-metadata-step.ts
+  36121c8f3b7c1ae4 1-3,8-10,12,35-43,55-63,65,71-77,79,82,84,88,91-93,95-96,98-113,115,120-131
+packages/ai/src/tasks/lessons/language/lesson-vocabulary.prompt.md
+  5d7fd1fee4f5be2a 1-167
+apps/main/src/app/(catalog)/my/page.tsx
+  5d7fd1fee4f5be2a 18
+apps/api/src/workflows/lesson-generation/steps/generate-vocabulary-audio-step.ts
+  36121c8f3b7c1ae4 1-2,5-13,16,20,23-25,33,38
+packages/core/src/player/commands/_utils/durable-curriculum-completion-rules.ts
+  36121c8f3b7c1ae4 7,9-10,14-16,46-47
+apps/api/src/workflows/chapter-generation/steps/_utils/lesson-plan-expansion.test.ts
+  5d7fd1fee4f5be2a 2,4,6-12,14-20,22-24,26-36,39-59,61-83,86-88,91-93,96-119,122-145
+apps/api/src/workflows/lesson-generation/steps/generate-vocabulary-pronunciation-step.ts
+  36121c8f3b7c1ae4 1-2,4-12,15,19,23-25,30
+apps/main/src/app/(catalog)/(home)/continue-learning-card.tsx
+  5d7fd1fee4f5be2a 30-31,33
+  36121c8f3b7c1ae4 53
+packages/core/src/player/contracts/_utils/lesson-data-mappers.test.ts
+  5d7fd1fee4f5be2a 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "468377fc6c0ffb4a223206074c369ba96c707c65",
+  "prompts": {
+    "36121c8f3b7c1ae4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dd4b7-fb4f-7fb2-a9af-80c1e0075446",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 7816,
+      "total_deletions": 31385,
+      "accepted_lines": 7468,
+      "overriden_lines": 0
+    },
+    "5d7fd1fee4f5be2a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dd31b-10a6-7f82-9f76-32574afa497f",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 24829,
+      "total_deletions": 12079,
+      "accepted_lines": 14693,
+      "overriden_lines": 2
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
