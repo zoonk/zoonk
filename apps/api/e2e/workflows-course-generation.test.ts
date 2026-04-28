@@ -4,6 +4,25 @@ import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 
+/**
+ * Creates a valid suggestion that will not drive the real generation pipeline.
+ * Pending suggestions enqueue AI/database work in the background, which makes
+ * route-contract tests noisy when they only need to prove the API starts a
+ * workflow and exposes its status stream. A completed suggestion exercises the
+ * same route path while making the workflow finish after its completion event.
+ */
+async function createCompletedCourseSuggestion({ slug, title }: { slug: string; title: string }) {
+  return prisma.courseSuggestion.create({
+    data: {
+      description: `E2E test course description for ${title}`,
+      generationStatus: "completed",
+      language: "en",
+      slug,
+      title,
+    },
+  });
+}
+
 test.describe("Course Generation Workflow API", () => {
   let baseURL: string;
 
@@ -67,15 +86,9 @@ test.describe("Course Generation Workflow API", () => {
 
   test("starts workflow for valid course suggestion", async () => {
     const uniqueId = randomUUID().slice(0, 8);
-
-    // Create a course suggestion
-    const suggestion = await prisma.courseSuggestion.create({
-      data: {
-        description: `E2E test course description ${uniqueId}`,
-        language: "en",
-        slug: `e2e-workflow-test-${uniqueId}`,
-        title: `E2E Workflow Test ${uniqueId}`,
-      },
+    const suggestion = await createCompletedCourseSuggestion({
+      slug: `e2e-workflow-test-${uniqueId}`,
+      title: `E2E Workflow Test ${uniqueId}`,
     });
 
     const apiContext = await request.newContext({ baseURL });
@@ -91,8 +104,6 @@ test.describe("Course Generation Workflow API", () => {
     expect(body.runId).toBeDefined();
     expect(typeof body.runId).toBe("string");
 
-    // Cleanup
-    await prisma.courseSuggestion.delete({ where: { id: suggestion.id } });
     await apiContext.dispose();
   });
 
@@ -112,15 +123,9 @@ test.describe("Course Generation Workflow API", () => {
 
   test("returns SSE stream for valid runId", async () => {
     const uniqueId = randomUUID().slice(0, 8);
-
-    // Create a course suggestion
-    const suggestion = await prisma.courseSuggestion.create({
-      data: {
-        description: `E2E test course description ${uniqueId}`,
-        language: "en",
-        slug: `e2e-status-test-${uniqueId}`,
-        title: `E2E Status Test ${uniqueId}`,
-      },
+    const suggestion = await createCompletedCourseSuggestion({
+      slug: `e2e-status-test-${uniqueId}`,
+      title: `E2E Status Test ${uniqueId}`,
     });
 
     const apiContext = await request.newContext({ baseURL });
@@ -133,32 +138,16 @@ test.describe("Course Generation Workflow API", () => {
     const triggerBody = await triggerResponse.json();
     const runId = triggerBody.runId;
 
-    // Use fetch with AbortController to test SSE headers without waiting for stream completion
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    const response = await fetch(
+      `${baseURL}/v1/workflows/course-generation/status?runId=${runId}`,
+      {
+        method: "HEAD",
+      },
+    );
 
-    try {
-      const response = await fetch(
-        `${baseURL}/v1/workflows/course-generation/status?runId=${runId}`,
-        {
-          signal: controller.signal,
-        },
-      );
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toBe("text/event-stream");
 
-      expect(response.status).toBe(200);
-      expect(response.headers.get("content-type")).toBe("text/event-stream");
-    } catch (error) {
-      // AbortError is expected when we abort the stream early
-      if (error instanceof Error && error.name !== "AbortError") {
-        throw error;
-      }
-    } finally {
-      clearTimeout(timeoutId);
-      controller.abort();
-    }
-
-    // Cleanup - delete suggestion (workflow will fail but that's okay for this test)
-    await prisma.courseSuggestion.delete({ where: { id: suggestion.id } });
     await apiContext.dispose();
   });
 });
