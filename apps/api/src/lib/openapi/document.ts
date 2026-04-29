@@ -7,8 +7,6 @@ import {
   chapterCompletionResponseSchema,
   courseCompletionQuerySchema,
   courseCompletionResponseSchema,
-  lessonCompletionQuerySchema,
-  lessonCompletionResponseSchema,
   nextLessonQuerySchema,
   nextLessonResponseSchema,
 } from "./schemas/progress";
@@ -102,24 +100,6 @@ export const openAPIDocument = createDocument({
           "400": validationErrorResponse,
         },
         summary: "Get chapter completion for a course",
-        tags: ["Progress"],
-      },
-    },
-    "/progress/lesson-completion": {
-      get: {
-        requestParams: { query: lessonCompletionQuerySchema },
-        responses: {
-          "200": {
-            content: {
-              "application/json": {
-                schema: lessonCompletionResponseSchema,
-              },
-            },
-            description: "Completed lesson IDs for a lesson",
-          },
-          "400": validationErrorResponse,
-        },
-        summary: "Get completed lessons for a lesson",
         tags: ["Progress"],
       },
     },

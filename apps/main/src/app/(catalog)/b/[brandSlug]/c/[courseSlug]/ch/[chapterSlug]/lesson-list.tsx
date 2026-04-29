@@ -5,12 +5,12 @@ import {
   CatalogListItem,
   CatalogListItemContent,
   CatalogListItemDescription,
+  CatalogListItemIndicator,
   CatalogListItemPosition,
-  CatalogListItemProgress,
   CatalogListItemTitle,
   CatalogListSearch,
 } from "@/components/catalog/catalog-list";
-import { getChapterLessonProgress } from "@zoonk/core/progress/lessons";
+import { getLessonProgress } from "@zoonk/core/progress/lessons";
 import { type Lesson } from "@zoonk/db";
 import { formatPosition } from "@zoonk/utils/number";
 import { getExtracted } from "next-intl/server";
@@ -33,7 +33,7 @@ export async function LessonList({
   }
 
   const t = await getExtracted();
-  const completionData = await getChapterLessonProgress({ chapterId });
+  const completionData = await getLessonProgress({ chapterId });
   const completionMap = new Map(completionData.map((row) => [row.lessonId, row]));
 
   return (
@@ -43,10 +43,7 @@ export async function LessonList({
         <CatalogListContent>
           {lessons.map((lesson) => {
             const completion = completionMap.get(lesson.id);
-            const isCompleted =
-              completion !== undefined &&
-              completion.totalLessons > 0 &&
-              completion.completedLessons >= completion.totalLessons;
+            const isCompleted = completion?.isCompleted ?? false;
 
             return (
               <CatalogListItem
@@ -64,13 +61,11 @@ export async function LessonList({
                   <CatalogListItemDescription>{lesson.description}</CatalogListItemDescription>
                 </CatalogListItemContent>
 
-                {completion && (
-                  <CatalogListItemProgress
-                    completed={completion.completedLessons}
-                    completedLabel={t("Completed")}
-                    total={completion.totalLessons}
-                  />
-                )}
+                <CatalogListItemIndicator
+                  completed={isCompleted}
+                  completedLabel={t("Completed")}
+                  notCompletedLabel={t("Not completed")}
+                />
               </CatalogListItem>
             );
           })}

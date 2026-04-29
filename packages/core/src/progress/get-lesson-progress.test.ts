@@ -14,17 +14,10 @@ describe(getLessonProgress, () => {
     organization = await organizationFixture();
   });
 
-  async function createPublishedLesson() {
+  async function createPublishedChapter() {
     const course = await courseFixture({ isPublished: true, organizationId: organization.id });
-    const chapter = await chapterFixture({
+    return chapterFixture({
       courseId: course.id,
-      isPublished: true,
-      organizationId: organization.id,
-      position: 0,
-    });
-
-    return lessonFixture({
-      chapterId: chapter.id,
       isPublished: true,
       organizationId: organization.id,
       position: 0,
@@ -32,71 +25,19 @@ describe(getLessonProgress, () => {
   }
 
   test("returns empty array when unauthenticated", async () => {
-    const lesson = await createPublishedLesson();
+    const chapter = await createPublishedChapter();
 
     const result = await getLessonProgress({
+      chapterId: chapter.id,
       headers: new Headers(),
-      lessonId: lesson.id,
     });
 
     expect(result).toEqual([]);
   });
 
-  test("returns empty array when user has no progress", async () => {
-    const [user, lesson] = await Promise.all([userFixture(), createPublishedLesson()]);
-
-    const headers = await signInAs(user.email, user.password);
-    const result = await getLessonProgress({ headers, lessonId: lesson.id });
-
-    expect(result).toEqual([]);
-  });
-
-  test("returns completed lesson ID", async () => {
-    const [user, lesson] = await Promise.all([userFixture(), createPublishedLesson()]);
-
-    await lessonProgressFixture({
-      completedAt: new Date(),
-      durationSeconds: 60,
-      lessonId: lesson.id,
-      userId: user.id,
-    });
-
-    const headers = await signInAs(user.email, user.password);
-    const result = await getLessonProgress({ headers, lessonId: lesson.id });
-
-    expect(result).toEqual([lesson.id]);
-  });
-
-  test("excludes started-but-not-completed lessons", async () => {
-    const [user, lesson] = await Promise.all([userFixture(), createPublishedLesson()]);
-
-    await lessonProgressFixture({
-      completedAt: null,
-      durationSeconds: 30,
-      lessonId: lesson.id,
-      userId: user.id,
-    });
-
-    const headers = await signInAs(user.email, user.password);
-    const result = await getLessonProgress({ headers, lessonId: lesson.id });
-
-    expect(result).toEqual([]);
-  });
-
-  test("only returns the specified completed lesson", async () => {
-    const [user, course] = await Promise.all([
-      userFixture(),
-      courseFixture({ isPublished: true, organizationId: organization.id }),
-    ]);
-
-    const chapter = await chapterFixture({
-      courseId: course.id,
-      isPublished: true,
-      organizationId: organization.id,
-      position: 0,
-    });
-
-    const [lesson1, lesson2] = await Promise.all([
+  test("returns completion rows for published lessons in the chapter", async () => {
+    const [user, chapter] = await Promise.all([userFixture(), createPublishedChapter()]);
+    const [completedLesson, pendingLesson] = await Promise.all([
       lessonFixture({
         chapterId: chapter.id,
         isPublished: true,
@@ -111,24 +52,111 @@ describe(getLessonProgress, () => {
       }),
     ]);
 
+    await lessonProgressFixture({
+      completedAt: new Date(),
+      durationSeconds: 60,
+      lessonId: completedLesson.id,
+      userId: user.id,
+    });
+
+    const headers = await signInAs(user.email, user.password);
+    const result = await getLessonProgress({ chapterId: chapter.id, headers });
+
+    expect(result).toEqual([
+      { isCompleted: true, lessonId: completedLesson.id },
+      { isCompleted: false, lessonId: pendingLesson.id },
+    ]);
+  });
+
+  test("excludes started-but-not-completed lessons", async () => {
+    const [user, chapter] = await Promise.all([userFixture(), createPublishedChapter()]);
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    await lessonProgressFixture({
+      completedAt: null,
+      durationSeconds: 30,
+      lessonId: lesson.id,
+      userId: user.id,
+    });
+
+    const headers = await signInAs(user.email, user.password);
+    const result = await getLessonProgress({ chapterId: chapter.id, headers });
+
+    expect(result).toEqual([{ isCompleted: false, lessonId: lesson.id }]);
+  });
+
+  test("excludes unpublished lessons", async () => {
+    const [user, chapter] = await Promise.all([userFixture(), createPublishedChapter()]);
+    const [publishedLesson, unpublishedLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: false,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
+
     await Promise.all([
       lessonProgressFixture({
         completedAt: new Date(),
         durationSeconds: 60,
-        lessonId: lesson1.id,
+        lessonId: publishedLesson.id,
         userId: user.id,
       }),
       lessonProgressFixture({
         completedAt: new Date(),
         durationSeconds: 60,
-        lessonId: lesson2.id,
+        lessonId: unpublishedLesson.id,
         userId: user.id,
       }),
     ]);
 
     const headers = await signInAs(user.email, user.password);
-    const result = await getLessonProgress({ headers, lessonId: lesson1.id });
+    const result = await getLessonProgress({ chapterId: chapter.id, headers });
 
-    expect(result).toEqual([lesson1.id]);
+    expect(result).toEqual([{ isCompleted: true, lessonId: publishedLesson.id }]);
+  });
+
+  test("keeps a completed lesson completed when a new lesson is added later", async () => {
+    const [user, chapter] = await Promise.all([userFixture(), createPublishedChapter()]);
+    const completedLesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    await lessonProgressFixture({
+      completedAt: new Date(),
+      durationSeconds: 60,
+      lessonId: completedLesson.id,
+      userId: user.id,
+    });
+
+    const newLesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 1,
+    });
+
+    const headers = await signInAs(user.email, user.password);
+    const result = await getLessonProgress({ chapterId: chapter.id, headers });
+
+    expect(result).toEqual([
+      { isCompleted: true, lessonId: completedLesson.id },
+      { isCompleted: false, lessonId: newLesson.id },
+    ]);
   });
 });

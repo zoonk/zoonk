@@ -738,6 +738,11 @@ msgid "Chapter {position}"
 msgstr "Capítulo {position}"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+msgctxt "4o5CAP"
+msgid "Not completed"
+msgstr "Não concluído"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgctxt "FuT9vz"
 msgid "No lessons found"
 msgstr "Nenhuma aula encontrada"

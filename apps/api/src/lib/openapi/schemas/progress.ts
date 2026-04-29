@@ -2,20 +2,6 @@ import { z } from "zod";
 
 const uuidQuery = (description: string) => z.uuid().meta({ description });
 
-export const lessonCompletionQuerySchema = z
-  .object({
-    lessonId: uuidQuery("Lesson ID"),
-  })
-  .meta({ id: "LessonCompletionQuery" });
-
-export const lessonCompletionResponseSchema = z
-  .object({
-    completedLessonIds: z
-      .array(z.string())
-      .meta({ description: "IDs of completed lessons in the lesson" }),
-  })
-  .meta({ id: "LessonCompletionResponse" });
-
 export const courseCompletionQuerySchema = z
   .object({
     courseId: uuidQuery("Course ID"),
@@ -47,9 +33,8 @@ export const chapterCompletionResponseSchema = z
     lessons: z
       .array(
         z.object({
-          completedLessons: z.number().meta({ description: "Number of completed lessons" }),
+          isCompleted: z.boolean().meta({ description: "Whether the lesson is completed" }),
           lessonId: z.string().meta({ description: "Lesson ID" }),
-          totalLessons: z.number().meta({ description: "Total number of lessons" }),
         }),
       )
       .meta({ description: "Completion status per lesson" }),

@@ -165,7 +165,7 @@ export function CatalogListItemPosition({ className, ...props }: React.Component
   );
 }
 
-function CatalogListItemIndicator({
+export function CatalogListItemIndicator({
   className,
   completed,
   completedLabel,
