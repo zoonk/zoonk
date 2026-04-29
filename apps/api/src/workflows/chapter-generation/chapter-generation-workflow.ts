@@ -5,13 +5,15 @@ import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-g
 import { CHAPTER_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata } from "workflow";
 import { addLessonsStep } from "./steps/add-lessons-step";
+import { classifyLessonsStep } from "./steps/classify-lessons-step";
 import { generateLessonsStep } from "./steps/generate-lessons-step";
 import { getChapterStep } from "./steps/get-chapter-step";
 import { setChapterAsCompletedStep } from "./steps/set-chapter-as-completed-step";
 import { setChapterAsRunningStep } from "./steps/set-chapter-as-running-step";
 
 async function generateAndAddLessons(context: Awaited<ReturnType<typeof getChapterStep>>) {
-  const lessons = await generateLessonsStep(context);
+  const plan = await generateLessonsStep(context);
+  const lessons = await classifyLessonsStep({ context, plan });
   return addLessonsStep({ context, lessons });
 }
 

@@ -4,60 +4,21 @@ import {
   generateLanguageChapterLessons,
 } from "@zoonk/ai/tasks/chapters/language-lessons";
 import { type ChapterLesson, generateChapterLessons } from "@zoonk/ai/tasks/chapters/lessons";
-import { type LessonKindSchema, generateLessonKind } from "@zoonk/ai/tasks/lessons/kind";
 import { type ChapterStepName } from "@zoonk/core/workflows/steps";
 import { safeAsync } from "@zoonk/utils/error";
 import { type ChapterContext } from "./get-chapter-step";
 
-type ClassifiedChapterLesson = ChapterLesson & { kind: LessonKindSchema["kind"] };
+export type ChapterLessonPlan =
+  | {
+      lessons: ChapterLesson[];
+      needsClassification: true;
+    }
+  | {
+      lessons: LanguageChapterLesson[];
+      needsClassification: false;
+    };
 
-export type GeneratedChapterLesson = ClassifiedChapterLesson | LanguageChapterLesson;
-
-/**
- * Lesson planning and lesson-kind classification are separate AI decisions so
- * the planner can focus on curriculum boundaries and the classifier can focus
- * on one lesson's learning approach. The calls run in parallel so every lesson
- * gets the same focused classification without adding serial latency.
- */
-function classifyChapterLessons({
-  context,
-  lessons,
-}: {
-  context: ChapterContext;
-  lessons: ChapterLesson[];
-}): Promise<ClassifiedChapterLesson[]> {
-  return Promise.all(lessons.map((lesson) => classifyChapterLesson({ context, lesson })));
-}
-
-/**
- * The lesson generation workflow depends on every planned non-language lesson
- * having one kind before it is saved, because downstream lesson generation uses
- * that kind to choose the correct content workflow.
- */
-async function classifyChapterLesson({
-  context,
-  lesson,
-}: {
-  context: ChapterContext;
-  lesson: ChapterLesson;
-}): Promise<ClassifiedChapterLesson> {
-  const result = await generateLessonKind({
-    chapterTitle: context.title,
-    courseTitle: context.course.title,
-    language: context.language,
-    lessonDescription: lesson.description,
-    lessonTitle: lesson.title,
-  });
-
-  return {
-    ...lesson,
-    kind: result.data.kind,
-  };
-}
-
-export async function generateLessonsStep(
-  context: ChapterContext,
-): Promise<GeneratedChapterLesson[]> {
+export async function generateLessonsStep(context: ChapterContext): Promise<ChapterLessonPlan> {
   "use step";
 
   await using stream = createStepStream<ChapterStepName>();
@@ -80,12 +41,11 @@ export async function generateLessonsStep(
     }
 
     await stream.status({ status: "completed", step: "generateLessons" });
-    await stream.status({ status: "completed", step: "generateLessonKind" });
 
-    return result.data.lessons;
+    return { lessons: result.data.lessons, needsClassification: false };
   }
 
-  const { data: plannedLessons, error: planningError } = await safeAsync(() =>
+  const { data: result, error } = await safeAsync(() =>
     generateChapterLessons({
       chapterDescription: context.description,
       chapterTitle: context.title,
@@ -95,22 +55,11 @@ export async function generateLessonsStep(
     }),
   );
 
-  if (planningError) {
-    throw planningError;
+  if (error) {
+    throw error;
   }
 
   await stream.status({ status: "completed", step: "generateLessons" });
-  await stream.status({ status: "started", step: "generateLessonKind" });
 
-  const { data: classifiedLessons, error: kindError } = await safeAsync(() =>
-    classifyChapterLessons({ context, lessons: plannedLessons.data.lessons }),
-  );
-
-  if (kindError) {
-    throw kindError;
-  }
-
-  await stream.status({ status: "completed", step: "generateLessonKind" });
-
-  return classifiedLessons;
+  return { lessons: result.data.lessons, needsClassification: true };
 }
