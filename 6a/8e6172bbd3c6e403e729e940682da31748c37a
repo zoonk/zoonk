@@ -1,0 +1,126 @@
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
+  h_1cda88fc21fe9c 2,94-95,129-130
+packages/core/src/progress/_utils/published-lesson-progress.ts
+  36121c8f3b7c1ae4 14,32
+apps/main/e2e/lesson-completion.test.ts
+  36121c8f3b7c1ae4 429,438,441,450,478,484
+apps/main/src/data/courses/get-continue-learning.ts
+  36121c8f3b7c1ae4 26,36,183
+apps/main/e2e/lesson-detail.test.ts
+  36121c8f3b7c1ae4 32,41,63,164,170
+packages/db/src/prisma/models/lessons.prisma
+  h_1cda88fc21fe9c 12-14
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/step-select-image-edit.tsx
+  36121c8f3b7c1ae4 3-4,50,53-54,59
+apps/admin/src/app/(private)/review/_components/content/step-select-image-review.tsx
+  36121c8f3b7c1ae4 1,3,13,17,23
+apps/api/src/workflows/chapter-generation/steps/add-lessons-step.test.ts
+  36121c8f3b7c1ae4 116-117,119-120,171-176
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-player-model.ts
+  36121c8f3b7c1ae4 12
+apps/api/src/workflows/lesson-generation/steps/generate-grammar-content-step.ts
+  36121c8f3b7c1ae4 28-29
+apps/main/messages/es.po
+  36121c8f3b7c1ae4 2538-2541,2552-2566,2572-2581,2587-2591,2597-2606,2612-2616,2632-2636,2642-2646,2666-2670
+apps/api/src/workflows/lesson-generation/steps/generate-practice-content-step.ts
+  36121c8f3b7c1ae4 34-35
+apps/main/messages/en.po
+  36121c8f3b7c1ae4 2538-2541,2552-2566,2572-2581,2587-2591,2597-2606,2612-2616,2632-2636,2642-2646,2666-2670
+apps/admin/src/data/review/get-review-item.ts
+  36121c8f3b7c1ae4 30
+apps/main/e2e/generate-lesson.test.ts
+  36121c8f3b7c1ae4 345,351,354,366
+apps/api/src/workflows/chapter-generation/steps/_utils/lesson-plan-expansion.test.ts
+  36121c8f3b7c1ae4 88-108
+packages/core/src/lessons/get-next-lesson-in-course.ts
+  36121c8f3b7c1ae4 13
+apps/admin/src/app/(private)/review/_components/content/step-image-review.tsx
+  36121c8f3b7c1ae4 1-2,22,27,33
+apps/main/src/app/generate/l/[id]/generate-lesson-content.tsx
+  36121c8f3b7c1ae4 5,32,52-53
+apps/api/src/workflows/lesson-generation/steps/generate-image-prompts-step.ts
+  36121c8f3b7c1ae4 28-29
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-player-client.tsx
+  36121c8f3b7c1ae4 46
+apps/api/src/workflows/chapter-generation/steps/add-lessons-step.ts
+  36121c8f3b7c1ae4 10-26,42-62
+apps/api/src/workflows/lesson-generation/steps/_utils/explanation-source-steps.ts
+  36121c8f3b7c1ae4 10-17,28
+packages/db/src/prisma/enums.prisma
+  h_1cda88fc21fe9c 9,14-15,17,19
+apps/api/src/workflows/lesson-generation/steps/generate-quiz-content-step.ts
+  36121c8f3b7c1ae4 32-33
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/step-image-edit.tsx
+  36121c8f3b7c1ae4 3-4,15,19,25
+apps/api/src/workflows/lesson-generation/steps/generate-vocabulary-content-step.ts
+  36121c8f3b7c1ae4 32-33
+apps/api/src/workflows/lesson-generation/steps/generate-grammar-user-content-step.ts
+  36121c8f3b7c1ae4 38-39
+packages/core/src/player/queries/get-next-sibling.ts
+  h_1cda88fc21fe9c 3,6,29,31,33,82
+apps/main/src/app/(catalog)/(home)/continue-learning.tsx
+  36121c8f3b7c1ae4 62
+apps/api/src/workflows/chapter-generation/steps/_utils/lesson-plan-expansion.ts
+  36121c8f3b7c1ae4 5,7,11,13,25-36,38-49,128,147-149,160-161,182-183,185-186,240-241,246-247,263,266,272
+apps/api/src/workflows/lesson-generation/steps/generate-reading-content-step.ts
+  36121c8f3b7c1ae4 64-65
+apps/api/src/workflows/lesson-generation/steps/generate-tutorial-content-step.ts
+  36121c8f3b7c1ae4 22-23
+apps/admin/src/lib/lesson-label.ts
+  36121c8f3b7c1ae4 1-34
+apps/main/messages/pt.po
+  36121c8f3b7c1ae4 2538-2541,2552-2566,2572-2581,2587-2591,2597-2606,2612-2616,2632-2636,2642-2646,2666-2670
+packages/db/src/prisma/migrations/20260429205752_optional_lesson_copy/migration.sql
+  36121c8f3b7c1ae4 1-4
+apps/main/src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+  h_1cda88fc21fe9c 13,19-36,57-62,66,69,84,86
+apps/main/src/app/(catalog)/(home)/continue-learning-card.tsx
+  h_1cda88fc21fe9c 2,24-30,37,66,68-69,112,122
+apps/main/src/data/courses/_utils/continue-learning-pending-targets.ts
+  36121c8f3b7c1ae4 8,85
+apps/main/src/lib/lessons.ts
+  36121c8f3b7c1ae4 4-15,18-35,38-48,52-94,139,141-143
+  5d7fd1fee4f5be2a 36,95-96
+apps/api/src/workflows/lesson-generation/steps/generate-explanation-content-step.ts
+  36121c8f3b7c1ae4 24-25
+packages/core/src/progress/get-next-lesson-state.ts
+  36121c8f3b7c1ae4 30,39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "6a8e6172bbd3c6e403e729e940682da31748c37a",
+  "prompts": {
+    "36121c8f3b7c1ae4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dd4b7-fb4f-7fb2-a9af-80c1e0075446",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 641,
+      "total_deletions": 337,
+      "accepted_lines": 3742,
+      "overriden_lines": 32
+    },
+    "5d7fd1fee4f5be2a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dd31b-10a6-7f82-9f76-32574afa497f",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 10024,
+      "overriden_lines": 4
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
