@@ -8,15 +8,8 @@ export async function practiceLessonWorkflow(context: LessonContext): Promise<vo
   "use workflow";
 
   const content = await generatePracticeContentStep(context);
-  const prompts = getPracticeImagePrompts({
-    scenario: content.scenario,
-    steps: content.steps,
-  });
-  const { images } = await generateStepImagesStep({
-    context,
-    preset: "practice",
-    prompts,
-  });
+  const prompts = getPracticeImagePrompts({ scenario: content.scenario, steps: content.steps });
+  const { images } = await generateStepImagesStep({ context, preset: "practice", prompts });
 
   await savePracticeLessonStep({ content, context, images });
 }

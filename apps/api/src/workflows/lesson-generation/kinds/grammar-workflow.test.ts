@@ -68,6 +68,7 @@ describe(grammarLessonWorkflow, () => {
 
     expect(generateLessonGrammarContent).toHaveBeenCalledOnce();
     expect(generateLessonGrammarUserContent).toHaveBeenCalledOnce();
+
     expect(generateLessonRomanization).toHaveBeenCalledWith(
       expect.objectContaining({
         texts: expect.arrayContaining(["猫がいます", "猫", "犬"]),
@@ -85,6 +86,7 @@ describe(grammarLessonWorkflow, () => {
       [2, "static"],
       [3, "fillBlank"],
     ]);
+
     expect(steps[0]?.content).toEqual({
       highlight: "猫",
       romanization: "猫がいます romanized",
@@ -92,16 +94,19 @@ describe(grammarLessonWorkflow, () => {
       translation: "There is a cat.",
       variant: "grammarExample",
     });
+
     expect(steps[1]?.content).toMatchObject({
       context: "Choose the matching pattern.",
       kind: "core",
       question: "Which sentence matches?",
     });
+
     expect(steps[2]?.content).toEqual({
       ruleName: "Existence",
       ruleSummary: "Use がいます for living things.",
       variant: "grammarRule",
     });
+
     expect(steps[3]?.content).toEqual({
       answers: ["猫"],
       distractors: ["犬"],

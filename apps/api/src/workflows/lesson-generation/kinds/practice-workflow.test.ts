@@ -56,11 +56,7 @@ describe(practiceLessonWorkflow, () => {
   });
 
   test("stores scenario and practice questions from the uncovered explanation steps", async () => {
-    const context = await createLessonContext({
-      kind: "practice",
-      organizationId,
-      position: 2,
-    });
+    const context = await createLessonContext({ kind: "practice", organizationId, position: 2 });
 
     await createCompletedExplanation({
       chapterId: context.chapterId,
@@ -77,12 +73,14 @@ describe(practiceLessonWorkflow, () => {
         explanationSteps: [{ text: "Use the latest explanation.", title: "Latest" }],
       }),
     );
+
     expect(generateContentStepImage).toHaveBeenCalledTimes(2);
 
     const steps = await prisma.step.findMany({
       orderBy: { position: "asc" },
       where: { lessonId: context.id },
     });
+
     const intro = parseStepContent("static", steps[0]?.content);
     const question = parseStepContent("multipleChoice", steps[1]?.content);
 
@@ -90,6 +88,7 @@ describe(practiceLessonWorkflow, () => {
       [0, "static"],
       [1, "multipleChoice"],
     ]);
+
     expect(intro).toEqual({
       image: {
         prompt: "scenario prompt",
@@ -99,6 +98,7 @@ describe(practiceLessonWorkflow, () => {
       title: "Scenario",
       variant: "intro",
     });
+
     expect(question).toMatchObject({
       context: "Question context",
       image: {
@@ -108,6 +108,7 @@ describe(practiceLessonWorkflow, () => {
       kind: "core",
       question: "What now?",
     });
+
     expect(question.options).toEqual([
       expect.objectContaining({
         feedback: "Correct",

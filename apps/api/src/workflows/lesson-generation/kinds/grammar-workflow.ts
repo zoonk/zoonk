@@ -8,6 +8,7 @@ export async function grammarLessonWorkflow(context: LessonContext): Promise<voi
   "use workflow";
 
   const grammarContent = await generateGrammarContentStep(context);
+
   const [userContent, { romanizations }] = await Promise.all([
     generateGrammarUserContentStep({ context, grammarContent }),
     generateGrammarRomanizationStep({ context, grammarContent }),

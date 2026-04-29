@@ -19,12 +19,14 @@ describe(listeningLessonWorkflow, () => {
 
   test("stores listening steps from the previous reading lesson", async () => {
     const uniqueId = randomUUID().slice(0, 8);
+
     const context = await createLessonContext({
       kind: "listening",
       organizationId,
       position: 2,
       targetLanguage: "de",
     });
+
     const readingLesson = await lessonFixture({
       chapterId: context.chapterId,
       generationStatus: "completed",
@@ -33,6 +35,7 @@ describe(listeningLessonWorkflow, () => {
       organizationId,
       position: 1,
     });
+
     const sentence = await sentenceFixture({
       organizationId,
       sentence: `Guten Morgen ${uniqueId}`,
@@ -66,6 +69,7 @@ describe(listeningLessonWorkflow, () => {
     expect(steps.map((step) => [step.position, step.kind, step.sentenceId])).toEqual([
       [0, "listening", sentence.id],
     ]);
+
     expect(steps.map((step) => parseStepContent("listening", step.content))).toEqual([{}]);
   });
 });

@@ -24,10 +24,12 @@ export async function vocabularyLessonWorkflow(context: LessonContext): Promise<
   "use workflow";
 
   const content = await generateVocabularyContentStep(context);
+
   const { distractors } = await generateVocabularyDistractorsStep({
     context,
     words: content.words,
   });
+
   const vocabularyTargetWords = collectVocabularyTargetWords({
     distractors,
     words: content.words,

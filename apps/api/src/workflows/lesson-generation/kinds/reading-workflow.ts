@@ -26,23 +26,28 @@ export async function readingLessonWorkflow(context: LessonContext): Promise<voi
   "use workflow";
 
   const content = await generateReadingContentStep(context);
+
   const [{ sentenceAudioUrls }, { romanizations: sentenceRomanizations }] = await Promise.all([
     generateReadingAudioStep({ context, sentences: content.sentences }),
     generateReadingRomanizationStep({ context, sentences: content.sentences }),
   ]);
+
   const { distractors, translationDistractors } = await generateSentenceDistractorsStep({
     context,
     sentences: content.sentences,
   });
+
   const targetWords = collectReadingTargetWords({
     distractors,
     sentences: content.sentences,
   });
+
   const { wordMetadata } = await generateSentenceWordMetadataStep({
     context,
     sentences: content.sentences,
     targetWords,
   });
+
   const [{ wordAudioUrls }, { pronunciations }] = await Promise.all([
     generateSentenceWordAudioStep({ context, words: targetWords }),
     generateSentenceWordPronunciationStep({ context, words: targetWords }),

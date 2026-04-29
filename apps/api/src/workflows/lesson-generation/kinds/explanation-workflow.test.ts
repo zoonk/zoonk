@@ -48,10 +48,7 @@ describe(explanationLessonWorkflow, () => {
   });
 
   test("stores generated explanation text with generated images", async () => {
-    const context = await createLessonContext({
-      kind: "explanation",
-      organizationId,
-    });
+    const context = await createLessonContext({ kind: "explanation", organizationId });
 
     await explanationLessonWorkflow(context);
 
@@ -63,6 +60,7 @@ describe(explanationLessonWorkflow, () => {
       orderBy: { position: "asc" },
       where: { lessonId: context.id },
     });
+
     const contents = steps.map((step) => parseStepContent("static", step.content));
 
     expect(steps.map((step) => [step.position, step.kind])).toEqual([

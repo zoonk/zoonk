@@ -47,10 +47,7 @@ describe(tutorialLessonWorkflow, () => {
   });
 
   test("stores generated tutorial steps with generated images", async () => {
-    const context = await createLessonContext({
-      kind: "tutorial",
-      organizationId,
-    });
+    const context = await createLessonContext({ kind: "tutorial", organizationId });
 
     await tutorialLessonWorkflow(context);
 
@@ -62,12 +59,14 @@ describe(tutorialLessonWorkflow, () => {
       orderBy: { position: "asc" },
       where: { lessonId: context.id },
     });
+
     const contents = steps.map((step) => parseStepContent("static", step.content));
 
     expect(steps.map((step) => [step.position, step.kind])).toEqual([
       [0, "static"],
       [1, "static"],
     ]);
+
     expect(contents).toEqual([
       {
         image: {

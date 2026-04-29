@@ -87,12 +87,14 @@ describe(readingLessonWorkflow, () => {
     const sourceWords = [`guten${uniqueId}`, `morgen${uniqueId}`];
     const sentence = sourceWords.join(" ");
     const translation = `good morning ${uniqueId}`;
+
     const context = await createLessonContext({
       kind: "reading",
       organizationId,
       position: 2,
       targetLanguage: "de",
     });
+
     const vocabularyLesson = await lessonFixture({
       chapterId: context.chapterId,
       generationStatus: "completed",
@@ -101,6 +103,7 @@ describe(readingLessonWorkflow, () => {
       organizationId,
       position: 1,
     });
+
     const wordRecords = await Promise.all(
       sourceWords.map((word) =>
         wordFixture({
@@ -124,6 +127,7 @@ describe(readingLessonWorkflow, () => {
 
     readingState.sentence = sentence;
     readingState.translation = translation;
+
     readingState.distractors = {
       [sentence]: [`abend-${uniqueId}`, `fenster-${uniqueId}`],
       [translation]: [`hello-${uniqueId}`, `bye-${uniqueId}`],
@@ -134,6 +138,7 @@ describe(readingLessonWorkflow, () => {
     expect(generateLessonSentences).toHaveBeenCalledWith(
       expect.objectContaining({ words: expect.arrayContaining(sourceWords) }),
     );
+
     expect(generateLessonDistractors).toHaveBeenCalledTimes(2);
     expect(generateTranslation).toHaveBeenCalledTimes(sourceWords.length);
     expect(generateLessonPronunciation).toHaveBeenCalledTimes(sourceWords.length + 2);
@@ -142,6 +147,7 @@ describe(readingLessonWorkflow, () => {
     const savedSentence = await prisma.sentence.findFirstOrThrow({
       where: { organizationId, sentence, targetLanguage: "de" },
     });
+
     const [step, lessonSentence, lessonWords] = await Promise.all([
       prisma.step.findFirstOrThrow({ where: { lessonId: context.id, position: 0 } }),
       prisma.lessonSentence.findUniqueOrThrow({
@@ -158,16 +164,19 @@ describe(readingLessonWorkflow, () => {
       audioUrl: `https://example.com/audio/${encodeURIComponent(sentence)}.mp3`,
       sentence,
     });
+
     expect(step).toMatchObject({
       kind: "reading",
       sentenceId: savedSentence.id,
     });
+
     expect(lessonSentence).toMatchObject({
       distractors: [`abend-${uniqueId}`, `fenster-${uniqueId}`],
       explanation: "Greeting sentence.",
       translation,
       translationDistractors: [`hello-${uniqueId}`, `bye-${uniqueId}`],
     });
+
     expect(lessonWords.map((entry) => [entry.word.word, entry.translation])).toEqual([
       [sourceWords[0], `${sourceWords[0]} translated`],
       [sourceWords[1], `${sourceWords[1]} translated`],

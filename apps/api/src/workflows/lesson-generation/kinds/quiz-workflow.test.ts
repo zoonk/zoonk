@@ -49,11 +49,7 @@ describe(quizLessonWorkflow, () => {
   });
 
   test("stores quiz image questions from the uncovered explanation steps", async () => {
-    const context = await createLessonContext({
-      kind: "quiz",
-      organizationId,
-      position: 2,
-    });
+    const context = await createLessonContext({ kind: "quiz", organizationId, position: 2 });
 
     await createCompletedExplanation({
       chapterId: context.chapterId,
@@ -70,16 +66,19 @@ describe(quizLessonWorkflow, () => {
         explanationSteps: [{ text: "Use the quiz explanation.", title: "Quiz Source" }],
       }),
     );
+
     expect(generateStepImage).toHaveBeenCalledTimes(2);
 
     const steps = await prisma.step.findMany({
       orderBy: { position: "asc" },
       where: { lessonId: context.id },
     });
+
     const content = parseStepContent("selectImage", steps[0]?.content);
 
     expect(steps.map((step) => [step.position, step.kind])).toEqual([[0, "selectImage"]]);
     expect(content.question).toBe("Pick one");
+
     expect(content.options).toEqual([
       expect.objectContaining({
         feedback: "Correct",

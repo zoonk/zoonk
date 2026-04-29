@@ -7,10 +7,7 @@ export async function quizLessonWorkflow(context: LessonContext): Promise<void> 
   "use workflow";
 
   const content = await generateQuizContentStep(context);
-  const questions = await generateQuizImagesStep({
-    context,
-    questions: content.questions,
-  });
+  const questions = await generateQuizImagesStep({ context, questions: content.questions });
 
   await saveQuizLessonStep({ context, questions });
 }

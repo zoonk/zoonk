@@ -79,6 +79,7 @@ describe(vocabularyLessonWorkflow, () => {
     const fireWord = `火-${uniqueId}`;
     const earthWord = `土-${uniqueId}`;
     const allWords = [catWord, waterWord, dogWord, birdWord, fireWord, earthWord];
+
     const context = await createLessonContext({
       kind: "vocabulary",
       organizationId,
@@ -99,10 +100,11 @@ describe(vocabularyLessonWorkflow, () => {
     expect(generateLessonVocabulary).toHaveBeenCalledOnce();
     expect(generateLessonDistractors).toHaveBeenCalledTimes(2);
     expect(generateLessonPronunciation).toHaveBeenCalledTimes(allWords.length);
+    expect(generateLanguageAudio).toHaveBeenCalledTimes(allWords.length);
+
     expect(generateLessonRomanization).toHaveBeenCalledWith(
       expect.objectContaining({ texts: allWords }),
     );
-    expect(generateLanguageAudio).toHaveBeenCalledTimes(allWords.length);
 
     const [steps, lessonWords, words] = await Promise.all([
       prisma.step.findMany({
@@ -128,6 +130,7 @@ describe(vocabularyLessonWorkflow, () => {
       [0, "vocabulary"],
       [1, "vocabulary"],
     ]);
+
     expect(
       lessonWords
         .map((entry) => ({
@@ -148,6 +151,7 @@ describe(vocabularyLessonWorkflow, () => {
         word: waterWord,
       },
     ]);
+
     expect(
       words
         .map((entry) => ({

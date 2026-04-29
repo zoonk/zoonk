@@ -31,12 +31,14 @@ async function createContext({
     organizationId,
     title: `Explanation Source Course ${randomUUID()}`,
   });
+
   const chapter = await chapterFixture({
     courseId: course.id,
     isPublished: true,
     organizationId,
     title: `Explanation Source Chapter ${randomUUID()}`,
   });
+
   const lesson = await lessonFixture({
     chapterId: chapter.id,
     generationStatus: "pending",
@@ -153,6 +155,7 @@ describe("explanation source step helpers", () => {
       text: "Old explanation",
       title: "Old",
     });
+
     await lessonFixture({
       chapterId: context.chapterId,
       generationStatus: "completed",
@@ -161,6 +164,7 @@ describe("explanation source step helpers", () => {
       organizationId,
       position: 1,
     });
+
     await createCompletedExplanation({
       chapterId: context.chapterId,
       organizationId,
@@ -168,6 +172,7 @@ describe("explanation source step helpers", () => {
       text: "New explanation",
       title: "New",
     });
+
     await lessonFixture({
       chapterId: context.chapterId,
       generationStatus: "pending",
@@ -193,6 +198,7 @@ describe("explanation source step helpers", () => {
       text: "Already quizzed",
       title: "Old",
     });
+
     await lessonFixture({
       chapterId: context.chapterId,
       generationStatus: "completed",
@@ -201,6 +207,7 @@ describe("explanation source step helpers", () => {
       organizationId,
       position: 1,
     });
+
     await createCompletedExplanation({
       chapterId: context.chapterId,
       organizationId,

@@ -19,12 +19,14 @@ describe(translationLessonWorkflow, () => {
 
   test("stores translation steps from the previous vocabulary lesson", async () => {
     const uniqueId = randomUUID().slice(0, 8);
+
     const context = await createLessonContext({
       kind: "translation",
       organizationId,
       position: 2,
       targetLanguage: "de",
     });
+
     const vocabularyLesson = await lessonFixture({
       chapterId: context.chapterId,
       generationStatus: "completed",
@@ -33,6 +35,7 @@ describe(translationLessonWorkflow, () => {
       organizationId,
       position: 1,
     });
+
     const words = await Promise.all(
       [`guten-${uniqueId}`, `morgen-${uniqueId}`].map((word) =>
         wordFixture({
@@ -73,6 +76,7 @@ describe(translationLessonWorkflow, () => {
       [0, "translation", words[0]?.id],
       [1, "translation", words[1]?.id],
     ]);
+
     expect(steps.map((step) => parseStepContent("translation", step.content))).toEqual([{}, {}]);
   });
 });
