@@ -7,7 +7,6 @@ import { type ChapterLesson, generateChapterLessons } from "@zoonk/ai/tasks/chap
 import { type LessonKindSchema, generateLessonKind } from "@zoonk/ai/tasks/lessons/kind";
 import { type ChapterStepName } from "@zoonk/core/workflows/steps";
 import { safeAsync } from "@zoonk/utils/error";
-import { getLanguageCourseTargetLanguage } from "./_utils/language-course";
 import { type ChapterContext } from "./get-chapter-step";
 
 type ClassifiedChapterLesson = ChapterLesson & { kind: LessonKindSchema["kind"] };
@@ -62,7 +61,7 @@ export async function generateLessonsStep(
   "use step";
 
   await using stream = createStepStream<ChapterStepName>();
-  const targetLanguage = await getLanguageCourseTargetLanguage({ course: context.course });
+  const targetLanguage = context.course.targetLanguage;
 
   await stream.status({ status: "started", step: "generateLessons" });
 

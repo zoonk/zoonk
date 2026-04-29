@@ -3,7 +3,6 @@ import { type ChapterStepName } from "@zoonk/core/workflows/steps";
 import { type Lesson, type LessonCreateManyInput, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { deduplicateSlugs, normalizeString, toSlug } from "@zoonk/utils/string";
-import { getLanguageCourseTargetLanguage } from "./_utils/language-course";
 import { expandChapterLessons } from "./_utils/lesson-plan-expansion";
 import { type GeneratedChapterLesson } from "./generate-lessons-step";
 import { type ChapterContext } from "./get-chapter-step";
@@ -17,14 +16,10 @@ export async function addLessonsStep(input: {
   await using stream = createStepStream<ChapterStepName>();
   await stream.status({ status: "started", step: "addLessons" });
 
-  const targetLanguage = await getLanguageCourseTargetLanguage({
-    course: input.context.course,
-  });
-
   const expandedLessons = expandChapterLessons({
     language: input.context.language,
     lessons: input.lessons,
-    targetLanguage,
+    targetLanguage: input.context.course.targetLanguage,
   });
 
   const lessonsData: LessonCreateManyInput[] = deduplicateSlugs(

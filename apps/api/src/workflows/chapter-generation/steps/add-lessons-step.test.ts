@@ -126,4 +126,44 @@ describe(addLessonsStep, () => {
       expect.objectContaining({ status: "completed", step: "addLessons" }),
     );
   });
+
+  test("expands language lessons when the course has a target language", async () => {
+    const course = await courseFixture({ organizationId, targetLanguage: "es" });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      organizationId,
+      title: `Add Language Lessons ${randomUUID()}`,
+    });
+    const chapterContext: ChapterContext = {
+      ...chapter,
+      _count: { lessons: 0 },
+      course,
+      neighboringChapters: [],
+    };
+
+    await addLessonsStep({
+      context: chapterContext,
+      lessons: [
+        {
+          description: "Useful words",
+          kind: "vocabulary",
+          title: `Words ${randomUUID()}`,
+        },
+      ],
+    });
+
+    const dbLessons = await prisma.lesson.findMany({
+      orderBy: { position: "asc" },
+      where: { chapterId: chapter.id },
+    });
+
+    expect(dbLessons.map((lesson) => lesson.kind)).toEqual([
+      "vocabulary",
+      "translation",
+      "reading",
+      "listening",
+      "review",
+    ]);
+    expect(dbLessons.at(-1)?.generationStatus).toBe("completed");
+  });
 });

@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { generateLessonsStep } from "./generate-lessons-step";
@@ -51,7 +51,6 @@ describe(generateLessonsStep, () => {
       organizationId: organization.id,
       targetLanguage: "es",
     });
-    await courseCategoryFixture({ category: "languages", courseId: languageCourse.id });
 
     const chapter = await chapterFixture({
       courseId: course.id,
@@ -167,24 +166,6 @@ describe(generateLessonsStep, () => {
     expect(events).toContainEqual(
       expect.objectContaining({ status: "completed", step: "generateLessonKind" }),
     );
-  });
-
-  test("uses the standard lesson generator when a course has no language category", async () => {
-    const targetOnlyContext: ChapterContext = {
-      ...context,
-      course: { ...context.course, targetLanguage: "es" },
-    };
-    const lessons = [{ description: "Intro", title: "Lesson 1" }];
-
-    generateChapterLessonsMock.mockResolvedValue({ data: { lessons } });
-    generateLessonKindMock.mockResolvedValue({ data: { kind: "explanation" as const } });
-
-    const result = await generateLessonsStep(targetOnlyContext);
-
-    expect(result).toEqual([{ description: "Intro", kind: "explanation", title: "Lesson 1" }]);
-    expect(generateChapterLessonsMock).toHaveBeenCalledOnce();
-    expect(generateLessonKindMock).toHaveBeenCalledOnce();
-    expect(generateLanguageChapterLessonsMock).not.toHaveBeenCalled();
   });
 
   test("throws when lesson kind generation fails for any planned lesson", async () => {
