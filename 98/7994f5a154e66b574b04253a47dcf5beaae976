@@ -1,0 +1,69 @@
+apps/api/src/workflows/course-generation/steps/add-categories-step.test.ts
+  36121c8f3b7c1ae4 49
+apps/api/src/workflows/chapter-generation/steps/classify-lessons-step.test.ts
+  36121c8f3b7c1ae4 78
+apps/api/src/workflows/course-generation/steps/add-chapters-step.test.ts
+  36121c8f3b7c1ae4 43,80
+apps/api/src/workflows/course-generation/steps/update-course-step.test.ts
+  36121c8f3b7c1ae4 40,75
+apps/api/src/workflows/chapter-generation/steps/add-lessons-step.test.ts
+  36121c8f3b7c1ae4 50,109
+apps/api/src/workflows/course-generation/_internal/generate-missing-content.test.ts
+  36121c8f3b7c1ae4 119
+apps/api/src/workflows/course-generation/steps/handle-failure-step.test.ts
+  36121c8f3b7c1ae4 53,128
+apps/api/src/workflows/course-generation/steps/generate-chapters-step.test.ts
+  36121c8f3b7c1ae4 55,86
+apps/api/src/workflows/course-generation/steps/get-course-suggestion-step.test.ts
+  36121c8f3b7c1ae4 22,38
+apps/api/src/workflows/course-generation/steps/get-course-chapters-step.test.ts
+  36121c8f3b7c1ae4 45
+apps/api/src/workflows/course-generation/steps/initialize-course-step.test.ts
+  36121c8f3b7c1ae4 34,65
+apps/api/src/workflows/course-generation/steps/generate-categories-step.test.ts
+  36121c8f3b7c1ae4 41,57
+apps/api/src/workflows/course-generation/steps/set-course-as-running-step.test.ts
+  36121c8f3b7c1ae4 38,73
+apps/api/src/workflows/chapter-generation/steps/generate-lessons-step.test.ts
+  36121c8f3b7c1ae4 88,116,126
+apps/api/src/workflows/chapter-generation/steps/set-chapter-as-running-step.test.ts
+  36121c8f3b7c1ae4 30,53
+apps/api/src/workflows/chapter-generation/steps/get-chapter-step.test.ts
+  36121c8f3b7c1ae4 38,81
+apps/api/src/workflows/course-generation/steps/check-existing-course-step.test.ts
+  36121c8f3b7c1ae4 31
+apps/api/src/workflows/course-generation/steps/generate-alternative-titles-step.test.ts
+  36121c8f3b7c1ae4 42,58
+apps/api/src/workflows/course-generation/steps/generate-image-step.test.ts
+  36121c8f3b7c1ae4 38,57
+apps/api/src/workflows/course-generation/steps/complete-course-setup-step.test.ts
+  36121c8f3b7c1ae4 37,70
+apps/api/src/workflows/course-generation/_internal/persist-generated-content.test.ts
+  36121c8f3b7c1ae4 117
+apps/api/src/workflows/course-generation/steps/add-alternative-titles-step.test.ts
+  36121c8f3b7c1ae4 39,71
+apps/api/src/workflows/chapter-generation/steps/set-chapter-as-completed-step.test.ts
+  36121c8f3b7c1ae4 44,75
+apps/api/src/workflows/course-generation/steps/generate-description-step.test.ts
+  36121c8f3b7c1ae4 42,58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "987994f5a154e66b574b04253a47dcf5beaae976",
+  "prompts": {
+    "36121c8f3b7c1ae4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dd4b7-fb4f-7fb2-a9af-80c1e0075446",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 43,
+      "total_deletions": 419,
+      "accepted_lines": 3195,
+      "overriden_lines": 0
+    }
+  }
+}
