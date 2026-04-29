@@ -1,17 +1,17 @@
+import { randomUUID } from "node:crypto";
+import { generateLanguageAudio } from "@zoonk/core/audio/generate";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
-import { generateWordAudioUrls } from "./_utils/generate-word-audio-urls";
 import { generateVocabularyAudioStep } from "./generate-vocabulary-audio-step";
 
-vi.mock("./_utils/generate-word-audio-urls", () => ({
-  generateWordAudioUrls: vi
-    .fn()
-    .mockImplementation(({ words }) =>
-      Promise.resolve(
-        Object.fromEntries(words.map((word: string) => [word, `/audio/${word}.mp3`])),
-      ),
-    ),
+vi.mock("@zoonk/core/audio/generate", () => ({
+  generateLanguageAudio: vi.fn().mockImplementation(({ text }) =>
+    Promise.resolve({
+      data: `/audio/${text}.mp3`,
+      error: null,
+    }),
+  ),
 }));
 
 describe(generateVocabularyAudioStep, () => {
@@ -27,9 +27,10 @@ describe(generateVocabularyAudioStep, () => {
   });
 
   test("generates audio URLs for vocabulary words", async () => {
+    const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
     const context = await createLessonContext({ organizationId, targetLanguage: "ja" });
-    const catWord = "猫";
-    const dogWord = "犬";
+    const catWord = `猫${uniqueId}`;
+    const dogWord = `犬${uniqueId}`;
     const words = [catWord, dogWord];
 
     await expect(generateVocabularyAudioStep({ context, words })).resolves.toEqual({
@@ -38,8 +39,15 @@ describe(generateVocabularyAudioStep, () => {
         [dogWord]: `/audio/${dogWord}.mp3`,
       },
     });
-    expect(generateWordAudioUrls).toHaveBeenCalledWith(
-      expect.objectContaining({ orgSlug: "ai", targetLanguage: "ja", words }),
-    );
+    expect(generateLanguageAudio).toHaveBeenCalledWith({
+      language: "ja",
+      orgSlug: "ai",
+      text: catWord,
+    });
+    expect(generateLanguageAudio).toHaveBeenCalledWith({
+      language: "ja",
+      orgSlug: "ai",
+      text: dogWord,
+    });
   });
 });

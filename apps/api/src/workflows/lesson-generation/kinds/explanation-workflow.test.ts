@@ -1,71 +1,104 @@
-import { beforeEach, describe, expect, test, vi } from "vitest";
-import { generateExplanationContentStep } from "../steps/generate-explanation-content-step";
-import { generateImagePromptsStep } from "../steps/generate-image-prompts-step";
-import { generateStepImagesStep } from "../steps/generate-step-images-step";
-import { saveExplanationLessonStep } from "../steps/save-static-lesson-step";
-import { createKindWorkflowContext } from "./_test-utils/create-kind-workflow-context";
+import { generateLessonExplanation } from "@zoonk/ai/tasks/lessons/core/explanation";
+import { generateStepImagePrompts } from "@zoonk/ai/tasks/steps/image-prompts";
+import { generateContentStepImage } from "@zoonk/core/steps/content-image";
+import { parseStepContent } from "@zoonk/core/steps/contract/content";
+import { prisma } from "@zoonk/db";
+import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { createLessonContext } from "../steps/_test-utils/create-lesson-context";
 import { explanationLessonWorkflow } from "./explanation-workflow";
 
-vi.mock("../steps/generate-explanation-content-step", () => ({
-  generateExplanationContentStep: vi.fn().mockResolvedValue({
-    steps: [
-      { text: "Explain A", title: "A" },
-      { text: "Explain B", title: "B" },
-    ],
+vi.mock("@zoonk/ai/tasks/lessons/core/explanation", () => ({
+  generateLessonExplanation: vi.fn().mockResolvedValue({
+    data: {
+      anchor: { text: "Apply the idea later.", title: "Anchor" },
+      explanation: [
+        { text: "Explain A", title: "A" },
+        { text: "Explain B", title: "B" },
+      ],
+    },
   }),
 }));
 
-vi.mock("../steps/generate-image-prompts-step", () => ({
-  generateImagePromptsStep: vi.fn().mockResolvedValue({
-    prompts: ["image prompt a", "image prompt b"],
+vi.mock("@zoonk/ai/tasks/steps/image-prompts", () => ({
+  generateStepImagePrompts: vi.fn().mockResolvedValue({
+    data: { prompts: ["image prompt a", "image prompt b", "image prompt anchor"] },
   }),
 }));
 
-vi.mock("../steps/generate-step-images-step", () => ({
-  generateStepImagesStep: vi.fn().mockResolvedValue({
-    images: [
-      { prompt: "image prompt a", url: "https://example.com/a.webp" },
-      { prompt: "image prompt b", url: "https://example.com/b.webp" },
-    ],
-  }),
-}));
-
-vi.mock("../steps/save-static-lesson-step", () => ({
-  saveExplanationLessonStep: vi.fn(),
+vi.mock("@zoonk/core/steps/content-image", () => ({
+  generateContentStepImage: vi.fn().mockImplementation(({ prompt }) =>
+    Promise.resolve({
+      data: `https://example.com/${encodeURIComponent(prompt)}.webp`,
+      error: null,
+    }),
+  ),
 }));
 
 describe(explanationLessonWorkflow, () => {
+  let organizationId: string;
+
+  beforeAll(async () => {
+    const organization = await aiOrganizationFixture();
+    organizationId = organization.id;
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  test("generates explanation content, images, and saves the static lesson", async () => {
-    const context = await createKindWorkflowContext();
+  test("stores generated explanation text with generated images", async () => {
+    const context = await createLessonContext({
+      kind: "explanation",
+      organizationId,
+    });
 
     await explanationLessonWorkflow(context);
 
-    expect(generateExplanationContentStep).toHaveBeenCalledExactlyOnceWith(context);
-    expect(generateImagePromptsStep).toHaveBeenCalledExactlyOnceWith({
-      context,
-      steps: [
-        { text: "Explain A", title: "A" },
-        { text: "Explain B", title: "B" },
-      ],
+    expect(generateLessonExplanation).toHaveBeenCalledOnce();
+    expect(generateStepImagePrompts).toHaveBeenCalledOnce();
+    expect(generateContentStepImage).toHaveBeenCalledTimes(3);
+
+    const steps = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      where: { lessonId: context.id },
     });
-    expect(generateStepImagesStep).toHaveBeenCalledExactlyOnceWith({
-      context,
-      prompts: ["image prompt a", "image prompt b"],
-    });
-    expect(saveExplanationLessonStep).toHaveBeenCalledExactlyOnceWith({
-      context,
-      images: [
-        { prompt: "image prompt a", url: "https://example.com/a.webp" },
-        { prompt: "image prompt b", url: "https://example.com/b.webp" },
-      ],
-      steps: [
-        { text: "Explain A", title: "A" },
-        { text: "Explain B", title: "B" },
-      ],
-    });
+    const contents = steps.map((step) => parseStepContent("static", step.content));
+
+    expect(steps.map((step) => [step.position, step.kind])).toEqual([
+      [0, "static"],
+      [1, "static"],
+      [2, "static"],
+    ]);
+
+    expect(contents).toEqual([
+      {
+        image: {
+          prompt: "image prompt a",
+          url: "https://example.com/image%20prompt%20a.webp",
+        },
+        text: "Explain A",
+        title: "A",
+        variant: "text",
+      },
+      {
+        image: {
+          prompt: "image prompt b",
+          url: "https://example.com/image%20prompt%20b.webp",
+        },
+        text: "Explain B",
+        title: "B",
+        variant: "text",
+      },
+      {
+        image: {
+          prompt: "image prompt anchor",
+          url: "https://example.com/image%20prompt%20anchor.webp",
+        },
+        text: "Apply the idea later.",
+        title: "Anchor",
+        variant: "text",
+      },
+    ]);
   });
 });

@@ -1,15 +1,15 @@
+import { generateLessonRomanization } from "@zoonk/ai/tasks/lessons/language/romanization";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
-import { generateLessonRomanizations } from "./_utils/generate-lesson-romanizations";
 import { generateVocabularyRomanizationStep } from "./generate-vocabulary-romanization-step";
 
-vi.mock("./_utils/generate-lesson-romanizations", () => ({
-  generateLessonRomanizations: vi
-    .fn()
-    .mockImplementation(({ texts }) =>
-      Promise.resolve(Object.fromEntries(texts.map((text: string) => [text, `${text} romanized`]))),
-    ),
+vi.mock("@zoonk/ai/tasks/lessons/language/romanization", () => ({
+  generateLessonRomanization: vi.fn().mockImplementation(({ texts }) =>
+    Promise.resolve({
+      data: { romanizations: texts.map((text: string) => `${text} romanized`) },
+    }),
+  ),
 }));
 
 describe(generateVocabularyRomanizationStep, () => {
@@ -36,7 +36,7 @@ describe(generateVocabularyRomanizationStep, () => {
         [dogWord]: `${dogWord} romanized`,
       },
     });
-    expect(generateLessonRomanizations).toHaveBeenCalledWith({
+    expect(generateLessonRomanization).toHaveBeenCalledWith({
       targetLanguage: "ja",
       texts: words,
     });

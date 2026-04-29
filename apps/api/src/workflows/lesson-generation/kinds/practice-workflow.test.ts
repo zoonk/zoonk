@@ -1,65 +1,124 @@
-import { beforeEach, describe, expect, test, vi } from "vitest";
-import { getPracticeImagePrompts } from "../steps/_utils/get-practice-image-prompts";
-import { generatePracticeContentStep } from "../steps/generate-practice-content-step";
-import { generateStepImagesStep } from "../steps/generate-step-images-step";
-import { savePracticeLessonStep } from "../steps/save-practice-lesson-step";
-import { createKindWorkflowContext } from "./_test-utils/create-kind-workflow-context";
+import { generateLessonPractice } from "@zoonk/ai/tasks/lessons/core/practice";
+import { generateContentStepImage } from "@zoonk/core/steps/content-image";
+import { parseStepContent } from "@zoonk/core/steps/contract/content";
+import { prisma } from "@zoonk/db";
+import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import {
+  createCompletedExplanation,
+  createLessonContext,
+} from "../steps/_test-utils/create-lesson-context";
 import { practiceLessonWorkflow } from "./practice-workflow";
 
-const { practiceContent } = vi.hoisted(() => ({
-  practiceContent: {
-    kind: "practice" as const,
-    scenario: {
-      imagePrompt: "scenario prompt",
-      text: "Scenario text",
-      title: "Scenario",
-    },
-    steps: [
-      {
-        context: "Question context",
-        imagePrompt: "question prompt",
-        options: [{ feedback: "yes", isCorrect: true, text: "Answer" }],
-        question: "What now?",
+vi.mock("@zoonk/ai/tasks/lessons/core/practice", () => ({
+  generateLessonPractice: vi.fn().mockResolvedValue({
+    data: {
+      scenario: {
+        imagePrompt: "scenario prompt",
+        text: "Scenario text",
+        title: "Scenario",
       },
-    ],
-  },
-}));
-
-vi.mock("../steps/generate-practice-content-step", () => ({
-  generatePracticeContentStep: vi.fn().mockResolvedValue(practiceContent),
-}));
-
-vi.mock("../steps/generate-step-images-step", () => ({
-  generateStepImagesStep: vi.fn().mockResolvedValue({
-    images: [
-      { prompt: "scenario prompt", url: "https://example.com/scenario.webp" },
-      { prompt: "question prompt", url: "https://example.com/question.webp" },
-    ],
+      steps: [
+        {
+          context: "Question context",
+          imagePrompt: "question prompt",
+          options: [
+            { feedback: "Correct", isCorrect: true, text: "Answer" },
+            { feedback: "Not yet", isCorrect: false, text: "Distractor" },
+          ],
+          question: "What now?",
+        },
+      ],
+      title: "Practice",
+    },
   }),
 }));
 
-vi.mock("../steps/save-practice-lesson-step", () => ({
-  savePracticeLessonStep: vi.fn(),
+vi.mock("@zoonk/core/steps/content-image", () => ({
+  generateContentStepImage: vi.fn().mockImplementation(({ prompt }) =>
+    Promise.resolve({
+      data: `https://example.com/${encodeURIComponent(prompt)}.webp`,
+      error: null,
+    }),
+  ),
 }));
 
 describe(practiceLessonWorkflow, () => {
+  let organizationId: string;
+
+  beforeAll(async () => {
+    const organization = await aiOrganizationFixture();
+    organizationId = organization.id;
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  test("uses practice image prompts before saving practice content", async () => {
-    const context = await createKindWorkflowContext();
+  test("stores scenario and practice questions from the uncovered explanation steps", async () => {
+    const context = await createLessonContext({
+      kind: "practice",
+      organizationId,
+      position: 2,
+    });
+
+    await createCompletedExplanation({
+      chapterId: context.chapterId,
+      organizationId,
+      position: 1,
+      text: "Use the latest explanation.",
+      title: "Latest",
+    });
 
     await practiceLessonWorkflow(context);
 
-    expect(generatePracticeContentStep).toHaveBeenCalledExactlyOnceWith(context);
-    expect(generateStepImagesStep).toHaveBeenCalledExactlyOnceWith({
-      context,
-      preset: "practice",
-      prompts: getPracticeImagePrompts(practiceContent),
-    });
-    expect(savePracticeLessonStep).toHaveBeenCalledWith(
-      expect.objectContaining({ content: practiceContent, context, images: expect.any(Array) }),
+    expect(generateLessonPractice).toHaveBeenCalledWith(
+      expect.objectContaining({
+        explanationSteps: [{ text: "Use the latest explanation.", title: "Latest" }],
+      }),
     );
+    expect(generateContentStepImage).toHaveBeenCalledTimes(2);
+
+    const steps = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      where: { lessonId: context.id },
+    });
+    const intro = parseStepContent("static", steps[0]?.content);
+    const question = parseStepContent("multipleChoice", steps[1]?.content);
+
+    expect(steps.map((step) => [step.position, step.kind])).toEqual([
+      [0, "static"],
+      [1, "multipleChoice"],
+    ]);
+    expect(intro).toEqual({
+      image: {
+        prompt: "scenario prompt",
+        url: "https://example.com/scenario%20prompt.webp",
+      },
+      text: "Scenario text",
+      title: "Scenario",
+      variant: "intro",
+    });
+    expect(question).toMatchObject({
+      context: "Question context",
+      image: {
+        prompt: "question prompt",
+        url: "https://example.com/question%20prompt.webp",
+      },
+      kind: "core",
+      question: "What now?",
+    });
+    expect(question.options).toEqual([
+      expect.objectContaining({
+        feedback: "Correct",
+        isCorrect: true,
+        text: "Answer",
+      }),
+      expect.objectContaining({
+        feedback: "Not yet",
+        isCorrect: false,
+        text: "Distractor",
+      }),
+    ]);
   });
 });

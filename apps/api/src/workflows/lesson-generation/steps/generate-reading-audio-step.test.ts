@@ -1,16 +1,16 @@
 import { randomUUID } from "node:crypto";
+import { generateLanguageAudio } from "@zoonk/core/audio/generate";
 import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
-import { generateAudioForText } from "./_utils/generate-audio-for-text";
 import { generateReadingAudioStep } from "./generate-reading-audio-step";
 
-vi.mock("./_utils/generate-audio-for-text", () => ({
-  generateAudioForText: vi.fn().mockImplementation((text) =>
+vi.mock("@zoonk/core/audio/generate", () => ({
+  generateLanguageAudio: vi.fn().mockImplementation(({ text }) =>
     Promise.resolve({
-      audioUrl: `/audio/${text}.mp3`,
-      text,
+      data: `/audio/${text}.mp3`,
+      error: null,
     }),
   ),
 }));
@@ -60,6 +60,10 @@ describe(generateReadingAudioStep, () => {
         [newSentence]: `/audio/${newSentence}.mp3`,
       },
     });
-    expect(generateAudioForText).toHaveBeenCalledExactlyOnceWith(newSentence, "ja", "ai");
+    expect(generateLanguageAudio).toHaveBeenCalledExactlyOnceWith({
+      language: "ja",
+      orgSlug: "ai",
+      text: newSentence,
+    });
   });
 });

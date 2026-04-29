@@ -1,15 +1,16 @@
+import { randomUUID } from "node:crypto";
+import { generateLessonPronunciation } from "@zoonk/ai/tasks/lessons/language/pronunciation";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
-import { generateWordPronunciations } from "./_utils/generate-word-pronunciations";
 import { generateVocabularyPronunciationStep } from "./generate-vocabulary-pronunciation-step";
 
-vi.mock("./_utils/generate-word-pronunciations", () => ({
-  generateWordPronunciations: vi
-    .fn()
-    .mockImplementation(({ words }) =>
-      Promise.resolve(Object.fromEntries(words.map((word: string) => [word, `${word} pron`]))),
-    ),
+vi.mock("@zoonk/ai/tasks/lessons/language/pronunciation", () => ({
+  generateLessonPronunciation: vi.fn().mockImplementation(({ word }) =>
+    Promise.resolve({
+      data: { pronunciation: `${word} pron` },
+    }),
+  ),
 }));
 
 describe(generateVocabularyPronunciationStep, () => {
@@ -25,9 +26,10 @@ describe(generateVocabularyPronunciationStep, () => {
   });
 
   test("generates pronunciations for vocabulary words", async () => {
+    const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
     const context = await createLessonContext({ organizationId, targetLanguage: "ja" });
-    const catWord = "猫";
-    const dogWord = "犬";
+    const catWord = `猫${uniqueId}`;
+    const dogWord = `犬${uniqueId}`;
     const words = [catWord, dogWord];
 
     await expect(generateVocabularyPronunciationStep({ context, words })).resolves.toEqual({
@@ -36,8 +38,15 @@ describe(generateVocabularyPronunciationStep, () => {
         [dogWord]: `${dogWord} pron`,
       },
     });
-    expect(generateWordPronunciations).toHaveBeenCalledWith(
-      expect.objectContaining({ targetLanguage: "ja", userLanguage: context.language, words }),
-    );
+    expect(generateLessonPronunciation).toHaveBeenCalledWith({
+      targetLanguage: "ja",
+      userLanguage: context.language,
+      word: catWord,
+    });
+    expect(generateLessonPronunciation).toHaveBeenCalledWith({
+      targetLanguage: "ja",
+      userLanguage: context.language,
+      word: dogWord,
+    });
   });
 });

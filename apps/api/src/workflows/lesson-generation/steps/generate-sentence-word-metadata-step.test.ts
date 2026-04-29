@@ -1,10 +1,10 @@
 import { randomUUID } from "node:crypto";
+import { generateLessonRomanization } from "@zoonk/ai/tasks/lessons/language/romanization";
 import { generateTranslation } from "@zoonk/ai/tasks/lessons/language/translation";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
-import { generateLessonRomanizations } from "./_utils/generate-lesson-romanizations";
 import { generateSentenceWordMetadataStep } from "./generate-sentence-word-metadata-step";
 
 vi.mock("@zoonk/ai/tasks/lessons/language/translation", () => ({
@@ -15,12 +15,12 @@ vi.mock("@zoonk/ai/tasks/lessons/language/translation", () => ({
   ),
 }));
 
-vi.mock("./_utils/generate-lesson-romanizations", () => ({
-  generateLessonRomanizations: vi
-    .fn()
-    .mockImplementation(({ texts }) =>
-      Promise.resolve(Object.fromEntries(texts.map((text: string) => [text, `${text} romanized`]))),
-    ),
+vi.mock("@zoonk/ai/tasks/lessons/language/romanization", () => ({
+  generateLessonRomanization: vi.fn().mockImplementation(({ texts }) =>
+    Promise.resolve({
+      data: { romanizations: texts.map((text: string) => `${text} romanized`) },
+    }),
+  ),
 }));
 
 describe(generateSentenceWordMetadataStep, () => {
@@ -76,8 +76,9 @@ describe(generateSentenceWordMetadataStep, () => {
     expect(generateTranslation).toHaveBeenCalledWith(
       expect.objectContaining({ targetLanguage: "ja", userLanguage: "en", word: waterWord }),
     );
-    expect(generateLessonRomanizations).toHaveBeenCalledWith(
-      expect.objectContaining({ targetLanguage: "ja" }),
-    );
+    expect(generateLessonRomanization).toHaveBeenCalledWith({
+      targetLanguage: "ja",
+      texts: [waterWord, fireWord],
+    });
   });
 });

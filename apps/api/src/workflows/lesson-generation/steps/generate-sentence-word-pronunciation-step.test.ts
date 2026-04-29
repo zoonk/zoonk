@@ -1,16 +1,16 @@
 import { randomUUID } from "node:crypto";
+import { generateLessonPronunciation } from "@zoonk/ai/tasks/lessons/language/pronunciation";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
-import { generateWordPronunciations } from "./_utils/generate-word-pronunciations";
 import { generateSentenceWordPronunciationStep } from "./generate-sentence-word-pronunciation-step";
 
-vi.mock("./_utils/generate-word-pronunciations", () => ({
-  generateWordPronunciations: vi
-    .fn()
-    .mockImplementation(({ words }) =>
-      Promise.resolve(Object.fromEntries(words.map((word: string) => [word, `${word} pron`]))),
-    ),
+vi.mock("@zoonk/ai/tasks/lessons/language/pronunciation", () => ({
+  generateLessonPronunciation: vi.fn().mockImplementation(({ word }) =>
+    Promise.resolve({
+      data: { pronunciation: `${word} pron` },
+    }),
+  ),
 }));
 
 describe(generateSentenceWordPronunciationStep, () => {
@@ -44,8 +44,11 @@ describe(generateSentenceWordPronunciationStep, () => {
         [waterWord]: `${waterWord} pron`,
       },
     });
-    expect(generateWordPronunciations).toHaveBeenCalledWith(
-      expect.objectContaining({ targetLanguage: "ja", words }),
-    );
+    expect(generateLessonPronunciation).toHaveBeenCalledTimes(3);
+    expect(generateLessonPronunciation).toHaveBeenCalledWith({
+      targetLanguage: "ja",
+      userLanguage: context.language,
+      word: catWord,
+    });
   });
 });

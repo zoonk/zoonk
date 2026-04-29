@@ -1,18 +1,17 @@
 import { randomUUID } from "node:crypto";
+import { generateLanguageAudio } from "@zoonk/core/audio/generate";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
-import { generateWordAudioUrls } from "./_utils/generate-word-audio-urls";
 import { generateSentenceWordAudioStep } from "./generate-sentence-word-audio-step";
 
-vi.mock("./_utils/generate-word-audio-urls", () => ({
-  generateWordAudioUrls: vi
-    .fn()
-    .mockImplementation(({ words }) =>
-      Promise.resolve(
-        Object.fromEntries(words.map((word: string) => [word, `/audio/${word}.mp3`])),
-      ),
-    ),
+vi.mock("@zoonk/core/audio/generate", () => ({
+  generateLanguageAudio: vi.fn().mockImplementation(({ text }) =>
+    Promise.resolve({
+      data: `/audio/${text}.mp3`,
+      error: null,
+    }),
+  ),
 }));
 
 describe(generateSentenceWordAudioStep, () => {
@@ -46,8 +45,11 @@ describe(generateSentenceWordAudioStep, () => {
         [waterWord]: `/audio/${waterWord}.mp3`,
       },
     });
-    expect(generateWordAudioUrls).toHaveBeenCalledWith(
-      expect.objectContaining({ targetLanguage: "ja", words }),
-    );
+    expect(generateLanguageAudio).toHaveBeenCalledTimes(3);
+    expect(generateLanguageAudio).toHaveBeenCalledWith({
+      language: "ja",
+      orgSlug: "ai",
+      text: catWord,
+    });
   });
 });

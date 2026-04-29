@@ -1,125 +1,176 @@
-import { beforeEach, describe, expect, test, vi } from "vitest";
-import { generateReadingAudioStep } from "../steps/generate-reading-audio-step";
-import { generateReadingContentStep } from "../steps/generate-reading-content-step";
-import { generateReadingRomanizationStep } from "../steps/generate-reading-romanization-step";
-import { generateSentenceDistractorsStep } from "../steps/generate-sentence-distractors-step";
-import { generateSentenceWordAudioStep } from "../steps/generate-sentence-word-audio-step";
-import { generateSentenceWordMetadataStep } from "../steps/generate-sentence-word-metadata-step";
-import { generateSentenceWordPronunciationStep } from "../steps/generate-sentence-word-pronunciation-step";
-import { saveReadingLessonStep } from "../steps/save-reading-lesson-step";
-import { createKindWorkflowContext } from "./_test-utils/create-kind-workflow-context";
+import { randomUUID } from "node:crypto";
+import { generateLessonDistractors } from "@zoonk/ai/tasks/lessons/language/distractors";
+import { generateLessonPronunciation } from "@zoonk/ai/tasks/lessons/language/pronunciation";
+import { generateLessonSentences } from "@zoonk/ai/tasks/lessons/language/sentences";
+import { generateTranslation } from "@zoonk/ai/tasks/lessons/language/translation";
+import { generateLanguageAudio } from "@zoonk/core/audio/generate";
+import { prisma } from "@zoonk/db";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { lessonWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
+import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { createLessonContext } from "../steps/_test-utils/create-lesson-context";
 import { readingLessonWorkflow } from "./reading-workflow";
 
-const { sentences, targetWords } = vi.hoisted(() => ({
-  sentences: [
-    {
-      explanation: "Greeting sentence.",
-      sentence: "Guten Morgen, Lara.",
-      translation: "Good morning, Lara.",
-    },
-  ],
-  targetWords: ["guten", "morgen", "lara", "Abend", "Fenster"],
+const readingState = vi.hoisted(() => ({
+  distractors: {} as Record<string, string[]>,
+  sentence: "",
+  translation: "",
 }));
 
-vi.mock("../steps/generate-reading-content-step", () => ({
-  generateReadingContentStep: vi.fn().mockResolvedValue({
-    kind: "reading",
-    sentences,
-  }),
+vi.mock("@zoonk/ai/tasks/lessons/language/sentences", () => ({
+  generateLessonSentences: vi.fn().mockImplementation(() =>
+    Promise.resolve({
+      data: {
+        sentences: [
+          {
+            explanation: "Greeting sentence.",
+            sentence: readingState.sentence,
+            translation: readingState.translation,
+          },
+        ],
+      },
+    }),
+  ),
 }));
 
-vi.mock("../steps/generate-reading-audio-step", () => ({
-  generateReadingAudioStep: vi.fn().mockResolvedValue({
-    sentenceAudioUrls: { "Guten Morgen, Lara.": "/audio/sentence.mp3" },
-  }),
+vi.mock("@zoonk/ai/tasks/lessons/language/distractors", () => ({
+  generateLessonDistractors: vi.fn().mockImplementation(({ input }) =>
+    Promise.resolve({
+      data: { distractors: readingState.distractors[input] ?? [] },
+    }),
+  ),
 }));
 
-vi.mock("../steps/generate-reading-romanization-step", () => ({
-  generateReadingRomanizationStep: vi.fn().mockResolvedValue({
-    romanizations: { "Guten Morgen, Lara.": "guten morgen lara" },
-  }),
+vi.mock("@zoonk/ai/tasks/lessons/language/translation", () => ({
+  generateTranslation: vi.fn().mockImplementation(({ word }) =>
+    Promise.resolve({
+      data: { translation: `${word} translated` },
+    }),
+  ),
 }));
 
-vi.mock("../steps/generate-sentence-distractors-step", () => ({
-  generateSentenceDistractorsStep: vi.fn().mockResolvedValue({
-    distractors: { "Guten Morgen, Lara.": ["Abend", "Fenster"] },
-    translationDistractors: { "Good morning, Lara.": ["good night", "goodbye"] },
-  }),
+vi.mock("@zoonk/ai/tasks/lessons/language/pronunciation", () => ({
+  generateLessonPronunciation: vi.fn().mockImplementation(({ word }) =>
+    Promise.resolve({
+      data: { pronunciation: `${word} pronunciation` },
+    }),
+  ),
 }));
 
-vi.mock("../steps/generate-sentence-word-metadata-step", () => ({
-  generateSentenceWordMetadataStep: vi.fn().mockResolvedValue({
-    wordMetadata: {
-      Abend: { romanization: null, translation: "" },
-      Fenster: { romanization: null, translation: "" },
-      guten: { romanization: null, translation: "good" },
-      lara: { romanization: null, translation: "Lara" },
-      morgen: { romanization: null, translation: "morning" },
-    },
-  }),
-}));
-
-vi.mock("../steps/generate-sentence-word-audio-step", () => ({
-  generateSentenceWordAudioStep: vi.fn().mockResolvedValue({
-    wordAudioUrls: {
-      Abend: "/audio/abend.mp3",
-      Fenster: "/audio/fenster.mp3",
-      guten: "/audio/guten.mp3",
-      lara: "/audio/lara.mp3",
-      morgen: "/audio/morgen.mp3",
-    },
-  }),
-}));
-
-vi.mock("../steps/generate-sentence-word-pronunciation-step", () => ({
-  generateSentenceWordPronunciationStep: vi.fn().mockResolvedValue({
-    pronunciations: {
-      Abend: "abend",
-      Fenster: "fenster",
-      guten: "guten",
-      lara: "lara",
-      morgen: "morgen",
-    },
-  }),
-}));
-
-vi.mock("../steps/save-reading-lesson-step", () => ({
-  saveReadingLessonStep: vi.fn(),
+vi.mock("@zoonk/core/audio/generate", () => ({
+  generateLanguageAudio: vi.fn().mockImplementation(({ text }) =>
+    Promise.resolve({
+      data: `https://example.com/audio/${encodeURIComponent(text)}.mp3`,
+      error: null,
+    }),
+  ),
 }));
 
 describe(readingLessonWorkflow, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+  let organizationId: string;
+
+  beforeAll(async () => {
+    const organization = await aiOrganizationFixture();
+    organizationId = organization.id;
   });
 
-  test("enriches sentence words and distractors before saving reading content", async () => {
-    const context = await createKindWorkflowContext();
+  beforeEach(() => {
+    vi.clearAllMocks();
+    readingState.distractors = {};
+    readingState.sentence = "";
+    readingState.translation = "";
+  });
+
+  test("stores reading sentences and word metadata from uncovered vocabulary lessons", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const sourceWords = [`guten${uniqueId}`, `morgen${uniqueId}`];
+    const sentence = sourceWords.join(" ");
+    const translation = `good morning ${uniqueId}`;
+    const context = await createLessonContext({
+      kind: "reading",
+      organizationId,
+      position: 2,
+      targetLanguage: "de",
+    });
+    const vocabularyLesson = await lessonFixture({
+      chapterId: context.chapterId,
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "vocabulary",
+      organizationId,
+      position: 1,
+    });
+    const wordRecords = await Promise.all(
+      sourceWords.map((word) =>
+        wordFixture({
+          organizationId,
+          targetLanguage: "de",
+          word,
+        }),
+      ),
+    );
+
+    await Promise.all(
+      wordRecords.map((word) =>
+        lessonWordFixture({
+          lessonId: vocabularyLesson.id,
+          translation: `${word.word} translation`,
+          userLanguage: "en",
+          wordId: word.id,
+        }),
+      ),
+    );
+
+    readingState.sentence = sentence;
+    readingState.translation = translation;
+    readingState.distractors = {
+      [sentence]: [`abend-${uniqueId}`, `fenster-${uniqueId}`],
+      [translation]: [`hello-${uniqueId}`, `bye-${uniqueId}`],
+    };
 
     await readingLessonWorkflow(context);
 
-    expect(generateReadingContentStep).toHaveBeenCalledExactlyOnceWith(context);
-    expect(generateReadingAudioStep).toHaveBeenCalledWith({ context, sentences });
-    expect(generateReadingRomanizationStep).toHaveBeenCalledWith({ context, sentences });
-    expect(generateSentenceDistractorsStep).toHaveBeenCalledWith({ context, sentences });
-    expect(generateSentenceWordMetadataStep).toHaveBeenCalledWith({
-      context,
-      sentences,
-      targetWords,
-    });
-    expect(generateSentenceWordAudioStep).toHaveBeenCalledWith({
-      context,
-      words: targetWords,
-    });
-    expect(generateSentenceWordPronunciationStep).toHaveBeenCalledWith({
-      context,
-      words: targetWords,
-    });
-    expect(saveReadingLessonStep).toHaveBeenCalledWith(
-      expect.objectContaining({
-        context,
-        distractors: { "Guten Morgen, Lara.": ["Abend", "Fenster"] },
-        sentences,
-      }),
+    expect(generateLessonSentences).toHaveBeenCalledWith(
+      expect.objectContaining({ words: expect.arrayContaining(sourceWords) }),
     );
+    expect(generateLessonDistractors).toHaveBeenCalledTimes(2);
+    expect(generateTranslation).toHaveBeenCalledTimes(sourceWords.length);
+    expect(generateLessonPronunciation).toHaveBeenCalledTimes(sourceWords.length + 2);
+    expect(generateLanguageAudio).toHaveBeenCalledTimes(sourceWords.length + 3);
+
+    const savedSentence = await prisma.sentence.findFirstOrThrow({
+      where: { organizationId, sentence, targetLanguage: "de" },
+    });
+    const [step, lessonSentence, lessonWords] = await Promise.all([
+      prisma.step.findFirstOrThrow({ where: { lessonId: context.id, position: 0 } }),
+      prisma.lessonSentence.findUniqueOrThrow({
+        where: { lessonSentence: { lessonId: context.id, sentenceId: savedSentence.id } },
+      }),
+      prisma.lessonWord.findMany({
+        include: { word: true },
+        orderBy: { word: { word: "asc" } },
+        where: { lessonId: context.id },
+      }),
+    ]);
+
+    expect(savedSentence).toMatchObject({
+      audioUrl: `https://example.com/audio/${encodeURIComponent(sentence)}.mp3`,
+      sentence,
+    });
+    expect(step).toMatchObject({
+      kind: "reading",
+      sentenceId: savedSentence.id,
+    });
+    expect(lessonSentence).toMatchObject({
+      distractors: [`abend-${uniqueId}`, `fenster-${uniqueId}`],
+      explanation: "Greeting sentence.",
+      translation,
+      translationDistractors: [`hello-${uniqueId}`, `bye-${uniqueId}`],
+    });
+    expect(lessonWords.map((entry) => [entry.word.word, entry.translation])).toEqual([
+      [sourceWords[0], `${sourceWords[0]} translated`],
+      [sourceWords[1], `${sourceWords[1]} translated`],
+    ]);
   });
 });

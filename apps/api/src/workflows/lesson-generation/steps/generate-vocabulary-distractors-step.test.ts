@@ -1,19 +1,15 @@
+import { generateLessonDistractors } from "@zoonk/ai/tasks/lessons/language/distractors";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
-import { generateDirectDistractors } from "./_utils/generate-direct-distractors";
 import { generateVocabularyDistractorsStep } from "./generate-vocabulary-distractors-step";
 
-vi.mock("./_utils/generate-direct-distractors", () => ({
-  generateDirectDistractors: vi
-    .fn()
-    .mockImplementation(({ entries }) =>
-      Promise.resolve(
-        Object.fromEntries(
-          entries.map((entry: { key: string }) => [entry.key, [`${entry.key} alt`]]),
-        ),
-      ),
-    ),
+vi.mock("@zoonk/ai/tasks/lessons/language/distractors", () => ({
+  generateLessonDistractors: vi.fn().mockImplementation(({ input }) =>
+    Promise.resolve({
+      data: { distractors: [`${input} alt`] },
+    }),
+  ),
 }));
 
 describe(generateVocabularyDistractorsStep, () => {
@@ -38,8 +34,10 @@ describe(generateVocabularyDistractorsStep, () => {
         words: [{ translation: "cat", word: catWord }],
       }),
     ).resolves.toEqual({ distractors: { [catWord]: [`${catWord} alt`] } });
-    expect(generateDirectDistractors).toHaveBeenCalledWith(
-      expect.objectContaining({ language: "ja", shape: "any" }),
-    );
+    expect(generateLessonDistractors).toHaveBeenCalledWith({
+      input: catWord,
+      language: "ja",
+      shape: "any",
+    });
   });
 });

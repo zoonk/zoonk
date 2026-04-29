@@ -1,20 +1,16 @@
 import { randomUUID } from "node:crypto";
+import { generateLessonDistractors } from "@zoonk/ai/tasks/lessons/language/distractors";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
-import { generateDirectDistractors } from "./_utils/generate-direct-distractors";
 import { generateSentenceDistractorsStep } from "./generate-sentence-distractors-step";
 
-vi.mock("./_utils/generate-direct-distractors", () => ({
-  generateDirectDistractors: vi
-    .fn()
-    .mockImplementation(({ entries }) =>
-      Promise.resolve(
-        Object.fromEntries(
-          entries.map((entry: { key: string }) => [entry.key, [`${entry.key} alt`]]),
-        ),
-      ),
-    ),
+vi.mock("@zoonk/ai/tasks/lessons/language/distractors", () => ({
+  generateLessonDistractors: vi.fn().mockImplementation(({ language }) =>
+    Promise.resolve({
+      data: { distractors: language === "ja" ? ["火"] : ["dog"] },
+    }),
+  ),
 }));
 
 describe(generateSentenceDistractorsStep, () => {
@@ -43,9 +39,18 @@ describe(generateSentenceDistractorsStep, () => {
     ];
 
     await expect(generateSentenceDistractorsStep({ context, sentences })).resolves.toEqual({
-      distractors: { [`${catWord} ${waterWord}`]: [`${catWord} ${waterWord} alt`] },
-      translationDistractors: { "cat and water": ["cat and water alt"] },
+      distractors: { [`${catWord} ${waterWord}`]: ["火"] },
+      translationDistractors: { "cat and water": ["dog"] },
     });
-    expect(generateDirectDistractors).toHaveBeenCalledTimes(2);
+    expect(generateLessonDistractors).toHaveBeenCalledWith({
+      input: `${catWord} ${waterWord}`,
+      language: "ja",
+      shape: "single-word",
+    });
+    expect(generateLessonDistractors).toHaveBeenCalledWith({
+      input: "cat and water",
+      language: "en",
+      shape: "single-word",
+    });
   });
 });

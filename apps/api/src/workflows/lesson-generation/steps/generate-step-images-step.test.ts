@@ -1,14 +1,16 @@
+import { generateContentStepImage } from "@zoonk/core/steps/content-image";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
-import { generateStepImages } from "./_utils/generate-step-images";
 import { generateStepImagesStep } from "./generate-step-images-step";
 
-vi.mock("./_utils/generate-step-images", () => ({
-  generateStepImages: vi.fn().mockResolvedValue([
-    { prompt: "first prompt", url: "https://example.com/first.webp" },
-    { prompt: "second prompt", url: "https://example.com/second.webp" },
-  ]),
+vi.mock("@zoonk/core/steps/content-image", () => ({
+  generateContentStepImage: vi.fn().mockImplementation(({ prompt }) =>
+    Promise.resolve({
+      data: `https://example.com/${encodeURIComponent(prompt)}.webp`,
+      error: null,
+    }),
+  ),
 }));
 
 describe(generateStepImagesStep, () => {
@@ -23,7 +25,7 @@ describe(generateStepImagesStep, () => {
     vi.clearAllMocks();
   });
 
-  test("delegates content image generation with lesson language and organization", async () => {
+  test("generates content images with lesson language and organization", async () => {
     const context = await createLessonContext({ organizationId });
 
     const result = await generateStepImagesStep({
@@ -33,14 +35,20 @@ describe(generateStepImagesStep, () => {
     });
 
     expect(result.images).toEqual([
-      { prompt: "first prompt", url: "https://example.com/first.webp" },
-      { prompt: "second prompt", url: "https://example.com/second.webp" },
+      { prompt: "first prompt", url: "https://example.com/first%20prompt.webp" },
+      { prompt: "second prompt", url: "https://example.com/second%20prompt.webp" },
     ]);
-    expect(generateStepImages).toHaveBeenCalledExactlyOnceWith({
+    expect(generateContentStepImage).toHaveBeenCalledWith({
       language: context.language,
       orgSlug: "ai",
       preset: "practice",
-      prompts: ["first prompt", "second prompt"],
+      prompt: "first prompt",
+    });
+    expect(generateContentStepImage).toHaveBeenCalledWith({
+      language: context.language,
+      orgSlug: "ai",
+      preset: "practice",
+      prompt: "second prompt",
     });
   });
 });

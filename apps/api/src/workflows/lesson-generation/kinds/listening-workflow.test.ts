@@ -1,22 +1,71 @@
-import { beforeEach, describe, expect, test, vi } from "vitest";
-import { saveListeningLessonStep } from "../steps/save-listening-lesson-step";
-import { createKindWorkflowContext } from "./_test-utils/create-kind-workflow-context";
+import { randomUUID } from "node:crypto";
+import { assertStepContent, parseStepContent } from "@zoonk/core/steps/contract/content";
+import { prisma } from "@zoonk/db";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { lessonSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
+import { stepFixture } from "@zoonk/testing/fixtures/steps";
+import { beforeAll, describe, expect, test } from "vitest";
+import { createLessonContext } from "../steps/_test-utils/create-lesson-context";
 import { listeningLessonWorkflow } from "./listening-workflow";
 
-vi.mock("../steps/save-listening-lesson-step", () => ({
-  saveListeningLessonStep: vi.fn(),
-}));
-
 describe(listeningLessonWorkflow, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+  let organizationId: string;
+
+  beforeAll(async () => {
+    const organization = await aiOrganizationFixture();
+    organizationId = organization.id;
   });
 
-  test("delegates listening lessons to the listening save step", async () => {
-    const context = await createKindWorkflowContext();
+  test("stores listening steps from the previous reading lesson", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const context = await createLessonContext({
+      kind: "listening",
+      organizationId,
+      position: 2,
+      targetLanguage: "de",
+    });
+    const readingLesson = await lessonFixture({
+      chapterId: context.chapterId,
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "reading",
+      organizationId,
+      position: 1,
+    });
+    const sentence = await sentenceFixture({
+      organizationId,
+      sentence: `Guten Morgen ${uniqueId}`,
+      targetLanguage: "de",
+    });
+
+    await Promise.all([
+      lessonSentenceFixture({
+        lessonId: readingLesson.id,
+        sentenceId: sentence.id,
+        translation: `Good morning ${uniqueId}`,
+        userLanguage: "en",
+      }),
+      stepFixture({
+        content: assertStepContent("reading", {}),
+        isPublished: true,
+        kind: "reading",
+        lessonId: readingLesson.id,
+        position: 0,
+        sentenceId: sentence.id,
+      }),
+    ]);
 
     await listeningLessonWorkflow(context);
 
-    expect(saveListeningLessonStep).toHaveBeenCalledExactlyOnceWith(context);
+    const steps = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      where: { lessonId: context.id },
+    });
+
+    expect(steps.map((step) => [step.position, step.kind, step.sentenceId])).toEqual([
+      [0, "listening", sentence.id],
+    ]);
+    expect(steps.map((step) => parseStepContent("listening", step.content))).toEqual([{}]);
   });
 });
