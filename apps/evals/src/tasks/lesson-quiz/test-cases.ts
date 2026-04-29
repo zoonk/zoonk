@@ -215,7 +215,7 @@ TOPIC-SPECIFIC GUIDANCE:
    - All C–H bonds adjacent to carbonyls being equally acidic (acidity depends on additional stabilizing groups)
    - Resonance stabilization occurring before deprotonation (it is a consequence of deprotonation)
 
-3. FORMAT FIT: Multiple choice works for reaction prediction scenarios. Match columns work for connecting substrate types to their enolate relesson.
+3. FORMAT FIT: Multiple choice works for reaction prediction scenarios. Match columns work for connecting substrate types to their enolate reactivity.
 
 ${SHARED_EXPECTATIONS}
     `,

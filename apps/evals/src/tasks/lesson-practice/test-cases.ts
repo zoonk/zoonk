@@ -189,7 +189,7 @@ TOPIC-SPECIFIC GUIDANCE:
 
 2. SCENARIO CHECK: The workplace problem should involve realistic organic chemistry challenges like: planning a synthesis route, troubleshooting a failed aldol reaction, or choosing between enolate formation conditions.
 
-3. CONCEPTUAL FOCUS: Decisions should require reasoning about α-acidity, enolate stability, and nucleophilic relesson in C–C bond formation.
+3. CONCEPTUAL FOCUS: Decisions should require reasoning about α-acidity, enolate stability, and nucleophilic reactivity in C–C bond formation.
 
 ${SHARED_EXPECTATIONS}
     `,
