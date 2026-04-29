@@ -7,20 +7,6 @@ import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { classifyLessonsStep } from "./classify-lessons-step";
 import { type ChapterContext } from "./get-chapter-step";
 
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
-
 const { generateLessonKindMock } = vi.hoisted(() => ({
   generateLessonKindMock: vi.fn(),
 }));
@@ -89,7 +75,7 @@ describe(classifyLessonsStep, () => {
       lessonTitle: "Lesson 2",
     });
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).toContainEqual(
       expect.objectContaining({ status: "started", step: "generateLessonKind" }),

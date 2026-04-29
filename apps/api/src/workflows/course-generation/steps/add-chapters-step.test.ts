@@ -7,20 +7,6 @@ import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { addChaptersStep } from "./add-chapters-step";
 import { type CourseContext } from "./initialize-course-step";
 
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
-
 describe(addChaptersStep, () => {
   let organizationId: string;
   let courseContext: CourseContext;
@@ -54,7 +40,7 @@ describe(addChaptersStep, () => {
 
     await expect(addChaptersStep({ chapters, course: brokenContext })).rejects.toThrow();
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "addChapters" }),
@@ -91,7 +77,7 @@ describe(addChaptersStep, () => {
     expect(dbChapters[0]!.position).toBe(0);
     expect(dbChapters[1]!.position).toBe(1);
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).toContainEqual(
       expect.objectContaining({ status: "started", step: "addChapters" }),

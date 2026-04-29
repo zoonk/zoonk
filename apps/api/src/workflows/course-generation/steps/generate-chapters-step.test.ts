@@ -3,20 +3,6 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { generateChaptersStep } from "./generate-chapters-step";
 import { type CourseContext } from "./initialize-course-step";
 
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
-
 const { generateCourseChaptersMock, generateLanguageCourseChaptersMock } = vi.hoisted(() => ({
   generateCourseChaptersMock: vi.fn(),
   generateLanguageCourseChaptersMock: vi.fn(),
@@ -66,7 +52,7 @@ describe(generateChaptersStep, () => {
       language: "en",
     });
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).toContainEqual(
       expect.objectContaining({ status: "started", step: "generateChapters" }),
@@ -97,7 +83,7 @@ describe(generateChaptersStep, () => {
 
     await expect(generateChaptersStep(baseCourse)).rejects.toThrow("AI failure");
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "generateChapters" }),

@@ -8,20 +8,6 @@ import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { type ChapterContext } from "./get-chapter-step";
 import { setChapterAsCompletedStep } from "./set-chapter-as-completed-step";
 
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
-
 describe(setChapterAsCompletedStep, () => {
   let organizationId: string;
   let course: Awaited<ReturnType<typeof courseFixture>>;
@@ -55,7 +41,7 @@ describe(setChapterAsCompletedStep, () => {
       setChapterAsCompletedStep({ context: brokenContext, workflowRunId: "run-id" }),
     ).rejects.toThrow();
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "setChapterAsCompleted" }),
@@ -86,7 +72,7 @@ describe(setChapterAsCompletedStep, () => {
     expect(updated.generationStatus).toBe("completed");
     expect(updated.generationRunId).toBe(workflowRunId);
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).toContainEqual(
       expect.objectContaining({ status: "started", step: "setChapterAsCompleted" }),

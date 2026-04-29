@@ -8,20 +8,6 @@ import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { addLessonsStep } from "./add-lessons-step";
 import { type ChapterContext } from "./get-chapter-step";
 
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
-
 describe(addLessonsStep, () => {
   let organizationId: string;
   let context: ChapterContext;
@@ -61,7 +47,7 @@ describe(addLessonsStep, () => {
 
     await expect(addLessonsStep({ context: brokenContext, lessons })).rejects.toThrow();
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "addLessons" }),
@@ -120,7 +106,7 @@ describe(addLessonsStep, () => {
     expect(dbLessons[4]!.description).toBeNull();
     expect(dbLessons[4]!.generationStatus).toBe("completed");
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).toContainEqual(
       expect.objectContaining({ status: "started", step: "addLessons" }),

@@ -7,20 +7,6 @@ import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { checkExistingCourseStep } from "./check-existing-course-step";
 
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
-
 describe(checkExistingCourseStep, () => {
   let organizationId: string;
 
@@ -42,7 +28,7 @@ describe(checkExistingCourseStep, () => {
 
     expect(result).toBeNull();
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).toContainEqual(
       expect.objectContaining({ status: "started", step: "checkExistingCourse" }),

@@ -4,20 +4,6 @@ import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggesti
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { getCourseSuggestionStep } from "./get-course-suggestion-step";
 
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
-
 describe(getCourseSuggestionStep, () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -33,7 +19,7 @@ describe(getCourseSuggestionStep, () => {
     expect(result.id).toBe(suggestion.id);
     expect(result.title).toBe(suggestion.title);
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).toContainEqual(
       expect.objectContaining({ status: "started", step: "getCourseSuggestion" }),
@@ -49,7 +35,7 @@ describe(getCourseSuggestionStep, () => {
       "Course suggestion not found",
     );
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).toContainEqual(
       expect.objectContaining({ status: "error", step: "getCourseSuggestion" }),

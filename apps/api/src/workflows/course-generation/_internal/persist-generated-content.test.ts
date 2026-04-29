@@ -9,20 +9,6 @@ import { type GeneratedContent } from "./generate-missing-content";
 import { type ExistingCourseContent } from "./get-or-create-course";
 import { persistGeneratedContent } from "./persist-generated-content";
 
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
-
 describe(persistGeneratedContent, () => {
   let organizationId: string;
 
@@ -128,7 +114,7 @@ describe(persistGeneratedContent, () => {
 
     expect(chapters).toEqual([]);
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
     const completedSteps = events
       .filter((event) => event.status === "completed")
       .map((event) => event.step);

@@ -3,20 +3,6 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { generateAlternativeTitlesStep } from "./generate-alternative-titles-step";
 import { type CourseContext } from "./initialize-course-step";
 
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
-
 const { generateAlternativeTitlesMock } = vi.hoisted(() => ({
   generateAlternativeTitlesMock: vi.fn(),
 }));
@@ -53,7 +39,7 @@ describe(generateAlternativeTitlesStep, () => {
       title: "Test Course",
     });
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).toContainEqual(
       expect.objectContaining({ status: "started", step: "generateAlternativeTitles" }),
@@ -69,7 +55,7 @@ describe(generateAlternativeTitlesStep, () => {
 
     await expect(generateAlternativeTitlesStep(course)).rejects.toThrow("AI failure");
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "generateAlternativeTitles" }),

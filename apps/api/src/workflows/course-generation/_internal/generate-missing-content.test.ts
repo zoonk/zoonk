@@ -4,20 +4,6 @@ import { type CourseContext } from "../steps/initialize-course-step";
 import { generateMissingContent } from "./generate-missing-content";
 import { type ExistingCourseContent } from "./get-or-create-course";
 
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
-
 const {
   generateCourseDescriptionMock,
   generateCourseImageMock,
@@ -130,7 +116,7 @@ describe(generateMissingContent, () => {
     expect(generateCourseCategoriesMock).not.toHaveBeenCalled();
     expect(generateCourseChaptersMock).not.toHaveBeenCalled();
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
     const skippedSteps = events.filter((event) => event.status === "completed");
 
     expect(skippedSteps.length).toBeGreaterThanOrEqual(5);
