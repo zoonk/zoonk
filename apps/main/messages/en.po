@@ -2535,6 +2535,11 @@ msgid "Geography"
 msgstr "Geography"
 
 #: src/lib/lessons.ts
+msgctxt "1h+4hA"
+msgid "Work through a guided lesson."
+msgstr "Work through a guided lesson."
+
+#: src/lib/lessons.ts
 msgctxt "3198Ew"
 msgid "Learn new {topic} words with flashcards — see each word, its translation, and pronunciation."
 msgstr "Learn new {topic} words with flashcards — see each word, its translation, and pronunciation."
@@ -2545,9 +2550,34 @@ msgid "Learn {topic} with a guided step-by-step tutorial."
 msgstr "Learn {topic} with a guided step-by-step tutorial."
 
 #: src/lib/lessons.ts
+msgctxt "4dAUaa"
+msgid "Apply the previous explanations in a guided problem."
+msgstr "Apply the previous explanations in a guided problem."
+
+#: src/lib/lessons.ts
+msgctxt "4TTYDR"
+msgid "Custom lesson"
+msgstr "Custom lesson"
+
+#: src/lib/lessons.ts
+msgctxt "9XByXq"
+msgid "Follow a guided step-by-step tutorial."
+msgstr "Follow a guided step-by-step tutorial."
+
+#: src/lib/lessons.ts
 msgctxt "bzFQEy"
 msgid "Review everything you learned about {topic} with a comprehensive quiz."
 msgstr "Review everything you learned about {topic} with a comprehensive quiz."
+
+#: src/lib/lessons.ts
+msgctxt "DfYRbN"
+msgid "Learn new words with focused vocabulary practice."
+msgstr "Learn new words with focused vocabulary practice."
+
+#: src/lib/lessons.ts
+msgctxt "dHmgw1"
+msgid "Practice grammar patterns with examples and exercises."
+msgstr "Practice grammar patterns with examples and exercises."
 
 #: src/lib/lessons.ts
 msgctxt "gAYlHX"
@@ -2555,14 +2585,34 @@ msgid "Sharpen your {topic} listening skills by translating audio sentences."
 msgstr "Sharpen your {topic} listening skills by translating audio sentences."
 
 #: src/lib/lessons.ts
+msgctxt "Gm85VV"
+msgid "Translate the words from the previous vocabulary lesson."
+msgstr "Translate the words from the previous vocabulary lesson."
+
+#: src/lib/lessons.ts
 msgctxt "h2acN8"
 msgid "Test your understanding of {topic} with questions designed to check real comprehension, not just memorization."
 msgstr "Test your understanding of {topic} with questions designed to check real comprehension, not just memorization."
 
 #: src/lib/lessons.ts
+msgctxt "kvq0XW"
+msgid "Listen to sentences built from the latest vocabulary."
+msgstr "Listen to sentences built from the latest vocabulary."
+
+#: src/lib/lessons.ts
+msgctxt "KWi2PI"
+msgid "Learn the alphabet and writing system with focused practice."
+msgstr "Learn the alphabet and writing system with focused practice."
+
+#: src/lib/lessons.ts
 msgctxt "MOpDCK"
 msgid "{kind} {lesson}"
 msgstr "{kind} {lesson}"
+
+#: src/lib/lessons.ts
+msgctxt "nuMTc1"
+msgid "Read sentences built from the latest vocabulary."
+msgstr "Read sentences built from the latest vocabulary."
 
 #: src/lib/lessons.ts
 msgctxt "OjyuQ+"
@@ -2580,9 +2630,19 @@ msgid "Learn about {topic} through an interactive lesson."
 msgstr "Learn about {topic} through an interactive lesson."
 
 #: src/lib/lessons.ts
+msgctxt "pwrprO"
+msgid "Review this chapter with practice based on your mistakes."
+msgstr "Review this chapter with practice based on your mistakes."
+
+#: src/lib/lessons.ts
 msgctxt "qHbgYB"
 msgid "{lesson} - {course}"
 msgstr "{lesson} - {course}"
+
+#: src/lib/lessons.ts
+msgctxt "t+ekBV"
+msgid "Check your understanding with a short quiz."
+msgstr "Check your understanding with a short quiz."
 
 #: src/lib/lessons.ts
 msgctxt "THPcKi"
@@ -2603,3 +2663,8 @@ msgstr "Apply {topic} through a visual real-world problem with short decisions."
 msgctxt "XzxpBZ"
 msgid "Improve your {topic} reading comprehension by translating sentences and passages."
 msgstr "Improve your {topic} reading comprehension by translating sentences and passages."
+
+#: src/lib/lessons.ts
+msgctxt "yGskby"
+msgid "Understand the key ideas before applying them."
+msgstr "Understand the key ideas before applying them."

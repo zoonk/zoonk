@@ -1,26 +1,26 @@
 model Lesson {
-  id                String                @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  organizationId    String?               @map("organization_id") @db.Uuid
-  organization      Organization?         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  chapterId         String                @map("chapter_id") @db.Uuid
-  chapter           Chapter               @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-  isLocked          Boolean               @default(false) @map("is_locked")
-  isPublished       Boolean               @default(false) @map("is_published")
-  language          String                @db.VarChar(10)
-  kind              LessonKind            @default(custom)
-  slug              String
-  title             String
-  normalizedTitle   String                @map("normalized_title")
-  description       String
-  generationStatus  GenerationStatus      @default(pending) @map("generation_status")
-  generationRunId   String?               @map("generation_run_id")
-  position          Int
-  createdAt         DateTime              @default(now()) @map("created_at")
-  updatedAt         DateTime              @default(now()) @updatedAt @map("updated_at")
-  progress          LessonProgress[]
-  steps             Step[]
-  words             LessonWord[]
-  sentences         LessonSentence[]
+  id               String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  organizationId   String?          @map("organization_id") @db.Uuid
+  organization     Organization?    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  chapterId        String           @map("chapter_id") @db.Uuid
+  chapter          Chapter          @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  isLocked         Boolean          @default(false) @map("is_locked")
+  isPublished      Boolean          @default(false) @map("is_published")
+  language         String           @db.VarChar(10)
+  kind             LessonKind       @default(custom)
+  slug             String
+  title            String?
+  normalizedTitle  String?          @map("normalized_title")
+  description      String?
+  generationStatus GenerationStatus @default(pending) @map("generation_status")
+  generationRunId  String?          @map("generation_run_id")
+  position         Int
+  createdAt        DateTime         @default(now()) @map("created_at")
+  updatedAt        DateTime         @default(now()) @updatedAt @map("updated_at")
+  progress         LessonProgress[]
+  steps            Step[]
+  words            LessonWord[]
+  sentences        LessonSentence[]
 
   @@unique([chapterId, slug], name: "chapterLessonSlug")
   @@index([organizationId, normalizedTitle])

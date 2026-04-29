@@ -9,7 +9,7 @@ type NextSibling = {
   chapterSlug: string;
   courseSlug: string;
   lessonSlug: string;
-  lessonTitle: string;
+  lessonTitle: string | null;
 };
 
 export function buildLessonPlayerModel({

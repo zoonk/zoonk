@@ -1,22 +1,97 @@
 import { type LessonKind } from "@zoonk/db";
 import { getExtracted } from "next-intl/server";
 
-export async function getLessonKinds(): Promise<{ key: LessonKind; label: string }[]> {
+type LessonDisplayInput = {
+  kind: LessonKind;
+  title: string | null;
+  description: string | null;
+};
+
+/**
+ * Lesson kind labels are used in several app-level fallbacks. Keeping them in
+ * one translated map prevents the chapter list, player metadata, and SEO copy
+ * from drifting when a label changes.
+ */
+async function getLessonKindLabels(): Promise<Record<LessonKind, string>> {
   const t = await getExtracted();
 
+  return {
+    alphabet: t("Alphabet"),
+    custom: t("Custom lesson"),
+    explanation: t("Explanation"),
+    grammar: t("Grammar"),
+    listening: t("Listening"),
+    practice: t("Practice"),
+    quiz: t("Quiz"),
+    reading: t("Reading"),
+    review: t("Review"),
+    translation: t("Translation"),
+    tutorial: t("Tutorial"),
+    vocabulary: t("Vocabulary"),
+  };
+}
+
+async function getLessonKinds(): Promise<{ key: LessonKind; label: string }[]> {
+  const labels = await getLessonKindLabels();
+
   return [
-    { key: "alphabet", label: t("Alphabet") },
-    { key: "tutorial", label: t("Tutorial") },
-    { key: "explanation", label: t("Explanation") },
-    { key: "quiz", label: t("Quiz") },
-    { key: "practice", label: t("Practice") },
-    { key: "vocabulary", label: t("Vocabulary") },
-    { key: "translation", label: t("Translation") },
-    { key: "grammar", label: t("Grammar") },
-    { key: "reading", label: t("Reading") },
-    { key: "listening", label: t("Listening") },
-    { key: "review", label: t("Review") },
+    { key: "alphabet", label: labels.alphabet },
+    { key: "tutorial", label: labels.tutorial },
+    { key: "explanation", label: labels.explanation },
+    { key: "quiz", label: labels.quiz },
+    { key: "practice", label: labels.practice },
+    { key: "vocabulary", label: labels.vocabulary },
+    { key: "translation", label: labels.translation },
+    { key: "grammar", label: labels.grammar },
+    { key: "reading", label: labels.reading },
+    { key: "listening", label: labels.listening },
+    { key: "review", label: labels.review },
   ];
+}
+
+/**
+ * System-created lessons such as practice, quiz, reading, and review do not
+ * store generated titles or descriptions. The app renders those labels from
+ * current translations so copy can change without regenerating curriculum rows.
+ */
+export async function getLessonDisplayMeta(
+  lesson: LessonDisplayInput,
+): Promise<{ title: string; description: string }> {
+  const labels = await getLessonKindLabels();
+  const t = await getExtracted();
+
+  function getTitle() {
+    if (lesson.title) {
+      return lesson.title;
+    }
+
+    return labels[lesson.kind];
+  }
+
+  function getDescription() {
+    if (lesson.description) {
+      return lesson.description;
+    }
+
+    const descriptions: Record<LessonKind, string> = {
+      alphabet: t("Learn the alphabet and writing system with focused practice."),
+      custom: t("Work through a guided lesson."),
+      explanation: t("Understand the key ideas before applying them."),
+      grammar: t("Practice grammar patterns with examples and exercises."),
+      listening: t("Listen to sentences built from the latest vocabulary."),
+      practice: t("Apply the previous explanations in a guided problem."),
+      quiz: t("Check your understanding with a short quiz."),
+      reading: t("Read sentences built from the latest vocabulary."),
+      review: t("Review this chapter with practice based on your mistakes."),
+      translation: t("Translate the words from the previous vocabulary lesson."),
+      tutorial: t("Follow a guided step-by-step tutorial."),
+      vocabulary: t("Learn new words with focused vocabulary practice."),
+    };
+
+    return descriptions[lesson.kind];
+  }
+
+  return { description: getDescription(), title: getTitle() };
 }
 
 async function getSeoDescription(kind: LessonKind, topic: string): Promise<string> {
@@ -61,12 +136,11 @@ async function getSeoDescription(kind: LessonKind, topic: string): Promise<strin
 
 export async function getLessonSeoMeta(
   lesson: { kind: LessonKind; title: string | null; description: string | null },
-  lessonTitle: string,
+  lessonTitle: string | null,
 ): Promise<{ title: string; description: string }> {
-  const [title, description] = await Promise.all([
-    getSeoTitle(lesson, lessonTitle),
-    getSeoLessonDescription(lesson, lessonTitle),
-  ]);
+  const displayMeta = await getLessonDisplayMeta(lesson);
+  const title = await getSeoTitle(lesson, lessonTitle ?? displayMeta.title);
+  const description = await getSeoLessonDescription(lesson, lessonTitle ?? displayMeta.title);
 
   return { description, title };
 }

@@ -342,15 +342,16 @@ test.describe("Generate Lesson Page - Running Generation Bypasses Auth", () => {
       title: `E2E Running Lesson Chapter ${uniqueId}`,
     });
 
+    const lessonTitle = `E2E Running Lesson ${uniqueId}`;
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       generationRunId: `run-${uniqueId}`,
       generationStatus: "running",
       isPublished: true,
-      normalizedTitle: normalizeString(`E2E Running Lesson ${uniqueId}`),
+      normalizedTitle: normalizeString(lessonTitle),
       organizationId: org.id,
       slug: `e2e-running-lesson-${uniqueId}`,
-      title: `E2E Running Lesson ${uniqueId}`,
+      title: lessonTitle,
     });
 
     await setupMockApis(page, {
@@ -362,7 +363,7 @@ test.describe("Generate Lesson Page - Running Generation Bypasses Auth", () => {
 
     await expect(page.getByRole("alert").filter({ hasText: /logged in/i })).toHaveCount(0);
     await expect(page.getByText(/upgrade to create/i)).toHaveCount(0);
-    await expect(page.getByRole("heading", { name: lesson.title })).toBeVisible();
+    await expect(page.getByRole("heading", { name: lessonTitle })).toBeVisible();
   });
 });
 

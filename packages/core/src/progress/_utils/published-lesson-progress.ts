@@ -11,7 +11,7 @@ export type PublishedLessonProgressRow = {
   completedLessons: number;
   courseId: string;
   courseSlug: string;
-  lessonDescription: string;
+  lessonDescription: string | null;
   lessonGenerationStatus: "completed" | "failed" | "pending" | "running";
   lessonId: string;
   lessonKind:
@@ -29,7 +29,7 @@ export type PublishedLessonProgressRow = {
     | "vocabulary";
   lessonPosition: number;
   lessonSlug: string;
-  lessonTitle: string;
+  lessonTitle: string | null;
   pendingLessons: number;
   totalLessons: number;
 };

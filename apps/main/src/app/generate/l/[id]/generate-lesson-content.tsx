@@ -2,6 +2,7 @@ import { LoginRequired } from "@/components/auth/login-required";
 import { SubscriptionGate } from "@/components/subscription/subscription-gate";
 import { getLessonForGeneration } from "@/data/lessons/get-lesson-for-generation";
 import { isGeneratedLessonKind } from "@/lib/generation/lesson-generation-phase-config";
+import { getLessonDisplayMeta } from "@/lib/lessons";
 import { getInitialGenerationPageStatus } from "@/lib/workflow/get-initial-generation-page-status";
 import { getSession } from "@zoonk/core/users/session/get";
 import {
@@ -28,6 +29,7 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
 
   const hasStarted = lesson.generationStatus !== "pending";
   const t = await getExtracted();
+  const lessonMeta = await getLessonDisplayMeta(lesson);
 
   const backHref =
     `/b/${AI_ORG_SLUG}/c/${lesson.chapter.course.slug}/ch/${lesson.chapter.slug}` as const;
@@ -47,8 +49,8 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
     <Container variant="narrow">
       <ContainerHeader>
         <ContainerHeaderGroup>
-          <ContainerTitle>{lesson.title}</ContainerTitle>
-          <ContainerDescription>{lesson.description}</ContainerDescription>
+          <ContainerTitle>{lessonMeta.title}</ContainerTitle>
+          <ContainerDescription>{lessonMeta.description}</ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 

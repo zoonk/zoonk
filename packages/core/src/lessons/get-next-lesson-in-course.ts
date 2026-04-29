@@ -10,7 +10,7 @@ export type NextLessonInCourse = {
   lessonTitle: string | null;
   chapterId: string;
   chapterSlug: string;
-  lessonDescription: string;
+  lessonDescription: string | null;
   lessonSlug: string;
 };
 

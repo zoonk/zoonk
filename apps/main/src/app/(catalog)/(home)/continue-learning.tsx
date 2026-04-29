@@ -3,7 +3,6 @@ import {
   MAX_CONTINUE_LEARNING_ITEMS,
   getContinueLearning,
 } from "@/data/courses/get-continue-learning";
-import { getLessonKinds } from "@/lib/lessons";
 import {
   FeatureCard,
   FeatureCardBody,
@@ -56,13 +55,11 @@ export async function ContinueLearningList() {
   }
 
   const t = await getExtracted();
-  const lessonKinds = await getLessonKinds();
   const itemCount = items.length;
 
-  const kindLabels = new Map<string, string>(lessonKinds.map((kind) => [kind.key, kind.label]));
   const cards = items.map((item) => (
     <ContinueLearningItem itemCount={itemCount} key={item.course.id}>
-      <ContinueLearningCard item={item} kindLabels={kindLabels} />
+      <ContinueLearningCard item={item} />
     </ContinueLearningItem>
   ));
 

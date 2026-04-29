@@ -6,17 +6,17 @@ enum GenerationStatus {
 }
 
 enum LessonKind {
-  custom
-  tutorial
-  explanation
-  practice
-  quiz
-  review
   alphabet
+  custom
+  explanation
   grammar
   listening
+  practice
+  quiz
   reading
+  review
   translation
+  tutorial
   vocabulary
 }
 

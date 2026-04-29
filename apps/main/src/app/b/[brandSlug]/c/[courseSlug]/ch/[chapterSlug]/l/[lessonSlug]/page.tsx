@@ -1,5 +1,5 @@
 import { getLesson as getCatalogLesson } from "@/data/lessons/get-lesson";
-import { getLessonSeoMeta } from "@/lib/lessons";
+import { getLessonDisplayMeta, getLessonSeoMeta } from "@/lib/lessons";
 import { getNextLessonInCourse } from "@zoonk/core/lessons/next-in-course";
 import { startLesson } from "@zoonk/core/player/commands/start-lesson";
 import { preparePlayerLessonData } from "@zoonk/core/player/contracts/prepare-lesson-data";
@@ -91,6 +91,8 @@ export default async function LessonPage({ params }: Props) {
     );
   }
 
+  const lessonMeta = await getLessonDisplayMeta(lesson);
+
   const resourceLessonIds = getPlayerResourceLessonIds({
     lessonId: lessonShell.id,
     reviewSteps,
@@ -124,8 +126,8 @@ export default async function LessonPage({ params }: Props) {
       courseSlug={courseSlug}
       chapterSlug={chapterSlug}
       isAuthenticated={Boolean(session)}
-      lessonDescription={lesson.description}
-      lessonTitle={lesson.title}
+      lessonDescription={lessonMeta.description}
+      lessonTitle={lessonMeta.title}
       nextLesson={nextLesson}
       nextSibling={nextSibling}
       totalBrainPower={totalBrainPower}

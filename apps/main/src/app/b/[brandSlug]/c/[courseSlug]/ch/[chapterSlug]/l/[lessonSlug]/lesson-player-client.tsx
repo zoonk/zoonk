@@ -43,7 +43,7 @@ export function LessonPlayerClient({
     chapterSlug: string;
     courseSlug: string;
     lessonSlug: string;
-    lessonTitle: string;
+    lessonTitle: string | null;
   } | null;
   totalBrainPower: number;
   userEmail?: string;

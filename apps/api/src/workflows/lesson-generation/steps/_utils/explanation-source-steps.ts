@@ -7,6 +7,14 @@ type ExplanationStep = {
   title: string;
 };
 
+/**
+ * Sibling titles are optional prompt context. Untitled structural lessons
+ * should not appear as `"null"` or placeholder text in explanation prompts.
+ */
+function lessonTitleForPrompt(lesson: { title: string | null }): string[] {
+  return lesson.title ? [lesson.title] : [];
+}
+
 export async function getOtherExplanationLessonTitles(context: LessonContext): Promise<string[]> {
   const lessons = await prisma.lesson.findMany({
     orderBy: { position: "asc" },
@@ -17,7 +25,7 @@ export async function getOtherExplanationLessonTitles(context: LessonContext): P
     },
   });
 
-  return lessons.map((lesson) => lesson.title);
+  return lessons.flatMap((lesson) => lessonTitleForPrompt(lesson));
 }
 
 export async function getExplanationStepsSinceLastLessonKind({

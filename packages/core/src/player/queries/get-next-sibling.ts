@@ -1,5 +1,10 @@
 import "server-only";
-import { getPublishedChapterWhere, getPublishedLessonWhere, prisma } from "@zoonk/db";
+import {
+  type LessonKind,
+  getPublishedChapterWhere,
+  getPublishedLessonWhere,
+  prisma,
+} from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
 type LessonScope = {
@@ -21,10 +26,11 @@ type LessonResult = {
   chapterId: string;
   chapterSlug: string;
   courseSlug: string;
-  lessonDescription: string;
+  lessonDescription: string | null;
   lessonId: string;
+  lessonKind: LessonKind;
   lessonSlug: string;
-  lessonTitle: string;
+  lessonTitle: string | null;
 };
 
 type ChapterResult = {
@@ -73,6 +79,7 @@ async function getNextLessonSibling(scope: LessonScope): Promise<LessonResult | 
     courseSlug: lesson.chapter.course.slug,
     lessonDescription: lesson.description,
     lessonId: lesson.id,
+    lessonKind: lesson.kind,
     lessonSlug: lesson.slug,
     lessonTitle: lesson.title,
   };

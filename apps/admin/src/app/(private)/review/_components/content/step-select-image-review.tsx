@@ -1,4 +1,6 @@
+import { getAdminLessonLabel } from "@/lib/lesson-label";
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
+import { type LessonKind } from "@zoonk/db";
 import { Badge } from "@zoonk/ui/components/badge";
 import Image from "next/image";
 
@@ -8,16 +10,17 @@ export function StepSelectImageReview({
   item: {
     id: string;
     content: unknown;
-    lesson: { title: string };
+    lesson: { kind: LessonKind; title: string | null };
   };
 }) {
   const content = parseStepContent("selectImage", item.content);
+  const lessonLabel = getAdminLessonLabel(item.lesson);
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <Badge variant="outline">selectImage</Badge>
-        <span className="text-muted-foreground text-sm">{item.lesson.title}</span>
+        <span className="text-muted-foreground text-sm">{lessonLabel}</span>
       </div>
 
       <p className="text-lg font-medium">{content.question}</p>

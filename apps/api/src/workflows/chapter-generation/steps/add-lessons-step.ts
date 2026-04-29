@@ -7,6 +7,23 @@ import { expandChapterLessons } from "./_utils/lesson-plan-expansion";
 import { type GeneratedChapterLesson } from "./generate-lessons-step";
 import { type ChapterContext } from "./get-chapter-step";
 
+/**
+ * Lessons without authored titles still need stable URL slugs. The label is
+ * only used for route generation, while the public UI can render current
+ * kind-based copy from translations instead of storing generated fallback text.
+ */
+function getRouteLabel({
+  index,
+  kind,
+  title,
+}: {
+  index: number;
+  kind: string;
+  title: string | null;
+}): string {
+  return title ?? `${kind}-${index + 1}`;
+}
+
 export async function addLessonsStep(input: {
   context: ChapterContext;
   lessons: GeneratedChapterLesson[];
@@ -17,25 +34,32 @@ export async function addLessonsStep(input: {
   await stream.status({ status: "started", step: "addLessons" });
 
   const expandedLessons = expandChapterLessons({
-    language: input.context.language,
     lessons: input.lessons,
     targetLanguage: input.context.course.targetLanguage,
   });
 
   const lessonsData: LessonCreateManyInput[] = deduplicateSlugs(
-    expandedLessons.map((lesson, index) => ({
-      chapterId: input.context.id,
-      description: lesson.description,
-      generationStatus: lesson.kind === "review" ? ("completed" as const) : ("pending" as const),
-      isPublished: true,
-      kind: lesson.kind,
-      language: input.context.language,
-      normalizedTitle: normalizeString(lesson.title),
-      organizationId: input.context.organizationId,
-      position: index,
-      slug: toSlug(lesson.title),
-      title: lesson.title,
-    })),
+    expandedLessons.map((lesson, index) => {
+      const routeLabel = getRouteLabel({
+        index,
+        kind: lesson.kind,
+        title: lesson.title,
+      });
+
+      return {
+        chapterId: input.context.id,
+        description: lesson.description,
+        generationStatus: lesson.kind === "review" ? ("completed" as const) : ("pending" as const),
+        isPublished: true,
+        kind: lesson.kind,
+        language: input.context.language,
+        normalizedTitle: lesson.title ? normalizeString(lesson.title) : null,
+        organizationId: input.context.organizationId,
+        position: index,
+        slug: toSlug(routeLabel),
+        title: lesson.title,
+      };
+    }),
   );
 
   const { data: createdLessons, error } = await safeAsync(() =>

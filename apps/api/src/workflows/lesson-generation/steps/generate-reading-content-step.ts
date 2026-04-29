@@ -61,8 +61,8 @@ export async function generateReadingContentStep(
     await safeAsync(() =>
       generateLessonSentences({
         chapterTitle: context.chapter.title,
-        lessonDescription: context.description,
-        lessonTitle: context.title,
+        lessonDescription: context.description ?? undefined,
+        lessonTitle: context.title ?? "",
         targetLanguage,
         userLanguage: context.language,
         words,

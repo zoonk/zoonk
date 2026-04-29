@@ -29,8 +29,8 @@ export async function generateVocabularyContentStep(
     await safeAsync(() =>
       generateLessonVocabulary({
         chapterTitle: context.chapter.title,
-        lessonDescription: context.description,
-        lessonTitle: context.title,
+        lessonDescription: context.description ?? "",
+        lessonTitle: context.title ?? "",
         targetLanguage,
         userLanguage: context.language,
       }),

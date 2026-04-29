@@ -1,4 +1,5 @@
 import { type ContinueLearningItem } from "@/data/courses/get-continue-learning";
+import { getLessonDisplayMeta } from "@/lib/lessons";
 import {
   FeatureCard,
   FeatureCardBody,
@@ -20,17 +21,20 @@ import { getExtracted } from "next-intl/server";
 import Image from "next/image";
 import Link from "next/link";
 
-async function getHeaderLabel(item: ContinueLearningItem, kindLabels: Map<string, string>) {
+async function getHeaderLabel({
+  item,
+  lessonTitle,
+}: {
+  item: ContinueLearningItem;
+  lessonTitle: string | null;
+}) {
   const t = await getExtracted();
 
   if (item.status === "pending") {
     return t("Continue");
   }
 
-  const defaultLabel = t("Lesson");
-  const lessonLabel = item.lesson.title ?? kindLabels.get(item.lesson.kind) ?? defaultLabel;
-
-  return t("Next: {lesson}", { lesson: lessonLabel });
+  return t("Next: {lesson}", { lesson: lessonTitle ?? t("Lesson") });
 }
 
 function getHrefs(item: ContinueLearningItem) {
@@ -59,15 +63,10 @@ function getHrefs(item: ContinueLearningItem) {
   return { courseHref, headerHref: lessonHref, lessonHref, prefetch: false };
 }
 
-export async function ContinueLearningCard({
-  item,
-  kindLabels,
-}: {
-  item: ContinueLearningItem;
-  kindLabels: Map<string, string>;
-}) {
+export async function ContinueLearningCard({ item }: { item: ContinueLearningItem }) {
   const { course, lesson } = item;
-  const headerLabel = await getHeaderLabel(item, kindLabels);
+  const lessonMeta = lesson ? await getLessonDisplayMeta(lesson) : null;
+  const headerLabel = await getHeaderLabel({ item, lessonTitle: lessonMeta?.title ?? null });
   const { courseHref, headerHref, lessonHref, prefetch } = getHrefs(item);
 
   return (
@@ -110,7 +109,7 @@ export async function ContinueLearningCard({
             <>
               <FeatureCardTitle>
                 <Link href={lessonHref} prefetch={prefetch}>
-                  {lesson.title}
+                  {lessonMeta?.title}
                 </Link>
               </FeatureCardTitle>
 
@@ -120,7 +119,7 @@ export async function ContinueLearningCard({
                 </Link>
               </FeatureCardSubtitle>
 
-              <FeatureCardDescription>{lesson.description}</FeatureCardDescription>
+              <FeatureCardDescription>{lessonMeta?.description}</FeatureCardDescription>
             </>
           ) : (
             <FeatureCardTitle>

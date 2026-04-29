@@ -28,7 +28,6 @@ describe(expandChapterLessons, () => {
     expect(
       kinds(
         expandChapterLessons({
-          language: "en",
           lessons: explanationLessons(3),
           targetLanguage: null,
         }),
@@ -40,7 +39,6 @@ describe(expandChapterLessons, () => {
     expect(
       kinds(
         expandChapterLessons({
-          language: "en",
           lessons: explanationLessons(5),
           targetLanguage: null,
         }),
@@ -62,7 +60,6 @@ describe(expandChapterLessons, () => {
     expect(
       kinds(
         expandChapterLessons({
-          language: "en",
           lessons: explanationLessons(6),
           targetLanguage: null,
         }),
@@ -88,16 +85,33 @@ describe(expandChapterLessons, () => {
       { description: "Tutorial", kind: "tutorial", title: "Tutorial" },
     ];
 
-    expect(kinds(expandChapterLessons({ language: "en", lessons, targetLanguage: null }))).toEqual([
-      "tutorial",
-    ]);
+    expect(kinds(expandChapterLessons({ lessons, targetLanguage: null }))).toEqual(["tutorial"]);
+  });
+
+  test("keeps generated companion lesson titles and descriptions empty", () => {
+    const lessons = expandChapterLessons({
+      lessons: explanationLessons(2),
+      targetLanguage: null,
+    });
+
+    expect(lessons.find((lesson) => lesson.kind === "practice")).toMatchObject({
+      description: null,
+      title: null,
+    });
+    expect(lessons.find((lesson) => lesson.kind === "quiz")).toMatchObject({
+      description: null,
+      title: null,
+    });
+    expect(lessons.find((lesson) => lesson.kind === "review")).toMatchObject({
+      description: null,
+      title: null,
+    });
   });
 
   test("adds reading and listening after every vocabulary group", () => {
     expect(
       kinds(
         expandChapterLessons({
-          language: "en",
           lessons: vocabularyLessons(4),
           targetLanguage: "es",
         }),
@@ -123,7 +137,6 @@ describe(expandChapterLessons, () => {
     expect(
       kinds(
         expandChapterLessons({
-          language: "en",
           lessons: vocabularyLessons(5),
           targetLanguage: "xx",
         }),

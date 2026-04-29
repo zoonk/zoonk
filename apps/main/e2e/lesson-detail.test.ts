@@ -29,6 +29,7 @@ async function createTestLesson(options?: {
     title: `E2E Lesson Chapter ${uniqueId}`,
   });
 
+  const lessonTitle = `E2E Lesson Lesson ${uniqueId}`;
   const lesson = await lessonFixture({
     chapterId: chapter.id,
     description: `E2E lesson description ${uniqueId}`,
@@ -37,7 +38,7 @@ async function createTestLesson(options?: {
     kind: "explanation",
     organizationId: org.id,
     slug: `e2e-lesson-lesson-${uniqueId}`,
-    title: `E2E Lesson Lesson ${uniqueId}`,
+    title: lessonTitle,
   });
 
   if (options?.generationStatus !== "pending") {
@@ -59,7 +60,7 @@ async function createTestLesson(options?: {
     );
   }
 
-  return { chapter, course, lesson, uniqueId };
+  return { chapter, course, lesson, lessonTitle, uniqueId };
 }
 
 test.describe("Lesson Player Page", () => {
@@ -160,13 +161,13 @@ test.describe("Lesson Player Page", () => {
   });
 
   test("page title contains lesson title", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestLesson({
+    const { chapter, course, lesson, lessonTitle } = await createTestLesson({
       generationStatus: "completed",
     });
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await expect(page).toHaveTitle(new RegExp(lesson.title));
+    await expect(page).toHaveTitle(new RegExp(lessonTitle));
   });
 
   test("unpublished lesson shows 404 page", async ({ page }) => {

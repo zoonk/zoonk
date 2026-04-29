@@ -426,6 +426,7 @@ test.describe("Lesson Completion UX", () => {
       slug: `e2e-mute-chapter-${uniqueId}`,
     });
 
+    const completedLessonTitle = `Done Lesson ${uniqueId}`;
     const completedLesson = await lessonFixture({
       chapterId: chapter.id,
       description: `Completed lesson ${uniqueId}`,
@@ -434,9 +435,10 @@ test.describe("Lesson Completion UX", () => {
       organizationId: org.id,
       position: 0,
       slug: `e2e-mute-done-${uniqueId}`,
-      title: `Done Lesson ${uniqueId}`,
+      title: completedLessonTitle,
     });
 
+    const pendingLessonTitle = `Pending Lesson ${uniqueId}`;
     const pendingLesson = await lessonFixture({
       chapterId: chapter.id,
       description: `Pending lesson ${uniqueId}`,
@@ -445,7 +447,7 @@ test.describe("Lesson Completion UX", () => {
       organizationId: org.id,
       position: 1,
       slug: `e2e-mute-pending-${uniqueId}`,
-      title: `Pending Lesson ${uniqueId}`,
+      title: pendingLessonTitle,
     });
 
     await stepFixture({
@@ -473,13 +475,13 @@ test.describe("Lesson Completion UX", () => {
     await authenticatedPage.waitForLoadState("networkidle");
 
     const completedItem = authenticatedPage.getByRole("link", {
-      name: new RegExp(completedLesson.title),
+      name: new RegExp(completedLessonTitle),
     });
     await expect(completedItem).toBeVisible();
     await expect(completedItem.getByRole("img", { name: /^completed$/i })).toBeVisible();
 
     const pendingItem = authenticatedPage.getByRole("link", {
-      name: new RegExp(pendingLesson.title),
+      name: new RegExp(pendingLessonTitle),
     });
     await expect(pendingItem).toBeVisible();
   });

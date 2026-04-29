@@ -23,7 +23,7 @@ type PrefetchableContinueLearningState = ContinueLearningResolvedState & {
 };
 
 type ContinueLearningLesson = {
-  description: string;
+  description: string | null;
   id: string;
   kind: LessonKind;
   position: number;
@@ -33,7 +33,7 @@ type ContinueLearningLesson = {
 
 type ContinueLearningPendingLesson = Pick<
   ContinueLearningLesson,
-  "description" | "id" | "slug" | "title"
+  "description" | "id" | "kind" | "slug" | "title"
 >;
 
 type ContinueLearningChapter = Pick<Chapter, "id" | "slug">;
@@ -180,6 +180,7 @@ function toPendingItemFromState({
     lesson: {
       description: state.lessonDescription,
       id: state.lessonId,
+      kind: state.lessonKind,
       slug: state.lessonSlug,
       title: state.lessonTitle,
     },

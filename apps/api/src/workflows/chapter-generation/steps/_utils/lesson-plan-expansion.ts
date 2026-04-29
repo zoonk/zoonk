@@ -2,106 +2,18 @@ import { type LessonKind } from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 
 type GeneratedChapterLesson = {
-  description: string;
+  description?: string | null;
   kind: "alphabet" | "explanation" | "grammar" | "tutorial" | "vocabulary";
-  title: string;
+  title?: string | null;
 };
 
 type ExpandedChapterLesson = {
-  description: string;
+  description: string | null;
   kind: LessonKind;
-  title: string;
-};
-
-type LessonCopy = {
-  description: string;
-  title: string;
+  title: string | null;
 };
 
 type CompanionKind = "listening" | "practice" | "quiz" | "reading" | "review" | "translation";
-
-const ENGLISH_COPY: Record<CompanionKind, LessonCopy> = {
-  listening: {
-    description: "Listen to sentences built from the latest vocabulary group.",
-    title: "Listening practice",
-  },
-  practice: {
-    description: "Apply the previous explanations in a guided problem.",
-    title: "Practice",
-  },
-  quiz: {
-    description: "Check the previous practice set with a short quiz.",
-    title: "Quiz",
-  },
-  reading: {
-    description: "Read sentences built from the latest vocabulary group.",
-    title: "Reading practice",
-  },
-  review: {
-    description: "Review this chapter with practice based on your mistakes.",
-    title: "Review",
-  },
-  translation: {
-    description: "Translate the words and phrases from the previous vocabulary lesson.",
-    title: "Translation practice",
-  },
-};
-
-const COPY: Record<string, Record<CompanionKind, LessonCopy>> = {
-  en: ENGLISH_COPY,
-  es: {
-    listening: {
-      description: "Escucha oraciones construidas con el grupo de vocabulario más reciente.",
-      title: "Práctica de escucha",
-    },
-    practice: {
-      description: "Aplica las explicaciones anteriores en un problema guiado.",
-      title: "Práctica",
-    },
-    quiz: {
-      description: "Comprueba la práctica anterior con una prueba breve.",
-      title: "Prueba",
-    },
-    reading: {
-      description: "Lee oraciones construidas con el grupo de vocabulario más reciente.",
-      title: "Práctica de lectura",
-    },
-    review: {
-      description: "Repasa este capítulo con práctica basada en tus errores.",
-      title: "Repaso",
-    },
-    translation: {
-      description: "Traduce las palabras y frases de la lección de vocabulario anterior.",
-      title: "Práctica de traducción",
-    },
-  },
-  pt: {
-    listening: {
-      description: "Escute frases criadas com o grupo de vocabulário mais recente.",
-      title: "Prática de escuta",
-    },
-    practice: {
-      description: "Aplique as explicações anteriores em um problema guiado.",
-      title: "Prática",
-    },
-    quiz: {
-      description: "Confira a prática anterior com um quiz curto.",
-      title: "Quiz",
-    },
-    reading: {
-      description: "Leia frases criadas com o grupo de vocabulário mais recente.",
-      title: "Prática de leitura",
-    },
-    review: {
-      description: "Revise este capítulo com prática baseada nos seus erros.",
-      title: "Revisão",
-    },
-    translation: {
-      description: "Traduza as palavras e frases da lição de vocabulário anterior.",
-      title: "Prática de tradução",
-    },
-  },
-};
 
 const DEFAULT_EXPLANATION_GROUP_SIZE = 2;
 const MAX_EXPLANATION_GROUP_SIZE = 3;
@@ -110,12 +22,31 @@ const BALANCED_VOCABULARY_GROUP_SIZE = 2;
 const MAX_VOCABULARY_GROUP_SIZE = 3;
 
 /**
- * Generated curriculum content is localized by the model, but the companion
- * lessons are deterministic rows created by the app. This helper keeps those
- * generated row labels in the same broad UI language as the surrounding course.
+ * Companion lessons are structural rows, not model-authored curriculum items.
+ * Keeping copy out of these rows lets the app decide how to label each kind in
+ * the current UI language instead of freezing generated titles in the database.
  */
-function getCopy({ kind, language }: { kind: CompanionKind; language: string }) {
-  return COPY[language]?.[kind] ?? ENGLISH_COPY[kind];
+function companionLesson(kind: CompanionKind): ExpandedChapterLesson {
+  return { description: null, kind, title: null };
+}
+
+/**
+ * Model-authored lessons may omit display copy in future planning tasks, so
+ * every expansion path normalizes absent values to database nulls before rows
+ * are handed to the persistence step.
+ */
+function authoredLesson({
+  kind,
+  lesson,
+}: {
+  kind?: LessonKind;
+  lesson: GeneratedChapterLesson;
+}): ExpandedChapterLesson {
+  return {
+    description: lesson.description ?? null,
+    kind: kind ?? lesson.kind,
+    title: lesson.title ?? null,
+  };
 }
 
 /**
@@ -187,22 +118,17 @@ function getGroupEndOrdinals(sizes: number[], previous = 0): number[] {
  * appears after every two practice rows, with a final quiz before review.
  */
 function expandContentLessons({
-  language,
   lessons,
 }: {
-  language: string;
   lessons: GeneratedChapterLesson[];
 }): ExpandedChapterLesson[] {
   const explanationCount = lessons.filter((lesson) => lesson.kind === "explanation").length;
 
   if (explanationCount === 0) {
-    return lessons.map((lesson) => ({ ...lesson, kind: lesson.kind as LessonKind }));
+    return lessons.map((lesson) => authoredLesson({ lesson }));
   }
 
   const groupEnds = new Set(getGroupEndOrdinals(getExplanationGroupSizes(explanationCount)));
-  const practiceCopy = getCopy({ kind: "practice", language });
-  const quizCopy = getCopy({ kind: "quiz", language });
-  const reviewCopy = getCopy({ kind: "review", language });
 
   const expanded = lessons.reduce(
     (state, lesson) => {
@@ -218,9 +144,9 @@ function expandContentLessons({
         practiceCount: nextPracticeCount,
         rows: [
           ...state.rows,
-          { ...lesson, kind: lesson.kind as LessonKind },
-          ...(shouldAddPractice ? [{ ...practiceCopy, kind: "practice" as const }] : []),
-          ...(shouldAddQuiz ? [{ ...quizCopy, kind: "quiz" as const }] : []),
+          authoredLesson({ lesson }),
+          ...(shouldAddPractice ? [companionLesson("practice")] : []),
+          ...(shouldAddQuiz ? [companionLesson("quiz")] : []),
         ],
       };
     },
@@ -231,8 +157,8 @@ function expandContentLessons({
 
   return [
     ...expanded.rows,
-    ...(needsFinalQuiz ? [{ ...quizCopy, kind: "quiz" as const }] : []),
-    { ...reviewCopy, kind: "review" as const },
+    ...(needsFinalQuiz ? [companionLesson("quiz")] : []),
+    companionLesson("review"),
   ];
 }
 
@@ -242,27 +168,22 @@ function expandContentLessons({
  * reading lesson and, when TTS supports it, a listening lesson.
  */
 function expandVocabularyRun({
-  language,
   lessons,
   targetLanguage,
 }: {
-  language: string;
   lessons: GeneratedChapterLesson[];
   targetLanguage: string;
 }): ExpandedChapterLesson[] {
-  const translationCopy = getCopy({ kind: "translation", language });
-  const readingCopy = getCopy({ kind: "reading", language });
-  const listeningCopy = getCopy({ kind: "listening", language });
   const groups = groupBySizes(lessons, getVocabularyGroupSizes(lessons.length));
   const canGenerateListening = isTTSSupportedLanguage(targetLanguage);
 
   return groups.flatMap((group) => [
     ...group.flatMap((lesson) => [
-      { ...lesson, kind: "vocabulary" as const },
-      { ...translationCopy, kind: "translation" as const },
+      authoredLesson({ kind: "vocabulary", lesson }),
+      companionLesson("translation"),
     ]),
-    { ...readingCopy, kind: "reading" as const },
-    ...(canGenerateListening ? [{ ...listeningCopy, kind: "listening" as const }] : []),
+    companionLesson("reading"),
+    ...(canGenerateListening ? [companionLesson("listening")] : []),
   ]);
 }
 
@@ -301,11 +222,9 @@ function takeVocabularyRun(lessons: GeneratedChapterLesson[]) {
  * all generated language content.
  */
 function expandLanguageLessons({
-  language,
   lessons,
   targetLanguage,
 }: {
-  language: string;
   lessons: GeneratedChapterLesson[];
   targetLanguage: string;
 }): ExpandedChapterLesson[] {
@@ -318,14 +237,14 @@ function expandLanguageLessons({
   if (firstLesson.kind === "vocabulary") {
     const { rest, run } = takeVocabularyRun(lessons);
     return [
-      ...expandVocabularyRun({ language, lessons: run, targetLanguage }),
-      ...expandLanguageLessons({ language, lessons: rest, targetLanguage }),
+      ...expandVocabularyRun({ lessons: run, targetLanguage }),
+      ...expandLanguageLessons({ lessons: rest, targetLanguage }),
     ];
   }
 
   return [
-    { ...firstLesson, kind: firstLesson.kind as LessonKind },
-    ...expandLanguageLessons({ language, lessons: remainingLessons, targetLanguage }),
+    authoredLesson({ lesson: firstLesson }),
+    ...expandLanguageLessons({ lessons: remainingLessons, targetLanguage }),
   ];
 }
 
@@ -334,24 +253,21 @@ function expandLanguageLessons({
  * function expands that plan into the actual lesson rows the learner will see.
  */
 export function expandChapterLessons({
-  language,
   lessons,
   targetLanguage,
 }: {
-  language: string;
   lessons: GeneratedChapterLesson[];
   targetLanguage: string | null;
 }): ExpandedChapterLesson[] {
   if (!targetLanguage) {
-    return expandContentLessons({ language, lessons });
+    return expandContentLessons({ lessons });
   }
 
-  const reviewCopy = getCopy({ kind: "review", language });
-  const expanded = expandLanguageLessons({ language, lessons, targetLanguage });
+  const expanded = expandLanguageLessons({ lessons, targetLanguage });
 
   if (expanded.length === 0) {
     return [];
   }
 
-  return [...expanded, { ...reviewCopy, kind: "review" as const }];
+  return [...expanded, companionLesson("review")];
 }

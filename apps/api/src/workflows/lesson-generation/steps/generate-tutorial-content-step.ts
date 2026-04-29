@@ -19,8 +19,8 @@ export async function generateTutorialContentStep(
         chapterTitle: context.chapter.title,
         courseTitle: context.chapter.course.title,
         language: context.language,
-        lessonDescription: context.description,
-        lessonTitle: context.title,
+        lessonDescription: context.description ?? "",
+        lessonTitle: context.title ?? "",
       }),
     );
 

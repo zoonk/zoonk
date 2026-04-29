@@ -1,3 +1,5 @@
+import { getAdminLessonLabel } from "@/lib/lesson-label";
+import { type LessonKind } from "@zoonk/db";
 import { Badge } from "@zoonk/ui/components/badge";
 import { isJsonObject } from "@zoonk/utils/json";
 import Image from "next/image";
@@ -17,17 +19,18 @@ export function StepImageReview({
   item: {
     id: string;
     content: unknown;
-    lesson: { title: string };
+    lesson: { kind: LessonKind; title: string | null };
   };
 }) {
   const prompt = getStringField(item.content, "prompt");
   const imageUrl = getStringField(item.content, "url");
+  const lessonLabel = getAdminLessonLabel(item.lesson);
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <Badge variant="outline">image</Badge>
-        <span className="text-muted-foreground text-sm">{item.lesson.title}</span>
+        <span className="text-muted-foreground text-sm">{lessonLabel}</span>
       </div>
 
       {imageUrl && (

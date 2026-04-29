@@ -25,8 +25,8 @@ export async function generateGrammarContentStep(
   }: SafeReturn<Awaited<ReturnType<typeof generateLessonGrammarContent>>> = await safeAsync(() =>
     generateLessonGrammarContent({
       chapterTitle: context.chapter.title,
-      lessonDescription: context.description,
-      lessonTitle: context.title,
+      lessonDescription: context.description ?? "",
+      lessonTitle: context.title ?? "",
       targetLanguage,
     }),
   );

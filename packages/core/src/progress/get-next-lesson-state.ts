@@ -27,7 +27,7 @@ export type NextLessonState = {
   lessonId: string;
   lessonKind: LessonKind;
   lessonPosition: number;
-  lessonTitle: string;
+  lessonTitle: string | null;
   brandSlug: string | null;
   canPrefetch: boolean;
   chapterId: string;
@@ -36,7 +36,7 @@ export type NextLessonState = {
   courseId: string;
   courseSlug: string;
   hasStarted: boolean;
-  lessonDescription: string;
+  lessonDescription: string | null;
   lessonHasPendingContent: boolean;
   lessonSlug: string;
   scopeDurablyCompleted: boolean;

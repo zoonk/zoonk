@@ -29,8 +29,8 @@ export async function generateQuizContentStep(context: LessonContext): Promise<Q
         courseTitle: context.chapter.course.title,
         explanationSteps,
         language: context.language,
-        lessonDescription: context.description,
-        lessonTitle: context.title,
+        lessonDescription: context.description ?? "",
+        lessonTitle: context.title ?? "",
       }),
     );
 
