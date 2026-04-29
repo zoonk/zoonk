@@ -1,0 +1,51 @@
+import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
+import { prisma } from "@zoonk/db";
+import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { stepFixture } from "@zoonk/testing/fixtures/steps";
+import { beforeAll, describe, expect, test } from "vitest";
+import { createLessonContext } from "./_test-utils/create-lesson-context";
+import { setLessonAsRunningStep } from "./set-lesson-as-running-step";
+
+describe(setLessonAsRunningStep, () => {
+  let organizationId: string;
+
+  beforeAll(async () => {
+    const organization = await aiOrganizationFixture();
+    organizationId = organization.id;
+  });
+
+  test("marks a lesson as running and clears stale steps when requested", async () => {
+    const lesson = await createLessonContext({
+      generationStatus: "failed",
+      organizationId,
+    });
+    await stepFixture({
+      content: { text: "stale", title: "Stale", variant: "text" },
+      kind: "static",
+      lessonId: lesson.id,
+    });
+
+    await setLessonAsRunningStep({
+      lessonId: lesson.id,
+      resetExistingSteps: true,
+      workflowRunId: "workflow-running-1",
+    });
+
+    const [updatedLesson, remainingSteps] = await Promise.all([
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+      prisma.step.findMany({ where: { lessonId: lesson.id } }),
+    ]);
+
+    expect(updatedLesson).toMatchObject({
+      generationRunId: "workflow-running-1",
+      generationStatus: "running",
+    });
+    expect(remainingSteps).toHaveLength(0);
+    expect(getStreamedEvents()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ status: "started", step: "setLessonAsRunning" }),
+        expect.objectContaining({ status: "completed", step: "setLessonAsRunning" }),
+      ]),
+    );
+  });
+});
