@@ -101,7 +101,10 @@ export function getLanguageName(params: { targetLanguage: string; userLanguage?:
 
 /**
  * ISO 639-1 codes for languages whose primary writing system is non-Roman.
- * Used to decide whether romanized text should be generated alongside native script.
+ * Used to decide whether romanized (Latin-script) versions of text
+ * should be generated alongside the native script — for example,
+ * showing "konnichiwa" next to "こんにちは" to help learners
+ * who can't yet read the native script.
  */
 const NON_ROMAN_SCRIPT_LANGUAGES = new Set([
   "am",
@@ -147,7 +150,9 @@ const NON_ROMAN_SCRIPT_LANGUAGES = new Set([
 
 /**
  * Returns true for languages whose primary writing system is non-Roman.
- * Learners need Latin-script transliteration for these languages until they can read the native script.
+ * This is used to decide whether we need to generate a romanized
+ * (Latin-script) transliteration of content so learners who can't
+ * yet read the native script can still follow along phonetically.
  */
 export function needsRomanization(languageCode: string): boolean {
   return NON_ROMAN_SCRIPT_LANGUAGES.has(languageCode);
