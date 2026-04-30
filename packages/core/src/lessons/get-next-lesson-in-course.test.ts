@@ -209,7 +209,7 @@ describe(getNextLessonInCourse, () => {
     });
   });
 
-  test("skips lessons with incomplete generation", async () => {
+  test("returns the next lesson shell even when it still needs generation", async () => {
     const testOrg = await organizationFixture({ kind: "brand" });
     const testCourse = await courseFixture({
       isPublished: true,
@@ -245,7 +245,7 @@ describe(getNextLessonInCourse, () => {
       }),
     ]);
 
-    const thirdLesson = pendingLessons[2];
+    const pendingLesson = pendingLessons[1];
 
     const result = await getNextLessonInCourse({
       chapterId: testChapter.id,
@@ -257,9 +257,9 @@ describe(getNextLessonInCourse, () => {
 
     expect(result).toMatchObject({
       chapterSlug: testChapter.slug,
-      lessonId: thirdLesson?.id,
-      lessonPosition: 2,
-      lessonSlug: thirdLesson?.slug,
+      lessonId: pendingLesson?.id,
+      lessonPosition: 1,
+      lessonSlug: pendingLesson?.slug,
     });
   });
 

@@ -1,7 +1,7 @@
 import "server-only";
-import { type LessonKind, getPublishedLessonWhere, prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
+import { type GenerationStatus, type LessonKind } from "@zoonk/db";
 import { cache } from "react";
+import { getNextSibling } from "../player/queries/get-next-sibling";
 
 export type NextLessonInCourse = {
   lessonId: string;
@@ -12,6 +12,7 @@ export type NextLessonInCourse = {
   chapterSlug: string;
   chapterTitle: string;
   lessonDescription: string | null;
+  lessonGenerationStatus: GenerationStatus;
   lessonSlug: string;
 };
 
@@ -20,59 +21,37 @@ const cachedGetNextLesson = cache(
     chapterId: string,
     chapterPosition: number,
     courseId: string,
-    lessonId: string,
     lessonPosition: number,
   ): Promise<NextLessonInCourse | null> => {
-    const { data: lesson, error } = await safeAsync(() =>
-      prisma.lesson.findFirst({
-        include: { chapter: true },
-        orderBy: [{ chapter: { position: "asc" } }, { position: "asc" }],
-        where: {
-          AND: [
-            getPublishedLessonWhere({
-              courseWhere: { id: courseId },
-              lessonWhere: { generationStatus: "completed" },
-            }),
-            {
-              OR: [
-                {
-                  chapter: {
-                    id: chapterId,
-                    position: chapterPosition,
-                  },
-                  id: { not: lessonId },
-                  position: { gt: lessonPosition },
-                },
-                {
-                  chapter: { position: { gt: chapterPosition } },
-                },
-              ],
-            },
-          ],
-        },
-      }),
-    );
+    const lesson = await getNextSibling({
+      chapterId,
+      chapterPosition,
+      courseId,
+      lessonPosition,
+      level: "lesson",
+    });
 
-    if (error || !lesson) {
+    if (!lesson) {
       return null;
     }
 
     return {
-      chapterId: lesson.chapter.id,
-      chapterSlug: lesson.chapter.slug,
-      chapterTitle: lesson.chapter.title,
-      lessonDescription: lesson.description,
-      lessonId: lesson.id,
-      lessonKind: lesson.kind,
-      lessonPosition: lesson.position,
-      lessonSlug: lesson.slug,
-      lessonTitle: lesson.title,
+      chapterId: lesson.chapterId,
+      chapterSlug: lesson.chapterSlug,
+      chapterTitle: lesson.chapterTitle,
+      lessonDescription: lesson.lessonDescription,
+      lessonGenerationStatus: lesson.lessonGenerationStatus,
+      lessonId: lesson.lessonId,
+      lessonKind: lesson.lessonKind,
+      lessonPosition: lesson.lessonPosition,
+      lessonSlug: lesson.lessonSlug,
+      lessonTitle: lesson.lessonTitle,
     };
   },
 );
 
 /**
- * Finds the next published, generated lesson in course order using structural position.
+ * Finds the next published lesson in course order using structural position.
  */
 export function getNextLessonInCourse(params: {
   chapterId: string;
@@ -85,7 +64,6 @@ export function getNextLessonInCourse(params: {
     params.chapterId,
     params.chapterPosition,
     params.courseId,
-    params.lessonId,
     params.lessonPosition,
   );
 }

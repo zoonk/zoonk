@@ -134,6 +134,30 @@ function toCompletedItemFromNext({
   };
 }
 
+function toPendingItemFromNext({
+  next,
+  row,
+}: {
+  next: NextLessonInCourse;
+  row: ContinueLearningRow;
+}): ContinueLearningPendingItem {
+  return toPendingItem({
+    chapter: {
+      id: next.chapterId,
+      slug: next.chapterSlug,
+      title: next.chapterTitle,
+    },
+    course: toCourse(row),
+    lesson: {
+      description: next.lessonDescription,
+      id: next.lessonId,
+      kind: next.lessonKind,
+      slug: next.lessonSlug,
+      title: next.lessonTitle,
+    },
+  });
+}
+
 /**
  * A completed course should disappear from the feed entirely, even if the
  * learner's last historical completion in that course is still recent.
@@ -242,6 +266,13 @@ function toContinueLearningItem({
   const course = toCourse(candidate.row);
 
   if (candidate.sequentialNext && !candidate.isSequentialNextBlocked) {
+    if (candidate.sequentialNext.lessonGenerationStatus !== "completed") {
+      return toPendingItemFromNext({
+        next: candidate.sequentialNext,
+        row: candidate.row,
+      });
+    }
+
     return toCompletedItemFromNext({
       next: candidate.sequentialNext,
       row: candidate.row,

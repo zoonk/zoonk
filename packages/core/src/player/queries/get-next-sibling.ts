@@ -1,5 +1,6 @@
 import "server-only";
 import {
+  type GenerationStatus,
   type LessonKind,
   getPublishedChapterWhere,
   getPublishedLessonWhere,
@@ -28,8 +29,10 @@ type LessonResult = {
   chapterTitle: string;
   courseSlug: string;
   lessonDescription: string | null;
+  lessonGenerationStatus: GenerationStatus;
   lessonId: string;
   lessonKind: LessonKind;
+  lessonPosition: number;
   lessonSlug: string;
   lessonTitle: string | null;
 };
@@ -81,8 +84,10 @@ async function getNextLessonSibling(scope: LessonScope): Promise<LessonResult | 
     chapterTitle: lesson.chapter.title,
     courseSlug: lesson.chapter.course.slug,
     lessonDescription: lesson.description,
+    lessonGenerationStatus: lesson.generationStatus,
     lessonId: lesson.id,
     lessonKind: lesson.kind,
+    lessonPosition: lesson.position,
     lessonSlug: lesson.slug,
     lessonTitle: lesson.title,
   };

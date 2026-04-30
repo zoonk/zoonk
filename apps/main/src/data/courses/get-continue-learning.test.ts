@@ -487,6 +487,65 @@ describe("authenticated users", () => {
     });
   });
 
+  test("returns the pending tree-next lesson before a later generated lesson", async () => {
+    const user = await userFixture();
+    const headers = await signInAs(user.email, user.password);
+
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: organization.id,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const [completedLesson, pendingLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "pending",
+        isPublished: true,
+        organizationId: organization.id,
+        position: 1,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "practice",
+        organizationId: organization.id,
+        position: 2,
+      }),
+    ]);
+
+    await lessonProgressFixture({
+      completedAt: new Date(),
+      durationSeconds: 60,
+      lessonId: completedLesson.id,
+      userId: user.id,
+    });
+
+    const result = await getContinueLearning(headers);
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({
+      chapter: { id: chapter.id, slug: chapter.slug, title: chapter.title },
+      course: { id: course.id },
+      lesson: { id: pendingLesson.id, slug: pendingLesson.slug, title: pendingLesson.title },
+      status: "pending",
+    });
+  });
+
   test("returns the next pending lesson target after the latest completed lesson", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
