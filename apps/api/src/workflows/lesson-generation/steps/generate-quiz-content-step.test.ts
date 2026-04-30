@@ -38,28 +38,30 @@ describe(generateQuizContentStep, () => {
   test("uses only explanation steps since the previous quiz", async () => {
     const context = await createLessonContext({ kind: "quiz", organizationId, position: 4 });
 
-    await createCompletedExplanation({
-      chapterId: context.chapterId,
-      organizationId,
-      position: 0,
-      text: "Old quiz explanation",
-      title: "Old",
-    });
-    await lessonFixture({
-      chapterId: context.chapterId,
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "quiz",
-      organizationId,
-      position: 1,
-    });
-    await createCompletedExplanation({
-      chapterId: context.chapterId,
-      organizationId,
-      position: 2,
-      text: "New quiz explanation",
-      title: "New",
-    });
+    await Promise.all([
+      createCompletedExplanation({
+        chapterId: context.chapterId,
+        organizationId,
+        position: 0,
+        text: "Old quiz explanation",
+        title: "Old",
+      }),
+      lessonFixture({
+        chapterId: context.chapterId,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "quiz",
+        organizationId,
+        position: 1,
+      }),
+      createCompletedExplanation({
+        chapterId: context.chapterId,
+        organizationId,
+        position: 2,
+        text: "New quiz explanation",
+        title: "New",
+      }),
+    ]);
 
     const result = await generateQuizContentStep(context);
 
