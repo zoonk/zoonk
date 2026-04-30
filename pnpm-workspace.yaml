@@ -58,6 +58,8 @@ minimumReleaseAgeExclude:
 overrides:
   "@hono/node-server@<1.19.13": ^1.19.13
   "@types/pg": 8.20.0
+  "@vercel/functions>@vercel/oidc": 3.3.1
+  "@vercel/queue>@vercel/oidc": 3.3.1
   devalue@<5.6.4: ^5.6.4
   devalue@<=5.6.3: ^5.6.4
   postcss@<8.5.10: ^8.5.10

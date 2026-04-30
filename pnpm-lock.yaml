@@ -106,6 +106,8 @@ catalogs:
 overrides:
   '@hono/node-server@<1.19.13': ^1.19.13
   '@types/pg': 8.20.0
+  '@vercel/functions>@vercel/oidc': 3.3.1
+  '@vercel/queue>@vercel/oidc': 3.3.1
   devalue@<5.6.4: ^5.6.4
   devalue@<=5.6.3: ^5.6.4
   postcss@<8.5.10: ^8.5.10
@@ -2061,87 +2063,6 @@ packages:
 
   '@module-federation/webpack-bundler-runtime@0.22.0':
     resolution: {integrity: sha512-aM8gCqXu+/4wBmJtVeMeeMN5guw3chf+2i6HajKtQv7SJfxV/f4IyNQJUeUQu9HfiAZHjqtMV5Lvq/Lvh8LdyA==}
-
-  '@napi-rs/keyring-darwin-arm64@1.2.0':
-    resolution: {integrity: sha512-CA83rDeyONDADO25JLZsh3eHY8yTEtm/RS6ecPsY+1v+dSawzT9GywBMu2r6uOp1IEhQs/xAfxgybGAFr17lSA==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@napi-rs/keyring-darwin-x64@1.2.0':
-    resolution: {integrity: sha512-dBHjtKRCj4ByfnfqIKIJLo3wueQNJhLRyuxtX/rR4K/XtcS7VLlRD01XXizjpre54vpmObj63w+ZpHG+mGM8uA==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [darwin]
-
-  '@napi-rs/keyring-freebsd-x64@1.2.0':
-    resolution: {integrity: sha512-DPZFr11pNJSnaoh0dzSUNF+T6ORhy3CkzUT3uGixbA71cAOPJ24iG8e8QrLOkuC/StWrAku3gBnth2XMWOcR3Q==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [freebsd]
-
-  '@napi-rs/keyring-linux-arm-gnueabihf@1.2.0':
-    resolution: {integrity: sha512-8xv6DyEMlvRdqJzp4F39RLUmmTQsLcGYYv/3eIfZNZN1O5257tHxTrFYqAsny659rJJK2EKeSa7PhrSibQqRWQ==}
-    engines: {node: '>= 10'}
-    cpu: [arm]
-    os: [linux]
-
-  '@napi-rs/keyring-linux-arm64-gnu@1.2.0':
-    resolution: {integrity: sha512-Pu2V6Py+PBt7inryEecirl+t+ti8bhZphjP+W68iVaXHUxLdWmkgL9KI1VkbRHbx5k8K5Tew9OP218YfmVguIA==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [linux]
-    libc: [glibc]
-
-  '@napi-rs/keyring-linux-arm64-musl@1.2.0':
-    resolution: {integrity: sha512-8TDymrpC4P1a9iDEaegT7RnrkmrJN5eNZh3Im3UEV5PPYGtrb82CRxsuFohthCWQW81O483u1bu+25+XA4nKUw==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [linux]
-    libc: [musl]
-
-  '@napi-rs/keyring-linux-riscv64-gnu@1.2.0':
-    resolution: {integrity: sha512-awsB5XI1MYL7fwfjMDGmKOWvNgJEO7mM7iVEMS0fO39f0kVJnOSjlu7RHcXAF0LOx+0VfF3oxbWqJmZbvRCRHw==}
-    engines: {node: '>= 10'}
-    cpu: [riscv64]
-    os: [linux]
-    libc: [glibc]
-
-  '@napi-rs/keyring-linux-x64-gnu@1.2.0':
-    resolution: {integrity: sha512-8E+7z4tbxSJXxIBqA+vfB1CGajpCDRyTyqXkBig5NtASrv4YXcntSo96Iah2QDR5zD3dSTsmbqJudcj9rKKuHQ==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [linux]
-    libc: [glibc]
-
-  '@napi-rs/keyring-linux-x64-musl@1.2.0':
-    resolution: {integrity: sha512-8RZ8yVEnmWr/3BxKgBSzmgntI7lNEsY7xouNfOsQkuVAiCNmxzJwETspzK3PQ2FHtDxgz5vHQDEBVGMyM4hUHA==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [linux]
-    libc: [musl]
-
-  '@napi-rs/keyring-win32-arm64-msvc@1.2.0':
-    resolution: {integrity: sha512-AoqaDZpQ6KPE19VBLpxyORcp+yWmHI9Xs9Oo0PJ4mfHma4nFSLVdhAubJCxdlNptHe5va7ghGCHj3L9Akiv4cQ==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [win32]
-
-  '@napi-rs/keyring-win32-ia32-msvc@1.2.0':
-    resolution: {integrity: sha512-EYL+EEI6bCsYi3LfwcQdnX3P/R76ENKNn+3PmpGheBsUFLuh0gQuP7aMVHM4rTw6UVe+L3vCLZSptq/oeacz0A==}
-    engines: {node: '>= 10'}
-    cpu: [ia32]
-    os: [win32]
-
-  '@napi-rs/keyring-win32-x64-msvc@1.2.0':
-    resolution: {integrity: sha512-xFlx/TsmqmCwNU9v+AVnEJgoEAlBYgzFF5Ihz1rMpPAt4qQWWkMd4sCyM1gMJ1A/GnRqRegDiQpwaxGUHFtFbA==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [win32]
-
-  '@napi-rs/keyring@1.2.0':
-    resolution: {integrity: sha512-d0d4Oyxm+v980PEq1ZH2PmS6cvpMIRc17eYpiU47KgW+lzxklMu6+HOEOPmxrpnF/XQZ0+Q78I2mgMhbIIo/dg==}
-    engines: {node: '>= 10'}
 
   '@napi-rs/nice-android-arm-eabi@1.1.1':
     resolution: {integrity: sha512-kjirL3N6TnRPv5iuHw36wnucNqXAO46dzK9oPb0wj076R5Xm8PfUVA9nAFB5ZNMmfJQJVKACAPd/Z2KYMppthw==}
@@ -4860,9 +4781,6 @@ packages:
   '@vercel/cli-auth@0.0.1':
     resolution: {integrity: sha512-CnqiuMlZ4pjs2LCPYiR6aLKPPd3Xb8SBI1Y7eotXKgpx6qgrGNY+E7EIyUt5ErGHJGIrCZyGG5WEo4bHtVmz2Q==}
 
-  '@vercel/cli-auth@0.1.0':
-    resolution: {integrity: sha512-6H2b6c83auVjrKnFtiSkqz+JA5hNXYAJv/TKggxw1eJ7CQiXh6ZkWPdPi4G9sUVRJh61iTEu+FXiNsWH2xAr9Q==}
-
   '@vercel/functions@3.4.5':
     resolution: {integrity: sha512-sr7ic2Cr42rFS7g6n3sZpUHoXCr87BkTII3c9MZwSYB0Fs88Gqa/acmeAixc+Phi3MwYDz7Lv9i0Semxrfo8pA==}
     engines: {node: '>= 20'}
@@ -4876,8 +4794,8 @@ packages:
     resolution: {integrity: sha512-UycprH3T6n3jH0k44NHMa7pnFHGu/N05MjojYr+Mc6I7obkoLIJujSWwin1pCvdy/eOxrI/l3uDLQsmcrOb4ug==}
     engines: {node: '>= 20'}
 
-  '@vercel/oidc@3.3.0':
-    resolution: {integrity: sha512-VVuXWjMXjDv6P5fA34mEayK/lnw9dgk0GO1u1/+vNC+TwokzQZ9F8GKVbd3yRtBmHl/NV43Awjim/eHiF9dolw==}
+  '@vercel/oidc@3.3.1':
+    resolution: {integrity: sha512-ULe6UN+13OyNV+TsshKv/oloDlVGPwRO8HxzMnBV9DMp/RerklieVmbr1vkaGZzoyH0ImhsBe4DDjB7Cxs+0RA==}
     engines: {node: '>= 20'}
 
   '@vercel/queue@0.1.4':
@@ -9572,57 +9490,6 @@ snapshots:
       '@module-federation/runtime': 0.22.0
       '@module-federation/sdk': 0.22.0
 
-  '@napi-rs/keyring-darwin-arm64@1.2.0':
-    optional: true
-
-  '@napi-rs/keyring-darwin-x64@1.2.0':
-    optional: true
-
-  '@napi-rs/keyring-freebsd-x64@1.2.0':
-    optional: true
-
-  '@napi-rs/keyring-linux-arm-gnueabihf@1.2.0':
-    optional: true
-
-  '@napi-rs/keyring-linux-arm64-gnu@1.2.0':
-    optional: true
-
-  '@napi-rs/keyring-linux-arm64-musl@1.2.0':
-    optional: true
-
-  '@napi-rs/keyring-linux-riscv64-gnu@1.2.0':
-    optional: true
-
-  '@napi-rs/keyring-linux-x64-gnu@1.2.0':
-    optional: true
-
-  '@napi-rs/keyring-linux-x64-musl@1.2.0':
-    optional: true
-
-  '@napi-rs/keyring-win32-arm64-msvc@1.2.0':
-    optional: true
-
-  '@napi-rs/keyring-win32-ia32-msvc@1.2.0':
-    optional: true
-
-  '@napi-rs/keyring-win32-x64-msvc@1.2.0':
-    optional: true
-
-  '@napi-rs/keyring@1.2.0':
-    optionalDependencies:
-      '@napi-rs/keyring-darwin-arm64': 1.2.0
-      '@napi-rs/keyring-darwin-x64': 1.2.0
-      '@napi-rs/keyring-freebsd-x64': 1.2.0
-      '@napi-rs/keyring-linux-arm-gnueabihf': 1.2.0
-      '@napi-rs/keyring-linux-arm64-gnu': 1.2.0
-      '@napi-rs/keyring-linux-arm64-musl': 1.2.0
-      '@napi-rs/keyring-linux-riscv64-gnu': 1.2.0
-      '@napi-rs/keyring-linux-x64-gnu': 1.2.0
-      '@napi-rs/keyring-linux-x64-musl': 1.2.0
-      '@napi-rs/keyring-win32-arm64-msvc': 1.2.0
-      '@napi-rs/keyring-win32-ia32-msvc': 1.2.0
-      '@napi-rs/keyring-win32-x64-msvc': 1.2.0
-
   '@napi-rs/nice-android-arm-eabi@1.1.1':
     optional: true
 
@@ -9824,7 +9691,7 @@ snapshots:
       semver: 7.7.4
       string-width: 4.2.3
       supports-color: 8.1.1
-      tinyglobby: 0.2.15
+      tinyglobby: 0.2.16
       widest-line: 3.1.0
       wordwrap: 1.0.0
       wrap-ansi: 7.0.0
@@ -12098,32 +11965,22 @@ snapshots:
     dependencies:
       async-listen: 3.0.0
       open: 8.4.0
-      xdg-app-paths: 5.1.0
-      zod: 4.1.11
-
-  '@vercel/cli-auth@0.1.0':
-    dependencies:
-      '@napi-rs/keyring': 1.2.0
-      async-listen: 3.0.0
-      open: 8.4.0
       xdg-app-paths: 5.5.1
       zod: 4.1.11
 
   '@vercel/functions@3.4.5(@aws-sdk/credential-provider-web-identity@3.972.13)':
     dependencies:
-      '@vercel/oidc': 3.3.0
+      '@vercel/oidc': 3.3.1
     optionalDependencies:
       '@aws-sdk/credential-provider-web-identity': 3.972.13
 
   '@vercel/oidc@3.2.0': {}
 
-  '@vercel/oidc@3.3.0':
-    dependencies:
-      '@vercel/cli-auth': 0.1.0
+  '@vercel/oidc@3.3.1': {}
 
   '@vercel/queue@0.1.4':
     dependencies:
-      '@vercel/oidc': 3.3.0
+      '@vercel/oidc': 3.3.1
       minimatch: 10.2.5
       mixpart: 0.0.5
       picocolors: 1.1.1
