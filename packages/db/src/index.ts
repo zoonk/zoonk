@@ -56,6 +56,8 @@ export type Sql = Prisma.Sql;
 
 export type TransactionClient = Parameters<Parameters<typeof prisma.$transaction>[0]>[0];
 
+export { isPrismaUniqueConstraintError } from "./prisma-errors";
+
 export {
   getAiGenerationChapterWhere,
   getAiGenerationCourseWhere,
