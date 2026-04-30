@@ -11,15 +11,13 @@ export function collectTargetWords({
   canonicalWords: string[];
   generatedWords: string[];
 }): string[] {
-  const seenCanonicalWords = new Set<string>();
   const seenTargetKeys = new Set<string>();
   const targetWords: string[] = [];
 
   for (const word of canonicalWords) {
     const key = getTargetKey(word);
 
-    if (key && !seenCanonicalWords.has(word)) {
-      seenCanonicalWords.add(word);
+    if (key && !seenTargetKeys.has(key)) {
       seenTargetKeys.add(key);
       targetWords.push(word);
     }
