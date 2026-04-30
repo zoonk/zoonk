@@ -22,17 +22,9 @@ function ReviewLabel() {
     return null;
   }
 
-  const activeMilestone = milestone;
+  const milestoneLabel = milestone.kind === "course" ? t("Review Course") : t("Review Chapter");
 
-  function getLabel() {
-    if (activeMilestone.kind === "course") {
-      return t("Review Course");
-    }
-
-    return t("Review Chapter");
-  }
-
-  return <span>{getLabel()}</span>;
+  return <span>{milestoneLabel}</span>;
 }
 
 function CourseCompleteActions() {
