@@ -1,0 +1,83 @@
+apps/main/e2e/lesson-detail.test.ts
+  db27aa525c72732e 66-165,209-240
+apps/main/messages/pt.po
+  h_1cda88fc21fe9c 1572,1589,1594,1599,1604
+  db27aa525c72732e 1563-1571,1573-1580,1586-1588,1590-1593,1595-1598,1600-1603
+packages/core/src/lessons/generation-prerequisites.ts
+  db27aa525c72732e 2,12-17,19-46,48-50,59,74-76,78,82,87,94,103-133,137-139,141,144,146-161,167,170,174
+  h_1cda88fc21fe9c 1,3-11,18,47,51-58,60-73,77,79-81,83-86,88-93,95-102,134-136,140,142-143,145,162-166,168-169,171-173,175-176
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
+  db27aa525c72732e 3,14,18,21,69,80,90-107,110,116
+apps/api/src/workflows/lesson-generation/steps/get-blocking-generation-prerequisite-step.ts
+  db27aa525c72732e 1-12
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
+  db27aa525c72732e 18,22,26-27,36-38,40-44,51,56
+apps/main/messages/es.po
+  h_1cda88fc21fe9c 1572,1589,1594,1599,1604
+  db27aa525c72732e 1563-1571,1573-1580,1586-1588,1590-1593,1595-1598,1600-1603
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.test.ts
+  db27aa525c72732e 504-547
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-data-loaders.ts
+  db27aa525c72732e 6,8-40,49-58,60-63
+  36121c8f3b7c1ae4 59
+apps/main/e2e/generate-lesson.test.ts
+  db27aa525c72732e 266
+  h_1cda88fc21fe9c 153-211,258-265,267-270
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
+  db27aa525c72732e 1-59
+apps/api/e2e/workflows-lesson-generation.test.ts
+  db27aa525c72732e 323-326,328-345,347-355,359-402
+  h_1cda88fc21fe9c 8-43,47-53,250,252,254,256-262,266,268-276,278,280-314,317-322,403-409
+apps/main/src/app/generate/l/[id]/generate-lesson-content.tsx
+  h_1cda88fc21fe9c 7,9-10,19-26,29,31,35-46,60-62,64,76-94,96-113
+  db27aa525c72732e 63,95
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.ts
+  db27aa525c72732e 14,25,128-131
+apps/main/messages/en.po
+  db27aa525c72732e 1563-1580,1586-1604
+packages/core/src/lessons/generation-prerequisites.test.ts
+  db27aa525c72732e 68-104,106,115-129,131,137-165,167-168,170,176-294,305
+  h_1cda88fc21fe9c 1-67,105,107-114,130,132-136,166,169,171-175,295-304,306-307
+packages/core/package.json
+  db27aa525c72732e 7
+apps/api/src/app/v1/workflows/lesson-generation/trigger/route.ts
+  db27aa525c72732e 6-9,37-42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "66a9e22631d58b7afacc7c5acc162bdcd43976b9",
+  "prompts": {
+    "36121c8f3b7c1ae4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dd4b7-fb4f-7fb2-a9af-80c1e0075446",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 3143,
+      "overriden_lines": 0
+    },
+    "db27aa525c72732e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ddb82-20ce-7f00-8dbc-d2c0c5c59d62",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1322,
+      "total_deletions": 418,
+      "accepted_lines": 1160,
+      "overriden_lines": 14
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
