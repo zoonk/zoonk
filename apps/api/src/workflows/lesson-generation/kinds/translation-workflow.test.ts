@@ -27,24 +27,25 @@ describe(translationLessonWorkflow, () => {
       targetLanguage: "de",
     });
 
-    const vocabularyLesson = await lessonFixture({
-      chapterId: context.chapterId,
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "vocabulary",
-      organizationId,
-      position: 1,
-    });
-
-    const words = await Promise.all(
-      [`guten-${uniqueId}`, `morgen-${uniqueId}`].map((word) =>
-        wordFixture({
-          organizationId,
-          targetLanguage: "de",
-          word,
-        }),
+    const [vocabularyLesson, words] = await Promise.all([
+      lessonFixture({
+        chapterId: context.chapterId,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "vocabulary",
+        organizationId,
+        position: 1,
+      }),
+      Promise.all(
+        [`guten-${uniqueId}`, `morgen-${uniqueId}`].map((word) =>
+          wordFixture({
+            organizationId,
+            targetLanguage: "de",
+            word,
+          }),
+        ),
       ),
-    );
+    ]);
 
     await Promise.all(
       words.flatMap((word, position) => [

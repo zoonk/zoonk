@@ -31,20 +31,21 @@ describe(generateReadingAudioStep, () => {
     const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
     const existingSentence = `既存${uniqueId}`;
     const newSentence = `新しい${uniqueId}`;
-    const context = await createLessonContext({
-      kind: "reading",
-      organizationId,
-      targetLanguage: "ja",
-    });
-
-    await prisma.sentence.create({
-      data: {
-        audioUrl: "/audio/existing.mp3",
+    const [context] = await Promise.all([
+      createLessonContext({
+        kind: "reading",
         organizationId,
-        sentence: existingSentence,
         targetLanguage: "ja",
-      },
-    });
+      }),
+      prisma.sentence.create({
+        data: {
+          audioUrl: "/audio/existing.mp3",
+          organizationId,
+          sentence: existingSentence,
+          targetLanguage: "ja",
+        },
+      }),
+    ]);
 
     const result = await generateReadingAudioStep({
       context,

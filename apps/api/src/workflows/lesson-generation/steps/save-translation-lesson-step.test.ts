@@ -23,15 +23,15 @@ describe(saveTranslationLessonStep, () => {
       position: 2,
       targetLanguage: "pt",
     });
-    const vocabularyLesson = await lessonFixture({
-      chapterId: context.chapterId,
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "vocabulary",
-      organizationId,
-      position: 1,
-    });
-    const [firstWord, secondWord] = await Promise.all([
+    const [vocabularyLesson, firstWord, secondWord] = await Promise.all([
+      lessonFixture({
+        chapterId: context.chapterId,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "vocabulary",
+        organizationId,
+        position: 1,
+      }),
       wordFixture({ organizationId, targetLanguage: "pt", word: `word-a-${randomUUID()}` }),
       wordFixture({ organizationId, targetLanguage: "pt", word: `word-b-${randomUUID()}` }),
     ]);

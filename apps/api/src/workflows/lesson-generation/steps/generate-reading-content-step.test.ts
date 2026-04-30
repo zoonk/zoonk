@@ -41,30 +41,32 @@ describe(generateReadingContentStep, () => {
       position: 4,
       targetLanguage: "ja",
     });
-    const oldVocabularyLesson = await lessonFixture({
-      chapterId: context.chapterId,
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "vocabulary",
-      organizationId,
-      position: 0,
-    });
-    const previousReading = await lessonFixture({
-      chapterId: context.chapterId,
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "reading",
-      organizationId,
-      position: 1,
-    });
-    const currentVocabularyLesson = await lessonFixture({
-      chapterId: context.chapterId,
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "vocabulary",
-      organizationId,
-      position: 2,
-    });
+    const [oldVocabularyLesson, previousReading, currentVocabularyLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: context.chapterId,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "vocabulary",
+        organizationId,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: context.chapterId,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "reading",
+        organizationId,
+        position: 1,
+      }),
+      lessonFixture({
+        chapterId: context.chapterId,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "vocabulary",
+        organizationId,
+        position: 2,
+      }),
+    ]);
     const [oldWord, catWord, waterWord] = await Promise.all([
       wordFixture({ organizationId, targetLanguage: "ja", word: `古い${uniqueId}` }),
       wordFixture({ organizationId, targetLanguage: "ja", word: `猫${uniqueId}` }),

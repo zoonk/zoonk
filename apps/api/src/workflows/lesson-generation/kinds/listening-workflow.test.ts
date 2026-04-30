@@ -27,20 +27,21 @@ describe(listeningLessonWorkflow, () => {
       targetLanguage: "de",
     });
 
-    const readingLesson = await lessonFixture({
-      chapterId: context.chapterId,
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "reading",
-      organizationId,
-      position: 1,
-    });
-
-    const sentence = await sentenceFixture({
-      organizationId,
-      sentence: `Guten Morgen ${uniqueId}`,
-      targetLanguage: "de",
-    });
+    const [readingLesson, sentence] = await Promise.all([
+      lessonFixture({
+        chapterId: context.chapterId,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "reading",
+        organizationId,
+        position: 1,
+      }),
+      sentenceFixture({
+        organizationId,
+        sentence: `Guten Morgen ${uniqueId}`,
+        targetLanguage: "de",
+      }),
+    ]);
 
     await Promise.all([
       lessonSentenceFixture({

@@ -36,39 +36,44 @@ describe(getLessonDistractorWordsForLessons, () => {
 
   test("returns unique target-language distractor words with pronunciation for the lesson language", async () => {
     const id = crypto.randomUUID();
-    const lessonForTest = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      language: "en",
-      organizationId: org.id,
-    });
-    const [canonicalWord, canonicalSentence, lessonWordDistractor, sharedDistractor] =
-      await Promise.all([
-        wordFixture({
-          organizationId: org.id,
-          targetLanguage: "de",
-          word: `wort-${id}`,
-        }),
-        sentenceFixture({
-          organizationId: org.id,
-          sentence: `satz ${id}`,
-          targetLanguage: "de",
-        }),
-        wordFixture({
-          audioUrl: `https://example.com/fenster-${id}.mp3`,
-          organizationId: org.id,
-          romanization: `fenster-${id}-rom`,
-          targetLanguage: "de",
-          word: `Fenster-${id}`,
-        }),
-        wordFixture({
-          audioUrl: `https://example.com/abend-${id}.mp3`,
-          organizationId: org.id,
-          romanization: `abend-${id}-rom`,
-          targetLanguage: "de",
-          word: `Abend-${id}`,
-        }),
-      ]);
+    const [
+      lessonForTest,
+      canonicalWord,
+      canonicalSentence,
+      lessonWordDistractor,
+      sharedDistractor,
+    ] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        language: "en",
+        organizationId: org.id,
+      }),
+      wordFixture({
+        organizationId: org.id,
+        targetLanguage: "de",
+        word: `wort-${id}`,
+      }),
+      sentenceFixture({
+        organizationId: org.id,
+        sentence: `satz ${id}`,
+        targetLanguage: "de",
+      }),
+      wordFixture({
+        audioUrl: `https://example.com/fenster-${id}.mp3`,
+        organizationId: org.id,
+        romanization: `fenster-${id}-rom`,
+        targetLanguage: "de",
+        word: `Fenster-${id}`,
+      }),
+      wordFixture({
+        audioUrl: `https://example.com/abend-${id}.mp3`,
+        organizationId: org.id,
+        romanization: `abend-${id}-rom`,
+        targetLanguage: "de",
+        word: `Abend-${id}`,
+      }),
+    ]);
 
     await Promise.all([
       wordPronunciationFixture({
@@ -132,29 +137,31 @@ describe(getLessonDistractorWordsForLessons, () => {
 
   test("ignores translation distractors and unresolved target-language texts", async () => {
     const id = crypto.randomUUID();
-    const lessonForTest = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      language: "en",
-      organizationId: org.id,
-    });
-    const [canonicalWord, canonicalSentence, resolvedDistractor] = await Promise.all([
-      wordFixture({
-        organizationId: org.id,
-        targetLanguage: "de",
-        word: `wort-${id}`,
-      }),
-      sentenceFixture({
-        organizationId: org.id,
-        sentence: `satz ${id}`,
-        targetLanguage: "de",
-      }),
-      wordFixture({
-        organizationId: org.id,
-        targetLanguage: "de",
-        word: `Antwort-${id}`,
-      }),
-    ]);
+    const [lessonForTest, canonicalWord, canonicalSentence, resolvedDistractor] = await Promise.all(
+      [
+        lessonFixture({
+          chapterId: chapter.id,
+          isPublished: true,
+          language: "en",
+          organizationId: org.id,
+        }),
+        wordFixture({
+          organizationId: org.id,
+          targetLanguage: "de",
+          word: `wort-${id}`,
+        }),
+        sentenceFixture({
+          organizationId: org.id,
+          sentence: `satz ${id}`,
+          targetLanguage: "de",
+        }),
+        wordFixture({
+          organizationId: org.id,
+          targetLanguage: "de",
+          word: `Antwort-${id}`,
+        }),
+      ],
+    );
 
     await Promise.all([
       lessonWordFixture({

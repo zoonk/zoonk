@@ -66,20 +66,21 @@ describe(getLessonSentencesForLessons, () => {
   });
 
   test("returns all expected fields", async () => {
-    const newLesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      language: "es",
-      organizationId: org.id,
-    });
-
-    const sentence = await sentenceFixture({
-      audioUrl: "https://example.com/megusta.mp3",
-      organizationId: org.id,
-      romanization: null,
-      sentence: `Me gusta ${crypto.randomUUID()}`,
-      targetLanguage: "es",
-    });
+    const [newLesson, sentence] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        language: "es",
+        organizationId: org.id,
+      }),
+      sentenceFixture({
+        audioUrl: "https://example.com/megusta.mp3",
+        organizationId: org.id,
+        romanization: null,
+        sentence: `Me gusta ${crypto.randomUUID()}`,
+        targetLanguage: "es",
+      }),
+    ]);
 
     await lessonSentenceFixture({
       distractors: ["Adoro"],

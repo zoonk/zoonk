@@ -432,38 +432,40 @@ describe(lessonGenerationWorkflow, () => {
   test("practice generation uses only explanation steps since the previous practice", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
 
-    await completedExplanationLesson({
-      chapterId: chapter.id,
-      organizationId,
-      position: 0,
-      text: "Old explanation",
-      title: "Old",
-    });
-    await lessonFixture({
-      chapterId: chapter.id,
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "practice",
-      organizationId,
-      position: 1,
-      title: `Completed Practice ${randomUUID()}`,
-    });
-    await completedExplanationLesson({
-      chapterId: chapter.id,
-      organizationId,
-      position: 2,
-      text: "New explanation",
-      title: "New",
-    });
-    const practice = await lessonFixture({
-      chapterId: chapter.id,
-      generationStatus: "pending",
-      isPublished: true,
-      kind: "practice",
-      organizationId,
-      position: 3,
-      title: `Practice Lesson ${randomUUID()}`,
-    });
+    const [practice] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "pending",
+        isPublished: true,
+        kind: "practice",
+        organizationId,
+        position: 3,
+        title: `Practice Lesson ${randomUUID()}`,
+      }),
+      completedExplanationLesson({
+        chapterId: chapter.id,
+        organizationId,
+        position: 0,
+        text: "Old explanation",
+        title: "Old",
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "practice",
+        organizationId,
+        position: 1,
+        title: `Completed Practice ${randomUUID()}`,
+      }),
+      completedExplanationLesson({
+        chapterId: chapter.id,
+        organizationId,
+        position: 2,
+        text: "New explanation",
+        title: "New",
+      }),
+    ]);
 
     await lessonGenerationWorkflow(practice.id);
 
@@ -506,31 +508,33 @@ describe(lessonGenerationWorkflow, () => {
 
     vi.mocked(generateLessonPractice).mockClear();
 
-    await completedExplanationLesson({
-      chapterId: chapter.id,
-      organizationId,
-      position: 0,
-      text: "Generated explanation",
-      title: "Generated",
-    });
-    await lessonFixture({
-      chapterId: chapter.id,
-      generationStatus: "pending",
-      isPublished: true,
-      kind: "explanation",
-      organizationId,
-      position: 1,
-      title: `Pending Explanation ${randomUUID()}`,
-    });
-    const practice = await lessonFixture({
-      chapterId: chapter.id,
-      generationStatus: "pending",
-      isPublished: true,
-      kind: "practice",
-      organizationId,
-      position: 2,
-      title: `Blocked Practice ${randomUUID()}`,
-    });
+    const [practice] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "pending",
+        isPublished: true,
+        kind: "practice",
+        organizationId,
+        position: 2,
+        title: `Blocked Practice ${randomUUID()}`,
+      }),
+      completedExplanationLesson({
+        chapterId: chapter.id,
+        organizationId,
+        position: 0,
+        text: "Generated explanation",
+        title: "Generated",
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "pending",
+        isPublished: true,
+        kind: "explanation",
+        organizationId,
+        position: 1,
+        title: `Pending Explanation ${randomUUID()}`,
+      }),
+    ]);
 
     await expect(lessonGenerationWorkflow(practice.id)).resolves.toBe("blocked");
 
@@ -548,38 +552,40 @@ describe(lessonGenerationWorkflow, () => {
   test("quiz generation uses explanations since the previous quiz and saves select-image URLs", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
 
-    await completedExplanationLesson({
-      chapterId: chapter.id,
-      organizationId,
-      position: 0,
-      text: "Already quizzed explanation",
-      title: "Old Quiz Scope",
-    });
-    await lessonFixture({
-      chapterId: chapter.id,
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "quiz",
-      organizationId,
-      position: 1,
-      title: `Completed Quiz ${randomUUID()}`,
-    });
-    await completedExplanationLesson({
-      chapterId: chapter.id,
-      organizationId,
-      position: 2,
-      text: "Unquizzed explanation",
-      title: "New Quiz Scope",
-    });
-    const quiz = await lessonFixture({
-      chapterId: chapter.id,
-      generationStatus: "pending",
-      isPublished: true,
-      kind: "quiz",
-      organizationId,
-      position: 3,
-      title: `Quiz Lesson ${randomUUID()}`,
-    });
+    const [quiz] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "pending",
+        isPublished: true,
+        kind: "quiz",
+        organizationId,
+        position: 3,
+        title: `Quiz Lesson ${randomUUID()}`,
+      }),
+      completedExplanationLesson({
+        chapterId: chapter.id,
+        organizationId,
+        position: 0,
+        text: "Already quizzed explanation",
+        title: "Old Quiz Scope",
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "quiz",
+        organizationId,
+        position: 1,
+        title: `Completed Quiz ${randomUUID()}`,
+      }),
+      completedExplanationLesson({
+        chapterId: chapter.id,
+        organizationId,
+        position: 2,
+        text: "Unquizzed explanation",
+        title: "New Quiz Scope",
+      }),
+    ]);
 
     await lessonGenerationWorkflow(quiz.id);
 
@@ -718,45 +724,48 @@ describe(lessonGenerationWorkflow, () => {
   test("translation generation creates translation steps from the previous vocabulary lesson", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const { chapter } = await createLanguageWorkflowTree({ organizationId });
-    const vocabularyLesson = await lessonFixture({
-      chapterId: chapter.id,
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "vocabulary",
-      organizationId,
-      position: 0,
-      title: `Vocabulary Source ${uniqueId}`,
-    });
-    const word = await wordFixture({
-      organizationId,
-      targetLanguage: "ja",
-      word: `猫-${uniqueId}`,
-    });
+    const [vocabularyLesson, word] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "vocabulary",
+        organizationId,
+        position: 0,
+        title: `Vocabulary Source ${uniqueId}`,
+      }),
+      wordFixture({
+        organizationId,
+        targetLanguage: "ja",
+        word: `猫-${uniqueId}`,
+      }),
+    ]);
 
-    await lessonWordFixture({
-      lessonId: vocabularyLesson.id,
-      translation: `cat ${uniqueId}`,
-      userLanguage: "en",
-      wordId: word.id,
-    });
-    await stepFixture({
-      content: assertStepContent("vocabulary", {}),
-      isPublished: true,
-      kind: "vocabulary",
-      lessonId: vocabularyLesson.id,
-      position: 0,
-      wordId: word.id,
-    });
-
-    const translationLesson = await lessonFixture({
-      chapterId: chapter.id,
-      generationStatus: "pending",
-      isPublished: true,
-      kind: "translation",
-      organizationId,
-      position: 1,
-      title: `Translation Lesson ${uniqueId}`,
-    });
+    const [translationLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "pending",
+        isPublished: true,
+        kind: "translation",
+        organizationId,
+        position: 1,
+        title: `Translation Lesson ${uniqueId}`,
+      }),
+      lessonWordFixture({
+        lessonId: vocabularyLesson.id,
+        translation: `cat ${uniqueId}`,
+        userLanguage: "en",
+        wordId: word.id,
+      }),
+      stepFixture({
+        content: assertStepContent("vocabulary", {}),
+        isPublished: true,
+        kind: "vocabulary",
+        lessonId: vocabularyLesson.id,
+        position: 0,
+        wordId: word.id,
+      }),
+    ]);
 
     await lessonGenerationWorkflow(translationLesson.id);
 
@@ -776,21 +785,30 @@ describe(lessonGenerationWorkflow, () => {
   test("reading generation uses vocabulary since the previous reading and saves enriched sentences", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const { chapter } = await createLanguageWorkflowTree({ organizationId });
-    const vocabularyLesson = await lessonFixture({
-      chapterId: chapter.id,
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "vocabulary",
-      organizationId,
-      position: 0,
-      title: `Reading Source ${uniqueId}`,
-    });
-    const [catWord, waterWord] = await Promise.all([
+    const [vocabularyLesson, catWord, waterWord] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "vocabulary",
+        organizationId,
+        position: 0,
+        title: `Reading Source ${uniqueId}`,
+      }),
       wordFixture({ organizationId, targetLanguage: "ja", word: `猫-${uniqueId}` }),
       wordFixture({ organizationId, targetLanguage: "ja", word: `水-${uniqueId}` }),
     ]);
 
-    await Promise.all([
+    const [readingLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "pending",
+        isPublished: true,
+        kind: "reading",
+        organizationId,
+        position: 1,
+        title: `Reading Lesson ${uniqueId}`,
+      }),
       lessonWordFixture({
         lessonId: vocabularyLesson.id,
         translation: `cat ${uniqueId}`,
@@ -804,16 +822,6 @@ describe(lessonGenerationWorkflow, () => {
         wordId: waterWord.id,
       }),
     ]);
-
-    const readingLesson = await lessonFixture({
-      chapterId: chapter.id,
-      generationStatus: "pending",
-      isPublished: true,
-      kind: "reading",
-      organizationId,
-      position: 1,
-      title: `Reading Lesson ${uniqueId}`,
-    });
 
     await lessonGenerationWorkflow(readingLesson.id);
 
@@ -854,45 +862,48 @@ describe(lessonGenerationWorkflow, () => {
   test("listening generation copies sentence steps from the previous reading lesson", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const { chapter } = await createLanguageWorkflowTree({ organizationId });
-    const readingLesson = await lessonFixture({
-      chapterId: chapter.id,
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "reading",
-      organizationId,
-      position: 0,
-      title: `Reading Source ${uniqueId}`,
-    });
-    const sentence = await sentenceFixture({
-      organizationId,
-      sentence: `猫と水 ${uniqueId}`,
-      targetLanguage: "ja",
-    });
+    const [readingLesson, sentence] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "reading",
+        organizationId,
+        position: 0,
+        title: `Reading Source ${uniqueId}`,
+      }),
+      sentenceFixture({
+        organizationId,
+        sentence: `猫と水 ${uniqueId}`,
+        targetLanguage: "ja",
+      }),
+    ]);
 
-    await lessonSentenceFixture({
-      lessonId: readingLesson.id,
-      sentenceId: sentence.id,
-      translation: `cat and water ${uniqueId}`,
-      userLanguage: "en",
-    });
-    await stepFixture({
-      content: assertStepContent("reading", {}),
-      isPublished: true,
-      kind: "reading",
-      lessonId: readingLesson.id,
-      position: 0,
-      sentenceId: sentence.id,
-    });
-
-    const listeningLesson = await lessonFixture({
-      chapterId: chapter.id,
-      generationStatus: "pending",
-      isPublished: true,
-      kind: "listening",
-      organizationId,
-      position: 1,
-      title: `Listening Lesson ${uniqueId}`,
-    });
+    const [listeningLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "pending",
+        isPublished: true,
+        kind: "listening",
+        organizationId,
+        position: 1,
+        title: `Listening Lesson ${uniqueId}`,
+      }),
+      lessonSentenceFixture({
+        lessonId: readingLesson.id,
+        sentenceId: sentence.id,
+        translation: `cat and water ${uniqueId}`,
+        userLanguage: "en",
+      }),
+      stepFixture({
+        content: assertStepContent("reading", {}),
+        isPublished: true,
+        kind: "reading",
+        lessonId: readingLesson.id,
+        position: 0,
+        sentenceId: sentence.id,
+      }),
+    ]);
 
     await lessonGenerationWorkflow(listeningLesson.id);
 

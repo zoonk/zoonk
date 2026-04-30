@@ -123,21 +123,25 @@ describe(submitPlayerCompletion, () => {
   });
 
   test("persists completion and requests preloading when the next lesson needs generation", async () => {
-    const user = await userFixture();
-    const { chapter, organization } = await createPublishedChapterContext();
-    const currentLesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      organizationId: organization.id,
-      position: 0,
-    });
-    const nextLesson = await lessonFixture({
-      chapterId: chapter.id,
-      generationStatus: "pending",
-      isPublished: true,
-      organizationId: organization.id,
-      position: 1,
-    });
+    const [user, { chapter, organization }] = await Promise.all([
+      userFixture(),
+      createPublishedChapterContext(),
+    ]);
+    const [currentLesson, nextLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "pending",
+        isPublished: true,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
     const { lesson, step } = await createMultipleChoiceLesson({
       lessonId: currentLesson.id,
       organizationId: organization.id,

@@ -22,15 +22,15 @@ describe(saveListeningLessonStep, () => {
       position: 2,
       targetLanguage: "de",
     });
-    const readingLesson = await lessonFixture({
-      chapterId: context.chapterId,
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "reading",
-      organizationId,
-      position: 1,
-    });
-    const [firstSentence, secondSentence] = await Promise.all([
+    const [readingLesson, firstSentence, secondSentence] = await Promise.all([
+      lessonFixture({
+        chapterId: context.chapterId,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "reading",
+        organizationId,
+        position: 1,
+      }),
       sentenceFixture({ organizationId, targetLanguage: "de" }),
       sentenceFixture({ organizationId, targetLanguage: "de" }),
     ]);

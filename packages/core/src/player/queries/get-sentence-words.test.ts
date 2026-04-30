@@ -31,17 +31,16 @@ describe(getSentenceWordsForLessons, () => {
 
   test("returns LessonWord records matching words found in lesson sentences", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
-    const newLesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      language: "es",
-      organizationId: org.id,
-    });
-
     const wordText1 = `hola${uniqueId}`;
     const wordText2 = `mundo${uniqueId}`;
 
-    const [sentence, word1, word2] = await Promise.all([
+    const [newLesson, sentence, word1, word2] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        language: "es",
+        organizationId: org.id,
+      }),
       sentenceFixture({
         organizationId: org.id,
         sentence: `${wordText1} ${wordText2}`,
@@ -93,18 +92,19 @@ describe(getSentenceWordsForLessons, () => {
 
   test("returns empty when sentence words have no matching LessonWord records", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
-    const newLesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      language: "es",
-      organizationId: org.id,
-    });
-
-    const sentence = await sentenceFixture({
-      organizationId: org.id,
-      sentence: `noexiste${uniqueId} tampoco${uniqueId}`,
-      targetLanguage: "es",
-    });
+    const [newLesson, sentence] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        language: "es",
+        organizationId: org.id,
+      }),
+      sentenceFixture({
+        organizationId: org.id,
+        sentence: `noexiste${uniqueId} tampoco${uniqueId}`,
+        targetLanguage: "es",
+      }),
+    ]);
 
     await lessonSentenceFixture({ lessonId: newLesson.id, sentenceId: sentence.id });
 
@@ -115,14 +115,13 @@ describe(getSentenceWordsForLessons, () => {
   test("strips punctuation when matching sentence words to LessonWord records", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
     const wordText = `sabes${uniqueId}`;
-    const newLesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      language: "es",
-      organizationId: org.id,
-    });
-
-    const [sentence, word] = await Promise.all([
+    const [newLesson, sentence, word] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        language: "es",
+        organizationId: org.id,
+      }),
       sentenceFixture({
         organizationId: org.id,
         sentence: `${wordText}?`,
@@ -148,16 +147,15 @@ describe(getSentenceWordsForLessons, () => {
 
   test("matches LessonWord records case-insensitively", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
-    const newLesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      language: "es",
-      organizationId: org.id,
-    });
-
     const wordText = `Hola${uniqueId}`;
 
-    const [sentence, word] = await Promise.all([
+    const [newLesson, sentence, word] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        language: "es",
+        organizationId: org.id,
+      }),
       sentenceFixture({
         organizationId: org.id,
         sentence: `${wordText} mundo`,
@@ -191,14 +189,13 @@ describe(getSentenceWordsForLessons, () => {
   test("deduplicates words across multiple sentences", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
     const wordText = `gato${uniqueId}`;
-    const newLesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      language: "es",
-      organizationId: org.id,
-    });
-
-    const [sentence1, sentence2, word] = await Promise.all([
+    const [newLesson, sentence1, sentence2, word] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        language: "es",
+        organizationId: org.id,
+      }),
       sentenceFixture({
         organizationId: org.id,
         sentence: `${wordText} bonito`,

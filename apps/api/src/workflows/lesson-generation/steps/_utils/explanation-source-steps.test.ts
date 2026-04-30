@@ -148,40 +148,39 @@ describe("explanation source step helpers", () => {
   test("returns only completed explanation text since the previous practice", async () => {
     const context = await createContext({ kind: "practice", organizationId, position: 4 });
 
-    await createCompletedExplanation({
-      chapterId: context.chapterId,
-      organizationId,
-      position: 0,
-      text: "Old explanation",
-      title: "Old",
-    });
-
-    await lessonFixture({
-      chapterId: context.chapterId,
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "practice",
-      organizationId,
-      position: 1,
-    });
-
-    await createCompletedExplanation({
-      chapterId: context.chapterId,
-      organizationId,
-      position: 2,
-      text: "New explanation",
-      title: "New",
-    });
-
-    await lessonFixture({
-      chapterId: context.chapterId,
-      generationStatus: "pending",
-      isPublished: true,
-      kind: "explanation",
-      organizationId,
-      position: 3,
-      title: "Pending explanation",
-    });
+    await Promise.all([
+      createCompletedExplanation({
+        chapterId: context.chapterId,
+        organizationId,
+        position: 0,
+        text: "Old explanation",
+        title: "Old",
+      }),
+      lessonFixture({
+        chapterId: context.chapterId,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "practice",
+        organizationId,
+        position: 1,
+      }),
+      createCompletedExplanation({
+        chapterId: context.chapterId,
+        organizationId,
+        position: 2,
+        text: "New explanation",
+        title: "New",
+      }),
+      lessonFixture({
+        chapterId: context.chapterId,
+        generationStatus: "pending",
+        isPublished: true,
+        kind: "explanation",
+        organizationId,
+        position: 3,
+        title: "Pending explanation",
+      }),
+    ]);
 
     const steps = await getExplanationStepsSinceLastLessonKind({ context, kind: "practice" });
 
@@ -191,30 +190,30 @@ describe("explanation source step helpers", () => {
   test("uses the previous quiz boundary for quiz source content", async () => {
     const context = await createContext({ kind: "quiz", organizationId, position: 5 });
 
-    await createCompletedExplanation({
-      chapterId: context.chapterId,
-      organizationId,
-      position: 0,
-      text: "Already quizzed",
-      title: "Old",
-    });
-
-    await lessonFixture({
-      chapterId: context.chapterId,
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "quiz",
-      organizationId,
-      position: 1,
-    });
-
-    await createCompletedExplanation({
-      chapterId: context.chapterId,
-      organizationId,
-      position: 2,
-      text: "New quiz source",
-      title: "New",
-    });
+    await Promise.all([
+      createCompletedExplanation({
+        chapterId: context.chapterId,
+        organizationId,
+        position: 0,
+        text: "Already quizzed",
+        title: "Old",
+      }),
+      lessonFixture({
+        chapterId: context.chapterId,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "quiz",
+        organizationId,
+        position: 1,
+      }),
+      createCompletedExplanation({
+        chapterId: context.chapterId,
+        organizationId,
+        position: 2,
+        text: "New quiz source",
+        title: "New",
+      }),
+    ]);
 
     const steps = await getExplanationStepsSinceLastLessonKind({ context, kind: "quiz" });
 

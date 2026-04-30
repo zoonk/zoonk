@@ -319,28 +319,27 @@ describe(courseGenerationWorkflow, () => {
         title,
       });
 
-      await courseAlternativeTitleFixture({
-        courseId: existingCourse.id,
-        language: "en",
-        slug: `alt-${slug}`,
-      });
-
-      await courseCategoryFixture({
-        category: "programming",
-        courseId: existingCourse.id,
-      });
-
-      await chapterFixture({
-        courseId: existingCourse.id,
-        organizationId,
-        title: `Existing Chapter ${randomUUID()}`,
-      });
-
-      const suggestion = await courseSuggestionFixture({
-        generationStatus: "failed",
-        slug,
-        title,
-      });
+      const [suggestion] = await Promise.all([
+        courseSuggestionFixture({
+          generationStatus: "failed",
+          slug,
+          title,
+        }),
+        courseAlternativeTitleFixture({
+          courseId: existingCourse.id,
+          language: "en",
+          slug: `alt-${slug}`,
+        }),
+        courseCategoryFixture({
+          category: "programming",
+          courseId: existingCourse.id,
+        }),
+        chapterFixture({
+          courseId: existingCourse.id,
+          organizationId,
+          title: `Existing Chapter ${randomUUID()}`,
+        }),
+      ]);
 
       await courseGenerationWorkflow(suggestion.id);
 

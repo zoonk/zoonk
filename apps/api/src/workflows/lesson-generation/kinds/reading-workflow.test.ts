@@ -95,24 +95,25 @@ describe(readingLessonWorkflow, () => {
       targetLanguage: "de",
     });
 
-    const vocabularyLesson = await lessonFixture({
-      chapterId: context.chapterId,
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "vocabulary",
-      organizationId,
-      position: 1,
-    });
-
-    const wordRecords = await Promise.all(
-      sourceWords.map((word) =>
-        wordFixture({
-          organizationId,
-          targetLanguage: "de",
-          word,
-        }),
+    const [vocabularyLesson, wordRecords] = await Promise.all([
+      lessonFixture({
+        chapterId: context.chapterId,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "vocabulary",
+        organizationId,
+        position: 1,
+      }),
+      Promise.all(
+        sourceWords.map((word) =>
+          wordFixture({
+            organizationId,
+            targetLanguage: "de",
+            word,
+          }),
+        ),
       ),
-    );
+    ]);
 
     await Promise.all(
       wordRecords.map((word) =>

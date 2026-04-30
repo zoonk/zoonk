@@ -89,14 +89,15 @@ describe(saveReadingTargetWords, () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const existingWord = `Gato${id}`;
     const lowercaseWord = existingWord.toLowerCase();
-    const lesson = await createLanguageLesson({ organizationId });
-
-    await wordFixture({
-      audioUrl: "/audio/gato.mp3",
-      organizationId,
-      targetLanguage: "de",
-      word: existingWord,
-    });
+    const [lesson] = await Promise.all([
+      createLanguageLesson({ organizationId }),
+      wordFixture({
+        audioUrl: "/audio/gato.mp3",
+        organizationId,
+        targetLanguage: "de",
+        word: existingWord,
+      }),
+    ]);
 
     await saveReadingTargetWords({
       distractors: { [lowercaseWord]: [] },
