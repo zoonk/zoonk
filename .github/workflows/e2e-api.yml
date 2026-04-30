@@ -62,7 +62,7 @@ jobs:
             ${{ runner.os }}-nextjs-api-
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@9b5745cdf0a2e8c2620f0746130f809adb911c19
+        uses: pnpm/action-setup@v6
         with:
           version: 11.0.2
 

@@ -2,7 +2,7 @@
   "name": "zoonk",
   "private": true,
   "scripts": {
-    "auth:generate": "NEXT_PUBLIC_APP_DOMAIN=localhost:3000 pnpm dlx auth@latest generate --output=./packages/db/src/prisma/models/accounts.prisma --config=./packages/auth/src/auth.ts",
+    "auth:generate": "NEXT_PUBLIC_APP_DOMAIN=localhost:3000 pnpx auth@latest generate --output=./packages/db/src/prisma/models/accounts.prisma --config=./packages/auth/src/auth.ts",
     "build": "turbo build",
     "build:e2e": "turbo build:e2e",
     "db:generate": "turbo db:generate",
@@ -13,7 +13,7 @@
     "evals:remove": "./apps/evals/scripts/remove-test-cases.sh",
     "format": "oxfmt --check",
     "format:fix": "oxfmt .",
-    "i18n": "pnpm dlx lingo.dev@latest run",
+    "i18n": "pnpx lingo.dev@latest run",
     "i18n:check": "./scripts/i18n.sh",
     "knip": "knip",
     "lint": "oxlint --deny-warnings .",
