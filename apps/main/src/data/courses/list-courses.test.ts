@@ -18,16 +18,8 @@ describe(listCourses, () => {
     ]);
 
     [draftCourse, privateCourse] = await Promise.all([
-      courseFixture({
-        isPublished: false,
-        language: "en",
-        organizationId: brandOrg.id,
-      }),
-      courseFixture({
-        isPublished: true,
-        language: "en",
-        organizationId: privateOrg.id,
-      }),
+      courseFixture({ isPublished: false, language: "en", organizationId: brandOrg.id }),
+      courseFixture({ isPublished: true, language: "en", organizationId: privateOrg.id }),
     ]);
   });
 
@@ -98,11 +90,7 @@ describe(listCourses, () => {
 
     // Fetch the second page using cursor (last item's id)
     const lastItem = firstPage.at(-1)!;
-    const secondPage = await listCourses({
-      cursor: lastItem.id,
-      language: uniqueLang,
-      limit: 3,
-    });
+    const secondPage = await listCourses({ cursor: lastItem.id, language: uniqueLang, limit: 3 });
 
     // Should return the remaining 2 courses
     expect(secondPage).toHaveLength(2);

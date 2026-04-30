@@ -8,9 +8,7 @@ import systemPrompt from "./lesson-kind.prompt.md";
 const taskName = "lesson-kind";
 const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
-const schema = z.object({
-  kind: z.enum(["explanation", "tutorial"]),
-});
+const schema = z.object({ kind: z.enum(["explanation", "tutorial"]) });
 
 export type LessonKindSchema = z.infer<typeof schema>;
 

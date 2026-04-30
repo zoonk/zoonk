@@ -86,11 +86,7 @@ describe("player browser integration: explanation lesson flow", () => {
     });
 
     await expect
-      .element(
-        page.getByRole("heading", {
-          name: /whole message travel as one blob/i,
-        }),
-      )
+      .element(page.getByRole("heading", { name: /whole message travel as one blob/i }))
       .toBeInTheDocument();
     await expect
       .element(page.getByAltText(/wrapped network packet moving through layered labels/i))

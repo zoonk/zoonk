@@ -49,16 +49,8 @@ describe(getLessonDistractorWordsForLessons, () => {
         language: "en",
         organizationId: org.id,
       }),
-      wordFixture({
-        organizationId: org.id,
-        targetLanguage: "de",
-        word: `wort-${id}`,
-      }),
-      sentenceFixture({
-        organizationId: org.id,
-        sentence: `satz ${id}`,
-        targetLanguage: "de",
-      }),
+      wordFixture({ organizationId: org.id, targetLanguage: "de", word: `wort-${id}` }),
+      sentenceFixture({ organizationId: org.id, sentence: `satz ${id}`, targetLanguage: "de" }),
       wordFixture({
         audioUrl: `https://example.com/fenster-${id}.mp3`,
         organizationId: org.id,
@@ -145,21 +137,9 @@ describe(getLessonDistractorWordsForLessons, () => {
           language: "en",
           organizationId: org.id,
         }),
-        wordFixture({
-          organizationId: org.id,
-          targetLanguage: "de",
-          word: `wort-${id}`,
-        }),
-        sentenceFixture({
-          organizationId: org.id,
-          sentence: `satz ${id}`,
-          targetLanguage: "de",
-        }),
-        wordFixture({
-          organizationId: org.id,
-          targetLanguage: "de",
-          word: `Antwort-${id}`,
-        }),
+        wordFixture({ organizationId: org.id, targetLanguage: "de", word: `wort-${id}` }),
+        sentenceFixture({ organizationId: org.id, sentence: `satz ${id}`, targetLanguage: "de" }),
+        wordFixture({ organizationId: org.id, targetLanguage: "de", word: `Antwort-${id}` }),
       ],
     );
 

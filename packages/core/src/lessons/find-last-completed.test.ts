@@ -237,11 +237,7 @@ describe(findLastCompleted, () => {
 
       const result = await findLastCompleted(uid, { courseId: course.id });
 
-      expect(result).toMatchObject({
-        chapterId: ch2.id,
-        chapterPosition: 1,
-        lessonId: lesson2.id,
-      });
+      expect(result).toMatchObject({ chapterId: ch2.id, chapterPosition: 1, lessonId: lesson2.id });
     });
 
     test("ignores completions from other courses", async () => {
@@ -302,10 +298,7 @@ describe(findLastCompleted, () => {
 
       const result = await findLastCompleted(uid, { courseId: course1.id });
 
-      expect(result).toMatchObject({
-        courseId: course1.id,
-        lessonId: lesson1.id,
-      });
+      expect(result).toMatchObject({ courseId: course1.id, lessonId: lesson1.id });
     });
   });
 
@@ -365,10 +358,7 @@ describe(findLastCompleted, () => {
 
       const result = await findLastCompleted(uid, { chapterId: ch1.id });
 
-      expect(result).toMatchObject({
-        chapterId: ch1.id,
-        lessonId: lesson1.id,
-      });
+      expect(result).toMatchObject({ chapterId: ch1.id, lessonId: lesson1.id });
     });
   });
 
@@ -419,10 +409,7 @@ describe(findLastCompleted, () => {
 
       const result = await findLastCompleted(uid, { lessonId: lesson1.id });
 
-      expect(result).toMatchObject({
-        lessonId: lesson1.id,
-        lessonPosition: 0,
-      });
+      expect(result).toMatchObject({ lessonId: lesson1.id, lessonPosition: 0 });
     });
   });
 
@@ -518,10 +505,7 @@ describe(findLastCompleted, () => {
 
     const result = await findLastCompleted(uid, { courseId: course.id });
 
-    expect(result).toMatchObject({
-      lessonId: publishedLesson.id,
-      lessonPosition: 0,
-    });
+    expect(result).toMatchObject({ lessonId: publishedLesson.id, lessonPosition: 0 });
   });
 
   test("skips completions in unpublished chapters", async () => {
@@ -579,10 +563,7 @@ describe(findLastCompleted, () => {
 
     const result = await findLastCompleted(uid, { courseId: course.id });
 
-    expect(result).toMatchObject({
-      chapterId: publishedChapter.id,
-      chapterPosition: 0,
-    });
+    expect(result).toMatchObject({ chapterId: publishedChapter.id, chapterPosition: 0 });
   });
 
   test("returns null for non-existent course", async () => {

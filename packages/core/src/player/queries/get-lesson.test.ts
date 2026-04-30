@@ -20,11 +20,7 @@ describe(getLesson, () => {
   beforeAll(async () => {
     org = await organizationFixture({ kind: "brand" });
 
-    course = await courseFixture({
-      isPublished: true,
-      language: "en",
-      organizationId: org.id,
-    });
+    course = await courseFixture({ isPublished: true, language: "en", organizationId: org.id });
 
     chapter = await chapterFixture({
       courseId: course.id,
@@ -141,12 +137,7 @@ describe(getLesson, () => {
       }),
     ]);
 
-    await stepFixture({
-      isPublished: true,
-      lessonId: wordLesson.id,
-      position: 0,
-      wordId: word.id,
-    });
+    await stepFixture({ isPublished: true, lessonId: wordLesson.id, position: 0, wordId: word.id });
 
     const result = await getLesson({ lessonId: wordLesson.id });
 

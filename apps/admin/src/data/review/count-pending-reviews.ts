@@ -66,10 +66,7 @@ export const countPendingForTask = cache(async function countPendingForTask(
 
   if (taskType === "courseSuggestions") {
     return prisma.searchPrompt.count({
-      where: {
-        NOT: { id: { in: excludeIds } },
-        suggestions: { some: {} },
-      },
+      where: { NOT: { id: { in: excludeIds } }, suggestions: { some: {} } },
     });
   }
 

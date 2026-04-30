@@ -72,10 +72,7 @@ function createRouteHandler(options: MockApiOptions) {
         return;
       }
       await route.fulfill({
-        body: JSON.stringify({
-          message: "Workflow started",
-          runId: triggerResponse.runId,
-        }),
+        body: JSON.stringify({ message: "Workflow started", runId: triggerResponse.runId }),
         contentType: "application/json",
         status: 200,
       });
@@ -137,9 +134,7 @@ test.describe("Generate Course Page", () => {
       await page.goto(`/generate/cs/${suggestion.id}`);
 
       // Should show triggering or streaming state (no idle state)
-      await expect(page.getByText(/creating your course/i)).toBeVisible({
-        timeout: 10_000,
-      });
+      await expect(page.getByText(/creating your course/i)).toBeVisible({ timeout: 10_000 });
 
       await expect(page.getByText(/this usually takes about a minute/i)).toBeVisible();
     });
@@ -171,11 +166,7 @@ test.describe("Generate Course Page", () => {
         organizationId: org.id,
       });
 
-      await lessonFixture({
-        chapterId: chapter.id,
-        isPublished: true,
-        organizationId: org.id,
-      });
+      await lessonFixture({ chapterId: chapter.id, isPublished: true, organizationId: org.id });
 
       await setupMockApis(page, {
         streamMessages: [
@@ -219,11 +210,7 @@ test.describe("Generate Course Page", () => {
             organizationId: org.id,
           });
 
-          await lessonFixture({
-            chapterId: chapter.id,
-            isPublished: true,
-            organizationId: org.id,
-          });
+          await lessonFixture({ chapterId: chapter.id, isPublished: true, organizationId: org.id });
         }),
       ]);
 
@@ -239,9 +226,7 @@ test.describe("Generate Course Page", () => {
       await page.goto(`/generate/cs/${suggestion.id}`);
 
       // Should redirect to the suffixed slug, not the raw suggestion slug
-      await page.waitForURL(new RegExp(`/b/ai/c/${suffixedSlug}`), {
-        timeout: 10_000,
-      });
+      await page.waitForURL(new RegExp(`/b/ai/c/${suffixedSlug}`), { timeout: 10_000 });
     });
   });
 
@@ -264,9 +249,7 @@ test.describe("Generate Course Page", () => {
       await page.goto(`/generate/cs/${suggestion.id}`);
 
       // Should show error message when a step errors
-      await expect(page.getByText(/something went wrong/i)).toBeVisible({
-        timeout: 10_000,
-      });
+      await expect(page.getByText(/something went wrong/i)).toBeVisible({ timeout: 10_000 });
     });
   });
 

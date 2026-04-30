@@ -30,11 +30,7 @@ describe(updateCourseStep, () => {
     };
 
     await expect(
-      updateCourseStep({
-        course: brokenContext,
-        description: "desc",
-        imageUrl: null,
-      }),
+      updateCourseStep({ course: brokenContext, description: "desc", imageUrl: null }),
     ).rejects.toThrow();
 
     const events = getStreamedEvents();

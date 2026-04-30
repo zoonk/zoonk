@@ -83,11 +83,7 @@ Config.setCodec("vp9");
 import { CalculateMetadataFunction } from "remotion";
 
 const calculateMetadata: CalculateMetadataFunction<Props> = async ({ props }) => {
-  return {
-    defaultCodec: "vp8",
-    defaultVideoImageFormat: "png",
-    defaultPixelFormat: "yuva420p",
-  };
+  return { defaultCodec: "vp8", defaultVideoImageFormat: "png", defaultPixelFormat: "yuva420p" };
 };
 
 <Composition

@@ -24,10 +24,7 @@ export const errors = {
   unauthorized: (msg = "Authentication required") =>
     errorResponse("UNAUTHORIZED", msg, HTTP_UNAUTHORIZED),
   validation: (zodError: z.ZodError) => {
-    const details = zodError.issues.map((issue) => ({
-      message: issue.message,
-      path: issue.path,
-    }));
+    const details = zodError.issues.map((issue) => ({ message: issue.message, path: issue.path }));
     return errorResponse("VALIDATION_ERROR", "Invalid request", HTTP_BAD_REQUEST, details);
   },
 } as const;

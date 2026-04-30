@@ -113,19 +113,13 @@ return Response.json({ data });
 return Response.json({ error: "Not found" }, { status: 404 });
 
 // With headers
-return Response.json(data, {
-  headers: {
-    "Cache-Control": "max-age=3600",
-  },
-});
+return Response.json(data, { headers: { "Cache-Control": "max-age=3600" } });
 
 // Redirect
 return Response.redirect(new URL("/login", request.url));
 
 // Stream
-return new Response(stream, {
-  headers: { "Content-Type": "text/event-stream" },
-});
+return new Response(stream, { headers: { "Content-Type": "text/event-stream" } });
 ```
 
 ## When to Use Route Handlers vs Server Actions

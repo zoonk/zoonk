@@ -196,9 +196,7 @@ function ImageUploadTrigger({
   className,
   size = 96,
   ...props
-}: Omit<React.ComponentProps<"div">, "onClick"> & {
-  size?: number;
-}) {
+}: Omit<React.ComponentProps<"div">, "onClick"> & { size?: number }) {
   const { hasImage, pending, openFilePicker, handleRemove } = useImageUpload();
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
@@ -341,9 +339,7 @@ function ImageUploadSkeleton({
   className,
   size = 96,
   ...props
-}: React.ComponentProps<"div"> & {
-  size?: number;
-}) {
+}: React.ComponentProps<"div"> & { size?: number }) {
   return (
     <Skeleton
       className={cn("rounded-xl", className)}

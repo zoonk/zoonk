@@ -17,10 +17,7 @@ import Link from "next/link";
 import { Fragment } from "react";
 import { AdminPeriodTabs } from "./admin-period-tabs";
 
-type StatsBreadcrumbItem = {
-  href?: string;
-  label: string;
-};
+type StatsBreadcrumbItem = { href?: string; label: string };
 
 /**
  * The stats pages all share the same dashboard-level navigation, but some

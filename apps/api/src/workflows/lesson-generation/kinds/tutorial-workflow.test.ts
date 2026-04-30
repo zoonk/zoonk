@@ -20,18 +20,20 @@ vi.mock("@zoonk/ai/tasks/lessons/tutorial", () => ({
 }));
 
 vi.mock("@zoonk/ai/tasks/steps/image-prompts", () => ({
-  generateStepImagePrompts: vi.fn().mockResolvedValue({
-    data: { prompts: ["settings image prompt", "save image prompt"] },
-  }),
+  generateStepImagePrompts: vi
+    .fn()
+    .mockResolvedValue({ data: { prompts: ["settings image prompt", "save image prompt"] } }),
 }));
 
 vi.mock("@zoonk/core/steps/content-image", () => ({
-  generateContentStepImage: vi.fn().mockImplementation(({ prompt }) =>
-    Promise.resolve({
-      data: `https://example.com/${encodeURIComponent(prompt)}.webp`,
-      error: null,
-    }),
-  ),
+  generateContentStepImage: vi
+    .fn()
+    .mockImplementation(({ prompt }) =>
+      Promise.resolve({
+        data: `https://example.com/${encodeURIComponent(prompt)}.webp`,
+        error: null,
+      }),
+    ),
 }));
 
 describe(tutorialLessonWorkflow, () => {

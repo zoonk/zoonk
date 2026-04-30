@@ -176,9 +176,7 @@ test.describe("Lesson Player Page", () => {
   });
 
   test("close link has correct href", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestLesson({
-      generationStatus: "completed",
-    });
+    const { chapter, course, lesson } = await createTestLesson({ generationStatus: "completed" });
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
@@ -191,9 +189,7 @@ test.describe("Lesson Player Page", () => {
   });
 
   test("pending lessons show the create state and link details", async ({ page }) => {
-    const { lesson, chapter, course } = await createTestLesson({
-      generationStatus: "pending",
-    });
+    const { lesson, chapter, course } = await createTestLesson({ generationStatus: "pending" });
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
@@ -272,9 +268,7 @@ test.describe("Lesson Player Page", () => {
   });
 
   test("pressing escape navigates to the chapter page", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestLesson({
-      generationStatus: "completed",
-    });
+    const { chapter, course, lesson } = await createTestLesson({ generationStatus: "completed" });
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 

@@ -25,12 +25,7 @@ export async function profileFormAction(_prevState: unknown, formData: FormData)
     body.username = username;
   }
 
-  const { error } = await safeAsync(async () =>
-    auth.api.updateUser({
-      body,
-      headers: reqHeaders,
-    }),
-  );
+  const { error } = await safeAsync(async () => auth.api.updateUser({ body, headers: reqHeaders }));
 
   if (error) {
     logError("Error updating profile:", error);

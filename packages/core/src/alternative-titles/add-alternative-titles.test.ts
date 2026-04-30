@@ -80,11 +80,7 @@ describe(addAlternativeTitles, () => {
     const sharedTitle = `Vue.js ${suffix}`;
     const uniqueTitle = `Angular ${suffix}`;
 
-    await addAlternativeTitles({
-      courseId: course1.id,
-      language: "en",
-      titles: [sharedTitle],
-    });
+    await addAlternativeTitles({ courseId: course1.id, language: "en", titles: [sharedTitle] });
 
     await addAlternativeTitles({
       courseId: course2.id,
@@ -104,15 +100,9 @@ describe(addAlternativeTitles, () => {
     const org = await organizationFixture();
     const course = await courseFixture({ organizationId: org.id });
 
-    await addAlternativeTitles({
-      courseId: course.id,
-      language: "en",
-      titles: [],
-    });
+    await addAlternativeTitles({ courseId: course.id, language: "en", titles: [] });
 
-    const titles = await prisma.courseAlternativeTitle.findMany({
-      where: { courseId: course.id },
-    });
+    const titles = await prisma.courseAlternativeTitle.findMany({ where: { courseId: course.id } });
 
     expect(titles).toEqual([]);
   });

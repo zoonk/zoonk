@@ -7,9 +7,9 @@ import {
   prisma,
 } from "@zoonk/db";
 
-function courseAttrs(attrs?: Partial<Course>): Omit<Course, "id" | "createdAt" | "updatedAt"> & {
-  description: string;
-} {
+function courseAttrs(
+  attrs?: Partial<Course>,
+): Omit<Course, "id" | "createdAt" | "updatedAt"> & { description: string } {
   const { description, ...rest } = attrs ?? {};
 
   return {
@@ -39,26 +39,15 @@ export async function courseFixture(attrs?: Partial<Course>) {
 
 export async function courseCategoryFixture(attrs: Omit<CourseCategory, "id" | "createdAt">) {
   const courseCategory = await prisma.courseCategory.create({
-    data: {
-      category: attrs.category,
-      courseId: attrs.courseId,
-    },
+    data: { category: attrs.category, courseId: attrs.courseId },
   });
   return courseCategory;
 }
 
 export async function courseUserFixture(attrs: Omit<CourseUser, "id" | "startedAt">) {
   const [courseUser] = await prisma.$transaction([
-    prisma.courseUser.create({
-      data: {
-        courseId: attrs.courseId,
-        userId: attrs.userId,
-      },
-    }),
-    prisma.course.update({
-      data: { userCount: { increment: 1 } },
-      where: { id: attrs.courseId },
-    }),
+    prisma.courseUser.create({ data: { courseId: attrs.courseId, userId: attrs.userId } }),
+    prisma.course.update({ data: { userCount: { increment: 1 } }, where: { id: attrs.courseId } }),
   ]);
 
   return courseUser;
@@ -68,10 +57,6 @@ export async function courseAlternativeTitleFixture(
   attrs: Omit<CourseAlternativeTitle, "id" | "createdAt">,
 ) {
   return prisma.courseAlternativeTitle.create({
-    data: {
-      courseId: attrs.courseId,
-      language: attrs.language,
-      slug: attrs.slug,
-    },
+    data: { courseId: attrs.courseId, language: attrs.language, slug: attrs.slug },
   });
 }

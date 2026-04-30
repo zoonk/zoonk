@@ -70,11 +70,7 @@ const box = fillTextBox({ maxBoxWidth: 400, maxLines: 3 });
 
 const words = ["Hello", "World", "This", "is", "a", "test"];
 for (const word of words) {
-  const { exceedsBox } = box.add({
-    text: word + " ",
-    fontFamily: "Arial",
-    fontSize: 24,
-  });
+  const { exceedsBox } = box.add({ text: word + " ", fontFamily: "Arial", fontSize: 24 });
   if (exceedsBox) {
     // Text would overflow, handle accordingly
     break;
@@ -89,18 +85,11 @@ for (const word of words) {
 ```tsx
 import { loadFont } from "@remotion/google-fonts/Inter";
 
-const { fontFamily, waitUntilDone } = loadFont("normal", {
-  weights: ["400"],
-  subsets: ["latin"],
-});
+const { fontFamily, waitUntilDone } = loadFont("normal", { weights: ["400"], subsets: ["latin"] });
 
 waitUntilDone().then(() => {
   // Now safe to measure
-  const { width } = measureText({
-    text: "Hello",
-    fontFamily,
-    fontSize: 32,
-  });
+  const { width } = measureText({ text: "Hello", fontFamily, fontSize: 32 });
 });
 ```
 
@@ -125,10 +114,7 @@ const fontStyle = {
   letterSpacing: "0.5px",
 };
 
-const { width } = measureText({
-  text: "Hello",
-  ...fontStyle,
-});
+const { width } = measureText({ text: "Hello", ...fontStyle });
 
 return <div style={fontStyle}>Hello</div>;
 ```

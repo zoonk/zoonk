@@ -46,16 +46,8 @@ describe(getSentenceWordsForLessons, () => {
         sentence: `${wordText1} ${wordText2}`,
         targetLanguage: "es",
       }),
-      wordFixture({
-        organizationId: org.id,
-        targetLanguage: "es",
-        word: wordText1,
-      }),
-      wordFixture({
-        organizationId: org.id,
-        targetLanguage: "es",
-        word: wordText2,
-      }),
+      wordFixture({ organizationId: org.id, targetLanguage: "es", word: wordText1 }),
+      wordFixture({ organizationId: org.id, targetLanguage: "es", word: wordText2 }),
     ]);
 
     await Promise.all([
@@ -122,16 +114,8 @@ describe(getSentenceWordsForLessons, () => {
         language: "es",
         organizationId: org.id,
       }),
-      sentenceFixture({
-        organizationId: org.id,
-        sentence: `${wordText}?`,
-        targetLanguage: "es",
-      }),
-      wordFixture({
-        organizationId: org.id,
-        targetLanguage: "es",
-        word: wordText,
-      }),
+      sentenceFixture({ organizationId: org.id, sentence: `${wordText}?`, targetLanguage: "es" }),
+      wordFixture({ organizationId: org.id, targetLanguage: "es", word: wordText }),
     ]);
 
     await Promise.all([
@@ -161,11 +145,7 @@ describe(getSentenceWordsForLessons, () => {
         sentence: `${wordText} mundo`,
         targetLanguage: "es",
       }),
-      wordFixture({
-        organizationId: org.id,
-        targetLanguage: "es",
-        word: wordText,
-      }),
+      wordFixture({ organizationId: org.id, targetLanguage: "es", word: wordText }),
     ]);
 
     await Promise.all([
@@ -206,11 +186,7 @@ describe(getSentenceWordsForLessons, () => {
         sentence: `${wordText} grande`,
         targetLanguage: "es",
       }),
-      wordFixture({
-        organizationId: org.id,
-        targetLanguage: "es",
-        word: wordText,
-      }),
+      wordFixture({ organizationId: org.id, targetLanguage: "es", word: wordText }),
     ]);
 
     await Promise.all([

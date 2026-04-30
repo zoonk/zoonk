@@ -67,35 +67,19 @@ async function seedWord(
     },
     update: {},
     where: {
-      orgWord: {
-        organizationId: org.id,
-        targetLanguage: data.targetLanguage,
-        word: data.word,
-      },
+      orgWord: { organizationId: org.id, targetLanguage: data.targetLanguage, word: data.word },
     },
   });
 
   await prisma.wordPronunciation.upsert({
-    create: {
-      pronunciation: data.pronunciation,
-      userLanguage: data.userLanguage,
-      wordId: word.id,
-    },
+    create: { pronunciation: data.pronunciation, userLanguage: data.userLanguage, wordId: word.id },
     update: {},
-    where: {
-      wordPronunciation: {
-        userLanguage: data.userLanguage,
-        wordId: word.id,
-      },
-    },
+    where: { wordPronunciation: { userLanguage: data.userLanguage, wordId: word.id } },
   });
 
   const lessonWordPromises = data.lessonSlugs.map(async (lessonSlug) => {
     const lesson = await prisma.lesson.findFirst({
-      where: {
-        organizationId: org.id,
-        slug: lessonSlug,
-      },
+      where: { organizationId: org.id, slug: lessonSlug },
     });
 
     if (lesson) {
@@ -107,12 +91,7 @@ async function seedWord(
           wordId: word.id,
         },
         update: {},
-        where: {
-          lessonWord: {
-            lessonId: lesson.id,
-            wordId: word.id,
-          },
-        },
+        where: { lessonWord: { lessonId: lesson.id, wordId: word.id } },
       });
     }
   });

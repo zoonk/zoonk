@@ -13,12 +13,7 @@ export async function getLessonProgress({
 }: {
   chapterId: string;
   headers?: Headers;
-}): Promise<
-  {
-    isCompleted: boolean;
-    lessonId: string;
-  }[]
-> {
+}): Promise<{ isCompleted: boolean; lessonId: string }[]> {
   const session = await getSession(headers);
   const userId = session?.user.id;
 
@@ -26,21 +21,14 @@ export async function getLessonProgress({
     return [];
   }
 
-  const rows = await listPublishedLessonProgressRows({
-    scope: { chapterId },
-    userId,
-  });
+  const rows = await listPublishedLessonProgressRows({ scope: { chapterId }, userId });
 
   const durableLessonIds = await listDurableLessonCompletionIds({
     lessonIds: [...new Set(rows.map((row) => row.lessonId))],
     userId,
   });
 
-  return toEffectiveLessonProgressRows({
-    durablyCompletedLessonIds: durableLessonIds,
-    rows,
-  }).map((row) => ({
-    isCompleted: row.isEffectivelyCompleted,
-    lessonId: row.lessonId,
-  }));
+  return toEffectiveLessonProgressRows({ durablyCompletedLessonIds: durableLessonIds, rows }).map(
+    (row) => ({ isCompleted: row.isEffectivelyCompleted, lessonId: row.lessonId }),
+  );
 }

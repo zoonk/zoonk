@@ -26,11 +26,7 @@ export async function getAiTaskUsageMap({
   startDate: string;
 }): Promise<TaskUsageByName> {
   const { data, error } = await safeAsync(() =>
-    zoonkGateway.getSpendReport({
-      endDate,
-      groupBy: "tag",
-      startDate,
-    }),
+    zoonkGateway.getSpendReport({ endDate, groupBy: "tag", startDate }),
   );
 
   if (error) {

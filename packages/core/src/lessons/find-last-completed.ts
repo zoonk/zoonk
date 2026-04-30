@@ -21,20 +21,14 @@ type LastCompletedLesson = {
  */
 function getScopeLessonWhere(scope: LessonScope) {
   if ("courseId" in scope) {
-    return getPublishedLessonWhere({
-      courseWhere: { id: scope.courseId },
-    });
+    return getPublishedLessonWhere({ courseWhere: { id: scope.courseId } });
   }
 
   if ("chapterId" in scope) {
-    return getPublishedLessonWhere({
-      chapterWhere: { id: scope.chapterId },
-    });
+    return getPublishedLessonWhere({ chapterWhere: { id: scope.chapterId } });
   }
 
-  return getPublishedLessonWhere({
-    lessonWhere: { id: scope.lessonId },
-  });
+  return getPublishedLessonWhere({ lessonWhere: { id: scope.lessonId } });
 }
 
 /**
@@ -49,13 +43,7 @@ export async function findLastCompleted(
     prisma.lessonProgress.findFirst({
       include: {
         lesson: {
-          include: {
-            chapter: {
-              include: {
-                course: { include: { organization: true } },
-              },
-            },
-          },
+          include: { chapter: { include: { course: { include: { organization: true } } } } },
         },
       },
       orderBy: [
@@ -63,11 +51,7 @@ export async function findLastCompleted(
         { lesson: { chapter: { position: "desc" } } },
         { lesson: { position: "desc" } },
       ],
-      where: {
-        completedAt: { not: null },
-        lesson: getScopeLessonWhere(scope),
-        userId,
-      },
+      where: { completedAt: { not: null }, lesson: getScopeLessonWhere(scope), userId },
     }),
   );
 

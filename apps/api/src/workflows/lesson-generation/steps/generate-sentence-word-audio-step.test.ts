@@ -6,12 +6,9 @@ import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateSentenceWordAudioStep } from "./generate-sentence-word-audio-step";
 
 vi.mock("@zoonk/core/audio/generate", () => ({
-  generateLanguageAudio: vi.fn().mockImplementation(({ text }) =>
-    Promise.resolve({
-      data: `/audio/${text}.mp3`,
-      error: null,
-    }),
-  ),
+  generateLanguageAudio: vi
+    .fn()
+    .mockImplementation(({ text }) => Promise.resolve({ data: `/audio/${text}.mp3`, error: null })),
 }));
 
 describe(generateSentenceWordAudioStep, () => {

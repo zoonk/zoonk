@@ -28,10 +28,7 @@ describe(generateLessonsStep, () => {
     const organization = await aiOrganizationFixture();
     const [course, languageCourse] = await Promise.all([
       courseFixture({ organizationId: organization.id }),
-      courseFixture({
-        organizationId: organization.id,
-        targetLanguage: "es",
-      }),
+      courseFixture({ organizationId: organization.id, targetLanguage: "es" }),
     ]);
 
     const [chapter, languageChapter] = await Promise.all([
@@ -47,12 +44,7 @@ describe(generateLessonsStep, () => {
       }),
     ]);
 
-    context = {
-      ...chapter,
-      _count: { lessons: 0 },
-      course,
-      neighboringChapters: [],
-    };
+    context = { ...chapter, _count: { lessons: 0 }, course, neighboringChapters: [] };
 
     languageContext = {
       ...languageChapter,

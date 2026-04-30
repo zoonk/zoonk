@@ -28,12 +28,7 @@ export async function seedCourseUsers(
           userId: users.owner.id,
         },
         update: {},
-        where: {
-          courseUser: {
-            courseId: course.id,
-            userId: users.owner.id,
-          },
-        },
+        where: { courseUser: { courseId: course.id, userId: users.owner.id } },
       }),
     ),
   );
@@ -42,17 +37,9 @@ export async function seedCourseUsers(
   const firstCourse = courses[0];
   if (firstCourse) {
     await prisma.courseUser.upsert({
-      create: {
-        courseId: firstCourse.id,
-        userId: users.member.id,
-      },
+      create: { courseId: firstCourse.id, userId: users.member.id },
       update: {},
-      where: {
-        courseUser: {
-          courseId: firstCourse.id,
-          userId: users.member.id,
-        },
-      },
+      where: { courseUser: { courseId: firstCourse.id, userId: users.member.id } },
     });
   }
 
@@ -60,10 +47,7 @@ export async function seedCourseUsers(
   await Promise.all(
     courses.map(async (course) => {
       const count = await prisma.courseUser.count({ where: { courseId: course.id } });
-      await prisma.course.update({
-        data: { userCount: count },
-        where: { id: course.id },
-      });
+      await prisma.course.update({ data: { userCount: count }, where: { id: course.id } });
     }),
   );
 }

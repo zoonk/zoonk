@@ -84,13 +84,7 @@ function ForwardMessageProvider({ children }: { children: React.ReactNode }) {
   const submit = useForwardMessage();
 
   return (
-    <ComposerContext
-      value={{
-        state,
-        actions: { update: setState, submit },
-        meta: { inputRef },
-      }}
-    >
+    <ComposerContext value={{ state, actions: { update: setState, submit }, meta: { inputRef } }}>
       {children}
     </ComposerContext>
   );
@@ -102,13 +96,7 @@ function ChannelProvider({ channelId, children }: Props) {
   const inputRef = useRef(null);
 
   return (
-    <ComposerContext
-      value={{
-        state,
-        actions: { update, submit },
-        meta: { inputRef },
-      }}
-    >
+    <ComposerContext value={{ state, actions: { update, submit }, meta: { inputRef } }}>
       {children}
     </ComposerContext>
   );

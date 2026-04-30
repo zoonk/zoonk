@@ -64,10 +64,7 @@ const COUNTRY_CURRENCY: Record<string, string> = {
   ZA: "zar",
 };
 
-export type PriceInfo = {
-  amount: number;
-  currency: string;
-};
+export type PriceInfo = { amount: number; currency: string };
 
 export function countryToCurrency(countryCode: string): string {
   return COUNTRY_CURRENCY[countryCode.toUpperCase()] ?? "usd";

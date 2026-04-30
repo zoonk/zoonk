@@ -1,3 +1,1 @@
-export const ErrorCode = {
-  unauthorized: "unauthorized",
-} as const;
+export const ErrorCode = { unauthorized: "unauthorized" } as const;

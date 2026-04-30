@@ -13,10 +13,7 @@ const INITIAL_BACKOFF_MS = 1000;
 
 export type AudioFormat = "opus" | "wav";
 
-export type AudioResult = {
-  audio: Uint8Array;
-  format: AudioFormat;
-};
+export type AudioResult = { audio: Uint8Array; format: AudioFormat };
 
 type AudioProvider = (params: {
   instructions: string;
@@ -24,11 +21,7 @@ type AudioProvider = (params: {
   voice: TTSVoice;
 }) => Promise<AudioResult>;
 
-type ScheduledAttempt = {
-  backoffMs: number;
-  generate: AudioProvider;
-  name: string;
-};
+type ScheduledAttempt = { backoffMs: number; generate: AudioProvider; name: string };
 
 function buildInstructions(languageCode?: string): string {
   const languageName = languageCode

@@ -9,20 +9,14 @@ export const LIST_COURSES_LIMIT = 20;
 const cachedListCourses = cache(
   async (language: string, limit: number, category?: CourseCategory, cursor?: string) => {
     const courses = await prisma.course.findMany({
-      include: {
-        organization: {
-          select: { slug: true },
-        },
-      },
+      include: { organization: { select: { slug: true } } },
       orderBy: [{ userCount: "desc" }, { id: "desc" }],
       take: limit,
       ...(cursor && { cursor: { id: cursor }, skip: 1 }),
       where: getPublishedCourseWhere({
         language,
         organization: { kind: "brand" },
-        ...(category && {
-          categories: { some: { category } },
-        }),
+        ...(category && { categories: { some: { category } } }),
       }),
     });
 

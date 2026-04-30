@@ -26,23 +26,13 @@ function kinds(lessons: ReturnType<typeof expandChapterLessons>) {
 describe(expandChapterLessons, () => {
   test("adds practice, quiz, and review for three explanations", () => {
     expect(
-      kinds(
-        expandChapterLessons({
-          lessons: explanationLessons(3),
-          targetLanguage: null,
-        }),
-      ),
+      kinds(expandChapterLessons({ lessons: explanationLessons(3), targetLanguage: null })),
     ).toEqual(["explanation", "explanation", "explanation", "practice", "quiz", "review"]);
   });
 
   test("groups five explanations as three then two before quiz and review", () => {
     expect(
-      kinds(
-        expandChapterLessons({
-          lessons: explanationLessons(5),
-          targetLanguage: null,
-        }),
-      ),
+      kinds(expandChapterLessons({ lessons: explanationLessons(5), targetLanguage: null })),
     ).toEqual([
       "explanation",
       "explanation",
@@ -58,12 +48,7 @@ describe(expandChapterLessons, () => {
 
   test("groups six explanations as pairs with quiz after every two practices", () => {
     expect(
-      kinds(
-        expandChapterLessons({
-          lessons: explanationLessons(6),
-          targetLanguage: null,
-        }),
-      ),
+      kinds(expandChapterLessons({ lessons: explanationLessons(6), targetLanguage: null })),
     ).toEqual([
       "explanation",
       "explanation",
@@ -89,10 +74,7 @@ describe(expandChapterLessons, () => {
   });
 
   test("keeps generated companion lesson titles and descriptions empty", () => {
-    const lessons = expandChapterLessons({
-      lessons: explanationLessons(2),
-      targetLanguage: null,
-    });
+    const lessons = expandChapterLessons({ lessons: explanationLessons(2), targetLanguage: null });
 
     expect(lessons.find((lesson) => lesson.kind === "practice")).toMatchObject({
       description: null,
@@ -110,12 +92,7 @@ describe(expandChapterLessons, () => {
 
   test("adds reading and listening after every vocabulary group", () => {
     expect(
-      kinds(
-        expandChapterLessons({
-          lessons: vocabularyLessons(4),
-          targetLanguage: "es",
-        }),
-      ),
+      kinds(expandChapterLessons({ lessons: vocabularyLessons(4), targetLanguage: "es" })),
     ).toEqual([
       "vocabulary",
       "translation",
@@ -135,12 +112,7 @@ describe(expandChapterLessons, () => {
 
   test("adds reading for the final vocabulary group even when listening is unsupported", () => {
     expect(
-      kinds(
-        expandChapterLessons({
-          lessons: vocabularyLessons(5),
-          targetLanguage: "xx",
-        }),
-      ),
+      kinds(expandChapterLessons({ lessons: vocabularyLessons(5), targetLanguage: "xx" })),
     ).toEqual([
       "vocabulary",
       "translation",

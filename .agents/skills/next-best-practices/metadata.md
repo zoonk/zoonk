@@ -56,11 +56,7 @@ Separate from metadata for streaming support:
 ```tsx
 import type { Viewport } from "next";
 
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  themeColor: "#000000",
-};
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#000000" };
 
 // Or dynamic
 export function generateViewport({ params }): Viewport {
@@ -73,9 +69,7 @@ export function generateViewport({ params }): Viewport {
 In root layout for consistent naming:
 
 ```tsx
-export const metadata: Metadata = {
-  title: { default: "Site Name", template: "%s | Site Name" },
-};
+export const metadata: Metadata = { title: { default: "Site Name", template: "%s | Site Name" } };
 ```
 
 ## Metadata File Conventions
@@ -217,11 +211,7 @@ export default async function Image() {
 
   return new ImageResponse(
     <div style={{ fontFamily: "Inter", fontSize: 64 }}>Custom Font Text</div>,
-    {
-      width: 1200,
-      height: 630,
-      fonts: [{ name: "Inter", data: fontData, style: "normal" }],
-    },
+    { width: 1200, height: 630, fonts: [{ name: "Inter", data: fontData, style: "normal" }] },
   );
 }
 ```

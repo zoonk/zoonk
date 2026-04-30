@@ -5,10 +5,7 @@ import { type ScoredRow, findBestByScore } from "@zoonk/utils/aggregation";
 import { getDefaultStartDate } from "@zoonk/utils/date-ranges";
 import { cache } from "react";
 
-type BestDayData = {
-  score: number;
-  dayOfWeek: number;
-};
+type BestDayData = { score: number; dayOfWeek: number };
 
 const cachedGetBestDay = cache(
   async (startDateIso?: string, headers?: Headers): Promise<BestDayData | null> => {

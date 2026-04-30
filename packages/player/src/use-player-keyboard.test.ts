@@ -36,12 +36,7 @@ describe(usePlayerKeyboard, () => {
   describe("Enter key", () => {
     test("calls onCheck when the screen model exposes a check action", () => {
       const opts = buildOptions({
-        keyboard: {
-          canRestart: false,
-          enterAction: "check",
-          leftAction: null,
-          rightAction: null,
-        },
+        keyboard: { canRestart: false, enterAction: "check", leftAction: null, rightAction: null },
       });
       renderHook(() => usePlayerKeyboard(opts));
 
@@ -247,12 +242,7 @@ describe(usePlayerKeyboard, () => {
 
     test("all keys are no-op with ctrlKey", () => {
       const opts = buildOptions({
-        keyboard: {
-          canRestart: false,
-          enterAction: "check",
-          leftAction: null,
-          rightAction: null,
-        },
+        keyboard: { canRestart: false, enterAction: "check", leftAction: null, rightAction: null },
       });
       renderHook(() => usePlayerKeyboard(opts));
 
@@ -263,12 +253,7 @@ describe(usePlayerKeyboard, () => {
 
     test("all keys are no-op with shiftKey", () => {
       const opts = buildOptions({
-        keyboard: {
-          canRestart: false,
-          enterAction: "check",
-          leftAction: null,
-          rightAction: null,
-        },
+        keyboard: { canRestart: false, enterAction: "check", leftAction: null, rightAction: null },
       });
       renderHook(() => usePlayerKeyboard(opts));
 
@@ -279,12 +264,7 @@ describe(usePlayerKeyboard, () => {
 
     test("all keys are no-op with altKey", () => {
       const opts = buildOptions({
-        keyboard: {
-          canRestart: false,
-          enterAction: "check",
-          leftAction: null,
-          rightAction: null,
-        },
+        keyboard: { canRestart: false, enterAction: "check", leftAction: null, rightAction: null },
       });
       renderHook(() => usePlayerKeyboard(opts));
 
@@ -296,12 +276,7 @@ describe(usePlayerKeyboard, () => {
 
   test("cleans up listener on unmount", () => {
     const opts = buildOptions({
-      keyboard: {
-        canRestart: false,
-        enterAction: "check",
-        leftAction: null,
-        rightAction: null,
-      },
+      keyboard: { canRestart: false, enterAction: "check", leftAction: null, rightAction: null },
     });
     const { unmount } = renderHook(() => usePlayerKeyboard(opts));
 

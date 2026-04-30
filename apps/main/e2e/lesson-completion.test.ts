@@ -27,9 +27,7 @@ async function createUniqueUser(baseURL: string) {
 async function createAuthenticatedPage(browser: Browser, baseURL: string, email: string) {
   const context = await request.newContext({ baseURL });
 
-  await context.post("/api/auth/sign-in/email", {
-    data: { email, password: "password123" },
-  });
+  await context.post("/api/auth/sign-in/email", { data: { email, password: "password123" } });
 
   const storageState = await context.storageState();
   await context.dispose();

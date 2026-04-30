@@ -60,10 +60,7 @@ ACCURACY PITFALLS:
 ${SHARED_EXPECTATIONS}
     `,
     id: "ja-basic-phrases",
-    userInput: {
-      targetLanguage: "ja",
-      texts: ["こんにちは", "東京タワー", "お元気ですか"],
-    },
+    userInput: { targetLanguage: "ja", texts: ["こんにちは", "東京タワー", "お元気ですか"] },
   },
   {
     expectations: `
@@ -86,10 +83,7 @@ ACCURACY PITFALLS:
 ${SHARED_EXPECTATIONS}
     `,
     id: "zh-basic-phrases",
-    userInput: {
-      targetLanguage: "zh",
-      texts: ["你好", "谢谢", "中国人"],
-    },
+    userInput: { targetLanguage: "zh", texts: ["你好", "谢谢", "中国人"] },
   },
   {
     expectations: `
@@ -112,10 +106,7 @@ ACCURACY PITFALLS:
 ${SHARED_EXPECTATIONS}
     `,
     id: "ko-basic-phrases",
-    userInput: {
-      targetLanguage: "ko",
-      texts: ["안녕하세요", "감사합니다", "대한민국"],
-    },
+    userInput: { targetLanguage: "ko", texts: ["안녕하세요", "감사합니다", "대한민국"] },
   },
   {
     expectations: `
@@ -138,10 +129,7 @@ ACCURACY PITFALLS:
 ${SHARED_EXPECTATIONS}
     `,
     id: "ar-basic-words",
-    userInput: {
-      targetLanguage: "ar",
-      texts: ["مرحبا", "شكرا", "كتاب"],
-    },
+    userInput: { targetLanguage: "ar", texts: ["مرحبا", "شكرا", "كتاب"] },
   },
   {
     expectations: `
@@ -164,10 +152,7 @@ ACCURACY PITFALLS:
 ${SHARED_EXPECTATIONS}
     `,
     id: "ru-basic-phrases",
-    userInput: {
-      targetLanguage: "ru",
-      texts: ["Здравствуйте", "Спасибо", "Москва"],
-    },
+    userInput: { targetLanguage: "ru", texts: ["Здравствуйте", "Спасибо", "Москва"] },
   },
   {
     expectations: `
@@ -190,10 +175,7 @@ ACCURACY PITFALLS:
 ${SHARED_EXPECTATIONS}
     `,
     id: "th-basic-phrases",
-    userInput: {
-      targetLanguage: "th",
-      texts: ["สวัสดี", "ขอบคุณ", "กรุงเทพ"],
-    },
+    userInput: { targetLanguage: "th", texts: ["สวัสดี", "ขอบคุณ", "กรุงเทพ"] },
   },
   {
     expectations: `
@@ -244,9 +226,6 @@ ACCURACY PITFALLS:
 ${SHARED_EXPECTATIONS}
     `,
     id: "hi-basic-words",
-    userInput: {
-      targetLanguage: "hi",
-      texts: ["नमस्ते", "धन्यवाद", "भारत"],
-    },
+    userInput: { targetLanguage: "hi", texts: ["नमस्ते", "धन्यवाद", "भारत"] },
   },
 ];

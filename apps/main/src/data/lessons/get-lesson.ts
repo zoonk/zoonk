@@ -5,17 +5,10 @@ import { cache } from "react";
 const cachedGetLesson = cache(
   async (brandSlug: string, courseSlug: string, chapterSlug: string, lessonSlug: string) =>
     prisma.lesson.findFirst({
-      include: {
-        chapter: {
-          include: { course: true },
-        },
-      },
+      include: { chapter: { include: { course: true } } },
       where: getPublishedLessonWhere({
         chapterWhere: { slug: chapterSlug },
-        courseWhere: {
-          organization: { kind: "brand", slug: brandSlug },
-          slug: courseSlug,
-        },
+        courseWhere: { organization: { kind: "brand", slug: brandSlug }, slug: courseSlug },
         lessonWhere: { slug: lessonSlug },
       }),
     }),

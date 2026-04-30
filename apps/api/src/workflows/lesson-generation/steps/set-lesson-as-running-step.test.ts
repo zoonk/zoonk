@@ -15,10 +15,7 @@ describe(setLessonAsRunningStep, () => {
   });
 
   test("marks a lesson as running and clears stale steps when requested", async () => {
-    const lesson = await createLessonContext({
-      generationStatus: "failed",
-      organizationId,
-    });
+    const lesson = await createLessonContext({ generationStatus: "failed", organizationId });
     await stepFixture({
       content: { text: "stale", title: "Stale", variant: "text" },
       kind: "static",

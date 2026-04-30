@@ -204,15 +204,11 @@ export function MediaCardPopoverSourceLink({
   return useRender({
     defaultTagName: "a",
     props: mergeProps<"a">(
-      {
-        className: cn("hover:text-foreground transition-colors", className),
-      },
+      { className: cn("hover:text-foreground transition-colors", className) },
       props,
     ),
     render,
-    state: {
-      slot: "media-card-popover-source-link",
-    },
+    state: { slot: "media-card-popover-source-link" },
   });
 }
 

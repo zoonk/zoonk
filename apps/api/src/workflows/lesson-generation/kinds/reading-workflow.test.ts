@@ -19,52 +19,56 @@ const readingState = vi.hoisted(() => ({
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/sentences", () => ({
-  generateLessonSentences: vi.fn().mockImplementation(() =>
-    Promise.resolve({
-      data: {
-        sentences: [
-          {
-            explanation: "Greeting sentence.",
-            sentence: readingState.sentence,
-            translation: readingState.translation,
-          },
-        ],
-      },
-    }),
-  ),
+  generateLessonSentences: vi
+    .fn()
+    .mockImplementation(() =>
+      Promise.resolve({
+        data: {
+          sentences: [
+            {
+              explanation: "Greeting sentence.",
+              sentence: readingState.sentence,
+              translation: readingState.translation,
+            },
+          ],
+        },
+      }),
+    ),
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/distractors", () => ({
-  generateLessonDistractors: vi.fn().mockImplementation(({ input }) =>
-    Promise.resolve({
-      data: { distractors: readingState.distractors[input] ?? [] },
-    }),
-  ),
+  generateLessonDistractors: vi
+    .fn()
+    .mockImplementation(({ input }) =>
+      Promise.resolve({ data: { distractors: readingState.distractors[input] ?? [] } }),
+    ),
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/translation", () => ({
-  generateTranslation: vi.fn().mockImplementation(({ word }) =>
-    Promise.resolve({
-      data: { translation: `${word} translated` },
-    }),
-  ),
+  generateTranslation: vi
+    .fn()
+    .mockImplementation(({ word }) =>
+      Promise.resolve({ data: { translation: `${word} translated` } }),
+    ),
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/pronunciation", () => ({
-  generateLessonPronunciation: vi.fn().mockImplementation(({ word }) =>
-    Promise.resolve({
-      data: { pronunciation: `${word} pronunciation` },
-    }),
-  ),
+  generateLessonPronunciation: vi
+    .fn()
+    .mockImplementation(({ word }) =>
+      Promise.resolve({ data: { pronunciation: `${word} pronunciation` } }),
+    ),
 }));
 
 vi.mock("@zoonk/core/audio/generate", () => ({
-  generateLanguageAudio: vi.fn().mockImplementation(({ text }) =>
-    Promise.resolve({
-      data: `https://example.com/audio/${encodeURIComponent(text)}.mp3`,
-      error: null,
-    }),
-  ),
+  generateLanguageAudio: vi
+    .fn()
+    .mockImplementation(({ text }) =>
+      Promise.resolve({
+        data: `https://example.com/audio/${encodeURIComponent(text)}.mp3`,
+        error: null,
+      }),
+    ),
 }));
 
 describe(readingLessonWorkflow, () => {
@@ -105,13 +109,7 @@ describe(readingLessonWorkflow, () => {
         position: 1,
       }),
       Promise.all(
-        sourceWords.map((word) =>
-          wordFixture({
-            organizationId,
-            targetLanguage: "de",
-            word,
-          }),
-        ),
+        sourceWords.map((word) => wordFixture({ organizationId, targetLanguage: "de", word })),
       ),
     ]);
 
@@ -166,10 +164,7 @@ describe(readingLessonWorkflow, () => {
       sentence,
     });
 
-    expect(step).toMatchObject({
-      kind: "reading",
-      sentenceId: savedSentence.id,
-    });
+    expect(step).toMatchObject({ kind: "reading", sentenceId: savedSentence.id });
 
     expect(lessonSentence).toMatchObject({
       distractors: [`abend-${uniqueId}`, `fenster-${uniqueId}`],
@@ -207,11 +202,7 @@ describe(readingLessonWorkflow, () => {
         organizationId,
         position: 1,
       }),
-      wordFixture({
-        organizationId,
-        targetLanguage: "de",
-        word: canonicalWord,
-      }),
+      wordFixture({ organizationId, targetLanguage: "de", word: canonicalWord }),
     ]);
 
     await lessonWordFixture({
@@ -223,9 +214,7 @@ describe(readingLessonWorkflow, () => {
 
     readingState.sentence = canonicalWord;
     readingState.translation = translation;
-    readingState.distractors = {
-      [canonicalWord]: [duplicateDistractor, validDistractor],
-    };
+    readingState.distractors = { [canonicalWord]: [duplicateDistractor, validDistractor] };
 
     await readingLessonWorkflow(context);
 
@@ -233,36 +222,15 @@ describe(readingLessonWorkflow, () => {
       await Promise.all([
         prisma.word.findUnique({
           include: { pronunciations: true },
-          where: {
-            orgWord: {
-              organizationId,
-              targetLanguage: "de",
-              word: canonicalWord,
-            },
-          },
+          where: { orgWord: { organizationId, targetLanguage: "de", word: canonicalWord } },
         }),
         prisma.word.findUnique({
-          where: {
-            orgWord: {
-              organizationId,
-              targetLanguage: "de",
-              word: duplicateDistractor,
-            },
-          },
+          where: { orgWord: { organizationId, targetLanguage: "de", word: duplicateDistractor } },
         }),
         prisma.word.findUnique({
-          where: {
-            orgWord: {
-              organizationId,
-              targetLanguage: "de",
-              word: validDistractor,
-            },
-          },
+          where: { orgWord: { organizationId, targetLanguage: "de", word: validDistractor } },
         }),
-        prisma.lessonWord.findFirst({
-          include: { word: true },
-          where: { lessonId: context.id },
-        }),
+        prisma.lessonWord.findFirst({ include: { word: true }, where: { lessonId: context.id } }),
       ]);
 
     expect(canonicalRecord).toMatchObject({
@@ -277,9 +245,7 @@ describe(readingLessonWorkflow, () => {
       audioUrl: `https://example.com/audio/${encodeURIComponent(validDistractor)}.mp3`,
       word: validDistractor,
     });
-    expect(lessonWord).toMatchObject({
-      translation: `${canonicalWord} translated`,
-    });
+    expect(lessonWord).toMatchObject({ translation: `${canonicalWord} translated` });
     expect(lessonWord?.word.word).toBe(canonicalWord);
   });
 });

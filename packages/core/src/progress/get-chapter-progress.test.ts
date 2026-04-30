@@ -17,10 +17,7 @@ describe(getChapterProgress, () => {
 
   test("returns empty array when unauthenticated", async () => {
     const course = await courseFixture({ isPublished: true, organizationId: organization.id });
-    const result = await getChapterProgress({
-      courseId: course.id,
-      headers: new Headers(),
-    });
+    const result = await getChapterProgress({ courseId: course.id, headers: new Headers() });
     expect(result).toEqual([]);
   });
 
@@ -337,12 +334,7 @@ describe(getChapterProgress, () => {
       }),
     ]);
 
-    await prisma.chapterCompletion.create({
-      data: {
-        chapterId: chapter.id,
-        userId: user.id,
-      },
-    });
+    await prisma.chapterCompletion.create({ data: { chapterId: chapter.id, userId: user.id } });
 
     const headers = await signInAs(user.email, user.password);
     const result = await getChapterProgress({ courseId: course.id, headers });

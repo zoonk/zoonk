@@ -47,20 +47,14 @@ export async function fetchReviewLessonData(lessonId: string): Promise<ReviewLes
   const session = await getSession();
 
   const [steps, generationLesson] = await Promise.all([
-    getReviewSteps({
-      lessonId,
-      userId: session ? session.user.id : null,
-    }),
+    getReviewSteps({ lessonId, userId: session ? session.user.id : null }),
     getFirstIncompleteGeneratedLessonBeforeReview({
       chapterId: lesson.chapterId,
       position: lesson.position,
     }),
   ]);
 
-  return {
-    generationLessonId: generationLesson?.id ?? null,
-    steps,
-  };
+  return { generationLessonId: generationLesson?.id ?? null, steps };
 }
 
 export async function fetchNextSibling(

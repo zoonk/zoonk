@@ -24,9 +24,7 @@ type StepWithSentence = {
   sentence: { id: string; sentence: string } | null;
 };
 
-type PlayerCompletionEffects = {
-  preloadLessonId: string | null;
-};
+type PlayerCompletionEffects = { preloadLessonId: string | null };
 
 /**
  * Attaches sentence translation data from `LessonSentence` records to steps.
@@ -43,10 +41,7 @@ function attachSentenceTranslationsToSteps(
   return steps.map((step) => ({
     ...step,
     sentence: step.sentence
-      ? {
-          ...step.sentence,
-          translation: translationMap.get(step.sentence.id)?.translation ?? "",
-        }
+      ? { ...step.sentence, translation: translationMap.get(step.sentence.id)?.translation ?? "" }
       : null,
   }));
 }
@@ -103,10 +98,7 @@ export async function submitPlayerCompletion(params: {
   const lessonSentences = await getLessonSentencesForLessons({
     lessonIds:
       lesson.kind === "review"
-        ? getValidationSentenceLessonIds({
-            lessonId: lesson.id,
-            steps: rawStepsForValidation,
-          })
+        ? getValidationSentenceLessonIds({ lessonId: lesson.id, steps: rawStepsForValidation })
         : [lesson.id],
   });
 
@@ -148,7 +140,5 @@ export async function submitPlayerCompletion(params: {
 
   const nextLesson = await getNextLesson(lesson.id);
 
-  return {
-    preloadLessonId: nextLesson?.needsGeneration ? nextLesson.id : null,
-  };
+  return { preloadLessonId: nextLesson?.needsGeneration ? nextLesson.id : null };
 }

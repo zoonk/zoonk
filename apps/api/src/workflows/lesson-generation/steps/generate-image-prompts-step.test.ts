@@ -5,9 +5,9 @@ import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateImagePromptsStep } from "./generate-image-prompts-step";
 
 vi.mock("@zoonk/ai/tasks/steps/image-prompts", () => ({
-  generateStepImagePrompts: vi.fn().mockResolvedValue({
-    data: { prompts: ["first prompt", "second prompt"] },
-  }),
+  generateStepImagePrompts: vi
+    .fn()
+    .mockResolvedValue({ data: { prompts: ["first prompt", "second prompt"] } }),
 }));
 
 describe(generateImagePromptsStep, () => {
@@ -33,10 +33,7 @@ describe(generateImagePromptsStep, () => {
 
     expect(result).toEqual({ prompts: ["first prompt", "second prompt"] });
     expect(generateStepImagePrompts).toHaveBeenCalledWith(
-      expect.objectContaining({
-        lessonDescription: context.description,
-        steps,
-      }),
+      expect.objectContaining({ lessonDescription: context.description, steps }),
     );
   });
 

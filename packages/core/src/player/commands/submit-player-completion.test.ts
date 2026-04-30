@@ -28,10 +28,7 @@ function todayLocalDate(): string {
  */
 async function createPublishedChapterContext() {
   const organization = await organizationFixture({ kind: "brand" });
-  const course = await courseFixture({
-    isPublished: true,
-    organizationId: organization.id,
-  });
+  const course = await courseFixture({ isPublished: true, organizationId: organization.id });
   const chapter = await chapterFixture({
     courseId: course.id,
     isPublished: true,
@@ -90,21 +87,13 @@ function buildCompletionInput(params: {
 
   return {
     answers: {
-      [stepId]: {
-        kind: "multipleChoice",
-        selectedOptionId: params.selectedOptionId ?? "a",
-      },
+      [stepId]: { kind: "multipleChoice", selectedOptionId: params.selectedOptionId ?? "a" },
     },
     lessonId: params.lessonId,
     localDate: todayLocalDate(),
     startedAt,
     stepTimings: {
-      [stepId]: {
-        answeredAt: startedAt + 5000,
-        dayOfWeek: 1,
-        durationSeconds: 5,
-        hourOfDay: 12,
-      },
+      [stepId]: { answeredAt: startedAt + 5000, dayOfWeek: 1, durationSeconds: 5, hourOfDay: 12 },
     },
   };
 }
@@ -112,10 +101,7 @@ function buildCompletionInput(params: {
 describe(submitPlayerCompletion, () => {
   test("returns null when the submitted lesson no longer exists", async () => {
     const result = await submitPlayerCompletion({
-      input: buildCompletionInput({
-        lessonId: randomUUID(),
-        stepId: randomUUID(),
-      }),
+      input: buildCompletionInput({ lessonId: randomUUID(), stepId: randomUUID() }),
       userId: "missing-user-id",
     });
 
@@ -148,34 +134,19 @@ describe(submitPlayerCompletion, () => {
     });
 
     const result = await submitPlayerCompletion({
-      input: buildCompletionInput({
-        lessonId: lesson.id,
-        stepId: step.id,
-      }),
+      input: buildCompletionInput({ lessonId: lesson.id, stepId: step.id }),
       userId: user.id,
     });
 
     const [lessonProgress, stepAttempts] = await Promise.all([
       prisma.lessonProgress.findUnique({
-        where: {
-          userLesson: {
-            lessonId: lesson.id,
-            userId: user.id,
-          },
-        },
+        where: { userLesson: { lessonId: lesson.id, userId: user.id } },
       }),
-      prisma.stepAttempt.findMany({
-        where: {
-          stepId: step.id,
-          userId: user.id,
-        },
-      }),
+      prisma.stepAttempt.findMany({ where: { stepId: step.id, userId: user.id } }),
     ]);
 
     expect(nextLesson.position).toBeGreaterThan(currentLesson.position);
-    expect(result).toEqual({
-      preloadLessonId: nextLesson.id,
-    });
+    expect(result).toEqual({ preloadLessonId: nextLesson.id });
     expect(lessonProgress?.completedAt).toBeInstanceOf(Date);
     expect(stepAttempts).toHaveLength(1);
     expect(stepAttempts[0]?.isCorrect).toBe(true);

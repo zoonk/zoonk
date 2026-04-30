@@ -22,11 +22,7 @@ async function listLessonWordsForLessons({ lessonIds }: { lessonIds: string[] })
 
   return prisma.lessonWord.findMany({
     include: {
-      word: {
-        include: {
-          pronunciations: { where: { userLanguage: firstLesson.userLanguage } },
-        },
-      },
+      word: { include: { pronunciations: { where: { userLanguage: firstLesson.userLanguage } } } },
     },
     where: { lessonId: { in: lessonIds } },
   });

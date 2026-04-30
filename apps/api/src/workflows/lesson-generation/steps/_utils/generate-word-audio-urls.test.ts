@@ -4,9 +4,7 @@ import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { generateWordAudioUrls } from "./generate-word-audio-urls";
 
-const { generateLanguageAudioMock } = vi.hoisted(() => ({
-  generateLanguageAudioMock: vi.fn(),
-}));
+const { generateLanguageAudioMock } = vi.hoisted(() => ({ generateLanguageAudioMock: vi.fn() }));
 
 vi.mock("@zoonk/core/audio/generate", () => ({
   generateLanguageAudio: generateLanguageAudioMock.mockImplementation(

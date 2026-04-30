@@ -35,10 +35,7 @@ describe(handleCourseFailureStep, () => {
       }),
     ]);
 
-    await handleCourseFailureStep({
-      courseId: course.id,
-      courseSuggestionId: suggestion.id,
-    });
+    await handleCourseFailureStep({ courseId: course.id, courseSuggestionId: suggestion.id });
 
     const [updatedCourse, updatedSuggestion] = await Promise.all([
       prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
@@ -80,10 +77,7 @@ describe(handleCourseFailureStep, () => {
       title: `No Course Fail ${randomUUID()}`,
     });
 
-    await handleCourseFailureStep({
-      courseId: null,
-      courseSuggestionId: suggestion.id,
-    });
+    await handleCourseFailureStep({ courseId: null, courseSuggestionId: suggestion.id });
 
     const updatedSuggestion = await prisma.courseSuggestion.findUniqueOrThrow({
       where: { id: suggestion.id },

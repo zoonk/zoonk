@@ -14,11 +14,7 @@ function buildCompletionQuizLesson({
   correctText = "Correct answer",
   question = "Completion question",
   wrongText = "Wrong answer",
-}: {
-  correctText?: string;
-  question?: string;
-  wrongText?: string;
-} = {}) {
+}: { correctText?: string; question?: string; wrongText?: string } = {}) {
   return buildSerializedLesson({
     kind: "quiz",
     steps: [
@@ -45,9 +41,7 @@ function buildCompletionQuizLesson({
  */
 async function completeSingleChoiceLesson({
   optionName = "Correct answer",
-}: {
-  optionName?: string;
-} = {}) {
+}: { optionName?: string } = {}) {
   await page.getByRole("radio", { name: optionName }).click();
   await page.getByRole("button", { name: /check/i }).click();
   await page.getByRole("button", { name: /continue/i }).click();
@@ -59,9 +53,7 @@ describe("player browser integration: completion", () => {
       lesson: buildCompletionQuizLesson(),
       navigation: buildNavigation({ nextLessonHref: "/lesson/play" }),
       totalBrainPower: 240,
-      viewer: buildAuthenticatedViewer({
-        completionFooter: <p>Custom completion footer</p>,
-      }),
+      viewer: buildAuthenticatedViewer({ completionFooter: <p>Custom completion footer</p> }),
     });
 
     await expect.element(page.getByRole("link", { name: /close/i })).toBeInTheDocument();
@@ -162,11 +154,7 @@ describe("player browser integration: completion", () => {
   test("falls back to review-only chapter completion when there is no next chapter", async () => {
     renderPlayer({
       lesson: buildCompletionQuizLesson(),
-      milestone: {
-        kind: "chapter",
-        nextHref: null,
-        reviewHref: "/review-chapter",
-      },
+      milestone: { kind: "chapter", nextHref: null, reviewHref: "/review-chapter" },
       viewer: buildAuthenticatedViewer(),
     });
 
@@ -210,11 +198,7 @@ describe("player browser integration: completion", () => {
   test("shows guest milestone actions without exposing authenticated next links", async () => {
     renderPlayer({
       lesson: buildCompletionQuizLesson(),
-      milestone: {
-        kind: "chapter",
-        nextHref: "/next-chapter",
-        reviewHref: "/review-chapter",
-      },
+      milestone: { kind: "chapter", nextHref: "/next-chapter", reviewHref: "/review-chapter" },
       navigation: buildNavigation({ loginHref: "/sign-in" }),
       viewer: { isAuthenticated: false, userName: null },
     });

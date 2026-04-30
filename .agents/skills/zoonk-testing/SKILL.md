@@ -101,10 +101,7 @@ Every test that needs data should create it:
 ```typescript
 // Create unique data for THIS test
 const uniqueId = randomUUID().slice(0, 8);
-const course = await courseFixture({
-  slug: `e2e-${uniqueId}`,
-  title: `E2E Course ${uniqueId}`,
-});
+const course = await courseFixture({ slug: `e2e-${uniqueId}`, title: `E2E Course ${uniqueId}` });
 
 // Test uses only data it created
 await page.goto(`/courses/${course.slug}`);
@@ -120,9 +117,7 @@ Using a seeded organization as a container is acceptable because:
 
 ```typescript
 // ACCEPTABLE: Using seeded org as container
-const org = await prisma.organization.findUniqueOrThrow({
-  where: { slug: "ai" },
-});
+const org = await prisma.organization.findUniqueOrThrow({ where: { slug: "ai" } });
 const course = await courseFixture({ organizationId: org.id });
 ```
 
@@ -228,10 +223,7 @@ import { postFixture } from "@/tests/fixtures/posts";
 
 async function createTestPost() {
   const uniqueId = randomUUID().slice(0, 8);
-  return postFixture({
-    slug: `e2e-${uniqueId}`,
-    title: `E2E Post ${uniqueId}`,
-  });
+  return postFixture({ slug: `e2e-${uniqueId}`, title: `E2E Post ${uniqueId}` });
 }
 
 test("edits post title", async ({ authenticatedPage }) => {

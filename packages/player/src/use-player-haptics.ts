@@ -19,10 +19,7 @@ export function usePlayerHaptics({ current }: { current: PlayerHapticSnapshot })
     const previous = previousRef.current;
     previousRef.current = current;
 
-    const sequence = getPlayerHapticSequence({
-      current,
-      previous,
-    });
+    const sequence = getPlayerHapticSequence({ current, previous });
 
     for (const haptic of sequence) {
       void trigger(haptic);

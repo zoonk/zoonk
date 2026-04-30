@@ -24,15 +24,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 ```tsx
 import { Inter, Roboto_Mono } from "next/font/google";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-});
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
-const robotoMono = Roboto_Mono({
-  subsets: ["latin"],
-  variable: "--font-roboto-mono",
-});
+const robotoMono = Roboto_Mono({ subsets: ["latin"], variable: "--font-roboto-mono" });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -59,16 +53,10 @@ code {
 
 ```tsx
 // Single weight
-const inter = Inter({
-  subsets: ["latin"],
-  weight: "400",
-});
+const inter = Inter({ subsets: ["latin"], weight: "400" });
 
 // Multiple weights
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-});
+const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "700"] });
 
 // Variable font (recommended) - includes all weights
 const inter = Inter({
@@ -77,10 +65,7 @@ const inter = Inter({
 });
 
 // With italic
-const inter = Inter({
-  subsets: ["latin"],
-  style: ["normal", "italic"],
-});
+const inter = Inter({ subsets: ["latin"], style: ["normal", "italic"] });
 ```
 
 ## Local Fonts
@@ -88,31 +73,18 @@ const inter = Inter({
 ```tsx
 import localFont from "next/font/local";
 
-const myFont = localFont({
-  src: "./fonts/MyFont.woff2",
-});
+const myFont = localFont({ src: "./fonts/MyFont.woff2" });
 
 // Multiple files for different weights
 const myFont = localFont({
   src: [
-    {
-      path: "./fonts/MyFont-Regular.woff2",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "./fonts/MyFont-Bold.woff2",
-      weight: "700",
-      style: "normal",
-    },
+    { path: "./fonts/MyFont-Regular.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/MyFont-Bold.woff2", weight: "700", style: "normal" },
   ],
 });
 
 // Variable font
-const myFont = localFont({
-  src: "./fonts/MyFont-Variable.woff2",
-  variable: "--font-my-font",
-});
+const myFont = localFont({ src: "./fonts/MyFont-Variable.woff2", variable: "--font-my-font" });
 ```
 
 ## Tailwind CSS Integration
@@ -121,10 +93,7 @@ const myFont = localFont({
 // app/layout.tsx
 import { Inter } from "next/font/google";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-});
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export default function RootLayout({ children }) {
   return (
@@ -137,15 +106,7 @@ export default function RootLayout({ children }) {
 
 ```js
 // tailwind.config.js
-module.exports = {
-  theme: {
-    extend: {
-      fontFamily: {
-        sans: ["var(--font-inter)"],
-      },
-    },
-  },
-};
+module.exports = { theme: { extend: { fontFamily: { sans: ["var(--font-inter)"] } } } };
 ```
 
 ## Preloading Subsets

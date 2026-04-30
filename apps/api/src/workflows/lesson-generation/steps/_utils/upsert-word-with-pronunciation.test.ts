@@ -46,9 +46,7 @@ describe(upsertWordWithPronunciation, () => {
       word: wordText,
     });
 
-    const pronunciations = await prisma.wordPronunciation.findMany({
-      where: { wordId },
-    });
+    const pronunciations = await prisma.wordPronunciation.findMany({ where: { wordId } });
 
     expect(pronunciations).toHaveLength(1);
     expect(pronunciations[0]?.pronunciation).toBe("EE-noo");
@@ -71,9 +69,7 @@ describe(upsertWordWithPronunciation, () => {
       word: wordText,
     });
 
-    const pronunciations = await prisma.wordPronunciation.findMany({
-      where: { wordId },
-    });
+    const pronunciations = await prisma.wordPronunciation.findMany({ where: { wordId } });
 
     expect(pronunciations).toHaveLength(0);
   });

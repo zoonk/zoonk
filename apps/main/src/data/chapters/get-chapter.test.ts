@@ -18,16 +18,8 @@ describe(getChapter, () => {
     ]);
 
     const [brandCourse] = await Promise.all([
-      courseFixture({
-        isPublished: true,
-        language: "en",
-        organizationId: brandOrg.id,
-      }),
-      courseFixture({
-        isPublished: true,
-        language: "en",
-        organizationId: schoolOrg.id,
-      }),
+      courseFixture({ isPublished: true, language: "en", organizationId: brandOrg.id }),
+      courseFixture({ isPublished: true, language: "en", organizationId: schoolOrg.id }),
     ]);
 
     publishedCourse = brandCourse;

@@ -15,11 +15,7 @@ import { useExtracted } from "next-intl";
 import { useActionState, useId } from "react";
 import { contactFormAction } from "./contact-form-action";
 
-const initialState: {
-  status: "idle" | "error" | "success";
-} = {
-  status: "idle",
-};
+const initialState: { status: "idle" | "error" | "success" } = { status: "idle" };
 
 export function ContactForm({ defaultEmail }: { defaultEmail?: string }) {
   const t = useExtracted();

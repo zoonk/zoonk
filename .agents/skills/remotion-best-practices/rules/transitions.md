@@ -159,14 +159,10 @@ Use the `getDurationInFrames()` method on the timing object:
 ```tsx
 import { linearTiming, springTiming } from "@remotion/transitions";
 
-const linearDuration = linearTiming({
-  durationInFrames: 20,
-}).getDurationInFrames({ fps: 30 });
+const linearDuration = linearTiming({ durationInFrames: 20 }).getDurationInFrames({ fps: 30 });
 // Returns 20
 
-const springDuration = springTiming({
-  config: { damping: 200 },
-}).getDurationInFrames({ fps: 30 });
+const springDuration = springTiming({ config: { damping: 200 } }).getDurationInFrames({ fps: 30 });
 // Returns calculated duration based on spring physics
 ```
 

@@ -8,9 +8,7 @@ import type * as React from "react";
 const itemGroupVariants = cva(
   "group/item-group flex w-full flex-col gap-4 has-data-[size=sm]:gap-2.5 has-data-[size=xs]:gap-2 has-data-[variant=default]:gap-0",
   {
-    defaultVariants: {
-      layout: "list",
-    },
+    defaultVariants: { layout: "list" },
     variants: {
       layout: {
         grid: "md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-4 xl:grid-cols-3 2xl:grid-cols-4",
@@ -47,10 +45,7 @@ function ItemSeparator({ className, ...props }: React.ComponentProps<typeof Sepa
 const itemVariants = cva(
   "group/item focus-visible:border-ring focus-visible:ring-ring/50 [a]:hover:bg-muted flex w-full flex-wrap items-center rounded-2xl border text-sm transition-colors duration-100 outline-none focus-visible:ring-[3px] [a]:transition-colors",
   {
-    defaultVariants: {
-      size: "default",
-      variant: "default",
-    },
+    defaultVariants: { size: "default", variant: "default" },
     variants: {
       size: {
         default: "gap-3.5 px-4 py-3.5",
@@ -71,27 +66,16 @@ type ItemProps = useRender.ComponentProps<"div"> & VariantProps<typeof itemVaria
 function Item({ className, variant = "default", size = "default", render, ...props }: ItemProps) {
   return useRender({
     defaultTagName: "div",
-    props: mergeProps<"div">(
-      {
-        className: cn(itemVariants({ className, size, variant })),
-      },
-      props,
-    ),
+    props: mergeProps<"div">({ className: cn(itemVariants({ className, size, variant })) }, props),
     render,
-    state: {
-      size,
-      slot: "item",
-      variant,
-    },
+    state: { size, slot: "item", variant },
   });
 }
 
 const itemMediaVariants = cva(
   "flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:translate-y-0.5 group-has-[[data-slot=item-description]]/item:self-start [&_svg]:pointer-events-none",
   {
-    defaultVariants: {
-      variant: "default",
-    },
+    defaultVariants: { variant: "default" },
     variants: {
       variant: {
         default: "bg-transparent",

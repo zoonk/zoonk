@@ -13,8 +13,5 @@ export default getRequestConfig(async ({ locale: overrideLocale }) => {
 
   const translations = await import(`../../messages/${locale}.po`);
 
-  return {
-    locale,
-    messages: translations.default,
-  };
+  return { locale, messages: translations.default };
 });

@@ -13,10 +13,7 @@ export async function setChapterAsCompletedStep(input: {
   await stream.status({ status: "started", step: "setChapterAsCompleted" });
 
   await prisma.chapter.update({
-    data: {
-      generationRunId: input.workflowRunId,
-      generationStatus: "completed",
-    },
+    data: { generationRunId: input.workflowRunId, generationStatus: "completed" },
     where: { id: input.context.id },
   });
 

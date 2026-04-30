@@ -6,9 +6,7 @@ const cachedListChapterLessons = cache(
   async (chapterId: string): Promise<Lesson[]> =>
     prisma.lesson.findMany({
       orderBy: { position: "asc" },
-      where: getPublishedLessonWhere({
-        lessonWhere: { chapterId },
-      }),
+      where: getPublishedLessonWhere({ lessonWhere: { chapterId } }),
     }),
 );
 

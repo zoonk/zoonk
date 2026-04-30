@@ -25,10 +25,7 @@ export async function generateSentenceDistractorsStep({
 
   const [distractors, translationDistractors] = await Promise.all([
     generateDirectDistractors({
-      entries: sentences.map((sentence) => ({
-        input: sentence.sentence,
-        key: sentence.sentence,
-      })),
+      entries: sentences.map((sentence) => ({ input: sentence.sentence, key: sentence.sentence })),
       language: context.chapter.course.targetLanguage ?? "",
       shape: "single-word",
     }),

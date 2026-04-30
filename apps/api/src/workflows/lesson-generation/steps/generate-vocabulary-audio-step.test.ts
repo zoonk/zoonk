@@ -6,12 +6,9 @@ import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateVocabularyAudioStep } from "./generate-vocabulary-audio-step";
 
 vi.mock("@zoonk/core/audio/generate", () => ({
-  generateLanguageAudio: vi.fn().mockImplementation(({ text }) =>
-    Promise.resolve({
-      data: `/audio/${text}.mp3`,
-      error: null,
-    }),
-  ),
+  generateLanguageAudio: vi
+    .fn()
+    .mockImplementation(({ text }) => Promise.resolve({ data: `/audio/${text}.mp3`, error: null })),
 }));
 
 describe(generateVocabularyAudioStep, () => {
@@ -34,10 +31,7 @@ describe(generateVocabularyAudioStep, () => {
     const words = [catWord, dogWord];
 
     await expect(generateVocabularyAudioStep({ context, words })).resolves.toEqual({
-      wordAudioUrls: {
-        [catWord]: `/audio/${catWord}.mp3`,
-        [dogWord]: `/audio/${dogWord}.mp3`,
-      },
+      wordAudioUrls: { [catWord]: `/audio/${catWord}.mp3`, [dogWord]: `/audio/${dogWord}.mp3` },
     });
     expect(generateLanguageAudio).toHaveBeenCalledWith({
       language: "ja",

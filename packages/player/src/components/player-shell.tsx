@@ -55,13 +55,7 @@ export function PlayerShell() {
   const upcomingImages = getUpcomingImages(state);
   const stageResetKey = getStageResetKey({ screenKind: screen.kind, stepId: currentStep?.id });
 
-  usePlayerHaptics({
-    current: {
-      phase: state.phase,
-      result: currentResult,
-      step: currentStep,
-    },
-  });
+  usePlayerHaptics({ current: { phase: state.phase, result: currentResult, step: currentStep } });
 
   return (
     <main className="flex h-dvh flex-col overflow-hidden">

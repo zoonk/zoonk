@@ -83,10 +83,7 @@ export async function updateProfile(data: unknown) {
   // Finally perform the mutation
   await db.user.update({
     where: { id: validated.userId },
-    data: {
-      name: validated.name,
-      email: validated.email,
-    },
+    data: { name: validated.name, email: validated.email },
   });
 
   return { success: true };

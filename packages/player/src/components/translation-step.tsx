@@ -59,9 +59,7 @@ export function TranslationStep({
   const selectedOptionId = getSelectedOptionId(selectedAnswer);
   const options = step.translationOptions;
 
-  const { play } = useWordAudio({
-    preloadUrls: options.map((word) => word.audioUrl),
-  });
+  const { play } = useWordAudio({ preloadUrls: options.map((word) => word.audioUrl) });
 
   const handleSelect = (index: number) => {
     const word = options[index];

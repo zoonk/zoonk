@@ -2,10 +2,7 @@ import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { type LessonKind, prisma } from "@zoonk/db";
 import { type LessonContext } from "../get-lesson-step";
 
-type ExplanationStep = {
-  text: string;
-  title: string;
-};
+type ExplanationStep = { text: string; title: string };
 
 /**
  * Sibling titles are optional prompt context. Untitled structural lessons
@@ -18,11 +15,7 @@ function lessonTitleForPrompt(lesson: { title: string | null }): string[] {
 export async function getOtherExplanationLessonTitles(context: LessonContext): Promise<string[]> {
   const lessons = await prisma.lesson.findMany({
     orderBy: { position: "asc" },
-    where: {
-      chapterId: context.chapterId,
-      id: { not: context.id },
-      kind: "explanation",
-    },
+    where: { chapterId: context.chapterId, id: { not: context.id }, kind: "explanation" },
   });
 
   return lessons.flatMap((lesson) => lessonTitleForPrompt(lesson));
@@ -37,11 +30,7 @@ export async function getExplanationStepsSinceLastLessonKind({
 }): Promise<ExplanationStep[]> {
   const previousLesson = await prisma.lesson.findFirst({
     orderBy: { position: "desc" },
-    where: {
-      chapterId: context.chapterId,
-      kind,
-      position: { lt: context.position },
-    },
+    where: { chapterId: context.chapterId, kind, position: { lt: context.position } },
   });
 
   return getExplanationStepsInRange({
@@ -61,12 +50,7 @@ async function getExplanationStepsInRange({
   chapterId: string;
 }): Promise<ExplanationStep[]> {
   const lessons = await prisma.lesson.findMany({
-    include: {
-      steps: {
-        orderBy: { position: "asc" },
-        where: { kind: "static" },
-      },
-    },
+    include: { steps: { orderBy: { position: "asc" }, where: { kind: "static" } } },
     orderBy: { position: "asc" },
     where: {
       chapterId,

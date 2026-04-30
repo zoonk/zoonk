@@ -5,9 +5,9 @@ import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateTutorialContentStep } from "./generate-tutorial-content-step";
 
 vi.mock("@zoonk/ai/tasks/lessons/tutorial", () => ({
-  generateLessonTutorial: vi.fn().mockResolvedValue({
-    data: { steps: [{ text: "Open settings.", title: "Settings" }] },
-  }),
+  generateLessonTutorial: vi
+    .fn()
+    .mockResolvedValue({ data: { steps: [{ text: "Open settings.", title: "Settings" }] } }),
 }));
 
 describe(generateTutorialContentStep, () => {

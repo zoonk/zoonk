@@ -5,9 +5,7 @@ import { DEFAULT_PROGRESS_LOOKBACK_DAYS } from "@zoonk/utils/date-ranges";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
-type ScoreData = {
-  score: number;
-};
+type ScoreData = { score: number };
 
 function getDateRange(
   startDateIso?: string,

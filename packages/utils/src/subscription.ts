@@ -17,12 +17,7 @@ type SubscriptionPlan = {
   tier: number;
 };
 
-type PaidPlan = {
-  annualLookupKey: string;
-  lookupKey: string;
-  name: PlanName;
-  tier: number;
-};
+type PaidPlan = { annualLookupKey: string; lookupKey: string; name: PlanName; tier: number };
 
 export const FREE_PLAN: SubscriptionPlan = {
   annualLookupKey: null,

@@ -5,9 +5,7 @@ import { beforeAll, describe, expect, test, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { handleLessonFailureStep } from "./handle-failure-step";
 
-vi.mock("@zoonk/utils/logger", () => ({
-  logError: vi.fn(),
-}));
+vi.mock("@zoonk/utils/logger", () => ({ logError: vi.fn() }));
 
 describe(handleLessonFailureStep, () => {
   let organizationId: string;
@@ -18,19 +16,14 @@ describe(handleLessonFailureStep, () => {
   });
 
   test("marks a lesson as failed after workflow failure", async () => {
-    const lesson = await createLessonContext({
-      generationStatus: "running",
-      organizationId,
-    });
+    const lesson = await createLessonContext({ generationStatus: "running", organizationId });
 
     await handleLessonFailureStep({
       error: { message: "AI failed", name: "Error", stack: "stack" },
       lessonId: lesson.id,
     });
 
-    const updatedLesson = await prisma.lesson.findUniqueOrThrow({
-      where: { id: lesson.id },
-    });
+    const updatedLesson = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
 
     expect(updatedLesson.generationStatus).toBe("failed");
     expect(getStreamedEvents()).toEqual(

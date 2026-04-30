@@ -414,11 +414,7 @@ import TextField from "@mui/material/TextField";
 
 ```js
 // next.config.js - use optimizePackageImports
-module.exports = {
-  experimental: {
-    optimizePackageImports: ["lucide-react", "@mui/material"],
-  },
-};
+module.exports = { experimental: { optimizePackageImports: ["lucide-react", "@mui/material"] } };
 
 // Then you can keep the ergonomic barrel imports:
 import { Check, X, Menu } from "lucide-react";
@@ -664,10 +660,7 @@ export async function updateProfile(data: unknown) {
   // Finally perform the mutation
   await db.user.update({
     where: { id: validated.userId },
-    data: {
-      name: validated.name,
-      email: validated.email,
-    },
+    data: { name: validated.name, email: validated.email },
   });
 
   return { success: true };
@@ -941,9 +934,7 @@ import { cache } from "react";
 export const getCurrentUser = cache(async () => {
   const session = await auth();
   if (!session?.user?.id) return null;
-  return await db.user.findUnique({
-    where: { id: session.user.id },
-  });
+  return await db.user.findUnique({ where: { id: session.user.id } });
 });
 ```
 
@@ -1866,14 +1857,7 @@ function Tracker() {
 
   return (
     <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: lastX,
-        width: 8,
-        height: 8,
-        background: "black",
-      }}
+      style={{ position: "fixed", top: 0, left: lastX, width: 8, height: 8, background: "black" }}
     />
   );
 }
@@ -2501,10 +2485,7 @@ Multiple `.find()` calls by the same key should use a Map.
 
 ```typescript
 function processOrders(orders: Order[], users: User[]) {
-  return orders.map((order) => ({
-    ...order,
-    user: users.find((u) => u.id === order.userId),
-  }));
+  return orders.map((order) => ({ ...order, user: users.find((u) => u.id === order.userId) }));
 }
 ```
 
@@ -2514,10 +2495,7 @@ function processOrders(orders: Order[], users: User[]) {
 function processOrders(orders: Order[], users: User[]) {
   const userById = new Map(users.map((u) => [u.id, u]));
 
-  return orders.map((order) => ({
-    ...order,
-    user: userById.get(order.userId),
-  }));
+  return orders.map((order) => ({ ...order, user: userById.get(order.userId) }));
 }
 ```
 

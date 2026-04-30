@@ -21,10 +21,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-want-to-code",
-    userInput: {
-      language: "pt",
-      prompt: "I want to code",
-    },
+    userInput: { language: "pt", prompt: "I want to code" },
   },
   {
     expectations: `
@@ -36,10 +33,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-black-holes",
-    userInput: {
-      language: "en",
-      prompt: "quero aprender sobre buracos negros",
-    },
+    userInput: { language: "en", prompt: "quero aprender sobre buracos negros" },
   },
   {
     expectations: `
@@ -51,10 +45,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "es-derecho-penal",
-    userInput: {
-      language: "es",
-      prompt: "derecho penal",
-    },
+    userInput: { language: "es", prompt: "derecho penal" },
   },
   {
     expectations: `
@@ -66,10 +57,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "es-derecho-chileno",
-    userInput: {
-      language: "es",
-      prompt: "derecho chileno",
-    },
+    userInput: { language: "es", prompt: "derecho chileno" },
   },
   {
     expectations: `
@@ -81,10 +69,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-toefl",
-    userInput: {
-      language: "pt",
-      prompt: "quero passar no TOEFL",
-    },
+    userInput: { language: "pt", prompt: "quero passar no TOEFL" },
   },
   {
     expectations: `
@@ -97,10 +82,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-physics-and-chemistry",
-    userInput: {
-      language: "pt",
-      prompt: "physics and chemistry",
-    },
+    userInput: { language: "pt", prompt: "physics and chemistry" },
   },
   {
     expectations: `
@@ -113,10 +95,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-intro-to-chemistry",
-    userInput: {
-      language: "en",
-      prompt: "i want an intro to chemistry",
-    },
+    userInput: { language: "en", prompt: "i want an intro to chemistry" },
   },
   {
     expectations: `
@@ -128,10 +107,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-dragon-ball",
-    userInput: {
-      language: "pt",
-      prompt: "dragon bals",
-    },
+    userInput: { language: "pt", prompt: "dragon bals" },
   },
   {
     expectations: `
@@ -143,10 +119,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-beatles",
-    userInput: {
-      language: "en",
-      prompt: "beatles",
-    },
+    userInput: { language: "en", prompt: "beatles" },
   },
   {
     expectations: `
@@ -158,10 +131,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "fr-f1",
-    userInput: {
-      language: "fr",
-      prompt: "f1",
-    },
+    userInput: { language: "fr", prompt: "f1" },
   },
   {
     expectations: `
@@ -174,10 +144,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-jlpt-n2",
-    userInput: {
-      language: "en",
-      prompt: "i want to pass the JLPT N2",
-    },
+    userInput: { language: "en", prompt: "i want to pass the JLPT N2" },
   },
   {
     expectations: `
@@ -189,10 +156,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-ielts-academic",
-    userInput: {
-      language: "pt",
-      prompt: "quero passar no IELTS Academic",
-    },
+    userInput: { language: "pt", prompt: "quero passar no IELTS Academic" },
   },
   {
     expectations: `
@@ -204,10 +168,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-how-computers-work",
-    userInput: {
-      language: "en",
-      prompt: "how do computers work",
-    },
+    userInput: { language: "en", prompt: "how do computers work" },
   },
   {
     expectations: `
@@ -220,10 +181,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-periodic-table",
-    userInput: {
-      language: "pt",
-      prompt: "tabela periódica",
-    },
+    userInput: { language: "pt", prompt: "tabela periódica" },
   },
   {
     expectations: `
@@ -236,10 +194,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-matrix-movie",
-    userInput: {
-      language: "en",
-      prompt: "matrix movie",
-    },
+    userInput: { language: "en", prompt: "matrix movie" },
   },
   {
     expectations: `
@@ -251,10 +206,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-ai",
-    userInput: {
-      language: "en",
-      prompt: "ai",
-    },
+    userInput: { language: "en", prompt: "ai" },
   },
   {
     expectations: `
@@ -266,9 +218,6 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-wealth-of-nations",
-    userInput: {
-      language: "en",
-      prompt: "wealth of nations",
-    },
+    userInput: { language: "en", prompt: "wealth of nations" },
   },
 ];

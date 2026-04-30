@@ -34,14 +34,9 @@ describe(addCategoriesStep, () => {
       targetLanguage: null,
     };
 
-    await addCategoriesStep({
-      categories: ["programming", "web"],
-      course: courseContext,
-    });
+    await addCategoriesStep({ categories: ["programming", "web"], course: courseContext });
 
-    const dbCategories = await prisma.courseCategory.findMany({
-      where: { courseId: course.id },
-    });
+    const dbCategories = await prisma.courseCategory.findMany({ where: { courseId: course.id } });
 
     expect(dbCategories).toHaveLength(2);
     expect(dbCategories.map((cat) => cat.category).toSorted()).toEqual(["programming", "web"]);
@@ -72,19 +67,11 @@ describe(addCategoriesStep, () => {
       targetLanguage: null,
     };
 
-    await addCategoriesStep({
-      categories: ["programming"],
-      course: courseContext,
-    });
+    await addCategoriesStep({ categories: ["programming"], course: courseContext });
 
-    await addCategoriesStep({
-      categories: ["programming", "web"],
-      course: courseContext,
-    });
+    await addCategoriesStep({ categories: ["programming", "web"], course: courseContext });
 
-    const dbCategories = await prisma.courseCategory.findMany({
-      where: { courseId: course.id },
-    });
+    const dbCategories = await prisma.courseCategory.findMany({ where: { courseId: course.id } });
 
     expect(dbCategories).toHaveLength(2);
   });

@@ -28,11 +28,7 @@ async function listSentenceWordsForLessons({ lessonIds }: { lessonIds: string[] 
   const { userLanguage } = firstSentence;
 
   return prisma.lessonWord.findMany({
-    include: {
-      word: {
-        include: { pronunciations: { where: { userLanguage } } },
-      },
-    },
+    include: { word: { include: { pronunciations: { where: { userLanguage } } } } },
     where: {
       lessonId: { in: lessonIds },
       word: { word: { in: uniqueWords, mode: "insensitive" } },

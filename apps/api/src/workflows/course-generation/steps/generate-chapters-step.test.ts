@@ -25,10 +25,7 @@ const baseCourse: CourseContext = {
   targetLanguage: null,
 };
 
-const languageCourse: CourseContext = {
-  ...baseCourse,
-  targetLanguage: "es",
-};
+const languageCourse: CourseContext = { ...baseCourse, targetLanguage: "es" };
 
 describe(generateChaptersStep, () => {
   beforeEach(() => {

@@ -1,10 +1,7 @@
 import { generateLessonPronunciation } from "@zoonk/ai/tasks/lessons/language/pronunciation";
 import { prisma } from "@zoonk/db";
 
-type PronunciationEntry = {
-  pronunciation: string;
-  word: string;
-};
+type PronunciationEntry = { pronunciation: string; word: string };
 
 /**
  * Generates missing pronunciations for target-language words by surface text.
@@ -54,11 +51,7 @@ async function fetchExistingPronunciations(params: {
   words: string[];
 }): Promise<Record<string, string>> {
   const existingWords = await prisma.word.findMany({
-    include: {
-      pronunciations: {
-        where: { userLanguage: params.userLanguage },
-      },
-    },
+    include: { pronunciations: { where: { userLanguage: params.userLanguage } } },
     where: {
       organizationId: params.organizationId,
       targetLanguage: params.targetLanguage,
@@ -87,10 +80,7 @@ async function generateMissingPronunciations(params: {
         word,
       });
 
-      return {
-        pronunciation: result.data.pronunciation,
-        word,
-      };
+      return { pronunciation: result.data.pronunciation, word };
     }),
   );
 }

@@ -47,10 +47,7 @@ export async function generateStepImages({
         prompt,
       });
 
-      return {
-        prompt,
-        url: getImageUrlOrThrow({ error, prompt, url }),
-      };
+      return { prompt, url: getImageUrlOrThrow({ error, prompt, url }) };
     }),
   );
 }

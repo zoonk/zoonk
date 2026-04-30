@@ -8,11 +8,7 @@ import {
 } from "./prepare-lesson-data";
 import { type DistractorWord } from "./translation-options";
 
-type WordDataInput = {
-  audioUrl: string | null;
-  romanization: string | null;
-  word: string;
-};
+type WordDataInput = { audioUrl: string | null; romanization: string | null; word: string };
 
 type WordMetadata = Omit<WordBankOption, "word">;
 
@@ -128,11 +124,7 @@ function buildWordMetadataLookup(params: {
     (word) =>
       [
         normalizeWordKey(word.word),
-        {
-          audioUrl: word.audioUrl,
-          romanization: word.romanization,
-          translation: null,
-        },
+        { audioUrl: word.audioUrl, romanization: word.romanization, translation: null },
       ] as const,
   );
 
@@ -140,11 +132,7 @@ function buildWordMetadataLookup(params: {
     (word) =>
       [
         normalizeWordKey(word.word),
-        {
-          audioUrl: word.audioUrl,
-          romanization: word.romanization,
-          translation: null,
-        },
+        { audioUrl: word.audioUrl, romanization: word.romanization, translation: null },
       ] as const,
   );
 
@@ -204,11 +192,9 @@ export function buildSentenceWordOptions(
  * Reading and listening both produce arrange-words banks. This small config object keeps
  * the public builder declarative and avoids branching logic during option construction.
  */
-function getWordBankConfig(step: SerializedStep): {
-  correctWords: string[];
-  distractors: string[];
-  usesTargetLanguageMetadata: boolean;
-} | null {
+function getWordBankConfig(
+  step: SerializedStep,
+): { correctWords: string[]; distractors: string[]; usesTargetLanguageMetadata: boolean } | null {
   if (step.kind === "reading" && step.sentence) {
     return {
       correctWords: segmentWords(step.sentence.sentence),

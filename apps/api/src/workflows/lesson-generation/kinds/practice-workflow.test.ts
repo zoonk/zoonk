@@ -13,11 +13,7 @@ import { practiceLessonWorkflow } from "./practice-workflow";
 vi.mock("@zoonk/ai/tasks/lessons/core/practice", () => ({
   generateLessonPractice: vi.fn().mockResolvedValue({
     data: {
-      scenario: {
-        imagePrompt: "scenario prompt",
-        text: "Scenario text",
-        title: "Scenario",
-      },
+      scenario: { imagePrompt: "scenario prompt", text: "Scenario text", title: "Scenario" },
       steps: [
         {
           context: "Question context",
@@ -35,12 +31,14 @@ vi.mock("@zoonk/ai/tasks/lessons/core/practice", () => ({
 }));
 
 vi.mock("@zoonk/core/steps/content-image", () => ({
-  generateContentStepImage: vi.fn().mockImplementation(({ prompt }) =>
-    Promise.resolve({
-      data: `https://example.com/${encodeURIComponent(prompt)}.webp`,
-      error: null,
-    }),
-  ),
+  generateContentStepImage: vi
+    .fn()
+    .mockImplementation(({ prompt }) =>
+      Promise.resolve({
+        data: `https://example.com/${encodeURIComponent(prompt)}.webp`,
+        error: null,
+      }),
+    ),
 }));
 
 describe(practiceLessonWorkflow, () => {
@@ -90,10 +88,7 @@ describe(practiceLessonWorkflow, () => {
     ]);
 
     expect(intro).toEqual({
-      image: {
-        prompt: "scenario prompt",
-        url: "https://example.com/scenario%20prompt.webp",
-      },
+      image: { prompt: "scenario prompt", url: "https://example.com/scenario%20prompt.webp" },
       text: "Scenario text",
       title: "Scenario",
       variant: "intro",
@@ -101,24 +96,13 @@ describe(practiceLessonWorkflow, () => {
 
     expect(question).toMatchObject({
       context: "Question context",
-      image: {
-        prompt: "question prompt",
-        url: "https://example.com/question%20prompt.webp",
-      },
+      image: { prompt: "question prompt", url: "https://example.com/question%20prompt.webp" },
       question: "What now?",
     });
 
     expect(question.options).toEqual([
-      expect.objectContaining({
-        feedback: "Correct",
-        isCorrect: true,
-        text: "Answer",
-      }),
-      expect.objectContaining({
-        feedback: "Not yet",
-        isCorrect: false,
-        text: "Distractor",
-      }),
+      expect.objectContaining({ feedback: "Correct", isCorrect: true, text: "Answer" }),
+      expect.objectContaining({ feedback: "Not yet", isCorrect: false, text: "Distractor" }),
     ]);
   });
 });

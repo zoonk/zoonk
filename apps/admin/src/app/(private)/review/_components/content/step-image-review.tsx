@@ -16,11 +16,7 @@ function getStringField(data: unknown, field: string): string | null {
 export function StepImageReview({
   item,
 }: {
-  item: {
-    id: string;
-    content: unknown;
-    lesson: { kind: LessonKind; title: string | null };
-  };
+  item: { id: string; content: unknown; lesson: { kind: LessonKind; title: string | null } };
 }) {
   const prompt = getStringField(item.content, "prompt");
   const imageUrl = getStringField(item.content, "url");

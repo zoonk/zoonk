@@ -83,23 +83,22 @@ describe(getReviewSteps, () => {
 
     // Create incorrect attempts for 3 steps (never corrected = tier 1)
     await Promise.all(
-      newLesson.steps.slice(0, 3).map((step) =>
-        stepAttemptFixture({
-          answer: {},
-          dayOfWeek: 1,
-          durationSeconds: 10,
-          hourOfDay: 12,
-          isCorrect: false,
-          stepId: step.id,
-          userId: newUser.id,
-        }),
-      ),
+      newLesson.steps
+        .slice(0, 3)
+        .map((step) =>
+          stepAttemptFixture({
+            answer: {},
+            dayOfWeek: 1,
+            durationSeconds: 10,
+            hourOfDay: 12,
+            isCorrect: false,
+            stepId: step.id,
+            userId: newUser.id,
+          }),
+        ),
     );
 
-    const result = await getReviewSteps({
-      lessonId: newLesson.lesson.id,
-      userId: newUser.id,
-    });
+    const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: newUser.id });
 
     // Should have 10 total (3 mistakes + 7 fillers)
     expect(result).toHaveLength(REVIEW_TARGET_COUNT);
@@ -119,47 +118,48 @@ describe(getReviewSteps, () => {
 
     // Tier 1: 2 steps with only incorrect attempts
     await Promise.all(
-      newLesson.steps.slice(0, 2).map((step) =>
-        stepAttemptFixture({
-          answer: {},
-          dayOfWeek: 1,
-          durationSeconds: 10,
-          hourOfDay: 12,
-          isCorrect: false,
-          stepId: step.id,
-          userId: newUser.id,
-        }),
-      ),
+      newLesson.steps
+        .slice(0, 2)
+        .map((step) =>
+          stepAttemptFixture({
+            answer: {},
+            dayOfWeek: 1,
+            durationSeconds: 10,
+            hourOfDay: 12,
+            isCorrect: false,
+            stepId: step.id,
+            userId: newUser.id,
+          }),
+        ),
     );
 
     // Tier 2: 3 steps with incorrect then correct attempts
     await Promise.all(
-      newLesson.steps.slice(2, 5).flatMap((step) => [
-        stepAttemptFixture({
-          answer: {},
-          dayOfWeek: 1,
-          durationSeconds: 10,
-          hourOfDay: 12,
-          isCorrect: false,
-          stepId: step.id,
-          userId: newUser.id,
-        }),
-        stepAttemptFixture({
-          answer: {},
-          dayOfWeek: 1,
-          durationSeconds: 10,
-          hourOfDay: 12,
-          isCorrect: true,
-          stepId: step.id,
-          userId: newUser.id,
-        }),
-      ]),
+      newLesson.steps
+        .slice(2, 5)
+        .flatMap((step) => [
+          stepAttemptFixture({
+            answer: {},
+            dayOfWeek: 1,
+            durationSeconds: 10,
+            hourOfDay: 12,
+            isCorrect: false,
+            stepId: step.id,
+            userId: newUser.id,
+          }),
+          stepAttemptFixture({
+            answer: {},
+            dayOfWeek: 1,
+            durationSeconds: 10,
+            hourOfDay: 12,
+            isCorrect: true,
+            stepId: step.id,
+            userId: newUser.id,
+          }),
+        ]),
     );
 
-    const result = await getReviewSteps({
-      lessonId: newLesson.lesson.id,
-      userId: newUser.id,
-    });
+    const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: newUser.id });
 
     // Should have 10 total (5 mistakes + 5 fillers)
     expect(result).toHaveLength(REVIEW_TARGET_COUNT);
@@ -179,47 +179,48 @@ describe(getReviewSteps, () => {
 
     // Tier 1: 8 steps with only incorrect attempts
     await Promise.all(
-      newLesson.steps.slice(0, 8).map((step) =>
-        stepAttemptFixture({
-          answer: {},
-          dayOfWeek: 1,
-          durationSeconds: 10,
-          hourOfDay: 12,
-          isCorrect: false,
-          stepId: step.id,
-          userId: newUser.id,
-        }),
-      ),
+      newLesson.steps
+        .slice(0, 8)
+        .map((step) =>
+          stepAttemptFixture({
+            answer: {},
+            dayOfWeek: 1,
+            durationSeconds: 10,
+            hourOfDay: 12,
+            isCorrect: false,
+            stepId: step.id,
+            userId: newUser.id,
+          }),
+        ),
     );
 
     // Tier 2: 4 steps with incorrect then correct attempts
     await Promise.all(
-      newLesson.steps.slice(8, 12).flatMap((step) => [
-        stepAttemptFixture({
-          answer: {},
-          dayOfWeek: 1,
-          durationSeconds: 10,
-          hourOfDay: 12,
-          isCorrect: false,
-          stepId: step.id,
-          userId: newUser.id,
-        }),
-        stepAttemptFixture({
-          answer: {},
-          dayOfWeek: 1,
-          durationSeconds: 10,
-          hourOfDay: 12,
-          isCorrect: true,
-          stepId: step.id,
-          userId: newUser.id,
-        }),
-      ]),
+      newLesson.steps
+        .slice(8, 12)
+        .flatMap((step) => [
+          stepAttemptFixture({
+            answer: {},
+            dayOfWeek: 1,
+            durationSeconds: 10,
+            hourOfDay: 12,
+            isCorrect: false,
+            stepId: step.id,
+            userId: newUser.id,
+          }),
+          stepAttemptFixture({
+            answer: {},
+            dayOfWeek: 1,
+            durationSeconds: 10,
+            hourOfDay: 12,
+            isCorrect: true,
+            stepId: step.id,
+            userId: newUser.id,
+          }),
+        ]),
     );
 
-    const result = await getReviewSteps({
-      lessonId: newLesson.lesson.id,
-      userId: newUser.id,
-    });
+    const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: newUser.id });
 
     const resultIds = result.map((step) => step.id);
 
@@ -239,17 +240,19 @@ describe(getReviewSteps, () => {
 
     // Tier 1: 11 steps with only incorrect attempts
     await Promise.all(
-      newLesson.steps.slice(0, 11).map((step) =>
-        stepAttemptFixture({
-          answer: {},
-          dayOfWeek: 1,
-          durationSeconds: 10,
-          hourOfDay: 12,
-          isCorrect: false,
-          stepId: step.id,
-          userId: newUser.id,
-        }),
-      ),
+      newLesson.steps
+        .slice(0, 11)
+        .map((step) =>
+          stepAttemptFixture({
+            answer: {},
+            dayOfWeek: 1,
+            durationSeconds: 10,
+            hourOfDay: 12,
+            isCorrect: false,
+            stepId: step.id,
+            userId: newUser.id,
+          }),
+        ),
     );
 
     // Tier 2: 1 step with incorrect then correct
@@ -274,10 +277,7 @@ describe(getReviewSteps, () => {
       }),
     ]);
 
-    const result = await getReviewSteps({
-      lessonId: newLesson.lesson.id,
-      userId: newUser.id,
-    });
+    const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: newUser.id });
 
     // Should only have the 11 tier 1 steps, not the tier 2 step
     const resultIds = result.map((step) => step.id);
@@ -313,10 +313,7 @@ describe(getReviewSteps, () => {
       }),
     ]);
 
-    const result = await getReviewSteps({
-      lessonId: newLesson.lesson.id,
-      userId: newUser.id,
-    });
+    const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: newUser.id });
 
     // The step should only appear once
     const occurrences = result.filter((step) => step.id === newLesson.steps[0]!.id);
@@ -350,10 +347,7 @@ describe(getReviewSteps, () => {
       position: 0,
     });
 
-    const result = await getReviewSteps({
-      lessonId: isolated.lesson.id,
-      userId: null,
-    });
+    const result = await getReviewSteps({ lessonId: isolated.lesson.id, userId: null });
 
     expect(result).toHaveLength(3);
 
@@ -372,10 +366,7 @@ describe(getReviewSteps, () => {
       position: 10,
     });
 
-    const result = await getReviewSteps({
-      lessonId: isolated.lesson.id,
-      userId: null,
-    });
+    const result = await getReviewSteps({ lessonId: isolated.lesson.id, userId: null });
 
     expect(result).toHaveLength(3);
 
@@ -392,23 +383,22 @@ describe(getReviewSteps, () => {
 
     // Only 2 mistakes
     await Promise.all(
-      newLesson.steps.slice(0, 2).map((step) =>
-        stepAttemptFixture({
-          answer: {},
-          dayOfWeek: 1,
-          durationSeconds: 10,
-          hourOfDay: 12,
-          isCorrect: false,
-          stepId: step.id,
-          userId: newUser.id,
-        }),
-      ),
+      newLesson.steps
+        .slice(0, 2)
+        .map((step) =>
+          stepAttemptFixture({
+            answer: {},
+            dayOfWeek: 1,
+            durationSeconds: 10,
+            hourOfDay: 12,
+            isCorrect: false,
+            stepId: step.id,
+            userId: newUser.id,
+          }),
+        ),
     );
 
-    const result = await getReviewSteps({
-      lessonId: newLesson.lesson.id,
-      userId: newUser.id,
-    });
+    const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: newUser.id });
 
     // Should have exactly REVIEW_TARGET_COUNT (10) unique steps
     expect(result).toHaveLength(REVIEW_TARGET_COUNT);
@@ -423,10 +413,7 @@ describe(getReviewSteps, () => {
   });
 
   test("returns random steps for unauthenticated user (userId null)", async () => {
-    const result = await getReviewSteps({
-      lessonId: lesson.id,
-      userId: null,
-    });
+    const result = await getReviewSteps({ lessonId: lesson.id, userId: null });
 
     // Shared lesson has 12 interactive steps, so result should be exactly 10
     expect(result).toHaveLength(REVIEW_TARGET_COUNT);
@@ -439,10 +426,7 @@ describe(getReviewSteps, () => {
   test("returns random steps for user with no attempts", async () => {
     const newUser = await userFixture();
 
-    const result = await getReviewSteps({
-      lessonId: lesson.id,
-      userId: newUser.id,
-    });
+    const result = await getReviewSteps({ lessonId: lesson.id, userId: newUser.id });
 
     // No attempts means all steps are fillers, capped at REVIEW_TARGET_COUNT
     expect(result).toHaveLength(REVIEW_TARGET_COUNT);
@@ -455,10 +439,7 @@ describe(getReviewSteps, () => {
   test("handles lesson with fewer than 10 interactive steps", async () => {
     const newLesson = await createLessonWithSteps(org.id, 5);
 
-    const result = await getReviewSteps({
-      lessonId: newLesson.lesson.id,
-      userId: null,
-    });
+    const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: null });
 
     // Should return all 5 available steps (less than target)
     expect(result).toHaveLength(5);
@@ -467,19 +448,13 @@ describe(getReviewSteps, () => {
   test("returns empty array when lesson has no eligible interactive steps", async () => {
     const newLesson = await createLessonWithSteps(org.id, 0);
 
-    const result = await getReviewSteps({
-      lessonId: newLesson.lesson.id,
-      userId: null,
-    });
+    const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: null });
 
     expect(result).toHaveLength(0);
   });
 
   test("excludes unpublished steps", async () => {
-    const result = await getReviewSteps({
-      lessonId: lesson.id,
-      userId: null,
-    });
+    const result = await getReviewSteps({ lessonId: lesson.id, userId: null });
 
     const resultIds = result.map((step) => step.id);
     expect(resultIds).not.toContain(unpublishedStepId);
@@ -493,47 +468,48 @@ describe(getReviewSteps, () => {
 
     // Tier 1: exactly 10 steps with only incorrect attempts
     await Promise.all(
-      newLesson.steps.slice(0, 10).map((step) =>
-        stepAttemptFixture({
-          answer: {},
-          dayOfWeek: 1,
-          durationSeconds: 10,
-          hourOfDay: 12,
-          isCorrect: false,
-          stepId: step.id,
-          userId: newUser.id,
-        }),
-      ),
+      newLesson.steps
+        .slice(0, 10)
+        .map((step) =>
+          stepAttemptFixture({
+            answer: {},
+            dayOfWeek: 1,
+            durationSeconds: 10,
+            hourOfDay: 12,
+            isCorrect: false,
+            stepId: step.id,
+            userId: newUser.id,
+          }),
+        ),
     );
 
     // Tier 2: 2 steps with incorrect then correct
     await Promise.all(
-      newLesson.steps.slice(10, 12).flatMap((step) => [
-        stepAttemptFixture({
-          answer: {},
-          dayOfWeek: 1,
-          durationSeconds: 10,
-          hourOfDay: 12,
-          isCorrect: false,
-          stepId: step.id,
-          userId: newUser.id,
-        }),
-        stepAttemptFixture({
-          answer: {},
-          dayOfWeek: 1,
-          durationSeconds: 10,
-          hourOfDay: 12,
-          isCorrect: true,
-          stepId: step.id,
-          userId: newUser.id,
-        }),
-      ]),
+      newLesson.steps
+        .slice(10, 12)
+        .flatMap((step) => [
+          stepAttemptFixture({
+            answer: {},
+            dayOfWeek: 1,
+            durationSeconds: 10,
+            hourOfDay: 12,
+            isCorrect: false,
+            stepId: step.id,
+            userId: newUser.id,
+          }),
+          stepAttemptFixture({
+            answer: {},
+            dayOfWeek: 1,
+            durationSeconds: 10,
+            hourOfDay: 12,
+            isCorrect: true,
+            stepId: step.id,
+            userId: newUser.id,
+          }),
+        ]),
     );
 
-    const result = await getReviewSteps({
-      lessonId: newLesson.lesson.id,
-      userId: newUser.id,
-    });
+    const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: newUser.id });
 
     // Exactly 10 tier 1 hits the >= threshold, so tier 2 should be excluded
     expect(result).toHaveLength(10);
@@ -578,10 +554,7 @@ describe(getReviewSteps, () => {
       }),
     ]);
 
-    const result = await getReviewSteps({
-      lessonId: newLesson.lesson.id,
-      userId: newUser.id,
-    });
+    const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: newUser.id });
 
     // Should have 10 steps (1 prioritized + 9 fillers)
     expect(result).toHaveLength(REVIEW_TARGET_COUNT);
@@ -600,23 +573,22 @@ describe(getReviewSteps, () => {
 
     // 5 tier 1 steps
     await Promise.all(
-      newLesson.steps.slice(0, 5).map((step) =>
-        stepAttemptFixture({
-          answer: {},
-          dayOfWeek: 1,
-          durationSeconds: 10,
-          hourOfDay: 12,
-          isCorrect: false,
-          stepId: step.id,
-          userId: newUser.id,
-        }),
-      ),
+      newLesson.steps
+        .slice(0, 5)
+        .map((step) =>
+          stepAttemptFixture({
+            answer: {},
+            dayOfWeek: 1,
+            durationSeconds: 10,
+            hourOfDay: 12,
+            isCorrect: false,
+            stepId: step.id,
+            userId: newUser.id,
+          }),
+        ),
     );
 
-    const result = await getReviewSteps({
-      lessonId: newLesson.lesson.id,
-      userId: newUser.id,
-    });
+    const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: newUser.id });
 
     // 5 prioritized + 5 fillers = 10, all unique
     expect(result).toHaveLength(REVIEW_TARGET_COUNT);
@@ -719,12 +691,7 @@ describe(getReviewValidationSteps, () => {
   test("includes canonical sentence metadata for review validation", async () => {
     const [sentence, readingLesson] = await Promise.all([
       sentenceFixture({ organizationId }),
-      lessonFixture({
-        isPublished: true,
-        kind: "reading",
-        lessonId: lesson.id,
-        organizationId,
-      }),
+      lessonFixture({ isPublished: true, kind: "reading", lessonId: lesson.id, organizationId }),
     ]);
 
     const [readingStep] = await Promise.all([
@@ -750,9 +717,7 @@ describe(getReviewValidationSteps, () => {
       stepIds: [readingStep.id],
     });
 
-    expect(steps[0]?.sentence).toMatchObject({
-      sentence: sentence.sentence,
-    });
+    expect(steps[0]?.sentence).toMatchObject({ sentence: sentence.sentence });
   });
 });
 
@@ -760,11 +725,7 @@ describe(getReviewValidationSteps, () => {
  * Helper to create an isolated lesson with a given number of interactive steps.
  */
 async function createLessonWithSteps(orgId: string, stepCount: number) {
-  const course = await courseFixture({
-    isPublished: true,
-    language: "en",
-    organizationId: orgId,
-  });
+  const course = await courseFixture({ isPublished: true, language: "en", organizationId: orgId });
 
   const chapter = await chapterFixture({
     courseId: course.id,

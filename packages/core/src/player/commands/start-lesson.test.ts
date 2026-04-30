@@ -14,11 +14,7 @@ describe(startLesson, () => {
     const org = await organizationFixture();
     const course = await courseFixture({ organizationId: org.id });
     const chapter = await chapterFixture({ courseId: course.id, organizationId: org.id });
-    lesson = await lessonFixture({
-      chapterId: chapter.id,
-      kind: "quiz",
-      organizationId: org.id,
-    });
+    lesson = await lessonFixture({ chapterId: chapter.id, kind: "quiz", organizationId: org.id });
   });
 
   test("creates LessonProgress with completedAt null and durationSeconds null", async () => {
@@ -79,12 +75,7 @@ describe(startLesson, () => {
     const completedAt = new Date();
 
     await prisma.lessonProgress.create({
-      data: {
-        completedAt,
-        durationSeconds: 30,
-        lessonId: lesson.id,
-        userId,
-      },
+      data: { completedAt, durationSeconds: 30, lessonId: lesson.id, userId },
     });
 
     await startLesson({ lessonId: lesson.id, userId });

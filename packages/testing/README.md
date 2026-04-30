@@ -11,11 +11,7 @@ This package provides fixtures and utilities for testing across all Zoonk applic
 Add as a dev dependency in your app:
 
 ```json
-{
-  "devDependencies": {
-    "@zoonk/testing": "workspace:*"
-  }
-}
+{ "devDependencies": { "@zoonk/testing": "workspace:*" } }
 ```
 
 Import fixtures in your tests:

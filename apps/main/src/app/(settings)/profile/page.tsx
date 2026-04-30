@@ -15,10 +15,7 @@ import { ProfileForm } from "./profile-form";
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 
-  return {
-    description: t("Update your name and username on Zoonk."),
-    title: t("Profile"),
-  };
+  return { description: t("Update your name and username on Zoonk."), title: t("Profile") };
 }
 
 export default async function ProfilePage() {

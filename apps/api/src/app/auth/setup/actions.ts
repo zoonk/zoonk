@@ -22,10 +22,7 @@ export async function setupProfileAction(
   }
 
   const { error } = await safeAsync(async () =>
-    auth.api.updateUser({
-      body: { name, username },
-      headers: await headers(),
-    }),
+    auth.api.updateUser({ body: { name, username }, headers: await headers() }),
   );
 
   if (error) {

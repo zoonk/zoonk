@@ -16,9 +16,7 @@ const romanizationSchema = z.string().min(1);
  * and the runtime validation tied to the same schema shape.
  */
 function buildSchema(textCount: number) {
-  return z.object({
-    romanizations: z.array(romanizationSchema).length(textCount),
-  });
+  return z.object({ romanizations: z.array(romanizationSchema).length(textCount) });
 }
 
 export type LessonRomanizationSchema = z.infer<ReturnType<typeof buildSchema>>;

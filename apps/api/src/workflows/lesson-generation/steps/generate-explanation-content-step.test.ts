@@ -8,12 +8,14 @@ import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateExplanationContentStep } from "./generate-explanation-content-step";
 
 vi.mock("@zoonk/ai/tasks/lessons/core/explanation", () => ({
-  generateLessonExplanation: vi.fn().mockResolvedValue({
-    data: {
-      anchor: { text: "Apply the idea elsewhere.", title: "Transfer" },
-      explanation: [{ text: "Concept explanation.", title: "Concept" }],
-    },
-  }),
+  generateLessonExplanation: vi
+    .fn()
+    .mockResolvedValue({
+      data: {
+        anchor: { text: "Apply the idea elsewhere.", title: "Transfer" },
+        explanation: [{ text: "Concept explanation.", title: "Concept" }],
+      },
+    }),
 }));
 
 describe(generateExplanationContentStep, () => {

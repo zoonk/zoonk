@@ -1,9 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 
-export async function getAIOrganizationStep(): Promise<{
-  id: string;
-}> {
+export async function getAIOrganizationStep(): Promise<{ id: string }> {
   "use step";
 
   return prisma.organization.findUniqueOrThrow({

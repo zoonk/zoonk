@@ -7,10 +7,7 @@ const cachedGetChapter = cache(async (brandSlug: string, courseSlug: string, cha
     include: { course: true },
     where: getPublishedChapterWhere({
       chapterWhere: { slug: chapterSlug },
-      courseWhere: {
-        organization: { kind: "brand", slug: brandSlug },
-        slug: courseSlug,
-      },
+      courseWhere: { organization: { kind: "brand", slug: brandSlug }, slug: courseSlug },
     }),
   }),
 );

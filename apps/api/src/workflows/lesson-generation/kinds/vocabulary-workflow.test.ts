@@ -16,44 +16,46 @@ const vocabularyState = vi.hoisted(() => ({
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/vocabulary", () => ({
-  generateLessonVocabulary: vi.fn().mockImplementation(() =>
-    Promise.resolve({
-      data: { words: vocabularyState.words },
-    }),
-  ),
+  generateLessonVocabulary: vi
+    .fn()
+    .mockImplementation(() => Promise.resolve({ data: { words: vocabularyState.words } })),
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/distractors", () => ({
-  generateLessonDistractors: vi.fn().mockImplementation(({ input }) =>
-    Promise.resolve({
-      data: { distractors: vocabularyState.distractors[input] ?? [] },
-    }),
-  ),
+  generateLessonDistractors: vi
+    .fn()
+    .mockImplementation(({ input }) =>
+      Promise.resolve({ data: { distractors: vocabularyState.distractors[input] ?? [] } }),
+    ),
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/pronunciation", () => ({
-  generateLessonPronunciation: vi.fn().mockImplementation(({ word }) =>
-    Promise.resolve({
-      data: { pronunciation: `${word} pronunciation` },
-    }),
-  ),
+  generateLessonPronunciation: vi
+    .fn()
+    .mockImplementation(({ word }) =>
+      Promise.resolve({ data: { pronunciation: `${word} pronunciation` } }),
+    ),
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/romanization", () => ({
-  generateLessonRomanization: vi.fn().mockImplementation(({ texts }) =>
-    Promise.resolve({
-      data: { romanizations: texts.map((text: string) => `${text} romanized`) },
-    }),
-  ),
+  generateLessonRomanization: vi
+    .fn()
+    .mockImplementation(({ texts }) =>
+      Promise.resolve({
+        data: { romanizations: texts.map((text: string) => `${text} romanized`) },
+      }),
+    ),
 }));
 
 vi.mock("@zoonk/core/audio/generate", () => ({
-  generateLanguageAudio: vi.fn().mockImplementation(({ text }) =>
-    Promise.resolve({
-      data: `https://example.com/audio/${encodeURIComponent(text)}.mp3`,
-      error: null,
-    }),
-  ),
+  generateLanguageAudio: vi
+    .fn()
+    .mockImplementation(({ text }) =>
+      Promise.resolve({
+        data: `https://example.com/audio/${encodeURIComponent(text)}.mp3`,
+        error: null,
+      }),
+    ),
 }));
 
 describe(vocabularyLessonWorkflow, () => {
@@ -107,10 +109,7 @@ describe(vocabularyLessonWorkflow, () => {
     );
 
     const [steps, lessonWords, words] = await Promise.all([
-      prisma.step.findMany({
-        orderBy: { position: "asc" },
-        where: { lessonId: context.id },
-      }),
+      prisma.step.findMany({ orderBy: { position: "asc" }, where: { lessonId: context.id } }),
       prisma.lessonWord.findMany({
         include: { word: true },
         orderBy: { word: { word: "asc" } },
@@ -118,11 +117,7 @@ describe(vocabularyLessonWorkflow, () => {
       }),
       prisma.word.findMany({
         include: { pronunciations: true },
-        where: {
-          organizationId,
-          targetLanguage: "ja",
-          word: { in: allWords },
-        },
+        where: { organizationId, targetLanguage: "ja", word: { in: allWords } },
       }),
     ]);
 
@@ -140,16 +135,8 @@ describe(vocabularyLessonWorkflow, () => {
         }))
         .toSorted((a, b) => a.translation.localeCompare(b.translation)),
     ).toEqual([
-      {
-        distractors: [dogWord, birdWord],
-        translation: `cat ${uniqueId}`,
-        word: catWord,
-      },
-      {
-        distractors: [fireWord, earthWord],
-        translation: `water ${uniqueId}`,
-        word: waterWord,
-      },
+      { distractors: [dogWord, birdWord], translation: `cat ${uniqueId}`, word: catWord },
+      { distractors: [fireWord, earthWord], translation: `water ${uniqueId}`, word: waterWord },
     ]);
 
     expect(
@@ -186,36 +173,19 @@ describe(vocabularyLessonWorkflow, () => {
     });
 
     vocabularyState.words = [{ translation: `water ${uniqueId}`, word: canonicalWord }];
-    vocabularyState.distractors = {
-      [canonicalWord]: [duplicateDistractor, validDistractor],
-    };
+    vocabularyState.distractors = { [canonicalWord]: [duplicateDistractor, validDistractor] };
 
     await vocabularyLessonWorkflow(context);
 
     const [canonicalRecord, duplicateDistractorRecord, lessonWord] = await Promise.all([
       prisma.word.findUnique({
         include: { pronunciations: true },
-        where: {
-          orgWord: {
-            organizationId,
-            targetLanguage: "ja",
-            word: canonicalWord,
-          },
-        },
+        where: { orgWord: { organizationId, targetLanguage: "ja", word: canonicalWord } },
       }),
       prisma.word.findUnique({
-        where: {
-          orgWord: {
-            organizationId,
-            targetLanguage: "ja",
-            word: duplicateDistractor,
-          },
-        },
+        where: { orgWord: { organizationId, targetLanguage: "ja", word: duplicateDistractor } },
       }),
-      prisma.lessonWord.findFirst({
-        include: { word: true },
-        where: { lessonId: context.id },
-      }),
+      prisma.lessonWord.findFirst({ include: { word: true }, where: { lessonId: context.id } }),
     ]);
 
     expect(canonicalRecord).toMatchObject({

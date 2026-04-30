@@ -31,10 +31,7 @@ export async function setupCourse(
 
   const chapters = await getChapters(course.courseId, createdChapters, existing.hasChapters);
 
-  await completeCourseSetupStep({
-    courseId: course.courseId,
-    courseSuggestionId,
-  });
+  await completeCourseSetupStep({ courseId: course.courseId, courseSuggestionId });
 
   return chapters;
 }

@@ -37,12 +37,7 @@ function getHrefs(item: ContinueLearningItem) {
   if (!course.organization) {
     const href = `/p/${course.id}` as const;
 
-    return {
-      chapterHref: href,
-      courseHref: href,
-      headerHref: href,
-      prefetch: false,
-    };
+    return { chapterHref: href, courseHref: href, headerHref: href, prefetch: false };
   }
 
   const courseHref = `/b/${course.organization.slug}/c/${course.slug}` as const;
@@ -53,20 +48,10 @@ function getHrefs(item: ContinueLearningItem) {
     : chapterHref;
 
   if (item.status === "completed") {
-    return {
-      chapterHref,
-      courseHref,
-      headerHref: lessonHref,
-      prefetch: true,
-    };
+    return { chapterHref, courseHref, headerHref: lessonHref, prefetch: true };
   }
 
-  return {
-    chapterHref,
-    courseHref,
-    headerHref: lessonHref,
-    prefetch: false,
-  };
+  return { chapterHref, courseHref, headerHref: lessonHref, prefetch: false };
 }
 
 export async function ContinueLearningCard({ item }: { item: ContinueLearningItem }) {

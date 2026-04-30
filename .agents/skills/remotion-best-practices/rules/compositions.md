@@ -45,12 +45,7 @@ export const RemotionRoot = () => {
       fps={30}
       width={1080}
       height={1080}
-      defaultProps={
-        {
-          title: "Hello World",
-          color: "#ff0000",
-        } satisfies MyCompositionProps
-      }
+      defaultProps={{ title: "Hello World", color: "#ff0000" } satisfies MyCompositionProps}
     />
   );
 };
@@ -115,10 +110,7 @@ const calculateMetadata: CalculateMetadataFunction<MyCompositionProps> = async (
 
   return {
     durationInFrames: Math.ceil(data.duration * 30),
-    props: {
-      ...props,
-      videoUrl: data.url,
-    },
+    props: { ...props, videoUrl: data.url },
   };
 };
 

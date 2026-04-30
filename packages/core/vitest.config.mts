@@ -13,9 +13,7 @@ export default defineConfig({
     tsconfigPaths: true,
   },
   test: {
-    deps: {
-      optimizer: { ssr: { include: ["next"] } },
-    },
+    deps: { optimizer: { ssr: { include: ["next"] } } },
     env: {
       DATABASE_URL: "postgres://postgres:postgres@localhost:5432/zoonk_test",
       DATABASE_URL_UNPOOLED: "postgres://postgres:postgres@localhost:5432/zoonk_test",

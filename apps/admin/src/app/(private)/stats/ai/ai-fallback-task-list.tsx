@@ -183,8 +183,5 @@ function AiFallbackTaskRow({
  * fallback issues sit in the low single-digit range.
  */
 function formatAiFallbackRate(value: number) {
-  return new Intl.NumberFormat("en", {
-    maximumFractionDigits: 1,
-    style: "percent",
-  }).format(value);
+  return new Intl.NumberFormat("en", { maximumFractionDigits: 1, style: "percent" }).format(value);
 }

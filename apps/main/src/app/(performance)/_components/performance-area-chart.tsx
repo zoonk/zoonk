@@ -8,41 +8,21 @@ type PerformanceAreaChartProps = Omit<
   "margin" | "responsive" | "style"
 >;
 
-type PerformanceChartFigureProps = {
-  children: ReactNode;
-  label: string;
-};
+type PerformanceChartFigureProps = { children: ReactNode; label: string };
 
-type PerformanceChartTooltipProps<DataPoint> = {
-  children: (data: DataPoint) => ReactNode;
-};
+type PerformanceChartTooltipProps<DataPoint> = { children: (data: DataPoint) => ReactNode };
 
-type PerformanceChartGradientProps = {
-  color: string;
-  id: string;
-};
+type PerformanceChartGradientProps = { color: string; id: string };
 
-type PerformanceChartAreaProps = {
-  color: string;
-  dataKey: string;
-  gradientId: string;
-};
+type PerformanceChartAreaProps = { color: string; dataKey: string; gradientId: string };
 
-type PerformanceChartAverageLineProps = {
-  children: string;
-  y: number;
-};
+type PerformanceChartAverageLineProps = { children: string; y: number };
 
-type PerformanceChartCompactYAxisProps = {
-  locale: string;
-};
+type PerformanceChartCompactYAxisProps = { locale: string };
 
 const PERFORMANCE_CHART_MARGIN = { bottom: 0, left: 0, right: 0, top: 10 };
 
-const PERFORMANCE_CHART_STYLE = {
-  height: 256,
-  width: "100%",
-} satisfies CSSProperties;
+const PERFORMANCE_CHART_STYLE = { height: 256, width: "100%" } satisfies CSSProperties;
 
 /**
  * Gives each performance chart the same accessible container and flex-safe

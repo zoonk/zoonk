@@ -55,10 +55,7 @@ export async function Level({
 
         <FeatureCardBody>
           <FeatureCardTitle>
-            {t("{color} Belt - Level {level}", {
-              color: colorName,
-              level: String(level),
-            })}
+            {t("{color} Belt - Level {level}", { color: colorName, level: String(level) })}
           </FeatureCardTitle>
           <FeatureCardSubtitle>{subtitle}</FeatureCardSubtitle>
         </FeatureCardBody>

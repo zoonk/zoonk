@@ -63,10 +63,7 @@ export async function getReviewSteps({
   // Lesson step counts are small, so fetching all steps upfront is efficient
   // and avoids extra queries for prioritized/filler IDs.
   const [allSteps, incorrectAttempts, correctAttempts] = await Promise.all([
-    prisma.step.findMany({
-      include: { sentence: true, word: true },
-      where: lessonStepFilter,
-    }),
+    prisma.step.findMany({ include: { sentence: true, word: true }, where: lessonStepFilter }),
     prisma.stepAttempt.findMany({
       distinct: ["stepId"],
       orderBy: { answeredAt: "desc" },

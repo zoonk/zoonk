@@ -13,12 +13,7 @@ describe("computeLessonScore (generic)", () => {
       ],
     });
 
-    expect(result).toEqual({
-      brainPower: 10,
-      correctCount: 5,
-      energyDelta: 1,
-      incorrectCount: 0,
-    });
+    expect(result).toEqual({ brainPower: 10, correctCount: 5, energyDelta: 1, incorrectCount: 0 });
   });
 
   test("all incorrect (5): BP=10, energyDelta=-0.5", () => {

@@ -107,9 +107,5 @@ export function getPhaseWeights(kind: GeneratedLessonKind): Record<PhaseName, nu
     };
   }
 
-  return {
-    ...ZERO_WEIGHTS,
-    gettingStarted: 10,
-    saving: 90,
-  };
+  return { ...ZERO_WEIGHTS, gettingStarted: 10, saving: 90 };
 }

@@ -23,18 +23,13 @@ test.describe("Level Page", () => {
       // User clicks level card on home page (use flexible matcher for belt name)
       await authenticatedPage
         .getByRole("link")
-        .filter({
-          has: authenticatedPage.getByText(/belt - level \d+/i),
-        })
+        .filter({ has: authenticatedPage.getByText(/belt - level \d+/i) })
         .click();
 
       await expect(authenticatedPage).toHaveURL(/\/level/);
 
       await expect(
-        authenticatedPage.getByRole("heading", {
-          level: 1,
-          name: /^level$/i,
-        }),
+        authenticatedPage.getByRole("heading", { level: 1, name: /^level$/i }),
       ).toBeVisible();
 
       await expect(authenticatedPage.getByText(/vs last month/i)).toBeVisible();
@@ -100,10 +95,7 @@ test.describe("Level Page", () => {
 
       // Page still shows data
       await expect(
-        authenticatedPage.getByRole("heading", {
-          level: 1,
-          name: /^level$/i,
-        }),
+        authenticatedPage.getByRole("heading", { level: 1, name: /^level$/i }),
       ).toBeVisible();
     });
 
@@ -112,9 +104,7 @@ test.describe("Level Page", () => {
 
       await expect(authenticatedPage.getByText(/vs last month/i)).toBeVisible();
 
-      const prevButton = authenticatedPage.getByRole("button", {
-        name: /previous period/i,
-      });
+      const prevButton = authenticatedPage.getByRole("button", { name: /previous period/i });
 
       await prevButton.click();
       await authenticatedPage.waitForURL(/offset=1/);

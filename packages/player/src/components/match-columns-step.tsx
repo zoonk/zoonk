@@ -197,11 +197,7 @@ export function MatchColumnsStep({
         setSelected(null);
 
         if (nextCorrect.length === content.pairs.length) {
-          onSelectAnswer(step.id, {
-            kind: "matchColumns",
-            mistakes,
-            userPairs: nextCorrect,
-          });
+          onSelectAnswer(step.id, { kind: "matchColumns", mistakes, userPairs: nextCorrect });
         }
       } else {
         void trigger("warning");

@@ -15,9 +15,7 @@ import { segmentWords } from "@zoonk/utils/string";
 import { type SelectedAnswer } from "./player-reducer";
 import { type PlayerCheckBehavior, getPlayerCheckBehavior } from "./player-step-behavior";
 
-type CheckStepResult = {
-  result: AnswerResult;
-};
+type CheckStepResult = { result: AnswerResult };
 
 const MISMATCH_RESULT: CheckStepResult = {
   result: { correctAnswer: null, feedback: null, isCorrect: false },
@@ -49,9 +47,7 @@ function checkMatchColumns(step: SerializedStep, answer: SelectedAnswer): CheckS
   }
 
   const content = parseStepContent("matchColumns", step.content);
-  return {
-    result: checkMatchColumnsAnswer(content, answer.userPairs, answer.mistakes),
-  };
+  return { result: checkMatchColumnsAnswer(content, answer.userPairs, answer.mistakes) };
 }
 
 function checkSortOrder(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
@@ -81,9 +77,7 @@ function checkTranslationStep(step: SerializedStep, answer: SelectedAnswer): Che
     return MISMATCH_RESULT;
   }
 
-  return {
-    result: checkTranslationAnswer(step.word.id, answer.selectedOptionId, step.word.word),
-  };
+  return { result: checkTranslationAnswer(step.word.id, answer.selectedOptionId, step.word.word) };
 }
 
 function checkReadingStep(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {

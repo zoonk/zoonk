@@ -13,9 +13,7 @@ Cache Components enable Partial Prerendering (PPR) - mix static, cached, and dyn
 // next.config.ts
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  cacheComponents: true,
-};
+const nextConfig: NextConfig = { cacheComponents: true };
 
 export default nextConfig;
 ```
@@ -318,9 +316,7 @@ async function Stats() {
 
 async function Notifications() {
   const userId = (await cookies()).get("userId")?.value;
-  const notifications = await db.notifications.findMany({
-    where: { userId, read: false },
-  });
+  const notifications = await db.notifications.findMany({ where: { userId, read: false } });
   return <NotificationList items={notifications} />;
 }
 ```

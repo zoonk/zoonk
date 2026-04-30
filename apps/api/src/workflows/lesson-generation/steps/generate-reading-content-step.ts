@@ -13,20 +13,11 @@ import { type LessonContext } from "./get-lesson-step";
 async function getVocabularyWordsSincePreviousReading(context: LessonContext): Promise<string[]> {
   const previousReading = await prisma.lesson.findFirst({
     orderBy: { position: "desc" },
-    where: {
-      chapterId: context.chapterId,
-      kind: "reading",
-      position: { lt: context.position },
-    },
+    where: { chapterId: context.chapterId, kind: "reading", position: { lt: context.position } },
   });
 
   const vocabularyLessons = await prisma.lesson.findMany({
-    include: {
-      words: {
-        include: { word: true },
-        orderBy: { createdAt: "asc" },
-      },
-    },
+    include: { words: { include: { word: true }, orderBy: { createdAt: "asc" } } },
     orderBy: { position: "asc" },
     where: {
       chapterId: context.chapterId,

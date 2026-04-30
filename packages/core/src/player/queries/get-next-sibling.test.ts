@@ -159,11 +159,7 @@ describe("getNextSibling - lesson level", () => {
       level: "lesson",
     });
 
-    expect(result).toEqual(
-      expect.objectContaining({
-        lessonSlug: nextLesson.slug,
-      }),
-    );
+    expect(result).toEqual(expect.objectContaining({ lessonSlug: nextLesson.slug }));
   });
 });
 
@@ -190,25 +186,13 @@ describe("getNextSibling - chapter level", () => {
   });
 
   test("returns next chapter in course", async () => {
-    const result = await getNextSibling({
-      chapterPosition: 0,
-      courseId,
-      level: "chapter",
-    });
+    const result = await getNextSibling({ chapterPosition: 0, courseId, level: "chapter" });
 
-    expect(result).toMatchObject({
-      brandSlug: orgSlug,
-      chapterSlug: chapter2Slug,
-      courseSlug,
-    });
+    expect(result).toMatchObject({ brandSlug: orgSlug, chapterSlug: chapter2Slug, courseSlug });
   });
 
   test("returns null when last chapter", async () => {
-    const result = await getNextSibling({
-      chapterPosition: 1,
-      courseId,
-      level: "chapter",
-    });
+    const result = await getNextSibling({ chapterPosition: 1, courseId, level: "chapter" });
 
     expect(result).toBeNull();
   });
@@ -244,10 +228,6 @@ describe("getNextSibling - chapter level", () => {
       level: "chapter",
     });
 
-    expect(result).toEqual(
-      expect.objectContaining({
-        chapterSlug: chapters[2]?.slug,
-      }),
-    );
+    expect(result).toEqual(expect.objectContaining({ chapterSlug: chapters[2]?.slug }));
   });
 });

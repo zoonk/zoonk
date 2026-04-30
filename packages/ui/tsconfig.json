@@ -1,9 +1,5 @@
 {
-  "compilerOptions": {
-    "paths": {
-      "@zoonk/ui/*": ["./src/*"]
-    }
-  },
+  "compilerOptions": { "paths": { "@zoonk/ui/*": ["./src/*"] } },
   "exclude": ["node_modules", "dist"],
   "extends": "@zoonk/tsconfig/react-library.json",
   "include": ["."]

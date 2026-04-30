@@ -12,14 +12,8 @@ vi.mock("@zoonk/core/steps/content-image", () => ({
 describe(generateStepImages, () => {
   test("returns one uploaded image per prompt", async () => {
     generateContentStepImageMock
-      .mockResolvedValueOnce({
-        data: "https://example.com/step-1.webp",
-        error: null,
-      })
-      .mockResolvedValueOnce({
-        data: "https://example.com/step-2.webp",
-        error: null,
-      });
+      .mockResolvedValueOnce({ data: "https://example.com/step-1.webp", error: null })
+      .mockResolvedValueOnce({ data: "https://example.com/step-2.webp", error: null });
 
     const images = await generateStepImages({
       language: "en",
@@ -52,24 +46,15 @@ describe(generateStepImages, () => {
     });
 
     await expect(
-      generateStepImages({
-        language: "en",
-        prompts: ["Broken prompt"],
-      }),
+      generateStepImages({ language: "en", prompts: ["Broken prompt"] }),
     ).rejects.toThrow("Image generation failed");
   });
 
   test("throws when image generation returns no URL", async () => {
-    generateContentStepImageMock.mockResolvedValueOnce({
-      data: null,
-      error: null,
-    });
+    generateContentStepImageMock.mockResolvedValueOnce({ data: null, error: null });
 
     await expect(
-      generateStepImages({
-        language: "en",
-        prompts: ["Missing URL prompt"],
-      }),
+      generateStepImages({ language: "en", prompts: ["Missing URL prompt"] }),
     ).rejects.toThrow("Image generation returned no URL for prompt: Missing URL prompt");
   });
 
@@ -79,11 +64,7 @@ describe(generateStepImages, () => {
       error: null,
     });
 
-    await generateStepImages({
-      language: "en",
-      preset: "practice",
-      prompts: ["Practice prompt"],
-    });
+    await generateStepImages({ language: "en", preset: "practice", prompts: ["Practice prompt"] });
 
     expect(generateContentStepImageMock).toHaveBeenCalledWith({
       language: "en",

@@ -22,10 +22,7 @@ export async function vocabularyLessonWorkflow(context: LessonContext): Promise<
     words: content.words,
   });
 
-  const vocabularyTargetWords = collectVocabularyTargetWords({
-    distractors,
-    words: content.words,
-  });
+  const vocabularyTargetWords = collectVocabularyTargetWords({ distractors, words: content.words });
 
   const [{ pronunciations }, { wordAudioUrls }, { romanizations }] = await Promise.all([
     generateVocabularyPronunciationStep({ context, words: vocabularyTargetWords }),

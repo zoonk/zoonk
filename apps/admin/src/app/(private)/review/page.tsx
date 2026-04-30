@@ -12,9 +12,7 @@ import { type Metadata } from "next";
 import { Suspense } from "react";
 import { ReviewLanding } from "./review-landing";
 
-export const metadata: Metadata = {
-  title: "Content Review",
-};
+export const metadata: Metadata = { title: "Content Review" };
 
 function ReviewLandingSkeleton() {
   return (

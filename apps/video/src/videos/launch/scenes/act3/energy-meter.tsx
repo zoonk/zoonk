@@ -28,14 +28,7 @@ export function EnergyIntro() {
 
   return (
     <SceneContainer bg="white">
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 28,
-        }}
-      >
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 28 }}>
         <SceneHeadline setup={t.energySetup} payoff={t.energyPayoff} fontSize={44} />
 
         <div style={{ ...gaugeStyle, position: "relative", width: 140, height: 88 }}>
@@ -105,14 +98,7 @@ export function EnergyDip() {
 
   return (
     <SceneContainer bg="white">
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 28,
-        }}
-      >
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 28 }}>
         <SceneHeadline setup={t.energyDipSetup} payoff={t.energyDipPayoff} fontSize={44} />
 
         <div style={{ ...gaugeStyle, position: "relative", width: 140, height: 88 }}>

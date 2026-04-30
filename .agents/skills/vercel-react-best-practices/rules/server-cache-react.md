@@ -17,9 +17,7 @@ import { cache } from "react";
 export const getCurrentUser = cache(async () => {
   const session = await auth();
   if (!session?.user?.id) return null;
-  return await db.user.findUnique({
-    where: { id: session.user.id },
-  });
+  return await db.user.findUnique({ where: { id: session.user.id } });
 });
 ```
 

@@ -37,10 +37,7 @@ export async function extractFrames({
   onVideoSample,
   signal,
 }: ExtractFramesProps): Promise<void> {
-  using input = new Input({
-    formats: ALL_FORMATS,
-    source: new UrlSource(src),
-  });
+  using input = new Input({ formats: ALL_FORMATS, source: new UrlSource(src) });
 
   const [durationInSeconds, format, videoTrack] = await Promise.all([
     input.computeDuration(),
@@ -59,10 +56,7 @@ export async function extractFrames({
   const timestamps =
     typeof timestampsInSeconds === "function"
       ? await timestampsInSeconds({
-          track: {
-            width: videoTrack.displayWidth,
-            height: videoTrack.displayHeight,
-          },
+          track: { width: videoTrack.displayWidth, height: videoTrack.displayHeight },
           container: format.name,
           durationInSeconds,
         })
@@ -187,9 +181,7 @@ const timeoutPromise = new Promise<never>((_, reject) => {
     reject(new Error("Frame extraction timed out after 10 seconds"));
   }, 10000);
 
-  controller.signal.addEventListener("abort", () => clearTimeout(timeoutId), {
-    once: true,
-  });
+  controller.signal.addEventListener("abort", () => clearTimeout(timeoutId), { once: true });
 });
 
 try {

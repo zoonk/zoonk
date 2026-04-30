@@ -11,18 +11,9 @@ Return an object with `examples` (2-4 sentences with highlights) and `exercises`
 ```json
 {
   "examples": [
-    {
-      "sentence": "Yo hablo español.",
-      "highlight": "hablo"
-    },
-    {
-      "sentence": "Ella habla con su madre.",
-      "highlight": "habla"
-    },
-    {
-      "sentence": "Nosotros hablamos mucho.",
-      "highlight": "hablamos"
-    }
+    { "sentence": "Yo hablo español.", "highlight": "hablo" },
+    { "sentence": "Ella habla con su madre.", "highlight": "habla" },
+    { "sentence": "Nosotros hablamos mucho.", "highlight": "hablamos" }
   ],
   "exercises": [
     {
@@ -49,16 +40,8 @@ Return an object with `examples` (2-4 sentences with highlights) and `exercises`
     { "sentence": "田中さんは先生です。", "highlight": "は" }
   ],
   "exercises": [
-    {
-      "template": "猫[BLANK]かわいいです。",
-      "answer": "は",
-      "distractors": ["が", "を", "に"]
-    },
-    {
-      "template": "あなた[BLANK]だれですか。",
-      "answer": "は",
-      "distractors": ["が", "を", "の"]
-    }
+    { "template": "猫[BLANK]かわいいです。", "answer": "は", "distractors": ["が", "を", "に"] },
+    { "template": "あなた[BLANK]だれですか。", "answer": "は", "distractors": ["が", "を", "の"] }
   ]
 }
 ```

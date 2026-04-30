@@ -24,12 +24,7 @@ const cachedListUsers = cache(async function cachedListUsers(
     : undefined;
 
   const [users, total] = await Promise.all([
-    prisma.user.findMany({
-      orderBy: { createdAt: "desc" },
-      skip: offset,
-      take: limit,
-      where,
-    }),
+    prisma.user.findMany({ orderBy: { createdAt: "desc" }, skip: offset, take: limit, where }),
     prisma.user.count({ where }),
   ]);
 
@@ -37,9 +32,7 @@ const cachedListUsers = cache(async function cachedListUsers(
 
   const subscriptions =
     userIds.length > 0
-      ? await prisma.subscription.findMany({
-          where: { referenceId: { in: userIds } },
-        })
+      ? await prisma.subscription.findMany({ where: { referenceId: { in: userIds } } })
       : [];
 
   const subscriptionsByUserId = groupSubscriptionsByUser({ subscriptions });

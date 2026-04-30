@@ -45,11 +45,7 @@ EXPECTED BEHAVIOR:
 ${SHARED_EXPECTATIONS}
     `,
     id: "it-ciao-polysemy",
-    userInput: {
-      input: "ciao",
-      language: "it",
-      shape: "any",
-    },
+    userInput: { input: "ciao", language: "it", shape: "any" },
   },
   {
     expectations: `
@@ -66,11 +62,7 @@ EXPECTED BEHAVIOR:
 ${SHARED_EXPECTATIONS}
     `,
     id: "pt-boa-noite-greeting",
-    userInput: {
-      input: "boa noite",
-      language: "pt",
-      shape: "any",
-    },
+    userInput: { input: "boa noite", language: "pt", shape: "any" },
   },
   {
     expectations: `
@@ -82,11 +74,7 @@ EXPECTED BEHAVIOR:
 ${SHARED_EXPECTATIONS}
     `,
     id: "en-money-polysemy",
-    userInput: {
-      input: "money",
-      language: "en",
-      shape: "any",
-    },
+    userInput: { input: "money", language: "en", shape: "any" },
   },
   {
     expectations: `
@@ -99,11 +87,7 @@ EXPECTED BEHAVIOR:
 ${SHARED_EXPECTATIONS}
     `,
     id: "de-sentence-one-word-only",
-    userInput: {
-      input: "Guten Morgen, Anna!",
-      language: "de",
-      shape: "single-word",
-    },
+    userInput: { input: "Guten Morgen, Anna!", language: "de", shape: "single-word" },
   },
   {
     expectations: `
@@ -114,11 +98,7 @@ EXPECTED BEHAVIOR:
 ${SHARED_EXPECTATIONS}
     `,
     id: "ja-non-roman",
-    userInput: {
-      input: "猫",
-      language: "ja",
-      shape: "any",
-    },
+    userInput: { input: "猫", language: "ja", shape: "any" },
   },
   {
     expectations: `
@@ -129,11 +109,7 @@ EXPECTED BEHAVIOR:
 ${SHARED_EXPECTATIONS}
     `,
     id: "ko-non-roman",
-    userInput: {
-      input: "학교",
-      language: "ko",
-      shape: "any",
-    },
+    userInput: { input: "학교", language: "ko", shape: "any" },
   },
   {
     expectations: `
@@ -145,11 +121,7 @@ EXPECTED BEHAVIOR:
 ${SHARED_EXPECTATIONS}
     `,
     id: "zh-sentence-non-roman",
-    userInput: {
-      input: "我喜欢咖啡。",
-      language: "zh",
-      shape: "single-word",
-    },
+    userInput: { input: "我喜欢咖啡。", language: "zh", shape: "single-word" },
   },
   {
     expectations: `
@@ -160,10 +132,6 @@ EXPECTED BEHAVIOR:
 ${SHARED_EXPECTATIONS}
     `,
     id: "fr-clean-output",
-    userInput: {
-      input: "petit",
-      language: "fr",
-      shape: "any",
-    },
+    userInput: { input: "petit", language: "fr", shape: "any" },
   },
 ];

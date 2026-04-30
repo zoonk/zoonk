@@ -209,10 +209,7 @@ describe(getUpcomingImages, () => {
         }),
         buildStep({
           content: {
-            image: {
-              prompt: "Also behind",
-              url: "https://example.com/also-behind.jpg",
-            },
+            image: { prompt: "Also behind", url: "https://example.com/also-behind.jpg" },
             text: "Also behind",
             title: "Also behind",
             variant: "text",

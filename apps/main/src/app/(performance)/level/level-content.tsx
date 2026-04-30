@@ -20,11 +20,7 @@ export async function LevelContent({
   const locale = await getLocale();
 
   const [data, session] = await Promise.all([
-    getBpHistory({
-      locale,
-      offset: Number(offset),
-      period: validPeriod,
-    }),
+    getBpHistory({ locale, offset: Number(offset), period: validPeriod }),
     getSession(),
   ]);
 

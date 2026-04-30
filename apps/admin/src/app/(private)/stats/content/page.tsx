@@ -6,9 +6,7 @@ import { AdminPeriodNavigation } from "../_components/admin-period-navigation";
 import { StatsPageLayout } from "../_components/stats-page-layout";
 import { ContentMetrics, ContentMetricsSkeleton } from "./content-metrics";
 
-export const metadata: Metadata = {
-  title: "Content & Operations",
-};
+export const metadata: Metadata = { title: "Content & Operations" };
 
 export default async function ContentPage({ searchParams }: PageProps<"/stats/content">) {
   const { period: rawPeriod, offset: rawOffset } = await searchParams;

@@ -17,12 +17,7 @@ function buildTouch({
   x: number;
   y: number;
 }) {
-  return new Touch({
-    clientX: x,
-    clientY: y,
-    identifier,
-    target,
-  });
+  return new Touch({ clientX: x, clientY: y, identifier, target });
 }
 
 function swipeLeft(target: HTMLElement) {
@@ -34,10 +29,7 @@ function swipeLeft(target: HTMLElement) {
     targetTouches: [startTouch],
     touches: [startTouch],
   });
-  fireEvent.touchEnd(globalThis.window, {
-    changedTouches: [endTouch],
-    touches: [],
-  });
+  fireEvent.touchEnd(globalThis.window, { changedTouches: [endTouch], touches: [] });
 }
 
 function tapLeft(target: HTMLElement) {
@@ -48,10 +40,7 @@ function tapLeft(target: HTMLElement) {
     targetTouches: [touch],
     touches: [touch],
   });
-  fireEvent.touchEnd(globalThis.window, {
-    changedTouches: [touch],
-    touches: [],
-  });
+  fireEvent.touchEnd(globalThis.window, { changedTouches: [touch], touches: [] });
 }
 
 function tapRight(target: HTMLElement) {
@@ -62,10 +51,7 @@ function tapRight(target: HTMLElement) {
     targetTouches: [touch],
     touches: [touch],
   });
-  fireEvent.touchEnd(globalThis.window, {
-    changedTouches: [touch],
-    touches: [],
-  });
+  fireEvent.touchEnd(globalThis.window, { changedTouches: [touch], touches: [] });
 }
 
 function tapExpandedImageBackdrop(target: HTMLElement) {
@@ -79,10 +65,7 @@ function tapExpandedImageBackdrop(target: HTMLElement) {
     touches: [touch],
   });
 
-  fireEvent.touchEnd(globalThis.window, {
-    changedTouches: [touch],
-    touches: [],
-  });
+  fireEvent.touchEnd(globalThis.window, { changedTouches: [touch], touches: [] });
 
   fireEvent.click(target, { clientX: x, clientY: y });
 }

@@ -99,32 +99,16 @@ export async function seedCourses(prisma: PrismaClient, orgs: SeedOrganizations)
   await Promise.all([
     ...coursesData.map((course) =>
       prisma.course.upsert({
-        create: {
-          ...course,
-          organizationId: orgs.ai.id,
-        },
+        create: { ...course, organizationId: orgs.ai.id },
         update: {},
-        where: {
-          orgSlug: {
-            organizationId: orgs.ai.id,
-            slug: course.slug,
-          },
-        },
+        where: { orgSlug: { organizationId: orgs.ai.id, slug: course.slug } },
       }),
     ),
     ...testOrgCoursesData.map((course) =>
       prisma.course.upsert({
-        create: {
-          ...course,
-          organizationId: orgs.testOrg.id,
-        },
+        create: { ...course, organizationId: orgs.testOrg.id },
         update: {},
-        where: {
-          orgSlug: {
-            organizationId: orgs.testOrg.id,
-            slug: course.slug,
-          },
-        },
+        where: { orgSlug: { organizationId: orgs.testOrg.id, slug: course.slug } },
       }),
     ),
   ]);

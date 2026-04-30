@@ -70,10 +70,7 @@ describe(saveReadingLessonStep, () => {
           where: { lessonId: context.id },
         }),
         prisma.lessonWord.findMany({
-          where: {
-            lessonId: context.id,
-            word: { word: { in: [...generatedDistractorWords] } },
-          },
+          where: { lessonId: context.id, word: { word: { in: [...generatedDistractorWords] } } },
         }),
         prisma.step.findFirstOrThrow({
           where: { kind: "reading", lessonId: context.id, position: 0 },
@@ -101,11 +98,7 @@ describe(saveReadingLessonStep, () => {
       translation,
       translationDistractors: [`hello-${id}`, `bye-${id}`],
     });
-    expect(step).toMatchObject({
-      content: {},
-      isPublished: true,
-      sentenceId: savedSentence.id,
-    });
+    expect(step).toMatchObject({ content: {}, isPublished: true, sentenceId: savedSentence.id });
     expect(lessonWords.map((entry) => [entry.word.word, entry.translation])).toEqual([
       [normalizedCanonicalWords[0]!, `good-${id}`],
       [normalizedCanonicalWords[2]!, canonicalWords[2]],

@@ -25,11 +25,7 @@ function BeltIndicator({
   label: string;
   size?: "sm" | "md" | "lg";
 }) {
-  const sizeClasses: Record<typeof size, string> = {
-    lg: "size-6",
-    md: "size-4",
-    sm: "size-3",
-  };
+  const sizeClasses: Record<typeof size, string> = { lg: "size-6", md: "size-4", sm: "size-3" };
 
   return (
     <span

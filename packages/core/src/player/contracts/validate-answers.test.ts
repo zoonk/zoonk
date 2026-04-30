@@ -42,9 +42,7 @@ describe(validateAnswers, () => {
   test("validates fillBlank answer", () => {
     const steps = [{ content: fillBlankContent, id: "2", kind: "fillBlank" }];
 
-    const results = validateAnswers(steps, {
-      "2": { kind: "fillBlank", userAnswers: ["dog"] },
-    });
+    const results = validateAnswers(steps, { "2": { kind: "fillBlank", userAnswers: ["dog"] } });
 
     expect(results).toHaveLength(1);
     expect(results[0]?.isCorrect).toBe(false);
@@ -65,14 +63,7 @@ describe(validateAnswers, () => {
   });
 
   test("validates translation answer against word ID", () => {
-    const steps = [
-      {
-        content: {},
-        id: "4",
-        kind: "translation",
-        word: { id: "100" },
-      },
-    ];
+    const steps = [{ content: {}, id: "4", kind: "translation", word: { id: "100" } }];
 
     const results = validateAnswers(steps, {
       "4": { kind: "translation", selectedOptionId: "100" },
@@ -83,14 +74,7 @@ describe(validateAnswers, () => {
   });
 
   test("translation answer with wrong word ID is incorrect", () => {
-    const steps = [
-      {
-        content: {},
-        id: "4",
-        kind: "translation",
-        word: { id: "100" },
-      },
-    ];
+    const steps = [{ content: {}, id: "4", kind: "translation", word: { id: "100" } }];
 
     const results = validateAnswers(steps, {
       "4": { kind: "translation", selectedOptionId: "999" },

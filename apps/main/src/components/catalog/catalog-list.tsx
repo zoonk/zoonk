@@ -61,10 +61,7 @@ export function CatalogListSearch<T extends { id: string | number; title: string
     }
 
     const matching = items.filter((item) => normalizeString(item.title).includes(query));
-    return {
-      filteredIds: new Set(matching.map((item) => String(item.id))),
-      isSearchActive: true,
-    };
+    return { filteredIds: new Set(matching.map((item) => String(item.id))), isSearchActive: true };
   }, [items, search]);
 
   return (

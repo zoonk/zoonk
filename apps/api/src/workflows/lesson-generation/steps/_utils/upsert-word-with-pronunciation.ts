@@ -39,12 +39,7 @@ export async function upsertWordWithPronunciation(params: {
         wordId: record.id,
       },
       update: { pronunciation: params.pronunciation },
-      where: {
-        wordPronunciation: {
-          userLanguage: params.userLanguage,
-          wordId: record.id,
-        },
-      },
+      where: { wordPronunciation: { userLanguage: params.userLanguage, wordId: record.id } },
     });
   }
 

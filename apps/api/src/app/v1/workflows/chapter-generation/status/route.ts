@@ -14,11 +14,7 @@ export async function GET(request: Request) {
 
   const run = getRun(parsed.data.runId);
 
-  const stream = run.getReadable<string>({
-    startIndex: parsed.data.startIndex,
-  });
+  const stream = run.getReadable<string>({ startIndex: parsed.data.startIndex });
 
-  return new Response(stream, {
-    headers: { "Content-Type": "text/event-stream" },
-  });
+  return new Response(stream, { headers: { "Content-Type": "text/event-stream" } });
 }

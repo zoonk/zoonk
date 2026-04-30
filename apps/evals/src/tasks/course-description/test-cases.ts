@@ -25,10 +25,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-frontend-development",
-    userInput: {
-      language: "en",
-      title: "Frontend Development",
-    },
+    userInput: { language: "en", title: "Frontend Development" },
   },
   {
     expectations: `
@@ -40,10 +37,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-french",
-    userInput: {
-      language: "en",
-      title: "French",
-    },
+    userInput: { language: "en", title: "French" },
   },
   {
     expectations: `
@@ -55,10 +49,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-inteligencia-artificial",
-    userInput: {
-      language: "pt",
-      title: "Inteligência Artificial",
-    },
+    userInput: { language: "pt", title: "Inteligência Artificial" },
   },
   {
     expectations: `
@@ -70,10 +61,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "es-desarrollo-web",
-    userInput: {
-      language: "es",
-      title: "Desarrollo Web",
-    },
+    userInput: { language: "es", title: "Desarrollo Web" },
   },
   {
     expectations: `
@@ -85,9 +73,6 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-the-matrix",
-    userInput: {
-      language: "en",
-      title: "The Matrix",
-    },
+    userInput: { language: "en", title: "The Matrix" },
   },
 ];

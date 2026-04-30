@@ -12,10 +12,7 @@ const periods: { label: string; value: HistoryPeriod }[] = [
 ];
 
 export function AdminPeriodTabs() {
-  const [period, setPeriod] = useQueryState("period", {
-    defaultValue: "month",
-    shallow: false,
-  });
+  const [period, setPeriod] = useQueryState("period", { defaultValue: "month", shallow: false });
 
   const [, setOffset] = useQueryState("offset", { shallow: false });
 

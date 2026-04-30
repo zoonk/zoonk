@@ -68,12 +68,7 @@ return (
     {frequencies.map((v, i) => (
       <div
         key={i}
-        style={{
-          flex: 1,
-          height: `${v * 100}%`,
-          backgroundColor: "#0b84f3",
-          margin: "0 1px",
-        }}
+        style={{ flex: 1, height: `${v * 100}%`, backgroundColor: "#0b84f3", margin: "0 1px" }}
       />
     ))}
   </div>

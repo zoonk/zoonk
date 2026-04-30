@@ -6,10 +6,7 @@ import { auth } from "@zoonk/auth/testing";
  * This is useful for simulating authenticated requests in tests.
  */
 export async function signInAs(email: string, password: string) {
-  const response = await auth.api.signInEmail({
-    asResponse: true,
-    body: { email, password },
-  });
+  const response = await auth.api.signInEmail({ asResponse: true, body: { email, password } });
 
   const cookie = response.headers.get("set-cookie");
 

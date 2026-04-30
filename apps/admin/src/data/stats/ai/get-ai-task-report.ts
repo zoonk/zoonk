@@ -46,10 +46,7 @@ export async function getAiTaskReport({
   return {
     averageMarketCostPerRequest,
     defaultModels: usage.defaultModels,
-    estimatedMarketCost: calculateEstimatedMarketCost({
-      averageMarketCostPerRequest,
-      runCount,
-    }),
+    estimatedMarketCost: calculateEstimatedMarketCost({ averageMarketCostPerRequest, runCount }),
     fallbackRequestCount: usage.fallbackRequestCount,
     hasFallbackTracking: usage.hasFallbackTracking,
     models: usage.models,

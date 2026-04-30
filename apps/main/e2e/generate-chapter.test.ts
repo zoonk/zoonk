@@ -64,10 +64,7 @@ function createRouteHandler(options: MockApiOptions) {
         return;
       }
       await route.fulfill({
-        body: JSON.stringify({
-          message: "Workflow started",
-          runId: triggerResponse.runId,
-        }),
+        body: JSON.stringify({ message: "Workflow started", runId: triggerResponse.runId }),
         contentType: "application/json",
         status: 200,
       });
@@ -198,10 +195,7 @@ test.describe("Generate Chapter Page - With Subscription", () => {
         slug: `e2e-ready-lesson-${uniqueId}`,
         title: `E2E Ready Lesson ${uniqueId}`,
       }),
-      prisma.chapter.update({
-        data: { generationStatus: "completed" },
-        where: { id: chapter.id },
-      }),
+      prisma.chapter.update({ data: { generationStatus: "completed" }, where: { id: chapter.id } }),
     ]);
 
     await page.goto(`/generate/ch/${chapter.id}`);

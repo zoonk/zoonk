@@ -18,10 +18,7 @@ export async function addCategoriesStep(input: {
     courseId: input.course.courseId,
   }));
 
-  await prisma.courseCategory.createMany({
-    data: categories,
-    skipDuplicates: true,
-  });
+  await prisma.courseCategory.createMany({ data: categories, skipDuplicates: true });
 
   await stream.status({ status: "completed", step: "addCategories" });
 }

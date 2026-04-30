@@ -20,11 +20,7 @@ export async function organizationFixture(attrs?: Partial<Organization>) {
   const params = organizationAttrs(attrs);
 
   const org = await prisma.organization.create({
-    data: {
-      ...params,
-      createdAt: new Date(),
-      id: randomUUID(),
-    },
+    data: { ...params, createdAt: new Date(), id: randomUUID() },
   });
 
   return org;
@@ -33,21 +29,14 @@ export async function organizationFixture(attrs?: Partial<Organization>) {
 export async function aiOrganizationFixture() {
   try {
     return await prisma.organization.upsert({
-      create: {
-        id: randomUUID(),
-        kind: "brand",
-        name: "Zoonk AI",
-        slug: AI_ORG_SLUG,
-      },
+      create: { id: randomUUID(), kind: "brand", name: "Zoonk AI", slug: AI_ORG_SLUG },
       update: {},
       where: { slug: AI_ORG_SLUG },
     });
   } catch (error) {
     // Handle upsert race condition - another test may have created the org concurrently
     if (isPrismaUniqueConstraintError(error)) {
-      const existing = await prisma.organization.findUnique({
-        where: { slug: AI_ORG_SLUG },
-      });
+      const existing = await prisma.organization.findUnique({ where: { slug: AI_ORG_SLUG } });
 
       if (existing) {
         return existing;

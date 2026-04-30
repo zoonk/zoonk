@@ -5,12 +5,14 @@ import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateQuizImagesStep } from "./generate-quiz-images-step";
 
 vi.mock("@zoonk/core/steps/image", () => ({
-  generateStepImage: vi.fn().mockImplementation(({ prompt }) =>
-    Promise.resolve({
-      data: `https://example.com/${encodeURIComponent(prompt)}.webp`,
-      error: null,
-    }),
-  ),
+  generateStepImage: vi
+    .fn()
+    .mockImplementation(({ prompt }) =>
+      Promise.resolve({
+        data: `https://example.com/${encodeURIComponent(prompt)}.webp`,
+        error: null,
+      }),
+    ),
 }));
 
 describe(generateQuizImagesStep, () => {

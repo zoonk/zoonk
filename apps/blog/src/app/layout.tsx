@@ -9,10 +9,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "./" },
   description: "Thoughts on education, technology, and open source.",
   metadataBase: new URL(BLOG_URL),
-  title: {
-    default: "Zoonk Blog",
-    template: "%s | Zoonk Blog",
-  },
+  title: { default: "Zoonk Blog", template: "%s | Zoonk Blog" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

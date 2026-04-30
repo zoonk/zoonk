@@ -15,11 +15,7 @@ import {
   PerformanceChartXAxis,
 } from "../_components/performance-area-chart";
 
-type SerializedDataPoint = {
-  date: string;
-  bp: number;
-  label: string;
-};
+type SerializedDataPoint = { date: string; bp: number; label: string };
 
 export function LevelChartClient({
   dataPoints,

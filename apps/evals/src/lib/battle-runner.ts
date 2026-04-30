@@ -52,14 +52,8 @@ function anonymizeOutputs(outputs: { modelId: string; output: string }[]): {
 
   shuffled.forEach((item, index) => {
     const anonymousId = `Model ${letters[index]}`;
-    anonymizedOutputs.push({
-      anonymousId,
-      output: item.output,
-    });
-    mapping.push({
-      anonymousId,
-      modelId: item.modelId,
-    });
+    anonymizedOutputs.push({ anonymousId, output: item.output });
+    mapping.push({ anonymousId, modelId: item.modelId });
   });
 
   return { anonymizedOutputs, mapping };

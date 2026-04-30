@@ -4,9 +4,7 @@ import { MAX_QUERY_ITEMS, clampQueryItems } from "@zoonk/db/utils";
 import { DEFAULT_SEARCH_LIMIT, mergeSearchResults } from "@zoonk/utils/search";
 import { normalizeString } from "@zoonk/utils/string";
 
-type CourseWithOrganization = Course & {
-  organization: Organization;
-};
+type CourseWithOrganization = Course & { organization: Organization };
 
 export async function searchCourses(params: {
   query: string;
@@ -22,26 +20,18 @@ export async function searchCourses(params: {
     return [];
   }
 
-  const baseWhere = getPublishedCourseWhere({
-    organization: { kind: "brand" } as const,
-  });
+  const baseWhere = getPublishedCourseWhere({ organization: { kind: "brand" } as const });
 
   const [exactMatch, containsMatches] = await Promise.all([
     prisma.course.findFirst({
       include: { organization: true },
-      where: {
-        ...baseWhere,
-        normalizedTitle: normalizedSearch,
-      },
+      where: { ...baseWhere, normalizedTitle: normalizedSearch },
     }),
     prisma.course.findMany({
       include: { organization: true },
       orderBy: { createdAt: "desc" },
       take: limit + offset + 1,
-      where: {
-        ...baseWhere,
-        normalizedTitle: { contains: normalizedSearch, mode: "insensitive" },
-      },
+      where: { ...baseWhere, normalizedTitle: { contains: normalizedSearch, mode: "insensitive" } },
     }),
   ]);
 

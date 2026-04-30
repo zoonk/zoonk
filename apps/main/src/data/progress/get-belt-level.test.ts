@@ -25,10 +25,7 @@ describe("authenticated users", () => {
     const headers = await signInAs(user.email, user.password);
 
     await prisma.userProgress.create({
-      data: {
-        totalBrainPower: BigInt(15_000),
-        userId: user.id,
-      },
+      data: { totalBrainPower: BigInt(15_000), userId: user.id },
     });
 
     const result = await getBeltLevel(headers);
@@ -46,12 +43,7 @@ describe("authenticated users", () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
-    await prisma.userProgress.create({
-      data: {
-        totalBrainPower: BigInt(0),
-        userId: user.id,
-      },
-    });
+    await prisma.userProgress.create({ data: { totalBrainPower: BigInt(0), userId: user.id } });
 
     const result = await getBeltLevel(headers);
 

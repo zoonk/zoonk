@@ -120,9 +120,7 @@ export function ArrangeWordsInteraction({
     return [];
   });
 
-  const { play } = useWordAudio({
-    preloadUrls: wordBankOptions.map((option) => option.audioUrl),
-  });
+  const { play } = useWordAudio({ preloadUrls: wordBankOptions.map((option) => option.audioUrl) });
 
   const maxAnswerLength = Math.max(...acceptedWordLengths, correctWords.length);
 

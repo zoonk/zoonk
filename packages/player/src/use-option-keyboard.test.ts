@@ -4,12 +4,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import { useOptionKeyboard } from "./use-option-keyboard";
 
 function buildOptions(overrides: Partial<Parameters<typeof useOptionKeyboard>[0]> = {}) {
-  return {
-    enabled: true,
-    onSelect: vi.fn(),
-    optionCount: 4,
-    ...overrides,
-  };
+  return { enabled: true, onSelect: vi.fn(), optionCount: 4, ...overrides };
 }
 
 function fireKey(key: string, modifiers: Partial<KeyboardEventInit> = {}) {

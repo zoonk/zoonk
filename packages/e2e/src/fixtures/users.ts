@@ -50,10 +50,7 @@ export async function createE2EUser(
 
   const user = await prisma.user.findUniqueOrThrow({ where: { email } });
 
-  await prisma.user.update({
-    data: { username: `e2e_${uniqueId}` },
-    where: { id: user.id },
-  });
+  await prisma.user.update({ data: { username: `e2e_${uniqueId}` }, where: { id: user.id } });
 
   if (options?.orgRole) {
     const org = options.orgSlug
@@ -61,12 +58,7 @@ export async function createE2EUser(
       : await getAiOrganization();
 
     await prisma.member.create({
-      data: {
-        id: randomUUID(),
-        organizationId: org.id,
-        role: options.orgRole,
-        userId: user.id,
-      },
+      data: { id: randomUUID(), organizationId: org.id, role: options.orgRole, userId: user.id },
     });
   }
 
@@ -109,10 +101,7 @@ export async function createE2EUser(
  * to reach into internal session tables directly.
  */
 export async function generateOneTimeToken(baseURL: string, user: E2EUser): Promise<string> {
-  const ctx = await request.newContext({
-    baseURL,
-    storageState: user.storageState,
-  });
+  const ctx = await request.newContext({ baseURL, storageState: user.storageState });
 
   const response = await ctx.get("/api/auth/one-time-token/generate");
 

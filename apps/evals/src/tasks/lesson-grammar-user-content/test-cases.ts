@@ -78,16 +78,8 @@ ${SHARED_EXPECTATIONS}
         { highlight: "は", sentence: "東京は大きいです。" },
       ],
       exercises: [
-        {
-          answer: "は",
-          distractors: ["が", "を", "に"],
-          template: "猫[BLANK]かわいいです。",
-        },
-        {
-          answer: "は",
-          distractors: ["が", "を", "で"],
-          template: "私[BLANK]日本人です。",
-        },
+        { answer: "は", distractors: ["が", "を", "に"], template: "猫[BLANK]かわいいです。" },
+        { answer: "は", distractors: ["が", "を", "で"], template: "私[BLANK]日本人です。" },
       ],
       lessonDescription:
         "The topic marker particle and how it indicates what the sentence is about",
@@ -157,16 +149,8 @@ ${SHARED_EXPECTATIONS}
         { highlight: "이", sentence: "선생님이 가르쳐요." },
       ],
       exercises: [
-        {
-          answer: "가",
-          distractors: ["이", "을", "는"],
-          template: "아이[BLANK] 놀아요.",
-        },
-        {
-          answer: "이",
-          distractors: ["가", "를", "은"],
-          template: "음식[BLANK] 맛있어요.",
-        },
+        { answer: "가", distractors: ["이", "을", "는"], template: "아이[BLANK] 놀아요." },
+        { answer: "이", distractors: ["가", "를", "은"], template: "음식[BLANK] 맛있어요." },
       ],
       lessonDescription:
         "Os marcadores de sujeito coreanos e como escolher qual usar de acordo com a palavra",

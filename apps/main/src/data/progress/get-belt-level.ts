@@ -15,9 +15,7 @@ export const getBeltLevel = cache(async (headers?: Headers): Promise<BeltLevelRe
   const userId = session.user.id;
 
   const { data: progress, error } = await safeAsync(() =>
-    prisma.userProgress.findUnique({
-      where: { userId },
-    }),
+    prisma.userProgress.findUnique({ where: { userId } }),
   );
 
   if (error || !progress) {

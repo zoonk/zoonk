@@ -18,11 +18,7 @@ import {
   Wrench,
 } from "lucide-react";
 
-export type CategoryInfo = {
-  icon: LucideIcon;
-  key: CourseCategory;
-  label: string;
-};
+export type CategoryInfo = { icon: LucideIcon; key: CourseCategory; label: string };
 
 export const CATEGORY_ICONS: Record<CourseCategory, LucideIcon> = {
   arts: Palette,

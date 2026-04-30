@@ -6,11 +6,9 @@ import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateVocabularyPronunciationStep } from "./generate-vocabulary-pronunciation-step";
 
 vi.mock("@zoonk/ai/tasks/lessons/language/pronunciation", () => ({
-  generateLessonPronunciation: vi.fn().mockImplementation(({ word }) =>
-    Promise.resolve({
-      data: { pronunciation: `${word} pron` },
-    }),
-  ),
+  generateLessonPronunciation: vi
+    .fn()
+    .mockImplementation(({ word }) => Promise.resolve({ data: { pronunciation: `${word} pron` } })),
 }));
 
 describe(generateVocabularyPronunciationStep, () => {
@@ -33,10 +31,7 @@ describe(generateVocabularyPronunciationStep, () => {
     const words = [catWord, dogWord];
 
     await expect(generateVocabularyPronunciationStep({ context, words })).resolves.toEqual({
-      pronunciations: {
-        [catWord]: `${catWord} pron`,
-        [dogWord]: `${dogWord} pron`,
-      },
+      pronunciations: { [catWord]: `${catWord} pron`, [dogWord]: `${dogWord} pron` },
     });
     expect(generateLessonPronunciation).toHaveBeenCalledWith({
       targetLanguage: "ja",

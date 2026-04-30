@@ -1,8 +1,6 @@
 {
   "$schema": "./node_modules/turbo/schema.json",
-  "futureFlags": {
-    "globalConfiguration": true
-  },
+  "futureFlags": { "globalConfiguration": true },
   "global": {
     "env": [
       "AI_GATEWAY_API_KEY",
@@ -27,19 +25,10 @@
   "tasks": {
     "//#format": {},
     "//#format:fix": { "cache": false },
-    "//#lint": {
-      "dependsOn": ["@zoonk/db#db:generate"]
-    },
-    "//#lint:fix": {
-      "cache": false,
-      "dependsOn": ["@zoonk/db#db:generate"]
-    },
-    "//#quality": {
-      "dependsOn": ["//#lint", "//#format"]
-    },
-    "//#quality:fix": {
-      "dependsOn": ["//#lint:fix", "//#format:fix"]
-    },
+    "//#lint": { "dependsOn": ["@zoonk/db#db:generate"] },
+    "//#lint:fix": { "cache": false, "dependsOn": ["@zoonk/db#db:generate"] },
+    "//#quality": { "dependsOn": ["//#lint", "//#format"] },
+    "//#quality:fix": { "dependsOn": ["//#lint:fix", "//#format:fix"] },
     "build": {
       "dependsOn": ["^db:generate", "^db:deploy", "^build"],
       "outputs": [".next/**", "!.next/cache/**"]
@@ -48,43 +37,22 @@
       "dependsOn": ["^db:generate", "^build:e2e"],
       "outputs": [".next-e2e/**", "!.next-e2e/cache/**"]
     },
-    "db:deploy": {
-      "cache": false
-    },
+    "db:deploy": { "cache": false },
     "db:generate": {
       "cache": false,
       "dependsOn": ["^db:generate"],
       "outputs": ["src/generated/**"]
     },
-    "db:setup:test": {
-      "cache": false,
-      "dependsOn": ["^db:setup:test"]
-    },
-    "dev": {
-      "cache": false,
-      "dependsOn": ["^db:generate", "^dev"],
-      "persistent": true
-    },
-    "e2e": {
-      "dependsOn": ["build:e2e"],
-      "passThroughEnv": ["PLAYWRIGHT_*", "E2E_BASE_URL"]
-    },
-    "start": {
-      "cache": false,
-      "dependsOn": ["^start"],
-      "persistent": true
-    },
-    "test": {
-      "dependsOn": ["^db:generate", "^db:setup:test", "^test"]
-    },
+    "db:setup:test": { "cache": false, "dependsOn": ["^db:setup:test"] },
+    "dev": { "cache": false, "dependsOn": ["^db:generate", "^dev"], "persistent": true },
+    "e2e": { "dependsOn": ["build:e2e"], "passThroughEnv": ["PLAYWRIGHT_*", "E2E_BASE_URL"] },
+    "start": { "cache": false, "dependsOn": ["^start"], "persistent": true },
+    "test": { "dependsOn": ["^db:generate", "^db:setup:test", "^test"] },
     "test:watch": {
       "cache": false,
       "dependsOn": ["^db:generate", "^db:setup:test"],
       "persistent": true
     },
-    "typecheck": {
-      "dependsOn": ["^db:generate", "^typecheck"],
-      "outputs": [".next/types/**"]
-    }
+    "typecheck": { "dependsOn": ["^db:generate", "^typecheck"], "outputs": [".next/types/**"] }
   }
 }

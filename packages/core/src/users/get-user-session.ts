@@ -10,7 +10,5 @@ import { cache } from "react";
  * reintroduce the legacy numeric contract we are removing.
  */
 export const getSession = cache(async (reqHeaders?: Headers) =>
-  auth.api.getSession({
-    headers: reqHeaders ?? (await headers()),
-  }),
+  auth.api.getSession({ headers: reqHeaders ?? (await headers()) }),
 );

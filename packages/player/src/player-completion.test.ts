@@ -44,9 +44,7 @@ describe(computeLocalCompletion, () => {
   test("uses standard scoring for checked steps", () => {
     const steps = [
       buildStep({
-        content: {
-          options: [{ feedback: "Yes", id: "a", isCorrect: true, text: "A" }],
-        },
+        content: { options: [{ feedback: "Yes", id: "a", isCorrect: true, text: "A" }] },
         id: "mc-1",
         kind: "multipleChoice",
       }),

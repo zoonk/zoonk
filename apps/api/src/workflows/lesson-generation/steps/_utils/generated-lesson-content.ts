@@ -5,10 +5,7 @@ import { type LessonGrammarUserContentSchema } from "@zoonk/ai/tasks/lessons/lan
 import { type LessonSentencesSchema } from "@zoonk/ai/tasks/lessons/language/sentences";
 import { type VocabularyWord } from "@zoonk/ai/tasks/lessons/language/vocabulary";
 
-export type StaticLessonStep = {
-  text: string;
-  title: string;
-};
+export type StaticLessonStep = { text: string; title: string };
 
 export type PracticeLessonContent = {
   kind: "practice";
@@ -16,10 +13,7 @@ export type PracticeLessonContent = {
   steps: LessonPracticeSchema["steps"];
 };
 
-export type QuizLessonContent = {
-  kind: "quiz";
-  questions: QuizQuestion[];
-};
+export type QuizLessonContent = { kind: "quiz"; questions: QuizQuestion[] };
 
 export type GrammarLessonContent = {
   grammarContent: LessonGrammarContentSchema;
@@ -27,29 +21,18 @@ export type GrammarLessonContent = {
   userContent: LessonGrammarUserContentSchema;
 };
 
-export type VocabularyLessonContent = {
-  kind: "vocabulary";
-  words: VocabularyWord[];
-};
+export type VocabularyLessonContent = { kind: "vocabulary"; words: VocabularyWord[] };
 
-export type TranslationLessonContent = {
-  kind: "translation";
-  wordIds: string[];
-};
+export type TranslationLessonContent = { kind: "translation"; wordIds: string[] };
 
 export type ReadingLessonContent = {
   kind: "reading";
   sentences: LessonSentencesSchema["sentences"];
 };
 
-export type ListeningLessonContent = {
-  kind: "listening";
-  sentenceIds: string[];
-};
+export type ListeningLessonContent = { kind: "listening"; sentenceIds: string[] };
 
-export type EmptyLessonContent = {
-  kind: "empty";
-};
+export type EmptyLessonContent = { kind: "empty" };
 
 export type GeneratedLessonContent =
   | EmptyLessonContent
@@ -60,7 +43,4 @@ export type GeneratedLessonContent =
   | ReadingLessonContent
   | TranslationLessonContent
   | VocabularyLessonContent
-  | {
-      kind: "static";
-      steps: StaticLessonStep[];
-    };
+  | { kind: "static"; steps: StaticLessonStep[] };

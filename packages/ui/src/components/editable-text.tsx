@@ -2,9 +2,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { type VariantProps, cva } from "class-variance-authority";
 import { type LucideIcon } from "lucide-react";
 
-export type EditableLabelProps = React.ComponentProps<"label"> & {
-  icon?: LucideIcon;
-};
+export type EditableLabelProps = React.ComponentProps<"label"> & { icon?: LucideIcon };
 
 function EditableLabel({ children, className, icon: Icon, ...props }: EditableLabelProps) {
   return (
@@ -26,9 +24,7 @@ const editableTextVariants = cva(
     "transition-colors duration-150",
   ],
   {
-    defaultVariants: {
-      variant: "default",
-    },
+    defaultVariants: { variant: "default" },
     variants: {
       variant: {
         default: "text-foreground",
@@ -64,9 +60,7 @@ const editableTextareaVariants = cva(
     "transition-colors duration-150",
   ],
   {
-    defaultVariants: {
-      variant: "default",
-    },
+    defaultVariants: { variant: "default" },
     variants: {
       variant: {
         default: "text-foreground",

@@ -1,11 +1,6 @@
 import postsData from "@/app/posts.json";
 
-type Post = {
-  id: string;
-  date: string;
-  title: string;
-  authorId: string;
-};
+type Post = { id: string; date: string; title: string; authorId: string };
 
 /**
  * Group posts by year for the home page listing.

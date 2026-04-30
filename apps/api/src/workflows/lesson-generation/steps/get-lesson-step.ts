@@ -9,9 +9,7 @@ async function getLessonForGeneration(lessonId: string) {
       _count: { select: { steps: true } },
       chapter: { include: { course: { include: { organization: true } } } },
     },
-    where: getAiGenerationLessonWhere({
-      lessonWhere: { id: lessonId },
-    }),
+    where: getAiGenerationLessonWhere({ lessonWhere: { id: lessonId } }),
   });
 }
 

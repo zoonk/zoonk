@@ -11,9 +11,7 @@ export async function setLessonAsCompletedStep(input: { context: LessonContext }
   await stream.status({ status: "started", step: "setLessonAsCompleted" });
 
   await prisma.lesson.update({
-    data: {
-      generationStatus: "completed",
-    },
+    data: { generationStatus: "completed" },
     where: { id: input.context.id },
   });
 

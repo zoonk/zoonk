@@ -8,11 +8,7 @@ import {
 } from "@zoonk/ui/components/accordion";
 import { ContainerTitle } from "@zoonk/ui/components/container";
 
-type Issue = {
-  testCaseId: string;
-  conclusion: string;
-  score: number;
-};
+type Issue = { testCaseId: string; conclusion: string; score: number };
 
 const ISSUE_KINDS = ["majorErrors", "minorErrors"] as const;
 

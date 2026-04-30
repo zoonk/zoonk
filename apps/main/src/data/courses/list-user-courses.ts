@@ -22,9 +22,7 @@ export const listUserCourses = cache(
         include: { course: { include: { organization: true } } },
         orderBy: { startedAt: "desc" },
         where: {
-          course: {
-            OR: [{ organization: { kind: "brand" } }, { organizationId: null }],
-          },
+          course: { OR: [{ organization: { kind: "brand" } }, { organizationId: null }] },
           userId,
         },
       }),

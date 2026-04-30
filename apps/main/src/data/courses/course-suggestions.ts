@@ -12,21 +12,12 @@ async function findSearchPrompt(params: { language: string; prompt: string }) {
   const prompt = normalizeString(rawPrompt);
 
   return prisma.searchPrompt.findUnique({
-    include: {
-      suggestions: {
-        include: { courseSuggestion: true },
-        orderBy: { position: "asc" },
-      },
-    },
+    include: { suggestions: { include: { courseSuggestion: true }, orderBy: { position: "asc" } } },
     where: { languagePrompt: { language, prompt } },
   });
 }
 
-type SuggestionInput = {
-  title: string;
-  description: string;
-  targetLanguage: string | null;
-};
+type SuggestionInput = { title: string; description: string; targetLanguage: string | null };
 
 async function upsertSearchPromptWithSuggestions(input: {
   language: string;
@@ -150,11 +141,7 @@ export async function generateCourseSuggestions({
   const resolved = data.map((item) => resolveLanguageSuggestion(item, language));
   const deduplicated = deduplicateByTargetLanguage(resolved);
 
-  return upsertSearchPromptWithSuggestions({
-    language,
-    prompt,
-    suggestions: deduplicated,
-  });
+  return upsertSearchPromptWithSuggestions({ language, prompt, suggestions: deduplicated });
 }
 
 /**
@@ -167,9 +154,7 @@ export async function getCourseSuggestionById(id: string): Promise<CourseSuggest
     return null;
   }
 
-  return prisma.courseSuggestion.findUnique({
-    where: { id },
-  });
+  return prisma.courseSuggestion.findUnique({ where: { id } });
 }
 
 export async function getCourseSuggestionBySlug({

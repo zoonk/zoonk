@@ -73,11 +73,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "pt-english-beautiful",
-    userInput: {
-      targetLanguage: "en",
-      userLanguage: "pt",
-      word: "beautiful",
-    },
+    userInput: { targetLanguage: "en", userLanguage: "pt", word: "beautiful" },
   },
   {
     expectations: `
@@ -105,11 +101,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "pt-english-through",
-    userInput: {
-      targetLanguage: "en",
-      userLanguage: "pt",
-      word: "through",
-    },
+    userInput: { targetLanguage: "en", userLanguage: "pt", word: "through" },
   },
   {
     expectations: `
@@ -138,11 +130,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "pt-english-squirrel",
-    userInput: {
-      targetLanguage: "en",
-      userLanguage: "pt",
-      word: "squirrel",
-    },
+    userInput: { targetLanguage: "en", userLanguage: "pt", word: "squirrel" },
   },
   {
     expectations: `
@@ -170,11 +158,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "es-english-comfortable",
-    userInput: {
-      targetLanguage: "en",
-      userLanguage: "es",
-      word: "comfortable",
-    },
+    userInput: { targetLanguage: "en", userLanguage: "es", word: "comfortable" },
   },
   {
     expectations: `
@@ -203,11 +187,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "es-english-vegetable",
-    userInput: {
-      targetLanguage: "en",
-      userLanguage: "es",
-      word: "vegetable",
-    },
+    userInput: { targetLanguage: "en", userLanguage: "es", word: "vegetable" },
   },
   {
     expectations: `
@@ -237,11 +217,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "es-english-rhythm",
-    userInput: {
-      targetLanguage: "en",
-      userLanguage: "es",
-      word: "rhythm",
-    },
+    userInput: { targetLanguage: "en", userLanguage: "es", word: "rhythm" },
   },
   {
     expectations: `
@@ -270,11 +246,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "en-portuguese-desenvolvimento",
-    userInput: {
-      targetLanguage: "pt",
-      userLanguage: "en",
-      word: "desenvolvimento",
-    },
+    userInput: { targetLanguage: "pt", userLanguage: "en", word: "desenvolvimento" },
   },
   {
     expectations: `
@@ -303,11 +275,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "en-portuguese-parabens",
-    userInput: {
-      targetLanguage: "pt",
-      userLanguage: "en",
-      word: "parabéns",
-    },
+    userInput: { targetLanguage: "pt", userLanguage: "en", word: "parabéns" },
   },
   {
     expectations: `
@@ -336,11 +304,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "en-spanish-ferrocarril",
-    userInput: {
-      targetLanguage: "es",
-      userLanguage: "en",
-      word: "ferrocarril",
-    },
+    userInput: { targetLanguage: "es", userLanguage: "en", word: "ferrocarril" },
   },
   {
     expectations: `
@@ -369,11 +333,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "en-spanish-murcielago",
-    userInput: {
-      targetLanguage: "es",
-      userLanguage: "en",
-      word: "murciélago",
-    },
+    userInput: { targetLanguage: "es", userLanguage: "en", word: "murciélago" },
   },
   {
     expectations: `
@@ -400,11 +360,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "pt-english-cat",
-    userInput: {
-      targetLanguage: "en",
-      userLanguage: "pt",
-      word: "cat",
-    },
+    userInput: { targetLanguage: "en", userLanguage: "pt", word: "cat" },
   },
   {
     expectations: `
@@ -431,10 +387,6 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "es-english-go",
-    userInput: {
-      targetLanguage: "en",
-      userLanguage: "es",
-      word: "go",
-    },
+    userInput: { targetLanguage: "en", userLanguage: "es", word: "go" },
   },
 ];

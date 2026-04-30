@@ -20,11 +20,7 @@ export async function Hero() {
 
       <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
         <Link
-          className={buttonVariants({
-            className: "gap-2",
-            size: "lg",
-            variant: "default",
-          })}
+          className={buttonVariants({ className: "gap-2", size: "lg", variant: "default" })}
           href="/learn"
           prefetch
         >
@@ -33,11 +29,7 @@ export async function Hero() {
         </Link>
 
         <Link
-          className={buttonVariants({
-            className: "gap-2",
-            size: "lg",
-            variant: "outline",
-          })}
+          className={buttonVariants({ className: "gap-2", size: "lg", variant: "outline" })}
           href="/courses"
           prefetch
         >

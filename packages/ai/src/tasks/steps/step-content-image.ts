@@ -11,11 +11,7 @@ const { defaultModel } = AI_TASK_MODEL_CONFIG[taskName];
 const DEFAULT_QUALITY = "low";
 
 const STEP_CONTENT_IMAGE_PRESETS = {
-  illustration: {
-    promptTemplate: illustrationPromptTemplate,
-    size: "1024x1280",
-    taskName,
-  },
+  illustration: { promptTemplate: illustrationPromptTemplate, size: "1024x1280", taskName },
   practice: {
     promptTemplate: practicePromptTemplate,
     size: "1024x1280",

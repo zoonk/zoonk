@@ -30,9 +30,7 @@ export default function Page() {
 // Good: Use dynamic import with ssr: false
 import dynamic from "next/dynamic";
 
-const SomeChart = dynamic(() => import("some-chart-library"), {
-  ssr: false,
-});
+const SomeChart = dynamic(() => import("some-chart-library"), { ssr: false });
 
 export default function Page() {
   return <SomeChart />;
@@ -45,9 +43,7 @@ For packages that should run on server but have bundling issues:
 
 ```js
 // next.config.js
-module.exports = {
-  serverExternalPackages: ["problematic-package"],
-};
+module.exports = { serverExternalPackages: ["problematic-package"] };
 ```
 
 Use this for:
@@ -120,9 +116,7 @@ Module not found: ESM packages need to be imported
 
 ```js
 // next.config.js
-module.exports = {
-  transpilePackages: ["some-esm-package", "another-package"],
-};
+module.exports = { transpilePackages: ["some-esm-package", "another-package"] };
 ```
 
 ## Common Problematic Packages

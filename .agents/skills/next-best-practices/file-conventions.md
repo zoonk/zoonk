@@ -105,9 +105,7 @@ export function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
-export const config = {
-  matcher: ["/dashboard/:path*", "/api/:path*"],
-};
+export const config = { matcher: ["/dashboard/:path*", "/api/:path*"] };
 ```
 
 ### Next.js 16+: `proxy.ts`
@@ -124,9 +122,7 @@ export function proxy(request: NextRequest) {
   return NextResponse.next();
 }
 
-export const proxyConfig = {
-  matcher: ["/dashboard/:path*", "/api/:path*"],
-};
+export const proxyConfig = { matcher: ["/dashboard/:path*", "/api/:path*"] };
 ```
 
 | Version | File            | Export         | Config        |

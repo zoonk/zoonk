@@ -8,14 +8,8 @@ import { type ChapterStepName } from "@zoonk/core/workflows/steps";
 import { type ChapterContext } from "./get-chapter-step";
 
 export type ChapterLessonPlan =
-  | {
-      lessons: ChapterLesson[];
-      needsClassification: true;
-    }
-  | {
-      lessons: LanguageChapterLesson[];
-      needsClassification: false;
-    };
+  | { lessons: ChapterLesson[]; needsClassification: true }
+  | { lessons: LanguageChapterLesson[]; needsClassification: false };
 
 export async function generateLessonsStep(context: ChapterContext): Promise<ChapterLessonPlan> {
   "use step";

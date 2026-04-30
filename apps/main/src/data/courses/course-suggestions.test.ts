@@ -22,9 +22,7 @@ describe("course-suggestions", () => {
       title: `TypeScript ${uniqueId}`,
     };
 
-    const searchPrompt = await prisma.searchPrompt.create({
-      data: { language, prompt },
-    });
+    const searchPrompt = await prisma.searchPrompt.create({ data: { language, prompt } });
 
     const courseSuggestion = await prisma.courseSuggestion.create({
       data: {
@@ -98,14 +96,8 @@ describe("course-suggestions", () => {
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
     spy.mockResolvedValue({ data: suggestions } as never);
 
-    const result1 = await generateCourseSuggestions({
-      language,
-      prompt: prompt1,
-    });
-    const result2 = await generateCourseSuggestions({
-      language,
-      prompt: prompt2,
-    });
+    const result1 = await generateCourseSuggestions({ language, prompt: prompt1 });
+    const result2 = await generateCourseSuggestions({ language, prompt: prompt2 });
 
     // Both should reference the same suggestion ID
     expect(result1.suggestions[0]?.id).toBe(result2.suggestions[0]?.id);
@@ -124,11 +116,7 @@ describe("course-suggestions", () => {
     const prompt = `lang-override-${randomUUID()}`;
 
     const generatedSuggestions = [
-      {
-        description: "Learn Spanish from scratch.",
-        targetLanguageCode: "es",
-        title: "Espanhol",
-      },
+      { description: "Learn Spanish from scratch.", targetLanguageCode: "es", title: "Espanhol" },
     ];
 
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
@@ -156,11 +144,7 @@ describe("course-suggestions", () => {
 
     // AI returns "TOEFL" but with targetLanguageCode "en" — title should become "English"
     const generatedSuggestions = [
-      {
-        description: "Pass the TOEFL exam.",
-        targetLanguageCode: "en",
-        title: "TOEFL",
-      },
+      { description: "Pass the TOEFL exam.", targetLanguageCode: "en", title: "TOEFL" },
     ];
 
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
@@ -179,11 +163,7 @@ describe("course-suggestions", () => {
     const prompt = `non-tts-lang-${randomUUID()}`;
 
     const generatedSuggestions = [
-      {
-        description: "Learn Amharic.",
-        targetLanguageCode: "am",
-        title: "Amharic Course",
-      },
+      { description: "Learn Amharic.", targetLanguageCode: "am", title: "Amharic Course" },
     ];
 
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
@@ -203,16 +183,8 @@ describe("course-suggestions", () => {
 
     // AI returns two suggestions that both resolve to the same language
     const generatedSuggestions = [
-      {
-        description: "Pass the TOEFL exam.",
-        targetLanguageCode: "en",
-        title: "TOEFL",
-      },
-      {
-        description: "Learn English.",
-        targetLanguageCode: "en",
-        title: "Inglês",
-      },
+      { description: "Pass the TOEFL exam.", targetLanguageCode: "en", title: "TOEFL" },
+      { description: "Learn English.", targetLanguageCode: "en", title: "Inglês" },
     ];
 
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
@@ -243,12 +215,7 @@ describe("course-suggestions", () => {
     const slug = toSlug(title);
 
     const item = await prisma.courseSuggestion.create({
-      data: {
-        description: "Test description",
-        language,
-        slug,
-        title,
-      },
+      data: { description: "Test description", language, slug, title },
     });
 
     const result = await getCourseSuggestionById(item.id);
@@ -278,12 +245,7 @@ describe("course-suggestions", () => {
     const slug = toSlug(title);
 
     const item = await prisma.courseSuggestion.create({
-      data: {
-        description: "Test description",
-        language,
-        slug,
-        title,
-      },
+      data: { description: "Test description", language, slug, title },
     });
 
     const result = await getCourseSuggestionBySlug({ language, slug });
@@ -297,12 +259,7 @@ describe("course-suggestions", () => {
     const slug = toSlug(title);
 
     const item = await prisma.courseSuggestion.create({
-      data: {
-        description: "Test description",
-        language,
-        slug,
-        title,
-      },
+      data: { description: "Test description", language, slug, title },
     });
 
     // Course slugs include a locale suffix (e.g. "my-course-pt"),
@@ -316,12 +273,7 @@ describe("course-suggestions", () => {
     const slug = `multi-lang-${randomUUID()}`;
 
     const enItem = await prisma.courseSuggestion.create({
-      data: {
-        description: "English description",
-        language: "en",
-        slug,
-        title: "English Title",
-      },
+      data: { description: "English description", language: "en", slug, title: "English Title" },
     });
 
     const ptItem = await prisma.courseSuggestion.create({

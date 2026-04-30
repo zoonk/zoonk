@@ -104,16 +104,10 @@ export async function getNextLessonStateForUser({
     });
 
     if (forwardLesson) {
-      return buildOpenLessonState({
-        hasStarted,
-        lesson: forwardLesson,
-      });
+      return buildOpenLessonState({ hasStarted, lesson: forwardLesson });
     }
 
-    const reviewLesson = getReviewLesson({
-      after,
-      rows: effectiveRows,
-    });
+    const reviewLesson = getReviewLesson({ after, rows: effectiveRows });
 
     return buildCompletedScopeState({
       rows: reviewLesson ? [reviewLesson] : effectiveRows,
@@ -122,10 +116,7 @@ export async function getNextLessonStateForUser({
   }
 
   if (isScopeCompleted({ courseCompleted, durableChapterIds, rows: effectiveRows, scope })) {
-    return buildCompletedScopeState({
-      rows: effectiveRows,
-      scopeDurablyCompleted,
-    });
+    return buildCompletedScopeState({ rows: effectiveRows, scopeDurablyCompleted });
   }
 
   const firstIncompleteLesson = getFirstIncompleteLesson({
@@ -135,16 +126,10 @@ export async function getNextLessonStateForUser({
   });
 
   if (!firstIncompleteLesson) {
-    return buildCompletedScopeState({
-      rows: effectiveRows,
-      scopeDurablyCompleted,
-    });
+    return buildCompletedScopeState({ rows: effectiveRows, scopeDurablyCompleted });
   }
 
-  return buildOpenLessonState({
-    hasStarted,
-    lesson: firstIncompleteLesson,
-  });
+  return buildOpenLessonState({ hasStarted, lesson: firstIncompleteLesson });
 }
 
 /**

@@ -73,10 +73,5 @@ export function useInfiniteList<TItem>({
     rootMargin,
   });
 
-  return {
-    hasNextPage,
-    isLoading,
-    items,
-    sentryRef,
-  };
+  return { hasNextPage, isLoading, items, sentryRef };
 }

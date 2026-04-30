@@ -7,12 +7,9 @@ import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateReadingAudioStep } from "./generate-reading-audio-step";
 
 vi.mock("@zoonk/core/audio/generate", () => ({
-  generateLanguageAudio: vi.fn().mockImplementation(({ text }) =>
-    Promise.resolve({
-      data: `/audio/${text}.mp3`,
-      error: null,
-    }),
-  ),
+  generateLanguageAudio: vi
+    .fn()
+    .mockImplementation(({ text }) => Promise.resolve({ data: `/audio/${text}.mp3`, error: null })),
 }));
 
 describe(generateReadingAudioStep, () => {
@@ -32,11 +29,7 @@ describe(generateReadingAudioStep, () => {
     const existingSentence = `既存${uniqueId}`;
     const newSentence = `新しい${uniqueId}`;
     const [context] = await Promise.all([
-      createLessonContext({
-        kind: "reading",
-        organizationId,
-        targetLanguage: "ja",
-      }),
+      createLessonContext({ kind: "reading", organizationId, targetLanguage: "ja" }),
       prisma.sentence.create({
         data: {
           audioUrl: "/audio/existing.mp3",

@@ -38,10 +38,7 @@ export function CommandPalette({ isLoggedIn }: { isLoggedIn: boolean }) {
     query,
     results: courses,
     setQuery,
-  } = useCommandPaletteSearch<CourseSearchResult[]>({
-    emptyResults: [],
-    onSearch: handleSearch,
-  });
+  } = useCommandPaletteSearch<CourseSearchResult[]>({ emptyResults: [], onSearch: handleSearch });
 
   function handleSelect<T extends string>(url: Route<T>) {
     onSelectItem();

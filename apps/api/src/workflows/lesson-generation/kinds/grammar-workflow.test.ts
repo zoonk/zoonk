@@ -8,12 +8,14 @@ import { createLessonContext } from "../steps/_test-utils/create-lesson-context"
 import { grammarLessonWorkflow } from "./grammar-workflow";
 
 vi.mock("@zoonk/ai/tasks/lessons/language/grammar-content", () => ({
-  generateLessonGrammarContent: vi.fn().mockResolvedValue({
-    data: {
-      examples: [{ highlight: "猫", sentence: "猫がいます" }],
-      exercises: [{ answer: "猫", distractors: ["犬"], template: "[BLANK]がいます" }],
-    },
-  }),
+  generateLessonGrammarContent: vi
+    .fn()
+    .mockResolvedValue({
+      data: {
+        examples: [{ highlight: "猫", sentence: "猫がいます" }],
+        exercises: [{ answer: "猫", distractors: ["犬"], template: "[BLANK]がいます" }],
+      },
+    }),
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/grammar-user-content", () => ({
@@ -38,11 +40,13 @@ vi.mock("@zoonk/ai/tasks/lessons/language/grammar-user-content", () => ({
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/romanization", () => ({
-  generateLessonRomanization: vi.fn().mockImplementation(({ texts }) =>
-    Promise.resolve({
-      data: { romanizations: texts.map((text: string) => `${text} romanized`) },
-    }),
-  ),
+  generateLessonRomanization: vi
+    .fn()
+    .mockImplementation(({ texts }) =>
+      Promise.resolve({
+        data: { romanizations: texts.map((text: string) => `${text} romanized`) },
+      }),
+    ),
 }));
 
 describe(grammarLessonWorkflow, () => {
@@ -70,9 +74,7 @@ describe(grammarLessonWorkflow, () => {
     expect(generateLessonGrammarUserContent).toHaveBeenCalledOnce();
 
     expect(generateLessonRomanization).toHaveBeenCalledWith(
-      expect.objectContaining({
-        texts: expect.arrayContaining(["猫がいます", "猫", "犬"]),
-      }),
+      expect.objectContaining({ texts: expect.arrayContaining(["猫がいます", "猫", "犬"]) }),
     );
 
     const steps = await prisma.step.findMany({

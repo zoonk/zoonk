@@ -11,9 +11,7 @@ const cachedGetLesson = cache(async (lessonId: string) =>
         where: getPublishedStepWhere(),
       },
     },
-    where: getPublishedLessonWhere({
-      lessonWhere: { id: lessonId },
-    }),
+    where: getPublishedLessonWhere({ lessonWhere: { id: lessonId } }),
   }),
 );
 

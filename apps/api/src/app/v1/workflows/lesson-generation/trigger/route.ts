@@ -19,9 +19,7 @@ export async function POST(request: NextRequest) {
   }
 
   const lesson = await prisma.lesson.findFirst({
-    where: getAiGenerationLessonWhere({
-      lessonWhere: { id: parsed.data.lessonId },
-    }),
+    where: getAiGenerationLessonWhere({ lessonWhere: { id: parsed.data.lessonId } }),
   });
 
   if (!lesson) {
@@ -44,8 +42,5 @@ export async function POST(request: NextRequest) {
 
   const run = await start(lessonGenerationWorkflow, [parsed.data.lessonId]);
 
-  return NextResponse.json({
-    message: "Workflow started",
-    runId: run.runId,
-  });
+  return NextResponse.json({ message: "Workflow started", runId: run.runId });
 }

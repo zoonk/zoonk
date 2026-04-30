@@ -2,12 +2,7 @@ import { z } from "zod";
 import { stepImageSchema } from "./image";
 
 const multipleChoiceOptionSchema = z
-  .object({
-    feedback: z.string(),
-    id: z.string(),
-    isCorrect: z.boolean(),
-    text: z.string(),
-  })
+  .object({ feedback: z.string(), id: z.string(), isCorrect: z.boolean(), text: z.string() })
   .strict();
 
 export const multipleChoiceContentSchema = z
@@ -32,26 +27,14 @@ export const fillBlankContentSchema = z
   })
   .strict();
 
-const matchColumnsPairSchema = z
-  .object({
-    left: z.string(),
-    right: z.string(),
-  })
-  .strict();
+const matchColumnsPairSchema = z.object({ left: z.string(), right: z.string() }).strict();
 
 export const matchColumnsContentSchema = z
-  .object({
-    pairs: z.array(matchColumnsPairSchema).min(1),
-    question: z.string(),
-  })
+  .object({ pairs: z.array(matchColumnsPairSchema).min(1), question: z.string() })
   .strict();
 
 export const sortOrderContentSchema = z
-  .object({
-    feedback: z.string(),
-    items: z.array(z.string()).min(1),
-    question: z.string(),
-  })
+  .object({ feedback: z.string(), items: z.array(z.string()).min(1), question: z.string() })
   .strict();
 
 const selectImageOptionSchema = z
@@ -65,10 +48,7 @@ const selectImageOptionSchema = z
   .strict();
 
 export const selectImageContentSchema = z
-  .object({
-    options: z.array(selectImageOptionSchema).min(1),
-    question: z.string(),
-  })
+  .object({ options: z.array(selectImageOptionSchema).min(1), question: z.string() })
   .strict();
 
 export type MultipleChoiceStepContent = z.infer<typeof multipleChoiceContentSchema>;

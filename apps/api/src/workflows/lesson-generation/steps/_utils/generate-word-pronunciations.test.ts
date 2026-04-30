@@ -38,11 +38,7 @@ describe(generateWordPronunciations, () => {
   test("returns existing pronunciations without calling AI", async () => {
     const id = randomUUID().slice(0, 8);
     const wordText = `Hola${id}`;
-    const word = await wordFixture({
-      organizationId,
-      targetLanguage: "es",
-      word: wordText,
-    });
+    const word = await wordFixture({ organizationId, targetLanguage: "es", word: wordText });
 
     await wordPronunciationFixture({
       pronunciation: "OH-lah",
@@ -65,9 +61,7 @@ describe(generateWordPronunciations, () => {
     const id = randomUUID().slice(0, 8);
     const wordText = `Nuevo${id}`;
 
-    generateLessonPronunciationMock.mockResolvedValue({
-      data: { pronunciation: "NWEH-voh" },
-    });
+    generateLessonPronunciationMock.mockResolvedValue({ data: { pronunciation: "NWEH-voh" } });
 
     const result = await generateWordPronunciations({
       organizationId,
@@ -100,9 +94,7 @@ describe(generateWordPronunciations, () => {
       wordId: word.id,
     });
 
-    generateLessonPronunciationMock.mockResolvedValue({
-      data: { pronunciation: "PEH-rroh" },
-    });
+    generateLessonPronunciationMock.mockResolvedValue({ data: { pronunciation: "PEH-rroh" } });
 
     const result = await generateWordPronunciations({
       organizationId,

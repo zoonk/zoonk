@@ -36,14 +36,7 @@ export function PatternsData() {
 
   return (
     <SceneContainer bg="white">
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 28,
-        }}
-      >
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 28 }}>
         {/* Two hero stats side by side */}
         <div style={{ display: "flex", gap: 80, alignItems: "flex-start" }}>
           <div

@@ -9,10 +9,7 @@ import { beforeAll, describe, expect, test } from "vitest";
 import { MAX_CONTINUE_LEARNING_ITEMS, getContinueLearning } from "./get-continue-learning";
 
 async function createCourseWithLessons(organizationId: string) {
-  const course = await courseFixture({
-    isPublished: true,
-    organizationId,
-  });
+  const course = await courseFixture({ isPublished: true, organizationId });
 
   const chapter = await chapterFixture({
     courseId: course.id,
@@ -92,10 +89,7 @@ describe("authenticated users", () => {
     const headers = await signInAs(user.email, user.password);
     const userId = user.id;
 
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: organization.id,
-    });
+    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
 
     const chapter = await chapterFixture({
       courseId: course.id,
@@ -150,9 +144,7 @@ describe("authenticated users", () => {
       status: "completed",
     });
 
-    expect(result[0]).not.toMatchObject({
-      lesson: { id: replacementSecondLesson.id },
-    });
+    expect(result[0]).not.toMatchObject({ lesson: { id: replacementSecondLesson.id } });
 
     expect(completedLesson.id).not.toBe(nextLesson.id);
   });
@@ -246,10 +238,7 @@ describe("authenticated users", () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: organization.id,
-    });
+    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
 
     const [completedChapter, addedChapter] = await Promise.all([
       chapterFixture({
@@ -288,12 +277,7 @@ describe("authenticated users", () => {
         lessonId: completedLesson.id,
         userId: user.id,
       }),
-      prisma.courseCompletion.create({
-        data: {
-          courseId: course.id,
-          userId: user.id,
-        },
-      }),
+      prisma.courseCompletion.create({ data: { courseId: course.id, userId: user.id } }),
     ]);
 
     const result = await getContinueLearning(headers);
@@ -305,10 +289,7 @@ describe("authenticated users", () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: organization.id,
-    });
+    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
 
     const [chapter1, chapter2] = await Promise.all([
       chapterFixture({
@@ -442,10 +423,7 @@ describe("authenticated users", () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: organization.id,
-    });
+    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
 
     const chapter = await chapterFixture({
       courseId: course.id,
@@ -491,10 +469,7 @@ describe("authenticated users", () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: organization.id,
-    });
+    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
 
     const chapter = await chapterFixture({
       courseId: course.id,
@@ -550,10 +525,7 @@ describe("authenticated users", () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: organization.id,
-    });
+    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
 
     const chapter = await chapterFixture({
       courseId: course.id,
@@ -608,10 +580,7 @@ describe("authenticated users", () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: organization.id,
-    });
+    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
 
     const chapter1 = await chapterFixture({
       courseId: course.id,

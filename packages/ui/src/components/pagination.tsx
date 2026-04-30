@@ -33,9 +33,7 @@ function PaginationLink({
   isActive,
   size = "icon",
   ...props
-}: {
-  isActive?: boolean;
-} & Pick<React.ComponentProps<typeof Button>, "size"> &
+}: { isActive?: boolean } & Pick<React.ComponentProps<typeof Button>, "size"> &
   React.ComponentProps<"a">) {
   return (
     <Button

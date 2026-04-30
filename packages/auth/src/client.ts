@@ -33,9 +33,7 @@ export const authClient = createAuthClient({
       roles: { admin, member, owner },
       schema: inferOrgAdditionalFields<typeof auth>(),
     }),
-    stripeClient({
-      subscription: true,
-    }),
+    stripeClient({ subscription: true }),
     usernameClient(),
   ],
 });

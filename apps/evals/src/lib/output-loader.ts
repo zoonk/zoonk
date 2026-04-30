@@ -44,11 +44,7 @@ export async function getOutputStatus(
   taskId: string,
   modelId: string,
   totalTestCases: number,
-): Promise<{
-  status: OutputStatus;
-  completedTestCases: number;
-  totalTestCases: number;
-}> {
+): Promise<{ status: OutputStatus; completedTestCases: number; totalTestCases: number }> {
   const outputs = await loadModelOutputs(taskId, modelId);
   const completedTestCases = outputs?.outputs.length ?? 0;
 

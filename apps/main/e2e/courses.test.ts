@@ -60,11 +60,7 @@ test.describe("Courses Page - Infinite Loading", () => {
     // Create 25 courses to exceed the page limit (20)
     await Promise.all(
       Array.from({ length: 25 }, () =>
-        courseFixture({
-          isPublished: true,
-          language: "en",
-          organizationId: org.id,
-        }),
+        courseFixture({ isPublished: true, language: "en", organizationId: org.id }),
       ),
     );
 

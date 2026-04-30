@@ -45,10 +45,7 @@ export async function sendEmail({
     if (!response.ok) {
       logError("Email send failed", await response.text());
 
-      return {
-        data: null,
-        error: new Error(`Email send failed: ${response.statusText}`),
-      };
+      return { data: null, error: new Error(`Email send failed: ${response.statusText}`) };
     }
 
     return { data: response, error: null };

@@ -13,10 +13,7 @@ export async function triggerLessonPreload(input: {
 }): Promise<void> {
   const response = await fetch(`${API_URL}/v1/workflows/lesson-preload/trigger`, {
     body: JSON.stringify({ lessonId: input.lessonId }),
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: input.cookieHeader,
-    },
+    headers: { "Content-Type": "application/json", Cookie: input.cookieHeader },
     method: "POST",
   });
 

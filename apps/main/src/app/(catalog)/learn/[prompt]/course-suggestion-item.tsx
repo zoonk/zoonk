@@ -30,11 +30,7 @@ export async function CourseSuggestionItem({
 
         <ItemActions>
           <Link
-            className={buttonVariants({
-              className: "gap-1.5",
-              size: "sm",
-              variant: "outline",
-            })}
+            className={buttonVariants({ className: "gap-1.5", size: "sm", variant: "outline" })}
             href={`/generate/cs/${course.id}`}
             prefetch={false}
           >

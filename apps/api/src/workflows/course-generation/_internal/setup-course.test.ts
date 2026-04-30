@@ -26,9 +26,7 @@ vi.mock("@zoonk/ai/tasks/courses/description", () => ({
   generateCourseDescription: generateCourseDescriptionMock,
 }));
 
-vi.mock("@zoonk/core/courses/image", () => ({
-  generateCourseImage: generateCourseImageMock,
-}));
+vi.mock("@zoonk/core/courses/image", () => ({ generateCourseImage: generateCourseImageMock }));
 
 vi.mock("@zoonk/ai/tasks/courses/alternative-titles", () => ({
   generateAlternativeTitles: generateAlternativeTitlesMock,
@@ -84,9 +82,7 @@ describe(setupCourse, () => {
       imageUrl: null,
     };
 
-    generateCourseDescriptionMock.mockResolvedValue({
-      data: { description: "Setup desc" },
-    });
+    generateCourseDescriptionMock.mockResolvedValue({ data: { description: "Setup desc" } });
     generateCourseImageMock.mockResolvedValue({
       data: "https://example.com/setup.webp",
       error: null,
@@ -94,13 +90,9 @@ describe(setupCourse, () => {
     generateAlternativeTitlesMock.mockResolvedValue({
       data: { alternatives: [`Alt ${randomUUID()}`] },
     });
-    generateCourseCategoriesMock.mockResolvedValue({
-      data: { categories: ["testing"] },
-    });
+    generateCourseCategoriesMock.mockResolvedValue({ data: { categories: ["testing"] } });
     generateCourseChaptersMock.mockResolvedValue({
-      data: {
-        chapters: [{ description: "Ch desc", title: `Setup Ch ${randomUUID()}` }],
-      },
+      data: { chapters: [{ description: "Ch desc", title: `Setup Ch ${randomUUID()}` }] },
     });
 
     const chapters = await setupCourse(courseContext, suggestion.id, existing);

@@ -53,10 +53,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-frontend-development",
-    userInput: {
-      language: "en",
-      title: "Frontend Development",
-    },
+    userInput: { language: "en", title: "Frontend Development" },
   },
   {
     expectations: `
@@ -69,10 +66,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-formula-1",
-    userInput: {
-      language: "en",
-      title: "Formula 1",
-    },
+    userInput: { language: "en", title: "Formula 1" },
   },
   {
     expectations: `
@@ -85,10 +79,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-ux-design",
-    userInput: {
-      language: "en",
-      title: "UX Design",
-    },
+    userInput: { language: "en", title: "UX Design" },
   },
   {
     expectations: `
@@ -105,10 +96,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-ingles",
-    userInput: {
-      language: "pt",
-      title: "Inglês",
-    },
+    userInput: { language: "pt", title: "Inglês" },
   },
   {
     expectations: `
@@ -123,10 +111,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-inteligencia-artificial",
-    userInput: {
-      language: "pt",
-      title: "Inteligência Artificial",
-    },
+    userInput: { language: "pt", title: "Inteligência Artificial" },
   },
   {
     expectations: `
@@ -138,10 +123,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-machine-learning",
-    userInput: {
-      language: "en",
-      title: "Machine Learning",
-    },
+    userInput: { language: "en", title: "Machine Learning" },
   },
   {
     expectations: `
@@ -152,10 +134,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-javascript",
-    userInput: {
-      language: "en",
-      title: "JavaScript",
-    },
+    userInput: { language: "en", title: "JavaScript" },
   },
   {
     expectations: `
@@ -167,10 +146,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-python",
-    userInput: {
-      language: "en",
-      title: "Python",
-    },
+    userInput: { language: "en", title: "Python" },
   },
   {
     expectations: `
@@ -184,10 +160,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "es-desarrollo-web",
-    userInput: {
-      language: "es",
-      title: "Desarrollo Web",
-    },
+    userInput: { language: "es", title: "Desarrollo Web" },
   },
   {
     expectations: `
@@ -198,10 +171,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-data-science",
-    userInput: {
-      language: "en",
-      title: "Data Science",
-    },
+    userInput: { language: "en", title: "Data Science" },
   },
   {
     expectations: `
@@ -215,10 +185,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-the-matrix",
-    userInput: {
-      language: "en",
-      title: "The Matrix",
-    },
+    userInput: { language: "en", title: "The Matrix" },
   },
   {
     expectations: `
@@ -230,10 +197,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-calculus",
-    userInput: {
-      language: "en",
-      title: "Calculus",
-    },
+    userInput: { language: "en", title: "Calculus" },
   },
   {
     expectations: `
@@ -246,9 +210,6 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-world-war-2",
-    userInput: {
-      language: "en",
-      title: "World War II",
-    },
+    userInput: { language: "en", title: "World War II" },
   },
 ];

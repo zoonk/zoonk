@@ -28,8 +28,5 @@ function MDXImage({ src, alt }: { src?: string; alt?: string }) {
 }
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
-  return {
-    ...components,
-    img: MDXImage,
-  };
+  return { ...components, img: MDXImage };
 }

@@ -3,21 +3,11 @@ import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { type E2EUser, createE2EUser } from "@zoonk/e2e/fixtures/users";
 
 export const test = base.extend<
-  {
-    authenticatedPage: Page;
-    logoutPage: Page;
-    userWithoutProgress: Page;
-  },
-  {
-    logoutUser: E2EUser;
-    noProgressUser: E2EUser;
-    withProgressUser: E2EUser;
-  }
+  { authenticatedPage: Page; logoutPage: Page; userWithoutProgress: Page },
+  { logoutUser: E2EUser; noProgressUser: E2EUser; withProgressUser: E2EUser }
 >({
   authenticatedPage: async ({ browser, withProgressUser }, use) => {
-    const ctx = await browser.newContext({
-      storageState: withProgressUser.storageState,
-    });
+    const ctx = await browser.newContext({ storageState: withProgressUser.storageState });
     const page = await ctx.newPage();
     await use(page);
     await ctx.close();
@@ -29,9 +19,7 @@ export const test = base.extend<
   },
 
   logoutPage: async ({ browser, logoutUser }, use) => {
-    const ctx = await browser.newContext({
-      storageState: logoutUser.storageState,
-    });
+    const ctx = await browser.newContext({ storageState: logoutUser.storageState });
     const page = await ctx.newPage();
     await use(page);
     await ctx.close();
@@ -56,9 +44,7 @@ export const test = base.extend<
   ],
 
   userWithoutProgress: async ({ browser, noProgressUser }, use) => {
-    const ctx = await browser.newContext({
-      storageState: noProgressUser.storageState,
-    });
+    const ctx = await browser.newContext({ storageState: noProgressUser.storageState });
     const page = await ctx.newPage();
     await use(page);
     await ctx.close();
@@ -67,10 +53,7 @@ export const test = base.extend<
   withProgressUser: [
     // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
     async ({}, use) => {
-      const user = await createE2EUser(getBaseURL(), {
-        orgRole: "member",
-        withProgress: true,
-      });
+      const user = await createE2EUser(getBaseURL(), { orgRole: "member", withProgress: true });
       await use(user);
     },
     { scope: "worker" },

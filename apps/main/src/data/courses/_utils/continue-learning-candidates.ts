@@ -12,15 +12,9 @@ export type ContinueLearningCandidate = {
   state: ContinueLearningState;
 };
 
-type BlockedSequentialTargetIds = {
-  chapterIds: Set<string>;
-  lessonIds: Set<string>;
-};
+type BlockedSequentialTargetIds = { chapterIds: Set<string>; lessonIds: Set<string> };
 
-type SequentialTargetIds = {
-  chapterIds: string[];
-  lessonIds: string[];
-};
+type SequentialTargetIds = { chapterIds: string[]; lessonIds: string[] };
 
 /**
  * The feed needs several derived signals per course anchor: the sequential
@@ -42,14 +36,8 @@ export async function listContinueLearningCandidates({
   ]);
 
   const [blockedSequentialTargetIds, pendingTargets] = await Promise.all([
-    listBlockedSequentialTargetIds({
-      sequentialNextLessons,
-      userId,
-    }),
-    listPendingTargets({
-      rows,
-      states: nextStates,
-    }),
+    listBlockedSequentialTargetIds({ sequentialNextLessons, userId }),
+    listPendingTargets({ rows, states: nextStates }),
   ]);
 
   return rows.map((row, idx) =>
@@ -125,14 +113,8 @@ async function listBlockedSequentialTargetIds({
   }
 
   const [chapterCompletions, lessonCompletions] = await Promise.all([
-    listBlockedSequentialChapterIds({
-      chapterIds: targetIds.chapterIds,
-      userId,
-    }),
-    listBlockedSequentialLessonIds({
-      lessonIds: targetIds.lessonIds,
-      userId,
-    }),
+    listBlockedSequentialChapterIds({ chapterIds: targetIds.chapterIds, userId }),
+    listBlockedSequentialLessonIds({ lessonIds: targetIds.lessonIds, userId }),
   ]);
 
   return {
@@ -212,12 +194,7 @@ async function listBlockedSequentialChapterIds({
     return [];
   }
 
-  return prisma.chapterCompletion.findMany({
-    where: {
-      chapterId: { in: chapterIds },
-      userId,
-    },
-  });
+  return prisma.chapterCompletion.findMany({ where: { chapterId: { in: chapterIds }, userId } });
 }
 
 /**
@@ -236,11 +213,7 @@ async function listBlockedSequentialLessonIds({
   }
 
   return prisma.lessonProgress.findMany({
-    where: {
-      completedAt: { not: null },
-      lessonId: { in: lessonIds },
-      userId,
-    },
+    where: { completedAt: { not: null }, lessonId: { in: lessonIds }, userId },
   });
 }
 

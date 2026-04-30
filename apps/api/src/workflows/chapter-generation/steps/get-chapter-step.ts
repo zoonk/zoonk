@@ -5,13 +5,8 @@ import { FatalError } from "workflow";
 
 async function getChapterForGeneration(chapterId: string) {
   return prisma.chapter.findFirst({
-    include: {
-      _count: { select: { lessons: true } },
-      course: true,
-    },
-    where: getAiGenerationChapterWhere({
-      chapterWhere: { id: chapterId },
-    }),
+    include: { _count: { select: { lessons: true } }, course: true },
+    where: getAiGenerationChapterWhere({ chapterWhere: { id: chapterId } }),
   });
 }
 
@@ -24,11 +19,7 @@ async function getNeighboringChapters(courseId: string, position: number) {
     where: getAiGenerationChapterWhere({
       chapterWhere: {
         courseId,
-        position: {
-          gte: position - NEIGHBOR_RANGE,
-          lte: position + NEIGHBOR_RANGE,
-          not: position,
-        },
+        position: { gte: position - NEIGHBOR_RANGE, lte: position + NEIGHBOR_RANGE, not: position },
       },
     }),
   });

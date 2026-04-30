@@ -13,10 +13,7 @@ type PlayerPrimaryActionRun = "check" | "continue" | "navigateNext";
 type InPlayScreenScene = "choice" | "feedback" | "read";
 
 type PlayerBottomBarModel =
-  | {
-      canNavigatePrev: boolean;
-      kind: "navigation";
-    }
+  | { canNavigatePrev: boolean; kind: "navigation" }
   | {
       button: PlayerPrimaryActionKind;
       disabled: boolean;
@@ -57,9 +54,7 @@ export type PlayerFeedbackScreenModel = InPlayScreenModel & {
   scene: "feedback";
 };
 
-export type PlayerStepScreenModel = InPlayScreenModel & {
-  kind: "step";
-};
+export type PlayerStepScreenModel = InPlayScreenModel & { kind: "step" };
 
 export type PlayerScreenModel =
   | PlayerCompletedScreenModel
@@ -111,33 +106,18 @@ function getBottomBarModel({
   }
 
   if (phase === "feedback") {
-    return {
-      button: "continue",
-      disabled: false,
-      kind: "primaryAction",
-      run: "continue",
-    };
+    return { button: "continue", disabled: false, kind: "primaryAction", run: "continue" };
   }
 
   if (step.kind === "intro") {
-    return {
-      button: "begin",
-      disabled: false,
-      kind: "primaryAction",
-      run: "navigateNext",
-    };
+    return { button: "begin", disabled: false, kind: "primaryAction", run: "navigateNext" };
   }
 
   if (behavior.layout === "navigable") {
     return { canNavigatePrev: canMovePrev, kind: "navigation" };
   }
 
-  return {
-    button: "check",
-    disabled: !hasAnswer,
-    kind: "primaryAction",
-    run: "check",
-  };
+  return { button: "check", disabled: !hasAnswer, kind: "primaryAction", run: "check" };
 }
 
 /**
@@ -157,12 +137,7 @@ function getKeyboardModel({
   step: PlayerStepDescriptor;
 }): PlayerKeyboardModel {
   if (phase === "completed") {
-    return {
-      canRestart: true,
-      enterAction: "nextOrEscape",
-      leftAction: null,
-      rightAction: null,
-    };
+    return { canRestart: true, enterAction: "nextOrEscape", leftAction: null, rightAction: null };
   }
 
   const enterAction =
@@ -228,19 +203,9 @@ export function getPlayerScreenModel(state: PlayerState): PlayerScreenModel {
     steps: state.steps,
   });
 
-  const bottomBar = getBottomBarModel({
-    canMovePrev,
-    hasAnswer,
-    phase: state.phase,
-    step,
-  });
+  const bottomBar = getBottomBarModel({ canMovePrev, hasAnswer, phase: state.phase, step });
 
-  const keyboard = getKeyboardModel({
-    bottomBar,
-    canMovePrev,
-    phase: state.phase,
-    step,
-  });
+  const keyboard = getKeyboardModel({ bottomBar, canMovePrev, phase: state.phase, step });
 
   const scene = getPlayerScreenScene({ phase: state.phase, step });
   const behavior = getPlayerStepBehavior(step);

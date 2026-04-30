@@ -3,9 +3,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { parseStepContent } from "../../steps/contract/content";
 import { preparePlayerLessonData } from "./prepare-lesson-data";
 
-vi.mock("@zoonk/utils/shuffle", () => ({
-  shuffle: vi.fn(<T>(items: T[]) => items),
-}));
+vi.mock("@zoonk/utils/shuffle", () => ({ shuffle: vi.fn(<T>(items: T[]) => items) }));
 
 type PreparePlayerLessonInput = Parameters<typeof preparePlayerLessonData>[0];
 type LessonInput = PreparePlayerLessonInput["lesson"];
@@ -32,44 +30,21 @@ function makeWordRecord(overrides: Partial<LessonWord["word"]> = {}): LessonWord
 function makeSentenceRecord(
   overrides: Partial<LessonSentence["sentence"]> = {},
 ): LessonSentence["sentence"] {
-  return {
-    audioUrl: null,
-    id: "1",
-    romanization: null,
-    sentence: "sentence",
-    ...overrides,
-  };
+  return { audioUrl: null, id: "1", romanization: null, sentence: "sentence", ...overrides };
 }
 
 function makeStepWord(overrides: Partial<RawStepWord> = {}): RawStepWord {
-  return {
-    audioUrl: null,
-    id: "1",
-    romanization: null,
-    word: "word",
-    ...overrides,
-  };
+  return { audioUrl: null, id: "1", romanization: null, word: "word", ...overrides };
 }
 
 function makeStepSentence(overrides: Partial<RawStepSentence> = {}): RawStepSentence {
-  return {
-    audioUrl: null,
-    id: "1",
-    romanization: null,
-    sentence: "sentence",
-    ...overrides,
-  };
+  return { audioUrl: null, id: "1", romanization: null, sentence: "sentence", ...overrides };
 }
 
 function makeLessonWord(overrides: Partial<LessonWord> = {}): LessonWord {
   const word = overrides.word ?? makeWordRecord();
 
-  return {
-    distractors: [],
-    translation: "translation",
-    word,
-    ...overrides,
-  };
+  return { distractors: [], translation: "translation", word, ...overrides };
 }
 
 function makeLessonSentence(overrides: Partial<LessonSentence> = {}): LessonSentence {
@@ -88,12 +63,7 @@ function makeLessonSentence(overrides: Partial<LessonSentence> = {}): LessonSent
 function makeSentenceWord(overrides: Partial<SentenceWord> = {}): SentenceWord {
   const word = overrides.word ?? makeWordRecord();
 
-  return {
-    distractors: [],
-    translation: "translation",
-    word,
-    ...overrides,
-  };
+  return { distractors: [], translation: "translation", word, ...overrides };
 }
 
 function makeDistractorWord(overrides: Partial<DistractorWord> = {}): DistractorWord {
@@ -152,12 +122,7 @@ describe(preparePlayerLessonData, () => {
   test("serializes lesson and step ids to strings", () => {
     const result = prepare({
       lesson: makeLesson(
-        [
-          makeStep({
-            content: { text: "Hello world", title: "Intro", variant: "text" },
-            id: "42",
-          }),
-        ],
+        [makeStep({ content: { text: "Hello world", title: "Intro", variant: "text" }, id: "42" })],
         { id: "99" },
       ),
     });
@@ -193,12 +158,7 @@ describe(preparePlayerLessonData, () => {
     const result = prepare({
       lesson: makeLesson(
         [makeStep({ content: { text: "Hello world", title: "Intro", variant: "text" } })],
-        {
-          description: "Description",
-          id: "99",
-          kind: "review",
-          organizationId: "org-42",
-        },
+        { description: "Description", id: "99", kind: "review", organizationId: "org-42" },
       ),
       lessonSentences: [sentence],
       lessonWords: [word],
@@ -294,18 +254,8 @@ describe(preparePlayerLessonData, () => {
 
     expect(result.steps[0]?.sortOrderItems).toEqual(["first", "second", "third"]);
     expect(result.steps[1]?.fillBlankOptions).toEqual([
-      {
-        audioUrl: null,
-        romanization: null,
-        translation: null,
-        word: "sky",
-      },
-      {
-        audioUrl: null,
-        romanization: "ground-rom",
-        translation: null,
-        word: "ground",
-      },
+      { audioUrl: null, romanization: null, translation: null, word: "sky" },
+      { audioUrl: null, romanization: "ground-rom", translation: null, word: "ground" },
     ]);
     expect(result.steps[2]?.matchColumnsRightItems).toEqual(["1", "2"]);
   });
@@ -535,63 +485,18 @@ describe(preparePlayerLessonData, () => {
     });
 
     expect(result.steps[0]?.wordBankOptions).toEqual([
-      {
-        audioUrl: null,
-        romanization: null,
-        translation: null,
-        word: "Guten",
-      },
-      {
-        audioUrl: null,
-        romanization: null,
-        translation: null,
-        word: "Morgen,",
-      },
-      {
-        audioUrl: null,
-        romanization: null,
-        translation: null,
-        word: "Lara.",
-      },
-      {
-        audioUrl: "/audio/abend.mp3",
-        romanization: "abend",
-        translation: null,
-        word: "Abend",
-      },
-      {
-        audioUrl: null,
-        romanization: null,
-        translation: null,
-        word: "Fenster",
-      },
+      { audioUrl: null, romanization: null, translation: null, word: "Guten" },
+      { audioUrl: null, romanization: null, translation: null, word: "Morgen," },
+      { audioUrl: null, romanization: null, translation: null, word: "Lara." },
+      { audioUrl: "/audio/abend.mp3", romanization: "abend", translation: null, word: "Abend" },
+      { audioUrl: null, romanization: null, translation: null, word: "Fenster" },
     ]);
 
     expect(result.steps[1]?.wordBankOptions).toEqual([
-      {
-        audioUrl: null,
-        romanization: null,
-        translation: null,
-        word: "Bom",
-      },
-      {
-        audioUrl: null,
-        romanization: null,
-        translation: null,
-        word: "dia,",
-      },
-      {
-        audioUrl: null,
-        romanization: null,
-        translation: null,
-        word: "Lara.",
-      },
-      {
-        audioUrl: null,
-        romanization: null,
-        translation: null,
-        word: "tchau",
-      },
+      { audioUrl: null, romanization: null, translation: null, word: "Bom" },
+      { audioUrl: null, romanization: null, translation: null, word: "dia," },
+      { audioUrl: null, romanization: null, translation: null, word: "Lara." },
+      { audioUrl: null, romanization: null, translation: null, word: "tchau" },
     ]);
   });
 
@@ -613,28 +518,14 @@ describe(preparePlayerLessonData, () => {
       lessonWords: [
         makeLessonWord({
           translation: "good morning",
-          word: makeWordRecord({
-            id: "10",
-            romanization: "guten morgen",
-            word: "Guten Morgen",
-          }),
+          word: makeWordRecord({ id: "10", romanization: "guten morgen", word: "Guten Morgen" }),
         }),
       ],
     });
 
     expect(result.steps[0]?.sentenceWordOptions).toEqual([
-      {
-        audioUrl: null,
-        romanization: "guten",
-        translation: null,
-        word: "Guten",
-      },
-      {
-        audioUrl: null,
-        romanization: "morgen",
-        translation: null,
-        word: "Morgen",
-      },
+      { audioUrl: null, romanization: "guten", translation: null, word: "Guten" },
+      { audioUrl: null, romanization: "morgen", translation: null, word: "Morgen" },
     ]);
   });
 
@@ -656,11 +547,7 @@ describe(preparePlayerLessonData, () => {
       lessonWords: [
         makeLessonWord({
           translation: "cat (lesson)",
-          word: makeWordRecord({
-            audioUrl: "/audio/lesson-gato.mp3",
-            id: "10",
-            word: "gato",
-          }),
+          word: makeWordRecord({ audioUrl: "/audio/lesson-gato.mp3", id: "10", word: "gato" }),
         }),
       ],
       sentenceWords: [
@@ -683,12 +570,7 @@ describe(preparePlayerLessonData, () => {
         translation: "cat (lesson)",
         word: "gato",
       },
-      {
-        audioUrl: null,
-        romanization: null,
-        translation: null,
-        word: "bonito",
-      },
+      { audioUrl: null, romanization: null, translation: null, word: "bonito" },
     ]);
   });
 
@@ -745,18 +627,8 @@ describe(preparePlayerLessonData, () => {
     });
 
     expect(result.steps[0]?.wordBankOptions).toEqual([
-      {
-        audioUrl: null,
-        romanization: null,
-        translation: null,
-        word: "Hola",
-      },
-      {
-        audioUrl: null,
-        romanization: null,
-        translation: null,
-        word: "mundo",
-      },
+      { audioUrl: null, romanization: null, translation: null, word: "Hola" },
+      { audioUrl: null, romanization: null, translation: null, word: "mundo" },
     ]);
   });
 

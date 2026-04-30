@@ -11,10 +11,7 @@ vi.mock("@zoonk/ai/tasks/lessons/language/romanization", () => ({
 
 describe(generateLessonRomanizations, () => {
   test("returns empty romanization map for Roman-script languages without calling AI", async () => {
-    const result = await generateLessonRomanizations({
-      targetLanguage: "es",
-      texts: ["hola"],
-    });
+    const result = await generateLessonRomanizations({ targetLanguage: "es", texts: ["hola"] });
 
     expect(result).toEqual({});
     expect(generateLessonRomanizationMock).not.toHaveBeenCalled();
@@ -28,24 +25,15 @@ describe(generateLessonRomanizations, () => {
     const texts = ["これは猫です", "あれは犬です"];
     const result = await generateLessonRomanizations({ targetLanguage: "ja", texts });
 
-    expect(result).toEqual({
-      あれは犬です: "are wa inu desu",
-      これは猫です: "kore wa neko desu",
-    });
-    expect(generateLessonRomanizationMock).toHaveBeenCalledWith({
-      targetLanguage: "ja",
-      texts,
-    });
+    expect(result).toEqual({ あれは犬です: "are wa inu desu", これは猫です: "kore wa neko desu" });
+    expect(generateLessonRomanizationMock).toHaveBeenCalledWith({ targetLanguage: "ja", texts });
   });
 
   test("throws when AI call fails", async () => {
     generateLessonRomanizationMock.mockRejectedValue(new Error("AI error"));
 
     await expect(
-      generateLessonRomanizations({
-        targetLanguage: "ja",
-        texts: ["これは猫です"],
-      }),
+      generateLessonRomanizations({ targetLanguage: "ja", texts: ["これは猫です"] }),
     ).rejects.toThrow("AI error");
   });
 });

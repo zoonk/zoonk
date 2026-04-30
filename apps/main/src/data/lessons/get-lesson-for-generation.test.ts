@@ -15,29 +15,18 @@ describe(getLessonForGeneration, () => {
     const org = await aiOrganizationFixture();
     organizationId = org.id;
     course = await courseFixture({ organizationId });
-    chapter = await chapterFixture({
-      courseId: course.id,
-      organizationId,
-    });
+    chapter = await chapterFixture({ courseId: course.id, organizationId });
   });
 
   test("returns lesson with chapter and course info", async () => {
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      organizationId,
-    });
+    const lesson = await lessonFixture({ chapterId: chapter.id, organizationId });
 
     const result = await getLessonForGeneration(lesson.id);
 
     expect(result).toMatchObject({
-      _count: {
-        steps: 0,
-      },
+      _count: { steps: 0 },
       chapter: {
-        course: {
-          slug: course.slug,
-          title: course.title,
-        },
+        course: { slug: course.slug, title: course.title },
         slug: chapter.slug,
         title: chapter.title,
       },

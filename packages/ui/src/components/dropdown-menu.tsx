@@ -67,9 +67,7 @@ function DropdownMenuLabel({
   className,
   inset,
   ...props
-}: MenuPrimitive.GroupLabel.Props & {
-  inset?: boolean;
-}) {
+}: MenuPrimitive.GroupLabel.Props & { inset?: boolean }) {
   return (
     <MenuPrimitive.GroupLabel
       className={cn("text-muted-foreground px-3 py-2.5 text-xs data-inset:pl-8", className)}
@@ -85,10 +83,7 @@ function DropdownMenuItem({
   inset,
   variant = "default",
   ...props
-}: MenuPrimitive.Item.Props & {
-  inset?: boolean;
-  variant?: "default" | "destructive";
-}) {
+}: MenuPrimitive.Item.Props & { inset?: boolean; variant?: "default" | "destructive" }) {
   return (
     <MenuPrimitive.Item
       className={cn(
@@ -112,9 +107,7 @@ function DropdownMenuSubTrigger({
   inset,
   children,
   ...props
-}: MenuPrimitive.SubmenuTrigger.Props & {
-  inset?: boolean;
-}) {
+}: MenuPrimitive.SubmenuTrigger.Props & { inset?: boolean }) {
   return (
     <MenuPrimitive.SubmenuTrigger
       className={cn(

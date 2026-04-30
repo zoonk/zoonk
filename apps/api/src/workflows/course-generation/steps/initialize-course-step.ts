@@ -26,10 +26,7 @@ async function updateCourseSuggestionToRunning({
   workflowRunId: string;
 }): Promise<void> {
   await prisma.courseSuggestion.update({
-    data: {
-      generationRunId: workflowRunId,
-      generationStatus: "running",
-    },
+    data: { generationRunId: workflowRunId, generationStatus: "running" },
     where: { id: suggestionId },
   });
 }
@@ -94,20 +91,11 @@ export async function initializeCourseStep(input: {
 
   const { suggestion, workflowRunId } = input;
 
-  const aiOrg = await prisma.organization.findUniqueOrThrow({
-    where: { slug: AI_ORG_SLUG },
-  });
+  const aiOrg = await prisma.organization.findUniqueOrThrow({ where: { slug: AI_ORG_SLUG } });
 
-  await updateCourseSuggestionToRunning({
-    suggestionId: suggestion.id,
-    workflowRunId,
-  });
+  await updateCourseSuggestionToRunning({ suggestionId: suggestion.id, workflowRunId });
 
-  const course = await createCourseEntity({
-    organizationId: aiOrg.id,
-    suggestion,
-    workflowRunId,
-  });
+  const course = await createCourseEntity({ organizationId: aiOrg.id, suggestion, workflowRunId });
 
   await stream.status({ status: "completed", step: "initializeCourse" });
 

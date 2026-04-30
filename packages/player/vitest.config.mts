@@ -26,18 +26,11 @@ export default defineConfig({
     tsconfigPaths: true,
   },
   test: {
-    deps: {
-      optimizer: { ssr: { include: ["next"] } },
-    },
+    deps: { optimizer: { ssr: { include: ["next"] } } },
     projects: [
       {
         extends: true,
-        test: {
-          environment: "jsdom",
-          exclude: browserTests,
-          include: unitTests,
-          name: "unit",
-        },
+        test: { environment: "jsdom", exclude: browserTests, include: unitTests, name: "unit" },
       },
       {
         extends: true,
@@ -45,12 +38,7 @@ export default defineConfig({
           browser: {
             enabled: true,
             headless: true,
-            instances: [
-              {
-                browser: "chromium",
-                name: "chromium",
-              },
-            ],
+            instances: [{ browser: "chromium", name: "chromium" }],
             provider: playwright(),
           },
           include: browserTests,

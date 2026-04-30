@@ -7,9 +7,7 @@ import {
 } from "./prepare-lesson-data";
 import { type DistractorWord } from "./translation-options";
 
-vi.mock("@zoonk/utils/shuffle", () => ({
-  shuffle: <T>(items: T[]) => items,
-}));
+vi.mock("@zoonk/utils/shuffle", () => ({ shuffle: <T>(items: T[]) => items }));
 
 function makeLessonWord(overrides: Partial<SerializedWord> = {}): SerializedWord {
   return {
@@ -96,13 +94,7 @@ describe(buildWordBankOptions, () => {
 
   test("reading hydrates target-language distractors with metadata", () => {
     const options = buildWordBankOptions(
-      makeStep(
-        "reading",
-        makeSentence({
-          distractors: ["犬"],
-          sentence: "猫です",
-        }),
-      ),
+      makeStep("reading", makeSentence({ distractors: ["犬"], sentence: "猫です" })),
       [],
       [
         makeDistractorWord({
@@ -141,13 +133,7 @@ describe(buildWordBankOptions, () => {
           word: "Bom",
         }),
       ],
-      [
-        makeDistractorWord({
-          audioUrl: "/audio/noite.mp3",
-          romanization: "noite",
-          word: "noite",
-        }),
-      ],
+      [makeDistractorWord({ audioUrl: "/audio/noite.mp3", romanization: "noite", word: "noite" })],
       new Map(),
     );
 
@@ -168,13 +154,7 @@ describe(buildWordBankOptions, () => {
 
   test("shows fewer distractors when sanitation removes entries", () => {
     const options = buildWordBankOptions(
-      makeStep(
-        "reading",
-        makeSentence({
-          distractors: ["Hola", "Salut"],
-          sentence: "Hola mundo",
-        }),
-      ),
+      makeStep("reading", makeSentence({ distractors: ["Hola", "Salut"], sentence: "Hola mundo" })),
       [],
       [],
       new Map(),
@@ -188,29 +168,14 @@ describe(buildSentenceWordOptions, () => {
   test("hydrates multi-word lesson entries token by token", () => {
     const options = buildSentenceWordOptions(
       "Guten Morgen",
-      [
-        makeLessonWord({
-          romanization: "guten morgen",
-          word: "Guten Morgen",
-        }),
-      ],
+      [makeLessonWord({ romanization: "guten morgen", word: "Guten Morgen" })],
       [],
       new Map(),
     );
 
     expect(options).toEqual([
-      {
-        audioUrl: null,
-        romanization: "guten",
-        translation: null,
-        word: "Guten",
-      },
-      {
-        audioUrl: null,
-        romanization: "morgen",
-        translation: null,
-        word: "Morgen",
-      },
+      { audioUrl: null, romanization: "guten", translation: null, word: "Guten" },
+      { audioUrl: null, romanization: "morgen", translation: null, word: "Morgen" },
     ]);
   });
 
@@ -227,14 +192,7 @@ describe(buildSentenceWordOptions, () => {
       ],
       [],
       new Map([
-        [
-          "hola",
-          {
-            audioUrl: "/audio/hola-sentence.mp3",
-            romanization: "o-la",
-            word: "Hola",
-          },
-        ],
+        ["hola", { audioUrl: "/audio/hola-sentence.mp3", romanization: "o-la", word: "Hola" }],
       ]),
     );
 

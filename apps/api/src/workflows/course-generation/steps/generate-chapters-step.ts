@@ -12,10 +12,7 @@ function generateChapters(course: CourseContext) {
     });
   }
 
-  return generateCourseChapters({
-    courseTitle: course.courseTitle,
-    language: course.language,
-  });
+  return generateCourseChapters({ courseTitle: course.courseTitle, language: course.language });
 }
 
 export async function generateChaptersStep(course: CourseContext): Promise<CourseChapter[]> {

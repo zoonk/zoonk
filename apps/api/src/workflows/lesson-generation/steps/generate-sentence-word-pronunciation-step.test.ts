@@ -6,11 +6,9 @@ import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateSentenceWordPronunciationStep } from "./generate-sentence-word-pronunciation-step";
 
 vi.mock("@zoonk/ai/tasks/lessons/language/pronunciation", () => ({
-  generateLessonPronunciation: vi.fn().mockImplementation(({ word }) =>
-    Promise.resolve({
-      data: { pronunciation: `${word} pron` },
-    }),
-  ),
+  generateLessonPronunciation: vi
+    .fn()
+    .mockImplementation(({ word }) => Promise.resolve({ data: { pronunciation: `${word} pron` } })),
 }));
 
 describe(generateSentenceWordPronunciationStep, () => {

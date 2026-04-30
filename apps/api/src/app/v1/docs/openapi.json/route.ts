@@ -7,14 +7,8 @@ export async function GET() {
 
   const mergedDocument = {
     ...openAPIDocument,
-    components: {
-      ...authSchema.components,
-      ...openAPIDocument.components,
-    },
-    paths: {
-      ...authSchema.paths,
-      ...openAPIDocument.paths,
-    },
+    components: { ...authSchema.components, ...openAPIDocument.components },
+    paths: { ...authSchema.paths, ...openAPIDocument.paths },
     tags: [...(authSchema.tags ?? []), ...(openAPIDocument.tags ?? [])],
   };
 

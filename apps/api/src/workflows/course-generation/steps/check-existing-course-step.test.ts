@@ -20,9 +20,7 @@ describe(checkExistingCourseStep, () => {
   });
 
   test("returns null when no matching course exists", async () => {
-    const suggestion = await courseSuggestionFixture({
-      title: `No Match ${randomUUID()}`,
-    });
+    const suggestion = await courseSuggestionFixture({ title: `No Match ${randomUUID()}` });
 
     const result = await checkExistingCourseStep(suggestion);
 
@@ -43,11 +41,7 @@ describe(checkExistingCourseStep, () => {
     const title = `Existing Course ${randomUUID()}`;
     const slug = ensureLocaleSuffix(toSlug(title), "en");
 
-    const course = await courseFixture({
-      organizationId,
-      slug,
-      title,
-    });
+    const course = await courseFixture({ organizationId, slug, title });
 
     const suggestion = await courseSuggestionFixture({ language: "en", slug, title });
 
@@ -62,16 +56,9 @@ describe(checkExistingCourseStep, () => {
     const altTitle = `Alt Title ${randomUUID()}`;
     const altSlug = toSlug(altTitle);
 
-    const course = await courseFixture({
-      organizationId,
-      title,
-    });
+    const course = await courseFixture({ organizationId, title });
 
-    await courseAlternativeTitleFixture({
-      courseId: course.id,
-      language: "en",
-      slug: altSlug,
-    });
+    await courseAlternativeTitleFixture({ courseId: course.id, language: "en", slug: altSlug });
 
     const suggestion = await courseSuggestionFixture({
       language: "en",

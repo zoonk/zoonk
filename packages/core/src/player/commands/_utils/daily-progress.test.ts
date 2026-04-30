@@ -10,22 +10,12 @@ describe(fillDecayGaps, () => {
     const date = new Date(Date.UTC(2026, 0, 2));
 
     await prisma.dailyProgress.create({
-      data: {
-        date,
-        dayOfWeek: date.getUTCDay(),
-        energyAtEnd: 49,
-        userId,
-      },
+      data: { date, dayOfWeek: date.getUTCDay(), energyAtEnd: 49, userId },
     });
 
     await expect(
       prisma.dailyProgress.create({
-        data: {
-          date,
-          dayOfWeek: date.getUTCDay(),
-          energyAtEnd: 48,
-          userId,
-        },
+        data: { date, dayOfWeek: date.getUTCDay(), energyAtEnd: 48, userId },
       }),
     ).rejects.toHaveProperty("code", "P2002");
   });
@@ -36,12 +26,7 @@ describe(fillDecayGaps, () => {
     const gapDate = new Date(Date.UTC(2026, 0, 2));
 
     await prisma.dailyProgress.create({
-      data: {
-        date: gapDate,
-        dayOfWeek: gapDate.getUTCDay(),
-        energyAtEnd: 49,
-        userId,
-      },
+      data: { date: gapDate, dayOfWeek: gapDate.getUTCDay(), energyAtEnd: 49, userId },
     });
 
     await prisma.$transaction((tx) =>
@@ -54,9 +39,7 @@ describe(fillDecayGaps, () => {
       }),
     );
 
-    const rows = await prisma.dailyProgress.findMany({
-      where: { date: gapDate, userId },
-    });
+    const rows = await prisma.dailyProgress.findMany({ where: { date: gapDate, userId } });
 
     expect(rows).toHaveLength(1);
   });

@@ -4,13 +4,7 @@ const CACHE_IMAGE_DAYS = 30;
 
 const nextConfig: NextConfig = {
   devIndicators: false,
-  experimental: {
-    authInterrupts: true,
-    serverActions: {
-      bodySizeLimit: "10mb",
-    },
-    typedEnv: true,
-  },
+  experimental: { authInterrupts: true, serverActions: { bodySizeLimit: "10mb" }, typedEnv: true },
   images: {
     minimumCacheTTL: 60 * 60 * 24 * CACHE_IMAGE_DAYS,
     remotePatterns: [

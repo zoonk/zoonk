@@ -9,9 +9,7 @@ const modelRankingSchema = z.object({
   score: z.number().min(1).max(10),
 });
 
-const battleRankingSchema = z.object({
-  rankings: z.array(modelRankingSchema),
-});
+const battleRankingSchema = z.object({ rankings: z.array(modelRankingSchema) });
 
 // Judges may return "Model C", "Model C:", or just "C" — normalize for matching.
 const normalizeAnonymousId = (id: string) =>
@@ -24,10 +22,7 @@ export async function generateBattleRankings(params: {
   judgeId: string;
   expectations: string;
   userPrompt: string;
-  anonymizedOutputs: {
-    anonymousId: string;
-    output: string;
-  }[];
+  anonymizedOutputs: { anonymousId: string; output: string }[];
   mapping: { anonymousId: string; modelId: string }[];
 }): Promise<ModelRanking[]> {
   const { judgeId, expectations, userPrompt, anonymizedOutputs, mapping } = params;

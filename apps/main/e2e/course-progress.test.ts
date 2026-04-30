@@ -252,9 +252,7 @@ test.describe("Course Progress Indicators", () => {
 
     await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
 
-    const chapterLink = authenticatedPage.getByRole("link", {
-      name: new RegExp(chapter.title),
-    });
+    const chapterLink = authenticatedPage.getByRole("link", { name: new RegExp(chapter.title) });
 
     await expect(chapterLink).toBeVisible();
     await expect(chapterLink.getByLabel("1 of 2 completed")).toBeVisible();

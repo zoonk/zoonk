@@ -11,9 +11,7 @@ import { Suspense } from "react";
 import { CourseList } from "./course-list";
 import { CourseSearch } from "./course-search";
 
-export const metadata: Metadata = {
-  title: "Courses",
-};
+export const metadata: Metadata = { title: "Courses" };
 
 export default function CoursesPage({ searchParams }: PageProps<"/courses">) {
   return (

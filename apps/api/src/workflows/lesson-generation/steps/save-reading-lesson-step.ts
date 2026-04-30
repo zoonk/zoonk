@@ -118,10 +118,7 @@ async function saveOneSentence(params: {
       sentence,
       targetLanguage: params.targetLanguage,
     },
-    update: {
-      ...(audioUrl ? { audioUrl } : {}),
-      ...(romanization ? { romanization } : {}),
-    },
+    update: { ...(audioUrl ? { audioUrl } : {}), ...(romanization ? { romanization } : {}) },
     where: {
       orgSentence: {
         organizationId: params.organizationId,

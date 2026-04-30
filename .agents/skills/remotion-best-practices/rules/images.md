@@ -68,14 +68,7 @@ Use the `style` prop to control size and position:
 ```tsx
 <Img
   src={staticFile("photo.png")}
-  style={{
-    width: 500,
-    height: 300,
-    position: "absolute",
-    top: 100,
-    left: 50,
-    objectFit: "cover",
-  }}
+  style={{ width: 500, height: 300, position: "absolute", top: 100, left: 50, objectFit: "cover" }}
 />
 ```
 
@@ -122,9 +115,6 @@ import { getImageDimensions, staticFile, CalculateMetadataFunction } from "remot
 
 const calculateMetadata: CalculateMetadataFunction = async () => {
   const { width, height } = await getImageDimensions(staticFile("photo.png"));
-  return {
-    width,
-    height,
-  };
+  return { width, height };
 };
 ```

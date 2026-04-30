@@ -8,10 +8,7 @@ import {
   type StructureStats,
 } from "./ai-cost-estimate-types";
 
-type DateWindow = {
-  endExclusive: Date;
-  startAt: Date;
-};
+type DateWindow = { endExclusive: Date; startAt: Date };
 
 /**
  * The workflow estimates depend on a handful of aggregate counts. This loader
@@ -316,8 +313,5 @@ function buildChapterShellWhere({ dateWindow }: { dateWindow: DateWindow }) {
 }
 
 function buildCompletedChapterWhere({ dateWindow }: { dateWindow: DateWindow }) {
-  return {
-    ...buildChapterShellWhere({ dateWindow }),
-    generationStatus: "completed" as const,
-  };
+  return { ...buildChapterShellWhere({ dateWindow }), generationStatus: "completed" as const };
 }

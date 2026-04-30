@@ -18,10 +18,7 @@ export async function listPublishedLessonProgressRows({
   scope: PublishedLessonProgressScope;
   userId?: string;
 }): Promise<PublishedLessonProgressRow[]> {
-  return queryPublishedLessonProgressRows({
-    scope,
-    userId,
-  });
+  return queryPublishedLessonProgressRows({ scope, userId });
 }
 
 /**
@@ -37,10 +34,7 @@ export async function listPublishedChaptersForCourse({
     prisma.chapter.findMany({
       orderBy: { position: "asc" },
       select: { id: true },
-      where: {
-        courseId,
-        isPublished: true,
-      },
+      where: { courseId, isPublished: true },
     }),
   );
 

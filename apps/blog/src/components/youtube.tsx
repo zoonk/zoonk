@@ -2,9 +2,7 @@
 
 import YT from "react-youtube";
 
-type YouTubeProps = {
-  id: string;
-};
+type YouTubeProps = { id: string };
 
 /**
  * Responsive YouTube video embed.

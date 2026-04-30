@@ -1,11 +1,7 @@
 import { AI_TASK_MODEL_CONFIG, type AiTaskName } from "@zoonk/core/ai";
 import { formatAiTaskLabel } from "./ai-task-stats";
 
-type AiTaskCatalogGroupDefinition = {
-  description: string;
-  taskNames: AiTaskName[];
-  title: string;
-};
+type AiTaskCatalogGroupDefinition = { description: string; taskNames: AiTaskName[]; title: string };
 
 export type AiTaskCatalogTask = {
   defaultModel: string;
@@ -14,11 +10,7 @@ export type AiTaskCatalogTask = {
   taskName: AiTaskName;
 };
 
-type AiTaskCatalogGroup = {
-  description: string;
-  tasks: AiTaskCatalogTask[];
-  title: string;
-};
+type AiTaskCatalogGroup = { description: string; tasks: AiTaskCatalogTask[]; title: string };
 
 const AI_TASK_CATALOG_GROUP_DEFINITIONS = [
   {

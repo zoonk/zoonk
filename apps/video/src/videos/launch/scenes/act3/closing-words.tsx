@@ -16,12 +16,7 @@ export function ClosingWords() {
       <WordReveal
         text={t.closingWords}
         startFrame={0}
-        style={{
-          fontSize: 72,
-          fontWeight: 700,
-          color: COLORS.text,
-          justifyContent: "center",
-        }}
+        style={{ fontSize: 72, fontWeight: 700, color: COLORS.text, justifyContent: "center" }}
       />
     </SceneContainer>
   );

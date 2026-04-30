@@ -4,9 +4,7 @@ import { stripeClient } from "./client";
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET ?? "";
 
-type StripePluginOptions = {
-  createCustomerOnSignUp?: boolean;
-};
+type StripePluginOptions = { createCustomerOnSignUp?: boolean };
 
 export function stripePlugin({ createCustomerOnSignUp = true }: StripePluginOptions = {}) {
   return stripe({
@@ -16,11 +14,7 @@ export function stripePlugin({ createCustomerOnSignUp = true }: StripePluginOpti
     stripeWebhookSecret: webhookSecret,
     subscription: {
       enabled: true,
-      getCheckoutSessionParams: () => ({
-        params: {
-          allow_promotion_codes: true,
-        },
-      }),
+      getCheckoutSessionParams: () => ({ params: { allow_promotion_codes: true } }),
       plans: PAID_PLANS.map((plan) => ({
         annualDiscountLookupKey: plan.annualLookupKey,
         lookupKey: plan.lookupKey,

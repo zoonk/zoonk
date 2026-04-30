@@ -2,10 +2,7 @@
 
 import { useCallback, useEffect, useEffectEvent, useRef } from "react";
 
-type UseWordAudioOptions = {
-  onEnded?: () => void;
-  preloadUrls?: (string | null)[];
-};
+type UseWordAudioOptions = { onEnded?: () => void; preloadUrls?: (string | null)[] };
 
 /**
  * Word banks can repeat the same audio URL or include empty entries. Normalizing the list in one

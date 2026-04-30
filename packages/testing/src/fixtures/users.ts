@@ -1,12 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 
-type UserAttrs = {
-  email: string;
-  name: string;
-  role: "user" | "admin";
-  password: string;
-};
+type UserAttrs = { email: string; name: string; role: "user" | "admin"; password: string };
 
 function userAttrs(attrs?: Partial<UserAttrs>): UserAttrs {
   return {

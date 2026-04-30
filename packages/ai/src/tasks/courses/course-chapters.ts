@@ -9,12 +9,7 @@ const taskName = "course-chapters";
 const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
 const schema = z.object({
-  chapters: z.array(
-    z.object({
-      description: z.string(),
-      title: z.string(),
-    }),
-  ),
+  chapters: z.array(z.object({ description: z.string(), title: z.string() })),
 });
 
 export type CourseChaptersSchema = z.infer<typeof schema>;

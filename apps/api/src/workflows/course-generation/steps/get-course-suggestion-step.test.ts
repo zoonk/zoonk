@@ -10,9 +10,7 @@ describe(getCourseSuggestionStep, () => {
   });
 
   test("returns the course suggestion by ID", async () => {
-    const suggestion = await courseSuggestionFixture({
-      title: `Suggestion ${randomUUID()}`,
-    });
+    const suggestion = await courseSuggestionFixture({ title: `Suggestion ${randomUUID()}` });
 
     const result = await getCourseSuggestionStep(suggestion.id);
 

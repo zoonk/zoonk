@@ -41,12 +41,7 @@ export async function saveExplanationLessonStep({
 }): Promise<void> {
   "use step";
 
-  return saveStaticLessonStep({
-    context,
-    images,
-    step: "saveExplanationLesson",
-    steps,
-  });
+  return saveStaticLessonStep({ context, images, step: "saveExplanationLesson", steps });
 }
 
 export async function saveTutorialLessonStep({
@@ -60,10 +55,5 @@ export async function saveTutorialLessonStep({
 }): Promise<void> {
   "use step";
 
-  return saveStaticLessonStep({
-    context,
-    images,
-    step: "saveTutorialLesson",
-    steps,
-  });
+  return saveStaticLessonStep({ context, images, step: "saveTutorialLesson", steps });
 }

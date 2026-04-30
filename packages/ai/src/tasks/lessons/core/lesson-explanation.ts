@@ -8,25 +8,12 @@ import systemPrompt from "./lesson-explanation.prompt.md";
 const taskName = "lesson-explanation";
 const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
-const anchorSchema = z
-  .object({
-    text: z.string(),
-    title: z.string().min(1),
-  })
-  .strict();
+const anchorSchema = z.object({ text: z.string(), title: z.string().min(1) }).strict();
 
-const explanationStepSchema = z
-  .object({
-    text: z.string(),
-    title: z.string().min(1),
-  })
-  .strict();
+const explanationStepSchema = z.object({ text: z.string(), title: z.string().min(1) }).strict();
 
 const schema = z
-  .object({
-    anchor: anchorSchema,
-    explanation: z.array(explanationStepSchema).min(1),
-  })
+  .object({ anchor: anchorSchema, explanation: z.array(explanationStepSchema).min(1) })
   .strict();
 
 export type LessonExplanationSchema = z.infer<typeof schema>;

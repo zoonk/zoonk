@@ -119,24 +119,15 @@ export const MyComposition = () => {
         data: {
           type: "Feature",
           properties: {},
-          geometry: {
-            type: "LineString",
-            coordinates: lineCoordinates,
-          },
+          geometry: { type: "LineString", coordinates: lineCoordinates },
         },
       });
       _map.addLayer({
         type: "line",
         source: "trace",
         id: "line",
-        paint: {
-          "line-color": "black",
-          "line-width": 5,
-        },
-        layout: {
-          "line-cap": "round",
-          "line-join": "round",
-        },
+        paint: { "line-color": "black", "line-width": 5 },
+        layout: { "line-cap": "round", "line-join": "round" },
       });
     });
 
@@ -244,10 +235,7 @@ useEffect(() => {
   const alongRoute = turf.along(turf.lineString(lineCoordinates), routeDistance * progress).geometry
     .coordinates;
 
-  camera.lookAtPoint({
-    lng: alongRoute[0],
-    lat: alongRoute[1],
-  });
+  camera.lookAtPoint({ lng: alongRoute[0], lat: alongRoute[1] });
 
   map.setFreeCameraOptions(camera);
   map.once("idle", () => continueRender(handle));
@@ -293,10 +281,7 @@ useEffect(() => {
   const lineData: GeoJSON.Feature<GeoJSON.LineString> = {
     type: "Feature",
     properties: {},
-    geometry: {
-      type: "LineString",
-      coordinates: [start, [currentLng, currentLat]],
-    },
+    geometry: { type: "LineString", coordinates: [start, [currentLng, currentLat]] },
   };
 
   const source = map.getSource("trace") as mapboxgl.GeoJSONSource;
@@ -369,11 +354,7 @@ _map.addLayer({
     "text-offset": [0, 0.5],
     "text-anchor": "top",
   },
-  paint: {
-    "text-color": "#FFFFFF",
-    "text-halo-color": "#000000",
-    "text-halo-width": 2,
-  },
+  paint: { "text-color": "#FFFFFF", "text-halo-color": "#000000", "text-halo-width": 2 },
 });
 ```
 

@@ -9,15 +9,16 @@
   "bracketSpacing": true,
   "arrowParens": "always",
   "endOfLine": "lf",
-  "experimentalSortImports": {
+  "objectWrap": "collapse",
+  "sortImports": {
     "groups": ["builtin", "external", "internal", "parent", "sibling", "index", "type"],
     "internalPattern": ["@zoonk/*", "@/*", "~/"],
     "ignoreCase": true,
     "order": "asc",
     "newlinesBetween": false
   },
-  "experimentalSortPackageJson": true,
-  "experimentalTailwindcss": {
+  "sortPackageJson": true,
+  "sortTailwindcss": {
     "attributes": ["class", "className"],
     "functions": ["clsx", "cva", "tw", "cn"]
   },

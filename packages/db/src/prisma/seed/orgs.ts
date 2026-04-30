@@ -2,10 +2,7 @@ import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Organization, type PrismaClient } from "../../generated/prisma/client";
 import { type SeedUsers } from "./users";
 
-export type SeedOrganizations = {
-  ai: Organization;
-  testOrg: Organization;
-};
+export type SeedOrganizations = { ai: Organization; testOrg: Organization };
 
 export async function seedOrganizations(
   prisma: PrismaClient,
@@ -30,9 +27,7 @@ export async function seedOrganizations(
     }),
     prisma.organization.upsert({
       create: {
-        members: {
-          create: [{ role: "owner", userId: users.multiOrg.id }],
-        },
+        members: { create: [{ role: "owner", userId: users.multiOrg.id }] },
         name: "Test Org",
         slug: "test-org",
       },

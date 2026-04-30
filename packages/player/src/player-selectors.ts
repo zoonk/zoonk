@@ -53,10 +53,7 @@ export function getSelectedAnswer(state: PlayerState) {
   return state.selectedAnswers[currentStep.id];
 }
 
-export type PreloadableImage = {
-  kind: "selectImage" | "step";
-  url: string;
-};
+export type PreloadableImage = { kind: "selectImage" | "step"; url: string };
 
 const DEFAULT_LOOKAHEAD = 3;
 

@@ -56,10 +56,7 @@ describe(getNextLesson, () => {
   test("returns first lesson when unauthenticated", async () => {
     const { chapter, course, lessons } = await createCourseTree();
 
-    const result = await getNextLesson({
-      headers: new Headers(),
-      scope: { courseId: course.id },
-    });
+    const result = await getNextLesson({ headers: new Headers(), scope: { courseId: course.id } });
 
     expect(result).toEqual({
       brandSlug: organization.slug,
@@ -78,10 +75,7 @@ describe(getNextLesson, () => {
       lessonStatuses: ["pending", "completed"],
     });
 
-    const result = await getNextLesson({
-      headers: new Headers(),
-      scope: { courseId: course.id },
-    });
+    const result = await getNextLesson({ headers: new Headers(), scope: { courseId: course.id } });
 
     expect(result).toEqual({
       brandSlug: organization.slug,

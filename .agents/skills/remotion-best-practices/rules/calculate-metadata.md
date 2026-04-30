@@ -33,9 +33,7 @@ import { getVideoDuration } from "./get-video-duration";
 const calculateMetadata: CalculateMetadataFunction<Props> = async ({ props }) => {
   const durationInSeconds = await getVideoDuration(props.videoSrc);
 
-  return {
-    durationInFrames: Math.ceil(durationInSeconds * 30),
-  };
+  return { durationInFrames: Math.ceil(durationInSeconds * 30) };
 };
 ```
 
@@ -51,10 +49,7 @@ import { getVideoDimensions } from "./get-video-dimensions";
 const calculateMetadata: CalculateMetadataFunction<Props> = async ({ props }) => {
   const dimensions = await getVideoDimensions(props.videoSrc);
 
-  return {
-    width: dimensions.width,
-    height: dimensions.height,
-  };
+  return { width: dimensions.width, height: dimensions.height };
 };
 ```
 
@@ -67,9 +62,7 @@ const calculateMetadata: CalculateMetadataFunction<Props> = async ({ props }) =>
 
   const totalDuration = allMetadata.reduce((sum, durationInSeconds) => sum + durationInSeconds, 0);
 
-  return {
-    durationInFrames: Math.ceil(totalDuration * 30),
-  };
+  return { durationInFrames: Math.ceil(totalDuration * 30) };
 };
 ```
 
@@ -79,9 +72,7 @@ Set the default output filename based on props:
 
 ```tsx
 const calculateMetadata: CalculateMetadataFunction<Props> = async ({ props }) => {
-  return {
-    defaultOutName: `video-${props.id}.mp4`,
-  };
+  return { defaultOutName: `video-${props.id}.mp4` };
 };
 ```
 
@@ -94,12 +85,7 @@ const calculateMetadata: CalculateMetadataFunction<Props> = async ({ props, abor
   const response = await fetch(props.dataUrl, { signal: abortSignal });
   const data = await response.json();
 
-  return {
-    props: {
-      ...props,
-      fetchedData: data,
-    },
-  };
+  return { props: { ...props, fetchedData: data } };
 };
 ```
 

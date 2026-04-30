@@ -85,10 +85,7 @@ async function fetchUserData(userId: string) {
 async function processWithAI(data: any) {
   "use step";
   // AI SDK works in steps without workarounds
-  return await generateText({
-    model: openai("gpt-4"),
-    prompt: `Process: ${JSON.stringify(data)}`,
-  });
+  return await generateText({ model: openai("gpt-4"), prompt: `Process: ${JSON.stringify(data)}` });
 }
 
 // Workflow orchestrates steps - no sandbox issues
@@ -246,9 +243,7 @@ import { createHook } from "workflow";
 export async function chatWorkflow(channelId: string) {
   "use workflow";
 
-  const hook = createHook<{ text: string; done?: boolean }>({
-    token: `chat-${channelId}`,
-  });
+  const hook = createHook<{ text: string; done?: boolean }>({ token: `chat-${channelId}` });
 
   for await (const event of hook) {
     await processMessage(event.text);

@@ -74,13 +74,7 @@ export const MyAnimation = () => {
         fontFamily,
       }}
     >
-      <div
-        style={{
-          color: COLOR_TEXT,
-          fontSize: FONT_SIZE,
-          fontWeight: FONT_WEIGHT,
-        }}
-      >
+      <div style={{ color: COLOR_TEXT, fontSize: FONT_SIZE, fontWeight: FONT_WEIGHT }}>
         {hasHighlight ? (
           <>
             <span>{preText}</span>

@@ -44,12 +44,7 @@ export async function getAiTaskOverview({
 }): Promise<AiTaskOverview> {
   const taskTag = buildAiTaskTag(taskName);
   const { data, error } = await safeAsync(() =>
-    zoonkGateway.getSpendReport({
-      endDate,
-      groupBy: "tag",
-      startDate,
-      tags: [taskTag],
-    }),
+    zoonkGateway.getSpendReport({ endDate, groupBy: "tag", startDate, tags: [taskTag] }),
   );
 
   if (error) {
@@ -66,10 +61,7 @@ export async function getAiTaskOverview({
   return {
     averageMarketCostPerRequest,
     defaultModels,
-    estimatedMarketCost: calculateEstimatedMarketCost({
-      averageMarketCostPerRequest,
-      runCount,
-    }),
+    estimatedMarketCost: calculateEstimatedMarketCost({ averageMarketCostPerRequest, runCount }),
     hasFallbackTracking: defaultModels.length > 0,
     taskLabel: formatAiTaskLabel(taskName),
     taskName,
@@ -86,10 +78,7 @@ export async function getAiTaskOverview({
 function getAiTaskTotals({ rows, taskTag }: { rows: SpendReportTagRow[]; taskTag: string }) {
   const taskRow = rows.find((row) => row.tag === taskTag);
 
-  return {
-    totalMarketCost: taskRow?.marketCost ?? 0,
-    totalRequests: taskRow?.requestCount ?? 0,
-  };
+  return { totalMarketCost: taskRow?.marketCost ?? 0, totalRequests: taskRow?.requestCount ?? 0 };
 }
 
 /**

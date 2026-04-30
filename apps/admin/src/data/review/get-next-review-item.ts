@@ -7,10 +7,7 @@ import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { cache } from "react";
 import { reviewedEntityIds } from "./count-pending-reviews";
 
-type ReviewQueueResult = {
-  entityId: string | null;
-  remaining: number;
-};
+type ReviewQueueResult = { entityId: string | null; remaining: number };
 
 const EMPTY_RESULT: ReviewQueueResult = { entityId: null, remaining: 0 };
 
@@ -25,17 +22,10 @@ function hasStepImage(content: unknown): boolean {
 async function getNextCourseSuggestion(): Promise<ReviewQueueResult> {
   const excludeIds = await reviewedEntityIds("courseSuggestions");
 
-  const where = {
-    NOT: { id: { in: excludeIds } },
-    suggestions: { some: {} },
-  };
+  const where = { NOT: { id: { in: excludeIds } }, suggestions: { some: {} } };
 
   const [next, remaining] = await Promise.all([
-    prisma.searchPrompt.findFirst({
-      orderBy: { createdAt: "asc" },
-      select: { id: true },
-      where,
-    }),
+    prisma.searchPrompt.findFirst({ orderBy: { createdAt: "asc" }, select: { id: true }, where }),
     prisma.searchPrompt.count({ where }),
   ]);
 

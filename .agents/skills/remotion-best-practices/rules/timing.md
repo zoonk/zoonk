@@ -34,10 +34,7 @@ import { spring, useCurrentFrame, useVideoConfig } from "remotion";
 const frame = useCurrentFrame();
 const { fps } = useVideoConfig();
 
-const scale = spring({
-  frame,
-  fps,
-});
+const scale = spring({ frame, fps });
 ```
 
 ### Physical properties
@@ -48,11 +45,7 @@ This leads to the animation having a bit of bounce before it settles.
 The config can be overwritten like this:
 
 ```ts
-const scale = spring({
-  frame,
-  fps,
-  config: { damping: 200 },
-});
+const scale = spring({ frame, fps, config: { damping: 200 } });
 ```
 
 The recommended configuration for a natural motion without a bounce is: `{ damping: 200 }`.
@@ -72,11 +65,7 @@ The animation starts immediately by default.
 Use the `delay` parameter to delay the animation by a number of frames.
 
 ```tsx
-const entrance = spring({
-  frame: frame - ENTRANCE_DELAY,
-  fps,
-  delay: 20,
-});
+const entrance = spring({ frame: frame - ENTRANCE_DELAY, fps, delay: 20 });
 ```
 
 ### Duration
@@ -85,11 +74,7 @@ A `spring()` has a natural duration based on the physical properties.
 To stretch the animation to a specific duration, use the `durationInFrames` parameter.
 
 ```tsx
-const spring = spring({
-  frame,
-  fps,
-  durationInFrames: 40,
-});
+const spring = spring({ frame, fps, durationInFrames: 40 });
 ```
 
 ### Combining spring() with interpolate()
@@ -97,10 +82,7 @@ const spring = spring({
 Map spring output (0-1) to custom ranges:
 
 ```tsx
-const springProgress = spring({
-  frame,
-  fps,
-});
+const springProgress = spring({ frame, fps });
 
 // Map to rotation
 const rotation = interpolate(springProgress, [0, 1], [0, 360]);
@@ -116,10 +98,7 @@ Springs return just numbers, so math can be performed:
 const frame = useCurrentFrame();
 const { fps, durationInFrames } = useVideoConfig();
 
-const inAnimation = spring({
-  frame,
-  fps,
-});
+const inAnimation = spring({ frame, fps });
 const outAnimation = spring({
   frame,
   fps,

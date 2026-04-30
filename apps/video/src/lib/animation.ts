@@ -32,10 +32,7 @@ export function entryScale({
     extrapolateRight: "clamp",
   });
 
-  return {
-    opacity: progress,
-    transform: `scale(${interpolate(progress, [0, 1], [0.95, 1])})`,
-  };
+  return { opacity: progress, transform: `scale(${interpolate(progress, [0, 1], [0.95, 1])})` };
 }
 
 /**

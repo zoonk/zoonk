@@ -21,20 +21,13 @@ export async function generateMetadata({
 }: PageProps<"/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]">): Promise<Metadata> {
   const { brandSlug, chapterSlug, courseSlug } = await params;
 
-  const chapter = await getChapter({
-    brandSlug,
-    chapterSlug,
-    courseSlug,
-  });
+  const chapter = await getChapter({ brandSlug, chapterSlug, courseSlug });
 
   if (!chapter) {
     return {};
   }
 
-  return {
-    description: chapter.description,
-    title: chapter.title,
-  };
+  return { description: chapter.description, title: chapter.title };
 }
 
 export default async function ChapterPage({

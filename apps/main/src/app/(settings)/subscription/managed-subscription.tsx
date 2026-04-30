@@ -83,15 +83,11 @@ function getManagedSubscriptionAction({
   provider: Exclude<SubscriptionProvider, "stripe">;
 }) {
   if (provider === "apple") {
-    return {
-      href: APPLE_SUBSCRIPTION_MANAGEMENT_URL,
-    };
+    return { href: APPLE_SUBSCRIPTION_MANAGEMENT_URL };
   }
 
   if (provider === "google") {
-    return {
-      href: GOOGLE_SUBSCRIPTION_MANAGEMENT_URL,
-    };
+    return { href: GOOGLE_SUBSCRIPTION_MANAGEMENT_URL };
   }
 
   return null;

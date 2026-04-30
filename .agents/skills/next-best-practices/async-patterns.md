@@ -27,10 +27,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 ### SearchParams
 
 ```tsx
-type Props = {
-  params: Promise<{ slug: string }>;
-  searchParams: Promise<{ query?: string }>;
-};
+type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ query?: string }> };
 
 export default async function Page({ params, searchParams }: Props) {
   const { slug } = await params;

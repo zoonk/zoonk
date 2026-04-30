@@ -22,10 +22,7 @@ export default async function OTPPage({ searchParams }: PageProps<"/auth/otp">) 
 
       <Link
         className={buttonVariants({ variant: "outline" })}
-        href={{
-          pathname: "/auth/login",
-          query: { redirectTo: String(redirectTo) },
-        }}
+        href={{ pathname: "/auth/login", query: { redirectTo: String(redirectTo) } }}
       >
         {t("Change email")}
       </Link>

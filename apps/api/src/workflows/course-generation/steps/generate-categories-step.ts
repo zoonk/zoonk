@@ -10,9 +10,7 @@ export async function generateCategoriesStep(course: CourseContext): Promise<str
 
   await stream.status({ status: "started", step: "generateCategories" });
 
-  const result = await generateCourseCategories({
-    courseTitle: course.courseTitle,
-  });
+  const result = await generateCourseCategories({ courseTitle: course.courseTitle });
 
   await stream.status({ status: "completed", step: "generateCategories" });
 

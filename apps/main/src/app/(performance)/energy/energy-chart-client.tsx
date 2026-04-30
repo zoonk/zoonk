@@ -16,11 +16,7 @@ import {
   PerformanceChartXAxis,
 } from "../_components/performance-area-chart";
 
-type SerializedDataPoint = {
-  date: string;
-  energy: number;
-  label: string;
-};
+type SerializedDataPoint = { date: string; energy: number; label: string };
 
 export function EnergyChartClient({
   average,

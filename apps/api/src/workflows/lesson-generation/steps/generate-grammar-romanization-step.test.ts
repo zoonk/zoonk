@@ -5,11 +5,13 @@ import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateGrammarRomanizationStep } from "./generate-grammar-romanization-step";
 
 vi.mock("@zoonk/ai/tasks/lessons/language/romanization", () => ({
-  generateLessonRomanization: vi.fn().mockImplementation(({ texts }) =>
-    Promise.resolve({
-      data: { romanizations: texts.map((text: string) => `${text} romanized`) },
-    }),
-  ),
+  generateLessonRomanization: vi
+    .fn()
+    .mockImplementation(({ texts }) =>
+      Promise.resolve({
+        data: { romanizations: texts.map((text: string) => `${text} romanized`) },
+      }),
+    ),
 }));
 
 describe(generateGrammarRomanizationStep, () => {

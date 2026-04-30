@@ -66,11 +66,7 @@ export async function getAiCostEstimates({
         tutorialLessonEstimate,
         usageByTask,
       }),
-      buildLanguageCourseEstimate({
-        courseInputs,
-        languageLessonEstimate,
-        usageByTask,
-      }),
+      buildLanguageCourseEstimate({ courseInputs, languageLessonEstimate, usageByTask }),
     ],
   };
 }

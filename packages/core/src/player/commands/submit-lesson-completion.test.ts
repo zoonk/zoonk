@@ -39,11 +39,7 @@ describe(submitLessonCompletion, () => {
     course = await courseFixture({ organizationId: org.id });
     const chapter = await chapterFixture({ courseId: course.id, organizationId: org.id });
 
-    lesson = await lessonFixture({
-      chapterId: chapter.id,
-      kind: "quiz",
-      organizationId: org.id,
-    });
+    lesson = await lessonFixture({ chapterId: chapter.id, kind: "quiz", organizationId: org.id });
 
     step = await stepFixture({
       content: {
@@ -72,9 +68,7 @@ describe(submitLessonCompletion, () => {
       userId,
     });
 
-    const attempts = await prisma.stepAttempt.findMany({
-      where: { stepId: step.id, userId },
-    });
+    const attempts = await prisma.stepAttempt.findMany({ where: { stepId: step.id, userId } });
 
     expect(attempts).toHaveLength(1);
     expect(attempts[0]?.isCorrect).toBe(true);
@@ -111,10 +105,7 @@ describe(submitLessonCompletion, () => {
     const user = await userFixture();
     const userId = user.id;
 
-    const publishedCourse = await courseFixture({
-      isPublished: true,
-      organizationId: org.id,
-    });
+    const publishedCourse = await courseFixture({ isPublished: true, organizationId: org.id });
     const chapter = await chapterFixture({
       courseId: publishedCourse.id,
       isPublished: true,
@@ -208,9 +199,7 @@ describe(submitLessonCompletion, () => {
       userId,
     });
 
-    const daily = await prisma.dailyProgress.findFirst({
-      where: { userId },
-    });
+    const daily = await prisma.dailyProgress.findFirst({ where: { userId } });
 
     expect(daily).not.toBeNull();
     expect(daily?.correctAnswers).toBe(3);
@@ -280,9 +269,7 @@ describe(submitLessonCompletion, () => {
     await submitLessonCompletion(baseInput);
     await submitLessonCompletion(baseInput);
 
-    const attempts = await prisma.stepAttempt.findMany({
-      where: { stepId: step.id, userId },
-    });
+    const attempts = await prisma.stepAttempt.findMany({ where: { stepId: step.id, userId } });
     expect(attempts).toHaveLength(2);
 
     const userProgress = await prisma.userProgress.findUnique({ where: { userId } });
@@ -310,9 +297,7 @@ describe(submitLessonCompletion, () => {
       userId,
     });
 
-    const daily = await prisma.dailyProgress.findFirst({
-      where: { userId },
-    });
+    const daily = await prisma.dailyProgress.findFirst({ where: { userId } });
 
     expect(daily).not.toBeNull();
     expect(daily?.staticCompleted).toBe(1);
@@ -407,11 +392,7 @@ describe(submitLessonCompletion, () => {
     );
     const yesterday = new Date(todayMidnight.getTime() - 86_400_000);
 
-    await userProgressFixture({
-      currentEnergy: 50,
-      lastActiveAt: yesterday,
-      userId,
-    });
+    await userProgressFixture({ currentEnergy: 50, lastActiveAt: yesterday, userId });
 
     await submitLessonCompletion({
       durationSeconds: 10,
@@ -441,9 +422,7 @@ describe(submitLessonCompletion, () => {
     const userId = user.id;
 
     // Simulate startLesson() creating a start-only record
-    await prisma.lessonProgress.create({
-      data: { lessonId: lesson.id, userId },
-    });
+    await prisma.lessonProgress.create({ data: { lessonId: lesson.id, userId } });
 
     const startRecord = await prisma.lessonProgress.findUnique({
       where: { userLesson: { lessonId: lesson.id, userId } },
@@ -494,9 +473,7 @@ describe(submitLessonCompletion, () => {
       userId,
     });
 
-    const daily = await prisma.dailyProgress.findFirst({
-      where: { userId },
-    });
+    const daily = await prisma.dailyProgress.findFirst({ where: { userId } });
 
     expect(daily).not.toBeNull();
     expect(daily?.date).toEqual(
@@ -550,11 +527,7 @@ describe(submitLessonCompletion, () => {
     const todayMs = parseLocalDate(localDate).getTime();
     const fiveDaysBefore = new Date(todayMs - 5 * 86_400_000);
 
-    await userProgressFixture({
-      currentEnergy: 50,
-      lastActiveAt: fiveDaysBefore,
-      userId,
-    });
+    await userProgressFixture({ currentEnergy: 50, lastActiveAt: fiveDaysBefore, userId });
 
     await submitLessonCompletion({
       durationSeconds: 10,
@@ -593,11 +566,7 @@ describe(submitLessonCompletion, () => {
     );
     const fiveDaysAgo = new Date(todayMidnight.getTime() - 5 * 86_400_000);
 
-    await userProgressFixture({
-      currentEnergy: 50,
-      lastActiveAt: fiveDaysAgo,
-      userId,
-    });
+    await userProgressFixture({ currentEnergy: 50, lastActiveAt: fiveDaysAgo, userId });
 
     await submitLessonCompletion({
       durationSeconds: 10,

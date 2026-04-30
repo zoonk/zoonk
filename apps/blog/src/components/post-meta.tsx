@@ -1,9 +1,6 @@
 import { getAuthor } from "@/lib/authors";
 
-type PostMetaProps = {
-  date: string;
-  authorId: string;
-};
+type PostMetaProps = { date: string; authorId: string };
 
 /**
  * Displays post metadata below the title: date and author

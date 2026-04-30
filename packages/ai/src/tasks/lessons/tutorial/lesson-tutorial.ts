@@ -8,14 +8,9 @@ import systemPrompt from "./lesson-tutorial.prompt.md";
 const taskName = "lesson-tutorial";
 const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
-const stepSchema = z.object({
-  text: z.string(),
-  title: z.string(),
-});
+const stepSchema = z.object({ text: z.string(), title: z.string() });
 
-const schema = z.object({
-  steps: z.array(stepSchema).min(1),
-});
+const schema = z.object({ steps: z.array(stepSchema).min(1) });
 
 export type LessonTutorialSchema = z.infer<typeof schema>;
 

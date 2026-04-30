@@ -20,11 +20,7 @@ describe(getLessonWordsForLessons, () => {
   beforeAll(async () => {
     org = await organizationFixture({ kind: "brand" });
 
-    course = await courseFixture({
-      isPublished: true,
-      language: "es",
-      organizationId: org.id,
-    });
+    course = await courseFixture({ isPublished: true, language: "es", organizationId: org.id });
 
     chapter = await chapterFixture({
       courseId: course.id,
@@ -87,11 +83,7 @@ describe(getLessonWordsForLessons, () => {
     ]);
 
     await Promise.all([
-      wordPronunciationFixture({
-        pronunciation: "peh-roh",
-        userLanguage: "en",
-        wordId: word.id,
-      }),
+      wordPronunciationFixture({ pronunciation: "peh-roh", userLanguage: "en", wordId: word.id }),
       lessonWordFixture({
         distractors: [],
         lessonId: newLesson.id,
@@ -154,16 +146,8 @@ describe(getLessonWordsForLessons, () => {
 
     // Create pronunciations for two different user languages
     await Promise.all([
-      wordPronunciationFixture({
-        pronunciation: "BAHN-koh",
-        userLanguage: "en",
-        wordId: word.id,
-      }),
-      wordPronunciationFixture({
-        pronunciation: "BAN-co",
-        userLanguage: "pt",
-        wordId: word.id,
-      }),
+      wordPronunciationFixture({ pronunciation: "BAHN-koh", userLanguage: "en", wordId: word.id }),
+      wordPronunciationFixture({ pronunciation: "BAN-co", userLanguage: "pt", wordId: word.id }),
       lessonWordFixture({
         lessonId: newLesson.id,
         translation: "bank",

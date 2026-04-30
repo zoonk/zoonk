@@ -11,10 +11,7 @@ export async function validateTrustedOriginAction(redirectTo: string): Promise<b
   const reqHeaders = await headers();
 
   const { error } = await safeAsync(async () =>
-    auth.api.validateTrustedOrigin({
-      body: { url: redirectTo },
-      headers: reqHeaders,
-    }),
+    auth.api.validateTrustedOrigin({ body: { url: redirectTo }, headers: reqHeaders }),
   );
 
   return !error;
@@ -26,10 +23,7 @@ export async function createOneTimeTokenAction(
   const reqHeaders = await headers();
 
   const { error: validationError } = await safeAsync(async () =>
-    auth.api.validateTrustedOrigin({
-      body: { url: redirectTo },
-      headers: reqHeaders,
-    }),
+    auth.api.validateTrustedOrigin({ body: { url: redirectTo }, headers: reqHeaders }),
   );
 
   if (validationError) {
@@ -38,9 +32,7 @@ export async function createOneTimeTokenAction(
   }
 
   const { data, error } = await safeAsync(async () =>
-    auth.api.generateOneTimeToken({
-      headers: reqHeaders,
-    }),
+    auth.api.generateOneTimeToken({ headers: reqHeaders }),
   );
 
   if (error) {

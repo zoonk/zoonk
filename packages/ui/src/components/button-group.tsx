@@ -7,9 +7,7 @@ import { type VariantProps, cva } from "class-variance-authority";
 const buttonGroupVariants = cva(
   "flex w-fit items-stretch has-[>[data-slot=button-group]]:gap-2 [&>*]:focus-visible:relative [&>*]:focus-visible:z-10 has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-r-4xl [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1",
   {
-    defaultVariants: {
-      orientation: "horizontal",
-    },
+    defaultVariants: { orientation: "horizontal" },
     variants: {
       orientation: {
         horizontal:
@@ -50,9 +48,7 @@ function ButtonGroupText({ className, render, ...props }: useRender.ComponentPro
       props,
     ),
     render,
-    state: {
-      slot: "button-group-text",
-    },
+    state: { slot: "button-group-text" },
   });
 }
 

@@ -5,11 +5,11 @@ import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateVocabularyDistractorsStep } from "./generate-vocabulary-distractors-step";
 
 vi.mock("@zoonk/ai/tasks/lessons/language/distractors", () => ({
-  generateLessonDistractors: vi.fn().mockImplementation(({ input }) =>
-    Promise.resolve({
-      data: { distractors: [`${input} alt`] },
-    }),
-  ),
+  generateLessonDistractors: vi
+    .fn()
+    .mockImplementation(({ input }) =>
+      Promise.resolve({ data: { distractors: [`${input} alt`] } }),
+    ),
 }));
 
 describe(generateVocabularyDistractorsStep, () => {

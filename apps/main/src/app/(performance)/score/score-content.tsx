@@ -20,11 +20,7 @@ export async function ScoreContent({
   const locale = await getLocale();
 
   const [data, session] = await Promise.all([
-    getScoreHistory({
-      locale,
-      offset: Number(offset),
-      period: validPeriod,
-    }),
+    getScoreHistory({ locale, offset: Number(offset), period: validPeriod }),
     getSession(),
   ]);
 

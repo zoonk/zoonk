@@ -5,7 +5,9 @@ import { parseQueryParams } from "@/lib/query-params";
 import { searchCourses } from "@zoonk/core/courses/search";
 import { NextResponse } from "next/server";
 
-export async function GET(request: Request): Promise<
+export async function GET(
+  request: Request,
+): Promise<
   | NextResponse<
       PaginatedResponse<{
         id: string;
@@ -14,12 +16,7 @@ export async function GET(request: Request): Promise<
         description: string | null;
         imageUrl: string | null;
         language: string;
-        organization: {
-          id: string;
-          slug: string;
-          name: string;
-          logo: string | null;
-        };
+        organization: { id: string; slug: string; name: string; logo: string | null };
       }>
     >
   | NextResponse
@@ -35,12 +32,7 @@ export async function GET(request: Request): Promise<
   const { cursor, language, limit, query } = parsed.data;
   const offset = cursor ? (decodeCursor(cursor) ?? 0) : 0;
 
-  const courses = await searchCourses({
-    language,
-    limit: limit + 1,
-    offset,
-    query,
-  });
+  const courses = await searchCourses({ language, limit: limit + 1, offset, query });
 
   const response = createPaginatedResponse(
     courses.map((course) => ({

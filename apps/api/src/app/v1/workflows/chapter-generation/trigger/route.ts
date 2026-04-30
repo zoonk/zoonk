@@ -14,9 +14,7 @@ import { start } from "workflow/api";
 async function getChapterPosition(chapterId: string) {
   const chapter = await prisma.chapter.findFirst({
     select: { position: true },
-    where: getAiGenerationChapterWhere({
-      chapterWhere: { id: chapterId },
-    }),
+    where: getAiGenerationChapterWhere({ chapterWhere: { id: chapterId } }),
   });
   return chapter;
 }
@@ -44,8 +42,5 @@ export async function POST(request: NextRequest) {
 
   const run = await start(chapterGenerationWorkflow, [parsed.data.chapterId]);
 
-  return NextResponse.json({
-    message: "Workflow started",
-    runId: run.runId,
-  });
+  return NextResponse.json({ message: "Workflow started", runId: run.runId });
 }

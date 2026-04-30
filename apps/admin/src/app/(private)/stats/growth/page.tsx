@@ -6,9 +6,7 @@ import { AdminPeriodNavigation } from "../_components/admin-period-navigation";
 import { StatsPageLayout } from "../_components/stats-page-layout";
 import { GrowthMetrics, GrowthMetricsSkeleton } from "./growth-metrics";
 
-export const metadata: Metadata = {
-  title: "Growth & Sustainability",
-};
+export const metadata: Metadata = { title: "Growth & Sustainability" };
 
 export default async function GrowthPage({ searchParams }: PageProps<"/stats/growth">) {
   const { period: rawPeriod, offset: rawOffset } = await searchParams;

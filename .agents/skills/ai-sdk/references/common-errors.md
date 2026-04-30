@@ -61,9 +61,7 @@ const weatherTool = tool({
 // ✅ Correct
 const weatherTool = tool({
   description: "Get weather for a location",
-  inputSchema: z.object({
-    location: z.string(),
-  }),
+  inputSchema: z.object({ location: z.string() }),
   execute: async ({ location }) => ({ location, temp: 72 }),
 });
 ```
@@ -81,10 +79,7 @@ const result = await generateObject({
   model: "anthropic/claude-opus-4.5",
   schema: z.object({
     // deprecated: use `Output.object({ schema })` instead
-    recipe: z.object({
-      name: z.string(),
-      ingredients: z.array(z.string()),
-    }),
+    recipe: z.object({ name: z.string(), ingredients: z.array(z.string()) }),
   }),
   prompt: "Generate a recipe for chocolate cake",
 });
@@ -95,12 +90,7 @@ import { generateText, Output } from "ai";
 const result = await generateText({
   model: "anthropic/claude-opus-4.5",
   output: Output.object({
-    schema: z.object({
-      recipe: z.object({
-        name: z.string(),
-        ingredients: z.array(z.string()),
-      }),
-    }),
+    schema: z.object({ recipe: z.object({ name: z.string(), ingredients: z.array(z.string()) }) }),
   }),
   prompt: "Generate a recipe for chocolate cake",
 });
@@ -125,12 +115,7 @@ import { generateText, Output } from "ai";
 
 const result = await generateText({
   model: "anthropic/claude-opus-4.5",
-  output: Output.object({
-    schema: z.object({
-      name: z.string(),
-      age: z.number(),
-    }),
-  }),
+  output: Output.object({ schema: z.object({ name: z.string(), age: z.number() }) }),
   prompt: "Extract the user info: John is 25 years old",
 });
 
@@ -143,21 +128,14 @@ console.log(result.output); // { name: 'John', age: 25 }
 // Output.array - for generating arrays of items
 const result = await generateText({
   model: "anthropic/claude-opus-4.5",
-  output: Output.array({
-    element: z.object({
-      city: z.string(),
-      country: z.string(),
-    }),
-  }),
+  output: Output.array({ element: z.object({ city: z.string(), country: z.string() }) }),
   prompt: "List 5 capital cities",
 });
 
 // Output.choice - for selecting from predefined options
 const result = await generateText({
   model: "anthropic/claude-opus-4.5",
-  output: Output.choice({
-    options: ["positive", "negative", "neutral"] as const,
-  }),
+  output: Output.choice({ options: ["positive", "negative", "neutral"] as const }),
   prompt: "Classify the sentiment: I love this product!",
 });
 
@@ -221,9 +199,7 @@ import { useState } from "react";
 
 export default function Page() {
   const [input, setInput] = useState("");
-  const { sendMessage } = useChat({
-    transport: new DefaultChatTransport({ api: "/api/chat" }),
-  });
+  const { sendMessage } = useChat({ transport: new DefaultChatTransport({ api: "/api/chat" }) });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -432,8 +408,5 @@ return createAgentUIStreamResponse({
 });
 
 // ✅ Correct
-return createAgentUIStreamResponse({
-  agent: myAgent,
-  uiMessages: messages,
-});
+return createAgentUIStreamResponse({ agent: myAgent, uiMessages: messages });
 ```

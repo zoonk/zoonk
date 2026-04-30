@@ -23,11 +23,7 @@ const practiceStepSchema = z.object({
 });
 
 const schema = z.object({
-  scenario: z.object({
-    imagePrompt: z.string(),
-    text: z.string(),
-    title: z.string(),
-  }),
+  scenario: z.object({ imagePrompt: z.string(), text: z.string(), title: z.string() }),
   steps: z.array(practiceStepSchema).min(1),
   title: z.string(),
 });

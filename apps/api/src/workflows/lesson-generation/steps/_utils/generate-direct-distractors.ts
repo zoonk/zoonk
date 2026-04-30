@@ -1,10 +1,7 @@
 import { generateLessonDistractors } from "@zoonk/ai/tasks/lessons/language/distractors";
 import { type DistractorShape, sanitizeDistractors } from "@zoonk/utils/distractors";
 
-type DistractorEntry = {
-  input: string;
-  key: string;
-};
+type DistractorEntry = { input: string; key: string };
 
 /**
  * Generates and sanitizes direct distractor words for a batch of inputs.

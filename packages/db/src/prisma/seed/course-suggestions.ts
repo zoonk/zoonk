@@ -4,10 +4,7 @@ import { type PrismaClient } from "../../generated/prisma/client";
 export async function seedCourseSuggestions(prisma: PrismaClient): Promise<void> {
   // English suggestions
   const enSuggestions = [
-    {
-      description: "Learn the fundamentals of software testing",
-      title: "Introduction to Testing",
-    },
+    { description: "Learn the fundamentals of software testing", title: "Introduction to Testing" },
     {
       description: "Master complex testing patterns and methodologies",
       title: "Advanced Test Strategies",
@@ -17,12 +14,7 @@ export async function seedCourseSuggestions(prisma: PrismaClient): Promise<void>
   const enSearchPrompt = await prisma.searchPrompt.upsert({
     create: { language: "en", prompt: normalizeString("test prompt") },
     update: {},
-    where: {
-      languagePrompt: {
-        language: "en",
-        prompt: normalizeString("test prompt"),
-      },
-    },
+    where: { languagePrompt: { language: "en", prompt: normalizeString("test prompt") } },
   });
 
   await Promise.all(
@@ -59,10 +51,7 @@ export async function seedCourseSuggestions(prisma: PrismaClient): Promise<void>
 
   // Portuguese suggestions
   const ptSuggestions = [
-    {
-      description: "Aprenda os fundamentos de testes de software",
-      title: "Introdução a Testes",
-    },
+    { description: "Aprenda os fundamentos de testes de software", title: "Introdução a Testes" },
     {
       description: "Domine padrões e metodologias complexas de testes",
       title: "Estratégias Avançadas de Testes",
@@ -72,12 +61,7 @@ export async function seedCourseSuggestions(prisma: PrismaClient): Promise<void>
   const ptSearchPrompt = await prisma.searchPrompt.upsert({
     create: { language: "pt", prompt: normalizeString("test prompt") },
     update: {},
-    where: {
-      languagePrompt: {
-        language: "pt",
-        prompt: normalizeString("test prompt"),
-      },
-    },
+    where: { languagePrompt: { language: "pt", prompt: normalizeString("test prompt") } },
   });
 
   await Promise.all(

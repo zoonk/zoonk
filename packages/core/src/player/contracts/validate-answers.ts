@@ -22,18 +22,10 @@ type StepData = {
   kind: string;
   content: unknown;
   word?: { id: string } | null;
-  sentence?: {
-    id: string;
-    sentence: string;
-    translation: string;
-  } | null;
+  sentence?: { id: string; sentence: string; translation: string } | null;
 };
 
-type ValidatedStepResult = {
-  answer: object;
-  isCorrect: boolean;
-  stepId: string;
-};
+type ValidatedStepResult = { answer: object; isCorrect: boolean; stepId: string };
 
 type ServerValidationBehavior =
   | "fillBlank"

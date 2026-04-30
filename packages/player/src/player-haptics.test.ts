@@ -32,12 +32,7 @@ function buildResult(overrides: Partial<StepResult> = {}): StepResult {
 }
 
 function buildSnapshot(overrides: Partial<PlayerHapticSnapshot> = {}): PlayerHapticSnapshot {
-  return {
-    phase: "playing",
-    result: undefined,
-    step: buildStep(),
-    ...overrides,
-  };
+  return { phase: "playing", result: undefined, step: buildStep(), ...overrides };
 }
 
 describe(getPlayerHapticSequence, () => {

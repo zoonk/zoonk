@@ -11,9 +11,7 @@ import { Suspense } from "react";
 import { UserList } from "./user-list";
 import { UserSearch } from "./user-search";
 
-export const metadata: Metadata = {
-  title: "Users",
-};
+export const metadata: Metadata = { title: "Users" };
 
 export default function UsersPage({ searchParams }: PageProps<"/users">) {
   return (

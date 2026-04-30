@@ -119,11 +119,7 @@ export function PlayerChoiceSceneOptions({
 }) {
   const t = useExtracted();
 
-  useOptionKeyboard({
-    enabled: keyboardEnabled,
-    onSelect,
-    optionCount: options.length,
-  });
+  useOptionKeyboard({ enabled: keyboardEnabled, onSelect, optionCount: options.length });
 
   return (
     <div

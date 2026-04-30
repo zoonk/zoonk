@@ -94,11 +94,7 @@ async function seedStepAttempts(
   now: Date,
 ) {
   const lesson = await prisma.lesson.findFirst({
-    where: {
-      language: "en",
-      organizationId: org.id,
-      slug: "what-is-machine-learning",
-    },
+    where: { language: "en", organizationId: org.id, slug: "what-is-machine-learning" },
   });
 
   if (!lesson) {
@@ -115,20 +111,20 @@ async function seedStepAttempts(
     return;
   }
 
-  const attemptData = steps.slice(0, 3).map((step, index) => ({
-    answer: { selectedOption: index === 1 ? 0 : 1 },
-    answeredAt: new Date(now.getTime() - (3 - index) * 60 * 1000),
-    dayOfWeek: now.getDay(),
-    durationSeconds: 15 + Math.floor(Math.random() * 30),
-    hourOfDay: now.getHours(),
-    isCorrect: index !== 1,
-    stepId: step.id,
-    userId: users.owner.id,
-  }));
+  const attemptData = steps
+    .slice(0, 3)
+    .map((step, index) => ({
+      answer: { selectedOption: index === 1 ? 0 : 1 },
+      answeredAt: new Date(now.getTime() - (3 - index) * 60 * 1000),
+      dayOfWeek: now.getDay(),
+      durationSeconds: 15 + Math.floor(Math.random() * 30),
+      hourOfDay: now.getHours(),
+      isCorrect: index !== 1,
+      stepId: step.id,
+      userId: users.owner.id,
+    }));
 
-  await prisma.stepAttempt.createMany({
-    data: attemptData,
-  });
+  await prisma.stepAttempt.createMany({ data: attemptData });
 
   await prisma.lessonProgress.upsert({
     create: {
@@ -139,12 +135,7 @@ async function seedStepAttempts(
       userId: users.owner.id,
     },
     update: {},
-    where: {
-      userLesson: {
-        lessonId: lesson.id,
-        userId: users.owner.id,
-      },
-    },
+    where: { userLesson: { lessonId: lesson.id, userId: users.owner.id } },
   });
 }
 
@@ -165,12 +156,7 @@ export async function seedProgress(
       prisma.dailyProgress.upsert({
         create: data,
         update: {},
-        where: {
-          userDate: {
-            date: data.date,
-            userId: data.userId,
-          },
-        },
+        where: { userDate: { date: data.date, userId: data.userId } },
       }),
     ),
   );

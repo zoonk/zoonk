@@ -1,9 +1,6 @@
 import { type LessonKind } from "@zoonk/db";
 
-type LessonLabelInput = {
-  kind: LessonKind;
-  title: string | null;
-};
+type LessonLabelInput = { kind: LessonKind; title: string | null };
 
 /**
  * Admin review queues can receive structural lessons that intentionally have

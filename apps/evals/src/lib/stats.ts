@@ -52,12 +52,7 @@ function calculateStats(results: EvalResult[], modelId: string): TaskStats {
 
   const totalCost = calculateTotalCost(averageInputTokens, averageOutputTokens, model);
 
-  return {
-    averageDuration,
-    averageInputTokens,
-    averageOutputTokens,
-    totalCost,
-  };
+  return { averageDuration, averageInputTokens, averageOutputTokens, totalCost };
 }
 
 export function getStatsFromResults(evalResults: TaskEvalResults): TaskStats {

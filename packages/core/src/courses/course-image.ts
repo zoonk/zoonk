@@ -29,10 +29,7 @@ export async function generateCourseImage(
   const orgSlug = params.orgSlug ?? AI_ORG_SLUG;
   const fileName = `courses/${orgSlug}/${slug}.webp`;
 
-  const { data: url, error: uploadError } = await uploadImage({
-    fileName,
-    image: optimized,
-  });
+  const { data: url, error: uploadError } = await uploadImage({ fileName, image: optimized });
 
   if (uploadError) {
     return { data: null, error: uploadError };

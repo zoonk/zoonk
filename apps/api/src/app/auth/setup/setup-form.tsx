@@ -66,9 +66,7 @@ export function SetupProfileForm({
   const { setUsername, status, username } = useUsernameAvailability();
 
   const boundAction = setupProfileAction.bind(null, redirectTo);
-  const [state, formAction] = useActionState(boundAction, {
-    status: "idle" as const,
-  });
+  const [state, formAction] = useActionState(boundAction, { status: "idle" as const });
 
   const hasError = state.status === "error";
   const isSubmitDisabled = status !== "idle" && status !== "available";

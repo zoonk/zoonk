@@ -20,11 +20,7 @@ export type SelectedAnswer =
   | { kind: "sortOrder"; userOrder: string[] }
   | { kind: "translation"; selectedOptionId: string };
 
-export type StepResult = {
-  stepId: string;
-  answer?: SelectedAnswer;
-  result: AnswerResult;
-};
+export type StepResult = { stepId: string; answer?: SelectedAnswer; result: AnswerResult };
 
 export type StepTiming = {
   answeredAt: number;
@@ -140,12 +136,7 @@ function handleContinue(state: PlayerState): PlayerState {
     return completeWith(state);
   }
 
-  return {
-    ...state,
-    currentStepIndex: nextIndex,
-    phase: "playing",
-    stepStartedAt: Date.now(),
-  };
+  return { ...state, currentStepIndex: nextIndex, phase: "playing", stepStartedAt: Date.now() };
 }
 
 /**

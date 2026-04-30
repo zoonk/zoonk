@@ -60,11 +60,7 @@ function UsernameStatus({ status, username }: { status: UsernameStatusType; user
   );
 }
 
-const initialState = {
-  name: "",
-  status: "idle" as "idle" | "error" | "success",
-  username: "",
-};
+const initialState = { name: "", status: "idle" as "idle" | "error" | "success", username: "" };
 
 export function ProfileForm({
   defaultName,

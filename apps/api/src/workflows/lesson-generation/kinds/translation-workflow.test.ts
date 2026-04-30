@@ -38,11 +38,7 @@ describe(translationLessonWorkflow, () => {
       }),
       Promise.all(
         [`guten-${uniqueId}`, `morgen-${uniqueId}`].map((word) =>
-          wordFixture({
-            organizationId,
-            targetLanguage: "de",
-            word,
-          }),
+          wordFixture({ organizationId, targetLanguage: "de", word }),
         ),
       ),
     ]);

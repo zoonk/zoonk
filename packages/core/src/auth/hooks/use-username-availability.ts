@@ -92,9 +92,5 @@ export function useUsernameAvailability(currentUsername?: string | null) {
     };
   }, [username, checkAvailability]);
 
-  return {
-    setUsername,
-    status,
-    username,
-  };
+  return { setUsername, status, username };
 }

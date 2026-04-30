@@ -34,12 +34,8 @@ import { isUsernameAllowed } from "./username-validator";
  * Does NOT include rateLimit or emailAndPassword - those differ per environment.
  */
 export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
-  account: {
-    accountLinking: { enabled: true },
-  },
-  advanced: {
-    database: { generateId: "uuid" },
-  },
+  account: { accountLinking: { enabled: true } },
+  advanced: { database: { generateId: "uuid" } },
   appName: "Zoonk",
   basePath: BETTER_AUTH_BASE_PATH,
   baseURL: {
@@ -48,14 +44,9 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
     protocol: isLocalhostSupported() ? "http" : "https",
   },
   database: prismaAdapter(prisma, { provider: "postgresql" }),
-  experimental: {
-    joins: true,
-  },
+  experimental: { joins: true },
   session: {
-    cookieCache: {
-      enabled: true,
-      maxAge: 60 * COOKIE_CACHE_MINUTES,
-    },
+    cookieCache: { enabled: true, maxAge: 60 * COOKIE_CACHE_MINUTES },
     expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,
   },
   trustedOrigins: ["https://appleid.apple.com"],
@@ -63,9 +54,7 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
 
 export const baseAuthPlugins = [
   adminPlugin(),
-  username({
-    usernameValidator: (value) => isUsernameAllowed(value),
-  }),
+  username({ usernameValidator: (value) => isUsernameAllowed(value) }),
   organization({
     ac,
     // Temporarily disable organization creation
@@ -76,23 +65,15 @@ export const baseAuthPlugins = [
     roles: { admin, member, owner },
     schema: {
       organization: {
-        additionalFields: {
-          kind: { defaultValue: "brand", required: true, type: "string" },
-        },
+        additionalFields: { kind: { defaultValue: "brand", required: true, type: "string" } },
       },
     },
   }),
 ] as const;
 
 export const fullPlugins = [
-  emailOTP({
-    overrideDefaultEmailVerification: true,
-    sendVerificationOTP,
-    storeOTP: "hashed",
-  }),
-  oneTimeToken({
-    storeToken: "hashed",
-  }),
+  emailOTP({ overrideDefaultEmailVerification: true, sendVerificationOTP, storeOTP: "hashed" }),
+  oneTimeToken({ storeToken: "hashed" }),
   jwt(),
   bearer(),
   stripePlugin(),
@@ -102,7 +83,4 @@ export const fullPlugins = [
   nextCookies(),
 ] as const;
 
-export const socialProviders = {
-  ...appleProvider,
-  ...googleProvider,
-};
+export const socialProviders = { ...appleProvider, ...googleProvider };

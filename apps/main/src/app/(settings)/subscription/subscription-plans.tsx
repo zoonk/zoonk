@@ -39,10 +39,7 @@ export async function SubscriptionPlans() {
 
   const currentPlan = subscription?.plan ?? null;
 
-  const cancelDate = getSubscriptionDate({
-    date: subscription?.cancelAt ?? null,
-    format,
-  });
+  const cancelDate = getSubscriptionDate({ date: subscription?.cancelAt ?? null, format });
 
   const periodEndDate = getSubscriptionDate({
     date: subscription?.cancelAt ? null : (subscription?.periodEnd ?? null),
@@ -111,9 +108,7 @@ async function getCurrentSubscription(requestHeaders: Headers) {
     return null;
   }
 
-  return prisma.subscription.findUnique({
-    where: { id: activeSubscription.id },
-  });
+  return prisma.subscription.findUnique({ where: { id: activeSubscription.id } });
 }
 
 /**
@@ -131,11 +126,7 @@ function getSubscriptionDate({
     return null;
   }
 
-  return format.dateTime(new Date(date), {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+  return format.dateTime(new Date(date), { day: "numeric", month: "long", year: "numeric" });
 }
 
 export function SubscriptionPlansSkeleton() {

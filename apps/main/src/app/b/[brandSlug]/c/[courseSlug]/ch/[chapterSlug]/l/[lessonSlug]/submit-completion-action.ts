@@ -47,10 +47,7 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
 
   after(async () => {
     try {
-      const effects = await submitPlayerCompletion({
-        input,
-        userId,
-      });
+      const effects = await submitPlayerCompletion({ input, userId });
 
       if (!effects) {
         logError(`[submitCompletion] Lesson ${lessonId} not found`);

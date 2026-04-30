@@ -7,11 +7,7 @@ describe(buildLessonPlayerModel, () => {
       brandSlug: "brand",
       chapterSlug: "chapter-1",
       courseSlug: "course",
-      nextLesson: {
-        chapterSlug: "chapter-1",
-        lessonSlug: "lesson-1",
-        lessonTitle: "Lesson 1",
-      },
+      nextLesson: { chapterSlug: "chapter-1", lessonSlug: "lesson-1", lessonTitle: "Lesson 1" },
       nextSibling: null,
     });
 
@@ -25,11 +21,7 @@ describe(buildLessonPlayerModel, () => {
       brandSlug: "brand",
       chapterSlug: "chapter-1",
       courseSlug: "course",
-      nextLesson: {
-        chapterSlug: "chapter-1",
-        lessonSlug: "lesson-2",
-        lessonTitle: "Lesson 2",
-      },
+      nextLesson: { chapterSlug: "chapter-1", lessonSlug: "lesson-2", lessonTitle: "Lesson 2" },
       nextSibling: null,
     });
 
@@ -62,11 +54,7 @@ describe(buildLessonPlayerModel, () => {
       brandSlug: "brand",
       chapterSlug: "chapter-1",
       courseSlug: "course",
-      nextLesson: {
-        chapterSlug: "chapter-2",
-        lessonSlug: "lesson-2",
-        lessonTitle: "Lesson 2",
-      },
+      nextLesson: { chapterSlug: "chapter-2", lessonSlug: "lesson-2", lessonTitle: "Lesson 2" },
       nextSibling: null,
     });
 

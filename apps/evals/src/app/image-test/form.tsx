@@ -10,10 +10,7 @@ import { generateThumbnailAction } from "./actions";
 
 export function ImageTestForm() {
   const [isPending, startTransition] = useTransition();
-  const [result, setResult] = useState<{
-    imageUrl?: string;
-    error?: string;
-  } | null>(null);
+  const [result, setResult] = useState<{ imageUrl?: string; error?: string } | null>(null);
 
   async function handleSubmit(formData: FormData) {
     startTransition(async () => {

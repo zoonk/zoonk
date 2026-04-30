@@ -47,10 +47,7 @@ export async function chapterGenerationWorkflow(chapterId: string): Promise<void
 
   // Chapter-specific work with failure handling
   const createdLessons = await generateAndAddLessons(context).catch(async (error: unknown) => {
-    await handleChapterFailureStep({
-      chapterId,
-      error: serializeWorkflowError(error),
-    });
+    await handleChapterFailureStep({ chapterId, error: serializeWorkflowError(error) });
 
     throw error;
   });

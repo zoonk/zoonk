@@ -9,9 +9,7 @@ export const getUserSubscription = cache(async function getUserSubscription(user
     return null;
   }
 
-  const subscriptions = await prisma.subscription.findMany({
-    where: { referenceId: userId },
-  });
+  const subscriptions = await prisma.subscription.findMany({ where: { referenceId: userId } });
 
   return findUserActiveSubscription(subscriptions) ?? null;
 });

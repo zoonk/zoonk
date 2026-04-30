@@ -7,10 +7,7 @@ import { getBpHistory } from "./get-bp-history";
 
 describe("unauthenticated users", () => {
   test("returns null", async () => {
-    const result = await getBpHistory({
-      headers: new Headers(),
-      period: "month",
-    });
+    const result = await getBpHistory({ headers: new Headers(), period: "month" });
     expect(result).toBeNull();
   });
 });
@@ -34,18 +31,8 @@ describe("authenticated users", () => {
 
       await prisma.dailyProgress.createMany({
         data: [
-          {
-            brainPowerEarned: 100,
-            date: today,
-            dayOfWeek: today.getDay(),
-            userId: user.id,
-          },
-          {
-            brainPowerEarned: 50,
-            date: yesterday,
-            dayOfWeek: yesterday.getDay(),
-            userId: user.id,
-          },
+          { brainPowerEarned: 100, date: today, dayOfWeek: today.getDay(), userId: user.id },
+          { brainPowerEarned: 50, date: yesterday, dayOfWeek: yesterday.getDay(), userId: user.id },
         ],
       });
 
@@ -65,12 +52,7 @@ describe("authenticated users", () => {
 
       await prisma.dailyProgress.createMany({
         data: [
-          {
-            brainPowerEarned: 200,
-            date: today,
-            dayOfWeek: today.getDay(),
-            userId: user.id,
-          },
+          { brainPowerEarned: 200, date: today, dayOfWeek: today.getDay(), userId: user.id },
           {
             brainPowerEarned: 300,
             date: yesterday,
@@ -91,24 +73,14 @@ describe("authenticated users", () => {
       const headers = await signInAs(user.email, user.password);
 
       await prisma.userProgress.upsert({
-        create: {
-          totalBrainPower: 5000,
-          userId: user.id,
-        },
-        update: {
-          totalBrainPower: 5000,
-        },
+        create: { totalBrainPower: 5000, userId: user.id },
+        update: { totalBrainPower: 5000 },
         where: { userId: user.id },
       });
 
       const date = createSafeDate(0);
       await prisma.dailyProgress.create({
-        data: {
-          brainPowerEarned: 100,
-          date,
-          dayOfWeek: date.getDay(),
-          userId: user.id,
-        },
+        data: { brainPowerEarned: 100, date, dayOfWeek: date.getDay(), userId: user.id },
       });
 
       const result = await getBpHistory({ headers, period: "month" });
@@ -173,11 +145,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getBpHistory({
-        headers,
-        offset: 1,
-        period: "month",
-      });
+      const result = await getBpHistory({ headers, offset: 1, period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.periodTotal).toBe(150);
@@ -195,12 +163,7 @@ describe("authenticated users", () => {
 
       await prisma.dailyProgress.createMany({
         data: [
-          {
-            brainPowerEarned: 100,
-            date: today,
-            dayOfWeek: today.getDay(),
-            userId: user.id,
-          },
+          { brainPowerEarned: 100, date: today, dayOfWeek: today.getDay(), userId: user.id },
           {
             brainPowerEarned: 80,
             date: oneWeekAgo,
@@ -228,12 +191,7 @@ describe("authenticated users", () => {
 
       await prisma.dailyProgress.createMany({
         data: [
-          {
-            brainPowerEarned: 250,
-            date: today,
-            dayOfWeek: today.getDay(),
-            userId: user.id,
-          },
+          { brainPowerEarned: 250, date: today, dayOfWeek: today.getDay(), userId: user.id },
           {
             brainPowerEarned: 150,
             date: yesterday,
@@ -259,12 +217,7 @@ describe("authenticated users", () => {
       const today = createSafeDate(0);
 
       await prisma.dailyProgress.create({
-        data: {
-          brainPowerEarned: 200,
-          date: today,
-          dayOfWeek: today.getDay(),
-          userId: user.id,
-        },
+        data: { brainPowerEarned: 200, date: today, dayOfWeek: today.getDay(), userId: user.id },
       });
 
       const result = await getBpHistory({ headers, period: "all" });
@@ -312,12 +265,7 @@ describe("authenticated users", () => {
 
       const date = createSafeDate(0);
       await prisma.dailyProgress.create({
-        data: {
-          brainPowerEarned: 100,
-          date,
-          dayOfWeek: date.getDay(),
-          userId: user.id,
-        },
+        data: { brainPowerEarned: 100, date, dayOfWeek: date.getDay(), userId: user.id },
       });
 
       const result = await getBpHistory({ headers, period: "month" });
@@ -341,11 +289,7 @@ describe("authenticated users", () => {
         },
       });
 
-      const result = await getBpHistory({
-        headers,
-        offset: 1,
-        period: "month",
-      });
+      const result = await getBpHistory({ headers, offset: 1, period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.hasNextPeriod).toBe(true);

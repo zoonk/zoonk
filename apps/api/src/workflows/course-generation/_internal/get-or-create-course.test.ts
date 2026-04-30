@@ -20,9 +20,7 @@ describe(getOrCreateCourse, () => {
   });
 
   test("creates a new course when no existing course is found", async () => {
-    const suggestion = await courseSuggestionFixture({
-      title: `New Course ${randomUUID()}`,
-    });
+    const suggestion = await courseSuggestionFixture({ title: `New Course ${randomUUID()}` });
 
     const workflowRunId = `run-${randomUUID()}`;
 
@@ -54,9 +52,7 @@ describe(getOrCreateCourse, () => {
       title: `Existing Course ${randomUUID()}`,
     });
 
-    const suggestion = await courseSuggestionFixture({
-      title: course.title,
-    });
+    const suggestion = await courseSuggestionFixture({ title: course.title });
 
     const existingCourse: ExistingCourse = {
       ...course,

@@ -13,14 +13,7 @@ export async function getLessonForGeneration(lessonId: string) {
   }
 
   return prisma.lesson.findFirst({
-    include: {
-      _count: { select: { steps: true } },
-      chapter: {
-        include: { course: true },
-      },
-    },
-    where: getAiGenerationLessonWhere({
-      lessonWhere: { id: lessonId },
-    }),
+    include: { _count: { select: { steps: true } }, chapter: { include: { course: true } } },
+    where: getAiGenerationLessonWhere({ lessonWhere: { id: lessonId } }),
   });
 }

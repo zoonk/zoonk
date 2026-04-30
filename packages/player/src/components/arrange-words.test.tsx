@@ -3,17 +3,11 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import { type Mock, describe, expect, it, vi } from "vitest";
 import { ArrangeWordsInteraction } from "./arrange-words";
 
-vi.mock("next-intl", () => ({
-  useExtracted: () => (value: string) => value,
-}));
+vi.mock("next-intl", () => ({ useExtracted: () => (value: string) => value }));
 
-vi.mock("@zoonk/utils/shuffle", () => ({
-  shuffle: <T,>(array: readonly T[]): T[] => [...array],
-}));
+vi.mock("@zoonk/utils/shuffle", () => ({ shuffle: <T,>(array: readonly T[]): T[] => [...array] }));
 
-vi.mock("../use-word-audio", () => ({
-  useWordAudio: () => ({ pause: vi.fn(), play: vi.fn() }),
-}));
+vi.mock("../use-word-audio", () => ({ useWordAudio: () => ({ pause: vi.fn(), play: vi.fn() }) }));
 
 vi.mock("./step-layouts", () => ({
   InteractiveStepLayout: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,

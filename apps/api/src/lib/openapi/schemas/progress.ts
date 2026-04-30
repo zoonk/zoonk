@@ -3,9 +3,7 @@ import { z } from "zod";
 const uuidQuery = (description: string) => z.uuid().meta({ description });
 
 export const courseCompletionQuerySchema = z
-  .object({
-    courseId: uuidQuery("Course ID"),
-  })
+  .object({ courseId: uuidQuery("Course ID") })
   .meta({ id: "CourseCompletionQuery" });
 
 export const courseCompletionResponseSchema = z
@@ -23,9 +21,7 @@ export const courseCompletionResponseSchema = z
   .meta({ id: "CourseCompletionResponse" });
 
 export const chapterCompletionQuerySchema = z
-  .object({
-    chapterId: uuidQuery("Chapter ID"),
-  })
+  .object({ chapterId: uuidQuery("Chapter ID") })
   .meta({ id: "ChapterCompletionQuery" });
 
 export const chapterCompletionResponseSchema = z

@@ -9,18 +9,13 @@ import { withWorkflow } from "workflow/next";
 const isE2E = process.env.E2E_TESTING === "true";
 
 const e2eAliases: Record<string, string> = isE2E
-  ? {
-      "@zoonk/auth": "../../packages/auth/src/e2e.ts",
-    }
+  ? { "@zoonk/auth": "../../packages/auth/src/e2e.ts" }
   : {};
 
 const nextConfig: NextConfig = {
   devIndicators: false,
   distDir: isE2E ? ".next-e2e" : ".next",
-  experimental: {
-    authInterrupts: true,
-    typedEnv: true,
-  },
+  experimental: { authInterrupts: true, typedEnv: true },
   headers: getPublicAppSecurityHeaders,
   reactCompiler: true,
   turbopack: {
@@ -28,10 +23,7 @@ const nextConfig: NextConfig = {
     root: path.resolve(import.meta.dirname, "../.."),
     rules: {
       // Allow to import MDX files used for AI prompts
-      "*.md": {
-        as: "*.js",
-        loaders: ["raw-loader"],
-      },
+      "*.md": { as: "*.js", loaders: ["raw-loader"] },
     },
   },
   typedRoutes: true,
@@ -55,10 +47,6 @@ export default withSentryConfig(withWorkflow(withBotId(withNextIntl(nextConfig))
   org: "zoonk",
   project: "zoonk-api",
   silent: true,
-  webpack: {
-    treeshake: {
-      removeDebugLogging: true,
-    },
-  },
+  webpack: { treeshake: { removeDebugLogging: true } },
   widenClientFileUpload: true,
 });

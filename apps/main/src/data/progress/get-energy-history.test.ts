@@ -7,10 +7,7 @@ import { getEnergyHistory } from "./get-energy-history";
 
 describe("unauthenticated users", () => {
   test("returns null", async () => {
-    const result = await getEnergyHistory({
-      headers: new Headers(),
-      period: "month",
-    });
+    const result = await getEnergyHistory({ headers: new Headers(), period: "month" });
     expect(result).toBeNull();
   });
 });
@@ -35,18 +32,8 @@ describe("authenticated users", () => {
 
       await prisma.dailyProgress.createMany({
         data: [
-          {
-            date: today,
-            dayOfWeek: today.getDay(),
-            energyAtEnd: 85.5,
-            userId: user.id,
-          },
-          {
-            date: yesterday,
-            dayOfWeek: yesterday.getDay(),
-            energyAtEnd: 80,
-            userId: user.id,
-          },
+          { date: today, dayOfWeek: today.getDay(), energyAtEnd: 85.5, userId: user.id },
+          { date: yesterday, dayOfWeek: yesterday.getDay(), energyAtEnd: 80, userId: user.id },
         ],
       });
 
@@ -67,18 +54,8 @@ describe("authenticated users", () => {
 
       await prisma.dailyProgress.createMany({
         data: [
-          {
-            date: today,
-            dayOfWeek: today.getDay(),
-            energyAtEnd: 100,
-            userId: user.id,
-          },
-          {
-            date: yesterday,
-            dayOfWeek: yesterday.getDay(),
-            energyAtEnd: 50,
-            userId: user.id,
-          },
+          { date: today, dayOfWeek: today.getDay(), energyAtEnd: 100, userId: user.id },
+          { date: yesterday, dayOfWeek: yesterday.getDay(), energyAtEnd: 50, userId: user.id },
         ],
       });
 
@@ -103,12 +80,7 @@ describe("authenticated users", () => {
             energyAtEnd: 80,
             userId: user.id,
           },
-          {
-            date: lastMonth,
-            dayOfWeek: lastMonth.getDay(),
-            energyAtEnd: 60,
-            userId: user.id,
-          },
+          { date: lastMonth, dayOfWeek: lastMonth.getDay(), energyAtEnd: 60, userId: user.id },
         ],
       });
 
@@ -134,20 +106,11 @@ describe("authenticated users", () => {
             energyAtEnd: 80,
             userId: user.id,
           },
-          {
-            date: lastMonth,
-            dayOfWeek: lastMonth.getDay(),
-            energyAtEnd: 60,
-            userId: user.id,
-          },
+          { date: lastMonth, dayOfWeek: lastMonth.getDay(), energyAtEnd: 60, userId: user.id },
         ],
       });
 
-      const result = await getEnergyHistory({
-        headers,
-        offset: 1,
-        period: "month",
-      });
+      const result = await getEnergyHistory({ headers, offset: 1, period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.average).toBe(60);
@@ -166,18 +129,8 @@ describe("authenticated users", () => {
 
       await prisma.dailyProgress.createMany({
         data: [
-          {
-            date: today,
-            dayOfWeek: today.getDay(),
-            energyAtEnd: 80,
-            userId: user.id,
-          },
-          {
-            date: oneWeekAgo,
-            dayOfWeek: oneWeekAgo.getDay(),
-            energyAtEnd: 70,
-            userId: user.id,
-          },
+          { date: today, dayOfWeek: today.getDay(), energyAtEnd: 80, userId: user.id },
+          { date: oneWeekAgo, dayOfWeek: oneWeekAgo.getDay(), energyAtEnd: 70, userId: user.id },
         ],
       });
 
@@ -204,12 +157,7 @@ describe("authenticated users", () => {
             energyAtEnd: 85,
             userId: user.id,
           },
-          {
-            date: lastMonth,
-            dayOfWeek: lastMonth.getDay(),
-            energyAtEnd: 75,
-            userId: user.id,
-          },
+          { date: lastMonth, dayOfWeek: lastMonth.getDay(), energyAtEnd: 75, userId: user.id },
         ],
       });
 
@@ -228,12 +176,7 @@ describe("authenticated users", () => {
       const today = createSafeDate(0);
 
       await prisma.dailyProgress.create({
-        data: {
-          date: today,
-          dayOfWeek: today.getDay(),
-          energyAtEnd: 85,
-          userId: user.id,
-        },
+        data: { date: today, dayOfWeek: today.getDay(), energyAtEnd: 85, userId: user.id },
       });
 
       const result = await getEnergyHistory({ headers, period: "all" });
@@ -282,12 +225,7 @@ describe("authenticated users", () => {
       const today = createSafeDate(0);
 
       await prisma.dailyProgress.create({
-        data: {
-          date: today,
-          dayOfWeek: today.getDay(),
-          energyAtEnd: 80,
-          userId: user.id,
-        },
+        data: { date: today, dayOfWeek: today.getDay(), energyAtEnd: 80, userId: user.id },
       });
 
       const result = await getEnergyHistory({ headers, period: "month" });
@@ -303,19 +241,10 @@ describe("authenticated users", () => {
       const lastMonth = createSafeDate(1);
 
       await prisma.dailyProgress.create({
-        data: {
-          date: lastMonth,
-          dayOfWeek: lastMonth.getDay(),
-          energyAtEnd: 70,
-          userId: user.id,
-        },
+        data: { date: lastMonth, dayOfWeek: lastMonth.getDay(), energyAtEnd: 70, userId: user.id },
       });
 
-      const result = await getEnergyHistory({
-        headers,
-        offset: 1,
-        period: "month",
-      });
+      const result = await getEnergyHistory({ headers, offset: 1, period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.hasNextPeriod).toBe(true);
@@ -335,18 +264,8 @@ describe("authenticated users", () => {
 
       await prisma.dailyProgress.createMany({
         data: [
-          {
-            date: day1,
-            dayOfWeek: day1.getDay(),
-            energyAtEnd: 75,
-            userId: user.id,
-          },
-          {
-            date: day5,
-            dayOfWeek: day5.getDay(),
-            energyAtEnd: 76,
-            userId: user.id,
-          },
+          { date: day1, dayOfWeek: day1.getDay(), energyAtEnd: 75, userId: user.id },
+          { date: day5, dayOfWeek: day5.getDay(), energyAtEnd: 76, userId: user.id },
         ],
       });
 
@@ -382,18 +301,8 @@ describe("authenticated users", () => {
 
       await prisma.dailyProgress.createMany({
         data: [
-          {
-            date: day1,
-            dayOfWeek: day1.getDay(),
-            energyAtEnd: 3,
-            userId: user.id,
-          },
-          {
-            date: day6,
-            dayOfWeek: day6.getDay(),
-            energyAtEnd: 50,
-            userId: user.id,
-          },
+          { date: day1, dayOfWeek: day1.getDay(), energyAtEnd: 3, userId: user.id },
+          { date: day6, dayOfWeek: day6.getDay(), energyAtEnd: 50, userId: user.id },
         ],
       });
 
@@ -427,18 +336,8 @@ describe("authenticated users", () => {
 
       await prisma.dailyProgress.createMany({
         data: [
-          {
-            date: day1,
-            dayOfWeek: day1.getDay(),
-            energyAtEnd: 90,
-            userId: user.id,
-          },
-          {
-            date: day3,
-            dayOfWeek: day3.getDay(),
-            energyAtEnd: 95,
-            userId: user.id,
-          },
+          { date: day1, dayOfWeek: day1.getDay(), energyAtEnd: 90, userId: user.id },
+          { date: day3, dayOfWeek: day3.getDay(), energyAtEnd: 95, userId: user.id },
         ],
       });
 
@@ -459,18 +358,8 @@ describe("authenticated users", () => {
 
       await prisma.dailyProgress.createMany({
         data: [
-          {
-            date: day1,
-            dayOfWeek: day1.getDay(),
-            energyAtEnd: 80,
-            userId: user.id,
-          },
-          {
-            date: day3,
-            dayOfWeek: day3.getDay(),
-            energyAtEnd: 90,
-            userId: user.id,
-          },
+          { date: day1, dayOfWeek: day1.getDay(), energyAtEnd: 80, userId: user.id },
+          { date: day3, dayOfWeek: day3.getDay(), energyAtEnd: 90, userId: user.id },
         ],
       });
 
@@ -496,18 +385,8 @@ describe("authenticated users", () => {
 
       await prisma.dailyProgress.createMany({
         data: [
-          {
-            date: day1,
-            dayOfWeek: day1.getDay(),
-            energyAtEnd: 100,
-            userId: user.id,
-          },
-          {
-            date: day4,
-            dayOfWeek: day4.getDay(),
-            energyAtEnd: 100,
-            userId: user.id,
-          },
+          { date: day1, dayOfWeek: day1.getDay(), energyAtEnd: 100, userId: user.id },
+          { date: day4, dayOfWeek: day4.getDay(), energyAtEnd: 100, userId: user.id },
         ],
       });
 

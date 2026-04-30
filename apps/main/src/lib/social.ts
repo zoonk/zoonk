@@ -41,18 +41,12 @@ const PROFILES = {
   reddit: {
     en: { handle: "r/zoonk", url: "https://www.reddit.com/r/zoonk" },
     icon: IconBrandReddit,
-    pt: {
-      handle: "r/ZoonkBrasil",
-      url: "https://www.reddit.com/r/ZoonkBrasil",
-    },
+    pt: { handle: "r/ZoonkBrasil", url: "https://www.reddit.com/r/ZoonkBrasil" },
   },
   bluesky: {
     en: { handle: "@zoonk", url: "https://bsky.app/profile/zoonk.bsky.social" },
     icon: IconBrandBluesky,
-    pt: {
-      handle: "@zoonkbr",
-      url: "https://bsky.app/profile/zoonkbr.bsky.social",
-    },
+    pt: { handle: "@zoonkbr", url: "https://bsky.app/profile/zoonkbr.bsky.social" },
   },
   youtube: {
     en: { handle: "@zoonkcom", url: "https://www.youtube.com/@zoonkcom" },

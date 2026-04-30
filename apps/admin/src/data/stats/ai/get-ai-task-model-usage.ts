@@ -44,20 +44,10 @@ export async function getAiTaskModelUsage({
   const taskTag = buildAiTaskTag(taskName);
   const [modelResponse, tagResponse] = await Promise.all([
     safeAsync(() =>
-      zoonkGateway.getSpendReport({
-        endDate,
-        groupBy: "model",
-        startDate,
-        tags: [taskTag],
-      }),
+      zoonkGateway.getSpendReport({ endDate, groupBy: "model", startDate, tags: [taskTag] }),
     ),
     safeAsync(() =>
-      zoonkGateway.getSpendReport({
-        endDate,
-        groupBy: "tag",
-        startDate,
-        tags: [taskTag],
-      }),
+      zoonkGateway.getSpendReport({ endDate, groupBy: "tag", startDate, tags: [taskTag] }),
     ),
   ]);
 
@@ -135,11 +125,7 @@ function buildAiTaskModelUsage({
       totalMarketCost: currentTotals.totalMarketCost + model.marketCost,
       totalRequests: currentTotals.totalRequests + model.requestCount,
     }),
-    {
-      fallbackRequestCount: 0,
-      totalMarketCost: 0,
-      totalRequests: 0,
-    },
+    { fallbackRequestCount: 0, totalMarketCost: 0, totalRequests: 0 },
   );
 
   return {

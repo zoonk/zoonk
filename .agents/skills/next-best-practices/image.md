@@ -40,11 +40,7 @@ Remote domains must be configured in `next.config.js`:
 module.exports = {
   images: {
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "example.com",
-        pathname: "/images/**",
-      },
+      { protocol: "https", hostname: "example.com", pathname: "/images/**" },
       {
         protocol: "https",
         hostname: "*.cdn.com", // Wildcard subdomain
@@ -159,10 +155,7 @@ When using `output: 'export'`, use `unoptimized` or custom loader:
 
 // Option 2: Global config
 // next.config.js
-module.exports = {
-  output: "export",
-  images: { unoptimized: true },
-};
+module.exports = { output: "export", images: { unoptimized: true } };
 
 // Option 3: Custom loader (Cloudinary, Imgix, etc.)
 const cloudinaryLoader = ({ src, width, quality }) => {

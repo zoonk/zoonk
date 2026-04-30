@@ -25,9 +25,7 @@ import { Input, ALL_FORMATS, UrlSource } from "mediabunny";
 export const canDecode = async (src: string) => {
   const input = new Input({
     formats: ALL_FORMATS,
-    source: new UrlSource(src, {
-      getRetryDelay: () => null,
-    }),
+    source: new UrlSource(src, { getRetryDelay: () => null }),
   });
 
   try {
@@ -71,10 +69,7 @@ For file uploads or drag-and-drop, use `BlobSource`:
 import { Input, ALL_FORMATS, BlobSource } from "mediabunny";
 
 export const canDecodeBlob = async (blob: Blob) => {
-  const input = new Input({
-    formats: ALL_FORMATS,
-    source: new BlobSource(blob),
-  });
+  const input = new Input({ formats: ALL_FORMATS, source: new BlobSource(blob) });
 
   // Same validation logic as above
 };

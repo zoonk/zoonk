@@ -39,9 +39,7 @@ function FeatureCardLink({ className, render, ...props }: FeatureCardLinkProps) 
       props,
     ),
     render,
-    state: {
-      slot: "feature-card-link",
-    },
+    state: { slot: "feature-card-link" },
   });
 }
 
@@ -113,21 +111,10 @@ function FeatureCardContent({ children, className, ...props }: React.ComponentPr
 }
 
 const featureCardThumbnailVariants = cva("relative shrink-0 overflow-hidden", {
-  defaultVariants: {
-    rounded: "lg",
-    size: "md",
-  },
+  defaultVariants: { rounded: "lg", size: "md" },
   variants: {
-    rounded: {
-      "2xl": "rounded-2xl",
-      lg: "rounded-lg",
-      xl: "rounded-xl",
-    },
-    size: {
-      lg: "size-24",
-      md: "size-20",
-      sm: "size-16",
-    },
+    rounded: { "2xl": "rounded-2xl", lg: "rounded-lg", xl: "rounded-xl" },
+    size: { lg: "size-24", md: "size-20", sm: "size-16" },
   },
 });
 

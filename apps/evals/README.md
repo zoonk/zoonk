@@ -30,10 +30,7 @@ Adding a new task to the eval system requires no changes to the core evaluation 
 export const TEST_CASES = [
   {
     id: "unique-test-case-id",
-    userInput: {
-      language: "en",
-      prompt: "your test input",
-    },
+    userInput: { language: "en", prompt: "your test input" },
     expectations: `
       - expected behavior 1
       - expected behavior 2

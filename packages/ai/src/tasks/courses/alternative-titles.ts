@@ -8,9 +8,7 @@ import systemPrompt from "./alternative-titles.prompt.md";
 const taskName = "alternative-titles";
 const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
-const schema = z.object({
-  alternatives: z.array(z.string()),
-});
+const schema = z.object({ alternatives: z.array(z.string()) });
 
 export type AlternativeTitlesSchema = z.infer<typeof schema>;
 

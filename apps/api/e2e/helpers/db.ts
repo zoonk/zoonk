@@ -42,9 +42,7 @@ export async function getOTPForEmail(email: string, maxRetries = 10): Promise<st
  */
 export async function cleanupVerifications(email: string): Promise<void> {
   const identifier = `sign-in-otp-${email}`;
-  await prisma.verification.deleteMany({
-    where: { identifier },
-  });
+  await prisma.verification.deleteMany({ where: { identifier } });
 }
 
 /**

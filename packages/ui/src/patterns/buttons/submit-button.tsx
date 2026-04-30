@@ -11,19 +11,12 @@ export function SubmitButton({
   className,
   full,
   ...props
-}: {
-  icon?: React.ReactNode;
-  full?: boolean;
-} & React.ComponentProps<"button">) {
+}: { icon?: React.ReactNode; full?: boolean } & React.ComponentProps<"button">) {
   const status = useFormStatus();
 
   return (
     <Button
-      className={cn({
-        className,
-        "w-full": full,
-        "w-max": !full,
-      })}
+      className={cn({ className, "w-full": full, "w-max": !full })}
       disabled={status.pending}
       type="submit"
       {...props}

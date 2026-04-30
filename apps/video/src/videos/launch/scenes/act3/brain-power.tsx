@@ -21,14 +21,7 @@ export function BrainPowerIntro() {
 
   return (
     <SceneContainer bg="white">
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 28,
-        }}
-      >
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 28 }}>
         <SceneHeadline setup={t.brainIntroSetup} payoff={t.brainIntroPayoff} />
 
         {/* Brain Power counter */}

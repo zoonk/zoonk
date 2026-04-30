@@ -1,11 +1,7 @@
 import { type LessonKind } from "@zoonk/db";
 import { getExtracted } from "next-intl/server";
 
-type LessonDisplayInput = {
-  kind: LessonKind;
-  title: string | null;
-  description: string | null;
-};
+type LessonDisplayInput = { kind: LessonKind; title: string | null; description: string | null };
 
 /**
  * Lesson kind labels are used in several app-level fallbacks. Keeping them in

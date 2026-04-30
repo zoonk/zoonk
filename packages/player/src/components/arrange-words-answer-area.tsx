@@ -82,10 +82,7 @@ function PlacedWordTile({
       disabled={hasResult}
       onClick={onClick}
       ref={setNodeRef}
-      style={{
-        transform: CSS.Transform.toString(transform),
-        transition,
-      }}
+      style={{ transform: CSS.Transform.toString(transform), transition }}
       type="button"
     >
       <span>{option.word}</span>

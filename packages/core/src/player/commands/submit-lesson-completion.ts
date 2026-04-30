@@ -66,16 +66,8 @@ export async function submitLessonCompletion(input: {
         startedAt: input.startedAt,
         userId: input.userId,
       },
-      update: {
-        completedAt: now,
-        durationSeconds: input.durationSeconds,
-      },
-      where: {
-        userLesson: {
-          lessonId: input.lessonId,
-          userId: input.userId,
-        },
-      },
+      update: { completedAt: now, durationSeconds: input.durationSeconds },
+      where: { userLesson: { lessonId: input.lessonId, userId: input.userId } },
     });
 
     const { courseId } = await syncDurableCurriculumCompletion(tx, {
@@ -90,16 +82,11 @@ export async function submitLessonCompletion(input: {
     });
 
     if (count > 0) {
-      await tx.course.update({
-        data: { userCount: { increment: 1 } },
-        where: { id: courseId },
-      });
+      await tx.course.update({ data: { userCount: { increment: 1 } }, where: { id: courseId } });
     }
 
     // Find existing UserProgress to apply decay
-    const existingProgress = await tx.userProgress.findUnique({
-      where: { userId: input.userId },
-    });
+    const existingProgress = await tx.userProgress.findUnique({ where: { userId: input.userId } });
 
     const decayedBase = existingProgress
       ? computeDecayedEnergy(existingProgress.currentEnergy, existingProgress.lastActiveAt, today)

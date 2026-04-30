@@ -23,10 +23,7 @@ export function SocialLogin({ redirectTo }: { redirectTo?: string }) {
       ? `/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`
       : "/auth/callback";
 
-    const { error } = await authClient.signIn.social({
-      callbackURL,
-      provider,
-    });
+    const { error } = await authClient.signIn.social({ callbackURL, provider });
 
     if (error) {
       logError("Social login error:", error);

@@ -41,11 +41,7 @@ export function ProtectedSection({
 
   if (state === "unauthenticated") {
     return (
-      <ProtectedAlert
-        className={cn({
-          "mx-auto items-center text-center": centered,
-        })}
-      >
+      <ProtectedAlert className={cn({ "mx-auto items-center text-center": centered })}>
         <ProtectedAlertHeader>
           <LockIcon />
           <ProtectedAlertTitle>{alertTitle}</ProtectedAlertTitle>

@@ -12,13 +12,7 @@ const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 const multipleChoiceSchema = z.object({
   context: z.string(),
   format: z.literal("multipleChoice"),
-  options: z.array(
-    z.object({
-      feedback: z.string(),
-      isCorrect: z.boolean(),
-      text: z.string(),
-    }),
-  ),
+  options: z.array(z.object({ feedback: z.string(), isCorrect: z.boolean(), text: z.string() })),
   question: z.string(),
 });
 
@@ -33,12 +27,7 @@ const fillBlankSchema = z.object({
 
 const matchColumnsSchema = z.object({
   format: z.literal("matchColumns"),
-  pairs: z.array(
-    z.object({
-      left: z.string(),
-      right: z.string(),
-    }),
-  ),
+  pairs: z.array(z.object({ left: z.string(), right: z.string() })),
   question: z.string(),
 });
 
@@ -51,13 +40,7 @@ const sortOrderSchema = z.object({
 
 const selectImageSchema = z.object({
   format: z.literal("selectImage"),
-  options: z.array(
-    z.object({
-      feedback: z.string(),
-      isCorrect: z.boolean(),
-      prompt: z.string(),
-    }),
-  ),
+  options: z.array(z.object({ feedback: z.string(), isCorrect: z.boolean(), prompt: z.string() })),
   question: z.string(),
 });
 
@@ -69,9 +52,7 @@ const quizQuestionSchema = z.union([
   selectImageSchema,
 ]);
 
-const schema = z.object({
-  questions: z.array(quizQuestionSchema).min(1),
-});
+const schema = z.object({ questions: z.array(quizQuestionSchema).min(1) });
 
 export type QuizQuestion = z.infer<typeof quizQuestionSchema>;
 export type LessonQuizSchema = z.infer<typeof schema>;

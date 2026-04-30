@@ -8,17 +8,15 @@ import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateReadingContentStep } from "./generate-reading-content-step";
 
 vi.mock("@zoonk/ai/tasks/lessons/language/sentences", () => ({
-  generateLessonSentences: vi.fn().mockResolvedValue({
-    data: {
-      sentences: [
-        {
-          explanation: "Uses both words.",
-          sentence: "猫と水",
-          translation: "cat and water",
-        },
-      ],
-    },
-  }),
+  generateLessonSentences: vi
+    .fn()
+    .mockResolvedValue({
+      data: {
+        sentences: [
+          { explanation: "Uses both words.", sentence: "猫と水", translation: "cat and water" },
+        ],
+      },
+    }),
 }));
 
 describe(generateReadingContentStep, () => {
@@ -100,11 +98,7 @@ describe(generateReadingContentStep, () => {
     expect(result).toEqual({
       kind: "reading",
       sentences: [
-        {
-          explanation: "Uses both words.",
-          sentence: "猫と水",
-          translation: "cat and water",
-        },
+        { explanation: "Uses both words.", sentence: "猫と水", translation: "cat and water" },
       ],
     });
     const sentenceInput = vi.mocked(generateLessonSentences).mock.calls[0]?.[0];

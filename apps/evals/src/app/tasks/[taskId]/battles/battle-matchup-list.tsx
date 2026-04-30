@@ -11,12 +11,7 @@ import {
 import { Badge } from "@zoonk/ui/components/badge";
 import { RankingItem } from "./ranking-item";
 
-type TestCaseEntry = {
-  testCaseId: string;
-  score: number;
-  reasoning: string;
-  anonymousId: string;
-};
+type TestCaseEntry = { testCaseId: string; score: number; reasoning: string; anonymousId: string };
 
 /**
  * Some judges output bare anonymous letters (e.g. "C") as modelId
@@ -45,7 +40,9 @@ function resolveModelId(modelId: string, anonymousIdMap: Map<string, string>): s
   return anonymousIdMap.get(modelId) ?? modelId;
 }
 
-function buildJudgeViews(matchups: BattleMatchup[]): {
+function buildJudgeViews(
+  matchups: BattleMatchup[],
+): {
   judgeId: string;
   judgeName: string;
   models: {

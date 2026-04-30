@@ -8,10 +8,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { revalidatePath } from "next/cache";
 
 export async function uploadStepImageAction(
-  params: {
-    stepId: string;
-    imageTarget: "step" | number;
-  },
+  params: { stepId: string; imageTarget: "step" | number },
   formData: FormData,
 ): Promise<{ error: string | null; imageUrl: string | null }> {
   if (!(await isAdmin())) {

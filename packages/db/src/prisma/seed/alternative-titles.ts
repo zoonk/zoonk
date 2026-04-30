@@ -24,12 +24,7 @@ export async function seedAlternativeTitles(
     alternativeTitlesData.map(async (item) => {
       const course = await prisma.course.findUnique({
         select: { id: true },
-        where: {
-          orgSlug: {
-            organizationId: org.id,
-            slug: item.courseSlug,
-          },
-        },
+        where: { orgSlug: { organizationId: org.id, slug: item.courseSlug } },
       });
 
       if (!course) {
@@ -39,11 +34,7 @@ export async function seedAlternativeTitles(
       const slugs = item.titles.map(toSlug);
 
       await prisma.courseAlternativeTitle.createMany({
-        data: slugs.map((slug) => ({
-          courseId: course.id,
-          language: item.language,
-          slug,
-        })),
+        data: slugs.map((slug) => ({ courseId: course.id, language: item.language, slug })),
         skipDuplicates: true,
       });
     }),

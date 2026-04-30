@@ -1,9 +1,6 @@
 export type TimePeriod = "week" | "month" | "year";
 
-type TimePeriodConfig = {
-  getKey: (date: Date) => string;
-  getNormalizedDate: (date: Date) => Date;
-};
+type TimePeriodConfig = { getKey: (date: Date) => string; getNormalizedDate: (date: Date) => Date };
 
 const SUNDAY_DAYS_SINCE_MONDAY = 6;
 
@@ -59,11 +56,7 @@ export function aggregateByPeriod<T extends { date: Date }>(
       existing.total += getValue(point);
       existing.count += 1;
     } else {
-      map.set(key, {
-        count: 1,
-        date: getNormalizedDate(point.date),
-        total: getValue(point),
-      });
+      map.set(key, { count: 1, date: getNormalizedDate(point.date), total: getValue(point) });
     }
   }
 
@@ -101,10 +94,7 @@ export function aggregateScoreByPeriod(
   }
 
   return [...map.values()]
-    .map((item) => ({
-      date: item.date,
-      score: calculateScore(item.correct, item.incorrect),
-    }))
+    .map((item) => ({ date: item.date, score: calculateScore(item.correct, item.incorrect) }))
     .toSorted((a, b) => a.date.getTime() - b.date.getTime());
 }
 

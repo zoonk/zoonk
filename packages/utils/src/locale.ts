@@ -52,9 +52,7 @@ export function getLocaleFromHeaders(acceptLanguage: string | null): string {
     return DEFAULT_LOCALE;
   }
 
-  const negotiator = new Negotiator({
-    headers: { "accept-language": acceptLanguage },
-  });
+  const negotiator = new Negotiator({ headers: { "accept-language": acceptLanguage } });
   const languages = negotiator.languages();
 
   try {
