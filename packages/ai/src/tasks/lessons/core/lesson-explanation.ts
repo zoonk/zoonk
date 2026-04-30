@@ -60,7 +60,6 @@ export async function generateLessonExplanation({
     CHAPTER_TITLE: ${chapterTitle}
     COURSE_TITLE: ${courseTitle}
     LANGUAGE: ${language}
-    LESSON_GOAL: ${lessonDescription}
     OTHER_EXPLANATION_LESSON_TITLES: ${otherLessonTitles.join(", ")}
   `;
 

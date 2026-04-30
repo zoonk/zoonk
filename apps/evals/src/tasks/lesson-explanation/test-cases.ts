@@ -7,18 +7,18 @@ EVALUATION CRITERIA:
    - explanation[]: an array of narrative steps, each with title and text
    - anchor: { title, text } (no visual)
 
-3. GOAL DELIVERY: The lesson must actually deliver on LESSON_GOAL. The learner should finish the lesson knowing what the thing is, why it exists or is used (when the goal implies it), and how it works or is written in practice (when the goal implies it). Penalize lessons that stay surface-level and leave the learner still unsure what the thing is, why it matters, or how it's written when the goal required these.
+3. LESSON DELIVERY: The lesson must actually deliver on LESSON_TITLE and LESSON_DESCRIPTION. The learner should finish the lesson knowing what the thing is, why it exists or is used (when the description implies it), and how it works or is written in practice (when the description implies it). Penalize lessons that stay surface-level and leave the learner still unsure what the thing is, why it matters, or how it's written when the description required these.
 
 4. LESSON BOUNDARY: The lesson must stay focused on the selected LESSON_TITLE and leave sibling angles in OTHER_EXPLANATION_LESSON_TITLES for those other lessons. Penalize explanations that spend their main arc teaching a sibling lesson instead of the chosen one.
 
-5. SCENE SPINE: The entire lesson must revolve around ONE concrete moment (e.g. tapping a button, sending a message, opening a contact list). Every step refers back to or deepens that same moment. The single scene is the vehicle for covering what/why/how when the goal requires all three. Penalize:
+5. SCENE SPINE: The entire lesson must revolve around ONE concrete moment (e.g. tapping a button, sending a message, opening a contact list). Every step refers back to or deepens that same moment. The single scene is the vehicle for covering what/why/how when the lesson requires all three. Penalize:
    - Lessons that jump between multiple unrelated scenarios
    - An opening scenario that gets abandoned after step 1
    - Definitions that float in abstractly instead of pointing at something already shown in the scene
 
 6. COLD OPEN: Step 1 must land the learner inside a concrete sensory moment with no question-as-hook, no "Imagine...", no resolution, and no definition. Penalize steps that answer their own setup within the same step, or that open with abstract framing.
 
-7. NARRATIVE ARC: The explanation[] array should unfold a clear arc: cold open → mystery (something hidden) → reveal (what was hidden) → naming (from inside the scene) → zoom (into one piece, often "how") → optional stakes (why, when the goal calls for it) → payoff (callback to the opening). Step count is flexible — deeper topics need more steps, simpler topics fewer — but these narrative functions should be present in order. Penalize:
+7. NARRATIVE ARC: The explanation[] array should unfold a clear arc: cold open → mystery (something hidden) → reveal (what was hidden) → naming (from inside the scene) → zoom (into one piece, often "how") → optional stakes (why, when the lesson calls for it) → payoff (callback to the opening). Step count is flexible — deeper topics need more steps, simpler topics fewer — but these narrative functions should be present in order. Penalize:
    - A structure that reads as stacked definitions rather than a single unfolding story
    - Missing a payoff/callback as the last step
    - Naming a term before showing an example of it in the scene
@@ -31,7 +31,7 @@ EVALUATION CRITERIA:
 9. STEP CONCRETENESS: The explanation steps must be specific enough that a downstream image-prompt task could clearly infer what should be shown. Penalize:
    - Vague prose that never makes the scene or reveal concrete
    - Mechanism steps that stay too abstract to picture
-   - "How it's written" goals that never describe the structure or code detail clearly enough to visualize
+   - Lessons about "how it's written" that never describe the structure or code detail clearly enough to visualize
 
 10. STATIC-ONLY DELIVERY: The lesson should stay entirely within narrative explanation steps plus the closing anchor. Penalize:
    - Quiz-like interruptions, option lists, or explicit "guess before continuing" instructions
@@ -47,11 +47,11 @@ EVALUATION CRITERIA:
 12. STYLE: Clear, short, concrete, beginner-friendly. Penalize academic tone, filler lines, and redundancy across steps and anchor.
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
-- Do NOT require a fixed number of steps. Complex topics need more; simple topics fewer. Both are fine as long as the arc is present and the goal is delivered
+- Do NOT require a fixed number of steps. Complex topics need more; simple topics fewer. Both are fine as long as the arc is present and the lesson is delivered
 - Do NOT require specific title wording, a particular choice of product or event, or a specific visual kind. The anchor must name some specific real thing, but any reasonable choice is fine — do not penalize the model for picking Instagram over WhatsApp, or one named case over another
 - Do NOT penalize creative scenes as long as they stay concrete and the same scene threads through every step
 - Do NOT focus on JSON wrapping or formatting trivia. Evaluate the content and structural fit
-- ONLY penalize for: wrong top-level structure, factual errors, failing to deliver LESSON_GOAL, drifting into sibling lessons, broken scene continuity, weak cold open, missing arc, weak imagery cues, anchor drift, or broken writing constraints
+- ONLY penalize for: wrong top-level structure, factual errors, failing to deliver LESSON_TITLE and LESSON_DESCRIPTION, drifting into sibling lessons, broken scene continuity, weak cold open, missing arc, weak imagery cues, anchor drift, or broken writing constraints
 `;
 
 export const TEST_CASES = [
