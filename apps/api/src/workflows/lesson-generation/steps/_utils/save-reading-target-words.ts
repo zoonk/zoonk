@@ -1,10 +1,7 @@
 import { prisma } from "@zoonk/db";
-import {
-  deduplicateNormalizedTexts,
-  emptyToNull,
-  extractUniqueSentenceWords,
-} from "@zoonk/utils/string";
+import { emptyToNull, extractUniqueSentenceWords } from "@zoonk/utils/string";
 import { type WordMetadataEntry } from "../generate-sentence-word-metadata-step";
+import { collectTargetWords } from "./collect-target-words";
 import { fetchExistingWordCasing } from "./fetch-existing-word-casing";
 import { type ReadingLessonContent } from "./generated-lesson-content";
 import { upsertWordWithPronunciation } from "./upsert-word-with-pronunciation";
@@ -31,8 +28,10 @@ export async function saveReadingTargetWords(params: {
   wordMetadata: Record<string, WordMetadataEntry>;
 }): Promise<void> {
   const canonicalWords = extractCanonicalWords(params.sentences, params.wordMetadata);
-  const distractorWords = extractDistractorWords(params.sentences, params.distractors);
-  const allTargetWords = deduplicateNormalizedTexts([...canonicalWords, ...distractorWords]);
+  const allTargetWords = collectTargetWords({
+    canonicalWords,
+    generatedWords: extractDistractorWords(params.sentences, params.distractors),
+  });
 
   if (allTargetWords.length === 0) {
     return;
@@ -43,7 +42,8 @@ export async function saveReadingTargetWords(params: {
     targetLanguage: params.targetLanguage,
     words: allTargetWords,
   });
-  const distractorOnlyWords = removeCanonicalWords(canonicalWords, distractorWords);
+  const canonicalWordSet = new Set(canonicalWords);
+  const distractorOnlyWords = allTargetWords.filter((word) => !canonicalWordSet.has(word));
 
   await Promise.all(
     canonicalWords.map((word) =>
@@ -102,19 +102,7 @@ function extractDistractorWords(
   sentences: ReadingSentence[],
   distractors: Record<string, string[]>,
 ): string[] {
-  return deduplicateNormalizedTexts(
-    sentences.flatMap((sentence) => distractors[sentence.sentence] ?? []),
-  );
-}
-
-/**
- * Canonical tokens and distractors can overlap after normalization. We skip
- * overlaps here so distractor-only saves do not duplicate a canonical lesson
- * word save.
- */
-function removeCanonicalWords(canonicalWords: string[], distractorWords: string[]): string[] {
-  const canonicalWordKeys = new Set(canonicalWords.map((word) => word.toLowerCase()));
-  return distractorWords.filter((word) => !canonicalWordKeys.has(word.toLowerCase()));
+  return sentences.flatMap((sentence) => distractors[sentence.sentence] ?? []);
 }
 
 /**

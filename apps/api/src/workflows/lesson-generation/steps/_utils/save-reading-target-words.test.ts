@@ -187,4 +187,52 @@ describe(saveReadingTargetWords, () => {
     expect(distractorRecord.audioUrl).toBe(`/audio/${distractorWord}.mp3`);
     expect(distractorLessonWords).toEqual([]);
   });
+
+  test("skips distractor variants that normalize to canonical words", async () => {
+    const id = randomUUID().replaceAll("-", "").slice(0, 8);
+    const canonicalWord = `água${id}`;
+    const duplicateDistractor = `agua${id}`;
+    const lesson = await createLanguageLesson({ organizationId });
+
+    await saveReadingTargetWords({
+      distractors: { [canonicalWord]: [duplicateDistractor] },
+      lessonId: lesson.id,
+      organizationId,
+      pronunciations: { [canonicalWord]: "AH-gwah" },
+      sentences: [
+        {
+          explanation: "test explanation",
+          sentence: canonicalWord,
+          translation: "water",
+        },
+      ],
+      targetLanguage: "de",
+      userLanguage: "en",
+      wordAudioUrls: {
+        [canonicalWord]: `/audio/${canonicalWord}.mp3`,
+      },
+      wordMetadata: {
+        [canonicalWord]: { romanization: null, translation: "water" },
+      },
+    });
+
+    const [lessonWord, duplicateDistractorRecord] = await Promise.all([
+      prisma.lessonWord.findFirstOrThrow({
+        include: { word: true },
+        where: { lessonId: lesson.id },
+      }),
+      prisma.word.findUnique({
+        where: {
+          orgWord: {
+            organizationId,
+            targetLanguage: "de",
+            word: duplicateDistractor,
+          },
+        },
+      }),
+    ]);
+
+    expect(lessonWord.word.word).toBe(canonicalWord);
+    expect(duplicateDistractorRecord).toBeNull();
+  });
 });

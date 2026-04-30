@@ -4,7 +4,8 @@ import { assertStepContent } from "@zoonk/core/steps/contract/content";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { sanitizeDistractors } from "@zoonk/utils/distractors";
-import { deduplicateNormalizedTexts, normalizePunctuation } from "@zoonk/utils/string";
+import { normalizePunctuation } from "@zoonk/utils/string";
+import { collectVocabularyTargetWords } from "./_utils/collect-vocabulary-target-words";
 import { fetchExistingWordCasing } from "./_utils/fetch-existing-word-casing";
 import { upsertWordWithPronunciation } from "./_utils/upsert-word-with-pronunciation";
 import { type LessonContext } from "./get-lesson-step";
@@ -49,19 +50,14 @@ export async function saveVocabularyLessonStep({
 
   await prisma.step.deleteMany({ where: { lessonId: context.id } });
 
-  const allTargetWords = deduplicateNormalizedTexts([
-    ...words.map((word) => word.word),
-    ...words.flatMap((word) => distractors[word.word] ?? []),
-  ]);
+  const allTargetWords = collectVocabularyTargetWords({ distractors, words });
   const existingCasing = await fetchExistingWordCasing({
     organizationId,
     targetLanguage,
     words: allTargetWords,
   });
-  const canonicalWordKeys = new Set(words.map((word) => word.word.toLowerCase()));
-  const distractorWords = deduplicateNormalizedTexts(
-    words.flatMap((word) => distractors[word.word] ?? []),
-  ).filter((word) => !canonicalWordKeys.has(word.toLowerCase()));
+  const canonicalWords = new Set(words.map((word) => word.word));
+  const distractorWords = allTargetWords.filter((word) => !canonicalWords.has(word));
 
   await Promise.all(
     words.map((word, position) =>

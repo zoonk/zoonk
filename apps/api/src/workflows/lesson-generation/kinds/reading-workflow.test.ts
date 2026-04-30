@@ -183,4 +183,103 @@ describe(readingLessonWorkflow, () => {
       [sourceWords[1], `${sourceWords[1]} translated`],
     ]);
   });
+
+  test("keeps canonical word metadata when a reading distractor normalizes to the same key", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const canonicalWord = `água${uniqueId}`;
+    const duplicateDistractor = `agua${uniqueId}`;
+    const validDistractor = `mizu${uniqueId}`;
+    const translation = `water ${uniqueId}`;
+
+    const context = await createLessonContext({
+      kind: "reading",
+      organizationId,
+      position: 2,
+      targetLanguage: "de",
+    });
+
+    const [vocabularyLesson, wordRecord] = await Promise.all([
+      lessonFixture({
+        chapterId: context.chapterId,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "vocabulary",
+        organizationId,
+        position: 1,
+      }),
+      wordFixture({
+        organizationId,
+        targetLanguage: "de",
+        word: canonicalWord,
+      }),
+    ]);
+
+    await lessonWordFixture({
+      lessonId: vocabularyLesson.id,
+      translation,
+      userLanguage: "en",
+      wordId: wordRecord.id,
+    });
+
+    readingState.sentence = canonicalWord;
+    readingState.translation = translation;
+    readingState.distractors = {
+      [canonicalWord]: [duplicateDistractor, validDistractor],
+    };
+
+    await readingLessonWorkflow(context);
+
+    const [canonicalRecord, duplicateDistractorRecord, validDistractorRecord, lessonWord] =
+      await Promise.all([
+        prisma.word.findUnique({
+          include: { pronunciations: true },
+          where: {
+            orgWord: {
+              organizationId,
+              targetLanguage: "de",
+              word: canonicalWord,
+            },
+          },
+        }),
+        prisma.word.findUnique({
+          where: {
+            orgWord: {
+              organizationId,
+              targetLanguage: "de",
+              word: duplicateDistractor,
+            },
+          },
+        }),
+        prisma.word.findUnique({
+          where: {
+            orgWord: {
+              organizationId,
+              targetLanguage: "de",
+              word: validDistractor,
+            },
+          },
+        }),
+        prisma.lessonWord.findFirst({
+          include: { word: true },
+          where: { lessonId: context.id },
+        }),
+      ]);
+
+    expect(canonicalRecord).toMatchObject({
+      audioUrl: `https://example.com/audio/${encodeURIComponent(canonicalWord)}.mp3`,
+      word: canonicalWord,
+    });
+    expect(canonicalRecord?.pronunciations[0]?.pronunciation).toBe(
+      `${canonicalWord} pronunciation`,
+    );
+    expect(duplicateDistractorRecord).toBeNull();
+    expect(validDistractorRecord).toMatchObject({
+      audioUrl: `https://example.com/audio/${encodeURIComponent(validDistractor)}.mp3`,
+      word: validDistractor,
+    });
+    expect(lessonWord).toMatchObject({
+      translation: `${canonicalWord} translated`,
+    });
+    expect(lessonWord?.word.word).toBe(canonicalWord);
+  });
 });

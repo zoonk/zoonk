@@ -1,4 +1,4 @@
-import { deduplicateNormalizedTexts, extractUniqueSentenceWords } from "@zoonk/utils/string";
+import { collectReadingTargetWords } from "../steps/_utils/collect-reading-target-words";
 import { generateReadingAudioStep } from "../steps/generate-reading-audio-step";
 import { generateReadingContentStep } from "../steps/generate-reading-content-step";
 import { generateReadingRomanizationStep } from "../steps/generate-reading-romanization-step";
@@ -8,24 +8,6 @@ import { generateSentenceWordMetadataStep } from "../steps/generate-sentence-wor
 import { generateSentenceWordPronunciationStep } from "../steps/generate-sentence-word-pronunciation-step";
 import { type LessonContext } from "../steps/get-lesson-step";
 import { saveReadingLessonStep } from "../steps/save-reading-lesson-step";
-
-/**
- * Reading lessons enrich every target-language word the player may render:
- * canonical sentence tokens plus generated reading distractors. Listening-side
- * distractors stay as plain learner-language strings and are excluded here.
- */
-function collectReadingTargetWords({
-  distractors,
-  sentences,
-}: {
-  distractors: Record<string, string[]>;
-  sentences: { sentence: string }[];
-}): string[] {
-  return deduplicateNormalizedTexts([
-    ...extractUniqueSentenceWords(sentences.map((entry) => entry.sentence)),
-    ...sentences.flatMap((entry) => distractors[entry.sentence] ?? []),
-  ]);
-}
 
 /**
  * Reading generation is bounded by the previous reading lesson so each reading

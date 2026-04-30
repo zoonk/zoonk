@@ -172,4 +172,65 @@ describe(vocabularyLessonWorkflow, () => {
         .toSorted((a, b) => a.word.localeCompare(b.word)),
     );
   });
+
+  test("keeps canonical word enrichment when a distractor normalizes to the same key", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const canonicalWord = `Água-${uniqueId}`;
+    const duplicateDistractor = `Agua-${uniqueId}`;
+    const validDistractor = `水-${uniqueId}`;
+
+    const context = await createLessonContext({
+      kind: "vocabulary",
+      organizationId,
+      targetLanguage: "ja",
+    });
+
+    vocabularyState.words = [{ translation: `water ${uniqueId}`, word: canonicalWord }];
+    vocabularyState.distractors = {
+      [canonicalWord]: [duplicateDistractor, validDistractor],
+    };
+
+    await vocabularyLessonWorkflow(context);
+
+    const [canonicalRecord, duplicateDistractorRecord, lessonWord] = await Promise.all([
+      prisma.word.findUnique({
+        include: { pronunciations: true },
+        where: {
+          orgWord: {
+            organizationId,
+            targetLanguage: "ja",
+            word: canonicalWord,
+          },
+        },
+      }),
+      prisma.word.findUnique({
+        where: {
+          orgWord: {
+            organizationId,
+            targetLanguage: "ja",
+            word: duplicateDistractor,
+          },
+        },
+      }),
+      prisma.lessonWord.findFirst({
+        include: { word: true },
+        where: { lessonId: context.id },
+      }),
+    ]);
+
+    expect(canonicalRecord).toMatchObject({
+      audioUrl: `https://example.com/audio/${encodeURIComponent(canonicalWord)}.mp3`,
+      romanization: `${canonicalWord} romanized`,
+      word: canonicalWord,
+    });
+    expect(canonicalRecord?.pronunciations[0]?.pronunciation).toBe(
+      `${canonicalWord} pronunciation`,
+    );
+    expect(duplicateDistractorRecord).toBeNull();
+    expect(lessonWord).toMatchObject({
+      distractors: [validDistractor],
+      translation: `water ${uniqueId}`,
+    });
+    expect(lessonWord?.word.word).toBe(canonicalWord);
+  });
 });

@@ -1,4 +1,4 @@
-import { deduplicateNormalizedTexts } from "@zoonk/utils/string";
+import { collectVocabularyTargetWords } from "../steps/_utils/collect-vocabulary-target-words";
 import { generateVocabularyAudioStep } from "../steps/generate-vocabulary-audio-step";
 import { generateVocabularyContentStep } from "../steps/generate-vocabulary-content-step";
 import { generateVocabularyDistractorsStep } from "../steps/generate-vocabulary-distractors-step";
@@ -6,25 +6,6 @@ import { generateVocabularyPronunciationStep } from "../steps/generate-vocabular
 import { generateVocabularyRomanizationStep } from "../steps/generate-vocabulary-romanization-step";
 import { type LessonContext } from "../steps/get-lesson-step";
 import { saveVocabularyLessonStep } from "../steps/save-vocabulary-lesson-step";
-
-/**
- * Canonical vocabulary words and their generated distractor words share the
- * same target-language enrichment pipeline. Collecting the union here ensures
- * we create audio, romanization, and pronunciation for every word the player
- * may render.
- */
-function collectVocabularyTargetWords({
-  distractors,
-  words,
-}: {
-  distractors: Record<string, string[]>;
-  words: { word: string }[];
-}): string[] {
-  return deduplicateNormalizedTexts([
-    ...words.map((entry) => entry.word),
-    ...words.flatMap((entry) => distractors[entry.word] ?? []),
-  ]);
-}
 
 /**
  * Vocabulary lessons persist both canonical words and generated distractors, so
