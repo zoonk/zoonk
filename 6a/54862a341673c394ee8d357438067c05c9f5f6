@@ -1,0 +1,426 @@
+apps/api/src/workflows/lesson-generation/kinds/practice-workflow.test.ts
+  04c3207140c1bc15 6,56
+apps/api/src/workflows/lesson-generation/steps/set-lesson-as-completed-step.test.ts
+  04c3207140c1bc15 4,16
+apps/api/src/workflows/lesson-generation/kinds/explanation-workflow.test.ts
+  04c3207140c1bc15 7,54
+packages/core/src/player/contracts/validate-answers.test.ts
+  04c3207140c1bc15 1,19,31,42,51,65,76,87,111,135,159,183,207,217
+packages/core/src/player/contracts/build-word-bank-options.test.ts
+  04c3207140c1bc15 1,70,93,116,153,166,180
+packages/utils/src/shuffle.test.ts
+  04c3207140c1bc15 1,5,11,17,21,25
+apps/api/src/workflows/lesson-generation/steps/generate-reading-romanization-step.test.ts
+  04c3207140c1bc15 4,30
+apps/api/src/workflows/lesson-generation/steps/_utils/generate-lesson-romanizations.test.ts
+  04c3207140c1bc15 1,13,20,32
+apps/api/src/workflows/lesson-generation/steps/save-translation-lesson-step.test.ts
+  04c3207140c1bc15 7,19,69
+apps/api/src/workflows/lesson-generation/steps/_utils/generate-direct-distractors.test.ts
+  04c3207140c1bc15 1,17,36,48
+apps/api/src/workflows/lesson-generation/steps/get-lesson-step.test.ts
+  04c3207140c1bc15 3,15,30
+packages/ai/src/provider-options.test.ts
+  04c3207140c1bc15 1,9,27,48,61,80,98,123,133
+apps/api/src/workflows/course-generation/course-generation-workflow.test.ts
+  04c3207140c1bc15 20,122,132,153,174,201,230,258,287,326,357,383
+apps/api/src/workflows/lesson-generation/steps/generate-vocabulary-romanization-step.test.ts
+  04c3207140c1bc15 3,29
+apps/api/src/workflows/lesson-generation/steps/save-reading-lesson-step.test.ts
+  04c3207140c1bc15 4,16
+packages/core/src/steps/contract/content.test.ts
+  04c3207140c1bc15 1,5,15,43,59,75,89,107,121,126,131,136,141,150,164,192,210,222,232,239,253,262
+packages/player/src/_browser-tests/player-header-info.browser.test.tsx
+  04c3207140c1bc15 1,8,17,26,46
+packages/player/src/check-step.test.ts
+  04c3207140c1bc15 2,39,46,66,72,92,105,130,136,156,162,185,191,199,225,232,239,260,305,312,319,340,366,380
+packages/player/src/player-haptics.test.ts
+  04c3207140c1bc15 2,39,68,97
+packages/core/src/player/queries/get-lesson-sentences.test.ts
+  04c3207140c1bc15 7,36,64,107,119
+packages/core/src/player/queries/get-review-steps.test.ts
+  04c3207140c1bc15 9,78,113,174,235,288,330,358,378,415,426,439,448,456,463,528,568,667,679,691
+apps/api/src/workflows/course-generation/steps/get-ai-organization-step.test.ts
+  04c3207140c1bc15 2,17
+apps/api/src/workflows/lesson-generation/steps/_utils/generate-step-images.test.ts
+  04c3207140c1bc15 1,13,42,53,61
+apps/api/src/workflows/lesson-generation/steps/generate-vocabulary-distractors-step.test.ts
+  04c3207140c1bc15 3,27
+apps/api/src/workflows/course-generation/steps/generate-image-step.test.ts
+  04c3207140c1bc15 2,24,45
+apps/api/src/workflows/course-generation/steps/get-course-suggestion-step.test.ts
+  04c3207140c1bc15 4,12,31
+apps/api/src/workflows/lesson-generation/steps/save-practice-lesson-step.test.ts
+  04c3207140c1bc15 3,15
+apps/api/src/workflows/lesson-generation/steps/generate-explanation-content-step.test.ts
+  04c3207140c1bc15 6,33,70
+apps/api/src/workflows/lesson-generation/steps/generate-quiz-images-step.test.ts
+  04c3207140c1bc15 3,30
+apps/api/src/workflows/lesson-generation/steps/generate-grammar-romanization-step.test.ts
+  04c3207140c1bc15 3,29
+apps/api/src/workflows/course-generation/steps/add-alternative-titles-step.test.ts
+  04c3207140c1bc15 6,22,46
+apps/api/src/workflows/course-generation/steps/add-chapters-step.test.ts
+  04c3207140c1bc15 6,33,47
+apps/api/src/workflows/lesson-generation/steps/_utils/upsert-word-with-pronunciation.test.ts
+  04c3207140c1bc15 5,9,33,56,77,108,136
+apps/main/src/data/progress/get-best-day.test.ts
+  04c3207140c1bc15 4,8,15,23,53,86,123
+packages/core/src/courses/search-courses.test.ts
+  04c3207140c1bc15 6,47,52,57,64,78,98,137,165,175,194,213,251,297,314,334
+packages/core/src/player/contracts/translation-options.test.ts
+  04c3207140c1bc15 1,22
+packages/core/src/progress/get-chapter-progress.test.ts
+  04c3207140c1bc15 8,18,24,49,99,151,184,224,243,268,309
+packages/player/src/_browser-tests/player-explanation.browser.test.tsx
+  04c3207140c1bc15 2,10
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.test.ts
+  04c3207140c1bc15 28,348,393,442,511,557,621,722,779,854,909,953,989
+packages/utils/src/languages.test.ts
+  04c3207140c1bc15 1,5,9,13,17,21,27,50,57,63,67,71,75,79
+knip.json
+  341201a1977a1a10 4
+apps/main/src/data/courses/list-user-courses.test.ts
+  04c3207140c1bc15 7,11,30,40,52,71,103,129,147
+apps/main/src/data/chapters/get-chapter-for-generation.test.ts
+  04c3207140c1bc15 6,19,38,50,55,60
+apps/api/src/workflows/course-generation/_internal/persist-generated-content.test.ts
+  04c3207140c1bc15 6,24,77
+apps/main/src/app/generate/ch/[id]/generation-phases.test.ts
+  04c3207140c1bc15 1,5,16,21,31,41,58,63
+packages/core/src/player/commands/_utils/daily-progress.test.ts
+  04c3207140c1bc15 3,7,23
+apps/api/src/workflows/lesson-generation/kinds/grammar-workflow.test.ts
+  04c3207140c1bc15 6,64
+packages/core/src/player/contracts/check-answer.test.ts
+  04c3207140c1bc15 8,29,37,45,63,71,79,87,95,113,117,131,144,157,170,183,201,209,217,235,243,251,261,269,279,285,291,297,309
+apps/main/src/data/lessons/list-chapter-lessons.test.ts
+  04c3207140c1bc15 5,71,89,96,102,108
+apps/api/src/workflows/course-generation/steps/handle-failure-step.test.ts
+  04c3207140c1bc15 8,23,57,73,106
+apps/api/src/workflows/lesson-generation/steps/handle-failure-step.test.ts
+  04c3207140c1bc15 4,18
+packages/core/src/player/contracts/prepare-lesson-data.test.ts
+  04c3207140c1bc15 2,122,134,199,218,263,300,368,384,410,454,503,532,577,590,611,635
+apps/api/src/workflows/_shared/workflow-error.test.ts
+  04c3207140c1bc15 1,5,15,25,32,49
+apps/api/src/workflows/course-generation/steps/generate-categories-step.test.ts
+  04c3207140c1bc15 2,28,50
+packages/core/src/progress/get-next-lesson.test.ts
+  04c3207140c1bc15 7,56,73,92,118,152,178
+packages/player/src/_browser-tests/player-completion.browser.test.tsx
+  04c3207140c1bc15 1,51,94,121,154,174,198
+apps/api/src/workflows/lesson-generation/steps/generate-sentence-word-pronunciation-step.test.ts
+  04c3207140c1bc15 4,26
+apps/api/src/workflows/course-generation/steps/generate-chapters-step.test.ts
+  04c3207140c1bc15 2,35,63,78
+packages/player/src/player-step.test.ts
+  04c3207140c1bc15 2,25,35,41
+packages/core/src/player/contracts/compute-score.test.ts
+  04c3207140c1bc15 1,5,19,38,57
+apps/main/src/app/generate/l/[id]/generation-phases.test.ts
+  04c3207140c1bc15 1,6,15,25,39,50,68,89
+apps/main/src/data/progress/get-energy-history.test.ts
+  04c3207140c1bc15 5,9,16,25,47,68,94,122,145,172,191,221,237,255,292,327,352,376
+apps/api/src/workflows/lesson-generation/kinds/translation-workflow.test.ts
+  04c3207140c1bc15 8,20
+apps/api/src/workflows/lesson-generation/steps/_utils/fetch-existing-word-casing.test.ts
+  04c3207140c1bc15 4,15,25,40,55,74
+packages/player/src/player-completion.test.ts
+  04c3207140c1bc15 2,44
+apps/api/src/workflows/course-generation/steps/check-existing-course-step.test.ts
+  04c3207140c1bc15 7,22,40,54
+apps/main/src/app/generate/cs/[id]/generation-phases.test.ts
+  04c3207140c1bc15 1,5,18,23,33,38,43
+packages/core/src/lessons/generation-prerequisites.test.ts
+  04c3207140c1bc15 7,65,102,119,156,186,224,254
+apps/api/src/workflows/lesson-generation/steps/save-vocabulary-lesson-step.test.ts
+  04c3207140c1bc15 4,16
+packages/core/src/player/queries/get-lesson-words.test.ts
+  04c3207140c1bc15 11,40,68,115,127,132
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-player-model.test.ts
+  f06cf7165ced1377 1,5,19,33,52,69
+apps/api/src/workflows/lesson-generation/steps/generate-reading-audio-step.test.ts
+  04c3207140c1bc15 5,27
+packages/player/src/components/_utils/strip-wrapping-quotes.test.ts
+  04c3207140c1bc15 1,5,11,16,22,27
+apps/api/src/workflows/chapter-generation/steps/classify-lessons-step.test.ts
+  04c3207140c1bc15 6,33,79,91
+apps/api/src/workflows/lesson-generation/steps/save-grammar-lesson-step.test.ts
+  04c3207140c1bc15 4,16
+apps/api/src/workflows/lesson-generation/kinds/quiz-workflow.test.ts
+  04c3207140c1bc15 6,53
+apps/api/src/workflows/lesson-generation/steps/generate-sentence-distractors-step.test.ts
+  04c3207140c1bc15 4,28
+packages/core/src/player/commands/_utils/durable-curriculum-completion-rules.test.ts
+  04c3207140c1bc15 1,57,75,85,105,138,160,201
+packages/player/src/player-selectors.test.ts
+  04c3207140c1bc15 2,44,56,78,106,143,197,239
+apps/api/src/workflows/lesson-generation/kinds/vocabulary-workflow.test.ts
+  04c3207140c1bc15 9,75,163
+packages/core/src/lessons/get-next-lesson-in-course.test.ts
+  04c3207140c1bc15 5,72,89,106,118,130,145,196,247,294
+apps/api/src/workflows/lesson-generation/steps/generate-image-prompts-step.test.ts
+  04c3207140c1bc15 3,25,40
+apps/api/src/workflows/course-generation/_internal/get-or-create-course.test.ts
+  04c3207140c1bc15 6,22,47
+apps/api/src/workflows/course-generation/steps/add-categories-step.test.ts
+  04c3207140c1bc15 6,22,55
+apps/api/src/workflows/lesson-generation/kinds/listening-workflow.test.ts
+  04c3207140c1bc15 8,20
+apps/api/src/workflows/lesson-generation/steps/generate-vocabulary-content-step.test.ts
+  04c3207140c1bc15 3,25,36
+apps/main/src/data/progress/get-best-time.test.ts
+  04c3207140c1bc15 8,68,75,83,107,135,159,179,199
+apps/api/src/workflows/lesson-preload/lesson-preload-workflow.test.ts
+  04c3207140c1bc15 1,16,22,30
+packages/ai/src/reporting-tags.test.ts
+  04c3207140c1bc15 1,10,16,22,28
+packages/core/src/player/contracts/arrange-words-answers.test.ts
+  04c3207140c1bc15 1,9,22,30
+apps/api/src/workflows/lesson-generation/steps/generate-reading-content-step.test.ts
+  04c3207140c1bc15 6,34
+packages/core/src/player/queries/get-lesson.test.ts
+  04c3207140c1bc15 9,60,71,80,86,101,107,114,121,152,188,195,234
+apps/main/src/data/lessons/get-lesson.test.ts
+  04c3207140c1bc15 5,64,83,94,105,130,161,192
+packages/core/src/steps/contract/image.test.ts
+  04c3207140c1bc15 1,5,11,23
+apps/api/src/workflows/lesson-generation/steps/save-listening-lesson-step.test.ts
+  04c3207140c1bc15 6,18,68
+apps/api/src/workflows/lesson-generation/steps/_utils/explanation-source-steps.test.ts
+  04c3207140c1bc15 8,120,148,190
+apps/api/src/workflows/lesson-generation/steps/generate-vocabulary-pronunciation-step.test.ts
+  04c3207140c1bc15 4,26
+apps/api/src/workflows/course-generation/steps/complete-course-setup-step.test.ts
+  04c3207140c1bc15 7,22,44
+apps/main/src/data/chapters/get-chapter.test.ts
+  04c3207140c1bc15 4,47,64,74,84,107,130,142
+packages/player/src/player-step-behavior.test.ts
+  04c3207140c1bc15 2,30,45
+apps/main/src/data/chapters/list-course-chapters.test.ts
+  04c3207140c1bc15 4,52,69,76
+apps/main/src/data/courses/get-course.test.ts
+  04c3207140c1bc15 3,31,45,51,57,63,74
+packages/player/src/use-option-keyboard.test.ts
+  04c3207140c1bc15 3,20,29,38,47,56,65,76,85,94,103,112,121,135,149,164
+apps/main/src/data/courses/list-courses.test.ts
+  04c3207140c1bc15 5,26,34,51,70,104
+apps/api/src/workflows/lesson-generation/kinds/tutorial-workflow.test.ts
+  04c3207140c1bc15 7,51
+packages/ui/src/hooks/use-auto-save.test.ts
+  04c3207140c1bc15 2,14,29,48
+packages/core/src/player/queries/get-next-lesson.test.ts
+  04c3207140c1bc15 6,63,68,73,78,83,118,169,199,229,259
+apps/main/src/data/progress/get-belt-level.test.ts
+  04c3207140c1bc15 4,8,15,23,42
+apps/api/src/workflows/chapter-generation/steps/set-chapter-as-completed-step.test.ts
+  04c3207140c1bc15 7,25,51
+apps/main/src/data/progress/get-score-history.test.ts
+  04c3207140c1bc15 5,9,16,24,44,80,103,136,171,204,241,275,300,332,352,376
+packages/core/src/player/queries/get-next-sibling.test.ts
+  04c3207140c1bc15 5,62,79,96,108,188,194,200
+apps/api/src/workflows/lesson-generation/steps/_utils/get-practice-image-prompts.test.ts
+  04c3207140c1bc15 1,5
+packages/ai/src/gateway.test.ts
+  04c3207140c1bc15 2,6
+apps/api/src/workflows/course-generation/steps/update-course-step.test.ts
+  04c3207140c1bc15 6,22,43,82
+apps/main/src/data/sitemaps/chapters.test.ts
+  04c3207140c1bc15 4,13,20,47,65,81,99
+packages/core/src/player/commands/start-lesson.test.ts
+  04c3207140c1bc15 7,20,36,55,72
+packages/core/src/player/queries/get-sentence-words.test.ts
+  04c3207140c1bc15 8,32,68,80,85,107,132,169
+packages/core/src/progress/get-lesson-progress.test.ts
+  04c3207140c1bc15 7,27,35,68,90,128
+packages/player/src/_browser-tests/player-vocabulary.browser.test.tsx
+  04c3207140c1bc15 2,13,40,75
+packages/utils/src/number.test.ts
+  04c3207140c1bc15 1,5,9,13,17,21,25,29,33,39,45,51,56,62,70,74,84,89
+apps/api/src/workflows/course-generation/_internal/setup-course.test.ts
+  04c3207140c1bc15 6,55
+packages/player/src/use-player-keyboard.test.ts
+  04c3207140c1bc15 3,37,48,64,74,93,114,130,146,155,166,177,193,202,225,243,254,265,277
+packages/utils/src/settled.test.ts
+  04c3207140c1bc15 1,5,17,28,32,38,48
+packages/ai/src/tasks/lessons/core/_utils/format-explanation-steps.test.ts
+  04c3207140c1bc15 1,5,13,19,25
+apps/api/src/workflows/chapter-generation/steps/_utils/lesson-plan-expansion.test.ts
+  04c3207140c1bc15 1,27,33,49,68,76,93,113
+apps/api/src/workflows/lesson-generation/kinds/reading-workflow.test.ts
+  04c3207140c1bc15 11,89,182
+packages/core/src/users/get-user-session.test.ts
+  04c3207140c1bc15 3,7
+apps/api/src/workflows/course-generation/steps/initialize-course-step.test.ts
+  04c3207140c1bc15 6,18,41,74
+apps/main/src/data/sitemaps/lessons.test.ts
+  04c3207140c1bc15 5,14,21,55,79,101,125,149
+packages/player/src/_browser-tests/player-arrangement.browser.test.tsx
+  04c3207140c1bc15 1,8,43,68,105
+apps/main/src/data/progress/get-score.test.ts
+  04c3207140c1bc15 4,8,15,23,57,91
+apps/api/src/workflows/lesson-generation/steps/generate-quiz-content-step.test.ts
+  04c3207140c1bc15 4,40
+apps/api/src/workflows/chapter-generation/steps/generate-lessons-step.test.ts
+  04c3207140c1bc15 6,61,93,113
+apps/api/src/workflows/lesson-generation/steps/save-static-lesson-step.test.ts
+  04c3207140c1bc15 6,18
+packages/player/src/player-screen.test.ts
+  04c3207140c1bc15 3,52,62,86,111
+apps/api/src/workflows/course-generation/steps/get-course-chapters-step.test.ts
+  04c3207140c1bc15 6,21,56
+apps/api/src/workflows/lesson-generation/steps/set-lesson-as-running-step.test.ts
+  04c3207140c1bc15 5,17
+packages/player/src/player-reducer.test.ts
+  04c3207140c1bc15 5,83,90,98,104,109,116,127,137,148,162,178,190,210,226,254,264,276,284,290,296,310,317,323,329,335,342,352,359,380,386,394,400,406,414,438,450,477,501,521,530,545,558,564,581,589,610,626,639,651,663,682,688,696
+packages/core/src/player/queries/get-lesson-distractor-words.test.ts
+  04c3207140c1bc15 11,37,130,169
+apps/main/src/data/progress/_fill-gaps.test.ts
+  04c3207140c1bc15 1,13,17,23,40,51,62,73
+apps/api/src/workflows/lesson-generation/steps/generate-grammar-user-content-step.test.ts
+  04c3207140c1bc15 3,39
+packages/player/src/_browser-tests/player-static.browser.test.tsx
+  04c3207140c1bc15 2,74,110,150,211,244,281
+apps/api/src/workflows/lesson-generation/steps/_utils/generate-word-pronunciations.test.ts
+  04c3207140c1bc15 4,27,38,60,81,111
+apps/api/src/workflows/lesson-generation/steps/generate-vocabulary-audio-step.test.ts
+  04c3207140c1bc15 4,26
+packages/player/src/_browser-tests/player-choice.browser.test.tsx
+  04c3207140c1bc15 2,14,50,109,147,191,241,308,352,383
+apps/api/src/workflows/course-generation/_internal/generate-missing-content.test.ts
+  04c3207140c1bc15 2,67,88,117,134
+apps/api/src/workflows/chapter-generation/steps/get-chapter-step.test.ts
+  04c3207140c1bc15 6,24,49,78,86
+apps/api/src/workflows/lesson-generation/steps/_utils/generate-word-audio-urls.test.ts
+  04c3207140c1bc15 4,29,46,68,92,114
+packages/core/src/lessons/find-last-completed.test.ts
+  04c3207140c1bc15 7,20,48,76,134,185,243,306,366,416,464,511,569,575
+apps/main/src/data/progress/get-energy-level.test.ts
+  04c3207140c1bc15 4,8,15,23,35,54
+packages/core/src/alternative-titles/add-alternative-titles.test.ts
+  04c3207140c1bc15 5,9,33,53,74,99,110
+.oxlintrc.json
+  h_1cda88fc21fe9c 18-21
+packages/core/src/player/contracts/_utils/lesson-data-mappers.test.ts
+  04c3207140c1bc15 1,31,61,93,112,136,232
+apps/main/src/data/courses/find-existing-course.test.ts
+  04c3207140c1bc15 7,26,33,57,84,95,125,140,160
+packages/player/src/player-controller.test.ts
+  04c3207140c1bc15 2,44,53,63,77
+apps/main/src/data/courses/course-suggestions.test.ts
+  04c3207140c1bc15 5,13,52,85,112,139,159,178,201,206,212,234,242,256,272
+packages/player/src/_browser-tests/player-word-bank.browser.test.tsx
+  04c3207140c1bc15 1,12,48,82,120,160,199
+apps/api/src/workflows/lesson-generation/steps/generate-sentence-word-metadata-step.test.ts
+  04c3207140c1bc15 6,40
+packages/utils/src/energy.test.ts
+  04c3207140c1bc15 1,5,20,24,28,32,36,42,49,56,63,70,77
+packages/core/src/player/commands/submit-lesson-completion.test.ts
+  04c3207140c1bc15 10,56,80,104,165,187,213,234,254,279,307,327,353,384,420,453,486,504,522,559
+packages/core/src/player/commands/submit-player-completion.test.ts
+  04c3207140c1bc15 9,102,111
+apps/main/src/data/progress/get-bp-history.test.ts
+  04c3207140c1bc15 5,9,16,25,46,71,93,124,157,185,213,232,262,277
+apps/api/src/workflows/course-generation/steps/generate-description-step.test.ts
+  04c3207140c1bc15 2,28,53
+packages/utils/src/string.test.ts
+  04c3207140c1bc15 1,19,27,33,37,44,50,55,60,65,70,74,80,84,88,92,96,102,106,110,114,122,126,133,137,141,147,157,166,171,178,194,204,215,223,231,239,244,249,254,259,269,273,279,286,292,296,300,304,308,312,316,320,324,332,337,345,350,355,359,364,369,373,379,385,391,395,401,407,412,418,426,431,435,444,448,452,458,462,466,470,476
+apps/api/src/workflows/chapter-generation/steps/add-lessons-step.test.ts
+  04c3207140c1bc15 7,33,49,112
+packages/player/src/use-player-actions.test.tsx
+  04c3207140c1bc15 4,46
+apps/main/src/data/courses/get-continue-learning.test.ts
+  04c3207140c1bc15 8,42,55,63,87,152,183,211,237,288,343,370,422,468,524,579
+apps/api/src/workflows/lesson-generation/steps/generate-tutorial-content-step.test.ts
+  04c3207140c1bc15 3,25
+packages/player/src/_browser-tests/player-practice.browser.test.tsx
+  04c3207140c1bc15 1,9
+apps/api/src/workflows/lesson-generation/steps/generate-step-images-step.test.ts
+  04c3207140c1bc15 3,30
+apps/main/src/data/lessons/get-lesson-for-generation.test.ts
+  04c3207140c1bc15 6,21,45,50,55
+apps/main/src/data/sitemaps/courses.test.ts
+  04c3207140c1bc15 3,11,18,38,50,62,72
+packages/utils/src/uuid.test.ts
+  04c3207140c1bc15 1,5,10
+apps/api/src/workflows/course-generation/steps/generate-alternative-titles-step.test.ts
+  04c3207140c1bc15 2,28,53
+packages/utils/src/distractors.test.ts
+  04c3207140c1bc15 1,5,11,17,26,36,46
+packages/utils/src/belt-level.test.ts
+  04c3207140c1bc15 1,6,18,30,42,54,68,80,92,106,118,130,144,156,170,182,196,208,222,234,248,260,274,286,300,312,324,338,352,358,364,373,378,383,388
+apps/api/src/workflows/chapter-generation/steps/set-chapter-as-running-step.test.ts
+  04c3207140c1bc15 7,25,37
+apps/api/src/workflows/chapter-generation/chapter-generation-workflow.test.ts
+  h_1cda88fc21fe9c 11,55,76,97,122,141,163,183,205,229
+apps/api/src/workflows/lesson-generation/steps/generate-practice-content-step.test.ts
+  04c3207140c1bc15 4,41,75
+packages/utils/src/search.test.ts
+  04c3207140c1bc15 1,7,20,31,46,54,60
+apps/api/src/workflows/lesson-generation/steps/_utils/save-reading-target-words.test.ts
+  04c3207140c1bc15 8,53,88,133,172
+apps/api/src/workflows/lesson-generation/steps/generate-grammar-content-step.test.ts
+  04c3207140c1bc15 3,30
+apps/api/src/workflows/lesson-generation/steps/generate-sentence-word-audio-step.test.ts
+  04c3207140c1bc15 4,26
+apps/api/src/workflows/course-generation/steps/set-course-as-running-step.test.ts
+  04c3207140c1bc15 7,22,45
+apps/api/src/workflows/lesson-generation/steps/save-quiz-lesson-step.test.ts
+  04c3207140c1bc15 3,15
+apps/api/src/workflows/lesson-generation/steps/_utils/collect-target-words.test.ts
+  04c3207140c1bc15 1,5
+packages/core/src/player/queries/get-total-brain-power.test.ts
+  04c3207140c1bc15 4,8,24,29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "6a54862a341673c394ee8d357438067c05c9f5f6",
+  "prompts": {
+    "04c3207140c1bc15": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019de05b-77ff-7bf3-9379-e85fea7ae685",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1327,
+      "total_deletions": 1242,
+      "accepted_lines": 1327,
+      "overriden_lines": 0
+    },
+    "341201a1977a1a10": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019de060-8dfd-7700-85b7-eea385e9d239",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 3,
+      "total_deletions": 2,
+      "accepted_lines": 1,
+      "overriden_lines": 1
+    },
+    "f06cf7165ced1377": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019de060-be7e-7fa1-86c8-ca68bef785da",
+        "model": "unknown"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 6,
+      "total_deletions": 6,
+      "accepted_lines": 6,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
