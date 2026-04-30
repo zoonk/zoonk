@@ -1,0 +1,128 @@
+apps/api/src/workflows/course-generation/steps/check-existing-course-step.ts
+  855f6393ce1e65f8 34-38,40-51
+packages/ai/src/tasks/lessons/tutorial/lesson-tutorial.ts
+  h_1cda88fc21fe9c 11-15,17
+apps/api/src/workflows/course-generation/steps/update-course-step.ts
+  855f6393ce1e65f8 17-24
+packages/ai/src/tasks/lessons/language/lesson-vocabulary.ts
+  h_1cda88fc21fe9c 13-17,19
+apps/api/src/workflows/chapter-generation/steps/classify-lessons-step.ts
+  855f6393ce1e65f8 36-37
+apps/api/src/workflows/lesson-generation/steps/generate-explanation-content-step.ts
+  855f6393ce1e65f8 1,22-29
+apps/api/src/workflows/lesson-generation/steps/generate-quiz-content-step.ts
+  855f6393ce1e65f8 1,29-36
+packages/ai/src/tasks/lessons/core/lesson-explanation.ts
+  855f6393ce1e65f8 28
+apps/api/src/workflows/lesson-generation/steps/_utils/generate-direct-distractors.ts
+  h_1cda88fc21fe9c 26,30
+packages/ai/src/tasks/lessons/language/lesson-sentences.ts
+  855f6393ce1e65f8 20
+  h_1cda88fc21fe9c 13-18
+apps/api/src/workflows/chapter-generation/steps/set-chapter-as-completed-step.ts
+  855f6393ce1e65f8 15-21
+apps/api/src/workflows/lesson-generation/steps/generate-grammar-user-content-step.ts
+  855f6393ce1e65f8 1,28-36
+apps/api/src/workflows/lesson-generation/steps/_utils/generate-lesson-romanizations.ts
+  855f6393ce1e65f8 4-27,38,41
+packages/ai/src/tasks/lessons/core/lesson-practice.ts
+  855f6393ce1e65f8 31
+apps/api/src/workflows/course-generation/steps/generate-categories-step.ts
+  855f6393ce1e65f8 13-15
+apps/api/src/workflows/lesson-generation/steps/generate-grammar-content-step.ts
+  855f6393ce1e65f8 1,21-26
+apps/api/src/workflows/course-generation/steps/generate-chapters-step.ts
+  855f6393ce1e65f8 28
+apps/api/src/workflows/lesson-generation/steps/handle-failure-step.ts
+  855f6393ce1e65f8 22-25
+apps/api/src/workflows/course-generation/steps/generate-alternative-titles-step.ts
+  855f6393ce1e65f8 13-16
+apps/api/src/workflows/lesson-generation/steps/set-lesson-as-completed-step.ts
+  855f6393ce1e65f8 13-18
+packages/ai/src/tasks/lessons/language/lesson-translation.ts
+  855f6393ce1e65f8 13
+apps/api/src/workflows/lesson-generation/steps/generate-image-prompts-step.ts
+  855f6393ce1e65f8 1
+packages/ai/src/tasks/lessons/language/lesson-grammar-content.ts
+  h_1cda88fc21fe9c 13-23,25-26
+apps/api/src/workflows/course-generation/steps/get-course-chapters-step.ts
+  855f6393ce1e65f8 12-15
+apps/api/src/workflows/lesson-generation/steps/generate-reading-content-step.ts
+  855f6393ce1e65f8 1,68-75
+apps/api/src/workflows/lesson-generation/steps/_utils/generate-word-pronunciations.ts
+  h_1cda88fc21fe9c 84,88
+apps/api/src/workflows/chapter-generation/steps/add-lessons-step.ts
+  855f6393ce1e65f8 64-66
+apps/api/src/workflows/chapter-generation/steps/generate-lessons-step.ts
+  855f6393ce1e65f8 29-34,41-47
+apps/api/src/workflows/course-generation/steps/add-chapters-step.ts
+  855f6393ce1e65f8 33-35
+apps/api/src/workflows/course-generation/steps/add-categories-step.ts
+  855f6393ce1e65f8 21-24
+apps/api/src/workflows/lesson-generation/steps/generate-vocabulary-content-step.ts
+  855f6393ce1e65f8 1,27-33
+packages/ai/src/tasks/lessons/language/lesson-pronunciation.ts
+  855f6393ce1e65f8 13
+packages/ai/src/tasks/lessons/language/lesson-romanization.ts
+  855f6393ce1e65f8 11,13-24,63
+apps/api/src/workflows/lesson-generation/steps/generate-practice-content-step.ts
+  855f6393ce1e65f8 1,31-38
+apps/api/src/workflows/lesson-generation/steps/generate-tutorial-content-step.ts
+  855f6393ce1e65f8 1,15-21
+apps/api/src/workflows/course-generation/steps/initialize-course-step.ts
+  855f6393ce1e65f8 27-34,49,53-57,59,61,63,65-73,97-99,101,106
+apps/api/src/workflows/course-generation/steps/generate-description-step.ts
+  855f6393ce1e65f8 13-16
+apps/api/src/workflows/lesson-generation/steps/generate-sentence-word-metadata-step.ts
+  855f6393ce1e65f8 43
+apps/api/src/workflows/lesson-generation/steps/generate-explanation-content-step.test.ts
+  855f6393ce1e65f8 68,70,72
+apps/api/src/workflows/lesson-generation/steps/set-lesson-as-running-step.ts
+  h_1cda88fc21fe9c 37
+apps/api/src/workflows/course-generation/steps/handle-failure-step.ts
+  855f6393ce1e65f8 82-85
+packages/ai/src/tasks/lessons/core/lesson-quiz.ts
+  855f6393ce1e65f8 73
+apps/api/src/workflows/chapter-generation/steps/set-chapter-as-running-step.ts
+  855f6393ce1e65f8 14-20
+packages/ai/src/tasks/lessons/language/lesson-distractors.ts
+  855f6393ce1e65f8 14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "9b98c2cf61a68d6e99c82f5efd9a9e1e383f777d",
+  "prompts": {
+    "459f6515c612404a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dde75-8271-7230-9b14-91453113e245",
+        "model": "unknown"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 8,
+      "total_deletions": 6,
+      "accepted_lines": 0,
+      "overriden_lines": 1
+    },
+    "855f6393ce1e65f8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dde6b-0dec-7d22-bb99-a82c3e7358dd",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 258,
+      "total_deletions": 552,
+      "accepted_lines": 245,
+      "overriden_lines": 3
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
