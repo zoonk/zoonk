@@ -428,7 +428,6 @@ msgid "Tutorial"
 msgstr "Tutorial"
 
 #: ../../packages/player/src/use-lesson-kind-label.ts
-#: src/app/(catalog)/(home)/continue-learning-card.tsx
 msgctxt "PJivSX"
 msgid "Lesson"
 msgstr "Lección"

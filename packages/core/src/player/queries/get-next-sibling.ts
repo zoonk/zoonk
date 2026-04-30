@@ -25,6 +25,7 @@ type LessonResult = {
   brandSlug: string;
   chapterId: string;
   chapterSlug: string;
+  chapterTitle: string;
   courseSlug: string;
   lessonDescription: string | null;
   lessonId: string;
@@ -37,6 +38,7 @@ type ChapterResult = {
   brandSlug: string;
   chapterId: string;
   chapterSlug: string;
+  chapterTitle: string;
   courseSlug: string;
 };
 
@@ -76,6 +78,7 @@ async function getNextLessonSibling(scope: LessonScope): Promise<LessonResult | 
     brandSlug: lesson.chapter.course.organization?.slug ?? "",
     chapterId: lesson.chapter.id,
     chapterSlug: lesson.chapter.slug,
+    chapterTitle: lesson.chapter.title,
     courseSlug: lesson.chapter.course.slug,
     lessonDescription: lesson.description,
     lessonId: lesson.id,
@@ -109,6 +112,7 @@ async function getNextChapterSibling(scope: ChapterScope): Promise<ChapterResult
     brandSlug: chapter.course.organization?.slug ?? "",
     chapterId: chapter.id,
     chapterSlug: chapter.slug,
+    chapterTitle: chapter.title,
     courseSlug: chapter.course.slug,
   };
 }

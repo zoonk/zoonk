@@ -8,6 +8,7 @@ export type PublishedLessonProgressRow = {
   chapterId: string;
   chapterPosition: number;
   chapterSlug: string;
+  chapterTitle: string;
   completedLessons: number;
   courseId: string;
   courseSlug: string;

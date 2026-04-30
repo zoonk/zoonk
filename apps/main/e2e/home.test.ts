@@ -81,6 +81,7 @@ test.describe("Home Page - Authenticated", () => {
       isPublished: true,
       organizationId: org.id,
       position: 0,
+      title: `E2E Pending Chapter ${uniqueId}`,
     });
 
     const lesson1 = await lessonFixture({
@@ -128,9 +129,13 @@ test.describe("Home Page - Authenticated", () => {
 
     await expect(page.getByRole("heading", { name: /learn anything with ai/i })).not.toBeVisible();
 
-    await expect(page.getByRole("link", { name: /continue/i }).first()).toBeVisible();
-    await expect(page.getByText(new RegExp(`E2E Pending Course ${uniqueId}`))).toBeVisible();
-    await expect(page.getByText(new RegExp(`E2E Pending Lesson ${uniqueId}`))).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: new RegExp(`Next:.*E2E Pending Lesson ${uniqueId}`) }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("link", { name: `E2E Pending Chapter ${uniqueId}` })).toBeVisible();
+    await expect(page.getByRole("link", { name: `E2E Pending Course ${uniqueId}` })).toBeVisible();
+    await expect(page.getByText(`E2E Pending Lesson Description ${uniqueId}`)).toBeVisible();
 
     await ctx.close();
   });

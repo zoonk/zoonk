@@ -36,7 +36,7 @@ type ContinueLearningPendingLesson = Pick<
   "description" | "id" | "kind" | "slug" | "title"
 >;
 
-type ContinueLearningChapter = Pick<Chapter, "id" | "slug">;
+type ContinueLearningChapter = Pick<Chapter, "id" | "slug" | "title">;
 
 type ContinueLearningCourse = Pick<Course, "id" | "slug" | "title" | "imageUrl"> & {
   organization: Pick<Organization, "slug"> | null;
@@ -89,6 +89,7 @@ function toCompletedItemFromState({
     chapter: {
       id: state.chapterId,
       slug: state.chapterSlug,
+      title: state.chapterTitle,
     },
     course: toCourse(row),
     lesson: {
@@ -118,6 +119,7 @@ function toCompletedItemFromNext({
     chapter: {
       id: next.chapterId,
       slug: next.chapterSlug,
+      title: next.chapterTitle,
     },
     course: toCourse(row),
     lesson: {
@@ -175,7 +177,11 @@ function toPendingItemFromState({
   state: ContinueLearningResolvedState;
 }): ContinueLearningPendingItem {
   return toPendingItem({
-    chapter: { id: state.chapterId, slug: state.chapterSlug },
+    chapter: {
+      id: state.chapterId,
+      slug: state.chapterSlug,
+      title: state.chapterTitle,
+    },
     course: toCourse(row),
     lesson: {
       description: state.lessonDescription,

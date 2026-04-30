@@ -10,6 +10,7 @@ export type NextLessonInCourse = {
   lessonTitle: string | null;
   chapterId: string;
   chapterSlug: string;
+  chapterTitle: string;
   lessonDescription: string | null;
   lessonSlug: string;
 };
@@ -59,6 +60,7 @@ const cachedGetNextLesson = cache(
     return {
       chapterId: lesson.chapter.id,
       chapterSlug: lesson.chapter.slug,
+      chapterTitle: lesson.chapter.title,
       lessonDescription: lesson.description,
       lessonId: lesson.id,
       lessonKind: lesson.kind,

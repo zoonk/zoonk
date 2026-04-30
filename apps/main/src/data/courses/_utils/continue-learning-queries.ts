@@ -9,6 +9,7 @@ import { safeAsync } from "@zoonk/utils/error";
 export type ContinueLearningRow = {
   chapterId: string;
   chapterPosition: number;
+  chapterTitle: string;
   courseId: string;
   courseImageUrl: string | null;
   courseSlug: string;
@@ -49,7 +50,8 @@ export async function listRecentContinueLearningRows({
             l.position as lesson_position,
             l.id as lesson_id,
             l.chapter_id,
-            ch.position as chapter_position
+            ch.position as chapter_position,
+            ch.title as chapter_title
           FROM lesson_progress ap
           JOIN lessons l ON l.id = ap.lesson_id
           JOIN chapters ch ON ch.id = l.chapter_id
@@ -67,7 +69,8 @@ export async function listRecentContinueLearningRows({
           lpc.lesson_id as "lessonId",
           lpc.lesson_position as "lessonPosition",
           lpc.chapter_id as "chapterId",
-          lpc.chapter_position as "chapterPosition"
+          lpc.chapter_position as "chapterPosition",
+          lpc.chapter_title as "chapterTitle"
         FROM last_per_course lpc
         ORDER BY lpc.completed_at DESC
         LIMIT ${SQL_LIMIT}

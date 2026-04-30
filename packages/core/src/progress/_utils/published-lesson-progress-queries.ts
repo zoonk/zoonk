@@ -71,6 +71,7 @@ async function queryPublishedLessonProgressRows({
           ch.id AS "chapterId",
           ch.position AS "chapterPosition",
           ch.slug AS "chapterSlug",
+          ch.title AS "chapterTitle",
           COUNT(lp.lesson_id)::int AS "completedLessons",
           c.id AS "courseId",
           c.slug AS "courseSlug",

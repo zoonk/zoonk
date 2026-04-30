@@ -80,7 +80,7 @@ describe("authenticated users", () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
-      chapter: { id: chapter.id },
+      chapter: { id: chapter.id, title: chapter.title },
       course: { id: course.id },
       lesson: { id: lesson2.id },
       status: "completed",
@@ -144,7 +144,7 @@ describe("authenticated users", () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
-      chapter: { id: chapter.id },
+      chapter: { id: chapter.id, title: chapter.title },
       course: { id: course.id },
       lesson: { id: nextLesson.id },
       status: "completed",
@@ -353,7 +353,7 @@ describe("authenticated users", () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
-      chapter: { id: chapter2.id },
+      chapter: { id: chapter2.id, title: chapter2.title },
       lesson: { id: lesson2.id },
       status: "completed",
     });
@@ -480,7 +480,7 @@ describe("authenticated users", () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
-      chapter: { id: chapter.id, slug: chapter.slug },
+      chapter: { id: chapter.id, slug: chapter.slug, title: chapter.title },
       course: { id: course.id },
       lesson: { id: lesson2.id, slug: lesson2.slug, title: lesson2.title },
       status: "pending",
@@ -538,7 +538,7 @@ describe("authenticated users", () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
-      chapter: { id: chapter.id, slug: chapter.slug },
+      chapter: { id: chapter.id, slug: chapter.slug, title: chapter.title },
       course: { id: course.id },
       lesson: { id: nextLesson.id, slug: nextLesson.slug, title: nextLesson.title },
       status: "pending",
@@ -587,7 +587,7 @@ describe("authenticated users", () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
-      chapter: { id: chapter2.id, slug: chapter2.slug },
+      chapter: { id: chapter2.id, slug: chapter2.slug, title: chapter2.title },
       course: { id: course.id },
       lesson: null,
       status: "pending",

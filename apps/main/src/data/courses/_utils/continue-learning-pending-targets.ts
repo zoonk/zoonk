@@ -4,7 +4,7 @@ import { type ContinueLearningState } from "./continue-learning-next-state";
 import { type ContinueLearningRow } from "./continue-learning-queries";
 
 export type PendingTarget = {
-  chapter: Pick<Chapter, "id" | "slug">;
+  chapter: Pick<Chapter, "id" | "slug" | "title">;
   lesson: Pick<Lesson, "description" | "id" | "kind" | "slug" | "title"> | null;
 };
 
@@ -78,7 +78,11 @@ async function findPendingTarget({
 
   if (nextLesson) {
     return {
-      chapter: { id: nextLesson.chapterId, slug: nextLesson.chapterSlug },
+      chapter: {
+        id: nextLesson.chapterId,
+        slug: nextLesson.chapterSlug,
+        title: nextLesson.chapterTitle,
+      },
       lesson: {
         description: nextLesson.lessonDescription,
         id: nextLesson.lessonId,
@@ -100,7 +104,11 @@ async function findPendingTarget({
   }
 
   return {
-    chapter: { id: nextChapter.chapterId, slug: nextChapter.chapterSlug },
+    chapter: {
+      id: nextChapter.chapterId,
+      slug: nextChapter.chapterSlug,
+      title: nextChapter.chapterTitle,
+    },
     lesson: null,
   };
 }
