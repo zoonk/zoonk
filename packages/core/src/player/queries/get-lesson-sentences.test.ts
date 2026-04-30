@@ -5,9 +5,9 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { lessonSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { beforeAll, describe, expect, test } from "vitest";
-import { getLessonSentences } from "./get-lesson-sentences";
+import { getLessonSentencesForLessons } from "./get-lesson-sentences";
 
-describe(getLessonSentences, () => {
+describe(getLessonSentencesForLessons, () => {
   let org: Awaited<ReturnType<typeof organizationFixture>>;
   let course: Awaited<ReturnType<typeof courseFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
@@ -56,7 +56,7 @@ describe(getLessonSentences, () => {
       lessonSentenceFixture({ lessonId: lesson.id, sentenceId: sentence2.id }),
     ]);
 
-    const result = await getLessonSentences({ lessonId: lesson.id });
+    const result = await getLessonSentencesForLessons({ lessonIds: [lesson.id] });
 
     expect(result).toHaveLength(2);
 
@@ -66,20 +66,21 @@ describe(getLessonSentences, () => {
   });
 
   test("returns all expected fields", async () => {
-    const newLesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      language: "es",
-      organizationId: org.id,
-    });
-
-    const sentence = await sentenceFixture({
-      audioUrl: "https://example.com/megusta.mp3",
-      organizationId: org.id,
-      romanization: null,
-      sentence: `Me gusta ${crypto.randomUUID()}`,
-      targetLanguage: "es",
-    });
+    const [newLesson, sentence] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        language: "es",
+        organizationId: org.id,
+      }),
+      sentenceFixture({
+        audioUrl: "https://example.com/megusta.mp3",
+        organizationId: org.id,
+        romanization: null,
+        sentence: `Me gusta ${crypto.randomUUID()}`,
+        targetLanguage: "es",
+      }),
+    ]);
 
     await lessonSentenceFixture({
       distractors: ["Adoro"],
@@ -90,7 +91,7 @@ describe(getLessonSentences, () => {
       userLanguage: "en",
     });
 
-    const result = await getLessonSentences({ lessonId: newLesson.id });
+    const result = await getLessonSentencesForLessons({ lessonIds: [newLesson.id] });
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
@@ -115,12 +116,12 @@ describe(getLessonSentences, () => {
       organizationId: org.id,
     });
 
-    const result = await getLessonSentences({ lessonId: emptyLesson.id });
+    const result = await getLessonSentencesForLessons({ lessonIds: [emptyLesson.id] });
     expect(result).toEqual([]);
   });
 
   test("returns empty array for non-existent lesson", async () => {
-    const result = await getLessonSentences({ lessonId: randomUUID() });
+    const result = await getLessonSentencesForLessons({ lessonIds: [randomUUID()] });
     expect(result).toEqual([]);
   });
 });

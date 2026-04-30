@@ -1,18 +1,26 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { cache } from "react";
-
-const cachedGetLessonSentences = cache(async (lessonId: string) =>
-  prisma.lessonSentence.findMany({
-    include: { sentence: true },
-    where: { lessonId },
-  }),
-);
 
 /**
- * Returns all `LessonSentence` records for a lesson, each including
- * the canonical sentence row used for audio and romanization.
+ * Sentence metadata is read by both normal lessons and review lessons. Review
+ * lessons need the sentence rows from whichever source lessons supplied the
+ * on-demand review steps.
  */
-export function getLessonSentences(params: { lessonId: string }) {
-  return cachedGetLessonSentences(params.lessonId);
+async function listLessonSentencesForLessons({ lessonIds }: { lessonIds: string[] }) {
+  if (lessonIds.length === 0) {
+    return [];
+  }
+
+  return prisma.lessonSentence.findMany({
+    include: { sentence: true },
+    where: { lessonId: { in: lessonIds } },
+  });
+}
+
+/**
+ * Fetches sentence metadata for a set of lessons so review payloads can render
+ * source lesson reading and listening steps with the right translations.
+ */
+export function getLessonSentencesForLessons(params: { lessonIds: string[] }) {
+  return listLessonSentencesForLessons({ lessonIds: params.lessonIds });
 }

@@ -7,20 +7,19 @@ import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 import { useMemo, useState } from "react";
 import { AdminTrendChart } from "../_components/admin-trend-chart";
 
-type ContentFilterValue = "all" | "courses" | "chapters" | "lessons" | "activities" | "steps";
+type ContentFilterValue = "all" | "courses" | "chapters" | "lessons" | "steps";
 
 const filters: { label: string; value: ContentFilterValue }[] = [
   { label: "All", value: "all" },
   { label: "Courses", value: "courses" },
   { label: "Chapters", value: "chapters" },
   { label: "Lessons", value: "lessons" },
-  { label: "Activities", value: "activities" },
   { label: "Steps", value: "steps" },
 ];
 
 function getCountForFilter(row: DailyContentRow, filter: ContentFilterValue): number {
   if (filter === "all") {
-    return row.courses + row.chapters + row.lessons + row.activities + row.steps;
+    return row.courses + row.chapters + row.lessons + row.steps;
   }
   return row[filter];
 }

@@ -1,4 +1,4 @@
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { describe, expect, test } from "vitest";
 import { buildCompletionInput, getPlayerTransition } from "./player-controller";
 import { type PlayerAction, type PlayerState } from "./player-reducer";
@@ -24,10 +24,10 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
 
 function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
   return {
-    activityId: "activity-1",
-    activityKind: "quiz",
     completion: null,
     currentStepIndex: 0,
+    lessonId: "lesson-1",
+    lessonKind: "quiz",
     phase: "playing",
     results: {},
     selectedAnswers: {},
@@ -101,10 +101,10 @@ describe(buildCompletionInput, () => {
     });
 
     expect(buildCompletionInput(state, now)).toEqual({
-      activityId: "activity-1",
       answers: {
         "step-1": { kind: "multipleChoice", selectedOptionId: "a" },
       },
+      lessonId: "lesson-1",
       localDate: "2026-03-18",
       startedAt: 1000,
       stepTimings: {

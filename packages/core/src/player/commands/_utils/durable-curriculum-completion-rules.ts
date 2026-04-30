@@ -4,18 +4,16 @@ import {
 } from "./durable-curriculum-completion-queries";
 
 /**
- * Lessons only earn durable completion after every current published activity
- * is complete. Lessons with zero published activities still stay out of the
- * durable model because the learner never had anything concrete to finish.
+ * Lessons are complete when their lesson-progress row has a completion time.
  */
-export function isCurrentLessonCompleted({ row }: { row: PublishedLessonCompletionRow }) {
-  return row.totalActivities > 0 && row.completedActivities >= row.totalActivities;
+function isCurrentLessonCompleted({ row }: { row: PublishedLessonCompletionRow }) {
+  return row.isCompleted;
 }
 
 /**
- * Chapter and course completion must respect both current direct activity
- * completion and durable lesson completions. Centralizing that shared rule
- * keeps the completion boundary consistent across every scope.
+ * Chapter and course completion must respect both current lesson progress and
+ * previously completed lessons. Centralizing that shared rule keeps the
+ * completion boundary consistent across every scope.
  */
 function isEffectivelyCompleted({
   durableLessonIds,
@@ -45,9 +43,8 @@ export function groupRowsByChapter({ rows }: { rows: PublishedLessonCompletionRo
 }
 
 /**
- * The lesson row for the just-completed activity is the only lesson that can
- * newly cross the lesson-completion boundary in this transaction. Pulling it
- * out once makes the later write conditions direct.
+ * The lesson row for the just-completed lesson is the only lesson that can
+ * newly cross the completion boundary in this transaction.
  */
 export function getLessonRow({
   lessonId,

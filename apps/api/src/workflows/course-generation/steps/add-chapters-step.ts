@@ -2,7 +2,6 @@ import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type CourseChapter } from "@zoonk/ai/tasks/courses/chapters";
 import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { type Chapter, type ChapterCreateManyInput, prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
 import { deduplicateSlugs, normalizeString, toSlug } from "@zoonk/utils/string";
 import { type CourseContext } from "./initialize-course-step";
 
@@ -31,15 +30,9 @@ export async function addChaptersStep(input: {
     })),
   );
 
-  const { data: createdChapters, error } = await safeAsync(() =>
-    prisma.chapter.createManyAndReturn({
-      data: chaptersData,
-    }),
-  );
-
-  if (error || !createdChapters) {
-    throw error ?? new Error("Failed to create chapters");
-  }
+  const createdChapters = await prisma.chapter.createManyAndReturn({
+    data: chaptersData,
+  });
 
   await stream.status({ status: "completed", step: "addChapters" });
 

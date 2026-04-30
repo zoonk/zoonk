@@ -1,4 +1,4 @@
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { describePlayerStep } from "./player-step";
 import { hasStaticNavigation } from "./player-step-behavior";
 

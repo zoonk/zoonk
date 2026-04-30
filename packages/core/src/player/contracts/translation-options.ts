@@ -63,7 +63,7 @@ function toTranslationOption(word: TranslationSourceWord | DistractorWord): Tran
 
 /**
  * Target-language distractors are looked up by normalized surface text. Missing word
- * records still render as plain options so the activity keeps working even if enrichment
+ * records still render as plain options so the lesson keeps working even if enrichment
  * underflows.
  */
 export function buildDistractorWordLookup(
@@ -73,7 +73,7 @@ export function buildDistractorWordLookup(
 }
 
 /**
- * Translation activities read the stored direct distractor list from `LessonWord`. The
+ * Translation lessons read the stored direct distractor list from `LessonWord`. The
  * player only sanitizes, hydrates what metadata exists, and shows the first three.
  */
 export function buildTranslationOptions(params: {

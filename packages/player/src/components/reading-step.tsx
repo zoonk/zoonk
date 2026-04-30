@@ -4,7 +4,7 @@ import {
   buildAcceptedArrangeWordSequences,
   getAcceptedArrangeWordLengths,
 } from "@zoonk/core/player/contracts/arrange-words-answers";
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { useExtracted } from "next-intl";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { ArrangeWordsInteraction } from "./arrange-words";

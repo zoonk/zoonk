@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type Page } from "@playwright/test";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -10,7 +9,7 @@ import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { lessonWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { expect, test } from "./fixtures";
 
-async function createReviewActivity(options: {
+async function createReviewLesson(options: {
   sentences: { sentence: string; translation: string }[];
   words: { translation: string; word: string }[];
 }) {
@@ -33,11 +32,26 @@ async function createReviewActivity(options: {
     title: `E2E Review Chapter ${uniqueId}`,
   });
 
-  const lesson = await lessonFixture({
+  const sourceLesson = await lessonFixture({
+    chapterId: chapter.id,
+    description: `E2E source lesson ${uniqueId}`,
+    generationStatus: "completed",
+    isPublished: true,
+    kind: "translation",
+    organizationId: org.id,
+    position: 0,
+    slug: `e2e-source-lesson-${uniqueId}`,
+    title: `E2E Source Lesson ${uniqueId}`,
+  });
+
+  const reviewLesson = await lessonFixture({
     chapterId: chapter.id,
     description: `E2E review lesson ${uniqueId}`,
+    generationStatus: "completed",
     isPublished: true,
+    kind: "review",
     organizationId: org.id,
+    position: 1,
     slug: `e2e-review-lesson-${uniqueId}`,
     title: `E2E Review Lesson ${uniqueId}`,
   });
@@ -51,7 +65,7 @@ async function createReviewActivity(options: {
         });
 
         await lessonWordFixture({
-          lessonId: lesson.id,
+          lessonId: sourceLesson.id,
           translation: wordData.translation,
           wordId: word.id,
         });
@@ -67,7 +81,7 @@ async function createReviewActivity(options: {
         });
 
         await lessonSentenceFixture({
-          lessonId: lesson.id,
+          lessonId: sourceLesson.id,
           sentenceId: sentence.id,
           translation: sentenceData.translation,
         });
@@ -77,66 +91,32 @@ async function createReviewActivity(options: {
     ),
   ]);
 
-  // Create a source activity (vocabulary) with interactive steps
-  const sourceActivity = await activityFixture({
-    generationStatus: "completed",
-    isPublished: true,
-    kind: "translation",
-    lessonId: lesson.id,
-    organizationId: org.id,
-    position: 0,
-    title: `E2E Source Activity ${uniqueId}`,
-  });
-
   const vocabStepCount = createdWords.length;
 
   await Promise.all([
     ...createdWords.map((word, index) =>
       stepFixture({
-        activityId: sourceActivity.id,
         content: {},
         isPublished: true,
         kind: "translation",
+        lessonId: sourceLesson.id,
         position: index,
         wordId: word.id,
       }),
     ),
     ...createdSentences.map((sentence, index) =>
       stepFixture({
-        activityId: sourceActivity.id,
         content: {},
         isPublished: true,
         kind: "reading",
+        lessonId: sourceLesson.id,
         position: vocabStepCount + index,
         sentenceId: sentence.id,
       }),
     ),
   ]);
 
-  // Create the review activity (completed at creation time, no pre-generated steps)
-  // Create a third activity so the review one is not the last in the lesson.
-  // This ensures tests see mid-lesson completion behavior (not lesson-complete).
-  await Promise.all([
-    activityFixture({
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "review",
-      lessonId: lesson.id,
-      organizationId: org.id,
-      position: 1,
-      title: `E2E Review Activity ${uniqueId}`,
-    }),
-    activityFixture({
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "explanation",
-      lessonId: lesson.id,
-      organizationId: org.id,
-      position: 2,
-    }),
-  ]);
-
-  const url = `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/1`;
+  const url = `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${reviewLesson.slug}`;
 
   return { url };
 }
@@ -344,7 +324,7 @@ test.describe("Review Step", () => {
       words.map(({ translation, word }) => [translation, word]),
     );
 
-    const { url } = await createReviewActivity({
+    const { url } = await createReviewLesson({
       sentences: [
         {
           sentence: `${sentenceWord1} ${sentenceWord2}`,
@@ -367,9 +347,13 @@ test.describe("Review Step", () => {
       translationToWord,
     });
 
-    // Completion screen
-    await expect(page.getByRole("status")).toBeVisible();
-    await expect(page.getByText(completionScoreText, { exact: true })).toBeVisible();
-    await expect(page.getByText(/correct/i)).toBeVisible();
+    const completionScreen = page.getByRole("status");
+
+    await expect(completionScreen).toBeVisible();
+    await expect(completionScreen.getByRole("heading", { name: /course complete/i })).toBeVisible();
+    await expect(completionScreen.getByRole("link", { name: /review course/i })).toBeVisible();
+    await expect(
+      completionScreen.getByText(completionScoreText, { exact: true }),
+    ).not.toBeVisible();
   });
 });

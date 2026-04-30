@@ -121,7 +121,7 @@ const chaptersData: CourseChapters[] = [
         title: "Spanish Basics",
       },
       {
-        description: "Build essential vocabulary for travel, food, family, and daily activities.",
+        description: "Build essential vocabulary for travel, food, family, and daily lessons.",
         generationStatus: "pending",
         isPublished: true,
         slug: "essential-vocabulary",

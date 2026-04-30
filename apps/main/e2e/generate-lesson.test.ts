@@ -2,10 +2,10 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { type Page, type Route } from "@zoonk/e2e/fixtures";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
@@ -150,6 +150,66 @@ async function createPendingLesson() {
 }
 
 /**
+ * A pending practice lesson is locked until the explanation lessons in its
+ * source range are completed. This creates the smallest chapter shape that can
+ * prove the generate page sends learners to the missing explanation instead.
+ */
+async function createBlockedPracticeLesson() {
+  const org = await getAiOrganization();
+
+  const uniqueId = randomUUID().slice(0, 8);
+  const courseTitle = `E2E Blocked Course ${uniqueId}`;
+  const chapterTitle = `E2E Blocked Chapter ${uniqueId}`;
+  const explanationTitle = `E2E Required Explanation ${uniqueId}`;
+  const practiceTitle = `E2E Blocked Practice ${uniqueId}`;
+
+  const course = await courseFixture({
+    isPublished: true,
+    normalizedTitle: normalizeString(courseTitle),
+    organizationId: org.id,
+    slug: `e2e-blocked-course-${uniqueId}`,
+    title: courseTitle,
+  });
+
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    generationStatus: "completed",
+    isPublished: true,
+    normalizedTitle: normalizeString(chapterTitle),
+    organizationId: org.id,
+    slug: `e2e-blocked-chapter-${uniqueId}`,
+    title: chapterTitle,
+  });
+
+  const [explanation, practice] = await Promise.all([
+    lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "explanation",
+      normalizedTitle: normalizeString(explanationTitle),
+      organizationId: org.id,
+      position: 0,
+      slug: `e2e-required-explanation-${uniqueId}`,
+      title: explanationTitle,
+    }),
+    lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "practice",
+      normalizedTitle: normalizeString(practiceTitle),
+      organizationId: org.id,
+      position: 1,
+      slug: `e2e-blocked-practice-${uniqueId}`,
+      title: practiceTitle,
+    }),
+  ]);
+
+  return { explanation, practice };
+}
+
+/**
  * Creates a test subscription for the given user.
  */
 async function createTestSubscription(userId: string) {
@@ -195,17 +255,37 @@ test.describe("Generate Lesson Page - No Subscription", () => {
   });
 });
 
+test.describe("Generate Lesson Page - Prerequisites", () => {
+  test("links to the required explanation when practice is blocked", async ({ page }) => {
+    const { explanation, practice } = await createBlockedPracticeLesson();
+
+    await page.goto(`/generate/l/${practice.id}`);
+
+    await expect(page.getByRole("heading", { name: practice.title ?? "" })).toBeVisible();
+    await expect(page.getByText("Lesson locked")).toBeVisible();
+    await expect(page.getByText("Create the required lesson first.")).toBeVisible();
+
+    const requiredLessonLink = page.getByRole("link", { name: "Open required lesson" });
+    await expect(requiredLessonLink).toBeVisible();
+    await expect(requiredLessonLink).toHaveAttribute("href", `/generate/l/${explanation.id}`);
+  });
+});
+
 test.describe("Generate Lesson Page - With Subscription", () => {
   test("shows completion UI before redirecting when lesson is already ready", async ({ page }) => {
-    const { lesson, organizationId } = await createPendingLesson();
+    const { lesson } = await createPendingLesson();
     const uniqueId = randomUUID().slice(0, 8);
 
     await Promise.all([
-      activityFixture({
+      stepFixture({
+        content: {
+          text: `E2E Ready Lesson ${uniqueId}`,
+          title: `E2E Ready Lesson ${uniqueId}`,
+          variant: "text",
+        },
         isPublished: true,
+        kind: "static",
         lessonId: lesson.id,
-        organizationId,
-        title: `E2E Ready Activity ${uniqueId}`,
       }),
       prisma.lesson.update({
         data: { generationStatus: "completed" },
@@ -228,15 +308,18 @@ test.describe("Generate Lesson Page - With Subscription", () => {
     noProgressUser,
   }) => {
     await createTestSubscription(noProgressUser.id);
-    const { lesson, organizationId } = await createPendingLesson();
+    const { lesson } = await createPendingLesson();
 
-    // Create an activity so the lesson page doesn't redirect back to /generate
     const uniqueId = randomUUID().slice(0, 8);
-    await activityFixture({
+    await stepFixture({
+      content: {
+        text: `E2E Generated Lesson ${uniqueId}`,
+        title: `E2E Generated Lesson ${uniqueId}`,
+        variant: "text",
+      },
       isPublished: true,
+      kind: "static",
       lessonId: lesson.id,
-      organizationId,
-      title: `E2E Generated Activity ${uniqueId}`,
     });
 
     await setupMockApis(userWithoutProgress, {
@@ -245,14 +328,14 @@ test.describe("Generate Lesson Page - With Subscription", () => {
         { status: "completed", step: "getLesson" },
         { status: "started", step: "setLessonAsRunning" },
         { status: "completed", step: "setLessonAsRunning" },
-        { status: "started", step: "determineLessonKind" },
-        { status: "completed", step: "determineLessonKind" },
-        { status: "started", step: "updateLessonKind" },
-        { status: "completed", step: "updateLessonKind" },
-        { status: "started", step: "generateCustomActivities" },
-        { status: "completed", step: "generateCustomActivities" },
-        { status: "started", step: "addActivities" },
-        { status: "completed", step: "addActivities" },
+        { status: "started", step: "generateExplanationContent" },
+        { status: "completed", step: "generateExplanationContent" },
+        { status: "started", step: "generateImagePrompts" },
+        { status: "completed", step: "generateImagePrompts" },
+        { status: "started", step: "generateStepImages" },
+        { status: "completed", step: "generateStepImages" },
+        { status: "started", step: "saveExplanationLesson" },
+        { status: "completed", step: "saveExplanationLesson" },
         { status: "started", step: "setLessonAsCompleted" },
         { status: "completed", step: "setLessonAsCompleted" },
       ],
@@ -260,21 +343,18 @@ test.describe("Generate Lesson Page - With Subscription", () => {
 
     await userWithoutProgress.goto(`/generate/l/${lesson.id}`);
 
-    // Should show completion message
     await expect(userWithoutProgress.getByText(/your lesson is ready/i)).toBeVisible({
       timeout: 10_000,
     });
 
     await expect(userWithoutProgress.getByText(/taking you to your lesson/i)).toBeVisible();
 
-    // Update lesson status - the redirect will happen in ~1.5s via location.href
     await prisma.lesson.update({
       data: { generationStatus: "completed" },
       where: { id: lesson.id },
     });
 
-    // Should redirect to lesson page
-    await userWithoutProgress.waitForURL(/\/b\/ai\/c\//, { timeout: 10_000 });
+    await userWithoutProgress.waitForURL(/\/b\/ai\/c\/.+\/ch\/.+\/l\/.+$/, { timeout: 10_000 });
   });
 
   test("shows time estimate during generation", async ({ userWithoutProgress, noProgressUser }) => {
@@ -338,15 +418,16 @@ test.describe("Generate Lesson Page - Running Generation Bypasses Auth", () => {
       title: `E2E Running Lesson Chapter ${uniqueId}`,
     });
 
+    const lessonTitle = `E2E Running Lesson ${uniqueId}`;
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       generationRunId: `run-${uniqueId}`,
       generationStatus: "running",
       isPublished: true,
-      normalizedTitle: normalizeString(`E2E Running Lesson ${uniqueId}`),
+      normalizedTitle: normalizeString(lessonTitle),
       organizationId: org.id,
       slug: `e2e-running-lesson-${uniqueId}`,
-      title: `E2E Running Lesson ${uniqueId}`,
+      title: lessonTitle,
     });
 
     await setupMockApis(page, {
@@ -358,7 +439,7 @@ test.describe("Generate Lesson Page - Running Generation Bypasses Auth", () => {
 
     await expect(page.getByRole("alert").filter({ hasText: /logged in/i })).toHaveCount(0);
     await expect(page.getByText(/upgrade to create/i)).toHaveCount(0);
-    await expect(page.getByRole("heading", { name: lesson.title })).toBeVisible();
+    await expect(page.getByRole("heading", { name: lessonTitle })).toBeVisible();
   });
 });
 

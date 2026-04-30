@@ -7,20 +7,6 @@ import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { setChapterAsRunningStep } from "./set-chapter-as-running-step";
 
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
-
 describe(setChapterAsRunningStep, () => {
   let organizationId: string;
   let courseId: string;
@@ -41,7 +27,7 @@ describe(setChapterAsRunningStep, () => {
       setChapterAsRunningStep({ chapterId: randomUUID(), workflowRunId: "run-id" }),
     ).rejects.toThrow();
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "setChapterAsRunning" }),
@@ -64,7 +50,7 @@ describe(setChapterAsRunningStep, () => {
     expect(updated.generationStatus).toBe("running");
     expect(updated.generationRunId).toBe(workflowRunId);
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).toContainEqual(
       expect.objectContaining({ status: "started", step: "setChapterAsRunning" }),

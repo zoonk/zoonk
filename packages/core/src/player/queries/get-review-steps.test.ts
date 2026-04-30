@@ -1,4 +1,3 @@
-import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -40,8 +39,8 @@ describe(getReviewSteps, () => {
       organizationId: org.id,
     });
 
-    // Create a source activity with 12 interactive steps
-    const sourceActivity = await activityFixture({
+    // Create a source lesson with 12 interactive steps
+    const sourceLesson = await lessonFixture({
       generationStatus: "completed",
       isPublished: true,
       kind: "explanation",
@@ -53,10 +52,10 @@ describe(getReviewSteps, () => {
 
     const stepPromises = Array.from({ length: 12 }, (_, i) =>
       stepFixture({
-        activityId: sourceActivity.id,
-        content: { kind: "core", options: [], question: `Q${i}`, text: `Step ${i}` },
+        content: { options: [], question: `Q${i}`, text: `Step ${i}` },
         isPublished: true,
         kind: "multipleChoice",
+        lessonId: sourceLesson.id,
         position: i,
       }),
     );
@@ -64,10 +63,10 @@ describe(getReviewSteps, () => {
     // Also create an unpublished step (should be excluded)
     stepPromises.push(
       stepFixture({
-        activityId: sourceActivity.id,
-        content: { kind: "core", options: [], question: "Unpub Q", text: "Unpub step" },
+        content: { options: [], question: "Unpub Q", text: "Unpub step" },
         isPublished: false,
         kind: "multipleChoice",
+        lessonId: sourceLesson.id,
         position: 13,
       }),
     );
@@ -77,8 +76,10 @@ describe(getReviewSteps, () => {
   });
 
   test("returns steps where user only has incorrect attempts (tier 1)", async () => {
-    const newLesson = await createLessonWithSteps(org.id, 12);
-    const newUser = await userFixture();
+    const [newLesson, newUser] = await Promise.all([
+      createLessonWithSteps(org.id, 12),
+      userFixture(),
+    ]);
 
     // Create incorrect attempts for 3 steps (never corrected = tier 1)
     await Promise.all(
@@ -111,8 +112,10 @@ describe(getReviewSteps, () => {
   });
 
   test("includes steps with incorrect then correct attempts (tier 2) when tier 1 < 10", async () => {
-    const newLesson = await createLessonWithSteps(org.id, 12);
-    const newUser = await userFixture();
+    const [newLesson, newUser] = await Promise.all([
+      createLessonWithSteps(org.id, 12),
+      userFixture(),
+    ]);
 
     // Tier 1: 2 steps with only incorrect attempts
     await Promise.all(
@@ -169,8 +172,10 @@ describe(getReviewSteps, () => {
   });
 
   test("includes all tier 1 and tier 2 steps even when combined count exceeds target", async () => {
-    const newLesson = await createLessonWithSteps(org.id, 12);
-    const newUser = await userFixture();
+    const [newLesson, newUser] = await Promise.all([
+      createLessonWithSteps(org.id, 12),
+      userFixture(),
+    ]);
 
     // Tier 1: 8 steps with only incorrect attempts
     await Promise.all(
@@ -227,8 +232,10 @@ describe(getReviewSteps, () => {
   });
 
   test("when tier 1 >= 10, does NOT include tier 2 or fillers", async () => {
-    const newLesson = await createLessonWithSteps(org.id, 12);
-    const newUser = await userFixture();
+    const [newLesson, newUser] = await Promise.all([
+      createLessonWithSteps(org.id, 12),
+      userFixture(),
+    ]);
 
     // Tier 1: 11 steps with only incorrect attempts
     await Promise.all(
@@ -279,8 +286,10 @@ describe(getReviewSteps, () => {
   });
 
   test("deduplicates steps with multiple incorrect attempts", async () => {
-    const newLesson = await createLessonWithSteps(org.id, 12);
-    const newUser = await userFixture();
+    const [newLesson, newUser] = await Promise.all([
+      createLessonWithSteps(org.id, 12),
+      userFixture(),
+    ]);
 
     // Create multiple incorrect attempts for the same step
     await Promise.all([
@@ -321,10 +330,10 @@ describe(getReviewSteps, () => {
    * step will always appear in the result.
    */
 
-  test("excludes review activity steps", async () => {
+  test("excludes review lesson steps", async () => {
     const isolated = await createLessonWithSteps(org.id, 3);
 
-    const reviewActivity = await activityFixture({
+    const reviewLesson = await lessonFixture({
       generationStatus: "completed",
       isPublished: true,
       kind: "review",
@@ -334,10 +343,10 @@ describe(getReviewSteps, () => {
     });
 
     const reviewStep = await stepFixture({
-      activityId: reviewActivity.id,
-      content: { kind: "core", options: [], question: "Review Q" },
+      content: { options: [], question: "Review Q" },
       isPublished: true,
       kind: "multipleChoice",
+      lessonId: reviewLesson.id,
       position: 0,
     });
 
@@ -356,10 +365,10 @@ describe(getReviewSteps, () => {
     const isolated = await createLessonWithSteps(org.id, 3);
 
     await stepFixture({
-      activityId: isolated.activity.id,
       content: { text: "Static content", title: "Static" },
       isPublished: true,
       kind: "static",
+      lessonId: isolated.lesson.id,
       position: 10,
     });
 
@@ -376,8 +385,10 @@ describe(getReviewSteps, () => {
   });
 
   test("fills with random steps when total mistakes < 10", async () => {
-    const newLesson = await createLessonWithSteps(org.id, 12);
-    const newUser = await userFixture();
+    const [newLesson, newUser] = await Promise.all([
+      createLessonWithSteps(org.id, 12),
+      userFixture(),
+    ]);
 
     // Only 2 mistakes
     await Promise.all(
@@ -475,8 +486,10 @@ describe(getReviewSteps, () => {
   });
 
   test("when tier 1 is exactly 10, excludes tier 2", async () => {
-    const newLesson = await createLessonWithSteps(org.id, 12);
-    const newUser = await userFixture();
+    const [newLesson, newUser] = await Promise.all([
+      createLessonWithSteps(org.id, 12),
+      userFixture(),
+    ]);
 
     // Tier 1: exactly 10 steps with only incorrect attempts
     await Promise.all(
@@ -537,30 +550,33 @@ describe(getReviewSteps, () => {
   });
 
   test("steps with only correct attempts are not prioritized", async () => {
-    const newLesson = await createLessonWithSteps(org.id, 12);
-    const newUser = await userFixture();
+    const [newLesson, newUser] = await Promise.all([
+      createLessonWithSteps(org.id, 12),
+      userFixture(),
+    ]);
 
-    // 1 tier 1 step (incorrect only)
-    await stepAttemptFixture({
-      answer: {},
-      dayOfWeek: 1,
-      durationSeconds: 10,
-      hourOfDay: 12,
-      isCorrect: false,
-      stepId: newLesson.steps[0]!.id,
-      userId: newUser.id,
-    });
-
-    // 1 step with only correct attempts (should NOT be tier 1 or tier 2)
-    await stepAttemptFixture({
-      answer: {},
-      dayOfWeek: 1,
-      durationSeconds: 10,
-      hourOfDay: 12,
-      isCorrect: true,
-      stepId: newLesson.steps[1]!.id,
-      userId: newUser.id,
-    });
+    await Promise.all([
+      // 1 tier 1 step (incorrect only)
+      stepAttemptFixture({
+        answer: {},
+        dayOfWeek: 1,
+        durationSeconds: 10,
+        hourOfDay: 12,
+        isCorrect: false,
+        stepId: newLesson.steps[0]!.id,
+        userId: newUser.id,
+      }),
+      // 1 step with only correct attempts (should NOT be tier 1 or tier 2)
+      stepAttemptFixture({
+        answer: {},
+        dayOfWeek: 1,
+        durationSeconds: 10,
+        hourOfDay: 12,
+        isCorrect: true,
+        stepId: newLesson.steps[1]!.id,
+        userId: newUser.id,
+      }),
+    ]);
 
     const result = await getReviewSteps({
       lessonId: newLesson.lesson.id,
@@ -577,8 +593,10 @@ describe(getReviewSteps, () => {
   });
 
   test("does not return duplicate steps when mixing prioritized and fillers", async () => {
-    const newLesson = await createLessonWithSteps(org.id, 12);
-    const newUser = await userFixture();
+    const [newLesson, newUser] = await Promise.all([
+      createLessonWithSteps(org.id, 12),
+      userFixture(),
+    ]);
 
     // 5 tier 1 steps
     await Promise.all(
@@ -631,21 +649,20 @@ describe(getReviewValidationSteps, () => {
     });
 
     const mcContent = {
-      kind: "core",
       options: [
         { feedback: "Correct!", id: "a", isCorrect: true, text: "A" },
         { feedback: "Wrong.", id: "b", isCorrect: false, text: "B" },
       ],
     };
 
-    const [quizActivity, reviewActivity] = await Promise.all([
-      activityFixture({
+    const [quizLesson, reviewLesson] = await Promise.all([
+      lessonFixture({
         isPublished: true,
         kind: "quiz",
         lessonId: lesson.id,
         organizationId: org.id,
       }),
-      activityFixture({
+      lessonFixture({
         isPublished: true,
         kind: "review",
         lessonId: lesson.id,
@@ -655,27 +672,27 @@ describe(getReviewValidationSteps, () => {
 
     [quizStep, reviewStep, staticStep] = await Promise.all([
       stepFixture({
-        activityId: quizActivity.id,
         content: mcContent,
         isPublished: true,
         kind: "multipleChoice",
+        lessonId: quizLesson.id,
       }),
       stepFixture({
-        activityId: reviewActivity.id,
         content: mcContent,
         isPublished: true,
         kind: "multipleChoice",
+        lessonId: reviewLesson.id,
       }),
       stepFixture({
-        activityId: quizActivity.id,
         content: mcContent,
         isPublished: true,
         kind: "static",
+        lessonId: quizLesson.id,
       }),
     ]);
   });
 
-  test("excludes steps from review activities", async () => {
+  test("excludes steps from review lessons", async () => {
     const steps = await getReviewValidationSteps({
       lessonId: lesson.id,
       stepIds: [quizStep.id, reviewStep.id],
@@ -700,31 +717,33 @@ describe(getReviewValidationSteps, () => {
   });
 
   test("includes canonical sentence metadata for review validation", async () => {
-    const sentence = await sentenceFixture({ organizationId });
+    const [sentence, readingLesson] = await Promise.all([
+      sentenceFixture({ organizationId }),
+      lessonFixture({
+        isPublished: true,
+        kind: "reading",
+        lessonId: lesson.id,
+        organizationId,
+      }),
+    ]);
 
-    await lessonSentenceFixture({
-      distractors: ["Morgen"],
-      lessonId: lesson.id,
-      sentenceId: sentence.id,
-      translation: "Hello, I am Lara.",
-      translationDistractors: ["Good"],
-      userLanguage: "en",
-    });
-
-    const readingActivity = await activityFixture({
-      isPublished: true,
-      kind: "reading",
-      lessonId: lesson.id,
-      organizationId,
-    });
-
-    const readingStep = await stepFixture({
-      activityId: readingActivity.id,
-      content: {},
-      isPublished: true,
-      kind: "reading",
-      sentenceId: sentence.id,
-    });
+    const [readingStep] = await Promise.all([
+      stepFixture({
+        content: {},
+        isPublished: true,
+        kind: "reading",
+        lessonId: readingLesson.id,
+        sentenceId: sentence.id,
+      }),
+      lessonSentenceFixture({
+        distractors: ["Morgen"],
+        lessonId: lesson.id,
+        sentenceId: sentence.id,
+        translation: "Hello, I am Lara.",
+        translationDistractors: ["Good"],
+        userLanguage: "en",
+      }),
+    ]);
 
     const steps = await getReviewValidationSteps({
       lessonId: lesson.id,
@@ -756,17 +775,10 @@ async function createLessonWithSteps(orgId: string, stepCount: number) {
 
   const lesson = await lessonFixture({
     chapterId: chapter.id,
-    isPublished: true,
-    language: "en",
-    organizationId: orgId,
-  });
-
-  const activity = await activityFixture({
     generationStatus: "completed",
     isPublished: true,
     kind: "explanation",
     language: "en",
-    lessonId: lesson.id,
     organizationId: orgId,
     position: 0,
   });
@@ -774,14 +786,14 @@ async function createLessonWithSteps(orgId: string, stepCount: number) {
   const steps = await Promise.all(
     Array.from({ length: stepCount }, (_, i) =>
       stepFixture({
-        activityId: activity.id,
-        content: { kind: "core", options: [], question: `Q${i}`, text: `Step ${i}` },
+        content: { options: [], question: `Q${i}`, text: `Step ${i}` },
         isPublished: true,
         kind: "multipleChoice",
+        lessonId: lesson.id,
         position: i,
       }),
     ),
   );
 
-  return { activity, lesson, steps };
+  return { lesson, steps };
 }

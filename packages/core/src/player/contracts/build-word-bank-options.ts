@@ -5,7 +5,7 @@ import {
   type SerializedStep,
   type SerializedWord,
   type WordBankOption,
-} from "./prepare-activity-data";
+} from "./prepare-lesson-data";
 import { type DistractorWord } from "./translation-options";
 
 type WordDataInput = {
@@ -157,7 +157,7 @@ function buildWordMetadataLookup(params: {
 
 /**
  * Reading chips and word-bank tiles both need the same metadata lookup rule. Wrapping the
- * lookup keeps the exported builders focused on activity-level behavior instead of map code.
+ * lookup keeps the exported builders focused on lesson-level behavior instead of map code.
  */
 function createWordOptionBuilder(params: {
   distractorWords: DistractorWord[];

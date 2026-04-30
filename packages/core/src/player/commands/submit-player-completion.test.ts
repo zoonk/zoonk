@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -25,7 +24,7 @@ function todayLocalDate(): string {
 /**
  * The shared completion command only needs a standard published curriculum path:
  * org -> course -> chapter. Keeping this setup centralized makes each test focus
- * on the lesson/activity state it wants to verify.
+ * on the lesson state it wants to verify.
  */
 async function createPublishedChapterContext() {
   const organization = await organizationFixture({ kind: "brand" });
@@ -47,12 +46,12 @@ async function createPublishedChapterContext() {
  * multiple-choice step is enough to verify validation, persistence, and
  * follow-up effect planning without dragging in unrelated player variants.
  */
-async function createMultipleChoiceActivity(params: {
+async function createMultipleChoiceLesson(params: {
   lessonId: string;
   organizationId: string;
   position?: number;
 }) {
-  const activity = await activityFixture({
+  const lesson = await lessonFixture({
     isPublished: true,
     kind: "quiz",
     lessonId: params.lessonId,
@@ -60,9 +59,7 @@ async function createMultipleChoiceActivity(params: {
     position: params.position ?? 0,
   });
   const step = await stepFixture({
-    activityId: activity.id,
     content: {
-      kind: "core",
       options: [
         { feedback: "Correct!", id: "a", isCorrect: true, text: "A" },
         { feedback: "Wrong.", id: "b", isCorrect: false, text: "B" },
@@ -71,9 +68,10 @@ async function createMultipleChoiceActivity(params: {
     },
     isPublished: true,
     kind: "multipleChoice",
+    lessonId: lesson.id,
   });
 
-  return { activity, step };
+  return { lesson, step };
 }
 
 /**
@@ -82,7 +80,7 @@ async function createMultipleChoiceActivity(params: {
  * validation path for a multiple-choice step.
  */
 function buildCompletionInput(params: {
-  activityId: string;
+  lessonId: string;
   selectedOptionId?: string;
   startedAt?: number;
   stepId: string;
@@ -91,13 +89,13 @@ function buildCompletionInput(params: {
   const stepId = params.stepId;
 
   return {
-    activityId: params.activityId,
     answers: {
       [stepId]: {
         kind: "multipleChoice",
         selectedOptionId: params.selectedOptionId ?? "a",
       },
     },
+    lessonId: params.lessonId,
     localDate: todayLocalDate(),
     startedAt,
     stepTimings: {
@@ -112,10 +110,10 @@ function buildCompletionInput(params: {
 }
 
 describe(submitPlayerCompletion, () => {
-  test("returns null when the submitted activity no longer exists", async () => {
+  test("returns null when the submitted lesson no longer exists", async () => {
     const result = await submitPlayerCompletion({
       input: buildCompletionInput({
-        activityId: randomUUID(),
+        lessonId: randomUUID(),
         stepId: randomUUID(),
       }),
       userId: "missing-user-id",
@@ -125,39 +123,43 @@ describe(submitPlayerCompletion, () => {
   });
 
   test("persists completion and requests preloading when the next lesson needs generation", async () => {
-    const user = await userFixture();
-    const { chapter, organization } = await createPublishedChapterContext();
-    const currentLesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      organizationId: organization.id,
-      position: 0,
-    });
-    const nextLesson = await lessonFixture({
-      chapterId: chapter.id,
-      generationStatus: "pending",
-      isPublished: true,
-      organizationId: organization.id,
-      position: 1,
-    });
-    const { activity, step } = await createMultipleChoiceActivity({
+    const [user, { chapter, organization }] = await Promise.all([
+      userFixture(),
+      createPublishedChapterContext(),
+    ]);
+    const [currentLesson, nextLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "pending",
+        isPublished: true,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
+    const { lesson, step } = await createMultipleChoiceLesson({
       lessonId: currentLesson.id,
       organizationId: organization.id,
     });
 
     const result = await submitPlayerCompletion({
       input: buildCompletionInput({
-        activityId: activity.id,
+        lessonId: lesson.id,
         stepId: step.id,
       }),
       userId: user.id,
     });
 
-    const [activityProgress, stepAttempts] = await Promise.all([
-      prisma.activityProgress.findUnique({
+    const [lessonProgress, stepAttempts] = await Promise.all([
+      prisma.lessonProgress.findUnique({
         where: {
-          userActivity: {
-            activityId: activity.id,
+          userLesson: {
+            lessonId: lesson.id,
             userId: user.id,
           },
         },
@@ -174,7 +176,7 @@ describe(submitPlayerCompletion, () => {
     expect(result).toEqual({
       preloadLessonId: nextLesson.id,
     });
-    expect(activityProgress?.completedAt).toBeInstanceOf(Date);
+    expect(lessonProgress?.completedAt).toBeInstanceOf(Date);
     expect(stepAttempts).toHaveLength(1);
     expect(stepAttempts[0]?.isCorrect).toBe(true);
   });

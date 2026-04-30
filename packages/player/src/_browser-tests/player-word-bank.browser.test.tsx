@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
 import {
-  buildSerializedActivity,
+  buildSerializedLesson,
   buildSerializedSentence,
   buildSerializedStep,
 } from "../_test-utils/player-test-data";
@@ -11,7 +11,7 @@ import { renderPlayer } from "../_test-utils/render-player";
 describe("player browser integration: word bank steps", () => {
   test("fills blanks, checks the answer, and reaches completion", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         steps: [
           buildSerializedStep({
             content: {
@@ -47,7 +47,7 @@ describe("player browser integration: word bank steps", () => {
 
   test("builds a reading answer from the word bank and shows inline feedback", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         kind: "reading",
         steps: [
           buildSerializedStep({
@@ -81,7 +81,7 @@ describe("player browser integration: word bank steps", () => {
 
   test("renders listening audio controls and completes from the word bank flow", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         kind: "listening",
         steps: [
           buildSerializedStep({
@@ -119,7 +119,7 @@ describe("player browser integration: word bank steps", () => {
 
   test("lets learners remove fill-blank words before checking and shows the correct-answer hint", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         steps: [
           buildSerializedStep({
             content: {
@@ -159,7 +159,7 @@ describe("player browser integration: word bank steps", () => {
 
   test("shows reading correction feedback and romanization for wrong arrangements", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         kind: "reading",
         steps: [
           buildSerializedStep({
@@ -198,7 +198,7 @@ describe("player browser integration: word bank steps", () => {
 
   test("falls back to sentence text when listening audio is missing", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         kind: "listening",
         steps: [
           buildSerializedStep({

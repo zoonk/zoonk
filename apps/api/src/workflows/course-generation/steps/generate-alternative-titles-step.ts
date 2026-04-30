@@ -1,7 +1,6 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { generateAlternativeTitles } from "@zoonk/ai/tasks/courses/alternative-titles";
 import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
-import { safeAsync } from "@zoonk/utils/error";
 import { type CourseContext } from "./initialize-course-step";
 
 export async function generateAlternativeTitlesStep(course: CourseContext): Promise<string[]> {
@@ -11,16 +10,10 @@ export async function generateAlternativeTitlesStep(course: CourseContext): Prom
 
   await stream.status({ status: "started", step: "generateAlternativeTitles" });
 
-  const { data: result, error } = await safeAsync(() =>
-    generateAlternativeTitles({
-      language: course.language,
-      title: course.courseTitle,
-    }),
-  );
-
-  if (error) {
-    throw error;
-  }
+  const result = await generateAlternativeTitles({
+    language: course.language,
+    title: course.courseTitle,
+  });
 
   await stream.status({
     status: "completed",

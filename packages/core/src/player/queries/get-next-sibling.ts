@@ -1,5 +1,11 @@
 import "server-only";
-import { getPublishedChapterWhere, getPublishedLessonWhere, prisma } from "@zoonk/db";
+import {
+  type GenerationStatus,
+  type LessonKind,
+  getPublishedChapterWhere,
+  getPublishedLessonWhere,
+  prisma,
+} from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
 type LessonScope = {
@@ -20,17 +26,22 @@ type LessonResult = {
   brandSlug: string;
   chapterId: string;
   chapterSlug: string;
+  chapterTitle: string;
   courseSlug: string;
-  lessonDescription: string;
+  lessonDescription: string | null;
+  lessonGenerationStatus: GenerationStatus;
   lessonId: string;
+  lessonKind: LessonKind;
+  lessonPosition: number;
   lessonSlug: string;
-  lessonTitle: string;
+  lessonTitle: string | null;
 };
 
 type ChapterResult = {
   brandSlug: string;
   chapterId: string;
   chapterSlug: string;
+  chapterTitle: string;
   courseSlug: string;
 };
 
@@ -70,9 +81,13 @@ async function getNextLessonSibling(scope: LessonScope): Promise<LessonResult | 
     brandSlug: lesson.chapter.course.organization?.slug ?? "",
     chapterId: lesson.chapter.id,
     chapterSlug: lesson.chapter.slug,
+    chapterTitle: lesson.chapter.title,
     courseSlug: lesson.chapter.course.slug,
     lessonDescription: lesson.description,
+    lessonGenerationStatus: lesson.generationStatus,
     lessonId: lesson.id,
+    lessonKind: lesson.kind,
+    lessonPosition: lesson.position,
     lessonSlug: lesson.slug,
     lessonTitle: lesson.title,
   };
@@ -102,6 +117,7 @@ async function getNextChapterSibling(scope: ChapterScope): Promise<ChapterResult
     brandSlug: chapter.course.organization?.slug ?? "",
     chapterId: chapter.id,
     chapterSlug: chapter.slug,
+    chapterTitle: chapter.title,
     courseSlug: chapter.course.slug,
   };
 }

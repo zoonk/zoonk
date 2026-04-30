@@ -2,7 +2,7 @@ import { fireEvent } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
 import {
-  buildSerializedActivity,
+  buildSerializedLesson,
   buildSerializedStep,
   buildSerializedWord,
 } from "../_test-utils/player-test-data";
@@ -12,7 +12,7 @@ import { buildNavigation, renderPlayer } from "../_test-utils/render-player";
 describe("player browser integration: vocabulary", () => {
   test("renders a vocabulary card with pronunciation and translation", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         kind: "translation",
         steps: [
           buildSerializedStep({
@@ -39,7 +39,7 @@ describe("player browser integration: vocabulary", () => {
 
   test("navigates vocabulary cards without quiz controls", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         kind: "vocabulary",
         steps: [
           buildSerializedStep({
@@ -65,7 +65,7 @@ describe("player browser integration: vocabulary", () => {
           }),
         ],
       }),
-      navigation: buildNavigation({ nextActivityHref: null }),
+      navigation: buildNavigation({ nextLessonHref: null }),
       viewer: buildAuthenticatedViewer(),
     });
 
@@ -80,9 +80,9 @@ describe("player browser integration: vocabulary", () => {
     await expect.element(page.getByText("Sol")).toBeInTheDocument();
   });
 
-  test("completes flashcard vocabulary activities through the shared rewards flow", async () => {
+  test("completes flashcard vocabulary lessons through the shared rewards flow", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         kind: "vocabulary",
         steps: [
           buildSerializedStep({
@@ -96,7 +96,7 @@ describe("player browser integration: vocabulary", () => {
           }),
         ],
       }),
-      navigation: buildNavigation({ nextActivityHref: null }),
+      navigation: buildNavigation({ nextLessonHref: null }),
       viewer: buildAuthenticatedViewer(),
     });
 

@@ -1,4 +1,5 @@
 import { type ContinueLearningItem } from "@/data/courses/get-continue-learning";
+import { getLessonDisplayMeta } from "@/lib/lessons";
 import {
   FeatureCard,
   FeatureCardBody,
@@ -20,17 +21,14 @@ import { getExtracted } from "next-intl/server";
 import Image from "next/image";
 import Link from "next/link";
 
-async function getHeaderLabel(item: ContinueLearningItem, kindLabels: Map<string, string>) {
+async function getHeaderLabel({ lessonTitle }: { lessonTitle: string | null }) {
   const t = await getExtracted();
 
-  if (item.status === "pending") {
-    return t("Continue");
+  if (lessonTitle) {
+    return t("Next: {lesson}", { lesson: lessonTitle });
   }
 
-  const defaultLabel = t("Activity");
-  const activityLabel = item.activity.title ?? kindLabels.get(item.activity.kind) ?? defaultLabel;
-
-  return t("Next: {activity}", { activity: activityLabel });
+  return t("Continue");
 }
 
 function getHrefs(item: ContinueLearningItem) {
@@ -38,37 +36,44 @@ function getHrefs(item: ContinueLearningItem) {
 
   if (!course.organization) {
     const href = `/p/${course.id}` as const;
-    return { courseHref: href, headerHref: href, lessonHref: href, prefetch: false };
+
+    return {
+      chapterHref: href,
+      courseHref: href,
+      headerHref: href,
+      prefetch: false,
+    };
   }
 
   const courseHref = `/b/${course.organization.slug}/c/${course.slug}` as const;
+  const chapterHref = `/b/${course.organization.slug}/c/${course.slug}/ch/${chapter.slug}` as const;
 
   const lessonHref = lesson
     ? (`/b/${course.organization.slug}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}` as const)
-    : (`/b/${course.organization.slug}/c/${course.slug}/ch/${chapter.slug}` as const);
+    : chapterHref;
 
   if (item.status === "completed") {
     return {
+      chapterHref,
       courseHref,
-      headerHref: `${lessonHref}/a/${item.activity.position}` as const,
-      lessonHref,
+      headerHref: lessonHref,
       prefetch: true,
     };
   }
 
-  return { courseHref, headerHref: lessonHref, lessonHref, prefetch: false };
+  return {
+    chapterHref,
+    courseHref,
+    headerHref: lessonHref,
+    prefetch: false,
+  };
 }
 
-export async function ContinueLearningCard({
-  item,
-  kindLabels,
-}: {
-  item: ContinueLearningItem;
-  kindLabels: Map<string, string>;
-}) {
-  const { course, lesson } = item;
-  const headerLabel = await getHeaderLabel(item, kindLabels);
-  const { courseHref, headerHref, lessonHref, prefetch } = getHrefs(item);
+export async function ContinueLearningCard({ item }: { item: ContinueLearningItem }) {
+  const { chapter, course, lesson } = item;
+  const lessonMeta = lesson ? await getLessonDisplayMeta(lesson) : null;
+  const headerLabel = await getHeaderLabel({ lessonTitle: lessonMeta?.title ?? null });
+  const { chapterHref, courseHref, headerHref, prefetch } = getHrefs(item);
 
   return (
     <FeatureCard>
@@ -106,29 +111,21 @@ export async function ContinueLearningCard({
         </Link>
 
         <FeatureCardBody>
-          {lesson ? (
-            <>
-              <FeatureCardTitle>
-                <Link href={lessonHref} prefetch={prefetch}>
-                  {lesson.title}
-                </Link>
-              </FeatureCardTitle>
+          <FeatureCardTitle>
+            <Link href={chapterHref} prefetch={prefetch}>
+              {chapter.title}
+            </Link>
+          </FeatureCardTitle>
 
-              <FeatureCardSubtitle>
-                <Link href={courseHref} prefetch>
-                  {course.title}
-                </Link>
-              </FeatureCardSubtitle>
+          <FeatureCardSubtitle>
+            <Link href={courseHref} prefetch>
+              {course.title}
+            </Link>
+          </FeatureCardSubtitle>
 
-              <FeatureCardDescription>{lesson.description}</FeatureCardDescription>
-            </>
-          ) : (
-            <FeatureCardTitle>
-              <Link href={courseHref} prefetch>
-                {course.title}
-              </Link>
-            </FeatureCardTitle>
-          )}
+          {lessonMeta ? (
+            <FeatureCardDescription>{lessonMeta.description}</FeatureCardDescription>
+          ) : null}
         </FeatureCardBody>
       </FeatureCardContent>
     </FeatureCard>

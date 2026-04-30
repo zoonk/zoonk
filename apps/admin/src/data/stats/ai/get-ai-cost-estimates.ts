@@ -13,8 +13,8 @@ import {
 } from "./_utils/build-ai-course-cost-estimates";
 import {
   buildCoreLessonEstimate,
-  buildCustomLessonEstimate,
   buildLanguageLessonEstimate,
+  buildTutorialLessonEstimate,
 } from "./_utils/build-ai-lesson-cost-estimates";
 import { getStructureStats } from "./_utils/get-ai-cost-estimate-structure";
 import { getAiTaskUsageMap } from "./get-ai-task-usage-map";
@@ -50,20 +50,20 @@ export async function getAiCostEstimates({
     overrides: courseInputOverrides,
   });
   const coreLessonEstimate = buildCoreLessonEstimate({ structureStats, usageByTask });
-  const customLessonEstimate = buildCustomLessonEstimate({ structureStats, usageByTask });
   const languageLessonEstimate = buildLanguageLessonEstimate({ structureStats, usageByTask });
+  const tutorialLessonEstimate = buildTutorialLessonEstimate({ structureStats, usageByTask });
 
   return {
     courseInputs,
     defaultCourseInputs,
     estimates: [
       coreLessonEstimate,
-      customLessonEstimate,
+      tutorialLessonEstimate,
       languageLessonEstimate,
       buildRegularCourseEstimate({
         coreLessonEstimate,
         courseInputs,
-        customLessonEstimate,
+        tutorialLessonEstimate,
         usageByTask,
       }),
       buildLanguageCourseEstimate({

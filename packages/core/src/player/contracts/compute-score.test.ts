@@ -1,9 +1,9 @@
 import { describe, expect, test } from "vitest";
-import { computeActivityScore } from "./compute-score";
+import { computeLessonScore } from "./compute-score";
 
-describe("computeActivityScore (generic)", () => {
+describe("computeLessonScore (generic)", () => {
   test("all correct (5): BP=10, energyDelta=1.0", () => {
-    const result = computeActivityScore({
+    const result = computeLessonScore({
       results: [
         { isCorrect: true },
         { isCorrect: true },
@@ -22,7 +22,7 @@ describe("computeActivityScore (generic)", () => {
   });
 
   test("all incorrect (5): BP=10, energyDelta=-0.5", () => {
-    const result = computeActivityScore({
+    const result = computeLessonScore({
       results: [
         { isCorrect: false },
         { isCorrect: false },
@@ -41,7 +41,7 @@ describe("computeActivityScore (generic)", () => {
   });
 
   test("mix (3 correct, 2 incorrect): BP=10, energyDelta=0.4", () => {
-    const result = computeActivityScore({
+    const result = computeLessonScore({
       results: [
         { isCorrect: true },
         { isCorrect: true },
@@ -59,8 +59,8 @@ describe("computeActivityScore (generic)", () => {
     });
   });
 
-  test("empty results (static activity): BP=10, energyDelta=0.1", () => {
-    const result = computeActivityScore({ results: [] });
+  test("empty results (static lesson): BP=10, energyDelta=0.1", () => {
+    const result = computeLessonScore({ results: [] });
 
     expect(result).toEqual({
       brainPower: 10,

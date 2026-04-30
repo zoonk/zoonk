@@ -2,9 +2,9 @@ import { CatalogActions } from "@/components/catalog/catalog-actions";
 import { CatalogContainer, CatalogToolbar } from "@/components/catalog/catalog-list";
 import { CatalogListSkeleton } from "@/components/catalog/catalog-skeletons";
 import {
-  ContinueActivityLink,
-  ContinueActivityLinkSkeleton,
-} from "@/components/catalog/continue-activity-link";
+  ContinueLessonLink,
+  ContinueLessonLinkSkeleton,
+} from "@/components/catalog/continue-lesson-link";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
 import { getSession } from "@zoonk/core/users/session/get";
@@ -65,8 +65,8 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
 
       <CatalogContainer>
         <CatalogToolbar>
-          <Suspense fallback={<ContinueActivityLinkSkeleton />}>
-            <ContinueActivityLink courseId={course.id} fallbackHref={fallbackHref} />
+          <Suspense fallback={<ContinueLessonLinkSkeleton />}>
+            <ContinueLessonLink courseId={course.id} fallbackHref={fallbackHref} />
           </Suspense>
           <CatalogActions contentId={courseSlug} defaultEmail={session?.user.email} kind="course" />
         </CatalogToolbar>

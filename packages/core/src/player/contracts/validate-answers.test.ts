@@ -1,8 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { validateAnswers } from "./validate-answers";
 
-const coreMultipleChoiceContent = {
-  kind: "core" as const,
+const multipleChoiceContent = {
   options: [
     { feedback: "Correct!", id: "option-a", isCorrect: true, text: "Option A" },
     { feedback: "Wrong.", id: "option-b", isCorrect: false, text: "Option B" },
@@ -18,7 +17,7 @@ const fillBlankContent = {
 
 describe(validateAnswers, () => {
   test("validates correct multipleChoice answer server-side", () => {
-    const steps = [{ content: coreMultipleChoiceContent, id: "1", kind: "multipleChoice" }];
+    const steps = [{ content: multipleChoiceContent, id: "1", kind: "multipleChoice" }];
 
     const results = validateAnswers(steps, {
       "1": { kind: "multipleChoice", selectedOptionId: "option-a" },
@@ -30,7 +29,7 @@ describe(validateAnswers, () => {
   });
 
   test("validates incorrect multipleChoice answer", () => {
-    const steps = [{ content: coreMultipleChoiceContent, id: "1", kind: "multipleChoice" }];
+    const steps = [{ content: multipleChoiceContent, id: "1", kind: "multipleChoice" }];
 
     const results = validateAnswers(steps, {
       "1": { kind: "multipleChoice", selectedOptionId: "option-b" },
@@ -53,7 +52,7 @@ describe(validateAnswers, () => {
 
   test("skips steps with no client answer", () => {
     const steps = [
-      { content: coreMultipleChoiceContent, id: "1", kind: "multipleChoice" },
+      { content: multipleChoiceContent, id: "1", kind: "multipleChoice" },
       { content: { text: "Hello", title: "Intro", variant: "text" }, id: "2", kind: "static" },
     ];
 

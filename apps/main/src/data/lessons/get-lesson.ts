@@ -34,5 +34,3 @@ export function getLesson(params: {
     params.lessonSlug,
   );
 }
-
-export type LessonWithDetails = NonNullable<Awaited<ReturnType<typeof getLesson>>>;

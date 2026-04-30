@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type Organization, prisma } from "@zoonk/db";
+import { type Organization, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 
 function organizationAttrs(
@@ -44,7 +44,7 @@ export async function aiOrganizationFixture() {
     });
   } catch (error) {
     // Handle upsert race condition - another test may have created the org concurrently
-    if (error instanceof Error && "code" in error && error.code === "P2002") {
+    if (isPrismaUniqueConstraintError(error)) {
       const existing = await prisma.organization.findUnique({
         where: { slug: AI_ORG_SLUG },
       });

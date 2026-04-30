@@ -1,5 +1,7 @@
 "use client";
 
+import { getAdminLessonLabel } from "@/lib/lesson-label";
+import { type LessonKind } from "@zoonk/db";
 import { Badge } from "@zoonk/ui/components/badge";
 import { uploadStepImageAction } from "./_actions/step-image";
 import { SimpleImageUpload } from "./simple-image-upload";
@@ -45,14 +47,16 @@ export function StepSelectImageEdit({
       question: string;
       options: { prompt: string; url?: string; feedback: string; isCorrect: boolean }[];
     };
-    activity: { title: string | null };
+    lesson: { kind: LessonKind; title: string | null };
   };
 }) {
+  const lessonLabel = getAdminLessonLabel(item.lesson);
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <Badge variant="outline">selectImage</Badge>
-        <span className="text-muted-foreground text-sm">{item.activity.title}</span>
+        <span className="text-muted-foreground text-sm">{lessonLabel}</span>
       </div>
 
       <p className="text-lg font-medium">{item.content.question}</p>

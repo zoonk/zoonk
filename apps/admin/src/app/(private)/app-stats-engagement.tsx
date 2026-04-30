@@ -2,12 +2,12 @@ import { Stats } from "@/components/stats";
 import { StatsSection } from "@/components/stats-section";
 import { countActiveLearners } from "@/data/stats/count-active-learners";
 import { getAccuracyRate } from "@/data/stats/get-accuracy-rate";
-import { getAvgActivitiesPerLearner } from "@/data/stats/get-avg-activities-per-learner";
-import { getAvgActivityTime } from "@/data/stats/get-avg-activity-time";
+import { getAvgLessonTime } from "@/data/stats/get-avg-lesson-time";
+import { getAvgLessonsPerLearner } from "@/data/stats/get-avg-lessons-per-learner";
 import { getCompletionRate } from "@/data/stats/get-completion-rate";
 import { getTotalLearningTime } from "@/data/stats/get-total-learning-time";
 import { formatDuration } from "@/lib/format-duration";
-import { ActivityIcon, CheckCircleIcon, ClockIcon, LayersIcon, TargetIcon } from "lucide-react";
+import { BookOpenIcon, CheckCircleIcon, ClockIcon, LayersIcon, TargetIcon } from "lucide-react";
 import { connection } from "next/server";
 
 const DAYS_7 = 7;
@@ -23,14 +23,14 @@ export async function EngagementStats() {
     activeLearners,
     accuracyRate,
     avgTime,
-    avgActivitiesPerLearner,
+    avgLessonsPerLearner,
     completionRate,
     totalLearningTime,
   ] = await Promise.all([
     countActiveLearners(sevenDaysAgo, thirtyDaysAgo),
     getAccuracyRate(),
-    getAvgActivityTime(),
-    getAvgActivitiesPerLearner(),
+    getAvgLessonTime(),
+    getAvgLessonsPerLearner(),
     getCompletionRate(),
     getTotalLearningTime(),
   ]);
@@ -41,7 +41,7 @@ export async function EngagementStats() {
         description={`vs ${activeLearners.last30Days.toLocaleString()} in last 30d`}
         help="Users with activity in the last 7 days"
         href="/stats/engagement"
-        icon={<ActivityIcon />}
+        icon={<BookOpenIcon />}
         title="Active Learners (7d)"
         value={activeLearners.last7Days.toLocaleString()}
       />
@@ -55,7 +55,7 @@ export async function EngagementStats() {
       />
 
       <Stats
-        help="Activities completed vs started"
+        help="Lessons completed vs started"
         href="/stats/engagement"
         icon={<CheckCircleIcon />}
         title="Completion Rate"
@@ -63,18 +63,18 @@ export async function EngagementStats() {
       />
 
       <Stats
-        help="Average time to complete an activity"
+        help="Average time to complete a lesson"
         href="/stats/engagement"
         icon={<ClockIcon />}
-        title="Avg Time / Activity"
+        title="Avg Time / Lesson"
         value={formatDuration(avgTime)}
       />
 
       <Stats
-        help="Average activities completed per active learner"
+        help="Average lessons completed per active learner"
         icon={<LayersIcon />}
-        title="Activities / Learner"
-        value={avgActivitiesPerLearner.toLocaleString()}
+        title="Lessons / Learner"
+        value={avgLessonsPerLearner.toLocaleString()}
       />
 
       <Stats

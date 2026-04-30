@@ -16,15 +16,9 @@ export const chapterGenerationTriggerSchema = z
 
 export const lessonGenerationTriggerSchema = z
   .object({
-    lessonId: uuidParam("Lesson ID to generate activities for"),
+    lessonId: uuidParam("Lesson ID to generate content for"),
   })
   .meta({ id: "LessonGenerationTrigger" });
-
-export const activityGenerationTriggerSchema = z
-  .object({
-    lessonId: uuidParam("Lesson ID to generate activities for"),
-  })
-  .meta({ id: "ActivityGenerationTrigger" });
 
 export const lessonPreloadTriggerSchema = z
   .object({

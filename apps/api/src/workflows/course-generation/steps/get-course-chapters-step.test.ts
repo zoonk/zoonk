@@ -6,20 +6,6 @@ import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { getCourseChaptersStep } from "./get-course-chapters-step";
 
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
-
 describe(getCourseChaptersStep, () => {
   let organizationId: string;
 
@@ -56,7 +42,7 @@ describe(getCourseChaptersStep, () => {
     expect(result[0]!.position).toBe(0);
     expect(result[1]!.position).toBe(1);
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).toContainEqual(
       expect.objectContaining({ status: "started", step: "getExistingChapters" }),

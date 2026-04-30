@@ -1,0 +1,99 @@
+import { prisma } from "@zoonk/db";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { userFixture } from "@zoonk/testing/fixtures/users";
+import { beforeAll, describe, expect, test } from "vitest";
+import { startLesson } from "./start-lesson";
+
+describe(startLesson, () => {
+  let lesson: Awaited<ReturnType<typeof lessonFixture>>;
+
+  beforeAll(async () => {
+    const org = await organizationFixture();
+    const course = await courseFixture({ organizationId: org.id });
+    const chapter = await chapterFixture({ courseId: course.id, organizationId: org.id });
+    lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "quiz",
+      organizationId: org.id,
+    });
+  });
+
+  test("creates LessonProgress with completedAt null and durationSeconds null", async () => {
+    const user = await userFixture();
+    const userId = user.id;
+
+    await startLesson({ lessonId: lesson.id, userId });
+
+    const progress = await prisma.lessonProgress.findUnique({
+      where: { userLesson: { lessonId: lesson.id, userId } },
+    });
+
+    expect(progress).not.toBeNull();
+    expect(progress?.completedAt).toBeNull();
+    expect(progress?.durationSeconds).toBeNull();
+    expect(progress?.startedAt).toBeInstanceOf(Date);
+  });
+
+  test("idempotent: second call preserves original startedAt", async () => {
+    const user = await userFixture();
+    const userId = user.id;
+
+    await startLesson({ lessonId: lesson.id, userId });
+
+    const first = await prisma.lessonProgress.findUnique({
+      where: { userLesson: { lessonId: lesson.id, userId } },
+    });
+
+    await startLesson({ lessonId: lesson.id, userId });
+
+    const second = await prisma.lessonProgress.findUnique({
+      where: { userLesson: { lessonId: lesson.id, userId } },
+    });
+
+    expect(second?.startedAt).toEqual(first?.startedAt);
+  });
+
+  test("idempotent: concurrent calls create one progress row", async () => {
+    const user = await userFixture();
+    const userId = user.id;
+
+    await Promise.all([
+      startLesson({ lessonId: lesson.id, userId }),
+      startLesson({ lessonId: lesson.id, userId }),
+    ]);
+
+    const progress = await prisma.lessonProgress.findMany({
+      where: { lessonId: lesson.id, userId },
+    });
+
+    expect(progress).toHaveLength(1);
+    expect(progress[0]?.completedAt).toBeNull();
+  });
+
+  test("does not overwrite a completed record", async () => {
+    const user = await userFixture();
+    const userId = user.id;
+    const completedAt = new Date();
+
+    await prisma.lessonProgress.create({
+      data: {
+        completedAt,
+        durationSeconds: 30,
+        lessonId: lesson.id,
+        userId,
+      },
+    });
+
+    await startLesson({ lessonId: lesson.id, userId });
+
+    const progress = await prisma.lessonProgress.findUnique({
+      where: { userLesson: { lessonId: lesson.id, userId } },
+    });
+
+    expect(progress?.completedAt).toEqual(completedAt);
+    expect(progress?.durationSeconds).toBe(30);
+  });
+});

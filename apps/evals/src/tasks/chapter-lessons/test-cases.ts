@@ -3,11 +3,12 @@ const SHARED_EXPECTATIONS = `
 
   Evaluate whether the result is a usable lesson plan for the requested chapter.
 
-  A strong lesson plan turns the chapter scope into cohesive learner capabilities. Each lesson should be large enough to support its own explanation activities, practice, quiz, and review without repeating neighboring lessons. Coverage matters, but only when the lesson boundaries would produce a good learning experience in this product.
+  A strong lesson plan turns the chapter scope into self-contained learner capabilities. Each lesson should teach one clear topic or skill: the core explanation should fit in no more than 3,000 characters, including spaces. It should also be large enough that its parts make sense together, instead of becoming tiny fragments that repeat each other. Coverage matters, but only when the lesson boundaries would produce a good playable unit.
 
   # What Good Looks Like
 
-  - Lessons are capability-sized: each one teaches a distinct mechanism, decision, artifact, workflow, or real learner move.
+  - Lessons are capability-sized: each one teaches a distinct mechanism, decision, artifact, workflow, evidence type, or practical task as one self-contained unit.
+  - Each lesson can be explained clearly within 3,000 characters, including spaces. If it would need several unrelated explanations, it should be split into multiple lessons.
   - Related concepts that are mutually defining stay together in one lesson.
   - The plan covers the chapter's canonical fundamentals, important modern practice, and required named entities from the domain.
   - Lessons stay inside this chapter's scope and avoid concepts that primarily belong to neighboring chapters.
@@ -19,7 +20,7 @@ const SHARED_EXPECTATIONS = `
 
   ## False Granularity
 
-  False granularity is the main failure this eval must catch. It happens when the output looks comprehensive because it split the chapter into many tiny lessons, but those lessons would generate repetitive activities.
+  False granularity is the main failure this eval must catch. It happens when the output looks comprehensive because it split the chapter into many tiny lessons, but those lessons would repeat the same explanation.
 
   Use this test: if the explanation or practice for lesson A must teach lesson B's core idea for lesson A to make sense, A and B should probably be one lesson.
 
@@ -44,7 +45,19 @@ const SHARED_EXPECTATIONS = `
 
   - Clear false-granularity cluster: \`majorErrors\` score must be 7.5 or lower.
   - Repeated false granularity across the output, after excluding valid domain decomposition: \`majorErrors\` score must be 6.5 or lower.
-  - Glossary-expanded syllabus where many lessons are too small to support distinct activities: \`majorErrors\` score must be 6.5 or lower.
+  - Glossary-expanded syllabus where many lessons are too small to stand as distinct self-contained units: \`majorErrors\` score must be 6.5 or lower.
+
+  ## Overloaded Lessons
+
+  The opposite failure is hiding too much inside one lesson. A lesson is too broad when a clear explanation would need more than 3,000 characters, including spaces, or several mostly independent explanations to deliver it clearly. The chapter should split those by what the learner needs to do or understand, not by tiny labels.
+
+  Penalize as a major failure when the output:
+
+  - combines multiple independent chapter pillars into one lesson
+  - makes one lesson responsible for several mechanisms, workflows, or decisions that can be learned without re-teaching each other
+  - depends on vague wording to fit a lesson that would actually need more than 3,000 characters to teach clearly
+  - uses vague umbrella titles to avoid making necessary lesson boundaries
+  - creates lessons that would need several separate explanations to teach clearly
 
   ## Coverage, Accuracy, and Scope
 
@@ -68,7 +81,7 @@ const SHARED_EXPECTATIONS = `
 
   # Scoring Order
 
-  First check whether the lesson boundaries would produce distinct, non-repetitive learning arcs. Then check coverage, accuracy, scope, and title quality. Do not reward extra length, exhaustive lists, or high concept count by themselves.
+  First check whether the lesson boundaries would produce distinct, non-repetitive lessons. Then check coverage, accuracy, scope, and title quality. Do not reward extra length, exhaustive lists, or high concept count by themselves.
 
   If the output has no concrete major failures, the \`majorErrors\` conclusion should be "None" and the score should be 10.
 `;
@@ -197,7 +210,7 @@ export const TEST_CASES = [
     expectations: `
       - MUST be in Brazilian Portuguese
       - Kanban-specific false-granularity check: separate adjacent lessons for lead time, cycle time, throughput, WIP, and item age are over-split when they only teach isolated definitions. These metrics form one flow-measurement toolkit and should be grouped by learner use, such as reading flow health, diagnosing bottlenecks, or asking better forecasting questions. If the output creates one glossary lesson per metric, the \`majorErrors\` score must be 6.5 or lower.
-      - Do not penalize separate lessons for genuinely different learner moves, such as choosing which metric answers a question, spotting a bottleneck, or using measurements without pressuring people.
+      - Do not penalize separate lessons for genuinely different tasks, such as choosing which metric answers a question, spotting a bottleneck, or using measurements without pressuring people.
 
       ${SHARED_EXPECTATIONS}
     `,

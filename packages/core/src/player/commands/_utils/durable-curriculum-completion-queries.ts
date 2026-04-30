@@ -1,6 +1,6 @@
 import { type TransactionClient } from "@zoonk/db";
 
-type ActivityCurriculumContext = {
+type LessonCurriculumContext = {
   chapterId: string;
   courseId: string;
   lessonId: string;
@@ -8,57 +8,49 @@ type ActivityCurriculumContext = {
 
 export type PublishedLessonCompletionRow = {
   chapterId: string;
-  completedActivities: number;
+  isCompleted: boolean;
   lessonId: string;
-  totalActivities: number;
 };
 
 /**
- * Completion sync starts from an activity id because that is the only stable
- * input the player action already has. Resolving the lesson, chapter, and
- * course once lets every later completion decision derive from the real
- * curriculum tree instead of trusting caller-provided ids.
+ * Completion sync starts from a lesson id and resolves the chapter and course
+ * once so every later completion decision derives from the curriculum tree.
  */
-export async function getActivityCurriculumContext({
-  activityId,
+export async function getLessonCurriculumContext({
+  lessonId,
   tx,
 }: {
-  activityId: string;
+  lessonId: string;
   tx: TransactionClient;
-}): Promise<ActivityCurriculumContext> {
-  const activity = await tx.activity.findUnique({
-    include: {
-      lesson: {
+}): Promise<LessonCurriculumContext> {
+  const lesson = await tx.lesson.findUnique({
+    select: {
+      chapter: {
         select: {
-          chapter: {
-            select: {
-              courseId: true,
-            },
-          },
-          chapterId: true,
-          id: true,
+          courseId: true,
         },
       },
+      chapterId: true,
+      id: true,
     },
-    where: { id: activityId },
+    where: { id: lessonId },
   });
 
-  if (!activity) {
-    throw new Error("Activity not found");
+  if (!lesson) {
+    throw new Error("Lesson not found");
   }
 
   return {
-    chapterId: activity.lesson.chapterId,
-    courseId: activity.lesson.chapter.courseId,
-    lessonId: activity.lesson.id,
+    chapterId: lesson.chapterId,
+    courseId: lesson.chapter.courseId,
+    lessonId: lesson.id,
   };
 }
 
 /**
  * Durable completion writes need one current course snapshot with direct
- * activity completion counts for the learner. Keeping that aggregation in one
- * query avoids reloading overlapping lesson trees for lesson, chapter, and
- * course checks separately.
+ * lesson completion flags for the learner. Keeping that in one query avoids
+ * reloading overlapping trees for lesson, chapter, and course checks.
  */
 export async function listPublishedCourseLessonCompletionRows({
   courseId,
@@ -72,23 +64,17 @@ export async function listPublishedCourseLessonCompletionRows({
   return tx.$queryRaw<PublishedLessonCompletionRow[]>`
     SELECT
       l.chapter_id AS "chapterId",
-      COUNT(DISTINCT ap.activity_id)::int AS "completedActivities",
-      l.id AS "lessonId",
-      COUNT(DISTINCT a.id)::int AS "totalActivities"
+      (lp.completed_at IS NOT NULL) AS "isCompleted",
+      l.id AS "lessonId"
     FROM lessons l
     JOIN chapters ch
       ON ch.id = l.chapter_id
       AND ch.is_published = true
-    LEFT JOIN activities a
-      ON a.lesson_id = l.id
-      AND a.is_published = true
-    LEFT JOIN activity_progress ap
-      ON ap.activity_id = a.id
-      AND ap.user_id = ${userId}
-      AND ap.completed_at IS NOT NULL
+    LEFT JOIN lesson_progress lp
+      ON lp.lesson_id = l.id
+      AND lp.user_id = ${userId}
     WHERE ch.course_id = ${courseId}
       AND l.is_published = true
-    GROUP BY l.chapter_id, l.id
   `;
 }
 
@@ -114,9 +100,8 @@ export async function listPublishedCourseChapters({
 }
 
 /**
- * Durable lesson completions need to be loaded for the same published course
- * tree we are evaluating now. Keeping that filter at the database level avoids
- * first loading lesson ids and then issuing a second scoped query from them.
+ * Completed lessons need to be loaded for the same published course tree we
+ * are evaluating now so chapter and course rollups use the current catalog.
  */
 export async function listDurableCourseLessonIds({
   courseId,
@@ -127,8 +112,9 @@ export async function listDurableCourseLessonIds({
   tx: TransactionClient;
   userId: string;
 }): Promise<Set<string>> {
-  const rows = await tx.lessonCompletion.findMany({
+  const rows = await tx.lessonProgress.findMany({
     where: {
+      completedAt: { not: null },
       lesson: {
         chapter: {
           courseId,

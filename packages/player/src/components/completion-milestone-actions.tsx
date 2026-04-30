@@ -11,33 +11,27 @@ function NextButtonLabel() {
   const t = useExtracted();
   const milestone = usePlayerMilestone();
 
-  return <span>{milestone.kind === "chapter" ? t("Next Chapter") : t("Next Lesson")}</span>;
+  return <span>{milestone?.kind === "chapter" ? t("Next Chapter") : t("Next")}</span>;
 }
 
 function ReviewLabel() {
   const t = useExtracted();
   const milestone = usePlayerMilestone();
 
-  function getLabel() {
-    if (milestone.kind === "course") {
-      return t("Review Course");
-    }
-
-    if (milestone.kind === "chapter") {
-      return t("Review Chapter");
-    }
-
-    return t("Review Lesson");
+  if (!milestone) {
+    return null;
   }
 
-  return <span>{getLabel()}</span>;
+  const milestoneLabel = milestone.kind === "course" ? t("Review Course") : t("Review Chapter");
+
+  return <span>{milestoneLabel}</span>;
 }
 
 function CourseCompleteActions() {
   const t = useExtracted();
   const milestone = usePlayerMilestone();
 
-  if (milestone.kind !== "course") {
+  if (!milestone || milestone.kind !== "course") {
     return null;
   }
 
@@ -57,12 +51,12 @@ function CourseCompleteActions() {
 export function MilestoneActions() {
   const milestone = usePlayerMilestone();
 
-  if (milestone.kind === "course") {
-    return <CourseCompleteActions />;
+  if (!milestone) {
+    return null;
   }
 
-  if (milestone.kind === "activity") {
-    return null;
+  if (milestone.kind === "course") {
+    return <CourseCompleteActions />;
   }
 
   if (milestone.nextHref) {
@@ -90,7 +84,7 @@ export function UnauthenticatedMilestoneActions({ loginHref }: { loginHref: Play
   const t = useExtracted();
   const milestone = usePlayerMilestone();
 
-  if (milestone.kind === "activity") {
+  if (!milestone) {
     return null;
   }
 

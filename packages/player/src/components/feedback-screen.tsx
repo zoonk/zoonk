@@ -1,6 +1,6 @@
 "use client";
 
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { useExtracted } from "next-intl";
 import { type StepResult } from "../player-reducer";
@@ -37,7 +37,7 @@ function getMultipleChoiceSelectedText(result: StepResult, step?: SerializedStep
 
 /**
  * Translation answers use the same selectedOptionId shape as other option
- * activities. The selected display text comes from the serialized option pool.
+ * lessons. The selected display text comes from the serialized option pool.
  */
 function getTranslationSelectedText(result: StepResult, step?: SerializedStep): string | null {
   if (result.answer?.kind !== "translation") {

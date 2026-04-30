@@ -9,9 +9,9 @@ import {
   wordPronunciationFixture,
 } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, test } from "vitest";
-import { getLessonWords } from "./get-lesson-words";
+import { getLessonWordsForLessons } from "./get-lesson-words";
 
-describe(getLessonWords, () => {
+describe(getLessonWordsForLessons, () => {
   let org: Awaited<ReturnType<typeof organizationFixture>>;
   let course: Awaited<ReturnType<typeof courseFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
@@ -60,7 +60,7 @@ describe(getLessonWords, () => {
       lessonWordFixture({ lessonId: lesson.id, wordId: word2.id }),
     ]);
 
-    const result = await getLessonWords({ lessonId: lesson.id });
+    const result = await getLessonWordsForLessons({ lessonIds: [lesson.id] });
 
     expect(result).toHaveLength(2);
 
@@ -70,36 +70,38 @@ describe(getLessonWords, () => {
   });
 
   test("returns all expected fields", async () => {
-    const newLesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      language: "es",
-      organizationId: org.id,
-    });
+    const [newLesson, word] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        language: "es",
+        organizationId: org.id,
+      }),
+      wordFixture({
+        audioUrl: "https://example.com/perro.mp3",
+        organizationId: org.id,
+        romanization: null,
+        targetLanguage: "es",
+        word: `perro-${crypto.randomUUID()}`,
+      }),
+    ]);
 
-    const word = await wordFixture({
-      audioUrl: "https://example.com/perro.mp3",
-      organizationId: org.id,
-      romanization: null,
-      targetLanguage: "es",
-      word: `perro-${crypto.randomUUID()}`,
-    });
+    await Promise.all([
+      wordPronunciationFixture({
+        pronunciation: "peh-roh",
+        userLanguage: "en",
+        wordId: word.id,
+      }),
+      lessonWordFixture({
+        distractors: [],
+        lessonId: newLesson.id,
+        translation: "dog",
+        userLanguage: "en",
+        wordId: word.id,
+      }),
+    ]);
 
-    await wordPronunciationFixture({
-      pronunciation: "peh-roh",
-      userLanguage: "en",
-      wordId: word.id,
-    });
-
-    await lessonWordFixture({
-      distractors: [],
-      lessonId: newLesson.id,
-      translation: "dog",
-      userLanguage: "en",
-      wordId: word.id,
-    });
-
-    const result = await getLessonWords({ lessonId: newLesson.id });
+    const result = await getLessonWordsForLessons({ lessonIds: [newLesson.id] });
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
@@ -126,28 +128,29 @@ describe(getLessonWords, () => {
       organizationId: org.id,
     });
 
-    const result = await getLessonWords({ lessonId: emptyLesson.id });
+    const result = await getLessonWordsForLessons({ lessonIds: [emptyLesson.id] });
     expect(result).toEqual([]);
   });
 
   test("returns empty array for non-existent lesson", async () => {
-    const result = await getLessonWords({ lessonId: randomUUID() });
+    const result = await getLessonWordsForLessons({ lessonIds: [randomUUID()] });
     expect(result).toEqual([]);
   });
 
   test("only includes pronunciation matching the lesson's userLanguage", async () => {
-    const newLesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      language: "es",
-      organizationId: org.id,
-    });
-
-    const word = await wordFixture({
-      organizationId: org.id,
-      targetLanguage: "es",
-      word: `banco-${crypto.randomUUID()}`,
-    });
+    const [newLesson, word] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        language: "es",
+        organizationId: org.id,
+      }),
+      wordFixture({
+        organizationId: org.id,
+        targetLanguage: "es",
+        word: `banco-${crypto.randomUUID()}`,
+      }),
+    ]);
 
     // Create pronunciations for two different user languages
     await Promise.all([
@@ -161,16 +164,15 @@ describe(getLessonWords, () => {
         userLanguage: "pt",
         wordId: word.id,
       }),
+      lessonWordFixture({
+        lessonId: newLesson.id,
+        translation: "bank",
+        userLanguage: "en",
+        wordId: word.id,
+      }),
     ]);
 
-    await lessonWordFixture({
-      lessonId: newLesson.id,
-      translation: "bank",
-      userLanguage: "en",
-      wordId: word.id,
-    });
-
-    const result = await getLessonWords({ lessonId: newLesson.id });
+    const result = await getLessonWordsForLessons({ lessonIds: [newLesson.id] });
 
     // Should only include the English pronunciation (matching userLanguage
     // on the LessonWord), not the Portuguese one

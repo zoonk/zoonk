@@ -1,11 +1,12 @@
 import "server-only";
 import { type LessonSentence, prisma } from "@zoonk/db";
 import { type CompletionInput } from "../contracts/completion-input-schema";
-import { computeActivityScore } from "../contracts/compute-score";
+import { computeLessonScore } from "../contracts/compute-score";
 import { validateAnswers } from "../contracts/validate-answers";
+import { getLessonSentencesForLessons } from "../queries/get-lesson-sentences";
 import { getNextLesson } from "../queries/get-next-lesson";
 import { getReviewValidationSteps } from "../queries/get-review-steps";
-import { submitActivityCompletion } from "./submit-activity-completion";
+import { submitLessonCompletion } from "./submit-lesson-completion";
 
 const MAX_DURATION_SECONDS = 7200;
 
@@ -18,6 +19,7 @@ type StepWithSentence = {
   id: string;
   kind: string;
   content: unknown;
+  lessonId: string;
   word: { id: string } | null;
   sentence: { id: string; sentence: string } | null;
 };
@@ -50,6 +52,21 @@ function attachSentenceTranslationsToSteps(
 }
 
 /**
+ * Review validation receives steps from earlier lessons in the chapter, so
+ * sentence translations must be looked up from those source lessons. Normal
+ * lesson validation keeps using the current lesson id.
+ */
+function getValidationSentenceLessonIds({
+  lessonId,
+  steps,
+}: {
+  lessonId: string;
+  steps: StepWithSentence[];
+}) {
+  return steps.length === 0 ? [lessonId] : [...new Set(steps.map((step) => step.lessonId))];
+}
+
+/**
  * The app shell should only orchestrate request-specific concerns such as auth,
  * cache revalidation, and background execution. This command owns the shared
  * completion workflow: validate the submission, persist authoritative progress,
@@ -59,8 +76,8 @@ export async function submitPlayerCompletion(params: {
   input: CompletionInput;
   userId: string;
 }): Promise<PlayerCompletionEffects | null> {
-  const activityId = params.input.activityId;
-  const activity = await prisma.activity.findUnique({
+  const lessonId = params.input.lessonId;
+  const lesson = await prisma.lesson.findUnique({
     include: {
       steps: {
         include: { sentence: true, word: true },
@@ -68,31 +85,39 @@ export async function submitPlayerCompletion(params: {
         where: { isPublished: true },
       },
     },
-    where: { id: activityId },
+    where: { id: lessonId },
   });
 
-  if (!activity) {
+  if (!lesson) {
     return null;
   }
 
-  const lessonSentences = await prisma.lessonSentence.findMany({
-    where: { lessonId: activity.lessonId },
+  const rawStepsForValidation =
+    lesson.kind === "review"
+      ? await getReviewValidationSteps({
+          lessonId: lesson.id,
+          stepIds: Object.keys(params.input.answers),
+        })
+      : lesson.steps;
+
+  const lessonSentences = await getLessonSentencesForLessons({
+    lessonIds:
+      lesson.kind === "review"
+        ? getValidationSentenceLessonIds({
+            lessonId: lesson.id,
+            steps: rawStepsForValidation,
+          })
+        : [lesson.id],
   });
 
-  const stepsForValidation =
-    activity.kind === "review"
-      ? attachSentenceTranslationsToSteps(
-          await getReviewValidationSteps({
-            lessonId: activity.lessonId,
-            stepIds: Object.keys(params.input.answers),
-          }),
-          lessonSentences,
-        )
-      : attachSentenceTranslationsToSteps(activity.steps, lessonSentences);
+  const stepsForValidation = attachSentenceTranslationsToSteps(
+    rawStepsForValidation,
+    lessonSentences,
+  );
 
   const stepResults = validateAnswers(stepsForValidation, params.input.answers);
 
-  const score = computeActivityScore({ results: stepResults });
+  const score = computeLessonScore({ results: stepResults });
 
   const durationSeconds = clampDuration(params.input.startedAt);
 
@@ -111,9 +136,9 @@ export async function submitPlayerCompletion(params: {
     };
   });
 
-  await submitActivityCompletion({
-    activityId: activity.id,
+  await submitLessonCompletion({
     durationSeconds,
+    lessonId: lesson.id,
     localDate: params.input.localDate,
     score,
     startedAt: new Date(params.input.startedAt),
@@ -121,7 +146,7 @@ export async function submitPlayerCompletion(params: {
     userId: params.userId,
   });
 
-  const nextLesson = await getNextLesson(activity.id);
+  const nextLesson = await getNextLesson(lesson.id);
 
   return {
     preloadLessonId: nextLesson?.needsGeneration ? nextLesson.id : null,

@@ -4,8 +4,8 @@ import { cache } from "react";
 
 export const getCompletionRate = cache(async () => {
   const [started, completed] = await Promise.all([
-    prisma.activityProgress.count(),
-    prisma.activityProgress.count({ where: { completedAt: { not: null } } }),
+    prisma.lessonProgress.count(),
+    prisma.lessonProgress.count({ where: { completedAt: { not: null } } }),
   ]);
 
   return started === 0 ? 0 : (completed / started) * 100;

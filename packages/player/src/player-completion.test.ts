@@ -1,4 +1,4 @@
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { describe, expect, test } from "vitest";
 import { computeLocalCompletion } from "./player-completion";
 import { type PlayerState, type StepResult } from "./player-reducer";
@@ -24,10 +24,10 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
 
 function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
   return {
-    activityId: "activity-1",
-    activityKind: "quiz",
     completion: null,
     currentStepIndex: 0,
+    lessonId: "lesson-1",
+    lessonKind: "quiz",
     phase: "completed",
     results: {},
     selectedAnswers: {},
@@ -45,7 +45,6 @@ describe(computeLocalCompletion, () => {
     const steps = [
       buildStep({
         content: {
-          kind: "core" as const,
           options: [{ feedback: "Yes", id: "a", isCorrect: true, text: "A" }],
         },
         id: "mc-1",

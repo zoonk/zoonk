@@ -1,7 +1,9 @@
+import { type LessonKind } from "@zoonk/db";
+
 export type EstimateKind =
   | "coreLesson"
-  | "customLesson"
   | "languageLesson"
+  | "tutorialLesson"
   | "regularCourse"
   | "languageCourse";
 
@@ -32,7 +34,7 @@ export type AiCourseEstimateInputs = {
   languageLessonsPerChapter: number;
   regularChapterCount: number;
   regularCoreLessonsPerChapter: number;
-  regularCustomLessonsPerChapter: number;
+  regularTutorialLessonsPerChapter: number;
 };
 
 export type AiCourseEstimateInputOverrides = Partial<
@@ -45,14 +47,14 @@ export type AiCostEstimateReport = {
   estimates: AiGenerationCostEstimate[];
 };
 
-export type StepImageUsageRow = {
-  activityKind: "custom" | "explanation";
-  count: bigint;
-};
-
 export type LanguageAudioUsageRow = {
   sentenceWordCount: bigint | null;
   wordClipCount: bigint | null;
+};
+
+export type StepImageUsageRow = {
+  count: bigint;
+  lessonKind: Extract<LessonKind, "explanation" | "practice" | "tutorial">;
 };
 
 export type StructureStats = {
@@ -62,8 +64,6 @@ export type StructureStats = {
   coreLessonExplanationCount: number;
   coreLessonPracticeCount: number;
   coreLessonQuizCount: number;
-  customActivityCount: number;
-  customLessonCount: number;
   languageAudioSentenceWordCount: number;
   languageAudioWordClipCount: number;
   languageCourseChapterCount: number;
@@ -73,6 +73,7 @@ export type StructureStats = {
   regularCoreLessonCountInCourses: number;
   regularCourseChapterCount: number;
   regularCourseCount: number;
-  regularCustomLessonCountInCourses: number;
-  stepImageCountsByActivityKind: Record<string, number>;
+  regularTutorialLessonCountInCourses: number;
+  tutorialLessonCount: number;
+  stepImageCountsByLessonKind: Partial<Record<StepImageUsageRow["lessonKind"], number>>;
 };

@@ -1,4 +1,4 @@
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { describe, expect, test } from "vitest";
 import { type PlayerHapticSnapshot, getPlayerHapticSequence } from "./player-haptics";
 import { type StepResult } from "./player-reducer";
@@ -64,7 +64,6 @@ describe(getPlayerHapticSequence, () => {
         }),
         step,
       }),
-      milestoneKind: "activity",
       previous: buildSnapshot({ step }),
     });
 
@@ -74,7 +73,6 @@ describe(getPlayerHapticSequence, () => {
   test("adds a generic error haptic when feedback screen appears for a wrong answer", () => {
     const step = buildStep({
       content: {
-        kind: "core" as const,
         options: [
           { feedback: "Nope", id: "a", isCorrect: false, text: "A" },
           { feedback: "Yes", id: "b", isCorrect: true, text: "B" },
@@ -95,7 +93,6 @@ describe(getPlayerHapticSequence, () => {
         }),
         step,
       }),
-      milestoneKind: "activity",
       previous: buildSnapshot({ step }),
     });
 
@@ -105,7 +102,6 @@ describe(getPlayerHapticSequence, () => {
   test("uses a stronger celebration for lesson completion", () => {
     const sequence = getPlayerHapticSequence({
       current: buildSnapshot({ phase: "completed" }),
-      milestoneKind: "lesson",
       previous: buildSnapshot({ phase: "playing" }),
     });
 

@@ -25,6 +25,7 @@ export function useGenerationPhases(
   const t = useExtracted();
 
   const labels: Record<PhaseName, string> = {
+    classifyingLessons: t("Choosing lesson types"),
     gettingReady: t("Getting things ready"),
     preparingLessons: t("Preparing lessons"),
     savingLessons: t("Saving your lessons"),
@@ -54,6 +55,11 @@ export function useGenerationPhases(
     .map((phase) => phase.name);
 
   const thinkingGenerators: Record<PhaseName, ThinkingMessageGenerator> = {
+    classifyingLessons: createCountingGenerator({
+      intro: [t("Checking how each lesson should be taught...")],
+      itemTemplate: (num) => t("Choosing type for lesson {number}...", { number: String(num) }),
+      reviewMessage: t("Reviewing the lesson mix..."),
+    }),
     gettingReady: (index) =>
       cycleMessage([t("Setting things up..."), t("Getting everything ready...")], index),
     preparingLessons: createCountingGenerator({

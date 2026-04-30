@@ -3,6 +3,10 @@ import { listDurableLessonCompletionIds } from "./_utils/durable-completion-quer
 import { toEffectiveLessonProgressRows } from "./_utils/published-lesson-progress";
 import { listPublishedLessonProgressRows } from "./_utils/published-lesson-progress-queries";
 
+/**
+ * Chapter pages need one progress row per listed lesson so the catalog can
+ * show completion without loading every lesson separately.
+ */
 export async function getLessonProgress({
   chapterId,
   headers,
@@ -11,9 +15,8 @@ export async function getLessonProgress({
   headers?: Headers;
 }): Promise<
   {
-    completedActivities: number;
+    isCompleted: boolean;
     lessonId: string;
-    totalActivities: number;
   }[]
 > {
   const session = await getSession(headers);
@@ -36,11 +39,8 @@ export async function getLessonProgress({
   return toEffectiveLessonProgressRows({
     durablyCompletedLessonIds: durableLessonIds,
     rows,
-  })
-    .filter((row) => row.totalActivities > 0)
-    .map((row) => ({
-      completedActivities: row.isDurablyCompleted ? row.totalActivities : row.completedActivities,
-      lessonId: row.lessonId,
-      totalActivities: row.totalActivities,
-    }));
+  }).map((row) => ({
+    isCompleted: row.isEffectivelyCompleted,
+    lessonId: row.lessonId,
+  }));
 }

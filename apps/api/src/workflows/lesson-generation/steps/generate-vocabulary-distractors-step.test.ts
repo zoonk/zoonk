@@ -1,0 +1,43 @@
+import { generateLessonDistractors } from "@zoonk/ai/tasks/lessons/language/distractors";
+import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { createLessonContext } from "./_test-utils/create-lesson-context";
+import { generateVocabularyDistractorsStep } from "./generate-vocabulary-distractors-step";
+
+vi.mock("@zoonk/ai/tasks/lessons/language/distractors", () => ({
+  generateLessonDistractors: vi.fn().mockImplementation(({ input }) =>
+    Promise.resolve({
+      data: { distractors: [`${input} alt`] },
+    }),
+  ),
+}));
+
+describe(generateVocabularyDistractorsStep, () => {
+  let organizationId: string;
+
+  beforeAll(async () => {
+    const organization = await aiOrganizationFixture();
+    organizationId = organization.id;
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test("generates distractors for vocabulary words", async () => {
+    const context = await createLessonContext({ organizationId, targetLanguage: "ja" });
+    const catWord = "猫";
+
+    await expect(
+      generateVocabularyDistractorsStep({
+        context,
+        words: [{ translation: "cat", word: catWord }],
+      }),
+    ).resolves.toEqual({ distractors: { [catWord]: [`${catWord} alt`] } });
+    expect(generateLessonDistractors).toHaveBeenCalledWith({
+      input: catWord,
+      language: "ja",
+      shape: "any",
+    });
+  });
+});

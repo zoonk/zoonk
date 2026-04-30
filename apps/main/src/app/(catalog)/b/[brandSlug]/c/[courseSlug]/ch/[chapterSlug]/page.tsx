@@ -2,9 +2,9 @@ import { CatalogActions } from "@/components/catalog/catalog-actions";
 import { CatalogContainer, CatalogToolbar } from "@/components/catalog/catalog-list";
 import { CatalogListSkeleton } from "@/components/catalog/catalog-skeletons";
 import {
-  ContinueActivityLink,
-  ContinueActivityLinkSkeleton,
-} from "@/components/catalog/continue-activity-link";
+  ContinueLessonLink,
+  ContinueLessonLinkSkeleton,
+} from "@/components/catalog/continue-lesson-link";
 import { getChapter } from "@/data/chapters/get-chapter";
 import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
 import { getNextSibling } from "@zoonk/core/player/queries/get-next-sibling";
@@ -78,8 +78,8 @@ export default async function ChapterPage({
 
       <CatalogContainer>
         <CatalogToolbar>
-          <Suspense fallback={<ContinueActivityLinkSkeleton />}>
-            <ContinueActivityLink
+          <Suspense fallback={<ContinueLessonLinkSkeleton />}>
+            <ContinueLessonLink
               chapterId={chapter.id}
               completedHref={completedHref}
               fallbackHref={fallbackHref}

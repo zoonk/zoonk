@@ -2,20 +2,6 @@ import { z } from "zod";
 
 const uuidQuery = (description: string) => z.uuid().meta({ description });
 
-export const activityCompletionQuerySchema = z
-  .object({
-    lessonId: uuidQuery("Lesson ID"),
-  })
-  .meta({ id: "ActivityCompletionQuery" });
-
-export const activityCompletionResponseSchema = z
-  .object({
-    completedActivityIds: z
-      .array(z.string())
-      .meta({ description: "IDs of completed activities in the lesson" }),
-  })
-  .meta({ id: "ActivityCompletionResponse" });
-
 export const courseCompletionQuerySchema = z
   .object({
     courseId: uuidQuery("Course ID"),
@@ -47,16 +33,15 @@ export const chapterCompletionResponseSchema = z
     lessons: z
       .array(
         z.object({
-          completedActivities: z.number().meta({ description: "Number of completed activities" }),
+          isCompleted: z.boolean().meta({ description: "Whether the lesson is completed" }),
           lessonId: z.string().meta({ description: "Lesson ID" }),
-          totalActivities: z.number().meta({ description: "Total number of activities" }),
         }),
       )
       .meta({ description: "Completion status per lesson" }),
   })
   .meta({ id: "ChapterCompletionResponse" });
 
-export const nextActivityQuerySchema = z
+export const nextLessonQuerySchema = z
   .object({
     chapterId: uuidQuery("Chapter ID").optional(),
     courseId: uuidQuery("Course ID").optional(),
@@ -71,19 +56,16 @@ export const nextActivityQuerySchema = z
     },
     { message: "Exactly one of courseId, chapterId, or lessonId must be provided" },
   )
-  .meta({ id: "NextActivityQuery" });
+  .meta({ id: "NextLessonQuery" });
 
-export const nextActivityResponseSchema = z
+export const nextLessonResponseSchema = z
   .object({
-    activityPosition: z
-      .number()
-      .optional()
-      .meta({ description: "Activity position in the lesson" }),
     brandSlug: z.string().optional().meta({ description: "Organization slug" }),
     chapterSlug: z.string().optional().meta({ description: "Chapter slug" }),
-    completed: z.boolean().meta({ description: "Whether all activities are completed" }),
+    completed: z.boolean().meta({ description: "Whether all lessons are completed" }),
     courseSlug: z.string().optional().meta({ description: "Course slug" }),
     hasStarted: z.boolean().meta({ description: "Whether the user has started" }),
+    lessonPosition: z.number().optional().meta({ description: "Lesson position in the lesson" }),
     lessonSlug: z.string().optional().meta({ description: "Lesson slug" }),
   })
-  .meta({ id: "NextActivityResponse" });
+  .meta({ id: "NextLessonResponse" });

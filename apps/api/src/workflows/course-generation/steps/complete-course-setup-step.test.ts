@@ -7,20 +7,6 @@ import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { completeCourseSetupStep } from "./complete-course-setup-step";
 
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
-
 describe(completeCourseSetupStep, () => {
   let organizationId: string;
 
@@ -48,7 +34,7 @@ describe(completeCourseSetupStep, () => {
       }
     });
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "completeCourseSetup" }),
@@ -81,7 +67,7 @@ describe(completeCourseSetupStep, () => {
     expect(updatedCourse.generationStatus).toBe("completed");
     expect(updatedSuggestion.generationStatus).toBe("completed");
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).toContainEqual(
       expect.objectContaining({ status: "started", step: "completeCourseSetup" }),

@@ -1,6 +1,6 @@
 "use client";
 
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { describePlayerStep, getPlayerStepImage } from "../player-step";
 import { useReplaceName } from "../user-name-context";
 import { HighlightText } from "./highlight-text";

@@ -8,20 +8,6 @@ import { type CourseContext } from "../steps/initialize-course-step";
 import { type ExistingCourseContent } from "./get-or-create-course";
 import { setupCourse } from "./setup-course";
 
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
-
 const {
   generateCourseDescriptionMock,
   generateCourseImageMock,

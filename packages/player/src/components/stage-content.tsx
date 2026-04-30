@@ -1,4 +1,4 @@
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import {
   type PlayerRuntimeContextValue,
   usePlayerNavigation,
@@ -70,7 +70,7 @@ function hasEmbeddedDesktopAction({
 
 export function StageContent() {
   const { actions, screen, state } = usePlayerRuntime();
-  const { lessonHref, nextActivityHref } = usePlayerNavigation();
+  const { chapterHref, nextLessonHref } = usePlayerNavigation();
 
   const completionResult = getCompletionResult(state);
   const currentResult = getCurrentResult(state);
@@ -81,8 +81,8 @@ export function StageContent() {
     return (
       <CompletionScreenContent
         completionResult={completionResult}
-        lessonHref={lessonHref}
-        nextActivityHref={nextActivityHref}
+        chapterHref={chapterHref}
+        nextLessonHref={nextLessonHref}
         onRestart={actions.restart}
       />
     );

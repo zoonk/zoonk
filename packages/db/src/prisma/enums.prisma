@@ -6,25 +6,17 @@ enum GenerationStatus {
 }
 
 enum LessonKind {
-  core
-  language
+  alphabet
   custom
-}
-
-enum ActivityKind {
-  custom
-  review
-
-  // core lessons
   explanation
-  practice
-  quiz
-
-  // language lessons
   grammar
   listening
+  practice
+  quiz
   reading
+  review
   translation
+  tutorial
   vocabulary
 }
 

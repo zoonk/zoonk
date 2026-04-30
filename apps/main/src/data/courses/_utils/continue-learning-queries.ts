@@ -7,9 +7,9 @@ import { safeAsync } from "@zoonk/utils/error";
  * about item selection instead of raw historical query details.
  */
 export type ContinueLearningRow = {
-  activityPosition: number;
   chapterId: string;
   chapterPosition: number;
+  chapterTitle: string;
   courseId: string;
   courseImageUrl: string | null;
   courseSlug: string;
@@ -47,14 +47,13 @@ export async function listRecentContinueLearningRows({
             c.title as course_title,
             c.image_url as course_image_url,
             o.slug as org_slug,
-            a.position as activity_position,
-            a.lesson_id,
             l.position as lesson_position,
+            l.id as lesson_id,
             l.chapter_id,
-            ch.position as chapter_position
-          FROM activity_progress ap
-          JOIN activities a ON a.id = ap.activity_id
-          JOIN lessons l ON l.id = a.lesson_id
+            ch.position as chapter_position,
+            ch.title as chapter_title
+          FROM lesson_progress ap
+          JOIN lessons l ON l.id = ap.lesson_id
           JOIN chapters ch ON ch.id = l.chapter_id
           JOIN courses c ON c.id = ch.course_id AND c.is_published = true
           LEFT JOIN organizations o ON o.id = c.organization_id
@@ -67,11 +66,11 @@ export async function listRecentContinueLearningRows({
           lpc.course_title as "courseTitle",
           lpc.course_image_url as "courseImageUrl",
           lpc.org_slug as "orgSlug",
-          lpc.activity_position as "activityPosition",
           lpc.lesson_id as "lessonId",
           lpc.lesson_position as "lessonPosition",
           lpc.chapter_id as "chapterId",
-          lpc.chapter_position as "chapterPosition"
+          lpc.chapter_position as "chapterPosition",
+          lpc.chapter_title as "chapterTitle"
         FROM last_per_course lpc
         ORDER BY lpc.completed_at DESC
         LIMIT ${SQL_LIMIT}

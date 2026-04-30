@@ -6,7 +6,6 @@ import {
   getAiGenerationCourseWhere,
   prisma,
 } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
 import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
 
 const courseInclude = {
@@ -32,32 +31,24 @@ export async function checkExistingCourseStep(
 
   const normalizedSlug = toSlug(suggestion.slug);
 
-  const { data, error } = await safeAsync(() =>
-    Promise.all([
-      prisma.course.findFirst({
-        include: courseInclude,
-        where: getAiGenerationCourseWhere({
-          slug: ensureLocaleSuffix(normalizedSlug, suggestion.language),
-        }),
+  const [courseMatch, alternativeTitleMatch] = await Promise.all([
+    prisma.course.findFirst({
+      include: courseInclude,
+      where: getAiGenerationCourseWhere({
+        slug: ensureLocaleSuffix(normalizedSlug, suggestion.language),
       }),
-      prisma.courseAlternativeTitle.findFirst({
-        include: {
-          course: { include: courseInclude },
-        },
-        where: {
-          course: getAiGenerationCourseWhere(),
-          language: suggestion.language,
-          slug: normalizedSlug,
-        },
-      }),
-    ]),
-  );
-
-  if (error) {
-    throw error;
-  }
-
-  const [courseMatch, alternativeTitleMatch] = data;
+    }),
+    prisma.courseAlternativeTitle.findFirst({
+      include: {
+        course: { include: courseInclude },
+      },
+      where: {
+        course: getAiGenerationCourseWhere(),
+        language: suggestion.language,
+        slug: normalizedSlug,
+      },
+    }),
+  ]);
 
   await stream.status({ status: "completed", step: "checkExistingCourse" });
 

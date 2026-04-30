@@ -69,11 +69,11 @@ export function AiEstimateFilters({
 }
 
 /**
- * Regular-course defaults include both core and custom lesson counts, so the
+ * Regular-course defaults include both explanation and tutorial lesson counts, so the
  * helper copy should surface all three assumptions in one compact sentence.
  */
 function describeRegularDefaults(courseInputs: AiCourseEstimateInputs) {
-  return `${courseInputs.regularChapterCount.toLocaleString()} chapters, ${courseInputs.regularCoreLessonsPerChapter.toLocaleString()} core per chapter, ${courseInputs.regularCustomLessonsPerChapter.toLocaleString()} custom per chapter.`;
+  return `${courseInputs.regularChapterCount.toLocaleString()} chapters, ${courseInputs.regularCoreLessonsPerChapter.toLocaleString()} explanation per chapter, ${courseInputs.regularTutorialLessonsPerChapter.toLocaleString()} tutorial per chapter.`;
 }
 
 /**
@@ -113,17 +113,17 @@ function RegularCourseFieldset({
         />
         <EstimateNumberField
           htmlFor="regularCoreLessonsPerChapter"
-          label="Core / Chapter"
+          label="Explanation / Chapter"
           min={1}
           name="regularCoreLessonsPerChapter"
           value={courseInputs.regularCoreLessonsPerChapter}
         />
         <EstimateNumberField
-          htmlFor="regularCustomLessonsPerChapter"
-          label="Custom / Chapter"
+          htmlFor="regularTutorialLessonsPerChapter"
+          label="Tutorial / Chapter"
           min={0}
-          name="regularCustomLessonsPerChapter"
-          value={courseInputs.regularCustomLessonsPerChapter}
+          name="regularTutorialLessonsPerChapter"
+          value={courseInputs.regularTutorialLessonsPerChapter}
         />
       </div>
     </fieldset>

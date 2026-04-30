@@ -1,7 +1,6 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { type CourseSuggestion, prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { ensureLocaleSuffix, normalizeString, toSlug } from "@zoonk/utils/string";
 
@@ -25,18 +24,14 @@ async function updateCourseSuggestionToRunning({
 }: {
   suggestionId: string;
   workflowRunId: string;
-}): Promise<{ error: Error | null }> {
-  const { error } = await safeAsync(() =>
-    prisma.courseSuggestion.update({
-      data: {
-        generationRunId: workflowRunId,
-        generationStatus: "running",
-      },
-      where: { id: suggestionId },
-    }),
-  );
-
-  return { error };
+}): Promise<void> {
+  await prisma.courseSuggestion.update({
+    data: {
+      generationRunId: workflowRunId,
+      generationStatus: "running",
+    },
+    where: { id: suggestionId },
+  });
 }
 
 /**
@@ -51,40 +46,31 @@ async function createCourseEntity({
   organizationId: string;
   suggestion: CourseSuggestion;
   workflowRunId: string;
-}): Promise<{ course: CourseContext | null; error: Error | null }> {
+}): Promise<CourseContext> {
   const slug = ensureLocaleSuffix(toSlug(suggestion.title), suggestion.language);
   const normalizedTitle = normalizeString(suggestion.title);
 
-  const { data: course, error } = await safeAsync(() =>
-    prisma.course.create({
-      data: {
-        generationRunId: workflowRunId,
-        generationStatus: "running",
-        isPublished: true,
-        language: suggestion.language,
-        normalizedTitle,
-        organizationId,
-        slug,
-        targetLanguage: suggestion.targetLanguage,
-        title: suggestion.title,
-      },
-    }),
-  );
-
-  if (error || !course) {
-    return { course: null, error: error ?? new Error("Failed to create course") };
-  }
+  const course = await prisma.course.create({
+    data: {
+      generationRunId: workflowRunId,
+      generationStatus: "running",
+      isPublished: true,
+      language: suggestion.language,
+      normalizedTitle,
+      organizationId,
+      slug,
+      targetLanguage: suggestion.targetLanguage,
+      title: suggestion.title,
+    },
+  });
 
   return {
-    course: {
-      courseId: course.id,
-      courseSlug: course.slug,
-      courseTitle: suggestion.title,
-      language: suggestion.language,
-      organizationId,
-      targetLanguage: suggestion.targetLanguage,
-    },
-    error: null,
+    courseId: course.id,
+    courseSlug: course.slug,
+    courseTitle: suggestion.title,
+    language: suggestion.language,
+    organizationId,
+    targetLanguage: suggestion.targetLanguage,
   };
 }
 
@@ -108,34 +94,20 @@ export async function initializeCourseStep(input: {
 
   const { suggestion, workflowRunId } = input;
 
-  const { data: aiOrg, error: orgError } = await safeAsync(() =>
-    prisma.organization.findUniqueOrThrow({
-      where: { slug: AI_ORG_SLUG },
-    }),
-  );
+  const aiOrg = await prisma.organization.findUniqueOrThrow({
+    where: { slug: AI_ORG_SLUG },
+  });
 
-  if (orgError || !aiOrg) {
-    throw orgError ?? new Error("AI organization not found");
-  }
-
-  const { error: suggestionError } = await updateCourseSuggestionToRunning({
+  await updateCourseSuggestionToRunning({
     suggestionId: suggestion.id,
     workflowRunId,
   });
 
-  if (suggestionError) {
-    throw suggestionError;
-  }
-
-  const { course, error: createError } = await createCourseEntity({
+  const course = await createCourseEntity({
     organizationId: aiOrg.id,
     suggestion,
     workflowRunId,
   });
-
-  if (createError || !course) {
-    throw createError ?? new Error("Failed to create course");
-  }
 
   await stream.status({ status: "completed", step: "initializeCourse" });
 

@@ -7,20 +7,6 @@ import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { generateLessonsStep } from "./generate-lessons-step";
 import { type ChapterContext } from "./get-chapter-step";
 
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
-
 const { generateChapterLessonsMock, generateLanguageChapterLessonsMock } = vi.hoisted(() => ({
   generateChapterLessonsMock: vi.fn(),
   generateLanguageChapterLessonsMock: vi.fn(),
@@ -40,23 +26,26 @@ describe(generateLessonsStep, () => {
 
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();
-    const course = await courseFixture({ organizationId: organization.id });
-    const languageCourse = await courseFixture({
-      organizationId: organization.id,
-      targetLanguage: "es",
-    });
+    const [course, languageCourse] = await Promise.all([
+      courseFixture({ organizationId: organization.id }),
+      courseFixture({
+        organizationId: organization.id,
+        targetLanguage: "es",
+      }),
+    ]);
 
-    const chapter = await chapterFixture({
-      courseId: course.id,
-      organizationId: organization.id,
-      title: `Gen Lessons Chapter ${randomUUID()}`,
-    });
-
-    const languageChapter = await chapterFixture({
-      courseId: languageCourse.id,
-      organizationId: organization.id,
-      title: `Gen Lang Lessons Chapter ${randomUUID()}`,
-    });
+    const [chapter, languageChapter] = await Promise.all([
+      chapterFixture({
+        courseId: course.id,
+        organizationId: organization.id,
+        title: `Gen Lessons Chapter ${randomUUID()}`,
+      }),
+      chapterFixture({
+        courseId: languageCourse.id,
+        organizationId: organization.id,
+        title: `Gen Lang Lessons Chapter ${randomUUID()}`,
+      }),
+    ]);
 
     context = {
       ...chapter,
@@ -79,15 +68,14 @@ describe(generateLessonsStep, () => {
 
   test("calls generateChapterLessons for non-language courses and returns lessons", async () => {
     const lessons = [
-      { concepts: ["A"], description: "Intro", title: "Lesson 1" },
-      { concepts: ["B"], description: "Basics", title: "Lesson 2" },
+      { description: "Intro", title: "Lesson 1" },
+      { description: "Basics", title: "Lesson 2" },
     ];
 
     generateChapterLessonsMock.mockResolvedValue({ data: { lessons } });
-
     const result = await generateLessonsStep(context);
 
-    expect(result).toEqual(lessons);
+    expect(result).toEqual({ lessons, needsClassification: true });
 
     expect(generateChapterLessonsMock).toHaveBeenCalledWith({
       chapterDescription: context.description,
@@ -97,7 +85,7 @@ describe(generateLessonsStep, () => {
       neighboringChapters: context.neighboringChapters,
     });
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).toContainEqual(
       expect.objectContaining({ status: "started", step: "generateLessons" }),
@@ -106,16 +94,18 @@ describe(generateLessonsStep, () => {
     expect(events).toContainEqual(
       expect.objectContaining({ status: "completed", step: "generateLessons" }),
     );
+
+    expect(events).not.toContainEqual(expect.objectContaining({ step: "generateLessonKind" }));
   });
 
   test("calls generateLanguageChapterLessons for language courses", async () => {
-    const lessons = [{ concepts: [], description: "Vocab", title: "Words" }];
+    const lessons = [{ description: "Vocab", kind: "vocabulary" as const, title: "Words" }];
 
     generateLanguageChapterLessonsMock.mockResolvedValue({ data: { lessons } });
 
     const result = await generateLessonsStep(languageContext);
 
-    expect(result).toEqual(lessons);
+    expect(result).toEqual({ lessons, needsClassification: false });
 
     expect(generateLanguageChapterLessonsMock).toHaveBeenCalledWith({
       chapterDescription: languageContext.description,
@@ -123,6 +113,9 @@ describe(generateLessonsStep, () => {
       targetLanguage: "es",
       userLanguage: languageContext.language,
     });
+    const events = getStreamedEvents();
+
+    expect(events).not.toContainEqual(expect.objectContaining({ step: "generateLessonKind" }));
   });
 
   test("throws without streaming error when AI generation fails", async () => {
@@ -130,7 +123,7 @@ describe(generateLessonsStep, () => {
 
     await expect(generateLessonsStep(context)).rejects.toThrow("AI failure");
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "generateLessons" }),

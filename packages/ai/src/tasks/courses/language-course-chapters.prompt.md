@@ -27,7 +27,7 @@ After finishing this course, learners should be able to communicate fluently and
 
 # How Our Lessons Work
 
-Each lesson in this platform automatically includes activities for **vocabulary**, **grammar**, **pronunciation**, **reading**, **listening**, and **immersive dialogues**. These skills are practiced in EVERY lesson regardless of the chapter topic.
+Each lesson in this platform automatically includes lessons for **vocabulary**, **grammar**, **pronunciation**, **reading**, **listening**, and **immersive dialogues**. These skills are practiced in EVERY lesson regardless of the chapter topic.
 
 This means chapters should focus on **content domains** — grammar structures, vocabulary themes, and communication scenarios — NOT on skill types. Do NOT create chapters like "Pronunciation", "Listening Comprehension", "Reading Skills", or "Writing Practice" because those skills are already embedded in every lesson.
 
@@ -48,7 +48,7 @@ Chapters should cover **content domains**, such as:
 - **Grammar structures**: verb tenses (present, past, future, subjunctive, conditional, imperative), noun/article systems, pronouns, adjectives, adverbs, prepositions, conjunctions, sentence structure, word order, relative clauses, passive voice, reported speech
 - **Vocabulary themes**: greetings, numbers, family, food & dining, travel & directions, health & body, home & daily life, shopping, transportation, weather & nature, technology, education, emotions & feelings, time & dates, clothing, work & occupations, sports & hobbies
 - **Communication scenarios**: introductions, ordering food, asking directions, making appointments, phone calls, small talk, expressing opinions, agreeing/disagreeing, making requests, giving advice, telling stories, describing experiences, formal vs informal register
-- **Writing systems** (non-Latin scripts ONLY): if `TARGET_LANGUAGE` uses a non-Latin script (e.g., Japanese hiragana/katakana/kanji, Arabic script, Cyrillic, Hangul, etc.), include dedicated chapters for learning the writing system. Do NOT create alphabet or writing system chapters for Latin-script languages (Spanish, French, Portuguese, Italian, German, etc.) — pronunciation of letters and unique sounds is handled by every lesson's built-in pronunciation activity
+- **Writing systems** (non-Latin scripts ONLY): if `TARGET_LANGUAGE` uses a non-Latin script (e.g., Japanese hiragana/katakana/kanji, Arabic script, Cyrillic, Hangul, etc.), include dedicated chapters for learning the writing system. Do NOT create alphabet or writing system chapters for Latin-script languages (Spanish, French, Portuguese, Italian, German, etc.) — pronunciation of letters and unique sounds is handled by every lesson's built-in pronunciation lesson
 
 ## Scope & Granularity
 
@@ -88,7 +88,7 @@ Good chapter titles include:
 Bad chapter titles:
 
 - ❌ "Pronunciation & Phonetics" (skill, not content — pronunciation is in every lesson)
-- ❌ "Spanish Alphabet and Phonetics" (skill — alphabet/sounds for Latin-script languages are covered in every lesson's pronunciation activity)
+- ❌ "Spanish Alphabet and Phonetics" (skill — alphabet/sounds for Latin-script languages are covered in every lesson's pronunciation lesson)
 - ❌ "The Sound System" (skill, not content)
 - ❌ "Reading Comprehension" (skill, not content)
 - ❌ "Listening Practice" (skill, not content)

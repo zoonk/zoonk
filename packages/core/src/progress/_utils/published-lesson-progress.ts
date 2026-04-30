@@ -8,17 +8,31 @@ export type PublishedLessonProgressRow = {
   chapterId: string;
   chapterPosition: number;
   chapterSlug: string;
-  completedActivities: number;
+  chapterTitle: string;
+  completedLessons: number;
   courseId: string;
   courseSlug: string;
-  lessonDescription: string;
+  lessonDescription: string | null;
   lessonGenerationStatus: "completed" | "failed" | "pending" | "running";
   lessonId: string;
+  lessonKind:
+    | "alphabet"
+    | "custom"
+    | "explanation"
+    | "grammar"
+    | "listening"
+    | "practice"
+    | "quiz"
+    | "reading"
+    | "review"
+    | "translation"
+    | "tutorial"
+    | "vocabulary";
   lessonPosition: number;
   lessonSlug: string;
-  lessonTitle: string;
-  pendingActivities: number;
-  totalActivities: number;
+  lessonTitle: string | null;
+  pendingLessons: number;
+  totalLessons: number;
 };
 
 export type EffectiveLessonProgressRow = PublishedLessonProgressRow & {
@@ -27,7 +41,7 @@ export type EffectiveLessonProgressRow = PublishedLessonProgressRow & {
 };
 
 /**
- * Direct activity counts still matter for incomplete lessons, while durable
+ * Direct lesson counts still matter for incomplete lessons, while durable
  * lesson completion takes over once the learner has already earned that lesson.
  * This helper merges both signals into one per-lesson state.
  */
@@ -42,8 +56,7 @@ export function toEffectiveLessonProgressRows({
     const isDurablyCompleted = durablyCompletedLessonIds.has(row.lessonId);
 
     const isEffectivelyCompleted =
-      isDurablyCompleted ||
-      (row.totalActivities > 0 && row.completedActivities >= row.totalActivities);
+      isDurablyCompleted || (row.totalLessons > 0 && row.completedLessons >= row.totalLessons);
 
     return {
       ...row,

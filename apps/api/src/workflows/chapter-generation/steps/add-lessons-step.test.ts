@@ -8,20 +8,6 @@ import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { addLessonsStep } from "./add-lessons-step";
 import { type ChapterContext } from "./get-chapter-step";
 
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
-
 describe(addLessonsStep, () => {
   let organizationId: string;
   let context: ChapterContext;
@@ -55,11 +41,13 @@ describe(addLessonsStep, () => {
       id: randomUUID(),
     };
 
-    const lessons = [{ concepts: ["A"], description: "Desc", title: `Lesson ${randomUUID()}` }];
+    const lessons = [
+      { description: "Desc", kind: "explanation" as const, title: `Lesson ${randomUUID()}` },
+    ];
 
     await expect(addLessonsStep({ context: brokenContext, lessons })).rejects.toThrow();
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "addLessons" }),
@@ -81,28 +69,44 @@ describe(addLessonsStep, () => {
     };
 
     const lessons = [
-      { concepts: ["A", "B"], description: "First lesson", title: `Lesson 1 ${randomUUID()}` },
-      { concepts: ["C"], description: "Second lesson", title: `Lesson 2 ${randomUUID()}` },
+      {
+        description: "First lesson",
+        kind: "explanation" as const,
+        title: `Lesson 1 ${randomUUID()}`,
+      },
+      {
+        description: "Second lesson",
+        kind: "tutorial" as const,
+        title: `Lesson 2 ${randomUUID()}`,
+      },
     ];
 
     const result = await addLessonsStep({ context: chapterContext, lessons });
 
-    expect(result).toHaveLength(2);
+    expect(result).toHaveLength(5);
 
     const dbLessons = await prisma.lesson.findMany({
       orderBy: { position: "asc" },
       where: { chapterId: chapter.id },
     });
 
-    expect(dbLessons).toHaveLength(2);
+    expect(dbLessons).toHaveLength(5);
     expect(dbLessons[0]!.title).toBe(lessons[0]!.title);
     expect(dbLessons[0]!.description).toBe("First lesson");
     expect(dbLessons[0]!.generationStatus).toBe("pending");
     expect(dbLessons[0]!.isPublished).toBe(true);
     expect(dbLessons[0]!.position).toBe(0);
     expect(dbLessons[1]!.position).toBe(1);
+    expect(dbLessons[2]!.kind).toBe("tutorial");
+    expect(dbLessons[3]!.kind).toBe("quiz");
+    expect(dbLessons[3]!.title).toBeNull();
+    expect(dbLessons[3]!.description).toBeNull();
+    expect(dbLessons[4]!.kind).toBe("review");
+    expect(dbLessons[4]!.title).toBeNull();
+    expect(dbLessons[4]!.description).toBeNull();
+    expect(dbLessons[4]!.generationStatus).toBe("completed");
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).toContainEqual(
       expect.objectContaining({ status: "started", step: "addLessons" }),
@@ -111,5 +115,51 @@ describe(addLessonsStep, () => {
     expect(events).toContainEqual(
       expect.objectContaining({ status: "completed", step: "addLessons" }),
     );
+  });
+
+  test("expands language lessons when the course has a target language", async () => {
+    const course = await courseFixture({ organizationId, targetLanguage: "es" });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      organizationId,
+      title: `Add Language Lessons ${randomUUID()}`,
+    });
+    const chapterContext: ChapterContext = {
+      ...chapter,
+      _count: { lessons: 0 },
+      course,
+      neighboringChapters: [],
+    };
+
+    await addLessonsStep({
+      context: chapterContext,
+      lessons: [
+        {
+          description: "Useful words",
+          kind: "vocabulary",
+          title: `Words ${randomUUID()}`,
+        },
+      ],
+    });
+
+    const dbLessons = await prisma.lesson.findMany({
+      orderBy: { position: "asc" },
+      where: { chapterId: chapter.id },
+    });
+
+    expect(dbLessons.map((lesson) => lesson.kind)).toEqual([
+      "vocabulary",
+      "translation",
+      "reading",
+      "listening",
+      "review",
+    ]);
+    expect(dbLessons[1]?.title).toBeNull();
+    expect(dbLessons[1]?.description).toBeNull();
+    expect(dbLessons[2]?.title).toBeNull();
+    expect(dbLessons[2]?.description).toBeNull();
+    expect(dbLessons[3]?.title).toBeNull();
+    expect(dbLessons[3]?.description).toBeNull();
+    expect(dbLessons.at(-1)?.generationStatus).toBe("completed");
   });
 });

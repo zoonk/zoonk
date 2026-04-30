@@ -6,20 +6,6 @@ import { aiOrganizationFixture, organizationFixture } from "@zoonk/testing/fixtu
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { getChapterStep } from "./get-chapter-step";
 
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
-
 describe(getChapterStep, () => {
   let organizationId: string;
   let courseId: string;
@@ -49,7 +35,7 @@ describe(getChapterStep, () => {
     expect(result.course.id).toBe(courseId);
     expect(result._count.lessons).toBe(0);
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).toContainEqual(
       expect.objectContaining({ status: "started", step: "getChapter" }),
@@ -92,7 +78,7 @@ describe(getChapterStep, () => {
   test("throws FatalError when chapter does not exist", async () => {
     await expect(getChapterStep(randomUUID())).rejects.toThrow("Chapter not found");
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).toContainEqual(expect.objectContaining({ status: "error", step: "getChapter" }));
   });

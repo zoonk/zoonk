@@ -1,0 +1,80 @@
+import { formatDuration } from "@/lib/format-duration";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@zoonk/ui/components/table";
+
+const lessonKindLabels: Record<string, string> = {
+  alphabet: "Alphabet",
+  custom: "Custom",
+  explanation: "Explanation",
+  grammar: "Grammar",
+  listening: "Listening",
+  practice: "Practice",
+  quiz: "Quiz",
+  reading: "Reading",
+  review: "Review",
+  translation: "Translation",
+  tutorial: "Tutorial",
+  vocabulary: "Vocabulary",
+};
+
+type LessonBreakdownRow = {
+  kind: string;
+  avgDuration: number;
+  completionRate: number;
+  completionCount: number;
+};
+
+export function LessonBreakdownTable({ data }: { data: LessonBreakdownRow[] }) {
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Lesson Type</TableHead>
+          <TableHead>Avg Duration</TableHead>
+          <TableHead>Completion Rate</TableHead>
+          <TableHead className="text-right">Completions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {data.map((row) => (
+          <LessonBreakdownRow key={row.kind} row={row} />
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
+
+function LessonBreakdownRow({ row }: { row: LessonBreakdownRow }) {
+  return (
+    <TableRow>
+      <TableCell className="font-medium">{lessonKindLabels[row.kind] ?? row.kind}</TableCell>
+      <TableCell className="tabular-nums">{formatDuration(row.avgDuration)}</TableCell>
+      <TableCell>
+        <CompletionBar rate={row.completionRate} />
+      </TableCell>
+      <TableCell className="text-right tabular-nums">
+        {row.completionCount.toLocaleString()}
+      </TableCell>
+    </TableRow>
+  );
+}
+
+function CompletionBar({ rate }: { rate: number }) {
+  return (
+    <div className="flex items-center gap-3">
+      <div className="bg-foreground/10 h-1.5 w-24 overflow-hidden rounded-full">
+        <div
+          className="bg-foreground/80 h-full rounded-full"
+          style={{ width: `${Math.min(rate, 100)}%` }}
+        />
+      </div>
+      <span className="text-muted-foreground text-sm tabular-nums">{rate.toFixed(1)}%</span>
+    </div>
+  );
+}

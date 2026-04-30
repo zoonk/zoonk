@@ -18,9 +18,8 @@ import {
 } from "./check-answer";
 
 describe(checkMultipleChoiceAnswer, () => {
-  describe("core kind", () => {
+  describe("multipleChoice content", () => {
     const content: MultipleChoiceStepContent = {
-      kind: "core",
       options: [
         { feedback: "Correct!", id: "a", isCorrect: true, text: "A" },
         { feedback: "Wrong.", id: "b", isCorrect: false, text: "B" },

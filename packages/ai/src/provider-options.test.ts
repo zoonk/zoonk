@@ -12,7 +12,7 @@ describe(buildProviderOptions, () => {
         fallbackModels: ["google/gemini-3-flash", "anthropic/claude-haiku-4.5"],
         model: "openai/gpt-5.4",
         reasoningEffort: "high",
-        taskName: "activity-explanation",
+        taskName: "lesson-explanation",
         useFallback: true,
       }),
     ).toEqual({
@@ -32,14 +32,14 @@ describe(buildProviderOptions, () => {
         fallbackModels: ["google/gemini-3-flash", "anthropic/claude-haiku-4.5"],
         model: "openai/gpt-5.4",
         reasoningEffort: "high",
-        taskName: "activity-explanation",
+        taskName: "lesson-explanation",
         useFallback: true,
       }),
     ).toEqual({
       gateway: {
         models: ["google/gemini-3-flash", "anthropic/claude-haiku-4.5"],
         order: ["openai", "azure", "google", "anthropic", "vertex"],
-        tags: ["task:activity-explanation", "default-model:openai/gpt-5.4"],
+        tags: ["task:lesson-explanation", "default-model:openai/gpt-5.4"],
       },
       openai: { reasoningEffort: "high" },
     });
@@ -50,7 +50,7 @@ describe(buildProviderOptions, () => {
       buildProviderOptions({
         fallbackModels: ["openai/gpt-5.4-mini"],
         model: "google/gemini-3-flash",
-        taskName: "activity-vocabulary",
+        taskName: "lesson-vocabulary",
         useFallback: false,
       }),
     ).toEqual({
@@ -68,14 +68,14 @@ describe(buildProviderOptions, () => {
       buildProviderOptions({
         fallbackModels: ["openai/gpt-5.4-mini"],
         model: "anthropic/claude-opus-4.6",
-        taskName: "activity-practice",
+        taskName: "lesson-practice",
         useFallback: true,
       }),
     ).toEqual({
       gateway: {
         models: ["openai/gpt-5.4-mini"],
         order: ["anthropic", "vertex", "openai", "azure", "google"],
-        tags: ["task:activity-practice", "default-model:anthropic/claude-opus-4.6"],
+        tags: ["task:lesson-practice", "default-model:anthropic/claude-opus-4.6"],
       },
     });
   });
@@ -105,14 +105,14 @@ describe(buildProviderOptions, () => {
       buildProviderOptions({
         fallbackModels: [],
         model: "openai/gpt-5.4",
-        taskName: "activity-practice",
+        taskName: "lesson-practice",
         useFallback: true,
       }),
     ).toEqual({
       gateway: {
         models: [],
         order: ["openai", "azure", "google", "anthropic", "vertex"],
-        tags: ["task:activity-practice", "default-model:openai/gpt-5.4"],
+        tags: ["task:lesson-practice", "default-model:openai/gpt-5.4"],
       },
     });
   });

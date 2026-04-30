@@ -7,20 +7,6 @@ import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { addCategoriesStep } from "./add-categories-step";
 import { type CourseContext } from "./initialize-course-step";
 
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
-
 describe(addCategoriesStep, () => {
   let organizationId: string;
 
@@ -60,7 +46,7 @@ describe(addCategoriesStep, () => {
     expect(dbCategories).toHaveLength(2);
     expect(dbCategories.map((cat) => cat.category).toSorted()).toEqual(["programming", "web"]);
 
-    const events = getStreamedEvents(writeMock);
+    const events = getStreamedEvents();
 
     expect(events).toContainEqual(
       expect.objectContaining({ status: "started", step: "addCategories" }),

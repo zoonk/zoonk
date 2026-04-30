@@ -1,4 +1,4 @@
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { describe, expect, test } from "vitest";
 import { checkStep } from "./check-step";
 import { type SelectedAnswer } from "./player-reducer";
@@ -26,7 +26,6 @@ describe(checkStep, () => {
   describe("multipleChoice core", () => {
     const step = buildStep({
       content: {
-        kind: "core" as const,
         options: [
           { feedback: "Correct!", id: "four", isCorrect: true, text: "4" },
           { feedback: "Wrong!", id: "three", isCorrect: false, text: "3" },
@@ -389,7 +388,6 @@ describe(checkStep, () => {
     test("multipleChoice step with fillBlank answer returns safe fallback", () => {
       const step = buildStep({
         content: {
-          kind: "core" as const,
           options: [{ feedback: "OK", id: "a", isCorrect: true, text: "A" }],
           question: "Test",
         },

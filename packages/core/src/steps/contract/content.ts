@@ -13,7 +13,7 @@ import {
 } from "./exercise";
 import { type StaticStepContent, staticContentSchema } from "./static";
 
-export type { ActivityKind } from "@zoonk/db";
+export type { LessonKind } from "@zoonk/db";
 export type {
   FillBlankStepContent,
   MatchColumnsStepContent,

@@ -1,18 +1,19 @@
 import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { serializeWorkflowError } from "@/workflows/_shared/workflow-error";
-import { activityGenerationWorkflow } from "@/workflows/activity-generation/activity-generation-workflow";
 import { handleChapterFailureStep } from "@/workflows/course-generation/steps/handle-failure-step";
 import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-generation-workflow";
 import { CHAPTER_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata } from "workflow";
 import { addLessonsStep } from "./steps/add-lessons-step";
+import { classifyLessonsStep } from "./steps/classify-lessons-step";
 import { generateLessonsStep } from "./steps/generate-lessons-step";
 import { getChapterStep } from "./steps/get-chapter-step";
 import { setChapterAsCompletedStep } from "./steps/set-chapter-as-completed-step";
 import { setChapterAsRunningStep } from "./steps/set-chapter-as-running-step";
 
 async function generateAndAddLessons(context: Awaited<ReturnType<typeof getChapterStep>>) {
-  const lessons = await generateLessonsStep(context);
+  const plan = await generateLessonsStep(context);
+  const lessons = await classifyLessonsStep({ context, plan });
   return addLessonsStep({ context, lessons });
 }
 
@@ -57,15 +58,11 @@ export async function chapterGenerationWorkflow(chapterId: string): Promise<void
   // Chapter is complete once its lesson list exists
   await setChapterAsCompletedStep({ context, workflowRunId });
 
-  // Lesson and activity generation outside chapter failure handling.
-  // Each has its own error handling that marks specific resources as failed.
+  // Generate the first lesson outside chapter failure handling so lesson
+  // failures mark that lesson without rolling back the completed chapter plan.
   const firstLesson = createdLessons[0];
 
   if (firstLesson) {
-    const lessonGenerationResult = await lessonGenerationWorkflow(firstLesson.id);
-
-    if (lessonGenerationResult === "ready") {
-      await activityGenerationWorkflow(firstLesson.id);
-    }
+    await lessonGenerationWorkflow(firstLesson.id);
   }
 }

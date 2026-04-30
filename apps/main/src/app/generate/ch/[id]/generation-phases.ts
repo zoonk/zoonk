@@ -6,11 +6,22 @@ import {
   getPhaseStatus as getStatus,
 } from "@/lib/generation-phases";
 import { type ChapterStepName, type ChapterWorkflowStepName } from "@zoonk/core/workflows/steps";
-import { BookOpenIcon, CheckCircleIcon, type LucideIcon, SettingsIcon } from "lucide-react";
+import {
+  BookOpenIcon,
+  CheckCircleIcon,
+  type LucideIcon,
+  SettingsIcon,
+  TagsIcon,
+} from "lucide-react";
 
-export type PhaseName = "gettingReady" | "preparingLessons" | "savingLessons";
+export type PhaseName =
+  | "gettingReady"
+  | "preparingLessons"
+  | "classifyingLessons"
+  | "savingLessons";
 
 const PHASE_STEPS = {
+  classifyingLessons: ["generateLessonKind"],
   gettingReady: ["getChapter", "setChapterAsRunning"],
   preparingLessons: ["generateLessons"],
   savingLessons: ["addLessons", "setChapterAsCompleted"],
@@ -19,21 +30,28 @@ const PHASE_STEPS = {
 type AssignedSteps = (typeof PHASE_STEPS)[PhaseName][number];
 type _ValidateChapter = AssertAllCovered<Exclude<ChapterStepName, AssignedSteps>>;
 
-const PHASE_ORDER: PhaseName[] = ["gettingReady", "preparingLessons", "savingLessons"];
+const PHASE_ORDER: PhaseName[] = [
+  "gettingReady",
+  "preparingLessons",
+  "classifyingLessons",
+  "savingLessons",
+];
 
 export function getPhaseOrder(): PhaseName[] {
   return PHASE_ORDER;
 }
 
 export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
+  classifyingLessons: TagsIcon,
   gettingReady: SettingsIcon,
   preparingLessons: BookOpenIcon,
   savingLessons: CheckCircleIcon,
 };
 
 const PHASE_WEIGHTS: Record<PhaseName, number> = {
+  classifyingLessons: 15,
   gettingReady: 5,
-  preparingLessons: 85,
+  preparingLessons: 70,
   savingLessons: 10,
 };
 

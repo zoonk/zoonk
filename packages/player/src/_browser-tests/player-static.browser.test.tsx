@@ -2,7 +2,7 @@ import { fireEvent, screen } from "@testing-library/react";
 import { describe, expect, test, vi } from "vitest";
 import { page } from "vitest/browser";
 import { buildInlineImageUrl } from "../_test-utils/build-inline-image-url";
-import { buildSerializedActivity, buildSerializedStep } from "../_test-utils/player-test-data";
+import { buildSerializedLesson, buildSerializedStep } from "../_test-utils/player-test-data";
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { buildNavigation, renderPlayer } from "../_test-utils/render-player";
 
@@ -90,7 +90,7 @@ function tapExpandedImageBackdrop(target: HTMLElement) {
 describe("player browser integration: static steps", () => {
   test("uses keyboard navigation without visible step arrows", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         kind: "explanation",
         steps: [
           buildSerializedStep({
@@ -104,7 +104,7 @@ describe("player browser integration: static steps", () => {
           }),
         ],
       }),
-      navigation: buildNavigation({ nextActivityHref: null }),
+      navigation: buildNavigation({ nextLessonHref: null }),
       viewer: buildAuthenticatedViewer(),
     });
 
@@ -126,7 +126,7 @@ describe("player browser integration: static steps", () => {
 
   test("renders grammar example and grammar rule static variants through the shared shell", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         kind: "explanation",
         steps: [
           buildSerializedStep({
@@ -150,7 +150,7 @@ describe("player browser integration: static steps", () => {
           }),
         ],
       }),
-      navigation: buildNavigation({ nextActivityHref: null }),
+      navigation: buildNavigation({ nextLessonHref: null }),
       viewer: buildAuthenticatedViewer(),
     });
 
@@ -166,7 +166,7 @@ describe("player browser integration: static steps", () => {
 
   test("renders embedded step images inside the shared static shell", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         kind: "explanation",
         steps: [
           buildSerializedStep({
@@ -188,7 +188,7 @@ describe("player browser integration: static steps", () => {
           }),
         ],
       }),
-      navigation: buildNavigation({ nextActivityHref: null }),
+      navigation: buildNavigation({ nextLessonHref: null }),
       viewer: buildAuthenticatedViewer(),
     });
 
@@ -227,7 +227,7 @@ describe("player browser integration: static steps", () => {
 
   test("swipes touch navigation forward on static steps", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         kind: "explanation",
         steps: [
           buildSerializedStep({
@@ -249,7 +249,7 @@ describe("player browser integration: static steps", () => {
           }),
         ],
       }),
-      navigation: buildNavigation({ nextActivityHref: null }),
+      navigation: buildNavigation({ nextLessonHref: null }),
       viewer: buildAuthenticatedViewer(),
     });
 
@@ -260,7 +260,7 @@ describe("player browser integration: static steps", () => {
 
   test("uses single taps on the left and right halves for touch navigation", async () => {
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         kind: "explanation",
         steps: [
           buildSerializedStep({
@@ -282,7 +282,7 @@ describe("player browser integration: static steps", () => {
           }),
         ],
       }),
-      navigation: buildNavigation({ nextActivityHref: null }),
+      navigation: buildNavigation({ nextLessonHref: null }),
       viewer: buildAuthenticatedViewer(),
     });
 
@@ -299,7 +299,7 @@ describe("player browser integration: static steps", () => {
     const onEscape = vi.fn();
 
     renderPlayer({
-      activity: buildSerializedActivity({
+      lesson: buildSerializedLesson({
         kind: "explanation",
         steps: [
           buildSerializedStep({
@@ -313,7 +313,7 @@ describe("player browser integration: static steps", () => {
           }),
         ],
       }),
-      navigation: buildNavigation({ nextActivityHref: null }),
+      navigation: buildNavigation({ nextLessonHref: null }),
       onEscape,
       viewer: buildAuthenticatedViewer(),
     });

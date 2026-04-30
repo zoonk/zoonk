@@ -6,9 +6,9 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { lessonSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { lessonWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, test } from "vitest";
-import { getSentenceWords } from "./get-sentence-words";
+import { getSentenceWordsForLessons } from "./get-sentence-words";
 
-describe(getSentenceWords, () => {
+describe(getSentenceWordsForLessons, () => {
   let org: Awaited<ReturnType<typeof organizationFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 
@@ -31,17 +31,16 @@ describe(getSentenceWords, () => {
 
   test("returns LessonWord records matching words found in lesson sentences", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
-    const newLesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      language: "es",
-      organizationId: org.id,
-    });
-
     const wordText1 = `hola${uniqueId}`;
     const wordText2 = `mundo${uniqueId}`;
 
-    const [sentence, word1, word2] = await Promise.all([
+    const [newLesson, sentence, word1, word2] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        language: "es",
+        organizationId: org.id,
+      }),
       sentenceFixture({
         organizationId: org.id,
         sentence: `${wordText1} ${wordText2}`,
@@ -65,7 +64,7 @@ describe(getSentenceWords, () => {
       lessonWordFixture({ lessonId: newLesson.id, wordId: word2.id }),
     ]);
 
-    const result = await getSentenceWords({ lessonId: newLesson.id });
+    const result = await getSentenceWordsForLessons({ lessonIds: [newLesson.id] });
 
     expect(result).toHaveLength(2);
 
@@ -82,47 +81,47 @@ describe(getSentenceWords, () => {
       organizationId: org.id,
     });
 
-    const result = await getSentenceWords({ lessonId: emptyLesson.id });
+    const result = await getSentenceWordsForLessons({ lessonIds: [emptyLesson.id] });
     expect(result).toEqual([]);
   });
 
   test("returns empty array for non-existent lesson", async () => {
-    const result = await getSentenceWords({ lessonId: randomUUID() });
+    const result = await getSentenceWordsForLessons({ lessonIds: [randomUUID()] });
     expect(result).toEqual([]);
   });
 
   test("returns empty when sentence words have no matching LessonWord records", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
-    const newLesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      language: "es",
-      organizationId: org.id,
-    });
-
-    const sentence = await sentenceFixture({
-      organizationId: org.id,
-      sentence: `noexiste${uniqueId} tampoco${uniqueId}`,
-      targetLanguage: "es",
-    });
+    const [newLesson, sentence] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        language: "es",
+        organizationId: org.id,
+      }),
+      sentenceFixture({
+        organizationId: org.id,
+        sentence: `noexiste${uniqueId} tampoco${uniqueId}`,
+        targetLanguage: "es",
+      }),
+    ]);
 
     await lessonSentenceFixture({ lessonId: newLesson.id, sentenceId: sentence.id });
 
-    const result = await getSentenceWords({ lessonId: newLesson.id });
+    const result = await getSentenceWordsForLessons({ lessonIds: [newLesson.id] });
     expect(result).toEqual([]);
   });
 
   test("strips punctuation when matching sentence words to LessonWord records", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
     const wordText = `sabes${uniqueId}`;
-    const newLesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      language: "es",
-      organizationId: org.id,
-    });
-
-    const [sentence, word] = await Promise.all([
+    const [newLesson, sentence, word] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        language: "es",
+        organizationId: org.id,
+      }),
       sentenceFixture({
         organizationId: org.id,
         sentence: `${wordText}?`,
@@ -140,7 +139,7 @@ describe(getSentenceWords, () => {
       lessonWordFixture({ lessonId: newLesson.id, wordId: word.id }),
     ]);
 
-    const result = await getSentenceWords({ lessonId: newLesson.id });
+    const result = await getSentenceWordsForLessons({ lessonIds: [newLesson.id] });
 
     expect(result).toHaveLength(1);
     expect(result[0]?.word.word).toBe(word.word);
@@ -148,16 +147,15 @@ describe(getSentenceWords, () => {
 
   test("matches LessonWord records case-insensitively", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
-    const newLesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      language: "es",
-      organizationId: org.id,
-    });
-
     const wordText = `Hola${uniqueId}`;
 
-    const [sentence, word] = await Promise.all([
+    const [newLesson, sentence, word] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        language: "es",
+        organizationId: org.id,
+      }),
       sentenceFixture({
         organizationId: org.id,
         sentence: `${wordText} mundo`,
@@ -181,7 +179,7 @@ describe(getSentenceWords, () => {
     ]);
 
     // extractUniqueSentenceWords lowercases to "hola...", but Word record has "Hola..."
-    const result = await getSentenceWords({ lessonId: newLesson.id });
+    const result = await getSentenceWordsForLessons({ lessonIds: [newLesson.id] });
 
     const match = result.find((item) => item.word.word.toLowerCase() === wordText.toLowerCase());
     expect(match).toBeDefined();
@@ -191,14 +189,13 @@ describe(getSentenceWords, () => {
   test("deduplicates words across multiple sentences", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
     const wordText = `gato${uniqueId}`;
-    const newLesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      language: "es",
-      organizationId: org.id,
-    });
-
-    const [sentence1, sentence2, word] = await Promise.all([
+    const [newLesson, sentence1, sentence2, word] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        language: "es",
+        organizationId: org.id,
+      }),
       sentenceFixture({
         organizationId: org.id,
         sentence: `${wordText} bonito`,
@@ -222,7 +219,7 @@ describe(getSentenceWords, () => {
       lessonWordFixture({ lessonId: newLesson.id, wordId: word.id }),
     ]);
 
-    const result = await getSentenceWords({ lessonId: newLesson.id });
+    const result = await getSentenceWordsForLessons({ lessonIds: [newLesson.id] });
 
     const matchingWords = result.filter((item) => item.word.word === word.word);
     expect(matchingWords).toHaveLength(1);

@@ -12,12 +12,15 @@ const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 const schema = z.object({
   lessons: z.array(
     z.object({
-      concepts: z.array(z.string()),
       description: z.string(),
+      kind: z.enum(["alphabet", "grammar", "vocabulary"]),
       title: z.string(),
     }),
   ),
 });
+
+export type LanguageChapterLessonsSchema = z.infer<typeof schema>;
+export type LanguageChapterLesson = LanguageChapterLessonsSchema["lessons"][number];
 
 export async function generateLanguageChapterLessons({
   chapterDescription,

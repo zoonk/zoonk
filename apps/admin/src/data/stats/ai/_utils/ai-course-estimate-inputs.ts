@@ -48,12 +48,12 @@ export function buildDefaultCourseEstimateInputs({
         totalCount: structureStats.regularCoreLessonCountInCourses,
       }),
     }),
-    regularCustomLessonsPerChapter: normalizeInteger({
+    regularTutorialLessonsPerChapter: normalizeInteger({
       fallback: 0,
       minimum: 0,
       value: roundAverage({
         entityCount: structureStats.completedRegularChapterCount,
-        totalCount: structureStats.regularCustomLessonCountInCourses,
+        totalCount: structureStats.regularTutorialLessonCountInCourses,
       }),
     }),
   };
@@ -92,10 +92,10 @@ export function resolveCourseEstimateInputs({
       minimum: 1,
       value: overrides?.regularCoreLessonsPerChapter,
     }),
-    regularCustomLessonsPerChapter: normalizeInteger({
-      fallback: defaults.regularCustomLessonsPerChapter,
+    regularTutorialLessonsPerChapter: normalizeInteger({
+      fallback: defaults.regularTutorialLessonsPerChapter,
       minimum: 0,
-      value: overrides?.regularCustomLessonsPerChapter,
+      value: overrides?.regularTutorialLessonsPerChapter,
     }),
   };
 }

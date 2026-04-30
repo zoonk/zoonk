@@ -1,9 +1,8 @@
 import { prisma } from "@zoonk/db";
-import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, test } from "vitest";
@@ -38,16 +37,9 @@ describe(getChapterProgress, () => {
       position: 0,
     });
 
-    const lesson = await lessonFixture({
+    await lessonFixture({
       chapterId: chapter.id,
       isPublished: true,
-      organizationId: organization.id,
-      position: 0,
-    });
-
-    await activityFixture({
-      isPublished: true,
-      lessonId: lesson.id,
       organizationId: organization.id,
       position: 0,
     });
@@ -57,7 +49,7 @@ describe(getChapterProgress, () => {
     expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 0, totalLessons: 1 }]);
   });
 
-  test("a lesson counts as completed only when ALL its activities are completed", async () => {
+  test("counts completed lessons directly", async () => {
     const [user, course] = await Promise.all([
       userFixture(),
       courseFixture({ isPublished: true, organizationId: organization.id }),
@@ -70,50 +62,41 @@ describe(getChapterProgress, () => {
       position: 0,
     });
 
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      organizationId: organization.id,
-      position: 0,
-    });
-
-    const [activity1, activity2] = await Promise.all([
-      activityFixture({
+    const [lesson1, lesson2] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
         isPublished: true,
-        lessonId: lesson.id,
         organizationId: organization.id,
         position: 0,
       }),
-      activityFixture({
+      lessonFixture({
+        chapterId: chapter.id,
         isPublished: true,
-        lessonId: lesson.id,
         organizationId: organization.id,
         position: 1,
       }),
     ]);
 
-    // Only complete one of two activities
-    await activityProgressFixture({
-      activityId: activity1.id,
+    await lessonProgressFixture({
       completedAt: new Date(),
       durationSeconds: 60,
+      lessonId: lesson1.id,
       userId: user.id,
     });
 
     const headers = await signInAs(user.email, user.password);
     const result = await getChapterProgress({ courseId: course.id, headers });
-    expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 0, totalLessons: 1 }]);
+    expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 1, totalLessons: 2 }]);
 
-    // Now complete the second activity
-    await activityProgressFixture({
-      activityId: activity2.id,
+    await lessonProgressFixture({
       completedAt: new Date(),
       durationSeconds: 60,
+      lessonId: lesson2.id,
       userId: user.id,
     });
 
     const result2 = await getChapterProgress({ courseId: course.id, headers });
-    expect(result2).toEqual([{ chapterId: chapter.id, completedLessons: 1, totalLessons: 1 }]);
+    expect(result2).toEqual([{ chapterId: chapter.id, completedLessons: 2, totalLessons: 2 }]);
   });
 
   test("returns correct counts across multiple chapters", async () => {
@@ -137,7 +120,7 @@ describe(getChapterProgress, () => {
       }),
     ]);
 
-    const [lesson1, lesson2] = await Promise.all([
+    const [lesson1, _lesson2] = await Promise.all([
       lessonFixture({
         chapterId: chapter1.id,
         isPublished: true,
@@ -152,26 +135,11 @@ describe(getChapterProgress, () => {
       }),
     ]);
 
-    const [activity1, _activity2] = await Promise.all([
-      activityFixture({
-        isPublished: true,
-        lessonId: lesson1.id,
-        organizationId: organization.id,
-        position: 0,
-      }),
-      activityFixture({
-        isPublished: true,
-        lessonId: lesson2.id,
-        organizationId: organization.id,
-        position: 0,
-      }),
-    ]);
-
     // Complete only the first chapter's lesson
-    await activityProgressFixture({
-      activityId: activity1.id,
+    await lessonProgressFixture({
       completedAt: new Date(),
       durationSeconds: 60,
+      lessonId: lesson1.id,
       userId: user.id,
     });
 
@@ -183,7 +151,7 @@ describe(getChapterProgress, () => {
     ]);
   });
 
-  test("excludes started-but-not-completed activities from lesson completion", async () => {
+  test("excludes started-but-not-completed lessons from lesson completion", async () => {
     const [user, course] = await Promise.all([
       userFixture(),
       courseFixture({ isPublished: true, organizationId: organization.id }),
@@ -203,18 +171,11 @@ describe(getChapterProgress, () => {
       position: 0,
     });
 
-    const activity = await activityFixture({
-      isPublished: true,
-      lessonId: lesson.id,
-      organizationId: organization.id,
-      position: 0,
-    });
-
     // Started but not completed
-    await activityProgressFixture({
-      activityId: activity.id,
+    await lessonProgressFixture({
       completedAt: null,
       durationSeconds: 30,
+      lessonId: lesson.id,
       userId: user.id,
     });
 
@@ -223,7 +184,7 @@ describe(getChapterProgress, () => {
     expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 0, totalLessons: 1 }]);
   });
 
-  test("only counts published activities and lessons", async () => {
+  test("only counts published lessons", async () => {
     const [user, course] = await Promise.all([
       userFixture(),
       courseFixture({ isPublished: true, organizationId: organization.id }),
@@ -251,31 +212,15 @@ describe(getChapterProgress, () => {
       }),
     ]);
 
-    const [publishedActivity] = await Promise.all([
-      activityFixture({
-        isPublished: true,
-        lessonId: publishedLesson.id,
-        organizationId: organization.id,
-        position: 0,
-      }),
-      activityFixture({
-        isPublished: false,
-        lessonId: publishedLesson.id,
-        organizationId: organization.id,
-        position: 1,
-      }),
-    ]);
-
-    await activityProgressFixture({
-      activityId: publishedActivity.id,
+    await lessonProgressFixture({
       completedAt: new Date(),
       durationSeconds: 60,
+      lessonId: publishedLesson.id,
       userId: user.id,
     });
 
     const headers = await signInAs(user.email, user.password);
     const result = await getChapterProgress({ courseId: course.id, headers });
-    // Only the published lesson with the published activity counts
     expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 1, totalLessons: 1 }]);
   });
 
@@ -298,7 +243,7 @@ describe(getChapterProgress, () => {
     expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 0, totalLessons: 0 }]);
   });
 
-  test("lessons with 0 published activities still count as incomplete lessons", async () => {
+  test("incomplete lessons still count toward the chapter total", async () => {
     const [user, course] = await Promise.all([
       userFixture(),
       courseFixture({ isPublished: true, organizationId: organization.id }),
@@ -311,7 +256,6 @@ describe(getChapterProgress, () => {
       position: 0,
     });
 
-    // Published lessons still count in chapter progress, even before they have activities.
     await lessonFixture({
       chapterId: chapter.id,
       isPublished: true,
@@ -324,7 +268,7 @@ describe(getChapterProgress, () => {
     expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 0, totalLessons: 1 }]);
   });
 
-  test("a chapter stays in progress when another published lesson has no activities", async () => {
+  test("a chapter stays in progress while another published lesson is incomplete", async () => {
     const [user, course] = await Promise.all([
       userFixture(),
       courseFixture({ isPublished: true, organizationId: organization.id }),
@@ -352,17 +296,10 @@ describe(getChapterProgress, () => {
       }),
     ]);
 
-    const activity = await activityFixture({
-      isPublished: true,
-      lessonId: completedLesson.id,
-      organizationId: organization.id,
-      position: 0,
-    });
-
-    await activityProgressFixture({
-      activityId: activity.id,
+    await lessonProgressFixture({
       completedAt: new Date(),
       durationSeconds: 60,
+      lessonId: completedLesson.id,
       userId: user.id,
     });
 
@@ -385,7 +322,7 @@ describe(getChapterProgress, () => {
       position: 0,
     });
 
-    const [originalLesson, newLesson] = await Promise.all([
+    await Promise.all([
       lessonFixture({
         chapterId: chapter.id,
         isPublished: true,
@@ -397,21 +334,6 @@ describe(getChapterProgress, () => {
         isPublished: true,
         organizationId: organization.id,
         position: 1,
-      }),
-    ]);
-
-    await Promise.all([
-      activityFixture({
-        isPublished: true,
-        lessonId: originalLesson.id,
-        organizationId: organization.id,
-        position: 0,
-      }),
-      activityFixture({
-        isPublished: true,
-        lessonId: newLesson.id,
-        organizationId: organization.id,
-        position: 0,
       }),
     ]);
 

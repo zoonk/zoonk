@@ -20,6 +20,7 @@ import { LESSON_COMPLETION_STEP, type LessonStepName } from "@zoonk/core/workflo
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { API_URL } from "@zoonk/utils/url";
 import { useExtracted } from "next-intl";
+import { type GeneratedLessonKind } from "./generation-phase-config";
 import { useGenerationPhases } from "./use-generation-phases";
 
 export function GenerationClient({
@@ -28,6 +29,7 @@ export function GenerationClient({
   generationRunId,
   initialStatus,
   lessonId,
+  lessonKind,
   lessonSlug,
 }: {
   chapterSlug: string;
@@ -35,6 +37,7 @@ export function GenerationClient({
   generationRunId: string | null;
   initialStatus: GenerationStatus;
   lessonId: string;
+  lessonKind: GeneratedLessonKind;
   lessonSlug: string;
 }) {
   const t = useExtracted();
@@ -49,7 +52,12 @@ export function GenerationClient({
   });
 
   const { activePhaseNames, phases, progress, targetProgress, thinkingGenerators } =
-    useGenerationPhases(generation.completedSteps, generation.currentStep, generation.startedSteps);
+    useGenerationPhases(
+      generation.completedSteps,
+      generation.currentStep,
+      lessonKind,
+      generation.startedSteps,
+    );
 
   const isActive = generation.status === "triggering" || generation.status === "streaming";
   const displayProgress = useAnimatedProgress({ isActive, realProgress: progress, targetProgress });
@@ -67,7 +75,7 @@ export function GenerationClient({
     return (
       <GenerationTimeline>
         <GenerationTimelineHeader>
-          <GenerationTimelineTitle>{t("Creating your activities")}</GenerationTimelineTitle>
+          <GenerationTimelineTitle>{t("Creating your lesson")}</GenerationTimelineTitle>
           <GenerationTimelineSubtitle>
             {t("This usually takes a few seconds")}
           </GenerationTimelineSubtitle>

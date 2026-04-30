@@ -1,6 +1,5 @@
 import {
   type StepContentImageParams,
-  type StepContentImagePreset,
   generateStepContentImage,
 } from "@zoonk/ai/tasks/steps/content-image";
 import { type SafeReturn } from "@zoonk/utils/error";
@@ -54,5 +53,3 @@ export async function generateContentStepImage({
 
   return { data: url, error: null };
 }
-
-export type { StepContentImagePreset };

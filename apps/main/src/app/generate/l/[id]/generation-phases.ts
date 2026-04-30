@@ -1,5 +1,4 @@
 import {
-  type AssertAllCovered,
   type PhaseStatus,
   calculateWeightedProgress as calculateProgress,
   calculateTargetProgress as calculateTarget,
@@ -7,79 +6,92 @@ import {
 } from "@/lib/generation-phases";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import {
+  AudioLinesIcon,
   BookOpenIcon,
+  BookTextIcon,
   CheckCircleIcon,
+  GraduationCapIcon,
+  ImageIcon,
+  LanguagesIcon,
+  ListChecksIcon,
   type LucideIcon,
+  MicIcon,
+  PenLineIcon,
   SearchIcon,
-  SparklesIcon,
+  TextIcon,
 } from "lucide-react";
-
-export type PhaseName =
-  | "gettingStarted"
-  | "figuringOutApproach"
-  | "settingUpActivities"
-  | "finishing";
-
-const PHASE_STEPS = {
-  figuringOutApproach: ["determineLessonKind", "updateLessonKind", "removeNonLanguageLesson"],
-  finishing: ["setLessonAsCompleted"],
-  gettingStarted: ["getLesson", "setLessonAsRunning"],
-  settingUpActivities: ["generateCoreActivities", "generateCustomActivities", "addActivities"],
-} as const satisfies Record<PhaseName, readonly LessonStepName[]>;
-
-// Compile-time check: typecheck fails with the exact missing step names.
-type _ValidateLesson = AssertAllCovered<
-  Exclude<LessonStepName, (typeof PHASE_STEPS)[PhaseName][number]>
->;
-
-export const PHASE_ORDER: PhaseName[] = [
-  "gettingStarted",
-  "figuringOutApproach",
-  "settingUpActivities",
-  "finishing",
-];
+import {
+  type GeneratedLessonKind,
+  type PhaseName,
+  getPhaseOrder,
+  getPhaseSteps,
+  getPhaseWeights,
+} from "./generation-phase-config";
 
 export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
-  figuringOutApproach: SearchIcon,
-  finishing: CheckCircleIcon,
+  addingGrammarRomanization: LanguagesIcon,
+  addingPronunciation: MicIcon,
+  addingRomanization: LanguagesIcon,
+  addingVocabularyRomanization: LanguagesIcon,
+  addingWordPronunciation: MicIcon,
+  buildingWordList: BookTextIcon,
+  creatingAnswerOptions: ListChecksIcon,
+  creatingExercises: GraduationCapIcon,
+  creatingImages: ImageIcon,
+  creatingSentences: TextIcon,
   gettingStarted: BookOpenIcon,
-  settingUpActivities: SparklesIcon,
+  lookingUpWords: SearchIcon,
+  preparingImages: ImageIcon,
+  recordingAudio: AudioLinesIcon,
+  recordingVocabularyAudio: AudioLinesIcon,
+  recordingWordAudio: AudioLinesIcon,
+  saving: CheckCircleIcon,
+  savingPrerequisites: CheckCircleIcon,
+  writingContent: PenLineIcon,
+  writingExplanation: PenLineIcon,
 };
 
-const PHASE_WEIGHTS: Record<PhaseName, number> = {
-  figuringOutApproach: 20,
-  finishing: 5,
-  gettingStarted: 5,
-  settingUpActivities: 70,
-};
-
+/** Returns a phase status using the step map for the selected lesson kind. */
 export function getPhaseStatus(
   phase: PhaseName,
   completedSteps: LessonStepName[],
   currentStep: LessonStepName | null,
+  lessonKind: GeneratedLessonKind,
   startedSteps?: LessonStepName[],
 ): PhaseStatus {
-  return getStatus(phase, completedSteps, currentStep, PHASE_STEPS, startedSteps);
+  return getStatus(phase, completedSteps, currentStep, getPhaseSteps(lessonKind), startedSteps);
 }
 
-const PROGRESS_CONFIG = {
-  phaseOrder: PHASE_ORDER,
-  phaseSteps: PHASE_STEPS,
-  phaseWeights: PHASE_WEIGHTS,
-};
+/** Builds the shared progress config for a lesson kind. */
+function getProgressConfig(lessonKind: GeneratedLessonKind, startedSteps?: LessonStepName[]) {
+  return {
+    phaseOrder: getPhaseOrder(lessonKind),
+    phaseSteps: getPhaseSteps(lessonKind),
+    phaseWeights: getPhaseWeights(lessonKind),
+    startedSteps,
+  };
+}
 
+/** Calculates progress using only the phases that the selected lesson kind executes. */
 export function calculateWeightedProgress(
   completedSteps: LessonStepName[],
   currentStep: LessonStepName | null,
+  lessonKind: GeneratedLessonKind,
   startedSteps?: LessonStepName[],
 ): number {
-  return calculateProgress(completedSteps, currentStep, { ...PROGRESS_CONFIG, startedSteps });
+  return calculateProgress(
+    completedSteps,
+    currentStep,
+    getProgressConfig(lessonKind, startedSteps),
+  );
 }
 
+/** Calculates the progress value that the active lesson phases can animate toward. */
 export function calculateTargetProgress(
   completedSteps: LessonStepName[],
   currentStep: LessonStepName | null,
+  lessonKind: GeneratedLessonKind,
   startedSteps?: LessonStepName[],
 ): number {
-  return calculateTarget(completedSteps, currentStep, { ...PROGRESS_CONFIG, startedSteps });
+  return calculateTarget(completedSteps, currentStep, getProgressConfig(lessonKind, startedSteps));
 }

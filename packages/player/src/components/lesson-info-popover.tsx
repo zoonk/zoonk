@@ -12,18 +12,18 @@ import {
 import { Separator } from "@zoonk/ui/components/separator";
 import { InfoIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { usePlayerActivityMeta } from "../player-context";
+import { usePlayerLessonMeta } from "../player-context";
 
 /**
  * A small info button in the player header that opens a popover with
  * contextual details about the current lesson and chapter.
  *
- * Helps learners orient themselves when they enter an activity directly
- * (e.g., via "Continue" links) without going through the lesson page first.
+ * Helps learners orient themselves when they enter a lesson directly
+ * from navigation links.
  */
 export function LessonInfoPopover() {
   const t = useExtracted();
-  const { chapterTitle, description, lessonTitle } = usePlayerActivityMeta();
+  const { chapterTitle, description, lessonTitle } = usePlayerLessonMeta();
 
   return (
     <Popover>

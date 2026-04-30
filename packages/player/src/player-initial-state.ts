@@ -1,7 +1,7 @@
 import {
-  type SerializedActivity,
+  type SerializedLesson,
   type SerializedStep,
-} from "@zoonk/core/player/contracts/prepare-activity-data";
+} from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type PlayerPhase, type PlayerState, type SelectedAnswer } from "./player-reducer";
 
 export function buildInitialAnswers(steps: SerializedStep[]): Record<string, SelectedAnswer> {
@@ -25,25 +25,25 @@ function getInitialPhase(steps: SerializedStep[]): PlayerPhase {
 }
 
 export type InitialStateInput = {
-  activity: SerializedActivity;
+  lesson: SerializedLesson;
   totalBrainPower: number;
 };
 
-export function createInitialState({ activity, totalBrainPower }: InitialStateInput): PlayerState {
+export function createInitialState({ lesson, totalBrainPower }: InitialStateInput): PlayerState {
   const now = Date.now();
 
   return {
-    activityId: activity.id,
-    activityKind: activity.kind,
     completion: null,
     currentStepIndex: 0,
-    phase: getInitialPhase(activity.steps),
+    lessonId: lesson.id,
+    lessonKind: lesson.kind,
+    phase: getInitialPhase(lesson.steps),
     results: {},
-    selectedAnswers: buildInitialAnswers(activity.steps),
+    selectedAnswers: buildInitialAnswers(lesson.steps),
     startedAt: now,
     stepStartedAt: now,
     stepTimings: {},
-    steps: activity.steps,
+    steps: lesson.steps,
     totalBrainPower,
   };
 }
