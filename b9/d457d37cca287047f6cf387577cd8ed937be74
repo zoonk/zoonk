@@ -1,0 +1,87 @@
+apps/api/src/workflows/lesson-generation/steps/_utils/save-reading-target-words.ts
+  36121c8f3b7c1ae4 14-21,83-87,97-100,110-114,120-125,136-141
+apps/api/src/workflows/lesson-generation/steps/_utils/generate-step-images.ts
+  36121c8f3b7c1ae4 25-29
+apps/api/src/workflows/lesson-generation/kinds/listening-workflow.ts
+  36121c8f3b7c1ae4 4-8
+apps/api/src/workflows/lesson-generation/kinds/translation-workflow.ts
+  36121c8f3b7c1ae4 4-7
+apps/api/src/workflows/lesson-generation/steps/save-listening-lesson-step.ts
+  36121c8f3b7c1ae4 8-12
+apps/api/src/workflows/lesson-generation/steps/save-practice-lesson-step.ts
+  36121c8f3b7c1ae4 9-12
+apps/api/src/workflows/lesson-generation/steps/save-vocabulary-lesson-step.ts
+  36121c8f3b7c1ae4 12-16,104-108
+packages/core/src/player/commands/submit-player-completion.test.ts
+  36121c8f3b7c1ae4 27
+apps/api/src/workflows/lesson-generation/kinds/tutorial-workflow.ts
+  36121c8f3b7c1ae4 7-10
+packages/ai/src/tasks/steps/step-image-prompts.ts
+  36121c8f3b7c1ae4 13-17,36-40
+apps/api/src/workflows/lesson-generation/steps/generate-practice-content-step.ts
+  36121c8f3b7c1ae4 10-14
+apps/main/src/data/courses/_utils/continue-learning-candidates.ts
+  36121c8f3b7c1ae4 174
+apps/api/src/workflows/lesson-generation/kinds/grammar-workflow.ts
+  36121c8f3b7c1ae4 7-11
+apps/api/src/workflows/lesson-generation/kinds/vocabulary-workflow.ts
+  36121c8f3b7c1ae4 10-15,29-33
+apps/api/src/workflows/lesson-generation/kinds/practice-workflow.ts
+  36121c8f3b7c1ae4 7-11
+apps/api/src/workflows/lesson-generation/kinds/reading-workflow.ts
+  36121c8f3b7c1ae4 12-16,30-33
+apps/api/src/workflows/lesson-generation/steps/generate-step-images-step.ts
+  36121c8f3b7c1ae4 8-11
+apps/api/src/workflows/lesson-generation/steps/save-quiz-lesson-step.ts
+  36121c8f3b7c1ae4 10-13
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.ts
+  36121c8f3b7c1ae4 59-63,110-115,166-170
+apps/api/src/workflows/lesson-generation/steps/save-reading-lesson-step.ts
+  36121c8f3b7c1ae4 14-18,82-86
+apps/main/src/data/courses/_utils/continue-learning-pending-targets.ts
+  36121c8f3b7c1ae4 37
+apps/api/src/workflows/lesson-generation/steps/_utils/generate-direct-distractors.ts
+  36121c8f3b7c1ae4 10-19
+apps/api/src/workflows/lesson-generation/steps/generate-reading-content-step.ts
+  36121c8f3b7c1ae4 10-13,45-49
+apps/api/src/workflows/lesson-generation/steps/generate-quiz-content-step.ts
+  36121c8f3b7c1ae4 10-14
+apps/api/src/workflows/lesson-generation/steps/generate-explanation-content-step.ts
+  36121c8f3b7c1ae4 9-13
+apps/api/src/workflows/lesson-generation/steps/save-translation-lesson-step.ts
+  36121c8f3b7c1ae4 8-11,30-34
+apps/api/src/workflows/lesson-generation/steps/_utils/generate-word-audio-urls.ts
+  36121c8f3b7c1ae4 4-10
+apps/api/src/workflows/lesson-generation/steps/generate-image-prompts-step.ts
+  36121c8f3b7c1ae4 7-10
+packages/core/src/progress/get-chapter-progress.ts
+  36121c8f3b7c1ae4 59-60
+apps/api/src/workflows/lesson-generation/steps/save-static-lesson-step.ts
+  36121c8f3b7c1ae4 9-12
+packages/core/src/progress/_utils/next-lesson-state-helpers.ts
+  36121c8f3b7c1ae4 181-182
+apps/api/src/workflows/lesson-generation/steps/_utils/generate-word-pronunciations.ts
+  36121c8f3b7c1ae4 10-17
+apps/api/src/workflows/lesson-generation/kinds/explanation-workflow.ts
+  36121c8f3b7c1ae4 7-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "b9d457d37cca287047f6cf387577cd8ed937be74",
+  "prompts": {
+    "36121c8f3b7c1ae4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dd4b7-fb4f-7fb2-a9af-80c1e0075446",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 255,
+      "total_deletions": 36,
+      "accepted_lines": 3276,
+      "overriden_lines": 0
+    }
+  }
+}
