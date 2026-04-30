@@ -3,27 +3,19 @@ import { z } from "zod";
 const uuidParam = (description: string) => z.uuid().meta({ description });
 
 export const courseGenerationTriggerSchema = z
-  .object({
-    courseSuggestionId: uuidParam("Course suggestion ID to generate from"),
-  })
+  .object({ courseSuggestionId: uuidParam("Course suggestion ID to generate from") })
   .meta({ id: "CourseGenerationTrigger" });
 
 export const chapterGenerationTriggerSchema = z
-  .object({
-    chapterId: uuidParam("Chapter ID to generate content for"),
-  })
+  .object({ chapterId: uuidParam("Chapter ID to generate content for") })
   .meta({ id: "ChapterGenerationTrigger" });
 
 export const lessonGenerationTriggerSchema = z
-  .object({
-    lessonId: uuidParam("Lesson ID to generate content for"),
-  })
+  .object({ lessonId: uuidParam("Lesson ID to generate content for") })
   .meta({ id: "LessonGenerationTrigger" });
 
 export const lessonPreloadTriggerSchema = z
-  .object({
-    lessonId: uuidParam("Lesson ID to preload content for"),
-  })
+  .object({ lessonId: uuidParam("Lesson ID to preload content for") })
   .meta({ id: "LessonPreloadTrigger" });
 
 export const workflowTriggerResponseSchema = z

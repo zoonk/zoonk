@@ -11,10 +11,7 @@ export default function NextLink({
   href,
   prefetch: _prefetch,
   ...props
-}: Omit<ComponentProps<"a">, "href"> & {
-  href: string | URL;
-  prefetch?: boolean;
-}) {
+}: Omit<ComponentProps<"a">, "href"> & { href: string | URL; prefetch?: boolean }) {
   return (
     <a {...props} href={typeof href === "string" ? href : href.toString()}>
       {children}

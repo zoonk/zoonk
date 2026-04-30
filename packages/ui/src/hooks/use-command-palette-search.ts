@@ -82,15 +82,5 @@ export function useCommandPaletteSearch<TResults>(options: {
     });
   }, [query, minQueryLength, onSearch, emptyResults]);
 
-  return {
-    closePalette,
-    isOpen,
-    isPending,
-    onSelectItem,
-    open,
-    query,
-    results,
-    setQuery,
-    toggle,
-  };
+  return { closePalette, isOpen, isPending, onSelectItem, open, query, results, setQuery, toggle };
 }

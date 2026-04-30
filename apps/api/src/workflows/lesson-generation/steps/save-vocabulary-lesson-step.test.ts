@@ -25,9 +25,7 @@ describe(saveVocabularyLessonStep, () => {
 
     await saveVocabularyLessonStep({
       context,
-      distractors: {
-        [vocabularyWord]: [...distractorWords, distractorWords[0]],
-      },
+      distractors: { [vocabularyWord]: [...distractorWords, distractorWords[0]] },
       pronunciations: {
         [vocabularyWord]: `pron-${id}-boa-noite`,
         [distractorWords[0]]: `pron-${id}-boa-tarde`,
@@ -43,15 +41,9 @@ describe(saveVocabularyLessonStep, () => {
     });
 
     const [lessonWords, distractorLessonWords, words, pronunciations, steps] = await Promise.all([
+      prisma.lessonWord.findMany({ include: { word: true }, where: { lessonId: context.id } }),
       prisma.lessonWord.findMany({
-        include: { word: true },
-        where: { lessonId: context.id },
-      }),
-      prisma.lessonWord.findMany({
-        where: {
-          lessonId: context.id,
-          word: { word: { in: [...distractorWords] } },
-        },
+        where: { lessonId: context.id, word: { word: { in: [...distractorWords] } } },
       }),
       prisma.word.findMany({
         orderBy: { word: "asc" },

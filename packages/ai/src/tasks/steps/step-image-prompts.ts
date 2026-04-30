@@ -16,9 +16,7 @@ const imagePromptSchema = z.string().min(1);
  * the saved step order, which prevents image/step mismatches downstream.
  */
 function buildSchema(stepCount: number) {
-  return z.object({
-    prompts: z.array(imagePromptSchema).length(stepCount),
-  });
+  return z.object({ prompts: z.array(imagePromptSchema).length(stepCount) });
 }
 
 type StepImagePromptsParams = {

@@ -45,14 +45,7 @@ export function VisualsGrid() {
 
   return (
     <SceneContainer bg="white">
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 40,
-        }}
-      >
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 40 }}>
         <SceneHeadline setup={t.gridSetup} payoff={t.gridPayoff} payoffStartFrame={18} />
 
         <div

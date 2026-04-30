@@ -54,10 +54,7 @@ describe(buildProviderOptions, () => {
         useFallback: false,
       }),
     ).toEqual({
-      gateway: {
-        models: [],
-        order: ["google", "vertex", "openai", "azure", "anthropic"],
-      },
+      gateway: { models: [], order: ["google", "vertex", "openai", "azure", "anthropic"] },
     });
   });
 
@@ -130,13 +127,7 @@ describe(buildImageProviderOptions, () => {
         quality: "low",
         taskName: "course-thumbnail",
       }),
-    ).toEqual({
-      gateway: {},
-      openai: {
-        output_format: "webp",
-        quality: "low",
-      },
-    });
+    ).toEqual({ gateway: {}, openai: { output_format: "webp", quality: "low" } });
   });
 
   test("adds gateway reporting tags for image tasks when enabled", () => {
@@ -149,13 +140,8 @@ describe(buildImageProviderOptions, () => {
         taskName: "course-thumbnail",
       }),
     ).toEqual({
-      gateway: {
-        tags: ["task:course-thumbnail", "default-model:openai/gpt-image-2"],
-      },
-      openai: {
-        output_format: "webp",
-        quality: "low",
-      },
+      gateway: { tags: ["task:course-thumbnail", "default-model:openai/gpt-image-2"] },
+      openai: { output_format: "webp", quality: "low" },
     });
   });
 });

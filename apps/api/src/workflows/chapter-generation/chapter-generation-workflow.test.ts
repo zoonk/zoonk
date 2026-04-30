@@ -62,9 +62,7 @@ describe(chapterGenerationWorkflow, () => {
 
       await chapterGenerationWorkflow(chapter.id);
 
-      const dbChapter = await prisma.chapter.findUnique({
-        where: { id: chapter.id },
-      });
+      const dbChapter = await prisma.chapter.findUnique({ where: { id: chapter.id } });
 
       expect(dbChapter?.generationStatus).toBe("running");
       expect(generateChapterLessons).not.toHaveBeenCalled();
@@ -85,9 +83,7 @@ describe(chapterGenerationWorkflow, () => {
 
       await chapterGenerationWorkflow(chapter.id);
 
-      const dbChapter = await prisma.chapter.findUnique({
-        where: { id: chapter.id },
-      });
+      const dbChapter = await prisma.chapter.findUnique({ where: { id: chapter.id } });
 
       expect(dbChapter?.generationStatus).toBe("completed");
       expect(generateChapterLessons).not.toHaveBeenCalled();
@@ -114,9 +110,7 @@ describe(chapterGenerationWorkflow, () => {
 
       await chapterGenerationWorkflow(chapter.id);
 
-      const dbChapter = await prisma.chapter.findUnique({
-        where: { id: chapter.id },
-      });
+      const dbChapter = await prisma.chapter.findUnique({ where: { id: chapter.id } });
 
       expect(dbChapter?.generationStatus).toBe("completed");
       expect(dbChapter?.generationRunId).toBe("test-run-id");
@@ -156,9 +150,7 @@ describe(chapterGenerationWorkflow, () => {
       let chapterStatusDuringLessonGen: string | null = null;
 
       vi.mocked(lessonGenerationWorkflow).mockImplementationOnce(async () => {
-        const dbChapter = await prisma.chapter.findUnique({
-          where: { id: chapter.id },
-        });
+        const dbChapter = await prisma.chapter.findUnique({ where: { id: chapter.id } });
         chapterStatusDuringLessonGen = dbChapter?.generationStatus ?? null;
         return "ready";
       });
@@ -177,16 +169,12 @@ describe(chapterGenerationWorkflow, () => {
         title,
       });
 
-      const initialChapter = await prisma.chapter.findUnique({
-        where: { id: chapter.id },
-      });
+      const initialChapter = await prisma.chapter.findUnique({ where: { id: chapter.id } });
       expect(initialChapter?.generationStatus).toBe("pending");
 
       await chapterGenerationWorkflow(chapter.id);
 
-      const finalChapter = await prisma.chapter.findUnique({
-        where: { id: chapter.id },
-      });
+      const finalChapter = await prisma.chapter.findUnique({ where: { id: chapter.id } });
       expect(finalChapter?.generationStatus).toBe("completed");
     });
   });
@@ -209,9 +197,7 @@ describe(chapterGenerationWorkflow, () => {
         "Lesson generation failed",
       );
 
-      const dbChapter = await prisma.chapter.findUnique({
-        where: { id: chapter.id },
-      });
+      const dbChapter = await prisma.chapter.findUnique({ where: { id: chapter.id } });
 
       expect(dbChapter?.generationStatus).toBe("completed");
     });
@@ -229,9 +215,7 @@ describe(chapterGenerationWorkflow, () => {
 
       await expect(chapterGenerationWorkflow(chapter.id)).rejects.toThrow("AI generation failed");
 
-      const dbChapter = await prisma.chapter.findUnique({
-        where: { id: chapter.id },
-      });
+      const dbChapter = await prisma.chapter.findUnique({ where: { id: chapter.id } });
 
       expect(dbChapter?.generationStatus).toBe("failed");
       expect(dbChapter?.generationRunId).toBeNull();

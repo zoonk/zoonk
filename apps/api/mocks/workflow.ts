@@ -1,12 +1,8 @@
 import { vi } from "vitest";
 
-type WorkflowMetadata = {
-  workflowRunId: string;
-};
+type WorkflowMetadata = { workflowRunId: string };
 
-const defaultWorkflowMetadata: WorkflowMetadata = {
-  workflowRunId: "test-run-id",
-};
+const defaultWorkflowMetadata: WorkflowMetadata = { workflowRunId: "test-run-id" };
 
 let workflowMetadata = { ...defaultWorkflowMetadata };
 
@@ -19,12 +15,7 @@ export const workflowWriteMock = vi.fn().mockResolvedValue(null);
  * a stable place to capture writes so stream assertions can inspect them.
  */
 function createWritable() {
-  return {
-    getWriter: () => ({
-      releaseLock: workflowReleaseLockMock,
-      write: workflowWriteMock,
-    }),
-  };
+  return { getWriter: () => ({ releaseLock: workflowReleaseLockMock, write: workflowWriteMock }) };
 }
 
 export class FatalError extends Error {

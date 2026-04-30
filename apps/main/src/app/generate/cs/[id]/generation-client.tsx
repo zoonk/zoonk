@@ -54,10 +54,7 @@ export function GenerationClient({
     isActive ? activePhaseNames : [],
   );
 
-  useCompletionRedirect({
-    status: generation.status,
-    url: `/b/${AI_ORG_SLUG}/c/${courseSlug}`,
-  });
+  useCompletionRedirect({ status: generation.status, url: `/b/${AI_ORG_SLUG}/c/${courseSlug}` });
 
   if (isActive) {
     return (

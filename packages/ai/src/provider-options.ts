@@ -21,10 +21,7 @@ type ProviderOptionsResult = {
 
 type ImageProviderOptionsResult = {
   gateway: Pick<GatewayProviderOptions, "tags">;
-  openai: {
-    output_format: "webp";
-    quality: ImageGenerationQuality;
-  };
+  openai: { output_format: "webp"; quality: ImageGenerationQuality };
 };
 
 /**
@@ -121,13 +118,7 @@ export function buildImageProviderOptions({
     ? buildGatewayTags({ model: getImageReportingModel(model), taskName })
     : undefined;
 
-  return {
-    gateway: tags ? { tags } : {},
-    openai: {
-      output_format: "webp",
-      quality,
-    },
-  };
+  return { gateway: tags ? { tags } : {}, openai: { output_format: "webp", quality } };
 }
 
 /**

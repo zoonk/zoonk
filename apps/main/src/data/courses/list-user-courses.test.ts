@@ -38,15 +38,9 @@ describe("authenticated users", () => {
   });
 
   test("returns courses the user has started", async () => {
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: organization.id,
-    });
+    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
 
-    await courseUserFixture({
-      courseId: course.id,
-      userId: user.id,
-    });
+    await courseUserFixture({ courseId: course.id, userId: user.id });
 
     const result = await listUserCourses(headers);
 
@@ -59,15 +53,9 @@ describe("authenticated users", () => {
     const testUser = await userFixture();
     const testHeaders = await signInAs(testUser.email, testUser.password);
 
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: organization.id,
-    });
+    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
 
-    await courseUserFixture({
-      courseId: course.id,
-      userId: testUser.id,
-    });
+    await courseUserFixture({ courseId: course.id, userId: testUser.id });
 
     const result = await listUserCourses(testHeaders);
 
@@ -97,21 +85,9 @@ describe("authenticated users", () => {
 
     await prisma.courseUser.createMany({
       data: [
-        {
-          courseId: course1.id,
-          startedAt: twoHoursAgo,
-          userId: testUser.id,
-        },
-        {
-          courseId: course2.id,
-          startedAt: now,
-          userId: testUser.id,
-        },
-        {
-          courseId: course3.id,
-          startedAt: oneHourAgo,
-          userId: testUser.id,
-        },
+        { courseId: course1.id, startedAt: twoHoursAgo, userId: testUser.id },
+        { courseId: course2.id, startedAt: now, userId: testUser.id },
+        { courseId: course3.id, startedAt: oneHourAgo, userId: testUser.id },
       ],
     });
 
@@ -160,10 +136,7 @@ describe("authenticated users", () => {
       userId: testUser.id,
     });
 
-    await courseUserFixture({
-      courseId: personalCourse.id,
-      userId: testUser.id,
-    });
+    await courseUserFixture({ courseId: personalCourse.id, userId: testUser.id });
 
     const result = await listUserCourses(testHeaders);
 
@@ -182,14 +155,8 @@ describe("authenticated users", () => {
     ]);
 
     await Promise.all([
-      courseUserFixture({
-        courseId: otherUserCourse.id,
-        userId: otherUser.id,
-      }),
-      courseUserFixture({
-        courseId: testUserCourse.id,
-        userId: testUser.id,
-      }),
+      courseUserFixture({ courseId: otherUserCourse.id, userId: otherUser.id }),
+      courseUserFixture({ courseId: testUserCourse.id, userId: testUser.id }),
     ]);
 
     const result = await listUserCourses(testHeaders);

@@ -42,9 +42,7 @@ async function getChapterIdFromLesson(lessonId?: string) {
 export async function lessonFixture(attrs?: Partial<Lesson> & { lessonId?: string }) {
   const chapterId = attrs?.chapterId ?? (await getChapterIdFromLesson(attrs?.lessonId));
   const { lessonId: _lessonId, ...input } = attrs ?? {};
-  const lesson = await prisma.lesson.create({
-    data: lessonAttrs({ ...input, chapterId }),
-  });
+  const lesson = await prisma.lesson.create({ data: lessonAttrs({ ...input, chapterId }) });
 
   return lesson;
 }

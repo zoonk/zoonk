@@ -7,10 +7,7 @@ import { getScoreHistory } from "./get-score-history";
 
 describe("unauthenticated users", () => {
   test("returns null", async () => {
-    const result = await getScoreHistory({
-      headers: new Headers(),
-      period: "month",
-    });
+    const result = await getScoreHistory({ headers: new Headers(), period: "month" });
     expect(result).toBeNull();
   });
 });
@@ -162,11 +159,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getScoreHistory({
-        headers,
-        offset: 1,
-        period: "month",
-      });
+      const result = await getScoreHistory({ headers, offset: 1, period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.average).toBe(60);
@@ -372,11 +365,7 @@ describe("authenticated users", () => {
         },
       });
 
-      const result = await getScoreHistory({
-        headers,
-        offset: 1,
-        period: "month",
-      });
+      const result = await getScoreHistory({ headers, offset: 1, period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.hasNextPeriod).toBe(true);

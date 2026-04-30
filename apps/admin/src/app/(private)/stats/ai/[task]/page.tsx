@@ -18,9 +18,7 @@ export async function generateMetadata({
     return { title: "AI Task" };
   }
 
-  return {
-    title: formatAiTaskLabel(task),
-  };
+  return { title: formatAiTaskLabel(task) };
 }
 
 /**

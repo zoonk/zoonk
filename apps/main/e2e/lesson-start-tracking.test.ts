@@ -27,9 +27,7 @@ async function createUniqueUser(baseURL: string) {
 async function createAuthenticatedPage(browser: Browser, baseURL: string, email: string) {
   const context = await request.newContext({ baseURL });
 
-  await context.post("/api/auth/sign-in/email", {
-    data: { email, password: "password123" },
-  });
+  await context.post("/api/auth/sign-in/email", { data: { email, password: "password123" } });
 
   const storageState = await context.storageState();
   await context.dispose();
@@ -125,9 +123,7 @@ test.describe("Lesson Start Tracking", () => {
     await page.goto(url);
     await expect(page.getByRole("link", { name: /close/i })).toBeVisible();
 
-    const progress = await prisma.lessonProgress.findFirst({
-      where: { lessonId: lesson.id },
-    });
+    const progress = await prisma.lessonProgress.findFirst({ where: { lessonId: lesson.id } });
 
     expect(progress).toBeNull();
   });

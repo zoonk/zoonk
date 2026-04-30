@@ -19,9 +19,7 @@ import { ArrowRightIcon, BookOpenIcon, BotIcon, TrendingUpIcon } from "lucide-re
 import { type Metadata } from "next";
 import Link from "next/link";
 
-export const metadata: Metadata = {
-  title: "Stats",
-};
+export const metadata: Metadata = { title: "Stats" };
 
 const sections = [
   {

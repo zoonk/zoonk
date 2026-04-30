@@ -7,10 +7,7 @@ export async function GenerateCourseContent({ params }: { params: Promise<{ slug
   const { slug } = await params;
   const locale = await getLocale();
 
-  const suggestion = await getCourseSuggestionBySlug({
-    language: locale,
-    slug,
-  });
+  const suggestion = await getCourseSuggestionBySlug({ language: locale, slug });
 
   if (!suggestion) {
     notFound();

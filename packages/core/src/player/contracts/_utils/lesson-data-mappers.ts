@@ -1,6 +1,4 @@
-export type LessonPronunciationInput = {
-  pronunciation: string;
-};
+export type LessonPronunciationInput = { pronunciation: string };
 
 export type WordRecordInput = {
   id: string;
@@ -17,11 +15,7 @@ export type SentenceRecordInput = {
   audioUrl: string | null;
 };
 
-export type LessonWordInput = {
-  translation: string;
-  distractors: string[];
-  word: WordRecordInput;
-};
+export type LessonWordInput = { translation: string; distractors: string[]; word: WordRecordInput };
 
 export type LessonSentenceInput = {
   translation: string;

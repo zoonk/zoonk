@@ -40,11 +40,7 @@ async function loadExistingScoredResults(taskId: string, modelId: string): Promi
 async function saveScoredResults(taskId: string, modelId: string, results: ScoredResult[]) {
   await ensureResultsDir(taskId);
 
-  const taskResults: ScoredTaskResults = {
-    modelId,
-    results,
-    taskId,
-  };
+  const taskResults: ScoredTaskResults = { modelId, results, taskId };
 
   const filePath = getResultsFilePath(taskId, modelId);
   await fs.writeFile(filePath, JSON.stringify(taskResults, null, 2));
@@ -68,15 +64,9 @@ async function scoreOutput(output: OutputEntry, testCase: TestCase): Promise<Sco
 
   logInfo(`Score: ${scoreResult.score}`);
 
-  const testCaseWithRun: TestCase = {
-    ...testCase,
-    id: output.testCaseId,
-  };
+  const testCaseWithRun: TestCase = { ...testCase, id: output.testCaseId };
 
-  return {
-    steps: scoreResult.steps,
-    testCase: testCaseWithRun,
-  };
+  return { steps: scoreResult.steps, testCase: testCaseWithRun };
 }
 
 function isAlreadyScored(existingResults: ScoredResult[], testCaseId: string): boolean {
@@ -164,11 +154,7 @@ function combineOutputsAndResults(
     };
   });
 
-  return {
-    modelId,
-    results,
-    taskId,
-  };
+  return { modelId, results, taskId };
 }
 
 export const getTaskResults = cache(
@@ -199,10 +185,6 @@ export const getTaskResults = cache(
       };
     });
 
-    return {
-      modelId,
-      results,
-      taskId,
-    };
+    return { modelId, results, taskId };
   },
 );

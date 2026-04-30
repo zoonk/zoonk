@@ -31,11 +31,7 @@ export async function generateSelectImageStep({
       maxImagesPerCall: 1,
       model,
       prompt: getSelectImageStepPrompt(prompt, language),
-      providerOptions: buildImageProviderOptions({
-        model,
-        quality,
-        taskName,
-      }),
+      providerOptions: buildImageProviderOptions({ model, quality, taskName }),
       size: "1024x1024",
     }),
   );

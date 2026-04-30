@@ -57,10 +57,7 @@ test.beforeAll(async () => {
     second: `History of E2E Testing ${uniqueId}`,
   };
 
-  lessonSlugs = {
-    first: `e2e-what-is-${uniqueId}`,
-    second: `e2e-history-of-${uniqueId}`,
-  };
+  lessonSlugs = { first: `e2e-what-is-${uniqueId}`, second: `e2e-history-of-${uniqueId}` };
 
   const unpublishedLessonTitle = `Unpublished Lesson ${uniqueId}`;
 
@@ -177,12 +174,7 @@ test.describe("Chapter Detail Page", () => {
   test("shows chapter content with title, description, and position", async ({ page }) => {
     await page.goto(chapterUrl);
 
-    await expect(
-      page.getByRole("heading", {
-        level: 1,
-        name: chapterTitle,
-      }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: chapterTitle })).toBeVisible();
 
     await expect(page.getByText(`Different types of learning ${uniqueId}`)).toBeVisible();
 
@@ -298,10 +290,7 @@ test.describe("Chapter - No Lessons", () => {
 
     await expect(page).toHaveURL(url);
     await expect(
-      page.getByRole("heading", {
-        level: 1,
-        name: `Non AI Chapter ${nonAiUniqueId}`,
-      }),
+      page.getByRole("heading", { level: 1, name: `Non AI Chapter ${nonAiUniqueId}` }),
     ).toBeVisible();
     await expect(page.getByRole("link", { name: /^start$/i })).not.toBeVisible();
   });

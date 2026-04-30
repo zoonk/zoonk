@@ -18,14 +18,7 @@ export function Website() {
 
   return (
     <SceneContainer bg="white">
-      <span
-        style={{
-          fontSize: 48,
-          fontWeight: 500,
-          color: COLORS.text,
-          opacity,
-        }}
-      >
+      <span style={{ fontSize: 48, fontWeight: 500, color: COLORS.text, opacity }}>
         {t.website}
       </span>
     </SceneContainer>

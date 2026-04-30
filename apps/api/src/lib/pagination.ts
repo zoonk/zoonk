@@ -1,8 +1,6 @@
 import { z } from "zod";
 
-const cursorPayloadSchema = z.object({
-  offset: z.number().int().min(0),
-});
+const cursorPayloadSchema = z.object({ offset: z.number().int().min(0) });
 
 function encodeCursor(offset: number): string {
   return Buffer.from(JSON.stringify({ offset })).toString("base64url");
@@ -22,10 +20,7 @@ export function decodeCursor(cursor: string): number | null {
 
 export type PaginatedResponse<T> = {
   data: T[];
-  pagination: {
-    nextCursor: string | null;
-    hasMore: boolean;
-  };
+  pagination: { nextCursor: string | null; hasMore: boolean };
 };
 
 export function createPaginatedResponse<T>(
@@ -38,11 +33,5 @@ export function createPaginatedResponse<T>(
   const data = hasMore ? items.slice(0, limit) : items;
   const nextOffset = offset + data.length;
 
-  return {
-    data,
-    pagination: {
-      hasMore,
-      nextCursor: hasMore ? encodeCursor(nextOffset) : null,
-    },
-  };
+  return { data, pagination: { hasMore, nextCursor: hasMore ? encodeCursor(nextOffset) : null } };
 }

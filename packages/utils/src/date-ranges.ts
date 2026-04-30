@@ -170,15 +170,13 @@ export function formatPeriodLabel(
   }
 
   if (period === "6months") {
-    const startMonth = new Intl.DateTimeFormat(locale, {
-      month: "short",
-      timeZone: "UTC",
-    }).format(periodStart);
+    const startMonth = new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" }).format(
+      periodStart,
+    );
 
-    const endMonth = new Intl.DateTimeFormat(locale, {
-      month: "short",
-      timeZone: "UTC",
-    }).format(periodEnd);
+    const endMonth = new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" }).format(
+      periodEnd,
+    );
 
     return `${startMonth} - ${endMonth} ${periodStart.getUTCFullYear()}`;
   }

@@ -181,11 +181,7 @@ export async function createE2EProgressData(userId: string): Promise<void> {
     lessonId: completedLesson.id,
   });
 
-  await userProgressFixture({
-    currentEnergy: 75,
-    totalBrainPower: 15_000n,
-    userId,
-  });
+  await userProgressFixture({ currentEnergy: 75, totalBrainPower: 15_000n, userId });
 
   await dailyProgressFixtureMany(buildDailyProgressInputs(today, userId));
   await createStepAttempts(step.id, userId, now);
@@ -200,12 +196,7 @@ export async function createE2EProgressData(userId: string): Promise<void> {
         userId,
       },
     }),
-    prisma.courseUser.create({
-      data: { courseId: course.id, userId },
-    }),
-    prisma.course.update({
-      data: { userCount: { increment: 1 } },
-      where: { id: course.id },
-    }),
+    prisma.courseUser.create({ data: { courseId: course.id, userId } }),
+    prisma.course.update({ data: { userCount: { increment: 1 } }, where: { id: course.id } }),
   ]);
 }

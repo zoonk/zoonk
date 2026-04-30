@@ -7,12 +7,7 @@ const SWIPE_DISTANCE_THRESHOLD = 48;
 const SWIPE_HORIZONTAL_RATIO = 1.05;
 const TAP_DISTANCE_THRESHOLD = 12;
 
-type SwipeGesture = {
-  container: HTMLDivElement;
-  startX: number;
-  startY: number;
-  touchId: number;
-};
+type SwipeGesture = { container: HTMLDivElement; startX: number; startY: number; touchId: number };
 
 export type SwipeNavigableStepFrame = "default" | "media";
 

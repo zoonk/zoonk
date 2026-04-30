@@ -44,10 +44,7 @@ export async function BestDay({ score, dayOfWeek }: { score: number; dayOfWeek: 
 
         <FeatureCardBody>
           <FeatureCardTitle className="first-letter:uppercase">
-            {t("{day} with {value}%", {
-              day: dayName,
-              value: formattedScore,
-            })}
+            {t("{day} with {value}%", { day: dayName, value: formattedScore })}
           </FeatureCardTitle>
           <FeatureCardSubtitle>{t("Past 3 months")}</FeatureCardSubtitle>
         </FeatureCardBody>

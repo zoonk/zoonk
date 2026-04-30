@@ -24,15 +24,9 @@ export async function LevelChart({
   const locale = await getLocale();
   const periodLabel = formatPeriodLabel(periodStart, periodEnd, period, locale);
 
-  const serializedDataPoints: {
-    date: string;
-    bp: number;
-    label: string;
-  }[] = dataPoints.map((point) => ({
-    bp: point.bp,
-    date: point.date.toISOString(),
-    label: point.label,
-  }));
+  const serializedDataPoints: { date: string; bp: number; label: string }[] = dataPoints.map(
+    (point) => ({ bp: point.bp, date: point.date.toISOString(), label: point.label }),
+  );
 
   return (
     <PerformanceChartLayout

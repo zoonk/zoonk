@@ -176,9 +176,7 @@ test.describe("Course Detail Page", () => {
 
     await page.waitForURL(`/generate/cs/${suggestion.id}`, { timeout: 10_000 });
 
-    await expect(page.getByText(/creating your course/i)).toBeVisible({
-      timeout: 10_000,
-    });
+    await expect(page.getByText(/creating your course/i)).toBeVisible({ timeout: 10_000 });
   });
 
   test("non-AI courses with no chapters stay on the course page", async ({ page }) => {

@@ -20,11 +20,7 @@ export async function handleCourseFailureStep(input: {
 
   const { courseId, courseSuggestionId } = input;
 
-  logError("[Course Workflow Failure]", {
-    courseId,
-    courseSuggestionId,
-    error: input.error,
-  });
+  logError("[Course Workflow Failure]", { courseId, courseSuggestionId, error: input.error });
 
   if (courseId) {
     const results = await Promise.allSettled([
@@ -74,10 +70,7 @@ export async function handleChapterFailureStep(input: {
 }): Promise<void> {
   "use step";
 
-  logError("[Chapter Workflow Failure]", {
-    chapterId: input.chapterId,
-    error: input.error,
-  });
+  logError("[Chapter Workflow Failure]", { chapterId: input.chapterId, error: input.error });
 
   await prisma.chapter.update({
     data: { generationRunId: null, generationStatus: "failed" },

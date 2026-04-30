@@ -6,26 +6,14 @@ import { type VariantProps, cva } from "class-variance-authority";
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
 const accordionVariants = cva("flex w-full flex-col overflow-hidden", {
-  defaultVariants: {
-    variant: "default",
-  },
-  variants: {
-    variant: {
-      default: "rounded-2xl border",
-      ghost: "rounded-none border-0",
-    },
-  },
+  defaultVariants: { variant: "default" },
+  variants: { variant: { default: "rounded-2xl border", ghost: "rounded-none border-0" } },
 });
 
 const accordionItemVariants = cva("data-open:bg-muted/50", {
-  defaultVariants: {
-    variant: "default",
-  },
+  defaultVariants: { variant: "default" },
   variants: {
-    variant: {
-      default: "not-last:border-b",
-      ghost: "border-b-0 data-open:bg-transparent",
-    },
+    variant: { default: "not-last:border-b", ghost: "border-b-0 data-open:bg-transparent" },
   },
 });
 

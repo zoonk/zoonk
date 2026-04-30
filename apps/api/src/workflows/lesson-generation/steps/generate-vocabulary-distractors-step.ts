@@ -21,10 +21,7 @@ export async function generateVocabularyDistractorsStep({
   await stream.status({ status: "started", step: "generateVocabularyDistractors" });
 
   const distractors = await generateDirectDistractors({
-    entries: words.map((word) => ({
-      input: word.word,
-      key: word.word,
-    })),
+    entries: words.map((word) => ({ input: word.word, key: word.word })),
     language: context.chapter.course.targetLanguage ?? "",
     shape: "any",
   });

@@ -22,12 +22,7 @@ export async function listPendingTargets({
   states: ContinueLearningState[];
 }) {
   return Promise.all(
-    rows.map((row, idx) =>
-      listPendingTarget({
-        row,
-        state: states[idx] ?? null,
-      }),
-    ),
+    rows.map((row, idx) => listPendingTarget({ row, state: states[idx] ?? null })),
   );
 }
 

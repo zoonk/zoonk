@@ -16,11 +16,7 @@ describe(getLessonSentencesForLessons, () => {
   beforeAll(async () => {
     org = await organizationFixture({ kind: "brand" });
 
-    course = await courseFixture({
-      isPublished: true,
-      language: "es",
-      organizationId: org.id,
-    });
+    course = await courseFixture({ isPublished: true, language: "es", organizationId: org.id });
 
     chapter = await chapterFixture({
       courseId: course.id,

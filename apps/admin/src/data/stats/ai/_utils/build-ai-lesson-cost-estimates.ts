@@ -114,11 +114,7 @@ export function buildTutorialLessonEstimate({
 }): AiGenerationCostEstimate {
   const tutorialLessonCount = structureStats.tutorialLessonCount;
   const lineItems = [
-    buildGatewayLineItem({
-      averageRequestsPerRun: 1,
-      taskName: "lesson-tutorial",
-      usageByTask,
-    }),
+    buildGatewayLineItem({ averageRequestsPerRun: 1, taskName: "lesson-tutorial", usageByTask }),
     buildGatewayLineItem({
       averageRequestsPerRun: 1,
       taskName: STEP_IMAGE_PROMPTS_TASK,

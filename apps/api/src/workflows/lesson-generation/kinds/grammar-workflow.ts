@@ -19,10 +19,5 @@ export async function grammarLessonWorkflow(context: LessonContext): Promise<voi
     generateGrammarRomanizationStep({ context, grammarContent }),
   ]);
 
-  await saveGrammarLessonStep({
-    context,
-    grammarContent,
-    romanizations,
-    userContent,
-  });
+  await saveGrammarLessonStep({ context, grammarContent, romanizations, userContent });
 }

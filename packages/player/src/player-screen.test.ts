@@ -44,10 +44,7 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
 function buildScreen({
   lessonKind = "quiz",
   state = buildState(),
-}: {
-  lessonKind?: LessonKind;
-  state?: PlayerState;
-} = {}) {
+}: { lessonKind?: LessonKind; state?: PlayerState } = {}) {
   return getPlayerScreenModel({ ...state, lessonKind });
 }
 

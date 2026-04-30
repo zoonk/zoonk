@@ -10,9 +10,7 @@ export async function generateImageStep(course: CourseContext): Promise<string |
 
   await stream.status({ status: "started", step: "generateImage" });
 
-  const { data: imageUrl, error } = await generateCourseImage({
-    title: course.courseTitle,
-  });
+  const { data: imageUrl, error } = await generateCourseImage({ title: course.courseTitle });
 
   if (error) {
     throw error;

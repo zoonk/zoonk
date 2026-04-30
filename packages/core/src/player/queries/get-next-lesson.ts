@@ -13,14 +13,7 @@ type NextLesson = { id: string; needsGeneration: boolean };
  */
 export async function getNextLesson(lessonId: string): Promise<NextLesson | null> {
   const { data: lesson, error } = await safeAsync(() =>
-    prisma.lesson.findFirst({
-      include: {
-        chapter: true,
-      },
-      where: {
-        id: lessonId,
-      },
-    }),
+    prisma.lesson.findFirst({ include: { chapter: true }, where: { id: lessonId } }),
   );
 
   if (error || !lesson) {
@@ -36,13 +29,8 @@ export async function getNextLesson(lessonId: string): Promise<NextLesson | null
         courseWhere: { id: chapter.courseId },
         lessonWhere: {
           OR: [
-            {
-              chapter: { id: chapter.id },
-              position: { gt: lesson.position },
-            },
-            {
-              chapter: { position: { gt: chapter.position } },
-            },
+            { chapter: { id: chapter.id }, position: { gt: lesson.position } },
+            { chapter: { position: { gt: chapter.position } } },
           ],
         },
       }),

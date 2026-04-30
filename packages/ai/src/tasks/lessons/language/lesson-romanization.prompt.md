@@ -87,7 +87,5 @@ Maintain punctuation, capitalization at sentence beginnings, and spacing convent
 Return a JSON object with a `romanizations` array containing one string per input text.
 
 ```json
-{
-  "romanizations": ["Kore wa yasui desu.", "Watashi wa gakusei desu."]
-}
+{ "romanizations": ["Kore wa yasui desu.", "Watashi wa gakusei desu."] }
 ```

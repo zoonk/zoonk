@@ -11,8 +11,5 @@ export const getDailySignups = cache(async (start: Date, end: Date) => {
     ORDER BY date ASC
   `;
 
-  return results.map((row) => ({
-    count: Number(row.count),
-    date: row.date,
-  }));
+  return results.map((row) => ({ count: Number(row.count), date: row.date }));
 });

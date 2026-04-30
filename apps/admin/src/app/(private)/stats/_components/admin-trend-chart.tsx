@@ -23,11 +23,7 @@ const BAR_OPACITY = 0.8;
 const BAR_CORNER_RADIUS = 4;
 const BAR_RADIUS: [number, number, number, number] = [BAR_CORNER_RADIUS, BAR_CORNER_RADIUS, 0, 0];
 
-type DataPoint = {
-  date: string;
-  label: string;
-  value: number;
-};
+type DataPoint = { date: string; label: string; value: number };
 
 export function AdminTrendChart({
   average,

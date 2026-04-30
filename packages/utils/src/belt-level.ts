@@ -32,11 +32,7 @@ export type BeltLevelResult = {
   progressInLevel: number;
 };
 
-type BeltConfig = {
-  bpPerLevel: number;
-  color: BeltColor;
-  startBp: number;
-};
+type BeltConfig = { bpPerLevel: number; color: BeltColor; startBp: number };
 
 // Non-empty tuple guarantees BELT_CONFIGS[0] is always defined
 const BELT_CONFIGS: readonly [BeltConfig, ...BeltConfig[]] = [

@@ -5,9 +5,9 @@ import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateVocabularyContentStep } from "./generate-vocabulary-content-step";
 
 vi.mock("@zoonk/ai/tasks/lessons/language/vocabulary", () => ({
-  generateLessonVocabulary: vi.fn().mockResolvedValue({
-    data: { words: [{ translation: "cat", word: "猫" }] },
-  }),
+  generateLessonVocabulary: vi
+    .fn()
+    .mockResolvedValue({ data: { words: [{ translation: "cat", word: "猫" }] } }),
 }));
 
 describe(generateVocabularyContentStep, () => {
@@ -23,22 +23,13 @@ describe(generateVocabularyContentStep, () => {
   });
 
   test("generates vocabulary words with target and user language context", async () => {
-    const context = await createLessonContext({
-      organizationId,
-      targetLanguage: "ja",
-    });
+    const context = await createLessonContext({ organizationId, targetLanguage: "ja" });
 
     const result = await generateVocabularyContentStep(context);
 
-    expect(result).toEqual({
-      kind: "vocabulary",
-      words: [{ translation: "cat", word: "猫" }],
-    });
+    expect(result).toEqual({ kind: "vocabulary", words: [{ translation: "cat", word: "猫" }] });
     expect(generateLessonVocabulary).toHaveBeenCalledWith(
-      expect.objectContaining({
-        targetLanguage: "ja",
-        userLanguage: context.language,
-      }),
+      expect.objectContaining({ targetLanguage: "ja", userLanguage: context.language }),
     );
   });
 

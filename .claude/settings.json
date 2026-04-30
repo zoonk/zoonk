@@ -27,11 +27,6 @@
     "typescript-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
-    "nextjs": {
-      "source": {
-        "repo": "vercel/next.js",
-        "source": "github"
-      }
-    }
+    "nextjs": { "source": { "repo": "vercel/next.js", "source": "github" } }
   }
 }

@@ -6,11 +6,13 @@ import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateReadingRomanizationStep } from "./generate-reading-romanization-step";
 
 vi.mock("@zoonk/ai/tasks/lessons/language/romanization", () => ({
-  generateLessonRomanization: vi.fn().mockImplementation(({ texts }) =>
-    Promise.resolve({
-      data: { romanizations: texts.map((text: string) => `${text} romanized`) },
-    }),
-  ),
+  generateLessonRomanization: vi
+    .fn()
+    .mockImplementation(({ texts }) =>
+      Promise.resolve({
+        data: { romanizations: texts.map((text: string) => `${text} romanized`) },
+      }),
+    ),
 }));
 
 describe(generateReadingRomanizationStep, () => {
@@ -38,9 +40,7 @@ describe(generateReadingRomanizationStep, () => {
     const sentences = [{ explanation: "", sentence, translation: "cat and water" }];
 
     await expect(generateReadingRomanizationStep({ context, sentences })).resolves.toEqual({
-      romanizations: {
-        [sentence]: `${sentence} romanized`,
-      },
+      romanizations: { [sentence]: `${sentence} romanized` },
     });
     expect(generateLessonRomanization).toHaveBeenCalledWith({
       targetLanguage: "ja",

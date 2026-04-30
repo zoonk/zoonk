@@ -13,26 +13,14 @@ const REVIEW_TASKS: Record<ReviewTaskType, { group: ReviewGroup; label: string; 
     label: "Course Suggestions",
     path: "/review/text/course-suggestions",
   },
-  sentenceAudio: {
-    group: "audio",
-    label: "Sentence Audio",
-    path: "/review/audio/sentence-audio",
-  },
-  stepImage: {
-    group: "image",
-    label: "Step Images",
-    path: "/review/image/step-image",
-  },
+  sentenceAudio: { group: "audio", label: "Sentence Audio", path: "/review/audio/sentence-audio" },
+  stepImage: { group: "image", label: "Step Images", path: "/review/image/step-image" },
   stepSelectImage: {
     group: "image",
     label: "Select Images",
     path: "/review/image/step-select-image",
   },
-  wordAudio: {
-    group: "audio",
-    label: "Word Audio",
-    path: "/review/audio/word-audio",
-  },
+  wordAudio: { group: "audio", label: "Word Audio", path: "/review/audio/word-audio" },
 };
 
 function fromKebabCase(str: string): string {

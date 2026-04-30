@@ -43,16 +43,12 @@ export function LaunchVideo({ locale }: LaunchVideoProps) {
         <Audio
           src={staticFile("audio/background.mp3")}
           volume={(f) => {
-            const fadeIn = interpolate(f, [0, 2 * fps], [0, 0.2], {
-              extrapolateRight: "clamp",
-            });
+            const fadeIn = interpolate(f, [0, 2 * fps], [0, 0.2], { extrapolateRight: "clamp" });
             const fadeOut = interpolate(
               f,
               [durationInFrames - 3 * fps, durationInFrames],
               [0.2, 0],
-              {
-                extrapolateLeft: "clamp",
-              },
+              { extrapolateLeft: "clamp" },
             );
             return Math.min(fadeIn, fadeOut);
           }}

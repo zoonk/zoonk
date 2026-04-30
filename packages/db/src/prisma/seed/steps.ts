@@ -8,10 +8,7 @@ import {
 const stepsData: {
   lessonSlug: string;
   language: string;
-  steps: {
-    kind: StepKind;
-    content: Prisma.InputJsonValue;
-  }[];
+  steps: { kind: StepKind; content: Prisma.InputJsonValue }[];
 }[] = [
   {
     language: "en",
@@ -129,15 +126,9 @@ const stepsData: {
       {
         content: {
           pairs: [
-            {
-              left: "Supervised Learning",
-              right: "Learning from labeled examples",
-            },
+            { left: "Supervised Learning", right: "Learning from labeled examples" },
             { left: "Unsupervised Learning", right: "Finding hidden patterns" },
-            {
-              left: "Reinforcement Learning",
-              right: "Learning through trial and error",
-            },
+            { left: "Reinforcement Learning", right: "Learning through trial and error" },
           ],
           question: "Match each learning type to its description.",
         },
@@ -196,20 +187,14 @@ const stepsData: {
 export async function seedSteps(prisma: PrismaClient, org: Organization): Promise<void> {
   const stepCreationPromises = stepsData.map(async (data) => {
     const lesson = await prisma.lesson.findFirst({
-      where: {
-        language: data.language,
-        organizationId: org.id,
-        slug: data.lessonSlug,
-      },
+      where: { language: data.language, organizationId: org.id, slug: data.lessonSlug },
     });
 
     if (!lesson) {
       return;
     }
 
-    const existingCount = await prisma.step.count({
-      where: { lessonId: lesson.id },
-    });
+    const existingCount = await prisma.step.count({ where: { lessonId: lesson.id } });
 
     if (existingCount > 0) {
       return;

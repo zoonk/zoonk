@@ -3,13 +3,9 @@ import { stepImageSchema } from "./image";
 
 describe("step image contract", () => {
   test("parses a prompt-only image payload", () => {
-    const image = stepImageSchema.parse({
-      prompt: "A clean diagram of a neural network",
-    });
+    const image = stepImageSchema.parse({ prompt: "A clean diagram of a neural network" });
 
-    expect(image).toEqual({
-      prompt: "A clean diagram of a neural network",
-    });
+    expect(image).toEqual({ prompt: "A clean diagram of a neural network" });
   });
 
   test("parses an uploaded image payload", () => {
@@ -26,9 +22,7 @@ describe("step image contract", () => {
 
   test("rejects missing prompts", () => {
     expect(() =>
-      stepImageSchema.parse({
-        url: "https://example.com/neural-network.webp",
-      }),
+      stepImageSchema.parse({ url: "https://example.com/neural-network.webp" }),
     ).toThrow();
   });
 });

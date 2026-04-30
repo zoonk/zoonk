@@ -7,10 +7,7 @@ import { z } from "zod";
  * image shape.
  */
 export const stepImageSchema = z
-  .object({
-    prompt: z.string(),
-    url: z.string().optional(),
-  })
+  .object({ prompt: z.string(), url: z.string().optional() })
   .strict();
 
 export type StepImage = z.infer<typeof stepImageSchema>;

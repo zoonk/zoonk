@@ -24,11 +24,7 @@ export async function generateWithGemini({
   const response = await client.models.generateContent({
     config: {
       responseModalities: ["AUDIO"],
-      speechConfig: {
-        voiceConfig: {
-          prebuiltVoiceConfig: { voiceName: voice },
-        },
-      },
+      speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } },
     },
     contents: [{ parts: [{ text: `${instructions}\n\n${text}` }] }],
     model: MODEL,

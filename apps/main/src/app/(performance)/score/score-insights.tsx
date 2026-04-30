@@ -106,10 +106,7 @@ async function BestDayCard({
 
       <FeatureCardBody>
         <FeatureCardTitle className="first-letter:uppercase">
-          {t("{day} with {value}%", {
-            day: dayName,
-            value: formattedScore,
-          })}
+          {t("{day} with {value}%", { day: dayName, value: formattedScore })}
         </FeatureCardTitle>
         <FeatureCardSubtitle>{periodLabel}</FeatureCardSubtitle>
       </FeatureCardBody>
@@ -151,10 +148,7 @@ async function BestTimeCard({
 
       <FeatureCardBody>
         <FeatureCardTitle className="first-letter:uppercase">
-          {t("{period} with {value}%", {
-            period: periodName,
-            value: formattedScore,
-          })}
+          {t("{period} with {value}%", { period: periodName, value: formattedScore })}
         </FeatureCardTitle>
         <FeatureCardSubtitle>{periodLabel}</FeatureCardSubtitle>
       </FeatureCardBody>

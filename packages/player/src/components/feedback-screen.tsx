@@ -110,13 +110,7 @@ export function FeedbackScreenContent({
   const feedback = rawFeedback ? replaceName(rawFeedback) : null;
   const selectedText = getSelectedText(result, step);
   const questionText = getQuestionText(result, step);
-  const rom = getFeedbackRomanization({
-    correctAnswer,
-    questionText,
-    result,
-    selectedText,
-    step,
-  });
+  const rom = getFeedbackRomanization({ correctAnswer, questionText, result, selectedText, step });
   const audioUrl = getFeedbackAudioUrl(step);
 
   return (

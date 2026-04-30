@@ -5,13 +5,9 @@ import { type Mock, afterEach, describe, expect, it, vi } from "vitest";
 import { type SelectedAnswer } from "../player-reducer";
 import { FillBlankStep } from "./fill-blank-step";
 
-vi.mock("next-intl", () => ({
-  useExtracted: () => (value: string) => value,
-}));
+vi.mock("next-intl", () => ({ useExtracted: () => (value: string) => value }));
 
-vi.mock("./user-name-context", () => ({
-  useReplaceName: () => (value: string) => value,
-}));
+vi.mock("./user-name-context", () => ({ useReplaceName: () => (value: string) => value }));
 
 function buildFillBlankStep(overrides: Record<string, unknown> = {}) {
   return {

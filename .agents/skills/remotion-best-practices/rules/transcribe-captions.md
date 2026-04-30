@@ -34,15 +34,9 @@ import fs from "fs";
 
 const to = path.join(process.cwd(), "whisper.cpp");
 
-await installWhisperCpp({
-  to,
-  version: "1.5.5",
-});
+await installWhisperCpp({ to, version: "1.5.5" });
 
-await downloadWhisperModel({
-  model: "medium.en",
-  folder: to,
-});
+await downloadWhisperModel({ model: "medium.en", folder: to });
 
 // Convert the audio to a 16KHz wav file first if needed:
 // import {execSync} from 'child_process';
@@ -57,9 +51,7 @@ const whisperCppOutput = await transcribe({
 });
 
 // Optional: Apply our recommended postprocessing
-const { captions } = toCaptions({
-  whisperCppOutput,
-});
+const { captions } = toCaptions({ whisperCppOutput });
 
 // Write it to the public/ folder so it can be fetched from Remotion
 fs.writeFileSync("captions123.json", JSON.stringify(captions, null, 2));

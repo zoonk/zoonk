@@ -18,12 +18,8 @@
   "includeEntryExports": true,
   "tags": ["-lintignore", "-internal", "-public"],
   "workspaces": {
-    "apps/api": {
-      "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts", "!**/_test-utils/**!"]
-    },
-    "apps/blog": {
-      "project": ["src/**/*.{ts,tsx}!"]
-    },
+    "apps/api": { "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts", "!**/_test-utils/**!"] },
+    "apps/blog": { "project": ["src/**/*.{ts,tsx}!"] },
     "apps/main": {
       "entry": ["src/app/privacy/*.mdx", "src/app/terms/*.mdx"],
       "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts"]
@@ -33,19 +29,13 @@
       "ignoreDependencies": ["@remotion/cli!"],
       "project": ["src/**/*.{ts,tsx}!"]
     },
-    "packages/core": {
-      "project": ["src/**/*.ts!"]
-    },
+    "packages/core": { "project": ["src/**/*.ts!"] },
     "packages/db": {
       "entry": ["prisma.config.ts"],
       "ignore": ["src/prisma/seed.ts", "src/prisma/seed/**"],
       "prisma": false
     },
-    "packages/player": {
-      "project": ["src/**/*.{ts,tsx}!", "!**/_test-utils/**!"]
-    },
-    "packages/ui": {
-      "includeEntryExports": false
-    }
+    "packages/player": { "project": ["src/**/*.{ts,tsx}!", "!**/_test-utils/**!"] },
+    "packages/ui": { "includeEntryExports": false }
   }
 }

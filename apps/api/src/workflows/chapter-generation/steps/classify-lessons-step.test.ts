@@ -7,13 +7,9 @@ import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { classifyLessonsStep } from "./classify-lessons-step";
 import { type ChapterContext } from "./get-chapter-step";
 
-const { generateLessonKindMock } = vi.hoisted(() => ({
-  generateLessonKindMock: vi.fn(),
-}));
+const { generateLessonKindMock } = vi.hoisted(() => ({ generateLessonKindMock: vi.fn() }));
 
-vi.mock("@zoonk/ai/tasks/lessons/kind", () => ({
-  generateLessonKind: generateLessonKindMock,
-}));
+vi.mock("@zoonk/ai/tasks/lessons/kind", () => ({ generateLessonKind: generateLessonKindMock }));
 
 describe(classifyLessonsStep, () => {
   let context: ChapterContext;
@@ -27,12 +23,7 @@ describe(classifyLessonsStep, () => {
       title: `Classify Lessons Chapter ${randomUUID()}`,
     });
 
-    context = {
-      ...chapter,
-      _count: { lessons: 0 },
-      course,
-      neighboringChapters: [],
-    };
+    context = { ...chapter, _count: { lessons: 0 }, course, neighboringChapters: [] };
   });
 
   beforeEach(() => {

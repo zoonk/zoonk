@@ -26,11 +26,7 @@ describe(fetchExistingWordCasing, () => {
     const id = randomUUID().slice(0, 8);
     const originalCasing = `Hola${id}`;
 
-    await wordFixture({
-      organizationId,
-      targetLanguage: "es",
-      word: originalCasing,
-    });
+    await wordFixture({ organizationId, targetLanguage: "es", word: originalCasing });
 
     const result = await fetchExistingWordCasing({
       organizationId,
@@ -45,11 +41,7 @@ describe(fetchExistingWordCasing, () => {
     const id = randomUUID().slice(0, 8);
     const originalCasing = `Buenos${id}`;
 
-    await wordFixture({
-      organizationId,
-      targetLanguage: "es",
-      word: originalCasing,
-    });
+    await wordFixture({ organizationId, targetLanguage: "es", word: originalCasing });
 
     const result = await fetchExistingWordCasing({
       organizationId,
@@ -76,21 +68,14 @@ describe(fetchExistingWordCasing, () => {
       words: [word1.toLowerCase(), word2.toLowerCase()],
     });
 
-    expect(result).toEqual({
-      [word1.toLowerCase()]: word1,
-      [word2.toLowerCase()]: word2,
-    });
+    expect(result).toEqual({ [word1.toLowerCase()]: word1, [word2.toLowerCase()]: word2 });
   });
 
   test("does not match words from a different target language", async () => {
     const id = randomUUID().slice(0, 8);
     const word = `Bonjour${id}`;
 
-    await wordFixture({
-      organizationId,
-      targetLanguage: "fr",
-      word,
-    });
+    await wordFixture({ organizationId, targetLanguage: "fr", word });
 
     const result = await fetchExistingWordCasing({
       organizationId,

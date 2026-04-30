@@ -56,10 +56,7 @@ function SortableItem({
     id: item.id,
   });
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
+  const style = { transform: CSS.Transform.toString(transform), transition };
 
   return (
     <div
@@ -248,10 +245,7 @@ export function SortOrderStep({
   const handleReorder = useCallback(
     (reordered: SortItem[]) => {
       setItems(reordered);
-      onSelectAnswer(step.id, {
-        kind: "sortOrder",
-        userOrder: reordered.map((item) => item.text),
-      });
+      onSelectAnswer(step.id, { kind: "sortOrder", userOrder: reordered.map((item) => item.text) });
     },
     [onSelectAnswer, step.id],
   );

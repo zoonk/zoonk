@@ -10,10 +10,7 @@ import systemPrompt from "./lesson-grammar-content.prompt.md";
 const taskName = "lesson-grammar-content";
 const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
-const exampleSchema = z.object({
-  highlight: z.string(),
-  sentence: z.string(),
-});
+const exampleSchema = z.object({ highlight: z.string(), sentence: z.string() });
 
 const exerciseSchema = z.object({
   answer: z.string(),

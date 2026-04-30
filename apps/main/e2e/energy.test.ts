@@ -25,9 +25,7 @@ test.describe("Energy Page", () => {
       // User clicks energy card on home page (use flexible matcher for energy percentage)
       await authenticatedPage
         .getByRole("link")
-        .filter({
-          has: authenticatedPage.getByText(/your energy is \d+(\.\d+)?%/i),
-        })
+        .filter({ has: authenticatedPage.getByText(/your energy is \d+(\.\d+)?%/i) })
         .click();
 
       // Wait for navigation to energy page
@@ -95,9 +93,7 @@ test.describe("Energy Page", () => {
       await expect(authenticatedPage.getByText(/vs last month/i)).toBeVisible();
 
       // Navigate back in time by clicking previous period
-      const prevButton = authenticatedPage.getByRole("button", {
-        name: /previous period/i,
-      });
+      const prevButton = authenticatedPage.getByRole("button", { name: /previous period/i });
 
       await prevButton.click();
       await authenticatedPage.waitForURL(/offset=1/);

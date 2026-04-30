@@ -18,17 +18,9 @@ import Image from "next/image";
 import { type MouseEvent, type TouchEvent, useState } from "react";
 import { type StepImageFit, StepImageView } from "./step-image";
 
-type ImageSize = {
-  height: number;
-  width: number;
-};
+type ImageSize = { height: number; width: number };
 
-type Rect = {
-  bottom: number;
-  left: number;
-  right: number;
-  top: number;
-};
+type Rect = { bottom: number; left: number; right: number; top: number };
 
 /**
  * Gives cropped step images an explicit escape hatch without adding visible
@@ -132,12 +124,7 @@ function getContainedImageRect({
   const left = containerRect.left + (containerRect.width - renderedWidth) / 2;
   const top = containerRect.top + (containerRect.height - renderedHeight) / 2;
 
-  return {
-    bottom: top + renderedHeight,
-    left,
-    right: left + renderedWidth,
-    top,
-  };
+  return { bottom: top + renderedHeight, left, right: left + renderedWidth, top };
 }
 
 /**

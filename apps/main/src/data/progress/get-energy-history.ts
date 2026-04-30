@@ -10,11 +10,7 @@ import { fillGapsWithDecay } from "./_fill-gaps";
 
 export type EnergyPeriod = HistoryPeriod;
 
-export type EnergyDataPoint = {
-  date: Date;
-  energy: number;
-  label: string;
-};
+export type EnergyDataPoint = { date: Date; energy: number; label: string };
 
 type EnergyHistoryData = {
   dataPoints: EnergyDataPoint[];
@@ -56,9 +52,7 @@ function getPreviousAverage(
 
 async function hasEarlierData(userId: string, beforeDate: Date): Promise<boolean> {
   const { data } = await safeAsync(() =>
-    prisma.dailyProgress.findFirst({
-      where: { date: { lt: beforeDate }, userId },
-    }),
+    prisma.dailyProgress.findFirst({ where: { date: { lt: beforeDate }, userId } }),
   );
   return Boolean(data);
 }
@@ -137,10 +131,7 @@ async function fetchDailyData(
   }
 
   return {
-    data: result.data.map((row) => ({
-      date: row.date,
-      energy: row.energyAtEnd,
-    })),
+    data: result.data.map((row) => ({ date: row.date, energy: row.energyAtEnd })),
     error: null,
   };
 }

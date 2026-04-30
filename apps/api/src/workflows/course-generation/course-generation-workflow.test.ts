@@ -22,9 +22,9 @@ import { getOrCreateCourse } from "./_internal/get-or-create-course";
 import { courseGenerationWorkflow } from "./course-generation-workflow";
 
 vi.mock("@zoonk/ai/tasks/courses/description", () => ({
-  generateCourseDescription: vi.fn().mockResolvedValue({
-    data: { description: "Generated course description" },
-  }),
+  generateCourseDescription: vi
+    .fn()
+    .mockResolvedValue({ data: { description: "Generated course description" } }),
 }));
 
 vi.mock("@zoonk/ai/tasks/courses/chapters", () => ({
@@ -50,24 +50,25 @@ vi.mock("@zoonk/ai/tasks/courses/language-chapters", () => ({
 }));
 
 vi.mock("@zoonk/ai/tasks/courses/alternative-titles", () => ({
-  generateAlternativeTitles: vi.fn().mockImplementation(() =>
-    Promise.resolve({
-      data: { alternatives: [`Alt Title ${randomUUID()}`, `Alt Title ${randomUUID()}`] },
-    }),
-  ),
+  generateAlternativeTitles: vi
+    .fn()
+    .mockImplementation(() =>
+      Promise.resolve({
+        data: { alternatives: [`Alt Title ${randomUUID()}`, `Alt Title ${randomUUID()}`] },
+      }),
+    ),
 }));
 
 vi.mock("@zoonk/ai/tasks/courses/categories", () => ({
-  generateCourseCategories: vi.fn().mockResolvedValue({
-    data: { categories: ["programming", "technology"] },
-  }),
+  generateCourseCategories: vi
+    .fn()
+    .mockResolvedValue({ data: { categories: ["programming", "technology"] } }),
 }));
 
 vi.mock("@zoonk/core/courses/image", () => ({
-  generateCourseImage: vi.fn().mockResolvedValue({
-    data: "https://example.com/course-image.webp",
-    error: null,
-  }),
+  generateCourseImage: vi
+    .fn()
+    .mockResolvedValue({ data: "https://example.com/course-image.webp", error: null }),
 }));
 
 vi.mock("@zoonk/ai/tasks/chapters/lessons", () => ({
@@ -174,12 +175,7 @@ describe(courseGenerationWorkflow, () => {
       const title = `Existing Running Course ${randomUUID()}`;
       const slug = toSlug(title);
 
-      await courseFixture({
-        generationStatus: "running",
-        organizationId,
-        slug,
-        title,
-      });
+      await courseFixture({ generationStatus: "running", organizationId, slug, title });
 
       const suggestion = await courseSuggestionFixture({
         generationStatus: "pending",
@@ -206,12 +202,7 @@ describe(courseGenerationWorkflow, () => {
       const title = `Existing Completed Course ${randomUUID()}`;
       const slug = toSlug(title);
 
-      await courseFixture({
-        generationStatus: "completed",
-        organizationId,
-        slug,
-        title,
-      });
+      await courseFixture({ generationStatus: "completed", organizationId, slug, title });
 
       const suggestion = await courseSuggestionFixture({
         generationStatus: "pending",
@@ -249,14 +240,7 @@ describe(courseGenerationWorkflow, () => {
       await courseGenerationWorkflow(suggestion.id);
 
       const course = await prisma.course.findFirst({
-        include: {
-          chapters: {
-            include: {
-              lessons: true,
-            },
-            orderBy: { position: "asc" },
-          },
-        },
+        include: { chapters: { include: { lessons: true }, orderBy: { position: "asc" } } },
         where: { slug },
       });
 
@@ -290,17 +274,11 @@ describe(courseGenerationWorkflow, () => {
         },
       });
 
-      const suggestion = await courseSuggestionFixture({
-        generationStatus: "failed",
-        slug,
-        title,
-      });
+      const suggestion = await courseSuggestionFixture({ generationStatus: "failed", slug, title });
 
       await courseGenerationWorkflow(suggestion.id);
 
-      const course = await prisma.course.findUnique({
-        where: { id: existingCourse.id },
-      });
+      const course = await prisma.course.findUnique({ where: { id: existingCourse.id } });
 
       expect(course?.generationStatus).toBe("completed");
       expect(course?.description).toBe("Generated course description");
@@ -320,20 +298,13 @@ describe(courseGenerationWorkflow, () => {
       });
 
       const [suggestion] = await Promise.all([
-        courseSuggestionFixture({
-          generationStatus: "failed",
-          slug,
-          title,
-        }),
+        courseSuggestionFixture({ generationStatus: "failed", slug, title }),
         courseAlternativeTitleFixture({
           courseId: existingCourse.id,
           language: "en",
           slug: `alt-${slug}`,
         }),
-        courseCategoryFixture({
-          category: "programming",
-          courseId: existingCourse.id,
-        }),
+        courseCategoryFixture({ category: "programming", courseId: existingCourse.id }),
         chapterFixture({
           courseId: existingCourse.id,
           organizationId,
@@ -366,9 +337,7 @@ describe(courseGenerationWorkflow, () => {
 
       await expect(courseGenerationWorkflow(suggestion.id)).rejects.toThrow();
 
-      const course = await prisma.course.findFirst({
-        where: { slug },
-      });
+      const course = await prisma.course.findFirst({ where: { slug } });
 
       const dbSuggestion = await prisma.courseSuggestion.findUnique({
         where: { id: suggestion.id },
@@ -430,11 +399,7 @@ describe(courseGenerationWorkflow, () => {
       );
 
       const course = await prisma.course.findFirst({
-        include: {
-          chapters: {
-            orderBy: { position: "asc" },
-          },
-        },
+        include: { chapters: { orderBy: { position: "asc" } } },
         where: { slug },
       });
 

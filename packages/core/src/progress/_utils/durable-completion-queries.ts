@@ -19,11 +19,7 @@ export async function listDurableLessonCompletionIds({
 
   const { data } = await safeAsync(() =>
     prisma.lessonProgress.findMany({
-      where: {
-        completedAt: { not: null },
-        lessonId: { in: lessonIds },
-        userId,
-      },
+      where: { completedAt: { not: null }, lessonId: { in: lessonIds }, userId },
     }),
   );
 
@@ -47,12 +43,7 @@ export async function listDurableChapterCompletionIds({
   }
 
   const { data } = await safeAsync(() =>
-    prisma.chapterCompletion.findMany({
-      where: {
-        chapterId: { in: chapterIds },
-        userId,
-      },
-    }),
+    prisma.chapterCompletion.findMany({ where: { chapterId: { in: chapterIds }, userId } }),
   );
 
   return new Set((data ?? []).map((row) => row.chapterId));
@@ -75,9 +66,7 @@ export async function hasDurableCourseCompletion({
   }
 
   const { data } = await safeAsync(() =>
-    prisma.courseCompletion.findUnique({
-      where: { userCourseCompletion: { courseId, userId } },
-    }),
+    prisma.courseCompletion.findUnique({ where: { userCourseCompletion: { courseId, userId } } }),
   );
 
   return Boolean(data);

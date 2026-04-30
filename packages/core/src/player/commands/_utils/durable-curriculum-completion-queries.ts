@@ -1,10 +1,6 @@
 import { type TransactionClient } from "@zoonk/db";
 
-type LessonCurriculumContext = {
-  chapterId: string;
-  courseId: string;
-  lessonId: string;
-};
+type LessonCurriculumContext = { chapterId: string; courseId: string; lessonId: string };
 
 export type PublishedLessonCompletionRow = {
   chapterId: string;
@@ -24,15 +20,7 @@ export async function getLessonCurriculumContext({
   tx: TransactionClient;
 }): Promise<LessonCurriculumContext> {
   const lesson = await tx.lesson.findUnique({
-    select: {
-      chapter: {
-        select: {
-          courseId: true,
-        },
-      },
-      chapterId: true,
-      id: true,
-    },
+    select: { chapter: { select: { courseId: true } }, chapterId: true, id: true },
     where: { id: lessonId },
   });
 
@@ -40,11 +28,7 @@ export async function getLessonCurriculumContext({
     throw new Error("Lesson not found");
   }
 
-  return {
-    chapterId: lesson.chapterId,
-    courseId: lesson.chapter.courseId,
-    lessonId: lesson.id,
-  };
+  return { chapterId: lesson.chapterId, courseId: lesson.chapter.courseId, lessonId: lesson.id };
 }
 
 /**
@@ -92,10 +76,7 @@ export async function listPublishedCourseChapters({
 }) {
   return tx.chapter.findMany({
     orderBy: { position: "asc" },
-    where: {
-      courseId,
-      isPublished: true,
-    },
+    where: { courseId, isPublished: true },
   });
 }
 
@@ -115,13 +96,7 @@ export async function listDurableCourseLessonIds({
   const rows = await tx.lessonProgress.findMany({
     where: {
       completedAt: { not: null },
-      lesson: {
-        chapter: {
-          courseId,
-          isPublished: true,
-        },
-        isPublished: true,
-      },
+      lesson: { chapter: { courseId, isPublished: true }, isPublished: true },
       userId,
     },
   });
@@ -144,13 +119,7 @@ export async function listDurableCourseChapterIds({
   userId: string;
 }): Promise<Set<string>> {
   const rows = await tx.chapterCompletion.findMany({
-    where: {
-      chapter: {
-        courseId,
-        isPublished: true,
-      },
-      userId,
-    },
+    where: { chapter: { courseId, isPublished: true }, userId },
   });
 
   return new Set(rows.map((row) => row.chapterId));

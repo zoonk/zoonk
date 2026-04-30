@@ -5,9 +5,5 @@ import { type PlayerViewer } from "../player-context";
  * where completion persistence, rewards, and personalization are wired.
  */
 export function buildAuthenticatedViewer(overrides: Partial<PlayerViewer> = {}): PlayerViewer {
-  return {
-    isAuthenticated: true,
-    userName: "Alex",
-    ...overrides,
-  };
+  return { isAuthenticated: true, userName: "Alex", ...overrides };
 }

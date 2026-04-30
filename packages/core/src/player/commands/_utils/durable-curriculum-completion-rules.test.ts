@@ -90,20 +90,14 @@ describe("durable curriculum completion rules", () => {
     expect(
       getEffectiveDurableLessonIds({
         durableLessonIds,
-        lessonRow: createRow({
-          isCompleted: true,
-          lessonId: currentLessonId,
-        }),
+        lessonRow: createRow({ isCompleted: true, lessonId: currentLessonId }),
       }),
     ).toEqual(new Set([durableLessonId, currentLessonId]));
 
     expect(
       getEffectiveDurableLessonIds({
         durableLessonIds,
-        lessonRow: createRow({
-          isCompleted: false,
-          lessonId: currentLessonId,
-        }),
+        lessonRow: createRow({ isCompleted: false, lessonId: currentLessonId }),
       }),
     ).toBe(durableLessonIds);
   });
@@ -115,16 +109,8 @@ describe("durable curriculum completion rules", () => {
     const missingChapterId = createTestUuid(99);
     const rowsByChapter = groupRowsByChapter({
       rows: [
-        createRow({
-          chapterId,
-          isCompleted: true,
-          lessonId: lesson10,
-        }),
-        createRow({
-          chapterId,
-          isCompleted: false,
-          lessonId: lesson11,
-        }),
+        createRow({ chapterId, isCompleted: true, lessonId: lesson10 }),
+        createRow({ chapterId, isCompleted: false, lessonId: lesson11 }),
       ],
     });
 
@@ -137,11 +123,7 @@ describe("durable curriculum completion rules", () => {
     ).toBe(true);
 
     expect(
-      isCurrentChapterCompleted({
-        chapterId,
-        durableLessonIds: new Set(),
-        rowsByChapter,
-      }),
+      isCurrentChapterCompleted({ chapterId, durableLessonIds: new Set(), rowsByChapter }),
     ).toBe(false);
 
     expect(
@@ -183,16 +165,8 @@ describe("durable curriculum completion rules", () => {
     const lesson20 = createTestUuid(20);
     const rowsByChapter = groupRowsByChapter({
       rows: [
-        createRow({
-          chapterId: chapter1,
-          isCompleted: true,
-          lessonId: lesson10,
-        }),
-        createRow({
-          chapterId: chapter2,
-          isCompleted: false,
-          lessonId: lesson20,
-        }),
+        createRow({ chapterId: chapter1, isCompleted: true, lessonId: lesson10 }),
+        createRow({ chapterId: chapter2, isCompleted: false, lessonId: lesson20 }),
       ],
     });
 
@@ -231,16 +205,8 @@ describe("durable curriculum completion rules", () => {
     const lesson20 = createTestUuid(20);
     const rowsByChapter = groupRowsByChapter({
       rows: [
-        createRow({
-          chapterId: chapter1,
-          isCompleted: true,
-          lessonId: lesson10,
-        }),
-        createRow({
-          chapterId: chapter2,
-          isCompleted: false,
-          lessonId: lesson20,
-        }),
+        createRow({ chapterId: chapter1, isCompleted: true, lessonId: lesson10 }),
+        createRow({ chapterId: chapter2, isCompleted: false, lessonId: lesson20 }),
       ],
     });
 

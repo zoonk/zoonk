@@ -3,13 +3,9 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { generateImageStep } from "./generate-image-step";
 import { type CourseContext } from "./initialize-course-step";
 
-const { generateCourseImageMock } = vi.hoisted(() => ({
-  generateCourseImageMock: vi.fn(),
-}));
+const { generateCourseImageMock } = vi.hoisted(() => ({ generateCourseImageMock: vi.fn() }));
 
-vi.mock("@zoonk/core/courses/image", () => ({
-  generateCourseImage: generateCourseImageMock,
-}));
+vi.mock("@zoonk/core/courses/image", () => ({ generateCourseImage: generateCourseImageMock }));
 
 const course: CourseContext = {
   courseId: "1",

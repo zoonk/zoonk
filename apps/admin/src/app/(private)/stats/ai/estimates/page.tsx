@@ -4,9 +4,7 @@ import { Suspense } from "react";
 import { StatsPageLayout } from "../../_components/stats-page-layout";
 import { AiEstimateDashboard, AiEstimateDashboardSkeleton } from "../ai-estimate-dashboard";
 
-export const metadata: Metadata = {
-  title: "AI Cost Estimates",
-};
+export const metadata: Metadata = { title: "AI Cost Estimates" };
 
 /**
  * Workflow cost modeling lives on its own page so the task index can stay

@@ -15,10 +15,7 @@ export async function sendVerificationOTP({
   email: string;
   headers?: Headers;
 }) {
-  const data = await auth.api.sendVerificationOTP({
-    body: { email, type: "sign-in" },
-    headers,
-  });
+  const data = await auth.api.sendVerificationOTP({ body: { email, type: "sign-in" }, headers });
 
   return { data };
 }

@@ -6,10 +6,7 @@ import { getDefaultStartDate } from "@zoonk/utils/date-ranges";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
-type BestTimeData = {
-  score: number;
-  period: number;
-};
+type BestTimeData = { score: number; period: number };
 
 const cachedGetBestTime = cache(
   async (startDateIso?: string, headers?: Headers): Promise<BestTimeData | null> => {

@@ -37,20 +37,14 @@ describe(checkStep, () => {
     });
 
     test("correct answer returns isCorrect true", () => {
-      const answer: SelectedAnswer = {
-        kind: "multipleChoice",
-        selectedOptionId: "four",
-      };
+      const answer: SelectedAnswer = { kind: "multipleChoice", selectedOptionId: "four" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
       expect(result.feedback).toBe("Correct!");
     });
 
     test("incorrect answer returns isCorrect false", () => {
-      const answer: SelectedAnswer = {
-        kind: "multipleChoice",
-        selectedOptionId: "three",
-      };
+      const answer: SelectedAnswer = { kind: "multipleChoice", selectedOptionId: "three" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
       expect(result.feedback).toBe("Wrong!");
@@ -134,19 +128,13 @@ describe(checkStep, () => {
     });
 
     test("correct order", () => {
-      const answer: SelectedAnswer = {
-        kind: "sortOrder",
-        userOrder: ["first", "second", "third"],
-      };
+      const answer: SelectedAnswer = { kind: "sortOrder", userOrder: ["first", "second", "third"] };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
     });
 
     test("incorrect order", () => {
-      const answer: SelectedAnswer = {
-        kind: "sortOrder",
-        userOrder: ["third", "first", "second"],
-      };
+      const answer: SelectedAnswer = { kind: "sortOrder", userOrder: ["third", "first", "second"] };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
     });
@@ -209,15 +197,8 @@ describe(checkStep, () => {
 
   describe("vocabulary flashcard", () => {
     test("returns mismatch result for flashcard step", () => {
-      const step = buildStep({
-        content: {},
-        id: "vocab-1",
-        kind: "vocabulary",
-      });
-      const answer: SelectedAnswer = {
-        kind: "translation",
-        selectedOptionId: "word-1",
-      };
+      const step = buildStep({ content: {}, id: "vocab-1", kind: "vocabulary" });
+      const answer: SelectedAnswer = { kind: "translation", selectedOptionId: "word-1" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
       expect(result.feedback).toBeNull();
@@ -373,10 +354,7 @@ describe(checkStep, () => {
         },
       });
 
-      const answer: SelectedAnswer = {
-        arrangedWords: ["Bom", "dia,", "Lara."],
-        kind: "listening",
-      };
+      const answer: SelectedAnswer = { arrangedWords: ["Bom", "dia,", "Lara."], kind: "listening" };
       const { result } = checkStep(stepWithDistractors, answer);
 
       expect(result.isCorrect).toBe(false);

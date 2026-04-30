@@ -3,16 +3,8 @@
   "results": [
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "The response is strong and aligns well with the prompt: titles are in Brazilian Portuguese, avoid banned level markers and joiner constructions, include broad relevant coding topics, and all targetLanguageCode values are null. Small improvements are possible: the set could include an even more directly broad title like \"Programação\" to mirror the expectation more explicitly, and \"Programação Python\" is slightly narrower than the other broad-topic suggestions, though still relevant and valid.",
           "kind": "potentialImprovements",
@@ -22,24 +14,13 @@
       "testCase": {
         "expectations": "\n      - titles should include broad topics like \"Ciência da Computação\", \"Programação\", \"Desenvolvimento de Software\"\n      - may include other related topics to coding and programming\n      - all titles and descriptions in Brazilian Portuguese\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
         "id": "pt-want-to-code-1",
-        "userInput": {
-          "language": "pt",
-          "prompt": "I want to code"
-        }
+        "userInput": { "language": "pt", "prompt": "I want to code" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Could be slightly improved by making the first description more directly learner-oriented, but this does not affect the title-focused requirements and all descriptions are in the correct language.",
           "kind": "potentialImprovements",
@@ -49,24 +30,13 @@
       "testCase": {
         "expectations": "\n      - should include \"Black Holes\" in the first result\n      - should include broader topics like \"Astrophysics\"\n      - all titles and descriptions in US English\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
         "id": "en-black-holes-1",
-        "userInput": {
-          "language": "en",
-          "prompt": "quero aprender sobre buracos negros"
-        }
+        "userInput": { "language": "en", "prompt": "quero aprender sobre buracos negros" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "The response is strong and follows the title-focused requirements well: it includes the exact requested topic \"Derecho Penal\" as the first suggestion, all titles are in Spanish, there are no prohibited level markers or course words in titles, and targetLanguageCode is null for all non-language courses. Possible improvements are limited: some related titles are slightly narrower or more specialized, but they remain relevant and valid for the input.",
           "kind": "potentialImprovements",
@@ -76,19 +46,12 @@
       "testCase": {
         "expectations": "\n      - should include \"Derecho Penal\"\n      - may include broader or similar topics\n      - all titles and descriptions in Latin American Spanish\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
         "id": "es-derecho-penal-1",
-        "userInput": {
-          "language": "es",
-          "prompt": "derecho penal"
-        }
+        "userInput": { "language": "es", "prompt": "derecho penal" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Descriptions are in neutral/standard Spanish rather than clearly Chilean Spanish, but this is explicitly deprioritized by the expectations unless the language is wrong; titles themselves are fully compliant. No other concrete minor issues found in the titles or targetLanguageCode fields.",
           "kind": "minorErrors",
@@ -103,24 +66,13 @@
       "testCase": {
         "expectations": "\n      - should include \"Derecho Chileno\" since the user is specifically asking for Chilean law\n      - if including related topics, they should be specific to Chilean law, not general Spanish law\n      - all titles and descriptions in Chilean Spanish since this courses is specific to Chile\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
         "id": "es-derecho-chileno-1",
-        "userInput": {
-          "language": "es",
-          "prompt": "derecho chileno"
-        }
+        "userInput": { "language": "es", "prompt": "derecho chileno" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "The response fully matches the key requirements: it returns exactly one suggestion, the title is the correct language-learning course name in Brazilian Portuguese ('Inglês'), and the targetLanguageCode is correctly set to 'en'. The description is also in Portuguese, so there is no language mismatch. No meaningful improvements are needed for the evaluated criteria.",
           "kind": "potentialImprovements",
@@ -130,24 +82,13 @@
       "testCase": {
         "expectations": "\n      - should ONLY include \"Inglês\" with targetLanguageCode \"en\"\n      - all titles and descriptions in Brazilian Portuguese\n      - no extra titles like \"TOEFL\", \"Testes de Proficiência em Inglês\", \"Preparatório para o TOEFL\", etc\n      - must return EXACTLY ONE suggestion\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
         "id": "pt-toefl-1",
-        "userInput": {
-          "language": "pt",
-          "prompt": "quero passar no TOEFL"
-        }
+        "userInput": { "language": "pt", "prompt": "quero passar no TOEFL" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "The response could be slightly improved by making the third suggestion more clearly canonical for broad user intent, but this is not required and does not violate the instructions. Titles correctly include both Física and Química separately, avoid forbidden joiners/levels, stay in Brazilian Portuguese, and all targetLanguageCode values are null.",
           "kind": "potentialImprovements",
@@ -157,24 +98,13 @@
       "testCase": {
         "expectations": "\n      - should include both \"Física\" and \"Química\"\n      - should NOT include \"Física e Química\" as a single title\n      - may include broader or similar topics but it's not required\n      - all titles and descriptions in Brazilian Portuguese\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
         "id": "pt-physics-and-chemistry-1",
-        "userInput": {
-          "language": "pt",
-          "prompt": "physics and chemistry"
-        }
+        "userInput": { "language": "pt", "prompt": "physics and chemistry" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "The response satisfies the key title requirements: it includes \"Chemistry\" as the first suggestion, avoids forbidden level words such as \"Intro\" or \"Introduction\" in titles, keeps all titles in US English, and correctly sets targetLanguageCode to null for all non-language courses. A small improvement would be to make the first description less mastery-oriented given the user's phrasing, but descriptions were explicitly deprioritized for scoring here.",
           "kind": "potentialImprovements",
@@ -184,24 +114,13 @@
       "testCase": {
         "expectations": "\n      - should include \"Chemistry\" (this is very important, not including it is a major error)\n      - do NOT include \"Intro to Chemistry\" or \"Introduction to Chemistry\"\n      - may include broader or similar topics but it's not required\n      - all titles and descriptions in US English\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
         "id": "en-intro-to-chemistry-1",
-        "userInput": {
-          "language": "en",
-          "prompt": "i want an intro to chemistry"
-        }
+        "userInput": { "language": "en", "prompt": "i want an intro to chemistry" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "The output fully satisfies the title-focused requirements: it corrects the typo to 'Dragon Ball' as the first suggestion, keeps all titles in Brazilian Portuguese context where applicable, avoids forbidden level markers and joiner constructions, and correctly sets targetLanguageCode to null for all non-language courses. Only minimal improvement is possible, such as making every related title even more directly tied to the specific IP, but this is optional under the expectations.",
           "kind": "potentialImprovements",
@@ -211,24 +130,13 @@
       "testCase": {
         "expectations": "\n      - should include \"Dragon Ball\", fixing the typo in the input\n      - optionally, may include broader alts like \"Animação\", \"Cultura Pop\" or related suggestions\n      - all titles and descriptions in Brazilian Portuguese\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
         "id": "pt-dragon-ball-1",
-        "userInput": {
-          "language": "pt",
-          "prompt": "dragon bals"
-        }
+        "userInput": { "language": "pt", "prompt": "dragon bals" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "The response strongly follows the title-focused requirements: it includes 'The Beatles' as the first suggestion, all titles are in US English, avoids forbidden level markers and the word 'course', and sets targetLanguageCode to null for all non-language suggestions. Possible improvements are limited: some related titles like 'Music History' could also have been included, but the provided alternatives are already relevant and acceptable.",
           "kind": "potentialImprovements",
@@ -238,19 +146,12 @@
       "testCase": {
         "expectations": "\n      - should include \"Beatles\" or \"The Beatles\"\n      - optionally, may include broader alts like \"Rock\", \"Music History\" or related suggestions\n      - all titles and descriptions in US English\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
         "id": "en-beatles-1",
-        "userInput": {
-          "language": "en",
-          "prompt": "beatles"
-        }
+        "userInput": { "language": "en", "prompt": "beatles" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "One minor issue: several related titles are quite generic and not explicitly tied to Formula 1 despite the user input including a very specific topic/jurisdiction-like domain; however, the first suggestion correctly includes the exact topic \"Formule 1\", all titles are in French, avoid forbidden level markers/joiners, and all targetLanguageCode values are correctly null.",
           "kind": "minorErrors",
@@ -265,51 +166,25 @@
       "testCase": {
         "expectations": "\n      - should include \"Formule 1\" or \"F1\"\n      - optionally, may include broader alts like \"Sport Automobile\", \"Courses de Voitures\" or related suggestions\n      - all titles and descriptions in France French\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
         "id": "fr-f1-1",
-        "userInput": {
-          "language": "fr",
-          "prompt": "f1"
-        }
+        "userInput": { "language": "fr", "prompt": "f1" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "\n      - should ONLY include \"Japanese\" with targetLanguageCode \"ja\"\n      - should NOT include \"Japanese Language\" (adding a \"language\" suffix is a major error)\n      - all titles and descriptions in US English\n      - no extra titles like \"JLPT\", \"Japanese Language Proficiency Test\", \"JLPT N2 Preparation\", etc\n      - must return EXACTLY ONE suggestion\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
         "id": "en-jlpt-n2-1",
-        "userInput": {
-          "language": "en",
-          "prompt": "i want to pass the JLPT N2"
-        }
+        "userInput": { "language": "en", "prompt": "i want to pass the JLPT N2" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Description mentions IELTS exam preparation rather than purely the language, which is slightly off the strict edge-case rule, but expectations explicitly say to focus only on the title unless the description is in the wrong language; the description is in Brazilian Portuguese, so this does not materially reduce utility. No meaningful title-level improvements are needed.",
           "kind": "potentialImprovements",
@@ -319,24 +194,13 @@
       "testCase": {
         "expectations": "\n      - should ONLY include \"Inglês\" with targetLanguageCode \"en\"\n      - all titles and descriptions in Brazilian Portuguese\n      - no extra titles like \"IELTS\", \"Testes de Proficiência em Inglês\", \"Preparatório para o IELTS\", etc\n      - must return EXACTLY ONE suggestion\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
         "id": "pt-ielts-academic-1",
-        "userInput": {
-          "language": "pt",
-          "prompt": "quero passar no IELTS Academic"
-        }
+        "userInput": { "language": "pt", "prompt": "quero passar no IELTS Academic" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "The response strongly matches the request and expectations: titles are in US English, relevant to 'how do computers work,' include broad canonical options like 'Computer Science' and 'Computer Architecture,' avoid forbidden level markers and joiner constructions, and all targetLanguageCode values are correctly null. Possible improvement: it could have included another broad adjacent title such as 'Computer Engineering' or 'Hardware Systems,' but the instructions say extra related topics are optional, so this is only a very small opportunity for expansion rather than a defect.",
           "kind": "potentialImprovements",
@@ -346,24 +210,13 @@
       "testCase": {
         "expectations": "\n      - should include broad courses like \"Computer Science\", \"Computer Architecture\", etc\n      - extra related topics are fine but their absence is also fine\n      - all titles and descriptions in US English\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
         "id": "en-how-computers-work-1",
-        "userInput": {
-          "language": "en",
-          "prompt": "how do computers work"
-        }
+        "userInput": { "language": "en", "prompt": "how do computers work" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Could be improved slightly by ensuring every title looks maximally like a standalone course catalog entry tied to the prompt; however, the current titles already satisfy the stated expectations well.",
           "kind": "potentialImprovements",
@@ -373,10 +226,7 @@
       "testCase": {
         "expectations": "\n      - should include \"Tabela Periódica\"\n      - should NOT include an article title like \"A Tabela Periódica\"\n      - may include other chemistry-related topics and broad suggestions like \"Química\"\n      - all titles and descriptions in Brazilian Portuguese\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
         "id": "pt-periodic-table-1",
-        "userInput": {
-          "language": "pt",
-          "prompt": "tabela periódica"
-        }
+        "userInput": { "language": "pt", "prompt": "tabela periódica" }
       }
     },
     {
@@ -400,24 +250,13 @@
       "testCase": {
         "expectations": "\n      - first result should be the exact movie title: \"The Matrix\"\n      - may include other sci-fi related topics and broad suggestions\n      - may include broader film-related suggestions\n      - all titles and descriptions in US English\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
         "id": "en-matrix-movie-1",
-        "userInput": {
-          "language": "en",
-          "prompt": "matrix movie"
-        }
+        "userInput": { "language": "en", "prompt": "matrix movie" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Could be improved slightly by including one or two additional broad adjacent suggestions such as Deep Learning or Data Science, but this is optional because the current set already includes the required canonical title and several relevant AI-related topics in correct US English with null targetLanguageCode.",
           "kind": "potentialImprovements",
@@ -427,24 +266,13 @@
       "testCase": {
         "expectations": "\n      - should include \"Artificial Intelligence\" (not \"AI\" abbreviation in the title)\n      - may include other AI-related topics and broad suggestions\n      - all titles and descriptions in US English\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
         "id": "en-ai-1",
-        "userInput": {
-          "language": "en",
-          "prompt": "ai"
-        }
+        "userInput": { "language": "en", "prompt": "ai" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "A small improvement would be to ensure every title is maximally tied to the specific book request; while the first suggestion correctly uses the exact official title 'The Wealth of Nations' and the rest are relevant broader topics, one could argue for including an even closer related title such as 'Adam Smith' or 'Free Market Economics' instead of a broader 'Macroeconomics'. This does not violate the instructions and only slightly affects topical precision.",
           "kind": "potentialImprovements",
@@ -454,10 +282,7 @@
       "testCase": {
         "expectations": "\n      - should include the exact book title (\"The Wealth of Nations\") since the user is specifically asking for this book\n      - should include broader or similar topics\n      - all titles and descriptions in US English\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
         "id": "en-wealth-of-nations-1",
-        "userInput": {
-          "language": "en",
-          "prompt": "wealth of nations"
-        }
+        "userInput": { "language": "en", "prompt": "wealth of nations" }
       }
     }
   ],

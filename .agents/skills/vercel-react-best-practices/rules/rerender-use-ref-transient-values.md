@@ -23,14 +23,7 @@ function Tracker() {
 
   return (
     <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: lastX,
-        width: 8,
-        height: 8,
-        background: "black",
-      }}
+      style={{ position: "fixed", top: 0, left: lastX, width: 8, height: 8, background: "black" }}
     />
   );
 }

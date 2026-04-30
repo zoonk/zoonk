@@ -37,10 +37,7 @@ async function createUserWithSubscription(
       provider: options?.provider ?? "stripe",
       referenceId: user.id,
       status: "active",
-      ...getStripeSubscriptionFields({
-        provider: options?.provider ?? "stripe",
-        uniqueId,
-      }),
+      ...getStripeSubscriptionFields({ provider: options?.provider ?? "stripe", uniqueId }),
     },
   });
 
@@ -50,9 +47,7 @@ async function createUserWithSubscription(
 async function createAuthenticatedPage(browser: Browser, baseURL: string, email: string) {
   const context = await request.newContext({ baseURL });
 
-  await context.post("/api/auth/sign-in/email", {
-    data: { email, password: "password123" },
-  });
+  await context.post("/api/auth/sign-in/email", { data: { email, password: "password123" } });
 
   const storageState = await context.storageState();
   await context.dispose();

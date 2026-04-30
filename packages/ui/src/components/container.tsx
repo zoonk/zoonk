@@ -7,9 +7,7 @@ import { type LucideIcon } from "lucide-react";
 import { Skeleton } from "./skeleton";
 
 const containerVariants = cva("flex w-full flex-col gap-4 antialiased", {
-  defaultVariants: {
-    variant: "default",
-  },
+  defaultVariants: { variant: "default" },
   variants: {
     variant: {
       centered:
@@ -28,15 +26,8 @@ export function Container({ children, className, variant }: ContainerProps) {
 }
 
 const containerHeaderVariants = cva("flex items-center justify-between gap-2 px-4", {
-  defaultVariants: {
-    variant: "page",
-  },
-  variants: {
-    variant: {
-      page: "pt-0",
-      sidebar: "pt-4",
-    },
-  },
+  defaultVariants: { variant: "page" },
+  variants: { variant: { page: "pt-0", sidebar: "pt-4" } },
 });
 
 export type ContainerHeaderProps = React.ComponentProps<"header"> &
@@ -85,9 +76,7 @@ export function ContainerActions({ children, className }: ContainerActionsProps)
   return <div className={cn("flex items-center gap-2", className)}>{children}</div>;
 }
 
-export type ContainerActionProps = useRender.ComponentProps<"a"> & {
-  icon: LucideIcon;
-};
+export type ContainerActionProps = useRender.ComponentProps<"a"> & { icon: LucideIcon };
 
 export function ContainerAction({
   icon: Icon,
@@ -99,9 +88,7 @@ export function ContainerAction({
   return useRender({
     defaultTagName: "a",
     props: mergeProps<"a">(
-      {
-        className: cn(buttonVariants({ size: "adaptive", variant: "outline" }), className),
-      },
+      { className: cn(buttonVariants({ size: "adaptive", variant: "outline" }), className) },
       {
         ...props,
         children: (
@@ -113,9 +100,7 @@ export function ContainerAction({
       },
     ),
     render,
-    state: {
-      slot: "container-action",
-    },
+    state: { slot: "container-action" },
   });
 }
 
@@ -131,9 +116,7 @@ export function ContainerBody({ children, className }: ContainerBodyProps) {
   );
 }
 
-export type ContainerHeaderSkeletonProps = {
-  className?: string;
-};
+export type ContainerHeaderSkeletonProps = { className?: string };
 
 export function ContainerHeaderSkeleton({ className }: ContainerHeaderSkeletonProps) {
   return (

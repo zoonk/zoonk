@@ -43,10 +43,7 @@ describe("authenticated users", () => {
       ],
     });
 
-    const result = await getBestDay({
-      headers,
-      startDate: new Date("2025-01-01T00:00:00Z"),
-    });
+    const result = await getBestDay({ headers, startDate: new Date("2025-01-01T00:00:00Z") });
 
     expect(result).not.toBeNull();
     expect(result?.dayOfWeek).toBe(0); // Sunday
@@ -116,10 +113,7 @@ describe("authenticated users", () => {
       ],
     });
 
-    const result = await getBestDay({
-      headers,
-      startDate: new Date("2025-01-01T00:00:00Z"),
-    });
+    const result = await getBestDay({ headers, startDate: new Date("2025-01-01T00:00:00Z") });
 
     expect(result).not.toBeNull();
     expect(result?.dayOfWeek).toBe(0); // Sunday (more answers than Monday due to two Sundays)

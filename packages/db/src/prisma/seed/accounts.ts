@@ -11,8 +11,5 @@ export async function seedAccounts(prisma: PrismaClient, users: SeedUsers): Prom
     userId: user.id,
   }));
 
-  await prisma.account.createMany({
-    data: accountData,
-    skipDuplicates: true,
-  });
+  await prisma.account.createMany({ data: accountData, skipDuplicates: true });
 }

@@ -7,9 +7,7 @@ import { AiTaskDirectory } from "./ai-task-directory";
 import { AiTaskDirectoryControls } from "./ai-task-directory-controls";
 import { AiTaskList, AiTaskListSkeleton } from "./ai-task-list";
 
-export const metadata: Metadata = {
-  title: "AI Tasks",
-};
+export const metadata: Metadata = { title: "AI Tasks" };
 
 /**
  * The AI stats index keeps its default render lightweight, then streams only the

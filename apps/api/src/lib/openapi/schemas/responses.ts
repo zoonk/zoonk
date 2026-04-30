@@ -34,9 +34,7 @@ export function workflowTriggerEndpoint({
   return {
     post: {
       ...(requiresSubscription && { description: "Requires active subscription." }),
-      requestBody: {
-        content: { "application/json": { schema } },
-      },
+      requestBody: { content: { "application/json": { schema } } },
       responses: {
         "200": workflowStartedResponse,
         "400": validationErrorResponse,
@@ -53,9 +51,7 @@ export function workflowStatusEndpoint(summary: string) {
     get: {
       description: "Returns a Server-Sent Events stream with workflow status updates.",
       requestParams: { query: workflowStatusQuerySchema },
-      responses: {
-        "200": sseStreamResponse,
-      },
+      responses: { "200": sseStreamResponse },
       summary,
       tags: ["Workflows"],
     },

@@ -14,8 +14,5 @@ export async function POST(request: NextRequest) {
 
   const run = await start(courseGenerationWorkflow, [parsed.data.courseSuggestionId]);
 
-  return NextResponse.json({
-    message: "Workflow started",
-    runId: run.runId,
-  });
+  return NextResponse.json({ message: "Workflow started", runId: run.runId });
 }

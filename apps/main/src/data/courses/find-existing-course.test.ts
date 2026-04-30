@@ -24,10 +24,7 @@ describe(findExistingCourse, () => {
   });
 
   test("returns null when no course exists with slug/language", async () => {
-    const result = await findExistingCourse({
-      language: "en",
-      slug: "non-existent-course",
-    });
+    const result = await findExistingCourse({ language: "en", slug: "non-existent-course" });
 
     expect(result.error).toBeNull();
     expect(result.data).toBeNull();
@@ -43,19 +40,12 @@ describe(findExistingCourse, () => {
       slug: uniqueSlug,
     });
 
-    const result = await findExistingCourse({
-      language: "en",
-      slug: uniqueSlug,
-    });
+    const result = await findExistingCourse({ language: "en", slug: uniqueSlug });
 
     expect(result.error).toBeNull();
 
     expect(result.data).toMatchObject({
-      _count: {
-        alternativeTitles: 0,
-        categories: 0,
-        chapters: 0,
-      },
+      _count: { alternativeTitles: 0, categories: 0, chapters: 0 },
       description: course.description,
       generationStatus: course.generationStatus,
       id: course.id,
@@ -75,25 +65,14 @@ describe(findExistingCourse, () => {
       slug: uniqueSlug,
     });
 
-    await courseAlternativeTitleFixture({
-      courseId: course.id,
-      language: "en",
-      slug: altSlug,
-    });
+    await courseAlternativeTitleFixture({ courseId: course.id, language: "en", slug: altSlug });
 
-    const result = await findExistingCourse({
-      language: "en",
-      slug: altSlug,
-    });
+    const result = await findExistingCourse({ language: "en", slug: altSlug });
 
     expect(result.error).toBeNull();
 
     expect(result.data).toMatchObject({
-      _count: {
-        alternativeTitles: 1,
-        categories: 0,
-        chapters: 0,
-      },
+      _count: { alternativeTitles: 1, categories: 0, chapters: 0 },
       description: course.description,
       generationStatus: course.generationStatus,
       id: course.id,
@@ -105,16 +84,9 @@ describe(findExistingCourse, () => {
   test("returns null for courses from non-AI organizations", async () => {
     const uniqueSlug = `nonai-${randomUUID()}`;
 
-    await courseFixture({
-      language: "en",
-      organizationId: nonAiOrg.id,
-      slug: uniqueSlug,
-    });
+    await courseFixture({ language: "en", organizationId: nonAiOrg.id, slug: uniqueSlug });
 
-    const result = await findExistingCourse({
-      language: "en",
-      slug: uniqueSlug,
-    });
+    const result = await findExistingCourse({ language: "en", slug: uniqueSlug });
 
     expect(result.error).toBeNull();
     expect(result.data).toBeNull();
@@ -143,10 +115,7 @@ describe(findExistingCourse, () => {
       slug: uniqueSlug,
     });
 
-    const result = await findExistingCourse({
-      language: "en",
-      slug: uniqueSlug,
-    });
+    const result = await findExistingCourse({ language: "en", slug: uniqueSlug });
 
     expect(result.error).toBeNull();
     expect(result.data?.id).toBe(directCourse.id);
@@ -162,10 +131,7 @@ describe(findExistingCourse, () => {
       slug: toSlug(uniqueTitle),
     });
 
-    const result = await findExistingCourse({
-      language: "en",
-      slug: uniqueTitle,
-    });
+    const result = await findExistingCourse({ language: "en", slug: uniqueTitle });
 
     expect(result.error).toBeNull();
     expect(result.data?.id).toBe(course.id);
@@ -175,16 +141,8 @@ describe(findExistingCourse, () => {
     const uniqueSlug = `lang-${randomUUID()}`;
 
     const [enCourse, ptCourse] = await Promise.all([
-      courseFixture({
-        language: "en",
-        organizationId: aiOrg.id,
-        slug: uniqueSlug,
-      }),
-      courseFixture({
-        language: "pt",
-        organizationId: aiOrg.id,
-        slug: `${uniqueSlug}-pt`,
-      }),
+      courseFixture({ language: "en", organizationId: aiOrg.id, slug: uniqueSlug }),
+      courseFixture({ language: "pt", organizationId: aiOrg.id, slug: `${uniqueSlug}-pt` }),
     ]);
 
     const [enResult, ptResult] = await Promise.all([
@@ -208,10 +166,7 @@ describe(findExistingCourse, () => {
       slug: `${uniqueSlug}-pt`,
     });
 
-    const result = await findExistingCourse({
-      language: "pt",
-      slug: uniqueSlug,
-    });
+    const result = await findExistingCourse({ language: "pt", slug: uniqueSlug });
 
     expect(result.error).toBeNull();
     expect(result.data).not.toBeNull();

@@ -95,18 +95,14 @@ export async function generateMetadata({ params }) {
    Find JSON message files in your locales directory (e.g., `messages/en.json`, `messages/es.json`) and add the new key:
 
    ```json
-   {
-     "New page title": "New page title"
-   }
+   { "New page title": "New page title" }
    ```
 
 3. **Translate for each locale**:
 
    ```json
    // messages/es.json
-   {
-     "New page title": "Nuevo título de página"
-   }
+   { "New page title": "Nuevo título de página" }
    ```
 
 ## Common Patterns
@@ -128,25 +124,19 @@ t("items", { count: 5 }); // "5 items"
 In your messages file:
 
 ```json
-{
-  "items": "{count, plural, =0 {No items} =1 {1 item} other {# items}}"
-}
+{ "items": "{count, plural, =0 {No items} =1 {1 item} other {# items}}" }
 ```
 
 ### Rich Text (with components)
 
 ```tsx
-t.rich("Read our {link}", {
-  link: (chunks) => <Link href="/terms">{chunks}</Link>,
-});
+t.rich("Read our {link}", { link: (chunks) => <Link href="/terms">{chunks}</Link> });
 ```
 
 In your messages file:
 
 ```json
-{
-  "Read our {link}": "Read our <link>terms of service</link>"
-}
+{ "Read our {link}": "Read our <link>terms of service</link>" }
 ```
 
 ## File Structure
@@ -173,9 +163,5 @@ t("welcome");
 ```
 
 ```json
-{
-  "Dashboard": {
-    "welcome": "Welcome to your dashboard"
-  }
-}
+{ "Dashboard": { "welcome": "Welcome to your dashboard" } }
 ```

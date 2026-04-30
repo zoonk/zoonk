@@ -34,11 +34,7 @@ export const openAPIDocument = createDocument({
       get: {
         responses: {
           "200": {
-            content: {
-              "application/json": {
-                schema: z.object({ status: z.literal("ok") }),
-              },
-            },
+            content: { "application/json": { schema: z.object({ status: z.literal("ok") }) } },
             description: "Service is healthy",
           },
         },
@@ -72,11 +68,7 @@ export const openAPIDocument = createDocument({
         requestParams: { query: chapterCompletionQuerySchema },
         responses: {
           "200": {
-            content: {
-              "application/json": {
-                schema: chapterCompletionResponseSchema,
-              },
-            },
+            content: { "application/json": { schema: chapterCompletionResponseSchema } },
             description: "Lesson completion status for a chapter",
           },
           "400": validationErrorResponse,
@@ -90,11 +82,7 @@ export const openAPIDocument = createDocument({
         requestParams: { query: courseCompletionQuerySchema },
         responses: {
           "200": {
-            content: {
-              "application/json": {
-                schema: courseCompletionResponseSchema,
-              },
-            },
+            content: { "application/json": { schema: courseCompletionResponseSchema } },
             description: "Chapter completion status for a course",
           },
           "400": validationErrorResponse,
@@ -108,11 +96,7 @@ export const openAPIDocument = createDocument({
         requestParams: { query: nextLessonQuerySchema },
         responses: {
           "200": {
-            content: {
-              "application/json": {
-                schema: nextLessonResponseSchema,
-              },
-            },
+            content: { "application/json": { schema: nextLessonResponseSchema } },
             description: "Next lesson to complete",
           },
           "400": validationErrorResponse,

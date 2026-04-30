@@ -50,19 +50,11 @@ async function createStepAttempts(
 
 async function createTestStep(orgId: string) {
   const course = await courseFixture({ organizationId: orgId });
-  const chapter = await chapterFixture({
-    courseId: course.id,
-    organizationId: orgId,
-  });
-  const lesson = await lessonFixture({
-    chapterId: chapter.id,
-    organizationId: orgId,
-  });
+  const chapter = await chapterFixture({ courseId: course.id, organizationId: orgId });
+  const lesson = await lessonFixture({ chapterId: chapter.id, organizationId: orgId });
   const step = await prisma.step.create({
     data: {
-      content: {
-        options: [{ feedback: "Yes", isCorrect: true, text: "A" }],
-      },
+      content: { options: [{ feedback: "Yes", isCorrect: true, text: "A" }] },
       kind: "multipleChoice",
       lessonId: lesson.id,
       position: 0,
@@ -228,10 +220,7 @@ describe("authenticated users", () => {
     ]);
 
     // Filter to only include data from the past week
-    const result = await getBestTime({
-      headers,
-      startDate: oneWeekAgo,
-    });
+    const result = await getBestTime({ headers, startDate: oneWeekAgo });
 
     expect(result).not.toBeNull();
     expect(result?.period).toBe(1); // Morning (only recent data)

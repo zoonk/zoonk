@@ -83,12 +83,5 @@ export function usePlayerActions(
     dispatchTransition({ type: "RESTART" });
   }, [dispatchTransition]);
 
-  return {
-    check,
-    continue: handleContinue,
-    navigateNext,
-    navigatePrev,
-    restart,
-    selectAnswer,
-  };
+  return { check, continue: handleContinue, navigateNext, navigatePrev, restart, selectAnswer };
 }

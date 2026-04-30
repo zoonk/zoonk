@@ -5,13 +5,7 @@ import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
 import { cache } from "react";
 
 const courseInclude = {
-  _count: {
-    select: {
-      alternativeTitles: true,
-      categories: true,
-      chapters: true,
-    },
-  },
+  _count: { select: { alternativeTitles: true, categories: true, chapters: true } },
 } as const;
 
 type ExistingCourse = NonNullable<
@@ -26,21 +20,11 @@ const cachedFindExistingCourse = cache(
       Promise.all([
         prisma.course.findFirst({
           include: courseInclude,
-          where: getAiGenerationCourseWhere({
-            slug: ensureLocaleSuffix(normalizedSlug, language),
-          }),
+          where: getAiGenerationCourseWhere({ slug: ensureLocaleSuffix(normalizedSlug, language) }),
         }),
         prisma.courseAlternativeTitle.findFirst({
-          include: {
-            course: {
-              include: courseInclude,
-            },
-          },
-          where: {
-            course: getAiGenerationCourseWhere(),
-            language,
-            slug: normalizedSlug,
-          },
+          include: { course: { include: courseInclude } },
+          where: { course: getAiGenerationCourseWhere(), language, slug: normalizedSlug },
         }),
       ]),
     );

@@ -51,10 +51,7 @@ export function NavbarLinks({ isLoggedIn }: { isLoggedIn: boolean }) {
     <>
       <Link
         aria-current={homeVariant === "default" ? "page" : undefined}
-        className={buttonVariants({
-          size: "icon",
-          variant: homeVariant,
-        })}
+        className={buttonVariants({ size: "icon", variant: homeVariant })}
         href={homeMenu.url}
         prefetch
       >
@@ -64,10 +61,7 @@ export function NavbarLinks({ isLoggedIn }: { isLoggedIn: boolean }) {
 
       <Link
         aria-current={coursesVariant === "default" ? "page" : undefined}
-        className={buttonVariants({
-          size: "adaptive",
-          variant: coursesVariant,
-        })}
+        className={buttonVariants({ size: "adaptive", variant: coursesVariant })}
         href={coursesMenu.url}
         prefetch
       >

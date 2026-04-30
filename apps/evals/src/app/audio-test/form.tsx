@@ -17,10 +17,7 @@ import { generateAudioAction } from "./actions";
 
 export function AudioTestForm() {
   const [isPending, startTransition] = useTransition();
-  const [result, setResult] = useState<{
-    audioUrl?: string;
-    error?: string;
-  } | null>(null);
+  const [result, setResult] = useState<{ audioUrl?: string; error?: string } | null>(null);
 
   async function handleSubmit(formData: FormData) {
     startTransition(async () => {

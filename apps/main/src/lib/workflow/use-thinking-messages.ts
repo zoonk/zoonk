@@ -54,10 +54,7 @@ function getRandomInterval(): number {
   return MIN_INTERVAL + Math.random() * (MAX_INTERVAL - MIN_INTERVAL);
 }
 
-type ThinkingState = {
-  tick: number;
-  indices: Record<string, number>;
-};
+type ThinkingState = { tick: number; indices: Record<string, number> };
 
 type ThinkingAction = { type: "advance"; phases: readonly string[] } | { type: "reset" };
 

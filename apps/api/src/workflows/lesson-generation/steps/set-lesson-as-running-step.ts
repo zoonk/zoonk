@@ -18,10 +18,7 @@ function buildRunningTransaction(input: SetLessonAsRunningInput) {
       ? [prisma.step.deleteMany({ where: { lessonId: input.lessonId } })]
       : []),
     prisma.lesson.update({
-      data: {
-        generationRunId: input.workflowRunId,
-        generationStatus: "running",
-      },
+      data: { generationRunId: input.workflowRunId, generationStatus: "running" },
       where: { id: input.lessonId },
     }),
   ];

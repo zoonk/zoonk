@@ -115,10 +115,7 @@ export default async function LessonPage({ params }: Props) {
   const lessonMeta = await getLessonDisplayMeta(lesson);
   const reviewSteps = reviewLessonData?.steps ?? null;
 
-  const resourceLessonIds = getPlayerResourceLessonIds({
-    lessonId: lessonShell.id,
-    reviewSteps,
-  });
+  const resourceLessonIds = getPlayerResourceLessonIds({ lessonId: lessonShell.id, reviewSteps });
 
   const [distractorWords, lessonWords, lessonSentences, sentenceWords] = await Promise.all([
     getLessonDistractorWordsForLessons({ lessonIds: resourceLessonIds }),

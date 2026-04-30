@@ -20,13 +20,7 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   // Use separate build directories so E2E and production builds don't conflict
   distDir: isE2E ? ".next-e2e" : ".next",
-  experimental: {
-    authInterrupts: true,
-    staleTimes: {
-      dynamic: 300,
-    },
-    typedEnv: true,
-  },
+  experimental: { authInterrupts: true, staleTimes: { dynamic: 300 }, typedEnv: true },
   headers: getPublicAppSecurityHeaders,
   images: {
     minimumCacheTTL: 60 * 60 * 24 * CACHE_IMAGE_DAYS,
@@ -37,22 +31,15 @@ const nextConfig: NextConfig = {
       new URL("https://*.githubusercontent.com/**"),
     ],
   },
-  logging: {
-    browserToTerminal: true,
-  },
+  logging: { browserToTerminal: true },
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
   reactCompiler: true,
   turbopack: {
-    resolveAlias: {
-      ...e2eAliases,
-    },
+    resolveAlias: { ...e2eAliases },
     root: path.resolve(import.meta.dirname, "../.."),
     rules: {
       // Allow to import MDX files used for AI prompts
-      "*.md": {
-        as: "*.js",
-        loaders: ["raw-loader"],
-      },
+      "*.md": { as: "*.js", loaders: ["raw-loader"] },
     },
   },
   typedRoutes: true,
@@ -63,14 +50,9 @@ const withMDX = createMDX();
 
 const withNextIntl = createNextIntlPlugin({
   experimental: {
-    extract: {
-      sourceLocale: "en",
-    },
+    extract: { sourceLocale: "en" },
     messages: {
-      format: {
-        codec: "./src/i18n/codec.ts",
-        extension: ".po",
-      },
+      format: { codec: "./src/i18n/codec.ts", extension: ".po" },
       locales: "infer",
       path: "./messages",
       precompile: true,
@@ -83,10 +65,6 @@ export default withSentryConfig(withBotId(withNextIntl(withMDX(nextConfig))), {
   org: "zoonk",
   project: "zoonk",
   silent: true,
-  webpack: {
-    treeshake: {
-      removeDebugLogging: true,
-    },
-  },
+  webpack: { treeshake: { removeDebugLogging: true } },
   widenClientFileUpload: true,
 });

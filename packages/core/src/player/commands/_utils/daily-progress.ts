@@ -42,12 +42,7 @@ export async function fillDecayGaps(params: {
     const date = new Date(params.lastActiveDate.getTime() + (i + 1) * MS_PER_DAY);
     const decayedEnergy = Math.max(MIN_ENERGY, params.currentEnergy - (i + 1) * DAILY_DECAY);
 
-    return {
-      date,
-      dayOfWeek: date.getUTCDay(),
-      energyAtEnd: decayedEnergy,
-      userId: params.userId,
-    };
+    return { date, dayOfWeek: date.getUTCDay(), energyAtEnd: decayedEnergy, userId: params.userId };
   });
 
   await params.tx.dailyProgress.createMany({ data: records, skipDuplicates: true });
@@ -95,11 +90,6 @@ export async function upsertDailyProgress(
   await tx.dailyProgress.upsert({
     create: createData,
     update: updateData,
-    where: {
-      userDate: {
-        date: params.date,
-        userId: params.userId,
-      },
-    },
+    where: { userDate: { date: params.date, userId: params.userId } },
   });
 }

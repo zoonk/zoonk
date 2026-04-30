@@ -54,10 +54,7 @@ describe(completeCourseSetupStep, () => {
       }),
     ]);
 
-    await completeCourseSetupStep({
-      courseId: course.id,
-      courseSuggestionId: suggestion.id,
-    });
+    await completeCourseSetupStep({ courseId: course.id, courseSuggestionId: suggestion.id });
 
     const [updatedCourse, updatedSuggestion] = await Promise.all([
       prisma.course.findUniqueOrThrow({ where: { id: course.id } }),

@@ -104,28 +104,26 @@ vi.mock("@zoonk/ai/tasks/lessons/tutorial", () => ({
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/vocabulary", () => ({
-  generateLessonVocabulary: vi.fn().mockResolvedValue({
-    data: {
-      words: languageMockState.words,
-    },
-  }),
+  generateLessonVocabulary: vi.fn().mockResolvedValue({ data: { words: languageMockState.words } }),
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/distractors", () => ({
-  generateLessonDistractors: vi.fn().mockImplementation(({ input }) =>
-    Promise.resolve({
-      data: { distractors: languageMockState.distractors[input] ?? [] },
-    }),
-  ),
+  generateLessonDistractors: vi
+    .fn()
+    .mockImplementation(({ input }) =>
+      Promise.resolve({ data: { distractors: languageMockState.distractors[input] ?? [] } }),
+    ),
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/grammar-content", () => ({
-  generateLessonGrammarContent: vi.fn().mockResolvedValue({
-    data: {
-      examples: [{ highlight: "猫", sentence: "猫がいます" }],
-      exercises: [{ answer: "猫", distractors: ["犬", "鳥"], template: "[BLANK]がいます" }],
-    },
-  }),
+  generateLessonGrammarContent: vi
+    .fn()
+    .mockResolvedValue({
+      data: {
+        examples: [{ highlight: "猫", sentence: "猫がいます" }],
+        exercises: [{ answer: "猫", distractors: ["犬", "鳥"], template: "[BLANK]がいます" }],
+      },
+    }),
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/grammar-user-content", () => ({
@@ -150,81 +148,93 @@ vi.mock("@zoonk/ai/tasks/lessons/language/grammar-user-content", () => ({
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/sentences", () => ({
-  generateLessonSentences: vi.fn().mockResolvedValue({
-    data: {
-      sentences: [
-        {
-          explanation: "Uses both vocabulary words in context.",
-          sentence: "猫と水",
-          translation: "cat and water",
-        },
-      ],
-    },
-  }),
+  generateLessonSentences: vi
+    .fn()
+    .mockResolvedValue({
+      data: {
+        sentences: [
+          {
+            explanation: "Uses both vocabulary words in context.",
+            sentence: "猫と水",
+            translation: "cat and water",
+          },
+        ],
+      },
+    }),
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/translation", () => ({
-  generateTranslation: vi.fn().mockImplementation(({ word }) =>
-    Promise.resolve({
-      data: { translation: `${word} translated` },
-    }),
-  ),
+  generateTranslation: vi
+    .fn()
+    .mockImplementation(({ word }) =>
+      Promise.resolve({ data: { translation: `${word} translated` } }),
+    ),
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/pronunciation", () => ({
-  generateLessonPronunciation: vi.fn().mockImplementation(({ word }) =>
-    Promise.resolve({
-      data: { pronunciation: `${word} pronunciation` },
-    }),
-  ),
+  generateLessonPronunciation: vi
+    .fn()
+    .mockImplementation(({ word }) =>
+      Promise.resolve({ data: { pronunciation: `${word} pronunciation` } }),
+    ),
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/romanization", () => ({
-  generateLessonRomanization: vi.fn().mockImplementation(({ texts }) =>
-    Promise.resolve({
-      data: { romanizations: texts.map((text: string) => `${text} romanized`) },
-    }),
-  ),
+  generateLessonRomanization: vi
+    .fn()
+    .mockImplementation(({ texts }) =>
+      Promise.resolve({
+        data: { romanizations: texts.map((text: string) => `${text} romanized`) },
+      }),
+    ),
 }));
 
 vi.mock("@zoonk/ai/tasks/steps/image-prompts", () => ({
-  generateStepImagePrompts: vi.fn().mockImplementation(({ steps }) =>
-    Promise.resolve({
-      data: {
-        prompts:
-          steps.length === 2
-            ? ["tutorial first image prompt", "tutorial second image prompt"]
-            : ["first image prompt", "second image prompt", "anchor image prompt"],
-      },
-    }),
-  ),
+  generateStepImagePrompts: vi
+    .fn()
+    .mockImplementation(({ steps }) =>
+      Promise.resolve({
+        data: {
+          prompts:
+            steps.length === 2
+              ? ["tutorial first image prompt", "tutorial second image prompt"]
+              : ["first image prompt", "second image prompt", "anchor image prompt"],
+        },
+      }),
+    ),
 }));
 
 vi.mock("@zoonk/core/steps/content-image", () => ({
-  generateContentStepImage: vi.fn().mockImplementation(({ prompt }) =>
-    Promise.resolve({
-      data: `https://example.com/content/${encodeURIComponent(prompt)}.webp`,
-      error: null,
-    }),
-  ),
+  generateContentStepImage: vi
+    .fn()
+    .mockImplementation(({ prompt }) =>
+      Promise.resolve({
+        data: `https://example.com/content/${encodeURIComponent(prompt)}.webp`,
+        error: null,
+      }),
+    ),
 }));
 
 vi.mock("@zoonk/core/audio/generate", () => ({
-  generateLanguageAudio: vi.fn().mockImplementation(({ text }) =>
-    Promise.resolve({
-      data: `https://example.com/audio/${encodeURIComponent(text)}.mp3`,
-      error: null,
-    }),
-  ),
+  generateLanguageAudio: vi
+    .fn()
+    .mockImplementation(({ text }) =>
+      Promise.resolve({
+        data: `https://example.com/audio/${encodeURIComponent(text)}.mp3`,
+        error: null,
+      }),
+    ),
 }));
 
 vi.mock("@zoonk/core/steps/image", () => ({
-  generateStepImage: vi.fn().mockImplementation(({ prompt }) =>
-    Promise.resolve({
-      data: `https://example.com/select/${encodeURIComponent(prompt)}.webp`,
-      error: null,
-    }),
-  ),
+  generateStepImage: vi
+    .fn()
+    .mockImplementation(({ prompt }) =>
+      Promise.resolve({
+        data: `https://example.com/select/${encodeURIComponent(prompt)}.webp`,
+        error: null,
+      }),
+    ),
 }));
 
 /**
@@ -470,15 +480,10 @@ describe(lessonGenerationWorkflow, () => {
     await lessonGenerationWorkflow(practice.id);
 
     expect(generateLessonPractice).toHaveBeenCalledWith(
-      expect.objectContaining({
-        explanationSteps: [{ text: "New explanation", title: "New" }],
-      }),
+      expect.objectContaining({ explanationSteps: [{ text: "New explanation", title: "New" }] }),
     );
     expect(generateContentStepImage).toHaveBeenCalledWith(
-      expect.objectContaining({
-        preset: "practice",
-        prompt: "practice scenario image",
-      }),
+      expect.objectContaining({ preset: "practice", prompt: "practice scenario image" }),
     );
     expect(completedStreamedSteps()).toEqual(
       expect.arrayContaining([
@@ -664,10 +669,7 @@ describe(lessonGenerationWorkflow, () => {
     expect(generateLanguageAudio).toHaveBeenCalledTimes(6);
     expect(generateLessonPronunciation).toHaveBeenCalledTimes(6);
     expect(generateLessonRomanization).toHaveBeenCalledWith(
-      expect.objectContaining({
-        targetLanguage: "ja",
-        texts: allRenderedWords,
-      }),
+      expect.objectContaining({ targetLanguage: "ja", texts: allRenderedWords }),
     );
     expect(completedStreamedSteps()).toEqual(
       expect.arrayContaining([
@@ -682,11 +684,7 @@ describe(lessonGenerationWorkflow, () => {
     );
 
     const lessonWords = await prisma.lessonWord.findMany({
-      include: {
-        word: {
-          include: { pronunciations: true },
-        },
-      },
+      include: { word: { include: { pronunciations: true } } },
       orderBy: { word: { word: "asc" } },
       where: { lessonId: lesson.id },
     });
@@ -734,11 +732,7 @@ describe(lessonGenerationWorkflow, () => {
         position: 0,
         title: `Vocabulary Source ${uniqueId}`,
       }),
-      wordFixture({
-        organizationId,
-        targetLanguage: "ja",
-        word: `猫-${uniqueId}`,
-      }),
+      wordFixture({ organizationId, targetLanguage: "ja", word: `猫-${uniqueId}` }),
     ]);
 
     const [translationLesson] = await Promise.all([
@@ -826,9 +820,7 @@ describe(lessonGenerationWorkflow, () => {
     await lessonGenerationWorkflow(readingLesson.id);
 
     expect(generateLessonSentences).toHaveBeenCalledWith(
-      expect.objectContaining({
-        words: expect.arrayContaining([catWord.word, waterWord.word]),
-      }),
+      expect.objectContaining({ words: expect.arrayContaining([catWord.word, waterWord.word]) }),
     );
     expect(generateTranslation).toHaveBeenCalledWith(expect.objectContaining({ word: "猫" }));
     expect(generateTranslation).toHaveBeenCalledWith(expect.objectContaining({ word: "水" }));
@@ -872,11 +864,7 @@ describe(lessonGenerationWorkflow, () => {
         position: 0,
         title: `Reading Source ${uniqueId}`,
       }),
-      sentenceFixture({
-        organizationId,
-        sentence: `猫と水 ${uniqueId}`,
-        targetLanguage: "ja",
-      }),
+      sentenceFixture({ organizationId, sentence: `猫と水 ${uniqueId}`, targetLanguage: "ja" }),
     ]);
 
     const [listeningLesson] = await Promise.all([
@@ -911,9 +899,7 @@ describe(lessonGenerationWorkflow, () => {
       expect.arrayContaining(["saveListeningLesson", "setLessonAsCompleted"]),
     );
 
-    const [listeningStep] = await prisma.step.findMany({
-      where: { lessonId: listeningLesson.id },
-    });
+    const [listeningStep] = await prisma.step.findMany({ where: { lessonId: listeningLesson.id } });
 
     expect(listeningStep?.kind).toBe("listening");
     expect(listeningStep?.sentenceId).toBe(sentence.id);
@@ -936,14 +922,10 @@ describe(lessonGenerationWorkflow, () => {
 
     expect(generateLessonGrammarContent).toHaveBeenCalledOnce();
     expect(generateLessonGrammarUserContent).toHaveBeenCalledWith(
-      expect.objectContaining({
-        examples: [{ highlight: "猫", sentence: "猫がいます" }],
-      }),
+      expect.objectContaining({ examples: [{ highlight: "猫", sentence: "猫がいます" }] }),
     );
     expect(generateLessonRomanization).toHaveBeenCalledWith(
-      expect.objectContaining({
-        texts: expect.arrayContaining(["猫がいます", "猫", "犬", "鳥"]),
-      }),
+      expect.objectContaining({ texts: expect.arrayContaining(["猫がいます", "猫", "犬", "鳥"]) }),
     );
     expect(completedStreamedSteps()).toEqual(
       expect.arrayContaining([

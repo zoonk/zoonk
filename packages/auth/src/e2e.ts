@@ -27,14 +27,8 @@ export const auth = betterAuth({
         plugin.id !== "email-otp" && plugin.id !== "one-time-token" && plugin.id !== "stripe",
     ),
     stripePlugin({ createCustomerOnSignUp: false }),
-    emailOTP({
-      overrideDefaultEmailVerification: true,
-      sendVerificationOTP,
-      storeOTP: "plain",
-    }),
-    oneTimeToken({
-      storeToken: "plain",
-    }),
+    emailOTP({ overrideDefaultEmailVerification: true, sendVerificationOTP, storeOTP: "plain" }),
+    oneTimeToken({ storeToken: "plain" }),
   ],
   rateLimit: { enabled: false },
   socialProviders,

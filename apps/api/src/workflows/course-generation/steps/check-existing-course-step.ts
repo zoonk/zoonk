@@ -9,13 +9,7 @@ import {
 import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
 
 const courseInclude = {
-  _count: {
-    select: {
-      alternativeTitles: true,
-      categories: true,
-      chapters: true,
-    },
-  },
+  _count: { select: { alternativeTitles: true, categories: true, chapters: true } },
 } as const;
 
 export type ExistingCourse = CourseGetPayload<{ include: typeof courseInclude }>;
@@ -39,9 +33,7 @@ export async function checkExistingCourseStep(
       }),
     }),
     prisma.courseAlternativeTitle.findFirst({
-      include: {
-        course: { include: courseInclude },
-      },
+      include: { course: { include: courseInclude } },
       where: {
         course: getAiGenerationCourseWhere(),
         language: suggestion.language,

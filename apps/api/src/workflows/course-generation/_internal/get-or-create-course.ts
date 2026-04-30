@@ -26,10 +26,7 @@ export async function getOrCreateCourse(
   suggestion: CourseSuggestion,
   courseSuggestionId: string,
   workflowRunId: string,
-): Promise<{
-  course: CourseContext;
-  existing: ExistingCourseContent;
-}> {
+): Promise<{ course: CourseContext; existing: ExistingCourseContent }> {
   if (!existingCourse) {
     const course = await initializeCourseStep({ suggestion, workflowRunId });
     await streamSkipStep("setCourseAsRunning");
@@ -48,11 +45,7 @@ export async function getOrCreateCourse(
     targetLanguage: suggestion.targetLanguage,
   };
 
-  await setCourseAsRunningStep({
-    courseId: existingCourse.id,
-    courseSuggestionId,
-    workflowRunId,
-  });
+  await setCourseAsRunningStep({ courseId: existingCourse.id, courseSuggestionId, workflowRunId });
 
   return {
     course,

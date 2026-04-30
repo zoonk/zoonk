@@ -44,13 +44,8 @@ describe(setCourseAsRunningStep, () => {
 
   test("marks both course and suggestion as running", async () => {
     const [course, suggestion] = await Promise.all([
-      courseFixture({
-        organizationId,
-        title: `Set Running ${randomUUID()}`,
-      }),
-      courseSuggestionFixture({
-        title: `Running Suggestion ${randomUUID()}`,
-      }),
+      courseFixture({ organizationId, title: `Set Running ${randomUUID()}` }),
+      courseSuggestionFixture({ title: `Running Suggestion ${randomUUID()}` }),
     ]);
 
     const workflowRunId = `run-${randomUUID()}`;

@@ -49,11 +49,7 @@ export async function saveTranslationLessonStep(context: LessonContext): Promise
 
   const sourceSteps = await prisma.step.findMany({
     orderBy: { position: "asc" },
-    where: {
-      kind: "vocabulary",
-      lessonId: sourceLesson.id,
-      wordId: { not: null },
-    },
+    where: { kind: "vocabulary", lessonId: sourceLesson.id, wordId: { not: null } },
   });
   const wordIds = sourceSteps.flatMap((step) => (step.wordId ? [step.wordId] : []));
 

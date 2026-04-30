@@ -104,19 +104,11 @@ describe(saveReadingTargetWords, () => {
       lessonId: lesson.id,
       organizationId,
       pronunciations: { [lowercaseWord]: "ga-to" },
-      sentences: [
-        {
-          explanation: "test explanation",
-          sentence: lowercaseWord,
-          translation: "cat",
-        },
-      ],
+      sentences: [{ explanation: "test explanation", sentence: lowercaseWord, translation: "cat" }],
       targetLanguage: "de",
       userLanguage: "en",
       wordAudioUrls: {},
-      wordMetadata: {
-        [lowercaseWord]: { romanization: null, translation: "cat" },
-      },
+      wordMetadata: { [lowercaseWord]: { romanization: null, translation: "cat" } },
     });
 
     const [words, lessonWord] = await Promise.all([
@@ -150,11 +142,7 @@ describe(saveReadingTargetWords, () => {
       organizationId,
       pronunciations: { [canonicalWord]: "ha-lo", [distractorWord]: "choos" },
       sentences: [
-        {
-          explanation: "test explanation",
-          sentence: canonicalWord,
-          translation: "hello",
-        },
+        { explanation: "test explanation", sentence: canonicalWord, translation: "hello" },
       ],
       targetLanguage: "de",
       userLanguage: "en",
@@ -170,17 +158,10 @@ describe(saveReadingTargetWords, () => {
 
     const [distractorRecord, distractorLessonWords] = await Promise.all([
       prisma.word.findFirstOrThrow({
-        where: {
-          organizationId,
-          targetLanguage: "de",
-          word: distractorWord,
-        },
+        where: { organizationId, targetLanguage: "de", word: distractorWord },
       }),
       prisma.lessonWord.findMany({
-        where: {
-          lessonId: lesson.id,
-          word: { word: distractorWord },
-        },
+        where: { lessonId: lesson.id, word: { word: distractorWord } },
       }),
     ]);
 
@@ -200,20 +181,12 @@ describe(saveReadingTargetWords, () => {
       organizationId,
       pronunciations: { [canonicalWord]: "AH-gwah" },
       sentences: [
-        {
-          explanation: "test explanation",
-          sentence: canonicalWord,
-          translation: "water",
-        },
+        { explanation: "test explanation", sentence: canonicalWord, translation: "water" },
       ],
       targetLanguage: "de",
       userLanguage: "en",
-      wordAudioUrls: {
-        [canonicalWord]: `/audio/${canonicalWord}.mp3`,
-      },
-      wordMetadata: {
-        [canonicalWord]: { romanization: null, translation: "water" },
-      },
+      wordAudioUrls: { [canonicalWord]: `/audio/${canonicalWord}.mp3` },
+      wordMetadata: { [canonicalWord]: { romanization: null, translation: "water" } },
     });
 
     const [lessonWord, duplicateDistractorRecord] = await Promise.all([
@@ -222,13 +195,7 @@ describe(saveReadingTargetWords, () => {
         where: { lessonId: lesson.id },
       }),
       prisma.word.findUnique({
-        where: {
-          orgWord: {
-            organizationId,
-            targetLanguage: "de",
-            word: duplicateDistractor,
-          },
-        },
+        where: { orgWord: { organizationId, targetLanguage: "de", word: duplicateDistractor } },
       }),
     ]);
 

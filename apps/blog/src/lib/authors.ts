@@ -1,15 +1,8 @@
 import { type Icon, IconBrandLinkedin, IconBrandX } from "@tabler/icons-react";
 
-type AuthorSocial = {
-  icon: Icon;
-  label: string;
-  url: string;
-};
+type AuthorSocial = { icon: Icon; label: string; url: string };
 
-type Author = {
-  name: string;
-  social: AuthorSocial[];
-};
+type Author = { name: string; social: AuthorSocial[] };
 
 /**
  * Author registry for blog posts.
@@ -20,16 +13,8 @@ const AUTHORS: Record<string, Author> = {
   will: {
     name: "Will Ceolin",
     social: [
-      {
-        icon: IconBrandX,
-        label: "X",
-        url: "https://x.com/ceolinwill",
-      },
-      {
-        icon: IconBrandLinkedin,
-        label: "LinkedIn",
-        url: "https://linkedin.com/in/ceolinwill",
-      },
+      { icon: IconBrandX, label: "X", url: "https://x.com/ceolinwill" },
+      { icon: IconBrandLinkedin, label: "LinkedIn", url: "https://linkedin.com/in/ceolinwill" },
     ],
   },
 };

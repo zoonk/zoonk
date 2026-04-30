@@ -17,10 +17,7 @@ export async function generateQuizContentStep(context: LessonContext): Promise<Q
   await using stream = createStepStream<LessonStepName>();
   await stream.status({ status: "started", step: "generateQuizContent" });
 
-  const explanationSteps = await getExplanationStepsSinceLastLessonKind({
-    context,
-    kind: "quiz",
-  });
+  const explanationSteps = await getExplanationStepsSinceLastLessonKind({ context, kind: "quiz" });
 
   if (explanationSteps.length === 0) {
     throw new FatalError("Quiz generation needs completed explanation lessons");

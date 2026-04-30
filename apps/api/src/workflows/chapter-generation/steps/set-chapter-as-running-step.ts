@@ -12,10 +12,7 @@ export async function setChapterAsRunningStep(input: {
   await stream.status({ status: "started", step: "setChapterAsRunning" });
 
   await prisma.chapter.update({
-    data: {
-      generationRunId: input.workflowRunId,
-      generationStatus: "running",
-    },
+    data: { generationRunId: input.workflowRunId, generationStatus: "running" },
     where: { id: input.chapterId },
   });
 

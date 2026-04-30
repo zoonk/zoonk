@@ -13,18 +13,9 @@ export default function NextImage({
   src,
   style,
   ...props
-}: Omit<ComponentProps<"img">, "src"> & {
-  alt: string;
-  fill?: boolean;
-  src: string;
-}) {
+}: Omit<ComponentProps<"img">, "src"> & { alt: string; fill?: boolean; src: string }) {
   const fillStyle = fill
-    ? {
-        height: "100%",
-        inset: 0,
-        position: "absolute" as const,
-        width: "100%",
-      }
+    ? { height: "100%", inset: 0, position: "absolute" as const, width: "100%" }
     : undefined;
 
   return <img {...props} alt={alt} src={src} style={{ ...fillStyle, ...style }} />;

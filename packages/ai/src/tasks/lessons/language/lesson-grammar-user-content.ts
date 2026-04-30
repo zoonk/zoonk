@@ -12,13 +12,7 @@ const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 const schema = z.object({
   discovery: z.object({
     context: z.string().nullable(),
-    options: z.array(
-      z.object({
-        feedback: z.string(),
-        isCorrect: z.boolean(),
-        text: z.string(),
-      }),
-    ),
+    options: z.array(z.object({ feedback: z.string(), isCorrect: z.boolean(), text: z.string() })),
     question: z.string().nullable(),
   }),
   exampleTranslations: z.array(z.string()),

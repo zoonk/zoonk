@@ -7,11 +7,7 @@ const BAD_SCORE = 8;
 const GOOD_SCORE = 9.2;
 
 // Weight configuration for different step types
-const STEP_WEIGHTS = {
-  majorErrors: 3,
-  minorErrors: 2,
-  potentialImprovements: 1,
-} as const;
+const STEP_WEIGHTS = { majorErrors: 3, minorErrors: 2, potentialImprovements: 1 } as const;
 
 /**
  * Calculates a weighted average score from evaluation steps.
@@ -59,10 +55,7 @@ export async function generateScore(params: {
     system: systemPrompt,
   });
 
-  return {
-    score: calculateScore(result.steps),
-    steps: result.steps,
-  };
+  return { score: calculateScore(result.steps), steps: result.steps };
 }
 
 export const getScoreClassName = (score: number) => {

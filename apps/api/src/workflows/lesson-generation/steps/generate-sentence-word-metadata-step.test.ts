@@ -8,19 +8,21 @@ import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateSentenceWordMetadataStep } from "./generate-sentence-word-metadata-step";
 
 vi.mock("@zoonk/ai/tasks/lessons/language/translation", () => ({
-  generateTranslation: vi.fn().mockImplementation(({ word }) =>
-    Promise.resolve({
-      data: { translation: `${word} translated` },
-    }),
-  ),
+  generateTranslation: vi
+    .fn()
+    .mockImplementation(({ word }) =>
+      Promise.resolve({ data: { translation: `${word} translated` } }),
+    ),
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/romanization", () => ({
-  generateLessonRomanization: vi.fn().mockImplementation(({ texts }) =>
-    Promise.resolve({
-      data: { romanizations: texts.map((text: string) => `${text} romanized`) },
-    }),
-  ),
+  generateLessonRomanization: vi
+    .fn()
+    .mockImplementation(({ texts }) =>
+      Promise.resolve({
+        data: { romanizations: texts.map((text: string) => `${text} romanized`) },
+      }),
+    ),
 }));
 
 describe(generateSentenceWordMetadataStep, () => {

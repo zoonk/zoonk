@@ -10,18 +10,12 @@ const stepSchema = z.object({
   score: z.number().min(MIN_SCORE).max(10),
 });
 
-export const scoreSchema = z.object({
-  steps: z.array(stepSchema),
-});
+export const scoreSchema = z.object({ steps: z.array(stepSchema) });
 
 export type Score = z.infer<typeof scoreSchema>;
 export type ScoreStep = z.infer<typeof stepSchema>;
 
-export type TestCase = {
-  id: string;
-  userInput: Record<string, unknown>;
-  expectations: string;
-};
+export type TestCase = { id: string; userInput: Record<string, unknown>; expectations: string };
 export type TaskResult<T = unknown> = {
   data: T;
   usage: LanguageModelUsage;
@@ -38,11 +32,7 @@ export type EvalResult = {
   duration: number;
 };
 
-export type TaskEvalResults = {
-  taskId: string;
-  modelId: string;
-  results: EvalResult[];
-};
+export type TaskEvalResults = { taskId: string; modelId: string; results: EvalResult[] };
 
 export type Task<TInput = unknown, TOutput = unknown> = {
   id: string;
@@ -52,11 +42,7 @@ export type Task<TInput = unknown, TOutput = unknown> = {
   // Using method signature instead of property signature makes this bivariant,
   // Allowing Task<SpecificInput> to be assignable to Task<unknown>
   generate(
-    input: TInput & {
-      model: string;
-      useFallback?: boolean;
-      reasoningEffort?: ReasoningEffort;
-    },
+    input: TInput & { model: string; useFallback?: boolean; reasoningEffort?: ReasoningEffort },
   ): Promise<TaskResult<TOutput>>;
 };
 
@@ -81,16 +67,9 @@ export type ModelOutputs = {
 
 // === Scored Result Types (Without output data) ===
 
-export type ScoredResult = {
-  testCase: TestCase;
-  steps: Score["steps"];
-};
+export type ScoredResult = { testCase: TestCase; steps: Score["steps"] };
 
-export type ScoredTaskResults = {
-  taskId: string;
-  modelId: string;
-  results: ScoredResult[];
-};
+export type ScoredTaskResults = { taskId: string; modelId: string; results: ScoredResult[] };
 
 // === Battle Mode Types ===
 
@@ -101,10 +80,7 @@ export type ModelRanking = {
   reasoning: string;
 };
 
-export type JudgeRanking = {
-  judgeId: string;
-  rankings: ModelRanking[];
-};
+export type JudgeRanking = { judgeId: string; rankings: ModelRanking[] };
 
 export type BattleMatchup = {
   taskId: string;

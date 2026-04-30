@@ -7,9 +7,7 @@ import noTFunctionAsArgument from "./rules/no-t-function-as-argument.js";
 
 /** @public */
 export default eslintCompatPlugin({
-  meta: {
-    name: "zoonk",
-  },
+  meta: { name: "zoonk" },
   rules: {
     "no-dynamic-translation-key": noDynamicTranslationKey,
     "no-get-extracted-in-promise": noGetExtractedInPromise,

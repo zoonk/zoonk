@@ -5,11 +5,7 @@
 export function setCookie(
   name: string,
   value: string,
-  options: {
-    expires?: number;
-    maxAge?: number;
-    sameSite?: "strict" | "lax" | "none";
-  } = {},
+  options: { expires?: number; maxAge?: number; sameSite?: "strict" | "lax" | "none" } = {},
 ): void {
   const { expires, maxAge, sameSite = "lax" } = options;
 

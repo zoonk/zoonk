@@ -14,13 +14,9 @@ export const BELT_BG_CLASSES: Record<BeltColor, string> = {
   yellow: "bg-belt-yellow",
 };
 
-export async function getBeltColors(params?: { locale: string }): Promise<
-  {
-    bgClass: string;
-    key: BeltColor;
-    label: string;
-  }[]
-> {
+export async function getBeltColors(params?: {
+  locale: string;
+}): Promise<{ bgClass: string; key: BeltColor; label: string }[]> {
   const t = await getExtracted(params);
 
   return [

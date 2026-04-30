@@ -8,11 +8,7 @@ import { type HistoryPeriod, calculateDateRanges } from "@zoonk/utils/date-range
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
-export type BpDataPoint = {
-  date: Date;
-  bp: number;
-  label: string;
-};
+export type BpDataPoint = { date: Date; bp: number; label: string };
 
 type BpHistoryData = {
   dataPoints: BpDataPoint[];
@@ -45,10 +41,7 @@ async function fetchDailyBpData(
   }
 
   return {
-    data: result.data.map((row) => ({
-      bp: row.brainPowerEarned,
-      date: row.date,
-    })),
+    data: result.data.map((row) => ({ bp: row.brainPowerEarned, date: row.date })),
     error: null,
   };
 }
@@ -91,9 +84,7 @@ function getPreviousPeriodTotal(previousData: RawDataPoint[] | null): number | n
 
 async function hasEarlierData(userId: string, beforeDate: Date): Promise<boolean> {
   const { data } = await safeAsync(() =>
-    prisma.dailyProgress.findFirst({
-      where: { date: { lt: beforeDate }, userId },
-    }),
+    prisma.dailyProgress.findFirst({ where: { date: { lt: beforeDate }, userId } }),
   );
   return Boolean(data);
 }
@@ -116,11 +107,7 @@ const cachedGetBpHistory = cache(
     const [currentResult, previousResult, progressResult] = await Promise.all([
       fetchDailyBpData(userId, current.start, current.end),
       fetchDailyBpData(userId, previous.start, previous.end),
-      safeAsync(() =>
-        prisma.userProgress.findUnique({
-          where: { userId },
-        }),
-      ),
+      safeAsync(() => prisma.userProgress.findUnique({ where: { userId } })),
     ]);
 
     if (currentResult.error || !currentResult.data || currentResult.data.length === 0) {

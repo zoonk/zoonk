@@ -16,9 +16,7 @@ function parseEvent(raw: unknown): Record<string, unknown> {
  * This parses them into objects for easy assertion.
  */
 export function getStreamedEvents(
-  writeMock: {
-    mock: { calls: unknown[][] };
-  } = getWorkflowWriteMock(),
+  writeMock: { mock: { calls: unknown[][] } } = getWorkflowWriteMock(),
 ): Record<string, unknown>[] {
   return writeMock.mock.calls.map(([raw]) => parseEvent(raw));
 }

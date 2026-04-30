@@ -37,11 +37,7 @@ function getChapterProgressRows({
     const totalLessons = chapterRows.length;
 
     if (durableChapterIds.has(chapterId)) {
-      return {
-        chapterId,
-        completedLessons: totalLessons,
-        totalLessons,
-      };
+      return { chapterId, completedLessons: totalLessons, totalLessons };
     }
 
     return {
@@ -65,13 +61,7 @@ export async function getChapterProgress({
 }: {
   courseId: string;
   headers?: Headers;
-}): Promise<
-  {
-    chapterId: string;
-    completedLessons: number;
-    totalLessons: number;
-  }[]
-> {
+}): Promise<{ chapterId: string; completedLessons: number; totalLessons: number }[]> {
   const session = await getSession(headers);
   const userId = session?.user.id;
 
@@ -81,10 +71,7 @@ export async function getChapterProgress({
 
   const [chapterIds, rows] = await Promise.all([
     listPublishedChaptersForCourse({ courseId }),
-    listPublishedLessonProgressRows({
-      scope: { courseId },
-      userId,
-    }),
+    listPublishedLessonProgressRows({ scope: { courseId }, userId }),
   ]);
 
   const [durableLessonIds, durableChapterIds] = await Promise.all([
@@ -101,9 +88,6 @@ export async function getChapterProgress({
   return getChapterProgressRows({
     chapterIds,
     durableChapterIds,
-    rows: toEffectiveLessonProgressRows({
-      durablyCompletedLessonIds: durableLessonIds,
-      rows,
-    }),
+    rows: toEffectiveLessonProgressRows({ durablyCompletedLessonIds: durableLessonIds, rows }),
   });
 }

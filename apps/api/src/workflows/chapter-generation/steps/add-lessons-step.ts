@@ -39,11 +39,7 @@ export async function addLessonsStep(input: {
 
   const lessonsData: LessonCreateManyInput[] = deduplicateSlugs(
     expandedLessons.map((lesson, index) => {
-      const routeLabel = getRouteLabel({
-        index,
-        kind: lesson.kind,
-        title: lesson.title,
-      });
+      const routeLabel = getRouteLabel({ index, kind: lesson.kind, title: lesson.title });
 
       return {
         chapterId: input.context.id,
@@ -61,9 +57,7 @@ export async function addLessonsStep(input: {
     }),
   );
 
-  const createdLessons = await prisma.lesson.createManyAndReturn({
-    data: lessonsData,
-  });
+  const createdLessons = await prisma.lesson.createManyAndReturn({ data: lessonsData });
 
   await stream.status({ status: "completed", step: "addLessons" });
 

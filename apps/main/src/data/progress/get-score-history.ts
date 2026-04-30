@@ -9,11 +9,7 @@ import { cache } from "react";
 
 export type ScorePeriod = HistoryPeriod;
 
-export type ScoreDataPoint = {
-  date: Date;
-  score: number;
-  label: string;
-};
+export type ScoreDataPoint = { date: Date; score: number; label: string };
 
 type ScoreHistoryData = {
   dataPoints: ScoreDataPoint[];
@@ -25,11 +21,7 @@ type ScoreHistoryData = {
   hasNextPeriod: boolean;
 };
 
-type RawDataPoint = {
-  date: Date;
-  correct: number;
-  incorrect: number;
-};
+type RawDataPoint = { date: Date; correct: number; incorrect: number };
 
 function calculateScore(correct: number, incorrect: number): number {
   const total = correct + incorrect;

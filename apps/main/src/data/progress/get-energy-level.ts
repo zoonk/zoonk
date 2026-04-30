@@ -6,11 +6,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
 export const getEnergyLevel = cache(
-  async (
-    headers?: Headers,
-  ): Promise<{
-    currentEnergy: number;
-  } | null> => {
+  async (headers?: Headers): Promise<{ currentEnergy: number } | null> => {
     const session = await getSession(headers);
 
     if (!session) {
@@ -20,9 +16,7 @@ export const getEnergyLevel = cache(
     const userId = session.user.id;
 
     const { data: progress, error } = await safeAsync(() =>
-      prisma.userProgress.findUnique({
-        where: { userId },
-      }),
+      prisma.userProgress.findUnique({ where: { userId } }),
     );
 
     if (error || !progress) {

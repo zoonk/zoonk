@@ -62,10 +62,7 @@ describe(persistGeneratedContent, () => {
 
     const [dbCourse, dbChapters, dbCategories, dbAltTitles] = await Promise.all([
       prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
-      prisma.chapter.findMany({
-        orderBy: { position: "asc" },
-        where: { courseId: course.id },
-      }),
+      prisma.chapter.findMany({ orderBy: { position: "asc" }, where: { courseId: course.id } }),
       prisma.courseCategory.findMany({ where: { courseId: course.id } }),
       prisma.courseAlternativeTitle.findMany({ where: { courseId: course.id } }),
     ]);

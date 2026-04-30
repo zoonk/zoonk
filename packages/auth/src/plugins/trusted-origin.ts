@@ -7,17 +7,11 @@ export function trustedOriginPlugin() {
     endpoints: {
       validateTrustedOrigin: createAuthEndpoint(
         "/trusted-origin/validate",
-        {
-          body: z.object({ url: z.url() }),
-          method: "POST",
-          use: [sessionMiddleware],
-        },
+        { body: z.object({ url: z.url() }), method: "POST", use: [sessionMiddleware] },
         async (ctx) => {
           const { url } = ctx.body;
 
-          const isTrusted = ctx.context.isTrustedOrigin(url, {
-            allowRelativePaths: false,
-          });
+          const isTrusted = ctx.context.isTrustedOrigin(url, { allowRelativePaths: false });
 
           if (!isTrusted) {
             throw new APIError("FORBIDDEN", { message: "UNTRUSTED_ORIGIN" });

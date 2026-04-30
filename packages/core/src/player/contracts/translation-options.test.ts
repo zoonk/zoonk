@@ -5,9 +5,7 @@ import {
   buildTranslationOptions,
 } from "./translation-options";
 
-vi.mock("@zoonk/utils/shuffle", () => ({
-  shuffle: <T>(items: T[]) => items,
-}));
+vi.mock("@zoonk/utils/shuffle", () => ({ shuffle: <T>(items: T[]) => items }));
 
 function makeDistractorWord(overrides: Partial<DistractorWord> = {}): DistractorWord {
   return {

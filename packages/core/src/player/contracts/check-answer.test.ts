@@ -278,32 +278,20 @@ describe(checkTranslationAnswer, () => {
 describe(checkArrangeWordsAnswer, () => {
   test("returns correct for matching sequence", () => {
     expect(checkArrangeWordsAnswer([["I", "speak", "Spanish"]], ["I", "speak", "Spanish"])).toEqual(
-      {
-        correctAnswer: null,
-        feedback: null,
-        isCorrect: true,
-      },
+      { correctAnswer: null, feedback: null, isCorrect: true },
     );
   });
 
   test("returns incorrect for wrong sequence", () => {
     expect(checkArrangeWordsAnswer([["I", "speak", "Spanish"]], ["Spanish", "I", "speak"])).toEqual(
-      {
-        correctAnswer: null,
-        feedback: null,
-        isCorrect: false,
-      },
+      { correctAnswer: null, feedback: null, isCorrect: false },
     );
   });
 
   test("returns incorrect when user provides extra words", () => {
     expect(
       checkArrangeWordsAnswer([["I", "speak", "Spanish"]], ["I", "speak", "Spanish", "well"]),
-    ).toEqual({
-      correctAnswer: null,
-      feedback: null,
-      isCorrect: false,
-    });
+    ).toEqual({ correctAnswer: null, feedback: null, isCorrect: false });
   });
 
   test("accepts an alternative valid sequence", () => {
@@ -315,11 +303,7 @@ describe(checkArrangeWordsAnswer, () => {
         ],
         ["Guten", "Morgen"],
       ),
-    ).toEqual({
-      correctAnswer: null,
-      feedback: null,
-      isCorrect: true,
-    });
+    ).toEqual({ correctAnswer: null, feedback: null, isCorrect: true });
   });
 
   test("matches case and punctuation insensitively", () => {

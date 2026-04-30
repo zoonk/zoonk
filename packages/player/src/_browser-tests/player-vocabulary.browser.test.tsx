@@ -46,22 +46,14 @@ describe("player browser integration: vocabulary", () => {
             content: {},
             id: "vocab-1",
             kind: "vocabulary",
-            word: buildSerializedWord({
-              id: "word-1",
-              translation: "Sun",
-              word: "Sol",
-            }),
+            word: buildSerializedWord({ id: "word-1", translation: "Sun", word: "Sol" }),
           }),
           buildSerializedStep({
             content: {},
             id: "vocab-2",
             kind: "vocabulary",
             position: 1,
-            word: buildSerializedWord({
-              id: "word-2",
-              translation: "Moon",
-              word: "Luna",
-            }),
+            word: buildSerializedWord({ id: "word-2", translation: "Moon", word: "Luna" }),
           }),
         ],
       }),
@@ -88,11 +80,7 @@ describe("player browser integration: vocabulary", () => {
           buildSerializedStep({
             content: {},
             kind: "vocabulary",
-            word: buildSerializedWord({
-              id: "word-1",
-              translation: "Cat",
-              word: "Gato",
-            }),
+            word: buildSerializedWord({ id: "word-1", translation: "Cat", word: "Gato" }),
           }),
         ],
       }),

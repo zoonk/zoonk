@@ -14,16 +14,11 @@ describe(setLessonAsCompletedStep, () => {
   });
 
   test("marks a lesson as completed", async () => {
-    const context = await createLessonContext({
-      generationStatus: "running",
-      organizationId,
-    });
+    const context = await createLessonContext({ generationStatus: "running", organizationId });
 
     await setLessonAsCompletedStep({ context });
 
-    const updatedLesson = await prisma.lesson.findUniqueOrThrow({
-      where: { id: context.id },
-    });
+    const updatedLesson = await prisma.lesson.findUniqueOrThrow({ where: { id: context.id } });
 
     expect(updatedLesson.generationStatus).toBe("completed");
     expect(getStreamedEvents()).toEqual(

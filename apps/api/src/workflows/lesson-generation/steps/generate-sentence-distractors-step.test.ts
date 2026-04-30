@@ -6,11 +6,11 @@ import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateSentenceDistractorsStep } from "./generate-sentence-distractors-step";
 
 vi.mock("@zoonk/ai/tasks/lessons/language/distractors", () => ({
-  generateLessonDistractors: vi.fn().mockImplementation(({ language }) =>
-    Promise.resolve({
-      data: { distractors: language === "ja" ? ["火"] : ["dog"] },
-    }),
-  ),
+  generateLessonDistractors: vi
+    .fn()
+    .mockImplementation(({ language }) =>
+      Promise.resolve({ data: { distractors: language === "ja" ? ["火"] : ["dog"] } }),
+    ),
 }));
 
 describe(generateSentenceDistractorsStep, () => {

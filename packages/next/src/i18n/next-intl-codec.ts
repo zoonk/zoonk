@@ -93,9 +93,7 @@ export default defineCodec(() => {
           id: msgctxt,
           message: msgstr,
           ...(extractedComments &&
-            extractedComments.length > 0 && {
-              description: extractedComments[0],
-            }),
+            extractedComments.length > 0 && { description: extractedComments[0] }),
         };
       });
     },

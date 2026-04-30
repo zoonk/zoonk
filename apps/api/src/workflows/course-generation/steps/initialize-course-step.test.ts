@@ -39,9 +39,7 @@ describe(initializeCourseStep, () => {
   });
 
   test("creates a course and marks suggestion as running", async () => {
-    const suggestion = await courseSuggestionFixture({
-      title: `Init Course ${randomUUID()}`,
-    });
+    const suggestion = await courseSuggestionFixture({ title: `Init Course ${randomUUID()}` });
 
     const workflowRunId = `run-${randomUUID()}`;
 
@@ -79,10 +77,7 @@ describe(initializeCourseStep, () => {
       title: `Language Course ${randomUUID()}`,
     });
 
-    const result = await initializeCourseStep({
-      suggestion,
-      workflowRunId: `run-${randomUUID()}`,
-    });
+    const result = await initializeCourseStep({ suggestion, workflowRunId: `run-${randomUUID()}` });
 
     expect(result.targetLanguage).toBe("es");
 

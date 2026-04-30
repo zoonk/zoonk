@@ -38,11 +38,7 @@ async function handleCourseGenerationRoute(route: Route): Promise<void> {
   }
 
   if (url.includes("/v1/workflows/course-generation/status")) {
-    await route.fulfill({
-      body: "",
-      contentType: "text/event-stream",
-      status: 200,
-    });
+    await route.fulfill({ body: "", contentType: "text/event-stream", status: 200 });
     return;
   }
 

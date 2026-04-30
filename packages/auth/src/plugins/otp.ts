@@ -23,10 +23,6 @@ export const sendVerificationOTP: EmailOTPOptions["sendVerificationOTP"] = async
     `;
 
   after(() => {
-    void sendEmail({
-      htmlBody,
-      subject,
-      to: email,
-    });
+    void sendEmail({ htmlBody, subject, to: email });
   });
 };

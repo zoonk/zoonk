@@ -86,11 +86,7 @@ function toCompletedItemFromState({
   state: PrefetchableContinueLearningState;
 }): ContinueLearningCompletedItem {
   return {
-    chapter: {
-      id: state.chapterId,
-      slug: state.chapterSlug,
-      title: state.chapterTitle,
-    },
+    chapter: { id: state.chapterId, slug: state.chapterSlug, title: state.chapterTitle },
     course: toCourse(row),
     lesson: {
       description: state.lessonDescription,
@@ -116,11 +112,7 @@ function toCompletedItemFromNext({
   row: ContinueLearningRow;
 }): ContinueLearningCompletedItem {
   return {
-    chapter: {
-      id: next.chapterId,
-      slug: next.chapterSlug,
-      title: next.chapterTitle,
-    },
+    chapter: { id: next.chapterId, slug: next.chapterSlug, title: next.chapterTitle },
     course: toCourse(row),
     lesson: {
       description: next.lessonDescription,
@@ -142,11 +134,7 @@ function toPendingItemFromNext({
   row: ContinueLearningRow;
 }): ContinueLearningPendingItem {
   return toPendingItem({
-    chapter: {
-      id: next.chapterId,
-      slug: next.chapterSlug,
-      title: next.chapterTitle,
-    },
+    chapter: { id: next.chapterId, slug: next.chapterSlug, title: next.chapterTitle },
     course: toCourse(row),
     lesson: {
       description: next.lessonDescription,
@@ -180,12 +168,7 @@ function toPendingItem({
   course: ContinueLearningCourse;
   lesson: ContinueLearningPendingLesson | null;
 }): ContinueLearningPendingItem {
-  return {
-    chapter,
-    course,
-    lesson,
-    status: "pending",
-  };
+  return { chapter, course, lesson, status: "pending" };
 }
 
 /**
@@ -201,11 +184,7 @@ function toPendingItemFromState({
   state: ContinueLearningResolvedState;
 }): ContinueLearningPendingItem {
   return toPendingItem({
-    chapter: {
-      id: state.chapterId,
-      slug: state.chapterSlug,
-      title: state.chapterTitle,
-    },
+    chapter: { id: state.chapterId, slug: state.chapterSlug, title: state.chapterTitle },
     course: toCourse(row),
     lesson: {
       description: state.lessonDescription,
@@ -228,11 +207,7 @@ function toPendingItemFromTarget({
   course: ContinueLearningCourse;
   pendingTarget: NonNullable<ContinueLearningCandidate["pendingTarget"]>;
 }): ContinueLearningPendingItem {
-  return toPendingItem({
-    chapter: pendingTarget.chapter,
-    course,
-    lesson: pendingTarget.lesson,
-  });
+  return toPendingItem({ chapter: pendingTarget.chapter, course, lesson: pendingTarget.lesson });
 }
 
 /**
@@ -267,38 +242,23 @@ function toContinueLearningItem({
 
   if (candidate.sequentialNext && !candidate.isSequentialNextBlocked) {
     if (candidate.sequentialNext.lessonGenerationStatus !== "completed") {
-      return toPendingItemFromNext({
-        next: candidate.sequentialNext,
-        row: candidate.row,
-      });
+      return toPendingItemFromNext({ next: candidate.sequentialNext, row: candidate.row });
     }
 
-    return toCompletedItemFromNext({
-      next: candidate.sequentialNext,
-      row: candidate.row,
-    });
+    return toCompletedItemFromNext({ next: candidate.sequentialNext, row: candidate.row });
   }
 
   if (state.completed) {
     return candidate.pendingTarget
-      ? toPendingItemFromTarget({
-          course,
-          pendingTarget: candidate.pendingTarget,
-        })
+      ? toPendingItemFromTarget({ course, pendingTarget: candidate.pendingTarget })
       : null;
   }
 
   if (hasPrefetchableLesson(state)) {
-    return toCompletedItemFromState({
-      row: candidate.row,
-      state,
-    });
+    return toCompletedItemFromState({ row: candidate.row, state });
   }
 
-  return toPendingItemFromState({
-    row: candidate.row,
-    state,
-  });
+  return toPendingItemFromState({ row: candidate.row, state });
 }
 
 /**
@@ -321,10 +281,7 @@ export const getContinueLearning = cache(
       return [];
     }
 
-    const candidates = await listContinueLearningCandidates({
-      rows,
-      userId,
-    });
+    const candidates = await listContinueLearningCandidates({ rows, userId });
 
     return candidates
       .map((candidate) => toContinueLearningItem({ candidate }))

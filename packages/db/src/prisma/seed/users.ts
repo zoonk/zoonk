@@ -69,11 +69,5 @@ export async function seedUsers(prisma: PrismaClient): Promise<SeedUsers> {
     where: { email: "multi-org@zoonk.test" },
   });
 
-  return {
-    admin,
-    logoutTest,
-    member,
-    multiOrg,
-    owner,
-  };
+  return { admin, logoutTest, member, multiOrg, owner };
 }

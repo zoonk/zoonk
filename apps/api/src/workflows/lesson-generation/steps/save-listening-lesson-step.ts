@@ -32,11 +32,7 @@ export async function saveListeningLessonStep(context: LessonContext): Promise<v
 
   const readingSteps = await prisma.step.findMany({
     orderBy: { position: "asc" },
-    where: {
-      kind: "reading",
-      lessonId: sourceLesson.id,
-      sentenceId: { not: null },
-    },
+    where: { kind: "reading", lessonId: sourceLesson.id, sentenceId: { not: null } },
   });
 
   if (readingSteps.length === 0) {

@@ -49,11 +49,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "es-en-el",
-    userInput: {
-      targetLanguage: "es",
-      userLanguage: "en",
-      word: "el",
-    },
+    userInput: { targetLanguage: "es", userLanguage: "en", word: "el" },
   },
   {
     expectations: `
@@ -73,11 +69,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "es-en-gato",
-    userInput: {
-      targetLanguage: "es",
-      userLanguage: "en",
-      word: "gato",
-    },
+    userInput: { targetLanguage: "es", userLanguage: "en", word: "gato" },
   },
   {
     expectations: `
@@ -97,11 +89,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "es-en-come",
-    userInput: {
-      targetLanguage: "es",
-      userLanguage: "en",
-      word: "come",
-    },
+    userInput: { targetLanguage: "es", userLanguage: "en", word: "come" },
   },
   {
     expectations: `
@@ -121,11 +109,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "ja-en-neko",
-    userInput: {
-      targetLanguage: "ja",
-      userLanguage: "en",
-      word: "猫",
-    },
+    userInput: { targetLanguage: "ja", userLanguage: "en", word: "猫" },
   },
   {
     expectations: `
@@ -145,11 +129,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "ja-en-taberu",
-    userInput: {
-      targetLanguage: "ja",
-      userLanguage: "en",
-      word: "食べる",
-    },
+    userInput: { targetLanguage: "ja", userLanguage: "en", word: "食べる" },
   },
   {
     expectations: `
@@ -170,11 +150,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "ja-en-wa",
-    userInput: {
-      targetLanguage: "ja",
-      userLanguage: "en",
-      word: "は",
-    },
+    userInput: { targetLanguage: "ja", userLanguage: "en", word: "は" },
   },
   {
     expectations: `
@@ -194,11 +170,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "de-en-der",
-    userInput: {
-      targetLanguage: "de",
-      userLanguage: "en",
-      word: "der",
-    },
+    userInput: { targetLanguage: "de", userLanguage: "en", word: "der" },
   },
   {
     expectations: `
@@ -218,11 +190,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "de-en-hund",
-    userInput: {
-      targetLanguage: "de",
-      userLanguage: "en",
-      word: "Hund",
-    },
+    userInput: { targetLanguage: "de", userLanguage: "en", word: "Hund" },
   },
   {
     expectations: `
@@ -243,11 +211,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "de-en-laeuft",
-    userInput: {
-      targetLanguage: "de",
-      userLanguage: "en",
-      word: "läuft",
-    },
+    userInput: { targetLanguage: "de", userLanguage: "en", word: "läuft" },
   },
   {
     expectations: `
@@ -267,11 +231,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "ko-pt-goyangi",
-    userInput: {
-      targetLanguage: "ko",
-      userLanguage: "pt",
-      word: "고양이",
-    },
+    userInput: { targetLanguage: "ko", userLanguage: "pt", word: "고양이" },
   },
   {
     expectations: `
@@ -292,11 +252,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "ko-pt-neun",
-    userInput: {
-      targetLanguage: "ko",
-      userLanguage: "pt",
-      word: "는",
-    },
+    userInput: { targetLanguage: "ko", userLanguage: "pt", word: "는" },
   },
   {
     expectations: `
@@ -316,11 +272,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "ko-pt-meokda",
-    userInput: {
-      targetLanguage: "ko",
-      userLanguage: "pt",
-      word: "먹다",
-    },
+    userInput: { targetLanguage: "ko", userLanguage: "pt", word: "먹다" },
   },
   {
     expectations: `
@@ -340,11 +292,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "ar-es-qitta",
-    userInput: {
-      targetLanguage: "ar",
-      userLanguage: "es",
-      word: "قطة",
-    },
+    userInput: { targetLanguage: "ar", userLanguage: "es", word: "قطة" },
   },
   {
     expectations: `
@@ -364,11 +312,7 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "ar-es-fi",
-    userInput: {
-      targetLanguage: "ar",
-      userLanguage: "es",
-      word: "في",
-    },
+    userInput: { targetLanguage: "ar", userLanguage: "es", word: "في" },
   },
   {
     expectations: `
@@ -388,10 +332,6 @@ QUALITY CHECK:
 ${SHARED_EXPECTATIONS}
     `,
     id: "ar-es-albayt",
-    userInput: {
-      targetLanguage: "ar",
-      userLanguage: "es",
-      word: "البيت",
-    },
+    userInput: { targetLanguage: "ar", userLanguage: "es", word: "البيت" },
   },
 ];

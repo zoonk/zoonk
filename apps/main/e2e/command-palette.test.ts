@@ -199,10 +199,7 @@ test.describe("Command Palette - Authenticated", () => {
 
     // Verify user sees subscription page
     await expect(
-      authenticatedPage.getByRole("heading", {
-        level: 1,
-        name: /subscription/i,
-      }),
+      authenticatedPage.getByRole("heading", { level: 1, name: /subscription/i }),
     ).toBeVisible();
   });
 
@@ -492,9 +489,7 @@ test.describe("Command Palette - Accessibility", () => {
     browser,
   }) => {
     // Create a mobile-sized context since iOS Safari zoom only affects mobile
-    const context = await browser.newContext({
-      viewport: { height: 667, width: 375 },
-    });
+    const context = await browser.newContext({ viewport: { height: 667, width: 375 } });
 
     const page = await context.newPage();
 

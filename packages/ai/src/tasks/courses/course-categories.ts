@@ -17,9 +17,7 @@ const AI_CATEGORIES = COURSE_CATEGORIES.filter(
   (cat): cat is Exclude<(typeof COURSE_CATEGORIES)[number], "languages"> => cat !== "languages",
 );
 
-const schema = z.object({
-  categories: z.array(z.enum(AI_CATEGORIES)),
-});
+const schema = z.object({ categories: z.array(z.enum(AI_CATEGORIES)) });
 
 export type CourseCategoriesSchema = z.infer<typeof schema>;
 

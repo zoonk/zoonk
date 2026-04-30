@@ -125,11 +125,7 @@ describe("authenticated users", () => {
     });
 
     // Filter to only include data from the past week
-    const result = await getScore({
-      endDate: now,
-      headers,
-      startDate: oneWeekAgo,
-    });
+    const result = await getScore({ endDate: now, headers, startDate: oneWeekAgo });
 
     // Should include: now (10/10) + oneWeekAgo (5/10) = 15/20 = 75%
     expect(result).not.toBeNull();

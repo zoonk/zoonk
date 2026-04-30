@@ -9,9 +9,7 @@ import systemPrompt from "./lesson-pronunciation.prompt.md";
 const taskName = "lesson-pronunciation";
 const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
-const schema = z.object({
-  pronunciation: z.string().min(1),
-});
+const schema = z.object({ pronunciation: z.string().min(1) });
 
 export type LessonPronunciationSchema = z.infer<typeof schema>;
 

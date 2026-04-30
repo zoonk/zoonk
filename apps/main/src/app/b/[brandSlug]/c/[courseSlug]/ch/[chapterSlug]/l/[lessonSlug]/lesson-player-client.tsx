@@ -33,11 +33,7 @@ export function LessonPlayerClient({
   isAuthenticated: boolean;
   lessonDescription: string;
   lessonTitle: string;
-  nextLesson: {
-    chapterSlug: string;
-    lessonSlug: string;
-    lessonTitle: string | null;
-  } | null;
+  nextLesson: { chapterSlug: string; lessonSlug: string; lessonTitle: string | null } | null;
   nextSibling: {
     brandSlug: string;
     chapterSlug: string;

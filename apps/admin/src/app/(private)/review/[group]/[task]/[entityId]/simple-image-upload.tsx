@@ -6,10 +6,9 @@ import { DEFAULT_IMAGE_ACCEPTED_TYPES } from "@zoonk/utils/upload";
 import { ImageIcon, Loader2Icon, UploadIcon } from "lucide-react";
 import { useRef, useState, useTransition } from "react";
 
-type UploadAction = (formData: FormData) => Promise<{
-  error: string | null;
-  imageUrl: string | null;
-}>;
+type UploadAction = (
+  formData: FormData,
+) => Promise<{ error: string | null; imageUrl: string | null }>;
 
 /**
  * Keeps the admin review image editing flow simple.

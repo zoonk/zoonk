@@ -87,9 +87,7 @@ test.describe("Score Page", () => {
       await expect(authenticatedPage.getByText(/vs last month/i)).toBeVisible();
 
       // Navigate back in time by clicking previous period
-      const prevButton = authenticatedPage.getByRole("button", {
-        name: /previous period/i,
-      });
+      const prevButton = authenticatedPage.getByRole("button", { name: /previous period/i });
 
       await prevButton.click();
       await authenticatedPage.waitForURL(/offset=1/);

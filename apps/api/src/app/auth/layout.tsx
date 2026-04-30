@@ -9,9 +9,7 @@ import "@zoonk/ui/globals.css";
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 
-  return {
-    title: t("Sign in to Zoonk"),
-  };
+  return { title: t("Sign in to Zoonk") };
 }
 
 async function AuthLayoutContent({ children }: LayoutProps<"/auth">) {

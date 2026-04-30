@@ -98,14 +98,7 @@ export function PlayerProvider({
     ],
   );
 
-  const runtimeValue = useMemo(
-    () => ({
-      actions,
-      screen,
-      state,
-    }),
-    [actions, screen, state],
-  );
+  const runtimeValue = useMemo(() => ({ actions, screen, state }), [actions, screen, state]);
 
   return (
     <PlayerConfigContext value={configValue}>

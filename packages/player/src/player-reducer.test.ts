@@ -110,10 +110,7 @@ describe(createInitialState, () => {
     const sortItems = ["Banana", "Apple", "Cherry"];
     const steps = [buildStep({ id: "sort-1", kind: "sortOrder", sortOrderItems: sortItems })];
     const state = createInitialState({ lesson: buildLesson({ steps }), totalBrainPower: 0 });
-    expect(state.selectedAnswers["sort-1"]).toEqual({
-      kind: "sortOrder",
-      userOrder: sortItems,
-    });
+    expect(state.selectedAnswers["sort-1"]).toEqual({ kind: "sortOrder", userOrder: sortItems });
   });
 
   test("does not pre-populate selectedAnswers for non-sortOrder steps", () => {
@@ -150,9 +147,7 @@ describe("SELECT_ANSWER", () => {
 
   test("overwrites previous answer for same step", () => {
     const state = buildState({
-      selectedAnswers: {
-        "step-1": { kind: "multipleChoice", selectedOptionId: "option-b" },
-      },
+      selectedAnswers: { "step-1": { kind: "multipleChoice", selectedOptionId: "option-b" } },
     });
     const next = playerReducer(state, {
       answer: multipleChoiceAnswer,
@@ -182,10 +177,7 @@ describe("CHECK_ANSWER", () => {
 
   test("includes selected answer in the result", () => {
     const step = buildMultipleChoiceStep({ id: "mc-1" });
-    const state = buildState({
-      selectedAnswers: { "mc-1": multipleChoiceAnswer },
-      steps: [step],
-    });
+    const state = buildState({ selectedAnswers: { "mc-1": multipleChoiceAnswer }, steps: [step] });
     const next = playerReducer(state, {
       result: { correctAnswer: null, feedback: "Correct!", isCorrect: true },
       stepId: "mc-1",
@@ -528,11 +520,7 @@ describe("RESTART", () => {
 
   test("preserves lessonId and steps", () => {
     const steps = [buildStep({ id: "s1" }), buildStep({ id: "s2", position: 1 })];
-    const state = buildState({
-      lessonId: "my-lesson",
-      phase: "completed",
-      steps,
-    });
+    const state = buildState({ lessonId: "my-lesson", phase: "completed", steps });
 
     const next = playerReducer(state, { type: "RESTART" });
     expect(next.lessonId).toBe("my-lesson");
@@ -545,18 +533,10 @@ describe("RESTART", () => {
       buildStep({ id: "sort-1", kind: "sortOrder", sortOrderItems: sortItems }),
       buildMultipleChoiceStep({ id: "mc-1", position: 1 }),
     ];
-    const state = buildState({
-      phase: "completed",
-      results: {},
-      selectedAnswers: {},
-      steps,
-    });
+    const state = buildState({ phase: "completed", results: {}, selectedAnswers: {}, steps });
 
     const next = playerReducer(state, { type: "RESTART" });
-    expect(next.selectedAnswers["sort-1"]).toEqual({
-      kind: "sortOrder",
-      userOrder: sortItems,
-    });
+    expect(next.selectedAnswers["sort-1"]).toEqual({ kind: "sortOrder", userOrder: sortItems });
     expect(next.selectedAnswers["mc-1"]).toBeUndefined();
   });
 });
@@ -576,17 +556,13 @@ describe("CLEAR_ANSWER", () => {
   });
 
   test("no-ops when stepId is not in selectedAnswers", () => {
-    const state = buildState({
-      selectedAnswers: { "step-1": multipleChoiceAnswer },
-    });
+    const state = buildState({ selectedAnswers: { "step-1": multipleChoiceAnswer } });
     const next = playerReducer(state, { stepId: "step-99", type: "CLEAR_ANSWER" });
     expect(next.selectedAnswers).toEqual({ "step-1": multipleChoiceAnswer });
   });
 
   test("does not change phase or index", () => {
-    const state = buildState({
-      selectedAnswers: { "step-1": multipleChoiceAnswer },
-    });
+    const state = buildState({ selectedAnswers: { "step-1": multipleChoiceAnswer } });
     const next = playerReducer(state, { stepId: "step-1", type: "CLEAR_ANSWER" });
     expect(next.phase).toBe("playing");
     expect(next.currentStepIndex).toBe(0);
@@ -719,10 +695,7 @@ describe("edge cases", () => {
 
   test("results include the stored StepResult structure", () => {
     const step = buildMultipleChoiceStep({ id: "mc-1" });
-    const answer: SelectedAnswer = {
-      kind: "multipleChoice",
-      selectedOptionId: "option-c",
-    };
+    const answer: SelectedAnswer = { kind: "multipleChoice", selectedOptionId: "option-c" };
     const state = buildState({ selectedAnswers: { "mc-1": answer }, steps: [step] });
     const next = playerReducer(state, {
       result: { correctAnswer: null, feedback: "Good!", isCorrect: true },

@@ -1,9 +1,5 @@
 {
-  "compilerOptions": {
-    "paths": {
-      "@/fixtures/*": ["./test/fixtures/*"]
-    }
-  },
+  "compilerOptions": { "paths": { "@/fixtures/*": ["./test/fixtures/*"] } },
   "exclude": ["node_modules", "dist"],
   "extends": "@zoonk/tsconfig/base.json",
   "include": ["src", "markdown.d.ts"]

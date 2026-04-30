@@ -21,10 +21,7 @@ import {
  */
 export async function syncDurableCurriculumCompletion(
   tx: TransactionClient,
-  params: {
-    lessonId: string;
-    userId: string;
-  },
+  params: { lessonId: string; userId: string },
 ): Promise<{ courseId: string }> {
   const context = await getLessonCurriculumContext({ lessonId: params.lessonId, tx });
 
@@ -45,10 +42,7 @@ export async function syncDurableCurriculumCompletion(
     return { courseId: context.courseId };
   }
 
-  const effectiveDurableLessonIds = getEffectiveDurableLessonIds({
-    durableLessonIds,
-    lessonRow,
-  });
+  const effectiveDurableLessonIds = getEffectiveDurableLessonIds({ durableLessonIds, lessonRow });
 
   const rowsByChapter = groupRowsByChapter({ rows });
 
@@ -110,34 +104,18 @@ function getDurableCompletionWrites({
     ...(chapterCompleted && !durableChapterIds.has(context.chapterId)
       ? [
           tx.chapterCompletion.upsert({
-            create: {
-              chapterId: context.chapterId,
-              userId,
-            },
+            create: { chapterId: context.chapterId, userId },
             update: {},
-            where: {
-              userChapterCompletion: {
-                chapterId: context.chapterId,
-                userId,
-              },
-            },
+            where: { userChapterCompletion: { chapterId: context.chapterId, userId } },
           }),
         ]
       : []),
     ...(courseCompleted
       ? [
           tx.courseCompletion.upsert({
-            create: {
-              courseId: context.courseId,
-              userId,
-            },
+            create: { courseId: context.courseId, userId },
             update: {},
-            where: {
-              userCourseCompletion: {
-                courseId: context.courseId,
-                userId,
-              },
-            },
+            where: { userCourseCompletion: { courseId: context.courseId, userId } },
           }),
         ]
       : []),

@@ -43,10 +43,7 @@ export async function BestTime({ score, period }: { score: number; period: numbe
 
         <FeatureCardBody>
           <FeatureCardTitle className="first-letter:uppercase">
-            {t("{period} with {value}%", {
-              period: periodName,
-              value: formattedScore,
-            })}
+            {t("{period} with {value}%", { period: periodName, value: formattedScore })}
           </FeatureCardTitle>
           <FeatureCardSubtitle>{t("Past 3 months")}</FeatureCardSubtitle>
         </FeatureCardBody>

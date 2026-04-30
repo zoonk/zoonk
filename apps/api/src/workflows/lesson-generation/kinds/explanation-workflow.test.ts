@@ -21,18 +21,22 @@ vi.mock("@zoonk/ai/tasks/lessons/core/explanation", () => ({
 }));
 
 vi.mock("@zoonk/ai/tasks/steps/image-prompts", () => ({
-  generateStepImagePrompts: vi.fn().mockResolvedValue({
-    data: { prompts: ["image prompt a", "image prompt b", "image prompt anchor"] },
-  }),
+  generateStepImagePrompts: vi
+    .fn()
+    .mockResolvedValue({
+      data: { prompts: ["image prompt a", "image prompt b", "image prompt anchor"] },
+    }),
 }));
 
 vi.mock("@zoonk/core/steps/content-image", () => ({
-  generateContentStepImage: vi.fn().mockImplementation(({ prompt }) =>
-    Promise.resolve({
-      data: `https://example.com/${encodeURIComponent(prompt)}.webp`,
-      error: null,
-    }),
-  ),
+  generateContentStepImage: vi
+    .fn()
+    .mockImplementation(({ prompt }) =>
+      Promise.resolve({
+        data: `https://example.com/${encodeURIComponent(prompt)}.webp`,
+        error: null,
+      }),
+    ),
 }));
 
 describe(explanationLessonWorkflow, () => {
@@ -71,19 +75,13 @@ describe(explanationLessonWorkflow, () => {
 
     expect(contents).toEqual([
       {
-        image: {
-          prompt: "image prompt a",
-          url: "https://example.com/image%20prompt%20a.webp",
-        },
+        image: { prompt: "image prompt a", url: "https://example.com/image%20prompt%20a.webp" },
         text: "Explain A",
         title: "A",
         variant: "text",
       },
       {
-        image: {
-          prompt: "image prompt b",
-          url: "https://example.com/image%20prompt%20b.webp",
-        },
+        image: { prompt: "image prompt b", url: "https://example.com/image%20prompt%20b.webp" },
         text: "Explain B",
         title: "B",
         variant: "text",

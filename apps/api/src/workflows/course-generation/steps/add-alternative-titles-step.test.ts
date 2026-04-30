@@ -57,10 +57,7 @@ describe(addAlternativeTitlesStep, () => {
 
     const altTitles = [`Alt Title A ${randomUUID()}`, `Alt Title B ${randomUUID()}`];
 
-    await addAlternativeTitlesStep({
-      alternativeTitles: altTitles,
-      course: courseContext,
-    });
+    await addAlternativeTitlesStep({ alternativeTitles: altTitles, course: courseContext });
 
     const dbAltTitles = await prisma.courseAlternativeTitle.findMany({
       where: { courseId: course.id },

@@ -55,10 +55,7 @@ describe(listSitemapLessons, () => {
   test("excludes unpublished lessons", async () => {
     const org = await organizationFixture({ kind: "brand" });
 
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: org.id,
-    });
+    const course = await courseFixture({ isPublished: true, organizationId: org.id });
 
     const chapter = await chapterFixture({
       courseId: course.id,
@@ -80,10 +77,7 @@ describe(listSitemapLessons, () => {
   });
 
   test("excludes lessons from personal courses without an organization", async () => {
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: null,
-    });
+    const course = await courseFixture({ isPublished: true, organizationId: null });
 
     const chapter = await chapterFixture({
       courseId: course.id,
@@ -107,10 +101,7 @@ describe(listSitemapLessons, () => {
   test("excludes lessons from non-brand organizations", async () => {
     const org = await organizationFixture({ kind: "personal" });
 
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: org.id,
-    });
+    const course = await courseFixture({ isPublished: true, organizationId: org.id });
 
     const chapter = await chapterFixture({
       courseId: course.id,
@@ -134,10 +125,7 @@ describe(listSitemapLessons, () => {
   test("excludes lessons from unpublished chapters", async () => {
     const org = await organizationFixture({ kind: "brand" });
 
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: org.id,
-    });
+    const course = await courseFixture({ isPublished: true, organizationId: org.id });
 
     const chapter = await chapterFixture({
       courseId: course.id,
@@ -161,10 +149,7 @@ describe(listSitemapLessons, () => {
   test("excludes lessons from unpublished courses", async () => {
     const org = await organizationFixture({ kind: "brand" });
 
-    const course = await courseFixture({
-      isPublished: false,
-      organizationId: org.id,
-    });
+    const course = await courseFixture({ isPublished: false, organizationId: org.id });
 
     const chapter = await chapterFixture({
       courseId: course.id,

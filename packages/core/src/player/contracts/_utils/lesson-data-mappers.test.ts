@@ -11,13 +11,7 @@ function makeLessonWord(overrides: Record<string, unknown> = {}) {
   return {
     distractors: [],
     translation: "translation",
-    word: {
-      audioUrl: null,
-      id: "1",
-      pronunciations: [],
-      romanization: null,
-      word: "word",
-    },
+    word: { audioUrl: null, id: "1", pronunciations: [], romanization: null, word: "word" },
     ...overrides,
   };
 }
@@ -26,12 +20,7 @@ function makeLessonSentence(overrides: Record<string, unknown> = {}) {
   return {
     distractors: [],
     explanation: null,
-    sentence: {
-      audioUrl: null,
-      id: "1",
-      romanization: null,
-      sentence: "sentence",
-    },
+    sentence: { audioUrl: null, id: "1", romanization: null, sentence: "sentence" },
     translation: "translation",
     translationDistractors: [],
     ...overrides,
@@ -115,11 +104,7 @@ describe(toSentenceWordInputs, () => {
       }),
     ]);
 
-    expect(result[0]).toMatchObject({
-      pronunciation: "katze",
-      translation: "cat",
-      word: "Katze",
-    });
+    expect(result[0]).toMatchObject({ pronunciation: "katze", translation: "cat", word: "Katze" });
   });
 });
 
@@ -253,24 +238,14 @@ describe(attachTranslationsToSteps, () => {
           kind: "translation",
           position: 0,
           sentence: null,
-          word: {
-            audioUrl: null,
-            id: "1",
-            romanization: null,
-            word: "hola",
-          },
+          word: { audioUrl: null, id: "1", romanization: null, word: "hola" },
         },
         {
           content: {},
           id: "2",
           kind: "reading",
           position: 1,
-          sentence: {
-            audioUrl: null,
-            id: "2",
-            romanization: null,
-            sentence: "hola mundo",
-          },
+          sentence: { audioUrl: null, id: "2", romanization: null, sentence: "hola mundo" },
           word: null,
         },
       ],

@@ -7,11 +7,7 @@ type GeneratedChapterLesson = {
   title?: string | null;
 };
 
-type ExpandedChapterLesson = {
-  description: string | null;
-  kind: LessonKind;
-  title: string | null;
-};
+type ExpandedChapterLesson = { description: string | null; kind: LessonKind; title: string | null };
 
 type CompanionKind = "listening" | "practice" | "quiz" | "reading" | "review" | "translation";
 
@@ -210,10 +206,7 @@ function takeVocabularyRun(lessons: GeneratedChapterLesson[]) {
   const nextNonVocabularyIndex = lessons.findIndex((lesson) => lesson.kind !== "vocabulary");
   const splitIndex = nextNonVocabularyIndex === -1 ? lessons.length : nextNonVocabularyIndex;
 
-  return {
-    rest: lessons.slice(splitIndex),
-    run: lessons.slice(0, splitIndex),
-  };
+  return { rest: lessons.slice(splitIndex), run: lessons.slice(0, splitIndex) };
 }
 
 /**

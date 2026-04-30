@@ -144,10 +144,7 @@ describe("step content contracts", () => {
       question: "Match the items.",
     });
 
-    expect(content).toEqual({
-      pairs: [{ left: "A", right: "1" }],
-      question: "Match the items.",
-    });
+    expect(content).toEqual({ pairs: [{ left: "A", right: "1" }], question: "Match the items." });
   });
 
   test("parses sortOrder", () => {
@@ -234,11 +231,7 @@ describe("step content contracts", () => {
 
   test("throws for unknown static variant", () => {
     expect(() =>
-      parseStepContent("static", {
-        text: "Hello",
-        title: "World",
-        variant: "unknown",
-      }),
+      parseStepContent("static", { text: "Hello", title: "World", variant: "unknown" }),
     ).toThrow();
   });
 

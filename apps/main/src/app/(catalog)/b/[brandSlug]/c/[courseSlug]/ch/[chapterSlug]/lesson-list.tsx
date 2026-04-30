@@ -16,10 +16,7 @@ import { type Lesson } from "@zoonk/db";
 import { formatPosition } from "@zoonk/utils/number";
 import { getExtracted } from "next-intl/server";
 
-type LessonRow = {
-  display: { title: string; description: string };
-  lesson: Lesson;
-};
+type LessonRow = { display: { title: string; description: string }; lesson: Lesson };
 
 /**
  * Lesson display copy can come from translations when generated companion

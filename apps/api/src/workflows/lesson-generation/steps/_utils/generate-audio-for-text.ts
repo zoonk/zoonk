@@ -5,11 +5,7 @@ export async function generateAudioForText(
   language: string,
   orgSlug?: string,
 ): Promise<{ audioUrl: string; text: string }> {
-  const { data, error } = await generateLanguageAudio({
-    language,
-    orgSlug,
-    text,
-  });
+  const { data, error } = await generateLanguageAudio({ language, orgSlug, text });
 
   if (error || !data) {
     throw error ?? new Error("audioGenerationFailed");

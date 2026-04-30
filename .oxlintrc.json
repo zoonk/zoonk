@@ -2,11 +2,7 @@
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "oxc", "react", "nextjs", "import", "unicorn", "jsx-a11y", "vitest"],
   "jsPlugins": ["./packages/oxlint-plugin/index.js"],
-  "env": {
-    "browser": true,
-    "es2024": true,
-    "node": true
-  },
+  "env": { "browser": true, "es2024": true, "node": true },
   "categories": {
     "correctness": "error",
     "pedantic": "error",
@@ -15,9 +11,7 @@
     "style": "error",
     "suspicious": "error"
   },
-  "options": {
-    "typeAware": true
-  },
+  "options": { "typeAware": true },
   "rules": {
     "eslint/capitalized-comments": "off",
     "eslint/func-style": ["error", "declaration", { "allowArrowFunctions": true }],
@@ -149,12 +143,7 @@
         "unicorn/prefer-top-level-await": "off"
       }
     },
-    {
-      "files": ["**/e2e/**"],
-      "rules": {
-        "react/rules-of-hooks": "off"
-      }
-    },
+    { "files": ["**/e2e/**"], "rules": { "react/rules-of-hooks": "off" } },
     {
       "files": ["*.test.ts", "*.test.tsx"],
       "rules": {
@@ -188,9 +177,7 @@
     },
     {
       "files": ["**/*skeleton*", "**/*-skeleton*"],
-      "rules": {
-        "react/no-array-index-key": "off"
-      }
+      "rules": { "react/no-array-index-key": "off" }
     },
     {
       "files": ["packages/oxlint-plugin/**/*.js"],
@@ -210,18 +197,8 @@
         "typescript/no-unsafe-assignment": "off"
       }
     },
-    {
-      "files": ["**/error-messages.ts"],
-      "rules": {
-        "eslint/max-statements": "off"
-      }
-    },
-    {
-      "files": ["**/proxy.ts"],
-      "rules": {
-        "unicorn/prefer-string-raw": "off"
-      }
-    },
+    { "files": ["**/error-messages.ts"], "rules": { "eslint/max-statements": "off" } },
+    { "files": ["**/proxy.ts"], "rules": { "unicorn/prefer-string-raw": "off" } },
     {
       "files": [
         "**/page.tsx",
@@ -241,21 +218,12 @@
         "**/*.js",
         "**/e2e/**/*.ts"
       ],
-      "rules": {
-        "import/no-default-export": "off"
-      }
+      "rules": { "import/no-default-export": "off" }
     },
-    {
-      "files": ["**/*.d.ts"],
-      "rules": {
-        "import/unambiguous": "off"
-      }
-    },
+    { "files": ["**/*.d.ts"], "rules": { "import/unambiguous": "off" } },
     {
       "files": ["apps/main/**/*.tsx", "apps/api/**/*.tsx"],
-      "rules": {
-        "zoonk/no-hardcoded-aria-label": "error"
-      }
+      "rules": { "zoonk/no-hardcoded-aria-label": "error" }
     }
   ],
   "ignorePatterns": [

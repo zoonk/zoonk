@@ -40,9 +40,7 @@ Then, a Zod schema can be defined alongside the component:
 ```tsx title="src/MyComposition.tsx"
 import { z } from "zod";
 
-export const MyCompositionSchema = z.object({
-  title: z.string(),
-});
+export const MyCompositionSchema = z.object({ title: z.string() });
 
 const MyComponent: React.FC<z.infer<typeof MyCompositionSchema>> = () => {
   return (
@@ -103,7 +101,5 @@ import { zColor } from "@remotion/zod-types";
 Then use it in the schema:
 
 ```tsx
-export const MyCompositionSchema = z.object({
-  color: zColor(),
-});
+export const MyCompositionSchema = z.object({ color: zColor() });
 ```

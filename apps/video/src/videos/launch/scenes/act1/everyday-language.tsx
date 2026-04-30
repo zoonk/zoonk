@@ -41,14 +41,7 @@ export function EverydayLanguage() {
 
   return (
     <SceneContainer bg="white">
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 48,
-        }}
-      >
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 48 }}>
         <SceneHeadline setup={t.everydaySetup} payoff={t.everydayPayoff} />
 
         {/* Icon grid — 2 rows of 5 */}

@@ -5,21 +5,23 @@ import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateGrammarUserContentStep } from "./generate-grammar-user-content-step";
 
 vi.mock("@zoonk/ai/tasks/lessons/language/grammar-user-content", () => ({
-  generateLessonGrammarUserContent: vi.fn().mockResolvedValue({
-    data: {
-      discovery: {
-        context: "Pick the matching pattern.",
-        options: [{ feedback: "yes", isCorrect: true, text: "It matches." }],
-        question: "Which option matches?",
+  generateLessonGrammarUserContent: vi
+    .fn()
+    .mockResolvedValue({
+      data: {
+        discovery: {
+          context: "Pick the matching pattern.",
+          options: [{ feedback: "yes", isCorrect: true, text: "It matches." }],
+          question: "Which option matches?",
+        },
+        exampleTranslations: ["There is a cat."],
+        exerciseFeedback: ["Use the noun."],
+        exerciseQuestions: ["Which noun fits?"],
+        exerciseTranslations: ["There is a cat."],
+        ruleName: "Existence",
+        ruleSummary: "Use がいます.",
       },
-      exampleTranslations: ["There is a cat."],
-      exerciseFeedback: ["Use the noun."],
-      exerciseQuestions: ["Which noun fits?"],
-      exerciseTranslations: ["There is a cat."],
-      ruleName: "Existence",
-      ruleSummary: "Use がいます.",
-    },
-  }),
+    }),
 }));
 
 describe(generateGrammarUserContentStep, () => {

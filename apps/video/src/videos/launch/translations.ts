@@ -291,10 +291,7 @@ const ptBr: TranslationStrings = {
   website: "zoonk.com",
 };
 
-const translations: Record<Locale, TranslationStrings> = {
-  en,
-  "pt-br": ptBr,
-};
+const translations: Record<Locale, TranslationStrings> = { en, "pt-br": ptBr };
 
 /** Returns all translation strings for a given locale. */
 export function getTranslations(locale: Locale): TranslationStrings {

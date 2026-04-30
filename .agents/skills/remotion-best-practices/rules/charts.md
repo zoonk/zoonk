@@ -20,12 +20,7 @@ const frame = useCurrentFrame();
 const { fps } = useVideoConfig();
 
 const bars = data.map((item, i) => {
-  const height = spring({
-    frame,
-    fps,
-    delay: i * STAGGER_DELAY,
-    config: { damping: 200 },
-  });
+  const height = spring({ frame, fps, delay: i * STAGGER_DELAY, config: { damping: 200 } });
   return <div style={{ height: height * item.value }} />;
 });
 ```

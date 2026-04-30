@@ -18,9 +18,7 @@ export async function generateContentStepImage({
   orgSlug,
   prompt,
   ...rest
-}: StepContentImageParams & {
-  orgSlug?: string;
-}): Promise<SafeReturn<string>> {
+}: StepContentImageParams & { orgSlug?: string }): Promise<SafeReturn<string>> {
   const { data: image, error: imageGenerationError } = await generateStepContentImage({
     prompt,
     ...rest,
@@ -42,10 +40,7 @@ export async function generateContentStepImage({
   const org = orgSlug ?? AI_ORG_SLUG;
   const fileName = `steps/${org}/content-${slug}.webp`;
 
-  const { data: url, error: uploadError } = await uploadImage({
-    fileName,
-    image: optimized,
-  });
+  const { data: url, error: uploadError } = await uploadImage({ fileName, image: optimized });
 
   if (uploadError) {
     return { data: null, error: uploadError };

@@ -1,9 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getStripePrices } from "./prices";
 
-const { mockList } = vi.hoisted(() => ({
-  mockList: vi.fn(),
-}));
+const { mockList } = vi.hoisted(() => ({ mockList: vi.fn() }));
 
 vi.mock("stripe", () => ({
   default: class MockStripe {
@@ -26,9 +24,7 @@ describe(getStripePrices, () => {
       data: [
         {
           currency: "usd",
-          currency_options: {
-            brl: { unit_amount: 2990 },
-          },
+          currency_options: { brl: { unit_amount: 2990 } },
           lookup_key: "hobby_monthly",
           unit_amount: 999,
         },
@@ -37,47 +33,26 @@ describe(getStripePrices, () => {
 
     const result = await getStripePrices(["hobby_monthly"], "brl");
 
-    expect(result.get("hobby_monthly")).toEqual({
-      amount: 2990,
-      currency: "brl",
-    });
+    expect(result.get("hobby_monthly")).toEqual({ amount: 2990, currency: "brl" });
   });
 
   it("falls back to default price when currency option is unavailable", async () => {
     mockList.mockResolvedValue({
       data: [
-        {
-          currency: "usd",
-          currency_options: {},
-          lookup_key: "hobby_monthly",
-          unit_amount: 999,
-        },
+        { currency: "usd", currency_options: {}, lookup_key: "hobby_monthly", unit_amount: 999 },
       ],
     });
 
     const result = await getStripePrices(["hobby_monthly"], "xyz");
 
-    expect(result.get("hobby_monthly")).toEqual({
-      amount: 999,
-      currency: "usd",
-    });
+    expect(result.get("hobby_monthly")).toEqual({ amount: 999, currency: "usd" });
   });
 
   it("handles multiple lookup keys", async () => {
     mockList.mockResolvedValue({
       data: [
-        {
-          currency: "usd",
-          currency_options: {},
-          lookup_key: "hobby_monthly",
-          unit_amount: 999,
-        },
-        {
-          currency: "usd",
-          currency_options: {},
-          lookup_key: "plus_monthly",
-          unit_amount: 1999,
-        },
+        { currency: "usd", currency_options: {}, lookup_key: "hobby_monthly", unit_amount: 999 },
+        { currency: "usd", currency_options: {}, lookup_key: "plus_monthly", unit_amount: 1999 },
       ],
     });
 
@@ -90,14 +65,7 @@ describe(getStripePrices, () => {
 
   it("skips prices without lookup_key", async () => {
     mockList.mockResolvedValue({
-      data: [
-        {
-          currency: "usd",
-          currency_options: {},
-          lookup_key: null,
-          unit_amount: 999,
-        },
-      ],
+      data: [{ currency: "usd", currency_options: {}, lookup_key: null, unit_amount: 999 }],
     });
 
     const result = await getStripePrices(["hobby_monthly"], "usd");

@@ -71,10 +71,7 @@ async function seedSentence(
 
   const lessonSentencePromises = data.lessonSlugs.map(async (lessonSlug) => {
     const lesson = await prisma.lesson.findFirst({
-      where: {
-        organizationId: org.id,
-        slug: lessonSlug,
-      },
+      where: { organizationId: org.id, slug: lessonSlug },
     });
 
     if (lesson) {
@@ -86,12 +83,7 @@ async function seedSentence(
           userLanguage: data.userLanguage,
         },
         update: {},
-        where: {
-          lessonSentence: {
-            lessonId: lesson.id,
-            sentenceId: sentence.id,
-          },
-        },
+        where: { lessonSentence: { lessonId: lesson.id, sentenceId: sentence.id } },
       });
     }
   });

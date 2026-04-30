@@ -4,12 +4,7 @@ let cached: { token: string; exp: number } | null = null;
 
 const { APPLE_TEAM_ID, APPLE_CLIENT_ID, APPLE_KEY_ID, APPLE_PRIVATE_KEY } = process.env;
 
-type AppleConfig = {
-  clientId: string;
-  keyId: string;
-  privateKey: string;
-  teamId: string;
-};
+type AppleConfig = { clientId: string; keyId: string; privateKey: string; teamId: string };
 
 const appleConfig: AppleConfig | null =
   APPLE_TEAM_ID && APPLE_CLIENT_ID && APPLE_KEY_ID && APPLE_PRIVATE_KEY

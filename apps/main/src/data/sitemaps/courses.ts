@@ -5,27 +5,19 @@ export const SITEMAP_BATCH_SIZE = 5000;
 
 export async function countSitemapCourses(): Promise<number> {
   return prisma.course.count({
-    where: getPublishedCourseWhere({
-      organization: { kind: "brand" },
-    }),
+    where: getPublishedCourseWhere({ organization: { kind: "brand" } }),
   });
 }
 
-export async function listSitemapCourses(page: number): Promise<
-  {
-    brandSlug: string;
-    courseSlug: string;
-    updatedAt: Date;
-  }[]
-> {
+export async function listSitemapCourses(
+  page: number,
+): Promise<{ brandSlug: string; courseSlug: string; updatedAt: Date }[]> {
   const courses = await prisma.course.findMany({
     include: { organization: true },
     orderBy: { id: "asc" },
     skip: page * SITEMAP_BATCH_SIZE,
     take: SITEMAP_BATCH_SIZE,
-    where: getPublishedCourseWhere({
-      organization: { kind: "brand" },
-    }),
+    where: getPublishedCourseWhere({ organization: { kind: "brand" } }),
   });
 
   return courses.map((course) => ({

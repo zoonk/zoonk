@@ -1,7 +1,4 @@
-type ExplanationPromptStep = {
-  text: string;
-  title: string;
-};
+type ExplanationPromptStep = { text: string; title: string };
 
 /**
  * Explanation lessons can now include hook or recap screens that omit

@@ -1,9 +1,4 @@
-const QUOTE_PAIRS: Record<string, string> = {
-  '"': '"',
-  "'": "'",
-  "‘": "’",
-  "“": "”",
-};
+const QUOTE_PAIRS: Record<string, string> = { '"': '"', "'": "'", "‘": "’", "“": "”" };
 
 /**
  * Matches any quote character that has at least one non-word neighbor (or sits

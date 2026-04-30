@@ -8,10 +8,7 @@ import { useQueryState } from "nuqs";
 export function PeriodTabs() {
   const t = useExtracted();
 
-  const [period, setPeriod] = useQueryState("period", {
-    defaultValue: "month",
-    shallow: false,
-  });
+  const [period, setPeriod] = useQueryState("period", { defaultValue: "month", shallow: false });
 
   const [, setOffset] = useQueryState("offset", { shallow: false });
 

@@ -51,16 +51,9 @@ export async function persistGeneratedContent(
 
   const metadataOps = [
     needsCourseUpdate &&
-      updateCourseStep({
-        course,
-        description: content.description,
-        imageUrl: content.imageUrl,
-      }),
+      updateCourseStep({ course, description: content.description, imageUrl: content.imageUrl }),
     needsAlternativeTitles &&
-      addAlternativeTitlesStep({
-        alternativeTitles: content.alternativeTitles,
-        course,
-      }),
+      addAlternativeTitlesStep({ alternativeTitles: content.alternativeTitles, course }),
     needsCategories && addCategoriesStep({ categories: content.categories, course }),
   ].filter(Boolean);
 

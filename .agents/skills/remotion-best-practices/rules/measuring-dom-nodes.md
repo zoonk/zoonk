@@ -23,10 +23,7 @@ export const MyComponent = () => {
   useEffect(() => {
     if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
-    setDimensions({
-      width: rect.width / scale,
-      height: rect.height / scale,
-    });
+    setDimensions({ width: rect.width / scale, height: rect.height / scale });
   }, [scale]);
 
   return <div ref={ref}>Content to measure</div>;

@@ -27,9 +27,7 @@ import { z } from "zod";
 
 export const weatherTool = tool({
   description: "Get current weather for a location",
-  inputSchema: z.object({
-    location: z.string().describe("City name"),
-  }),
+  inputSchema: z.object({ location: z.string().describe("City name") }),
   execute: async ({ location }) => {
     return { temperature: 72, condition: "sunny", location };
   },
@@ -47,10 +45,7 @@ import { calculatorTool } from "../tools/calculator-tool";
 export const myAgent = new ToolLoopAgent({
   model: "anthropic/claude-sonnet-4",
   instructions: "You are a helpful assistant.",
-  tools: {
-    weather: weatherTool,
-    calculator: calculatorTool,
-  },
+  tools: { weather: weatherTool, calculator: calculatorTool },
 });
 
 // Infer the UIMessage type from the agent
@@ -63,10 +58,7 @@ export type MyAgentUIMessage = InferAgentUIMessage<typeof myAgent>;
 // lib/agents/my-agent.ts
 import { z } from "zod";
 
-const metadataSchema = z.object({
-  createdAt: z.number(),
-  model: z.string().optional(),
-});
+const metadataSchema = z.object({ createdAt: z.number(), model: z.string().optional() });
 
 type MyMetadata = z.infer<typeof metadataSchema>;
 
@@ -143,9 +135,7 @@ import { z } from "zod";
 
 export const weatherTool = tool({
   description: "Get current weather for a location",
-  inputSchema: z.object({
-    location: z.string().describe("City name"),
-  }),
+  inputSchema: z.object({ location: z.string().describe("City name") }),
   execute: async ({ location }) => {
     return { temperature: 72, condition: "sunny", location };
   },

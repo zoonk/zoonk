@@ -36,16 +36,8 @@ async function listLessonDistractorWordsForLessons({ lessonIds }: { lessonIds: s
   }
 
   return prisma.word.findMany({
-    include: {
-      pronunciations: {
-        where: { userLanguage },
-      },
-    },
-    where: {
-      organizationId,
-      targetLanguage,
-      word: { in: distractorTexts, mode: "insensitive" },
-    },
+    include: { pronunciations: { where: { userLanguage } } },
+    where: { organizationId, targetLanguage, word: { in: distractorTexts, mode: "insensitive" } },
   });
 }
 

@@ -1,8 +1,4 @@
-type NextLesson = {
-  chapterSlug: string;
-  lessonSlug: string;
-  lessonTitle: string | null;
-};
+type NextLesson = { chapterSlug: string; lessonSlug: string; lessonTitle: string | null };
 
 type NextSibling = {
   brandSlug: string;
@@ -58,19 +54,11 @@ export function buildLessonPlayerModel({
 
   const milestone = (() => {
     if (!nextLesson && !nextSibling) {
-      return {
-        kind: "course" as const,
-        reviewHref: courseHref,
-        secondaryReviewHref: chapterHref,
-      };
+      return { kind: "course" as const, reviewHref: courseHref, secondaryReviewHref: chapterHref };
     }
 
     if (nextChapterHref) {
-      return {
-        kind: "chapter" as const,
-        nextHref: nextChapterHref,
-        reviewHref: chapterHref,
-      };
+      return { kind: "chapter" as const, nextHref: nextChapterHref, reviewHref: chapterHref };
     }
 
     return null;

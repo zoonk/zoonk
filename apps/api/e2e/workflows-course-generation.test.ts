@@ -38,9 +38,7 @@ test.describe("Course Generation Workflow API", () => {
 
   test("returns validation error when courseSuggestionId is missing", async () => {
     const apiContext = await request.newContext({ baseURL });
-    const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
-      data: {},
-    });
+    const response = await apiContext.post("/v1/workflows/course-generation/trigger", { data: {} });
 
     expect(response.status()).toBe(400);
 
@@ -140,9 +138,7 @@ test.describe("Course Generation Workflow API", () => {
 
     const response = await fetch(
       `${baseURL}/v1/workflows/course-generation/status?runId=${runId}`,
-      {
-        method: "HEAD",
-      },
+      { method: "HEAD" },
     );
 
     expect(response.status).toBe(200);

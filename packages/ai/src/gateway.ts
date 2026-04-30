@@ -16,8 +16,5 @@ const blockTestGatewayFetch: NonNullable<GatewayProviderSettings["fetch"]> = asy
 export const zoonkGateway = createGateway({
   apiKey: isTest ? "test-disabled" : undefined,
   fetch: isTest ? blockTestGatewayFetch : undefined,
-  headers: {
-    "http-referer": "https://www.zoonk.com",
-    "x-title": "Zoonk",
-  },
+  headers: { "http-referer": "https://www.zoonk.com", "x-title": "Zoonk" },
 });

@@ -57,11 +57,7 @@ function AiTaskDirectoryGroup({
         {group.tasks.map((task) => (
           <Link
             className={buttonVariants({ size: "sm", variant: "outline" })}
-            href={buildAiTaskReportHref({
-              endDate,
-              startDate,
-              taskName: task.taskName,
-            })}
+            href={buildAiTaskReportHref({ endDate, startDate, taskName: task.taskName })}
             key={task.taskName}
           >
             {task.taskLabel}

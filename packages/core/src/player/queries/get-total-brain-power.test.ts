@@ -27,12 +27,7 @@ describe("authenticated users", () => {
   });
 
   test("returns total brain power from progress record", async () => {
-    await prisma.userProgress.create({
-      data: {
-        totalBrainPower: BigInt(2500),
-        userId,
-      },
-    });
+    await prisma.userProgress.create({ data: { totalBrainPower: BigInt(2500), userId } });
 
     const result = await getTotalBrainPower(headers);
     expect(result).toBe(2500);

@@ -58,10 +58,6 @@ export function toEffectiveLessonProgressRows({
     const isEffectivelyCompleted =
       isDurablyCompleted || (row.totalLessons > 0 && row.completedLessons >= row.totalLessons);
 
-    return {
-      ...row,
-      isDurablyCompleted,
-      isEffectivelyCompleted,
-    };
+    return { ...row, isDurablyCompleted, isEffectivelyCompleted };
   });
 }

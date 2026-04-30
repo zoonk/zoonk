@@ -28,14 +28,8 @@ describe(saveExplanationLessonStep, () => {
       { text: `Each layer adds a different label. ${randomUUID()}`, title: "Layers" },
     ];
     const images = [
-      {
-        prompt: "A packet with labels added around it.",
-        url: "https://example.com/packet.webp",
-      },
-      {
-        prompt: "Each layer adding a label.",
-        url: "https://example.com/labels.webp",
-      },
+      { prompt: "A packet with labels added around it.", url: "https://example.com/packet.webp" },
+      { prompt: "Each layer adding a label.", url: "https://example.com/labels.webp" },
     ];
 
     await saveExplanationLessonStep({ context, images, steps: stepsToSave });

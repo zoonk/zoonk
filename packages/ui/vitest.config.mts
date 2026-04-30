@@ -2,8 +2,5 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   resolve: { tsconfigPaths: true },
-  test: {
-    environment: "jsdom",
-    exclude: ["**/node_modules/**"],
-  },
+  test: { environment: "jsdom", exclude: ["**/node_modules/**"] },
 });

@@ -24,10 +24,7 @@ function getInitialPhase(steps: SerializedStep[]): PlayerPhase {
   return "playing";
 }
 
-export type InitialStateInput = {
-  lesson: SerializedLesson;
-  totalBrainPower: number;
-};
+export type InitialStateInput = { lesson: SerializedLesson; totalBrainPower: number };
 
 export function createInitialState({ lesson, totalBrainPower }: InitialStateInput): PlayerState {
   const now = Date.now();

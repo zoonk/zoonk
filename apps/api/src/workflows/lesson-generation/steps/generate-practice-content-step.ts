@@ -39,9 +39,5 @@ export async function generatePracticeContentStep(
 
   await stream.status({ status: "completed", step: "generatePracticeContent" });
 
-  return {
-    kind: "practice",
-    scenario: result.data.scenario,
-    steps: result.data.steps,
-  };
+  return { kind: "practice", scenario: result.data.scenario, steps: result.data.steps };
 }

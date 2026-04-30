@@ -26,11 +26,7 @@ export async function saveGrammarLessonStep({
   await using stream = createStepStream<LessonStepName>();
   await stream.status({ status: "started", step: "saveGrammarLesson" });
 
-  const content: GrammarLessonContent = {
-    grammarContent,
-    kind: "grammar",
-    userContent,
-  };
+  const content: GrammarLessonContent = { grammarContent, kind: "grammar", userContent };
 
   await prisma.step.deleteMany({ where: { lessonId: context.id } });
   await saveGrammarLessonContent({ content, context, romanizations });

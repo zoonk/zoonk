@@ -12,10 +12,7 @@ type StepWhere = Omit<Prisma.StepWhereInput, "lesson">;
  * pages, and workflow steps aligned when they load raw ids for generation.
  */
 export function getAiGenerationCourseWhere(where: CourseWhere = {}): Prisma.CourseWhereInput {
-  return {
-    ...where,
-    organization: { slug: AI_ORG_SLUG },
-  };
+  return { ...where, organization: { slug: AI_ORG_SLUG } };
 }
 
 /**
@@ -24,10 +21,7 @@ export function getAiGenerationCourseWhere(where: CourseWhere = {}): Prisma.Cour
  * published checks for every descendant in the curriculum tree.
  */
 export function getPublishedCourseWhere(where: CourseWhere = {}): Prisma.CourseWhereInput {
-  return {
-    ...where,
-    isPublished: true,
-  };
+  return { ...where, isPublished: true };
 }
 
 /**
@@ -38,14 +32,8 @@ export function getPublishedCourseWhere(where: CourseWhere = {}): Prisma.CourseW
 export function getAiGenerationChapterWhere({
   chapterWhere = {},
   courseWhere = {},
-}: {
-  chapterWhere?: ChapterWhere;
-  courseWhere?: CourseWhere;
-} = {}): Prisma.ChapterWhereInput {
-  return {
-    ...chapterWhere,
-    course: getAiGenerationCourseWhere(courseWhere),
-  };
+}: { chapterWhere?: ChapterWhere; courseWhere?: CourseWhere } = {}): Prisma.ChapterWhereInput {
+  return { ...chapterWhere, course: getAiGenerationCourseWhere(courseWhere) };
 }
 
 /**
@@ -56,15 +44,8 @@ export function getAiGenerationChapterWhere({
 export function getPublishedChapterWhere({
   chapterWhere = {},
   courseWhere = {},
-}: {
-  chapterWhere?: ChapterWhere;
-  courseWhere?: CourseWhere;
-} = {}): Prisma.ChapterWhereInput {
-  return {
-    ...chapterWhere,
-    course: getPublishedCourseWhere(courseWhere),
-    isPublished: true,
-  };
+}: { chapterWhere?: ChapterWhere; courseWhere?: CourseWhere } = {}): Prisma.ChapterWhereInput {
+  return { ...chapterWhere, course: getPublishedCourseWhere(courseWhere), isPublished: true };
 }
 
 /**
@@ -81,10 +62,7 @@ export function getAiGenerationLessonWhere({
   courseWhere?: CourseWhere;
   lessonWhere?: LessonWhere;
 } = {}): Prisma.LessonWhereInput {
-  return {
-    ...lessonWhere,
-    chapter: getAiGenerationChapterWhere({ chapterWhere, courseWhere }),
-  };
+  return { ...lessonWhere, chapter: getAiGenerationChapterWhere({ chapterWhere, courseWhere }) };
 }
 
 /**

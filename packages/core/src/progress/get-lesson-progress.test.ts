@@ -27,10 +27,7 @@ describe(getLessonProgress, () => {
   test("returns empty array when unauthenticated", async () => {
     const chapter = await createPublishedChapter();
 
-    const result = await getLessonProgress({
-      chapterId: chapter.id,
-      headers: new Headers(),
-    });
+    const result = await getLessonProgress({ chapterId: chapter.id, headers: new Headers() });
 
     expect(result).toEqual([]);
   });

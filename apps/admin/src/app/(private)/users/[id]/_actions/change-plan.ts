@@ -18,9 +18,7 @@ export async function changePlanAction(formData: FormData) {
     throw new Error("Invalid form data");
   }
 
-  const subscriptions = await prisma.subscription.findMany({
-    where: { referenceId: userId },
-  });
+  const subscriptions = await prisma.subscription.findMany({ where: { referenceId: userId } });
 
   const existing = findUserActiveSubscription(subscriptions);
 

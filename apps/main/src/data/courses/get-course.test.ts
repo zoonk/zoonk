@@ -17,40 +17,19 @@ describe(getCourse, () => {
     ]);
 
     [publishedCourse, draftCourse, schoolCourse] = await Promise.all([
-      courseFixture({
-        isPublished: true,
-        language: "en",
-        organizationId: brandOrg.id,
-      }),
-      courseFixture({
-        isPublished: false,
-        language: "en",
-        organizationId: brandOrg.id,
-      }),
-      courseFixture({
-        isPublished: true,
-        language: "en",
-        organizationId: schoolOrg.id,
-      }),
+      courseFixture({ isPublished: true, language: "en", organizationId: brandOrg.id }),
+      courseFixture({ isPublished: false, language: "en", organizationId: brandOrg.id }),
+      courseFixture({ isPublished: true, language: "en", organizationId: schoolOrg.id }),
     ]);
 
     await Promise.all([
-      courseCategoryFixture({
-        category: "tech",
-        courseId: publishedCourse.id,
-      }),
-      courseCategoryFixture({
-        category: "science",
-        courseId: publishedCourse.id,
-      }),
+      courseCategoryFixture({ category: "tech", courseId: publishedCourse.id }),
+      courseCategoryFixture({ category: "science", courseId: publishedCourse.id }),
     ]);
   });
 
   test("returns course with organization and categories", async () => {
-    const result = await getCourse({
-      brandSlug: brandOrg.slug,
-      courseSlug: publishedCourse.slug,
-    });
+    const result = await getCourse({ brandSlug: brandOrg.slug, courseSlug: publishedCourse.slug });
 
     expect(result).not.toBeNull();
     expect(result?.id).toBe(publishedCourse.id);
@@ -64,28 +43,19 @@ describe(getCourse, () => {
   });
 
   test("returns null for non-existent course", async () => {
-    const result = await getCourse({
-      brandSlug: brandOrg.slug,
-      courseSlug: "non-existent-course",
-    });
+    const result = await getCourse({ brandSlug: brandOrg.slug, courseSlug: "non-existent-course" });
 
     expect(result).toBeNull();
   });
 
   test("returns null for unpublished course", async () => {
-    const result = await getCourse({
-      brandSlug: brandOrg.slug,
-      courseSlug: draftCourse.slug,
-    });
+    const result = await getCourse({ brandSlug: brandOrg.slug, courseSlug: draftCourse.slug });
 
     expect(result).toBeNull();
   });
 
   test("returns null for course from non-brand org", async () => {
-    const result = await getCourse({
-      brandSlug: schoolOrg.slug,
-      courseSlug: schoolCourse.slug,
-    });
+    const result = await getCourse({ brandSlug: schoolOrg.slug, courseSlug: schoolCourse.slug });
 
     expect(result).toBeNull();
   });

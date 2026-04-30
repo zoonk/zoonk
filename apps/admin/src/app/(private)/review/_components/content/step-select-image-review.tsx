@@ -7,11 +7,7 @@ import Image from "next/image";
 export function StepSelectImageReview({
   item,
 }: {
-  item: {
-    id: string;
-    content: unknown;
-    lesson: { kind: LessonKind; title: string | null };
-  };
+  item: { id: string; content: unknown; lesson: { kind: LessonKind; title: string | null } };
 }) {
   const content = parseStepContent("selectImage", item.content);
   const lessonLabel = getAdminLessonLabel(item.lesson);

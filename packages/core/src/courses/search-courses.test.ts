@@ -62,18 +62,9 @@ describe(searchCourses, () => {
   });
 
   test("search is case-insensitive", async () => {
-    const uppercaseResult = await searchCourses({
-      language: "en",
-      query: "JAVASCRIPT",
-    });
-    const lowercaseResult = await searchCourses({
-      language: "en",
-      query: "javascript",
-    });
-    const mixedResult = await searchCourses({
-      language: "en",
-      query: "JaVaScRiPt",
-    });
+    const uppercaseResult = await searchCourses({ language: "en", query: "JAVASCRIPT" });
+    const lowercaseResult = await searchCourses({ language: "en", query: "javascript" });
+    const mixedResult = await searchCourses({ language: "en", query: "JaVaScRiPt" });
 
     const uppercaseIds = uppercaseResult.map((course) => course.id);
     const lowercaseIds = lowercaseResult.map((course) => course.id);
@@ -93,15 +84,9 @@ describe(searchCourses, () => {
       title: "Programação em Python",
     });
 
-    const withAccent = await searchCourses({
-      language: "pt",
-      query: "Programação",
-    });
+    const withAccent = await searchCourses({ language: "pt", query: "Programação" });
 
-    const withoutAccent = await searchCourses({
-      language: "pt",
-      query: "Programacao",
-    });
+    const withoutAccent = await searchCourses({ language: "pt", query: "Programacao" });
 
     const withAccentIds = withAccent.map((course) => course.id);
     const withoutAccentIds = withoutAccent.map((course) => course.id);
@@ -131,15 +116,9 @@ describe(searchCourses, () => {
       }),
     ]);
 
-    const enResult = await searchCourses({
-      language: "en",
-      query: searchTerm,
-    });
+    const enResult = await searchCourses({ language: "en", query: searchTerm });
 
-    const ptResult = await searchCourses({
-      language: "pt",
-      query: searchTerm,
-    });
+    const ptResult = await searchCourses({ language: "pt", query: searchTerm });
 
     const enIds = enResult.map((course) => course.id);
     const ptIds = ptResult.map((course) => course.id);
@@ -184,10 +163,7 @@ describe(searchCourses, () => {
   });
 
   test("returns only published courses from brand orgs", async () => {
-    const result = await searchCourses({
-      language: "en",
-      query: "JavaScript",
-    });
+    const result = await searchCourses({ language: "en", query: "JavaScript" });
 
     const ids = result.map((course) => course.id);
 
@@ -210,10 +186,7 @@ describe(searchCourses, () => {
       })),
     });
 
-    const result = await searchCourses({
-      language: "en",
-      query: "Bulk Search Limit Test",
-    });
+    const result = await searchCourses({ language: "en", query: "Bulk Search Limit Test" });
 
     expect(result).toHaveLength(10);
   });
@@ -232,11 +205,7 @@ describe(searchCourses, () => {
       })),
     });
 
-    const result = await searchCourses({
-      language: "en",
-      limit: 5,
-      query: "Custom Limit Test",
-    });
+    const result = await searchCourses({ language: "en", limit: 5, query: "Custom Limit Test" });
 
     expect(result).toHaveLength(5);
   });
@@ -269,10 +238,7 @@ describe(searchCourses, () => {
       }),
     ]);
 
-    const result = await searchCourses({
-      language: "en",
-      query: searchTerm,
-    });
+    const result = await searchCourses({ language: "en", query: searchTerm });
 
     const ids = result.map((course) => course.id);
 
@@ -299,11 +265,7 @@ describe(searchCourses, () => {
       })),
     });
 
-    const firstPage = await searchCourses({
-      language: "en",
-      limit: 2,
-      query: searchTerm,
-    });
+    const firstPage = await searchCourses({ language: "en", limit: 2, query: searchTerm });
 
     const secondPage = await searchCourses({
       language: "en",
@@ -344,11 +306,7 @@ describe(searchCourses, () => {
       title: searchTerm,
     });
 
-    const result = await searchCourses({
-      language: "en",
-      offset: 100,
-      query: searchTerm,
-    });
+    const result = await searchCourses({ language: "en", offset: 100, query: searchTerm });
 
     expect(result).toEqual([]);
   });
@@ -367,11 +325,7 @@ describe(searchCourses, () => {
 
     // A very large offset should be clamped to 100
     // and not cause the query to fetch millions of rows
-    const result = await searchCourses({
-      language: "en",
-      offset: 1_000_000,
-      query: searchTerm,
-    });
+    const result = await searchCourses({ language: "en", offset: 1_000_000, query: searchTerm });
 
     // With offset clamped to 100 and only 1 result, we get empty array
     expect(result).toEqual([]);
@@ -398,10 +352,7 @@ describe(searchCourses, () => {
       }),
     ]);
 
-    const result = await searchCourses({
-      language: "en",
-      query: searchTerm,
-    });
+    const result = await searchCourses({ language: "en", query: searchTerm });
 
     const ids = result.map((course) => course.id);
 

@@ -5,12 +5,14 @@ import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateGrammarContentStep } from "./generate-grammar-content-step";
 
 vi.mock("@zoonk/ai/tasks/lessons/language/grammar-content", () => ({
-  generateLessonGrammarContent: vi.fn().mockResolvedValue({
-    data: {
-      examples: [{ highlight: "猫", sentence: "猫がいます" }],
-      exercises: [{ answer: "猫", distractors: ["犬"], template: "[BLANK]がいます" }],
-    },
-  }),
+  generateLessonGrammarContent: vi
+    .fn()
+    .mockResolvedValue({
+      data: {
+        examples: [{ highlight: "猫", sentence: "猫がいます" }],
+        exercises: [{ answer: "猫", distractors: ["犬"], template: "[BLANK]がいます" }],
+      },
+    }),
 }));
 
 describe(generateGrammarContentStep, () => {

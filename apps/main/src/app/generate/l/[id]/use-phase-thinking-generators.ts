@@ -7,8 +7,5 @@ import { useLanguagePhaseGenerators } from "./phase-thinking-generators/language
 
 /** Combines content and language thinking messages for lesson generation phases. */
 export function usePhaseThinkingGenerators(): Partial<Record<PhaseName, ThinkingMessageGenerator>> {
-  return {
-    ...useLanguagePhaseGenerators(),
-    ...useContentPhaseGenerators(),
-  };
+  return { ...useLanguagePhaseGenerators(), ...useContentPhaseGenerators() };
 }

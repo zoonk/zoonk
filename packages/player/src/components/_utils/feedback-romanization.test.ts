@@ -131,10 +131,7 @@ describe(getFeedbackRomanization, () => {
 
   describe("translation answers (word romanization)", () => {
     it("returns word romanization on correct translation answer", () => {
-      const result = buildResult({
-        kind: "translation",
-        selectedOptionId: "w-1",
-      });
+      const result = buildResult({ kind: "translation", selectedOptionId: "w-1" });
       const step = buildStep({ wordRomanization: "konnichiwa" });
 
       const rom = getFeedbackRomanization({
@@ -149,10 +146,7 @@ describe(getFeedbackRomanization, () => {
     });
 
     it("returns null when word romanization matches selected text (dedup)", () => {
-      const result = buildResult({
-        kind: "translation",
-        selectedOptionId: "w-1",
-      });
+      const result = buildResult({ kind: "translation", selectedOptionId: "w-1" });
       const step = buildStep({ wordRomanization: "konnichiwa" });
 
       const rom = getFeedbackRomanization({
@@ -167,10 +161,7 @@ describe(getFeedbackRomanization, () => {
     });
 
     it("returns word romanization on wrong translation's correct answer line", () => {
-      const result = buildResult({
-        kind: "translation",
-        selectedOptionId: "w-2",
-      });
+      const result = buildResult({ kind: "translation", selectedOptionId: "w-2" });
       const step = buildStep({ wordRomanization: "konnichiwa" });
 
       const rom = getFeedbackRomanization({
@@ -185,10 +176,7 @@ describe(getFeedbackRomanization, () => {
     });
 
     it("returns null wrongReading when word romanization matches correct answer (dedup)", () => {
-      const result = buildResult({
-        kind: "translation",
-        selectedOptionId: "w-2",
-      });
+      const result = buildResult({ kind: "translation", selectedOptionId: "w-2" });
       const step = buildStep({ wordRomanization: "konnichiwa" });
 
       const rom = getFeedbackRomanization({
@@ -203,10 +191,7 @@ describe(getFeedbackRomanization, () => {
     });
 
     it("returns null for translate field (only used by listening)", () => {
-      const result = buildResult({
-        kind: "translation",
-        selectedOptionId: "w-1",
-      });
+      const result = buildResult({ kind: "translation", selectedOptionId: "w-1" });
       const step = buildStep({ wordRomanization: "konnichiwa" });
 
       const rom = getFeedbackRomanization({
@@ -221,10 +206,7 @@ describe(getFeedbackRomanization, () => {
     });
 
     it("returns null when step has no word", () => {
-      const result = buildResult({
-        kind: "translation",
-        selectedOptionId: "w-1",
-      });
+      const result = buildResult({ kind: "translation", selectedOptionId: "w-1" });
       const step = buildStep();
 
       const rom = getFeedbackRomanization({
@@ -290,10 +272,7 @@ describe(getFeedbackRomanization, () => {
 
   describe("multipleChoice answers", () => {
     it("returns null for all fields", () => {
-      const result = buildResult({
-        kind: "multipleChoice",
-        selectedOptionId: "option-a",
-      });
+      const result = buildResult({ kind: "multipleChoice", selectedOptionId: "option-a" });
       const step = buildStep({ sentenceRomanization: "romaji", wordRomanization: "romaji" });
 
       const rom = getFeedbackRomanization({

@@ -107,9 +107,7 @@ type PreparePlayerLessonInput = {
   steps?: LessonStepInput[];
 };
 
-type OptionsContent = {
-  options: readonly unknown[];
-};
+type OptionsContent = { options: readonly unknown[] };
 
 /**
  * Canonical lesson words travel through the player with lesson-scoped translations and

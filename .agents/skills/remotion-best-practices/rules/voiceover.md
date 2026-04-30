@@ -38,11 +38,7 @@ const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voic
   body: JSON.stringify({
     text: "Welcome to the show.",
     model_id: "eleven_multilingual_v2",
-    voice_settings: {
-      stability: 0.5,
-      similarity_boost: 0.75,
-      style: 0.3,
-    },
+    voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0.3 },
   }),
 });
 
@@ -75,9 +71,7 @@ export const calculateMetadata: CalculateMetadataFunction<Props> = async ({ prop
     return durationInSeconds * FPS;
   });
 
-  return {
-    durationInFrames: Math.ceil(sceneDurations.reduce((sum, d) => sum + d, 0)),
-  };
+  return { durationInFrames: Math.ceil(sceneDurations.reduce((sum, d) => sum + d, 0)) };
 };
 ```
 

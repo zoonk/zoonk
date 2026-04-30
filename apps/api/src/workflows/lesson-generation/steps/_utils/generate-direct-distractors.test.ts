@@ -47,13 +47,9 @@ describe(generateDirectDistractors, () => {
 
   test("throws when any entry fails", async () => {
     generateLessonDistractorsMock
-      .mockResolvedValueOnce({
-        data: { distractors: ["d1", "d2", "d3"] },
-      })
+      .mockResolvedValueOnce({ data: { distractors: ["d1", "d2", "d3"] } })
       .mockRejectedValueOnce(new Error("fail"))
-      .mockResolvedValueOnce({
-        data: { distractors: ["d4", "d5", "d6"] },
-      });
+      .mockResolvedValueOnce({ data: { distractors: ["d4", "d5", "d6"] } });
 
     await expect(
       generateDirectDistractors({

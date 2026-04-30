@@ -28,12 +28,14 @@ vi.mock("@zoonk/ai/tasks/lessons/core/quiz", () => ({
 }));
 
 vi.mock("@zoonk/core/steps/image", () => ({
-  generateStepImage: vi.fn().mockImplementation(({ prompt }) =>
-    Promise.resolve({
-      data: `https://example.com/${encodeURIComponent(prompt)}.webp`,
-      error: null,
-    }),
-  ),
+  generateStepImage: vi
+    .fn()
+    .mockImplementation(({ prompt }) =>
+      Promise.resolve({
+        data: `https://example.com/${encodeURIComponent(prompt)}.webp`,
+        error: null,
+      }),
+    ),
 }));
 
 describe(quizLessonWorkflow, () => {

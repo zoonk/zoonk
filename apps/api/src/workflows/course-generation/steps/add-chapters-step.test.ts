@@ -31,10 +31,7 @@ describe(addChaptersStep, () => {
   });
 
   test("throws without streaming error when DB save fails", async () => {
-    const brokenContext: CourseContext = {
-      ...courseContext,
-      courseId: randomUUID(),
-    };
+    const brokenContext: CourseContext = { ...courseContext, courseId: randomUUID() };
 
     const chapters = [{ description: "Desc", title: `Chapter ${randomUUID()}` }];
 
@@ -50,10 +47,7 @@ describe(addChaptersStep, () => {
   test("creates chapters in the database and returns them", async () => {
     const course = await courseFixture({ organizationId });
 
-    const context: CourseContext = {
-      ...courseContext,
-      courseId: course.id,
-    };
+    const context: CourseContext = { ...courseContext, courseId: course.id };
 
     const chapters = [
       { description: "First chapter desc", title: `Chapter 1 ${randomUUID()}` },

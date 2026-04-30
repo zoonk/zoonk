@@ -32,10 +32,7 @@ function getCorrectReadingRomanization({
 }: {
   kind?: string;
   selectedText: string | null;
-  romanizations: {
-    sentenceRomanization?: string | null;
-    wordRomanization?: string | null;
-  };
+  romanizations: { sentenceRomanization?: string | null; wordRomanization?: string | null };
 }): string | null {
   if (kind === "reading" && selectedText) {
     return getVisibleRomanization({
@@ -61,10 +58,7 @@ function getWrongReadingRomanization({
 }: {
   correctAnswer?: string | null;
   kind?: string;
-  romanizations: {
-    sentenceRomanization?: string | null;
-    wordRomanization?: string | null;
-  };
+  romanizations: { sentenceRomanization?: string | null; wordRomanization?: string | null };
 }): string | null {
   if (kind === "reading" && correctAnswer) {
     return getVisibleRomanization({
@@ -117,10 +111,7 @@ export function getFeedbackRomanization({
      */
     correctReading: getCorrectReadingRomanization({
       kind,
-      romanizations: {
-        sentenceRomanization,
-        wordRomanization,
-      },
+      romanizations: { sentenceRomanization, wordRomanization },
       selectedText,
     }),
 
@@ -140,10 +131,7 @@ export function getFeedbackRomanization({
     wrongReading: getWrongReadingRomanization({
       correctAnswer,
       kind,
-      romanizations: {
-        sentenceRomanization,
-        wordRomanization,
-      },
+      romanizations: { sentenceRomanization, wordRomanization },
     }),
   };
 }

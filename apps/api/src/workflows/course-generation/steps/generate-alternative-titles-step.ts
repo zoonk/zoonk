@@ -15,10 +15,7 @@ export async function generateAlternativeTitlesStep(course: CourseContext): Prom
     title: course.courseTitle,
   });
 
-  await stream.status({
-    status: "completed",
-    step: "generateAlternativeTitles",
-  });
+  await stream.status({ status: "completed", step: "generateAlternativeTitles" });
 
   return result.data.alternatives;
 }

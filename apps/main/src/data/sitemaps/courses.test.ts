@@ -38,10 +38,7 @@ describe(listSitemapCourses, () => {
   test("excludes unpublished courses", async () => {
     const org = await organizationFixture({ kind: "brand" });
 
-    const course = await courseFixture({
-      isPublished: false,
-      organizationId: org.id,
-    });
+    const course = await courseFixture({ isPublished: false, organizationId: org.id });
 
     const count = await countSitemapCourses();
     const courses = await listSitemapCourses(lastPage(count));
@@ -53,10 +50,7 @@ describe(listSitemapCourses, () => {
   test("excludes non-brand organization courses", async () => {
     const org = await organizationFixture({ kind: "personal" });
 
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: org.id,
-    });
+    const course = await courseFixture({ isPublished: true, organizationId: org.id });
 
     const count = await countSitemapCourses();
     const courses = await listSitemapCourses(lastPage(count));
@@ -66,10 +60,7 @@ describe(listSitemapCourses, () => {
   });
 
   test("excludes personal courses without an organization", async () => {
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: null,
-    });
+    const course = await courseFixture({ isPublished: true, organizationId: null });
 
     const count = await countSitemapCourses();
     const courses = await listSitemapCourses(lastPage(count));

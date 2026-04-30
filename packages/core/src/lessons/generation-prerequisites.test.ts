@@ -73,18 +73,8 @@ describe(getBlockingLessonGenerationPrerequisite, () => {
         organizationId,
         position: 0,
       }),
-      createLesson({
-        chapterId: chapter.id,
-        kind: "practice",
-        organizationId,
-        position: 1,
-      }),
-      createLesson({
-        chapterId: chapter.id,
-        kind: "explanation",
-        organizationId,
-        position: 2,
-      }),
+      createLesson({ chapterId: chapter.id, kind: "practice", organizationId, position: 1 }),
+      createLesson({ chapterId: chapter.id, kind: "explanation", organizationId, position: 2 }),
       createLesson({
         chapterId: chapter.id,
         generationStatus: "running",
@@ -113,12 +103,7 @@ describe(getBlockingLessonGenerationPrerequisite, () => {
     const chapter = await createChapter({ organizationId });
 
     const [, practice] = await Promise.all([
-      createLesson({
-        chapterId: chapter.id,
-        kind: "explanation",
-        organizationId,
-        position: 0,
-      }),
+      createLesson({ chapterId: chapter.id, kind: "explanation", organizationId, position: 0 }),
       createLesson({
         chapterId: chapter.id,
         generationStatus: "pending",
@@ -142,12 +127,7 @@ describe(getBlockingLessonGenerationPrerequisite, () => {
         organizationId,
         position: 0,
       }),
-      createLesson({
-        chapterId: chapter.id,
-        kind: "quiz",
-        organizationId,
-        position: 1,
-      }),
+      createLesson({ chapterId: chapter.id, kind: "quiz", organizationId, position: 1 }),
       createLesson({
         chapterId: chapter.id,
         generationStatus: "pending",
@@ -177,12 +157,7 @@ describe(getBlockingLessonGenerationPrerequisite, () => {
     const chapter = await createChapter({ organizationId });
 
     const lessons = await Promise.all([
-      createLesson({
-        chapterId: chapter.id,
-        kind: "vocabulary",
-        organizationId,
-        position: 0,
-      }),
+      createLesson({ chapterId: chapter.id, kind: "vocabulary", organizationId, position: 0 }),
       createLesson({
         chapterId: chapter.id,
         generationStatus: "pending",
@@ -219,18 +194,8 @@ describe(getBlockingLessonGenerationPrerequisite, () => {
         organizationId,
         position: 0,
       }),
-      createLesson({
-        chapterId: chapter.id,
-        kind: "reading",
-        organizationId,
-        position: 1,
-      }),
-      createLesson({
-        chapterId: chapter.id,
-        kind: "vocabulary",
-        organizationId,
-        position: 2,
-      }),
+      createLesson({ chapterId: chapter.id, kind: "reading", organizationId, position: 1 }),
+      createLesson({ chapterId: chapter.id, kind: "vocabulary", organizationId, position: 2 }),
       createLesson({
         chapterId: chapter.id,
         generationStatus: "failed",
@@ -260,12 +225,7 @@ describe(getBlockingLessonGenerationPrerequisite, () => {
     const chapter = await createChapter({ organizationId });
 
     const lessons = await Promise.all([
-      createLesson({
-        chapterId: chapter.id,
-        kind: "reading",
-        organizationId,
-        position: 0,
-      }),
+      createLesson({ chapterId: chapter.id, kind: "reading", organizationId, position: 0 }),
       createLesson({
         chapterId: chapter.id,
         generationStatus: "running",

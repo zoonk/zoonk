@@ -8,9 +8,7 @@ import systemPrompt from "./course-description.prompt.md";
 const taskName = "course-description";
 const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
-const schema = z.object({
-  description: z.string(),
-});
+const schema = z.object({ description: z.string() });
 
 export type CourseDescriptionSchema = z.infer<typeof schema>;
 

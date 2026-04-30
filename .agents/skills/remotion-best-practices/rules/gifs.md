@@ -73,12 +73,7 @@ Use the `style` prop for additional CSS (use `width` and `height` props for sizi
   src={staticFile("animation.gif")}
   width={500}
   height={500}
-  style={{
-    borderRadius: 20,
-    position: "absolute",
-    top: 100,
-    left: 50,
-  }}
+  style={{ borderRadius: 20, position: "absolute", top: 100, left: 50 }}
 />
 ```
 
@@ -106,9 +101,7 @@ import { staticFile, CalculateMetadataFunction } from "remotion";
 
 const calculateMetadata: CalculateMetadataFunction = async () => {
   const duration = await getGifDurationInSeconds(staticFile("animation.gif"));
-  return {
-    durationInFrames: Math.ceil(duration * 30),
-  };
+  return { durationInFrames: Math.ceil(duration * 30) };
 };
 ```
 

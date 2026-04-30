@@ -8,9 +8,7 @@ For Docker or any containerized deployment, use standalone output:
 
 ```js
 // next.config.js
-module.exports = {
-  output: "standalone",
-};
+module.exports = { output: "standalone" };
 ```
 
 This creates a minimal `standalone` folder with only production dependencies:
@@ -101,10 +99,7 @@ module.exports = {
       script: ".next/standalone/server.js",
       instances: "max",
       exec_mode: "cluster",
-      env: {
-        NODE_ENV: "production",
-        PORT: 3000,
-      },
+      env: { NODE_ENV: "production", PORT: 3000 },
     },
   ],
 };
@@ -156,17 +151,11 @@ module.exports = class CacheHandler {
     if (!data) return null;
 
     const parsed = JSON.parse(data);
-    return {
-      value: parsed.value,
-      lastModified: parsed.lastModified,
-    };
+    return { value: parsed.value, lastModified: parsed.lastModified };
   }
 
   async set(key, data, ctx) {
-    const cacheData = {
-      value: data,
-      lastModified: Date.now(),
-    };
+    const cacheData = { value: data, lastModified: Date.now() };
 
     // Set TTL based on revalidate option
     if (ctx?.revalidate) {
@@ -195,12 +184,7 @@ const BUCKET = process.env.CACHE_BUCKET;
 module.exports = class CacheHandler {
   async get(key) {
     try {
-      const response = await s3.send(
-        new GetObjectCommand({
-          Bucket: BUCKET,
-          Key: `cache/${key}`,
-        }),
-      );
+      const response = await s3.send(new GetObjectCommand({ Bucket: BUCKET, Key: `cache/${key}` }));
       const body = await response.Body.transformToString();
       return JSON.parse(body);
     } catch (err) {
@@ -214,10 +198,7 @@ module.exports = class CacheHandler {
       new PutObjectCommand({
         Bucket: BUCKET,
         Key: `cache/${key}`,
-        Body: JSON.stringify({
-          value: data,
-          lastModified: Date.now(),
-        }),
+        Body: JSON.stringify({ value: data, lastModified: Date.now() }),
         ContentType: "application/json",
       }),
     );
@@ -266,12 +247,7 @@ Offload to Cloudinary, Imgix, or similar:
 
 ```js
 // next.config.js
-module.exports = {
-  images: {
-    loader: "custom",
-    loaderFile: "./lib/image-loader.js",
-  },
-};
+module.exports = { images: { loader: "custom", loaderFile: "./lib/image-loader.js" } };
 ```
 
 ```js
@@ -302,10 +278,7 @@ For truly dynamic config, don't use `NEXT_PUBLIC_*`. Instead:
 ```tsx
 // app/api/config/route.ts
 export async function GET() {
-  return Response.json({
-    apiUrl: process.env.API_URL,
-    features: process.env.FEATURES?.split(","),
-  });
+  return Response.json({ apiUrl: process.env.API_URL, features: process.env.FEATURES?.split(",") });
 }
 ```
 

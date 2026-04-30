@@ -16,9 +16,7 @@ const sentenceSchema = z.object({
   translation: z.string(),
 });
 
-const schema = z.object({
-  sentences: z.array(sentenceSchema).min(1),
-});
+const schema = z.object({ sentences: z.array(sentenceSchema).min(1) });
 
 export type LessonSentencesSchema = z.infer<typeof schema>;
 

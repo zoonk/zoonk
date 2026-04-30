@@ -50,11 +50,7 @@ export function SearchPrompt() {
     frame,
     [typingDone, typingDone + 15],
     [INPUT_CENTER_Y, INPUT_FINAL_Y],
-    {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-      easing: Easing.bezier(0.16, 1, 0.3, 1),
-    },
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.bezier(0.16, 1, 0.3, 1) },
   );
 
   /** Chapters become visible after the input has slid up. */
@@ -134,12 +130,7 @@ export function SearchPrompt() {
             return (
               <div
                 key={title}
-                style={{
-                  ...style,
-                  height: ITEM_HEIGHT,
-                  display: "flex",
-                  alignItems: "center",
-                }}
+                style={{ ...style, height: ITEM_HEIGHT, display: "flex", alignItems: "center" }}
               >
                 <span
                   style={{
@@ -153,14 +144,7 @@ export function SearchPrompt() {
                 >
                   {index + 1}
                 </span>
-                <span
-                  style={{
-                    fontSize: 22,
-                    fontWeight: 500,
-                    color: COLORS.text,
-                    marginLeft: 12,
-                  }}
-                >
+                <span style={{ fontSize: 22, fontWeight: 500, color: COLORS.text, marginLeft: 12 }}>
                   {title}
                 </span>
               </div>

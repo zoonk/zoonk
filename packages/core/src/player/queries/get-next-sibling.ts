@@ -16,11 +16,7 @@ type LessonScope = {
   level: "lesson";
 };
 
-type ChapterScope = {
-  chapterPosition: number;
-  courseId: string;
-  level: "chapter";
-};
+type ChapterScope = { chapterPosition: number; courseId: string; level: "chapter" };
 
 type LessonResult = {
   brandSlug: string;
@@ -48,25 +44,14 @@ type ChapterResult = {
 async function getNextLessonSibling(scope: LessonScope): Promise<LessonResult | null> {
   const { data: lesson, error } = await safeAsync(() =>
     prisma.lesson.findFirst({
-      include: {
-        chapter: {
-          include: {
-            course: { include: { organization: true } },
-          },
-        },
-      },
+      include: { chapter: { include: { course: { include: { organization: true } } } } },
       orderBy: [{ chapter: { position: "asc" } }, { position: "asc" }],
       where: getPublishedLessonWhere({
         courseWhere: { id: scope.courseId },
         lessonWhere: {
           OR: [
-            {
-              chapter: { id: scope.chapterId },
-              position: { gt: scope.lessonPosition },
-            },
-            {
-              chapter: { position: { gt: scope.chapterPosition } },
-            },
+            { chapter: { id: scope.chapterId }, position: { gt: scope.lessonPosition } },
+            { chapter: { position: { gt: scope.chapterPosition } } },
           ],
         },
       }),
@@ -96,15 +81,10 @@ async function getNextLessonSibling(scope: LessonScope): Promise<LessonResult | 
 async function getNextChapterSibling(scope: ChapterScope): Promise<ChapterResult | null> {
   const { data: chapter, error } = await safeAsync(() =>
     prisma.chapter.findFirst({
-      include: {
-        course: { include: { organization: true } },
-      },
+      include: { course: { include: { organization: true } } },
       orderBy: { position: "asc" },
       where: getPublishedChapterWhere({
-        chapterWhere: {
-          courseId: scope.courseId,
-          position: { gt: scope.chapterPosition },
-        },
+        chapterWhere: { courseId: scope.courseId, position: { gt: scope.chapterPosition } },
       }),
     }),
   );

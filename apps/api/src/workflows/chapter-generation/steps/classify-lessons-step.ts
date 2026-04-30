@@ -61,8 +61,5 @@ async function classifyChapterLesson({
     lessonTitle: lesson.title,
   });
 
-  return {
-    ...lesson,
-    kind: result.data.kind,
-  };
+  return { ...lesson, kind: result.data.kind };
 }

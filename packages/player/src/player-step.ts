@@ -23,11 +23,7 @@ type IntroStepContent = Extract<SerializedStep<"static">["content"], { variant: 
 
 type IntroStepDescriptor = StepDescriptorBase<"static", "intro"> & {
   content: IntroStepContent;
-  intro: {
-    image?: StepImage | null;
-    text: string;
-    title: string;
-  };
+  intro: { image?: StepImage | null; text: string; title: string };
 };
 
 export type PlayerStepDescriptor =
@@ -47,9 +43,7 @@ export type PlayerStepDescriptor =
 
 export type PlayerStepKind = PlayerStepDescriptor["kind"];
 
-type PlayerStepImageContent = PlayerStepDescriptor["content"] & {
-  image?: StepImage | null;
-};
+type PlayerStepImageContent = PlayerStepDescriptor["content"] & { image?: StepImage | null };
 
 /**
  * Primary step images are attached to content variants, not to player render

@@ -5,9 +5,7 @@ export async function seedSubscriptions(prisma: PrismaClient, users: SeedUsers):
   const allUsers = Object.values(users);
   const userIds = allUsers.map((user) => user.id);
 
-  await prisma.subscription.deleteMany({
-    where: { referenceId: { in: userIds } },
-  });
+  await prisma.subscription.deleteMany({ where: { referenceId: { in: userIds } } });
 
   const now = new Date();
   const oneYearFromNow = new Date(now);
@@ -24,7 +22,5 @@ export async function seedSubscriptions(prisma: PrismaClient, users: SeedUsers):
     stripeSubscriptionId: null,
   }));
 
-  await prisma.subscription.createMany({
-    data: subscriptionData,
-  });
+  await prisma.subscription.createMany({ data: subscriptionData });
 }

@@ -25,11 +25,7 @@ describe("authenticated users", () => {
     const headers = await signInAs(user.email, user.password);
 
     await prisma.userProgress.create({
-      data: {
-        currentEnergy: 85.5,
-        lastActiveAt: new Date(),
-        userId: user.id,
-      },
+      data: { currentEnergy: 85.5, lastActiveAt: new Date(), userId: user.id },
     });
 
     const result = await getEnergyLevel(headers);
@@ -48,11 +44,7 @@ describe("authenticated users", () => {
     const fiveDaysAgo = new Date(todayMidnight.getTime() - 5 * 86_400_000);
 
     await prisma.userProgress.create({
-      data: {
-        currentEnergy: 50,
-        lastActiveAt: fiveDaysAgo,
-        userId: user.id,
-      },
+      data: { currentEnergy: 50, lastActiveAt: fiveDaysAgo, userId: user.id },
     });
 
     const result = await getEnergyLevel(headers);
@@ -70,11 +62,7 @@ describe("authenticated users", () => {
     const longAgo = new Date(todayMidnight.getTime() - 100 * 86_400_000);
 
     await prisma.userProgress.create({
-      data: {
-        currentEnergy: 20,
-        lastActiveAt: longAgo,
-        userId: user.id,
-      },
+      data: { currentEnergy: 20, lastActiveAt: longAgo, userId: user.id },
     });
 
     const result = await getEnergyLevel(headers);

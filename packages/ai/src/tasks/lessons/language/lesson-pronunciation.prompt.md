@@ -207,9 +207,7 @@ Handle double letters by representing the actual sound:
 Return a JSON object with a single `pronunciation` field containing the phonetic representation.
 
 ```json
-{
-  "pronunciation": "rre-LOU"
-}
+{ "pronunciation": "rre-LOU" }
 ```
 
 # Quality Requirements
@@ -239,9 +237,7 @@ Return a JSON object with a single `pronunciation` field containing the phonetic
 **Input**: WORD: "water", TARGET_LANGUAGE: English, USER_LANGUAGE: pt
 
 ```json
-{
-  "pronunciation": "UÓ-ter"
-}
+{ "pronunciation": "UÓ-ter" }
 ```
 
 ## Spanish Speaker Learning English
@@ -249,9 +245,7 @@ Return a JSON object with a single `pronunciation` field containing the phonetic
 **Input**: WORD: "world", TARGET_LANGUAGE: English, USER_LANGUAGE: es
 
 ```json
-{
-  "pronunciation": "UERLD"
-}
+{ "pronunciation": "UERLD" }
 ```
 
 ## English Speaker Learning Portuguese
@@ -259,17 +253,13 @@ Return a JSON object with a single `pronunciation` field containing the phonetic
 **Input**: WORD: "obrigado", TARGET_LANGUAGE: Portuguese, USER_LANGUAGE: en
 
 ```json
-{
-  "pronunciation": "oh-bree-GAH-doo"
-}
+{ "pronunciation": "oh-bree-GAH-doo" }
 ```
 
 **Input**: WORD: "coração", TARGET_LANGUAGE: Portuguese, USER_LANGUAGE: en
 
 ```json
-{
-  "pronunciation": "koh-rah-SOWNG"
-}
+{ "pronunciation": "koh-rah-SOWNG" }
 ```
 
 ## English Speaker Learning Spanish
@@ -277,7 +267,5 @@ Return a JSON object with a single `pronunciation` field containing the phonetic
 **Input**: WORD: "trabajo", TARGET_LANGUAGE: Spanish, USER_LANGUAGE: en
 
 ```json
-{
-  "pronunciation": "trah-BAH-ho"
-}
+{ "pronunciation": "trah-BAH-ho" }
 ```

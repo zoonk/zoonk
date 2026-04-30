@@ -30,9 +30,7 @@ export async function addChaptersStep(input: {
     })),
   );
 
-  const createdChapters = await prisma.chapter.createManyAndReturn({
-    data: chaptersData,
-  });
+  const createdChapters = await prisma.chapter.createManyAndReturn({ data: chaptersData });
 
   await stream.status({ status: "completed", step: "addChapters" });
 

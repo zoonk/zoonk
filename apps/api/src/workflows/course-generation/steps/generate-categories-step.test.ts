@@ -34,9 +34,7 @@ describe(generateCategoriesStep, () => {
 
     expect(result).toEqual(["programming", "web"]);
 
-    expect(generateCourseCategoriesMock).toHaveBeenCalledWith({
-      courseTitle: "Test Course",
-    });
+    expect(generateCourseCategoriesMock).toHaveBeenCalledWith({ courseTitle: "Test Course" });
 
     const events = getStreamedEvents();
 

@@ -181,11 +181,7 @@ function Sidebar({
           data-sidebar="sidebar"
           data-slot="sidebar"
           side={side}
-          style={
-            {
-              "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
-            } as CSSPropertiesWithVariables
-          }
+          style={{ "--sidebar-width": SIDEBAR_WIDTH_MOBILE } as CSSPropertiesWithVariables}
         >
           <SheetHeader className="sr-only">
             <SheetTitle>{title}</SheetTitle>
@@ -399,10 +395,7 @@ function SidebarGroupLabel({
       props,
     ),
     render,
-    state: {
-      sidebar: "group-label",
-      slot: "sidebar-group-label",
-    },
+    state: { sidebar: "group-label", slot: "sidebar-group-label" },
   });
 }
 
@@ -423,10 +416,7 @@ function SidebarGroupAction({
       props,
     ),
     render,
-    state: {
-      sidebar: "group-action",
-      slot: "sidebar-group-action",
-    },
+    state: { sidebar: "group-action", slot: "sidebar-group-action" },
   });
 }
 
@@ -466,10 +456,7 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 const sidebarMenuButtonVariants = cva(
   "peer/menu-button group/menu-button ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground active:bg-sidebar-accent active:text-sidebar-accent-foreground data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground data-open:hover:bg-sidebar-accent data-open:hover:text-sidebar-accent-foreground flex w-full items-center gap-2 overflow-hidden rounded-lg p-2 text-left text-sm outline-hidden transition-[width,height,padding] group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-active:font-medium [&_svg]:size-4 [&_svg]:shrink-0 [&>span:last-child]:truncate",
   {
-    defaultVariants: {
-      size: "default",
-      variant: "default",
-    },
+    defaultVariants: { size: "default", variant: "default" },
     variants: {
       size: {
         default: "h-9 text-sm",
@@ -502,18 +489,11 @@ function SidebarMenuButton({
   const comp = useRender({
     defaultTagName: "button",
     props: mergeProps<"button">(
-      {
-        className: cn(sidebarMenuButtonVariants({ size, variant }), className),
-      },
+      { className: cn(sidebarMenuButtonVariants({ size, variant }), className) },
       props,
     ),
     render: tooltip ? TooltipTrigger : render,
-    state: {
-      active: isActive,
-      sidebar: "menu-button",
-      size,
-      slot: "sidebar-menu-button",
-    },
+    state: { active: isActive, sidebar: "menu-button", size, slot: "sidebar-menu-button" },
   });
 
   if (!tooltip) {
@@ -541,9 +521,7 @@ function SidebarMenuAction({
   showOnHover = false,
   ...props
 }: useRender.ComponentProps<"button"> &
-  React.ComponentProps<"button"> & {
-    showOnHover?: boolean;
-  }) {
+  React.ComponentProps<"button"> & { showOnHover?: boolean }) {
   return useRender({
     defaultTagName: "button",
     props: mergeProps<"button">(
@@ -558,10 +536,7 @@ function SidebarMenuAction({
       props,
     ),
     render,
-    state: {
-      sidebar: "menu-action",
-      slot: "sidebar-menu-action",
-    },
+    state: { sidebar: "menu-action", slot: "sidebar-menu-action" },
   });
 }
 
@@ -583,9 +558,7 @@ function SidebarMenuSkeleton({
   className,
   showIcon = false,
   ...props
-}: React.ComponentProps<"div"> & {
-  showIcon?: boolean;
-}) {
+}: React.ComponentProps<"div"> & { showIcon?: boolean }) {
   // Random width between 50 to 90%.
   const width = useMemo(() => `${Math.floor(Math.random() * 40) + 50}%`, []);
 
@@ -600,11 +573,7 @@ function SidebarMenuSkeleton({
       <Skeleton
         className="h-4 max-w-(--skeleton-width) flex-1"
         data-sidebar="menu-skeleton-text"
-        style={
-          {
-            "--skeleton-width": width,
-          } as CSSPropertiesWithVariables
-        }
+        style={{ "--skeleton-width": width } as CSSPropertiesWithVariables}
       />
     </div>
   );
@@ -642,10 +611,7 @@ function SidebarMenuSubButton({
   className,
   ...props
 }: useRender.ComponentProps<"a"> &
-  React.ComponentProps<"a"> & {
-    size?: "sm" | "md";
-    isActive?: boolean;
-  }) {
+  React.ComponentProps<"a"> & { size?: "sm" | "md"; isActive?: boolean }) {
   return useRender({
     defaultTagName: "a",
     props: mergeProps<"a">(
@@ -658,12 +624,7 @@ function SidebarMenuSubButton({
       props,
     ),
     render,
-    state: {
-      active: isActive,
-      sidebar: "menu-sub-button",
-      size,
-      slot: "sidebar-menu-sub-button",
-    },
+    state: { active: isActive, sidebar: "menu-sub-button", size, slot: "sidebar-menu-sub-button" },
   });
 }
 

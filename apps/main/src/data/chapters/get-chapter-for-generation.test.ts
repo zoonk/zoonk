@@ -17,22 +17,13 @@ describe(getChapterForGeneration, () => {
   });
 
   test("returns chapter with course info", async () => {
-    const chapter = await chapterFixture({
-      courseId: course.id,
-      organizationId,
-    });
+    const chapter = await chapterFixture({ courseId: course.id, organizationId });
 
     const result = await getChapterForGeneration(chapter.id);
 
     expect(result).toMatchObject({
-      _count: {
-        lessons: 0,
-      },
-      course: {
-        slug: course.slug,
-        targetLanguage: course.targetLanguage,
-        title: course.title,
-      },
+      _count: { lessons: 0 },
+      course: { slug: course.slug, targetLanguage: course.targetLanguage, title: course.title },
       description: chapter.description,
       generationRunId: chapter.generationRunId,
       generationStatus: chapter.generationStatus,
@@ -45,20 +36,11 @@ describe(getChapterForGeneration, () => {
   });
 
   test("returns lesson count when chapter has lessons", async () => {
-    const chapter = await chapterFixture({
-      courseId: course.id,
-      organizationId,
-    });
+    const chapter = await chapterFixture({ courseId: course.id, organizationId });
 
-    await lessonFixture({
-      chapterId: chapter.id,
-      organizationId,
-    });
+    await lessonFixture({ chapterId: chapter.id, organizationId });
 
-    await lessonFixture({
-      chapterId: chapter.id,
-      organizationId,
-    });
+    await lessonFixture({ chapterId: chapter.id, organizationId });
 
     const result = await getChapterForGeneration(chapter.id);
 

@@ -8,10 +8,7 @@ import { AiTaskModelTable } from "./ai-task-model-table";
 
 type AiTaskDetailReport = Awaited<ReturnType<typeof getAiTaskReport>>;
 
-type AiTaskRange = {
-  endInput: string;
-  startInput: string;
-};
+type AiTaskRange = { endInput: string; startInput: string };
 
 /**
  * The overview stays visible whether or not the admin opens the detailed model

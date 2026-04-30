@@ -34,10 +34,7 @@ function HorizontalScroll({ className, children, ...props }: React.ComponentProp
   }, []);
 
   function scroll(direction: "left" | "right") {
-    scrollRef.current?.scrollBy({
-      behavior: "smooth",
-      left: direction === "left" ? -200 : 200,
-    });
+    scrollRef.current?.scrollBy({ behavior: "smooth", left: direction === "left" ? -200 : 200 });
   }
 
   return (

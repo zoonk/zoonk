@@ -42,10 +42,7 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
 
 describe(getPlayerTransition, () => {
   test("marks persistence when feedback continues into completion", () => {
-    const state = buildState({
-      phase: "feedback",
-      steps: [buildStep()],
-    });
+    const state = buildState({ phase: "feedback", steps: [buildStep()] });
 
     const transition = getPlayerTransition(state, { type: "CONTINUE" });
 
@@ -55,15 +52,9 @@ describe(getPlayerTransition, () => {
 
   test("marks persistence when static navigation reaches the last step", () => {
     const steps = [buildStep({ id: "step-1" }), buildStep({ id: "step-2", position: 1 })];
-    const state = buildState({
-      currentStepIndex: 1,
-      steps,
-    });
+    const state = buildState({ currentStepIndex: 1, steps });
 
-    const transition = getPlayerTransition(state, {
-      direction: "next",
-      type: "NAVIGATE_STEP",
-    });
+    const transition = getPlayerTransition(state, { direction: "next", type: "NAVIGATE_STEP" });
 
     expect(transition.nextState.phase).toBe("completed");
     expect(transition.shouldPersistCompletion).toBe(true);
@@ -87,34 +78,16 @@ describe(buildCompletionInput, () => {
     const answeredAt = new Date("2026-03-18T15:30:00.000Z").getTime();
     const now = new Date("2026-03-18T18:45:00.000Z");
     const state = buildState({
-      selectedAnswers: {
-        "step-1": { kind: "multipleChoice", selectedOptionId: "a" },
-      },
-      stepTimings: {
-        "step-1": {
-          answeredAt,
-          dayOfWeek: 3,
-          durationSeconds: 12,
-          hourOfDay: 12,
-        },
-      },
+      selectedAnswers: { "step-1": { kind: "multipleChoice", selectedOptionId: "a" } },
+      stepTimings: { "step-1": { answeredAt, dayOfWeek: 3, durationSeconds: 12, hourOfDay: 12 } },
     });
 
     expect(buildCompletionInput(state, now)).toEqual({
-      answers: {
-        "step-1": { kind: "multipleChoice", selectedOptionId: "a" },
-      },
+      answers: { "step-1": { kind: "multipleChoice", selectedOptionId: "a" } },
       lessonId: "lesson-1",
       localDate: "2026-03-18",
       startedAt: 1000,
-      stepTimings: {
-        "step-1": {
-          answeredAt,
-          dayOfWeek: 3,
-          durationSeconds: 12,
-          hourOfDay: 12,
-        },
-      },
+      stepTimings: { "step-1": { answeredAt, dayOfWeek: 3, durationSeconds: 12, hourOfDay: 12 } },
     });
   });
 });

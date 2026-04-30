@@ -19,11 +19,7 @@ export async function EnergyContent({
   const locale = await getLocale();
 
   const [data, session] = await Promise.all([
-    getEnergyHistory({
-      locale,
-      offset: Number(offset),
-      period: validPeriod,
-    }),
+    getEnergyHistory({ locale, offset: Number(offset), period: validPeriod }),
     getSession(),
   ]);
 

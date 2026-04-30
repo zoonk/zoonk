@@ -20,9 +20,7 @@ function courseSuggestionAttrs(
 }
 
 export async function courseSuggestionFixture(attrs?: Partial<CourseSuggestion>) {
-  const suggestion = await prisma.courseSuggestion.create({
-    data: courseSuggestionAttrs(attrs),
-  });
+  const suggestion = await prisma.courseSuggestion.create({ data: courseSuggestionAttrs(attrs) });
   return suggestion;
 }
 
@@ -57,11 +55,7 @@ export async function searchPromptWithSuggestionsFixture(attrs?: {
   await Promise.all(
     suggestions.map((suggestion, idx) =>
       prisma.searchPromptSuggestion.create({
-        data: {
-          courseSuggestionId: suggestion.id,
-          position: idx,
-          searchPromptId: searchPrompt.id,
-        },
+        data: { courseSuggestionId: suggestion.id, position: idx, searchPromptId: searchPrompt.id },
       }),
     ),
   );

@@ -25,10 +25,7 @@ type AiTaskDetailReport = Awaited<ReturnType<typeof getAiTaskReport>>;
 type AiTaskReportState = {
   breakdownHref: string;
   overviewHref: string;
-  range: {
-    endInput: string;
-    startInput: string;
-  };
+  range: { endInput: string; startInput: string };
   report: AiTaskDetailReport | null;
   runCount: number;
   showBreakdown: boolean;

@@ -25,9 +25,7 @@ export async function unflagAction(formData: FormData) {
   }
 
   const { error } = await safeAsync(() =>
-    prisma.contentReview.deleteMany({
-      where: { entityId, taskType },
-    }),
+    prisma.contentReview.deleteMany({ where: { entityId, taskType } }),
   );
 
   if (error) {

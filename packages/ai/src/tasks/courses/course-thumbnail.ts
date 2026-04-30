@@ -29,11 +29,7 @@ export async function generateCourseThumbnail({
       maxImagesPerCall: 1,
       model,
       prompt: getCourseThumbnailPrompt(title),
-      providerOptions: buildImageProviderOptions({
-        model,
-        quality,
-        taskName,
-      }),
+      providerOptions: buildImageProviderOptions({ model, quality, taskName }),
       size: "1024x1024",
     }),
   );

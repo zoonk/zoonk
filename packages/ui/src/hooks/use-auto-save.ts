@@ -18,11 +18,7 @@ export function useAutoSave({
   initialValue: string;
   onSave: (value: string) => Promise<{ error: string | null }>;
   debounceMs?: number;
-}): {
-  status: SaveStatusType;
-  value: string;
-  setValue: (value: string) => void;
-} {
+}): { status: SaveStatusType; value: string; setValue: (value: string) => void } {
   const [value, setValue] = useState(initialValue);
   const [prevInitialValue, setPrevInitialValue] = useState(initialValue);
   const [status, setStatus] = useState<SaveStatusType>("idle");

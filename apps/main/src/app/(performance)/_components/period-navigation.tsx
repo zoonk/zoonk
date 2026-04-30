@@ -16,10 +16,7 @@ export function PeriodNavigation({
 }) {
   const t = useExtracted();
 
-  const [offset, setOffset] = useQueryState("offset", {
-    defaultValue: "0",
-    shallow: false,
-  });
+  const [offset, setOffset] = useQueryState("offset", { defaultValue: "0", shallow: false });
 
   const currentOffset = Number(offset) || 0;
 

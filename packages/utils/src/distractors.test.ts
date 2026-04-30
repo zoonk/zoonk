@@ -10,10 +10,7 @@ describe(normalizeDistractorKey, () => {
 describe(sanitizeDistractors, () => {
   test("keeps only unique single-word distractors by default", () => {
     expect(
-      sanitizeDistractors({
-        distractors: [" gato ", "GATO", "cão", "", "bom dia"],
-        input: "gato",
-      }),
+      sanitizeDistractors({ distractors: [" gato ", "GATO", "cão", "", "bom dia"], input: "gato" }),
     ).toEqual(["cão"]);
   });
 

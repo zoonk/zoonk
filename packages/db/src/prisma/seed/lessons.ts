@@ -201,11 +201,7 @@ export async function seedLessons(prisma: PrismaClient, org: Organization): Prom
   const allLessonPromises = lessonsData.flatMap((data) =>
     prisma.chapter
       .findFirst({
-        where: {
-          language: data.language,
-          organizationId: org.id,
-          slug: data.chapterSlug,
-        },
+        where: { language: data.language, organizationId: org.id, slug: data.chapterSlug },
       })
       .then(async (chapter) => {
         if (!chapter) {
@@ -229,12 +225,7 @@ export async function seedLessons(prisma: PrismaClient, org: Organization): Prom
                 title: lessonData.title,
               },
               update: {},
-              where: {
-                chapterLessonSlug: {
-                  chapterId: chapter.id,
-                  slug: lessonData.slug,
-                },
-              },
+              where: { chapterLessonSlug: { chapterId: chapter.id, slug: lessonData.slug } },
             }),
           ),
         );

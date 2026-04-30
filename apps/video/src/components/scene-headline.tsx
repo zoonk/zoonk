@@ -22,22 +22,8 @@ export function SceneHeadline({
   fontSize?: number;
 }) {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: 8,
-      }}
-    >
-      <span
-        style={{
-          fontSize,
-          fontWeight: 700,
-          color: COLORS.text,
-          textAlign: "center",
-        }}
-      >
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+      <span style={{ fontSize, fontWeight: 700, color: COLORS.text, textAlign: "center" }}>
         {setup}
       </span>
       <WordReveal

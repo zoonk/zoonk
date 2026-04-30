@@ -31,32 +31,15 @@ const YAxis: React.FC<{ steps: number[]; height: number }> = ({ steps, height })
       .slice()
       .reverse()
       .map((step) => (
-        <div
-          key={step}
-          style={{
-            color: COLOR_MUTED,
-            fontSize: 20,
-            textAlign: "right",
-          }}
-        >
+        <div key={step} style={{ color: COLOR_MUTED, fontSize: 20, textAlign: "right" }}>
           {step.toLocaleString()}
         </div>
       ))}
   </div>
 );
 
-const Bar: React.FC<{
-  height: number;
-  progress: number;
-}> = ({ height, progress }) => (
-  <div
-    style={{
-      flex: 1,
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "flex-end",
-    }}
-  >
+const Bar: React.FC<{ height: number; progress: number }> = ({ height, progress }) => (
+  <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
     <div
       style={{
         width: "100%",
@@ -69,11 +52,11 @@ const Bar: React.FC<{
   </div>
 );
 
-const XAxis: React.FC<{
-  children: React.ReactNode;
-  labels: string[];
-  height: number;
-}> = ({ children, labels, height }) => (
+const XAxis: React.FC<{ children: React.ReactNode; labels: string[]; height: number }> = ({
+  children,
+  labels,
+  height,
+}) => (
   <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
     <div
       style={{
@@ -88,24 +71,9 @@ const XAxis: React.FC<{
     >
       {children}
     </div>
-    <div
-      style={{
-        display: "flex",
-        gap: 16,
-        paddingLeft: 16,
-        marginTop: 12,
-      }}
-    >
+    <div style={{ display: "flex", gap: 16, paddingLeft: 16, marginTop: 12 }}>
       {labels.map((label) => (
-        <div
-          key={label}
-          style={{
-            flex: 1,
-            textAlign: "center",
-            color: COLOR_MUTED,
-            fontSize: 20,
-          }}
-        >
+        <div key={label} style={{ flex: 1, textAlign: "center", color: COLOR_MUTED, fontSize: 20 }}>
           {label}
         </div>
       ))}

@@ -60,11 +60,7 @@ async function getPreviousBoundaryPosition({
 }): Promise<number> {
   const previousLesson = await prisma.lesson.findFirst({
     orderBy: { position: "desc" },
-    where: {
-      chapterId,
-      kind,
-      position: { lt: beforePosition },
-    },
+    where: { chapterId, kind, position: { lt: beforePosition } },
   });
 
   return previousLesson?.position ?? -1;
@@ -119,11 +115,7 @@ async function getNearestIncompleteSourceLesson({
 }): Promise<BlockingLessonGenerationPrerequisite | null> {
   const lesson = await prisma.lesson.findFirst({
     orderBy: { position: "desc" },
-    where: {
-      chapterId,
-      kind: { in: kinds },
-      position: { lt: beforePosition },
-    },
+    where: { chapterId, kind: { in: kinds }, position: { lt: beforePosition } },
   });
 
   if (!lesson || lesson.generationStatus === "completed") {

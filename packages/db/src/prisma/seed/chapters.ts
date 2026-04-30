@@ -226,10 +226,7 @@ async function seedChaptersForCourse(
   data: CourseChapters,
 ): Promise<void> {
   const course = await prisma.course.findFirst({
-    where: {
-      organizationId: org.id,
-      slug: data.courseSlug,
-    },
+    where: { organizationId: org.id, slug: data.courseSlug },
   });
 
   if (!course) {
@@ -251,12 +248,7 @@ async function seedChaptersForCourse(
         title: chapterData.title,
       },
       update: {},
-      where: {
-        courseChapterSlug: {
-          courseId: course.id,
-          slug: chapterData.slug,
-        },
-      },
+      where: { courseChapterSlug: { courseId: course.id, slug: chapterData.slug } },
     });
   });
 

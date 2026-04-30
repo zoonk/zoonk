@@ -8,10 +8,7 @@ import { generateLessonRomanizations } from "./_utils/generate-lesson-romanizati
 import { type ReadingLessonContent } from "./_utils/generated-lesson-content";
 import { type LessonContext } from "./get-lesson-step";
 
-export type WordMetadataEntry = {
-  romanization: string | null;
-  translation: string;
-};
+export type WordMetadataEntry = { romanization: string | null; translation: string };
 
 async function fetchExistingWordRomanizations(params: {
   organizationId: string;
@@ -98,10 +95,7 @@ export async function generateSentenceWordMetadataStep({
       words: canonicalWords,
     }),
     needsRomanization(targetLanguage)
-      ? generateLessonRomanizations({
-          targetLanguage,
-          texts: wordsNeedingRomanization,
-        })
+      ? generateLessonRomanizations({ targetLanguage, texts: wordsNeedingRomanization })
       : Promise.resolve<Record<string, string>>({}),
   ]);
 

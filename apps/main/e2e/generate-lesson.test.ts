@@ -65,10 +65,7 @@ function createRouteHandler(options: MockApiOptions) {
         return;
       }
       await route.fulfill({
-        body: JSON.stringify({
-          message: "Workflow started",
-          runId: triggerResponse.runId,
-        }),
+        body: JSON.stringify({ message: "Workflow started", runId: triggerResponse.runId }),
         contentType: "application/json",
         status: 200,
       });
@@ -287,10 +284,7 @@ test.describe("Generate Lesson Page - With Subscription", () => {
         kind: "static",
         lessonId: lesson.id,
       }),
-      prisma.lesson.update({
-        data: { generationStatus: "completed" },
-        where: { id: lesson.id },
-      }),
+      prisma.lesson.update({ data: { generationStatus: "completed" }, where: { id: lesson.id } }),
     ]);
 
     await page.goto(`/generate/l/${lesson.id}`);

@@ -7,19 +7,14 @@ import { countPendingForTask } from "./count-pending-reviews";
 
 export const countReviewStatuses = cache(async function countReviewStatuses(
   taskType: ReviewTaskType,
-): Promise<{
-  pending: number;
-  needsChanges: number;
-}> {
+): Promise<{ pending: number; needsChanges: number }> {
   if (!(await isAdmin())) {
     return { needsChanges: 0, pending: 0 };
   }
 
   const [pending, needsChanges] = await Promise.all([
     countPendingForTask(taskType),
-    prisma.contentReview.count({
-      where: { status: "needsChanges", taskType },
-    }),
+    prisma.contentReview.count({ where: { status: "needsChanges", taskType } }),
   ]);
 
   return { needsChanges, pending };

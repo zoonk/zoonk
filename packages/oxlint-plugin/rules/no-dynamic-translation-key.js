@@ -104,10 +104,7 @@ export default defineRule({
 
         // Check if first argument is a string literal
         if (!isStringLiteral(firstArg)) {
-          context.report({
-            loc: firstArg.loc,
-            messageId: "noDynamicKey",
-          });
+          context.report({ loc: firstArg.loc, messageId: "noDynamicKey" });
         }
       },
     };

@@ -111,9 +111,7 @@ function extractDistractorWords(
  * explicit null or empty strings to clear stale romanization when the metadata
  * entry is present.
  */
-function getRomanizationUpdate(metadata?: WordMetadataEntry): {
-  romanization?: string | null;
-} {
+function getRomanizationUpdate(metadata?: WordMetadataEntry): { romanization?: string | null } {
   if (metadata === undefined) {
     return {};
   }
@@ -162,11 +160,6 @@ async function saveCanonicalSentenceWord(params: {
       wordId,
     },
     update: { translation },
-    where: {
-      lessonWord: {
-        lessonId: params.lessonId,
-        wordId,
-      },
-    },
+    where: { lessonWord: { lessonId: params.lessonId, wordId } },
   });
 }

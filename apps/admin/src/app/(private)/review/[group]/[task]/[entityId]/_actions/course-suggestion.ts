@@ -79,13 +79,7 @@ export async function addCourseSuggestionAction(formData: FormData) {
     const slug = toSlug(title);
 
     const suggestion = await prisma.courseSuggestion.upsert({
-      create: {
-        description,
-        language,
-        slug,
-        targetLanguage: targetLanguage || null,
-        title,
-      },
+      create: { description, language, slug, targetLanguage: targetLanguage || null, title },
       update: { description, title },
       where: { languageSlug: { language, slug } },
     });

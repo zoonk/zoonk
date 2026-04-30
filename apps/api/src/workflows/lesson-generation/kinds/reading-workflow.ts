@@ -28,10 +28,7 @@ export async function readingLessonWorkflow(context: LessonContext): Promise<voi
     sentences: content.sentences,
   });
 
-  const targetWords = collectReadingTargetWords({
-    distractors,
-    sentences: content.sentences,
-  });
+  const targetWords = collectReadingTargetWords({ distractors, sentences: content.sentences });
 
   const { wordMetadata } = await generateSentenceWordMetadataStep({
     context,

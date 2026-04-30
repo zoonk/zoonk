@@ -59,10 +59,7 @@ async function createReviewLesson(options: {
   const [createdWords, createdSentences] = await Promise.all([
     Promise.all(
       options.words.map(async (wordData) => {
-        const word = await wordFixture({
-          organizationId: org.id,
-          word: wordData.word,
-        });
+        const word = await wordFixture({ organizationId: org.id, word: wordData.word });
 
         await lessonWordFixture({
           lessonId: sourceLesson.id,
@@ -153,9 +150,7 @@ async function completeVocabStep(
       await option.click();
     }
 
-    await expect(option).toHaveAttribute("aria-checked", "true", {
-      timeout: 1000,
-    });
+    await expect(option).toHaveAttribute("aria-checked", "true", { timeout: 1000 });
   }).toPass();
 
   await page.getByRole("button", { name: /check/i }).click();

@@ -14,17 +14,8 @@ export const onRouterTransitionStart = captureRouterTransitionStart;
 
 initBotId({
   protect: [
-    {
-      method: "POST",
-      path: "/v1/*",
-    },
-    {
-      method: "GET",
-      path: "/v1/*",
-    },
-    {
-      method: "PATCH",
-      path: "/v1/*",
-    },
+    { method: "POST", path: "/v1/*" },
+    { method: "GET", path: "/v1/*" },
+    { method: "PATCH", path: "/v1/*" },
   ],
 });

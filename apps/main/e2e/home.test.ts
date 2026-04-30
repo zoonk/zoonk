@@ -43,9 +43,7 @@ test.describe("Home Page - Authenticated", () => {
     ).toBeVisible();
 
     await expect(
-      authenticatedPage.getByRole("heading", {
-        name: /learn anything with ai/i,
-      }),
+      authenticatedPage.getByRole("heading", { name: /learn anything with ai/i }),
     ).not.toBeVisible();
   });
 
@@ -55,9 +53,7 @@ test.describe("Home Page - Authenticated", () => {
     await expect(userWithoutProgress.getByText(/continue learning/i)).not.toBeVisible();
 
     await expect(
-      userWithoutProgress.getByRole("heading", {
-        name: /learn anything with ai/i,
-      }),
+      userWithoutProgress.getByRole("heading", { name: /learn anything with ai/i }),
     ).toBeVisible();
   });
 

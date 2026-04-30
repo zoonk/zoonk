@@ -23,12 +23,7 @@ describe(addLessonsStep, () => {
       title: `Add Lessons Chapter ${randomUUID()}`,
     });
 
-    context = {
-      ...chapter,
-      _count: { lessons: 0 },
-      course,
-      neighboringChapters: [],
-    };
+    context = { ...chapter, _count: { lessons: 0 }, course, neighboringChapters: [] };
   });
 
   beforeEach(() => {
@@ -36,10 +31,7 @@ describe(addLessonsStep, () => {
   });
 
   test("throws without streaming error when DB save fails", async () => {
-    const brokenContext: ChapterContext = {
-      ...context,
-      id: randomUUID(),
-    };
+    const brokenContext: ChapterContext = { ...context, id: randomUUID() };
 
     const lessons = [
       { description: "Desc", kind: "explanation" as const, title: `Lesson ${randomUUID()}` },
@@ -134,11 +126,7 @@ describe(addLessonsStep, () => {
     await addLessonsStep({
       context: chapterContext,
       lessons: [
-        {
-          description: "Useful words",
-          kind: "vocabulary",
-          title: `Words ${randomUUID()}`,
-        },
+        { description: "Useful words", kind: "vocabulary", title: `Words ${randomUUID()}` },
       ],
     });
 

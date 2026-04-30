@@ -7,9 +7,7 @@ function Switch({
   className,
   size = "default",
   ...props
-}: SwitchPrimitive.Root.Props & {
-  size?: "sm" | "default";
-}) {
+}: SwitchPrimitive.Root.Props & { size?: "sm" | "default" }) {
   return (
     <SwitchPrimitive.Root
       className={cn(

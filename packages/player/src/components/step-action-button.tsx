@@ -36,11 +36,7 @@ export function StepActionButton({
     navigateNext: actions.navigateNext,
   } as const;
 
-  const labelByButton = {
-    begin: t("Begin"),
-    check: t("Check"),
-    continue: t("Continue"),
-  } as const;
+  const labelByButton = { begin: t("Begin"), check: t("Check"), continue: t("Continue") } as const;
 
   const buttonProps = {
     ...props,

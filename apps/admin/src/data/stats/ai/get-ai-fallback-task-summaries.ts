@@ -5,9 +5,7 @@ import { type AiTaskCatalogTask, listAiTaskCatalogTasks } from "./ai-task-catalo
 import { extractAiTaskName } from "./ai-task-stats";
 import { getAiTaskUsageMap } from "./get-ai-task-usage-map";
 
-type ActiveFallbackTask = AiTaskCatalogTask & {
-  requestCount: number;
-};
+type ActiveFallbackTask = AiTaskCatalogTask & { requestCount: number };
 
 export type AiFallbackTaskSummary = {
   defaultModel: string;
@@ -71,10 +69,7 @@ export async function getAiFallbackTaskSummaries({
 
   return {
     activeTaskCount: activeTasks.length,
-    fallbackRate: calculateFallbackRate({
-      fallbackRequestCount,
-      requestCount: totalRequestCount,
-    }),
+    fallbackRate: calculateFallbackRate({ fallbackRequestCount, requestCount: totalRequestCount }),
     fallbackRequestCount,
     tasks,
     totalRequestCount,
@@ -133,12 +128,7 @@ async function getDefaultModelRequestCounts({
   const tasksByDefaultModel = groupTasksByDefaultModel({ activeTasks });
   const defaultModelRequestCountMaps = await Promise.all(
     [...tasksByDefaultModel.entries()].map(([defaultModel, tasks]) =>
-      getDefaultModelRequestCountMapForTaskGroup({
-        defaultModel,
-        endDate,
-        startDate,
-        tasks,
-      }),
+      getDefaultModelRequestCountMapForTaskGroup({ defaultModel, endDate, startDate, tasks }),
     ),
   );
 
@@ -178,12 +168,7 @@ async function getDefaultModelRequestCountMapForTaskGroup({
   tasks: ActiveFallbackTask[];
 }) {
   const { data, error } = await safeAsync(() =>
-    zoonkGateway.getSpendReport({
-      endDate,
-      groupBy: "tag",
-      model: defaultModel,
-      startDate,
-    }),
+    zoonkGateway.getSpendReport({ endDate, groupBy: "tag", model: defaultModel, startDate }),
   );
 
   if (error) {
@@ -258,10 +243,7 @@ function buildAiFallbackTaskSummary({
 
   return {
     defaultModel: task.defaultModel,
-    fallbackRate: calculateFallbackRate({
-      fallbackRequestCount,
-      requestCount: task.requestCount,
-    }),
+    fallbackRate: calculateFallbackRate({ fallbackRequestCount, requestCount: task.requestCount }),
     fallbackRequestCount,
     requestCount: task.requestCount,
     taskLabel: task.taskLabel,

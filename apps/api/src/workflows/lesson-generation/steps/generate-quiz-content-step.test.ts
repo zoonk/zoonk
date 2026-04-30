@@ -9,18 +9,20 @@ import {
 import { generateQuizContentStep } from "./generate-quiz-content-step";
 
 vi.mock("@zoonk/ai/tasks/lessons/core/quiz", () => ({
-  generateLessonQuiz: vi.fn().mockResolvedValue({
-    data: {
-      questions: [
-        {
-          context: "Question context",
-          format: "multipleChoice",
-          options: [{ feedback: "yes", isCorrect: true, text: "Apply it" }],
-          question: "What is true?",
-        },
-      ],
-    },
-  }),
+  generateLessonQuiz: vi
+    .fn()
+    .mockResolvedValue({
+      data: {
+        questions: [
+          {
+            context: "Question context",
+            format: "multipleChoice",
+            options: [{ feedback: "yes", isCorrect: true, text: "Apply it" }],
+            question: "What is true?",
+          },
+        ],
+      },
+    }),
 }));
 
 describe(generateQuizContentStep, () => {

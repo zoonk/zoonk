@@ -1,7 +1,4 @@
-type AiTaskModelConfig = {
-  defaultModel: string;
-  fallbackModels: readonly string[];
-};
+type AiTaskModelConfig = { defaultModel: string; fallbackModels: readonly string[] };
 
 export const AI_TASK_MODEL_CONFIG = {
   "alternative-titles": {
@@ -36,10 +33,7 @@ export const AI_TASK_MODEL_CONFIG = {
     defaultModel: "openai/gpt-5.4-mini",
     fallbackModels: ["google/gemini-3-flash"],
   },
-  "course-thumbnail": {
-    defaultModel: "openai/gpt-image-2",
-    fallbackModels: [],
-  },
+  "course-thumbnail": { defaultModel: "openai/gpt-image-2", fallbackModels: [] },
   "language-chapter-lessons": {
     defaultModel: "openai/gpt-5.4",
     fallbackModels: ["google/gemini-3.1-pro-preview", "anthropic/claude-sonnet-4.6"],
@@ -80,10 +74,7 @@ export const AI_TASK_MODEL_CONFIG = {
     defaultModel: "google/gemini-3-flash",
     fallbackModels: ["anthropic/claude-sonnet-4.6", "openai/gpt-5.1-instant"],
   },
-  "lesson-quiz": {
-    defaultModel: "openai/gpt-5.4",
-    fallbackModels: ["anthropic/claude-opus-4.6"],
-  },
+  "lesson-quiz": { defaultModel: "openai/gpt-5.4", fallbackModels: ["anthropic/claude-opus-4.6"] },
   "lesson-romanization": {
     defaultModel: "openai/gpt-5.4",
     fallbackModels: ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"],
@@ -104,18 +95,12 @@ export const AI_TASK_MODEL_CONFIG = {
     defaultModel: "google/gemini-3-flash",
     fallbackModels: ["google/gemini-3.1-pro-preview", "openai/gpt-5.4"],
   },
-  "step-content-image": {
-    defaultModel: "openai/gpt-image-2",
-    fallbackModels: [],
-  },
+  "step-content-image": { defaultModel: "openai/gpt-image-2", fallbackModels: [] },
   "step-image-prompts": {
     defaultModel: "openai/gpt-5.4",
     fallbackModels: ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"],
   },
-  "step-select-image": {
-    defaultModel: "openai/gpt-image-2",
-    fallbackModels: [],
-  },
+  "step-select-image": { defaultModel: "openai/gpt-image-2", fallbackModels: [] },
 } satisfies Record<string, AiTaskModelConfig>;
 
 export type AiTaskName = keyof typeof AI_TASK_MODEL_CONFIG;

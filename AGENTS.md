@@ -179,10 +179,7 @@ You can also type a simple data structure and iterate to render links:
 ```tsx
 import type { Route } from "next";
 
-type NavItem<Href extends string = string> = {
-  href: Href;
-  label: string;
-};
+type NavItem<Href extends string = string> = { href: Href; label: string };
 
 export const navItems: NavItem<Route>[] = [
   { href: "/", label: "Home" },

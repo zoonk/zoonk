@@ -26,13 +26,9 @@ test.describe("Course Search API", () => {
 
   test.afterAll(async () => {
     // Clean up test data
-    await prisma.course.deleteMany({
-      where: { organizationId: brandOrgId },
-    });
+    await prisma.course.deleteMany({ where: { organizationId: brandOrgId } });
 
-    await prisma.organization.delete({
-      where: { id: brandOrgId },
-    });
+    await prisma.organization.delete({ where: { id: brandOrgId } });
 
     await prisma.$disconnect();
   });

@@ -13,10 +13,7 @@ export async function sendVerificationOTPAction(formData: FormData) {
     return;
   }
 
-  await sendVerificationOTP({
-    email,
-    headers: await headers(),
-  });
+  await sendVerificationOTP({ email, headers: await headers() });
 
   const params = new URLSearchParams({ email });
 

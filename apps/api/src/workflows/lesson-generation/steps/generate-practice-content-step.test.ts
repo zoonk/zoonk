@@ -9,19 +9,21 @@ import {
 import { generatePracticeContentStep } from "./generate-practice-content-step";
 
 vi.mock("@zoonk/ai/tasks/lessons/core/practice", () => ({
-  generateLessonPractice: vi.fn().mockResolvedValue({
-    data: {
-      scenario: { imagePrompt: "scenario prompt", text: "Scenario", title: "Scenario" },
-      steps: [
-        {
-          context: "Use the explanation.",
-          imagePrompt: "question prompt",
-          options: [{ feedback: "yes", isCorrect: true, text: "Apply it" }],
-          question: "What should happen?",
-        },
-      ],
-    },
-  }),
+  generateLessonPractice: vi
+    .fn()
+    .mockResolvedValue({
+      data: {
+        scenario: { imagePrompt: "scenario prompt", text: "Scenario", title: "Scenario" },
+        steps: [
+          {
+            context: "Use the explanation.",
+            imagePrompt: "question prompt",
+            options: [{ feedback: "yes", isCorrect: true, text: "Apply it" }],
+            question: "What should happen?",
+          },
+        ],
+      },
+    }),
 }));
 
 describe(generatePracticeContentStep, () => {
@@ -66,9 +68,7 @@ describe(generatePracticeContentStep, () => {
 
     expect(result.kind).toBe("practice");
     expect(generateLessonPractice).toHaveBeenCalledWith(
-      expect.objectContaining({
-        explanationSteps: [{ text: "New explanation", title: "New" }],
-      }),
+      expect.objectContaining({ explanationSteps: [{ text: "New explanation", title: "New" }] }),
     );
   });
 

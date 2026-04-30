@@ -38,10 +38,7 @@ Preferrably, specify only needed weights and subsets to reduce file size:
 ```tsx
 import { loadFont } from "@remotion/google-fonts/Roboto";
 
-const { fontFamily } = loadFont("normal", {
-  weights: ["400", "700"],
-  subsets: ["latin"],
-});
+const { fontFamily } = loadFont("normal", { weights: ["400", "700"], subsets: ["latin"] });
 ```
 
 ### Waiting for font to load
@@ -79,10 +76,7 @@ Place your font file in the `public/` folder and use `loadFont()`:
 import { loadFont } from "@remotion/fonts";
 import { staticFile } from "remotion";
 
-await loadFont({
-  family: "MyFont",
-  url: staticFile("MyFont-Regular.woff2"),
-});
+await loadFont({ family: "MyFont", url: staticFile("MyFont-Regular.woff2") });
 
 export const MyComposition = () => {
   return <div style={{ fontFamily: "MyFont" }}>Hello World</div>;
@@ -98,16 +92,8 @@ import { loadFont } from "@remotion/fonts";
 import { staticFile } from "remotion";
 
 await Promise.all([
-  loadFont({
-    family: "Inter",
-    url: staticFile("Inter-Regular.woff2"),
-    weight: "400",
-  }),
-  loadFont({
-    family: "Inter",
-    url: staticFile("Inter-Bold.woff2"),
-    weight: "700",
-  }),
+  loadFont({ family: "Inter", url: staticFile("Inter-Regular.woff2"), weight: "400" }),
+  loadFont({ family: "Inter", url: staticFile("Inter-Bold.woff2"), weight: "700" }),
 ]);
 ```
 
@@ -131,22 +117,9 @@ Call `loadFont()` at the top level of your component or in a separate file that'
 ```tsx
 import { loadFont } from "@remotion/google-fonts/Montserrat";
 
-const { fontFamily } = loadFont("normal", {
-  weights: ["400", "700"],
-  subsets: ["latin"],
-});
+const { fontFamily } = loadFont("normal", { weights: ["400", "700"], subsets: ["latin"] });
 
 export const Title: React.FC<{ text: string }> = ({ text }) => {
-  return (
-    <h1
-      style={{
-        fontFamily,
-        fontSize: 80,
-        fontWeight: "bold",
-      }}
-    >
-      {text}
-    </h1>
-  );
+  return <h1 style={{ fontFamily, fontSize: 80, fontWeight: "bold" }}>{text}</h1>;
 };
 ```

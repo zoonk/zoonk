@@ -23,11 +23,7 @@ export type PlayerNavigation = {
   nextLessonHref: PlayerRoute | null;
 };
 
-type ReviewMilestone = {
-  kind: "chapter";
-  nextHref: PlayerRoute | null;
-  reviewHref: PlayerRoute;
-};
+type ReviewMilestone = { kind: "chapter"; nextHref: PlayerRoute | null; reviewHref: PlayerRoute };
 
 type CourseMilestone = {
   kind: "course";
@@ -129,11 +125,7 @@ export function usePlayerLessonMeta(): PlayerLessonMeta {
 
   return {
     ...lessonMeta,
-    description: getLessonMetaDescription({
-      fallbackDescription,
-      lessonDescription,
-      state,
-    }),
+    description: getLessonMetaDescription({ fallbackDescription, lessonDescription, state }),
   };
 }
 

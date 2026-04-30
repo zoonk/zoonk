@@ -1,12 +1,6 @@
-type ResponseHeader = {
-  key: string;
-  value: string;
-};
+type ResponseHeader = { key: string; value: string };
 
-type RouteHeaders = {
-  headers: ResponseHeader[];
-  source: string;
-};
+type RouteHeaders = { headers: ResponseHeader[]; source: string };
 
 const PUBLIC_APP_PERMISSIONS_POLICY = [
   "camera=()",
@@ -26,22 +20,10 @@ const PUBLIC_APP_PERMISSIONS_POLICY = [
 const PUBLIC_APP_SECURITY_HEADERS = [
   {
     headers: [
-      {
-        key: "Strict-Transport-Security",
-        value: "max-age=63072000",
-      },
-      {
-        key: "X-Frame-Options",
-        value: "DENY",
-      },
-      {
-        key: "X-Content-Type-Options",
-        value: "nosniff",
-      },
-      {
-        key: "Permissions-Policy",
-        value: PUBLIC_APP_PERMISSIONS_POLICY,
-      },
+      { key: "Strict-Transport-Security", value: "max-age=63072000" },
+      { key: "X-Frame-Options", value: "DENY" },
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "Permissions-Policy", value: PUBLIC_APP_PERMISSIONS_POLICY },
     ],
     source: "/:path*",
   },

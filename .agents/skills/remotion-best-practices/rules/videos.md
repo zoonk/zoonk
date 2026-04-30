@@ -78,14 +78,7 @@ Use the `style` prop to control size and position:
 ```tsx
 <Video
   src={staticFile("video.mp4")}
-  style={{
-    width: 500,
-    height: 300,
-    position: "absolute",
-    top: 100,
-    left: 50,
-    objectFit: "cover",
-  }}
+  style={{ width: 500, height: 300, position: "absolute", top: 100, left: 50, objectFit: "cover" }}
 />
 ```
 

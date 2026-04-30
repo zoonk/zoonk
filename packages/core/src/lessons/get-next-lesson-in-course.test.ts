@@ -24,25 +24,12 @@ describe(getNextLessonInCourse, () => {
     const org = await organizationFixture({ kind: "brand" });
     orgId = org.id;
 
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: orgId,
-    });
+    const course = await courseFixture({ isPublished: true, organizationId: orgId });
     courseId = course.id;
 
     const [ch1, ch2] = await Promise.all([
-      chapterFixture({
-        courseId,
-        isPublished: true,
-        organizationId: orgId,
-        position: 0,
-      }),
-      chapterFixture({
-        courseId,
-        isPublished: true,
-        organizationId: orgId,
-        position: 1,
-      }),
+      chapterFixture({ courseId, isPublished: true, organizationId: orgId, position: 0 }),
+      chapterFixture({ courseId, isPublished: true, organizationId: orgId, position: 1 }),
     ]);
 
     chapter1Id = ch1.id;
@@ -157,10 +144,7 @@ describe(getNextLessonInCourse, () => {
 
   test("skips unpublished lessons", async () => {
     const testOrg = await organizationFixture({ kind: "brand" });
-    const testCourse = await courseFixture({
-      isPublished: true,
-      organizationId: testOrg.id,
-    });
+    const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
     const testChapter = await chapterFixture({
       courseId: testCourse.id,
       isPublished: true,
@@ -211,10 +195,7 @@ describe(getNextLessonInCourse, () => {
 
   test("returns the next lesson shell even when it still needs generation", async () => {
     const testOrg = await organizationFixture({ kind: "brand" });
-    const testCourse = await courseFixture({
-      isPublished: true,
-      organizationId: testOrg.id,
-    });
+    const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
     const testChapter = await chapterFixture({
       courseId: testCourse.id,
       isPublished: true,
@@ -265,10 +246,7 @@ describe(getNextLessonInCourse, () => {
 
   test("skips unpublished lessons when moving through a chapter", async () => {
     const testOrg = await organizationFixture({ kind: "brand" });
-    const testCourse = await courseFixture({
-      isPublished: true,
-      organizationId: testOrg.id,
-    });
+    const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
     const testChapter = await chapterFixture({
       courseId: testCourse.id,
       isPublished: true,
@@ -315,10 +293,7 @@ describe(getNextLessonInCourse, () => {
 
   test("skips lessons in unpublished chapters", async () => {
     const testOrg = await organizationFixture({ kind: "brand" });
-    const testCourse = await courseFixture({
-      isPublished: true,
-      organizationId: testOrg.id,
-    });
+    const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
 
     const [publishedCh, unpublishedCh, nextPublishedCh] = await Promise.all([
       chapterFixture({
