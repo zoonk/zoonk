@@ -36,26 +36,10 @@ catalog:
   vitest: 4.1.4
   zod: 4.3.6
 
-ignoredBuiltDependencies:
-  - "@nestjs/core"
-  - "@parcel/watcher"
-  - "@prisma/client"
-  - cbor-extract
-  - protobufjs
-  - sharp
-
 minimumReleaseAgeExclude:
   - devalue@5.6.4
   - undici@7.24.0
   - "@hono/node-server@1.19.13"
-
-onlyBuiltDependencies:
-  - "@prisma/engines"
-  - "@sentry/cli"
-  - "@swc/core"
-  - "@tailwindcss/oxide"
-  - esbuild
-  - prisma
 
 overrides:
   "@hono/node-server@<1.19.13": ">=1.19.13"
@@ -64,3 +48,17 @@ overrides:
   devalue@<=5.6.3: ">=5.6.4"
   undici@>=7.0.0 <7.24.0: ">=7.24.0"
   undici@>=7.17.0 <7.24.0: ">=7.24.0"
+
+allowBuilds:
+  "@prisma/engines": true
+  "@sentry/cli": true
+  "@swc/core": true
+  "@tailwindcss/oxide": true
+  esbuild: true
+  prisma: true
+  "@nestjs/core": false
+  "@parcel/watcher": false
+  "@prisma/client": false
+  cbor-extract: false
+  protobufjs: false
+  sharp: false
