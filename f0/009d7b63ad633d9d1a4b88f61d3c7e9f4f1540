@@ -1,0 +1,14 @@
+packages/auth/package.json
+  h_1cda88fc21fe9c 28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "f0009d7b63ad633d9d1a4b88f61d3c7e9f4f1540",
+  "prompts": {},
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
