@@ -1,0 +1,14 @@
+turbo.json
+  h_1cda88fc21fe9c 33,37,47,50,53,56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "9ef306a4b12c15cb8bff25067c214ff803a0bdd7",
+  "prompts": {},
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
