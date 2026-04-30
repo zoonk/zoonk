@@ -1,5 +1,5 @@
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { generateChaptersStep } from "./generate-chapters-step";
 import { type CourseContext } from "./initialize-course-step";
 
@@ -32,7 +32,7 @@ describe(generateChaptersStep, () => {
     vi.clearAllMocks();
   });
 
-  test("calls generateCourseChapters for non-language courses", async () => {
+  it("calls generateCourseChapters for non-language courses", async () => {
     const chapters = [
       { description: "Intro chapter", title: "Introduction" },
       { description: "Basics chapter", title: "Basics" },
@@ -60,7 +60,7 @@ describe(generateChaptersStep, () => {
     );
   });
 
-  test("calls generateLanguageCourseChapters for language courses", async () => {
+  it("calls generateLanguageCourseChapters for language courses", async () => {
     const chapters = [{ description: "Greetings", title: "Basic Greetings" }];
 
     generateLanguageCourseChaptersMock.mockResolvedValue({ data: { chapters } });
@@ -75,7 +75,7 @@ describe(generateChaptersStep, () => {
     });
   });
 
-  test("throws without streaming error when AI generation fails", async () => {
+  it("throws without streaming error when AI generation fails", async () => {
     generateCourseChaptersMock.mockRejectedValue(new Error("AI failure"));
 
     await expect(generateChaptersStep(baseCourse)).rejects.toThrow("AI failure");

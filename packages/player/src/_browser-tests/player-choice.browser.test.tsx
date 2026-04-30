@@ -1,5 +1,5 @@
 import { fireEvent } from "@testing-library/react";
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { buildInlineImageUrl } from "../_test-utils/build-inline-image-url";
 import {
@@ -11,7 +11,7 @@ import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { renderPlayer } from "../_test-utils/render-player";
 
 describe("player browser integration: choice steps", () => {
-  test("completes a multiple-choice step through the real provider and shell", async () => {
+  it("completes a multiple-choice step through the real provider and shell", async () => {
     const onComplete = vi.fn();
 
     renderPlayer({
@@ -47,7 +47,7 @@ describe("player browser integration: choice steps", () => {
     expect(onComplete).toHaveBeenCalledOnce();
   });
 
-  test("renders translation options, plays the selection flow, and completes", async () => {
+  it("renders translation options, plays the selection flow, and completes", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "translation",
@@ -106,7 +106,7 @@ describe("player browser integration: choice steps", () => {
     await expect.element(page.getByText("1/1")).toBeInTheDocument();
   });
 
-  test("selects an image option and shows inline feedback", async () => {
+  it("selects an image option and shows inline feedback", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         steps: [
@@ -144,7 +144,7 @@ describe("player browser integration: choice steps", () => {
       .toBeInTheDocument();
   });
 
-  test("lets multiple-choice users toggle selections and shows the correct answer on mistakes", async () => {
+  it("lets multiple-choice users toggle selections and shows the correct answer on mistakes", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         steps: [
@@ -188,7 +188,7 @@ describe("player browser integration: choice steps", () => {
     await expect.element(page.getByText("Berlin")).toBeInTheDocument();
   });
 
-  test("lets users expand image-led multiple-choice evidence", async () => {
+  it("lets users expand image-led multiple-choice evidence", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         steps: [
@@ -238,7 +238,7 @@ describe("player browser integration: choice steps", () => {
     await expect.element(dialog).not.toBeInTheDocument();
   });
 
-  test("shows translation pronunciation, romanization, and feedback audio without app wiring", async () => {
+  it("shows translation pronunciation, romanization, and feedback audio without app wiring", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "translation",
@@ -305,7 +305,7 @@ describe("player browser integration: choice steps", () => {
       .toBeInTheDocument();
   });
 
-  test("falls back to prompt text for missing select-image URLs and highlights the correct answer", async () => {
+  it("falls back to prompt text for missing select-image URLs and highlights the correct answer", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         steps: [
@@ -349,7 +349,7 @@ describe("player browser integration: choice steps", () => {
     await expect.element(page.getByRole("radio", { name: "Cat" })).toBeInTheDocument();
   });
 
-  test("replaces {{NAME}} placeholders for authenticated viewers", async () => {
+  it("replaces {{NAME}} placeholders for authenticated viewers", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         steps: [
@@ -380,7 +380,7 @@ describe("player browser integration: choice steps", () => {
     await expect.element(page.getByText(/Alex, great call/i)).toBeInTheDocument();
   });
 
-  test("strips {{NAME}} placeholders for unauthenticated viewers", async () => {
+  it("strips {{NAME}} placeholders for unauthenticated viewers", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         steps: [

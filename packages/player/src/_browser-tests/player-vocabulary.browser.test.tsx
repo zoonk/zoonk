@@ -1,5 +1,5 @@
 import { fireEvent } from "@testing-library/react";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import {
   buildSerializedLesson,
@@ -10,7 +10,7 @@ import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { buildNavigation, renderPlayer } from "../_test-utils/render-player";
 
 describe("player browser integration: vocabulary", () => {
-  test("renders a vocabulary card with pronunciation and translation", async () => {
+  it("renders a vocabulary card with pronunciation and translation", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "translation",
@@ -37,7 +37,7 @@ describe("player browser integration: vocabulary", () => {
     await expect.element(page.getByText("Hello")).toBeInTheDocument();
   });
 
-  test("navigates vocabulary cards without quiz controls", async () => {
+  it("navigates vocabulary cards without quiz controls", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "vocabulary",
@@ -72,7 +72,7 @@ describe("player browser integration: vocabulary", () => {
     await expect.element(page.getByText("Sol")).toBeInTheDocument();
   });
 
-  test("completes flashcard vocabulary lessons through the shared rewards flow", async () => {
+  it("completes flashcard vocabulary lessons through the shared rewards flow", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "vocabulary",

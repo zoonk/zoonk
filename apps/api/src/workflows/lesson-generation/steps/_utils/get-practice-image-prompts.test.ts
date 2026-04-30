@@ -1,8 +1,8 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { getPracticeImagePrompts } from "./get-practice-image-prompts";
 
 describe(getPracticeImagePrompts, () => {
-  test("returns trimmed authored prompts in visible practice order", () => {
+  it("returns trimmed authored prompts in visible practice order", () => {
     const prompts = getPracticeImagePrompts({
       scenario: {
         imagePrompt: "  Opening support desk scene with Maya and a refund dashboard  ",

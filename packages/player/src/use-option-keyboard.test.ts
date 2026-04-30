@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { renderHook } from "@testing-library/react";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { useOptionKeyboard } from "./use-option-keyboard";
 
 function buildOptions(overrides: Partial<Parameters<typeof useOptionKeyboard>[0]> = {}) {
@@ -17,7 +17,7 @@ describe(useOptionKeyboard, () => {
     vi.restoreAllMocks();
   });
 
-  test("key 1 calls onSelect with index 0", () => {
+  it("key 1 calls onSelect with index 0", () => {
     const opts = buildOptions();
     renderHook(() => useOptionKeyboard(opts));
 
@@ -26,7 +26,7 @@ describe(useOptionKeyboard, () => {
     expect(opts.onSelect).toHaveBeenCalledWith(0);
   });
 
-  test("key 2 calls onSelect with index 1", () => {
+  it("key 2 calls onSelect with index 1", () => {
     const opts = buildOptions();
     renderHook(() => useOptionKeyboard(opts));
 
@@ -35,7 +35,7 @@ describe(useOptionKeyboard, () => {
     expect(opts.onSelect).toHaveBeenCalledWith(1);
   });
 
-  test("key 4 calls onSelect with index 3", () => {
+  it("key 4 calls onSelect with index 3", () => {
     const opts = buildOptions();
     renderHook(() => useOptionKeyboard(opts));
 
@@ -44,7 +44,7 @@ describe(useOptionKeyboard, () => {
     expect(opts.onSelect).toHaveBeenCalledWith(3);
   });
 
-  test("key beyond option count is ignored", () => {
+  it("key beyond option count is ignored", () => {
     const opts = buildOptions({ optionCount: 3 });
     renderHook(() => useOptionKeyboard(opts));
 
@@ -53,7 +53,7 @@ describe(useOptionKeyboard, () => {
     expect(opts.onSelect).not.toHaveBeenCalled();
   });
 
-  test("key 0 is ignored", () => {
+  it("key 0 is ignored", () => {
     const opts = buildOptions();
     renderHook(() => useOptionKeyboard(opts));
 
@@ -62,7 +62,7 @@ describe(useOptionKeyboard, () => {
     expect(opts.onSelect).not.toHaveBeenCalled();
   });
 
-  test("non-digit keys are ignored", () => {
+  it("non-digit keys are ignored", () => {
     const opts = buildOptions();
     renderHook(() => useOptionKeyboard(opts));
 
@@ -73,7 +73,7 @@ describe(useOptionKeyboard, () => {
     expect(opts.onSelect).not.toHaveBeenCalled();
   });
 
-  test("key with metaKey modifier is ignored", () => {
+  it("key with metaKey modifier is ignored", () => {
     const opts = buildOptions();
     renderHook(() => useOptionKeyboard(opts));
 
@@ -82,7 +82,7 @@ describe(useOptionKeyboard, () => {
     expect(opts.onSelect).not.toHaveBeenCalled();
   });
 
-  test("key with ctrlKey modifier is ignored", () => {
+  it("key with ctrlKey modifier is ignored", () => {
     const opts = buildOptions();
     renderHook(() => useOptionKeyboard(opts));
 
@@ -91,7 +91,7 @@ describe(useOptionKeyboard, () => {
     expect(opts.onSelect).not.toHaveBeenCalled();
   });
 
-  test("key with shiftKey modifier is ignored", () => {
+  it("key with shiftKey modifier is ignored", () => {
     const opts = buildOptions();
     renderHook(() => useOptionKeyboard(opts));
 
@@ -100,7 +100,7 @@ describe(useOptionKeyboard, () => {
     expect(opts.onSelect).not.toHaveBeenCalled();
   });
 
-  test("key with altKey modifier is ignored", () => {
+  it("key with altKey modifier is ignored", () => {
     const opts = buildOptions();
     renderHook(() => useOptionKeyboard(opts));
 
@@ -109,7 +109,7 @@ describe(useOptionKeyboard, () => {
     expect(opts.onSelect).not.toHaveBeenCalled();
   });
 
-  test("disabled state prevents selection", () => {
+  it("disabled state prevents selection", () => {
     const opts = buildOptions({ enabled: false });
     renderHook(() => useOptionKeyboard(opts));
 
@@ -118,7 +118,7 @@ describe(useOptionKeyboard, () => {
     expect(opts.onSelect).not.toHaveBeenCalled();
   });
 
-  test("ignores keys when focus is on input element", () => {
+  it("ignores keys when focus is on input element", () => {
     const opts = buildOptions();
     renderHook(() => useOptionKeyboard(opts));
 
@@ -132,7 +132,7 @@ describe(useOptionKeyboard, () => {
     expect(opts.onSelect).not.toHaveBeenCalled();
   });
 
-  test("ignores keys when focus is on textarea element", () => {
+  it("ignores keys when focus is on textarea element", () => {
     const opts = buildOptions();
     renderHook(() => useOptionKeyboard(opts));
 
@@ -146,7 +146,7 @@ describe(useOptionKeyboard, () => {
     expect(opts.onSelect).not.toHaveBeenCalled();
   });
 
-  test("ignores keys when focus is on contenteditable element", () => {
+  it("ignores keys when focus is on contenteditable element", () => {
     const opts = buildOptions();
     renderHook(() => useOptionKeyboard(opts));
 
@@ -161,7 +161,7 @@ describe(useOptionKeyboard, () => {
     expect(opts.onSelect).not.toHaveBeenCalled();
   });
 
-  test("cleans up listener on unmount", () => {
+  it("cleans up listener on unmount", () => {
     const opts = buildOptions();
     const { unmount } = renderHook(() => useOptionKeyboard(opts));
 

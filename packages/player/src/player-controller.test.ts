@@ -1,5 +1,5 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { buildCompletionInput, getPlayerTransition } from "./player-controller";
 import { type PlayerAction, type PlayerState } from "./player-reducer";
 
@@ -41,7 +41,7 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
 }
 
 describe(getPlayerTransition, () => {
-  test("marks persistence when feedback continues into completion", () => {
+  it("marks persistence when feedback continues into completion", () => {
     const state = buildState({ phase: "feedback", steps: [buildStep()] });
 
     const transition = getPlayerTransition(state, { type: "CONTINUE" });
@@ -50,7 +50,7 @@ describe(getPlayerTransition, () => {
     expect(transition.shouldPersistCompletion).toBe(true);
   });
 
-  test("marks persistence when static navigation reaches the last step", () => {
+  it("marks persistence when static navigation reaches the last step", () => {
     const steps = [buildStep({ id: "step-1" }), buildStep({ id: "step-2", position: 1 })];
     const state = buildState({ currentStepIndex: 1, steps });
 
@@ -60,7 +60,7 @@ describe(getPlayerTransition, () => {
     expect(transition.shouldPersistCompletion).toBe(true);
   });
 
-  test("does not persist completion for non-terminal actions", () => {
+  it("does not persist completion for non-terminal actions", () => {
     const action: PlayerAction = {
       answer: { kind: "multipleChoice", selectedOptionId: "a" },
       stepId: "step-1",
@@ -74,7 +74,7 @@ describe(getPlayerTransition, () => {
 });
 
 describe(buildCompletionInput, () => {
-  test("builds completion payload from the player state", () => {
+  it("builds completion payload from the player state", () => {
     const answeredAt = new Date("2026-03-18T15:30:00.000Z").getTime();
     const now = new Date("2026-03-18T18:45:00.000Z");
     const state = buildState({

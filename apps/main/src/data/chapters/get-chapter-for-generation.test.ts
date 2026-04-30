@@ -3,7 +3,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { getChapterForGeneration } from "./get-chapter-for-generation";
 
 describe(getChapterForGeneration, () => {
@@ -16,7 +16,7 @@ describe(getChapterForGeneration, () => {
     course = await courseFixture({ organizationId });
   });
 
-  test("returns chapter with course info", async () => {
+  it("returns chapter with course info", async () => {
     const chapter = await chapterFixture({ courseId: course.id, organizationId });
 
     const result = await getChapterForGeneration(chapter.id);
@@ -35,7 +35,7 @@ describe(getChapterForGeneration, () => {
     });
   });
 
-  test("returns lesson count when chapter has lessons", async () => {
+  it("returns lesson count when chapter has lessons", async () => {
     const chapter = await chapterFixture({ courseId: course.id, organizationId });
 
     await lessonFixture({ chapterId: chapter.id, organizationId });
@@ -47,17 +47,17 @@ describe(getChapterForGeneration, () => {
     expect(result?._count.lessons).toBe(2);
   });
 
-  test("returns null for non-existent chapter", async () => {
+  it("returns null for non-existent chapter", async () => {
     const result = await getChapterForGeneration(randomUUID());
     expect(result).toBeNull();
   });
 
-  test("returns null for malformed chapter ids", async () => {
+  it("returns null for malformed chapter ids", async () => {
     const result = await getChapterForGeneration("invalid-id");
     expect(result).toBeNull();
   });
 
-  test("returns null for chapters outside the AI organization", async () => {
+  it("returns null for chapters outside the AI organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });
     const otherChapter = await chapterFixture({

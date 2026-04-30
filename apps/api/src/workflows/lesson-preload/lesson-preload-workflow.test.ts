@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { lessonGenerationWorkflow } from "../lesson-generation/lesson-generation-workflow";
 import { lessonPreloadWorkflow } from "./lesson-preload-workflow";
 
@@ -13,13 +13,13 @@ describe(lessonPreloadWorkflow, () => {
     vi.clearAllMocks();
   });
 
-  test("calls lessonGenerationWorkflow", async () => {
+  it("calls lessonGenerationWorkflow", async () => {
     await lessonPreloadWorkflow(lessonId);
 
     expect(lessonGenerationWorkflow).toHaveBeenCalledWith(lessonId);
   });
 
-  test("allows filtered lesson generation results", async () => {
+  it("allows filtered lesson generation results", async () => {
     vi.mocked(lessonGenerationWorkflow).mockResolvedValueOnce("filtered");
 
     await lessonPreloadWorkflow(lessonId);
@@ -27,7 +27,7 @@ describe(lessonPreloadWorkflow, () => {
     expect(lessonGenerationWorkflow).toHaveBeenCalledWith(lessonId);
   });
 
-  test("propagates errors from lessonGenerationWorkflow", async () => {
+  it("propagates errors from lessonGenerationWorkflow", async () => {
     vi.mocked(lessonGenerationWorkflow).mockRejectedValueOnce(new Error("lesson gen failed"));
 
     await expect(lessonPreloadWorkflow(lessonId)).rejects.toThrow("lesson gen failed");

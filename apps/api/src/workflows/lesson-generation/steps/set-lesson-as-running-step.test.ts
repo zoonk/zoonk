@@ -2,7 +2,7 @@ import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { setLessonAsRunningStep } from "./set-lesson-as-running-step";
 
@@ -14,7 +14,7 @@ describe(setLessonAsRunningStep, () => {
     organizationId = organization.id;
   });
 
-  test("marks a lesson as running and clears stale steps when requested", async () => {
+  it("marks a lesson as running and clears stale steps when requested", async () => {
     const lesson = await createLessonContext({ generationStatus: "failed", organizationId });
     await stepFixture({
       content: { text: "stale", title: "Stale", variant: "text" },

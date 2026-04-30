@@ -3,7 +3,7 @@ import { generateLessonSentences } from "@zoonk/ai/tasks/lessons/language/senten
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { lessonWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateReadingContentStep } from "./generate-reading-content-step";
 
@@ -31,7 +31,7 @@ describe(generateReadingContentStep, () => {
     vi.clearAllMocks();
   });
 
-  test("generates reading content from vocabulary lessons since the previous reading", async () => {
+  it("generates reading content from vocabulary lessons since the previous reading", async () => {
     const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
     const context = await createLessonContext({
       kind: "reading",

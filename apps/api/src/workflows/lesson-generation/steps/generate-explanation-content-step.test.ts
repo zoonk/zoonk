@@ -3,7 +3,7 @@ import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { generateLessonExplanation } from "@zoonk/ai/tasks/lessons/core/explanation";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateExplanationContentStep } from "./generate-explanation-content-step";
 
@@ -30,7 +30,7 @@ describe(generateExplanationContentStep, () => {
     vi.clearAllMocks();
   });
 
-  test("generates explanation steps and includes neighboring explanation titles", async () => {
+  it("generates explanation steps and includes neighboring explanation titles", async () => {
     const context = await createLessonContext({
       organizationId,
       titlePrefix: `Explanation Content ${randomUUID()}`,
@@ -67,7 +67,7 @@ describe(generateExplanationContentStep, () => {
     );
   });
 
-  test("throws when explanation generation fails", async () => {
+  it("throws when explanation generation fails", async () => {
     const context = await createLessonContext({ organizationId });
     vi.mocked(generateLessonExplanation).mockRejectedValueOnce(new Error("AI failure"));
 

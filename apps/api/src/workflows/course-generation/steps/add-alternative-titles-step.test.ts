@@ -3,7 +3,7 @@ import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { addAlternativeTitlesStep } from "./add-alternative-titles-step";
 import { type CourseContext } from "./initialize-course-step";
 
@@ -19,7 +19,7 @@ describe(addAlternativeTitlesStep, () => {
     vi.clearAllMocks();
   });
 
-  test("throws without streaming error when DB save fails", async () => {
+  it("throws without streaming error when DB save fails", async () => {
     const brokenContext: CourseContext = {
       courseId: randomUUID(),
       courseSlug: "broken",
@@ -43,7 +43,7 @@ describe(addAlternativeTitlesStep, () => {
     );
   });
 
-  test("creates alternative titles in the database", async () => {
+  it("creates alternative titles in the database", async () => {
     const course = await courseFixture({ organizationId });
 
     const courseContext: CourseContext = {

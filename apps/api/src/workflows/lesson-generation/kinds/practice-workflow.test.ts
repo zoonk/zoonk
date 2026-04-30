@@ -3,7 +3,7 @@ import { generateContentStepImage } from "@zoonk/core/steps/content-image";
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createCompletedExplanation,
   createLessonContext,
@@ -53,7 +53,7 @@ describe(practiceLessonWorkflow, () => {
     vi.clearAllMocks();
   });
 
-  test("stores scenario and practice questions from the uncovered explanation steps", async () => {
+  it("stores scenario and practice questions from the uncovered explanation steps", async () => {
     const context = await createLessonContext({ kind: "practice", organizationId, position: 2 });
 
     await createCompletedExplanation({

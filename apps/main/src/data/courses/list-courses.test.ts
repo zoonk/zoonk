@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { listCourses } from "./list-courses";
 
 describe(listCourses, () => {
@@ -23,7 +23,7 @@ describe(listCourses, () => {
     ]);
   });
 
-  test("excludes draft courses and non-brand orgs", async () => {
+  it("excludes draft courses and non-brand orgs", async () => {
     const result = await listCourses({ language: "en", limit: 100 });
     const ids = result.map((course) => course.id);
 
@@ -31,7 +31,7 @@ describe(listCourses, () => {
     expect(ids).not.toContain(privateCourse.id);
   });
 
-  test("filters by language", async () => {
+  it("filters by language", async () => {
     const ptCourse = await courseFixture({
       isPublished: true,
       language: "pt",
@@ -48,7 +48,7 @@ describe(listCourses, () => {
     expect(ptIds).toContain(ptCourse.id);
   });
 
-  test("limits results to specified amount", async () => {
+  it("limits results to specified amount", async () => {
     await prisma.course.createMany({
       data: Array.from({ length: 5 }, (_, i) => ({
         description: `Course ${i} description`,
@@ -67,7 +67,7 @@ describe(listCourses, () => {
     expect(result).toHaveLength(3);
   });
 
-  test("paginates using cursor", async () => {
+  it("paginates using cursor", async () => {
     const uniqueLang = randomUUID().slice(0, 10);
 
     // Create 5 courses with a unique language so we have a clean, isolated set
@@ -101,7 +101,7 @@ describe(listCourses, () => {
     expect(hasOverlap).toBe(false);
   });
 
-  test("sorts by popularity (higher userCount first)", async () => {
+  it("sorts by popularity (higher userCount first)", async () => {
     const uniqueLang = randomUUID().slice(0, 10);
 
     // Create courses with explicit userCount values

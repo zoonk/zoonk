@@ -6,7 +6,7 @@ import { generateLessonVocabulary } from "@zoonk/ai/tasks/lessons/language/vocab
 import { generateLanguageAudio } from "@zoonk/core/audio/generate";
 import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "../steps/_test-utils/create-lesson-context";
 import { vocabularyLessonWorkflow } from "./vocabulary-workflow";
 
@@ -72,7 +72,7 @@ describe(vocabularyLessonWorkflow, () => {
     vocabularyState.distractors = {};
   });
 
-  test("stores vocabulary words, enrichment metadata, and vocabulary steps", async () => {
+  it("stores vocabulary words, enrichment metadata, and vocabulary steps", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const catWord = `猫-${uniqueId}`;
     const waterWord = `水-${uniqueId}`;
@@ -160,7 +160,7 @@ describe(vocabularyLessonWorkflow, () => {
     );
   });
 
-  test("keeps canonical word enrichment when a distractor normalizes to the same key", async () => {
+  it("keeps canonical word enrichment when a distractor normalizes to the same key", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const canonicalWord = `Água-${uniqueId}`;
     const duplicateDistractor = `Agua-${uniqueId}`;

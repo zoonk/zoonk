@@ -6,7 +6,7 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { getLesson } from "./get-lesson";
 
 describe(getLesson, () => {
@@ -57,7 +57,7 @@ describe(getLesson, () => {
     ]);
   });
 
-  test("returns lesson with steps", async () => {
+  it("returns lesson with steps", async () => {
     const result = await getLesson({ lessonId: lesson.id });
 
     expect(result).not.toBeNull();
@@ -68,7 +68,7 @@ describe(getLesson, () => {
     expect(result?.steps).toHaveLength(2);
   });
 
-  test("orders steps by position ascending", async () => {
+  it("orders steps by position ascending", async () => {
     const result = await getLesson({ lessonId: lesson.id });
 
     expect(result?.steps[0]?.id).toBe(step1.id);
@@ -77,13 +77,13 @@ describe(getLesson, () => {
     expect(result?.steps[1]?.position).toBe(1);
   });
 
-  test("returns generation status", async () => {
+  it("returns generation status", async () => {
     const result = await getLesson({ lessonId: lesson.id });
 
     expect(result?.generationStatus).toBe("completed");
   });
 
-  test("returns null for unpublished lesson", async () => {
+  it("returns null for unpublished lesson", async () => {
     const draftLesson = await lessonFixture({
       chapterId: chapter.id,
       isPublished: false,
@@ -98,27 +98,27 @@ describe(getLesson, () => {
     expect(result).toBeNull();
   });
 
-  test("returns null for non-existent lesson", async () => {
+  it("returns null for non-existent lesson", async () => {
     const result = await getLesson({ lessonId: randomUUID() });
 
     expect(result).toBeNull();
   });
 
-  test("includes step content and visual information", async () => {
+  it("includes step content and visual information", async () => {
     const result = await getLesson({ lessonId: lesson.id });
 
     expect(result?.steps[0]?.content).toEqual({ text: "Step 1 content", title: "Step 1" });
     expect(result?.steps[0]?.kind).toBe("static");
   });
 
-  test("returns language and organizationId on the lesson", async () => {
+  it("returns language and organizationId on the lesson", async () => {
     const result = await getLesson({ lessonId: lesson.id });
 
     expect(result?.language).toBe("en");
     expect(result?.organizationId).toBe(org.id);
   });
 
-  test("returns word data when step has word relation", async () => {
+  it("returns word data when step has word relation", async () => {
     const [wordLesson, word] = await Promise.all([
       lessonFixture({
         chapterId: chapter.id,
@@ -149,7 +149,7 @@ describe(getLesson, () => {
     });
   });
 
-  test("returns sentence data when step has sentence relation", async () => {
+  it("returns sentence data when step has sentence relation", async () => {
     const [sentLesson, sentence] = await Promise.all([
       lessonFixture({
         chapterId: chapter.id,
@@ -185,14 +185,14 @@ describe(getLesson, () => {
     });
   });
 
-  test("returns null word and sentence for steps without relations", async () => {
+  it("returns null word and sentence for steps without relations", async () => {
     const result = await getLesson({ lessonId: lesson.id });
 
     expect(result?.steps[0]?.word).toBeNull();
     expect(result?.steps[0]?.sentence).toBeNull();
   });
 
-  test("excludes unpublished steps", async () => {
+  it("excludes unpublished steps", async () => {
     const pubLesson = await lessonFixture({
       chapterId: chapter.id,
       generationStatus: "completed",
@@ -231,7 +231,7 @@ describe(getLesson, () => {
     expect(result?.steps[1]?.id).toBe(pubStep3.id);
   });
 
-  test("returns no steps when all are unpublished", async () => {
+  it("returns no steps when all are unpublished", async () => {
     const draftLesson = await lessonFixture({
       chapterId: chapter.id,
       generationStatus: "completed",

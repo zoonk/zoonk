@@ -4,7 +4,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { getLessonProgress } from "./get-lesson-progress";
 
 describe(getLessonProgress, () => {
@@ -24,7 +24,7 @@ describe(getLessonProgress, () => {
     });
   }
 
-  test("returns empty array when unauthenticated", async () => {
+  it("returns empty array when unauthenticated", async () => {
     const chapter = await createPublishedChapter();
 
     const result = await getLessonProgress({ chapterId: chapter.id, headers: new Headers() });
@@ -32,7 +32,7 @@ describe(getLessonProgress, () => {
     expect(result).toEqual([]);
   });
 
-  test("returns completion rows for published lessons in the chapter", async () => {
+  it("returns completion rows for published lessons in the chapter", async () => {
     const [user, chapter] = await Promise.all([userFixture(), createPublishedChapter()]);
     const [completedLesson, pendingLesson] = await Promise.all([
       lessonFixture({
@@ -65,7 +65,7 @@ describe(getLessonProgress, () => {
     ]);
   });
 
-  test("excludes started-but-not-completed lessons", async () => {
+  it("excludes started-but-not-completed lessons", async () => {
     const [user, chapter] = await Promise.all([userFixture(), createPublishedChapter()]);
     const lesson = await lessonFixture({
       chapterId: chapter.id,
@@ -87,7 +87,7 @@ describe(getLessonProgress, () => {
     expect(result).toEqual([{ isCompleted: false, lessonId: lesson.id }]);
   });
 
-  test("excludes unpublished lessons", async () => {
+  it("excludes unpublished lessons", async () => {
     const [user, chapter] = await Promise.all([userFixture(), createPublishedChapter()]);
     const [publishedLesson, unpublishedLesson] = await Promise.all([
       lessonFixture({
@@ -125,7 +125,7 @@ describe(getLessonProgress, () => {
     expect(result).toEqual([{ isCompleted: true, lessonId: publishedLesson.id }]);
   });
 
-  test("keeps a completed lesson completed when a new lesson is added later", async () => {
+  it("keeps a completed lesson completed when a new lesson is added later", async () => {
     const [user, chapter] = await Promise.all([userFixture(), createPublishedChapter()]);
     const completedLesson = await lessonFixture({
       chapterId: chapter.id,

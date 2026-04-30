@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { saveQuizLessonStep } from "./save-quiz-lesson-step";
 
@@ -12,7 +12,7 @@ describe(saveQuizLessonStep, () => {
     organizationId = organization.id;
   });
 
-  test("saves quiz questions with player-ready option ids", async () => {
+  it("saves quiz questions with player-ready option ids", async () => {
     const context = await createLessonContext({ kind: "quiz", organizationId });
 
     await saveQuizLessonStep({

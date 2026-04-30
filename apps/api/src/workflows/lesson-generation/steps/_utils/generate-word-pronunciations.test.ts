@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { wordFixture, wordPronunciationFixture } from "@zoonk/testing/fixtures/words";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { generateWordPronunciations } from "./generate-word-pronunciations";
 
 const { generateLessonPronunciationMock } = vi.hoisted(() => ({
@@ -24,7 +24,7 @@ describe(generateWordPronunciations, () => {
     vi.clearAllMocks();
   });
 
-  test("returns empty object for empty word list", async () => {
+  it("returns empty object for empty word list", async () => {
     const result = await generateWordPronunciations({
       organizationId,
       targetLanguage: "es",
@@ -35,7 +35,7 @@ describe(generateWordPronunciations, () => {
     expect(result).toEqual({});
   });
 
-  test("returns existing pronunciations without calling AI", async () => {
+  it("returns existing pronunciations without calling AI", async () => {
     const id = randomUUID().slice(0, 8);
     const wordText = `Hola${id}`;
     const word = await wordFixture({ organizationId, targetLanguage: "es", word: wordText });
@@ -57,7 +57,7 @@ describe(generateWordPronunciations, () => {
     expect(generateLessonPronunciationMock).not.toHaveBeenCalled();
   });
 
-  test("generates pronunciations for words without existing records", async () => {
+  it("generates pronunciations for words without existing records", async () => {
     const id = randomUUID().slice(0, 8);
     const wordText = `Nuevo${id}`;
 
@@ -78,7 +78,7 @@ describe(generateWordPronunciations, () => {
     });
   });
 
-  test("mixes existing and generated pronunciations", async () => {
+  it("mixes existing and generated pronunciations", async () => {
     const id = randomUUID().slice(0, 8);
     const existingWordText = `Gato${id}`;
     const newWordText = `Perro${id}`;
@@ -108,7 +108,7 @@ describe(generateWordPronunciations, () => {
     expect(generateLessonPronunciationMock).toHaveBeenCalledOnce();
   });
 
-  test("throws when an AI call fails", async () => {
+  it("throws when an AI call fails", async () => {
     const id = randomUUID().slice(0, 8);
     const wordText = `Fallo${id}`;
 

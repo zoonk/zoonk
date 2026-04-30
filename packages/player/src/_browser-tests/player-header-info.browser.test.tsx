@@ -1,11 +1,11 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { buildSerializedLesson } from "../_test-utils/player-test-data";
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { renderPlayer } from "../_test-utils/render-player";
 
 describe("player header: lesson title and lesson info", () => {
-  test("shows the lesson title in the header", async () => {
+  it("shows the lesson title in the header", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({ title: "Basic Greetings" }),
       viewer: buildAuthenticatedViewer(),
@@ -14,7 +14,7 @@ describe("player header: lesson title and lesson info", () => {
     await expect.element(page.getByText("Basic Greetings")).toBeInTheDocument();
   });
 
-  test("shows the lesson kind label when title is null", async () => {
+  it("shows the lesson kind label when title is null", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({ kind: "vocabulary", title: null }),
       viewer: buildAuthenticatedViewer(),
@@ -23,7 +23,7 @@ describe("player header: lesson title and lesson info", () => {
     await expect.element(page.getByText("Vocabulary")).toBeInTheDocument();
   });
 
-  test("lesson info popover prefers the current lesson description", async () => {
+  it("lesson info popover prefers the current lesson description", async () => {
     renderPlayer({
       chapterTitle: "Verb Fundamentals",
       lesson: buildSerializedLesson({
@@ -43,7 +43,7 @@ describe("player header: lesson title and lesson info", () => {
     await expect.element(page.getByText("Verb Fundamentals")).toBeInTheDocument();
   });
 
-  test("lesson info popover falls back to the lesson description", async () => {
+  it("lesson info popover falls back to the lesson description", async () => {
     renderPlayer({
       chapterTitle: "Verb Fundamentals",
       lesson: buildSerializedLesson({ description: null }),

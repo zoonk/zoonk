@@ -1,7 +1,7 @@
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { countSitemapChapters, listSitemapChapters } from "./chapters";
 import { SITEMAP_BATCH_SIZE } from "./courses";
 
@@ -10,14 +10,14 @@ function lastPage(count: number): number {
 }
 
 describe(countSitemapChapters, () => {
-  test("returns a positive count", async () => {
+  it("returns a positive count", async () => {
     const count = await countSitemapChapters();
     expect(count).toBeGreaterThan(0);
   });
 });
 
 describe(listSitemapChapters, () => {
-  test("returns correct slug hierarchy", async () => {
+  it("returns correct slug hierarchy", async () => {
     const org = await organizationFixture({ kind: "brand" });
 
     const course = await courseFixture({
@@ -44,7 +44,7 @@ describe(listSitemapChapters, () => {
     });
   });
 
-  test("excludes unpublished chapters", async () => {
+  it("excludes unpublished chapters", async () => {
     const org = await organizationFixture({ kind: "brand" });
 
     const course = await courseFixture({ isPublished: true, organizationId: org.id });
@@ -62,7 +62,7 @@ describe(listSitemapChapters, () => {
     expect(found).toBeUndefined();
   });
 
-  test("excludes chapters from personal courses without an organization", async () => {
+  it("excludes chapters from personal courses without an organization", async () => {
     const course = await courseFixture({ isPublished: true, organizationId: null });
 
     const chapter = await chapterFixture({
@@ -78,7 +78,7 @@ describe(listSitemapChapters, () => {
     expect(found).toBeUndefined();
   });
 
-  test("excludes chapters from non-brand organizations", async () => {
+  it("excludes chapters from non-brand organizations", async () => {
     const org = await organizationFixture({ kind: "personal" });
 
     const course = await courseFixture({ isPublished: true, organizationId: org.id });
@@ -96,7 +96,7 @@ describe(listSitemapChapters, () => {
     expect(found).toBeUndefined();
   });
 
-  test("excludes chapters from unpublished courses", async () => {
+  it("excludes chapters from unpublished courses", async () => {
     const org = await organizationFixture({ kind: "brand" });
 
     const course = await courseFixture({ isPublished: false, organizationId: org.id });

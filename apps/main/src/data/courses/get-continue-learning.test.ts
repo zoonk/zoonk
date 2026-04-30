@@ -5,7 +5,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { MAX_CONTINUE_LEARNING_ITEMS, getContinueLearning } from "./get-continue-learning";
 
 async function createCourseWithLessons(organizationId: string) {
@@ -39,7 +39,7 @@ async function createCourseWithLessons(organizationId: string) {
 }
 
 describe("unauthenticated users", () => {
-  test("returns empty array", async () => {
+  it("returns empty array", async () => {
     const result = await getContinueLearning(new Headers());
     expect(result).toEqual([]);
   });
@@ -52,7 +52,7 @@ describe("authenticated users", () => {
     organization = await organizationFixture();
   });
 
-  test("returns empty array when user has no completions", async () => {
+  it("returns empty array when user has no completions", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -60,7 +60,7 @@ describe("authenticated users", () => {
     expect(result).toEqual([]);
   });
 
-  test("returns courses with next lesson info based on completions", async () => {
+  it("returns courses with next lesson info based on completions", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -84,7 +84,7 @@ describe("authenticated users", () => {
     });
   });
 
-  test("does not reopen a durably completed lesson after new lessons are added", async () => {
+  it("does not reopen a durably completed lesson after new lessons are added", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
     const userId = user.id;
@@ -149,7 +149,7 @@ describe("authenticated users", () => {
     expect(completedLesson.id).not.toBe(nextLesson.id);
   });
 
-  test("orders by most recent completion", async () => {
+  it("orders by most recent completion", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -180,7 +180,7 @@ describe("authenticated users", () => {
     expect(result[1]).toMatchObject({ course: { id: data1.course.id }, status: "completed" });
   });
 
-  test("limits to max items", async () => {
+  it("limits to max items", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -208,7 +208,7 @@ describe("authenticated users", () => {
     expect(result).toHaveLength(MAX_CONTINUE_LEARNING_ITEMS);
   });
 
-  test("filters out completed courses", async () => {
+  it("filters out completed courses", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -234,7 +234,7 @@ describe("authenticated users", () => {
     expect(result).toEqual([]);
   });
 
-  test("filters out durably completed courses even when a new chapter is added later", async () => {
+  it("filters out durably completed courses even when a new chapter is added later", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -285,7 +285,7 @@ describe("authenticated users", () => {
     expect(result).toEqual([]);
   });
 
-  test("finds lesson in next chapter when current chapter is complete", async () => {
+  it("finds lesson in next chapter when current chapter is complete", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -340,7 +340,7 @@ describe("authenticated users", () => {
     });
   });
 
-  test("excludes courses from non-brand organizations", async () => {
+  it("excludes courses from non-brand organizations", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -367,7 +367,7 @@ describe("authenticated users", () => {
     expect(result).toEqual([]);
   });
 
-  test("returns null organization for personal courses", async () => {
+  it("returns null organization for personal courses", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -419,7 +419,7 @@ describe("authenticated users", () => {
     });
   });
 
-  test("returns pending item when next lesson has no generated lessons", async () => {
+  it("returns pending item when next lesson has no generated lessons", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -465,7 +465,7 @@ describe("authenticated users", () => {
     });
   });
 
-  test("returns the pending tree-next lesson before a later generated lesson", async () => {
+  it("returns the pending tree-next lesson before a later generated lesson", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -521,7 +521,7 @@ describe("authenticated users", () => {
     });
   });
 
-  test("returns the next pending lesson target after the latest completed lesson", async () => {
+  it("returns the next pending lesson target after the latest completed lesson", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -576,7 +576,7 @@ describe("authenticated users", () => {
     });
   });
 
-  test("returns pending item linking to chapter when no next published lesson", async () => {
+  it("returns pending item linking to chapter when no next published lesson", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 

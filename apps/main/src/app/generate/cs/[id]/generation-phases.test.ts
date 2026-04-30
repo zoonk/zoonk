@@ -1,8 +1,8 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { calculateWeightedProgress, getPhaseOrder, getPhaseStatus } from "./generation-phases";
 
 describe("course generation phases", () => {
-  test("returns all 6 course phases in order", () => {
+  it("returns all 6 course phases in order", () => {
     const phases = getPhaseOrder();
 
     expect(phases).toEqual([
@@ -15,12 +15,12 @@ describe("course generation phases", () => {
     ]);
   });
 
-  test("marks phase as active when its step is the current step", () => {
+  it("marks phase as active when its step is the current step", () => {
     const status = getPhaseStatus("writingDescription", [], "generateDescription");
     expect(status).toBe("active");
   });
 
-  test("marks phase as completed when all its steps are completed", () => {
+  it("marks phase as completed when all its steps are completed", () => {
     const status = getPhaseStatus(
       "gettingReady",
       ["getCourseSuggestion", "checkExistingCourse", "initializeCourse", "setCourseAsRunning"],
@@ -30,17 +30,17 @@ describe("course generation phases", () => {
     expect(status).toBe("completed");
   });
 
-  test("marks phase as pending when no steps have started", () => {
+  it("marks phase as pending when no steps have started", () => {
     const status = getPhaseStatus("outliningChapters", [], null);
     expect(status).toBe("pending");
   });
 
-  test("returns 0 progress at start", () => {
+  it("returns 0 progress at start", () => {
     const progress = calculateWeightedProgress([], null);
     expect(progress).toBe(0);
   });
 
-  test("returns 100 progress when all steps are complete", () => {
+  it("returns 100 progress when all steps are complete", () => {
     const allSteps = [
       "getCourseSuggestion",
       "checkExistingCourse",

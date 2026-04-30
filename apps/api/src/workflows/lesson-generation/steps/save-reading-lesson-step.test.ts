@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { saveReadingLessonStep } from "./save-reading-lesson-step";
 
@@ -13,7 +13,7 @@ describe(saveReadingLessonStep, () => {
     organizationId = organization.id;
   });
 
-  test("saves reading sentences, target words, and distractor word metadata", async () => {
+  it("saves reading sentences, target words, and distractor word metadata", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const canonicalWords = [`Guten${id}`, `Morgen${id}`, `Lara${id}`] as const;
     const normalizedCanonicalWords = canonicalWords.map((word) => word.toLowerCase());

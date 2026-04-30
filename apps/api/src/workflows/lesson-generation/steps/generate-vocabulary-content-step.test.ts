@@ -1,6 +1,6 @@
 import { generateLessonVocabulary } from "@zoonk/ai/tasks/lessons/language/vocabulary";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateVocabularyContentStep } from "./generate-vocabulary-content-step";
 
@@ -22,7 +22,7 @@ describe(generateVocabularyContentStep, () => {
     vi.clearAllMocks();
   });
 
-  test("generates vocabulary words with target and user language context", async () => {
+  it("generates vocabulary words with target and user language context", async () => {
     const context = await createLessonContext({ organizationId, targetLanguage: "ja" });
 
     const result = await generateVocabularyContentStep(context);
@@ -33,7 +33,7 @@ describe(generateVocabularyContentStep, () => {
     );
   });
 
-  test("throws when vocabulary generation has no target language", async () => {
+  it("throws when vocabulary generation has no target language", async () => {
     const context = await createLessonContext({ organizationId, targetLanguage: null });
 
     await expect(generateVocabularyContentStep(context)).rejects.toThrow(

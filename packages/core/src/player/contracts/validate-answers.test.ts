@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { validateAnswers } from "./validate-answers";
 
 const multipleChoiceContent = {
@@ -16,7 +16,7 @@ const fillBlankContent = {
 };
 
 describe(validateAnswers, () => {
-  test("validates correct multipleChoice answer server-side", () => {
+  it("validates correct multipleChoice answer server-side", () => {
     const steps = [{ content: multipleChoiceContent, id: "1", kind: "multipleChoice" }];
 
     const results = validateAnswers(steps, {
@@ -28,7 +28,7 @@ describe(validateAnswers, () => {
     expect(results[0]?.stepId).toBe("1");
   });
 
-  test("validates incorrect multipleChoice answer", () => {
+  it("validates incorrect multipleChoice answer", () => {
     const steps = [{ content: multipleChoiceContent, id: "1", kind: "multipleChoice" }];
 
     const results = validateAnswers(steps, {
@@ -39,7 +39,7 @@ describe(validateAnswers, () => {
     expect(results[0]?.isCorrect).toBe(false);
   });
 
-  test("validates fillBlank answer", () => {
+  it("validates fillBlank answer", () => {
     const steps = [{ content: fillBlankContent, id: "2", kind: "fillBlank" }];
 
     const results = validateAnswers(steps, { "2": { kind: "fillBlank", userAnswers: ["dog"] } });
@@ -48,7 +48,7 @@ describe(validateAnswers, () => {
     expect(results[0]?.isCorrect).toBe(false);
   });
 
-  test("skips steps with no client answer", () => {
+  it("skips steps with no client answer", () => {
     const steps = [
       { content: multipleChoiceContent, id: "1", kind: "multipleChoice" },
       { content: { text: "Hello", title: "Intro", variant: "text" }, id: "2", kind: "static" },
@@ -62,7 +62,7 @@ describe(validateAnswers, () => {
     expect(results[0]?.stepId).toBe("1");
   });
 
-  test("validates translation answer against word ID", () => {
+  it("validates translation answer against word ID", () => {
     const steps = [{ content: {}, id: "4", kind: "translation", word: { id: "100" } }];
 
     const results = validateAnswers(steps, {
@@ -73,7 +73,7 @@ describe(validateAnswers, () => {
     expect(results[0]?.isCorrect).toBe(true);
   });
 
-  test("translation answer with wrong word ID is incorrect", () => {
+  it("translation answer with wrong word ID is incorrect", () => {
     const steps = [{ content: {}, id: "4", kind: "translation", word: { id: "100" } }];
 
     const results = validateAnswers(steps, {
@@ -84,7 +84,7 @@ describe(validateAnswers, () => {
     expect(results[0]?.isCorrect).toBe(false);
   });
 
-  test("validates reading answer against sentence words", () => {
+  it("validates reading answer against sentence words", () => {
     const steps = [
       {
         content: {},
@@ -108,7 +108,7 @@ describe(validateAnswers, () => {
     expect(results[0]?.isCorrect).toBe(true);
   });
 
-  test("validates listening answer against translation words", () => {
+  it("validates listening answer against translation words", () => {
     const steps = [
       {
         content: {},
@@ -132,7 +132,7 @@ describe(validateAnswers, () => {
     expect(results[0]?.isCorrect).toBe(true);
   });
 
-  test("rejects non-canonical reading answers", () => {
+  it("rejects non-canonical reading answers", () => {
     const steps = [
       {
         content: {},
@@ -156,7 +156,7 @@ describe(validateAnswers, () => {
     expect(results[0]?.isCorrect).toBe(false);
   });
 
-  test("rejects non-canonical listening answers", () => {
+  it("rejects non-canonical listening answers", () => {
     const steps = [
       {
         content: {},
@@ -180,7 +180,7 @@ describe(validateAnswers, () => {
     expect(results[0]?.isCorrect).toBe(false);
   });
 
-  test("accepts punctuation-insensitive listening answers", () => {
+  it("accepts punctuation-insensitive listening answers", () => {
     const steps = [
       {
         content: {},
@@ -204,7 +204,7 @@ describe(validateAnswers, () => {
     expect(results[0]?.isCorrect).toBe(true);
   });
 
-  test("skips unsupported step kinds", () => {
+  it("skips unsupported step kinds", () => {
     const steps = [{ content: {}, id: "7", kind: "unknownKind" }];
 
     const results = validateAnswers(steps, {
@@ -214,7 +214,7 @@ describe(validateAnswers, () => {
     expect(results).toHaveLength(0);
   });
 
-  test("skips malformed unanswered static steps instead of throwing", () => {
+  it("skips malformed unanswered static steps instead of throwing", () => {
     const steps = [{ content: { text: "Legacy static step" }, id: "16", kind: "static" }];
 
     const runValidation = () => validateAnswers(steps, {});

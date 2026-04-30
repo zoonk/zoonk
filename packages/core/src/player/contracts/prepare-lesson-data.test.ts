@@ -1,5 +1,5 @@
 import { shuffle } from "@zoonk/utils/shuffle";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { parseStepContent } from "../../steps/contract/content";
 import { preparePlayerLessonData } from "./prepare-lesson-data";
 
@@ -119,7 +119,7 @@ describe(preparePlayerLessonData, () => {
     shuffleMock.mockImplementation(<T>(items: readonly T[]) => [...items]);
   });
 
-  test("serializes lesson and step ids to strings", () => {
+  it("serializes lesson and step ids to strings", () => {
     const result = prepare({
       lesson: makeLesson(
         [makeStep({ content: { text: "Hello world", title: "Intro", variant: "text" }, id: "42" })],
@@ -131,7 +131,7 @@ describe(preparePlayerLessonData, () => {
     expect(result.steps[0]?.id).toBe("42");
   });
 
-  test("keeps lesson metadata plus serialized lesson pools", () => {
+  it("keeps lesson metadata plus serialized lesson pools", () => {
     const word = makeLessonWord({
       distractors: ["boa tarde"],
       translation: "good evening",
@@ -196,7 +196,7 @@ describe(preparePlayerLessonData, () => {
     ]);
   });
 
-  test("parses supported step content and filters unsupported steps", () => {
+  it("parses supported step content and filters unsupported steps", () => {
     const result = prepare({
       lesson: makeLesson([
         makeStep({
@@ -215,7 +215,7 @@ describe(preparePlayerLessonData, () => {
     });
   });
 
-  test("populates sortOrderItems, fillBlankOptions, and matchColumnsRightItems", () => {
+  it("populates sortOrderItems, fillBlankOptions, and matchColumnsRightItems", () => {
     const result = prepare({
       lesson: makeLesson([
         makeStep({
@@ -260,7 +260,7 @@ describe(preparePlayerLessonData, () => {
     expect(result.steps[2]?.matchColumnsRightItems).toEqual(["1", "2"]);
   });
 
-  test("serializes lesson-scoped distractor arrays for words and sentences", () => {
+  it("serializes lesson-scoped distractor arrays for words and sentences", () => {
     const word = makeLessonWord({
       distractors: ["boa tarde", "bom dia"],
       translation: "good evening",
@@ -297,7 +297,7 @@ describe(preparePlayerLessonData, () => {
     expect(result.steps[1]?.sentence?.distractors).toEqual(["Abend", "Fenster"]);
   });
 
-  test("builds translation options from stored distractors and hydrated metadata", () => {
+  it("builds translation options from stored distractors and hydrated metadata", () => {
     const word = makeLessonWord({
       distractors: ["boa tarde", "bom dia", "até logo"],
       translation: "good evening",
@@ -365,7 +365,7 @@ describe(preparePlayerLessonData, () => {
     ]);
   });
 
-  test("drops supported steps whose content does not match the content contract", () => {
+  it("drops supported steps whose content does not match the content contract", () => {
     const result = prepare({
       lesson: makeLesson([
         makeStep({ content: {}, id: "1", kind: "static" }),
@@ -381,7 +381,7 @@ describe(preparePlayerLessonData, () => {
     expect(result.steps[0]?.id).toBe("2");
   });
 
-  test("serializes multiple choice content", () => {
+  it("serializes multiple choice content", () => {
     const result = prepare({
       lesson: makeLesson([
         makeStep({
@@ -407,7 +407,7 @@ describe(preparePlayerLessonData, () => {
     });
   });
 
-  test("shuffles select image options during serialization", () => {
+  it("shuffles select image options during serialization", () => {
     shuffleMock.mockImplementationOnce((items) => items.toReversed());
 
     const result = prepare({
@@ -451,7 +451,7 @@ describe(preparePlayerLessonData, () => {
     expect(selectImageContent.options.map(({ id }) => id)).toEqual(["image-2", "image-1"]);
   });
 
-  test("builds reading and listening word banks from stored distractors only", () => {
+  it("builds reading and listening word banks from stored distractors only", () => {
     const sentence = makeLessonSentence({
       distractors: ["Abend", "Fenster", "Guten Tag"],
       sentence: makeSentenceRecord({ id: "20", sentence: "Guten Morgen, Lara." }),
@@ -500,7 +500,7 @@ describe(preparePlayerLessonData, () => {
     ]);
   });
 
-  test("populates sentenceWordOptions from canonical sentence tokens", () => {
+  it("populates sentenceWordOptions from canonical sentence tokens", () => {
     const sentence = makeLessonSentence({
       sentence: makeSentenceRecord({ id: "20", sentence: "Guten Morgen" }),
       translation: "Good morning",
@@ -529,7 +529,7 @@ describe(preparePlayerLessonData, () => {
     ]);
   });
 
-  test("keeps sentence word metadata from sentence words when available", () => {
+  it("keeps sentence word metadata from sentence words when available", () => {
     const sentence = makeLessonSentence({
       sentence: makeSentenceRecord({ id: "20", sentence: "gato bonito" }),
       translation: "pretty cat",
@@ -574,7 +574,7 @@ describe(preparePlayerLessonData, () => {
     ]);
   });
 
-  test("keeps sentenceWordOptions empty for steps without a sentence", () => {
+  it("keeps sentenceWordOptions empty for steps without a sentence", () => {
     const result = prepare({
       lesson: makeLesson([
         makeStep({
@@ -587,7 +587,7 @@ describe(preparePlayerLessonData, () => {
     expect(result.steps[0]?.sentenceWordOptions).toEqual([]);
   });
 
-  test("keeps option helper arrays empty for unrelated step kinds", () => {
+  it("keeps option helper arrays empty for unrelated step kinds", () => {
     const result = prepare({
       lesson: makeLesson([
         makeStep({
@@ -608,7 +608,7 @@ describe(preparePlayerLessonData, () => {
     });
   });
 
-  test("allows sanitation underflow without fallback top-up", () => {
+  it("allows sanitation underflow without fallback top-up", () => {
     const sentence = makeLessonSentence({
       distractors: ["Hola", "Buenos dias"],
       sentence: makeSentenceRecord({ id: "20", sentence: "Hola mundo" }),
@@ -632,7 +632,7 @@ describe(preparePlayerLessonData, () => {
     ]);
   });
 
-  test("uses the provided steps override instead of the lesson steps", () => {
+  it("uses the provided steps override instead of the lesson steps", () => {
     const result = prepare({
       lesson: makeLesson(
         [

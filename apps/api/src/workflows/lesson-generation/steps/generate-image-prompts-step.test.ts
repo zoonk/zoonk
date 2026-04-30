@@ -1,6 +1,6 @@
 import { generateStepImagePrompts } from "@zoonk/ai/tasks/steps/image-prompts";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateImagePromptsStep } from "./generate-image-prompts-step";
 
@@ -22,7 +22,7 @@ describe(generateImagePromptsStep, () => {
     vi.clearAllMocks();
   });
 
-  test("generates image prompts for static lesson steps", async () => {
+  it("generates image prompts for static lesson steps", async () => {
     const context = await createLessonContext({ organizationId });
     const steps = [
       { text: "First text", title: "First" },
@@ -37,7 +37,7 @@ describe(generateImagePromptsStep, () => {
     );
   });
 
-  test("skips image prompt generation when no steps exist", async () => {
+  it("skips image prompt generation when no steps exist", async () => {
     const context = await createLessonContext({ organizationId });
 
     const result = await generateImagePromptsStep({ context, steps: [] });

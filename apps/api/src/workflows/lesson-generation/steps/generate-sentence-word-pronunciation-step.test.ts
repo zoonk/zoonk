@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { generateLessonPronunciation } from "@zoonk/ai/tasks/lessons/language/pronunciation";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateSentenceWordPronunciationStep } from "./generate-sentence-word-pronunciation-step";
 
@@ -23,7 +23,7 @@ describe(generateSentenceWordPronunciationStep, () => {
     vi.clearAllMocks();
   });
 
-  test("generates pronunciations for reading words", async () => {
+  it("generates pronunciations for reading words", async () => {
     const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
     const catWord = `猫${uniqueId}`;
     const fireWord = `火${uniqueId}`;

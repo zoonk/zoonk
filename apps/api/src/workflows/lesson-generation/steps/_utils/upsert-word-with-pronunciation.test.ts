@@ -2,11 +2,11 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { upsertWordWithPronunciation } from "./upsert-word-with-pronunciation";
 
 describe(upsertWordWithPronunciation, () => {
-  test("creates a new Word record and returns its ID", async () => {
+  it("creates a new Word record and returns its ID", async () => {
     const organization = await organizationFixture({ kind: "brand" });
     const id = randomUUID().slice(0, 8);
     const wordText = `neko-${id}`;
@@ -30,7 +30,7 @@ describe(upsertWordWithPronunciation, () => {
     expect(record?.romanization).toBe("neko");
   });
 
-  test("creates a WordPronunciation record when pronunciation is provided", async () => {
+  it("creates a WordPronunciation record when pronunciation is provided", async () => {
     const organization = await organizationFixture({ kind: "brand" });
     const id = randomUUID().slice(0, 8);
     const wordText = `inu-${id}`;
@@ -53,7 +53,7 @@ describe(upsertWordWithPronunciation, () => {
     expect(pronunciations[0]?.userLanguage).toBe("en");
   });
 
-  test("does not create WordPronunciation when pronunciation is null", async () => {
+  it("does not create WordPronunciation when pronunciation is null", async () => {
     const organization = await organizationFixture({ kind: "brand" });
     const id = randomUUID().slice(0, 8);
     const wordText = `kaze-${id}`;
@@ -74,7 +74,7 @@ describe(upsertWordWithPronunciation, () => {
     expect(pronunciations).toHaveLength(0);
   });
 
-  test("updates existing Word record on conflict", async () => {
+  it("updates existing Word record on conflict", async () => {
     const organization = await organizationFixture({ kind: "brand" });
     const id = randomUUID().slice(0, 8);
     const wordText = `sora-${id}`;
@@ -105,7 +105,7 @@ describe(upsertWordWithPronunciation, () => {
     expect(record?.romanization).toBe("sora");
   });
 
-  test("does not overwrite romanization when romanizationUpdate is empty", async () => {
+  it("does not overwrite romanization when romanizationUpdate is empty", async () => {
     const organization = await organizationFixture({ kind: "brand" });
     const id = randomUUID().slice(0, 8);
     const wordText = `yama-${id}`;
@@ -133,7 +133,7 @@ describe(upsertWordWithPronunciation, () => {
     expect(record?.romanization).toBe("yama");
   });
 
-  test("clears romanization when romanizationUpdate sets it to null", async () => {
+  it("clears romanization when romanizationUpdate sets it to null", async () => {
     const organization = await organizationFixture({ kind: "brand" });
     const id = randomUUID().slice(0, 8);
     const wordText = `mizu-${id}`;

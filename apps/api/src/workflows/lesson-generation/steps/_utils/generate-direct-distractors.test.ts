@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { generateDirectDistractors } from "./generate-direct-distractors";
 
 const { generateLessonDistractorsMock } = vi.hoisted(() => ({
@@ -14,7 +14,7 @@ describe(generateDirectDistractors, () => {
     vi.clearAllMocks();
   });
 
-  test("returns sanitized distractors keyed by entry key", async () => {
+  it("returns sanitized distractors keyed by entry key", async () => {
     generateLessonDistractorsMock.mockResolvedValue({
       data: { distractors: ["wrong1", "wrong2", "wrong3"] },
     });
@@ -33,7 +33,7 @@ describe(generateDirectDistractors, () => {
     });
   });
 
-  test("throws when an AI call fails", async () => {
+  it("throws when an AI call fails", async () => {
     generateLessonDistractorsMock.mockRejectedValue(new Error("AI failure"));
 
     await expect(
@@ -45,7 +45,7 @@ describe(generateDirectDistractors, () => {
     ).rejects.toThrow("AI failure");
   });
 
-  test("throws when any entry fails", async () => {
+  it("throws when any entry fails", async () => {
     generateLessonDistractorsMock
       .mockResolvedValueOnce({ data: { distractors: ["d1", "d2", "d3"] } })
       .mockRejectedValueOnce(new Error("fail"))

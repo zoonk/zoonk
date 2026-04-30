@@ -1,6 +1,6 @@
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { aiOrganizationFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { getLessonStep } from "./get-lesson-step";
 
@@ -12,7 +12,7 @@ describe(getLessonStep, () => {
     organizationId = organization.id;
   });
 
-  test("loads lessons with the nested course context needed by generation", async () => {
+  it("loads lessons with the nested course context needed by generation", async () => {
     const lesson = await createLessonContext({ organizationId });
 
     const context = await getLessonStep(lesson.id);
@@ -27,7 +27,7 @@ describe(getLessonStep, () => {
     );
   });
 
-  test("throws for lessons outside the AI organization", async () => {
+  it("throws for lessons outside the AI organization", async () => {
     const otherOrg = await organizationFixture();
     const lesson = await createLessonContext({ organizationId: otherOrg.id });
 

@@ -3,7 +3,7 @@ import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { prisma } from "@zoonk/db";
 import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { initializeCourseStep } from "./initialize-course-step";
 
 describe(initializeCourseStep, () => {
@@ -15,7 +15,7 @@ describe(initializeCourseStep, () => {
     vi.clearAllMocks();
   });
 
-  test("throws without streaming error when suggestion update fails", async () => {
+  it("throws without streaming error when suggestion update fails", async () => {
     const suggestion = await courseSuggestionFixture({
       title: `Missing Suggestion ${randomUUID()}`,
     });
@@ -38,7 +38,7 @@ describe(initializeCourseStep, () => {
     );
   });
 
-  test("creates a course and marks suggestion as running", async () => {
+  it("creates a course and marks suggestion as running", async () => {
     const suggestion = await courseSuggestionFixture({ title: `Init Course ${randomUUID()}` });
 
     const workflowRunId = `run-${randomUUID()}`;
@@ -71,7 +71,7 @@ describe(initializeCourseStep, () => {
     );
   });
 
-  test("sets targetLanguage on course when suggestion has one", async () => {
+  it("sets targetLanguage on course when suggestion has one", async () => {
     const suggestion = await courseSuggestionFixture({
       targetLanguage: "es",
       title: `Language Course ${randomUUID()}`,

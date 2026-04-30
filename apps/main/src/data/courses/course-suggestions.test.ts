@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import * as courseSuggestions from "@zoonk/ai/tasks/courses/suggestions";
 import { prisma } from "@zoonk/db";
 import { toSlug } from "@zoonk/utils/string";
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   generateCourseSuggestions,
   getCourseSuggestionById,
@@ -10,7 +10,7 @@ import {
 } from "./course-suggestions";
 
 describe("course-suggestions", () => {
-  test("get an existing item", async () => {
+  it("get an existing item", async () => {
     const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
 
     const language = "en";
@@ -49,7 +49,7 @@ describe("course-suggestions", () => {
     expect(spy).not.toHaveBeenCalled();
   });
 
-  test("generates a new item", async () => {
+  it("generates a new item", async () => {
     const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
 
     const language = "en";
@@ -82,7 +82,7 @@ describe("course-suggestions", () => {
     expect(spy).toHaveBeenCalledOnce();
   });
 
-  test("deduplicates suggestions across prompts", async () => {
+  it("deduplicates suggestions across prompts", async () => {
     const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
 
     const language = "en";
@@ -109,7 +109,7 @@ describe("course-suggestions", () => {
     expect(items).toHaveLength(1);
   });
 
-  test("overrides title with Intl language name for supported language courses", async () => {
+  it("overrides title with Intl language name for supported language courses", async () => {
     const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
 
     const language = "pt";
@@ -136,7 +136,7 @@ describe("course-suggestions", () => {
     expect(dbItem?.targetLanguage).toBe("es");
   });
 
-  test("overrides AI title with deterministic Intl name for language courses", async () => {
+  it("overrides AI title with deterministic Intl name for language courses", async () => {
     const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
 
     const language = "en";
@@ -156,7 +156,7 @@ describe("course-suggestions", () => {
     expect(result.suggestions[0]?.targetLanguage).toBe("en");
   });
 
-  test("accepts non-TTS language and uses Intl-derived title", async () => {
+  it("accepts non-TTS language and uses Intl-derived title", async () => {
     const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
 
     const language = "en";
@@ -175,7 +175,7 @@ describe("course-suggestions", () => {
     expect(result.suggestions[0]?.targetLanguage).toBe("am");
   });
 
-  test("deduplicates suggestions with the same targetLanguageCode", async () => {
+  it("deduplicates suggestions with the same targetLanguageCode", async () => {
     const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
 
     const language = "pt";
@@ -198,18 +198,18 @@ describe("course-suggestions", () => {
     expect(result.suggestions[0]?.targetLanguage).toBe("en");
   });
 
-  test("getCourseSuggestionById returns null for non-existent id", async () => {
+  it("getCourseSuggestionById returns null for non-existent id", async () => {
     const result = await getCourseSuggestionById(randomUUID());
     expect(result).toBeNull();
   });
 
-  test("getCourseSuggestionById returns null for malformed ids", async () => {
+  it("getCourseSuggestionById returns null for malformed ids", async () => {
     const result = await getCourseSuggestionById("invalid-id");
 
     expect(result).toBeNull();
   });
 
-  test("getCourseSuggestionById returns suggestion by id", async () => {
+  it("getCourseSuggestionById returns suggestion by id", async () => {
     const language = "en";
     const title = `by-id-${randomUUID()}`;
     const slug = toSlug(title);
@@ -231,7 +231,7 @@ describe("course-suggestions", () => {
     });
   });
 
-  test("getCourseSuggestionBySlug returns null for non-existent slug", async () => {
+  it("getCourseSuggestionBySlug returns null for non-existent slug", async () => {
     const result = await getCourseSuggestionBySlug({
       language: "en",
       slug: `non-existent-${randomUUID()}`,
@@ -239,7 +239,7 @@ describe("course-suggestions", () => {
     expect(result).toBeNull();
   });
 
-  test("getCourseSuggestionBySlug returns suggestion id by slug and language", async () => {
+  it("getCourseSuggestionBySlug returns suggestion id by slug and language", async () => {
     const language = "en";
     const title = `by-slug-${randomUUID()}`;
     const slug = toSlug(title);
@@ -253,7 +253,7 @@ describe("course-suggestions", () => {
     expect(result).toMatchObject({ id: item.id });
   });
 
-  test("getCourseSuggestionBySlug finds suggestion when slug has a locale suffix", async () => {
+  it("getCourseSuggestionBySlug finds suggestion when slug has a locale suffix", async () => {
     const language = "pt";
     const title = `locale-suffix-${randomUUID()}`;
     const slug = toSlug(title);
@@ -269,7 +269,7 @@ describe("course-suggestions", () => {
     expect(result).toMatchObject({ id: item.id });
   });
 
-  test("getCourseSuggestionBySlug distinguishes between languages", async () => {
+  it("getCourseSuggestionBySlug distinguishes between languages", async () => {
     const slug = `multi-lang-${randomUUID()}`;
 
     const enItem = await prisma.courseSuggestion.create({

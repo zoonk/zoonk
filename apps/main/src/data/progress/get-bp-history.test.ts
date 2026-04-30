@@ -2,18 +2,18 @@ import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { createSafeDate } from "@zoonk/testing/fixtures/dates";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { getBpHistory } from "./get-bp-history";
 
 describe("unauthenticated users", () => {
-  test("returns null", async () => {
+  it("returns null", async () => {
     const result = await getBpHistory({ headers: new Headers(), period: "month" });
     expect(result).toBeNull();
   });
 });
 
 describe("authenticated users", () => {
-  test("returns null when user has no DailyProgress records", async () => {
+  it("returns null when user has no DailyProgress records", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -22,7 +22,7 @@ describe("authenticated users", () => {
   });
 
   describe("month period", () => {
-    test("returns daily data points with BP values", async () => {
+    it("returns daily data points with BP values", async () => {
       const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
@@ -43,7 +43,7 @@ describe("authenticated users", () => {
       expect(result?.periodTotal).toBe(150);
     });
 
-    test("calculates period total correctly", async () => {
+    it("calculates period total correctly", async () => {
       const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
@@ -68,7 +68,7 @@ describe("authenticated users", () => {
       expect(result?.periodTotal).toBe(500);
     });
 
-    test("includes current belt level", async () => {
+    it("includes current belt level", async () => {
       const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
@@ -90,7 +90,7 @@ describe("authenticated users", () => {
       expect(result?.currentBelt.color).toBe("yellow");
     });
 
-    test("calculates comparison with previous month", async () => {
+    it("calculates comparison with previous month", async () => {
       const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
@@ -121,7 +121,7 @@ describe("authenticated users", () => {
       expect(result?.previousPeriodTotal).toBe(100);
     });
 
-    test("navigates to previous month with offset", async () => {
+    it("navigates to previous month with offset", async () => {
       const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
@@ -154,7 +154,7 @@ describe("authenticated users", () => {
   });
 
   describe("6months period", () => {
-    test("returns weekly aggregated data points", async () => {
+    it("returns weekly aggregated data points", async () => {
       const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
@@ -182,7 +182,7 @@ describe("authenticated users", () => {
   });
 
   describe("year period", () => {
-    test("returns monthly aggregated data points", async () => {
+    it("returns monthly aggregated data points", async () => {
       const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
@@ -210,7 +210,7 @@ describe("authenticated users", () => {
   });
 
   describe("all period", () => {
-    test("returns yearly aggregated data points", async () => {
+    it("returns yearly aggregated data points", async () => {
       const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
@@ -229,7 +229,7 @@ describe("authenticated users", () => {
   });
 
   describe("navigation flags", () => {
-    test("hasPreviousPeriod is true when historical data exists", async () => {
+    it("hasPreviousPeriod is true when historical data exists", async () => {
       const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
@@ -259,7 +259,7 @@ describe("authenticated users", () => {
       expect(result?.hasPreviousPeriod).toBe(true);
     });
 
-    test("hasNextPeriod is false when on current period (offset=0)", async () => {
+    it("hasNextPeriod is false when on current period (offset=0)", async () => {
       const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
@@ -274,7 +274,7 @@ describe("authenticated users", () => {
       expect(result?.hasNextPeriod).toBe(false);
     });
 
-    test("hasNextPeriod is true when offset > 0", async () => {
+    it("hasNextPeriod is true when offset > 0", async () => {
       const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 

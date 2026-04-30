@@ -5,7 +5,7 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { lessonSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { createLessonContext } from "../steps/_test-utils/create-lesson-context";
 import { listeningLessonWorkflow } from "./listening-workflow";
 
@@ -17,7 +17,7 @@ describe(listeningLessonWorkflow, () => {
     organizationId = organization.id;
   });
 
-  test("stores listening steps from the previous reading lesson", async () => {
+  it("stores listening steps from the previous reading lesson", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
     const context = await createLessonContext({

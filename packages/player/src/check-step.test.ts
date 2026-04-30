@@ -1,5 +1,5 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { checkStep } from "./check-step";
 import { type SelectedAnswer } from "./player-reducer";
 
@@ -36,14 +36,14 @@ describe(checkStep, () => {
       kind: "multipleChoice",
     });
 
-    test("correct answer returns isCorrect true", () => {
+    it("correct answer returns isCorrect true", () => {
       const answer: SelectedAnswer = { kind: "multipleChoice", selectedOptionId: "four" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
       expect(result.feedback).toBe("Correct!");
     });
 
-    test("incorrect answer returns isCorrect false", () => {
+    it("incorrect answer returns isCorrect false", () => {
       const answer: SelectedAnswer = { kind: "multipleChoice", selectedOptionId: "three" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
@@ -63,13 +63,13 @@ describe(checkStep, () => {
       kind: "fillBlank",
     });
 
-    test("correct answer", () => {
+    it("correct answer", () => {
       const answer: SelectedAnswer = { kind: "fillBlank", userAnswers: ["sky"] };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
     });
 
-    test("incorrect answer", () => {
+    it("incorrect answer", () => {
       const answer: SelectedAnswer = { kind: "fillBlank", userAnswers: ["ground"] };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
@@ -89,7 +89,7 @@ describe(checkStep, () => {
       kind: "matchColumns",
     });
 
-    test("correct pairs", () => {
+    it("correct pairs", () => {
       const answer: SelectedAnswer = {
         kind: "matchColumns",
         mistakes: 0,
@@ -102,7 +102,7 @@ describe(checkStep, () => {
       expect(result.isCorrect).toBe(true);
     });
 
-    test("incorrect pairs", () => {
+    it("incorrect pairs", () => {
       const answer: SelectedAnswer = {
         kind: "matchColumns",
         mistakes: 0,
@@ -127,13 +127,13 @@ describe(checkStep, () => {
       kind: "sortOrder",
     });
 
-    test("correct order", () => {
+    it("correct order", () => {
       const answer: SelectedAnswer = { kind: "sortOrder", userOrder: ["first", "second", "third"] };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
     });
 
-    test("incorrect order", () => {
+    it("incorrect order", () => {
       const answer: SelectedAnswer = { kind: "sortOrder", userOrder: ["third", "first", "second"] };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
@@ -153,13 +153,13 @@ describe(checkStep, () => {
       kind: "selectImage",
     });
 
-    test("correct selection", () => {
+    it("correct selection", () => {
       const answer: SelectedAnswer = { kind: "selectImage", selectedOptionId: "cat" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
     });
 
-    test("incorrect selection", () => {
+    it("incorrect selection", () => {
       const answer: SelectedAnswer = { kind: "selectImage", selectedOptionId: "dog" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
@@ -182,13 +182,13 @@ describe(checkStep, () => {
       },
     });
 
-    test("correct word", () => {
+    it("correct word", () => {
       const answer: SelectedAnswer = { kind: "translation", selectedOptionId: "word-1" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
     });
 
-    test("incorrect word", () => {
+    it("incorrect word", () => {
       const answer: SelectedAnswer = { kind: "translation", selectedOptionId: "word-99" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
@@ -196,7 +196,7 @@ describe(checkStep, () => {
   });
 
   describe("vocabulary flashcard", () => {
-    test("returns mismatch result for flashcard step", () => {
+    it("returns mismatch result for flashcard step", () => {
       const step = buildStep({ content: {}, id: "vocab-1", kind: "vocabulary" });
       const answer: SelectedAnswer = { kind: "translation", selectedOptionId: "word-1" };
       const { result } = checkStep(step, answer);
@@ -222,21 +222,21 @@ describe(checkStep, () => {
       },
     });
 
-    test("correct word arrangement", () => {
+    it("correct word arrangement", () => {
       const answer: SelectedAnswer = { arrangedWords: ["Hello", "world"], kind: "reading" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
       expect(result.correctAnswer).toBe("Hello world");
     });
 
-    test("incorrect word arrangement returns correct answer", () => {
+    it("incorrect word arrangement returns correct answer", () => {
       const answer: SelectedAnswer = { arrangedWords: ["world", "Hello"], kind: "reading" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
       expect(result.correctAnswer).toBe("Hello world");
     });
 
-    test("returns explanation as feedback", () => {
+    it("returns explanation as feedback", () => {
       const stepWithExplanation = buildStep({
         content: {},
         id: "reading-2",
@@ -257,7 +257,7 @@ describe(checkStep, () => {
       expect(result.feedback).toBe("Word order matters in this language.");
     });
 
-    test("rejects non-canonical reading answers", () => {
+    it("rejects non-canonical reading answers", () => {
       const stepWithDistractors = buildStep({
         content: {},
         id: "reading-3",
@@ -302,21 +302,21 @@ describe(checkStep, () => {
       },
     });
 
-    test("correct word arrangement uses translation", () => {
+    it("correct word arrangement uses translation", () => {
       const answer: SelectedAnswer = { arrangedWords: ["Buenos", "dias"], kind: "listening" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
       expect(result.correctAnswer).toBe("Buenos dias");
     });
 
-    test("incorrect word arrangement returns correct answer", () => {
+    it("incorrect word arrangement returns correct answer", () => {
       const answer: SelectedAnswer = { arrangedWords: ["dias", "Buenos"], kind: "listening" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
       expect(result.correctAnswer).toBe("Buenos dias");
     });
 
-    test("returns explanation as feedback", () => {
+    it("returns explanation as feedback", () => {
       const stepWithExplanation = buildStep({
         content: {},
         id: "listening-2",
@@ -337,7 +337,7 @@ describe(checkStep, () => {
       expect(result.feedback).toBe("Pay attention to accent marks.");
     });
 
-    test("rejects non-canonical listening answers", () => {
+    it("rejects non-canonical listening answers", () => {
       const stepWithDistractors = buildStep({
         content: {},
         id: "listening-3",
@@ -363,7 +363,7 @@ describe(checkStep, () => {
   });
 
   describe("mismatched kinds", () => {
-    test("multipleChoice step with fillBlank answer returns safe fallback", () => {
+    it("multipleChoice step with fillBlank answer returns safe fallback", () => {
       const step = buildStep({
         content: {
           options: [{ feedback: "OK", id: "a", isCorrect: true, text: "A" }],
@@ -377,7 +377,7 @@ describe(checkStep, () => {
       expect(result.feedback).toBeNull();
     });
 
-    test("static step returns mismatch result", () => {
+    it("static step returns mismatch result", () => {
       const step = buildStep();
       const answer: SelectedAnswer = { kind: "multipleChoice", selectedOptionId: "missing" };
       const { result } = checkStep(step, answer);

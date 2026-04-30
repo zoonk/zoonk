@@ -5,7 +5,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { handleChapterFailureStep, handleCourseFailureStep } from "./handle-failure-step";
 
 describe(handleCourseFailureStep, () => {
@@ -20,7 +20,7 @@ describe(handleCourseFailureStep, () => {
     vi.clearAllMocks();
   });
 
-  test("marks both course and suggestion as failed when courseId is provided", async () => {
+  it("marks both course and suggestion as failed when courseId is provided", async () => {
     const [course, suggestion] = await Promise.all([
       courseFixture({
         generationRunId: "old-run",
@@ -54,7 +54,7 @@ describe(handleCourseFailureStep, () => {
     );
   });
 
-  test("throws all status update failures", async () => {
+  it("throws all status update failures", async () => {
     const promise = handleCourseFailureStep({
       courseId: randomUUID(),
       courseSuggestionId: randomUUID(),
@@ -70,7 +70,7 @@ describe(handleCourseFailureStep, () => {
     });
   });
 
-  test("marks only suggestion as failed when courseId is null", async () => {
+  it("marks only suggestion as failed when courseId is null", async () => {
     const suggestion = await courseSuggestionFixture({
       generationRunId: "old-run",
       generationStatus: "running",
@@ -103,7 +103,7 @@ describe(handleChapterFailureStep, () => {
     vi.clearAllMocks();
   });
 
-  test("marks chapter as failed and clears run ID", async () => {
+  it("marks chapter as failed and clears run ID", async () => {
     const chapter = await chapterFixture({
       courseId,
       generationRunId: "old-run",

@@ -1,6 +1,6 @@
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { getCourse } from "./get-course";
 
 describe(getCourse, () => {
@@ -28,7 +28,7 @@ describe(getCourse, () => {
     ]);
   });
 
-  test("returns course with organization and categories", async () => {
+  it("returns course with organization and categories", async () => {
     const result = await getCourse({ brandSlug: brandOrg.slug, courseSlug: publishedCourse.slug });
 
     expect(result).not.toBeNull();
@@ -42,25 +42,25 @@ describe(getCourse, () => {
     expect(result?.categories.map((item) => item.category)).toContain("science");
   });
 
-  test("returns null for non-existent course", async () => {
+  it("returns null for non-existent course", async () => {
     const result = await getCourse({ brandSlug: brandOrg.slug, courseSlug: "non-existent-course" });
 
     expect(result).toBeNull();
   });
 
-  test("returns null for unpublished course", async () => {
+  it("returns null for unpublished course", async () => {
     const result = await getCourse({ brandSlug: brandOrg.slug, courseSlug: draftCourse.slug });
 
     expect(result).toBeNull();
   });
 
-  test("returns null for course from non-brand org", async () => {
+  it("returns null for course from non-brand org", async () => {
     const result = await getCourse({ brandSlug: schoolOrg.slug, courseSlug: schoolCourse.slug });
 
     expect(result).toBeNull();
   });
 
-  test("returns null when brandSlug does not match", async () => {
+  it("returns null when brandSlug does not match", async () => {
     const otherBrandOrg = await organizationFixture({ kind: "brand" });
 
     const result = await getCourse({
@@ -71,7 +71,7 @@ describe(getCourse, () => {
     expect(result).toBeNull();
   });
 
-  test("finds courses with different language slugs independently", async () => {
+  it("finds courses with different language slugs independently", async () => {
     const baseSlug = `lang-test-${crypto.randomUUID()}`;
 
     const [enCourse, ptCourse] = await Promise.all([

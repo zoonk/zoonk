@@ -1,5 +1,5 @@
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { generateDescriptionStep } from "./generate-description-step";
 import { type CourseContext } from "./initialize-course-step";
 
@@ -25,7 +25,7 @@ describe(generateDescriptionStep, () => {
     vi.clearAllMocks();
   });
 
-  test("returns the generated description", async () => {
+  it("returns the generated description", async () => {
     generateCourseDescriptionMock.mockResolvedValue({
       data: { description: "A great course about testing" },
     });
@@ -50,7 +50,7 @@ describe(generateDescriptionStep, () => {
     );
   });
 
-  test("throws without streaming error when AI generation fails", async () => {
+  it("throws without streaming error when AI generation fails", async () => {
     generateCourseDescriptionMock.mockRejectedValue(new Error("AI failure"));
 
     await expect(generateDescriptionStep(course)).rejects.toThrow("AI failure");

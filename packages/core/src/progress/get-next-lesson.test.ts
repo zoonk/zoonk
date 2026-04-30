@@ -4,7 +4,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { getNextLesson } from "./get-next-lesson";
 
 type CourseTree = {
@@ -53,7 +53,7 @@ describe(getNextLesson, () => {
     return { chapter, course, lessons };
   }
 
-  test("returns first lesson when unauthenticated", async () => {
+  it("returns first lesson when unauthenticated", async () => {
     const { chapter, course, lessons } = await createCourseTree();
 
     const result = await getNextLesson({ headers: new Headers(), scope: { courseId: course.id } });
@@ -70,7 +70,7 @@ describe(getNextLesson, () => {
     });
   });
 
-  test("returns a shell link when the first lesson still needs generation", async () => {
+  it("returns a shell link when the first lesson still needs generation", async () => {
     const { chapter, course, lessons } = await createCourseTree({
       lessonStatuses: ["pending", "completed"],
     });
@@ -89,7 +89,7 @@ describe(getNextLesson, () => {
     });
   });
 
-  test("returns next lesson after the latest completed lesson", async () => {
+  it("returns next lesson after the latest completed lesson", async () => {
     const [user, tree] = await Promise.all([userFixture(), createCourseTree()]);
     const [completedLesson, nextLesson] = tree.lessons;
 
@@ -115,7 +115,7 @@ describe(getNextLesson, () => {
     });
   });
 
-  test("returns the latest completed lesson as review state when the course is complete", async () => {
+  it("returns the latest completed lesson as review state when the course is complete", async () => {
     const [user, tree] = await Promise.all([userFixture(), createCourseTree()]);
     const [lesson1, lesson2] = tree.lessons;
 
@@ -149,7 +149,7 @@ describe(getNextLesson, () => {
     });
   });
 
-  test("chapter scope stays inside the requested chapter", async () => {
+  it("chapter scope stays inside the requested chapter", async () => {
     const [user, tree] = await Promise.all([userFixture(), createCourseTree()]);
     const [completedLesson, nextLesson] = tree.lessons;
 
@@ -175,7 +175,7 @@ describe(getNextLesson, () => {
     });
   });
 
-  test("lesson scope returns that lesson completion state", async () => {
+  it("lesson scope returns that lesson completion state", async () => {
     const [user, tree] = await Promise.all([userFixture(), createCourseTree()]);
     const [lesson] = tree.lessons;
 

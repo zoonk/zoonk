@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { normalizeString } from "@zoonk/utils/string";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { searchCourses } from "./search-courses";
 
 describe(searchCourses, () => {
@@ -44,24 +44,24 @@ describe(searchCourses, () => {
     ]);
   });
 
-  test("returns empty array for empty query", async () => {
+  it("returns empty array for empty query", async () => {
     const result = await searchCourses({ language: "en", query: "" });
     expect(result).toEqual([]);
   });
 
-  test("returns empty array for whitespace-only query", async () => {
+  it("returns empty array for whitespace-only query", async () => {
     const result = await searchCourses({ language: "en", query: "   " });
     expect(result).toEqual([]);
   });
 
-  test("returns courses matching partial title", async () => {
+  it("returns courses matching partial title", async () => {
     const result = await searchCourses({ language: "en", query: "JavaScript" });
     const ids = result.map((course) => course.id);
 
     expect(ids).toContain(publishedCourse.id);
   });
 
-  test("search is case-insensitive", async () => {
+  it("search is case-insensitive", async () => {
     const uppercaseResult = await searchCourses({ language: "en", query: "JAVASCRIPT" });
     const lowercaseResult = await searchCourses({ language: "en", query: "javascript" });
     const mixedResult = await searchCourses({ language: "en", query: "JaVaScRiPt" });
@@ -75,7 +75,7 @@ describe(searchCourses, () => {
     expect(mixedIds).toContain(publishedCourse.id);
   });
 
-  test("search handles accented characters", async () => {
+  it("search handles accented characters", async () => {
     const accentedCourse = await courseFixture({
       isPublished: true,
       language: "pt",
@@ -95,7 +95,7 @@ describe(searchCourses, () => {
     expect(withoutAccentIds).toContain(accentedCourse.id);
   });
 
-  test("returns all languages but sorts user's language first", async () => {
+  it("returns all languages but sorts user's language first", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const searchTerm = `langorder${uniqueId}`;
 
@@ -134,7 +134,7 @@ describe(searchCourses, () => {
     expect(ptResult[0]?.language).toBe("pt");
   });
 
-  test("returns all languages when no language is specified", async () => {
+  it("returns all languages when no language is specified", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const searchTerm = `nolang${uniqueId}`;
 
@@ -162,7 +162,7 @@ describe(searchCourses, () => {
     expect(ids).toContain(ptCourse.id);
   });
 
-  test("returns only published courses from brand orgs", async () => {
+  it("returns only published courses from brand orgs", async () => {
     const result = await searchCourses({ language: "en", query: "JavaScript" });
 
     const ids = result.map((course) => course.id);
@@ -172,7 +172,7 @@ describe(searchCourses, () => {
     expect(ids).not.toContain(schoolCourse.id);
   });
 
-  test("limits results to default of 10", async () => {
+  it("limits results to default of 10", async () => {
     await prisma.course.createMany({
       data: Array.from({ length: 15 }, (_, i) => ({
         description: `Bulk course ${i} description`,
@@ -191,7 +191,7 @@ describe(searchCourses, () => {
     expect(result).toHaveLength(10);
   });
 
-  test("respects custom limit parameter", async () => {
+  it("respects custom limit parameter", async () => {
     await prisma.course.createMany({
       data: Array.from({ length: 15 }, (_, i) => ({
         description: `Custom limit course ${i} description`,
@@ -210,7 +210,7 @@ describe(searchCourses, () => {
     expect(result).toHaveLength(5);
   });
 
-  test("returns exact match first", async () => {
+  it("returns exact match first", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const searchTerm = `exactmatch${uniqueId}`;
 
@@ -248,7 +248,7 @@ describe(searchCourses, () => {
     expect(result[0]?.id).toBe(exactMatch.id);
   });
 
-  test("respects offset parameter for pagination", async () => {
+  it("respects offset parameter for pagination", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const searchTerm = `paginationtest${uniqueId}`;
 
@@ -294,7 +294,7 @@ describe(searchCourses, () => {
     expect(uniqueIds.size).toBe(5);
   });
 
-  test("returns empty array when offset exceeds results", async () => {
+  it("returns empty array when offset exceeds results", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const searchTerm = `offsetexceed${uniqueId}`;
 
@@ -311,7 +311,7 @@ describe(searchCourses, () => {
     expect(result).toEqual([]);
   });
 
-  test("clamps offset to prevent unbounded database queries", async () => {
+  it("clamps offset to prevent unbounded database queries", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const searchTerm = `clampoffset${uniqueId}`;
 
@@ -331,7 +331,7 @@ describe(searchCourses, () => {
     expect(result).toEqual([]);
   });
 
-  test("excludes courses without an organization", async () => {
+  it("excludes courses without an organization", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const searchTerm = `noorg${uniqueId}`;
 

@@ -1,6 +1,6 @@
 import { generateStepImage } from "@zoonk/core/steps/image";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateQuizImagesStep } from "./generate-quiz-images-step";
 
@@ -27,7 +27,7 @@ describe(generateQuizImagesStep, () => {
     vi.clearAllMocks();
   });
 
-  test("adds generated image URLs to select-image quiz options only", async () => {
+  it("adds generated image URLs to select-image quiz options only", async () => {
     const context = await createLessonContext({ kind: "quiz", organizationId });
 
     const result = await generateQuizImagesStep({

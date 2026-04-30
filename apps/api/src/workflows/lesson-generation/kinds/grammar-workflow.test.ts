@@ -3,7 +3,7 @@ import { generateLessonGrammarUserContent } from "@zoonk/ai/tasks/lessons/langua
 import { generateLessonRomanization } from "@zoonk/ai/tasks/lessons/language/romanization";
 import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "../steps/_test-utils/create-lesson-context";
 import { grammarLessonWorkflow } from "./grammar-workflow";
 
@@ -61,7 +61,7 @@ describe(grammarLessonWorkflow, () => {
     vi.clearAllMocks();
   });
 
-  test("stores grammar examples, discovery, rule, and exercises", async () => {
+  it("stores grammar examples, discovery, rule, and exercises", async () => {
     const context = await createLessonContext({
       kind: "grammar",
       organizationId,

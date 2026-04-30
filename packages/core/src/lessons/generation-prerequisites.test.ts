@@ -4,7 +4,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { getBlockingLessonGenerationPrerequisite } from "./generation-prerequisites";
 
 /**
@@ -62,7 +62,7 @@ describe(getBlockingLessonGenerationPrerequisite, () => {
     organizationId = organization.id;
   });
 
-  test("returns the first incomplete explanation since the previous practice", async () => {
+  it("returns the first incomplete explanation since the previous practice", async () => {
     const chapter = await createChapter({ organizationId });
 
     const lessons = await Promise.all([
@@ -99,7 +99,7 @@ describe(getBlockingLessonGenerationPrerequisite, () => {
     });
   });
 
-  test("returns null when every source explanation is completed", async () => {
+  it("returns null when every source explanation is completed", async () => {
     const chapter = await createChapter({ organizationId });
 
     const [, practice] = await Promise.all([
@@ -116,7 +116,7 @@ describe(getBlockingLessonGenerationPrerequisite, () => {
     await expect(getBlockingLessonGenerationPrerequisite(practice)).resolves.toBeNull();
   });
 
-  test("uses the previous quiz as the quiz source boundary", async () => {
+  it("uses the previous quiz as the quiz source boundary", async () => {
     const chapter = await createChapter({ organizationId });
 
     const lessons = await Promise.all([
@@ -153,7 +153,7 @@ describe(getBlockingLessonGenerationPrerequisite, () => {
     });
   });
 
-  test("returns the nearest incomplete vocabulary source for translation", async () => {
+  it("returns the nearest incomplete vocabulary source for translation", async () => {
     const chapter = await createChapter({ organizationId });
 
     const lessons = await Promise.all([
@@ -183,7 +183,7 @@ describe(getBlockingLessonGenerationPrerequisite, () => {
     });
   });
 
-  test("returns the first incomplete vocabulary since the previous reading", async () => {
+  it("returns the first incomplete vocabulary since the previous reading", async () => {
     const chapter = await createChapter({ organizationId });
 
     const lessons = await Promise.all([
@@ -221,7 +221,7 @@ describe(getBlockingLessonGenerationPrerequisite, () => {
     });
   });
 
-  test("returns the nearest incomplete reading source for listening", async () => {
+  it("returns the nearest incomplete reading source for listening", async () => {
     const chapter = await createChapter({ organizationId });
 
     const lessons = await Promise.all([
@@ -251,7 +251,7 @@ describe(getBlockingLessonGenerationPrerequisite, () => {
     });
   });
 
-  test("returns null for lesson kinds without generation prerequisites", async () => {
+  it("returns null for lesson kinds without generation prerequisites", async () => {
     const chapter = await createChapter({ organizationId });
 
     const explanation = await createLesson({

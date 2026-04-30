@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { generateLanguageAudio } from "@zoonk/core/audio/generate";
 import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateReadingAudioStep } from "./generate-reading-audio-step";
 
@@ -24,7 +24,7 @@ describe(generateReadingAudioStep, () => {
     vi.clearAllMocks();
   });
 
-  test("generates reading audio for missing sentence audio and reuses existing audio", async () => {
+  it("generates reading audio for missing sentence audio and reuses existing audio", async () => {
     const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
     const existingSentence = `既存${uniqueId}`;
     const newSentence = `新しい${uniqueId}`;

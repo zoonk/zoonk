@@ -3,7 +3,7 @@ import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { type CourseContext } from "./initialize-course-step";
 import { updateCourseStep } from "./update-course-step";
 
@@ -19,7 +19,7 @@ describe(updateCourseStep, () => {
     vi.clearAllMocks();
   });
 
-  test("throws without streaming error when course does not exist", async () => {
+  it("throws without streaming error when course does not exist", async () => {
     const brokenContext: CourseContext = {
       courseId: randomUUID(),
       courseSlug: "broken",
@@ -40,7 +40,7 @@ describe(updateCourseStep, () => {
     );
   });
 
-  test("updates course description, image, and generation status", async () => {
+  it("updates course description, image, and generation status", async () => {
     const course = await courseFixture({
       generationStatus: "running",
       organizationId,
@@ -79,7 +79,7 @@ describe(updateCourseStep, () => {
     );
   });
 
-  test("does not update imageUrl when it is null", async () => {
+  it("does not update imageUrl when it is null", async () => {
     const course = await courseFixture({
       imageUrl: "https://example.com/existing.webp",
       organizationId,

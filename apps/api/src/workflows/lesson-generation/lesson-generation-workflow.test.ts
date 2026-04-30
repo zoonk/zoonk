@@ -25,7 +25,7 @@ import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { lessonSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { lessonWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { lessonGenerationWorkflow } from "./lesson-generation-workflow";
 
 const languageMockState = vi.hoisted(() => ({
@@ -345,7 +345,7 @@ describe(lessonGenerationWorkflow, () => {
     ]);
   });
 
-  test("runs the explanation image workflow and saves images on static steps", async () => {
+  it("runs the explanation image workflow and saves images on static steps", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
     const lesson = await lessonFixture({
       chapterId: chapter.id,
@@ -390,7 +390,7 @@ describe(lessonGenerationWorkflow, () => {
     expect(dbLesson.generationRunId).toBe("test-run-id");
   });
 
-  test("runs the tutorial image workflow and saves generated procedural steps", async () => {
+  it("runs the tutorial image workflow and saves generated procedural steps", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
     const lesson = await lessonFixture({
       chapterId: chapter.id,
@@ -439,7 +439,7 @@ describe(lessonGenerationWorkflow, () => {
     ]);
   });
 
-  test("practice generation uses only explanation steps since the previous practice", async () => {
+  it("practice generation uses only explanation steps since the previous practice", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
 
     const [practice] = await Promise.all([
@@ -508,7 +508,7 @@ describe(lessonGenerationWorkflow, () => {
     );
   });
 
-  test("blocks practice generation until all source explanations are completed", async () => {
+  it("blocks practice generation until all source explanations are completed", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
 
     vi.mocked(generateLessonPractice).mockClear();
@@ -554,7 +554,7 @@ describe(lessonGenerationWorkflow, () => {
     expect(steps).toHaveLength(0);
   });
 
-  test("quiz generation uses explanations since the previous quiz and saves select-image URLs", async () => {
+  it("quiz generation uses explanations since the previous quiz and saves select-image URLs", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
 
     const [quiz] = await Promise.all([
@@ -618,7 +618,7 @@ describe(lessonGenerationWorkflow, () => {
     ]);
   });
 
-  test("vocabulary generation keeps audio, pronunciation, romanization, and distractor enrichment", async () => {
+  it("vocabulary generation keeps audio, pronunciation, romanization, and distractor enrichment", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const catWord = `猫-${uniqueId}`;
     const waterWord = `水-${uniqueId}`;
@@ -719,7 +719,7 @@ describe(lessonGenerationWorkflow, () => {
     ]);
   });
 
-  test("translation generation creates translation steps from the previous vocabulary lesson", async () => {
+  it("translation generation creates translation steps from the previous vocabulary lesson", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const { chapter } = await createLanguageWorkflowTree({ organizationId });
     const [vocabularyLesson, word] = await Promise.all([
@@ -776,7 +776,7 @@ describe(lessonGenerationWorkflow, () => {
     expect(parseStepContent("translation", translationStep?.content)).toEqual({});
   });
 
-  test("reading generation uses vocabulary since the previous reading and saves enriched sentences", async () => {
+  it("reading generation uses vocabulary since the previous reading and saves enriched sentences", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const { chapter } = await createLanguageWorkflowTree({ organizationId });
     const [vocabularyLesson, catWord, waterWord] = await Promise.all([
@@ -851,7 +851,7 @@ describe(lessonGenerationWorkflow, () => {
     expect(sentenceLink?.translation).toBe("cat and water");
   });
 
-  test("listening generation copies sentence steps from the previous reading lesson", async () => {
+  it("listening generation copies sentence steps from the previous reading lesson", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const { chapter } = await createLanguageWorkflowTree({ organizationId });
     const [readingLesson, sentence] = await Promise.all([
@@ -906,7 +906,7 @@ describe(lessonGenerationWorkflow, () => {
     expect(parseStepContent("listening", listeningStep?.content)).toEqual({});
   });
 
-  test("grammar generation keeps content, user-language exercises, romanization, and saving phases", async () => {
+  it("grammar generation keeps content, user-language exercises, romanization, and saving phases", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const { chapter } = await createLanguageWorkflowTree({ organizationId });
     const lesson = await lessonFixture({
@@ -950,7 +950,7 @@ describe(lessonGenerationWorkflow, () => {
     ]);
   });
 
-  test("repairs a pending lesson with existing steps without calling AI", async () => {
+  it("repairs a pending lesson with existing steps without calling AI", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
     const lesson = await lessonFixture({
       chapterId: chapter.id,
@@ -986,7 +986,7 @@ describe(lessonGenerationWorkflow, () => {
     expect(completionEvent).toBeDefined();
   });
 
-  test("regenerates failed lessons with leftover steps instead of repairing them", async () => {
+  it("regenerates failed lessons with leftover steps instead of repairing them", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
     const lesson = await lessonFixture({
       chapterId: chapter.id,

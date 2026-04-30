@@ -15,7 +15,10 @@
   "rules": {
     "eslint/capitalized-comments": "off",
     "eslint/func-style": ["error", "declaration", { "allowArrowFunctions": true }],
-    "eslint/no-underscore-dangle": "off",
+    "eslint/no-underscore-dangle": [
+      "error",
+      { "allow": ["_avg", "_count", "_max", "_min", "_sum"] }
+    ],
     "eslint/id-length": [
       "error",
       { "min": 2, "exceptions": ["i", "j", "x", "y", "z", "_", "a", "b", "t", "T"] }
@@ -56,7 +59,6 @@
       { "allow": ["**/*.css", "server-only", "dotenv/config"] }
     ],
     "import/prefer-default-export": "off",
-    "jest/consistent-test-it": "off",
     "jest/max-expects": "off",
     "jest/no-conditional-expect": "off",
     "jest/no-conditional-in-test": "off",

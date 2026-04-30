@@ -4,7 +4,7 @@ import { prisma } from "@zoonk/db";
 import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { completeCourseSetupStep } from "./complete-course-setup-step";
 
 describe(completeCourseSetupStep, () => {
@@ -19,7 +19,7 @@ describe(completeCourseSetupStep, () => {
     vi.clearAllMocks();
   });
 
-  test("throws all DB save failures without streaming error", async () => {
+  it("throws all DB save failures without streaming error", async () => {
     const promise = completeCourseSetupStep({
       courseId: randomUUID(),
       courseSuggestionId: randomUUID(),
@@ -41,7 +41,7 @@ describe(completeCourseSetupStep, () => {
     );
   });
 
-  test("marks both course and suggestion as completed", async () => {
+  it("marks both course and suggestion as completed", async () => {
     const [course, suggestion] = await Promise.all([
       courseFixture({
         generationStatus: "running",

@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { savePracticeLessonStep } from "./save-practice-lesson-step";
 
@@ -12,7 +12,7 @@ describe(savePracticeLessonStep, () => {
     organizationId = organization.id;
   });
 
-  test("saves practice scenario and question steps with option ids", async () => {
+  it("saves practice scenario and question steps with option ids", async () => {
     const context = await createLessonContext({ kind: "practice", organizationId });
     const images = [
       {

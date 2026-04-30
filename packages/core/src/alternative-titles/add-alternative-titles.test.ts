@@ -2,11 +2,11 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { addAlternativeTitles } from "./add-alternative-titles";
 
 describe(addAlternativeTitles, () => {
-  test("adds alternative titles to a course", async () => {
+  it("adds alternative titles to a course", async () => {
     const org = await organizationFixture();
     const course = await courseFixture({ organizationId: org.id });
 
@@ -30,7 +30,7 @@ describe(addAlternativeTitles, () => {
     ]);
   });
 
-  test("converts titles to slugs", async () => {
+  it("converts titles to slugs", async () => {
     const org = await organizationFixture();
     const course = await courseFixture({ organizationId: org.id });
 
@@ -50,7 +50,7 @@ describe(addAlternativeTitles, () => {
     expect(titles).toEqual([{ slug: `machine-learning-basics-${suffix}` }]);
   });
 
-  test("removes duplicate titles", async () => {
+  it("removes duplicate titles", async () => {
     const org = await organizationFixture();
     const course = await courseFixture({ organizationId: org.id });
 
@@ -71,7 +71,7 @@ describe(addAlternativeTitles, () => {
     expect(titles).toEqual([{ slug: `react-${suffix}` }]);
   });
 
-  test("silently ignores duplicate titles across courses", async () => {
+  it("silently ignores duplicate titles across courses", async () => {
     const org = await organizationFixture();
     const course1 = await courseFixture({ organizationId: org.id });
     const course2 = await courseFixture({ organizationId: org.id });
@@ -96,7 +96,7 @@ describe(addAlternativeTitles, () => {
     expect(course2Titles).toEqual([{ slug: `angular-${suffix}` }]);
   });
 
-  test("does nothing when titles array is empty", async () => {
+  it("does nothing when titles array is empty", async () => {
     const org = await organizationFixture();
     const course = await courseFixture({ organizationId: org.id });
 
@@ -107,7 +107,7 @@ describe(addAlternativeTitles, () => {
     expect(titles).toEqual([]);
   });
 
-  test("filters out empty slugs", async () => {
+  it("filters out empty slugs", async () => {
     const org = await organizationFixture();
     const course = await courseFixture({ organizationId: org.id });
 

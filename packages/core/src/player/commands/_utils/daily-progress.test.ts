@@ -1,10 +1,10 @@
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { fillDecayGaps } from "./daily-progress";
 
 describe(fillDecayGaps, () => {
-  test("keeps one daily progress row per user and day", async () => {
+  it("keeps one daily progress row per user and day", async () => {
     const user = await userFixture();
     const userId = user.id;
     const date = new Date(Date.UTC(2026, 0, 2));
@@ -20,7 +20,7 @@ describe(fillDecayGaps, () => {
     ).rejects.toHaveProperty("code", "P2002");
   });
 
-  test("skips decay rows for days that already have progress", async () => {
+  it("skips decay rows for days that already have progress", async () => {
     const user = await userFixture();
     const userId = user.id;
     const gapDate = new Date(Date.UTC(2026, 0, 2));

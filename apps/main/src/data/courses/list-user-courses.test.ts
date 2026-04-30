@@ -4,11 +4,11 @@ import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { courseFixture, courseUserFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { listUserCourses } from "./list-user-courses";
 
 describe("unauthenticated users", () => {
-  test("returns Unauthorized", async () => {
+  it("returns Unauthorized", async () => {
     const result = await listUserCourses(new Headers());
 
     expect(result.error?.message).toBe(ErrorCode.unauthorized);
@@ -27,7 +27,7 @@ describe("authenticated users", () => {
     headers = await signInAs(user.email, user.password);
   });
 
-  test("returns empty array when user has no courses", async () => {
+  it("returns empty array when user has no courses", async () => {
     const newUser = await userFixture();
     const newHeaders = await signInAs(newUser.email, newUser.password);
 
@@ -37,7 +37,7 @@ describe("authenticated users", () => {
     expect(result.data).toEqual([]);
   });
 
-  test("returns courses the user has started", async () => {
+  it("returns courses the user has started", async () => {
     const course = await courseFixture({ isPublished: true, organizationId: organization.id });
 
     await courseUserFixture({ courseId: course.id, userId: user.id });
@@ -49,7 +49,7 @@ describe("authenticated users", () => {
     expect(result.data?.some((item) => item.id === course.id)).toBe(true);
   });
 
-  test("includes the organization in the response", async () => {
+  it("includes the organization in the response", async () => {
     const testUser = await userFixture();
     const testHeaders = await signInAs(testUser.email, testUser.password);
 
@@ -68,7 +68,7 @@ describe("authenticated users", () => {
     expect(returnedCourse?.organization?.slug).toBe(organization.slug);
   });
 
-  test("orders courses by startedAt descending (most recent first)", async () => {
+  it("orders courses by startedAt descending (most recent first)", async () => {
     const testUser = await userFixture();
     const testHeaders = await signInAs(testUser.email, testUser.password);
 
@@ -100,7 +100,7 @@ describe("authenticated users", () => {
     expect(courseIds).toEqual([course2.id, course3.id, course1.id]);
   });
 
-  test("excludes courses from non-brand organizations", async () => {
+  it("excludes courses from non-brand organizations", async () => {
     const testUser = await userFixture();
     const testHeaders = await signInAs(testUser.email, testUser.password);
 
@@ -126,7 +126,7 @@ describe("authenticated users", () => {
     expect(result.data?.some((item) => item.id === schoolCourse.id)).toBe(false);
   });
 
-  test("includes personal courses with null organization", async () => {
+  it("includes personal courses with null organization", async () => {
     const testUser = await userFixture();
     const testHeaders = await signInAs(testUser.email, testUser.password);
 
@@ -144,7 +144,7 @@ describe("authenticated users", () => {
     expect(result.data?.some((item) => item.id === personalCourse.id)).toBe(true);
   });
 
-  test("does not return other users courses", async () => {
+  it("does not return other users courses", async () => {
     const [otherUser, testUser] = await Promise.all([userFixture(), userFixture()]);
 
     const testHeaders = await signInAs(testUser.email, testUser.password);

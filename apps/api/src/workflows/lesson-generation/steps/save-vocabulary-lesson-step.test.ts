@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { saveVocabularyLessonStep } from "./save-vocabulary-lesson-step";
 
@@ -13,7 +13,7 @@ describe(saveVocabularyLessonStep, () => {
     organizationId = organization.id;
   });
 
-  test("saves vocabulary words, distractor metadata, and vocabulary steps", async () => {
+  it("saves vocabulary words, distractor metadata, and vocabulary steps", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const vocabularyWord = `boa noite ${id}`;
     const distractorWords = [`boa tarde ${id}`, `bom dia ${id}`] as const;

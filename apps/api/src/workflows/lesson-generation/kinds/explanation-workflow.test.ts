@@ -4,7 +4,7 @@ import { generateContentStepImage } from "@zoonk/core/steps/content-image";
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "../steps/_test-utils/create-lesson-context";
 import { explanationLessonWorkflow } from "./explanation-workflow";
 
@@ -51,7 +51,7 @@ describe(explanationLessonWorkflow, () => {
     vi.clearAllMocks();
   });
 
-  test("stores generated explanation text with generated images", async () => {
+  it("stores generated explanation text with generated images", async () => {
     const context = await createLessonContext({ kind: "explanation", organizationId });
 
     await explanationLessonWorkflow(context);

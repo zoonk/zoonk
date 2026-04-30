@@ -1,5 +1,5 @@
 import { fireEvent, screen } from "@testing-library/react";
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { buildInlineImageUrl } from "../_test-utils/build-inline-image-url";
 import { buildSerializedLesson, buildSerializedStep } from "../_test-utils/player-test-data";
@@ -71,7 +71,7 @@ function tapExpandedImageBackdrop(target: HTMLElement) {
 }
 
 describe("player browser integration: static steps", () => {
-  test("uses keyboard navigation without visible step arrows", async () => {
+  it("uses keyboard navigation without visible step arrows", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "explanation",
@@ -107,7 +107,7 @@ describe("player browser integration: static steps", () => {
     await expect.element(page.getByRole("heading", { name: "First step" })).toBeInTheDocument();
   });
 
-  test("renders grammar example and grammar rule static variants through the shared shell", async () => {
+  it("renders grammar example and grammar rule static variants through the shared shell", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "explanation",
@@ -147,7 +147,7 @@ describe("player browser integration: static steps", () => {
     await expect.element(page.getByText("Add -ed to regular verbs")).toBeInTheDocument();
   });
 
-  test("renders embedded step images inside the shared static shell", async () => {
+  it("renders embedded step images inside the shared static shell", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "explanation",
@@ -208,7 +208,7 @@ describe("player browser integration: static steps", () => {
     await expect.element(reopenedDialog).not.toBeInTheDocument();
   });
 
-  test("swipes touch navigation forward on static steps", async () => {
+  it("swipes touch navigation forward on static steps", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "explanation",
@@ -241,7 +241,7 @@ describe("player browser integration: static steps", () => {
     await expect.element(page.getByRole("heading", { name: "Second step" })).toBeInTheDocument();
   });
 
-  test("uses single taps on the left and right halves for touch navigation", async () => {
+  it("uses single taps on the left and right halves for touch navigation", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "explanation",
@@ -278,7 +278,7 @@ describe("player browser integration: static steps", () => {
       .toBeInTheDocument();
   });
 
-  test("supports keyboard navigation on static steps and keyboard completion actions", async () => {
+  it("supports keyboard navigation on static steps and keyboard completion actions", async () => {
     const onEscape = vi.fn();
 
     renderPlayer({

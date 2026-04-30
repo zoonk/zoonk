@@ -1,7 +1,7 @@
 import { generateLessonQuiz } from "@zoonk/ai/tasks/lessons/core/quiz";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createCompletedExplanation,
   createLessonContext,
@@ -37,7 +37,7 @@ describe(generateQuizContentStep, () => {
     vi.clearAllMocks();
   });
 
-  test("uses only explanation steps since the previous quiz", async () => {
+  it("uses only explanation steps since the previous quiz", async () => {
     const context = await createLessonContext({ kind: "quiz", organizationId, position: 4 });
 
     await Promise.all([

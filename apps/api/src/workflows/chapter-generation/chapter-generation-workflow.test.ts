@@ -8,7 +8,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, test, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { chapterGenerationWorkflow } from "./chapter-generation-workflow";
 
 vi.mock("@zoonk/ai/tasks/chapters/lessons", () => ({
@@ -52,7 +52,7 @@ describe(chapterGenerationWorkflow, () => {
   });
 
   describe("early returns", () => {
-    test("returns early when generationStatus is 'running' without streaming completion", async () => {
+    it("returns early when generationStatus is 'running' without streaming completion", async () => {
       const chapter = await chapterFixture({
         courseId: course.id,
         generationStatus: "running",
@@ -73,7 +73,7 @@ describe(chapterGenerationWorkflow, () => {
       expect(completionEvent).toBeUndefined();
     });
 
-    test("streams completion when generationStatus is 'completed'", async () => {
+    it("streams completion when generationStatus is 'completed'", async () => {
       const chapter = await chapterFixture({
         courseId: course.id,
         generationStatus: "completed",
@@ -94,7 +94,7 @@ describe(chapterGenerationWorkflow, () => {
       expect(completionEvent).toBeDefined();
     });
 
-    test("sets as completed and returns when chapter has existing lessons", async () => {
+    it("sets as completed and returns when chapter has existing lessons", async () => {
       const chapter = await chapterFixture({
         courseId: course.id,
         generationStatus: "pending",
@@ -119,7 +119,7 @@ describe(chapterGenerationWorkflow, () => {
   });
 
   describe("happy path", () => {
-    test("calls lessonGenerationWorkflow with first lesson's ID", async () => {
+    it("calls lessonGenerationWorkflow with first lesson's ID", async () => {
       const title = `Lesson Gen Chapter ${randomUUID()}`;
       const chapter = await chapterFixture({
         courseId: course.id,
@@ -138,7 +138,7 @@ describe(chapterGenerationWorkflow, () => {
       expect(lessonGenerationWorkflow).toHaveBeenCalledWith(lessons[0]?.id);
     });
 
-    test("sets chapter as completed before the first lesson generation runs", async () => {
+    it("sets chapter as completed before the first lesson generation runs", async () => {
       const title = `Completed Before Lesson Gen ${randomUUID()}`;
       const chapter = await chapterFixture({
         courseId: course.id,
@@ -160,7 +160,7 @@ describe(chapterGenerationWorkflow, () => {
       expect(chapterStatusDuringLessonGen).toBe("completed");
     });
 
-    test("updates chapter status: pending → running → completed", async () => {
+    it("updates chapter status: pending → running → completed", async () => {
       const title = `Status Transition Chapter ${randomUUID()}`;
       const chapter = await chapterFixture({
         courseId: course.id,
@@ -180,7 +180,7 @@ describe(chapterGenerationWorkflow, () => {
   });
 
   describe("error handling", () => {
-    test("chapter stays completed when first lesson generation throws", async () => {
+    it("chapter stays completed when first lesson generation throws", async () => {
       vi.mocked(lessonGenerationWorkflow).mockRejectedValueOnce(
         new Error("Lesson generation failed"),
       );
@@ -202,7 +202,7 @@ describe(chapterGenerationWorkflow, () => {
       expect(dbChapter?.generationStatus).toBe("completed");
     });
 
-    test("marks chapter as 'failed' when AI generation throws after retries", async () => {
+    it("marks chapter as 'failed' when AI generation throws after retries", async () => {
       vi.mocked(generateChapterLessons).mockRejectedValueOnce(new Error("AI generation failed"));
 
       const title = `Error Chapter ${randomUUID()}`;
@@ -226,7 +226,7 @@ describe(chapterGenerationWorkflow, () => {
       expect(errorEvent).toBeDefined();
     });
 
-    test("throws FatalError when chapter not found", async () => {
+    it("throws FatalError when chapter not found", async () => {
       const nonExistentId = randomUUID();
 
       await expect(chapterGenerationWorkflow(nonExistentId)).rejects.toThrow("Chapter not found");

@@ -1,5 +1,5 @@
 import { fireEvent } from "@testing-library/react";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { buildInlineImageUrl } from "../_test-utils/build-inline-image-url";
 import { buildSerializedLesson, buildSerializedStep } from "../_test-utils/player-test-data";
@@ -7,7 +7,7 @@ import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { renderPlayer } from "../_test-utils/render-player";
 
 describe("player browser integration: explanation lesson flow", () => {
-  test("handles title-only hooks, body-only explanations, step images, and predict checks in one flow", async () => {
+  it("handles title-only hooks, body-only explanations, step images, and predict checks in one flow", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "explanation",

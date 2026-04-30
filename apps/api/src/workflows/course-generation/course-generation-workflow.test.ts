@@ -17,7 +17,7 @@ import {
 } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { toSlug } from "@zoonk/utils/string";
-import { beforeAll, describe, expect, test, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { getOrCreateCourse } from "./_internal/get-or-create-course";
 import { courseGenerationWorkflow } from "./course-generation-workflow";
 
@@ -119,7 +119,7 @@ describe(courseGenerationWorkflow, () => {
   });
 
   describe("early returns", () => {
-    test("returns when suggestion not found", async () => {
+    it("returns when suggestion not found", async () => {
       const nonExistentId = randomUUID();
 
       await expect(courseGenerationWorkflow(nonExistentId)).rejects.toThrow(
@@ -129,7 +129,7 @@ describe(courseGenerationWorkflow, () => {
       expect(generateCourseDescription).not.toHaveBeenCalled();
     });
 
-    test("returns when suggestion status is 'running' without streaming completion", async () => {
+    it("returns when suggestion status is 'running' without streaming completion", async () => {
       const suggestion = await courseSuggestionFixture({
         generationStatus: "running",
         title: `Running Suggestion ${randomUUID()}`,
@@ -150,7 +150,7 @@ describe(courseGenerationWorkflow, () => {
       expect(completionEvent).toBeUndefined();
     });
 
-    test("streams completion when suggestion status is 'completed'", async () => {
+    it("streams completion when suggestion status is 'completed'", async () => {
       const suggestion = await courseSuggestionFixture({
         generationStatus: "completed",
         title: `Completed Suggestion ${randomUUID()}`,
@@ -171,7 +171,7 @@ describe(courseGenerationWorkflow, () => {
       expect(completionEvent).toBeDefined();
     });
 
-    test("returns when existing course status is 'running' without streaming completion", async () => {
+    it("returns when existing course status is 'running' without streaming completion", async () => {
       const title = `Existing Running Course ${randomUUID()}`;
       const slug = toSlug(title);
 
@@ -198,7 +198,7 @@ describe(courseGenerationWorkflow, () => {
       expect(completionEvent).toBeUndefined();
     });
 
-    test("streams completion when existing course status is 'completed'", async () => {
+    it("streams completion when existing course status is 'completed'", async () => {
       const title = `Existing Completed Course ${randomUUID()}`;
       const slug = toSlug(title);
 
@@ -227,7 +227,7 @@ describe(courseGenerationWorkflow, () => {
   });
 
   describe("happy path", () => {
-    test("triggers chapter generation for first chapter", async () => {
+    it("triggers chapter generation for first chapter", async () => {
       const title = `First Chapter Gen Course ${randomUUID()}`;
       const slug = toSlug(title);
 
@@ -255,7 +255,7 @@ describe(courseGenerationWorkflow, () => {
   });
 
   describe("existing course resumption", () => {
-    test("resumes generation for failed course", async () => {
+    it("resumes generation for failed course", async () => {
       const title = `Failed Course Resume ${randomUUID()}`;
       const slug = toSlug(title);
 
@@ -284,7 +284,7 @@ describe(courseGenerationWorkflow, () => {
       expect(course?.description).toBe("Generated course description");
     });
 
-    test("skips generation for content that already exists", async () => {
+    it("skips generation for content that already exists", async () => {
       const title = `Partial Course ${randomUUID()}`;
       const slug = toSlug(title);
 
@@ -323,7 +323,7 @@ describe(courseGenerationWorkflow, () => {
   });
 
   describe("error handling", () => {
-    test("marks course and suggestion as 'failed' when generation fails after retries", async () => {
+    it("marks course and suggestion as 'failed' when generation fails after retries", async () => {
       vi.mocked(generateCourseDescription).mockRejectedValueOnce(new Error("AI generation failed"));
 
       const title = `Error Course ${randomUUID()}`;
@@ -354,7 +354,7 @@ describe(courseGenerationWorkflow, () => {
       expect(errorEvent).toBeDefined();
     });
 
-    test("marks suggestion as 'failed' when getOrCreateCourse fails", async () => {
+    it("marks suggestion as 'failed' when getOrCreateCourse fails", async () => {
       vi.mocked(getOrCreateCourse).mockRejectedValueOnce(new Error("Organization not found"));
 
       const title = `Init Fail Course ${randomUUID()}`;
@@ -380,7 +380,7 @@ describe(courseGenerationWorkflow, () => {
       expect(errorEvent).toBeDefined();
     });
 
-    test("chapter generation errors don't mark course as failed", async () => {
+    it("chapter generation errors don't mark course as failed", async () => {
       vi.mocked(generateChapterLessons).mockRejectedValueOnce(
         new Error("Chapter generation failed"),
       );

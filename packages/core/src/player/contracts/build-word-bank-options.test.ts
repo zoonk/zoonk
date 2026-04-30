@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { buildSentenceWordOptions, buildWordBankOptions } from "./build-word-bank-options";
 import { type SerializedStep, type SerializedWord } from "./prepare-lesson-data";
 import { type DistractorWord } from "./translation-options";
@@ -67,7 +67,7 @@ function makeDistractorWord(overrides: Partial<DistractorWord> = {}): Distractor
 }
 
 describe(buildWordBankOptions, () => {
-  test("reading uses stored distractors only and removes phrases plus canonical collisions", () => {
+  it("reading uses stored distractors only and removes phrases plus canonical collisions", () => {
     const options = buildWordBankOptions(
       makeStep(
         "reading",
@@ -90,7 +90,7 @@ describe(buildWordBankOptions, () => {
     ]);
   });
 
-  test("reading hydrates target-language distractors with metadata", () => {
+  it("reading hydrates target-language distractors with metadata", () => {
     const options = buildWordBankOptions(
       makeStep("reading", makeSentence({ distractors: ["犬"], sentence: "猫です" })),
       [],
@@ -113,7 +113,7 @@ describe(buildWordBankOptions, () => {
     });
   });
 
-  test("listening uses translation distractors and keeps metadata empty", () => {
+  it("listening uses translation distractors and keeps metadata empty", () => {
     const options = buildWordBankOptions(
       makeStep(
         "listening",
@@ -150,7 +150,7 @@ describe(buildWordBankOptions, () => {
     });
   });
 
-  test("shows fewer distractors when sanitation removes entries", () => {
+  it("shows fewer distractors when sanitation removes entries", () => {
     const options = buildWordBankOptions(
       makeStep("reading", makeSentence({ distractors: ["Hola", "Salut"], sentence: "Hola mundo" })),
       [],
@@ -163,7 +163,7 @@ describe(buildWordBankOptions, () => {
 });
 
 describe(buildSentenceWordOptions, () => {
-  test("hydrates multi-word lesson entries token by token", () => {
+  it("hydrates multi-word lesson entries token by token", () => {
     const options = buildSentenceWordOptions(
       "Guten Morgen",
       [makeLessonWord({ romanization: "guten morgen", word: "Guten Morgen" })],
@@ -177,7 +177,7 @@ describe(buildSentenceWordOptions, () => {
     ]);
   });
 
-  test("keeps lesson-word translations when sentence metadata adds audio and romanization", () => {
+  it("keeps lesson-word translations when sentence metadata adds audio and romanization", () => {
     const options = buildSentenceWordOptions(
       "Hola",
       [

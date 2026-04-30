@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { fetchExistingWordCasing } from "./fetch-existing-word-casing";
 
 describe(fetchExistingWordCasing, () => {
@@ -12,7 +12,7 @@ describe(fetchExistingWordCasing, () => {
     organizationId = organization.id;
   });
 
-  test("returns empty object when no words match", async () => {
+  it("returns empty object when no words match", async () => {
     const result = await fetchExistingWordCasing({
       organizationId,
       targetLanguage: "es",
@@ -22,7 +22,7 @@ describe(fetchExistingWordCasing, () => {
     expect(result).toEqual({});
   });
 
-  test("returns lowercase-to-original casing map for existing words", async () => {
+  it("returns lowercase-to-original casing map for existing words", async () => {
     const id = randomUUID().slice(0, 8);
     const originalCasing = `Hola${id}`;
 
@@ -37,7 +37,7 @@ describe(fetchExistingWordCasing, () => {
     expect(result).toEqual({ [originalCasing.toLowerCase()]: originalCasing });
   });
 
-  test("matches case-insensitively", async () => {
+  it("matches case-insensitively", async () => {
     const id = randomUUID().slice(0, 8);
     const originalCasing = `Buenos${id}`;
 
@@ -52,7 +52,7 @@ describe(fetchExistingWordCasing, () => {
     expect(result).toEqual({ [originalCasing.toLowerCase()]: originalCasing });
   });
 
-  test("returns multiple words when several match", async () => {
+  it("returns multiple words when several match", async () => {
     const id = randomUUID().slice(0, 8);
     const word1 = `Gato${id}`;
     const word2 = `Perro${id}`;
@@ -71,7 +71,7 @@ describe(fetchExistingWordCasing, () => {
     expect(result).toEqual({ [word1.toLowerCase()]: word1, [word2.toLowerCase()]: word2 });
   });
 
-  test("does not match words from a different target language", async () => {
+  it("does not match words from a different target language", async () => {
     const id = randomUUID().slice(0, 8);
     const word = `Bonjour${id}`;
 

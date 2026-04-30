@@ -3,7 +3,7 @@ import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { addCategoriesStep } from "./add-categories-step";
 import { type CourseContext } from "./initialize-course-step";
 
@@ -19,7 +19,7 @@ describe(addCategoriesStep, () => {
     vi.clearAllMocks();
   });
 
-  test("creates categories in the database", async () => {
+  it("creates categories in the database", async () => {
     const course = await courseFixture({
       organizationId,
       title: `Categories Course ${randomUUID()}`,
@@ -52,7 +52,7 @@ describe(addCategoriesStep, () => {
     );
   });
 
-  test("skips duplicate categories without error", async () => {
+  it("skips duplicate categories without error", async () => {
     const course = await courseFixture({
       organizationId,
       title: `Dup Categories Course ${randomUUID()}`,

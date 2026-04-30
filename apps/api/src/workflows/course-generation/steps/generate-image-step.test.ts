@@ -1,5 +1,5 @@
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { generateImageStep } from "./generate-image-step";
 import { type CourseContext } from "./initialize-course-step";
 
@@ -21,7 +21,7 @@ describe(generateImageStep, () => {
     vi.clearAllMocks();
   });
 
-  test("returns the generated image URL", async () => {
+  it("returns the generated image URL", async () => {
     generateCourseImageMock.mockResolvedValue({
       data: "https://example.com/image.webp",
       error: null,
@@ -42,7 +42,7 @@ describe(generateImageStep, () => {
     );
   });
 
-  test("throws without streaming error when image generation fails", async () => {
+  it("throws without streaming error when image generation fails", async () => {
     generateCourseImageMock.mockResolvedValue({
       data: null,
       error: new Error("Image generation failed"),

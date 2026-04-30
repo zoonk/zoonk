@@ -2,7 +2,7 @@ import {
   type SerializedLesson,
   type SerializedStep,
 } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   type PlayerState,
   type SelectedAnswer,
@@ -80,14 +80,14 @@ const multipleChoiceAnswer: SelectedAnswer = {
 };
 
 describe(createInitialState, () => {
-  test("sets phase to playing and index to 0", () => {
+  it("sets phase to playing and index to 0", () => {
     const lesson = buildLesson();
     const state = createInitialState({ lesson, totalBrainPower: 0 });
     expect(state.phase).toBe("playing");
     expect(state.currentStepIndex).toBe(0);
   });
 
-  test("copies lessonId and steps", () => {
+  it("copies lessonId and steps", () => {
     const steps = [buildStep({ id: "s1" }), buildStep({ id: "s2", position: 1 })];
     const lesson = buildLesson({ steps });
     const state = createInitialState({ lesson, totalBrainPower: 0 });
@@ -95,25 +95,25 @@ describe(createInitialState, () => {
     expect(state.steps).toEqual(steps);
   });
 
-  test("initializes empty maps", () => {
+  it("initializes empty maps", () => {
     const state = createInitialState({ lesson: buildLesson(), totalBrainPower: 0 });
     expect(state.selectedAnswers).toEqual({});
     expect(state.results).toEqual({});
   });
 
-  test("stores totalBrainPower from input", () => {
+  it("stores totalBrainPower from input", () => {
     const state = createInitialState({ lesson: buildLesson(), totalBrainPower: 500 });
     expect(state.totalBrainPower).toBe(500);
   });
 
-  test("pre-populates selectedAnswers for sortOrder steps", () => {
+  it("pre-populates selectedAnswers for sortOrder steps", () => {
     const sortItems = ["Banana", "Apple", "Cherry"];
     const steps = [buildStep({ id: "sort-1", kind: "sortOrder", sortOrderItems: sortItems })];
     const state = createInitialState({ lesson: buildLesson({ steps }), totalBrainPower: 0 });
     expect(state.selectedAnswers["sort-1"]).toEqual({ kind: "sortOrder", userOrder: sortItems });
   });
 
-  test("does not pre-populate selectedAnswers for non-sortOrder steps", () => {
+  it("does not pre-populate selectedAnswers for non-sortOrder steps", () => {
     const steps = [
       buildStep({ id: "s1", kind: "static" }),
       buildMultipleChoiceStep({ id: "mc-1" }),
@@ -124,7 +124,7 @@ describe(createInitialState, () => {
 });
 
 describe("SELECT_ANSWER", () => {
-  test("stores answer by stepId", () => {
+  it("stores answer by stepId", () => {
     const state = buildState();
     const next = playerReducer(state, {
       answer: multipleChoiceAnswer,
@@ -134,7 +134,7 @@ describe("SELECT_ANSWER", () => {
     expect(next.selectedAnswers["step-1"]).toEqual(multipleChoiceAnswer);
   });
 
-  test("does not change phase or index", () => {
+  it("does not change phase or index", () => {
     const state = buildState();
     const next = playerReducer(state, {
       answer: multipleChoiceAnswer,
@@ -145,7 +145,7 @@ describe("SELECT_ANSWER", () => {
     expect(next.currentStepIndex).toBe(0);
   });
 
-  test("overwrites previous answer for same step", () => {
+  it("overwrites previous answer for same step", () => {
     const state = buildState({
       selectedAnswers: { "step-1": { kind: "multipleChoice", selectedOptionId: "option-b" } },
     });
@@ -159,7 +159,7 @@ describe("SELECT_ANSWER", () => {
 });
 
 describe("CHECK_ANSWER", () => {
-  test("transitions from playing to feedback and stores result", () => {
+  it("transitions from playing to feedback and stores result", () => {
     const step = buildMultipleChoiceStep({ id: "mc-1" });
     const state = buildState({ steps: [step] });
     const next = playerReducer(state, {
@@ -175,7 +175,7 @@ describe("CHECK_ANSWER", () => {
     });
   });
 
-  test("includes selected answer in the result", () => {
+  it("includes selected answer in the result", () => {
     const step = buildMultipleChoiceStep({ id: "mc-1" });
     const state = buildState({ selectedAnswers: { "mc-1": multipleChoiceAnswer }, steps: [step] });
     const next = playerReducer(state, {
@@ -187,7 +187,7 @@ describe("CHECK_ANSWER", () => {
   });
 
   describe("matchColumns auto-advance", () => {
-    test("auto-advances to next step instead of entering feedback phase", () => {
+    it("auto-advances to next step instead of entering feedback phase", () => {
       const steps = [
         buildStep({ id: "mc-1", kind: "matchColumns", position: 0 }),
         buildStep({ id: "mc-2", kind: "matchColumns", position: 1 }),
@@ -207,7 +207,7 @@ describe("CHECK_ANSWER", () => {
       });
     });
 
-    test("sets completed when matchColumns is the last step", () => {
+    it("sets completed when matchColumns is the last step", () => {
       const steps = [buildStep({ id: "mc-1", kind: "matchColumns", position: 0 })];
       const state = buildState({ steps });
       const next = playerReducer(state, {
@@ -223,7 +223,7 @@ describe("CHECK_ANSWER", () => {
       });
     });
 
-    test("records stepTimings on last matchColumns step", () => {
+    it("records stepTimings on last matchColumns step", () => {
       vi.useFakeTimers();
       vi.setSystemTime(new Date("2026-03-15T14:30:00"));
 
@@ -251,7 +251,7 @@ describe("CHECK_ANSWER", () => {
     });
   });
 
-  test("no-ops in feedback phase", () => {
+  it("no-ops in feedback phase", () => {
     const state = buildState({ phase: "feedback" });
     const next = playerReducer(state, {
       result: { correctAnswer: null, feedback: null, isCorrect: true },
@@ -261,7 +261,7 @@ describe("CHECK_ANSWER", () => {
     expect(next).toBe(state);
   });
 
-  test("no-ops in completed phase", () => {
+  it("no-ops in completed phase", () => {
     const state = buildState({ phase: "completed" });
     const next = playerReducer(state, {
       result: { correctAnswer: null, feedback: null, isCorrect: true },
@@ -273,7 +273,7 @@ describe("CHECK_ANSWER", () => {
 });
 
 describe("CONTINUE", () => {
-  test("advances from feedback to playing on next step", () => {
+  it("advances from feedback to playing on next step", () => {
     const steps = [buildStep({ id: "s1" }), buildStep({ id: "s2", position: 1 })];
     const state = buildState({ currentStepIndex: 0, phase: "feedback", steps });
     const next = playerReducer(state, { type: "CONTINUE" });
@@ -281,19 +281,19 @@ describe("CONTINUE", () => {
     expect(next.currentStepIndex).toBe(1);
   });
 
-  test("sets completed when on last step", () => {
+  it("sets completed when on last step", () => {
     const state = buildState({ currentStepIndex: 0, phase: "feedback", steps: [buildStep()] });
     const next = playerReducer(state, { type: "CONTINUE" });
     expect(next.phase).toBe("completed");
   });
 
-  test("no-ops in playing phase", () => {
+  it("no-ops in playing phase", () => {
     const state = buildState({ phase: "playing" });
     const next = playerReducer(state, { type: "CONTINUE" });
     expect(next).toBe(state);
   });
 
-  test("no-ops in completed phase", () => {
+  it("no-ops in completed phase", () => {
     const state = buildState({ phase: "completed" });
     const next = playerReducer(state, { type: "CONTINUE" });
     expect(next).toBe(state);
@@ -307,39 +307,39 @@ describe("NAVIGATE_STEP", () => {
     buildStep({ id: "s3", kind: "static", position: 2 }),
   ];
 
-  test("next advances on static step", () => {
+  it("next advances on static step", () => {
     const state = buildState({ currentStepIndex: 0, steps: staticSteps });
     const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });
     expect(next.currentStepIndex).toBe(1);
     expect(next.phase).toBe("playing");
   });
 
-  test("prev goes back on static step", () => {
+  it("prev goes back on static step", () => {
     const state = buildState({ currentStepIndex: 1, steps: staticSteps });
     const next = playerReducer(state, { direction: "prev", type: "NAVIGATE_STEP" });
     expect(next.currentStepIndex).toBe(0);
   });
 
-  test("prev clamps at 0", () => {
+  it("prev clamps at 0", () => {
     const state = buildState({ currentStepIndex: 0, steps: staticSteps });
     const next = playerReducer(state, { direction: "prev", type: "NAVIGATE_STEP" });
     expect(next.currentStepIndex).toBe(0);
   });
 
-  test("next past last step transitions to completed", () => {
+  it("next past last step transitions to completed", () => {
     const state = buildState({ currentStepIndex: 2, steps: staticSteps });
     const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });
     expect(next.phase).toBe("completed");
   });
 
-  test("prev from last step goes back", () => {
+  it("prev from last step goes back", () => {
     const state = buildState({ currentStepIndex: 2, steps: staticSteps });
     const next = playerReducer(state, { direction: "prev", type: "NAVIGATE_STEP" });
     expect(next.currentStepIndex).toBe(1);
     expect(next.phase).toBe("playing");
   });
 
-  test("prev no-ops when previous step is interactive", () => {
+  it("prev no-ops when previous step is interactive", () => {
     const steps = [
       buildMultipleChoiceStep({ id: "mc-1", position: 0 }),
       buildStep({ id: "s1", kind: "static", position: 1 }),
@@ -349,14 +349,14 @@ describe("NAVIGATE_STEP", () => {
     expect(next).toBe(state);
   });
 
-  test("no-ops on interactive step", () => {
+  it("no-ops on interactive step", () => {
     const steps = [buildMultipleChoiceStep({ id: "mc-1" })];
     const state = buildState({ steps });
     const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });
     expect(next).toBe(state);
   });
 
-  test("next advances on practice intro hero step", () => {
+  it("next advances on practice intro hero step", () => {
     const steps = [
       buildStep({
         content: {
@@ -377,13 +377,13 @@ describe("NAVIGATE_STEP", () => {
     expect(next.currentStepIndex).toBe(1);
   });
 
-  test("no-ops in feedback phase", () => {
+  it("no-ops in feedback phase", () => {
     const state = buildState({ phase: "feedback", steps: staticSteps });
     const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });
     expect(next).toBe(state);
   });
 
-  test("no-ops in completed phase", () => {
+  it("no-ops in completed phase", () => {
     const state = buildState({ phase: "completed", steps: staticSteps });
     const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });
     expect(next).toBe(state);
@@ -391,19 +391,19 @@ describe("NAVIGATE_STEP", () => {
 });
 
 describe("COMPLETE", () => {
-  test("sets completed from playing", () => {
+  it("sets completed from playing", () => {
     const state = buildState({ phase: "playing" });
     const next = playerReducer(state, { type: "COMPLETE" });
     expect(next.phase).toBe("completed");
   });
 
-  test("sets completed from feedback", () => {
+  it("sets completed from feedback", () => {
     const state = buildState({ phase: "feedback" });
     const next = playerReducer(state, { type: "COMPLETE" });
     expect(next.phase).toBe("completed");
   });
 
-  test("no-ops when already completed", () => {
+  it("no-ops when already completed", () => {
     const state = buildState({ phase: "completed" });
     const next = playerReducer(state, { type: "COMPLETE" });
     expect(next).toBe(state);
@@ -411,7 +411,7 @@ describe("COMPLETE", () => {
 });
 
 describe("local completion computation", () => {
-  test("computes completion result when CONTINUE transitions to completed", () => {
+  it("computes completion result when CONTINUE transitions to completed", () => {
     const state = buildState({
       currentStepIndex: 0,
       phase: "feedback",
@@ -435,7 +435,7 @@ describe("local completion computation", () => {
     expect(next.completion?.belt).toBeDefined();
   });
 
-  test("computes completion result when NAVIGATE_STEP passes last step", () => {
+  it("computes completion result when NAVIGATE_STEP passes last step", () => {
     const steps = [buildStep({ id: "s1", kind: "static" })];
     const state = buildState({ currentStepIndex: 0, steps, totalBrainPower: 50 });
 
@@ -447,7 +447,7 @@ describe("local completion computation", () => {
     expect(next.completion?.newTotalBp).toBe(60);
   });
 
-  test("resets completion to null on RESTART", () => {
+  it("resets completion to null on RESTART", () => {
     const state = buildState({
       completion: {
         belt: {
@@ -474,7 +474,7 @@ describe("local completion computation", () => {
 });
 
 describe("RESTART", () => {
-  test("resets to playing with index 0 from completed state", () => {
+  it("resets to playing with index 0 from completed state", () => {
     const steps = [
       buildMultipleChoiceStep({ id: "s1" }),
       buildMultipleChoiceStep({ id: "s2", position: 1 }),
@@ -498,7 +498,7 @@ describe("RESTART", () => {
     expect(next.currentStepIndex).toBe(0);
   });
 
-  test("clears results and selectedAnswers", () => {
+  it("clears results and selectedAnswers", () => {
     const steps = [buildMultipleChoiceStep({ id: "s1" })];
     const state = buildState({
       phase: "completed",
@@ -518,7 +518,7 @@ describe("RESTART", () => {
     expect(next.selectedAnswers).toEqual({});
   });
 
-  test("preserves lessonId and steps", () => {
+  it("preserves lessonId and steps", () => {
     const steps = [buildStep({ id: "s1" }), buildStep({ id: "s2", position: 1 })];
     const state = buildState({ lessonId: "my-lesson", phase: "completed", steps });
 
@@ -527,7 +527,7 @@ describe("RESTART", () => {
     expect(next.steps).toEqual(steps);
   });
 
-  test("re-seeds sortOrder answers on restart", () => {
+  it("re-seeds sortOrder answers on restart", () => {
     const sortItems = ["Banana", "Apple", "Cherry"];
     const steps = [
       buildStep({ id: "sort-1", kind: "sortOrder", sortOrderItems: sortItems }),
@@ -542,7 +542,7 @@ describe("RESTART", () => {
 });
 
 describe("CLEAR_ANSWER", () => {
-  test("removes the selected answer for the given stepId", () => {
+  it("removes the selected answer for the given stepId", () => {
     const state = buildState({
       selectedAnswers: {
         "step-1": multipleChoiceAnswer,
@@ -555,13 +555,13 @@ describe("CLEAR_ANSWER", () => {
     });
   });
 
-  test("no-ops when stepId is not in selectedAnswers", () => {
+  it("no-ops when stepId is not in selectedAnswers", () => {
     const state = buildState({ selectedAnswers: { "step-1": multipleChoiceAnswer } });
     const next = playerReducer(state, { stepId: "step-99", type: "CLEAR_ANSWER" });
     expect(next.selectedAnswers).toEqual({ "step-1": multipleChoiceAnswer });
   });
 
-  test("does not change phase or index", () => {
+  it("does not change phase or index", () => {
     const state = buildState({ selectedAnswers: { "step-1": multipleChoiceAnswer } });
     const next = playerReducer(state, { stepId: "step-1", type: "CLEAR_ANSWER" });
     expect(next.phase).toBe("playing");
@@ -578,7 +578,7 @@ describe("timing", () => {
     vi.useRealTimers();
   });
 
-  test("createInitialState sets startedAt and stepStartedAt", () => {
+  it("createInitialState sets startedAt and stepStartedAt", () => {
     vi.setSystemTime(new Date("2026-03-15T10:00:00"));
     const state = createInitialState({ lesson: buildLesson(), totalBrainPower: 0 });
     expect(state.startedAt).toBe(Date.now());
@@ -586,7 +586,7 @@ describe("timing", () => {
     expect(state.stepTimings).toEqual({});
   });
 
-  test("CHECK_ANSWER records step timing with duration, hourOfDay, dayOfWeek", () => {
+  it("CHECK_ANSWER records step timing with duration, hourOfDay, dayOfWeek", () => {
     vi.setSystemTime(new Date("2026-03-15T14:30:00"));
     const startTime = Date.now();
     const step = buildMultipleChoiceStep({ id: "mc-1" });
@@ -607,7 +607,7 @@ describe("timing", () => {
     });
   });
 
-  test("CONTINUE resets stepStartedAt when advancing to next step", () => {
+  it("CONTINUE resets stepStartedAt when advancing to next step", () => {
     const steps = [buildStep({ id: "s1" }), buildStep({ id: "s2", position: 1 })];
 
     vi.setSystemTime(new Date("2026-03-15T10:00:00"));
@@ -623,7 +623,7 @@ describe("timing", () => {
     expect(next.stepStartedAt).not.toBe(1000);
   });
 
-  test("CONTINUE does not reset stepStartedAt on last step (completed)", () => {
+  it("CONTINUE does not reset stepStartedAt on last step (completed)", () => {
     const state = buildState({
       currentStepIndex: 0,
       phase: "feedback",
@@ -636,7 +636,7 @@ describe("timing", () => {
     expect(next.stepStartedAt).toBe(1000);
   });
 
-  test("NAVIGATE_STEP next resets stepStartedAt", () => {
+  it("NAVIGATE_STEP next resets stepStartedAt", () => {
     vi.setSystemTime(new Date("2026-03-15T10:00:00"));
     const staticSteps = [
       buildStep({ id: "s1", kind: "static", position: 0 }),
@@ -648,7 +648,7 @@ describe("timing", () => {
     expect(next.stepStartedAt).toBe(Date.now());
   });
 
-  test("NAVIGATE_STEP prev resets stepStartedAt", () => {
+  it("NAVIGATE_STEP prev resets stepStartedAt", () => {
     vi.setSystemTime(new Date("2026-03-15T10:00:00"));
     const staticSteps = [
       buildStep({ id: "s1", kind: "static", position: 0 }),
@@ -660,7 +660,7 @@ describe("timing", () => {
     expect(next.stepStartedAt).toBe(Date.now());
   });
 
-  test("RESTART resets startedAt, stepStartedAt, and clears stepTimings", () => {
+  it("RESTART resets startedAt, stepStartedAt, and clears stepTimings", () => {
     vi.setSystemTime(new Date("2026-03-15T10:00:00"));
     const state = buildState({
       phase: "completed",
@@ -679,13 +679,13 @@ describe("timing", () => {
 });
 
 describe("edge cases", () => {
-  test("unknown action returns state unchanged", () => {
+  it("unknown action returns state unchanged", () => {
     const state = buildState();
     const next = playerReducer(state, { type: "UNKNOWN" } as any);
     expect(next).toBe(state);
   });
 
-  test("empty steps array sets phase to completed", () => {
+  it("empty steps array sets phase to completed", () => {
     const lesson = buildLesson({ steps: [] });
     const state = createInitialState({ lesson, totalBrainPower: 0 });
     expect(state.steps).toEqual([]);
@@ -693,7 +693,7 @@ describe("edge cases", () => {
     expect(state.phase).toBe("completed");
   });
 
-  test("results include the stored StepResult structure", () => {
+  it("results include the stored StepResult structure", () => {
     const step = buildMultipleChoiceStep({ id: "mc-1" });
     const answer: SelectedAnswer = { kind: "multipleChoice", selectedOptionId: "option-c" };
     const state = buildState({ selectedAnswers: { "mc-1": answer }, steps: [step] });

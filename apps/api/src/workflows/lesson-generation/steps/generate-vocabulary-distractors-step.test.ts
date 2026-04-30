@@ -1,6 +1,6 @@
 import { generateLessonDistractors } from "@zoonk/ai/tasks/lessons/language/distractors";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateVocabularyDistractorsStep } from "./generate-vocabulary-distractors-step";
 
@@ -24,7 +24,7 @@ describe(generateVocabularyDistractorsStep, () => {
     vi.clearAllMocks();
   });
 
-  test("generates distractors for vocabulary words", async () => {
+  it("generates distractors for vocabulary words", async () => {
     const context = await createLessonContext({ organizationId, targetLanguage: "ja" });
     const catWord = "猫";
 

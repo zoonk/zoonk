@@ -4,7 +4,7 @@ import { courseAlternativeTitleFixture, courseFixture } from "@zoonk/testing/fix
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { toSlug } from "@zoonk/utils/string";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { findExistingCourse } from "./find-existing-course";
 
 async function getOrCreateAIOrg() {
@@ -23,14 +23,14 @@ describe(findExistingCourse, () => {
     [aiOrg, nonAiOrg] = await Promise.all([getOrCreateAIOrg(), organizationFixture()]);
   });
 
-  test("returns null when no course exists with slug/language", async () => {
+  it("returns null when no course exists with slug/language", async () => {
     const result = await findExistingCourse({ language: "en", slug: "non-existent-course" });
 
     expect(result.error).toBeNull();
     expect(result.data).toBeNull();
   });
 
-  test("returns course when found by slug + language in courses table (AI org)", async () => {
+  it("returns course when found by slug + language in courses table (AI org)", async () => {
     const uniqueSlug = `ai-${randomUUID()}`;
 
     const course = await courseFixture({
@@ -54,7 +54,7 @@ describe(findExistingCourse, () => {
     });
   });
 
-  test("returns course when found by slug + language in alternative titles table", async () => {
+  it("returns course when found by slug + language in alternative titles table", async () => {
     const uniqueSlug = `orig-${randomUUID()}`;
     const altSlug = `alt-${randomUUID()}`;
 
@@ -81,7 +81,7 @@ describe(findExistingCourse, () => {
     });
   });
 
-  test("returns null for courses from non-AI organizations", async () => {
+  it("returns null for courses from non-AI organizations", async () => {
     const uniqueSlug = `nonai-${randomUUID()}`;
 
     await courseFixture({ language: "en", organizationId: nonAiOrg.id, slug: uniqueSlug });
@@ -92,7 +92,7 @@ describe(findExistingCourse, () => {
     expect(result.data).toBeNull();
   });
 
-  test("prioritizes direct course match over alternative title match", async () => {
+  it("prioritizes direct course match over alternative title match", async () => {
     const uniqueSlug = `prio-${randomUUID()}`;
 
     const directCourse = await courseFixture({
@@ -122,7 +122,7 @@ describe(findExistingCourse, () => {
     expect(result.data?.generationStatus).toBe("completed");
   });
 
-  test("handles slug normalization", async () => {
+  it("handles slug normalization", async () => {
     const uniqueTitle = `My Course Title ${randomUUID()}`;
 
     const course = await courseFixture({
@@ -137,7 +137,7 @@ describe(findExistingCourse, () => {
     expect(result.data?.id).toBe(course.id);
   });
 
-  test("handles different languages correctly", async () => {
+  it("handles different languages correctly", async () => {
     const uniqueSlug = `lang-${randomUUID()}`;
 
     const [enCourse, ptCourse] = await Promise.all([
@@ -157,7 +157,7 @@ describe(findExistingCourse, () => {
     expect(ptResult.data?.id).toBe(ptCourse.id);
   });
 
-  test("finds non-English course by suffixed slug", async () => {
+  it("finds non-English course by suffixed slug", async () => {
     const uniqueSlug = `test-course-${randomUUID()}`;
 
     const ptCourse = await courseFixture({

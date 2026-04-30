@@ -1,8 +1,8 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { serializeWorkflowError } from "./workflow-error";
 
 describe(serializeWorkflowError, () => {
-  test("preserves Error details", () => {
+  it("preserves Error details", () => {
     const error = new TypeError("AI provider failed");
 
     expect(serializeWorkflowError(error)).toEqual({
@@ -12,7 +12,7 @@ describe(serializeWorkflowError, () => {
     });
   });
 
-  test("preserves message fields from plain provider errors", () => {
+  it("preserves message fields from plain provider errors", () => {
     expect(
       serializeWorkflowError({
         message: "Rate limit exceeded",
@@ -22,14 +22,14 @@ describe(serializeWorkflowError, () => {
     ).toEqual({ message: "Rate limit exceeded", name: "AI_RetryError", stack: "stack trace" });
   });
 
-  test("serializes unusual thrown values without throwing", () => {
+  it("serializes unusual thrown values without throwing", () => {
     const circular: { self?: unknown } = {};
     circular.self = circular;
 
     expect(serializeWorkflowError(circular)).toEqual({ message: "[object Object]", name: "Error" });
   });
 
-  test("preserves every nested AggregateError failure", () => {
+  it("preserves every nested AggregateError failure", () => {
     const error = new AggregateError(
       [new Error("course update failed"), new Error("suggestion update failed")],
       "Course status updates failed",
@@ -46,7 +46,7 @@ describe(serializeWorkflowError, () => {
     });
   });
 
-  test("serializes circular nested errors without recursing forever", () => {
+  it("serializes circular nested errors without recursing forever", () => {
     const error = new AggregateError([], "Course status updates failed");
     error.errors.push(error);
 

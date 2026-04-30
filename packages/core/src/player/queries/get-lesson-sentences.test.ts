@@ -4,7 +4,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { lessonSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { getLessonSentencesForLessons } from "./get-lesson-sentences";
 
 describe(getLessonSentencesForLessons, () => {
@@ -33,7 +33,7 @@ describe(getLessonSentencesForLessons, () => {
     });
   });
 
-  test("returns sentences linked via LessonSentence junction", async () => {
+  it("returns sentences linked via LessonSentence junction", async () => {
     const [sentence1, sentence2] = await Promise.all([
       sentenceFixture({
         organizationId: org.id,
@@ -61,7 +61,7 @@ describe(getLessonSentencesForLessons, () => {
     expect(sentenceIds).toContain(sentence2.id);
   });
 
-  test("returns all expected fields", async () => {
+  it("returns all expected fields", async () => {
     const [newLesson, sentence] = await Promise.all([
       lessonFixture({
         chapterId: chapter.id,
@@ -104,7 +104,7 @@ describe(getLessonSentencesForLessons, () => {
     });
   });
 
-  test("returns empty array when lesson has no sentences", async () => {
+  it("returns empty array when lesson has no sentences", async () => {
     const emptyLesson = await lessonFixture({
       chapterId: chapter.id,
       isPublished: true,
@@ -116,7 +116,7 @@ describe(getLessonSentencesForLessons, () => {
     expect(result).toEqual([]);
   });
 
-  test("returns empty array for non-existent lesson", async () => {
+  it("returns empty array for non-existent lesson", async () => {
     const result = await getLessonSentencesForLessons({ lessonIds: [randomUUID()] });
     expect(result).toEqual([]);
   });

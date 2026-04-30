@@ -2,7 +2,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { listChapterLessons } from "./list-chapter-lessons";
 
 describe(listChapterLessons, () => {
@@ -68,7 +68,7 @@ describe(listChapterLessons, () => {
     ]);
   });
 
-  test("returns published lessons ordered by position", async () => {
+  it("returns published lessons ordered by position", async () => {
     const result = await listChapterLessons({ chapterId: publishedChapter.id });
 
     expect(result).toHaveLength(2);
@@ -86,26 +86,26 @@ describe(listChapterLessons, () => {
     expect(result[1]?.position).toBe(1);
   });
 
-  test("excludes unpublished lessons", async () => {
+  it("excludes unpublished lessons", async () => {
     const result = await listChapterLessons({ chapterId: publishedChapter.id });
 
     const draftLessonInResult = result.find((lesson) => lesson.id === draftLesson.id);
     expect(draftLessonInResult).toBeUndefined();
   });
 
-  test("returns empty array when chapter has no lessons", async () => {
+  it("returns empty array when chapter has no lessons", async () => {
     const result = await listChapterLessons({ chapterId: emptyChapter.id });
 
     expect(result).toEqual([]);
   });
 
-  test("returns empty array for non-existent chapter", async () => {
+  it("returns empty array for non-existent chapter", async () => {
     const result = await listChapterLessons({ chapterId: "00000000-0000-7000-8000-000000000001" });
 
     expect(result).toEqual([]);
   });
 
-  test("returns all lesson fields correctly", async () => {
+  it("returns all lesson fields correctly", async () => {
     const result = await listChapterLessons({ chapterId: publishedChapter.id });
 
     const lesson = result.find((item) => item.id === publishedLesson1.id);

@@ -4,7 +4,7 @@ import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggesti
 import { courseAlternativeTitleFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { checkExistingCourseStep } from "./check-existing-course-step";
 
 describe(checkExistingCourseStep, () => {
@@ -19,7 +19,7 @@ describe(checkExistingCourseStep, () => {
     vi.clearAllMocks();
   });
 
-  test("returns null when no matching course exists", async () => {
+  it("returns null when no matching course exists", async () => {
     const suggestion = await courseSuggestionFixture({ title: `No Match ${randomUUID()}` });
 
     const result = await checkExistingCourseStep(suggestion);
@@ -37,7 +37,7 @@ describe(checkExistingCourseStep, () => {
     );
   });
 
-  test("returns existing course when slug matches", async () => {
+  it("returns existing course when slug matches", async () => {
     const title = `Existing Course ${randomUUID()}`;
     const slug = ensureLocaleSuffix(toSlug(title), "en");
 
@@ -51,7 +51,7 @@ describe(checkExistingCourseStep, () => {
     expect(result!.id).toBe(course.id);
   });
 
-  test("returns existing course when alternative title matches", async () => {
+  it("returns existing course when alternative title matches", async () => {
     const title = `Alt Title Course ${randomUUID()}`;
     const altTitle = `Alt Title ${randomUUID()}`;
     const altSlug = toSlug(altTitle);

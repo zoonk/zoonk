@@ -1,5 +1,5 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { type PlayerState } from "./player-reducer";
 import { getUpcomingImages } from "./player-selectors";
 
@@ -41,7 +41,7 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
 }
 
 describe(getUpcomingImages, () => {
-  test("returns empty array when no upcoming steps have images", () => {
+  it("returns empty array when no upcoming steps have images", () => {
     const state = buildState({
       steps: [
         buildStep({ id: "s1" }),
@@ -53,7 +53,7 @@ describe(getUpcomingImages, () => {
     expect(getUpcomingImages(state)).toEqual([]);
   });
 
-  test("extracts URL from a static step image", () => {
+  it("extracts URL from a static step image", () => {
     const state = buildState({
       steps: [
         buildStep({ id: "s1" }),
@@ -75,7 +75,7 @@ describe(getUpcomingImages, () => {
     ]);
   });
 
-  test("extracts URL from a multipleChoice step image", () => {
+  it("extracts URL from a multipleChoice step image", () => {
     const state = buildState({
       steps: [
         buildStep({ id: "s1" }),
@@ -103,7 +103,7 @@ describe(getUpcomingImages, () => {
     ]);
   });
 
-  test("extracts URLs from a selectImage step", () => {
+  it("extracts URLs from a selectImage step", () => {
     const state = buildState({
       steps: [
         buildStep({ id: "s1" }),
@@ -140,7 +140,7 @@ describe(getUpcomingImages, () => {
     ]);
   });
 
-  test("respects default lookahead of 3 steps", () => {
+  it("respects default lookahead of 3 steps", () => {
     const state = buildState({
       steps: [
         buildStep({ id: "s1" }),
@@ -194,7 +194,7 @@ describe(getUpcomingImages, () => {
     ]);
   });
 
-  test("only looks ahead from current step, not behind", () => {
+  it("only looks ahead from current step, not behind", () => {
     const state = buildState({
       currentStepIndex: 2,
       steps: [
@@ -236,7 +236,7 @@ describe(getUpcomingImages, () => {
     ]);
   });
 
-  test("skips steps with missing or undefined URLs", () => {
+  it("skips steps with missing or undefined URLs", () => {
     const state = buildState({
       steps: [
         buildStep({ id: "s1" }),

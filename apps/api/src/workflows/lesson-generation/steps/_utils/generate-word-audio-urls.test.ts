@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { generateWordAudioUrls } from "./generate-word-audio-urls";
 
 const { generateLanguageAudioMock } = vi.hoisted(() => ({ generateLanguageAudioMock: vi.fn() }));
@@ -26,7 +26,7 @@ describe(generateWordAudioUrls, () => {
     vi.clearAllMocks();
   });
 
-  test("generates audio for words without existing records", async () => {
+  it("generates audio for words without existing records", async () => {
     const id = randomUUID().slice(0, 8);
     const word = `nuevo-${id}`;
 
@@ -43,7 +43,7 @@ describe(generateWordAudioUrls, () => {
     );
   });
 
-  test("reuses existing audio without calling TTS", async () => {
+  it("reuses existing audio without calling TTS", async () => {
     const id = randomUUID().slice(0, 8);
     const wordText = `gato-${id}`;
 
@@ -65,7 +65,7 @@ describe(generateWordAudioUrls, () => {
     expect(generateLanguageAudioMock).not.toHaveBeenCalled();
   });
 
-  test("mixes existing and generated audio", async () => {
+  it("mixes existing and generated audio", async () => {
     const id = randomUUID().slice(0, 8);
     const existingWord = `perro-${id}`;
     const newWord = `casa-${id}`;
@@ -89,7 +89,7 @@ describe(generateWordAudioUrls, () => {
     expect(generateLanguageAudioMock).toHaveBeenCalledOnce();
   });
 
-  test("matches existing audio case-insensitively", async () => {
+  it("matches existing audio case-insensitively", async () => {
     const id = randomUUID().slice(0, 8);
     const dbWord = `Hola-${id}`;
 
@@ -111,7 +111,7 @@ describe(generateWordAudioUrls, () => {
     expect(generateLanguageAudioMock).not.toHaveBeenCalled();
   });
 
-  test("returns empty object for empty word list", async () => {
+  it("returns empty object for empty word list", async () => {
     const result = await generateWordAudioUrls({
       orgSlug,
       organizationId,

@@ -7,7 +7,7 @@ import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { parseLocalDate } from "@zoonk/utils/date";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { submitLessonCompletion } from "./submit-lesson-completion";
 
 function todayLocalDate(): string {
@@ -53,7 +53,7 @@ describe(submitLessonCompletion, () => {
     });
   });
 
-  test("creates StepAttempt records with correct fields", async () => {
+  it("creates StepAttempt records with correct fields", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -77,7 +77,7 @@ describe(submitLessonCompletion, () => {
     expect(attempts[0]?.dayOfWeek).toBe(1);
   });
 
-  test("creates LessonProgress with completedAt and durationSeconds", async () => {
+  it("creates LessonProgress with completedAt and durationSeconds", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -101,7 +101,7 @@ describe(submitLessonCompletion, () => {
     expect(progress?.durationSeconds).toBe(15);
   });
 
-  test("marks lesson, chapter, and course as durably completed when the final lesson is completed", async () => {
+  it("marks lesson, chapter, and course as durably completed when the final lesson is completed", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -162,7 +162,7 @@ describe(submitLessonCompletion, () => {
     expect(courseCompletion).not.toBeNull();
   });
 
-  test("creates UserProgress with correct BP increment and energy delta", async () => {
+  it("creates UserProgress with correct BP increment and energy delta", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -184,7 +184,7 @@ describe(submitLessonCompletion, () => {
     expect(userProgress?.currentEnergy).toBeCloseTo(0.2);
   });
 
-  test("creates DailyProgress with correct counters", async () => {
+  it("creates DailyProgress with correct counters", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -210,7 +210,7 @@ describe(submitLessonCompletion, () => {
     expect(daily?.staticCompleted).toBe(0);
   });
 
-  test("energy clamps at 100", async () => {
+  it("energy clamps at 100", async () => {
     const user = await userFixture();
     const userId = user.id;
     await userProgressFixture({ currentEnergy: 99.5, lastActiveAt: new Date(), userId });
@@ -231,7 +231,7 @@ describe(submitLessonCompletion, () => {
     expect(result.energyDelta).toBe(1);
   });
 
-  test("energy clamps at 0", async () => {
+  it("energy clamps at 0", async () => {
     const user = await userFixture();
     const userId = user.id;
     await userProgressFixture({ currentEnergy: 0.05, lastActiveAt: new Date(), userId });
@@ -251,7 +251,7 @@ describe(submitLessonCompletion, () => {
     expect(userProgress?.currentEnergy).toBe(0);
   });
 
-  test("re-completion: new StepAttempts, updated BP", async () => {
+  it("re-completion: new StepAttempts, updated BP", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -276,7 +276,7 @@ describe(submitLessonCompletion, () => {
     expect(Number(userProgress?.totalBrainPower)).toBe(20);
   });
 
-  test("static lesson increments staticCompleted, not interactiveCompleted", async () => {
+  it("static lesson increments staticCompleted, not interactiveCompleted", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -304,7 +304,7 @@ describe(submitLessonCompletion, () => {
     expect(daily?.interactiveCompleted).toBe(0);
   });
 
-  test("returns correct belt level based on new total BP", async () => {
+  it("returns correct belt level based on new total BP", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -324,7 +324,7 @@ describe(submitLessonCompletion, () => {
     expect(result.newTotalBp).toBe(10);
   });
 
-  test("creates CourseUser and increments userCount on first lesson completion", async () => {
+  it("creates CourseUser and increments userCount on first lesson completion", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -350,7 +350,7 @@ describe(submitLessonCompletion, () => {
     expect(courseAfter.userCount).toBe(courseBefore.userCount + 1);
   });
 
-  test("does not duplicate CourseUser or increment userCount on re-completion", async () => {
+  it("does not duplicate CourseUser or increment userCount on re-completion", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -381,7 +381,7 @@ describe(submitLessonCompletion, () => {
     expect(courseUsers).toHaveLength(1);
   });
 
-  test("1-day gap: no decay, no gap records", async () => {
+  it("1-day gap: no decay, no gap records", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -417,7 +417,7 @@ describe(submitLessonCompletion, () => {
     expect(dailyRecords[0]?.energyAtEnd).toBeCloseTo(50.2);
   });
 
-  test("completes a pre-started record: sets completedAt and durationSeconds, preserves startedAt", async () => {
+  it("completes a pre-started record: sets completedAt and durationSeconds, preserves startedAt", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -450,7 +450,7 @@ describe(submitLessonCompletion, () => {
     expect(progress?.startedAt).toEqual(startRecord?.startedAt);
   });
 
-  test("stores DailyProgress date from localDate, not server UTC", async () => {
+  it("stores DailyProgress date from localDate, not server UTC", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -483,7 +483,7 @@ describe(submitLessonCompletion, () => {
     );
   });
 
-  test("rejects localDate too far in the future", async () => {
+  it("rejects localDate too far in the future", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -501,7 +501,7 @@ describe(submitLessonCompletion, () => {
     ).rejects.toThrow("localDate is too far from server time");
   });
 
-  test("rejects localDate too far in the past", async () => {
+  it("rejects localDate too far in the past", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -519,7 +519,7 @@ describe(submitLessonCompletion, () => {
     ).rejects.toThrow("localDate is too far from server time");
   });
 
-  test("decay uses localDate so gaps and energy stay consistent", async () => {
+  it("decay uses localDate so gaps and energy stay consistent", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -556,7 +556,7 @@ describe(submitLessonCompletion, () => {
     expect(dailyRecords[4]?.energyAtEnd).toBeCloseTo(46.2);
   });
 
-  test("applies decay and fills DailyProgress gaps for inactive days", async () => {
+  it("applies decay and fills DailyProgress gaps for inactive days", async () => {
     const user = await userFixture();
     const userId = user.id;
 

@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getCourseSuggestionStep } from "./get-course-suggestion-step";
 
 describe(getCourseSuggestionStep, () => {
@@ -9,7 +9,7 @@ describe(getCourseSuggestionStep, () => {
     vi.clearAllMocks();
   });
 
-  test("returns the course suggestion by ID", async () => {
+  it("returns the course suggestion by ID", async () => {
     const suggestion = await courseSuggestionFixture({ title: `Suggestion ${randomUUID()}` });
 
     const result = await getCourseSuggestionStep(suggestion.id);
@@ -28,7 +28,7 @@ describe(getCourseSuggestionStep, () => {
     );
   });
 
-  test("throws FatalError when suggestion does not exist", async () => {
+  it("throws FatalError when suggestion does not exist", async () => {
     await expect(getCourseSuggestionStep(randomUUID())).rejects.toThrow(
       "Course suggestion not found",
     );

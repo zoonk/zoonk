@@ -1,6 +1,6 @@
 import { generateLessonGrammarUserContent } from "@zoonk/ai/tasks/lessons/language/grammar-user-content";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateGrammarUserContentStep } from "./generate-grammar-user-content-step";
 
@@ -36,7 +36,7 @@ describe(generateGrammarUserContentStep, () => {
     vi.clearAllMocks();
   });
 
-  test("generates grammar user content with target and user language context", async () => {
+  it("generates grammar user content with target and user language context", async () => {
     const context = await createLessonContext({
       kind: "grammar",
       organizationId,

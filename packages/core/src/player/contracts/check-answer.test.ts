@@ -5,7 +5,7 @@ import {
   type SelectImageStepContent,
   type SortOrderStepContent,
 } from "@zoonk/core/steps/contract/content";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   checkArrangeWordsAnswer,
   checkFillBlankAnswer,
@@ -26,7 +26,7 @@ describe(checkMultipleChoiceAnswer, () => {
       ],
     };
 
-    test("returns correct with feedback for correct text", () => {
+    it("returns correct with feedback for correct text", () => {
       expect(checkMultipleChoiceAnswer(content, "a")).toEqual({
         correctAnswer: "A",
         feedback: "Correct!",
@@ -34,7 +34,7 @@ describe(checkMultipleChoiceAnswer, () => {
       });
     });
 
-    test("returns incorrect with feedback for wrong text", () => {
+    it("returns incorrect with feedback for wrong text", () => {
       expect(checkMultipleChoiceAnswer(content, "b")).toEqual({
         correctAnswer: "A",
         feedback: "Wrong.",
@@ -42,7 +42,7 @@ describe(checkMultipleChoiceAnswer, () => {
       });
     });
 
-    test("returns incorrect with null feedback for unknown text", () => {
+    it("returns incorrect with null feedback for unknown text", () => {
       expect(checkMultipleChoiceAnswer(content, "missing")).toEqual({
         correctAnswer: "A",
         feedback: null,
@@ -60,7 +60,7 @@ describe(checkFillBlankAnswer, () => {
     template: "Yo [BLANK] [BLANK].",
   };
 
-  test("returns correct for exact match", () => {
+  it("returns correct for exact match", () => {
     expect(checkFillBlankAnswer(content, ["hablo", "español"])).toEqual({
       correctAnswer: null,
       feedback: "Use first person singular.",
@@ -68,7 +68,7 @@ describe(checkFillBlankAnswer, () => {
     });
   });
 
-  test("returns correct for case-insensitive match", () => {
+  it("returns correct for case-insensitive match", () => {
     expect(checkFillBlankAnswer(content, ["HABLO", "ESPAÑOL"])).toEqual({
       correctAnswer: null,
       feedback: "Use first person singular.",
@@ -76,7 +76,7 @@ describe(checkFillBlankAnswer, () => {
     });
   });
 
-  test("returns correct with trimmed whitespace", () => {
+  it("returns correct with trimmed whitespace", () => {
     expect(checkFillBlankAnswer(content, ["  hablo  ", " español "])).toEqual({
       correctAnswer: null,
       feedback: "Use first person singular.",
@@ -84,7 +84,7 @@ describe(checkFillBlankAnswer, () => {
     });
   });
 
-  test("returns incorrect for wrong answer", () => {
+  it("returns incorrect for wrong answer", () => {
     expect(checkFillBlankAnswer(content, ["habla", "español"])).toEqual({
       correctAnswer: null,
       feedback: "Use first person singular.",
@@ -92,7 +92,7 @@ describe(checkFillBlankAnswer, () => {
     });
   });
 
-  test("returns incorrect when user provides extra answers", () => {
+  it("returns incorrect when user provides extra answers", () => {
     expect(checkFillBlankAnswer(content, ["hablo", "español", "extra"])).toEqual({
       correctAnswer: null,
       feedback: "Use first person singular.",
@@ -110,11 +110,11 @@ describe(checkSingleMatchPair, () => {
     question: "Match the items.",
   };
 
-  test("returns true for a correct pair", () => {
+  it("returns true for a correct pair", () => {
     expect(checkSingleMatchPair(content, { left: "A", right: "1" })).toBe(true);
   });
 
-  test("returns false for an incorrect pair", () => {
+  it("returns false for an incorrect pair", () => {
     expect(checkSingleMatchPair(content, { left: "A", right: "2" })).toBe(false);
   });
 });
@@ -128,7 +128,7 @@ describe(checkMatchColumnsAnswer, () => {
     question: "Match the items.",
   };
 
-  test("returns correct when all pairs match with no mistakes", () => {
+  it("returns correct when all pairs match with no mistakes", () => {
     const userPairs = [
       { left: "A", right: "1" },
       { left: "B", right: "2" },
@@ -141,7 +141,7 @@ describe(checkMatchColumnsAnswer, () => {
     });
   });
 
-  test("returns correct when all pairs match in different order with no mistakes", () => {
+  it("returns correct when all pairs match in different order with no mistakes", () => {
     const userPairs = [
       { left: "B", right: "2" },
       { left: "A", right: "1" },
@@ -154,7 +154,7 @@ describe(checkMatchColumnsAnswer, () => {
     });
   });
 
-  test("returns incorrect when all pairs match but mistakes > 0", () => {
+  it("returns incorrect when all pairs match but mistakes > 0", () => {
     const userPairs = [
       { left: "A", right: "1" },
       { left: "B", right: "2" },
@@ -167,7 +167,7 @@ describe(checkMatchColumnsAnswer, () => {
     });
   });
 
-  test("returns incorrect when a pair is wrong", () => {
+  it("returns incorrect when a pair is wrong", () => {
     const userPairs = [
       { left: "A", right: "2" },
       { left: "B", right: "1" },
@@ -180,7 +180,7 @@ describe(checkMatchColumnsAnswer, () => {
     });
   });
 
-  test("returns incorrect when counts differ", () => {
+  it("returns incorrect when counts differ", () => {
     const userPairs = [{ left: "A", right: "1" }];
 
     expect(checkMatchColumnsAnswer(content, userPairs, 0)).toEqual({
@@ -198,7 +198,7 @@ describe(checkSortOrderAnswer, () => {
     question: "Sort these items.",
   };
 
-  test("returns correct for matching order", () => {
+  it("returns correct for matching order", () => {
     expect(checkSortOrderAnswer(content, ["one", "two", "three"])).toEqual({
       correctAnswer: null,
       feedback: "Correct order.",
@@ -206,7 +206,7 @@ describe(checkSortOrderAnswer, () => {
     });
   });
 
-  test("returns incorrect for wrong order", () => {
+  it("returns incorrect for wrong order", () => {
     expect(checkSortOrderAnswer(content, ["three", "two", "one"])).toEqual({
       correctAnswer: null,
       feedback: "Correct order.",
@@ -214,7 +214,7 @@ describe(checkSortOrderAnswer, () => {
     });
   });
 
-  test("returns incorrect when user provides extra entries", () => {
+  it("returns incorrect when user provides extra entries", () => {
     expect(checkSortOrderAnswer(content, ["one", "two", "three", "four"])).toEqual({
       correctAnswer: null,
       feedback: "Correct order.",
@@ -232,7 +232,7 @@ describe(checkSelectImageAnswer, () => {
     question: "Which image shows a cat?",
   };
 
-  test("returns correct with feedback for correct option id", () => {
+  it("returns correct with feedback for correct option id", () => {
     expect(checkSelectImageAnswer(content, "cat")).toEqual({
       correctAnswer: null,
       feedback: "Yes, a cat!",
@@ -240,7 +240,7 @@ describe(checkSelectImageAnswer, () => {
     });
   });
 
-  test("returns incorrect with feedback for wrong option id", () => {
+  it("returns incorrect with feedback for wrong option id", () => {
     expect(checkSelectImageAnswer(content, "dog")).toEqual({
       correctAnswer: null,
       feedback: "That's a dog.",
@@ -248,7 +248,7 @@ describe(checkSelectImageAnswer, () => {
     });
   });
 
-  test("returns incorrect with null feedback for unknown option id", () => {
+  it("returns incorrect with null feedback for unknown option id", () => {
     expect(checkSelectImageAnswer(content, "missing")).toEqual({
       correctAnswer: null,
       feedback: null,
@@ -258,7 +258,7 @@ describe(checkSelectImageAnswer, () => {
 });
 
 describe(checkTranslationAnswer, () => {
-  test("returns correct for matching IDs", () => {
+  it("returns correct for matching IDs", () => {
     expect(checkTranslationAnswer("word-1", "word-1")).toEqual({
       correctAnswer: null,
       feedback: null,
@@ -266,7 +266,7 @@ describe(checkTranslationAnswer, () => {
     });
   });
 
-  test("returns incorrect for non-matching IDs", () => {
+  it("returns incorrect for non-matching IDs", () => {
     expect(checkTranslationAnswer("word-1", "word-2")).toEqual({
       correctAnswer: null,
       feedback: null,
@@ -276,25 +276,25 @@ describe(checkTranslationAnswer, () => {
 });
 
 describe(checkArrangeWordsAnswer, () => {
-  test("returns correct for matching sequence", () => {
+  it("returns correct for matching sequence", () => {
     expect(checkArrangeWordsAnswer([["I", "speak", "Spanish"]], ["I", "speak", "Spanish"])).toEqual(
       { correctAnswer: null, feedback: null, isCorrect: true },
     );
   });
 
-  test("returns incorrect for wrong sequence", () => {
+  it("returns incorrect for wrong sequence", () => {
     expect(checkArrangeWordsAnswer([["I", "speak", "Spanish"]], ["Spanish", "I", "speak"])).toEqual(
       { correctAnswer: null, feedback: null, isCorrect: false },
     );
   });
 
-  test("returns incorrect when user provides extra words", () => {
+  it("returns incorrect when user provides extra words", () => {
     expect(
       checkArrangeWordsAnswer([["I", "speak", "Spanish"]], ["I", "speak", "Spanish", "well"]),
     ).toEqual({ correctAnswer: null, feedback: null, isCorrect: false });
   });
 
-  test("accepts an alternative valid sequence", () => {
+  it("accepts an alternative valid sequence", () => {
     expect(
       checkArrangeWordsAnswer(
         [
@@ -306,7 +306,7 @@ describe(checkArrangeWordsAnswer, () => {
     ).toEqual({ correctAnswer: null, feedback: null, isCorrect: true });
   });
 
-  test("matches case and punctuation insensitively", () => {
+  it("matches case and punctuation insensitively", () => {
     expect(checkArrangeWordsAnswer([["Hello,", "Lara!"]], ["hello", "lara"])).toEqual({
       correctAnswer: null,
       feedback: null,

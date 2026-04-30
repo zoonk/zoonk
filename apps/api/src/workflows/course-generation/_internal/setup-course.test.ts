@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { type CourseContext } from "../steps/initialize-course-step";
 import { type ExistingCourseContent } from "./get-or-create-course";
 import { setupCourse } from "./setup-course";
@@ -52,7 +52,7 @@ describe(setupCourse, () => {
     vi.clearAllMocks();
   });
 
-  test("generates content, persists it, and marks course as completed", async () => {
+  it("generates content, persists it, and marks course as completed", async () => {
     const [course, suggestion] = await Promise.all([
       courseFixture({
         generationStatus: "running",

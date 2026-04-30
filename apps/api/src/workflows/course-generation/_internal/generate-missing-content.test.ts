@@ -1,5 +1,5 @@
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { type CourseContext } from "../steps/initialize-course-step";
 import { generateMissingContent } from "./generate-missing-content";
 import { type ExistingCourseContent } from "./get-or-create-course";
@@ -64,7 +64,7 @@ describe(generateMissingContent, () => {
     vi.clearAllMocks();
   });
 
-  test("generates all content when nothing exists", async () => {
+  it("generates all content when nothing exists", async () => {
     generateCourseDescriptionMock.mockResolvedValue({ data: { description: "Generated desc" } });
     generateCourseImageMock.mockResolvedValue({
       data: "https://example.com/img.webp",
@@ -85,7 +85,7 @@ describe(generateMissingContent, () => {
     expect(result.chapters).toEqual([{ description: "Ch1 desc", title: "Ch1" }]);
   });
 
-  test("skips generation for fields that already exist", async () => {
+  it("skips generation for fields that already exist", async () => {
     const existing: ExistingCourseContent = {
       description: "Existing desc",
       hasAlternativeTitles: true,
@@ -114,7 +114,7 @@ describe(generateMissingContent, () => {
     expect(skippedSteps.length).toBeGreaterThanOrEqual(5);
   });
 
-  test("returns 'languages' category for language courses without AI call", async () => {
+  it("returns 'languages' category for language courses without AI call", async () => {
     const langCourse: CourseContext = { ...course, targetLanguage: "es" };
 
     generateCourseDescriptionMock.mockResolvedValue({ data: { description: "Lang desc" } });
@@ -131,7 +131,7 @@ describe(generateMissingContent, () => {
     expect(generateCourseCategoriesMock).not.toHaveBeenCalled();
   });
 
-  test("filters out 'languages' from non-language course categories", async () => {
+  it("filters out 'languages' from non-language course categories", async () => {
     generateCourseDescriptionMock.mockResolvedValue({ data: { description: "desc" } });
     generateCourseImageMock.mockResolvedValue({
       data: "https://example.com/non-lang.webp",

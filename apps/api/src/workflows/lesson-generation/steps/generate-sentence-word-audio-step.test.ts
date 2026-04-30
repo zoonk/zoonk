@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { generateLanguageAudio } from "@zoonk/core/audio/generate";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateSentenceWordAudioStep } from "./generate-sentence-word-audio-step";
 
@@ -23,7 +23,7 @@ describe(generateSentenceWordAudioStep, () => {
     vi.clearAllMocks();
   });
 
-  test("generates word audio URLs for reading words", async () => {
+  it("generates word audio URLs for reading words", async () => {
     const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
     const catWord = `猫${uniqueId}`;
     const fireWord = `火${uniqueId}`;
