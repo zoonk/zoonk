@@ -1,6 +1,6 @@
 import { type AssertAllCovered } from "@/lib/generation-phases";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
-import { type PhaseName } from "../lesson-generation-phase-config";
+import { type PhaseName } from "../generation-phase-config";
 
 type TutorialSteps =
   | "getLesson"

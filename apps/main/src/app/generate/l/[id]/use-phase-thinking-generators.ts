@@ -1,7 +1,7 @@
 "use client";
 
-import { type PhaseName } from "@/lib/generation/lesson-generation-phase-config";
 import { type ThinkingMessageGenerator } from "@/lib/workflow/use-thinking-messages";
+import { type PhaseName } from "./generation-phase-config";
 import { useContentPhaseGenerators } from "./phase-thinking-generators/content";
 import { useLanguagePhaseGenerators } from "./phase-thinking-generators/language";
 

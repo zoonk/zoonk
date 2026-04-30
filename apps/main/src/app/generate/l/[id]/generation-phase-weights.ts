@@ -1,4 +1,4 @@
-import { type GeneratedLessonKind, type PhaseName } from "./lesson-generation-phase-config";
+import { type GeneratedLessonKind, type PhaseName } from "./generation-phase-config";
 
 /** All phases default to 0 weight so each lesson kind can weight only the phases it uses. */
 const ZERO_WEIGHTS: Record<PhaseName, number> = {

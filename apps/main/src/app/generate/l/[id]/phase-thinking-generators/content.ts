@@ -1,8 +1,8 @@
 "use client";
 
-import { type PhaseName } from "@/lib/generation/lesson-generation-phase-config";
 import { type ThinkingMessageGenerator, cycleMessage } from "@/lib/workflow/use-thinking-messages";
 import { useExtracted } from "next-intl";
+import { type PhaseName } from "../generation-phase-config";
 
 /** Returns thinking messages for lesson content, image, and lifecycle phases. */
 export function useContentPhaseGenerators(): Partial<Record<PhaseName, ThinkingMessageGenerator>> {

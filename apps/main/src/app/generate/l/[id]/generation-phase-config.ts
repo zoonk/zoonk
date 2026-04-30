@@ -11,7 +11,7 @@ import { TRANSLATION_PHASE_ORDER, TRANSLATION_PHASE_STEPS } from "./phase-kind-s
 import { TUTORIAL_PHASE_ORDER, TUTORIAL_PHASE_STEPS } from "./phase-kind-steps/tutorial";
 import { VOCABULARY_PHASE_ORDER, VOCABULARY_PHASE_STEPS } from "./phase-kind-steps/vocabulary";
 
-export { getPhaseWeights } from "./lesson-generation-phase-weights";
+export { getPhaseWeights } from "./generation-phase-weights";
 
 /**
  * Phase names shown while a lesson is being generated.

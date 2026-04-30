@@ -1,7 +1,7 @@
 "use client";
 
-import { type PhaseName } from "@/lib/generation/lesson-generation-phase-config";
 import { useExtracted } from "next-intl";
+import { type PhaseName } from "./generation-phase-config";
 
 /** Returns translated labels for each lesson generation phase. */
 export function usePhaseLabels(): Record<PhaseName, string> {

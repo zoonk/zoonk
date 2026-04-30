@@ -1,6 +1,6 @@
-import { isGeneratedLessonKind } from "@/lib/generation/lesson-generation-phase-config";
 import { describe, expect, test } from "vitest";
-import { calculateWeightedProgress, getPhaseOrder, getPhaseStatus } from "./generation-phases";
+import { getPhaseOrder, isGeneratedLessonKind } from "./generation-phase-config";
+import { calculateWeightedProgress, getPhaseStatus } from "./generation-phases";
 
 describe(isGeneratedLessonKind, () => {
   test("keeps non-generated lesson rows out of lesson generation", () => {

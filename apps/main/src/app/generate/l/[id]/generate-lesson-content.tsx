@@ -1,7 +1,6 @@
 import { LoginRequired } from "@/components/auth/login-required";
 import { SubscriptionGate } from "@/components/subscription/subscription-gate";
 import { getLessonForGeneration } from "@/data/lessons/get-lesson-for-generation";
-import { isGeneratedLessonKind } from "@/lib/generation/lesson-generation-phase-config";
 import { getLessonDisplayMeta } from "@/lib/lessons";
 import { getInitialGenerationPageStatus } from "@/lib/workflow/get-initial-generation-page-status";
 import { getBlockingLessonGenerationPrerequisite } from "@zoonk/core/lessons/generation-prerequisites";
@@ -31,6 +30,7 @@ import { getExtracted } from "next-intl/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { GenerationClient } from "./generation-client";
+import { isGeneratedLessonKind } from "./generation-phase-config";
 
 /**
  * Pending and failed lessons are the only states where a prerequisite should
