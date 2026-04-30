@@ -43,7 +43,6 @@ async function createAuthenticatedPage(browser: Browser, baseURL: string, email:
 async function createQuizLesson(lessonId: string, uniqueId: string) {
   await stepFixture({
     content: {
-      kind: "core",
       options: [
         { feedback: "Correct!", id: "right", isCorrect: true, text: `Right ${uniqueId}` },
         { feedback: "Wrong", id: "wrong", isCorrect: false, text: `Wrong ${uniqueId}` },

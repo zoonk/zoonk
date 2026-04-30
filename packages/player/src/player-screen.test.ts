@@ -92,7 +92,6 @@ describe(getPlayerScreenModel, () => {
         steps: [
           buildStep({
             content: {
-              kind: "core" as const,
               options: [{ feedback: "Correct", id: "A", isCorrect: true, text: "A" }],
               question: "Choose",
             },

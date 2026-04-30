@@ -80,7 +80,6 @@ describe(saveGrammarLessonStep, () => {
     });
     expect(steps[2]?.content).toMatchObject({
       context: `Look at the examples ${id}`,
-      kind: "core",
       question: `What verb fits? ${id}`,
     });
     expect(steps[3]?.content).toEqual({

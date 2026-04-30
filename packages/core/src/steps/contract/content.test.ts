@@ -2,26 +2,23 @@ import { describe, expect, test } from "vitest";
 import { assertStepContent, parseStepContent } from "./content";
 
 describe("step content contracts", () => {
-  test("parses core multipleChoice with optional context/question omitted", () => {
+  test("parses multipleChoice with optional context/question omitted", () => {
     const content = parseStepContent("multipleChoice", {
-      kind: "core",
       options: [{ feedback: "Correct", id: "a", isCorrect: true, text: "A" }],
     });
 
     expect(content).toEqual({
-      kind: "core",
       options: [{ feedback: "Correct", id: "a", isCorrect: true, text: "A" }],
     });
   });
 
-  test("parses core multipleChoice with all fields", () => {
+  test("parses multipleChoice with all fields", () => {
     const content = parseStepContent("multipleChoice", {
       context: "Some context",
       image: {
         prompt: "A refund dashboard with one outlier row",
         url: "https://example.com/refund.webp",
       },
-      kind: "core",
       options: [
         { feedback: "Correct!", id: "a", isCorrect: true, text: "A" },
         { feedback: "Wrong.", id: "b", isCorrect: false, text: "B" },
@@ -35,7 +32,6 @@ describe("step content contracts", () => {
         prompt: "A refund dashboard with one outlier row",
         url: "https://example.com/refund.webp",
       },
-      kind: "core",
       options: [
         { feedback: "Correct!", id: "a", isCorrect: true, text: "A" },
         { feedback: "Wrong.", id: "b", isCorrect: false, text: "B" },
@@ -44,18 +40,9 @@ describe("step content contracts", () => {
     });
   });
 
-  test("rejects multipleChoice without kind", () => {
+  test("rejects multipleChoice options with extra fields", () => {
     expect(() =>
       parseStepContent("multipleChoice", {
-        options: [{ feedback: "Correct", id: "a", isCorrect: true, text: "A" }],
-      }),
-    ).toThrow();
-  });
-
-  test("rejects core options with extra fields", () => {
-    expect(() =>
-      parseStepContent("multipleChoice", {
-        kind: "core",
         options: [
           {
             effects: [{ dimension: "X", impact: "positive" }],
@@ -65,15 +52,6 @@ describe("step content contracts", () => {
             text: "A",
           },
         ],
-      }),
-    ).toThrow();
-  });
-
-  test("rejects unknown kind value", () => {
-    expect(() =>
-      parseStepContent("multipleChoice", {
-        kind: "unknown",
-        options: [{ feedback: "Correct", id: "a", isCorrect: true, text: "A" }],
       }),
     ).toThrow();
   });

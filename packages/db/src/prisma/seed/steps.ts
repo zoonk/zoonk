@@ -99,7 +99,6 @@ const stepsData: {
       {
         content: {
           context: "Traditional programming requires explicit rules for every scenario.",
-          kind: "core",
           options: [
             {
               feedback: "Both use electricity. Think about how they solve problems.",

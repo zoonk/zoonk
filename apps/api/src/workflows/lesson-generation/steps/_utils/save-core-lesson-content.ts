@@ -99,7 +99,6 @@ export async function savePracticeLessonContent({
       content: assertStepContent("multipleChoice", {
         context: step.context,
         ...(image ? { image } : {}),
-        kind: "core",
         options: addOptionIds({ options: step.options }),
         question: step.question,
       }),
@@ -143,7 +142,6 @@ function buildQuizStepContent(question: QuizQuestionWithUrls) {
 
     return assertStepContent(format, {
       ...rawContent,
-      kind: "core",
       options: addOptionIds({ options: question.options }),
     });
   }

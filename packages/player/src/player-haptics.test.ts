@@ -73,7 +73,6 @@ describe(getPlayerHapticSequence, () => {
   test("adds a generic error haptic when feedback screen appears for a wrong answer", () => {
     const step = buildStep({
       content: {
-        kind: "core" as const,
         options: [
           { feedback: "Nope", id: "a", isCorrect: false, text: "A" },
           { feedback: "Yes", id: "b", isCorrect: true, text: "B" },

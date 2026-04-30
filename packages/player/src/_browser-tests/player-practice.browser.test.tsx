@@ -38,7 +38,6 @@ describe("player browser integration: practice lessons", () => {
                     "A refund dashboard filtered to discounted orders with one outlier row highlighted",
                 }),
               },
-              kind: "core" as const,
               options: [
                 {
                   feedback: "Yes. Start with the shared pattern before blaming a random order.",

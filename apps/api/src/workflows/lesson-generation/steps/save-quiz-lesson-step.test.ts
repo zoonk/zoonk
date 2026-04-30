@@ -54,7 +54,6 @@ describe(saveQuizLessonStep, () => {
     ]);
     expect(steps[0]?.content).toEqual({
       context: "Look at the rule.",
-      kind: "core",
       options: [
         { feedback: "Correct!", id: "option-1", isCorrect: true, text: "It transfers" },
         { feedback: "Not quite.", id: "option-2", isCorrect: false, text: "It only applies here" },

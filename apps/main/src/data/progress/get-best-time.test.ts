@@ -61,7 +61,6 @@ async function createTestStep(orgId: string) {
   const step = await prisma.step.create({
     data: {
       content: {
-        kind: "core",
         options: [{ feedback: "Yes", isCorrect: true, text: "A" }],
       },
       kind: "multipleChoice",

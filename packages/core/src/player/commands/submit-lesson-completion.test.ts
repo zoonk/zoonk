@@ -47,7 +47,6 @@ describe(submitLessonCompletion, () => {
 
     step = await stepFixture({
       content: {
-        kind: "core",
         options: [
           { feedback: "Correct!", id: "a", isCorrect: true, text: "A" },
           { feedback: "Wrong.", id: "b", isCorrect: false, text: "B" },

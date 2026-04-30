@@ -19,7 +19,6 @@ describe("player browser integration: choice steps", () => {
         steps: [
           buildSerializedStep({
             content: {
-              kind: "core",
               options: [
                 { feedback: "Nope", id: "Paris", isCorrect: false, text: "Paris" },
                 { feedback: "Correct", id: "Berlin", isCorrect: true, text: "Berlin" },
@@ -152,7 +151,6 @@ describe("player browser integration: choice steps", () => {
           buildSerializedStep({
             content: {
               context: "Read the clue first",
-              kind: "core",
               options: [
                 { feedback: "Nope", id: "Paris", isCorrect: false, text: "Paris" },
                 { feedback: "Correct", id: "Berlin", isCorrect: true, text: "Berlin" },
@@ -201,7 +199,6 @@ describe("player browser integration: choice steps", () => {
                 prompt: "A sales chart with a visible drop in March",
                 url: buildInlineImageUrl({ label: "A sales chart with a visible drop in March" }),
               },
-              kind: "core",
               options: [
                 {
                   feedback: "Correct",
@@ -359,7 +356,6 @@ describe("player browser integration: choice steps", () => {
           buildSerializedStep({
             content: {
               context: "{{NAME}}, we have a situation",
-              kind: "core",
               options: [
                 {
                   feedback: "{{NAME}}, great call",
@@ -391,7 +387,6 @@ describe("player browser integration: choice steps", () => {
           buildSerializedStep({
             content: {
               context: "{{NAME}}, we have a situation",
-              kind: "core",
               options: [
                 {
                   feedback: "{{NAME}}, great call",

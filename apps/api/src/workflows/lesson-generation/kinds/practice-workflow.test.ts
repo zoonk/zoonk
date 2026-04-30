@@ -105,7 +105,6 @@ describe(practiceLessonWorkflow, () => {
         prompt: "question prompt",
         url: "https://example.com/question%20prompt.webp",
       },
-      kind: "core",
       question: "What now?",
     });
 

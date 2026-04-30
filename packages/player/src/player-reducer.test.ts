@@ -11,8 +11,7 @@ import {
   playerReducer,
 } from "./player-reducer";
 
-const coreMultipleChoiceContent = {
-  kind: "core" as const,
+const multipleChoiceContent = {
   options: [
     { feedback: "Yes", id: "option-a", isCorrect: true, text: "A" },
     { feedback: "No", id: "option-b", isCorrect: false, text: "B" },
@@ -39,7 +38,7 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
 }
 
 function buildMultipleChoiceStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
-  return buildStep({ content: coreMultipleChoiceContent, kind: "multipleChoice", ...overrides });
+  return buildStep({ content: multipleChoiceContent, kind: "multipleChoice", ...overrides });
 }
 
 function buildLesson(overrides: Partial<SerializedLesson> = {}): SerializedLesson {

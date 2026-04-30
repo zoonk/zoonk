@@ -47,7 +47,6 @@ describe(describePlayerStep, () => {
       buildStep({
         content: {
           image,
-          kind: "core" as const,
           options: [{ feedback: "Correct", id: "A", isCorrect: true, text: "A" }],
           question: "Choose",
         },

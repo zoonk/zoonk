@@ -67,7 +67,6 @@ describe(savePracticeLessonStep, () => {
     expect(steps[1]?.content).toEqual({
       context: "The discounted orders are the only ones acting weird.",
       image: images[1],
-      kind: "core",
       options: [
         { feedback: "Correct!", id: "option-1", isCorrect: true, text: "Check discounts" },
         { feedback: "Not yet.", id: "option-2", isCorrect: false, text: "Ignore it" },

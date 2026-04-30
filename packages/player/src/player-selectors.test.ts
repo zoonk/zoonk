@@ -86,7 +86,6 @@ describe(getUpcomingImages, () => {
               prompt: "A refund dashboard with one mismatched total highlighted",
               url: "https://example.com/refund-dashboard.jpg",
             },
-            kind: "core",
             options: [
               { feedback: "Yes", id: "Check totals", isCorrect: true, text: "Check totals" },
             ],

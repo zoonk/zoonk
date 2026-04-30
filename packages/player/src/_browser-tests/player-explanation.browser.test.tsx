@@ -43,7 +43,6 @@ describe("player browser integration: explanation lesson flow", () => {
           }),
           buildSerializedStep({
             content: {
-              kind: "core",
               options: [
                 {
                   feedback: "Right. That label helps the network forward it.",

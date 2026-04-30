@@ -52,7 +52,7 @@ describe(getReviewSteps, () => {
 
     const stepPromises = Array.from({ length: 12 }, (_, i) =>
       stepFixture({
-        content: { kind: "core", options: [], question: `Q${i}`, text: `Step ${i}` },
+        content: { options: [], question: `Q${i}`, text: `Step ${i}` },
         isPublished: true,
         kind: "multipleChoice",
         lessonId: sourceLesson.id,
@@ -63,7 +63,7 @@ describe(getReviewSteps, () => {
     // Also create an unpublished step (should be excluded)
     stepPromises.push(
       stepFixture({
-        content: { kind: "core", options: [], question: "Unpub Q", text: "Unpub step" },
+        content: { options: [], question: "Unpub Q", text: "Unpub step" },
         isPublished: false,
         kind: "multipleChoice",
         lessonId: sourceLesson.id,
@@ -333,7 +333,7 @@ describe(getReviewSteps, () => {
     });
 
     const reviewStep = await stepFixture({
-      content: { kind: "core", options: [], question: "Review Q" },
+      content: { options: [], question: "Review Q" },
       isPublished: true,
       kind: "multipleChoice",
       lessonId: reviewLesson.id,
@@ -630,7 +630,6 @@ describe(getReviewValidationSteps, () => {
     });
 
     const mcContent = {
-      kind: "core",
       options: [
         { feedback: "Correct!", id: "a", isCorrect: true, text: "A" },
         { feedback: "Wrong.", id: "b", isCorrect: false, text: "B" },
@@ -766,7 +765,7 @@ async function createLessonWithSteps(orgId: string, stepCount: number) {
   const steps = await Promise.all(
     Array.from({ length: stepCount }, (_, i) =>
       stepFixture({
-        content: { kind: "core", options: [], question: `Q${i}`, text: `Step ${i}` },
+        content: { options: [], question: `Q${i}`, text: `Step ${i}` },
         isPublished: true,
         kind: "multipleChoice",
         lessonId: lesson.id,

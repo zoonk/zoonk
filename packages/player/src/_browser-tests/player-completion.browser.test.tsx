@@ -24,7 +24,6 @@ function buildCompletionQuizLesson({
     steps: [
       buildSerializedStep({
         content: {
-          kind: "core" as const,
           options: [
             { feedback: "Correct!", id: "correct", isCorrect: true, text: correctText },
             { feedback: "Not this one", id: "wrong", isCorrect: false, text: wrongText },

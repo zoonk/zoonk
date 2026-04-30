@@ -79,7 +79,6 @@ function buildGrammarSteps({
     content: assertStepContent("multipleChoice", {
       ...getOptionalQuestion(userContent.discovery.question),
       ...getOptionalContext(userContent.discovery.context),
-      kind: "core",
       options: addOptionIds({ options: userContent.discovery.options }),
     }),
     isPublished: true,

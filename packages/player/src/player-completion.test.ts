@@ -45,7 +45,6 @@ describe(computeLocalCompletion, () => {
     const steps = [
       buildStep({
         content: {
-          kind: "core" as const,
           options: [{ feedback: "Yes", id: "a", isCorrect: true, text: "A" }],
         },
         id: "mc-1",

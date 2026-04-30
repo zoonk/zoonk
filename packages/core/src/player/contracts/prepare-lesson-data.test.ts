@@ -431,12 +431,11 @@ describe(preparePlayerLessonData, () => {
     expect(result.steps[0]?.id).toBe("2");
   });
 
-  test("serializes multiple choice core content", () => {
+  test("serializes multiple choice content", () => {
     const result = prepare({
       lesson: makeLesson([
         makeStep({
           content: {
-            kind: "core",
             options: [
               { feedback: "Yes", id: "alpha", isCorrect: true, text: "Alpha" },
               { feedback: "No", id: "beta", isCorrect: false, text: "Beta" },
@@ -450,7 +449,6 @@ describe(preparePlayerLessonData, () => {
     });
 
     expect(result.steps[0]?.content).toEqual({
-      kind: "core",
       options: [
         { feedback: "Yes", id: "alpha", isCorrect: true, text: "Alpha" },
         { feedback: "No", id: "beta", isCorrect: false, text: "Beta" },

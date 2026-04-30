@@ -97,7 +97,6 @@ describe(grammarLessonWorkflow, () => {
 
     expect(steps[1]?.content).toMatchObject({
       context: "Choose the matching pattern.",
-      kind: "core",
       question: "Which sentence matches?",
     });
 
