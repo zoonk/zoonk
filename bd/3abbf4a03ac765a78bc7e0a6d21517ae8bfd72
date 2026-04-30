@@ -1,0 +1,36 @@
+packages/ai/src/tasks/lessons/core/lesson-explanation.prompt.md
+  7749c8b02c7f69a4 5,7,13,21,34,49,59,125-126,146,152
+packages/ai/src/tasks/chapters/chapter-lessons.prompt.md
+  7749c8b02c7f69a4 25,31-32,49,111,118
+  h_1cda88fc21fe9c 47-48,50,112-116
+apps/evals/src/tasks/lesson-explanation/test-cases.ts
+  7749c8b02c7f69a4 10,14,21,34,50,54
+apps/evals/src/tasks/chapter-lessons/test-cases.ts
+  7749c8b02c7f69a4 6,10-11,23,52,58,60,84,213
+  h_1cda88fc21fe9c 48-51,53-57,59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "bd3abbf4a03ac765a78bc7e0a6d21517ae8bfd72",
+  "prompts": {
+    "7749c8b02c7f69a4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ddc0d-5f71-7370-b37c-92e08552f03c",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 39,
+      "total_deletions": 40,
+      "accepted_lines": 32,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
