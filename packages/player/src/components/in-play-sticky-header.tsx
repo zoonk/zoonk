@@ -14,14 +14,14 @@ export function InPlayStickyHeader({
   progressValue: number;
 }) {
   const { kind, title } = usePlayerLessonMeta();
-  const { lessonHref } = usePlayerNavigation();
+  const { chapterHref } = usePlayerNavigation();
   const kindLabel = useLessonKindLabel(kind);
   const displayTitle = title ?? kindLabel;
 
   return (
     <div className="bg-background/95 sticky top-0 z-30 backdrop-blur-sm">
       <PlayerHeader>
-        <PlayerCloseLink href={lessonHref} />
+        <PlayerCloseLink href={chapterHref} />
 
         <div className="min-w-0 flex-1 text-center">
           {centerContent ?? (

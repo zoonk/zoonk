@@ -66,7 +66,6 @@ export function buildNavigation(overrides: Partial<PlayerNavigation> = {}): Play
   return {
     chapterHref: "/chapter",
     courseHref: "/course",
-    lessonHref: "/lesson",
     levelHref: "/level",
     loginHref: "/login",
     nextLessonHref: "/lesson/play",

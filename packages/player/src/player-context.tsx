@@ -18,7 +18,6 @@ export type PlayerViewer = {
 export type PlayerNavigation = {
   chapterHref: PlayerRoute;
   courseHref: PlayerRoute;
-  lessonHref: PlayerRoute;
   levelHref?: PlayerRoute;
   loginHref?: PlayerRoute;
   nextLessonHref: PlayerRoute | null;

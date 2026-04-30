@@ -34,7 +34,7 @@ describe(buildLessonPlayerModel, () => {
     });
 
     expect(model.milestone).toBeNull();
-    expect(model.navigation.lessonHref).toBe("/b/brand/c/course/ch/chapter-1");
+    expect(model.navigation.chapterHref).toBe("/b/brand/c/course/ch/chapter-1");
     expect(model.onNextHref).toBe("/b/brand/c/course/ch/chapter-1/l/lesson-2");
   });
 

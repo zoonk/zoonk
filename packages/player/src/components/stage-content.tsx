@@ -70,7 +70,7 @@ function hasEmbeddedDesktopAction({
 
 export function StageContent() {
   const { actions, screen, state } = usePlayerRuntime();
-  const { lessonHref, nextLessonHref } = usePlayerNavigation();
+  const { chapterHref, nextLessonHref } = usePlayerNavigation();
 
   const completionResult = getCompletionResult(state);
   const currentResult = getCurrentResult(state);
@@ -81,7 +81,7 @@ export function StageContent() {
     return (
       <CompletionScreenContent
         completionResult={completionResult}
-        lessonHref={lessonHref}
+        chapterHref={chapterHref}
         nextLessonHref={nextLessonHref}
         onRestart={actions.restart}
       />

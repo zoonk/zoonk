@@ -31,11 +31,11 @@ function ActionRow({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function SecondaryActions({
-  lessonHref,
+  chapterHref,
   onRestart,
   variant,
 }: {
-  lessonHref: PlayerRoute;
+  chapterHref: PlayerRoute;
   onRestart: () => void;
   variant: "inline" | "stacked";
 }) {
@@ -49,7 +49,7 @@ function SecondaryActions({
         buttonVariants({ variant: isInline ? "outline" : "default" }),
         isInline ? "flex-1 lg:justify-between" : "w-full lg:justify-between",
       )}
-      href={lessonHref}
+      href={chapterHref}
     >
       {t("All Lessons")}
       {isInline ? <SecondaryKbd>Esc</SecondaryKbd> : <PrimaryKbd>Esc</PrimaryKbd>}
@@ -86,13 +86,13 @@ function SecondaryActions({
 
 function AuthenticatedContent({
   completionResult,
-  lessonHref,
+  chapterHref,
   nextLessonHref,
   onRestart,
   showRewards,
 }: {
+  chapterHref: PlayerRoute;
   completionResult: CompletionResult | null;
-  lessonHref: PlayerRoute;
   nextLessonHref: PlayerRoute | null;
   onRestart: () => void;
   showRewards: boolean;
@@ -130,10 +130,10 @@ function AuthenticatedContent({
               {t("Next")}
             </PrimaryActionLink>
 
-            <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="inline" />
+            <SecondaryActions chapterHref={chapterHref} onRestart={onRestart} variant="inline" />
           </>
         ) : (
-          <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="stacked" />
+          <SecondaryActions chapterHref={chapterHref} onRestart={onRestart} variant="stacked" />
         )}
       </CompletionActions>
     </>
@@ -141,12 +141,12 @@ function AuthenticatedContent({
 }
 
 function UnauthenticatedContent({
-  lessonHref,
+  chapterHref,
   loginHref,
   nextLessonHref,
   onRestart,
 }: {
-  lessonHref: PlayerRoute;
+  chapterHref: PlayerRoute;
   loginHref: PlayerRoute;
   nextLessonHref: PlayerRoute | null;
   onRestart: () => void;
@@ -179,7 +179,7 @@ function UnauthenticatedContent({
           </PrimaryActionLink>
         )}
 
-        <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="inline" />
+        <SecondaryActions chapterHref={chapterHref} onRestart={onRestart} variant="inline" />
       </CompletionActions>
     </>
   );
@@ -187,13 +187,13 @@ function UnauthenticatedContent({
 
 export function AuthBranch({
   completionResult,
-  lessonHref,
+  chapterHref,
   nextLessonHref,
   onRestart,
   showRewards = true,
 }: {
+  chapterHref: PlayerRoute;
   completionResult: CompletionResult | null;
-  lessonHref: PlayerRoute;
   nextLessonHref: PlayerRoute | null;
   onRestart: () => void;
   showRewards?: boolean;
@@ -204,7 +204,7 @@ export function AuthBranch({
   if (!isAuthenticated) {
     return (
       <UnauthenticatedContent
-        lessonHref={lessonHref}
+        chapterHref={chapterHref}
         loginHref={loginHref ?? "/login"}
         nextLessonHref={nextLessonHref}
         onRestart={onRestart}
@@ -215,7 +215,7 @@ export function AuthBranch({
   return (
     <AuthenticatedContent
       completionResult={completionResult}
-      lessonHref={lessonHref}
+      chapterHref={chapterHref}
       nextLessonHref={nextLessonHref}
       onRestart={onRestart}
       showRewards={showRewards}

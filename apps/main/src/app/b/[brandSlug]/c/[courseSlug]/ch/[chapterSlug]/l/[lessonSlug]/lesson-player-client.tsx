@@ -74,7 +74,7 @@ export function LessonPlayerClient({
       milestone={model.milestone}
       navigation={model.navigation}
       onComplete={handleComplete}
-      onEscape={() => router.push(model.navigation.lessonHref)}
+      onEscape={() => router.push(model.navigation.chapterHref)}
       onNext={handleNext}
       totalBrainPower={totalBrainPower}
       viewer={{

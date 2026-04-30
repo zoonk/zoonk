@@ -67,12 +67,12 @@ function MilestoneHeading({ milestone }: { milestone: PlayerMilestone }) {
 
 export function CompletionScreenContent({
   completionResult,
-  lessonHref,
+  chapterHref,
   nextLessonHref,
   onRestart,
 }: {
+  chapterHref: PlayerRoute;
   completionResult: CompletionResult | null;
-  lessonHref: PlayerRoute;
   nextLessonHref: PlayerRoute | null;
   onRestart: () => void;
 }) {
@@ -88,7 +88,7 @@ export function CompletionScreenContent({
         <div className="flex w-full flex-col gap-3">
           <AuthBranch
             completionResult={completionResult}
-            lessonHref={lessonHref}
+            chapterHref={chapterHref}
             nextLessonHref={nextLessonHref}
             onRestart={onRestart}
             showRewards={false}
@@ -117,7 +117,7 @@ export function CompletionScreenContent({
 
       <AuthBranch
         completionResult={completionResult}
-        lessonHref={lessonHref}
+        chapterHref={chapterHref}
         nextLessonHref={nextLessonHref}
         onRestart={onRestart}
       />
