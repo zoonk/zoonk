@@ -1,0 +1,14 @@
+packages/player/src/components/step-image-preloader.tsx
+  h_1cda88fc21fe9c 4,14-16,24,29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "3722ca99f031887e5a9a9555d938dde3dc1afc62",
+  "prompts": {},
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
