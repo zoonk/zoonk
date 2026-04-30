@@ -63,6 +63,106 @@ async function createTestLesson(options?: {
   return { chapter, course, lesson, lessonTitle, uniqueId };
 }
 
+/**
+ * A practice lesson depends on the explanation lessons before it. This creates
+ * the smallest published AI chapter where the practice player page should send
+ * the learner to the missing explanation's generation page instead of starting
+ * practice generation.
+ */
+async function createBlockedPracticeLesson() {
+  const org = await getAiOrganization();
+
+  const uniqueId = randomUUID().slice(0, 8);
+  const course = await courseFixture({
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-blocked-player-course-${uniqueId}`,
+    title: `E2E Blocked Player Course ${uniqueId}`,
+  });
+
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-blocked-player-chapter-${uniqueId}`,
+    title: `E2E Blocked Player Chapter ${uniqueId}`,
+  });
+
+  const [explanation, practice] = await Promise.all([
+    lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "explanation",
+      organizationId: org.id,
+      position: 0,
+      slug: `e2e-blocked-player-explanation-${uniqueId}`,
+      title: `E2E Blocked Player Explanation ${uniqueId}`,
+    }),
+    lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "practice",
+      organizationId: org.id,
+      position: 1,
+      slug: `e2e-blocked-player-practice-${uniqueId}`,
+      title: `E2E Blocked Player Practice ${uniqueId}`,
+    }),
+  ]);
+
+  return { chapter, course, explanation, practice };
+}
+
+/**
+ * Review lessons are completed structural rows, but they only have playable
+ * content after earlier generated lessons have saved reviewable steps.
+ */
+async function createEmptyReviewLesson() {
+  const org = await getAiOrganization();
+
+  const uniqueId = randomUUID().slice(0, 8);
+  const course = await courseFixture({
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-review-empty-course-${uniqueId}`,
+    title: `E2E Review Empty Course ${uniqueId}`,
+  });
+
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-review-empty-chapter-${uniqueId}`,
+    title: `E2E Review Empty Chapter ${uniqueId}`,
+  });
+
+  const [requiredLesson, review] = await Promise.all([
+    lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "explanation",
+      organizationId: org.id,
+      position: 0,
+      slug: `e2e-review-empty-explanation-${uniqueId}`,
+      title: `E2E Review Empty Explanation ${uniqueId}`,
+    }),
+    lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "review",
+      organizationId: org.id,
+      position: 1,
+      slug: `e2e-review-empty-review-${uniqueId}`,
+      title: `E2E Review Empty Review ${uniqueId}`,
+    }),
+  ]);
+
+  return { chapter, course, requiredLesson, review };
+}
+
 test.describe("Lesson Player Page", () => {
   test("generated lesson player renders the seeded step content", async ({ page }) => {
     const { chapter, course, lesson, uniqueId } = await createTestLesson({
@@ -104,6 +204,40 @@ test.describe("Lesson Player Page", () => {
     await expect(generateLink).toBeVisible();
     await expect(generateLink).toHaveAttribute("href", new RegExp(`/generate/l/${lesson.id}`));
     await expect(generateLink).toHaveAttribute("rel", "nofollow");
+  });
+
+  test("blocked practice lessons link to the required explanation generation page", async ({
+    page,
+  }) => {
+    const { chapter, course, explanation, practice } = await createBlockedPracticeLesson();
+
+    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${practice.slug}`);
+
+    await expect(page.getByText("Lesson locked")).toBeVisible();
+    await expect(page.getByText("Create the required lesson first.")).toBeVisible();
+
+    const requiredLessonLink = page.getByRole("link", { name: "Open required lesson" });
+    await expect(requiredLessonLink).toBeVisible();
+    await expect(requiredLessonLink).toHaveAttribute("href", `/generate/l/${explanation.id}`);
+    await expect(requiredLessonLink).toHaveAttribute("rel", "nofollow");
+  });
+
+  test("empty review lessons link to the first earlier lesson that needs generation", async ({
+    page,
+  }) => {
+    const { chapter, course, requiredLesson, review } = await createEmptyReviewLesson();
+
+    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${review.slug}`);
+
+    await expect(page.getByText("Review locked")).toBeVisible();
+    await expect(
+      page.getByText("Create earlier lessons first, then come back to review."),
+    ).toBeVisible();
+
+    const requiredLessonLink = page.getByRole("link", { name: "Open required lesson" });
+    await expect(requiredLessonLink).toBeVisible();
+    await expect(requiredLessonLink).toHaveAttribute("href", `/generate/l/${requiredLesson.id}`);
+    await expect(requiredLessonLink).toHaveAttribute("rel", "nofollow");
   });
 
   test("pending non-AI lessons do not show a generate link", async ({ page }) => {

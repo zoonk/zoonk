@@ -3,6 +3,10 @@ import { parseBody } from "@/lib/body-parser";
 import { lessonGenerationTriggerSchema } from "@/lib/openapi/schemas/workflows";
 import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-generation-workflow";
 import { hasActiveSubscription } from "@zoonk/core/auth/subscription";
+import {
+  getBlockingLessonGenerationPrerequisite,
+  hasLessonGenerationPrerequisites,
+} from "@zoonk/core/lessons/generation-prerequisites";
 import { getAiGenerationLessonWhere, prisma } from "@zoonk/db";
 import { type NextRequest, NextResponse } from "next/server";
 import { start } from "workflow/api";
@@ -15,7 +19,6 @@ export async function POST(request: NextRequest) {
   }
 
   const lesson = await prisma.lesson.findFirst({
-    select: { id: true },
     where: getAiGenerationLessonWhere({
       lessonWhere: { id: parsed.data.lessonId },
     }),
@@ -29,6 +32,14 @@ export async function POST(request: NextRequest) {
 
   if (!hasSubscription) {
     return errors.paymentRequired();
+  }
+
+  const blockingPrerequisite = hasLessonGenerationPrerequisites(lesson.kind)
+    ? await getBlockingLessonGenerationPrerequisite(lesson)
+    : null;
+
+  if (blockingPrerequisite) {
+    return errors.conflict("Create the required lesson first");
   }
 
   const run = await start(lessonGenerationWorkflow, [parsed.data.lessonId]);

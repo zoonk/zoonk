@@ -150,6 +150,66 @@ async function createPendingLesson() {
 }
 
 /**
+ * A pending practice lesson is locked until the explanation lessons in its
+ * source range are completed. This creates the smallest chapter shape that can
+ * prove the generate page sends learners to the missing explanation instead.
+ */
+async function createBlockedPracticeLesson() {
+  const org = await getAiOrganization();
+
+  const uniqueId = randomUUID().slice(0, 8);
+  const courseTitle = `E2E Blocked Course ${uniqueId}`;
+  const chapterTitle = `E2E Blocked Chapter ${uniqueId}`;
+  const explanationTitle = `E2E Required Explanation ${uniqueId}`;
+  const practiceTitle = `E2E Blocked Practice ${uniqueId}`;
+
+  const course = await courseFixture({
+    isPublished: true,
+    normalizedTitle: normalizeString(courseTitle),
+    organizationId: org.id,
+    slug: `e2e-blocked-course-${uniqueId}`,
+    title: courseTitle,
+  });
+
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    generationStatus: "completed",
+    isPublished: true,
+    normalizedTitle: normalizeString(chapterTitle),
+    organizationId: org.id,
+    slug: `e2e-blocked-chapter-${uniqueId}`,
+    title: chapterTitle,
+  });
+
+  const [explanation, practice] = await Promise.all([
+    lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "explanation",
+      normalizedTitle: normalizeString(explanationTitle),
+      organizationId: org.id,
+      position: 0,
+      slug: `e2e-required-explanation-${uniqueId}`,
+      title: explanationTitle,
+    }),
+    lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "practice",
+      normalizedTitle: normalizeString(practiceTitle),
+      organizationId: org.id,
+      position: 1,
+      slug: `e2e-blocked-practice-${uniqueId}`,
+      title: practiceTitle,
+    }),
+  ]);
+
+  return { explanation, practice };
+}
+
+/**
  * Creates a test subscription for the given user.
  */
 async function createTestSubscription(userId: string) {
@@ -192,6 +252,22 @@ test.describe("Generate Lesson Page - No Subscription", () => {
     const upgradeLink = authenticatedPage.getByRole("link", { name: /upgrade/i });
     await expect(upgradeLink).toBeVisible();
     await expect(upgradeLink).toHaveAttribute("href", /\/subscription/);
+  });
+});
+
+test.describe("Generate Lesson Page - Prerequisites", () => {
+  test("links to the required explanation when practice is blocked", async ({ page }) => {
+    const { explanation, practice } = await createBlockedPracticeLesson();
+
+    await page.goto(`/generate/l/${practice.id}`);
+
+    await expect(page.getByRole("heading", { name: practice.title ?? "" })).toBeVisible();
+    await expect(page.getByText("Lesson locked")).toBeVisible();
+    await expect(page.getByText("Create the required lesson first.")).toBeVisible();
+
+    const requiredLessonLink = page.getByRole("link", { name: "Open required lesson" });
+    await expect(requiredLessonLink).toBeVisible();
+    await expect(requiredLessonLink).toHaveAttribute("href", `/generate/l/${explanation.id}`);
   });
 });
 

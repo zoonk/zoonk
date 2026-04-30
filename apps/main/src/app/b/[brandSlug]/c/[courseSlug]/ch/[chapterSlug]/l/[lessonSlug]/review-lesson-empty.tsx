@@ -7,44 +7,41 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@zoonk/ui/components/empty";
-import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { SparklesIcon } from "lucide-react";
+import { BookOpenCheckIcon, SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import Link from "next/link";
 
-export async function LessonNotGenerated({
-  lessonId,
-  brandSlug,
-  prerequisiteLessonId,
+/**
+ * Replaces the misleading zero-step completion screen for review lessons with
+ * a concrete next action when earlier generated lessons still need content.
+ */
+export async function ReviewLessonEmpty({
+  generationLessonId,
 }: {
-  lessonId: string;
-  brandSlug: string;
-  prerequisiteLessonId?: string | null;
+  generationLessonId: string | null;
 }) {
   const t = await getExtracted();
-  const canGenerateLesson = brandSlug === AI_ORG_SLUG;
-  const generationLessonId = prerequisiteLessonId ?? lessonId;
-  const isBlockedByPrerequisite = Boolean(prerequisiteLessonId);
+  const isWaitingForGeneration = Boolean(generationLessonId);
 
   return (
     <Empty className="border-0">
       <EmptyHeader>
         <EmptyMedia variant="icon">
-          <SparklesIcon />
+          <BookOpenCheckIcon />
         </EmptyMedia>
 
         <EmptyTitle>
-          {isBlockedByPrerequisite ? t("Lesson locked") : t("Lesson not available")}
+          {isWaitingForGeneration ? t("Review locked") : t("Nothing to review yet")}
         </EmptyTitle>
 
         <EmptyDescription>
-          {isBlockedByPrerequisite
-            ? t("Create the required lesson first.")
-            : t("This lesson hasn't been created yet.")}
+          {isWaitingForGeneration
+            ? t("Create earlier lessons first, then come back to review.")
+            : t("There are no practice questions to review yet.")}
         </EmptyDescription>
       </EmptyHeader>
 
-      {canGenerateLesson && (
+      {generationLessonId && (
         <EmptyContent>
           <Link
             className={buttonVariants({ variant: "outline" })}
@@ -53,7 +50,7 @@ export async function LessonNotGenerated({
             rel="nofollow"
           >
             <SparklesIcon data-icon="inline-start" />
-            {isBlockedByPrerequisite ? t("Open required lesson") : t("Create lesson")}
+            {t("Open required lesson")}
           </Link>
         </EmptyContent>
       )}

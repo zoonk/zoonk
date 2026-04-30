@@ -501,6 +501,50 @@ describe(lessonGenerationWorkflow, () => {
     );
   });
 
+  test("blocks practice generation until all source explanations are completed", async () => {
+    const { chapter } = await createWorkflowTree({ organizationId });
+
+    vi.mocked(generateLessonPractice).mockClear();
+
+    await completedExplanationLesson({
+      chapterId: chapter.id,
+      organizationId,
+      position: 0,
+      text: "Generated explanation",
+      title: "Generated",
+    });
+    await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "explanation",
+      organizationId,
+      position: 1,
+      title: `Pending Explanation ${randomUUID()}`,
+    });
+    const practice = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "practice",
+      organizationId,
+      position: 2,
+      title: `Blocked Practice ${randomUUID()}`,
+    });
+
+    await expect(lessonGenerationWorkflow(practice.id)).resolves.toBe("blocked");
+
+    expect(generateLessonPractice).not.toHaveBeenCalled();
+    expect(completedStreamedSteps()).not.toContain("setLessonAsRunning");
+
+    const dbLesson = await prisma.lesson.findUniqueOrThrow({ where: { id: practice.id } });
+    const steps = await prisma.step.findMany({ where: { lessonId: practice.id } });
+
+    expect(dbLesson.generationStatus).toBe("pending");
+    expect(dbLesson.generationRunId).toBeNull();
+    expect(steps).toHaveLength(0);
+  });
+
   test("quiz generation uses explanations since the previous quiz and saves select-image URLs", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
 

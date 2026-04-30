@@ -11,6 +11,7 @@ import { readingLessonWorkflow } from "./kinds/reading-workflow";
 import { translationLessonWorkflow } from "./kinds/translation-workflow";
 import { tutorialLessonWorkflow } from "./kinds/tutorial-workflow";
 import { vocabularyLessonWorkflow } from "./kinds/vocabulary-workflow";
+import { getBlockingGenerationPrerequisiteStep } from "./steps/get-blocking-generation-prerequisite-step";
 import { getLessonStep } from "./steps/get-lesson-step";
 import { handleLessonFailureStep } from "./steps/handle-failure-step";
 import { setLessonAsCompletedStep } from "./steps/set-lesson-as-completed-step";
@@ -21,7 +22,7 @@ type GeneratedLessonContext = LessonGenerationContext & {
   kind: Exclude<LessonGenerationContext["kind"], "custom" | "review">;
 };
 
-type LessonGenerationResult = "filtered" | "ready";
+type LessonGenerationResult = "blocked" | "filtered" | "ready";
 
 /**
  * Running lessons already have another workflow owner, so this run should avoid
@@ -122,6 +123,12 @@ async function runLessonGeneration(input: {
 
   if (!isGeneratedLessonContext(input.context)) {
     return "filtered";
+  }
+
+  const blockingPrerequisite = await getBlockingGenerationPrerequisiteStep(input.context);
+
+  if (blockingPrerequisite) {
+    return "blocked";
   }
 
   await setLessonAsRunningStep({

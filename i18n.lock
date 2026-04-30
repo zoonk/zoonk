@@ -485,7 +485,14 @@ checksums:
     Contact%20Support/singular: fcbd9e317c7286b3e08752eb73eb1a81
     Lesson%20not%20available/singular: db3820087a2ecddca747cb43e1a57105
     This%20lesson%20hasn't%20been%20created%20yet./singular: d483d3c9ceb11e4680ad4cf0d0f2a2c2
+    Lesson%20locked/singular: 4b7356f9a896630aacdd8522bb3e10c5
+    Create%20the%20required%20lesson%20first./singular: fd1ebf8f7421a0f1cd8590370f9a26a6
+    Open%20required%20lesson/singular: c6890174b6855f529f9fc48d2079eedd
     Create%20lesson/singular: 18b36a710404451dcb61ebf8b6e0bd77
+    There%20are%20no%20practice%20questions%20to%20review%20yet./singular: 9cca7189bb5d5f55eede3a1e0a32ba79
+    Create%20earlier%20lessons%20first%2C%20then%20come%20back%20to%20review./singular: 7994bef27c4db711825da16727782c83
+    Review%20locked/singular: 0611072442631fc935ee3d59a0bddea9
+    Nothing%20to%20review%20yet/singular: bc762f3d9c959a0339d3ebac36142d13
     Create%20Chapter/singular: eff367b47e651ac3234f8b4655d5a078
     Back%20to%20course/singular: 605eb294c4cd0dbfee151a369d28fe36
     Your%20lessons%20are%20ready/singular: fe8d9df59ba42f451b249fd750813cba

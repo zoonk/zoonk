@@ -4,6 +4,7 @@
   "type": "module",
   "exports": {
     "./lessons/last-completed": "./src/lessons/find-last-completed.ts",
+    "./lessons/generation-prerequisites": "./src/lessons/generation-prerequisites.ts",
     "./lessons/next-in-course": "./src/lessons/get-next-lesson-in-course.ts",
     "./ai": "./src/ai.ts",
     "./alternative-titles/add": "./src/alternative-titles/add-alternative-titles.ts",

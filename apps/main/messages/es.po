@@ -1560,9 +1560,48 @@ msgid "This lesson hasn't been created yet."
 msgstr "Esta lección aún no se ha creado."
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
+#: src/app/generate/l/[id]/generate-lesson-content.tsx
+msgctxt "dAecIj"
+msgid "Lesson locked"
+msgstr "Lección bloqueada"
+
+#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
+#: src/app/generate/l/[id]/generate-lesson-content.tsx
+msgctxt "mDEcv4"
+msgid "Create the required lesson first."
+msgstr "Crea primero la lección requerida."
+
+#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
+#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
+#: src/app/generate/l/[id]/generate-lesson-content.tsx
+msgctxt "xJPcOx"
+msgid "Open required lesson"
+msgstr "Abrir la lección requerida"
+
+#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
 msgctxt "ZzznjM"
 msgid "Create lesson"
 msgstr "Crear lección"
+
+#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
+msgctxt "9AOq2+"
+msgid "There are no practice questions to review yet."
+msgstr "Aún no hay preguntas para revisar."
+
+#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
+msgctxt "lOdIcU"
+msgid "Create earlier lessons first, then come back to review."
+msgstr "Crea primero las lecciones anteriores y luego vuelve para revisar."
+
+#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
+msgctxt "mA7vCW"
+msgid "Review locked"
+msgstr "Revisión bloqueada"
+
+#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
+msgctxt "Qy4EsI"
+msgid "Nothing to review yet"
+msgstr "Aún no hay nada para revisar"
 
 #: src/app/generate/ch/[id]/generate-chapter-content.tsx
 msgctxt "qNiSDe"

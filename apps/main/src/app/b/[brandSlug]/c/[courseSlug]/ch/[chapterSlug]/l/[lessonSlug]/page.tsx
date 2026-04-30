@@ -1,5 +1,6 @@
 import { getLesson as getCatalogLesson } from "@/data/lessons/get-lesson";
 import { getLessonDisplayMeta, getLessonSeoMeta } from "@/lib/lessons";
+import { getBlockingLessonGenerationPrerequisite } from "@zoonk/core/lessons/generation-prerequisites";
 import { getNextLessonInCourse } from "@zoonk/core/lessons/next-in-course";
 import { startLesson } from "@zoonk/core/player/commands/start-lesson";
 import { preparePlayerLessonData } from "@zoonk/core/player/contracts/prepare-lesson-data";
@@ -10,12 +11,14 @@ import { getLessonWordsForLessons } from "@zoonk/core/player/queries/get-lesson-
 import { getSentenceWordsForLessons } from "@zoonk/core/player/queries/get-sentence-words";
 import { getTotalBrainPower } from "@zoonk/core/player/queries/get-total-brain-power";
 import { getSession } from "@zoonk/core/users/session/get";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { after } from "next/server";
-import { fetchNextSibling, fetchReviewSteps } from "./lesson-data-loaders";
+import { fetchNextSibling, fetchReviewLessonData } from "./lesson-data-loaders";
 import { LessonNotGenerated } from "./lesson-not-generated";
 import { LessonPlayerClient } from "./lesson-player-client";
+import { ReviewLessonEmpty } from "./review-lesson-empty";
 
 type Props = PageProps<"/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">;
 
@@ -63,7 +66,7 @@ export default async function LessonPage({ params }: Props) {
     notFound();
   }
 
-  const [lesson, nextLesson, session, reviewSteps, nextSibling, totalBrainPower] =
+  const [lesson, nextLesson, session, reviewLessonData, nextSibling, totalBrainPower] =
     await Promise.all([
       getPlayerLesson({ lessonId: lessonShell.id }),
       getNextLessonInCourse({
@@ -74,7 +77,7 @@ export default async function LessonPage({ params }: Props) {
         lessonPosition: lessonShell.position,
       }),
       getSession(),
-      fetchReviewSteps(lessonShell.id),
+      fetchReviewLessonData(lessonShell.id),
       fetchNextSibling(lessonShell.id, lessonShell.chapter, lessonShell.position),
       getTotalBrainPower(),
     ]);
@@ -84,14 +87,33 @@ export default async function LessonPage({ params }: Props) {
   }
 
   if (lesson.generationStatus !== "completed") {
+    const blockingPrerequisite =
+      brandSlug === AI_ORG_SLUG ? await getBlockingLessonGenerationPrerequisite(lesson) : null;
+
     return (
       <main className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center p-4">
-        <LessonNotGenerated lessonId={lesson.id} brandSlug={brandSlug} />
+        <LessonNotGenerated
+          lessonId={lesson.id}
+          brandSlug={brandSlug}
+          prerequisiteLessonId={blockingPrerequisite?.lessonId ?? null}
+        />
+      </main>
+    );
+  }
+
+  if (lesson.kind === "review" && (!reviewLessonData || reviewLessonData.steps.length === 0)) {
+    const generationLessonId =
+      brandSlug === AI_ORG_SLUG ? (reviewLessonData?.generationLessonId ?? null) : null;
+
+    return (
+      <main className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center p-4">
+        <ReviewLessonEmpty generationLessonId={generationLessonId} />
       </main>
     );
   }
 
   const lessonMeta = await getLessonDisplayMeta(lesson);
+  const reviewSteps = reviewLessonData?.steps ?? null;
 
   const resourceLessonIds = getPlayerResourceLessonIds({
     lessonId: lessonShell.id,
