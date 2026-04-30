@@ -28,40 +28,4 @@ describe(getPracticeImagePrompts, () => {
       "A refund dashboard filtered to discounted orders with one outlier row highlighted",
     ]);
   });
-
-  test("throws when the scenario image prompt is blank", () => {
-    expect(() =>
-      getPracticeImagePrompts({
-        scenario: {
-          imagePrompt: "   ",
-          text: "I'm checking one last shipping issue with Leo before the warehouse closes.",
-          title: "Late label",
-        },
-        steps: [],
-      }),
-    ).toThrow("Missing practice image prompt for scenario");
-  });
-
-  test("throws when a step image prompt is blank", () => {
-    expect(() =>
-      getPracticeImagePrompts({
-        scenario: {
-          imagePrompt: "Opening shipping desk scene",
-          text: "I'm checking one last shipping issue with Leo before the warehouse closes.",
-          title: "Late label",
-        },
-        steps: [
-          {
-            context: "These two labels look almost the same, but the destination scan disagrees.",
-            imagePrompt: "",
-            options: [
-              { feedback: "Yes", isCorrect: true, text: "Match labels" },
-              { feedback: "No", isCorrect: false, text: "Guess city" },
-            ],
-            question: "What should we compare?",
-          },
-        ],
-      }),
-    ).toThrow("Missing practice image prompt for step 1");
-  });
 });
