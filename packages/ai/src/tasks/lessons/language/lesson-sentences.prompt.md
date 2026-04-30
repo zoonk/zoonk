@@ -54,7 +54,7 @@ Example: A lesson on "Greetings" with vocabulary ["hola", "buenos días"] should
   - Travel and transportation
   - Social interactions and conversations
   - Shopping and services
-  - Hobbies and leisure lessons
+  - Hobbies and leisure activities
   - Food and dining
   - Health and daily routines
 - **Practical relevance**: Sentences learners will actually encounter or need to produce
