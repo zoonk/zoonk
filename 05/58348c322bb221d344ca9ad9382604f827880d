@@ -1,0 +1,33 @@
+packages/player/src/components/in-play-sticky-header.tsx
+  fd2270486674c0ba 17,24
+packages/player/src/components/stage-content.tsx
+  fd2270486674c0ba 73,84
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-player-model.test.ts
+  fd2270486674c0ba 37
+packages/player/src/components/completion-auth-branch.tsx
+  fd2270486674c0ba 34,38,52,89,94,133,136,144,149,182,190,195,207,218
+packages/player/src/components/completion-screen.tsx
+  fd2270486674c0ba 70,74,91,120
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-player-client.tsx
+  fd2270486674c0ba 77
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "0558348c322bb221d344ca9ad9382604f827880d",
+  "prompts": {
+    "fd2270486674c0ba": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ddbf5-d6f6-7b12-8a91-5cf24bf15977",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 122,
+      "total_deletions": 28,
+      "accepted_lines": 121,
+      "overriden_lines": 0
+    }
+  }
+}
