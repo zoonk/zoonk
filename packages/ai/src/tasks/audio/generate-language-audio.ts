@@ -11,7 +11,7 @@ const DEFAULT_VOICE: TTSVoice = "Kore";
 const MAX_ATTEMPTS_PER_PROVIDER = 3;
 const INITIAL_BACKOFF_MS = 1000;
 
-export type AudioFormat = "opus" | "wav";
+type AudioFormat = "opus" | "wav";
 
 export type AudioResult = { audio: Uint8Array; format: AudioFormat };
 

@@ -40,8 +40,8 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/gateway": "3.0.101",
-    "@ai-sdk/openai": "3.0.53",
+    "@ai-sdk/gateway": "3.0.105",
+    "@ai-sdk/openai": "3.0.54",
     "@google/genai": "1.50.1",
     "@zoonk/utils": "workspace:*",
     "ai": "catalog:"

@@ -23,16 +23,16 @@ export type GrammarLessonContent = {
 
 export type VocabularyLessonContent = { kind: "vocabulary"; words: VocabularyWord[] };
 
-export type TranslationLessonContent = { kind: "translation"; wordIds: string[] };
+type TranslationLessonContent = { kind: "translation"; wordIds: string[] };
 
 export type ReadingLessonContent = {
   kind: "reading";
   sentences: LessonSentencesSchema["sentences"];
 };
 
-export type ListeningLessonContent = { kind: "listening"; sentenceIds: string[] };
+type ListeningLessonContent = { kind: "listening"; sentenceIds: string[] };
 
-export type EmptyLessonContent = { kind: "empty" };
+type EmptyLessonContent = { kind: "empty" };
 
 export type GeneratedLessonContent =
   | EmptyLessonContent

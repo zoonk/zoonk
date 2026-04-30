@@ -12,7 +12,7 @@ const schema = z.object({
   lessons: z.array(z.object({ description: z.string(), title: z.string() })),
 });
 
-export type ChapterLessonsSchema = z.infer<typeof schema>;
+type ChapterLessonsSchema = z.infer<typeof schema>;
 export type ChapterLesson = ChapterLessonsSchema["lessons"][number];
 
 function formatNeighboringChapters(chapters: { title: string; description: string }[]): string {

@@ -42,7 +42,7 @@ export type SerializedWord = {
   audioUrl: string | null;
 };
 
-export type SerializedSentence = {
+type SerializedSentence = {
   id: string;
   sentence: string;
   distractors: string[];

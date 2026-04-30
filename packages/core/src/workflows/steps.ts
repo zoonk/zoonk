@@ -1,4 +1,4 @@
-export type StepStatus = "started" | "completed" | "error";
+type StepStatus = "started" | "completed" | "error";
 
 export type WorkflowErrorReason =
   | "aiEmptyResult"
@@ -35,7 +35,7 @@ export type StepStreamMessage<TStep extends string = string> = {
  *    in the matching generation phase config — add it there too
  */
 
-export const CHAPTER_STEPS = [
+const CHAPTER_STEPS = [
   "getChapter",
   "setChapterAsRunning",
   "generateLessons",
@@ -50,9 +50,9 @@ export const CHAPTER_COMPLETION_STEP: ChapterStepName = "setChapterAsCompleted";
 
 export const WORKFLOW_ERROR_STEP = "workflowError" as const;
 
-export type WorkflowErrorStepName = typeof WORKFLOW_ERROR_STEP;
+type WorkflowErrorStepName = typeof WORKFLOW_ERROR_STEP;
 
-export const LESSON_STEPS = [
+const LESSON_STEPS = [
   "getLesson",
   "setLessonAsRunning",
   "generateExplanationContent",
@@ -93,7 +93,7 @@ export type LessonStepName = (typeof LESSON_STEPS)[number];
 
 export const LESSON_COMPLETION_STEP: LessonStepName = "setLessonAsCompleted";
 
-export const COURSE_STEPS = [
+const COURSE_STEPS = [
   "getCourseSuggestion",
   "checkExistingCourse",
   "initializeCourse",

@@ -1,11 +1,9 @@
 import { describe, expect, test, vi } from "vitest";
 import { buildSentenceWordOptions, buildWordBankOptions } from "./build-word-bank-options";
-import {
-  type SerializedSentence,
-  type SerializedStep,
-  type SerializedWord,
-} from "./prepare-lesson-data";
+import { type SerializedStep, type SerializedWord } from "./prepare-lesson-data";
 import { type DistractorWord } from "./translation-options";
+
+type SerializedSentence = NonNullable<SerializedStep["sentence"]>;
 
 vi.mock("@zoonk/utils/shuffle", () => ({ shuffle: <T>(items: T[]) => items }));
 

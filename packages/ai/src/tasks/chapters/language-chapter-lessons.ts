@@ -19,7 +19,7 @@ const schema = z.object({
   ),
 });
 
-export type LanguageChapterLessonsSchema = z.infer<typeof schema>;
+type LanguageChapterLessonsSchema = z.infer<typeof schema>;
 export type LanguageChapterLesson = LanguageChapterLessonsSchema["lessons"][number];
 
 export async function generateLanguageChapterLessons({

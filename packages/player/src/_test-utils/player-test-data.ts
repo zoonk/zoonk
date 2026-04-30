@@ -1,9 +1,10 @@
 import {
   type SerializedLesson,
-  type SerializedSentence,
   type SerializedStep,
   type SerializedWord,
 } from "@zoonk/core/player/contracts/prepare-lesson-data";
+
+type SerializedSentence = NonNullable<SerializedStep["sentence"]>;
 
 /**
  * Shared browser tests need a tiny canonical word shape so each scenario can

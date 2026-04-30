@@ -26,7 +26,7 @@
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
     "botid": "catalog:",
-    "eventsource-parser": "3.0.6",
+    "eventsource-parser": "3.0.8",
     "lucide-react": "catalog:",
     "next": "catalog:",
     "next-intl": "catalog:",

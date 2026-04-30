@@ -1,6 +1,6 @@
 import { type LessonKind } from "@zoonk/db";
 
-export type EstimateKind =
+type EstimateKind =
   | "coreLesson"
   | "languageLesson"
   | "tutorialLesson"
