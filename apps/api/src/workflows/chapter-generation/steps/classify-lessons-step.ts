@@ -2,7 +2,6 @@ import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type ChapterLesson } from "@zoonk/ai/tasks/chapters/lessons";
 import { type LessonKindSchema, generateLessonKind } from "@zoonk/ai/tasks/lessons/kind";
 import { type ChapterStepName } from "@zoonk/core/workflows/steps";
-import { safeAsync } from "@zoonk/utils/error";
 import { type ChapterLessonPlan } from "./generate-lessons-step";
 import { type ChapterContext } from "./get-chapter-step";
 
@@ -34,13 +33,9 @@ export async function classifyLessonsStep({
     return plan.lessons;
   }
 
-  const { data: lessons, error } = await safeAsync(() =>
-    Promise.all(plan.lessons.map((lesson) => classifyChapterLesson({ context, lesson }))),
+  const lessons = await Promise.all(
+    plan.lessons.map((lesson) => classifyChapterLesson({ context, lesson })),
   );
-
-  if (error) {
-    throw error;
-  }
 
   await stream.status({ status: "completed", step: "generateLessonKind" });
 

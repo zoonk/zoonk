@@ -11,7 +11,7 @@ const taskName = "lesson-distractors";
 const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
 const schema = z.object({
-  distractors: z.array(z.string()),
+  distractors: z.array(z.string().min(1)).min(1),
 });
 
 export type LessonDistractorsSchema = z.infer<typeof schema>;

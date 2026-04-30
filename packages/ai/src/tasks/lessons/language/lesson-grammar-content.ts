@@ -10,20 +10,20 @@ import systemPrompt from "./lesson-grammar-content.prompt.md";
 const taskName = "lesson-grammar-content";
 const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
+const exampleSchema = z.object({
+  highlight: z.string(),
+  sentence: z.string(),
+});
+
+const exerciseSchema = z.object({
+  answer: z.string(),
+  distractors: z.array(z.string()),
+  template: z.string(),
+});
+
 const schema = z.object({
-  examples: z.array(
-    z.object({
-      highlight: z.string(),
-      sentence: z.string(),
-    }),
-  ),
-  exercises: z.array(
-    z.object({
-      answer: z.string(),
-      distractors: z.array(z.string()),
-      template: z.string(),
-    }),
-  ),
+  examples: z.array(exampleSchema).min(1),
+  exercises: z.array(exerciseSchema).min(1),
 });
 
 export type LessonGrammarContentSchema = z.infer<typeof schema>;

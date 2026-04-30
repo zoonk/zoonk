@@ -8,11 +8,20 @@ import systemPrompt from "./lesson-romanization.prompt.md";
 const taskName = "lesson-romanization";
 const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
-const schema = z.object({
-  romanizations: z.array(z.string()),
-});
+const romanizationSchema = z.string().min(1);
 
-export type LessonRomanizationSchema = z.infer<typeof schema>;
+/**
+ * Builds a schema that requires one romanization per requested text. The
+ * expected count is only known at call time, so this keeps the reusable type
+ * and the runtime validation tied to the same schema shape.
+ */
+function buildSchema(textCount: number) {
+  return z.object({
+    romanizations: z.array(romanizationSchema).length(textCount),
+  });
+}
+
+export type LessonRomanizationSchema = z.infer<ReturnType<typeof buildSchema>>;
 
 export type LessonRomanizationParams = {
   model?: string;
@@ -51,7 +60,7 @@ export async function generateLessonRomanization({
 
   const { output, usage } = await generateText({
     model,
-    output: Output.object({ schema }),
+    output: Output.object({ schema: buildSchema(texts.length) }),
     prompt: userPrompt,
     providerOptions,
     system: systemPrompt,

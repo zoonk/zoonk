@@ -1,6 +1,5 @@
 import { generateLessonPronunciation } from "@zoonk/ai/tasks/lessons/language/pronunciation";
 import { prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
 
 type PronunciationEntry = {
   pronunciation: string;
@@ -82,17 +81,11 @@ async function generateMissingPronunciations(params: {
 }): Promise<PronunciationEntry[]> {
   return Promise.all(
     params.words.map(async (word) => {
-      const { data: result, error } = await safeAsync(() =>
-        generateLessonPronunciation({
-          targetLanguage: params.targetLanguage,
-          userLanguage: params.userLanguage,
-          word,
-        }),
-      );
-
-      if (error || !result?.data) {
-        throw error ?? new Error("pronunciationGenerationFailed");
-      }
+      const result = await generateLessonPronunciation({
+        targetLanguage: params.targetLanguage,
+        userLanguage: params.userLanguage,
+        word,
+      });
 
       return {
         pronunciation: result.data.pronunciation,

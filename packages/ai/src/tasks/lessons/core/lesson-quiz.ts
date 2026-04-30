@@ -70,7 +70,7 @@ const quizQuestionSchema = z.union([
 ]);
 
 const schema = z.object({
-  questions: z.array(quizQuestionSchema),
+  questions: z.array(quizQuestionSchema).min(1),
 });
 
 export type QuizQuestion = z.infer<typeof quizQuestionSchema>;

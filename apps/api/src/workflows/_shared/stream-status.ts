@@ -2,24 +2,6 @@ import { type StepStreamMessage, type WorkflowErrorReason } from "@zoonk/core/wo
 import { logError } from "@zoonk/utils/logger";
 import { getWritable } from "workflow";
 
-export function getAIResultErrorReason({
-  error,
-  result,
-}: {
-  error?: Error | null;
-  result?: unknown;
-} = {}): WorkflowErrorReason {
-  if (error) {
-    return "aiGenerationFailed";
-  }
-
-  if (!result) {
-    return "aiEmptyResult";
-  }
-
-  return "contentValidationFailed";
-}
-
 type StepStream<T extends string> = {
   status: (params: StepStreamMessage<T>) => Promise<void>;
   error: (params: { reason: WorkflowErrorReason; step: T }) => Promise<void>;

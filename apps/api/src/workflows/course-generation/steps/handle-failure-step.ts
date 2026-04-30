@@ -2,7 +2,6 @@ import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type WorkflowErrorLog, serializeWorkflowError } from "@/workflows/_shared/workflow-error";
 import { type CourseWorkflowStepName, WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { getSettledFailureError, settledFailures } from "@zoonk/utils/settled";
 
@@ -80,17 +79,10 @@ export async function handleChapterFailureStep(input: {
     error: input.error,
   });
 
-  const { error } = await safeAsync(() =>
-    prisma.chapter.update({
-      data: { generationRunId: null, generationStatus: "failed" },
-      where: { id: input.chapterId },
-    }),
-  );
-
-  if (error) {
-    logError("[Chapter Workflow Failure Status Update Failed]", error);
-    throw error;
-  }
+  await prisma.chapter.update({
+    data: { generationRunId: null, generationStatus: "failed" },
+    where: { id: input.chapterId },
+  });
 
   await using stream = createStepStream<CourseWorkflowStepName>();
   await stream.error({ reason: "aiGenerationFailed", step: WORKFLOW_ERROR_STEP });

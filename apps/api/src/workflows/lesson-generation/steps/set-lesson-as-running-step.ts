@@ -1,7 +1,6 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
 
 type SetLessonAsRunningInput = {
   lessonId: string;
@@ -35,11 +34,7 @@ export async function setLessonAsRunningStep(input: SetLessonAsRunningInput): Pr
 
   await stream.status({ status: "started", step: "setLessonAsRunning" });
 
-  const { error } = await safeAsync(() => prisma.$transaction(buildRunningTransaction(input)));
-
-  if (error) {
-    throw error;
-  }
+  await prisma.$transaction(buildRunningTransaction(input));
 
   await stream.status({ status: "completed", step: "setLessonAsRunning" });
 }

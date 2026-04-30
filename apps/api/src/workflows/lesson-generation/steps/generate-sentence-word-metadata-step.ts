@@ -2,7 +2,6 @@ import { createStepStream } from "@/workflows/_shared/stream-status";
 import { generateTranslation } from "@zoonk/ai/tasks/lessons/language/translation";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
 import { needsRomanization } from "@zoonk/utils/languages";
 import { extractUniqueSentenceWords } from "@zoonk/utils/string";
 import { generateLessonRomanizations } from "./_utils/generate-lesson-romanizations";
@@ -41,13 +40,7 @@ async function translateWord({
   userLanguage: string;
   word: string;
 }): Promise<{ translation: string; word: string }> {
-  const { data: result, error } = await safeAsync(() =>
-    generateTranslation({ targetLanguage, userLanguage, word }),
-  );
-
-  if (error || !result?.data) {
-    throw error ?? new Error("translationGenerationFailed");
-  }
+  const result = await generateTranslation({ targetLanguage, userLanguage, word });
 
   return { translation: result.data.translation, word };
 }

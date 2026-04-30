@@ -2,7 +2,6 @@ import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type WorkflowErrorLog } from "@/workflows/_shared/workflow-error";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 
 /**
@@ -20,17 +19,10 @@ export async function handleLessonFailureStep(input: {
 
   logError("[Lesson Workflow Failure]", { error: input.error, lessonId: input.lessonId });
 
-  const { error } = await safeAsync(() =>
-    prisma.lesson.update({
-      data: { generationStatus: "failed" },
-      where: { id: input.lessonId },
-    }),
-  );
-
-  if (error) {
-    logError("[Lesson Workflow Failure Status Update Failed]", error);
-    throw error;
-  }
+  await prisma.lesson.update({
+    data: { generationStatus: "failed" },
+    where: { id: input.lessonId },
+  });
 
   await stream.error({ reason: "aiGenerationFailed", step: WORKFLOW_ERROR_STEP });
 }

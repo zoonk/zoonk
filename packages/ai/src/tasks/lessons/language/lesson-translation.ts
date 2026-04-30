@@ -10,7 +10,7 @@ const taskName = "lesson-translation";
 const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
 const schema = z.object({
-  translation: z.string(),
+  translation: z.string().min(1),
 });
 
 export type TranslationSchema = z.infer<typeof schema>;

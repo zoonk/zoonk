@@ -67,16 +67,4 @@ describe(generateDirectDistractors, () => {
       }),
     ).rejects.toThrow("fail");
   });
-
-  test("throws when AI returns null data", async () => {
-    generateLessonDistractorsMock.mockResolvedValue({ data: null });
-
-    await expect(
-      generateDirectDistractors({
-        entries: [{ input: "hola", key: "word-1" }],
-        language: "es",
-        shape: "single-word",
-      }),
-    ).rejects.toThrow("distractorGenerationFailed");
-  });
 });

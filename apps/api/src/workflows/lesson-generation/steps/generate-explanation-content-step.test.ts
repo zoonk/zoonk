@@ -65,12 +65,10 @@ describe(generateExplanationContentStep, () => {
     );
   });
 
-  test("throws when explanation generation returns no explanation steps", async () => {
+  test("throws when explanation generation fails", async () => {
     const context = await createLessonContext({ organizationId });
-    vi.mocked(generateLessonExplanation).mockResolvedValueOnce({
-      data: { anchor: { text: "Anchor", title: "Anchor" }, explanation: [] },
-    } as unknown as Awaited<ReturnType<typeof generateLessonExplanation>>);
+    vi.mocked(generateLessonExplanation).mockRejectedValueOnce(new Error("AI failure"));
 
-    await expect(generateExplanationContentStep(context)).rejects.toThrow();
+    await expect(generateExplanationContentStep(context)).rejects.toThrow("AI failure");
   });
 });

@@ -48,28 +48,4 @@ describe(generateLessonRomanizations, () => {
       }),
     ).rejects.toThrow("AI error");
   });
-
-  test("throws when AI returns no data", async () => {
-    generateLessonRomanizationMock.mockResolvedValue({ data: null });
-
-    await expect(
-      generateLessonRomanizations({
-        targetLanguage: "ja",
-        texts: ["これは猫です"],
-      }),
-    ).rejects.toThrow("romanizationFailed");
-  });
-
-  test("filters out texts where AI returned undefined", async () => {
-    generateLessonRomanizationMock.mockResolvedValue({
-      data: { romanizations: ["kore wa neko desu", undefined] },
-    });
-
-    const result = await generateLessonRomanizations({
-      targetLanguage: "ja",
-      texts: ["これは猫です", "あれは犬です"],
-    });
-
-    expect(result).toEqual({ これは猫です: "kore wa neko desu" });
-  });
 });

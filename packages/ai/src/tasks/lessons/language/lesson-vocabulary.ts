@@ -10,13 +10,13 @@ import systemPrompt from "./lesson-vocabulary.prompt.md";
 const taskName = "lesson-vocabulary";
 const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
+const wordSchema = z.object({
+  translation: z.string(),
+  word: z.string(),
+});
+
 const schema = z.object({
-  words: z.array(
-    z.object({
-      translation: z.string(),
-      word: z.string(),
-    }),
-  ),
+  words: z.array(wordSchema).min(1),
 });
 
 export type LessonVocabularySchema = z.infer<typeof schema>;

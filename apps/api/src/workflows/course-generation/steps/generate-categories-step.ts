@@ -1,7 +1,6 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { generateCourseCategories } from "@zoonk/ai/tasks/courses/categories";
 import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
-import { safeAsync } from "@zoonk/utils/error";
 import { type CourseContext } from "./initialize-course-step";
 
 export async function generateCategoriesStep(course: CourseContext): Promise<string[]> {
@@ -11,15 +10,9 @@ export async function generateCategoriesStep(course: CourseContext): Promise<str
 
   await stream.status({ status: "started", step: "generateCategories" });
 
-  const { data: result, error } = await safeAsync(() =>
-    generateCourseCategories({
-      courseTitle: course.courseTitle,
-    }),
-  );
-
-  if (error) {
-    throw error;
-  }
+  const result = await generateCourseCategories({
+    courseTitle: course.courseTitle,
+  });
 
   await stream.status({ status: "completed", step: "generateCategories" });
 

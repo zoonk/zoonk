@@ -1,7 +1,6 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type ChapterStepName } from "@zoonk/core/workflows/steps";
 import { type Lesson, type LessonCreateManyInput, prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
 import { deduplicateSlugs, normalizeString, toSlug } from "@zoonk/utils/string";
 import { expandChapterLessons } from "./_utils/lesson-plan-expansion";
 import { type GeneratedChapterLesson } from "./classify-lessons-step";
@@ -62,15 +61,9 @@ export async function addLessonsStep(input: {
     }),
   );
 
-  const { data: createdLessons, error } = await safeAsync(() =>
-    prisma.lesson.createManyAndReturn({
-      data: lessonsData,
-    }),
-  );
-
-  if (error) {
-    throw error;
-  }
+  const createdLessons = await prisma.lesson.createManyAndReturn({
+    data: lessonsData,
+  });
 
   await stream.status({ status: "completed", step: "addLessons" });
 

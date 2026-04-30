@@ -10,14 +10,14 @@ import systemPrompt from "./lesson-sentences.prompt.md";
 const taskName = "lesson-sentences";
 const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
+const sentenceSchema = z.object({
+  explanation: z.string(),
+  sentence: z.string(),
+  translation: z.string(),
+});
+
 const schema = z.object({
-  sentences: z.array(
-    z.object({
-      explanation: z.string(),
-      sentence: z.string(),
-      translation: z.string(),
-    }),
-  ),
+  sentences: z.array(sentenceSchema).min(1),
 });
 
 export type LessonSentencesSchema = z.infer<typeof schema>;

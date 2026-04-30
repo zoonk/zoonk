@@ -1,6 +1,29 @@
 import { generateLessonRomanization } from "@zoonk/ai/tasks/lessons/language/romanization";
-import { safeAsync } from "@zoonk/utils/error";
 import { needsRomanization } from "@zoonk/utils/languages";
+
+/**
+ * Pairs each generated romanization with its source text. The AI task schema
+ * enforces one romanization per input text, but TypeScript still treats indexed
+ * array access as possibly missing, so this keeps the workflow result typed as
+ * a complete text-to-romanization map.
+ */
+function pairTextsWithRomanizations({
+  romanizations,
+  texts,
+}: {
+  romanizations: string[];
+  texts: string[];
+}): [string, string][] {
+  return texts.map((text, index) => {
+    const romanization = romanizations[index];
+
+    if (!romanization) {
+      throw new Error("romanizationFailed");
+    }
+
+    return [text, romanization];
+  });
+}
 
 export async function generateLessonRomanizations(params: {
   targetLanguage: string;
@@ -12,17 +35,9 @@ export async function generateLessonRomanizations(params: {
     return {};
   }
 
-  const { data: result, error } = await safeAsync(() =>
-    generateLessonRomanization({ targetLanguage, texts }),
-  );
-
-  if (error || !result?.data) {
-    throw error ?? new Error("romanizationFailed");
-  }
+  const result = await generateLessonRomanization({ targetLanguage, texts });
 
   return Object.fromEntries(
-    texts
-      .map((text, index) => [text, result.data.romanizations[index]] as const)
-      .filter((entry): entry is [string, string] => Boolean(entry[1])),
+    pairTextsWithRomanizations({ romanizations: result.data.romanizations, texts }),
   );
 }

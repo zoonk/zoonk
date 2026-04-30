@@ -28,7 +28,7 @@ const schema = z.object({
     text: z.string(),
     title: z.string(),
   }),
-  steps: z.array(practiceStepSchema),
+  steps: z.array(practiceStepSchema).min(1),
   title: z.string(),
 });
 

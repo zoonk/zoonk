@@ -25,7 +25,7 @@ const explanationStepSchema = z
 const schema = z
   .object({
     anchor: anchorSchema,
-    explanation: z.array(explanationStepSchema),
+    explanation: z.array(explanationStepSchema).min(1),
   })
   .strict();
 

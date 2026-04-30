@@ -10,7 +10,7 @@ const taskName = "lesson-pronunciation";
 const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
 const schema = z.object({
-  pronunciation: z.string(),
+  pronunciation: z.string().min(1),
 });
 
 export type LessonPronunciationSchema = z.infer<typeof schema>;

@@ -1,4 +1,4 @@
-import { createStepStream, getAIResultErrorReason } from "@/workflows/_shared/stream-status";
+import { createStepStream } from "@/workflows/_shared/stream-status";
 import { generateStepImagePrompts } from "@zoonk/ai/tasks/steps/image-prompts";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { type StaticLessonStep } from "./_utils/generated-lesson-content";
@@ -33,10 +33,6 @@ export async function generateImagePromptsStep({
     lessonTitle: context.title ?? "",
     steps,
   });
-
-  if (!result?.data) {
-    throw new Error(getAIResultErrorReason({ result }));
-  }
 
   await stream.status({ status: "completed", step: "generateImagePrompts" });
 
