@@ -3,7 +3,7 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { saveListeningLessonStep } from "./save-listening-lesson-step";
 
@@ -15,7 +15,7 @@ describe(saveListeningLessonStep, () => {
     organizationId = organization.id;
   });
 
-  test("copies reading sentence steps into listening lessons", async () => {
+  it("copies reading sentence steps into listening lessons", async () => {
     const context = await createLessonContext({
       kind: "listening",
       organizationId,
@@ -59,13 +59,13 @@ describe(saveListeningLessonStep, () => {
       where: { kind: "listening", lessonId: context.id },
     });
 
-    expect(steps.map((step) => [step.position, step.sentenceId])).toEqual([
+    expect(steps.map((step) => [step.position, step.sentenceId])).toStrictEqual([
       [0, firstSentence.id],
       [1, secondSentence.id],
     ]);
   });
 
-  test("throws when a listening lesson has no completed reading source", async () => {
+  it("throws when a listening lesson has no completed reading source", async () => {
     const context = await createLessonContext({
       kind: "listening",
       organizationId,

@@ -1,5 +1,5 @@
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { generateCategoriesStep } from "./generate-categories-step";
 import { type CourseContext } from "./initialize-course-step";
 
@@ -25,14 +25,14 @@ describe(generateCategoriesStep, () => {
     vi.clearAllMocks();
   });
 
-  test("returns the generated categories", async () => {
+  it("returns the generated categories", async () => {
     generateCourseCategoriesMock.mockResolvedValue({
       data: { categories: ["programming", "web"] },
     });
 
     const result = await generateCategoriesStep(course);
 
-    expect(result).toEqual(["programming", "web"]);
+    expect(result).toStrictEqual(["programming", "web"]);
 
     expect(generateCourseCategoriesMock).toHaveBeenCalledWith({ courseTitle: "Test Course" });
 
@@ -47,7 +47,7 @@ describe(generateCategoriesStep, () => {
     );
   });
 
-  test("throws without streaming error when AI generation fails", async () => {
+  it("throws without streaming error when AI generation fails", async () => {
     generateCourseCategoriesMock.mockRejectedValue(new Error("AI failure"));
 
     await expect(generateCategoriesStep(course)).rejects.toThrow("AI failure");

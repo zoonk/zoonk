@@ -1,11 +1,9 @@
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { buildSentenceWordOptions, buildWordBankOptions } from "./build-word-bank-options";
-import {
-  type SerializedSentence,
-  type SerializedStep,
-  type SerializedWord,
-} from "./prepare-lesson-data";
+import { type SerializedStep, type SerializedWord } from "./prepare-lesson-data";
 import { type DistractorWord } from "./translation-options";
+
+type SerializedSentence = NonNullable<SerializedStep["sentence"]>;
 
 vi.mock("@zoonk/utils/shuffle", () => ({ shuffle: <T>(items: T[]) => items }));
 
@@ -69,7 +67,7 @@ function makeDistractorWord(overrides: Partial<DistractorWord> = {}): Distractor
 }
 
 describe(buildWordBankOptions, () => {
-  test("reading uses stored distractors only and removes phrases plus canonical collisions", () => {
+  it("reading uses stored distractors only and removes phrases plus canonical collisions", () => {
     const options = buildWordBankOptions(
       makeStep(
         "reading",
@@ -83,7 +81,7 @@ describe(buildWordBankOptions, () => {
       new Map(),
     );
 
-    expect(options.map((option) => option.word)).toEqual([
+    expect(options.map((option) => option.word)).toStrictEqual([
       "Guten",
       "Morgen,",
       "Anna!",
@@ -92,7 +90,7 @@ describe(buildWordBankOptions, () => {
     ]);
   });
 
-  test("reading hydrates target-language distractors with metadata", () => {
+  it("reading hydrates target-language distractors with metadata", () => {
     const options = buildWordBankOptions(
       makeStep("reading", makeSentence({ distractors: ["犬"], sentence: "猫です" })),
       [],
@@ -107,7 +105,7 @@ describe(buildWordBankOptions, () => {
       new Map(),
     );
 
-    expect(options.find((option) => option.word === "犬")).toEqual({
+    expect(options.find((option) => option.word === "犬")).toStrictEqual({
       audioUrl: "/audio/dog.mp3",
       romanization: "inu",
       translation: null,
@@ -115,7 +113,7 @@ describe(buildWordBankOptions, () => {
     });
   });
 
-  test("listening uses translation distractors and keeps metadata empty", () => {
+  it("listening uses translation distractors and keeps metadata empty", () => {
     const options = buildWordBankOptions(
       makeStep(
         "listening",
@@ -137,14 +135,14 @@ describe(buildWordBankOptions, () => {
       new Map(),
     );
 
-    expect(options.map((option) => option.word)).toEqual([
+    expect(options.map((option) => option.word)).toStrictEqual([
       "Boa",
       "tarde,",
       "Lara.",
       "Bom",
       "noite",
     ]);
-    expect(options.find((option) => option.word === "noite")).toEqual({
+    expect(options.find((option) => option.word === "noite")).toStrictEqual({
       audioUrl: null,
       romanization: null,
       translation: null,
@@ -152,7 +150,7 @@ describe(buildWordBankOptions, () => {
     });
   });
 
-  test("shows fewer distractors when sanitation removes entries", () => {
+  it("shows fewer distractors when sanitation removes entries", () => {
     const options = buildWordBankOptions(
       makeStep("reading", makeSentence({ distractors: ["Hola", "Salut"], sentence: "Hola mundo" })),
       [],
@@ -160,12 +158,12 @@ describe(buildWordBankOptions, () => {
       new Map(),
     );
 
-    expect(options.map((option) => option.word)).toEqual(["Hola", "mundo", "Salut"]);
+    expect(options.map((option) => option.word)).toStrictEqual(["Hola", "mundo", "Salut"]);
   });
 });
 
 describe(buildSentenceWordOptions, () => {
-  test("hydrates multi-word lesson entries token by token", () => {
+  it("hydrates multi-word lesson entries token by token", () => {
     const options = buildSentenceWordOptions(
       "Guten Morgen",
       [makeLessonWord({ romanization: "guten morgen", word: "Guten Morgen" })],
@@ -173,13 +171,13 @@ describe(buildSentenceWordOptions, () => {
       new Map(),
     );
 
-    expect(options).toEqual([
+    expect(options).toStrictEqual([
       { audioUrl: null, romanization: "guten", translation: null, word: "Guten" },
       { audioUrl: null, romanization: "morgen", translation: null, word: "Morgen" },
     ]);
   });
 
-  test("keeps lesson-word translations when sentence metadata adds audio and romanization", () => {
+  it("keeps lesson-word translations when sentence metadata adds audio and romanization", () => {
     const options = buildSentenceWordOptions(
       "Hola",
       [
@@ -196,7 +194,7 @@ describe(buildSentenceWordOptions, () => {
       ]),
     );
 
-    expect(options).toEqual([
+    expect(options).toStrictEqual([
       {
         audioUrl: "/audio/hola-sentence.mp3",
         romanization: "o-la",

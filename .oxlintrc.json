@@ -15,6 +15,10 @@
   "rules": {
     "eslint/capitalized-comments": "off",
     "eslint/func-style": ["error", "declaration", { "allowArrowFunctions": true }],
+    "eslint/no-underscore-dangle": [
+      "error",
+      { "allow": ["_avg", "_count", "_max", "_min", "_sum"] }
+    ],
     "eslint/id-length": [
       "error",
       { "min": 2, "exceptions": ["i", "j", "x", "y", "z", "_", "a", "b", "t", "T"] }
@@ -55,7 +59,16 @@
       { "allow": ["**/*.css", "server-only", "dotenv/config"] }
     ],
     "import/prefer-default-export": "off",
+    "jest/max-expects": "off",
+    "jest/no-conditional-in-test": "off",
+    "jest/no-hooks": "off",
     "jest/no-untyped-mock-factory": "off",
+    "jest/prefer-ending-with-an-expect": "off",
+    "jest/prefer-expect-assertions": "off",
+    "jest/prefer-lowercase-title": "off",
+    "jest/prefer-mock-return-shorthand": "off",
+    "jest/require-to-throw-message": "off",
+    "jest/valid-title": "off",
     "jsx-max-depth": ["error", { "max": 5 }],
     "jsx-a11y/no-autofocus": "off",
     "oxc/no-async-await": "off",
@@ -63,6 +76,7 @@
     "oxc/no-map-spread": "off",
     "oxc/no-optional-chaining": "off",
     "oxc/no-rest-spread-properties": "off",
+    "react/forbid-component-props": "off",
     "react/jsx-filename-extension": ["error", { "extensions": ["tsx"] }],
     "react/jsx-handler-names": "off",
     "react/jsx-props-no-spreading": "off",
@@ -74,6 +88,7 @@
     "react/react-in-jsx-scope": "off",
     "typescript/consistent-type-definitions": ["error", "type"],
     "typescript/explicit-function-return-type": "off",
+    "typescript/explicit-member-accessibility": "off",
     "typescript/explicit-module-boundary-types": "off",
     "typescript/no-confusing-void-expression": ["error", { "ignoreArrowShorthand": true }],
     "typescript/no-import-type-side-effects": "off",
@@ -95,9 +110,12 @@
     "unicorn/prefer-native-coercion-functions": "off",
     "unicorn/prefer-ternary": "off",
     "unicorn/switch-case-braces": ["error", "avoid"],
+    "vitest/max-expects": "off",
+    "vitest/no-conditional-in-test": "off",
     "vitest/no-hooks": "off",
     "vitest/no-importing-vitest-globals": "off",
     "vitest/prefer-called-times": "off",
+    "vitest/prefer-expect-assertions": "off",
     "vitest/prefer-import-in-mock": "off",
     "vitest/prefer-strict-boolean-matchers": "off",
     "vitest/prefer-to-be-falsy": "off",
@@ -107,6 +125,7 @@
     "vitest/prefer-importing-vitest-globals": "off",
     "vitest/require-test-timeout": "off",
     "vitest/require-top-level-describe": "off",
+    "vitest/valid-title": "off",
 
     // custom rules
     "zoonk/no-dynamic-translation-key": "error",
@@ -224,6 +243,10 @@
     {
       "files": ["apps/main/**/*.tsx", "apps/api/**/*.tsx"],
       "rules": { "zoonk/no-hardcoded-aria-label": "error" }
+    },
+    {
+      "files": ["**/setup-tests.ts", "**/browser-setup.ts"],
+      "rules": { "jest/require-top-level-describe": "off" }
     }
   ],
   "ignorePatterns": [

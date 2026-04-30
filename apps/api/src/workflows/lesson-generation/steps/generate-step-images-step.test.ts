@@ -1,6 +1,6 @@
 import { generateContentStepImage } from "@zoonk/core/steps/content-image";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateStepImagesStep } from "./generate-step-images-step";
 
@@ -27,7 +27,7 @@ describe(generateStepImagesStep, () => {
     vi.clearAllMocks();
   });
 
-  test("generates content images with lesson language and organization", async () => {
+  it("generates content images with lesson language and organization", async () => {
     const context = await createLessonContext({ organizationId });
 
     const result = await generateStepImagesStep({
@@ -36,7 +36,7 @@ describe(generateStepImagesStep, () => {
       prompts: ["first prompt", "second prompt"],
     });
 
-    expect(result.images).toEqual([
+    expect(result.images).toStrictEqual([
       { prompt: "first prompt", url: "https://example.com/first%20prompt.webp" },
       { prompt: "second prompt", url: "https://example.com/second%20prompt.webp" },
     ]);

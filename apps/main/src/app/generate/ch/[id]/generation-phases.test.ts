@@ -1,11 +1,11 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { calculateWeightedProgress, getPhaseOrder, getPhaseStatus } from "./generation-phases";
 
 describe("chapter generation phases", () => {
-  test("returns all 4 chapter phases in order", () => {
+  it("returns all 4 chapter phases in order", () => {
     const phases = getPhaseOrder();
 
-    expect(phases).toEqual([
+    expect(phases).toStrictEqual([
       "gettingReady",
       "preparingLessons",
       "classifyingLessons",
@@ -13,12 +13,12 @@ describe("chapter generation phases", () => {
     ]);
   });
 
-  test("marks gettingReady as active when its step is the current step", () => {
+  it("marks gettingReady as active when its step is the current step", () => {
     const status = getPhaseStatus("gettingReady", [], "getChapter");
     expect(status).toBe("active");
   });
 
-  test("marks preparingLessons as active when generateLessons is in progress", () => {
+  it("marks preparingLessons as active when generateLessons is in progress", () => {
     const status = getPhaseStatus(
       "preparingLessons",
       ["getChapter", "setChapterAsRunning"],
@@ -28,7 +28,7 @@ describe("chapter generation phases", () => {
     expect(status).toBe("active");
   });
 
-  test("marks classifyingLessons as active when lesson kind generation is in progress", () => {
+  it("marks classifyingLessons as active when lesson kind generation is in progress", () => {
     const status = getPhaseStatus(
       "classifyingLessons",
       ["getChapter", "setChapterAsRunning", "generateLessons"],
@@ -38,7 +38,7 @@ describe("chapter generation phases", () => {
     expect(status).toBe("active");
   });
 
-  test("marks savingLessons as completed when all its steps are done", () => {
+  it("marks savingLessons as completed when all its steps are done", () => {
     const status = getPhaseStatus(
       "savingLessons",
       [
@@ -55,12 +55,12 @@ describe("chapter generation phases", () => {
     expect(status).toBe("completed");
   });
 
-  test("returns 0 progress at start", () => {
+  it("returns 0 progress at start", () => {
     const progress = calculateWeightedProgress([], null);
     expect(progress).toBe(0);
   });
 
-  test("returns 100 progress when all steps are complete", () => {
+  it("returns 100 progress when all steps are complete", () => {
     const allSteps = [
       "getChapter",
       "setChapterAsRunning",

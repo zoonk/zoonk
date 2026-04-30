@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { type ExistingCourse } from "../steps/check-existing-course-step";
 import { getOrCreateCourse } from "./get-or-create-course";
 
@@ -19,7 +19,7 @@ describe(getOrCreateCourse, () => {
     vi.clearAllMocks();
   });
 
-  test("creates a new course when no existing course is found", async () => {
+  it("creates a new course when no existing course is found", async () => {
     const suggestion = await courseSuggestionFixture({ title: `New Course ${randomUUID()}` });
 
     const workflowRunId = `run-${randomUUID()}`;
@@ -27,9 +27,9 @@ describe(getOrCreateCourse, () => {
     const result = await getOrCreateCourse(null, suggestion, suggestion.id, workflowRunId);
 
     expect(result.course.courseTitle).toBe(suggestion.title);
-    expect(result.course.courseId).toEqual(expect.any(String));
+    expect(result.course.courseId).toStrictEqual(expect.any(String));
 
-    expect(result.existing).toEqual({
+    expect(result.existing).toStrictEqual({
       description: null,
       hasAlternativeTitles: false,
       hasCategories: false,
@@ -44,7 +44,7 @@ describe(getOrCreateCourse, () => {
     expect(createdCourse.generationStatus).toBe("running");
   });
 
-  test("reuses existing course and marks it as running", async () => {
+  it("reuses existing course and marks it as running", async () => {
     const course = await courseFixture({
       description: "Existing description",
       imageUrl: "https://example.com/img.webp",
@@ -70,7 +70,7 @@ describe(getOrCreateCourse, () => {
 
     expect(result.course.courseId).toBe(course.id);
 
-    expect(result.existing).toEqual({
+    expect(result.existing).toStrictEqual({
       description: "Existing description",
       hasAlternativeTitles: true,
       hasCategories: true,

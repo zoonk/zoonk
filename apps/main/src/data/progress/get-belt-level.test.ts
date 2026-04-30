@@ -1,18 +1,18 @@
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { getBeltLevel } from "./get-belt-level";
 
 describe("unauthenticated users", () => {
-  test("returns null", async () => {
+  it("returns null", async () => {
     const result = await getBeltLevel(new Headers());
     expect(result).toBeNull();
   });
 });
 
 describe("authenticated users", () => {
-  test("returns null when user has no progress record", async () => {
+  it("returns null when user has no progress record", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -20,7 +20,7 @@ describe("authenticated users", () => {
     expect(result).toBeNull();
   });
 
-  test("returns belt level when user has progress record", async () => {
+  it("returns belt level when user has progress record", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -29,7 +29,7 @@ describe("authenticated users", () => {
     });
 
     const result = await getBeltLevel(headers);
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       bpPerLevel: 1000,
       bpToNextLevel: 500,
       color: "orange",
@@ -39,7 +39,7 @@ describe("authenticated users", () => {
     });
   });
 
-  test("returns white belt level 1 for zero brain power", async () => {
+  it("returns white belt level 1 for zero brain power", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -47,7 +47,7 @@ describe("authenticated users", () => {
 
     const result = await getBeltLevel(headers);
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       bpPerLevel: 250,
       bpToNextLevel: 250,
       color: "white",

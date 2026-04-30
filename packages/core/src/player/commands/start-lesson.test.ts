@@ -4,7 +4,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { startLesson } from "./start-lesson";
 
 describe(startLesson, () => {
@@ -17,7 +17,7 @@ describe(startLesson, () => {
     lesson = await lessonFixture({ chapterId: chapter.id, kind: "quiz", organizationId: org.id });
   });
 
-  test("creates LessonProgress with completedAt null and durationSeconds null", async () => {
+  it("creates LessonProgress with completedAt null and durationSeconds null", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -33,7 +33,7 @@ describe(startLesson, () => {
     expect(progress?.startedAt).toBeInstanceOf(Date);
   });
 
-  test("idempotent: second call preserves original startedAt", async () => {
+  it("idempotent: second call preserves original startedAt", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -49,10 +49,10 @@ describe(startLesson, () => {
       where: { userLesson: { lessonId: lesson.id, userId } },
     });
 
-    expect(second?.startedAt).toEqual(first?.startedAt);
+    expect(second?.startedAt).toStrictEqual(first?.startedAt);
   });
 
-  test("idempotent: concurrent calls create one progress row", async () => {
+  it("idempotent: concurrent calls create one progress row", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -69,7 +69,7 @@ describe(startLesson, () => {
     expect(progress[0]?.completedAt).toBeNull();
   });
 
-  test("does not overwrite a completed record", async () => {
+  it("does not overwrite a completed record", async () => {
     const user = await userFixture();
     const userId = user.id;
     const completedAt = new Date();
@@ -84,7 +84,7 @@ describe(startLesson, () => {
       where: { userLesson: { lessonId: lesson.id, userId } },
     });
 
-    expect(progress?.completedAt).toEqual(completedAt);
+    expect(progress?.completedAt).toStrictEqual(completedAt);
     expect(progress?.durationSeconds).toBe(30);
   });
 });

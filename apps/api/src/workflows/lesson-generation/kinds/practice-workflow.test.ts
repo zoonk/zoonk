@@ -3,7 +3,7 @@ import { generateContentStepImage } from "@zoonk/core/steps/content-image";
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createCompletedExplanation,
   createLessonContext,
@@ -53,7 +53,7 @@ describe(practiceLessonWorkflow, () => {
     vi.clearAllMocks();
   });
 
-  test("stores scenario and practice questions from the uncovered explanation steps", async () => {
+  it("stores scenario and practice questions from the uncovered explanation steps", async () => {
     const context = await createLessonContext({ kind: "practice", organizationId, position: 2 });
 
     await createCompletedExplanation({
@@ -82,12 +82,12 @@ describe(practiceLessonWorkflow, () => {
     const intro = parseStepContent("static", steps[0]?.content);
     const question = parseStepContent("multipleChoice", steps[1]?.content);
 
-    expect(steps.map((step) => [step.position, step.kind])).toEqual([
+    expect(steps.map((step) => [step.position, step.kind])).toStrictEqual([
       [0, "static"],
       [1, "multipleChoice"],
     ]);
 
-    expect(intro).toEqual({
+    expect(intro).toStrictEqual({
       image: { prompt: "scenario prompt", url: "https://example.com/scenario%20prompt.webp" },
       text: "Scenario text",
       title: "Scenario",
@@ -100,7 +100,7 @@ describe(practiceLessonWorkflow, () => {
       question: "What now?",
     });
 
-    expect(question.options).toEqual([
+    expect(question.options).toStrictEqual([
       expect.objectContaining({ feedback: "Correct", isCorrect: true, text: "Answer" }),
       expect.objectContaining({ feedback: "Not yet", isCorrect: false, text: "Distractor" }),
     ]);

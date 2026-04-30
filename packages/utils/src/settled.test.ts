@@ -1,8 +1,8 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { getSettledFailureError, settledFailures, throwSettledFailures } from "./settled";
 
 describe(settledFailures, () => {
-  test("returns every rejected reason and fulfilled error", () => {
+  it("returns every rejected reason and fulfilled error", () => {
     const rejectedError = new Error("rejected");
     const fulfilledError = new Error("fulfilled error");
     const results: PromiseSettledResult<unknown>[] = [
@@ -11,31 +11,31 @@ describe(settledFailures, () => {
       { status: "fulfilled", value: { data: null, error: fulfilledError } },
     ];
 
-    expect(settledFailures(results)).toEqual([rejectedError, fulfilledError]);
+    expect(settledFailures(results)).toStrictEqual([rejectedError, fulfilledError]);
   });
 
-  test("returns an empty array when nothing failed", () => {
+  it("returns an empty array when nothing failed", () => {
     const results: PromiseSettledResult<unknown>[] = [
       { status: "fulfilled", value: "ok" },
       { status: "fulfilled", value: { data: "ok", error: null } },
     ];
 
-    expect(settledFailures(results)).toEqual([]);
+    expect(settledFailures(results)).toStrictEqual([]);
   });
 });
 
 describe(getSettledFailureError, () => {
-  test("returns null when there are no failures", () => {
+  it("returns null when there are no failures", () => {
     expect(getSettledFailureError({ failures: [], message: "failed" })).toBeNull();
   });
 
-  test("returns the original error when exactly one operation failed", () => {
+  it("returns the original error when exactly one operation failed", () => {
     const error = new Error("single");
 
     expect(getSettledFailureError({ failures: [error], message: "failed" })).toBe(error);
   });
 
-  test("returns AggregateError when multiple operations failed", () => {
+  it("returns AggregateError when multiple operations failed", () => {
     const errors = [new Error("first"), new Error("second")];
     const error = getSettledFailureError({ failures: errors, message: "multiple failed" });
 
@@ -45,7 +45,7 @@ describe(getSettledFailureError, () => {
 });
 
 describe(throwSettledFailures, () => {
-  test("throws AggregateError with every failure", () => {
+  it("throws AggregateError with every failure", () => {
     const errors = [new Error("first"), new Error("second")];
     const results: PromiseSettledResult<unknown>[] = [
       { reason: errors[0], status: "rejected" },

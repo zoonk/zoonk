@@ -3,7 +3,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { getLessonForGeneration } from "./get-lesson-for-generation";
 
 describe(getLessonForGeneration, () => {
@@ -18,7 +18,7 @@ describe(getLessonForGeneration, () => {
     chapter = await chapterFixture({ courseId: course.id, organizationId });
   });
 
-  test("returns lesson with chapter and course info", async () => {
+  it("returns lesson with chapter and course info", async () => {
     const lesson = await lessonFixture({ chapterId: chapter.id, organizationId });
 
     const result = await getLessonForGeneration(lesson.id);
@@ -42,17 +42,17 @@ describe(getLessonForGeneration, () => {
     });
   });
 
-  test("returns null for non-existent lessons", async () => {
+  it("returns null for non-existent lessons", async () => {
     const result = await getLessonForGeneration(randomUUID());
     expect(result).toBeNull();
   });
 
-  test("returns null for malformed lesson ids", async () => {
+  it("returns null for malformed lesson ids", async () => {
     const result = await getLessonForGeneration("invalid-id");
     expect(result).toBeNull();
   });
 
-  test("returns null for lessons outside the AI organization", async () => {
+  it("returns null for lessons outside the AI organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });
     const otherChapter = await chapterFixture({

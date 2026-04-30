@@ -1,7 +1,7 @@
 import { generateLessonPractice } from "@zoonk/ai/tasks/lessons/core/practice";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createCompletedExplanation,
   createLessonContext,
@@ -38,7 +38,7 @@ describe(generatePracticeContentStep, () => {
     vi.clearAllMocks();
   });
 
-  test("uses only explanation steps since the previous practice", async () => {
+  it("uses only explanation steps since the previous practice", async () => {
     const context = await createLessonContext({ kind: "practice", organizationId, position: 4 });
 
     await createCompletedExplanation({
@@ -72,7 +72,7 @@ describe(generatePracticeContentStep, () => {
     );
   });
 
-  test("throws when practice has no completed explanation source steps", async () => {
+  it("throws when practice has no completed explanation source steps", async () => {
     const context = await createLessonContext({ kind: "practice", organizationId });
 
     await expect(generatePracticeContentStep(context)).rejects.toThrow(

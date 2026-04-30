@@ -1,10 +1,10 @@
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, expectTypeOf, test } from "vitest";
+import { describe, expect, expectTypeOf, it } from "vitest";
 import { getSession } from "./get-user-session";
 
 describe(getSession, () => {
-  test("returns string ids for the authenticated user and session owner", async () => {
+  it("returns string ids for the authenticated user and session owner", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 

@@ -6,7 +6,7 @@ import { generateLessonVocabulary } from "@zoonk/ai/tasks/lessons/language/vocab
 import { generateLanguageAudio } from "@zoonk/core/audio/generate";
 import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "../steps/_test-utils/create-lesson-context";
 import { vocabularyLessonWorkflow } from "./vocabulary-workflow";
 
@@ -18,7 +18,7 @@ const vocabularyState = vi.hoisted(() => ({
 vi.mock("@zoonk/ai/tasks/lessons/language/vocabulary", () => ({
   generateLessonVocabulary: vi
     .fn()
-    .mockImplementation(() => Promise.resolve({ data: { words: vocabularyState.words } })),
+    .mockImplementation(() => ({ data: { words: vocabularyState.words } })),
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/distractors", () => ({
@@ -72,7 +72,7 @@ describe(vocabularyLessonWorkflow, () => {
     vocabularyState.distractors = {};
   });
 
-  test("stores vocabulary words, enrichment metadata, and vocabulary steps", async () => {
+  it("stores vocabulary words, enrichment metadata, and vocabulary steps", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const catWord = `猫-${uniqueId}`;
     const waterWord = `水-${uniqueId}`;
@@ -121,7 +121,7 @@ describe(vocabularyLessonWorkflow, () => {
       }),
     ]);
 
-    expect(steps.map((step) => [step.position, step.kind])).toEqual([
+    expect(steps.map((step) => [step.position, step.kind])).toStrictEqual([
       [0, "vocabulary"],
       [1, "vocabulary"],
     ]);
@@ -134,7 +134,7 @@ describe(vocabularyLessonWorkflow, () => {
           word: entry.word.word,
         }))
         .toSorted((a, b) => a.translation.localeCompare(b.translation)),
-    ).toEqual([
+    ).toStrictEqual([
       { distractors: [dogWord, birdWord], translation: `cat ${uniqueId}`, word: catWord },
       { distractors: [fireWord, earthWord], translation: `water ${uniqueId}`, word: waterWord },
     ]);
@@ -148,7 +148,7 @@ describe(vocabularyLessonWorkflow, () => {
           word: entry.word,
         }))
         .toSorted((a, b) => a.word.localeCompare(b.word)),
-    ).toEqual(
+    ).toStrictEqual(
       allWords
         .map((word) => ({
           audioUrl: `https://example.com/audio/${encodeURIComponent(word)}.mp3`,
@@ -160,7 +160,7 @@ describe(vocabularyLessonWorkflow, () => {
     );
   });
 
-  test("keeps canonical word enrichment when a distractor normalizes to the same key", async () => {
+  it("keeps canonical word enrichment when a distractor normalizes to the same key", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const canonicalWord = `Água-${uniqueId}`;
     const duplicateDistractor = `Agua-${uniqueId}`;

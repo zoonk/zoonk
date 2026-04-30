@@ -4,7 +4,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { getNextLesson } from "./get-next-lesson";
 
 type CourseTree = {
@@ -53,12 +53,12 @@ describe(getNextLesson, () => {
     return { chapter, course, lessons };
   }
 
-  test("returns first lesson when unauthenticated", async () => {
+  it("returns first lesson when unauthenticated", async () => {
     const { chapter, course, lessons } = await createCourseTree();
 
     const result = await getNextLesson({ headers: new Headers(), scope: { courseId: course.id } });
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       brandSlug: organization.slug,
       canPrefetch: true,
       chapterSlug: chapter.slug,
@@ -70,14 +70,14 @@ describe(getNextLesson, () => {
     });
   });
 
-  test("returns a shell link when the first lesson still needs generation", async () => {
+  it("returns a shell link when the first lesson still needs generation", async () => {
     const { chapter, course, lessons } = await createCourseTree({
       lessonStatuses: ["pending", "completed"],
     });
 
     const result = await getNextLesson({ headers: new Headers(), scope: { courseId: course.id } });
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       brandSlug: organization.slug,
       canPrefetch: false,
       chapterSlug: chapter.slug,
@@ -89,7 +89,7 @@ describe(getNextLesson, () => {
     });
   });
 
-  test("returns next lesson after the latest completed lesson", async () => {
+  it("returns next lesson after the latest completed lesson", async () => {
     const [user, tree] = await Promise.all([userFixture(), createCourseTree()]);
     const [completedLesson, nextLesson] = tree.lessons;
 
@@ -103,7 +103,7 @@ describe(getNextLesson, () => {
     const headers = await signInAs(user.email, user.password);
     const result = await getNextLesson({ headers, scope: { courseId: tree.course.id } });
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       brandSlug: organization.slug,
       canPrefetch: true,
       chapterSlug: tree.chapter.slug,
@@ -115,7 +115,7 @@ describe(getNextLesson, () => {
     });
   });
 
-  test("returns the latest completed lesson as review state when the course is complete", async () => {
+  it("returns the latest completed lesson as review state when the course is complete", async () => {
     const [user, tree] = await Promise.all([userFixture(), createCourseTree()]);
     const [lesson1, lesson2] = tree.lessons;
 
@@ -137,7 +137,7 @@ describe(getNextLesson, () => {
     const headers = await signInAs(user.email, user.password);
     const result = await getNextLesson({ headers, scope: { courseId: tree.course.id } });
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       brandSlug: organization.slug,
       canPrefetch: true,
       chapterSlug: tree.chapter.slug,
@@ -149,7 +149,7 @@ describe(getNextLesson, () => {
     });
   });
 
-  test("chapter scope stays inside the requested chapter", async () => {
+  it("chapter scope stays inside the requested chapter", async () => {
     const [user, tree] = await Promise.all([userFixture(), createCourseTree()]);
     const [completedLesson, nextLesson] = tree.lessons;
 
@@ -163,7 +163,7 @@ describe(getNextLesson, () => {
     const headers = await signInAs(user.email, user.password);
     const result = await getNextLesson({ headers, scope: { chapterId: tree.chapter.id } });
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       brandSlug: organization.slug,
       canPrefetch: true,
       chapterSlug: tree.chapter.slug,
@@ -175,7 +175,7 @@ describe(getNextLesson, () => {
     });
   });
 
-  test("lesson scope returns that lesson completion state", async () => {
+  it("lesson scope returns that lesson completion state", async () => {
     const [user, tree] = await Promise.all([userFixture(), createCourseTree()]);
     const [lesson] = tree.lessons;
 
@@ -189,7 +189,7 @@ describe(getNextLesson, () => {
     const headers = await signInAs(user.email, user.password);
     const result = await getNextLesson({ headers, scope: { lessonId: lesson?.id ?? "" } });
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       brandSlug: organization.slug,
       canPrefetch: true,
       chapterSlug: tree.chapter.slug,

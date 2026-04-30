@@ -1,8 +1,8 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { clampEnergy, computeDecayedEnergy, toUTCMidnight } from "./energy";
 
 describe(toUTCMidnight, () => {
-  test("strips time and creates UTC midnight", () => {
+  it("strips time and creates UTC midnight", () => {
     const date = new Date("2025-03-15T14:30:45.123Z");
     const result = toUTCMidnight(date);
 
@@ -17,64 +17,64 @@ describe(toUTCMidnight, () => {
 });
 
 describe(clampEnergy, () => {
-  test("clamps below minimum to 0", () => {
+  it("clamps below minimum to 0", () => {
     expect(clampEnergy(-5)).toBe(0);
   });
 
-  test("clamps above maximum to 100", () => {
+  it("clamps above maximum to 100", () => {
     expect(clampEnergy(150)).toBe(100);
   });
 
-  test("returns value unchanged when within bounds", () => {
+  it("returns value unchanged when within bounds", () => {
     expect(clampEnergy(50)).toBe(50);
   });
 
-  test("returns 0 at exact minimum", () => {
+  it("returns 0 at exact minimum", () => {
     expect(clampEnergy(0)).toBe(0);
   });
 
-  test("returns 100 at exact maximum", () => {
+  it("returns 100 at exact maximum", () => {
     expect(clampEnergy(100)).toBe(100);
   });
 });
 
 describe(computeDecayedEnergy, () => {
-  test("same day: no decay", () => {
+  it("same day: no decay", () => {
     const lastActiveAt = new Date("2025-01-10T10:00:00Z");
     const now = new Date("2025-01-10T23:00:00Z");
 
     expect(computeDecayedEnergy(50, lastActiveAt, now)).toBe(50);
   });
 
-  test("1 day gap: 0 inactive days, no decay", () => {
+  it("1 day gap: 0 inactive days, no decay", () => {
     const lastActiveAt = new Date("2025-01-10T10:00:00Z");
     const now = new Date("2025-01-11T10:00:00Z");
 
     expect(computeDecayedEnergy(50, lastActiveAt, now)).toBe(50);
   });
 
-  test("3 day gap: 2 inactive days, decay=2", () => {
+  it("3 day gap: 2 inactive days, decay=2", () => {
     const lastActiveAt = new Date("2025-01-10T10:00:00Z");
     const now = new Date("2025-01-13T10:00:00Z");
 
     expect(computeDecayedEnergy(50, lastActiveAt, now)).toBe(48);
   });
 
-  test("5 day gap: 4 inactive days, decay=4", () => {
+  it("5 day gap: 4 inactive days, decay=4", () => {
     const lastActiveAt = new Date("2025-01-10T10:00:00Z");
     const now = new Date("2025-01-15T10:00:00Z");
 
     expect(computeDecayedEnergy(50, lastActiveAt, now)).toBe(46);
   });
 
-  test("energy clamped at 0", () => {
+  it("energy clamped at 0", () => {
     const lastActiveAt = new Date("2025-01-10T10:00:00Z");
     const now = new Date("2025-01-20T10:00:00Z");
 
     expect(computeDecayedEnergy(2, lastActiveAt, now)).toBe(0);
   });
 
-  test("cross-day boundary: lastActive=Jan 10 11pm, now=Jan 12 1am → 1 inactive day, decay=1", () => {
+  it("cross-day boundary: lastActive=Jan 10 11pm, now=Jan 12 1am → 1 inactive day, decay=1", () => {
     const lastActiveAt = new Date("2025-01-10T23:00:00Z");
     const now = new Date("2025-01-12T01:00:00Z");
 

@@ -4,7 +4,7 @@ import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { type ChapterContext } from "./get-chapter-step";
 import { setChapterAsCompletedStep } from "./set-chapter-as-completed-step";
 
@@ -22,7 +22,7 @@ describe(setChapterAsCompletedStep, () => {
     vi.clearAllMocks();
   });
 
-  test("throws without streaming error when chapter does not exist", async () => {
+  it("throws without streaming error when chapter does not exist", async () => {
     const chapter = await chapterFixture({
       courseId: course.id,
       organizationId,
@@ -48,7 +48,7 @@ describe(setChapterAsCompletedStep, () => {
     );
   });
 
-  test("updates chapter generation status to completed", async () => {
+  it("updates chapter generation status to completed", async () => {
     const chapter = await chapterFixture({
       courseId: course.id,
       generationStatus: "running",

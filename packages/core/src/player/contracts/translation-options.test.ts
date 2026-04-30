@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   type DistractorWord,
   buildDistractorWordLookup,
@@ -19,7 +19,7 @@ function makeDistractorWord(overrides: Partial<DistractorWord> = {}): Distractor
 }
 
 describe(buildTranslationOptions, () => {
-  test("hydrates distractors with the same normalized key used during sanitation", () => {
+  it("hydrates distractors with the same normalized key used during sanitation", () => {
     const distractorLookup = buildDistractorWordLookup([
       makeDistractorWord({
         audioUrl: "/audio/cafe.mp3",
@@ -42,7 +42,7 @@ describe(buildTranslationOptions, () => {
       },
     });
 
-    expect(options).toEqual([
+    expect(options).toStrictEqual([
       {
         audioUrl: "/audio/tea.mp3",
         id: "word-1",

@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { renderHook } from "@testing-library/react";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { type PlayerKeyboardModel } from "./player-screen";
 import { usePlayerKeyboard } from "./use-player-keyboard";
 
@@ -34,7 +34,7 @@ describe(usePlayerKeyboard, () => {
   });
 
   describe("Enter key", () => {
-    test("calls onCheck when the screen model exposes a check action", () => {
+    it("calls onCheck when the screen model exposes a check action", () => {
       const opts = buildOptions({
         keyboard: { canRestart: false, enterAction: "check", leftAction: null, rightAction: null },
       });
@@ -45,7 +45,7 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onCheck).toHaveBeenCalledOnce();
     });
 
-    test("calls onContinue when the screen model exposes a continue action", () => {
+    it("calls onContinue when the screen model exposes a continue action", () => {
       const opts = buildOptions({
         keyboard: {
           canRestart: false,
@@ -61,7 +61,7 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onContinue).toHaveBeenCalledOnce();
     });
 
-    test("no-op when Enter has no mapped action", () => {
+    it("no-op when Enter has no mapped action", () => {
       const opts = buildOptions();
       renderHook(() => usePlayerKeyboard(opts));
 
@@ -71,7 +71,7 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onContinue).not.toHaveBeenCalled();
     });
 
-    test("calls onNext when completion Enter action prefers next", () => {
+    it("calls onNext when completion Enter action prefers next", () => {
       const onNext = vi.fn();
       const opts = buildOptions({
         keyboard: {
@@ -90,7 +90,7 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onEscape).not.toHaveBeenCalled();
     });
 
-    test("calls onEscape when completion Enter action has no next callback", () => {
+    it("calls onEscape when completion Enter action has no next callback", () => {
       const opts = buildOptions({
         keyboard: {
           canRestart: true,
@@ -111,7 +111,7 @@ describe(usePlayerKeyboard, () => {
   });
 
   describe("Navigation keys", () => {
-    test("ArrowRight calls onNavigateNext when the screen model enables it", () => {
+    it("ArrowRight calls onNavigateNext when the screen model enables it", () => {
       const opts = buildOptions({
         keyboard: {
           canRestart: false,
@@ -127,7 +127,7 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onNavigateNext).toHaveBeenCalledOnce();
     });
 
-    test("ArrowLeft calls onNavigatePrev when the screen model enables it", () => {
+    it("ArrowLeft calls onNavigatePrev when the screen model enables it", () => {
       const opts = buildOptions({
         keyboard: {
           canRestart: false,
@@ -143,7 +143,7 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onNavigatePrev).toHaveBeenCalledOnce();
     });
 
-    test("ArrowLeft no-ops when no previous action is mapped", () => {
+    it("ArrowLeft no-ops when no previous action is mapped", () => {
       const opts = buildOptions();
       renderHook(() => usePlayerKeyboard(opts));
 
@@ -152,7 +152,7 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onNavigatePrev).not.toHaveBeenCalled();
     });
 
-    test("ArrowRight no-ops when no next action is mapped", () => {
+    it("ArrowRight no-ops when no next action is mapped", () => {
       const opts = buildOptions();
       renderHook(() => usePlayerKeyboard(opts));
 
@@ -163,7 +163,7 @@ describe(usePlayerKeyboard, () => {
   });
 
   describe("Escape key", () => {
-    test("calls onEscape regardless of screen mode", () => {
+    it("calls onEscape regardless of screen mode", () => {
       const opts = buildOptions();
       renderHook(() => usePlayerKeyboard(opts));
 
@@ -174,7 +174,7 @@ describe(usePlayerKeyboard, () => {
   });
 
   describe("R key", () => {
-    test("calls onRestart when restart is enabled", () => {
+    it("calls onRestart when restart is enabled", () => {
       const opts = buildOptions({
         keyboard: {
           canRestart: true,
@@ -190,7 +190,7 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onRestart).toHaveBeenCalledOnce();
     });
 
-    test("no-op when restart is disabled", () => {
+    it("no-op when restart is disabled", () => {
       const opts = buildOptions();
       renderHook(() => usePlayerKeyboard(opts));
 
@@ -199,7 +199,7 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onRestart).not.toHaveBeenCalled();
     });
 
-    test("no-op when target is an input element", () => {
+    it("no-op when target is an input element", () => {
       const opts = buildOptions({
         keyboard: {
           canRestart: true,
@@ -222,7 +222,7 @@ describe(usePlayerKeyboard, () => {
   });
 
   describe("modifier keys", () => {
-    test("all keys are no-op with metaKey", () => {
+    it("all keys are no-op with metaKey", () => {
       const opts = buildOptions({
         keyboard: {
           canRestart: false,
@@ -240,7 +240,7 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onNavigateNext).not.toHaveBeenCalled();
     });
 
-    test("all keys are no-op with ctrlKey", () => {
+    it("all keys are no-op with ctrlKey", () => {
       const opts = buildOptions({
         keyboard: { canRestart: false, enterAction: "check", leftAction: null, rightAction: null },
       });
@@ -251,7 +251,7 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onCheck).not.toHaveBeenCalled();
     });
 
-    test("all keys are no-op with shiftKey", () => {
+    it("all keys are no-op with shiftKey", () => {
       const opts = buildOptions({
         keyboard: { canRestart: false, enterAction: "check", leftAction: null, rightAction: null },
       });
@@ -262,7 +262,7 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onCheck).not.toHaveBeenCalled();
     });
 
-    test("all keys are no-op with altKey", () => {
+    it("all keys are no-op with altKey", () => {
       const opts = buildOptions({
         keyboard: { canRestart: false, enterAction: "check", leftAction: null, rightAction: null },
       });
@@ -274,7 +274,7 @@ describe(usePlayerKeyboard, () => {
     });
   });
 
-  test("cleans up listener on unmount", () => {
+  it("cleans up listener on unmount", () => {
     const opts = buildOptions({
       keyboard: { canRestart: false, enterAction: "check", leftAction: null, rightAction: null },
     });

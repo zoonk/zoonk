@@ -1,5 +1,5 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { type PlayerState } from "./player-reducer";
 import { getUpcomingImages } from "./player-selectors";
 
@@ -41,7 +41,7 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
 }
 
 describe(getUpcomingImages, () => {
-  test("returns empty array when no upcoming steps have images", () => {
+  it("returns empty array when no upcoming steps have images", () => {
     const state = buildState({
       steps: [
         buildStep({ id: "s1" }),
@@ -50,10 +50,10 @@ describe(getUpcomingImages, () => {
       ],
     });
 
-    expect(getUpcomingImages(state)).toEqual([]);
+    expect(getUpcomingImages(state)).toStrictEqual([]);
   });
 
-  test("extracts URL from a static step image", () => {
+  it("extracts URL from a static step image", () => {
     const state = buildState({
       steps: [
         buildStep({ id: "s1" }),
@@ -70,12 +70,12 @@ describe(getUpcomingImages, () => {
       ],
     });
 
-    expect(getUpcomingImages(state)).toEqual([
+    expect(getUpcomingImages(state)).toStrictEqual([
       { kind: "step", url: "https://example.com/cat.jpg" },
     ]);
   });
 
-  test("extracts URL from a multipleChoice step image", () => {
+  it("extracts URL from a multipleChoice step image", () => {
     const state = buildState({
       steps: [
         buildStep({ id: "s1" }),
@@ -98,12 +98,12 @@ describe(getUpcomingImages, () => {
       ],
     });
 
-    expect(getUpcomingImages(state)).toEqual([
+    expect(getUpcomingImages(state)).toStrictEqual([
       { kind: "step", url: "https://example.com/refund-dashboard.jpg" },
     ]);
   });
 
-  test("extracts URLs from a selectImage step", () => {
+  it("extracts URLs from a selectImage step", () => {
     const state = buildState({
       steps: [
         buildStep({ id: "s1" }),
@@ -134,13 +134,13 @@ describe(getUpcomingImages, () => {
       ],
     });
 
-    expect(getUpcomingImages(state)).toEqual([
+    expect(getUpcomingImages(state)).toStrictEqual([
       { kind: "selectImage", url: "https://example.com/cat.jpg" },
       { kind: "selectImage", url: "https://example.com/dog.jpg" },
     ]);
   });
 
-  test("respects default lookahead of 3 steps", () => {
+  it("respects default lookahead of 3 steps", () => {
     const state = buildState({
       steps: [
         buildStep({ id: "s1" }),
@@ -187,14 +187,14 @@ describe(getUpcomingImages, () => {
       ],
     });
 
-    expect(getUpcomingImages(state)).toEqual([
+    expect(getUpcomingImages(state)).toStrictEqual([
       { kind: "step", url: "https://example.com/1.jpg" },
       { kind: "step", url: "https://example.com/2.jpg" },
       { kind: "step", url: "https://example.com/3.jpg" },
     ]);
   });
 
-  test("only looks ahead from current step, not behind", () => {
+  it("only looks ahead from current step, not behind", () => {
     const state = buildState({
       currentStepIndex: 2,
       steps: [
@@ -231,12 +231,12 @@ describe(getUpcomingImages, () => {
       ],
     });
 
-    expect(getUpcomingImages(state)).toEqual([
+    expect(getUpcomingImages(state)).toStrictEqual([
       { kind: "step", url: "https://example.com/ahead.jpg" },
     ]);
   });
 
-  test("skips steps with missing or undefined URLs", () => {
+  it("skips steps with missing or undefined URLs", () => {
     const state = buildState({
       steps: [
         buildStep({ id: "s1" }),
@@ -271,7 +271,7 @@ describe(getUpcomingImages, () => {
       ],
     });
 
-    expect(getUpcomingImages(state)).toEqual([
+    expect(getUpcomingImages(state)).toStrictEqual([
       { kind: "selectImage", url: "https://example.com/img.jpg" },
     ]);
   });

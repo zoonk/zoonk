@@ -1,7 +1,7 @@
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, test, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { handleLessonFailureStep } from "./handle-failure-step";
 
@@ -15,7 +15,7 @@ describe(handleLessonFailureStep, () => {
     organizationId = organization.id;
   });
 
-  test("marks a lesson as failed after workflow failure", async () => {
+  it("marks a lesson as failed after workflow failure", async () => {
     const lesson = await createLessonContext({ generationStatus: "running", organizationId });
 
     await handleLessonFailureStep({
@@ -26,7 +26,7 @@ describe(handleLessonFailureStep, () => {
     const updatedLesson = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
 
     expect(updatedLesson.generationStatus).toBe("failed");
-    expect(getStreamedEvents()).toEqual(
+    expect(getStreamedEvents()).toStrictEqual(
       expect.arrayContaining([
         expect.objectContaining({
           reason: "aiGenerationFailed",

@@ -3,7 +3,7 @@ import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { getCourseChaptersStep } from "./get-course-chapters-step";
 
 describe(getCourseChaptersStep, () => {
@@ -18,7 +18,7 @@ describe(getCourseChaptersStep, () => {
     vi.clearAllMocks();
   });
 
-  test("returns chapters ordered by position", async () => {
+  it("returns chapters ordered by position", async () => {
     const course = await courseFixture({ organizationId });
 
     await Promise.all([
@@ -53,11 +53,11 @@ describe(getCourseChaptersStep, () => {
     );
   });
 
-  test("returns empty array for a course with no chapters", async () => {
+  it("returns empty array for a course with no chapters", async () => {
     const emptyCourse = await courseFixture({ organizationId });
 
     const result = await getCourseChaptersStep(emptyCourse.id);
 
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 });

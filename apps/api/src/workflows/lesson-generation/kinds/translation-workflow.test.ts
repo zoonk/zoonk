@@ -5,7 +5,7 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { lessonWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { createLessonContext } from "../steps/_test-utils/create-lesson-context";
 import { translationLessonWorkflow } from "./translation-workflow";
 
@@ -17,7 +17,7 @@ describe(translationLessonWorkflow, () => {
     organizationId = organization.id;
   });
 
-  test("stores translation steps from the previous vocabulary lesson", async () => {
+  it("stores translation steps from the previous vocabulary lesson", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
     const context = await createLessonContext({
@@ -69,11 +69,14 @@ describe(translationLessonWorkflow, () => {
       where: { lessonId: context.id },
     });
 
-    expect(steps.map((step) => [step.position, step.kind, step.wordId])).toEqual([
+    expect(steps.map((step) => [step.position, step.kind, step.wordId])).toStrictEqual([
       [0, "translation", words[0]?.id],
       [1, "translation", words[1]?.id],
     ]);
 
-    expect(steps.map((step) => parseStepContent("translation", step.content))).toEqual([{}, {}]);
+    expect(steps.map((step) => parseStepContent("translation", step.content))).toStrictEqual([
+      {},
+      {},
+    ]);
   });
 });

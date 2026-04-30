@@ -2,7 +2,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { SITEMAP_BATCH_SIZE } from "./courses";
 import { countSitemapLessons, listSitemapLessons } from "./lessons";
 
@@ -11,14 +11,14 @@ function lastPage(count: number): number {
 }
 
 describe(countSitemapLessons, () => {
-  test("returns a positive count", async () => {
+  it("returns a positive count", async () => {
     const count = await countSitemapLessons();
     expect(count).toBeGreaterThan(0);
   });
 });
 
 describe(listSitemapLessons, () => {
-  test("returns correct full path slugs", async () => {
+  it("returns correct full path slugs", async () => {
     const org = await organizationFixture({ kind: "brand" });
 
     const course = await courseFixture({
@@ -43,7 +43,7 @@ describe(listSitemapLessons, () => {
     const lessons = await listSitemapLessons(lastPage(count));
     const found = lessons.find((item) => item.lessonSlug === lesson.slug);
 
-    expect(found).toEqual({
+    expect(found).toStrictEqual({
       brandSlug: org.slug,
       chapterSlug: chapter.slug,
       courseSlug: course.slug,
@@ -52,7 +52,7 @@ describe(listSitemapLessons, () => {
     });
   });
 
-  test("excludes unpublished lessons", async () => {
+  it("excludes unpublished lessons", async () => {
     const org = await organizationFixture({ kind: "brand" });
 
     const course = await courseFixture({ isPublished: true, organizationId: org.id });
@@ -76,7 +76,7 @@ describe(listSitemapLessons, () => {
     expect(found).toBeUndefined();
   });
 
-  test("excludes lessons from personal courses without an organization", async () => {
+  it("excludes lessons from personal courses without an organization", async () => {
     const course = await courseFixture({ isPublished: true, organizationId: null });
 
     const chapter = await chapterFixture({
@@ -98,7 +98,7 @@ describe(listSitemapLessons, () => {
     expect(found).toBeUndefined();
   });
 
-  test("excludes lessons from non-brand organizations", async () => {
+  it("excludes lessons from non-brand organizations", async () => {
     const org = await organizationFixture({ kind: "personal" });
 
     const course = await courseFixture({ isPublished: true, organizationId: org.id });
@@ -122,7 +122,7 @@ describe(listSitemapLessons, () => {
     expect(found).toBeUndefined();
   });
 
-  test("excludes lessons from unpublished chapters", async () => {
+  it("excludes lessons from unpublished chapters", async () => {
     const org = await organizationFixture({ kind: "brand" });
 
     const course = await courseFixture({ isPublished: true, organizationId: org.id });
@@ -146,7 +146,7 @@ describe(listSitemapLessons, () => {
     expect(found).toBeUndefined();
   });
 
-  test("excludes lessons from unpublished courses", async () => {
+  it("excludes lessons from unpublished courses", async () => {
     const org = await organizationFixture({ kind: "brand" });
 
     const course = await courseFixture({ isPublished: false, organizationId: org.id });

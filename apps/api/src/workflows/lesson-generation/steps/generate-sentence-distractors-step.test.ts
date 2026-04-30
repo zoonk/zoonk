@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { generateLessonDistractors } from "@zoonk/ai/tasks/lessons/language/distractors";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateSentenceDistractorsStep } from "./generate-sentence-distractors-step";
 
@@ -25,7 +25,7 @@ describe(generateSentenceDistractorsStep, () => {
     vi.clearAllMocks();
   });
 
-  test("generates sentence and translation distractors", async () => {
+  it("generates sentence and translation distractors", async () => {
     const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
     const catWord = `猫${uniqueId}`;
     const waterWord = `水${uniqueId}`;
@@ -38,7 +38,7 @@ describe(generateSentenceDistractorsStep, () => {
       { explanation: "", sentence: `${catWord} ${waterWord}`, translation: "cat and water" },
     ];
 
-    await expect(generateSentenceDistractorsStep({ context, sentences })).resolves.toEqual({
+    await expect(generateSentenceDistractorsStep({ context, sentences })).resolves.toStrictEqual({
       distractors: { [`${catWord} ${waterWord}`]: ["火"] },
       translationDistractors: { "cat and water": ["dog"] },
     });

@@ -6,7 +6,7 @@ import { lessonSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/
 import { stepAttemptFixture } from "@zoonk/testing/fixtures/step-attempts";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { getReviewSteps, getReviewValidationSteps } from "./get-review-steps";
 
 const REVIEW_TARGET_COUNT = 10;
@@ -75,7 +75,7 @@ describe(getReviewSteps, () => {
     unpublishedStepId = allSteps[12]!.id;
   });
 
-  test("returns steps where user only has incorrect attempts (tier 1)", async () => {
+  it("returns steps where user only has incorrect attempts (tier 1)", async () => {
     const [newLesson, newUser] = await Promise.all([
       createLessonWithSteps(org.id, 12),
       userFixture(),
@@ -110,7 +110,7 @@ describe(getReviewSteps, () => {
     }
   });
 
-  test("includes steps with incorrect then correct attempts (tier 2) when tier 1 < 10", async () => {
+  it("includes steps with incorrect then correct attempts (tier 2) when tier 1 < 10", async () => {
     const [newLesson, newUser] = await Promise.all([
       createLessonWithSteps(org.id, 12),
       userFixture(),
@@ -171,7 +171,7 @@ describe(getReviewSteps, () => {
     }
   });
 
-  test("includes all tier 1 and tier 2 steps even when combined count exceeds target", async () => {
+  it("includes all tier 1 and tier 2 steps even when combined count exceeds target", async () => {
     const [newLesson, newUser] = await Promise.all([
       createLessonWithSteps(org.id, 12),
       userFixture(),
@@ -232,7 +232,7 @@ describe(getReviewSteps, () => {
     }
   });
 
-  test("when tier 1 >= 10, does NOT include tier 2 or fillers", async () => {
+  it("when tier 1 >= 10, does NOT include tier 2 or fillers", async () => {
     const [newLesson, newUser] = await Promise.all([
       createLessonWithSteps(org.id, 12),
       userFixture(),
@@ -285,7 +285,7 @@ describe(getReviewSteps, () => {
     expect(result).toHaveLength(11);
   });
 
-  test("deduplicates steps with multiple incorrect attempts", async () => {
+  it("deduplicates steps with multiple incorrect attempts", async () => {
     const [newLesson, newUser] = await Promise.all([
       createLessonWithSteps(org.id, 12),
       userFixture(),
@@ -327,7 +327,7 @@ describe(getReviewSteps, () => {
    * step will always appear in the result.
    */
 
-  test("excludes review lesson steps", async () => {
+  it("excludes review lesson steps", async () => {
     const isolated = await createLessonWithSteps(org.id, 3);
 
     const reviewLesson = await lessonFixture({
@@ -355,7 +355,7 @@ describe(getReviewSteps, () => {
     expect(resultIds).not.toContain(reviewStep.id);
   });
 
-  test("excludes static steps", async () => {
+  it("excludes static steps", async () => {
     const isolated = await createLessonWithSteps(org.id, 3);
 
     await stepFixture({
@@ -375,7 +375,7 @@ describe(getReviewSteps, () => {
     }
   });
 
-  test("fills with random steps when total mistakes < 10", async () => {
+  it("fills with random steps when total mistakes < 10", async () => {
     const [newLesson, newUser] = await Promise.all([
       createLessonWithSteps(org.id, 12),
       userFixture(),
@@ -412,7 +412,7 @@ describe(getReviewSteps, () => {
     }
   });
 
-  test("returns random steps for unauthenticated user (userId null)", async () => {
+  it("returns random steps for unauthenticated user (userId null)", async () => {
     const result = await getReviewSteps({ lessonId: lesson.id, userId: null });
 
     // Shared lesson has 12 interactive steps, so result should be exactly 10
@@ -423,7 +423,7 @@ describe(getReviewSteps, () => {
     }
   });
 
-  test("returns random steps for user with no attempts", async () => {
+  it("returns random steps for user with no attempts", async () => {
     const newUser = await userFixture();
 
     const result = await getReviewSteps({ lessonId: lesson.id, userId: newUser.id });
@@ -436,7 +436,7 @@ describe(getReviewSteps, () => {
     }
   });
 
-  test("handles lesson with fewer than 10 interactive steps", async () => {
+  it("handles lesson with fewer than 10 interactive steps", async () => {
     const newLesson = await createLessonWithSteps(org.id, 5);
 
     const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: null });
@@ -445,7 +445,7 @@ describe(getReviewSteps, () => {
     expect(result).toHaveLength(5);
   });
 
-  test("returns empty array when lesson has no eligible interactive steps", async () => {
+  it("returns empty array when lesson has no eligible interactive steps", async () => {
     const newLesson = await createLessonWithSteps(org.id, 0);
 
     const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: null });
@@ -453,14 +453,14 @@ describe(getReviewSteps, () => {
     expect(result).toHaveLength(0);
   });
 
-  test("excludes unpublished steps", async () => {
+  it("excludes unpublished steps", async () => {
     const result = await getReviewSteps({ lessonId: lesson.id, userId: null });
 
     const resultIds = result.map((step) => step.id);
     expect(resultIds).not.toContain(unpublishedStepId);
   });
 
-  test("when tier 1 is exactly 10, excludes tier 2", async () => {
+  it("when tier 1 is exactly 10, excludes tier 2", async () => {
     const [newLesson, newUser] = await Promise.all([
       createLessonWithSteps(org.id, 12),
       userFixture(),
@@ -525,7 +525,7 @@ describe(getReviewSteps, () => {
     }
   });
 
-  test("steps with only correct attempts are not prioritized", async () => {
+  it("steps with only correct attempts are not prioritized", async () => {
     const [newLesson, newUser] = await Promise.all([
       createLessonWithSteps(org.id, 12),
       userFixture(),
@@ -565,7 +565,7 @@ describe(getReviewSteps, () => {
     expect(resultIds).toContain(newLesson.steps[0]!.id);
   });
 
-  test("does not return duplicate steps when mixing prioritized and fillers", async () => {
+  it("does not return duplicate steps when mixing prioritized and fillers", async () => {
     const [newLesson, newUser] = await Promise.all([
       createLessonWithSteps(org.id, 12),
       userFixture(),
@@ -664,7 +664,7 @@ describe(getReviewValidationSteps, () => {
     ]);
   });
 
-  test("excludes steps from review lessons", async () => {
+  it("excludes steps from review lessons", async () => {
     const steps = await getReviewValidationSteps({
       lessonId: lesson.id,
       stepIds: [quizStep.id, reviewStep.id],
@@ -676,7 +676,7 @@ describe(getReviewValidationSteps, () => {
     expect(stepIds).not.toContain(reviewStep.id);
   });
 
-  test("excludes static steps", async () => {
+  it("excludes static steps", async () => {
     const steps = await getReviewValidationSteps({
       lessonId: lesson.id,
       stepIds: [quizStep.id, staticStep.id],
@@ -688,7 +688,7 @@ describe(getReviewValidationSteps, () => {
     expect(stepIds).not.toContain(staticStep.id);
   });
 
-  test("includes canonical sentence metadata for review validation", async () => {
+  it("includes canonical sentence metadata for review validation", async () => {
     const [sentence, readingLesson] = await Promise.all([
       sentenceFixture({ organizationId }),
       lessonFixture({ isPublished: true, kind: "reading", lessonId: lesson.id, organizationId }),

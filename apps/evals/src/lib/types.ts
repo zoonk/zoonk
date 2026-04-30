@@ -12,11 +12,11 @@ const stepSchema = z.object({
 
 export const scoreSchema = z.object({ steps: z.array(stepSchema) });
 
-export type Score = z.infer<typeof scoreSchema>;
+type Score = z.infer<typeof scoreSchema>;
 export type ScoreStep = z.infer<typeof stepSchema>;
 
 export type TestCase = { id: string; userInput: Record<string, unknown>; expectations: string };
-export type TaskResult<T = unknown> = {
+type TaskResult<T = unknown> = {
   data: T;
   usage: LanguageModelUsage;
   userPrompt: string;
@@ -80,7 +80,7 @@ export type ModelRanking = {
   reasoning: string;
 };
 
-export type JudgeRanking = { judgeId: string; rankings: ModelRanking[] };
+type JudgeRanking = { judgeId: string; rankings: ModelRanking[] };
 
 export type BattleMatchup = {
   taskId: string;

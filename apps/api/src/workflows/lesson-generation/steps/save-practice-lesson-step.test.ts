@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { savePracticeLessonStep } from "./save-practice-lesson-step";
 
@@ -12,7 +12,7 @@ describe(savePracticeLessonStep, () => {
     organizationId = organization.id;
   });
 
-  test("saves practice scenario and question steps with option ids", async () => {
+  it("saves practice scenario and question steps with option ids", async () => {
     const context = await createLessonContext({ kind: "practice", organizationId });
     const images = [
       {
@@ -54,17 +54,17 @@ describe(savePracticeLessonStep, () => {
       where: { lessonId: context.id },
     });
 
-    expect(steps.map((step) => [step.position, step.kind])).toEqual([
+    expect(steps.map((step) => [step.position, step.kind])).toStrictEqual([
       [0, "static"],
       [1, "multipleChoice"],
     ]);
-    expect(steps[0]?.content).toEqual({
+    expect(steps[0]?.content).toStrictEqual({
       image: images[0],
       text: "A support report does not line up with the refund totals.",
       title: "Night shift",
       variant: "intro",
     });
-    expect(steps[1]?.content).toEqual({
+    expect(steps[1]?.content).toStrictEqual({
       context: "The discounted orders are the only ones acting weird.",
       image: images[1],
       options: [

@@ -5,7 +5,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { type LessonContext } from "../get-lesson-step";
 import {
   getExplanationStepsSinceLastLessonKind,
@@ -117,7 +117,7 @@ describe("explanation source step helpers", () => {
     organizationId = organization.id;
   });
 
-  test("returns other explanation lesson titles in chapter order", async () => {
+  it("returns other explanation lesson titles in chapter order", async () => {
     const context = await createContext({ organizationId, position: 2 });
 
     await Promise.all([
@@ -139,13 +139,13 @@ describe("explanation source step helpers", () => {
       }),
     ]);
 
-    await expect(getOtherExplanationLessonTitles(context)).resolves.toEqual([
+    await expect(getOtherExplanationLessonTitles(context)).resolves.toStrictEqual([
       "First explanation",
       "Second explanation",
     ]);
   });
 
-  test("returns only completed explanation text since the previous practice", async () => {
+  it("returns only completed explanation text since the previous practice", async () => {
     const context = await createContext({ kind: "practice", organizationId, position: 4 });
 
     await Promise.all([
@@ -184,10 +184,10 @@ describe("explanation source step helpers", () => {
 
     const steps = await getExplanationStepsSinceLastLessonKind({ context, kind: "practice" });
 
-    expect(steps).toEqual([{ text: "New explanation", title: "New" }]);
+    expect(steps).toStrictEqual([{ text: "New explanation", title: "New" }]);
   });
 
-  test("uses the previous quiz boundary for quiz source content", async () => {
+  it("uses the previous quiz boundary for quiz source content", async () => {
     const context = await createContext({ kind: "quiz", organizationId, position: 5 });
 
     await Promise.all([
@@ -217,6 +217,6 @@ describe("explanation source step helpers", () => {
 
     const steps = await getExplanationStepsSinceLastLessonKind({ context, kind: "quiz" });
 
-    expect(steps).toEqual([{ text: "New quiz source", title: "New" }]);
+    expect(steps).toStrictEqual([{ text: "New quiz source", title: "New" }]);
   });
 });

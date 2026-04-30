@@ -6,7 +6,7 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { type CompletionInput } from "../contracts/completion-input-schema";
 import { submitPlayerCompletion } from "./submit-player-completion";
 
@@ -99,7 +99,7 @@ function buildCompletionInput(params: {
 }
 
 describe(submitPlayerCompletion, () => {
-  test("returns null when the submitted lesson no longer exists", async () => {
+  it("returns null when the submitted lesson no longer exists", async () => {
     const result = await submitPlayerCompletion({
       input: buildCompletionInput({ lessonId: randomUUID(), stepId: randomUUID() }),
       userId: "missing-user-id",
@@ -108,7 +108,7 @@ describe(submitPlayerCompletion, () => {
     expect(result).toBeNull();
   });
 
-  test("persists completion and requests preloading when the next lesson needs generation", async () => {
+  it("persists completion and requests preloading when the next lesson needs generation", async () => {
     const [user, { chapter, organization }] = await Promise.all([
       userFixture(),
       createPublishedChapterContext(),
@@ -146,7 +146,7 @@ describe(submitPlayerCompletion, () => {
     ]);
 
     expect(nextLesson.position).toBeGreaterThan(currentLesson.position);
-    expect(result).toEqual({ preloadLessonId: nextLesson.id });
+    expect(result).toStrictEqual({ preloadLessonId: nextLesson.id });
     expect(lessonProgress?.completedAt).toBeInstanceOf(Date);
     expect(stepAttempts).toHaveLength(1);
     expect(stepAttempts[0]?.isCorrect).toBe(true);

@@ -20,7 +20,7 @@ const ONE_MILLION_TOKENS = 1_000_000;
 
 type AiTaskDateRange = { end: Date; endInput: string; start: Date; startInput: string };
 
-export type TaskUsageSummary = {
+type TaskUsageSummary = {
   averageMarketCostPerRequest: number;
   requestCount: number;
   taskName: string;

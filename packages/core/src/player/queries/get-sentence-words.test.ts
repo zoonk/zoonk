@@ -5,7 +5,7 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { lessonSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { lessonWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { getSentenceWordsForLessons } from "./get-sentence-words";
 
 describe(getSentenceWordsForLessons, () => {
@@ -29,7 +29,7 @@ describe(getSentenceWordsForLessons, () => {
     });
   });
 
-  test("returns LessonWord records matching words found in lesson sentences", async () => {
+  it("returns LessonWord records matching words found in lesson sentences", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
     const wordText1 = `hola${uniqueId}`;
     const wordText2 = `mundo${uniqueId}`;
@@ -65,7 +65,7 @@ describe(getSentenceWordsForLessons, () => {
     expect(words).toContain(word2.word);
   });
 
-  test("returns empty array when lesson has no sentences", async () => {
+  it("returns empty array when lesson has no sentences", async () => {
     const emptyLesson = await lessonFixture({
       chapterId: chapter.id,
       isPublished: true,
@@ -74,15 +74,15 @@ describe(getSentenceWordsForLessons, () => {
     });
 
     const result = await getSentenceWordsForLessons({ lessonIds: [emptyLesson.id] });
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
-  test("returns empty array for non-existent lesson", async () => {
+  it("returns empty array for non-existent lesson", async () => {
     const result = await getSentenceWordsForLessons({ lessonIds: [randomUUID()] });
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
-  test("returns empty when sentence words have no matching LessonWord records", async () => {
+  it("returns empty when sentence words have no matching LessonWord records", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
     const [newLesson, sentence] = await Promise.all([
       lessonFixture({
@@ -101,10 +101,10 @@ describe(getSentenceWordsForLessons, () => {
     await lessonSentenceFixture({ lessonId: newLesson.id, sentenceId: sentence.id });
 
     const result = await getSentenceWordsForLessons({ lessonIds: [newLesson.id] });
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
-  test("strips punctuation when matching sentence words to LessonWord records", async () => {
+  it("strips punctuation when matching sentence words to LessonWord records", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
     const wordText = `sabes${uniqueId}`;
     const [newLesson, sentence, word] = await Promise.all([
@@ -129,7 +129,7 @@ describe(getSentenceWordsForLessons, () => {
     expect(result[0]?.word.word).toBe(word.word);
   });
 
-  test("matches LessonWord records case-insensitively", async () => {
+  it("matches LessonWord records case-insensitively", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
     const wordText = `Hola${uniqueId}`;
 
@@ -166,7 +166,7 @@ describe(getSentenceWordsForLessons, () => {
     expect(match?.translation).toBe("hello");
   });
 
-  test("deduplicates words across multiple sentences", async () => {
+  it("deduplicates words across multiple sentences", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
     const wordText = `gato${uniqueId}`;
     const [newLesson, sentence1, sentence2, word] = await Promise.all([

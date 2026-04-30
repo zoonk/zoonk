@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { generateLanguageAudio } from "@zoonk/core/audio/generate";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateVocabularyAudioStep } from "./generate-vocabulary-audio-step";
 
@@ -23,14 +23,14 @@ describe(generateVocabularyAudioStep, () => {
     vi.clearAllMocks();
   });
 
-  test("generates audio URLs for vocabulary words", async () => {
+  it("generates audio URLs for vocabulary words", async () => {
     const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
     const context = await createLessonContext({ organizationId, targetLanguage: "ja" });
     const catWord = `猫${uniqueId}`;
     const dogWord = `犬${uniqueId}`;
     const words = [catWord, dogWord];
 
-    await expect(generateVocabularyAudioStep({ context, words })).resolves.toEqual({
+    await expect(generateVocabularyAudioStep({ context, words })).resolves.toStrictEqual({
       wordAudioUrls: { [catWord]: `/audio/${catWord}.mp3`, [dogWord]: `/audio/${dogWord}.mp3` },
     });
     expect(generateLanguageAudio).toHaveBeenCalledWith({

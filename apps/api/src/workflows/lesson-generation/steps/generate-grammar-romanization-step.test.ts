@@ -1,6 +1,6 @@
 import { generateLessonRomanization } from "@zoonk/ai/tasks/lessons/language/romanization";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateGrammarRomanizationStep } from "./generate-grammar-romanization-step";
 
@@ -26,7 +26,7 @@ describe(generateGrammarRomanizationStep, () => {
     vi.clearAllMocks();
   });
 
-  test("generates grammar sentence and option romanizations", async () => {
+  it("generates grammar sentence and option romanizations", async () => {
     const context = await createLessonContext({
       kind: "grammar",
       organizationId,
@@ -42,7 +42,7 @@ describe(generateGrammarRomanizationStep, () => {
 
     const romanizations = await generateGrammarRomanizationStep({ context, grammarContent });
 
-    expect(romanizations.romanizations).toEqual({
+    expect(romanizations.romanizations).toStrictEqual({
       [catWord]: `${catWord} romanized`,
       [dogWord]: `${dogWord} romanized`,
       [grammarSentence]: `${grammarSentence} romanized`,

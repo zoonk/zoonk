@@ -1,31 +1,31 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { shuffle } from "./shuffle";
 
 describe(shuffle, () => {
-  test("returns a new array (no mutation)", () => {
+  it("returns a new array (no mutation)", () => {
     const input = [1, 2, 3, 4, 5];
     const result = shuffle(input);
     expect(result).not.toBe(input);
   });
 
-  test("contains same elements as input", () => {
+  it("contains same elements as input", () => {
     const input = [1, 2, 3, 4, 5];
     const result = shuffle(input);
-    expect(result.toSorted((left, right) => left - right)).toEqual([1, 2, 3, 4, 5]);
+    expect(result.toSorted((left, right) => left - right)).toStrictEqual([1, 2, 3, 4, 5]);
   });
 
-  test("empty array returns empty array", () => {
-    expect(shuffle([])).toEqual([]);
+  it("empty array returns empty array", () => {
+    expect(shuffle([])).toStrictEqual([]);
   });
 
-  test("single element returns same element", () => {
-    expect(shuffle([42])).toEqual([42]);
+  it("single element returns same element", () => {
+    expect(shuffle([42])).toStrictEqual([42]);
   });
 
-  test("large array preserves all elements", () => {
+  it("large array preserves all elements", () => {
     const input = Array.from({ length: 100 }, (_, idx) => idx);
     const result = shuffle(input);
     expect(result).toHaveLength(100);
-    expect(result.toSorted((left, right) => left - right)).toEqual(input);
+    expect(result.toSorted((left, right) => left - right)).toStrictEqual(input);
   });
 });

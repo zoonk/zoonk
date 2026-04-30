@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   attachTranslationsToSteps,
   toDistractorWordInputs,
@@ -28,7 +28,7 @@ function makeLessonSentence(overrides: Record<string, unknown> = {}) {
 }
 
 describe(toLessonWordInputs, () => {
-  test("maps lesson words to player inputs", () => {
+  it("maps lesson words to player inputs", () => {
     const result = toLessonWordInputs([
       makeLessonWord({
         distractors: ["boa tarde"],
@@ -43,7 +43,7 @@ describe(toLessonWordInputs, () => {
       }),
     ]);
 
-    expect(result).toEqual([
+    expect(result).toStrictEqual([
       {
         audioUrl: "/audio/boa-noite.mp3",
         distractors: ["boa tarde"],
@@ -58,7 +58,7 @@ describe(toLessonWordInputs, () => {
 });
 
 describe(toLessonSentenceInputs, () => {
-  test("maps lesson sentences to player inputs", () => {
+  it("maps lesson sentences to player inputs", () => {
     const result = toLessonSentenceInputs([
       makeLessonSentence({
         distractors: ["abend"],
@@ -74,7 +74,7 @@ describe(toLessonSentenceInputs, () => {
       }),
     ]);
 
-    expect(result).toEqual([
+    expect(result).toStrictEqual([
       {
         audioUrl: "/audio/sentence.mp3",
         distractors: ["abend"],
@@ -90,7 +90,7 @@ describe(toLessonSentenceInputs, () => {
 });
 
 describe(toSentenceWordInputs, () => {
-  test("reuses lesson word mapping for canonical sentence words", () => {
+  it("reuses lesson word mapping for canonical sentence words", () => {
     const result = toSentenceWordInputs([
       makeLessonWord({
         translation: "cat",
@@ -109,7 +109,7 @@ describe(toSentenceWordInputs, () => {
 });
 
 describe(toDistractorWordInputs, () => {
-  test("keeps only lightweight distractor metadata", () => {
+  it("keeps only lightweight distractor metadata", () => {
     const result = toDistractorWordInputs([
       {
         audioUrl: "/audio/abend.mp3",
@@ -120,7 +120,7 @@ describe(toDistractorWordInputs, () => {
       },
     ]);
 
-    expect(result).toEqual([
+    expect(result).toStrictEqual([
       {
         audioUrl: "/audio/abend.mp3",
         id: "4",
@@ -133,7 +133,7 @@ describe(toDistractorWordInputs, () => {
 });
 
 describe(attachTranslationsToSteps, () => {
-  test("merges lesson-scoped translations and distractors into raw steps", () => {
+  it("merges lesson-scoped translations and distractors into raw steps", () => {
     const result = attachTranslationsToSteps(
       [
         {
@@ -192,7 +192,7 @@ describe(attachTranslationsToSteps, () => {
       ],
     );
 
-    expect(result).toEqual([
+    expect(result).toStrictEqual([
       {
         content: {},
         id: "1",
@@ -229,7 +229,7 @@ describe(attachTranslationsToSteps, () => {
     ]);
   });
 
-  test("falls back to empty lesson-scoped data when no matching lesson row exists", () => {
+  it("falls back to empty lesson-scoped data when no matching lesson row exists", () => {
     const result = attachTranslationsToSteps(
       [
         {
@@ -253,7 +253,7 @@ describe(attachTranslationsToSteps, () => {
       [],
     );
 
-    expect(result).toEqual([
+    expect(result).toStrictEqual([
       {
         content: {},
         id: "1",

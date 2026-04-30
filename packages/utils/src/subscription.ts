@@ -1,7 +1,7 @@
 const PLAN_NAMES = ["free", "hobby", "plus", "pro"] as const;
 type PlanName = (typeof PLAN_NAMES)[number];
 
-export const SUBSCRIPTION_PROVIDERS = ["stripe", "google", "apple", "zoonk"] as const;
+const SUBSCRIPTION_PROVIDERS = ["stripe", "google", "apple", "zoonk"] as const;
 export type SubscriptionProvider = (typeof SUBSCRIPTION_PROVIDERS)[number];
 
 const PLAN_LOOKUP_KEYS: Record<Exclude<PlanName, "free">, { monthly: string; yearly: string }> = {

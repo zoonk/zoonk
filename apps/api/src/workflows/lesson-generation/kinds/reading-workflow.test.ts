@@ -8,7 +8,7 @@ import { prisma } from "@zoonk/db";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { lessonWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "../steps/_test-utils/create-lesson-context";
 import { readingLessonWorkflow } from "./reading-workflow";
 
@@ -21,19 +21,17 @@ const readingState = vi.hoisted(() => ({
 vi.mock("@zoonk/ai/tasks/lessons/language/sentences", () => ({
   generateLessonSentences: vi
     .fn()
-    .mockImplementation(() =>
-      Promise.resolve({
-        data: {
-          sentences: [
-            {
-              explanation: "Greeting sentence.",
-              sentence: readingState.sentence,
-              translation: readingState.translation,
-            },
-          ],
-        },
-      }),
-    ),
+    .mockImplementation(() => ({
+      data: {
+        sentences: [
+          {
+            explanation: "Greeting sentence.",
+            sentence: readingState.sentence,
+            translation: readingState.translation,
+          },
+        ],
+      },
+    })),
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/distractors", () => ({
@@ -86,7 +84,7 @@ describe(readingLessonWorkflow, () => {
     readingState.translation = "";
   });
 
-  test("stores reading sentences and word metadata from uncovered vocabulary lessons", async () => {
+  it("stores reading sentences and word metadata from uncovered vocabulary lessons", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const sourceWords = [`guten${uniqueId}`, `morgen${uniqueId}`];
     const sentence = sourceWords.join(" ");
@@ -173,13 +171,13 @@ describe(readingLessonWorkflow, () => {
       translationDistractors: [`hello-${uniqueId}`, `bye-${uniqueId}`],
     });
 
-    expect(lessonWords.map((entry) => [entry.word.word, entry.translation])).toEqual([
+    expect(lessonWords.map((entry) => [entry.word.word, entry.translation])).toStrictEqual([
       [sourceWords[0], `${sourceWords[0]} translated`],
       [sourceWords[1], `${sourceWords[1]} translated`],
     ]);
   });
 
-  test("keeps canonical word metadata when a reading distractor normalizes to the same key", async () => {
+  it("keeps canonical word metadata when a reading distractor normalizes to the same key", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const canonicalWord = `água${uniqueId}`;
     const duplicateDistractor = `agua${uniqueId}`;

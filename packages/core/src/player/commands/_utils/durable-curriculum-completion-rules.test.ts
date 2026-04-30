@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { type PublishedLessonCompletionRow } from "./durable-curriculum-completion-queries";
 import {
   getEffectiveDurableChapterIds,
@@ -54,7 +54,7 @@ function createChapters(ids: string[]): Parameters<typeof isCurrentCourseComplet
 }
 
 describe("durable curriculum completion rules", () => {
-  test("groupRowsByChapter groups rows by chapter id", () => {
+  it("groupRowsByChapter groups rows by chapter id", () => {
     const chapter1 = createTestUuid(1);
     const chapter2 = createTestUuid(2);
     const lesson10 = createTestUuid(10);
@@ -68,11 +68,11 @@ describe("durable curriculum completion rules", () => {
 
     const grouped = groupRowsByChapter({ rows });
 
-    expect(grouped.get(chapter1)?.map((row) => row.lessonId)).toEqual([lesson10, lesson11]);
-    expect(grouped.get(chapter2)?.map((row) => row.lessonId)).toEqual([lesson20]);
+    expect(grouped.get(chapter1)?.map((row) => row.lessonId)).toStrictEqual([lesson10, lesson11]);
+    expect(grouped.get(chapter2)?.map((row) => row.lessonId)).toStrictEqual([lesson20]);
   });
 
-  test("getLessonRow returns the matching lesson or null", () => {
+  it("getLessonRow returns the matching lesson or null", () => {
     const lesson10 = createTestUuid(10);
     const lesson11 = createTestUuid(11);
     const missingLesson = createTestUuid(99);
@@ -82,7 +82,7 @@ describe("durable curriculum completion rules", () => {
     expect(getLessonRow({ lessonId: missingLesson, rows })).toBeNull();
   });
 
-  test("getEffectiveDurableLessonIds adds the current lesson only when it is complete", () => {
+  it("getEffectiveDurableLessonIds adds the current lesson only when it is complete", () => {
     const durableLessonId = createTestUuid(3);
     const currentLessonId = createTestUuid(9);
     const durableLessonIds = new Set([durableLessonId]);
@@ -92,7 +92,7 @@ describe("durable curriculum completion rules", () => {
         durableLessonIds,
         lessonRow: createRow({ isCompleted: true, lessonId: currentLessonId }),
       }),
-    ).toEqual(new Set([durableLessonId, currentLessonId]));
+    ).toStrictEqual(new Set([durableLessonId, currentLessonId]));
 
     expect(
       getEffectiveDurableLessonIds({
@@ -102,7 +102,7 @@ describe("durable curriculum completion rules", () => {
     ).toBe(durableLessonIds);
   });
 
-  test("isCurrentChapterCompleted accepts direct or durable lesson completion but rejects empty chapters", () => {
+  it("isCurrentChapterCompleted accepts direct or durable lesson completion but rejects empty chapters", () => {
     const chapterId = createTestUuid(1);
     const lesson10 = createTestUuid(10);
     const lesson11 = createTestUuid(11);
@@ -135,7 +135,7 @@ describe("durable curriculum completion rules", () => {
     ).toBe(false);
   });
 
-  test("getEffectiveDurableChapterIds adds the current chapter only when it is complete", () => {
+  it("getEffectiveDurableChapterIds adds the current chapter only when it is complete", () => {
     const durableChapterId = createTestUuid(2);
     const currentChapterId = createTestUuid(5);
     const durableChapterIds = new Set([durableChapterId]);
@@ -146,7 +146,7 @@ describe("durable curriculum completion rules", () => {
         durableChapterIds,
         isChapterCompleted: true,
       }),
-    ).toEqual(new Set([durableChapterId, currentChapterId]));
+    ).toStrictEqual(new Set([durableChapterId, currentChapterId]));
 
     expect(
       getEffectiveDurableChapterIds({
@@ -157,7 +157,7 @@ describe("durable curriculum completion rules", () => {
     ).toBe(durableChapterIds);
   });
 
-  test("isCurrentCourseCompleted requires every chapter to be covered by durable or effective completion", () => {
+  it("isCurrentCourseCompleted requires every chapter to be covered by durable or effective completion", () => {
     const chapter1 = createTestUuid(1);
     const chapter2 = createTestUuid(2);
     const chapter3 = createTestUuid(3);
@@ -198,7 +198,7 @@ describe("durable curriculum completion rules", () => {
     ).toBe(false);
   });
 
-  test("isCurrentCourseCompleted can finish a course through durable lessons without a chapter badge yet", () => {
+  it("isCurrentCourseCompleted can finish a course through durable lessons without a chapter badge yet", () => {
     const chapter1 = createTestUuid(1);
     const chapter2 = createTestUuid(2);
     const lesson10 = createTestUuid(10);

@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { saveGrammarLessonStep } from "./save-grammar-lesson-step";
 
@@ -13,7 +13,7 @@ describe(saveGrammarLessonStep, () => {
     organizationId = organization.id;
   });
 
-  test("saves grammar examples, discovery, rule, and practice steps", async () => {
+  it("saves grammar examples, discovery, rule, and practice steps", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const context = await createLessonContext({
       kind: "grammar",
@@ -65,7 +65,7 @@ describe(saveGrammarLessonStep, () => {
       where: { lessonId: context.id },
     });
 
-    expect(steps.map((step) => [step.position, step.kind])).toEqual([
+    expect(steps.map((step) => [step.position, step.kind])).toStrictEqual([
       [0, "static"],
       [1, "static"],
       [2, "multipleChoice"],
@@ -82,12 +82,12 @@ describe(saveGrammarLessonStep, () => {
       context: `Look at the examples ${id}`,
       question: `What verb fits? ${id}`,
     });
-    expect(steps[3]?.content).toEqual({
+    expect(steps[3]?.content).toStrictEqual({
       ruleName: `Present tense ${id}`,
       ruleSummary: `Use ist${id} for present tense`,
       variant: "grammarRule",
     });
-    expect(steps[4]?.content).toEqual({
+    expect(steps[4]?.content).toStrictEqual({
       answers: [`ist${id}`],
       distractors: [`war${id}`, `hat${id}`],
       feedback: `Because ist${id} fits here`,

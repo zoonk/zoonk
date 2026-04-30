@@ -22,7 +22,7 @@ export type SelectedAnswer =
 
 export type StepResult = { stepId: string; answer?: SelectedAnswer; result: AnswerResult };
 
-export type StepTiming = {
+type StepTiming = {
   answeredAt: number;
   dayOfWeek: number;
   durationSeconds: number;

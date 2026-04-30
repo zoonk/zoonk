@@ -8,7 +8,7 @@ import {
   wordFixture,
   wordPronunciationFixture,
 } from "@zoonk/testing/fixtures/words";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { getLessonDistractorWordsForLessons } from "./get-lesson-distractor-words";
 
 describe(getLessonDistractorWordsForLessons, () => {
@@ -34,7 +34,7 @@ describe(getLessonDistractorWordsForLessons, () => {
     });
   });
 
-  test("returns unique target-language distractor words with pronunciation for the lesson language", async () => {
+  it("returns unique target-language distractor words with pronunciation for the lesson language", async () => {
     const id = crypto.randomUUID();
     const [
       lessonForTest,
@@ -102,10 +102,10 @@ describe(getLessonDistractorWordsForLessons, () => {
 
     const result = await getLessonDistractorWordsForLessons({ lessonIds: [lessonForTest.id] });
 
-    expect(result.map((item) => item.word).toSorted()).toEqual(
+    expect(result.map((item) => item.word).toSorted()).toStrictEqual(
       [lessonWordDistractor.word, sharedDistractor.word].toSorted(),
     );
-    expect(result).toEqual(
+    expect(result).toStrictEqual(
       expect.arrayContaining([
         expect.objectContaining({
           audioUrl: lessonWordDistractor.audioUrl,
@@ -127,7 +127,7 @@ describe(getLessonDistractorWordsForLessons, () => {
     );
   });
 
-  test("ignores translation distractors and unresolved target-language texts", async () => {
+  it("ignores translation distractors and unresolved target-language texts", async () => {
     const id = crypto.randomUUID();
     const [lessonForTest, canonicalWord, canonicalSentence, resolvedDistractor] = await Promise.all(
       [
@@ -163,10 +163,10 @@ describe(getLessonDistractorWordsForLessons, () => {
 
     const result = await getLessonDistractorWordsForLessons({ lessonIds: [lessonForTest.id] });
 
-    expect(result.map((item) => item.word)).toEqual([resolvedDistractor.word]);
+    expect(result.map((item) => item.word)).toStrictEqual([resolvedDistractor.word]);
   });
 
-  test("returns empty array when the lesson has no stored language rows", async () => {
+  it("returns empty array when the lesson has no stored language rows", async () => {
     const emptyLesson = await lessonFixture({
       chapterId: chapter.id,
       isPublished: true,
@@ -176,6 +176,6 @@ describe(getLessonDistractorWordsForLessons, () => {
 
     const result = await getLessonDistractorWordsForLessons({ lessonIds: [emptyLesson.id] });
 
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 });

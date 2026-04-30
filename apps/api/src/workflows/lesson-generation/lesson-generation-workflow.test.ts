@@ -25,7 +25,7 @@ import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { lessonSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { lessonWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { lessonGenerationWorkflow } from "./lesson-generation-workflow";
 
 const languageMockState = vi.hoisted(() => ({
@@ -345,7 +345,7 @@ describe(lessonGenerationWorkflow, () => {
     ]);
   });
 
-  test("runs the explanation image workflow and saves images on static steps", async () => {
+  it("runs the explanation image workflow and saves images on static steps", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
     const lesson = await lessonFixture({
       chapterId: chapter.id,
@@ -361,7 +361,7 @@ describe(lessonGenerationWorkflow, () => {
     expect(generateLessonExplanation).toHaveBeenCalledOnce();
     expect(generateStepImagePrompts).toHaveBeenCalledOnce();
     expect(generateContentStepImage).toHaveBeenCalledTimes(3);
-    expect(completedStreamedSteps()).toEqual(
+    expect(completedStreamedSteps()).toStrictEqual(
       expect.arrayContaining([
         "generateExplanationContent",
         "generateImagePrompts",
@@ -379,7 +379,7 @@ describe(lessonGenerationWorkflow, () => {
     const imageUrls = contents.map((content) => content.image?.url);
 
     expect(steps).toHaveLength(3);
-    expect(imageUrls).toEqual([
+    expect(imageUrls).toStrictEqual([
       "https://example.com/content/first%20image%20prompt.webp",
       "https://example.com/content/second%20image%20prompt.webp",
       "https://example.com/content/anchor%20image%20prompt.webp",
@@ -390,7 +390,7 @@ describe(lessonGenerationWorkflow, () => {
     expect(dbLesson.generationRunId).toBe("test-run-id");
   });
 
-  test("runs the tutorial image workflow and saves generated procedural steps", async () => {
+  it("runs the tutorial image workflow and saves generated procedural steps", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
     const lesson = await lessonFixture({
       chapterId: chapter.id,
@@ -413,7 +413,7 @@ describe(lessonGenerationWorkflow, () => {
       }),
     );
     expect(generateContentStepImage).toHaveBeenCalledTimes(2);
-    expect(completedStreamedSteps()).toEqual(
+    expect(completedStreamedSteps()).toStrictEqual(
       expect.arrayContaining([
         "generateTutorialContent",
         "generateImagePrompts",
@@ -429,17 +429,17 @@ describe(lessonGenerationWorkflow, () => {
     });
     const contents = steps.map((step) => parseStepContent("static", step.content));
 
-    expect(contents.map((content) => ("title" in content ? content.title : null))).toEqual([
+    expect(contents.map((content) => ("title" in content ? content.title : null))).toStrictEqual([
       "Open settings",
       "Save project",
     ]);
-    expect(contents.map((content) => content.image?.url)).toEqual([
+    expect(contents.map((content) => content.image?.url)).toStrictEqual([
       "https://example.com/content/tutorial%20first%20image%20prompt.webp",
       "https://example.com/content/tutorial%20second%20image%20prompt.webp",
     ]);
   });
 
-  test("practice generation uses only explanation steps since the previous practice", async () => {
+  it("practice generation uses only explanation steps since the previous practice", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
 
     const [practice] = await Promise.all([
@@ -485,7 +485,7 @@ describe(lessonGenerationWorkflow, () => {
     expect(generateContentStepImage).toHaveBeenCalledWith(
       expect.objectContaining({ preset: "practice", prompt: "practice scenario image" }),
     );
-    expect(completedStreamedSteps()).toEqual(
+    expect(completedStreamedSteps()).toStrictEqual(
       expect.arrayContaining([
         "generatePracticeContent",
         "generateStepImages",
@@ -508,7 +508,7 @@ describe(lessonGenerationWorkflow, () => {
     );
   });
 
-  test("blocks practice generation until all source explanations are completed", async () => {
+  it("blocks practice generation until all source explanations are completed", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
 
     vi.mocked(generateLessonPractice).mockClear();
@@ -554,7 +554,7 @@ describe(lessonGenerationWorkflow, () => {
     expect(steps).toHaveLength(0);
   });
 
-  test("quiz generation uses explanations since the previous quiz and saves select-image URLs", async () => {
+  it("quiz generation uses explanations since the previous quiz and saves select-image URLs", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
 
     const [quiz] = await Promise.all([
@@ -600,7 +600,7 @@ describe(lessonGenerationWorkflow, () => {
       }),
     );
     expect(generateStepImage).toHaveBeenCalledTimes(2);
-    expect(completedStreamedSteps()).toEqual(
+    expect(completedStreamedSteps()).toStrictEqual(
       expect.arrayContaining([
         "generateQuizContent",
         "generateQuizImages",
@@ -612,13 +612,13 @@ describe(lessonGenerationWorkflow, () => {
     const [step] = await prisma.step.findMany({ where: { lessonId: quiz.id } });
     const content = parseStepContent("selectImage", step?.content);
 
-    expect(content.options.map((option) => option.url)).toEqual([
+    expect(content.options.map((option) => option.url)).toStrictEqual([
       "https://example.com/select/correct%20quiz%20option.webp",
       "https://example.com/select/wrong%20quiz%20option.webp",
     ]);
   });
 
-  test("vocabulary generation keeps audio, pronunciation, romanization, and distractor enrichment", async () => {
+  it("vocabulary generation keeps audio, pronunciation, romanization, and distractor enrichment", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const catWord = `猫-${uniqueId}`;
     const waterWord = `水-${uniqueId}`;
@@ -671,7 +671,7 @@ describe(lessonGenerationWorkflow, () => {
     expect(generateLessonRomanization).toHaveBeenCalledWith(
       expect.objectContaining({ targetLanguage: "ja", texts: allRenderedWords }),
     );
-    expect(completedStreamedSteps()).toEqual(
+    expect(completedStreamedSteps()).toStrictEqual(
       expect.arrayContaining([
         "generateVocabularyContent",
         "generateVocabularyDistractors",
@@ -699,7 +699,7 @@ describe(lessonGenerationWorkflow, () => {
       }))
       .toSorted((a, b) => a.translation.localeCompare(b.translation));
 
-    expect(words).toEqual([
+    expect(words).toStrictEqual([
       {
         audioUrl: `https://example.com/audio/${encodeURIComponent(catWord)}.mp3`,
         distractors: [dogWord, birdWord],
@@ -719,7 +719,7 @@ describe(lessonGenerationWorkflow, () => {
     ]);
   });
 
-  test("translation generation creates translation steps from the previous vocabulary lesson", async () => {
+  it("translation generation creates translation steps from the previous vocabulary lesson", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const { chapter } = await createLanguageWorkflowTree({ organizationId });
     const [vocabularyLesson, word] = await Promise.all([
@@ -763,7 +763,7 @@ describe(lessonGenerationWorkflow, () => {
 
     await lessonGenerationWorkflow(translationLesson.id);
 
-    expect(completedStreamedSteps()).toEqual(
+    expect(completedStreamedSteps()).toStrictEqual(
       expect.arrayContaining(["saveTranslationLesson", "setLessonAsCompleted"]),
     );
 
@@ -773,10 +773,10 @@ describe(lessonGenerationWorkflow, () => {
 
     expect(translationStep?.kind).toBe("translation");
     expect(translationStep?.wordId).toBe(word.id);
-    expect(parseStepContent("translation", translationStep?.content)).toEqual({});
+    expect(parseStepContent("translation", translationStep?.content)).toStrictEqual({});
   });
 
-  test("reading generation uses vocabulary since the previous reading and saves enriched sentences", async () => {
+  it("reading generation uses vocabulary since the previous reading and saves enriched sentences", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const { chapter } = await createLanguageWorkflowTree({ organizationId });
     const [vocabularyLesson, catWord, waterWord] = await Promise.all([
@@ -824,7 +824,7 @@ describe(lessonGenerationWorkflow, () => {
     );
     expect(generateTranslation).toHaveBeenCalledWith(expect.objectContaining({ word: "猫" }));
     expect(generateTranslation).toHaveBeenCalledWith(expect.objectContaining({ word: "水" }));
-    expect(completedStreamedSteps()).toEqual(
+    expect(completedStreamedSteps()).toStrictEqual(
       expect.arrayContaining([
         "generateReadingContent",
         "generateReadingAudio",
@@ -851,7 +851,7 @@ describe(lessonGenerationWorkflow, () => {
     expect(sentenceLink?.translation).toBe("cat and water");
   });
 
-  test("listening generation copies sentence steps from the previous reading lesson", async () => {
+  it("listening generation copies sentence steps from the previous reading lesson", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const { chapter } = await createLanguageWorkflowTree({ organizationId });
     const [readingLesson, sentence] = await Promise.all([
@@ -895,7 +895,7 @@ describe(lessonGenerationWorkflow, () => {
 
     await lessonGenerationWorkflow(listeningLesson.id);
 
-    expect(completedStreamedSteps()).toEqual(
+    expect(completedStreamedSteps()).toStrictEqual(
       expect.arrayContaining(["saveListeningLesson", "setLessonAsCompleted"]),
     );
 
@@ -903,10 +903,10 @@ describe(lessonGenerationWorkflow, () => {
 
     expect(listeningStep?.kind).toBe("listening");
     expect(listeningStep?.sentenceId).toBe(sentence.id);
-    expect(parseStepContent("listening", listeningStep?.content)).toEqual({});
+    expect(parseStepContent("listening", listeningStep?.content)).toStrictEqual({});
   });
 
-  test("grammar generation keeps content, user-language exercises, romanization, and saving phases", async () => {
+  it("grammar generation keeps content, user-language exercises, romanization, and saving phases", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const { chapter } = await createLanguageWorkflowTree({ organizationId });
     const lesson = await lessonFixture({
@@ -927,7 +927,7 @@ describe(lessonGenerationWorkflow, () => {
     expect(generateLessonRomanization).toHaveBeenCalledWith(
       expect.objectContaining({ texts: expect.arrayContaining(["猫がいます", "猫", "犬", "鳥"]) }),
     );
-    expect(completedStreamedSteps()).toEqual(
+    expect(completedStreamedSteps()).toStrictEqual(
       expect.arrayContaining([
         "generateGrammarContent",
         "generateGrammarUserContent",
@@ -942,7 +942,7 @@ describe(lessonGenerationWorkflow, () => {
       where: { lessonId: lesson.id },
     });
 
-    expect(steps.map((step) => step.kind)).toEqual([
+    expect(steps.map((step) => step.kind)).toStrictEqual([
       "static",
       "multipleChoice",
       "static",
@@ -950,7 +950,7 @@ describe(lessonGenerationWorkflow, () => {
     ]);
   });
 
-  test("repairs a pending lesson with existing steps without calling AI", async () => {
+  it("repairs a pending lesson with existing steps without calling AI", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
     const lesson = await lessonFixture({
       chapterId: chapter.id,
@@ -986,7 +986,7 @@ describe(lessonGenerationWorkflow, () => {
     expect(completionEvent).toBeDefined();
   });
 
-  test("regenerates failed lessons with leftover steps instead of repairing them", async () => {
+  it("regenerates failed lessons with leftover steps instead of repairing them", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
     const lesson = await lessonFixture({
       chapterId: chapter.id,
@@ -1019,7 +1019,7 @@ describe(lessonGenerationWorkflow, () => {
     });
     const contents = steps.map((step) => parseStepContent("static", step.content));
 
-    expect(contents.map((content) => ("title" in content ? content.title : null))).toEqual([
+    expect(contents.map((content) => ("title" in content ? content.title : null))).toStrictEqual([
       "First idea",
       "Second idea",
       "Transfer",

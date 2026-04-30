@@ -3,7 +3,7 @@ import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { classifyLessonsStep } from "./classify-lessons-step";
 import { type ChapterContext } from "./get-chapter-step";
 
@@ -30,7 +30,7 @@ describe(classifyLessonsStep, () => {
     vi.clearAllMocks();
   });
 
-  test("classifies planned non-language lessons", async () => {
+  it("classifies planned non-language lessons", async () => {
     const lessons = [
       { description: "Intro", title: "Lesson 1" },
       { description: "Basics", title: "Lesson 2" },
@@ -45,7 +45,7 @@ describe(classifyLessonsStep, () => {
       plan: { lessons, needsClassification: true },
     });
 
-    expect(result).toEqual([
+    expect(result).toStrictEqual([
       { description: "Intro", kind: "explanation", title: "Lesson 1" },
       { description: "Basics", kind: "tutorial", title: "Lesson 2" },
     ]);
@@ -76,7 +76,7 @@ describe(classifyLessonsStep, () => {
     );
   });
 
-  test("returns language lessons without classification", async () => {
+  it("returns language lessons without classification", async () => {
     const lessons = [{ description: "Vocab", kind: "vocabulary" as const, title: "Words" }];
 
     const result = await classifyLessonsStep({
@@ -84,11 +84,11 @@ describe(classifyLessonsStep, () => {
       plan: { lessons, needsClassification: false },
     });
 
-    expect(result).toEqual(lessons);
+    expect(result).toStrictEqual(lessons);
     expect(generateLessonKindMock).not.toHaveBeenCalled();
   });
 
-  test("throws when lesson kind generation fails for any planned lesson", async () => {
+  it("throws when lesson kind generation fails for any planned lesson", async () => {
     const lessons = [
       { description: "Intro", title: "Lesson 1" },
       { description: "Basics", title: "Lesson 2" },

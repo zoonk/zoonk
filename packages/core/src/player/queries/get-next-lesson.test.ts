@@ -3,7 +3,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { getNextLesson } from "./get-next-lesson";
 
 describe(getNextLesson, () => {
@@ -60,27 +60,27 @@ describe(getNextLesson, () => {
     lesson3Id = ls3.id;
   });
 
-  test("returns next lesson in same chapter", async () => {
+  it("returns next lesson in same chapter", async () => {
     const result = await getNextLesson(lesson1Id);
-    expect(result).toEqual({ id: lesson2Id, needsGeneration: false });
+    expect(result).toStrictEqual({ id: lesson2Id, needsGeneration: false });
   });
 
-  test("returns first lesson of next chapter when current is last in chapter", async () => {
+  it("returns first lesson of next chapter when current is last in chapter", async () => {
     const result = await getNextLesson(lesson2Id);
-    expect(result).toEqual({ id: lesson3Id, needsGeneration: false });
+    expect(result).toStrictEqual({ id: lesson3Id, needsGeneration: false });
   });
 
-  test("returns null when on last lesson of course", async () => {
+  it("returns null when on last lesson of course", async () => {
     const result = await getNextLesson(lesson3Id);
     expect(result).toBeNull();
   });
 
-  test("returns null for non-existent lesson", async () => {
+  it("returns null for non-existent lesson", async () => {
     const result = await getNextLesson(randomUUID());
     expect(result).toBeNull();
   });
 
-  test("skips unpublished lessons", async () => {
+  it("skips unpublished lessons", async () => {
     const testOrg = await organizationFixture({ kind: "brand" });
     const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
     const testChapter = await chapterFixture({
@@ -112,10 +112,10 @@ describe(getNextLesson, () => {
     ]);
 
     const result = await getNextLesson(publishedLesson.id);
-    expect(result).toEqual({ id: nextPublishedLesson.id, needsGeneration: false });
+    expect(result).toStrictEqual({ id: nextPublishedLesson.id, needsGeneration: false });
   });
 
-  test("skips unpublished chapters", async () => {
+  it("skips unpublished chapters", async () => {
     const testOrg = await organizationFixture({ kind: "brand" });
     const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
 
@@ -162,11 +162,11 @@ describe(getNextLesson, () => {
     ]);
 
     const result = await getNextLesson(currentLesson.id);
-    expect(result).toEqual({ id: nextLesson.id, needsGeneration: false });
+    expect(result).toStrictEqual({ id: nextLesson.id, needsGeneration: false });
   });
 
   describe("needsGeneration", () => {
-    test("returns needsGeneration true when lesson is pending", async () => {
+    it("returns needsGeneration true when lesson is pending", async () => {
       const testOrg = await organizationFixture({ kind: "brand" });
       const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
       const testChapter = await chapterFixture({
@@ -193,10 +193,10 @@ describe(getNextLesson, () => {
       ]);
 
       const result = await getNextLesson(currentLesson.id);
-      expect(result).toEqual({ id: pendingLesson.id, needsGeneration: true });
+      expect(result).toStrictEqual({ id: pendingLesson.id, needsGeneration: true });
     });
 
-    test("returns needsGeneration true when lesson is failed", async () => {
+    it("returns needsGeneration true when lesson is failed", async () => {
       const testOrg = await organizationFixture({ kind: "brand" });
       const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
       const testChapter = await chapterFixture({
@@ -223,10 +223,10 @@ describe(getNextLesson, () => {
       ]);
 
       const result = await getNextLesson(currentLesson.id);
-      expect(result).toEqual({ id: failedLesson.id, needsGeneration: true });
+      expect(result).toStrictEqual({ id: failedLesson.id, needsGeneration: true });
     });
 
-    test("returns needsGeneration false when next lesson is completed", async () => {
+    it("returns needsGeneration false when next lesson is completed", async () => {
       const testOrg = await organizationFixture({ kind: "brand" });
       const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
       const testChapter = await chapterFixture({
@@ -253,10 +253,10 @@ describe(getNextLesson, () => {
       ]);
 
       const result = await getNextLesson(currentLesson.id);
-      expect(result).toEqual({ id: nextLesson.id, needsGeneration: false });
+      expect(result).toStrictEqual({ id: nextLesson.id, needsGeneration: false });
     });
 
-    test("returns needsGeneration false when lesson generation is already in flight", async () => {
+    it("returns needsGeneration false when lesson generation is already in flight", async () => {
       const testOrg = await organizationFixture({ kind: "brand" });
       const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
       const testChapter = await chapterFixture({
@@ -284,7 +284,7 @@ describe(getNextLesson, () => {
       ]);
 
       const result = await getNextLesson(currentLesson.id);
-      expect(result).toEqual({ id: runningLesson.id, needsGeneration: false });
+      expect(result).toStrictEqual({ id: runningLesson.id, needsGeneration: false });
     });
   });
 });

@@ -3,7 +3,7 @@ import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { type CourseContext } from "../steps/initialize-course-step";
 import { type GeneratedContent } from "./generate-missing-content";
 import { type ExistingCourseContent } from "./get-or-create-course";
@@ -21,7 +21,7 @@ describe(persistGeneratedContent, () => {
     vi.clearAllMocks();
   });
 
-  test("persists all generated content when nothing exists", async () => {
+  it("persists all generated content when nothing exists", async () => {
     const course = await courseFixture({
       generationStatus: "running",
       organizationId,
@@ -74,7 +74,7 @@ describe(persistGeneratedContent, () => {
     expect(dbAltTitles).toHaveLength(1);
   });
 
-  test("skips persisting content that already exists", async () => {
+  it("skips persisting content that already exists", async () => {
     const course = await courseFixture({
       description: "Already has desc",
       imageUrl: "https://example.com/existing.webp",
@@ -109,7 +109,7 @@ describe(persistGeneratedContent, () => {
 
     const chapters = await persistGeneratedContent(courseContext, content, existing);
 
-    expect(chapters).toEqual([]);
+    expect(chapters).toStrictEqual([]);
 
     const events = getStreamedEvents();
     const completedSteps = events
@@ -117,7 +117,7 @@ describe(persistGeneratedContent, () => {
       .map((event) => event.step);
 
     expect(completedSteps).toHaveLength(4);
-    expect(completedSteps).toEqual(
+    expect(completedSteps).toStrictEqual(
       expect.arrayContaining([
         "updateCourse",
         "addAlternativeTitles",

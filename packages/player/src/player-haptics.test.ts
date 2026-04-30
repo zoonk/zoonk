@@ -1,5 +1,5 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { type PlayerHapticSnapshot, getPlayerHapticSequence } from "./player-haptics";
 import { type StepResult } from "./player-reducer";
 
@@ -36,7 +36,7 @@ function buildSnapshot(overrides: Partial<PlayerHapticSnapshot> = {}): PlayerHap
 }
 
 describe(getPlayerHapticSequence, () => {
-  test("adds a generic success haptic when inline feedback appears", () => {
+  it("adds a generic success haptic when inline feedback appears", () => {
     const step = buildStep({
       content: {
         answers: ["world"],
@@ -62,10 +62,10 @@ describe(getPlayerHapticSequence, () => {
       previous: buildSnapshot({ step }),
     });
 
-    expect(sequence).toEqual(["success"]);
+    expect(sequence).toStrictEqual(["success"]);
   });
 
-  test("adds a generic error haptic when feedback screen appears for a wrong answer", () => {
+  it("adds a generic error haptic when feedback screen appears for a wrong answer", () => {
     const step = buildStep({
       content: {
         options: [
@@ -91,16 +91,16 @@ describe(getPlayerHapticSequence, () => {
       previous: buildSnapshot({ step }),
     });
 
-    expect(sequence).toEqual(["error"]);
+    expect(sequence).toStrictEqual(["error"]);
   });
 
-  test("uses a stronger celebration for lesson completion", () => {
+  it("uses a stronger celebration for lesson completion", () => {
     const sequence = getPlayerHapticSequence({
       current: buildSnapshot({ phase: "completed" }),
       previous: buildSnapshot({ phase: "playing" }),
     });
 
-    expect(sequence).toEqual([
+    expect(sequence).toStrictEqual([
       [
         { duration: 30, intensity: 0.6 },
         { delay: 45, duration: 45, intensity: 0.9 },

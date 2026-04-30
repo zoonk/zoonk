@@ -1,9 +1,9 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { getPhaseOrder, isGeneratedLessonKind } from "./generation-phase-config";
 import { calculateWeightedProgress, getPhaseStatus } from "./generation-phases";
 
 describe(isGeneratedLessonKind, () => {
-  test("keeps non-generated lesson rows out of lesson generation", () => {
+  it("keeps non-generated lesson rows out of lesson generation", () => {
     expect(isGeneratedLessonKind("custom")).toBe(false);
     expect(isGeneratedLessonKind("review")).toBe(false);
     expect(isGeneratedLessonKind("explanation")).toBe(true);
@@ -12,8 +12,8 @@ describe(isGeneratedLessonKind, () => {
 });
 
 describe(getPhaseOrder, () => {
-  test("keeps explanation generation split into content, visual planning, images, and saving", () => {
-    expect(getPhaseOrder("explanation")).toEqual([
+  it("keeps explanation generation split into content, visual planning, images, and saving", () => {
+    expect(getPhaseOrder("explanation")).toStrictEqual([
       "gettingStarted",
       "writingContent",
       "preparingImages",
@@ -22,8 +22,8 @@ describe(getPhaseOrder, () => {
     ]);
   });
 
-  test("keeps vocabulary generation split into enrichment and media phases", () => {
-    expect(getPhaseOrder("vocabulary")).toEqual([
+  it("keeps vocabulary generation split into enrichment and media phases", () => {
+    expect(getPhaseOrder("vocabulary")).toStrictEqual([
       "gettingStarted",
       "buildingWordList",
       "creatingExercises",
@@ -36,7 +36,7 @@ describe(getPhaseOrder, () => {
 });
 
 describe(getPhaseStatus, () => {
-  test("marks the explanation visual planning phase active when image prompts are streaming", () => {
+  it("marks the explanation visual planning phase active when image prompts are streaming", () => {
     expect(
       getPhaseStatus(
         "preparingImages",
@@ -47,7 +47,7 @@ describe(getPhaseStatus, () => {
     ).toBe("active");
   });
 
-  test("marks the vocabulary audio phase active when word audio is streaming", () => {
+  it("marks the vocabulary audio phase active when word audio is streaming", () => {
     expect(
       getPhaseStatus(
         "recordingAudio",
@@ -65,7 +65,7 @@ describe(getPhaseStatus, () => {
     ).toBe("active");
   });
 
-  test("keeps the final completion write inside the saving phase", () => {
+  it("keeps the final completion write inside the saving phase", () => {
     expect(
       getPhaseStatus(
         "saving",
@@ -86,7 +86,7 @@ describe(getPhaseStatus, () => {
 });
 
 describe(calculateWeightedProgress, () => {
-  test("uses only the selected lesson kind's phases when calculating progress", () => {
+  it("uses only the selected lesson kind's phases when calculating progress", () => {
     expect(
       calculateWeightedProgress(
         [

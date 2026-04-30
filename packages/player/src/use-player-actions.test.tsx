@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { act, renderHook } from "@testing-library/react";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { type PlayerState } from "./player-reducer";
 import { usePlayerActions } from "./use-player-actions";
 
@@ -43,7 +43,7 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
 }
 
 describe(usePlayerActions, () => {
-  test("check still no-ops for unanswered interactive steps", () => {
+  it("check still no-ops for unanswered interactive steps", () => {
     const dispatch = vi.fn();
     const onComplete = vi.fn();
     const state = buildState({

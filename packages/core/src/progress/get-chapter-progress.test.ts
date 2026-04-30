@@ -5,7 +5,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { getChapterProgress } from "./get-chapter-progress";
 
 describe(getChapterProgress, () => {
@@ -15,13 +15,13 @@ describe(getChapterProgress, () => {
     organization = await organizationFixture();
   });
 
-  test("returns empty array when unauthenticated", async () => {
+  it("returns empty array when unauthenticated", async () => {
     const course = await courseFixture({ isPublished: true, organizationId: organization.id });
     const result = await getChapterProgress({ courseId: course.id, headers: new Headers() });
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
-  test("returns chapters with zero counts when user has no progress", async () => {
+  it("returns chapters with zero counts when user has no progress", async () => {
     const [user, course] = await Promise.all([
       userFixture(),
       courseFixture({ isPublished: true, organizationId: organization.id }),
@@ -43,10 +43,10 @@ describe(getChapterProgress, () => {
 
     const headers = await signInAs(user.email, user.password);
     const result = await getChapterProgress({ courseId: course.id, headers });
-    expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 0, totalLessons: 1 }]);
+    expect(result).toStrictEqual([{ chapterId: chapter.id, completedLessons: 0, totalLessons: 1 }]);
   });
 
-  test("counts completed lessons directly", async () => {
+  it("counts completed lessons directly", async () => {
     const [user, course] = await Promise.all([
       userFixture(),
       courseFixture({ isPublished: true, organizationId: organization.id }),
@@ -83,7 +83,7 @@ describe(getChapterProgress, () => {
 
     const headers = await signInAs(user.email, user.password);
     const result = await getChapterProgress({ courseId: course.id, headers });
-    expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 1, totalLessons: 2 }]);
+    expect(result).toStrictEqual([{ chapterId: chapter.id, completedLessons: 1, totalLessons: 2 }]);
 
     await lessonProgressFixture({
       completedAt: new Date(),
@@ -93,10 +93,12 @@ describe(getChapterProgress, () => {
     });
 
     const result2 = await getChapterProgress({ courseId: course.id, headers });
-    expect(result2).toEqual([{ chapterId: chapter.id, completedLessons: 2, totalLessons: 2 }]);
+    expect(result2).toStrictEqual([
+      { chapterId: chapter.id, completedLessons: 2, totalLessons: 2 },
+    ]);
   });
 
-  test("returns correct counts across multiple chapters", async () => {
+  it("returns correct counts across multiple chapters", async () => {
     const [user, course] = await Promise.all([
       userFixture(),
       courseFixture({ isPublished: true, organizationId: organization.id }),
@@ -142,13 +144,13 @@ describe(getChapterProgress, () => {
 
     const headers = await signInAs(user.email, user.password);
     const result = await getChapterProgress({ courseId: course.id, headers });
-    expect(result).toEqual([
+    expect(result).toStrictEqual([
       { chapterId: chapter1.id, completedLessons: 1, totalLessons: 1 },
       { chapterId: chapter2.id, completedLessons: 0, totalLessons: 1 },
     ]);
   });
 
-  test("excludes started-but-not-completed lessons from lesson completion", async () => {
+  it("excludes started-but-not-completed lessons from lesson completion", async () => {
     const [user, course] = await Promise.all([
       userFixture(),
       courseFixture({ isPublished: true, organizationId: organization.id }),
@@ -178,10 +180,10 @@ describe(getChapterProgress, () => {
 
     const headers = await signInAs(user.email, user.password);
     const result = await getChapterProgress({ courseId: course.id, headers });
-    expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 0, totalLessons: 1 }]);
+    expect(result).toStrictEqual([{ chapterId: chapter.id, completedLessons: 0, totalLessons: 1 }]);
   });
 
-  test("only counts published lessons", async () => {
+  it("only counts published lessons", async () => {
     const [user, course] = await Promise.all([
       userFixture(),
       courseFixture({ isPublished: true, organizationId: organization.id }),
@@ -218,10 +220,10 @@ describe(getChapterProgress, () => {
 
     const headers = await signInAs(user.email, user.password);
     const result = await getChapterProgress({ courseId: course.id, headers });
-    expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 1, totalLessons: 1 }]);
+    expect(result).toStrictEqual([{ chapterId: chapter.id, completedLessons: 1, totalLessons: 1 }]);
   });
 
-  test("chapters with 0 published lessons return totalLessons 0", async () => {
+  it("chapters with 0 published lessons return totalLessons 0", async () => {
     const [user, course] = await Promise.all([
       userFixture(),
       courseFixture({ isPublished: true, organizationId: organization.id }),
@@ -237,10 +239,10 @@ describe(getChapterProgress, () => {
 
     const headers = await signInAs(user.email, user.password);
     const result = await getChapterProgress({ courseId: course.id, headers });
-    expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 0, totalLessons: 0 }]);
+    expect(result).toStrictEqual([{ chapterId: chapter.id, completedLessons: 0, totalLessons: 0 }]);
   });
 
-  test("incomplete lessons still count toward the chapter total", async () => {
+  it("incomplete lessons still count toward the chapter total", async () => {
     const [user, course] = await Promise.all([
       userFixture(),
       courseFixture({ isPublished: true, organizationId: organization.id }),
@@ -262,10 +264,10 @@ describe(getChapterProgress, () => {
 
     const headers = await signInAs(user.email, user.password);
     const result = await getChapterProgress({ courseId: course.id, headers });
-    expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 0, totalLessons: 1 }]);
+    expect(result).toStrictEqual([{ chapterId: chapter.id, completedLessons: 0, totalLessons: 1 }]);
   });
 
-  test("a chapter stays in progress while another published lesson is incomplete", async () => {
+  it("a chapter stays in progress while another published lesson is incomplete", async () => {
     const [user, course] = await Promise.all([
       userFixture(),
       courseFixture({ isPublished: true, organizationId: organization.id }),
@@ -303,10 +305,10 @@ describe(getChapterProgress, () => {
     const headers = await signInAs(user.email, user.password);
     const result = await getChapterProgress({ courseId: course.id, headers });
 
-    expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 1, totalLessons: 2 }]);
+    expect(result).toStrictEqual([{ chapterId: chapter.id, completedLessons: 1, totalLessons: 2 }]);
   });
 
-  test("keeps a durably completed chapter completed when a new lesson is added later", async () => {
+  it("keeps a durably completed chapter completed when a new lesson is added later", async () => {
     const [user, course] = await Promise.all([
       userFixture(),
       courseFixture({ isPublished: true, organizationId: organization.id }),
@@ -339,6 +341,6 @@ describe(getChapterProgress, () => {
     const headers = await signInAs(user.email, user.password);
     const result = await getChapterProgress({ courseId: course.id, headers });
 
-    expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 2, totalLessons: 2 }]);
+    expect(result).toStrictEqual([{ chapterId: chapter.id, completedLessons: 2, totalLessons: 2 }]);
   });
 });

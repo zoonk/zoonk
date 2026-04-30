@@ -4,7 +4,7 @@ import { generateContentStepImage } from "@zoonk/core/steps/content-image";
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "../steps/_test-utils/create-lesson-context";
 import { tutorialLessonWorkflow } from "./tutorial-workflow";
 
@@ -48,7 +48,7 @@ describe(tutorialLessonWorkflow, () => {
     vi.clearAllMocks();
   });
 
-  test("stores generated tutorial steps with generated images", async () => {
+  it("stores generated tutorial steps with generated images", async () => {
     const context = await createLessonContext({ kind: "tutorial", organizationId });
 
     await tutorialLessonWorkflow(context);
@@ -64,12 +64,12 @@ describe(tutorialLessonWorkflow, () => {
 
     const contents = steps.map((step) => parseStepContent("static", step.content));
 
-    expect(steps.map((step) => [step.position, step.kind])).toEqual([
+    expect(steps.map((step) => [step.position, step.kind])).toStrictEqual([
       [0, "static"],
       [1, "static"],
     ]);
 
-    expect(contents).toEqual([
+    expect(contents).toStrictEqual([
       {
         image: {
           prompt: "settings image prompt",

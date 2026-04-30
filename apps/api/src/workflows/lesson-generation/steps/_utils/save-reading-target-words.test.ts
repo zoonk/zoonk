@@ -5,7 +5,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { saveReadingTargetWords } from "./save-reading-target-words";
 
 /**
@@ -50,7 +50,7 @@ describe(saveReadingTargetWords, () => {
     organizationId = organization.id;
   });
 
-  test("creates lesson words only for canonical words with translations", async () => {
+  it("creates lesson words only for canonical words with translations", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const translatedWord = `gato${id}`;
     const untranslatedWord = `bonito${id}`;
@@ -82,10 +82,10 @@ describe(saveReadingTargetWords, () => {
       where: { lessonId: lesson.id },
     });
 
-    expect(lessonWords.map((entry) => entry.word.word)).toEqual([translatedWord]);
+    expect(lessonWords.map((entry) => entry.word.word)).toStrictEqual([translatedWord]);
   });
 
-  test("reuses existing word casing instead of creating lowercase duplicates", async () => {
+  it("reuses existing word casing instead of creating lowercase duplicates", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const existingWord = `Gato${id}`;
     const lowercaseWord = existingWord.toLowerCase();
@@ -130,7 +130,7 @@ describe(saveReadingTargetWords, () => {
     expect(lessonWord.word.word).toBe(existingWord);
   });
 
-  test("creates distractor word records without lesson-word rows", async () => {
+  it("creates distractor word records without lesson-word rows", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const canonicalWord = `hallo${id}`;
     const distractorWord = `tschuss${id}`;
@@ -166,10 +166,10 @@ describe(saveReadingTargetWords, () => {
     ]);
 
     expect(distractorRecord.audioUrl).toBe(`/audio/${distractorWord}.mp3`);
-    expect(distractorLessonWords).toEqual([]);
+    expect(distractorLessonWords).toStrictEqual([]);
   });
 
-  test("skips distractor variants that normalize to canonical words", async () => {
+  it("skips distractor variants that normalize to canonical words", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const canonicalWord = `água${id}`;
     const duplicateDistractor = `agua${id}`;

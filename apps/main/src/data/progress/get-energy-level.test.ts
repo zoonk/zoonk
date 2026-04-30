@@ -1,18 +1,18 @@
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { getEnergyLevel } from "./get-energy-level";
 
 describe("unauthenticated users", () => {
-  test("returns null", async () => {
+  it("returns null", async () => {
     const result = await getEnergyLevel(new Headers());
     expect(result).toBeNull();
   });
 });
 
 describe("authenticated users", () => {
-  test("returns null when user has no progress record", async () => {
+  it("returns null when user has no progress record", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -20,7 +20,7 @@ describe("authenticated users", () => {
     expect(result).toBeNull();
   });
 
-  test("returns energy unchanged when lastActiveAt is today", async () => {
+  it("returns energy unchanged when lastActiveAt is today", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -29,10 +29,10 @@ describe("authenticated users", () => {
     });
 
     const result = await getEnergyLevel(headers);
-    expect(result).toEqual({ currentEnergy: 85.5 });
+    expect(result).toStrictEqual({ currentEnergy: 85.5 });
   });
 
-  test("applies decay when lastActiveAt is 5 days ago", async () => {
+  it("applies decay when lastActiveAt is 5 days ago", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -48,10 +48,10 @@ describe("authenticated users", () => {
     });
 
     const result = await getEnergyLevel(headers);
-    expect(result).toEqual({ currentEnergy: 46 });
+    expect(result).toStrictEqual({ currentEnergy: 46 });
   });
 
-  test("clamps decayed energy at 0", async () => {
+  it("clamps decayed energy at 0", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -66,6 +66,6 @@ describe("authenticated users", () => {
     });
 
     const result = await getEnergyLevel(headers);
-    expect(result).toEqual({ currentEnergy: 0 });
+    expect(result).toStrictEqual({ currentEnergy: 0 });
   });
 });

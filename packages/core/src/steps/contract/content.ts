@@ -21,8 +21,6 @@ export type {
   SelectImageStepContent,
   SortOrderStepContent,
 } from "./exercise";
-export type { StaticStepContent } from "./static";
-
 const vocabularyContentSchema = z.object({}).strict();
 const translationContentSchema = z.object({}).strict();
 const readingContentSchema = z.object({}).strict();
@@ -43,10 +41,10 @@ const stepContentSchemas = {
 
 export type SupportedStepKind = keyof typeof stepContentSchemas;
 
-export type VocabularyStepContent = z.infer<typeof vocabularyContentSchema>;
-export type TranslationStepContent = z.infer<typeof translationContentSchema>;
-export type ReadingStepContent = z.infer<typeof readingContentSchema>;
-export type ListeningStepContent = z.infer<typeof listeningContentSchema>;
+type VocabularyStepContent = z.infer<typeof vocabularyContentSchema>;
+type TranslationStepContent = z.infer<typeof translationContentSchema>;
+type ReadingStepContent = z.infer<typeof readingContentSchema>;
+type ListeningStepContent = z.infer<typeof listeningContentSchema>;
 
 export type StepContentByKind = {
   fillBlank: FillBlankStepContent;

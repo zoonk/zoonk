@@ -1,5 +1,5 @@
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { generateAlternativeTitlesStep } from "./generate-alternative-titles-step";
 import { type CourseContext } from "./initialize-course-step";
 
@@ -25,14 +25,14 @@ describe(generateAlternativeTitlesStep, () => {
     vi.clearAllMocks();
   });
 
-  test("returns the generated alternative titles", async () => {
+  it("returns the generated alternative titles", async () => {
     generateAlternativeTitlesMock.mockResolvedValue({
       data: { alternatives: ["Alt Title 1", "Alt Title 2"] },
     });
 
     const result = await generateAlternativeTitlesStep(course);
 
-    expect(result).toEqual(["Alt Title 1", "Alt Title 2"]);
+    expect(result).toStrictEqual(["Alt Title 1", "Alt Title 2"]);
 
     expect(generateAlternativeTitlesMock).toHaveBeenCalledWith({
       language: "en",
@@ -50,7 +50,7 @@ describe(generateAlternativeTitlesStep, () => {
     );
   });
 
-  test("throws without streaming error when AI generation fails", async () => {
+  it("throws without streaming error when AI generation fails", async () => {
     generateAlternativeTitlesMock.mockRejectedValue(new Error("AI failure"));
 
     await expect(generateAlternativeTitlesStep(course)).rejects.toThrow("AI failure");

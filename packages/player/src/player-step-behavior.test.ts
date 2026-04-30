@@ -1,5 +1,5 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { describePlayerStep } from "./player-step";
 import {
   getPlayerStepBehavior,
@@ -27,7 +27,7 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
 }
 
 describe(getPlayerStepBehavior, () => {
-  test("keeps regular static text in navigable static mode", () => {
+  it("keeps regular static text in navigable static mode", () => {
     const descriptor = describePlayerStep(buildStep());
     const behavior = getPlayerStepBehavior(descriptor);
 
@@ -42,7 +42,7 @@ describe(getPlayerStepBehavior, () => {
     expect(hasFeedbackScreen(descriptor)).toBe(false);
   });
 
-  test("upgrades the practice scenario intro to the hero layout", () => {
+  it("upgrades the practice scenario intro to the hero layout", () => {
     const descriptor = describePlayerStep(
       buildStep({ content: { text: "Hello", title: "Intro", variant: "intro" as const } }),
     );

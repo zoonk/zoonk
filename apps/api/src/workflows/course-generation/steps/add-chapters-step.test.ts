@@ -3,7 +3,7 @@ import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { addChaptersStep } from "./add-chapters-step";
 import { type CourseContext } from "./initialize-course-step";
 
@@ -30,7 +30,7 @@ describe(addChaptersStep, () => {
     vi.clearAllMocks();
   });
 
-  test("throws without streaming error when DB save fails", async () => {
+  it("throws without streaming error when DB save fails", async () => {
     const brokenContext: CourseContext = { ...courseContext, courseId: randomUUID() };
 
     const chapters = [{ description: "Desc", title: `Chapter ${randomUUID()}` }];
@@ -44,7 +44,7 @@ describe(addChaptersStep, () => {
     );
   });
 
-  test("creates chapters in the database and returns them", async () => {
+  it("creates chapters in the database and returns them", async () => {
     const course = await courseFixture({ organizationId });
 
     const context: CourseContext = { ...courseContext, courseId: course.id };

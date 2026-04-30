@@ -1,11 +1,11 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { buildSerializedLesson, buildSerializedStep } from "../_test-utils/player-test-data";
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { renderPlayer } from "../_test-utils/render-player";
 
 describe("player browser integration: arrangement steps", () => {
-  test("matches pairs and auto-advances to the next step after checking", async () => {
+  it("matches pairs and auto-advances to the next step after checking", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         steps: [
@@ -40,7 +40,7 @@ describe("player browser integration: arrangement steps", () => {
     await expect.element(page.getByRole("heading", { name: "Next step" })).toBeInTheDocument();
   });
 
-  test("checks a preordered sort step without requiring app-specific routing", async () => {
+  it("checks a preordered sort step without requiring app-specific routing", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         steps: [
@@ -65,7 +65,7 @@ describe("player browser integration: arrangement steps", () => {
       .toBeInTheDocument();
   });
 
-  test("keeps match-columns mistakes in the completion result even after correction", async () => {
+  it("keeps match-columns mistakes in the completion result even after correction", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         steps: [
@@ -102,7 +102,7 @@ describe("player browser integration: arrangement steps", () => {
     await expect.element(page.getByText("0/1")).toBeInTheDocument();
   });
 
-  test("shows the correct order when the shared sort-order answer is wrong", async () => {
+  it("shows the correct order when the shared sort-order answer is wrong", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         steps: [

@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import {
   buildSerializedLesson,
@@ -9,7 +9,7 @@ import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { renderPlayer } from "../_test-utils/render-player";
 
 describe("player browser integration: word bank steps", () => {
-  test("fills blanks, checks the answer, and reaches completion", async () => {
+  it("fills blanks, checks the answer, and reaches completion", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         steps: [
@@ -45,7 +45,7 @@ describe("player browser integration: word bank steps", () => {
     await expect.element(page.getByText("1/1")).toBeInTheDocument();
   });
 
-  test("builds a reading answer from the word bank and shows inline feedback", async () => {
+  it("builds a reading answer from the word bank and shows inline feedback", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "reading",
@@ -79,7 +79,7 @@ describe("player browser integration: word bank steps", () => {
     await expect.element(page.getByText("1/1")).toBeInTheDocument();
   });
 
-  test("renders listening audio controls and completes from the word bank flow", async () => {
+  it("renders listening audio controls and completes from the word bank flow", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "listening",
@@ -117,7 +117,7 @@ describe("player browser integration: word bank steps", () => {
     await expect.element(page.getByText("1/1")).toBeInTheDocument();
   });
 
-  test("lets learners remove fill-blank words before checking and shows the correct-answer hint", async () => {
+  it("lets learners remove fill-blank words before checking and shows the correct-answer hint", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         steps: [
@@ -157,7 +157,7 @@ describe("player browser integration: word bank steps", () => {
     await expect.element(feedback.getByText(/correct answer:/i)).toBeInTheDocument();
   });
 
-  test("shows reading correction feedback and romanization for wrong arrangements", async () => {
+  it("shows reading correction feedback and romanization for wrong arrangements", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "reading",
@@ -196,7 +196,7 @@ describe("player browser integration: word bank steps", () => {
       .toBeInTheDocument();
   });
 
-  test("falls back to sentence text when listening audio is missing", async () => {
+  it("falls back to sentence text when listening audio is missing", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "listening",

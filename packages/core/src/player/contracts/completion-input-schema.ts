@@ -45,7 +45,7 @@ const translationAnswerSchema = z.object({
   selectedOptionId: z.string(),
 });
 
-export const selectedAnswerSchema = z.union([
+const selectedAnswerSchema = z.union([
   fillBlankAnswerSchema,
   listeningAnswerSchema,
   matchColumnsAnswerSchema,

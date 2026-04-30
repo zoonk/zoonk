@@ -2,7 +2,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { getNextLessonInCourse } from "./get-next-lesson-in-course";
 
 describe(getNextLessonInCourse, () => {
@@ -69,7 +69,7 @@ describe(getNextLessonInCourse, () => {
     lesson3Slug = lesson3.slug;
   });
 
-  test("returns next lesson in same chapter", async () => {
+  it("returns next lesson in same chapter", async () => {
     const result = await getNextLessonInCourse({
       chapterId: chapter1Id,
       chapterPosition: 0,
@@ -86,7 +86,7 @@ describe(getNextLessonInCourse, () => {
     });
   });
 
-  test("returns first lesson of next chapter when at last lesson of current chapter", async () => {
+  it("returns first lesson of next chapter when at last lesson of current chapter", async () => {
     const result = await getNextLessonInCourse({
       chapterId: chapter1Id,
       chapterPosition: 0,
@@ -103,7 +103,7 @@ describe(getNextLessonInCourse, () => {
     });
   });
 
-  test("returns null when at the last lesson of the course", async () => {
+  it("returns null when at the last lesson of the course", async () => {
     const result = await getNextLessonInCourse({
       chapterId: chapter2Id,
       chapterPosition: 1,
@@ -115,7 +115,7 @@ describe(getNextLessonInCourse, () => {
     expect(result).toBeNull();
   });
 
-  test("returns null for a non-existent course", async () => {
+  it("returns null for a non-existent course", async () => {
     const result = await getNextLessonInCourse({
       chapterId: chapter1Id,
       chapterPosition: 0,
@@ -127,7 +127,7 @@ describe(getNextLessonInCourse, () => {
     expect(result).toBeNull();
   });
 
-  test("includes lesson kind and title in result", async () => {
+  it("includes lesson kind and title in result", async () => {
     const result = await getNextLessonInCourse({
       chapterId: chapter1Id,
       chapterPosition: 0,
@@ -142,7 +142,7 @@ describe(getNextLessonInCourse, () => {
     expect(result).toHaveProperty("lessonDescription");
   });
 
-  test("skips unpublished lessons", async () => {
+  it("skips unpublished lessons", async () => {
     const testOrg = await organizationFixture({ kind: "brand" });
     const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
     const testChapter = await chapterFixture({
@@ -193,7 +193,7 @@ describe(getNextLessonInCourse, () => {
     });
   });
 
-  test("returns the next lesson shell even when it still needs generation", async () => {
+  it("returns the next lesson shell even when it still needs generation", async () => {
     const testOrg = await organizationFixture({ kind: "brand" });
     const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
     const testChapter = await chapterFixture({
@@ -244,7 +244,7 @@ describe(getNextLessonInCourse, () => {
     });
   });
 
-  test("skips unpublished lessons when moving through a chapter", async () => {
+  it("skips unpublished lessons when moving through a chapter", async () => {
     const testOrg = await organizationFixture({ kind: "brand" });
     const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
     const testChapter = await chapterFixture({
@@ -291,7 +291,7 @@ describe(getNextLessonInCourse, () => {
     });
   });
 
-  test("skips lessons in unpublished chapters", async () => {
+  it("skips lessons in unpublished chapters", async () => {
     const testOrg = await organizationFixture({ kind: "brand" });
     const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
 

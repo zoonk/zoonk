@@ -1,18 +1,18 @@
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { getScore } from "./get-score";
 
 describe("unauthenticated users", () => {
-  test("returns null", async () => {
+  it("returns null", async () => {
     const result = await getScore({ headers: new Headers() });
     expect(result).toBeNull();
   });
 });
 
 describe("authenticated users", () => {
-  test("returns null when user has no DailyProgress records", async () => {
+  it("returns null when user has no DailyProgress records", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -20,7 +20,7 @@ describe("authenticated users", () => {
     expect(result).toBeNull();
   });
 
-  test("returns score when user has DailyProgress records", async () => {
+  it("returns score when user has DailyProgress records", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -54,7 +54,7 @@ describe("authenticated users", () => {
     expect(result?.score).toBeCloseTo(83.33, 1);
   });
 
-  test("excludes records older than 3 months", async () => {
+  it("excludes records older than 3 months", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -88,7 +88,7 @@ describe("authenticated users", () => {
     expect(result?.score).toBe(100);
   });
 
-  test("filters by custom date range when startDate and endDate are provided", async () => {
+  it("filters by custom date range when startDate and endDate are provided", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 

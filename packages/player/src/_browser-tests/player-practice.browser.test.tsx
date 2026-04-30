@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { buildInlineImageUrl } from "../_test-utils/build-inline-image-url";
 import { buildSerializedLesson, buildSerializedStep } from "../_test-utils/player-test-data";
@@ -6,7 +6,7 @@ import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { buildNavigation, renderPlayer } from "../_test-utils/render-player";
 
 describe("player browser integration: practice lessons", () => {
-  test("renders a leading static scenario step and still completes with question scoring", async () => {
+  it("renders a leading static scenario step and still completes with question scoring", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "practice",

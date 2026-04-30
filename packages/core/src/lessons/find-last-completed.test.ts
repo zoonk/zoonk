@@ -4,7 +4,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { findLastCompleted } from "./find-last-completed";
 
 describe(findLastCompleted, () => {
@@ -17,7 +17,7 @@ describe(findLastCompleted, () => {
     userId = user.id;
   });
 
-  test("returns null when user has no completions", async () => {
+  it("returns null when user has no completions", async () => {
     const course = await courseFixture({ isPublished: true, organizationId: orgId });
     const chapter = await chapterFixture({
       courseId: course.id,
@@ -45,7 +45,7 @@ describe(findLastCompleted, () => {
     expect(result).toBeNull();
   });
 
-  test("returns null when completedAt is null (started but not finished)", async () => {
+  it("returns null when completedAt is null (started but not finished)", async () => {
     const course = await courseFixture({ isPublished: true, organizationId: orgId });
     const chapter = await chapterFixture({
       courseId: course.id,
@@ -73,7 +73,7 @@ describe(findLastCompleted, () => {
     expect(result).toBeNull();
   });
 
-  test("returns the most recently completed lesson", async () => {
+  it("returns the most recently completed lesson", async () => {
     const user = await userFixture();
     const uid = user.id;
 
@@ -131,7 +131,7 @@ describe(findLastCompleted, () => {
     expect(result).toHaveProperty("orgSlug");
   });
 
-  test("tiebreaker: returns furthest lesson when completedAt is identical", async () => {
+  it("tiebreaker: returns furthest lesson when completedAt is identical", async () => {
     const user = await userFixture();
     const uid = user.id;
 
@@ -182,7 +182,7 @@ describe(findLastCompleted, () => {
   });
 
   describe("course scope", () => {
-    test("finds completions across chapters", async () => {
+    it("finds completions across chapters", async () => {
       const user = await userFixture();
       const uid = user.id;
 
@@ -240,7 +240,7 @@ describe(findLastCompleted, () => {
       expect(result).toMatchObject({ chapterId: ch2.id, chapterPosition: 1, lessonId: lesson2.id });
     });
 
-    test("ignores completions from other courses", async () => {
+    it("ignores completions from other courses", async () => {
       const user = await userFixture();
       const uid = user.id;
 
@@ -303,7 +303,7 @@ describe(findLastCompleted, () => {
   });
 
   describe("chapter scope", () => {
-    test("finds completions only within the given chapter", async () => {
+    it("finds completions only within the given chapter", async () => {
       const user = await userFixture();
       const uid = user.id;
 
@@ -363,7 +363,7 @@ describe(findLastCompleted, () => {
   });
 
   describe("lesson scope", () => {
-    test("finds completions only within the given lesson", async () => {
+    it("finds completions only within the given lesson", async () => {
       const user = await userFixture();
       const uid = user.id;
 
@@ -413,7 +413,7 @@ describe(findLastCompleted, () => {
     });
   });
 
-  test("skips completions for unpublished lessons", async () => {
+  it("skips completions for unpublished lessons", async () => {
     const user = await userFixture();
     const uid = user.id;
 
@@ -461,7 +461,7 @@ describe(findLastCompleted, () => {
     expect(result).toMatchObject({ lessonPosition: 0 });
   });
 
-  test("skips completions in unpublished lessons", async () => {
+  it("skips completions in unpublished lessons", async () => {
     const user = await userFixture();
     const uid = user.id;
 
@@ -508,7 +508,7 @@ describe(findLastCompleted, () => {
     expect(result).toMatchObject({ lessonId: publishedLesson.id, lessonPosition: 0 });
   });
 
-  test("skips completions in unpublished chapters", async () => {
+  it("skips completions in unpublished chapters", async () => {
     const user = await userFixture();
     const uid = user.id;
 
@@ -566,13 +566,13 @@ describe(findLastCompleted, () => {
     expect(result).toMatchObject({ chapterId: publishedChapter.id, chapterPosition: 0 });
   });
 
-  test("returns null for non-existent course", async () => {
+  it("returns null for non-existent course", async () => {
     const result = await findLastCompleted(userId, { courseId: randomUUID() });
 
     expect(result).toBeNull();
   });
 
-  test("ignores other users' completions", async () => {
+  it("ignores other users' completions", async () => {
     const [user1, user2] = await Promise.all([userFixture(), userFixture()]);
 
     const course = await courseFixture({ isPublished: true, organizationId: orgId });

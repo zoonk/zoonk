@@ -1,18 +1,18 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { assertStepContent, parseStepContent } from "./content";
 
 describe("step content contracts", () => {
-  test("parses multipleChoice with optional context/question omitted", () => {
+  it("parses multipleChoice with optional context/question omitted", () => {
     const content = parseStepContent("multipleChoice", {
       options: [{ feedback: "Correct", id: "a", isCorrect: true, text: "A" }],
     });
 
-    expect(content).toEqual({
+    expect(content).toStrictEqual({
       options: [{ feedback: "Correct", id: "a", isCorrect: true, text: "A" }],
     });
   });
 
-  test("parses multipleChoice with all fields", () => {
+  it("parses multipleChoice with all fields", () => {
     const content = parseStepContent("multipleChoice", {
       context: "Some context",
       image: {
@@ -26,7 +26,7 @@ describe("step content contracts", () => {
       question: "What is correct?",
     });
 
-    expect(content).toEqual({
+    expect(content).toStrictEqual({
       context: "Some context",
       image: {
         prompt: "A refund dashboard with one outlier row",
@@ -40,7 +40,7 @@ describe("step content contracts", () => {
     });
   });
 
-  test("rejects multipleChoice options with extra fields", () => {
+  it("rejects multipleChoice options with extra fields", () => {
     expect(() =>
       parseStepContent("multipleChoice", {
         options: [
@@ -56,7 +56,7 @@ describe("step content contracts", () => {
     ).toThrow();
   });
 
-  test("parses fillBlank with optional question omitted", () => {
+  it("parses fillBlank with optional question omitted", () => {
     const content = parseStepContent("fillBlank", {
       answers: ["hablo"],
       distractors: ["habla"],
@@ -64,7 +64,7 @@ describe("step content contracts", () => {
       template: "Yo [BLANK] español.",
     });
 
-    expect(content).toEqual({
+    expect(content).toStrictEqual({
       answers: ["hablo"],
       distractors: ["habla"],
       feedback: "Use first person singular.",
@@ -72,21 +72,21 @@ describe("step content contracts", () => {
     });
   });
 
-  test("parses static text variant", () => {
+  it("parses static text variant", () => {
     const content = parseStepContent("static", {
       text: "Background text",
       title: "Background title",
       variant: "text",
     });
 
-    expect(content).toEqual({
+    expect(content).toStrictEqual({
       text: "Background text",
       title: "Background title",
       variant: "text",
     });
   });
 
-  test("parses static grammarExample variant", () => {
+  it("parses static grammarExample variant", () => {
     const content = parseStepContent("static", {
       highlight: "hablo",
       romanization: "ha-blo",
@@ -95,7 +95,7 @@ describe("step content contracts", () => {
       variant: "grammarExample",
     });
 
-    expect(content).toEqual({
+    expect(content).toStrictEqual({
       highlight: "hablo",
       romanization: "ha-blo",
       sentence: "Yo hablo español.",
@@ -104,64 +104,67 @@ describe("step content contracts", () => {
     });
   });
 
-  test("parses static grammarRule variant", () => {
+  it("parses static grammarRule variant", () => {
     const content = parseStepContent("static", {
       ruleName: "Present tense endings",
       ruleSummary: "Use -o for yo and -es for tú.",
       variant: "grammarRule",
     });
 
-    expect(content).toEqual({
+    expect(content).toStrictEqual({
       ruleName: "Present tense endings",
       ruleSummary: "Use -o for yo and -es for tú.",
       variant: "grammarRule",
     });
   });
 
-  test("parses vocabulary step content", () => {
+  it("parses vocabulary step content", () => {
     const content = parseStepContent("vocabulary", {});
-    expect(content).toEqual({});
+    expect(content).toStrictEqual({});
   });
 
-  test("parses translation step content", () => {
+  it("parses translation step content", () => {
     const content = parseStepContent("translation", {});
-    expect(content).toEqual({});
+    expect(content).toStrictEqual({});
   });
 
-  test("parses reading step content", () => {
+  it("parses reading step content", () => {
     const content = parseStepContent("reading", {});
-    expect(content).toEqual({});
+    expect(content).toStrictEqual({});
   });
 
-  test("parses listening step content", () => {
+  it("parses listening step content", () => {
     const content = parseStepContent("listening", {});
-    expect(content).toEqual({});
+    expect(content).toStrictEqual({});
   });
 
-  test("parses matchColumns", () => {
+  it("parses matchColumns", () => {
     const content = parseStepContent("matchColumns", {
       pairs: [{ left: "A", right: "1" }],
       question: "Match the items.",
     });
 
-    expect(content).toEqual({ pairs: [{ left: "A", right: "1" }], question: "Match the items." });
+    expect(content).toStrictEqual({
+      pairs: [{ left: "A", right: "1" }],
+      question: "Match the items.",
+    });
   });
 
-  test("parses sortOrder", () => {
+  it("parses sortOrder", () => {
     const content = parseStepContent("sortOrder", {
       feedback: "Correct order.",
       items: ["one", "two"],
       question: "Sort these items.",
     });
 
-    expect(content).toEqual({
+    expect(content).toStrictEqual({
       feedback: "Correct order.",
       items: ["one", "two"],
       question: "Sort these items.",
     });
   });
 
-  test("parses selectImage", () => {
+  it("parses selectImage", () => {
     const content = parseStepContent("selectImage", {
       options: [
         {
@@ -175,7 +178,7 @@ describe("step content contracts", () => {
       question: "Which image shows a cat?",
     });
 
-    expect(content).toEqual({
+    expect(content).toStrictEqual({
       options: [
         {
           feedback: "Correct",
@@ -189,7 +192,7 @@ describe("step content contracts", () => {
     });
   });
 
-  test("parses grammar example with null romanization", () => {
+  it("parses grammar example with null romanization", () => {
     const content = parseStepContent("static", {
       highlight: "hablo",
       romanization: null,
@@ -198,7 +201,7 @@ describe("step content contracts", () => {
       variant: "grammarExample",
     });
 
-    expect(content).toEqual({
+    expect(content).toStrictEqual({
       highlight: "hablo",
       romanization: null,
       sentence: "Yo hablo español.",
@@ -207,7 +210,7 @@ describe("step content contracts", () => {
     });
   });
 
-  test("rejects grammar example with empty string romanization", () => {
+  it("rejects grammar example with empty string romanization", () => {
     expect(() =>
       parseStepContent("static", {
         highlight: "hablo",
@@ -219,7 +222,7 @@ describe("step content contracts", () => {
     ).toThrow();
   });
 
-  test("throws for invalid fillBlank", () => {
+  it("throws for invalid fillBlank", () => {
     expect(() =>
       assertStepContent("fillBlank", {
         answers: ["hablo"],
@@ -229,28 +232,28 @@ describe("step content contracts", () => {
     ).toThrow();
   });
 
-  test("throws for unknown static variant", () => {
+  it("throws for unknown static variant", () => {
     expect(() =>
       parseStepContent("static", { text: "Hello", title: "World", variant: "unknown" }),
     ).toThrow();
   });
 
   describe("static intro", () => {
-    test("parses generic intro", () => {
+    it("parses generic intro", () => {
       const content = parseStepContent("static", {
         text: "You arrive in the middle of the problem.",
         title: "Opening",
         variant: "intro",
       });
 
-      expect(content).toEqual({
+      expect(content).toStrictEqual({
         text: "You arrive in the middle of the problem.",
         title: "Opening",
         variant: "intro",
       });
     });
 
-    test("rejects intro without title", () => {
+    it("rejects intro without title", () => {
       expect(() =>
         parseStepContent("static", {
           text: "You arrive in the middle of the problem.",
@@ -259,7 +262,7 @@ describe("step content contracts", () => {
       ).toThrow();
     });
 
-    test("rejects intro with unsupported metrics", () => {
+    it("rejects intro with unsupported metrics", () => {
       expect(() =>
         parseStepContent("static", {
           metrics: [{ label: "Production" }, { label: "Morale" }],

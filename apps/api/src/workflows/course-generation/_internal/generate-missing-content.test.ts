@@ -1,5 +1,5 @@
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { type CourseContext } from "../steps/initialize-course-step";
 import { generateMissingContent } from "./generate-missing-content";
 import { type ExistingCourseContent } from "./get-or-create-course";
@@ -64,7 +64,7 @@ describe(generateMissingContent, () => {
     vi.clearAllMocks();
   });
 
-  test("generates all content when nothing exists", async () => {
+  it("generates all content when nothing exists", async () => {
     generateCourseDescriptionMock.mockResolvedValue({ data: { description: "Generated desc" } });
     generateCourseImageMock.mockResolvedValue({
       data: "https://example.com/img.webp",
@@ -80,12 +80,12 @@ describe(generateMissingContent, () => {
 
     expect(result.description).toBe("Generated desc");
     expect(result.imageUrl).toBe("https://example.com/img.webp");
-    expect(result.alternativeTitles).toEqual(["Alt 1"]);
-    expect(result.categories).toEqual(["programming"]);
-    expect(result.chapters).toEqual([{ description: "Ch1 desc", title: "Ch1" }]);
+    expect(result.alternativeTitles).toStrictEqual(["Alt 1"]);
+    expect(result.categories).toStrictEqual(["programming"]);
+    expect(result.chapters).toStrictEqual([{ description: "Ch1 desc", title: "Ch1" }]);
   });
 
-  test("skips generation for fields that already exist", async () => {
+  it("skips generation for fields that already exist", async () => {
     const existing: ExistingCourseContent = {
       description: "Existing desc",
       hasAlternativeTitles: true,
@@ -98,9 +98,9 @@ describe(generateMissingContent, () => {
 
     expect(result.description).toBe("Existing desc");
     expect(result.imageUrl).toBe("https://example.com/existing.webp");
-    expect(result.alternativeTitles).toEqual([]);
-    expect(result.categories).toEqual([]);
-    expect(result.chapters).toEqual([]);
+    expect(result.alternativeTitles).toStrictEqual([]);
+    expect(result.categories).toStrictEqual([]);
+    expect(result.chapters).toStrictEqual([]);
 
     expect(generateCourseDescriptionMock).not.toHaveBeenCalled();
     expect(generateCourseImageMock).not.toHaveBeenCalled();
@@ -114,7 +114,7 @@ describe(generateMissingContent, () => {
     expect(skippedSteps.length).toBeGreaterThanOrEqual(5);
   });
 
-  test("returns 'languages' category for language courses without AI call", async () => {
+  it("returns 'languages' category for language courses without AI call", async () => {
     const langCourse: CourseContext = { ...course, targetLanguage: "es" };
 
     generateCourseDescriptionMock.mockResolvedValue({ data: { description: "Lang desc" } });
@@ -127,11 +127,11 @@ describe(generateMissingContent, () => {
 
     const result = await generateMissingContent(langCourse, emptyExisting);
 
-    expect(result.categories).toEqual(["languages"]);
+    expect(result.categories).toStrictEqual(["languages"]);
     expect(generateCourseCategoriesMock).not.toHaveBeenCalled();
   });
 
-  test("filters out 'languages' from non-language course categories", async () => {
+  it("filters out 'languages' from non-language course categories", async () => {
     generateCourseDescriptionMock.mockResolvedValue({ data: { description: "desc" } });
     generateCourseImageMock.mockResolvedValue({
       data: "https://example.com/non-lang.webp",
@@ -145,6 +145,6 @@ describe(generateMissingContent, () => {
 
     const result = await generateMissingContent(course, emptyExisting);
 
-    expect(result.categories).toEqual(["programming", "web"]);
+    expect(result.categories).toStrictEqual(["programming", "web"]);
   });
 });

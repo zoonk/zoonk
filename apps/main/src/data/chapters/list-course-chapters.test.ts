@@ -1,7 +1,7 @@
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { listCourseChapters } from "./list-course-chapters";
 
 describe(listCourseChapters, () => {
@@ -49,7 +49,7 @@ describe(listCourseChapters, () => {
     ]);
   });
 
-  test("returns published chapters ordered by position", async () => {
+  it("returns published chapters ordered by position", async () => {
     const result = await listCourseChapters({ courseId: publishedCourse.id });
 
     expect(result).toHaveLength(2);
@@ -66,14 +66,14 @@ describe(listCourseChapters, () => {
     expect(result[1]?.title).toBe("Chapter 1");
   });
 
-  test("excludes unpublished chapters", async () => {
+  it("excludes unpublished chapters", async () => {
     const result = await listCourseChapters({ courseId: publishedCourse.id });
 
     const draftChapterInResult = result.find((chapter) => chapter.id === draftChapter.id);
     expect(draftChapterInResult).toBeUndefined();
   });
 
-  test("returns empty array when no chapters exist", async () => {
+  it("returns empty array when no chapters exist", async () => {
     const courseWithoutChapters = await courseFixture({
       isPublished: true,
       language: "en",
@@ -82,6 +82,6 @@ describe(listCourseChapters, () => {
 
     const result = await listCourseChapters({ courseId: courseWithoutChapters.id });
 
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 });

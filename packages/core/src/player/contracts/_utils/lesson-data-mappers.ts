@@ -1,6 +1,6 @@
-export type LessonPronunciationInput = { pronunciation: string };
+type LessonPronunciationInput = { pronunciation: string };
 
-export type WordRecordInput = {
+type WordRecordInput = {
   id: string;
   word: string;
   romanization: string | null;
@@ -8,7 +8,7 @@ export type WordRecordInput = {
   pronunciations: LessonPronunciationInput[];
 };
 
-export type SentenceRecordInput = {
+type SentenceRecordInput = {
   id: string;
   sentence: string;
   romanization: string | null;

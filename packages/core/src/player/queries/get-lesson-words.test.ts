@@ -8,7 +8,7 @@ import {
   wordFixture,
   wordPronunciationFixture,
 } from "@zoonk/testing/fixtures/words";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { getLessonWordsForLessons } from "./get-lesson-words";
 
 describe(getLessonWordsForLessons, () => {
@@ -37,7 +37,7 @@ describe(getLessonWordsForLessons, () => {
     });
   });
 
-  test("returns words linked via LessonWord junction", async () => {
+  it("returns words linked via LessonWord junction", async () => {
     const [word1, word2] = await Promise.all([
       wordFixture({
         organizationId: org.id,
@@ -65,7 +65,7 @@ describe(getLessonWordsForLessons, () => {
     expect(wordIds).toContain(word2.id);
   });
 
-  test("returns all expected fields", async () => {
+  it("returns all expected fields", async () => {
     const [newLesson, word] = await Promise.all([
       lessonFixture({
         chapterId: chapter.id,
@@ -112,7 +112,7 @@ describe(getLessonWordsForLessons, () => {
     });
   });
 
-  test("returns empty array when lesson has no words", async () => {
+  it("returns empty array when lesson has no words", async () => {
     const emptyLesson = await lessonFixture({
       chapterId: chapter.id,
       isPublished: true,
@@ -121,15 +121,15 @@ describe(getLessonWordsForLessons, () => {
     });
 
     const result = await getLessonWordsForLessons({ lessonIds: [emptyLesson.id] });
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
-  test("returns empty array for non-existent lesson", async () => {
+  it("returns empty array for non-existent lesson", async () => {
     const result = await getLessonWordsForLessons({ lessonIds: [randomUUID()] });
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
-  test("only includes pronunciation matching the lesson's userLanguage", async () => {
+  it("only includes pronunciation matching the lesson's userLanguage", async () => {
     const [newLesson, word] = await Promise.all([
       lessonFixture({
         chapterId: chapter.id,

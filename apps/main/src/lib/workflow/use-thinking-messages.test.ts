@@ -40,19 +40,19 @@ describe(useThinkingMessages, () => {
 
   it("returns empty object when no phases are active", () => {
     const { result } = renderHook(() => useThinkingMessages(cyclingGenerators, []));
-    expect(result.current).toEqual({});
+    expect(result.current).toStrictEqual({});
   });
 
   it("returns first message immediately for active phases", () => {
     const { result } = renderHook(() => useThinkingMessages(cyclingGenerators, ["phaseA"]));
-    expect(result.current).toEqual({ phaseA: "Analyzing..." });
+    expect(result.current).toStrictEqual({ phaseA: "Analyzing..." });
   });
 
   it("returns messages for multiple active phases simultaneously", () => {
     const { result } = renderHook(() =>
       useThinkingMessages(cyclingGenerators, ["phaseA", "phaseB"]),
     );
-    expect(result.current).toEqual({ phaseA: "Analyzing...", phaseB: "Loading..." });
+    expect(result.current).toStrictEqual({ phaseA: "Analyzing...", phaseB: "Loading..." });
   });
 
   it("cycles through messages over time", () => {
@@ -60,13 +60,13 @@ describe(useThinkingMessages, () => {
       useThinkingMessages(cyclingGenerators, ["phaseA", "phaseB"]),
     );
 
-    expect(result.current).toEqual({ phaseA: "Analyzing...", phaseB: "Loading..." });
+    expect(result.current).toStrictEqual({ phaseA: "Analyzing...", phaseB: "Loading..." });
 
     act(() => {
       vi.advanceTimersByTime(3000);
     });
 
-    expect(result.current).toEqual({ phaseA: "Planning...", phaseB: "Processing..." });
+    expect(result.current).toStrictEqual({ phaseA: "Planning...", phaseB: "Processing..." });
   });
 
   it("uses randomized intervals between 1.5-3s", () => {
@@ -74,19 +74,19 @@ describe(useThinkingMessages, () => {
 
     const { result } = renderHook(() => useThinkingMessages(cyclingGenerators, ["phaseA"]));
 
-    expect(result.current).toEqual({ phaseA: "Analyzing..." });
+    expect(result.current).toStrictEqual({ phaseA: "Analyzing..." });
 
     act(() => {
       vi.advanceTimersByTime(1499);
     });
 
-    expect(result.current).toEqual({ phaseA: "Analyzing..." });
+    expect(result.current).toStrictEqual({ phaseA: "Analyzing..." });
 
     act(() => {
       vi.advanceTimersByTime(1);
     });
 
-    expect(result.current).toEqual({ phaseA: "Planning..." });
+    expect(result.current).toStrictEqual({ phaseA: "Planning..." });
 
     vi.spyOn(Math, "random").mockRestore();
   });
@@ -101,13 +101,13 @@ describe(useThinkingMessages, () => {
       vi.advanceTimersByTime(3000);
     });
 
-    expect(result.current).toEqual({ phaseA: "Planning..." });
+    expect(result.current).toStrictEqual({ phaseA: "Planning..." });
 
     rerender({ active: [] });
-    expect(result.current).toEqual({});
+    expect(result.current).toStrictEqual({});
 
     rerender({ active: ["phaseA"] });
-    expect(result.current).toEqual({ phaseA: "Analyzing..." });
+    expect(result.current).toStrictEqual({ phaseA: "Analyzing..." });
   });
 
   it("starts lesson numbering at 1 when switching from chapters phase", () => {
@@ -116,7 +116,7 @@ describe(useThinkingMessages, () => {
       { initialProps: { active: ["chapters"] as string[] } },
     );
 
-    expect(result.current).toEqual({ chapters: "Planning..." });
+    expect(result.current).toStrictEqual({ chapters: "Planning..." });
 
     advanceTicks(5);
 
@@ -124,12 +124,12 @@ describe(useThinkingMessages, () => {
 
     rerender({ active: ["lessons"] });
 
-    expect(result.current).toEqual({ lessons: "Exploring..." });
+    expect(result.current).toStrictEqual({ lessons: "Exploring..." });
 
     act(() => {
       vi.advanceTimersByTime(3000);
     });
 
-    expect(result.current).toEqual({ lessons: "Lesson 1" });
+    expect(result.current).toStrictEqual({ lessons: "Lesson 1" });
   });
 });

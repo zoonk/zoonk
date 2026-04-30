@@ -196,17 +196,17 @@ function makePhase(status: PhaseStatus) {
 describe(enforcePhaseProgression, () => {
   it("does not change when all phases are pending", () => {
     const input = [makePhase("pending"), makePhase("pending"), makePhase("pending")];
-    expect(enforcePhaseProgression(input)).toEqual(input);
+    expect(enforcePhaseProgression(input)).toStrictEqual(input);
   });
 
   it("does not change linear [completed, active, pending]", () => {
     const input = [makePhase("completed"), makePhase("active"), makePhase("pending")];
-    expect(enforcePhaseProgression(input)).toEqual(input);
+    expect(enforcePhaseProgression(input)).toStrictEqual(input);
   });
 
   it("does not change when all phases are completed", () => {
     const input = [makePhase("completed"), makePhase("completed"), makePhase("completed")];
-    expect(enforcePhaseProgression(input)).toEqual(input);
+    expect(enforcePhaseProgression(input)).toStrictEqual(input);
   });
 
   it("clamps last phase to pending when earlier phases are not all completed", () => {

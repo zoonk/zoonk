@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { expandChapterLessons } from "./lesson-plan-expansion";
 
 type GeneratedChapterLesson = Parameters<typeof expandChapterLessons>[0]["lessons"][number];
@@ -24,16 +24,16 @@ function kinds(lessons: ReturnType<typeof expandChapterLessons>) {
 }
 
 describe(expandChapterLessons, () => {
-  test("adds practice, quiz, and review for three explanations", () => {
+  it("adds practice, quiz, and review for three explanations", () => {
     expect(
       kinds(expandChapterLessons({ lessons: explanationLessons(3), targetLanguage: null })),
-    ).toEqual(["explanation", "explanation", "explanation", "practice", "quiz", "review"]);
+    ).toStrictEqual(["explanation", "explanation", "explanation", "practice", "quiz", "review"]);
   });
 
-  test("groups five explanations as three then two before quiz and review", () => {
+  it("groups five explanations as three then two before quiz and review", () => {
     expect(
       kinds(expandChapterLessons({ lessons: explanationLessons(5), targetLanguage: null })),
-    ).toEqual([
+    ).toStrictEqual([
       "explanation",
       "explanation",
       "explanation",
@@ -46,10 +46,10 @@ describe(expandChapterLessons, () => {
     ]);
   });
 
-  test("groups six explanations as pairs with quiz after every two practices", () => {
+  it("groups six explanations as pairs with quiz after every two practices", () => {
     expect(
       kinds(expandChapterLessons({ lessons: explanationLessons(6), targetLanguage: null })),
-    ).toEqual([
+    ).toStrictEqual([
       "explanation",
       "explanation",
       "practice",
@@ -65,15 +65,17 @@ describe(expandChapterLessons, () => {
     ]);
   });
 
-  test("does not add interactive companion lessons when there are no explanations", () => {
+  it("does not add interactive companion lessons when there are no explanations", () => {
     const lessons: GeneratedChapterLesson[] = [
       { description: "Tutorial", kind: "tutorial", title: "Tutorial" },
     ];
 
-    expect(kinds(expandChapterLessons({ lessons, targetLanguage: null }))).toEqual(["tutorial"]);
+    expect(kinds(expandChapterLessons({ lessons, targetLanguage: null }))).toStrictEqual([
+      "tutorial",
+    ]);
   });
 
-  test("keeps generated companion lesson titles and descriptions empty", () => {
+  it("keeps generated companion lesson titles and descriptions empty", () => {
     const lessons = expandChapterLessons({ lessons: explanationLessons(2), targetLanguage: null });
 
     expect(lessons.find((lesson) => lesson.kind === "practice")).toMatchObject({
@@ -90,10 +92,10 @@ describe(expandChapterLessons, () => {
     });
   });
 
-  test("adds reading and listening after every vocabulary group", () => {
+  it("adds reading and listening after every vocabulary group", () => {
     expect(
       kinds(expandChapterLessons({ lessons: vocabularyLessons(4), targetLanguage: "es" })),
-    ).toEqual([
+    ).toStrictEqual([
       "vocabulary",
       "translation",
       "vocabulary",
@@ -110,10 +112,10 @@ describe(expandChapterLessons, () => {
     ]);
   });
 
-  test("adds reading for the final vocabulary group even when listening is unsupported", () => {
+  it("adds reading for the final vocabulary group even when listening is unsupported", () => {
     expect(
       kinds(expandChapterLessons({ lessons: vocabularyLessons(5), targetLanguage: "xx" })),
-    ).toEqual([
+    ).toStrictEqual([
       "vocabulary",
       "translation",
       "vocabulary",

@@ -2,7 +2,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { getLesson } from "./get-lesson";
 
 describe(getLesson, () => {
@@ -61,7 +61,7 @@ describe(getLesson, () => {
     ]);
   });
 
-  test("returns lesson with chapter and course info", async () => {
+  it("returns lesson with chapter and course info", async () => {
     const result = await getLesson({
       brandSlug: brandOrg.slug,
       chapterSlug: publishedChapter.slug,
@@ -80,7 +80,7 @@ describe(getLesson, () => {
     expect(result?.chapter.course.title).toBe(publishedCourse.title);
   });
 
-  test("returns null for non-existent lesson", async () => {
+  it("returns null for non-existent lesson", async () => {
     const result = await getLesson({
       brandSlug: brandOrg.slug,
       chapterSlug: publishedChapter.slug,
@@ -91,7 +91,7 @@ describe(getLesson, () => {
     expect(result).toBeNull();
   });
 
-  test("returns null for unpublished lesson", async () => {
+  it("returns null for unpublished lesson", async () => {
     const result = await getLesson({
       brandSlug: brandOrg.slug,
       chapterSlug: publishedChapter.slug,
@@ -102,7 +102,7 @@ describe(getLesson, () => {
     expect(result).toBeNull();
   });
 
-  test("returns null for lesson in unpublished chapter", async () => {
+  it("returns null for lesson in unpublished chapter", async () => {
     const draftChapter = await chapterFixture({
       courseId: publishedCourse.id,
       isPublished: false,
@@ -127,7 +127,7 @@ describe(getLesson, () => {
     expect(result).toBeNull();
   });
 
-  test("returns null for lesson in unpublished course", async () => {
+  it("returns null for lesson in unpublished course", async () => {
     const draftCourse = await courseFixture({
       isPublished: false,
       language: "en",
@@ -158,7 +158,7 @@ describe(getLesson, () => {
     expect(result).toBeNull();
   });
 
-  test("returns null for lesson from non-brand org", async () => {
+  it("returns null for lesson from non-brand org", async () => {
     const schoolCourse = await courseFixture({
       isPublished: true,
       language: "en",
@@ -189,7 +189,7 @@ describe(getLesson, () => {
     expect(result).toBeNull();
   });
 
-  test("returns null when brandSlug does not match", async () => {
+  it("returns null when brandSlug does not match", async () => {
     const otherBrandOrg = await organizationFixture({ kind: "brand" });
 
     const result = await getLesson({

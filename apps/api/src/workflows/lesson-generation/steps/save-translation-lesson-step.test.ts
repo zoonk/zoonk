@@ -4,7 +4,7 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { saveTranslationLessonStep } from "./save-translation-lesson-step";
 
@@ -16,7 +16,7 @@ describe(saveTranslationLessonStep, () => {
     organizationId = organization.id;
   });
 
-  test("creates translation steps from the previous completed vocabulary lesson", async () => {
+  it("creates translation steps from the previous completed vocabulary lesson", async () => {
     const context = await createLessonContext({
       kind: "translation",
       organizationId,
@@ -60,13 +60,13 @@ describe(saveTranslationLessonStep, () => {
       where: { kind: "translation", lessonId: context.id },
     });
 
-    expect(steps.map((step) => [step.position, step.wordId])).toEqual([
+    expect(steps.map((step) => [step.position, step.wordId])).toStrictEqual([
       [0, firstWord.id],
       [1, secondWord.id],
     ]);
   });
 
-  test("throws when a translation lesson has no completed vocabulary source", async () => {
+  it("throws when a translation lesson has no completed vocabulary source", async () => {
     const context = await createLessonContext({
       kind: "translation",
       organizationId,

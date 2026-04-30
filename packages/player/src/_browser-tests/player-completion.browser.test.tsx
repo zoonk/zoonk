@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { buildSerializedLesson, buildSerializedStep } from "../_test-utils/player-test-data";
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
@@ -48,7 +48,7 @@ async function completeSingleChoiceLesson({
 }
 
 describe("player browser integration: completion", () => {
-  test("renders authenticated lesson completion rewards, actions, footer, and hidden chrome", async () => {
+  it("renders authenticated lesson completion rewards, actions, footer, and hidden chrome", async () => {
     renderPlayer({
       lesson: buildCompletionQuizLesson(),
       navigation: buildNavigation({ nextLessonHref: "/lesson/play" }),
@@ -91,7 +91,7 @@ describe("player browser integration: completion", () => {
     await expect.element(page.getByRole("link", { name: /close/i })).toBeInTheDocument();
   });
 
-  test("omits next lesson and level progress when optional lesson links are missing", async () => {
+  it("omits next lesson and level progress when optional lesson links are missing", async () => {
     renderPlayer({
       lesson: buildCompletionQuizLesson(),
       navigation: buildNavigation({ levelHref: undefined, nextLessonHref: null }),
@@ -118,7 +118,7 @@ describe("player browser integration: completion", () => {
     await expect.element(completionScreen.getByText(/belt/i)).not.toBeInTheDocument();
   });
 
-  test("shows guest lesson completion login prompt without rewards and falls back to /login", async () => {
+  it("shows guest lesson completion login prompt without rewards and falls back to /login", async () => {
     renderPlayer({
       lesson: buildCompletionQuizLesson(),
       navigation: buildNavigation({ loginHref: undefined, nextLessonHref: "/lesson/play" }),
@@ -151,7 +151,7 @@ describe("player browser integration: completion", () => {
       .not.toBeInTheDocument();
   });
 
-  test("falls back to review-only chapter completion when there is no next chapter", async () => {
+  it("falls back to review-only chapter completion when there is no next chapter", async () => {
     renderPlayer({
       lesson: buildCompletionQuizLesson(),
       milestone: { kind: "chapter", nextHref: null, reviewHref: "/review-chapter" },
@@ -171,7 +171,7 @@ describe("player browser integration: completion", () => {
       .not.toBeInTheDocument();
   });
 
-  test("renders course completion review actions", async () => {
+  it("renders course completion review actions", async () => {
     renderPlayer({
       lesson: buildCompletionQuizLesson(),
       milestone: {
@@ -195,7 +195,7 @@ describe("player browser integration: completion", () => {
       .toBeInTheDocument();
   });
 
-  test("shows guest milestone actions without exposing authenticated next links", async () => {
+  it("shows guest milestone actions without exposing authenticated next links", async () => {
     renderPlayer({
       lesson: buildCompletionQuizLesson(),
       milestone: { kind: "chapter", nextHref: "/next-chapter", reviewHref: "/review-chapter" },

@@ -30,11 +30,11 @@
     "//#quality": { "dependsOn": ["//#lint", "//#format"] },
     "//#quality:fix": { "dependsOn": ["//#lint:fix", "//#format:fix"] },
     "build": {
-      "dependsOn": ["^db:generate", "^db:deploy", "^build"],
+      "dependsOn": ["db:generate", "db:deploy", "^build"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "build:e2e": {
-      "dependsOn": ["^db:generate", "^build:e2e"],
+      "dependsOn": ["db:generate", "^build:e2e"],
       "outputs": [".next-e2e/**", "!.next-e2e/cache/**"]
     },
     "db:deploy": { "cache": false },
@@ -44,15 +44,15 @@
       "outputs": ["src/generated/**"]
     },
     "db:setup:test": { "cache": false, "dependsOn": ["^db:setup:test"] },
-    "dev": { "cache": false, "dependsOn": ["^db:generate", "^dev"], "persistent": true },
+    "dev": { "cache": false, "dependsOn": ["db:generate", "^dev"], "persistent": true },
     "e2e": { "dependsOn": ["build:e2e"], "passThroughEnv": ["PLAYWRIGHT_*", "E2E_BASE_URL"] },
     "start": { "cache": false, "dependsOn": ["^start"], "persistent": true },
-    "test": { "dependsOn": ["^db:generate", "^db:setup:test", "^test"] },
+    "test": { "dependsOn": ["db:generate", "^db:setup:test", "^test"] },
     "test:watch": {
       "cache": false,
-      "dependsOn": ["^db:generate", "^db:setup:test"],
+      "dependsOn": ["db:generate", "^db:setup:test"],
       "persistent": true
     },
-    "typecheck": { "dependsOn": ["^db:generate", "^typecheck"], "outputs": [".next/types/**"] }
+    "typecheck": { "dependsOn": ["db:generate", "^typecheck"], "outputs": [".next/types/**"] }
   }
 }

@@ -1,18 +1,18 @@
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { getBestDay } from "./get-best-day";
 
 describe("unauthenticated users", () => {
-  test("returns null", async () => {
+  it("returns null", async () => {
     const result = await getBestDay({ headers: new Headers() });
     expect(result).toBeNull();
   });
 });
 
 describe("authenticated users", () => {
-  test("returns null when user has no DailyProgress records", async () => {
+  it("returns null when user has no DailyProgress records", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -20,7 +20,7 @@ describe("authenticated users", () => {
     expect(result).toBeNull();
   });
 
-  test("returns best day when user has data for multiple days", async () => {
+  it("returns best day when user has data for multiple days", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -50,7 +50,7 @@ describe("authenticated users", () => {
     expect(result?.score).toBe(90);
   });
 
-  test("excludes records older than 90 days", async () => {
+  it("excludes records older than 90 days", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -83,7 +83,7 @@ describe("authenticated users", () => {
     expect(result?.score).toBe(80);
   });
 
-  test("uses day with most answers as tiebreaker", async () => {
+  it("uses day with most answers as tiebreaker", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -120,7 +120,7 @@ describe("authenticated users", () => {
     expect(result?.score).toBe(90);
   });
 
-  test("returns correct score calculation", async () => {
+  it("returns correct score calculation", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 

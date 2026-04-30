@@ -3,7 +3,7 @@ import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { generateStepImage } from "@zoonk/core/steps/image";
 import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createCompletedExplanation,
   createLessonContext,
@@ -50,7 +50,7 @@ describe(quizLessonWorkflow, () => {
     vi.clearAllMocks();
   });
 
-  test("stores quiz image questions from the uncovered explanation steps", async () => {
+  it("stores quiz image questions from the uncovered explanation steps", async () => {
     const context = await createLessonContext({ kind: "quiz", organizationId, position: 2 });
 
     await createCompletedExplanation({
@@ -78,10 +78,10 @@ describe(quizLessonWorkflow, () => {
 
     const content = parseStepContent("selectImage", steps[0]?.content);
 
-    expect(steps.map((step) => [step.position, step.kind])).toEqual([[0, "selectImage"]]);
+    expect(steps.map((step) => [step.position, step.kind])).toStrictEqual([[0, "selectImage"]]);
     expect(content.question).toBe("Pick one");
 
-    expect(content.options).toEqual([
+    expect(content.options).toStrictEqual([
       expect.objectContaining({
         feedback: "Correct",
         isCorrect: true,

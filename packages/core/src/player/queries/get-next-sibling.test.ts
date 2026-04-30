@@ -2,7 +2,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { getNextSibling } from "./get-next-sibling";
 
 describe("getNextSibling - lesson level", () => {
@@ -59,7 +59,7 @@ describe("getNextSibling - lesson level", () => {
     lesson3Slug = ls3.slug;
   });
 
-  test("returns next lesson in same chapter", async () => {
+  it("returns next lesson in same chapter", async () => {
     const result = await getNextSibling({
       chapterId: chapter1Id,
       chapterPosition: chapter1Position,
@@ -76,7 +76,7 @@ describe("getNextSibling - lesson level", () => {
     });
   });
 
-  test("returns first lesson of next chapter when last in current chapter", async () => {
+  it("returns first lesson of next chapter when last in current chapter", async () => {
     const result = await getNextSibling({
       chapterId: chapter1Id,
       chapterPosition: chapter1Position,
@@ -93,7 +93,7 @@ describe("getNextSibling - lesson level", () => {
     });
   });
 
-  test("returns null when last lesson in course", async () => {
+  it("returns null when last lesson in course", async () => {
     const result = await getNextSibling({
       chapterId: chapter2Id,
       chapterPosition: chapter2Position,
@@ -105,7 +105,7 @@ describe("getNextSibling - lesson level", () => {
     expect(result).toBeNull();
   });
 
-  test("skips unpublished lessons and chapters", async () => {
+  it("skips unpublished lessons and chapters", async () => {
     const org = await organizationFixture({ kind: "brand" });
     const course = await courseFixture({ isPublished: true, organizationId: org.id });
 
@@ -159,7 +159,7 @@ describe("getNextSibling - lesson level", () => {
       level: "lesson",
     });
 
-    expect(result).toEqual(expect.objectContaining({ lessonSlug: nextLesson.slug }));
+    expect(result).toStrictEqual(expect.objectContaining({ lessonSlug: nextLesson.slug }));
   });
 });
 
@@ -185,19 +185,19 @@ describe("getNextSibling - chapter level", () => {
     chapter2Slug = ch2.slug;
   });
 
-  test("returns next chapter in course", async () => {
+  it("returns next chapter in course", async () => {
     const result = await getNextSibling({ chapterPosition: 0, courseId, level: "chapter" });
 
     expect(result).toMatchObject({ brandSlug: orgSlug, chapterSlug: chapter2Slug, courseSlug });
   });
 
-  test("returns null when last chapter", async () => {
+  it("returns null when last chapter", async () => {
     const result = await getNextSibling({ chapterPosition: 1, courseId, level: "chapter" });
 
     expect(result).toBeNull();
   });
 
-  test("skips unpublished chapters", async () => {
+  it("skips unpublished chapters", async () => {
     const org = await organizationFixture({ kind: "brand" });
     const course = await courseFixture({ isPublished: true, organizationId: org.id });
 
@@ -228,6 +228,6 @@ describe("getNextSibling - chapter level", () => {
       level: "chapter",
     });
 
-    expect(result).toEqual(expect.objectContaining({ chapterSlug: chapters[2]?.slug }));
+    expect(result).toStrictEqual(expect.objectContaining({ chapterSlug: chapters[2]?.slug }));
   });
 });

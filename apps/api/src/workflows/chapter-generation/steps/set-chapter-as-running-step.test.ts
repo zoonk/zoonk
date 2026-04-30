@@ -4,7 +4,7 @@ import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { setChapterAsRunningStep } from "./set-chapter-as-running-step";
 
 describe(setChapterAsRunningStep, () => {
@@ -22,7 +22,7 @@ describe(setChapterAsRunningStep, () => {
     vi.clearAllMocks();
   });
 
-  test("throws without streaming error when chapter does not exist", async () => {
+  it("throws without streaming error when chapter does not exist", async () => {
     await expect(
       setChapterAsRunningStep({ chapterId: randomUUID(), workflowRunId: "run-id" }),
     ).rejects.toThrow();
@@ -34,7 +34,7 @@ describe(setChapterAsRunningStep, () => {
     );
   });
 
-  test("updates chapter generation status to running with run ID", async () => {
+  it("updates chapter generation status to running with run ID", async () => {
     const chapter = await chapterFixture({
       courseId,
       organizationId,

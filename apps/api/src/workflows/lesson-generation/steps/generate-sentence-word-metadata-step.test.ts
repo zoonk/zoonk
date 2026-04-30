@@ -3,7 +3,7 @@ import { generateLessonRomanization } from "@zoonk/ai/tasks/lessons/language/rom
 import { generateTranslation } from "@zoonk/ai/tasks/lessons/language/translation";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateSentenceWordMetadataStep } from "./generate-sentence-word-metadata-step";
 
@@ -37,7 +37,7 @@ describe(generateSentenceWordMetadataStep, () => {
     vi.clearAllMocks();
   });
 
-  test("generates sentence word translations and romanizations for canonical words", async () => {
+  it("generates sentence word translations and romanizations for canonical words", async () => {
     const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
     const catWord = `猫${uniqueId}`;
     const waterWord = `水${uniqueId}`;
@@ -64,7 +64,7 @@ describe(generateSentenceWordMetadataStep, () => {
       targetWords: [catWord, waterWord, fireWord],
     });
 
-    expect(metadata.wordMetadata).toEqual({
+    expect(metadata.wordMetadata).toStrictEqual({
       [catWord]: { romanization: "neko", translation: `${catWord} translated` },
       [fireWord]: { romanization: `${fireWord} romanized`, translation: "" },
       [waterWord]: {

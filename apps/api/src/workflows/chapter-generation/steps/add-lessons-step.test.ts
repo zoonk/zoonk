@@ -4,7 +4,7 @@ import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { addLessonsStep } from "./add-lessons-step";
 import { type ChapterContext } from "./get-chapter-step";
 
@@ -30,7 +30,7 @@ describe(addLessonsStep, () => {
     vi.clearAllMocks();
   });
 
-  test("throws without streaming error when DB save fails", async () => {
+  it("throws without streaming error when DB save fails", async () => {
     const brokenContext: ChapterContext = { ...context, id: randomUUID() };
 
     const lessons = [
@@ -46,7 +46,7 @@ describe(addLessonsStep, () => {
     );
   });
 
-  test("creates lessons in the database and returns them", async () => {
+  it("creates lessons in the database and returns them", async () => {
     const chapter = await chapterFixture({
       courseId: context.course.id,
       organizationId,
@@ -109,7 +109,7 @@ describe(addLessonsStep, () => {
     );
   });
 
-  test("expands language lessons when the course has a target language", async () => {
+  it("expands language lessons when the course has a target language", async () => {
     const course = await courseFixture({ organizationId, targetLanguage: "es" });
     const chapter = await chapterFixture({
       courseId: course.id,
@@ -135,7 +135,7 @@ describe(addLessonsStep, () => {
       where: { chapterId: chapter.id },
     });
 
-    expect(dbLessons.map((lesson) => lesson.kind)).toEqual([
+    expect(dbLessons.map((lesson) => lesson.kind)).toStrictEqual([
       "vocabulary",
       "translation",
       "reading",

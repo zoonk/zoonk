@@ -1,5 +1,5 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { describePlayerStep, getPlayerStepImage } from "./player-step";
 
 function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
@@ -22,7 +22,7 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
 }
 
 describe(describePlayerStep, () => {
-  test("describes practice scenario as the canonical intro step", () => {
+  it("describes practice scenario as the canonical intro step", () => {
     const descriptor = describePlayerStep(
       buildStep({ content: { text: "Hello", title: "Intro", variant: "intro" as const } }),
     );
@@ -32,13 +32,13 @@ describe(describePlayerStep, () => {
     expect(descriptor?.kind === "intro" ? descriptor.intro.text : null).toBe("Hello");
   });
 
-  test("keeps regular static text as the canonical staticText kind", () => {
+  it("keeps regular static text as the canonical staticText kind", () => {
     const descriptor = describePlayerStep(buildStep());
 
     expect(descriptor?.kind).toBe("staticText");
   });
 
-  test("returns the primary image from image-backed descriptors", () => {
+  it("returns the primary image from image-backed descriptors", () => {
     const image = { prompt: "A useful diagram", url: "data:image/svg+xml,diagram" };
     const staticDescriptor = describePlayerStep(
       buildStep({ content: { image, text: "Hello", title: "Intro", variant: "text" as const } }),
@@ -54,8 +54,8 @@ describe(describePlayerStep, () => {
       }),
     );
 
-    expect(getPlayerStepImage(staticDescriptor)).toEqual(image);
-    expect(getPlayerStepImage(choiceDescriptor)).toEqual(image);
+    expect(getPlayerStepImage(staticDescriptor)).toStrictEqual(image);
+    expect(getPlayerStepImage(choiceDescriptor)).toStrictEqual(image);
     expect(getPlayerStepImage(null)).toBeNull();
   });
 });

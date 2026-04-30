@@ -3,7 +3,7 @@ import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { getChapterStep } from "./get-chapter-step";
 
 describe(getChapterStep, () => {
@@ -21,7 +21,7 @@ describe(getChapterStep, () => {
     vi.clearAllMocks();
   });
 
-  test("returns chapter with course and lesson count", async () => {
+  it("returns chapter with course and lesson count", async () => {
     const chapter = await chapterFixture({
       courseId,
       organizationId,
@@ -46,7 +46,7 @@ describe(getChapterStep, () => {
     );
   });
 
-  test("includes neighboring chapters within range", async () => {
+  it("includes neighboring chapters within range", async () => {
     // Use a dedicated course so other tests' chapters don't interfere with neighbor counts
     const isolatedCourse = await courseFixture({ organizationId });
 
@@ -71,11 +71,11 @@ describe(getChapterStep, () => {
       .map((ch) => ch.title);
 
     expect(neighborTitles).toHaveLength(4);
-    expect(neighborTitles).toEqual(expect.arrayContaining(expectedNeighborTitles));
+    expect(neighborTitles).toStrictEqual(expect.arrayContaining(expectedNeighborTitles));
     expect(neighborTitles).not.toContain(middleChapter.title);
   });
 
-  test("throws FatalError when chapter does not exist", async () => {
+  it("throws FatalError when chapter does not exist", async () => {
     await expect(getChapterStep(randomUUID())).rejects.toThrow("Chapter not found");
 
     const events = getStreamedEvents();
@@ -83,7 +83,7 @@ describe(getChapterStep, () => {
     expect(events).toContainEqual(expect.objectContaining({ status: "error", step: "getChapter" }));
   });
 
-  test("throws FatalError when chapter is outside the AI organization", async () => {
+  it("throws FatalError when chapter is outside the AI organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });
     const chapter = await chapterFixture({

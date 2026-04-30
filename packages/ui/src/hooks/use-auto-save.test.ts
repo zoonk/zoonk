@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useAutoSave } from "./use-auto-save";
 
 describe(useAutoSave, () => {
@@ -11,7 +11,7 @@ describe(useAutoSave, () => {
     vi.useRealTimers();
   });
 
-  test("resets value when initialValue changes", () => {
+  it("resets value when initialValue changes", () => {
     const onSave = vi.fn().mockResolvedValue({ error: null });
 
     const { result, rerender } = renderHook(
@@ -26,7 +26,7 @@ describe(useAutoSave, () => {
     expect(result.current.value).toBe("updated from server");
   });
 
-  test("does not trigger save when initialValue changes", () => {
+  it("does not trigger save when initialValue changes", () => {
     const onSave = vi.fn().mockResolvedValue({ error: null });
 
     const { rerender } = renderHook(
@@ -45,7 +45,7 @@ describe(useAutoSave, () => {
     expect(onSave).not.toHaveBeenCalled();
   });
 
-  test("saves after user edits following an initialValue change", async () => {
+  it("saves after user edits following an initialValue change", async () => {
     const onSave = vi.fn().mockResolvedValue({ error: null });
 
     const { result, rerender } = renderHook(

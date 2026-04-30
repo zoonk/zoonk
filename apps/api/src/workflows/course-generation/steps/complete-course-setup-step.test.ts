@@ -1,10 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
+import { getRejectedAggregateError } from "@/workflows/_test-utils/rejected-error";
 import { prisma } from "@zoonk/db";
 import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { completeCourseSetupStep } from "./complete-course-setup-step";
 
 describe(completeCourseSetupStep, () => {
@@ -19,20 +20,15 @@ describe(completeCourseSetupStep, () => {
     vi.clearAllMocks();
   });
 
-  test("throws all DB save failures without streaming error", async () => {
+  it("throws all DB save failures without streaming error", async () => {
     const promise = completeCourseSetupStep({
       courseId: randomUUID(),
       courseSuggestionId: randomUUID(),
     });
 
-    await expect(promise).rejects.toThrow(AggregateError);
+    const error = await getRejectedAggregateError(promise);
 
-    await promise.catch((error: unknown) => {
-      expect(error).toBeInstanceOf(AggregateError);
-      if (error instanceof AggregateError) {
-        expect(error.errors).toHaveLength(2);
-      }
-    });
+    expect(error.errors).toHaveLength(2);
 
     const events = getStreamedEvents();
 
@@ -41,7 +37,7 @@ describe(completeCourseSetupStep, () => {
     );
   });
 
-  test("marks both course and suggestion as completed", async () => {
+  it("marks both course and suggestion as completed", async () => {
     const [course, suggestion] = await Promise.all([
       courseFixture({
         generationStatus: "running",

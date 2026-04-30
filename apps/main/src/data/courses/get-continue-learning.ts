@@ -42,14 +42,14 @@ type ContinueLearningCourse = Pick<Course, "id" | "slug" | "title" | "imageUrl">
   organization: Pick<Organization, "slug"> | null;
 };
 
-export type ContinueLearningCompletedItem = {
+type ContinueLearningCompletedItem = {
   status: "completed";
   lesson: ContinueLearningLesson;
   chapter: ContinueLearningChapter;
   course: ContinueLearningCourse;
 };
 
-export type ContinueLearningPendingItem = {
+type ContinueLearningPendingItem = {
   status: "pending";
   chapter: ContinueLearningChapter;
   course: ContinueLearningCourse;

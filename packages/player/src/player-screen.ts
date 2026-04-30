@@ -39,7 +39,7 @@ type InPlayScreenModel = {
   step: PlayerStepDescriptor;
 };
 
-export type PlayerCompletedScreenModel = {
+type PlayerCompletedScreenModel = {
   bottomBar: null;
   keyboard: PlayerKeyboardModel;
   kind: "completed";
@@ -49,12 +49,9 @@ export type PlayerCompletedScreenModel = {
   stageIsStatic: false;
 };
 
-export type PlayerFeedbackScreenModel = InPlayScreenModel & {
-  kind: "feedbackScreen";
-  scene: "feedback";
-};
+type PlayerFeedbackScreenModel = InPlayScreenModel & { kind: "feedbackScreen"; scene: "feedback" };
 
-export type PlayerStepScreenModel = InPlayScreenModel & { kind: "step" };
+type PlayerStepScreenModel = InPlayScreenModel & { kind: "step" };
 
 export type PlayerScreenModel =
   | PlayerCompletedScreenModel

@@ -5,7 +5,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { getBestTime } from "./get-best-time";
 
 type StepAttemptParams = {
@@ -65,14 +65,14 @@ async function createTestStep(orgId: string) {
 }
 
 describe("unauthenticated users", () => {
-  test("returns null", async () => {
+  it("returns null", async () => {
     const result = await getBestTime({ headers: new Headers() });
     expect(result).toBeNull();
   });
 });
 
 describe("authenticated users", () => {
-  test("returns null when user has no StepAttempt records", async () => {
+  it("returns null when user has no StepAttempt records", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -80,7 +80,7 @@ describe("authenticated users", () => {
     expect(result).toBeNull();
   });
 
-  test("returns best time when user has data for multiple periods", async () => {
+  it("returns best time when user has data for multiple periods", async () => {
     const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
     const [headers, step] = await Promise.all([
       signInAs(user.email, user.password),
@@ -104,7 +104,7 @@ describe("authenticated users", () => {
     expect(result?.score).toBe(90);
   });
 
-  test("excludes records older than 90 days", async () => {
+  it("excludes records older than 90 days", async () => {
     const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
     const [headers, step] = await Promise.all([
       signInAs(user.email, user.password),
@@ -132,7 +132,7 @@ describe("authenticated users", () => {
     expect(result?.score).toBe(80);
   });
 
-  test("uses period with most answers as tiebreaker", async () => {
+  it("uses period with most answers as tiebreaker", async () => {
     const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
     const [headers, step] = await Promise.all([
       signInAs(user.email, user.password),
@@ -156,7 +156,7 @@ describe("authenticated users", () => {
     expect(result?.score).toBe(90);
   });
 
-  test("returns correct score calculation", async () => {
+  it("returns correct score calculation", async () => {
     const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
     const [headers, step] = await Promise.all([
       signInAs(user.email, user.password),
@@ -176,7 +176,7 @@ describe("authenticated users", () => {
     expect(result?.score).toBe(85);
   });
 
-  test("correctly maps hours to periods", async () => {
+  it("correctly maps hours to periods", async () => {
     const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
     const [headers, step] = await Promise.all([
       signInAs(user.email, user.password),
@@ -196,7 +196,7 @@ describe("authenticated users", () => {
     expect(result?.score).toBe(100);
   });
 
-  test("filters by custom date range when startDate is provided", async () => {
+  it("filters by custom date range when startDate is provided", async () => {
     const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
     const [headers, step] = await Promise.all([
       signInAs(user.email, user.password),

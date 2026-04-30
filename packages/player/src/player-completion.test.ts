@@ -1,5 +1,5 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { computeLocalCompletion } from "./player-completion";
 import { type PlayerState, type StepResult } from "./player-reducer";
 
@@ -41,7 +41,7 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
 }
 
 describe(computeLocalCompletion, () => {
-  test("uses standard scoring for checked steps", () => {
+  it("uses standard scoring for checked steps", () => {
     const steps = [
       buildStep({
         content: { options: [{ feedback: "Yes", id: "a", isCorrect: true, text: "A" }] },

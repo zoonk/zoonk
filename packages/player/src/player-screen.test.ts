@@ -1,6 +1,6 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type LessonKind } from "@zoonk/core/steps/contract/content";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { type PlayerState } from "./player-reducer";
 import { getPlayerScreenModel } from "./player-screen";
 
@@ -49,17 +49,17 @@ function buildScreen({
 }
 
 describe(getPlayerScreenModel, () => {
-  test("uses navigation mode for regular static steps", () => {
+  it("uses navigation mode for regular static steps", () => {
     const screen = buildScreen();
 
     expect(screen.kind).toBe("step");
-    expect(screen.bottomBar).toEqual({ canNavigatePrev: false, kind: "navigation" });
+    expect(screen.bottomBar).toStrictEqual({ canNavigatePrev: false, kind: "navigation" });
     expect(screen.keyboard.enterAction).toBeNull();
     expect(screen.keyboard.rightAction).toBe("navigateNext");
     expect(screen.stageIsStatic).toBe(true);
   });
 
-  test("uses primary action mode for the practice scenario intro", () => {
+  it("uses primary action mode for the practice scenario intro", () => {
     const screen = buildScreen({
       lessonKind: "practice",
       state: buildState({
@@ -71,7 +71,7 @@ describe(getPlayerScreenModel, () => {
 
     expect(screen.kind).toBe("step");
 
-    expect(screen.bottomBar).toEqual({
+    expect(screen.bottomBar).toStrictEqual({
       button: "begin",
       disabled: false,
       kind: "primaryAction",
@@ -83,7 +83,7 @@ describe(getPlayerScreenModel, () => {
     expect(screen.stageIsFullBleed).toBe(true);
   });
 
-  test("keeps unanswered interactive steps disabled", () => {
+  it("keeps unanswered interactive steps disabled", () => {
     const screen = buildScreen({
       state: buildState({
         steps: [
@@ -99,7 +99,7 @@ describe(getPlayerScreenModel, () => {
     });
 
     expect(screen.kind).toBe("step");
-    expect(screen.bottomBar).toEqual({
+    expect(screen.bottomBar).toStrictEqual({
       button: "check",
       disabled: true,
       kind: "primaryAction",
@@ -108,7 +108,7 @@ describe(getPlayerScreenModel, () => {
     expect(screen.keyboard.enterAction).toBeNull();
   });
 
-  test("keeps completed state in completion mode", () => {
+  it("keeps completed state in completion mode", () => {
     const screen = buildScreen({ state: buildState({ phase: "completed" }) });
 
     expect(screen.kind).toBe("completed");
