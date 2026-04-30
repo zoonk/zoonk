@@ -35,11 +35,15 @@ describe(isValidChartPayload, () => {
 
   it("narrows the type correctly", () => {
     const payload: unknown = [{ payload: { name: "A", value: 10 } }];
+    const isValidPayload = isValidChartPayload<{ name: string; value: number }>(payload);
 
-    if (isValidChartPayload<{ name: string; value: number }>(payload)) {
-      expect(payload[0].payload.name).toBe("A");
-      expect(payload[0].payload.value).toBe(10);
+    expect(isValidPayload).toBe(true);
+    if (!isValidPayload) {
+      throw new Error("Expected chart payload to be valid.");
     }
+
+    expect(payload[0].payload.name).toBe("A");
+    expect(payload[0].payload.value).toBe(10);
   });
 });
 

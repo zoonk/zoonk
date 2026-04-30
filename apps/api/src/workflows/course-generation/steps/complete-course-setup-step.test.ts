@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
+import { getRejectedAggregateError } from "@/workflows/_test-utils/rejected-error";
 import { prisma } from "@zoonk/db";
 import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -25,14 +26,9 @@ describe(completeCourseSetupStep, () => {
       courseSuggestionId: randomUUID(),
     });
 
-    await expect(promise).rejects.toThrow(AggregateError);
+    const error = await getRejectedAggregateError(promise);
 
-    await promise.catch((error: unknown) => {
-      expect(error).toBeInstanceOf(AggregateError);
-      if (error instanceof AggregateError) {
-        expect(error.errors).toHaveLength(2);
-      }
-    });
+    expect(error.errors).toHaveLength(2);
 
     const events = getStreamedEvents();
 

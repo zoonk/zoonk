@@ -60,7 +60,6 @@
     ],
     "import/prefer-default-export": "off",
     "jest/max-expects": "off",
-    "jest/no-conditional-expect": "off",
     "jest/no-conditional-in-test": "off",
     "jest/no-hooks": "off",
     "jest/no-untyped-mock-factory": "off",
