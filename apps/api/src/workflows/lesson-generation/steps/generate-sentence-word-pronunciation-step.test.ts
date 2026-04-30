@@ -35,7 +35,7 @@ describe(generateSentenceWordPronunciationStep, () => {
     });
     const words = [catWord, waterWord, fireWord];
 
-    await expect(generateSentenceWordPronunciationStep({ context, words })).resolves.toEqual({
+    await expect(generateSentenceWordPronunciationStep({ context, words })).resolves.toStrictEqual({
       pronunciations: {
         [catWord]: `${catWord} pron`,
         [fireWord]: `${fireWord} pron`,

@@ -67,13 +67,13 @@ describe(explanationLessonWorkflow, () => {
 
     const contents = steps.map((step) => parseStepContent("static", step.content));
 
-    expect(steps.map((step) => [step.position, step.kind])).toEqual([
+    expect(steps.map((step) => [step.position, step.kind])).toStrictEqual([
       [0, "static"],
       [1, "static"],
       [2, "static"],
     ]);
 
-    expect(contents).toEqual([
+    expect(contents).toStrictEqual([
       {
         image: { prompt: "image prompt a", url: "https://example.com/image%20prompt%20a.webp" },
         text: "Explain A",

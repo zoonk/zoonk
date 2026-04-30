@@ -43,7 +43,7 @@ describe(toLessonWordInputs, () => {
       }),
     ]);
 
-    expect(result).toEqual([
+    expect(result).toStrictEqual([
       {
         audioUrl: "/audio/boa-noite.mp3",
         distractors: ["boa tarde"],
@@ -74,7 +74,7 @@ describe(toLessonSentenceInputs, () => {
       }),
     ]);
 
-    expect(result).toEqual([
+    expect(result).toStrictEqual([
       {
         audioUrl: "/audio/sentence.mp3",
         distractors: ["abend"],
@@ -120,7 +120,7 @@ describe(toDistractorWordInputs, () => {
       },
     ]);
 
-    expect(result).toEqual([
+    expect(result).toStrictEqual([
       {
         audioUrl: "/audio/abend.mp3",
         id: "4",
@@ -192,7 +192,7 @@ describe(attachTranslationsToSteps, () => {
       ],
     );
 
-    expect(result).toEqual([
+    expect(result).toStrictEqual([
       {
         content: {},
         id: "1",
@@ -253,7 +253,7 @@ describe(attachTranslationsToSteps, () => {
       [],
     );
 
-    expect(result).toEqual([
+    expect(result).toStrictEqual([
       {
         content: {},
         id: "1",

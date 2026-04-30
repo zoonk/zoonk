@@ -15,7 +15,7 @@ describe(buildProviderOptions, () => {
         taskName: "lesson-explanation",
         useFallback: true,
       }),
-    ).toEqual({
+    ).toStrictEqual({
       gateway: {
         models: ["google/gemini-3-flash", "anthropic/claude-haiku-4.5"],
         order: ["openai", "azure", "google", "anthropic", "vertex"],
@@ -35,7 +35,7 @@ describe(buildProviderOptions, () => {
         taskName: "lesson-explanation",
         useFallback: true,
       }),
-    ).toEqual({
+    ).toStrictEqual({
       gateway: {
         models: ["google/gemini-3-flash", "anthropic/claude-haiku-4.5"],
         order: ["openai", "azure", "google", "anthropic", "vertex"],
@@ -53,7 +53,7 @@ describe(buildProviderOptions, () => {
         taskName: "lesson-vocabulary",
         useFallback: false,
       }),
-    ).toEqual({
+    ).toStrictEqual({
       gateway: { models: [], order: ["google", "vertex", "openai", "azure", "anthropic"] },
     });
   });
@@ -68,7 +68,7 @@ describe(buildProviderOptions, () => {
         taskName: "lesson-practice",
         useFallback: true,
       }),
-    ).toEqual({
+    ).toStrictEqual({
       gateway: {
         models: ["openai/gpt-5.4-mini"],
         order: ["anthropic", "vertex", "openai", "azure", "google"],
@@ -87,7 +87,7 @@ describe(buildProviderOptions, () => {
         taskName: "course-description",
         useFallback: true,
       }),
-    ).toEqual({
+    ).toStrictEqual({
       gateway: {
         models: ["openai/gpt-5.4-mini"],
         tags: ["task:course-description", "default-model:xai/grok-4"],
@@ -105,7 +105,7 @@ describe(buildProviderOptions, () => {
         taskName: "lesson-practice",
         useFallback: true,
       }),
-    ).toEqual({
+    ).toStrictEqual({
       gateway: {
         models: [],
         order: ["openai", "azure", "google", "anthropic", "vertex"],
@@ -127,7 +127,7 @@ describe(buildImageProviderOptions, () => {
         quality: "low",
         taskName: "course-thumbnail",
       }),
-    ).toEqual({ gateway: {}, openai: { output_format: "webp", quality: "low" } });
+    ).toStrictEqual({ gateway: {}, openai: { output_format: "webp", quality: "low" } });
   });
 
   it("adds gateway reporting tags for image tasks when enabled", () => {
@@ -139,7 +139,7 @@ describe(buildImageProviderOptions, () => {
         quality: "low",
         taskName: "course-thumbnail",
       }),
-    ).toEqual({
+    ).toStrictEqual({
       gateway: { tags: ["task:course-thumbnail", "default-model:openai/gpt-image-2"] },
       openai: { output_format: "webp", quality: "low" },
     });

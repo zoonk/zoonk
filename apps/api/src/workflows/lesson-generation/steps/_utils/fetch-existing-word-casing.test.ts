@@ -19,7 +19,7 @@ describe(fetchExistingWordCasing, () => {
       words: [`nonexistent-${randomUUID()}`],
     });
 
-    expect(result).toEqual({});
+    expect(result).toStrictEqual({});
   });
 
   it("returns lowercase-to-original casing map for existing words", async () => {
@@ -34,7 +34,7 @@ describe(fetchExistingWordCasing, () => {
       words: [originalCasing.toLowerCase()],
     });
 
-    expect(result).toEqual({ [originalCasing.toLowerCase()]: originalCasing });
+    expect(result).toStrictEqual({ [originalCasing.toLowerCase()]: originalCasing });
   });
 
   it("matches case-insensitively", async () => {
@@ -49,7 +49,7 @@ describe(fetchExistingWordCasing, () => {
       words: [originalCasing.toUpperCase()],
     });
 
-    expect(result).toEqual({ [originalCasing.toLowerCase()]: originalCasing });
+    expect(result).toStrictEqual({ [originalCasing.toLowerCase()]: originalCasing });
   });
 
   it("returns multiple words when several match", async () => {
@@ -68,7 +68,7 @@ describe(fetchExistingWordCasing, () => {
       words: [word1.toLowerCase(), word2.toLowerCase()],
     });
 
-    expect(result).toEqual({ [word1.toLowerCase()]: word1, [word2.toLowerCase()]: word2 });
+    expect(result).toStrictEqual({ [word1.toLowerCase()]: word1, [word2.toLowerCase()]: word2 });
   });
 
   it("does not match words from a different target language", async () => {
@@ -83,6 +83,6 @@ describe(fetchExistingWordCasing, () => {
       words: [word.toLowerCase()],
     });
 
-    expect(result).toEqual({});
+    expect(result).toStrictEqual({});
   });
 });

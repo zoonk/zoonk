@@ -58,7 +58,7 @@ describe(getNextLesson, () => {
 
     const result = await getNextLesson({ headers: new Headers(), scope: { courseId: course.id } });
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       brandSlug: organization.slug,
       canPrefetch: true,
       chapterSlug: chapter.slug,
@@ -77,7 +77,7 @@ describe(getNextLesson, () => {
 
     const result = await getNextLesson({ headers: new Headers(), scope: { courseId: course.id } });
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       brandSlug: organization.slug,
       canPrefetch: false,
       chapterSlug: chapter.slug,
@@ -103,7 +103,7 @@ describe(getNextLesson, () => {
     const headers = await signInAs(user.email, user.password);
     const result = await getNextLesson({ headers, scope: { courseId: tree.course.id } });
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       brandSlug: organization.slug,
       canPrefetch: true,
       chapterSlug: tree.chapter.slug,
@@ -137,7 +137,7 @@ describe(getNextLesson, () => {
     const headers = await signInAs(user.email, user.password);
     const result = await getNextLesson({ headers, scope: { courseId: tree.course.id } });
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       brandSlug: organization.slug,
       canPrefetch: true,
       chapterSlug: tree.chapter.slug,
@@ -163,7 +163,7 @@ describe(getNextLesson, () => {
     const headers = await signInAs(user.email, user.password);
     const result = await getNextLesson({ headers, scope: { chapterId: tree.chapter.id } });
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       brandSlug: organization.slug,
       canPrefetch: true,
       chapterSlug: tree.chapter.slug,
@@ -189,7 +189,7 @@ describe(getNextLesson, () => {
     const headers = await signInAs(user.email, user.password);
     const result = await getNextLesson({ headers, scope: { lessonId: lesson?.id ?? "" } });
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       brandSlug: organization.slug,
       canPrefetch: true,
       chapterSlug: tree.chapter.slug,

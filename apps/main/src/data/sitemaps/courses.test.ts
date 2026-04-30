@@ -28,7 +28,7 @@ describe(listSitemapCourses, () => {
     const courses = await listSitemapCourses(lastPage(count));
     const found = courses.find((item) => item.courseSlug === course.slug);
 
-    expect(found).toEqual({
+    expect(found).toStrictEqual({
       brandSlug: org.slug,
       courseSlug: course.slug,
       updatedAt: expect.any(Date),

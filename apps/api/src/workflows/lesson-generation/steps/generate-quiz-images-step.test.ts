@@ -51,7 +51,7 @@ describe(generateQuizImagesStep, () => {
     });
 
     expect(generateStepImage).toHaveBeenCalledTimes(2);
-    expect(result).toEqual([
+    expect(result).toStrictEqual([
       {
         format: "selectImage",
         options: [

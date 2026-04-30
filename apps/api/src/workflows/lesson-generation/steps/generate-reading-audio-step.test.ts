@@ -48,7 +48,7 @@ describe(generateReadingAudioStep, () => {
       ],
     });
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       sentenceAudioUrls: {
         [existingSentence]: "/audio/existing.mp3",
         [newSentence]: `/audio/${newSentence}.mp3`,

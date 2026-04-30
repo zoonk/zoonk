@@ -32,7 +32,7 @@ describe(generateVocabularyRomanizationStep, () => {
     const dogWord = "犬";
     const words = [catWord, dogWord];
 
-    await expect(generateVocabularyRomanizationStep({ context, words })).resolves.toEqual({
+    await expect(generateVocabularyRomanizationStep({ context, words })).resolves.toStrictEqual({
       romanizations: { [catWord]: `${catWord} romanized`, [dogWord]: `${dogWord} romanized` },
     });
     expect(generateLessonRomanization).toHaveBeenCalledWith({ targetLanguage: "ja", texts: words });

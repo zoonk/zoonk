@@ -82,7 +82,7 @@ describe(saveReadingTargetWords, () => {
       where: { lessonId: lesson.id },
     });
 
-    expect(lessonWords.map((entry) => entry.word.word)).toEqual([translatedWord]);
+    expect(lessonWords.map((entry) => entry.word.word)).toStrictEqual([translatedWord]);
   });
 
   it("reuses existing word casing instead of creating lowercase duplicates", async () => {
@@ -166,7 +166,7 @@ describe(saveReadingTargetWords, () => {
     ]);
 
     expect(distractorRecord.audioUrl).toBe(`/audio/${distractorWord}.mp3`);
-    expect(distractorLessonWords).toEqual([]);
+    expect(distractorLessonWords).toStrictEqual([]);
   });
 
   it("skips distractor variants that normalize to canonical words", async () => {

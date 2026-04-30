@@ -11,7 +11,7 @@ describe(sanitizeDistractors, () => {
   it("keeps only unique single-word distractors by default", () => {
     expect(
       sanitizeDistractors({ distractors: [" gato ", "GATO", "cão", "", "bom dia"], input: "gato" }),
-    ).toEqual(["cão"]);
+    ).toStrictEqual(["cão"]);
   });
 
   it("removes exact canonical collisions after punctuation normalization", () => {
@@ -20,7 +20,7 @@ describe(sanitizeDistractors, () => {
         distractors: ["Guten Morgen!", "Guten Morgen", "Abend"],
         input: "Guten Morgen",
       }),
-    ).toEqual(["Abend"]);
+    ).toStrictEqual(["Abend"]);
   });
 
   it("keeps words and phrases for translation distractors", () => {
@@ -30,7 +30,7 @@ describe(sanitizeDistractors, () => {
         input: "you're welcome",
         shape: "any",
       }),
-    ).toEqual(["please", "sure thing", "no problem"]);
+    ).toStrictEqual(["please", "sure thing", "no problem"]);
   });
 
   it("dedupes normalized translation distractors without enforcing token count", () => {
@@ -40,7 +40,7 @@ describe(sanitizeDistractors, () => {
         input: "boa noite",
         shape: "any",
       }),
-    ).toEqual(["boa tarde", "bom dia", "até amanhã"]);
+    ).toStrictEqual(["boa tarde", "bom dia", "até amanhã"]);
   });
 
   it("drops phrase distractors for sentence word-bank inputs", () => {
@@ -50,6 +50,6 @@ describe(sanitizeDistractors, () => {
         input: "Guten Morgen, Anna!",
         shape: "single-word",
       }),
-    ).toEqual(["Abend", "Fenster"]);
+    ).toStrictEqual(["Abend", "Fenster"]);
   });
 });

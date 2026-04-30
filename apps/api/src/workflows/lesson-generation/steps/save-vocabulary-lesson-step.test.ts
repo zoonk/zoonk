@@ -75,8 +75,8 @@ describe(saveVocabularyLessonStep, () => {
       translation: "good evening",
     });
     expect(lessonWords[0]?.word.word).toBe(vocabularyWord);
-    expect(distractorLessonWords).toEqual([]);
-    expect(words.map((entry) => [entry.word, entry.audioUrl])).toEqual([
+    expect(distractorLessonWords).toStrictEqual([]);
+    expect(words.map((entry) => [entry.word, entry.audioUrl])).toStrictEqual([
       [vocabularyWord, `/audio/boa-noite-${id}.mp3`],
       [distractorWords[0], `/audio/boa-tarde-${id}.mp3`],
       [distractorWords[1], `/audio/bom-dia-${id}.mp3`],

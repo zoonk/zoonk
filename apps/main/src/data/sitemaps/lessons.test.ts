@@ -43,7 +43,7 @@ describe(listSitemapLessons, () => {
     const lessons = await listSitemapLessons(lastPage(count));
     const found = lessons.find((item) => item.lessonSlug === lesson.slug);
 
-    expect(found).toEqual({
+    expect(found).toStrictEqual({
       brandSlug: org.slug,
       chapterSlug: chapter.slug,
       courseSlug: course.slug,

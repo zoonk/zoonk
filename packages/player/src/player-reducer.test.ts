@@ -92,13 +92,13 @@ describe(createInitialState, () => {
     const lesson = buildLesson({ steps });
     const state = createInitialState({ lesson, totalBrainPower: 0 });
     expect(state.lessonId).toBe("lesson-1");
-    expect(state.steps).toEqual(steps);
+    expect(state.steps).toStrictEqual(steps);
   });
 
   it("initializes empty maps", () => {
     const state = createInitialState({ lesson: buildLesson(), totalBrainPower: 0 });
-    expect(state.selectedAnswers).toEqual({});
-    expect(state.results).toEqual({});
+    expect(state.selectedAnswers).toStrictEqual({});
+    expect(state.results).toStrictEqual({});
   });
 
   it("stores totalBrainPower from input", () => {
@@ -110,7 +110,10 @@ describe(createInitialState, () => {
     const sortItems = ["Banana", "Apple", "Cherry"];
     const steps = [buildStep({ id: "sort-1", kind: "sortOrder", sortOrderItems: sortItems })];
     const state = createInitialState({ lesson: buildLesson({ steps }), totalBrainPower: 0 });
-    expect(state.selectedAnswers["sort-1"]).toEqual({ kind: "sortOrder", userOrder: sortItems });
+    expect(state.selectedAnswers["sort-1"]).toStrictEqual({
+      kind: "sortOrder",
+      userOrder: sortItems,
+    });
   });
 
   it("does not pre-populate selectedAnswers for non-sortOrder steps", () => {
@@ -119,7 +122,7 @@ describe(createInitialState, () => {
       buildMultipleChoiceStep({ id: "mc-1" }),
     ];
     const state = createInitialState({ lesson: buildLesson({ steps }), totalBrainPower: 0 });
-    expect(state.selectedAnswers).toEqual({});
+    expect(state.selectedAnswers).toStrictEqual({});
   });
 });
 
@@ -131,7 +134,7 @@ describe("SELECT_ANSWER", () => {
       stepId: "step-1",
       type: "SELECT_ANSWER",
     });
-    expect(next.selectedAnswers["step-1"]).toEqual(multipleChoiceAnswer);
+    expect(next.selectedAnswers["step-1"]).toStrictEqual(multipleChoiceAnswer);
   });
 
   it("does not change phase or index", () => {
@@ -154,7 +157,7 @@ describe("SELECT_ANSWER", () => {
       stepId: "step-1",
       type: "SELECT_ANSWER",
     });
-    expect(next.selectedAnswers["step-1"]).toEqual(multipleChoiceAnswer);
+    expect(next.selectedAnswers["step-1"]).toStrictEqual(multipleChoiceAnswer);
   });
 });
 
@@ -168,7 +171,7 @@ describe("CHECK_ANSWER", () => {
       type: "CHECK_ANSWER",
     });
     expect(next.phase).toBe("feedback");
-    expect(next.results["mc-1"]).toEqual({
+    expect(next.results["mc-1"]).toStrictEqual({
       answer: undefined,
       result: { correctAnswer: null, feedback: "Correct!", isCorrect: true },
       stepId: "mc-1",
@@ -183,7 +186,7 @@ describe("CHECK_ANSWER", () => {
       stepId: "mc-1",
       type: "CHECK_ANSWER",
     });
-    expect(next.results["mc-1"]?.answer).toEqual(multipleChoiceAnswer);
+    expect(next.results["mc-1"]?.answer).toStrictEqual(multipleChoiceAnswer);
   });
 
   describe("matchColumns auto-advance", () => {
@@ -200,7 +203,7 @@ describe("CHECK_ANSWER", () => {
       });
       expect(next.phase).toBe("playing");
       expect(next.currentStepIndex).toBe(1);
-      expect(next.results["mc-1"]).toEqual({
+      expect(next.results["mc-1"]).toStrictEqual({
         answer: undefined,
         result: { correctAnswer: null, feedback: null, isCorrect: true },
         stepId: "mc-1",
@@ -216,7 +219,7 @@ describe("CHECK_ANSWER", () => {
         type: "CHECK_ANSWER",
       });
       expect(next.phase).toBe("completed");
-      expect(next.results["mc-1"]).toEqual({
+      expect(next.results["mc-1"]).toStrictEqual({
         answer: undefined,
         result: { correctAnswer: null, feedback: null, isCorrect: true },
         stepId: "mc-1",
@@ -240,7 +243,7 @@ describe("CHECK_ANSWER", () => {
       });
 
       expect(next.phase).toBe("completed");
-      expect(next.stepTimings["mc-1"]).toEqual({
+      expect(next.stepTimings["mc-1"]).toStrictEqual({
         answeredAt: Date.now(),
         dayOfWeek: 0,
         durationSeconds: 7,
@@ -514,8 +517,8 @@ describe("RESTART", () => {
     });
 
     const next = playerReducer(state, { type: "RESTART" });
-    expect(next.results).toEqual({});
-    expect(next.selectedAnswers).toEqual({});
+    expect(next.results).toStrictEqual({});
+    expect(next.selectedAnswers).toStrictEqual({});
   });
 
   it("preserves lessonId and steps", () => {
@@ -524,7 +527,7 @@ describe("RESTART", () => {
 
     const next = playerReducer(state, { type: "RESTART" });
     expect(next.lessonId).toBe("my-lesson");
-    expect(next.steps).toEqual(steps);
+    expect(next.steps).toStrictEqual(steps);
   });
 
   it("re-seeds sortOrder answers on restart", () => {
@@ -536,7 +539,10 @@ describe("RESTART", () => {
     const state = buildState({ phase: "completed", results: {}, selectedAnswers: {}, steps });
 
     const next = playerReducer(state, { type: "RESTART" });
-    expect(next.selectedAnswers["sort-1"]).toEqual({ kind: "sortOrder", userOrder: sortItems });
+    expect(next.selectedAnswers["sort-1"]).toStrictEqual({
+      kind: "sortOrder",
+      userOrder: sortItems,
+    });
     expect(next.selectedAnswers["mc-1"]).toBeUndefined();
   });
 });
@@ -550,7 +556,7 @@ describe("CLEAR_ANSWER", () => {
       },
     });
     const next = playerReducer(state, { stepId: "step-1", type: "CLEAR_ANSWER" });
-    expect(next.selectedAnswers).toEqual({
+    expect(next.selectedAnswers).toStrictEqual({
       "step-2": { kind: "fillBlank", userAnswers: ["cat", "mat"] },
     });
   });
@@ -558,7 +564,7 @@ describe("CLEAR_ANSWER", () => {
   it("no-ops when stepId is not in selectedAnswers", () => {
     const state = buildState({ selectedAnswers: { "step-1": multipleChoiceAnswer } });
     const next = playerReducer(state, { stepId: "step-99", type: "CLEAR_ANSWER" });
-    expect(next.selectedAnswers).toEqual({ "step-1": multipleChoiceAnswer });
+    expect(next.selectedAnswers).toStrictEqual({ "step-1": multipleChoiceAnswer });
   });
 
   it("does not change phase or index", () => {
@@ -583,7 +589,7 @@ describe("timing", () => {
     const state = createInitialState({ lesson: buildLesson(), totalBrainPower: 0 });
     expect(state.startedAt).toBe(Date.now());
     expect(state.stepStartedAt).toBe(Date.now());
-    expect(state.stepTimings).toEqual({});
+    expect(state.stepTimings).toStrictEqual({});
   });
 
   it("CHECK_ANSWER records step timing with duration, hourOfDay, dayOfWeek", () => {
@@ -599,7 +605,7 @@ describe("timing", () => {
       type: "CHECK_ANSWER",
     });
 
-    expect(next.stepTimings["mc-1"]).toEqual({
+    expect(next.stepTimings["mc-1"]).toStrictEqual({
       answeredAt: Date.now(),
       dayOfWeek: 0, // Sunday
       durationSeconds: 5,
@@ -674,7 +680,7 @@ describe("timing", () => {
     const next = playerReducer(state, { type: "RESTART" });
     expect(next.startedAt).toBe(Date.now());
     expect(next.stepStartedAt).toBe(Date.now());
-    expect(next.stepTimings).toEqual({});
+    expect(next.stepTimings).toStrictEqual({});
   });
 });
 
@@ -688,7 +694,7 @@ describe("edge cases", () => {
   it("empty steps array sets phase to completed", () => {
     const lesson = buildLesson({ steps: [] });
     const state = createInitialState({ lesson, totalBrainPower: 0 });
-    expect(state.steps).toEqual([]);
+    expect(state.steps).toStrictEqual([]);
     expect(state.currentStepIndex).toBe(0);
     expect(state.phase).toBe("completed");
   });
@@ -707,6 +713,6 @@ describe("edge cases", () => {
       result: { correctAnswer: null, feedback: "Good!", isCorrect: true },
       stepId: "mc-1",
     };
-    expect(next.results["mc-1"]).toEqual(expected);
+    expect(next.results["mc-1"]).toStrictEqual(expected);
   });
 });

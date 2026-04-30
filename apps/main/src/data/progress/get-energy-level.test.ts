@@ -29,7 +29,7 @@ describe("authenticated users", () => {
     });
 
     const result = await getEnergyLevel(headers);
-    expect(result).toEqual({ currentEnergy: 85.5 });
+    expect(result).toStrictEqual({ currentEnergy: 85.5 });
   });
 
   it("applies decay when lastActiveAt is 5 days ago", async () => {
@@ -48,7 +48,7 @@ describe("authenticated users", () => {
     });
 
     const result = await getEnergyLevel(headers);
-    expect(result).toEqual({ currentEnergy: 46 });
+    expect(result).toStrictEqual({ currentEnergy: 46 });
   });
 
   it("clamps decayed energy at 0", async () => {
@@ -66,6 +66,6 @@ describe("authenticated users", () => {
     });
 
     const result = await getEnergyLevel(headers);
-    expect(result).toEqual({ currentEnergy: 0 });
+    expect(result).toStrictEqual({ currentEnergy: 0 });
   });
 });

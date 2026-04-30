@@ -59,7 +59,7 @@ describe(saveListeningLessonStep, () => {
       where: { kind: "listening", lessonId: context.id },
     });
 
-    expect(steps.map((step) => [step.position, step.sentenceId])).toEqual([
+    expect(steps.map((step) => [step.position, step.sentenceId])).toStrictEqual([
       [0, firstSentence.id],
       [1, secondSentence.id],
     ]);

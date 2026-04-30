@@ -42,7 +42,7 @@ describe(generateGrammarRomanizationStep, () => {
 
     const romanizations = await generateGrammarRomanizationStep({ context, grammarContent });
 
-    expect(romanizations.romanizations).toEqual({
+    expect(romanizations.romanizations).toStrictEqual({
       [catWord]: `${catWord} romanized`,
       [dogWord]: `${dogWord} romanized`,
       [grammarSentence]: `${grammarSentence} romanized`,

@@ -74,12 +74,12 @@ describe(getSentenceWordsForLessons, () => {
     });
 
     const result = await getSentenceWordsForLessons({ lessonIds: [emptyLesson.id] });
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
   it("returns empty array for non-existent lesson", async () => {
     const result = await getSentenceWordsForLessons({ lessonIds: [randomUUID()] });
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
   it("returns empty when sentence words have no matching LessonWord records", async () => {
@@ -101,7 +101,7 @@ describe(getSentenceWordsForLessons, () => {
     await lessonSentenceFixture({ lessonId: newLesson.id, sentenceId: sentence.id });
 
     const result = await getSentenceWordsForLessons({ lessonIds: [newLesson.id] });
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
   it("strips punctuation when matching sentence words to LessonWord records", async () => {

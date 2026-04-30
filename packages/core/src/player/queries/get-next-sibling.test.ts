@@ -159,7 +159,7 @@ describe("getNextSibling - lesson level", () => {
       level: "lesson",
     });
 
-    expect(result).toEqual(expect.objectContaining({ lessonSlug: nextLesson.slug }));
+    expect(result).toStrictEqual(expect.objectContaining({ lessonSlug: nextLesson.slug }));
   });
 });
 
@@ -228,6 +228,6 @@ describe("getNextSibling - chapter level", () => {
       level: "chapter",
     });
 
-    expect(result).toEqual(expect.objectContaining({ chapterSlug: chapters[2]?.slug }));
+    expect(result).toStrictEqual(expect.objectContaining({ chapterSlug: chapters[2]?.slug }));
   });
 });

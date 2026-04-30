@@ -82,6 +82,6 @@ describe(listCourseChapters, () => {
 
     const result = await listCourseChapters({ courseId: courseWithoutChapters.id });
 
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 });

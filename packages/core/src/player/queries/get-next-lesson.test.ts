@@ -62,12 +62,12 @@ describe(getNextLesson, () => {
 
   it("returns next lesson in same chapter", async () => {
     const result = await getNextLesson(lesson1Id);
-    expect(result).toEqual({ id: lesson2Id, needsGeneration: false });
+    expect(result).toStrictEqual({ id: lesson2Id, needsGeneration: false });
   });
 
   it("returns first lesson of next chapter when current is last in chapter", async () => {
     const result = await getNextLesson(lesson2Id);
-    expect(result).toEqual({ id: lesson3Id, needsGeneration: false });
+    expect(result).toStrictEqual({ id: lesson3Id, needsGeneration: false });
   });
 
   it("returns null when on last lesson of course", async () => {
@@ -112,7 +112,7 @@ describe(getNextLesson, () => {
     ]);
 
     const result = await getNextLesson(publishedLesson.id);
-    expect(result).toEqual({ id: nextPublishedLesson.id, needsGeneration: false });
+    expect(result).toStrictEqual({ id: nextPublishedLesson.id, needsGeneration: false });
   });
 
   it("skips unpublished chapters", async () => {
@@ -162,7 +162,7 @@ describe(getNextLesson, () => {
     ]);
 
     const result = await getNextLesson(currentLesson.id);
-    expect(result).toEqual({ id: nextLesson.id, needsGeneration: false });
+    expect(result).toStrictEqual({ id: nextLesson.id, needsGeneration: false });
   });
 
   describe("needsGeneration", () => {
@@ -193,7 +193,7 @@ describe(getNextLesson, () => {
       ]);
 
       const result = await getNextLesson(currentLesson.id);
-      expect(result).toEqual({ id: pendingLesson.id, needsGeneration: true });
+      expect(result).toStrictEqual({ id: pendingLesson.id, needsGeneration: true });
     });
 
     it("returns needsGeneration true when lesson is failed", async () => {
@@ -223,7 +223,7 @@ describe(getNextLesson, () => {
       ]);
 
       const result = await getNextLesson(currentLesson.id);
-      expect(result).toEqual({ id: failedLesson.id, needsGeneration: true });
+      expect(result).toStrictEqual({ id: failedLesson.id, needsGeneration: true });
     });
 
     it("returns needsGeneration false when next lesson is completed", async () => {
@@ -253,7 +253,7 @@ describe(getNextLesson, () => {
       ]);
 
       const result = await getNextLesson(currentLesson.id);
-      expect(result).toEqual({ id: nextLesson.id, needsGeneration: false });
+      expect(result).toStrictEqual({ id: nextLesson.id, needsGeneration: false });
     });
 
     it("returns needsGeneration false when lesson generation is already in flight", async () => {
@@ -284,7 +284,7 @@ describe(getNextLesson, () => {
       ]);
 
       const result = await getNextLesson(currentLesson.id);
-      expect(result).toEqual({ id: runningLesson.id, needsGeneration: false });
+      expect(result).toStrictEqual({ id: runningLesson.id, needsGeneration: false });
     });
   });
 });

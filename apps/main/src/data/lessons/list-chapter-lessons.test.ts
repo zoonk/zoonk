@@ -96,13 +96,13 @@ describe(listChapterLessons, () => {
   it("returns empty array when chapter has no lessons", async () => {
     const result = await listChapterLessons({ chapterId: emptyChapter.id });
 
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
   it("returns empty array for non-existent chapter", async () => {
     const result = await listChapterLessons({ chapterId: "00000000-0000-7000-8000-000000000001" });
 
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
   it("returns all lesson fields correctly", async () => {

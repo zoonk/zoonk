@@ -220,6 +220,6 @@ describe(validateAnswers, () => {
     const runValidation = () => validateAnswers(steps, {});
 
     expect(runValidation).not.toThrow();
-    expect(runValidation()).toEqual([]);
+    expect(runValidation()).toStrictEqual([]);
   });
 });

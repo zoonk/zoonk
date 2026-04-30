@@ -13,7 +13,7 @@ describe(isGeneratedLessonKind, () => {
 
 describe(getPhaseOrder, () => {
   it("keeps explanation generation split into content, visual planning, images, and saving", () => {
-    expect(getPhaseOrder("explanation")).toEqual([
+    expect(getPhaseOrder("explanation")).toStrictEqual([
       "gettingStarted",
       "writingContent",
       "preparingImages",
@@ -23,7 +23,7 @@ describe(getPhaseOrder, () => {
   });
 
   it("keeps vocabulary generation split into enrichment and media phases", () => {
-    expect(getPhaseOrder("vocabulary")).toEqual([
+    expect(getPhaseOrder("vocabulary")).toStrictEqual([
       "gettingStarted",
       "buildingWordList",
       "creatingExercises",

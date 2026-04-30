@@ -107,7 +107,7 @@ describe(getLesson, () => {
   it("includes step content and visual information", async () => {
     const result = await getLesson({ lessonId: lesson.id });
 
-    expect(result?.steps[0]?.content).toEqual({ text: "Step 1 content", title: "Step 1" });
+    expect(result?.steps[0]?.content).toStrictEqual({ text: "Step 1 content", title: "Step 1" });
     expect(result?.steps[0]?.kind).toBe("static");
   });
 

@@ -36,7 +36,7 @@ describe(listSitemapChapters, () => {
     const chapters = await listSitemapChapters(lastPage(count));
     const found = chapters.find((item) => item.chapterSlug === chapter.slug);
 
-    expect(found).toEqual({
+    expect(found).toStrictEqual({
       brandSlug: org.slug,
       chapterSlug: chapter.slug,
       courseSlug: course.slug,

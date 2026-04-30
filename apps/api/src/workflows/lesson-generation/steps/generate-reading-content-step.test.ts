@@ -95,14 +95,14 @@ describe(generateReadingContentStep, () => {
     const result = await generateReadingContentStep(context);
 
     expect(previousReading.position).toBe(1);
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       kind: "reading",
       sentences: [
         { explanation: "Uses both words.", sentence: "猫と水", translation: "cat and water" },
       ],
     });
     const sentenceInput = vi.mocked(generateLessonSentences).mock.calls[0]?.[0];
-    expect(sentenceInput?.words).toEqual(
+    expect(sentenceInput?.words).toStrictEqual(
       expect.arrayContaining([`猫${uniqueId}`, `水${uniqueId}`]),
     );
     expect(sentenceInput?.words).toHaveLength(2);

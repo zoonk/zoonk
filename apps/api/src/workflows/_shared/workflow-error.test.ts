@@ -5,7 +5,7 @@ describe(serializeWorkflowError, () => {
   it("preserves Error details", () => {
     const error = new TypeError("AI provider failed");
 
-    expect(serializeWorkflowError(error)).toEqual({
+    expect(serializeWorkflowError(error)).toStrictEqual({
       message: "AI provider failed",
       name: "TypeError",
       stack: expect.any(String),
@@ -19,14 +19,21 @@ describe(serializeWorkflowError, () => {
         name: "AI_RetryError",
         stack: "stack trace",
       }),
-    ).toEqual({ message: "Rate limit exceeded", name: "AI_RetryError", stack: "stack trace" });
+    ).toStrictEqual({
+      message: "Rate limit exceeded",
+      name: "AI_RetryError",
+      stack: "stack trace",
+    });
   });
 
   it("serializes unusual thrown values without throwing", () => {
     const circular: { self?: unknown } = {};
     circular.self = circular;
 
-    expect(serializeWorkflowError(circular)).toEqual({ message: "[object Object]", name: "Error" });
+    expect(serializeWorkflowError(circular)).toStrictEqual({
+      message: "[object Object]",
+      name: "Error",
+    });
   });
 
   it("preserves every nested AggregateError failure", () => {
@@ -35,7 +42,7 @@ describe(serializeWorkflowError, () => {
       "Course status updates failed",
     );
 
-    expect(serializeWorkflowError(error)).toEqual({
+    expect(serializeWorkflowError(error)).toStrictEqual({
       errors: [
         expect.objectContaining({ message: "course update failed", name: "Error" }),
         expect.objectContaining({ message: "suggestion update failed", name: "Error" }),
@@ -50,7 +57,7 @@ describe(serializeWorkflowError, () => {
     const error = new AggregateError([], "Course status updates failed");
     error.errors.push(error);
 
-    expect(serializeWorkflowError(error)).toEqual({
+    expect(serializeWorkflowError(error)).toStrictEqual({
       errors: [{ message: "Circular error reference", name: "Error" }],
       message: "Course status updates failed",
       name: "AggregateError",

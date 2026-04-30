@@ -33,7 +33,7 @@ describe(getStripePrices, () => {
 
     const result = await getStripePrices(["hobby_monthly"], "brl");
 
-    expect(result.get("hobby_monthly")).toEqual({ amount: 2990, currency: "brl" });
+    expect(result.get("hobby_monthly")).toStrictEqual({ amount: 2990, currency: "brl" });
   });
 
   it("falls back to default price when currency option is unavailable", async () => {
@@ -45,7 +45,7 @@ describe(getStripePrices, () => {
 
     const result = await getStripePrices(["hobby_monthly"], "xyz");
 
-    expect(result.get("hobby_monthly")).toEqual({ amount: 999, currency: "usd" });
+    expect(result.get("hobby_monthly")).toStrictEqual({ amount: 999, currency: "usd" });
   });
 
   it("handles multiple lookup keys", async () => {

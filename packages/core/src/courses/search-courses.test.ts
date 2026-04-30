@@ -46,12 +46,12 @@ describe(searchCourses, () => {
 
   it("returns empty array for empty query", async () => {
     const result = await searchCourses({ language: "en", query: "" });
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
   it("returns empty array for whitespace-only query", async () => {
     const result = await searchCourses({ language: "en", query: "   " });
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
   it("returns courses matching partial title", async () => {
@@ -308,7 +308,7 @@ describe(searchCourses, () => {
 
     const result = await searchCourses({ language: "en", offset: 100, query: searchTerm });
 
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
   it("clamps offset to prevent unbounded database queries", async () => {
@@ -328,7 +328,7 @@ describe(searchCourses, () => {
     const result = await searchCourses({ language: "en", offset: 1_000_000, query: searchTerm });
 
     // With offset clamped to 100 and only 1 result, we get empty array
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
   it("excludes courses without an organization", async () => {

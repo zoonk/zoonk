@@ -7,7 +7,7 @@ describe("step content contracts", () => {
       options: [{ feedback: "Correct", id: "a", isCorrect: true, text: "A" }],
     });
 
-    expect(content).toEqual({
+    expect(content).toStrictEqual({
       options: [{ feedback: "Correct", id: "a", isCorrect: true, text: "A" }],
     });
   });
@@ -26,7 +26,7 @@ describe("step content contracts", () => {
       question: "What is correct?",
     });
 
-    expect(content).toEqual({
+    expect(content).toStrictEqual({
       context: "Some context",
       image: {
         prompt: "A refund dashboard with one outlier row",
@@ -64,7 +64,7 @@ describe("step content contracts", () => {
       template: "Yo [BLANK] español.",
     });
 
-    expect(content).toEqual({
+    expect(content).toStrictEqual({
       answers: ["hablo"],
       distractors: ["habla"],
       feedback: "Use first person singular.",
@@ -79,7 +79,7 @@ describe("step content contracts", () => {
       variant: "text",
     });
 
-    expect(content).toEqual({
+    expect(content).toStrictEqual({
       text: "Background text",
       title: "Background title",
       variant: "text",
@@ -95,7 +95,7 @@ describe("step content contracts", () => {
       variant: "grammarExample",
     });
 
-    expect(content).toEqual({
+    expect(content).toStrictEqual({
       highlight: "hablo",
       romanization: "ha-blo",
       sentence: "Yo hablo español.",
@@ -111,7 +111,7 @@ describe("step content contracts", () => {
       variant: "grammarRule",
     });
 
-    expect(content).toEqual({
+    expect(content).toStrictEqual({
       ruleName: "Present tense endings",
       ruleSummary: "Use -o for yo and -es for tú.",
       variant: "grammarRule",
@@ -120,22 +120,22 @@ describe("step content contracts", () => {
 
   it("parses vocabulary step content", () => {
     const content = parseStepContent("vocabulary", {});
-    expect(content).toEqual({});
+    expect(content).toStrictEqual({});
   });
 
   it("parses translation step content", () => {
     const content = parseStepContent("translation", {});
-    expect(content).toEqual({});
+    expect(content).toStrictEqual({});
   });
 
   it("parses reading step content", () => {
     const content = parseStepContent("reading", {});
-    expect(content).toEqual({});
+    expect(content).toStrictEqual({});
   });
 
   it("parses listening step content", () => {
     const content = parseStepContent("listening", {});
-    expect(content).toEqual({});
+    expect(content).toStrictEqual({});
   });
 
   it("parses matchColumns", () => {
@@ -144,7 +144,10 @@ describe("step content contracts", () => {
       question: "Match the items.",
     });
 
-    expect(content).toEqual({ pairs: [{ left: "A", right: "1" }], question: "Match the items." });
+    expect(content).toStrictEqual({
+      pairs: [{ left: "A", right: "1" }],
+      question: "Match the items.",
+    });
   });
 
   it("parses sortOrder", () => {
@@ -154,7 +157,7 @@ describe("step content contracts", () => {
       question: "Sort these items.",
     });
 
-    expect(content).toEqual({
+    expect(content).toStrictEqual({
       feedback: "Correct order.",
       items: ["one", "two"],
       question: "Sort these items.",
@@ -175,7 +178,7 @@ describe("step content contracts", () => {
       question: "Which image shows a cat?",
     });
 
-    expect(content).toEqual({
+    expect(content).toStrictEqual({
       options: [
         {
           feedback: "Correct",
@@ -198,7 +201,7 @@ describe("step content contracts", () => {
       variant: "grammarExample",
     });
 
-    expect(content).toEqual({
+    expect(content).toStrictEqual({
       highlight: "hablo",
       romanization: null,
       sentence: "Yo hablo español.",
@@ -243,7 +246,7 @@ describe("step content contracts", () => {
         variant: "intro",
       });
 
-      expect(content).toEqual({
+      expect(content).toStrictEqual({
         text: "You arrive in the middle of the problem.",
         title: "Opening",
         variant: "intro",

@@ -38,7 +38,7 @@ describe(generateSentenceDistractorsStep, () => {
       { explanation: "", sentence: `${catWord} ${waterWord}`, translation: "cat and water" },
     ];
 
-    await expect(generateSentenceDistractorsStep({ context, sentences })).resolves.toEqual({
+    await expect(generateSentenceDistractorsStep({ context, sentences })).resolves.toStrictEqual({
       distractors: { [`${catWord} ${waterWord}`]: ["火"] },
       translationDistractors: { "cat and water": ["dog"] },
     });

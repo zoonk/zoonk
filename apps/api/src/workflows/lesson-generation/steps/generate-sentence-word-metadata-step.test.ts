@@ -64,7 +64,7 @@ describe(generateSentenceWordMetadataStep, () => {
       targetWords: [catWord, waterWord, fireWord],
     });
 
-    expect(metadata.wordMetadata).toEqual({
+    expect(metadata.wordMetadata).toStrictEqual({
       [catWord]: { romanization: "neko", translation: `${catWord} translated` },
       [fireWord]: { romanization: `${fireWord} romanized`, translation: "" },
       [waterWord]: {

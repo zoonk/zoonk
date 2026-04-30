@@ -60,7 +60,7 @@ describe(saveTranslationLessonStep, () => {
       where: { kind: "translation", lessonId: context.id },
     });
 
-    expect(steps.map((step) => [step.position, step.wordId])).toEqual([
+    expect(steps.map((step) => [step.position, step.wordId])).toStrictEqual([
       [0, firstWord.id],
       [1, secondWord.id],
     ]);

@@ -67,7 +67,7 @@ describe(generateLessonsStep, () => {
     generateChapterLessonsMock.mockResolvedValue({ data: { lessons } });
     const result = await generateLessonsStep(context);
 
-    expect(result).toEqual({ lessons, needsClassification: true });
+    expect(result).toStrictEqual({ lessons, needsClassification: true });
 
     expect(generateChapterLessonsMock).toHaveBeenCalledWith({
       chapterDescription: context.description,
@@ -97,7 +97,7 @@ describe(generateLessonsStep, () => {
 
     const result = await generateLessonsStep(languageContext);
 
-    expect(result).toEqual({ lessons, needsClassification: false });
+    expect(result).toStrictEqual({ lessons, needsClassification: false });
 
     expect(generateLanguageChapterLessonsMock).toHaveBeenCalledWith({
       chapterDescription: languageContext.description,

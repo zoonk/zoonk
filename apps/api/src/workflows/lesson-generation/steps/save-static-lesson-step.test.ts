@@ -39,23 +39,23 @@ describe(saveExplanationLessonStep, () => {
       where: { lessonId: context.id },
     });
 
-    expect(steps.map((step) => [step.position, step.kind])).toEqual([
+    expect(steps.map((step) => [step.position, step.kind])).toStrictEqual([
       [0, "static"],
       [1, "static"],
     ]);
-    expect(steps[0]?.content).toEqual({
+    expect(steps[0]?.content).toStrictEqual({
       image: images[0],
       text: stepsToSave[0]?.text,
       title: "Question",
       variant: "text",
     });
-    expect(steps[1]?.content).toEqual({
+    expect(steps[1]?.content).toStrictEqual({
       image: images[1],
       text: stepsToSave[1]?.text,
       title: "Layers",
       variant: "text",
     });
-    expect(getStreamedEvents()).toEqual(
+    expect(getStreamedEvents()).toStrictEqual(
       expect.arrayContaining([
         expect.objectContaining({ status: "started", step: "saveExplanationLesson" }),
         expect.objectContaining({ status: "completed", step: "saveExplanationLesson" }),

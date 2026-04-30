@@ -42,7 +42,7 @@ describe(buildTranslationOptions, () => {
       },
     });
 
-    expect(options).toEqual([
+    expect(options).toStrictEqual([
       {
         audioUrl: "/audio/tea.mp3",
         id: "word-1",

@@ -82,14 +82,14 @@ describe(grammarLessonWorkflow, () => {
       where: { lessonId: context.id },
     });
 
-    expect(steps.map((step) => [step.position, step.kind])).toEqual([
+    expect(steps.map((step) => [step.position, step.kind])).toStrictEqual([
       [0, "static"],
       [1, "multipleChoice"],
       [2, "static"],
       [3, "fillBlank"],
     ]);
 
-    expect(steps[0]?.content).toEqual({
+    expect(steps[0]?.content).toStrictEqual({
       highlight: "猫",
       romanization: "猫がいます romanized",
       sentence: "猫がいます",
@@ -102,13 +102,13 @@ describe(grammarLessonWorkflow, () => {
       question: "Which sentence matches?",
     });
 
-    expect(steps[2]?.content).toEqual({
+    expect(steps[2]?.content).toStrictEqual({
       ruleName: "Existence",
       ruleSummary: "Use がいます for living things.",
       variant: "grammarRule",
     });
 
-    expect(steps[3]?.content).toEqual({
+    expect(steps[3]?.content).toStrictEqual({
       answers: ["猫"],
       distractors: ["犬"],
       feedback: "Use the noun before がいます.",

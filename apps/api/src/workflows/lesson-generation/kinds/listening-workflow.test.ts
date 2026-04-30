@@ -67,10 +67,10 @@ describe(listeningLessonWorkflow, () => {
       where: { lessonId: context.id },
     });
 
-    expect(steps.map((step) => [step.position, step.kind, step.sentenceId])).toEqual([
+    expect(steps.map((step) => [step.position, step.kind, step.sentenceId])).toStrictEqual([
       [0, "listening", sentence.id],
     ]);
 
-    expect(steps.map((step) => parseStepContent("listening", step.content))).toEqual([{}]);
+    expect(steps.map((step) => parseStepContent("listening", step.content))).toStrictEqual([{}]);
   });
 });

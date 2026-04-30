@@ -69,11 +69,14 @@ describe(translationLessonWorkflow, () => {
       where: { lessonId: context.id },
     });
 
-    expect(steps.map((step) => [step.position, step.kind, step.wordId])).toEqual([
+    expect(steps.map((step) => [step.position, step.kind, step.wordId])).toStrictEqual([
       [0, "translation", words[0]?.id],
       [1, "translation", words[1]?.id],
     ]);
 
-    expect(steps.map((step) => parseStepContent("translation", step.content))).toEqual([{}, {}]);
+    expect(steps.map((step) => parseStepContent("translation", step.content))).toStrictEqual([
+      {},
+      {},
+    ]);
   });
 });

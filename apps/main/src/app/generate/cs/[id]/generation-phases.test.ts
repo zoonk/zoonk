@@ -5,7 +5,7 @@ describe("course generation phases", () => {
   it("returns all 6 course phases in order", () => {
     const phases = getPhaseOrder();
 
-    expect(phases).toEqual([
+    expect(phases).toStrictEqual([
       "gettingReady",
       "writingDescription",
       "creatingCoverImage",

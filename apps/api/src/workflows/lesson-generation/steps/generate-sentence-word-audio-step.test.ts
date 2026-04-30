@@ -35,7 +35,7 @@ describe(generateSentenceWordAudioStep, () => {
     });
     const words = [catWord, waterWord, fireWord];
 
-    await expect(generateSentenceWordAudioStep({ context, words })).resolves.toEqual({
+    await expect(generateSentenceWordAudioStep({ context, words })).resolves.toStrictEqual({
       wordAudioUrls: {
         [catWord]: `/audio/${catWord}.mp3`,
         [fireWord]: `/audio/${fireWord}.mp3`,

@@ -34,7 +34,7 @@ describe("authenticated users", () => {
     const result = await listUserCourses(newHeaders);
 
     expect(result.error).toBeNull();
-    expect(result.data).toEqual([]);
+    expect(result.data).toStrictEqual([]);
   });
 
   it("returns courses the user has started", async () => {
@@ -97,7 +97,7 @@ describe("authenticated users", () => {
     expect(result.data).toHaveLength(3);
 
     const courseIds = result.data?.map((item) => item.id);
-    expect(courseIds).toEqual([course2.id, course3.id, course1.id]);
+    expect(courseIds).toStrictEqual([course2.id, course3.id, course1.id]);
   });
 
   it("excludes courses from non-brand organizations", async () => {

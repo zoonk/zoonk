@@ -45,7 +45,7 @@ describe(classifyLessonsStep, () => {
       plan: { lessons, needsClassification: true },
     });
 
-    expect(result).toEqual([
+    expect(result).toStrictEqual([
       { description: "Intro", kind: "explanation", title: "Lesson 1" },
       { description: "Basics", kind: "tutorial", title: "Lesson 2" },
     ]);
@@ -84,7 +84,7 @@ describe(classifyLessonsStep, () => {
       plan: { lessons, needsClassification: false },
     });
 
-    expect(result).toEqual(lessons);
+    expect(result).toStrictEqual(lessons);
     expect(generateLessonKindMock).not.toHaveBeenCalled();
   });
 

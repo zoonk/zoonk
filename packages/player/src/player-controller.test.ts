@@ -82,7 +82,7 @@ describe(buildCompletionInput, () => {
       stepTimings: { "step-1": { answeredAt, dayOfWeek: 3, durationSeconds: 12, hourOfDay: 12 } },
     });
 
-    expect(buildCompletionInput(state, now)).toEqual({
+    expect(buildCompletionInput(state, now)).toStrictEqual({
       answers: { "step-1": { kind: "multipleChoice", selectedOptionId: "a" } },
       lessonId: "lesson-1",
       localDate: "2026-03-18",

@@ -58,6 +58,6 @@ describe(getCourseChaptersStep, () => {
 
     const result = await getCourseChaptersStep(emptyCourse.id);
 
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 });

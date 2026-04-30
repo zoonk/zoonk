@@ -53,7 +53,7 @@ describe(getPlayerScreenModel, () => {
     const screen = buildScreen();
 
     expect(screen.kind).toBe("step");
-    expect(screen.bottomBar).toEqual({ canNavigatePrev: false, kind: "navigation" });
+    expect(screen.bottomBar).toStrictEqual({ canNavigatePrev: false, kind: "navigation" });
     expect(screen.keyboard.enterAction).toBeNull();
     expect(screen.keyboard.rightAction).toBe("navigateNext");
     expect(screen.stageIsStatic).toBe(true);
@@ -71,7 +71,7 @@ describe(getPlayerScreenModel, () => {
 
     expect(screen.kind).toBe("step");
 
-    expect(screen.bottomBar).toEqual({
+    expect(screen.bottomBar).toStrictEqual({
       button: "begin",
       disabled: false,
       kind: "primaryAction",
@@ -99,7 +99,7 @@ describe(getPlayerScreenModel, () => {
     });
 
     expect(screen.kind).toBe("step");
-    expect(screen.bottomBar).toEqual({
+    expect(screen.bottomBar).toStrictEqual({
       button: "check",
       disabled: true,
       kind: "primaryAction",

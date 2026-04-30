@@ -48,7 +48,7 @@ describe(generateExplanationContentStep, () => {
 
     const result = await generateExplanationContentStep(context);
 
-    expect(result.steps).toEqual([
+    expect(result.steps).toStrictEqual([
       { text: "Concept explanation.", title: "Concept" },
       { text: "Apply the idea elsewhere.", title: "Transfer" },
     ]);
@@ -59,7 +59,7 @@ describe(generateExplanationContentStep, () => {
         otherLessonTitles: ["Sibling explanation"],
       }),
     );
-    expect(getStreamedEvents()).toEqual(
+    expect(getStreamedEvents()).toStrictEqual(
       expect.arrayContaining([
         expect.objectContaining({ status: "started", step: "generateExplanationContent" }),
         expect.objectContaining({ status: "completed", step: "generateExplanationContent" }),

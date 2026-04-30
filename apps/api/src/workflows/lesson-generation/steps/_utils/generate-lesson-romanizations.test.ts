@@ -13,7 +13,7 @@ describe(generateLessonRomanizations, () => {
   it("returns empty romanization map for Roman-script languages without calling AI", async () => {
     const result = await generateLessonRomanizations({ targetLanguage: "es", texts: ["hola"] });
 
-    expect(result).toEqual({});
+    expect(result).toStrictEqual({});
     expect(generateLessonRomanizationMock).not.toHaveBeenCalled();
   });
 
@@ -25,7 +25,10 @@ describe(generateLessonRomanizations, () => {
     const texts = ["これは猫です", "あれは犬です"];
     const result = await generateLessonRomanizations({ targetLanguage: "ja", texts });
 
-    expect(result).toEqual({ あれは犬です: "are wa inu desu", これは猫です: "kore wa neko desu" });
+    expect(result).toStrictEqual({
+      あれは犬です: "are wa inu desu",
+      これは猫です: "kore wa neko desu",
+    });
     expect(generateLessonRomanizationMock).toHaveBeenCalledWith({ targetLanguage: "ja", texts });
   });
 

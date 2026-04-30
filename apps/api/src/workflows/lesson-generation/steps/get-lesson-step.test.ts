@@ -19,7 +19,7 @@ describe(getLessonStep, () => {
 
     expect(context.id).toBe(lesson.id);
     expect(context.chapter.course.organization?.id).toBe(organizationId);
-    expect(getStreamedEvents()).toEqual(
+    expect(getStreamedEvents()).toStrictEqual(
       expect.arrayContaining([
         expect.objectContaining({ status: "started", step: "getLesson" }),
         expect.objectContaining({ status: "completed", step: "getLesson" }),
@@ -32,7 +32,7 @@ describe(getLessonStep, () => {
     const lesson = await createLessonContext({ organizationId: otherOrg.id });
 
     await expect(getLessonStep(lesson.id)).rejects.toThrow("Lesson not found");
-    expect(getStreamedEvents()).toEqual(
+    expect(getStreamedEvents()).toStrictEqual(
       expect.arrayContaining([
         expect.objectContaining({ reason: "notFound", status: "error", step: "getLesson" }),
       ]),

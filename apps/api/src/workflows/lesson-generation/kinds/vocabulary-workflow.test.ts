@@ -121,7 +121,7 @@ describe(vocabularyLessonWorkflow, () => {
       }),
     ]);
 
-    expect(steps.map((step) => [step.position, step.kind])).toEqual([
+    expect(steps.map((step) => [step.position, step.kind])).toStrictEqual([
       [0, "vocabulary"],
       [1, "vocabulary"],
     ]);
@@ -134,7 +134,7 @@ describe(vocabularyLessonWorkflow, () => {
           word: entry.word.word,
         }))
         .toSorted((a, b) => a.translation.localeCompare(b.translation)),
-    ).toEqual([
+    ).toStrictEqual([
       { distractors: [dogWord, birdWord], translation: `cat ${uniqueId}`, word: catWord },
       { distractors: [fireWord, earthWord], translation: `water ${uniqueId}`, word: waterWord },
     ]);
@@ -148,7 +148,7 @@ describe(vocabularyLessonWorkflow, () => {
           word: entry.word,
         }))
         .toSorted((a, b) => a.word.localeCompare(b.word)),
-    ).toEqual(
+    ).toStrictEqual(
       allWords
         .map((word) => ({
           audioUrl: `https://example.com/audio/${encodeURIComponent(word)}.mp3`,

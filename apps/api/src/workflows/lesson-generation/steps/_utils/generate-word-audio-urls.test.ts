@@ -119,7 +119,7 @@ describe(generateWordAudioUrls, () => {
       words: [],
     });
 
-    expect(result).toEqual({});
+    expect(result).toStrictEqual({});
     expect(generateLanguageAudioMock).not.toHaveBeenCalled();
   });
 });

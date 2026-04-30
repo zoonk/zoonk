@@ -5,7 +5,7 @@ describe("chapter generation phases", () => {
   it("returns all 4 chapter phases in order", () => {
     const phases = getPhaseOrder();
 
-    expect(phases).toEqual([
+    expect(phases).toStrictEqual([
       "gettingReady",
       "preparingLessons",
       "classifyingLessons",

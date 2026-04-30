@@ -36,7 +36,7 @@ describe(generateStepImagesStep, () => {
       prompts: ["first prompt", "second prompt"],
     });
 
-    expect(result.images).toEqual([
+    expect(result.images).toStrictEqual([
       { prompt: "first prompt", url: "https://example.com/first%20prompt.webp" },
       { prompt: "second prompt", url: "https://example.com/second%20prompt.webp" },
     ]);

@@ -48,11 +48,11 @@ describe(saveQuizLessonStep, () => {
       where: { lessonId: context.id },
     });
 
-    expect(steps.map((step) => [step.position, step.kind])).toEqual([
+    expect(steps.map((step) => [step.position, step.kind])).toStrictEqual([
       [0, "multipleChoice"],
       [1, "selectImage"],
     ]);
-    expect(steps[0]?.content).toEqual({
+    expect(steps[0]?.content).toStrictEqual({
       context: "Look at the rule.",
       options: [
         { feedback: "Correct!", id: "option-1", isCorrect: true, text: "It transfers" },
@@ -60,7 +60,7 @@ describe(saveQuizLessonStep, () => {
       ],
       question: "What is true?",
     });
-    expect(steps[1]?.content).toEqual({
+    expect(steps[1]?.content).toStrictEqual({
       options: [
         {
           feedback: "Correct!",

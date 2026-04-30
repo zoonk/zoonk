@@ -49,7 +49,7 @@ describe(startLesson, () => {
       where: { userLesson: { lessonId: lesson.id, userId } },
     });
 
-    expect(second?.startedAt).toEqual(first?.startedAt);
+    expect(second?.startedAt).toStrictEqual(first?.startedAt);
   });
 
   it("idempotent: concurrent calls create one progress row", async () => {
@@ -84,7 +84,7 @@ describe(startLesson, () => {
       where: { userLesson: { lessonId: lesson.id, userId } },
     });
 
-    expect(progress?.completedAt).toEqual(completedAt);
+    expect(progress?.completedAt).toStrictEqual(completedAt);
     expect(progress?.durationSeconds).toBe(30);
   });
 });

@@ -8,6 +8,6 @@ describe(collectTargetWords, () => {
         canonicalWords: ["Água", "Agua", "Mizu"],
         generatedWords: ["agua", "mizu", "fogo"],
       }),
-    ).toEqual(["Água", "Mizu", "fogo"]);
+    ).toStrictEqual(["Água", "Mizu", "fogo"]);
   });
 });

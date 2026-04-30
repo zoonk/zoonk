@@ -71,7 +71,7 @@ describe(getChapterStep, () => {
       .map((ch) => ch.title);
 
     expect(neighborTitles).toHaveLength(4);
-    expect(neighborTitles).toEqual(expect.arrayContaining(expectedNeighborTitles));
+    expect(neighborTitles).toStrictEqual(expect.arrayContaining(expectedNeighborTitles));
     expect(neighborTitles).not.toContain(middleChapter.title);
   });
 

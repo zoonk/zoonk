@@ -171,7 +171,7 @@ describe(readingLessonWorkflow, () => {
       translationDistractors: [`hello-${uniqueId}`, `bye-${uniqueId}`],
     });
 
-    expect(lessonWords.map((entry) => [entry.word.word, entry.translation])).toEqual([
+    expect(lessonWords.map((entry) => [entry.word.word, entry.translation])).toStrictEqual([
       [sourceWords[0], `${sourceWords[0]} translated`],
       [sourceWords[1], `${sourceWords[1]} translated`],
     ]);

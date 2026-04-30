@@ -47,7 +47,7 @@ describe(initializeCourseStep, () => {
 
     expect(result.courseTitle).toBe(suggestion.title);
     expect(result.language).toBe(suggestion.language);
-    expect(result.courseId).toEqual(expect.any(String));
+    expect(result.courseId).toStrictEqual(expect.any(String));
 
     const [updatedSuggestion, createdCourse] = await Promise.all([
       prisma.courseSuggestion.findUniqueOrThrow({ where: { id: suggestion.id } }),

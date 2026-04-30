@@ -15,7 +15,7 @@ describe(generationReducer, () => {
         step: "stepA",
         type: "stepCompleted",
       });
-      expect(state.completedSteps).toEqual(["stepA"]);
+      expect(state.completedSteps).toStrictEqual(["stepA"]);
     });
 
     it("does not add duplicate steps", () => {
@@ -24,7 +24,7 @@ describe(generationReducer, () => {
         type: "stepCompleted",
       });
       const second = generationReducer(first, { step: "stepA", type: "stepCompleted" });
-      expect(second.completedSteps).toEqual(["stepA"]);
+      expect(second.completedSteps).toStrictEqual(["stepA"]);
     });
 
     it("clears currentStep when it matches the completed step", () => {
@@ -148,7 +148,7 @@ describe(handleStepStreamMessage, () => {
 
   it("routes 'completed' to stepCompleted", () => {
     const state = applyMessage({ status: "completed", step: "stepA" });
-    expect(state.completedSteps).toEqual(["stepA"]);
+    expect(state.completedSteps).toStrictEqual(["stepA"]);
   });
 
   it("triggers streamEnded on completionStep match", () => {
@@ -220,7 +220,7 @@ describe(handleStepStreamMessage, () => {
 
       const state = applyActions(actions, initialGenerationState());
 
-      expect(state.completedSteps).toEqual([]);
+      expect(state.completedSteps).toStrictEqual([]);
     });
 
     it("tracks stepCompleted when message entityId matches viewer", () => {
@@ -234,7 +234,7 @@ describe(handleStepStreamMessage, () => {
 
       const state = applyActions(actions, initialGenerationState());
 
-      expect(state.completedSteps).toEqual(["generateVisuals"]);
+      expect(state.completedSteps).toStrictEqual(["generateVisuals"]);
     });
 
     it("tracks stepCompleted when message has no entityId (shared/batch step)", () => {
@@ -248,7 +248,7 @@ describe(handleStepStreamMessage, () => {
 
       const state = applyActions(actions, initialGenerationState());
 
-      expect(state.completedSteps).toEqual(["generateExplanationContent"]);
+      expect(state.completedSteps).toStrictEqual(["generateExplanationContent"]);
     });
 
     it("tracks stepCompleted when viewer has no entityId (non-lesson workflow)", () => {
@@ -261,7 +261,7 @@ describe(handleStepStreamMessage, () => {
 
       const state = applyActions(actions, initialGenerationState());
 
-      expect(state.completedSteps).toEqual(["stepA"]);
+      expect(state.completedSteps).toStrictEqual(["stepA"]);
     });
 
     it("does NOT track stepStarted when message entityId doesn't match viewer", () => {
@@ -276,7 +276,7 @@ describe(handleStepStreamMessage, () => {
       const state = applyActions(actions, initialGenerationState());
 
       expect(state.currentStep).toBeNull();
-      expect(state.startedSteps).toEqual([]);
+      expect(state.startedSteps).toStrictEqual([]);
     });
 
     it("tracks stepStarted when message entityId matches viewer", () => {

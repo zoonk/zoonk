@@ -54,17 +54,17 @@ describe(savePracticeLessonStep, () => {
       where: { lessonId: context.id },
     });
 
-    expect(steps.map((step) => [step.position, step.kind])).toEqual([
+    expect(steps.map((step) => [step.position, step.kind])).toStrictEqual([
       [0, "static"],
       [1, "multipleChoice"],
     ]);
-    expect(steps[0]?.content).toEqual({
+    expect(steps[0]?.content).toStrictEqual({
       image: images[0],
       text: "A support report does not line up with the refund totals.",
       title: "Night shift",
       variant: "intro",
     });
-    expect(steps[1]?.content).toEqual({
+    expect(steps[1]?.content).toStrictEqual({
       context: "The discounted orders are the only ones acting weird.",
       image: images[1],
       options: [

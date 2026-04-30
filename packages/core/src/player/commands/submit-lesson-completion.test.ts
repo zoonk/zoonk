@@ -413,7 +413,7 @@ describe(submitLessonCompletion, () => {
       where: { userId },
     });
     expect(dailyRecords).toHaveLength(1);
-    expect(dailyRecords[0]?.date).toEqual(parseLocalDate(todayLocalDate()));
+    expect(dailyRecords[0]?.date).toStrictEqual(parseLocalDate(todayLocalDate()));
     expect(dailyRecords[0]?.energyAtEnd).toBeCloseTo(50.2);
   });
 
@@ -447,7 +447,7 @@ describe(submitLessonCompletion, () => {
 
     expect(progress?.completedAt).not.toBeNull();
     expect(progress?.durationSeconds).toBe(20);
-    expect(progress?.startedAt).toEqual(startRecord?.startedAt);
+    expect(progress?.startedAt).toStrictEqual(startRecord?.startedAt);
   });
 
   it("stores DailyProgress date from localDate, not server UTC", async () => {
@@ -476,7 +476,7 @@ describe(submitLessonCompletion, () => {
     const daily = await prisma.dailyProgress.findFirst({ where: { userId } });
 
     expect(daily).not.toBeNull();
-    expect(daily?.date).toEqual(
+    expect(daily?.date).toStrictEqual(
       new Date(
         Date.UTC(yesterday.getUTCFullYear(), yesterday.getUTCMonth(), yesterday.getUTCDate()),
       ),
@@ -552,7 +552,7 @@ describe(submitLessonCompletion, () => {
     expect(dailyRecords).toHaveLength(5);
     expect(dailyRecords[0]?.energyAtEnd).toBe(49);
     expect(dailyRecords[3]?.energyAtEnd).toBe(46);
-    expect(dailyRecords[4]?.date).toEqual(parseLocalDate(localDate));
+    expect(dailyRecords[4]?.date).toStrictEqual(parseLocalDate(localDate));
     expect(dailyRecords[4]?.energyAtEnd).toBeCloseTo(46.2);
   });
 
@@ -595,7 +595,7 @@ describe(submitLessonCompletion, () => {
     expect(dailyRecords[1]?.energyAtEnd).toBe(48);
     expect(dailyRecords[2]?.energyAtEnd).toBe(47);
     expect(dailyRecords[3]?.energyAtEnd).toBe(46);
-    expect(dailyRecords[4]?.date).toEqual(parseLocalDate(todayLocalDate()));
+    expect(dailyRecords[4]?.date).toStrictEqual(parseLocalDate(todayLocalDate()));
     expect(dailyRecords[4]?.energyAtEnd).toBeCloseTo(46.2);
   });
 });

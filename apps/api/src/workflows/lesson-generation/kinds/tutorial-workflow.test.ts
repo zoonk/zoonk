@@ -64,12 +64,12 @@ describe(tutorialLessonWorkflow, () => {
 
     const contents = steps.map((step) => parseStepContent("static", step.content));
 
-    expect(steps.map((step) => [step.position, step.kind])).toEqual([
+    expect(steps.map((step) => [step.position, step.kind])).toStrictEqual([
       [0, "static"],
       [1, "static"],
     ]);
 
-    expect(contents).toEqual([
+    expect(contents).toStrictEqual([
       {
         image: {
           prompt: "settings image prompt",

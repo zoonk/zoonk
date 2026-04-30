@@ -41,7 +41,7 @@ async function createCourseWithLessons(organizationId: string) {
 describe("unauthenticated users", () => {
   it("returns empty array", async () => {
     const result = await getContinueLearning(new Headers());
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 });
 
@@ -57,7 +57,7 @@ describe("authenticated users", () => {
     const headers = await signInAs(user.email, user.password);
 
     const result = await getContinueLearning(headers);
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
   it("returns courses with next lesson info based on completions", async () => {
@@ -231,7 +231,7 @@ describe("authenticated users", () => {
 
     const result = await getContinueLearning(headers);
 
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
   it("filters out durably completed courses even when a new chapter is added later", async () => {
@@ -282,7 +282,7 @@ describe("authenticated users", () => {
 
     const result = await getContinueLearning(headers);
 
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
   it("finds lesson in next chapter when current chapter is complete", async () => {
@@ -364,7 +364,7 @@ describe("authenticated users", () => {
 
     const result = await getContinueLearning(headers);
 
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
   it("returns null organization for personal courses", async () => {

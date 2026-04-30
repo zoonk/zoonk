@@ -67,7 +67,6 @@
     "jest/prefer-expect-assertions": "off",
     "jest/prefer-lowercase-title": "off",
     "jest/prefer-mock-return-shorthand": "off",
-    "jest/prefer-strict-equal": "off",
     "jest/prefer-to-be": "off",
     "jest/prefer-to-have-length": "off",
     "jest/require-to-throw-message": "off",

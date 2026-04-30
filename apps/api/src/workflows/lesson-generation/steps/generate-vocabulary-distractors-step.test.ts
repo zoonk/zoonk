@@ -33,7 +33,7 @@ describe(generateVocabularyDistractorsStep, () => {
         context,
         words: [{ translation: "cat", word: catWord }],
       }),
-    ).resolves.toEqual({ distractors: { [catWord]: [`${catWord} alt`] } });
+    ).resolves.toStrictEqual({ distractors: { [catWord]: [`${catWord} alt`] } });
     expect(generateLessonDistractors).toHaveBeenCalledWith({
       input: catWord,
       language: "ja",

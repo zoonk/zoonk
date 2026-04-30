@@ -80,9 +80,9 @@ describe(generateMissingContent, () => {
 
     expect(result.description).toBe("Generated desc");
     expect(result.imageUrl).toBe("https://example.com/img.webp");
-    expect(result.alternativeTitles).toEqual(["Alt 1"]);
-    expect(result.categories).toEqual(["programming"]);
-    expect(result.chapters).toEqual([{ description: "Ch1 desc", title: "Ch1" }]);
+    expect(result.alternativeTitles).toStrictEqual(["Alt 1"]);
+    expect(result.categories).toStrictEqual(["programming"]);
+    expect(result.chapters).toStrictEqual([{ description: "Ch1 desc", title: "Ch1" }]);
   });
 
   it("skips generation for fields that already exist", async () => {
@@ -98,9 +98,9 @@ describe(generateMissingContent, () => {
 
     expect(result.description).toBe("Existing desc");
     expect(result.imageUrl).toBe("https://example.com/existing.webp");
-    expect(result.alternativeTitles).toEqual([]);
-    expect(result.categories).toEqual([]);
-    expect(result.chapters).toEqual([]);
+    expect(result.alternativeTitles).toStrictEqual([]);
+    expect(result.categories).toStrictEqual([]);
+    expect(result.chapters).toStrictEqual([]);
 
     expect(generateCourseDescriptionMock).not.toHaveBeenCalled();
     expect(generateCourseImageMock).not.toHaveBeenCalled();
@@ -127,7 +127,7 @@ describe(generateMissingContent, () => {
 
     const result = await generateMissingContent(langCourse, emptyExisting);
 
-    expect(result.categories).toEqual(["languages"]);
+    expect(result.categories).toStrictEqual(["languages"]);
     expect(generateCourseCategoriesMock).not.toHaveBeenCalled();
   });
 
@@ -145,6 +145,6 @@ describe(generateMissingContent, () => {
 
     const result = await generateMissingContent(course, emptyExisting);
 
-    expect(result.categories).toEqual(["programming", "web"]);
+    expect(result.categories).toStrictEqual(["programming", "web"]);
   });
 });

@@ -171,7 +171,7 @@ describe(preparePlayerLessonData, () => {
       organizationId: "org-42",
       title: "Lesson",
     });
-    expect(result.lessonWords).toEqual([
+    expect(result.lessonWords).toStrictEqual([
       {
         audioUrl: "/audio/boa-noite.mp3",
         distractors: ["boa tarde"],
@@ -182,7 +182,7 @@ describe(preparePlayerLessonData, () => {
         word: "boa noite",
       },
     ]);
-    expect(result.lessonSentences).toEqual([
+    expect(result.lessonSentences).toStrictEqual([
       {
         audioUrl: "/audio/guten-morgen.mp3",
         distractors: ["Abend"],
@@ -208,7 +208,7 @@ describe(preparePlayerLessonData, () => {
     });
 
     expect(result.steps).toHaveLength(1);
-    expect(result.steps[0]?.content).toEqual({
+    expect(result.steps[0]?.content).toStrictEqual({
       text: "Hello world",
       title: "Intro",
       variant: "text",
@@ -252,12 +252,12 @@ describe(preparePlayerLessonData, () => {
       ]),
     });
 
-    expect(result.steps[0]?.sortOrderItems).toEqual(["first", "second", "third"]);
-    expect(result.steps[1]?.fillBlankOptions).toEqual([
+    expect(result.steps[0]?.sortOrderItems).toStrictEqual(["first", "second", "third"]);
+    expect(result.steps[1]?.fillBlankOptions).toStrictEqual([
       { audioUrl: null, romanization: null, translation: null, word: "sky" },
       { audioUrl: null, romanization: "ground-rom", translation: null, word: "ground" },
     ]);
-    expect(result.steps[2]?.matchColumnsRightItems).toEqual(["1", "2"]);
+    expect(result.steps[2]?.matchColumnsRightItems).toStrictEqual(["1", "2"]);
   });
 
   it("serializes lesson-scoped distractor arrays for words and sentences", () => {
@@ -290,11 +290,11 @@ describe(preparePlayerLessonData, () => {
       lessonWords: [word],
     });
 
-    expect(result.lessonWords[0]?.distractors).toEqual(["boa tarde", "bom dia"]);
-    expect(result.lessonSentences[0]?.distractors).toEqual(["Abend", "Fenster"]);
-    expect(result.lessonSentences[0]?.translationDistractors).toEqual(["tchau", "logo"]);
-    expect(result.steps[0]?.word?.distractors).toEqual(["boa tarde", "bom dia"]);
-    expect(result.steps[1]?.sentence?.distractors).toEqual(["Abend", "Fenster"]);
+    expect(result.lessonWords[0]?.distractors).toStrictEqual(["boa tarde", "bom dia"]);
+    expect(result.lessonSentences[0]?.distractors).toStrictEqual(["Abend", "Fenster"]);
+    expect(result.lessonSentences[0]?.translationDistractors).toStrictEqual(["tchau", "logo"]);
+    expect(result.steps[0]?.word?.distractors).toStrictEqual(["boa tarde", "bom dia"]);
+    expect(result.steps[1]?.sentence?.distractors).toStrictEqual(["Abend", "Fenster"]);
   });
 
   it("builds translation options from stored distractors and hydrated metadata", () => {
@@ -333,7 +333,7 @@ describe(preparePlayerLessonData, () => {
       lessonWords: [word],
     });
 
-    expect(result.steps[0]?.translationOptions).toEqual([
+    expect(result.steps[0]?.translationOptions).toStrictEqual([
       {
         audioUrl: null,
         id: "10",
@@ -398,7 +398,7 @@ describe(preparePlayerLessonData, () => {
       ]),
     });
 
-    expect(result.steps[0]?.content).toEqual({
+    expect(result.steps[0]?.content).toStrictEqual({
       options: [
         { feedback: "Yes", id: "alpha", isCorrect: true, text: "Alpha" },
         { feedback: "No", id: "beta", isCorrect: false, text: "Beta" },
@@ -448,7 +448,7 @@ describe(preparePlayerLessonData, () => {
 
     const selectImageContent = parseStepContent("selectImage", selectImageStep.content);
 
-    expect(selectImageContent.options.map(({ id }) => id)).toEqual(["image-2", "image-1"]);
+    expect(selectImageContent.options.map(({ id }) => id)).toStrictEqual(["image-2", "image-1"]);
   });
 
   it("builds reading and listening word banks from stored distractors only", () => {
@@ -484,7 +484,7 @@ describe(preparePlayerLessonData, () => {
       lessonSentences: [sentence],
     });
 
-    expect(result.steps[0]?.wordBankOptions).toEqual([
+    expect(result.steps[0]?.wordBankOptions).toStrictEqual([
       { audioUrl: null, romanization: null, translation: null, word: "Guten" },
       { audioUrl: null, romanization: null, translation: null, word: "Morgen," },
       { audioUrl: null, romanization: null, translation: null, word: "Lara." },
@@ -492,7 +492,7 @@ describe(preparePlayerLessonData, () => {
       { audioUrl: null, romanization: null, translation: null, word: "Fenster" },
     ]);
 
-    expect(result.steps[1]?.wordBankOptions).toEqual([
+    expect(result.steps[1]?.wordBankOptions).toStrictEqual([
       { audioUrl: null, romanization: null, translation: null, word: "Bom" },
       { audioUrl: null, romanization: null, translation: null, word: "dia," },
       { audioUrl: null, romanization: null, translation: null, word: "Lara." },
@@ -523,7 +523,7 @@ describe(preparePlayerLessonData, () => {
       ],
     });
 
-    expect(result.steps[0]?.sentenceWordOptions).toEqual([
+    expect(result.steps[0]?.sentenceWordOptions).toStrictEqual([
       { audioUrl: null, romanization: "guten", translation: null, word: "Guten" },
       { audioUrl: null, romanization: "morgen", translation: null, word: "Morgen" },
     ]);
@@ -563,7 +563,7 @@ describe(preparePlayerLessonData, () => {
       ],
     });
 
-    expect(result.steps[0]?.sentenceWordOptions).toEqual([
+    expect(result.steps[0]?.sentenceWordOptions).toStrictEqual([
       {
         audioUrl: "/audio/sentence-gato.mp3",
         romanization: "ga-to",
@@ -584,7 +584,7 @@ describe(preparePlayerLessonData, () => {
       ]),
     });
 
-    expect(result.steps[0]?.sentenceWordOptions).toEqual([]);
+    expect(result.steps[0]?.sentenceWordOptions).toStrictEqual([]);
   });
 
   it("keeps option helper arrays empty for unrelated step kinds", () => {
@@ -626,7 +626,7 @@ describe(preparePlayerLessonData, () => {
       lessonSentences: [sentence],
     });
 
-    expect(result.steps[0]?.wordBankOptions).toEqual([
+    expect(result.steps[0]?.wordBankOptions).toStrictEqual([
       { audioUrl: null, romanization: null, translation: null, word: "Hola" },
       { audioUrl: null, romanization: null, translation: null, word: "mundo" },
     ]);
@@ -653,7 +653,7 @@ describe(preparePlayerLessonData, () => {
       ],
     });
 
-    expect(result.steps).toEqual([
+    expect(result.steps).toStrictEqual([
       expect.objectContaining({
         content: { text: "from override", title: "Used", variant: "text" },
         id: "11",

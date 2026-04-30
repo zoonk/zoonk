@@ -238,22 +238,30 @@ describe(toSlug, () => {
 describe(deduplicateSlugs, () => {
   it("leaves unique slugs unchanged", () => {
     const items = [{ slug: "a" }, { slug: "b" }];
-    expect(deduplicateSlugs(items)).toEqual([{ slug: "a" }, { slug: "b" }]);
+    expect(deduplicateSlugs(items)).toStrictEqual([{ slug: "a" }, { slug: "b" }]);
   });
 
   it("appends counter suffix to duplicate slugs", () => {
     const items = [{ slug: "x" }, { slug: "x" }, { slug: "x" }];
-    expect(deduplicateSlugs(items)).toEqual([{ slug: "x" }, { slug: "x-1" }, { slug: "x-2" }]);
+    expect(deduplicateSlugs(items)).toStrictEqual([
+      { slug: "x" },
+      { slug: "x-1" },
+      { slug: "x-2" },
+    ]);
   });
 
   it("uses 1-based counter regardless of array position", () => {
     const items = [{ slug: "a" }, { slug: "x" }, { slug: "x" }];
-    expect(deduplicateSlugs(items)).toEqual([{ slug: "a" }, { slug: "x" }, { slug: "x-1" }]);
+    expect(deduplicateSlugs(items)).toStrictEqual([{ slug: "a" }, { slug: "x" }, { slug: "x-1" }]);
   });
 
   it("avoids collision with pre-existing slugs", () => {
     const items = [{ slug: "x" }, { slug: "x" }, { slug: "x-1" }];
-    expect(deduplicateSlugs(items)).toEqual([{ slug: "x" }, { slug: "x-2" }, { slug: "x-1" }]);
+    expect(deduplicateSlugs(items)).toStrictEqual([
+      { slug: "x" },
+      { slug: "x-2" },
+      { slug: "x-1" },
+    ]);
   });
 
   it("preserves extra properties", () => {
@@ -262,29 +270,29 @@ describe(deduplicateSlugs, () => {
       { slug: "a", title: "B" },
     ];
     const result = deduplicateSlugs(items);
-    expect(result[0]).toEqual({ slug: "a", title: "A" });
-    expect(result[1]).toEqual({ slug: "a-1", title: "B" });
+    expect(result[0]).toStrictEqual({ slug: "a", title: "A" });
+    expect(result[1]).toStrictEqual({ slug: "a-1", title: "B" });
   });
 
   it("handles empty array", () => {
-    expect(deduplicateSlugs([])).toEqual([]);
+    expect(deduplicateSlugs([])).toStrictEqual([]);
   });
 
   it("handles single item", () => {
-    expect(deduplicateSlugs([{ slug: "a" }])).toEqual([{ slug: "a" }]);
+    expect(deduplicateSlugs([{ slug: "a" }])).toStrictEqual([{ slug: "a" }]);
   });
 });
 
 describe(deduplicateNormalizedTexts, () => {
   it("deduplicates text after punctuation and string normalization", () => {
-    expect(deduplicateNormalizedTexts([" Bonjour ! ", "Bonjour!", "Oi", "oi "])).toEqual([
+    expect(deduplicateNormalizedTexts([" Bonjour ! ", "Bonjour!", "Oi", "oi "])).toStrictEqual([
       "Bonjour!",
       "oi",
     ]);
   });
 
   it("keeps the first key order while preserving the latest display text", () => {
-    expect(deduplicateNormalizedTexts(["Olá", "Oi", "Ola"])).toEqual(["Ola", "Oi"]);
+    expect(deduplicateNormalizedTexts(["Olá", "Oi", "Ola"])).toStrictEqual(["Ola", "Oi"]);
   });
 });
 
@@ -330,8 +338,8 @@ describe(normalizePunctuation, () => {
 
 describe(segmentWords, () => {
   it("splits space-delimited text by spaces", () => {
-    expect(segmentWords("Hola mundo")).toEqual(["Hola", "mundo"]);
-    expect(segmentWords("Yo veo un gato.")).toEqual(["Yo", "veo", "un", "gato."]);
+    expect(segmentWords("Hola mundo")).toStrictEqual(["Hola", "mundo"]);
+    expect(segmentWords("Yo veo un gato.")).toStrictEqual(["Yo", "veo", "un", "gato."]);
   });
 
   it("segments Japanese text into individual words", () => {
@@ -348,36 +356,36 @@ describe(segmentWords, () => {
   });
 
   it("handles single word", () => {
-    expect(segmentWords("hello")).toEqual(["hello"]);
-    expect(segmentWords("猫")).toEqual(["猫"]);
+    expect(segmentWords("hello")).toStrictEqual(["hello"]);
+    expect(segmentWords("猫")).toStrictEqual(["猫"]);
   });
 
   it("handles empty string", () => {
-    expect(segmentWords("")).toEqual([]);
+    expect(segmentWords("")).toStrictEqual([]);
   });
 
   it("filters empty tokens from consecutive spaces", () => {
-    expect(segmentWords("hello  world")).toEqual(["hello", "world"]);
-    expect(segmentWords("a  b  c")).toEqual(["a", "b", "c"]);
+    expect(segmentWords("hello  world")).toStrictEqual(["hello", "world"]);
+    expect(segmentWords("a  b  c")).toStrictEqual(["a", "b", "c"]);
   });
 
   it("attaches French-style punctuation to preceding word", () => {
-    expect(segmentWords("Comment allez-vous ?")).toEqual(["Comment", "allez-vous?"]);
-    expect(segmentWords("Bonjour !")).toEqual(["Bonjour!"]);
+    expect(segmentWords("Comment allez-vous ?")).toStrictEqual(["Comment", "allez-vous?"]);
+    expect(segmentWords("Bonjour !")).toStrictEqual(["Bonjour!"]);
   });
 
   it("handles multiple French-style punctuation in one sentence", () => {
-    expect(segmentWords("Oui , je suis là !")).toEqual(["Oui,", "je", "suis", "là!"]);
+    expect(segmentWords("Oui , je suis là !")).toStrictEqual(["Oui,", "je", "suis", "là!"]);
   });
 
   it("keeps connector-linked tokens intact without spaces", () => {
-    expect(segmentWords("gato-prueba")).toEqual(["gato-prueba"]);
-    expect(segmentWords("l'heure")).toEqual(["l'heure"]);
-    expect(segmentWords("allez-vous?")).toEqual(["allez-vous?"]);
+    expect(segmentWords("gato-prueba")).toStrictEqual(["gato-prueba"]);
+    expect(segmentWords("l'heure")).toStrictEqual(["l'heure"]);
+    expect(segmentWords("allez-vous?")).toStrictEqual(["allez-vous?"]);
   });
 
   it("keeps surrounding punctuation on non-space tokens", () => {
-    expect(segmentWords("¿Hola?")).toEqual(["¿Hola?"]);
+    expect(segmentWords("¿Hola?")).toStrictEqual(["¿Hola?"]);
   });
 });
 
@@ -406,7 +414,7 @@ describe(stripPunctuation, () => {
 describe(extractUniqueSentenceWords, () => {
   it("extracts unique lowercase words from sentences", () => {
     const result = extractUniqueSentenceWords(["Hola mundo", "Buenos dias"]);
-    expect(result).toEqual(["hola", "mundo", "buenos", "dias"]);
+    expect(result).toStrictEqual(["hola", "mundo", "buenos", "dias"]);
   });
 
   it("deduplicates words across sentences", () => {
@@ -429,7 +437,7 @@ describe(extractUniqueSentenceWords, () => {
   });
 
   it("returns empty array for empty input", () => {
-    expect(extractUniqueSentenceWords([])).toEqual([]);
+    expect(extractUniqueSentenceWords([])).toStrictEqual([]);
   });
 
   it("handles non-space-delimited text via Intl.Segmenter", () => {

@@ -109,7 +109,7 @@ describe(persistGeneratedContent, () => {
 
     const chapters = await persistGeneratedContent(courseContext, content, existing);
 
-    expect(chapters).toEqual([]);
+    expect(chapters).toStrictEqual([]);
 
     const events = getStreamedEvents();
     const completedSteps = events
@@ -117,7 +117,7 @@ describe(persistGeneratedContent, () => {
       .map((event) => event.step);
 
     expect(completedSteps).toHaveLength(4);
-    expect(completedSteps).toEqual(
+    expect(completedSteps).toStrictEqual(
       expect.arrayContaining([
         "updateCourse",
         "addAlternativeTitles",

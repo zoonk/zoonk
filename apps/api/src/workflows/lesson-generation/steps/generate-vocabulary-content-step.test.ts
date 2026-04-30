@@ -27,7 +27,10 @@ describe(generateVocabularyContentStep, () => {
 
     const result = await generateVocabularyContentStep(context);
 
-    expect(result).toEqual({ kind: "vocabulary", words: [{ translation: "cat", word: "猫" }] });
+    expect(result).toStrictEqual({
+      kind: "vocabulary",
+      words: [{ translation: "cat", word: "猫" }],
+    });
     expect(generateLessonVocabulary).toHaveBeenCalledWith(
       expect.objectContaining({ targetLanguage: "ja", userLanguage: context.language }),
     );

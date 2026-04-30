@@ -68,8 +68,8 @@ describe("durable curriculum completion rules", () => {
 
     const grouped = groupRowsByChapter({ rows });
 
-    expect(grouped.get(chapter1)?.map((row) => row.lessonId)).toEqual([lesson10, lesson11]);
-    expect(grouped.get(chapter2)?.map((row) => row.lessonId)).toEqual([lesson20]);
+    expect(grouped.get(chapter1)?.map((row) => row.lessonId)).toStrictEqual([lesson10, lesson11]);
+    expect(grouped.get(chapter2)?.map((row) => row.lessonId)).toStrictEqual([lesson20]);
   });
 
   it("getLessonRow returns the matching lesson or null", () => {
@@ -92,7 +92,7 @@ describe("durable curriculum completion rules", () => {
         durableLessonIds,
         lessonRow: createRow({ isCompleted: true, lessonId: currentLessonId }),
       }),
-    ).toEqual(new Set([durableLessonId, currentLessonId]));
+    ).toStrictEqual(new Set([durableLessonId, currentLessonId]));
 
     expect(
       getEffectiveDurableLessonIds({
@@ -146,7 +146,7 @@ describe("durable curriculum completion rules", () => {
         durableChapterIds,
         isChapterCompleted: true,
       }),
-    ).toEqual(new Set([durableChapterId, currentChapterId]));
+    ).toStrictEqual(new Set([durableChapterId, currentChapterId]));
 
     expect(
       getEffectiveDurableChapterIds({

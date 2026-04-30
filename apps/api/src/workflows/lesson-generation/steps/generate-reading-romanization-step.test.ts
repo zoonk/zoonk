@@ -39,7 +39,7 @@ describe(generateReadingRomanizationStep, () => {
     const sentence = `${catWord} ${waterWord}`;
     const sentences = [{ explanation: "", sentence, translation: "cat and water" }];
 
-    await expect(generateReadingRomanizationStep({ context, sentences })).resolves.toEqual({
+    await expect(generateReadingRomanizationStep({ context, sentences })).resolves.toStrictEqual({
       romanizations: { [sentence]: `${sentence} romanized` },
     });
     expect(generateLessonRomanization).toHaveBeenCalledWith({

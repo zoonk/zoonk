@@ -13,7 +13,7 @@ describe(mergeSearchResults, () => {
 
     const result = mergeSearchResults(exactMatch, containsMatches);
 
-    expect(result[0]).toEqual(exactMatch);
+    expect(result[0]).toStrictEqual(exactMatch);
     expect(result).toHaveLength(3);
   });
 
@@ -25,7 +25,7 @@ describe(mergeSearchResults, () => {
 
     const result = mergeSearchResults(null, containsMatches);
 
-    expect(result).toEqual(containsMatches);
+    expect(result).toStrictEqual(containsMatches);
   });
 
   it("removes duplicate from contains matches when exact match exists", () => {
@@ -39,7 +39,7 @@ describe(mergeSearchResults, () => {
     const result = mergeSearchResults(exactMatch, containsMatches);
 
     expect(result).toHaveLength(3);
-    expect(result[0]).toEqual(exactMatch);
+    expect(result[0]).toStrictEqual(exactMatch);
     expect(result.filter((item) => item.id === "1")).toHaveLength(1);
   });
 
@@ -48,13 +48,13 @@ describe(mergeSearchResults, () => {
 
     const result = mergeSearchResults(exactMatch, []);
 
-    expect(result).toEqual([exactMatch]);
+    expect(result).toStrictEqual([exactMatch]);
   });
 
   it("returns empty array when both inputs are empty", () => {
     const result = mergeSearchResults(null, []);
 
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
   it("preserves order of contains matches after exact match", () => {
@@ -68,6 +68,6 @@ describe(mergeSearchResults, () => {
     const result = mergeSearchResults(exactMatch, containsMatches);
 
     expect(result).toHaveLength(4);
-    expect(result.map((item) => item.id)).toEqual(["1", "2", "3", "4"]);
+    expect(result.map((item) => item.id)).toStrictEqual(["1", "2", "3", "4"]);
   });
 });

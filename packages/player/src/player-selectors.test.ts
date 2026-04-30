@@ -50,7 +50,7 @@ describe(getUpcomingImages, () => {
       ],
     });
 
-    expect(getUpcomingImages(state)).toEqual([]);
+    expect(getUpcomingImages(state)).toStrictEqual([]);
   });
 
   it("extracts URL from a static step image", () => {
@@ -70,7 +70,7 @@ describe(getUpcomingImages, () => {
       ],
     });
 
-    expect(getUpcomingImages(state)).toEqual([
+    expect(getUpcomingImages(state)).toStrictEqual([
       { kind: "step", url: "https://example.com/cat.jpg" },
     ]);
   });
@@ -98,7 +98,7 @@ describe(getUpcomingImages, () => {
       ],
     });
 
-    expect(getUpcomingImages(state)).toEqual([
+    expect(getUpcomingImages(state)).toStrictEqual([
       { kind: "step", url: "https://example.com/refund-dashboard.jpg" },
     ]);
   });
@@ -134,7 +134,7 @@ describe(getUpcomingImages, () => {
       ],
     });
 
-    expect(getUpcomingImages(state)).toEqual([
+    expect(getUpcomingImages(state)).toStrictEqual([
       { kind: "selectImage", url: "https://example.com/cat.jpg" },
       { kind: "selectImage", url: "https://example.com/dog.jpg" },
     ]);
@@ -187,7 +187,7 @@ describe(getUpcomingImages, () => {
       ],
     });
 
-    expect(getUpcomingImages(state)).toEqual([
+    expect(getUpcomingImages(state)).toStrictEqual([
       { kind: "step", url: "https://example.com/1.jpg" },
       { kind: "step", url: "https://example.com/2.jpg" },
       { kind: "step", url: "https://example.com/3.jpg" },
@@ -231,7 +231,7 @@ describe(getUpcomingImages, () => {
       ],
     });
 
-    expect(getUpcomingImages(state)).toEqual([
+    expect(getUpcomingImages(state)).toStrictEqual([
       { kind: "step", url: "https://example.com/ahead.jpg" },
     ]);
   });
@@ -271,7 +271,7 @@ describe(getUpcomingImages, () => {
       ],
     });
 
-    expect(getUpcomingImages(state)).toEqual([
+    expect(getUpcomingImages(state)).toStrictEqual([
       { kind: "selectImage", url: "https://example.com/img.jpg" },
     ]);
   });

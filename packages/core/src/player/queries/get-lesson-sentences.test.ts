@@ -113,11 +113,11 @@ describe(getLessonSentencesForLessons, () => {
     });
 
     const result = await getLessonSentencesForLessons({ lessonIds: [emptyLesson.id] });
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
   it("returns empty array for non-existent lesson", async () => {
     const result = await getLessonSentencesForLessons({ lessonIds: [randomUUID()] });
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 });

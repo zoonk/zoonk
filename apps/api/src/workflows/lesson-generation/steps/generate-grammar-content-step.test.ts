@@ -36,7 +36,7 @@ describe(generateGrammarContentStep, () => {
 
     const grammarContent = await generateGrammarContentStep(context);
 
-    expect(grammarContent.examples).toEqual([{ highlight: "猫", sentence: "猫がいます" }]);
+    expect(grammarContent.examples).toStrictEqual([{ highlight: "猫", sentence: "猫がいます" }]);
     expect(generateLessonGrammarContent).toHaveBeenCalledWith(
       expect.objectContaining({ targetLanguage: "ja" }),
     );

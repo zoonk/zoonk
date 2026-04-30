@@ -31,7 +31,7 @@ describe(generateImagePromptsStep, () => {
 
     const result = await generateImagePromptsStep({ context, steps });
 
-    expect(result).toEqual({ prompts: ["first prompt", "second prompt"] });
+    expect(result).toStrictEqual({ prompts: ["first prompt", "second prompt"] });
     expect(generateStepImagePrompts).toHaveBeenCalledWith(
       expect.objectContaining({ lessonDescription: context.description, steps }),
     );
@@ -42,7 +42,7 @@ describe(generateImagePromptsStep, () => {
 
     const result = await generateImagePromptsStep({ context, steps: [] });
 
-    expect(result).toEqual({ prompts: [] });
+    expect(result).toStrictEqual({ prompts: [] });
     expect(generateStepImagePrompts).not.toHaveBeenCalled();
   });
 });

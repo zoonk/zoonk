@@ -102,10 +102,10 @@ describe(getLessonDistractorWordsForLessons, () => {
 
     const result = await getLessonDistractorWordsForLessons({ lessonIds: [lessonForTest.id] });
 
-    expect(result.map((item) => item.word).toSorted()).toEqual(
+    expect(result.map((item) => item.word).toSorted()).toStrictEqual(
       [lessonWordDistractor.word, sharedDistractor.word].toSorted(),
     );
-    expect(result).toEqual(
+    expect(result).toStrictEqual(
       expect.arrayContaining([
         expect.objectContaining({
           audioUrl: lessonWordDistractor.audioUrl,
@@ -163,7 +163,7 @@ describe(getLessonDistractorWordsForLessons, () => {
 
     const result = await getLessonDistractorWordsForLessons({ lessonIds: [lessonForTest.id] });
 
-    expect(result.map((item) => item.word)).toEqual([resolvedDistractor.word]);
+    expect(result.map((item) => item.word)).toStrictEqual([resolvedDistractor.word]);
   });
 
   it("returns empty array when the lesson has no stored language rows", async () => {
@@ -176,6 +176,6 @@ describe(getLessonDistractorWordsForLessons, () => {
 
     const result = await getLessonDistractorWordsForLessons({ lessonIds: [emptyLesson.id] });
 
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 });

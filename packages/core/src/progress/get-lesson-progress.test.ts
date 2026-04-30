@@ -29,7 +29,7 @@ describe(getLessonProgress, () => {
 
     const result = await getLessonProgress({ chapterId: chapter.id, headers: new Headers() });
 
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
   it("returns completion rows for published lessons in the chapter", async () => {
@@ -59,7 +59,7 @@ describe(getLessonProgress, () => {
     const headers = await signInAs(user.email, user.password);
     const result = await getLessonProgress({ chapterId: chapter.id, headers });
 
-    expect(result).toEqual([
+    expect(result).toStrictEqual([
       { isCompleted: true, lessonId: completedLesson.id },
       { isCompleted: false, lessonId: pendingLesson.id },
     ]);
@@ -84,7 +84,7 @@ describe(getLessonProgress, () => {
     const headers = await signInAs(user.email, user.password);
     const result = await getLessonProgress({ chapterId: chapter.id, headers });
 
-    expect(result).toEqual([{ isCompleted: false, lessonId: lesson.id }]);
+    expect(result).toStrictEqual([{ isCompleted: false, lessonId: lesson.id }]);
   });
 
   it("excludes unpublished lessons", async () => {
@@ -122,7 +122,7 @@ describe(getLessonProgress, () => {
     const headers = await signInAs(user.email, user.password);
     const result = await getLessonProgress({ chapterId: chapter.id, headers });
 
-    expect(result).toEqual([{ isCompleted: true, lessonId: publishedLesson.id }]);
+    expect(result).toStrictEqual([{ isCompleted: true, lessonId: publishedLesson.id }]);
   });
 
   it("keeps a completed lesson completed when a new lesson is added later", async () => {
@@ -151,7 +151,7 @@ describe(getLessonProgress, () => {
     const headers = await signInAs(user.email, user.password);
     const result = await getLessonProgress({ chapterId: chapter.id, headers });
 
-    expect(result).toEqual([
+    expect(result).toStrictEqual([
       { isCompleted: true, lessonId: completedLesson.id },
       { isCompleted: false, lessonId: newLesson.id },
     ]);

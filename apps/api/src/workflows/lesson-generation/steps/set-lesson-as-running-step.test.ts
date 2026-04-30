@@ -38,7 +38,7 @@ describe(setLessonAsRunningStep, () => {
       generationStatus: "running",
     });
     expect(remainingSteps).toHaveLength(0);
-    expect(getStreamedEvents()).toEqual(
+    expect(getStreamedEvents()).toStrictEqual(
       expect.arrayContaining([
         expect.objectContaining({ status: "started", step: "setLessonAsRunning" }),
         expect.objectContaining({ status: "completed", step: "setLessonAsRunning" }),

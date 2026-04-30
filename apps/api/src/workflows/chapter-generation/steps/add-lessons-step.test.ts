@@ -135,7 +135,7 @@ describe(addLessonsStep, () => {
       where: { chapterId: chapter.id },
     });
 
-    expect(dbLessons.map((lesson) => lesson.kind)).toEqual([
+    expect(dbLessons.map((lesson) => lesson.kind)).toStrictEqual([
       "vocabulary",
       "translation",
       "reading",

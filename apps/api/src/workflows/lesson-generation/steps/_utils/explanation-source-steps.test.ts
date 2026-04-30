@@ -139,7 +139,7 @@ describe("explanation source step helpers", () => {
       }),
     ]);
 
-    await expect(getOtherExplanationLessonTitles(context)).resolves.toEqual([
+    await expect(getOtherExplanationLessonTitles(context)).resolves.toStrictEqual([
       "First explanation",
       "Second explanation",
     ]);
@@ -184,7 +184,7 @@ describe("explanation source step helpers", () => {
 
     const steps = await getExplanationStepsSinceLastLessonKind({ context, kind: "practice" });
 
-    expect(steps).toEqual([{ text: "New explanation", title: "New" }]);
+    expect(steps).toStrictEqual([{ text: "New explanation", title: "New" }]);
   });
 
   it("uses the previous quiz boundary for quiz source content", async () => {
@@ -217,6 +217,6 @@ describe("explanation source step helpers", () => {
 
     const steps = await getExplanationStepsSinceLastLessonKind({ context, kind: "quiz" });
 
-    expect(steps).toEqual([{ text: "New quiz source", title: "New" }]);
+    expect(steps).toStrictEqual([{ text: "New quiz source", title: "New" }]);
   });
 });

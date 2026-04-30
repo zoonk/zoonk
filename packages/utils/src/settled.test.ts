@@ -11,7 +11,7 @@ describe(settledFailures, () => {
       { status: "fulfilled", value: { data: null, error: fulfilledError } },
     ];
 
-    expect(settledFailures(results)).toEqual([rejectedError, fulfilledError]);
+    expect(settledFailures(results)).toStrictEqual([rejectedError, fulfilledError]);
   });
 
   it("returns an empty array when nothing failed", () => {
@@ -20,7 +20,7 @@ describe(settledFailures, () => {
       { status: "fulfilled", value: { data: "ok", error: null } },
     ];
 
-    expect(settledFailures(results)).toEqual([]);
+    expect(settledFailures(results)).toStrictEqual([]);
   });
 });
 

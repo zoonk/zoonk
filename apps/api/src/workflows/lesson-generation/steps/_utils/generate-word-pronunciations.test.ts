@@ -32,7 +32,7 @@ describe(generateWordPronunciations, () => {
       words: [],
     });
 
-    expect(result).toEqual({});
+    expect(result).toStrictEqual({});
   });
 
   it("returns existing pronunciations without calling AI", async () => {

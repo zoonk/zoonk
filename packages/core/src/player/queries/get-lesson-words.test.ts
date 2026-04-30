@@ -121,12 +121,12 @@ describe(getLessonWordsForLessons, () => {
     });
 
     const result = await getLessonWordsForLessons({ lessonIds: [emptyLesson.id] });
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
   it("returns empty array for non-existent lesson", async () => {
     const result = await getLessonWordsForLessons({ lessonIds: [randomUUID()] });
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 
   it("only includes pronunciation matching the lesson's userLanguage", async () => {

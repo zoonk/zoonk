@@ -11,7 +11,7 @@ function dateKeys(points: { date: Date }[]): string[] {
 
 describe(fillGapsWithDecay, () => {
   it("returns empty array for empty input", () => {
-    expect(fillGapsWithDecay([])).toEqual([]);
+    expect(fillGapsWithDecay([])).toStrictEqual([]);
   });
 
   it("returns single point unchanged", () => {
@@ -27,14 +27,14 @@ describe(fillGapsWithDecay, () => {
     ]);
 
     expect(result).toHaveLength(5);
-    expect(dateKeys(result)).toEqual([
+    expect(dateKeys(result)).toStrictEqual([
       "2025-01-10",
       "2025-01-11",
       "2025-01-12",
       "2025-01-13",
       "2025-01-14",
     ]);
-    expect(result.map((point) => point.energy)).toEqual([75, 74, 73, 72, 80]);
+    expect(result.map((point) => point.energy)).toStrictEqual([75, 74, 73, 72, 80]);
   });
 
   it("produces correct dates across US spring-forward DST boundary", () => {
@@ -45,7 +45,12 @@ describe(fillGapsWithDecay, () => {
     ]);
 
     expect(result).toHaveLength(4);
-    expect(dateKeys(result)).toEqual(["2025-03-08", "2025-03-09", "2025-03-10", "2025-03-11"]);
+    expect(dateKeys(result)).toStrictEqual([
+      "2025-03-08",
+      "2025-03-09",
+      "2025-03-10",
+      "2025-03-11",
+    ]);
   });
 
   it("produces correct dates across US fall-back DST boundary", () => {
@@ -56,7 +61,12 @@ describe(fillGapsWithDecay, () => {
     ]);
 
     expect(result).toHaveLength(4);
-    expect(dateKeys(result)).toEqual(["2025-11-01", "2025-11-02", "2025-11-03", "2025-11-04"]);
+    expect(dateKeys(result)).toStrictEqual([
+      "2025-11-01",
+      "2025-11-02",
+      "2025-11-03",
+      "2025-11-04",
+    ]);
   });
 
   it("produces correct dates across EU spring-forward DST boundary", () => {
@@ -67,7 +77,12 @@ describe(fillGapsWithDecay, () => {
     ]);
 
     expect(result).toHaveLength(4);
-    expect(dateKeys(result)).toEqual(["2025-03-29", "2025-03-30", "2025-03-31", "2025-04-01"]);
+    expect(dateKeys(result)).toStrictEqual([
+      "2025-03-29",
+      "2025-03-30",
+      "2025-03-31",
+      "2025-04-01",
+    ]);
   });
 
   it("decay never goes below MIN_ENERGY (0)", () => {
@@ -77,6 +92,6 @@ describe(fillGapsWithDecay, () => {
     ]);
 
     expect(result).toHaveLength(6);
-    expect(result.map((point) => point.energy)).toEqual([2, 1, 0, 0, 0, 50]);
+    expect(result.map((point) => point.energy)).toStrictEqual([2, 1, 0, 0, 0, 50]);
   });
 });

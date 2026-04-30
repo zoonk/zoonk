@@ -14,7 +14,7 @@ describe(buildAcceptedArrangeWordSequences, () => {
       "Hallo, Lara!",
     ]);
 
-    expect(acceptedSequences).toEqual([["Hallo,", "Lara!"]]);
+    expect(acceptedSequences).toStrictEqual([["Hallo,", "Lara!"]]);
   });
 });
 
@@ -22,7 +22,7 @@ describe(getAcceptedArrangeWordLengths, () => {
   it("returns unique sorted non-empty lengths", () => {
     const lengths = getAcceptedArrangeWordLengths([[], ["one"], ["a", "b"], ["x", "y"]]);
 
-    expect(lengths).toEqual([1, 2]);
+    expect(lengths).toStrictEqual([1, 2]);
   });
 });
 

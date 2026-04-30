@@ -78,10 +78,10 @@ describe(quizLessonWorkflow, () => {
 
     const content = parseStepContent("selectImage", steps[0]?.content);
 
-    expect(steps.map((step) => [step.position, step.kind])).toEqual([[0, "selectImage"]]);
+    expect(steps.map((step) => [step.position, step.kind])).toStrictEqual([[0, "selectImage"]]);
     expect(content.question).toBe("Pick one");
 
-    expect(content.options).toEqual([
+    expect(content.options).toStrictEqual([
       expect.objectContaining({
         feedback: "Correct",
         isCorrect: true,

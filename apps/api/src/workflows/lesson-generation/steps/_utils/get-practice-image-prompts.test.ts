@@ -23,7 +23,7 @@ describe(getPracticeImagePrompts, () => {
       ],
     });
 
-    expect(prompts).toEqual([
+    expect(prompts).toStrictEqual([
       "Opening support desk scene with Maya and a refund dashboard",
       "A refund dashboard filtered to discounted orders with one outlier row highlighted",
     ]);

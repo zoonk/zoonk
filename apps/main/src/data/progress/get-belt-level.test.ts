@@ -29,7 +29,7 @@ describe("authenticated users", () => {
     });
 
     const result = await getBeltLevel(headers);
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       bpPerLevel: 1000,
       bpToNextLevel: 500,
       color: "orange",
@@ -47,7 +47,7 @@ describe("authenticated users", () => {
 
     const result = await getBeltLevel(headers);
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       bpPerLevel: 250,
       bpToNextLevel: 250,
       color: "white",

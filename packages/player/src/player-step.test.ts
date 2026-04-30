@@ -54,8 +54,8 @@ describe(describePlayerStep, () => {
       }),
     );
 
-    expect(getPlayerStepImage(staticDescriptor)).toEqual(image);
-    expect(getPlayerStepImage(choiceDescriptor)).toEqual(image);
+    expect(getPlayerStepImage(staticDescriptor)).toStrictEqual(image);
+    expect(getPlayerStepImage(choiceDescriptor)).toStrictEqual(image);
     expect(getPlayerStepImage(null)).toBeNull();
   });
 });

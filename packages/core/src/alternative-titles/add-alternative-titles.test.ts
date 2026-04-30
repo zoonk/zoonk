@@ -24,7 +24,7 @@ describe(addAlternativeTitles, () => {
       where: { courseId: course.id },
     });
 
-    expect(titles).toEqual([
+    expect(titles).toStrictEqual([
       { slug: `frontend-development-${suffix}` },
       { slug: `frontend-engineering-${suffix}` },
     ]);
@@ -47,7 +47,7 @@ describe(addAlternativeTitles, () => {
       where: { courseId: course.id },
     });
 
-    expect(titles).toEqual([{ slug: `machine-learning-basics-${suffix}` }]);
+    expect(titles).toStrictEqual([{ slug: `machine-learning-basics-${suffix}` }]);
   });
 
   it("removes duplicate titles", async () => {
@@ -68,7 +68,7 @@ describe(addAlternativeTitles, () => {
       where: { courseId: course.id },
     });
 
-    expect(titles).toEqual([{ slug: `react-${suffix}` }]);
+    expect(titles).toStrictEqual([{ slug: `react-${suffix}` }]);
   });
 
   it("silently ignores duplicate titles across courses", async () => {
@@ -93,7 +93,7 @@ describe(addAlternativeTitles, () => {
       where: { courseId: course2.id },
     });
 
-    expect(course2Titles).toEqual([{ slug: `angular-${suffix}` }]);
+    expect(course2Titles).toStrictEqual([{ slug: `angular-${suffix}` }]);
   });
 
   it("does nothing when titles array is empty", async () => {
@@ -104,7 +104,7 @@ describe(addAlternativeTitles, () => {
 
     const titles = await prisma.courseAlternativeTitle.findMany({ where: { courseId: course.id } });
 
-    expect(titles).toEqual([]);
+    expect(titles).toStrictEqual([]);
   });
 
   it("filters out empty slugs", async () => {
@@ -124,6 +124,6 @@ describe(addAlternativeTitles, () => {
       where: { courseId: course.id },
     });
 
-    expect(titles).toEqual([{ slug: `valid-title-${suffix}` }]);
+    expect(titles).toStrictEqual([{ slug: `valid-title-${suffix}` }]);
   });
 });

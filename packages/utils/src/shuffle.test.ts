@@ -11,21 +11,21 @@ describe(shuffle, () => {
   it("contains same elements as input", () => {
     const input = [1, 2, 3, 4, 5];
     const result = shuffle(input);
-    expect(result.toSorted((left, right) => left - right)).toEqual([1, 2, 3, 4, 5]);
+    expect(result.toSorted((left, right) => left - right)).toStrictEqual([1, 2, 3, 4, 5]);
   });
 
   it("empty array returns empty array", () => {
-    expect(shuffle([])).toEqual([]);
+    expect(shuffle([])).toStrictEqual([]);
   });
 
   it("single element returns same element", () => {
-    expect(shuffle([42])).toEqual([42]);
+    expect(shuffle([42])).toStrictEqual([42]);
   });
 
   it("large array preserves all elements", () => {
     const input = Array.from({ length: 100 }, (_, idx) => idx);
     const result = shuffle(input);
     expect(result).toHaveLength(100);
-    expect(result.toSorted((left, right) => left - right)).toEqual(input);
+    expect(result.toSorted((left, right) => left - right)).toStrictEqual(input);
   });
 });

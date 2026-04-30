@@ -32,7 +32,7 @@ describe(generateAlternativeTitlesStep, () => {
 
     const result = await generateAlternativeTitlesStep(course);
 
-    expect(result).toEqual(["Alt Title 1", "Alt Title 2"]);
+    expect(result).toStrictEqual(["Alt Title 1", "Alt Title 2"]);
 
     expect(generateAlternativeTitlesMock).toHaveBeenCalledWith({
       language: "en",

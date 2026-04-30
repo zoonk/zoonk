@@ -30,7 +30,7 @@ describe(generateVocabularyAudioStep, () => {
     const dogWord = `犬${uniqueId}`;
     const words = [catWord, dogWord];
 
-    await expect(generateVocabularyAudioStep({ context, words })).resolves.toEqual({
+    await expect(generateVocabularyAudioStep({ context, words })).resolves.toStrictEqual({
       wordAudioUrls: { [catWord]: `/audio/${catWord}.mp3`, [dogWord]: `/audio/${dogWord}.mp3` },
     });
     expect(generateLanguageAudio).toHaveBeenCalledWith({

@@ -21,7 +21,7 @@ describe(setLessonAsCompletedStep, () => {
     const updatedLesson = await prisma.lesson.findUniqueOrThrow({ where: { id: context.id } });
 
     expect(updatedLesson.generationStatus).toBe("completed");
-    expect(getStreamedEvents()).toEqual(
+    expect(getStreamedEvents()).toStrictEqual(
       expect.arrayContaining([
         expect.objectContaining({ status: "completed", step: "setLessonAsCompleted" }),
       ]),

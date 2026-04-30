@@ -99,12 +99,12 @@ describe(saveReadingLessonStep, () => {
       translationDistractors: [`hello-${id}`, `bye-${id}`],
     });
     expect(step).toMatchObject({ content: {}, isPublished: true, sentenceId: savedSentence.id });
-    expect(lessonWords.map((entry) => [entry.word.word, entry.translation])).toEqual([
+    expect(lessonWords.map((entry) => [entry.word.word, entry.translation])).toStrictEqual([
       [normalizedCanonicalWords[0]!, `good-${id}`],
       [normalizedCanonicalWords[2]!, canonicalWords[2]],
       [normalizedCanonicalWords[1]!, `morning-${id}`],
     ]);
-    expect(distractorLessonWords).toEqual([]);
+    expect(distractorLessonWords).toStrictEqual([]);
     expect(pronunciations).toHaveLength(5);
   });
 });

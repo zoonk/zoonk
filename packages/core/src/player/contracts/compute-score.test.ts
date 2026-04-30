@@ -13,7 +13,12 @@ describe("computeLessonScore (generic)", () => {
       ],
     });
 
-    expect(result).toEqual({ brainPower: 10, correctCount: 5, energyDelta: 1, incorrectCount: 0 });
+    expect(result).toStrictEqual({
+      brainPower: 10,
+      correctCount: 5,
+      energyDelta: 1,
+      incorrectCount: 0,
+    });
   });
 
   it("all incorrect (5): BP=10, energyDelta=-0.5", () => {
@@ -27,7 +32,7 @@ describe("computeLessonScore (generic)", () => {
       ],
     });
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       brainPower: 10,
       correctCount: 0,
       energyDelta: -0.5,
@@ -46,7 +51,7 @@ describe("computeLessonScore (generic)", () => {
       ],
     });
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       brainPower: 10,
       correctCount: 3,
       energyDelta: 0.4,
@@ -57,7 +62,7 @@ describe("computeLessonScore (generic)", () => {
   it("empty results (static lesson): BP=10, energyDelta=0.1", () => {
     const result = computeLessonScore({ results: [] });
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       brainPower: 10,
       correctCount: 0,
       energyDelta: 0.1,

@@ -146,7 +146,7 @@ describe(submitPlayerCompletion, () => {
     ]);
 
     expect(nextLesson.position).toBeGreaterThan(currentLesson.position);
-    expect(result).toEqual({ preloadLessonId: nextLesson.id });
+    expect(result).toStrictEqual({ preloadLessonId: nextLesson.id });
     expect(lessonProgress?.completedAt).toBeInstanceOf(Date);
     expect(stepAttempts).toHaveLength(1);
     expect(stepAttempts[0]?.isCorrect).toBe(true);

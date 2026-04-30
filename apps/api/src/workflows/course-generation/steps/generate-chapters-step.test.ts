@@ -42,7 +42,7 @@ describe(generateChaptersStep, () => {
 
     const result = await generateChaptersStep(baseCourse);
 
-    expect(result).toEqual(chapters);
+    expect(result).toStrictEqual(chapters);
 
     expect(generateCourseChaptersMock).toHaveBeenCalledWith({
       courseTitle: "Test Course",
@@ -67,7 +67,7 @@ describe(generateChaptersStep, () => {
 
     const result = await generateChaptersStep(languageCourse);
 
-    expect(result).toEqual(chapters);
+    expect(result).toStrictEqual(chapters);
 
     expect(generateLanguageCourseChaptersMock).toHaveBeenCalledWith({
       targetLanguage: "es",

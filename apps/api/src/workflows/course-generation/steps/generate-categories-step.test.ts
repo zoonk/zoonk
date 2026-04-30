@@ -32,7 +32,7 @@ describe(generateCategoriesStep, () => {
 
     const result = await generateCategoriesStep(course);
 
-    expect(result).toEqual(["programming", "web"]);
+    expect(result).toStrictEqual(["programming", "web"]);
 
     expect(generateCourseCategoriesMock).toHaveBeenCalledWith({ courseTitle: "Test Course" });
 

@@ -62,7 +62,7 @@ describe(getPlayerHapticSequence, () => {
       previous: buildSnapshot({ step }),
     });
 
-    expect(sequence).toEqual(["success"]);
+    expect(sequence).toStrictEqual(["success"]);
   });
 
   it("adds a generic error haptic when feedback screen appears for a wrong answer", () => {
@@ -91,7 +91,7 @@ describe(getPlayerHapticSequence, () => {
       previous: buildSnapshot({ step }),
     });
 
-    expect(sequence).toEqual(["error"]);
+    expect(sequence).toStrictEqual(["error"]);
   });
 
   it("uses a stronger celebration for lesson completion", () => {
@@ -100,7 +100,7 @@ describe(getPlayerHapticSequence, () => {
       previous: buildSnapshot({ phase: "playing" }),
     });
 
-    expect(sequence).toEqual([
+    expect(sequence).toStrictEqual([
       [
         { duration: 30, intensity: 0.6 },
         { delay: 45, duration: 45, intensity: 0.9 },

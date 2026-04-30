@@ -30,7 +30,7 @@ describe(generateVocabularyPronunciationStep, () => {
     const dogWord = `犬${uniqueId}`;
     const words = [catWord, dogWord];
 
-    await expect(generateVocabularyPronunciationStep({ context, words })).resolves.toEqual({
+    await expect(generateVocabularyPronunciationStep({ context, words })).resolves.toStrictEqual({
       pronunciations: { [catWord]: `${catWord} pron`, [dogWord]: `${dogWord} pron` },
     });
     expect(generateLessonPronunciation).toHaveBeenCalledWith({

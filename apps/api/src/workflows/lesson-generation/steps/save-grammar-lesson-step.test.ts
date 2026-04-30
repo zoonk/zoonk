@@ -65,7 +65,7 @@ describe(saveGrammarLessonStep, () => {
       where: { lessonId: context.id },
     });
 
-    expect(steps.map((step) => [step.position, step.kind])).toEqual([
+    expect(steps.map((step) => [step.position, step.kind])).toStrictEqual([
       [0, "static"],
       [1, "static"],
       [2, "multipleChoice"],
@@ -82,12 +82,12 @@ describe(saveGrammarLessonStep, () => {
       context: `Look at the examples ${id}`,
       question: `What verb fits? ${id}`,
     });
-    expect(steps[3]?.content).toEqual({
+    expect(steps[3]?.content).toStrictEqual({
       ruleName: `Present tense ${id}`,
       ruleSummary: `Use ist${id} for present tense`,
       variant: "grammarRule",
     });
-    expect(steps[4]?.content).toEqual({
+    expect(steps[4]?.content).toStrictEqual({
       answers: [`ist${id}`],
       distractors: [`war${id}`, `hat${id}`],
       feedback: `Because ist${id} fits here`,

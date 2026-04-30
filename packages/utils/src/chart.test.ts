@@ -92,7 +92,7 @@ describe(buildChartData, () => {
   it("returns daily data points for 'month' period (no aggregation)", () => {
     const result = buildChartData(rawPoints, "month", "en");
     expect(result.dataPoints).toHaveLength(4);
-    expect(result.dataPoints.map((dp) => dp.value)).toEqual([10, 20, 30, 40]);
+    expect(result.dataPoints.map((dp) => dp.value)).toStrictEqual([10, 20, 30, 40]);
   });
 
   it("aggregates to weekly sums for '6months' period", () => {
@@ -105,7 +105,7 @@ describe(buildChartData, () => {
   it("aggregates to monthly sums for 'year' period", () => {
     const result = buildChartData(rawPoints, "year", "en");
     expect(result.dataPoints).toHaveLength(2);
-    expect(result.dataPoints.map((dp) => dp.value)).toEqual([60, 40]);
+    expect(result.dataPoints.map((dp) => dp.value)).toStrictEqual([60, 40]);
   });
 
   it("aggregates to yearly sums for 'all' period", () => {
@@ -116,13 +116,13 @@ describe(buildChartData, () => {
     ];
     const result = buildChartData(crossYearPoints, "all", "en");
     expect(result.dataPoints).toHaveLength(2);
-    expect(result.dataPoints.map((dp) => dp.value)).toEqual([30, 30]);
-    expect(result.dataPoints.map((dp) => dp.label)).toEqual(["2025", "2026"]);
+    expect(result.dataPoints.map((dp) => dp.value)).toStrictEqual([30, 30]);
+    expect(result.dataPoints.map((dp) => dp.label)).toStrictEqual(["2025", "2026"]);
   });
 
   it("returns empty data points and zero average for empty input", () => {
     const result = buildChartData([], "month", "en");
-    expect(result).toEqual({ average: 0, dataPoints: [] });
+    expect(result).toStrictEqual({ average: 0, dataPoints: [] });
   });
 
   it("calculates average correctly", () => {

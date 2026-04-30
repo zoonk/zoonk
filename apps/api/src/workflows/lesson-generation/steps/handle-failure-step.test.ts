@@ -26,7 +26,7 @@ describe(handleLessonFailureStep, () => {
     const updatedLesson = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
 
     expect(updatedLesson.generationStatus).toBe("failed");
-    expect(getStreamedEvents()).toEqual(
+    expect(getStreamedEvents()).toStrictEqual(
       expect.arrayContaining([
         expect.objectContaining({
           reason: "aiGenerationFailed",

@@ -81,7 +81,7 @@ describe(buildWordBankOptions, () => {
       new Map(),
     );
 
-    expect(options.map((option) => option.word)).toEqual([
+    expect(options.map((option) => option.word)).toStrictEqual([
       "Guten",
       "Morgen,",
       "Anna!",
@@ -105,7 +105,7 @@ describe(buildWordBankOptions, () => {
       new Map(),
     );
 
-    expect(options.find((option) => option.word === "犬")).toEqual({
+    expect(options.find((option) => option.word === "犬")).toStrictEqual({
       audioUrl: "/audio/dog.mp3",
       romanization: "inu",
       translation: null,
@@ -135,14 +135,14 @@ describe(buildWordBankOptions, () => {
       new Map(),
     );
 
-    expect(options.map((option) => option.word)).toEqual([
+    expect(options.map((option) => option.word)).toStrictEqual([
       "Boa",
       "tarde,",
       "Lara.",
       "Bom",
       "noite",
     ]);
-    expect(options.find((option) => option.word === "noite")).toEqual({
+    expect(options.find((option) => option.word === "noite")).toStrictEqual({
       audioUrl: null,
       romanization: null,
       translation: null,
@@ -158,7 +158,7 @@ describe(buildWordBankOptions, () => {
       new Map(),
     );
 
-    expect(options.map((option) => option.word)).toEqual(["Hola", "mundo", "Salut"]);
+    expect(options.map((option) => option.word)).toStrictEqual(["Hola", "mundo", "Salut"]);
   });
 });
 
@@ -171,7 +171,7 @@ describe(buildSentenceWordOptions, () => {
       new Map(),
     );
 
-    expect(options).toEqual([
+    expect(options).toStrictEqual([
       { audioUrl: null, romanization: "guten", translation: null, word: "Guten" },
       { audioUrl: null, romanization: "morgen", translation: null, word: "Morgen" },
     ]);
@@ -194,7 +194,7 @@ describe(buildSentenceWordOptions, () => {
       ]),
     );
 
-    expect(options).toEqual([
+    expect(options).toStrictEqual([
       {
         audioUrl: "/audio/hola-sentence.mp3",
         romanization: "o-la",

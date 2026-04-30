@@ -58,7 +58,7 @@ describe(buildLessonPlayerModel, () => {
       nextSibling: null,
     });
 
-    expect(model.milestone).toEqual({
+    expect(model.milestone).toStrictEqual({
       kind: "chapter",
       nextHref: "/b/brand/c/course/ch/chapter-2",
       reviewHref: "/b/brand/c/course/ch/chapter-1",
@@ -75,7 +75,7 @@ describe(buildLessonPlayerModel, () => {
       nextSibling: null,
     });
 
-    expect(model.milestone).toEqual({
+    expect(model.milestone).toStrictEqual({
       kind: "course",
       reviewHref: "/b/brand/c/course",
       secondaryReviewHref: "/b/brand/c/course/ch/chapter-1",
