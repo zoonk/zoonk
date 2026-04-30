@@ -21,19 +21,17 @@ const readingState = vi.hoisted(() => ({
 vi.mock("@zoonk/ai/tasks/lessons/language/sentences", () => ({
   generateLessonSentences: vi
     .fn()
-    .mockImplementation(() =>
-      Promise.resolve({
-        data: {
-          sentences: [
-            {
-              explanation: "Greeting sentence.",
-              sentence: readingState.sentence,
-              translation: readingState.translation,
-            },
-          ],
-        },
-      }),
-    ),
+    .mockImplementation(() => ({
+      data: {
+        sentences: [
+          {
+            explanation: "Greeting sentence.",
+            sentence: readingState.sentence,
+            translation: readingState.translation,
+          },
+        ],
+      },
+    })),
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/distractors", () => ({

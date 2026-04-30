@@ -18,7 +18,7 @@ const vocabularyState = vi.hoisted(() => ({
 vi.mock("@zoonk/ai/tasks/lessons/language/vocabulary", () => ({
   generateLessonVocabulary: vi
     .fn()
-    .mockImplementation(() => Promise.resolve({ data: { words: vocabularyState.words } })),
+    .mockImplementation(() => ({ data: { words: vocabularyState.words } })),
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/distractors", () => ({

@@ -182,7 +182,7 @@ describe(useAnimatedProgress, () => {
     });
 
     unmount();
-    expect(cancelSpy).toHaveBeenCalled();
+    expect(cancelSpy).toHaveBeenCalledWith(expect.any(Number));
     cancelSpy.mockRestore();
   });
 });

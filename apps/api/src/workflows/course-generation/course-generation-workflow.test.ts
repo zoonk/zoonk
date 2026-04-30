@@ -52,11 +52,9 @@ vi.mock("@zoonk/ai/tasks/courses/language-chapters", () => ({
 vi.mock("@zoonk/ai/tasks/courses/alternative-titles", () => ({
   generateAlternativeTitles: vi
     .fn()
-    .mockImplementation(() =>
-      Promise.resolve({
-        data: { alternatives: [`Alt Title ${randomUUID()}`, `Alt Title ${randomUUID()}`] },
-      }),
-    ),
+    .mockResolvedValue({
+      data: { alternatives: [`Alt Title ${randomUUID()}`, `Alt Title ${randomUUID()}`] },
+    }),
 }));
 
 vi.mock("@zoonk/ai/tasks/courses/categories", () => ({
