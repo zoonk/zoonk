@@ -1,0 +1,83 @@
+packages/ai/src/tasks/audio/generate-language-audio.ts
+  9ee63215e649e83f 14
+apps/admin/src/data/stats/ai/_utils/ai-cost-estimate-types.ts
+  9ee63215e649e83f 3
+packages/ai/src/tasks/chapters/chapter-lessons.ts
+  9ee63215e649e83f 15
+packages/core/src/player/contracts/build-word-bank-options.test.ts
+  9ee63215e649e83f 3,6
+apps/admin/src/data/stats/ai/ai-task-stats.ts
+  9ee63215e649e83f 23
+packages/player/src/_test-utils/player-test-data.ts
+  9ee63215e649e83f 7
+packages/core/src/workflows/steps.ts
+  9ee63215e649e83f 1,38,53,55,96
+apps/api/src/workflows/lesson-generation/steps/_utils/generated-lesson-content.ts
+  9ee63215e649e83f 26,33,35
+packages/core/src/steps/contract/content.ts
+  9ee63215e649e83f 44-47
+packages/player/src/player-screen.ts
+  9ee63215e649e83f 42,52,54
+packages/auth/package.json
+  h_1cda88fc21fe9c 21-22,26-27
+apps/evals/src/lib/types.ts
+  9ee63215e649e83f 15,19,83
+package.json
+  h_1cda88fc21fe9c 31-34
+packages/core/src/player/contracts/completion-input-schema.ts
+  9ee63215e649e83f 48
+.oxlintrc.json
+  459d97d84002ea77 18,59-63,65-76,84,96,118-121,125,135
+packages/core/src/player/contracts/_utils/lesson-data-mappers.ts
+  9ee63215e649e83f 1,3,11
+pnpm-workspace.yaml
+  h_1cda88fc21fe9c 5,13-18,26,28,34,36,39-40,42,50,56,59,61-65
+packages/ai/src/tasks/chapters/language-chapter-lessons.ts
+  9ee63215e649e83f 22
+packages/utils/src/subscription.ts
+  9ee63215e649e83f 4
+packages/player/src/player-reducer.ts
+  9ee63215e649e83f 25
+apps/main/src/data/courses/get-continue-learning.ts
+  9ee63215e649e83f 45,52
+packages/core/src/player/contracts/prepare-lesson-data.ts
+  9ee63215e649e83f 45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "241d3f8e3e8f39bbf154bc4a03565d8e0af57945",
+  "prompts": {
+    "459d97d84002ea77": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ea44c887-9dc1-4f7d-bf97-db56b3f09e45",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 26,
+      "total_deletions": 0,
+      "accepted_lines": 26,
+      "overriden_lines": 0
+    },
+    "9ee63215e649e83f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aa4c7553-36fb-4871-8ca5-10ca15415d44",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 38,
+      "total_deletions": 41,
+      "accepted_lines": 36,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
