@@ -1,0 +1,14 @@
+packages/ai/src/tasks/lessons/language/lesson-sentences.prompt.md
+  h_1cda88fc21fe9c 57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "a7546b7489bfd949d8fe792d31063c1fa78d1be4",
+  "prompts": {},
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
