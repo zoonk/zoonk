@@ -706,9 +706,9 @@ msgid "Level"
 msgstr "Level"
 
 #: src/app/(catalog)/(home)/page.tsx
-msgctxt "htyKxZ"
-msgid "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses, lessons, and lessons."
-msgstr "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses, lessons, and lessons."
+msgctxt "fEOaZF"
+msgid "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses and lessons."
+msgstr "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses and lessons."
 
 #: src/app/(catalog)/(home)/page.tsx
 msgctxt "qsfeMJ"
@@ -809,9 +809,9 @@ msgid "Online Courses using AI"
 msgstr "Online Courses using AI"
 
 #: src/app/(catalog)/courses/page.tsx
-msgctxt "ujsArd"
-msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons and lessons to learn subjects like science, math, technology, and more."
-msgstr "Explore all Zoonk courses to learn anything using AI. Find interactive lessons and lessons to learn subjects like science, math, technology, and more."
+msgctxt "WgPMAP"
+msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons to learn subjects like science, math, technology, and more."
+msgstr "Explore all Zoonk courses to learn anything using AI. Find interactive lessons to learn subjects like science, math, technology, and more."
 
 #: src/app/(catalog)/learn/[prompt]/course-suggestion-item.tsx
 msgctxt "VzzYJk"
@@ -845,9 +845,9 @@ msgid "Change subject"
 msgstr "Change subject"
 
 #: src/app/(catalog)/learn/[prompt]/page.tsx
-msgctxt "U6/c8l"
-msgid "Discover personalized courses and resources to learn {prompt}. Zoonk uses AI to create interactive lessons and lessons tailored to you."
-msgstr "Discover personalized courses and resources to learn {prompt}. Zoonk uses AI to create interactive lessons and lessons tailored to you."
+msgctxt "CaU/nf"
+msgid "Discover personalized courses and resources to learn {prompt}. Zoonk uses AI to create interactive lessons tailored to you."
+msgstr "Discover personalized courses and resources to learn {prompt}. Zoonk uses AI to create interactive lessons tailored to you."
 
 #: src/app/(catalog)/learn/[prompt]/page.tsx
 msgctxt "X2b6pH"
@@ -931,6 +931,11 @@ msgid "Deep sea creatures"
 msgstr "Deep sea creatures"
 
 #: src/app/(catalog)/learn/page.tsx
+msgctxt "JlJVf1"
+msgid "Tell Zoonk what you want to learn and get a course created with AI. Start learning any subject with interactive lessons."
+msgstr "Tell Zoonk what you want to learn and get a course created with AI. Start learning any subject with interactive lessons."
+
+#: src/app/(catalog)/learn/page.tsx
 #: src/lib/categories/category.ts
 msgctxt "KOuDOE"
 msgid "Economics"
@@ -955,11 +960,6 @@ msgstr "Molecular biology"
 msgctxt "NvSCuG"
 msgid "Suggested subjects"
 msgstr "Suggested subjects"
-
-#: src/app/(catalog)/learn/page.tsx
-msgctxt "o+Unq4"
-msgid "Tell Zoonk what you want to learn and get a course created with AI. Start learning any subject with interactive lessons and lessons."
-msgstr "Tell Zoonk what you want to learn and get a course created with AI. Start learning any subject with interactive lessons and lessons."
 
 #: src/app/(catalog)/learn/page.tsx
 msgctxt "O9mDkA"
@@ -1037,11 +1037,6 @@ msgid "World history"
 msgstr "World history"
 
 #: src/app/(catalog)/my/page.tsx
-msgctxt "B+9gB2"
-msgid "View all the courses you started on Zoonk. Continue where you left off and track your progress across interactive lessons and lessons."
-msgstr "View all the courses you started on Zoonk. Continue where you left off and track your progress across interactive lessons and lessons."
-
-#: src/app/(catalog)/my/page.tsx
 msgctxt "Dr13kE"
 msgid "Continue where you left off"
 msgstr "Continue where you left off"
@@ -1050,6 +1045,11 @@ msgstr "Continue where you left off"
 msgctxt "eeNr/Y"
 msgid "My Courses"
 msgstr "My Courses"
+
+#: src/app/(catalog)/my/page.tsx
+msgctxt "riE3I5"
+msgid "View all the courses you started on Zoonk. Continue where you left off and track your progress across interactive lessons."
+msgstr "View all the courses you started on Zoonk. Continue where you left off and track your progress across interactive lessons."
 
 #: src/app/(catalog)/my/user-course-list.tsx
 msgctxt "azX41u"
@@ -1192,9 +1192,9 @@ msgid "{value} BP"
 msgstr "{value} BP"
 
 #: src/app/(performance)/level/level-explanation.tsx
-msgctxt "5eLdgO"
-msgid "Every time you complete an lesson, you earn Brain Power. As you accumulate BP, you progress through 10 belt colors, each with 10 levels."
-msgstr "Every time you complete an lesson, you earn Brain Power. As you accumulate BP, you progress through 10 belt colors, each with 10 levels."
+msgctxt "0kiEdE"
+msgid "Every time you complete a lesson, you earn Brain Power. As you accumulate BP, you progress through 10 belt colors, each with 10 levels."
+msgstr "Every time you complete a lesson, you earn Brain Power. As you accumulate BP, you progress through 10 belt colors, each with 10 levels."
 
 #: src/app/(performance)/level/level-explanation.tsx
 msgctxt "C6bCZT"

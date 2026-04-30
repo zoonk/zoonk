@@ -76,7 +76,7 @@ Provide 2-4 sentences that clearly demonstrate the grammar pattern.
 - Vary the content (different subjects, objects, contexts) while keeping the same grammatical structure
 - Build progressively: start with the clearest case, then show variations
 - For verb conjugation, prefer showing different persons/forms across examples. Avoid regional forms (vosotros, vos) unless the lesson specifically targets them
-- Use consistent script choices within an lesson. If examples use kanji for a word, exercises should too
+- Use consistent script choices within a lesson. If examples use kanji for a word, exercises should too
 
 ## Highlighting Rules
 

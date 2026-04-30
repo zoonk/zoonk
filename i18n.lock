@@ -317,7 +317,7 @@ checksums:
     Max%20level%20reached/singular: 5bfdf2d9ba3929b456dcf5c253315e92
     "%7Bcolor%7D%20Belt%20-%20Level%20%7Blevel%7D/singular": abb5a7600bd66f523906425beffbaff4
     Level/singular: 1e3bf31d5c6083e898dd3e3359fbb0c2
-    Zoonk%20is%20an%20AI-powered%20learning%20platform%20where%20you%20can%20learn%20anything%20through%20interactive%20courses%2C%20lessons%2C%20and%20lessons./singular: 896d061064d40ce70c414cb59e198b00
+    Zoonk%20is%20an%20AI-powered%20learning%20platform%20where%20you%20can%20learn%20anything%20through%20interactive%20courses%20and%20lessons./singular: 9bfb927bfa0b720b3e8c1e7134285d88
     Zoonk%3A%20AI%20Learning%20Platform/singular: 4a2d25490f4a5e5cd4543f48fcec968d
     Performance/singular: 28b6d3a3d4a53afa0617a180e318ff4d
     "%7Bvalue%7D%25%20correct%20answers/singular": 0a95eedb35d1990c8e8af833ddba628f
@@ -337,14 +337,14 @@ checksums:
     No%20courses/singular: 72fc2629e79529e927834070a26d2a07
     Start%20learning%20something%20new%20today/singular: 727ed4b5249a54fc3975f77b91e96757
     Online%20Courses%20using%20AI/singular: 4e3c619f363cc66f3f2e604e372ca038
-    Explore%20all%20Zoonk%20courses%20to%20learn%20anything%20using%20AI.%20Find%20interactive%20lessons%20and%20lessons%20to%20learn%20subjects%20like%20science%2C%20math%2C%20technology%2C%20and%20more./singular: 16746f26584de4f6a3ae436e3bf5f937
+    Explore%20all%20Zoonk%20courses%20to%20learn%20anything%20using%20AI.%20Find%20interactive%20lessons%20to%20learn%20subjects%20like%20science%2C%20math%2C%20technology%2C%20and%20more./singular: e93989030b981724598e08538b5003a8
     Create/singular: 757ccd28dd533ff3a933355273c1e32a
     Cancel/singular: 2e2a849c2223911717de8caa2c71bade
     Cooking%20up%20some%20course%20ideas/singular: a42520f96dbac3580a2ccae4bd6ceb31
     We're%20putting%20together%20a%20few%20course%20suggestions%20for%20you.%20This%20may%20take%20a%20few%20seconds./singular: 8467af30434eb8bfb2f13e109b1d9334
     Course%20ideas%20for%20%7Bprompt%7D/singular: 23f94da8ce9272d654ff40bb80e6a352
     Change%20subject/singular: 8585bb703ba2d857dd9a7b36f97be507
-    Discover%20personalized%20courses%20and%20resources%20to%20learn%20%7Bprompt%7D.%20Zoonk%20uses%20AI%20to%20create%20interactive%20lessons%20and%20lessons%20tailored%20to%20you./singular: 9fccce64f592eef1c0782ce20e053a8e
+    Discover%20personalized%20courses%20and%20resources%20to%20learn%20%7Bprompt%7D.%20Zoonk%20uses%20AI%20to%20create%20interactive%20lessons%20tailored%20to%20you./singular: 465a9b5a3176121ca2a9c3d02361f97a
     Learn%20%7Bprompt%7D%20with%20AI/singular: 5a8a8ee7f52faf0cb790e0f0cfbcce7d
     Enter%20a%20subject/singular: 4590e12cd42fdc491ab95457e66e13eb
     Learn%20anything./singular: 6a1858e1c15518444a10d3e3e95b23f6
@@ -361,12 +361,12 @@ checksums:
     Psychology/singular: 68dab9afb597537ae98a7b4d63849c58
     How%20the%20internet%20works/singular: ab755af095b9f5254e62b4c9090f9841
     Deep%20sea%20creatures/singular: f3c0a0f3b84d1be92fa3642a7a8fdf72
+    Tell%20Zoonk%20what%20you%20want%20to%20learn%20and%20get%20a%20course%20created%20with%20AI.%20Start%20learning%20any%20subject%20with%20interactive%20lessons./singular: 34d587422c437cd92d88eb91a5732472
     Economics/singular: 3931d28200c67977f6ecdf9b2aa61014
     Computer%20Science/singular: fb0a00d8442f2429c8fab8e20d19ae03
     How%20volcanoes%20work/singular: fa35b6c9bdc18c39d17f0573e78a62be
     Molecular%20biology/singular: 5157b95a95d558b7848ceadcf83a9e8b
     Suggested%20subjects/singular: d2d996b64130d889f9be70a6193443c8
-    Tell%20Zoonk%20what%20you%20want%20to%20learn%20and%20get%20a%20course%20created%20with%20AI.%20Start%20learning%20any%20subject%20with%20interactive%20lessons%20and%20lessons./singular: 967685f44846ea30ef33f89b8f61f196
     Marketing/singular: fcf0f06f8b64b458c7ca6d95541a3cc8
     Creative%20writing/singular: a76e930eba9f5de736fdc7cfcd229024
     Graphic%20Design/singular: 5644c7666d8e59fda7c5048ef1bdcc70
@@ -382,9 +382,9 @@ checksums:
     Quantum%20physics/singular: 5a1f601573f0ab41a9c4bd2b72a079a0
     Learn%20Anything%20with%20AI/singular: af8ba68f4986f321a1025e9b0f4ac794
     World%20history/singular: 9d467f46d8358a17e85db86fc98b789e
-    View%20all%20the%20courses%20you%20started%20on%20Zoonk.%20Continue%20where%20you%20left%20off%20and%20track%20your%20progress%20across%20interactive%20lessons%20and%20lessons./singular: 14103d7923d8e21235ede8541a41e4b6
     Continue%20where%20you%20left%20off/singular: c3ef4fd14e046d53816ede13fc5d27fc
     My%20Courses/singular: 3031c7801404796addff2b7d796fa4c2
+    View%20all%20the%20courses%20you%20started%20on%20Zoonk.%20Continue%20where%20you%20left%20off%20and%20track%20your%20progress%20across%20interactive%20lessons./singular: 8c25d00b62d1932df240fe8aeabb3dfc
     Start%20learning%20something%20new%20today./singular: 55903bfd6e1f8c3e95c73ec67427ed11
     No%20courses%20yet/singular: d5fcc38466fdc83a74eab5032a2f85b6
     Personalized%20courses%20are%20coming%20soon./singular: ad21564f7620bc2a553e298a587daccf
@@ -412,7 +412,7 @@ checksums:
     Brain%20Power%20chart/singular: 07ca213967e88b69e1000a6cda465ad8
     Total%20Brain%20Power%20earned%3A%20%7Btotal%7D/singular: d28228f7edab6482d1a444de33646b1a
     "%7Bvalue%7D%20BP/singular": a2480149a0208509d79feeb1ca1cfa1e
-    Every%20time%20you%20complete%20an%20lesson%2C%20you%20earn%20Brain%20Power.%20As%20you%20accumulate%20BP%2C%20you%20progress%20through%2010%20belt%20colors%2C%20each%20with%2010%20levels./singular: f7c5ccaf06b5340b1c68bd8cbd7e0ded
+    Every%20time%20you%20complete%20a%20lesson%2C%20you%20earn%20Brain%20Power.%20As%20you%20accumulate%20BP%2C%20you%20progress%20through%2010%20belt%20colors%2C%20each%20with%2010%20levels./singular: f94e5b66855742ee476d581c0793a70c
     Brain%20Power%20(BP)%20represents%20your%20knowledge%20growth.%20Unlike%20energy%2C%20BP%20never%20decreases%20-%20it%20only%20grows%20as%20you%20learn%20more./singular: 436619a12f6800283deddf1f429d506a
     Belt%20colors%20in%20order%3A%20White%2C%20Yellow%2C%20Orange%2C%20Green%2C%20Blue%2C%20Purple%2C%20Brown%2C%20Red%2C%20Gray%2C%20and%20Black.%20Keep%20learning%20to%20reach%20the%20highest%20level!/singular: 9e74564402564784900f3ba7c0da5f10
     About%20Levels/singular: c6833a65186160f3a1ded244544ac163

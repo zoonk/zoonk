@@ -2,7 +2,7 @@ import { type LessonKind } from "@zoonk/core/steps/contract/content";
 import { useExtracted } from "next-intl";
 
 /**
- * Map an lesson kind to a human-readable label. Used as fallback when
+ * Map a lesson kind to a human-readable label. Used as fallback when
  * the lesson has no custom title, matching how the lesson list displays
  * lesson kinds throughout the app.
  */

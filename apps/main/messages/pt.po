@@ -706,9 +706,9 @@ msgid "Level"
 msgstr "Nível"
 
 #: src/app/(catalog)/(home)/page.tsx
-msgctxt "htyKxZ"
-msgid "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses, lessons, and lessons."
-msgstr "Zoonk é uma plataforma de aprendizado com IA onde você pode aprender qualquer coisa por meio de cursos interativos, aulas e aulas."
+msgctxt "fEOaZF"
+msgid "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses and lessons."
+msgstr "Zoonk é uma plataforma de aprendizado com IA onde você pode aprender qualquer coisa por meio de cursos e aulas interativos."
 
 #: src/app/(catalog)/(home)/page.tsx
 msgctxt "qsfeMJ"
@@ -809,9 +809,9 @@ msgid "Online Courses using AI"
 msgstr "Cursos online usando IA"
 
 #: src/app/(catalog)/courses/page.tsx
-msgctxt "ujsArd"
-msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons and lessons to learn subjects like science, math, technology, and more."
-msgstr "Explore todos os cursos da Zoonk para aprender qualquer coisa usando IA. Encontre aulas interativas e aulas para aprender assuntos como ciência, matemática, tecnologia e muito mais."
+msgctxt "WgPMAP"
+msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons to learn subjects like science, math, technology, and more."
+msgstr "Explore todos os cursos do Zoonk para aprender qualquer coisa usando IA. Encontre aulas interativas para aprender assuntos como ciência, matemática, tecnologia e mais."
 
 #: src/app/(catalog)/learn/[prompt]/course-suggestion-item.tsx
 msgctxt "VzzYJk"
@@ -845,9 +845,9 @@ msgid "Change subject"
 msgstr "Mudar assunto"
 
 #: src/app/(catalog)/learn/[prompt]/page.tsx
-msgctxt "U6/c8l"
-msgid "Discover personalized courses and resources to learn {prompt}. Zoonk uses AI to create interactive lessons and lessons tailored to you."
-msgstr "Descubra cursos e recursos personalizados para aprender {prompt}. A Zoonk usa IA para criar aulas interativas e aulas feitas pra você."
+msgctxt "CaU/nf"
+msgid "Discover personalized courses and resources to learn {prompt}. Zoonk uses AI to create interactive lessons tailored to you."
+msgstr "Descubra cursos e recursos personalizados para aprender {prompt}. O Zoonk usa IA para criar aulas interativas feitas pra você."
 
 #: src/app/(catalog)/learn/[prompt]/page.tsx
 msgctxt "X2b6pH"
@@ -931,6 +931,11 @@ msgid "Deep sea creatures"
 msgstr "Criaturas do fundo do mar"
 
 #: src/app/(catalog)/learn/page.tsx
+msgctxt "JlJVf1"
+msgid "Tell Zoonk what you want to learn and get a course created with AI. Start learning any subject with interactive lessons."
+msgstr "Conte ao Zoonk o que você quer aprender e receba um curso criado com IA. Comece a aprender qualquer assunto com aulas interativas."
+
+#: src/app/(catalog)/learn/page.tsx
 #: src/lib/categories/category.ts
 msgctxt "KOuDOE"
 msgid "Economics"
@@ -955,11 +960,6 @@ msgstr "Biologia molecular"
 msgctxt "NvSCuG"
 msgid "Suggested subjects"
 msgstr "Assuntos sugeridos"
-
-#: src/app/(catalog)/learn/page.tsx
-msgctxt "o+Unq4"
-msgid "Tell Zoonk what you want to learn and get a course created with AI. Start learning any subject with interactive lessons and lessons."
-msgstr "Conte pra Zoonk o que você quer aprender e receba um curso criado com IA. Comece a aprender qualquer assunto com aulas interativas e aulas."
 
 #: src/app/(catalog)/learn/page.tsx
 msgctxt "O9mDkA"
@@ -1037,11 +1037,6 @@ msgid "World history"
 msgstr "História mundial"
 
 #: src/app/(catalog)/my/page.tsx
-msgctxt "B+9gB2"
-msgid "View all the courses you started on Zoonk. Continue where you left off and track your progress across interactive lessons and lessons."
-msgstr "Veja todos os cursos que você começou na Zoonk. Continue de onde parou e acompanhe seu progresso nas aulas interativas e nas aulas."
-
-#: src/app/(catalog)/my/page.tsx
 msgctxt "Dr13kE"
 msgid "Continue where you left off"
 msgstr "Continue de onde você parou"
@@ -1050,6 +1045,11 @@ msgstr "Continue de onde você parou"
 msgctxt "eeNr/Y"
 msgid "My Courses"
 msgstr "Meus cursos"
+
+#: src/app/(catalog)/my/page.tsx
+msgctxt "riE3I5"
+msgid "View all the courses you started on Zoonk. Continue where you left off and track your progress across interactive lessons."
+msgstr "Veja todos os cursos que você começou no Zoonk. Continue de onde parou e acompanhe seu progresso ao longo das aulas interativas."
 
 #: src/app/(catalog)/my/user-course-list.tsx
 msgctxt "azX41u"
@@ -1192,9 +1192,9 @@ msgid "{value} BP"
 msgstr "{value} PM"
 
 #: src/app/(performance)/level/level-explanation.tsx
-msgctxt "5eLdgO"
-msgid "Every time you complete an lesson, you earn Brain Power. As you accumulate BP, you progress through 10 belt colors, each with 10 levels."
-msgstr "Toda vez que você conclui uma aula, você ganha poder mental. Conforme acumula PM, você avança por 10 cores de faixa, cada uma com 10 níveis."
+msgctxt "0kiEdE"
+msgid "Every time you complete a lesson, you earn Brain Power. As you accumulate BP, you progress through 10 belt colors, each with 10 levels."
+msgstr "Toda vez que você conclui uma aula, você ganha poder mental. À medida que acumula PM, você avança por 10 cores de faixa, cada uma com 10 níveis."
 
 #: src/app/(performance)/level/level-explanation.tsx
 msgctxt "C6bCZT"
