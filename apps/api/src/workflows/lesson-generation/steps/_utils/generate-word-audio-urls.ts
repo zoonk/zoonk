@@ -1,6 +1,13 @@
 import { prisma } from "@zoonk/db";
 import { generateAudioForText } from "./generate-audio-for-text";
 
+/**
+ * Queries existing Word audio records and generates missing audio via TTS.
+ *
+ * This is the shared core for vocabulary and sentence-word audio steps. Both
+ * need case-insensitive lookup, parallel missing-audio generation, and a result
+ * keyed by the original word surface used by the caller.
+ */
 export async function generateWordAudioUrls(params: {
   organizationId: string;
   orgSlug: string;

@@ -7,6 +7,11 @@ import { getExplanationStepsSinceLastLessonKind } from "./_utils/explanation-sou
 import { type PracticeLessonContent } from "./_utils/generated-lesson-content";
 import { type LessonContext } from "./get-lesson-step";
 
+/**
+ * Generates practice content from the explanation steps that have not already
+ * fed an earlier practice lesson. That keeps each practice focused on the
+ * preceding explanation group instead of the whole chapter.
+ */
 export async function generatePracticeContentStep(
   context: LessonContext,
 ): Promise<PracticeLessonContent> {

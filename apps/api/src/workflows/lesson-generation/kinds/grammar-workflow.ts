@@ -4,6 +4,11 @@ import { generateGrammarUserContentStep } from "../steps/generate-grammar-user-c
 import { type LessonContext } from "../steps/get-lesson-step";
 import { saveGrammarLessonStep } from "../steps/save-grammar-lesson-step";
 
+/**
+ * The target-language grammar content is generated first. Learner-language
+ * explanations and romanization then run in parallel because both depend on
+ * that same generated grammar structure but not on each other.
+ */
 export async function grammarLessonWorkflow(context: LessonContext): Promise<void> {
   "use workflow";
 

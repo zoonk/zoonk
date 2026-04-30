@@ -24,7 +24,7 @@ function todayLocalDate(): string {
 /**
  * The shared completion command only needs a standard published curriculum path:
  * org -> course -> chapter. Keeping this setup centralized makes each test focus
- * on the lesson/lesson state it wants to verify.
+ * on the lesson state it wants to verify.
  */
 async function createPublishedChapterContext() {
   const organization = await organizationFixture({ kind: "brand" });

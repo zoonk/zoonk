@@ -56,8 +56,8 @@ function getChapterProgressRows({
  * This query powers the chapter list progress on the course page.
  * We count every published lesson in a published chapter because the catalog
  * should only show a chapter as complete once every listed lesson is done.
- * A lesson with zero published lessons is therefore still part of the total,
- * but it cannot count as completed yet.
+ * A lesson without completion progress is therefore still part of the total,
+ * but it does not count as completed yet.
  */
 export async function getChapterProgress({
   courseId,

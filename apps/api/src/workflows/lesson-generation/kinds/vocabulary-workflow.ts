@@ -7,6 +7,12 @@ import { generateVocabularyRomanizationStep } from "../steps/generate-vocabulary
 import { type LessonContext } from "../steps/get-lesson-step";
 import { saveVocabularyLessonStep } from "../steps/save-vocabulary-lesson-step";
 
+/**
+ * Canonical vocabulary words and their generated distractor words share the
+ * same target-language enrichment pipeline. Collecting the union here ensures
+ * we create audio, romanization, and pronunciation for every word the player
+ * may render.
+ */
 function collectVocabularyTargetWords({
   distractors,
   words,
@@ -20,6 +26,11 @@ function collectVocabularyTargetWords({
   ]);
 }
 
+/**
+ * Vocabulary lessons persist both canonical words and generated distractors, so
+ * every target-language word the player may render must be enriched before the
+ * lesson is saved.
+ */
 export async function vocabularyLessonWorkflow(context: LessonContext): Promise<void> {
   "use workflow";
 

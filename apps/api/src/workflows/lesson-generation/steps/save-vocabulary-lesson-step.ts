@@ -9,6 +9,11 @@ import { fetchExistingWordCasing } from "./_utils/fetch-existing-word-casing";
 import { upsertWordWithPronunciation } from "./_utils/upsert-word-with-pronunciation";
 import { type LessonContext } from "./get-lesson-step";
 
+/**
+ * Vocabulary persistence owns both lesson-scoped translations/distractors and
+ * reusable target-language word metadata. Saving them together keeps the later
+ * translation lesson linked to the exact words this vocabulary lesson taught.
+ */
 export async function saveVocabularyLessonStep({
   context,
   distractors,
@@ -96,6 +101,11 @@ export async function saveVocabularyLessonStep({
   await stream.status({ status: "completed", step: "saveVocabularyLesson" });
 }
 
+/**
+ * The same surface word can appear in different lessons with different
+ * translations or distractors, so the reusable Word row and the lesson-scoped
+ * LessonWord row must be written together.
+ */
 async function saveOneVocabularyWord(params: {
   context: LessonContext;
   distractors: Record<string, string[]>;

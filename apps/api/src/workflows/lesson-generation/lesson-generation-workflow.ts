@@ -56,6 +56,11 @@ function isGeneratedLessonContext(
   return context.kind !== "custom" && context.kind !== "review";
 }
 
+/**
+ * Routes the generated lesson row to the workflow that owns its content kind.
+ * Chapter generation has already planned the lesson kind, so this step should
+ * only dispatch to the matching lesson workflow instead of reclassifying it.
+ */
 async function generateLessonForKind(context: GeneratedLessonContext): Promise<void> {
   if (context.kind === "tutorial") {
     await tutorialLessonWorkflow(context);
@@ -102,6 +107,12 @@ async function generateLessonForKind(context: GeneratedLessonContext): Promise<v
   }
 }
 
+/**
+ * Owns the lesson row lifecycle for first-time content generation: skip active
+ * reruns, emit completion for already-generated lessons, repair stale statuses,
+ * block on unfinished source lessons, run the kind-specific workflow, and mark
+ * the lesson completed or failed.
+ */
 async function runLessonGeneration(input: {
   context: LessonGenerationContext;
   lessonId: string;
@@ -152,6 +163,11 @@ async function runLessonGeneration(input: {
   }
 }
 
+/**
+ * Entrypoint for lesson content generation. The workflow metadata supplies the
+ * generation run id while `getLessonStep` loads the current lesson context that
+ * every downstream step uses.
+ */
 export async function lessonGenerationWorkflow(lessonId: string): Promise<LessonGenerationResult> {
   "use workflow";
 

@@ -5,6 +5,11 @@ import { prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
 import { type LessonContext } from "./get-lesson-step";
 
+/**
+ * Listening steps reuse sentence IDs from the nearest completed reading lesson
+ * so audio, romanization, translations, and review metadata stay attached to
+ * the same source sentences.
+ */
 export async function saveListeningLessonStep(context: LessonContext): Promise<void> {
   "use step";
 

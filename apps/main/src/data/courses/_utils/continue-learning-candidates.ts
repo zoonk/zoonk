@@ -171,7 +171,7 @@ function getUniqueSequentialChapterIds({
 
 /**
  * Lesson-level durable completion is the guard for completed lessons that
- * gained more current lessons after the learner already finished them.
+ * remain completed after the catalog changes around them.
  */
 function getUniqueSequentialLessonIds({
   sequentialNextLessons,

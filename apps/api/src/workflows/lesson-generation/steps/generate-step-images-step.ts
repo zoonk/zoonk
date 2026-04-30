@@ -5,6 +5,10 @@ import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { generateStepImages } from "./_utils/generate-step-images";
 import { type LessonContext } from "./get-lesson-step";
 
+/**
+ * Wraps shared image generation in a workflow step so expensive image calls
+ * stream their own progress and can be retried independently by Workflow.
+ */
 export async function generateStepImagesStep({
   context,
   preset = "illustration",

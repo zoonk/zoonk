@@ -178,8 +178,8 @@ export function canPrefetchLesson({ row }: { row: EffectiveLessonProgressRow }) 
 
 /**
  * Pending generation can live either on the lesson row itself or on one of its
- * current lessons. Navigation needs one shared definition so course, chapter,
- * and lesson buttons all decide the same way about prefetching.
+ * content prerequisites. Navigation needs one shared definition so course,
+ * chapter, and lesson buttons all decide the same way about prefetching.
  */
 export function hasPendingLessonContent({ row }: { row: EffectiveLessonProgressRow }) {
   return (

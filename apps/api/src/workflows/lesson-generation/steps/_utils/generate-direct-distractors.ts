@@ -7,6 +7,16 @@ type DistractorEntry = {
   key: string;
 };
 
+/**
+ * Generates and sanitizes direct distractor words for a batch of inputs.
+ *
+ * This helper keeps the workflow steps small and consistent: call the shared
+ * AI task, normalize the output, and preserve the key that each caller uses to
+ * attach distractors back to saved lesson content.
+ *
+ * Failures throw the original AI error so Workflow retries the owning step
+ * instead of silently saving lessons with missing distractors.
+ */
 export async function generateDirectDistractors(params: {
   entries: DistractorEntry[];
   language: string;

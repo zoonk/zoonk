@@ -34,7 +34,7 @@ export async function listPendingTargets({
 /**
  * Pending fallback targets only matter when the shared next-state says the
  * course is complete for now but not durably completed overall. Every other
- * state can be rendered directly from the current lesson or lesson data.
+ * state can be rendered directly from the current lesson data.
  */
 function shouldLoadPendingTarget({ state }: { state: ContinueLearningState }) {
   return Boolean(state?.completed && !state.scopeDurablyCompleted);

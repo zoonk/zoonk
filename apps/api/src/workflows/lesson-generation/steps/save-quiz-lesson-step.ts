@@ -7,6 +7,10 @@ import {
 } from "./_utils/save-core-lesson-content";
 import { type LessonContext } from "./get-lesson-step";
 
+/**
+ * Replaces any partial quiz steps with the generated question set in one save
+ * operation so retries do not mix stale questions with fresh ones.
+ */
 export async function saveQuizLessonStep({
   context,
   questions,

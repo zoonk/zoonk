@@ -6,6 +6,11 @@ import { getOtherExplanationLessonTitles } from "./_utils/explanation-source-ste
 import { type StaticLessonStep } from "./_utils/generated-lesson-content";
 import { type LessonContext } from "./get-lesson-step";
 
+/**
+ * Generates the ordered explanation steps for one explanation lesson. Sibling
+ * explanation titles are included so the model avoids repeating nearby lessons
+ * in the same chapter.
+ */
 export async function generateExplanationContentStep(
   context: LessonContext,
 ): Promise<{ steps: StaticLessonStep[] }> {

@@ -9,6 +9,11 @@ import { generateSentenceWordPronunciationStep } from "../steps/generate-sentenc
 import { type LessonContext } from "../steps/get-lesson-step";
 import { saveReadingLessonStep } from "../steps/save-reading-lesson-step";
 
+/**
+ * Reading lessons enrich every target-language word the player may render:
+ * canonical sentence tokens plus generated reading distractors. Listening-side
+ * distractors stay as plain learner-language strings and are excluded here.
+ */
 function collectReadingTargetWords({
   distractors,
   sentences,
@@ -22,6 +27,10 @@ function collectReadingTargetWords({
   ]);
 }
 
+/**
+ * Reading generation is bounded by the previous reading lesson so each reading
+ * lesson only reinforces the vocabulary group immediately before it.
+ */
 export async function readingLessonWorkflow(context: LessonContext): Promise<void> {
   "use workflow";
 

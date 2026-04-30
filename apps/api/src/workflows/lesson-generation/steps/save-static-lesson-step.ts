@@ -6,6 +6,10 @@ import { type StaticLessonStep } from "./_utils/generated-lesson-content";
 import { saveStaticLessonContent } from "./_utils/save-core-lesson-content";
 import { type LessonContext } from "./get-lesson-step";
 
+/**
+ * Saves static-step lessons through one implementation so explanation and
+ * tutorial workflows share deletion, persistence, and stream behavior.
+ */
 async function saveStaticLessonStep({
   context,
   images,

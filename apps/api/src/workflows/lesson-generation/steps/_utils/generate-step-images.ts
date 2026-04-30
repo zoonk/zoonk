@@ -22,6 +22,11 @@ function getImageUrlOrThrow({
   return url;
 }
 
+/**
+ * Step images are required illustration output for lesson workflows that save
+ * readable image-backed content. Throwing on the first missing image keeps
+ * workflow retries intact so we do not silently save half-finished lessons.
+ */
 export async function generateStepImages({
   language,
   orgSlug,

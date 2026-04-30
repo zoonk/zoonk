@@ -7,6 +7,11 @@ import { getExplanationStepsSinceLastLessonKind } from "./_utils/explanation-sou
 import { type QuizLessonContent } from "./_utils/generated-lesson-content";
 import { type LessonContext } from "./get-lesson-step";
 
+/**
+ * Generates quiz questions from the explanation steps that have not already
+ * fed an earlier quiz lesson. The fatal prerequisite check keeps the workflow
+ * from creating disconnected quizzes when source explanations are missing.
+ */
 export async function generateQuizContentStep(context: LessonContext): Promise<QuizLessonContent> {
   "use step";
 

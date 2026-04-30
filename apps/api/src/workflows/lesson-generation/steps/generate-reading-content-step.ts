@@ -7,6 +7,10 @@ import { FatalError } from "workflow";
 import { type ReadingLessonContent } from "./_utils/generated-lesson-content";
 import { type LessonContext } from "./get-lesson-step";
 
+/**
+ * Reading lessons should only cover vocabulary that has not already been
+ * consumed by an earlier reading lesson in the same chapter.
+ */
 async function getVocabularyWordsSincePreviousReading(context: LessonContext): Promise<string[]> {
   const previousReading = await prisma.lesson.findFirst({
     orderBy: { position: "desc" },
@@ -38,6 +42,11 @@ async function getVocabularyWordsSincePreviousReading(context: LessonContext): P
   );
 }
 
+/**
+ * Generates reading sentences from the vocabulary group immediately before the
+ * reading lesson. This boundary keeps later readings from repeating words that
+ * were already covered by an earlier reading/listening pair.
+ */
 export async function generateReadingContentStep(
   context: LessonContext,
 ): Promise<ReadingLessonContent> {

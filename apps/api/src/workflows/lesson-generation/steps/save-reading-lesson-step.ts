@@ -11,6 +11,11 @@ import { type LessonContext } from "./get-lesson-step";
 
 type ReadingSentence = ReadingLessonContent["sentences"][number];
 
+/**
+ * Reading persistence writes sentence steps and target-word metadata together
+ * so the player and review lessons can read a consistent set of sentence,
+ * distractor, audio, romanization, and pronunciation resources.
+ */
 export async function saveReadingLessonStep(params: {
   context: LessonContext;
   distractors: Record<string, string[]>;
@@ -74,6 +79,11 @@ export async function saveReadingLessonStep(params: {
   await stream.status({ status: "completed", step: "saveReadingLesson" });
 }
 
+/**
+ * Sentence rows hold reusable target-language metadata while LessonSentence
+ * rows hold lesson-specific translation, explanation, and distractor content.
+ * Both rows must be upserted before the reading step can safely reference them.
+ */
 async function saveOneSentence(params: {
   context: LessonContext;
   distractors: Record<string, string[]>;

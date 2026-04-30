@@ -5,6 +5,10 @@ import { type LessonKind, prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
 import { type LessonContext } from "./get-lesson-step";
 
+/**
+ * Translation lessons copy from the nearest completed vocabulary source so the
+ * translated prompts stay tied to the exact word IDs already taught.
+ */
 async function getPreviousLessonByKind({
   context,
   kinds,
@@ -23,6 +27,11 @@ async function getPreviousLessonByKind({
   });
 }
 
+/**
+ * Translation steps reuse vocabulary word IDs instead of regenerating words.
+ * That keeps translation practice aligned with the learner's current
+ * vocabulary group.
+ */
 export async function saveTranslationLessonStep(context: LessonContext): Promise<void> {
   "use step";
 

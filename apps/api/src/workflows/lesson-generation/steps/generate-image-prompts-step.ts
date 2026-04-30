@@ -4,6 +4,10 @@ import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { type StaticLessonStep } from "./_utils/generated-lesson-content";
 import { type LessonContext } from "./get-lesson-step";
 
+/**
+ * Generates one image prompt per readable static step so the later image step
+ * can preserve the same order when it attaches generated images to content.
+ */
 export async function generateImagePromptsStep({
   context,
   steps,

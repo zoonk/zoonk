@@ -7,6 +7,14 @@ type PronunciationEntry = {
   word: string;
 };
 
+/**
+ * Generates missing pronunciations for target-language words by surface text.
+ *
+ * Pronunciation is meaning-independent, so one WordPronunciation record can be
+ * reused across canonical lesson words and generated distractor words. Querying
+ * by word text lets the workflow enrich words before it knows which database
+ * IDs will be reused.
+ */
 export async function generateWordPronunciations(params: {
   organizationId: string;
   targetLanguage: string;
