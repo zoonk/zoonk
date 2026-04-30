@@ -277,7 +277,7 @@ describe("authenticated users", () => {
 
       // Should have 5 data points: day1 + 3 decayed days + day5
       const { dataPoints } = result;
-      expect(dataPoints.length).toBe(5);
+      expect(dataPoints).toHaveLength(5);
 
       // First and last should be actual data
       expect(dataPoints[0]?.energy).toBe(75);
@@ -313,7 +313,7 @@ describe("authenticated users", () => {
 
       // Should have 6 data points: day1 + 4 decayed days + day6
       const { dataPoints } = result;
-      expect(dataPoints.length).toBe(6);
+      expect(dataPoints).toHaveLength(6);
 
       // Day 1: 3, Day 2: 2, Day 3: 1, Day 4: 0, Day 5: 0 (not negative), Day 6: 50
       expect(dataPoints[0]?.energy).toBe(3);

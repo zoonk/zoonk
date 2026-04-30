@@ -80,6 +80,6 @@ describe(buildLessonPlayerModel, () => {
       reviewHref: "/b/brand/c/course",
       secondaryReviewHref: "/b/brand/c/course/ch/chapter-1",
     });
-    expect(model.onNextHref).toBe(null);
+    expect(model.onNextHref).toBeNull();
   });
 });

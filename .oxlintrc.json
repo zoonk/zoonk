@@ -67,10 +67,7 @@
     "jest/prefer-expect-assertions": "off",
     "jest/prefer-lowercase-title": "off",
     "jest/prefer-mock-return-shorthand": "off",
-    "jest/prefer-to-be": "off",
-    "jest/prefer-to-have-length": "off",
     "jest/require-to-throw-message": "off",
-    "jest/require-top-level-describe": "off",
     "jest/valid-title": "off",
     "jsx-max-depth": ["error", { "max": 5 }],
     "jsx-a11y/no-autofocus": "off",
@@ -248,7 +245,8 @@
     {
       "files": ["apps/main/**/*.tsx", "apps/api/**/*.tsx"],
       "rules": { "zoonk/no-hardcoded-aria-label": "error" }
-    }
+    },
+    { "files": ["**/setup-tests.ts", "**/browser-setup.ts"], "rules": { "jest/require-top-level-describe": "off" } },
   ],
   "ignorePatterns": [
     "node_modules",
