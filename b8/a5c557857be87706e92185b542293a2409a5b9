@@ -1,0 +1,44 @@
+apps/main/src/data/courses/get-continue-learning.ts
+  0984569301891172 137-160,269-275
+packages/core/src/lessons/get-next-lesson-in-course.test.ts
+  911b1744c3ca50fe 212,248,260-262
+packages/core/src/player/queries/get-next-sibling.ts
+  0984569301891172 3,32,35,87,90
+packages/core/src/lessons/get-next-lesson-in-course.ts
+  911b1744c3ca50fe 2,4,15,26-32,34,39-48,54
+apps/main/src/data/courses/get-continue-learning.test.ts
+  0984569301891172 490-548
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "b8a5c557857be87706e92185b542293a2409a5b9",
+  "prompts": {
+    "0984569301891172": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ddfd2-3c91-7ea2-abf2-3d0987b2d48d",
+        "model": "unknown"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 95,
+      "total_deletions": 0,
+      "accepted_lines": 95,
+      "overriden_lines": 0
+    },
+    "911b1744c3ca50fe": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ddfb6-ea6a-7c53-85c5-faba7d0cd11d",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 29,
+      "total_deletions": 51,
+      "accepted_lines": 27,
+      "overriden_lines": 0
+    }
+  }
+}
