@@ -1,0 +1,94 @@
+packages/ai/src/tasks/lessons/language/lesson-sentences.ts
+  a7a11caa19c57d96 9-10
+packages/ai/src/tasks/steps/step-content-image.ts
+  a7a11caa19c57d96 8,12-13,55
+packages/ai/src/tasks/lessons/language/lesson-grammar-user-content.ts
+  a7a11caa19c57d96 8-9
+packages/ai/src/tasks/courses/course-description.ts
+  a7a11caa19c57d96 7-8
+packages/ai/src/tasks/lessons/language/lesson-pronunciation.ts
+  a7a11caa19c57d96 8-9
+packages/ai/src/tasks/courses/course-chapters.ts
+  a7a11caa19c57d96 7
+  83592d7c6494a61f 8-12
+packages/ai/src/tasks/lessons/language/lesson-distractors.ts
+  83592d7c6494a61f 10-13
+  a7a11caa19c57d96 9
+packages/ai/src/tasks/lessons/language/lesson-vocabulary.ts
+  a7a11caa19c57d96 9-10
+packages/ai/src/tasks/lessons/language/lesson-grammar-content.ts
+  a7a11caa19c57d96 9-10
+packages/ai/src/tasks/lessons/language/lesson-translation.ts
+  a7a11caa19c57d96 8-9
+packages/ai/src/tasks/courses/course-suggestions.ts
+  a7a11caa19c57d96 7-8
+packages/ai/src/tasks/steps/step-image-prompts.ts
+  a7a11caa19c57d96 7-8
+packages/ai/src/tasks/lessons/core/lesson-practice.ts
+  a7a11caa19c57d96 8-9
+packages/ai/src/tasks/courses/course-thumbnail.ts
+  a7a11caa19c57d96 7,30
+packages/ai/src/tasks/steps/step-select-image.ts
+  a7a11caa19c57d96 7,32
+packages/ai/src/tasks/lessons/core/lesson-quiz.ts
+  a7a11caa19c57d96 8-9
+packages/ai/src/tasks/chapters/language-chapter-lessons.ts
+  a7a11caa19c57d96 8-9
+packages/ai/src/tasks/lessons/core/lesson-explanation.ts
+  a7a11caa19c57d96 7-8
+packages/ai/src/tasks/lessons/lesson-kind.ts
+  a7a11caa19c57d96 7
+  83592d7c6494a61f 8-12
+packages/ai/src/tasks/lessons/tutorial/lesson-tutorial.ts
+  a7a11caa19c57d96 7-8
+packages/ai/src/tasks/chapters/chapter-lessons.ts
+  a7a11caa19c57d96 7-10,12
+  h_1cda88fc21fe9c 11
+packages/ai/src/tasks/lessons/language/lesson-romanization.ts
+  a7a11caa19c57d96 7-8
+packages/ai/src/tasks/courses/course-categories.ts
+  a7a11caa19c57d96 8
+  83592d7c6494a61f 9-13
+packages/ai/src/tasks/courses/language-course-chapters.ts
+  a7a11caa19c57d96 8-9
+packages/ai/src/tasks/courses/alternative-titles.ts
+  a7a11caa19c57d96 7-8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "3ac3a5620ecde402cc1a815c2d1462edb09ff954",
+  "prompts": {
+    "83592d7c6494a61f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019de4f1-f218-7f22-ab90-e80974d0ed5a",
+        "model": "unknown"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 19,
+      "total_deletions": 4,
+      "accepted_lines": 19,
+      "overriden_lines": 0
+    },
+    "a7a11caa19c57d96": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019de09e-343a-7240-81a9-cf99ca7e3025",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 57,
+      "total_deletions": 141,
+      "accepted_lines": 51,
+      "overriden_lines": 1
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
