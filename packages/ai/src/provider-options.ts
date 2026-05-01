@@ -1,7 +1,5 @@
 import { type GatewayProviderOptions } from "@ai-sdk/gateway";
 import { type OpenAILanguageModelResponsesOptions } from "@ai-sdk/openai";
-import { type ImageModel } from "ai";
-import { buildGatewayReportingTags } from "./reporting-tags";
 
 export type ReasoningEffort = "auto" | "low" | "medium" | "high";
 export type ImageGenerationQuality = "auto" | "low" | "medium" | "high";
@@ -15,12 +13,11 @@ const providerOrderByModelPrefix = {
 type SupportedModelPrefix = keyof typeof providerOrderByModelPrefix;
 
 type ProviderOptionsResult = {
-  gateway: Pick<GatewayProviderOptions, "models" | "order" | "tags">;
+  gateway: Pick<GatewayProviderOptions, "models" | "order">;
   openai?: Pick<OpenAILanguageModelResponsesOptions, "reasoningEffort">;
 };
 
 type ImageProviderOptionsResult = {
-  gateway: Pick<GatewayProviderOptions, "tags">;
   openai: { output_format: "webp"; quality: ImageGenerationQuality };
 };
 
@@ -32,24 +29,15 @@ type ImageProviderOptionsResult = {
 function buildGatewayProviderOptions({
   fallbackModels,
   model,
-  taskName,
   useFallback,
 }: {
   fallbackModels: readonly string[];
   model: string;
-  taskName: string;
   useFallback: boolean;
 }): ProviderOptionsResult["gateway"] {
   const order = getGatewayProviderOrder(model);
-  const tags = shouldAddGatewayTags(useFallback)
-    ? buildGatewayTags({ model, taskName })
-    : undefined;
 
-  return {
-    models: useFallback ? [...fallbackModels] : [],
-    ...(order ? { order } : {}),
-    ...(tags ? { tags } : {}),
-  };
+  return { models: useFallback ? [...fallbackModels] : [], ...(order ? { order } : {}) };
 }
 
 /**
@@ -78,66 +66,17 @@ function isSupportedModelPrefix(value: string): value is SupportedModelPrefix {
 }
 
 /**
- * Builds the reporting tags attached to every gateway-backed task request.
- * We keep the format in one place so custom reporting queries can rely on a
- * stable `task:*` prefix instead of every caller inventing its own shape.
- */
-function buildGatewayTags({ model, taskName }: { model: string; taskName: string }): string[] {
-  return buildGatewayReportingTags({ model, taskName });
-}
-
-/**
- * Image tasks accept either a plain `provider/model` string or a provider model
- * instance. Custom Reporting needs a stable string tag, so this helper converts
- * either shape into the same `provider/model` identifier before we build tags.
- */
-function getImageReportingModel(model: ImageModel): string {
-  if (typeof model === "string") {
-    return model;
-  }
-
-  return model.modelId.includes("/") ? model.modelId : `${model.provider}/${model.modelId}`;
-}
-
-/**
  * Builds the provider options shared by image-generation tasks.
  * Image requests do not use the text fallback helper, so they need their own
- * small wrapper to keep Custom Reporting tags and the OpenAI image output
- * format in one place instead of drifting across each task entry point.
+ * small wrapper to keep the OpenAI image output format in one place instead of
+ * drifting across each task entry point.
  */
 export function buildImageProviderOptions({
-  model,
   quality,
-  taskName,
 }: {
-  model: ImageModel;
   quality: ImageGenerationQuality;
-  taskName: string;
 }): ImageProviderOptionsResult {
-  const tags = isGatewayTaggingEnabled()
-    ? buildGatewayTags({ model: getImageReportingModel(model), taskName })
-    : undefined;
-
-  return { gateway: tags ? { tags } : {}, openai: { output_format: "webp", quality } };
-}
-
-/**
- * Gateway request tags power our cost reporting, but tagged Gateway requests
- * cost money. We keep this behind an explicit env opt-in so environments that
- * do not need reporting can avoid the extra charge by default.
- */
-function isGatewayTaggingEnabled(): boolean {
-  return process.env.ENABLE_AI_GATEWAY_TAGS === "true";
-}
-
-/**
- * We only want analytics for tasks that actually participate in fallback
- * routing, and only in environments that explicitly opted into paid Gateway
- * tags. This keeps eval runs out of Gateway reports while still letting opted-
- * in fallback flows report against the normal task path.
- */
-function shouldAddGatewayTags(useFallback: boolean): boolean {
-  return useFallback && isGatewayTaggingEnabled();
+  return { openai: { output_format: "webp", quality } };
 }
 
 /**
@@ -150,16 +89,14 @@ export function buildProviderOptions({
   useFallback,
   fallbackModels,
   reasoningEffort,
-  taskName,
 }: {
   model: string;
   useFallback: boolean;
   fallbackModels: readonly string[];
   reasoningEffort?: ReasoningEffort;
-  taskName: string;
 }): ProviderOptionsResult {
   const options: ProviderOptionsResult = {
-    gateway: buildGatewayProviderOptions({ fallbackModels, model, taskName, useFallback }),
+    gateway: buildGatewayProviderOptions({ fallbackModels, model, useFallback }),
   };
 
   if (reasoningEffort && reasoningEffort !== "auto") {

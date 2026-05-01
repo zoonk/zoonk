@@ -1,12 +1,11 @@
 import "server-only";
-import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
 import systemPrompt from "./alternative-titles.prompt.md";
 
-const taskName = "alternative-titles";
-const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
+const defaultModel = "openai/gpt-5.4";
+const fallbackModels = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"] as const;
 
 const schema = z.object({ alternatives: z.array(z.string()) });
 
@@ -36,7 +35,6 @@ export async function generateAlternativeTitles({
     fallbackModels,
     model,
     reasoningEffort,
-    taskName,
     useFallback,
   });
 

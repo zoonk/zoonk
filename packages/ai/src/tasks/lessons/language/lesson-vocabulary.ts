@@ -1,14 +1,13 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
-import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { formatConceptLines } from "../config";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./lesson-vocabulary.prompt.md";
 
-const taskName = "lesson-vocabulary";
-const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
+const defaultModel = "google/gemini-3-flash";
+const fallbackModels = ["google/gemini-3.1-pro-preview", "openai/gpt-5.4"] as const;
 
 const wordSchema = z.object({ translation: z.string(), word: z.string() });
 
@@ -57,7 +56,6 @@ export async function generateLessonVocabulary({
     fallbackModels,
     model,
     reasoningEffort,
-    taskName,
     useFallback,
   });
 

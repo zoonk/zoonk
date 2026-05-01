@@ -1,12 +1,10 @@
-import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { type GeneratedFile, type ImageModel, generateImage } from "ai";
 import { type ImageGenerationQuality, buildImageProviderOptions } from "../../provider-options";
 import promptTemplate from "./course-thumbnail.prompt.md";
 
-const taskName = "course-thumbnail";
-const { defaultModel } = AI_TASK_MODEL_CONFIG[taskName];
+const defaultModel = "openai/gpt-image-2";
 const DEFAULT_QUALITY = "low";
 
 function getCourseThumbnailPrompt(title: string) {
@@ -29,7 +27,7 @@ export async function generateCourseThumbnail({
       maxImagesPerCall: 1,
       model,
       prompt: getCourseThumbnailPrompt(title),
-      providerOptions: buildImageProviderOptions({ model, quality, taskName }),
+      providerOptions: buildImageProviderOptions({ quality }),
       size: "1024x1024",
     }),
   );

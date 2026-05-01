@@ -1,12 +1,15 @@
 import "server-only";
-import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
 import systemPrompt from "./lesson-kind.prompt.md";
 
-const taskName = "lesson-kind";
-const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
+const defaultModel = "openai/gpt-5.4-nano";
+const fallbackModels = [
+  "google/gemini-3.1-flash-lite-preview",
+  "meta/llama-4-scout",
+  "anthropic/claude-haiku-4.5",
+] as const;
 
 const schema = z.object({ kind: z.enum(["explanation", "tutorial"]) });
 
@@ -50,7 +53,6 @@ export async function generateLessonKind({
     fallbackModels,
     model,
     reasoningEffort,
-    taskName,
     useFallback,
   });
 

@@ -21,9 +21,9 @@ type StatsBreadcrumbItem = { href?: string; label: string };
 
 /**
  * The stats pages all share the same dashboard-level navigation, but some
- * sections need an extra breadcrumb level such as `AI Tasks > Course Suggestions`.
- * This keeps the breadcrumb markup in one place while letting each page opt into
- * deeper navigation when needed.
+ * sections need extra breadcrumb levels for drill-down pages. This keeps the
+ * breadcrumb markup in one place while letting each page opt into deeper
+ * navigation when needed.
  */
 function StatsBreadcrumb({ items }: { items: StatsBreadcrumbItem[] }) {
   return (

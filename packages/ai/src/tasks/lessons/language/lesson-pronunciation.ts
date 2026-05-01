@@ -1,13 +1,12 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
-import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./lesson-pronunciation.prompt.md";
 
-const taskName = "lesson-pronunciation";
-const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
+const defaultModel = "google/gemini-3-flash";
+const fallbackModels = ["anthropic/claude-sonnet-4.6", "openai/gpt-5.1-instant"] as const;
 
 const schema = z.object({ pronunciation: z.string().min(1) });
 
@@ -42,7 +41,6 @@ export async function generateLessonPronunciation({
     fallbackModels,
     model,
     reasoningEffort,
-    taskName,
     useFallback,
   });
 

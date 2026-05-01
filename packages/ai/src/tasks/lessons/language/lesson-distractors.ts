@@ -1,14 +1,16 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
-import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { type DistractorShape } from "@zoonk/utils/distractors";
 import { getLanguageName } from "@zoonk/utils/languages";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import systemPrompt from "./lesson-distractors.prompt.md";
 
-const taskName = "lesson-distractors";
-const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
+const defaultModel = "openai/gpt-5.4";
+const fallbackModels = [
+  "google/gemini-3.1-flash-lite-preview",
+  "anthropic/claude-sonnet-4.6",
+] as const;
 
 const schema = z.object({ distractors: z.array(z.string().min(1)).min(1) });
 
@@ -48,7 +50,6 @@ export async function generateLessonDistractors({
     fallbackModels,
     model,
     reasoningEffort,
-    taskName,
     useFallback,
   });
 

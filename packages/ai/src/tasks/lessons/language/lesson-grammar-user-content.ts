@@ -1,13 +1,12 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
-import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./lesson-grammar-user-content.prompt.md";
 
-const taskName = "lesson-grammar-user-content";
-const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
+const defaultModel = "openai/gpt-5.4";
+const fallbackModels = ["anthropic/claude-opus-4.6", "google/gemini-3-flash"] as const;
 
 const schema = z.object({
   discovery: z.object({
@@ -75,7 +74,6 @@ export async function generateLessonGrammarUserContent({
     fallbackModels,
     model,
     reasoningEffort,
-    taskName,
     useFallback,
   });
 
