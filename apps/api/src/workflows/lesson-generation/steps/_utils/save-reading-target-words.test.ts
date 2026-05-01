@@ -25,6 +25,7 @@ async function createLanguageLesson({
     targetLanguage,
     title: `Reading Target Course ${randomUUID()}`,
   });
+
   const chapter = await chapterFixture({
     courseId: course.id,
     isPublished: true,
@@ -89,6 +90,7 @@ describe(saveReadingTargetWords, () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const existingWord = `Gato${id}`;
     const lowercaseWord = existingWord.toLowerCase();
+
     const [lesson] = await Promise.all([
       createLanguageLesson({ organizationId }),
       wordFixture({

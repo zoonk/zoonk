@@ -16,6 +16,7 @@ describe(setLessonAsRunningStep, () => {
 
   it("marks a lesson as running and clears stale steps when requested", async () => {
     const lesson = await createLessonContext({ generationStatus: "failed", organizationId });
+
     await stepFixture({
       content: { text: "stale", title: "Stale", variant: "text" },
       kind: "static",
@@ -37,7 +38,9 @@ describe(setLessonAsRunningStep, () => {
       generationRunId: "workflow-running-1",
       generationStatus: "running",
     });
+
     expect(remainingSteps).toHaveLength(0);
+
     expect(getStreamedEvents()).toStrictEqual(
       expect.arrayContaining([
         expect.objectContaining({ status: "started", step: "setLessonAsRunning" }),

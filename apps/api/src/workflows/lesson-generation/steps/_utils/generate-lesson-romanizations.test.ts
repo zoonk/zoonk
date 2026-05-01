@@ -29,6 +29,7 @@ describe(generateLessonRomanizations, () => {
       あれは犬です: "are wa inu desu",
       これは猫です: "kore wa neko desu",
     });
+
     expect(generateLessonRomanizationMock).toHaveBeenCalledWith({ targetLanguage: "ja", texts });
   });
 

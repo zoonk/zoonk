@@ -20,5 +20,6 @@ export async function stepFixture(attrs: {
       wordId: attrs.wordId,
     },
   });
+
   return step;
 }

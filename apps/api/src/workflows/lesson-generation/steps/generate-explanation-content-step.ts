@@ -19,6 +19,7 @@ export async function generateExplanationContentStep(
   await stream.status({ status: "started", step: "generateExplanationContent" });
 
   const otherLessonTitles = await getOtherExplanationLessonTitles(context);
+
   const result = await generateLessonExplanation({
     chapterTitle: context.chapter.title,
     courseTitle: context.chapter.course.title,

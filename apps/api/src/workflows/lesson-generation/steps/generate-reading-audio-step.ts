@@ -39,12 +39,15 @@ export async function generateReadingAudioStep({
       targetLanguage,
     },
   });
+
   const existingAudioUrls = Object.fromEntries(
     existingAudios.flatMap((record) =>
       record.audioUrl ? [[record.sentence, record.audioUrl]] : [],
     ),
   );
+
   const sentencesNeedingAudio = sentences.filter((entry) => !existingAudioUrls[entry.sentence]);
+
   const results = await Promise.all(
     sentencesNeedingAudio.map((entry) =>
       generateAudioForText(entry.sentence, targetLanguage, organization.slug),

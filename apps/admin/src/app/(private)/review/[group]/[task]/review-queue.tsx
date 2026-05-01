@@ -19,6 +19,7 @@ import { ReviewProgress } from "../../_components/review-progress";
 async function renderContent(taskType: ReviewTaskType, entityId: string) {
   if (taskType === "stepImage") {
     const item = await getStepImageReview(entityId);
+
     if (!item) {
       return null;
     }
@@ -39,9 +40,11 @@ async function renderContent(taskType: ReviewTaskType, entityId: string) {
 
   if (taskType === "stepSelectImage") {
     const item = await getStepImageReview(entityId);
+
     if (!item) {
       return null;
     }
+
     return <StepSelectImageReview item={item} />;
   }
 

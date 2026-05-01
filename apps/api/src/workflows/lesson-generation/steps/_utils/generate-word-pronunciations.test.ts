@@ -71,6 +71,7 @@ describe(generateWordPronunciations, () => {
     });
 
     expect(result[wordText]).toBe("NWEH-voh");
+
     expect(generateLessonPronunciationMock).toHaveBeenCalledWith({
       targetLanguage: "es",
       userLanguage: "en",
@@ -82,6 +83,7 @@ describe(generateWordPronunciations, () => {
     const id = randomUUID().slice(0, 8);
     const existingWordText = `Gato${id}`;
     const newWordText = `Perro${id}`;
+
     const word = await wordFixture({
       organizationId,
       targetLanguage: "es",

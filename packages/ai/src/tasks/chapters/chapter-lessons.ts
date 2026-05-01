@@ -5,6 +5,7 @@ import { type ReasoningEffort, buildProviderOptions } from "../../provider-optio
 import systemPrompt from "./chapter-lessons.prompt.md";
 
 const defaultModel = "openai/gpt-5.5";
+
 const fallbackModels = [
   "openai/gpt-5.4",
   "google/gemini-3.1-pro-preview",

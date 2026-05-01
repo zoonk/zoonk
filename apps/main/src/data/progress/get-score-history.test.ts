@@ -26,6 +26,7 @@ describe("authenticated users", () => {
     const headers = await signInAs(user.email, user.password);
 
     const date = new Date();
+
     await prisma.dailyProgress.create({
       data: {
         correctAnswers: 0,

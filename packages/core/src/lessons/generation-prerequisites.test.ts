@@ -90,6 +90,7 @@ describe(getBlockingLessonGenerationPrerequisite, () => {
         position: 4,
       }),
     ]);
+
     const runningExplanation = lessons[3];
     const practice = lessons[4];
 

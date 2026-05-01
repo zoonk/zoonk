@@ -65,9 +65,11 @@ function WordBank({
     <div aria-label={t("Word bank")} className="flex flex-wrap gap-2.5" role="group">
       {words.map((option, index) => {
         const usedCount = placedWords.filter((placed) => placed.word === option.word).length;
+
         const totalCount = words
           .slice(0, index + 1)
           .filter((item) => item.word === option.word).length;
+
         const isUsed = usedCount >= totalCount;
 
         return (

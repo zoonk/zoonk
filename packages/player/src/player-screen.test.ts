@@ -99,12 +99,14 @@ describe(getPlayerScreenModel, () => {
     });
 
     expect(screen.kind).toBe("step");
+
     expect(screen.bottomBar).toStrictEqual({
       button: "check",
       disabled: true,
       kind: "primaryAction",
       run: "check",
     });
+
     expect(screen.keyboard.enterAction).toBeNull();
   });
 

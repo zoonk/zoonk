@@ -66,6 +66,7 @@ describe(getChapterStep, () => {
     const result = await getChapterStep(middleChapter.id);
 
     const neighborTitles = result.neighboringChapters.map((ch) => ch.title);
+
     const expectedNeighborTitles = chapters
       .filter((ch) => ch.id !== middleChapter.id)
       .map((ch) => ch.title);
@@ -86,6 +87,7 @@ describe(getChapterStep, () => {
   it("throws FatalError when chapter is outside the AI organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });
+
     const chapter = await chapterFixture({
       courseId: otherCourse.id,
       organizationId: otherOrg.id,

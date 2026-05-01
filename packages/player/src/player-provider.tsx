@@ -48,6 +48,7 @@ export function PlayerProvider({
     () => ({ lesson, totalBrainPower }),
     [lesson, totalBrainPower],
   );
+
   const [state, dispatch] = useReducer(playerReducer, initInput, createInitialState);
   const actions = usePlayerActions(state, dispatch, onComplete, viewer.isAuthenticated);
   const screen = useMemo(() => getPlayerScreenModel(state), [state]);

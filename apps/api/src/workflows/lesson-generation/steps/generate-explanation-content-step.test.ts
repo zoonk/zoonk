@@ -52,6 +52,7 @@ describe(generateExplanationContentStep, () => {
       { text: "Concept explanation.", title: "Concept" },
       { text: "Apply the idea elsewhere.", title: "Transfer" },
     ]);
+
     expect(generateLessonExplanation).toHaveBeenCalledWith(
       expect.objectContaining({
         lessonDescription: context.description,
@@ -59,6 +60,7 @@ describe(generateExplanationContentStep, () => {
         otherLessonTitles: ["Sibling explanation"],
       }),
     );
+
     expect(getStreamedEvents()).toStrictEqual(
       expect.arrayContaining([
         expect.objectContaining({ status: "started", step: "generateExplanationContent" }),

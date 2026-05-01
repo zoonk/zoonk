@@ -14,6 +14,7 @@ function escapeSvgText(value: string): string {
  */
 export function buildInlineImageUrl({ label }: { label: string }): string {
   const safeLabel = escapeSvgText(label);
+
   const svg = [
     '<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">',
     '<rect width="1024" height="1024" fill="#f4f4f5" />',

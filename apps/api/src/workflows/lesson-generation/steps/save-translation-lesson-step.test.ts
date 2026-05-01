@@ -23,6 +23,7 @@ describe(saveTranslationLessonStep, () => {
       position: 2,
       targetLanguage: "pt",
     });
+
     const [vocabularyLesson, firstWord, secondWord] = await Promise.all([
       lessonFixture({
         chapterId: context.chapterId,

@@ -24,6 +24,7 @@ describe(generateImagePromptsStep, () => {
 
   it("generates image prompts for static lesson steps", async () => {
     const context = await createLessonContext({ organizationId });
+
     const steps = [
       { text: "First text", title: "First" },
       { text: "Second text", title: "Second" },
@@ -32,6 +33,7 @@ describe(generateImagePromptsStep, () => {
     const result = await generateImagePromptsStep({ context, steps });
 
     expect(result).toStrictEqual({ prompts: ["first prompt", "second prompt"] });
+
     expect(generateStepImagePrompts).toHaveBeenCalledWith(
       expect.objectContaining({ lessonDescription: context.description, steps }),
     );

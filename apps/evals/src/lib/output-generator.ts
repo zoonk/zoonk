@@ -15,12 +15,14 @@ async function generateOutputForTestCase(
   const model = getModelById(modelId);
   const gatewayModelId = getGatewayModelId(modelId);
   const startTime = performance.now();
+
   const result = await task.generate({
     ...testCase.userInput,
     model: gatewayModelId,
     reasoningEffort: model?.reasoningEffort,
     useFallback: false,
   });
+
   const duration = performance.now() - startTime;
 
   const testCaseId = `${testCase.id}-${runNumber}`;
@@ -49,6 +51,7 @@ type TestCaseRun = { testCase: TestCase; runNumber: number };
 
 function collectTestCaseRuns(testCases: TestCase[], existingEntries: OutputEntry[]): TestCaseRun[] {
   const runs: TestCaseRun[] = [];
+
   for (const testCase of testCases) {
     for (let runNumber = 1; runNumber <= RUNS_PER_TEST_CASE; runNumber += 1) {
       if (!shouldSkipTestCase(existingEntries, testCase.id, runNumber)) {
@@ -56,6 +59,7 @@ function collectTestCaseRuns(testCases: TestCase[], existingEntries: OutputEntry
       }
     }
   }
+
   return runs;
 }
 
@@ -80,6 +84,7 @@ function createModelOutputs(taskId: string, modelId: string, outputs: OutputEntr
 export async function generateOutputs(task: Task, modelId: string): Promise<ModelOutputs> {
   const safeModelId = modelId.replaceAll(/[\r\n]/g, "");
   logInfo(`\nGenerating outputs for task: ${task.name}, model: [${safeModelId}]`);
+
   logInfo(
     `Total test cases: ${task.testCases.length} (${task.testCases.length * RUNS_PER_TEST_CASE} runs)`,
   );

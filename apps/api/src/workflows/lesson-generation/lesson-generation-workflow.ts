@@ -18,6 +18,7 @@ import { setLessonAsCompletedStep } from "./steps/set-lesson-as-completed-step";
 import { setLessonAsRunningStep } from "./steps/set-lesson-as-running-step";
 
 type LessonGenerationContext = Awaited<ReturnType<typeof getLessonStep>>;
+
 type GeneratedLessonContext = LessonGenerationContext & {
   kind: Exclude<LessonGenerationContext["kind"], "custom" | "review">;
 };

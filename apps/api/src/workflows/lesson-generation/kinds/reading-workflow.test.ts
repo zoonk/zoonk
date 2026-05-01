@@ -235,14 +235,18 @@ describe(readingLessonWorkflow, () => {
       audioUrl: `https://example.com/audio/${encodeURIComponent(canonicalWord)}.mp3`,
       word: canonicalWord,
     });
+
     expect(canonicalRecord?.pronunciations[0]?.pronunciation).toBe(
       `${canonicalWord} pronunciation`,
     );
+
     expect(duplicateDistractorRecord).toBeNull();
+
     expect(validDistractorRecord).toMatchObject({
       audioUrl: `https://example.com/audio/${encodeURIComponent(validDistractor)}.mp3`,
       word: validDistractor,
     });
+
     expect(lessonWord).toMatchObject({ translation: `${canonicalWord} translated` });
     expect(lessonWord?.word.word).toBe(canonicalWord);
   });

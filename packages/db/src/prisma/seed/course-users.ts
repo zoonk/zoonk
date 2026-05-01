@@ -19,6 +19,7 @@ export async function seedCourseUsers(
   // Enroll owner in all 5 courses with different startedAt times
   // So they appear in order in the continue learning section
   const now = new Date();
+
   await Promise.all(
     courses.map((course, index) =>
       prisma.courseUser.upsert({
@@ -35,6 +36,7 @@ export async function seedCourseUsers(
 
   // Also enroll member in the first course
   const firstCourse = courses[0];
+
   if (firstCourse) {
     await prisma.courseUser.upsert({
       create: { courseId: firstCourse.id, userId: users.member.id },

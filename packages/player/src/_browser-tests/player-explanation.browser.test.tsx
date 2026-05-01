@@ -88,17 +88,20 @@ describe("player browser integration: explanation lesson flow", () => {
     await expect
       .element(page.getByRole("heading", { name: /whole message travel as one blob/i }))
       .toBeInTheDocument();
+
     await expect
       .element(page.getByAltText(/wrapped network packet moving through layered labels/i))
       .toBeInTheDocument();
 
     fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
     await expect.element(page.getByText(/each layer adds its own label/i)).toBeInTheDocument();
+
     await expect
       .element(page.getByAltText(/different network layers adding their own labels/i))
       .toBeInTheDocument();
 
     fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
+
     await expect
       .element(
         page.getByText(/which label helps the network decide where to send the packet next/i),
@@ -111,6 +114,7 @@ describe("player browser integration: explanation lesson flow", () => {
 
     await expect.element(page.getByRole("heading", { name: "This is why" })).toBeInTheDocument();
     await expect.element(page.getByText(/whatsapp/i)).toBeInTheDocument();
+
     await expect
       .element(
         page.getByAltText(

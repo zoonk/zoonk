@@ -60,6 +60,7 @@ describe("durable curriculum completion rules", () => {
     const lesson10 = createTestUuid(10);
     const lesson11 = createTestUuid(11);
     const lesson20 = createTestUuid(20);
+
     const rows = [
       createRow({ chapterId: chapter1, lessonId: lesson10 }),
       createRow({ chapterId: chapter1, lessonId: lesson11 }),
@@ -107,6 +108,7 @@ describe("durable curriculum completion rules", () => {
     const lesson10 = createTestUuid(10);
     const lesson11 = createTestUuid(11);
     const missingChapterId = createTestUuid(99);
+
     const rowsByChapter = groupRowsByChapter({
       rows: [
         createRow({ chapterId, isCompleted: true, lessonId: lesson10 }),
@@ -163,6 +165,7 @@ describe("durable curriculum completion rules", () => {
     const chapter3 = createTestUuid(3);
     const lesson10 = createTestUuid(10);
     const lesson20 = createTestUuid(20);
+
     const rowsByChapter = groupRowsByChapter({
       rows: [
         createRow({ chapterId: chapter1, isCompleted: true, lessonId: lesson10 }),
@@ -203,6 +206,7 @@ describe("durable curriculum completion rules", () => {
     const chapter2 = createTestUuid(2);
     const lesson10 = createTestUuid(10);
     const lesson20 = createTestUuid(20);
+
     const rowsByChapter = groupRowsByChapter({
       rows: [
         createRow({ chapterId: chapter1, isCompleted: true, lessonId: lesson10 }),

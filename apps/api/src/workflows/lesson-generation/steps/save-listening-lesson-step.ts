@@ -40,6 +40,7 @@ export async function saveListeningLessonStep(context: LessonContext): Promise<v
   }
 
   await prisma.step.deleteMany({ where: { lessonId: context.id } });
+
   await prisma.step.createMany({
     data: readingSteps.map((readingStep) => ({
       content: assertStepContent("listening", {}),

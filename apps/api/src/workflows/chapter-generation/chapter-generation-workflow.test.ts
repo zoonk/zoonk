@@ -70,6 +70,7 @@ describe(chapterGenerationWorkflow, () => {
       const completionEvent = getStreamedEvents().find(
         (event) => event.step === CHAPTER_COMPLETION_STEP && event.status === "completed",
       );
+
       expect(completionEvent).toBeUndefined();
     });
 
@@ -91,6 +92,7 @@ describe(chapterGenerationWorkflow, () => {
       const completionEvent = getStreamedEvents().find(
         (event) => event.step === CHAPTER_COMPLETION_STEP && event.status === "completed",
       );
+
       expect(completionEvent).toBeDefined();
     });
 
@@ -121,6 +123,7 @@ describe(chapterGenerationWorkflow, () => {
   describe("happy path", () => {
     it("calls lessonGenerationWorkflow with first lesson's ID", async () => {
       const title = `Lesson Gen Chapter ${randomUUID()}`;
+
       const chapter = await chapterFixture({
         courseId: course.id,
         generationStatus: "pending",
@@ -140,6 +143,7 @@ describe(chapterGenerationWorkflow, () => {
 
     it("sets chapter as completed before the first lesson generation runs", async () => {
       const title = `Completed Before Lesson Gen ${randomUUID()}`;
+
       const chapter = await chapterFixture({
         courseId: course.id,
         generationStatus: "pending",
@@ -162,6 +166,7 @@ describe(chapterGenerationWorkflow, () => {
 
     it("updates chapter status: pending → running → completed", async () => {
       const title = `Status Transition Chapter ${randomUUID()}`;
+
       const chapter = await chapterFixture({
         courseId: course.id,
         generationStatus: "pending",
@@ -186,6 +191,7 @@ describe(chapterGenerationWorkflow, () => {
       );
 
       const title = `Lesson Fail Chapter ${randomUUID()}`;
+
       const chapter = await chapterFixture({
         courseId: course.id,
         generationStatus: "pending",
@@ -206,6 +212,7 @@ describe(chapterGenerationWorkflow, () => {
       vi.mocked(generateChapterLessons).mockRejectedValueOnce(new Error("AI generation failed"));
 
       const title = `Error Chapter ${randomUUID()}`;
+
       const chapter = await chapterFixture({
         courseId: course.id,
         generationStatus: "pending",
@@ -223,6 +230,7 @@ describe(chapterGenerationWorkflow, () => {
       const errorEvent = getStreamedEvents().find(
         (event) => event.status === "error" && event.step === "workflowError",
       );
+
       expect(errorEvent).toBeDefined();
     });
 

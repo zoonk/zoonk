@@ -29,6 +29,7 @@ describe("authenticated users", () => {
     });
 
     const result = await getBeltLevel(headers);
+
     expect(result).toStrictEqual({
       bpPerLevel: 1000,
       bpToNextLevel: 500,

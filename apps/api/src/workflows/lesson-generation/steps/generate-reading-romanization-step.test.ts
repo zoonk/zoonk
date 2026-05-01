@@ -31,17 +31,20 @@ describe(generateReadingRomanizationStep, () => {
     const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
     const catWord = `猫${uniqueId}`;
     const waterWord = `水${uniqueId}`;
+
     const context = await createLessonContext({
       kind: "reading",
       organizationId,
       targetLanguage: "ja",
     });
+
     const sentence = `${catWord} ${waterWord}`;
     const sentences = [{ explanation: "", sentence, translation: "cat and water" }];
 
     await expect(generateReadingRomanizationStep({ context, sentences })).resolves.toStrictEqual({
       romanizations: { [sentence]: `${sentence} romanized` },
     });
+
     expect(generateLessonRomanization).toHaveBeenCalledWith({
       targetLanguage: "ja",
       texts: [sentence],

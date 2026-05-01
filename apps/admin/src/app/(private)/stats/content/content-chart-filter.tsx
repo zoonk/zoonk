@@ -21,6 +21,7 @@ function getCountForFilter(row: DailyContentRow, filter: ContentFilterValue): nu
   if (filter === "all") {
     return row.courses + row.chapters + row.lessons + row.steps;
   }
+
   return row[filter];
 }
 
@@ -38,6 +39,7 @@ export function ContentChart({
       count: getCountForFilter(row, filter),
       date: row.date,
     }));
+
     return buildChartData(filtered, period, "en");
   }, [dailyContent, filter, period]);
 

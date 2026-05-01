@@ -61,13 +61,16 @@ function createRouteHandler(options: MockApiOptions) {
           contentType: "application/json",
           status: triggerResponse.status ?? 500,
         });
+
         return;
       }
+
       await route.fulfill({
         body: JSON.stringify({ message: "Workflow started", runId: triggerResponse.runId }),
         contentType: "application/json",
         status: 200,
       });
+
       return;
     }
 
@@ -77,16 +80,19 @@ function createRouteHandler(options: MockApiOptions) {
         await route.abort("failed");
         return;
       }
+
       if (statusDelayMs > 0) {
         await new Promise<void>((resolve) => {
           setTimeout(resolve, statusDelayMs);
         });
       }
+
       await route.fulfill({
         body: createSSEStream(streamMessages),
         contentType: "text/event-stream",
         status: 200,
       });
+
       return;
     }
 
@@ -217,6 +223,7 @@ test.describe("Generate Chapter Page - With Subscription", () => {
 
     // Create a lesson so the chapter page doesn't redirect back to /generate
     const uniqueId = randomUUID().slice(0, 8);
+
     await lessonFixture({
       chapterId: chapter.id,
       isPublished: true,
@@ -267,6 +274,7 @@ test.describe("Generate Chapter Page - With Subscription", () => {
     const { chapter, organizationId } = await createPendingChapter();
 
     const uniqueId = randomUUID().slice(0, 8);
+
     await lessonFixture({
       chapterId: chapter.id,
       isPublished: true,
@@ -293,6 +301,7 @@ test.describe("Generate Chapter Page - With Subscription", () => {
      * The client uses `startIndex` to resume from where it left off.
      */
     let statusRequestCount = 0;
+
     await userWithoutProgress.route("**/v1/workflows/chapter-generation/**", async (route) => {
       const url = route.request().url();
       const method = route.request().method();
@@ -303,17 +312,20 @@ test.describe("Generate Chapter Page - With Subscription", () => {
           contentType: "application/json",
           status: 200,
         });
+
         return;
       }
 
       if (url.includes("/status")) {
         statusRequestCount += 1;
         const messages = statusRequestCount === 1 ? partialMessages : remainingMessages;
+
         await route.fulfill({
           body: createSSEStream(messages),
           contentType: "text/event-stream",
           status: 200,
         });
+
         return;
       }
 

@@ -14,6 +14,7 @@ async function createUniqueUser(baseURL: string) {
   const email = `e2e-lcomp-${uniqueId}@zoonk.test`;
 
   const signupContext = await request.newContext({ baseURL });
+
   const response = await signupContext.post("/api/auth/sign-up/email", {
     data: { email, name: `E2E LComp ${uniqueId}`, password: "password123" },
   });
@@ -424,6 +425,7 @@ test.describe("Lesson Completion UX", () => {
     });
 
     const completedLessonTitle = `Done Lesson ${uniqueId}`;
+
     const completedLesson = await lessonFixture({
       chapterId: chapter.id,
       description: `Completed lesson ${uniqueId}`,
@@ -436,6 +438,7 @@ test.describe("Lesson Completion UX", () => {
     });
 
     const pendingLessonTitle = `Pending Lesson ${uniqueId}`;
+
     const pendingLesson = await lessonFixture({
       chapterId: chapter.id,
       description: `Pending lesson ${uniqueId}`,
@@ -474,12 +477,14 @@ test.describe("Lesson Completion UX", () => {
     const completedItem = authenticatedPage.getByRole("link", {
       name: new RegExp(completedLessonTitle),
     });
+
     await expect(completedItem).toBeVisible();
     await expect(completedItem.getByRole("img", { name: /^completed$/i })).toBeVisible();
 
     const pendingItem = authenticatedPage.getByRole("link", {
       name: new RegExp(pendingLessonTitle),
     });
+
     await expect(pendingItem).toBeVisible();
   });
 });

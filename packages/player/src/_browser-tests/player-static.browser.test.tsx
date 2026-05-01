@@ -29,6 +29,7 @@ function swipeLeft(target: HTMLElement) {
     targetTouches: [startTouch],
     touches: [startTouch],
   });
+
   fireEvent.touchEnd(globalThis.window, { changedTouches: [endTouch], touches: [] });
 }
 
@@ -40,6 +41,7 @@ function tapLeft(target: HTMLElement) {
     targetTouches: [touch],
     touches: [touch],
   });
+
   fireEvent.touchEnd(globalThis.window, { changedTouches: [touch], touches: [] });
 }
 
@@ -51,6 +53,7 @@ function tapRight(target: HTMLElement) {
     targetTouches: [touch],
     touches: [touch],
   });
+
   fireEvent.touchEnd(globalThis.window, { changedTouches: [touch], touches: [] });
 }
 
@@ -93,6 +96,7 @@ describe("player browser integration: static steps", () => {
 
     await expect.element(page.getByRole("heading", { name: "First step" })).toBeInTheDocument();
     await expect.element(page.getByRole("button", { name: /next step/i })).not.toBeInTheDocument();
+
     await expect
       .element(page.getByRole("button", { name: /previous step/i }))
       .not.toBeInTheDocument();
@@ -178,6 +182,7 @@ describe("player browser integration: static steps", () => {
     await expect
       .element(page.getByRole("heading", { name: "One step, one image" }))
       .toBeInTheDocument();
+
     await expect
       .element(page.getByAltText(/lantern lighting up one idea at a time/i))
       .toBeInTheDocument();
@@ -273,6 +278,7 @@ describe("player browser integration: static steps", () => {
     await expect.element(page.getByRole("heading", { name: "Second step" })).toBeInTheDocument();
 
     tapLeft(screen.getByRole("heading", { name: "Second step" }));
+
     await expect
       .element(page.getByRole("heading", { name: "One step, one image" }))
       .toBeInTheDocument();

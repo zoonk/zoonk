@@ -33,11 +33,13 @@ describe(generateVocabularyPronunciationStep, () => {
     await expect(generateVocabularyPronunciationStep({ context, words })).resolves.toStrictEqual({
       pronunciations: { [catWord]: `${catWord} pron`, [dogWord]: `${dogWord} pron` },
     });
+
     expect(generateLessonPronunciation).toHaveBeenCalledWith({
       targetLanguage: "ja",
       userLanguage: context.language,
       word: catWord,
     });
+
     expect(generateLessonPronunciation).toHaveBeenCalledWith({
       targetLanguage: "ja",
       userLanguage: context.language,

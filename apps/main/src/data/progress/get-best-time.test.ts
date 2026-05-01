@@ -18,6 +18,7 @@ type StepAttemptParams = {
 
 function buildStepAttemptData(params: StepAttemptParams) {
   const answeredAt = params.answeredAt ?? new Date();
+
   return {
     answer: { selectedOption: params.isCorrect ? 1 : 0 },
     answeredAt,
@@ -52,6 +53,7 @@ async function createTestStep(orgId: string) {
   const course = await courseFixture({ organizationId: orgId });
   const chapter = await chapterFixture({ courseId: course.id, organizationId: orgId });
   const lesson = await lessonFixture({ chapterId: chapter.id, organizationId: orgId });
+
   const step = await prisma.step.create({
     data: {
       content: { options: [{ feedback: "Yes", isCorrect: true, text: "A" }] },
@@ -82,6 +84,7 @@ describe("authenticated users", () => {
 
   it("returns best time when user has data for multiple periods", async () => {
     const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
+
     const [headers, step] = await Promise.all([
       signInAs(user.email, user.password),
       createTestStep(org.id),
@@ -106,6 +109,7 @@ describe("authenticated users", () => {
 
   it("excludes records older than 90 days", async () => {
     const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
+
     const [headers, step] = await Promise.all([
       signInAs(user.email, user.password),
       createTestStep(org.id),
@@ -134,6 +138,7 @@ describe("authenticated users", () => {
 
   it("uses period with most answers as tiebreaker", async () => {
     const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
+
     const [headers, step] = await Promise.all([
       signInAs(user.email, user.password),
       createTestStep(org.id),
@@ -158,6 +163,7 @@ describe("authenticated users", () => {
 
   it("returns correct score calculation", async () => {
     const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
+
     const [headers, step] = await Promise.all([
       signInAs(user.email, user.password),
       createTestStep(org.id),
@@ -178,6 +184,7 @@ describe("authenticated users", () => {
 
   it("correctly maps hours to periods", async () => {
     const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
+
     const [headers, step] = await Promise.all([
       signInAs(user.email, user.password),
       createTestStep(org.id),
@@ -198,6 +205,7 @@ describe("authenticated users", () => {
 
   it("filters by custom date range when startDate is provided", async () => {
     const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
+
     const [headers, step] = await Promise.all([
       signInAs(user.email, user.password),
       createTestStep(org.id),

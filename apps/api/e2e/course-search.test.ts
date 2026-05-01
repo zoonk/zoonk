@@ -51,6 +51,7 @@ test.describe("Course Search API", () => {
     });
 
     const apiContext = await request.newContext({ baseURL });
+
     const response = await apiContext.get(
       `/v1/courses/search?query=${encodeURIComponent(uniqueId)}&language=en`,
     );
@@ -72,6 +73,7 @@ test.describe("Course Search API", () => {
 
   test("returns empty data array when no matches found", async () => {
     const apiContext = await request.newContext({ baseURL });
+
     const response = await apiContext.get(
       "/v1/courses/search?query=nonexistentcourse999xyz&language=en",
     );
@@ -122,6 +124,7 @@ test.describe("Course Search API", () => {
     const enResponse = await apiContext.get(
       `/v1/courses/search?query=${encodeURIComponent(uniqueId)}&language=en`,
     );
+
     const ptResponse = await apiContext.get(
       `/v1/courses/search?query=${encodeURIComponent(uniqueId)}&language=pt`,
     );
@@ -205,6 +208,7 @@ test.describe("Course Search API", () => {
       ...secondBody.data.map((course: { id: number }) => course.id),
       ...thirdBody.data.map((course: { id: number }) => course.id),
     ];
+
     const uniqueIds = new Set(allIds);
 
     expect(uniqueIds.size).toBe(5);
@@ -244,6 +248,7 @@ test.describe("Course Search API", () => {
     });
 
     const apiContext = await request.newContext({ baseURL });
+
     const response = await apiContext.get(
       `/v1/courses/search?query=${encodeURIComponent(uniqueId)}`,
     );
@@ -275,6 +280,7 @@ test.describe("Course Search API", () => {
     });
 
     const apiContext = await request.newContext({ baseURL });
+
     const response = await apiContext.get(
       `/v1/courses/search?query=${encodeURIComponent(`limit ${uniqueId}`)}&language=en&limit=5`,
     );
@@ -318,6 +324,7 @@ test.describe("Course Search API", () => {
     ]);
 
     const apiContext = await request.newContext({ baseURL });
+
     const response = await apiContext.get(
       `/v1/courses/search?query=${encodeURIComponent(uniqueId)}&language=en`,
     );
@@ -370,6 +377,7 @@ test.describe("Course Search API", () => {
     ]);
 
     const apiContext = await request.newContext({ baseURL });
+
     const response = await apiContext.get(
       `/v1/courses/search?query=${encodeURIComponent(uniqueId)}&language=en`,
     );
@@ -406,6 +414,7 @@ test.describe("Course Search API", () => {
     });
 
     const apiContext = await request.newContext({ baseURL });
+
     const response = await apiContext.get(
       `/v1/courses/search?query=${encodeURIComponent(uniqueId)}&language=en`,
     );

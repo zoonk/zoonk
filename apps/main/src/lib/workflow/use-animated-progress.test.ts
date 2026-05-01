@@ -173,6 +173,7 @@ describe(useAnimatedProgress, () => {
 
   it("cleans up animation frame on unmount", () => {
     const cancelSpy = vi.spyOn(globalThis, "cancelAnimationFrame");
+
     const { unmount } = renderHook(() =>
       useAnimatedProgress({ isActive: true, realProgress: 10, targetProgress: 50 }),
     );

@@ -95,6 +95,7 @@ export async function submitLessonCompletion(input: {
     // Fill DailyProgress records for inactive days
     if (existingProgress) {
       const lastActiveDate = toUTCMidnight(existingProgress.lastActiveAt);
+
       await fillDecayGaps({
         currentEnergy: existingProgress.currentEnergy,
         lastActiveDate,

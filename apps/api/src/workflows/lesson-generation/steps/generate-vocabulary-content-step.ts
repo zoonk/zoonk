@@ -24,6 +24,7 @@ export async function generateVocabularyContentStep(
   await stream.status({ status: "started", step: "generateVocabularyContent" });
 
   const targetLanguage = getTargetLanguage(context);
+
   const result = await generateLessonVocabulary({
     chapterTitle: context.chapter.title,
     lessonDescription: context.description ?? "",

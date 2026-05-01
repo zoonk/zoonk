@@ -25,6 +25,7 @@ export async function uploadStepImageAction(
   }
 
   const targetLabel = imageTarget === "step" ? "step" : `option-${imageTarget}`;
+
   const { data: imageUrl, error: uploadError } = await processAndUploadImage({
     file,
     fileName: `steps/admin-review/${stepId}-${targetLabel}.webp`,
@@ -50,6 +51,7 @@ export async function uploadStepImageAction(
   const { error: updateError } = await safeAsync(() => {
     if (imageTarget === "step") {
       const content = parseStepContent("static", step.content);
+
       return prisma.step.update({
         data: { content: { ...content, image: { ...content.image, url: imageUrl } } },
         where: { id: stepId },
@@ -57,6 +59,7 @@ export async function uploadStepImageAction(
     }
 
     const content = parseStepContent("selectImage", step.content);
+
     const updatedOptions = content.options.map((option, index) =>
       index === imageTarget ? { ...option, url: imageUrl } : option,
     );

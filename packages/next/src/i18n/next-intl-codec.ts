@@ -15,6 +15,7 @@ function setNestedProperty(obj: Record<string, unknown>, keyPath: string, value:
   let current = obj;
 
   const keysToTraverse = keys.slice(0, -1);
+
   for (const key of keysToTraverse) {
     if (!(key in current) || typeof current[key] !== "object" || current[key] === null) {
       current[key] = {};
@@ -39,6 +40,7 @@ function getSortedMessages(messages: ExtractedMessage[]): ExtractedMessage[] {
     if (pathA === pathB) {
       return localeCompare(messageA.id, messageB.id);
     }
+
     return localeCompare(pathA, pathB);
   });
 }
@@ -69,9 +71,11 @@ export default defineCodec(() => {
   return {
     decode(content, context) {
       const catalog = POParser.parse(content);
+
       if (catalog.meta) {
         metadataByLocale.set(context.locale, catalog.meta);
       }
+
       const messages = catalog.messages ?? [];
 
       return messages.map((msg) => {
@@ -101,6 +105,7 @@ export default defineCodec(() => {
     encode(messages, context) {
       const encodedMessages = getSortedMessages(messages).map((msg) => {
         const sourceMessage = context.sourceMessagesById.get(msg.id)?.message;
+
         if (!sourceMessage) {
           throw new Error(
             `Source message not found for id "${msg.id}" in locale "${context.locale}".`,
@@ -133,9 +138,11 @@ export default defineCodec(() => {
     toJSONString(source, context) {
       const parsed = this.decode(source, context);
       const messagesObject = {};
+
       for (const message of parsed) {
         setNestedProperty(messagesObject, message.id, message.message);
       }
+
       return JSON.stringify(messagesObject);
     },
   };

@@ -92,6 +92,7 @@ describe(vocabularyLessonWorkflow, () => {
       { translation: `cat ${uniqueId}`, word: catWord },
       { translation: `water ${uniqueId}`, word: waterWord },
     ];
+
     vocabularyState.distractors = {
       [catWord]: [dogWord, birdWord],
       [waterWord]: [fireWord, earthWord],
@@ -193,14 +194,18 @@ describe(vocabularyLessonWorkflow, () => {
       romanization: `${canonicalWord} romanized`,
       word: canonicalWord,
     });
+
     expect(canonicalRecord?.pronunciations[0]?.pronunciation).toBe(
       `${canonicalWord} pronunciation`,
     );
+
     expect(duplicateDistractorRecord).toBeNull();
+
     expect(lessonWord).toMatchObject({
       distractors: [validDistractor],
       translation: `water ${uniqueId}`,
     });
+
     expect(lessonWord?.word.word).toBe(canonicalWord);
   });
 });

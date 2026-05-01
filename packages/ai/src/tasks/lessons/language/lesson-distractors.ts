@@ -7,6 +7,7 @@ import { z } from "zod";
 import systemPrompt from "./lesson-distractors.prompt.md";
 
 const defaultModel = "openai/gpt-5.4";
+
 const fallbackModels = [
   "google/gemini-3.1-flash-lite-preview",
   "anthropic/claude-sonnet-4.6",

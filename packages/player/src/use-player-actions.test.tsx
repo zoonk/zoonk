@@ -46,6 +46,7 @@ describe(usePlayerActions, () => {
   it("check still no-ops for unanswered interactive steps", () => {
     const dispatch = vi.fn();
     const onComplete = vi.fn();
+
     const state = buildState({
       steps: [
         buildStep({

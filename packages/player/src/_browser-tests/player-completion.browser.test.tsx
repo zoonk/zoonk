@@ -57,6 +57,7 @@ describe("player browser integration: completion", () => {
     });
 
     await expect.element(page.getByRole("link", { name: /close/i })).toBeInTheDocument();
+
     await expect
       .element(page.getByRole("progressbar", { name: /lesson progress/i }))
       .toBeInTheDocument();
@@ -67,18 +68,24 @@ describe("player browser integration: completion", () => {
 
     await expect.element(completionScreen.getByText("1/1")).toBeInTheDocument();
     await expect.element(completionScreen.getByText(/\+10\s*BP/i)).toBeInTheDocument();
+
     await expect
       .element(completionScreen.getByRole("progressbar", { name: /level progress/i }))
       .toBeInTheDocument();
+
     await expect.element(completionScreen.getByRole("link", { name: "Next" })).toBeInTheDocument();
+
     await expect
       .element(completionScreen.getByRole("link", { name: /all lessons/i }))
       .toBeInTheDocument();
+
     await expect
       .element(completionScreen.getByRole("button", { name: /try again/i }))
       .toBeInTheDocument();
+
     await expect.element(page.getByText("Custom completion footer")).toBeInTheDocument();
     await expect.element(page.getByRole("link", { name: /close/i })).not.toBeInTheDocument();
+
     await expect
       .element(page.getByRole("progressbar", { name: /lesson progress/i }))
       .not.toBeInTheDocument();
@@ -88,6 +95,7 @@ describe("player browser integration: completion", () => {
     await expect
       .element(page.getByRole("heading", { name: "Completion question" }))
       .toBeInTheDocument();
+
     await expect.element(page.getByRole("link", { name: /close/i })).toBeInTheDocument();
   });
 
@@ -103,18 +111,23 @@ describe("player browser integration: completion", () => {
     const completionScreen = page.getByRole("status");
 
     await expect.element(completionScreen.getByText(/\+10\s*BP/i)).toBeInTheDocument();
+
     await expect
       .element(completionScreen.getByRole("link", { name: /all lessons/i }))
       .toBeInTheDocument();
+
     await expect
       .element(completionScreen.getByRole("button", { name: /try again/i }))
       .toBeInTheDocument();
+
     await expect
       .element(completionScreen.getByRole("link", { name: "Next" }))
       .not.toBeInTheDocument();
+
     await expect
       .element(completionScreen.getByRole("progressbar", { name: /level progress/i }))
       .not.toBeInTheDocument();
+
     await expect.element(completionScreen.getByText(/belt/i)).not.toBeInTheDocument();
   });
 
@@ -132,20 +145,26 @@ describe("player browser integration: completion", () => {
     const nextLink = completionScreen.getByRole("link", { name: "Next" });
 
     await expect.element(completionScreen.getByText("1/1")).toBeInTheDocument();
+
     await expect
       .element(completionScreen.getByText(/sign up to track your progress/i))
       .toBeInTheDocument();
+
     await expect.element(nextLink).toBeInTheDocument();
     await expect.element(nextLink).toHaveAttribute("href", "/lesson/play");
     await expect.element(loginLink).toBeInTheDocument();
     await expect.element(loginLink).toHaveAttribute("href", "/login");
+
     await expect
       .element(completionScreen.getByRole("link", { name: /all lessons/i }))
       .toBeInTheDocument();
+
     await expect
       .element(completionScreen.getByRole("button", { name: /try again/i }))
       .toBeInTheDocument();
+
     await expect.element(completionScreen.getByText(/\+10\s*BP/i)).not.toBeInTheDocument();
+
     await expect
       .element(completionScreen.getByRole("progressbar", { name: /level progress/i }))
       .not.toBeInTheDocument();
@@ -163,9 +182,11 @@ describe("player browser integration: completion", () => {
     const completionScreen = page.getByRole("status");
 
     await expect.element(completionScreen.getByText(/chapter complete/i)).toBeInTheDocument();
+
     await expect
       .element(completionScreen.getByRole("link", { name: /review chapter/i }))
       .toBeInTheDocument();
+
     await expect
       .element(completionScreen.getByRole("link", { name: /next chapter/i }))
       .not.toBeInTheDocument();
@@ -187,9 +208,11 @@ describe("player browser integration: completion", () => {
     const completionScreen = page.getByRole("status");
 
     await expect.element(completionScreen.getByText(/course complete/i)).toBeInTheDocument();
+
     await expect
       .element(completionScreen.getByRole("link", { name: /review course/i }))
       .toBeInTheDocument();
+
     await expect
       .element(completionScreen.getByRole("link", { name: /review chapter/i }))
       .toBeInTheDocument();
@@ -211,10 +234,13 @@ describe("player browser integration: completion", () => {
     await expect
       .element(completionScreen.getByText(/sign up to track your progress/i))
       .toBeInTheDocument();
+
     await expect.element(loginLink).toHaveAttribute("href", "/sign-in");
+
     await expect
       .element(completionScreen.getByRole("link", { name: /review chapter/i }))
       .toBeInTheDocument();
+
     await expect
       .element(completionScreen.getByRole("link", { name: /next chapter/i }))
       .not.toBeInTheDocument();

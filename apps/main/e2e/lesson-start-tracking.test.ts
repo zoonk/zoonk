@@ -14,6 +14,7 @@ async function createUniqueUser(baseURL: string) {
   const email = `e2e-start-${uniqueId}@zoonk.test`;
 
   const signupContext = await request.newContext({ baseURL });
+
   const response = await signupContext.post("/api/auth/sign-up/email", {
     data: { email, name: `E2E Start ${uniqueId}`, password: "password123" },
   });
@@ -98,6 +99,7 @@ test.describe("Lesson Start Tracking", () => {
     const before = await prisma.lessonProgress.findUnique({
       where: { userLesson: { lessonId: lesson.id, userId } },
     });
+
     expect(before).toBeNull();
 
     await page.goto(url);

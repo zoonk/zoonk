@@ -83,14 +83,18 @@ describe(setupCourse, () => {
     };
 
     generateCourseDescriptionMock.mockResolvedValue({ data: { description: "Setup desc" } });
+
     generateCourseImageMock.mockResolvedValue({
       data: "https://example.com/setup.webp",
       error: null,
     });
+
     generateAlternativeTitlesMock.mockResolvedValue({
       data: { alternatives: [`Alt ${randomUUID()}`] },
     });
+
     generateCourseCategoriesMock.mockResolvedValue({ data: { categories: ["testing"] } });
+
     generateCourseChaptersMock.mockResolvedValue({
       data: { chapters: [{ description: "Ch desc", title: `Setup Ch ${randomUUID()}` }] },
     });

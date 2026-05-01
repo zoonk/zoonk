@@ -79,6 +79,7 @@ describe("authenticated users", () => {
       });
 
       const date = createSafeDate(0);
+
       await prisma.dailyProgress.create({
         data: { brainPowerEarned: 100, date, dayOfWeek: date.getDay(), userId: user.id },
       });
@@ -264,6 +265,7 @@ describe("authenticated users", () => {
       const headers = await signInAs(user.email, user.password);
 
       const date = createSafeDate(0);
+
       await prisma.dailyProgress.create({
         data: { brainPowerEarned: 100, date, dayOfWeek: date.getDay(), userId: user.id },
       });

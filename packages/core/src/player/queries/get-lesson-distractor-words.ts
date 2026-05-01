@@ -18,8 +18,10 @@ async function listLessonDistractorWordsForLessons({ lessonIds }: { lessonIds: s
   const lessonWord = lessonWords[0];
   const lessonSentence = lessonSentences[0];
   const organizationId = lessonWord?.word.organizationId ?? lessonSentence?.sentence.organizationId;
+
   const targetLanguage =
     lessonWord?.word.targetLanguage ?? lessonSentence?.sentence.targetLanguage ?? "";
+
   const userLanguage = lessonWord?.userLanguage ?? lessonSentence?.userLanguage ?? "";
 
   if (!organizationId || !targetLanguage || !userLanguage) {

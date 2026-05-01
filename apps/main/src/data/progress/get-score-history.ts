@@ -25,9 +25,11 @@ type RawDataPoint = { date: Date; correct: number; incorrect: number };
 
 function calculateScore(correct: number, incorrect: number): number {
   const total = correct + incorrect;
+
   if (total === 0) {
     return 0;
   }
+
   return (correct / total) * 100;
 }
 
@@ -35,6 +37,7 @@ function calculateAverage(dataPoints: { score: number }[]): number {
   if (dataPoints.length === 0) {
     return 0;
   }
+
   const sum = dataPoints.reduce((acc, point) => acc + point.score, 0);
   return sum / dataPoints.length;
 }
@@ -96,9 +99,11 @@ function getPreviousAverage(
   period: ScorePeriod,
 ): number | null {
   const valid = filterValidData(previousData ?? []);
+
   if (valid.length === 0) {
     return null;
   }
+
   const processed = processScoreData(valid, period);
   return processed.length > 0 ? calculateAverage(processed) : null;
 }
@@ -113,6 +118,7 @@ async function hasEarlierScoreData(userId: string, beforeDate: Date): Promise<bo
       },
     }),
   );
+
   return Boolean(data);
 }
 
@@ -124,6 +130,7 @@ const cachedGetScoreHistory = cache(
     headers?: Headers,
   ): Promise<ScoreHistoryData | null> => {
     const session = await getSession(headers);
+
     if (!session) {
       return null;
     }
@@ -141,11 +148,13 @@ const cachedGetScoreHistory = cache(
     }
 
     const validData = filterValidData(currentResult.data);
+
     if (validData.length === 0) {
       return null;
     }
 
     const currentData = processScoreData(validData, period);
+
     const dataPoints: ScoreDataPoint[] = currentData.map((row) => ({
       date: row.date,
       label: formatLabel(row.date, period, locale),

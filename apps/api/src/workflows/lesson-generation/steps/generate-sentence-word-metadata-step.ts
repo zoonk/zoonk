@@ -80,14 +80,17 @@ export async function generateSentenceWordMetadataStep({
 
   const targetLanguage = course.targetLanguage ?? "";
   const canonicalWords = extractUniqueSentenceWords(sentences.map((entry) => entry.sentence));
+
   const existingRomanizations = await fetchExistingWordRomanizations({
     organizationId: course.organization.id,
     targetLanguage,
     words: targetWords,
   });
+
   const wordsNeedingRomanization = targetWords.filter(
     (word) => !existingRomanizations[word.toLowerCase()],
   );
+
   const [translations, newRomanizations] = await Promise.all([
     generateMissingTranslations({
       targetLanguage,

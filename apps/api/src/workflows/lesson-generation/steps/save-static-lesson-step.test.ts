@@ -17,6 +17,7 @@ describe(saveExplanationLessonStep, () => {
 
   it("saves static explanation steps with generated images", async () => {
     const context = await createLessonContext({ kind: "explanation", organizationId });
+
     await stepFixture({
       content: { text: "stale", title: "Stale", variant: "text" },
       kind: "static",
@@ -27,6 +28,7 @@ describe(saveExplanationLessonStep, () => {
       { text: `Why does this happen? ${randomUUID()}`, title: "Question" },
       { text: `Each layer adds a different label. ${randomUUID()}`, title: "Layers" },
     ];
+
     const images = [
       { prompt: "A packet with labels added around it.", url: "https://example.com/packet.webp" },
       { prompt: "Each layer adding a label.", url: "https://example.com/labels.webp" },
@@ -43,18 +45,21 @@ describe(saveExplanationLessonStep, () => {
       [0, "static"],
       [1, "static"],
     ]);
+
     expect(steps[0]?.content).toStrictEqual({
       image: images[0],
       text: stepsToSave[0]?.text,
       title: "Question",
       variant: "text",
     });
+
     expect(steps[1]?.content).toStrictEqual({
       image: images[1],
       text: stepsToSave[1]?.text,
       title: "Layers",
       variant: "text",
     });
+
     expect(getStreamedEvents()).toStrictEqual(
       expect.arrayContaining([
         expect.objectContaining({ status: "started", step: "saveExplanationLesson" }),

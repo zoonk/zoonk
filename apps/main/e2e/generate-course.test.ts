@@ -69,13 +69,16 @@ function createRouteHandler(options: MockApiOptions) {
           contentType: "application/json",
           status: triggerResponse.status ?? 500,
         });
+
         return;
       }
+
       await route.fulfill({
         body: JSON.stringify({ message: "Workflow started", runId: triggerResponse.runId }),
         contentType: "application/json",
         status: 200,
       });
+
       return;
     }
 
@@ -85,16 +88,19 @@ function createRouteHandler(options: MockApiOptions) {
         await route.abort("failed");
         return;
       }
+
       if (statusDelayMs > 0) {
         await new Promise<void>((resolve) => {
           setTimeout(resolve, statusDelayMs);
         });
       }
+
       await route.fulfill({
         body: createSSEStream(streamMessages),
         contentType: "text/event-stream",
         status: 200,
       });
+
       return;
     }
 
@@ -118,6 +124,7 @@ test.describe("Generate Course Page", () => {
     test("shows triggering state immediately on page load", async ({ page }) => {
       // Create a unique suggestion to avoid PPR caching issues with seeded data
       const slug = `e2e-trigger-${randomUUID().slice(0, 8)}`;
+
       const suggestion = await courseSuggestionFixture({
         generationStatus: "running",
         language: "en",

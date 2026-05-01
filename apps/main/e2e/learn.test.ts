@@ -34,6 +34,7 @@ async function handleCourseGenerationRoute(route: Route): Promise<void> {
       contentType: "application/json",
       status: 200,
     });
+
     return;
   }
 

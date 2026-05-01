@@ -44,6 +44,7 @@ export function CatalogActions({
     if (feedback === value) {
       return;
     }
+
     setFeedback(value);
     trackFeedback({ contentId, feedback: value, kind });
     toast.success(t("Thanks for your feedback"));

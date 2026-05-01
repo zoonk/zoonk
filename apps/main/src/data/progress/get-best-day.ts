@@ -10,6 +10,7 @@ type BestDayData = { score: number; dayOfWeek: number };
 const cachedGetBestDay = cache(
   async (startDateIso?: string, headers?: Headers): Promise<BestDayData | null> => {
     const session = await getSession(headers);
+
     if (!session) {
       return null;
     }

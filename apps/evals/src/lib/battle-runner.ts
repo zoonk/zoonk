@@ -31,12 +31,14 @@ function getMatchupFilePath(taskId: string, testCaseId: string): string {
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
+
   for (let i = shuffled.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
     const temp = shuffled[i];
     shuffled[i] = shuffled[j] as T;
     shuffled[j] = temp as T;
   }
+
   return shuffled;
 }
 
@@ -64,6 +66,7 @@ async function loadExistingMatchup(
   testCaseId: string,
 ): Promise<BattleMatchup | null> {
   const filePath = getMatchupFilePath(taskId, testCaseId);
+
   try {
     const data = await fs.readFile(filePath, "utf8");
     return JSON.parse(data) as BattleMatchup;
@@ -82,6 +85,7 @@ function extractMappingFromMatchup(
   matchup: BattleMatchup,
 ): { anonymousId: string; modelId: string }[] {
   const firstJudgment = matchup.judgments[0];
+
   if (!firstJudgment) {
     return [];
   }
@@ -101,6 +105,7 @@ function hasNewModels(existingMatchup: BattleMatchup, currentModelIds: string[])
   const existingModelIds = new Set(
     extractMappingFromMatchup(existingMatchup).map((item) => item.modelId),
   );
+
   return currentModelIds.some((modelId) => !existingModelIds.has(modelId));
 }
 
@@ -117,6 +122,7 @@ function collectModelOutputsForTestCase(
 
   for (const [modelId, modelOutputs] of allOutputs) {
     const output = getOutputForTestCase(modelOutputs, testCaseId);
+
     if (output) {
       outputs.push({ modelId, output: output.output });
 
@@ -138,10 +144,12 @@ function getAnonymizationForBattle(
   }
 
   const mapping = extractMappingFromMatchup(existingMatchup);
+
   const anonymizedOutputs = modelOutputs.map((item) => {
     const mapEntry = mapping.find((entry) => entry.modelId === item.modelId);
     return { anonymousId: mapEntry?.anonymousId ?? item.modelId, output: item.output };
   });
+
   return { anonymizedOutputs, mapping };
 }
 
@@ -175,6 +183,7 @@ async function runBattleForTestCase(
   existingMatchup: BattleMatchup | null,
 ): Promise<BattleMatchup> {
   const testCaseId = `${testCase.id}-1`;
+
   const { outputs: modelOutputs, userPrompt } = collectModelOutputsForTestCase(
     testCaseId,
     allOutputs,
@@ -186,6 +195,7 @@ async function runBattleForTestCase(
 
   const currentModelIds = modelOutputs.map((item) => item.modelId);
   const newModelsDetected = existingMatchup && hasNewModels(existingMatchup, currentModelIds);
+
   if (newModelsDetected) {
     logInfo(`New models detected for ${testCaseId}, re-running all judges`);
   }
@@ -196,6 +206,7 @@ async function runBattleForTestCase(
   const judgesToRun = effectiveExisting
     ? getMissingJudges(effectiveExisting)
     : [...BATTLE_JUDGES_CONFIG];
+
   if (judgesToRun.length === 0 && effectiveExisting) {
     return effectiveExisting;
   }
@@ -207,6 +218,7 @@ async function runBattleForTestCase(
     mapping,
     userPrompt,
   });
+
   const allJudgments = effectiveExisting
     ? [...effectiveExisting.judgments, ...newJudgments]
     : newJudgments;
@@ -244,8 +256,10 @@ export async function runBattleMode(task: Task): Promise<void> {
 
   // Filter to only include complete models
   const completeOutputs = new Map<string, ModelOutputs>();
+
   for (const modelId of completeModels) {
     const outputs = allOutputs.get(modelId);
+
     if (outputs) {
       completeOutputs.set(modelId, outputs);
     }
@@ -273,6 +287,7 @@ export async function runBattleMode(task: Task): Promise<void> {
 
   logInfo("\n=== Battle Mode Complete ===");
   logInfo("Top 3 models:");
+
   leaderboard.slice(0, 3).forEach((entry, i) => {
     logInfo(`  ${i + 1}. ${entry.modelName}: ${entry.totalScore} points`);
   });

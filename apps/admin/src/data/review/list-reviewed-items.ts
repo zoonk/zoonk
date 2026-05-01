@@ -13,6 +13,7 @@ const cachedListReviewedItems = cache(async function cachedListReviewedItems(
   if (!(await isAdmin())) {
     return { items: [], total: 0 };
   }
+
   const where = { status, taskType };
 
   const [items, total] = await Promise.all([

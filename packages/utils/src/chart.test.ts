@@ -38,6 +38,7 @@ describe(isValidChartPayload, () => {
     const isValidPayload = isValidChartPayload<{ name: string; value: number }>(payload);
 
     expect(isValidPayload).toBe(true);
+
     if (!isValidPayload) {
       throw new Error("Expected chart payload to be valid.");
     }
@@ -114,6 +115,7 @@ describe(buildChartData, () => {
       { count: 20, date: new Date(Date.UTC(2025, 8, 6)) },
       { count: 30, date: new Date(Date.UTC(2026, 1, 10)) },
     ];
+
     const result = buildChartData(crossYearPoints, "all", "en");
     expect(result.dataPoints).toHaveLength(2);
     expect(result.dataPoints.map((dp) => dp.value)).toStrictEqual([30, 30]);

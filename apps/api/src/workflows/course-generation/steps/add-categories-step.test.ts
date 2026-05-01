@@ -39,6 +39,7 @@ describe(addCategoriesStep, () => {
     const dbCategories = await prisma.courseCategory.findMany({ where: { courseId: course.id } });
 
     expect(dbCategories).toHaveLength(2);
+
     expect(dbCategories.map((cat) => cat.category).toSorted()).toStrictEqual([
       "programming",
       "web",

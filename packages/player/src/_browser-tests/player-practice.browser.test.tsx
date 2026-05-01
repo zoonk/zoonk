@@ -65,6 +65,7 @@ describe("player browser integration: practice lessons", () => {
     });
 
     await expect.element(page.getByRole("heading", { name: "Night shift" })).toBeInTheDocument();
+
     await expect
       .element(
         page.getByAltText(
@@ -72,6 +73,7 @@ describe("player browser integration: practice lessons", () => {
         ),
       )
       .toBeInTheDocument();
+
     await expect
       .element(
         page.getByText(
@@ -85,6 +87,7 @@ describe("player browser integration: practice lessons", () => {
     await expect
       .element(page.getByRole("heading", { name: "What should I check first?" }))
       .toBeInTheDocument();
+
     await expect
       .element(page.getByAltText(/refund dashboard filtered to discounted orders/i))
       .toBeInTheDocument();

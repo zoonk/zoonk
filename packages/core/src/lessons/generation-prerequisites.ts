@@ -9,10 +9,12 @@ type BlockingLessonGenerationPrerequisite = {
 };
 
 type LessonGenerationPrerequisiteTarget = Pick<Lesson, "chapterId" | "kind" | "position">;
+
 type LessonGenerationPrerequisiteKind = Extract<
   Lesson["kind"],
   "listening" | "practice" | "quiz" | "reading" | "translation"
 >;
+
 type SourceBoundaryLessonKind = Extract<Lesson["kind"], "practice" | "quiz" | "reading">;
 type SourceLessonKind = Extract<Lesson["kind"], "alphabet" | "reading" | "vocabulary">;
 

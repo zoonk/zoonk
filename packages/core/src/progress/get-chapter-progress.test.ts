@@ -93,6 +93,7 @@ describe(getChapterProgress, () => {
     });
 
     const result2 = await getChapterProgress({ courseId: course.id, headers });
+
     expect(result2).toStrictEqual([
       { chapterId: chapter.id, completedLessons: 2, totalLessons: 2 },
     ]);
@@ -144,6 +145,7 @@ describe(getChapterProgress, () => {
 
     const headers = await signInAs(user.email, user.password);
     const result = await getChapterProgress({ courseId: course.id, headers });
+
     expect(result).toStrictEqual([
       { chapterId: chapter1.id, completedLessons: 1, totalLessons: 1 },
       { chapterId: chapter2.id, completedLessons: 0, totalLessons: 1 },

@@ -38,6 +38,7 @@ describe(usePlayerKeyboard, () => {
       const opts = buildOptions({
         keyboard: { canRestart: false, enterAction: "check", leftAction: null, rightAction: null },
       });
+
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("Enter");
@@ -54,6 +55,7 @@ describe(usePlayerKeyboard, () => {
           rightAction: null,
         },
       });
+
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("Enter");
@@ -73,6 +75,7 @@ describe(usePlayerKeyboard, () => {
 
     it("calls onNext when completion Enter action prefers next", () => {
       const onNext = vi.fn();
+
       const opts = buildOptions({
         keyboard: {
           canRestart: true,
@@ -82,6 +85,7 @@ describe(usePlayerKeyboard, () => {
         },
         onNext,
       });
+
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("Enter");
@@ -100,6 +104,7 @@ describe(usePlayerKeyboard, () => {
         },
         onNext: null,
       });
+
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("Enter");
@@ -120,6 +125,7 @@ describe(usePlayerKeyboard, () => {
           rightAction: "navigateNext",
         },
       });
+
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("ArrowRight");
@@ -136,6 +142,7 @@ describe(usePlayerKeyboard, () => {
           rightAction: null,
         },
       });
+
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("ArrowLeft");
@@ -183,6 +190,7 @@ describe(usePlayerKeyboard, () => {
           rightAction: null,
         },
       });
+
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("r");
@@ -208,6 +216,7 @@ describe(usePlayerKeyboard, () => {
           rightAction: null,
         },
       });
+
       renderHook(() => usePlayerKeyboard(opts));
 
       const input = document.createElement("input");
@@ -231,6 +240,7 @@ describe(usePlayerKeyboard, () => {
           rightAction: "navigateNext",
         },
       });
+
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("Enter", { metaKey: true });
@@ -244,6 +254,7 @@ describe(usePlayerKeyboard, () => {
       const opts = buildOptions({
         keyboard: { canRestart: false, enterAction: "check", leftAction: null, rightAction: null },
       });
+
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("Enter", { ctrlKey: true });
@@ -255,6 +266,7 @@ describe(usePlayerKeyboard, () => {
       const opts = buildOptions({
         keyboard: { canRestart: false, enterAction: "check", leftAction: null, rightAction: null },
       });
+
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("Enter", { shiftKey: true });
@@ -266,6 +278,7 @@ describe(usePlayerKeyboard, () => {
       const opts = buildOptions({
         keyboard: { canRestart: false, enterAction: "check", leftAction: null, rightAction: null },
       });
+
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("Enter", { altKey: true });
@@ -278,6 +291,7 @@ describe(usePlayerKeyboard, () => {
     const opts = buildOptions({
       keyboard: { canRestart: false, enterAction: "check", leftAction: null, rightAction: null },
     });
+
     const { unmount } = renderHook(() => usePlayerKeyboard(opts));
 
     unmount();

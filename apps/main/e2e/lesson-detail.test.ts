@@ -30,6 +30,7 @@ async function createTestLesson(options?: {
   });
 
   const lessonTitle = `E2E Lesson Lesson ${uniqueId}`;
+
   const lesson = await lessonFixture({
     chapterId: chapter.id,
     description: `E2E lesson description ${uniqueId}`,
@@ -73,6 +74,7 @@ async function createBlockedPracticeLesson() {
   const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
+
   const course = await courseFixture({
     isPublished: true,
     organizationId: org.id,
@@ -122,6 +124,7 @@ async function createEmptyReviewLesson() {
   const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
+
   const course = await courseFixture({
     isPublished: true,
     organizationId: org.id,
@@ -226,6 +229,7 @@ test.describe("Lesson Player Page", () => {
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${review.slug}`);
 
     await expect(page.getByText("Review locked")).toBeVisible();
+
     await expect(
       page.getByText("Create earlier lessons first, then come back to review."),
     ).toBeVisible();
@@ -239,12 +243,14 @@ test.describe("Lesson Player Page", () => {
   test("pending non-AI lessons do not show a generate link", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const org = await createOrganization();
+
     const course = await courseFixture({
       isPublished: true,
       organizationId: org.id,
       slug: `non-ai-lesson-course-${uniqueId}`,
       title: `Non AI Lesson Course ${uniqueId}`,
     });
+
     const chapter = await chapterFixture({
       courseId: course.id,
       isPublished: true,
@@ -252,6 +258,7 @@ test.describe("Lesson Player Page", () => {
       slug: `non-ai-lesson-chapter-${uniqueId}`,
       title: `Non AI Lesson Chapter ${uniqueId}`,
     });
+
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       generationStatus: "pending",

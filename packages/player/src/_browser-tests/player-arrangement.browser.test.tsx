@@ -60,6 +60,7 @@ describe("player browser integration: arrangement steps", () => {
 
     await expect.element(page.getByRole("button", { name: /check/i })).toBeEnabled();
     await page.getByRole("button", { name: /check/i }).click();
+
     await expect
       .element(page.getByRole("region", { name: /answer feedback/i }))
       .toBeInTheDocument();

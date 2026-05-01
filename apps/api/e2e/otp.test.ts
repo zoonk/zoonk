@@ -63,6 +63,7 @@ test.describe("OTP Login Flow", () => {
     await page.goto(
       `/auth/otp?email=${encodeURIComponent(TEST_EMAIL)}&redirectTo=${encodeURIComponent(REDIRECT_URL)}`,
     );
+
     await page.getByRole("link", { name: /change email/i }).click();
     await page.waitForURL(/\/auth\/login/);
 

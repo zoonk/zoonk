@@ -37,9 +37,11 @@ describe("player header: lesson title and lesson info", () => {
     await page.getByRole("button", { name: /lesson info/i }).click();
 
     await expect.element(page.getByRole("heading", { name: "Present Tense" })).toBeInTheDocument();
+
     await expect
       .element(page.getByText("Use present tense patterns to describe what someone does now."))
       .toBeInTheDocument();
+
     await expect.element(page.getByText("Verb Fundamentals")).toBeInTheDocument();
   });
 

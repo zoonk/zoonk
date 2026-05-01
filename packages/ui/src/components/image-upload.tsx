@@ -21,9 +21,11 @@ const ImageUploadContext = createContext<ImageUploadContextValue | undefined>(un
 
 function useImageUpload() {
   const context = useContext(ImageUploadContext);
+
   if (!context) {
     throw new Error("ImageUpload components must be used within an ImageUploadProvider.");
   }
+
   return context;
 }
 
@@ -99,6 +101,7 @@ function ImageUploadProvider({
   const handleFileSelect = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
+
       if (
         !(
           file &&

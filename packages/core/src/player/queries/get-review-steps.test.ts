@@ -105,6 +105,7 @@ describe(getReviewSteps, () => {
 
     // The 3 mistake steps should be included
     const resultIds = result.map((step) => step.id);
+
     for (const step of newLesson.steps.slice(0, 3)) {
       expect(resultIds).toContain(step.id);
     }
@@ -166,6 +167,7 @@ describe(getReviewSteps, () => {
 
     // All 5 mistake steps (tier 1 + tier 2) should be included
     const resultIds = result.map((step) => step.id);
+
     for (const step of newLesson.steps.slice(0, 5)) {
       expect(resultIds).toContain(step.id);
     }
@@ -609,11 +611,13 @@ describe(getReviewValidationSteps, () => {
     const org = await organizationFixture();
     organizationId = org.id;
     const course = await courseFixture({ isPublished: true, organizationId: org.id });
+
     const chapter = await chapterFixture({
       courseId: course.id,
       isPublished: true,
       organizationId: org.id,
     });
+
     lesson = await lessonFixture({
       chapterId: chapter.id,
       isPublished: true,

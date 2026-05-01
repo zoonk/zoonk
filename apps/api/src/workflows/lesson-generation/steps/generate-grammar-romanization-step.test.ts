@@ -32,9 +32,11 @@ describe(generateGrammarRomanizationStep, () => {
       organizationId,
       targetLanguage: "ja",
     });
+
     const catWord = "猫";
     const dogWord = "犬";
     const grammarSentence = "猫がいます";
+
     const grammarContent = {
       examples: [{ highlight: catWord, sentence: grammarSentence }],
       exercises: [{ answer: catWord, distractors: [dogWord], template: "[BLANK]がいます" }],
@@ -47,6 +49,7 @@ describe(generateGrammarRomanizationStep, () => {
       [dogWord]: `${dogWord} romanized`,
       [grammarSentence]: `${grammarSentence} romanized`,
     });
+
     expect(generateLessonRomanization).toHaveBeenCalledWith({
       targetLanguage: "ja",
       texts: [grammarSentence, grammarSentence, catWord, dogWord],

@@ -37,6 +37,7 @@ export async function createE2EUser(
   const name = `E2E User ${uniqueId}`;
 
   const signupContext = await request.newContext({ baseURL });
+
   const signupResponse = await signupContext.post("/api/auth/sign-up/email", {
     data: { email, name, password },
   });
@@ -80,6 +81,7 @@ export async function createE2EUser(
   }
 
   const signinContext = await request.newContext({ baseURL });
+
   const signinResponse = await signinContext.post("/api/auth/sign-in/email", {
     data: { email, password },
   });

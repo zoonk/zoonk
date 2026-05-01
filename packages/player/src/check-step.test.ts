@@ -98,6 +98,7 @@ describe(checkStep, () => {
           { left: "B", right: "2" },
         ],
       };
+
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
     });
@@ -111,6 +112,7 @@ describe(checkStep, () => {
           { left: "B", right: "1" },
         ],
       };
+
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
     });
@@ -252,6 +254,7 @@ describe(checkStep, () => {
           translationDistractors: [],
         },
       });
+
       const answer: SelectedAnswer = { arrangedWords: ["world", "Hello"], kind: "reading" };
       const { result } = checkStep(stepWithExplanation, answer);
       expect(result.feedback).toBe("Word order matters in this language.");
@@ -278,6 +281,7 @@ describe(checkStep, () => {
         arrangedWords: ["Guten", "Morgen,", "Lara."],
         kind: "reading",
       };
+
       const { result } = checkStep(stepWithDistractors, answer);
 
       expect(result.isCorrect).toBe(false);
@@ -332,6 +336,7 @@ describe(checkStep, () => {
           translationDistractors: [],
         },
       });
+
       const answer: SelectedAnswer = { arrangedWords: ["dias", "Buenos"], kind: "listening" };
       const { result } = checkStep(stepWithExplanation, answer);
       expect(result.feedback).toBe("Pay attention to accent marks.");
@@ -371,6 +376,7 @@ describe(checkStep, () => {
         },
         kind: "multipleChoice",
       });
+
       const answer: SelectedAnswer = { kind: "fillBlank", userAnswers: ["test"] };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);

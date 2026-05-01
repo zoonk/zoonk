@@ -77,6 +77,7 @@ describe(buildCompletionInput, () => {
   it("builds completion payload from the player state", () => {
     const answeredAt = new Date("2026-03-18T15:30:00.000Z").getTime();
     const now = new Date("2026-03-18T18:45:00.000Z");
+
     const state = buildState({
       selectedAnswers: { "step-1": { kind: "multipleChoice", selectedOptionId: "a" } },
       stepTimings: { "step-1": { answeredAt, dayOfWeek: 3, durationSeconds: 12, hourOfDay: 12 } },

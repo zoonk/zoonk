@@ -51,6 +51,7 @@ export function GenerationClient({
 
   const isActive = generation.status === "triggering" || generation.status === "streaming";
   const displayProgress = useAnimatedProgress({ isActive, realProgress: progress, targetProgress });
+
   const thinkingMessages = useThinkingMessages(
     thinkingGenerators,
     isActive ? activePhaseNames : [],

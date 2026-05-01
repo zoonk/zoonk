@@ -52,6 +52,7 @@ describe(useThinkingMessages, () => {
     const { result } = renderHook(() =>
       useThinkingMessages(cyclingGenerators, ["phaseA", "phaseB"]),
     );
+
     expect(result.current).toStrictEqual({ phaseA: "Analyzing...", phaseB: "Loading..." });
   });
 

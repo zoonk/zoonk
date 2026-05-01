@@ -25,6 +25,7 @@ async function mockWorkflowApis(route: Route) {
       contentType: "application/json",
       status: 200,
     });
+
     return;
   }
 
@@ -34,6 +35,7 @@ async function mockWorkflowApis(route: Route) {
       contentType: "text/event-stream",
       status: 200,
     });
+
     return;
   }
 
@@ -182,6 +184,7 @@ test.describe("Course Detail Page", () => {
   test("non-AI courses with no chapters stay on the course page", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, UUID_SHORT_LENGTH);
     const org = await createOrganization();
+
     const course = await courseFixture({
       isPublished: true,
       language: "en",
@@ -190,14 +193,17 @@ test.describe("Course Detail Page", () => {
       slug: `non-ai-empty-course-${uniqueId}`,
       title: `Non AI Empty Course ${uniqueId}`,
     });
+
     const url = `/b/${org.slug}/c/${course.slug}`;
 
     await page.goto(url);
 
     await expect(page).toHaveURL(url);
+
     await expect(
       page.getByRole("heading", { level: 1, name: `Non AI Empty Course ${uniqueId}` }),
     ).toBeVisible();
+
     await expect(page.getByRole("link", { name: /^start$/i })).not.toBeVisible();
   });
 

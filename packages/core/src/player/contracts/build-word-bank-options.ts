@@ -250,6 +250,7 @@ export function buildWordBankOptions(
 
   const distractors = removeCanonicalWordCollisions(config.distractors, config.correctWords);
   const words = shuffle([...config.correctWords, ...distractors]);
+
   const buildOption = config.usesTargetLanguageMetadata
     ? createWordOptionBuilder({ distractorWords, lessonWords, sentenceWordMap })
     : emptyWordOption;

@@ -55,9 +55,11 @@ Ties are allowed if outputs are truly equivalent in quality.
   // Map anonymous IDs back to model IDs, normalizing format variations.
   const rankings: ModelRanking[] = result.rankings.map((ranking) => {
     const normalizedRanking = normalizeAnonymousId(ranking.anonymousId);
+
     const modelMapping = mapping.find(
       (entry) => normalizeAnonymousId(entry.anonymousId) === normalizedRanking,
     );
+
     return {
       anonymousId: modelMapping?.anonymousId ?? ranking.anonymousId,
       modelId: modelMapping?.modelId ?? ranking.anonymousId,

@@ -17,6 +17,7 @@ describe(saveVocabularyLessonStep, () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const vocabularyWord = `boa noite ${id}`;
     const distractorWords = [`boa tarde ${id}`, `bom dia ${id}`] as const;
+
     const context = await createLessonContext({
       kind: "vocabulary",
       organizationId,
@@ -70,19 +71,24 @@ describe(saveVocabularyLessonStep, () => {
     ]);
 
     expect(lessonWords).toHaveLength(1);
+
     expect(lessonWords[0]).toMatchObject({
       distractors: [...distractorWords],
       translation: "good evening",
     });
+
     expect(lessonWords[0]?.word.word).toBe(vocabularyWord);
     expect(distractorLessonWords).toStrictEqual([]);
+
     expect(words.map((entry) => [entry.word, entry.audioUrl])).toStrictEqual([
       [vocabularyWord, `/audio/boa-noite-${id}.mp3`],
       [distractorWords[0], `/audio/boa-tarde-${id}.mp3`],
       [distractorWords[1], `/audio/bom-dia-${id}.mp3`],
     ]);
+
     expect(pronunciations).toHaveLength(3);
     expect(steps).toHaveLength(1);
+
     expect(steps[0]).toMatchObject({
       content: {},
       isPublished: true,

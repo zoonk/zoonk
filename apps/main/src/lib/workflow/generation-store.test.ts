@@ -15,6 +15,7 @@ describe(generationReducer, () => {
         step: "stepA",
         type: "stepCompleted",
       });
+
       expect(state.completedSteps).toStrictEqual(["stepA"]);
     });
 
@@ -23,6 +24,7 @@ describe(generationReducer, () => {
         step: "stepA",
         type: "stepCompleted",
       });
+
       const second = generationReducer(first, { step: "stepA", type: "stepCompleted" });
       expect(second.completedSteps).toStrictEqual(["stepA"]);
     });
@@ -32,6 +34,7 @@ describe(generationReducer, () => {
         step: "stepA",
         type: "stepCompleted",
       });
+
       expect(state.currentStep).toBeNull();
     });
 
@@ -40,6 +43,7 @@ describe(generationReducer, () => {
         step: "stepA",
         type: "stepCompleted",
       });
+
       expect(state.currentStep).toBe("stepB");
     });
   });
@@ -50,6 +54,7 @@ describe(generationReducer, () => {
         step: "stepA",
         type: "stepStarted",
       });
+
       expect(state.currentStep).toBe("stepA");
     });
   });
@@ -59,6 +64,7 @@ describe(generationReducer, () => {
       const state = generationReducer(initialGenerationState({ status: "streaming" }), {
         type: "reconnect",
       });
+
       expect(state.reconnectCount).toBe(1);
     });
 
@@ -66,6 +72,7 @@ describe(generationReducer, () => {
       const first = generationReducer(initialGenerationState({ status: "streaming" }), {
         type: "reconnect",
       });
+
       const second = generationReducer(first, { type: "reconnect" });
       expect(second.reconnectCount).toBe(2);
     });
@@ -77,6 +84,7 @@ describe(generationReducer, () => {
         initialGenerationState({ reconnectCount: 3, status: "streaming" }),
         { type: "reset" },
       );
+
       expect(state.reconnectCount).toBe(0);
     });
   });
@@ -87,6 +95,7 @@ describe(generationReducer, () => {
         initialGenerationState({ error: "Some error", status: "error" }),
         { type: "streamEnded" },
       );
+
       expect(state.status).toBe("error");
     });
 
@@ -94,6 +103,7 @@ describe(generationReducer, () => {
       const state = generationReducer(initialGenerationState({ status: "completed" }), {
         type: "streamEnded",
       });
+
       expect(state.status).toBe("completed");
     });
 
@@ -101,6 +111,7 @@ describe(generationReducer, () => {
       const state = generationReducer(initialGenerationState({ status: "streaming" }), {
         type: "streamEnded",
       });
+
       expect(state.status).toBe("completed");
     });
 
@@ -109,6 +120,7 @@ describe(generationReducer, () => {
         initialGenerationState({ completedSteps: ["done"], status: "streaming" }),
         { completionStep: "done", type: "streamEnded" },
       );
+
       expect(state.status).toBe("completed");
     });
 
@@ -117,6 +129,7 @@ describe(generationReducer, () => {
         completionStep: "done",
         type: "streamEnded",
       });
+
       expect(state.status).toBe("error");
       expect(state.error).toBe("Generation ended unexpectedly. Please try again.");
     });
@@ -126,9 +139,11 @@ describe(generationReducer, () => {
 describe(handleStepStreamMessage, () => {
   function applyActions(actions: GenerationAction[], initial: GenerationState) {
     let state = initial;
+
     for (const action of actions) {
       state = generationReducer(state, action);
     }
+
     return state;
   }
 
@@ -153,57 +168,67 @@ describe(handleStepStreamMessage, () => {
 
   it("triggers streamEnded on completionStep match", () => {
     const actions: GenerationAction[] = [];
+
     handleStepStreamMessage({
       completionStep: "done",
       dispatch: (a) => actions.push(a),
       message: { status: "completed", step: "done" },
     });
+
     const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
     expect(state.status).toBe("completed");
   });
 
   it("triggers streamEnded when entityId matches the completed lesson", () => {
     const actions: GenerationAction[] = [];
+
     handleStepStreamMessage({
       completionStep: "done",
       dispatch: (a) => actions.push(a),
       entityId: "42",
       message: { entityId: "42", status: "completed", step: "done" },
     });
+
     const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
     expect(state.status).toBe("completed");
   });
 
   it("does not trigger streamEnded when entityId does not match", () => {
     const actions: GenerationAction[] = [];
+
     handleStepStreamMessage({
       completionStep: "done",
       dispatch: (a) => actions.push(a),
       entityId: "42",
       message: { entityId: "99", status: "completed", step: "done" },
     });
+
     const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
     expect(state.status).toBe("streaming");
   });
 
   it("triggers streamEnded when no entityId filter is set (non-lesson workflows)", () => {
     const actions: GenerationAction[] = [];
+
     handleStepStreamMessage({
       completionStep: "done",
       dispatch: (a) => actions.push(a),
       message: { entityId: "99", status: "completed", step: "done" },
     });
+
     const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
     expect(state.status).toBe("completed");
   });
 
   it("does not trigger streamEnded for non-completion steps", () => {
     const actions: GenerationAction[] = [];
+
     handleStepStreamMessage({
       completionStep: "done",
       dispatch: (a) => actions.push(a),
       message: { status: "completed", step: "stepA" },
     });
+
     const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
     expect(state.status).toBe("streaming");
   });
@@ -322,6 +347,7 @@ describe(handleStepStreamMessage, () => {
 
   it("does NOT set error when error entityId doesn't match viewer", () => {
     const actions: GenerationAction[] = [];
+
     handleStepStreamMessage({
       dispatch: (a) => actions.push(a),
       entityId: "100",
@@ -332,6 +358,7 @@ describe(handleStepStreamMessage, () => {
         step: "generateVisuals",
       },
     });
+
     const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
     expect(state.status).toBe("streaming");
     expect(state.error).toBeNull();
@@ -339,6 +366,7 @@ describe(handleStepStreamMessage, () => {
 
   it("sets error when error entityId matches viewer", () => {
     const actions: GenerationAction[] = [];
+
     handleStepStreamMessage({
       dispatch: (a) => actions.push(a),
       entityId: "100",
@@ -349,12 +377,14 @@ describe(handleStepStreamMessage, () => {
         step: "generateVisuals",
       },
     });
+
     const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
     expect(state.status).toBe("error");
   });
 
   it("sets error when error has no entityId (shared/batch step failure)", () => {
     const actions: GenerationAction[] = [];
+
     handleStepStreamMessage({
       dispatch: (a) => actions.push(a),
       entityId: "100",
@@ -364,6 +394,7 @@ describe(handleStepStreamMessage, () => {
         step: "generateExplanationContent",
       },
     });
+
     const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
     expect(state.status).toBe("error");
   });

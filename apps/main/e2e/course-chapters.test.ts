@@ -33,6 +33,7 @@ test.beforeAll(async () => {
     second: `Beta Chapter ${uniqueId}`,
     third: `Gamma Chapter ${uniqueId}`,
   };
+
   chapterSlugs = { first: `e2e-alpha-${uniqueId}` };
   unpublishedChapterName = `Unpublished Chapter ${uniqueId}`;
 

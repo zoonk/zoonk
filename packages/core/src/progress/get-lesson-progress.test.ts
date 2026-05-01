@@ -16,6 +16,7 @@ describe(getLessonProgress, () => {
 
   async function createPublishedChapter() {
     const course = await courseFixture({ isPublished: true, organizationId: organization.id });
+
     return chapterFixture({
       courseId: course.id,
       isPublished: true,
@@ -34,6 +35,7 @@ describe(getLessonProgress, () => {
 
   it("returns completion rows for published lessons in the chapter", async () => {
     const [user, chapter] = await Promise.all([userFixture(), createPublishedChapter()]);
+
     const [completedLesson, pendingLesson] = await Promise.all([
       lessonFixture({
         chapterId: chapter.id,
@@ -67,6 +69,7 @@ describe(getLessonProgress, () => {
 
   it("excludes started-but-not-completed lessons", async () => {
     const [user, chapter] = await Promise.all([userFixture(), createPublishedChapter()]);
+
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       isPublished: true,
@@ -89,6 +92,7 @@ describe(getLessonProgress, () => {
 
   it("excludes unpublished lessons", async () => {
     const [user, chapter] = await Promise.all([userFixture(), createPublishedChapter()]);
+
     const [publishedLesson, unpublishedLesson] = await Promise.all([
       lessonFixture({
         chapterId: chapter.id,
@@ -127,6 +131,7 @@ describe(getLessonProgress, () => {
 
   it("keeps a completed lesson completed when a new lesson is added later", async () => {
     const [user, chapter] = await Promise.all([userFixture(), createPublishedChapter()]);
+
     const completedLesson = await lessonFixture({
       chapterId: chapter.id,
       isPublished: true,

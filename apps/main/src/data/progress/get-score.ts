@@ -14,6 +14,7 @@ function getDateRange(
   if (startDateIso && endDateIso) {
     return { endDate: new Date(endDateIso), startDate: new Date(startDateIso) };
   }
+
   const endDate = new Date();
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - DEFAULT_PROGRESS_LOOKBACK_DAYS);
@@ -22,9 +23,11 @@ function getDateRange(
 
 function calculateScoreFromTotals(correct: number, incorrect: number): number | null {
   const total = correct + incorrect;
+
   if (total === 0) {
     return null;
   }
+
   return (correct / total) * 100;
 }
 
@@ -35,6 +38,7 @@ const cachedGetScore = cache(
     headers?: Headers,
   ): Promise<ScoreData | null> => {
     const session = await getSession(headers);
+
     if (!session) {
       return null;
     }

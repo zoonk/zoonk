@@ -17,12 +17,15 @@ async function emitSkippedPersistSteps(
   if (!needsCourseUpdate) {
     await streamSkipStep("updateCourse");
   }
+
   if (!needsAlternativeTitles) {
     await streamSkipStep("addAlternativeTitles");
   }
+
   if (!needsCategories) {
     await streamSkipStep("addCategories");
   }
+
   if (!needsChapters) {
     await streamSkipStep("addChapters");
   }

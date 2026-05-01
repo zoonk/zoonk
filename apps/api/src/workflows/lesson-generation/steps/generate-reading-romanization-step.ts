@@ -24,6 +24,7 @@ export async function generateReadingRomanizationStep({
   await stream.status({ status: "started", step: "generateReadingRomanization" });
 
   const sentenceStrings = sentences.map((entry) => entry.sentence);
+
   const romanizations = await generateLessonRomanizations({
     targetLanguage,
     texts: sentenceStrings,

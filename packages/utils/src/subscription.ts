@@ -62,6 +62,7 @@ export function getPlanTier(planName: string | null): number {
   if (!planName) {
     return 0;
   }
+
   return ALL_SUBSCRIPTION_PLANS.find((plan) => plan.name === planName)?.tier ?? 0;
 }
 

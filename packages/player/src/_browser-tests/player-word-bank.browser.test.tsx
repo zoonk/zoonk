@@ -191,6 +191,7 @@ describe("player browser integration: word bank steps", () => {
     await expect.element(page.getByText(/correct answer:/i)).toBeInTheDocument();
     await expect.element(page.getByText("Hola mundo")).toBeInTheDocument();
     await expect.element(page.getByText("OH-la MUN-do")).toBeInTheDocument();
+
     await expect
       .element(page.getByText("The sentence keeps the greeting first."))
       .toBeInTheDocument();
@@ -221,6 +222,7 @@ describe("player browser integration: word bank steps", () => {
     });
 
     await expect.element(page.getByText("Hola mundo")).toBeInTheDocument();
+
     await expect
       .element(page.getByRole("button", { name: /play pronunciation/i }))
       .not.toBeInTheDocument();

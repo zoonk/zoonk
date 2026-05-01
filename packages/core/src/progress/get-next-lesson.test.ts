@@ -31,6 +31,7 @@ describe(getNextLesson, () => {
     lessonStatuses?: ("completed" | "failed" | "pending" | "running")[];
   } = {}): Promise<CourseTree> {
     const course = await courseFixture({ isPublished: true, organizationId: organization.id });
+
     const chapter = await chapterFixture({
       courseId: course.id,
       isPublished: true,

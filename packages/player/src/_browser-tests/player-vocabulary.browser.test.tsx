@@ -96,6 +96,7 @@ describe("player browser integration: vocabulary", () => {
 
     await expect.element(completionScreen).toBeInTheDocument();
     await expect.element(completionScreen.getByText(/\+10\s*BP/i)).toBeInTheDocument();
+
     await expect
       .element(completionScreen.getByRole("progressbar", { name: /level progress/i }))
       .toBeInTheDocument();

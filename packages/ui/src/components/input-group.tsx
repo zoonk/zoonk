@@ -53,6 +53,7 @@ function InputGroupAddon({
         if (event.target instanceof HTMLElement && event.target.closest("button")) {
           return;
         }
+
         event.currentTarget.parentElement?.querySelector("input")?.focus();
       }}
       role="group"

@@ -68,6 +68,7 @@ describe(generateQuizContentStep, () => {
     const result = await generateQuizContentStep(context);
 
     expect(result.kind).toBe("quiz");
+
     expect(generateLessonQuiz).toHaveBeenCalledWith(
       expect.objectContaining({
         explanationSteps: [{ text: "New quiz explanation", title: "New" }],

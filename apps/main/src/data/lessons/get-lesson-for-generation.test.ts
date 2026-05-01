@@ -55,10 +55,12 @@ describe(getLessonForGeneration, () => {
   it("returns null for lessons outside the AI organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });
+
     const otherChapter = await chapterFixture({
       courseId: otherCourse.id,
       organizationId: otherOrg.id,
     });
+
     const otherLesson = await lessonFixture({
       chapterId: otherChapter.id,
       organizationId: otherOrg.id,

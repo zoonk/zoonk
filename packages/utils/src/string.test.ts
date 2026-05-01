@@ -223,6 +223,7 @@ describe(toSlug, () => {
   it("truncates to SLUG_MAX_LENGTH", () => {
     const long = "a".repeat(100);
     expect(toSlug(long)).toBe("a".repeat(50));
+
     expect(
       toSlug("Introduction to Conditional Probability and Bayesian Inference Methods"),
     ).toHaveLength(50);
@@ -243,6 +244,7 @@ describe(deduplicateSlugs, () => {
 
   it("appends counter suffix to duplicate slugs", () => {
     const items = [{ slug: "x" }, { slug: "x" }, { slug: "x" }];
+
     expect(deduplicateSlugs(items)).toStrictEqual([
       { slug: "x" },
       { slug: "x-1" },
@@ -257,6 +259,7 @@ describe(deduplicateSlugs, () => {
 
   it("avoids collision with pre-existing slugs", () => {
     const items = [{ slug: "x" }, { slug: "x" }, { slug: "x-1" }];
+
     expect(deduplicateSlugs(items)).toStrictEqual([
       { slug: "x" },
       { slug: "x-2" },
@@ -269,6 +272,7 @@ describe(deduplicateSlugs, () => {
       { slug: "a", title: "A" },
       { slug: "a", title: "B" },
     ];
+
     const result = deduplicateSlugs(items);
     expect(result[0]).toStrictEqual({ slug: "a", title: "A" });
     expect(result[1]).toStrictEqual({ slug: "a-1", title: "B" });

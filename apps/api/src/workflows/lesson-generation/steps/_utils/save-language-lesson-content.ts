@@ -99,6 +99,7 @@ function buildGrammarSteps({
 
   const exerciseSteps = content.exercises.map((exercise, index) => {
     const fullSentence = exercise.template.replace("[BLANK]", exercise.answer);
+
     const optionRomanizations = buildOptionRomanizations(
       [fullSentence, exercise.answer, ...exercise.distractors],
       romanizations,

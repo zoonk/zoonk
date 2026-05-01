@@ -28,12 +28,15 @@ describe(stripWrappingQuotes, () => {
     expect(stripWrappingQuotes('"this" should preserve quotes in the first and last "words"')).toBe(
       '"this" should preserve quotes in the first and last "words"',
     );
+
     expect(stripWrappingQuotes("“this” should preserve quotes in the first and last “words”")).toBe(
       "“this” should preserve quotes in the first and last “words”",
     );
+
     expect(stripWrappingQuotes("'this' should preserve quotes in the first and last 'words'")).toBe(
       "'this' should preserve quotes in the first and last 'words'",
     );
+
     expect(stripWrappingQuotes("‘this’ should preserve quotes in the first and last ‘words’")).toBe(
       "‘this’ should preserve quotes in the first and last ‘words’",
     );

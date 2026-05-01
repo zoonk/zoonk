@@ -26,6 +26,7 @@ function calculateAverage(dataPoints: { energy: number }[]): number {
   if (dataPoints.length === 0) {
     return 0;
   }
+
   const sum = dataPoints.reduce((acc, point) => acc + point.energy, 0);
   return sum / dataPoints.length;
 }
@@ -46,6 +47,7 @@ function getPreviousAverage(
   if (!previousData || previousData.length === 0) {
     return null;
   }
+
   const processed = processEnergyData(previousData, period);
   return processed.length > 0 ? calculateAverage(processed) : null;
 }
@@ -54,6 +56,7 @@ async function hasEarlierData(userId: string, beforeDate: Date): Promise<boolean
   const { data } = await safeAsync(() =>
     prisma.dailyProgress.findFirst({ where: { date: { lt: beforeDate }, userId } }),
   );
+
   return Boolean(data);
 }
 
@@ -65,6 +68,7 @@ const cachedGetEnergyHistory = cache(
     headers?: Headers,
   ): Promise<EnergyHistoryData | null> => {
     const session = await getSession(headers);
+
     if (!session) {
       return null;
     }
@@ -82,6 +86,7 @@ const cachedGetEnergyHistory = cache(
     }
 
     const currentData = processEnergyData(currentResult.data, period);
+
     const dataPoints: EnergyDataPoint[] = currentData.map((row) => ({
       date: row.date,
       energy: row.energy,

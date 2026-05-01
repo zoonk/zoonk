@@ -106,11 +106,13 @@ describe(submitLessonCompletion, () => {
     const userId = user.id;
 
     const publishedCourse = await courseFixture({ isPublished: true, organizationId: org.id });
+
     const chapter = await chapterFixture({
       courseId: publishedCourse.id,
       isPublished: true,
       organizationId: org.id,
     });
+
     const [firstLesson, secondLesson] = await Promise.all([
       lessonFixture({
         chapterId: chapter.id,
@@ -344,6 +346,7 @@ describe(submitLessonCompletion, () => {
     const courseUser = await prisma.courseUser.findUnique({
       where: { courseUser: { courseId: course.id, userId } },
     });
+
     expect(courseUser).not.toBeNull();
 
     const courseAfter = await prisma.course.findUniqueOrThrow({ where: { id: course.id } });
@@ -378,6 +381,7 @@ describe(submitLessonCompletion, () => {
     const courseUsers = await prisma.courseUser.findMany({
       where: { courseId: course.id, userId },
     });
+
     expect(courseUsers).toHaveLength(1);
   });
 
@@ -387,9 +391,11 @@ describe(submitLessonCompletion, () => {
 
     // Anchor to UTC midnight so a midnight rollover can't shift the day count
     const today = new Date();
+
     const todayMidnight = new Date(
       Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
     );
+
     const yesterday = new Date(todayMidnight.getTime() - 86_400_000);
 
     await userProgressFixture({ currentEnergy: 50, lastActiveAt: yesterday, userId });
@@ -412,6 +418,7 @@ describe(submitLessonCompletion, () => {
       orderBy: { date: "asc" },
       where: { userId },
     });
+
     expect(dailyRecords).toHaveLength(1);
     expect(dailyRecords[0]?.date).toStrictEqual(parseLocalDate(todayLocalDate()));
     expect(dailyRecords[0]?.energyAtEnd).toBeCloseTo(50.2);
@@ -476,6 +483,7 @@ describe(submitLessonCompletion, () => {
     const daily = await prisma.dailyProgress.findFirst({ where: { userId } });
 
     expect(daily).not.toBeNull();
+
     expect(daily?.date).toStrictEqual(
       new Date(
         Date.UTC(yesterday.getUTCFullYear(), yesterday.getUTCMonth(), yesterday.getUTCDate()),
@@ -561,9 +569,11 @@ describe(submitLessonCompletion, () => {
     const userId = user.id;
 
     const today = new Date();
+
     const todayMidnight = new Date(
       Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
     );
+
     const fiveDaysAgo = new Date(todayMidnight.getTime() - 5 * 86_400_000);
 
     await userProgressFixture({ currentEnergy: 50, lastActiveAt: fiveDaysAgo, userId });

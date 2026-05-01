@@ -14,6 +14,7 @@ describe(savePracticeLessonStep, () => {
 
   it("saves practice scenario and question steps with option ids", async () => {
     const context = await createLessonContext({ kind: "practice", organizationId });
+
     const images = [
       {
         prompt: "Support desk with refund dashboard.",
@@ -58,12 +59,14 @@ describe(savePracticeLessonStep, () => {
       [0, "static"],
       [1, "multipleChoice"],
     ]);
+
     expect(steps[0]?.content).toStrictEqual({
       image: images[0],
       text: "A support report does not line up with the refund totals.",
       title: "Night shift",
       variant: "intro",
     });
+
     expect(steps[1]?.content).toStrictEqual({
       context: "The discounted orders are the only ones acting weird.",
       image: images[1],

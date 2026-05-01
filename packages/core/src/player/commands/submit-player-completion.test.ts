@@ -29,6 +29,7 @@ function todayLocalDate(): string {
 async function createPublishedChapterContext() {
   const organization = await organizationFixture({ kind: "brand" });
   const course = await courseFixture({ isPublished: true, organizationId: organization.id });
+
   const chapter = await chapterFixture({
     courseId: course.id,
     isPublished: true,
@@ -55,6 +56,7 @@ async function createMultipleChoiceLesson(params: {
     organizationId: params.organizationId,
     position: params.position ?? 0,
   });
+
   const step = await stepFixture({
     content: {
       options: [
@@ -113,6 +115,7 @@ describe(submitPlayerCompletion, () => {
       userFixture(),
       createPublishedChapterContext(),
     ]);
+
     const [currentLesson, nextLesson] = await Promise.all([
       lessonFixture({
         chapterId: chapter.id,
@@ -128,6 +131,7 @@ describe(submitPlayerCompletion, () => {
         position: 1,
       }),
     ]);
+
     const { lesson, step } = await createMultipleChoiceLesson({
       lessonId: currentLesson.id,
       organizationId: organization.id,

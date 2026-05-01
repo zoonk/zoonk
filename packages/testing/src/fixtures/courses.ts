@@ -41,6 +41,7 @@ export async function courseCategoryFixture(attrs: Omit<CourseCategory, "id" | "
   const courseCategory = await prisma.courseCategory.create({
     data: { category: attrs.category, courseId: attrs.courseId },
   });
+
   return courseCategory;
 }
 

@@ -40,12 +40,14 @@ describe(generateStepImagesStep, () => {
       { prompt: "first prompt", url: "https://example.com/first%20prompt.webp" },
       { prompt: "second prompt", url: "https://example.com/second%20prompt.webp" },
     ]);
+
     expect(generateContentStepImage).toHaveBeenCalledWith({
       language: context.language,
       orgSlug: "ai",
       preset: "practice",
       prompt: "first prompt",
     });
+
     expect(generateContentStepImage).toHaveBeenCalledWith({
       language: context.language,
       orgSlug: "ai",

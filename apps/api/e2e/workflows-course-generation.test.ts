@@ -52,6 +52,7 @@ test.describe("Course Generation Workflow API", () => {
 
   test("returns validation error when courseSuggestionId is invalid type", async () => {
     const apiContext = await request.newContext({ baseURL });
+
     const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
       data: { courseSuggestionId: "invalid" },
     });
@@ -68,6 +69,7 @@ test.describe("Course Generation Workflow API", () => {
 
   test("returns validation error when courseSuggestionId is negative", async () => {
     const apiContext = await request.newContext({ baseURL });
+
     const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
       data: { courseSuggestionId: -1 },
     });
@@ -84,12 +86,14 @@ test.describe("Course Generation Workflow API", () => {
 
   test("starts workflow for valid course suggestion", async () => {
     const uniqueId = randomUUID().slice(0, 8);
+
     const suggestion = await createCompletedCourseSuggestion({
       slug: `e2e-workflow-test-${uniqueId}`,
       title: `E2E Workflow Test ${uniqueId}`,
     });
 
     const apiContext = await request.newContext({ baseURL });
+
     const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
       data: { courseSuggestionId: suggestion.id },
     });
@@ -121,6 +125,7 @@ test.describe("Course Generation Workflow API", () => {
 
   test("returns SSE stream for valid runId", async () => {
     const uniqueId = randomUUID().slice(0, 8);
+
     const suggestion = await createCompletedCourseSuggestion({
       slug: `e2e-status-test-${uniqueId}`,
       title: `E2E Status Test ${uniqueId}`,

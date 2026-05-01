@@ -6,6 +6,7 @@ import { type ReasoningEffort, buildProviderOptions } from "../../provider-optio
 import promptTemplate from "./course-categories.prompt.md";
 
 const defaultModel = "google/gemini-3.1-flash-lite-preview";
+
 const fallbackModels = [
   "openai/gpt-5.4-nano",
   "anthropic/claude-haiku-4.5",
@@ -40,6 +41,7 @@ export async function generateCourseCategories({
   const userPrompt = `
     COURSE_TITLE: ${courseTitle}
   `;
+
   const systemPrompt = promptTemplate.replace("{{CATEGORIES}}", () => AI_CATEGORIES.join(", "));
 
   const providerOptions = buildProviderOptions({

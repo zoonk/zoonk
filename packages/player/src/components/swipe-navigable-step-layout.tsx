@@ -229,6 +229,7 @@ export function SwipeNavigableStepLayout({
     }
 
     detachWindowTouchListeners();
+
     gestureRef.current = {
       container: event.currentTarget,
       startX: touch.clientX,

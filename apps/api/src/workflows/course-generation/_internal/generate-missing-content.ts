@@ -24,6 +24,7 @@ async function descriptionOrSkip(
     await streamSkipStep("generateDescription");
     return null;
   }
+
   return generateDescriptionStep(course);
 }
 
@@ -35,6 +36,7 @@ async function imageOrSkip(
     await streamSkipStep("generateImage");
     return null;
   }
+
   return generateImageStep(course);
 }
 
@@ -46,6 +48,7 @@ async function altTitlesOrSkip(
     await streamSkipStep("generateAlternativeTitles");
     return [];
   }
+
   return generateAlternativeTitlesStep(course);
 }
 
@@ -76,6 +79,7 @@ async function chaptersOrSkip(
     await streamSkipStep("generateChapters");
     return [];
   }
+
   return generateChaptersStep(course);
 }
 

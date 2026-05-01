@@ -29,11 +29,13 @@ describe(generateSentenceDistractorsStep, () => {
     const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
     const catWord = `猫${uniqueId}`;
     const waterWord = `水${uniqueId}`;
+
     const context = await createLessonContext({
       kind: "reading",
       organizationId,
       targetLanguage: "ja",
     });
+
     const sentences = [
       { explanation: "", sentence: `${catWord} ${waterWord}`, translation: "cat and water" },
     ];
@@ -42,11 +44,13 @@ describe(generateSentenceDistractorsStep, () => {
       distractors: { [`${catWord} ${waterWord}`]: ["火"] },
       translationDistractors: { "cat and water": ["dog"] },
     });
+
     expect(generateLessonDistractors).toHaveBeenCalledWith({
       input: `${catWord} ${waterWord}`,
       language: "ja",
       shape: "single-word",
     });
+
     expect(generateLessonDistractors).toHaveBeenCalledWith({
       input: "cat and water",
       language: "en",

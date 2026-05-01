@@ -96,6 +96,7 @@ describe(getLessonWordsForLessons, () => {
     const result = await getLessonWordsForLessons({ lessonIds: [newLesson.id] });
 
     expect(result).toHaveLength(1);
+
     expect(result[0]).toMatchObject({
       distractors: [],
       translation: "dog",

@@ -262,6 +262,7 @@ function buildSerializedLesson(
   const serializedLessonSentences = lessonSentences.map((sentence) => serializeSentence(sentence));
   const serializedDistractorWords = distractorWords.map((word) => serializeDistractorWord(word));
   const distractorLookup = buildDistractorWordLookup(serializedDistractorWords);
+
   const sentenceWordMap = new Map(
     sentenceWords.map((word) => [normalizeDistractorKey(word.word), word]),
   );

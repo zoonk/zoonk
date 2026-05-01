@@ -52,6 +52,7 @@ describe(saveQuizLessonStep, () => {
       [0, "multipleChoice"],
       [1, "selectImage"],
     ]);
+
     expect(steps[0]?.content).toStrictEqual({
       context: "Look at the rule.",
       options: [
@@ -60,6 +61,7 @@ describe(saveQuizLessonStep, () => {
       ],
       question: "What is true?",
     });
+
     expect(steps[1]?.content).toStrictEqual({
       options: [
         {

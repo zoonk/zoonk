@@ -52,6 +52,7 @@ function resolveTaskType(group: string, task: string): ReviewTaskType | null {
   if (!isValidTaskType(taskType)) {
     return null;
   }
+
   if (getTaskGroup(taskType) !== group) {
     return null;
   }

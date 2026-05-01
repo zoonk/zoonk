@@ -4,18 +4,22 @@ type DataPoint = { date: Date; energy: number };
 
 function buildDateEnergyMap(dataPoints: DataPoint[]): Map<string, number> {
   const map = new Map<string, number>();
+
   for (const point of dataPoints) {
     map.set(point.date.toISOString().slice(0, 10), point.energy);
   }
+
   return map;
 }
 
 function getDateBounds(sorted: DataPoint[]): { firstDate: Date; lastDate: Date } | null {
   const first = sorted[0];
   const last = sorted.at(-1);
+
   if (!first || !last) {
     return null;
   }
+
   return { firstDate: first.date, lastDate: last.date };
 }
 
@@ -25,11 +29,13 @@ function getDayCount(firstDate: Date, lastDate: Date): number {
     firstDate.getUTCMonth(),
     firstDate.getUTCDate(),
   );
+
   const utcLast = Date.UTC(
     lastDate.getUTCFullYear(),
     lastDate.getUTCMonth(),
     lastDate.getUTCDate(),
   );
+
   return Math.round((utcLast - utcFirst) / (1000 * 60 * 60 * 24));
 }
 
@@ -69,6 +75,7 @@ export function fillGapsWithDecay(dataPoints: DataPoint[]): DataPoint[] {
 
   const sorted = [...dataPoints].toSorted((a, b) => a.date.getTime() - b.date.getTime());
   const bounds = getDateBounds(sorted);
+
   if (!bounds) {
     return [];
   }

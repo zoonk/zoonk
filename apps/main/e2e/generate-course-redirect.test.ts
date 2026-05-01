@@ -19,6 +19,7 @@ async function mockWorkflowApis(route: Route) {
       contentType: "application/json",
       status: 200,
     });
+
     return;
   }
 
@@ -29,6 +30,7 @@ async function mockWorkflowApis(route: Route) {
       contentType: "text/event-stream",
       status: 200,
     });
+
     return;
   }
 
@@ -38,6 +40,7 @@ async function mockWorkflowApis(route: Route) {
 test.describe("Generate Course Redirect", () => {
   test("redirects to generate/cs/[id] when course suggestion exists", async ({ page }) => {
     const slug = `e2e-redirect-${randomUUID().slice(0, 8)}`;
+
     const suggestion = await courseSuggestionFixture({
       generationStatus: "running",
       language: "en",

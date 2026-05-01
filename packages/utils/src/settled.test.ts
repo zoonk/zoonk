@@ -5,6 +5,7 @@ describe(settledFailures, () => {
   it("returns every rejected reason and fulfilled error", () => {
     const rejectedError = new Error("rejected");
     const fulfilledError = new Error("fulfilled error");
+
     const results: PromiseSettledResult<unknown>[] = [
       { status: "fulfilled", value: "ok" },
       { reason: rejectedError, status: "rejected" },
@@ -47,6 +48,7 @@ describe(getSettledFailureError, () => {
 describe(throwSettledFailures, () => {
   it("throws AggregateError with every failure", () => {
     const errors = [new Error("first"), new Error("second")];
+
     const results: PromiseSettledResult<unknown>[] = [
       { reason: errors[0], status: "rejected" },
       { reason: errors[1], status: "rejected" },
