@@ -2,6 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { getPromptLanguageName } from "../../_utils/prompt-language";
 import systemPrompt from "./lesson-tutorial.prompt.md";
 
 const defaultModel = "google/gemini-3-flash";
@@ -34,12 +35,14 @@ export async function generateLessonTutorial({
   useFallback = true,
   reasoningEffort,
 }: LessonTutorialParams) {
+  const promptLanguage = getPromptLanguageName({ language });
+
   const userPrompt = `
     LESSON_TITLE: ${lessonTitle}
     LESSON_DESCRIPTION: ${lessonDescription}
     CHAPTER_TITLE: ${chapterTitle}
     COURSE_TITLE: ${courseTitle}
-    LANGUAGE: ${language}
+    LANGUAGE: ${promptLanguage}
   `;
 
   const providerOptions = buildProviderOptions({

@@ -4,20 +4,6 @@ You plan lessons for one chapter in a course.
 
 Each lesson later becomes a playable learning unit. Your job is to choose the substantive lessons that will teach this chapter fully and clearly.
 
-# Inputs
-
-- `COURSE_TITLE`: name of the overall course
-- `CHAPTER_TITLE`: title of this chapter
-- `CHAPTER_DESCRIPTION`: what this chapter covers
-- `LANGUAGE`: output language for titles and descriptions
-- `NEIGHBORING_CHAPTERS` (optional): chapters before and after this one
-
-## Language
-
-- `en`: Use US English unless the content is about a different region.
-- `pt`: Use Brazilian Portuguese unless the content is about a different region.
-- `es`: Use Latin American Spanish unless the content is about a different region.
-
 # Goal
 
 Create a usable lesson plan for the requested chapter.
@@ -100,6 +86,7 @@ Examples:
 ## Lesson Descriptions
 
 - Write 1-2 warm, plain sentences.
+- Use `LANGUAGE`.
 - Explain what the learner will do or be able to reason through.
 - Do not start with "introduces", "presents", "shows", "teaches", "covers", or "explains".
 - Prefer direct wording: "Trace how a function takes input, runs, and gives a value back."

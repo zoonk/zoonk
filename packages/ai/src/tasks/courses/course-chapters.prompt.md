@@ -81,5 +81,5 @@ Final check: before returning, verify that every canonical pillar of the field h
 
 - Titles: short, specific, concrete. Prefer titles that name a real thing or answer a real question. Avoid "I / II / Part 1" — use subtitles instead.
 - Descriptions: 1–2 sentences describing what the chapter covers and, when natural, what it enables.
-- Language: follow the `LANGUAGE` input. For `pt`: Brazilian Portuguese. For `es`: Latin American Spanish. For `en`: US English.
+- Language: write titles and descriptions in `LANGUAGE`.
 - Warm, plain language. Avoid academic vocabulary. Never say "explore", "understand", "learn about", "introduction to", "basics of".

@@ -1,8 +1,8 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
-import { getLanguageName } from "@zoonk/utils/languages";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { getPromptLanguageName } from "../../_utils/prompt-language";
 import { formatConceptLines } from "../config";
 import systemPrompt from "./lesson-grammar-content.prompt.md";
 
@@ -54,7 +54,7 @@ export async function generateLessonGrammarContent({
   targetLanguage,
   useFallback = true,
 }: LessonGrammarContentParams) {
-  const targetLanguageName = getLanguageName({ targetLanguage });
+  const targetLanguageName = getPromptLanguageName({ language: targetLanguage });
 
   const userPrompt = `
     TARGET_LANGUAGE: ${targetLanguageName}

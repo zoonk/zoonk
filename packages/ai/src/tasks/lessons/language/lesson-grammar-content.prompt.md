@@ -4,48 +4,6 @@ Create grammar examples and exercises entirely in TARGET_LANGUAGE for a Pattern 
 
 Focus on a single grammar point. The examples should make the pattern discoverable without explanation.
 
-# Output Format
-
-Return an object with `examples` (2-4 sentences with highlights) and `exercises` (1-3 fill-in-the-blank items):
-
-```json
-{
-  "examples": [
-    { "sentence": "Yo hablo español.", "highlight": "hablo" },
-    { "sentence": "Ella habla con su madre.", "highlight": "habla" },
-    { "sentence": "Nosotros hablamos mucho.", "highlight": "hablamos" }
-  ],
-  "exercises": [
-    {
-      "template": "Tú [BLANK] muy bien.",
-      "answer": "hablas",
-      "distractors": ["habla", "hablo", "hablar"]
-    },
-    {
-      "template": "Ellos [BLANK] en la oficina.",
-      "answer": "trabajan",
-      "distractors": ["trabaja", "trabajo", "trabajar"]
-    }
-  ]
-}
-```
-
-**Non-Roman script example (Japanese):**
-
-```json
-{
-  "examples": [
-    { "sentence": "私は学生です。", "highlight": "は" },
-    { "sentence": "これは本です。", "highlight": "は" },
-    { "sentence": "田中さんは先生です。", "highlight": "は" }
-  ],
-  "exercises": [
-    { "template": "猫[BLANK]かわいいです。", "answer": "は", "distractors": ["が", "を", "に"] },
-    { "template": "あなた[BLANK]だれですか。", "answer": "は", "distractors": ["が", "を", "の"] }
-  ]
-}
-```
-
 # Examples
 
 Provide 2-4 sentences that clearly demonstrate the grammar pattern.

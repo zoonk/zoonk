@@ -2,6 +2,7 @@ import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { type GeneratedFile, type ImageModel, generateImage } from "ai";
 import { type ImageGenerationQuality, buildImageProviderOptions } from "../../provider-options";
+import { getPromptLanguageName } from "../_utils/prompt-language";
 import illustrationPromptTemplate from "./step-content-image.prompt.md";
 import practicePromptTemplate from "./step-content-practice-image.prompt.md";
 
@@ -17,6 +18,11 @@ export type StepContentImagePreset = keyof typeof STEP_CONTENT_IMAGE_PRESETS;
 
 const DEFAULT_PRESET: StepContentImagePreset = "illustration";
 
+/**
+ * Builds the final image prompt with the same language naming used by text
+ * tasks. Image models need the dialect spelled out too because visible labels
+ * and UI text inside generated images should match the learner's locale.
+ */
 function getStepContentImagePrompt({
   language,
   preset,
@@ -26,9 +32,11 @@ function getStepContentImagePrompt({
   preset: StepContentImagePreset;
   prompt: string;
 }) {
+  const promptLanguage = getPromptLanguageName({ language });
+
   return STEP_CONTENT_IMAGE_PRESETS[preset].promptTemplate
     .replace("{{PROMPT}}", () => prompt)
-    .replace("{{LANGUAGE}}", () => language);
+    .replace("{{LANGUAGE}}", () => promptLanguage);
 }
 
 export type StepContentImageParams = {

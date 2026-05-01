@@ -2,6 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { getPromptLanguageName } from "../../_utils/prompt-language";
 import { formatExplanationStepsForPrompt } from "./_utils/format-explanation-steps";
 import systemPrompt from "./lesson-practice.prompt.md";
 
@@ -53,13 +54,14 @@ export async function generateLessonPractice({
   reasoningEffort,
 }: LessonPracticeParams) {
   const formattedExplanationSteps = formatExplanationStepsForPrompt(explanationSteps);
+  const promptLanguage = getPromptLanguageName({ language });
 
   const userPrompt = `
     LESSON_TITLE: ${lessonTitle}
     LESSON_DESCRIPTION: ${lessonDescription}
     CHAPTER_TITLE: ${chapterTitle}
     COURSE_TITLE: ${courseTitle}
-    LANGUAGE: ${language}
+    LANGUAGE: ${promptLanguage}
     EXPLANATION_STEPS: ${formattedExplanationSteps}
   `;
 

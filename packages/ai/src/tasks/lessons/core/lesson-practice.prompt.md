@@ -16,24 +16,9 @@ The learner should mostly inspect the image, notice what matters, and decide wha
 
 This should feel closer to a great Duolingo story beat than to a quiz with long paragraphs.
 
-# Inputs
-
-- `LESSON_TITLE`: The topic to build the scenario around
-- `LESSON_DESCRIPTION`: Extra context about the lesson
-- `CHAPTER_TITLE`: Chapter context for scope
-- `COURSE_TITLE`: Course context for audience level
-- `LANGUAGE`: Output language
-- `EXPLANATION_STEPS`: The concepts the scenario must naturally require
-
-## Language Guidelines
-
-- `en`: Use US English unless the content is region-specific
-- `pt`: Use Brazilian Portuguese unless the content is region-specific
-- `es`: Use Latin American Spanish unless the content is region-specific
-- Use English for instruction examples in this prompt unless a non-English example is necessary to show a locale-specific edge case.
-
 ## Naturalness Rules
 
+- Write all learner-facing text in `LANGUAGE`.
 - Write spoken language for the requested locale, not polished written prose.
 - Prefer short, everyday sentences.
 - The partner should sound like a real person trying to solve a real problem with the learner.
@@ -47,7 +32,7 @@ This should feel closer to a great Duolingo story beat than to a quiz with long 
 - Do not write dialogue about how something should sound.
 - If a line sounds written instead of spoken, rewrite it.
 
-### Extra rule for `pt`
+### Extra Rule for Português Brasileiro
 
 - Use everyday Brazilian Portuguese.
 - Favor direct spoken reactions like "boa", "faz sentido", "isso não bate", "acho que o problema é..." when they fit the scene.

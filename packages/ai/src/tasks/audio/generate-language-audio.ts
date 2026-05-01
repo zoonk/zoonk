@@ -1,8 +1,9 @@
 import "server-only";
 import { setTimeout } from "node:timers/promises";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { type TTSVoice, getLanguageName } from "@zoonk/utils/languages";
+import { type TTSVoice } from "@zoonk/utils/languages";
 import { logError } from "@zoonk/utils/logger";
+import { getPromptLanguageName } from "../_utils/prompt-language";
 import promptTemplate from "./generate-language-audio.prompt.md";
 import { generateWithGemini } from "./provider-gemini";
 import { generateWithOpenAI } from "./provider-openai";
@@ -23,10 +24,14 @@ type AudioProvider = (params: {
 
 type ScheduledAttempt = { backoffMs: number; generate: AudioProvider; name: string };
 
+/**
+ * Expands stored language codes before they reach TTS instructions. The model
+ * should receive the exact spoken dialect, not the app's compact locale code.
+ */
 function buildInstructions(languageCode?: string): string {
   const languageName = languageCode
-    ? getLanguageName({ targetLanguage: languageCode, userLanguage: "en" })
-    : "English";
+    ? getPromptLanguageName({ language: languageCode })
+    : getPromptLanguageName({ language: "en" });
 
   return promptTemplate.replaceAll("{{LANGUAGE}}", () => languageName);
 }

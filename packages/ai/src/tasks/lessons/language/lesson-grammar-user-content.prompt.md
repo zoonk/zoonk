@@ -6,14 +6,13 @@ You enrich existing content. Do NOT create new examples or exercises.
 
 # Global Rules
 
-- ALL output text must be in USER_LANGUAGE unless quoting TARGET_LANGUAGE words.
+- Generated text must be in USER_LANGUAGE unless quoting TARGET_LANGUAGE words.
 - When quoting TARGET_LANGUAGE words in explanations or feedback, keep them in their original script. Never mix scripts within a single quoted word.
-- Every output array must match the length and order of its corresponding input array.
+- Every array must match the length and order of its corresponding input array.
 - Translations must be natural and idiomatic in USER_LANGUAGE, not word-for-word.
 - When a TARGET_LANGUAGE term has no exact 1:1 equivalent in USER_LANGUAGE (e.g., it covers a broader or narrower scope than any single translation), choose the closest natural equivalent for the context. If the scope difference matters for the lesson (e.g., a greeting used all day vs. one used only in the morning), convey that distinction — either by picking the right equivalent for the situation shown in the sentence, or by adding a brief parenthetical clarification.
-- For `pt` output, use Brazilian Portuguese. For `es` output, use Latin American Spanish. For `en` output, use US English.
 
-# Output Fields
+# Content Rules
 
 ## `exampleTranslations`
 
@@ -71,47 +70,3 @@ When explaining why a particular form is used, name the specific condition that 
 - Bad: "The ending changes based on the subject."
 
 For allomorphic forms, name the conditioning environment explicitly (e.g., "after a consonant-final syllable" vs "after a vowel-final syllable").
-
-# Output Format
-
-Return an object with this structure:
-
-```json
-{
-  "ruleName": "Present Tense -ar Verb Conjugation",
-  "ruleSummary": "Spanish -ar verbs change their ending to match the subject: -o (yo), -a (ella), -amos (nosotros). This is called conjugation.",
-  "exampleTranslations": ["I speak Spanish.", "She speaks with her mother.", "We speak a lot."],
-  "discovery": {
-    "question": "What pattern do you notice in the highlighted words?",
-    "context": null,
-    "options": [
-      {
-        "text": "The verb ending changes based on who is doing the action",
-        "isCorrect": true,
-        "feedback": "Correct! The verb 'hablar' changes its ending (-o, -a, -amos) to match the subject."
-      },
-      {
-        "text": "All the sentences are about speaking",
-        "isCorrect": false,
-        "feedback": "That's true, but look more closely at the highlighted words. Notice how 'habl-' stays the same but the ending changes?"
-      },
-      {
-        "text": "Spanish verbs always end in -ar",
-        "isCorrect": false,
-        "feedback": "Not all Spanish verbs end in -ar. Focus on what changes in the highlighted words across the examples."
-      },
-      {
-        "text": "The verb comes before the subject",
-        "isCorrect": false,
-        "feedback": "Word order varies in these examples. Look at the verb endings — what changes between hablo, habla, and hablamos?"
-      }
-    ]
-  },
-  "exerciseTranslations": ["You speak very well.", "They work in the office."],
-  "exerciseQuestions": [null, "Say that they work in the office:"],
-  "exerciseFeedback": [
-    "With 'tú' (you), -ar verbs use the ending '-as', giving us 'hablas'.",
-    "With 'ellos' (they), -ar verbs use the ending '-an', giving us 'trabajan'."
-  ]
-}
-```

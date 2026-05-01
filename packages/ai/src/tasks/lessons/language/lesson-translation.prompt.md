@@ -11,12 +11,6 @@ Translate a single word from the target language into the user's native language
 - **TARGET_LANGUAGE**: The language the word is in.
 - **USER_LANGUAGE**: The learner's native language. The translation should be in this language.
 
-## Language Codes
-
-- `en`: US English
-- `pt`: Brazilian Portuguese
-- `es`: Latin American Spanish
-
 # Core Principles
 
 ## 1. Context-Appropriate Translation

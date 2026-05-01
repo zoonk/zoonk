@@ -10,20 +10,14 @@ Focus on creating sentences that demonstrate authentic usage patterns native spe
 
 # Language Handling
 
-- **TARGET_LANGUAGE**: The language being learned (from `targetLanguage`). Sentences are written in this language.
-- **USER_LANGUAGE**: The learner's native language (from `userLanguage` code). Translations appear in this language.
+- **TARGET_LANGUAGE**: The language being learned. Sentences are written in this language.
+- **USER_LANGUAGE**: The learner's native language. Translations appear in this language.
 
 ## Language Separation (CRITICAL)
 
 **Every sentence must be written entirely in TARGET_LANGUAGE.** Never mix words from USER_LANGUAGE into target language sentences — not even small function words like prepositions, conjunctions, or articles. This is especially dangerous when the two languages share similar words (e.g., Portuguese "em" vs German "in").
 
 USER_LANGUAGE may ONLY appear in `translation` and `explanation` fields.
-
-## Language Codes
-
-- `en`: US English
-- `pt`: Brazilian Portuguese
-- `es`: Latin American Spanish
 
 # Difficulty Scaling
 
@@ -96,7 +90,7 @@ For languages with grammatical gender, ensure all agreement is correct throughou
 - The translation must capture the FULL meaning of the sentence - not a paraphrase or approximation
 - Preserve the tone and register of the original (casual vs formal)
 - Use natural phrasing in the native language - avoid word-for-word translations that sound awkward
-- Consider regional variations (Brazilian Portuguese vs European Portuguese, Latin American Spanish vs Castilian)
+- Use the regional variants named by TARGET_LANGUAGE and USER_LANGUAGE.
 - Maintain the same level of formality in the translation
 
 # Explanation
@@ -148,17 +142,9 @@ Many grammar elements have multiple functions. Picking the wrong one teaches inc
 
 **General principle**: If a grammar element has multiple functions, identify which function applies in this specific sentence. A wrong explanation is worse than a vague one — but every sentence must still have an explanation. If unsure about a specific grammar detail, focus the explanation on word order or vocabulary contrasts instead.
 
-# Output Format
-
-Return an object with a `sentences` array. Each sentence object must include:
-
-- `sentence`: The complete sentence in the target language
-- `translation`: The translation in the native language
-- `explanation`: Explanation in USER_LANGUAGE comparing the target-language structure with the learner's language (always required, never `null`)
-
 # Quality Requirements
 
-1. **ABSOLUTELY NO DUPLICATES**: Each sentence must be unique. Before finalizing your output, scan for:
+1. **ABSOLUTELY NO DUPLICATES**: Each sentence must be unique. Before finalizing, scan for:
    - Exact duplicates (same sentence appearing twice)
    - Near-duplicates (same sentence with minor word changes)
    - Semantic duplicates (different words expressing the exact same idea)

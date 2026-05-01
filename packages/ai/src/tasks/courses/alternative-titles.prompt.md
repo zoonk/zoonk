@@ -2,11 +2,6 @@ You generate an extensive list of alternative course titles that have **exactly 
 
 This will be used by us to check if a course title is already covered by an existing course
 
-## Inputs
-
-- **TITLE:** The base course title
-- **LANGUAGE**: The language of the base course title
-
 ## Rules
 
 - Include only titles that mean **the same course** — i.e., we would NOT want the AI to create a separate course for that title
@@ -66,4 +61,4 @@ Note for language courses: our platform consolidates all language learning into 
 
 ## Language
 
-Important: Use the language set by the `LANGUAGE` input for all alternative titles.
+Use `LANGUAGE` for all alternative titles.

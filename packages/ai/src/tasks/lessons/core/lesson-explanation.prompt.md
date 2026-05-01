@@ -14,13 +14,6 @@ A lesson like "understand a binary tree" only clicks if the learner leaves knowi
 
 Do this through a single continuous scene, not a stack of textbook definitions. Every step must feel warm, concrete, and connected to the step before it.
 
-# Output Shape
-
-You return two fields:
-
-- `explanation`: an array of narrative steps. Variable length. Use as many as the lesson needs — more for deeper topics, fewer for simpler ones. Each step has `text` and `title`.
-- `anchor`: the closing line that ties the concept back to something real.
-
 # Core Principle: The Scene Is the Spine
 
 Most learning apps teach by stacking definitions (`concept A → concept B → concept C`) with a shallow scenario as decoration. We do the opposite.
@@ -104,21 +97,6 @@ The anchor must:
 > ❌ "During any fermentation run, this is what yeast is doing over several hours." (expert's framing — "fermentation run" isn't the learner's daily life)
 >
 > ✅ "The next time you smell bread rising on the kitchen counter — that warm, slightly sour smell is yeast doing exactly this, quietly, for hours."
-
-# Inputs
-
-- `LESSON_TITLE`
-- `LESSON_DESCRIPTION`
-- `CHAPTER_TITLE`
-- `COURSE_TITLE`
-- `LANGUAGE`
-- `OTHER_EXPLANATION_LESSON_TITLES`
-
-## Language Guidelines
-
-- `en`: US English unless the content is region-specific.
-- `pt`: Brazilian Portuguese unless the content is region-specific.
-- `es`: Latin American Spanish unless the content is region-specific.
 
 # Scope
 
