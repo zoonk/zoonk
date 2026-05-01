@@ -2,6 +2,7 @@ import "server-only";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
+import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./course-description.prompt.md";
 
 const defaultModel = "openai/gpt-5.4-nano";
@@ -26,9 +27,11 @@ export async function generateCourseDescription({
   useFallback = true,
   reasoningEffort,
 }: CourseDescriptionParams) {
+  const promptLanguage = getPromptLanguageName({ language });
+
   const userPrompt = `
     COURSE_TITLE: ${title}
-    LANGUAGE: ${language}
+    LANGUAGE: ${promptLanguage}
   `;
 
   const providerOptions = buildProviderOptions({

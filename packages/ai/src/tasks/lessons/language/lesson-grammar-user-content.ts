@@ -2,7 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { getLanguagePromptContext } from "./_utils/language-prompt-context";
+import { getLanguagePromptContext } from "../../_utils/prompt-language";
 import systemPrompt from "./lesson-grammar-user-content.prompt.md";
 
 const defaultModel = "openai/gpt-5.4";
@@ -62,7 +62,7 @@ export async function generateLessonGrammarUserContent({
 
   const userPrompt = `
     TARGET_LANGUAGE: ${promptContext.targetLanguageName}
-    USER_LANGUAGE: ${promptContext.userLanguage}
+    USER_LANGUAGE: ${promptContext.userLanguageName}
     CHAPTER_TITLE: ${chapterTitle}
     LESSON_TITLE: ${lessonTitle}
     LESSON_DESCRIPTION: ${lessonDescription}

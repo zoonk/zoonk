@@ -2,6 +2,7 @@ import "server-only";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
+import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./alternative-titles.prompt.md";
 
 const defaultModel = "openai/gpt-5.4";
@@ -26,9 +27,11 @@ export async function generateAlternativeTitles({
   useFallback = true,
   reasoningEffort,
 }: AlternativeTitlesParams) {
+  const promptLanguage = getPromptLanguageName({ language });
+
   const userPrompt = `
     TITLE: ${title}
-    LANGUAGE: ${language}
+    LANGUAGE: ${promptLanguage}
   `;
 
   const providerOptions = buildProviderOptions({

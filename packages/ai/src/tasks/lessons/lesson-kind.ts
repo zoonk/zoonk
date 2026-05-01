@@ -2,6 +2,7 @@ import "server-only";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
+import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./lesson-kind.prompt.md";
 
 const defaultModel = "openai/gpt-5.4-nano";
@@ -42,12 +43,14 @@ export async function generateLessonKind({
   useFallback = true,
   reasoningEffort,
 }: LessonKindParams) {
+  const promptLanguage = getPromptLanguageName({ language });
+
   const userPrompt = `
     LESSON_TITLE: ${lessonTitle}
     LESSON_DESCRIPTION: ${lessonDescription}
     CHAPTER_TITLE: ${chapterTitle}
     COURSE_TITLE: ${courseTitle}
-    LANGUAGE: ${language}
+    LANGUAGE: ${promptLanguage}
   `;
 
   const providerOptions = buildProviderOptions({

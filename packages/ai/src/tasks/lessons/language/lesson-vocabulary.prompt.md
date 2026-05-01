@@ -10,14 +10,8 @@ Focus ONLY on the specific topic defined in the lesson title and description. In
 
 # Language Handling
 
-- **TARGET_LANGUAGE**: The language being learned (from `targetLanguage`). Words come from this language.
-- **USER_LANGUAGE**: The learner's native language (from `userLanguage` code). Translations appear in this language.
-
-## Language Codes
-
-- `en`: US English
-- `pt`: Brazilian Portuguese
-- `es`: Latin American Spanish
+- **TARGET_LANGUAGE**: The language being learned. Words come from this language.
+- **USER_LANGUAGE**: The learner's native language. Translations appear in this language.
 
 # Vocabulary Selection
 
@@ -89,61 +83,23 @@ Before including any noun, verify the grammatical gender is correct:
 
 - Verify each translation is accurate and semantically precise
 - The translation must match the EXACT meaning of the source word - not a related concept, not a broader category, not a narrower subset
-- Consider regional variations (Brazilian Portuguese vs European Portuguese, Latin American Spanish vs Castilian)
+- Use the regional variants named by TARGET_LANGUAGE and USER_LANGUAGE.
 - If multiple translations are valid, pick the most common one
 - Use the most natural translation for the native language
 - Avoid loanwords that are not standard in the target language (e.g., do not use English words as standalone vocabulary in languages where they are not commonly used)
 
-# Output Format
-
-Return an object with a `words` array. Each word object must include:
-
-- `word`: The word in the target language (with article for gendered nouns)
-- `translation`: The translation in `USER_LANGUAGE` (with article if applicable)
-
-**Example for Spanish:**
-
-```json
-{
-  "words": [
-    { "word": "la casa", "translation": "the house" },
-    { "word": "el gato", "translation": "the cat" }
-  ]
-}
-```
-
-**Example for Japanese:**
-
-```json
-{
-  "words": [
-    { "word": "猫", "translation": "o gato" },
-    { "word": "犬", "translation": "o cachorro" }
-  ]
-}
-```
-
 # Quality Requirements
 
-1. **ABSOLUTELY NO DUPLICATES**: The `word` field is the unique identifier. If the same word appears in the `word` field more than once, it is a duplicate - regardless of what is in the `translation` field. Before finalizing your output, scan for:
+1. **ABSOLUTELY NO DUPLICATES**: The `word` field is the unique identifier. If the same word appears in the `word` field more than once, it is a duplicate - regardless of what is in the `translation` field. Before finalizing, scan for:
    - Exact duplicates (same `word` value appearing twice, even with different translations)
    - Near-duplicates (same word with slightly different formatting or articles)
    - Semantic duplicates (same concept with different phrasing)
 
    **CRITICAL**: A word with multiple valid translations should appear ONCE with the most common translation. Do NOT create separate entries for each possible translation.
 
-   **BAD (duplicate word with different translations)**:
+   **BAD (duplicate word with different translations)**: `il guinzaglio` appears twice, once translated as `a coleira` and once as `a guia`.
 
-   ```json
-   { "word": "il guinzaglio", "translation": "a coleira" },
-   { "word": "il guinzaglio", "translation": "a guia" }
-   ```
-
-   **GOOD (single entry with one translation)**:
-
-   ```json
-   { "word": "il guinzaglio", "translation": "a coleira" }
-   ```
+   **GOOD (single entry with one translation)**: `il guinzaglio` appears once with the most common translation.
 
    Pick the most common translation and use it. If you find any duplicate `word` value, remove it.
 

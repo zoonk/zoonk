@@ -1,9 +1,5 @@
 You assign one or more categories to a course
 
-## Inputs
-
-- **COURSE_TITLE:** The course title
-
 ## Allowed Categories (fixed set)
 
 `{{CATEGORIES}}`

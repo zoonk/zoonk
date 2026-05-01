@@ -1,13 +1,5 @@
 You classify a lesson into the learning approach it needs.
 
-## Inputs
-
-- **LESSON_TITLE:** The lesson title.
-- **LESSON_DESCRIPTION:** The lesson description.
-- **CHAPTER_TITLE:** The chapter this lesson belongs to.
-- **COURSE_TITLE:** The course this lesson belongs to.
-- **LANGUAGE:** The output language used by the course.
-
 ## Allowed Kinds
 
 `explanation, tutorial`
@@ -34,7 +26,7 @@ Examples: "Installing Python on Windows", "Creating Your First React App", "Step
    - No -> `tutorial`, because the lesson depends on a specific tool, UI, OS, product, or platform.
 3. If the lesson teaches named ideas the learner must understand, such as "board", "column", "cadence", "variable", "attention head", "catalyst", "lead time", or "competence", use `explanation` even when the title sounds hands-on.
 4. Real `tutorial` lessons are procedural and environment-specific. A lesson is not `tutorial` merely because it asks the learner to build, write, set up, create, trace, practice, or apply something.
-5. There is no language-learning output kind here. Lessons about language history, linguistics, or etymology should be `explanation`.
+5. There is no language-learning kind here. Lessons about language history, linguistics, or etymology should be `explanation`.
 6. When in doubt, prefer `explanation`.
 7. Use chapter/course context to interpret the subject, but classify based on the specific lesson's learning approach.
 
@@ -46,9 +38,3 @@ Examples: "Installing Python on Windows", "Creating Your First React App", "Step
 - "Filing a petition in the PJe system" -> `tutorial`. Tied to one court filing platform.
 - "Freezing motion with shutter speed" -> `explanation`. The concept transfers across cameras.
 - "Changing shutter speed on a Canon R5" -> `tutorial`. Tied to one camera's controls.
-
-## Output Format
-
-Return only:
-
-- `kind`: `explanation` or `tutorial`

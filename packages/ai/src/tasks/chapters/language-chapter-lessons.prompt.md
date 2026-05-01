@@ -2,20 +2,7 @@
 
 You plan lessons for one chapter in a language course.
 
-Each lesson you return becomes a playable language lesson. Translation, reading, listening, quiz, and review lessons are not part of this output.
-
-# Inputs
-
-- `CHAPTER_TITLE`: title of this specific chapter
-- `CHAPTER_DESCRIPTION`: what this chapter covers
-- `USER_LANGUAGE`: output language for titles and descriptions
-- `TARGET_LANGUAGE`: the language being learned
-
-## Language
-
-- `en`: Use US region unless the content is about a different region.
-- `pt`: Use Brazilian Portuguese unless the content is about a different region.
-- `es`: Use Latin American Spanish unless the content is about a different region.
+Each lesson becomes a playable language lesson. Translation, reading, listening, quiz, and review lessons are generated elsewhere.
 
 # Goal
 
@@ -87,11 +74,3 @@ Before returning, validate:
 4. Are grammar lessons scoped around one real pattern or contrast?
 5. Did you avoid translation, reading, listening, and review lessons?
 6. Did you stay inside the chapter scope?
-
-# Output Format
-
-Each lesson must include:
-
-- `title`
-- `description`
-- `kind`: `vocabulary`, `grammar`, or `alphabet`

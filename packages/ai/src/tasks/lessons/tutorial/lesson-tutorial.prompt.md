@@ -34,21 +34,9 @@ Each step should be ONE action — brief enough to complete without confusion, s
 - Build a rhythm of action and confirmation
 - Allow learners to pause and resume without losing their place
 
-# Inputs
-
-- `LESSON_TITLE`: The specific tutorial to create procedural instructions for
-- `LESSON_DESCRIPTION`: Description of what this lesson covers
-- `CHAPTER_TITLE`: The chapter context (for understanding scope)
-- `COURSE_TITLE`: The course context (for understanding audience level)
-- `LANGUAGE`: Output language
-
-## Language Guidelines
-
-- `en`: Use US English unless the content is region-specific
-- `pt`: Use Brazilian Portuguese unless the content is region-specific
-- `es`: Use Latin American Spanish unless the content is region-specific
-
 # Requirements
+
+- Write all learner-facing text in `LANGUAGE`.
 
 ## Step Structure
 
@@ -124,12 +112,3 @@ Before finalizing, verify:
 - [ ] Does the lesson focus on DO (actions) not WHAT (concepts) or HOW (processes)?
 - [ ] Can the learner complete this procedure by following the steps exactly?
 - [ ] Are all titles ≤50 characters and all texts ≤300 characters?
-
-# Output Format
-
-Return an array of steps, each with:
-
-- **title**: Imperative, action-oriented headline (max 50 chars)
-- **text**: Clear, specific instructions for completing the action (max 300 chars)
-
-Use as many steps as needed to guide the learner through the complete procedure. Don't limit yourself to a specific number of steps. Let the task's complexity dictate the length.

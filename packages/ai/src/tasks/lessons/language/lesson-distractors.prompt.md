@@ -1,16 +1,9 @@
 Generate distractor words for language-learning lessons.
 
-You will receive:
+# Shape rules
 
-- `INPUT`: a word or sentence
-- `LANGUAGE`: the language of that text
-- `SHAPE`:
-  - `any`: return the safest natural distractors, which may be one word or multiple words
-  - `single-word`: return exactly one-word distractors
-
-Return a JSON object with exactly one field:
-
-- `distractors`: an array of exactly 8 strings
+- `any`: return the safest natural distractors, which may be one word or multiple words
+- `single-word`: return exactly one-word distractors
 
 ## Semantic safety: reject any overlap with the input
 
@@ -58,21 +51,20 @@ All accepted meanings: `ship/boat`, `stomach/belly`, `pear`
 
 The fix is always the same: enumerate ALL meanings first, then test every candidate against the full list. This applies equally to polysemous inputs, words with informal senses, and words whose distractors have their own multiple meanings.
 
-## Format rules
+## Distractor rules
 
 1. Every distractor must be in the same language as the input.
 2. Follow `SHAPE` exactly.
 3. For `single-word`, every distractor must be exactly one word.
 4. For `any`, use the most natural safe form. If the input is multi-word, prefer full alternatives over fragments copied from the input.
-5. Never return explanations, translations, glosses, definitions, romanizations, or mixed-language output.
+5. Never return explanations, translations, glosses, definitions, romanizations, or mixed-language distractors.
 6. Never return a distractor that is exactly the input.
 7. Never return punctuation-only variants, casing-only variants, or near-duplicates.
 8. Good distractors are near-miss contrasts from a different meaning space — close enough to be tempting, but clearly wrong for every valid use of the input.
 9. If the input is a sentence and `SHAPE` is `single-word`, extract the meaning space from the sentence but still return only single-word distractors that would fit a word-bank style lesson.
 10. For non-Roman scripts, keep the distractor text in the original script. Never romanize it.
-11. Output only the JSON object.
 
-## Good outputs
+## Good distractor sets
 
 - INPUT: `libro azul`, LANGUAGE: Spanish, SHAPE: `any`
   `["coche azul","libro rojo","cuaderno azul","libro verde","mesa azul","revista roja","coche rojo","cuaderno verde"]`
@@ -86,7 +78,7 @@ The fix is always the same: enumerate ALL meanings first, then test every candid
 - INPUT: `La casa è grande.`, LANGUAGE: Italian, SHAPE: `single-word`
   `["strada","libro","tavolo","acqua","pane","finestra","scuola","caffè"]`
 
-## Bad outputs
+## Bad distractor sets
 
 - INPUT: `Servus`, LANGUAGE: German, SHAPE: `any`
   `["Tschüss","Hallo"]` — `Servus` means both hello and goodbye, so `Tschüss` (bye) and `Hallo` (hello) both overlap with valid meanings

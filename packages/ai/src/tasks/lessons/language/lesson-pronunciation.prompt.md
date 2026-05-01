@@ -11,12 +11,6 @@ Generate a pronunciation guide that helps a native speaker of one language prono
 - **TARGET_LANGUAGE**: The language of the word being learned. This is where the word comes from.
 - **USER_LANGUAGE**: The learner's native language. The pronunciation guide uses ONLY sounds from this language.
 
-## Language Codes
-
-- `en`: US English
-- `pt`: Brazilian Portuguese
-- `es`: Latin American Spanish
-
 # Core Principles
 
 ## 1. Use Only Native Language Sounds
@@ -202,17 +196,9 @@ Handle double letters by representing the actual sound:
 - English "butter" for Portuguese: "BA-ter" (single "t" sound)
 - Italian "pizza" for English: "PEET-sah" (the "zz" is a "ts" sound)
 
-# Output Format
-
-Return a JSON object with a single `pronunciation` field containing the phonetic representation.
-
-```json
-{ "pronunciation": "rre-LOU" }
-```
-
 # Quality Requirements
 
-1. **Native language only**: Every letter and letter combination in the output must be valid in the native language. A native speaker should be able to read it naturally without any learning.
+1. **Native language only**: Every letter and letter combination in the pronunciation must be valid in the native language. A native speaker should be able to read it naturally without any learning.
 
 2. **Phonotactically valid**: The syllable structures must be pronounceable in the native language. Verify that:
    - Consonant clusters are valid in the native language (no Spanish 'yt', no Portuguese intervocalic 'rr' for /r/)
@@ -226,7 +212,7 @@ Return a JSON object with a single `pronunciation` field containing the phonetic
 
 6. **Closest approximation**: When exact sounds don't exist, use the closest available sound. Never leave a sound unrepresented.
 
-7. **Readable output**: The pronunciation should look like a word or phrase the native speaker could naturally say. Avoid awkward letter combinations that don't occur in the native language.
+7. **Readable pronunciation**: The pronunciation should look like a word or phrase the native speaker could naturally say. Avoid awkward letter combinations that don't occur in the native language.
 
 8. **Consistency**: Use consistent representations for the same sounds throughout.
 
@@ -234,38 +220,28 @@ Return a JSON object with a single `pronunciation` field containing the phonetic
 
 ## Portuguese Speaker Learning English
 
-**Input**: WORD: "water", TARGET_LANGUAGE: English, USER_LANGUAGE: pt
+WORD: "water", TARGET_LANGUAGE: US English, USER_LANGUAGE: Português Brasileiro
 
-```json
-{ "pronunciation": "UÓ-ter" }
-```
+Pronunciation: "UÓ-ter"
 
 ## Spanish Speaker Learning English
 
-**Input**: WORD: "world", TARGET_LANGUAGE: English, USER_LANGUAGE: es
+WORD: "world", TARGET_LANGUAGE: US English, USER_LANGUAGE: Español Latinoamericano
 
-```json
-{ "pronunciation": "UERLD" }
-```
+Pronunciation: "UERLD"
 
 ## English Speaker Learning Portuguese
 
-**Input**: WORD: "obrigado", TARGET_LANGUAGE: Portuguese, USER_LANGUAGE: en
+WORD: "obrigado", TARGET_LANGUAGE: Português Brasileiro, USER_LANGUAGE: US English
 
-```json
-{ "pronunciation": "oh-bree-GAH-doo" }
-```
+Pronunciation: "oh-bree-GAH-doo"
 
-**Input**: WORD: "coração", TARGET_LANGUAGE: Portuguese, USER_LANGUAGE: en
+WORD: "coração", TARGET_LANGUAGE: Português Brasileiro, USER_LANGUAGE: US English
 
-```json
-{ "pronunciation": "koh-rah-SOWNG" }
-```
+Pronunciation: "koh-rah-SOWNG"
 
 ## English Speaker Learning Spanish
 
-**Input**: WORD: "trabajo", TARGET_LANGUAGE: Spanish, USER_LANGUAGE: en
+WORD: "trabajo", TARGET_LANGUAGE: Español Latinoamericano, USER_LANGUAGE: US English
 
-```json
-{ "pronunciation": "trah-BAH-ho" }
-```
+Pronunciation: "trah-BAH-ho"

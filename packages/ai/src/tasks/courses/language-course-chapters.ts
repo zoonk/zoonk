@@ -1,8 +1,8 @@
 import "server-only";
-import { getLanguageName } from "@zoonk/utils/languages";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
+import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./language-course-chapters.prompt.md";
 
 const defaultModel = "openai/gpt-5.4";
@@ -29,10 +29,11 @@ export async function generateLanguageCourseChapters({
   useFallback = true,
   reasoningEffort,
 }: LanguageCourseChaptersParams) {
-  const targetLanguageName = getLanguageName({ targetLanguage, userLanguage });
+  const targetLanguageName = getPromptLanguageName({ language: targetLanguage, userLanguage });
+  const userLanguageName = getPromptLanguageName({ language: userLanguage });
 
   const userPrompt = `
-    USER_LANGUAGE: ${userLanguage}
+    USER_LANGUAGE: ${userLanguageName}
     TARGET_LANGUAGE: ${targetLanguageName}
   `;
 

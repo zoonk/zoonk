@@ -2,6 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { getPromptLanguageName } from "../../_utils/prompt-language";
 import systemPrompt from "./lesson-explanation.prompt.md";
 
 const defaultModel = "openai/gpt-5.4";
@@ -40,12 +41,14 @@ export async function generateLessonExplanation({
   useFallback = true,
   reasoningEffort,
 }: LessonExplanationParams) {
+  const promptLanguage = getPromptLanguageName({ language });
+
   const userPrompt = `
     LESSON_TITLE: ${lessonTitle}
     LESSON_DESCRIPTION: ${lessonDescription}
     CHAPTER_TITLE: ${chapterTitle}
     COURSE_TITLE: ${courseTitle}
-    LANGUAGE: ${language}
+    LANGUAGE: ${promptLanguage}
     OTHER_EXPLANATION_LESSON_TITLES: ${otherLessonTitles.join(", ")}
   `;
 

@@ -1,9 +1,9 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { type DistractorShape } from "@zoonk/utils/distractors";
-import { getLanguageName } from "@zoonk/utils/languages";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { getPromptLanguageName } from "../../_utils/prompt-language";
 import systemPrompt from "./lesson-distractors.prompt.md";
 
 const defaultModel = "openai/gpt-5.4";
@@ -45,7 +45,7 @@ export async function generateLessonDistractors({
   reasoningEffort,
   useFallback = true,
 }: LessonDistractorsParams) {
-  const languageName = getLanguageName({ targetLanguage: language, userLanguage: "en" });
+  const languageName = getPromptLanguageName({ language });
 
   const providerOptions = buildProviderOptions({
     fallbackModels,
@@ -56,7 +56,7 @@ export async function generateLessonDistractors({
 
   const userPrompt = `
     INPUT: ${input}
-    LANGUAGE: ${languageName} (${language})
+    LANGUAGE: ${languageName}
     SHAPE: ${shape}
   `;
 

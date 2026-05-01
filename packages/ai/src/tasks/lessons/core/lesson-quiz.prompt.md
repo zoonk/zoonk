@@ -49,11 +49,7 @@ If no, the question tests memorization, not understanding.
 
 Generate all content in the specified `LANGUAGE`:
 
-- `en`: US English unless content is region-specific
-- `pt`: Brazilian Portuguese unless content is region-specific
-- `es`: Latin American Spanish unless content is region-specific
-
-**Language Purity Rule**: Every word, character, and token in the output MUST be in the specified LANGUAGE. Never mix languages or scripts within a response. If the LANGUAGE is `en`, use only English words — no Chinese, Japanese, Korean, Arabic, or other script characters.
+**Language Purity Rule**: Every word, character, and token in generated text MUST be in `LANGUAGE`. Never mix languages or scripts within a response.
 
 # Question Formats
 

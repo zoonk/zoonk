@@ -2,6 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { getPromptLanguageName } from "../../_utils/prompt-language";
 import systemPrompt from "./lesson-romanization.prompt.md";
 
 const defaultModel = "openai/gpt-5.4";
@@ -41,9 +42,10 @@ export async function generateLessonRomanization({
   useFallback = true,
 }: LessonRomanizationParams) {
   const formattedTexts = texts.map((text, index) => `${index + 1}. ${text}`).join("\n");
+  const targetLanguageName = getPromptLanguageName({ language: targetLanguage });
 
   const userPrompt = `
-    TARGET_LANGUAGE: ${targetLanguage}
+    TARGET_LANGUAGE: ${targetLanguageName}
     TEXTS: ${formattedTexts}
   `;
 
