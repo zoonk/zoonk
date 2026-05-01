@@ -1,0 +1,16 @@
+apps/blog/src/app/layout.tsx
+  h_1cda88fc21fe9c 38
+apps/main/src/app/layout.tsx
+  h_1cda88fc21fe9c 29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "881b90c1e310e83a579dec053f25c425e70ca484",
+  "prompts": {},
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
