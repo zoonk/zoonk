@@ -202,9 +202,11 @@ function getPriceLabel(planName: string, price: PriceInfo | null): string {
   if (planName === "free") {
     return "";
   }
+
   if (!price) {
     return "";
   }
+
   return formatPrice(price.amount, price.currency);
 }
 

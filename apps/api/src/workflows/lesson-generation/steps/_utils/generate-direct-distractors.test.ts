@@ -26,6 +26,7 @@ describe(generateDirectDistractors, () => {
     });
 
     expect(result["word-1"]).toStrictEqual(expect.arrayContaining(["wrong1", "wrong2", "wrong3"]));
+
     expect(generateLessonDistractorsMock).toHaveBeenCalledWith({
       input: "hola",
       language: "es",

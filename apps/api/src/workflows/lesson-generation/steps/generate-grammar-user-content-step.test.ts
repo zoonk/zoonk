@@ -42,6 +42,7 @@ describe(generateGrammarUserContentStep, () => {
       organizationId,
       targetLanguage: "ja",
     });
+
     const grammarContent = {
       examples: [{ highlight: "猫", sentence: "猫がいます" }],
       exercises: [{ answer: "猫", distractors: ["犬"], template: "[BLANK]がいます" }],
@@ -50,6 +51,7 @@ describe(generateGrammarUserContentStep, () => {
     const userContent = await generateGrammarUserContentStep({ context, grammarContent });
 
     expect(userContent.ruleName).toBe("Existence");
+
     expect(generateLessonGrammarUserContent).toHaveBeenCalledWith(
       expect.objectContaining({ targetLanguage: "ja", userLanguage: "en" }),
     );

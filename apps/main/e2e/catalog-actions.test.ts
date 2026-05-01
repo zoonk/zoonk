@@ -153,6 +153,7 @@ test.describe("Catalog Actions", () => {
       "aria-checked",
       "true",
     );
+
     await expect(page.getByRole("menuitemradio", { name: /^helpful$/i })).toHaveAttribute(
       "aria-checked",
       "false",

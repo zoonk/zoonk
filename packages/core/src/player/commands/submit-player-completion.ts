@@ -72,6 +72,7 @@ export async function submitPlayerCompletion(params: {
   userId: string;
 }): Promise<PlayerCompletionEffects | null> {
   const lessonId = params.input.lessonId;
+
   const lesson = await prisma.lesson.findUnique({
     include: {
       steps: {

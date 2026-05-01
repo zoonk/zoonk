@@ -40,6 +40,7 @@ test.describe("Command Palette - Unauthenticated", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
+
     await expect(
       page.getByRole("navigation").getByRole("button", { name: /search/i }),
     ).toBeVisible();
@@ -81,6 +82,7 @@ test.describe("Command Palette - Unauthenticated", () => {
     await page
       .locator("[data-slot='dialog-overlay']")
       .click({ force: true, position: { x: 10, y: 10 } });
+
     await expect(page.getByRole("dialog")).not.toBeVisible();
   });
 
@@ -216,6 +218,7 @@ test.describe("Command Palette - Authenticated", () => {
       .getByRole("dialog")
       .getByText(/^logout$/i)
       .click();
+
     await logoutPage.waitForURL(/^[^?]*\/$/);
     await logoutPage.waitForLoadState("networkidle");
 
@@ -318,6 +321,7 @@ test.describe("Command Palette - Course Search", () => {
     // Create test courses with a unique prefix to avoid conflicts
     const uniqueId = randomUUID().slice(0, 8);
     const exactMatchTitle = `Zlaw ${uniqueId}`;
+
     const partialMatchTitles = [
       `Criminal Zlaw ${uniqueId}`,
       `Tax Zlaw ${uniqueId}`,
@@ -467,9 +471,11 @@ test.describe("Command Palette - Accessibility", () => {
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
+
     const hasLabel = await dialog.evaluate(
       (el) => el.hasAttribute("aria-label") || el.hasAttribute("aria-labelledby"),
     );
+
     expect(hasLabel).toBe(true);
   });
 

@@ -142,6 +142,7 @@ describe(preparePlayerLessonData, () => {
         word: "boa noite",
       }),
     });
+
     const sentence = makeLessonSentence({
       distractors: ["Abend"],
       explanation: "Greeting",
@@ -171,6 +172,7 @@ describe(preparePlayerLessonData, () => {
       organizationId: "org-42",
       title: "Lesson",
     });
+
     expect(result.lessonWords).toStrictEqual([
       {
         audioUrl: "/audio/boa-noite.mp3",
@@ -182,6 +184,7 @@ describe(preparePlayerLessonData, () => {
         word: "boa noite",
       },
     ]);
+
     expect(result.lessonSentences).toStrictEqual([
       {
         audioUrl: "/audio/guten-morgen.mp3",
@@ -208,6 +211,7 @@ describe(preparePlayerLessonData, () => {
     });
 
     expect(result.steps).toHaveLength(1);
+
     expect(result.steps[0]?.content).toStrictEqual({
       text: "Hello world",
       title: "Intro",
@@ -253,10 +257,12 @@ describe(preparePlayerLessonData, () => {
     });
 
     expect(result.steps[0]?.sortOrderItems).toStrictEqual(["first", "second", "third"]);
+
     expect(result.steps[1]?.fillBlankOptions).toStrictEqual([
       { audioUrl: null, romanization: null, translation: null, word: "sky" },
       { audioUrl: null, romanization: "ground-rom", translation: null, word: "ground" },
     ]);
+
     expect(result.steps[2]?.matchColumnsRightItems).toStrictEqual(["1", "2"]);
   });
 
@@ -266,6 +272,7 @@ describe(preparePlayerLessonData, () => {
       translation: "good evening",
       word: makeWordRecord({ id: "10", word: "boa noite" }),
     });
+
     const sentence = makeLessonSentence({
       distractors: ["Abend", "Fenster"],
       sentence: makeSentenceRecord({ id: "20", sentence: "Guten Morgen, Lara." }),

@@ -25,12 +25,14 @@ describe(generateStepImages, () => {
       { prompt: "Prompt 1", url: "https://example.com/step-1.webp" },
       { prompt: "Prompt 2", url: "https://example.com/step-2.webp" },
     ]);
+
     expect(generateContentStepImageMock).toHaveBeenNthCalledWith(1, {
       language: "en",
       orgSlug: "ai-org",
       preset: undefined,
       prompt: "Prompt 1",
     });
+
     expect(generateContentStepImageMock).toHaveBeenNthCalledWith(2, {
       language: "en",
       orgSlug: "ai-org",

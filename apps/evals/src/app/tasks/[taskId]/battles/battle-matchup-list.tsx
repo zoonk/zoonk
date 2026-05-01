@@ -37,6 +37,7 @@ function resolveModelId(modelId: string, anonymousIdMap: Map<string, string>): s
   if (getModelById(modelId)) {
     return modelId;
   }
+
   return anonymousIdMap.get(modelId) ?? modelId;
 }
 
@@ -62,6 +63,7 @@ function buildJudgeViews(
     for (const judgment of matchup.judgments) {
       if (!judgeNames.has(judgment.judgeId)) {
         const judgeModel = getModelById(judgment.judgeId);
+
         judgeNames.set(
           judgment.judgeId,
           judgeModel ? getModelDisplayName(judgeModel) : judgment.judgeId,
@@ -74,12 +76,14 @@ function buildJudgeViews(
       for (const ranking of judgment.rankings) {
         const modelId = resolveModelId(ranking.modelId, anonymousIdMap);
         const entries = modelMap.get(modelId) ?? [];
+
         entries.push({
           anonymousId: ranking.anonymousId,
           reasoning: ranking.reasoning,
           score: ranking.score,
           testCaseId: matchup.testCaseId,
         });
+
         modelMap.set(modelId, entries);
       }
     }

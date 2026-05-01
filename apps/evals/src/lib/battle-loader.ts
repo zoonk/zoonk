@@ -17,6 +17,7 @@ export const getBattleMatchups = cache(async (taskId: string): Promise<BattleMat
 
   try {
     const files = await fs.readdir(taskDir);
+
     const matchupFiles = files.filter(
       (file) => file.endsWith(".json") && file !== "leaderboard.json",
     );
@@ -62,6 +63,7 @@ function aggregateScoresFromMatchups(matchups: BattleMatchup[]): {
   for (const matchup of matchups) {
     for (const judgment of matchup.judgments) {
       totalJudgments += 1;
+
       for (const ranking of judgment.rankings) {
         const existing = modelScores.get(ranking.modelId) ?? {
           scoresByJudge: {},
@@ -70,8 +72,10 @@ function aggregateScoresFromMatchups(matchups: BattleMatchup[]): {
         };
 
         existing.totalScore += ranking.score;
+
         existing.scoresByJudge[judgment.judgeId] =
           (existing.scoresByJudge[judgment.judgeId] ?? 0) + ranking.score;
+
         existing.scoresByTestCase[matchup.testCaseId] =
           (existing.scoresByTestCase[matchup.testCaseId] ?? 0) + ranking.score;
 
@@ -101,6 +105,7 @@ function calculateModelMetrics({
 
   const avgInputTokens =
     outputs.outputs.reduce((sum, output) => sum + output.inputTokens, 0) / numOutputs;
+
   const avgOutputTokens =
     outputs.outputs.reduce((sum, output) => sum + output.outputTokens, 0) / numOutputs;
 
@@ -121,6 +126,7 @@ function buildLeaderboardEntry(
   matchupsCount: number,
 ): BattleLeaderboardEntry | null {
   const model = getModelById(modelId);
+
   if (!model) {
     return null;
   }
@@ -158,6 +164,7 @@ export const getBattleLeaderboard = cache(
 
     for (const [modelId, scores] of modelScores) {
       const entry = buildLeaderboardEntry(modelId, scores, allOutputs, matchups.length);
+
       if (entry) {
         entries.push(entry);
       }

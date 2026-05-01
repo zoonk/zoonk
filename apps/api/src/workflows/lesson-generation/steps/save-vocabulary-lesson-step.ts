@@ -51,11 +51,13 @@ export async function saveVocabularyLessonStep({
   await prisma.step.deleteMany({ where: { lessonId: context.id } });
 
   const allTargetWords = collectVocabularyTargetWords({ distractors, words });
+
   const existingCasing = await fetchExistingWordCasing({
     organizationId,
     targetLanguage,
     words: allTargetWords,
   });
+
   const canonicalWords = new Set(words.map((word) => word.word));
   const distractorWords = allTargetWords.filter((word) => !canonicalWords.has(word));
 
@@ -117,11 +119,13 @@ async function saveOneVocabularyWord(params: {
 }): Promise<void> {
   const dbWord = params.existingCasing[params.word.word.toLowerCase()] ?? params.word.word;
   const romanization = params.romanizations[params.word.word] ?? null;
+
   const wordDistractors = sanitizeDistractors({
     distractors: params.distractors[params.word.word] ?? [],
     input: params.word.word,
     shape: "any",
   });
+
   const wordId = await upsertWordWithPronunciation({
     audioUrl: params.wordAudioUrls[params.word.word] ?? null,
     organizationId: params.organizationId,

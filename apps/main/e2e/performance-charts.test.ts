@@ -22,6 +22,7 @@ test.describe("Performance Charts", () => {
       });
 
       await authenticatedPage.goto(chartPage.path);
+
       await expect(
         authenticatedPage.getByRole("figure", { name: chartPage.chartName }),
       ).toBeVisible();

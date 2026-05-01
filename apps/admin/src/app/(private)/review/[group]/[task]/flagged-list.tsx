@@ -44,12 +44,14 @@ export async function FlaggedList({
   searchParams: PageProps<"/review/[group]/[task]">["searchParams"];
 }) {
   const { page, limit, offset } = parseSearchParams(await searchParams);
+
   const { items, total } = await listReviewedItems({
     limit,
     offset,
     status: "needsChanges",
     taskType,
   });
+
   const totalPages = Math.ceil(total / limit);
 
   const taskPath = getTaskPath(taskType);

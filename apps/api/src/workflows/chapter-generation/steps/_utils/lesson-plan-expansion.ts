@@ -130,8 +130,10 @@ function expandContentLessons({
     (state, lesson) => {
       const nextExplanationCount =
         lesson.kind === "explanation" ? state.explanationCount + 1 : state.explanationCount;
+
       const shouldAddPractice =
         lesson.kind === "explanation" && groupEnds.has(nextExplanationCount);
+
       const nextPracticeCount = shouldAddPractice ? state.practiceCount + 1 : state.practiceCount;
       const shouldAddQuiz = shouldAddPractice && nextPracticeCount % 2 === 0;
 
@@ -229,6 +231,7 @@ function expandLanguageLessons({
 
   if (firstLesson.kind === "vocabulary") {
     const { rest, run } = takeVocabularyRun(lessons);
+
     return [
       ...expandVocabularyRun({ lessons: run, targetLanguage }),
       ...expandLanguageLessons({ lessons: rest, targetLanguage }),

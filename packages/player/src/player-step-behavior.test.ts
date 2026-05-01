@@ -38,6 +38,7 @@ describe(getPlayerStepBehavior, () => {
       render: "static",
       validation: "none",
     });
+
     expect(hasStaticNavigation(descriptor)).toBe(true);
     expect(hasFeedbackScreen(descriptor)).toBe(false);
   });

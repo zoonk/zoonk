@@ -84,6 +84,7 @@ describe(getSentenceWordsForLessons, () => {
 
   it("returns empty when sentence words have no matching LessonWord records", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
+
     const [newLesson, sentence] = await Promise.all([
       lessonFixture({
         chapterId: chapter.id,
@@ -107,6 +108,7 @@ describe(getSentenceWordsForLessons, () => {
   it("strips punctuation when matching sentence words to LessonWord records", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
     const wordText = `sabes${uniqueId}`;
+
     const [newLesson, sentence, word] = await Promise.all([
       lessonFixture({
         chapterId: chapter.id,
@@ -169,6 +171,7 @@ describe(getSentenceWordsForLessons, () => {
   it("deduplicates words across multiple sentences", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
     const wordText = `gato${uniqueId}`;
+
     const [newLesson, sentence1, sentence2, word] = await Promise.all([
       lessonFixture({
         chapterId: chapter.id,

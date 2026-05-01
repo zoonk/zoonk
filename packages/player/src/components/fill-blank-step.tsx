@@ -171,9 +171,11 @@ function WordBank({
     >
       {options.map((option, index) => {
         const usedCount = usedWords.filter((used) => used === option.word).length;
+
         const totalCount = options
           .slice(0, index + 1)
           .filter((item) => item.word === option.word).length;
+
         const isUsed = usedCount >= totalCount;
 
         return (

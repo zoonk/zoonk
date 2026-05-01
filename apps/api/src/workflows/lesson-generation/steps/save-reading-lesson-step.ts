@@ -98,18 +98,22 @@ async function saveOneSentence(params: {
 }): Promise<void> {
   const sentence = normalizePunctuation(params.readingSentence.sentence);
   const translation = normalizePunctuation(params.readingSentence.translation);
+
   const sentenceDistractors = sanitizeDistractors({
     distractors: params.distractors[params.readingSentence.sentence] ?? [],
     input: params.readingSentence.sentence,
     shape: "single-word",
   });
+
   const sentenceTranslationDistractors = sanitizeDistractors({
     distractors: params.translationDistractors[params.readingSentence.translation] ?? [],
     input: params.readingSentence.translation,
     shape: "single-word",
   });
+
   const audioUrl = params.sentenceAudioUrls[params.readingSentence.sentence] ?? null;
   const romanization = params.sentenceRomanizations[params.readingSentence.sentence] ?? null;
+
   const record = await prisma.sentence.upsert({
     create: {
       audioUrl,

@@ -51,6 +51,7 @@ export async function saveTranslationLessonStep(context: LessonContext): Promise
     orderBy: { position: "asc" },
     where: { kind: "vocabulary", lessonId: sourceLesson.id, wordId: { not: null } },
   });
+
   const wordIds = sourceSteps.flatMap((step) => (step.wordId ? [step.wordId] : []));
 
   if (wordIds.length === 0) {
@@ -58,6 +59,7 @@ export async function saveTranslationLessonStep(context: LessonContext): Promise
   }
 
   await prisma.step.deleteMany({ where: { lessonId: context.id } });
+
   await prisma.step.createMany({
     data: wordIds.map((wordId, position) => ({
       content: assertStepContent("translation", {}),

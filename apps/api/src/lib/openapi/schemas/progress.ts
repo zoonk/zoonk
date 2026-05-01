@@ -48,6 +48,7 @@ export const nextLessonQuerySchema = z
       const provided = [data.courseId, data.chapterId, data.lessonId].filter(
         (value) => value !== undefined,
       );
+
       return provided.length === 1;
     },
     { message: "Exactly one of courseId, chapterId, or lessonId must be provided" },

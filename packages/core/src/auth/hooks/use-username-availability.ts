@@ -22,6 +22,7 @@ export function useUsernameAvailability(currentUsername?: string | null) {
 
   if (currentUsername !== prevCurrentUsername) {
     setPrevCurrentUsername(currentUsername);
+
     if (currentUsername) {
       setUsername(currentUsername);
     }

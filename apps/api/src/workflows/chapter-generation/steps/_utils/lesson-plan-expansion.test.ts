@@ -82,10 +82,12 @@ describe(expandChapterLessons, () => {
       description: null,
       title: null,
     });
+
     expect(lessons.find((lesson) => lesson.kind === "quiz")).toMatchObject({
       description: null,
       title: null,
     });
+
     expect(lessons.find((lesson) => lesson.kind === "review")).toMatchObject({
       description: null,
       title: null,

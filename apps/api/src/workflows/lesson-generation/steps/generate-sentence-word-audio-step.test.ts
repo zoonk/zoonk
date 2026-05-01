@@ -28,11 +28,13 @@ describe(generateSentenceWordAudioStep, () => {
     const catWord = `猫${uniqueId}`;
     const fireWord = `火${uniqueId}`;
     const waterWord = `水${uniqueId}`;
+
     const context = await createLessonContext({
       kind: "reading",
       organizationId,
       targetLanguage: "ja",
     });
+
     const words = [catWord, waterWord, fireWord];
 
     await expect(generateSentenceWordAudioStep({ context, words })).resolves.toStrictEqual({
@@ -42,7 +44,9 @@ describe(generateSentenceWordAudioStep, () => {
         [waterWord]: `/audio/${waterWord}.mp3`,
       },
     });
+
     expect(generateLanguageAudio).toHaveBeenCalledTimes(3);
+
     expect(generateLanguageAudio).toHaveBeenCalledWith({
       language: "ja",
       orgSlug: "ai",

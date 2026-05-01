@@ -36,6 +36,7 @@ describe(getLessonDistractorWordsForLessons, () => {
 
   it("returns unique target-language distractor words with pronunciation for the lesson language", async () => {
     const id = crypto.randomUUID();
+
     const [
       lessonForTest,
       canonicalWord,
@@ -105,6 +106,7 @@ describe(getLessonDistractorWordsForLessons, () => {
     expect(result.map((item) => item.word).toSorted()).toStrictEqual(
       [lessonWordDistractor.word, sharedDistractor.word].toSorted(),
     );
+
     expect(result).toStrictEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -129,6 +131,7 @@ describe(getLessonDistractorWordsForLessons, () => {
 
   it("ignores translation distractors and unresolved target-language texts", async () => {
     const id = crypto.randomUUID();
+
     const [lessonForTest, canonicalWord, canonicalSentence, resolvedDistractor] = await Promise.all(
       [
         lessonFixture({

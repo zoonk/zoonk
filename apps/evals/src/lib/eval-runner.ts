@@ -28,6 +28,7 @@ function getResultsFilePath(taskId: string, modelId: string): string {
 
 async function loadExistingScoredResults(taskId: string, modelId: string): Promise<ScoredResult[]> {
   const filePath = getResultsFilePath(taskId, modelId);
+
   try {
     const data = await fs.readFile(filePath, "utf8");
     const parsed = JSON.parse(data) as ScoredTaskResults;
@@ -80,6 +81,7 @@ export async function runEval(task: Task, modelId: string): Promise<TaskEvalResu
 
   // Load pre-generated outputs
   const modelOutputs = await loadModelOutputs(task.id, modelId);
+
   if (!modelOutputs || modelOutputs.outputs.length === 0) {
     throw new Error(`No outputs found for model ${modelId}. Generate outputs first.`);
   }
@@ -105,9 +107,11 @@ export async function runEval(task: Task, modelId: string): Promise<TaskEvalResu
   const results = await Promise.allSettled(
     outputsToScore.map((output) => {
       const testCase = findTestCaseForOutput(task, output.testCaseId);
+
       if (!testCase) {
         return Promise.reject(new Error(`Test case not found for output: ${output.testCaseId}`));
       }
+
       return scoreOutput(output, testCase);
     }),
   );
@@ -140,6 +144,7 @@ function combineOutputsAndResults(
 ): TaskEvalResults {
   const results = scoredResults.flatMap((scored) => {
     const output = outputs.find((entry) => entry.testCaseId === scored.testCase.id);
+
     if (!output) {
       return [];
     }
@@ -160,17 +165,20 @@ function combineOutputsAndResults(
 export const getTaskResults = cache(
   async (taskId: string, modelId: string): Promise<TaskEvalResults | null> => {
     const modelOutputs = await loadModelOutputs(taskId, modelId);
+
     if (!modelOutputs) {
       return null;
     }
 
     const scoredResults = await loadExistingScoredResults(taskId, modelId);
+
     if (scoredResults.length === 0) {
       return null;
     }
 
     const results = scoredResults.flatMap((scored) => {
       const output = modelOutputs.outputs.find((entry) => entry.testCaseId === scored.testCase.id);
+
       if (!output) {
         return [];
       }

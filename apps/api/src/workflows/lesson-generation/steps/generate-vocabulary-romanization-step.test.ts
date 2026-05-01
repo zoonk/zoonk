@@ -35,6 +35,7 @@ describe(generateVocabularyRomanizationStep, () => {
     await expect(generateVocabularyRomanizationStep({ context, words })).resolves.toStrictEqual({
       romanizations: { [catWord]: `${catWord} romanized`, [dogWord]: `${dogWord} romanized` },
     });
+
     expect(generateLessonRomanization).toHaveBeenCalledWith({ targetLanguage: "ja", texts: words });
   });
 });

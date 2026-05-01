@@ -32,11 +32,13 @@ export function checkFillBlankAnswer(
   userAnswers: string[],
 ): AnswerResult {
   const isSameLength = content.answers.length === userAnswers.length;
+
   const isCorrect =
     isSameLength &&
     content.answers.every(
       (answer, index) => answer.toLowerCase() === (userAnswers[index] ?? "").trim().toLowerCase(),
     );
+
   return { correctAnswer: null, feedback: content.feedback, isCorrect };
 }
 

@@ -107,6 +107,7 @@ async function seedStepAttempts(
   });
 
   const firstStep = steps[0];
+
   if (!firstStep) {
     return;
   }

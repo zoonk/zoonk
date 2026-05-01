@@ -28,6 +28,7 @@ describe(generateTutorialContentStep, () => {
     const result = await generateTutorialContentStep(context);
 
     expect(result).toStrictEqual({ steps: [{ text: "Open settings.", title: "Settings" }] });
+
     expect(generateLessonTutorial).toHaveBeenCalledWith(
       expect.objectContaining({
         lessonDescription: context.description,

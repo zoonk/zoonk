@@ -100,9 +100,11 @@ test.describe("Continue Learning Revalidation", () => {
 
     // 1. Navigate to home page (full load)
     await page.goto("/");
+
     const nextLink = page.getByRole("link", {
       name: new RegExp(`Next:.*Current Next ${uniqueId}`),
     });
+
     await expect(nextLink.first()).toBeVisible();
 
     // 2. Click the continue learning card link (client-side navigation)

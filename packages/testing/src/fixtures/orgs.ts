@@ -42,6 +42,7 @@ export async function aiOrganizationFixture() {
         return existing;
       }
     }
+
     throw error;
   }
 }

@@ -110,6 +110,7 @@ describe(createInitialState, () => {
     const sortItems = ["Banana", "Apple", "Cherry"];
     const steps = [buildStep({ id: "sort-1", kind: "sortOrder", sortOrderItems: sortItems })];
     const state = createInitialState({ lesson: buildLesson({ steps }), totalBrainPower: 0 });
+
     expect(state.selectedAnswers["sort-1"]).toStrictEqual({
       kind: "sortOrder",
       userOrder: sortItems,
@@ -121,6 +122,7 @@ describe(createInitialState, () => {
       buildStep({ id: "s1", kind: "static" }),
       buildMultipleChoiceStep({ id: "mc-1" }),
     ];
+
     const state = createInitialState({ lesson: buildLesson({ steps }), totalBrainPower: 0 });
     expect(state.selectedAnswers).toStrictEqual({});
   });
@@ -129,21 +131,25 @@ describe(createInitialState, () => {
 describe("SELECT_ANSWER", () => {
   it("stores answer by stepId", () => {
     const state = buildState();
+
     const next = playerReducer(state, {
       answer: multipleChoiceAnswer,
       stepId: "step-1",
       type: "SELECT_ANSWER",
     });
+
     expect(next.selectedAnswers["step-1"]).toStrictEqual(multipleChoiceAnswer);
   });
 
   it("does not change phase or index", () => {
     const state = buildState();
+
     const next = playerReducer(state, {
       answer: multipleChoiceAnswer,
       stepId: "step-1",
       type: "SELECT_ANSWER",
     });
+
     expect(next.phase).toBe("playing");
     expect(next.currentStepIndex).toBe(0);
   });
@@ -152,11 +158,13 @@ describe("SELECT_ANSWER", () => {
     const state = buildState({
       selectedAnswers: { "step-1": { kind: "multipleChoice", selectedOptionId: "option-b" } },
     });
+
     const next = playerReducer(state, {
       answer: multipleChoiceAnswer,
       stepId: "step-1",
       type: "SELECT_ANSWER",
     });
+
     expect(next.selectedAnswers["step-1"]).toStrictEqual(multipleChoiceAnswer);
   });
 });
@@ -165,12 +173,15 @@ describe("CHECK_ANSWER", () => {
   it("transitions from playing to feedback and stores result", () => {
     const step = buildMultipleChoiceStep({ id: "mc-1" });
     const state = buildState({ steps: [step] });
+
     const next = playerReducer(state, {
       result: { correctAnswer: null, feedback: "Correct!", isCorrect: true },
       stepId: "mc-1",
       type: "CHECK_ANSWER",
     });
+
     expect(next.phase).toBe("feedback");
+
     expect(next.results["mc-1"]).toStrictEqual({
       answer: undefined,
       result: { correctAnswer: null, feedback: "Correct!", isCorrect: true },
@@ -181,11 +192,13 @@ describe("CHECK_ANSWER", () => {
   it("includes selected answer in the result", () => {
     const step = buildMultipleChoiceStep({ id: "mc-1" });
     const state = buildState({ selectedAnswers: { "mc-1": multipleChoiceAnswer }, steps: [step] });
+
     const next = playerReducer(state, {
       result: { correctAnswer: null, feedback: "Correct!", isCorrect: true },
       stepId: "mc-1",
       type: "CHECK_ANSWER",
     });
+
     expect(next.results["mc-1"]?.answer).toStrictEqual(multipleChoiceAnswer);
   });
 
@@ -195,14 +208,18 @@ describe("CHECK_ANSWER", () => {
         buildStep({ id: "mc-1", kind: "matchColumns", position: 0 }),
         buildStep({ id: "mc-2", kind: "matchColumns", position: 1 }),
       ];
+
       const state = buildState({ steps });
+
       const next = playerReducer(state, {
         result: { correctAnswer: null, feedback: null, isCorrect: true },
         stepId: "mc-1",
         type: "CHECK_ANSWER",
       });
+
       expect(next.phase).toBe("playing");
       expect(next.currentStepIndex).toBe(1);
+
       expect(next.results["mc-1"]).toStrictEqual({
         answer: undefined,
         result: { correctAnswer: null, feedback: null, isCorrect: true },
@@ -213,12 +230,15 @@ describe("CHECK_ANSWER", () => {
     it("sets completed when matchColumns is the last step", () => {
       const steps = [buildStep({ id: "mc-1", kind: "matchColumns", position: 0 })];
       const state = buildState({ steps });
+
       const next = playerReducer(state, {
         result: { correctAnswer: null, feedback: null, isCorrect: true },
         stepId: "mc-1",
         type: "CHECK_ANSWER",
       });
+
       expect(next.phase).toBe("completed");
+
       expect(next.results["mc-1"]).toStrictEqual({
         answer: undefined,
         result: { correctAnswer: null, feedback: null, isCorrect: true },
@@ -243,6 +263,7 @@ describe("CHECK_ANSWER", () => {
       });
 
       expect(next.phase).toBe("completed");
+
       expect(next.stepTimings["mc-1"]).toStrictEqual({
         answeredAt: Date.now(),
         dayOfWeek: 0,
@@ -256,21 +277,25 @@ describe("CHECK_ANSWER", () => {
 
   it("no-ops in feedback phase", () => {
     const state = buildState({ phase: "feedback" });
+
     const next = playerReducer(state, {
       result: { correctAnswer: null, feedback: null, isCorrect: true },
       stepId: "step-1",
       type: "CHECK_ANSWER",
     });
+
     expect(next).toBe(state);
   });
 
   it("no-ops in completed phase", () => {
     const state = buildState({ phase: "completed" });
+
     const next = playerReducer(state, {
       result: { correctAnswer: null, feedback: null, isCorrect: true },
       stepId: "step-1",
       type: "CHECK_ANSWER",
     });
+
     expect(next).toBe(state);
   });
 });
@@ -347,6 +372,7 @@ describe("NAVIGATE_STEP", () => {
       buildMultipleChoiceStep({ id: "mc-1", position: 0 }),
       buildStep({ id: "s1", kind: "static", position: 1 }),
     ];
+
     const state = buildState({ currentStepIndex: 1, steps });
     const next = playerReducer(state, { direction: "prev", type: "NAVIGATE_STEP" });
     expect(next).toBe(state);
@@ -482,6 +508,7 @@ describe("RESTART", () => {
       buildMultipleChoiceStep({ id: "s1" }),
       buildMultipleChoiceStep({ id: "s2", position: 1 }),
     ];
+
     const state = buildState({
       currentStepIndex: 1,
       phase: "completed",
@@ -503,6 +530,7 @@ describe("RESTART", () => {
 
   it("clears results and selectedAnswers", () => {
     const steps = [buildMultipleChoiceStep({ id: "s1" })];
+
     const state = buildState({
       phase: "completed",
       results: {
@@ -532,17 +560,21 @@ describe("RESTART", () => {
 
   it("re-seeds sortOrder answers on restart", () => {
     const sortItems = ["Banana", "Apple", "Cherry"];
+
     const steps = [
       buildStep({ id: "sort-1", kind: "sortOrder", sortOrderItems: sortItems }),
       buildMultipleChoiceStep({ id: "mc-1", position: 1 }),
     ];
+
     const state = buildState({ phase: "completed", results: {}, selectedAnswers: {}, steps });
 
     const next = playerReducer(state, { type: "RESTART" });
+
     expect(next.selectedAnswers["sort-1"]).toStrictEqual({
       kind: "sortOrder",
       userOrder: sortItems,
     });
+
     expect(next.selectedAnswers["mc-1"]).toBeUndefined();
   });
 });
@@ -555,7 +587,9 @@ describe("CLEAR_ANSWER", () => {
         "step-2": { kind: "fillBlank", userAnswers: ["cat", "mat"] },
       },
     });
+
     const next = playerReducer(state, { stepId: "step-1", type: "CLEAR_ANSWER" });
+
     expect(next.selectedAnswers).toStrictEqual({
       "step-2": { kind: "fillBlank", userAnswers: ["cat", "mat"] },
     });
@@ -599,6 +633,7 @@ describe("timing", () => {
     const state = buildState({ stepStartedAt: startTime, steps: [step] });
 
     vi.setSystemTime(new Date("2026-03-15T14:30:05"));
+
     const next = playerReducer(state, {
       result: { correctAnswer: null, feedback: "Correct!", isCorrect: true },
       stepId: "mc-1",
@@ -617,6 +652,7 @@ describe("timing", () => {
     const steps = [buildStep({ id: "s1" }), buildStep({ id: "s2", position: 1 })];
 
     vi.setSystemTime(new Date("2026-03-15T10:00:00"));
+
     const state = buildState({
       currentStepIndex: 0,
       phase: "feedback",
@@ -644,10 +680,12 @@ describe("timing", () => {
 
   it("NAVIGATE_STEP next resets stepStartedAt", () => {
     vi.setSystemTime(new Date("2026-03-15T10:00:00"));
+
     const staticSteps = [
       buildStep({ id: "s1", kind: "static", position: 0 }),
       buildStep({ id: "s2", kind: "static", position: 1 }),
     ];
+
     const state = buildState({ stepStartedAt: 1000, steps: staticSteps });
 
     const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });
@@ -656,10 +694,12 @@ describe("timing", () => {
 
   it("NAVIGATE_STEP prev resets stepStartedAt", () => {
     vi.setSystemTime(new Date("2026-03-15T10:00:00"));
+
     const staticSteps = [
       buildStep({ id: "s1", kind: "static", position: 0 }),
       buildStep({ id: "s2", kind: "static", position: 1 }),
     ];
+
     const state = buildState({ currentStepIndex: 1, stepStartedAt: 1000, steps: staticSteps });
 
     const next = playerReducer(state, { direction: "prev", type: "NAVIGATE_STEP" });
@@ -668,6 +708,7 @@ describe("timing", () => {
 
   it("RESTART resets startedAt, stepStartedAt, and clears stepTimings", () => {
     vi.setSystemTime(new Date("2026-03-15T10:00:00"));
+
     const state = buildState({
       phase: "completed",
       startedAt: 500,
@@ -703,16 +744,19 @@ describe("edge cases", () => {
     const step = buildMultipleChoiceStep({ id: "mc-1" });
     const answer: SelectedAnswer = { kind: "multipleChoice", selectedOptionId: "option-c" };
     const state = buildState({ selectedAnswers: { "mc-1": answer }, steps: [step] });
+
     const next = playerReducer(state, {
       result: { correctAnswer: null, feedback: "Good!", isCorrect: true },
       stepId: "mc-1",
       type: "CHECK_ANSWER",
     });
+
     const expected: StepResult = {
       answer,
       result: { correctAnswer: null, feedback: "Good!", isCorrect: true },
       stepId: "mc-1",
     };
+
     expect(next.results["mc-1"]).toStrictEqual(expected);
   });
 });

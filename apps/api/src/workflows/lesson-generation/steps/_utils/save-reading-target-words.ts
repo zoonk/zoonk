@@ -28,6 +28,7 @@ export async function saveReadingTargetWords(params: {
   wordMetadata: Record<string, WordMetadataEntry>;
 }): Promise<void> {
   const canonicalWords = extractCanonicalWords(params.sentences, params.wordMetadata);
+
   const allTargetWords = collectTargetWords({
     canonicalWords,
     generatedWords: extractDistractorWords(params.sentences, params.distractors),
@@ -42,6 +43,7 @@ export async function saveReadingTargetWords(params: {
     targetLanguage: params.targetLanguage,
     words: allTargetWords,
   });
+
   const canonicalWordSet = new Set(canonicalWords);
   const distractorOnlyWords = allTargetWords.filter((word) => !canonicalWordSet.has(word));
 
@@ -140,6 +142,7 @@ async function saveCanonicalSentenceWord(params: {
   const translation = metadata?.translation ?? "";
   const romanization = emptyToNull(metadata?.romanization ?? null);
   const dbWord = params.existingCasing[params.word.toLowerCase()] ?? params.word;
+
   const wordId = await upsertWordWithPronunciation({
     audioUrl: params.wordAudioUrls[params.word] ?? null,
     organizationId: params.organizationId,

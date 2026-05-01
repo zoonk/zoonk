@@ -20,8 +20,10 @@ export function BeltProgressHint({
   const { levelHref } = usePlayerNavigation();
   const currentBelt = calculateBeltLevel(newTotalBp);
   const previousBelt = calculateBeltLevel(newTotalBp - brainPower);
+
   const didLevelUp =
     currentBelt.color !== previousBelt.color || currentBelt.level !== previousBelt.level;
+
   const colorLabel = useBeltColorLabel(currentBelt.color);
   const currentPercent = getBeltProgressPercent(currentBelt);
 

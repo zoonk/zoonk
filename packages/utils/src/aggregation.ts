@@ -7,6 +7,7 @@ const SUNDAY_DAYS_SINCE_MONDAY = 6;
 function getMondayOfWeek(date: Date): Date {
   const dayOfWeek = date.getUTCDay();
   const daysSinceMonday = dayOfWeek === 0 ? SUNDAY_DAYS_SINCE_MONDAY : dayOfWeek - 1;
+
   return new Date(
     Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() - daysSinceMonday),
   );
@@ -52,6 +53,7 @@ export function aggregateByPeriod<T extends { date: Date }>(
   for (const point of dataPoints) {
     const key = getKey(point.date);
     const existing = map.get(key);
+
     if (existing) {
       existing.total += getValue(point);
       existing.count += 1;
@@ -81,6 +83,7 @@ export function aggregateScoreByPeriod(
   for (const point of dataPoints) {
     const key = getKey(point.date);
     const existing = map.get(key);
+
     if (existing) {
       existing.correct += point.correct;
       existing.incorrect += point.incorrect;

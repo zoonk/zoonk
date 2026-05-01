@@ -17,6 +17,7 @@ describe(classifyLessonsStep, () => {
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();
     const course = await courseFixture({ organizationId: organization.id });
+
     const chapter = await chapterFixture({
       courseId: course.id,
       organizationId: organization.id,
@@ -51,6 +52,7 @@ describe(classifyLessonsStep, () => {
     ]);
 
     expect(generateLessonKindMock).toHaveBeenCalledTimes(2);
+
     expect(generateLessonKindMock).toHaveBeenNthCalledWith(1, {
       chapterTitle: context.title,
       courseTitle: context.course.title,
@@ -58,6 +60,7 @@ describe(classifyLessonsStep, () => {
       lessonDescription: "Intro",
       lessonTitle: "Lesson 1",
     });
+
     expect(generateLessonKindMock).toHaveBeenNthCalledWith(2, {
       chapterTitle: context.title,
       courseTitle: context.course.title,
@@ -71,6 +74,7 @@ describe(classifyLessonsStep, () => {
     expect(events).toContainEqual(
       expect.objectContaining({ status: "started", step: "generateLessonKind" }),
     );
+
     expect(events).toContainEqual(
       expect.objectContaining({ status: "completed", step: "generateLessonKind" }),
     );

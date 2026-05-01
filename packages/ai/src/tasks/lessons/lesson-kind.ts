@@ -5,6 +5,7 @@ import { type ReasoningEffort, buildProviderOptions } from "../../provider-optio
 import systemPrompt from "./lesson-kind.prompt.md";
 
 const defaultModel = "openai/gpt-5.4-nano";
+
 const fallbackModels = [
   "google/gemini-3.1-flash-lite-preview",
   "meta/llama-4-scout",

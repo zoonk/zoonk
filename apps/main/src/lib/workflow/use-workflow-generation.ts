@@ -33,6 +33,7 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
     triggerBody,
     triggerUrl,
   } = config;
+
   const hasTriggeredRef = useRef(false);
 
   // Wrapper preserves the TStep generic that useReducer would otherwise widen to string.
@@ -134,6 +135,7 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
     if (!autoTrigger || state.status !== "idle" || hasTriggeredRef.current) {
       return;
     }
+
     hasTriggeredRef.current = true;
     void startTrigger();
   }, [autoTrigger, state.status]);

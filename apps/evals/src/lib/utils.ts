@@ -8,6 +8,7 @@ export type ModelStatus = "completed" | "outputsReady" | "incomplete" | "notStar
 
 export async function getModelStatus(taskId: string, modelId: string): Promise<ModelStatus> {
   const totalTestCases = getTotalTestCases(taskId);
+
   const [results, outputStatus] = await Promise.all([
     getTaskResults(taskId, modelId),
     getOutputStatus(taskId, modelId, totalTestCases),

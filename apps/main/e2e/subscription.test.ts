@@ -20,6 +20,7 @@ async function createUserWithSubscription(
   const password = "password123";
 
   const signupContext = await request.newContext({ baseURL });
+
   const signupResponse = await signupContext.post("/api/auth/sign-up/email", {
     data: { email, name: `E2E Sub ${uniqueId}`, password },
   });
@@ -131,6 +132,7 @@ test.describe("Subscription Page - No Subscription", () => {
     await authenticatedPage.goto("/subscription");
 
     await authenticatedPage.getByRole("radio", { name: /hobby/i }).click();
+
     await expect(
       authenticatedPage.getByRole("button", { name: /upgrade to hobby/i }),
     ).toBeVisible();
@@ -143,6 +145,7 @@ test.describe("Subscription Page - No Subscription", () => {
     await expect(authenticatedPage.getByRole("button", { name: /upgrade to pro/i })).toBeVisible();
 
     await authenticatedPage.getByRole("radio", { name: /free/i }).click();
+
     await expect(
       authenticatedPage.getByRole("button", { name: /upgrade to pro/i }),
     ).not.toBeVisible();
@@ -236,14 +239,17 @@ test.describe("Subscription Page - Provider Managed", () => {
 
     await expect(page.getByText(/managed through the app store/i)).toBeVisible();
     await expect(page.getByRole("link", { name: /manage in app store/i })).toBeVisible();
+
     await expect(page.getByRole("link", { name: /manage in app store/i })).toHaveAttribute(
       "href",
       "https://support.apple.com/billing",
     );
+
     await expect(page.getByRole("link", { name: /contact support/i })).toHaveAttribute(
       "href",
       "/support",
     );
+
     await expect(page.getByRole("radio", { name: /free/i })).not.toBeVisible();
     await expect(page.getByRole("button", { name: /manage/i })).not.toBeVisible();
 
@@ -260,10 +266,12 @@ test.describe("Subscription Page - Provider Managed", () => {
     await page.goto("/subscription");
 
     await expect(page.getByText(/managed by zoonk/i)).toBeVisible();
+
     await expect(page.getByRole("link", { name: /contact support/i })).toHaveAttribute(
       "href",
       "/support",
     );
+
     await expect(page.getByRole("radio", { name: /free/i })).not.toBeVisible();
     await expect(page.getByRole("button", { name: /manage/i })).not.toBeVisible();
 

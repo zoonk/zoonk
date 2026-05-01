@@ -111,11 +111,13 @@ describe(addLessonsStep, () => {
 
   it("expands language lessons when the course has a target language", async () => {
     const course = await courseFixture({ organizationId, targetLanguage: "es" });
+
     const chapter = await chapterFixture({
       courseId: course.id,
       organizationId,
       title: `Add Language Lessons ${randomUUID()}`,
     });
+
     const chapterContext: ChapterContext = {
       ...chapter,
       _count: { lessons: 0 },
@@ -142,6 +144,7 @@ describe(addLessonsStep, () => {
       "listening",
       "review",
     ]);
+
     expect(dbLessons[1]?.title).toBeNull();
     expect(dbLessons[1]?.description).toBeNull();
     expect(dbLessons[2]?.title).toBeNull();

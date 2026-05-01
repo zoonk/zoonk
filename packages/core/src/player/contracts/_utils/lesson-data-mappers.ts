@@ -174,6 +174,7 @@ export function attachTranslationsToSteps(
   lessonSentences: LessonSentenceInput[],
 ): StepDataInput[] {
   const wordMap = new Map(lessonWords.map((lessonWord) => [lessonWord.word.id, lessonWord]));
+
   const sentenceMap = new Map(
     lessonSentences.map((lessonSentence) => [lessonSentence.sentence.id, lessonSentence]),
   );

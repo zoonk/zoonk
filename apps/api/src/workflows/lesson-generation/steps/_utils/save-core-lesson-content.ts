@@ -148,6 +148,7 @@ function buildQuizStepContent(question: QuizQuestionWithUrls) {
 
   if (question.format === "selectImage") {
     const { format, ...rawContent } = question;
+
     return assertStepContent(format, {
       ...rawContent,
       options: addOptionIds({ options: question.options }),

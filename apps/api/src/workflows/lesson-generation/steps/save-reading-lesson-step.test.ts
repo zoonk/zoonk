@@ -20,6 +20,7 @@ describe(saveReadingLessonStep, () => {
     const generatedDistractorWords = [`Abend${id}`, `Fenster${id}`] as const;
     const sentence = canonicalWords.join(" ");
     const translation = `Good morning ${id}`;
+
     const context = await createLessonContext({
       kind: "reading",
       organizationId,
@@ -59,6 +60,7 @@ describe(saveReadingLessonStep, () => {
     const savedSentence = await prisma.sentence.findFirstOrThrow({
       where: { organizationId, sentence, targetLanguage: "de" },
     });
+
     const [lessonSentence, lessonWords, distractorLessonWords, step, pronunciations] =
       await Promise.all([
         prisma.lessonSentence.findUniqueOrThrow({
@@ -92,18 +94,22 @@ describe(saveReadingLessonStep, () => {
       romanization: normalizedCanonicalWords.join(" "),
       sentence,
     });
+
     expect(lessonSentence).toMatchObject({
       distractors: [...generatedDistractorWords],
       explanation: "Greeting",
       translation,
       translationDistractors: [`hello-${id}`, `bye-${id}`],
     });
+
     expect(step).toMatchObject({ content: {}, isPublished: true, sentenceId: savedSentence.id });
+
     expect(lessonWords.map((entry) => [entry.word.word, entry.translation])).toStrictEqual([
       [normalizedCanonicalWords[0]!, `good-${id}`],
       [normalizedCanonicalWords[2]!, canonicalWords[2]],
       [normalizedCanonicalWords[1]!, `morning-${id}`],
     ]);
+
     expect(distractorLessonWords).toStrictEqual([]);
     expect(pronunciations).toHaveLength(5);
   });

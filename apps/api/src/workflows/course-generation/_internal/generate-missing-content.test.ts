@@ -66,12 +66,15 @@ describe(generateMissingContent, () => {
 
   it("generates all content when nothing exists", async () => {
     generateCourseDescriptionMock.mockResolvedValue({ data: { description: "Generated desc" } });
+
     generateCourseImageMock.mockResolvedValue({
       data: "https://example.com/img.webp",
       error: null,
     });
+
     generateAlternativeTitlesMock.mockResolvedValue({ data: { alternatives: ["Alt 1"] } });
     generateCourseCategoriesMock.mockResolvedValue({ data: { categories: ["programming"] } });
+
     generateCourseChaptersMock.mockResolvedValue({
       data: { chapters: [{ description: "Ch1 desc", title: "Ch1" }] },
     });
@@ -118,10 +121,12 @@ describe(generateMissingContent, () => {
     const langCourse: CourseContext = { ...course, targetLanguage: "es" };
 
     generateCourseDescriptionMock.mockResolvedValue({ data: { description: "Lang desc" } });
+
     generateCourseImageMock.mockResolvedValue({
       data: "https://example.com/lang.webp",
       error: null,
     });
+
     generateAlternativeTitlesMock.mockResolvedValue({ data: { alternatives: [] } });
     generateLanguageCourseChaptersMock.mockResolvedValue({ data: { chapters: [] } });
 
@@ -133,14 +138,18 @@ describe(generateMissingContent, () => {
 
   it("filters out 'languages' from non-language course categories", async () => {
     generateCourseDescriptionMock.mockResolvedValue({ data: { description: "desc" } });
+
     generateCourseImageMock.mockResolvedValue({
       data: "https://example.com/non-lang.webp",
       error: null,
     });
+
     generateAlternativeTitlesMock.mockResolvedValue({ data: { alternatives: [] } });
+
     generateCourseCategoriesMock.mockResolvedValue({
       data: { categories: ["programming", "languages", "web"] },
     });
+
     generateCourseChaptersMock.mockResolvedValue({ data: { chapters: [] } });
 
     const result = await generateMissingContent(course, emptyExisting);

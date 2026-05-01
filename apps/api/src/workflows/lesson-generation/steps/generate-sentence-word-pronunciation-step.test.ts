@@ -28,11 +28,13 @@ describe(generateSentenceWordPronunciationStep, () => {
     const catWord = `猫${uniqueId}`;
     const fireWord = `火${uniqueId}`;
     const waterWord = `水${uniqueId}`;
+
     const context = await createLessonContext({
       kind: "reading",
       organizationId,
       targetLanguage: "ja",
     });
+
     const words = [catWord, waterWord, fireWord];
 
     await expect(generateSentenceWordPronunciationStep({ context, words })).resolves.toStrictEqual({
@@ -42,7 +44,9 @@ describe(generateSentenceWordPronunciationStep, () => {
         [waterWord]: `${waterWord} pron`,
       },
     });
+
     expect(generateLessonPronunciation).toHaveBeenCalledTimes(3);
+
     expect(generateLessonPronunciation).toHaveBeenCalledWith({
       targetLanguage: "ja",
       userLanguage: context.language,

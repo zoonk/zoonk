@@ -139,6 +139,7 @@ function getKeyboardModel({
 
   const enterAction =
     bottomBar.kind === "primaryAction" && !bottomBar.disabled ? bottomBar.run : null;
+
   const behavior = getPlayerStepBehavior(step);
 
   return {

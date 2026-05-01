@@ -73,6 +73,7 @@ describe("course-suggestions", () => {
     const dbItem = await prisma.courseSuggestion.findUnique({
       where: { languageSlug: { language, slug: toSlug("Vitest") } },
     });
+
     expect(dbItem).not.toBeNull();
     expect(dbItem?.title).toBe("Vitest");
 
@@ -106,6 +107,7 @@ describe("course-suggestions", () => {
     const items = await prisma.courseSuggestion.findMany({
       where: { language, slug: toSlug("Common Course") },
     });
+
     expect(items).toHaveLength(1);
   });
 
@@ -236,6 +238,7 @@ describe("course-suggestions", () => {
       language: "en",
       slug: `non-existent-${randomUUID()}`,
     });
+
     expect(result).toBeNull();
   });
 

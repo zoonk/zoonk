@@ -59,6 +59,7 @@ export function calculateBeltLevel(totalBrainPower: number): BeltLevelResult {
   const currentBelt = findCurrentBelt(bp);
 
   const bpInCurrentBelt = bp - currentBelt.startBp;
+
   const level = Math.min(
     LEVELS_PER_COLOR,
     Math.floor(bpInCurrentBelt / currentBelt.bpPerLevel) + 1,

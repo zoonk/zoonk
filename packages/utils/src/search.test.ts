@@ -6,6 +6,7 @@ type TestItem = { id: string; title: string };
 describe(mergeSearchResults, () => {
   it("returns exact match first when it exists", () => {
     const exactMatch: TestItem = { id: "1", title: "Law" };
+
     const containsMatches: TestItem[] = [
       { id: "2", title: "Criminal Law" },
       { id: "3", title: "Tax Law" },
@@ -30,6 +31,7 @@ describe(mergeSearchResults, () => {
 
   it("removes duplicate from contains matches when exact match exists", () => {
     const exactMatch: TestItem = { id: "1", title: "Law" };
+
     const containsMatches: TestItem[] = [
       { id: "1", title: "Law" },
       { id: "2", title: "Criminal Law" },
@@ -59,6 +61,7 @@ describe(mergeSearchResults, () => {
 
   it("preserves order of contains matches after exact match", () => {
     const exactMatch: TestItem = { id: "1", title: "Law" };
+
     const containsMatches: TestItem[] = [
       { id: "2", title: "Criminal Law" },
       { id: "3", title: "Tax Law" },

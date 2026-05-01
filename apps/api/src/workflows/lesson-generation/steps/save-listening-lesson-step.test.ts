@@ -22,6 +22,7 @@ describe(saveListeningLessonStep, () => {
       position: 2,
       targetLanguage: "de",
     });
+
     const [readingLesson, firstSentence, secondSentence] = await Promise.all([
       lessonFixture({
         chapterId: context.chapterId,

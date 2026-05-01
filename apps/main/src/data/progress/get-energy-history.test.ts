@@ -307,6 +307,7 @@ describe("authenticated users", () => {
       });
 
       const result = await getEnergyHistory({ headers, period: "month" });
+
       if (!result) {
         throw new Error("Expected result");
       }

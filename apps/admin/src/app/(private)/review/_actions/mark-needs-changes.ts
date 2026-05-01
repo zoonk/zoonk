@@ -17,6 +17,7 @@ export async function markNeedsChangesAction(formData: FormData) {
   if (!taskType || !entityId || !isValidTaskType(taskType)) {
     throw new Error("Invalid form data");
   }
+
   const userId = session.user.id;
 
   const { error } = await safeAsync(() =>

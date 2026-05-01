@@ -29,6 +29,7 @@ export async function saveModelOutputs(
 export const loadModelOutputs = cache(
   async (taskId: string, modelId: string): Promise<ModelOutputs | null> => {
     const filePath = getOutputsFilePath(taskId, modelId);
+
     try {
       const data = await fs.readFile(filePath, "utf8");
       return JSON.parse(data) as ModelOutputs;

@@ -46,6 +46,7 @@ export const getDailyContentCreated = cache(async (start: Date, end: Date) => {
 
   for (const row of results) {
     const key = row.date.toISOString().slice(0, 10);
+
     const existing = dateMap.get(key) ?? {
       chapters: 0,
       courses: 0,

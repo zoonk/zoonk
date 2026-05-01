@@ -52,6 +52,7 @@ function checkObjectProperty(prop, tVariableNames, context) {
       loc: prop.key.loc,
       messageId: "noTFunctionAsArgument",
     });
+
     return;
   }
 

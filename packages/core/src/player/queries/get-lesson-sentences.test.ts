@@ -90,6 +90,7 @@ describe(getLessonSentencesForLessons, () => {
     const result = await getLessonSentencesForLessons({ lessonIds: [newLesson.id] });
 
     expect(result).toHaveLength(1);
+
     expect(result[0]).toMatchObject({
       distractors: ["Adoro"],
       sentence: expect.objectContaining({

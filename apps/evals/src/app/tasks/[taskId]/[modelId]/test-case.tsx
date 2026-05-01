@@ -11,6 +11,7 @@ function formatValue(value: unknown): string {
   if (typeof value === "string") {
     return value;
   }
+
   if (Array.isArray(value)) {
     if (value.length === 0) {
       return "[]";
@@ -22,6 +23,7 @@ function formatValue(value: unknown): string {
 
     return JSON.stringify(value, null, 2);
   }
+
   return JSON.stringify(value);
 }
 

@@ -28,6 +28,7 @@ describe(generateReadingAudioStep, () => {
     const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
     const existingSentence = `既存${uniqueId}`;
     const newSentence = `新しい${uniqueId}`;
+
     const [context] = await Promise.all([
       createLessonContext({ kind: "reading", organizationId, targetLanguage: "ja" }),
       prisma.sentence.create({
@@ -54,6 +55,7 @@ describe(generateReadingAudioStep, () => {
         [newSentence]: `/audio/${newSentence}.mp3`,
       },
     });
+
     expect(generateLanguageAudio).toHaveBeenCalledExactlyOnceWith({
       language: "ja",
       orgSlug: "ai",

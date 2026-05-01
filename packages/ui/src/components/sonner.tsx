@@ -21,6 +21,7 @@ function isValidTheme(theme: string): theme is ValidTheme {
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme();
   const validTheme: ValidTheme = isValidTheme(theme) ? theme : "system";
+
   const style: CSSPropertiesWithVariables = {
     "--border-radius": "var(--radius)",
     "--normal-bg": "var(--popover)",

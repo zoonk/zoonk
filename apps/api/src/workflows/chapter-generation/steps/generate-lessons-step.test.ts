@@ -26,6 +26,7 @@ describe(generateLessonsStep, () => {
 
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();
+
     const [course, languageCourse] = await Promise.all([
       courseFixture({ organizationId: organization.id }),
       courseFixture({ organizationId: organization.id, targetLanguage: "es" }),
@@ -105,6 +106,7 @@ describe(generateLessonsStep, () => {
       targetLanguage: "es",
       userLanguage: languageContext.language,
     });
+
     const events = getStreamedEvents();
 
     expect(events).not.toContainEqual(expect.objectContaining({ step: "generateLessonKind" }));

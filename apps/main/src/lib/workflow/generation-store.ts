@@ -68,6 +68,7 @@ export function generationReducer<TStep extends string>(
       if (state.status === "completed" || state.status === "error") {
         return state;
       }
+
       if (action.completionStep && !state.completedSteps.includes(action.completionStep)) {
         return {
           ...state,
@@ -75,6 +76,7 @@ export function generationReducer<TStep extends string>(
           status: "error",
         };
       }
+
       return { ...state, status: "completed" };
 
     case "triggerStart":
@@ -118,6 +120,7 @@ export function handleStepStreamMessage<TStep extends string>(params: {
       if (isEventRelevantToViewer(message.entityId, entityId)) {
         dispatch({ step: message.step, type: "stepStarted" });
       }
+
       break;
     case "completed": {
       if (isEventRelevantToViewer(message.entityId, entityId)) {
@@ -135,6 +138,7 @@ export function handleStepStreamMessage<TStep extends string>(params: {
       if (isCompletionForThisEntity) {
         dispatch({ completionStep, type: "streamEnded" });
       }
+
       break;
     }
     case "error":
@@ -145,6 +149,7 @@ export function handleStepStreamMessage<TStep extends string>(params: {
 
         dispatch({ error: errorMessage, type: "setError" });
       }
+
       break;
 
     default: {

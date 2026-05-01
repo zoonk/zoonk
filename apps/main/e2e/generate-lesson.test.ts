@@ -62,13 +62,16 @@ function createRouteHandler(options: MockApiOptions) {
           contentType: "application/json",
           status: triggerResponse.status ?? 500,
         });
+
         return;
       }
+
       await route.fulfill({
         body: JSON.stringify({ message: "Workflow started", runId: triggerResponse.runId }),
         contentType: "application/json",
         status: 200,
       });
+
       return;
     }
 
@@ -78,16 +81,19 @@ function createRouteHandler(options: MockApiOptions) {
         await route.abort("failed");
         return;
       }
+
       if (statusDelayMs > 0) {
         await new Promise<void>((resolve) => {
           setTimeout(resolve, statusDelayMs);
         });
       }
+
       await route.fulfill({
         body: createSSEStream(streamMessages),
         contentType: "text/event-stream",
         status: 200,
       });
+
       return;
     }
 
@@ -305,6 +311,7 @@ test.describe("Generate Lesson Page - With Subscription", () => {
     const { lesson } = await createPendingLesson();
 
     const uniqueId = randomUUID().slice(0, 8);
+
     await stepFixture({
       content: {
         text: `E2E Generated Lesson ${uniqueId}`,
@@ -413,6 +420,7 @@ test.describe("Generate Lesson Page - Running Generation Bypasses Auth", () => {
     });
 
     const lessonTitle = `E2E Running Lesson ${uniqueId}`;
+
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       generationRunId: `run-${uniqueId}`,

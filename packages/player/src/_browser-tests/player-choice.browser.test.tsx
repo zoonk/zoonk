@@ -139,6 +139,7 @@ describe("player browser integration: choice steps", () => {
 
     await page.getByRole("radio", { name: "Cat" }).click();
     await page.getByRole("button", { name: /check/i }).click();
+
     await expect
       .element(page.getByRole("region", { name: /answer feedback/i }))
       .toBeInTheDocument();
@@ -168,15 +169,19 @@ describe("player browser integration: choice steps", () => {
     await expect.element(page.getByRole("button", { name: /check/i })).toBeDisabled();
 
     fireEvent.keyDown(globalThis.window, { key: "2" });
+
     await expect
       .element(page.getByRole("radio", { name: "Berlin" }))
       .toHaveAttribute("aria-checked", "true");
+
     await expect.element(page.getByRole("button", { name: /check/i })).toBeEnabled();
 
     await page.getByRole("radio", { name: "Berlin" }).click();
+
     await expect
       .element(page.getByRole("radio", { name: "Berlin" }))
       .toHaveAttribute("aria-checked", "false");
+
     await expect.element(page.getByRole("button", { name: /check/i })).toBeDisabled();
 
     await page.getByRole("radio", { name: "Paris" }).click();
@@ -300,6 +305,7 @@ describe("player browser integration: choice steps", () => {
     await expect.element(page.getByText(/translate:/i)).toBeInTheDocument();
     await expect.element(page.getByText("Capital of Germany")).toBeInTheDocument();
     await expect.element(page.getByText("beru-rin")).toBeInTheDocument();
+
     await expect
       .element(page.getByRole("button", { name: /play pronunciation/i }))
       .toBeInTheDocument();
@@ -346,6 +352,7 @@ describe("player browser integration: choice steps", () => {
     await expect
       .element(page.getByRole("region", { name: /answer feedback/i }))
       .toBeInTheDocument();
+
     await expect.element(page.getByRole("radio", { name: "Cat" })).toBeInTheDocument();
   });
 

@@ -111,6 +111,7 @@ function MatchGrid({
     <div className="grid grid-cols-2 gap-2 sm:gap-3">
       {leftItems.map((left, index) => {
         const right = rightItems[index];
+
         if (!right) {
           return null;
         }

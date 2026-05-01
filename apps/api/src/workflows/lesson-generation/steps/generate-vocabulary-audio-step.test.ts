@@ -33,11 +33,13 @@ describe(generateVocabularyAudioStep, () => {
     await expect(generateVocabularyAudioStep({ context, words })).resolves.toStrictEqual({
       wordAudioUrls: { [catWord]: `/audio/${catWord}.mp3`, [dogWord]: `/audio/${dogWord}.mp3` },
     });
+
     expect(generateLanguageAudio).toHaveBeenCalledWith({
       language: "ja",
       orgSlug: "ai",
       text: catWord,
     });
+
     expect(generateLanguageAudio).toHaveBeenCalledWith({
       language: "ja",
       orgSlug: "ai",

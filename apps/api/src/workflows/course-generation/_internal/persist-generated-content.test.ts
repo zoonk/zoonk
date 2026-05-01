@@ -112,11 +112,13 @@ describe(persistGeneratedContent, () => {
     expect(chapters).toStrictEqual([]);
 
     const events = getStreamedEvents();
+
     const completedSteps = events
       .filter((event) => event.status === "completed")
       .map((event) => event.step);
 
     expect(completedSteps).toHaveLength(4);
+
     expect(completedSteps).toStrictEqual(
       expect.arrayContaining([
         "updateCourse",

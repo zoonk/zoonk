@@ -142,6 +142,7 @@ describe(buildWordBankOptions, () => {
       "Bom",
       "noite",
     ]);
+
     expect(options.find((option) => option.word === "noite")).toStrictEqual({
       audioUrl: null,
       romanization: null,

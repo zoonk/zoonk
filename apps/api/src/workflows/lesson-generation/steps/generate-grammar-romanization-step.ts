@@ -33,6 +33,7 @@ export async function generateGrammarRomanizationStep({
       ...exercise.distractors,
     ]),
   ];
+
   const romanizations = await generateLessonRomanizations({ targetLanguage, texts });
 
   await stream.status({ status: "completed", step: "generateGrammarRomanization" });

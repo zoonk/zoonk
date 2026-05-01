@@ -144,6 +144,7 @@ export function SelectImageStep({
             hasResult && selectedOptionId
               ? getImageOptionResultState(option, selectedOptionId)
               : null;
+
           const isDimmed = hasResult && !resultState;
           const isSelected = selectedOptionId === option.id;
 

@@ -63,6 +63,7 @@ describe(buildLessonPlayerModel, () => {
       nextHref: "/b/brand/c/course/ch/chapter-2",
       reviewHref: "/b/brand/c/course/ch/chapter-1",
     });
+
     expect(model.onNextHref).toBe("/b/brand/c/course/ch/chapter-2/l/lesson-2");
   });
 
@@ -80,6 +81,7 @@ describe(buildLessonPlayerModel, () => {
       reviewHref: "/b/brand/c/course",
       secondaryReviewHref: "/b/brand/c/course/ch/chapter-1",
     });
+
     expect(model.onNextHref).toBeNull();
   });
 });

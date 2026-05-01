@@ -22,9 +22,11 @@ export async function generateWordPronunciations(params: {
   }
 
   const existingPronunciations = await fetchExistingPronunciations(params);
+
   const wordsNeedingPronunciation = params.words.filter(
     (word) => !existingPronunciations[word.toLowerCase()],
   );
+
   const generatedPronunciations = await generateMissingPronunciations({
     targetLanguage: params.targetLanguage,
     userLanguage: params.userLanguage,

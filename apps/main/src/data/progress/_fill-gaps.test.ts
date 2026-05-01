@@ -27,6 +27,7 @@ describe(fillGapsWithDecay, () => {
     ]);
 
     expect(result).toHaveLength(5);
+
     expect(dateKeys(result)).toStrictEqual([
       "2025-01-10",
       "2025-01-11",
@@ -34,6 +35,7 @@ describe(fillGapsWithDecay, () => {
       "2025-01-13",
       "2025-01-14",
     ]);
+
     expect(result.map((point) => point.energy)).toStrictEqual([75, 74, 73, 72, 80]);
   });
 
@@ -45,6 +47,7 @@ describe(fillGapsWithDecay, () => {
     ]);
 
     expect(result).toHaveLength(4);
+
     expect(dateKeys(result)).toStrictEqual([
       "2025-03-08",
       "2025-03-09",
@@ -61,6 +64,7 @@ describe(fillGapsWithDecay, () => {
     ]);
 
     expect(result).toHaveLength(4);
+
     expect(dateKeys(result)).toStrictEqual([
       "2025-11-01",
       "2025-11-02",
@@ -77,6 +81,7 @@ describe(fillGapsWithDecay, () => {
     ]);
 
     expect(result).toHaveLength(4);
+
     expect(dateKeys(result)).toStrictEqual([
       "2025-03-29",
       "2025-03-30",

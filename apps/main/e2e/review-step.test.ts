@@ -134,6 +134,7 @@ async function completeVocabStep(
     .getByText(/translate this word/i)
     .locator("..")
     .textContent();
+
   const correctWord = Object.entries(translationToWord).find(([translation]) =>
     promptText?.includes(translation),
   )?.[1];
@@ -347,6 +348,7 @@ test.describe("Review Step", () => {
     await expect(completionScreen).toBeVisible();
     await expect(completionScreen.getByRole("heading", { name: /course complete/i })).toBeVisible();
     await expect(completionScreen.getByRole("link", { name: /review course/i })).toBeVisible();
+
     await expect(
       completionScreen.getByText(completionScoreText, { exact: true }),
     ).not.toBeVisible();

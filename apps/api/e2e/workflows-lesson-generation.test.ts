@@ -22,6 +22,7 @@ async function createSubscribedApiContext({
   const password = "password123";
 
   const signupContext = await request.newContext({ baseURL });
+
   const signupResponse = await signupContext.post("/v1/auth/sign-up/email", {
     data: { email, name: `E2E User ${uniqueId}`, password },
   });
@@ -30,6 +31,7 @@ async function createSubscribedApiContext({
   await signupContext.dispose();
 
   const user = await prisma.user.findUniqueOrThrow({ where: { email } });
+
   await prisma.subscription.create({
     data: {
       id: randomUUID(),
@@ -42,6 +44,7 @@ async function createSubscribedApiContext({
   });
 
   const apiContext = await request.newContext({ baseURL });
+
   const signInResponse = await apiContext.post("/v1/auth/sign-in/email", {
     data: { email, password },
   });
@@ -82,6 +85,7 @@ test.describe("Lesson Generation Workflow API", () => {
 
   test("returns validation error when lessonId is invalid type", async () => {
     const apiContext = await request.newContext({ baseURL });
+
     const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
       data: { lessonId: "invalid" },
     });
@@ -98,6 +102,7 @@ test.describe("Lesson Generation Workflow API", () => {
 
   test("returns validation error when lessonId is negative", async () => {
     const apiContext = await request.newContext({ baseURL });
+
     const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
       data: { lessonId: -1 },
     });
@@ -158,6 +163,7 @@ test.describe("Lesson Generation Workflow API", () => {
     });
 
     const apiContext = await request.newContext({ baseURL });
+
     const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
       data: { lessonId: lesson.id },
     });
@@ -236,6 +242,7 @@ test.describe("Lesson Generation Workflow API", () => {
     });
 
     const apiContext = await request.newContext({ baseURL });
+
     const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
       data: { lessonId: lesson.id },
     });

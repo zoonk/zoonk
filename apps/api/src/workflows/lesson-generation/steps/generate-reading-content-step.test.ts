@@ -33,12 +33,14 @@ describe(generateReadingContentStep, () => {
 
   it("generates reading content from vocabulary lessons since the previous reading", async () => {
     const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
+
     const context = await createLessonContext({
       kind: "reading",
       organizationId,
       position: 4,
       targetLanguage: "ja",
     });
+
     const [oldVocabularyLesson, previousReading, currentVocabularyLesson] = await Promise.all([
       lessonFixture({
         chapterId: context.chapterId,
@@ -65,6 +67,7 @@ describe(generateReadingContentStep, () => {
         position: 2,
       }),
     ]);
+
     const [oldWord, catWord, waterWord] = await Promise.all([
       wordFixture({ organizationId, targetLanguage: "ja", word: `古い${uniqueId}` }),
       wordFixture({ organizationId, targetLanguage: "ja", word: `猫${uniqueId}` }),
@@ -95,16 +98,20 @@ describe(generateReadingContentStep, () => {
     const result = await generateReadingContentStep(context);
 
     expect(previousReading.position).toBe(1);
+
     expect(result).toStrictEqual({
       kind: "reading",
       sentences: [
         { explanation: "Uses both words.", sentence: "猫と水", translation: "cat and water" },
       ],
     });
+
     const sentenceInput = vi.mocked(generateLessonSentences).mock.calls[0]?.[0];
+
     expect(sentenceInput?.words).toStrictEqual(
       expect.arrayContaining([`猫${uniqueId}`, `水${uniqueId}`]),
     );
+
     expect(sentenceInput?.words).toHaveLength(2);
   });
 });

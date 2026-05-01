@@ -56,6 +56,7 @@ export function CatalogListSearch<T extends { id: string | number; title: string
 
   const { filteredIds, isSearchActive } = useMemo(() => {
     const query = normalizeString(search);
+
     if (!query) {
       return { filteredIds: null, isSearchActive: false };
     }

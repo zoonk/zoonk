@@ -83,6 +83,7 @@ describe(getNextLesson, () => {
   it("skips unpublished lessons", async () => {
     const testOrg = await organizationFixture({ kind: "brand" });
     const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
+
     const testChapter = await chapterFixture({
       courseId: testCourse.id,
       isPublished: true,
@@ -169,6 +170,7 @@ describe(getNextLesson, () => {
     it("returns needsGeneration true when lesson is pending", async () => {
       const testOrg = await organizationFixture({ kind: "brand" });
       const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
+
       const testChapter = await chapterFixture({
         courseId: testCourse.id,
         isPublished: true,
@@ -199,6 +201,7 @@ describe(getNextLesson, () => {
     it("returns needsGeneration true when lesson is failed", async () => {
       const testOrg = await organizationFixture({ kind: "brand" });
       const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
+
       const testChapter = await chapterFixture({
         courseId: testCourse.id,
         isPublished: true,
@@ -229,6 +232,7 @@ describe(getNextLesson, () => {
     it("returns needsGeneration false when next lesson is completed", async () => {
       const testOrg = await organizationFixture({ kind: "brand" });
       const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
+
       const testChapter = await chapterFixture({
         courseId: testCourse.id,
         isPublished: true,
@@ -259,6 +263,7 @@ describe(getNextLesson, () => {
     it("returns needsGeneration false when lesson generation is already in flight", async () => {
       const testOrg = await organizationFixture({ kind: "brand" });
       const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
+
       const testChapter = await chapterFixture({
         courseId: testCourse.id,
         isPublished: true,

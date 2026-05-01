@@ -44,6 +44,7 @@ const SidebarContext = createContext<SidebarContextProps | undefined>(undefined)
 
 function useSidebar() {
   const context = useContext(SidebarContext);
+
   if (!context) {
     throw new Error("useSidebar must be used within a SidebarProvider.");
   }
@@ -71,9 +72,11 @@ function SidebarProvider({
   // We use openProp and setOpenProp for control from outside the component.
   const [open, setOpen] = useState(defaultOpen);
   const isOpen = openProp ?? open;
+
   const setIsOpen = useCallback(
     (value: boolean | ((value: boolean) => boolean)) => {
       const openState = typeof value === "function" ? value(isOpen) : value;
+
       if (setOpenProp) {
         setOpenProp(openState);
       } else {
@@ -486,6 +489,7 @@ function SidebarMenuButton({
     tooltip?: string | React.ComponentProps<typeof TooltipContent>;
   } & VariantProps<typeof sidebarMenuButtonVariants>) {
   const { isMobile, state } = useSidebar();
+
   const comp = useRender({
     defaultTagName: "button",
     props: mergeProps<"button">(

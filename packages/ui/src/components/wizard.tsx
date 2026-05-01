@@ -240,6 +240,7 @@ export function useWizardKeyboard({
       if (isFirstStep) {
         return false;
       }
+
       onBack();
     },
     { mode: "none" },
@@ -251,6 +252,7 @@ export function useWizardKeyboard({
       if (!canProceed || isLastStep) {
         return false;
       }
+
       onNext();
     },
     { mode: "none" },

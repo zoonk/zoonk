@@ -42,11 +42,13 @@ describe(generateSentenceWordMetadataStep, () => {
     const catWord = `猫${uniqueId}`;
     const waterWord = `水${uniqueId}`;
     const fireWord = `火${uniqueId}`;
+
     const context = await createLessonContext({
       kind: "reading",
       organizationId,
       targetLanguage: "ja",
     });
+
     const sentences = [
       { explanation: "", sentence: `${catWord} ${waterWord}`, translation: "cat and water" },
     ];
@@ -72,12 +74,15 @@ describe(generateSentenceWordMetadataStep, () => {
         translation: `${waterWord} translated`,
       },
     });
+
     expect(generateTranslation).toHaveBeenCalledWith(
       expect.objectContaining({ targetLanguage: "ja", userLanguage: "en", word: catWord }),
     );
+
     expect(generateTranslation).toHaveBeenCalledWith(
       expect.objectContaining({ targetLanguage: "ja", userLanguage: "en", word: waterWord }),
     );
+
     expect(generateLessonRomanization).toHaveBeenCalledWith({
       targetLanguage: "ja",
       texts: [waterWord, fireWord],

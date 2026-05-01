@@ -48,6 +48,7 @@ describe(generatePracticeContentStep, () => {
       text: "Old explanation",
       title: "Old",
     });
+
     await lessonFixture({
       chapterId: context.chapterId,
       generationStatus: "completed",
@@ -56,6 +57,7 @@ describe(generatePracticeContentStep, () => {
       organizationId,
       position: 1,
     });
+
     await createCompletedExplanation({
       chapterId: context.chapterId,
       organizationId,
@@ -67,6 +69,7 @@ describe(generatePracticeContentStep, () => {
     const result = await generatePracticeContentStep(context);
 
     expect(result.kind).toBe("practice");
+
     expect(generateLessonPractice).toHaveBeenCalledWith(
       expect.objectContaining({ explanationSteps: [{ text: "New explanation", title: "New" }] }),
     );

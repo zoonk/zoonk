@@ -47,6 +47,7 @@ export async function generateStepContentImage({
   quality = DEFAULT_QUALITY,
 }: StepContentImageParams): Promise<SafeReturn<GeneratedFile>> {
   const imagePreset = STEP_CONTENT_IMAGE_PRESETS[preset];
+
   const { data, error } = await safeAsync(() =>
     generateImage({
       maxImagesPerCall: 1,

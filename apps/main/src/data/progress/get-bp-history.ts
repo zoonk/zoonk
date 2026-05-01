@@ -79,6 +79,7 @@ function getPreviousPeriodTotal(previousData: RawDataPoint[] | null): number | n
   if (!previousData || previousData.length === 0) {
     return null;
   }
+
   return sumBp(previousData);
 }
 
@@ -86,6 +87,7 @@ async function hasEarlierData(userId: string, beforeDate: Date): Promise<boolean
   const { data } = await safeAsync(() =>
     prisma.dailyProgress.findFirst({ where: { date: { lt: beforeDate }, userId } }),
   );
+
   return Boolean(data);
 }
 
@@ -97,6 +99,7 @@ const cachedGetBpHistory = cache(
     headers?: Headers,
   ): Promise<BpHistoryData | null> => {
     const session = await getSession(headers);
+
     if (!session) {
       return null;
     }
@@ -115,6 +118,7 @@ const cachedGetBpHistory = cache(
     }
 
     const processedData = processBpData(currentResult.data, period);
+
     const dataPoints: BpDataPoint[] = processedData.map((row) => ({
       bp: row.bp,
       date: row.date,

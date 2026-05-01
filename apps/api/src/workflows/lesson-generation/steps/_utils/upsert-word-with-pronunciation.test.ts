@@ -78,6 +78,7 @@ describe(upsertWordWithPronunciation, () => {
     const organization = await organizationFixture({ kind: "brand" });
     const id = randomUUID().slice(0, 8);
     const wordText = `sora-${id}`;
+
     const existing = await wordFixture({
       audioUrl: null,
       organizationId: organization.id,

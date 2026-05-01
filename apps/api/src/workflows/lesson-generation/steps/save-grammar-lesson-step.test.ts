@@ -15,6 +15,7 @@ describe(saveGrammarLessonStep, () => {
 
   it("saves grammar examples, discovery, rule, and practice steps", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
+
     const context = await createLessonContext({
       kind: "grammar",
       organizationId,
@@ -72,21 +73,25 @@ describe(saveGrammarLessonStep, () => {
       [3, "static"],
       [4, "fillBlank"],
     ]);
+
     expect(steps[0]?.content).toMatchObject({
       romanization: `das ist${id} gut`,
       sentence: `Das ist${id} gut`,
       translation: `That is${id} good`,
       variant: "grammarExample",
     });
+
     expect(steps[2]?.content).toMatchObject({
       context: `Look at the examples ${id}`,
       question: `What verb fits? ${id}`,
     });
+
     expect(steps[3]?.content).toStrictEqual({
       ruleName: `Present tense ${id}`,
       ruleSummary: `Use ist${id} for present tense`,
       variant: "grammarRule",
     });
+
     expect(steps[4]?.content).toStrictEqual({
       answers: [`ist${id}`],
       distractors: [`war${id}`, `hat${id}`],

@@ -38,9 +38,11 @@ describe("authenticated users", () => {
 
     // Anchor to UTC midnight so a midnight rollover can't shift the day count
     const today = new Date();
+
     const todayMidnight = new Date(
       Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
     );
+
     const fiveDaysAgo = new Date(todayMidnight.getTime() - 5 * 86_400_000);
 
     await prisma.userProgress.create({
@@ -56,9 +58,11 @@ describe("authenticated users", () => {
     const headers = await signInAs(user.email, user.password);
 
     const today = new Date();
+
     const todayMidnight = new Date(
       Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
     );
+
     const longAgo = new Date(todayMidnight.getTime() - 100 * 86_400_000);
 
     await prisma.userProgress.create({

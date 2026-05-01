@@ -23,6 +23,7 @@ function userAttrs(attrs?: Partial<UserAttrs>): UserAttrs {
  */
 export async function userFixture(attrs?: Partial<UserAttrs>) {
   const params = userAttrs(attrs);
+
   const user = await prisma.user.create({
     data: {
       accounts: {

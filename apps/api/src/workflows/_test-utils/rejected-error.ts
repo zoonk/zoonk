@@ -22,6 +22,7 @@ export async function getRejectedAggregateError(
   promise: Promise<unknown>,
 ): Promise<AggregateError> {
   const error = await getRejectedError(promise);
+
   if (error instanceof AggregateError) {
     return error;
   }

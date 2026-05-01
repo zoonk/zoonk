@@ -40,9 +40,11 @@ describe(describePlayerStep, () => {
 
   it("returns the primary image from image-backed descriptors", () => {
     const image = { prompt: "A useful diagram", url: "data:image/svg+xml,diagram" };
+
     const staticDescriptor = describePlayerStep(
       buildStep({ content: { image, text: "Hello", title: "Intro", variant: "text" as const } }),
     );
+
     const choiceDescriptor = describePlayerStep(
       buildStep({
         content: {

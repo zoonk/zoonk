@@ -232,6 +232,7 @@ describe(enforcePhaseProgression, () => {
       makePhase("pending"),
       makePhase("active"),
     ];
+
     const result = enforcePhaseProgression(input);
     expect(result.at(4)?.status).toBe("active");
     expect(result.at(5)?.status).toBe("pending");

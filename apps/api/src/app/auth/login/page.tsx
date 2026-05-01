@@ -23,6 +23,7 @@ async function LoginView({ searchParams }: PageProps<"/auth/login">) {
   const { redirectTo } = await searchParams;
 
   const session = await getSession();
+
   if (session && redirectTo) {
     redirect(`/auth/callback?redirectTo=${encodeURIComponent(String(redirectTo))}`);
   }

@@ -76,6 +76,7 @@ describe("authenticated users", () => {
     const result = await getContinueLearning(headers);
 
     expect(result).toHaveLength(1);
+
     expect(result[0]).toMatchObject({
       chapter: { id: chapter.id, title: chapter.title },
       course: { id: course.id },
@@ -137,6 +138,7 @@ describe("authenticated users", () => {
     const result = await getContinueLearning(headers);
 
     expect(result).toHaveLength(1);
+
     expect(result[0]).toMatchObject({
       chapter: { id: chapter.id, title: chapter.title },
       course: { id: course.id },
@@ -333,6 +335,7 @@ describe("authenticated users", () => {
     const result = await getContinueLearning(headers);
 
     expect(result).toHaveLength(1);
+
     expect(result[0]).toMatchObject({
       chapter: { id: chapter2.id, title: chapter2.title },
       lesson: { id: lesson2.id },
@@ -412,6 +415,7 @@ describe("authenticated users", () => {
     const result = await getContinueLearning(headers);
 
     expect(result).toHaveLength(1);
+
     expect(result[0]).toMatchObject({
       course: { id: course.id, organization: null },
       lesson: { id: lesson2.id },
@@ -457,6 +461,7 @@ describe("authenticated users", () => {
     const result = await getContinueLearning(headers);
 
     expect(result).toHaveLength(1);
+
     expect(result[0]).toMatchObject({
       chapter: { id: chapter.id, slug: chapter.slug, title: chapter.title },
       course: { id: course.id },
@@ -513,6 +518,7 @@ describe("authenticated users", () => {
     const result = await getContinueLearning(headers);
 
     expect(result).toHaveLength(1);
+
     expect(result[0]).toMatchObject({
       chapter: { id: chapter.id, slug: chapter.slug, title: chapter.title },
       course: { id: course.id },
@@ -568,6 +574,7 @@ describe("authenticated users", () => {
     const result = await getContinueLearning(headers);
 
     expect(result).toHaveLength(1);
+
     expect(result[0]).toMatchObject({
       chapter: { id: chapter.id, slug: chapter.slug, title: chapter.title },
       course: { id: course.id },
@@ -614,6 +621,7 @@ describe("authenticated users", () => {
     const result = await getContinueLearning(headers);
 
     expect(result).toHaveLength(1);
+
     expect(result[0]).toMatchObject({
       chapter: { id: chapter2.id, slug: chapter2.slug, title: chapter2.title },
       course: { id: course.id },

@@ -39,10 +39,13 @@ function endOfDay(date: Date): Date {
 
 function getMonthDateRanges(now: Date, offset: number): DateRanges {
   const currentStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - offset, 1));
+
   const currentEnd = endOfDay(
     new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - offset + 1, 0)),
   );
+
   const previousStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - offset - 1, 1));
+
   const previousEnd = endOfDay(
     new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - offset, 0)),
   );
@@ -58,12 +61,15 @@ function getHalfYearDateRanges(now: Date, offset: number): DateRanges {
     (Math.floor(now.getUTCMonth() / MONTHS_PER_HALF_YEAR) - offset) * MONTHS_PER_HALF_YEAR;
 
   const currentStart = new Date(Date.UTC(now.getUTCFullYear(), startMonth, 1));
+
   const currentEnd = endOfDay(
     new Date(Date.UTC(now.getUTCFullYear(), startMonth + MONTHS_PER_HALF_YEAR, 0)),
   );
+
   const previousStart = new Date(
     Date.UTC(now.getUTCFullYear(), startMonth - MONTHS_PER_HALF_YEAR, 1),
   );
+
   const previousEnd = endOfDay(new Date(Date.UTC(now.getUTCFullYear(), startMonth, 0)));
 
   return {
@@ -75,10 +81,13 @@ function getHalfYearDateRanges(now: Date, offset: number): DateRanges {
 function getYearDateRanges(now: Date, offset: number): DateRanges {
   const currentYear = now.getUTCFullYear() - offset;
   const currentStart = new Date(Date.UTC(currentYear, 0, 1));
+
   const currentEnd = endOfDay(
     new Date(Date.UTC(currentYear, DECEMBER_INDEX, LAST_DAY_OF_DECEMBER)),
   );
+
   const previousStart = new Date(Date.UTC(currentYear - 1, 0, 1));
+
   const previousEnd = endOfDay(
     new Date(Date.UTC(currentYear - 1, DECEMBER_INDEX, LAST_DAY_OF_DECEMBER)),
   );
@@ -141,7 +150,9 @@ export function getDefaultStartDate(startDateIso?: string): Date {
   if (startDateIso) {
     return new Date(startDateIso);
   }
+
   const now = new Date();
+
   return new Date(
     Date.UTC(
       now.getUTCFullYear(),

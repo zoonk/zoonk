@@ -91,9 +91,11 @@ export default defineRule({
     return {
       before() {
         const options = context.options[0] || {};
+
         exceptions = (options.exceptions || ["headers"]).map((exception) =>
           exception.toLowerCase(),
         );
+
         cacheImported = false;
         cacheLocalName = "cache";
       },

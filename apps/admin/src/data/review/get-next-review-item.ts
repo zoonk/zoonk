@@ -34,6 +34,7 @@ async function getNextCourseSuggestion(): Promise<ReviewQueueResult> {
 
 async function getNextStepImage(): Promise<ReviewQueueResult> {
   const excludeIds = await reviewedEntityIds("stepImage");
+
   const steps = await prisma.step.findMany({
     orderBy: { createdAt: "asc" },
     select: { content: true, id: true },

@@ -31,6 +31,7 @@ describe(generateVocabularyContentStep, () => {
       kind: "vocabulary",
       words: [{ translation: "cat", word: "猫" }],
     });
+
     expect(generateLessonVocabulary).toHaveBeenCalledWith(
       expect.objectContaining({ targetLanguage: "ja", userLanguage: context.language }),
     );

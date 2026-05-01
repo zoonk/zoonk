@@ -147,6 +147,7 @@ test.describe("Continue Lesson Link", () => {
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
     await expect(page.getByText(/lesson not available/i)).toBeVisible();
+
     await expect(page.getByRole("link", { name: /create lesson/i })).toHaveAttribute(
       "href",
       `/generate/l/${lesson.id}`,
@@ -160,6 +161,7 @@ test.describe("Continue Lesson Link", () => {
 
     const startLink = page.getByRole("link", { name: /^start$/i });
     await expect(startLink).toBeVisible();
+
     await expect(startLink).toHaveAttribute(
       "href",
       expect.stringContaining(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`),
@@ -173,6 +175,7 @@ test.describe("Continue Lesson Link", () => {
 
     const startLink = page.getByRole("link", { name: /^start$/i });
     await expect(startLink).toBeVisible();
+
     await expect(startLink).toHaveAttribute(
       "href",
       expect.stringContaining(`/ch/${chapter.slug}/l/${lesson.slug}`),
@@ -208,6 +211,7 @@ test.describe("Continue Lesson Link", () => {
 
     const continueLink = authenticatedPage.getByRole("link", { name: /^continue$/i });
     await expect(continueLink).toBeVisible();
+
     await expect(continueLink).toHaveAttribute(
       "href",
       `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${pendingLesson.slug}`,
@@ -271,6 +275,7 @@ test.describe("Continue Lesson Link", () => {
 
     const continueLink = authenticatedPage.getByRole("link", { name: /^continue$/i });
     await expect(continueLink).toBeVisible();
+
     await expect(continueLink).toHaveAttribute(
       "href",
       `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${nextLesson.slug}`,
@@ -340,6 +345,7 @@ test.describe("Continue Lesson Link", () => {
 
     const continueLink = authenticatedPage.getByRole("link", { name: /^continue$/i });
     await expect(continueLink).toBeVisible();
+
     await expect(continueLink).toHaveAttribute(
       "href",
       `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter2.slug}`,

@@ -19,12 +19,14 @@ describe(findLastCompleted, () => {
 
   it("returns null when user has no completions", async () => {
     const course = await courseFixture({ isPublished: true, organizationId: orgId });
+
     const chapter = await chapterFixture({
       courseId: course.id,
       isPublished: true,
       organizationId: orgId,
       position: 0,
     });
+
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       isPublished: true,
@@ -47,12 +49,14 @@ describe(findLastCompleted, () => {
 
   it("returns null when completedAt is null (started but not finished)", async () => {
     const course = await courseFixture({ isPublished: true, organizationId: orgId });
+
     const chapter = await chapterFixture({
       courseId: course.id,
       isPublished: true,
       organizationId: orgId,
       position: 0,
     });
+
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       generationStatus: "completed",
@@ -78,12 +82,14 @@ describe(findLastCompleted, () => {
     const uid = user.id;
 
     const course = await courseFixture({ isPublished: true, organizationId: orgId });
+
     const chapter = await chapterFixture({
       courseId: course.id,
       isPublished: true,
       organizationId: orgId,
       position: 0,
     });
+
     const [lesson1, lesson2] = await Promise.all([
       lessonFixture({
         chapterId: chapter.id,
@@ -128,6 +134,7 @@ describe(findLastCompleted, () => {
       lessonPosition: 1,
       lessonSlug: lesson2.slug,
     });
+
     expect(result).toHaveProperty("orgSlug");
   });
 
@@ -136,12 +143,14 @@ describe(findLastCompleted, () => {
     const uid = user.id;
 
     const course = await courseFixture({ isPublished: true, organizationId: orgId });
+
     const chapter = await chapterFixture({
       courseId: course.id,
       isPublished: true,
       organizationId: orgId,
       position: 0,
     });
+
     const [lesson1, lesson2] = await Promise.all([
       lessonFixture({
         chapterId: chapter.id,
@@ -368,6 +377,7 @@ describe(findLastCompleted, () => {
       const uid = user.id;
 
       const course = await courseFixture({ isPublished: true, organizationId: orgId });
+
       const chapter = await chapterFixture({
         courseId: course.id,
         isPublished: true,
@@ -418,12 +428,14 @@ describe(findLastCompleted, () => {
     const uid = user.id;
 
     const course = await courseFixture({ isPublished: true, organizationId: orgId });
+
     const chapter = await chapterFixture({
       courseId: course.id,
       isPublished: true,
       organizationId: orgId,
       position: 0,
     });
+
     const [publishedLesson, unpublishedLesson] = await Promise.all([
       lessonFixture({
         chapterId: chapter.id,
@@ -466,6 +478,7 @@ describe(findLastCompleted, () => {
     const uid = user.id;
 
     const course = await courseFixture({ isPublished: true, organizationId: orgId });
+
     const chapter = await chapterFixture({
       courseId: course.id,
       isPublished: true,
@@ -576,12 +589,14 @@ describe(findLastCompleted, () => {
     const [user1, user2] = await Promise.all([userFixture(), userFixture()]);
 
     const course = await courseFixture({ isPublished: true, organizationId: orgId });
+
     const chapter = await chapterFixture({
       courseId: course.id,
       isPublished: true,
       organizationId: orgId,
       position: 0,
     });
+
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       generationStatus: "completed",

@@ -5,11 +5,14 @@ import { defineConfig } from "vitest/config";
 
 const browserTests = ["src/**/*.browser.test.tsx"];
 const unitTests = ["src/**/*.test.ts", "src/**/*.test.tsx"];
+
 const nextImageShim = fileURLToPath(
   new URL("src/_test-utils/shims/next-image.tsx", import.meta.url),
 );
+
 const nextIntlShim = fileURLToPath(new URL("src/_test-utils/shims/next-intl.ts", import.meta.url));
 const nextLinkShim = fileURLToPath(new URL("src/_test-utils/shims/next-link.tsx", import.meta.url));
+
 const webHapticsShim = fileURLToPath(
   new URL("src/_test-utils/shims/web-haptics-react.ts", import.meta.url),
 );

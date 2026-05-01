@@ -16,6 +16,7 @@ async function getChapterPosition(chapterId: string) {
     select: { position: true },
     where: getAiGenerationChapterWhere({ chapterWhere: { id: chapterId } }),
   });
+
   return chapter;
 }
 

@@ -11,6 +11,7 @@ type BestTimeData = { score: number; period: number };
 const cachedGetBestTime = cache(
   async (startDateIso?: string, headers?: Headers): Promise<BestTimeData | null> => {
     const session = await getSession(headers);
+
     if (!session) {
       return null;
     }

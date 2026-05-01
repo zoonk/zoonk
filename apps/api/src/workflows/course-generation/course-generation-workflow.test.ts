@@ -101,6 +101,7 @@ vi.mock("@zoonk/ai/tasks/chapters/language-lessons", () => ({
 
 vi.mock("./_internal/get-or-create-course", async (importOriginal) => {
   const mod = await importOriginal();
+
   return {
     getOrCreateCourse: vi.fn(
       (mod as { getOrCreateCourse: typeof getOrCreateCourse }).getOrCreateCourse,
@@ -145,6 +146,7 @@ describe(courseGenerationWorkflow, () => {
       const completionEvent = getStreamedEvents().find(
         (event) => event.step === COURSE_COMPLETION_STEP && event.status === "completed",
       );
+
       expect(completionEvent).toBeUndefined();
     });
 
@@ -166,6 +168,7 @@ describe(courseGenerationWorkflow, () => {
       const completionEvent = getStreamedEvents().find(
         (event) => event.step === COURSE_COMPLETION_STEP && event.status === "completed",
       );
+
       expect(completionEvent).toBeDefined();
     });
 
@@ -193,6 +196,7 @@ describe(courseGenerationWorkflow, () => {
       const completionEvent = getStreamedEvents().find(
         (event) => event.step === COURSE_COMPLETION_STEP && event.status === "completed",
       );
+
       expect(completionEvent).toBeUndefined();
     });
 
@@ -220,6 +224,7 @@ describe(courseGenerationWorkflow, () => {
       const completionEvent = getStreamedEvents().find(
         (event) => event.step === COURSE_COMPLETION_STEP && event.status === "completed",
       );
+
       expect(completionEvent).toBeDefined();
     });
   });
@@ -349,6 +354,7 @@ describe(courseGenerationWorkflow, () => {
       const errorEvent = getStreamedEvents().find(
         (event) => event.status === "error" && event.step === "workflowError",
       );
+
       expect(errorEvent).toBeDefined();
     });
 
@@ -375,6 +381,7 @@ describe(courseGenerationWorkflow, () => {
       const errorEvent = getStreamedEvents().find(
         (event) => event.status === "error" && event.step === "workflowError",
       );
+
       expect(errorEvent).toBeDefined();
     });
 

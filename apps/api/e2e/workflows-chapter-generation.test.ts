@@ -22,6 +22,7 @@ test.describe("Chapter Generation Workflow API", () => {
 
   test("returns validation error when chapterId is missing", async () => {
     const apiContext = await request.newContext({ baseURL });
+
     const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
       data: {},
     });
@@ -38,6 +39,7 @@ test.describe("Chapter Generation Workflow API", () => {
 
   test("returns validation error when chapterId is invalid type", async () => {
     const apiContext = await request.newContext({ baseURL });
+
     const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
       data: { chapterId: "invalid" },
     });
@@ -54,6 +56,7 @@ test.describe("Chapter Generation Workflow API", () => {
 
   test("returns validation error when chapterId is negative", async () => {
     const apiContext = await request.newContext({ baseURL });
+
     const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
       data: { chapterId: -1 },
     });
@@ -100,6 +103,7 @@ test.describe("Chapter Generation Workflow API", () => {
     });
 
     const apiContext = await request.newContext({ baseURL });
+
     const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
       data: { chapterId: chapter.id },
     });
@@ -150,6 +154,7 @@ test.describe("Chapter Generation Workflow API", () => {
     });
 
     const apiContext = await request.newContext({ baseURL });
+
     const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
       data: { chapterId: chapter.id },
     });
@@ -195,6 +200,7 @@ test.describe("Chapter Generation Workflow API", () => {
     });
 
     const apiContext = await request.newContext({ baseURL });
+
     const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
       data: { chapterId: chapter.id },
     });
@@ -225,6 +231,7 @@ test.describe("Chapter Generation Workflow API", () => {
 
     // Create unique user via sign-up API
     const signupContext = await request.newContext({ baseURL });
+
     const signupResponse = await signupContext.post("/v1/auth/sign-up/email", {
       data: { email, name: `E2E User ${uniqueId}`, password },
     });
@@ -234,6 +241,7 @@ test.describe("Chapter Generation Workflow API", () => {
 
     // Get the user and create subscription
     const user = await prisma.user.findUniqueOrThrow({ where: { email } });
+
     await prisma.subscription.create({
       data: {
         id: randomUUID(),
@@ -274,6 +282,7 @@ test.describe("Chapter Generation Workflow API", () => {
 
     // Sign in and test
     const apiContext = await request.newContext({ baseURL });
+
     const signInResponse = await apiContext.post("/v1/auth/sign-in/email", {
       data: { email, password },
     });

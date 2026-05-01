@@ -38,6 +38,7 @@ describe(generateWordAudioUrls, () => {
     });
 
     expect(result[word]).toBe(`/audio/${word}.mp3`);
+
     expect(generateLanguageAudioMock).toHaveBeenCalledWith(
       expect.objectContaining({ language: "es", text: word }),
     );

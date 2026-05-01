@@ -46,6 +46,7 @@ export function LessonPlayerClient({
   userName: string | null;
 }) {
   const router = useRouter();
+
   const model = buildLessonPlayerModel({
     brandSlug,
     chapterSlug,
@@ -53,6 +54,7 @@ export function LessonPlayerClient({
     nextLesson,
     nextSibling,
   });
+
   const onNextHref = model.onNextHref;
   const handleNext = onNextHref ? () => router.push(onNextHref) : undefined;
 
