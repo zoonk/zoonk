@@ -35,7 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </footer>
         </div>
 
-        <Analytics />
+        <Analytics debug={false} />
       </body>
     </html>
   );

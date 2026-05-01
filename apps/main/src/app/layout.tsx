@@ -26,7 +26,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <NuqsAdapter>
             <NextIntlClientProvider>{children}</NextIntlClientProvider>
           </NuqsAdapter>
-          <Analytics />
+          <Analytics debug={false} />
           <Toaster />
         </body>
       </HtmlDocument>
