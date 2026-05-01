@@ -1,13 +1,12 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
-import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { formatExplanationStepsForPrompt } from "./_utils/format-explanation-steps";
 import systemPrompt from "./lesson-practice.prompt.md";
 
-const taskName = "lesson-practice";
-const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
+const defaultModel = "openai/gpt-5.4";
+const fallbackModels = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"] as const;
 
 const practiceOptionSchema = z.object({
   feedback: z.string(),
@@ -68,7 +67,6 @@ export async function generateLessonPractice({
     fallbackModels,
     model,
     reasoningEffort,
-    taskName,
     useFallback,
   });
 

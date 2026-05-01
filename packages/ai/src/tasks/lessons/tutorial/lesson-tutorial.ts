@@ -1,12 +1,11 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
-import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import systemPrompt from "./lesson-tutorial.prompt.md";
 
-const taskName = "lesson-tutorial";
-const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
+const defaultModel = "google/gemini-3-flash";
+const fallbackModels = ["anthropic/claude-opus-4.6", "openai/gpt-5.4"] as const;
 
 const stepSchema = z.object({ text: z.string(), title: z.string() });
 
@@ -47,7 +46,6 @@ export async function generateLessonTutorial({
     fallbackModels,
     model,
     reasoningEffort,
-    taskName,
     useFallback,
   });
 

@@ -1,14 +1,13 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
-import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { formatConceptLines } from "../config";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./lesson-sentences.prompt.md";
 
-const taskName = "lesson-sentences";
-const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
+const defaultModel = "openai/gpt-5.4";
+const fallbackModels = ["google/gemini-3.1-pro-preview", "anthropic/claude-opus-4.6"] as const;
 
 const sentenceSchema = z.object({
   explanation: z.string(),
@@ -63,7 +62,6 @@ export async function generateLessonSentences({
     fallbackModels,
     model,
     reasoningEffort,
-    taskName,
     useFallback,
   });
 

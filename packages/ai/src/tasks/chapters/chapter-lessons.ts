@@ -1,12 +1,15 @@
 import "server-only";
-import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
 import systemPrompt from "./chapter-lessons.prompt.md";
 
-const taskName = "chapter-lessons";
-const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
+const defaultModel = "openai/gpt-5.5";
+const fallbackModels = [
+  "openai/gpt-5.4",
+  "google/gemini-3.1-pro-preview",
+  "anthropic/claude-opus-4.7",
+] as const;
 
 const schema = z.object({
   lessons: z.array(z.object({ description: z.string(), title: z.string() })),
@@ -59,7 +62,6 @@ export async function generateChapterLessons({
     fallbackModels,
     model,
     reasoningEffort,
-    taskName,
     useFallback,
   });
 

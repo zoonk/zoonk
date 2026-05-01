@@ -1,12 +1,11 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
-import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import systemPrompt from "./lesson-romanization.prompt.md";
 
-const taskName = "lesson-romanization";
-const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
+const defaultModel = "openai/gpt-5.4";
+const fallbackModels = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"] as const;
 
 const romanizationSchema = z.string().min(1);
 
@@ -52,7 +51,6 @@ export async function generateLessonRomanization({
     fallbackModels,
     model,
     reasoningEffort,
-    taskName,
     useFallback,
   });
 

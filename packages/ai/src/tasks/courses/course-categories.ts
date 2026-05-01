@@ -1,13 +1,16 @@
 import "server-only";
-import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
 import promptTemplate from "./course-categories.prompt.md";
 
-const taskName = "course-categories";
-const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
+const defaultModel = "google/gemini-3.1-flash-lite-preview";
+const fallbackModels = [
+  "openai/gpt-5.4-nano",
+  "anthropic/claude-haiku-4.5",
+  "meta/llama-4-scout",
+] as const;
 
 /**
  * Categories available for AI assignment.
@@ -43,7 +46,6 @@ export async function generateCourseCategories({
     fallbackModels,
     model,
     reasoningEffort,
-    taskName,
     useFallback,
   });
 

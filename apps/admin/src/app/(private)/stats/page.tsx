@@ -15,7 +15,7 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@zoonk/ui/components/item";
-import { ArrowRightIcon, BookOpenIcon, BotIcon, TrendingUpIcon } from "lucide-react";
+import { ArrowRightIcon, BookOpenIcon, TrendingUpIcon } from "lucide-react";
 import { type Metadata } from "next";
 import Link from "next/link";
 
@@ -40,13 +40,6 @@ const sections = [
     href: "/stats/content",
     icon: BookOpenIcon,
     title: "Content & Operations",
-  },
-  {
-    description:
-      "Task request counts, model usage, and cost estimates for gateway-backed AI tasks.",
-    href: "/stats/ai",
-    icon: BotIcon,
-    title: "AI Tasks",
   },
 ] as const;
 

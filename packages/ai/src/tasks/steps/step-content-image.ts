@@ -1,4 +1,3 @@
-import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { type GeneratedFile, type ImageModel, generateImage } from "ai";
@@ -6,17 +5,12 @@ import { type ImageGenerationQuality, buildImageProviderOptions } from "../../pr
 import illustrationPromptTemplate from "./step-content-image.prompt.md";
 import practicePromptTemplate from "./step-content-practice-image.prompt.md";
 
-const taskName = "step-content-image";
-const { defaultModel } = AI_TASK_MODEL_CONFIG[taskName];
+const defaultModel = "openai/gpt-image-2";
 const DEFAULT_QUALITY = "low";
 
 const STEP_CONTENT_IMAGE_PRESETS = {
-  illustration: { promptTemplate: illustrationPromptTemplate, size: "1024x1280", taskName },
-  practice: {
-    promptTemplate: practicePromptTemplate,
-    size: "1024x1280",
-    taskName: "practice-step-image",
-  },
+  illustration: { promptTemplate: illustrationPromptTemplate, size: "1024x1280" },
+  practice: { promptTemplate: practicePromptTemplate, size: "1024x1280" },
 } as const;
 
 export type StepContentImagePreset = keyof typeof STEP_CONTENT_IMAGE_PRESETS;
@@ -58,11 +52,7 @@ export async function generateStepContentImage({
       maxImagesPerCall: 1,
       model,
       prompt: getStepContentImagePrompt({ language, preset, prompt }),
-      providerOptions: buildImageProviderOptions({
-        model,
-        quality,
-        taskName: imagePreset.taskName,
-      }),
+      providerOptions: buildImageProviderOptions({ quality }),
       size: imagePreset.size,
     }),
   );

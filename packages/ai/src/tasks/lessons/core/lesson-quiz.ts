@@ -1,13 +1,12 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
-import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { formatExplanationStepsForPrompt } from "./_utils/format-explanation-steps";
 import systemPrompt from "./lesson-quiz.prompt.md";
 
-const taskName = "lesson-quiz";
-const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
+const defaultModel = "openai/gpt-5.4";
+const fallbackModels = ["anthropic/claude-opus-4.6"] as const;
 
 const multipleChoiceSchema = z.object({
   context: z.string(),
@@ -95,7 +94,6 @@ export async function generateLessonQuiz({
     fallbackModels,
     model,
     reasoningEffort,
-    taskName,
     useFallback,
   });
 
