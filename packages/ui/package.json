@@ -18,7 +18,6 @@
     "./lib/*": "./src/lib/*.ts",
     "./patterns/auth/protected": "./src/patterns/auth/protected-section.tsx",
     "./patterns/buttons/submit": "./src/patterns/buttons/submit-button.tsx",
-    "./patterns/courses/list": "./src/patterns/courses/course-list.tsx",
     "./patterns/empty": "./src/patterns/empty.tsx",
     "./patterns/error": "./src/patterns/error-view.tsx",
     "./postcss.config": "./postcss.config.mjs"

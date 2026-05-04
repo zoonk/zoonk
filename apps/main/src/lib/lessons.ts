@@ -52,11 +52,11 @@ async function getLessonKinds(): Promise<{ key: LessonKind; label: string }[]> {
  */
 export async function getLessonDisplayMeta(
   lesson: LessonDisplayInput,
-): Promise<{ title: string; description: string }> {
+): Promise<{ description: string; title: string }> {
   const labels = await getLessonKindLabels();
   const t = await getExtracted();
 
-  function getTitle() {
+  function getTitle(): string {
     if (lesson.title) {
       return lesson.title;
     }
@@ -64,7 +64,7 @@ export async function getLessonDisplayMeta(
     return labels[lesson.kind];
   }
 
-  function getDescription() {
+  function getDescription(): string {
     if (lesson.description) {
       return lesson.description;
     }

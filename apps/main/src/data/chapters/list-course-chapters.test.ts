@@ -1,5 +1,6 @@
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, it } from "vitest";
 import { listCourseChapters } from "./list-course-chapters";
@@ -47,6 +48,37 @@ describe(listCourseChapters, () => {
         title: "Draft Chapter",
       }),
     ]);
+
+    await Promise.all([
+      lessonFixture({
+        chapterId: publishedChapter1.id,
+        isPublished: true,
+        language: "en",
+        organizationId: brandOrg.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: publishedChapter1.id,
+        isPublished: true,
+        language: "en",
+        organizationId: brandOrg.id,
+        position: 1,
+      }),
+      lessonFixture({
+        chapterId: publishedChapter1.id,
+        isPublished: false,
+        language: "en",
+        organizationId: brandOrg.id,
+        position: 2,
+      }),
+      lessonFixture({
+        chapterId: publishedChapter2.id,
+        isPublished: true,
+        language: "en",
+        organizationId: brandOrg.id,
+        position: 0,
+      }),
+    ]);
   });
 
   it("returns published chapters ordered by position", async () => {
@@ -71,6 +103,16 @@ describe(listCourseChapters, () => {
 
     const draftChapterInResult = result.find((chapter) => chapter.id === draftChapter.id);
     expect(draftChapterInResult).toBeUndefined();
+  });
+
+  it("includes the number of published lessons for each chapter", async () => {
+    const result = await listCourseChapters({ courseId: publishedCourse.id });
+
+    const chapter1 = result.find((chapter) => chapter.id === publishedChapter1.id);
+    const chapter2 = result.find((chapter) => chapter.id === publishedChapter2.id);
+
+    expect(chapter1?._count.lessons).toBe(2);
+    expect(chapter2?._count.lessons).toBe(1);
   });
 
   it("returns empty array when no chapters exist", async () => {

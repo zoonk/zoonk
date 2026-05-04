@@ -130,22 +130,26 @@ test.beforeAll(async () => {
 });
 
 test.describe("Course Chapters List", () => {
-  test("displays chapters with position numbers as links", async ({ page }) => {
+  test("displays chapter rows", async ({ page }) => {
     await page.goto(courseUrl);
 
-    await expect(page.getByText("01", { exact: true })).toBeVisible();
-    await expect(page.getByText("02", { exact: true })).toBeVisible();
-    await expect(page.getByText("03", { exact: true })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: new RegExp(`1\\. ${chapterNames.first}`) }),
+    ).toBeVisible();
 
-    await expect(page.getByRole("link", { name: chapterNames.first })).toBeVisible();
-    await expect(page.getByRole("link", { name: chapterNames.second })).toBeVisible();
-    await expect(page.getByRole("link", { name: chapterNames.third })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: new RegExp(`2\\. ${chapterNames.second}`) }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByRole("link", { name: new RegExp(`3\\. ${chapterNames.third}`) }),
+    ).toBeVisible();
   });
 
   test("chapter link navigates to chapter page", async ({ page }) => {
     await page.goto(courseUrl);
 
-    const chapterLink = page.getByRole("link", { name: chapterNames.first });
+    const chapterLink = page.getByRole("link", { name: new RegExp(`1\\. ${chapterNames.first}`) });
     await expect(chapterLink).toBeVisible();
     await chapterLink.click();
 
@@ -157,9 +161,8 @@ test.describe("Course Chapters List", () => {
   test("excludes unpublished chapters from the list", async ({ page }) => {
     await page.goto(courseUrl);
 
-    await expect(page.getByRole("link", { name: chapterNames.first })).toBeVisible();
+    await expect(page.getByRole("link", { name: new RegExp(chapterNames.first) })).toBeVisible();
     await expect(page.getByRole("link", { name: unpublishedChapterName })).not.toBeVisible();
-    await expect(page.getByText("04", { exact: true })).not.toBeVisible();
   });
 });
 
@@ -168,8 +171,8 @@ test.describe("Course Chapters - Locale", () => {
     await setLocale(page, "pt");
     await page.goto(ptCourseUrl);
 
-    await expect(page.getByRole("link", { name: ptChapterNames.first })).toBeVisible();
-    await expect(page.getByRole("link", { name: ptChapterNames.second })).toBeVisible();
+    await expect(page.getByRole("link", { name: new RegExp(ptChapterNames.first) })).toBeVisible();
+    await expect(page.getByRole("link", { name: new RegExp(ptChapterNames.second) })).toBeVisible();
   });
 });
 
@@ -179,9 +182,13 @@ test.describe("Course Chapter Search", () => {
 
     await page.getByLabel(/search chapters/i).fill("Gamma");
 
-    await expect(page.getByRole("link", { name: chapterNames.third })).toBeVisible();
-    await expect(page.getByRole("link", { name: chapterNames.first })).not.toBeVisible();
-    await expect(page.getByRole("link", { name: chapterNames.second })).not.toBeVisible();
+    const firstChapter = page.getByRole("link", { name: new RegExp(chapterNames.first) });
+    const secondChapter = page.getByRole("link", { name: new RegExp(chapterNames.second) });
+    const thirdChapter = page.getByRole("link", { name: new RegExp(chapterNames.third) });
+
+    await expect(thirdChapter).toBeVisible();
+    await expect(firstChapter).not.toBeVisible();
+    await expect(secondChapter).not.toBeVisible();
   });
 
   test("persists search in URL and survives page reload", async ({ page }) => {
@@ -193,7 +200,7 @@ test.describe("Course Chapter Search", () => {
     await page.reload();
 
     await expect(page.getByLabel(/search chapters/i)).toHaveValue("Gamma");
-    await expect(page.getByRole("link", { name: chapterNames.third })).toBeVisible();
+    await expect(page.getByRole("link", { name: new RegExp(chapterNames.third) })).toBeVisible();
   });
 
   test("shows empty state when no matches found", async ({ page }) => {
@@ -207,14 +214,18 @@ test.describe("Course Chapter Search", () => {
     await page.goto(courseUrl);
 
     const searchInput = page.getByLabel(/search chapters/i);
+    const firstChapter = page.getByRole("link", { name: new RegExp(chapterNames.first) });
+    const secondChapter = page.getByRole("link", { name: new RegExp(chapterNames.second) });
+    const thirdChapter = page.getByRole("link", { name: new RegExp(chapterNames.third) });
+
     await searchInput.fill("Gamma");
-    await expect(page.getByRole("link", { name: chapterNames.first })).not.toBeVisible();
+    await expect(firstChapter).not.toBeVisible();
 
     await searchInput.clear();
 
-    await expect(page.getByRole("link", { name: chapterNames.first })).toBeVisible();
-    await expect(page.getByRole("link", { name: chapterNames.second })).toBeVisible();
-    await expect(page.getByRole("link", { name: chapterNames.third })).toBeVisible();
+    await expect(firstChapter).toBeVisible();
+    await expect(secondChapter).toBeVisible();
+    await expect(thirdChapter).toBeVisible();
   });
 
   test("matches Portuguese chapters without accents (accent-insensitive search)", async ({
@@ -225,7 +236,10 @@ test.describe("Course Chapter Search", () => {
 
     await page.getByLabel(/buscar capítulos/i).fill("introducao");
 
-    await expect(page.getByRole("link", { name: ptChapterNames.first })).toBeVisible();
-    await expect(page.getByRole("link", { name: ptChapterNames.second })).not.toBeVisible();
+    const firstChapter = page.getByRole("link", { name: new RegExp(ptChapterNames.first) });
+    const secondChapter = page.getByRole("link", { name: new RegExp(ptChapterNames.second) });
+
+    await expect(firstChapter).toBeVisible();
+    await expect(secondChapter).not.toBeVisible();
   });
 });

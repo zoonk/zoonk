@@ -7,6 +7,7 @@ import {
 } from "@/components/catalog/continue-lesson-link";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
+import { getDefaultChapterImage } from "@/lib/catalog/default-images";
 import { getSession } from "@zoonk/core/users/session/get";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Metadata } from "next";
@@ -56,6 +57,8 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
     ? (`/b/${brandSlug}/c/${courseSlug}/ch/${chapters[0].slug}` as const)
     : undefined;
 
+  const defaultChapterImage = getDefaultChapterImage({ categories: course.categories });
+
   return (
     <main className="flex flex-1 flex-col">
       <CourseHeader brandSlug={brandSlug} course={course} />
@@ -74,6 +77,7 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
             chapters={chapters}
             courseId={course.id}
             courseSlug={courseSlug}
+            defaultChapterImage={defaultChapterImage}
           />
         </Suspense>
       </CatalogContainer>

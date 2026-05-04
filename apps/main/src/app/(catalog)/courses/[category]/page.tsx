@@ -1,5 +1,6 @@
 import { LIST_COURSES_LIMIT, listCourses } from "@/data/courses/list-courses";
 import { getCategoryHeader, getCategoryMeta } from "@/lib/categories/category";
+import { CatalogListSkeleton } from "@zoonk/ui/components/catalog-list";
 import {
   Container,
   ContainerDescription,
@@ -13,7 +14,6 @@ import { getLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { CourseListClient } from "../course-list-client";
-import { CourseListSkeleton } from "../course-list-skeleton";
 
 export async function generateMetadata({
   params,
@@ -59,7 +59,7 @@ export default async function CategoryCourses({ params }: PageProps<"/courses/[c
         </ContainerHeaderGroup>
       </ContainerHeader>
 
-      <Suspense fallback={<CourseListSkeleton />}>
+      <Suspense fallback={<CatalogListSkeleton count={8} />}>
         <CategoryCourseListContent category={category} />
       </Suspense>
     </Container>

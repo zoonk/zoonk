@@ -182,11 +182,11 @@ test.describe("Chapter Detail Page", () => {
     await expect(positionIcon).toBeVisible();
   });
 
-  test("displays lessons list with position numbers", async ({ page }) => {
+  test("displays lesson rows", async ({ page }) => {
     await page.goto(chapterUrl);
 
-    await expect(page.getByRole("link", { name: lessonNames.first })).toBeVisible();
-    await expect(page.getByRole("link", { name: lessonNames.second })).toBeVisible();
+    await expect(page.getByRole("link", { name: new RegExp(lessonNames.first) })).toBeVisible();
+    await expect(page.getByRole("link", { name: new RegExp(lessonNames.second) })).toBeVisible();
 
     await expect(
       page.getByRole("link", { name: `Unpublished Lesson ${uniqueId}` }),
