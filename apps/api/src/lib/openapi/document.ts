@@ -2,6 +2,7 @@ import { z } from "zod";
 import { createDocument } from "zod-openapi";
 import { paginationSchema } from "./schemas/common";
 import { courseResultSchema, courseSearchQuerySchema } from "./schemas/courses";
+import { feedbackResponseSchema, feedbackSubmissionSchema } from "./schemas/feedback";
 import {
   chapterCompletionQuerySchema,
   chapterCompletionResponseSchema,
@@ -61,6 +62,20 @@ export const openAPIDocument = createDocument({
         },
         summary: "Search published courses",
         tags: ["Courses"],
+      },
+    },
+    "/feedback": {
+      post: {
+        requestBody: { content: { "application/json": { schema: feedbackSubmissionSchema } } },
+        responses: {
+          "200": {
+            content: { "application/json": { schema: feedbackResponseSchema } },
+            description: "Feedback received",
+          },
+          "400": validationErrorResponse,
+        },
+        summary: "Submit a feedback message",
+        tags: ["Feedback"],
       },
     },
     "/progress/chapter-completion": {
