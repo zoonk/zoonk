@@ -119,14 +119,14 @@ export const COURSE_COMPLETION_STEP: CourseStepName = "completeCourseSetup";
 
 /**
  * All step names the SSE stream can emit during chapter generation.
- * The chapter workflow also generates the first lesson, so the stream includes
- * both chapter and lesson step events.
+ * The first chapter workflow also generates lesson content, so the stream
+ * includes both chapter and lesson step events.
  */
 export type ChapterWorkflowStepName = ChapterStepName | LessonStepName | WorkflowErrorStepName;
 
 /**
  * All step names the SSE stream can emit during course generation.
- * The course workflow also generates the first chapter and lesson, so the
- * stream includes all downstream step events.
+ * The course workflow also generates all chapter shells and first-chapter
+ * lesson content, so the stream includes all downstream step events.
  */
 export type CourseWorkflowStepName = CourseStepName | ChapterWorkflowStepName;

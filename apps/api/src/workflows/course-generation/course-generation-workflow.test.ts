@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
+import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-generation-workflow";
 import { generateChapterLessons } from "@zoonk/ai/tasks/chapters/lessons";
 import { generateAlternativeTitles } from "@zoonk/ai/tasks/courses/alternative-titles";
 import { generateCourseCategories } from "@zoonk/ai/tasks/courses/categories";
@@ -17,7 +18,7 @@ import {
 } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { toSlug } from "@zoonk/utils/string";
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { getOrCreateCourse } from "./_internal/get-or-create-course";
 import { courseGenerationWorkflow } from "./course-generation-workflow";
 
@@ -118,6 +119,10 @@ describe(courseGenerationWorkflow, () => {
   beforeAll(async () => {
     const org = await aiOrganizationFixture();
     organizationId = org.id;
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
   describe("early returns", () => {
@@ -233,7 +238,7 @@ describe(courseGenerationWorkflow, () => {
   });
 
   describe("happy path", () => {
-    it("triggers chapter generation for first chapter", async () => {
+    it("triggers chapter generation for every chapter and lesson generation for the first lesson", async () => {
       const title = `First Chapter Gen Course ${randomUUID()}`;
       const slug = toSlug(title);
 
@@ -246,7 +251,12 @@ describe(courseGenerationWorkflow, () => {
       await courseGenerationWorkflow(suggestion.id);
 
       const course = await prisma.course.findFirst({
-        include: { chapters: { include: { lessons: true }, orderBy: { position: "asc" } } },
+        include: {
+          chapters: {
+            include: { lessons: { orderBy: { position: "asc" } } },
+            orderBy: { position: "asc" },
+          },
+        },
         where: { slug },
       });
 
@@ -256,9 +266,13 @@ describe(courseGenerationWorkflow, () => {
       expect(firstChapter?.imageUrl).toBe("https://example.com/chapter/Chapter%201.webp");
 
       const secondChapter = course?.chapters[1];
-      expect(secondChapter?.generationStatus).toBe("pending");
-      expect(secondChapter?.lessons).toHaveLength(0);
-      expect(secondChapter?.imageUrl).toBeNull();
+      expect(secondChapter?.generationStatus).toBe("completed");
+      expect(secondChapter?.lessons).toHaveLength(5);
+      expect(secondChapter?.imageUrl).toBe("https://example.com/chapter/Chapter%202.webp");
+
+      expect(lessonGenerationWorkflow).toHaveBeenCalledExactlyOnceWith(
+        firstChapter?.lessons[0]?.id,
+      );
     });
   });
 
@@ -393,7 +407,7 @@ describe(courseGenerationWorkflow, () => {
       expect(errorEvent).toBeDefined();
     });
 
-    it("chapter generation errors don't mark course as failed", async () => {
+    it("chapter generation errors don't fail the course workflow or other chapters", async () => {
       vi.mocked(generateChapterLessons).mockRejectedValueOnce(
         new Error("Chapter generation failed"),
       );
@@ -407,9 +421,7 @@ describe(courseGenerationWorkflow, () => {
         title,
       });
 
-      await expect(courseGenerationWorkflow(suggestion.id)).rejects.toThrow(
-        "Chapter generation failed",
-      );
+      await expect(courseGenerationWorkflow(suggestion.id)).resolves.toBeUndefined();
 
       const course = await prisma.course.findFirst({
         include: { chapters: { orderBy: { position: "asc" } } },
@@ -418,8 +430,16 @@ describe(courseGenerationWorkflow, () => {
 
       expect(course?.generationStatus).toBe("completed");
 
-      const firstChapter = course?.chapters[0];
-      expect(firstChapter?.generationStatus).toBe("failed");
+      const failedChapters = course?.chapters.filter(
+        (chapter) => chapter.generationStatus === "failed",
+      );
+
+      const completedChapters = course?.chapters.filter(
+        (chapter) => chapter.generationStatus === "completed",
+      );
+
+      expect(failedChapters).toHaveLength(1);
+      expect(completedChapters).toHaveLength(1);
     });
   });
 });

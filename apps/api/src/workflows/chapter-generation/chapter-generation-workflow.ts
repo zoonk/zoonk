@@ -44,8 +44,8 @@ async function generateChapterShellContent(
 
 /**
  * Creates the chapter thumbnail and lesson rows, then marks the chapter as
- * completed. The first lesson generation starts only after this chapter shell
- * is fully ready.
+ * completed. Lesson content generation starts only after this chapter shell is
+ * fully ready.
  */
 async function generateLessonsAndCompleteChapter({
   context,
@@ -60,6 +60,37 @@ async function generateLessonsAndCompleteChapter({
   await setChapterAsCompletedStep({ context, imageUrl, workflowRunId });
 
   return createdLessons;
+}
+
+/**
+ * Picks the first saved lesson by its authored position instead of relying on
+ * database return order from createManyAndReturn.
+ */
+function getFirstLesson(lessons: Lesson[]): Lesson | undefined {
+  return lessons.find((lesson) => lesson.position === 0);
+}
+
+/**
+ * Generates only the first lesson for the first chapter. Later chapter
+ * workflows stop after lesson-shell creation so the course has a full outline
+ * without spending AI work on locked future content.
+ */
+async function generateFirstChapterLesson({
+  context,
+  lessons,
+}: {
+  context: Awaited<ReturnType<typeof getChapterStep>>;
+  lessons: Lesson[];
+}): Promise<void> {
+  if (context.position !== 0) {
+    return;
+  }
+
+  const firstLesson = getFirstLesson(lessons);
+
+  if (firstLesson) {
+    await lessonGenerationWorkflow(firstLesson.id);
+  }
 }
 
 export async function chapterGenerationWorkflow(chapterId: string): Promise<void> {
@@ -100,11 +131,7 @@ export async function chapterGenerationWorkflow(chapterId: string): Promise<void
     },
   );
 
-  // Generate the first lesson outside chapter failure handling so lesson
-  // failures mark that lesson without rolling back the completed chapter plan.
-  const firstLesson = createdLessons[0];
-
-  if (firstLesson) {
-    await lessonGenerationWorkflow(firstLesson.id);
-  }
+  // Generate lesson content outside chapter failure handling so lesson failures
+  // mark that lesson without rolling back the completed chapter plan.
+  await generateFirstChapterLesson({ context, lessons: createdLessons });
 }

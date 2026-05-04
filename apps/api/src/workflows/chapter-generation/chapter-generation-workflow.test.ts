@@ -140,7 +140,7 @@ describe(chapterGenerationWorkflow, () => {
   });
 
   describe("happy path", () => {
-    it("calls lessonGenerationWorkflow with first lesson's ID", async () => {
+    it("calls lessonGenerationWorkflow with the first lesson's ID for the first chapter", async () => {
       const title = `Lesson Gen Chapter ${randomUUID()}`;
 
       const chapter = await chapterFixture({
@@ -157,7 +157,7 @@ describe(chapterGenerationWorkflow, () => {
         prisma.chapter.findUnique({ where: { id: chapter.id } }),
       ]);
 
-      expect(lessonGenerationWorkflow).toHaveBeenCalledWith(lessons[0]?.id);
+      expect(lessonGenerationWorkflow).toHaveBeenCalledExactlyOnceWith(lessons[0]?.id);
       expect(lessons.every((lesson) => lesson.imageUrl === null)).toBe(true);
 
       expect(dbChapter?.imageUrl).toBe(
@@ -169,7 +169,30 @@ describe(chapterGenerationWorkflow, () => {
       );
     });
 
-    it("sets chapter as completed before the first lesson generation runs", async () => {
+    it("does not call lessonGenerationWorkflow for later course chapters", async () => {
+      const title = `Later Chapter ${randomUUID()}`;
+
+      const chapter = await chapterFixture({
+        courseId: course.id,
+        generationStatus: "pending",
+        organizationId,
+        position: 1,
+        title,
+      });
+
+      await chapterGenerationWorkflow(chapter.id);
+
+      const [lessons, dbChapter] = await Promise.all([
+        prisma.lesson.findMany({ orderBy: { position: "asc" }, where: { chapterId: chapter.id } }),
+        prisma.chapter.findUnique({ where: { id: chapter.id } }),
+      ]);
+
+      expect(lessonGenerationWorkflow).not.toHaveBeenCalled();
+      expect(lessons).toHaveLength(5);
+      expect(dbChapter?.generationStatus).toBe("completed");
+    });
+
+    it("sets chapter as completed before lesson generation runs", async () => {
       const title = `Completed Before Lesson Gen ${randomUUID()}`;
 
       const chapter = await chapterFixture({

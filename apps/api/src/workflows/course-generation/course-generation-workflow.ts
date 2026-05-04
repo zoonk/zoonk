@@ -36,6 +36,15 @@ async function setupCourseContent({
   return chapters;
 }
 
+/**
+ * Starts every chapter workflow as one fan-out wave after the course shell is
+ * saved. Each chapter workflow owns its own failure state, so the course row can
+ * stay completed even when one or more chapters need a retry.
+ */
+async function generateCourseChapters(chapters: Chapter[]): Promise<void> {
+  await Promise.allSettled(chapters.map((chapter) => chapterGenerationWorkflow(chapter.id)));
+}
+
 export async function courseGenerationWorkflow(courseSuggestionId: string): Promise<void> {
   "use workflow";
 
@@ -104,9 +113,5 @@ export async function courseGenerationWorkflow(courseSuggestionId: string): Prom
   // Start chapter generation outside the course error handling.
   // Chapter generation has its own error handling that marks the chapter as failed.
   // We don't want chapter failures to mark the entire course as failed.
-  const firstChapter = chapters[0];
-
-  if (firstChapter) {
-    await chapterGenerationWorkflow(firstChapter.id);
-  }
+  await generateCourseChapters(chapters);
 }
