@@ -1,0 +1,89 @@
+.agents/skills/android-material-guidelines/SKILL.md
+  h_1cda88fc21fe9c 1-54
+.agents/skills/android-material-guidelines/references/official-links.md
+  1af6f36eb8935019 1-115
+.agents/skills/apple-human-interface-guidelines/references/official-links.md
+  h_1cda88fc21fe9c 1-231
+.agents/skills/apple-human-interface-guidelines/SKILL.md
+  h_1cda88fc21fe9c 1-52
+AGENTS.md
+  1af6f36eb8935019 68-73
+  h_1cda88fc21fe9c 62-67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "4b8d0af72e9538ef2e508e93fd9644cf43c0da71",
+  "prompts": {
+    "1af6f36eb8935019": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019df518-8023-7560-90d5-3f1cfbd33f86",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 198,
+      "total_deletions": 0,
+      "accepted_lines": 121,
+      "overriden_lines": 0
+    },
+    "5f305971711887a5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5a2e94cd-b684-4ca6-8aed-3b7b7fbdd180",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 61,
+      "total_deletions": 0,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    },
+    "736e3aa11968c142": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019de5cf-14ed-7c82-8cb9-142f768292d7",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 53,
+      "total_deletions": 6,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    },
+    "941e573147819c74": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019df40f-1432-7593-8f47-4be8927655b7",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 152,
+      "total_deletions": 5,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    },
+    "f38ee449969cbcd9": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019df515-9e60-79d1-9429-1655ab6e6fd7",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
