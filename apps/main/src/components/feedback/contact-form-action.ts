@@ -1,6 +1,6 @@
 "use server";
 
-import { sendEmail } from "@zoonk/core/mailer/send";
+import { sendFeedbackMessage } from "@zoonk/core/feedback/send";
 import { parseFormField } from "@zoonk/utils/form";
 
 export async function contactFormAction(_prevState: unknown, formData: FormData) {
@@ -11,12 +11,7 @@ export async function contactFormAction(_prevState: unknown, formData: FormData)
     return { status: "error" };
   }
 
-  const { error } = await sendEmail({
-    replyTo: email,
-    subject: "Zoonk Request",
-    textBody: `From: ${email}\n\n${message}`,
-    to: "hello@zoonk.com",
-  });
+  const { error } = await sendFeedbackMessage({ email, message });
 
   if (error) {
     return { status: "error" };
