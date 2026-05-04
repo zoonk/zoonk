@@ -1,0 +1,38 @@
+apps/api/src/workflows/course-generation/course-generation-workflow.test.ts
+  3fc23af900186ebe 3,21,124-127,241,254-259,269-275,410,424,433-442
+apps/api/src/workflows/course-generation/course-generation-workflow.ts
+  3fc23af900186ebe 42,45
+  h_1cda88fc21fe9c 39-41,43-44,46-47,116
+apps/api/src/workflows/chapter-generation/chapter-generation-workflow.test.ts
+  3fc23af900186ebe 143,160,172-195
+apps/api/src/workflows/chapter-generation/chapter-generation-workflow.ts
+  h_1cda88fc21fe9c 47-48,65,68,71-73,77,79-88,94-95,134
+  3fc23af900186ebe 66-67,69-70,74-76,78,89-93,136
+packages/core/src/workflows/steps.ts
+  h_1cda88fc21fe9c 122-123,129-130
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "fba0ff0288f4140b33156cf82fa89e3d537a41fc",
+  "prompts": {
+    "3fc23af900186ebe": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019df50e-565f-78b2-8c27-0fc19d32536f",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 109,
+      "total_deletions": 78,
+      "accepted_lines": 74,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
