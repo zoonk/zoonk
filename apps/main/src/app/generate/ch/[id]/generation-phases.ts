@@ -9,6 +9,7 @@ import { type ChapterStepName, type ChapterWorkflowStepName } from "@zoonk/core/
 import {
   BookOpenIcon,
   CheckCircleIcon,
+  ImageIcon,
   type LucideIcon,
   SettingsIcon,
   TagsIcon,
@@ -18,10 +19,12 @@ export type PhaseName =
   | "gettingReady"
   | "preparingLessons"
   | "classifyingLessons"
+  | "creatingChapterImage"
   | "savingLessons";
 
 const PHASE_STEPS = {
   classifyingLessons: ["generateLessonKind"],
+  creatingChapterImage: ["generateChapterImage"],
   gettingReady: ["getChapter", "setChapterAsRunning"],
   preparingLessons: ["generateLessons"],
   savingLessons: ["addLessons", "setChapterAsCompleted"],
@@ -32,6 +35,7 @@ type _ValidateChapter = AssertAllCovered<Exclude<ChapterStepName, AssignedSteps>
 
 const PHASE_ORDER: PhaseName[] = [
   "gettingReady",
+  "creatingChapterImage",
   "preparingLessons",
   "classifyingLessons",
   "savingLessons",
@@ -43,16 +47,18 @@ export function getPhaseOrder(): PhaseName[] {
 
 export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
   classifyingLessons: TagsIcon,
+  creatingChapterImage: ImageIcon,
   gettingReady: SettingsIcon,
   preparingLessons: BookOpenIcon,
   savingLessons: CheckCircleIcon,
 };
 
 const PHASE_WEIGHTS: Record<PhaseName, number> = {
-  classifyingLessons: 15,
+  classifyingLessons: 5,
+  creatingChapterImage: 40,
   gettingReady: 5,
-  preparingLessons: 70,
-  savingLessons: 10,
+  preparingLessons: 40,
+  savingLessons: 5,
 };
 
 export function getPhaseStatus(

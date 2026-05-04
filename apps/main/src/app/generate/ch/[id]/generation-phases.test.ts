@@ -2,11 +2,12 @@ import { describe, expect, it } from "vitest";
 import { calculateWeightedProgress, getPhaseOrder, getPhaseStatus } from "./generation-phases";
 
 describe("chapter generation phases", () => {
-  it("returns all 4 chapter phases in order", () => {
+  it("returns all 5 chapter phases in order", () => {
     const phases = getPhaseOrder();
 
     expect(phases).toStrictEqual([
       "gettingReady",
+      "creatingChapterImage",
       "preparingLessons",
       "classifyingLessons",
       "savingLessons",
@@ -38,7 +39,7 @@ describe("chapter generation phases", () => {
     expect(status).toBe("active");
   });
 
-  it("marks savingLessons as completed when all its steps are done", () => {
+  it("marks savingLessons as completed when lessons are saved", () => {
     const status = getPhaseStatus(
       "savingLessons",
       [
@@ -46,6 +47,7 @@ describe("chapter generation phases", () => {
         "setChapterAsRunning",
         "generateLessons",
         "generateLessonKind",
+        "generateChapterImage",
         "addLessons",
         "setChapterAsCompleted",
       ],
@@ -53,6 +55,16 @@ describe("chapter generation phases", () => {
     );
 
     expect(status).toBe("completed");
+  });
+
+  it("marks chapter image generation as its own active phase", () => {
+    const status = getPhaseStatus(
+      "creatingChapterImage",
+      ["getChapter", "setChapterAsRunning", "generateLessons", "generateLessonKind"],
+      "generateChapterImage",
+    );
+
+    expect(status).toBe("active");
   });
 
   it("returns 0 progress at start", () => {
@@ -66,6 +78,7 @@ describe("chapter generation phases", () => {
       "setChapterAsRunning",
       "generateLessons",
       "generateLessonKind",
+      "generateChapterImage",
       "addLessons",
       "setChapterAsCompleted",
     ] as const;

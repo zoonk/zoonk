@@ -5,7 +5,7 @@ import { generateAlternativeTitles } from "@zoonk/ai/tasks/courses/alternative-t
 import { generateCourseCategories } from "@zoonk/ai/tasks/courses/categories";
 import { generateCourseChapters } from "@zoonk/ai/tasks/courses/chapters";
 import { generateCourseDescription } from "@zoonk/ai/tasks/courses/description";
-import { generateCourseImage } from "@zoonk/core/courses/image";
+import { generateContentThumbnailImage } from "@zoonk/core/content/thumbnail";
 import { COURSE_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -63,10 +63,13 @@ vi.mock("@zoonk/ai/tasks/courses/categories", () => ({
     .mockResolvedValue({ data: { categories: ["programming", "technology"] } }),
 }));
 
-vi.mock("@zoonk/core/courses/image", () => ({
-  generateCourseImage: vi
-    .fn()
-    .mockResolvedValue({ data: "https://example.com/course-image.webp", error: null }),
+vi.mock("@zoonk/core/content/thumbnail", () => ({
+  generateContentThumbnailImage: vi.fn(({ kind, title }: { kind: string; title: string }) =>
+    Promise.resolve({
+      data: `https://example.com/${kind}/${encodeURIComponent(title)}.webp`,
+      error: null,
+    }),
+  ),
 }));
 
 vi.mock("@zoonk/ai/tasks/chapters/lessons", () => ({
@@ -250,10 +253,12 @@ describe(courseGenerationWorkflow, () => {
       const firstChapter = course?.chapters[0];
       expect(firstChapter?.generationStatus).toBe("completed");
       expect(firstChapter?.lessons).toHaveLength(5);
+      expect(firstChapter?.imageUrl).toBe("https://example.com/chapter/Chapter%201.webp");
 
       const secondChapter = course?.chapters[1];
       expect(secondChapter?.generationStatus).toBe("pending");
       expect(secondChapter?.lessons).toHaveLength(0);
+      expect(secondChapter?.imageUrl).toBeNull();
     });
   });
 
@@ -318,10 +323,13 @@ describe(courseGenerationWorkflow, () => {
       await courseGenerationWorkflow(suggestion.id);
 
       expect(generateCourseDescription).not.toHaveBeenCalled();
-      expect(generateCourseImage).not.toHaveBeenCalled();
       expect(generateAlternativeTitles).not.toHaveBeenCalled();
       expect(generateCourseCategories).not.toHaveBeenCalled();
       expect(generateCourseChapters).not.toHaveBeenCalled();
+
+      expect(generateContentThumbnailImage).not.toHaveBeenCalledWith(
+        expect.objectContaining({ kind: "course" }),
+      );
     });
   });
 

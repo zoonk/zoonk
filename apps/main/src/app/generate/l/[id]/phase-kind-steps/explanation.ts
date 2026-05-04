@@ -9,10 +9,12 @@ type ExplanationSteps =
   | "generateImagePrompts"
   | "generateStepImages"
   | "saveExplanationLesson"
+  | "generateLessonImage"
   | "setLessonAsCompleted";
 
 export const EXPLANATION_PHASE_STEPS = {
   creatingImages: ["generateStepImages"],
+  creatingLessonImage: ["generateLessonImage"],
   gettingStarted: ["getLesson", "setLessonAsRunning"],
   preparingImages: ["generateImagePrompts"],
   saving: ["saveExplanationLesson", "setLessonAsCompleted"],
@@ -31,5 +33,6 @@ export const EXPLANATION_PHASE_ORDER: PhaseName[] = [
   "writingContent",
   "preparingImages",
   "creatingImages",
+  "creatingLessonImage",
   "saving",
 ];

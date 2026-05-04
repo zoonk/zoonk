@@ -1660,11 +1660,21 @@ msgid "Choosing type for lesson {number}..."
 msgstr "Choosing type for lesson {number}..."
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
+msgctxt "1Q0Y9/"
+msgid "Creating chapter image"
+msgstr "Creating chapter image"
+
+#: src/app/generate/ch/[id]/use-generation-phases.ts
 #: src/app/generate/cs/[id]/use-generation-phases.ts
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "5nJVpw"
 msgid "Getting everything ready..."
 msgstr "Getting everything ready..."
+
+#: src/app/generate/ch/[id]/use-generation-phases.ts
+msgctxt "6sYiuc"
+msgid "Creating the chapter image..."
+msgstr "Creating the chapter image..."
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
 #: src/app/generate/cs/[id]/use-generation-phases.ts
@@ -1683,9 +1693,19 @@ msgid "Reviewing the flow so far..."
 msgstr "Reviewing the flow so far..."
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
+msgctxt "JjJCYL"
+msgid "Designing the chapter thumbnail..."
+msgstr "Designing the chapter thumbnail..."
+
+#: src/app/generate/ch/[id]/use-generation-phases.ts
 msgctxt "L7nQzn"
 msgid "Saving your lessons"
 msgstr "Saving your lessons"
+
+#: src/app/generate/ch/[id]/use-generation-phases.ts
+msgctxt "lXIWAI"
+msgid "Refining the chapter artwork..."
+msgstr "Refining the chapter artwork..."
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
 msgctxt "nwGJ65"
@@ -1887,6 +1907,11 @@ msgid "Planning each image..."
 msgstr "Planning each image..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "4TTl72"
+msgid "Creating the lesson image..."
+msgstr "Creating the lesson image..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "4wkMNX"
 msgid "Getting answer options ready..."
 msgstr "Getting answer options ready..."
@@ -1905,6 +1930,11 @@ msgstr "Putting together the lesson..."
 msgctxt "6hjA6/"
 msgid "Creating examples to try..."
 msgstr "Creating examples to try..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "6k562E"
+msgid "Refining the lesson artwork..."
+msgstr "Refining the lesson artwork..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "6xEJTk"
@@ -2030,6 +2060,11 @@ msgstr "Loading lesson data..."
 msgctxt "uDzgwu"
 msgid "Writing example sentences..."
 msgstr "Writing example sentences..."
+
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgctxt "W2b0tx"
+msgid "Designing the lesson thumbnail..."
+msgstr "Designing the lesson thumbnail..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "WsjFV2"
@@ -2300,6 +2335,11 @@ msgstr "Building word list"
 msgctxt "T00GEW"
 msgid "Recording audio"
 msgstr "Recording audio"
+
+#: src/app/generate/l/[id]/use-phase-labels.ts
+msgctxt "tcyV4j"
+msgid "Creating lesson image"
+msgstr "Creating lesson image"
 
 #: src/app/generate/l/[id]/use-phase-labels.ts
 msgctxt "TlrPFF"

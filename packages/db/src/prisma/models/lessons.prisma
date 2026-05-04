@@ -14,6 +14,7 @@ model Lesson {
   description      String?
   generationStatus GenerationStatus @default(pending) @map("generation_status")
   generationRunId  String?          @map("generation_run_id")
+  imageUrl         String?          @map("image_url")
   position         Int
   createdAt        DateTime         @default(now()) @map("created_at")
   updatedAt        DateTime         @default(now()) @updatedAt @map("updated_at")

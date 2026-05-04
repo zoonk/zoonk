@@ -72,10 +72,10 @@ export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
 
 const PHASE_WEIGHTS: Record<PhaseName, number> = {
   categorizingCourse: 3,
-  creatingCoverImage: 7,
+  creatingCoverImage: 15,
   gettingReady: 1,
-  outliningChapters: 19,
-  savingCourseInfo: 1,
+  outliningChapters: 50,
+  savingCourseInfo: 2,
   writingDescription: 3,
 };
 

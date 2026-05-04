@@ -6,17 +6,17 @@ import { type ExistingCourseContent } from "./get-or-create-course";
 
 const {
   generateCourseDescriptionMock,
-  generateCourseImageMock,
+  generateContentThumbnailImageMock,
   generateAlternativeTitlesMock,
   generateCourseCategoriesMock,
   generateCourseChaptersMock,
   generateLanguageCourseChaptersMock,
 } = vi.hoisted(() => ({
   generateAlternativeTitlesMock: vi.fn(),
+  generateContentThumbnailImageMock: vi.fn(),
   generateCourseCategoriesMock: vi.fn(),
   generateCourseChaptersMock: vi.fn(),
   generateCourseDescriptionMock: vi.fn(),
-  generateCourseImageMock: vi.fn(),
   generateLanguageCourseChaptersMock: vi.fn(),
 }));
 
@@ -24,7 +24,9 @@ vi.mock("@zoonk/ai/tasks/courses/description", () => ({
   generateCourseDescription: generateCourseDescriptionMock,
 }));
 
-vi.mock("@zoonk/core/courses/image", () => ({ generateCourseImage: generateCourseImageMock }));
+vi.mock("@zoonk/core/content/thumbnail", () => ({
+  generateContentThumbnailImage: generateContentThumbnailImageMock,
+}));
 
 vi.mock("@zoonk/ai/tasks/courses/alternative-titles", () => ({
   generateAlternativeTitles: generateAlternativeTitlesMock,
@@ -59,6 +61,8 @@ const emptyExisting: ExistingCourseContent = {
   imageUrl: null,
 };
 
+const courseSuggestionDescription = "Course suggestion description";
+
 describe(generateMissingContent, () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -67,7 +71,7 @@ describe(generateMissingContent, () => {
   it("generates all content when nothing exists", async () => {
     generateCourseDescriptionMock.mockResolvedValue({ data: { description: "Generated desc" } });
 
-    generateCourseImageMock.mockResolvedValue({
+    generateContentThumbnailImageMock.mockResolvedValue({
       data: "https://example.com/img.webp",
       error: null,
     });
@@ -79,13 +83,24 @@ describe(generateMissingContent, () => {
       data: { chapters: [{ description: "Ch1 desc", title: "Ch1" }] },
     });
 
-    const result = await generateMissingContent(course, emptyExisting);
+    const result = await generateMissingContent({
+      course,
+      description: courseSuggestionDescription,
+      existing: emptyExisting,
+    });
 
     expect(result.description).toBe("Generated desc");
     expect(result.imageUrl).toBe("https://example.com/img.webp");
     expect(result.alternativeTitles).toStrictEqual(["Alt 1"]);
     expect(result.categories).toStrictEqual(["programming"]);
+
     expect(result.chapters).toStrictEqual([{ description: "Ch1 desc", title: "Ch1" }]);
+
+    expect(generateContentThumbnailImageMock).toHaveBeenCalledWith({
+      description: courseSuggestionDescription,
+      kind: "course",
+      title: course.courseTitle,
+    });
   });
 
   it("skips generation for fields that already exist", async () => {
@@ -97,7 +112,11 @@ describe(generateMissingContent, () => {
       imageUrl: "https://example.com/existing.webp",
     };
 
-    const result = await generateMissingContent(course, existing);
+    const result = await generateMissingContent({
+      course,
+      description: courseSuggestionDescription,
+      existing,
+    });
 
     expect(result.description).toBe("Existing desc");
     expect(result.imageUrl).toBe("https://example.com/existing.webp");
@@ -106,7 +125,7 @@ describe(generateMissingContent, () => {
     expect(result.chapters).toStrictEqual([]);
 
     expect(generateCourseDescriptionMock).not.toHaveBeenCalled();
-    expect(generateCourseImageMock).not.toHaveBeenCalled();
+    expect(generateContentThumbnailImageMock).not.toHaveBeenCalled();
     expect(generateAlternativeTitlesMock).not.toHaveBeenCalled();
     expect(generateCourseCategoriesMock).not.toHaveBeenCalled();
     expect(generateCourseChaptersMock).not.toHaveBeenCalled();
@@ -122,7 +141,7 @@ describe(generateMissingContent, () => {
 
     generateCourseDescriptionMock.mockResolvedValue({ data: { description: "Lang desc" } });
 
-    generateCourseImageMock.mockResolvedValue({
+    generateContentThumbnailImageMock.mockResolvedValue({
       data: "https://example.com/lang.webp",
       error: null,
     });
@@ -130,7 +149,11 @@ describe(generateMissingContent, () => {
     generateAlternativeTitlesMock.mockResolvedValue({ data: { alternatives: [] } });
     generateLanguageCourseChaptersMock.mockResolvedValue({ data: { chapters: [] } });
 
-    const result = await generateMissingContent(langCourse, emptyExisting);
+    const result = await generateMissingContent({
+      course: langCourse,
+      description: courseSuggestionDescription,
+      existing: emptyExisting,
+    });
 
     expect(result.categories).toStrictEqual(["languages"]);
     expect(generateCourseCategoriesMock).not.toHaveBeenCalled();
@@ -139,7 +162,7 @@ describe(generateMissingContent, () => {
   it("filters out 'languages' from non-language course categories", async () => {
     generateCourseDescriptionMock.mockResolvedValue({ data: { description: "desc" } });
 
-    generateCourseImageMock.mockResolvedValue({
+    generateContentThumbnailImageMock.mockResolvedValue({
       data: "https://example.com/non-lang.webp",
       error: null,
     });
@@ -152,7 +175,11 @@ describe(generateMissingContent, () => {
 
     generateCourseChaptersMock.mockResolvedValue({ data: { chapters: [] } });
 
-    const result = await generateMissingContent(course, emptyExisting);
+    const result = await generateMissingContent({
+      course,
+      description: courseSuggestionDescription,
+      existing: emptyExisting,
+    });
 
     expect(result.categories).toStrictEqual(["programming", "web"]);
   });

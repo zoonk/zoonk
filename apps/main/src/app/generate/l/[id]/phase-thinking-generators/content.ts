@@ -40,6 +40,15 @@ export function useContentPhaseGenerators(): Partial<Record<PhaseName, ThinkingM
         ],
         index,
       ),
+    creatingLessonImage: (index) =>
+      cycleMessage(
+        [
+          t("Designing the lesson thumbnail..."),
+          t("Creating the lesson image..."),
+          t("Refining the lesson artwork..."),
+        ],
+        index,
+      ),
     creatingSentences: (index) =>
       cycleMessage(
         [

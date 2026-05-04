@@ -14,6 +14,7 @@ import { generateLessonVocabulary } from "@zoonk/ai/tasks/lessons/language/vocab
 import { generateLessonTutorial } from "@zoonk/ai/tasks/lessons/tutorial";
 import { generateStepImagePrompts } from "@zoonk/ai/tasks/steps/image-prompts";
 import { generateLanguageAudio } from "@zoonk/core/audio/generate";
+import { generateContentThumbnailImage } from "@zoonk/core/content/thumbnail";
 import { generateContentStepImage } from "@zoonk/core/steps/content-image";
 import { assertStepContent, parseStepContent } from "@zoonk/core/steps/contract/content";
 import { generateStepImage } from "@zoonk/core/steps/image";
@@ -226,6 +227,17 @@ vi.mock("@zoonk/core/audio/generate", () => ({
     ),
 }));
 
+vi.mock("@zoonk/core/content/thumbnail", () => ({
+  generateContentThumbnailImage: vi
+    .fn()
+    .mockImplementation(({ title }) =>
+      Promise.resolve({
+        data: `https://example.com/thumbnail/${encodeURIComponent(title)}.webp`,
+        error: null,
+      }),
+    ),
+}));
+
 vi.mock("@zoonk/core/steps/image", () => ({
   generateStepImage: vi
     .fn()
@@ -336,6 +348,8 @@ describe(lessonGenerationWorkflow, () => {
   });
 
   beforeEach(() => {
+    vi.clearAllMocks();
+
     languageMockState.words.splice(
       0,
       languageMockState.words.length,
@@ -373,6 +387,7 @@ describe(lessonGenerationWorkflow, () => {
         "generateImagePrompts",
         "generateStepImages",
         "saveExplanationLesson",
+        "generateLessonImage",
         "setLessonAsCompleted",
       ]),
     );
@@ -396,6 +411,14 @@ describe(lessonGenerationWorkflow, () => {
     const dbLesson = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
     expect(dbLesson.generationStatus).toBe("completed");
     expect(dbLesson.generationRunId).toBe("test-run-id");
+
+    expect(dbLesson.imageUrl).toBe(
+      `https://example.com/thumbnail/${encodeURIComponent(lesson.title ?? "")}.webp`,
+    );
+
+    expect(generateContentThumbnailImage).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: "lesson" }),
+    );
   });
 
   it("runs the tutorial image workflow and saves generated procedural steps", async () => {
@@ -524,6 +547,11 @@ describe(lessonGenerationWorkflow, () => {
     expect(question.image?.url).toBe(
       "https://example.com/content/practice%20question%20image.webp",
     );
+
+    const dbLesson = await prisma.lesson.findUniqueOrThrow({ where: { id: practice.id } });
+
+    expect(dbLesson.imageUrl).toBeNull();
+    expect(generateContentThumbnailImage).not.toHaveBeenCalled();
   });
 
   it("blocks practice generation until all source explanations are completed", async () => {

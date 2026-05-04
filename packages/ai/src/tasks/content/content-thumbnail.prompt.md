@@ -26,3 +26,4 @@ The icon must:
 Choose ONE simple metaphor object that best represents the topic. If more than one object is generated, the image is incorrect.
 
 TOPIC: **{{TITLE}}**
+CONTEXT: {{CONTEXT}}

@@ -11,6 +11,7 @@ const ZERO_WEIGHTS: Record<PhaseName, number> = {
   creatingAnswerOptions: 0,
   creatingExercises: 0,
   creatingImages: 0,
+  creatingLessonImage: 0,
   creatingSentences: 0,
   gettingStarted: 0,
   lookingUpWords: 0,
@@ -69,6 +70,7 @@ export function getPhaseWeights(kind: GeneratedLessonKind): Record<PhaseName, nu
     return {
       ...ZERO_WEIGHTS,
       creatingImages: 35,
+      creatingLessonImage: 35,
       gettingStarted: 3,
       preparingImages: 44,
       saving: 4,
@@ -80,6 +82,7 @@ export function getPhaseWeights(kind: GeneratedLessonKind): Record<PhaseName, nu
     return {
       ...ZERO_WEIGHTS,
       creatingImages: 33,
+      creatingLessonImage: 33,
       gettingStarted: 3,
       preparingImages: 40,
       saving: 4,

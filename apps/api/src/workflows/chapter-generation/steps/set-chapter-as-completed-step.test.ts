@@ -82,4 +82,30 @@ describe(setChapterAsCompletedStep, () => {
       expect.objectContaining({ status: "completed", step: "setChapterAsCompleted" }),
     );
   });
+
+  it("saves the generated chapter image with the completion status", async () => {
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      generationStatus: "running",
+      organizationId,
+      title: `Chapter Image Complete ${randomUUID()}`,
+    });
+
+    const context: ChapterContext = {
+      ...chapter,
+      _count: { lessons: 0 },
+      course,
+      neighboringChapters: [],
+    };
+
+    await setChapterAsCompletedStep({
+      context,
+      imageUrl: "https://example.com/chapter-complete.webp",
+      workflowRunId: `run-${randomUUID()}`,
+    });
+
+    const updated = await prisma.chapter.findUniqueOrThrow({ where: { id: chapter.id } });
+
+    expect(updated.imageUrl).toBe("https://example.com/chapter-complete.webp");
+  });
 });

@@ -9,10 +9,12 @@ type TutorialSteps =
   | "generateImagePrompts"
   | "generateStepImages"
   | "saveTutorialLesson"
+  | "generateLessonImage"
   | "setLessonAsCompleted";
 
 export const TUTORIAL_PHASE_STEPS = {
   creatingImages: ["generateStepImages"],
+  creatingLessonImage: ["generateLessonImage"],
   gettingStarted: ["getLesson", "setLessonAsRunning"],
   preparingImages: ["generateImagePrompts"],
   saving: ["saveTutorialLesson", "setLessonAsCompleted"],
@@ -28,5 +30,6 @@ export const TUTORIAL_PHASE_ORDER: PhaseName[] = [
   "writingContent",
   "preparingImages",
   "creatingImages",
+  "creatingLessonImage",
   "saving",
 ];

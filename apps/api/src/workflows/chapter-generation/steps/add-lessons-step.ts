@@ -2,8 +2,7 @@ import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type ChapterStepName } from "@zoonk/core/workflows/steps";
 import { type Lesson, type LessonCreateManyInput, prisma } from "@zoonk/db";
 import { deduplicateSlugs, normalizeString, toSlug } from "@zoonk/utils/string";
-import { expandChapterLessons } from "./_utils/lesson-plan-expansion";
-import { type GeneratedChapterLesson } from "./classify-lessons-step";
+import { type ExpandedChapterLesson } from "./_utils/lesson-plan-expansion";
 import { type ChapterContext } from "./get-chapter-step";
 
 /**
@@ -25,20 +24,15 @@ function getRouteLabel({
 
 export async function addLessonsStep(input: {
   context: ChapterContext;
-  lessons: GeneratedChapterLesson[];
+  lessons: ExpandedChapterLesson[];
 }): Promise<Lesson[]> {
   "use step";
 
   await using stream = createStepStream<ChapterStepName>();
   await stream.status({ status: "started", step: "addLessons" });
 
-  const expandedLessons = expandChapterLessons({
-    lessons: input.lessons,
-    targetLanguage: input.context.course.targetLanguage,
-  });
-
   const lessonsData: LessonCreateManyInput[] = deduplicateSlugs(
-    expandedLessons.map((lesson, index) => {
+    input.lessons.map((lesson, index) => {
       const routeLabel = getRouteLabel({ index, kind: lesson.kind, title: lesson.title });
 
       return {

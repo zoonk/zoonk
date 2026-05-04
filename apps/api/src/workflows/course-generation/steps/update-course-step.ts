@@ -15,11 +15,7 @@ export async function updateCourseStep(input: {
   await stream.status({ status: "started", step: "updateCourse" });
 
   await prisma.course.update({
-    data: {
-      description: input.description,
-      generationStatus: "completed",
-      ...(input.imageUrl && { imageUrl: input.imageUrl }),
-    },
+    data: { description: input.description, ...(input.imageUrl && { imageUrl: input.imageUrl }) },
     where: { id: input.course.courseId },
   });
 

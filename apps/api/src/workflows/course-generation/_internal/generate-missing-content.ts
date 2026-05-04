@@ -16,10 +16,20 @@ export type GeneratedContent = {
   chapters: CourseChapter[];
 };
 
-async function descriptionOrSkip(
-  course: CourseContext,
-  existing: ExistingCourseContent,
-): Promise<string | null> {
+type GenerateMissingContentInput = {
+  course: CourseContext;
+  description: string | null;
+  existing: ExistingCourseContent;
+};
+
+type ExistingCourseStepInput = { course: CourseContext; existing: ExistingCourseContent };
+
+type ImageStepInput = ExistingCourseStepInput & { description: string | null };
+
+async function descriptionOrSkip({
+  course,
+  existing,
+}: ExistingCourseStepInput): Promise<string | null> {
   if (existing.description) {
     await streamSkipStep("generateDescription");
     return null;
@@ -28,22 +38,20 @@ async function descriptionOrSkip(
   return generateDescriptionStep(course);
 }
 
-async function imageOrSkip(
-  course: CourseContext,
-  existing: ExistingCourseContent,
-): Promise<string | null> {
+async function imageOrSkip({
+  course,
+  description,
+  existing,
+}: ImageStepInput): Promise<string | null> {
   if (existing.imageUrl) {
     await streamSkipStep("generateImage");
     return null;
   }
 
-  return generateImageStep(course);
+  return generateImageStep({ course, description });
 }
 
-async function altTitlesOrSkip(
-  course: CourseContext,
-  existing: ExistingCourseContent,
-): Promise<string[]> {
+async function altTitlesOrSkip({ course, existing }: ExistingCourseStepInput): Promise<string[]> {
   if (existing.hasAlternativeTitles) {
     await streamSkipStep("generateAlternativeTitles");
     return [];
@@ -52,10 +60,7 @@ async function altTitlesOrSkip(
   return generateAlternativeTitlesStep(course);
 }
 
-async function categoriesOrSkip(
-  course: CourseContext,
-  existing: ExistingCourseContent,
-): Promise<string[]> {
+async function categoriesOrSkip({ course, existing }: ExistingCourseStepInput): Promise<string[]> {
   if (existing.hasCategories) {
     await streamSkipStep("generateCategories");
     return [];
@@ -71,10 +76,10 @@ async function categoriesOrSkip(
   return categories.filter((cat) => cat !== "languages");
 }
 
-async function chaptersOrSkip(
-  course: CourseContext,
-  existing: ExistingCourseContent,
-): Promise<CourseChapter[]> {
+async function chaptersOrSkip({
+  course,
+  existing,
+}: ExistingCourseStepInput): Promise<CourseChapter[]> {
   if (existing.hasChapters) {
     await streamSkipStep("generateChapters");
     return [];
@@ -83,17 +88,22 @@ async function chaptersOrSkip(
   return generateChaptersStep(course);
 }
 
-export async function generateMissingContent(
-  course: CourseContext,
-  existing: ExistingCourseContent,
-): Promise<GeneratedContent> {
+/**
+ * Generates only the course pieces that are still missing so repeated setup
+ * attempts preserve content that was already saved.
+ */
+export async function generateMissingContent({
+  course,
+  description,
+  existing,
+}: GenerateMissingContentInput): Promise<GeneratedContent> {
   const [generatedDescription, generatedImageUrl, alternativeTitles, categories, chapters] =
     await Promise.all([
-      descriptionOrSkip(course, existing),
-      imageOrSkip(course, existing),
-      altTitlesOrSkip(course, existing),
-      categoriesOrSkip(course, existing),
-      chaptersOrSkip(course, existing),
+      descriptionOrSkip({ course, existing }),
+      imageOrSkip({ course, description, existing }),
+      altTitlesOrSkip({ course, existing }),
+      categoriesOrSkip({ course, existing }),
+      chaptersOrSkip({ course, existing }),
     ]);
 
   return {

@@ -7,7 +7,7 @@ import { type ChapterContext } from "./get-chapter-step";
 
 type ClassifiedChapterLesson = ChapterLesson & { kind: LessonKindSchema["kind"] };
 
-export type GeneratedChapterLesson =
+type GeneratedChapterLesson =
   | ClassifiedChapterLesson
   | Extract<ChapterLessonPlan, { needsClassification: false }>["lessons"][number];
 

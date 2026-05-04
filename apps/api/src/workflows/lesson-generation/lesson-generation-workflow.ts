@@ -11,6 +11,7 @@ import { readingLessonWorkflow } from "./kinds/reading-workflow";
 import { translationLessonWorkflow } from "./kinds/translation-workflow";
 import { tutorialLessonWorkflow } from "./kinds/tutorial-workflow";
 import { vocabularyLessonWorkflow } from "./kinds/vocabulary-workflow";
+import { generateLessonImageStep } from "./steps/generate-lesson-image-step";
 import { getBlockingGenerationPrerequisiteStep } from "./steps/get-blocking-generation-prerequisite-step";
 import { getLessonStep } from "./steps/get-lesson-step";
 import { handleLessonFailureStep } from "./steps/handle-failure-step";
@@ -150,8 +151,12 @@ async function runLessonGeneration(input: {
   });
 
   try {
-    await generateLessonForKind(input.context);
-    await setLessonAsCompletedStep({ context: input.context });
+    const [, imageUrl] = await Promise.all([
+      generateLessonForKind(input.context),
+      generateLessonImageStep(input.context),
+    ]);
+
+    await setLessonAsCompletedStep({ context: input.context, imageUrl });
 
     return "ready";
   } catch (error) {

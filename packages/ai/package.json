@@ -27,7 +27,7 @@
     "./tasks/courses/description": "./src/tasks/courses/course-description.ts",
     "./tasks/courses/language-chapters": "./src/tasks/courses/language-course-chapters.ts",
     "./tasks/courses/suggestions": "./src/tasks/courses/course-suggestions.ts",
-    "./tasks/courses/thumbnail": "./src/tasks/courses/course-thumbnail.ts",
+    "./tasks/content/thumbnail": "./src/tasks/content/content-thumbnail.ts",
     "./tasks/steps/content-image": "./src/tasks/steps/step-content-image.ts",
     "./tasks/steps/image-prompts": "./src/tasks/steps/step-image-prompts.ts",
     "./tasks/steps/select-image": "./src/tasks/steps/step-select-image.ts"

@@ -2,13 +2,39 @@ import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { serializeWorkflowError } from "@/workflows/_shared/workflow-error";
 import { chapterGenerationWorkflow } from "@/workflows/chapter-generation/chapter-generation-workflow";
 import { COURSE_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
+import { type Chapter } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
 import { getWorkflowMetadata } from "workflow";
 import { getOrCreateCourse } from "./_internal/get-or-create-course";
 import { setupCourse } from "./_internal/setup-course";
 import { checkExistingCourseStep } from "./steps/check-existing-course-step";
+import { completeCourseSetupStep } from "./steps/complete-course-setup-step";
 import { getCourseSuggestionStep } from "./steps/get-course-suggestion-step";
 import { handleCourseFailureStep } from "./steps/handle-failure-step";
+
+/**
+ * Runs course setup through final persistence and only then marks the course
+ * complete. Chapter generation owns chapter-specific content such as
+ * thumbnails, so this course setup step only saves course-level metadata and
+ * chapter shells.
+ */
+async function setupCourseContent({
+  course,
+  description,
+  courseSuggestionId,
+  existing,
+}: {
+  course: Awaited<ReturnType<typeof getOrCreateCourse>>["course"];
+  description: string | null;
+  courseSuggestionId: string;
+  existing: Awaited<ReturnType<typeof getOrCreateCourse>>["existing"];
+}): Promise<Chapter[]> {
+  const chapters = await setupCourse(course, description, existing);
+
+  await completeCourseSetupStep({ courseId: course.courseId, courseSuggestionId });
+
+  return chapters;
+}
 
 export async function courseGenerationWorkflow(courseSuggestionId: string): Promise<void> {
   "use workflow";
@@ -58,19 +84,22 @@ export async function courseGenerationWorkflow(courseSuggestionId: string): Prom
     throw error;
   });
 
-  const chapters = await setupCourse(course, courseSuggestionId, existing).catch(
-    async (error: unknown) => {
-      await handleCourseFailureStep({
-        courseId: course.courseId,
-        courseSuggestionId,
-        error: serializeWorkflowError(error),
-      });
+  const chapters = await setupCourseContent({
+    course,
+    courseSuggestionId,
+    description: suggestion.description,
+    existing,
+  }).catch(async (error: unknown) => {
+    await handleCourseFailureStep({
+      courseId: course.courseId,
+      courseSuggestionId,
+      error: serializeWorkflowError(error),
+    });
 
-      logError(`[workflow ${workflowRunId}] Course generation failed`, error);
+    logError(`[workflow ${workflowRunId}] Course generation failed`, error);
 
-      throw error;
-    },
-  );
+    throw error;
+  });
 
   // Start chapter generation outside the course error handling.
   // Chapter generation has its own error handling that marks the chapter as failed.

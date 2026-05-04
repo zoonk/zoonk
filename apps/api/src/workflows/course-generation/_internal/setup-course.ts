@@ -1,6 +1,5 @@
 import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { type Chapter } from "@zoonk/db";
-import { completeCourseSetupStep } from "../steps/complete-course-setup-step";
 import { getCourseChaptersStep } from "../steps/get-course-chapters-step";
 import { type CourseContext } from "../steps/initialize-course-step";
 import { generateMissingContent } from "./generate-missing-content";
@@ -22,16 +21,11 @@ async function getChapters(
 
 export async function setupCourse(
   course: CourseContext,
-  courseSuggestionId: string,
+  description: string | null,
   existing: ExistingCourseContent,
 ): Promise<Chapter[]> {
-  const content = await generateMissingContent(course, existing);
-
+  const content = await generateMissingContent({ course, description, existing });
   const createdChapters = await persistGeneratedContent(course, content, existing);
 
-  const chapters = await getChapters(course.courseId, createdChapters, existing.hasChapters);
-
-  await completeCourseSetupStep({ courseId: course.courseId, courseSuggestionId });
-
-  return chapters;
+  return getChapters(course.courseId, createdChapters, existing.hasChapters);
 }
