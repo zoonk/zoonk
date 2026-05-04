@@ -1,0 +1,181 @@
+apps/api/src/workflows/chapter-generation/chapter-generation-workflow.ts
+  cb862ce6ec41f092 6,8-11,14,20-22,25-62,87,95-97,99-101
+apps/api/src/workflows/course-generation/_internal/generate-missing-content.ts
+  aba5b4266bd78685 26,28-32,41-45,54,63,79-82,102-106
+  h_1cda88fc21fe9c 19-25,27,51,91-95,97,99
+apps/api/src/workflows/course-generation/_internal/generate-missing-content.test.ts
+  h_1cda88fc21fe9c 9,16,27-28,64,74,86,88-90,96,98-103,115,117-119,128,144,152-156,165,178,180-182
+apps/main/src/app/generate/cs/[id]/generation-phases.ts
+  cb862ce6ec41f092 75,78
+  h_1cda88fc21fe9c 77
+apps/api/src/workflows/course-generation/course-generation-workflow.test.ts
+  fa8b75fd5683237b 8,66-72,256,261,329-332
+apps/main/src/app/generate/ch/[id]/generation-phases.ts
+  cb862ce6ec41f092 12,22,27,38,50,57-58,60-61
+apps/main/messages/es.po
+  cb862ce6ec41f092 1662-1666,1674-1678,1695-1699,1705-1709,1909-1913,1934-1938,2064-2068,2339-2342
+apps/api/src/workflows/chapter-generation/steps/_utils/lesson-plan-expansion.ts
+  fa8b75fd5683237b 10-14
+apps/api/src/workflows/chapter-generation/steps/generate-chapter-image-step.ts
+  fa8b75fd5683237b 1-40
+apps/api/src/workflows/course-generation/_internal/setup-course.test.ts
+  fa8b75fd5683237b 12,18,28-30,56-61,82,97,101,103
+packages/core/src/content/content-thumbnail.ts
+  cb862ce6ec41f092 2-4,11-58,72
+apps/api/src/workflows/chapter-generation/steps/add-lessons-step.test.ts
+  cb862ce6ec41f092 8,64,77-78,89,92,134-139
+apps/api/src/workflows/chapter-generation/steps/generate-chapter-image-step.test.ts
+  cb862ce6ec41f092 1-85
+apps/main/src/app/generate/l/[id]/phase-kind-steps/explanation.ts
+  cb862ce6ec41f092 12,17,36
+apps/api/src/workflows/chapter-generation/steps/add-lessons-step.ts
+  fa8b75fd5683237b 5,27,35
+packages/db/src/prisma/models/lessons.prisma
+  h_1cda88fc21fe9c 17
+apps/api/src/workflows/chapter-generation/steps/classify-lessons-step.ts
+  fa8b75fd5683237b 10
+apps/api/src/workflows/course-generation/course-generation-workflow.ts
+  fa8b75fd5683237b 5,11,15-38,87-97,99,101-102
+apps/api/src/workflows/course-generation/steps/generate-image-step.ts
+  cb862ce6ec41f092 2,6-12,19-23
+packages/core/src/player/commands/_utils/durable-curriculum-completion-rules.test.ts
+  cb862ce6ec41f092 44
+packages/testing/src/fixtures/lessons.ts
+  cb862ce6ec41f092 16
+apps/main/src/app/generate/l/[id]/generation-phases.test.ts
+  cb862ce6ec41f092 21,80,88-104
+apps/main/src/app/generate/l/[id]/phase-kind-steps/tutorial.ts
+  cb862ce6ec41f092 12,17,33
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.ts
+  cb862ce6ec41f092 14,154-159
+apps/main/src/app/generate/l/[id]/generation-phase-weights.ts
+  cb862ce6ec41f092 14,73,85
+packages/ai/src/tasks/content/content-thumbnail.ts
+  h_1cda88fc21fe9c 23
+  cb862ce6ec41f092 5,10-22,24,27-28,34-40,44,49,56
+apps/api/src/workflows/course-generation/steps/add-chapters-step.test.ts
+  cb862ce6ec41f092 70
+apps/main/src/app/generate/ch/[id]/generation-phases.test.ts
+  cb862ce6ec41f092 5,10,42,50,60-69,81
+apps/main/messages/pt.po
+  cb862ce6ec41f092 1662-1666,1674-1678,1695-1699,1705-1709,1909-1913,1934-1938,2064-2068,2339-2342
+apps/api/src/workflows/lesson-generation/steps/generate-lesson-image-step.ts
+  cb862ce6ec41f092 1-48
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.test.ts
+  cb862ce6ec41f092 17,230-240,351-352,390,414-421,550-554
+apps/api/src/workflows/course-generation/_internal/persist-generated-content.test.ts
+  cb862ce6ec41f092 73
+apps/main/src/app/generate/l/[id]/generation-phase-config.ts
+  cb862ce6ec41f092 41,89
+apps/api/src/workflows/lesson-generation/steps/set-lesson-as-completed-step.test.ts
+  cb862ce6ec41f092 31-44
+apps/main/src/app/generate/ch/[id]/use-generation-phases.ts
+  cb862ce6ec41f092 29,64-72
+packages/ai/package.json
+  cb862ce6ec41f092 30
+packages/db/src/prisma/models/chapters.prisma
+  h_1cda88fc21fe9c 16
+apps/main/src/app/generate/l/[id]/generation-phases.ts
+  cb862ce6ec41f092 41
+apps/main/messages/en.po
+  cb862ce6ec41f092 1662-1666,1674-1678,1695-1699,1705-1709,1909-1913,1934-1938,2064-2068,2339-2342
+apps/api/src/workflows/course-generation/_internal/setup-course.ts
+  cb862ce6ec41f092 24,30
+  aba5b4266bd78685 27
+apps/api/src/workflows/course-generation/steps/update-course-step.ts
+  cb862ce6ec41f092 18
+packages/ai/src/tasks/content/content-thumbnail.prompt.md
+  h_1cda88fc21fe9c 29
+packages/testing/src/fixtures/chapters.ts
+  cb862ce6ec41f092 14
+apps/api/src/workflows/chapter-generation/chapter-generation-workflow.test.ts
+  cb862ce6ec41f092 5,12,45-53,64-67,113,130,134-136,138,155-158,161-169
+apps/api/src/workflows/course-generation/steps/generate-image-step.test.ts
+  cb862ce6ec41f092 6-8,10-12,23-24,31,36,40-45,58,63-65
+packages/db/src/prisma/migrations/20260504131816_add_content_thumbnail_images/migration.sql
+  cb862ce6ec41f092 1-5
+apps/evals/src/app/image-test/actions.ts
+  cb862ce6ec41f092 3,14-18
+apps/api/src/workflows/chapter-generation/steps/set-chapter-as-completed-step.test.ts
+  fa8b75fd5683237b 85-110
+apps/api/src/workflows/course-generation/steps/update-course-step.test.ts
+  cb862ce6ec41f092 43,69
+packages/core/src/workflows/steps.ts
+  cb862ce6ec41f092 43,90
+packages/core/package.json
+  cb862ce6ec41f092 16
+apps/api/src/workflows/lesson-generation/steps/generate-lesson-image-step.test.ts
+  cb862ce6ec41f092 1-76
+apps/main/src/app/generate/l/[id]/phase-thinking-generators/content.ts
+  cb862ce6ec41f092 43-51
+apps/main/src/app/generate/l/[id]/use-phase-labels.ts
+  cb862ce6ec41f092 20
+apps/api/src/workflows/lesson-generation/steps/set-lesson-as-completed-step.ts
+  h_1cda88fc21fe9c 7-8,18-19
+apps/api/src/workflows/chapter-generation/steps/set-chapter-as-completed-step.ts
+  fa8b75fd5683237b 8,17-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "e5b2a7221159f48d1d7745203108cb4ff86adf1c",
+  "prompts": {
+    "317de6bc1d65d833": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019def28-714f-7012-93de-c0208b7684cc",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 898,
+      "total_deletions": 203,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    },
+    "aba5b4266bd78685": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019df3a5-f282-7101-8de1-60b9e5260e53",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 31,
+      "total_deletions": 28,
+      "accepted_lines": 23,
+      "overriden_lines": 2
+    },
+    "cb862ce6ec41f092": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019df31c-dc44-7433-8b97-3a4ad4a2d3d3",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 2010,
+      "total_deletions": 1087,
+      "accepted_lines": 847,
+      "overriden_lines": 4
+    },
+    "fa8b75fd5683237b": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019df3b2-031b-7741-a2d7-e4f7131724ac",
+        "model": "unknown"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 152,
+      "total_deletions": 55,
+      "accepted_lines": 152,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
