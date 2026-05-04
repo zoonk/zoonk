@@ -1,0 +1,146 @@
+apps/android/.idea/runConfigurations.xml
+  2a158080c49bc30b 1-17
+apps/android/app/src/main/AndroidManifest.xml
+  5aeb886e1b5cd8ed 1,3-25
+  2a158080c49bc30b 2
+apps/android/app/proguard-rules.pro
+  5aeb886e1b5cd8ed 1-21
+apps/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+  5aeb886e1b5cd8ed 1-4
+  2a158080c49bc30b 5
+apps/android/app/src/main/res/drawable/ic_launcher_foreground.xml
+  2a158080c49bc30b 1,5-19
+  5aeb886e1b5cd8ed 2-4
+apps/android/app/src/main/res/xml/data_extraction_rules.xml
+  5aeb886e1b5cd8ed 1-19
+apps/android/.idea/.gitignore
+  2a158080c49bc30b 1-3
+apps/android/app/src/main/res/drawable/ic_launcher_background.xml
+  5aeb886e1b5cd8ed 1-7,10
+  2a158080c49bc30b 8-9
+apps/android/gradle.properties
+  5aeb886e1b5cd8ed 1-15
+apps/android/gradle/wrapper/gradle-wrapper.properties
+  5aeb886e1b5cd8ed 1-9
+apps/android/.idea/AndroidProjectSystem.xml
+  2a158080c49bc30b 1-6
+apps/android/.idea/gradle.xml
+  2a158080c49bc30b 1-17
+apps/android/app/src/main/res/values/themes.xml
+  5aeb886e1b5cd8ed 1-5
+apps/android/build.gradle.kts
+  5aeb886e1b5cd8ed 1-5
+apps/android/gradlew.bat
+  5aeb886e1b5cd8ed 1-94
+apps/android/app/src/main/res/xml/backup_rules.xml
+  5aeb886e1b5cd8ed 1-13
+apps/android/app/.gitignore
+  5aeb886e1b5cd8ed 1
+apps/android/app/src/main/java/com/zoonk/ui/theme/Theme.kt
+  2a158080c49bc30b 1-35
+apps/android/.idea/inspectionProfiles/Project_Default.xml
+  2a158080c49bc30b 1-61
+apps/android/.idea/vcs.xml
+  2a158080c49bc30b 1-6
+apps/android/gradle/gradle-daemon-jvm.properties
+  5aeb886e1b5cd8ed 1-12
+apps/android/app/src/main/java/com/zoonk/MainActivity.kt
+  2a158080c49bc30b 1-51
+apps/android/.idea/.name
+  2a158080c49bc30b 1
+apps/android/app/build.gradle.kts
+  2a158080c49bc30b 7,15,47
+  5aeb886e1b5cd8ed 1-6,8-14,16,18-46
+  58eca7d77880880f 17
+apps/android/app/src/main/res/values/strings.xml
+  5aeb886e1b5cd8ed 1-3
+apps/android/.idea/codeStyles/codeStyleConfig.xml
+  2a158080c49bc30b 1-5
+apps/android/.idea/deploymentTargetSelector.xml
+  2a158080c49bc30b 1-11
+apps/android/settings.gradle.kts
+  5aeb886e1b5cd8ed 1-11,14-26
+apps/android/.idea/compiler.xml
+  2a158080c49bc30b 1-6
+apps/android/.gitignore
+  5aeb886e1b5cd8ed 1-15
+apps/android/gradlew
+  5aeb886e1b5cd8ed 1-251
+apps/android/.idea/codeStyles/Project.xml
+  2a158080c49bc30b 1-123
+apps/android/.idea/deviceManager.xml
+  2a158080c49bc30b 1-13
+apps/android/gradle/libs.versions.toml
+  5aeb886e1b5cd8ed 1-17
+apps/android/.idea/misc.xml
+  2a158080c49bc30b 1-10
+apps/android/.idea/appInsightsSettings.xml
+  2a158080c49bc30b 1-26
+apps/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+  5aeb886e1b5cd8ed 1-4
+  2a158080c49bc30b 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "31f9fe7780c63d55001153e27e8763f1af22ae3d",
+  "prompts": {
+    "2a158080c49bc30b": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019df382-0b8b-7d13-818f-671d29e31c00",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 591,
+      "total_deletions": 308,
+      "accepted_lines": 415,
+      "overriden_lines": 0
+    },
+    "58eca7d77880880f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019df3e8-0cdb-75d3-82d3-c51449e86879",
+        "model": "unknown"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    },
+    "5aeb886e1b5cd8ed": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019df368-173f-78a3-9e31-ab43bea20e0e",
+        "model": "unknown"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1018,
+      "total_deletions": 0,
+      "accepted_lines": 592,
+      "overriden_lines": 0
+    },
+    "ffc6174f27234a9b": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019df367-058a-75c3-be74-b669d6238b3a",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 17,
+      "total_deletions": 24,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
