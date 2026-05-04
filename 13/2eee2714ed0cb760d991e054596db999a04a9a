@@ -1,0 +1,55 @@
+apps/api/src/lib/api-errors.ts
+  7e5966caaa84c583 4-13,20-23,25-26,28,30,33
+apps/api/src/lib/openapi/schemas/responses.ts
+  h_1cda88fc21fe9c 10-24
+packages/utils/src/json.test.ts
+  h_1cda88fc21fe9c 1-24
+apps/api/e2e/docs.test.ts
+  7e5966caaa84c583 58
+apps/api/src/app/v1/me/_utils/me-profile-update.ts
+  7e5966caaa84c583 1-64
+apps/api/src/lib/openapi/document.ts
+  7e5966caaa84c583 6,16-18,85-109
+packages/utils/src/date.ts
+  7e5966caaa84c583 12-24
+apps/api/e2e/me.test.ts
+  h_1cda88fc21fe9c 117,202,219
+  7e5966caaa84c583 1-116,118-201,203-218,220-230
+apps/api/src/app/v1/me/route.ts
+  7e5966caaa84c583 1-102
+packages/utils/src/date.test.ts
+  7e5966caaa84c583 2,32-46
+packages/utils/src/json.ts
+  7e5966caaa84c583 14-61
+apps/api/src/app/v1/me/_utils/me-response.ts
+  7e5966caaa84c583 1-64
+apps/api/src/lib/better-auth-errors.ts
+  7e5966caaa84c583 1-23
+apps/api/src/lib/openapi/schemas/me.ts
+  7e5966caaa84c583 1-67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "132eee2714ed0cb760d991e054596db999a04a9a",
+  "prompts": {
+    "7e5966caaa84c583": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019df4ba-78e6-70f2-8c69-42cb754d6972",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 866,
+      "total_deletions": 204,
+      "accepted_lines": 677,
+      "overriden_lines": 3
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
