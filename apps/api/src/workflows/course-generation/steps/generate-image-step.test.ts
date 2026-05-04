@@ -3,9 +3,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { generateImageStep } from "./generate-image-step";
 import { type CourseContext } from "./initialize-course-step";
 
-const { generateCourseImageMock } = vi.hoisted(() => ({ generateCourseImageMock: vi.fn() }));
+const { generateContentThumbnailImageMock } = vi.hoisted(() => ({
+  generateContentThumbnailImageMock: vi.fn(),
+}));
 
-vi.mock("@zoonk/core/courses/image", () => ({ generateCourseImage: generateCourseImageMock }));
+vi.mock("@zoonk/core/content/thumbnail", () => ({
+  generateContentThumbnailImage: generateContentThumbnailImageMock,
+}));
 
 const course: CourseContext = {
   courseId: "1",
@@ -16,20 +20,28 @@ const course: CourseContext = {
   targetLanguage: null,
 };
 
+const description = "Course suggestion description";
+
 describe(generateImageStep, () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it("returns the generated image URL", async () => {
-    generateCourseImageMock.mockResolvedValue({
+    generateContentThumbnailImageMock.mockResolvedValue({
       data: "https://example.com/image.webp",
       error: null,
     });
 
-    const result = await generateImageStep(course);
+    const result = await generateImageStep({ course, description });
 
     expect(result).toBe("https://example.com/image.webp");
+
+    expect(generateContentThumbnailImageMock).toHaveBeenCalledWith({
+      description,
+      kind: "course",
+      title: course.courseTitle,
+    });
 
     const events = getStreamedEvents();
 
@@ -43,12 +55,14 @@ describe(generateImageStep, () => {
   });
 
   it("throws without streaming error when image generation fails", async () => {
-    generateCourseImageMock.mockResolvedValue({
+    generateContentThumbnailImageMock.mockResolvedValue({
       data: null,
       error: new Error("Image generation failed"),
     });
 
-    await expect(generateImageStep(course)).rejects.toThrow("Image generation failed");
+    await expect(generateImageStep({ course, description })).rejects.toThrow(
+      "Image generation failed",
+    );
 
     const events = getStreamedEvents();
 

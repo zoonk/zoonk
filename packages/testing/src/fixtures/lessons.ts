@@ -13,6 +13,7 @@ function lessonAttrs(
     description: attrs?.description ?? "Test lesson description",
     generationRunId: null,
     generationStatus: "completed",
+    imageUrl: null,
     isLocked: false,
     isPublished: false,
     kind: "explanation",

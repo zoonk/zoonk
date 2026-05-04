@@ -3,18 +3,63 @@ import { serializeWorkflowError } from "@/workflows/_shared/workflow-error";
 import { handleChapterFailureStep } from "@/workflows/course-generation/steps/handle-failure-step";
 import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-generation-workflow";
 import { CHAPTER_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
+import { type Lesson } from "@zoonk/db";
 import { getWorkflowMetadata } from "workflow";
+import {
+  type ExpandedChapterLesson,
+  expandChapterLessons,
+} from "./steps/_utils/lesson-plan-expansion";
 import { addLessonsStep } from "./steps/add-lessons-step";
 import { classifyLessonsStep } from "./steps/classify-lessons-step";
+import { generateChapterImageStep } from "./steps/generate-chapter-image-step";
 import { generateLessonsStep } from "./steps/generate-lessons-step";
 import { getChapterStep } from "./steps/get-chapter-step";
 import { setChapterAsCompletedStep } from "./steps/set-chapter-as-completed-step";
 import { setChapterAsRunningStep } from "./steps/set-chapter-as-running-step";
 
-async function generateAndAddLessons(context: Awaited<ReturnType<typeof getChapterStep>>) {
+async function generateExpandedLessons(
+  context: Awaited<ReturnType<typeof getChapterStep>>,
+): Promise<ExpandedChapterLesson[]> {
   const plan = await generateLessonsStep(context);
   const lessons = await classifyLessonsStep({ context, plan });
-  return addLessonsStep({ context, lessons });
+
+  return expandChapterLessons({ lessons, targetLanguage: context.course.targetLanguage });
+}
+
+/**
+ * Runs the independent chapter thumbnail and lesson plan work as one parallel
+ * wave. If either promise fails, the chapter workflow fails and the existing
+ * failure handler marks the chapter as failed.
+ */
+async function generateChapterShellContent(
+  context: Awaited<ReturnType<typeof getChapterStep>>,
+): Promise<{ imageUrl: string | null; lessons: ExpandedChapterLesson[] }> {
+  const [lessons, imageUrl] = await Promise.all([
+    generateExpandedLessons(context),
+    generateChapterImageStep(context),
+  ]);
+
+  return { imageUrl, lessons };
+}
+
+/**
+ * Creates the chapter thumbnail and lesson rows, then marks the chapter as
+ * completed. The first lesson generation starts only after this chapter shell
+ * is fully ready.
+ */
+async function generateLessonsAndCompleteChapter({
+  context,
+  workflowRunId,
+}: {
+  context: Awaited<ReturnType<typeof getChapterStep>>;
+  workflowRunId: string;
+}): Promise<Lesson[]> {
+  const { imageUrl, lessons } = await generateChapterShellContent(context);
+  const createdLessons = await addLessonsStep({ context, lessons });
+
+  await setChapterAsCompletedStep({ context, imageUrl, workflowRunId });
+
+  return createdLessons;
 }
 
 export async function chapterGenerationWorkflow(chapterId: string): Promise<void> {
@@ -39,6 +84,7 @@ export async function chapterGenerationWorkflow(chapterId: string): Promise<void
   // If chapter has lessons but status is not completed, fix the status
   if (context._count.lessons > 0) {
     await setChapterAsCompletedStep({ context, workflowRunId });
+
     return;
   }
 
@@ -46,14 +92,13 @@ export async function chapterGenerationWorkflow(chapterId: string): Promise<void
   await setChapterAsRunningStep({ chapterId, workflowRunId });
 
   // Chapter-specific work with failure handling
-  const createdLessons = await generateAndAddLessons(context).catch(async (error: unknown) => {
-    await handleChapterFailureStep({ chapterId, error: serializeWorkflowError(error) });
+  const createdLessons = await generateLessonsAndCompleteChapter({ context, workflowRunId }).catch(
+    async (error: unknown) => {
+      await handleChapterFailureStep({ chapterId, error: serializeWorkflowError(error) });
 
-    throw error;
-  });
-
-  // Chapter is complete once its lesson list exists
-  await setChapterAsCompletedStep({ context, workflowRunId });
+      throw error;
+    },
+  );
 
   // Generate the first lesson outside chapter failure handling so lesson
   // failures mark that lesson without rolling back the completed chapter plan.

@@ -11,6 +11,7 @@ function chapterAttrs(attrs?: Partial<Chapter>): Omit<Chapter, "id" | "createdAt
     description: "Test chapter description",
     generationRunId: null,
     generationStatus: "completed",
+    imageUrl: null,
     isLocked: false,
     isPublished: false,
     language: "en",

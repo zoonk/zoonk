@@ -18,6 +18,7 @@ describe(getPhaseOrder, () => {
       "writingContent",
       "preparingImages",
       "creatingImages",
+      "creatingLessonImage",
       "saving",
     ]);
   });
@@ -76,12 +77,31 @@ describe(getPhaseStatus, () => {
           "generateImagePrompts",
           "generateStepImages",
           "saveExplanationLesson",
+          "generateLessonImage",
           "setLessonAsCompleted",
         ],
         null,
         "explanation",
       ),
     ).toBe("completed");
+  });
+
+  it("marks lesson thumbnail generation as its own active phase", () => {
+    expect(
+      getPhaseStatus(
+        "creatingLessonImage",
+        [
+          "getLesson",
+          "setLessonAsRunning",
+          "generateExplanationContent",
+          "generateImagePrompts",
+          "generateStepImages",
+          "saveExplanationLesson",
+        ],
+        "generateLessonImage",
+        "explanation",
+      ),
+    ).toBe("active");
   });
 });
 

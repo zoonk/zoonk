@@ -5,6 +5,7 @@ import { type ChapterContext } from "./get-chapter-step";
 
 export async function setChapterAsCompletedStep(input: {
   context: ChapterContext;
+  imageUrl?: string | null;
   workflowRunId: string;
 }): Promise<void> {
   "use step";
@@ -13,7 +14,11 @@ export async function setChapterAsCompletedStep(input: {
   await stream.status({ status: "started", step: "setChapterAsCompleted" });
 
   await prisma.chapter.update({
-    data: { generationRunId: input.workflowRunId, generationStatus: "completed" },
+    data: {
+      ...(input.imageUrl ? { imageUrl: input.imageUrl } : {}),
+      generationRunId: input.workflowRunId,
+      generationStatus: "completed",
+    },
     where: { id: input.context.id },
   });
 

@@ -41,6 +41,7 @@ function createChapters(ids: string[]): Parameters<typeof isCurrentCourseComplet
     generationRunId: null,
     generationStatus: "completed" as const,
     id,
+    imageUrl: null,
     isLocked: false,
     isPublished: true,
     language: "en",

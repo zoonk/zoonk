@@ -40,6 +40,7 @@ const CHAPTER_STEPS = [
   "setChapterAsRunning",
   "generateLessons",
   "generateLessonKind",
+  "generateChapterImage",
   "addLessons",
   "setChapterAsCompleted",
 ] as const;
@@ -86,6 +87,7 @@ const LESSON_STEPS = [
   "generateGrammarUserContent",
   "generateGrammarRomanization",
   "saveGrammarLesson",
+  "generateLessonImage",
   "setLessonAsCompleted",
 ] as const;
 

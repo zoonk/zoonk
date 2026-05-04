@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -10,23 +9,25 @@ import { setupCourse } from "./setup-course";
 
 const {
   generateCourseDescriptionMock,
-  generateCourseImageMock,
+  generateContentThumbnailImageMock,
   generateAlternativeTitlesMock,
   generateCourseCategoriesMock,
   generateCourseChaptersMock,
 } = vi.hoisted(() => ({
   generateAlternativeTitlesMock: vi.fn(),
+  generateContentThumbnailImageMock: vi.fn(),
   generateCourseCategoriesMock: vi.fn(),
   generateCourseChaptersMock: vi.fn(),
   generateCourseDescriptionMock: vi.fn(),
-  generateCourseImageMock: vi.fn(),
 }));
 
 vi.mock("@zoonk/ai/tasks/courses/description", () => ({
   generateCourseDescription: generateCourseDescriptionMock,
 }));
 
-vi.mock("@zoonk/core/courses/image", () => ({ generateCourseImage: generateCourseImageMock }));
+vi.mock("@zoonk/core/content/thumbnail", () => ({
+  generateContentThumbnailImage: generateContentThumbnailImageMock,
+}));
 
 vi.mock("@zoonk/ai/tasks/courses/alternative-titles", () => ({
   generateAlternativeTitles: generateAlternativeTitlesMock,
@@ -52,18 +53,12 @@ describe(setupCourse, () => {
     vi.clearAllMocks();
   });
 
-  it("generates content, persists it, and marks course as completed", async () => {
-    const [course, suggestion] = await Promise.all([
-      courseFixture({
-        generationStatus: "running",
-        organizationId,
-        title: `Setup Course ${randomUUID()}`,
-      }),
-      courseSuggestionFixture({
-        generationStatus: "running",
-        title: `Setup Suggestion ${randomUUID()}`,
-      }),
-    ]);
+  it("generates and persists course content without completing setup", async () => {
+    const course = await courseFixture({
+      generationStatus: "running",
+      organizationId,
+      title: `Setup Course ${randomUUID()}`,
+    });
 
     const courseContext: CourseContext = {
       courseId: course.id,
@@ -84,7 +79,7 @@ describe(setupCourse, () => {
 
     generateCourseDescriptionMock.mockResolvedValue({ data: { description: "Setup desc" } });
 
-    generateCourseImageMock.mockResolvedValue({
+    generateContentThumbnailImageMock.mockResolvedValue({
       data: "https://example.com/setup.webp",
       error: null,
     });
@@ -99,17 +94,13 @@ describe(setupCourse, () => {
       data: { chapters: [{ description: "Ch desc", title: `Setup Ch ${randomUUID()}` }] },
     });
 
-    const chapters = await setupCourse(courseContext, suggestion.id, existing);
+    const chapters = await setupCourse(courseContext, "Course suggestion description", existing);
 
     expect(chapters).toHaveLength(1);
 
-    const [updatedCourse, updatedSuggestion] = await Promise.all([
-      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
-      prisma.courseSuggestion.findUniqueOrThrow({ where: { id: suggestion.id } }),
-    ]);
+    const updatedCourse = await prisma.course.findUniqueOrThrow({ where: { id: course.id } });
 
-    expect(updatedCourse.generationStatus).toBe("completed");
+    expect(updatedCourse.generationStatus).toBe("running");
     expect(updatedCourse.description).toBe("Setup desc");
-    expect(updatedSuggestion.generationStatus).toBe("completed");
   });
 });

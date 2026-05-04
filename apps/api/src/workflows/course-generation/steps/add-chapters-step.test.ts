@@ -67,6 +67,7 @@ describe(addChaptersStep, () => {
     expect(dbChapters[0]!.title).toBe(chapters[0]!.title);
     expect(dbChapters[0]!.description).toBe("First chapter desc");
     expect(dbChapters[0]!.generationStatus).toBe("pending");
+    expect(dbChapters[0]!.imageUrl).toBeNull();
     expect(dbChapters[0]!.isPublished).toBe(true);
     expect(dbChapters[0]!.position).toBe(0);
     expect(dbChapters[1]!.position).toBe(1);

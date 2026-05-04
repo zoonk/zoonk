@@ -7,7 +7,11 @@ type GeneratedChapterLesson = {
   title?: string | null;
 };
 
-type ExpandedChapterLesson = { description: string | null; kind: LessonKind; title: string | null };
+export type ExpandedChapterLesson = {
+  description: string | null;
+  kind: LessonKind;
+  title: string | null;
+};
 
 type CompanionKind = "listening" | "practice" | "quiz" | "reading" | "review" | "translation";
 

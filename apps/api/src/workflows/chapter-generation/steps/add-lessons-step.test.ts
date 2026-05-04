@@ -5,6 +5,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { expandChapterLessons } from "./_utils/lesson-plan-expansion";
 import { addLessonsStep } from "./add-lessons-step";
 import { type ChapterContext } from "./get-chapter-step";
 
@@ -60,7 +61,7 @@ describe(addLessonsStep, () => {
       neighboringChapters: [],
     };
 
-    const lessons = [
+    const generatedLessons = [
       {
         description: "First lesson",
         kind: "explanation" as const,
@@ -73,6 +74,8 @@ describe(addLessonsStep, () => {
       },
     ];
 
+    const lessons = expandChapterLessons({ lessons: generatedLessons, targetLanguage: null });
+
     const result = await addLessonsStep({ context: chapterContext, lessons });
 
     expect(result).toHaveLength(5);
@@ -83,9 +86,10 @@ describe(addLessonsStep, () => {
     });
 
     expect(dbLessons).toHaveLength(5);
-    expect(dbLessons[0]!.title).toBe(lessons[0]!.title);
+    expect(dbLessons[0]!.title).toBe(generatedLessons[0]!.title);
     expect(dbLessons[0]!.description).toBe("First lesson");
     expect(dbLessons[0]!.generationStatus).toBe("pending");
+    expect(dbLessons[0]!.imageUrl).toBeNull();
     expect(dbLessons[0]!.isPublished).toBe(true);
     expect(dbLessons[0]!.position).toBe(0);
     expect(dbLessons[1]!.position).toBe(1);
@@ -127,9 +131,12 @@ describe(addLessonsStep, () => {
 
     await addLessonsStep({
       context: chapterContext,
-      lessons: [
-        { description: "Useful words", kind: "vocabulary", title: `Words ${randomUUID()}` },
-      ],
+      lessons: expandChapterLessons({
+        lessons: [
+          { description: "Useful words", kind: "vocabulary", title: `Words ${randomUUID()}` },
+        ],
+        targetLanguage: "es",
+      }),
     });
 
     const dbLessons = await prisma.lesson.findMany({

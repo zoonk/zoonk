@@ -1,6 +1,6 @@
 "use server";
 
-import { generateCourseImage } from "@zoonk/core/courses/image";
+import { generateContentThumbnailImage } from "@zoonk/core/content/thumbnail";
 import { parseFormField } from "@zoonk/utils/form";
 import { logError } from "@zoonk/utils/logger";
 
@@ -11,7 +11,11 @@ export async function generateThumbnailAction(formData: FormData) {
     return { error: "Title is required." };
   }
 
-  const { data: imageUrl, error } = await generateCourseImage({ orgSlug: "evals", title });
+  const { data: imageUrl, error } = await generateContentThumbnailImage({
+    kind: "course",
+    orgSlug: "evals",
+    title,
+  });
 
   if (error) {
     logError("Error generating thumbnail:", error);

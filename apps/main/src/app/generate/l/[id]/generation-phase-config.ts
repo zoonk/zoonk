@@ -38,6 +38,7 @@ export type PhaseName =
   | "savingPrerequisites"
   | "preparingImages"
   | "creatingImages"
+  | "creatingLessonImage"
   | "saving";
 
 export type GeneratedLessonKind = Exclude<LessonKind, "custom" | "review">;
@@ -85,6 +86,7 @@ function toFullPhaseSteps(
     creatingAnswerOptions: EMPTY,
     creatingExercises: EMPTY,
     creatingImages: EMPTY,
+    creatingLessonImage: EMPTY,
     creatingSentences: EMPTY,
     gettingStarted: EMPTY,
     lookingUpWords: EMPTY,

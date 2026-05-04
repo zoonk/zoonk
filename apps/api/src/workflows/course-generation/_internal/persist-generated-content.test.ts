@@ -70,6 +70,7 @@ describe(persistGeneratedContent, () => {
     expect(dbCourse.description).toBe("Generated description");
     expect(dbCourse.imageUrl).toBe("https://example.com/img.webp");
     expect(dbChapters).toHaveLength(2);
+    expect(dbChapters[0]?.imageUrl).toBeNull();
     expect(dbCategories).toHaveLength(1);
     expect(dbAltTitles).toHaveLength(1);
   });

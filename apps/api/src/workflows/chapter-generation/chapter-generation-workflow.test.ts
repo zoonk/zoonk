@@ -2,13 +2,14 @@ import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-generation-workflow";
 import { generateChapterLessons } from "@zoonk/ai/tasks/chapters/lessons";
+import { generateContentThumbnailImage } from "@zoonk/core/content/thumbnail";
 import { CHAPTER_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { chapterGenerationWorkflow } from "./chapter-generation-workflow";
 
 vi.mock("@zoonk/ai/tasks/chapters/lessons", () => ({
@@ -41,6 +42,15 @@ vi.mock("@/workflows/lesson-generation/lesson-generation-workflow", () => ({
   lessonGenerationWorkflow: vi.fn().mockResolvedValue("ready"),
 }));
 
+vi.mock("@zoonk/core/content/thumbnail", () => ({
+  generateContentThumbnailImage: vi.fn(({ kind, title }: { kind: string; title: string }) =>
+    Promise.resolve({
+      data: `https://example.com/${kind}/${encodeURIComponent(title)}.webp`,
+      error: null,
+    }),
+  ),
+}));
+
 describe(chapterGenerationWorkflow, () => {
   let organizationId: string;
   let course: Awaited<ReturnType<typeof courseFixture>>;
@@ -49,6 +59,10 @@ describe(chapterGenerationWorkflow, () => {
     const org = await aiOrganizationFixture();
     organizationId = org.id;
     course = await courseFixture({ organizationId });
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
   describe("early returns", () => {
@@ -96,7 +110,7 @@ describe(chapterGenerationWorkflow, () => {
       expect(completionEvent).toBeDefined();
     });
 
-    it("sets as completed and returns when chapter has existing lessons", async () => {
+    it("completes a chapter that already has lesson rows without generating new content", async () => {
       const chapter = await chapterFixture({
         courseId: course.id,
         generationStatus: "pending",
@@ -113,10 +127,15 @@ describe(chapterGenerationWorkflow, () => {
       await chapterGenerationWorkflow(chapter.id);
 
       const dbChapter = await prisma.chapter.findUnique({ where: { id: chapter.id } });
+      const dbLessons = await prisma.lesson.findMany({ where: { chapterId: chapter.id } });
 
       expect(dbChapter?.generationStatus).toBe("completed");
       expect(dbChapter?.generationRunId).toBe("test-run-id");
+
+      expect(dbLessons[0]?.imageUrl).toBeNull();
+
       expect(generateChapterLessons).not.toHaveBeenCalled();
+      expect(generateContentThumbnailImage).not.toHaveBeenCalled();
     });
   });
 
@@ -133,12 +152,21 @@ describe(chapterGenerationWorkflow, () => {
 
       await chapterGenerationWorkflow(chapter.id);
 
-      const lessons = await prisma.lesson.findMany({
-        orderBy: { position: "asc" },
-        where: { chapterId: chapter.id },
-      });
+      const [lessons, dbChapter] = await Promise.all([
+        prisma.lesson.findMany({ orderBy: { position: "asc" }, where: { chapterId: chapter.id } }),
+        prisma.chapter.findUnique({ where: { id: chapter.id } }),
+      ]);
 
       expect(lessonGenerationWorkflow).toHaveBeenCalledWith(lessons[0]?.id);
+      expect(lessons.every((lesson) => lesson.imageUrl === null)).toBe(true);
+
+      expect(dbChapter?.imageUrl).toBe(
+        `https://example.com/chapter/${encodeURIComponent(title)}.webp`,
+      );
+
+      expect(generateContentThumbnailImage).toHaveBeenCalledWith(
+        expect.objectContaining({ kind: "chapter" }),
+      );
     });
 
     it("sets chapter as completed before the first lesson generation runs", async () => {

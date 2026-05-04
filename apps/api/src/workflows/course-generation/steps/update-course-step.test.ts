@@ -40,7 +40,7 @@ describe(updateCourseStep, () => {
     );
   });
 
-  it("updates course description, image, and generation status", async () => {
+  it("updates course description and image without completing setup", async () => {
     const course = await courseFixture({
       generationStatus: "running",
       organizationId,
@@ -66,7 +66,7 @@ describe(updateCourseStep, () => {
 
     expect(updated.description).toBe("Updated description");
     expect(updated.imageUrl).toBe("https://example.com/image.webp");
-    expect(updated.generationStatus).toBe("completed");
+    expect(updated.generationStatus).toBe("running");
 
     const events = getStreamedEvents();
 

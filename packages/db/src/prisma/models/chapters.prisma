@@ -1,21 +1,22 @@
 model Chapter {
-  id               String                @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  organizationId   String?               @map("organization_id") @db.Uuid
-  organization     Organization?         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  courseId         String                @map("course_id") @db.Uuid
-  course           Course                @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  isLocked         Boolean               @default(false) @map("is_locked")
-  isPublished      Boolean               @default(false) @map("is_published")
-  language         String                @db.VarChar(10)
+  id               String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  organizationId   String?             @map("organization_id") @db.Uuid
+  organization     Organization?       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  courseId         String              @map("course_id") @db.Uuid
+  course           Course              @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  isLocked         Boolean             @default(false) @map("is_locked")
+  isPublished      Boolean             @default(false) @map("is_published")
+  language         String              @db.VarChar(10)
   slug             String
   title            String
-  normalizedTitle  String                @map("normalized_title")
+  normalizedTitle  String              @map("normalized_title")
   description      String
-  generationStatus GenerationStatus      @default(pending) @map("generation_status")
-  generationRunId  String?               @map("generation_run_id")
+  generationStatus GenerationStatus    @default(pending) @map("generation_status")
+  generationRunId  String?             @map("generation_run_id")
+  imageUrl         String?             @map("image_url")
   position         Int
-  createdAt        DateTime              @default(now()) @map("created_at")
-  updatedAt        DateTime              @default(now()) @updatedAt @map("updated_at")
+  createdAt        DateTime            @default(now()) @map("created_at")
+  updatedAt        DateTime            @default(now()) @updatedAt @map("updated_at")
   completions      ChapterCompletion[]
   lessons          Lesson[]
 
