@@ -1,4 +1,5 @@
 import { LIST_COURSES_LIMIT, listCourses } from "@/data/courses/list-courses";
+import { CatalogListSkeleton } from "@zoonk/ui/components/catalog-list";
 import {
   Container,
   ContainerDescription,
@@ -10,7 +11,6 @@ import { type Metadata } from "next";
 import { getExtracted, getLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { CourseListClient } from "./course-list-client";
-import { CourseListSkeleton } from "./course-list-skeleton";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
@@ -41,7 +41,7 @@ export default async function Courses() {
         </ContainerHeaderGroup>
       </ContainerHeader>
 
-      <Suspense fallback={<CourseListSkeleton />}>
+      <Suspense fallback={<CatalogListSkeleton count={8} />}>
         <CourseListContent />
       </Suspense>
     </Container>

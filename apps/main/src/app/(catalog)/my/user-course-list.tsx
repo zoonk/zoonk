@@ -1,5 +1,15 @@
-import { type UserCourse, listUserCourses } from "@/data/courses/list-user-courses";
+import { listUserCourses } from "@/data/courses/list-user-courses";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import {
+  CatalogListGroup,
+  CatalogListItem,
+  CatalogListItemContent,
+  CatalogListItemDescription,
+  CatalogListItemIcon,
+  CatalogListItemImage,
+  CatalogListItemTitle,
+  CatalogListSkeleton,
+} from "@zoonk/ui/components/catalog-list";
 import {
   Empty,
   EmptyContent,
@@ -8,25 +18,10 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@zoonk/ui/components/empty";
-import {
-  CourseListGroup,
-  CourseListItemView,
-  CourseListSkeleton,
-} from "@zoonk/ui/patterns/courses/list";
 import { NotebookPenIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import Image from "next/image";
 import Link from "next/link";
-
-function toCourseListItem(course: UserCourse) {
-  return {
-    description: course.description,
-    id: course.id,
-    imageUrl: course.imageUrl,
-    slug: course.slug,
-    title: course.title,
-  };
-}
 
 export async function UserCourseList() {
   const t = await getExtracted();
@@ -53,25 +48,32 @@ export async function UserCourseList() {
   }
 
   return (
-    <CourseListGroup layout="list">
+    <CatalogListGroup>
       {courses.map((course) => (
-        <CourseListItemView
-          course={toCourseListItem(course)}
-          image={
-            course.imageUrl ? (
-              <Image alt={course.title} height={64} src={course.imageUrl} width={64} />
-            ) : undefined
-          }
+        <CatalogListItem
           key={course.id}
-          linkComponent={
-            <Link href={`/b/${course.organization?.slug}/c/${course.slug}`} prefetch />
-          }
-        />
+          render={<Link href={`/b/${course.organization?.slug}/c/${course.slug}`} prefetch />}
+        >
+          {course.imageUrl ? (
+            <CatalogListItemImage>
+              <Image alt="" height={64} src={course.imageUrl} width={64} />
+            </CatalogListItemImage>
+          ) : (
+            <CatalogListItemIcon>
+              <NotebookPenIcon aria-hidden="true" className="text-muted-foreground/80 size-6" />
+            </CatalogListItemIcon>
+          )}
+
+          <CatalogListItemContent>
+            <CatalogListItemTitle>{course.title}</CatalogListItemTitle>
+            <CatalogListItemDescription>{course.description}</CatalogListItemDescription>
+          </CatalogListItemContent>
+        </CatalogListItem>
       ))}
-    </CourseListGroup>
+    </CatalogListGroup>
   );
 }
 
 export function UserCourseListSkeleton() {
-  return <CourseListSkeleton />;
+  return <CatalogListSkeleton />;
 }

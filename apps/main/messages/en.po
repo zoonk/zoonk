@@ -737,11 +737,6 @@ msgid "Chapter {position}"
 msgstr "Chapter {position}"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
-msgctxt "4o5CAP"
-msgid "Not completed"
-msgstr "Not completed"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgctxt "FuT9vz"
 msgid "No lessons found"
 msgstr "No lessons found"
@@ -760,6 +755,11 @@ msgstr "Search chapters..."
 msgctxt "8udPa+"
 msgid "No chapters found"
 msgstr "No chapters found"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
+msgctxt "9sDoY5"
+msgid "{completed} of {total} completed"
+msgstr "{completed} of {total} completed"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
 msgctxt "gyGolN"

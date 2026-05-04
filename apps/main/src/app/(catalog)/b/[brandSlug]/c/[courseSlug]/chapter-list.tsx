@@ -1,30 +1,141 @@
 import {
   CatalogList,
-  CatalogListContent,
   CatalogListEmpty,
   CatalogListItem,
-  CatalogListItemContent,
-  CatalogListItemDescription,
-  CatalogListItemPosition,
-  CatalogListItemProgress,
-  CatalogListItemTitle,
   CatalogListSearch,
 } from "@/components/catalog/catalog-list";
+import { type CourseChapter } from "@/data/chapters/list-course-chapters";
 import { getChapterProgress } from "@zoonk/core/progress/chapters";
-import { type Chapter } from "@zoonk/db";
-import { formatPosition } from "@zoonk/utils/number";
+import {
+  CatalogListGroup,
+  CatalogListItemContent,
+  CatalogListItemDescription,
+  CatalogListItemHeader,
+  CatalogListItemImage,
+  CatalogListItemStatusCompleted,
+  CatalogListItemStatusProgress,
+  CatalogListItemTitle,
+} from "@zoonk/ui/components/catalog-list";
 import { getExtracted } from "next-intl/server";
+import Image from "next/image";
+
+/**
+ * Chapter progress has one visual status, but the rules depend on both the
+ * completed count and the total published lesson count.
+ */
+function getProgressStatus({
+  completed,
+  total,
+}: {
+  completed: number;
+  total: number;
+}): "completed" | "inProgress" | "notStarted" {
+  if (total > 0 && completed >= total) {
+    return "completed";
+  }
+
+  if (completed > 0) {
+    return "inProgress";
+  }
+
+  return "notStarted";
+}
+
+/**
+ * Chapter rows need three quiet states: empty for untouched, blue for partial
+ * progress, and green for complete.
+ */
+function ChapterListItemStatus({
+  completedLabel,
+  completedLessons,
+  inProgressLabel,
+  totalLessons,
+}: {
+  completedLabel: string;
+  completedLessons: number;
+  inProgressLabel: string;
+  totalLessons: number;
+}) {
+  const status = getProgressStatus({ completed: completedLessons, total: totalLessons });
+
+  if (status === "completed") {
+    return <CatalogListItemStatusCompleted aria-label={completedLabel} />;
+  }
+
+  if (status === "inProgress") {
+    return <CatalogListItemStatusProgress aria-label={inProgressLabel} />;
+  }
+
+  return null;
+}
+
+/**
+ * A chapter row owns the thumbnail, text, and status composition so the page map
+ * can stay focused on progress lookup and translated labels.
+ */
+function ChapterRow({
+  brandSlug,
+  chapter,
+  completedLabel,
+  completedLessons,
+  courseSlug,
+  defaultChapterImage,
+  inProgressLabel,
+  totalLessons,
+}: {
+  brandSlug: string;
+  chapter: CourseChapter;
+  completedLabel: string;
+  completedLessons: number;
+  courseSlug: string;
+  defaultChapterImage: string;
+  inProgressLabel: string;
+  totalLessons: number;
+}) {
+  const chapterNumber = chapter.position + 1;
+
+  return (
+    <CatalogListItem
+      href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapter.slug}`}
+      id={chapter.id}
+      prefetch={chapter.generationStatus === "completed"}
+    >
+      <CatalogListItemImage>
+        <Image alt="" height={64} src={chapter.imageUrl ?? defaultChapterImage} width={64} />
+      </CatalogListItemImage>
+
+      <CatalogListItemContent>
+        <CatalogListItemHeader>
+          <CatalogListItemTitle>
+            <span className="text-muted-foreground">{chapterNumber}.</span> {chapter.title}
+          </CatalogListItemTitle>
+          <ChapterListItemStatus
+            completedLabel={completedLabel}
+            completedLessons={completedLessons}
+            inProgressLabel={inProgressLabel}
+            totalLessons={totalLessons}
+          />
+        </CatalogListItemHeader>
+        {chapter.description && (
+          <CatalogListItemDescription>{chapter.description}</CatalogListItemDescription>
+        )}
+      </CatalogListItemContent>
+    </CatalogListItem>
+  );
+}
 
 export async function ChapterList({
   brandSlug,
   chapters,
   courseId,
   courseSlug,
+  defaultChapterImage,
 }: {
   brandSlug: string;
-  chapters: Chapter[];
+  chapters: CourseChapter[];
   courseId: string;
   courseSlug: string;
+  defaultChapterImage: string;
 }) {
   if (chapters.length === 0) {
     return null;
@@ -38,39 +149,30 @@ export async function ChapterList({
     <CatalogList>
       <CatalogListSearch items={chapters} placeholder={t("Search chapters...")}>
         <CatalogListEmpty>{t("No chapters found")}</CatalogListEmpty>
-        <CatalogListContent>
+        <CatalogListGroup>
           {chapters.map((chapter) => {
             const completion = completionMap.get(chapter.id);
+            const completedLessons = completion?.completedLessons ?? 0;
+            const totalLessons = chapter._count.lessons;
 
             return (
-              <CatalogListItem
-                href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapter.slug}`}
-                id={chapter.id}
+              <ChapterRow
+                brandSlug={brandSlug}
+                chapter={chapter}
+                completedLabel={t("Completed")}
+                completedLessons={completedLessons}
+                courseSlug={courseSlug}
+                defaultChapterImage={defaultChapterImage}
+                inProgressLabel={t("{completed} of {total} completed", {
+                  completed: String(completedLessons),
+                  total: String(totalLessons),
+                })}
                 key={chapter.id}
-                prefetch={chapter.generationStatus === "completed"}
-              >
-                <CatalogListItemPosition>
-                  {formatPosition(chapter.position)}
-                </CatalogListItemPosition>
-
-                <CatalogListItemContent>
-                  <CatalogListItemTitle>{chapter.title}</CatalogListItemTitle>
-                  {chapter.description && (
-                    <CatalogListItemDescription>{chapter.description}</CatalogListItemDescription>
-                  )}
-                </CatalogListItemContent>
-
-                {completion && (
-                  <CatalogListItemProgress
-                    completed={completion.completedLessons}
-                    completedLabel={t("Completed")}
-                    total={completion.totalLessons}
-                  />
-                )}
-              </CatalogListItem>
+                totalLessons={totalLessons}
+              />
             );
           })}
-        </CatalogListContent>
+        </CatalogListGroup>
       </CatalogListSearch>
     </CatalogList>
   );

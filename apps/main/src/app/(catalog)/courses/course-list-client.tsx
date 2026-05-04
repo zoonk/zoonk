@@ -1,12 +1,16 @@
 "use client";
 
 import { type CourseWithOrg } from "@/data/courses/list-courses";
-import { useInfiniteList } from "@zoonk/ui/hooks/infinite-list";
 import {
-  CourseListGroup,
-  type CourseListItem,
-  CourseListItemView,
-} from "@zoonk/ui/patterns/courses/list";
+  CatalogListGroup,
+  CatalogListItem,
+  CatalogListItemContent,
+  CatalogListItemDescription,
+  CatalogListItemIcon,
+  CatalogListItemImage,
+  CatalogListItemTitle,
+} from "@zoonk/ui/components/catalog-list";
+import { useInfiniteList } from "@zoonk/ui/hooks/infinite-list";
 import { EmptyView } from "@zoonk/ui/patterns/empty";
 import { type CourseCategory } from "@zoonk/utils/categories";
 import { Loader2Icon, NotebookPenIcon } from "lucide-react";
@@ -14,16 +18,6 @@ import { useExtracted } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 import { loadMoreCourses } from "./actions";
-
-function toCourseListItem(course: CourseWithOrg): CourseListItem {
-  return {
-    description: course.description,
-    id: course.id,
-    imageUrl: course.imageUrl,
-    slug: course.slug,
-    title: course.title,
-  };
-}
 
 export function CourseListClient({
   category,
@@ -61,22 +55,29 @@ export function CourseListClient({
 
   return (
     <>
-      <CourseListGroup layout="list">
+      <CatalogListGroup>
         {courses.map((course) => (
-          <CourseListItemView
-            course={toCourseListItem(course)}
-            image={
-              course.imageUrl ? (
-                <Image alt={course.title} height={64} src={course.imageUrl} width={64} />
-              ) : undefined
-            }
+          <CatalogListItem
             key={course.id}
-            linkComponent={
-              <Link href={`/b/${course.organization?.slug}/c/${course.slug}`} prefetch />
-            }
-          />
+            render={<Link href={`/b/${course.organization?.slug}/c/${course.slug}`} prefetch />}
+          >
+            {course.imageUrl ? (
+              <CatalogListItemImage>
+                <Image alt="" height={64} src={course.imageUrl} width={64} />
+              </CatalogListItemImage>
+            ) : (
+              <CatalogListItemIcon>
+                <NotebookPenIcon aria-hidden="true" className="text-muted-foreground/80 size-6" />
+              </CatalogListItemIcon>
+            )}
+
+            <CatalogListItemContent>
+              <CatalogListItemTitle>{course.title}</CatalogListItemTitle>
+              <CatalogListItemDescription>{course.description}</CatalogListItemDescription>
+            </CatalogListItemContent>
+          </CatalogListItem>
         ))}
-      </CourseListGroup>
+      </CatalogListGroup>
 
       <div className="flex justify-center py-4" ref={sentryRef}>
         {isLoading && (

@@ -1,18 +1,15 @@
 "use client";
 
+import { CatalogListItem as CatalogListItemRoot } from "@zoonk/ui/components/catalog-list";
 import { Input } from "@zoonk/ui/components/input";
 import { cn } from "@zoonk/ui/lib/utils";
 import { normalizeString } from "@zoonk/utils/string";
-import { CheckIcon, SearchIcon } from "lucide-react";
+import { SearchIcon } from "lucide-react";
 import { type Route } from "next";
 import Link from "next/link";
 import { useQueryState } from "nuqs";
-import { type ReactNode, createContext, use, useMemo } from "react";
-
-const CatalogListContext = createContext<{
-  filteredIds: Set<string> | null;
-  isSearchActive: boolean;
-} | null>(null);
+import { type ReactNode, useMemo } from "react";
+import { CatalogListContext, useCatalogListContext } from "./catalog-list-context";
 
 export function CatalogContainer({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -84,7 +81,7 @@ export function CatalogListSearch<T extends { id: string | number; title: string
 }
 
 export function CatalogListEmpty({ className, ...props }: React.ComponentProps<"p">) {
-  const context = use(CatalogListContext);
+  const context = useCatalogListContext();
   const filteredIds = context?.filteredIds ?? null;
   const isSearchActive = context?.isSearchActive ?? false;
 
@@ -103,17 +100,6 @@ export function CatalogListEmpty({ className, ...props }: React.ComponentProps<"
   );
 }
 
-export function CatalogListContent({ className, ...props }: React.ComponentProps<"ul">) {
-  return (
-    <ul
-      {...props}
-      className={cn("flex flex-col", className)}
-      data-slot="catalog-list-content"
-      role="list"
-    />
-  );
-}
-
 export function CatalogListItem<Href extends string>({
   children,
   className,
@@ -127,7 +113,7 @@ export function CatalogListItem<Href extends string>({
   id: string | number | bigint;
   prefetch?: boolean;
 }) {
-  const context = use(CatalogListContext);
+  const context = useCatalogListContext();
   const filteredIds = context?.filteredIds ?? null;
 
   if (filteredIds && !filteredIds.has(String(id))) {
@@ -135,138 +121,8 @@ export function CatalogListItem<Href extends string>({
   }
 
   return (
-    <li data-slot="catalog-list-item">
-      <Link
-        className={cn(
-          "hover:bg-muted/30 -mx-3 flex items-start gap-3 rounded-lg px-3 py-3.5 text-left transition-colors",
-          className,
-        )}
-        href={href}
-        prefetch={prefetch}
-      >
-        {children}
-      </Link>
-    </li>
-  );
-}
-
-export function CatalogListItemPosition({ className, ...props }: React.ComponentProps<"span">) {
-  return (
-    <span
-      {...props}
-      className={cn(
-        "text-muted-foreground/40 w-6 shrink-0 pt-0.5 font-mono text-sm leading-snug tabular-nums",
-        className,
-      )}
-      data-slot="catalog-list-item-position"
-    />
-  );
-}
-
-export function CatalogListItemIndicator({
-  className,
-  completed,
-  completedLabel,
-  notCompletedLabel,
-}: {
-  className?: string;
-  completed: boolean;
-  completedLabel: string;
-  notCompletedLabel: string;
-}) {
-  if (completed) {
-    return (
-      <div
-        aria-label={completedLabel}
-        className={cn(
-          "bg-success/60 text-background flex size-3.5 shrink-0 items-center justify-center self-center rounded-full",
-          className,
-        )}
-        data-slot="catalog-list-item-indicator"
-        role="img"
-      >
-        <CheckIcon aria-hidden="true" className="size-3" />
-      </div>
-    );
-  }
-
-  return (
-    <div
-      aria-label={notCompletedLabel}
-      className={cn(
-        "border-muted-foreground/30 size-3.5 shrink-0 self-center rounded-full border-2",
-        className,
-      )}
-      data-slot="catalog-list-item-indicator"
-      role="img"
-    />
-  );
-}
-
-export function CatalogListItemContent({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      {...props}
-      className={cn("flex min-w-0 flex-1 flex-col gap-0.5", className)}
-      data-slot="catalog-list-item-content"
-    />
-  );
-}
-
-export function CatalogListItemTitle({
-  className,
-  completed,
-  ...props
-}: React.ComponentProps<"span"> & { completed?: boolean }) {
-  return (
-    <span
-      {...props}
-      className={cn(
-        "text-sm leading-snug font-medium",
-        completed ? "text-muted-foreground" : "text-foreground/90",
-        className,
-      )}
-      data-slot="catalog-list-item-title"
-    />
-  );
-}
-
-export function CatalogListItemDescription({ className, ...props }: React.ComponentProps<"span">) {
-  return (
-    <span
-      {...props}
-      className={cn("text-muted-foreground line-clamp-2 pt-0.5 text-sm leading-snug", className)}
-      data-slot="catalog-list-item-description"
-    />
-  );
-}
-
-export function CatalogListItemProgress({
-  completed,
-  completedLabel,
-  total,
-}: {
-  completed: number;
-  completedLabel: string;
-  total: number;
-}) {
-  if (total === 0 || completed === 0) {
-    return null;
-  }
-
-  if (completed >= total) {
-    return (
-      <CatalogListItemIndicator completed completedLabel={completedLabel} notCompletedLabel="" />
-    );
-  }
-
-  return (
-    <span
-      aria-label={`${completed} of ${total} completed`}
-      className="text-muted-foreground/60 shrink-0 self-center font-mono text-xs tabular-nums"
-      data-slot="catalog-list-item-progress"
-    >
-      {completed}/{total}
-    </span>
+    <CatalogListItemRoot className={className} render={<Link href={href} prefetch={prefetch} />}>
+      {children}
+    </CatalogListItemRoot>
   );
 }
