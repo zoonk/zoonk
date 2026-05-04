@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseLocalDate } from "./date";
+import { parseLocalDate, serializeDate } from "./date";
 
 describe(parseLocalDate, () => {
   it("parses a valid YYYY-MM-DD string to UTC midnight", () => {
@@ -27,5 +27,22 @@ describe(parseLocalDate, () => {
   it("handles leap day", () => {
     const result = parseLocalDate("2028-02-29");
     expect(result).toStrictEqual(new Date(Date.UTC(2028, 1, 29)));
+  });
+});
+
+describe(serializeDate, () => {
+  it("serializes Date objects as ISO strings", () => {
+    const value = new Date("2026-05-04T12:30:00.000Z");
+
+    expect(serializeDate(value)).toBe("2026-05-04T12:30:00.000Z");
+  });
+
+  it("returns existing strings without changing them", () => {
+    expect(serializeDate("2026-05-04T12:30:00.000Z")).toBe("2026-05-04T12:30:00.000Z");
+  });
+
+  it("returns null for missing values", () => {
+    expect(serializeDate(null)).toBeNull();
+    expect(serializeDate()).toBeNull();
   });
 });
