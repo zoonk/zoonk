@@ -3,6 +3,7 @@ import { createDocument } from "zod-openapi";
 import { paginationSchema } from "./schemas/common";
 import { courseResultSchema, courseSearchQuerySchema } from "./schemas/courses";
 import { feedbackResponseSchema, feedbackSubmissionSchema } from "./schemas/feedback";
+import { meResponseSchema, meUpdateSchema } from "./schemas/me";
 import {
   chapterCompletionQuerySchema,
   chapterCompletionResponseSchema,
@@ -12,6 +13,9 @@ import {
   nextLessonResponseSchema,
 } from "./schemas/progress";
 import {
+  badRequestResponse,
+  conflictResponse,
+  unauthorizedResponse,
   validationErrorResponse,
   workflowStatusEndpoint,
   workflowTriggerEndpoint,
@@ -76,6 +80,33 @@ export const openAPIDocument = createDocument({
         },
         summary: "Submit a feedback message",
         tags: ["Feedback"],
+      },
+    },
+    "/me": {
+      get: {
+        responses: {
+          "200": {
+            content: { "application/json": { schema: meResponseSchema } },
+            description: "Current user and account state",
+          },
+          "401": unauthorizedResponse,
+        },
+        summary: "Get current user",
+        tags: ["Auth"],
+      },
+      patch: {
+        requestBody: { content: { "application/json": { schema: meUpdateSchema } } },
+        responses: {
+          "200": {
+            content: { "application/json": { schema: meResponseSchema } },
+            description: "Updated user and account state",
+          },
+          "400": badRequestResponse,
+          "401": unauthorizedResponse,
+          "409": conflictResponse,
+        },
+        summary: "Update current user",
+        tags: ["Auth"],
       },
     },
     "/progress/chapter-completion": {

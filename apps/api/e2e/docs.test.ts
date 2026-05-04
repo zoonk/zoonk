@@ -55,6 +55,7 @@ test.describe("API Documentation", () => {
     expect(spec.paths).toHaveProperty("/auth/health");
     expect(spec.paths).toHaveProperty("/courses/search");
     expect(spec.paths).toHaveProperty("/feedback");
+    expect(spec.paths).toHaveProperty("/me");
     expect(spec.paths).toHaveProperty("/workflows/course-generation/trigger");
     expect(spec.paths).toHaveProperty("/workflows/course-generation/status");
     expect(spec.paths).toHaveProperty("/workflows/chapter-generation/trigger");

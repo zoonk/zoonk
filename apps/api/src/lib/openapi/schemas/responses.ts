@@ -7,6 +7,21 @@ export const validationErrorResponse = {
   description: "Validation error",
 } as const;
 
+export const badRequestResponse = {
+  content: { "application/json": { schema: errorSchema } },
+  description: "Bad request",
+} as const;
+
+export const conflictResponse = {
+  content: { "application/json": { schema: errorSchema } },
+  description: "Conflict",
+} as const;
+
+export const unauthorizedResponse = {
+  content: { "application/json": { schema: errorSchema } },
+  description: "Authentication required",
+} as const;
+
 const subscriptionRequiredResponse = {
   content: { "application/json": { schema: errorSchema } },
   description: "Subscription required",
