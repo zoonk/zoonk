@@ -19,7 +19,14 @@ import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { toSlug } from "@zoonk/utils/string";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { getOrCreateCourse } from "./_internal/get-or-create-course";
+import { chapterImagesWorkflow } from "./chapter-images-workflow";
 import { courseGenerationWorkflow } from "./course-generation-workflow";
+
+const { startMock } = vi.hoisted(() => ({
+  startMock: vi.fn().mockResolvedValue({ runId: "chapter-images-run-id" }),
+}));
+
+vi.mock("workflow/api", () => ({ start: startMock }));
 
 vi.mock("@zoonk/ai/tasks/courses/description", () => ({
   generateCourseDescription: vi
@@ -253,12 +260,19 @@ describe(courseGenerationWorkflow, () => {
       const firstChapter = course?.chapters[0];
       expect(firstChapter?.generationStatus).toBe("completed");
       expect(firstChapter?.lessons).toHaveLength(5);
-      expect(firstChapter?.imageUrl).toBe("https://example.com/chapter/Chapter%201.webp");
+      expect(firstChapter?.imageUrl).toBeNull();
 
       const secondChapter = course?.chapters[1];
       expect(secondChapter?.generationStatus).toBe("pending");
       expect(secondChapter?.lessons).toHaveLength(0);
       expect(secondChapter?.imageUrl).toBeNull();
+
+      expect(startMock).toHaveBeenCalledWith(chapterImagesWorkflow, [
+        expect.arrayContaining([
+          expect.objectContaining({ id: firstChapter?.id, title: "Chapter 1" }),
+          expect.objectContaining({ id: secondChapter?.id, title: "Chapter 2" }),
+        ]),
+      ]);
     });
   });
 
@@ -420,6 +434,31 @@ describe(courseGenerationWorkflow, () => {
 
       const firstChapter = course?.chapters[0];
       expect(firstChapter?.generationStatus).toBe("failed");
+    });
+
+    it("chapter image workflow start errors don't fail the course workflow", async () => {
+      startMock.mockRejectedValueOnce(new Error("Chapter image workflow failed to start"));
+
+      const title = `Chapter Image Error Course ${randomUUID()}`;
+      const slug = toSlug(title);
+
+      const suggestion = await courseSuggestionFixture({
+        generationStatus: "pending",
+        slug,
+        title,
+      });
+
+      await expect(courseGenerationWorkflow(suggestion.id)).resolves.toBeUndefined();
+
+      const course = await prisma.course.findFirst({
+        include: { chapters: { orderBy: { position: "asc" } } },
+        where: { slug },
+      });
+
+      expect(course?.generationStatus).toBe("completed");
+      expect(course?.chapters[0]?.generationStatus).toBe("completed");
+      expect(course?.chapters[0]?.imageUrl).toBeNull();
+      expect(course?.chapters[1]?.imageUrl).toBeNull();
     });
   });
 });
