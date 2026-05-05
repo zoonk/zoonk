@@ -1,0 +1,59 @@
+apps/main/src/app/(catalog)/courses/layout.tsx
+  72624fbbedff0dc3 12,18
+packages/ui/src/components/container.tsx
+  h_1cda88fc21fe9c 16
+packages/ui/src/components/list.tsx
+  h_1cda88fc21fe9c 17-18,20-73,77-78,80-81,85-86,88,93-94,96,104,112,116,126-127,134-135,142,149,162,169,182,184,186,189-190,192,194,197-198,200
+apps/main/src/app/(catalog)/courses/page.tsx
+  72624fbbedff0dc3 9,44
+apps/main/src/app/(catalog)/my/user-course-list.tsx
+  72624fbbedff0dc3 11-20,51,53,58,60,62,64,67-71,73,78
+apps/main/src/app/(catalog)/courses/[category]/page.tsx
+  72624fbbedff0dc3 10,62
+apps/main/src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/loading.tsx
+  72624fbbedff0dc3 5
+apps/main/src/app/(catalog)/courses/category-pills.tsx
+  h_1cda88fc21fe9c 14,37
+apps/main/src/components/catalog/catalog-skeletons.tsx
+  72624fbbedff0dc3 1,14-19,36-37,40,42
+apps/main/src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/page.tsx
+  72624fbbedff0dc3 11,69,72-73,86,97
+apps/main/src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/loading.tsx
+  72624fbbedff0dc3 5
+apps/main/src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
+  72624fbbedff0dc3 9-18,62,66,103,105,107-109,111,118-120,147,150,173,175
+apps/main/src/app/(catalog)/courses/course-list-client.tsx
+  72624fbbedff0dc3 5-12,58,60,65,67,69,71,74-78,80
+apps/main/src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+  72624fbbedff0dc3 11-19,37,70,77,79-81,83-85,131,134,152,154
+apps/main/src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+  72624fbbedff0dc3 11,63,66-67,72,83
+apps/main/src/components/catalog/catalog-list.tsx
+  72624fbbedff0dc3 44-55,62-65
+  h_1cda88fc21fe9c 4,77,101,103
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "4ed14da9d49926c18a495cca11b4353d8acef139",
+  "prompts": {
+    "72624fbbedff0dc3": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019df9bf-e8e0-7ad2-843b-0f91f1cf467c",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1096,
+      "total_deletions": 755,
+      "accepted_lines": 702,
+      "overriden_lines": 5
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
