@@ -140,7 +140,7 @@ describe(chapterGenerationWorkflow, () => {
   });
 
   describe("happy path", () => {
-    it("calls lessonGenerationWorkflow with first lesson's ID", async () => {
+    it("calls lessonGenerationWorkflow with first lesson's ID without generating a chapter image", async () => {
       const title = `Lesson Gen Chapter ${randomUUID()}`;
 
       const chapter = await chapterFixture({
@@ -160,13 +160,8 @@ describe(chapterGenerationWorkflow, () => {
       expect(lessonGenerationWorkflow).toHaveBeenCalledWith(lessons[0]?.id);
       expect(lessons.every((lesson) => lesson.imageUrl === null)).toBe(true);
 
-      expect(dbChapter?.imageUrl).toBe(
-        `https://example.com/chapter/${encodeURIComponent(title)}.webp`,
-      );
-
-      expect(generateContentThumbnailImage).toHaveBeenCalledWith(
-        expect.objectContaining({ kind: "chapter" }),
-      );
+      expect(dbChapter?.imageUrl).toBeNull();
+      expect(generateContentThumbnailImage).not.toHaveBeenCalled();
     });
 
     it("sets chapter as completed before the first lesson generation runs", async () => {

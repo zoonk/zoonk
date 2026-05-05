@@ -83,10 +83,11 @@ describe(setChapterAsCompletedStep, () => {
     );
   });
 
-  it("saves the generated chapter image with the completion status", async () => {
+  it("leaves chapter image updates to the course image step", async () => {
     const chapter = await chapterFixture({
       courseId: course.id,
       generationStatus: "running",
+      imageUrl: "https://example.com/existing-chapter.webp",
       organizationId,
       title: `Chapter Image Complete ${randomUUID()}`,
     });
@@ -98,14 +99,10 @@ describe(setChapterAsCompletedStep, () => {
       neighboringChapters: [],
     };
 
-    await setChapterAsCompletedStep({
-      context,
-      imageUrl: "https://example.com/chapter-complete.webp",
-      workflowRunId: `run-${randomUUID()}`,
-    });
+    await setChapterAsCompletedStep({ context, workflowRunId: `run-${randomUUID()}` });
 
     const updated = await prisma.chapter.findUniqueOrThrow({ where: { id: chapter.id } });
 
-    expect(updated.imageUrl).toBe("https://example.com/chapter-complete.webp");
+    expect(updated.imageUrl).toBe("https://example.com/existing-chapter.webp");
   });
 });
