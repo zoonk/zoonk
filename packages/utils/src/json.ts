@@ -1,5 +1,9 @@
+/**
+ * Narrows unknown JSON-like values to keyed objects so callers can safely read
+ * named fields without accidentally treating arrays as records.
+ */
 export function isJsonObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 export function getString(body: unknown, key: string): string | null {

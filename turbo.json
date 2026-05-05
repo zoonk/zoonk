@@ -31,11 +31,11 @@
     "//#quality:fix": { "dependsOn": ["//#lint:fix", "//#format:fix"] },
     "build": {
       "dependsOn": ["db:generate", "db:deploy", "^build"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "!.next/cache/**", "messages/**"]
     },
     "build:e2e": {
       "dependsOn": ["db:generate", "^build:e2e"],
-      "outputs": [".next-e2e/**", "!.next-e2e/cache/**"]
+      "outputs": [".next-e2e/**", "!.next-e2e/cache/**", "messages/**"]
     },
     "db:deploy": { "cache": false },
     "db:generate": {

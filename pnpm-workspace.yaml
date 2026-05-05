@@ -39,7 +39,7 @@ catalog:
   jsdom: 29.1.0
   lucide-react: 1.14.0
   next: 16.2.4
-  next-intl: 4.11.0
+  next-intl: 0.0.0-canary-8f7782e
   nuqs: 2.8.9
   raw-loader: 4.0.2
   react: 19.2.5

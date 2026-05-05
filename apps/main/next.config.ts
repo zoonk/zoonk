@@ -33,6 +33,7 @@ const nextConfig: NextConfig = {
   logging: { browserToTerminal: true },
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
   reactCompiler: true,
+  transpilePackages: ["@zoonk/player"],
   turbopack: {
     resolveAlias: { ...e2eAliases },
     rules: {
@@ -48,14 +49,12 @@ const withMDX = createMDX();
 
 const withNextIntl = createNextIntlPlugin({
   experimental: {
-    extract: { sourceLocale: "en" },
+    extract: { locales: "infer", path: "./messages", sourceLocale: "en", srcPath: "./src" },
     messages: {
       format: { codec: "./src/i18n/codec.ts", extension: ".po" },
-      locales: "infer",
-      path: "./messages",
+      path: ["./messages", "../../packages/player/messages"],
       precompile: true,
     },
-    srcPath: ["./src", "../../packages/player/src"],
   },
 });
 

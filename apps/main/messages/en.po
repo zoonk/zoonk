@@ -5,82 +5,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: next-intl\n"
 
-#: ../../packages/player/src/components/arrange-words-answer-area.tsx
-msgctxt "1nJY2/"
-msgid "Your answer"
-msgstr "Your answer"
-
-#: ../../packages/player/src/components/arrange-words-answer-area.tsx
-#: ../../packages/player/src/components/fill-blank-step.tsx
-#: ../../packages/player/src/components/sort-order-step.tsx
-msgctxt "6NoIUl"
-msgid "Correct"
-msgstr "Correct"
-
-#: ../../packages/player/src/components/arrange-words-answer-area.tsx
-msgctxt "7R/rOB"
-msgid "Tap words to build your answer"
-msgstr "Tap words to build your answer"
-
-#: ../../packages/player/src/components/arrange-words-answer-area.tsx
-#: ../../packages/player/src/components/sort-order-step.tsx
-msgctxt "hFFOe+"
-msgid "{item}. {result}."
-msgstr "{item}. {result}."
-
-#: ../../packages/player/src/components/arrange-words-answer-area.tsx
-msgctxt "vPyO9S"
-msgid "Position {position}: {item}. Tap to remove."
-msgstr "Position {position}: {item}. Tap to remove."
-
-#: ../../packages/player/src/components/arrange-words-answer-area.tsx
-#: ../../packages/player/src/components/fill-blank-step.tsx
-#: ../../packages/player/src/components/sort-order-step.tsx
-msgctxt "Ypr9T5"
-msgid "Incorrect"
-msgstr "Incorrect"
-
-#: ../../packages/player/src/components/arrange-words.tsx
-#: ../../packages/player/src/components/fill-blank-step.tsx
-msgctxt "e7WNdK"
-msgid "Word bank"
-msgstr "Word bank"
-
-#: ../../packages/player/src/components/belt-progress.tsx
-#: src/app/(catalog)/(home)/level.tsx
-#: src/app/(progress)/level/level-stats.tsx
-msgctxt "3UK8wh"
-msgid "{color} belt"
-msgstr "{color} belt"
-
-#: ../../packages/player/src/components/belt-progress.tsx
-msgctxt "IGs0wl"
-msgid "Level progress"
-msgstr "Level progress"
-
-#: ../../packages/player/src/components/belt-progress.tsx
-msgctxt "oMEE4o"
-msgid "{value} BP to level up"
-msgstr "{value} BP to level up"
-
-#: ../../packages/player/src/components/belt-progress.tsx
-msgctxt "xiSVL4"
-msgid "{color} Belt — Level {level}"
-msgstr "{color} Belt — Level {level}"
-
-#: ../../packages/player/src/components/completion-auth-branch.tsx
-#: ../../packages/player/src/components/completion-milestone-actions.tsx
-msgctxt "9+Ddtu"
-msgid "Next"
-msgstr "Next"
-
-#: ../../packages/player/src/components/completion-auth-branch.tsx
-msgctxt "Ak+bLZ"
-msgid "All Lessons"
-msgstr "All Lessons"
-
-#: ../../packages/player/src/components/completion-auth-branch.tsx
-#: ../../packages/player/src/components/completion-milestone-actions.tsx
 #: src/app/(catalog)/_components/command-palette.tsx
 #: src/app/(catalog)/_components/logout-dropdown-item.tsx
 #: src/app/(progress)/_components/progress-empty-state.tsx
@@ -89,367 +13,6 @@ msgstr "All Lessons"
 msgctxt "AyGauy"
 msgid "Login"
 msgstr "Login"
-
-#: ../../packages/player/src/components/completion-auth-branch.tsx
-#: ../../packages/player/src/components/completion-milestone-actions.tsx
-msgctxt "e1M39C"
-msgid "Sign up to track your progress"
-msgstr "Sign up to track your progress"
-
-#: ../../packages/player/src/components/completion-auth-branch.tsx
-#: src/app/generate/ch/[id]/generation-client.tsx
-#: src/app/generate/cs/[id]/generation-client.tsx
-#: src/app/generate/l/[id]/generation-client.tsx
-msgctxt "FazwRl"
-msgid "Try again"
-msgstr "Try again"
-
-#: ../../packages/player/src/components/completion-milestone-actions.tsx
-msgctxt "DiIkZH"
-msgid "Next Chapter"
-msgstr "Next Chapter"
-
-#: ../../packages/player/src/components/completion-milestone-actions.tsx
-msgctxt "w0D7HC"
-msgid "Review Course"
-msgstr "Review Course"
-
-#: ../../packages/player/src/components/completion-milestone-actions.tsx
-msgctxt "wm/M34"
-msgid "Review Chapter"
-msgstr "Review Chapter"
-
-#: ../../packages/player/src/components/completion-screen.tsx
-msgctxt "2wDWd0"
-msgid "Course Complete"
-msgstr "Course Complete"
-
-#: ../../packages/player/src/components/completion-screen.tsx
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
-msgctxt "95stPq"
-msgid "Completed"
-msgstr "Completed"
-
-#: ../../packages/player/src/components/completion-screen.tsx
-msgctxt "P768k7"
-msgid "correct"
-msgstr "correct"
-
-#: ../../packages/player/src/components/completion-screen.tsx
-msgctxt "t2VOpl"
-msgid "Chapter Complete"
-msgstr "Chapter Complete"
-
-#: ../../packages/player/src/components/expandable-step-image-stage.tsx
-msgctxt "3Pgbio"
-msgid "Full image"
-msgstr "Full image"
-
-#: ../../packages/player/src/components/expandable-step-image-stage.tsx
-msgctxt "pumVIo"
-msgid "Open full image"
-msgstr "Open full image"
-
-#: ../../packages/player/src/components/expandable-step-image-stage.tsx
-msgctxt "vqV+x5"
-msgid "Shows the full uncropped step image."
-msgstr "Shows the full uncropped step image."
-
-#: ../../packages/player/src/components/expandable-step-image-stage.tsx
-msgctxt "ZYZr+P"
-msgid "Close full image"
-msgstr "Close full image"
-
-#: ../../packages/player/src/components/feedback-answer-blocks.tsx
-msgctxt "3nOd8f"
-msgid "Your answer:"
-msgstr "Your answer:"
-
-#: ../../packages/player/src/components/feedback-answer-blocks.tsx
-msgctxt "QAJ/Tl"
-msgid "Correct answer:"
-msgstr "Correct answer:"
-
-#: ../../packages/player/src/components/feedback-screen.tsx
-msgctxt "fpO9TK"
-msgid "Translate:"
-msgstr "Translate:"
-
-#: ../../packages/player/src/components/fill-blank-step.tsx
-msgctxt "FmmJ/j"
-msgid "Blank {position}"
-msgstr "Blank {position}"
-
-#: ../../packages/player/src/components/fill-blank-step.tsx
-msgctxt "SL2Bob"
-msgid "Blank {position}: {item}. {result}."
-msgstr "Blank {position}: {item}. {result}."
-
-#: ../../packages/player/src/components/fill-blank-step.tsx
-msgctxt "wUEGVH"
-msgid "Blank {position}: {item}. Tap to remove."
-msgstr "Blank {position}: {item}. Tap to remove."
-
-#: ../../packages/player/src/components/fill-blank-step.tsx
-msgctxt "xvWuPP"
-msgid "Correct answer: {answer}"
-msgstr "Correct answer: {answer}"
-
-#: ../../packages/player/src/components/inline-feedback.tsx
-msgctxt "HvLGEN"
-msgid "Answer feedback"
-msgstr "Answer feedback"
-
-#: ../../packages/player/src/components/lesson-info-popover.tsx
-msgctxt "RwePAQ"
-msgid "Lesson info"
-msgstr "Lesson info"
-
-#: ../../packages/player/src/components/listening-step.tsx
-#: ../../packages/player/src/components/reading-step.tsx
-msgctxt "19nXyC"
-msgid "Translate this sentence:"
-msgstr "Translate this sentence:"
-
-#: ../../packages/player/src/components/listening-step.tsx
-msgctxt "aAmWaS"
-msgid "What do you hear?"
-msgstr "What do you hear?"
-
-#: ../../packages/player/src/components/match-columns-step.tsx
-msgctxt "ja1JDt"
-msgid "All pairs matched. Press Check to continue."
-msgstr "All pairs matched. Press Check to continue."
-
-#: ../../packages/player/src/components/play-audio-button.tsx
-msgctxt "lYWSeP"
-msgid "Play pronunciation"
-msgstr "Play pronunciation"
-
-#: ../../packages/player/src/components/play-audio-button.tsx
-msgctxt "WGft2H"
-msgid "Pause pronunciation"
-msgstr "Pause pronunciation"
-
-#: ../../packages/player/src/components/player-choice-scene.tsx
-msgctxt "akd+cv"
-msgid "Answer options"
-msgstr "Answer options"
-
-#: ../../packages/player/src/components/player-header.tsx
-msgctxt "rbrahO"
-msgid "Close"
-msgstr "Close"
-
-#: ../../packages/player/src/components/player-progress-bar.tsx
-msgctxt "dYp90P"
-msgid "Lesson progress"
-msgstr "Lesson progress"
-
-#: ../../packages/player/src/components/player-shell.tsx
-msgctxt "tJtNzs"
-msgid "Player screen"
-msgstr "Player screen"
-
-#: ../../packages/player/src/components/reward-badges.tsx
-#: src/app/(progress)/level/level-stats.tsx
-msgctxt "/Q0taG"
-msgid "BP"
-msgstr "BP"
-
-#: ../../packages/player/src/components/reward-badges.tsx
-#: src/app/(catalog)/(home)/energy.tsx
-#: src/app/(progress)/_components/metric-pills.tsx
-#: src/app/(progress)/energy/page.tsx
-msgctxt "cVpmV7"
-msgid "Energy"
-msgstr "Energy"
-
-#: ../../packages/player/src/components/select-image-step.tsx
-msgctxt "NA6C/+"
-msgid "Image options"
-msgstr "Image options"
-
-#: ../../packages/player/src/components/sort-order-step.tsx
-msgctxt "9lc1oV"
-msgid "Drag items into the correct order"
-msgstr "Drag items into the correct order"
-
-#: ../../packages/player/src/components/sort-order-step.tsx
-msgctxt "p5llOK"
-msgid "Sort items"
-msgstr "Sort items"
-
-#: ../../packages/player/src/components/sort-order-step.tsx
-msgctxt "VA8c/A"
-msgid "Correct order:"
-msgstr "Correct order:"
-
-#: ../../packages/player/src/components/step-action-button.tsx
-#: src/app/(catalog)/(home)/continue-learning-card.tsx
-#: src/components/catalog/continue-lesson-link.tsx
-msgctxt "acrOoz"
-msgid "Continue"
-msgstr "Continue"
-
-#: ../../packages/player/src/components/step-action-button.tsx
-msgctxt "PVe26p"
-msgid "Begin"
-msgstr "Begin"
-
-#: ../../packages/player/src/components/step-action-button.tsx
-msgctxt "RDZVQL"
-msgid "Check"
-msgstr "Check"
-
-#: ../../packages/player/src/components/translation-step.tsx
-msgctxt "MxLxkr"
-msgid "Translate this word:"
-msgstr "Translate this word:"
-
-#: ../../packages/player/src/components/verdict-label.tsx
-msgctxt "++l7ni"
-msgid "Not quite"
-msgstr "Not quite"
-
-#: ../../packages/player/src/components/verdict-label.tsx
-msgctxt "xmF49T"
-msgid "Correct!"
-msgstr "Correct!"
-
-#: ../../packages/player/src/components/vocabulary-step.tsx
-#: ../../packages/player/src/use-lesson-kind-label.ts
-#: src/lib/lessons.ts
-msgctxt "lqtP+R"
-msgid "Vocabulary"
-msgstr "Vocabulary"
-
-#: ../../packages/player/src/use-belt-color-label.ts
-#: src/lib/belt-colors.ts
-msgctxt "1W4okO"
-msgid "Green"
-msgstr "Green"
-
-#: ../../packages/player/src/use-belt-color-label.ts
-#: src/lib/belt-colors.ts
-msgctxt "5Tw3Ta"
-msgid "Yellow"
-msgstr "Yellow"
-
-#: ../../packages/player/src/use-belt-color-label.ts
-#: src/lib/belt-colors.ts
-msgctxt "D+ZFS/"
-msgid "Red"
-msgstr "Red"
-
-#: ../../packages/player/src/use-belt-color-label.ts
-#: src/lib/belt-colors.ts
-msgctxt "eM/4ho"
-msgid "Brown"
-msgstr "Brown"
-
-#: ../../packages/player/src/use-belt-color-label.ts
-#: src/lib/belt-colors.ts
-msgctxt "k2tJ9k"
-msgid "Blue"
-msgstr "Blue"
-
-#: ../../packages/player/src/use-belt-color-label.ts
-#: src/lib/belt-colors.ts
-msgctxt "n3m1xt"
-msgid "Orange"
-msgstr "Orange"
-
-#: ../../packages/player/src/use-belt-color-label.ts
-#: src/lib/belt-colors.ts
-msgctxt "OAG+sQ"
-msgid "White"
-msgstr "White"
-
-#: ../../packages/player/src/use-belt-color-label.ts
-#: src/lib/belt-colors.ts
-msgctxt "tihmF3"
-msgid "Purple"
-msgstr "Purple"
-
-#: ../../packages/player/src/use-belt-color-label.ts
-#: src/lib/belt-colors.ts
-msgctxt "XjGbuY"
-msgid "Black"
-msgstr "Black"
-
-#: ../../packages/player/src/use-belt-color-label.ts
-#: src/lib/belt-colors.ts
-msgctxt "Yp7v0H"
-msgid "Gray"
-msgstr "Gray"
-
-#: ../../packages/player/src/use-lesson-kind-label.ts
-#: src/lib/lessons.ts
-msgctxt "/vCXIP"
-msgid "Translation"
-msgstr "Translation"
-
-#: ../../packages/player/src/use-lesson-kind-label.ts
-#: src/lib/lessons.ts
-msgctxt "1TOMnj"
-msgid "Listening"
-msgstr "Listening"
-
-#: ../../packages/player/src/use-lesson-kind-label.ts
-#: src/lib/lessons.ts
-msgctxt "E1bF/X"
-msgid "Explanation"
-msgstr "Explanation"
-
-#: ../../packages/player/src/use-lesson-kind-label.ts
-#: src/lib/lessons.ts
-msgctxt "KV+O0y"
-msgid "Practice"
-msgstr "Practice"
-
-#: ../../packages/player/src/use-lesson-kind-label.ts
-#: src/lib/lessons.ts
-msgctxt "MOK/yK"
-msgid "Reading"
-msgstr "Reading"
-
-#: ../../packages/player/src/use-lesson-kind-label.ts
-#: src/lib/lessons.ts
-msgctxt "OuR/Ij"
-msgid "Quiz"
-msgstr "Quiz"
-
-#: ../../packages/player/src/use-lesson-kind-label.ts
-#: src/lib/lessons.ts
-msgctxt "Ox+Z+K"
-msgid "Tutorial"
-msgstr "Tutorial"
-
-#: ../../packages/player/src/use-lesson-kind-label.ts
-msgctxt "PJivSX"
-msgid "Lesson"
-msgstr "Lesson"
-
-#: ../../packages/player/src/use-lesson-kind-label.ts
-#: src/lib/lessons.ts
-msgctxt "QzTY8x"
-msgid "Grammar"
-msgstr "Grammar"
-
-#: ../../packages/player/src/use-lesson-kind-label.ts
-#: src/components/catalog/continue-lesson-link.tsx
-#: src/lib/lessons.ts
-msgctxt "R+J5ox"
-msgid "Review"
-msgstr "Review"
-
-#: ../../packages/player/src/use-lesson-kind-label.ts
-#: src/lib/lessons.ts
-msgctxt "w0J/gv"
-msgid "Alphabet"
-msgstr "Alphabet"
 
 #: src/app/(catalog)/_components/command-palette.tsx
 #: src/app/(catalog)/_components/logout-dropdown-item.tsx
@@ -633,6 +196,12 @@ msgid "{period} with {value}%"
 msgstr "{period} with {value}%"
 
 #: src/app/(catalog)/(home)/continue-learning-card.tsx
+#: src/components/catalog/continue-lesson-link.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "Continue"
+
+#: src/app/(catalog)/(home)/continue-learning-card.tsx
 msgctxt "NubPSk"
 msgid "Next: {lesson}"
 msgstr "Next: {lesson}"
@@ -646,6 +215,13 @@ msgstr "Continue learning"
 msgctxt "C7ROJx"
 msgid "Your energy is {value}%"
 msgstr "Your energy is {value}%"
+
+#: src/app/(catalog)/(home)/energy.tsx
+#: src/app/(progress)/_components/metric-pills.tsx
+#: src/app/(progress)/energy/page.tsx
+msgctxt "cVpmV7"
+msgid "Energy"
+msgstr "Energy"
 
 #: src/app/(catalog)/(home)/energy.tsx
 msgctxt "soDmlG"
@@ -678,6 +254,12 @@ msgstr "Explore courses"
 msgctxt "VcxnWX"
 msgid "Interactive courses built for you. Just tell us what you want to learn."
 msgstr "Interactive courses built for you. Just tell us what you want to learn."
+
+#: src/app/(catalog)/(home)/level.tsx
+#: src/app/(progress)/level/level-stats.tsx
+msgctxt "3UK8wh"
+msgid "{color} belt"
+msgstr "{color} belt"
 
 #: src/app/(catalog)/(home)/level.tsx
 #: src/app/(progress)/level/level-stats.tsx
@@ -738,6 +320,12 @@ msgstr "Score"
 msgctxt "B9hCYt"
 msgid "Chapter {position}"
 msgstr "Chapter {position}"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
+msgctxt "95stPq"
+msgid "Completed"
+msgstr "Completed"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgctxt "FuT9vz"
@@ -1244,6 +832,11 @@ msgid "{current}/10"
 msgstr "{current}/10"
 
 #: src/app/(progress)/level/level-stats.tsx
+msgctxt "/Q0taG"
+msgid "BP"
+msgstr "BP"
+
+#: src/app/(progress)/level/level-stats.tsx
 msgctxt "u/oEJA"
 msgid "{value} BP earned"
 msgstr "{value} BP earned"
@@ -1624,6 +1217,13 @@ msgstr "Your lessons are ready"
 msgctxt "5c2xtK"
 msgid "Taking you to your chapter..."
 msgstr "Taking you to your chapter..."
+
+#: src/app/generate/ch/[id]/generation-client.tsx
+#: src/app/generate/cs/[id]/generation-client.tsx
+#: src/app/generate/l/[id]/generation-client.tsx
+msgctxt "FazwRl"
+msgid "Try again"
+msgstr "Try again"
 
 #: src/app/generate/ch/[id]/generation-client.tsx
 #: src/app/generate/cs/[id]/generation-client.tsx
@@ -2438,6 +2038,12 @@ msgctxt "mOFG3K"
 msgid "Start"
 msgstr "Start"
 
+#: src/components/catalog/continue-lesson-link.tsx
+#: src/lib/lessons.ts
+msgctxt "R+J5ox"
+msgid "Review"
+msgstr "Review"
+
 #: src/components/feedback/contact-form.tsx
 msgctxt "+5vOOu"
 msgid "Please provide as much detail as possible."
@@ -2522,6 +2128,56 @@ msgstr "Upgrade to create"
 msgctxt "jxZJ5k"
 msgid "Creating content with AI requires an active subscription."
 msgstr "Creating content with AI requires an active subscription."
+
+#: src/lib/belt-colors.ts
+msgctxt "1W4okO"
+msgid "Green"
+msgstr "Green"
+
+#: src/lib/belt-colors.ts
+msgctxt "5Tw3Ta"
+msgid "Yellow"
+msgstr "Yellow"
+
+#: src/lib/belt-colors.ts
+msgctxt "D+ZFS/"
+msgid "Red"
+msgstr "Red"
+
+#: src/lib/belt-colors.ts
+msgctxt "eM/4ho"
+msgid "Brown"
+msgstr "Brown"
+
+#: src/lib/belt-colors.ts
+msgctxt "k2tJ9k"
+msgid "Blue"
+msgstr "Blue"
+
+#: src/lib/belt-colors.ts
+msgctxt "n3m1xt"
+msgid "Orange"
+msgstr "Orange"
+
+#: src/lib/belt-colors.ts
+msgctxt "OAG+sQ"
+msgid "White"
+msgstr "White"
+
+#: src/lib/belt-colors.ts
+msgctxt "tihmF3"
+msgid "Purple"
+msgstr "Purple"
+
+#: src/lib/belt-colors.ts
+msgctxt "XjGbuY"
+msgid "Black"
+msgstr "Black"
+
+#: src/lib/belt-colors.ts
+msgctxt "Yp7v0H"
+msgid "Gray"
+msgstr "Gray"
 
 #: src/lib/categories/category.ts
 msgctxt "4HKnmB"
@@ -2609,9 +2265,19 @@ msgid "Geography"
 msgstr "Geography"
 
 #: src/lib/lessons.ts
+msgctxt "/vCXIP"
+msgid "Translation"
+msgstr "Translation"
+
+#: src/lib/lessons.ts
 msgctxt "1h+4hA"
 msgid "Work through a guided lesson."
 msgstr "Work through a guided lesson."
+
+#: src/lib/lessons.ts
+msgctxt "1TOMnj"
+msgid "Listening"
+msgstr "Listening"
 
 #: src/lib/lessons.ts
 msgctxt "3198Ew"
@@ -2654,6 +2320,11 @@ msgid "Practice grammar patterns with examples and exercises."
 msgstr "Practice grammar patterns with examples and exercises."
 
 #: src/lib/lessons.ts
+msgctxt "E1bF/X"
+msgid "Explanation"
+msgstr "Explanation"
+
+#: src/lib/lessons.ts
 msgctxt "gAYlHX"
 msgid "Sharpen your {topic} listening skills by translating audio sentences."
 msgstr "Sharpen your {topic} listening skills by translating audio sentences."
@@ -2669,6 +2340,11 @@ msgid "Test your understanding of {topic} with questions designed to check real 
 msgstr "Test your understanding of {topic} with questions designed to check real comprehension, not just memorization."
 
 #: src/lib/lessons.ts
+msgctxt "KV+O0y"
+msgid "Practice"
+msgstr "Practice"
+
+#: src/lib/lessons.ts
 msgctxt "kvq0XW"
 msgid "Listen to sentences built from the latest vocabulary."
 msgstr "Listen to sentences built from the latest vocabulary."
@@ -2677,6 +2353,16 @@ msgstr "Listen to sentences built from the latest vocabulary."
 msgctxt "KWi2PI"
 msgid "Learn the alphabet and writing system with focused practice."
 msgstr "Learn the alphabet and writing system with focused practice."
+
+#: src/lib/lessons.ts
+msgctxt "lqtP+R"
+msgid "Vocabulary"
+msgstr "Vocabulary"
+
+#: src/lib/lessons.ts
+msgctxt "MOK/yK"
+msgid "Reading"
+msgstr "Reading"
 
 #: src/lib/lessons.ts
 msgctxt "MOpDCK"
@@ -2692,6 +2378,16 @@ msgstr "Read sentences built from the latest vocabulary."
 msgctxt "OjyuQ+"
 msgid "Learn the writing system for {topic} with focused practice."
 msgstr "Learn the writing system for {topic} with focused practice."
+
+#: src/lib/lessons.ts
+msgctxt "OuR/Ij"
+msgid "Quiz"
+msgstr "Quiz"
+
+#: src/lib/lessons.ts
+msgctxt "Ox+Z+K"
+msgid "Tutorial"
+msgstr "Tutorial"
 
 #: src/lib/lessons.ts
 msgctxt "pDtxFt"
@@ -2714,6 +2410,11 @@ msgid "{lesson} - {course}"
 msgstr "{lesson} - {course}"
 
 #: src/lib/lessons.ts
+msgctxt "QzTY8x"
+msgid "Grammar"
+msgstr "Grammar"
+
+#: src/lib/lessons.ts
 msgctxt "t+ekBV"
 msgid "Check your understanding with a short quiz."
 msgstr "Check your understanding with a short quiz."
@@ -2727,6 +2428,11 @@ msgstr "Understand what {topic} is — core concepts and definitions explained w
 msgctxt "tlgfSZ"
 msgid "Practice {topic} grammar rules with exercises designed to help you remember and apply them."
 msgstr "Practice {topic} grammar rules with exercises designed to help you remember and apply them."
+
+#: src/lib/lessons.ts
+msgctxt "w0J/gv"
+msgid "Alphabet"
+msgstr "Alphabet"
 
 #: src/lib/lessons.ts
 msgctxt "wHBT6R"

@@ -29,14 +29,12 @@ const nextConfig: NextConfig = {
 
 const withNextIntl = createNextIntlPlugin({
   experimental: {
-    extract: { sourceLocale: "en" },
+    extract: { locales: "infer", path: "./messages", sourceLocale: "en", srcPath: "./src" },
     messages: {
       format: { codec: "./src/i18n/codec.ts", extension: ".po" },
-      locales: "infer",
       path: "./messages",
       precompile: true,
     },
-    srcPath: "./src",
   },
 });
 
