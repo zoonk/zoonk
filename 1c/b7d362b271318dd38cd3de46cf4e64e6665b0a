@@ -1,0 +1,110 @@
+apps/ios/Zoonk/App/AppShell.swift
+  7f5d5ad719443dc9 1-26
+apps/ios/Zoonk/App/ContentView.swift
+  7f5d5ad719443dc9 5,9,11-21
+apps/ios/Zoonk/Screens/Learn/LearnScreen.swift
+  7f5d5ad719443dc9 1-15
+apps/ios/Zoonk/Screens/Home/HomeScreen.swift
+  7f5d5ad719443dc9 1-15
+apps/ios/Zoonk/Shared/Components/AccountAvatarView.swift
+  7f5d5ad719443dc9 1-12
+.gitignore
+  089fddba00e67cf1 47
+apps/ios/Zoonk/Resources/Assets.xcassets/AppIcon.appiconset/Contents.json
+  7f5d5ad719443dc9 1-35
+apps/ios/Zoonk/Screens/Search/SearchScreen.swift
+  7f5d5ad719443dc9 1-54
+apps/ios/AGENTS.md
+  h_1cda88fc21fe9c 1-6,9-18,20,35-57
+  698156c04f8bdd73 7-8,19
+  7f5d5ad719443dc9 21-34
+apps/ios/Zoonk.xcodeproj/project.pbxproj
+  7f5d5ad719443dc9 93-94
+apps/ios/Zoonk/App/AppTab.swift
+  7f5d5ad719443dc9 1-60
+apps/ios/Zoonk/Shared/Components/EmptyStateView.swift
+  7f5d5ad719443dc9 1-15
+apps/ios/Zoonk/Shared/Layout/ScreenLayout.swift
+  7f5d5ad719443dc9 1-52
+apps/ios/Zoonk/Resources/Localizable.xcstrings
+  7f5d5ad719443dc9 1-292
+apps/ios/Zoonk/Screens/Progress/ProgressScreen.swift
+  7f5d5ad719443dc9 1-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "1cb7d362b271318dd38cd3de46cf4e64e6665b0a",
+  "prompts": {
+    "089fddba00e67cf1": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019df7f2-fac8-7430-a9d2-401516804a46",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 0,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    },
+    "4790f85f261f01ee": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019df564-2a0a-71a1-ad0c-68f7c7497fd1",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 129,
+      "total_deletions": 24,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    },
+    "698156c04f8bdd73": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019df587-076a-76c2-8376-128fdc09380d",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1045,
+      "total_deletions": 482,
+      "accepted_lines": 361,
+      "overriden_lines": 0
+    },
+    "7f5d5ad719443dc9": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019df8dc-78f0-77f1-96cb-b25190c69903",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 820,
+      "total_deletions": 52,
+      "accepted_lines": 630,
+      "overriden_lines": 0
+    },
+    "ac8fe75bce5d2ec0": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019df53f-7870-7832-929e-c23ff60a744a",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1588,
+      "total_deletions": 72,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
