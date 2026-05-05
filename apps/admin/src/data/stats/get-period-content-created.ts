@@ -1,6 +1,6 @@
 import "server-only";
+import { adminStatsCache as cache } from "@/data/stats/_utils/admin-stats-cache";
 import { prisma } from "@zoonk/db";
-import { cache } from "react";
 
 export const getPeriodContentCreated = cache(async (start: Date, end: Date) => {
   const [courses, lessons] = await Promise.all([
