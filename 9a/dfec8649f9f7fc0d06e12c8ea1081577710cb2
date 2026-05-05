@@ -1,0 +1,43 @@
+apps/api/src/workflows/course-generation/steps/generate-chapter-image-step.ts
+  860dc9b415b72186 2-5,8-10,12-20,22-28,30-31,34-35,37,41-46,50-51,53-60,62
+apps/api/src/workflows/chapter-generation/steps/set-chapter-as-completed-step.test.ts
+  860dc9b415b72186 86,90,102,106
+apps/api/src/workflows/chapter-generation/steps/set-chapter-as-completed-step.ts
+  860dc9b415b72186 16
+apps/api/src/workflows/course-generation/steps/start-chapter-images-workflow-step.ts
+  860dc9b415b72186 1-18
+apps/api/src/workflows/course-generation/chapter-images-workflow.ts
+  860dc9b415b72186 1-15
+apps/api/src/workflows/chapter-generation/chapter-generation-workflow.test.ts
+  860dc9b415b72186 143,163-164
+apps/api/src/workflows/course-generation/chapter-images-workflow.test.ts
+  860dc9b415b72186 1-69
+apps/api/src/workflows/course-generation/steps/generate-chapter-image-step.test.ts
+  860dc9b415b72186 4,8,12-17,25-26,30,37,39,41-43,46,51,54,57,59,62,64,66
+apps/api/src/workflows/course-generation/course-generation-workflow.ts
+  860dc9b415b72186 12,15,41-84,153
+apps/api/src/workflows/chapter-generation/chapter-generation-workflow.ts
+  860dc9b415b72186 29-31,40,43
+apps/api/src/workflows/course-generation/course-generation-workflow.test.ts
+  860dc9b415b72186 22,25-30,263,269-275,438-461
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "9adfec8649f9f7fc0d06e12c8ea1081577710cb2",
+  "prompts": {
+    "860dc9b415b72186": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019df53a-e0ae-7770-a26f-bce492c6a43c",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 704,
+      "total_deletions": 254,
+      "accepted_lines": 334,
+      "overriden_lines": 0
+    }
+  }
+}
