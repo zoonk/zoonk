@@ -1,5 +1,4 @@
 import { LIST_COURSES_LIMIT, listCourses } from "@/data/courses/list-courses";
-import { CatalogListSkeleton } from "@zoonk/ui/components/catalog-list";
 import {
   Container,
   ContainerDescription,
@@ -7,6 +6,7 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
+import { ListSkeleton } from "@zoonk/ui/components/list";
 import { type Metadata } from "next";
 import { getExtracted, getLocale } from "next-intl/server";
 import { Suspense } from "react";
@@ -41,7 +41,7 @@ export default async function Courses() {
         </ContainerHeaderGroup>
       </ContainerHeader>
 
-      <Suspense fallback={<CatalogListSkeleton count={8} />}>
+      <Suspense fallback={<ListSkeleton count={8} />}>
         <CourseListContent />
       </Suspense>
     </Container>

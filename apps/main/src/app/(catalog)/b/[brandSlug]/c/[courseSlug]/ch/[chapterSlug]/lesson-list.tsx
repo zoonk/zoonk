@@ -1,5 +1,4 @@
 import {
-  CatalogList,
   CatalogListEmpty,
   CatalogListItem,
   CatalogListSearch,
@@ -9,14 +8,15 @@ import { getLessonDisplayMeta } from "@/lib/lessons";
 import { getLessonProgress } from "@zoonk/core/progress/lessons";
 import { type Lesson } from "@zoonk/db";
 import {
-  CatalogListGroup,
-  CatalogListItemContent,
-  CatalogListItemDescription,
-  CatalogListItemHeader,
-  CatalogListItemImage,
-  CatalogListItemStatusCompleted,
-  CatalogListItemTitle,
-} from "@zoonk/ui/components/catalog-list";
+  ListContent,
+  ListGroup,
+  ListItemContent,
+  ListItemDescription,
+  ListItemHeader,
+  ListItemImage,
+  ListItemStatusCompleted,
+  ListItemTitle,
+} from "@zoonk/ui/components/list";
 import { getExtracted } from "next-intl/server";
 import Image from "next/image";
 
@@ -34,7 +34,7 @@ function LessonListItemStatus({
   isCompleted: boolean;
 }) {
   if (isCompleted) {
-    return <CatalogListItemStatusCompleted aria-label={completedLabel} />;
+    return <ListItemStatusCompleted aria-label={completedLabel} />;
   }
 
   return null;
@@ -67,22 +67,22 @@ function LessonRowItem({
       id={lesson.id}
       prefetch={lesson.generationStatus === "completed"}
     >
-      <CatalogListItemImage>
+      <ListItemImage>
         <Image
           alt={display.title}
           height={64}
           src={lesson.imageUrl ?? getDefaultLessonImage(lesson.kind)}
           width={64}
         />
-      </CatalogListItemImage>
+      </ListItemImage>
 
-      <CatalogListItemContent>
-        <CatalogListItemHeader>
-          <CatalogListItemTitle>{display.title}</CatalogListItemTitle>
+      <ListItemContent>
+        <ListItemHeader>
+          <ListItemTitle>{display.title}</ListItemTitle>
           <LessonListItemStatus completedLabel={completedLabel} isCompleted={isCompleted} />
-        </CatalogListItemHeader>
-        <CatalogListItemDescription>{display.description}</CatalogListItemDescription>
-      </CatalogListItemContent>
+        </ListItemHeader>
+        <ListItemDescription>{display.description}</ListItemDescription>
+      </ListItemContent>
     </CatalogListItem>
   );
 }
@@ -128,10 +128,10 @@ export async function LessonList({
   }));
 
   return (
-    <CatalogList>
+    <ListContent>
       <CatalogListSearch items={searchItems} placeholder={t("Search lessons...")}>
         <CatalogListEmpty>{t("No lessons found")}</CatalogListEmpty>
-        <CatalogListGroup>
+        <ListGroup>
           {lessonRows.map(({ display, lesson }) => {
             const completion = completionMap.get(lesson.id);
             const isCompleted = completion?.isCompleted ?? false;
@@ -149,8 +149,8 @@ export async function LessonList({
               />
             );
           })}
-        </CatalogListGroup>
+        </ListGroup>
       </CatalogListSearch>
-    </CatalogList>
+    </ListContent>
   );
 }

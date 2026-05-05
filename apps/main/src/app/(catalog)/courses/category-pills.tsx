@@ -11,15 +11,13 @@ import { useSelectedLayoutSegment } from "next/navigation";
 
 export function CategoryPillsSkeleton() {
   return (
-    <div className="mx-auto w-full lg:max-w-xl">
-      <div className="flex gap-2 px-4 pt-4 pb-2 lg:pt-0">
-        <Skeleton className="h-8 w-12 rounded-4xl" />
-        <Skeleton className="h-8 w-16 rounded-4xl" />
-        <Skeleton className="h-8 w-24 rounded-4xl" />
-        <Skeleton className="h-8 w-20 rounded-4xl" />
-        <Skeleton className="h-8 w-20 rounded-4xl" />
-        <Skeleton className="h-8 w-16 rounded-4xl" />
-      </div>
+    <div className="flex gap-2 px-4">
+      <Skeleton className="h-8 w-12 rounded-4xl" />
+      <Skeleton className="h-8 w-16 rounded-4xl" />
+      <Skeleton className="h-8 w-24 rounded-4xl" />
+      <Skeleton className="h-8 w-20 rounded-4xl" />
+      <Skeleton className="h-8 w-20 rounded-4xl" />
+      <Skeleton className="h-8 w-16 rounded-4xl" />
     </div>
   );
 }
@@ -36,7 +34,7 @@ export function CategoryPills({
     <HorizontalScroll>
       <HorizontalScrollContent
         aria-label={t("Course categories")}
-        className="pb-4"
+        className="pb-0"
         role="navigation"
       >
         <Link

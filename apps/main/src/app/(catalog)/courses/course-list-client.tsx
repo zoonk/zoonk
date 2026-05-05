@@ -2,14 +2,14 @@
 
 import { type CourseWithOrg } from "@/data/courses/list-courses";
 import {
-  CatalogListGroup,
-  CatalogListItem,
-  CatalogListItemContent,
-  CatalogListItemDescription,
-  CatalogListItemIcon,
-  CatalogListItemImage,
-  CatalogListItemTitle,
-} from "@zoonk/ui/components/catalog-list";
+  ListGroup,
+  ListItem,
+  ListItemContent,
+  ListItemDescription,
+  ListItemIcon,
+  ListItemImage,
+  ListItemTitle,
+} from "@zoonk/ui/components/list";
 import { useInfiniteList } from "@zoonk/ui/hooks/infinite-list";
 import { EmptyView } from "@zoonk/ui/patterns/empty";
 import { type CourseCategory } from "@zoonk/utils/categories";
@@ -55,29 +55,29 @@ export function CourseListClient({
 
   return (
     <>
-      <CatalogListGroup>
+      <ListGroup>
         {courses.map((course) => (
-          <CatalogListItem
+          <ListItem
             key={course.id}
             render={<Link href={`/b/${course.organization?.slug}/c/${course.slug}`} prefetch />}
           >
             {course.imageUrl ? (
-              <CatalogListItemImage>
+              <ListItemImage>
                 <Image alt="" height={64} src={course.imageUrl} width={64} />
-              </CatalogListItemImage>
+              </ListItemImage>
             ) : (
-              <CatalogListItemIcon>
+              <ListItemIcon>
                 <NotebookPenIcon aria-hidden="true" className="text-muted-foreground/80 size-6" />
-              </CatalogListItemIcon>
+              </ListItemIcon>
             )}
 
-            <CatalogListItemContent>
-              <CatalogListItemTitle>{course.title}</CatalogListItemTitle>
-              <CatalogListItemDescription>{course.description}</CatalogListItemDescription>
-            </CatalogListItemContent>
-          </CatalogListItem>
+            <ListItemContent>
+              <ListItemTitle>{course.title}</ListItemTitle>
+              <ListItemDescription>{course.description}</ListItemDescription>
+            </ListItemContent>
+          </ListItem>
         ))}
-      </CatalogListGroup>
+      </ListGroup>
 
       <div className="flex justify-center py-4" ref={sentryRef}>
         {isLoading && (

@@ -1,16 +1,6 @@
 import { listUserCourses } from "@/data/courses/list-user-courses";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
-  CatalogListGroup,
-  CatalogListItem,
-  CatalogListItemContent,
-  CatalogListItemDescription,
-  CatalogListItemIcon,
-  CatalogListItemImage,
-  CatalogListItemTitle,
-  CatalogListSkeleton,
-} from "@zoonk/ui/components/catalog-list";
-import {
   Empty,
   EmptyContent,
   EmptyDescription,
@@ -18,6 +8,16 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@zoonk/ui/components/empty";
+import {
+  ListGroup,
+  ListItem,
+  ListItemContent,
+  ListItemDescription,
+  ListItemIcon,
+  ListItemImage,
+  ListItemTitle,
+  ListSkeleton,
+} from "@zoonk/ui/components/list";
 import { NotebookPenIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import Image from "next/image";
@@ -48,32 +48,32 @@ export async function UserCourseList() {
   }
 
   return (
-    <CatalogListGroup>
+    <ListGroup>
       {courses.map((course) => (
-        <CatalogListItem
+        <ListItem
           key={course.id}
           render={<Link href={`/b/${course.organization?.slug}/c/${course.slug}`} prefetch />}
         >
           {course.imageUrl ? (
-            <CatalogListItemImage>
+            <ListItemImage>
               <Image alt="" height={64} src={course.imageUrl} width={64} />
-            </CatalogListItemImage>
+            </ListItemImage>
           ) : (
-            <CatalogListItemIcon>
+            <ListItemIcon>
               <NotebookPenIcon aria-hidden="true" className="text-muted-foreground/80 size-6" />
-            </CatalogListItemIcon>
+            </ListItemIcon>
           )}
 
-          <CatalogListItemContent>
-            <CatalogListItemTitle>{course.title}</CatalogListItemTitle>
-            <CatalogListItemDescription>{course.description}</CatalogListItemDescription>
-          </CatalogListItemContent>
-        </CatalogListItem>
+          <ListItemContent>
+            <ListItemTitle>{course.title}</ListItemTitle>
+            <ListItemDescription>{course.description}</ListItemDescription>
+          </ListItemContent>
+        </ListItem>
       ))}
-    </CatalogListGroup>
+    </ListGroup>
   );
 }
 
 export function UserCourseListSkeleton() {
-  return <CatalogListSkeleton />;
+  return <ListSkeleton />;
 }

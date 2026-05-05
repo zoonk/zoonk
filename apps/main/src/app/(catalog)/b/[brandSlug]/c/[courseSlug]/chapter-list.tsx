@@ -1,5 +1,4 @@
 import {
-  CatalogList,
   CatalogListEmpty,
   CatalogListItem,
   CatalogListSearch,
@@ -7,15 +6,16 @@ import {
 import { type CourseChapter } from "@/data/chapters/list-course-chapters";
 import { getChapterProgress } from "@zoonk/core/progress/chapters";
 import {
-  CatalogListGroup,
-  CatalogListItemContent,
-  CatalogListItemDescription,
-  CatalogListItemHeader,
-  CatalogListItemImage,
-  CatalogListItemStatusCompleted,
-  CatalogListItemStatusProgress,
-  CatalogListItemTitle,
-} from "@zoonk/ui/components/catalog-list";
+  ListContent,
+  ListGroup,
+  ListItemContent,
+  ListItemDescription,
+  ListItemHeader,
+  ListItemImage,
+  ListItemStatusCompleted,
+  ListItemStatusProgress,
+  ListItemTitle,
+} from "@zoonk/ui/components/list";
 import { getExtracted } from "next-intl/server";
 import Image from "next/image";
 
@@ -59,11 +59,11 @@ function ChapterListItemStatus({
   const status = getProgressStatus({ completed: completedLessons, total: totalLessons });
 
   if (status === "completed") {
-    return <CatalogListItemStatusCompleted aria-label={completedLabel} />;
+    return <ListItemStatusCompleted aria-label={completedLabel} />;
   }
 
   if (status === "inProgress") {
-    return <CatalogListItemStatusProgress aria-label={inProgressLabel} />;
+    return <ListItemStatusProgress aria-label={inProgressLabel} />;
   }
 
   return null;
@@ -100,26 +100,24 @@ function ChapterRow({
       id={chapter.id}
       prefetch={chapter.generationStatus === "completed"}
     >
-      <CatalogListItemImage>
+      <ListItemImage>
         <Image alt="" height={64} src={chapter.imageUrl ?? defaultChapterImage} width={64} />
-      </CatalogListItemImage>
+      </ListItemImage>
 
-      <CatalogListItemContent>
-        <CatalogListItemHeader>
-          <CatalogListItemTitle>
+      <ListItemContent>
+        <ListItemHeader>
+          <ListItemTitle>
             <span className="text-muted-foreground">{chapterNumber}.</span> {chapter.title}
-          </CatalogListItemTitle>
+          </ListItemTitle>
           <ChapterListItemStatus
             completedLabel={completedLabel}
             completedLessons={completedLessons}
             inProgressLabel={inProgressLabel}
             totalLessons={totalLessons}
           />
-        </CatalogListItemHeader>
-        {chapter.description && (
-          <CatalogListItemDescription>{chapter.description}</CatalogListItemDescription>
-        )}
-      </CatalogListItemContent>
+        </ListItemHeader>
+        {chapter.description && <ListItemDescription>{chapter.description}</ListItemDescription>}
+      </ListItemContent>
     </CatalogListItem>
   );
 }
@@ -146,10 +144,10 @@ export async function ChapterList({
   const completionMap = new Map(completionData.map((row) => [row.chapterId, row]));
 
   return (
-    <CatalogList>
+    <ListContent>
       <CatalogListSearch items={chapters} placeholder={t("Search chapters...")}>
         <CatalogListEmpty>{t("No chapters found")}</CatalogListEmpty>
-        <CatalogListGroup>
+        <ListGroup>
           {chapters.map((chapter) => {
             const completion = completionMap.get(chapter.id);
             const completedLessons = completion?.completedLessons ?? 0;
@@ -172,8 +170,8 @@ export async function ChapterList({
               />
             );
           })}
-        </CatalogListGroup>
+        </ListGroup>
       </CatalogListSearch>
-    </CatalogList>
+    </ListContent>
   );
 }
