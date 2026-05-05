@@ -12,7 +12,7 @@ import { Energy, EnergySkeleton } from "./energy";
 import { Level, LevelSkeleton } from "./level";
 import { Score, ScoreSkeleton } from "./score";
 
-export async function Performance() {
+export async function Progress() {
   const t = await getExtracted();
 
   const [energyData, beltData, scoreData, bestDayData, bestTimeData] = await Promise.all([
@@ -24,9 +24,9 @@ export async function Performance() {
   ]);
 
   return (
-    <section aria-labelledby="performance-title" className="flex flex-col gap-3 py-4 md:py-6">
-      <FeatureCardSectionTitle className="px-4" id="performance-title">
-        {t("Performance")}
+    <section aria-labelledby="progress-title" className="flex flex-col gap-3 py-4 md:py-6">
+      <FeatureCardSectionTitle className="px-4" id="progress-title">
+        {t("Progress")}
       </FeatureCardSectionTitle>
 
       <div className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
@@ -51,7 +51,7 @@ export async function Performance() {
   );
 }
 
-export function PerformanceSkeleton() {
+export function ProgressSkeleton() {
   return (
     <section className="flex flex-col gap-3 py-4 md:py-6">
       <Skeleton className="mx-4 h-5 w-24" />

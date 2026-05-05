@@ -28,9 +28,7 @@ export default async function ScorePage({ searchParams }: PageProps<"/score">) {
       <ContainerHeader>
         <ContainerHeaderGroup>
           <ContainerTitle>{t("Score")}</ContainerTitle>
-          <ContainerDescription>
-            {t("Track your score and performance trends")}
-          </ContainerDescription>
+          <ContainerDescription>{t("Track your score and progress trends")}</ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 

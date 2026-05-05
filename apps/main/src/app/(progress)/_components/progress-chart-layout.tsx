@@ -3,7 +3,7 @@ import { type ReactNode } from "react";
 import { PeriodNavigation } from "./period-navigation";
 import { PeriodTabs } from "./period-tabs";
 
-export async function PerformanceChartLayout({
+export async function ProgressChartLayout({
   children,
   hasNext,
   hasPrevious,

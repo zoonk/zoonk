@@ -1,7 +1,7 @@
 import { type ScoreDataPoint, type ScorePeriod } from "@/data/progress/get-score-history";
 import { formatPeriodLabel } from "@zoonk/utils/date-ranges";
 import { getLocale } from "next-intl/server";
-import { PerformanceChartLayout } from "../_components/performance-chart-layout";
+import { ProgressChartLayout } from "../_components/progress-chart-layout";
 import { ScoreChartClient } from "./score-chart-client";
 
 export async function ScoreChart({
@@ -31,13 +31,13 @@ export async function ScoreChart({
   }));
 
   return (
-    <PerformanceChartLayout
+    <ProgressChartLayout
       hasNext={hasNext}
       hasPrevious={hasPrevious}
       isEmpty={dataPoints.length === 0}
       periodLabel={periodLabel}
     >
       <ScoreChartClient average={average} dataPoints={serializedDataPoints} />
-    </PerformanceChartLayout>
+    </ProgressChartLayout>
   );
 }

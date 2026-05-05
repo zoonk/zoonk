@@ -2,7 +2,7 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { getExtracted } from "next-intl/server";
 import Link from "next/link";
 
-export async function PerformanceEmptyState({
+export async function ProgressEmptyState({
   isAuthenticated,
   children,
 }: {

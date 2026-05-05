@@ -1,7 +1,7 @@
 import { type EnergyDataPoint, type EnergyPeriod } from "@/data/progress/get-energy-history";
 import { formatPeriodLabel } from "@zoonk/utils/date-ranges";
 import { getLocale } from "next-intl/server";
-import { PerformanceChartLayout } from "../_components/performance-chart-layout";
+import { ProgressChartLayout } from "../_components/progress-chart-layout";
 import { EnergyChartClient } from "./energy-chart-client";
 
 export async function EnergyChart({
@@ -31,13 +31,13 @@ export async function EnergyChart({
   }));
 
   return (
-    <PerformanceChartLayout
+    <ProgressChartLayout
       hasNext={hasNext}
       hasPrevious={hasPrevious}
       isEmpty={dataPoints.length === 0}
       periodLabel={periodLabel}
     >
       <EnergyChartClient average={average} dataPoints={serializedDataPoints} />
-    </PerformanceChartLayout>
+    </ProgressChartLayout>
   );
 }

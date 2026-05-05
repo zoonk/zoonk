@@ -1,15 +1,16 @@
-import { getEnergyHistory } from "@/data/progress/get-energy-history";
+import { getBpHistory } from "@/data/progress/get-bp-history";
 import { getSession } from "@zoonk/core/users/session/get";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { validatePeriod } from "@zoonk/utils/date-ranges";
 import { getLocale } from "next-intl/server";
-import { PerformanceChartSkeleton } from "../_components/performance-chart-skeleton";
-import { PerformanceEmptyState } from "../_components/performance-empty-state";
-import { EnergyChart } from "./energy-chart";
-import { EnergyExplanation } from "./energy-explanation";
-import { EnergyStats, EnergyStatsSkeleton } from "./energy-stats";
+import { ProgressChartSkeleton } from "../_components/progress-chart-skeleton";
+import { ProgressEmptyState } from "../_components/progress-empty-state";
+import { LevelChart } from "./level-chart";
+import { LevelExplanation } from "./level-explanation";
+import { LevelProgression, LevelProgressionSkeleton } from "./level-progression";
+import { LevelStats, LevelStatsSkeleton } from "./level-stats";
 
-export async function EnergyContent({
+export async function LevelContent({
   searchParams,
 }: {
   searchParams: Promise<{ offset?: string; period?: string }>;
@@ -19,7 +20,7 @@ export async function EnergyContent({
   const locale = await getLocale();
 
   const [data, session] = await Promise.all([
-    getEnergyHistory({ locale, offset: Number(offset), period: validPeriod }),
+    getBpHistory({ locale, offset: Number(offset), period: validPeriod }),
     getSession(),
   ]);
 
@@ -27,42 +28,47 @@ export async function EnergyContent({
 
   if (!(data && isAuthenticated)) {
     return (
-      <PerformanceEmptyState isAuthenticated={isAuthenticated}>
-        <EnergyExplanation />
-      </PerformanceEmptyState>
+      <ProgressEmptyState isAuthenticated={isAuthenticated}>
+        <LevelExplanation />
+      </ProgressEmptyState>
     );
   }
 
   return (
     <div className="flex flex-col gap-8">
-      <EnergyStats
-        average={data.average}
+      <LevelStats
+        currentBelt={data.currentBelt}
         period={validPeriod}
         periodEnd={data.periodEnd}
         periodStart={data.periodStart}
-        previousAverage={data.previousAverage}
+        periodTotal={data.periodTotal}
+        previousPeriodTotal={data.previousPeriodTotal}
+        totalBp={data.totalBp}
       />
 
-      <EnergyChart
-        average={data.average}
+      <LevelChart
         dataPoints={data.dataPoints}
         hasNext={data.hasNextPeriod}
         hasPrevious={data.hasPreviousPeriod}
         period={validPeriod}
         periodEnd={data.periodEnd}
         periodStart={data.periodStart}
+        periodTotal={data.periodTotal}
       />
 
-      <EnergyExplanation />
+      <LevelProgression currentBelt={data.currentBelt} />
+
+      <LevelExplanation />
     </div>
   );
 }
 
-export function EnergyContentSkeleton() {
+export function LevelContentSkeleton() {
   return (
     <div className="flex flex-col gap-8">
-      <EnergyStatsSkeleton />
-      <PerformanceChartSkeleton />
+      <LevelStatsSkeleton />
+      <ProgressChartSkeleton />
+      <LevelProgressionSkeleton />
 
       <div className="flex flex-col gap-2">
         <Skeleton className="h-4 w-36" />

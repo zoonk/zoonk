@@ -6,7 +6,7 @@ import { getExtracted } from "next-intl/server";
 import Link from "next/link";
 import { MetricPillLinks } from "./metric-pills";
 
-export async function PerformanceNavbar() {
+export async function ProgressNavbar() {
   const t = await getExtracted();
 
   return (
@@ -25,7 +25,7 @@ export async function PerformanceNavbar() {
   );
 }
 
-export function PerformanceNavbarSkeleton() {
+export function ProgressNavbarSkeleton() {
   return (
     <nav className="bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-10 pt-4 backdrop-blur">
       <div className="flex gap-2 px-4">
