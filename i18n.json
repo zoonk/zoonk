@@ -1,8 +1,0 @@
-{
-  "$schema": "https://lingo.dev/schema/i18n.json",
-  "buckets": {
-    "po": { "include": ["apps/api/messages/[locale].po", "apps/main/messages/[locale].po"] }
-  },
-  "locale": { "source": "en", "targets": ["es", "pt"] },
-  "version": "1.10"
-}

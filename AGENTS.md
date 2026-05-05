@@ -147,8 +147,7 @@ page.getByLabel(/email/i);
 - Pass string literals, never variables or keys (e.g., `getExtracted("Hello world")`, not `getExtracted(greeting)` nor `getExtracted("greeting")`)
 - **NEVER pass `t` / `getExtracted` / `useExtracted` as a function argument, prop, or store it in a variable to call later.** Always call `t("literal")` directly in the component. If you need translated text in a helper, use conditionals in the component: `verdict === "correct" ? t("Correct!") : t("Not quite")`
 - Translation strings are extracted to PO files automatically when running `pnpm --filter {app} build`
-- Never edit `i18n.lock` manually
-- Manual translation should be done only in PO entries with empty `msgstr`
+- After extracting messages, translate empty strings in PO files maintaining consistency with terms used in the app
 - When using `render` prop with base-ui components (e.g., `useRender`), use `ClientLink` instead of `Link` since the render prop requires a client component
 - i18n functions like `getExtracted` can't be called inside `Promise.all`
 
@@ -213,6 +212,7 @@ How to verify your work:
 - pnpm build --filter <app>
 - pnpm test --filter <app>
 - pnpm e2e --filter <app>
+- pnpm i18n
 
 ## Docs
 
