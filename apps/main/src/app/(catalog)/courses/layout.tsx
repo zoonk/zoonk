@@ -9,12 +9,12 @@ async function CategoryPillsWithData() {
 
 export default async function CoursesLayout({ children }: LayoutProps<"/courses">) {
   return (
-    <>
+    <div className="flex w-full flex-col gap-4">
       <Suspense fallback={<CategoryPillsSkeleton />}>
         <CategoryPillsWithData />
       </Suspense>
 
       {children}
-    </>
+    </div>
   );
 }

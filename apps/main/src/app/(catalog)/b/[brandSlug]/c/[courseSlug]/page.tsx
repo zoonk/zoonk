@@ -1,5 +1,4 @@
 import { CatalogActions } from "@/components/catalog/catalog-actions";
-import { CatalogContainer, CatalogToolbar } from "@/components/catalog/catalog-list";
 import { CatalogListSkeleton } from "@/components/catalog/catalog-skeletons";
 import {
   ContinueLessonLink,
@@ -9,6 +8,7 @@ import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
 import { getDefaultChapterImage } from "@/lib/catalog/default-images";
 import { getSession } from "@zoonk/core/users/session/get";
+import { List, ListToolbar } from "@zoonk/ui/components/list";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -60,16 +60,16 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
   const defaultChapterImage = getDefaultChapterImage({ categories: course.categories });
 
   return (
-    <main className="flex flex-1 flex-col">
+    <main className="flex flex-1 flex-col gap-4">
       <CourseHeader brandSlug={brandSlug} course={course} />
 
-      <CatalogContainer>
-        <CatalogToolbar>
+      <List>
+        <ListToolbar>
           <Suspense fallback={<ContinueLessonLinkSkeleton />}>
             <ContinueLessonLink courseId={course.id} fallbackHref={fallbackHref} />
           </Suspense>
           <CatalogActions contentId={courseSlug} defaultEmail={session?.user.email} kind="course" />
-        </CatalogToolbar>
+        </ListToolbar>
 
         <Suspense fallback={<CatalogListSkeleton count={chapters.length} search />}>
           <ChapterList
@@ -80,7 +80,7 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
             defaultChapterImage={defaultChapterImage}
           />
         </Suspense>
-      </CatalogContainer>
+      </List>
     </main>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
-import { CatalogListItem as CatalogListItemRoot } from "@zoonk/ui/components/catalog-list";
 import { Input } from "@zoonk/ui/components/input";
+import { ListEmpty, ListItem } from "@zoonk/ui/components/list";
 import { cn } from "@zoonk/ui/lib/utils";
 import { normalizeString } from "@zoonk/utils/string";
 import { SearchIcon } from "lucide-react";
@@ -10,29 +10,6 @@ import Link from "next/link";
 import { useQueryState } from "nuqs";
 import { type ReactNode, useMemo } from "react";
 import { CatalogListContext, useCatalogListContext } from "./catalog-list-context";
-
-export function CatalogContainer({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      {...props}
-      className={cn(
-        "mx-auto flex w-full flex-col gap-4 px-4 pt-4 pb-8 md:pb-10 lg:max-w-xl",
-        className,
-      )}
-      data-slot="catalog-container"
-    />
-  );
-}
-
-export function CatalogToolbar({ className, ...props }: React.ComponentProps<"div">) {
-  return <div {...props} className={cn("flex gap-2", className)} data-slot="catalog-toolbar" />;
-}
-
-export function CatalogList({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div {...props} className={cn("flex flex-col gap-4", className)} data-slot="catalog-list" />
-  );
-}
 
 export function CatalogListSearch<T extends { id: string | number; title: string }>({
   className,
@@ -64,22 +41,28 @@ export function CatalogListSearch<T extends { id: string | number; title: string
 
   return (
     <CatalogListContext value={{ filteredIds, isSearchActive }}>
-      <div className={cn("relative", className)} data-slot="catalog-list-search">
-        <SearchIcon className="text-muted-foreground/60 absolute top-1/2 left-3 size-4 -translate-y-1/2" />
-        <Input
-          aria-label={placeholder}
-          className="border-border/40 placeholder:text-muted-foreground/50 focus-visible:border-border h-10 bg-transparent pl-9 focus-visible:ring-0"
-          onChange={(event) => setSearch(event.target.value || null)}
-          placeholder={placeholder}
-          type="search"
-          value={search}
-        />
+      <div className={cn("px-4", className)} data-slot="catalog-list-search">
+        <div className="relative">
+          <SearchIcon className="text-muted-foreground/60 absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+          <Input
+            aria-label={placeholder}
+            className="border-border/40 placeholder:text-muted-foreground/50 focus-visible:border-border h-10 bg-transparent pl-9 focus-visible:ring-0"
+            onChange={(event) => setSearch(event.target.value || null)}
+            placeholder={placeholder}
+            type="search"
+            value={search}
+          />
+        </div>
       </div>
       {children}
     </CatalogListContext>
   );
 }
 
+/**
+ * The main app decides whether search filtering produced an empty result, while
+ * the shared UI component owns the paragraph styling.
+ */
 export function CatalogListEmpty({ className, ...props }: React.ComponentProps<"p">) {
   const context = useCatalogListContext();
   const filteredIds = context?.filteredIds ?? null;
@@ -91,13 +74,7 @@ export function CatalogListEmpty({ className, ...props }: React.ComponentProps<"
     return null;
   }
 
-  return (
-    <p
-      {...props}
-      className={cn("text-muted-foreground py-8 text-center text-sm", className)}
-      data-slot="catalog-list-empty"
-    />
-  );
+  return <ListEmpty className={className} {...props} />;
 }
 
 export function CatalogListItem<Href extends string>({
@@ -121,8 +98,8 @@ export function CatalogListItem<Href extends string>({
   }
 
   return (
-    <CatalogListItemRoot className={className} render={<Link href={href} prefetch={prefetch} />}>
+    <ListItem className={className} render={<Link href={href} prefetch={prefetch} />}>
       {children}
-    </CatalogListItemRoot>
+    </ListItem>
   );
 }

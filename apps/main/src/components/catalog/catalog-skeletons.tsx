@@ -1,7 +1,6 @@
-import { CatalogListSkeleton as CatalogListPatternSkeleton } from "@zoonk/ui/components/catalog-list";
+import { List, ListSkeleton as ListPatternSkeleton, ListToolbar } from "@zoonk/ui/components/list";
 import { MediaCardSkeleton } from "@zoonk/ui/components/media-card";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { CatalogContainer, CatalogToolbar } from "./catalog-list";
 
 export function CatalogListSkeleton({
   count,
@@ -12,8 +11,12 @@ export function CatalogListSkeleton({
 }) {
   return (
     <div className="flex flex-col gap-4">
-      {search && <Skeleton className="h-9 w-full rounded-md" />}
-      <CatalogListPatternSkeleton count={count} />
+      {search && (
+        <div className="px-4">
+          <Skeleton className="h-9 w-full rounded-md" />
+        </div>
+      )}
+      <ListPatternSkeleton count={count} />
     </div>
   );
 }
@@ -30,13 +33,13 @@ export function CatalogPageSkeleton({
   return (
     <>
       <MediaCardSkeleton />
-      <CatalogContainer>
-        <CatalogToolbar>
+      <List>
+        <ListToolbar>
           <Skeleton className="h-9 flex-1 rounded-md" />
           <Skeleton className="size-9 rounded-md" />
-        </CatalogToolbar>
+        </ListToolbar>
         <CatalogListSkeleton count={listCount} search={showSearch} />
-      </CatalogContainer>
+      </List>
     </>
   );
 }
