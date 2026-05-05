@@ -1,0 +1,56 @@
+apps/main/src/i18n/request.ts
+  3fa18fe5599bd1ad 1,15-18,20
+packages/utils/src/json.ts
+  h_1cda88fc21fe9c 1-4,6
+apps/main/messages/es.po
+  3fa18fe5599bd1ad 198-203,219-225,258-263,324-329,834-838,1221-1227,2041-2046,2132-2181,2267-2271,2277-2281,2322-2326,2342-2346,2357-2366,2382-2391,2412-2416,2432-2435
+packages/player/messages/en.po
+  3fa18fe5599bd1ad 1-412
+packages/player/messages/pt.po
+  3fa18fe5599bd1ad 1-412
+apps/api/next.config.ts
+  h_1cda88fc21fe9c 35
+apps/main/next.config.ts
+  3fa18fe5599bd1ad 37,54,57
+apps/main/messages/pt.po
+  3fa18fe5599bd1ad 198-203,219-225,258-263,324-329,834-838,1221-1227,2041-2046,2132-2181,2267-2271,2277-2281,2322-2326,2342-2346,2357-2366,2382-2391,2412-2416,2432-2435
+turbo.json
+  3fa18fe5599bd1ad 34,38
+packages/player/package.json
+  3fa18fe5599bd1ad 6,11-13,38
+pnpm-workspace.yaml
+  3fa18fe5599bd1ad 42
+packages/player/extract-messages.ts
+  3fa18fe5599bd1ad 1-10
+packages/player/messages/es.po
+  3fa18fe5599bd1ad 1-412
+apps/main/messages/en.po
+  3fa18fe5599bd1ad 198-203,219-225,258-263,324-329,834-838,1221-1227,2041-2046,2132-2181,2267-2271,2277-2281,2322-2326,2342-2346,2357-2366,2382-2391,2412-2416,2432-2435
+packages/player/src/messages.ts
+  3fa18fe5599bd1ad 1-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "456af26631fd0f67bc79acae45b91678456b9c94",
+  "prompts": {
+    "3fa18fe5599bd1ad": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019df8ff-fd1e-75b2-aefe-dca2a4f9551f",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1790,
+      "total_deletions": 1385,
+      "accepted_lines": 1723,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
