@@ -17,8 +17,8 @@ test.describe("Level Page", () => {
     }) => {
       await authenticatedPage.goto("/");
 
-      // Wait for Performance section to load (indicates Suspense resolved)
-      await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
+      // Wait for Progress section to load (indicates Suspense resolved)
+      await expect(authenticatedPage.getByText(/^progress$/i)).toBeVisible();
 
       // User clicks level card on home page (use flexible matcher for belt name)
       await authenticatedPage

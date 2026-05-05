@@ -8,7 +8,7 @@ const chartPages = [
   { chartName: /score chart/i, label: "score", path: "/score" },
 ];
 
-test.describe("Performance Charts", () => {
+test.describe("Progress Charts", () => {
   for (const chartPage of chartPages) {
     test(`${chartPage.label} chart renders without invalid size warnings`, async ({
       authenticatedPage,

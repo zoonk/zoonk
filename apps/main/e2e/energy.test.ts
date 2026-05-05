@@ -19,8 +19,8 @@ test.describe("Energy Page", () => {
     }) => {
       await authenticatedPage.goto("/");
 
-      // Wait for Performance section to load (indicates Suspense resolved)
-      await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
+      // Wait for Progress section to load (indicates Suspense resolved)
+      await expect(authenticatedPage.getByText(/^progress$/i)).toBeVisible();
 
       // User clicks energy card on home page (use flexible matcher for energy percentage)
       await authenticatedPage

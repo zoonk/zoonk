@@ -1,7 +1,7 @@
 import { type BpDataPoint } from "@/data/progress/get-bp-history";
 import { type HistoryPeriod, formatPeriodLabel } from "@zoonk/utils/date-ranges";
 import { getLocale } from "next-intl/server";
-import { PerformanceChartLayout } from "../_components/performance-chart-layout";
+import { ProgressChartLayout } from "../_components/progress-chart-layout";
 import { LevelChartClient } from "./level-chart-client";
 
 export async function LevelChart({
@@ -29,13 +29,13 @@ export async function LevelChart({
   );
 
   return (
-    <PerformanceChartLayout
+    <ProgressChartLayout
       hasNext={hasNext}
       hasPrevious={hasPrevious}
       isEmpty={dataPoints.length === 0}
       periodLabel={periodLabel}
     >
       <LevelChartClient dataPoints={serializedDataPoints} total={periodTotal} />
-    </PerformanceChartLayout>
+    </ProgressChartLayout>
   );
 }

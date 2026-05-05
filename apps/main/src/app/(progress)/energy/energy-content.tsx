@@ -1,16 +1,15 @@
-import { getScoreHistory } from "@/data/progress/get-score-history";
+import { getEnergyHistory } from "@/data/progress/get-energy-history";
 import { getSession } from "@zoonk/core/users/session/get";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { validatePeriod } from "@zoonk/utils/date-ranges";
 import { getLocale } from "next-intl/server";
-import { PerformanceChartSkeleton } from "../_components/performance-chart-skeleton";
-import { PerformanceEmptyState } from "../_components/performance-empty-state";
-import { ScoreChart } from "./score-chart";
-import { ScoreExplanation } from "./score-explanation";
-import { ScoreInsights, ScoreInsightsSkeleton } from "./score-insights";
-import { ScoreStats, ScoreStatsSkeleton } from "./score-stats";
+import { ProgressChartSkeleton } from "../_components/progress-chart-skeleton";
+import { ProgressEmptyState } from "../_components/progress-empty-state";
+import { EnergyChart } from "./energy-chart";
+import { EnergyExplanation } from "./energy-explanation";
+import { EnergyStats, EnergyStatsSkeleton } from "./energy-stats";
 
-export async function ScoreContent({
+export async function EnergyContent({
   searchParams,
 }: {
   searchParams: Promise<{ offset?: string; period?: string }>;
@@ -20,7 +19,7 @@ export async function ScoreContent({
   const locale = await getLocale();
 
   const [data, session] = await Promise.all([
-    getScoreHistory({ locale, offset: Number(offset), period: validPeriod }),
+    getEnergyHistory({ locale, offset: Number(offset), period: validPeriod }),
     getSession(),
   ]);
 
@@ -28,15 +27,15 @@ export async function ScoreContent({
 
   if (!(data && isAuthenticated)) {
     return (
-      <PerformanceEmptyState isAuthenticated={isAuthenticated}>
-        <ScoreExplanation />
-      </PerformanceEmptyState>
+      <ProgressEmptyState isAuthenticated={isAuthenticated}>
+        <EnergyExplanation />
+      </ProgressEmptyState>
     );
   }
 
   return (
     <div className="flex flex-col gap-8">
-      <ScoreStats
+      <EnergyStats
         average={data.average}
         period={validPeriod}
         periodEnd={data.periodEnd}
@@ -44,7 +43,7 @@ export async function ScoreContent({
         previousAverage={data.previousAverage}
       />
 
-      <ScoreChart
+      <EnergyChart
         average={data.average}
         dataPoints={data.dataPoints}
         hasNext={data.hasNextPeriod}
@@ -54,19 +53,16 @@ export async function ScoreContent({
         periodStart={data.periodStart}
       />
 
-      <ScoreInsights period={validPeriod} periodStart={data.periodStart} />
-
-      <ScoreExplanation />
+      <EnergyExplanation />
     </div>
   );
 }
 
-export function ScoreContentSkeleton() {
+export function EnergyContentSkeleton() {
   return (
     <div className="flex flex-col gap-8">
-      <ScoreStatsSkeleton />
-      <PerformanceChartSkeleton />
-      <ScoreInsightsSkeleton />
+      <EnergyStatsSkeleton />
+      <ProgressChartSkeleton />
 
       <div className="flex flex-col gap-2">
         <Skeleton className="h-4 w-36" />

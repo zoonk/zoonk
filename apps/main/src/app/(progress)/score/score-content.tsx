@@ -1,16 +1,16 @@
-import { getBpHistory } from "@/data/progress/get-bp-history";
+import { getScoreHistory } from "@/data/progress/get-score-history";
 import { getSession } from "@zoonk/core/users/session/get";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { validatePeriod } from "@zoonk/utils/date-ranges";
 import { getLocale } from "next-intl/server";
-import { PerformanceChartSkeleton } from "../_components/performance-chart-skeleton";
-import { PerformanceEmptyState } from "../_components/performance-empty-state";
-import { LevelChart } from "./level-chart";
-import { LevelExplanation } from "./level-explanation";
-import { LevelProgression, LevelProgressionSkeleton } from "./level-progression";
-import { LevelStats, LevelStatsSkeleton } from "./level-stats";
+import { ProgressChartSkeleton } from "../_components/progress-chart-skeleton";
+import { ProgressEmptyState } from "../_components/progress-empty-state";
+import { ScoreChart } from "./score-chart";
+import { ScoreExplanation } from "./score-explanation";
+import { ScoreInsights, ScoreInsightsSkeleton } from "./score-insights";
+import { ScoreStats, ScoreStatsSkeleton } from "./score-stats";
 
-export async function LevelContent({
+export async function ScoreContent({
   searchParams,
 }: {
   searchParams: Promise<{ offset?: string; period?: string }>;
@@ -20,7 +20,7 @@ export async function LevelContent({
   const locale = await getLocale();
 
   const [data, session] = await Promise.all([
-    getBpHistory({ locale, offset: Number(offset), period: validPeriod }),
+    getScoreHistory({ locale, offset: Number(offset), period: validPeriod }),
     getSession(),
   ]);
 
@@ -28,47 +28,45 @@ export async function LevelContent({
 
   if (!(data && isAuthenticated)) {
     return (
-      <PerformanceEmptyState isAuthenticated={isAuthenticated}>
-        <LevelExplanation />
-      </PerformanceEmptyState>
+      <ProgressEmptyState isAuthenticated={isAuthenticated}>
+        <ScoreExplanation />
+      </ProgressEmptyState>
     );
   }
 
   return (
     <div className="flex flex-col gap-8">
-      <LevelStats
-        currentBelt={data.currentBelt}
+      <ScoreStats
+        average={data.average}
         period={validPeriod}
         periodEnd={data.periodEnd}
         periodStart={data.periodStart}
-        periodTotal={data.periodTotal}
-        previousPeriodTotal={data.previousPeriodTotal}
-        totalBp={data.totalBp}
+        previousAverage={data.previousAverage}
       />
 
-      <LevelChart
+      <ScoreChart
+        average={data.average}
         dataPoints={data.dataPoints}
         hasNext={data.hasNextPeriod}
         hasPrevious={data.hasPreviousPeriod}
         period={validPeriod}
         periodEnd={data.periodEnd}
         periodStart={data.periodStart}
-        periodTotal={data.periodTotal}
       />
 
-      <LevelProgression currentBelt={data.currentBelt} />
+      <ScoreInsights period={validPeriod} periodStart={data.periodStart} />
 
-      <LevelExplanation />
+      <ScoreExplanation />
     </div>
   );
 }
 
-export function LevelContentSkeleton() {
+export function ScoreContentSkeleton() {
   return (
     <div className="flex flex-col gap-8">
-      <LevelStatsSkeleton />
-      <PerformanceChartSkeleton />
-      <LevelProgressionSkeleton />
+      <ScoreStatsSkeleton />
+      <ProgressChartSkeleton />
+      <ScoreInsightsSkeleton />
 
       <div className="flex flex-col gap-2">
         <Skeleton className="h-4 w-36" />
