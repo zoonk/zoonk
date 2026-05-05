@@ -10,6 +10,20 @@ import { describe, expect, it } from "vitest";
 import { type CompletionInput } from "../contracts/completion-input-schema";
 import { submitPlayerCompletion } from "./submit-player-completion";
 
+type CompletableLessonVisibility = {
+  chapterIsPublished?: boolean;
+  courseIsPublished?: boolean;
+  lessonIsPublished?: boolean;
+  organizationKind?: string;
+};
+
+const inaccessibleLessonCases: { name: string; visibility: CompletableLessonVisibility }[] = [
+  { name: "course", visibility: { courseIsPublished: false } },
+  { name: "chapter", visibility: { chapterIsPublished: false } },
+  { name: "lesson", visibility: { lessonIsPublished: false } },
+  { name: "organization", visibility: { organizationKind: "school" } },
+];
+
 /**
  * Completion writes store a local calendar day alongside UTC timestamps so the
  * daily progress tables can aggregate by the learner's own timezone. Tests only
@@ -22,21 +36,25 @@ function todayLocalDate(): string {
 }
 
 /**
- * The shared completion command only needs a standard published curriculum path:
- * org -> course -> chapter. Keeping this setup centralized makes each test focus
- * on the lesson state it wants to verify.
+ * The shared completion command only needs a standard curriculum path:
+ * org -> course -> chapter. Visibility stays configurable so tests can verify
+ * that the command rejects non-public curriculum before writing progress.
  */
-async function createPublishedChapterContext() {
-  const organization = await organizationFixture({ kind: "brand" });
-  const course = await courseFixture({ isPublished: true, organizationId: organization.id });
+async function createChapterContext(params: CompletableLessonVisibility = {}) {
+  const organization = await organizationFixture({ kind: params.organizationKind ?? "brand" });
 
-  const chapter = await chapterFixture({
-    courseId: course.id,
-    isPublished: true,
+  const course = await courseFixture({
+    isPublished: params.courseIsPublished ?? true,
     organizationId: organization.id,
   });
 
-  return { chapter, organization };
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    isPublished: params.chapterIsPublished ?? true,
+    organizationId: organization.id,
+  });
+
+  return { chapter, course, organization };
 }
 
 /**
@@ -45,14 +63,15 @@ async function createPublishedChapterContext() {
  * follow-up effect planning without dragging in unrelated player variants.
  */
 async function createMultipleChoiceLesson(params: {
-  lessonId: string;
+  chapterId: string;
+  isPublished?: boolean;
   organizationId: string;
   position?: number;
 }) {
   const lesson = await lessonFixture({
-    isPublished: true,
+    chapterId: params.chapterId,
+    isPublished: params.isPublished ?? true,
     kind: "quiz",
-    lessonId: params.lessonId,
     organizationId: params.organizationId,
     position: params.position ?? 0,
   });
@@ -100,26 +119,108 @@ function buildCompletionInput(params: {
   };
 }
 
+/**
+ * Inaccessible completions must leave every progress table untouched. Reading
+ * the affected rows in one helper keeps the rejection test focused on the
+ * authorization boundary instead of repeating persistence details.
+ */
+async function readCompletionWrites(params: {
+  courseId: string;
+  lessonId: string;
+  stepId: string;
+  userId: string;
+}) {
+  const [
+    chapterCompletion,
+    courseCompletion,
+    courseUser,
+    dailyProgress,
+    lessonProgress,
+    stepAttempts,
+    userProgress,
+  ] = await Promise.all([
+    prisma.chapterCompletion.findMany({ where: { userId: params.userId } }),
+    prisma.courseCompletion.findMany({
+      where: { courseId: params.courseId, userId: params.userId },
+    }),
+    prisma.courseUser.findUnique({
+      where: { courseUser: { courseId: params.courseId, userId: params.userId } },
+    }),
+    prisma.dailyProgress.findMany({ where: { userId: params.userId } }),
+    prisma.lessonProgress.findUnique({
+      where: { userLesson: { lessonId: params.lessonId, userId: params.userId } },
+    }),
+    prisma.stepAttempt.findMany({ where: { stepId: params.stepId, userId: params.userId } }),
+    prisma.userProgress.findUnique({ where: { userId: params.userId } }),
+  ]);
+
+  return {
+    chapterCompletion,
+    courseCompletion,
+    courseUser,
+    dailyProgress,
+    lessonProgress,
+    stepAttempts,
+    userProgress,
+  };
+}
+
 describe(submitPlayerCompletion, () => {
   it("returns null when the submitted lesson no longer exists", async () => {
     const result = await submitPlayerCompletion({
       input: buildCompletionInput({ lessonId: randomUUID(), stepId: randomUUID() }),
-      userId: "missing-user-id",
+      userId: randomUUID(),
     });
 
     expect(result).toBeNull();
   });
 
+  it.each(inaccessibleLessonCases)(
+    "returns null without writing progress when the submitted $name is not publicly completable",
+    async (testCase) => {
+      const [user, context] = await Promise.all([
+        userFixture(),
+        createChapterContext(testCase.visibility),
+      ]);
+
+      const { lesson, step } = await createMultipleChoiceLesson({
+        chapterId: context.chapter.id,
+        isPublished: testCase.visibility.lessonIsPublished,
+        organizationId: context.organization.id,
+      });
+
+      const result = await submitPlayerCompletion({
+        input: buildCompletionInput({ lessonId: lesson.id, stepId: step.id }),
+        userId: user.id,
+      });
+
+      const writes = await readCompletionWrites({
+        courseId: context.course.id,
+        lessonId: lesson.id,
+        stepId: step.id,
+        userId: user.id,
+      });
+
+      expect(result).toBeNull();
+      expect(writes.chapterCompletion).toHaveLength(0);
+      expect(writes.courseCompletion).toHaveLength(0);
+      expect(writes.courseUser).toBeNull();
+      expect(writes.dailyProgress).toHaveLength(0);
+      expect(writes.lessonProgress).toBeNull();
+      expect(writes.stepAttempts).toHaveLength(0);
+      expect(writes.userProgress).toBeNull();
+    },
+  );
+
   it("persists completion and requests preloading when the next lesson needs generation", async () => {
     const [user, { chapter, organization }] = await Promise.all([
       userFixture(),
-      createPublishedChapterContext(),
+      createChapterContext(),
     ]);
 
     const [currentLesson, nextLesson] = await Promise.all([
-      lessonFixture({
+      createMultipleChoiceLesson({
         chapterId: chapter.id,
-        isPublished: true,
         organizationId: organization.id,
         position: 0,
       }),
@@ -132,24 +233,22 @@ describe(submitPlayerCompletion, () => {
       }),
     ]);
 
-    const { lesson, step } = await createMultipleChoiceLesson({
-      lessonId: currentLesson.id,
-      organizationId: organization.id,
-    });
-
     const result = await submitPlayerCompletion({
-      input: buildCompletionInput({ lessonId: lesson.id, stepId: step.id }),
+      input: buildCompletionInput({
+        lessonId: currentLesson.lesson.id,
+        stepId: currentLesson.step.id,
+      }),
       userId: user.id,
     });
 
     const [lessonProgress, stepAttempts] = await Promise.all([
       prisma.lessonProgress.findUnique({
-        where: { userLesson: { lessonId: lesson.id, userId: user.id } },
+        where: { userLesson: { lessonId: currentLesson.lesson.id, userId: user.id } },
       }),
-      prisma.stepAttempt.findMany({ where: { stepId: step.id, userId: user.id } }),
+      prisma.stepAttempt.findMany({ where: { stepId: currentLesson.step.id, userId: user.id } }),
     ]);
 
-    expect(nextLesson.position).toBeGreaterThan(currentLesson.position);
+    expect(nextLesson.position).toBeGreaterThan(currentLesson.lesson.position);
     expect(result).toStrictEqual({ preloadLessonId: nextLesson.id });
     expect(lessonProgress?.completedAt).toBeInstanceOf(Date);
     expect(stepAttempts).toHaveLength(1);

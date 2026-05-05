@@ -1,4 +1,4 @@
-import { type TransactionClient } from "@zoonk/db";
+import { type TransactionClient, getPublishedLessonWhere } from "@zoonk/db";
 
 type LessonCurriculumContext = { chapterId: string; courseId: string; lessonId: string };
 
@@ -9,8 +9,9 @@ export type PublishedLessonCompletionRow = {
 };
 
 /**
- * Completion sync starts from a lesson id and resolves the chapter and course
- * once so every later completion decision derives from the curriculum tree.
+ * Completion sync re-checks the published curriculum tree inside the write
+ * transaction. This prevents raw lesson ids from creating durable progress for
+ * draft courses, draft chapters, or draft lessons.
  */
 export async function getLessonCurriculumContext({
   lessonId,
@@ -19,13 +20,13 @@ export async function getLessonCurriculumContext({
   lessonId: string;
   tx: TransactionClient;
 }): Promise<LessonCurriculumContext> {
-  const lesson = await tx.lesson.findUnique({
+  const lesson = await tx.lesson.findFirst({
     select: { chapter: { select: { courseId: true } }, chapterId: true, id: true },
-    where: { id: lessonId },
+    where: getPublishedLessonWhere({ lessonWhere: { id: lessonId } }),
   });
 
   if (!lesson) {
-    throw new Error("Lesson not found");
+    throw new Error("Lesson is not completable");
   }
 
   return { chapterId: lesson.chapterId, courseId: lesson.chapter.courseId, lessonId: lesson.id };
@@ -54,10 +55,13 @@ export async function listPublishedCourseLessonCompletionRows({
     JOIN chapters ch
       ON ch.id = l.chapter_id
       AND ch.is_published = true
+    JOIN courses c
+      ON c.id = ch.course_id
+      AND c.is_published = true
     LEFT JOIN lesson_progress lp
       ON lp.lesson_id = l.id
       AND lp.user_id = ${userId}
-    WHERE ch.course_id = ${courseId}
+    WHERE c.id = ${courseId}
       AND l.is_published = true
   `;
 }
@@ -76,7 +80,7 @@ export async function listPublishedCourseChapters({
 }) {
   return tx.chapter.findMany({
     orderBy: { position: "asc" },
-    where: { courseId, isPublished: true },
+    where: { course: { isPublished: true }, courseId, isPublished: true },
   });
 }
 
@@ -96,7 +100,10 @@ export async function listDurableCourseLessonIds({
   const rows = await tx.lessonProgress.findMany({
     where: {
       completedAt: { not: null },
-      lesson: { chapter: { courseId, isPublished: true }, isPublished: true },
+      lesson: {
+        chapter: { course: { isPublished: true }, courseId, isPublished: true },
+        isPublished: true,
+      },
       userId,
     },
   });
@@ -119,7 +126,7 @@ export async function listDurableCourseChapterIds({
   userId: string;
 }): Promise<Set<string>> {
   const rows = await tx.chapterCompletion.findMany({
-    where: { chapter: { courseId, isPublished: true }, userId },
+    where: { chapter: { course: { isPublished: true }, courseId, isPublished: true }, userId },
   });
 
   return new Set(rows.map((row) => row.chapterId));
