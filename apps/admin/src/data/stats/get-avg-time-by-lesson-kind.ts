@@ -1,6 +1,6 @@
 import "server-only";
+import { adminStatsCache as cache } from "@/data/stats/_utils/admin-stats-cache";
 import { prisma } from "@zoonk/db";
-import { cache } from "react";
 
 export const getAvgTimeByLessonKind = cache(async (start: Date, end: Date) => {
   const results = await prisma.$queryRaw<
