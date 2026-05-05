@@ -1,0 +1,35 @@
+packages/core/src/player/commands/_utils/durable-curriculum-completion-queries.ts
+  7f7d9829366d5cb3 1,12-14,23,25,29,58-60,64,83,103-106,129
+packages/core/src/player/commands/submit-player-completion.ts
+  7f7d9829366d5cb3 2,29-40,88,96
+packages/core/src/player/commands/submit-lesson-completion.test.ts
+  7f7d9829366d5cb3 39,41-52,114-158,341
+packages/core/src/player/commands/submit-player-completion.test.ts
+  h_1cda88fc21fe9c 45,185,191,196,203,212,239
+  7f7d9829366d5cb3 13-26,39-41,43-44,46-49,53,57,66-67,72-73,122-167,172,178-184,186-190,192-195,197-201,205-211,218,222,237-238,240,246,248,251
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "638395f0e8f0df30a15413ab0963b607de36bd8d",
+  "prompts": {
+    "7f7d9829366d5cb3": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dfa7b-14da-7022-85b1-c9dd13058aaa",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 236,
+      "total_deletions": 72,
+      "accepted_lines": 207,
+      "overriden_lines": 1
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
