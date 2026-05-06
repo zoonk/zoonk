@@ -158,7 +158,7 @@ describe("player browser integration: static steps", () => {
         steps: [
           buildSerializedStep({
             content: {
-              text: "{{NAME}}, a regra é \\(d\\sin\\theta = m\\lambda\\). Use **destaque** e *ênfase*.",
+              text: "{{NAME}}, a regra é \\(d\\sin\\theta = m\\lambda\\). Use **destaque**, *ênfase* e `greetUser();`.",
               title: "A equação",
               variant: "text" as const,
             },
@@ -176,13 +176,16 @@ describe("player browser integration: static steps", () => {
 
     const boldText = screen.getByText("destaque");
     const italicText = screen.getByText("ênfase");
+    const codeText = screen.getByText("greetUser();");
     const bodyText = screen.getByText(/Alex, a regra é/).textContent;
 
     expect(boldText.tagName).toBe("STRONG");
     expect(italicText.tagName).toBe("EM");
+    expect(codeText.tagName).toBe("CODE");
     expect(bodyText).not.toContain("{{NAME}}");
     expect(bodyText).not.toContain(String.raw`\(`);
     expect(bodyText).not.toContain(String.raw`\)`);
+    expect(bodyText).not.toContain("`");
   });
 
   it("renders embedded step images inside the shared static shell", async () => {
