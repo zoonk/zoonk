@@ -33,7 +33,6 @@ const nextConfig: NextConfig = {
   logging: { browserToTerminal: true },
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
   reactCompiler: true,
-  transpilePackages: ["@zoonk/player"],
   turbopack: {
     resolveAlias: { ...e2eAliases },
     rules: {
