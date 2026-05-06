@@ -22,7 +22,7 @@ export function StepMediaLayout({
       data-slot="step-media-layout"
     >
       <div className="min-h-0" data-slot="step-media-stage">
-        <ExpandableStepImageStage className="[&_img]:object-top" image={image} />
+        <ExpandableStepImageStage image={image} />
       </div>
 
       <div

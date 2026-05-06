@@ -5,13 +5,6 @@ import Image from "next/image";
 import { useState } from "react";
 import { STEP_IMAGE_SIZES } from "../image-config";
 
-export type StepImageFit = "contain" | "cover";
-
-const IMAGE_FIT_CLASS: Record<StepImageFit, string> = {
-  contain: "object-contain",
-  cover: "object-cover",
-};
-
 function StepImageFallback({ prompt }: { prompt: string }) {
   return (
     <div className="flex h-full w-full items-center justify-center p-6">
@@ -24,16 +17,10 @@ function StepImageFallback({ prompt }: { prompt: string }) {
  * Readable lesson steps now own their illustration directly. This component
  * keeps the render/fallback behavior shared between explanation and tutorial
  * steps so a missing upload still leaves the learner with the intended prompt.
- * Story screens also reuse it for larger hero scenes by switching the image fit
- * from the default contained illustration mode to cover.
+ * The player renders images contained by default so generated content is not
+ * clipped by the lesson frame.
  */
-export function StepImageView({
-  fit = "contain",
-  image,
-}: {
-  fit?: StepImageFit;
-  image: StepImage;
-}) {
+export function StepImageView({ image }: { image: StepImage }) {
   const [errorUrl, setErrorUrl] = useState<string | null>(null);
 
   if (!image.url || errorUrl === image.url) {
@@ -44,7 +31,7 @@ export function StepImageView({
     <div className="relative h-full w-full" data-slot="step-image-view">
       <Image
         alt={image.prompt}
-        className={IMAGE_FIT_CLASS[fit]}
+        className="object-contain"
         fill
         loading="eager"
         onError={() => setErrorUrl(image.url ?? null)}

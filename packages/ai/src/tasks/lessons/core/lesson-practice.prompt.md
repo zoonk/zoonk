@@ -88,7 +88,6 @@ Image rules:
 - Compose each image prompt around one centered primary artifact, screen, document, device, scene detail, or clue.
 - Avoid wide side-by-side panels unless the question truly depends on comparing two states at once.
 - If the step needs comparison, stack the states vertically or place them inside one centered artifact instead of spreading important details across the full width.
-- Keep all essential labels, numbers, code, UI controls, and evidence away from the outer edges of the image.
 - For screens, dashboards, code editors, tables, forms, receipts, and documents, ask for only the relevant section. Do not include sidebars, browser chrome, file trees, toolbars, or extra columns unless they are the clue.
 - If text is needed inside the image, keep it short and legible.
 - Use labels, totals, column names, timestamps, badges, short notes, or short dialogue bubbles when useful.

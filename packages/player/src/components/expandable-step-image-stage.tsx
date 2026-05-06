@@ -16,16 +16,16 @@ import { Maximize2Icon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import Image from "next/image";
 import { type MouseEvent, type TouchEvent, useState } from "react";
-import { type StepImageFit, StepImageView } from "./step-image";
+import { StepImageView } from "./step-image";
 
 type ImageSize = { height: number; width: number };
 
 type Rect = { bottom: number; left: number; right: number; top: number };
 
 /**
- * Gives cropped step images an explicit escape hatch without adding visible
- * navigation chrome to every media layout. Mobile keeps the button visible
- * because hover does not exist there, while desktop reveals it on hover/focus.
+ * Gives step images a larger inspection view without adding visible navigation
+ * chrome to every media layout. Mobile keeps the button visible because hover
+ * does not exist there, while desktop reveals it on hover/focus.
  */
 function StepImageExpandButton() {
   const t = useExtracted();
@@ -155,9 +155,9 @@ function stopLightboxNavigationPropagation(event: TouchEvent<HTMLDivElement>) {
 }
 
 /**
- * Shows the original image with `contain` so learners can inspect anything
- * the immersive player crop hides. The dialog stays visually quiet: one close
- * control, tokenized surfaces, and no additional framing around the image.
+ * Shows the original image with `contain` so learners can inspect fine details
+ * at a larger size. The dialog stays visually quiet: one close control,
+ * tokenized surfaces, and no additional framing around the image.
  */
 function StepImageFullScreenDialog({
   image,
@@ -231,17 +231,15 @@ function StepImageFullScreenDialog({
 }
 
 /**
- * Shared media stage for player images that are allowed to crop in the normal
- * lesson view. Layout components decide the size and border radius with
- * `className`; this component owns rendering, fallback, and full-image access.
+ * Shared media stage for player images that should preserve their full content.
+ * Layout components decide the size and border radius with `className`; this
+ * component owns rendering, fallback, and full-image access.
  */
 export function ExpandableStepImageStage({
   className,
-  fit = "cover",
   image,
 }: {
   className?: string;
-  fit?: StepImageFit;
   image: StepImage;
 }) {
   const [open, setOpen] = useState(false);
@@ -250,12 +248,12 @@ export function ExpandableStepImageStage({
     <Dialog onOpenChange={setOpen} open={open}>
       <div
         className={cn(
-          "group/step-image-stage bg-muted relative h-full w-full overflow-hidden",
+          "group/step-image-stage bg-background relative h-full w-full overflow-hidden",
           className,
         )}
         data-slot="expandable-step-image-stage"
       >
-        <StepImageView fit={fit} image={image} />
+        <StepImageView image={image} />
         <StepImageExpandButton />
       </div>
 

@@ -73,7 +73,7 @@ function ChoiceStepImageStage({ image }: { image: StepImage }) {
   return (
     <div className="w-full lg:h-full lg:min-h-0" data-slot="choice-step-image-stage-shell">
       <div
-        className="relative aspect-square w-full overflow-hidden rounded-xl lg:aspect-auto lg:h-full lg:rounded-none [&_img]:object-top"
+        className="relative aspect-square w-full overflow-hidden rounded-xl lg:aspect-auto lg:h-full lg:rounded-none"
         data-slot="choice-step-image-stage"
       >
         <ExpandableStepImageStage image={image} />
