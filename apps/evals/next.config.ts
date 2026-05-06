@@ -1,4 +1,3 @@
-import path from "node:path";
 import { type NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -13,7 +12,6 @@ const nextConfig: NextConfig = {
   pageExtensions: ["ts", "tsx"],
   reactCompiler: true,
   turbopack: {
-    root: path.resolve(import.meta.dirname, "../.."),
     rules: {
       // Allow to import MDX files used for AI prompts
       "*.md": { as: "*.js", loaders: ["raw-loader"] },
