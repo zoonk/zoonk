@@ -10,6 +10,9 @@ import { describe, expect, it } from "vitest";
 import { type CompletionInput } from "../contracts/completion-input-schema";
 import { submitPlayerCompletion } from "./submit-player-completion";
 
+const REVIEW_TARGET_STEP_COUNT = 10;
+const REVIEW_SUBMITTED_STEP_COUNT = REVIEW_TARGET_STEP_COUNT + 1;
+
 type CompletableLessonVisibility = {
   chapterIsPublished?: boolean;
   courseIsPublished?: boolean;
@@ -77,19 +80,75 @@ async function createMultipleChoiceLesson(params: {
   });
 
   const step = await stepFixture({
-    content: {
-      options: [
-        { feedback: "Correct!", id: "a", isCorrect: true, text: "A" },
-        { feedback: "Wrong.", id: "b", isCorrect: false, text: "B" },
-      ],
-      question: "Choose",
-    },
+    content: buildMultipleChoiceContent(),
     isPublished: true,
     kind: "multipleChoice",
     lessonId: lesson.id,
   });
 
   return { lesson, step };
+}
+
+/**
+ * Review abuse tests need many equivalent interactive steps. Sharing this
+ * content shape keeps the setup focused on the number of submitted step IDs,
+ * not on differences between step contracts.
+ */
+function buildMultipleChoiceContent() {
+  return {
+    options: [
+      { feedback: "Correct!", id: "a", isCorrect: true, text: "A" },
+      { feedback: "Wrong.", id: "b", isCorrect: false, text: "B" },
+    ],
+    question: "Choose",
+  };
+}
+
+/**
+ * Review completion payloads can be forged directly against the server action.
+ * This helper builds that raw payload so the regression test verifies the
+ * server-side validation boundary rather than the normal React player flow.
+ */
+function buildReviewCompletionInput(params: {
+  lessonId: string;
+  startedAt?: number;
+  stepIds: string[];
+}): CompletionInput {
+  const startedAt = params.startedAt ?? Date.now() - 10_000;
+
+  return {
+    answers: Object.fromEntries(params.stepIds.map(buildMultipleChoiceAnswerEntry)),
+    lessonId: params.lessonId,
+    localDate: todayLocalDate(),
+    startedAt,
+    stepTimings: Object.fromEntries(
+      params.stepIds.map((stepId) => buildStepTimingEntry({ startedAt, stepId })),
+    ),
+  };
+}
+
+/**
+ * Each forged review answer uses the known correct option for the fixture step
+ * so the test isolates the submitted-step cap instead of answer correctness.
+ */
+function buildMultipleChoiceAnswerEntry(
+  stepId: string,
+): [string, CompletionInput["answers"][string]] {
+  return [stepId, { kind: "multipleChoice", selectedOptionId: "a" }];
+}
+
+/**
+ * Step timings are required by the completion input schema. The exact values do
+ * not matter for this bug, but every submitted step needs a realistic timing row.
+ */
+function buildStepTimingEntry(params: {
+  startedAt: number;
+  stepId: string;
+}): [string, CompletionInput["stepTimings"][string]] {
+  return [
+    params.stepId,
+    { answeredAt: params.startedAt + 5000, dayOfWeek: 1, durationSeconds: 5, hourOfDay: 12 },
+  ];
 }
 
 /**
@@ -253,5 +312,59 @@ describe(submitPlayerCompletion, () => {
     expect(lessonProgress?.completedAt).toBeInstanceOf(Date);
     expect(stepAttempts).toHaveLength(1);
     expect(stepAttempts[0]?.isCorrect).toBe(true);
+  });
+
+  it("caps review completion validation at the review target count", async () => {
+    const [user, { chapter, organization }] = await Promise.all([
+      userFixture(),
+      createChapterContext(),
+    ]);
+
+    const [reviewLesson, sourceLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        kind: "review",
+        organizationId: organization.id,
+        position: 1,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        kind: "quiz",
+        organizationId: organization.id,
+        position: 0,
+      }),
+    ]);
+
+    const reviewableSteps = await Promise.all(
+      Array.from({ length: REVIEW_SUBMITTED_STEP_COUNT }, (_, position) =>
+        stepFixture({
+          content: buildMultipleChoiceContent(),
+          isPublished: true,
+          kind: "multipleChoice",
+          lessonId: sourceLesson.id,
+          position,
+        }),
+      ),
+    );
+
+    await submitPlayerCompletion({
+      input: buildReviewCompletionInput({
+        lessonId: reviewLesson.id,
+        stepIds: reviewableSteps.map((step) => step.id),
+      }),
+      userId: user.id,
+    });
+
+    const [dailyProgress, stepAttempts] = await Promise.all([
+      prisma.dailyProgress.findFirst({ where: { userId: user.id } }),
+      prisma.stepAttempt.findMany({
+        where: { stepId: { in: reviewableSteps.map((step) => step.id) }, userId: user.id },
+      }),
+    ]);
+
+    expect(stepAttempts).toHaveLength(REVIEW_TARGET_STEP_COUNT);
+    expect(dailyProgress?.correctAnswers).toBe(REVIEW_TARGET_STEP_COUNT);
   });
 });
