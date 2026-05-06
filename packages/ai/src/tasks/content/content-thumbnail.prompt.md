@@ -20,7 +20,7 @@ The icon must:
 - Use 2–4 colors maximum
 - Have soft realistic lighting
 - Have a subtle shadow underneath
-- Be isolated on a very light warm gray background (#f5f5f3)
+- Be isolated on a white background
 - Square format (1:1)
 
 Choose ONE simple metaphor object that best represents the topic. If more than one object is generated, the image is incorrect.
