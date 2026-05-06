@@ -27,7 +27,6 @@ import { useExtracted } from "next-intl";
 import { useCallback, useId, useMemo, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
-import { useReplaceName } from "../user-name-context";
 import { InlineFeedback } from "./inline-feedback";
 import { QuestionText } from "./question-text";
 import { ResultKbd } from "./result-kbd";
@@ -239,7 +238,6 @@ export function SortOrderStep({
 }) {
   const t = useExtracted();
   const content = useMemo(() => parseStepContent("sortOrder", step.content), [step.content]);
-  const replaceName = useReplaceName();
   const [items, setItems] = useState<SortItem[]>(() => initItems(step, result));
 
   const handleReorder = useCallback(
@@ -255,7 +253,7 @@ export function SortOrderStep({
 
   return (
     <InteractiveStepLayout>
-      {content.question && <QuestionText>{replaceName(content.question)}</QuestionText>}
+      {content.question && <QuestionText>{content.question}</QuestionText>}
 
       {!hasResult && (
         <p className="text-muted-foreground text-sm">{t("Drag items into the correct order")}</p>

@@ -9,7 +9,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
-import { useReplaceName } from "../user-name-context";
 import { getTemplateRomanization } from "./_utils/template-romanization";
 import { InlineFeedback } from "./inline-feedback";
 import { QuestionText } from "./question-text";
@@ -215,7 +214,6 @@ export function FillBlankStep({
 }) {
   const t = useExtracted();
   const content = useMemo(() => parseStepContent("fillBlank", step.content), [step.content]);
-  const replaceName = useReplaceName();
   const blankCount = content.answers.length;
   const hasResult = result !== undefined;
 
@@ -279,7 +277,7 @@ export function FillBlankStep({
 
   return (
     <InteractiveStepLayout>
-      {content.question && <QuestionText>{replaceName(content.question)}</QuestionText>}
+      {content.question && <QuestionText>{content.question}</QuestionText>}
 
       <TemplateText
         answers={content.answers}

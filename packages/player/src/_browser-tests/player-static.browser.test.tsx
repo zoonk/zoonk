@@ -151,6 +151,40 @@ describe("player browser integration: static steps", () => {
     await expect.element(page.getByText("Add -ed to regular verbs")).toBeInTheDocument();
   });
 
+  it("renders generated rich text without exposing LaTeX delimiters", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        kind: "explanation",
+        steps: [
+          buildSerializedStep({
+            content: {
+              text: "{{NAME}}, a regra é \\(d\\sin\\theta = m\\lambda\\). Use **destaque** e *ênfase*.",
+              title: "A equação",
+              variant: "text" as const,
+            },
+            id: "static-rich-text",
+          }),
+        ],
+      }),
+      navigation: buildNavigation({ nextLessonHref: null }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await expect.element(page.getByRole("heading", { name: "A equação" })).toBeInTheDocument();
+    await expect.element(page.getByText("destaque")).toBeInTheDocument();
+    await expect.element(page.getByText("ênfase")).toBeInTheDocument();
+
+    const boldText = screen.getByText("destaque");
+    const italicText = screen.getByText("ênfase");
+    const bodyText = screen.getByText(/Alex, a regra é/).textContent;
+
+    expect(boldText.tagName).toBe("STRONG");
+    expect(italicText.tagName).toBe("EM");
+    expect(bodyText).not.toContain("{{NAME}}");
+    expect(bodyText).not.toContain(String.raw`\(`);
+    expect(bodyText).not.toContain(String.raw`\)`);
+  });
+
   it("renders embedded step images inside the shared static shell", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({

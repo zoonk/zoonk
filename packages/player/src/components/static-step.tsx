@@ -2,7 +2,6 @@
 
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { describePlayerStep, getPlayerStepImage } from "../player-step";
-import { useReplaceName } from "../user-name-context";
 import { HighlightText } from "./highlight-text";
 import {
   PlayerReadScene,
@@ -15,12 +14,10 @@ import { StaticStepLayout } from "./static-step-layout";
 import { StepIntroHero } from "./step-intro-hero-layout";
 
 function TextVariant({ title, text }: { title: string; text: string }) {
-  const replaceName = useReplaceName();
-
   return (
     <PlayerReadSceneStack>
-      <PlayerReadSceneTitle>{replaceName(title)}</PlayerReadSceneTitle>
-      <PlayerReadSceneBody>{replaceName(text)}</PlayerReadSceneBody>
+      <PlayerReadSceneTitle>{title}</PlayerReadSceneTitle>
+      <PlayerReadSceneBody>{text}</PlayerReadSceneBody>
     </PlayerReadSceneStack>
   );
 }

@@ -1,15 +1,17 @@
-import { stripWrappingQuotes } from "./_utils/strip-wrapping-quotes";
+import { PlayerRichText } from "./player-rich-text";
 
 export function ContextText({ children }: { children: React.ReactNode }) {
-  const content = typeof children === "string" ? stripWrappingQuotes(children) : children;
-
-  return <p className="text-lg leading-relaxed sm:text-xl sm:leading-relaxed">{content}</p>;
+  return (
+    <p className="text-lg leading-relaxed sm:text-xl sm:leading-relaxed">
+      {typeof children === "string" ? <PlayerRichText text={children} /> : children}
+    </p>
+  );
 }
 
 export function QuestionText({ children }: { children: React.ReactNode }) {
   return (
     <h2 className="text-muted-foreground text-lg font-semibold tracking-tight sm:text-xl">
-      {children}
+      {typeof children === "string" ? <PlayerRichText text={children} /> : children}
     </h2>
   );
 }

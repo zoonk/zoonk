@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
+import { PlayerRichText } from "./player-rich-text";
 import { PlayerContentFrame } from "./step-layouts";
 
 /**
@@ -42,7 +43,7 @@ export function PlayerFeedbackSceneMessage({
       data-slot="player-feedback-scene-message"
       {...props}
     >
-      {children}
+      {typeof children === "string" ? <PlayerRichText text={children} /> : children}
     </p>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { type StepImage } from "@zoonk/core/steps/contract/image";
-import { useReplaceName } from "../user-name-context";
 import { ExpandableStepImageStage } from "./expandable-step-image-stage";
 import {
   PlayerReadScene,
@@ -20,14 +19,12 @@ import { StepActionButton } from "./step-action-button";
  * placement from drifting.
  */
 function StepIntroHeroContent({ text, title }: { text: string; title: string }) {
-  const replaceName = useReplaceName();
-
   return (
     <div className="flex flex-col gap-6">
       <PlayerReadSceneStack>
-        <PlayerReadSceneTitle tone="foreground">{replaceName(title)}</PlayerReadSceneTitle>
+        <PlayerReadSceneTitle tone="foreground">{title}</PlayerReadSceneTitle>
 
-        <PlayerReadSceneBody>{replaceName(text)}</PlayerReadSceneBody>
+        <PlayerReadSceneBody>{text}</PlayerReadSceneBody>
       </PlayerReadSceneStack>
 
       <StepActionButton />

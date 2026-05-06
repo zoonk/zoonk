@@ -2,7 +2,7 @@
 
 import { useExtracted } from "next-intl";
 import { type StepResult } from "../player-reducer";
-import { useReplaceName } from "../user-name-context";
+import { PlayerRichText } from "./player-rich-text";
 import { VerdictLabel } from "./verdict-label";
 
 export function InlineFeedback({
@@ -13,9 +13,8 @@ export function InlineFeedback({
   result: StepResult;
 }) {
   const t = useExtracted();
-  const replaceName = useReplaceName();
   const isCorrect = result.result.isCorrect;
-  const feedback = result.result.feedback ? replaceName(result.result.feedback) : null;
+  const feedback = result.result.feedback;
 
   return (
     <div
@@ -26,7 +25,11 @@ export function InlineFeedback({
     >
       <VerdictLabel verdict={isCorrect ? "correct" : "incorrect"} />
 
-      {feedback && <p className="text-muted-foreground text-sm">{feedback}</p>}
+      {feedback && (
+        <p className="text-muted-foreground text-sm">
+          <PlayerRichText text={feedback} />
+        </p>
+      )}
 
       {children}
     </div>
