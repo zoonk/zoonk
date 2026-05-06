@@ -36,10 +36,20 @@ describe(submitLessonCompletion, () => {
 
   beforeAll(async () => {
     org = await organizationFixture();
-    course = await courseFixture({ organizationId: org.id });
-    const chapter = await chapterFixture({ courseId: course.id, organizationId: org.id });
+    course = await courseFixture({ isPublished: true, organizationId: org.id });
 
-    lesson = await lessonFixture({ chapterId: chapter.id, kind: "quiz", organizationId: org.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+    });
+
+    lesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      kind: "quiz",
+      organizationId: org.id,
+    });
 
     step = await stepFixture({
       content: {
@@ -99,6 +109,51 @@ describe(submitLessonCompletion, () => {
     expect(progress).not.toBeNull();
     expect(progress?.completedAt).not.toBeNull();
     expect(progress?.durationSeconds).toBe(15);
+  });
+
+  it("rolls back progress writes when the lesson tree is not completable", async () => {
+    const user = await userFixture();
+    const userId = user.id;
+
+    const draftCourse = await courseFixture({ organizationId: org.id });
+
+    const draftChapter = await chapterFixture({
+      courseId: draftCourse.id,
+      isPublished: true,
+      organizationId: org.id,
+    });
+
+    const draftLesson = await lessonFixture({
+      chapterId: draftChapter.id,
+      isPublished: true,
+      organizationId: org.id,
+    });
+
+    await expect(
+      submitLessonCompletion({
+        durationSeconds: 10,
+        lessonId: draftLesson.id,
+        localDate: todayLocalDate(),
+        score: { brainPower: 10, correctCount: 0, energyDelta: 0.1, incorrectCount: 0 },
+        startedAt: new Date(Date.now() - 10_000),
+        stepResults: [],
+        userId,
+      }),
+    ).rejects.toThrow("Lesson is not completable");
+
+    const [courseUser, dailyProgress, lessonProgress, userProgress] = await Promise.all([
+      prisma.courseUser.findUnique({ where: { courseUser: { courseId: draftCourse.id, userId } } }),
+      prisma.dailyProgress.findMany({ where: { userId } }),
+      prisma.lessonProgress.findUnique({
+        where: { userLesson: { lessonId: draftLesson.id, userId } },
+      }),
+      prisma.userProgress.findUnique({ where: { userId } }),
+    ]);
+
+    expect(courseUser).toBeNull();
+    expect(dailyProgress).toHaveLength(0);
+    expect(lessonProgress).toBeNull();
+    expect(userProgress).toBeNull();
   });
 
   it("marks lesson, chapter, and course as durably completed when the final lesson is completed", async () => {
@@ -283,6 +338,7 @@ describe(submitLessonCompletion, () => {
     const userId = user.id;
 
     const staticLesson = await lessonFixture({
+      isPublished: true,
       kind: "explanation",
       lessonId: lesson.id,
       organizationId: org.id,

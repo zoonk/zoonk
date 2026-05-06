@@ -1,5 +1,5 @@
 import "server-only";
-import { type LessonSentence, prisma } from "@zoonk/db";
+import { type LessonSentence, getPublishedLessonWhere, prisma } from "@zoonk/db";
 import { type CompletionInput } from "../contracts/completion-input-schema";
 import { computeLessonScore } from "../contracts/compute-score";
 import { validateAnswers } from "../contracts/validate-answers";
@@ -25,6 +25,18 @@ type StepWithSentence = {
 };
 
 type PlayerCompletionEffects = { preloadLessonId: string | null };
+
+/**
+ * Completion is only valid for lessons the learner can reach through the
+ * product. Public brand courses are always eligible, and organization-less
+ * courses are eligible only for the user who owns that generated course.
+ */
+function getCompletableLessonWhere({ lessonId, userId }: { lessonId: string; userId: string }) {
+  return getPublishedLessonWhere({
+    courseWhere: { OR: [{ organization: { kind: "brand" } }, { organizationId: null, userId }] },
+    lessonWhere: { id: lessonId },
+  });
+}
 
 /**
  * Attaches sentence translation data from `LessonSentence` records to steps.
@@ -73,7 +85,7 @@ export async function submitPlayerCompletion(params: {
 }): Promise<PlayerCompletionEffects | null> {
   const lessonId = params.input.lessonId;
 
-  const lesson = await prisma.lesson.findUnique({
+  const lesson = await prisma.lesson.findFirst({
     include: {
       steps: {
         include: { sentence: true, word: true },
@@ -81,7 +93,7 @@ export async function submitPlayerCompletion(params: {
         where: { isPublished: true },
       },
     },
-    where: { id: lessonId },
+    where: getCompletableLessonWhere({ lessonId, userId: params.userId }),
   });
 
   if (!lesson) {
