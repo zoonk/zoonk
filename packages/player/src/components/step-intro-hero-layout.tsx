@@ -35,9 +35,9 @@ function StepIntroHeroContent({ text, title }: { text: string; title: string }) 
 /**
  * Hero illustrations are immersive on mobile and composed on desktop.
  *
- * Small screens keep the image as a full-bleed background. Large screens reuse
- * the feedback-screen treatment: a centered, rounded square image above the
- * content so the generated scene feels intentional instead of oversized.
+ * Small screens keep the image behind the bottom card. Large screens reuse the
+ * feedback-screen treatment: a centered, rounded square image above the content
+ * so the generated scene feels intentional instead of oversized.
  */
 function StepHeroImage({ image }: { image: StepImage }) {
   return (
@@ -45,7 +45,7 @@ function StepHeroImage({ image }: { image: StepImage }) {
       className="bg-muted absolute inset-0 overflow-hidden lg:relative lg:inset-auto lg:aspect-square lg:w-full lg:rounded-3xl"
       data-slot="step-hero-image"
     >
-      <ExpandableStepImageStage fit="cover" image={image} />
+      <ExpandableStepImageStage image={image} />
     </div>
   );
 }
