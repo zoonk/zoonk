@@ -1,5 +1,5 @@
 import { cn } from "@zoonk/ui/lib/utils";
-import { stripWrappingQuotes } from "./_utils/strip-wrapping-quotes";
+import { PlayerRichText } from "./player-rich-text";
 import { PlayerContentFrame } from "./step-layouts";
 
 type PlayerReadSceneTitleTone = "destructive" | "foreground" | "muted" | "success" | "warning";
@@ -83,7 +83,7 @@ export function PlayerReadSceneTitle({
       )}
       data-slot="player-read-scene-title"
     >
-      {children}
+      {typeof children === "string" ? <PlayerRichText text={children} /> : children}
     </h2>
   );
 }
@@ -95,14 +95,12 @@ export function PlayerReadSceneTitle({
  * typography lives here.
  */
 export function PlayerReadSceneBody({ children }: { children: React.ReactNode }) {
-  const content = typeof children === "string" ? stripWrappingQuotes(children) : children;
-
   return (
     <p
       className="text-lg leading-relaxed sm:text-xl sm:leading-relaxed"
       data-slot="player-read-scene-body"
     >
-      {content}
+      {typeof children === "string" ? <PlayerRichText text={children} /> : children}
     </p>
   );
 }

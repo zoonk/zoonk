@@ -2,8 +2,8 @@
 
 import { useExtracted } from "next-intl";
 import { useOptionKeyboard } from "../use-option-keyboard";
-import { useReplaceName } from "../user-name-context";
 import { OptionCard } from "./option-card";
+import { PlayerRichText } from "./player-rich-text";
 import { ContextText, QuestionText } from "./question-text";
 import { SectionLabel } from "./section-label";
 import { InteractiveStepLayout } from "./step-layouts";
@@ -60,13 +60,11 @@ export function PlayerChoiceSceneEyebrow({ children }: { children: React.ReactNo
  * being repeated in every adapter component.
  */
 export function PlayerChoiceSceneContext({ children }: { children?: string | null }) {
-  const replaceName = useReplaceName();
-
   if (!children) {
     return null;
   }
 
-  return <ContextText>{replaceName(children)}</ContextText>;
+  return <ContextText>{children}</ContextText>;
 }
 
 /**
@@ -76,13 +74,11 @@ export function PlayerChoiceSceneContext({ children }: { children?: string | nul
  * treatment even though they come from different step kinds.
  */
 export function PlayerChoiceSceneQuestion({ children }: { children?: string | null }) {
-  const replaceName = useReplaceName();
-
   if (!children) {
     return null;
   }
 
-  return <QuestionText>{replaceName(children)}</QuestionText>;
+  return <QuestionText>{children}</QuestionText>;
 }
 
 /**
@@ -95,7 +91,7 @@ export function PlayerChoiceSceneQuestion({ children }: { children?: string | nu
 export function PlayerChoiceSceneOptionText({ children }: { children: React.ReactNode }) {
   return (
     <span className="text-base leading-6" data-slot="player-choice-scene-option-text">
-      {children}
+      {typeof children === "string" ? <PlayerRichText text={children} /> : children}
     </span>
   );
 }

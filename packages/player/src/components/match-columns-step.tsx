@@ -8,7 +8,6 @@ import { useExtracted } from "next-intl";
 import { Fragment, useCallback, useMemo, useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
 import { type SelectedAnswer } from "../player-reducer";
-import { useReplaceName } from "../user-name-context";
 import { QuestionText } from "./question-text";
 import { InteractiveStepLayout } from "./step-layouts";
 
@@ -152,7 +151,6 @@ export function MatchColumnsStep({
   step: SerializedStep;
 }) {
   const content = useMemo(() => parseStepContent("matchColumns", step.content), [step.content]);
-  const replaceName = useReplaceName();
   const t = useExtracted();
   const { trigger } = useWebHaptics();
 
@@ -223,7 +221,7 @@ export function MatchColumnsStep({
 
   return (
     <InteractiveStepLayout>
-      {content.question && <QuestionText>{replaceName(content.question)}</QuestionText>}
+      {content.question && <QuestionText>{content.question}</QuestionText>}
 
       <MatchGrid
         correctPairs={correctPairs}

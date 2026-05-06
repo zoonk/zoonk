@@ -4,7 +4,6 @@ import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { useExtracted } from "next-intl";
 import { type StepResult } from "../player-reducer";
-import { useReplaceName } from "../user-name-context";
 import { getFeedbackRomanization } from "./_utils/feedback-romanization";
 import { CorrectAnswerBlock, IncorrectAnswerBlock } from "./feedback-answer-blocks";
 import { PlayAudioButton } from "./play-audio-button";
@@ -105,9 +104,7 @@ export function FeedbackScreenContent({
   step?: SerializedStep;
 }) {
   const t = useExtracted();
-  const replaceName = useReplaceName();
-  const { isCorrect, feedback: rawFeedback, correctAnswer } = result.result;
-  const feedback = rawFeedback ? replaceName(rawFeedback) : null;
+  const { isCorrect, feedback, correctAnswer } = result.result;
   const selectedText = getSelectedText(result, step);
   const questionText = getQuestionText(result, step);
   const rom = getFeedbackRomanization({ correctAnswer, questionText, result, selectedText, step });
