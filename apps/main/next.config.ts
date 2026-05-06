@@ -1,4 +1,3 @@
-import path from "node:path";
 import createMDX from "@next/mdx";
 import { withSentryConfig } from "@sentry/nextjs";
 import { getPublicAppSecurityHeaders } from "@zoonk/next/security/headers";
@@ -36,7 +35,6 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   turbopack: {
     resolveAlias: { ...e2eAliases },
-    root: path.resolve(import.meta.dirname, "../.."),
     rules: {
       // Allow to import MDX files used for AI prompts
       "*.md": { as: "*.js", loaders: ["raw-loader"] },
