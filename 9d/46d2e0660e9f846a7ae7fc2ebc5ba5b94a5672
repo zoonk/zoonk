@@ -1,0 +1,40 @@
+packages/player/src/components/step-intro-hero-layout.tsx
+  a321e3a3a488506c 38-40,48
+packages/player/src/components/step-media-layout.tsx
+  a321e3a3a488506c 25
+packages/player/src/components/step-image.tsx
+  a321e3a3a488506c 20-21,23,34
+packages/ai/src/tasks/steps/step-content-practice-image.prompt.md
+  a321e3a3a488506c 13
+packages/ai/src/tasks/steps/step-content-image.prompt.md
+  a321e3a3a488506c 7
+packages/player/src/components/expandable-step-image-stage.tsx
+  a321e3a3a488506c 19,26-28,158-160,234-236,251,256
+packages/player/src/components/choice-step-layout.tsx
+  a321e3a3a488506c 76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "9d46d2e0660e9f846a7ae7fc2ebc5ba5b94a5672",
+  "prompts": {
+    "a321e3a3a488506c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dfe37-ac8b-7180-807e-84e87e503457",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 26,
+      "total_deletions": 47,
+      "accepted_lines": 24,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
