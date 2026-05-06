@@ -227,9 +227,6 @@ importers:
       '@zoonk/utils':
         specifier: workspace:*
         version: link:../../packages/utils
-      botid:
-        specifier: 'catalog:'
-        version: 1.5.11(next@16.2.4(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
       lucide-react:
         specifier: 'catalog:'
         version: 1.14.0(react@19.2.5)

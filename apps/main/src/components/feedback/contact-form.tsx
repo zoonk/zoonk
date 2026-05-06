@@ -13,9 +13,9 @@ import { Textarea } from "@zoonk/ui/components/textarea";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { useExtracted } from "next-intl";
 import { useActionState, useId } from "react";
-import { contactFormAction } from "./contact-form-action";
+import { type ContactFormState, contactFormAction } from "./contact-form-action";
 
-const initialState: { status: "idle" | "error" | "success" } = { status: "idle" };
+const initialState: ContactFormState = { status: "idle" };
 
 export function ContactForm({ defaultEmail }: { defaultEmail?: string }) {
   const t = useExtracted();

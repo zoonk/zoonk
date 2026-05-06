@@ -1,5 +1,6 @@
 import { openDialog } from "@zoonk/e2e/fixtures/dialog";
 import { searchPromptWithSuggestionsFixture } from "@zoonk/testing/fixtures/course-suggestions";
+import { mockFeedbackSubmission } from "./feedback";
 import { expect, test } from "./fixtures";
 
 let prompt: string;
@@ -46,6 +47,8 @@ test.describe("Content Feedback", () => {
   });
 
   test("submit with valid data shows success message", async ({ page }) => {
+    const feedbackSubmission = await mockFeedbackSubmission(page);
+
     const feedbackButton = page.getByRole("button", { name: /send feedback/i });
     const dialog = page.getByRole("dialog");
     await openDialog(feedbackButton, dialog);
@@ -64,6 +67,11 @@ test.describe("Content Feedback", () => {
     await dialog.getByRole("button", { name: /send message/i }).click();
 
     await expect(dialog.getByText(/message sent successfully/i)).toBeVisible();
+
+    await expect(feedbackSubmission.requestBody).resolves.toStrictEqual({
+      email: "test@example.com",
+      message: "This is test feedback",
+    });
   });
 
   test("submit with invalid email shows validation error", async ({ page }) => {
