@@ -1,6 +1,5 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import { getPublicAppSecurityHeaders } from "@zoonk/next/security/headers";
-import { withBotId } from "botid/next/config";
 import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import { withWorkflow } from "workflow/next";
@@ -41,7 +40,7 @@ const withNextIntl = createNextIntlPlugin({
   },
 });
 
-export default withSentryConfig(withWorkflow(withBotId(withNextIntl(nextConfig))), {
+export default withSentryConfig(withWorkflow(withNextIntl(nextConfig)), {
   org: "zoonk",
   project: "zoonk-api",
   silent: true,
