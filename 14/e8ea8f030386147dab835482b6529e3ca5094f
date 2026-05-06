@@ -1,0 +1,27 @@
+packages/core/src/player/commands/submit-player-completion.test.ts
+  s_0464414a46dbe1::t_95cf7900d62b56 13-15,92-153,316-368
+  s_0464414a46dbe1::t_746fc5c48502ae 83
+packages/core/src/player/queries/get-review-steps.ts
+  s_0464414a46dbe1::t_7aa05e4b04b58e 106-108,117-118,121
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "14e8ea8f030386147dab835482b6529e3ca5094f",
+  "prompts": {},
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  },
+  "sessions": {
+    "s_0464414a46dbe1": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dff72-5015-7e30-a1c7-0b19eb737a17",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>"
+    }
+  }
+}
