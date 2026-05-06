@@ -1,7 +1,7 @@
 "use client";
 
 import { calculateScore, getScoreClassName } from "@/lib/score";
-import { type EvalResult, type ScoreStep } from "@/lib/types";
+import { type EvalResult, type ScoreStep, type TestCaseOutput } from "@/lib/types";
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@zoonk/ui/components/accordion";
 import { Button } from "@zoonk/ui/components/button";
 import { useClipboard } from "@zoonk/ui/hooks/clipboard";
@@ -151,6 +151,30 @@ export function TestCase({ result, index }: { result: EvalResult; index: number 
         <OutputSection output={result.output} />
 
         <EvaluationStepsSection steps={result.steps} />
+      </AccordionContent>
+    </AccordionItem>
+  );
+}
+
+/**
+ * Output-only rows let prompt work inspect generated artifacts before spending
+ * tokens on eval scoring, while keeping the later scored view unchanged.
+ */
+export function OutputTestCase({ output, index }: { output: TestCaseOutput; index: number }) {
+  const testCaseTitle = output.testCase.id || `Test Case ${index + 1}`;
+
+  return (
+    <AccordionItem value={`output-test-case-${index}`}>
+      <AccordionTrigger className="flex w-full items-center justify-between pr-4 hover:no-underline">
+        <span className="text-base font-medium">{testCaseTitle}</span>
+      </AccordionTrigger>
+
+      <AccordionContent className="flex flex-col gap-4 pt-4">
+        <UserInputSection userInput={output.testCase.userInput} />
+
+        <TokensSection inputTokens={output.inputTokens} outputTokens={output.outputTokens} />
+
+        <OutputSection output={output.output} />
       </AccordionContent>
     </AccordionItem>
   );

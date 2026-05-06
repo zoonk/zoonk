@@ -1,7 +1,13 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { cache } from "react";
-import { type ModelOutputs, type OutputEntry } from "./types";
+import {
+  type ModelOutputs,
+  type OutputEntry,
+  type Task,
+  type TaskModelOutputResults,
+  type TestCase,
+} from "./types";
 
 const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
 const OUTPUTS_DIR = path.join(EVAL_RESULTS_DIR, "outputs");
@@ -9,6 +15,59 @@ const OUTPUTS_DIR = path.join(EVAL_RESULTS_DIR, "outputs");
 function getOutputsFilePath(taskId: string, modelId: string): string {
   const modelPath = modelId.replaceAll("/", "-");
   return path.join(OUTPUTS_DIR, taskId, `${modelPath}.json`);
+}
+
+/**
+ * Generated output ids include the run number so repeated runs do not overwrite
+ * each other, but the task registry stores the base test case id.
+ */
+function getBaseTestCaseId(testCaseId: string): string {
+  const lastDashIndex = testCaseId.lastIndexOf("-");
+
+  if (lastDashIndex === -1) {
+    return testCaseId;
+  }
+
+  return testCaseId.slice(0, lastDashIndex);
+}
+
+/**
+ * Saved output files intentionally avoid duplicating test case data, so display
+ * and scoring paths need one shared way to attach current task metadata.
+ */
+export function findTestCaseForOutput({
+  task,
+  testCaseId,
+}: {
+  task: Pick<Task, "testCases">;
+  testCaseId: string;
+}): TestCase | null {
+  const baseId = getBaseTestCaseId(testCaseId);
+  return task.testCases.find((testCase) => testCase.id === baseId) ?? null;
+}
+
+/**
+ * The model page needs UI-ready outputs before evals have been scored, while
+ * stale saved outputs for removed test cases should stay hidden.
+ */
+export function combineOutputsWithTestCases({
+  modelOutputs,
+  task,
+}: {
+  modelOutputs: ModelOutputs;
+  task: Pick<Task, "testCases">;
+}): TaskModelOutputResults {
+  const outputs = modelOutputs.outputs.flatMap((output) => {
+    const testCase = findTestCaseForOutput({ task, testCaseId: output.testCaseId });
+
+    if (!testCase) {
+      return [];
+    }
+
+    return [{ ...output, testCase: { ...testCase, id: output.testCaseId } }];
+  });
+
+  return { ...modelOutputs, outputs };
 }
 
 async function ensureOutputsDir(taskId: string) {

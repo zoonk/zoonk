@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { logError, logInfo } from "@zoonk/utils/logger";
 import { cache } from "react";
-import { loadModelOutputs } from "./output-loader";
+import { findTestCaseForOutput, loadModelOutputs } from "./output-loader";
 import { generateScore } from "./score";
 import {
   type OutputEntry,
@@ -45,13 +45,6 @@ async function saveScoredResults(taskId: string, modelId: string, results: Score
 
   const filePath = getResultsFilePath(taskId, modelId);
   await fs.writeFile(filePath, JSON.stringify(taskResults, null, 2));
-}
-
-function findTestCaseForOutput(task: Task, testCaseId: string): TestCase | null {
-  // TestCaseId format is "{baseId}-{runNumber}"
-  const lastDashIndex = testCaseId.lastIndexOf("-");
-  const baseId = testCaseId.slice(0, lastDashIndex);
-  return task.testCases.find((testCase) => testCase.id === baseId) ?? null;
 }
 
 async function scoreOutput(output: OutputEntry, testCase: TestCase): Promise<ScoredResult> {
@@ -106,7 +99,7 @@ export async function runEval(task: Task, modelId: string): Promise<TaskEvalResu
 
   const results = await Promise.allSettled(
     outputsToScore.map((output) => {
-      const testCase = findTestCaseForOutput(task, output.testCaseId);
+      const testCase = findTestCaseForOutput({ task, testCaseId: output.testCaseId });
 
       if (!testCase) {
         return Promise.reject(new Error(`Test case not found for output: ${output.testCaseId}`));

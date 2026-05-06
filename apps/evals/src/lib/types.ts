@@ -65,6 +65,15 @@ export type ModelOutputs = {
   outputs: OutputEntry[];
 };
 
+export type TestCaseOutput = OutputEntry & { testCase: TestCase };
+
+export type TaskModelOutputResults = {
+  taskId: string;
+  modelId: string;
+  generatedAt: string;
+  outputs: TestCaseOutput[];
+};
+
 // === Scored Result Types (Without output data) ===
 
 export type ScoredResult = { testCase: TestCase; steps: Score["steps"] };

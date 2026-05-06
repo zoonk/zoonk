@@ -6,7 +6,11 @@ import {
 } from "@/components/breadcrumb";
 import { getTaskResults } from "@/lib/eval-runner";
 import { EVAL_MODELS, getModelDisplayName } from "@/lib/models";
-import { getOutputStatus } from "@/lib/output-loader";
+import {
+  combineOutputsWithTestCases,
+  getOutputStatus,
+  loadModelOutputs,
+} from "@/lib/output-loader";
 import { TASKS } from "@/tasks";
 import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
 import {
@@ -18,6 +22,7 @@ import {
 } from "@zoonk/ui/components/container";
 import { notFound, redirect } from "next/navigation";
 import { EvalResults } from "./eval-results";
+import { GeneratedOutputs } from "./generated-outputs";
 import { TaskModelActionsCard } from "./task-model-actions-card";
 
 export default async function TaskModelPage({ params }: PageProps<"/tasks/[taskId]/[modelId]">) {
@@ -35,10 +40,15 @@ export default async function TaskModelPage({ params }: PageProps<"/tasks/[taskI
     redirect(`/tasks/${taskId}`);
   }
 
-  const [results, outputStatus] = await Promise.all([
+  const [results, modelOutputs, outputStatus] = await Promise.all([
     getTaskResults(taskId, modelId),
+    loadModelOutputs(taskId, modelId),
     getOutputStatus(taskId, modelId, task.testCases.length),
   ]);
+
+  const generatedOutputs = modelOutputs
+    ? combineOutputsWithTestCases({ modelOutputs, task })
+    : null;
 
   return (
     <main className="flex flex-col gap-4">
@@ -67,7 +77,11 @@ export default async function TaskModelPage({ params }: PageProps<"/tasks/[taskI
           taskId={taskId}
         />
 
-        {results && <EvalResults results={results} />}
+        {results ? (
+          <EvalResults results={results} />
+        ) : (
+          generatedOutputs && <GeneratedOutputs outputs={generatedOutputs} />
+        )}
       </ContainerBody>
     </main>
   );
