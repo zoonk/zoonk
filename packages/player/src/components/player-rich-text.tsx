@@ -6,6 +6,7 @@ import { stripWrappingQuotes } from "./_utils/strip-wrapping-quotes";
 
 type RichTextSegment =
   | { kind: "bold"; text: string }
+  | { kind: "code"; text: string }
   | { kind: "displayMath"; text: string }
   | { kind: "italic"; text: string }
   | { kind: "math"; text: string }
@@ -38,7 +39,7 @@ function parseMathSegments(text: string): RichTextSegment[] {
   const delimiter = findNextMathDelimiter(text);
 
   if (!delimiter) {
-    return parseEmphasisSegments(text);
+    return parseCodeSegments(text);
   }
 
   const before = text.slice(0, delimiter.index);
@@ -46,16 +47,41 @@ function parseMathSegments(text: string): RichTextSegment[] {
   const mathEnd = text.indexOf(delimiter.close, mathStart);
 
   if (mathEnd === -1) {
-    return parseEmphasisSegments(text);
+    return parseCodeSegments(text);
   }
 
   const mathText = text.slice(mathStart, mathEnd);
   const after = text.slice(mathEnd + delimiter.close.length);
 
   return [
-    ...parseEmphasisSegments(before),
+    ...parseCodeSegments(before),
     { kind: delimiter.kind, text: mathText },
     ...parseMathSegments(after),
+  ];
+}
+
+/**
+ * Parses inline code before emphasis so generated examples such as
+ * `greetUser();` keep their literal punctuation instead of being interpreted
+ * as lightweight Markdown.
+ */
+function parseCodeSegments(text: string): RichTextSegment[] {
+  const start = text.indexOf("`");
+  const contentStart = start + 1;
+  const end = text.indexOf("`", contentStart);
+
+  if (start === -1 || end === -1) {
+    return parseEmphasisSegments(text);
+  }
+
+  const before = text.slice(0, start);
+  const content = text.slice(contentStart, end);
+  const after = text.slice(end + 1);
+
+  return [
+    ...parseEmphasisSegments(before),
+    { kind: "code", text: content },
+    ...parseCodeSegments(after),
   ];
 }
 
@@ -127,7 +153,7 @@ function renderMathToHtml({ displayMode, text }: { displayMode: boolean; text: s
 
 /**
  * Renders generated lesson copy with only the formatting primitives we support
- * in player content: LaTeX math plus simple bold and italic emphasis.
+ * in player content: LaTeX math, inline code, and simple bold/italic emphasis.
  */
 export function PlayerRichText({ text }: { text: string }) {
   const replaceName = useReplaceName();
@@ -142,6 +168,17 @@ export function PlayerRichText({ text }: { text: string }) {
 
     if (segment.kind === "italic") {
       return <em key={key}>{segment.text}</em>;
+    }
+
+    if (segment.kind === "code") {
+      return (
+        <code
+          className="bg-muted text-foreground rounded-sm px-1 py-0.5 font-mono text-[0.85em]"
+          key={key}
+        >
+          {segment.text}
+        </code>
+      );
     }
 
     if (segment.kind === "math" || segment.kind === "displayMath") {

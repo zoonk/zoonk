@@ -5,8 +5,8 @@ import { z } from "zod";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import systemPrompt from "./lesson-explanation.prompt.md";
 
-const defaultModel = "openai/gpt-5.4";
-const fallbackModels = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"] as const;
+const defaultModel = "openai/gpt-5.5";
+const fallbackModels = ["anthropic/claude-opus-4.7", "google/gemini-3.1-pro-preview"] as const;
 
 const anchorSchema = z.object({ text: z.string(), title: z.string().min(1) }).strict();
 
