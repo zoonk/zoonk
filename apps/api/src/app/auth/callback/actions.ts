@@ -5,8 +5,6 @@ import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { headers } from "next/headers";
 
-const TRAILING_SLASHES = /\/+$/;
-
 export async function validateTrustedOriginAction(redirectTo: string): Promise<boolean> {
   const reqHeaders = await headers();
 
@@ -41,8 +39,7 @@ export async function createOneTimeTokenAction(
   }
 
   const redirectUrl = new URL(redirectTo);
-  const normalizedPath = redirectUrl.pathname.replace(TRAILING_SLASHES, "");
-  redirectUrl.pathname = `${normalizedPath}/${data?.token ?? ""}`;
+  redirectUrl.searchParams.set("token", data?.token ?? "");
 
   return { success: true, url: redirectUrl.toString() };
 }

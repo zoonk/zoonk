@@ -12,7 +12,6 @@
   "dependencies": {
     "@zoonk/core": "workspace:*",
     "@zoonk/db": "workspace:*",
-    "@zoonk/next": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
     "lucide-react": "catalog:",

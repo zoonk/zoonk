@@ -151,9 +151,6 @@ importers:
       '@zoonk/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@zoonk/next':
-        specifier: workspace:*
-        version: link:../../packages/next
       '@zoonk/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -425,9 +422,6 @@ importers:
       '@zoonk/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@zoonk/next':
-        specifier: workspace:*
-        version: link:../../packages/next
       '@zoonk/player':
         specifier: workspace:*
         version: link:../../packages/player
@@ -504,6 +498,9 @@ importers:
       '@zoonk/e2e':
         specifier: workspace:*
         version: link:../../packages/e2e
+      '@zoonk/next':
+        specifier: workspace:*
+        version: link:../../packages/next
       '@zoonk/testing':
         specifier: workspace:*
         version: link:../../packages/testing

@@ -1,18 +1,11 @@
-import { externalRedirect } from "@zoonk/next/navigation/external-redirect";
+import { OneTimeTokenLoginRedirect } from "@zoonk/core/auth/ott/login";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
-import { buildAuthLoginUrl, getBaseUrl } from "@zoonk/utils/origin";
-import { Suspense } from "react";
-
-async function Login() {
-  const callbackUrl = `${getBaseUrl()}/auth/callback`;
-  const authUrl = buildAuthLoginUrl({ callbackUrl });
-  return externalRedirect(authUrl);
-}
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<FullPageLoading />}>
-      <Login />
-    </Suspense>
+    <>
+      <OneTimeTokenLoginRedirect callbackPath="/auth/callback" />
+      <FullPageLoading />
+    </>
   );
 }
