@@ -1,0 +1,21 @@
+apps/api/e2e/otp.test.ts
+  s_d9b55857fd790f::t_7ff314c8ff855f 118
+apps/api/e2e/setup.test.ts
+  s_d9b55857fd790f::t_7ff314c8ff855f 66,74-75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "b964362396440ab1ee8e22e741cdb4e78e63bf8b",
+  "prompts": {},
+  "sessions": {
+    "s_d9b55857fd790f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dff71-4c14-7230-a0bb-62af68c6fc0a",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>"
+    }
+  }
+}
