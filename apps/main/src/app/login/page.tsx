@@ -1,8 +1,11 @@
-import { externalRedirect } from "@zoonk/next/navigation/external-redirect";
-import { buildAuthLoginUrl, getBaseUrl } from "@zoonk/utils/origin";
+import { OneTimeTokenLoginRedirect } from "@zoonk/core/auth/ott/login";
+import { FullPageLoading } from "@zoonk/ui/components/loading";
 
-export default async function LoginPage() {
-  const callbackUrl = `${getBaseUrl()}/auth/callback`;
-  const authUrl = buildAuthLoginUrl({ callbackUrl });
-  externalRedirect(authUrl);
+export default function LoginPage() {
+  return (
+    <>
+      <OneTimeTokenLoginRedirect callbackPath="/auth/callback" />
+      <FullPageLoading />
+    </>
+  );
 }

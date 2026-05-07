@@ -10,9 +10,9 @@ export function LocaleSwitcher() {
   const t = useExtracted();
   const locale = useLocale();
 
-  function onSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
+  async function onSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
     const nextLocale = event.target.value;
-    setCookie(LOCALE_COOKIE, nextLocale, { expires: 365, sameSite: "lax" });
+    await setCookie(LOCALE_COOKIE, nextLocale, { expires: 365, sameSite: "lax" });
     globalThis.location.reload();
   }
 

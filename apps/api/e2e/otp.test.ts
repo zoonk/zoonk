@@ -115,7 +115,7 @@ test.describe("OTP Login Flow", () => {
     // Verify no double slashes in the path
     expect(redirectUrl.pathname).not.toContain("//");
     // Verify token is present
-    expect(redirectUrl.pathname.split("/").filter(Boolean).length).toBe(2);
+    expect(redirectUrl.searchParams.get("token")).toBeTruthy();
 
     await cleanupVerifications(email);
   });
