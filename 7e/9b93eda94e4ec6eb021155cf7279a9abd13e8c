@@ -1,0 +1,36 @@
+apps/main/e2e/content-feedback.test.ts
+  s_241e7a830301fc::t_1792eb989992c3 3,50,72-74
+  s_241e7a830301fc::t_4bea65b8658d61 71
+apps/main/e2e/support.test.ts
+  h_ddcbd61c1a853d 37
+  s_241e7a830301fc::t_1792eb989992c3 2,19-20,39-41
+  s_241e7a830301fc::t_4bea65b8658d61 38
+apps/main/e2e/feedback.ts
+  s_241e7a830301fc::t_694cbbb377491d 20-24
+  s_241e7a830301fc::t_4bea65b8658d61 3-4,10,19,25
+  s_241e7a830301fc::t_1792eb989992c3 1-2,5-9,11-18,26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "7e9b93eda94e4ec6eb021155cf7279a9abd13e8c",
+  "prompts": {},
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    },
+    "h_ddcbd61c1a853d": {
+      "author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_241e7a830301fc": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dff6e-62c1-7431-9a3d-4714220bba1d",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+apps/main/src/components/feedback/contact-form-action.ts
+  s_241e7a830301fc::t_1ac2d70cf64d6e 1,3-7,9-16,21,24-25,27-54,58-60
+apps/main/src/components/feedback/contact-form.tsx
+  s_241e7a830301fc::t_f7501ae604cf3a 16
+  s_241e7a830301fc::t_5eb2cb0050e526 18
+apps/api/next.config.ts
+  s_241e7a830301fc::t_5d8017af8ac535 43
+apps/main/e2e/content-feedback.test.ts
+  s_241e7a830301fc::t_e7e8276d7c0a05 79
+  s_241e7a830301fc::t_81755e8b457b51 49-60
+  s_241e7a830301fc::t_360faf2fa9c763 80-82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "74e1e9cf9c964becf5799bd458c558e06c02ed22",
+  "prompts": {},
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  },
+  "sessions": {
+    "s_241e7a830301fc": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dff6e-62c1-7431-9a3d-4714220bba1d",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>"
+    }
+  }
+}
