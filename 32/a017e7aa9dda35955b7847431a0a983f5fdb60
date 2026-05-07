@@ -1,0 +1,65 @@
+apps/main/src/app/(settings)/_components/locale-switcher.tsx
+  s_d9b55857fd790f::t_e1619c5b086ac3 13,15
+apps/admin/src/app/login/page.tsx
+  s_d9b55857fd790f::t_fa544b8d212422 6-9
+  s_d9b55857fd790f::t_186cd0f5c2d4ec 1
+packages/core/src/auth/ott-callback.ts
+  s_d9b55857fd790f::t_186cd0f5c2d4ec 1,3-4,6-58,67,70-71
+apps/main/e2e/auth-callback.test.ts
+  s_d9b55857fd790f::t_e7bf6f910d57b5 75
+  h_ddcbd61c1a853d 114,135,150
+  s_d9b55857fd790f::t_186cd0f5c2d4ec 2
+  s_d9b55857fd790f::t_44a3c647e5ff89 1,7-8,10-14,16-35,53,68-69,107,111-113,123,125-128,137,140-141,152-153
+  s_d9b55857fd790f::t_935ff928f2ae4a 36-49,93-94
+  s_d9b55857fd790f::t_192ae12e071564 9,15,50-52,54-67,81-83,85-86,90-91,95-99,108,142-144
+  s_d9b55857fd790f::t_fc548e9610cf8e 70-74,76-79,124,129-134,136,138,146-149,151
+  s_d9b55857fd790f::t_f9b993461c1d2a 84,87-89,92,100-101
+apps/main/src/app/login/page.tsx
+  s_d9b55857fd790f::t_186cd0f5c2d4ec 1
+  s_d9b55857fd790f::t_fa544b8d212422 2,4-10
+packages/core/src/auth/ott-login.tsx
+  s_d9b55857fd790f::t_74aa064df26772 1-2,4-9,11-33,39-45,47-53,55-63,67-69
+  s_d9b55857fd790f::t_e1619c5b086ac3 3,34-38,46,54,64-66
+  s_d9b55857fd790f::t_186cd0f5c2d4ec 10
+packages/utils/src/cookies.ts
+  s_d9b55857fd790f::t_e1619c5b086ac3 2-5,7,10-17,21,29,42
+apps/api/src/app/auth/callback/actions.ts
+  s_d9b55857fd790f::t_846318ba70ac84 42
+apps/main/src/app/auth/callback/route.ts
+  s_d9b55857fd790f::t_e6a25f338a2a24 1-3
+packages/ui/src/components/sidebar.tsx
+  s_d9b55857fd790f::t_e1619c5b086ac3 87
+  h_ddcbd61c1a853d 230-231
+packages/core/package.json
+  s_d9b55857fd790f::t_186cd0f5c2d4ec 14-16
+apps/main/package.json
+  s_d9b55857fd790f::t_bb980165d2f0e3 51
+apps/admin/src/app/auth/callback/route.ts
+  s_d9b55857fd790f::t_e6a25f338a2a24 1-3
+packages/utils/src/cookies.test.ts
+  s_d9b55857fd790f::t_1000205fdbe7b6 5-10,31
+  h_ddcbd61c1a853d 32,71-72,77,92,108
+  s_d9b55857fd790f::t_94d959544e7274 1-4,11-30,33-46,49,51-64,66-70,73-76,78-91,93-107,109-110
+  s_d9b55857fd790f::t_9456bb14b3b5ed 47-48,50,65
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "32a017e7aa9dda35955b7847431a0a983f5fdb60",
+  "prompts": {},
+  "humans": {
+    "h_ddcbd61c1a853d": {
+      "author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_d9b55857fd790f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dff71-4c14-7230-a0bb-62af68c6fc0a",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>"
+    }
+  }
+}
