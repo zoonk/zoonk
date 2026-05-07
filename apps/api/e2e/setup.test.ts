@@ -63,17 +63,16 @@ test.describe("Profile Setup Flow", () => {
 
     const redirectPromise = page.waitForRequest((req) => {
       const url = req.url();
-      return url.startsWith(REDIRECT_URL) && url.split("/").length > 4;
+      return url.startsWith(REDIRECT_URL) && new URL(url).searchParams.has("token");
     });
 
     await page.getByRole("button", { name: /^continue$/i }).click();
 
     const redirectRequest = await redirectPromise;
     const redirectUrl = new URL(redirectRequest.url());
-    const pathSegments = redirectUrl.pathname.split("/").filter(Boolean);
 
-    expect(`${redirectUrl.origin}/${pathSegments[0]}`).toBe(REDIRECT_URL);
-    expect(pathSegments[1]).toBeTruthy();
+    expect(`${redirectUrl.origin}${redirectUrl.pathname}`).toBe(REDIRECT_URL);
+    expect(redirectUrl.searchParams.get("token")).toBeTruthy();
 
     await cleanupVerifications(email);
   });
