@@ -27,6 +27,7 @@ import { trustedOriginPlugin } from "./plugins/trusted-origin";
 import { appleProvider } from "./providers/apple";
 import { googleProvider } from "./providers/google";
 import { stripePlugin } from "./stripe/plugin";
+import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH, normalizeUsername } from "./username-rules";
 import { isUsernameAllowed } from "./username-validator";
 
 /**
@@ -54,7 +55,13 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
 
 export const baseAuthPlugins = [
   adminPlugin(),
-  username({ usernameValidator: (value) => isUsernameAllowed(value) }),
+  username({
+    maxUsernameLength: USERNAME_MAX_LENGTH,
+    minUsernameLength: USERNAME_MIN_LENGTH,
+    usernameNormalization: normalizeUsername,
+    usernameValidator: (value) => isUsernameAllowed(value),
+    validationOrder: { username: "post-normalization" },
+  }),
   organization({
     ac,
     // Temporarily disable organization creation

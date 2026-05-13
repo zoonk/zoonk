@@ -2,16 +2,21 @@
 
 import { authClient } from "@zoonk/auth/client";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { USERNAME_MIN_LENGTH, isUsernameSyntaxValid, normalizeUsername } from "../username-rules";
 
 export type UsernameStatus = "idle" | "checking" | "available" | "taken" | "invalid";
 
-export const USERNAME_MIN_LENGTH = 3;
-export const USERNAME_MAX_LENGTH = 30;
-const USERNAME_REGEX = /^[a-z0-9_]{3,30}$/u;
 const DEBOUNCE_MS = 300;
 
+/**
+ * Keeps profile/setup username fields on the same normalized syntax policy as
+ * the server while still asking Better Auth for reserved-name and duplicate
+ * checks. That split lets the client reject impossible URL shapes immediately
+ * without bundling the full reserved username blocklist.
+ */
 export function useUsernameAvailability(currentUsername?: string | null) {
-  const [username, setUsername] = useState(currentUsername ?? "");
+  const normalizedCurrentUsername = currentUsername ? normalizeUsername(currentUsername) : "";
+  const [username, setUsername] = useState(normalizedCurrentUsername);
   const [status, setStatus] = useState<UsernameStatus>("idle");
   const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
   const abortRef = useRef<AbortController>(null);
@@ -24,9 +29,13 @@ export function useUsernameAvailability(currentUsername?: string | null) {
     setPrevCurrentUsername(currentUsername);
 
     if (currentUsername) {
-      setUsername(currentUsername);
+      setUsername(normalizedCurrentUsername);
     }
   }
+
+  const setNormalizedUsername = useCallback((value: string) => {
+    setUsername(normalizeUsername(value));
+  }, []);
 
   const checkAvailability = useCallback(
     async (value: string) => {
@@ -34,12 +43,12 @@ export function useUsernameAvailability(currentUsername?: string | null) {
       const controller = new AbortController();
       abortRef.current = controller;
 
-      if (!USERNAME_REGEX.test(value)) {
+      if (!isUsernameSyntaxValid(value)) {
         setStatus("invalid");
         return;
       }
 
-      if (value === currentUsername) {
+      if (value === normalizedCurrentUsername) {
         setStatus("idle");
         return;
       }
@@ -69,7 +78,7 @@ export function useUsernameAvailability(currentUsername?: string | null) {
         setStatus("idle");
       }
     },
-    [currentUsername],
+    [normalizedCurrentUsername],
   );
 
   useEffect(() => {
@@ -93,5 +102,5 @@ export function useUsernameAvailability(currentUsername?: string | null) {
     };
   }, [username, checkAvailability]);
 
-  return { setUsername, status, username };
+  return { setUsername: setNormalizedUsername, status, username };
 }

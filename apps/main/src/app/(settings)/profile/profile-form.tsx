@@ -1,11 +1,10 @@
 "use client";
 
 import {
-  USERNAME_MAX_LENGTH,
-  USERNAME_MIN_LENGTH,
   type UsernameStatus as UsernameStatusType,
   useUsernameAvailability,
 } from "@zoonk/core/auth/hooks/username-availability";
+import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from "@zoonk/core/auth/username-rules";
 import {
   Field,
   FieldContent,
@@ -127,7 +126,7 @@ export function ProfileForm({
               maxLength={USERNAME_MAX_LENGTH}
               minLength={USERNAME_MIN_LENGTH}
               name="username"
-              onChange={(event) => setUsername(event.target.value.toLowerCase())}
+              onChange={(event) => setUsername(event.target.value)}
               required
               spellCheck={false}
               value={username}

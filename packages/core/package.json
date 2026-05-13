@@ -16,6 +16,7 @@
     "./auth/ott/state": "./src/auth/ott-state.ts",
     "./auth/stripe-prices": "./src/auth/stripe-prices.ts",
     "./auth/subscription": "./src/auth/subscription.ts",
+    "./auth/username-rules": "./src/auth/username-rules.ts",
     "./content/thumbnail": "./src/content/content-thumbnail.ts",
     "./courses/search": "./src/courses/search-courses.ts",
     "./feedback/send": "./src/feedback/send-feedback-message.ts",
