@@ -1,158 +1,129 @@
 msgid ""
 msgstr ""
 "Language: pt\n"
-"Content-Transfer-Encoding: 8bit\n"
 "Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "X-Generator: next-intl\n"
+"X-Crowdin-SourceKey: msgstr\n"
 
 #: src/app/auth/layout.tsx
-msgctxt "dVItHD"
-msgid "Sign in to Zoonk"
+msgid "dVItHD"
 msgstr "Entrar no Zoonk"
 
 #: src/app/auth/login/page.tsx
-msgctxt "4nOs3z"
-msgid "me@myorg.com"
-msgstr "eu@minhaempresa.com"
-
-#: src/app/auth/login/page.tsx
-msgctxt "4wpUNc"
-msgid "Or"
-msgstr "Ou"
-
-#: src/app/auth/login/page.tsx
-#: src/app/auth/otp/otp-form.tsx
-#: src/app/auth/setup/setup-form.tsx
-msgctxt "acrOoz"
-msgid "Continue"
-msgstr "Continuar"
-
-#: src/app/auth/login/page.tsx
-msgctxt "CoMQ1+"
-msgid "Continue with your email or a social account"
-msgstr "Continue com seu email ou uma conta social"
-
-#: src/app/auth/login/page.tsx
-msgctxt "eN8MTJ"
-msgid "Sign in or create an account"
+msgid "eN8MTJ"
 msgstr "Entre ou crie uma conta"
 
 #: src/app/auth/login/page.tsx
-msgctxt "Ju9oB+"
-msgid "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
-msgstr "Ao clicar em Continuar, você concorda com nossos <terms>Termos de Serviço</terms> e <privacy>Política de Privacidade</privacy>."
+msgid "CoMQ1+"
+msgstr "Continue com seu email ou uma conta social"
 
 #: src/app/auth/login/page.tsx
-msgctxt "sy+pv5"
-msgid "Email"
+msgid "4wpUNc"
+msgstr "Ou"
+
+#: src/app/auth/login/page.tsx
+msgid "sy+pv5"
 msgstr "Email"
 
-#: src/app/auth/login/social-login.tsx
-msgctxt "BmecBA"
-msgid "Continue with Apple"
-msgstr "Continuar com Apple"
+#: src/app/auth/login/page.tsx
+msgid "4nOs3z"
+msgstr "eu@minhaempresa.com"
+
+#: src/app/auth/login/page.tsx
+#: src/app/auth/otp/otp-form.tsx
+#: src/app/auth/setup/setup-form.tsx
+msgid "acrOoz"
+msgstr "Continuar"
+
+#: src/app/auth/login/page.tsx
+msgid "Ju9oB+"
+msgstr "Ao clicar em Continuar, você concorda com nossos <terms>Termos de Serviço</terms> e <privacy>Política de Privacidade</privacy>."
 
 #: src/app/auth/login/social-login.tsx
-msgctxt "FJ6r9E"
-msgid "Continue with Google"
+msgid "FJ6r9E"
 msgstr "Continuar com Google"
 
 #: src/app/auth/login/social-login.tsx
-msgctxt "pN2p0t"
-msgid "There was an error signing you in. Please try again or contact hello@zoonk.com"
+msgid "BmecBA"
+msgstr "Continuar com Apple"
+
+#: src/app/auth/login/social-login.tsx
+msgid "pN2p0t"
 msgstr "Houve um erro ao conectar você. Por favor, tente novamente ou entre em contato com contato@zoonk.com"
 
 #: src/app/auth/otp/otp-form.tsx
-msgctxt "HkHvQv"
-msgid "The code you entered is incorrect. Please try again or contact hello@zoonk.com"
+msgid "HkHvQv"
 msgstr "O código que você digitou está incorreto. Por favor, tente novamente ou entre em contato com contato@zoonk.com"
 
 #: src/app/auth/otp/page.tsx
-msgctxt "ChATeO"
-msgid "Change email"
-msgstr "Alterar email"
+msgid "zx7CKB"
+msgstr "Confira seu email"
 
 #: src/app/auth/otp/page.tsx
-msgctxt "LZHcmZ"
-msgid "Enter the code we sent to {email}:"
+msgid "LZHcmZ"
 msgstr "Digite o código que enviamos para {email}:"
 
 #: src/app/auth/otp/page.tsx
-msgctxt "zx7CKB"
-msgid "Check your email"
-msgstr "Confira seu email"
+msgid "ChATeO"
+msgstr "Alterar email"
 
 #: src/app/auth/setup/page.tsx
-msgctxt "7463XU"
-msgid "Choose a name and username before continuing."
-msgstr "Escolha um nome e nome de usuário antes de continuar."
-
-#: src/app/auth/setup/page.tsx
-msgctxt "CYqIel"
-msgid "Complete your profile"
+msgid "CYqIel"
 msgstr "Complete seu perfil"
 
+#: src/app/auth/setup/page.tsx
+msgid "7463XU"
+msgstr "Escolha um nome e nome de usuário antes de continuar."
+
 #: src/app/auth/setup/setup-form.tsx
-msgctxt "1SvspN"
-msgid "Checking..."
+msgid "1SvspN"
 msgstr "Verificando..."
 
 #: src/app/auth/setup/setup-form.tsx
-msgctxt "9N4/rz"
-msgid "{username} is available"
+msgid "9N4/rz"
 msgstr "{username} está disponível"
 
 #: src/app/auth/setup/setup-form.tsx
-msgctxt "HAlOn1"
-msgid "Name"
-msgstr "Nome"
-
-#: src/app/auth/setup/setup-form.tsx
-msgctxt "JCIgkj"
-msgid "Username"
-msgstr "Nome de usuário"
-
-#: src/app/auth/setup/setup-form.tsx
-msgctxt "R76cpj"
-msgid "{username} is already taken"
+msgid "R76cpj"
 msgstr "{username} já está em uso"
 
 #: src/app/auth/setup/setup-form.tsx
-msgctxt "vLl7z0"
-msgid "3-30 characters. Letters, numbers, and underscores only."
+msgid "vLl7z0"
 msgstr "3-30 caracteres. Apenas letras, números e sublinhados."
 
 #: src/app/auth/setup/setup-form.tsx
-msgctxt "XLl/pd"
-msgid "your-username"
+msgid "HAlOn1"
+msgstr "Nome"
+
+#: src/app/auth/setup/setup-form.tsx
+msgid "JCIgkj"
+msgstr "Nome de usuário"
+
+#: src/app/auth/setup/setup-form.tsx
+msgid "XLl/pd"
 msgstr "seu-nome-de-usuario"
 
 #: src/app/auth/setup/setup-form.tsx
-msgctxt "yCCLud"
-msgid "Failed to set up your profile. Please try again or contact hello@zoonk.com"
+msgid "yCCLud"
 msgstr "Falha ao configurar seu perfil. Por favor, tente novamente ou entre em contato com contato@zoonk.com"
 
 #: src/app/auth/untrusted-origin/page.tsx
-msgctxt "+e4BVR"
-msgid "Continue to Zoonk"
-msgstr "Continuar para o Zoonk"
-
-#: src/app/auth/untrusted-origin/page.tsx
-msgctxt "1vqX2W"
-msgid "Unable to redirect"
+msgid "1vqX2W"
 msgstr "Não foi possível redirecionar"
 
 #: src/app/auth/untrusted-origin/page.tsx
-msgctxt "585u5Z"
-msgid "For your safety, we cannot redirect you to an unrecognized destination."
-msgstr "Para sua segurança, não podemos redirecionar você para um destino não reconhecido."
-
-#: src/app/auth/untrusted-origin/page.tsx
-msgctxt "83K2kN"
-msgid "The destination URL is not recognized as a trusted Zoonk application."
+msgid "83K2kN"
 msgstr "A URL de destino não é reconhecida como um aplicativo Zoonk confiável."
 
 #: src/app/auth/untrusted-origin/page.tsx
-msgctxt "wkO19y"
-msgid "Security warning"
+msgid "wkO19y"
 msgstr "Aviso de segurança"
+
+#: src/app/auth/untrusted-origin/page.tsx
+msgid "585u5Z"
+msgstr "Para sua segurança, não podemos redirecionar você para um destino não reconhecido."
+
+#: src/app/auth/untrusted-origin/page.tsx
+msgid "+e4BVR"
+msgstr "Continuar para o Zoonk"

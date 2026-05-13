@@ -1,0 +1,334 @@
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: next-intl\n"
+"X-Crowdin-SourceKey: msgstr\n"
+
+#: src/components/arrange-words-answer-area.tsx
+#: src/components/fill-blank-step.tsx
+#: src/components/sort-order-step.tsx
+msgid "6NoIUl"
+msgstr "Correct"
+
+#: src/components/arrange-words-answer-area.tsx
+#: src/components/fill-blank-step.tsx
+#: src/components/sort-order-step.tsx
+msgid "Ypr9T5"
+msgstr "Incorrect"
+
+#: src/components/arrange-words-answer-area.tsx
+#: src/components/sort-order-step.tsx
+msgid "hFFOe+"
+msgstr "{item}. {result}."
+
+#: src/components/arrange-words-answer-area.tsx
+msgid "vPyO9S"
+msgstr "Position {position}: {item}. Tap to remove."
+
+#: src/components/arrange-words-answer-area.tsx
+msgid "1nJY2/"
+msgstr "Your answer"
+
+#: src/components/arrange-words-answer-area.tsx
+msgid "7R/rOB"
+msgstr "Tap words to build your answer"
+
+#: src/components/arrange-words.tsx
+#: src/components/fill-blank-step.tsx
+msgid "e7WNdK"
+msgstr "Word bank"
+
+#: src/components/belt-progress.tsx
+msgid "3UK8wh"
+msgstr "{color} belt"
+
+#: src/components/belt-progress.tsx
+msgid "xiSVL4"
+msgstr "{color} Belt — Level {level}"
+
+#: src/components/belt-progress.tsx
+msgid "IGs0wl"
+msgstr "Level progress"
+
+#: src/components/belt-progress.tsx
+msgid "oMEE4o"
+msgstr "{value} BP to level up"
+
+#: src/components/completion-auth-branch.tsx
+msgid "Ak+bLZ"
+msgstr "All Lessons"
+
+#: src/components/completion-auth-branch.tsx
+msgid "FazwRl"
+msgstr "Try again"
+
+#: src/components/completion-auth-branch.tsx
+#: src/components/completion-milestone-actions.tsx
+msgid "9+Ddtu"
+msgstr "Next"
+
+#: src/components/completion-auth-branch.tsx
+#: src/components/completion-milestone-actions.tsx
+msgid "e1M39C"
+msgstr "Sign up to track your progress"
+
+#: src/components/completion-auth-branch.tsx
+#: src/components/completion-milestone-actions.tsx
+msgid "AyGauy"
+msgstr "Login"
+
+#: src/components/completion-milestone-actions.tsx
+msgid "DiIkZH"
+msgstr "Next Chapter"
+
+#: src/components/completion-milestone-actions.tsx
+msgid "w0D7HC"
+msgstr "Review Course"
+
+#: src/components/completion-milestone-actions.tsx
+msgid "wm/M34"
+msgstr "Review Chapter"
+
+#: src/components/completion-screen.tsx
+msgid "95stPq"
+msgstr "Completed"
+
+#: src/components/completion-screen.tsx
+msgid "2wDWd0"
+msgstr "Course Complete"
+
+#: src/components/completion-screen.tsx
+msgid "t2VOpl"
+msgstr "Chapter Complete"
+
+#: src/components/completion-screen.tsx
+msgid "P768k7"
+msgstr "correct"
+
+#: src/components/expandable-step-image-stage.tsx
+msgid "pumVIo"
+msgstr "Open full image"
+
+#: src/components/expandable-step-image-stage.tsx
+msgid "3Pgbio"
+msgstr "Full image"
+
+#: src/components/expandable-step-image-stage.tsx
+msgid "vqV+x5"
+msgstr "Shows the full uncropped step image."
+
+#: src/components/expandable-step-image-stage.tsx
+msgid "ZYZr+P"
+msgstr "Close full image"
+
+#: src/components/feedback-answer-blocks.tsx
+msgid "3nOd8f"
+msgstr "Your answer:"
+
+#: src/components/feedback-answer-blocks.tsx
+msgid "QAJ/Tl"
+msgstr "Correct answer:"
+
+#: src/components/feedback-screen.tsx
+msgid "fpO9TK"
+msgstr "Translate:"
+
+#: src/components/fill-blank-step.tsx
+msgid "SL2Bob"
+msgstr "Blank {position}: {item}. {result}."
+
+#: src/components/fill-blank-step.tsx
+msgid "wUEGVH"
+msgstr "Blank {position}: {item}. Tap to remove."
+
+#: src/components/fill-blank-step.tsx
+msgid "FmmJ/j"
+msgstr "Blank {position}"
+
+#: src/components/fill-blank-step.tsx
+msgid "xvWuPP"
+msgstr "Correct answer: {answer}"
+
+#: src/components/inline-feedback.tsx
+msgid "HvLGEN"
+msgstr "Answer feedback"
+
+#: src/components/lesson-info-popover.tsx
+msgid "RwePAQ"
+msgstr "Lesson info"
+
+#: src/components/listening-step.tsx
+msgid "aAmWaS"
+msgstr "What do you hear?"
+
+#: src/components/listening-step.tsx
+#: src/components/reading-step.tsx
+msgid "19nXyC"
+msgstr "Translate this sentence:"
+
+#: src/components/match-columns-step.tsx
+msgid "ja1JDt"
+msgstr "All pairs matched. Press Check to continue."
+
+#: src/components/play-audio-button.tsx
+msgid "WGft2H"
+msgstr "Pause pronunciation"
+
+#: src/components/play-audio-button.tsx
+msgid "lYWSeP"
+msgstr "Play pronunciation"
+
+#: src/components/player-choice-scene.tsx
+msgid "akd+cv"
+msgstr "Answer options"
+
+#: src/components/player-header.tsx
+msgid "rbrahO"
+msgstr "Close"
+
+#: src/components/player-progress-bar.tsx
+msgid "dYp90P"
+msgstr "Lesson progress"
+
+#: src/components/player-shell.tsx
+msgid "tJtNzs"
+msgstr "Player screen"
+
+#: src/components/reward-badges.tsx
+msgid "/Q0taG"
+msgstr "BP"
+
+#: src/components/reward-badges.tsx
+msgid "cVpmV7"
+msgstr "Energy"
+
+#: src/components/select-image-step.tsx
+msgid "NA6C/+"
+msgstr "Image options"
+
+#: src/components/sort-order-step.tsx
+msgid "p5llOK"
+msgstr "Sort items"
+
+#: src/components/sort-order-step.tsx
+msgid "VA8c/A"
+msgstr "Correct order:"
+
+#: src/components/sort-order-step.tsx
+msgid "9lc1oV"
+msgstr "Drag items into the correct order"
+
+#: src/components/step-action-button.tsx
+msgid "PVe26p"
+msgstr "Begin"
+
+#: src/components/step-action-button.tsx
+msgid "RDZVQL"
+msgstr "Check"
+
+#: src/components/step-action-button.tsx
+msgid "acrOoz"
+msgstr "Continue"
+
+#: src/components/translation-step.tsx
+msgid "MxLxkr"
+msgstr "Translate this word:"
+
+#: src/components/verdict-label.tsx
+msgid "xmF49T"
+msgstr "Correct!"
+
+#: src/components/verdict-label.tsx
+msgid "++l7ni"
+msgstr "Not quite"
+
+#: src/components/vocabulary-step.tsx
+#: src/use-lesson-kind-label.ts
+msgid "lqtP+R"
+msgstr "Vocabulary"
+
+#: src/use-belt-color-label.ts
+msgid "XjGbuY"
+msgstr "Black"
+
+#: src/use-belt-color-label.ts
+msgid "k2tJ9k"
+msgstr "Blue"
+
+#: src/use-belt-color-label.ts
+msgid "eM/4ho"
+msgstr "Brown"
+
+#: src/use-belt-color-label.ts
+msgid "Yp7v0H"
+msgstr "Gray"
+
+#: src/use-belt-color-label.ts
+msgid "1W4okO"
+msgstr "Green"
+
+#: src/use-belt-color-label.ts
+msgid "n3m1xt"
+msgstr "Orange"
+
+#: src/use-belt-color-label.ts
+msgid "tihmF3"
+msgstr "Purple"
+
+#: src/use-belt-color-label.ts
+msgid "D+ZFS/"
+msgstr "Red"
+
+#: src/use-belt-color-label.ts
+msgid "OAG+sQ"
+msgstr "White"
+
+#: src/use-belt-color-label.ts
+msgid "5Tw3Ta"
+msgstr "Yellow"
+
+#: src/use-lesson-kind-label.ts
+msgid "w0J/gv"
+msgstr "Alphabet"
+
+#: src/use-lesson-kind-label.ts
+msgid "PJivSX"
+msgstr "Lesson"
+
+#: src/use-lesson-kind-label.ts
+msgid "E1bF/X"
+msgstr "Explanation"
+
+#: src/use-lesson-kind-label.ts
+msgid "QzTY8x"
+msgstr "Grammar"
+
+#: src/use-lesson-kind-label.ts
+msgid "1TOMnj"
+msgstr "Listening"
+
+#: src/use-lesson-kind-label.ts
+msgid "KV+O0y"
+msgstr "Practice"
+
+#: src/use-lesson-kind-label.ts
+msgid "OuR/Ij"
+msgstr "Quiz"
+
+#: src/use-lesson-kind-label.ts
+msgid "MOK/yK"
+msgstr "Reading"
+
+#: src/use-lesson-kind-label.ts
+msgid "R+J5ox"
+msgstr "Review"
+
+#: src/use-lesson-kind-label.ts
+msgid "/vCXIP"
+msgstr "Translation"
+
+#: src/use-lesson-kind-label.ts
+msgid "Ox+Z+K"
+msgstr "Tutorial"

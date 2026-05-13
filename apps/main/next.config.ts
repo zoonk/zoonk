@@ -48,14 +48,15 @@ const withMDX = createMDX();
 
 const withNextIntl = createNextIntlPlugin({
   experimental: {
-    extract: { sourceLocale: "en" },
+    extract: { path: "./messages" },
     messages: {
-      format: { codec: "./src/i18n/codec.ts", extension: ".po" },
+      format: "po",
       locales: "infer",
-      path: "./messages",
+      path: ["./messages", "../../packages/player/messages"],
       precompile: true,
+      sourceLocale: "en",
     },
-    srcPath: ["./src", "../../packages/player/src"],
+    srcPath: "./src",
   },
 });
 

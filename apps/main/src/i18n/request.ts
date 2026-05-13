@@ -1,3 +1,4 @@
+import { playerMessages } from "@zoonk/player/messages";
 import { LOCALE_COOKIE, getLocaleFromHeaders } from "@zoonk/utils/locale";
 import { getRequestConfig } from "next-intl/server";
 import { cookies, headers } from "next/headers";
@@ -11,7 +12,10 @@ export default getRequestConfig(async ({ locale: overrideLocale }) => {
   const locale =
     overrideLocale || cookieLocale || getLocaleFromHeaders(headerStore.get("accept-language"));
 
-  const translations = await import(`../../messages/${locale}.po`);
+  const [playerTranslations, appTranslations] = await Promise.all([
+    playerMessages(locale),
+    import(`../../messages/${locale}.po`),
+  ]);
 
-  return { locale, messages: translations.default };
+  return { locale, messages: { ...playerTranslations, ...appTranslations.default } };
 });

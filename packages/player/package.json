@@ -3,10 +3,14 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./messages": "./src/messages.ts",
     "./provider": "./src/player-provider.tsx",
     "./shell": "./src/components/player-shell.tsx"
   },
   "scripts": {
+    "build": "pnpm extract:messages",
+    "build:e2e": "pnpm extract:messages",
+    "extract:messages": "tsx extract-messages.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsgo --noEmit"
@@ -32,6 +36,7 @@
     "@zoonk/tsconfig": "workspace:*",
     "jsdom": "catalog:",
     "playwright": "1.59.1",
+    "tsx": "catalog:",
     "vitest": "catalog:"
   },
   "peerDependencies": {
