@@ -17,7 +17,7 @@ const fillBlankContent = {
 
 describe(validateAnswers, () => {
   it("validates correct multipleChoice answer server-side", () => {
-    const steps = [{ content: multipleChoiceContent, id: "1", kind: "multipleChoice" }];
+    const steps = [{ content: multipleChoiceContent, id: "1", kind: "multipleChoice" }] as const;
 
     const results = validateAnswers(steps, {
       "1": { kind: "multipleChoice", selectedOptionId: "option-a" },
@@ -29,7 +29,7 @@ describe(validateAnswers, () => {
   });
 
   it("validates incorrect multipleChoice answer", () => {
-    const steps = [{ content: multipleChoiceContent, id: "1", kind: "multipleChoice" }];
+    const steps = [{ content: multipleChoiceContent, id: "1", kind: "multipleChoice" }] as const;
 
     const results = validateAnswers(steps, {
       "1": { kind: "multipleChoice", selectedOptionId: "option-b" },
@@ -40,7 +40,7 @@ describe(validateAnswers, () => {
   });
 
   it("validates fillBlank answer", () => {
-    const steps = [{ content: fillBlankContent, id: "2", kind: "fillBlank" }];
+    const steps = [{ content: fillBlankContent, id: "2", kind: "fillBlank" }] as const;
 
     const results = validateAnswers(steps, { "2": { kind: "fillBlank", userAnswers: ["dog"] } });
 
@@ -52,7 +52,7 @@ describe(validateAnswers, () => {
     const steps = [
       { content: multipleChoiceContent, id: "1", kind: "multipleChoice" },
       { content: { text: "Hello", title: "Intro", variant: "text" }, id: "2", kind: "static" },
-    ];
+    ] as const;
 
     const results = validateAnswers(steps, {
       "1": { kind: "multipleChoice", selectedOptionId: "option-a" },
@@ -63,7 +63,7 @@ describe(validateAnswers, () => {
   });
 
   it("validates translation answer against word ID", () => {
-    const steps = [{ content: {}, id: "4", kind: "translation", word: { id: "100" } }];
+    const steps = [{ content: {}, id: "4", kind: "translation", word: { id: "100" } }] as const;
 
     const results = validateAnswers(steps, {
       "4": { kind: "translation", selectedOptionId: "100" },
@@ -74,7 +74,7 @@ describe(validateAnswers, () => {
   });
 
   it("translation answer with wrong word ID is incorrect", () => {
-    const steps = [{ content: {}, id: "4", kind: "translation", word: { id: "100" } }];
+    const steps = [{ content: {}, id: "4", kind: "translation", word: { id: "100" } }] as const;
 
     const results = validateAnswers(steps, {
       "4": { kind: "translation", selectedOptionId: "999" },
@@ -98,7 +98,7 @@ describe(validateAnswers, () => {
           translationDistractors: [],
         },
       },
-    ];
+    ] as const;
 
     const results = validateAnswers(steps, {
       "5": { arrangedWords: ["hello", "world"], kind: "reading" },
@@ -122,7 +122,7 @@ describe(validateAnswers, () => {
           translationDistractors: [],
         },
       },
-    ];
+    ] as const;
 
     const results = validateAnswers(steps, {
       "6": { arrangedWords: ["olá", "mundo"], kind: "listening" },
@@ -146,7 +146,7 @@ describe(validateAnswers, () => {
           translationDistractors: [],
         },
       },
-    ];
+    ] as const;
 
     const results = validateAnswers(steps, {
       "7": { arrangedWords: ["guten", "morgen", "lara"], kind: "reading" },
@@ -170,7 +170,7 @@ describe(validateAnswers, () => {
           translationDistractors: ["bom"],
         },
       },
-    ];
+    ] as const;
 
     const results = validateAnswers(steps, {
       "10": { arrangedWords: ["bom", "dia", "lara"], kind: "listening" },
@@ -194,7 +194,7 @@ describe(validateAnswers, () => {
           translationDistractors: [],
         },
       },
-    ];
+    ] as const;
 
     const results = validateAnswers(steps, {
       "8": { arrangedWords: ["bom", "dia", "lara"], kind: "listening" },
@@ -204,8 +204,8 @@ describe(validateAnswers, () => {
     expect(results[0]?.isCorrect).toBe(true);
   });
 
-  it("skips unsupported step kinds", () => {
-    const steps = [{ content: {}, id: "7", kind: "unknownKind" }];
+  it("skips non-answerable step kinds", () => {
+    const steps = [{ content: {}, id: "7", kind: "visual" }] as const;
 
     const results = validateAnswers(steps, {
       "7": { kind: "multipleChoice", selectedOptionId: "option-a" },
@@ -215,7 +215,7 @@ describe(validateAnswers, () => {
   });
 
   it("skips malformed unanswered static steps instead of throwing", () => {
-    const steps = [{ content: { text: "Legacy static step" }, id: "16", kind: "static" }];
+    const steps = [{ content: { text: "Legacy static step" }, id: "16", kind: "static" }] as const;
 
     const runValidation = () => validateAnswers(steps, {});
 

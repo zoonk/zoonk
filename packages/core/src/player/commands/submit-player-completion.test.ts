@@ -90,6 +90,60 @@ async function createMultipleChoiceLesson(params: {
 }
 
 /**
+ * Multi-question completion coverage must be enforced by the server, so this
+ * helper creates two trusted answerable steps without relying on player UI state.
+ */
+async function createTwoStepMultipleChoiceLesson(params: {
+  chapterId: string;
+  organizationId: string;
+}) {
+  const lesson = await lessonFixture({
+    chapterId: params.chapterId,
+    isPublished: true,
+    kind: "quiz",
+    organizationId: params.organizationId,
+    position: 0,
+  });
+
+  const steps = await Promise.all(
+    [0, 1].map((position) =>
+      stepFixture({
+        content: buildMultipleChoiceContent(),
+        isPublished: true,
+        kind: "multipleChoice",
+        lessonId: lesson.id,
+        position,
+      }),
+    ),
+  );
+
+  return { lesson, steps };
+}
+
+/**
+ * Static lessons intentionally submit no answers. Keeping this fixture separate
+ * prevents the completion-coverage tests from accidentally treating static
+ * reading content as an answerable quiz.
+ */
+async function createStaticLesson(params: { chapterId: string; organizationId: string }) {
+  const lesson = await lessonFixture({
+    chapterId: params.chapterId,
+    isPublished: true,
+    kind: "explanation",
+    organizationId: params.organizationId,
+  });
+
+  const step = await stepFixture({
+    content: { text: "Read this first", title: "Intro", variant: "text" },
+    isPublished: true,
+    kind: "static",
+    lessonId: lesson.id,
+  });
+
+  return { lesson, step };
+}
+
+/**
  * Review abuse tests need many equivalent interactive steps. Sharing this
  * content shape keeps the setup focused on the number of submitted step IDs,
  * not on differences between step contracts.
@@ -175,6 +229,48 @@ function buildCompletionInput(params: {
     stepTimings: {
       [stepId]: { answeredAt: startedAt + 5000, dayOfWeek: 1, durationSeconds: 5, hourOfDay: 12 },
     },
+  };
+}
+
+/**
+ * Forged completion payloads are the easiest way to prove the server does not
+ * trust the browser's idea of which answerable steps were completed.
+ */
+function buildCompletionInputForSteps(params: {
+  lessonId: string;
+  selectedOptionId?: string;
+  startedAt?: number;
+  stepIds: string[];
+}): CompletionInput {
+  const startedAt = params.startedAt ?? Date.now() - 10_000;
+
+  return {
+    answers: Object.fromEntries(
+      params.stepIds.map((stepId) => [
+        stepId,
+        { kind: "multipleChoice", selectedOptionId: params.selectedOptionId ?? "a" },
+      ]),
+    ),
+    lessonId: params.lessonId,
+    localDate: todayLocalDate(),
+    startedAt,
+    stepTimings: Object.fromEntries(
+      params.stepIds.map((stepId) => buildStepTimingEntry({ startedAt, stepId })),
+    ),
+  };
+}
+
+/**
+ * Empty completions should only be accepted for trusted static lessons. The
+ * schema allows this shape, so command-level tests need a direct way to submit it.
+ */
+function buildEmptyCompletionInput(params: { lessonId: string }): CompletionInput {
+  return {
+    answers: {},
+    lessonId: params.lessonId,
+    localDate: todayLocalDate(),
+    startedAt: Date.now() - 10_000,
+    stepTimings: {},
   };
 }
 
@@ -314,6 +410,125 @@ describe(submitPlayerCompletion, () => {
     expect(stepAttempts[0]?.isCorrect).toBe(true);
   });
 
+  it("rejects empty answers for an interactive lesson without writing progress", async () => {
+    const [user, { chapter, course, organization }] = await Promise.all([
+      userFixture(),
+      createChapterContext(),
+    ]);
+
+    const { lesson, step } = await createMultipleChoiceLesson({
+      chapterId: chapter.id,
+      organizationId: organization.id,
+    });
+
+    const result = await submitPlayerCompletion({
+      input: buildEmptyCompletionInput({ lessonId: lesson.id }),
+      userId: user.id,
+    });
+
+    const writes = await readCompletionWrites({
+      courseId: course.id,
+      lessonId: lesson.id,
+      stepId: step.id,
+      userId: user.id,
+    });
+
+    expect(result).toBeNull();
+    expect(writes.dailyProgress).toHaveLength(0);
+    expect(writes.lessonProgress).toBeNull();
+    expect(writes.stepAttempts).toHaveLength(0);
+    expect(writes.userProgress).toBeNull();
+  });
+
+  it("rejects partial answers for an interactive lesson without writing progress", async () => {
+    const [user, { chapter, course, organization }] = await Promise.all([
+      userFixture(),
+      createChapterContext(),
+    ]);
+
+    const { lesson, steps } = await createTwoStepMultipleChoiceLesson({
+      chapterId: chapter.id,
+      organizationId: organization.id,
+    });
+
+    const result = await submitPlayerCompletion({
+      input: buildCompletionInputForSteps({ lessonId: lesson.id, stepIds: [steps[0]!.id] }),
+      userId: user.id,
+    });
+
+    const writes = await readCompletionWrites({
+      courseId: course.id,
+      lessonId: lesson.id,
+      stepId: steps[0]!.id,
+      userId: user.id,
+    });
+
+    expect(result).toBeNull();
+    expect(writes.dailyProgress).toHaveLength(0);
+    expect(writes.lessonProgress).toBeNull();
+    expect(writes.stepAttempts).toHaveLength(0);
+    expect(writes.userProgress).toBeNull();
+  });
+
+  it("persists completion when every interactive answer is present but incorrect", async () => {
+    const [user, { chapter, organization }] = await Promise.all([
+      userFixture(),
+      createChapterContext(),
+    ]);
+
+    const { lesson, steps } = await createTwoStepMultipleChoiceLesson({
+      chapterId: chapter.id,
+      organizationId: organization.id,
+    });
+
+    const result = await submitPlayerCompletion({
+      input: buildCompletionInputForSteps({
+        lessonId: lesson.id,
+        selectedOptionId: "b",
+        stepIds: steps.map((step) => step.id),
+      }),
+      userId: user.id,
+    });
+
+    const stepAttempts = await prisma.stepAttempt.findMany({
+      where: { stepId: { in: steps.map((step) => step.id) }, userId: user.id },
+    });
+
+    expect(result).toStrictEqual({ preloadLessonId: null });
+    expect(stepAttempts).toHaveLength(2);
+    expect(stepAttempts.every((attempt) => !attempt.isCorrect)).toBe(true);
+  });
+
+  it("persists static-only lessons with empty answers", async () => {
+    const [user, { chapter, organization }] = await Promise.all([
+      userFixture(),
+      createChapterContext(),
+    ]);
+
+    const { lesson, step } = await createStaticLesson({
+      chapterId: chapter.id,
+      organizationId: organization.id,
+    });
+
+    const result = await submitPlayerCompletion({
+      input: buildEmptyCompletionInput({ lessonId: lesson.id }),
+      userId: user.id,
+    });
+
+    const [dailyProgress, lessonProgress, stepAttempts] = await Promise.all([
+      prisma.dailyProgress.findFirst({ where: { userId: user.id } }),
+      prisma.lessonProgress.findUnique({
+        where: { userLesson: { lessonId: lesson.id, userId: user.id } },
+      }),
+      prisma.stepAttempt.findMany({ where: { stepId: step.id, userId: user.id } }),
+    ]);
+
+    expect(result).toStrictEqual({ preloadLessonId: null });
+    expect(dailyProgress?.staticCompleted).toBe(1);
+    expect(lessonProgress?.completedAt).toBeInstanceOf(Date);
+    expect(stepAttempts).toHaveLength(0);
+  });
+
   it("caps review completion validation at the review target count", async () => {
     const [user, { chapter, organization }] = await Promise.all([
       userFixture(),
@@ -366,5 +581,127 @@ describe(submitPlayerCompletion, () => {
 
     expect(stepAttempts).toHaveLength(REVIEW_TARGET_STEP_COUNT);
     expect(dailyProgress?.correctAnswers).toBe(REVIEW_TARGET_STEP_COUNT);
+  });
+
+  it("rejects review completion when fewer than the on-demand target steps are submitted", async () => {
+    const [user, { chapter, organization }] = await Promise.all([
+      userFixture(),
+      createChapterContext(),
+    ]);
+
+    const [reviewLesson, sourceLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        kind: "review",
+        organizationId: organization.id,
+        position: 1,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        kind: "quiz",
+        organizationId: organization.id,
+        position: 0,
+      }),
+    ]);
+
+    const reviewableSteps = await Promise.all(
+      Array.from({ length: REVIEW_TARGET_STEP_COUNT }, (_, position) =>
+        stepFixture({
+          content: buildMultipleChoiceContent(),
+          isPublished: true,
+          kind: "multipleChoice",
+          lessonId: sourceLesson.id,
+          position,
+        }),
+      ),
+    );
+
+    const result = await submitPlayerCompletion({
+      input: buildReviewCompletionInput({
+        lessonId: reviewLesson.id,
+        stepIds: reviewableSteps.slice(0, 1).map((step) => step.id),
+      }),
+      userId: user.id,
+    });
+
+    const [dailyProgress, lessonProgress, stepAttempts] = await Promise.all([
+      prisma.dailyProgress.findFirst({ where: { userId: user.id } }),
+      prisma.lessonProgress.findUnique({
+        where: { userLesson: { lessonId: reviewLesson.id, userId: user.id } },
+      }),
+      prisma.stepAttempt.findMany({
+        where: { stepId: { in: reviewableSteps.map((step) => step.id) }, userId: user.id },
+      }),
+    ]);
+
+    expect(result).toBeNull();
+    expect(dailyProgress).toBeNull();
+    expect(lessonProgress).toBeNull();
+    expect(stepAttempts).toHaveLength(0);
+  });
+
+  it("persists review completion when only non-answerable fillers are missing", async () => {
+    const [user, { chapter, organization }] = await Promise.all([
+      userFixture(),
+      createChapterContext(),
+    ]);
+
+    const [reviewLesson, sourceLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        kind: "review",
+        organizationId: organization.id,
+        position: 1,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        kind: "vocabulary",
+        organizationId: organization.id,
+        position: 0,
+      }),
+    ]);
+
+    const answerableSteps = await Promise.all(
+      Array.from({ length: REVIEW_TARGET_STEP_COUNT - 1 }, (_, position) =>
+        stepFixture({
+          content: buildMultipleChoiceContent(),
+          isPublished: true,
+          kind: "multipleChoice",
+          lessonId: sourceLesson.id,
+          position,
+        }),
+      ),
+    );
+
+    await stepFixture({
+      content: {},
+      isPublished: true,
+      kind: "vocabulary",
+      lessonId: sourceLesson.id,
+      position: REVIEW_TARGET_STEP_COUNT,
+    });
+
+    const result = await submitPlayerCompletion({
+      input: buildReviewCompletionInput({
+        lessonId: reviewLesson.id,
+        stepIds: answerableSteps.map((step) => step.id),
+      }),
+      userId: user.id,
+    });
+
+    const [dailyProgress, stepAttempts] = await Promise.all([
+      prisma.dailyProgress.findFirst({ where: { userId: user.id } }),
+      prisma.stepAttempt.findMany({
+        where: { stepId: { in: answerableSteps.map((step) => step.id) }, userId: user.id },
+      }),
+    ]);
+
+    expect(result).toStrictEqual({ preloadLessonId: null });
+    expect(stepAttempts).toHaveLength(REVIEW_TARGET_STEP_COUNT - 1);
+    expect(dailyProgress?.correctAnswers).toBe(REVIEW_TARGET_STEP_COUNT - 1);
   });
 });

@@ -1,11 +1,11 @@
 import "server-only";
-import { type LessonSentence, getPublishedLessonWhere, prisma } from "@zoonk/db";
+import { type LessonSentence, type StepKind, getPublishedLessonWhere, prisma } from "@zoonk/db";
 import { type CompletionInput } from "../contracts/completion-input-schema";
 import { computeLessonScore } from "../contracts/compute-score";
-import { validateAnswers } from "../contracts/validate-answers";
+import { countAnswerableSteps, validateAnswers } from "../contracts/validate-answers";
 import { getLessonSentencesForLessons } from "../queries/get-lesson-sentences";
 import { getNextLesson } from "../queries/get-next-lesson";
-import { getReviewValidationSteps } from "../queries/get-review-steps";
+import { getReviewValidationData } from "../queries/get-review-steps";
 import { submitLessonCompletion } from "./submit-lesson-completion";
 
 const MAX_DURATION_SECONDS = 7200;
@@ -17,7 +17,7 @@ function clampDuration(startedAt: number): number {
 
 type StepWithSentence = {
   id: string;
-  kind: string;
+  kind: StepKind;
   content: unknown;
   lessonId: string;
   word: { id: string } | null;
@@ -74,6 +74,24 @@ function getValidationSentenceLessonIds({
 }
 
 /**
+ * Interactive completion is only trustworthy when every server-required answer
+ * produced a validation result. Static lessons have zero required answers, but
+ * review lessons are never static: the page shows an empty state instead of the
+ * player when there are no on-demand review steps.
+ */
+function hasCompleteAnswerCoverage(params: {
+  expectedStepCount: number;
+  lessonKind: string;
+  validatedStepCount: number;
+}) {
+  if (params.lessonKind === "review" && params.expectedStepCount === 0) {
+    return false;
+  }
+
+  return params.validatedStepCount === params.expectedStepCount;
+}
+
+/**
  * The app shell should only orchestrate request-specific concerns such as auth,
  * cache revalidation, and background execution. This command owns the shared
  * completion workflow: validate the submission, persist authoritative progress,
@@ -100,13 +118,15 @@ export async function submitPlayerCompletion(params: {
     return null;
   }
 
-  const rawStepsForValidation =
+  const validationData =
     lesson.kind === "review"
-      ? await getReviewValidationSteps({
+      ? await getReviewValidationData({
           lessonId: lesson.id,
           stepIds: Object.keys(params.input.answers),
         })
-      : lesson.steps;
+      : { expectedStepCount: countAnswerableSteps(lesson.steps), steps: lesson.steps };
+
+  const rawStepsForValidation = validationData.steps;
 
   const lessonSentences = await getLessonSentencesForLessons({
     lessonIds:
@@ -121,6 +141,16 @@ export async function submitPlayerCompletion(params: {
   );
 
   const stepResults = validateAnswers(stepsForValidation, params.input.answers);
+
+  if (
+    !hasCompleteAnswerCoverage({
+      expectedStepCount: validationData.expectedStepCount,
+      lessonKind: lesson.kind,
+      validatedStepCount: stepResults.length,
+    })
+  ) {
+    return null;
+  }
 
   const score = computeLessonScore({ results: stepResults });
 
