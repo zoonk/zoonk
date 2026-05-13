@@ -141,9 +141,9 @@ test.describe("Generate Course Page", () => {
       await page.goto(`/generate/cs/${suggestion.id}`);
 
       // Should show triggering or streaming state (no idle state)
-      await expect(page.getByText(/creating your course/i)).toBeVisible({ timeout: 10_000 });
+      await expect(page.getByText(/creating your course/iu)).toBeVisible({ timeout: 10_000 });
 
-      await expect(page.getByText(/this usually takes about a minute/i)).toBeVisible();
+      await expect(page.getByText(/this usually takes about a minute/iu)).toBeVisible();
     });
   });
 
@@ -187,7 +187,7 @@ test.describe("Generate Course Page", () => {
       await page.goto(`/generate/cs/${suggestion.id}`);
 
       // Should complete and redirect to course page
-      await page.waitForURL(/\/b\/ai\/c\//, { timeout: 10_000 });
+      await page.waitForURL(/\/b\/ai\/c\//u, { timeout: 10_000 });
     });
 
     test("redirects to suffixed slug for non-English courses", async ({ page }) => {
@@ -233,7 +233,7 @@ test.describe("Generate Course Page", () => {
       await page.goto(`/generate/cs/${suggestion.id}`);
 
       // Should redirect to the suffixed slug, not the raw suggestion slug
-      await page.waitForURL(new RegExp(`/b/ai/c/${suffixedSlug}`), { timeout: 10_000 });
+      await page.waitForURL(new RegExp(`/b/ai/c/${suffixedSlug}`, "u"), { timeout: 10_000 });
     });
   });
 
@@ -256,19 +256,19 @@ test.describe("Generate Course Page", () => {
       await page.goto(`/generate/cs/${suggestion.id}`);
 
       // Should show error message when a step errors
-      await expect(page.getByText(/something went wrong/i)).toBeVisible({ timeout: 10_000 });
+      await expect(page.getByText(/something went wrong/iu)).toBeVisible({ timeout: 10_000 });
     });
   });
 
   test.describe("Not found", () => {
     test("invalid suggestion ID shows 404 page", async ({ page }) => {
       await page.goto("/generate/cs/999999");
-      await expect(page.getByText(/not found|404/i)).toBeVisible();
+      await expect(page.getByText(/not found|404/iu)).toBeVisible();
     });
 
     test("non-numeric suggestion ID shows 404 page", async ({ page }) => {
       await page.goto("/generate/cs/invalid-id");
-      await expect(page.getByText(/not found|404/i)).toBeVisible();
+      await expect(page.getByText(/not found|404/iu)).toBeVisible();
     });
   });
 });

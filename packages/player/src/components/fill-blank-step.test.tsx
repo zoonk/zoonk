@@ -100,7 +100,7 @@ describe("fill in the blank step", () => {
       </StrictMode>,
     );
 
-    const wordBank = screen.getByRole("group", { name: /word bank/i });
+    const wordBank = screen.getByRole("group", { name: /word bank/iu });
     const buttons = [...wordBank.querySelectorAll("button")];
     const alphaButton = buttons.find((button) => button.textContent === "alpha");
     const betaButton = buttons.find((button) => button.textContent === "beta");
@@ -220,7 +220,7 @@ describe("fill in the blank step", () => {
       </ParentWithState>,
     );
 
-    const wordBank = screen.getByRole("group", { name: /word bank/i });
+    const wordBank = screen.getByRole("group", { name: /word bank/iu });
     const buttons = [...wordBank.querySelectorAll("button")];
 
     expect(buttons).toHaveLength(2);

@@ -3,9 +3,9 @@ import { expect, test } from "./fixtures";
 const CHART_SIZE_WARNING = "The width(-1) and height(-1) of chart should be greater than 0";
 
 const chartPages = [
-  { chartName: /energy chart/i, label: "energy", path: "/energy" },
-  { chartName: /brain power chart/i, label: "level", path: "/level" },
-  { chartName: /score chart/i, label: "score", path: "/score" },
+  { chartName: /energy chart/iu, label: "energy", path: "/energy" },
+  { chartName: /brain power chart/iu, label: "level", path: "/level" },
+  { chartName: /score chart/iu, label: "score", path: "/score" },
 ];
 
 test.describe("Progress Charts", () => {

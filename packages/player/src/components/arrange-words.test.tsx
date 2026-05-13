@@ -35,8 +35,8 @@ describe(ArrangeWordsInteraction, () => {
       </ArrangeWordsInteraction>,
     );
 
-    const wordBank = screen.getByRole("group", { name: /word bank/i });
-    const answerArea = screen.getByRole("group", { name: /your answer/i });
+    const wordBank = screen.getByRole("group", { name: /word bank/iu });
+    const answerArea = screen.getByRole("group", { name: /your answer/iu });
 
     // Place two words (correct length)
     fireEvent.click(within(wordBank).getByText("Hola"));

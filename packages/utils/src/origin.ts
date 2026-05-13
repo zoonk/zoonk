@@ -83,7 +83,7 @@ export function isCorsAllowedOrigin(origin: string): boolean {
 
   const LOCALHOST_PREFIX = "http://localhost:";
   const port = origin.slice(LOCALHOST_PREFIX.length);
-  const isValidLocalhostOrigin = origin.startsWith(LOCALHOST_PREFIX) && /^\d+$/.test(port);
+  const isValidLocalhostOrigin = origin.startsWith(LOCALHOST_PREFIX) && /^\d+$/u.test(port);
 
   if (isLocalhostSupported() && isValidLocalhostOrigin) {
     return true;

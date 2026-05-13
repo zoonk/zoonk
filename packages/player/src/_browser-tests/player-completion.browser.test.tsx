@@ -43,8 +43,8 @@ async function completeSingleChoiceLesson({
   optionName = "Correct answer",
 }: { optionName?: string } = {}) {
   await page.getByRole("radio", { name: optionName }).click();
-  await page.getByRole("button", { name: /check/i }).click();
-  await page.getByRole("button", { name: /continue/i }).click();
+  await page.getByRole("button", { name: /check/iu }).click();
+  await page.getByRole("button", { name: /continue/iu }).click();
 }
 
 describe("player browser integration: completion", () => {
@@ -56,10 +56,10 @@ describe("player browser integration: completion", () => {
       viewer: buildAuthenticatedViewer({ completionFooter: <p>Custom completion footer</p> }),
     });
 
-    await expect.element(page.getByRole("link", { name: /close/i })).toBeInTheDocument();
+    await expect.element(page.getByRole("link", { name: /close/iu })).toBeInTheDocument();
 
     await expect
-      .element(page.getByRole("progressbar", { name: /lesson progress/i }))
+      .element(page.getByRole("progressbar", { name: /lesson progress/iu }))
       .toBeInTheDocument();
 
     await completeSingleChoiceLesson();
@@ -67,36 +67,36 @@ describe("player browser integration: completion", () => {
     const completionScreen = page.getByRole("status");
 
     await expect.element(completionScreen.getByText("1/1")).toBeInTheDocument();
-    await expect.element(completionScreen.getByText(/\+10\s*BP/i)).toBeInTheDocument();
+    await expect.element(completionScreen.getByText(/\+10\s*BP/iu)).toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("progressbar", { name: /level progress/i }))
+      .element(completionScreen.getByRole("progressbar", { name: /level progress/iu }))
       .toBeInTheDocument();
 
     await expect.element(completionScreen.getByRole("link", { name: "Next" })).toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("link", { name: /all lessons/i }))
+      .element(completionScreen.getByRole("link", { name: /all lessons/iu }))
       .toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("button", { name: /try again/i }))
+      .element(completionScreen.getByRole("button", { name: /try again/iu }))
       .toBeInTheDocument();
 
     await expect.element(page.getByText("Custom completion footer")).toBeInTheDocument();
-    await expect.element(page.getByRole("link", { name: /close/i })).not.toBeInTheDocument();
+    await expect.element(page.getByRole("link", { name: /close/iu })).not.toBeInTheDocument();
 
     await expect
-      .element(page.getByRole("progressbar", { name: /lesson progress/i }))
+      .element(page.getByRole("progressbar", { name: /lesson progress/iu }))
       .not.toBeInTheDocument();
 
-    await completionScreen.getByRole("button", { name: /try again/i }).click();
+    await completionScreen.getByRole("button", { name: /try again/iu }).click();
 
     await expect
       .element(page.getByRole("heading", { name: "Completion question" }))
       .toBeInTheDocument();
 
-    await expect.element(page.getByRole("link", { name: /close/i })).toBeInTheDocument();
+    await expect.element(page.getByRole("link", { name: /close/iu })).toBeInTheDocument();
   });
 
   it("omits next lesson and level progress when optional lesson links are missing", async () => {
@@ -110,14 +110,14 @@ describe("player browser integration: completion", () => {
 
     const completionScreen = page.getByRole("status");
 
-    await expect.element(completionScreen.getByText(/\+10\s*BP/i)).toBeInTheDocument();
+    await expect.element(completionScreen.getByText(/\+10\s*BP/iu)).toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("link", { name: /all lessons/i }))
+      .element(completionScreen.getByRole("link", { name: /all lessons/iu }))
       .toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("button", { name: /try again/i }))
+      .element(completionScreen.getByRole("button", { name: /try again/iu }))
       .toBeInTheDocument();
 
     await expect
@@ -125,10 +125,10 @@ describe("player browser integration: completion", () => {
       .not.toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("progressbar", { name: /level progress/i }))
+      .element(completionScreen.getByRole("progressbar", { name: /level progress/iu }))
       .not.toBeInTheDocument();
 
-    await expect.element(completionScreen.getByText(/belt/i)).not.toBeInTheDocument();
+    await expect.element(completionScreen.getByText(/belt/iu)).not.toBeInTheDocument();
   });
 
   it("shows guest lesson completion login prompt without rewards and falls back to /login", async () => {
@@ -141,13 +141,13 @@ describe("player browser integration: completion", () => {
     await completeSingleChoiceLesson();
 
     const completionScreen = page.getByRole("status");
-    const loginLink = completionScreen.getByRole("link", { name: /login/i });
+    const loginLink = completionScreen.getByRole("link", { name: /login/iu });
     const nextLink = completionScreen.getByRole("link", { name: "Next" });
 
     await expect.element(completionScreen.getByText("1/1")).toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByText(/sign up to track your progress/i))
+      .element(completionScreen.getByText(/sign up to track your progress/iu))
       .toBeInTheDocument();
 
     await expect.element(nextLink).toBeInTheDocument();
@@ -156,17 +156,17 @@ describe("player browser integration: completion", () => {
     await expect.element(loginLink).toHaveAttribute("href", "/login");
 
     await expect
-      .element(completionScreen.getByRole("link", { name: /all lessons/i }))
+      .element(completionScreen.getByRole("link", { name: /all lessons/iu }))
       .toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("button", { name: /try again/i }))
+      .element(completionScreen.getByRole("button", { name: /try again/iu }))
       .toBeInTheDocument();
 
-    await expect.element(completionScreen.getByText(/\+10\s*BP/i)).not.toBeInTheDocument();
+    await expect.element(completionScreen.getByText(/\+10\s*BP/iu)).not.toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("progressbar", { name: /level progress/i }))
+      .element(completionScreen.getByRole("progressbar", { name: /level progress/iu }))
       .not.toBeInTheDocument();
   });
 
@@ -181,14 +181,14 @@ describe("player browser integration: completion", () => {
 
     const completionScreen = page.getByRole("status");
 
-    await expect.element(completionScreen.getByText(/chapter complete/i)).toBeInTheDocument();
+    await expect.element(completionScreen.getByText(/chapter complete/iu)).toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("link", { name: /review chapter/i }))
+      .element(completionScreen.getByRole("link", { name: /review chapter/iu }))
       .toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("link", { name: /next chapter/i }))
+      .element(completionScreen.getByRole("link", { name: /next chapter/iu }))
       .not.toBeInTheDocument();
   });
 
@@ -207,14 +207,14 @@ describe("player browser integration: completion", () => {
 
     const completionScreen = page.getByRole("status");
 
-    await expect.element(completionScreen.getByText(/course complete/i)).toBeInTheDocument();
+    await expect.element(completionScreen.getByText(/course complete/iu)).toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("link", { name: /review course/i }))
+      .element(completionScreen.getByRole("link", { name: /review course/iu }))
       .toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("link", { name: /review chapter/i }))
+      .element(completionScreen.getByRole("link", { name: /review chapter/iu }))
       .toBeInTheDocument();
   });
 
@@ -229,20 +229,20 @@ describe("player browser integration: completion", () => {
     await completeSingleChoiceLesson();
 
     const completionScreen = page.getByRole("status");
-    const loginLink = completionScreen.getByRole("link", { name: /login/i });
+    const loginLink = completionScreen.getByRole("link", { name: /login/iu });
 
     await expect
-      .element(completionScreen.getByText(/sign up to track your progress/i))
+      .element(completionScreen.getByText(/sign up to track your progress/iu))
       .toBeInTheDocument();
 
     await expect.element(loginLink).toHaveAttribute("href", "/sign-in");
 
     await expect
-      .element(completionScreen.getByRole("link", { name: /review chapter/i }))
+      .element(completionScreen.getByRole("link", { name: /review chapter/iu }))
       .toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("link", { name: /next chapter/i }))
+      .element(completionScreen.getByRole("link", { name: /next chapter/iu }))
       .not.toBeInTheDocument();
   });
 });

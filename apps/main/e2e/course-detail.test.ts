@@ -147,7 +147,7 @@ test.describe("Course Detail Page", () => {
   test("non-existent course shows 404 page", async ({ page }) => {
     await page.goto(`/b/${AI_ORG_SLUG}/c/nonexistent-course`);
 
-    await expect(page.getByText(/not found|404/i)).toBeVisible();
+    await expect(page.getByText(/not found|404/iu)).toBeVisible();
   });
 
   test("redirects to generate page when course has no chapters", async ({ page }) => {
@@ -178,7 +178,7 @@ test.describe("Course Detail Page", () => {
 
     await page.waitForURL(`/generate/cs/${suggestion.id}`, { timeout: 10_000 });
 
-    await expect(page.getByText(/creating your course/i)).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText(/creating your course/iu)).toBeVisible({ timeout: 10_000 });
   });
 
   test("non-AI courses with no chapters stay on the course page", async ({ page }) => {
@@ -204,7 +204,7 @@ test.describe("Course Detail Page", () => {
       page.getByRole("heading", { level: 1, name: `Non AI Empty Course ${uniqueId}` }),
     ).toBeVisible();
 
-    await expect(page.getByRole("link", { name: /^start$/i })).not.toBeVisible();
+    await expect(page.getByRole("link", { name: /^start$/iu })).not.toBeVisible();
   });
 
   test("shows fallback icon when course has no image", async ({ page }) => {
@@ -223,6 +223,6 @@ test.describe("Course Detail Page - Locale", () => {
     await setLocale(page, "pt");
     await page.goto(testData.ptCourseUrl);
 
-    await expect(page).toHaveURL(new RegExp(`/b/${AI_ORG_SLUG}/c/`));
+    await expect(page).toHaveURL(new RegExp(`/b/${AI_ORG_SLUG}/c/`, "u"));
   });
 });

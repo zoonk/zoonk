@@ -35,7 +35,7 @@ describe("player browser integration: arrangement steps", () => {
     await page.getByRole("button", { name: "Day" }).click();
     await page.getByRole("button", { name: "Moon" }).click();
     await page.getByRole("button", { name: "Night" }).click();
-    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /check/iu }).click();
 
     await expect.element(page.getByRole("heading", { name: "Next step" })).toBeInTheDocument();
   });
@@ -58,11 +58,11 @@ describe("player browser integration: arrangement steps", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    await expect.element(page.getByRole("button", { name: /check/i })).toBeEnabled();
-    await page.getByRole("button", { name: /check/i }).click();
+    await expect.element(page.getByRole("button", { name: /check/iu })).toBeEnabled();
+    await page.getByRole("button", { name: /check/iu }).click();
 
     await expect
-      .element(page.getByRole("region", { name: /answer feedback/i }))
+      .element(page.getByRole("region", { name: /answer feedback/iu }))
       .toBeInTheDocument();
   });
 
@@ -95,9 +95,9 @@ describe("player browser integration: arrangement steps", () => {
     await page.getByRole("button", { name: "Sun" }).click();
     await page.getByRole("button", { name: "Moon" }).click();
     await page.getByRole("button", { name: "Night" }).click();
-    await expect.element(page.getByRole("button", { name: /check/i })).toBeEnabled();
+    await expect.element(page.getByRole("button", { name: /check/iu })).toBeEnabled();
 
-    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /check/iu }).click();
 
     await expect.element(page.getByRole("status")).toBeInTheDocument();
     await expect.element(page.getByText("0/1")).toBeInTheDocument();
@@ -121,9 +121,9 @@ describe("player browser integration: arrangement steps", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /check/iu }).click();
 
-    await expect.element(page.getByText(/correct order:/i)).toBeInTheDocument();
+    await expect.element(page.getByText(/correct order:/iu)).toBeInTheDocument();
     await expect.element(page.getByText("Try again")).toBeInTheDocument();
   });
 });

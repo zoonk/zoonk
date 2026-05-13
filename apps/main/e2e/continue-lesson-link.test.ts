@@ -114,7 +114,7 @@ test.describe("Continue Lesson Link", () => {
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const startLink = page.getByRole("link", { name: /^start$/i });
+    const startLink = page.getByRole("link", { name: /^start$/iu });
     await expect(startLink).toBeVisible();
   });
 
@@ -123,12 +123,12 @@ test.describe("Continue Lesson Link", () => {
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const startLink = page.getByRole("link", { name: /^start$/i });
+    const startLink = page.getByRole("link", { name: /^start$/iu });
     await expect(startLink).toBeVisible();
     await startLink.click();
 
     await expect(page).toHaveURL(
-      new RegExp(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}$`),
+      new RegExp(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}$`, "u"),
     );
   });
 
@@ -137,7 +137,7 @@ test.describe("Continue Lesson Link", () => {
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
 
-    const startLink = page.getByRole("link", { name: /^start$/i });
+    const startLink = page.getByRole("link", { name: /^start$/iu });
     await expect(startLink).toBeVisible();
   });
 
@@ -146,9 +146,9 @@ test.describe("Continue Lesson Link", () => {
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await expect(page.getByText(/lesson not available/i)).toBeVisible();
+    await expect(page.getByText(/lesson not available/iu)).toBeVisible();
 
-    await expect(page.getByRole("link", { name: /create lesson/i })).toHaveAttribute(
+    await expect(page.getByRole("link", { name: /create lesson/iu })).toHaveAttribute(
       "href",
       `/generate/l/${lesson.id}`,
     );
@@ -159,7 +159,7 @@ test.describe("Continue Lesson Link", () => {
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const startLink = page.getByRole("link", { name: /^start$/i });
+    const startLink = page.getByRole("link", { name: /^start$/iu });
     await expect(startLink).toBeVisible();
 
     await expect(startLink).toHaveAttribute(
@@ -173,7 +173,7 @@ test.describe("Continue Lesson Link", () => {
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
 
-    const startLink = page.getByRole("link", { name: /^start$/i });
+    const startLink = page.getByRole("link", { name: /^start$/iu });
     await expect(startLink).toBeVisible();
 
     await expect(startLink).toHaveAttribute(
@@ -209,7 +209,7 @@ test.describe("Continue Lesson Link", () => {
 
     await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const continueLink = authenticatedPage.getByRole("link", { name: /^continue$/i });
+    const continueLink = authenticatedPage.getByRole("link", { name: /^continue$/iu });
     await expect(continueLink).toBeVisible();
 
     await expect(continueLink).toHaveAttribute(
@@ -243,7 +243,7 @@ test.describe("Continue Lesson Link", () => {
 
     await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const continueLink = authenticatedPage.getByRole("link", { name: /^continue$/i });
+    const continueLink = authenticatedPage.getByRole("link", { name: /^continue$/iu });
     await expect(continueLink).toBeVisible();
   });
 
@@ -273,7 +273,7 @@ test.describe("Continue Lesson Link", () => {
 
     await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const continueLink = authenticatedPage.getByRole("link", { name: /^continue$/i });
+    const continueLink = authenticatedPage.getByRole("link", { name: /^continue$/iu });
     await expect(continueLink).toBeVisible();
 
     await expect(continueLink).toHaveAttribute(
@@ -343,7 +343,7 @@ test.describe("Continue Lesson Link", () => {
 
     await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter1.slug}`);
 
-    const continueLink = authenticatedPage.getByRole("link", { name: /^continue$/i });
+    const continueLink = authenticatedPage.getByRole("link", { name: /^continue$/iu });
     await expect(continueLink).toBeVisible();
 
     await expect(continueLink).toHaveAttribute(
@@ -367,7 +367,7 @@ test.describe("Continue Lesson Link", () => {
 
     await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const reviewLink = authenticatedPage.getByRole("link", { name: /^review$/i });
+    const reviewLink = authenticatedPage.getByRole("link", { name: /^review$/iu });
     await expect(reviewLink).toBeVisible();
   });
 });

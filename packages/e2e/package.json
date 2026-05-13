@@ -19,7 +19,7 @@
     "@zoonk/utils": "workspace:*"
   },
   "devDependencies": {
-    "@playwright/test": "1.59.1",
+    "@playwright/test": "1.60.0",
     "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
     "@zoonk/testing": "workspace:*",

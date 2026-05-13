@@ -12,11 +12,11 @@ test.describe("OTP Login Flow", () => {
 
   test("completes email submission and shows OTP page", async ({ page }) => {
     await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
-    await page.getByLabel(/email/i).fill(TEST_EMAIL);
-    await page.getByRole("button", { name: /^continue$/i }).click();
-    await page.waitForURL(/\/auth\/otp/);
+    await page.getByLabel(/email/iu).fill(TEST_EMAIL);
+    await page.getByRole("button", { name: /^continue$/iu }).click();
+    await page.waitForURL(/\/auth\/otp/u);
 
-    await expect(page.getByRole("heading", { name: /check your email/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /check your email/iu })).toBeVisible();
 
     await expect(page.getByText(TEST_EMAIL)).toBeVisible();
   });
@@ -25,9 +25,9 @@ test.describe("OTP Login Flow", () => {
     const email = `e2e-otp-validate-${Date.now()}@zoonk.test`;
 
     await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
-    await page.getByLabel(/email/i).fill(email);
-    await page.getByRole("button", { name: /^continue$/i }).click();
-    await page.waitForURL(/\/auth\/otp/);
+    await page.getByLabel(/email/iu).fill(email);
+    await page.getByRole("button", { name: /^continue$/iu }).click();
+    await page.waitForURL(/\/auth\/otp/u);
 
     const otp = await getOTPForEmail(email);
 
@@ -37,26 +37,26 @@ test.describe("OTP Login Flow", () => {
 
     await page.getByRole("textbox").click();
     await page.keyboard.type(otp);
-    await page.getByRole("button", { name: /^continue$/i }).click();
+    await page.getByRole("button", { name: /^continue$/iu }).click();
 
     // New users without name/username are redirected to setup
-    await page.waitForURL(/\/auth\/setup/);
-    await expect(page.getByRole("heading", { name: /complete your profile/i })).toBeVisible();
+    await page.waitForURL(/\/auth\/setup/u);
+    await expect(page.getByRole("heading", { name: /complete your profile/iu })).toBeVisible();
 
     await cleanupVerifications(email);
   });
 
   test("shows error for invalid OTP", async ({ page }) => {
     await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
-    await page.getByLabel(/email/i).fill(TEST_EMAIL);
-    await page.getByRole("button", { name: /^continue$/i }).click();
-    await page.waitForURL(/\/auth\/otp/);
+    await page.getByLabel(/email/iu).fill(TEST_EMAIL);
+    await page.getByRole("button", { name: /^continue$/iu }).click();
+    await page.waitForURL(/\/auth\/otp/u);
 
     await page.getByRole("textbox").click();
     await page.keyboard.type("000000");
-    await page.getByRole("button", { name: /^continue$/i }).click();
+    await page.getByRole("button", { name: /^continue$/iu }).click();
 
-    await expect(page.getByText(/incorrect/i)).toBeVisible();
+    await expect(page.getByText(/incorrect/iu)).toBeVisible();
   });
 
   test("allows changing email (back to login)", async ({ page }) => {
@@ -64,11 +64,11 @@ test.describe("OTP Login Flow", () => {
       `/auth/otp?email=${encodeURIComponent(TEST_EMAIL)}&redirectTo=${encodeURIComponent(REDIRECT_URL)}`,
     );
 
-    await page.getByRole("link", { name: /change email/i }).click();
-    await page.waitForURL(/\/auth\/login/);
+    await page.getByRole("link", { name: /change email/iu }).click();
+    await page.waitForURL(/\/auth\/login/u);
 
     await expect(
-      page.getByRole("heading", { name: /sign in or create an account/i }),
+      page.getByRole("heading", { name: /sign in or create an account/iu }),
     ).toBeVisible();
   });
 
@@ -77,9 +77,9 @@ test.describe("OTP Login Flow", () => {
     const email = `e2e-otp-trailing-${Date.now()}@zoonk.test`;
 
     await page.goto(`/auth/login?redirectTo=${encodeURIComponent(trailingSlashUrl)}`);
-    await page.getByLabel(/email/i).fill(email);
-    await page.getByRole("button", { name: /^continue$/i }).click();
-    await page.waitForURL(/\/auth\/otp/);
+    await page.getByLabel(/email/iu).fill(email);
+    await page.getByRole("button", { name: /^continue$/iu }).click();
+    await page.waitForURL(/\/auth\/otp/u);
 
     const otp = await getOTPForEmail(email);
 
@@ -89,15 +89,15 @@ test.describe("OTP Login Flow", () => {
 
     await page.getByRole("textbox").click();
     await page.keyboard.type(otp);
-    await page.getByRole("button", { name: /^continue$/i }).click();
+    await page.getByRole("button", { name: /^continue$/iu }).click();
 
     // New user will be redirected to setup first
-    await page.waitForURL(/\/auth\/setup/);
+    await page.waitForURL(/\/auth\/setup/u);
 
     // Complete setup to continue the redirect flow
-    await page.getByRole("textbox", { name: /^name$/i }).fill("Trailing Slash User");
-    await page.getByRole("textbox", { name: /username/i }).fill(`trailing${Date.now()}`);
-    await expect(page.getByText(/is available/i)).toBeVisible();
+    await page.getByRole("textbox", { name: /^name$/iu }).fill("Trailing Slash User");
+    await page.getByRole("textbox", { name: /username/iu }).fill(`trailing${Date.now()}`);
+    await expect(page.getByText(/is available/iu)).toBeVisible();
 
     // Register listener BEFORE the click that triggers the redirect.
     // waitForRequest only captures requests after registration,
@@ -107,7 +107,7 @@ test.describe("OTP Login Flow", () => {
       return url.startsWith("http://localhost:49152/test/") && url.length > 28;
     });
 
-    await page.getByRole("button", { name: /^continue$/i }).click();
+    await page.getByRole("button", { name: /^continue$/iu }).click();
 
     const redirectRequest = await redirectPromise;
     const redirectUrl = new URL(redirectRequest.url());

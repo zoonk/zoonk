@@ -32,10 +32,10 @@
     "@types/react": "catalog:",
     "@typescript/native-preview": "catalog:",
     "@vitejs/plugin-react": "6.0.1",
-    "@vitest/browser-playwright": "4.1.5",
+    "@vitest/browser-playwright": "4.1.6",
     "@zoonk/tsconfig": "workspace:*",
     "jsdom": "catalog:",
-    "playwright": "1.59.1",
+    "playwright": "1.60.0",
     "tsx": "catalog:",
     "vitest": "catalog:"
   },

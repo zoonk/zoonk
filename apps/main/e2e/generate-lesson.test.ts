@@ -237,9 +237,9 @@ test.describe("Generate Lesson Page - Unauthenticated", () => {
     const { lesson } = await createPendingLesson();
     await page.goto(`/generate/l/${lesson.id}`);
 
-    await expect(page.getByRole("alert").filter({ hasText: /logged in/i })).toBeVisible();
+    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
 
-    const loginLink = page.getByRole("link", { name: /login/i });
+    const loginLink = page.getByRole("link", { name: /login/iu });
     await expect(loginLink).toBeVisible();
     await expect(loginLink).toHaveAttribute("href", "/login");
   });
@@ -250,11 +250,11 @@ test.describe("Generate Lesson Page - No Subscription", () => {
     const { lesson } = await createPendingLesson();
     await authenticatedPage.goto(`/generate/l/${lesson.id}`);
 
-    await expect(authenticatedPage.getByText(/upgrade to create/i)).toBeVisible();
+    await expect(authenticatedPage.getByText(/upgrade to create/iu)).toBeVisible();
 
-    const upgradeLink = authenticatedPage.getByRole("link", { name: /upgrade/i });
+    const upgradeLink = authenticatedPage.getByRole("link", { name: /upgrade/iu });
     await expect(upgradeLink).toBeVisible();
-    await expect(upgradeLink).toHaveAttribute("href", /\/subscription/);
+    await expect(upgradeLink).toHaveAttribute("href", /\/subscription/u);
   });
 });
 
@@ -295,10 +295,10 @@ test.describe("Generate Lesson Page - With Subscription", () => {
 
     await page.goto(`/generate/l/${lesson.id}`);
 
-    await expect(page.getByText(/your lesson is ready/i)).toBeVisible();
-    await expect(page.getByText(/taking you to your lesson/i)).toBeVisible();
+    await expect(page.getByText(/your lesson is ready/iu)).toBeVisible();
+    await expect(page.getByText(/taking you to your lesson/iu)).toBeVisible();
 
-    await page.waitForURL(new RegExp(`/b/${AI_ORG_SLUG}/c/.+/ch/.+/l/${lesson.slug}`), {
+    await page.waitForURL(new RegExp(`/b/${AI_ORG_SLUG}/c/.+/ch/.+/l/${lesson.slug}`, "u"), {
       timeout: 10_000,
     });
   });
@@ -344,18 +344,18 @@ test.describe("Generate Lesson Page - With Subscription", () => {
 
     await userWithoutProgress.goto(`/generate/l/${lesson.id}`);
 
-    await expect(userWithoutProgress.getByText(/your lesson is ready/i)).toBeVisible({
+    await expect(userWithoutProgress.getByText(/your lesson is ready/iu)).toBeVisible({
       timeout: 10_000,
     });
 
-    await expect(userWithoutProgress.getByText(/taking you to your lesson/i)).toBeVisible();
+    await expect(userWithoutProgress.getByText(/taking you to your lesson/iu)).toBeVisible();
 
     await prisma.lesson.update({
       data: { generationStatus: "completed" },
       where: { id: lesson.id },
     });
 
-    await userWithoutProgress.waitForURL(/\/b\/ai\/c\/.+\/ch\/.+\/l\/.+$/, { timeout: 10_000 });
+    await userWithoutProgress.waitForURL(/\/b\/ai\/c\/.+\/ch\/.+\/l\/.+$/u, { timeout: 10_000 });
   });
 
   test("shows time estimate during generation", async ({ userWithoutProgress, noProgressUser }) => {
@@ -369,7 +369,7 @@ test.describe("Generate Lesson Page - With Subscription", () => {
 
     await userWithoutProgress.goto(`/generate/l/${lesson.id}`);
 
-    await expect(userWithoutProgress.getByText(/this usually takes a few seconds/i)).toBeVisible({
+    await expect(userWithoutProgress.getByText(/this usually takes a few seconds/iu)).toBeVisible({
       timeout: 10_000,
     });
   });
@@ -390,7 +390,7 @@ test.describe("Generate Lesson Page - With Subscription", () => {
 
     await userWithoutProgress.goto(`/generate/l/${lesson.id}`);
 
-    await expect(userWithoutProgress.getByText(/something went wrong/i)).toBeVisible({
+    await expect(userWithoutProgress.getByText(/something went wrong/iu)).toBeVisible({
       timeout: 10_000,
     });
   });
@@ -439,8 +439,8 @@ test.describe("Generate Lesson Page - Running Generation Bypasses Auth", () => {
 
     await page.goto(`/generate/l/${lesson.id}`);
 
-    await expect(page.getByRole("alert").filter({ hasText: /logged in/i })).toHaveCount(0);
-    await expect(page.getByText(/upgrade to create/i)).toHaveCount(0);
+    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toHaveCount(0);
+    await expect(page.getByText(/upgrade to create/iu)).toHaveCount(0);
     await expect(page.getByRole("heading", { name: lessonTitle })).toBeVisible();
   });
 });
@@ -448,11 +448,11 @@ test.describe("Generate Lesson Page - Running Generation Bypasses Auth", () => {
 test.describe("Generate Lesson Page - Not Found", () => {
   test("invalid lesson ID shows 404 page", async ({ page }) => {
     await page.goto("/generate/l/999999");
-    await expect(page.getByText(/not found|404/i)).toBeVisible();
+    await expect(page.getByText(/not found|404/iu)).toBeVisible();
   });
 
   test("non-numeric lesson ID shows 404 page", async ({ page }) => {
     await page.goto("/generate/l/invalid-id");
-    await expect(page.getByText(/not found|404/i)).toBeVisible();
+    await expect(page.getByText(/not found|404/iu)).toBeVisible();
   });
 });

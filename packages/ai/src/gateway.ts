@@ -1,4 +1,8 @@
-import { type GatewayProviderSettings, createGateway } from "@ai-sdk/gateway";
+import {
+  GatewayInvalidRequestError,
+  type GatewayProviderSettings,
+  createGateway,
+} from "@ai-sdk/gateway";
 
 const isTest =
   process.env.E2E_TESTING === "true" ||
@@ -8,9 +12,11 @@ const isTest =
 /**
  * Tests can exercise real server routes or integration code, so missed mocks
  * must fail before a provider request leaves the process and spends credits.
+ * The Gateway SDK retries unknown fetch failures as 500s, so this uses a
+ * non-retryable Gateway error to make the test kill switch fail immediately.
  */
 const blockTestGatewayFetch: NonNullable<GatewayProviderSettings["fetch"]> = async () => {
-  throw new Error("AI Gateway calls are disabled during tests.");
+  throw new GatewayInvalidRequestError({ message: "AI Gateway calls are disabled during tests." });
 };
 
 export const zoonkGateway = createGateway({

@@ -86,39 +86,39 @@ describe("player browser integration: explanation lesson flow", () => {
     });
 
     await expect
-      .element(page.getByRole("heading", { name: /whole message travel as one blob/i }))
+      .element(page.getByRole("heading", { name: /whole message travel as one blob/iu }))
       .toBeInTheDocument();
 
     await expect
-      .element(page.getByAltText(/wrapped network packet moving through layered labels/i))
+      .element(page.getByAltText(/wrapped network packet moving through layered labels/iu))
       .toBeInTheDocument();
 
     fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
-    await expect.element(page.getByText(/each layer adds its own label/i)).toBeInTheDocument();
+    await expect.element(page.getByText(/each layer adds its own label/iu)).toBeInTheDocument();
 
     await expect
-      .element(page.getByAltText(/different network layers adding their own labels/i))
+      .element(page.getByAltText(/different network layers adding their own labels/iu))
       .toBeInTheDocument();
 
     fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
 
     await expect
       .element(
-        page.getByText(/which label helps the network decide where to send the packet next/i),
+        page.getByText(/which label helps the network decide where to send the packet next/iu),
       )
       .toBeInTheDocument();
 
-    await page.getByRole("radio", { name: /routing label/i }).click();
-    await page.getByRole("button", { name: /check/i }).click();
-    await page.getByRole("button", { name: /continue/i }).click();
+    await page.getByRole("radio", { name: /routing label/iu }).click();
+    await page.getByRole("button", { name: /check/iu }).click();
+    await page.getByRole("button", { name: /continue/iu }).click();
 
     await expect.element(page.getByRole("heading", { name: "This is why" })).toBeInTheDocument();
-    await expect.element(page.getByText(/whatsapp/i)).toBeInTheDocument();
+    await expect.element(page.getByText(/whatsapp/iu)).toBeInTheDocument();
 
     await expect
       .element(
         page.getByAltText(
-          /message reaching its destination after moving through several network hops/i,
+          /message reaching its destination after moving through several network hops/iu,
         ),
       )
       .toBeInTheDocument();

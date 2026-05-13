@@ -41,7 +41,7 @@ function HorizontalScroll({ className, children, ...props }: React.ComponentProp
     <div className={cn("relative", className)} data-slot="horizontal-scroll" {...props}>
       <div
         className={cn(
-          "overflow-x-auto [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+          "scrollbar-none overflow-x-auto [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden",
           canScrollLeft &&
             canScrollRight &&
             "mask-[linear-gradient(to_right,transparent,black_64px,black_calc(100%-64px),transparent)]",

@@ -134,26 +134,29 @@ test.describe("Course Chapters List", () => {
     await page.goto(courseUrl);
 
     await expect(
-      page.getByRole("link", { name: new RegExp(`1\\. ${chapterNames.first}`) }),
+      page.getByRole("link", { name: new RegExp(`1\\. ${chapterNames.first}`, "u") }),
     ).toBeVisible();
 
     await expect(
-      page.getByRole("link", { name: new RegExp(`2\\. ${chapterNames.second}`) }),
+      page.getByRole("link", { name: new RegExp(`2\\. ${chapterNames.second}`, "u") }),
     ).toBeVisible();
 
     await expect(
-      page.getByRole("link", { name: new RegExp(`3\\. ${chapterNames.third}`) }),
+      page.getByRole("link", { name: new RegExp(`3\\. ${chapterNames.third}`, "u") }),
     ).toBeVisible();
   });
 
   test("chapter link navigates to chapter page", async ({ page }) => {
     await page.goto(courseUrl);
 
-    const chapterLink = page.getByRole("link", { name: new RegExp(`1\\. ${chapterNames.first}`) });
+    const chapterLink = page.getByRole("link", {
+      name: new RegExp(`1\\. ${chapterNames.first}`, "u"),
+    });
+
     await expect(chapterLink).toBeVisible();
     await chapterLink.click();
 
-    await expect(page).toHaveURL(new RegExp(`${courseUrl}/ch/${chapterSlugs.first}`));
+    await expect(page).toHaveURL(new RegExp(`${courseUrl}/ch/${chapterSlugs.first}`, "u"));
 
     await expect(page.getByRole("heading", { level: 1, name: chapterNames.first })).toBeVisible();
   });
@@ -161,7 +164,10 @@ test.describe("Course Chapters List", () => {
   test("excludes unpublished chapters from the list", async ({ page }) => {
     await page.goto(courseUrl);
 
-    await expect(page.getByRole("link", { name: new RegExp(chapterNames.first) })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: new RegExp(chapterNames.first, "u") }),
+    ).toBeVisible();
+
     await expect(page.getByRole("link", { name: unpublishedChapterName })).not.toBeVisible();
   });
 });
@@ -171,8 +177,13 @@ test.describe("Course Chapters - Locale", () => {
     await setLocale(page, "pt");
     await page.goto(ptCourseUrl);
 
-    await expect(page.getByRole("link", { name: new RegExp(ptChapterNames.first) })).toBeVisible();
-    await expect(page.getByRole("link", { name: new RegExp(ptChapterNames.second) })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: new RegExp(ptChapterNames.first, "u") }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByRole("link", { name: new RegExp(ptChapterNames.second, "u") }),
+    ).toBeVisible();
   });
 });
 
@@ -180,11 +191,11 @@ test.describe("Course Chapter Search", () => {
   test("filters chapters by title", async ({ page }) => {
     await page.goto(courseUrl);
 
-    await page.getByLabel(/search chapters/i).fill("Gamma");
+    await page.getByLabel(/search chapters/iu).fill("Gamma");
 
-    const firstChapter = page.getByRole("link", { name: new RegExp(chapterNames.first) });
-    const secondChapter = page.getByRole("link", { name: new RegExp(chapterNames.second) });
-    const thirdChapter = page.getByRole("link", { name: new RegExp(chapterNames.third) });
+    const firstChapter = page.getByRole("link", { name: new RegExp(chapterNames.first, "u") });
+    const secondChapter = page.getByRole("link", { name: new RegExp(chapterNames.second, "u") });
+    const thirdChapter = page.getByRole("link", { name: new RegExp(chapterNames.third, "u") });
 
     await expect(thirdChapter).toBeVisible();
     await expect(firstChapter).not.toBeVisible();
@@ -194,29 +205,32 @@ test.describe("Course Chapter Search", () => {
   test("persists search in URL and survives page reload", async ({ page }) => {
     await page.goto(courseUrl);
 
-    await page.getByLabel(/search chapters/i).fill("Gamma");
-    await expect(page).toHaveURL(/\?q=Gamma/);
+    await page.getByLabel(/search chapters/iu).fill("Gamma");
+    await expect(page).toHaveURL(/\?q=Gamma/u);
 
     await page.reload();
 
-    await expect(page.getByLabel(/search chapters/i)).toHaveValue("Gamma");
-    await expect(page.getByRole("link", { name: new RegExp(chapterNames.third) })).toBeVisible();
+    await expect(page.getByLabel(/search chapters/iu)).toHaveValue("Gamma");
+
+    await expect(
+      page.getByRole("link", { name: new RegExp(chapterNames.third, "u") }),
+    ).toBeVisible();
   });
 
   test("shows empty state when no matches found", async ({ page }) => {
     await page.goto(courseUrl);
 
-    await page.getByLabel(/search chapters/i).fill("nonexistent xyz");
-    await expect(page.getByText(/no chapters found/i)).toBeVisible();
+    await page.getByLabel(/search chapters/iu).fill("nonexistent xyz");
+    await expect(page.getByText(/no chapters found/iu)).toBeVisible();
   });
 
   test("clears search and shows all chapters again", async ({ page }) => {
     await page.goto(courseUrl);
 
-    const searchInput = page.getByLabel(/search chapters/i);
-    const firstChapter = page.getByRole("link", { name: new RegExp(chapterNames.first) });
-    const secondChapter = page.getByRole("link", { name: new RegExp(chapterNames.second) });
-    const thirdChapter = page.getByRole("link", { name: new RegExp(chapterNames.third) });
+    const searchInput = page.getByLabel(/search chapters/iu);
+    const firstChapter = page.getByRole("link", { name: new RegExp(chapterNames.first, "u") });
+    const secondChapter = page.getByRole("link", { name: new RegExp(chapterNames.second, "u") });
+    const thirdChapter = page.getByRole("link", { name: new RegExp(chapterNames.third, "u") });
 
     await searchInput.fill("Gamma");
     await expect(firstChapter).not.toBeVisible();
@@ -234,10 +248,10 @@ test.describe("Course Chapter Search", () => {
     await setLocale(page, "pt");
     await page.goto(ptCourseUrl);
 
-    await page.getByLabel(/buscar capítulos/i).fill("introducao");
+    await page.getByLabel(/buscar capítulos/iu).fill("introducao");
 
-    const firstChapter = page.getByRole("link", { name: new RegExp(ptChapterNames.first) });
-    const secondChapter = page.getByRole("link", { name: new RegExp(ptChapterNames.second) });
+    const firstChapter = page.getByRole("link", { name: new RegExp(ptChapterNames.first, "u") });
+    const secondChapter = page.getByRole("link", { name: new RegExp(ptChapterNames.second, "u") });
 
     await expect(firstChapter).toBeVisible();
     await expect(secondChapter).not.toBeVisible();

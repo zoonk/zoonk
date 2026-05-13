@@ -33,15 +33,15 @@ describe("player browser integration: choice steps", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    await expect.element(page.getByRole("button", { name: /check/i })).toBeDisabled();
+    await expect.element(page.getByRole("button", { name: /check/iu })).toBeDisabled();
 
     await page.getByRole("radio", { name: "Berlin" }).click();
-    await expect.element(page.getByRole("button", { name: /check/i })).toBeEnabled();
+    await expect.element(page.getByRole("button", { name: /check/iu })).toBeEnabled();
 
-    await page.getByRole("button", { name: /check/i }).click();
-    await expect.element(page.getByText(/your answer:/i)).toBeInTheDocument();
+    await page.getByRole("button", { name: /check/iu }).click();
+    await expect.element(page.getByText(/your answer:/iu)).toBeInTheDocument();
 
-    await page.getByRole("button", { name: /continue/i }).click();
+    await page.getByRole("button", { name: /continue/iu }).click();
 
     await expect.element(page.getByText("1/1")).toBeInTheDocument();
     expect(onComplete).toHaveBeenCalledOnce();
@@ -97,12 +97,12 @@ describe("player browser integration: choice steps", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    await expect.element(page.getByText(/translate this word:/i)).toBeInTheDocument();
-    await page.getByRole("radio", { name: /berlin/i }).click();
-    await page.getByRole("button", { name: /check/i }).click();
-    await expect.element(page.getByText(/your answer:/i)).toBeInTheDocument();
+    await expect.element(page.getByText(/translate this word:/iu)).toBeInTheDocument();
+    await page.getByRole("radio", { name: /berlin/iu }).click();
+    await page.getByRole("button", { name: /check/iu }).click();
+    await expect.element(page.getByText(/your answer:/iu)).toBeInTheDocument();
 
-    await page.getByRole("button", { name: /continue/i }).click();
+    await page.getByRole("button", { name: /continue/iu }).click();
     await expect.element(page.getByText("1/1")).toBeInTheDocument();
   });
 
@@ -138,10 +138,10 @@ describe("player browser integration: choice steps", () => {
     });
 
     await page.getByRole("radio", { name: "Cat" }).click();
-    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /check/iu }).click();
 
     await expect
-      .element(page.getByRole("region", { name: /answer feedback/i }))
+      .element(page.getByRole("region", { name: /answer feedback/iu }))
       .toBeInTheDocument();
   });
 
@@ -166,7 +166,7 @@ describe("player browser integration: choice steps", () => {
     });
 
     await expect.element(page.getByText("Read the clue first")).toBeInTheDocument();
-    await expect.element(page.getByRole("button", { name: /check/i })).toBeDisabled();
+    await expect.element(page.getByRole("button", { name: /check/iu })).toBeDisabled();
 
     fireEvent.keyDown(globalThis.window, { key: "2" });
 
@@ -174,7 +174,7 @@ describe("player browser integration: choice steps", () => {
       .element(page.getByRole("radio", { name: "Berlin" }))
       .toHaveAttribute("aria-checked", "true");
 
-    await expect.element(page.getByRole("button", { name: /check/i })).toBeEnabled();
+    await expect.element(page.getByRole("button", { name: /check/iu })).toBeEnabled();
 
     await page.getByRole("radio", { name: "Berlin" }).click();
 
@@ -182,13 +182,13 @@ describe("player browser integration: choice steps", () => {
       .element(page.getByRole("radio", { name: "Berlin" }))
       .toHaveAttribute("aria-checked", "false");
 
-    await expect.element(page.getByRole("button", { name: /check/i })).toBeDisabled();
+    await expect.element(page.getByRole("button", { name: /check/iu })).toBeDisabled();
 
     await page.getByRole("radio", { name: "Paris" }).click();
-    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /check/iu }).click();
 
-    await expect.element(page.getByText(/your answer:/i)).toBeInTheDocument();
-    await expect.element(page.getByText(/correct answer:/i)).toBeInTheDocument();
+    await expect.element(page.getByText(/your answer:/iu)).toBeInTheDocument();
+    await expect.element(page.getByText(/correct answer:/iu)).toBeInTheDocument();
     await expect.element(page.getByText("Paris")).toBeInTheDocument();
     await expect.element(page.getByText("Berlin")).toBeInTheDocument();
   });
@@ -228,18 +228,18 @@ describe("player browser integration: choice steps", () => {
     });
 
     await expect
-      .element(page.getByAltText(/sales chart with a visible drop in march/i))
+      .element(page.getByAltText(/sales chart with a visible drop in march/iu))
       .toBeInTheDocument();
 
-    await page.getByRole("button", { name: /open full image/i }).click();
+    await page.getByRole("button", { name: /open full image/iu }).click();
 
-    const dialog = page.getByRole("dialog", { name: /full image/i });
+    const dialog = page.getByRole("dialog", { name: /full image/iu });
 
     await expect
-      .element(dialog.getByAltText(/sales chart with a visible drop in march/i))
+      .element(dialog.getByAltText(/sales chart with a visible drop in march/iu))
       .toBeInTheDocument();
 
-    await page.getByRole("button", { name: /close full image/i }).click();
+    await page.getByRole("button", { name: /close full image/iu }).click();
     await expect.element(dialog).not.toBeInTheDocument();
   });
 
@@ -297,17 +297,17 @@ describe("player browser integration: choice steps", () => {
 
     await expect.element(page.getByText("beru-rin")).toBeInTheDocument();
 
-    await page.getByRole("radio", { name: /berlin/i }).click();
+    await page.getByRole("radio", { name: /berlin/iu }).click();
     await expect.element(page.getByText("BEHR-lin")).toBeInTheDocument();
 
-    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /check/iu }).click();
 
-    await expect.element(page.getByText(/translate:/i)).toBeInTheDocument();
+    await expect.element(page.getByText(/translate:/iu)).toBeInTheDocument();
     await expect.element(page.getByText("Capital of Germany")).toBeInTheDocument();
     await expect.element(page.getByText("beru-rin")).toBeInTheDocument();
 
     await expect
-      .element(page.getByRole("button", { name: /play pronunciation/i }))
+      .element(page.getByRole("button", { name: /play pronunciation/iu }))
       .toBeInTheDocument();
   });
 
@@ -343,14 +343,14 @@ describe("player browser integration: choice steps", () => {
     });
 
     await expect
-      .element(page.getByRole("radiogroup", { name: /image options/i }).getByText("Cat"))
+      .element(page.getByRole("radiogroup", { name: /image options/iu }).getByText("Cat"))
       .toBeInTheDocument();
 
     await page.getByRole("radio", { name: "Dog" }).click();
-    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /check/iu }).click();
 
     await expect
-      .element(page.getByRole("region", { name: /answer feedback/i }))
+      .element(page.getByRole("region", { name: /answer feedback/iu }))
       .toBeInTheDocument();
 
     await expect.element(page.getByRole("radio", { name: "Cat" })).toBeInTheDocument();
@@ -381,10 +381,10 @@ describe("player browser integration: choice steps", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    await expect.element(page.getByText(/Alex, we have a situation/i)).toBeInTheDocument();
+    await expect.element(page.getByText(/Alex, we have a situation/iu)).toBeInTheDocument();
     await page.getByRole("radio", { name: "Investigate" }).click();
-    await page.getByRole("button", { name: /check/i }).click();
-    await expect.element(page.getByText(/Alex, great call/i)).toBeInTheDocument();
+    await page.getByRole("button", { name: /check/iu }).click();
+    await expect.element(page.getByText(/Alex, great call/iu)).toBeInTheDocument();
   });
 
   it("strips {{NAME}} placeholders for unauthenticated viewers", async () => {
@@ -411,13 +411,13 @@ describe("player browser integration: choice steps", () => {
       }),
     });
 
-    await expect.element(page.getByText(/^we have a situation$/i)).toBeInTheDocument();
+    await expect.element(page.getByText(/^we have a situation$/iu)).toBeInTheDocument();
     await expect.element(page.getByText("{{NAME}}")).not.toBeInTheDocument();
 
     await page.getByRole("radio", { name: "Investigate" }).click();
-    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /check/iu }).click();
 
-    await expect.element(page.getByText(/^great call$/i)).toBeInTheDocument();
+    await expect.element(page.getByText(/^great call$/iu)).toBeInTheDocument();
     await expect.element(page.getByText("{{NAME}}")).not.toBeInTheDocument();
   });
 });

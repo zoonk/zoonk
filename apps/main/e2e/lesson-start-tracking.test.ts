@@ -123,7 +123,7 @@ test.describe("Lesson Start Tracking", () => {
     const { lesson, url } = await createTestLesson();
 
     await page.goto(url);
-    await expect(page.getByRole("link", { name: /close/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /close/iu })).toBeVisible();
 
     const progress = await prisma.lessonProgress.findFirst({ where: { lessonId: lesson.id } });
 

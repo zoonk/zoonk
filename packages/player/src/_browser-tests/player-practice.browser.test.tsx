@@ -69,7 +69,7 @@ describe("player browser integration: practice lessons", () => {
     await expect
       .element(
         page.getByAltText(
-          /late-night support war room with a refund dashboard on a laptop and a teammate reviewing notes/i,
+          /late-night support war room with a refund dashboard on a laptop and a teammate reviewing notes/iu,
         ),
       )
       .toBeInTheDocument();
@@ -82,21 +82,21 @@ describe("player browser integration: practice lessons", () => {
       )
       .toBeInTheDocument();
 
-    await page.getByRole("button", { name: /begin/i }).click();
+    await page.getByRole("button", { name: /begin/iu }).click();
 
     await expect
       .element(page.getByRole("heading", { name: "What should I check first?" }))
       .toBeInTheDocument();
 
     await expect
-      .element(page.getByAltText(/refund dashboard filtered to discounted orders/i))
+      .element(page.getByAltText(/refund dashboard filtered to discounted orders/iu))
       .toBeInTheDocument();
 
     await page.getByRole("radio", { name: "Check the discounted orders first" }).click();
-    await page.getByRole("button", { name: /check/i }).click();
-    await page.getByRole("button", { name: /continue/i }).click();
+    await page.getByRole("button", { name: /check/iu }).click();
+    await page.getByRole("button", { name: /continue/iu }).click();
 
     await expect.element(page.getByText("1/1")).toBeInTheDocument();
-    await expect.element(page.getByText(/\+10\s*BP/i)).toBeInTheDocument();
+    await expect.element(page.getByText(/\+10\s*BP/iu)).toBeInTheDocument();
   });
 });

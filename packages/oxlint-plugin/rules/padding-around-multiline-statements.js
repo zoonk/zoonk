@@ -41,7 +41,7 @@ function hasUsableRange(statement) {
 function isPlainWhitespaceGap({ sourceText, previousStatement, nextStatement }) {
   const gap = sourceText.slice(previousStatement.range[1], nextStatement.range[0]);
 
-  return /^\s*$/.test(gap);
+  return /^\s*$/u.test(gap);
 }
 
 /**
@@ -60,7 +60,7 @@ function getStatementIndentation({ sourceText, statement }) {
   const lineStart = sourceText.lastIndexOf("\n", statement.range[0] - 1) + 1;
   const linePrefix = sourceText.slice(lineStart, statement.range[0]);
 
-  return linePrefix.match(/^\s*/)[0];
+  return linePrefix.match(/^\s*/u)[0];
 }
 
 /**

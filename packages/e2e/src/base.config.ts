@@ -35,7 +35,7 @@ export function createBaseConfig(options: {
       },
       timeout: 120_000,
       // Capture port from Next.js stdout: "- Local: http://localhost:12345"
-      wait: { stdout: /-\s+Local:\s+(?<E2E_BASE_URL>http:\/\/localhost:(?<E2E_PORT>\d+))/ },
+      wait: { stdout: /-\s+Local:\s+(?<E2E_BASE_URL>http:\/\/localhost:(?<E2E_PORT>\d+))/u },
     },
   });
 }

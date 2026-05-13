@@ -126,12 +126,12 @@ async function completeVocabStep(
   page: Page,
   translationToWord: Record<string, string>,
 ): Promise<void> {
-  const radiogroup = page.getByRole("radiogroup", { name: /answer options/i });
+  const radiogroup = page.getByRole("radiogroup", { name: /answer options/iu });
   await expect(radiogroup).toBeVisible();
 
   // Read the displayed translation from the prompt text
   const promptText = await page
-    .getByText(/translate this word/i)
+    .getByText(/translate this word/iu)
     .locator("..")
     .textContent();
 
@@ -154,22 +154,22 @@ async function completeVocabStep(
     await expect(option).toHaveAttribute("aria-checked", "true", { timeout: 1000 });
   }).toPass();
 
-  await page.getByRole("button", { name: /check/i }).click();
-  await page.getByRole("button", { name: /continue/i }).click();
+  await page.getByRole("button", { name: /check/iu }).click();
+  await page.getByRole("button", { name: /continue/iu }).click();
 }
 
 /**
  * Completes a reading step by tapping words in the word bank.
  */
 async function completeReadingStep(page: Page, word1: string, word2: string): Promise<void> {
-  const wordBank = page.getByRole("group", { name: /word bank/i });
+  const wordBank = page.getByRole("group", { name: /word bank/iu });
   await expect(wordBank).toBeVisible();
 
   await wordBank.getByRole("button", { exact: true, name: word1 }).click();
   await wordBank.getByRole("button", { exact: true, name: word2 }).click();
 
-  await page.getByRole("button", { name: /check/i }).click();
-  await page.getByRole("button", { name: /continue/i }).click();
+  await page.getByRole("button", { name: /check/iu }).click();
+  await page.getByRole("button", { name: /continue/iu }).click();
 }
 
 /**
@@ -185,11 +185,11 @@ async function getVisibleReviewState({
   completionScoreText: string;
   page: Page;
 }): Promise<"completed" | "pending" | "reading" | "vocab"> {
-  if (await page.getByText(/translate this word/i).isVisible()) {
+  if (await page.getByText(/translate this word/iu).isVisible()) {
     return "vocab";
   }
 
-  if (await page.getByText(/translate this sentence/i).isVisible()) {
+  if (await page.getByText(/translate this sentence/iu).isVisible()) {
     return "reading";
   }
 
@@ -346,8 +346,12 @@ test.describe("Review Step", () => {
     const completionScreen = page.getByRole("status");
 
     await expect(completionScreen).toBeVisible();
-    await expect(completionScreen.getByRole("heading", { name: /course complete/i })).toBeVisible();
-    await expect(completionScreen.getByRole("link", { name: /review course/i })).toBeVisible();
+
+    await expect(
+      completionScreen.getByRole("heading", { name: /course complete/iu }),
+    ).toBeVisible();
+
+    await expect(completionScreen.getByRole("link", { name: /review course/iu })).toBeVisible();
 
     await expect(
       completionScreen.getByText(completionScoreText, { exact: true }),

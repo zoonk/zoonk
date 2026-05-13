@@ -7,7 +7,7 @@ export default defineConfig({
     alias: [
       {
         // Use @zoonk/auth/testing in tests to avoid nextCookies() which requires Next.js context
-        find: /^@zoonk\/auth$/,
+        find: /^@zoonk\/auth$/u,
         replacement: resolve(import.meta.dirname, "../../packages/auth/src/testing.ts"),
       },
     ],

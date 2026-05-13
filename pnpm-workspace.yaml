@@ -3,9 +3,9 @@ packages:
   - packages/*
 
 allowBuilds:
+  "@google/genai": false
   "@nestjs/core": false
   "@parcel/watcher": false
-  "@prisma/client": false
   "@prisma/engines": true
   "@sentry/cli": true
   "@swc/core": true
@@ -22,33 +22,34 @@ catalog:
   "@dnd-kit/utilities": 3.2.2
   "@mdx-js/loader": 3.1.1
   "@mdx-js/react": 3.1.1
-  "@next/mdx": 16.2.4
-  "@sentry/nextjs": 10.51.0
-  "@tabler/icons-react": 3.41.1
-  "@tailwindcss/postcss": 4.2.4
+  "@next/mdx": 16.2.6
+  "@sentry/nextjs": 10.53.1
+  "@tabler/icons-react": 3.44.0
+  "@tailwindcss/postcss": 4.3.0
   "@testing-library/react": 16.3.2
   "@types/mdx": 2.0.13
   "@types/node": ^24
   "@types/react": ^19.2.14
   "@types/react-dom": ^19.2.3
-  "@typescript/native-preview": 7.0.0-dev.20260429.1
+  "@typescript/native-preview": 7.0.0-dev.20260512.1
   "@vercel/analytics": 2.0.1
-  ai: 6.0.170
+  ai: 6.0.182
   babel-plugin-react-compiler: 1.0.0
   botid: 1.5.11
-  jsdom: 29.1.0
+  jsdom: 29.1.1
   lucide-react: 1.14.0
-  next: 16.2.4
+  next: 16.2.6
   next-intl: 4.12.0
   nuqs: 2.8.9
   raw-loader: 4.0.2
-  react: 19.2.5
-  react-dom: 19.2.5
+  react: 19.2.6
+  react-dom: 19.2.6
   recharts: 3.8.1
   server-only: 0.0.1
   tsx: 4.21.0
-  vitest: 4.1.5
-  zod: 4.3.6
+  vitest: 4.1.6
+  zod: 4.4.3
+
 minimumReleaseAgeExclude:
   - devalue@5.6.4
   - undici@7.24.0
@@ -58,8 +59,6 @@ minimumReleaseAgeExclude:
 overrides:
   "@hono/node-server@<1.19.13": ^1.19.13
   "@types/pg": 8.20.0
-  "@vercel/functions>@vercel/oidc": 3.3.1
-  "@vercel/queue>@vercel/oidc": 3.3.1
   devalue@<5.6.4: ^5.6.4
   devalue@<=5.6.3: ^5.6.4
   postcss@<8.5.10: ^8.5.10

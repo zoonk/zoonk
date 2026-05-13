@@ -112,10 +112,10 @@ test.describe("Auth Callback", () => {
       `/auth/callback?state=${encodeURIComponent(state)}&token=${encodeURIComponent(token)}`,
     );
 
-    await page.waitForURL(/\/$/);
+    await page.waitForURL(/\/$/u);
 
-    await page.getByRole("button", { name: /user menu/i }).click();
-    await expect(page.getByText(/logout/i)).toBeVisible();
+    await page.getByRole("button", { name: /user menu/iu }).click();
+    await expect(page.getByText(/logout/iu)).toBeVisible();
 
     await ctx.close();
   });

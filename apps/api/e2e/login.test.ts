@@ -6,17 +6,17 @@ test.describe("Login Page", () => {
 
     // Verify heading
     await expect(
-      page.getByRole("heading", { name: /sign in or create an account/i }),
+      page.getByRole("heading", { name: /sign in or create an account/iu }),
     ).toBeVisible();
 
     // Verify email form elements
-    await expect(page.getByLabel(/email/i)).toBeVisible();
+    await expect(page.getByLabel(/email/iu)).toBeVisible();
 
-    await expect(page.getByRole("button", { name: /^continue$/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^continue$/iu })).toBeVisible();
 
     // Verify social login buttons
-    await expect(page.getByRole("button", { name: /continue with google/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /continue with google/iu })).toBeVisible();
 
-    await expect(page.getByRole("button", { name: /continue with apple/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /continue with apple/iu })).toBeVisible();
   });
 });

@@ -57,12 +57,12 @@ test.describe("Generate Course Redirect", () => {
     await page.waitForURL(`/generate/cs/${suggestion.id}`, { timeout: 10_000 });
 
     // Verify we're on the generation page by checking for the header
-    await expect(page.getByText(/creating your course/i)).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText(/creating your course/iu)).toBeVisible({ timeout: 10_000 });
   });
 
   test("shows 404 when course suggestion does not exist", async ({ page }) => {
     await page.goto(`/generate/c/nonexistent-${randomUUID()}`);
 
-    await expect(page.getByText(/not found|404/i)).toBeVisible();
+    await expect(page.getByText(/not found|404/iu)).toBeVisible();
   });
 });
