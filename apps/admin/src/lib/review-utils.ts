@@ -24,7 +24,7 @@ const REVIEW_TASKS: Record<ReviewTaskType, { group: ReviewGroup; label: string; 
 };
 
 function fromKebabCase(str: string): string {
-  return str.replaceAll(/-([a-z])/g, (_, char: string) => char.toUpperCase());
+  return str.replaceAll(/-([a-z])/gu, (_, char: string) => char.toUpperCase());
 }
 
 // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- keys mirror ReviewTaskType by construction

@@ -19,11 +19,11 @@ export function getTemplateRomanization({
     return sentence;
   }
 
-  const escaped = answer.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+  const escaped = answer.replaceAll(/[.*+?^${}()|[\]\\]/gu, String.raw`\$&`);
 
   const wordBoundaryPattern = new RegExp(
     `(?<=\\s|^|["'«「])${escaped}(?=\\s|[.,!?;:)"'»」]|$)`,
-    "i",
+    "iu",
   );
 
   return sentence.replace(wordBoundaryPattern, "____");

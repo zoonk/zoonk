@@ -183,11 +183,11 @@ test.describe("Lesson Player Page", () => {
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    const closeLink = page.getByRole("link", { name: /close/i });
+    const closeLink = page.getByRole("link", { name: /close/iu });
 
     await expect(closeLink).toHaveAttribute(
       "href",
-      new RegExp(`/b/ai/c/${course.slug}/ch/${chapter.slug}$`),
+      new RegExp(`/b/ai/c/${course.slug}/ch/${chapter.slug}$`, "u"),
     );
   });
 
@@ -196,12 +196,12 @@ test.describe("Lesson Player Page", () => {
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await expect(page.getByText(/lesson not available/i)).toBeVisible();
-    await expect(page.getByText(/hasn't been created yet/i)).toBeVisible();
-    const generateLink = page.getByRole("link", { name: /create lesson/i });
+    await expect(page.getByText(/lesson not available/iu)).toBeVisible();
+    await expect(page.getByText(/hasn't been created yet/iu)).toBeVisible();
+    const generateLink = page.getByRole("link", { name: /create lesson/iu });
 
     await expect(generateLink).toBeVisible();
-    await expect(generateLink).toHaveAttribute("href", new RegExp(`/generate/l/${lesson.id}`));
+    await expect(generateLink).toHaveAttribute("href", new RegExp(`/generate/l/${lesson.id}`, "u"));
     await expect(generateLink).toHaveAttribute("rel", "nofollow");
   });
 
@@ -270,8 +270,8 @@ test.describe("Lesson Player Page", () => {
 
     await page.goto(`/b/${org.slug}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await expect(page.getByText(/lesson not available/i)).toBeVisible();
-    await expect(page.getByRole("link", { name: /create lesson/i })).not.toBeVisible();
+    await expect(page.getByText(/lesson not available/iu)).toBeVisible();
+    await expect(page.getByRole("link", { name: /create lesson/iu })).not.toBeVisible();
   });
 
   test("pressing escape navigates to the chapter page", async ({ page }) => {
@@ -279,12 +279,12 @@ test.describe("Lesson Player Page", () => {
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await expect(page.getByRole("link", { name: /close/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /close/iu })).toBeVisible();
 
     await page.waitForLoadState("networkidle");
     await page.keyboard.press("Escape");
 
-    await expect(page).toHaveURL(new RegExp(`/b/ai/c/${course.slug}/ch/${chapter.slug}$`));
+    await expect(page).toHaveURL(new RegExp(`/b/ai/c/${course.slug}/ch/${chapter.slug}$`, "u"));
   });
 
   test("non-existent lesson shows 404 page", async ({ page }) => {
@@ -292,7 +292,7 @@ test.describe("Lesson Player Page", () => {
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/missing-${uniqueId}`);
 
-    await expect(page.getByText(/not found|404/i)).toBeVisible();
+    await expect(page.getByText(/not found|404/iu)).toBeVisible();
   });
 
   test("page title contains lesson title", async ({ page }) => {
@@ -302,7 +302,7 @@ test.describe("Lesson Player Page", () => {
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await expect(page).toHaveTitle(new RegExp(lessonTitle));
+    await expect(page).toHaveTitle(new RegExp(lessonTitle, "u"));
   });
 
   test("unpublished lesson shows 404 page", async ({ page }) => {
@@ -332,6 +332,6 @@ test.describe("Lesson Player Page", () => {
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await expect(page.getByText(/not found|404/i)).toBeVisible();
+    await expect(page.getByText(/not found|404/iu)).toBeVisible();
   });
 });

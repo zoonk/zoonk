@@ -167,9 +167,9 @@ test.describe("Generate Chapter Page - Unauthenticated", () => {
     const { chapter } = await createPendingChapter(1);
     await page.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(page.getByRole("alert").filter({ hasText: /logged in/i })).toBeVisible();
+    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
 
-    const loginLink = page.getByRole("link", { name: /login/i });
+    const loginLink = page.getByRole("link", { name: /login/iu });
     await expect(loginLink).toBeVisible();
     await expect(loginLink).toHaveAttribute("href", "/login");
   });
@@ -180,11 +180,11 @@ test.describe("Generate Chapter Page - No Subscription", () => {
     const { chapter } = await createPendingChapter(1);
     await authenticatedPage.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(authenticatedPage.getByText(/upgrade to create/i)).toBeVisible();
+    await expect(authenticatedPage.getByText(/upgrade to create/iu)).toBeVisible();
 
-    const upgradeLink = authenticatedPage.getByRole("link", { name: /upgrade/i });
+    const upgradeLink = authenticatedPage.getByRole("link", { name: /upgrade/iu });
     await expect(upgradeLink).toBeVisible();
-    await expect(upgradeLink).toHaveAttribute("href", /\/subscription/);
+    await expect(upgradeLink).toHaveAttribute("href", /\/subscription/u);
   });
 });
 
@@ -206,8 +206,8 @@ test.describe("Generate Chapter Page - With Subscription", () => {
 
     await page.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(page.getByText(/your lessons are ready/i)).toBeVisible();
-    await expect(page.getByText(/taking you to your chapter/i)).toBeVisible();
+    await expect(page.getByText(/your lessons are ready/iu)).toBeVisible();
+    await expect(page.getByText(/taking you to your chapter/iu)).toBeVisible();
 
     await page.waitForURL(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`, {
       timeout: 10_000,
@@ -250,11 +250,11 @@ test.describe("Generate Chapter Page - With Subscription", () => {
     await userWithoutProgress.goto(`/generate/ch/${chapter.id}`);
 
     // Should show completion message
-    await expect(userWithoutProgress.getByText(/your lessons are ready/i)).toBeVisible({
+    await expect(userWithoutProgress.getByText(/your lessons are ready/iu)).toBeVisible({
       timeout: 10_000,
     });
 
-    await expect(userWithoutProgress.getByText(/taking you to your chapter/i)).toBeVisible();
+    await expect(userWithoutProgress.getByText(/taking you to your chapter/iu)).toBeVisible();
 
     // Update chapter status - the redirect will happen in ~1.5s via location.href
     await prisma.chapter.update({
@@ -263,7 +263,7 @@ test.describe("Generate Chapter Page - With Subscription", () => {
     });
 
     // Should redirect to chapter page
-    await userWithoutProgress.waitForURL(/\/b\/ai\/c\//, { timeout: 10_000 });
+    await userWithoutProgress.waitForURL(/\/b\/ai\/c\//u, { timeout: 10_000 });
   });
 
   test("reconnects and completes when stream is cut off before completion step", async ({
@@ -334,7 +334,7 @@ test.describe("Generate Chapter Page - With Subscription", () => {
 
     await userWithoutProgress.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(userWithoutProgress.getByText(/your lessons are ready/i)).toBeVisible({
+    await expect(userWithoutProgress.getByText(/your lessons are ready/iu)).toBeVisible({
       timeout: 15_000,
     });
 
@@ -343,7 +343,7 @@ test.describe("Generate Chapter Page - With Subscription", () => {
       where: { id: chapter.id },
     });
 
-    await userWithoutProgress.waitForURL(/\/b\/ai\/c\//, { timeout: 10_000 });
+    await userWithoutProgress.waitForURL(/\/b\/ai\/c\//u, { timeout: 10_000 });
   });
 
   test("shows error when stream returns error status", async ({
@@ -362,7 +362,7 @@ test.describe("Generate Chapter Page - With Subscription", () => {
 
     await userWithoutProgress.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(userWithoutProgress.getByText(/something went wrong/i)).toBeVisible({
+    await expect(userWithoutProgress.getByText(/something went wrong/iu)).toBeVisible({
       timeout: 10_000,
     });
   });
@@ -379,7 +379,7 @@ test.describe("Generate Chapter Page - First Chapter Free", () => {
 
     await page.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(page.getByRole("alert").filter({ hasText: /logged in/i })).toHaveCount(0);
+    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toHaveCount(0);
     await expect(page.getByRole("heading", { name: chapter.title })).toBeVisible();
   });
 
@@ -395,7 +395,7 @@ test.describe("Generate Chapter Page - First Chapter Free", () => {
 
     await authenticatedPage.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(authenticatedPage.getByText(/upgrade to create/i)).toHaveCount(0);
+    await expect(authenticatedPage.getByText(/upgrade to create/iu)).toHaveCount(0);
     await expect(authenticatedPage.getByRole("heading", { name: chapter.title })).toBeVisible();
   });
 });
@@ -435,8 +435,8 @@ test.describe("Generate Chapter Page - Running Generation Bypasses Auth", () => 
 
     await page.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(page.getByRole("alert").filter({ hasText: /logged in/i })).toHaveCount(0);
-    await expect(page.getByText(/upgrade to create/i)).toHaveCount(0);
+    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toHaveCount(0);
+    await expect(page.getByText(/upgrade to create/iu)).toHaveCount(0);
     await expect(page.getByRole("heading", { name: chapter.title })).toBeVisible();
   });
 });
@@ -444,11 +444,11 @@ test.describe("Generate Chapter Page - Running Generation Bypasses Auth", () => 
 test.describe("Generate Chapter Page - Not Found", () => {
   test("invalid chapter ID shows 404 page", async ({ page }) => {
     await page.goto("/generate/ch/999999");
-    await expect(page.getByText(/not found|404/i)).toBeVisible();
+    await expect(page.getByText(/not found|404/iu)).toBeVisible();
   });
 
   test("non-numeric chapter ID shows 404 page", async ({ page }) => {
     await page.goto("/generate/ch/invalid-id");
-    await expect(page.getByText(/not found|404/i)).toBeVisible();
+    await expect(page.getByText(/not found|404/iu)).toBeVisible();
   });
 });

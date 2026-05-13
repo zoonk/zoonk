@@ -54,8 +54,8 @@ async function createTestCourseWithLesson() {
  * hasn't hydrated yet (SSR'd button visible but no event handler).
  */
 async function openMoreOptions(page: Page) {
-  const trigger = page.getByRole("button", { name: /more options/i });
-  const menuItem = page.getByRole("button", { name: /send feedback/i });
+  const trigger = page.getByRole("button", { name: /more options/iu });
+  const menuItem = page.getByRole("button", { name: /send feedback/iu });
 
   await expect(async () => {
     if (!(await menuItem.isVisible())) {
@@ -72,7 +72,7 @@ test.describe("Catalog Actions", () => {
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    await expect(page.getByRole("button", { name: /more options/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /more options/iu })).toBeVisible();
   });
 
   test("dropdown opens with feedback item", async ({ page }) => {
@@ -81,7 +81,7 @@ test.describe("Catalog Actions", () => {
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
     await openMoreOptions(page);
-    await expect(page.getByRole("button", { name: /send feedback/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /send feedback/iu })).toBeVisible();
   });
 
   test("feedback dialog opens from dropdown", async ({ page }) => {
@@ -90,11 +90,11 @@ test.describe("Catalog Actions", () => {
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
     await openMoreOptions(page);
-    await page.getByRole("button", { name: /send feedback/i }).click();
+    await page.getByRole("button", { name: /send feedback/iu }).click();
 
-    await expect(page.getByRole("heading", { name: /feedback/i })).toBeVisible();
-    await expect(page.getByRole("textbox", { name: /email/i })).toBeVisible();
-    await expect(page.getByRole("textbox", { name: /message/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /feedback/iu })).toBeVisible();
+    await expect(page.getByRole("textbox", { name: /email/iu })).toBeVisible();
+    await expect(page.getByRole("textbox", { name: /message/iu })).toBeVisible();
   });
 
   test("chapter page has actions button", async ({ page }) => {
@@ -102,7 +102,7 @@ test.describe("Catalog Actions", () => {
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
 
-    await expect(page.getByRole("button", { name: /more options/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /more options/iu })).toBeVisible();
   });
 
   test("dropdown shows feedback items on course page", async ({ page }) => {
@@ -111,8 +111,8 @@ test.describe("Catalog Actions", () => {
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
     await openMoreOptions(page);
-    await expect(page.getByRole("menuitemradio", { name: /^helpful$/i })).toBeVisible();
-    await expect(page.getByRole("menuitemradio", { name: /not helpful/i })).toBeVisible();
+    await expect(page.getByRole("menuitemradio", { name: /^helpful$/iu })).toBeVisible();
+    await expect(page.getByRole("menuitemradio", { name: /not helpful/iu })).toBeVisible();
   });
 
   test("clicking helpful shows toast confirmation", async ({ page }) => {
@@ -121,9 +121,9 @@ test.describe("Catalog Actions", () => {
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
     await openMoreOptions(page);
-    await page.getByRole("menuitemradio", { name: /^helpful$/i }).click();
+    await page.getByRole("menuitemradio", { name: /^helpful$/iu }).click();
 
-    await expect(page.getByText(/thanks for your feedback/i)).toBeVisible();
+    await expect(page.getByText(/thanks for your feedback/iu)).toBeVisible();
   });
 
   test("clicking helpful marks it as selected", async ({ page }) => {
@@ -132,9 +132,9 @@ test.describe("Catalog Actions", () => {
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
     await openMoreOptions(page);
-    await page.getByRole("menuitemradio", { name: /^helpful$/i }).click();
+    await page.getByRole("menuitemradio", { name: /^helpful$/iu }).click();
 
-    await expect(page.getByRole("menuitemradio", { name: /^helpful$/i })).toHaveAttribute(
+    await expect(page.getByRole("menuitemradio", { name: /^helpful$/iu })).toHaveAttribute(
       "aria-checked",
       "true",
     );
@@ -146,15 +146,15 @@ test.describe("Catalog Actions", () => {
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
     await openMoreOptions(page);
-    await page.getByRole("menuitemradio", { name: /^helpful$/i }).click();
-    await page.getByRole("menuitemradio", { name: /not helpful/i }).click();
+    await page.getByRole("menuitemradio", { name: /^helpful$/iu }).click();
+    await page.getByRole("menuitemradio", { name: /not helpful/iu }).click();
 
-    await expect(page.getByRole("menuitemradio", { name: /not helpful/i })).toHaveAttribute(
+    await expect(page.getByRole("menuitemradio", { name: /not helpful/iu })).toHaveAttribute(
       "aria-checked",
       "true",
     );
 
-    await expect(page.getByRole("menuitemradio", { name: /^helpful$/i })).toHaveAttribute(
+    await expect(page.getByRole("menuitemradio", { name: /^helpful$/iu })).toHaveAttribute(
       "aria-checked",
       "false",
     );
@@ -166,8 +166,8 @@ test.describe("Catalog Actions", () => {
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
 
     await openMoreOptions(page);
-    await expect(page.getByRole("menuitemradio", { name: /^helpful$/i })).toBeVisible();
-    await expect(page.getByRole("menuitemradio", { name: /not helpful/i })).toBeVisible();
+    await expect(page.getByRole("menuitemradio", { name: /^helpful$/iu })).toBeVisible();
+    await expect(page.getByRole("menuitemradio", { name: /not helpful/iu })).toBeVisible();
   });
 
   test("send feedback dialog still works after selecting feedback", async ({ page }) => {
@@ -176,11 +176,11 @@ test.describe("Catalog Actions", () => {
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
     await openMoreOptions(page);
-    await page.getByRole("menuitemradio", { name: /^helpful$/i }).click();
-    await page.getByRole("button", { name: /send feedback/i }).click();
+    await page.getByRole("menuitemradio", { name: /^helpful$/iu }).click();
+    await page.getByRole("button", { name: /send feedback/iu }).click();
 
-    await expect(page.getByRole("heading", { name: /feedback/i })).toBeVisible();
-    await expect(page.getByRole("textbox", { name: /email/i })).toBeVisible();
-    await expect(page.getByRole("textbox", { name: /message/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /feedback/iu })).toBeVisible();
+    await expect(page.getByRole("textbox", { name: /email/iu })).toBeVisible();
+    await expect(page.getByRole("textbox", { name: /message/iu })).toBeVisible();
   });
 });

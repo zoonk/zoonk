@@ -82,7 +82,7 @@ function createModelOutputs(taskId: string, modelId: string, outputs: OutputEntr
 }
 
 export async function generateOutputs(task: Task, modelId: string): Promise<ModelOutputs> {
-  const safeModelId = modelId.replaceAll(/[\r\n]/g, "");
+  const safeModelId = modelId.replaceAll(/[\r\n]/gu, "");
   logInfo(`\nGenerating outputs for task: ${task.name}, model: [${safeModelId}]`);
 
   logInfo(

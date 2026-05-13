@@ -14,8 +14,8 @@ const battleRankingSchema = z.object({ rankings: z.array(modelRankingSchema) });
 // Judges may return "Model C", "Model C:", or just "C" — normalize for matching.
 const normalizeAnonymousId = (id: string) =>
   id
-    .replace(/^Model\s+/i, "")
-    .replace(/:$/, "")
+    .replace(/^Model\s+/iu, "")
+    .replace(/:$/u, "")
     .trim();
 
 export async function generateBattleRankings(params: {

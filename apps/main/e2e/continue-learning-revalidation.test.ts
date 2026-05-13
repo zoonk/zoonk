@@ -102,14 +102,14 @@ test.describe("Continue Learning Revalidation", () => {
     await page.goto("/");
 
     const nextLink = page.getByRole("link", {
-      name: new RegExp(`Next:.*Current Next ${uniqueId}`),
+      name: new RegExp(`Next:.*Current Next ${uniqueId}`, "u"),
     });
 
     await expect(nextLink.first()).toBeVisible();
 
     // 2. Click the continue learning card link (client-side navigation)
     await nextLink.first().click();
-    await page.waitForURL(new RegExp(`/l/e2e-cl-reval-current-${uniqueId}$`));
+    await page.waitForURL(new RegExp(`/l/e2e-cl-reval-current-${uniqueId}$`, "u"));
     await page.waitForLoadState("networkidle");
 
     // Listen for the server action response BEFORE triggering completion.
@@ -125,22 +125,24 @@ test.describe("Continue Learning Revalidation", () => {
       await expect(page.getByRole("status")).toBeVisible({ timeout: 1000 });
     }).toPass({ timeout: 10_000 });
 
-    await expect(page.getByText(/completed/i)).toBeVisible();
+    await expect(page.getByText(/completed/iu)).toBeVisible();
 
     // Wait for the server action response (includes the revalidatePath signal for Router Cache)
     await serverActionResponse;
 
     // 4. Click "All Lessons" (client-side navigation)
-    await page.getByRole("link", { name: /all lessons/i }).click();
-    await page.waitForURL(new RegExp(`e2e-cl-reval-chapter-${uniqueId}$`));
+    await page.getByRole("link", { name: /all lessons/iu }).click();
+    await page.waitForURL(new RegExp(`e2e-cl-reval-chapter-${uniqueId}$`, "u"));
 
     // 5. Click the Home link in the navbar (client-side navigation — Router Cache)
-    await page.getByRole("link", { name: /home page/i }).click();
-    await page.waitForURL(/\/$/);
+    await page.getByRole("link", { name: /home page/iu }).click();
+    await page.waitForURL(/\/$/u);
     await page.waitForLoadState("networkidle");
 
     // 6. Continue learning should show the NEW next lesson, not the old one
-    await expect(page.getByText(new RegExp(`Next:.*After Next ${uniqueId}`)).first()).toBeVisible();
+    await expect(
+      page.getByText(new RegExp(`Next:.*After Next ${uniqueId}`, "u")).first(),
+    ).toBeVisible();
 
     await browserContext.close();
   });

@@ -39,7 +39,7 @@ test.describe("Courses Page - Basic", () => {
   test("clicking course card navigates to course detail", async ({ page }) => {
     const course = await createPublishedCourse("en");
 
-    const courseLink = page.getByRole("link", { name: new RegExp(course.title, "i") });
+    const courseLink = page.getByRole("link", { name: new RegExp(course.title, "iu") });
 
     await expect(async () => {
       await page.goto("/courses");
@@ -48,7 +48,7 @@ test.describe("Courses Page - Basic", () => {
 
     await courseLink.click();
 
-    await expect(page).toHaveURL(new RegExp(`/b/${AI_ORG_SLUG}/c/${course.slug}$`));
+    await expect(page).toHaveURL(new RegExp(`/b/${AI_ORG_SLUG}/c/${course.slug}$`, "u"));
     await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
   });
 });
@@ -89,7 +89,7 @@ test.describe("Courses Page - Locale", () => {
     await setLocale(page, "pt");
     await page.goto("/courses");
 
-    await expect(page.getByRole("heading", { name: /explorar cursos/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /explorar cursos/iu })).toBeVisible();
   });
 
   test("unpublished courses are hidden", async ({ page }) => {

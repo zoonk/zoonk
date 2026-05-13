@@ -3,38 +3,38 @@ import { expect, test } from "./fixtures";
 test.describe("Navbar - Unauthenticated", () => {
   test("Home link navigates to home page", async ({ page }) => {
     await page.goto("/courses");
-    await expect(page.getByRole("heading", { name: /explore courses/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
 
     // Scope to navigation to avoid conflicts with links in main content
-    await page.getByRole("navigation").getByRole("link", { name: /home/i }).click();
+    await page.getByRole("navigation").getByRole("link", { name: /home/iu }).click();
 
-    await expect(page.getByRole("heading", { name: /learn anything with ai/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn anything with ai/iu })).toBeVisible();
   });
 
   test("Courses link navigates to courses page", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: /learn anything with ai/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn anything with ai/iu })).toBeVisible();
 
     // Scope to navigation to avoid conflicts with "Explore courses" in hero
     await page.getByRole("navigation").getByRole("link", { exact: true, name: "Courses" }).click();
 
-    await expect(page.getByRole("heading", { name: /explore courses/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
   });
 
   test("Learn link navigates to learn page", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: /learn anything with ai/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn anything with ai/iu })).toBeVisible();
 
     // Scope to navigation to avoid conflicts with "Learn anything" in hero
     await page.getByRole("navigation").getByRole("link", { exact: true, name: "Learn" }).click();
 
-    await expect(page.getByRole("heading", { name: /learn anything/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
   });
 
   test("Home link is active on home page", async ({ page }) => {
     await page.goto("/");
 
-    const homeLink = page.getByRole("navigation").getByRole("link", { name: /home/i });
+    const homeLink = page.getByRole("navigation").getByRole("link", { name: /home/iu });
 
     await expect(homeLink).toHaveAttribute("aria-current", "page");
   });
@@ -65,23 +65,23 @@ test.describe("Navbar - Authenticated", () => {
     await authenticatedPage.goto("/");
     await authenticatedPage.waitForLoadState("networkidle");
 
-    await authenticatedPage.getByRole("button", { name: /user menu/i }).click();
+    await authenticatedPage.getByRole("button", { name: /user menu/iu }).click();
 
-    await authenticatedPage.getByRole("menuitem", { name: /my courses/i }).click();
+    await authenticatedPage.getByRole("menuitem", { name: /my courses/iu }).click();
 
-    await expect(authenticatedPage.getByRole("heading", { name: /my courses/i })).toBeVisible();
+    await expect(authenticatedPage.getByRole("heading", { name: /my courses/iu })).toBeVisible();
   });
 
   test("Subscription menu item navigates to subscription page", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/");
     await authenticatedPage.waitForLoadState("networkidle");
 
-    await authenticatedPage.getByRole("button", { name: /user menu/i }).click();
+    await authenticatedPage.getByRole("button", { name: /user menu/iu }).click();
 
-    await authenticatedPage.getByRole("menuitem", { name: /subscription/i }).click();
+    await authenticatedPage.getByRole("menuitem", { name: /subscription/iu }).click();
 
     await expect(
-      authenticatedPage.getByRole("heading", { level: 1, name: /subscription/i }),
+      authenticatedPage.getByRole("heading", { level: 1, name: /subscription/iu }),
     ).toBeVisible();
   });
 
@@ -89,12 +89,12 @@ test.describe("Navbar - Authenticated", () => {
     await authenticatedPage.goto("/");
     await authenticatedPage.waitForLoadState("networkidle");
 
-    await authenticatedPage.getByRole("button", { name: /user menu/i }).click();
+    await authenticatedPage.getByRole("button", { name: /user menu/iu }).click();
 
-    await authenticatedPage.getByRole("menuitem", { name: /profile/i }).click();
+    await authenticatedPage.getByRole("menuitem", { name: /profile/iu }).click();
 
     await expect(
-      authenticatedPage.getByRole("heading", { level: 1, name: /profile/i }),
+      authenticatedPage.getByRole("heading", { level: 1, name: /profile/iu }),
     ).toBeVisible();
   });
 
@@ -102,12 +102,12 @@ test.describe("Navbar - Authenticated", () => {
     await authenticatedPage.goto("/");
     await authenticatedPage.waitForLoadState("networkidle");
 
-    await authenticatedPage.getByRole("button", { name: /user menu/i }).click();
+    await authenticatedPage.getByRole("button", { name: /user menu/iu }).click();
 
-    await authenticatedPage.getByRole("menuitem", { name: /support/i }).click();
+    await authenticatedPage.getByRole("menuitem", { name: /support/iu }).click();
 
     await expect(
-      authenticatedPage.getByRole("heading", { level: 1, name: /feedback & support/i }),
+      authenticatedPage.getByRole("heading", { level: 1, name: /feedback & support/iu }),
     ).toBeVisible();
   });
 });

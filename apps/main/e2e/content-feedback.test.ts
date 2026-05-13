@@ -28,8 +28,8 @@ test.describe("Content Feedback", () => {
   });
 
   test("clicking feedback button marks it as pressed", async ({ page }) => {
-    const thumbsUp = page.getByRole("button", { name: /i liked it/i });
-    const thumbsDown = page.getByRole("button", { name: /i didn't like it/i });
+    const thumbsUp = page.getByRole("button", { name: /i liked it/iu });
+    const thumbsDown = page.getByRole("button", { name: /i didn't like it/iu });
 
     // Initially neither should be pressed
     await expect(thumbsUp).toHaveAttribute("aria-pressed", "false");
@@ -49,12 +49,12 @@ test.describe("Content Feedback", () => {
   test("submit with valid data shows success message", async ({ page }) => {
     const feedbackSubmission = await mockFeedbackSubmission(page);
 
-    const feedbackButton = page.getByRole("button", { name: /send feedback/i });
+    const feedbackButton = page.getByRole("button", { name: /send feedback/iu });
     const dialog = page.getByRole("dialog");
     await openDialog(feedbackButton, dialog);
 
-    const emailInput = dialog.getByRole("textbox", { name: /email address/i });
-    const messageInput = dialog.getByRole("textbox", { name: /^message$/i });
+    const emailInput = dialog.getByRole("textbox", { name: /email address/iu });
+    const messageInput = dialog.getByRole("textbox", { name: /^message$/iu });
 
     // Wait for dialog to be fully visible and inputs to be enabled
     await expect(emailInput).toBeEnabled();
@@ -64,9 +64,9 @@ test.describe("Content Feedback", () => {
     await emailInput.fill("test@example.com");
     await messageInput.click();
     await messageInput.fill("This is test feedback");
-    await dialog.getByRole("button", { name: /send message/i }).click();
+    await dialog.getByRole("button", { name: /send message/iu }).click();
 
-    await expect(dialog.getByText(/message sent successfully/i)).toBeVisible();
+    await expect(dialog.getByText(/message sent successfully/iu)).toBeVisible();
 
     await expect(feedbackSubmission.requestBody).resolves.toStrictEqual({
       email: "test@example.com",
@@ -75,12 +75,12 @@ test.describe("Content Feedback", () => {
   });
 
   test("submit with invalid email shows validation error", async ({ page }) => {
-    const feedbackButton = page.getByRole("button", { name: /send feedback/i });
+    const feedbackButton = page.getByRole("button", { name: /send feedback/iu });
     const dialog = page.getByRole("dialog");
     await openDialog(feedbackButton, dialog);
 
-    const emailInput = dialog.getByRole("textbox", { name: /email address/i });
-    const messageInput = dialog.getByRole("textbox", { name: /^message$/i });
+    const emailInput = dialog.getByRole("textbox", { name: /email address/iu });
+    const messageInput = dialog.getByRole("textbox", { name: /^message$/iu });
 
     // Wait for dialog to be fully visible and inputs to be enabled
     await expect(emailInput).toBeEnabled();
@@ -90,7 +90,7 @@ test.describe("Content Feedback", () => {
     await emailInput.fill("invalid-email");
     await messageInput.click();
     await messageInput.fill("This is test feedback");
-    await dialog.getByRole("button", { name: /send message/i }).click();
+    await dialog.getByRole("button", { name: /send message/iu }).click();
 
     // Browser validation prevents submission - verify semantically:
     // 1. Dialog remains visible (form wasn't submitted)
@@ -101,12 +101,12 @@ test.describe("Content Feedback", () => {
   });
 
   test("submit failure shows error message", async ({ page }) => {
-    const feedbackButton = page.getByRole("button", { name: /send feedback/i });
+    const feedbackButton = page.getByRole("button", { name: /send feedback/iu });
     const dialog = page.getByRole("dialog");
     await openDialog(feedbackButton, dialog);
 
-    const emailInput = dialog.getByRole("textbox", { name: /email address/i });
-    const messageInput = dialog.getByRole("textbox", { name: /^message$/i });
+    const emailInput = dialog.getByRole("textbox", { name: /email address/iu });
+    const messageInput = dialog.getByRole("textbox", { name: /^message$/iu });
 
     // Wait for dialog to be fully visible and inputs to be enabled
     await expect(emailInput).toBeEnabled();
@@ -118,9 +118,9 @@ test.describe("Content Feedback", () => {
     // Whitespace passes HTML5 "required" but fails server-side when trimmed
     await messageInput.click();
     await messageInput.fill("   ");
-    await dialog.getByRole("button", { name: /send message/i }).click();
+    await dialog.getByRole("button", { name: /send message/iu }).click();
 
-    await expect(dialog.getByText(/failed to send message/i)).toBeVisible();
+    await expect(dialog.getByText(/failed to send message/iu)).toBeVisible();
   });
 });
 
@@ -133,17 +133,17 @@ test.describe("Content Feedback - Authenticated", () => {
     // Wait for content to load
     await expect(authenticatedPage.getByText(suggestionTitle)).toBeVisible();
 
-    const feedbackButton = authenticatedPage.getByRole("button", { name: /send feedback/i });
+    const feedbackButton = authenticatedPage.getByRole("button", { name: /send feedback/iu });
     const dialog = authenticatedPage.getByRole("dialog");
     await openDialog(feedbackButton, dialog);
 
-    const emailInput = dialog.getByRole("textbox", { name: /email address/i });
+    const emailInput = dialog.getByRole("textbox", { name: /email address/iu });
 
     await expect(emailInput).toBeEnabled();
 
     // Should be pre-filled with user's email
     await expect(emailInput).toHaveValue(
-      new RegExp(withProgressUser.email.replaceAll(/[.]/g, String.raw`\.`)),
+      new RegExp(withProgressUser.email.replaceAll(/[.]/gu, String.raw`\.`), "u"),
     );
   });
 });

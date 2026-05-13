@@ -32,16 +32,16 @@ describe("player browser integration: word bank steps", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    const wordBank = page.getByRole("group", { name: /word bank/i });
+    const wordBank = page.getByRole("group", { name: /word bank/iu });
 
     await wordBank.getByRole("button", { name: "cat" }).click();
     await wordBank.getByRole("button", { name: "mat" }).click();
-    await expect.element(page.getByRole("button", { name: /check/i })).toBeEnabled();
+    await expect.element(page.getByRole("button", { name: /check/iu })).toBeEnabled();
 
-    await page.getByRole("button", { name: /check/i }).click();
-    await expect.element(page.getByText(/correct!/i)).toBeInTheDocument();
+    await page.getByRole("button", { name: /check/iu }).click();
+    await expect.element(page.getByText(/correct!/iu)).toBeInTheDocument();
 
-    await page.getByRole("button", { name: /continue/i }).click();
+    await page.getByRole("button", { name: /continue/iu }).click();
     await expect.element(page.getByText("1/1")).toBeInTheDocument();
   });
 
@@ -68,14 +68,14 @@ describe("player browser integration: word bank steps", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    const wordBank = page.getByRole("group", { name: /word bank/i });
+    const wordBank = page.getByRole("group", { name: /word bank/iu });
 
     await wordBank.getByRole("button", { exact: true, name: "Hola" }).click();
     await wordBank.getByRole("button", { exact: true, name: "mundo" }).click();
-    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /check/iu }).click();
 
-    await expect.element(page.getByRole("button", { name: /continue/i })).toBeInTheDocument();
-    await page.getByRole("button", { name: /continue/i }).click();
+    await expect.element(page.getByRole("button", { name: /continue/iu })).toBeInTheDocument();
+    await page.getByRole("button", { name: /continue/iu }).click();
     await expect.element(page.getByText("1/1")).toBeInTheDocument();
   });
 
@@ -104,15 +104,15 @@ describe("player browser integration: word bank steps", () => {
     });
 
     await expect
-      .element(page.getByRole("button", { name: /play pronunciation/i }))
+      .element(page.getByRole("button", { name: /play pronunciation/iu }))
       .toBeInTheDocument();
 
-    const wordBank = page.getByRole("group", { name: /word bank/i });
+    const wordBank = page.getByRole("group", { name: /word bank/iu });
 
     await wordBank.getByRole("button", { exact: true, name: "Hello" }).click();
     await wordBank.getByRole("button", { exact: true, name: "world" }).click();
-    await page.getByRole("button", { name: /check/i }).click();
-    await page.getByRole("button", { name: /continue/i }).click();
+    await page.getByRole("button", { name: /check/iu }).click();
+    await page.getByRole("button", { name: /continue/iu }).click();
 
     await expect.element(page.getByText("1/1")).toBeInTheDocument();
   });
@@ -140,21 +140,21 @@ describe("player browser integration: word bank steps", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    const wordBank = page.getByRole("group", { name: /word bank/i });
+    const wordBank = page.getByRole("group", { name: /word bank/iu });
 
     await wordBank.getByRole("button", { name: "red" }).click();
-    await expect.element(page.getByRole("button", { name: /check/i })).toBeEnabled();
+    await expect.element(page.getByRole("button", { name: /check/iu })).toBeEnabled();
 
-    await page.getByRole("button", { name: /tap to remove/i }).click();
-    await expect.element(page.getByRole("button", { name: /check/i })).toBeDisabled();
+    await page.getByRole("button", { name: /tap to remove/iu }).click();
+    await expect.element(page.getByRole("button", { name: /check/iu })).toBeDisabled();
 
     await wordBank.getByRole("button", { name: "red" }).click();
-    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /check/iu }).click();
 
-    const feedback = page.getByRole("region", { name: /answer feedback/i });
+    const feedback = page.getByRole("region", { name: /answer feedback/iu });
 
     await expect.element(feedback).toBeInTheDocument();
-    await expect.element(feedback.getByText(/correct answer:/i)).toBeInTheDocument();
+    await expect.element(feedback.getByText(/correct answer:/iu)).toBeInTheDocument();
   });
 
   it("shows reading correction feedback and romanization for wrong arrangements", async () => {
@@ -182,13 +182,13 @@ describe("player browser integration: word bank steps", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    const wordBank = page.getByRole("group", { name: /word bank/i });
+    const wordBank = page.getByRole("group", { name: /word bank/iu });
 
     await wordBank.getByRole("button", { exact: true, name: "mundo" }).click();
     await wordBank.getByRole("button", { exact: true, name: "Hola" }).click();
-    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /check/iu }).click();
 
-    await expect.element(page.getByText(/correct answer:/i)).toBeInTheDocument();
+    await expect.element(page.getByText(/correct answer:/iu)).toBeInTheDocument();
     await expect.element(page.getByText("Hola mundo")).toBeInTheDocument();
     await expect.element(page.getByText("OH-la MUN-do")).toBeInTheDocument();
 
@@ -224,16 +224,16 @@ describe("player browser integration: word bank steps", () => {
     await expect.element(page.getByText("Hola mundo")).toBeInTheDocument();
 
     await expect
-      .element(page.getByRole("button", { name: /play pronunciation/i }))
+      .element(page.getByRole("button", { name: /play pronunciation/iu }))
       .not.toBeInTheDocument();
 
-    const wordBank = page.getByRole("group", { name: /word bank/i });
+    const wordBank = page.getByRole("group", { name: /word bank/iu });
 
     await wordBank.getByRole("button", { exact: true, name: "Hello" }).click();
     await wordBank.getByRole("button", { exact: true, name: "world" }).click();
-    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /check/iu }).click();
 
-    await expect.element(page.getByText(/translate:/i)).toBeInTheDocument();
+    await expect.element(page.getByText(/translate:/iu)).toBeInTheDocument();
     await expect.element(page.getByText("Hola mundo")).toBeInTheDocument();
   });
 });

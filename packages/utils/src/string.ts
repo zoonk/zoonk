@@ -4,11 +4,11 @@ const WORD_CONNECTOR_PATTERN = /^[-'’‐‑‒–]$/u;
 const wordSegmenter = new Intl.Segmenter(undefined, { granularity: "word" });
 
 export function removeAccents(str: string): string {
-  return str.normalize("NFD").replaceAll(/[\u0300-\u036F]/g, "");
+  return str.normalize("NFD").replaceAll(/[\u0300-\u036F]/gu, "");
 }
 
 export function normalizeString(str: string): string {
-  return removeAccents(str).toLowerCase().replaceAll(/\s+/g, " ").trim();
+  return removeAccents(str).toLowerCase().replaceAll(/\s+/gu, " ").trim();
 }
 
 export function toSlug(str: string): string {
@@ -16,10 +16,10 @@ export function toSlug(str: string): string {
     .normalize("NFC")
     .toLowerCase()
     .replaceAll(/[^\p{L}\p{N}\p{M}\s-]/gu, "")
-    .replaceAll(/\s+/g, "-")
-    .replaceAll(/-+/g, "-")
+    .replaceAll(/\s+/gu, "-")
+    .replaceAll(/-+/gu, "-")
     .slice(0, SLUG_MAX_LENGTH)
-    .replaceAll(/^-|-$/g, "");
+    .replaceAll(/^-|-$/gu, "");
 }
 
 function nextAvailableSlug(base: string, taken: Set<string>): string {
@@ -99,7 +99,7 @@ export function removeLocaleSuffix(value: string, language: string): string {
 }
 
 export function normalizePunctuation(text: string): string {
-  return text.replaceAll(/(?<!\s)\s+([!?.,;:!?。、！？؟])/g, "$1");
+  return text.replaceAll(/(?<!\s)\s+([!?.,;:!?。、！？؟])/gu, "$1");
 }
 
 export function stripPunctuation(text: string): string {
@@ -198,8 +198,8 @@ export function replaceNamePlaceholder(text: string, name: string | null): strin
   }
 
   const stripped = text
-    .replaceAll(/\{\{NAME\}\},\s*/g, "")
-    .replaceAll(/,\s*\{\{NAME\}\}/g, "")
+    .replaceAll(/\{\{NAME\}\},\s*/gu, "")
+    .replaceAll(/,\s*\{\{NAME\}\}/gu, "")
     .replaceAll(NAME_PLACEHOLDER, "")
     .trim();
 

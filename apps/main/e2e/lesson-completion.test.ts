@@ -55,9 +55,9 @@ async function createQuizLesson(lessonId: string, uniqueId: string) {
 }
 
 async function completeQuiz(page: Page, uniqueId: string) {
-  await page.getByRole("radio", { name: new RegExp(`Right ${uniqueId}`) }).click();
-  await page.getByRole("button", { name: /check/i }).click();
-  await page.getByRole("button", { name: /continue/i }).click();
+  await page.getByRole("radio", { name: new RegExp(`Right ${uniqueId}`, "u") }).click();
+  await page.getByRole("button", { name: /check/iu }).click();
+  await page.getByRole("button", { name: /continue/iu }).click();
 }
 
 /**
@@ -238,10 +238,10 @@ test.describe("Lesson Completion UX", () => {
 
     const completionScreen = page.getByRole("status");
     await expect(completionScreen.getByText("1/1")).toBeVisible();
-    await expect(completionScreen.getByText(/correct/i)).toBeVisible();
+    await expect(completionScreen.getByText(/correct/iu)).toBeVisible();
 
     await completionScreen.getByRole("link", { name: "Next" }).click();
-    await expect(page).toHaveURL(new RegExp(`/l/${lesson2.slug}$`));
+    await expect(page).toHaveURL(new RegExp(`/l/${lesson2.slug}$`, "u"));
 
     await browserContext.close();
   });
@@ -260,7 +260,7 @@ test.describe("Lesson Completion UX", () => {
 
     const completionScreen = page.getByRole("status");
 
-    await completionScreen.getByRole("link", { name: /all lessons/i }).click();
+    await completionScreen.getByRole("link", { name: /all lessons/iu }).click();
     await expect(page.getByRole("heading", { level: 1, name: chapter.title })).toBeVisible();
 
     await browserContext.close();
@@ -281,9 +281,9 @@ test.describe("Lesson Completion UX", () => {
     await completeQuiz(page, uniqueId);
 
     const completionScreen = page.getByRole("status");
-    await expect(completionScreen.getByText(/chapter complete/i)).toBeVisible();
+    await expect(completionScreen.getByText(/chapter complete/iu)).toBeVisible();
 
-    await completionScreen.getByRole("link", { name: /next chapter/i }).click();
+    await completionScreen.getByRole("link", { name: /next chapter/iu }).click();
     await expect(page.getByRole("heading", { level: 1, name: chapter2.title })).toBeVisible();
 
     await browserContext.close();
@@ -303,7 +303,7 @@ test.describe("Lesson Completion UX", () => {
 
     const completionScreen = page.getByRole("status");
 
-    await completionScreen.getByRole("link", { name: /review chapter/i }).click();
+    await completionScreen.getByRole("link", { name: /review chapter/iu }).click();
     await expect(page.getByRole("heading", { level: 1, name: chapter1.title })).toBeVisible();
 
     await browserContext.close();
@@ -321,9 +321,9 @@ test.describe("Lesson Completion UX", () => {
     await completeQuiz(page, uniqueId);
 
     const completionScreen = page.getByRole("status");
-    await expect(completionScreen.getByText(/course complete/i)).toBeVisible();
+    await expect(completionScreen.getByText(/course complete/iu)).toBeVisible();
 
-    await completionScreen.getByRole("link", { name: /review course/i }).click();
+    await completionScreen.getByRole("link", { name: /review course/iu }).click();
     await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
 
     await browserContext.close();
@@ -343,7 +343,7 @@ test.describe("Lesson Completion UX", () => {
 
     const completionScreen = page.getByRole("status");
 
-    await completionScreen.getByRole("link", { name: /review chapter/i }).click();
+    await completionScreen.getByRole("link", { name: /review chapter/iu }).click();
     await expect(page.getByRole("heading", { level: 1, name: chapter.title })).toBeVisible();
 
     await browserContext.close();
@@ -475,14 +475,14 @@ test.describe("Lesson Completion UX", () => {
     await authenticatedPage.waitForLoadState("networkidle");
 
     const completedItem = authenticatedPage.getByRole("link", {
-      name: new RegExp(completedLessonTitle),
+      name: new RegExp(completedLessonTitle, "u"),
     });
 
     await expect(completedItem).toBeVisible();
-    await expect(completedItem.getByRole("img", { name: /^completed$/i })).toBeVisible();
+    await expect(completedItem.getByRole("img", { name: /^completed$/iu })).toBeVisible();
 
     const pendingItem = authenticatedPage.getByRole("link", {
-      name: new RegExp(pendingLessonTitle),
+      name: new RegExp(pendingLessonTitle, "u"),
     });
 
     await expect(pendingItem).toBeVisible();

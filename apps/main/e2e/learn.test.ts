@@ -83,7 +83,7 @@ test.describe("Learn Form", () => {
   test("shows form with auto-focused input", async ({ page }) => {
     await page.goto("/learn");
 
-    await expect(page.getByRole("heading", { name: /learn anything/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
 
     const input = page.getByRole("textbox");
     await expect(input).toBeFocused();
@@ -92,7 +92,7 @@ test.describe("Learn Form", () => {
   test("clicking a suggestion link navigates to the subject page", async ({ page }) => {
     await page.goto("/learn");
 
-    const suggestions = page.getByRole("navigation", { name: /suggested subjects/i });
+    const suggestions = page.getByRole("navigation", { name: /suggested subjects/iu });
     const firstLink = suggestions.getByRole("link").first();
     const subject = await firstLink.textContent();
 
@@ -103,7 +103,7 @@ test.describe("Learn Form", () => {
     await ensureSuggestionsForPrompt(subject);
     await firstLink.click();
 
-    await expect(page).toHaveURL(/\/learn\/.+/);
+    await expect(page).toHaveURL(/\/learn\/.+/u);
   });
 
   test("submitting prompt navigates to suggestions page", async ({ page }) => {
@@ -112,7 +112,7 @@ test.describe("Learn Form", () => {
     await page.getByRole("textbox").fill(prompt);
     await page.keyboard.press("Enter");
 
-    await expect(page.getByRole("heading", { name: /course ideas for/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /course ideas for/iu })).toBeVisible();
   });
 });
 
@@ -121,13 +121,13 @@ test.describe("Course Suggestions", () => {
     await page.goto(`/learn/${encodeURIComponent(prompt)}`);
 
     await expect(
-      page.getByRole("heading", { name: new RegExp(`course ideas for ${prompt}`, "i") }),
+      page.getByRole("heading", { name: new RegExp(`course ideas for ${prompt}`, "iu") }),
     ).toBeVisible();
 
     await expect(page.getByText(suggestionTitle)).toBeVisible();
     await expect(page.getByText(suggestionDescription)).toBeVisible();
 
-    const generateLinks = page.getByRole("link", { name: /create/i });
+    const generateLinks = page.getByRole("link", { name: /create/iu });
     await expect(generateLinks.first()).toBeVisible();
   });
 
@@ -136,21 +136,21 @@ test.describe("Course Suggestions", () => {
 
     await page.goto(`/learn/${encodeURIComponent(prompt)}`);
 
-    await expect(page.getByRole("heading", { name: /course ideas for/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /course ideas for/iu })).toBeVisible();
 
-    const generateLink = page.getByRole("link", { name: /create/i }).first();
+    const generateLink = page.getByRole("link", { name: /create/iu }).first();
     await generateLink.click();
 
-    await expect(page).toHaveURL(/\/generate\/cs\/\d+/);
+    await expect(page).toHaveURL(/\/generate\/cs\/\d+/u);
   });
 
   test("Change subject navigates back to learn form", async ({ page }) => {
     await page.goto(`/learn/${encodeURIComponent(prompt)}`);
 
-    await expect(page.getByRole("heading", { name: /course ideas for/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /course ideas for/iu })).toBeVisible();
 
-    await page.getByRole("link", { name: /change subject/i }).click();
+    await page.getByRole("link", { name: /change subject/iu }).click();
 
-    await expect(page.getByRole("heading", { name: /learn anything/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
   });
 });

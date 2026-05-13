@@ -13,7 +13,7 @@ test.describe("Locale Behavior - English", () => {
     await expect(nav.getByRole("link", { exact: true, name: "Learn" })).toBeVisible();
 
     // Hero heading should be in English
-    await expect(page.getByRole("heading", { name: /learn anything with ai/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn anything with ai/iu })).toBeVisible();
   });
 });
 
@@ -26,7 +26,7 @@ test.describe("Locale Behavior - Portuguese", () => {
 
     // Wait for Portuguese hero heading to confirm locale is loaded
     await expect(
-      page.getByRole("heading", { name: /aprenda qualquer coisa com ia/i }),
+      page.getByRole("heading", { name: /aprenda qualquer coisa com ia/iu }),
     ).toBeVisible();
 
     // Navbar should be in Portuguese (scoped to navigation to avoid hero links)
@@ -44,8 +44,8 @@ test.describe("Locale Navigation", () => {
     // Click Courses link in navbar (scoped to navigation to avoid hero links)
     await page.getByRole("navigation").getByRole("link", { exact: true, name: "Cursos" }).click();
 
-    await expect(page).toHaveURL(/\/courses/);
+    await expect(page).toHaveURL(/\/courses/u);
 
-    await expect(page.getByRole("heading", { name: /explorar cursos/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /explorar cursos/iu })).toBeVisible();
   });
 });

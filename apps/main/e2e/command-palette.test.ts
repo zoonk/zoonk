@@ -26,7 +26,7 @@ async function createTestCourse() {
 async function openCommandPalette(page: Page) {
   await page
     .getByRole("navigation")
-    .getByRole("button", { name: /search/i })
+    .getByRole("button", { name: /search/iu })
     .click();
 }
 
@@ -42,7 +42,7 @@ test.describe("Command Palette - Unauthenticated", () => {
     await page.waitForLoadState("networkidle");
 
     await expect(
-      page.getByRole("navigation").getByRole("button", { name: /search/i }),
+      page.getByRole("navigation").getByRole("button", { name: /search/iu }),
     ).toBeVisible();
   });
 
@@ -91,9 +91,9 @@ test.describe("Command Palette - Unauthenticated", () => {
 
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByText("Pages")).toBeVisible();
-    await expect(dialog.getByText(/home page/i)).toBeVisible();
-    await expect(dialog.getByText(/^courses$/i)).toBeVisible();
-    await expect(dialog.getByText(/learn something/i)).toBeVisible();
+    await expect(dialog.getByText(/home page/iu)).toBeVisible();
+    await expect(dialog.getByText(/^courses$/iu)).toBeVisible();
+    await expect(dialog.getByText(/learn something/iu)).toBeVisible();
   });
 
   test("shows My account group with Login and Language only", async ({ page }) => {
@@ -101,12 +101,12 @@ test.describe("Command Palette - Unauthenticated", () => {
 
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByText("My account")).toBeVisible();
-    await expect(dialog.getByText(/^login$/i)).toBeVisible();
-    await expect(dialog.getByText(/^language$/i)).toBeVisible();
+    await expect(dialog.getByText(/^login$/iu)).toBeVisible();
+    await expect(dialog.getByText(/^language$/iu)).toBeVisible();
 
     // Should NOT show authenticated-only options
-    await expect(dialog.getByText(/^my courses$/i)).not.toBeVisible();
-    await expect(dialog.getByText(/manage subscription/i)).not.toBeVisible();
+    await expect(dialog.getByText(/^my courses$/iu)).not.toBeVisible();
+    await expect(dialog.getByText(/manage subscription/iu)).not.toBeVisible();
   });
 
   test("shows Help group with Feedback & Support", async ({ page }) => {
@@ -114,21 +114,21 @@ test.describe("Command Palette - Unauthenticated", () => {
 
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByText("Help")).toBeVisible();
-    await expect(dialog.getByText(/feedback & support/i)).toBeVisible();
+    await expect(dialog.getByText(/feedback & support/iu)).toBeVisible();
   });
 
   test("selecting Home shows home content", async ({ page }) => {
     await page.goto("/courses"); // Start from different page
-    await expect(page.getByRole("heading", { name: /explore courses/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
     await openCommandPalette(page);
 
     await page
       .getByRole("dialog")
-      .getByText(/home page/i)
+      .getByText(/home page/iu)
       .click();
 
     // Verify user sees home page content
-    await expect(page.getByRole("heading", { name: /learn anything with ai/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn anything with ai/iu })).toBeVisible();
   });
 
   test("selecting Courses shows courses content", async ({ page }) => {
@@ -136,11 +136,11 @@ test.describe("Command Palette - Unauthenticated", () => {
 
     await page
       .getByRole("dialog")
-      .getByText(/^courses$/i)
+      .getByText(/^courses$/iu)
       .click();
 
     // Verify user sees courses page content
-    await expect(page.getByRole("heading", { name: /explore courses/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
   });
 
   test("selecting Learn shows learn form", async ({ page }) => {
@@ -148,11 +148,11 @@ test.describe("Command Palette - Unauthenticated", () => {
 
     await page
       .getByRole("dialog")
-      .getByText(/learn something/i)
+      .getByText(/learn something/iu)
       .click();
 
     // Verify user sees learn page content
-    await expect(page.getByRole("heading", { name: /learn anything/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
   });
 });
 
@@ -162,11 +162,11 @@ test.describe("Command Palette - Authenticated", () => {
     await openCommandPalette(authenticatedPage);
 
     const dialog = authenticatedPage.getByRole("dialog");
-    await expect(dialog.getByText(/^my courses$/i)).toBeVisible();
-    await expect(dialog.getByText(/manage subscription/i)).toBeVisible();
-    await expect(dialog.getByText(/update language/i)).toBeVisible();
-    await expect(dialog.getByText(/update profile/i)).toBeVisible();
-    await expect(dialog.getByText(/^logout$/i)).toBeVisible();
+    await expect(dialog.getByText(/^my courses$/iu)).toBeVisible();
+    await expect(dialog.getByText(/manage subscription/iu)).toBeVisible();
+    await expect(dialog.getByText(/update language/iu)).toBeVisible();
+    await expect(dialog.getByText(/update profile/iu)).toBeVisible();
+    await expect(dialog.getByText(/^logout$/iu)).toBeVisible();
   });
 
   test("does NOT show Login option when authenticated", async ({ authenticatedPage }) => {
@@ -174,7 +174,7 @@ test.describe("Command Palette - Authenticated", () => {
     await openCommandPalette(authenticatedPage);
 
     const dialog = authenticatedPage.getByRole("dialog");
-    await expect(dialog.getByText(/^login$/i)).not.toBeVisible();
+    await expect(dialog.getByText(/^login$/iu)).not.toBeVisible();
   });
 
   test("selecting My courses shows user's enrolled courses", async ({ authenticatedPage }) => {
@@ -183,11 +183,11 @@ test.describe("Command Palette - Authenticated", () => {
 
     await authenticatedPage
       .getByRole("dialog")
-      .getByText(/^my courses$/i)
+      .getByText(/^my courses$/iu)
       .click();
 
     // Verify user sees my courses page
-    await expect(authenticatedPage.getByRole("heading", { name: /my courses/i })).toBeVisible();
+    await expect(authenticatedPage.getByRole("heading", { name: /my courses/iu })).toBeVisible();
   });
 
   test("selecting Subscription shows subscription content", async ({ authenticatedPage }) => {
@@ -196,12 +196,12 @@ test.describe("Command Palette - Authenticated", () => {
 
     await authenticatedPage
       .getByRole("dialog")
-      .getByText(/manage subscription/i)
+      .getByText(/manage subscription/iu)
       .click();
 
     // Verify user sees subscription page
     await expect(
-      authenticatedPage.getByRole("heading", { level: 1, name: /subscription/i }),
+      authenticatedPage.getByRole("heading", { level: 1, name: /subscription/iu }),
     ).toBeVisible();
   });
 
@@ -211,20 +211,20 @@ test.describe("Command Palette - Authenticated", () => {
 
     // Verify authenticated state by checking command palette shows Logout option
     await openCommandPalette(logoutPage);
-    await expect(logoutPage.getByRole("dialog").getByText(/^logout$/i)).toBeVisible();
+    await expect(logoutPage.getByRole("dialog").getByText(/^logout$/iu)).toBeVisible();
 
     // Click logout - this triggers a hard navigation
     await logoutPage
       .getByRole("dialog")
-      .getByText(/^logout$/i)
+      .getByText(/^logout$/iu)
       .click();
 
-    await logoutPage.waitForURL(/^[^?]*\/$/);
+    await logoutPage.waitForURL(/^[^?]*\/$/u);
     await logoutPage.waitForLoadState("networkidle");
 
     // Verify user is logged out - command palette should show Login option
     await openCommandPalette(logoutPage);
-    await expect(logoutPage.getByRole("dialog").getByText(/^login$/i)).toBeVisible();
+    await expect(logoutPage.getByRole("dialog").getByText(/^login$/iu)).toBeVisible();
   });
 });
 
@@ -236,7 +236,7 @@ test.describe("Command Palette - Course Search", () => {
 
     const dialog = page.getByRole("dialog");
     // Type single character from unique course title
-    await dialog.getByPlaceholder(/search/i).fill(course.title.charAt(0));
+    await dialog.getByPlaceholder(/search/iu).fill(course.title.charAt(0));
 
     // Should not show course search results with single character
     await expect(dialog.getByText(course.title)).not.toBeVisible();
@@ -266,11 +266,11 @@ test.describe("Command Palette - Course Search", () => {
     });
 
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: /learn anything with ai/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn anything with ai/iu })).toBeVisible();
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
-    await dialog.getByPlaceholder(/search/i).fill(courseName);
+    await dialog.getByPlaceholder(/search/iu).fill(courseName);
 
     // Wait for the course option to appear in results
     const courseOption = dialog.getByRole("option").filter({ hasText: courseName });
@@ -293,9 +293,9 @@ test.describe("Command Palette - Course Search", () => {
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
-    await dialog.getByPlaceholder(/search/i).fill("xyznonexistent");
+    await dialog.getByPlaceholder(/search/iu).fill("xyznonexistent");
 
-    await expect(dialog.getByText(/no results found/i)).toBeVisible();
+    await expect(dialog.getByText(/no results found/iu)).toBeVisible();
   });
 
   test("handles rapid typing correctly", async ({ page }) => {
@@ -307,9 +307,9 @@ test.describe("Command Palette - Course Search", () => {
 
     // Type rapidly with corrections using unique title
     const partialTitle = course.title.slice(0, 5);
-    await dialog.getByPlaceholder(/search/i).pressSequentially(partialTitle, { delay: 50 });
+    await dialog.getByPlaceholder(/search/iu).pressSequentially(partialTitle, { delay: 50 });
 
-    await dialog.getByPlaceholder(/search/i).fill(course.title);
+    await dialog.getByPlaceholder(/search/iu).fill(course.title);
 
     // Should show correct results after debounce
     await expect(dialog.getByText(course.title)).toBeVisible();
@@ -346,7 +346,7 @@ test.describe("Command Palette - Course Search", () => {
           isPublished: true,
           normalizedTitle: normalizeString(title),
           organizationId: org.id,
-          slug: `${title.toLowerCase().replaceAll(/\s+/g, "-")}-${uniqueId}`,
+          slug: `${title.toLowerCase().replaceAll(/\s+/gu, "-")}-${uniqueId}`,
           title,
         }),
       ),
@@ -356,7 +356,7 @@ test.describe("Command Palette - Course Search", () => {
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
-    await dialog.getByPlaceholder(/search/i).fill(`zlaw ${uniqueId}`);
+    await dialog.getByPlaceholder(/search/iu).fill(`zlaw ${uniqueId}`);
 
     // Wait for results to load
     const options = dialog.getByRole("option");
@@ -380,7 +380,7 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     await page.goto("/");
     await openCommandPalette(page);
 
-    const input = page.getByPlaceholder(/search/i);
+    const input = page.getByPlaceholder(/search/iu);
     await expect(input).toBeFocused();
   });
 
@@ -392,15 +392,15 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     await expect(dialog).toBeVisible();
 
     // Ensure the search input is focused so cmdk receives keyboard events
-    const input = dialog.getByPlaceholder(/search/i);
+    const input = dialog.getByPlaceholder(/search/iu);
     await expect(input).toBeFocused();
 
     // Wait for cmdk to initialize - first item "Home page" should be selected
-    const homeOption = dialog.getByRole("option", { name: /home page/i });
+    const homeOption = dialog.getByRole("option", { name: /home page/iu });
     await expect(homeOption).toHaveAttribute("aria-selected", "true");
 
     // Also wait for the second option to be present before navigating
-    const coursesOption = dialog.getByRole("option", { name: /^courses$/i });
+    const coursesOption = dialog.getByRole("option", { name: /^courses$/iu });
     await expect(coursesOption).toBeVisible();
 
     // Press ArrowDown - "Courses" should now be selected
@@ -414,17 +414,17 @@ test.describe("Command Palette - Keyboard Navigation", () => {
 
   test("Enter to select navigates correctly", async ({ page }) => {
     await page.goto("/courses"); // Start from courses page so Home navigation is verifiable
-    await expect(page.getByRole("heading", { name: /explore courses/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
     await openCommandPalette(page);
     await expect(page.getByRole("dialog")).toBeVisible();
 
     // Type to filter to Home option, then press Enter to select it
-    await page.getByPlaceholder(/search/i).fill("Home");
+    await page.getByPlaceholder(/search/iu).fill("Home");
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("Enter");
 
     // Verify user sees home page content
-    await expect(page.getByRole("heading", { name: /learn anything with ai/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn anything with ai/iu })).toBeVisible();
   });
 
   test("focus trap within dialog", async ({ page }) => {
@@ -453,7 +453,7 @@ test.describe("Command Palette - Mobile Viewport", () => {
     await expect(dialog).toBeVisible();
 
     // Can interact with the palette
-    await expect(dialog.getByPlaceholder(/search/i)).toBeVisible();
+    await expect(dialog.getByPlaceholder(/search/iu)).toBeVisible();
   });
 });
 
@@ -483,8 +483,8 @@ test.describe("Command Palette - Accessibility", () => {
     await page.goto("/");
 
     // Scoped to navigation to avoid strict mode violation
-    const searchButton = page.getByRole("navigation").getByRole("button", { name: /search/i });
-    await expect(searchButton).toHaveAttribute("aria-keyshortcuts", /k/i);
+    const searchButton = page.getByRole("navigation").getByRole("button", { name: /search/iu });
+    await expect(searchButton).toHaveAttribute("aria-keyshortcuts", /k/iu);
   });
 
   /**
@@ -502,7 +502,7 @@ test.describe("Command Palette - Accessibility", () => {
     await page.goto("/");
     await openCommandPalette(page);
 
-    const input = page.getByPlaceholder(/search/i);
+    const input = page.getByPlaceholder(/search/iu);
 
     const fontSize = await input.evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize));
 

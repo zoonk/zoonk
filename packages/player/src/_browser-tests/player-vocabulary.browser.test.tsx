@@ -32,7 +32,7 @@ describe("player browser integration: vocabulary", () => {
     });
 
     await expect.element(page.getByText("Hola")).toBeInTheDocument();
-    await expect.element(page.getByText(/^ola$/)).toBeInTheDocument();
+    await expect.element(page.getByText(/^ola$/u)).toBeInTheDocument();
     await expect.element(page.getByText("OH-lah")).toBeInTheDocument();
     await expect.element(page.getByText("Hello")).toBeInTheDocument();
   });
@@ -63,7 +63,7 @@ describe("player browser integration: vocabulary", () => {
 
     await expect.element(page.getByText("Sol")).toBeInTheDocument();
     await expect.element(page.getByRole("radiogroup")).not.toBeInTheDocument();
-    await expect.element(page.getByRole("button", { name: /check/i })).not.toBeInTheDocument();
+    await expect.element(page.getByRole("button", { name: /check/iu })).not.toBeInTheDocument();
 
     fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
     await expect.element(page.getByText("Luna")).toBeInTheDocument();
@@ -95,10 +95,10 @@ describe("player browser integration: vocabulary", () => {
     const completionScreen = page.getByRole("status");
 
     await expect.element(completionScreen).toBeInTheDocument();
-    await expect.element(completionScreen.getByText(/\+10\s*BP/i)).toBeInTheDocument();
+    await expect.element(completionScreen.getByText(/\+10\s*BP/iu)).toBeInTheDocument();
 
     await expect
-      .element(completionScreen.getByRole("progressbar", { name: /level progress/i }))
+      .element(completionScreen.getByRole("progressbar", { name: /level progress/iu }))
       .toBeInTheDocument();
   });
 });

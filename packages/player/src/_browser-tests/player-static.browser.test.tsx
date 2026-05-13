@@ -95,10 +95,10 @@ describe("player browser integration: static steps", () => {
     });
 
     await expect.element(page.getByRole("heading", { name: "First step" })).toBeInTheDocument();
-    await expect.element(page.getByRole("button", { name: /next step/i })).not.toBeInTheDocument();
+    await expect.element(page.getByRole("button", { name: /next step/iu })).not.toBeInTheDocument();
 
     await expect
-      .element(page.getByRole("button", { name: /previous step/i }))
+      .element(page.getByRole("button", { name: /previous step/iu }))
       .not.toBeInTheDocument();
 
     fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
@@ -107,7 +107,7 @@ describe("player browser integration: static steps", () => {
     fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
     await expect.element(page.getByRole("status")).toBeInTheDocument();
 
-    await page.getByRole("button", { name: /try again/i }).click();
+    await page.getByRole("button", { name: /try again/iu }).click();
     await expect.element(page.getByRole("heading", { name: "First step" })).toBeInTheDocument();
   });
 
@@ -141,7 +141,7 @@ describe("player browser integration: static steps", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    await expect.element(page.getByText(/Ella.*corre.*rapido/i)).toBeInTheDocument();
+    await expect.element(page.getByText(/Ella.*corre.*rapido/iu)).toBeInTheDocument();
     await expect.element(page.getByText("ko-rre")).toBeInTheDocument();
     await expect.element(page.getByText("She runs fast")).toBeInTheDocument();
 
@@ -177,7 +177,7 @@ describe("player browser integration: static steps", () => {
     const boldText = screen.getByText("destaque");
     const italicText = screen.getByText("ênfase");
     const codeText = screen.getByText("greetUser();");
-    const bodyText = screen.getByText(/Alex, a regra é/).textContent;
+    const bodyText = screen.getByText(/Alex, a regra é/u).textContent;
 
     expect(boldText.tagName).toBe("STRONG");
     expect(italicText.tagName).toBe("EM");
@@ -221,17 +221,17 @@ describe("player browser integration: static steps", () => {
       .toBeInTheDocument();
 
     await expect
-      .element(page.getByAltText(/lantern lighting up one idea at a time/i))
+      .element(page.getByAltText(/lantern lighting up one idea at a time/iu))
       .toBeInTheDocument();
 
-    await page.getByRole("button", { name: /open full image/i }).click();
-    const dialog = page.getByRole("dialog", { name: /full image/i });
+    await page.getByRole("button", { name: /open full image/iu }).click();
+    const dialog = page.getByRole("dialog", { name: /full image/iu });
 
     await expect
-      .element(dialog.getByAltText(/lantern lighting up one idea at a time/i))
+      .element(dialog.getByAltText(/lantern lighting up one idea at a time/iu))
       .toBeInTheDocument();
 
-    tapExpandedImageBackdrop(screen.getByRole("dialog", { name: /full image/i }));
+    tapExpandedImageBackdrop(screen.getByRole("dialog", { name: /full image/iu }));
 
     await expect.element(dialog).not.toBeInTheDocument();
 
@@ -239,14 +239,14 @@ describe("player browser integration: static steps", () => {
       .element(page.getByRole("heading", { name: "One step, one image" }))
       .toBeInTheDocument();
 
-    await page.getByRole("button", { name: /open full image/i }).click();
-    const reopenedDialog = page.getByRole("dialog", { name: /full image/i });
+    await page.getByRole("button", { name: /open full image/iu }).click();
+    const reopenedDialog = page.getByRole("dialog", { name: /full image/iu });
 
     await expect
-      .element(reopenedDialog.getByAltText(/lantern lighting up one idea at a time/i))
+      .element(reopenedDialog.getByAltText(/lantern lighting up one idea at a time/iu))
       .toBeInTheDocument();
 
-    await page.getByRole("button", { name: /close full image/i }).click();
+    await page.getByRole("button", { name: /close full image/iu }).click();
     await expect.element(reopenedDialog).not.toBeInTheDocument();
   });
 
@@ -278,7 +278,7 @@ describe("player browser integration: static steps", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    swipeLeft(screen.getByAltText(/lantern lighting up one idea at a time/i));
+    swipeLeft(screen.getByAltText(/lantern lighting up one idea at a time/iu));
 
     await expect.element(page.getByRole("heading", { name: "Second step" })).toBeInTheDocument();
   });
@@ -311,7 +311,7 @@ describe("player browser integration: static steps", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    tapRight(screen.getByAltText(/lantern lighting up one idea at a time/i));
+    tapRight(screen.getByAltText(/lantern lighting up one idea at a time/iu));
     await expect.element(page.getByRole("heading", { name: "Second step" })).toBeInTheDocument();
 
     tapLeft(screen.getByRole("heading", { name: "Second step" }));

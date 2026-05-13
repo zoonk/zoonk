@@ -121,7 +121,7 @@ describe(useThinkingMessages, () => {
 
     advanceTicks(5);
 
-    expect(result.current.chapters).toMatch(/Chapter \d+/);
+    expect(result.current.chapters).toMatch(/Chapter \d+/u);
 
     rerender({ active: ["lessons"] });
 

@@ -178,15 +178,20 @@ test.describe("Chapter Detail Page", () => {
 
     await expect(page.getByText(`Different types of learning ${uniqueId}`)).toBeVisible();
 
-    const positionIcon = page.getByRole("img", { name: /chapter 01/i }).first();
+    const positionIcon = page.getByRole("img", { name: /chapter 01/iu }).first();
     await expect(positionIcon).toBeVisible();
   });
 
   test("displays lesson rows", async ({ page }) => {
     await page.goto(chapterUrl);
 
-    await expect(page.getByRole("link", { name: new RegExp(lessonNames.first) })).toBeVisible();
-    await expect(page.getByRole("link", { name: new RegExp(lessonNames.second) })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: new RegExp(lessonNames.first, "u") }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByRole("link", { name: new RegExp(lessonNames.second, "u") }),
+    ).toBeVisible();
 
     await expect(
       page.getByRole("link", { name: `Unpublished Lesson ${uniqueId}` }),
@@ -201,19 +206,19 @@ test.describe("Chapter Detail Page", () => {
 
     await lessonLink.click();
 
-    await expect(page).toHaveURL(new RegExp(`${chapterUrl}/l/${lessonSlugs.first}`));
+    await expect(page).toHaveURL(new RegExp(`${chapterUrl}/l/${lessonSlugs.first}`, "u"));
   });
 
   test("non-existent chapter shows 404 page", async ({ page }) => {
     await page.goto(`/b/${AI_ORG_SLUG}/c/${courseSlug}/ch/nonexistent-chapter-${uniqueId}`);
 
-    await expect(page.getByText(/not found|404/i)).toBeVisible();
+    await expect(page.getByText(/not found|404/iu)).toBeVisible();
   });
 
   test("unpublished chapter shows 404 page", async ({ page }) => {
     await page.goto(`/b/${AI_ORG_SLUG}/c/${courseSlug}/ch/${unpublishedChapterSlug}`);
 
-    await expect(page.getByText(/not found|404/i)).toBeVisible();
+    await expect(page.getByText(/not found|404/iu)).toBeVisible();
   });
 });
 
@@ -230,7 +235,7 @@ test.describe("Chapter Lesson Search", () => {
   test("filters lessons by title", async ({ page }) => {
     await page.goto(chapterUrl);
 
-    await page.getByLabel(/search lessons/i).fill("History");
+    await page.getByLabel(/search lessons/iu).fill("History");
 
     await expect(page.getByRole("link", { name: lessonNames.second })).toBeVisible();
 
@@ -240,15 +245,15 @@ test.describe("Chapter Lesson Search", () => {
   test("shows empty state when no matches found", async ({ page }) => {
     await page.goto(chapterUrl);
 
-    await page.getByLabel(/search lessons/i).fill("nonexistent xyz");
+    await page.getByLabel(/search lessons/iu).fill("nonexistent xyz");
 
-    await expect(page.getByText(/no lessons found/i)).toBeVisible();
+    await expect(page.getByText(/no lessons found/iu)).toBeVisible();
   });
 
   test("clears search and shows all lessons again", async ({ page }) => {
     await page.goto(chapterUrl);
 
-    const searchInput = page.getByLabel(/search lessons/i);
+    const searchInput = page.getByLabel(/search lessons/iu);
     await searchInput.fill("History");
 
     await expect(page.getByRole("link", { name: lessonNames.first })).not.toBeVisible();
@@ -264,7 +269,7 @@ test.describe("Chapter - No Lessons", () => {
   test("chapter with no lessons redirects to generate page", async ({ page }) => {
     await page.goto(noLessonsChapterUrl);
 
-    await page.waitForURL(new RegExp(`/generate/ch/${noLessonsChapterId}`));
+    await page.waitForURL(new RegExp(`/generate/ch/${noLessonsChapterId}`, "u"));
   });
 
   test("non-AI chapters with no lessons stay on the chapter page", async ({ page }) => {
@@ -297,6 +302,6 @@ test.describe("Chapter - No Lessons", () => {
       page.getByRole("heading", { level: 1, name: `Non AI Chapter ${nonAiUniqueId}` }),
     ).toBeVisible();
 
-    await expect(page.getByRole("link", { name: /^start$/i })).not.toBeVisible();
+    await expect(page.getByRole("link", { name: /^start$/iu })).not.toBeVisible();
   });
 });

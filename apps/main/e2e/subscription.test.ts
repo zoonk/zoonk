@@ -83,9 +83,9 @@ function getStripeSubscriptionFields({
 test.describe("Subscription Page - Unauthenticated", () => {
   test("shows login prompt with link to login page", async ({ page }) => {
     await page.goto("/subscription");
-    await expect(page.getByRole("alert").filter({ hasText: /logged in/i })).toBeVisible();
+    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
 
-    const loginLink = page.getByRole("link", { name: /login/i });
+    const loginLink = page.getByRole("link", { name: /login/iu });
     await expect(loginLink).toBeVisible();
     await expect(loginLink).toHaveAttribute("href", "/login");
   });
@@ -96,27 +96,27 @@ test.describe("Subscription Page - No Subscription", () => {
     await authenticatedPage.goto("/subscription");
 
     await expect(
-      authenticatedPage.getByRole("heading", { level: 1, name: /subscription/i }),
+      authenticatedPage.getByRole("heading", { level: 1, name: /subscription/iu }),
     ).toBeVisible();
 
-    await expect(authenticatedPage.getByRole("radio", { name: /free/i })).toBeVisible();
-    await expect(authenticatedPage.getByRole("radio", { name: /hobby/i })).toBeVisible();
-    await expect(authenticatedPage.getByRole("radio", { name: /plus/i })).toBeVisible();
-    await expect(authenticatedPage.getByRole("radio", { name: /pro/i })).toBeVisible();
+    await expect(authenticatedPage.getByRole("radio", { name: /free/iu })).toBeVisible();
+    await expect(authenticatedPage.getByRole("radio", { name: /hobby/iu })).toBeVisible();
+    await expect(authenticatedPage.getByRole("radio", { name: /plus/iu })).toBeVisible();
+    await expect(authenticatedPage.getByRole("radio", { name: /pro/iu })).toBeVisible();
   });
 
   test("has Free plan selected by default when no subscription", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/subscription");
 
-    await expect(authenticatedPage.getByRole("radio", { name: /free/i })).toBeChecked();
-    await expect(authenticatedPage.getByLabel(/current plan/i)).toBeVisible();
+    await expect(authenticatedPage.getByRole("radio", { name: /free/iu })).toBeChecked();
+    await expect(authenticatedPage.getByLabel(/current plan/iu)).toBeVisible();
   });
 
   test("shows monthly/yearly toggle", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/subscription");
 
-    await expect(authenticatedPage.getByRole("tab", { name: /monthly/i })).toBeVisible();
-    await expect(authenticatedPage.getByRole("tab", { name: /yearly/i })).toBeVisible();
+    await expect(authenticatedPage.getByRole("tab", { name: /monthly/iu })).toBeVisible();
+    await expect(authenticatedPage.getByRole("tab", { name: /yearly/iu })).toBeVisible();
   });
 
   test("hides action button when on free plan with free selected", async ({
@@ -124,30 +124,30 @@ test.describe("Subscription Page - No Subscription", () => {
   }) => {
     await authenticatedPage.goto("/subscription");
 
-    await expect(authenticatedPage.getByRole("radio", { name: /free/i })).toBeChecked();
-    await expect(authenticatedPage.getByRole("button", { name: /manage/i })).not.toBeVisible();
+    await expect(authenticatedPage.getByRole("radio", { name: /free/iu })).toBeChecked();
+    await expect(authenticatedPage.getByRole("button", { name: /manage/iu })).not.toBeVisible();
   });
 
   test("shows Upgrade button when selecting a paid plan", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/subscription");
 
-    await authenticatedPage.getByRole("radio", { name: /hobby/i }).click();
+    await authenticatedPage.getByRole("radio", { name: /hobby/iu }).click();
 
     await expect(
-      authenticatedPage.getByRole("button", { name: /upgrade to hobby/i }),
+      authenticatedPage.getByRole("button", { name: /upgrade to hobby/iu }),
     ).toBeVisible();
   });
 
   test("changes CTA label when selecting different plans", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/subscription");
 
-    await authenticatedPage.getByRole("radio", { name: /pro/i }).click();
-    await expect(authenticatedPage.getByRole("button", { name: /upgrade to pro/i })).toBeVisible();
+    await authenticatedPage.getByRole("radio", { name: /pro/iu }).click();
+    await expect(authenticatedPage.getByRole("button", { name: /upgrade to pro/iu })).toBeVisible();
 
-    await authenticatedPage.getByRole("radio", { name: /free/i }).click();
+    await authenticatedPage.getByRole("radio", { name: /free/iu }).click();
 
     await expect(
-      authenticatedPage.getByRole("button", { name: /upgrade to pro/i }),
+      authenticatedPage.getByRole("button", { name: /upgrade to pro/iu }),
     ).not.toBeVisible();
   });
 });
@@ -162,9 +162,9 @@ test.describe("Subscription Page - With Hobby Subscription", () => {
 
     await page.goto("/subscription");
 
-    await expect(page.getByRole("radio", { name: /hobby/i })).toBeChecked();
-    await expect(page.getByLabel(/current plan/i)).toBeVisible();
-    await expect(page.getByRole("button", { name: /manage/i })).toBeVisible();
+    await expect(page.getByRole("radio", { name: /hobby/iu })).toBeChecked();
+    await expect(page.getByLabel(/current plan/iu)).toBeVisible();
+    await expect(page.getByRole("button", { name: /manage/iu })).toBeVisible();
 
     await browserContext.close();
   });
@@ -175,8 +175,8 @@ test.describe("Subscription Page - With Hobby Subscription", () => {
 
     await page.goto("/subscription");
 
-    await page.getByRole("radio", { name: /plus/i }).click();
-    await expect(page.getByRole("button", { name: /upgrade to plus/i })).toBeVisible();
+    await page.getByRole("radio", { name: /plus/iu }).click();
+    await expect(page.getByRole("button", { name: /upgrade to plus/iu })).toBeVisible();
 
     await browserContext.close();
   });
@@ -187,8 +187,8 @@ test.describe("Subscription Page - With Hobby Subscription", () => {
 
     await page.goto("/subscription");
 
-    await page.getByRole("radio", { name: /free/i }).click();
-    await expect(page.getByRole("button", { name: /cancel/i })).toBeVisible();
+    await page.getByRole("radio", { name: /free/iu }).click();
+    await expect(page.getByRole("button", { name: /cancel/iu })).toBeVisible();
 
     await browserContext.close();
   });
@@ -199,7 +199,7 @@ test.describe("Subscription Page - With Hobby Subscription", () => {
 
     await page.goto("/subscription");
 
-    const manageButton = page.getByRole("button", { name: /manage/i });
+    const manageButton = page.getByRole("button", { name: /manage/iu });
     await manageButton.click();
     await expect(manageButton).toBeDisabled();
 
@@ -214,14 +214,14 @@ test.describe("Subscription Page - With Pro Subscription", () => {
 
     await page.goto("/subscription");
 
-    await expect(page.getByRole("radio", { name: /pro/i })).toBeChecked();
-    await expect(page.getByLabel(/current plan/i)).toBeVisible();
+    await expect(page.getByRole("radio", { name: /pro/iu })).toBeChecked();
+    await expect(page.getByLabel(/current plan/iu)).toBeVisible();
 
-    await page.getByRole("radio", { name: /hobby/i }).click();
-    await expect(page.getByRole("button", { name: /switch to hobby/i })).toBeVisible();
+    await page.getByRole("radio", { name: /hobby/iu }).click();
+    await expect(page.getByRole("button", { name: /switch to hobby/iu })).toBeVisible();
 
-    await page.getByRole("radio", { name: /free/i }).click();
-    await expect(page.getByRole("button", { name: /cancel/i })).toBeVisible();
+    await page.getByRole("radio", { name: /free/iu }).click();
+    await expect(page.getByRole("button", { name: /cancel/iu })).toBeVisible();
 
     await browserContext.close();
   });
@@ -237,21 +237,21 @@ test.describe("Subscription Page - Provider Managed", () => {
 
     await page.goto("/subscription");
 
-    await expect(page.getByText(/managed through the app store/i)).toBeVisible();
-    await expect(page.getByRole("link", { name: /manage in app store/i })).toBeVisible();
+    await expect(page.getByText(/managed through the app store/iu)).toBeVisible();
+    await expect(page.getByRole("link", { name: /manage in app store/iu })).toBeVisible();
 
-    await expect(page.getByRole("link", { name: /manage in app store/i })).toHaveAttribute(
+    await expect(page.getByRole("link", { name: /manage in app store/iu })).toHaveAttribute(
       "href",
       "https://support.apple.com/billing",
     );
 
-    await expect(page.getByRole("link", { name: /contact support/i })).toHaveAttribute(
+    await expect(page.getByRole("link", { name: /contact support/iu })).toHaveAttribute(
       "href",
       "/support",
     );
 
-    await expect(page.getByRole("radio", { name: /free/i })).not.toBeVisible();
-    await expect(page.getByRole("button", { name: /manage/i })).not.toBeVisible();
+    await expect(page.getByRole("radio", { name: /free/iu })).not.toBeVisible();
+    await expect(page.getByRole("button", { name: /manage/iu })).not.toBeVisible();
 
     await browserContext.close();
   });
@@ -265,15 +265,15 @@ test.describe("Subscription Page - Provider Managed", () => {
 
     await page.goto("/subscription");
 
-    await expect(page.getByText(/managed by zoonk/i)).toBeVisible();
+    await expect(page.getByText(/managed by zoonk/iu)).toBeVisible();
 
-    await expect(page.getByRole("link", { name: /contact support/i })).toHaveAttribute(
+    await expect(page.getByRole("link", { name: /contact support/iu })).toHaveAttribute(
       "href",
       "/support",
     );
 
-    await expect(page.getByRole("radio", { name: /free/i })).not.toBeVisible();
-    await expect(page.getByRole("button", { name: /manage/i })).not.toBeVisible();
+    await expect(page.getByRole("radio", { name: /free/iu })).not.toBeVisible();
+    await expect(page.getByRole("button", { name: /manage/iu })).not.toBeVisible();
 
     await browserContext.close();
   });
@@ -286,7 +286,7 @@ test.describe("Subscription Page - With Cancelled Subscription", () => {
     const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
 
     await page.goto("/subscription");
-    await expect(page.getByText(/subscription will end on/i)).toBeVisible();
+    await expect(page.getByText(/subscription will end on/iu)).toBeVisible();
 
     await browserContext.close();
   });
@@ -296,7 +296,7 @@ test.describe("Subscription Page - With Cancelled Subscription", () => {
     const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
 
     await page.goto("/subscription");
-    await expect(page.getByText(/subscription will end on/i)).not.toBeVisible();
+    await expect(page.getByText(/subscription will end on/iu)).not.toBeVisible();
 
     await browserContext.close();
   });

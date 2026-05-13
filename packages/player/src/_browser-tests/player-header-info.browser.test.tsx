@@ -34,7 +34,7 @@ describe("player header: lesson title and lesson info", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    await page.getByRole("button", { name: /lesson info/i }).click();
+    await page.getByRole("button", { name: /lesson info/iu }).click();
 
     await expect.element(page.getByRole("heading", { name: "Present Tense" })).toBeInTheDocument();
 
@@ -54,7 +54,7 @@ describe("player header: lesson title and lesson info", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    await page.getByRole("button", { name: /lesson info/i }).click();
+    await page.getByRole("button", { name: /lesson info/iu }).click();
 
     await expect
       .element(page.getByText("Learn present tense conjugation patterns."))

@@ -59,7 +59,7 @@ describe(formatLabel, () => {
   it("formats 6months period as week number", () => {
     const date = new Date(Date.UTC(2026, 0, 15));
     const result = formatLabel(date, "6months", "en");
-    expect(result).toMatch(/^W\d+$/);
+    expect(result).toMatch(/^W\d+$/u);
   });
 
   it("formats year period as short month", () => {
