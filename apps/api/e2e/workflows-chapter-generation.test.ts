@@ -143,6 +143,7 @@ test.describe("Chapter Generation Workflow API", () => {
       data: {
         courseId: course.id,
         description: "First chapter - should be free",
+        generationStatus: "completed",
         isPublished: true,
         language: "en",
         normalizedTitle: normalizeString("First Chapter Free"),
@@ -270,6 +271,7 @@ test.describe("Chapter Generation Workflow API", () => {
       data: {
         courseId: course.id,
         description: "Test chapter for workflow success",
+        generationStatus: "completed",
         isPublished: true,
         language: "en",
         normalizedTitle: normalizeString("Test Chapter Success"),

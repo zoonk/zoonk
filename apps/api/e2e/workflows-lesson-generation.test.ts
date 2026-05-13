@@ -443,6 +443,7 @@ test.describe("Lesson Generation Workflow API", () => {
       data: {
         chapterId: chapter.id,
         description: "Test lesson for workflow success",
+        generationStatus: "completed",
         isPublished: true,
         kind: "explanation",
         language: "en",
