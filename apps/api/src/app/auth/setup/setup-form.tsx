@@ -9,11 +9,10 @@ import {
   SetupSubmit,
 } from "@/components/setup";
 import {
-  USERNAME_MAX_LENGTH,
-  USERNAME_MIN_LENGTH,
   type UsernameStatus,
   useUsernameAvailability,
 } from "@zoonk/core/auth/hooks/username-availability";
+import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from "@zoonk/core/auth/username-rules";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@zoonk/ui/components/input-group";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -97,10 +96,7 @@ export function SetupProfileForm({
             maxLength={USERNAME_MAX_LENGTH}
             minLength={USERNAME_MIN_LENGTH}
             name="username"
-            onChange={(event) => {
-              event.target.value = event.target.value.toLowerCase();
-              setUsername(event.target.value);
-            }}
+            onChange={(event) => setUsername(event.target.value)}
             placeholder={t("your-username")}
             required
             spellCheck={false}

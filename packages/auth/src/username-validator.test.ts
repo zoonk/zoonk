@@ -1,5 +1,40 @@
 import { describe, expect, it } from "vitest";
+import {
+  USERNAME_MAX_LENGTH,
+  USERNAME_MIN_LENGTH,
+  isUsernameSyntaxValid,
+  normalizeUsername,
+} from "./username-rules";
 import { isUsernameAllowed } from "./username-validator";
+
+describe(normalizeUsername, () => {
+  it("normalizes direct server submissions the same way the UI does", () => {
+    expect(normalizeUsername(" John_Doe ")).toBe("john_doe");
+  });
+});
+
+describe(isUsernameSyntaxValid, () => {
+  it("allows lowercase letters, numbers, and underscores within the username length range", () => {
+    expect(isUsernameSyntaxValid("john_doe42")).toBe(true);
+  });
+
+  it("normalizes uppercase usernames before checking syntax", () => {
+    expect(isUsernameSyntaxValid("John_Doe42")).toBe(true);
+  });
+
+  it("blocks usernames outside the length range", () => {
+    expect(isUsernameSyntaxValid("a".repeat(USERNAME_MIN_LENGTH - 1))).toBe(false);
+    expect(isUsernameSyntaxValid("a".repeat(USERNAME_MAX_LENGTH + 1))).toBe(false);
+  });
+
+  it("blocks characters that are unsafe in profile URLs and mentions", () => {
+    expect(isUsernameSyntaxValid("john doe")).toBe(false);
+    expect(isUsernameSyntaxValid("john/doe")).toBe(false);
+    expect(isUsernameSyntaxValid("<tag>")).toBe(false);
+    expect(isUsernameSyntaxValid("john-doe")).toBe(false);
+    expect(isUsernameSyntaxValid("john.doe")).toBe(false);
+  });
+});
 
 describe(isUsernameAllowed, () => {
   describe("reserved usernames", () => {
@@ -38,11 +73,14 @@ describe(isUsernameAllowed, () => {
   });
 
   describe("invalid characters", () => {
-    it("blocks usernames containing dots", () => {
+    it("blocks usernames with characters outside the shared syntax policy", () => {
       expect(isUsernameAllowed("dev.ops")).toBe(false);
       expect(isUsernameAllowed("john.doe")).toBe(false);
       expect(isUsernameAllowed(".leading")).toBe(false);
       expect(isUsernameAllowed("trailing.")).toBe(false);
+      expect(isUsernameAllowed("john doe")).toBe(false);
+      expect(isUsernameAllowed("john/doe")).toBe(false);
+      expect(isUsernameAllowed("<tag>")).toBe(false);
     });
   });
 
