@@ -1,8 +1,11 @@
 import { betterAuth } from "better-auth/minimal";
+import { nextCookies } from "better-auth/next-js";
 import { emailOTP, oneTimeToken } from "better-auth/plugins";
 import { sendVerificationOTP } from "./plugins/otp";
 import { baseAuthConfig, baseAuthPlugins, fullPlugins, socialProviders } from "./server";
 import { stripePlugin } from "./stripe/plugin";
+
+const e2ePluginOverrideIds = new Set(["email-otp", "next-cookies", "one-time-token", "stripe"]);
 
 /**
  * @public
@@ -22,13 +25,11 @@ export const auth = betterAuth({
   },
   plugins: [
     ...baseAuthPlugins,
-    ...fullPlugins.filter(
-      (plugin) =>
-        plugin.id !== "email-otp" && plugin.id !== "one-time-token" && plugin.id !== "stripe",
-    ),
+    ...fullPlugins.filter((plugin) => !e2ePluginOverrideIds.has(plugin.id)),
     stripePlugin({ createCustomerOnSignUp: false }),
     emailOTP({ overrideDefaultEmailVerification: true, sendVerificationOTP, storeOTP: "plain" }),
     oneTimeToken({ storeToken: "plain" }),
+    nextCookies(),
   ],
   rateLimit: { enabled: false },
   socialProviders,
