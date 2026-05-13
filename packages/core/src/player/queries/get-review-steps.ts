@@ -101,23 +101,28 @@ export async function getReviewSteps({
 }
 
 /**
- * Fetches steps for validating a review lesson submission.
- * Only returns steps that are eligible for review — excludes
- * steps from review lessons and static steps. Review submissions can be
- * forged directly against the server action, so validation only considers the
- * same number of step IDs the server would serve in a normal review session.
+ * Fetches the server-accepted review step subset and the number of answers a
+ * normal review session would ask for. Review steps are chosen on demand, so
+ * completion should require the capped target count, not every eligible step in
+ * the chapter.
  */
-export async function getReviewValidationSteps(params: { lessonId: string; stepIds: string[] }) {
+export async function getReviewValidationData(params: { lessonId: string; stepIds: string[] }) {
   const chapterId = await getReviewChapterId(params.lessonId);
 
   if (!chapterId) {
-    return [];
+    return { expectedStepCount: 0, steps: [] };
   }
 
   const submittedStepIds = params.stepIds.slice(0, REVIEW_TARGET_COUNT);
+  const stepFilter = reviewableStepFilter(chapterId);
 
-  return prisma.step.findMany({
-    include: { sentence: true, word: true },
-    where: { ...reviewableStepFilter(chapterId), id: { in: submittedStepIds } },
-  });
+  const [eligibleStepCount, steps] = await Promise.all([
+    prisma.step.count({ where: stepFilter }),
+    prisma.step.findMany({
+      include: { sentence: true, word: true },
+      where: { ...stepFilter, id: { in: submittedStepIds } },
+    }),
+  ]);
+
+  return { expectedStepCount: Math.min(eligibleStepCount, REVIEW_TARGET_COUNT), steps };
 }

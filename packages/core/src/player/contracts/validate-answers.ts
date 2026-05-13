@@ -1,4 +1,5 @@
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
+import { type StepKind } from "@zoonk/db";
 import { buildAcceptedArrangeWordSequences } from "./arrange-words-answers";
 import {
   checkArrangeWordsAnswer,
@@ -17,9 +18,9 @@ import { type SelectedAnswer } from "./completion-input-schema";
  * table, so sentence carries only the canonical translation string used
  * by listening validation.
  */
-type StepData = {
+export type StepData = {
   id: string;
-  kind: string;
+  kind: StepKind;
   content: unknown;
   word?: { id: string } | null;
   sentence?: { id: string; sentence: string; translation: string } | null;
@@ -38,32 +39,40 @@ type ServerValidationBehavior =
   | "sortOrder"
   | "translation";
 
+type AnswerableStepKind = Exclude<ServerValidationBehavior, "none">;
+
+const ANSWERABLE_STEP_KINDS: readonly AnswerableStepKind[] = [
+  "fillBlank",
+  "listening",
+  "matchColumns",
+  "multipleChoice",
+  "reading",
+  "selectImage",
+  "sortOrder",
+  "translation",
+];
+
+/**
+ * Step kinds that share their database name with a validator can return that
+ * name directly. This keeps non-answerable kinds such as static, vocabulary,
+ * and visual out of completion coverage without duplicating every identity case
+ * in a switch.
+ */
+function isAnswerableStepKind(kind: StepKind): kind is AnswerableStepKind {
+  return ANSWERABLE_STEP_KINDS.some((answerableKind) => answerableKind === kind);
+}
+
 /**
  * Server validation should follow the semantic step contract directly instead
  * of depending on the React player's render behavior table. The raw step kind
- * kind is enough to decide whether the submission should emit a StepAttempt.
+ * is enough to decide whether the submission should emit a StepAttempt.
  */
-function getValidationBehavior(step: StepData): ServerValidationBehavior {
-  switch (step.kind) {
-    case "fillBlank":
-      return "fillBlank";
-    case "listening":
-      return "listening";
-    case "matchColumns":
-      return "matchColumns";
-    case "multipleChoice":
-      return "multipleChoice";
-    case "reading":
-      return "reading";
-    case "selectImage":
-      return "selectImage";
-    case "sortOrder":
-      return "sortOrder";
-    case "translation":
-      return "translation";
-    default:
-      return "none";
+function getValidationBehavior(step: { kind: StepKind }): ServerValidationBehavior {
+  if (isAnswerableStepKind(step.kind)) {
+    return step.kind;
   }
+
+  return "none";
 }
 
 function validateMultipleChoice(
@@ -176,8 +185,17 @@ const validators: Record<
   translation: validateTranslation,
 };
 
+/**
+ * Completion persistence needs the same answerable-step definition as answer
+ * validation. Keeping the count tied to the validation behavior table prevents
+ * a new checked step kind from becoming completable without a submitted answer.
+ */
+export function countAnswerableSteps(steps: readonly { kind: StepKind }[]): number {
+  return steps.filter((step) => getValidationBehavior(step) !== "none").length;
+}
+
 export function validateAnswers(
-  steps: StepData[],
+  steps: readonly StepData[],
   clientAnswers: Record<string, SelectedAnswer>,
 ): ValidatedStepResult[] {
   return steps.flatMap((step) => {

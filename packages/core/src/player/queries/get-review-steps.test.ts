@@ -7,7 +7,7 @@ import { stepAttemptFixture } from "@zoonk/testing/fixtures/step-attempts";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, it } from "vitest";
-import { getReviewSteps, getReviewValidationSteps } from "./get-review-steps";
+import { getReviewSteps, getReviewValidationData } from "./get-review-steps";
 
 const REVIEW_TARGET_COUNT = 10;
 
@@ -600,7 +600,7 @@ describe(getReviewSteps, () => {
   });
 });
 
-describe(getReviewValidationSteps, () => {
+describe(getReviewValidationData, () => {
   let lesson: Awaited<ReturnType<typeof lessonFixture>>;
   let organizationId: string;
   let quizStep: Awaited<ReturnType<typeof stepFixture>>;
@@ -669,7 +669,7 @@ describe(getReviewValidationSteps, () => {
   });
 
   it("excludes steps from review lessons", async () => {
-    const steps = await getReviewValidationSteps({
+    const { steps } = await getReviewValidationData({
       lessonId: lesson.id,
       stepIds: [quizStep.id, reviewStep.id],
     });
@@ -681,7 +681,7 @@ describe(getReviewValidationSteps, () => {
   });
 
   it("excludes static steps", async () => {
-    const steps = await getReviewValidationSteps({
+    const { steps } = await getReviewValidationData({
       lessonId: lesson.id,
       stepIds: [quizStep.id, staticStep.id],
     });
@@ -716,7 +716,7 @@ describe(getReviewValidationSteps, () => {
       }),
     ]);
 
-    const steps = await getReviewValidationSteps({
+    const { steps } = await getReviewValidationData({
       lessonId: lesson.id,
       stepIds: [readingStep.id],
     });
