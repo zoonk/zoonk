@@ -1,158 +1,129 @@
 msgid ""
 msgstr ""
 "Language: en\n"
-"Content-Transfer-Encoding: 8bit\n"
 "Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "X-Generator: next-intl\n"
+"X-Crowdin-SourceKey: msgstr\n"
 
 #: src/app/auth/layout.tsx
-msgctxt "dVItHD"
-msgid "Sign in to Zoonk"
+msgid "dVItHD"
 msgstr "Sign in to Zoonk"
 
 #: src/app/auth/login/page.tsx
-msgctxt "4nOs3z"
-msgid "me@myorg.com"
-msgstr "me@myorg.com"
-
-#: src/app/auth/login/page.tsx
-msgctxt "4wpUNc"
-msgid "Or"
-msgstr "Or"
-
-#: src/app/auth/login/page.tsx
-#: src/app/auth/otp/otp-form.tsx
-#: src/app/auth/setup/setup-form.tsx
-msgctxt "acrOoz"
-msgid "Continue"
-msgstr "Continue"
-
-#: src/app/auth/login/page.tsx
-msgctxt "CoMQ1+"
-msgid "Continue with your email or a social account"
-msgstr "Continue with your email or a social account"
-
-#: src/app/auth/login/page.tsx
-msgctxt "eN8MTJ"
-msgid "Sign in or create an account"
+msgid "eN8MTJ"
 msgstr "Sign in or create an account"
 
 #: src/app/auth/login/page.tsx
-msgctxt "Ju9oB+"
-msgid "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
-msgstr "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
+msgid "CoMQ1+"
+msgstr "Continue with your email or a social account"
 
 #: src/app/auth/login/page.tsx
-msgctxt "sy+pv5"
-msgid "Email"
+msgid "4wpUNc"
+msgstr "Or"
+
+#: src/app/auth/login/page.tsx
+msgid "sy+pv5"
 msgstr "Email"
 
-#: src/app/auth/login/social-login.tsx
-msgctxt "BmecBA"
-msgid "Continue with Apple"
-msgstr "Continue with Apple"
+#: src/app/auth/login/page.tsx
+msgid "4nOs3z"
+msgstr "me@myorg.com"
+
+#: src/app/auth/login/page.tsx
+#: src/app/auth/otp/otp-form.tsx
+#: src/app/auth/setup/setup-form.tsx
+msgid "acrOoz"
+msgstr "Continue"
+
+#: src/app/auth/login/page.tsx
+msgid "Ju9oB+"
+msgstr "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
 
 #: src/app/auth/login/social-login.tsx
-msgctxt "FJ6r9E"
-msgid "Continue with Google"
+msgid "FJ6r9E"
 msgstr "Continue with Google"
 
 #: src/app/auth/login/social-login.tsx
-msgctxt "pN2p0t"
-msgid "There was an error signing you in. Please try again or contact hello@zoonk.com"
+msgid "BmecBA"
+msgstr "Continue with Apple"
+
+#: src/app/auth/login/social-login.tsx
+msgid "pN2p0t"
 msgstr "There was an error signing you in. Please try again or contact hello@zoonk.com"
 
 #: src/app/auth/otp/otp-form.tsx
-msgctxt "HkHvQv"
-msgid "The code you entered is incorrect. Please try again or contact hello@zoonk.com"
+msgid "HkHvQv"
 msgstr "The code you entered is incorrect. Please try again or contact hello@zoonk.com"
 
 #: src/app/auth/otp/page.tsx
-msgctxt "ChATeO"
-msgid "Change email"
-msgstr "Change email"
+msgid "zx7CKB"
+msgstr "Check your email"
 
 #: src/app/auth/otp/page.tsx
-msgctxt "LZHcmZ"
-msgid "Enter the code we sent to {email}:"
+msgid "LZHcmZ"
 msgstr "Enter the code we sent to {email}:"
 
 #: src/app/auth/otp/page.tsx
-msgctxt "zx7CKB"
-msgid "Check your email"
-msgstr "Check your email"
+msgid "ChATeO"
+msgstr "Change email"
 
 #: src/app/auth/setup/page.tsx
-msgctxt "7463XU"
-msgid "Choose a name and username before continuing."
-msgstr "Choose a name and username before continuing."
-
-#: src/app/auth/setup/page.tsx
-msgctxt "CYqIel"
-msgid "Complete your profile"
+msgid "CYqIel"
 msgstr "Complete your profile"
 
+#: src/app/auth/setup/page.tsx
+msgid "7463XU"
+msgstr "Choose a name and username before continuing."
+
 #: src/app/auth/setup/setup-form.tsx
-msgctxt "1SvspN"
-msgid "Checking..."
+msgid "1SvspN"
 msgstr "Checking..."
 
 #: src/app/auth/setup/setup-form.tsx
-msgctxt "9N4/rz"
-msgid "{username} is available"
+msgid "9N4/rz"
 msgstr "{username} is available"
 
 #: src/app/auth/setup/setup-form.tsx
-msgctxt "HAlOn1"
-msgid "Name"
-msgstr "Name"
-
-#: src/app/auth/setup/setup-form.tsx
-msgctxt "JCIgkj"
-msgid "Username"
-msgstr "Username"
-
-#: src/app/auth/setup/setup-form.tsx
-msgctxt "R76cpj"
-msgid "{username} is already taken"
+msgid "R76cpj"
 msgstr "{username} is already taken"
 
 #: src/app/auth/setup/setup-form.tsx
-msgctxt "vLl7z0"
-msgid "3-30 characters. Letters, numbers, and underscores only."
+msgid "vLl7z0"
 msgstr "3-30 characters. Letters, numbers, and underscores only."
 
 #: src/app/auth/setup/setup-form.tsx
-msgctxt "XLl/pd"
-msgid "your-username"
+msgid "HAlOn1"
+msgstr "Name"
+
+#: src/app/auth/setup/setup-form.tsx
+msgid "JCIgkj"
+msgstr "Username"
+
+#: src/app/auth/setup/setup-form.tsx
+msgid "XLl/pd"
 msgstr "your-username"
 
 #: src/app/auth/setup/setup-form.tsx
-msgctxt "yCCLud"
-msgid "Failed to set up your profile. Please try again or contact hello@zoonk.com"
+msgid "yCCLud"
 msgstr "Failed to set up your profile. Please try again or contact hello@zoonk.com"
 
 #: src/app/auth/untrusted-origin/page.tsx
-msgctxt "+e4BVR"
-msgid "Continue to Zoonk"
-msgstr "Continue to Zoonk"
-
-#: src/app/auth/untrusted-origin/page.tsx
-msgctxt "1vqX2W"
-msgid "Unable to redirect"
+msgid "1vqX2W"
 msgstr "Unable to redirect"
 
 #: src/app/auth/untrusted-origin/page.tsx
-msgctxt "585u5Z"
-msgid "For your safety, we cannot redirect you to an unrecognized destination."
-msgstr "For your safety, we cannot redirect you to an unrecognized destination."
-
-#: src/app/auth/untrusted-origin/page.tsx
-msgctxt "83K2kN"
-msgid "The destination URL is not recognized as a trusted Zoonk application."
+msgid "83K2kN"
 msgstr "The destination URL is not recognized as a trusted Zoonk application."
 
 #: src/app/auth/untrusted-origin/page.tsx
-msgctxt "wkO19y"
-msgid "Security warning"
+msgid "wkO19y"
 msgstr "Security warning"
+
+#: src/app/auth/untrusted-origin/page.tsx
+msgid "585u5Z"
+msgstr "For your safety, we cannot redirect you to an unrecognized destination."
+
+#: src/app/auth/untrusted-origin/page.tsx
+msgid "+e4BVR"
+msgstr "Continue to Zoonk"
