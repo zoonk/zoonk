@@ -138,7 +138,8 @@
     "zoonk/no-object-params-in-cache": ["error", { "exceptions": ["headers"] }],
     "zoonk/no-hardcoded-aria-label": "off",
     "zoonk/no-t-function-as-argument": "error",
-    "zoonk/padding-around-multiline-statements": "error"
+    "zoonk/padding-around-multiline-statements": "error",
+    "zoonk/tailwind-canonical-classes": "error"
   },
   "overrides": [
     {

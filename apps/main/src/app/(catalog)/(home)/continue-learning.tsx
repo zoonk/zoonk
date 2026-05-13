@@ -39,7 +39,7 @@ function ContinueLearningLayout({
   }
 
   return (
-    <div className="overflow-x-auto [scrollbar-width:none] sm:overflow-x-visible [&::-webkit-scrollbar]:hidden">
+    <div className="overflow-x-auto scrollbar-none sm:overflow-x-visible [&::-webkit-scrollbar]:hidden">
       <div className="flex w-max min-w-full snap-x snap-mandatory gap-4 px-4 pb-1 sm:grid sm:w-auto sm:min-w-0 sm:snap-none sm:grid-cols-2 sm:pb-0 lg:grid-cols-3 xl:grid-cols-4">
         {children}
       </div>

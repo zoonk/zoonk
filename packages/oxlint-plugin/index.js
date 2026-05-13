@@ -5,6 +5,7 @@ import noHardcodedAriaLabel from "./rules/no-hardcoded-aria-label.js";
 import noObjectParamsInCache from "./rules/no-object-params-in-cache.js";
 import noTFunctionAsArgument from "./rules/no-t-function-as-argument.js";
 import paddingAroundMultilineStatements from "./rules/padding-around-multiline-statements.js";
+import tailwindCanonicalClasses from "./rules/tailwind-canonical-classes.js";
 
 /** @public */
 export default eslintCompatPlugin({
@@ -16,5 +17,6 @@ export default eslintCompatPlugin({
     "no-object-params-in-cache": noObjectParamsInCache,
     "no-t-function-as-argument": noTFunctionAsArgument,
     "padding-around-multiline-statements": paddingAroundMultilineStatements,
+    "tailwind-canonical-classes": tailwindCanonicalClasses,
   },
 });
