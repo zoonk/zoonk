@@ -641,4 +641,67 @@ describe(submitPlayerCompletion, () => {
     expect(lessonProgress).toBeNull();
     expect(stepAttempts).toHaveLength(0);
   });
+
+  it("persists review completion when only non-answerable fillers are missing", async () => {
+    const [user, { chapter, organization }] = await Promise.all([
+      userFixture(),
+      createChapterContext(),
+    ]);
+
+    const [reviewLesson, sourceLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        kind: "review",
+        organizationId: organization.id,
+        position: 1,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        kind: "vocabulary",
+        organizationId: organization.id,
+        position: 0,
+      }),
+    ]);
+
+    const answerableSteps = await Promise.all(
+      Array.from({ length: REVIEW_TARGET_STEP_COUNT - 1 }, (_, position) =>
+        stepFixture({
+          content: buildMultipleChoiceContent(),
+          isPublished: true,
+          kind: "multipleChoice",
+          lessonId: sourceLesson.id,
+          position,
+        }),
+      ),
+    );
+
+    await stepFixture({
+      content: {},
+      isPublished: true,
+      kind: "vocabulary",
+      lessonId: sourceLesson.id,
+      position: REVIEW_TARGET_STEP_COUNT,
+    });
+
+    const result = await submitPlayerCompletion({
+      input: buildReviewCompletionInput({
+        lessonId: reviewLesson.id,
+        stepIds: answerableSteps.map((step) => step.id),
+      }),
+      userId: user.id,
+    });
+
+    const [dailyProgress, stepAttempts] = await Promise.all([
+      prisma.dailyProgress.findFirst({ where: { userId: user.id } }),
+      prisma.stepAttempt.findMany({
+        where: { stepId: { in: answerableSteps.map((step) => step.id) }, userId: user.id },
+      }),
+    ]);
+
+    expect(result).toStrictEqual({ preloadLessonId: null });
+    expect(stepAttempts).toHaveLength(REVIEW_TARGET_STEP_COUNT - 1);
+    expect(dailyProgress?.correctAnswers).toBe(REVIEW_TARGET_STEP_COUNT - 1);
+  });
 });

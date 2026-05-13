@@ -28,20 +28,7 @@ export type StepData = {
 
 type ValidatedStepResult = { answer: object; isCorrect: boolean; stepId: string };
 
-type ServerValidationBehavior =
-  | "fillBlank"
-  | "listening"
-  | "matchColumns"
-  | "multipleChoice"
-  | "none"
-  | "reading"
-  | "selectImage"
-  | "sortOrder"
-  | "translation";
-
-type AnswerableStepKind = Exclude<ServerValidationBehavior, "none">;
-
-const ANSWERABLE_STEP_KINDS: readonly AnswerableStepKind[] = [
+export const ANSWERABLE_STEP_KINDS = [
   "fillBlank",
   "listening",
   "matchColumns",
@@ -50,7 +37,10 @@ const ANSWERABLE_STEP_KINDS: readonly AnswerableStepKind[] = [
   "selectImage",
   "sortOrder",
   "translation",
-];
+] as const satisfies readonly StepKind[];
+
+type AnswerableStepKind = (typeof ANSWERABLE_STEP_KINDS)[number];
+type ServerValidationBehavior = AnswerableStepKind | "none";
 
 /**
  * Step kinds that share their database name with a validator can return that

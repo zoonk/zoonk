@@ -1,10 +1,10 @@
 import "server-only";
-import { type LessonKind, type StepKind, getPublishedStepWhere, prisma } from "@zoonk/db";
+import { type LessonKind, getPublishedStepWhere, prisma } from "@zoonk/db";
 import { shuffle } from "@zoonk/utils/shuffle";
+import { ANSWERABLE_STEP_KINDS } from "../contracts/validate-answers";
 
 const REVIEW_TARGET_COUNT = 10;
 const EXCLUDED_LESSON_KINDS: LessonKind[] = ["review"];
-const NON_REVIEWABLE_STEP_KINDS: StepKind[] = ["static", "visual"];
 
 async function getReviewChapterId(lessonId: string) {
   const lesson = await prisma.lesson.findUnique({
@@ -19,7 +19,7 @@ function reviewableStepFilter(chapterId: string) {
   return getPublishedStepWhere({
     chapterWhere: { id: chapterId },
     lessonWhere: { kind: { notIn: EXCLUDED_LESSON_KINDS } },
-    stepWhere: { kind: { notIn: NON_REVIEWABLE_STEP_KINDS } },
+    stepWhere: { kind: { in: [...ANSWERABLE_STEP_KINDS] } },
   });
 }
 

@@ -377,6 +377,26 @@ describe(getReviewSteps, () => {
     }
   });
 
+  it("excludes vocabulary steps", async () => {
+    const isolated = await createLessonWithSteps(org.id, 3);
+
+    await stepFixture({
+      content: {},
+      isPublished: true,
+      kind: "vocabulary",
+      lessonId: isolated.lesson.id,
+      position: 10,
+    });
+
+    const result = await getReviewSteps({ lessonId: isolated.lesson.id, userId: null });
+
+    expect(result).toHaveLength(3);
+
+    for (const step of result) {
+      expect(step.kind).not.toBe("vocabulary");
+    }
+  });
+
   it("fills with random steps when total mistakes < 10", async () => {
     const [newLesson, newUser] = await Promise.all([
       createLessonWithSteps(org.id, 12),
