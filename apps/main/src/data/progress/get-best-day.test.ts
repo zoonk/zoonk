@@ -120,6 +120,40 @@ describe("authenticated users", () => {
     expect(result?.score).toBe(90);
   });
 
+  it("excludes later records when endDate is provided", async () => {
+    const user = await userFixture();
+    const headers = await signInAs(user.email, user.password);
+
+    await prisma.dailyProgress.createMany({
+      data: [
+        {
+          correctAnswers: 8,
+          date: new Date("2025-01-06T12:00:00Z"),
+          dayOfWeek: 1, // Monday
+          incorrectAnswers: 2,
+          userId: user.id,
+        },
+        {
+          correctAnswers: 10,
+          date: new Date("2025-02-02T12:00:00Z"),
+          dayOfWeek: 0, // Sunday
+          incorrectAnswers: 0,
+          userId: user.id,
+        },
+      ],
+    });
+
+    const result = await getBestDay({
+      endDate: new Date("2025-01-31T23:59:59.999Z"),
+      headers,
+      startDate: new Date("2025-01-01T00:00:00Z"),
+    });
+
+    expect(result).not.toBeNull();
+    expect(result?.dayOfWeek).toBe(1); // Monday
+    expect(result?.score).toBe(80);
+  });
+
   it("returns correct score calculation", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
