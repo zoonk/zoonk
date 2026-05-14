@@ -57,6 +57,14 @@ describe(getChapterForGeneration, () => {
     expect(result).toBeNull();
   });
 
+  it("returns null for valid chapter ids padded with whitespace", async () => {
+    const chapter = await chapterFixture({ courseId: course.id, organizationId });
+
+    const result = await getChapterForGeneration(` ${chapter.id} `);
+
+    expect(result).toBeNull();
+  });
+
   it("returns null for chapters outside the AI organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });

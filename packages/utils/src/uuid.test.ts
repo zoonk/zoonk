@@ -13,4 +13,8 @@ describe(isUuid, () => {
     expect(isUuid("")).toBe(false);
     expect(isUuid(null)).toBe(false);
   });
+
+  it("returns false for UUID strings padded with whitespace", () => {
+    expect(isUuid(" 018f5c3e-a9f8-7cc9-88d4-31e5c7286210 ")).toBe(false);
+  });
 });
