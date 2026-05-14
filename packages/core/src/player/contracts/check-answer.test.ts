@@ -189,6 +189,29 @@ describe(checkMatchColumnsAnswer, () => {
       isCorrect: false,
     });
   });
+
+  it("returns incorrect when duplicate pair counts do not match", () => {
+    const duplicateContent: MatchColumnsStepContent = {
+      pairs: [
+        { left: "A", right: "1" },
+        { left: "A", right: "1" },
+        { left: "B", right: "2" },
+      ],
+      question: "Match the items.",
+    };
+
+    expect(
+      checkMatchColumnsAnswer(
+        duplicateContent,
+        [
+          { left: "A", right: "1" },
+          { left: "B", right: "2" },
+          { left: "B", right: "2" },
+        ],
+        0,
+      ),
+    ).toStrictEqual({ correctAnswer: null, feedback: null, isCorrect: false });
+  });
 });
 
 describe(checkSortOrderAnswer, () => {

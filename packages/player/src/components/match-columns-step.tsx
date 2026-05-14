@@ -13,33 +13,102 @@ import { InteractiveStepLayout } from "./step-layouts";
 
 type Pair = { left: string; right: string };
 type ItemVisualState = "correct" | "idle" | "incorrectFlash" | "selected";
+type MatchSide = "left" | "right";
 
 const FLASH_DURATION = 800;
 
-type Selection = { item: string; side: "left" | "right" };
+type MatchItemData = { id: string; label: string; side: MatchSide };
+type MatchSelection = MatchItemData;
+type MatchAttempt = { leftId: string; pair: Pair; rightId: string };
+
+/**
+ * Match-column content only stores display labels, and duplicate labels are valid authored content.
+ * The player still needs one identity per visible button so solving one duplicate does not lock every
+ * other button with the same text.
+ */
+function buildLeftMatchItems(pairs: Pair[]): MatchItemData[] {
+  return pairs.map((pair, index) => ({ id: `left:${index}`, label: pair.left, side: "left" }));
+}
+
+/**
+ * Right-side labels are already shuffled before they reach the component, so their rendered order is
+ * the only stable identity available. That is enough because equal labels are interchangeable for
+ * answer checking, but each visible button must still be selectable exactly once.
+ */
+function buildRightMatchItems(labels: string[]): MatchItemData[] {
+  return labels.map((label, index) => ({ id: `right:${index}`, label, side: "right" }));
+}
+
+/**
+ * Correct and flashing states belong to a clicked visual item, not every item with the same label.
+ * This keeps duplicate labels independent while preserving the label-only answer contract.
+ */
+function getAttemptItemId({ attempt, side }: { attempt: MatchAttempt; side: MatchSide }): string {
+  return side === "left" ? attempt.leftId : attempt.rightId;
+}
+
+/**
+ * The answer contract still uses labels, so the pair sent to shared checking is built from the two
+ * selected buttons while the local ids remember which rendered buttons should become locked.
+ */
+function buildMatchAttempt({
+  current,
+  selected,
+}: {
+  current: MatchSelection;
+  selected: MatchSelection;
+}): MatchAttempt {
+  if (current.side === "left") {
+    return {
+      leftId: current.id,
+      pair: { left: current.label, right: selected.label },
+      rightId: selected.id,
+    };
+  }
+
+  return {
+    leftId: selected.id,
+    pair: { left: selected.label, right: current.label },
+    rightId: current.id,
+  };
+}
+
+/**
+ * A visible button is matched when its local id was used in a successful pair. Labels are intentionally
+ * ignored here because duplicate labels need independent state.
+ */
+function isItemMatched({
+  correctMatches,
+  item,
+}: {
+  correctMatches: MatchAttempt[];
+  item: MatchItemData;
+}): boolean {
+  return correctMatches.some(
+    (match) => getAttemptItemId({ attempt: match, side: item.side }) === item.id,
+  );
+}
 
 function getItemVisualState({
-  correctPairs,
-  flashingPair,
+  correctMatches,
+  flashingMatch,
   item,
   selected,
-  side,
 }: {
-  correctPairs: Pair[];
-  flashingPair: Pair | null;
-  item: string;
-  selected: Selection | null;
-  side: "left" | "right";
+  correctMatches: MatchAttempt[];
+  flashingMatch: MatchAttempt | null;
+  item: MatchItemData;
+  selected: MatchSelection | null;
 }): ItemVisualState {
-  if (correctPairs.some((pair) => pair[side] === item)) {
+  if (isItemMatched({ correctMatches, item })) {
     return "correct";
   }
 
-  if (flashingPair && flashingPair[side] === item) {
+  if (flashingMatch && getAttemptItemId({ attempt: flashingMatch, side: item.side }) === item.id) {
     return "incorrectFlash";
   }
 
-  if (selected && selected.side === side && selected.item === item) {
+  if (selected && selected.id === item.id) {
     return "selected";
   }
 
@@ -92,19 +161,19 @@ function MatchItem({
 }
 
 function MatchGrid({
-  correctPairs,
-  flashingPair,
+  correctMatches,
+  flashingMatch,
   leftItems,
   onTap,
   rightItems,
   selected,
 }: {
-  correctPairs: Pair[];
-  flashingPair: Pair | null;
-  leftItems: string[];
-  onTap: (side: "left" | "right", item: string) => void;
-  rightItems: string[];
-  selected: Selection | null;
+  correctMatches: MatchAttempt[];
+  flashingMatch: MatchAttempt | null;
+  leftItems: MatchItemData[];
+  onTap: (item: MatchItemData) => void;
+  rightItems: MatchItemData[];
+  selected: MatchSelection | null;
 }) {
   return (
     <div className="grid grid-cols-2 gap-2 sm:gap-3">
@@ -116,25 +185,23 @@ function MatchGrid({
         }
 
         const leftState = getItemVisualState({
-          correctPairs,
-          flashingPair,
+          correctMatches,
+          flashingMatch,
           item: left,
           selected,
-          side: "left",
         });
 
         const rightState = getItemVisualState({
-          correctPairs,
-          flashingPair,
+          correctMatches,
+          flashingMatch,
           item: right,
           selected,
-          side: "right",
         });
 
         return (
-          <Fragment key={left}>
-            <MatchItem label={left} onTap={() => onTap("left", left)} state={leftState} />
-            <MatchItem label={right} onTap={() => onTap("right", right)} state={rightState} />
+          <Fragment key={left.id}>
+            <MatchItem label={left.label} onTap={() => onTap(left)} state={leftState} />
+            <MatchItem label={right.label} onTap={() => onTap(right)} state={rightState} />
           </Fragment>
         );
       })}
@@ -154,54 +221,60 @@ export function MatchColumnsStep({
   const t = useExtracted();
   const { trigger } = useWebHaptics();
 
-  const leftItems = useMemo(() => content.pairs.map((pair) => pair.left), [content.pairs]);
+  const leftItems = useMemo(() => buildLeftMatchItems(content.pairs), [content.pairs]);
 
-  const [selected, setSelected] = useState<Selection | null>(null);
-  const [correctPairs, setCorrectPairs] = useState<Pair[]>([]);
-  const [flashingPair, setFlashingPair] = useState<Pair | null>(null);
+  const rightItems = useMemo(
+    () => buildRightMatchItems(step.matchColumnsRightItems),
+    [step.matchColumnsRightItems],
+  );
+
+  const [selected, setSelected] = useState<MatchSelection | null>(null);
+  const [correctMatches, setCorrectMatches] = useState<MatchAttempt[]>([]);
+  const [flashingMatch, setFlashingMatch] = useState<MatchAttempt | null>(null);
   const [mistakes, setMistakes] = useState(0);
   const flashTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleTap = useCallback(
-    (side: "left" | "right", item: string) => {
-      if (correctPairs.some((pair) => pair[side] === item)) {
+    (item: MatchItemData) => {
+      if (isItemMatched({ correctMatches, item })) {
         return;
       }
 
-      if (flashingPair) {
+      if (flashingMatch) {
         return;
       }
 
       if (!selected) {
-        setSelected({ item, side });
+        setSelected(item);
         return;
       }
 
-      if (selected.side === side) {
-        setSelected(selected.item === item ? null : { item, side });
+      if (selected.side === item.side) {
+        setSelected(selected.id === item.id ? null : item);
         return;
       }
 
-      const pair: Pair =
-        side === "left"
-          ? { left: item, right: selected.item }
-          : { left: selected.item, right: item };
+      const match = buildMatchAttempt({ current: item, selected });
 
-      const isCorrectPair = checkSingleMatchPair(content, pair);
+      const isCorrectPair = checkSingleMatchPair(content, match.pair);
 
       if (isCorrectPair) {
-        const nextCorrect = [...correctPairs, pair];
+        const nextCorrect = [...correctMatches, match];
         void trigger("light");
-        setCorrectPairs(nextCorrect);
+        setCorrectMatches(nextCorrect);
         setSelected(null);
 
         if (nextCorrect.length === content.pairs.length) {
-          onSelectAnswer(step.id, { kind: "matchColumns", mistakes, userPairs: nextCorrect });
+          onSelectAnswer(step.id, {
+            kind: "matchColumns",
+            mistakes,
+            userPairs: nextCorrect.map((attempt) => attempt.pair),
+          });
         }
       } else {
         void trigger("warning");
         setMistakes((prev) => prev + 1);
-        setFlashingPair(pair);
+        setFlashingMatch(match);
         setSelected(null);
 
         if (flashTimeoutRef.current) {
@@ -209,26 +282,26 @@ export function MatchColumnsStep({
         }
 
         flashTimeoutRef.current = setTimeout(() => {
-          setFlashingPair(null);
+          setFlashingMatch(null);
           flashTimeoutRef.current = null;
         }, FLASH_DURATION);
       }
     },
-    [content, correctPairs, flashingPair, mistakes, onSelectAnswer, selected, step.id, trigger],
+    [content, correctMatches, flashingMatch, mistakes, onSelectAnswer, selected, step.id, trigger],
   );
 
-  const allMatched = correctPairs.length === content.pairs.length;
+  const allMatched = correctMatches.length === content.pairs.length;
 
   return (
     <InteractiveStepLayout>
       {content.question && <QuestionText>{content.question}</QuestionText>}
 
       <MatchGrid
-        correctPairs={correctPairs}
-        flashingPair={flashingPair}
+        correctMatches={correctMatches}
+        flashingMatch={flashingMatch}
         leftItems={leftItems}
         onTap={handleTap}
-        rightItems={step.matchColumnsRightItems}
+        rightItems={rightItems}
         selected={selected}
       />
 

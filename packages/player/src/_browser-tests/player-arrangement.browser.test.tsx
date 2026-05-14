@@ -40,6 +40,48 @@ describe("player browser integration: arrangement steps", () => {
     await expect.element(page.getByRole("heading", { name: "Next step" })).toBeInTheDocument();
   });
 
+  it("keeps duplicate match-column labels selectable until each visible item is matched", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        steps: [
+          buildSerializedStep({
+            content: {
+              pairs: [
+                { left: "Alpha", right: "One" },
+                { left: "Alpha", right: "Two" },
+                { left: "Beta", right: "One" },
+              ],
+              question: "Match each item",
+            },
+            id: "match-duplicates",
+            kind: "matchColumns",
+            matchColumnsRightItems: ["One", "Two", "One"],
+          }),
+          buildSerializedStep({
+            content: { text: "Matched duplicates", title: "Next step", variant: "text" as const },
+            id: "static-after-duplicates",
+            position: 1,
+          }),
+        ],
+      }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await page.getByRole("button", { name: "Alpha" }).nth(0).click();
+    await page.getByRole("button", { name: "One" }).nth(0).click();
+
+    await expect.element(page.getByRole("button", { name: "Alpha" }).nth(1)).toBeEnabled();
+    await expect.element(page.getByRole("button", { name: "One" }).nth(1)).toBeEnabled();
+
+    await page.getByRole("button", { name: "Alpha" }).nth(1).click();
+    await page.getByRole("button", { name: "Two" }).click();
+    await page.getByRole("button", { name: "Beta" }).click();
+    await page.getByRole("button", { name: "One" }).nth(1).click();
+    await page.getByRole("button", { name: /check/iu }).click();
+
+    await expect.element(page.getByRole("heading", { name: "Next step" })).toBeInTheDocument();
+  });
+
   it("checks a preordered sort step without requiring app-specific routing", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
