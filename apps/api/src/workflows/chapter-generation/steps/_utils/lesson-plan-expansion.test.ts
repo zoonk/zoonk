@@ -133,4 +133,35 @@ describe(expandChapterLessons, () => {
       "review",
     ]);
   });
+
+  it("drops alphabet lessons for Roman-script target languages", () => {
+    const lessons: GeneratedChapterLesson[] = [
+      { description: "Letters", kind: "alphabet", title: "Alphabet" },
+      { description: "Words", kind: "vocabulary", title: "Words" },
+    ];
+
+    expect(kinds(expandChapterLessons({ lessons, targetLanguage: "es" }))).toStrictEqual([
+      "vocabulary",
+      "translation",
+      "reading",
+      "listening",
+      "review",
+    ]);
+  });
+
+  it("keeps alphabet lessons for non-Roman target languages", () => {
+    const lessons: GeneratedChapterLesson[] = [
+      { description: "Kana", kind: "alphabet", title: "Kana" },
+      { description: "Words", kind: "vocabulary", title: "Words" },
+    ];
+
+    expect(kinds(expandChapterLessons({ lessons, targetLanguage: "ja" }))).toStrictEqual([
+      "alphabet",
+      "vocabulary",
+      "translation",
+      "reading",
+      "listening",
+      "review",
+    ]);
+  });
 });
