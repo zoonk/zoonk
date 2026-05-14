@@ -1,5 +1,5 @@
 import { type LessonKind } from "@zoonk/db";
-import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
+import { isTTSSupportedLanguage, needsRomanization } from "@zoonk/utils/languages";
 
 type GeneratedChapterLesson = {
   description?: string | null;
@@ -216,6 +216,27 @@ function takeVocabularyRun(lessons: GeneratedChapterLesson[]) {
 }
 
 /**
+ * Alphabet lessons only help when the learner must first recognize a writing
+ * system that is not written with Roman letters. Models sometimes create
+ * alphabet rows for languages like Spanish because the topic is common in
+ * beginner curricula, but those rows duplicate pronunciation practice and
+ * should never become stored lesson records.
+ */
+function shouldKeepLanguageLesson({
+  lesson,
+  targetLanguage,
+}: {
+  lesson: GeneratedChapterLesson;
+  targetLanguage: string;
+}) {
+  if (lesson.kind !== "alphabet") {
+    return true;
+  }
+
+  return needsRomanization(targetLanguage);
+}
+
+/**
  * Language plans keep the model-authored grammar/alphabet order and expand only
  * contiguous vocabulary runs. A single chapter-level review is appended after
  * all generated language content.
@@ -263,7 +284,11 @@ export function expandChapterLessons({
     return expandContentLessons({ lessons });
   }
 
-  const expanded = expandLanguageLessons({ lessons, targetLanguage });
+  const filteredLessons = lessons.filter((lesson) =>
+    shouldKeepLanguageLesson({ lesson, targetLanguage }),
+  );
+
+  const expanded = expandLanguageLessons({ lessons: filteredLessons, targetLanguage });
 
   if (expanded.length === 0) {
     return [];
