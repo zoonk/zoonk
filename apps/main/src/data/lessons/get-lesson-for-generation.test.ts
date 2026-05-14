@@ -52,6 +52,14 @@ describe(getLessonForGeneration, () => {
     expect(result).toBeNull();
   });
 
+  it("returns null for valid lesson ids padded with whitespace", async () => {
+    const lesson = await lessonFixture({ chapterId: chapter.id, organizationId });
+
+    const result = await getLessonForGeneration(` ${lesson.id} `);
+
+    expect(result).toBeNull();
+  });
+
   it("returns null for lessons outside the AI organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });

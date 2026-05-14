@@ -211,6 +211,18 @@ describe("course-suggestions", () => {
     expect(result).toBeNull();
   });
 
+  it("getCourseSuggestionById returns null for valid ids padded with whitespace", async () => {
+    const title = `padded-id-${randomUUID()}`;
+
+    const item = await prisma.courseSuggestion.create({
+      data: { description: "Test description", language: "en", slug: toSlug(title), title },
+    });
+
+    const result = await getCourseSuggestionById(` ${item.id} `);
+
+    expect(result).toBeNull();
+  });
+
   it("getCourseSuggestionById returns suggestion by id", async () => {
     const language = "en";
     const title = `by-id-${randomUUID()}`;
