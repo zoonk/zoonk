@@ -51,16 +51,40 @@ export function checkSingleMatchPair(
   );
 }
 
+/**
+ * Duplicate match-column labels are valid, so answer checking needs to compare full pair
+ * multiplicity. JSON array keys avoid delimiter collisions between labels like ["a|b", "c"].
+ */
+function getSortedMatchPairKeys(pairs: { left: string; right: string }[]): string[] {
+  return pairs.map((pair) => JSON.stringify([pair.left, pair.right])).toSorted();
+}
+
+/**
+ * The player submits label pairs, not visual ids. Sorting the serialized pairs gives us a small
+ * multiset comparison so duplicate pairs must appear the same number of times in both lists.
+ */
+function hasSameMatchPairCounts({
+  correctPairs,
+  userPairs,
+}: {
+  correctPairs: { left: string; right: string }[];
+  userPairs: { left: string; right: string }[];
+}): boolean {
+  const correctKeys = getSortedMatchPairKeys(correctPairs);
+  const userKeys = getSortedMatchPairKeys(userPairs);
+
+  return (
+    correctKeys.length === userKeys.length &&
+    correctKeys.every((key, index) => key === userKeys[index])
+  );
+}
+
 export function checkMatchColumnsAnswer(
   content: MatchColumnsStepContent,
   userPairs: { left: string; right: string }[],
   mistakes: number,
 ): AnswerResult {
-  const allPairsCorrect =
-    content.pairs.length === userPairs.length &&
-    content.pairs.every((pair) =>
-      userPairs.some((userPair) => userPair.left === pair.left && userPair.right === pair.right),
-    );
+  const allPairsCorrect = hasSameMatchPairCounts({ correctPairs: content.pairs, userPairs });
 
   return { correctAnswer: null, feedback: null, isCorrect: allPairsCorrect && mistakes === 0 };
 }
