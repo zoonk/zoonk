@@ -54,7 +54,11 @@ export async function ScoreContent({
         periodStart={data.periodStart}
       />
 
-      <ScoreInsights period={validPeriod} periodStart={data.periodStart} />
+      <ScoreInsights
+        period={validPeriod}
+        periodEnd={data.periodEnd}
+        periodStart={data.periodStart}
+      />
 
       <ScoreExplanation />
     </div>

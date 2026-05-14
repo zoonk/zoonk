@@ -234,4 +234,41 @@ describe("authenticated users", () => {
     expect(result?.period).toBe(1); // Morning (only recent data)
     expect(result?.score).toBe(80);
   });
+
+  it("excludes later records when endDate is provided", async () => {
+    const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
+
+    const [headers, step] = await Promise.all([
+      signInAs(user.email, user.password),
+      createTestStep(org.id),
+    ]);
+
+    const userId = user.id;
+    const stepId = step.id;
+
+    await Promise.all([
+      // Morning inside the requested historical period: 80%
+      createStepAttempts(
+        { answeredAt: new Date("2025-01-06T09:00:00Z"), hourOfDay: 9, stepId, userId },
+        8,
+        2,
+      ),
+      // Afternoon after the requested historical period: 100%
+      createStepAttempts(
+        { answeredAt: new Date("2025-02-02T15:00:00Z"), hourOfDay: 15, stepId, userId },
+        10,
+        0,
+      ),
+    ]);
+
+    const result = await getBestTime({
+      endDate: new Date("2025-01-31T23:59:59.999Z"),
+      headers,
+      startDate: new Date("2025-01-01T00:00:00Z"),
+    });
+
+    expect(result).not.toBeNull();
+    expect(result?.period).toBe(1); // Morning
+    expect(result?.score).toBe(80);
+  });
 });

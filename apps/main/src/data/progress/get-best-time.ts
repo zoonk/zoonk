@@ -1,6 +1,6 @@
 import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
-import { prisma } from "@zoonk/db";
+import { type Sql, prisma, sql } from "@zoonk/db";
 import { type ScoredRow, findBestByScore } from "@zoonk/utils/aggregation";
 import { getDefaultStartDate } from "@zoonk/utils/date-ranges";
 import { safeAsync } from "@zoonk/utils/error";
@@ -8,8 +8,26 @@ import { cache } from "react";
 
 type BestTimeData = { score: number; period: number };
 
+/**
+ * Historical score views need the same closed date window for insight cards as
+ * they use for the chart. The end filter stays optional so homepage summaries
+ * can keep their default rolling lookback without pretending there is a fixed
+ * period end.
+ */
+function getAnsweredAtEndFilter({ endDate }: { endDate?: Date }): Sql {
+  if (!endDate) {
+    return sql`TRUE`;
+  }
+
+  return sql`answered_at <= ${endDate}`;
+}
+
 const cachedGetBestTime = cache(
-  async (startDateIso?: string, headers?: Headers): Promise<BestTimeData | null> => {
+  async (
+    startDateIso?: string,
+    endDateIso?: string,
+    headers?: Headers,
+  ): Promise<BestTimeData | null> => {
     const session = await getSession(headers);
 
     if (!session) {
@@ -18,6 +36,8 @@ const cachedGetBestTime = cache(
 
     const userId = session.user.id;
     const startDate = getDefaultStartDate(startDateIso);
+    const endDate = endDateIso ? new Date(endDateIso) : undefined;
+    const answeredAtEndFilter = getAnsweredAtEndFilter({ endDate });
 
     const { data: results, error } = await safeAsync(
       () =>
@@ -35,6 +55,7 @@ const cachedGetBestTime = cache(
           COUNT(*) FILTER (WHERE is_correct = false)::int AS "incorrect"
         FROM step_attempts
         WHERE user_id = ${userId} AND answered_at >= ${startDate}
+          AND ${answeredAtEndFilter}
         GROUP BY 1
         HAVING COUNT(*) FILTER (WHERE is_correct = true) + COUNT(*) FILTER (WHERE is_correct = false) > 0
       `,
@@ -55,10 +76,20 @@ const cachedGetBestTime = cache(
   },
 );
 
+/**
+ * Score insights use this for both rolling summaries and fixed historical
+ * periods. Keeping the end date optional lets the homepage keep its rolling
+ * lookback while score-page history can prevent future attempts from affecting
+ * a previous period.
+ */
 export function getBestTime(params?: {
   headers?: Headers;
   startDate?: Date;
   endDate?: Date;
 }): Promise<BestTimeData | null> {
-  return cachedGetBestTime(params?.startDate?.toISOString(), params?.headers);
+  return cachedGetBestTime(
+    params?.startDate?.toISOString(),
+    params?.endDate?.toISOString(),
+    params?.headers,
+  );
 }

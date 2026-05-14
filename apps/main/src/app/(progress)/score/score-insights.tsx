@@ -32,16 +32,18 @@ async function getPeriodLabel(period: HistoryPeriod): Promise<string> {
 
 export async function ScoreInsights({
   period,
+  periodEnd,
   periodStart,
 }: {
   period: HistoryPeriod;
+  periodEnd: Date;
   periodStart: Date;
 }) {
   const locale = await getLocale();
 
   const [bestDayData, bestTimeData, periodLabel] = await Promise.all([
-    getBestDay({ startDate: periodStart }),
-    getBestTime({ startDate: periodStart }),
+    getBestDay({ endDate: periodEnd, startDate: periodStart }),
+    getBestTime({ endDate: periodEnd, startDate: periodStart }),
     getPeriodLabel(period),
   ]);
 

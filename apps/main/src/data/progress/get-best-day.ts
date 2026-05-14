@@ -8,7 +8,11 @@ import { cache } from "react";
 type BestDayData = { score: number; dayOfWeek: number };
 
 const cachedGetBestDay = cache(
-  async (startDateIso?: string, headers?: Headers): Promise<BestDayData | null> => {
+  async (
+    startDateIso?: string,
+    endDateIso?: string,
+    headers?: Headers,
+  ): Promise<BestDayData | null> => {
     const session = await getSession(headers);
 
     if (!session) {
@@ -17,11 +21,13 @@ const cachedGetBestDay = cache(
 
     const userId = session.user.id;
     const startDate = getDefaultStartDate(startDateIso);
+    const endDate = endDateIso ? new Date(endDateIso) : undefined;
+    const dateFilter = endDate ? { gte: startDate, lte: endDate } : { gte: startDate };
 
     const results = await prisma.dailyProgress.groupBy({
       _sum: { correctAnswers: true, incorrectAnswers: true },
       by: ["dayOfWeek"],
-      where: { date: { gte: startDate }, userId },
+      where: { date: dateFilter, userId },
     });
 
     if (results.length === 0) {
@@ -39,9 +45,20 @@ const cachedGetBestDay = cache(
   },
 );
 
+/**
+ * Score insights use this for both rolling summaries and fixed historical
+ * periods. Keeping the end date optional lets the homepage keep its rolling
+ * lookback while score-page history can prevent future progress from affecting
+ * a previous period.
+ */
 export function getBestDay(params?: {
+  endDate?: Date;
   headers?: Headers;
   startDate?: Date;
 }): Promise<BestDayData | null> {
-  return cachedGetBestDay(params?.startDate?.toISOString(), params?.headers);
+  return cachedGetBestDay(
+    params?.startDate?.toISOString(),
+    params?.endDate?.toISOString(),
+    params?.headers,
+  );
 }
