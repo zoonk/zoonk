@@ -1,9 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
-import {
-  generateCourseIdentitySearchQueries,
-  resolveCourseIdentity,
-} from "@zoonk/ai/tasks/courses/identity";
+import { resolveCourseIdentity } from "@zoonk/ai/tasks/courses/identity";
+import { generateCourseIdentitySearchQueries } from "@zoonk/ai/tasks/courses/identity-search";
 import { prisma } from "@zoonk/db";
 import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -12,10 +10,11 @@ import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { resolveCourseIdentityStep } from "./resolve-course-identity-step";
 
-vi.mock("@zoonk/ai/tasks/courses/identity", () => ({
+vi.mock("@zoonk/ai/tasks/courses/identity-search", () => ({
   generateCourseIdentitySearchQueries: vi.fn(),
-  resolveCourseIdentity: vi.fn(),
 }));
+
+vi.mock("@zoonk/ai/tasks/courses/identity", () => ({ resolveCourseIdentity: vi.fn() }));
 
 const usage = {
   inputTokenDetails: {

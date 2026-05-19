@@ -2,9 +2,9 @@ import { createStepStream } from "@/workflows/_shared/stream-status";
 import {
   type CourseIdentityCandidate,
   type CourseIdentitySuggestion,
-  generateCourseIdentitySearchQueries,
   resolveCourseIdentity,
 } from "@zoonk/ai/tasks/courses/identity";
+import { generateCourseIdentitySearchQueries } from "@zoonk/ai/tasks/courses/identity-search";
 import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import {
   type CourseGetPayload,

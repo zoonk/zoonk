@@ -3,7 +3,7 @@ import {
   type CourseIdentitySearchParams,
   type CourseIdentitySearchSchema,
   generateCourseIdentitySearchQueries,
-} from "@zoonk/ai/tasks/courses/identity";
+} from "@zoonk/ai/tasks/courses/identity-search";
 import { TEST_CASES } from "./test-cases";
 
 export const courseIdentitySearchTask: Task<

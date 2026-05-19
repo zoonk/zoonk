@@ -25,6 +25,7 @@
     "./tasks/courses/chapters": "./src/tasks/courses/course-chapters.ts",
     "./tasks/courses/description": "./src/tasks/courses/course-description.ts",
     "./tasks/courses/identity": "./src/tasks/courses/course-identity.ts",
+    "./tasks/courses/identity-search": "./src/tasks/courses/course-identity-search.ts",
     "./tasks/courses/language-chapters": "./src/tasks/courses/language-course-chapters.ts",
     "./tasks/courses/suggestions": "./src/tasks/courses/course-suggestions.ts",
     "./tasks/content/thumbnail": "./src/tasks/content/content-thumbnail.ts",

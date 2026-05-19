@@ -4,10 +4,8 @@ import { generateChapterLessons } from "@zoonk/ai/tasks/chapters/lessons";
 import { generateCourseCategories } from "@zoonk/ai/tasks/courses/categories";
 import { generateCourseChapters } from "@zoonk/ai/tasks/courses/chapters";
 import { generateCourseDescription } from "@zoonk/ai/tasks/courses/description";
-import {
-  generateCourseIdentitySearchQueries,
-  resolveCourseIdentity,
-} from "@zoonk/ai/tasks/courses/identity";
+import { resolveCourseIdentity } from "@zoonk/ai/tasks/courses/identity";
+import { generateCourseIdentitySearchQueries } from "@zoonk/ai/tasks/courses/identity-search";
 import { generateContentThumbnailImage } from "@zoonk/core/content/thumbnail";
 import { COURSE_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
@@ -55,14 +53,17 @@ vi.mock("@zoonk/ai/tasks/courses/language-chapters", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/courses/identity", () => ({
+vi.mock("@zoonk/ai/tasks/courses/identity-search", () => ({
   generateCourseIdentitySearchQueries: vi
     .fn()
     .mockResolvedValue({ data: { queries: [] }, systemPrompt: "", usage: {}, userPrompt: "" }),
+}));
+
+vi.mock("@zoonk/ai/tasks/courses/identity", () => ({
   resolveCourseIdentity: vi
     .fn()
     .mockResolvedValue({
-      data: { courseId: null, decision: "createNew", reason: "no matching course" },
+      data: { courseSlug: null, decision: "createNew", reason: "no matching course" },
       systemPrompt: "",
       usage: {},
       userPrompt: "",
