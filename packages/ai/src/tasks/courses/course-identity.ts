@@ -39,23 +39,6 @@ export type CourseIdentityParams = {
 };
 
 /**
- * Builds provider options inside the classifier task so this file remains
- * standalone. The search task duplicates the same small defaults because each
- * AI task should be readable without following another course-identity helper.
- */
-function buildProviderConfig({
-  model,
-  reasoningEffort,
-  useFallback,
-}: {
-  model: string;
-  reasoningEffort?: ReasoningEffort;
-  useFallback: boolean;
-}) {
-  return buildProviderOptions({ fallbackModels, model, reasoningEffort, useFallback });
-}
-
-/**
  * Builds one stable prompt payload so evals and production use the same
  * candidate-classification contract. Keeping this JSON-shaped avoids prompt
  * wording drift when candidate fields are added later.
@@ -82,7 +65,12 @@ export async function resolveCourseIdentity({
 }: CourseIdentityParams) {
   const userPrompt = buildIdentityUserPrompt({ candidates, suggestion });
 
-  const providerOptions = buildProviderConfig({ model, reasoningEffort, useFallback });
+  const providerOptions = buildProviderOptions({
+    fallbackModels,
+    model,
+    reasoningEffort,
+    useFallback,
+  });
 
   const { output, usage } = await generateText({
     model,
