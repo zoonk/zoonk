@@ -19,14 +19,20 @@ export type CourseContext = {
  * This is a pure save step — one DB operation.
  */
 async function updateCourseSuggestionToRunning({
+  courseId,
   suggestionId,
   workflowRunId,
 }: {
+  courseId?: string;
   suggestionId: string;
   workflowRunId: string;
 }): Promise<void> {
   await prisma.courseSuggestion.update({
-    data: { generationRunId: workflowRunId, generationStatus: "running" },
+    data: {
+      ...(courseId ? { courseId } : {}),
+      generationRunId: workflowRunId,
+      generationStatus: "running",
+    },
     where: { id: suggestionId },
   });
 }
@@ -96,6 +102,12 @@ export async function initializeCourseStep(input: {
   await updateCourseSuggestionToRunning({ suggestionId: suggestion.id, workflowRunId });
 
   const course = await createCourseEntity({ organizationId: aiOrg.id, suggestion, workflowRunId });
+
+  await updateCourseSuggestionToRunning({
+    courseId: course.courseId,
+    suggestionId: suggestion.id,
+    workflowRunId,
+  });
 
   await stream.status({ status: "completed", step: "initializeCourse" });
 

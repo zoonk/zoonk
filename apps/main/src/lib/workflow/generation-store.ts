@@ -6,6 +6,7 @@ export type GenerationState<TStep extends string = string> = {
   completedSteps: TStep[];
   currentStep: TStep | null;
   error: string | null;
+  completionEntityId: string | null;
   reconnectCount: number;
   runId: string | null;
   startedSteps: TStep[];
@@ -18,7 +19,7 @@ export type GenerationAction<TStep extends string = string> =
   | { type: "setError"; error: string }
   | { type: "stepCompleted"; step: TStep }
   | { type: "stepStarted"; step: TStep }
-  | { type: "streamEnded"; completionStep?: TStep }
+  | { type: "streamEnded"; completionStep?: TStep; entityId?: string }
   | { type: "triggerStart" }
   | { type: "triggerSuccess"; runId: string };
 
@@ -27,6 +28,7 @@ export function initialGenerationState<TStep extends string = string>(
 ): GenerationState<TStep> {
   return {
     completedSteps: [] as TStep[],
+    completionEntityId: null,
     currentStep: null,
     error: null,
     reconnectCount: 0,
@@ -77,7 +79,7 @@ export function generationReducer<TStep extends string>(
         };
       }
 
-      return { ...state, status: "completed" };
+      return { ...state, completionEntityId: action.entityId ?? null, status: "completed" };
 
     case "triggerStart":
       return { ...state, error: null, status: "triggering" };
@@ -136,7 +138,7 @@ export function handleStepStreamMessage<TStep extends string>(params: {
         (entityId === undefined || message.entityId === entityId);
 
       if (isCompletionForThisEntity) {
-        dispatch({ completionStep, type: "streamEnded" });
+        dispatch({ completionStep, entityId: message.entityId, type: "streamEnded" });
       }
 
       break;

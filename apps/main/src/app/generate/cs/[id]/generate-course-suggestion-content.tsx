@@ -1,5 +1,7 @@
-import { getCourseSuggestionById } from "@/data/courses/course-suggestions";
-import { findExistingCourse } from "@/data/courses/find-existing-course";
+import {
+  getCourseSuggestionById,
+  getLinkedCourseForSuggestion,
+} from "@/data/courses/course-suggestions";
 import {
   Container,
   ContainerBody,
@@ -27,13 +29,10 @@ export async function GenerateCourseSuggestionContent({
     notFound();
   }
 
-  const existingCourse = await findExistingCourse({
-    language: suggestion.language,
-    slug: suggestion.slug,
-  });
+  const linkedCourse = await getLinkedCourseForSuggestion({ courseId: suggestion.courseId });
 
-  if (existingCourse.data?.generationStatus === "completed") {
-    redirect(`/b/${AI_ORG_SLUG}/c/${existingCourse.data.slug}`);
+  if (linkedCourse?.generationStatus === "completed") {
+    redirect(`/b/${AI_ORG_SLUG}/c/${linkedCourse.slug}`);
   }
 
   return (
@@ -48,6 +47,7 @@ export async function GenerateCourseSuggestionContent({
       <ContainerBody>
         <GenerationClient
           courseSlug={ensureLocaleSuffix(suggestion.slug, suggestion.language)}
+          linkedCourseSlug={linkedCourse?.slug ?? null}
           generationRunId={suggestion.generationRunId}
           generationStatus={suggestion.generationStatus}
           suggestionId={id}

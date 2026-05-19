@@ -6,6 +6,7 @@ import { throwSettledFailures } from "@zoonk/utils/settled";
 export async function completeCourseSetupStep(input: {
   courseSuggestionId: string;
   courseId: string;
+  courseSlug: string;
 }): Promise<void> {
   "use step";
 
@@ -19,12 +20,16 @@ export async function completeCourseSetupStep(input: {
       where: { id: input.courseId },
     }),
     prisma.courseSuggestion.update({
-      data: { generationStatus: "completed" },
+      data: { courseId: input.courseId, generationStatus: "completed" },
       where: { id: input.courseSuggestionId },
     }),
   ]);
 
   throwSettledFailures({ message: "Failed to complete course setup", results });
 
-  await stream.status({ status: "completed", step: "completeCourseSetup" });
+  await stream.status({
+    entityId: input.courseSlug,
+    status: "completed",
+    step: "completeCourseSetup",
+  });
 }

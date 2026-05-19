@@ -1,21 +1,19 @@
 import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { type CourseSuggestion } from "@zoonk/db";
-import { type ExistingCourse } from "../steps/check-existing-course-step";
 import { getAIOrganizationStep } from "../steps/get-ai-organization-step";
 import { type CourseContext, initializeCourseStep } from "../steps/initialize-course-step";
+import { type ExistingCourse } from "../steps/resolve-course-identity-step";
 import { setCourseAsRunningStep } from "../steps/set-course-as-running-step";
 
 export type ExistingCourseContent = {
   description: string | null;
   imageUrl: string | null;
-  hasAlternativeTitles: boolean;
   hasCategories: boolean;
   hasChapters: boolean;
 };
 
 const DEFAULT_EXISTING_CONTENT: ExistingCourseContent = {
   description: null,
-  hasAlternativeTitles: false,
   hasCategories: false,
   hasChapters: false,
   imageUrl: null,
@@ -51,7 +49,6 @@ export async function getOrCreateCourse(
     course,
     existing: {
       description: existingCourse.description,
-      hasAlternativeTitles: existingCourse._count.alternativeTitles > 0,
       hasCategories: existingCourse._count.categories > 0,
       hasChapters: existingCourse._count.chapters > 0,
       imageUrl: existingCourse.imageUrl,

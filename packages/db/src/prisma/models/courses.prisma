@@ -12,6 +12,8 @@ model SearchPrompt {
 
 model CourseSuggestion {
   id               String                   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  courseId         String?                  @map("course_id") @db.Uuid
+  course           Course?                  @relation(fields: [courseId], references: [id], onDelete: SetNull)
   language         String                   @db.VarChar(10)
   slug             String
   title            String
@@ -24,6 +26,7 @@ model CourseSuggestion {
   updatedAt        DateTime                 @default(now()) @updatedAt @map("updated_at")
 
   @@unique([language, slug], name: "languageSlug")
+  @@index([courseId])
   @@map("course_suggestions")
 }
 
@@ -42,31 +45,31 @@ model SearchPromptSuggestion {
 }
 
 model Course {
-  id                String                   @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  organizationId    String?                  @map("organization_id") @db.Uuid
-  organization      Organization?            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId            String?                  @map("user_id") @db.Uuid
-  user              User?                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  mode              CourseMode               @default(full)
-  completedAt       DateTime?                @map("completed_at")
-  isPublished       Boolean                  @default(false) @map("is_published")
-  language          String                   @db.VarChar(10)
-  slug              String
-  title             String
-  normalizedTitle   String                   @map("normalized_title")
-  description       String?
-  targetLanguage    String?                  @map("target_language") @db.VarChar(10)
-  generationStatus  GenerationStatus         @default(completed) @map("generation_status")
-  generationRunId   String?                  @map("generation_run_id")
-  imageUrl          String?                  @map("image_url")
-  userCount         Int                      @default(0) @map("user_count")
-  createdAt         DateTime                 @default(now()) @map("created_at")
-  updatedAt         DateTime                 @default(now()) @updatedAt @map("updated_at")
-  alternativeTitles CourseAlternativeTitle[]
-  categories        CourseCategory[]
-  chapters          Chapter[]
-  completions       CourseCompletion[]
-  users             CourseUser[]
+  id               String             @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  organizationId   String?            @map("organization_id") @db.Uuid
+  organization     Organization?      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId           String?            @map("user_id") @db.Uuid
+  user             User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mode             CourseMode         @default(full)
+  completedAt      DateTime?          @map("completed_at")
+  isPublished      Boolean            @default(false) @map("is_published")
+  language         String             @db.VarChar(10)
+  slug             String
+  title            String
+  normalizedTitle  String             @map("normalized_title")
+  description      String?
+  targetLanguage   String?            @map("target_language") @db.VarChar(10)
+  generationStatus GenerationStatus   @default(completed) @map("generation_status")
+  generationRunId  String?            @map("generation_run_id")
+  imageUrl         String?            @map("image_url")
+  userCount        Int                @default(0) @map("user_count")
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @default(now()) @updatedAt @map("updated_at")
+  categories       CourseCategory[]
+  chapters         Chapter[]
+  completions      CourseCompletion[]
+  suggestions      CourseSuggestion[]
+  users            CourseUser[]
 
   @@unique([organizationId, slug], name: "orgSlug")
   @@unique([userId, slug], name: "userSlug")
@@ -76,19 +79,6 @@ model Course {
   @@index([isPublished, language, userCount, id])
   @@index([userId, mode])
   @@map("courses")
-}
-
-model CourseAlternativeTitle {
-  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  courseId  String   @map("course_id") @db.Uuid
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  slug      String
-  language  String   @db.VarChar(10)
-  createdAt DateTime @default(now()) @map("created_at")
-
-  @@unique([language, slug], name: "languageSlug")
-  @@index([courseId])
-  @@map("course_alternative_titles")
 }
 
 model CourseCategory {

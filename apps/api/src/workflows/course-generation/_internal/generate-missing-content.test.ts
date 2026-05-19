@@ -7,12 +7,10 @@ import { type ExistingCourseContent } from "./get-or-create-course";
 const {
   generateCourseDescriptionMock,
   generateContentThumbnailImageMock,
-  generateAlternativeTitlesMock,
   generateCourseCategoriesMock,
   generateCourseChaptersMock,
   generateLanguageCourseChaptersMock,
 } = vi.hoisted(() => ({
-  generateAlternativeTitlesMock: vi.fn(),
   generateContentThumbnailImageMock: vi.fn(),
   generateCourseCategoriesMock: vi.fn(),
   generateCourseChaptersMock: vi.fn(),
@@ -26,10 +24,6 @@ vi.mock("@zoonk/ai/tasks/courses/description", () => ({
 
 vi.mock("@zoonk/core/content/thumbnail", () => ({
   generateContentThumbnailImage: generateContentThumbnailImageMock,
-}));
-
-vi.mock("@zoonk/ai/tasks/courses/alternative-titles", () => ({
-  generateAlternativeTitles: generateAlternativeTitlesMock,
 }));
 
 vi.mock("@zoonk/ai/tasks/courses/categories", () => ({
@@ -55,7 +49,6 @@ const course: CourseContext = {
 
 const emptyExisting: ExistingCourseContent = {
   description: null,
-  hasAlternativeTitles: false,
   hasCategories: false,
   hasChapters: false,
   imageUrl: null,
@@ -76,7 +69,6 @@ describe(generateMissingContent, () => {
       error: null,
     });
 
-    generateAlternativeTitlesMock.mockResolvedValue({ data: { alternatives: ["Alt 1"] } });
     generateCourseCategoriesMock.mockResolvedValue({ data: { categories: ["programming"] } });
 
     generateCourseChaptersMock.mockResolvedValue({
@@ -91,7 +83,6 @@ describe(generateMissingContent, () => {
 
     expect(result.description).toBe("Generated desc");
     expect(result.imageUrl).toBe("https://example.com/img.webp");
-    expect(result.alternativeTitles).toStrictEqual(["Alt 1"]);
     expect(result.categories).toStrictEqual(["programming"]);
 
     expect(result.chapters).toStrictEqual([{ description: "Ch1 desc", title: "Ch1" }]);
@@ -106,7 +97,6 @@ describe(generateMissingContent, () => {
   it("skips generation for fields that already exist", async () => {
     const existing: ExistingCourseContent = {
       description: "Existing desc",
-      hasAlternativeTitles: true,
       hasCategories: true,
       hasChapters: true,
       imageUrl: "https://example.com/existing.webp",
@@ -120,20 +110,18 @@ describe(generateMissingContent, () => {
 
     expect(result.description).toBe("Existing desc");
     expect(result.imageUrl).toBe("https://example.com/existing.webp");
-    expect(result.alternativeTitles).toStrictEqual([]);
     expect(result.categories).toStrictEqual([]);
     expect(result.chapters).toStrictEqual([]);
 
     expect(generateCourseDescriptionMock).not.toHaveBeenCalled();
     expect(generateContentThumbnailImageMock).not.toHaveBeenCalled();
-    expect(generateAlternativeTitlesMock).not.toHaveBeenCalled();
     expect(generateCourseCategoriesMock).not.toHaveBeenCalled();
     expect(generateCourseChaptersMock).not.toHaveBeenCalled();
 
     const events = getStreamedEvents();
     const skippedSteps = events.filter((event) => event.status === "completed");
 
-    expect(skippedSteps.length).toBeGreaterThanOrEqual(5);
+    expect(skippedSteps.length).toBeGreaterThanOrEqual(4);
   });
 
   it("returns 'languages' category for language courses without AI call", async () => {
@@ -146,7 +134,6 @@ describe(generateMissingContent, () => {
       error: null,
     });
 
-    generateAlternativeTitlesMock.mockResolvedValue({ data: { alternatives: [] } });
     generateLanguageCourseChaptersMock.mockResolvedValue({ data: { chapters: [] } });
 
     const result = await generateMissingContent({
@@ -166,8 +153,6 @@ describe(generateMissingContent, () => {
       data: "https://example.com/non-lang.webp",
       error: null,
     });
-
-    generateAlternativeTitlesMock.mockResolvedValue({ data: { alternatives: [] } });
 
     generateCourseCategoriesMock.mockResolvedValue({
       data: { categories: ["programming", "languages", "web"] },

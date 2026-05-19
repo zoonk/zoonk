@@ -1,6 +1,5 @@
 import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { type Chapter } from "@zoonk/db";
-import { addAlternativeTitlesStep } from "../steps/add-alternative-titles-step";
 import { addCategoriesStep } from "../steps/add-categories-step";
 import { addChaptersStep } from "../steps/add-chapters-step";
 import { type CourseContext } from "../steps/initialize-course-step";
@@ -10,16 +9,11 @@ import { type ExistingCourseContent } from "./get-or-create-course";
 
 async function emitSkippedPersistSteps(
   needsCourseUpdate: boolean,
-  needsAlternativeTitles: boolean,
   needsCategories: boolean,
   needsChapters: boolean,
 ) {
   if (!needsCourseUpdate) {
     await streamSkipStep("updateCourse");
-  }
-
-  if (!needsAlternativeTitles) {
-    await streamSkipStep("addAlternativeTitles");
   }
 
   if (!needsCategories) {
@@ -38,25 +32,15 @@ export async function persistGeneratedContent(
 ): Promise<Chapter[]> {
   const needsCourseUpdate = !(existing.description && existing.imageUrl);
 
-  const needsAlternativeTitles =
-    !existing.hasAlternativeTitles && content.alternativeTitles.length > 0;
-
   const needsCategories = !existing.hasCategories && content.categories.length > 0;
 
   const needsChapters = !existing.hasChapters && content.chapters.length > 0;
 
-  await emitSkippedPersistSteps(
-    needsCourseUpdate,
-    needsAlternativeTitles,
-    needsCategories,
-    needsChapters,
-  );
+  await emitSkippedPersistSteps(needsCourseUpdate, needsCategories, needsChapters);
 
   const metadataOps = [
     needsCourseUpdate &&
       updateCourseStep({ course, description: content.description, imageUrl: content.imageUrl }),
-    needsAlternativeTitles &&
-      addAlternativeTitlesStep({ alternativeTitles: content.alternativeTitles, course }),
     needsCategories && addCategoriesStep({ categories: content.categories, course }),
   ].filter(Boolean);
 

@@ -1,9 +1,10 @@
 import { type Task } from "@/lib/types";
-import { alternativeTitlesTask } from "./alternative-titles/task";
 import { chapterLessonsTask } from "./chapter-lessons/task";
 import { courseCategoriesTask } from "./course-categories/task";
 import { courseChaptersTask } from "./course-chapters/task";
 import { courseDescriptionTask } from "./course-description/task";
+import { courseIdentitySearchTask } from "./course-identity-search/task";
+import { courseIdentityClassificationTask } from "./course-identity/task";
 import { courseSuggestionsTask } from "./course-suggestions/task";
 import { languageChapterLessonsTask } from "./language-chapter-lessons/task";
 import { languageCourseChaptersTask } from "./language-course-chapters/task";
@@ -35,7 +36,8 @@ export const TASKS: readonly Task[] = [
   lessonRomanizationTask,
   lessonTutorialTask,
   lessonVocabularyTask,
-  alternativeTitlesTask,
+  courseIdentitySearchTask,
+  courseIdentityClassificationTask,
   chapterLessonsTask,
   courseCategoriesTask,
   courseChaptersTask,

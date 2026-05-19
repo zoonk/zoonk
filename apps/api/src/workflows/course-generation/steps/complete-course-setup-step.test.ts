@@ -23,6 +23,7 @@ describe(completeCourseSetupStep, () => {
   it("throws all DB save failures without streaming error", async () => {
     const promise = completeCourseSetupStep({
       courseId: randomUUID(),
+      courseSlug: `missing-course-${randomUUID()}`,
       courseSuggestionId: randomUUID(),
     });
 
@@ -50,7 +51,11 @@ describe(completeCourseSetupStep, () => {
       }),
     ]);
 
-    await completeCourseSetupStep({ courseId: course.id, courseSuggestionId: suggestion.id });
+    await completeCourseSetupStep({
+      courseId: course.id,
+      courseSlug: course.slug,
+      courseSuggestionId: suggestion.id,
+    });
 
     const [updatedCourse, updatedSuggestion] = await Promise.all([
       prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
@@ -59,6 +64,7 @@ describe(completeCourseSetupStep, () => {
 
     expect(updatedCourse.generationStatus).toBe("completed");
     expect(updatedSuggestion.generationStatus).toBe("completed");
+    expect(updatedSuggestion.courseId).toBe(course.id);
 
     const events = getStreamedEvents();
 
@@ -67,7 +73,11 @@ describe(completeCourseSetupStep, () => {
     );
 
     expect(events).toContainEqual(
-      expect.objectContaining({ status: "completed", step: "completeCourseSetup" }),
+      expect.objectContaining({
+        entityId: course.slug,
+        status: "completed",
+        step: "completeCourseSetup",
+      }),
     );
   });
 });

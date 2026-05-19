@@ -26,9 +26,12 @@ export function useGenerationPhases(
 
   const labels: Record<PhaseName, string> = {
     categorizingCourse: t("Categorizing your course"),
+    checkingCourseIdentity: t("Checking for duplicates"),
     creatingCoverImage: t("Creating the cover image"),
+    findingSimilarCourses: t("Finding similar courses"),
     gettingReady: t("Getting things ready"),
     outliningChapters: t("Writing chapters"),
+    preparingCourse: t("Preparing your course"),
     savingCourseInfo: t("Saving your course"),
     writingDescription: t("Writing your course description"),
   };
@@ -59,12 +62,30 @@ export function useGenerationPhases(
   const thinkingGenerators: Record<PhaseName, ThinkingMessageGenerator> = {
     categorizingCourse: (index) =>
       cycleMessage([t("Figuring out the right categories..."), t("Tagging your course...")], index),
+    checkingCourseIdentity: (index) =>
+      cycleMessage(
+        [
+          t("Comparing nearby courses..."),
+          t("Checking whether this course already exists..."),
+          t("Avoiding duplicate courses..."),
+        ],
+        index,
+      ),
     creatingCoverImage: (index) =>
       cycleMessage(
         [
           t("Designing the cover..."),
           t("Picking the right look..."),
           t("Adding finishing touches..."),
+        ],
+        index,
+      ),
+    findingSimilarCourses: (index) =>
+      cycleMessage(
+        [
+          t("Searching for matching topics..."),
+          t("Looking for alternate names..."),
+          t("Expanding the course search..."),
         ],
         index,
       ),
@@ -75,6 +96,8 @@ export function useGenerationPhases(
       itemTemplate: (num) => t("Writing chapter {number}...", { number: String(num) }),
       reviewMessage: t("Reviewing the overall flow..."),
     }),
+    preparingCourse: (index) =>
+      cycleMessage([t("Creating the course shell..."), t("Preparing the workspace...")], index),
     savingCourseInfo: (index) =>
       cycleMessage([t("Saving your progress..."), t("Putting it all together...")], index),
     writingDescription: (index) =>

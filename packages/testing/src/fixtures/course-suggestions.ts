@@ -8,6 +8,7 @@ function courseSuggestionAttrs(
   attrs?: Partial<CourseSuggestion>,
 ): Omit<CourseSuggestion, "id" | "createdAt" | "updatedAt"> {
   return {
+    courseId: null,
     description: "Test course suggestion description",
     generationRunId: null,
     generationStatus: "pending",

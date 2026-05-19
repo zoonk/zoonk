@@ -115,6 +115,16 @@ describe(generationReducer, () => {
       expect(state.status).toBe("completed");
     });
 
+    it("stores the completion entity id for redirects", () => {
+      const state = generationReducer(initialGenerationState({ status: "streaming" }), {
+        entityId: "target-course",
+        type: "streamEnded",
+      });
+
+      expect(state.status).toBe("completed");
+      expect(state.completionEntityId).toBe("target-course");
+    });
+
     it("transitions to completed when completionStep is in completedSteps", () => {
       const state = generationReducer(
         initialGenerationState({ completedSteps: ["done"], status: "streaming" }),
@@ -177,6 +187,7 @@ describe(handleStepStreamMessage, () => {
 
     const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
     expect(state.status).toBe("completed");
+    expect(state.completionEntityId).toBeNull();
   });
 
   it("triggers streamEnded when entityId matches the completed lesson", () => {
@@ -191,6 +202,7 @@ describe(handleStepStreamMessage, () => {
 
     const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
     expect(state.status).toBe("completed");
+    expect(state.completionEntityId).toBe("42");
   });
 
   it("does not trigger streamEnded when entityId does not match", () => {
@@ -218,6 +230,7 @@ describe(handleStepStreamMessage, () => {
 
     const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
     expect(state.status).toBe("completed");
+    expect(state.completionEntityId).toBe("99");
   });
 
   it("does not trigger streamEnded for non-completion steps", () => {

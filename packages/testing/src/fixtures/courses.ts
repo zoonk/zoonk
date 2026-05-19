@@ -1,11 +1,5 @@
 import { randomUUID } from "node:crypto";
-import {
-  type Course,
-  type CourseAlternativeTitle,
-  type CourseCategory,
-  type CourseUser,
-  prisma,
-} from "@zoonk/db";
+import { type Course, type CourseCategory, type CourseUser, prisma } from "@zoonk/db";
 
 function courseAttrs(
   attrs?: Partial<Course>,
@@ -52,12 +46,4 @@ export async function courseUserFixture(attrs: Omit<CourseUser, "id" | "startedA
   ]);
 
   return courseUser;
-}
-
-export async function courseAlternativeTitleFixture(
-  attrs: Omit<CourseAlternativeTitle, "id" | "createdAt">,
-) {
-  return prisma.courseAlternativeTitle.create({
-    data: { courseId: attrs.courseId, language: attrs.language, slug: attrs.slug },
-  });
 }

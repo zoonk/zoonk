@@ -26,11 +26,13 @@ export function GenerationClient({
   courseSlug,
   generationRunId,
   generationStatus,
+  linkedCourseSlug,
   suggestionId,
 }: {
   courseSlug: string;
   generationRunId: string | null;
   generationStatus: GenerationStatus;
+  linkedCourseSlug: string | null;
   suggestionId: string;
 }) {
   const t = useExtracted();
@@ -55,7 +57,9 @@ export function GenerationClient({
     isActive ? activePhaseNames : [],
   );
 
-  useCompletionRedirect({ status: generation.status, url: `/b/${AI_ORG_SLUG}/c/${courseSlug}` });
+  const redirectSlug = generation.completionEntityId ?? linkedCourseSlug ?? courseSlug;
+
+  useCompletionRedirect({ status: generation.status, url: `/b/${AI_ORG_SLUG}/c/${redirectSlug}` });
 
   if (isActive) {
     return (

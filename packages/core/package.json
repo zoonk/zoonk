@@ -4,7 +4,6 @@
   "type": "module",
   "exports": {
     "./ai": "./src/ai.ts",
-    "./alternative-titles/add": "./src/alternative-titles/add-alternative-titles.ts",
     "./audio/generate": "./src/audio/generate-language-audio.ts",
     "./audio/upload": "./src/audio/upload-audio.ts",
     "./auth": "./src/auth/auth.ts",

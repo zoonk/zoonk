@@ -10,11 +10,9 @@ import { setupCourse } from "./setup-course";
 const {
   generateCourseDescriptionMock,
   generateContentThumbnailImageMock,
-  generateAlternativeTitlesMock,
   generateCourseCategoriesMock,
   generateCourseChaptersMock,
 } = vi.hoisted(() => ({
-  generateAlternativeTitlesMock: vi.fn(),
   generateContentThumbnailImageMock: vi.fn(),
   generateCourseCategoriesMock: vi.fn(),
   generateCourseChaptersMock: vi.fn(),
@@ -27,10 +25,6 @@ vi.mock("@zoonk/ai/tasks/courses/description", () => ({
 
 vi.mock("@zoonk/core/content/thumbnail", () => ({
   generateContentThumbnailImage: generateContentThumbnailImageMock,
-}));
-
-vi.mock("@zoonk/ai/tasks/courses/alternative-titles", () => ({
-  generateAlternativeTitles: generateAlternativeTitlesMock,
 }));
 
 vi.mock("@zoonk/ai/tasks/courses/categories", () => ({
@@ -71,7 +65,6 @@ describe(setupCourse, () => {
 
     const existing: ExistingCourseContent = {
       description: null,
-      hasAlternativeTitles: false,
       hasCategories: false,
       hasChapters: false,
       imageUrl: null,
@@ -82,10 +75,6 @@ describe(setupCourse, () => {
     generateContentThumbnailImageMock.mockResolvedValue({
       data: "https://example.com/setup.webp",
       error: null,
-    });
-
-    generateAlternativeTitlesMock.mockResolvedValue({
-      data: { alternatives: [`Alt ${randomUUID()}`] },
     });
 
     generateCourseCategoriesMock.mockResolvedValue({ data: { categories: ["testing"] } });

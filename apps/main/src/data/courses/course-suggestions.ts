@@ -1,6 +1,6 @@
 import "server-only";
 import { generateCourseSuggestions as generateTask } from "@zoonk/ai/tasks/courses/suggestions";
-import { type CourseSuggestion, prisma } from "@zoonk/db";
+import { type CourseSuggestion, getAiGenerationCourseWhere, prisma } from "@zoonk/db";
 import { getLanguageName } from "@zoonk/utils/languages";
 import { normalizeString, removeLocaleSuffix, toSlug } from "@zoonk/utils/string";
 import { isUuid } from "@zoonk/utils/uuid";
@@ -155,6 +155,21 @@ export async function getCourseSuggestionById(id: string): Promise<CourseSuggest
   }
 
   return prisma.courseSuggestion.findUnique({ where: { id } });
+}
+
+/**
+ * Loads the AI-catalog course already chosen for a suggestion. Course identity
+ * resolution happens in the generation workflow, and server pages use this link
+ * to avoid repeating semantic duplicate checks during render.
+ */
+export async function getLinkedCourseForSuggestion({
+  courseId,
+}: Pick<CourseSuggestion, "courseId">) {
+  if (!courseId) {
+    return null;
+  }
+
+  return prisma.course.findFirst({ where: getAiGenerationCourseWhere({ id: courseId }) });
 }
 
 export async function getCourseSuggestionBySlug({
