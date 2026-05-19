@@ -4,12 +4,10 @@ import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
 import searchPrompt from "./course-identity-search.prompt.md";
 
-const MAX_SEARCH_QUERIES = 8;
-
 const defaultModel = "openai/gpt-5.5";
 const fallbackModels = ["anthropic/claude-opus-4.7", "google/gemini-3.1-pro-preview"] as const;
 
-const searchSchema = z.object({ queries: z.array(z.string()).max(MAX_SEARCH_QUERIES) });
+const searchSchema = z.object({ queries: z.array(z.string()) });
 
 export type CourseIdentitySearchSchema = z.infer<typeof searchSchema>;
 

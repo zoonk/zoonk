@@ -71,8 +71,11 @@ describe(resolveCourseIdentityStep, () => {
   it("returns and stores the existing course when the slug matches", async () => {
     const title = `Existing Course ${randomUUID()}`;
     const slug = toSlug(title);
-    const course = await courseFixture({ organizationId, slug, title });
-    const suggestion = await courseSuggestionFixture({ language: "en", slug, title });
+
+    const [course, suggestion] = await Promise.all([
+      courseFixture({ organizationId, slug, title }),
+      courseSuggestionFixture({ language: "en", slug, title }),
+    ]);
 
     const result = await resolveCourseIdentityStep(suggestion);
 
@@ -86,18 +89,19 @@ describe(resolveCourseIdentityStep, () => {
   });
 
   it("uses AI classification to link semantically equivalent course titles", async () => {
-    const course = await courseFixture({
-      normalizedTitle: normalizeString("Frontend Development"),
-      organizationId,
-      slug: `frontend-development-${randomUUID()}`,
-      title: "Frontend Development",
-    });
-
-    const suggestion = await courseSuggestionFixture({
-      language: "en",
-      slug: `frontend-engineering-${randomUUID()}`,
-      title: "Frontend Engineering",
-    });
+    const [course, suggestion] = await Promise.all([
+      courseFixture({
+        normalizedTitle: normalizeString("Frontend Development"),
+        organizationId,
+        slug: `frontend-development-${randomUUID()}`,
+        title: "Frontend Development",
+      }),
+      courseSuggestionFixture({
+        language: "en",
+        slug: `frontend-engineering-${randomUUID()}`,
+        title: "Frontend Engineering",
+      }),
+    ]);
 
     vi.mocked(resolveCourseIdentity).mockResolvedValueOnce({
       data: { courseSlug: course.slug, decision: "useExisting", reason: "same discipline" },
@@ -133,18 +137,19 @@ describe(resolveCourseIdentityStep, () => {
   });
 
   it("leaves the suggestion unlinked when AI says the candidate is different", async () => {
-    await courseFixture({
-      normalizedTitle: normalizeString("Deep Learning"),
-      organizationId,
-      slug: `deep-learning-${randomUUID()}`,
-      title: "Deep Learning",
-    });
-
-    const suggestion = await courseSuggestionFixture({
-      language: "en",
-      slug: `machine-learning-${randomUUID()}`,
-      title: "Machine Learning",
-    });
+    const [suggestion] = await Promise.all([
+      courseSuggestionFixture({
+        language: "en",
+        slug: `machine-learning-${randomUUID()}`,
+        title: "Machine Learning",
+      }),
+      courseFixture({
+        normalizedTitle: normalizeString("Deep Learning"),
+        organizationId,
+        slug: `deep-learning-${randomUUID()}`,
+        title: "Deep Learning",
+      }),
+    ]);
 
     vi.mocked(resolveCourseIdentity).mockResolvedValueOnce({
       data: { courseSlug: null, decision: "createNew", reason: "different scope" },
@@ -171,18 +176,19 @@ describe(resolveCourseIdentityStep, () => {
   });
 
   it("does not split AI search phrases into loose standalone word matches", async () => {
-    await courseFixture({
-      normalizedTitle: normalizeString("Science"),
-      organizationId,
-      slug: `science-${randomUUID()}`,
-      title: "Science",
-    });
-
-    const suggestion = await courseSuggestionFixture({
-      language: "en",
-      slug: `unique-topic-${randomUUID()}`,
-      title: "Unique Topic",
-    });
+    const [suggestion] = await Promise.all([
+      courseSuggestionFixture({
+        language: "en",
+        slug: `unique-topic-${randomUUID()}`,
+        title: "Unique Topic",
+      }),
+      courseFixture({
+        normalizedTitle: normalizeString("Science"),
+        organizationId,
+        slug: `science-${randomUUID()}`,
+        title: "Science",
+      }),
+    ]);
 
     vi.mocked(generateCourseIdentitySearchQueries).mockResolvedValueOnce({
       data: { queries: ["data science"] },
@@ -217,19 +223,20 @@ describe(resolveCourseIdentityStep, () => {
   });
 
   it("uses AI search queries before classifying cross-language title matches", async () => {
-    const course = await courseFixture({
-      language: "pt",
-      normalizedTitle: normalizeString("Machine Learning"),
-      organizationId,
-      slug: `machine-learning-${randomUUID()}-pt`,
-      title: "Machine Learning",
-    });
-
-    const suggestion = await courseSuggestionFixture({
-      language: "pt",
-      slug: `aprendizado-de-maquina-${randomUUID()}`,
-      title: "Aprendizado de máquina",
-    });
+    const [course, suggestion] = await Promise.all([
+      courseFixture({
+        language: "pt",
+        normalizedTitle: normalizeString("Machine Learning"),
+        organizationId,
+        slug: `machine-learning-${randomUUID()}-pt`,
+        title: "Machine Learning",
+      }),
+      courseSuggestionFixture({
+        language: "pt",
+        slug: `aprendizado-de-maquina-${randomUUID()}`,
+        title: "Aprendizado de máquina",
+      }),
+    ]);
 
     vi.mocked(generateCourseIdentitySearchQueries).mockResolvedValueOnce({
       data: { queries: ["machine learning"] },

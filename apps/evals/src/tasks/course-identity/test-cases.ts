@@ -45,6 +45,41 @@ export const TEST_CASES = [
   {
     expectations: `
       - Must choose "useExisting"
+      - Must choose courseSlug "frontend-development"
+      - "Client Side Development" and "Frontend Development" are synonyms for the same course
+      - Must prefer the precise frontend candidate over the broader web development candidate
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-client-side-development",
+    userInput: {
+      candidates: [
+        {
+          description: "Build user-facing web interfaces.",
+          language: "en",
+          slug: "frontend-development",
+          targetLanguage: null,
+          title: "Frontend Development",
+        },
+        {
+          description: "Build complete web applications across frontend and backend.",
+          language: "en",
+          slug: "web-development",
+          targetLanguage: null,
+          title: "Web Development",
+        },
+      ],
+      suggestion: {
+        description: "Build browser-based product interfaces.",
+        language: "en",
+        targetLanguage: null,
+        title: "Client Side Development",
+      },
+    },
+  },
+  {
+    expectations: `
+      - Must choose "useExisting"
       - Must choose courseSlug "python"
       - "Introduction to Python" is a level/package variant of "Python"
 
