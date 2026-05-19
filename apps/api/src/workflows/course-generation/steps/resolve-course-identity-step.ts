@@ -14,7 +14,6 @@ import {
 } from "@zoonk/db";
 import { ensureLocaleSuffix, normalizeString, toSlug } from "@zoonk/utils/string";
 
-const MAX_CANDIDATES = 12;
 const IDENTITY_SEARCH_STEP = "generateCourseIdentitySearchQueries";
 const IDENTITY_CLASSIFICATION_STEP = "resolveCourseIdentity";
 
@@ -139,8 +138,6 @@ async function findCandidateCourses({
 
   return prisma.course.findMany({
     include: courseInclude,
-    orderBy: [{ userCount: "desc" }, { createdAt: "asc" }],
-    take: MAX_CANDIDATES,
     where: getAiGenerationCourseWhere({ OR: whereClauses, language: suggestion.language }),
   });
 }
