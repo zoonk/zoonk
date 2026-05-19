@@ -1117,12 +1117,24 @@ msgid "i3JgLB"
 msgstr "Categorizando seu curso"
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
+msgid "WOe+OA"
+msgstr "Verificando duplicatas"
+
+#: src/app/generate/cs/[id]/use-generation-phases.ts
 msgid "Gjutu+"
 msgstr "Criando a imagem de capa"
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
+msgid "SQFyKH"
+msgstr "Encontrando cursos semelhantes"
+
+#: src/app/generate/cs/[id]/use-generation-phases.ts
 msgid "WZpB8D"
 msgstr "Escrevendo capítulos"
+
+#: src/app/generate/cs/[id]/use-generation-phases.ts
+msgid "d2xrsv"
+msgstr "Preparando tudo"
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
 msgid "CFWOGF"
@@ -1141,6 +1153,18 @@ msgid "EKAN6s"
 msgstr "Marcando seu curso..."
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
+msgid "JJrUOR"
+msgstr "Comparando cursos próximos..."
+
+#: src/app/generate/cs/[id]/use-generation-phases.ts
+msgid "uw23V+"
+msgstr "Verificando se este curso já existe..."
+
+#: src/app/generate/cs/[id]/use-generation-phases.ts
+msgid "qFmZfG"
+msgstr "Evitando cursos duplicados..."
+
+#: src/app/generate/cs/[id]/use-generation-phases.ts
 msgid "lxBtcx"
 msgstr "Criando a capa..."
 
@@ -1153,6 +1177,18 @@ msgid "At4rk1"
 msgstr "Adicionando os toques finais..."
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
+msgid "NgONb4"
+msgstr "Buscando tópicos correspondentes..."
+
+#: src/app/generate/cs/[id]/use-generation-phases.ts
+msgid "Auz1tl"
+msgstr "Procurando nomes alternativos..."
+
+#: src/app/generate/cs/[id]/use-generation-phases.ts
+msgid "Gt/VNO"
+msgstr "Expandindo a busca do curso..."
+
+#: src/app/generate/cs/[id]/use-generation-phases.ts
 msgid "AEG3Ol"
 msgstr "Planejando a estrutura do curso..."
 
@@ -1163,6 +1199,14 @@ msgstr "Escrevendo o capítulo {number}..."
 #: src/app/generate/cs/[id]/use-generation-phases.ts
 msgid "tXkuD8"
 msgstr "Revisando o fluxo geral..."
+
+#: src/app/generate/cs/[id]/use-generation-phases.ts
+msgid "4LsE/n"
+msgstr "Criando a estrutura do curso..."
+
+#: src/app/generate/cs/[id]/use-generation-phases.ts
+msgid "3hEaI4"
+msgstr "Preparando o espaço de trabalho..."
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
 msgid "a7FJJd"
