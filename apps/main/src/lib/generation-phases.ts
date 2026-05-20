@@ -130,6 +130,24 @@ type ProgressConfig<TPhase extends string, TStep extends string> = {
   startedSteps?: TStep[];
 };
 
+/**
+ * Converts the currently active phase weights into an animation duration.
+ * Generation phase weights are second-based estimates, and parallel phases can
+ * be active together, so the visible timer should follow the longest active
+ * phase instead of adding independent work that runs at the same time.
+ */
+export function getActivePhaseDurationMs<TPhase extends string>({
+  activePhases,
+  phaseWeights,
+}: {
+  activePhases: TPhase[];
+  phaseWeights: Record<TPhase, number>;
+}): number | undefined {
+  const durationSeconds = Math.max(...activePhases.map((phase) => phaseWeights[phase]));
+
+  return durationSeconds > 0 ? durationSeconds * 1000 : undefined;
+}
+
 export function calculateWeightedProgress<TPhase extends string, TStep extends string>(
   completedSteps: TStep[],
   currentStep: TStep | null,

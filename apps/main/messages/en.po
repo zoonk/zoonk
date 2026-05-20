@@ -987,7 +987,6 @@ msgid "ViO6Dt"
 msgstr "Creating your lessons"
 
 #: src/app/generate/ch/[id]/generation-client.tsx
-#: src/app/generate/cs/[id]/generation-client.tsx
 msgid "kiZUDf"
 msgstr "This usually takes about a minute"
 
@@ -1022,10 +1021,6 @@ msgid "gnxL73"
 msgstr "Choosing lesson types"
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
-msgid "1Q0Y9/"
-msgstr "Creating chapter image"
-
-#: src/app/generate/ch/[id]/use-generation-phases.ts
 #: src/app/generate/cs/[id]/use-generation-phases.ts
 msgid "aJev/w"
 msgstr "Getting things ready"
@@ -1049,18 +1044,6 @@ msgstr "Choosing type for lesson {number}..."
 #: src/app/generate/ch/[id]/use-generation-phases.ts
 msgid "Vbn5Wz"
 msgstr "Reviewing the lesson mix..."
-
-#: src/app/generate/ch/[id]/use-generation-phases.ts
-msgid "JjJCYL"
-msgstr "Designing the chapter thumbnail..."
-
-#: src/app/generate/ch/[id]/use-generation-phases.ts
-msgid "6sYiuc"
-msgstr "Creating the chapter image..."
-
-#: src/app/generate/ch/[id]/use-generation-phases.ts
-msgid "lXIWAI"
-msgstr "Refining the chapter artwork..."
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
 #: src/app/generate/cs/[id]/use-generation-phases.ts
@@ -1103,6 +1086,10 @@ msgstr "Putting it all together..."
 #: src/app/generate/cs/[id]/generation-client.tsx
 msgid "DFlapX"
 msgstr "Creating your course"
+
+#: src/app/generate/cs/[id]/generation-client.tsx
+msgid "GJKrUK"
+msgstr "This usually takes about 2 minutes"
 
 #: src/app/generate/cs/[id]/generation-client.tsx
 msgid "0o41MR"

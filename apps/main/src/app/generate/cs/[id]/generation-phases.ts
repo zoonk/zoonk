@@ -3,6 +3,7 @@ import {
   type PhaseStatus,
   calculateWeightedProgress as calculateProgress,
   calculateTargetProgress as calculateTarget,
+  getActivePhaseDurationMs as getDuration,
   getPhaseStatus as getStatus,
 } from "@/lib/generation-phases";
 import { type CourseStepName, type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
@@ -78,16 +79,20 @@ export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
 };
 
 const PHASE_WEIGHTS: Record<PhaseName, number> = {
-  categorizingCourse: 3,
-  checkingCourseIdentity: 3,
-  creatingCoverImage: 15,
-  findingSimilarCourses: 3,
+  categorizingCourse: 2,
+  checkingCourseIdentity: 2,
+  creatingCoverImage: 20,
+  findingSimilarCourses: 2,
   gettingReady: 1,
-  outliningChapters: 50,
+  outliningChapters: 102,
   preparingCourse: 1,
-  savingCourseInfo: 2,
-  writingDescription: 3,
+  savingCourseInfo: 1,
+  writingDescription: 4,
 };
+
+export function getActivePhaseDurationMs(activePhaseNames: PhaseName[]): number | undefined {
+  return getDuration({ activePhases: activePhaseNames, phaseWeights: PHASE_WEIGHTS });
+}
 
 export function getPhaseStatus(
   phase: PhaseName,

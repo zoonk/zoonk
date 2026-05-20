@@ -30,85 +30,85 @@ export function getPhaseWeights(kind: GeneratedLessonKind): Record<PhaseName, nu
   if (kind === "alphabet" || kind === "vocabulary") {
     return {
       ...ZERO_WEIGHTS,
-      addingPronunciation: 20,
-      addingRomanization: 10,
-      buildingWordList: 15,
+      addingPronunciation: 65,
+      addingRomanization: 4,
+      buildingWordList: 6,
       creatingExercises: 5,
-      gettingStarted: 3,
-      recordingAudio: 45,
-      saving: 2,
+      gettingStarted: 1,
+      recordingAudio: 6,
+      saving: 1,
     };
   }
 
   if (kind === "grammar") {
     return {
       ...ZERO_WEIGHTS,
-      addingRomanization: 15,
-      creatingExercises: 30,
-      gettingStarted: 5,
-      saving: 5,
-      writingContent: 45,
+      addingRomanization: 4,
+      creatingExercises: 8,
+      gettingStarted: 1,
+      saving: 1,
+      writingContent: 15,
     };
   }
 
   if (kind === "reading") {
     return {
       ...ZERO_WEIGHTS,
-      addingRomanization: 10,
-      addingWordPronunciation: 7,
-      creatingExercises: 20,
-      creatingSentences: 20,
-      gettingStarted: 3,
-      lookingUpWords: 20,
-      recordingAudio: 10,
-      recordingWordAudio: 5,
-      saving: 5,
+      addingRomanization: 4,
+      addingWordPronunciation: 5,
+      creatingExercises: 5,
+      creatingSentences: 12,
+      gettingStarted: 1,
+      lookingUpWords: 5,
+      recordingAudio: 5,
+      recordingWordAudio: 10,
+      saving: 1,
     };
   }
 
   if (kind === "tutorial") {
     return {
       ...ZERO_WEIGHTS,
-      creatingImages: 35,
-      creatingLessonImage: 35,
-      gettingStarted: 3,
-      preparingImages: 44,
-      saving: 4,
-      writingContent: 14,
+      creatingImages: 45,
+      creatingLessonImage: 30,
+      gettingStarted: 1,
+      preparingImages: 8,
+      saving: 1,
+      writingContent: 10,
     };
   }
 
   if (kind === "explanation") {
     return {
       ...ZERO_WEIGHTS,
-      creatingImages: 33,
-      creatingLessonImage: 33,
-      gettingStarted: 3,
-      preparingImages: 40,
-      saving: 4,
-      writingContent: 20,
+      creatingImages: 50,
+      creatingLessonImage: 30,
+      gettingStarted: 1,
+      preparingImages: 15,
+      saving: 1,
+      writingContent: 35,
     };
   }
 
   if (kind === "quiz") {
     return {
       ...ZERO_WEIGHTS,
-      creatingImages: 42,
-      gettingStarted: 3,
-      saving: 5,
-      writingContent: 50,
+      creatingImages: 45,
+      gettingStarted: 1,
+      saving: 1,
+      writingContent: 30,
     };
   }
 
   if (kind === "practice") {
     return {
       ...ZERO_WEIGHTS,
-      creatingImages: 30,
-      gettingStarted: 5,
-      saving: 5,
-      writingContent: 60,
+      creatingImages: 45,
+      gettingStarted: 1,
+      saving: 1,
+      writingContent: 20,
     };
   }
 
-  return { ...ZERO_WEIGHTS, gettingStarted: 10, saving: 90 };
+  return { ...ZERO_WEIGHTS, gettingStarted: 1, saving: 1 };
 }

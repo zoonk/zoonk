@@ -13,6 +13,7 @@ import {
   type PhaseName,
   calculateTargetProgress,
   calculateWeightedProgress,
+  getActivePhaseDurationMs,
   getPhaseOrder,
   getPhaseStatus,
 } from "./generation-phases";
@@ -26,7 +27,6 @@ export function useGenerationPhases(
 
   const labels: Record<PhaseName, string> = {
     classifyingLessons: t("Choosing lesson types"),
-    creatingChapterImage: t("Creating chapter image"),
     gettingReady: t("Getting things ready"),
     preparingLessons: t("Preparing lessons"),
     savingLessons: t("Saving your lessons"),
@@ -55,21 +55,14 @@ export function useGenerationPhases(
     .filter((phase) => phase.status === "active")
     .map((phase) => phase.name);
 
+  const activePhaseDurationMs = getActivePhaseDurationMs(activePhaseNames);
+
   const thinkingGenerators: Record<PhaseName, ThinkingMessageGenerator> = {
     classifyingLessons: createCountingGenerator({
       intro: [t("Checking how each lesson should be taught...")],
       itemTemplate: (num) => t("Choosing type for lesson {number}...", { number: String(num) }),
       reviewMessage: t("Reviewing the lesson mix..."),
     }),
-    creatingChapterImage: (index) =>
-      cycleMessage(
-        [
-          t("Designing the chapter thumbnail..."),
-          t("Creating the chapter image..."),
-          t("Refining the chapter artwork..."),
-        ],
-        index,
-      ),
     gettingReady: (index) =>
       cycleMessage([t("Setting things up..."), t("Getting everything ready...")], index),
     preparingLessons: createCountingGenerator({
@@ -81,5 +74,12 @@ export function useGenerationPhases(
       cycleMessage([t("Saving your progress..."), t("Putting it all together...")], index),
   };
 
-  return { activePhaseNames, phases, progress, targetProgress, thinkingGenerators };
+  return {
+    activePhaseDurationMs,
+    activePhaseNames,
+    phases,
+    progress,
+    targetProgress,
+    thinkingGenerators,
+  };
 }

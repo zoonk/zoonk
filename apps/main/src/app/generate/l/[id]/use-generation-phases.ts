@@ -7,6 +7,7 @@ import {
   PHASE_ICONS,
   calculateTargetProgress,
   calculateWeightedProgress,
+  getActivePhaseDurationMs,
   getPhaseStatus,
 } from "./generation-phases";
 import { usePhaseLabels } from "./use-phase-labels";
@@ -49,7 +50,16 @@ export function useGenerationPhases(
     .filter((phase) => phase.status === "active")
     .map((phase) => phase.name);
 
+  const activePhaseDurationMs = getActivePhaseDurationMs(activePhaseNames, lessonKind);
+
   const thinkingGenerators = usePhaseThinkingGenerators();
 
-  return { activePhaseNames, phases, progress, targetProgress, thinkingGenerators };
+  return {
+    activePhaseDurationMs,
+    activePhaseNames,
+    phases,
+    progress,
+    targetProgress,
+    thinkingGenerators,
+  };
 }

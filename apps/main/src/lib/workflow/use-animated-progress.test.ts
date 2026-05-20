@@ -58,6 +58,23 @@ describe(useAnimatedProgress, () => {
     expect(large.current).toBeGreaterThan(small.current);
   });
 
+  it("uses the estimated duration when the active phase has a time weight", () => {
+    const { result } = renderHook(() =>
+      useAnimatedProgress({
+        estimatedDurationMs: 120_000,
+        isActive: true,
+        realProgress: 21,
+        targetProgress: 99,
+      }),
+    );
+
+    act(() => {
+      vi.advanceTimersByTime(45_000);
+    });
+
+    expect(result.current).toBe(50);
+  });
+
   it("never exceeds targetProgress", () => {
     const { result } = renderHook(() =>
       useAnimatedProgress({ isActive: true, realProgress: 10, targetProgress: 30 }),

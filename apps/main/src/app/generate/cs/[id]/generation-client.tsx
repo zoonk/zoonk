@@ -46,11 +46,27 @@ export function GenerationClient({
     triggerUrl: `${API_URL}/v1/workflows/course-generation/trigger`,
   });
 
-  const { activePhaseNames, phases, progress, targetProgress, thinkingGenerators } =
-    useGenerationPhases(generation.completedSteps, generation.currentStep, generation.startedSteps);
+  const {
+    activePhaseDurationMs,
+    activePhaseNames,
+    phases,
+    progress,
+    targetProgress,
+    thinkingGenerators,
+  } = useGenerationPhases(
+    generation.completedSteps,
+    generation.currentStep,
+    generation.startedSteps,
+  );
 
   const isActive = generation.status === "triggering" || generation.status === "streaming";
-  const displayProgress = useAnimatedProgress({ isActive, realProgress: progress, targetProgress });
+
+  const displayProgress = useAnimatedProgress({
+    estimatedDurationMs: activePhaseDurationMs,
+    isActive,
+    realProgress: progress,
+    targetProgress,
+  });
 
   const thinkingMessages = useThinkingMessages(
     thinkingGenerators,
@@ -67,7 +83,7 @@ export function GenerationClient({
         <GenerationTimelineHeader>
           <GenerationTimelineTitle>{t("Creating your course")}</GenerationTimelineTitle>
           <GenerationTimelineSubtitle>
-            {t("This usually takes about a minute")}
+            {t("This usually takes about 2 minutes")}
           </GenerationTimelineSubtitle>
           <GenerationTimelineProgress label={t("Progress")} value={displayProgress} />
         </GenerationTimelineHeader>

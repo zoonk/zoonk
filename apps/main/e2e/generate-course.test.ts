@@ -180,7 +180,7 @@ test.describe("Generate Course Page", () => {
       // Should show triggering or streaming state (no idle state)
       await expect(page.getByText(/creating your course/iu)).toBeVisible({ timeout: 10_000 });
 
-      await expect(page.getByText(/this usually takes about a minute/iu)).toBeVisible();
+      await expect(page.getByText(/this usually takes about 2 minutes/iu)).toBeVisible();
     });
   });
 

@@ -40,7 +40,6 @@ const CHAPTER_STEPS = [
   "setChapterAsRunning",
   "generateLessons",
   "generateLessonKind",
-  "generateChapterImage",
   "addLessons",
   "setChapterAsCompleted",
 ] as const;

@@ -3,13 +3,13 @@ import {
   type PhaseStatus,
   calculateWeightedProgress as calculateProgress,
   calculateTargetProgress as calculateTarget,
+  getActivePhaseDurationMs as getDuration,
   getPhaseStatus as getStatus,
 } from "@/lib/generation-phases";
 import { type ChapterStepName, type ChapterWorkflowStepName } from "@zoonk/core/workflows/steps";
 import {
   BookOpenIcon,
   CheckCircleIcon,
-  ImageIcon,
   type LucideIcon,
   SettingsIcon,
   TagsIcon,
@@ -19,12 +19,10 @@ export type PhaseName =
   | "gettingReady"
   | "preparingLessons"
   | "classifyingLessons"
-  | "creatingChapterImage"
   | "savingLessons";
 
 const PHASE_STEPS = {
   classifyingLessons: ["generateLessonKind"],
-  creatingChapterImage: ["generateChapterImage"],
   gettingReady: ["getChapter", "setChapterAsRunning"],
   preparingLessons: ["generateLessons"],
   savingLessons: ["addLessons", "setChapterAsCompleted"],
@@ -35,7 +33,6 @@ type _ValidateChapter = AssertAllCovered<Exclude<ChapterStepName, AssignedSteps>
 
 const PHASE_ORDER: PhaseName[] = [
   "gettingReady",
-  "creatingChapterImage",
   "preparingLessons",
   "classifyingLessons",
   "savingLessons",
@@ -47,19 +44,21 @@ export function getPhaseOrder(): PhaseName[] {
 
 export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
   classifyingLessons: TagsIcon,
-  creatingChapterImage: ImageIcon,
   gettingReady: SettingsIcon,
   preparingLessons: BookOpenIcon,
   savingLessons: CheckCircleIcon,
 };
 
 const PHASE_WEIGHTS: Record<PhaseName, number> = {
-  classifyingLessons: 5,
-  creatingChapterImage: 40,
-  gettingReady: 5,
-  preparingLessons: 40,
-  savingLessons: 5,
+  classifyingLessons: 2,
+  gettingReady: 1,
+  preparingLessons: 50,
+  savingLessons: 1,
 };
+
+export function getActivePhaseDurationMs(activePhaseNames: PhaseName[]): number | undefined {
+  return getDuration({ activePhases: activePhaseNames, phaseWeights: PHASE_WEIGHTS });
+}
 
 export function getPhaseStatus(
   phase: PhaseName,

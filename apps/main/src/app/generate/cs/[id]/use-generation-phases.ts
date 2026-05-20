@@ -13,6 +13,7 @@ import {
   type PhaseName,
   calculateTargetProgress,
   calculateWeightedProgress,
+  getActivePhaseDurationMs,
   getPhaseOrder,
   getPhaseStatus,
 } from "./generation-phases";
@@ -59,6 +60,8 @@ export function useGenerationPhases(
     .filter((phase) => phase.status === "active")
     .map((phase) => phase.name);
 
+  const activePhaseDurationMs = getActivePhaseDurationMs(activePhaseNames);
+
   const thinkingGenerators: Record<PhaseName, ThinkingMessageGenerator> = {
     categorizingCourse: (index) =>
       cycleMessage([t("Figuring out the right categories..."), t("Tagging your course...")], index),
@@ -104,5 +107,12 @@ export function useGenerationPhases(
       cycleMessage([t("Summarizing what you'll learn..."), t("Writing the overview...")], index),
   };
 
-  return { activePhaseNames, phases, progress, targetProgress, thinkingGenerators };
+  return {
+    activePhaseDurationMs,
+    activePhaseNames,
+    phases,
+    progress,
+    targetProgress,
+    thinkingGenerators,
+  };
 }
