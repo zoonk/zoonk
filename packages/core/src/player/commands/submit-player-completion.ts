@@ -1,14 +1,13 @@
 import "server-only";
-import { type LessonSentence, type StepKind, getPublishedLessonWhere, prisma } from "@zoonk/db";
-import {
-  type NextLessonInCourse,
-  getNextLessonInCourse,
-} from "../../lessons/get-next-lesson-in-course";
+import { type LessonSentence, type StepKind, prisma } from "@zoonk/db";
+import { getNextLessonInCourse } from "../../lessons/get-next-lesson-in-course";
 import { type CompletionInput } from "../contracts/completion-input-schema";
 import { computeLessonScore } from "../contracts/compute-score";
 import { countAnswerableSteps, validateAnswers } from "../contracts/validate-answers";
 import { getLessonSentencesForLessons } from "../queries/get-lesson-sentences";
 import { getReviewValidationData } from "../queries/get-review-steps";
+import { getCompletableLessonWhere } from "./_utils/completable-lesson";
+import { getNextLessonPreloadId } from "./get-next-lesson-preload-target";
 import { submitLessonCompletion } from "./submit-lesson-completion";
 
 const MAX_DURATION_SECONDS = 7200;
@@ -28,18 +27,6 @@ type StepWithSentence = {
 };
 
 type PlayerCompletionEffects = { preloadLessonId: string | null };
-
-/**
- * Completion is only valid for lessons the learner can reach through the
- * product. Public brand courses are always eligible, and organization-less
- * courses are eligible only for the user who owns that generated course.
- */
-function getCompletableLessonWhere({ lessonId, userId }: { lessonId: string; userId: string }) {
-  return getPublishedLessonWhere({
-    courseWhere: { OR: [{ organization: { kind: "brand" } }, { organizationId: null, userId }] },
-    lessonWhere: { id: lessonId },
-  });
-}
 
 /**
  * Attaches sentence translation data from `LessonSentence` records to steps.
@@ -92,26 +79,6 @@ function hasCompleteAnswerCoverage(params: {
   }
 
   return params.validatedStepCount === params.expectedStepCount;
-}
-
-/**
- * Completion only asks the host app to preload lesson generation when the next
- * structural lesson exists and is in a retryable unfinished state. Running
- * generation already has work in flight, and completed lessons need no preload.
- */
-function getPreloadLessonId({ nextLesson }: { nextLesson: NextLessonInCourse | null }) {
-  if (!nextLesson) {
-    return null;
-  }
-
-  if (
-    nextLesson.lessonGenerationStatus === "pending" ||
-    nextLesson.lessonGenerationStatus === "failed"
-  ) {
-    return nextLesson.lessonId;
-  }
-
-  return null;
 }
 
 /**
@@ -212,5 +179,5 @@ export async function submitPlayerCompletion(params: {
     lessonPosition: lesson.position,
   });
 
-  return { preloadLessonId: getPreloadLessonId({ nextLesson }) };
+  return { preloadLessonId: getNextLessonPreloadId({ nextLesson }) };
 }

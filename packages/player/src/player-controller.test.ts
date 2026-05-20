@@ -1,6 +1,7 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { describe, expect, it } from "vitest";
 import { buildCompletionInput, getPlayerTransition } from "./player-controller";
+import { getPlayerStepChangeEvent } from "./player-events";
 import { type PlayerAction, type PlayerState } from "./player-reducer";
 
 function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
@@ -70,6 +71,45 @@ describe(getPlayerTransition, () => {
     const transition = getPlayerTransition(buildState(), action);
 
     expect(transition.shouldPersistCompletion).toBe(false);
+  });
+});
+
+describe(getPlayerStepChangeEvent, () => {
+  it("returns a next-step event when the player advances", () => {
+    const steps = [buildStep({ id: "step-1" }), buildStep({ id: "step-2", position: 1 })];
+    const state = buildState({ currentStepIndex: 0, steps });
+    const transition = getPlayerTransition(state, { direction: "next", type: "NAVIGATE_STEP" });
+
+    expect(getPlayerStepChangeEvent({ nextState: transition.nextState, state })).toStrictEqual({
+      direction: "next",
+      lessonId: "lesson-1",
+      nextStepId: "step-2",
+      nextStepIndex: 1,
+      previousStepId: "step-1",
+      previousStepIndex: 0,
+    });
+  });
+
+  it("returns a previous-step event when the player goes back", () => {
+    const steps = [buildStep({ id: "step-1" }), buildStep({ id: "step-2", position: 1 })];
+    const state = buildState({ currentStepIndex: 1, steps });
+    const transition = getPlayerTransition(state, { direction: "prev", type: "NAVIGATE_STEP" });
+
+    expect(getPlayerStepChangeEvent({ nextState: transition.nextState, state })).toStrictEqual({
+      direction: "prev",
+      lessonId: "lesson-1",
+      nextStepId: "step-1",
+      nextStepIndex: 0,
+      previousStepId: "step-2",
+      previousStepIndex: 1,
+    });
+  });
+
+  it("returns null when the transition completes the lesson", () => {
+    const state = buildState();
+    const transition = getPlayerTransition(state, { direction: "next", type: "NAVIGATE_STEP" });
+
+    expect(getPlayerStepChangeEvent({ nextState: transition.nextState, state })).toBeNull();
   });
 });
 
