@@ -76,4 +76,19 @@ describe(setLessonAsRunningStep, () => {
     expect(updatedLesson.generationStatus).toBe("running");
     expect(remainingSteps).toHaveLength(1);
   });
+
+  it("returns completed when another workflow already finished the lesson", async () => {
+    const lesson = await createLessonContext({ generationStatus: "completed", organizationId });
+
+    const result = await setLessonAsRunningStep({
+      lessonId: lesson.id,
+      workflowRunId: "workflow-running-3",
+    });
+
+    const updatedLesson = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
+
+    expect(result).toBe("completed");
+    expect(updatedLesson.generationRunId).not.toBe("workflow-running-3");
+    expect(updatedLesson.generationStatus).toBe("completed");
+  });
 });

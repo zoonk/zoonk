@@ -150,6 +150,11 @@ async function runLessonGeneration(input: {
     workflowRunId: input.workflowRunId,
   });
 
+  if (claimResult === "completed") {
+    await streamSkipStep(LESSON_COMPLETION_STEP);
+    return "ready";
+  }
+
   if (claimResult === "skipped") {
     return "ready";
   }

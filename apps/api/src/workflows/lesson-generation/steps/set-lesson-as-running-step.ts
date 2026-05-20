@@ -1,6 +1,6 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
 
 type SetLessonAsRunningInput = {
   lessonId: string;
@@ -8,7 +8,7 @@ type SetLessonAsRunningInput = {
   workflowRunId: string;
 };
 
-type LessonGenerationClaimResult = "claimed" | "skipped";
+type LessonGenerationClaimResult = "claimed" | "completed" | "skipped";
 
 /**
  * Failed lesson retries need to clear any partial steps from the previous run,
@@ -16,6 +16,27 @@ type LessonGenerationClaimResult = "claimed" | "skipped";
  */
 function getClaimableGenerationStatus(input: SetLessonAsRunningInput) {
   return input.resetExistingSteps ? "failed" : "pending";
+}
+
+/**
+ * A failed claim means another workflow changed the lesson first. Completed
+ * lessons need a distinct result so the losing workflow can mirror the
+ * completion event into the stream its client is watching.
+ */
+async function getSkippedLessonGenerationClaimResult({
+  lessonId,
+  tx,
+}: {
+  lessonId: string;
+  tx: TransactionClient;
+}): Promise<Exclude<LessonGenerationClaimResult, "claimed">> {
+  const lesson = await tx.lesson.findUnique({ where: { id: lessonId } });
+
+  if (lesson?.generationStatus === "completed") {
+    return "completed";
+  }
+
+  return "skipped";
 }
 
 /**
@@ -33,7 +54,7 @@ async function claimLessonGeneration(
     });
 
     if (claim.count === 0) {
-      return "skipped";
+      return getSkippedLessonGenerationClaimResult({ lessonId: input.lessonId, tx });
     }
 
     if (input.resetExistingSteps) {
