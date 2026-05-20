@@ -107,6 +107,49 @@ export const TEST_CASES = [
   {
     expectations: `
       - Must choose "useExisting"
+      - Must choose courseSlug "python"
+      - "Python for Data Science" should consolidate into the existing Python course for dedupe
+      - Must prefer the Python candidate over the application-domain Data Science candidate
+      - Must not choose narrower tool candidates such as Pandas
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-python-for-data-science",
+    userInput: {
+      candidates: [
+        {
+          description: "Use Python to write programs and solve practical problems.",
+          language: "en",
+          slug: "python",
+          targetLanguage: null,
+          title: "Python",
+        },
+        {
+          description: "Analyze data, build models, and communicate insights.",
+          language: "en",
+          slug: "data-science",
+          targetLanguage: null,
+          title: "Data Science",
+        },
+        {
+          description: "Use Pandas for tabular data analysis in Python.",
+          language: "en",
+          slug: "pandas",
+          targetLanguage: null,
+          title: "Pandas",
+        },
+      ],
+      suggestion: {
+        description: "Use Python to analyze data and build practical models.",
+        language: "en",
+        targetLanguage: null,
+        title: "Python for Data Science",
+      },
+    },
+  },
+  {
+    expectations: `
+      - Must choose "useExisting"
       - Must choose courseSlug "machine-learning-pt"
       - The suggested Portuguese title and the candidate English title refer to the same Portuguese course
 
