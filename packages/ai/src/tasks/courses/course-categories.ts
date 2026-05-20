@@ -5,7 +5,7 @@ import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
 import promptTemplate from "./course-categories.prompt.md";
 
-const defaultModel = "google/gemini-3.1-flash-lite-preview";
+const defaultModel = "google/gemini-3.1-flash-lite";
 
 const fallbackModels = [
   "openai/gpt-5.4-nano",
