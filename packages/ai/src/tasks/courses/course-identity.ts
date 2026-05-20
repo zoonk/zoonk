@@ -4,8 +4,8 @@ import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
 import classificationPrompt from "./course-identity.prompt.md";
 
-const defaultModel = "openai/gpt-5.5";
-const fallbackModels = ["anthropic/claude-opus-4.7", "google/gemini-3.1-pro-preview"] as const;
+const defaultModel = "google/gemini-3.1-flash-lite";
+const fallbackModels = ["openai/gpt-5.4-nano", "deepseek/deepseek-v4-flash"] as const;
 
 const identitySchema = z.object({
   courseSlug: z.string().nullable(),

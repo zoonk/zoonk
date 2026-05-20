@@ -3,7 +3,10 @@ const SHARED_EXPECTATIONS = `
   - Must choose "createNew" when candidates are broader, narrower, siblings, ambiguous, or jurisdictionally different
   - If using an existing course, courseSlug must exactly match the correct candidate slug
   - If creating new, courseSlug must be null
-  - The reason should be concise and should explain the identity boundary
+  - Ignore the reason field when scoring this eval
+  - If both decision and courseSlug match the expected values, the score must be 10
+  - If only one of decision or courseSlug matches the expected value, the score must be 7
+  - If neither decision nor courseSlug matches the expected values, the score must be the lowest possible score
   - False positives are major errors because they redirect learners to the wrong course
 `;
 
