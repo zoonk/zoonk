@@ -3,6 +3,9 @@ import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { createOrganization, getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { normalizeString } from "@zoonk/utils/string";
 
 /**
@@ -52,6 +55,44 @@ async function createSubscribedApiContext({
   expect(signInResponse.ok()).toBe(true);
 
   return apiContext;
+}
+
+/**
+ * Route-contract tests only need a published AI-owned lesson with a specific
+ * chapter position. The lesson is already completed so starting the workflow
+ * exercises the API gate without making the test depend on real AI generation.
+ */
+async function createAiLessonForWorkflow({
+  aiOrgId,
+  chapterPosition,
+  uniqueId,
+}: {
+  aiOrgId: string;
+  chapterPosition: number;
+  uniqueId: string;
+}) {
+  const course = await courseFixture({
+    isPublished: true,
+    organizationId: aiOrgId,
+    title: `E2E Lesson Workflow ${uniqueId}`,
+  });
+
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    isPublished: true,
+    organizationId: aiOrgId,
+    position: chapterPosition,
+    title: `E2E Lesson Chapter ${uniqueId}`,
+  });
+
+  return lessonFixture({
+    chapterId: chapter.id,
+    generationStatus: "completed",
+    isPublished: true,
+    kind: "explanation",
+    organizationId: aiOrgId,
+    title: `E2E Lesson ${uniqueId}`,
+  });
 }
 
 test.describe("Lesson Generation Workflow API", () => {
@@ -119,48 +160,7 @@ test.describe("Lesson Generation Workflow API", () => {
 
   test("returns 402 when user has no active subscription", async () => {
     const uniqueId = randomUUID().slice(0, 8);
-    const courseTitle = `E2E Lesson Test ${uniqueId}`;
-
-    const course = await prisma.course.create({
-      data: {
-        description: "Test course for lesson generation",
-        isPublished: true,
-        language: "en",
-        normalizedTitle: normalizeString(courseTitle),
-        organizationId: aiOrgId,
-        slug: `e2e-lesson-test-${uniqueId}`,
-        title: courseTitle,
-      },
-    });
-
-    const chapter = await prisma.chapter.create({
-      data: {
-        courseId: course.id,
-        description: "Test chapter description",
-        isPublished: true,
-        language: "en",
-        normalizedTitle: normalizeString("Test Chapter"),
-        organizationId: aiOrgId,
-        position: 0,
-        slug: `e2e-chapter-${uniqueId}`,
-        title: "Test Chapter",
-      },
-    });
-
-    const lesson = await prisma.lesson.create({
-      data: {
-        chapterId: chapter.id,
-        description: "Test lesson description",
-        isPublished: true,
-        kind: "explanation",
-        language: "en",
-        normalizedTitle: normalizeString("Test Lesson"),
-        organizationId: aiOrgId,
-        position: 0,
-        slug: `e2e-lesson-${uniqueId}`,
-        title: "Test Lesson",
-      },
-    });
+    const lesson = await createAiLessonForWorkflow({ aiOrgId, chapterPosition: 1, uniqueId });
 
     const apiContext = await request.newContext({ baseURL });
 
@@ -176,9 +176,28 @@ test.describe("Lesson Generation Workflow API", () => {
     expect(body.error.code).toBe("PAYMENT_REQUIRED");
     expect(body.error.message).toBe("Active subscription required");
 
-    await prisma.lesson.delete({ where: { id: lesson.id } });
-    await prisma.chapter.delete({ where: { id: chapter.id } });
-    await prisma.course.delete({ where: { id: course.id } });
+    await apiContext.dispose();
+  });
+
+  test("allows first chapter lesson generation without subscription", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+
+    const lesson = await createAiLessonForWorkflow({ aiOrgId, chapterPosition: 0, uniqueId });
+
+    const apiContext = await request.newContext({ baseURL });
+
+    const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
+      data: { lessonId: lesson.id },
+    });
+
+    expect(response.status()).toBe(200);
+
+    const body = await response.json();
+
+    expect(body.message).toBe("Workflow started");
+    expect(body.runId).toBeDefined();
+    expect(typeof body.runId).toBe("string");
+
     await apiContext.dispose();
   });
 
