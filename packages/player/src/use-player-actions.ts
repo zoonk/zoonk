@@ -4,6 +4,7 @@ import { type CompletionInput } from "@zoonk/core/player/contracts/completion-in
 import { type Dispatch, useCallback } from "react";
 import { checkStep } from "./check-step";
 import { buildCompletionInput, getPlayerTransition } from "./player-controller";
+import { type PlayerStepChangeEvent, getPlayerStepChangeEvent } from "./player-events";
 import {
   type PlayerAction,
   type PlayerState,
@@ -25,6 +26,7 @@ export function usePlayerActions(
   dispatch: Dispatch<Parameters<typeof playerReducer>[1]>,
   onComplete: (input: CompletionInput) => void,
   isAuthenticated: boolean,
+  onStepChange?: (event: PlayerStepChangeEvent) => void,
 ) {
   const currentStep = state.steps[state.currentStepIndex];
 
@@ -36,8 +38,14 @@ export function usePlayerActions(
       if (transition.shouldPersistCompletion && isAuthenticated) {
         onComplete(buildCompletionInput(transition.nextState));
       }
+
+      const stepChangeEvent = getPlayerStepChangeEvent({ nextState: transition.nextState, state });
+
+      if (stepChangeEvent) {
+        onStepChange?.(stepChangeEvent);
+      }
     },
-    [dispatch, isAuthenticated, onComplete, state],
+    [dispatch, isAuthenticated, onComplete, onStepChange, state],
   );
 
   const selectAnswer = useCallback(

@@ -144,11 +144,20 @@ async function runLessonGeneration(input: {
     return "blocked";
   }
 
-  await setLessonAsRunningStep({
+  const claimResult = await setLessonAsRunningStep({
     lessonId: input.lessonId,
     resetExistingSteps: input.context.generationStatus === "failed",
     workflowRunId: input.workflowRunId,
   });
+
+  if (claimResult === "completed") {
+    await streamSkipStep(LESSON_COMPLETION_STEP);
+    return "ready";
+  }
+
+  if (claimResult === "skipped") {
+    return "ready";
+  }
 
   try {
     const [, imageUrl] = await Promise.all([

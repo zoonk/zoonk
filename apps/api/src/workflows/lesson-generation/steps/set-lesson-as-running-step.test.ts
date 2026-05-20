@@ -23,7 +23,7 @@ describe(setLessonAsRunningStep, () => {
       lessonId: lesson.id,
     });
 
-    await setLessonAsRunningStep({
+    const result = await setLessonAsRunningStep({
       lessonId: lesson.id,
       resetExistingSteps: true,
       workflowRunId: "workflow-running-1",
@@ -33,6 +33,8 @@ describe(setLessonAsRunningStep, () => {
       prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
       prisma.step.findMany({ where: { lessonId: lesson.id } }),
     ]);
+
+    expect(result).toBe("claimed");
 
     expect(updatedLesson).toMatchObject({
       generationRunId: "workflow-running-1",
@@ -47,5 +49,46 @@ describe(setLessonAsRunningStep, () => {
         expect.objectContaining({ status: "completed", step: "setLessonAsRunning" }),
       ]),
     );
+  });
+
+  it("does not clear steps when another workflow already claimed the lesson", async () => {
+    const lesson = await createLessonContext({ generationStatus: "running", organizationId });
+
+    await stepFixture({
+      content: { text: "keep", title: "Keep", variant: "text" },
+      kind: "static",
+      lessonId: lesson.id,
+    });
+
+    const result = await setLessonAsRunningStep({
+      lessonId: lesson.id,
+      resetExistingSteps: true,
+      workflowRunId: "workflow-running-2",
+    });
+
+    const [updatedLesson, remainingSteps] = await Promise.all([
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+      prisma.step.findMany({ where: { lessonId: lesson.id } }),
+    ]);
+
+    expect(result).toBe("skipped");
+    expect(updatedLesson.generationRunId).not.toBe("workflow-running-2");
+    expect(updatedLesson.generationStatus).toBe("running");
+    expect(remainingSteps).toHaveLength(1);
+  });
+
+  it("returns completed when another workflow already finished the lesson", async () => {
+    const lesson = await createLessonContext({ generationStatus: "completed", organizationId });
+
+    const result = await setLessonAsRunningStep({
+      lessonId: lesson.id,
+      workflowRunId: "workflow-running-3",
+    });
+
+    const updatedLesson = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
+
+    expect(result).toBe("completed");
+    expect(updatedLesson.generationRunId).not.toBe("workflow-running-3");
+    expect(updatedLesson.generationStatus).toBe("completed");
   });
 });

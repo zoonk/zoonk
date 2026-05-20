@@ -26,6 +26,7 @@
     "./lessons/last-completed": "./src/lessons/find-last-completed.ts",
     "./lessons/next-chapter-in-course": "./src/lessons/get-next-chapter-in-course.ts",
     "./lessons/next-in-course": "./src/lessons/get-next-lesson-in-course.ts",
+    "./player/commands/get-next-lesson-preload-target": "./src/player/commands/get-next-lesson-preload-target.ts",
     "./player/commands/start-lesson": "./src/player/commands/start-lesson.ts",
     "./player/commands/submit-player-completion": "./src/player/commands/submit-player-completion.ts",
     "./player/contracts/arrange-words-answers": "./src/player/contracts/arrange-words-answers.ts",

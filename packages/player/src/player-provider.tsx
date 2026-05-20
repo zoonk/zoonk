@@ -10,12 +10,15 @@ import {
   PlayerRuntimeContext,
   type PlayerViewer,
 } from "./player-context";
+import { type PlayerStepChangeEvent } from "./player-events";
 import { type InitialStateInput } from "./player-initial-state";
 import { createInitialState, playerReducer } from "./player-reducer";
 import { getPlayerScreenModel } from "./player-screen";
 import { usePlayerActions } from "./use-player-actions";
 import { usePlayerKeyboard } from "./use-player-keyboard";
 import { UserNameProvider } from "./user-name-context";
+
+export type { PlayerStepChangeEvent } from "./player-events";
 
 export function PlayerProvider({
   lesson,
@@ -28,6 +31,7 @@ export function PlayerProvider({
   onComplete,
   onEscape,
   onNext,
+  onStepChange,
   totalBrainPower,
   viewer,
 }: {
@@ -41,6 +45,7 @@ export function PlayerProvider({
   onComplete: (input: CompletionInput) => void;
   onEscape: () => void;
   onNext?: () => void;
+  onStepChange?: (event: PlayerStepChangeEvent) => void;
   totalBrainPower: number;
   viewer: PlayerViewer;
 }) {
@@ -50,7 +55,15 @@ export function PlayerProvider({
   );
 
   const [state, dispatch] = useReducer(playerReducer, initInput, createInitialState);
-  const actions = usePlayerActions(state, dispatch, onComplete, viewer.isAuthenticated);
+
+  const actions = usePlayerActions(
+    state,
+    dispatch,
+    onComplete,
+    viewer.isAuthenticated,
+    onStepChange,
+  );
+
   const screen = useMemo(() => getPlayerScreenModel(state), [state]);
 
   const handleNext = useCallback(() => {

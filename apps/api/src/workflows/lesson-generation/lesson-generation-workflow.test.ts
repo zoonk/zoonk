@@ -28,6 +28,9 @@ import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { lessonWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { lessonGenerationWorkflow } from "./lesson-generation-workflow";
+import { type setLessonAsRunningStep } from "./steps/set-lesson-as-running-step";
+
+type SetLessonAsRunningStepModule = { setLessonAsRunningStep: typeof setLessonAsRunningStep };
 
 const languageMockState = vi.hoisted(() => ({
   distractors: Object.fromEntries([
@@ -39,6 +42,29 @@ const languageMockState = vi.hoisted(() => ({
     { translation: "water", word: "水" },
   ],
 }));
+
+const claimRaceMockState = vi.hoisted(() => ({
+  completeBeforeClaim: null as null | ((input: { lessonId: string }) => Promise<void>),
+}));
+
+vi.mock("./steps/set-lesson-as-running-step", async () => {
+  const actual = await vi.importActual<SetLessonAsRunningStepModule>(
+    "./steps/set-lesson-as-running-step",
+  );
+
+  return {
+    ...actual,
+    setLessonAsRunningStep: vi.fn(
+      async (input: Parameters<typeof actual.setLessonAsRunningStep>[0]) => {
+        if (claimRaceMockState.completeBeforeClaim) {
+          await claimRaceMockState.completeBeforeClaim({ lessonId: input.lessonId });
+        }
+
+        return actual.setLessonAsRunningStep(input);
+      },
+    ),
+  };
+});
 
 vi.mock("@zoonk/ai/tasks/lessons/core/explanation", () => ({
   generateLessonExplanation: vi.fn().mockResolvedValue({
@@ -349,6 +375,7 @@ describe(lessonGenerationWorkflow, () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    claimRaceMockState.completeBeforeClaim = null;
 
     languageMockState.words.splice(
       0,
@@ -1050,6 +1077,43 @@ describe(lessonGenerationWorkflow, () => {
     );
 
     expect(completionEvent).toBeDefined();
+  });
+
+  it("streams completion when another run completes before this run claims the lesson", async () => {
+    const { chapter } = await createWorkflowTree({ organizationId });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "explanation",
+      organizationId,
+      title: `Claim Race Lesson ${randomUUID()}`,
+    });
+
+    claimRaceMockState.completeBeforeClaim = async ({ lessonId }) => {
+      await stepFixture({
+        content: assertStepContent("static", {
+          text: "Saved by another workflow run.",
+          title: "Already complete",
+          variant: "text",
+        }),
+        isPublished: true,
+        kind: "static",
+        lessonId,
+        position: 0,
+      });
+
+      await prisma.lesson.update({
+        data: { generationStatus: "completed" },
+        where: { id: lessonId },
+      });
+    };
+
+    await expect(lessonGenerationWorkflow(lesson.id)).resolves.toBe("ready");
+
+    expect(generateLessonExplanation).not.toHaveBeenCalled();
+    expect(completedStreamedSteps()).toContain("setLessonAsCompleted");
   });
 
   it("regenerates failed lessons with leftover steps instead of repairing them", async () => {
