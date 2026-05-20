@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatPosition, validateOffset } from "./number";
+import { validateOffset } from "./number";
 
 describe(validateOffset, () => {
   it("parses valid positive integer", () => {
@@ -32,17 +32,5 @@ describe(validateOffset, () => {
 
   it("returns 0 for empty string", () => {
     expect(validateOffset("")).toBe(0);
-  });
-});
-
-describe(formatPosition, () => {
-  it("formats single digit positions with leading zero", () => {
-    expect(formatPosition(0)).toBe("01");
-    expect(formatPosition(8)).toBe("09");
-  });
-
-  it("formats double digit positions without leading zero", () => {
-    expect(formatPosition(9)).toBe("10");
-    expect(formatPosition(99)).toBe("100");
   });
 });

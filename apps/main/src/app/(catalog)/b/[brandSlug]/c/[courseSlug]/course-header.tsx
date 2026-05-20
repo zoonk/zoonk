@@ -1,4 +1,5 @@
 import { AIWarning } from "@/components/catalog/ai-warning";
+import { CatalogHeaderImage } from "@/components/catalog/catalog-header-image";
 import { type CourseWithDetails } from "@/data/courses/get-course";
 import { getCategories } from "@/lib/categories/category";
 import { Badge } from "@zoonk/ui/components/badge";
@@ -8,7 +9,6 @@ import {
   MediaCardDescription,
   MediaCardHeader,
   MediaCardIcon,
-  MediaCardImage,
   MediaCardIndicator,
   MediaCardPopover,
   MediaCardPopoverBadges,
@@ -20,7 +20,6 @@ import {
   MediaCardTrigger,
 } from "@zoonk/ui/components/media-card";
 import { NotebookPenIcon } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 
 export async function CourseHeader({
@@ -38,16 +37,7 @@ export async function CourseHeader({
   return (
     <MediaCard>
       {course.imageUrl ? (
-        <MediaCardImage>
-          <Image
-            alt={course.title}
-            className="size-full rounded-xl object-cover outline -outline-offset-1 outline-black/10 dark:outline-white/10"
-            fill
-            loading="eager"
-            sizes="(max-width: 640px) 80px, 96px"
-            src={course.imageUrl}
-          />
-        </MediaCardImage>
+        <CatalogHeaderImage alt={course.title} src={course.imageUrl} />
       ) : (
         <MediaCardIcon aria-label={course.title} role="img">
           <NotebookPenIcon aria-hidden="true" className="text-muted-foreground/80 size-8" />

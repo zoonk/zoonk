@@ -4,7 +4,7 @@ import { cache } from "react";
 
 const cachedGetChapter = cache(async (brandSlug: string, courseSlug: string, chapterSlug: string) =>
   prisma.chapter.findFirst({
-    include: { course: true },
+    include: { course: { include: { categories: true } } },
     where: getPublishedChapterWhere({
       chapterWhere: { slug: chapterSlug },
       courseWhere: { organization: { kind: "brand", slug: brandSlug }, slug: courseSlug },

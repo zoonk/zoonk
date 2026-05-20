@@ -265,10 +265,6 @@ msgstr "Aciertos"
 msgid "4dsZTc"
 msgstr "{value}% de respuestas correctas"
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-header.tsx
-msgid "B9hCYt"
-msgstr "Capítulo {position}"
-
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgid "ssvp3R"
 msgstr "Buscar lecciones..."

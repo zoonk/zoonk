@@ -11,7 +11,10 @@ export function MediaCard({ children, className }: React.ComponentProps<"header"
   return (
     <Popover>
       <header
-        className={cn("mx-auto flex w-full items-start gap-4 px-4 lg:max-w-xl", className)}
+        className={cn(
+          "mx-auto grid w-full grid-cols-[auto_minmax(0,1fr)] items-stretch gap-4 px-4 lg:max-w-xl",
+          className,
+        )}
         data-slot="media-card"
       >
         {children}
@@ -36,7 +39,10 @@ export function MediaCardTrigger({ children, className }: React.ComponentProps<"
 export function MediaCardImage({ children, className }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("relative size-20 shrink-0 overflow-hidden rounded-xl sm:size-24", className)}
+      className={cn(
+        "relative aspect-square h-full min-h-20 min-w-20 overflow-hidden rounded-xl sm:min-h-24 sm:min-w-24",
+        className,
+      )}
       data-slot="media-card-image"
     >
       {children}
@@ -48,7 +54,7 @@ export function MediaCardIcon({ children, className, ...props }: React.Component
   return (
     <div
       className={cn(
-        "bg-muted/70 flex size-20 shrink-0 items-center justify-center rounded-xl sm:size-24",
+        "bg-muted/70 flex aspect-square h-full min-h-20 min-w-20 items-center justify-center rounded-xl sm:min-h-24 sm:min-w-24",
         className,
       )}
       data-slot="media-card-icon"
