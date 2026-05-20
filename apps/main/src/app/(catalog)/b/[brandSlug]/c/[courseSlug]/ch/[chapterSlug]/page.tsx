@@ -6,7 +6,7 @@ import {
 } from "@/components/catalog/continue-lesson-link";
 import { getChapter } from "@/data/chapters/get-chapter";
 import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
-import { getNextSibling } from "@zoonk/core/player/queries/get-next-sibling";
+import { getNextChapterInCourse } from "@zoonk/core/lessons/next-chapter-in-course";
 import { getSession } from "@zoonk/core/users/session/get";
 import { List, ListToolbar } from "@zoonk/ui/components/list";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
@@ -44,21 +44,17 @@ export default async function ChapterPage({
     notFound();
   }
 
-  const [lessons, nextSibling] = await Promise.all([
+  const [lessons, nextChapter] = await Promise.all([
     listChapterLessons({ chapterId: chapter.id }),
-    getNextSibling({
-      chapterPosition: chapter.position,
-      courseId: chapter.courseId,
-      level: "chapter",
-    }),
+    getNextChapterInCourse({ chapterPosition: chapter.position, courseId: chapter.courseId }),
   ]);
 
   if (brandSlug === AI_ORG_SLUG && lessons.length === 0) {
     redirect(`/generate/ch/${chapter.id}`);
   }
 
-  const completedHref = nextSibling
-    ? (`/b/${nextSibling.brandSlug}/c/${nextSibling.courseSlug}/ch/${nextSibling.chapterSlug}` as const)
+  const completedHref = nextChapter
+    ? (`/b/${nextChapter.brandSlug}/c/${nextChapter.courseSlug}/ch/${nextChapter.chapterSlug}` as const)
     : undefined;
 
   const fallbackHref = lessons[0]

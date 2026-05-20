@@ -162,7 +162,7 @@ async function createChapterCompleteScenario(prefix: string) {
     slug: `e2e-${prefix}-lesson-${uniqueId}`,
   });
 
-  // Chapter2 needs a lesson so getNextSibling finds it.
+  // Chapter2 needs a lesson so structural next-lesson navigation finds it.
   await lessonFixture({
     chapterId: chapter2.id,
     isPublished: true,

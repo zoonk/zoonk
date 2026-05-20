@@ -1,4 +1,5 @@
-import { getNextSibling } from "@zoonk/core/player/queries/get-next-sibling";
+import { getNextChapterInCourse } from "@zoonk/core/lessons/next-chapter-in-course";
+import { getNextLessonInCourse } from "@zoonk/core/lessons/next-in-course";
 import { type Chapter, type Lesson } from "@zoonk/db";
 import { type ContinueLearningState } from "./continue-learning-next-state";
 import { type ContinueLearningRow } from "./continue-learning-queries";
@@ -63,12 +64,11 @@ async function findPendingTarget({
 }: {
   row: ContinueLearningRow;
 }): Promise<PendingTarget | null> {
-  const nextLesson = await getNextSibling({
+  const nextLesson = await getNextLessonInCourse({
     chapterId: row.chapterId,
     chapterPosition: row.chapterPosition,
     courseId: row.courseId,
     lessonPosition: row.lessonPosition,
-    level: "lesson",
   });
 
   if (nextLesson) {
@@ -88,10 +88,9 @@ async function findPendingTarget({
     };
   }
 
-  const nextChapter = await getNextSibling({
+  const nextChapter = await getNextChapterInCourse({
     chapterPosition: row.chapterPosition,
     courseId: row.courseId,
-    level: "chapter",
   });
 
   if (!nextChapter) {

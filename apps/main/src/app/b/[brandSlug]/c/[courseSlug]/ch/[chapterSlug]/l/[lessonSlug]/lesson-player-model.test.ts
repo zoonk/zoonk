@@ -8,7 +8,6 @@ describe(buildLessonPlayerModel, () => {
       chapterSlug: "chapter-1",
       courseSlug: "course",
       nextLesson: { chapterSlug: "chapter-1", lessonSlug: "lesson-1", lessonTitle: "Lesson 1" },
-      nextSibling: null,
     });
 
     expect(model.milestone).toBeNull();
@@ -22,31 +21,11 @@ describe(buildLessonPlayerModel, () => {
       chapterSlug: "chapter-1",
       courseSlug: "course",
       nextLesson: { chapterSlug: "chapter-1", lessonSlug: "lesson-2", lessonTitle: "Lesson 2" },
-      nextSibling: null,
     });
 
     expect(model.milestone).toBeNull();
     expect(model.navigation.chapterHref).toBe("/b/brand/c/course/ch/chapter-1");
     expect(model.onNextHref).toBe("/b/brand/c/course/ch/chapter-1/l/lesson-2");
-  });
-
-  it("uses the player route for pending next siblings", () => {
-    const model = buildLessonPlayerModel({
-      brandSlug: "brand",
-      chapterSlug: "chapter-1",
-      courseSlug: "course",
-      nextLesson: null,
-      nextSibling: {
-        brandSlug: "brand",
-        chapterSlug: "chapter-1",
-        courseSlug: "course",
-        lessonSlug: "pending-lesson",
-        lessonTitle: "Pending Lesson",
-      },
-    });
-
-    expect(model.milestone).toBeNull();
-    expect(model.onNextHref).toBe("/b/brand/c/course/ch/chapter-1/l/pending-lesson");
   });
 
   it("returns a chapter milestone when the next lesson is in another chapter", () => {
@@ -55,7 +34,6 @@ describe(buildLessonPlayerModel, () => {
       chapterSlug: "chapter-1",
       courseSlug: "course",
       nextLesson: { chapterSlug: "chapter-2", lessonSlug: "lesson-2", lessonTitle: "Lesson 2" },
-      nextSibling: null,
     });
 
     expect(model.milestone).toStrictEqual({
@@ -73,7 +51,6 @@ describe(buildLessonPlayerModel, () => {
       chapterSlug: "chapter-1",
       courseSlug: "course",
       nextLesson: null,
-      nextSibling: null,
     });
 
     expect(model.milestone).toStrictEqual({

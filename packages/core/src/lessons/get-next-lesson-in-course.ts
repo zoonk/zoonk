@@ -1,7 +1,7 @@
 import "server-only";
-import { type GenerationStatus, type LessonKind } from "@zoonk/db";
+import { type GenerationStatus, type LessonKind, getPublishedLessonWhere, prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
-import { getNextSibling } from "../player/queries/get-next-sibling";
 
 export type NextLessonInCourse = {
   lessonId: string;
@@ -23,29 +23,37 @@ const cachedGetNextLesson = cache(
     courseId: string,
     lessonPosition: number,
   ): Promise<NextLessonInCourse | null> => {
-    const lesson = await getNextSibling({
-      chapterId,
-      chapterPosition,
-      courseId,
-      lessonPosition,
-      level: "lesson",
-    });
+    const { data: lesson, error } = await safeAsync(() =>
+      prisma.lesson.findFirst({
+        include: { chapter: true },
+        orderBy: [{ chapter: { position: "asc" } }, { position: "asc" }],
+        where: getPublishedLessonWhere({
+          courseWhere: { id: courseId },
+          lessonWhere: {
+            OR: [
+              { chapter: { id: chapterId }, position: { gt: lessonPosition } },
+              { chapter: { position: { gt: chapterPosition } } },
+            ],
+          },
+        }),
+      }),
+    );
 
-    if (!lesson) {
+    if (error || !lesson) {
       return null;
     }
 
     return {
-      chapterId: lesson.chapterId,
-      chapterSlug: lesson.chapterSlug,
-      chapterTitle: lesson.chapterTitle,
-      lessonDescription: lesson.lessonDescription,
-      lessonGenerationStatus: lesson.lessonGenerationStatus,
-      lessonId: lesson.lessonId,
-      lessonKind: lesson.lessonKind,
-      lessonPosition: lesson.lessonPosition,
-      lessonSlug: lesson.lessonSlug,
-      lessonTitle: lesson.lessonTitle,
+      chapterId: lesson.chapter.id,
+      chapterSlug: lesson.chapter.slug,
+      chapterTitle: lesson.chapter.title,
+      lessonDescription: lesson.description,
+      lessonGenerationStatus: lesson.generationStatus,
+      lessonId: lesson.id,
+      lessonKind: lesson.kind,
+      lessonPosition: lesson.position,
+      lessonSlug: lesson.slug,
+      lessonTitle: lesson.title,
     };
   },
 );
@@ -57,7 +65,6 @@ export function getNextLessonInCourse(params: {
   chapterId: string;
   chapterPosition: number;
   courseId: string;
-  lessonId: string;
   lessonPosition: number;
 }): Promise<NextLessonInCourse | null> {
   return cachedGetNextLesson(

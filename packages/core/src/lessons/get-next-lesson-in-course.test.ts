@@ -14,7 +14,6 @@ describe(getNextLessonInCourse, () => {
   let chapter2Id: string;
   let chapter2Slug: string;
 
-  let lesson1Id: string;
   let lesson2Id: string;
   let lesson2Slug: string;
   let lesson3Id: string;
@@ -38,7 +37,7 @@ describe(getNextLessonInCourse, () => {
     chapter2Slug = ch2.slug;
 
     // Chapter 1: 2 lessons
-    const [lesson1, lesson2] = await Promise.all([
+    const initialLessons = await Promise.all([
       lessonFixture({
         chapterId: chapter1Id,
         isPublished: true,
@@ -53,7 +52,7 @@ describe(getNextLessonInCourse, () => {
       }),
     ]);
 
-    lesson1Id = lesson1.id;
+    const lesson2 = initialLessons[1];
     lesson2Id = lesson2.id;
     lesson2Slug = lesson2.slug;
 
@@ -74,7 +73,6 @@ describe(getNextLessonInCourse, () => {
       chapterId: chapter1Id,
       chapterPosition: 0,
       courseId,
-      lessonId: lesson1Id,
       lessonPosition: 0,
     });
 
@@ -91,7 +89,6 @@ describe(getNextLessonInCourse, () => {
       chapterId: chapter1Id,
       chapterPosition: 0,
       courseId,
-      lessonId: lesson2Id,
       lessonPosition: 1,
     });
 
@@ -108,7 +105,6 @@ describe(getNextLessonInCourse, () => {
       chapterId: chapter2Id,
       chapterPosition: 1,
       courseId,
-      lessonId: lesson3Id,
       lessonPosition: 0,
     });
 
@@ -120,7 +116,6 @@ describe(getNextLessonInCourse, () => {
       chapterId: chapter1Id,
       chapterPosition: 0,
       courseId: "missing-course-id",
-      lessonId: lesson1Id,
       lessonPosition: 0,
     });
 
@@ -132,14 +127,13 @@ describe(getNextLessonInCourse, () => {
       chapterId: chapter1Id,
       chapterPosition: 0,
       courseId,
-      lessonId: lesson1Id,
       lessonPosition: 0,
     });
 
     expect(result).toHaveProperty("lessonKind");
     expect(result).toHaveProperty("lessonTitle");
-    expect(result).toHaveProperty("lessonTitle");
     expect(result).toHaveProperty("lessonDescription");
+    expect(result).toHaveProperty("lessonGenerationStatus");
   });
 
   it("skips unpublished lessons", async () => {
@@ -183,7 +177,6 @@ describe(getNextLessonInCourse, () => {
       chapterId: testChapter.id,
       chapterPosition: 0,
       courseId: testCourse.id,
-      lessonId: lessons[0]?.id ?? "",
       lessonPosition: 0,
     });
 
@@ -236,7 +229,6 @@ describe(getNextLessonInCourse, () => {
       chapterId: testChapter.id,
       chapterPosition: 0,
       courseId: testCourse.id,
-      lessonId: pendingLessons[0]?.id ?? "",
       lessonPosition: 0,
     });
 
@@ -259,7 +251,7 @@ describe(getNextLessonInCourse, () => {
       position: 0,
     });
 
-    const [publishedLesson, _unpublishedLesson, nextPublishedLesson] = await Promise.all([
+    const lessons = await Promise.all([
       lessonFixture({
         chapterId: testChapter.id,
         isPublished: true,
@@ -280,11 +272,12 @@ describe(getNextLessonInCourse, () => {
       }),
     ]);
 
+    const nextPublishedLesson = lessons[2];
+
     const result = await getNextLessonInCourse({
       chapterId: testChapter.id,
       chapterPosition: 0,
       courseId: testCourse.id,
-      lessonId: publishedLesson.id,
       lessonPosition: 0,
     });
 
@@ -321,7 +314,7 @@ describe(getNextLessonInCourse, () => {
       }),
     ]);
 
-    const [lesson1, _lesson2, lesson3] = await Promise.all([
+    const lessons = await Promise.all([
       lessonFixture({
         chapterId: publishedCh.id,
         isPublished: true,
@@ -342,11 +335,12 @@ describe(getNextLessonInCourse, () => {
       }),
     ]);
 
+    const lesson3 = lessons[2];
+
     const result = await getNextLessonInCourse({
       chapterId: publishedCh.id,
       chapterPosition: 0,
       courseId: testCourse.id,
-      lessonId: lesson1.id,
       lessonPosition: 0,
     });
 

@@ -2,7 +2,7 @@ import { errors } from "@/lib/api-errors";
 import { nextLessonQuerySchema } from "@/lib/openapi/schemas/progress";
 import { parseQueryParams } from "@/lib/query-params";
 import { type LessonScope } from "@zoonk/core/lessons/last-completed";
-import { getNextLesson } from "@zoonk/core/progress/next-lesson";
+import { getContinueLessonTarget } from "@zoonk/core/progress/continue-lesson-target";
 import { NextResponse } from "next/server";
 
 function getScope(params: {
@@ -31,7 +31,7 @@ export async function GET(request: Request) {
 
   const { chapterId, courseId, lessonId } = parsed.data;
   const scope = getScope({ chapterId, courseId, lessonId });
-  const result = await getNextLesson({ headers: request.headers, scope });
+  const result = await getContinueLessonTarget({ headers: request.headers, scope });
 
   if (!result) {
     return NextResponse.json({ completed: false, hasStarted: false });
