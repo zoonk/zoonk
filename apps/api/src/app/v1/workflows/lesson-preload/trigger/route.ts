@@ -1,9 +1,12 @@
 import { errors } from "@/lib/api-errors";
 import { parseBody } from "@/lib/body-parser";
 import { lessonPreloadTriggerSchema } from "@/lib/openapi/schemas/workflows";
+import {
+  getAiGenerationLessonForWorkflow,
+  hasWorkflowSubscriptionAccess,
+  requiresSubscriptionForLessonGeneration,
+} from "@/lib/workflow-generation-access";
 import { lessonPreloadWorkflow } from "@/workflows/lesson-preload/lesson-preload-workflow";
-import { hasActiveSubscription } from "@zoonk/core/auth/subscription";
-import { getAiGenerationLessonWhere, prisma } from "@zoonk/db";
 import { type NextRequest, NextResponse } from "next/server";
 import { start } from "workflow/api";
 
@@ -14,18 +17,18 @@ export async function POST(request: NextRequest) {
     return errors.validation(parsed.error);
   }
 
-  const lesson = await prisma.lesson.findFirst({
-    select: { id: true },
-    where: getAiGenerationLessonWhere({ lessonWhere: { id: parsed.data.lessonId } }),
-  });
+  const lesson = await getAiGenerationLessonForWorkflow({ lessonId: parsed.data.lessonId });
 
   if (!lesson) {
     return errors.notFound();
   }
 
-  const hasSubscription = await hasActiveSubscription(request.headers);
+  const hasAccess = await hasWorkflowSubscriptionAccess({
+    headers: request.headers,
+    requiresSubscription: requiresSubscriptionForLessonGeneration(lesson),
+  });
 
-  if (!hasSubscription) {
+  if (!hasAccess) {
     return errors.paymentRequired();
   }
 

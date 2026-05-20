@@ -54,6 +54,8 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
   }
 
   const hasStarted = lesson.generationStatus !== "pending";
+  const isFirstChapter = lesson.chapter.position === 0;
+  const bypassAuth = isFirstChapter || hasStarted;
   const t = await getExtracted();
   const lessonMeta = await getLessonDisplayMeta(lesson);
 
@@ -112,7 +114,7 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
     );
   }
 
-  if (!session && !hasStarted) {
+  if (!session && !bypassAuth) {
     return <LoginRequired backHref={backHref} backLabel={backLabel} title={t("Create Lesson")} />;
   }
 
@@ -126,7 +128,7 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
       </ContainerHeader>
 
       <ContainerBody>
-        <SubscriptionGate backHref={backHref} backLabel={backLabel} bypass={hasStarted}>
+        <SubscriptionGate backHref={backHref} backLabel={backLabel} bypass={bypassAuth}>
           <GenerationClient
             chapterSlug={lesson.chapter.slug}
             courseSlug={lesson.chapter.course.slug}

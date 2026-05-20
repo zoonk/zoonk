@@ -1,24 +1,14 @@
 import { errors } from "@/lib/api-errors";
 import { parseBody } from "@/lib/body-parser";
 import { chapterGenerationTriggerSchema } from "@/lib/openapi/schemas/workflows";
+import {
+  getAiGenerationChapterForWorkflow,
+  hasWorkflowSubscriptionAccess,
+  requiresSubscriptionForChapterGeneration,
+} from "@/lib/workflow-generation-access";
 import { chapterGenerationWorkflow } from "@/workflows/chapter-generation/chapter-generation-workflow";
-import { hasActiveSubscription } from "@zoonk/core/auth/subscription";
-import { getAiGenerationChapterWhere, prisma } from "@zoonk/db";
 import { type NextRequest, NextResponse } from "next/server";
 import { start } from "workflow/api";
-
-/**
- * The first-chapter free path is intentionally public, so this lookup must
- * also prove the chapter belongs to the AI curriculum before we skip auth.
- */
-async function getChapterPosition(chapterId: string) {
-  const chapter = await prisma.chapter.findFirst({
-    select: { position: true },
-    where: getAiGenerationChapterWhere({ chapterWhere: { id: chapterId } }),
-  });
-
-  return chapter;
-}
 
 export async function POST(request: NextRequest) {
   const parsed = await parseBody(request, chapterGenerationTriggerSchema);
@@ -27,18 +17,19 @@ export async function POST(request: NextRequest) {
     return errors.validation(parsed.error);
   }
 
-  const chapter = await getChapterPosition(parsed.data.chapterId);
+  const chapter = await getAiGenerationChapterForWorkflow({ chapterId: parsed.data.chapterId });
 
   if (!chapter) {
     return errors.notFound();
   }
 
-  if (chapter.position !== 0) {
-    const hasSubscription = await hasActiveSubscription(request.headers);
+  const hasAccess = await hasWorkflowSubscriptionAccess({
+    headers: request.headers,
+    requiresSubscription: requiresSubscriptionForChapterGeneration(chapter),
+  });
 
-    if (!hasSubscription) {
-      return errors.paymentRequired();
-    }
+  if (!hasAccess) {
+    return errors.paymentRequired();
   }
 
   const run = await start(chapterGenerationWorkflow, [parsed.data.chapterId]);
