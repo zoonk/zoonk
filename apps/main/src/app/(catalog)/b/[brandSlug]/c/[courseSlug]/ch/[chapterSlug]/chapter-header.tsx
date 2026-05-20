@@ -1,24 +1,22 @@
 import { AIWarning } from "@/components/catalog/ai-warning";
+import { CatalogHeaderImage } from "@/components/catalog/catalog-header-image";
 import { type ChapterWithDetails } from "@/data/chapters/get-chapter";
+import { getDefaultChapterImage } from "@/lib/catalog/default-images";
 import {
   MediaCard,
   MediaCardBreadcrumb,
   MediaCardContent,
   MediaCardDescription,
   MediaCardHeader,
-  MediaCardIcon,
-  MediaCardIconText,
   MediaCardIndicator,
   MediaCardPopover,
   MediaCardPopoverText,
   MediaCardTitle,
   MediaCardTrigger,
 } from "@zoonk/ui/components/media-card";
-import { formatPosition } from "@zoonk/utils/number";
-import { getExtracted } from "next-intl/server";
 import Link from "next/link";
 
-export async function ChapterHeader({
+export function ChapterHeader({
   brandSlug,
   chapter,
   courseSlug,
@@ -27,14 +25,14 @@ export async function ChapterHeader({
   chapter: ChapterWithDetails;
   courseSlug: string;
 }) {
-  const t = await getExtracted();
-  const chapterPosition = formatPosition(chapter.position);
+  const chapterNumber = chapter.position + 1;
+
+  const chapterImage =
+    chapter.imageUrl ?? getDefaultChapterImage({ categories: chapter.course.categories });
 
   return (
     <MediaCard>
-      <MediaCardIcon aria-label={t("Chapter {position}", { position: chapterPosition })} role="img">
-        <MediaCardIconText>{chapterPosition}</MediaCardIconText>
-      </MediaCardIcon>
+      <CatalogHeaderImage alt={chapter.title} src={chapterImage} />
 
       <MediaCardContent>
         <MediaCardBreadcrumb>
@@ -48,7 +46,9 @@ export async function ChapterHeader({
 
         <MediaCardTrigger>
           <MediaCardHeader>
-            <MediaCardTitle>{chapter.title}</MediaCardTitle>
+            <MediaCardTitle>
+              <span className="text-muted-foreground">{chapterNumber}.</span> {chapter.title}
+            </MediaCardTitle>
             <MediaCardIndicator />
           </MediaCardHeader>
           <MediaCardDescription>{chapter.description}</MediaCardDescription>

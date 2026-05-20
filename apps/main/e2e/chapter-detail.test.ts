@@ -171,15 +171,16 @@ test.beforeAll(async () => {
 });
 
 test.describe("Chapter Detail Page", () => {
-  test("shows chapter content with title, description, and position", async ({ page }) => {
+  test("shows chapter content with title, description, and image", async ({ page }) => {
     await page.goto(chapterUrl);
 
-    await expect(page.getByRole("heading", { level: 1, name: chapterTitle })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { exact: true, level: 1, name: `1. ${chapterTitle}` }),
+    ).toBeVisible();
 
     await expect(page.getByText(`Different types of learning ${uniqueId}`)).toBeVisible();
 
-    const positionIcon = page.getByRole("img", { name: /chapter 01/iu }).first();
-    await expect(positionIcon).toBeVisible();
+    await expect(page.getByRole("img", { exact: true, name: chapterTitle })).toBeVisible();
   });
 
   test("displays lesson rows", async ({ page }) => {
