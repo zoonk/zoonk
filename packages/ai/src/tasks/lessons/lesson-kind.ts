@@ -8,7 +8,7 @@ import systemPrompt from "./lesson-kind.prompt.md";
 const defaultModel = "openai/gpt-5.4-nano";
 
 const fallbackModels = [
-  "google/gemini-3.1-flash-lite-preview",
+  "google/gemini-3.1-flash-lite",
   "meta/llama-4-scout",
   "anthropic/claude-haiku-4.5",
 ] as const;
