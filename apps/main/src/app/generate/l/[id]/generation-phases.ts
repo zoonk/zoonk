@@ -2,6 +2,7 @@ import {
   type PhaseStatus,
   calculateWeightedProgress as calculateProgress,
   calculateTargetProgress as calculateTarget,
+  getActivePhaseDurationMs as getDuration,
   getPhaseStatus as getStatus,
 } from "@/lib/generation-phases";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
@@ -95,4 +96,12 @@ export function calculateTargetProgress(
   startedSteps?: LessonStepName[],
 ): number {
   return calculateTarget(completedSteps, currentStep, getProgressConfig(lessonKind, startedSteps));
+}
+
+/** Returns the longest active lesson phase duration in milliseconds. */
+export function getActivePhaseDurationMs(
+  activePhaseNames: PhaseName[],
+  lessonKind: GeneratedLessonKind,
+): number | undefined {
+  return getDuration({ activePhases: activePhaseNames, phaseWeights: getPhaseWeights(lessonKind) });
 }

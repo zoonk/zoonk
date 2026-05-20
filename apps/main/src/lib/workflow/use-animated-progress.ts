@@ -6,6 +6,26 @@ const HALF_LIFE = 12_000;
 const CAP = 97;
 
 /**
+ * Uses the phase's estimated duration when one exists so a long single-step phase
+ * advances at the same pace as the time weight that produced the progress target.
+ * Without this, a 120-second phase still races toward its full target with the
+ * default 12-second half-life because the backend can only report started/done.
+ */
+function getDriftProgress({
+  elapsed,
+  estimatedDurationMs,
+}: {
+  elapsed: number;
+  estimatedDurationMs?: number | undefined;
+}) {
+  if (estimatedDurationMs && estimatedDurationMs > 0) {
+    return Math.min(elapsed / estimatedDurationMs, 1);
+  }
+
+  return 1 - Math.exp(-elapsed / HALF_LIFE);
+}
+
+/**
  * Wraps a real progress value and slowly ticks it forward
  * while streaming is active, creating the illusion of movement
  * during long-running backend steps.
@@ -22,10 +42,12 @@ const CAP = 97;
  * preventing visual "snap-back" when real progress drops after drift inflation.
  */
 export function useAnimatedProgress({
+  estimatedDurationMs,
   isActive,
   realProgress,
   targetProgress,
 }: {
+  estimatedDurationMs?: number | undefined;
   isActive: boolean;
   realProgress: number;
   targetProgress: number;
@@ -57,7 +79,7 @@ export function useAnimatedProgress({
     function tick() {
       const gap = Math.max(0, targetProgress - baseRef.current);
       const elapsed = performance.now() - startTimeRef.current;
-      const drift = gap * (1 - Math.exp(-elapsed / HALF_LIFE));
+      const drift = gap * getDriftProgress({ elapsed, estimatedDurationMs });
       const animated = baseRef.current + drift;
       const capped = Math.min(animated, CAP);
       const monotonic = Math.max(capped, highWaterRef.current);
@@ -77,7 +99,7 @@ export function useAnimatedProgress({
     return () => {
       cancelAnimationFrame(rafRef.current);
     };
-  }, [isActive, realProgress, targetProgress]);
+  }, [estimatedDurationMs, isActive, realProgress, targetProgress]);
 
   return display;
 }

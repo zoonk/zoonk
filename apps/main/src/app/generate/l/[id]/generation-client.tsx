@@ -51,16 +51,28 @@ export function GenerationClient({
     triggerUrl: `${API_URL}/v1/workflows/lesson-generation/trigger`,
   });
 
-  const { activePhaseNames, phases, progress, targetProgress, thinkingGenerators } =
-    useGenerationPhases(
-      generation.completedSteps,
-      generation.currentStep,
-      lessonKind,
-      generation.startedSteps,
-    );
+  const {
+    activePhaseDurationMs,
+    activePhaseNames,
+    phases,
+    progress,
+    targetProgress,
+    thinkingGenerators,
+  } = useGenerationPhases(
+    generation.completedSteps,
+    generation.currentStep,
+    lessonKind,
+    generation.startedSteps,
+  );
 
   const isActive = generation.status === "triggering" || generation.status === "streaming";
-  const displayProgress = useAnimatedProgress({ isActive, realProgress: progress, targetProgress });
+
+  const displayProgress = useAnimatedProgress({
+    estimatedDurationMs: activePhaseDurationMs,
+    isActive,
+    realProgress: progress,
+    targetProgress,
+  });
 
   const thinkingMessages = useThinkingMessages(
     thinkingGenerators,
