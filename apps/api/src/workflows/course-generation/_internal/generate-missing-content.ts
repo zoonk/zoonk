@@ -1,6 +1,5 @@
 import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { type CourseChapter } from "@zoonk/ai/tasks/courses/chapters";
-import { generateAlternativeTitlesStep } from "../steps/generate-alternative-titles-step";
 import { generateCategoriesStep } from "../steps/generate-categories-step";
 import { generateChaptersStep } from "../steps/generate-chapters-step";
 import { generateDescriptionStep } from "../steps/generate-description-step";
@@ -11,7 +10,6 @@ import { type ExistingCourseContent } from "./get-or-create-course";
 export type GeneratedContent = {
   description: string;
   imageUrl: string;
-  alternativeTitles: string[];
   categories: string[];
   chapters: CourseChapter[];
 };
@@ -51,15 +49,6 @@ async function imageOrSkip({
   return generateImageStep({ course, description });
 }
 
-async function altTitlesOrSkip({ course, existing }: ExistingCourseStepInput): Promise<string[]> {
-  if (existing.hasAlternativeTitles) {
-    await streamSkipStep("generateAlternativeTitles");
-    return [];
-  }
-
-  return generateAlternativeTitlesStep(course);
-}
-
 async function categoriesOrSkip({ course, existing }: ExistingCourseStepInput): Promise<string[]> {
   if (existing.hasCategories) {
     await streamSkipStep("generateCategories");
@@ -97,17 +86,14 @@ export async function generateMissingContent({
   description,
   existing,
 }: GenerateMissingContentInput): Promise<GeneratedContent> {
-  const [generatedDescription, generatedImageUrl, alternativeTitles, categories, chapters] =
-    await Promise.all([
-      descriptionOrSkip({ course, existing }),
-      imageOrSkip({ course, description, existing }),
-      altTitlesOrSkip({ course, existing }),
-      categoriesOrSkip({ course, existing }),
-      chaptersOrSkip({ course, existing }),
-    ]);
+  const [generatedDescription, generatedImageUrl, categories, chapters] = await Promise.all([
+    descriptionOrSkip({ course, existing }),
+    imageOrSkip({ course, description, existing }),
+    categoriesOrSkip({ course, existing }),
+    chaptersOrSkip({ course, existing }),
+  ]);
 
   return {
-    alternativeTitles,
     categories,
     chapters,
     description: existing.description || generatedDescription || "",

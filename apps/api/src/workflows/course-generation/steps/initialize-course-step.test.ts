@@ -56,6 +56,7 @@ describe(initializeCourseStep, () => {
 
     expect(updatedSuggestion.generationStatus).toBe("running");
     expect(updatedSuggestion.generationRunId).toBe(workflowRunId);
+    expect(updatedSuggestion.courseId).toBe(result.courseId);
     expect(createdCourse.generationStatus).toBe("running");
     expect(createdCourse.isPublished).toBe(true);
     expect(createdCourse.title).toBe(suggestion.title);

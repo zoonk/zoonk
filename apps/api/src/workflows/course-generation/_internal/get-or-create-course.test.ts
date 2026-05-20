@@ -4,7 +4,7 @@ import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggesti
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { type ExistingCourse } from "../steps/check-existing-course-step";
+import { type ExistingCourse } from "../steps/resolve-course-identity-step";
 import { getOrCreateCourse } from "./get-or-create-course";
 
 describe(getOrCreateCourse, () => {
@@ -31,7 +31,6 @@ describe(getOrCreateCourse, () => {
 
     expect(result.existing).toStrictEqual({
       description: null,
-      hasAlternativeTitles: false,
       hasCategories: false,
       hasChapters: false,
       imageUrl: null,
@@ -41,7 +40,12 @@ describe(getOrCreateCourse, () => {
       where: { id: result.course.courseId },
     });
 
+    const updatedSuggestion = await prisma.courseSuggestion.findUniqueOrThrow({
+      where: { id: suggestion.id },
+    });
+
     expect(createdCourse.generationStatus).toBe("running");
+    expect(updatedSuggestion.courseId).toBe(createdCourse.id);
   });
 
   it("reuses existing course and marks it as running", async () => {
@@ -54,10 +58,7 @@ describe(getOrCreateCourse, () => {
 
     const suggestion = await courseSuggestionFixture({ title: course.title });
 
-    const existingCourse: ExistingCourse = {
-      ...course,
-      _count: { alternativeTitles: 2, categories: 1, chapters: 3 },
-    };
+    const existingCourse: ExistingCourse = { ...course, _count: { categories: 1, chapters: 3 } };
 
     const workflowRunId = `run-${randomUUID()}`;
 
@@ -72,7 +73,6 @@ describe(getOrCreateCourse, () => {
 
     expect(result.existing).toStrictEqual({
       description: "Existing description",
-      hasAlternativeTitles: true,
       hasCategories: true,
       hasChapters: true,
       imageUrl: "https://example.com/img.webp",
@@ -84,6 +84,7 @@ describe(getOrCreateCourse, () => {
     ]);
 
     expect(updatedCourse.generationStatus).toBe("running");
+    expect(updatedSuggestion.courseId).toBe(course.id);
     expect(updatedSuggestion.generationStatus).toBe("running");
     expect(updatedSuggestion.generationRunId).toBe(workflowRunId);
   });

@@ -1,12 +1,14 @@
 import { randomUUID } from "node:crypto";
 import * as courseSuggestions from "@zoonk/ai/tasks/courses/suggestions";
 import { prisma } from "@zoonk/db";
-import { toSlug } from "@zoonk/utils/string";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
+import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { describe, expect, it, vi } from "vitest";
 import {
   generateCourseSuggestions,
   getCourseSuggestionById,
   getCourseSuggestionBySlug,
+  getLinkedCourseForSuggestion,
 } from "./course-suggestions";
 
 describe("course-suggestions", () => {
@@ -306,5 +308,30 @@ describe("course-suggestions", () => {
     expect(enResult).toMatchObject({ id: enItem.id });
     expect(ptResult).toMatchObject({ id: ptItem.id });
     expect(enResult?.id).not.toBe(ptResult?.id);
+  });
+
+  it("getLinkedCourseForSuggestion returns the linked AI course", async () => {
+    const title = `linked-course-${randomUUID()}`;
+    const slug = toSlug(title);
+
+    const organization = await prisma.organization.upsert({
+      create: { name: "AI", slug: AI_ORG_SLUG },
+      update: {},
+      where: { slug: AI_ORG_SLUG },
+    });
+
+    const course = await prisma.course.create({
+      data: {
+        language: "en",
+        normalizedTitle: normalizeString(title),
+        organizationId: organization.id,
+        slug,
+        title,
+      },
+    });
+
+    const result = await getLinkedCourseForSuggestion({ courseId: course.id });
+
+    expect(result?.id).toBe(course.id);
   });
 });

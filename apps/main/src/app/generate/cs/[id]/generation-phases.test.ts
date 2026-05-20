@@ -2,17 +2,35 @@ import { describe, expect, it } from "vitest";
 import { calculateWeightedProgress, getPhaseOrder, getPhaseStatus } from "./generation-phases";
 
 describe("course generation phases", () => {
-  it("returns all 6 course phases in order", () => {
+  it("returns all 9 course phases in workflow order", () => {
     const phases = getPhaseOrder();
 
     expect(phases).toStrictEqual([
       "gettingReady",
+      "findingSimilarCourses",
+      "checkingCourseIdentity",
+      "preparingCourse",
       "writingDescription",
       "creatingCoverImage",
       "categorizingCourse",
       "outliningChapters",
       "savingCourseInfo",
     ]);
+  });
+
+  it("marks the search phase as active when generating identity search queries", () => {
+    const status = getPhaseStatus(
+      "findingSimilarCourses",
+      [],
+      "generateCourseIdentitySearchQueries",
+    );
+
+    expect(status).toBe("active");
+  });
+
+  it("marks the course identity phase as active when classifying candidates", () => {
+    const status = getPhaseStatus("checkingCourseIdentity", [], "resolveCourseIdentity");
+    expect(status).toBe("active");
   });
 
   it("marks phase as active when its step is the current step", () => {
@@ -22,8 +40,8 @@ describe("course generation phases", () => {
 
   it("marks phase as completed when all its steps are completed", () => {
     const status = getPhaseStatus(
-      "gettingReady",
-      ["getCourseSuggestion", "checkExistingCourse", "initializeCourse", "setCourseAsRunning"],
+      "preparingCourse",
+      ["initializeCourse", "setCourseAsRunning"],
       null,
     );
 
@@ -43,17 +61,16 @@ describe("course generation phases", () => {
   it("returns 100 progress when all steps are complete", () => {
     const allSteps = [
       "getCourseSuggestion",
-      "checkExistingCourse",
+      "generateCourseIdentitySearchQueries",
+      "resolveCourseIdentity",
       "initializeCourse",
       "setCourseAsRunning",
       "generateDescription",
       "generateImage",
-      "generateAlternativeTitles",
       "generateCategories",
       "generateChapters",
       "getExistingChapters",
       "updateCourse",
-      "addAlternativeTitles",
       "addCategories",
       "addChapters",
       "completeCourseSetup",

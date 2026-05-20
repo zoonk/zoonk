@@ -12,12 +12,16 @@ import {
   LayoutListIcon,
   type LucideIcon,
   PenLineIcon,
+  SearchIcon,
   SettingsIcon,
   TagIcon,
 } from "lucide-react";
 
 export type PhaseName =
   | "gettingReady"
+  | "findingSimilarCourses"
+  | "checkingCourseIdentity"
+  | "preparingCourse"
   | "writingDescription"
   | "creatingCoverImage"
   | "categorizingCourse"
@@ -25,19 +29,16 @@ export type PhaseName =
   | "savingCourseInfo";
 
 const PHASE_STEPS = {
-  categorizingCourse: ["generateAlternativeTitles", "generateCategories"],
+  categorizingCourse: ["generateCategories"],
+  checkingCourseIdentity: ["resolveCourseIdentity"],
   creatingCoverImage: ["generateImage"],
-  gettingReady: [
-    "getCourseSuggestion",
-    "checkExistingCourse",
-    "initializeCourse",
-    "setCourseAsRunning",
-  ],
+  findingSimilarCourses: ["generateCourseIdentitySearchQueries"],
+  gettingReady: ["getCourseSuggestion"],
   outliningChapters: ["generateChapters"],
+  preparingCourse: ["initializeCourse", "setCourseAsRunning"],
   savingCourseInfo: [
     "getExistingChapters",
     "updateCourse",
-    "addAlternativeTitles",
     "addCategories",
     "addChapters",
     "completeCourseSetup",
@@ -50,6 +51,9 @@ type _ValidateCourse = AssertAllCovered<Exclude<CourseStepName, AssignedSteps>>;
 
 const PHASE_ORDER: PhaseName[] = [
   "gettingReady",
+  "findingSimilarCourses",
+  "checkingCourseIdentity",
+  "preparingCourse",
   "writingDescription",
   "creatingCoverImage",
   "categorizingCourse",
@@ -63,18 +67,24 @@ export function getPhaseOrder(): PhaseName[] {
 
 export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
   categorizingCourse: TagIcon,
+  checkingCourseIdentity: CheckCircleIcon,
   creatingCoverImage: ImageIcon,
+  findingSimilarCourses: SearchIcon,
   gettingReady: SettingsIcon,
   outliningChapters: LayoutListIcon,
+  preparingCourse: SettingsIcon,
   savingCourseInfo: CheckCircleIcon,
   writingDescription: PenLineIcon,
 };
 
 const PHASE_WEIGHTS: Record<PhaseName, number> = {
   categorizingCourse: 3,
+  checkingCourseIdentity: 3,
   creatingCoverImage: 15,
+  findingSimilarCourses: 3,
   gettingReady: 1,
   outliningChapters: 50,
+  preparingCourse: 1,
   savingCourseInfo: 2,
   writingDescription: 3,
 };

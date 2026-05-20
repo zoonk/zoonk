@@ -1,0 +1,377 @@
+{
+  "modelId": "openai/gpt-5.4-nano",
+  "results": [
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - Must choose \"useExisting\"\n      - Must choose courseSlug \"frontend-development\"\n      - \"Frontend Engineering\" and \"Frontend Development\" are synonyms for the same course\n\n      \n  - Must choose \"useExisting\" only when a candidate clearly covers the same learner goal\n  - Must choose \"createNew\" when candidates are broader, narrower, siblings, ambiguous, or jurisdictionally different\n  - If using an existing course, courseSlug must exactly match the correct candidate slug\n  - If creating new, courseSlug must be null\n  - Ignore the reason field when scoring this eval\n  - If both decision and courseSlug match the expected values, the score must be 10\n  - If only one of decision or courseSlug matches the expected value, the score must be 7\n  - If neither decision nor courseSlug matches the expected values, the score must be the lowest possible score\n  - False positives are major errors because they redirect learners to the wrong course\n\n    ",
+        "id": "en-frontend-engineering-1",
+        "userInput": {
+          "candidates": [
+            {
+              "description": "Build user-facing web interfaces.",
+              "language": "en",
+              "slug": "frontend-development",
+              "targetLanguage": null,
+              "title": "Frontend Development"
+            },
+            {
+              "description": "Build full web applications.",
+              "language": "en",
+              "slug": "web-development",
+              "targetLanguage": null,
+              "title": "Web Development"
+            }
+          ],
+          "suggestion": {
+            "description": "Build client-side product interfaces.",
+            "language": "en",
+            "targetLanguage": null,
+            "title": "Frontend Engineering"
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - Must choose \"useExisting\"\n      - Must choose courseSlug \"frontend-development\"\n      - \"Client Side Development\" and \"Frontend Development\" are synonyms for the same course\n      - Must prefer the precise frontend candidate over the broader web development candidate\n\n      \n  - Must choose \"useExisting\" only when a candidate clearly covers the same learner goal\n  - Must choose \"createNew\" when candidates are broader, narrower, siblings, ambiguous, or jurisdictionally different\n  - If using an existing course, courseSlug must exactly match the correct candidate slug\n  - If creating new, courseSlug must be null\n  - Ignore the reason field when scoring this eval\n  - If both decision and courseSlug match the expected values, the score must be 10\n  - If only one of decision or courseSlug matches the expected value, the score must be 7\n  - If neither decision nor courseSlug matches the expected values, the score must be the lowest possible score\n  - False positives are major errors because they redirect learners to the wrong course\n\n    ",
+        "id": "en-client-side-development-1",
+        "userInput": {
+          "candidates": [
+            {
+              "description": "Build user-facing web interfaces.",
+              "language": "en",
+              "slug": "frontend-development",
+              "targetLanguage": null,
+              "title": "Frontend Development"
+            },
+            {
+              "description": "Build complete web applications across frontend and backend.",
+              "language": "en",
+              "slug": "web-development",
+              "targetLanguage": null,
+              "title": "Web Development"
+            }
+          ],
+          "suggestion": {
+            "description": "Build browser-based product interfaces.",
+            "language": "en",
+            "targetLanguage": null,
+            "title": "Client Side Development"
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - Must choose \"useExisting\"\n      - Must choose courseSlug \"python\"\n      - \"Introduction to Python\" is a level/package variant of \"Python\"\n\n      \n  - Must choose \"useExisting\" only when a candidate clearly covers the same learner goal\n  - Must choose \"createNew\" when candidates are broader, narrower, siblings, ambiguous, or jurisdictionally different\n  - If using an existing course, courseSlug must exactly match the correct candidate slug\n  - If creating new, courseSlug must be null\n  - Ignore the reason field when scoring this eval\n  - If both decision and courseSlug match the expected values, the score must be 10\n  - If only one of decision or courseSlug matches the expected value, the score must be 7\n  - If neither decision nor courseSlug matches the expected values, the score must be the lowest possible score\n  - False positives are major errors because they redirect learners to the wrong course\n\n    ",
+        "id": "en-introduction-to-python-1",
+        "userInput": {
+          "candidates": [
+            {
+              "description": "Use Python to write programs.",
+              "language": "en",
+              "slug": "python",
+              "targetLanguage": null,
+              "title": "Python"
+            }
+          ],
+          "suggestion": {
+            "description": "Start writing Python programs.",
+            "language": "en",
+            "targetLanguage": null,
+            "title": "Introduction to Python"
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - Must choose \"useExisting\"\n      - Must choose courseSlug \"python\"\n      - \"Python for Data Science\" should consolidate into the existing Python course for dedupe\n      - Must prefer the Python candidate over the application-domain Data Science candidate\n      - Must not choose narrower tool candidates such as Pandas\n\n      \n  - Must choose \"useExisting\" only when a candidate clearly covers the same learner goal\n  - Must choose \"createNew\" when candidates are broader, narrower, siblings, ambiguous, or jurisdictionally different\n  - If using an existing course, courseSlug must exactly match the correct candidate slug\n  - If creating new, courseSlug must be null\n  - Ignore the reason field when scoring this eval\n  - If both decision and courseSlug match the expected values, the score must be 10\n  - If only one of decision or courseSlug matches the expected value, the score must be 7\n  - If neither decision nor courseSlug matches the expected values, the score must be the lowest possible score\n  - False positives are major errors because they redirect learners to the wrong course\n\n    ",
+        "id": "en-python-for-data-science-1",
+        "userInput": {
+          "candidates": [
+            {
+              "description": "Use Python to write programs and solve practical problems.",
+              "language": "en",
+              "slug": "python",
+              "targetLanguage": null,
+              "title": "Python"
+            },
+            {
+              "description": "Analyze data, build models, and communicate insights.",
+              "language": "en",
+              "slug": "data-science",
+              "targetLanguage": null,
+              "title": "Data Science"
+            },
+            {
+              "description": "Use Pandas for tabular data analysis in Python.",
+              "language": "en",
+              "slug": "pandas",
+              "targetLanguage": null,
+              "title": "Pandas"
+            }
+          ],
+          "suggestion": {
+            "description": "Use Python to analyze data and build practical models.",
+            "language": "en",
+            "targetLanguage": null,
+            "title": "Python for Data Science"
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - Must choose \"useExisting\"\n      - Must choose courseSlug \"machine-learning-pt\"\n      - The suggested Portuguese title and the candidate English title refer to the same Portuguese course\n\n      \n  - Must choose \"useExisting\" only when a candidate clearly covers the same learner goal\n  - Must choose \"createNew\" when candidates are broader, narrower, siblings, ambiguous, or jurisdictionally different\n  - If using an existing course, courseSlug must exactly match the correct candidate slug\n  - If creating new, courseSlug must be null\n  - Ignore the reason field when scoring this eval\n  - If both decision and courseSlug match the expected values, the score must be 10\n  - If only one of decision or courseSlug matches the expected value, the score must be 7\n  - If neither decision nor courseSlug matches the expected values, the score must be the lowest possible score\n  - False positives are major errors because they redirect learners to the wrong course\n\n    ",
+        "id": "pt-aprendizado-de-maquina-1",
+        "userInput": {
+          "candidates": [
+            {
+              "description": "Modelos que aprendem padrões a partir de dados.",
+              "language": "pt",
+              "slug": "machine-learning-pt",
+              "targetLanguage": null,
+              "title": "Machine Learning"
+            }
+          ],
+          "suggestion": {
+            "description": "Modelos que aprendem com dados.",
+            "language": "pt",
+            "targetLanguage": null,
+            "title": "Aprendizado de máquina"
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - Must choose \"createNew\"\n      - courseSlug must be null\n      - \"Deep Learning\" is a narrower independent field, not the same course as \"Machine Learning\"\n\n      \n  - Must choose \"useExisting\" only when a candidate clearly covers the same learner goal\n  - Must choose \"createNew\" when candidates are broader, narrower, siblings, ambiguous, or jurisdictionally different\n  - If using an existing course, courseSlug must exactly match the correct candidate slug\n  - If creating new, courseSlug must be null\n  - Ignore the reason field when scoring this eval\n  - If both decision and courseSlug match the expected values, the score must be 10\n  - If only one of decision or courseSlug matches the expected value, the score must be 7\n  - If neither decision nor courseSlug matches the expected values, the score must be the lowest possible score\n  - False positives are major errors because they redirect learners to the wrong course\n\n    ",
+        "id": "en-deep-learning-not-machine-learning-1",
+        "userInput": {
+          "candidates": [
+            {
+              "description": "Classical and modern models that learn from data.",
+              "language": "en",
+              "slug": "machine-learning",
+              "targetLanguage": null,
+              "title": "Machine Learning"
+            }
+          ],
+          "suggestion": {
+            "description": "Neural-network methods with many layers.",
+            "language": "en",
+            "targetLanguage": null,
+            "title": "Deep Learning"
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - Must choose \"createNew\"\n      - courseSlug must be null\n      - \"React\" has its own identity and should not map to \"JavaScript\"\n\n      \n  - Must choose \"useExisting\" only when a candidate clearly covers the same learner goal\n  - Must choose \"createNew\" when candidates are broader, narrower, siblings, ambiguous, or jurisdictionally different\n  - If using an existing course, courseSlug must exactly match the correct candidate slug\n  - If creating new, courseSlug must be null\n  - Ignore the reason field when scoring this eval\n  - If both decision and courseSlug match the expected values, the score must be 10\n  - If only one of decision or courseSlug matches the expected value, the score must be 7\n  - If neither decision nor courseSlug matches the expected values, the score must be the lowest possible score\n  - False positives are major errors because they redirect learners to the wrong course\n\n    ",
+        "id": "en-react-not-javascript-1",
+        "userInput": {
+          "candidates": [
+            {
+              "description": "The JavaScript language.",
+              "language": "en",
+              "slug": "javascript",
+              "targetLanguage": null,
+              "title": "JavaScript"
+            }
+          ],
+          "suggestion": {
+            "description": "Build interfaces with React.",
+            "language": "en",
+            "targetLanguage": null,
+            "title": "React"
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - Must choose \"useExisting\"\n      - Must choose courseSlug \"ingles-pt\"\n      - TOEFL preparation belongs to the English language course\n\n      \n  - Must choose \"useExisting\" only when a candidate clearly covers the same learner goal\n  - Must choose \"createNew\" when candidates are broader, narrower, siblings, ambiguous, or jurisdictionally different\n  - If using an existing course, courseSlug must exactly match the correct candidate slug\n  - If creating new, courseSlug must be null\n  - Ignore the reason field when scoring this eval\n  - If both decision and courseSlug match the expected values, the score must be 10\n  - If only one of decision or courseSlug matches the expected value, the score must be 7\n  - If neither decision nor courseSlug matches the expected values, the score must be the lowest possible score\n  - False positives are major errors because they redirect learners to the wrong course\n\n    ",
+        "id": "pt-toefl-english-1",
+        "userInput": {
+          "candidates": [
+            {
+              "description": "Curso para aprender inglês.",
+              "language": "pt",
+              "slug": "ingles-pt",
+              "targetLanguage": "en",
+              "title": "Inglês"
+            }
+          ],
+          "suggestion": {
+            "description": "Preparação para uma prova de proficiência em inglês.",
+            "language": "pt",
+            "targetLanguage": "en",
+            "title": "TOEFL"
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - Must choose \"createNew\"\n      - courseSlug must be null\n      - English literature is about literature, not learning the English language\n\n      \n  - Must choose \"useExisting\" only when a candidate clearly covers the same learner goal\n  - Must choose \"createNew\" when candidates are broader, narrower, siblings, ambiguous, or jurisdictionally different\n  - If using an existing course, courseSlug must exactly match the correct candidate slug\n  - If creating new, courseSlug must be null\n  - Ignore the reason field when scoring this eval\n  - If both decision and courseSlug match the expected values, the score must be 10\n  - If only one of decision or courseSlug matches the expected value, the score must be 7\n  - If neither decision nor courseSlug matches the expected values, the score must be the lowest possible score\n  - False positives are major errors because they redirect learners to the wrong course\n\n    ",
+        "id": "en-english-literature-not-language-1",
+        "userInput": {
+          "candidates": [
+            {
+              "description": "Learn the English language.",
+              "language": "en",
+              "slug": "english",
+              "targetLanguage": "en",
+              "title": "English"
+            }
+          ],
+          "suggestion": {
+            "description": "Study major works written in English.",
+            "language": "en",
+            "targetLanguage": null,
+            "title": "English Literature"
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - Must choose \"createNew\"\n      - courseSlug must be null\n      - \"California Law\" and \"Brazilian Law\" differ by jurisdiction\n\n      \n  - Must choose \"useExisting\" only when a candidate clearly covers the same learner goal\n  - Must choose \"createNew\" when candidates are broader, narrower, siblings, ambiguous, or jurisdictionally different\n  - If using an existing course, courseSlug must exactly match the correct candidate slug\n  - If creating new, courseSlug must be null\n  - Ignore the reason field when scoring this eval\n  - If both decision and courseSlug match the expected values, the score must be 10\n  - If only one of decision or courseSlug matches the expected value, the score must be 7\n  - If neither decision nor courseSlug matches the expected values, the score must be the lowest possible score\n  - False positives are major errors because they redirect learners to the wrong course\n\n    ",
+        "id": "en-california-law-not-brazilian-law-1",
+        "userInput": {
+          "candidates": [
+            {
+              "description": "Legal systems and rules in Brazil.",
+              "language": "en",
+              "slug": "brazilian-law",
+              "targetLanguage": null,
+              "title": "Brazilian Law"
+            }
+          ],
+          "suggestion": {
+            "description": "Legal systems and rules in California.",
+            "language": "en",
+            "targetLanguage": null,
+            "title": "California Law"
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - Must choose \"createNew\"\n      - courseSlug must be null\n      - \"Matrix\" alone is ambiguous and should not map to the movie candidate\n\n      \n  - Must choose \"useExisting\" only when a candidate clearly covers the same learner goal\n  - Must choose \"createNew\" when candidates are broader, narrower, siblings, ambiguous, or jurisdictionally different\n  - If using an existing course, courseSlug must exactly match the correct candidate slug\n  - If creating new, courseSlug must be null\n  - Ignore the reason field when scoring this eval\n  - If both decision and courseSlug match the expected values, the score must be 10\n  - If only one of decision or courseSlug matches the expected value, the score must be 7\n  - If neither decision nor courseSlug matches the expected values, the score must be the lowest possible score\n  - False positives are major errors because they redirect learners to the wrong course\n\n    ",
+        "id": "en-matrix-ambiguous-1",
+        "userInput": {
+          "candidates": [
+            {
+              "description": "The 1999 science fiction film.",
+              "language": "en",
+              "slug": "the-matrix",
+              "targetLanguage": null,
+              "title": "The Matrix"
+            }
+          ],
+          "suggestion": {
+            "description": "A course about matrices or media.",
+            "language": "en",
+            "targetLanguage": null,
+            "title": "Matrix"
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - Must choose \"useExisting\"\n      - Must choose courseSlug \"calculus\"\n      - \"Differential Calculus\" is consolidated into the broader Calculus course\n\n      \n  - Must choose \"useExisting\" only when a candidate clearly covers the same learner goal\n  - Must choose \"createNew\" when candidates are broader, narrower, siblings, ambiguous, or jurisdictionally different\n  - If using an existing course, courseSlug must exactly match the correct candidate slug\n  - If creating new, courseSlug must be null\n  - Ignore the reason field when scoring this eval\n  - If both decision and courseSlug match the expected values, the score must be 10\n  - If only one of decision or courseSlug matches the expected value, the score must be 7\n  - If neither decision nor courseSlug matches the expected values, the score must be the lowest possible score\n  - False positives are major errors because they redirect learners to the wrong course\n\n    ",
+        "id": "en-differential-calculus-1",
+        "userInput": {
+          "candidates": [
+            {
+              "description": "Limits, derivatives, integrals, and applications.",
+              "language": "en",
+              "slug": "calculus",
+              "targetLanguage": null,
+              "title": "Calculus"
+            },
+            {
+              "description": "Vectors and matrices.",
+              "language": "en",
+              "slug": "linear-algebra",
+              "targetLanguage": null,
+              "title": "Linear Algebra"
+            }
+          ],
+          "suggestion": {
+            "description": "Derivatives and rates of change.",
+            "language": "en",
+            "targetLanguage": null,
+            "title": "Differential Calculus"
+          }
+        }
+      }
+    }
+  ],
+  "taskId": "course-identity-classification"
+}

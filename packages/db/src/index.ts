@@ -24,7 +24,6 @@ export type {
   Chapter,
   ChapterCompletion,
   Course,
-  CourseAlternativeTitle,
   CourseCategory,
   CourseCompletion,
   CourseSuggestion,
@@ -47,8 +46,6 @@ export type {
 export type { ChapterCreateManyInput } from "./generated/prisma/models/Chapter";
 export type { CourseGetPayload } from "./generated/prisma/models/Course";
 export type { LessonCreateManyInput } from "./generated/prisma/models/Lesson";
-
-export type { BatchPayload } from "./generated/prisma/internal/prismaNamespace";
 
 export { prisma };
 export const sql = Prisma.sql;

@@ -1117,12 +1117,24 @@ msgid "i3JgLB"
 msgstr "Categorizing your course"
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
+msgid "WOe+OA"
+msgstr "Checking for duplicates"
+
+#: src/app/generate/cs/[id]/use-generation-phases.ts
 msgid "Gjutu+"
 msgstr "Creating the cover image"
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
+msgid "SQFyKH"
+msgstr "Finding similar courses"
+
+#: src/app/generate/cs/[id]/use-generation-phases.ts
 msgid "WZpB8D"
 msgstr "Writing chapters"
+
+#: src/app/generate/cs/[id]/use-generation-phases.ts
+msgid "d2xrsv"
+msgstr "Preparing your course"
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
 msgid "CFWOGF"
@@ -1141,6 +1153,18 @@ msgid "EKAN6s"
 msgstr "Tagging your course..."
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
+msgid "JJrUOR"
+msgstr "Comparing nearby courses..."
+
+#: src/app/generate/cs/[id]/use-generation-phases.ts
+msgid "uw23V+"
+msgstr "Checking whether this course already exists..."
+
+#: src/app/generate/cs/[id]/use-generation-phases.ts
+msgid "qFmZfG"
+msgstr "Avoiding duplicate courses..."
+
+#: src/app/generate/cs/[id]/use-generation-phases.ts
 msgid "lxBtcx"
 msgstr "Designing the cover..."
 
@@ -1153,6 +1177,18 @@ msgid "At4rk1"
 msgstr "Adding finishing touches..."
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
+msgid "NgONb4"
+msgstr "Searching for matching topics..."
+
+#: src/app/generate/cs/[id]/use-generation-phases.ts
+msgid "Auz1tl"
+msgstr "Looking for alternate names..."
+
+#: src/app/generate/cs/[id]/use-generation-phases.ts
+msgid "Gt/VNO"
+msgstr "Expanding the course search..."
+
+#: src/app/generate/cs/[id]/use-generation-phases.ts
 msgid "AEG3Ol"
 msgstr "Planning the course structure..."
 
@@ -1163,6 +1199,14 @@ msgstr "Writing chapter {number}..."
 #: src/app/generate/cs/[id]/use-generation-phases.ts
 msgid "tXkuD8"
 msgstr "Reviewing the overall flow..."
+
+#: src/app/generate/cs/[id]/use-generation-phases.ts
+msgid "4LsE/n"
+msgstr "Creating the course shell..."
+
+#: src/app/generate/cs/[id]/use-generation-phases.ts
+msgid "3hEaI4"
+msgstr "Preparing the workspace..."
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
 msgid "a7FJJd"

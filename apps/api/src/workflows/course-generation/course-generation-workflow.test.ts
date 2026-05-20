@@ -1,22 +1,19 @@
 import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { generateChapterLessons } from "@zoonk/ai/tasks/chapters/lessons";
-import { generateAlternativeTitles } from "@zoonk/ai/tasks/courses/alternative-titles";
 import { generateCourseCategories } from "@zoonk/ai/tasks/courses/categories";
 import { generateCourseChapters } from "@zoonk/ai/tasks/courses/chapters";
 import { generateCourseDescription } from "@zoonk/ai/tasks/courses/description";
+import { resolveCourseIdentity } from "@zoonk/ai/tasks/courses/identity";
+import { generateCourseIdentitySearchQueries } from "@zoonk/ai/tasks/courses/identity-search";
 import { generateContentThumbnailImage } from "@zoonk/core/content/thumbnail";
 import { COURSE_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
-import {
-  courseAlternativeTitleFixture,
-  courseCategoryFixture,
-  courseFixture,
-} from "@zoonk/testing/fixtures/courses";
+import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { toSlug } from "@zoonk/utils/string";
+import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { getOrCreateCourse } from "./_internal/get-or-create-course";
 import { chapterImagesWorkflow } from "./chapter-images-workflow";
@@ -56,11 +53,20 @@ vi.mock("@zoonk/ai/tasks/courses/language-chapters", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/courses/alternative-titles", () => ({
-  generateAlternativeTitles: vi
+vi.mock("@zoonk/ai/tasks/courses/identity-search", () => ({
+  generateCourseIdentitySearchQueries: vi
+    .fn()
+    .mockResolvedValue({ data: { queries: [] }, systemPrompt: "", usage: {}, userPrompt: "" }),
+}));
+
+vi.mock("@zoonk/ai/tasks/courses/identity", () => ({
+  resolveCourseIdentity: vi
     .fn()
     .mockResolvedValue({
-      data: { alternatives: [`Alt Title ${randomUUID()}`, `Alt Title ${randomUUID()}`] },
+      data: { courseSlug: null, decision: "createNew", reason: "no matching course" },
+      systemPrompt: "",
+      usage: {},
+      userPrompt: "",
     }),
 }));
 
@@ -201,6 +207,7 @@ describe(courseGenerationWorkflow, () => {
       });
 
       expect(dbSuggestion?.generationStatus).toBe("pending");
+      expect(dbSuggestion?.courseId).not.toBeNull();
       expect(generateCourseDescription).not.toHaveBeenCalled();
 
       const completionEvent = getStreamedEvents().find(
@@ -228,7 +235,8 @@ describe(courseGenerationWorkflow, () => {
         where: { id: suggestion.id },
       });
 
-      expect(dbSuggestion?.generationStatus).toBe("pending");
+      expect(dbSuggestion?.courseId).not.toBeNull();
+      expect(dbSuggestion?.generationStatus).toBe("completed");
       expect(generateCourseDescription).not.toHaveBeenCalled();
 
       const completionEvent = getStreamedEvents().find(
@@ -289,14 +297,19 @@ describe(courseGenerationWorkflow, () => {
           imageUrl: null,
           isPublished: true,
           language: "en",
-          normalizedTitle: title.toLowerCase(),
+          normalizedTitle: normalizeString(title),
           organizationId,
           slug,
           title,
         },
       });
 
-      const suggestion = await courseSuggestionFixture({ generationStatus: "failed", slug, title });
+      const suggestion = await courseSuggestionFixture({
+        courseId: existingCourse.id,
+        generationStatus: "failed",
+        slug,
+        title,
+      });
 
       await courseGenerationWorkflow(suggestion.id);
 
@@ -320,11 +333,11 @@ describe(courseGenerationWorkflow, () => {
       });
 
       const [suggestion] = await Promise.all([
-        courseSuggestionFixture({ generationStatus: "failed", slug, title }),
-        courseAlternativeTitleFixture({
+        courseSuggestionFixture({
           courseId: existingCourse.id,
-          language: "en",
-          slug: `alt-${slug}`,
+          generationStatus: "failed",
+          slug,
+          title,
         }),
         courseCategoryFixture({ category: "programming", courseId: existingCourse.id }),
         chapterFixture({
@@ -337,7 +350,8 @@ describe(courseGenerationWorkflow, () => {
       await courseGenerationWorkflow(suggestion.id);
 
       expect(generateCourseDescription).not.toHaveBeenCalled();
-      expect(generateAlternativeTitles).not.toHaveBeenCalled();
+      expect(generateCourseIdentitySearchQueries).not.toHaveBeenCalled();
+      expect(resolveCourseIdentity).not.toHaveBeenCalled();
       expect(generateCourseCategories).not.toHaveBeenCalled();
       expect(generateCourseChapters).not.toHaveBeenCalled();
 

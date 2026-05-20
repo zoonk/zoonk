@@ -14,19 +14,21 @@ export type CourseContext = {
 };
 
 /**
- * Updates the course suggestion status to "running" so other workflow
- * instances know this suggestion is being processed.
- * This is a pure save step — one DB operation.
+ * Links the suggestion to the new course and marks it as running. The course id
+ * is required because later generation requests use it to reuse the in-progress
+ * course instead of creating another one.
  */
 async function updateCourseSuggestionToRunning({
+  courseId,
   suggestionId,
   workflowRunId,
 }: {
+  courseId: string;
   suggestionId: string;
   workflowRunId: string;
 }): Promise<void> {
   await prisma.courseSuggestion.update({
-    data: { generationRunId: workflowRunId, generationStatus: "running" },
+    data: { courseId, generationRunId: workflowRunId, generationStatus: "running" },
     where: { id: suggestionId },
   });
 }
@@ -74,10 +76,11 @@ async function createCourseEntity({
 /**
  * Initializes a new course from a suggestion.
  * Split into two DB operations:
- * 1. Mark the course suggestion as "running"
- * 2. Create the course entity
+ * 1. Create the course entity
+ * 2. Link the suggestion to the course and mark it as "running"
  *
- * Each operation is isolated so failures are attributable to a specific action.
+ * This avoids a redundant pre-create update while keeping failures attributable
+ * to a specific action.
  */
 export async function initializeCourseStep(input: {
   suggestion: CourseSuggestion;
@@ -93,9 +96,13 @@ export async function initializeCourseStep(input: {
 
   const aiOrg = await prisma.organization.findUniqueOrThrow({ where: { slug: AI_ORG_SLUG } });
 
-  await updateCourseSuggestionToRunning({ suggestionId: suggestion.id, workflowRunId });
-
   const course = await createCourseEntity({ organizationId: aiOrg.id, suggestion, workflowRunId });
+
+  await updateCourseSuggestionToRunning({
+    courseId: course.courseId,
+    suggestionId: suggestion.id,
+    workflowRunId,
+  });
 
   await stream.status({ status: "completed", step: "initializeCourse" });
 

@@ -7,11 +7,11 @@ import { logError } from "@zoonk/utils/logger";
 import { getWorkflowMetadata } from "workflow";
 import { getOrCreateCourse } from "./_internal/get-or-create-course";
 import { setupCourse } from "./_internal/setup-course";
-import { checkExistingCourseStep } from "./steps/check-existing-course-step";
 import { completeCourseSetupStep } from "./steps/complete-course-setup-step";
 import { type ChapterImageInput } from "./steps/generate-chapter-image-step";
 import { getCourseSuggestionStep } from "./steps/get-course-suggestion-step";
 import { handleCourseFailureStep } from "./steps/handle-failure-step";
+import { resolveCourseIdentityStep } from "./steps/resolve-course-identity-step";
 import { startChapterImagesWorkflowStep } from "./steps/start-chapter-images-workflow-step";
 
 /**
@@ -33,7 +33,11 @@ async function setupCourseContent({
 }): Promise<Chapter[]> {
   const chapters = await setupCourse(course, description, existing);
 
-  await completeCourseSetupStep({ courseId: course.courseId, courseSuggestionId });
+  await completeCourseSetupStep({
+    courseId: course.courseId,
+    courseSlug: course.courseSlug,
+    courseSuggestionId,
+  });
 
   return chapters;
 }
@@ -100,7 +104,7 @@ export async function courseGenerationWorkflow(courseSuggestionId: string): Prom
     return;
   }
 
-  const existingCourse = await checkExistingCourseStep(suggestion);
+  const existingCourse = await resolveCourseIdentityStep(suggestion);
 
   // Skip running courses to avoid conflicts with another workflow instance.
   if (existingCourse?.generationStatus === "running") {
@@ -109,7 +113,12 @@ export async function courseGenerationWorkflow(courseSuggestionId: string): Prom
 
   // Already completed — stream the completion step so the client can redirect.
   if (existingCourse?.generationStatus === "completed") {
-    await streamSkipStep(COURSE_COMPLETION_STEP);
+    await completeCourseSetupStep({
+      courseId: existingCourse.id,
+      courseSlug: existingCourse.slug,
+      courseSuggestionId,
+    });
+
     return;
   }
 

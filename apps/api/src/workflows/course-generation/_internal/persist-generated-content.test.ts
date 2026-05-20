@@ -38,7 +38,6 @@ describe(persistGeneratedContent, () => {
     };
 
     const content: GeneratedContent = {
-      alternativeTitles: [`Alt ${randomUUID()}`],
       categories: ["programming"],
       chapters: [
         { description: "Ch1 desc", title: `Chapter 1 ${randomUUID()}` },
@@ -50,7 +49,6 @@ describe(persistGeneratedContent, () => {
 
     const existing: ExistingCourseContent = {
       description: null,
-      hasAlternativeTitles: false,
       hasCategories: false,
       hasChapters: false,
       imageUrl: null,
@@ -60,11 +58,10 @@ describe(persistGeneratedContent, () => {
 
     expect(chapters).toHaveLength(2);
 
-    const [dbCourse, dbChapters, dbCategories, dbAltTitles] = await Promise.all([
+    const [dbCourse, dbChapters, dbCategories] = await Promise.all([
       prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
       prisma.chapter.findMany({ orderBy: { position: "asc" }, where: { courseId: course.id } }),
       prisma.courseCategory.findMany({ where: { courseId: course.id } }),
-      prisma.courseAlternativeTitle.findMany({ where: { courseId: course.id } }),
     ]);
 
     expect(dbCourse.description).toBe("Generated description");
@@ -72,7 +69,6 @@ describe(persistGeneratedContent, () => {
     expect(dbChapters).toHaveLength(2);
     expect(dbChapters[0]?.imageUrl).toBeNull();
     expect(dbCategories).toHaveLength(1);
-    expect(dbAltTitles).toHaveLength(1);
   });
 
   it("skips persisting content that already exists", async () => {
@@ -93,7 +89,6 @@ describe(persistGeneratedContent, () => {
     };
 
     const content: GeneratedContent = {
-      alternativeTitles: [],
       categories: [],
       chapters: [],
       description: "Already has desc",
@@ -102,7 +97,6 @@ describe(persistGeneratedContent, () => {
 
     const existing: ExistingCourseContent = {
       description: "Already has desc",
-      hasAlternativeTitles: true,
       hasCategories: true,
       hasChapters: true,
       imageUrl: "https://example.com/existing.webp",
@@ -118,15 +112,10 @@ describe(persistGeneratedContent, () => {
       .filter((event) => event.status === "completed")
       .map((event) => event.step);
 
-    expect(completedSteps).toHaveLength(4);
+    expect(completedSteps).toHaveLength(3);
 
     expect(completedSteps).toStrictEqual(
-      expect.arrayContaining([
-        "updateCourse",
-        "addAlternativeTitles",
-        "addCategories",
-        "addChapters",
-      ]),
+      expect.arrayContaining(["updateCourse", "addCategories", "addChapters"]),
     );
   });
 });

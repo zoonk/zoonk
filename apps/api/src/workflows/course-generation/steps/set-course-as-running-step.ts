@@ -17,7 +17,11 @@ export async function setCourseAsRunningStep(input: {
   const results = await Promise.allSettled([
     prisma.course.update({ data: { generationStatus: "running" }, where: { id: input.courseId } }),
     prisma.courseSuggestion.update({
-      data: { generationRunId: input.workflowRunId, generationStatus: "running" },
+      data: {
+        courseId: input.courseId,
+        generationRunId: input.workflowRunId,
+        generationStatus: "running",
+      },
       where: { id: input.courseSuggestionId },
     }),
   ]);

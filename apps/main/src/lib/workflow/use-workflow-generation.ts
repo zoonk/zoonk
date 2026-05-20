@@ -148,6 +148,7 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
 
   return {
     completedSteps: state.completedSteps,
+    completionEntityId: state.completionEntityId,
     currentStep: state.currentStep,
     error: state.error,
     retry,
