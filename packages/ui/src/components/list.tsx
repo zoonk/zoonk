@@ -86,7 +86,7 @@ export function ListItem({ className, ...props }: ItemProps) {
  * a consistent visual rhythm.
  */
 export function ListItemImage({ className, ...props }: ItemMediaProps) {
-  return <ItemMedia className={cn("size-16", className)} variant="image" {...props} />;
+  return <ItemMedia className={cn("size-16 shadow", className)} variant="image" {...props} />;
 }
 
 /**
@@ -94,7 +94,7 @@ export function ListItemImage({ className, ...props }: ItemMediaProps) {
  * without forcing every caller to invent placeholder spacing.
  */
 export function ListItemIcon({ className, ...props }: ItemMediaProps) {
-  return <ItemMedia className={cn("size-16", className)} variant="icon" {...props} />;
+  return <ItemMedia className={cn("size-16 shadow", className)} variant="icon" {...props} />;
 }
 
 /**
