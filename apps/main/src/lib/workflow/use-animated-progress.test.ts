@@ -75,6 +75,31 @@ describe(useAnimatedProgress, () => {
     expect(result.current).toBe(50);
   });
 
+  it("restarts the phase timer when the active phase target changes", () => {
+    const { result, rerender } = renderHook((props) => useAnimatedProgress(props), {
+      initialProps: {
+        estimatedDurationMs: 20_000,
+        isActive: true,
+        realProgress: 0,
+        targetProgress: 31,
+      },
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(45_000);
+    });
+
+    expect(result.current).toBe(31);
+
+    rerender({ estimatedDurationMs: 45_000, isActive: true, realProgress: 31, targetProgress: 99 });
+
+    act(() => {
+      vi.advanceTimersByTime(100);
+    });
+
+    expect(result.current).toBe(31);
+  });
+
   it("never exceeds targetProgress", () => {
     const { result } = renderHook(() =>
       useAnimatedProgress({ isActive: true, realProgress: 10, targetProgress: 30 }),
