@@ -2,7 +2,12 @@ import { type LessonScope, findLastCompleted } from "@zoonk/core/lessons/last-co
 import { getSession } from "../users/get-user-session";
 import { getNextLessonStateForUser } from "./get-next-lesson-state";
 
-export async function getNextLesson({
+/**
+ * Resolves the lesson destination that start/continue/review buttons should
+ * use for a learner. This stays separate from structural course navigation
+ * because it folds in session state, durable completions, and prefetch safety.
+ */
+export async function getContinueLessonTarget({
   scope,
   headers,
 }: {

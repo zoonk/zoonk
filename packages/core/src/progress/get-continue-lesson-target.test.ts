@@ -5,7 +5,7 @@ import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/le
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, it } from "vitest";
-import { getNextLesson } from "./get-next-lesson";
+import { getContinueLessonTarget } from "./get-continue-lesson-target";
 
 type CourseTree = {
   chapter: Awaited<ReturnType<typeof chapterFixture>>;
@@ -13,7 +13,7 @@ type CourseTree = {
   lessons: Awaited<ReturnType<typeof lessonFixture>>[];
 };
 
-describe(getNextLesson, () => {
+describe(getContinueLessonTarget, () => {
   let organization: Awaited<ReturnType<typeof organizationFixture>>;
 
   beforeAll(async () => {
@@ -21,7 +21,7 @@ describe(getNextLesson, () => {
   });
 
   /**
-   * Next-lesson tests need small published course trees with predictable
+   * Continue-target tests need small published course trees with predictable
    * lesson order. This helper keeps each case focused on the progress state
    * being tested instead of repeating catalog setup.
    */
@@ -57,7 +57,10 @@ describe(getNextLesson, () => {
   it("returns first lesson when unauthenticated", async () => {
     const { chapter, course, lessons } = await createCourseTree();
 
-    const result = await getNextLesson({ headers: new Headers(), scope: { courseId: course.id } });
+    const result = await getContinueLessonTarget({
+      headers: new Headers(),
+      scope: { courseId: course.id },
+    });
 
     expect(result).toStrictEqual({
       brandSlug: organization.slug,
@@ -76,7 +79,10 @@ describe(getNextLesson, () => {
       lessonStatuses: ["pending", "completed"],
     });
 
-    const result = await getNextLesson({ headers: new Headers(), scope: { courseId: course.id } });
+    const result = await getContinueLessonTarget({
+      headers: new Headers(),
+      scope: { courseId: course.id },
+    });
 
     expect(result).toStrictEqual({
       brandSlug: organization.slug,
@@ -102,7 +108,8 @@ describe(getNextLesson, () => {
     });
 
     const headers = await signInAs(user.email, user.password);
-    const result = await getNextLesson({ headers, scope: { courseId: tree.course.id } });
+
+    const result = await getContinueLessonTarget({ headers, scope: { courseId: tree.course.id } });
 
     expect(result).toStrictEqual({
       brandSlug: organization.slug,
@@ -136,7 +143,8 @@ describe(getNextLesson, () => {
     ]);
 
     const headers = await signInAs(user.email, user.password);
-    const result = await getNextLesson({ headers, scope: { courseId: tree.course.id } });
+
+    const result = await getContinueLessonTarget({ headers, scope: { courseId: tree.course.id } });
 
     expect(result).toStrictEqual({
       brandSlug: organization.slug,
@@ -162,7 +170,11 @@ describe(getNextLesson, () => {
     });
 
     const headers = await signInAs(user.email, user.password);
-    const result = await getNextLesson({ headers, scope: { chapterId: tree.chapter.id } });
+
+    const result = await getContinueLessonTarget({
+      headers,
+      scope: { chapterId: tree.chapter.id },
+    });
 
     expect(result).toStrictEqual({
       brandSlug: organization.slug,
@@ -188,7 +200,11 @@ describe(getNextLesson, () => {
     });
 
     const headers = await signInAs(user.email, user.password);
-    const result = await getNextLesson({ headers, scope: { lessonId: lesson?.id ?? "" } });
+
+    const result = await getContinueLessonTarget({
+      headers,
+      scope: { lessonId: lesson?.id ?? "" },
+    });
 
     expect(result).toStrictEqual({
       brandSlug: organization.slug,

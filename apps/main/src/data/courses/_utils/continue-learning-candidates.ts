@@ -63,7 +63,6 @@ async function listSequentialNextLessons({ rows }: { rows: ContinueLearningRow[]
         chapterId: row.chapterId,
         chapterPosition: row.chapterPosition,
         courseId: row.courseId,
-        lessonId: row.lessonId,
         lessonPosition: row.lessonPosition,
       }),
     ),

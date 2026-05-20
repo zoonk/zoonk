@@ -27,6 +27,9 @@ const inaccessibleLessonCases: { name: string; visibility: CompletableLessonVisi
   { name: "organization", visibility: { organizationKind: "school" } },
 ];
 
+const preloadGenerationStatuses = ["pending", "failed"] as const;
+const nonPreloadGenerationStatuses = ["completed", "running"] as const;
+
 /**
  * Completion writes store a local calendar day alongside UTC timestamps so the
  * daily progress tables can aggregate by the learner's own timezone. Tests only
@@ -367,48 +370,85 @@ describe(submitPlayerCompletion, () => {
     },
   );
 
-  it("persists completion and requests preloading when the next lesson needs generation", async () => {
-    const [user, { chapter, organization }] = await Promise.all([
-      userFixture(),
-      createChapterContext(),
-    ]);
+  it.each(preloadGenerationStatuses)(
+    "persists completion and requests preloading when the next lesson is %s",
+    async (generationStatus) => {
+      const [user, { chapter, organization }] = await Promise.all([
+        userFixture(),
+        createChapterContext(),
+      ]);
 
-    const [currentLesson, nextLesson] = await Promise.all([
-      createMultipleChoiceLesson({
+      const [currentLesson, nextLesson] = await Promise.all([
+        createMultipleChoiceLesson({
+          chapterId: chapter.id,
+          organizationId: organization.id,
+          position: 0,
+        }),
+        lessonFixture({
+          chapterId: chapter.id,
+          generationStatus,
+          isPublished: true,
+          organizationId: organization.id,
+          position: 1,
+        }),
+      ]);
+
+      const result = await submitPlayerCompletion({
+        input: buildCompletionInput({
+          lessonId: currentLesson.lesson.id,
+          stepId: currentLesson.step.id,
+        }),
+        userId: user.id,
+      });
+
+      const [lessonProgress, stepAttempts] = await Promise.all([
+        prisma.lessonProgress.findUnique({
+          where: { userLesson: { lessonId: currentLesson.lesson.id, userId: user.id } },
+        }),
+        prisma.stepAttempt.findMany({ where: { stepId: currentLesson.step.id, userId: user.id } }),
+      ]);
+
+      expect(nextLesson.position).toBeGreaterThan(currentLesson.lesson.position);
+      expect(result).toStrictEqual({ preloadLessonId: nextLesson.id });
+      expect(lessonProgress?.completedAt).toBeInstanceOf(Date);
+      expect(stepAttempts).toHaveLength(1);
+      expect(stepAttempts[0]?.isCorrect).toBe(true);
+    },
+  );
+
+  it.each(nonPreloadGenerationStatuses)(
+    "persists completion without requesting preloading when the next lesson is %s",
+    async (generationStatus) => {
+      const [user, { chapter, organization }] = await Promise.all([
+        userFixture(),
+        createChapterContext(),
+      ]);
+
+      const currentLesson = await createMultipleChoiceLesson({
         chapterId: chapter.id,
         organizationId: organization.id,
         position: 0,
-      }),
-      lessonFixture({
+      });
+
+      await lessonFixture({
         chapterId: chapter.id,
-        generationStatus: "pending",
+        generationStatus,
         isPublished: true,
         organizationId: organization.id,
         position: 1,
-      }),
-    ]);
+      });
 
-    const result = await submitPlayerCompletion({
-      input: buildCompletionInput({
-        lessonId: currentLesson.lesson.id,
-        stepId: currentLesson.step.id,
-      }),
-      userId: user.id,
-    });
+      const result = await submitPlayerCompletion({
+        input: buildCompletionInput({
+          lessonId: currentLesson.lesson.id,
+          stepId: currentLesson.step.id,
+        }),
+        userId: user.id,
+      });
 
-    const [lessonProgress, stepAttempts] = await Promise.all([
-      prisma.lessonProgress.findUnique({
-        where: { userLesson: { lessonId: currentLesson.lesson.id, userId: user.id } },
-      }),
-      prisma.stepAttempt.findMany({ where: { stepId: currentLesson.step.id, userId: user.id } }),
-    ]);
-
-    expect(nextLesson.position).toBeGreaterThan(currentLesson.lesson.position);
-    expect(result).toStrictEqual({ preloadLessonId: nextLesson.id });
-    expect(lessonProgress?.completedAt).toBeInstanceOf(Date);
-    expect(stepAttempts).toHaveLength(1);
-    expect(stepAttempts[0]?.isCorrect).toBe(true);
-  });
+      expect(result).toStrictEqual({ preloadLessonId: null });
+    },
+  );
 
   it("rejects empty answers for an interactive lesson without writing progress", async () => {
     const [user, { chapter, course, organization }] = await Promise.all([

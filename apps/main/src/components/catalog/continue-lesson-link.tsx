@@ -1,5 +1,5 @@
 import { type LessonScope } from "@zoonk/core/lessons/last-completed";
-import { getNextLesson } from "@zoonk/core/progress/next-lesson";
+import { getContinueLessonTarget } from "@zoonk/core/progress/continue-lesson-target";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
@@ -42,7 +42,7 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
 }) {
   const t = await getExtracted();
   const scope = getScope({ chapterId, courseId, lessonId });
-  const data = await getNextLesson({ scope });
+  const data = await getContinueLessonTarget({ scope });
   const className = cn(buttonVariants(), "min-w-0 flex-1 gap-2");
 
   /**

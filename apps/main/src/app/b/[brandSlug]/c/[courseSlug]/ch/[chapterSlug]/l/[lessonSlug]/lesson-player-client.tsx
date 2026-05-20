@@ -20,7 +20,6 @@ export function LessonPlayerClient({
   lessonDescription,
   lessonTitle,
   nextLesson,
-  nextSibling,
   totalBrainPower,
   userEmail,
   userName,
@@ -34,26 +33,13 @@ export function LessonPlayerClient({
   lessonDescription: string;
   lessonTitle: string;
   nextLesson: { chapterSlug: string; lessonSlug: string; lessonTitle: string | null } | null;
-  nextSibling: {
-    brandSlug: string;
-    chapterSlug: string;
-    courseSlug: string;
-    lessonSlug: string;
-    lessonTitle: string | null;
-  } | null;
   totalBrainPower: number;
   userEmail?: string;
   userName: string | null;
 }) {
   const router = useRouter();
 
-  const model = buildLessonPlayerModel({
-    brandSlug,
-    chapterSlug,
-    courseSlug,
-    nextLesson,
-    nextSibling,
-  });
+  const model = buildLessonPlayerModel({ brandSlug, chapterSlug, courseSlug, nextLesson });
 
   const onNextHref = model.onNextHref;
   const handleNext = onNextHref ? () => router.push(onNextHref) : undefined;

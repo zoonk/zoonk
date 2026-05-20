@@ -15,7 +15,7 @@ import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { after } from "next/server";
-import { fetchNextSibling, fetchReviewLessonData } from "./lesson-data-loaders";
+import { fetchReviewLessonData } from "./lesson-data-loaders";
 import { LessonNotGenerated } from "./lesson-not-generated";
 import { LessonPlayerClient } from "./lesson-player-client";
 import { ReviewLessonEmpty } from "./review-lesson-empty";
@@ -66,21 +66,18 @@ export default async function LessonPage({ params }: Props) {
     notFound();
   }
 
-  const [lesson, nextLesson, session, reviewLessonData, nextSibling, totalBrainPower] =
-    await Promise.all([
-      getPlayerLesson({ lessonId: lessonShell.id }),
-      getNextLessonInCourse({
-        chapterId: lessonShell.chapter.id,
-        chapterPosition: lessonShell.chapter.position,
-        courseId: lessonShell.chapter.course.id,
-        lessonId: lessonShell.id,
-        lessonPosition: lessonShell.position,
-      }),
-      getSession(),
-      fetchReviewLessonData(lessonShell.id),
-      fetchNextSibling(lessonShell.id, lessonShell.chapter, lessonShell.position),
-      getTotalBrainPower(),
-    ]);
+  const [lesson, nextLesson, session, reviewLessonData, totalBrainPower] = await Promise.all([
+    getPlayerLesson({ lessonId: lessonShell.id }),
+    getNextLessonInCourse({
+      chapterId: lessonShell.chapter.id,
+      chapterPosition: lessonShell.chapter.position,
+      courseId: lessonShell.chapter.course.id,
+      lessonPosition: lessonShell.position,
+    }),
+    getSession(),
+    fetchReviewLessonData(lessonShell.id),
+    getTotalBrainPower(),
+  ]);
 
   if (!lesson) {
     notFound();
@@ -148,7 +145,6 @@ export default async function LessonPage({ params }: Props) {
       lessonDescription={lessonMeta.description}
       lessonTitle={lessonMeta.title}
       nextLesson={nextLesson}
-      nextSibling={nextSibling}
       totalBrainPower={totalBrainPower}
       userEmail={session?.user.email}
       userName={session?.user.name ?? null}

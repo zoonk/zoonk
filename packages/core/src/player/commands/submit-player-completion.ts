@@ -1,10 +1,13 @@
 import "server-only";
 import { type LessonSentence, type StepKind, getPublishedLessonWhere, prisma } from "@zoonk/db";
+import {
+  type NextLessonInCourse,
+  getNextLessonInCourse,
+} from "../../lessons/get-next-lesson-in-course";
 import { type CompletionInput } from "../contracts/completion-input-schema";
 import { computeLessonScore } from "../contracts/compute-score";
 import { countAnswerableSteps, validateAnswers } from "../contracts/validate-answers";
 import { getLessonSentencesForLessons } from "../queries/get-lesson-sentences";
-import { getNextLesson } from "../queries/get-next-lesson";
 import { getReviewValidationData } from "../queries/get-review-steps";
 import { submitLessonCompletion } from "./submit-lesson-completion";
 
@@ -92,6 +95,26 @@ function hasCompleteAnswerCoverage(params: {
 }
 
 /**
+ * Completion only asks the host app to preload lesson generation when the next
+ * structural lesson exists and is in a retryable unfinished state. Running
+ * generation already has work in flight, and completed lessons need no preload.
+ */
+function getPreloadLessonId({ nextLesson }: { nextLesson: NextLessonInCourse | null }) {
+  if (!nextLesson) {
+    return null;
+  }
+
+  if (
+    nextLesson.lessonGenerationStatus === "pending" ||
+    nextLesson.lessonGenerationStatus === "failed"
+  ) {
+    return nextLesson.lessonId;
+  }
+
+  return null;
+}
+
+/**
  * The app shell should only orchestrate request-specific concerns such as auth,
  * cache revalidation, and background execution. This command owns the shared
  * completion workflow: validate the submission, persist authoritative progress,
@@ -105,6 +128,7 @@ export async function submitPlayerCompletion(params: {
 
   const lesson = await prisma.lesson.findFirst({
     include: {
+      chapter: true,
       steps: {
         include: { sentence: true, word: true },
         orderBy: { position: "asc" },
@@ -181,7 +205,12 @@ export async function submitPlayerCompletion(params: {
     userId: params.userId,
   });
 
-  const nextLesson = await getNextLesson(lesson.id);
+  const nextLesson = await getNextLessonInCourse({
+    chapterId: lesson.chapterId,
+    chapterPosition: lesson.chapter.position,
+    courseId: lesson.chapter.courseId,
+    lessonPosition: lesson.position,
+  });
 
-  return { preloadLessonId: nextLesson?.needsGeneration ? nextLesson.id : null };
+  return { preloadLessonId: getPreloadLessonId({ nextLesson }) };
 }
