@@ -26,6 +26,28 @@ function getDriftProgress({
 }
 
 /**
+ * Detects when the backend has moved into a new active phase window.
+ * The displayed percentage may already equal the new real progress because the
+ * previous phase drifted to its target, so real progress alone is not enough to
+ * know when the elapsed timer should restart.
+ */
+function hasProgressWindowChanged({
+  estimatedDurationMs,
+  previousEstimatedDurationMs,
+  previousTargetProgress,
+  targetProgress,
+}: {
+  estimatedDurationMs?: number | undefined;
+  previousEstimatedDurationMs?: number | undefined;
+  previousTargetProgress: number;
+  targetProgress: number;
+}) {
+  return (
+    targetProgress !== previousTargetProgress || estimatedDurationMs !== previousEstimatedDurationMs
+  );
+}
+
+/**
  * Wraps a real progress value and slowly ticks it forward
  * while streaming is active, creating the illusion of movement
  * during long-running backend steps.
@@ -54,31 +76,44 @@ export function useAnimatedProgress({
 }): number {
   const [display, setDisplay] = useState(realProgress);
   const rafRef = useRef<number>(0);
-  const startTimeRef = useRef<number>(0);
+  const startTimeRef = useRef<number | null>(null);
   const baseRef = useRef(realProgress);
   const highWaterRef = useRef(realProgress);
+  const estimatedDurationRef = useRef(estimatedDurationMs);
+  const targetProgressRef = useRef(targetProgress);
 
-  // Only reset the drift timer when realProgress exceeds the high-water mark
   useEffect(() => {
-    baseRef.current = realProgress;
+    const progressWindowChanged = hasProgressWindowChanged({
+      estimatedDurationMs,
+      previousEstimatedDurationMs: estimatedDurationRef.current,
+      previousTargetProgress: targetProgressRef.current,
+      targetProgress,
+    });
 
-    if (realProgress > highWaterRef.current) {
-      highWaterRef.current = realProgress;
+    baseRef.current = realProgress;
+    estimatedDurationRef.current = estimatedDurationMs;
+    targetProgressRef.current = targetProgress;
+
+    if (realProgress > highWaterRef.current || progressWindowChanged) {
+      highWaterRef.current = Math.max(highWaterRef.current, realProgress);
       startTimeRef.current = performance.now();
     }
-  }, [realProgress]);
+  }, [estimatedDurationMs, realProgress, targetProgress]);
 
   useEffect(() => {
     if (!isActive) {
       setDisplay(realProgress);
       highWaterRef.current = realProgress;
+      startTimeRef.current = null;
       cancelAnimationFrame(rafRef.current);
       return;
     }
 
     function tick() {
       const gap = Math.max(0, targetProgress - baseRef.current);
-      const elapsed = performance.now() - startTimeRef.current;
+      const now = performance.now();
+      startTimeRef.current ??= now;
+      const elapsed = now - startTimeRef.current;
       const drift = gap * getDriftProgress({ elapsed, estimatedDurationMs });
       const animated = baseRef.current + drift;
       const capped = Math.min(animated, CAP);
