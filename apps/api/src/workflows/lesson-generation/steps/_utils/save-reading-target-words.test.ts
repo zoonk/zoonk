@@ -58,8 +58,8 @@ describe(saveReadingTargetWords, () => {
     const lesson = await createLanguageLesson({ organizationId });
 
     await saveReadingTargetWords({
+      chapterId: lesson.chapterId,
       distractors: { [`${translatedWord} ${untranslatedWord}`]: [] },
-      lessonId: lesson.id,
       organizationId,
       pronunciations: {},
       sentences: [
@@ -69,6 +69,7 @@ describe(saveReadingTargetWords, () => {
           translation: "pretty cat",
         },
       ],
+      sourceLessonId: lesson.id,
       targetLanguage: "de",
       userLanguage: "en",
       wordAudioUrls: {},
@@ -78,9 +79,9 @@ describe(saveReadingTargetWords, () => {
       },
     });
 
-    const lessonWords = await prisma.lessonWord.findMany({
+    const lessonWords = await prisma.chapterWord.findMany({
       include: { word: true },
-      where: { lessonId: lesson.id },
+      where: { sourceLessonId: lesson.id },
     });
 
     expect(lessonWords.map((entry) => entry.word.word)).toStrictEqual([translatedWord]);
@@ -102,11 +103,12 @@ describe(saveReadingTargetWords, () => {
     ]);
 
     await saveReadingTargetWords({
+      chapterId: lesson.chapterId,
       distractors: { [lowercaseWord]: [] },
-      lessonId: lesson.id,
       organizationId,
       pronunciations: { [lowercaseWord]: "ga-to" },
       sentences: [{ explanation: "test explanation", sentence: lowercaseWord, translation: "cat" }],
+      sourceLessonId: lesson.id,
       targetLanguage: "de",
       userLanguage: "en",
       wordAudioUrls: {},
@@ -121,9 +123,9 @@ describe(saveReadingTargetWords, () => {
           word: { in: [existingWord, lowercaseWord] },
         },
       }),
-      prisma.lessonWord.findFirstOrThrow({
+      prisma.chapterWord.findFirstOrThrow({
         include: { word: true },
-        where: { lessonId: lesson.id },
+        where: { sourceLessonId: lesson.id },
       }),
     ]);
 
@@ -139,13 +141,14 @@ describe(saveReadingTargetWords, () => {
     const lesson = await createLanguageLesson({ organizationId });
 
     await saveReadingTargetWords({
+      chapterId: lesson.chapterId,
       distractors: { [canonicalWord]: [distractorWord] },
-      lessonId: lesson.id,
       organizationId,
       pronunciations: { [canonicalWord]: "ha-lo", [distractorWord]: "choos" },
       sentences: [
         { explanation: "test explanation", sentence: canonicalWord, translation: "hello" },
       ],
+      sourceLessonId: lesson.id,
       targetLanguage: "de",
       userLanguage: "en",
       wordAudioUrls: {
@@ -162,8 +165,8 @@ describe(saveReadingTargetWords, () => {
       prisma.word.findFirstOrThrow({
         where: { organizationId, targetLanguage: "de", word: distractorWord },
       }),
-      prisma.lessonWord.findMany({
-        where: { lessonId: lesson.id, word: { word: distractorWord } },
+      prisma.chapterWord.findMany({
+        where: { sourceLessonId: lesson.id, word: { word: distractorWord } },
       }),
     ]);
 
@@ -178,13 +181,14 @@ describe(saveReadingTargetWords, () => {
     const lesson = await createLanguageLesson({ organizationId });
 
     await saveReadingTargetWords({
+      chapterId: lesson.chapterId,
       distractors: { [canonicalWord]: [duplicateDistractor] },
-      lessonId: lesson.id,
       organizationId,
       pronunciations: { [canonicalWord]: "AH-gwah" },
       sentences: [
         { explanation: "test explanation", sentence: canonicalWord, translation: "water" },
       ],
+      sourceLessonId: lesson.id,
       targetLanguage: "de",
       userLanguage: "en",
       wordAudioUrls: { [canonicalWord]: `/audio/${canonicalWord}.mp3` },
@@ -192,9 +196,9 @@ describe(saveReadingTargetWords, () => {
     });
 
     const [lessonWord, duplicateDistractorRecord] = await Promise.all([
-      prisma.lessonWord.findFirstOrThrow({
+      prisma.chapterWord.findFirstOrThrow({
         include: { word: true },
-        where: { lessonId: lesson.id },
+        where: { sourceLessonId: lesson.id },
       }),
       prisma.word.findUnique({
         where: { orgWord: { organizationId, targetLanguage: "de", word: duplicateDistractor } },

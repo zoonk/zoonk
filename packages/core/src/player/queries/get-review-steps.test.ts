@@ -2,7 +2,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { lessonSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
+import { chapterSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepAttemptFixture } from "@zoonk/testing/fixtures/step-attempts";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -726,10 +726,10 @@ describe(getReviewValidationData, () => {
         lessonId: readingLesson.id,
         sentenceId: sentence.id,
       }),
-      lessonSentenceFixture({
+      chapterSentenceFixture({
         distractors: ["Morgen"],
-        lessonId: lesson.id,
         sentenceId: sentence.id,
+        sourceLessonId: lesson.id,
         translation: "Hello, I am Lara.",
         translationDistractors: ["Good"],
         userLanguage: "en",

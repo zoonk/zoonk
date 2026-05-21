@@ -1,15 +1,16 @@
 import { describe, expect, it } from "vitest";
 import {
-  attachTranslationsToSteps,
+  attachResourcesToSteps,
+  toChapterSentenceInputs,
+  toChapterWordInputs,
   toDistractorWordInputs,
-  toLessonSentenceInputs,
-  toLessonWordInputs,
   toSentenceWordInputs,
 } from "./lesson-data-mappers";
 
 function makeLessonWord(overrides: Record<string, unknown> = {}) {
   return {
     distractors: [],
+    id: "chapter-word-1",
     translation: "translation",
     word: { audioUrl: null, id: "1", pronunciations: [], romanization: null, word: "word" },
     ...overrides,
@@ -20,6 +21,7 @@ function makeLessonSentence(overrides: Record<string, unknown> = {}) {
   return {
     distractors: [],
     explanation: null,
+    id: "chapter-sentence-1",
     sentence: { audioUrl: null, id: "1", romanization: null, sentence: "sentence" },
     translation: "translation",
     translationDistractors: [],
@@ -27,9 +29,9 @@ function makeLessonSentence(overrides: Record<string, unknown> = {}) {
   };
 }
 
-describe(toLessonWordInputs, () => {
-  it("maps lesson words to player inputs", () => {
-    const result = toLessonWordInputs([
+describe(toChapterWordInputs, () => {
+  it("maps chapter words to player inputs", () => {
+    const result = toChapterWordInputs([
       makeLessonWord({
         distractors: ["boa tarde"],
         translation: "good evening",
@@ -57,9 +59,9 @@ describe(toLessonWordInputs, () => {
   });
 });
 
-describe(toLessonSentenceInputs, () => {
-  it("maps lesson sentences to player inputs", () => {
-    const result = toLessonSentenceInputs([
+describe(toChapterSentenceInputs, () => {
+  it("maps chapter sentences to player inputs", () => {
+    const result = toChapterSentenceInputs([
       makeLessonSentence({
         distractors: ["abend"],
         explanation: "Greeting sentence",
@@ -90,7 +92,7 @@ describe(toLessonSentenceInputs, () => {
 });
 
 describe(toSentenceWordInputs, () => {
-  it("reuses lesson word mapping for canonical sentence words", () => {
+  it("reuses chapter word mapping for canonical sentence words", () => {
     const result = toSentenceWordInputs([
       makeLessonWord({
         translation: "cat",
@@ -132,11 +134,13 @@ describe(toDistractorWordInputs, () => {
   });
 });
 
-describe(attachTranslationsToSteps, () => {
-  it("merges lesson-scoped translations and distractors into raw steps", () => {
-    const result = attachTranslationsToSteps(
+describe(attachResourcesToSteps, () => {
+  it("merges chapter-scoped translations and distractors into raw steps", () => {
+    const result = attachResourcesToSteps(
       [
         {
+          chapterSentenceId: null,
+          chapterWordId: "chapter-word-1",
           content: {},
           id: "1",
           kind: "translation",
@@ -150,6 +154,8 @@ describe(attachTranslationsToSteps, () => {
           },
         },
         {
+          chapterSentenceId: "chapter-sentence-1",
+          chapterWordId: null,
           content: {},
           id: "2",
           kind: "reading",
@@ -229,10 +235,12 @@ describe(attachTranslationsToSteps, () => {
     ]);
   });
 
-  it("falls back to empty lesson-scoped data when no matching lesson row exists", () => {
-    const result = attachTranslationsToSteps(
+  it("falls back to empty chapter-scoped data when no matching resource row exists", () => {
+    const result = attachResourcesToSteps(
       [
         {
+          chapterSentenceId: null,
+          chapterWordId: "missing-word",
           content: {},
           id: "1",
           kind: "translation",
@@ -241,6 +249,8 @@ describe(attachTranslationsToSteps, () => {
           word: { audioUrl: null, id: "1", romanization: null, word: "hola" },
         },
         {
+          chapterSentenceId: "missing-sentence",
+          chapterWordId: null,
           content: {},
           id: "2",
           kind: "reading",

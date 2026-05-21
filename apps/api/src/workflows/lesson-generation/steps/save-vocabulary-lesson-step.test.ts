@@ -42,9 +42,12 @@ describe(saveVocabularyLessonStep, () => {
     });
 
     const [lessonWords, distractorLessonWords, words, pronunciations, steps] = await Promise.all([
-      prisma.lessonWord.findMany({ include: { word: true }, where: { lessonId: context.id } }),
-      prisma.lessonWord.findMany({
-        where: { lessonId: context.id, word: { word: { in: [...distractorWords] } } },
+      prisma.chapterWord.findMany({
+        include: { word: true },
+        where: { sourceLessonId: context.id },
+      }),
+      prisma.chapterWord.findMany({
+        where: { sourceLessonId: context.id, word: { word: { in: [...distractorWords] } } },
       }),
       prisma.word.findMany({
         orderBy: { word: "asc" },
@@ -90,6 +93,7 @@ describe(saveVocabularyLessonStep, () => {
     expect(steps).toHaveLength(1);
 
     expect(steps[0]).toMatchObject({
+      chapterWordId: lessonWords[0]?.id,
       content: {},
       isPublished: true,
       position: 0,

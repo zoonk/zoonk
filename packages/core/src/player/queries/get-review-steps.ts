@@ -119,7 +119,7 @@ export async function getReviewValidationData(params: { lessonId: string; stepId
   const [eligibleStepCount, steps] = await Promise.all([
     prisma.step.count({ where: stepFilter }),
     prisma.step.findMany({
-      include: { sentence: true, word: true },
+      include: { chapterSentence: true, sentence: true, word: true },
       where: { ...stepFilter, id: { in: submittedStepIds } },
     }),
   ]);

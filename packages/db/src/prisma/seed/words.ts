@@ -77,26 +77,27 @@ async function seedWord(
     where: { wordPronunciation: { userLanguage: data.userLanguage, wordId: word.id } },
   });
 
-  const lessonWordPromises = data.lessonSlugs.map(async (lessonSlug) => {
+  const chapterWordPromises = data.lessonSlugs.map(async (lessonSlug) => {
     const lesson = await prisma.lesson.findFirst({
       where: { organizationId: org.id, slug: lessonSlug },
     });
 
     if (lesson) {
-      await prisma.lessonWord.upsert({
+      await prisma.chapterWord.upsert({
         create: {
-          lessonId: lesson.id,
+          chapterId: lesson.chapterId,
+          sourceLessonId: lesson.id,
           translation: data.translation,
           userLanguage: data.userLanguage,
           wordId: word.id,
         },
         update: {},
-        where: { lessonWord: { lessonId: lesson.id, wordId: word.id } },
+        where: { chapterWordSource: { sourceLessonId: lesson.id, wordId: word.id } },
       });
     }
   });
 
-  await Promise.all(lessonWordPromises);
+  await Promise.all(chapterWordPromises);
 }
 
 export async function seedWords(prisma: PrismaClient, org: Organization): Promise<void> {

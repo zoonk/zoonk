@@ -7,7 +7,7 @@ import { generateLanguageAudio } from "@zoonk/core/audio/generate";
 import { prisma } from "@zoonk/db";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { lessonWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
+import { chapterWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "../steps/_test-utils/create-lesson-context";
 import { readingLessonWorkflow } from "./reading-workflow";
@@ -113,8 +113,8 @@ describe(readingLessonWorkflow, () => {
 
     await Promise.all(
       wordRecords.map((word) =>
-        lessonWordFixture({
-          lessonId: vocabularyLesson.id,
+        chapterWordFixture({
+          sourceLessonId: vocabularyLesson.id,
           translation: `${word.word} translation`,
           userLanguage: "en",
           wordId: word.id,
@@ -147,13 +147,15 @@ describe(readingLessonWorkflow, () => {
 
     const [step, lessonSentence, lessonWords] = await Promise.all([
       prisma.step.findFirstOrThrow({ where: { lessonId: context.id, position: 0 } }),
-      prisma.lessonSentence.findUniqueOrThrow({
-        where: { lessonSentence: { lessonId: context.id, sentenceId: savedSentence.id } },
+      prisma.chapterSentence.findUniqueOrThrow({
+        where: {
+          chapterSentenceSource: { sentenceId: savedSentence.id, sourceLessonId: context.id },
+        },
       }),
-      prisma.lessonWord.findMany({
+      prisma.chapterWord.findMany({
         include: { word: true },
         orderBy: { word: { word: "asc" } },
-        where: { lessonId: context.id },
+        where: { sourceLessonId: context.id },
       }),
     ]);
 
@@ -162,7 +164,11 @@ describe(readingLessonWorkflow, () => {
       sentence,
     });
 
-    expect(step).toMatchObject({ kind: "reading", sentenceId: savedSentence.id });
+    expect(step).toMatchObject({
+      chapterSentenceId: lessonSentence.id,
+      kind: "reading",
+      sentenceId: savedSentence.id,
+    });
 
     expect(lessonSentence).toMatchObject({
       distractors: [`abend-${uniqueId}`, `fenster-${uniqueId}`],
@@ -203,8 +209,8 @@ describe(readingLessonWorkflow, () => {
       wordFixture({ organizationId, targetLanguage: "de", word: canonicalWord }),
     ]);
 
-    await lessonWordFixture({
-      lessonId: vocabularyLesson.id,
+    await chapterWordFixture({
+      sourceLessonId: vocabularyLesson.id,
       translation,
       userLanguage: "en",
       wordId: wordRecord.id,
@@ -228,7 +234,10 @@ describe(readingLessonWorkflow, () => {
         prisma.word.findUnique({
           where: { orgWord: { organizationId, targetLanguage: "de", word: validDistractor } },
         }),
-        prisma.lessonWord.findFirst({ include: { word: true }, where: { lessonId: context.id } }),
+        prisma.chapterWord.findFirst({
+          include: { word: true },
+          where: { sourceLessonId: context.id },
+        }),
       ]);
 
     expect(canonicalRecord).toMatchObject({

@@ -1,27 +1,27 @@
 model Lesson {
-  id               String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  organizationId   String?          @map("organization_id") @db.Uuid
-  organization     Organization?    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  chapterId        String           @map("chapter_id") @db.Uuid
-  chapter          Chapter          @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-  isLocked         Boolean          @default(false) @map("is_locked")
-  isPublished      Boolean          @default(false) @map("is_published")
-  language         String           @db.VarChar(10)
-  kind             LessonKind       @default(custom)
+  id               String            @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  organizationId   String?           @map("organization_id") @db.Uuid
+  organization     Organization?     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  chapterId        String            @map("chapter_id") @db.Uuid
+  chapter          Chapter           @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  isLocked         Boolean           @default(false) @map("is_locked")
+  isPublished      Boolean           @default(false) @map("is_published")
+  language         String            @db.VarChar(10)
+  kind             LessonKind        @default(custom)
   slug             String
   title            String?
-  normalizedTitle  String?          @map("normalized_title")
+  normalizedTitle  String?           @map("normalized_title")
   description      String?
-  generationStatus GenerationStatus @default(pending) @map("generation_status")
-  generationRunId  String?          @map("generation_run_id")
-  imageUrl         String?          @map("image_url")
+  generationStatus GenerationStatus  @default(pending) @map("generation_status")
+  generationRunId  String?           @map("generation_run_id")
+  imageUrl         String?           @map("image_url")
   position         Int
-  createdAt        DateTime         @default(now()) @map("created_at")
-  updatedAt        DateTime         @default(now()) @updatedAt @map("updated_at")
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @default(now()) @updatedAt @map("updated_at")
   progress         LessonProgress[]
   steps            Step[]
-  words            LessonWord[]
-  sentences        LessonSentence[]
+  sourceWords      ChapterWord[]
+  sourceSentences  ChapterSentence[]
 
   @@unique([chapterId, slug], name: "chapterLessonSlug")
   @@index([organizationId, normalizedTitle])
@@ -31,24 +31,30 @@ model Lesson {
 }
 
 model Step {
-  id          String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  lessonId    String        @map("lesson_id") @db.Uuid
-  lesson      Lesson        @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  wordId      String?       @map("word_id") @db.Uuid
-  word        Word?         @relation(fields: [wordId], references: [id], onDelete: Cascade)
-  sentenceId  String?       @map("sentence_id") @db.Uuid
-  sentence    Sentence?     @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
-  kind        StepKind
-  position    Int
-  isPublished Boolean       @default(false) @map("is_published")
-  content     Json
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @default(now()) @updatedAt @map("updated_at")
-  attempts    StepAttempt[]
+  id                String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  lessonId          String           @map("lesson_id") @db.Uuid
+  lesson            Lesson           @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  wordId            String?          @map("word_id") @db.Uuid
+  word              Word?            @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  sentenceId        String?          @map("sentence_id") @db.Uuid
+  sentence          Sentence?        @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
+  chapterWordId     String?          @map("chapter_word_id") @db.Uuid
+  chapterWord       ChapterWord?     @relation(fields: [chapterWordId], references: [id], onDelete: Cascade)
+  chapterSentenceId String?          @map("chapter_sentence_id") @db.Uuid
+  chapterSentence   ChapterSentence? @relation(fields: [chapterSentenceId], references: [id], onDelete: Cascade)
+  kind              StepKind
+  position          Int
+  isPublished       Boolean          @default(false) @map("is_published")
+  content           Json
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @default(now()) @updatedAt @map("updated_at")
+  attempts          StepAttempt[]
 
   @@index([lessonId, position])
   @@index([lessonId, kind, position])
   @@index([wordId])
   @@index([sentenceId])
+  @@index([chapterWordId])
+  @@index([chapterSentenceId])
   @@map("steps")
 }

@@ -11,7 +11,7 @@ import { upsertWordWithPronunciation } from "./_utils/upsert-word-with-pronuncia
 import { type LessonContext } from "./get-lesson-step";
 
 /**
- * Vocabulary persistence owns both lesson-scoped translations/distractors and
+ * Vocabulary persistence owns both chapter-scoped translations/distractors and
  * reusable target-language word metadata. Saving them together keeps the later
  * translation lesson linked to the exact words this vocabulary lesson taught.
  */
@@ -100,9 +100,9 @@ export async function saveVocabularyLessonStep({
 }
 
 /**
- * The same surface word can appear in different lessons with different
- * translations or distractors, so the reusable Word row and the lesson-scoped
- * LessonWord row must be written together.
+ * The same surface word can appear in different chapter contexts with
+ * different translations or distractors, so the reusable Word row and the
+ * chapter-scoped resource row must be written together.
  */
 async function saveOneVocabularyWord(params: {
   context: LessonContext;
@@ -137,10 +137,11 @@ async function saveOneVocabularyWord(params: {
     word: dbWord,
   });
 
-  await prisma.lessonWord.upsert({
+  const chapterWord = await prisma.chapterWord.upsert({
     create: {
+      chapterId: params.context.chapterId,
       distractors: wordDistractors,
-      lessonId: params.context.id,
+      sourceLessonId: params.context.id,
       translation: normalizePunctuation(params.word.translation),
       userLanguage: params.userLanguage,
       wordId,
@@ -149,11 +150,12 @@ async function saveOneVocabularyWord(params: {
       distractors: wordDistractors,
       translation: normalizePunctuation(params.word.translation),
     },
-    where: { lessonWord: { lessonId: params.context.id, wordId } },
+    where: { chapterWordSource: { sourceLessonId: params.context.id, wordId } },
   });
 
   await prisma.step.create({
     data: {
+      chapterWordId: chapterWord.id,
       content: assertStepContent("vocabulary", {}),
       isPublished: true,
       kind: "vocabulary",

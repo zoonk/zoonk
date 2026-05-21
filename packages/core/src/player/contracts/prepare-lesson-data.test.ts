@@ -10,13 +10,13 @@ type LessonInput = PreparePlayerLessonInput["lesson"];
 type RawStep = LessonInput["steps"][number];
 type RawStepWord = NonNullable<RawStep["word"]>;
 type RawStepSentence = NonNullable<RawStep["sentence"]>;
-type LessonWord = PreparePlayerLessonInput["lessonWords"][number];
-type LessonSentence = PreparePlayerLessonInput["lessonSentences"][number];
+type ChapterWord = PreparePlayerLessonInput["chapterWords"][number];
+type ChapterSentence = PreparePlayerLessonInput["chapterSentences"][number];
 type SentenceWord = NonNullable<PreparePlayerLessonInput["sentenceWords"]>[number];
 type DistractorWord = NonNullable<PreparePlayerLessonInput["distractorWords"]>[number];
 const shuffleMock = vi.mocked(shuffle);
 
-function makeWordRecord(overrides: Partial<LessonWord["word"]> = {}): LessonWord["word"] {
+function makeWordRecord(overrides: Partial<ChapterWord["word"]> = {}): ChapterWord["word"] {
   return {
     audioUrl: null,
     id: "1",
@@ -28,8 +28,8 @@ function makeWordRecord(overrides: Partial<LessonWord["word"]> = {}): LessonWord
 }
 
 function makeSentenceRecord(
-  overrides: Partial<LessonSentence["sentence"]> = {},
-): LessonSentence["sentence"] {
+  overrides: Partial<ChapterSentence["sentence"]> = {},
+): ChapterSentence["sentence"] {
   return { audioUrl: null, id: "1", romanization: null, sentence: "sentence", ...overrides };
 }
 
@@ -41,18 +41,19 @@ function makeStepSentence(overrides: Partial<RawStepSentence> = {}): RawStepSent
   return { audioUrl: null, id: "1", romanization: null, sentence: "sentence", ...overrides };
 }
 
-function makeLessonWord(overrides: Partial<LessonWord> = {}): LessonWord {
+function makeLessonWord(overrides: Partial<ChapterWord> = {}): ChapterWord {
   const word = overrides.word ?? makeWordRecord();
 
-  return { distractors: [], translation: "translation", word, ...overrides };
+  return { distractors: [], id: word.id, translation: "translation", word, ...overrides };
 }
 
-function makeLessonSentence(overrides: Partial<LessonSentence> = {}): LessonSentence {
+function makeLessonSentence(overrides: Partial<ChapterSentence> = {}): ChapterSentence {
   const sentence = overrides.sentence ?? makeSentenceRecord();
 
   return {
     distractors: [],
     explanation: null,
+    id: sentence.id,
     sentence,
     translation: "translation",
     translationDistractors: [],
@@ -63,7 +64,7 @@ function makeLessonSentence(overrides: Partial<LessonSentence> = {}): LessonSent
 function makeSentenceWord(overrides: Partial<SentenceWord> = {}): SentenceWord {
   const word = overrides.word ?? makeWordRecord();
 
-  return { distractors: [], translation: "translation", word, ...overrides };
+  return { distractors: [], id: word.id, translation: "translation", word, ...overrides };
 }
 
 function makeDistractorWord(overrides: Partial<DistractorWord> = {}): DistractorWord {
@@ -78,13 +79,18 @@ function makeDistractorWord(overrides: Partial<DistractorWord> = {}): Distractor
 }
 
 function makeStep(overrides: Partial<RawStep> = {}): RawStep {
+  const word = overrides.word ?? null;
+  const sentence = overrides.sentence ?? null;
+
   return {
+    chapterSentenceId: overrides.chapterSentenceId ?? sentence?.id ?? null,
+    chapterWordId: overrides.chapterWordId ?? word?.id ?? null,
     content: {},
     id: "1",
     kind: "static",
     position: 0,
-    sentence: null,
-    word: null,
+    sentence,
+    word,
     ...overrides,
   };
 }
@@ -104,10 +110,10 @@ function makeLesson(steps: RawStep[], overrides: Partial<LessonInput> = {}): Les
 
 function prepare(params: Partial<PreparePlayerLessonInput> = {}) {
   return preparePlayerLessonData({
+    chapterSentences: params.chapterSentences ?? [],
+    chapterWords: params.chapterWords ?? [],
     distractorWords: params.distractorWords,
     lesson: params.lesson ?? makeLesson([]),
-    lessonSentences: params.lessonSentences ?? [],
-    lessonWords: params.lessonWords ?? [],
     sentenceWords: params.sentenceWords,
     steps: params.steps,
   });
@@ -157,12 +163,12 @@ describe(preparePlayerLessonData, () => {
     });
 
     const result = prepare({
+      chapterSentences: [sentence],
+      chapterWords: [word],
       lesson: makeLesson(
         [makeStep({ content: { text: "Hello world", title: "Intro", variant: "text" } })],
         { description: "Description", id: "99", kind: "review", organizationId: "org-42" },
       ),
-      lessonSentences: [sentence],
-      lessonWords: [word],
     });
 
     expect(result).toMatchObject({
@@ -266,7 +272,7 @@ describe(preparePlayerLessonData, () => {
     expect(result.steps[2]?.matchColumnsRightItems).toStrictEqual(["1", "2"]);
   });
 
-  it("serializes lesson-scoped distractor arrays for words and sentences", () => {
+  it("serializes chapter-scoped distractor arrays for words and sentences", () => {
     const word = makeLessonWord({
       distractors: ["boa tarde", "bom dia"],
       translation: "good evening",
@@ -281,6 +287,8 @@ describe(preparePlayerLessonData, () => {
     });
 
     const result = prepare({
+      chapterSentences: [sentence],
+      chapterWords: [word],
       lesson: makeLesson([
         makeStep({
           id: "11",
@@ -293,8 +301,6 @@ describe(preparePlayerLessonData, () => {
           sentence: makeStepSentence({ id: "20", sentence: "Guten Morgen, Lara." }),
         }),
       ]),
-      lessonSentences: [sentence],
-      lessonWords: [word],
     });
 
     expect(result.lessonWords[0]?.distractors).toStrictEqual(["boa tarde", "bom dia"]);
@@ -316,6 +322,7 @@ describe(preparePlayerLessonData, () => {
     });
 
     const result = prepare({
+      chapterWords: [word],
       distractorWords: [
         makeDistractorWord({
           audioUrl: "/audio/boa-tarde.mp3",
@@ -337,7 +344,6 @@ describe(preparePlayerLessonData, () => {
           word: makeStepWord({ id: "10", word: "boa noite" }),
         }),
       ]),
-      lessonWords: [word],
     });
 
     expect(result.steps[0]?.translationOptions).toStrictEqual([
@@ -368,6 +374,47 @@ describe(preparePlayerLessonData, () => {
         pronunciation: null,
         romanization: null,
         word: "até logo",
+      },
+    ]);
+  });
+
+  it("uses the exact chapter word referenced by the step when resources share a word", () => {
+    const vocabularyWord = makeLessonWord({
+      distractors: ["Danke"],
+      id: "chapter-word-vocabulary",
+      translation: "Tchau",
+      word: makeWordRecord({ id: "10", word: "Tschüss" }),
+    });
+
+    const readingWord = makeLessonWord({
+      distractors: [],
+      id: "chapter-word-reading",
+      translation: "tchau",
+      word: makeWordRecord({ id: "10", word: "Tschüss" }),
+    });
+
+    const result = prepare({
+      chapterWords: [vocabularyWord, readingWord],
+      lesson: makeLesson([
+        makeStep({
+          chapterWordId: "chapter-word-vocabulary",
+          id: "11",
+          kind: "translation",
+          word: makeStepWord({ id: "10", word: "Tschüss" }),
+        }),
+      ]),
+    });
+
+    expect(result.steps[0]?.word?.translation).toBe("Tchau");
+
+    expect(result.steps[0]?.translationOptions).toStrictEqual([
+      { audioUrl: null, id: "10", pronunciation: null, romanization: null, word: "Tschüss" },
+      {
+        audioUrl: null,
+        id: "distractor:danke",
+        pronunciation: null,
+        romanization: null,
+        word: "Danke",
       },
     ]);
   });
@@ -467,6 +514,7 @@ describe(preparePlayerLessonData, () => {
     });
 
     const result = prepare({
+      chapterSentences: [sentence],
       distractorWords: [
         makeDistractorWord({
           audioUrl: "/audio/abend.mp3",
@@ -488,7 +536,6 @@ describe(preparePlayerLessonData, () => {
           sentence: makeStepSentence({ id: "20", sentence: "Guten Morgen, Lara." }),
         }),
       ]),
-      lessonSentences: [sentence],
     });
 
     expect(result.steps[0]?.wordBankOptions).toStrictEqual([
@@ -514,6 +561,13 @@ describe(preparePlayerLessonData, () => {
     });
 
     const result = prepare({
+      chapterSentences: [sentence],
+      chapterWords: [
+        makeLessonWord({
+          translation: "good morning",
+          word: makeWordRecord({ id: "10", romanization: "guten morgen", word: "Guten Morgen" }),
+        }),
+      ],
       lesson: makeLesson([
         makeStep({
           id: "12",
@@ -521,13 +575,6 @@ describe(preparePlayerLessonData, () => {
           sentence: makeStepSentence({ id: "20", sentence: "Guten Morgen" }),
         }),
       ]),
-      lessonSentences: [sentence],
-      lessonWords: [
-        makeLessonWord({
-          translation: "good morning",
-          word: makeWordRecord({ id: "10", romanization: "guten morgen", word: "Guten Morgen" }),
-        }),
-      ],
     });
 
     expect(result.steps[0]?.sentenceWordOptions).toStrictEqual([
@@ -543,6 +590,13 @@ describe(preparePlayerLessonData, () => {
     });
 
     const result = prepare({
+      chapterSentences: [sentence],
+      chapterWords: [
+        makeLessonWord({
+          translation: "cat (lesson)",
+          word: makeWordRecord({ audioUrl: "/audio/lesson-gato.mp3", id: "10", word: "gato" }),
+        }),
+      ],
       lesson: makeLesson([
         makeStep({
           id: "40",
@@ -550,13 +604,6 @@ describe(preparePlayerLessonData, () => {
           sentence: makeStepSentence({ id: "20", sentence: "gato bonito" }),
         }),
       ]),
-      lessonSentences: [sentence],
-      lessonWords: [
-        makeLessonWord({
-          translation: "cat (lesson)",
-          word: makeWordRecord({ audioUrl: "/audio/lesson-gato.mp3", id: "10", word: "gato" }),
-        }),
-      ],
       sentenceWords: [
         makeSentenceWord({
           translation: "cat (sentence)",
@@ -623,6 +670,7 @@ describe(preparePlayerLessonData, () => {
     });
 
     const result = prepare({
+      chapterSentences: [sentence],
       lesson: makeLesson([
         makeStep({
           id: "12",
@@ -630,7 +678,6 @@ describe(preparePlayerLessonData, () => {
           sentence: makeStepSentence({ id: "20", sentence: "Hola mundo" }),
         }),
       ]),
-      lessonSentences: [sentence],
     });
 
     expect(result.steps[0]?.wordBankOptions).toStrictEqual([

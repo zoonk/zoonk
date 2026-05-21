@@ -14,7 +14,7 @@ import { type SelectedAnswer } from "./completion-input-schema";
 
 /**
  * Step data for server-side validation. Translations live directly
- * on LessonWord/LessonSentence rather than in a separate translation
+ * on ChapterWord/ChapterSentence rather than in a separate translation
  * table, so sentence carries only the canonical translation string used
  * by listening validation.
  */

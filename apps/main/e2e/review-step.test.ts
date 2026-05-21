@@ -4,9 +4,9 @@ import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
-import { lessonSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
+import { chapterSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { lessonWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
+import { chapterWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { expect, test } from "./fixtures";
 
 async function createReviewLesson(options: {
@@ -61,13 +61,13 @@ async function createReviewLesson(options: {
       options.words.map(async (wordData) => {
         const word = await wordFixture({ organizationId: org.id, word: wordData.word });
 
-        await lessonWordFixture({
-          lessonId: sourceLesson.id,
+        const chapterWord = await chapterWordFixture({
+          sourceLessonId: sourceLesson.id,
           translation: wordData.translation,
           wordId: word.id,
         });
 
-        return word;
+        return { chapterWord, word };
       }),
     ),
     Promise.all(
@@ -77,13 +77,13 @@ async function createReviewLesson(options: {
           sentence: sentenceData.sentence,
         });
 
-        await lessonSentenceFixture({
-          lessonId: sourceLesson.id,
+        const chapterSentence = await chapterSentenceFixture({
           sentenceId: sentence.id,
+          sourceLessonId: sourceLesson.id,
           translation: sentenceData.translation,
         });
 
-        return sentence;
+        return { chapterSentence, sentence };
       }),
     ),
   ]);
@@ -91,8 +91,9 @@ async function createReviewLesson(options: {
   const vocabStepCount = createdWords.length;
 
   await Promise.all([
-    ...createdWords.map((word, index) =>
+    ...createdWords.map(({ chapterWord, word }, index) =>
       stepFixture({
+        chapterWordId: chapterWord.id,
         content: {},
         isPublished: true,
         kind: "translation",
@@ -101,8 +102,9 @@ async function createReviewLesson(options: {
         wordId: word.id,
       }),
     ),
-    ...createdSentences.map((sentence, index) =>
+    ...createdSentences.map(({ chapterSentence, sentence }, index) =>
       stepFixture({
+        chapterSentenceId: chapterSentence.id,
         content: {},
         isPublished: true,
         kind: "reading",
