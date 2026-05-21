@@ -31,6 +31,7 @@ export type NextLessonState = {
   brandSlug: string | null;
   canPrefetch: boolean;
   chapterId: string;
+  chapterPosition: number;
   chapterSlug: string;
   chapterTitle: string;
   completed: boolean;
@@ -155,6 +156,7 @@ function buildCompletedScopeState({
     brandSlug: firstRow.brandSlug,
     canPrefetch: canPrefetchLesson({ row: firstRow }),
     chapterId: firstRow.chapterId,
+    chapterPosition: firstRow.chapterPosition,
     chapterSlug: firstRow.chapterSlug,
     chapterTitle: firstRow.chapterTitle,
     completed: true,
@@ -198,6 +200,7 @@ async function buildOpenLessonState({
       brandSlug: lesson.brandSlug,
       canPrefetch: true,
       chapterId: lesson.chapterId,
+      chapterPosition: lesson.chapterPosition,
       chapterSlug: lesson.chapterSlug,
       chapterTitle: lesson.chapterTitle,
       completed: false,
@@ -245,6 +248,7 @@ function toPendingLessonState({
     brandSlug: lesson.brandSlug,
     canPrefetch: false,
     chapterId: lesson.chapterId,
+    chapterPosition: lesson.chapterPosition,
     chapterSlug: lesson.chapterSlug,
     chapterTitle: lesson.chapterTitle,
     completed,

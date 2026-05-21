@@ -1,6 +1,7 @@
 import { getLesson as getCatalogLesson } from "@/data/lessons/get-lesson";
 import { getLessonDisplayMeta, getLessonSeoMeta } from "@/lib/lessons";
 import { getBlockingLessonGenerationPrerequisite } from "@zoonk/core/lessons/generation-prerequisites";
+import { getNextChapterInCourse } from "@zoonk/core/lessons/next-chapter-in-course";
 import { getNextLessonInCourse } from "@zoonk/core/lessons/next-in-course";
 import { startLesson } from "@zoonk/core/player/commands/start-lesson";
 import { preparePlayerLessonData } from "@zoonk/core/player/contracts/prepare-lesson-data";
@@ -66,18 +67,23 @@ export default async function LessonPage({ params }: Props) {
     notFound();
   }
 
-  const [lesson, nextLesson, session, reviewLessonData, totalBrainPower] = await Promise.all([
-    getPlayerLesson({ lessonId: lessonShell.id }),
-    getNextLessonInCourse({
-      chapterId: lessonShell.chapter.id,
-      chapterPosition: lessonShell.chapter.position,
-      courseId: lessonShell.chapter.course.id,
-      lessonPosition: lessonShell.position,
-    }),
-    getSession(),
-    fetchReviewLessonData(lessonShell.id),
-    getTotalBrainPower(),
-  ]);
+  const [lesson, nextChapter, nextLesson, session, reviewLessonData, totalBrainPower] =
+    await Promise.all([
+      getPlayerLesson({ lessonId: lessonShell.id }),
+      getNextChapterInCourse({
+        chapterPosition: lessonShell.chapter.position,
+        courseId: lessonShell.chapter.course.id,
+      }),
+      getNextLessonInCourse({
+        chapterId: lessonShell.chapter.id,
+        chapterPosition: lessonShell.chapter.position,
+        courseId: lessonShell.chapter.course.id,
+        lessonPosition: lessonShell.position,
+      }),
+      getSession(),
+      fetchReviewLessonData(lessonShell.id),
+      getTotalBrainPower(),
+    ]);
 
   if (!lesson) {
     notFound();
@@ -144,6 +150,7 @@ export default async function LessonPage({ params }: Props) {
       isAuthenticated={Boolean(session)}
       lessonDescription={lessonMeta.description}
       lessonTitle={lessonMeta.title}
+      nextChapter={nextChapter}
       nextLesson={nextLesson}
       totalBrainPower={totalBrainPower}
       userEmail={session?.user.email}

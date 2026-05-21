@@ -61,4 +61,22 @@ describe(buildLessonPlayerModel, () => {
 
     expect(model.onNextHref).toBeNull();
   });
+
+  it("returns a chapter milestone when the next chapter has no lesson shell yet", () => {
+    const model = buildLessonPlayerModel({
+      brandSlug: "brand",
+      chapterSlug: "chapter-1",
+      courseSlug: "course",
+      nextChapter: { brandSlug: "brand", chapterSlug: "chapter-2", courseSlug: "course" },
+      nextLesson: null,
+    });
+
+    expect(model.milestone).toStrictEqual({
+      kind: "chapter",
+      nextHref: "/b/brand/c/course/ch/chapter-2",
+      reviewHref: "/b/brand/c/course/ch/chapter-1",
+    });
+
+    expect(model.onNextHref).toBe("/b/brand/c/course/ch/chapter-2");
+  });
 });
