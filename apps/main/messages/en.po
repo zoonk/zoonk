@@ -1217,8 +1217,8 @@ msgid "mFR5UU"
 msgstr "Creating your lesson"
 
 #: src/app/generate/l/[id]/generation-client.tsx
-msgid "THvPMp"
-msgstr "This usually takes a few seconds"
+msgid "3vY0Zu"
+msgstr "This usually takes 1-2 minutes"
 
 #: src/app/generate/l/[id]/generation-client.tsx
 msgid "T2TGxR"
