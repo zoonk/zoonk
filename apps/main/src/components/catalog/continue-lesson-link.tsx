@@ -110,6 +110,24 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
     return renderFallback({ label });
   }
 
+  /**
+   * Completed generated lessons can still lead to an ungenerated next chapter.
+   * Those targets intentionally have no lesson slug, so route them to the
+   * chapter page where the normal generation redirect can take over.
+   */
+  if (!("lessonSlug" in data)) {
+    return (
+      <Link
+        className={className}
+        href={`/b/${data.brandSlug}/c/${data.courseSlug}/ch/${data.chapterSlug}`}
+        prefetch={false}
+      >
+        {label}
+        <ChevronRightIcon aria-hidden="true" />
+      </Link>
+    );
+  }
+
   if (data.canPrefetch) {
     return (
       <Link

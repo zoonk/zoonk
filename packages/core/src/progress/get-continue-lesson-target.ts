@@ -1,6 +1,23 @@
 import { type LessonScope, findLastCompleted } from "@zoonk/core/lessons/last-completed";
+import { getNextChapterInCourse } from "../lessons/get-next-chapter-in-course";
 import { getSession } from "../users/get-user-session";
-import { getNextLessonStateForUser } from "./get-next-lesson-state";
+import { type NextLessonState, getNextLessonStateForUser } from "./get-next-lesson-state";
+
+type ContinueLessonTargetBase = {
+  brandSlug: string | null;
+  chapterSlug: string;
+  completed: boolean;
+  courseSlug: string;
+  hasStarted: boolean;
+};
+
+type ContinueLessonTarget = ContinueLessonTargetBase & {
+  canPrefetch: boolean;
+  lessonPosition: number;
+  lessonSlug: string;
+};
+
+type ContinueChapterTarget = ContinueLessonTargetBase & { canPrefetch: false; completed: false };
 
 /**
  * Resolves the lesson destination that start/continue/review buttons should
@@ -13,16 +30,7 @@ export async function getContinueLessonTarget({
 }: {
   scope: LessonScope;
   headers?: Headers;
-}): Promise<{
-  lessonPosition: number;
-  brandSlug: string | null;
-  canPrefetch: boolean;
-  chapterSlug: string;
-  completed: boolean;
-  courseSlug: string;
-  hasStarted: boolean;
-  lessonSlug: string;
-} | null> {
+}): Promise<ContinueChapterTarget | ContinueLessonTarget | null> {
   const session = await getSession(headers);
   const userId = session?.user.id;
   const lastCompleted = userId ? await findLastCompleted(userId, scope) : null;
@@ -43,6 +51,12 @@ export async function getContinueLessonTarget({
     return null;
   }
 
+  const pendingChapterTarget = await getPendingChapterTarget({ scope, state });
+
+  if (pendingChapterTarget) {
+    return pendingChapterTarget;
+  }
+
   return {
     brandSlug: state.brandSlug,
     canPrefetch: state.canPrefetch,
@@ -52,5 +66,40 @@ export async function getContinueLessonTarget({
     hasStarted: state.hasStarted,
     lessonPosition: state.lessonPosition,
     lessonSlug: state.lessonSlug,
+  };
+}
+
+/**
+ * A course can be complete relative to its generated lessons while a later
+ * published chapter still has no lesson shells. In that state the course CTA
+ * should continue to the chapter page, not review the completed lesson.
+ */
+async function getPendingChapterTarget({
+  scope,
+  state,
+}: {
+  scope: LessonScope;
+  state: NextLessonState;
+}): Promise<ContinueChapterTarget | null> {
+  if (!("courseId" in scope) || !state.completed || state.scopeDurablyCompleted) {
+    return null;
+  }
+
+  const nextChapter = await getNextChapterInCourse({
+    chapterPosition: state.chapterPosition,
+    courseId: state.courseId,
+  });
+
+  if (!nextChapter) {
+    return null;
+  }
+
+  return {
+    brandSlug: nextChapter.brandSlug,
+    canPrefetch: false,
+    chapterSlug: nextChapter.chapterSlug,
+    completed: false,
+    courseSlug: nextChapter.courseSlug,
+    hasStarted: true,
   };
 }

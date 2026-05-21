@@ -282,6 +282,67 @@ test.describe("Continue Lesson Link", () => {
     );
   });
 
+  test("course page shows Continue linking to ungenerated next chapter", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
+    const org = await getAiOrganization();
+    const uniqueId = randomUUID().slice(0, 8);
+
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-cal-next-empty-course-${uniqueId}`,
+      title: `E2E CAL Next Empty Course ${uniqueId}`,
+    });
+
+    const [chapter1, chapter2] = await Promise.all([
+      chapterFixture({
+        courseId: course.id,
+        isPublished: true,
+        organizationId: org.id,
+        position: 0,
+        slug: `e2e-cal-next-empty-ch1-${uniqueId}`,
+        title: `E2E CAL Next Empty Ch1 ${uniqueId}`,
+      }),
+      chapterFixture({
+        courseId: course.id,
+        isPublished: true,
+        organizationId: org.id,
+        position: 1,
+        slug: `e2e-cal-next-empty-ch2-${uniqueId}`,
+        title: `E2E CAL Next Empty Ch2 ${uniqueId}`,
+      }),
+    ]);
+
+    const lesson = await lessonFixture({
+      chapterId: chapter1.id,
+      generationStatus: "completed",
+      isPublished: true,
+      organizationId: org.id,
+      position: 0,
+      slug: `e2e-cal-next-empty-l1-${uniqueId}`,
+      title: `E2E CAL Next Empty L1 ${uniqueId}`,
+    });
+
+    await lessonProgressFixture({
+      completedAt: new Date(),
+      durationSeconds: 60,
+      lessonId: lesson.id,
+      userId: withProgressUser.id,
+    });
+
+    await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
+
+    const continueLink = authenticatedPage.getByRole("link", { name: /^continue$/iu });
+    await expect(continueLink).toBeVisible();
+
+    await expect(continueLink).toHaveAttribute(
+      "href",
+      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter2.slug}`,
+    );
+  });
+
   test("chapter page shows Continue linking to next chapter when completed", async ({
     authenticatedPage,
     withProgressUser,

@@ -182,6 +182,58 @@ async function createChapterCompleteScenario(prefix: string) {
 }
 
 /**
+ * The next chapter can exist before its lesson shells are generated. Completing
+ * the current chapter should still show a chapter milestone, then let the
+ * chapter page redirect to generation instead of declaring the course done.
+ */
+async function createChapterCompleteWithUngeneratedNextChapterScenario(prefix: string) {
+  const org = await getAiOrganization();
+  const uniqueId = randomUUID().slice(0, 8);
+
+  const course = await courseFixture({
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-${prefix}-course-${uniqueId}`,
+  });
+
+  const [chapter1, chapter2] = await Promise.all([
+    chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 0,
+      slug: `e2e-${prefix}-ch1-${uniqueId}`,
+      title: `First Chapter ${uniqueId}`,
+    }),
+    chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 1,
+      slug: `e2e-${prefix}-ch2-${uniqueId}`,
+      title: `Second Chapter ${uniqueId}`,
+    }),
+  ]);
+
+  const lesson = await lessonFixture({
+    chapterId: chapter1.id,
+    isPublished: true,
+    kind: "quiz",
+    organizationId: org.id,
+    position: 0,
+    slug: `e2e-${prefix}-lesson-${uniqueId}`,
+  });
+
+  await createQuizLesson(lesson.id, uniqueId);
+
+  return {
+    chapter2,
+    lessonUrl: `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter1.slug}/l/${lesson.slug}`,
+    uniqueId,
+  };
+}
+
+/**
  * One chapter, one lesson, one lesson. Completing it → "Course Complete".
  * "Review Course" → course page. "Review Chapter" → chapter page.
  */
@@ -305,6 +357,30 @@ test.describe("Lesson Completion UX", () => {
 
     await completionScreen.getByRole("link", { name: /review chapter/iu }).click();
     await expect(page.getByRole("heading", { level: 1, name: chapter1.title })).toBeVisible();
+
+    await browserContext.close();
+  });
+
+  test("chapter complete: ungenerated next chapter is not course complete", async ({
+    baseURL,
+    browser,
+  }) => {
+    const email = await createUniqueUser(baseURL!);
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
+
+    const { chapter2, lessonUrl, uniqueId } =
+      await createChapterCompleteWithUngeneratedNextChapterScenario("chpending");
+
+    await page.goto(lessonUrl);
+    await page.waitForLoadState("networkidle");
+    await completeQuiz(page, uniqueId);
+
+    const completionScreen = page.getByRole("status");
+    await expect(completionScreen.getByText(/chapter complete/iu)).toBeVisible();
+    await expect(completionScreen.getByText(/course complete/iu)).not.toBeVisible();
+
+    await completionScreen.getByRole("link", { name: /next chapter/iu }).click();
+    await expect(page).toHaveURL(new RegExp(`/generate/ch/${chapter2.id}$`, "u"));
 
     await browserContext.close();
   });

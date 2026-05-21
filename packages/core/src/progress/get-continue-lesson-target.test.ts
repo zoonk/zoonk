@@ -158,6 +158,56 @@ describe(getContinueLessonTarget, () => {
     });
   });
 
+  it("returns a chapter target when the next chapter has no lesson shell yet", async () => {
+    const [user, course] = await Promise.all([
+      userFixture(),
+      courseFixture({ isPublished: true, organizationId: organization.id }),
+    ]);
+
+    const [completedChapter, nextChapter] = await Promise.all([
+      chapterFixture({
+        courseId: course.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      chapterFixture({
+        courseId: course.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
+
+    const lesson = await lessonFixture({
+      chapterId: completedChapter.id,
+      generationStatus: "completed",
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    await lessonProgressFixture({
+      completedAt: new Date(),
+      durationSeconds: 60,
+      lessonId: lesson.id,
+      userId: user.id,
+    });
+
+    const headers = await signInAs(user.email, user.password);
+
+    const result = await getContinueLessonTarget({ headers, scope: { courseId: course.id } });
+
+    expect(result).toStrictEqual({
+      brandSlug: organization.slug,
+      canPrefetch: false,
+      chapterSlug: nextChapter.slug,
+      completed: false,
+      courseSlug: course.slug,
+      hasStarted: true,
+    });
+  });
+
   it("chapter scope stays inside the requested chapter", async () => {
     const [user, tree] = await Promise.all([userFixture(), createCourseTree()]);
     const [completedLesson, nextLesson] = tree.lessons;
