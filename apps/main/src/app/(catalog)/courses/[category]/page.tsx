@@ -1,3 +1,4 @@
+import { CatalogGridSkeleton } from "@/components/catalog/catalog-skeletons";
 import { LIST_COURSES_LIMIT, listCourses } from "@/data/courses/list-courses";
 import { getCategoryHeader, getCategoryMeta } from "@/lib/categories/category";
 import {
@@ -7,7 +8,6 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import { ListSkeleton } from "@zoonk/ui/components/list";
 import { type CourseCategory, isValidCategory } from "@zoonk/utils/categories";
 import { type Metadata } from "next";
 import { getLocale } from "next-intl/server";
@@ -51,7 +51,7 @@ export default async function CategoryCourses({ params }: PageProps<"/courses/[c
   const header = await getCategoryHeader(category);
 
   return (
-    <Container variant="list">
+    <Container variant="grid">
       <ContainerHeader>
         <ContainerHeaderGroup>
           <ContainerTitle>{header.title}</ContainerTitle>
@@ -59,7 +59,7 @@ export default async function CategoryCourses({ params }: PageProps<"/courses/[c
         </ContainerHeaderGroup>
       </ContainerHeader>
 
-      <Suspense fallback={<ListSkeleton count={8} />}>
+      <Suspense fallback={<CatalogGridSkeleton count={8} />}>
         <CategoryCourseListContent category={category} />
       </Suspense>
     </Container>

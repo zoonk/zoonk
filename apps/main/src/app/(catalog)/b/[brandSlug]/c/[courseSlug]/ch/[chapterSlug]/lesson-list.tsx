@@ -1,26 +1,52 @@
 import {
-  CatalogListEmpty,
-  CatalogListItem,
-  CatalogListSearch,
-} from "@/components/catalog/catalog-list";
+  CatalogGridEmpty,
+  CatalogGridItem,
+  CatalogGridSearch,
+} from "@/components/catalog/catalog-grid";
+import { CatalogGridImage } from "@/components/catalog/catalog-grid-image";
 import { getDefaultLessonImage } from "@/lib/catalog/default-images";
 import { getLessonDisplayMeta } from "@/lib/lessons";
 import { getLessonProgress } from "@zoonk/core/progress/lessons";
-import { type Lesson } from "@zoonk/db";
+import { type Lesson, type LessonKind } from "@zoonk/db";
 import {
-  ListContent,
-  ListGroup,
-  ListItemContent,
-  ListItemDescription,
-  ListItemHeader,
-  ListItemImage,
-  ListItemStatusCompleted,
-  ListItemTitle,
-} from "@zoonk/ui/components/list";
+  GridContent,
+  GridGroup,
+  GridItemContent,
+  GridItemDescription,
+  GridItemFooter,
+  GridItemMedia,
+  GridItemPosition,
+  GridItemStatusCompleted,
+  GridItemStatusIdle,
+  GridItemTitle,
+  type GridItemTone,
+} from "@zoonk/ui/components/grid";
 import { getExtracted } from "next-intl/server";
-import Image from "next/image";
 
 type LessonRow = { display: Awaited<ReturnType<typeof getLessonDisplayMeta>>; lesson: Lesson };
+
+const LESSON_KIND_TONES: Record<LessonKind, GridItemTone> = {
+  alphabet: "blue",
+  custom: "gray",
+  explanation: "blue",
+  grammar: "purple",
+  listening: "purple",
+  practice: "green",
+  quiz: "yellow",
+  reading: "green",
+  review: "purple",
+  translation: "orange",
+  tutorial: "blue",
+  vocabulary: "blue",
+};
+
+/**
+ * Lesson kind is a stronger visual grouping than position because repeated
+ * companion lessons should be recognizable across the chapter.
+ */
+function getLessonKindTone({ kind }: { kind: LessonKind }) {
+  return LESSON_KIND_TONES[kind];
+}
 
 /**
  * Lesson rows only need a binary completion state, so the visual stays quieter
@@ -29,22 +55,24 @@ type LessonRow = { display: Awaited<ReturnType<typeof getLessonDisplayMeta>>; le
 function LessonListItemStatus({
   completedLabel,
   isCompleted,
+  notStartedLabel,
 }: {
   completedLabel: string;
   isCompleted: boolean;
+  notStartedLabel: string;
 }) {
   if (isCompleted) {
-    return <ListItemStatusCompleted aria-label={completedLabel} />;
+    return <GridItemStatusCompleted>{completedLabel}</GridItemStatusCompleted>;
   }
 
-  return null;
+  return <GridItemStatusIdle>{notStartedLabel}</GridItemStatusIdle>;
 }
 
 /**
- * A lesson row keeps the thumbnail, display copy, and completion dot together
- * while the page-level loop only resolves lesson display data.
+ * A lesson tile lets chapter pages read like a visual study board while keeping
+ * each lesson's title, description, and completion state in the link target.
  */
-function LessonRowItem({
+function LessonTile({
   brandSlug,
   chapterSlug,
   completedLabel,
@@ -52,6 +80,7 @@ function LessonRowItem({
   display,
   isCompleted,
   lesson,
+  notStartedLabel,
 }: {
   brandSlug: string;
   chapterSlug: string;
@@ -60,30 +89,38 @@ function LessonRowItem({
   display: LessonRow["display"];
   isCompleted: boolean;
   lesson: Lesson;
+  notStartedLabel: string;
 }) {
+  const lessonNumber = lesson.position + 1;
+
   return (
-    <CatalogListItem
+    <CatalogGridItem
       href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lesson.slug}`}
       id={lesson.id}
       prefetch={lesson.generationStatus === "completed"}
     >
-      <ListItemImage>
-        <Image
+      <GridItemMedia>
+        <CatalogGridImage
           alt={display.title}
-          height={64}
           src={lesson.imageUrl ?? getDefaultLessonImage(lesson.kind)}
-          width={64}
         />
-      </ListItemImage>
+      </GridItemMedia>
 
-      <ListItemContent>
-        <ListItemHeader>
-          <ListItemTitle>{display.title}</ListItemTitle>
-          <LessonListItemStatus completedLabel={completedLabel} isCompleted={isCompleted} />
-        </ListItemHeader>
-        <ListItemDescription>{display.description}</ListItemDescription>
-      </ListItemContent>
-    </CatalogListItem>
+      <GridItemContent>
+        <GridItemPosition tone={getLessonKindTone({ kind: lesson.kind })}>
+          {lessonNumber}
+        </GridItemPosition>
+        <GridItemTitle>{display.title}</GridItemTitle>
+        <GridItemDescription>{display.description}</GridItemDescription>
+      </GridItemContent>
+      <GridItemFooter>
+        <LessonListItemStatus
+          completedLabel={completedLabel}
+          isCompleted={isCompleted}
+          notStartedLabel={notStartedLabel}
+        />
+      </GridItemFooter>
+    </CatalogGridItem>
   );
 }
 
@@ -128,16 +165,16 @@ export async function LessonList({
   }));
 
   return (
-    <ListContent>
-      <CatalogListSearch items={searchItems} placeholder={t("Search lessons...")}>
-        <CatalogListEmpty>{t("No lessons found")}</CatalogListEmpty>
-        <ListGroup>
+    <GridContent>
+      <CatalogGridSearch items={searchItems} placeholder={t("Search lessons...")}>
+        <CatalogGridEmpty>{t("No lessons found")}</CatalogGridEmpty>
+        <GridGroup>
           {lessonRows.map(({ display, lesson }) => {
             const completion = completionMap.get(lesson.id);
             const isCompleted = completion?.isCompleted ?? false;
 
             return (
-              <LessonRowItem
+              <LessonTile
                 brandSlug={brandSlug}
                 chapterSlug={chapterSlug}
                 completedLabel={t("Completed")}
@@ -146,11 +183,12 @@ export async function LessonList({
                 isCompleted={isCompleted}
                 key={lesson.id}
                 lesson={lesson}
+                notStartedLabel={t("Not started")}
               />
             );
           })}
-        </ListGroup>
-      </CatalogListSearch>
-    </ListContent>
+        </GridGroup>
+      </CatalogGridSearch>
+    </GridContent>
   );
 }

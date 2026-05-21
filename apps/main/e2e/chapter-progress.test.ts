@@ -92,11 +92,12 @@ test.describe("Chapter Progress Indicators", () => {
       authenticatedPage.getByRole("heading", { level: 1, name: chapter.title }),
     ).toBeVisible();
 
-    await expect(authenticatedPage.getByRole("img", { name: /^completed$/iu })).toHaveCount(0);
-    await expect(authenticatedPage.getByLabel(/of .+ completed/u)).toHaveCount(0);
+    const main = authenticatedPage.getByRole("main");
+    await expect(main.getByText(/^completed$/iu)).toHaveCount(0);
+    await expect(main.getByText(/\d+\/\d+ done/u)).toHaveCount(0);
   });
 
-  test("shows completed checkmarks for completed lessons", async ({
+  test("shows completed status for completed lessons", async ({
     authenticatedPage,
     withProgressUser,
   }) => {
@@ -110,7 +111,7 @@ test.describe("Chapter Progress Indicators", () => {
       authenticatedPage.getByRole("heading", { level: 1, name: chapter.title }),
     ).toBeVisible();
 
-    await expect(authenticatedPage.getByRole("img", { name: /^completed$/iu })).toHaveCount(3);
+    await expect(authenticatedPage.getByRole("main").getByText(/^completed$/iu)).toHaveCount(3);
   });
 
   test("shows completed and not-started lesson states", async ({
@@ -127,7 +128,8 @@ test.describe("Chapter Progress Indicators", () => {
       authenticatedPage.getByRole("heading", { level: 1, name: chapter.title }),
     ).toBeVisible();
 
-    await expect(authenticatedPage.getByRole("img", { name: /^completed$/iu })).toHaveCount(1);
-    await expect(authenticatedPage.getByLabel(/of .+ completed/u)).toHaveCount(0);
+    const main = authenticatedPage.getByRole("main");
+    await expect(main.getByText(/^completed$/iu)).toHaveCount(1);
+    await expect(main.getByText(/\d+\/\d+ done/u)).toHaveCount(0);
   });
 });

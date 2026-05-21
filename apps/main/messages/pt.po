@@ -278,6 +278,11 @@ msgstr "Nenhuma aula encontrada"
 msgid "95stPq"
 msgstr "Concluída"
 
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
+msgid "xTTP0x"
+msgstr "Não começou"
+
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
 msgid "3SOcGR"
 msgstr "Buscar capítulos..."
@@ -287,8 +292,8 @@ msgid "8udPa+"
 msgstr "Nenhum capítulo encontrado"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
-msgid "9sDoY5"
-msgstr "{completed} de {total} concluídas"
+msgid "V1rAYd"
+msgstr "{completed}/{total} concluídas"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
 msgid "wPdQ13"

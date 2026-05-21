@@ -2,6 +2,7 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { WIDE_CONTENT_MAX_WIDTH_CLASS } from "@zoonk/ui/components/layout";
 import { Popover, PopoverContent, PopoverTrigger } from "@zoonk/ui/components/popover";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -12,7 +13,8 @@ export function MediaCard({ children, className }: React.ComponentProps<"header"
     <Popover>
       <header
         className={cn(
-          "mx-auto grid w-full grid-cols-[auto_minmax(0,1fr)] items-stretch gap-4 px-4 lg:max-w-xl",
+          "mx-auto grid w-full grid-cols-[auto_minmax(0,1fr)] items-stretch gap-3 px-4 sm:gap-4",
+          WIDE_CONTENT_MAX_WIDTH_CLASS,
           className,
         )}
         data-slot="media-card"
@@ -40,7 +42,7 @@ export function MediaCardImage({ children, className }: React.ComponentProps<"di
   return (
     <div
       className={cn(
-        "relative aspect-square h-full min-h-20 min-w-20 overflow-hidden rounded-xl sm:min-h-24 sm:min-w-24",
+        "relative aspect-square h-full min-h-20 min-w-20 overflow-hidden rounded-xl sm:min-h-32 sm:min-w-32",
         className,
       )}
       data-slot="media-card-image"
@@ -54,7 +56,7 @@ export function MediaCardIcon({ children, className, ...props }: React.Component
   return (
     <div
       className={cn(
-        "bg-muted/70 flex aspect-square h-full min-h-20 min-w-20 items-center justify-center rounded-xl sm:min-h-24 sm:min-w-24",
+        "bg-muted/70 flex aspect-square h-full min-h-20 min-w-20 items-center justify-center rounded-xl sm:min-h-32 sm:min-w-32",
         className,
       )}
       data-slot="media-card-icon"
@@ -81,7 +83,13 @@ export function MediaCardIconText({ children, className }: React.ComponentProps<
 
 export function MediaCardContent({ children, className }: React.ComponentProps<"div">) {
   return (
-    <div className={cn("flex min-w-0 flex-1 flex-col", className)} data-slot="media-card-content">
+    <div
+      className={cn(
+        "flex min-w-0 flex-1 flex-col [&:has([data-slot=media-card-breadcrumb])_[data-slot=media-card-description]]:line-clamp-2",
+        className,
+      )}
+      data-slot="media-card-content"
+    >
       {children}
     </div>
   );
@@ -114,7 +122,7 @@ export function MediaCardTitle({ children, className }: React.ComponentProps<"h1
   return (
     <h1
       className={cn(
-        "text-foreground/90 text-base leading-none font-semibold tracking-tight text-balance sm:text-lg md:text-xl",
+        "text-foreground/90 line-clamp-2 text-base leading-none font-semibold tracking-tight text-balance sm:line-clamp-none sm:text-2xl sm:leading-tight md:text-3xl",
         className,
       )}
       data-slot="media-card-title"
@@ -128,7 +136,7 @@ export function MediaCardDescription({ children, className }: React.ComponentPro
   return (
     <p
       className={cn(
-        "text-muted-foreground mt-0.5 line-clamp-2 text-sm leading-snug text-pretty md:leading-relaxed",
+        "text-muted-foreground mt-1.5 line-clamp-3 text-sm leading-snug text-pretty sm:text-base sm:leading-relaxed",
         className,
       )}
       data-slot="media-card-description"
@@ -256,10 +264,14 @@ export function MediaCardPopoverAILabel({ children, className }: React.Component
 export function MediaCardSkeleton({ className }: { className?: string }) {
   return (
     <header
-      className={cn("mx-auto flex w-full items-start gap-4 px-4 lg:max-w-xl", className)}
+      className={cn(
+        "mx-auto grid w-full grid-cols-[auto_minmax(0,1fr)] items-stretch gap-3 px-4 sm:gap-4",
+        WIDE_CONTENT_MAX_WIDTH_CLASS,
+        className,
+      )}
       data-slot="media-card"
     >
-      <Skeleton className="size-20 shrink-0 rounded-xl sm:size-24" />
+      <Skeleton className="aspect-square h-full min-h-20 min-w-20 rounded-xl sm:min-h-32 sm:min-w-32" />
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="grid grid-cols-[1fr_auto] items-center gap-1">
           <Skeleton className="h-5 w-3/4 sm:h-6" />
