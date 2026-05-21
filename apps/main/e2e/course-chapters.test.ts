@@ -12,6 +12,7 @@ let courseUrl: string;
 let ptCourseUrl: string;
 let chapterSlugs: { first: string };
 let chapterNames: { first: string; second: string; third: string };
+let chapterDescriptions: { first: string; second: string; third: string };
 let ptChapterNames: { first: string; second: string };
 let unpublishedChapterName: string;
 
@@ -34,12 +35,19 @@ test.beforeAll(async () => {
     third: `Gamma Chapter ${uniqueId}`,
   };
 
+  chapterDescriptions = {
+    first: `Alpha description ${uniqueId}`,
+    second: `Beta description ${uniqueId}`,
+    third: `Hidden orbital keyword ${uniqueId}`,
+  };
+
   chapterSlugs = { first: `e2e-alpha-${uniqueId}` };
   unpublishedChapterName = `Unpublished Chapter ${uniqueId}`;
 
   // Create first chapter separately so we can add a lesson (prevents redirect to /generate)
   const firstChapter = await chapterFixture({
     courseId: enCourse.id,
+    description: chapterDescriptions.first,
     isPublished: true,
     normalizedTitle: normalizeString(chapterNames.first),
     organizationId: org.id,
@@ -59,6 +67,7 @@ test.beforeAll(async () => {
   await Promise.all([
     chapterFixture({
       courseId: enCourse.id,
+      description: chapterDescriptions.second,
       isPublished: true,
       normalizedTitle: normalizeString(chapterNames.second),
       organizationId: org.id,
@@ -68,6 +77,7 @@ test.beforeAll(async () => {
     }),
     chapterFixture({
       courseId: enCourse.id,
+      description: chapterDescriptions.third,
       isPublished: true,
       normalizedTitle: normalizeString(chapterNames.third),
       organizationId: org.id,
@@ -192,6 +202,20 @@ test.describe("Course Chapter Search", () => {
     await page.goto(courseUrl);
 
     await page.getByLabel(/search chapters/iu).fill("Gamma");
+
+    const firstChapter = page.getByRole("link", { name: new RegExp(chapterNames.first, "u") });
+    const secondChapter = page.getByRole("link", { name: new RegExp(chapterNames.second, "u") });
+    const thirdChapter = page.getByRole("link", { name: new RegExp(chapterNames.third, "u") });
+
+    await expect(thirdChapter).toBeVisible();
+    await expect(firstChapter).not.toBeVisible();
+    await expect(secondChapter).not.toBeVisible();
+  });
+
+  test("filters chapters by description", async ({ page }) => {
+    await page.goto(courseUrl);
+
+    await page.getByLabel(/search chapters/iu).fill("orbital keyword");
 
     const firstChapter = page.getByRole("link", { name: new RegExp(chapterNames.first, "u") });
     const secondChapter = page.getByRole("link", { name: new RegExp(chapterNames.second, "u") });

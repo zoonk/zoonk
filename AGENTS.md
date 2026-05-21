@@ -91,6 +91,7 @@ For detailed UX guidelines (interactions, animation, layout, accessibility), see
 - Always add comments to functions explaining why that function exists. Use clear language, assume the reader has no context, be verbose if needed and add examples to illustrate it. Use plain language, no jargon. Comments should be meaningful and explain the "why" behind the code (eg why did we need to create this function, why is this logic necessary, etc.). Avoid vague statements. For example, "remove anything we don't support" is vague. What we don't support?
 - When writing comments, use `/** ... */` for functions, so we can get JSDoc tooltips
 - When refactoring code, double check if the remaining or replaced logic still makes sense. For example, it's pointless to just reassign a type or const like `type ExistingCourse = Course` or `const existingCourse = course`. Just use the original type or const instead of creating an alias that adds no value
+- Don't run next.js build and e2e tests inside your sandbox. They don't work there
 
 ## Prisma Queries
 

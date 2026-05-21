@@ -17,6 +17,7 @@ let unpublishedChapterSlug: string;
 let noLessonsChapterId: string;
 let noLessonsChapterUrl: string;
 let lessonNames: { first: string; second: string };
+let lessonDescriptions: { first: string; second: string };
 let lessonSlugs: { first: string; second: string };
 let ptChapterUrl: string;
 let ptLessonNames: { first: string; second: string };
@@ -57,6 +58,11 @@ test.beforeAll(async () => {
     second: `History of E2E Testing ${uniqueId}`,
   };
 
+  lessonDescriptions = {
+    first: `Practical setup ${uniqueId}`,
+    second: `Hidden archive keyword ${uniqueId}`,
+  };
+
   lessonSlugs = { first: `e2e-what-is-${uniqueId}`, second: `e2e-history-of-${uniqueId}` };
 
   const unpublishedLessonTitle = `Unpublished Lesson ${uniqueId}`;
@@ -64,6 +70,7 @@ test.beforeAll(async () => {
   await Promise.all([
     lessonFixture({
       chapterId: chapter.id,
+      description: lessonDescriptions.first,
       isPublished: true,
       normalizedTitle: normalizeString(lessonNames.first),
       organizationId: org.id,
@@ -73,6 +80,7 @@ test.beforeAll(async () => {
     }),
     lessonFixture({
       chapterId: chapter.id,
+      description: lessonDescriptions.second,
       isPublished: true,
       normalizedTitle: normalizeString(lessonNames.second),
       organizationId: org.id,
@@ -242,6 +250,20 @@ test.describe("Chapter Lesson Search", () => {
     await page.goto(chapterUrl);
 
     await page.getByLabel(/search lessons/iu).fill("History");
+
+    await expect(
+      page.getByRole("link", { name: new RegExp(lessonNames.second, "u") }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByRole("link", { name: new RegExp(lessonNames.first, "u") }),
+    ).not.toBeVisible();
+  });
+
+  test("filters lessons by description", async ({ page }) => {
+    await page.goto(chapterUrl);
+
+    await page.getByLabel(/search lessons/iu).fill("archive keyword");
 
     await expect(
       page.getByRole("link", { name: new RegExp(lessonNames.second, "u") }),
