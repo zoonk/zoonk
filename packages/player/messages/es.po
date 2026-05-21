@@ -232,6 +232,14 @@ msgstr "Revisar"
 msgid "acrOoz"
 msgstr "Continuar"
 
+#: src/components/swipe-navigable-step-layout.tsx
+msgid "aNzy1T"
+msgstr "Paso anterior"
+
+#: src/components/swipe-navigable-step-layout.tsx
+msgid "d+qgix"
+msgstr "Siguiente paso"
+
 #: src/components/translation-step.tsx
 msgid "MxLxkr"
 msgstr "Traduce esta palabra:"

@@ -1,5 +1,9 @@
 "use client";
 
+import { Button } from "@zoonk/ui/components/button";
+import { cn } from "@zoonk/ui/lib/utils";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { useExtracted } from "next-intl";
 import { type TouchEvent, useEffect, useRef } from "react";
 import { NavigableStepLayout } from "./step-layouts";
 
@@ -10,6 +14,7 @@ const TAP_DISTANCE_THRESHOLD = 12;
 type SwipeGesture = { container: HTMLDivElement; startX: number; startY: number; touchId: number };
 
 export type SwipeNavigableStepFrame = "default" | "media";
+type DesktopNavigationSide = "previous" | "next";
 
 /**
  * Image-backed read steps need the swipe surface to use the full stage width
@@ -22,6 +27,40 @@ function getNavigableFrameClass(frame: SwipeNavigableStepFrame) {
   }
 
   return "";
+}
+
+/**
+ * Desktop read screens still benefit from a visible navigation affordance, but
+ * touch screens already use the whole surface for tap and swipe navigation.
+ * Keeping these controls pointer-fine only avoids competing with the mobile
+ * gesture model while giving keyboard users a discoverable mouse target.
+ */
+function DesktopNavigationButton({
+  "aria-label": ariaLabel,
+  children,
+  onClick,
+  side,
+}: {
+  "aria-label": string;
+  children: React.ReactNode;
+  onClick: () => void;
+  side: DesktopNavigationSide;
+}) {
+  return (
+    <Button
+      aria-label={ariaLabel}
+      className={cn(
+        "bg-background/70 text-muted-foreground/70 hover:bg-background hover:text-foreground border-border/40 absolute top-1/2 z-20 flex -translate-y-1/2 opacity-55 shadow-sm backdrop-blur-md transition-[background-color,border-color,color,opacity,scale] hover:opacity-100 focus-visible:opacity-100 pointer-coarse:hidden",
+        side === "previous" ? "left-3 xl:left-6" : "right-3 xl:right-6",
+      )}
+      onClick={onClick}
+      size="icon"
+      type="button"
+      variant="outline"
+    >
+      {children}
+    </Button>
+  );
 }
 
 /**
@@ -133,6 +172,7 @@ export function SwipeNavigableStepLayout({
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
 }) {
+  const t = useExtracted();
   const gestureRef = useRef<SwipeGesture | null>(null);
   const endHandlerRef = useRef<((event: globalThis.TouchEvent) => void) | null>(null);
   const cancelHandlerRef = useRef<(() => void) | null>(null);
@@ -274,6 +314,20 @@ export function SwipeNavigableStepLayout({
   return (
     <NavigableStepLayout className={getNavigableFrameClass(frame)} onTouchStart={handleTouchStart}>
       <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col items-center">{children}</div>
+
+      {canNavigatePrev && (
+        <DesktopNavigationButton
+          aria-label={t("Previous step")}
+          onClick={onNavigatePrev}
+          side="previous"
+        >
+          <ChevronLeftIcon />
+        </DesktopNavigationButton>
+      )}
+
+      <DesktopNavigationButton aria-label={t("Next step")} onClick={onNavigateNext} side="next">
+        <ChevronRightIcon />
+      </DesktopNavigationButton>
     </NavigableStepLayout>
   );
 }
