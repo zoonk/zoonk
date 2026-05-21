@@ -3,10 +3,12 @@ import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-o
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
-import systemPrompt from "./lesson-explanation.prompt.md";
+import { appendLessonRichTextPrompt } from "../_utils/append-lesson-rich-text-prompt";
+import baseSystemPrompt from "./lesson-explanation.prompt.md";
 
 const defaultModel = "openai/gpt-5.5";
 const fallbackModels = ["anthropic/claude-opus-4.7", "google/gemini-3.1-pro-preview"] as const;
+const systemPrompt = appendLessonRichTextPrompt(baseSystemPrompt);
 
 const anchorSchema = z.object({ text: z.string(), title: z.string().min(1) }).strict();
 

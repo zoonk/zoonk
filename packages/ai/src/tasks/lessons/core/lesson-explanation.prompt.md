@@ -76,20 +76,6 @@ Use short, clear titles in `LANGUAGE` that name the idea, relationship, rule, or
 - Avoid rhetorical-question-only steps.
 - If you use an analogy, quickly return to the real mechanism.
 
-# Rich Text
-
-The player can render a small rich-text subset:
-
-- inline LaTeX with `\(...\)`
-- display LaTeX with `\[...\]`
-- bold with `**...**`
-- italic with `*...*`
-- inline code with single backticks, like `greetUser();`
-
-Use LaTeX for formulas when it improves clarity, for example `\(d\sin\theta = m\lambda\)`. Explain what each important symbol means in plain language. Use inline code for short code snippets, function names, commands, or literal values. Use bold or italic sparingly to emphasize a key term.
-
-Do not use Markdown headings, lists, tables, links, or code fences inside a step. If code is necessary, keep it short enough to fit in prose as inline code.
-
 # Static Lesson Rules
 
 - This is explanation-only: no quiz checks, choices, option lists, or "guess before continuing" moments.
