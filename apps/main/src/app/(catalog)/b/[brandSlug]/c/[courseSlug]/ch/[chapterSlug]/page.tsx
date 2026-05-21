@@ -1,5 +1,5 @@
 import { CatalogActions } from "@/components/catalog/catalog-actions";
-import { CatalogListSkeleton } from "@/components/catalog/catalog-skeletons";
+import { CatalogGridSkeleton } from "@/components/catalog/catalog-skeletons";
 import {
   ContinueLessonLink,
   ContinueLessonLinkSkeleton,
@@ -8,7 +8,7 @@ import { getChapter } from "@/data/chapters/get-chapter";
 import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
 import { getNextChapterInCourse } from "@zoonk/core/lessons/next-chapter-in-course";
 import { getSession } from "@zoonk/core/users/session/get";
-import { List, ListToolbar } from "@zoonk/ui/components/list";
+import { Grid, GridToolbar } from "@zoonk/ui/components/grid";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
@@ -62,11 +62,11 @@ export default async function ChapterPage({
     : undefined;
 
   return (
-    <main className="flex flex-1 flex-col gap-4">
+    <main className="flex flex-1 flex-col gap-6 py-2">
       <ChapterHeader brandSlug={brandSlug} chapter={chapter} courseSlug={courseSlug} />
 
-      <List>
-        <ListToolbar>
+      <Grid>
+        <GridToolbar>
           <Suspense fallback={<ContinueLessonLinkSkeleton />}>
             <ContinueLessonLink
               chapterId={chapter.id}
@@ -79,9 +79,9 @@ export default async function ChapterPage({
             defaultEmail={session?.user.email}
             kind="chapter"
           />
-        </ListToolbar>
+        </GridToolbar>
 
-        <Suspense fallback={<CatalogListSkeleton count={lessons.length} search />}>
+        <Suspense fallback={<CatalogGridSkeleton count={lessons.length} search />}>
           <LessonList
             brandSlug={brandSlug}
             chapterId={chapter.id}
@@ -90,7 +90,7 @@ export default async function ChapterPage({
             lessons={lessons}
           />
         </Suspense>
-      </List>
+      </Grid>
     </main>
   );
 }

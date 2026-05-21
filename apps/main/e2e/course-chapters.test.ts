@@ -134,24 +134,22 @@ test.describe("Course Chapters List", () => {
     await page.goto(courseUrl);
 
     await expect(
-      page.getByRole("link", { name: new RegExp(`1\\. ${chapterNames.first}`, "u") }),
+      page.getByRole("link", { name: new RegExp(chapterNames.first, "u") }),
     ).toBeVisible();
 
     await expect(
-      page.getByRole("link", { name: new RegExp(`2\\. ${chapterNames.second}`, "u") }),
+      page.getByRole("link", { name: new RegExp(chapterNames.second, "u") }),
     ).toBeVisible();
 
     await expect(
-      page.getByRole("link", { name: new RegExp(`3\\. ${chapterNames.third}`, "u") }),
+      page.getByRole("link", { name: new RegExp(chapterNames.third, "u") }),
     ).toBeVisible();
   });
 
   test("chapter link navigates to chapter page", async ({ page }) => {
     await page.goto(courseUrl);
 
-    const chapterLink = page.getByRole("link", {
-      name: new RegExp(`1\\. ${chapterNames.first}`, "u"),
-    });
+    const chapterLink = page.getByRole("link", { name: new RegExp(chapterNames.first, "u") });
 
     await expect(chapterLink).toBeVisible();
     await chapterLink.click();
@@ -168,7 +166,9 @@ test.describe("Course Chapters List", () => {
       page.getByRole("link", { name: new RegExp(chapterNames.first, "u") }),
     ).toBeVisible();
 
-    await expect(page.getByRole("link", { name: unpublishedChapterName })).not.toBeVisible();
+    await expect(
+      page.getByRole("link", { name: new RegExp(unpublishedChapterName, "u") }),
+    ).not.toBeVisible();
   });
 });
 

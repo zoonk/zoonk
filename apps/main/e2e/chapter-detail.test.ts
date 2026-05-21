@@ -195,14 +195,14 @@ test.describe("Chapter Detail Page", () => {
     ).toBeVisible();
 
     await expect(
-      page.getByRole("link", { name: `Unpublished Lesson ${uniqueId}` }),
+      page.getByRole("link", { name: new RegExp(`Unpublished Lesson ${uniqueId}`, "u") }),
     ).not.toBeVisible();
   });
 
   test("lesson link navigates to the correct URL", async ({ page }) => {
     await page.goto(chapterUrl);
 
-    const lessonLink = page.getByRole("link", { name: lessonNames.first });
+    const lessonLink = page.getByRole("link", { name: new RegExp(lessonNames.first, "u") });
     await expect(lessonLink).toBeVisible();
 
     await lessonLink.click();
@@ -227,8 +227,13 @@ test.describe("Chapter Detail - Locale", () => {
   test("shows lessons in Portuguese for Portuguese locale", async ({ page }) => {
     await page.goto(ptChapterUrl);
 
-    await expect(page.getByRole("link", { name: ptLessonNames.first })).toBeVisible();
-    await expect(page.getByRole("link", { name: ptLessonNames.second })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: new RegExp(ptLessonNames.first, "u") }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByRole("link", { name: new RegExp(ptLessonNames.second, "u") }),
+    ).toBeVisible();
   });
 });
 
@@ -238,9 +243,13 @@ test.describe("Chapter Lesson Search", () => {
 
     await page.getByLabel(/search lessons/iu).fill("History");
 
-    await expect(page.getByRole("link", { name: lessonNames.second })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: new RegExp(lessonNames.second, "u") }),
+    ).toBeVisible();
 
-    await expect(page.getByRole("link", { name: lessonNames.first })).not.toBeVisible();
+    await expect(
+      page.getByRole("link", { name: new RegExp(lessonNames.first, "u") }),
+    ).not.toBeVisible();
   });
 
   test("shows empty state when no matches found", async ({ page }) => {
@@ -257,12 +266,19 @@ test.describe("Chapter Lesson Search", () => {
     const searchInput = page.getByLabel(/search lessons/iu);
     await searchInput.fill("History");
 
-    await expect(page.getByRole("link", { name: lessonNames.first })).not.toBeVisible();
+    await expect(
+      page.getByRole("link", { name: new RegExp(lessonNames.first, "u") }),
+    ).not.toBeVisible();
 
     await searchInput.clear();
 
-    await expect(page.getByRole("link", { name: lessonNames.first })).toBeVisible();
-    await expect(page.getByRole("link", { name: lessonNames.second })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: new RegExp(lessonNames.first, "u") }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByRole("link", { name: new RegExp(lessonNames.second, "u") }),
+    ).toBeVisible();
   });
 });
 

@@ -1,3 +1,4 @@
+import { CatalogGridSkeleton } from "@/components/catalog/catalog-skeletons";
 import { LIST_COURSES_LIMIT, listCourses } from "@/data/courses/list-courses";
 import {
   Container,
@@ -6,7 +7,6 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import { ListSkeleton } from "@zoonk/ui/components/list";
 import { type Metadata } from "next";
 import { getExtracted, getLocale } from "next-intl/server";
 import { Suspense } from "react";
@@ -33,7 +33,7 @@ export default async function Courses() {
   const t = await getExtracted();
 
   return (
-    <Container variant="list">
+    <Container variant="grid">
       <ContainerHeader>
         <ContainerHeaderGroup>
           <ContainerTitle>{t("Explore courses")}</ContainerTitle>
@@ -41,7 +41,7 @@ export default async function Courses() {
         </ContainerHeaderGroup>
       </ContainerHeader>
 
-      <Suspense fallback={<ListSkeleton count={8} />}>
+      <Suspense fallback={<CatalogGridSkeleton count={8} />}>
         <CourseListContent />
       </Suspense>
     </Container>

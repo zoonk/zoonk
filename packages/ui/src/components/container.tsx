@@ -1,6 +1,7 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { WIDE_CONTENT_MAX_WIDTH_CLASS } from "@zoonk/ui/components/layout";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type VariantProps, cva } from "class-variance-authority";
 import { type LucideIcon } from "lucide-react";
@@ -13,6 +14,10 @@ const containerVariants = cva("flex w-full flex-col gap-4 antialiased", {
       centered:
         "bg-background mx-auto min-h-dvh max-w-sm items-center justify-center py-4 lg:gap-8",
       default: "",
+      grid: cn(
+        "mx-auto gap-5 px-4 pb-8 **:data-[slot=container-description]:text-base **:data-[slot=container-header]:px-0 **:data-[slot=container-title]:text-2xl **:data-[slot=container-title]:md:text-3xl lg:py-8",
+        WIDE_CONTENT_MAX_WIDTH_CLASS,
+      ),
       list: "mx-auto pb-8 lg:max-w-xl lg:py-8",
       narrow: "mx-auto py-4 lg:max-w-xl lg:gap-8 lg:py-16",
     },
@@ -22,7 +27,11 @@ const containerVariants = cva("flex w-full flex-col gap-4 antialiased", {
 export type ContainerProps = React.ComponentProps<"main"> & VariantProps<typeof containerVariants>;
 
 export function Container({ children, className, variant }: ContainerProps) {
-  return <main className={cn(containerVariants({ variant }), className)}>{children}</main>;
+  return (
+    <main className={cn(containerVariants({ variant }), className)} data-slot="container">
+      {children}
+    </main>
+  );
 }
 
 const containerHeaderVariants = cva("flex items-center justify-between gap-2 px-4", {
@@ -35,14 +44,23 @@ export type ContainerHeaderProps = React.ComponentProps<"header"> &
 
 export function ContainerHeader({ children, className, variant }: ContainerHeaderProps) {
   return (
-    <header className={cn(containerHeaderVariants({ variant }), className)}>{children}</header>
+    <header
+      className={cn(containerHeaderVariants({ variant }), className)}
+      data-slot="container-header"
+    >
+      {children}
+    </header>
   );
 }
 
 export type ContainerHeaderGroupProps = React.ComponentProps<"div">;
 
 export function ContainerHeaderGroup({ children, className }: ContainerHeaderGroupProps) {
-  return <div className={cn("flex flex-col gap-1.5", className)}>{children}</div>;
+  return (
+    <div className={cn("flex flex-col gap-1.5", className)} data-slot="container-header-group">
+      {children}
+    </div>
+  );
 }
 
 export type ContainerTitleProps = React.ComponentProps<"h1">;
@@ -54,6 +72,7 @@ export function ContainerTitle({ children, className }: ContainerTitleProps) {
         "text-foreground/90 scroll-m-20 text-lg leading-none font-semibold tracking-tight text-balance",
         className,
       )}
+      data-slot="container-title"
     >
       {children}
     </h1>
@@ -64,7 +83,10 @@ export type ContainerDescriptionProps = React.ComponentProps<"h2">;
 
 export function ContainerDescription({ children, className }: ContainerDescriptionProps) {
   return (
-    <h2 className={cn("text-muted-foreground leading-tight tracking-tight text-pretty", className)}>
+    <h2
+      className={cn("text-muted-foreground leading-tight tracking-tight text-pretty", className)}
+      data-slot="container-description"
+    >
       {children}
     </h2>
   );

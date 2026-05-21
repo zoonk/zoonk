@@ -1,8 +1,12 @@
-import { List, ListSkeleton as ListPatternSkeleton, ListToolbar } from "@zoonk/ui/components/list";
+import { Grid, GridSkeleton, GridToolbar } from "@zoonk/ui/components/grid";
 import { MediaCardSkeleton } from "@zoonk/ui/components/media-card";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 
-export function CatalogListSkeleton({
+/**
+ * Catalog grid loading mirrors the final tile layout so route transitions do
+ * not jump from old list rows into the new compact grid.
+ */
+export function CatalogGridSkeleton({
   count,
   search = false,
 }: {
@@ -12,11 +16,11 @@ export function CatalogListSkeleton({
   return (
     <div className="flex flex-col gap-4">
       {search && (
-        <div className="px-4">
-          <Skeleton className="h-9 w-full rounded-md" />
+        <div className="relative">
+          <Skeleton className="h-10 w-full rounded-md" />
         </div>
       )}
-      <ListPatternSkeleton count={count} />
+      <GridSkeleton count={count} />
     </div>
   );
 }
@@ -33,13 +37,13 @@ export function CatalogPageSkeleton({
   return (
     <>
       <MediaCardSkeleton />
-      <List>
-        <ListToolbar>
-          <Skeleton className="h-9 flex-1 rounded-md" />
-          <Skeleton className="size-9 rounded-md" />
-        </ListToolbar>
-        <CatalogListSkeleton count={listCount} search={showSearch} />
-      </List>
+      <Grid>
+        <GridToolbar>
+          <Skeleton className="h-10 flex-1 rounded-full" />
+          <Skeleton className="size-10 rounded-full" />
+        </GridToolbar>
+        <CatalogGridSkeleton count={listCount} search={showSearch} />
+      </Grid>
     </>
   );
 }

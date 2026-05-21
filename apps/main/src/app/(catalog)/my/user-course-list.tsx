@@ -56,7 +56,7 @@ export async function UserCourseList() {
         >
           {course.imageUrl ? (
             <ListItemImage>
-              <Image alt="" height={64} src={course.imageUrl} width={64} />
+              <Image alt={course.title} height={64} src={course.imageUrl} width={64} />
             </ListItemImage>
           ) : (
             <ListItemIcon>

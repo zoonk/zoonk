@@ -479,7 +479,7 @@ test.describe("Lesson Completion UX", () => {
     });
 
     await expect(completedItem).toBeVisible();
-    await expect(completedItem.getByRole("img", { name: /^completed$/iu })).toBeVisible();
+    await expect(completedItem.getByText(/^completed$/iu)).toBeVisible();
 
     const pendingItem = authenticatedPage.getByRole("link", {
       name: new RegExp(pendingLessonTitle, "u"),

@@ -1,5 +1,5 @@
 import { CatalogActions } from "@/components/catalog/catalog-actions";
-import { CatalogListSkeleton } from "@/components/catalog/catalog-skeletons";
+import { CatalogGridSkeleton } from "@/components/catalog/catalog-skeletons";
 import {
   ContinueLessonLink,
   ContinueLessonLinkSkeleton,
@@ -8,7 +8,7 @@ import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
 import { getDefaultChapterImage } from "@/lib/catalog/default-images";
 import { getSession } from "@zoonk/core/users/session/get";
-import { List, ListToolbar } from "@zoonk/ui/components/list";
+import { Grid, GridToolbar } from "@zoonk/ui/components/grid";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -60,18 +60,18 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
   const defaultChapterImage = getDefaultChapterImage({ categories: course.categories });
 
   return (
-    <main className="flex flex-1 flex-col gap-4">
+    <main className="flex flex-1 flex-col gap-6 py-2">
       <CourseHeader brandSlug={brandSlug} course={course} />
 
-      <List>
-        <ListToolbar>
+      <Grid>
+        <GridToolbar>
           <Suspense fallback={<ContinueLessonLinkSkeleton />}>
             <ContinueLessonLink courseId={course.id} fallbackHref={fallbackHref} />
           </Suspense>
           <CatalogActions contentId={courseSlug} defaultEmail={session?.user.email} kind="course" />
-        </ListToolbar>
+        </GridToolbar>
 
-        <Suspense fallback={<CatalogListSkeleton count={chapters.length} search />}>
+        <Suspense fallback={<CatalogGridSkeleton count={chapters.length} search />}>
           <ChapterList
             brandSlug={brandSlug}
             chapters={chapters}
@@ -80,7 +80,7 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
             defaultChapterImage={defaultChapterImage}
           />
         </Suspense>
-      </List>
+      </Grid>
     </main>
   );
 }

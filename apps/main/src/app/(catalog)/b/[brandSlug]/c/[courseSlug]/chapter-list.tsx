@@ -1,23 +1,53 @@
 import {
-  CatalogListEmpty,
-  CatalogListItem,
-  CatalogListSearch,
-} from "@/components/catalog/catalog-list";
+  CatalogGridEmpty,
+  CatalogGridItem,
+  CatalogGridSearch,
+} from "@/components/catalog/catalog-grid";
+import { CatalogGridImage } from "@/components/catalog/catalog-grid-image";
 import { type CourseChapter } from "@/data/chapters/list-course-chapters";
 import { getChapterProgress } from "@zoonk/core/progress/chapters";
 import {
-  ListContent,
-  ListGroup,
-  ListItemContent,
-  ListItemDescription,
-  ListItemHeader,
-  ListItemImage,
-  ListItemStatusCompleted,
-  ListItemStatusProgress,
-  ListItemTitle,
-} from "@zoonk/ui/components/list";
+  GridContent,
+  GridGroup,
+  GridItemContent,
+  GridItemDescription,
+  GridItemFooter,
+  GridItemMedia,
+  GridItemPosition,
+  GridItemStatusCompleted,
+  GridItemStatusIdle,
+  GridItemStatusProgress,
+  GridItemTitle,
+  type GridItemTone,
+} from "@zoonk/ui/components/grid";
 import { getExtracted } from "next-intl/server";
-import Image from "next/image";
+
+const CHAPTERS_PER_DIFFICULTY_BAND = 10;
+
+const CHAPTER_DIFFICULTY_TONES = [
+  "white",
+  "yellow",
+  "orange",
+  "green",
+  "blue",
+  "purple",
+  "brown",
+  "red",
+  "gray",
+  "black",
+] as const;
+
+/**
+ * Chapter order is the closest signal we have for difficulty, so we map every
+ * ten chapters onto the belt progression from easy to hard.
+ */
+function getChapterPositionTone({ position }: { position: number }): GridItemTone {
+  const bandIndex = Math.floor(position / CHAPTERS_PER_DIFFICULTY_BAND);
+
+  return (
+    CHAPTER_DIFFICULTY_TONES[Math.min(bandIndex, CHAPTER_DIFFICULTY_TONES.length - 1)] ?? "black"
+  );
+}
 
 /**
  * Chapter progress has one visual status, but the rules depend on both the
@@ -49,31 +79,33 @@ function ChapterListItemStatus({
   completedLabel,
   completedLessons,
   inProgressLabel,
+  notStartedLabel,
   totalLessons,
 }: {
   completedLabel: string;
   completedLessons: number;
   inProgressLabel: string;
+  notStartedLabel: string;
   totalLessons: number;
 }) {
   const status = getProgressStatus({ completed: completedLessons, total: totalLessons });
 
   if (status === "completed") {
-    return <ListItemStatusCompleted aria-label={completedLabel} />;
+    return <GridItemStatusCompleted>{completedLabel}</GridItemStatusCompleted>;
   }
 
   if (status === "inProgress") {
-    return <ListItemStatusProgress aria-label={inProgressLabel} />;
+    return <GridItemStatusProgress>{inProgressLabel}</GridItemStatusProgress>;
   }
 
-  return null;
+  return <GridItemStatusIdle>{notStartedLabel}</GridItemStatusIdle>;
 }
 
 /**
- * A chapter row owns the thumbnail, text, and status composition so the page map
- * can stay focused on progress lookup and translated labels.
+ * A chapter tile gives the image more room than the old row, making the course
+ * path easier to scan on wide screens without dropping the compact mobile flow.
  */
-function ChapterRow({
+function ChapterTile({
   brandSlug,
   chapter,
   completedLabel,
@@ -81,6 +113,7 @@ function ChapterRow({
   courseSlug,
   defaultChapterImage,
   inProgressLabel,
+  notStartedLabel,
   totalLessons,
 }: {
   brandSlug: string;
@@ -90,35 +123,39 @@ function ChapterRow({
   courseSlug: string;
   defaultChapterImage: string;
   inProgressLabel: string;
+  notStartedLabel: string;
   totalLessons: number;
 }) {
   const chapterNumber = chapter.position + 1;
 
   return (
-    <CatalogListItem
+    <CatalogGridItem
+      className="min-h-64"
       href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapter.slug}`}
       id={chapter.id}
       prefetch={chapter.generationStatus === "completed"}
     >
-      <ListItemImage>
-        <Image alt="" height={64} src={chapter.imageUrl ?? defaultChapterImage} width={64} />
-      </ListItemImage>
+      <GridItemMedia>
+        <CatalogGridImage alt={chapter.title} src={chapter.imageUrl ?? defaultChapterImage} />
+      </GridItemMedia>
 
-      <ListItemContent>
-        <ListItemHeader>
-          <ListItemTitle>
-            <span className="text-muted-foreground">{chapterNumber}.</span> {chapter.title}
-          </ListItemTitle>
-          <ChapterListItemStatus
-            completedLabel={completedLabel}
-            completedLessons={completedLessons}
-            inProgressLabel={inProgressLabel}
-            totalLessons={totalLessons}
-          />
-        </ListItemHeader>
-        {chapter.description && <ListItemDescription>{chapter.description}</ListItemDescription>}
-      </ListItemContent>
-    </CatalogListItem>
+      <GridItemContent>
+        <GridItemPosition tone={getChapterPositionTone({ position: chapter.position })}>
+          {chapterNumber}
+        </GridItemPosition>
+        <GridItemTitle>{chapter.title}</GridItemTitle>
+        {chapter.description && <GridItemDescription>{chapter.description}</GridItemDescription>}
+      </GridItemContent>
+      <GridItemFooter>
+        <ChapterListItemStatus
+          completedLabel={completedLabel}
+          completedLessons={completedLessons}
+          inProgressLabel={inProgressLabel}
+          notStartedLabel={notStartedLabel}
+          totalLessons={totalLessons}
+        />
+      </GridItemFooter>
+    </CatalogGridItem>
   );
 }
 
@@ -144,34 +181,35 @@ export async function ChapterList({
   const completionMap = new Map(completionData.map((row) => [row.chapterId, row]));
 
   return (
-    <ListContent>
-      <CatalogListSearch items={chapters} placeholder={t("Search chapters...")}>
-        <CatalogListEmpty>{t("No chapters found")}</CatalogListEmpty>
-        <ListGroup>
+    <GridContent>
+      <CatalogGridSearch items={chapters} placeholder={t("Search chapters...")}>
+        <CatalogGridEmpty>{t("No chapters found")}</CatalogGridEmpty>
+        <GridGroup>
           {chapters.map((chapter) => {
             const completion = completionMap.get(chapter.id);
             const completedLessons = completion?.completedLessons ?? 0;
             const totalLessons = chapter._count.lessons;
 
             return (
-              <ChapterRow
+              <ChapterTile
                 brandSlug={brandSlug}
                 chapter={chapter}
                 completedLabel={t("Completed")}
                 completedLessons={completedLessons}
                 courseSlug={courseSlug}
                 defaultChapterImage={defaultChapterImage}
-                inProgressLabel={t("{completed} of {total} completed", {
+                inProgressLabel={t("{completed}/{total} done", {
                   completed: String(completedLessons),
                   total: String(totalLessons),
                 })}
                 key={chapter.id}
+                notStartedLabel={t("Not started")}
                 totalLessons={totalLessons}
               />
             );
           })}
-        </ListGroup>
-      </CatalogListSearch>
-    </ListContent>
+        </GridGroup>
+      </CatalogGridSearch>
+    </GridContent>
   );
 }

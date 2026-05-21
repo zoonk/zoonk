@@ -278,6 +278,11 @@ msgstr "No lessons found"
 msgid "95stPq"
 msgstr "Completed"
 
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
+msgid "xTTP0x"
+msgstr "Not started"
+
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
 msgid "3SOcGR"
 msgstr "Search chapters..."
@@ -287,8 +292,8 @@ msgid "8udPa+"
 msgstr "No chapters found"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
-msgid "9sDoY5"
-msgstr "{completed} of {total} completed"
+msgid "V1rAYd"
+msgstr "{completed}/{total} done"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
 msgid "wPdQ13"
