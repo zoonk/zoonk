@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { wordFixture } from "@zoonk/testing/fixtures/words";
+import { chapterWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, it } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { saveTranslationLessonStep } from "./save-translation-lesson-step";
@@ -37,8 +37,14 @@ describe(saveTranslationLessonStep, () => {
       wordFixture({ organizationId, targetLanguage: "pt", word: `word-b-${randomUUID()}` }),
     ]);
 
+    const [firstChapterWord, secondChapterWord] = await Promise.all([
+      chapterWordFixture({ sourceLessonId: vocabularyLesson.id, wordId: firstWord.id }),
+      chapterWordFixture({ sourceLessonId: vocabularyLesson.id, wordId: secondWord.id }),
+    ]);
+
     await Promise.all([
       stepFixture({
+        chapterWordId: firstChapterWord.id,
         content: {},
         kind: "vocabulary",
         lessonId: vocabularyLesson.id,
@@ -46,6 +52,7 @@ describe(saveTranslationLessonStep, () => {
         wordId: firstWord.id,
       }),
       stepFixture({
+        chapterWordId: secondChapterWord.id,
         content: {},
         kind: "vocabulary",
         lessonId: vocabularyLesson.id,
@@ -61,9 +68,9 @@ describe(saveTranslationLessonStep, () => {
       where: { kind: "translation", lessonId: context.id },
     });
 
-    expect(steps.map((step) => [step.position, step.wordId])).toStrictEqual([
-      [0, firstWord.id],
-      [1, secondWord.id],
+    expect(steps.map((step) => [step.position, step.wordId, step.chapterWordId])).toStrictEqual([
+      [0, firstWord.id, firstChapterWord.id],
+      [1, secondWord.id, secondChapterWord.id],
     ]);
   });
 

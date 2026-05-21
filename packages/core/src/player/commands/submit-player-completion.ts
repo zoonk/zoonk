@@ -1,10 +1,9 @@
 import "server-only";
-import { type LessonSentence, type StepKind, prisma } from "@zoonk/db";
+import { type StepKind, prisma } from "@zoonk/db";
 import { getNextLessonInCourse } from "../../lessons/get-next-lesson-in-course";
 import { type CompletionInput } from "../contracts/completion-input-schema";
 import { computeLessonScore } from "../contracts/compute-score";
 import { countAnswerableSteps, validateAnswers } from "../contracts/validate-answers";
-import { getLessonSentencesForLessons } from "../queries/get-lesson-sentences";
 import { getReviewValidationData } from "../queries/get-review-steps";
 import { getCompletableLessonWhere } from "./_utils/completable-lesson";
 import { getNextLessonPreloadId } from "./get-next-lesson-preload-target";
@@ -22,6 +21,7 @@ type StepWithSentence = {
   kind: StepKind;
   content: unknown;
   lessonId: string;
+  chapterSentence: { translation: string } | null;
   word: { id: string } | null;
   sentence: { id: string; sentence: string } | null;
 };
@@ -29,38 +29,19 @@ type StepWithSentence = {
 type PlayerCompletionEffects = { preloadLessonId: string | null };
 
 /**
- * Attaches sentence translation data from `LessonSentence` records to steps.
- * Translations live on the `LessonSentence` junction table instead of a separate
- * `SentenceTranslation` model, so we flatten the canonical translation onto each step
- * before passing the result to `validateAnswers`.
+ * Attaches chapter-scoped sentence translation data to steps.
+ *
+ * Listening validation compares the learner's arranged words with the
+ * generated user-language translation, which lives on the exact
+ * `ChapterSentence` resource referenced by the step.
  */
-function attachSentenceTranslationsToSteps(
-  steps: StepWithSentence[],
-  lessonSentences: LessonSentence[],
-) {
-  const translationMap = new Map(lessonSentences.map((ls) => [ls.sentenceId, ls]));
-
+function attachSentenceTranslationsToSteps(steps: StepWithSentence[]) {
   return steps.map((step) => ({
     ...step,
     sentence: step.sentence
-      ? { ...step.sentence, translation: translationMap.get(step.sentence.id)?.translation ?? "" }
+      ? { ...step.sentence, translation: step.chapterSentence?.translation ?? "" }
       : null,
   }));
-}
-
-/**
- * Review validation receives steps from earlier lessons in the chapter, so
- * sentence translations must be looked up from those source lessons. Normal
- * lesson validation keeps using the current lesson id.
- */
-function getValidationSentenceLessonIds({
-  lessonId,
-  steps,
-}: {
-  lessonId: string;
-  steps: StepWithSentence[];
-}) {
-  return steps.length === 0 ? [lessonId] : [...new Set(steps.map((step) => step.lessonId))];
 }
 
 /**
@@ -97,7 +78,7 @@ export async function submitPlayerCompletion(params: {
     include: {
       chapter: true,
       steps: {
-        include: { sentence: true, word: true },
+        include: { chapterSentence: true, sentence: true, word: true },
         orderBy: { position: "asc" },
         where: { isPublished: true },
       },
@@ -119,17 +100,7 @@ export async function submitPlayerCompletion(params: {
 
   const rawStepsForValidation = validationData.steps;
 
-  const lessonSentences = await getLessonSentencesForLessons({
-    lessonIds:
-      lesson.kind === "review"
-        ? getValidationSentenceLessonIds({ lessonId: lesson.id, steps: rawStepsForValidation })
-        : [lesson.id],
-  });
-
-  const stepsForValidation = attachSentenceTranslationsToSteps(
-    rawStepsForValidation,
-    lessonSentences,
-  );
+  const stepsForValidation = attachSentenceTranslationsToSteps(rawStepsForValidation);
 
   const stepResults = validateAnswers(stepsForValidation, params.input.answers);
 

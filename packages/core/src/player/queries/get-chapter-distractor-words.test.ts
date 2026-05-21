@@ -1,17 +1,18 @@
+import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { lessonSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
+import { chapterSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import {
-  lessonWordFixture,
+  chapterWordFixture,
   wordFixture,
   wordPronunciationFixture,
 } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, it } from "vitest";
-import { getLessonDistractorWordsForLessons } from "./get-lesson-distractor-words";
+import { getChapterDistractorWords } from "./get-chapter-distractor-words";
 
-describe(getLessonDistractorWordsForLessons, () => {
+describe(getChapterDistractorWords, () => {
   let org: Awaited<ReturnType<typeof organizationFixture>>;
   let course: Awaited<ReturnType<typeof courseFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
@@ -84,24 +85,32 @@ describe(getLessonDistractorWordsForLessons, () => {
         userLanguage: "en",
         wordId: lessonWordDistractor.id,
       }),
-      lessonWordFixture({
+      chapterWordFixture({
         distractors: [sharedDistractor.word.toLowerCase(), lessonWordDistractor.word],
-        lessonId: lessonForTest.id,
+        sourceLessonId: lessonForTest.id,
         translation: `word-${id}`,
         userLanguage: "en",
         wordId: canonicalWord.id,
       }),
-      lessonSentenceFixture({
+      chapterSentenceFixture({
         distractors: [sharedDistractor.word, `  ${sharedDistractor.word.toUpperCase()}  `],
-        lessonId: lessonForTest.id,
         sentenceId: canonicalSentence.id,
+        sourceLessonId: lessonForTest.id,
         translation: `sentence-${id}`,
         translationDistractors: [`hello-${id}`],
         userLanguage: "en",
       }),
     ]);
 
-    const result = await getLessonDistractorWordsForLessons({ lessonIds: [lessonForTest.id] });
+    const resources = await Promise.all([
+      prisma.chapterWord.findFirstOrThrow({ where: { sourceLessonId: lessonForTest.id } }),
+      prisma.chapterSentence.findFirstOrThrow({ where: { sourceLessonId: lessonForTest.id } }),
+    ]);
+
+    const result = await getChapterDistractorWords({
+      chapterSentenceIds: [resources[1].id],
+      chapterWordIds: [resources[0].id],
+    });
 
     expect(result.map((item) => item.word).toSorted()).toStrictEqual(
       [lessonWordDistractor.word, sharedDistractor.word].toSorted(),
@@ -147,37 +156,38 @@ describe(getLessonDistractorWordsForLessons, () => {
     );
 
     await Promise.all([
-      lessonWordFixture({
+      chapterWordFixture({
         distractors: [resolvedDistractor.word, `missing-${id}`],
-        lessonId: lessonForTest.id,
+        sourceLessonId: lessonForTest.id,
         translation: `word-${id}`,
         userLanguage: "en",
         wordId: canonicalWord.id,
       }),
-      lessonSentenceFixture({
+      chapterSentenceFixture({
         distractors: [],
-        lessonId: lessonForTest.id,
         sentenceId: canonicalSentence.id,
+        sourceLessonId: lessonForTest.id,
         translation: `sentence-${id}`,
         translationDistractors: [`user-language-only-${id}`],
         userLanguage: "en",
       }),
     ]);
 
-    const result = await getLessonDistractorWordsForLessons({ lessonIds: [lessonForTest.id] });
+    const resources = await Promise.all([
+      prisma.chapterWord.findFirstOrThrow({ where: { sourceLessonId: lessonForTest.id } }),
+      prisma.chapterSentence.findFirstOrThrow({ where: { sourceLessonId: lessonForTest.id } }),
+    ]);
+
+    const result = await getChapterDistractorWords({
+      chapterSentenceIds: [resources[1].id],
+      chapterWordIds: [resources[0].id],
+    });
 
     expect(result.map((item) => item.word)).toStrictEqual([resolvedDistractor.word]);
   });
 
   it("returns empty array when the lesson has no stored language rows", async () => {
-    const emptyLesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      language: "en",
-      organizationId: org.id,
-    });
-
-    const result = await getLessonDistractorWordsForLessons({ lessonIds: [emptyLesson.id] });
+    const result = await getChapterDistractorWords({ chapterSentenceIds: [], chapterWordIds: [] });
 
     expect(result).toStrictEqual([]);
   });

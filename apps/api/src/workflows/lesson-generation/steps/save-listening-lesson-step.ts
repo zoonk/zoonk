@@ -6,9 +6,30 @@ import { FatalError } from "workflow";
 import { type LessonContext } from "./get-lesson-step";
 
 /**
- * Listening steps reuse sentence IDs from the nearest completed reading lesson
- * so audio, romanization, translations, and review metadata stay attached to
- * the same source sentences.
+ * Prisma keeps nullable field types even when the query filters them with
+ * `not: null`. This helper returns the exact sentence resource only when the
+ * reading step is fully linked.
+ */
+function getListeningResource(step: {
+  chapterSentenceId: string | null;
+  position: number;
+  sentenceId: string | null;
+}): { chapterSentenceId: string; position: number; sentenceId: string } | null {
+  if (!step.chapterSentenceId || !step.sentenceId) {
+    return null;
+  }
+
+  return {
+    chapterSentenceId: step.chapterSentenceId,
+    position: step.position,
+    sentenceId: step.sentenceId,
+  };
+}
+
+/**
+ * Listening steps reuse chapter-sentence resources from the nearest completed
+ * reading lesson so audio, romanization, translations, and review metadata stay
+ * attached to the same generated sentence rows.
  */
 export async function saveListeningLessonStep(context: LessonContext): Promise<void> {
   "use step";
@@ -32,17 +53,25 @@ export async function saveListeningLessonStep(context: LessonContext): Promise<v
 
   const readingSteps = await prisma.step.findMany({
     orderBy: { position: "asc" },
-    where: { kind: "reading", lessonId: sourceLesson.id, sentenceId: { not: null } },
+    where: {
+      chapterSentenceId: { not: null },
+      kind: "reading",
+      lessonId: sourceLesson.id,
+      sentenceId: { not: null },
+    },
   });
 
-  if (readingSteps.length === 0) {
+  const sentenceSteps = readingSteps.flatMap((step) => getListeningResource(step) ?? []);
+
+  if (sentenceSteps.length === 0) {
     throw new FatalError("Listening generation needs reading sentences");
   }
 
   await prisma.step.deleteMany({ where: { lessonId: context.id } });
 
   await prisma.step.createMany({
-    data: readingSteps.map((readingStep) => ({
+    data: sentenceSteps.map((readingStep) => ({
+      chapterSentenceId: readingStep.chapterSentenceId,
       content: assertStepContent("listening", {}),
       isPublished: true,
       kind: "listening" as const,

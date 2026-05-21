@@ -3,8 +3,10 @@ import { createOrganization, getAiOrganization } from "@zoonk/e2e/fixtures/orgs"
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { chapterSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { expect, test } from "./fixtures";
+import { chapterWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
+import { type Page, expect, test } from "./fixtures";
 
 async function createTestLesson(options?: {
   generationStatus?: "pending" | "completed";
@@ -166,6 +168,261 @@ async function createEmptyReviewLesson() {
   return { chapter, course, requiredLesson, review };
 }
 
+/**
+ * Translation lessons reuse word IDs from a vocabulary lesson without copying
+ * the lesson-scoped translation rows. The player page must therefore hydrate
+ * translation options from the vocabulary source lesson.
+ */
+async function createDerivedTranslationLesson() {
+  const org = await getAiOrganization();
+  const uniqueId = randomUUID().slice(0, 8);
+
+  const course = await courseFixture({
+    isPublished: true,
+    language: "en",
+    organizationId: org.id,
+    slug: `e2e-derived-translation-course-${uniqueId}`,
+    targetLanguage: "de",
+    title: `E2E Derived Translation Course ${uniqueId}`,
+  });
+
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    isPublished: true,
+    language: "en",
+    organizationId: org.id,
+    slug: `e2e-derived-translation-chapter-${uniqueId}`,
+    title: `E2E Derived Translation Chapter ${uniqueId}`,
+  });
+
+  const [sourceLesson, translationLesson, readingLesson, reviewLesson, correctWord] =
+    await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "vocabulary",
+        organizationId: org.id,
+        position: 0,
+        slug: `e2e-source-vocabulary-${uniqueId}`,
+        title: `E2E Source Vocabulary ${uniqueId}`,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "translation",
+        organizationId: org.id,
+        position: 1,
+        slug: `e2e-derived-translation-${uniqueId}`,
+        title: `E2E Derived Translation ${uniqueId}`,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "reading",
+        organizationId: org.id,
+        position: 2,
+        slug: `e2e-derived-translation-reading-${uniqueId}`,
+        title: `E2E Derived Translation Reading ${uniqueId}`,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "review",
+        organizationId: org.id,
+        position: 3,
+        slug: `e2e-derived-translation-review-${uniqueId}`,
+        title: `E2E Derived Translation Review ${uniqueId}`,
+      }),
+      wordFixture({ organizationId: org.id, targetLanguage: "de", word: `richtig-${uniqueId}` }),
+    ]);
+
+  const readingSentence = await sentenceFixture({
+    organizationId: org.id,
+    sentence: correctWord.word,
+    targetLanguage: "de",
+  });
+
+  const [sourceChapterWord, , readingChapterSentence] = await Promise.all([
+    chapterWordFixture({
+      distractors: [`falsch-${uniqueId}`],
+      sourceLessonId: sourceLesson.id,
+      translation: `Correct-${uniqueId}`,
+      userLanguage: "en",
+      wordId: correctWord.id,
+    }),
+    chapterWordFixture({
+      distractors: [],
+      sourceLessonId: readingLesson.id,
+      translation: `correct-${uniqueId}`,
+      userLanguage: "en",
+      wordId: correctWord.id,
+    }),
+    chapterSentenceFixture({
+      sentenceId: readingSentence.id,
+      sourceLessonId: readingLesson.id,
+      translation: `correct-${uniqueId}`,
+      userLanguage: "en",
+    }),
+  ]);
+
+  await Promise.all([
+    stepFixture({
+      chapterWordId: sourceChapterWord.id,
+      content: {},
+      isPublished: true,
+      kind: "translation",
+      lessonId: translationLesson.id,
+      wordId: correctWord.id,
+    }),
+    stepFixture({
+      chapterSentenceId: readingChapterSentence.id,
+      content: {},
+      isPublished: true,
+      kind: "reading",
+      lessonId: readingLesson.id,
+      sentenceId: readingSentence.id,
+    }),
+  ]);
+
+  return {
+    correctOption: correctWord.word,
+    distractorOption: `falsch-${uniqueId}`,
+    prompt: `Correct-${uniqueId}`,
+    reviewUrl: `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${reviewLesson.slug}`,
+    url: `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${translationLesson.slug}`,
+  };
+}
+
+/**
+ * Review steps are intentionally shuffled. If the mixed-resource review opens
+ * on the reading filler step first, this advances through it so the test can
+ * assert the translation step that regressed in production data.
+ */
+async function showReviewTranslationStep({
+  page,
+  prompt,
+  readingAnswer,
+}: {
+  page: Page;
+  prompt: string;
+  readingAnswer: string;
+}) {
+  const promptText = page.getByText(prompt);
+  const options = page.getByRole("radiogroup", { name: /answer options/iu });
+  const wordBank = page.getByRole("group", { name: /word bank/iu });
+
+  await expect(options.or(wordBank)).toBeVisible();
+
+  if (await options.isVisible()) {
+    await expect(promptText).toBeVisible();
+    return;
+  }
+
+  await expect(wordBank).toBeVisible();
+
+  await wordBank.getByRole("button", { exact: true, name: readingAnswer }).click();
+  await page.getByRole("button", { name: /check/iu }).click();
+  await expect(page.getByRole("button", { name: /continue/iu })).toBeVisible();
+  await page.getByRole("button", { name: /continue/iu }).click();
+
+  await expect(promptText).toBeVisible();
+  await expect(options).toBeVisible();
+}
+
+/**
+ * Listening lessons reuse the exact chapter-sentence row generated by reading.
+ * The word bank must use that row's translation and translation distractors.
+ */
+async function createDerivedListeningLesson() {
+  const org = await getAiOrganization();
+  const uniqueId = randomUUID().slice(0, 8);
+
+  const course = await courseFixture({
+    isPublished: true,
+    language: "en",
+    organizationId: org.id,
+    slug: `e2e-derived-listening-course-${uniqueId}`,
+    targetLanguage: "de",
+    title: `E2E Derived Listening Course ${uniqueId}`,
+  });
+
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    isPublished: true,
+    language: "en",
+    organizationId: org.id,
+    slug: `e2e-derived-listening-chapter-${uniqueId}`,
+    title: `E2E Derived Listening Chapter ${uniqueId}`,
+  });
+
+  const [sourceLesson, listeningLesson, reviewLesson, sentence] = await Promise.all([
+    lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "reading",
+      organizationId: org.id,
+      position: 0,
+      slug: `e2e-source-reading-${uniqueId}`,
+      title: `E2E Source Reading ${uniqueId}`,
+    }),
+    lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "listening",
+      organizationId: org.id,
+      position: 1,
+      slug: `e2e-derived-listening-${uniqueId}`,
+      title: `E2E Derived Listening ${uniqueId}`,
+    }),
+    lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "review",
+      organizationId: org.id,
+      position: 2,
+      slug: `e2e-derived-listening-review-${uniqueId}`,
+      title: `E2E Derived Listening Review ${uniqueId}`,
+    }),
+    sentenceFixture({
+      organizationId: org.id,
+      sentence: `Guten Morgen ${uniqueId}`,
+      targetLanguage: "de",
+    }),
+  ]);
+
+  const chapterSentence = await chapterSentenceFixture({
+    sentenceId: sentence.id,
+    sourceLessonId: sourceLesson.id,
+    translation: `hello-${uniqueId} world-${uniqueId}`,
+    translationDistractors: [`again-${uniqueId}`],
+    userLanguage: "en",
+  });
+
+  await stepFixture({
+    chapterSentenceId: chapterSentence.id,
+    content: {},
+    isPublished: true,
+    kind: "listening",
+    lessonId: listeningLesson.id,
+    sentenceId: sentence.id,
+  });
+
+  return {
+    distractor: `again-${uniqueId}`,
+    firstWord: `hello-${uniqueId}`,
+    reviewUrl: `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${reviewLesson.slug}`,
+    secondWord: `world-${uniqueId}`,
+    url: `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${listeningLesson.slug}`,
+  };
+}
+
 test.describe("Lesson Player Page", () => {
   test("generated lesson player renders the seeded step content", async ({ page }) => {
     const { chapter, course, lesson, uniqueId } = await createTestLesson({
@@ -238,6 +495,53 @@ test.describe("Lesson Player Page", () => {
     await expect(requiredLessonLink).toBeVisible();
     await expect(requiredLessonLink).toHaveAttribute("href", `/generate/l/${requiredLesson.id}`);
     await expect(requiredLessonLink).toHaveAttribute("rel", "nofollow");
+  });
+
+  test("derived translation lessons show source vocabulary distractors", async ({ page }) => {
+    const { correctOption, distractorOption, prompt, url } = await createDerivedTranslationLesson();
+
+    await page.goto(url);
+
+    await expect(page.getByText(prompt)).toBeVisible();
+
+    const options = page.getByRole("radiogroup", { name: /answer options/iu });
+    await expect(options.getByRole("radio", { name: correctOption })).toBeVisible();
+    await expect(options.getByRole("radio", { name: distractorOption })).toBeVisible();
+  });
+
+  test("derived listening lessons show source reading word banks", async ({ page }) => {
+    const { distractor, firstWord, secondWord, url } = await createDerivedListeningLesson();
+
+    await page.goto(url);
+
+    const wordBank = page.getByRole("group", { name: /word bank/iu });
+    await expect(wordBank.getByRole("button", { name: firstWord })).toBeVisible();
+    await expect(wordBank.getByRole("button", { name: secondWord })).toBeVisible();
+    await expect(wordBank.getByRole("button", { name: distractor })).toBeVisible();
+  });
+
+  test("review translation steps show source vocabulary distractors", async ({ page }) => {
+    const { correctOption, distractorOption, prompt, reviewUrl } =
+      await createDerivedTranslationLesson();
+
+    await page.goto(reviewUrl);
+
+    await showReviewTranslationStep({ page, prompt, readingAnswer: correctOption });
+
+    const options = page.getByRole("radiogroup", { name: /answer options/iu });
+    await expect(options.getByRole("radio", { name: correctOption })).toBeVisible();
+    await expect(options.getByRole("radio", { name: distractorOption })).toBeVisible();
+  });
+
+  test("review listening steps show source reading word banks", async ({ page }) => {
+    const { distractor, firstWord, reviewUrl, secondWord } = await createDerivedListeningLesson();
+
+    await page.goto(reviewUrl);
+
+    const wordBank = page.getByRole("group", { name: /word bank/iu });
+    await expect(wordBank.getByRole("button", { name: firstWord })).toBeVisible();
+    await expect(wordBank.getByRole("button", { name: secondWord })).toBeVisible();
+    await expect(wordBank.getByRole("button", { name: distractor })).toBeVisible();
   });
 
   test("pending non-AI lessons do not show a generate link", async ({ page }) => {

@@ -73,7 +73,7 @@ export function buildDistractorWordLookup(
 }
 
 /**
- * Translation lessons read the stored direct distractor list from `LessonWord`. The
+ * Translation lessons read the stored direct distractor list from `ChapterWord`. The
  * player only sanitizes, hydrates what metadata exists, and shows the first three.
  */
 export function buildTranslationOptions(params: {

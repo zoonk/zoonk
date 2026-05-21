@@ -3,7 +3,7 @@ import { assertStepContent, parseStepContent } from "@zoonk/core/steps/contract/
 import { prisma } from "@zoonk/db";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { lessonSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
+import { chapterSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { beforeAll, describe, expect, it } from "vitest";
 import { createLessonContext } from "../steps/_test-utils/create-lesson-context";
@@ -43,22 +43,22 @@ describe(listeningLessonWorkflow, () => {
       }),
     ]);
 
-    await Promise.all([
-      lessonSentenceFixture({
-        lessonId: readingLesson.id,
-        sentenceId: sentence.id,
-        translation: `Good morning ${uniqueId}`,
-        userLanguage: "en",
-      }),
-      stepFixture({
-        content: assertStepContent("reading", {}),
-        isPublished: true,
-        kind: "reading",
-        lessonId: readingLesson.id,
-        position: 0,
-        sentenceId: sentence.id,
-      }),
-    ]);
+    const chapterSentence = await chapterSentenceFixture({
+      sentenceId: sentence.id,
+      sourceLessonId: readingLesson.id,
+      translation: `Good morning ${uniqueId}`,
+      userLanguage: "en",
+    });
+
+    await stepFixture({
+      chapterSentenceId: chapterSentence.id,
+      content: assertStepContent("reading", {}),
+      isPublished: true,
+      kind: "reading",
+      lessonId: readingLesson.id,
+      position: 0,
+      sentenceId: sentence.id,
+    });
 
     await listeningLessonWorkflow(context);
 
@@ -67,9 +67,9 @@ describe(listeningLessonWorkflow, () => {
       where: { lessonId: context.id },
     });
 
-    expect(steps.map((step) => [step.position, step.kind, step.sentenceId])).toStrictEqual([
-      [0, "listening", sentence.id],
-    ]);
+    expect(
+      steps.map((step) => [step.position, step.kind, step.sentenceId, step.chapterSentenceId]),
+    ).toStrictEqual([[0, "listening", sentence.id, chapterSentence.id]]);
 
     expect(steps.map((step) => parseStepContent("listening", step.content))).toStrictEqual([{}]);
   });

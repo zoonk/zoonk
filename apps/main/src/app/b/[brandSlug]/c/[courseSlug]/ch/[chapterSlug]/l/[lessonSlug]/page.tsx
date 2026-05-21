@@ -5,11 +5,12 @@ import { getNextChapterInCourse } from "@zoonk/core/lessons/next-chapter-in-cour
 import { getNextLessonInCourse } from "@zoonk/core/lessons/next-in-course";
 import { startLesson } from "@zoonk/core/player/commands/start-lesson";
 import { preparePlayerLessonData } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { getChapterDistractorWords } from "@zoonk/core/player/queries/get-chapter-distractor-words";
+import { getChapterSentenceWordsForIds } from "@zoonk/core/player/queries/get-chapter-sentence-words";
+import { getChapterSentencesForIds } from "@zoonk/core/player/queries/get-chapter-sentences";
+import { getChapterWordsForIds } from "@zoonk/core/player/queries/get-chapter-words";
 import { getLesson as getPlayerLesson } from "@zoonk/core/player/queries/get-lesson";
-import { getLessonDistractorWordsForLessons } from "@zoonk/core/player/queries/get-lesson-distractor-words";
-import { getLessonSentencesForLessons } from "@zoonk/core/player/queries/get-lesson-sentences";
-import { getLessonWordsForLessons } from "@zoonk/core/player/queries/get-lesson-words";
-import { getSentenceWordsForLessons } from "@zoonk/core/player/queries/get-sentence-words";
+import { getPlayerResourceIds } from "@zoonk/core/player/queries/get-player-resource-ids";
 import { getTotalBrainPower } from "@zoonk/core/player/queries/get-total-brain-power";
 import { getSession } from "@zoonk/core/users/session/get";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
@@ -22,24 +23,6 @@ import { LessonPlayerClient } from "./lesson-player-client";
 import { ReviewLessonEmpty } from "./review-lesson-empty";
 
 type Props = PageProps<"/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">;
-
-/**
- * Review lessons replay steps from previous lessons, so the player resources
- * must come from those source lessons. Normal lessons keep using their own id.
- */
-function getPlayerResourceLessonIds({
-  lessonId,
-  reviewSteps,
-}: {
-  lessonId: string;
-  reviewSteps: { lessonId: string }[] | null;
-}) {
-  if (!reviewSteps) {
-    return [lessonId];
-  }
-
-  return [...new Set(reviewSteps.map((step) => step.lessonId))];
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { brandSlug, chapterSlug, courseSlug, lessonSlug } = await params;
@@ -118,22 +101,23 @@ export default async function LessonPage({ params }: Props) {
   const lessonMeta = await getLessonDisplayMeta(lesson);
   const reviewSteps = reviewLessonData?.steps ?? null;
 
-  const resourceLessonIds = getPlayerResourceLessonIds({ lessonId: lessonShell.id, reviewSteps });
+  const steps = reviewSteps ?? lesson.steps;
+  const resourceIds = getPlayerResourceIds({ steps });
 
-  const [distractorWords, lessonWords, lessonSentences, sentenceWords] = await Promise.all([
-    getLessonDistractorWordsForLessons({ lessonIds: resourceLessonIds }),
-    getLessonWordsForLessons({ lessonIds: resourceLessonIds }),
-    getLessonSentencesForLessons({ lessonIds: resourceLessonIds }),
-    getSentenceWordsForLessons({ lessonIds: resourceLessonIds }),
+  const [distractorWords, chapterWords, chapterSentences, sentenceWords] = await Promise.all([
+    getChapterDistractorWords(resourceIds),
+    getChapterWordsForIds({ chapterWordIds: resourceIds.chapterWordIds }),
+    getChapterSentencesForIds({ chapterSentenceIds: resourceIds.chapterSentenceIds }),
+    getChapterSentenceWordsForIds({ chapterSentenceIds: resourceIds.chapterSentenceIds }),
   ]);
 
   const serialized = preparePlayerLessonData({
+    chapterSentences,
+    chapterWords,
     distractorWords,
     lesson,
-    lessonSentences,
-    lessonWords,
     sentenceWords,
-    steps: reviewSteps ?? lesson.steps,
+    steps,
   });
 
   if (session) {

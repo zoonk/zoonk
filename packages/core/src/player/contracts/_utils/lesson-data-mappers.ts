@@ -15,9 +15,15 @@ type SentenceRecordInput = {
   audioUrl: string | null;
 };
 
-export type LessonWordInput = { translation: string; distractors: string[]; word: WordRecordInput };
+export type ChapterWordInput = {
+  id: string;
+  translation: string;
+  distractors: string[];
+  word: WordRecordInput;
+};
 
-export type LessonSentenceInput = {
+export type ChapterSentenceInput = {
+  id: string;
   translation: string;
   distractors: string[];
   translationDistractors: string[];
@@ -67,6 +73,8 @@ export type StepDataInput = {
 
 export type LessonStepInput = {
   id: string;
+  chapterSentenceId: string | null;
+  chapterWordId: string | null;
   content: unknown;
   kind: string;
   position: number;
@@ -75,65 +83,65 @@ export type LessonStepInput = {
 };
 
 /**
- * Maps a lesson-scoped word row to the flat player input shape.
+ * Maps a chapter-scoped word row to the flat player input shape.
  *
  * `prepareLessonData` should only receive plain serializable data, not database-shaped
  * objects. Keeping this mapping here lets the player own the shape it expects while the
  * app passes whatever relation objects it already loaded.
  */
-function toLessonWordInput(lessonWord: LessonWordInput): WordDataInput {
+function toChapterWordInput(chapterWord: ChapterWordInput): WordDataInput {
   return {
-    audioUrl: lessonWord.word.audioUrl,
-    distractors: lessonWord.distractors,
-    id: lessonWord.word.id,
-    pronunciation: lessonWord.word.pronunciations[0]?.pronunciation ?? null,
-    romanization: lessonWord.word.romanization,
-    translation: lessonWord.translation,
-    word: lessonWord.word.word,
+    audioUrl: chapterWord.word.audioUrl,
+    distractors: chapterWord.distractors,
+    id: chapterWord.word.id,
+    pronunciation: chapterWord.word.pronunciations[0]?.pronunciation ?? null,
+    romanization: chapterWord.word.romanization,
+    translation: chapterWord.translation,
+    word: chapterWord.word.word,
   };
 }
 
 /**
- * Maps lesson-scoped vocabulary rows to the flat shape consumed by `prepareLessonData`.
+ * Maps chapter-scoped vocabulary rows to the flat shape consumed by `prepareLessonData`.
  */
-export function toLessonWordInputs(lessonWords: LessonWordInput[]): WordDataInput[] {
-  return lessonWords.map((lessonWord) => toLessonWordInput(lessonWord));
+export function toChapterWordInputs(chapterWords: ChapterWordInput[]): WordDataInput[] {
+  return chapterWords.map((chapterWord) => toChapterWordInput(chapterWord));
 }
 
 /**
- * Maps a lesson-scoped sentence row to the flat player input shape.
+ * Maps a chapter-scoped sentence row to the flat player input shape.
  *
- * Sentence distractors and learner-language distractors live on the lesson row, while
+ * Sentence distractors and learner-language distractors live on the chapter row, while
  * shared audio and romanization stay on the canonical sentence record.
  */
-function toLessonSentenceInput(lessonSentence: LessonSentenceInput): SentenceDataInput {
+function toChapterSentenceInput(chapterSentence: ChapterSentenceInput): SentenceDataInput {
   return {
-    audioUrl: lessonSentence.sentence.audioUrl,
-    distractors: lessonSentence.distractors,
-    explanation: lessonSentence.explanation,
-    id: lessonSentence.sentence.id,
-    romanization: lessonSentence.sentence.romanization,
-    sentence: lessonSentence.sentence.sentence,
-    translation: lessonSentence.translation,
-    translationDistractors: lessonSentence.translationDistractors,
+    audioUrl: chapterSentence.sentence.audioUrl,
+    distractors: chapterSentence.distractors,
+    explanation: chapterSentence.explanation,
+    id: chapterSentence.sentence.id,
+    romanization: chapterSentence.sentence.romanization,
+    sentence: chapterSentence.sentence.sentence,
+    translation: chapterSentence.translation,
+    translationDistractors: chapterSentence.translationDistractors,
   };
 }
 
 /**
- * Maps lesson-scoped sentence rows to the flat shape consumed by `prepareLessonData`.
+ * Maps chapter-scoped sentence rows to the flat shape consumed by `prepareLessonData`.
  */
-export function toLessonSentenceInputs(
-  lessonSentences: LessonSentenceInput[],
+export function toChapterSentenceInputs(
+  chapterSentences: ChapterSentenceInput[],
 ): SentenceDataInput[] {
-  return lessonSentences.map((lessonSentence) => toLessonSentenceInput(lessonSentence));
+  return chapterSentences.map((chapterSentence) => toChapterSentenceInput(chapterSentence));
 }
 
 /**
- * Canonical sentence words use the same lesson-word format as the main lesson vocabulary,
+ * Canonical sentence words use the same chapter-word format as the main lesson vocabulary,
  * so the player can reuse the same mapping rule for both.
  */
-export function toSentenceWordInputs(sentenceWords: LessonWordInput[]): WordDataInput[] {
-  return sentenceWords.map((sentenceWord) => toLessonWordInput(sentenceWord));
+export function toSentenceWordInputs(sentenceWords: ChapterWordInput[]): WordDataInput[] {
+  return sentenceWords.map((sentenceWord) => toChapterWordInput(sentenceWord));
 }
 
 /**
@@ -162,21 +170,22 @@ export function toDistractorWordInputs(
 }
 
 /**
- * Attaches lesson-scoped translations and distractors to raw step records.
+ * Attaches chapter-scoped translations and distractors to raw step records.
  *
- * Database steps point at canonical `Word` and `Sentence` rows. The player needs the
- * lesson-scoped translation and distractor arrays merged in before serialization, so this
- * helper performs that merge once in a pure, testable place.
+ * Database steps point at canonical `Word`/`Sentence` rows and at the exact
+ * `ChapterWord`/`ChapterSentence` rows that contain generated learner-language
+ * metadata. The player needs those scoped translations and distractor arrays
+ * merged in before serialization.
  */
-export function attachTranslationsToSteps(
+export function attachResourcesToSteps(
   steps: LessonStepInput[],
-  lessonWords: LessonWordInput[],
-  lessonSentences: LessonSentenceInput[],
+  chapterWords: ChapterWordInput[],
+  chapterSentences: ChapterSentenceInput[],
 ): StepDataInput[] {
-  const wordMap = new Map(lessonWords.map((lessonWord) => [lessonWord.word.id, lessonWord]));
+  const wordMap = new Map(chapterWords.map((chapterWord) => [chapterWord.id, chapterWord]));
 
   const sentenceMap = new Map(
-    lessonSentences.map((lessonSentence) => [lessonSentence.sentence.id, lessonSentence]),
+    chapterSentences.map((chapterSentence) => [chapterSentence.id, chapterSentence]),
   );
 
   return steps.map((step) => ({
@@ -184,51 +193,69 @@ export function attachTranslationsToSteps(
     id: step.id,
     kind: step.kind,
     position: step.position,
-    sentence: step.sentence ? mergeSentenceWithTranslation(step.sentence, sentenceMap) : null,
-    word: step.word ? mergeWordWithTranslation(step.word, wordMap) : null,
+    sentence: step.sentence
+      ? mergeSentenceWithResource({
+          chapterSentenceId: step.chapterSentenceId,
+          sentence: step.sentence,
+          sentenceMap,
+        })
+      : null,
+    word: step.word
+      ? mergeWordWithResource({ chapterWordId: step.chapterWordId, word: step.word, wordMap })
+      : null,
   }));
 }
 
 /**
- * Merges a raw word record with its lesson-scoped translation and distractor list.
+ * Merges a raw word record with its chapter-scoped translation and distractor list.
  *
- * Some edge cases can leave a step without a matching lesson row, so this helper also
+ * Some edge cases can leave a step without a matching chapter row, so this helper also
  * defines the empty fallback shape instead of making callers reimplement it.
  */
-function mergeWordWithTranslation(
-  word: Omit<WordRecordInput, "pronunciations">,
-  wordMap: Map<string, LessonWordInput>,
-): WordDataInput {
-  const lessonWord = wordMap.get(word.id);
+function mergeWordWithResource({
+  chapterWordId,
+  word,
+  wordMap,
+}: {
+  chapterWordId: string | null;
+  word: Omit<WordRecordInput, "pronunciations">;
+  wordMap: Map<string, ChapterWordInput>;
+}): WordDataInput {
+  const chapterWord = chapterWordId ? wordMap.get(chapterWordId) : null;
 
   return {
     audioUrl: word.audioUrl,
-    distractors: lessonWord?.distractors ?? [],
+    distractors: chapterWord?.distractors ?? [],
     id: word.id,
-    pronunciation: lessonWord?.word.pronunciations[0]?.pronunciation ?? null,
+    pronunciation: chapterWord?.word.pronunciations[0]?.pronunciation ?? null,
     romanization: word.romanization,
-    translation: lessonWord?.translation ?? "",
+    translation: chapterWord?.translation ?? "",
     word: word.word,
   };
 }
 
 /**
- * Merges a raw sentence record with its lesson-scoped translation and distractor arrays.
+ * Merges a raw sentence record with its chapter-scoped translation and distractor arrays.
  */
-function mergeSentenceWithTranslation(
-  sentence: SentenceRecordInput,
-  sentenceMap: Map<string, LessonSentenceInput>,
-): SentenceDataInput {
-  const lessonSentence = sentenceMap.get(sentence.id);
+function mergeSentenceWithResource({
+  chapterSentenceId,
+  sentence,
+  sentenceMap,
+}: {
+  chapterSentenceId: string | null;
+  sentence: SentenceRecordInput;
+  sentenceMap: Map<string, ChapterSentenceInput>;
+}): SentenceDataInput {
+  const chapterSentence = chapterSentenceId ? sentenceMap.get(chapterSentenceId) : null;
 
   return {
     audioUrl: sentence.audioUrl,
-    distractors: lessonSentence?.distractors ?? [],
-    explanation: lessonSentence?.explanation ?? null,
+    distractors: chapterSentence?.distractors ?? [],
+    explanation: chapterSentence?.explanation ?? null,
     id: sentence.id,
     romanization: sentence.romanization,
     sentence: sentence.sentence,
-    translation: lessonSentence?.translation ?? "",
-    translationDistractors: lessonSentence?.translationDistractors ?? [],
+    translation: chapterSentence?.translation ?? "",
+    translationDistractors: chapterSentence?.translationDistractors ?? [],
   };
 }

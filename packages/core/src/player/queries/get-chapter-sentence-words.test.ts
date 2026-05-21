@@ -3,12 +3,12 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { lessonSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
-import { lessonWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
+import { chapterSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
+import { chapterWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, it } from "vitest";
-import { getSentenceWordsForLessons } from "./get-sentence-words";
+import { getChapterSentenceWordsForIds } from "./get-chapter-sentence-words";
 
-describe(getSentenceWordsForLessons, () => {
+describe(getChapterSentenceWordsForIds, () => {
   let org: Awaited<ReturnType<typeof organizationFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 
@@ -29,7 +29,7 @@ describe(getSentenceWordsForLessons, () => {
     });
   });
 
-  it("returns LessonWord records matching words found in lesson sentences", async () => {
+  it("returns ChapterWord records matching words found in lesson sentences", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
     const wordText1 = `hola${uniqueId}`;
     const wordText2 = `mundo${uniqueId}`;
@@ -50,13 +50,15 @@ describe(getSentenceWordsForLessons, () => {
       wordFixture({ organizationId: org.id, targetLanguage: "es", word: wordText2 }),
     ]);
 
-    await Promise.all([
-      lessonSentenceFixture({ lessonId: newLesson.id, sentenceId: sentence.id }),
-      lessonWordFixture({ lessonId: newLesson.id, wordId: word1.id }),
-      lessonWordFixture({ lessonId: newLesson.id, wordId: word2.id }),
+    const [chapterSentence] = await Promise.all([
+      chapterSentenceFixture({ sentenceId: sentence.id, sourceLessonId: newLesson.id }),
+      chapterWordFixture({ sourceLessonId: newLesson.id, wordId: word1.id }),
+      chapterWordFixture({ sourceLessonId: newLesson.id, wordId: word2.id }),
     ]);
 
-    const result = await getSentenceWordsForLessons({ lessonIds: [newLesson.id] });
+    const result = await getChapterSentenceWordsForIds({
+      chapterSentenceIds: [chapterSentence.id],
+    });
 
     expect(result).toHaveLength(2);
 
@@ -65,24 +67,17 @@ describe(getSentenceWordsForLessons, () => {
     expect(words).toContain(word2.word);
   });
 
-  it("returns empty array when lesson has no sentences", async () => {
-    const emptyLesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      language: "es",
-      organizationId: org.id,
-    });
-
-    const result = await getSentenceWordsForLessons({ lessonIds: [emptyLesson.id] });
+  it("returns empty array when no ids are requested", async () => {
+    const result = await getChapterSentenceWordsForIds({ chapterSentenceIds: [] });
     expect(result).toStrictEqual([]);
   });
 
-  it("returns empty array for non-existent lesson", async () => {
-    const result = await getSentenceWordsForLessons({ lessonIds: [randomUUID()] });
+  it("returns empty array for non-existent chapter sentence", async () => {
+    const result = await getChapterSentenceWordsForIds({ chapterSentenceIds: [randomUUID()] });
     expect(result).toStrictEqual([]);
   });
 
-  it("returns empty when sentence words have no matching LessonWord records", async () => {
+  it("returns empty when sentence words have no matching ChapterWord records", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
 
     const [newLesson, sentence] = await Promise.all([
@@ -99,13 +94,19 @@ describe(getSentenceWordsForLessons, () => {
       }),
     ]);
 
-    await lessonSentenceFixture({ lessonId: newLesson.id, sentenceId: sentence.id });
+    const chapterSentence = await chapterSentenceFixture({
+      sentenceId: sentence.id,
+      sourceLessonId: newLesson.id,
+    });
 
-    const result = await getSentenceWordsForLessons({ lessonIds: [newLesson.id] });
+    const result = await getChapterSentenceWordsForIds({
+      chapterSentenceIds: [chapterSentence.id],
+    });
+
     expect(result).toStrictEqual([]);
   });
 
-  it("strips punctuation when matching sentence words to LessonWord records", async () => {
+  it("strips punctuation when matching sentence words to ChapterWord records", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
     const wordText = `sabes${uniqueId}`;
 
@@ -120,18 +121,20 @@ describe(getSentenceWordsForLessons, () => {
       wordFixture({ organizationId: org.id, targetLanguage: "es", word: wordText }),
     ]);
 
-    await Promise.all([
-      lessonSentenceFixture({ lessonId: newLesson.id, sentenceId: sentence.id }),
-      lessonWordFixture({ lessonId: newLesson.id, wordId: word.id }),
+    const [chapterSentence] = await Promise.all([
+      chapterSentenceFixture({ sentenceId: sentence.id, sourceLessonId: newLesson.id }),
+      chapterWordFixture({ sourceLessonId: newLesson.id, wordId: word.id }),
     ]);
 
-    const result = await getSentenceWordsForLessons({ lessonIds: [newLesson.id] });
+    const result = await getChapterSentenceWordsForIds({
+      chapterSentenceIds: [chapterSentence.id],
+    });
 
     expect(result).toHaveLength(1);
     expect(result[0]?.word.word).toBe(word.word);
   });
 
-  it("matches LessonWord records case-insensitively", async () => {
+  it("matches ChapterWord records case-insensitively", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
     const wordText = `Hola${uniqueId}`;
 
@@ -150,10 +153,10 @@ describe(getSentenceWordsForLessons, () => {
       wordFixture({ organizationId: org.id, targetLanguage: "es", word: wordText }),
     ]);
 
-    await Promise.all([
-      lessonSentenceFixture({ lessonId: newLesson.id, sentenceId: sentence.id }),
-      lessonWordFixture({
-        lessonId: newLesson.id,
+    const [chapterSentence] = await Promise.all([
+      chapterSentenceFixture({ sentenceId: sentence.id, sourceLessonId: newLesson.id }),
+      chapterWordFixture({
+        sourceLessonId: newLesson.id,
         translation: "hello",
         userLanguage: "en",
         wordId: word.id,
@@ -161,7 +164,9 @@ describe(getSentenceWordsForLessons, () => {
     ]);
 
     // extractUniqueSentenceWords lowercases to "hola...", but Word record has "Hola..."
-    const result = await getSentenceWordsForLessons({ lessonIds: [newLesson.id] });
+    const result = await getChapterSentenceWordsForIds({
+      chapterSentenceIds: [chapterSentence.id],
+    });
 
     const match = result.find((item) => item.word.word.toLowerCase() === wordText.toLowerCase());
     expect(match).toBeDefined();
@@ -192,13 +197,15 @@ describe(getSentenceWordsForLessons, () => {
       wordFixture({ organizationId: org.id, targetLanguage: "es", word: wordText }),
     ]);
 
-    await Promise.all([
-      lessonSentenceFixture({ lessonId: newLesson.id, sentenceId: sentence1.id }),
-      lessonSentenceFixture({ lessonId: newLesson.id, sentenceId: sentence2.id }),
-      lessonWordFixture({ lessonId: newLesson.id, wordId: word.id }),
+    const [chapterSentence1, chapterSentence2] = await Promise.all([
+      chapterSentenceFixture({ sentenceId: sentence1.id, sourceLessonId: newLesson.id }),
+      chapterSentenceFixture({ sentenceId: sentence2.id, sourceLessonId: newLesson.id }),
+      chapterWordFixture({ sourceLessonId: newLesson.id, wordId: word.id }),
     ]);
 
-    const result = await getSentenceWordsForLessons({ lessonIds: [newLesson.id] });
+    const result = await getChapterSentenceWordsForIds({
+      chapterSentenceIds: [chapterSentence1.id, chapterSentence2.id],
+    });
 
     const matchingWords = result.filter((item) => item.word.word === word.word);
     expect(matchingWords).toHaveLength(1);

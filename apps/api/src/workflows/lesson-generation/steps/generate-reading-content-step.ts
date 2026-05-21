@@ -17,7 +17,7 @@ async function getVocabularyWordsSincePreviousReading(context: LessonContext): P
   });
 
   const vocabularyLessons = await prisma.lesson.findMany({
-    include: { words: { include: { word: true }, orderBy: { createdAt: "asc" } } },
+    include: { sourceWords: { include: { word: true }, orderBy: { createdAt: "asc" } } },
     orderBy: { position: "asc" },
     where: {
       chapterId: context.chapterId,
@@ -28,7 +28,7 @@ async function getVocabularyWordsSincePreviousReading(context: LessonContext): P
   });
 
   return vocabularyLessons.flatMap((lesson) =>
-    lesson.words.map((lessonWord) => lessonWord.word.word),
+    lesson.sourceWords.map((chapterWord) => chapterWord.word.word),
   );
 }
 

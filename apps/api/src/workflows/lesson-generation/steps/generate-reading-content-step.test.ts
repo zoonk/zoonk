@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { generateLessonSentences } from "@zoonk/ai/tasks/lessons/language/sentences";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { lessonWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
+import { chapterWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateReadingContentStep } from "./generate-reading-content-step";
@@ -75,20 +75,20 @@ describe(generateReadingContentStep, () => {
     ]);
 
     await Promise.all([
-      lessonWordFixture({
-        lessonId: oldVocabularyLesson.id,
+      chapterWordFixture({
+        sourceLessonId: oldVocabularyLesson.id,
         translation: "old",
         userLanguage: "en",
         wordId: oldWord.id,
       }),
-      lessonWordFixture({
-        lessonId: currentVocabularyLesson.id,
+      chapterWordFixture({
+        sourceLessonId: currentVocabularyLesson.id,
         translation: "cat",
         userLanguage: "en",
         wordId: catWord.id,
       }),
-      lessonWordFixture({
-        lessonId: currentVocabularyLesson.id,
+      chapterWordFixture({
+        sourceLessonId: currentVocabularyLesson.id,
         translation: "water",
         userLanguage: "en",
         wordId: waterWord.id,

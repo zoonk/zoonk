@@ -111,10 +111,10 @@ describe(vocabularyLessonWorkflow, () => {
 
     const [steps, lessonWords, words] = await Promise.all([
       prisma.step.findMany({ orderBy: { position: "asc" }, where: { lessonId: context.id } }),
-      prisma.lessonWord.findMany({
+      prisma.chapterWord.findMany({
         include: { word: true },
         orderBy: { word: { word: "asc" } },
-        where: { lessonId: context.id },
+        where: { sourceLessonId: context.id },
       }),
       prisma.word.findMany({
         include: { pronunciations: true },
@@ -186,7 +186,10 @@ describe(vocabularyLessonWorkflow, () => {
       prisma.word.findUnique({
         where: { orgWord: { organizationId, targetLanguage: "ja", word: duplicateDistractor } },
       }),
-      prisma.lessonWord.findFirst({ include: { word: true }, where: { lessonId: context.id } }),
+      prisma.chapterWord.findFirst({
+        include: { word: true },
+        where: { sourceLessonId: context.id },
+      }),
     ]);
 
     expect(canonicalRecord).toMatchObject({

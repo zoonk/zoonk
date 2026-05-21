@@ -17,11 +17,12 @@ type ReadingSentence = ReadingLessonContent["sentences"][number];
  * word extraction, and pronunciation save logic in the workflow step itself.
  */
 export async function saveReadingTargetWords(params: {
+  chapterId: string;
   distractors: Record<string, string[]>;
-  lessonId: string;
   organizationId: string;
   pronunciations: Record<string, string>;
   sentences: ReadingSentence[];
+  sourceLessonId: string;
   targetLanguage: string;
   userLanguage: string;
   wordAudioUrls: Record<string, string>;
@@ -50,10 +51,11 @@ export async function saveReadingTargetWords(params: {
   await Promise.all(
     canonicalWords.map((word) =>
       saveCanonicalSentenceWord({
+        chapterId: params.chapterId,
         existingCasing,
-        lessonId: params.lessonId,
         organizationId: params.organizationId,
         pronunciations: params.pronunciations,
+        sourceLessonId: params.sourceLessonId,
         targetLanguage: params.targetLanguage,
         userLanguage: params.userLanguage,
         word,
@@ -122,16 +124,17 @@ function getRomanizationUpdate(metadata?: WordMetadataEntry): { romanization?: s
 }
 
 /**
- * Reading still needs these LessonWord rows for canonical sentence tokens
- * because the same surface word can mean different things in different
- * lessons. We intentionally do not update LessonWord.distractors here so
- * vocabulary-owned distractors stay intact.
+ * Reading still needs chapter-word rows for canonical sentence tokens because
+ * the same surface word can mean different things in different contexts. We
+ * intentionally keep distractors empty here so vocabulary-owned distractors
+ * stay attached only to vocabulary resources.
  */
 async function saveCanonicalSentenceWord(params: {
+  chapterId: string;
   existingCasing: Record<string, string>;
-  lessonId: string;
   organizationId: string;
   pronunciations: Record<string, string>;
+  sourceLessonId: string;
   targetLanguage: string;
   userLanguage: string;
   word: string;
@@ -154,15 +157,16 @@ async function saveCanonicalSentenceWord(params: {
     word: dbWord,
   });
 
-  await prisma.lessonWord.upsert({
+  await prisma.chapterWord.upsert({
     create: {
+      chapterId: params.chapterId,
       distractors: [],
-      lessonId: params.lessonId,
+      sourceLessonId: params.sourceLessonId,
       translation,
       userLanguage: params.userLanguage,
       wordId,
     },
     update: { translation },
-    where: { lessonWord: { lessonId: params.lessonId, wordId } },
+    where: { chapterWordSource: { sourceLessonId: params.sourceLessonId, wordId } },
   });
 }

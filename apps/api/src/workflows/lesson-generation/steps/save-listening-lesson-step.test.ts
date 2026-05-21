@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { sentenceFixture } from "@zoonk/testing/fixtures/sentences";
+import { chapterSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { beforeAll, describe, expect, it } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
@@ -36,8 +36,14 @@ describe(saveListeningLessonStep, () => {
       sentenceFixture({ organizationId, targetLanguage: "de" }),
     ]);
 
+    const [firstChapterSentence, secondChapterSentence] = await Promise.all([
+      chapterSentenceFixture({ sentenceId: firstSentence.id, sourceLessonId: readingLesson.id }),
+      chapterSentenceFixture({ sentenceId: secondSentence.id, sourceLessonId: readingLesson.id }),
+    ]);
+
     await Promise.all([
       stepFixture({
+        chapterSentenceId: firstChapterSentence.id,
         content: {},
         kind: "reading",
         lessonId: readingLesson.id,
@@ -45,6 +51,7 @@ describe(saveListeningLessonStep, () => {
         sentenceId: firstSentence.id,
       }),
       stepFixture({
+        chapterSentenceId: secondChapterSentence.id,
         content: {},
         kind: "reading",
         lessonId: readingLesson.id,
@@ -60,9 +67,11 @@ describe(saveListeningLessonStep, () => {
       where: { kind: "listening", lessonId: context.id },
     });
 
-    expect(steps.map((step) => [step.position, step.sentenceId])).toStrictEqual([
-      [0, firstSentence.id],
-      [1, secondSentence.id],
+    expect(
+      steps.map((step) => [step.position, step.sentenceId, step.chapterSentenceId]),
+    ).toStrictEqual([
+      [0, firstSentence.id, firstChapterSentence.id],
+      [1, secondSentence.id, secondChapterSentence.id],
     ]);
   });
 

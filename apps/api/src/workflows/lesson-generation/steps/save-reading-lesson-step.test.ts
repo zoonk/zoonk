@@ -63,16 +63,21 @@ describe(saveReadingLessonStep, () => {
 
     const [lessonSentence, lessonWords, distractorLessonWords, step, pronunciations] =
       await Promise.all([
-        prisma.lessonSentence.findUniqueOrThrow({
-          where: { lessonSentence: { lessonId: context.id, sentenceId: savedSentence.id } },
+        prisma.chapterSentence.findUniqueOrThrow({
+          where: {
+            chapterSentenceSource: { sentenceId: savedSentence.id, sourceLessonId: context.id },
+          },
         }),
-        prisma.lessonWord.findMany({
+        prisma.chapterWord.findMany({
           include: { word: true },
           orderBy: { word: { word: "asc" } },
-          where: { lessonId: context.id },
+          where: { sourceLessonId: context.id },
         }),
-        prisma.lessonWord.findMany({
-          where: { lessonId: context.id, word: { word: { in: [...generatedDistractorWords] } } },
+        prisma.chapterWord.findMany({
+          where: {
+            sourceLessonId: context.id,
+            word: { word: { in: [...generatedDistractorWords] } },
+          },
         }),
         prisma.step.findFirstOrThrow({
           where: { kind: "reading", lessonId: context.id, position: 0 },
@@ -102,7 +107,12 @@ describe(saveReadingLessonStep, () => {
       translationDistractors: [`hello-${id}`, `bye-${id}`],
     });
 
-    expect(step).toMatchObject({ content: {}, isPublished: true, sentenceId: savedSentence.id });
+    expect(step).toMatchObject({
+      chapterSentenceId: lessonSentence.id,
+      content: {},
+      isPublished: true,
+      sentenceId: savedSentence.id,
+    });
 
     expect(lessonWords.map((entry) => [entry.word.word, entry.translation])).toStrictEqual([
       [normalizedCanonicalWords[0]!, `good-${id}`],

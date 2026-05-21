@@ -2,6 +2,8 @@ import { type StepKind, prisma } from "@zoonk/db";
 
 export async function stepFixture(attrs: {
   content?: object;
+  chapterSentenceId?: string;
+  chapterWordId?: string;
   isPublished?: boolean;
   kind?: StepKind;
   lessonId?: string;
@@ -11,6 +13,8 @@ export async function stepFixture(attrs: {
 }) {
   const step = await prisma.step.create({
     data: {
+      chapterSentenceId: attrs.chapterSentenceId,
+      chapterWordId: attrs.chapterWordId,
       content: attrs.content ?? { text: "Test step content", title: "Test Step" },
       isPublished: attrs.isPublished,
       kind: attrs.kind ?? "static",

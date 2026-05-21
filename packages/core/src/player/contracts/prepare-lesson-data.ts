@@ -8,18 +8,18 @@ import { type LessonKind } from "@zoonk/db";
 import { normalizeDistractorKey } from "@zoonk/utils/distractors";
 import { shuffle } from "@zoonk/utils/shuffle";
 import {
+  type ChapterSentenceInput,
+  type ChapterWordInput,
   type DistractorWordDataInput,
   type LessonDistractorWordInput,
-  type LessonSentenceInput,
   type LessonStepInput,
-  type LessonWordInput,
   type SentenceDataInput,
   type StepDataInput,
   type WordDataInput,
-  attachTranslationsToSteps,
+  attachResourcesToSteps,
+  toChapterSentenceInputs,
+  toChapterWordInputs,
   toDistractorWordInputs,
-  toLessonSentenceInputs,
-  toLessonWordInputs,
   toSentenceWordInputs,
 } from "./_utils/lesson-data-mappers";
 import { buildSentenceWordOptions, buildWordBankOptions } from "./build-word-bank-options";
@@ -100,10 +100,10 @@ type PreparePlayerLessonSource = {
 
 type PreparePlayerLessonInput = {
   lesson: PreparePlayerLessonSource;
+  chapterSentences: ChapterSentenceInput[];
+  chapterWords: ChapterWordInput[];
   distractorWords?: LessonDistractorWordInput[];
-  lessonSentences: LessonSentenceInput[];
-  lessonWords: LessonWordInput[];
-  sentenceWords?: LessonWordInput[];
+  sentenceWords?: ChapterWordInput[];
   steps?: LessonStepInput[];
 };
 
@@ -253,13 +253,13 @@ function buildSerializedLesson(
     organizationId: string | null;
     steps: StepDataInput[];
   },
-  lessonWords: WordDataInput[],
-  lessonSentences: SentenceDataInput[],
+  chapterWords: WordDataInput[],
+  chapterSentences: SentenceDataInput[],
   sentenceWords: WordDataInput[],
   distractorWords: DistractorWordDataInput[],
 ): SerializedLesson {
-  const serializedLessonWords = serializeWords(lessonWords);
-  const serializedLessonSentences = lessonSentences.map((sentence) => serializeSentence(sentence));
+  const serializedLessonWords = serializeWords(chapterWords);
+  const serializedLessonSentences = chapterSentences.map((sentence) => serializeSentence(sentence));
   const serializedDistractorWords = distractorWords.map((word) => serializeDistractorWord(word));
   const distractorLookup = buildDistractorWordLookup(serializedDistractorWords);
 
@@ -328,10 +328,10 @@ export function preparePlayerLessonData(params: PreparePlayerLessonInput): Seria
   return buildSerializedLesson(
     {
       ...params.lesson,
-      steps: attachTranslationsToSteps(steps, params.lessonWords, params.lessonSentences),
+      steps: attachResourcesToSteps(steps, params.chapterWords, params.chapterSentences),
     },
-    toLessonWordInputs(params.lessonWords),
-    toLessonSentenceInputs(params.lessonSentences),
+    toChapterWordInputs(params.chapterWords),
+    toChapterSentenceInputs(params.chapterSentences),
     toSentenceWordInputs(params.sentenceWords ?? []),
     toDistractorWordInputs(params.distractorWords ?? []),
   );

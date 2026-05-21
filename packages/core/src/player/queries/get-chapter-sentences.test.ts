@@ -3,11 +3,11 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { lessonSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
+import { chapterSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { beforeAll, describe, expect, it } from "vitest";
-import { getLessonSentencesForLessons } from "./get-lesson-sentences";
+import { getChapterSentencesForIds } from "./get-chapter-sentences";
 
-describe(getLessonSentencesForLessons, () => {
+describe(getChapterSentencesForIds, () => {
   let org: Awaited<ReturnType<typeof organizationFixture>>;
   let course: Awaited<ReturnType<typeof courseFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
@@ -33,7 +33,7 @@ describe(getLessonSentencesForLessons, () => {
     });
   });
 
-  it("returns sentences linked via LessonSentence junction", async () => {
+  it("returns sentences linked via ChapterSentence junction", async () => {
     const [sentence1, sentence2] = await Promise.all([
       sentenceFixture({
         organizationId: org.id,
@@ -47,12 +47,14 @@ describe(getLessonSentencesForLessons, () => {
       }),
     ]);
 
-    await Promise.all([
-      lessonSentenceFixture({ lessonId: lesson.id, sentenceId: sentence1.id }),
-      lessonSentenceFixture({ lessonId: lesson.id, sentenceId: sentence2.id }),
+    const chapterSentences = await Promise.all([
+      chapterSentenceFixture({ sentenceId: sentence1.id, sourceLessonId: lesson.id }),
+      chapterSentenceFixture({ sentenceId: sentence2.id, sourceLessonId: lesson.id }),
     ]);
 
-    const result = await getLessonSentencesForLessons({ lessonIds: [lesson.id] });
+    const result = await getChapterSentencesForIds({
+      chapterSentenceIds: chapterSentences.map((chapterSentence) => chapterSentence.id),
+    });
 
     expect(result).toHaveLength(2);
 
@@ -78,16 +80,16 @@ describe(getLessonSentencesForLessons, () => {
       }),
     ]);
 
-    await lessonSentenceFixture({
+    const chapterSentence = await chapterSentenceFixture({
       distractors: ["Adoro"],
-      lessonId: newLesson.id,
       sentenceId: sentence.id,
+      sourceLessonId: newLesson.id,
       translation: "I like",
       translationDistractors: ["I enjoy"],
       userLanguage: "en",
     });
 
-    const result = await getLessonSentencesForLessons({ lessonIds: [newLesson.id] });
+    const result = await getChapterSentencesForIds({ chapterSentenceIds: [chapterSentence.id] });
 
     expect(result).toHaveLength(1);
 
@@ -105,20 +107,13 @@ describe(getLessonSentencesForLessons, () => {
     });
   });
 
-  it("returns empty array when lesson has no sentences", async () => {
-    const emptyLesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      language: "es",
-      organizationId: org.id,
-    });
-
-    const result = await getLessonSentencesForLessons({ lessonIds: [emptyLesson.id] });
+  it("returns empty array when no ids are requested", async () => {
+    const result = await getChapterSentencesForIds({ chapterSentenceIds: [] });
     expect(result).toStrictEqual([]);
   });
 
-  it("returns empty array for non-existent lesson", async () => {
-    const result = await getLessonSentencesForLessons({ lessonIds: [randomUUID()] });
+  it("returns empty array for non-existent chapter sentence", async () => {
+    const result = await getChapterSentencesForIds({ chapterSentenceIds: [randomUUID()] });
     expect(result).toStrictEqual([]);
   });
 });

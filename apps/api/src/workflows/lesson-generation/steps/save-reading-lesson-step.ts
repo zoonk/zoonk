@@ -65,11 +65,12 @@ export async function saveReadingLessonStep(params: {
   );
 
   await saveReadingTargetWords({
+    chapterId: params.context.chapterId,
     distractors: params.distractors,
-    lessonId: params.context.id,
     organizationId,
     pronunciations: params.pronunciations,
     sentences: params.sentences,
+    sourceLessonId: params.context.id,
     targetLanguage,
     userLanguage: params.context.language,
     wordAudioUrls: params.wordAudioUrls,
@@ -80,8 +81,8 @@ export async function saveReadingLessonStep(params: {
 }
 
 /**
- * Sentence rows hold reusable target-language metadata while LessonSentence
- * rows hold lesson-specific translation, explanation, and distractor content.
+ * Sentence rows hold reusable target-language metadata while chapter-sentence
+ * resources hold generated translation, explanation, and distractor content.
  * Both rows must be upserted before the reading step can safely reference them.
  */
 async function saveOneSentence(params: {
@@ -132,12 +133,13 @@ async function saveOneSentence(params: {
     },
   });
 
-  await prisma.lessonSentence.upsert({
+  const chapterSentence = await prisma.chapterSentence.upsert({
     create: {
+      chapterId: params.context.chapterId,
       distractors: sentenceDistractors,
       explanation: emptyToNull(params.readingSentence.explanation),
-      lessonId: params.context.id,
       sentenceId: record.id,
+      sourceLessonId: params.context.id,
       translation,
       translationDistractors: sentenceTranslationDistractors,
       userLanguage: params.userLanguage,
@@ -148,11 +150,12 @@ async function saveOneSentence(params: {
       translation,
       translationDistractors: sentenceTranslationDistractors,
     },
-    where: { lessonSentence: { lessonId: params.context.id, sentenceId: record.id } },
+    where: { chapterSentenceSource: { sentenceId: record.id, sourceLessonId: params.context.id } },
   });
 
   await prisma.step.create({
     data: {
+      chapterSentenceId: chapterSentence.id,
       content: assertStepContent("reading", {}),
       isPublished: true,
       kind: "reading",

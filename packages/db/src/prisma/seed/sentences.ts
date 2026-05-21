@@ -69,26 +69,27 @@ async function seedSentence(
     },
   });
 
-  const lessonSentencePromises = data.lessonSlugs.map(async (lessonSlug) => {
+  const chapterSentencePromises = data.lessonSlugs.map(async (lessonSlug) => {
     const lesson = await prisma.lesson.findFirst({
       where: { organizationId: org.id, slug: lessonSlug },
     });
 
     if (lesson) {
-      await prisma.lessonSentence.upsert({
+      await prisma.chapterSentence.upsert({
         create: {
-          lessonId: lesson.id,
+          chapterId: lesson.chapterId,
           sentenceId: sentence.id,
+          sourceLessonId: lesson.id,
           translation: data.translation,
           userLanguage: data.userLanguage,
         },
         update: {},
-        where: { lessonSentence: { lessonId: lesson.id, sentenceId: sentence.id } },
+        where: { chapterSentenceSource: { sentenceId: sentence.id, sourceLessonId: lesson.id } },
       });
     }
   });
 
-  await Promise.all(lessonSentencePromises);
+  await Promise.all(chapterSentencePromises);
 }
 
 export async function seedSentences(prisma: PrismaClient, org: Organization): Promise<void> {

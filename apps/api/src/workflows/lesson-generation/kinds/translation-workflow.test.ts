@@ -4,7 +4,7 @@ import { prisma } from "@zoonk/db";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { lessonWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
+import { chapterWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, it } from "vitest";
 import { createLessonContext } from "../steps/_test-utils/create-lesson-context";
 import { translationLessonWorkflow } from "./translation-workflow";
@@ -43,23 +43,27 @@ describe(translationLessonWorkflow, () => {
       ),
     ]);
 
-    await Promise.all(
-      words.flatMap((word, position) => [
-        lessonWordFixture({
-          lessonId: vocabularyLesson.id,
+    const chapterWords = await Promise.all(
+      words.map(async (word, position) => {
+        const chapterWord = await chapterWordFixture({
+          sourceLessonId: vocabularyLesson.id,
           translation: `${word.word} translation`,
           userLanguage: "en",
           wordId: word.id,
-        }),
-        stepFixture({
+        });
+
+        await stepFixture({
+          chapterWordId: chapterWord.id,
           content: assertStepContent("vocabulary", {}),
           isPublished: true,
           kind: "vocabulary",
           lessonId: vocabularyLesson.id,
           position,
           wordId: word.id,
-        }),
-      ]),
+        });
+
+        return chapterWord;
+      }),
     );
 
     await translationLessonWorkflow(context);
@@ -69,9 +73,11 @@ describe(translationLessonWorkflow, () => {
       where: { lessonId: context.id },
     });
 
-    expect(steps.map((step) => [step.position, step.kind, step.wordId])).toStrictEqual([
-      [0, "translation", words[0]?.id],
-      [1, "translation", words[1]?.id],
+    expect(
+      steps.map((step) => [step.position, step.kind, step.wordId, step.chapterWordId]),
+    ).toStrictEqual([
+      [0, "translation", words[0]?.id, chapterWords[0]?.id],
+      [1, "translation", words[1]?.id, chapterWords[1]?.id],
     ]);
 
     expect(steps.map((step) => parseStepContent("translation", step.content))).toStrictEqual([

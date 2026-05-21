@@ -9,7 +9,7 @@ model Word {
   createdAt      DateTime            @default(now()) @map("created_at")
   updatedAt      DateTime            @default(now()) @updatedAt @map("updated_at")
   pronunciations WordPronunciation[]
-  lessons        LessonWord[]
+  chapterWords   ChapterWord[]
   steps          Step[]
 
   @@unique([organizationId, targetLanguage, word], name: "orgWord")
@@ -23,7 +23,7 @@ model Word {
 /// while a Portuguese speaker gets a different phonetic guide.
 /// That's why pronunciation lives in its own table keyed on
 /// (wordId, userLanguage) rather than on `Word` (no user language)
-/// or `LessonWord` (would duplicate the same value across lessons).
+/// or `ChapterWord` (would duplicate the same value across lessons).
 model WordPronunciation {
   id            String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   wordId        String   @map("word_id") @db.Uuid
@@ -37,59 +37,65 @@ model WordPronunciation {
 }
 
 model Sentence {
-  id             String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  organizationId String           @map("organization_id") @db.Uuid
-  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  targetLanguage String           @map("target_language") @db.VarChar(10)
-  sentence       String
-  romanization   String?
-  audioUrl       String?          @map("audio_url")
-  createdAt      DateTime         @default(now()) @map("created_at")
-  updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at")
-  lessons        LessonSentence[]
-  steps          Step[]
+  id               String            @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  organizationId   String            @map("organization_id") @db.Uuid
+  organization     Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  targetLanguage   String            @map("target_language") @db.VarChar(10)
+  sentence         String
+  romanization     String?
+  audioUrl         String?           @map("audio_url")
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @default(now()) @updatedAt @map("updated_at")
+  chapterSentences ChapterSentence[]
+  steps            Step[]
 
   @@unique([organizationId, targetLanguage, sentence], name: "orgSentence")
   @@map("sentences")
 }
 
-/// Links a word to a lesson with its lesson-specific translation.
+/// Links a canonical word to the chapter context that introduced it.
 /// Translations live here instead of a global `WordTranslation` table because
-/// the same word can have different meanings in different lessons — e.g.
-/// Spanish "banco" means "bank" in a finance lesson but "bench" in a
-/// furniture lesson. A global translation would be overwritten by whichever
-/// lesson saved last.
-model LessonWord {
-  id           String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  lessonId     String   @map("lesson_id") @db.Uuid
-  lesson       Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  wordId       String   @map("word_id") @db.Uuid
-  word         Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
-  userLanguage String   @map("user_language") @db.VarChar(10)
-  translation  String   @default("")
-  /// Stores direct target-language distractor words for this lesson word.
+/// the same word can have different meanings in different contexts — e.g.
+/// Spanish "banco" means "bank" in a finance chapter but "bench" in a
+/// furniture chapter. Steps point at this row directly so derived translation
+/// and review steps never have to infer the right resource lesson at render time.
+model ChapterWord {
+  id             String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  chapterId      String   @map("chapter_id") @db.Uuid
+  chapter        Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  sourceLessonId String   @map("source_lesson_id") @db.Uuid
+  sourceLesson   Lesson   @relation(fields: [sourceLessonId], references: [id], onDelete: Cascade)
+  wordId         String   @map("word_id") @db.Uuid
+  word           Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  userLanguage   String   @map("user_language") @db.VarChar(10)
+  translation    String   @default("")
+  /// Stores direct target-language distractor words for this chapter word.
   /// These are generated up front so the player can render wrong options
   /// directly instead of deriving them from semantic overlap rules.
-  distractors  String[] @default([])
-  createdAt    DateTime @default(now()) @map("created_at")
+  distractors    String[] @default([])
+  createdAt      DateTime @default(now()) @map("created_at")
+  steps          Step[]
 
-  @@unique([lessonId, wordId], name: "lessonWord")
+  @@unique([sourceLessonId, wordId], name: "chapterWordSource")
+  @@index([chapterId, wordId])
   @@index([wordId])
-  @@map("lesson_words")
+  @@map("chapter_words")
 }
 
-/// Links a sentence to a lesson with its lesson-specific translation.
-/// Follows the same pattern as `LessonWord` — translations are scoped to
-/// lessons rather than stored globally. While sentence-level polysemy is
+/// Links a sentence to the chapter context that introduced it.
+/// Follows the same pattern as `ChapterWord` — translations are scoped to
+/// chapter content rather than stored globally. While sentence-level polysemy is
 /// rarer than word-level (sentences carry their own context), the design
 /// principle is identical: explanation is inherently lesson-context-specific
 /// (a grammar lesson explains the same sentence differently than a
 /// vocabulary lesson), and fixing the schema pre-launch is far cheaper
 /// than migrating production data later.
-model LessonSentence {
+model ChapterSentence {
   id                     String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  lessonId               String   @map("lesson_id") @db.Uuid
-  lesson                 Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  chapterId              String   @map("chapter_id") @db.Uuid
+  chapter                Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  sourceLessonId         String   @map("source_lesson_id") @db.Uuid
+  sourceLesson           Lesson   @relation(fields: [sourceLessonId], references: [id], onDelete: Cascade)
   sentenceId             String   @map("sentence_id") @db.Uuid
   sentence               Sentence @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
   userLanguage           String   @map("user_language") @db.VarChar(10)
@@ -100,8 +106,10 @@ model LessonSentence {
   translationDistractors String[] @default([]) @map("translation_distractors")
   explanation            String?
   createdAt              DateTime @default(now()) @map("created_at")
+  steps                  Step[]
 
-  @@unique([lessonId, sentenceId], name: "lessonSentence")
+  @@unique([sourceLessonId, sentenceId], name: "chapterSentenceSource")
+  @@index([chapterId, sentenceId])
   @@index([sentenceId])
-  @@map("lesson_sentences")
+  @@map("chapter_sentences")
 }

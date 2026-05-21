@@ -19,6 +19,8 @@ model Chapter {
   updatedAt        DateTime            @default(now()) @updatedAt @map("updated_at")
   completions      ChapterCompletion[]
   lessons          Lesson[]
+  words            ChapterWord[]
+  sentences        ChapterSentence[]
 
   @@unique([courseId, slug], name: "courseChapterSlug")
   @@index([organizationId, normalizedTitle])

@@ -23,9 +23,9 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { lessonSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
+import { chapterSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { lessonWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
+import { chapterWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { lessonGenerationWorkflow } from "./lesson-generation-workflow";
 import { type setLessonAsRunningStep } from "./steps/set-lesson-as-running-step";
@@ -763,10 +763,10 @@ describe(lessonGenerationWorkflow, () => {
       ]),
     );
 
-    const lessonWords = await prisma.lessonWord.findMany({
+    const lessonWords = await prisma.chapterWord.findMany({
       include: { word: { include: { pronunciations: true } } },
       orderBy: { word: { word: "asc" } },
-      where: { lessonId: lesson.id },
+      where: { sourceLessonId: lesson.id },
     });
 
     const words = lessonWords
@@ -817,7 +817,7 @@ describe(lessonGenerationWorkflow, () => {
       wordFixture({ organizationId, targetLanguage: "ja", word: `猫-${uniqueId}` }),
     ]);
 
-    const [translationLesson] = await Promise.all([
+    const [translationLesson, chapterWord] = await Promise.all([
       lessonFixture({
         chapterId: chapter.id,
         generationStatus: "pending",
@@ -827,21 +827,23 @@ describe(lessonGenerationWorkflow, () => {
         position: 1,
         title: `Translation Lesson ${uniqueId}`,
       }),
-      lessonWordFixture({
-        lessonId: vocabularyLesson.id,
+      chapterWordFixture({
+        sourceLessonId: vocabularyLesson.id,
         translation: `cat ${uniqueId}`,
         userLanguage: "en",
         wordId: word.id,
       }),
-      stepFixture({
-        content: assertStepContent("vocabulary", {}),
-        isPublished: true,
-        kind: "vocabulary",
-        lessonId: vocabularyLesson.id,
-        position: 0,
-        wordId: word.id,
-      }),
     ]);
+
+    await stepFixture({
+      chapterWordId: chapterWord.id,
+      content: assertStepContent("vocabulary", {}),
+      isPublished: true,
+      kind: "vocabulary",
+      lessonId: vocabularyLesson.id,
+      position: 0,
+      wordId: word.id,
+    });
 
     await lessonGenerationWorkflow(translationLesson.id);
 
@@ -854,6 +856,7 @@ describe(lessonGenerationWorkflow, () => {
     });
 
     expect(translationStep?.kind).toBe("translation");
+    expect(translationStep?.chapterWordId).toBe(chapterWord.id);
     expect(translationStep?.wordId).toBe(word.id);
     expect(parseStepContent("translation", translationStep?.content)).toStrictEqual({});
   });
@@ -886,14 +889,14 @@ describe(lessonGenerationWorkflow, () => {
         position: 1,
         title: `Reading Lesson ${uniqueId}`,
       }),
-      lessonWordFixture({
-        lessonId: vocabularyLesson.id,
+      chapterWordFixture({
+        sourceLessonId: vocabularyLesson.id,
         translation: `cat ${uniqueId}`,
         userLanguage: "en",
         wordId: catWord.id,
       }),
-      lessonWordFixture({
-        lessonId: vocabularyLesson.id,
+      chapterWordFixture({
+        sourceLessonId: vocabularyLesson.id,
         translation: `water ${uniqueId}`,
         userLanguage: "en",
         wordId: waterWord.id,
@@ -928,8 +931,8 @@ describe(lessonGenerationWorkflow, () => {
       where: { lessonId: readingLesson.id },
     });
 
-    const sentenceLink = await prisma.lessonSentence.findFirst({
-      where: { lessonId: readingLesson.id },
+    const sentenceLink = await prisma.chapterSentence.findFirst({
+      where: { sourceLessonId: readingLesson.id },
     });
 
     expect(readingStep?.kind).toBe("reading");
@@ -954,7 +957,7 @@ describe(lessonGenerationWorkflow, () => {
       sentenceFixture({ organizationId, sentence: `猫と水 ${uniqueId}`, targetLanguage: "ja" }),
     ]);
 
-    const [listeningLesson] = await Promise.all([
+    const [listeningLesson, chapterSentence] = await Promise.all([
       lessonFixture({
         chapterId: chapter.id,
         generationStatus: "pending",
@@ -964,21 +967,23 @@ describe(lessonGenerationWorkflow, () => {
         position: 1,
         title: `Listening Lesson ${uniqueId}`,
       }),
-      lessonSentenceFixture({
-        lessonId: readingLesson.id,
+      chapterSentenceFixture({
         sentenceId: sentence.id,
+        sourceLessonId: readingLesson.id,
         translation: `cat and water ${uniqueId}`,
         userLanguage: "en",
       }),
-      stepFixture({
-        content: assertStepContent("reading", {}),
-        isPublished: true,
-        kind: "reading",
-        lessonId: readingLesson.id,
-        position: 0,
-        sentenceId: sentence.id,
-      }),
     ]);
+
+    await stepFixture({
+      chapterSentenceId: chapterSentence.id,
+      content: assertStepContent("reading", {}),
+      isPublished: true,
+      kind: "reading",
+      lessonId: readingLesson.id,
+      position: 0,
+      sentenceId: sentence.id,
+    });
 
     await lessonGenerationWorkflow(listeningLesson.id);
 
@@ -989,6 +994,7 @@ describe(lessonGenerationWorkflow, () => {
     const [listeningStep] = await prisma.step.findMany({ where: { lessonId: listeningLesson.id } });
 
     expect(listeningStep?.kind).toBe("listening");
+    expect(listeningStep?.chapterSentenceId).toBe(chapterSentence.id);
     expect(listeningStep?.sentenceId).toBe(sentence.id);
     expect(parseStepContent("listening", listeningStep?.content)).toStrictEqual({});
   });

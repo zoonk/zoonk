@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { getFixtureChapterId } from "./_utils/get-fixture-chapter-id";
 
 export async function wordFixture(attrs: {
   organizationId: string;
@@ -32,17 +33,24 @@ export async function wordPronunciationFixture(attrs: {
   });
 }
 
-export async function lessonWordFixture(attrs: {
-  lessonId: string;
+export async function chapterWordFixture(attrs: {
+  chapterId?: string;
+  sourceLessonId: string;
   wordId: string;
   userLanguage?: string;
   translation?: string;
   distractors?: string[];
 }) {
-  return prisma.lessonWord.create({
+  const chapterId = await getFixtureChapterId({
+    chapterId: attrs.chapterId,
+    sourceLessonId: attrs.sourceLessonId,
+  });
+
+  return prisma.chapterWord.create({
     data: {
+      chapterId,
       distractors: attrs.distractors ?? [],
-      lessonId: attrs.lessonId,
+      sourceLessonId: attrs.sourceLessonId,
       translation: attrs.translation ?? `translation-${crypto.randomUUID()}`,
       userLanguage: attrs.userLanguage ?? "en",
       wordId: attrs.wordId,

@@ -28,9 +28,25 @@ async function getPreviousLessonByKind({
 }
 
 /**
- * Translation steps reuse vocabulary word IDs instead of regenerating words.
- * That keeps translation practice aligned with the learner's current
- * vocabulary group.
+ * Prisma does not narrow nullable fields from `not: null` filters in the
+ * generated TypeScript type. This helper turns only fully linked vocabulary
+ * steps into the resource pair needed by derived translation steps.
+ */
+function getTranslationResource(step: {
+  chapterWordId: string | null;
+  wordId: string | null;
+}): { chapterWordId: string; wordId: string } | null {
+  if (!step.chapterWordId || !step.wordId) {
+    return null;
+  }
+
+  return { chapterWordId: step.chapterWordId, wordId: step.wordId };
+}
+
+/**
+ * Translation steps reuse the exact chapter-word resources from vocabulary
+ * steps instead of regenerating words. That keeps translation practice aligned
+ * with the generated translation and distractor bank.
  */
 export async function saveTranslationLessonStep(context: LessonContext): Promise<void> {
   "use step";
@@ -49,25 +65,31 @@ export async function saveTranslationLessonStep(context: LessonContext): Promise
 
   const sourceSteps = await prisma.step.findMany({
     orderBy: { position: "asc" },
-    where: { kind: "vocabulary", lessonId: sourceLesson.id, wordId: { not: null } },
+    where: {
+      chapterWordId: { not: null },
+      kind: "vocabulary",
+      lessonId: sourceLesson.id,
+      wordId: { not: null },
+    },
   });
 
-  const wordIds = sourceSteps.flatMap((step) => (step.wordId ? [step.wordId] : []));
+  const wordSteps = sourceSteps.flatMap((step) => getTranslationResource(step) ?? []);
 
-  if (wordIds.length === 0) {
+  if (wordSteps.length === 0) {
     throw new FatalError("Translation generation needs vocabulary words");
   }
 
   await prisma.step.deleteMany({ where: { lessonId: context.id } });
 
   await prisma.step.createMany({
-    data: wordIds.map((wordId, position) => ({
+    data: wordSteps.map((step, position) => ({
+      chapterWordId: step.chapterWordId,
       content: assertStepContent("translation", {}),
       isPublished: true,
       kind: "translation" as const,
       lessonId: context.id,
       position,
-      wordId,
+      wordId: step.wordId,
     })),
   });
 
