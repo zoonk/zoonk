@@ -7,7 +7,7 @@ import { CatalogGridImage } from "@/components/catalog/catalog-grid-image";
 import { getDefaultLessonImage } from "@/lib/catalog/default-images";
 import { getLessonDisplayMeta } from "@/lib/lessons";
 import { getLessonProgress } from "@zoonk/core/progress/lessons";
-import { type Lesson, type LessonKind } from "@zoonk/db";
+import { type Lesson } from "@zoonk/db";
 import {
   GridContent,
   GridGroup,
@@ -19,34 +19,11 @@ import {
   GridItemStatusCompleted,
   GridItemStatusIdle,
   GridItemTitle,
-  type GridItemTone,
 } from "@zoonk/ui/components/grid";
 import { getExtracted } from "next-intl/server";
+import { getLessonKindTone } from "./_utils/lesson-kind-tones";
 
 type LessonRow = { display: Awaited<ReturnType<typeof getLessonDisplayMeta>>; lesson: Lesson };
-
-const LESSON_KIND_TONES: Record<LessonKind, GridItemTone> = {
-  alphabet: "blue",
-  custom: "gray",
-  explanation: "blue",
-  grammar: "purple",
-  listening: "purple",
-  practice: "green",
-  quiz: "yellow",
-  reading: "green",
-  review: "purple",
-  translation: "orange",
-  tutorial: "blue",
-  vocabulary: "blue",
-};
-
-/**
- * Lesson kind is a stronger visual grouping than position because repeated
- * companion lessons should be recognizable across the chapter.
- */
-function getLessonKindTone({ kind }: { kind: LessonKind }) {
-  return LESSON_KIND_TONES[kind];
-}
 
 /**
  * Lesson rows only need a binary completion state, so the visual stays quieter
