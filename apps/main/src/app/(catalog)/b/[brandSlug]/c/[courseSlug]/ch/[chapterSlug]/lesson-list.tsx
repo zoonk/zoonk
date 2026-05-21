@@ -160,6 +160,7 @@ export async function LessonList({
   const lessonRows = await getLessonRows(lessons);
 
   const searchItems = lessonRows.map(({ display, lesson }) => ({
+    description: display.description,
     id: lesson.id,
     title: display.title,
   }));

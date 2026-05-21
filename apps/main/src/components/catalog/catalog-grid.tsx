@@ -11,12 +11,41 @@ import { useQueryState } from "nuqs";
 import { type ReactNode, useMemo } from "react";
 import { CatalogGridContext, useCatalogGridContext } from "./catalog-grid-context";
 
+type CatalogGridSearchItem = {
+  description?: string | null;
+  id: string | number | bigint;
+  title: string;
+};
+
+/**
+ * Catalog search should match the text learners scan inside each tile. Generated
+ * chapters and lessons often put the disambiguating detail in the description,
+ * so filtering only by title hides relevant results.
+ */
+function getCatalogSearchText(item: CatalogGridSearchItem): string {
+  return [item.title, item.description].filter(Boolean).join(" ");
+}
+
+/**
+ * Normalizing the combined tile text once per candidate keeps chapter and lesson
+ * search accent-insensitive without each page rebuilding the same rules.
+ */
+function matchesCatalogSearchQuery({
+  item,
+  query,
+}: {
+  item: CatalogGridSearchItem;
+  query: string;
+}): boolean {
+  return normalizeString(getCatalogSearchText(item)).includes(query);
+}
+
 /**
  * The catalog grid search owns query-string filtering so course, chapter, and
  * lesson grids can share one search behavior while each page keeps its own data
  * fetching on the server.
  */
-export function CatalogGridSearch<T extends { id: string | number; title: string }>({
+export function CatalogGridSearch({
   children,
   className,
   items,
@@ -24,7 +53,7 @@ export function CatalogGridSearch<T extends { id: string | number; title: string
 }: {
   children: ReactNode;
   className?: string;
-  items: T[];
+  items: CatalogGridSearchItem[];
   placeholder: string;
 }) {
   const [search, setSearch] = useQueryState("q", {
@@ -40,7 +69,7 @@ export function CatalogGridSearch<T extends { id: string | number; title: string
       return { filteredIds: null, isSearchActive: false };
     }
 
-    const matching = items.filter((item) => normalizeString(item.title).includes(query));
+    const matching = items.filter((item) => matchesCatalogSearchQuery({ item, query }));
     return { filteredIds: new Set(matching.map((item) => String(item.id))), isSearchActive: true };
   }, [items, search]);
 
