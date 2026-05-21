@@ -213,7 +213,7 @@ How to verify your work:
 - pnpm build --filter <app>
 - pnpm test --filter <app>
 - pnpm e2e --filter <app>
-- pnpm i18n
+- pnpm i18n to check translations, no need for msgfmt --check
 
 ## Docs
 

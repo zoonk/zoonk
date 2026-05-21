@@ -15,10 +15,10 @@ describe(getPhaseOrder, () => {
   it("keeps explanation generation split into content, visual planning, images, and saving", () => {
     expect(getPhaseOrder("explanation")).toStrictEqual([
       "gettingStarted",
+      "creatingLessonImage",
       "writingContent",
       "preparingImages",
       "creatingImages",
-      "creatingLessonImage",
       "saving",
     ]);
   });

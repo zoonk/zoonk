@@ -30,9 +30,9 @@ type _ValidateExplanation = AssertAllCovered<
 
 export const EXPLANATION_PHASE_ORDER: PhaseName[] = [
   "gettingStarted",
+  "creatingLessonImage",
   "writingContent",
   "preparingImages",
   "creatingImages",
-  "creatingLessonImage",
   "saving",
 ];
