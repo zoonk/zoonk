@@ -232,6 +232,14 @@ msgstr "Verificar"
 msgid "acrOoz"
 msgstr "Continuar"
 
+#: src/components/swipe-navigable-step-layout.tsx
+msgid "aNzy1T"
+msgstr "Etapa anterior"
+
+#: src/components/swipe-navigable-step-layout.tsx
+msgid "d+qgix"
+msgstr "Próxima etapa"
+
 #: src/components/translation-step.tsx
 msgid "MxLxkr"
 msgstr "Traduza esta palavra:"

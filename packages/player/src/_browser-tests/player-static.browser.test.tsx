@@ -74,7 +74,7 @@ function tapExpandedImageBackdrop(target: HTMLElement) {
 }
 
 describe("player browser integration: static steps", () => {
-  it("uses keyboard navigation without visible step arrows", async () => {
+  it("shows desktop arrows while preserving keyboard navigation", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "explanation",
@@ -95,11 +95,16 @@ describe("player browser integration: static steps", () => {
     });
 
     await expect.element(page.getByRole("heading", { name: "First step" })).toBeInTheDocument();
-    await expect.element(page.getByRole("button", { name: /next step/iu })).not.toBeInTheDocument();
 
     await expect
       .element(page.getByRole("button", { name: /previous step/iu }))
       .not.toBeInTheDocument();
+
+    await page.getByRole("button", { name: /next step/iu }).click();
+    await expect.element(page.getByRole("heading", { name: "Second step" })).toBeInTheDocument();
+
+    await page.getByRole("button", { name: /previous step/iu }).click();
+    await expect.element(page.getByRole("heading", { name: "First step" })).toBeInTheDocument();
 
     fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
     await expect.element(page.getByRole("heading", { name: "Second step" })).toBeInTheDocument();
