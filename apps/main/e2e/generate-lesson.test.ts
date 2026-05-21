@@ -407,7 +407,7 @@ test.describe("Generate Lesson Page - With Subscription", () => {
 
     await userWithoutProgress.goto(`/generate/l/${lesson.id}`);
 
-    await expect(userWithoutProgress.getByText(/this usually takes a few seconds/iu)).toBeVisible({
+    await expect(userWithoutProgress.getByText(/this usually takes 1-2 minutes/iu)).toBeVisible({
       timeout: 10_000,
     });
   });
