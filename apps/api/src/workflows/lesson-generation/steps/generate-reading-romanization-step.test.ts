@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
+import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { generateLessonRomanization } from "@zoonk/ai/tasks/lessons/language/romanization";
-import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { createLessonContext } from "./_test-utils/create-lesson-context";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { createRomanizationLessonContext } from "./_test-utils/create-romanization-lesson-context";
 import { generateReadingRomanizationStep } from "./generate-reading-romanization-step";
 
 vi.mock("@zoonk/ai/tasks/lessons/language/romanization", () => ({
@@ -16,13 +16,6 @@ vi.mock("@zoonk/ai/tasks/lessons/language/romanization", () => ({
 }));
 
 describe(generateReadingRomanizationStep, () => {
-  let organizationId: string;
-
-  beforeAll(async () => {
-    const organization = await aiOrganizationFixture();
-    organizationId = organization.id;
-  });
-
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -32,11 +25,7 @@ describe(generateReadingRomanizationStep, () => {
     const catWord = `猫${uniqueId}`;
     const waterWord = `水${uniqueId}`;
 
-    const context = await createLessonContext({
-      kind: "reading",
-      organizationId,
-      targetLanguage: "ja",
-    });
+    const context = createRomanizationLessonContext({ targetLanguage: "ja" });
 
     const sentence = `${catWord} ${waterWord}`;
     const sentences = [{ explanation: "", sentence, translation: "cat and water" }];
@@ -48,6 +37,26 @@ describe(generateReadingRomanizationStep, () => {
     expect(generateLessonRomanization).toHaveBeenCalledWith({
       targetLanguage: "ja",
       texts: [sentence],
+    });
+  });
+
+  it("streams completion when romanization is skipped for Roman-script languages", async () => {
+    const context = createRomanizationLessonContext({ targetLanguage: "es" });
+
+    await expect(
+      generateReadingRomanizationStep({
+        context,
+        sentences: [
+          { explanation: "", sentence: "el gato bebe agua", translation: "the cat drinks water" },
+        ],
+      }),
+    ).resolves.toStrictEqual({ romanizations: {} });
+
+    expect(generateLessonRomanization).not.toHaveBeenCalled();
+
+    expect(getStreamedEvents()).toContainEqual({
+      status: "completed",
+      step: "generateReadingRomanization",
     });
   });
 });

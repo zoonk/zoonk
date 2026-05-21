@@ -1,9 +1,10 @@
+import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type generateLessonGrammarContent } from "@zoonk/ai/tasks/lessons/language/grammar-content";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { needsRomanization } from "@zoonk/utils/languages";
 import { generateLessonRomanizations } from "./_utils/generate-lesson-romanizations";
-import { type LessonContext } from "./get-lesson-step";
+import { type RomanizationStepContext } from "./_utils/romanization-step-context";
 
 type GrammarContent = Awaited<ReturnType<typeof generateLessonGrammarContent>>["data"];
 
@@ -11,7 +12,7 @@ export async function generateGrammarRomanizationStep({
   context,
   grammarContent,
 }: {
-  context: LessonContext;
+  context: RomanizationStepContext;
   grammarContent: GrammarContent;
 }): Promise<{ romanizations: Record<string, string> | null }> {
   "use step";
@@ -19,6 +20,7 @@ export async function generateGrammarRomanizationStep({
   const targetLanguage = context.chapter.course.targetLanguage ?? "";
 
   if (!needsRomanization(targetLanguage)) {
+    await streamSkipStep("generateGrammarRomanization");
     return { romanizations: null };
   }
 
