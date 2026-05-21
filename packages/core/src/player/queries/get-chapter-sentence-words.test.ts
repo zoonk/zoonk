@@ -210,4 +210,44 @@ describe(getChapterSentenceWordsForIds, () => {
     const matchingWords = result.filter((item) => item.word.word === word.word);
     expect(matchingWords).toHaveLength(1);
   });
+
+  it("ignores matching words stored for a different learner language", async () => {
+    const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
+    const wordText = `morgen${uniqueId}`;
+
+    const [newLesson, sentence, word] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        language: "en",
+        organizationId: org.id,
+      }),
+      sentenceFixture({
+        organizationId: org.id,
+        sentence: `${wordText} jetzt`,
+        targetLanguage: "de",
+      }),
+      wordFixture({ organizationId: org.id, targetLanguage: "de", word: wordText }),
+    ]);
+
+    const [chapterSentence] = await Promise.all([
+      chapterSentenceFixture({
+        sentenceId: sentence.id,
+        sourceLessonId: newLesson.id,
+        userLanguage: "en",
+      }),
+      chapterWordFixture({
+        sourceLessonId: newLesson.id,
+        translation: "amanha",
+        userLanguage: "pt",
+        wordId: word.id,
+      }),
+    ]);
+
+    const result = await getChapterSentenceWordsForIds({
+      chapterSentenceIds: [chapterSentence.id],
+    });
+
+    expect(result).toStrictEqual([]);
+  });
 });

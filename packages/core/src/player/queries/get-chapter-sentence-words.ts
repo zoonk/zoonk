@@ -1,6 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { extractUniqueSentenceWords } from "@zoonk/utils/string";
+import { cache } from "react";
 import { getChapterSentencesForIds } from "./get-chapter-sentences";
 
 /**
@@ -9,11 +10,7 @@ import { getChapterSentencesForIds } from "./get-chapter-sentences";
  * the same source lessons that introduced those sentences so contextual
  * translations stay aligned.
  */
-export async function getChapterSentenceWordsForIds({
-  chapterSentenceIds,
-}: {
-  chapterSentenceIds: string[];
-}) {
+const cachedGetChapterSentenceWordsForIds = cache(async (...chapterSentenceIds: string[]) => {
   const chapterSentences = await getChapterSentencesForIds({ chapterSentenceIds });
 
   const firstSentence = chapterSentences[0];
@@ -30,14 +27,18 @@ export async function getChapterSentenceWordsForIds({
     return [];
   }
 
-  // All chapter sentence resources in one player payload share the learner's language.
   const { userLanguage } = firstSentence;
 
   return prisma.chapterWord.findMany({
     include: { word: { include: { pronunciations: { where: { userLanguage } } } } },
     where: {
       sourceLessonId: { in: sourceLessonIds },
+      userLanguage,
       word: { word: { in: uniqueWords, mode: "insensitive" } },
     },
   });
+});
+
+export function getChapterSentenceWordsForIds(params: { chapterSentenceIds: string[] }) {
+  return cachedGetChapterSentenceWordsForIds(...params.chapterSentenceIds);
 }

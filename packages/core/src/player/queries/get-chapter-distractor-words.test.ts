@@ -1,4 +1,3 @@
-import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -85,6 +84,9 @@ describe(getChapterDistractorWords, () => {
         userLanguage: "en",
         wordId: lessonWordDistractor.id,
       }),
+    ]);
+
+    const [chapterWord, chapterSentence] = await Promise.all([
       chapterWordFixture({
         distractors: [sharedDistractor.word.toLowerCase(), lessonWordDistractor.word],
         sourceLessonId: lessonForTest.id,
@@ -102,14 +104,9 @@ describe(getChapterDistractorWords, () => {
       }),
     ]);
 
-    const resources = await Promise.all([
-      prisma.chapterWord.findFirstOrThrow({ where: { sourceLessonId: lessonForTest.id } }),
-      prisma.chapterSentence.findFirstOrThrow({ where: { sourceLessonId: lessonForTest.id } }),
-    ]);
-
     const result = await getChapterDistractorWords({
-      chapterSentenceIds: [resources[1].id],
-      chapterWordIds: [resources[0].id],
+      chapterSentenceIds: [chapterSentence.id],
+      chapterWordIds: [chapterWord.id],
     });
 
     expect(result.map((item) => item.word).toSorted()).toStrictEqual(
@@ -155,7 +152,7 @@ describe(getChapterDistractorWords, () => {
       ],
     );
 
-    await Promise.all([
+    const [chapterWord, chapterSentence] = await Promise.all([
       chapterWordFixture({
         distractors: [resolvedDistractor.word, `missing-${id}`],
         sourceLessonId: lessonForTest.id,
@@ -173,14 +170,9 @@ describe(getChapterDistractorWords, () => {
       }),
     ]);
 
-    const resources = await Promise.all([
-      prisma.chapterWord.findFirstOrThrow({ where: { sourceLessonId: lessonForTest.id } }),
-      prisma.chapterSentence.findFirstOrThrow({ where: { sourceLessonId: lessonForTest.id } }),
-    ]);
-
     const result = await getChapterDistractorWords({
-      chapterSentenceIds: [resources[1].id],
-      chapterWordIds: [resources[0].id],
+      chapterSentenceIds: [chapterSentence.id],
+      chapterWordIds: [chapterWord.id],
     });
 
     expect(result.map((item) => item.word)).toStrictEqual([resolvedDistractor.word]);
