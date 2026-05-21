@@ -83,7 +83,7 @@ export function GridItem({ className, render, ...props }: useRender.ComponentPro
     props: mergeProps<"div">(
       {
         className: cn(
-          "group/grid-item bg-background focus-visible:border-ring focus-visible:ring-ring/50 flex h-full min-h-60 w-full min-w-0 flex-col justify-between rounded-3xl p-4 shadow-[0_1px_2px_rgb(0_0_0/0.04),0_8px_24px_rgb(0_0_0/0.06)] transition-all duration-150 outline-none hover:-translate-y-0.5 hover:shadow-[0_2px_4px_rgb(0_0_0/0.05),0_14px_36px_rgb(0_0_0/0.08)] focus-visible:ring-[3px]",
+          "group/grid-item bg-background focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-card dark:ring-border/50 dark:hover:ring-border flex h-full min-h-60 w-full min-w-0 flex-col justify-between rounded-3xl p-4 shadow-[0_1px_2px_rgb(0_0_0/0.04),0_8px_24px_rgb(0_0_0/0.06)] transition-all duration-150 outline-none hover:-translate-y-0.5 hover:shadow-[0_2px_4px_rgb(0_0_0/0.05),0_14px_36px_rgb(0_0_0/0.08)] focus-visible:ring-[3px] dark:shadow-[0_1px_2px_rgb(0_0_0/0.35),0_16px_40px_rgb(0_0_0/0.3)] dark:ring-1 dark:hover:shadow-[0_2px_4px_rgb(0_0_0/0.45),0_20px_52px_rgb(0_0_0/0.42)]",
           className,
         ),
       },
