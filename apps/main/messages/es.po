@@ -1285,12 +1285,12 @@ msgid "W2b0tx"
 msgstr "Diseñando la miniatura de la lección..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
-msgid "4TTl72"
-msgstr "Creando la imagen de la lección..."
+msgid "fRAHqN"
+msgstr "Creando la miniatura de la lección..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
-msgid "6k562E"
-msgstr "Refinando la imagen de la lección..."
+msgid "elwtxf"
+msgstr "Refinando la miniatura de la lección..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgid "uDzgwu"
@@ -1585,8 +1585,8 @@ msgid "aKNA/b"
 msgstr "Creando imágenes"
 
 #: src/app/generate/l/[id]/use-phase-labels.ts
-msgid "tcyV4j"
-msgstr "Creando imagen de la lección"
+msgid "WI2yui"
+msgstr "Creando miniatura de la lección"
 
 #: src/app/generate/l/[id]/use-phase-labels.ts
 msgid "mIpv67"

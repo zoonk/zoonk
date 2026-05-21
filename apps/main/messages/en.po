@@ -1285,12 +1285,12 @@ msgid "W2b0tx"
 msgstr "Designing the lesson thumbnail..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
-msgid "4TTl72"
-msgstr "Creating the lesson image..."
+msgid "fRAHqN"
+msgstr "Creating the lesson thumbnail..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
-msgid "6k562E"
-msgstr "Refining the lesson artwork..."
+msgid "elwtxf"
+msgstr "Refining the lesson thumbnail..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgid "uDzgwu"
@@ -1585,8 +1585,8 @@ msgid "aKNA/b"
 msgstr "Creating images"
 
 #: src/app/generate/l/[id]/use-phase-labels.ts
-msgid "tcyV4j"
-msgstr "Creating lesson image"
+msgid "WI2yui"
+msgstr "Creating lesson thumbnail"
 
 #: src/app/generate/l/[id]/use-phase-labels.ts
 msgid "mIpv67"

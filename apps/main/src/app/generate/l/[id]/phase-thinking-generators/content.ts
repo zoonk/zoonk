@@ -44,8 +44,8 @@ export function useContentPhaseGenerators(): Partial<Record<PhaseName, ThinkingM
       cycleMessage(
         [
           t("Designing the lesson thumbnail..."),
-          t("Creating the lesson image..."),
-          t("Refining the lesson artwork..."),
+          t("Creating the lesson thumbnail..."),
+          t("Refining the lesson thumbnail..."),
         ],
         index,
       ),

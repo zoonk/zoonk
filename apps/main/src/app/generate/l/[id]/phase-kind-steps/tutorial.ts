@@ -27,9 +27,9 @@ type _ValidateTutorial = AssertAllCovered<
 
 export const TUTORIAL_PHASE_ORDER: PhaseName[] = [
   "gettingStarted",
+  "creatingLessonImage",
   "writingContent",
   "preparingImages",
   "creatingImages",
-  "creatingLessonImage",
   "saving",
 ];
