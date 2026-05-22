@@ -90,9 +90,9 @@ Use when the concept IS about sequence and order matters conceptually (e.g., ste
 
 ## selectImage
 
-Use SPARINGLY — only when visual recognition genuinely tests understanding better than text-based formats.
+Use when an image is the best way to test understanding, such as visual recognition, comparing visible features, reading diagrams, or identifying spatial patterns.
 
-- `question`: A scenario where visual identification demonstrates understanding
+- `question`: A scenario where image-based evidence helps the learner demonstrate understanding
 - `options`: 2-4 image options. Each has `prompt` (image generation prompt describing content, not style), `isCorrect`, and `feedback`
 - NEVER reference copyrighted or trademarked characters (e.g., Mickey Mouse, Spider-Man, Mario, Pikachu). Describe concepts abstractly or use generic, original characters instead
 

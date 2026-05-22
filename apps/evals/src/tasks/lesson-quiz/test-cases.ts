@@ -24,7 +24,7 @@ EVALUATION CRITERIA:
    - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).
    - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).
    - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.
-   - Select image: ONLY when visual recognition genuinely tests understanding.
+   - Select image: Best when an image is the strongest way to test understanding, including visual recognition, comparing visible features, reading diagrams, or identifying spatial patterns.
 
    PENALIZE when:
    - Formats are used for variety rather than fit
