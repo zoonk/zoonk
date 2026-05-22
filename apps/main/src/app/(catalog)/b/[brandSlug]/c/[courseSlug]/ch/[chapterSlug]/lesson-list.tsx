@@ -1,4 +1,5 @@
 import {
+  CatalogGridContent,
   CatalogGridEmpty,
   CatalogGridItem,
   CatalogGridSearch,
@@ -9,7 +10,6 @@ import { getLessonDisplayMeta } from "@/lib/lessons";
 import { getLessonProgress } from "@zoonk/core/progress/lessons";
 import { type Lesson } from "@zoonk/db";
 import {
-  GridContent,
   GridGroup,
   GridItemContent,
   GridItemDescription,
@@ -143,7 +143,7 @@ export async function LessonList({
   }));
 
   return (
-    <GridContent>
+    <CatalogGridContent>
       <CatalogGridSearch items={searchItems} placeholder={t("Search lessons...")}>
         <CatalogGridEmpty>{t("No lessons found")}</CatalogGridEmpty>
         <GridGroup variant="pane">
@@ -167,6 +167,6 @@ export async function LessonList({
           })}
         </GridGroup>
       </CatalogGridSearch>
-    </GridContent>
+    </CatalogGridContent>
   );
 }

@@ -1,10 +1,11 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { WIDE_CONTENT_MAX_WIDTH_CLASS } from "@zoonk/ui/components/layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type VariantProps, cva } from "class-variance-authority";
-import { CircleCheckIcon, CircleDashedIcon } from "lucide-react";
+import { ArrowUpIcon, CircleCheckIcon, CircleDashedIcon } from "lucide-react";
 
 /**
  * Grid frames provide the shared wide browsing column for tile-based pages, so
@@ -46,6 +47,36 @@ export function GridToolbar({ className, ...props }: React.ComponentProps<"div">
 export function GridContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div className={cn("flex flex-col gap-6", className)} data-slot="grid-content" {...props} />
+  );
+}
+
+type GridBackToTopProps = Omit<React.ComponentProps<"a">, "href"> & { href?: string };
+
+/**
+ * Back-to-top is a normal anchor because grid pages only need a quiet way back
+ * to the page header, and keeping the behavior browser-native avoids scroll
+ * state or page-specific client logic.
+ */
+export function GridBackToTop({
+  children,
+  className,
+  href = "#top",
+  ...props
+}: GridBackToTopProps) {
+  return (
+    <a
+      className={cn(
+        buttonVariants({ size: "sm", variant: "ghost" }),
+        "text-muted-foreground/80 hover:text-foreground px-2 text-xs",
+        className,
+      )}
+      data-slot="grid-back-to-top"
+      href={href}
+      {...props}
+    >
+      <ArrowUpIcon aria-hidden="true" className="size-3.5" />
+      {children}
+    </a>
   );
 }
 

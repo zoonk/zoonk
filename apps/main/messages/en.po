@@ -1677,6 +1677,10 @@ msgstr "Not helpful"
 msgid "G5YSJR"
 msgstr "Send feedback"
 
+#: src/components/catalog/catalog-grid.tsx
+msgid "Gs9Kfp"
+msgstr "Back to top"
+
 #: src/components/catalog/continue-lesson-link.tsx
 msgid "mOFG3K"
 msgstr "Start"

@@ -1,21 +1,31 @@
 "use client";
 
-import { GridEmpty, GridGroupItem, GridItem } from "@zoonk/ui/components/grid";
+import {
+  GridBackToTop,
+  GridContent,
+  GridEmpty,
+  GridGroupItem,
+  GridItem,
+} from "@zoonk/ui/components/grid";
 import { Input } from "@zoonk/ui/components/input";
 import { cn } from "@zoonk/ui/lib/utils";
 import { normalizeString } from "@zoonk/utils/string";
 import { SearchIcon } from "lucide-react";
 import { type Route } from "next";
+import { useExtracted } from "next-intl";
 import Link from "next/link";
 import { useQueryState } from "nuqs";
-import { type ReactNode, useMemo } from "react";
+import { type MouseEvent, type ReactNode, useEffect, useMemo, useState } from "react";
 import { CatalogGridContext, useCatalogGridContext } from "./catalog-grid-context";
+import { CATALOG_TOP_TARGET_ID } from "./catalog-top-target";
 
 type CatalogGridSearchItem = {
   description?: string | null;
   id: string | number | bigint;
   title: string;
 };
+
+const BACK_TO_TOP_VISIBLE_SCROLL_Y = 360;
 
 /**
  * Catalog search should match the text learners scan inside each tile. Generated
@@ -38,6 +48,104 @@ function matchesCatalogSearchQuery({
   query: string;
 }): boolean {
   return normalizeString(getCatalogSearchText(item)).includes(query);
+}
+
+/**
+ * The floating top action should appear only after the reader has left the
+ * page header; showing it immediately would add chrome before it can help.
+ */
+function isBackToTopVisible({ scrollY }: { scrollY: number }): boolean {
+  return scrollY > BACK_TO_TOP_VISIBLE_SCROLL_Y;
+}
+
+/**
+ * Users who reduce motion should still get the same destination without the
+ * animated movement that can make scrolling feel uncomfortable.
+ */
+function getBackToTopScrollBehavior(): ScrollBehavior {
+  if (globalThis.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return "auto";
+  }
+
+  return "smooth";
+}
+
+/**
+ * The anchor href stays as a no-JS fallback, but hydrated catalog pages should
+ * scroll smoothly so the jump back to the sticky navigation does not feel harsh.
+ */
+function handleBackToTopClick(event: MouseEvent<HTMLAnchorElement>) {
+  event.preventDefault();
+
+  const catalogTopTarget = globalThis.document.querySelector(`#${CATALOG_TOP_TARGET_ID}`);
+  catalogTopTarget?.scrollIntoView({ behavior: getBackToTopScrollBehavior(), block: "start" });
+}
+
+/**
+ * Long generated course grids need a reachable escape hatch while scrolling,
+ * so this centralized action follows the viewport instead of waiting for the
+ * user to reach the end of the collection.
+ */
+function CatalogGridBackToTop() {
+  const t = useExtracted();
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    /**
+     * Scroll position lives outside React, so the listener keeps this utility
+     * visible only when it can help without forcing every grid item to know
+     * anything about viewport state.
+     */
+    function syncBackToTopVisibility() {
+      const nextIsVisible = isBackToTopVisible({ scrollY: globalThis.scrollY });
+
+      setIsVisible((currentIsVisible) =>
+        currentIsVisible === nextIsVisible ? currentIsVisible : nextIsVisible,
+      );
+    }
+
+    syncBackToTopVisibility();
+    globalThis.addEventListener("scroll", syncBackToTopVisibility, { passive: true });
+
+    return () => globalThis.removeEventListener("scroll", syncBackToTopVisibility);
+  }, []);
+
+  return (
+    <GridBackToTop
+      aria-label={t("Back to top")}
+      className={cn(
+        "bg-background/85 border-border/40 fixed right-4 bottom-[calc(env(safe-area-inset-bottom)+1rem)] z-30 border shadow-[0_8px_24px_rgb(0_0_0/0.08)] backdrop-blur-md transition-all duration-150 md:right-6",
+        isVisible
+          ? "pointer-events-auto translate-y-0 opacity-100"
+          : "pointer-events-none translate-y-2 opacity-0",
+      )}
+      href={`#${CATALOG_TOP_TARGET_ID}`}
+      onClick={handleBackToTopClick}
+      title={t("Back to top")}
+    >
+      <span className="hidden sm:inline">{t("Back to top")}</span>
+    </GridBackToTop>
+  );
+}
+
+/**
+ * Catalog grids share the same floating utility action so course, chapter, and
+ * lesson pages can offer quick scroll recovery without duplicating viewport
+ * listeners or page-specific positioning.
+ */
+export function CatalogGridContent({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <GridContent className={className}>
+      {children}
+      <CatalogGridBackToTop />
+    </GridContent>
+  );
 }
 
 /**

@@ -1,6 +1,6 @@
 "use client";
 
-import { CatalogGridItem } from "@/components/catalog/catalog-grid";
+import { CatalogGridContent, CatalogGridItem } from "@/components/catalog/catalog-grid";
 import { CatalogGridImage } from "@/components/catalog/catalog-grid-image";
 import { type CourseWithOrg } from "@/data/courses/list-courses";
 import {
@@ -80,7 +80,7 @@ export function CourseListClient({
   }
 
   return (
-    <>
+    <CatalogGridContent>
       <GridGroup>
         {courses.map((course) => (
           <CourseTile course={course} key={course.id} />
@@ -95,6 +95,6 @@ export function CourseListClient({
           />
         )}
       </div>
-    </>
+    </CatalogGridContent>
   );
 }
