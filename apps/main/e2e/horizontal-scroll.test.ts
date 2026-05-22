@@ -21,4 +21,19 @@ test.describe("Horizontal Scroll - Category Pills", () => {
     const scrollLeft = page.getByRole("button", { name: /scroll left/iu });
     await expect(scrollLeft).toBeVisible();
   });
+
+  test("category pill row cannot scroll vertically", async ({ page }) => {
+    await page.goto("/courses");
+
+    const categories = page.getByRole("navigation", { name: /course categories/iu });
+    await expect(categories).toBeVisible();
+
+    const verticalScrollRange = await categories.evaluate((nav) => {
+      const scrollTarget = nav.parentElement;
+
+      return scrollTarget ? scrollTarget.scrollHeight - scrollTarget.clientHeight : null;
+    });
+
+    expect(verticalScrollRange).toBe(0);
+  });
 });
