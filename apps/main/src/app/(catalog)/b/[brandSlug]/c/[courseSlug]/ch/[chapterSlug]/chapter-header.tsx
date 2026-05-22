@@ -20,10 +20,12 @@ export function ChapterHeader({
   brandSlug,
   chapter,
   courseSlug,
+  variant,
 }: {
   brandSlug: string;
   chapter: ChapterWithDetails;
   courseSlug: string;
+  variant?: "default" | "sidebar";
 }) {
   const chapterNumber = chapter.position + 1;
 
@@ -31,7 +33,7 @@ export function ChapterHeader({
     chapter.imageUrl ?? getDefaultChapterImage({ categories: chapter.course.categories });
 
   return (
-    <MediaCard>
+    <MediaCard variant={variant}>
       <CatalogHeaderImage alt={chapter.title} src={chapterImage} />
 
       <MediaCardContent>

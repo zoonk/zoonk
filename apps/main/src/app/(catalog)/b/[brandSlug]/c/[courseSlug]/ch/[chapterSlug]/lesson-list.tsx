@@ -146,7 +146,7 @@ export async function LessonList({
     <GridContent>
       <CatalogGridSearch items={searchItems} placeholder={t("Search lessons...")}>
         <CatalogGridEmpty>{t("No lessons found")}</CatalogGridEmpty>
-        <GridGroup>
+        <GridGroup variant="pane">
           {lessonRows.map(({ display, lesson }) => {
             const completion = completionMap.get(lesson.id);
             const isCompleted = completion?.isCompleted ?? false;

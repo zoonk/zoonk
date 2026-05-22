@@ -25,9 +25,11 @@ import Link from "next/link";
 export async function CourseHeader({
   brandSlug,
   course,
+  variant,
 }: {
   brandSlug: string;
   course: CourseWithDetails;
+  variant?: "default" | "sidebar";
 }) {
   const categoryLabels = await getCategories();
   const courseCategoryKeys = new Set(course.categories.map((item) => item.category));
@@ -35,7 +37,7 @@ export async function CourseHeader({
   const displayCategories = categoryLabels.filter((cat) => courseCategoryKeys.has(cat.key));
 
   return (
-    <MediaCard>
+    <MediaCard variant={variant}>
       {course.imageUrl ? (
         <CatalogHeaderImage alt={course.title} src={course.imageUrl} />
       ) : (

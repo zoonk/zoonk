@@ -1,4 +1,5 @@
 import { CatalogActions } from "@/components/catalog/catalog-actions";
+import { CatalogDetailLayout } from "@/components/catalog/catalog-detail-layout";
 import { CatalogGridSkeleton } from "@/components/catalog/catalog-skeletons";
 import {
   ContinueLessonLink,
@@ -62,26 +63,36 @@ export default async function ChapterPage({
     : undefined;
 
   return (
-    <main className="flex flex-1 flex-col gap-6 py-2">
-      <ChapterHeader brandSlug={brandSlug} chapter={chapter} courseSlug={courseSlug} />
-
-      <Grid>
-        <GridToolbar>
-          <Suspense fallback={<ContinueLessonLinkSkeleton />}>
-            <ContinueLessonLink
-              chapterId={chapter.id}
-              completedHref={completedHref}
-              fallbackHref={fallbackHref}
-            />
-          </Suspense>
-          <CatalogActions
-            contentId={`${courseSlug}/${chapterSlug}`}
-            defaultEmail={session?.user.email}
-            kind="chapter"
+    <CatalogDetailLayout
+      sidebar={
+        <>
+          <ChapterHeader
+            brandSlug={brandSlug}
+            chapter={chapter}
+            courseSlug={courseSlug}
+            variant="sidebar"
           />
-        </GridToolbar>
-
-        <Suspense fallback={<CatalogGridSkeleton count={lessons.length} search />}>
+          <GridToolbar>
+            <Suspense fallback={<ContinueLessonLinkSkeleton />}>
+              <ContinueLessonLink
+                chapterId={chapter.id}
+                completedHref={completedHref}
+                fallbackHref={fallbackHref}
+              />
+            </Suspense>
+            <CatalogActions
+              contentId={`${courseSlug}/${chapterSlug}`}
+              defaultEmail={session?.user.email}
+              kind="chapter"
+            />
+          </GridToolbar>
+        </>
+      }
+    >
+      <Grid variant="pane">
+        <Suspense
+          fallback={<CatalogGridSkeleton count={lessons.length} groupVariant="pane" search />}
+        >
           <LessonList
             brandSlug={brandSlug}
             chapterId={chapter.id}
@@ -91,6 +102,6 @@ export default async function ChapterPage({
           />
         </Suspense>
       </Grid>
-    </main>
+    </CatalogDetailLayout>
   );
 }

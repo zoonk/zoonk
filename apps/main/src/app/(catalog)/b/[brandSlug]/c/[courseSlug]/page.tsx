@@ -1,4 +1,5 @@
 import { CatalogActions } from "@/components/catalog/catalog-actions";
+import { CatalogDetailLayout } from "@/components/catalog/catalog-detail-layout";
 import { CatalogGridSkeleton } from "@/components/catalog/catalog-skeletons";
 import {
   ContinueLessonLink,
@@ -60,18 +61,27 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
   const defaultChapterImage = getDefaultChapterImage({ categories: course.categories });
 
   return (
-    <main className="flex flex-1 flex-col gap-6 py-2">
-      <CourseHeader brandSlug={brandSlug} course={course} />
-
-      <Grid>
-        <GridToolbar>
-          <Suspense fallback={<ContinueLessonLinkSkeleton />}>
-            <ContinueLessonLink courseId={course.id} fallbackHref={fallbackHref} />
-          </Suspense>
-          <CatalogActions contentId={courseSlug} defaultEmail={session?.user.email} kind="course" />
-        </GridToolbar>
-
-        <Suspense fallback={<CatalogGridSkeleton count={chapters.length} search />}>
+    <CatalogDetailLayout
+      sidebar={
+        <>
+          <CourseHeader brandSlug={brandSlug} course={course} variant="sidebar" />
+          <GridToolbar>
+            <Suspense fallback={<ContinueLessonLinkSkeleton />}>
+              <ContinueLessonLink courseId={course.id} fallbackHref={fallbackHref} />
+            </Suspense>
+            <CatalogActions
+              contentId={courseSlug}
+              defaultEmail={session?.user.email}
+              kind="course"
+            />
+          </GridToolbar>
+        </>
+      }
+    >
+      <Grid variant="pane">
+        <Suspense
+          fallback={<CatalogGridSkeleton count={chapters.length} groupVariant="pane" search />}
+        >
           <ChapterList
             brandSlug={brandSlug}
             chapters={chapters}
@@ -81,6 +91,6 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
           />
         </Suspense>
       </Grid>
-    </main>
+    </CatalogDetailLayout>
   );
 }
