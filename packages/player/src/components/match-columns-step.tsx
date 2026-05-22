@@ -291,10 +291,11 @@ export function MatchColumnsStep({
   );
 
   const allMatched = correctMatches.length === content.pairs.length;
+  const question = content.question ?? t("Match the pairs.");
 
   return (
     <InteractiveStepLayout>
-      {content.question && <QuestionText>{content.question}</QuestionText>}
+      <QuestionText>{question}</QuestionText>
 
       <MatchGrid
         correctMatches={correctMatches}

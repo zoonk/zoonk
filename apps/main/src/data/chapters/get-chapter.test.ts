@@ -61,6 +61,31 @@ describe(getChapter, () => {
     expect(result?.course.title).toBe(publishedCourse.title);
   });
 
+  it("returns chapter when route slugs are percent-encoded", async () => {
+    const course = await courseFixture({
+      isPublished: true,
+      language: "pt-BR",
+      organizationId: brandOrg.id,
+      slug: `japones-${crypto.randomUUID()}-日本語`,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      language: "pt-BR",
+      organizationId: brandOrg.id,
+      slug: `hiragana-${crypto.randomUUID()}-あいう`,
+    });
+
+    const result = await getChapter({
+      brandSlug: brandOrg.slug,
+      chapterSlug: encodeURIComponent(chapter.slug),
+      courseSlug: encodeURIComponent(course.slug),
+    });
+
+    expect(result?.id).toBe(chapter.id);
+  });
+
   it("returns null for non-existent chapter", async () => {
     const result = await getChapter({
       brandSlug: brandOrg.slug,

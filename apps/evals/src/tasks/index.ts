@@ -8,6 +8,7 @@ import { courseIdentityClassificationTask } from "./course-identity/task";
 import { courseSuggestionsTask } from "./course-suggestions/task";
 import { languageChapterLessonsTask } from "./language-chapter-lessons/task";
 import { languageCourseChaptersTask } from "./language-course-chapters/task";
+import { lessonAlphabetTask } from "./lesson-alphabet/task";
 import { lessonDistractorsTask } from "./lesson-distractors/task";
 import { lessonExplanationTask } from "./lesson-explanation/task";
 import { lessonGrammarContentTask } from "./lesson-grammar-content/task";
@@ -35,6 +36,7 @@ export const TASKS: readonly Task[] = [
   lessonPracticeTask,
   lessonRomanizationTask,
   lessonTutorialTask,
+  lessonAlphabetTask,
   lessonVocabularyTask,
   courseIdentitySearchTask,
   courseIdentityClassificationTask,

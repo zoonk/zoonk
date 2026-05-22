@@ -40,6 +40,29 @@ describe("player browser integration: arrangement steps", () => {
     await expect.element(page.getByRole("heading", { name: "Next step" })).toBeInTheDocument();
   });
 
+  it("uses a generic match prompt when generated content has no question", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        steps: [
+          buildSerializedStep({
+            content: {
+              pairs: [
+                { left: "Sun", right: "Day" },
+                { left: "Moon", right: "Night" },
+              ],
+            },
+            id: "match-without-question",
+            kind: "matchColumns",
+            matchColumnsRightItems: ["Day", "Night"],
+          }),
+        ],
+      }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await expect.element(page.getByRole("heading", { name: "Match the pairs." })).toBeVisible();
+  });
+
   it("keeps duplicate match-column labels selectable until each visible item is matched", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({

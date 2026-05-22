@@ -123,6 +123,26 @@ describe("step content contracts", () => {
     expect(content).toStrictEqual({});
   });
 
+  it("parses alphabet step content", () => {
+    const content = parseStepContent("alphabet", {
+      audioText: "あ",
+      audioUrl: "https://example.com/a.mp3",
+      forms: [],
+      pronunciation: "like a in father",
+      readingAid: "a",
+      symbol: "あ",
+    });
+
+    expect(content).toStrictEqual({
+      audioText: "あ",
+      audioUrl: "https://example.com/a.mp3",
+      forms: [],
+      pronunciation: "like a in father",
+      readingAid: "a",
+      symbol: "あ",
+    });
+  });
+
   it("parses translation step content", () => {
     const content = parseStepContent("translation", {});
     expect(content).toStrictEqual({});
@@ -148,6 +168,12 @@ describe("step content contracts", () => {
       pairs: [{ left: "A", right: "1" }],
       question: "Match the items.",
     });
+  });
+
+  it("parses matchColumns with optional question omitted", () => {
+    const content = parseStepContent("matchColumns", { pairs: [{ left: "A", right: "1" }] });
+
+    expect(content).toStrictEqual({ pairs: [{ left: "A", right: "1" }] });
   });
 
   it("parses sortOrder", () => {

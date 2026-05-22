@@ -1,6 +1,7 @@
 import "server-only";
 import { getPublishedLessonWhere, prisma } from "@zoonk/db";
 import { cache } from "react";
+import { decodeRouteParam } from "../_utils/route-params";
 
 const cachedGetLesson = cache(
   async (brandSlug: string, courseSlug: string, chapterSlug: string, lessonSlug: string) =>
@@ -21,9 +22,9 @@ export function getLesson(params: {
   lessonSlug: string;
 }) {
   return cachedGetLesson(
-    params.brandSlug,
-    params.courseSlug,
-    params.chapterSlug,
-    params.lessonSlug,
+    decodeRouteParam(params.brandSlug),
+    decodeRouteParam(params.courseSlug),
+    decodeRouteParam(params.chapterSlug),
+    decodeRouteParam(params.lessonSlug),
   );
 }

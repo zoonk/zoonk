@@ -6,6 +6,11 @@ msgstr ""
 "X-Generator: next-intl\n"
 "X-Crowdin-SourceKey: msgstr\n"
 
+#: src/components/alphabet-step.tsx
+#: src/use-lesson-kind-label.ts
+msgid "w0J/gv"
+msgstr "Alphabet"
+
 #: src/components/arrange-words-answer-area.tsx
 #: src/components/fill-blank-step.tsx
 #: src/components/sort-order-step.tsx
@@ -169,6 +174,10 @@ msgid "19nXyC"
 msgstr "Translate this sentence:"
 
 #: src/components/match-columns-step.tsx
+msgid "fV1MzK"
+msgstr "Match the pairs."
+
+#: src/components/match-columns-step.tsx
 msgid "ja1JDt"
 msgstr "All pairs matched. Press Check to continue."
 
@@ -296,10 +305,6 @@ msgstr "White"
 #: src/use-belt-color-label.ts
 msgid "5Tw3Ta"
 msgstr "Yellow"
-
-#: src/use-lesson-kind-label.ts
-msgid "w0J/gv"
-msgstr "Alphabet"
 
 #: src/use-lesson-kind-label.ts
 msgid "PJivSX"

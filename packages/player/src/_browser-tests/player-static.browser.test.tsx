@@ -73,6 +73,40 @@ function tapExpandedImageBackdrop(target: HTMLElement) {
   fireEvent.click(target, { clientX: x, clientY: y });
 }
 
+function buildLongStaticText() {
+  return [
+    ...Array.from(
+      { length: 32 },
+      (_, index) =>
+        `Scrollable paragraph ${index + 1} explains a detail that makes this static step taller than the player viewport.`,
+    ),
+    "Bottom sentence should stay reachable after scrolling.",
+  ].join(" ");
+}
+
+/**
+ * Long static copy should not rely on the page body to scroll because the
+ * player shell owns the viewport. This finds the nearest element that can
+ * actually scroll the semantic content the learner is trying to read.
+ */
+function getScrollableAncestor(element: HTMLElement | null): HTMLElement | null {
+  const parent = element?.parentElement;
+
+  if (!parent) {
+    return null;
+  }
+
+  const overflowY = globalThis.getComputedStyle(parent).overflowY;
+  const canScrollVertically = parent.scrollHeight > parent.clientHeight;
+  const allowsVerticalScroll = overflowY === "auto" || overflowY === "scroll";
+
+  if (canScrollVertically && allowsVerticalScroll) {
+    return parent;
+  }
+
+  return getScrollableAncestor(parent);
+}
+
 describe("player browser integration: static steps", () => {
   it("shows desktop arrows while preserving keyboard navigation", async () => {
     renderPlayer({
@@ -191,6 +225,47 @@ describe("player browser integration: static steps", () => {
     expect(bodyText).not.toContain(String.raw`\(`);
     expect(bodyText).not.toContain(String.raw`\)`);
     expect(bodyText).not.toContain("`");
+  });
+
+  it("allows long text-only static steps to scroll to the bottom", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        kind: "explanation",
+        steps: [
+          buildSerializedStep({
+            content: {
+              text: buildLongStaticText(),
+              title: "Scrollable static step",
+              variant: "text" as const,
+            },
+            id: "long-static-step",
+          }),
+        ],
+      }),
+      navigation: buildNavigation({ nextLessonHref: null }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await expect
+      .element(page.getByRole("heading", { name: "Scrollable static step" }))
+      .toBeInTheDocument();
+
+    const bottomSentence = screen.getByText(/Bottom sentence should stay reachable/u);
+    const scrollContainer = getScrollableAncestor(bottomSentence);
+
+    expect(scrollContainer).not.toBeNull();
+
+    if (!scrollContainer) {
+      throw new Error("Expected long static step to expose a scroll container");
+    }
+
+    scrollContainer.scrollTo({ top: scrollContainer.scrollHeight });
+
+    expect(scrollContainer.scrollTop).toBeGreaterThan(0);
+
+    expect(scrollContainer.scrollTop + scrollContainer.clientHeight).toBeGreaterThanOrEqual(
+      scrollContainer.scrollHeight - 1,
+    );
   });
 
   it("renders embedded step images inside the shared static shell", async () => {

@@ -89,6 +89,19 @@ function StaticStepContent({ step }: { step: SerializedStep }) {
   return <TextVariant text={descriptor.content.text} title={descriptor.content.title} />;
 }
 
+/**
+ * Text-only static steps sit inside the swipe navigation frame, which keeps the
+ * outer stage overflow locked. This inner frame gives long explanations their
+ * own vertical scroll area while preserving centered layout for short copy.
+ */
+function TextOnlyStaticScene({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex min-h-0 w-full flex-1 overflow-y-auto overscroll-contain">
+      <PlayerReadScene className="w-full">{children}</PlayerReadScene>
+    </div>
+  );
+}
+
 export function StaticStep({ step }: { step: SerializedStep }) {
   const descriptor = describePlayerStep(step);
 
@@ -106,7 +119,7 @@ export function StaticStep({ step }: { step: SerializedStep }) {
   const image = getPlayerStepImage(descriptor);
 
   if (!image) {
-    return <PlayerReadScene className="w-full">{content}</PlayerReadScene>;
+    return <TextOnlyStaticScene>{content}</TextOnlyStaticScene>;
   }
 
   return (

@@ -5,38 +5,47 @@ const SHARED_EXPECTATIONS = `
 
   ## Structure
 
-  Output is organized into LESSON UNITS (thematic groups) containing CONCEPTS (individual teachable items).
-  - Each concept should be a single teachable unit appropriate to the chapter's level and topic
-  - Lesson sizes should be 3-6 concepts and should vary naturally across lessons
-  - Total concept coverage should be exhaustive for the chapter's scope
+  Output is a flat list of playable LESSONS.
+  - Each lesson should be one teachable unit appropriate to the chapter's level and topic
+  - Lesson count should vary naturally with the chapter scope
+  - Total lesson coverage should be exhaustive for the chapter's scope
 
-  ## Evaluating concept quality
+  ## Evaluating lesson quality
 
-  Ask: "Is this ONE teachable thing, or is it secretly a bundle of separate things?"
-  - A concept is too broad only if it genuinely bundles multiple DISTINCT items that a student would need separate practice for
+  Ask: "Is this ONE playable lesson, or is it secretly a bundle of separate lessons?"
+  - A lesson is too broad only if it genuinely bundles multiple DISTINCT items that a student would need separate practice for
   - Use domain expertise: conventions that look like rule violations to a generalist may be standard practice in language teaching. Grammar notation, comparison pairs, and target-language labels are all normal in language curricula
-  - Comparisons and contrasts are natural in language learning — a synonym pair or a form distinction IS a single concept when the contrast itself is what the learner needs to master
-  - Watch for false granularity: the same form repeated across different subjects or contexts is NOT multiple concepts
+  - Comparisons and contrasts are natural in language learning — a synonym pair or a form distinction IS a single lesson when the contrast itself is what the learner needs to master
+  - Watch for false granularity: the same form repeated across different subjects or contexts is NOT multiple lessons
   - Watch for factual accuracy: grammar rules, conjugation forms, and usage patterns must be linguistically correct for the target language
-  - Every concept must be anchored in specific target-language items the learner will produce or recognize. Abstract category labels are acceptable as lesson titles but not as individual concepts
+  - Every lesson must be anchored in specific target-language items the learner will produce or recognize. Abstract category labels are acceptable only when the description names the concrete language items
 
   ## Evaluating scope
 
   The chapter description is the SOURCE OF TRUTH.
-  - Concepts must serve language acquisition — no culture, career, exam prep, or literature content
+  - Lessons must serve language acquisition — no culture, career, exam prep, or literature content
   - The curriculum should stay at the chapter's level — an advanced chapter should not include basic content that belongs in earlier chapters
   - In a language course, content naturally mixes the user's language and the target language — this is expected, not a language violation
 
-  ## Evaluating lesson quality
+  ## Evaluating alphabet lesson scope
+
+  Alphabet lessons produce symbol cards and recognition checks, so broad script lessons become unplayably long.
+  - For non-Roman writing-system chapters, broad script coverage should be split into several alphabet lessons
+  - Each alphabet lesson should name one natural writing-system chunk: a row/family, mark family, positional-form pattern, block-composition pattern, or small contrast set
+  - Do not accept a single alphabet lesson that covers a whole alphabet, syllabary, abjad, abugida, or writing system
+  - Do not require a fixed symbol count; judge whether the title and description define a playable closed chunk
+  - For chapters that are not about writing systems, avoid alphabet lessons unless script recognition is explicitly part of the chapter scope
+
+  ## Evaluating copy and progression
 
   - Lesson descriptions should be concise — no filler words like "introduces", "presents", "teaches"
   - Logical progression from foundational to advanced
   - No summary, review, or assessment lessons
-  - No duplicate concepts across lessons
+  - No duplicate lesson scope across lessons
 
   ## Coverage
 
-  Completeness is the key metric. Are all topics in the chapter description covered with sufficient granularity?
+  Completeness is the key metric. Are all topics in the chapter description covered with sufficient granularity and playable lesson scope?
 
   ## How to score
 
@@ -61,6 +70,42 @@ export const TEST_CASES = [
         "Regular present-tense conjugations, essential irregulars (ser, estar, tener, ir), and everyday action verbs.",
       chapterTitle: "Present Tense",
       targetLanguage: "es",
+      userLanguage: "en",
+    },
+  },
+  {
+    expectations: `
+      USER LANGUAGE: Brazilian Portuguese
+      TARGET LANGUAGE: Japanese
+
+      This is a writing-system chapter. A single broad alphabet lesson such as "Hiragana", "Hiragana básico", or "Tabela hiragana" is a major issue because it would produce too many player steps. The plan should split hiragana into multiple precise alphabet lessons whose titles/descriptions name the chunk being learned, such as natural rows, symbol families, marks, or small-kana combinations. The exact split can vary, but the output should make the full chapter playable without dumping the whole syllabary into one lesson.
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-japanese-hiragana-playable-chunks",
+    userInput: {
+      chapterDescription:
+        "Hiragana para iniciantes: vogais, linhas consonantais principais, ん, dakuten, handakuten e combinações yōon iniciais.",
+      chapterTitle: "Hiragana",
+      targetLanguage: "ja",
+      userLanguage: "pt",
+    },
+  },
+  {
+    expectations: `
+      USER LANGUAGE: English
+      TARGET LANGUAGE: Korean
+
+      This is a writing-system chapter. The plan should not create one broad alphabet lesson for all of Hangul. It should split script learning into several playable alphabet lessons, separating natural chunks such as basic vowels/consonants, syllable-block mechanics, final consonant recognition, and common contrast sets when they are in scope. A broad "Hangul basics" alphabet lesson that tries to cover the whole writing system is a major issue.
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-korean-hangul-playable-chunks",
+    userInput: {
+      chapterDescription:
+        "Beginner Hangul: basic vowels and consonants, how letters combine into syllable blocks, initial and final consonant positions, and common visual contrasts.",
+      chapterTitle: "Hangul Foundations",
+      targetLanguage: "ko",
       userLanguage: "en",
     },
   },

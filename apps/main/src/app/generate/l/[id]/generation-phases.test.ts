@@ -34,6 +34,15 @@ describe(getPhaseOrder, () => {
       "saving",
     ]);
   });
+
+  it("keeps alphabet generation split into content, audio, and saving", () => {
+    expect(getPhaseOrder("alphabet")).toStrictEqual([
+      "gettingStarted",
+      "writingContent",
+      "recordingAudio",
+      "saving",
+    ]);
+  });
 });
 
 describe(getPhaseStatus, () => {
@@ -62,6 +71,17 @@ describe(getPhaseStatus, () => {
         ],
         "generateVocabularyAudio",
         "vocabulary",
+      ),
+    ).toBe("active");
+  });
+
+  it("marks the alphabet content phase active when alphabet content is streaming", () => {
+    expect(
+      getPhaseStatus(
+        "writingContent",
+        ["getLesson", "setLessonAsRunning"],
+        "generateAlphabetContent",
+        "alphabet",
       ),
     ).toBe("active");
   });

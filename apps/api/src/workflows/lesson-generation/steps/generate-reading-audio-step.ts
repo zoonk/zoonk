@@ -50,7 +50,11 @@ export async function generateReadingAudioStep({
 
   const results = await Promise.all(
     sentencesNeedingAudio.map((entry) =>
-      generateAudioForText(entry.sentence, targetLanguage, organization.slug),
+      generateAudioForText({
+        language: targetLanguage,
+        orgSlug: organization.slug,
+        text: entry.sentence,
+      }),
     ),
   );
 

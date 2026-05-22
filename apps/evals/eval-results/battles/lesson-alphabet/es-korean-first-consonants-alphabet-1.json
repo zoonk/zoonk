@@ -1,0 +1,167 @@
+{
+  "expectations": "\nTARGET LANGUAGE: Korean\nUSER LANGUAGE: Spanish (Latin American)\n\nTOPIC: First Hangul consonants. The inventory should include exactly ㄱ, ㄴ, ㄷ, ㄹ. Intro can explain that these consonants appear inside syllable blocks, but it should stay short, use plain Spanish, and avoid adding extra consonants as inventory.\n\n\nEVALUATION CRITERIA:\n\n1. FOCUSED INVENTORY: The output must infer a small playable symbol inventory from the lesson title and description. Include the exact compact set when listed, and do not expand to a whole alphabet, syllabary, abjad, abugida, or broad beginner category.\n\n2. INTRO QUALITY: intro is optional. If present, it should be short, conversational, and directly useful before the cards. It must not repeat generic script overview content or sound academic.\n\n3. INLINE ROMANIZATION: Any non-Roman characters, words, or combinations mentioned in intro prose must have an adjacent reading cue. Native-first pairs like \"か (ka)\" are preferred, but romanization-first pairs like \"ka (か)\" are also acceptable. Penalize only missing or ambiguous reading cues.\n\n4. USER-LANGUAGE COPY: intro, pronunciation, and form labels must be in the user's language. Only use English when the user language is English.\n\n5. NO SYMBOL NOTES: symbols must not include a note field or note-like filler. Per-symbol cards should focus on symbol, readingAid, pronunciation, and forms.\n\n6. ACCURACY: Symbols, reading aids, audioText, pronunciation hints, and forms must be linguistically accurate and beginner-safe.\n\n    ",
+  "judgedAt": "2026-05-22T20:20:39.279Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Short conversational Spanish intro with proper romanization cues, accurate per-symbol entries, and uses block audioText to demonstrate the consonant in context. Exactly the four required consonants, no notes, clean and beginner-safe.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Concise Spanish intros with reading cues on all non-Roman tokens, accurate pronunciations, exactly the four consonants, and block-based audioText. Slightly less informative readingAid but overall clean and well-scoped.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Accurate pronunciation descriptions in Spanish with good explanation of positional variation. Intro is short and useful with proper romanization. AudioText uses the bare jamo which is less natural to pronounce, but otherwise solid.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Accurate and beginner-friendly with proper romanization cues and block audioText. However, intros are a bit long and the second intro veers academic with terms like 'no aspirados', slightly violating the 'short, conversational' expectation.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "Spanish intro is short and clear with romanization cues, and pronunciations are accurate. However, readingAid for ㄱ and ㄷ shows only 'g' and 'd' which is less complete than g/k and d/t.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Clear Spanish intros with romanization and accurate pronunciations. Slight scope drift mentioning 'las primeras cuatro consonantes del alfabeto coreano' (they aren't literally the first four in order), but inventory is correct.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Inventory and language are correct, intro is short and on-task. However, pronunciation hints are very terse and lowercase, lacking beginner-helpful detail or Spanish anchor examples.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Has a duplicate ㄱ entry (two cards for the same consonant) and the first one contains a corrupted symbol field 'ㄱ\\n\":'. Also uses 'forms' with labels which adds extra content. These accuracy/structure issues are significant despite otherwise good Spanish prose.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Perfectly satisfies all requirements. The intro is concise, includes all necessary inline romanizations, and avoids academic jargon. It cleverly uses the syllable blocks (가, 나, etc.) for the 'audioText' to align with the lesson description, while keeping the main 'symbol' field strictly focused on the required consonant inventory.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Very strong output with highly accurate, beginner-friendly pronunciation notes that explain positional sounds without using academic jargon. It perfectly follows the inline romanization rule. Using the standalone consonant for 'audioText' is acceptable, though slightly less practical for text-to-speech than using the full block.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "A solid output that meets all expectations. The intro includes all required inline romanizations and explains the concept simply. The pronunciation notes are helpful, though slightly less precise regarding air expulsion compared to higher-ranked models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "Has a great conversational intro and effectively uses the syllables for 'audioText'. However, it loses points for missing adjacent reading cues for the standalone consonants mentioned in the intro, and it oversimplifies the 'readingAid' for ㄱ and ㄷ to just 'g' and 'd'.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Structurally good and aligns with the lesson description by using syllables for audio. However, it misses inline reading cues for the consonants in the intro and incorrectly includes filler adjectives ('suave') inside the 'readingAid' field, which should be strictly phonetic ruby text.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Acceptable but lacks polish. The intro is very brief, and the pronunciation notes are uncapitalized and minimally descriptive. It follows the negative constraints but offers a lower quality product experience.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Violates the intro quality constraint by being overly academic and technical ('sonoras ni sordas', 'sonidos no aspirados'). It also misses inline romanization for several non-Roman characters in the second paragraph.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Fails the strict focused inventory constraint by hallucinating a fifth item and duplicating ㄱ with a malformed symbol string ('ㄱ\\n\":'). It also misses reading cues for the Korean characters mentioned in the first paragraph. Unusable due to inventory errors.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Best fit overall: it keeps the inventory to exactly ㄱ, ㄴ, ㄷ, ㄹ and gives short, useful Spanish guidance with adjacent readings for the Hangul examples. The cards are concise, accurate, and use simple block audio examples without adding note-like filler.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Strong output with the exact four consonants, clear Spanish intro, and useful block examples 가 (ga), 나 (na), 다 (da), 라 (ra). Minor weakness: the per-card pronunciation prose repeats Hangul syllables without adjacent reading cues, but the overall content is accurate and playable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Accurate exact inventory and strong beginner-safe pronunciation hints in Spanish. The intro is a bit more explanatory than necessary and the cards do not show block forms, but it still stays focused and avoids extra consonants.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Very focused and compact, with exactly the required consonants and a short useful intro. Pronunciation hints are accurate but quite minimal, and isolated consonant audioText is less helpful than using the simple syllable blocks from the lesson description.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Keeps the exact inventory and provides mostly accurate Spanish pronunciation guidance with proper inline cues in the intro. It is slightly more generic/cheerleading than ideal, and some sound explanations are a bit less precise than the strongest outputs.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "The symbol set is correct and the block examples are useful, but the intro lists ㄱ, ㄴ, ㄷ, ㄹ without adjacent reading cues. Reading aids for ㄱ and ㄷ are also overly narrow as just “g” and “d,” despite the pronunciation being closer to g/k and d/t.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The cards are mostly accurate and keep the right four symbols, but the intro is too long and academic for this lesson. It also introduces broader phonetic discussion and has missing reading cues for Hangul mentioned in prose, which hurts task fit.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Major inventory problem: it includes a duplicate ㄱ card and one malformed symbol value, so the playable set is not exactly the required four consonants. The rest of the content is mostly accurate, but the structural error makes it unreliable for the lesson.",
+          "score": 4
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-alphabet",
+  "testCaseId": "es-korean-first-consonants-alphabet-1"
+}

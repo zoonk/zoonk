@@ -2,6 +2,7 @@ import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { serializeWorkflowError } from "@/workflows/_shared/workflow-error";
 import { LESSON_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata } from "workflow";
+import { alphabetLessonWorkflow } from "./kinds/alphabet-workflow";
 import { explanationLessonWorkflow } from "./kinds/explanation-workflow";
 import { grammarLessonWorkflow } from "./kinds/grammar-workflow";
 import { listeningLessonWorkflow } from "./kinds/listening-workflow";
@@ -84,7 +85,12 @@ async function generateLessonForKind(context: GeneratedLessonContext): Promise<v
     return;
   }
 
-  if (context.kind === "alphabet" || context.kind === "vocabulary") {
+  if (context.kind === "alphabet") {
+    await alphabetLessonWorkflow(context);
+    return;
+  }
+
+  if (context.kind === "vocabulary") {
     await vocabularyLessonWorkflow(context);
     return;
   }

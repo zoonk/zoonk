@@ -3,6 +3,7 @@ import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { generateLessonExplanation } from "@zoonk/ai/tasks/lessons/core/explanation";
 import { generateLessonPractice } from "@zoonk/ai/tasks/lessons/core/practice";
 import { generateLessonQuiz } from "@zoonk/ai/tasks/lessons/core/quiz";
+import { generateLessonAlphabet } from "@zoonk/ai/tasks/lessons/language/alphabet";
 import { generateLessonDistractors } from "@zoonk/ai/tasks/lessons/language/distractors";
 import { generateLessonGrammarContent } from "@zoonk/ai/tasks/lessons/language/grammar-content";
 import { generateLessonGrammarUserContent } from "@zoonk/ai/tasks/lessons/language/grammar-user-content";
@@ -132,6 +133,30 @@ vi.mock("@zoonk/ai/tasks/lessons/tutorial", () => ({
 
 vi.mock("@zoonk/ai/tasks/lessons/language/vocabulary", () => ({
   generateLessonVocabulary: vi.fn().mockResolvedValue({ data: { words: languageMockState.words } }),
+}));
+
+vi.mock("@zoonk/ai/tasks/lessons/language/alphabet", () => ({
+  generateLessonAlphabet: vi.fn().mockResolvedValue({
+    data: {
+      intro: [{ text: "The vowels are あ (a) and い (i).", title: "Vowels" }],
+      symbols: [
+        {
+          audioText: "あ",
+          forms: [],
+          pronunciation: "like a in father",
+          readingAid: "a",
+          symbol: "あ",
+        },
+        {
+          audioText: "い",
+          forms: [],
+          pronunciation: "like ee in see",
+          readingAid: "i",
+          symbol: "い",
+        },
+      ],
+    },
+  }),
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/distractors", () => ({
@@ -798,6 +823,67 @@ describe(lessonGenerationWorkflow, () => {
         word: waterWord,
       },
     ]);
+  });
+
+  it("alphabet generation saves writing-system cards and a final matching drill without vocabulary rows", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { chapter } = await createLanguageWorkflowTree({ organizationId });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "alphabet",
+      organizationId,
+      title: `Alphabet Lesson ${uniqueId}`,
+    });
+
+    await lessonGenerationWorkflow(lesson.id);
+
+    expect(generateLessonAlphabet).toHaveBeenCalledOnce();
+    expect(generateLessonVocabulary).not.toHaveBeenCalled();
+
+    expect(completedStreamedSteps()).toStrictEqual(
+      expect.arrayContaining([
+        "generateAlphabetContent",
+        "generateAlphabetAudio",
+        "saveAlphabetLesson",
+        "setLessonAsCompleted",
+      ]),
+    );
+
+    const [steps, lessonWords] = await Promise.all([
+      prisma.step.findMany({ orderBy: { position: "asc" }, where: { lessonId: lesson.id } }),
+      prisma.chapterWord.findMany({ where: { sourceLessonId: lesson.id } }),
+    ]);
+
+    expect(lessonWords).toStrictEqual([]);
+
+    expect(steps.map((step) => [step.position, step.kind])).toStrictEqual([
+      [0, "static"],
+      [1, "alphabet"],
+      [2, "alphabet"],
+      [3, "matchColumns"],
+    ]);
+
+    expect(parseStepContent("static", steps[0]?.content)).toStrictEqual({
+      text: "The vowels are あ (a) and い (i).",
+      title: "Vowels",
+      variant: "text",
+    });
+
+    expect(parseStepContent("alphabet", steps[1]?.content)).toMatchObject({
+      audioUrl: "https://example.com/audio/%E3%81%82.mp3",
+      readingAid: "a",
+      symbol: "あ",
+    });
+
+    expect(parseStepContent("matchColumns", steps[3]?.content)).toStrictEqual({
+      pairs: [
+        { left: "あ", right: "a" },
+        { left: "い", right: "i" },
+      ],
+    });
   });
 
   it("translation generation creates translation steps from the previous vocabulary lesson", async () => {

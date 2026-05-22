@@ -42,6 +42,22 @@ describe(getCourse, () => {
     expect(result?.categories.map((item) => item.category)).toContain("science");
   });
 
+  it("returns course when route slugs are percent-encoded", async () => {
+    const course = await courseFixture({
+      isPublished: true,
+      language: "pt-BR",
+      organizationId: brandOrg.id,
+      slug: `japones-${crypto.randomUUID()}-日本語`,
+    });
+
+    const result = await getCourse({
+      brandSlug: brandOrg.slug,
+      courseSlug: encodeURIComponent(course.slug),
+    });
+
+    expect(result?.id).toBe(course.id);
+  });
+
   it("returns null for non-existent course", async () => {
     const result = await getCourse({ brandSlug: brandOrg.slug, courseSlug: "non-existent-course" });
 
