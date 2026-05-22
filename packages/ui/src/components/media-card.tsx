@@ -17,13 +17,14 @@ const mediaCardVariants = cva(
       variant: {
         default: WIDE_CONTENT_MAX_WIDTH_CLASS,
         sidebar:
-          "max-w-none px-0 lg:grid-cols-1 lg:items-start lg:**:data-[slot=media-card-description]:line-clamp-5 lg:**:data-[slot=media-card-icon]:h-auto lg:**:data-[slot=media-card-icon]:min-h-0 lg:**:data-[slot=media-card-icon]:w-full lg:**:data-[slot=media-card-icon]:min-w-0 lg:**:data-[slot=media-card-image]:h-auto lg:**:data-[slot=media-card-image]:min-h-0 lg:**:data-[slot=media-card-image]:w-full lg:**:data-[slot=media-card-image]:min-w-0 lg:**:data-[slot=media-card-title]:text-2xl",
+          "max-w-none px-0 lg:grid-cols-1 lg:items-start lg:**:data-[slot=media-card-description]:line-clamp-5 lg:**:data-[slot=media-card-icon]:h-auto lg:**:data-[slot=media-card-icon]:w-full lg:**:data-[slot=media-card-image]:h-auto lg:**:data-[slot=media-card-image]:w-full lg:**:data-[slot=media-card-title]:text-2xl",
       },
     },
   },
 );
 
 type MediaCardVariantProps = VariantProps<typeof mediaCardVariants>;
+const MEDIA_CARD_MEDIA_CLASS = "aspect-square size-20 shrink-0 sm:size-32";
 
 export function MediaCard({
   children,
@@ -59,10 +60,7 @@ export function MediaCardTrigger({ children, className }: React.ComponentProps<"
 export function MediaCardImage({ children, className }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(
-        "relative aspect-square h-full min-h-20 min-w-20 overflow-hidden rounded-xl sm:min-h-32 sm:min-w-32",
-        className,
-      )}
+      className={cn("relative overflow-hidden rounded-xl", MEDIA_CARD_MEDIA_CLASS, className)}
       data-slot="media-card-image"
     >
       {children}
@@ -74,7 +72,8 @@ export function MediaCardIcon({ children, className, ...props }: React.Component
   return (
     <div
       className={cn(
-        "bg-muted/70 flex aspect-square h-full min-h-20 min-w-20 items-center justify-center rounded-xl sm:min-h-32 sm:min-w-32",
+        "bg-muted/70 flex items-center justify-center rounded-xl",
+        MEDIA_CARD_MEDIA_CLASS,
         className,
       )}
       data-slot="media-card-icon"
@@ -283,8 +282,7 @@ export function MediaCardSkeleton({
   className,
   variant,
 }: { className?: string } & MediaCardVariantProps) {
-  const skeletonImageClassName =
-    variant === "sidebar" ? "lg:h-auto lg:min-h-0 lg:min-w-0 lg:w-full" : undefined;
+  const skeletonImageClassName = variant === "sidebar" ? "lg:h-auto lg:w-full" : undefined;
 
   return (
     <header
@@ -292,12 +290,7 @@ export function MediaCardSkeleton({
       data-variant={variant}
       data-slot="media-card"
     >
-      <Skeleton
-        className={cn(
-          "aspect-square h-full min-h-20 min-w-20 rounded-xl sm:min-h-32 sm:min-w-32",
-          skeletonImageClassName,
-        )}
-      />
+      <Skeleton className={cn("rounded-xl", MEDIA_CARD_MEDIA_CLASS, skeletonImageClassName)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="grid grid-cols-[1fr_auto] items-center gap-1">
           <Skeleton className="h-5 w-3/4 sm:h-6" />
