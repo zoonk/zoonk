@@ -11,17 +11,23 @@ import { CircleCheckIcon, CircleDashedIcon } from "lucide-react";
  * callers can change the catalog width in one component instead of repeating
  * page-level padding and max-width classes.
  */
-export function Grid({ className, ...props }: React.ComponentProps<"section">) {
+const gridVariants = cva("flex w-full flex-col gap-5", {
+  defaultVariants: { variant: "default" },
+  variants: {
+    variant: {
+      default: cn("mx-auto px-4 pb-8 md:pb-10", WIDE_CONTENT_MAX_WIDTH_CLASS),
+      pane: "pb-0 md:pb-0",
+    },
+  },
+});
+
+export type GridVariant = NonNullable<VariantProps<typeof gridVariants>["variant"]>;
+
+type GridProps = React.ComponentProps<"section"> & VariantProps<typeof gridVariants>;
+
+export function Grid({ className, variant, ...props }: GridProps) {
   return (
-    <section
-      className={cn(
-        "mx-auto flex w-full flex-col gap-5 px-4 pb-8 md:pb-10",
-        WIDE_CONTENT_MAX_WIDTH_CLASS,
-        className,
-      )}
-      data-slot="grid"
-      {...props}
-    />
+    <section className={cn(gridVariants({ variant }), className)} data-slot="grid" {...props} />
   );
 }
 
@@ -46,11 +52,27 @@ export function GridContent({ className, ...props }: React.ComponentProps<"div">
 /**
  * Grid groups define the shared responsive browsing rhythm for tile-based
  * collections without coupling the layout to any app-specific data or routing.
+ * The pane variant keeps card widths stable when a collection shares the
+ * viewport with a persistent info rail.
  */
-export function GridGroup({ className, ...props }: React.ComponentProps<"div">) {
+const gridGroupVariants = cva("grid grid-cols-1 gap-4", {
+  defaultVariants: { variant: "default" },
+  variants: {
+    variant: {
+      default: "sm:grid-cols-2 lg:grid-cols-3",
+      pane: "sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4",
+    },
+  },
+});
+
+export type GridGroupVariant = NonNullable<VariantProps<typeof gridGroupVariants>["variant"]>;
+
+type GridGroupProps = React.ComponentProps<"div"> & VariantProps<typeof gridGroupVariants>;
+
+export function GridGroup({ className, variant, ...props }: GridGroupProps) {
   return (
     <div
-      className={cn("grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3", className)}
+      className={cn(gridGroupVariants({ variant }), className)}
       data-slot="grid-group"
       role="list"
       {...props}
@@ -298,9 +320,15 @@ const DEFAULT_GRID_SKELETON_COUNT = 6;
  * The shared skeleton mirrors the same circular media, text block, and footer
  * rhythm as real grid items so loading states do not invent a second layout.
  */
-export function GridSkeleton({ count = DEFAULT_GRID_SKELETON_COUNT }: { count?: number }) {
+export function GridSkeleton({
+  count = DEFAULT_GRID_SKELETON_COUNT,
+  variant,
+}: {
+  count?: number;
+  variant?: GridGroupVariant;
+}) {
   return (
-    <GridGroup>
+    <GridGroup variant={variant}>
       {Array.from({ length: count }).map((_, index) => (
         // oxlint-disable-next-line eslint/no-array-index-key -- Static skeleton placeholders.
         <GridGroupItem key={index}>

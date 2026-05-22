@@ -184,7 +184,7 @@ export async function ChapterList({
     <GridContent>
       <CatalogGridSearch items={chapters} placeholder={t("Search chapters...")}>
         <CatalogGridEmpty>{t("No chapters found")}</CatalogGridEmpty>
-        <GridGroup>
+        <GridGroup variant="pane">
           {chapters.map((chapter) => {
             const completion = completionMap.get(chapter.id);
             const completedLessons = completion?.completedLessons ?? 0;

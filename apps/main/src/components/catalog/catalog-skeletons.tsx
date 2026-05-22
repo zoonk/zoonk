@@ -1,4 +1,5 @@
-import { Grid, GridSkeleton, GridToolbar } from "@zoonk/ui/components/grid";
+import { CatalogDetailLayout } from "@/components/catalog/catalog-detail-layout";
+import { Grid, type GridGroupVariant, GridSkeleton, GridToolbar } from "@zoonk/ui/components/grid";
 import { MediaCardSkeleton } from "@zoonk/ui/components/media-card";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 
@@ -8,9 +9,11 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
  */
 export function CatalogGridSkeleton({
   count,
+  groupVariant,
   search = false,
 }: {
   count: number;
+  groupVariant?: GridGroupVariant;
   search?: boolean;
 }) {
   return (
@@ -20,7 +23,7 @@ export function CatalogGridSkeleton({
           <Skeleton className="h-10 w-full rounded-md" />
         </div>
       )}
-      <GridSkeleton count={count} />
+      <GridSkeleton count={count} variant={groupVariant} />
     </div>
   );
 }
@@ -35,15 +38,20 @@ export function CatalogPageSkeleton({
   showSearch?: boolean;
 }) {
   return (
-    <>
-      <MediaCardSkeleton />
-      <Grid>
-        <GridToolbar>
-          <Skeleton className="h-10 flex-1 rounded-full" />
-          <Skeleton className="size-10 rounded-full" />
-        </GridToolbar>
-        <CatalogGridSkeleton count={listCount} search={showSearch} />
+    <CatalogDetailLayout
+      sidebar={
+        <>
+          <MediaCardSkeleton variant="sidebar" />
+          <GridToolbar>
+            <Skeleton className="h-10 flex-1 rounded-full" />
+            <Skeleton className="size-10 rounded-full" />
+          </GridToolbar>
+        </>
+      }
+    >
+      <Grid variant="pane">
+        <CatalogGridSkeleton count={listCount} groupVariant="pane" search={showSearch} />
       </Grid>
-    </>
+    </CatalogDetailLayout>
   );
 }

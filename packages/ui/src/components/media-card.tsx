@@ -6,17 +6,35 @@ import { WIDE_CONTENT_MAX_WIDTH_CLASS } from "@zoonk/ui/components/layout";
 import { Popover, PopoverContent, PopoverTrigger } from "@zoonk/ui/components/popover";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
+import { type VariantProps, cva } from "class-variance-authority";
 import { ChevronRightIcon, SparklesIcon } from "lucide-react";
 
-export function MediaCard({ children, className }: React.ComponentProps<"header">) {
+const mediaCardVariants = cva(
+  "mx-auto grid w-full grid-cols-[auto_minmax(0,1fr)] items-stretch gap-3 px-4 sm:gap-4",
+  {
+    defaultVariants: { variant: "default" },
+    variants: {
+      variant: {
+        default: WIDE_CONTENT_MAX_WIDTH_CLASS,
+        sidebar:
+          "max-w-none px-0 lg:grid-cols-1 lg:items-start lg:**:data-[slot=media-card-description]:line-clamp-5 lg:**:data-[slot=media-card-icon]:h-auto lg:**:data-[slot=media-card-icon]:min-h-0 lg:**:data-[slot=media-card-icon]:w-full lg:**:data-[slot=media-card-icon]:min-w-0 lg:**:data-[slot=media-card-image]:h-auto lg:**:data-[slot=media-card-image]:min-h-0 lg:**:data-[slot=media-card-image]:w-full lg:**:data-[slot=media-card-image]:min-w-0 lg:**:data-[slot=media-card-title]:text-2xl",
+      },
+    },
+  },
+);
+
+type MediaCardVariantProps = VariantProps<typeof mediaCardVariants>;
+
+export function MediaCard({
+  children,
+  className,
+  variant,
+}: React.ComponentProps<"header"> & MediaCardVariantProps) {
   return (
     <Popover>
       <header
-        className={cn(
-          "mx-auto grid w-full grid-cols-[auto_minmax(0,1fr)] items-stretch gap-3 px-4 sm:gap-4",
-          WIDE_CONTENT_MAX_WIDTH_CLASS,
-          className,
-        )}
+        className={cn(mediaCardVariants({ variant }), className)}
+        data-variant={variant}
         data-slot="media-card"
       >
         {children}
@@ -261,17 +279,25 @@ export function MediaCardPopoverAILabel({ children, className }: React.Component
   );
 }
 
-export function MediaCardSkeleton({ className }: { className?: string }) {
+export function MediaCardSkeleton({
+  className,
+  variant,
+}: { className?: string } & MediaCardVariantProps) {
+  const skeletonImageClassName =
+    variant === "sidebar" ? "lg:h-auto lg:min-h-0 lg:min-w-0 lg:w-full" : undefined;
+
   return (
     <header
-      className={cn(
-        "mx-auto grid w-full grid-cols-[auto_minmax(0,1fr)] items-stretch gap-3 px-4 sm:gap-4",
-        WIDE_CONTENT_MAX_WIDTH_CLASS,
-        className,
-      )}
+      className={cn(mediaCardVariants({ variant }), className)}
+      data-variant={variant}
       data-slot="media-card"
     >
-      <Skeleton className="aspect-square h-full min-h-20 min-w-20 rounded-xl sm:min-h-32 sm:min-w-32" />
+      <Skeleton
+        className={cn(
+          "aspect-square h-full min-h-20 min-w-20 rounded-xl sm:min-h-32 sm:min-w-32",
+          skeletonImageClassName,
+        )}
+      />
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="grid grid-cols-[1fr_auto] items-center gap-1">
           <Skeleton className="h-5 w-3/4 sm:h-6" />
