@@ -1677,6 +1677,10 @@ msgstr "Não foi útil"
 msgid "G5YSJR"
 msgstr "Enviar opinião"
 
+#: src/components/catalog/catalog-grid.tsx
+msgid "Gs9Kfp"
+msgstr "Voltar ao topo"
+
 #: src/components/catalog/continue-lesson-link.tsx
 msgid "mOFG3K"
 msgstr "Começar"

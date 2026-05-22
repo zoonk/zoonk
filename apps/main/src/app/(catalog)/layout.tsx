@@ -1,3 +1,4 @@
+import { CATALOG_TOP_TARGET_ID } from "@/components/catalog/catalog-top-target";
 import { getSession } from "@zoonk/core/users/session/get";
 import { AvatarSkeleton } from "@zoonk/ui/components/avatar";
 import { Navbar } from "@zoonk/ui/components/navbar";
@@ -22,6 +23,8 @@ export default function CatalogLayout({ children }: LayoutProps<"/">) {
           <UserAvatarMenu />
         </Suspense>
       </Navbar>
+
+      <div aria-hidden="true" className="scroll-mt-20" id={CATALOG_TOP_TARGET_ID} />
 
       {children}
     </div>

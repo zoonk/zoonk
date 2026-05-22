@@ -1,4 +1,5 @@
 import {
+  CatalogGridContent,
   CatalogGridEmpty,
   CatalogGridItem,
   CatalogGridSearch,
@@ -7,7 +8,6 @@ import { CatalogGridImage } from "@/components/catalog/catalog-grid-image";
 import { type CourseChapter } from "@/data/chapters/list-course-chapters";
 import { getChapterProgress } from "@zoonk/core/progress/chapters";
 import {
-  GridContent,
   GridGroup,
   GridItemContent,
   GridItemDescription,
@@ -181,7 +181,7 @@ export async function ChapterList({
   const completionMap = new Map(completionData.map((row) => [row.chapterId, row]));
 
   return (
-    <GridContent>
+    <CatalogGridContent>
       <CatalogGridSearch items={chapters} placeholder={t("Search chapters...")}>
         <CatalogGridEmpty>{t("No chapters found")}</CatalogGridEmpty>
         <GridGroup variant="pane">
@@ -210,6 +210,6 @@ export async function ChapterList({
           })}
         </GridGroup>
       </CatalogGridSearch>
-    </GridContent>
+    </CatalogGridContent>
   );
 }
