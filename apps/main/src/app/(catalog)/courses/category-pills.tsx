@@ -32,11 +32,7 @@ export function CategoryPills({
 
   return (
     <HorizontalScroll>
-      <HorizontalScrollContent
-        aria-label={t("Course categories")}
-        className="pb-0"
-        role="navigation"
-      >
+      <HorizontalScrollContent aria-label={t("Course categories")} role="navigation">
         <Link
           className={buttonVariants({
             size: "sm",
