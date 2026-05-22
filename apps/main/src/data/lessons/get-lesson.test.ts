@@ -80,6 +80,25 @@ describe(getLesson, () => {
     expect(result?.chapter.course.title).toBe(publishedCourse.title);
   });
 
+  it("returns lesson when route slugs are percent-encoded", async () => {
+    const lesson = await lessonFixture({
+      chapterId: publishedChapter.id,
+      isPublished: true,
+      language: "pt-BR",
+      organizationId: brandOrg.id,
+      slug: "vogais-あいうえお",
+    });
+
+    const result = await getLesson({
+      brandSlug: brandOrg.slug,
+      chapterSlug: publishedChapter.slug,
+      courseSlug: publishedCourse.slug,
+      lessonSlug: encodeURIComponent(lesson.slug),
+    });
+
+    expect(result?.id).toBe(lesson.id);
+  });
+
   it("returns null for non-existent lesson", async () => {
     const result = await getLesson({
       brandSlug: brandOrg.slug,

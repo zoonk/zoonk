@@ -27,7 +27,11 @@ const ZERO_WEIGHTS: Record<PhaseName, number> = {
 
 /** Returns relative progress weights for the selected lesson kind's generated phases. */
 export function getPhaseWeights(kind: GeneratedLessonKind): Record<PhaseName, number> {
-  if (kind === "alphabet" || kind === "vocabulary") {
+  if (kind === "alphabet") {
+    return { ...ZERO_WEIGHTS, gettingStarted: 1, recordingAudio: 6, saving: 1, writingContent: 15 };
+  }
+
+  if (kind === "vocabulary") {
     return {
       ...ZERO_WEIGHTS,
       addingPronunciation: 65,

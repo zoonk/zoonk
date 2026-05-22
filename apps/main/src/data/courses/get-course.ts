@@ -1,6 +1,7 @@
 import "server-only";
 import { getPublishedCourseWhere, prisma } from "@zoonk/db";
 import { cache } from "react";
+import { decodeRouteParam } from "../_utils/route-params";
 
 const cachedGetCourse = cache(async (brandSlug: string, courseSlug: string) =>
   prisma.course.findFirst({
@@ -14,7 +15,7 @@ const cachedGetCourse = cache(async (brandSlug: string, courseSlug: string) =>
 );
 
 export function getCourse(params: { brandSlug: string; courseSlug: string }) {
-  return cachedGetCourse(params.brandSlug, params.courseSlug);
+  return cachedGetCourse(decodeRouteParam(params.brandSlug), decodeRouteParam(params.courseSlug));
 }
 
 export type CourseWithDetails = NonNullable<Awaited<ReturnType<typeof getCourse>>>;

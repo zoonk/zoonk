@@ -1,0 +1,167 @@
+{
+  "expectations": "\nTARGET LANGUAGE: Arabic\nUSER LANGUAGE: Brazilian Portuguese\n\nTOPIC: Arabic letter Ba joining forms. The inventory should include exactly ب, with real isolated, initial, medial, and final forms using Portuguese labels. Intro should explain only what helps learners recognize this one letter joining right-to-left, without turning it into a broad Arabic alphabet overview.\n\n\nEVALUATION CRITERIA:\n\n1. FOCUSED INVENTORY: The output must infer a small playable symbol inventory from the lesson title and description. Include the exact compact set when listed, and do not expand to a whole alphabet, syllabary, abjad, abugida, or broad beginner category.\n\n2. INTRO QUALITY: intro is optional. If present, it should be short, conversational, and directly useful before the cards. It must not repeat generic script overview content or sound academic.\n\n3. INLINE ROMANIZATION: Any non-Roman characters, words, or combinations mentioned in intro prose must have an adjacent reading cue. Native-first pairs like \"か (ka)\" are preferred, but romanization-first pairs like \"ka (か)\" are also acceptable. Penalize only missing or ambiguous reading cues.\n\n4. USER-LANGUAGE COPY: intro, pronunciation, and form labels must be in the user's language. Only use English when the user language is English.\n\n5. NO SYMBOL NOTES: symbols must not include a note field or note-like filler. Per-symbol cards should focus on symbol, readingAid, pronunciation, and forms.\n\n6. ACCURACY: Symbols, reading aids, audioText, pronunciation hints, and forms must be linguistically accurate and beginner-safe.\n\n    ",
+  "judgedAt": "2026-05-22T20:20:19.052Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "All four forms present with PT labels, intro is short, conversational, and directly useful with inline romanization on Arabic tokens. Focuses tightly on recognizing ب without alphabet drift.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Complete four forms with PT labels, concise intro focused on the single letter with inline romanization (bā'). Slightly generic second intro but stays on task.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "All four forms with PT labels, helpful concrete example (باب) with romanization. Intro is conversational and on-target for recognition.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "All four forms present with clear PT labels and good romanization. First intro text appears truncated mid-sentence ('a letra se '), which is a noticeable quality issue.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Four forms with PT labels and concise intro, but drifts slightly toward general Arabic alphabet overview in the first card. Romanization present.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "Correct compact inventory and PT labels, romanization present, but intro is brief and somewhat academic ('representa o som /b/').",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Has the four forms with PT labels and romanization, but intro is very terse and uses 'bā'' in pronunciation/readingAid which is less beginner-friendly than 'b'. Acceptable but minimal.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Missing the isolated form in the forms array—only three forms listed, violating the required compact inventory of four. Otherwise good intro and accuracy.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Exceptional output. The intro is perfectly focused on the specific letter and its connecting lines without giving a broad alphabet overview. Inline romanization is applied consistently even for the specific forms, and the symbol inventory is perfectly accurate.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Exceptional output. Meets all criteria perfectly, with a helpful and focused intro that explains the letter's dot and connections. All required forms are present and accurately labeled.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "Strong output. Meets all expectations and includes all required forms. The intro is accurate and avoids broad overviews, though it is quite basic compared to the top models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Strong output. Accurate and strictly follows the constraints. The intro is a bit dry, and it uses the letter name for the reading aid rather than the sound, which is acceptable but slightly less intuitive.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Acceptable, but the first intro card provides a broad overview of the Arabic alphabet and cursive script. This violates the negative constraint to keep the intro strictly focused on recognizing this single letter.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Poor. Fails the inline romanization requirement by missing reading cues for the Arabic letter when it is mentioned multiple times in the intro prose.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Poor. Missing the isolated form in the forms list, which was explicitly required. It also includes a broad alphabet overview in the intro, violating a negative constraint.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Unusable. The first intro card contains an incomplete, cut-off sentence, making the output broken.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Best fit: exact one-symbol inventory, all four joining forms are correct, and labels/copy are in Brazilian Portuguese. The intro is short, practical, focused on recognizing ب, and includes reading cues for the Arabic forms it mentions.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Strong output with exactly ب and the four required forms, with clear Portuguese labels and no extra inventory. The intro is concise and useful, with adjacent reading cues; only minor possible issue is audioText using bare ب rather than a pronounced cue.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "Accurate compact inventory with the required isolated, initial, medial, and final forms, and Portuguese copy throughout. The intro is a bit more formal and the title includes ب without a cue, but the main prose and cards are beginner-safe.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Meets the core requirements with exactly one symbol and all four correct forms, with concise Portuguese labels. It is a little sparse, and readingAid “bā’” is more the letter name than the simple sound cue, but it remains accurate.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Correct one-letter inventory and all four forms, with helpful recognition advice about the dot. The intro leans somewhat generic with a cursive-script comparison, but it stays relevant and includes a cue for ب.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The symbol inventory and forms are correct, and the pronunciation guidance is useful. However, the first intro card is visibly incomplete/truncated, which hurts product quality, and the intro is a bit generic before focusing on ب.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "The required forms and labels are correct, but the intro mentions ب without adjacent reading cues. The example باب is also potentially misleading because the last ب after ا is not a connected final form in the way the lesson is teaching.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "It includes only ب, but it omits the required isolated form from the forms list, which is a major failure for this lesson. The readingAid “ba” may also mislead learners toward a syllable rather than the consonant/letter, though the intro is otherwise focused and cued.",
+          "score": 5
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-alphabet",
+  "testCaseId": "pt-arabic-ba-joining-forms-alphabet-1"
+}

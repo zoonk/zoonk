@@ -30,7 +30,7 @@ export const fillBlankContentSchema = z
 const matchColumnsPairSchema = z.object({ left: z.string(), right: z.string() }).strict();
 
 export const matchColumnsContentSchema = z
-  .object({ pairs: z.array(matchColumnsPairSchema).min(1), question: z.string() })
+  .object({ pairs: z.array(matchColumnsPairSchema).min(1), question: z.string().optional() })
   .strict();
 
 export const sortOrderContentSchema = z

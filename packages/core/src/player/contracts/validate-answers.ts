@@ -44,9 +44,9 @@ type ServerValidationBehavior = AnswerableStepKind | "none";
 
 /**
  * Step kinds that share their database name with a validator can return that
- * name directly. This keeps non-answerable kinds such as static, vocabulary,
- * and visual out of completion coverage without duplicating every identity case
- * in a switch.
+ * name directly. This keeps non-answerable kinds such as alphabet, static,
+ * vocabulary, and visual out of completion coverage without duplicating every
+ * identity case in a switch.
  */
 function isAnswerableStepKind(kind: StepKind): kind is AnswerableStepKind {
   return ANSWERABLE_STEP_KINDS.some((answerableKind) => answerableKind === kind);

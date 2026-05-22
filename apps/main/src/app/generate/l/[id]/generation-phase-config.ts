@@ -1,6 +1,7 @@
 import { type AssertAllCovered } from "@/lib/generation-phases";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { type LessonKind } from "@zoonk/db";
+import { ALPHABET_PHASE_ORDER, ALPHABET_PHASE_STEPS } from "./phase-kind-steps/alphabet";
 import { EXPLANATION_PHASE_ORDER, EXPLANATION_PHASE_STEPS } from "./phase-kind-steps/explanation";
 import { GRAMMAR_PHASE_ORDER, GRAMMAR_PHASE_STEPS } from "./phase-kind-steps/grammar";
 import { LISTENING_PHASE_ORDER, LISTENING_PHASE_STEPS } from "./phase-kind-steps/listening";
@@ -49,7 +50,7 @@ export function isGeneratedLessonKind(kind: LessonKind): kind is GeneratedLesson
 }
 
 const PHASE_ORDER_MAP: Record<GeneratedLessonKind, PhaseName[]> = {
-  alphabet: VOCABULARY_PHASE_ORDER,
+  alphabet: ALPHABET_PHASE_ORDER,
   explanation: EXPLANATION_PHASE_ORDER,
   grammar: GRAMMAR_PHASE_ORDER,
   listening: LISTENING_PHASE_ORDER,
@@ -103,7 +104,7 @@ function toFullPhaseSteps(
 }
 
 const PHASE_STEPS_MAP: Record<GeneratedLessonKind, Record<PhaseName, readonly LessonStepName[]>> = {
-  alphabet: toFullPhaseSteps(VOCABULARY_PHASE_STEPS),
+  alphabet: toFullPhaseSteps(ALPHABET_PHASE_STEPS),
   explanation: toFullPhaseSteps(EXPLANATION_PHASE_STEPS),
   grammar: toFullPhaseSteps(GRAMMAR_PHASE_STEPS),
   listening: toFullPhaseSteps(LISTENING_PHASE_STEPS),
@@ -123,6 +124,7 @@ export function getPhaseSteps(
 }
 
 type AssignedLessonStep =
+  | (typeof ALPHABET_PHASE_STEPS)[keyof typeof ALPHABET_PHASE_STEPS][number]
   | (typeof EXPLANATION_PHASE_STEPS)[keyof typeof EXPLANATION_PHASE_STEPS][number]
   | (typeof GRAMMAR_PHASE_STEPS)[keyof typeof GRAMMAR_PHASE_STEPS][number]
   | (typeof LISTENING_PHASE_STEPS)[keyof typeof LISTENING_PHASE_STEPS][number]

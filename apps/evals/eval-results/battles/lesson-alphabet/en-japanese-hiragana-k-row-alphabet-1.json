@@ -1,0 +1,167 @@
+{
+  "expectations": "\nTARGET LANGUAGE: Japanese\nUSER LANGUAGE: English\n\nTOPIC: Hiragana K row. The inventory should include exactly か, き, く, け, こ. Intro should not explain what hiragana is. A useful intro can say the row is k plus the five vowels using adjacent reading cues, e.g. か (ka) or ka (か).\n\n\nEVALUATION CRITERIA:\n\n1. FOCUSED INVENTORY: The output must infer a small playable symbol inventory from the lesson title and description. Include the exact compact set when listed, and do not expand to a whole alphabet, syllabary, abjad, abugida, or broad beginner category.\n\n2. INTRO QUALITY: intro is optional. If present, it should be short, conversational, and directly useful before the cards. It must not repeat generic script overview content or sound academic.\n\n3. INLINE ROMANIZATION: Any non-Roman characters, words, or combinations mentioned in intro prose must have an adjacent reading cue. Native-first pairs like \"か (ka)\" are preferred, but romanization-first pairs like \"ka (か)\" are also acceptable. Penalize only missing or ambiguous reading cues.\n\n4. USER-LANGUAGE COPY: intro, pronunciation, and form labels must be in the user's language. Only use English when the user language is English.\n\n5. NO SYMBOL NOTES: symbols must not include a note field or note-like filler. Per-symbol cards should focus on symbol, readingAid, pronunciation, and forms.\n\n6. ACCURACY: Symbols, reading aids, audioText, pronunciation hints, and forms must be linguistically accurate and beginner-safe.\n\n    ",
+  "judgedAt": "2026-05-22T20:20:47.094Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Excellent compact intro that uses adjacent reading cues for all kana and explains the K+vowel pattern conversationally. Pronunciation hints are accurate and beginner-friendly with short/clean emphasis. Meets all criteria cleanly.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Intro is short, conversational, with proper adjacent reading cues. Pronunciation hints are concise and accurate. Slightly less informative than A but very on-target.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Intro is concise with proper adjacent reading cues for all kana. Pronunciation hints are accurate and beginner-safe. Solid all-around output.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Intro is clean and conversational, explains the pattern well. However, intro lists vowels but doesn't show the kana with reading cues (no non-Roman text needing cues there, so acceptable). 'ko in koala' is a slightly awkward cue but workable.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "No intro (optional, acceptable). Symbol pronunciations are concise and accurate. Safe and minimal but misses the chance for a useful intro.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Intro is appropriate with adjacent reading cues. However, comparing き to 'key' without much shortening guidance and け to 'Kevin' is decent. Slightly more verbose but accurate.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Intro is somewhat academic with phonetic terminology ('unaspirated') and lacks adjacent reading cues for any kana (intro shows no kana). Acceptable but drifts toward academic tone.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "Intro is decent with proper adjacent reading cues. Pronunciation hints are accurate though brief. Solid but unremarkable.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Exceptional. The intro flawlessly introduces the kana with inline romanization as suggested. Pronunciation hints use clear, beginner-safe phonetic syllables that are highly accurate.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Exceptional. The intro is conversational and perfectly pairs the kana with their romanization. Pronunciation hints using common English words are highly accurate for a US English speaker.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Strong. It omits the optional intro entirely, but provides highly accurate and helpful pronunciation hints using US English words. Fully meets all constraints.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Strong. The pronunciation hints are helpful and accurate. The intro is conversational and useful, though it misses the opportunity to display the actual kana characters being learned.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Strong. Explains the vowel pattern well in the intro, though it does not display the target kana characters. Pronunciation hints are solid and beginner-safe.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Acceptable but has notable weaknesses. The intro is well-formatted with proper inline romanization, but the pronunciation hints are somewhat circular (e.g., 'like a crisp Japanese ka') which is unhelpful for absolute beginners.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "Poor. Contains a significant factual error for the US English target audience by equating the Japanese 'ko' sound to the word 'cop', which is pronounced with an 'ah' (/ɑ/) sound rather than an 'o' sound.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Poor. Uses inaccurate pronunciation hints for US English, such as equating 'ko' to 'cost', which does not match the Japanese 'o' sound. Using 'karma' minus the 'r' for 'ka' is also unnecessarily complex.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Best fit overall: exact inventory, no extra symbols or notes, and a short useful intro with adjacent readings for every hiragana mentioned. Pronunciation guidance is accurate and beginner-safe with only very minor English approximation limits.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Meets the inventory and formatting requirements, and the intro is concise with proper reading cues. Pronunciation hints are mostly useful, though “co” in “cone” risks an English diphthong for こ.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Exact symbol set, clean intro, and all hiragana in prose have adjacent romanization. Pronunciation is generally safe, but some hints are vague or circular, such as “crisp Japanese ka” and “pure Japanese u.”",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The inventory is exactly right and the lack of intro is acceptable. The card content is mostly accurate, but “car” for か and “cone” for こ are less beginner-safe approximations in US English.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Good focused inventory and a useful, concise English intro. However, “koo in cook” is confusing or inaccurate for く in US English, and a few other examples rely on imperfect English vowel approximations.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "The symbol set and intro are on target, with correct inline reading cues. Most pronunciations are acceptable, but “co” in “cop” is a poor US English cue for Japanese こ.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Includes the correct five symbols and a usable intro with adjacent reading cues. The pronunciation cue for こ using “cost” is inaccurate in US English, and a few other examples are less clean than they should be.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The inventory is correct and there are no note-field issues, but the intro is a bit technical for this task. More importantly, “ku” in “kung fu” and “ko” in “co-op” are misleading pronunciation cues, so accuracy is weaker than the others.",
+          "score": 6
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-alphabet",
+  "testCaseId": "en-japanese-hiragana-k-row-alphabet-1"
+}

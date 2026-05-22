@@ -21,12 +21,27 @@ export type {
   SelectImageStepContent,
   SortOrderStepContent,
 } from "./exercise";
+
+const alphabetFormSchema = z.object({ label: z.string(), symbol: z.string() }).strict();
+
+const alphabetContentSchema = z
+  .object({
+    audioText: z.string(),
+    audioUrl: z.string().nullable(),
+    forms: z.array(alphabetFormSchema),
+    pronunciation: z.string(),
+    readingAid: z.string(),
+    symbol: z.string(),
+  })
+  .strict();
+
 const vocabularyContentSchema = z.object({}).strict();
 const translationContentSchema = z.object({}).strict();
 const readingContentSchema = z.object({}).strict();
 const listeningContentSchema = z.object({}).strict();
 
 const stepContentSchemas = {
+  alphabet: alphabetContentSchema,
   fillBlank: fillBlankContentSchema,
   listening: listeningContentSchema,
   matchColumns: matchColumnsContentSchema,
@@ -41,12 +56,14 @@ const stepContentSchemas = {
 
 export type SupportedStepKind = keyof typeof stepContentSchemas;
 
+type AlphabetStepContent = z.infer<typeof alphabetContentSchema>;
 type VocabularyStepContent = z.infer<typeof vocabularyContentSchema>;
 type TranslationStepContent = z.infer<typeof translationContentSchema>;
 type ReadingStepContent = z.infer<typeof readingContentSchema>;
 type ListeningStepContent = z.infer<typeof listeningContentSchema>;
 
 export type StepContentByKind = {
+  alphabet: AlphabetStepContent;
   fillBlank: FillBlankStepContent;
   listening: ListeningStepContent;
   matchColumns: MatchColumnsStepContent;
@@ -63,6 +80,7 @@ export function isSupportedStepKind(kind: string): kind is SupportedStepKind {
   return Object.hasOwn(stepContentSchemas, kind);
 }
 
+export function parseStepContent(kind: "alphabet", content: unknown): AlphabetStepContent;
 export function parseStepContent(kind: "fillBlank", content: unknown): FillBlankStepContent;
 export function parseStepContent(kind: "listening", content: unknown): ListeningStepContent;
 export function parseStepContent(kind: "matchColumns", content: unknown): MatchColumnsStepContent;
@@ -84,6 +102,7 @@ export function parseStepContent(kind: SupportedStepKind, content: unknown) {
   return stepContentSchemas[kind].parse(content);
 }
 
+export function assertStepContent(kind: "alphabet", content: unknown): AlphabetStepContent;
 export function assertStepContent(kind: "fillBlank", content: unknown): FillBlankStepContent;
 export function assertStepContent(kind: "listening", content: unknown): ListeningStepContent;
 export function assertStepContent(kind: "matchColumns", content: unknown): MatchColumnsStepContent;

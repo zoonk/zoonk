@@ -4,6 +4,7 @@ import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { type TTSVoice } from "@zoonk/utils/languages";
 import { logError } from "@zoonk/utils/logger";
 import { getPromptLanguageName } from "../_utils/prompt-language";
+import alphabetSymbolPrompt from "./generate-language-audio-alphabet-symbol.prompt.md";
 import promptTemplate from "./generate-language-audio.prompt.md";
 import { generateWithGemini } from "./provider-gemini";
 import { generateWithOpenAI } from "./provider-openai";
@@ -15,6 +16,12 @@ const INITIAL_BACKOFF_MS = 1000;
 type AudioFormat = "opus" | "wav";
 
 export type AudioResult = { audio: Uint8Array; format: AudioFormat };
+export type LanguageAudioUsage = "alphabetSymbol";
+
+const usagePrompts = { alphabetSymbol: alphabetSymbolPrompt } satisfies Record<
+  LanguageAudioUsage,
+  string
+>;
 
 type AudioProvider = (params: {
   instructions: string;
@@ -25,15 +32,26 @@ type AudioProvider = (params: {
 type ScheduledAttempt = { backoffMs: number; generate: AudioProvider; name: string };
 
 /**
- * Expands stored language codes before they reach TTS instructions. The model
- * should receive the exact spoken dialect, not the app's compact locale code.
+ * Expands the base TTS prompt with optional usage-specific instructions.
+ * Keeping the usage structured avoids passing learner-facing romanization or
+ * pronunciation hints into the audio model, which can make output less stable.
  */
-function buildInstructions(languageCode?: string): string {
+function buildInstructions({
+  languageCode,
+  usage,
+}: {
+  languageCode?: string;
+  usage?: LanguageAudioUsage;
+}): string {
   const languageName = languageCode
     ? getPromptLanguageName({ language: languageCode })
     : getPromptLanguageName({ language: "en" });
 
-  return promptTemplate.replaceAll("{{LANGUAGE}}", () => languageName);
+  const usagePrompt = usage ? usagePrompts[usage] : "";
+
+  return [promptTemplate.replaceAll("{{LANGUAGE}}", () => languageName), usagePrompt]
+    .filter(Boolean)
+    .join("\n\n");
 }
 
 /**
@@ -107,13 +125,15 @@ async function generateWithFallback({
 export async function generateLanguageAudio({
   language,
   text,
+  usage,
   voice = DEFAULT_VOICE,
 }: {
   language?: string;
   text: string;
+  usage?: LanguageAudioUsage;
   voice?: TTSVoice;
 }): Promise<SafeReturn<AudioResult>> {
-  const instructions = buildInstructions(language);
+  const instructions = buildInstructions({ languageCode: language, usage });
 
   return safeAsync(() => generateWithFallback({ instructions, text, voice }));
 }

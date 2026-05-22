@@ -21,6 +21,7 @@ enum LessonKind {
 }
 
 enum StepKind {
+  alphabet
   arrangeWords   @map("arrange_words")
   fillBlank      @map("fill_blank")
   listening

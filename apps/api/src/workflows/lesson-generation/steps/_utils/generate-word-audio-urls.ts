@@ -41,7 +41,9 @@ export async function generateWordAudioUrls(params: {
   const wordsNeedingAudio = words.filter((word) => !existingAudioByLower[word.toLowerCase()]);
 
   const results = await Promise.all(
-    wordsNeedingAudio.map((word) => generateAudioForText(word, targetLanguage, orgSlug)),
+    wordsNeedingAudio.map((word) =>
+      generateAudioForText({ language: targetLanguage, orgSlug, text: word }),
+    ),
   );
 
   return {

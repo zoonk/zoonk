@@ -27,6 +27,7 @@ type IntroStepDescriptor = StepDescriptorBase<"static", "intro"> & {
 };
 
 export type PlayerStepDescriptor =
+  | StepDescriptorBase<"alphabet", "alphabet">
   | StepDescriptorBase<"fillBlank", "fillBlank">
   | StepDescriptorBase<"listening", "listening">
   | StepDescriptorBase<"matchColumns", "matchColumns">
@@ -101,6 +102,10 @@ function describeStaticStep(step: SerializedStep<"static">): PlayerStepDescripto
 export function describePlayerStep(step?: SerializedStep | null): PlayerStepDescriptor | null {
   if (!step) {
     return null;
+  }
+
+  if (hasStepKind(step, "alphabet")) {
+    return { content: step.content, kind: "alphabet", step };
   }
 
   if (hasStepKind(step, "fillBlank")) {

@@ -10,6 +10,7 @@ import {
   getPlayerStepBehavior,
   hasStaticNavigation,
 } from "../player-step-behavior";
+import { AlphabetStep } from "./alphabet-step";
 import { FillBlankStep } from "./fill-blank-step";
 import { ListeningStep } from "./listening-step";
 import { MatchColumnsStep } from "./match-columns-step";
@@ -45,6 +46,8 @@ function renderStepContent({
   render: PlayerRenderBehavior;
 }) {
   switch (render) {
+    case "alphabet":
+      return <AlphabetStep step={step} />;
     case "fillBlank":
       return (
         <FillBlankStep
@@ -126,7 +129,7 @@ function renderStepContent({
 /**
  * Static image steps render a full split media layout inside the navigable
  * swipe wrapper. They need the wrapper to stop applying the normal reading
- * max-width, while text-only static and vocabulary steps should keep it.
+ * max-width, while text-only static, alphabet, and vocabulary steps should keep it.
  */
 function hasNavigableMediaFrame(descriptor: PlayerStepDescriptor) {
   return hasStaticNavigation(descriptor) && Boolean(getPlayerStepImage(descriptor));

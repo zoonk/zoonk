@@ -17,6 +17,7 @@ type PlayerLayoutBehavior = "default" | "hero" | "navigable";
 type PlayerSceneBehavior = "choice" | "read";
 
 export type PlayerRenderBehavior =
+  | "alphabet"
   | "fillBlank"
   | "listening"
   | "matchColumns"
@@ -49,6 +50,14 @@ type PlayerStepBehavior = {
 };
 
 const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
+  alphabet: {
+    check: "none",
+    feedback: "none",
+    layout: "navigable",
+    render: "alphabet",
+    scene: "read",
+    validation: "none",
+  },
   fillBlank: {
     check: "fillBlank",
     feedback: "inline",

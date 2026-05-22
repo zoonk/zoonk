@@ -1,0 +1,88 @@
+{
+  "modelId": "anthropic/claude-sonnet-4.6",
+  "results": [
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The pronunciation hint for く is somewhat misleading: “ku in kung fu” may point English speakers toward the vowel in “kung” or an overly rounded “oo,” while Japanese う is shorter and typically less rounded. The こ hint using “co-op” could also risk encouraging an English diphthong, though the warning helps.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The intro could be slightly more directly tied to the actual cards by listing the five kana with inline romanization, e.g. か (ka), き (ki), く (ku), け (ke), こ (ko). Pronunciation hints could use more beginner-safe approximations for Japanese short vowels.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: Japanese\nUSER LANGUAGE: English\n\nTOPIC: Hiragana K row. The inventory should include exactly か, き, く, け, こ. Intro should not explain what hiragana is. A useful intro can say the row is k plus the five vowels using inline romanization, e.g. か (ka).\n\n\nEVALUATION CRITERIA:\n\n1. FOCUSED INVENTORY: The output must infer a small playable symbol inventory from the lesson title and description. Include the exact compact set when listed, and do not expand to a whole alphabet, syllabary, abjad, abugida, or broad beginner category.\n\n2. INTRO QUALITY: intro is optional. If present, it should be short, conversational, and directly useful before the cards. It must not repeat generic script overview content or sound academic.\n\n3. INLINE ROMANIZATION: Any non-Roman characters, words, or combinations mentioned in intro prose must include romanization in parentheses immediately after them.\n\n4. USER-LANGUAGE COPY: intro, pronunciation, and form labels must be in the user's language. Only use English when the user language is English.\n\n5. NO SYMBOL NOTES: symbols must not include a note field or note-like filler. Per-symbol cards should focus on symbol, readingAid, pronunciation, and forms.\n\n6. ACCURACY: Symbols, reading aids, audioText, pronunciation hints, and forms must be linguistically accurate and beginner-safe.\n\n    ",
+        "id": "en-japanese-hiragana-k-row-alphabet-1",
+        "userInput": {
+          "chapterTitle": "Hiragana",
+          "lessonDescription": "Recognize か, き, く, け, こ and read the sounds ka, ki, ku, ke, ko",
+          "lessonTitle": "K row かきくけこ",
+          "targetLanguage": "ja",
+          "userLanguage": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The inventory is correct and compact (exactly ㄱ, ㄴ, ㄷ, ㄹ), with no note fields. However, the intro violates the inline romanization requirement by mentioning ㄱ and ㄷ without immediate romanization in the second intro item. There is also a factual/pronunciation issue: it says Spanish k/t/p have a small puff of air, but Spanish voiceless stops are generally unaspirated, so this is misleading for learners.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The intro is somewhat longer and more technical than ideal for the expectation of short, plain, conversational Spanish; terms like “sonoras,” “sordas,” and “no aspirados” make it feel a bit academic. The phrase “ㄱ, ㄷ y similares” also gestures beyond the exact lesson inventory, though it does not actually add extra symbol cards.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "It would be better to keep the intro to one brief paragraph, romanize every Hangul item immediately, and explain aspiration using English or Korean contrast rather than Spanish. Adding simple forms/examples for each consonant inside syllable blocks could improve usefulness if kept focused and accurate.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: Korean\nUSER LANGUAGE: Spanish (Latin American)\n\nTOPIC: First Hangul consonants. The inventory should include exactly ㄱ, ㄴ, ㄷ, ㄹ. Intro can explain that these consonants appear inside syllable blocks, but it should stay short, use plain Spanish, and avoid adding extra consonants as inventory.\n\n\nEVALUATION CRITERIA:\n\n1. FOCUSED INVENTORY: The output must infer a small playable symbol inventory from the lesson title and description. Include the exact compact set when listed, and do not expand to a whole alphabet, syllabary, abjad, abugida, or broad beginner category.\n\n2. INTRO QUALITY: intro is optional. If present, it should be short, conversational, and directly useful before the cards. It must not repeat generic script overview content or sound academic.\n\n3. INLINE ROMANIZATION: Any non-Roman characters, words, or combinations mentioned in intro prose must include romanization in parentheses immediately after them.\n\n4. USER-LANGUAGE COPY: intro, pronunciation, and form labels must be in the user's language. Only use English when the user language is English.\n\n5. NO SYMBOL NOTES: symbols must not include a note field or note-like filler. Per-symbol cards should focus on symbol, readingAid, pronunciation, and forms.\n\n6. ACCURACY: Symbols, reading aids, audioText, pronunciation hints, and forms must be linguistically accurate and beginner-safe.\n\n    ",
+        "id": "es-korean-first-consonants-alphabet-1",
+        "userInput": {
+          "chapterTitle": "Consonantes de Hangul",
+          "lessonDescription": "Reconocer ㄱ, ㄴ, ㄷ, ㄹ y verlos dentro de bloques simples como 가, 나, 다, 라",
+          "lessonTitle": "Primeras consonantes ㄱ ㄴ ㄷ ㄹ",
+          "targetLanguage": "ko",
+          "userLanguage": "es"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The first intro text is cut off mid-sentence, which makes it feel unfinished. The intro title “O truque do ب” includes the Arabic letter without immediate romanization, which violates the inline romanization expectation if intro titles are treated as intro copy. The first intro card is somewhat generic about Arabic letters changing shape, though it remains mostly relevant to recognizing Ba’s joining forms.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Complete the interrupted intro sentence or remove that card. Add romanization in the title, e.g. “O truque do ب (bā’)”, or avoid Arabic characters in intro titles. The intro could be tightened further to focus only on ب and right-to-left joining recognition.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: Arabic\nUSER LANGUAGE: Brazilian Portuguese\n\nTOPIC: Arabic letter Ba joining forms. The inventory should include exactly ب, with real isolated, initial, medial, and final forms using Portuguese labels. Intro should explain only what helps learners recognize this one letter joining right-to-left, without turning it into a broad Arabic alphabet overview.\n\n\nEVALUATION CRITERIA:\n\n1. FOCUSED INVENTORY: The output must infer a small playable symbol inventory from the lesson title and description. Include the exact compact set when listed, and do not expand to a whole alphabet, syllabary, abjad, abugida, or broad beginner category.\n\n2. INTRO QUALITY: intro is optional. If present, it should be short, conversational, and directly useful before the cards. It must not repeat generic script overview content or sound academic.\n\n3. INLINE ROMANIZATION: Any non-Roman characters, words, or combinations mentioned in intro prose must include romanization in parentheses immediately after them.\n\n4. USER-LANGUAGE COPY: intro, pronunciation, and form labels must be in the user's language. Only use English when the user language is English.\n\n5. NO SYMBOL NOTES: symbols must not include a note field or note-like filler. Per-symbol cards should focus on symbol, readingAid, pronunciation, and forms.\n\n6. ACCURACY: Symbols, reading aids, audioText, pronunciation hints, and forms must be linguistically accurate and beginner-safe.\n\n    ",
+        "id": "pt-arabic-ba-joining-forms-alphabet-1",
+        "userInput": {
+          "chapterTitle": "Letras árabes que se conectam",
+          "lessonDescription": "Reconhecer a letra ب e suas formas quando aparece sozinha, no começo, no meio e no fim da palavra",
+          "lessonTitle": "Formas da letra ب",
+          "targetLanguage": "ar",
+          "userLanguage": "pt"
+        }
+      }
+    }
+  ],
+  "taskId": "lesson-alphabet"
+}

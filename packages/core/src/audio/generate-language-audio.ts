@@ -1,5 +1,8 @@
 import "server-only";
-import { generateLanguageAudio as generateAudio } from "@zoonk/ai/tasks/audio";
+import {
+  type LanguageAudioUsage,
+  generateLanguageAudio as generateAudio,
+} from "@zoonk/ai/tasks/audio";
 import { type SafeReturn } from "@zoonk/utils/error";
 import { type TTSVoice } from "@zoonk/utils/languages";
 import { toSlug } from "@zoonk/utils/string";
@@ -9,17 +12,20 @@ export async function generateLanguageAudio({
   language,
   orgSlug,
   text,
+  usage,
   voice,
 }: {
   language?: string;
   orgSlug?: string;
   text: string;
+  usage?: LanguageAudioUsage;
   voice?: TTSVoice;
 }): Promise<SafeReturn<string>> {
   const { data: audioResult, error: generateError } = await generateAudio({
     language,
     text,
     voice,
+    ...(usage ? { usage } : {}),
   });
 
   if (generateError) {

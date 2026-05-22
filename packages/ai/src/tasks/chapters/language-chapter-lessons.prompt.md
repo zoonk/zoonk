@@ -29,6 +29,10 @@ Use `alphabet` only when the target language uses a non-Roman writing system and
 - Avoid broad dumping. If one lesson would contain unrelated language moves, split it.
 - Keep vocabulary lessons thematic and usable in later reading/listening practice.
 - Keep grammar lessons centered on one real rule, structure, contrast, or pattern family.
+- Alphabet lessons have a different player shape: each symbol usually becomes a card and a recognition check. The chapter planner owns keeping these lessons playable. Do not rely on downstream alphabet tasks to shrink a broad script lesson.
+- Keep each alphabet lesson to one natural writing-system chunk: one row or family, one mark or variant family, one positional-form pattern, one block-composition pattern, or one small contrast set.
+- If the chapter covers a broad writing system, split it into several alphabet lessons that progress from simpler chunks to more complex chunks. Do not create one lesson whose scope is an entire alphabet, syllabary, abjad, abugida, or writing system.
+- Alphabet lesson titles and descriptions must name the precise chunk the learner will recognize. Avoid titles that only name the whole script or writing system.
 
 # Explicitly Forbidden
 
@@ -70,7 +74,9 @@ Before returning, validate:
 
 1. Does every lesson teach new language content?
 2. Is every `alphabet` lesson truly needed for a non-Roman script?
-3. Are vocabulary lessons thematic enough to become later reading/listening material?
-4. Are grammar lessons scoped around one real pattern or contrast?
-5. Did you avoid translation, reading, listening, and review lessons?
-6. Did you stay inside the chapter scope?
+3. Is every `alphabet` lesson small enough to become a playable card/check sequence?
+4. Did you split broad script coverage into precise alphabet chunks instead of one dumping lesson?
+5. Are vocabulary lessons thematic enough to become later reading/listening material?
+6. Are grammar lessons scoped around one real pattern or contrast?
+7. Did you avoid translation, reading, listening, and review lessons?
+8. Did you stay inside the chapter scope?
