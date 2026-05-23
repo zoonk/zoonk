@@ -5,7 +5,7 @@ import { z } from "zod";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import systemPrompt from "./lesson-romanization.prompt.md";
 
-const defaultModel = "openai/gpt-5.4";
+const defaultModel = "openai/gpt-5.5";
 const fallbackModels = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"] as const;
 
 const romanizationSchema = z.string().min(1);

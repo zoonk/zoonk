@@ -7,7 +7,7 @@ import { formatConceptLines } from "../config";
 import systemPrompt from "./lesson-grammar-content.prompt.md";
 
 const defaultModel = "google/gemini-3.1-pro-preview";
-const fallbackModels = ["openai/gpt-5.4", "anthropic/claude-opus-4.6"] as const;
+const fallbackModels = ["openai/gpt-5.5", "anthropic/claude-opus-4.6"] as const;
 
 const exampleSchema = z.object({ highlight: z.string(), sentence: z.string() });
 

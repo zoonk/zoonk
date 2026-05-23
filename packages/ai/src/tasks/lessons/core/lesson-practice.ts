@@ -7,7 +7,7 @@ import { appendLessonRichTextPrompt } from "../_utils/append-lesson-rich-text-pr
 import { formatExplanationStepsForPrompt } from "./_utils/format-explanation-steps";
 import baseSystemPrompt from "./lesson-practice.prompt.md";
 
-const defaultModel = "openai/gpt-5.4";
+const defaultModel = "openai/gpt-5.5";
 const fallbackModels = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"] as const;
 const systemPrompt = appendLessonRichTextPrompt(baseSystemPrompt);
 
