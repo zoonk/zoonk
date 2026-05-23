@@ -4,12 +4,11 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { beforeAll, describe, expect, it } from "vitest";
 import { type LessonContext } from "../get-lesson-step";
 import {
-  getExplanationStepsSinceLastLessonKind,
   getOtherExplanationLessonTitles,
+  getSourceLessonsSinceLastLessonKind,
 } from "./explanation-source-steps";
 
 /**
@@ -60,7 +59,8 @@ async function createContext({
 
 /**
  * Completed explanation lessons are the only source content practice and quiz
- * lessons should see, and only text-variant static steps carry explanation text.
+ * lessons should see. Title and description are the compact metadata passed to
+ * the AI prompt for both generated lesson kinds.
  */
 async function createCompletedExplanation({
   chapterId,
@@ -77,6 +77,7 @@ async function createCompletedExplanation({
 }) {
   const lesson = await lessonFixture({
     chapterId,
+    description: text,
     generationStatus: "completed",
     isPublished: true,
     kind: "explanation",
@@ -85,31 +86,10 @@ async function createCompletedExplanation({
     title,
   });
 
-  await Promise.all([
-    stepFixture({
-      content: { text, title, variant: "text" },
-      isPublished: true,
-      kind: "static",
-      lessonId: lesson.id,
-      position: 0,
-    }),
-    stepFixture({
-      content: {
-        ruleName: "Ignored rule",
-        ruleSummary: "Not explanation text",
-        variant: "grammarRule",
-      },
-      isPublished: true,
-      kind: "static",
-      lessonId: lesson.id,
-      position: 1,
-    }),
-  ]);
-
   return lesson;
 }
 
-describe("explanation source step helpers", () => {
+describe("explanation source lesson helpers", () => {
   let organizationId: string;
 
   beforeAll(async () => {
@@ -145,7 +125,7 @@ describe("explanation source step helpers", () => {
     ]);
   });
 
-  it("returns only completed explanation text since the previous practice", async () => {
+  it("returns source lesson metadata since the previous practice", async () => {
     const context = await createContext({ kind: "practice", organizationId, position: 4 });
 
     await Promise.all([
@@ -182,12 +162,12 @@ describe("explanation source step helpers", () => {
       }),
     ]);
 
-    const steps = await getExplanationStepsSinceLastLessonKind({ context, kind: "practice" });
+    const sourceLessons = await getSourceLessonsSinceLastLessonKind({ context, kind: "practice" });
 
-    expect(steps).toStrictEqual([{ text: "New explanation", title: "New" }]);
+    expect(sourceLessons).toStrictEqual([{ description: "New explanation", title: "New" }]);
   });
 
-  it("uses the previous quiz boundary for quiz source content", async () => {
+  it("returns source lesson metadata since the previous quiz", async () => {
     const context = await createContext({ kind: "quiz", organizationId, position: 5 });
 
     await Promise.all([
@@ -215,8 +195,8 @@ describe("explanation source step helpers", () => {
       }),
     ]);
 
-    const steps = await getExplanationStepsSinceLastLessonKind({ context, kind: "quiz" });
+    const sourceLessons = await getSourceLessonsSinceLastLessonKind({ context, kind: "quiz" });
 
-    expect(steps).toStrictEqual([{ text: "New quiz source", title: "New" }]);
+    expect(sourceLessons).toStrictEqual([{ description: "New quiz source", title: "New" }]);
   });
 });

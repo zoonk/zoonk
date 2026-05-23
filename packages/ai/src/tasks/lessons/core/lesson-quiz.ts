@@ -3,26 +3,29 @@ import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-o
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
-import { formatExplanationStepsForPrompt } from "./_utils/format-explanation-steps";
+import { type SourceLesson, formatSourceLessonsForPrompt } from "./_utils/source-lessons";
 import systemPrompt from "./lesson-quiz.prompt.md";
 
 const defaultModel = "openai/gpt-5.5";
-const fallbackModels = ["anthropic/claude-opus-4.6"] as const;
+const fallbackModels = ["google/gemini-3.1-pro-preview"] as const;
+const maximumQuestions = 15;
+const minimumQuestions = 5;
 
+/* oxlint-disable eslint/sort-keys -- Structured output follows schema property order; keep format first. */
 const multipleChoiceSchema = z.object({
-  context: z.string(),
   format: z.literal("multipleChoice"),
-  options: z.array(z.object({ feedback: z.string(), isCorrect: z.boolean(), text: z.string() })),
+  context: z.string(),
   question: z.string(),
+  options: z.array(z.object({ feedback: z.string(), isCorrect: z.boolean(), text: z.string() })),
 });
 
 const fillBlankSchema = z.object({
-  answers: z.array(z.string()),
-  distractors: z.array(z.string()),
-  feedback: z.string(),
   format: z.literal("fillBlank"),
   question: z.string(),
   template: z.string(),
+  answers: z.array(z.string()),
+  distractors: z.array(z.string()),
+  feedback: z.string(),
 });
 
 const matchColumnsSchema = z.object({
@@ -32,17 +35,18 @@ const matchColumnsSchema = z.object({
 });
 
 const sortOrderSchema = z.object({
-  feedback: z.string(),
   format: z.literal("sortOrder"),
-  items: z.array(z.string()),
   question: z.string(),
+  items: z.array(z.string()),
+  feedback: z.string(),
 });
 
 const selectImageSchema = z.object({
   format: z.literal("selectImage"),
-  options: z.array(z.object({ feedback: z.string(), isCorrect: z.boolean(), prompt: z.string() })),
   question: z.string(),
+  options: z.array(z.object({ feedback: z.string(), isCorrect: z.boolean(), prompt: z.string() })),
 });
+/* oxlint-enable eslint/sort-keys */
 
 const quizQuestionSchema = z.union([
   multipleChoiceSchema,
@@ -52,44 +56,40 @@ const quizQuestionSchema = z.union([
   selectImageSchema,
 ]);
 
-const schema = z.object({ questions: z.array(quizQuestionSchema).min(1) });
+const schema = z.object({
+  questions: z.array(quizQuestionSchema).min(minimumQuestions).max(maximumQuestions),
+});
 
 export type QuizQuestion = z.infer<typeof quizQuestionSchema>;
 export type LessonQuizSchema = z.infer<typeof schema>;
 
 export type LessonQuizParams = {
-  lessonTitle: string;
-  lessonDescription: string;
   chapterTitle: string;
   courseTitle: string;
   language: string;
-  explanationSteps: { title: string; text: string }[];
+  sourceLessons: SourceLesson[];
   model?: string;
   useFallback?: boolean;
   reasoningEffort?: ReasoningEffort;
 };
 
 export async function generateLessonQuiz({
-  lessonTitle,
-  lessonDescription,
   chapterTitle,
   courseTitle,
   language,
-  explanationSteps,
+  sourceLessons,
   model = defaultModel,
   useFallback = true,
   reasoningEffort,
 }: LessonQuizParams) {
-  const formattedExplanationSteps = formatExplanationStepsForPrompt(explanationSteps);
+  const formattedSourceLessons = formatSourceLessonsForPrompt(sourceLessons);
   const promptLanguage = getPromptLanguageName({ language });
 
   const userPrompt = `
-    LESSON_TITLE: ${lessonTitle}
-    LESSON_DESCRIPTION: ${lessonDescription}
     CHAPTER_TITLE: ${chapterTitle}
     COURSE_TITLE: ${courseTitle}
     LANGUAGE: ${promptLanguage}
-    EXPLANATION_STEPS: ${formattedExplanationSteps}
+    SOURCE_LESSONS: ${formattedSourceLessons}
   `;
 
   const providerOptions = buildProviderOptions({

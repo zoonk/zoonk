@@ -38,7 +38,7 @@ describe(generatePracticeContentStep, () => {
     vi.clearAllMocks();
   });
 
-  it("uses only explanation steps since the previous practice", async () => {
+  it("uses only source lessons since the previous practice", async () => {
     const context = await createLessonContext({ kind: "practice", organizationId, position: 4 });
 
     await createCompletedExplanation({
@@ -71,7 +71,9 @@ describe(generatePracticeContentStep, () => {
     expect(result.kind).toBe("practice");
 
     expect(generateLessonPractice).toHaveBeenCalledWith(
-      expect.objectContaining({ explanationSteps: [{ text: "New explanation", title: "New" }] }),
+      expect.objectContaining({
+        sourceLessons: [{ description: "New explanation", title: "New" }],
+      }),
     );
   });
 

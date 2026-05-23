@@ -1,8 +1,7 @@
-import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { type LessonKind, prisma } from "@zoonk/db";
 import { type LessonContext } from "../get-lesson-step";
 
-type ExplanationStep = { text: string; title: string };
+type SourceLesson = { description: string; title: string };
 
 /**
  * Sibling titles are optional prompt context. Untitled structural lessons
@@ -10,6 +9,19 @@ type ExplanationStep = { text: string; title: string };
  */
 function lessonTitleForPrompt(lesson: { title: string | null }): string[] {
   return lesson.title ? [lesson.title] : [];
+}
+
+/**
+ * Practice and quiz prompts need lesson-level scope without every explanation step.
+ * Empty metadata is skipped so the prompt does not receive placeholder rows
+ * like `"null"` or `":"` when a source lesson has no usable summary.
+ */
+function sourceLessonForPrompt(lesson: { description: string | null; title: string | null }) {
+  if (!lesson.title && !lesson.description) {
+    return [];
+  }
+
+  return [{ description: lesson.description ?? "", title: lesson.title ?? "" }];
 }
 
 export async function getOtherExplanationLessonTitles(context: LessonContext): Promise<string[]> {
@@ -21,26 +33,36 @@ export async function getOtherExplanationLessonTitles(context: LessonContext): P
   return lessons.flatMap((lesson) => lessonTitleForPrompt(lesson));
 }
 
-export async function getExplanationStepsSinceLastLessonKind({
+/**
+ * Practice and quiz generation should cover explanation lessons that have not
+ * already fed the previous lesson of the same kind. Returning titles and
+ * descriptions keeps prompts compact while preserving the same source range.
+ */
+export async function getSourceLessonsSinceLastLessonKind({
   context,
   kind,
 }: {
   context: LessonContext;
   kind: Extract<LessonKind, "practice" | "quiz">;
-}): Promise<ExplanationStep[]> {
+}): Promise<SourceLesson[]> {
   const previousLesson = await prisma.lesson.findFirst({
     orderBy: { position: "desc" },
     where: { chapterId: context.chapterId, kind, position: { lt: context.position } },
   });
 
-  return getExplanationStepsInRange({
+  return getSourceLessonsInRange({
     afterPosition: previousLesson?.position ?? -1,
     beforePosition: context.position,
     chapterId: context.chapterId,
   });
 }
 
-async function getExplanationStepsInRange({
+/**
+ * Source lesson metadata is enough for practice and quiz scope and avoids
+ * sending dozens of static explanation steps from production chapters into the
+ * model context.
+ */
+async function getSourceLessonsInRange({
   afterPosition,
   beforePosition,
   chapterId,
@@ -48,9 +70,8 @@ async function getExplanationStepsInRange({
   afterPosition: number;
   beforePosition: number;
   chapterId: string;
-}): Promise<ExplanationStep[]> {
+}): Promise<SourceLesson[]> {
   const lessons = await prisma.lesson.findMany({
-    include: { steps: { orderBy: { position: "asc" }, where: { kind: "static" } } },
     orderBy: { position: "asc" },
     where: {
       chapterId,
@@ -60,15 +81,5 @@ async function getExplanationStepsInRange({
     },
   });
 
-  return lessons.flatMap((lesson) => lesson.steps.flatMap((step) => getTextStep(step.content)));
-}
-
-function getTextStep(content: unknown): ExplanationStep[] {
-  const parsed = parseStepContent("static", content);
-
-  if (parsed.variant !== "text") {
-    return [];
-  }
-
-  return [{ text: parsed.text, title: parsed.title }];
+  return lessons.flatMap((lesson) => sourceLessonForPrompt(lesson));
 }

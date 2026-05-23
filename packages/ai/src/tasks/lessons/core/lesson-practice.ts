@@ -4,7 +4,7 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import { appendLessonRichTextPrompt } from "../_utils/append-lesson-rich-text-prompt";
-import { formatExplanationStepsForPrompt } from "./_utils/format-explanation-steps";
+import { type SourceLesson, formatSourceLessonsForPrompt } from "./_utils/source-lessons";
 import baseSystemPrompt from "./lesson-practice.prompt.md";
 
 const defaultModel = "openai/gpt-5.5";
@@ -33,38 +33,33 @@ const schema = z.object({
 export type LessonPracticeSchema = z.infer<typeof schema>;
 
 export type LessonPracticeParams = {
-  lessonTitle: string;
-  lessonDescription: string;
   chapterTitle: string;
   courseTitle: string;
   language: string;
-  explanationSteps: { title: string; text: string }[];
+  sourceLessons: SourceLesson[];
   model?: string;
   useFallback?: boolean;
   reasoningEffort?: ReasoningEffort;
 };
 
 export async function generateLessonPractice({
-  lessonTitle,
-  lessonDescription,
   chapterTitle,
   courseTitle,
   language,
-  explanationSteps,
+  sourceLessons,
   model = defaultModel,
   useFallback = true,
   reasoningEffort,
 }: LessonPracticeParams) {
-  const formattedExplanationSteps = formatExplanationStepsForPrompt(explanationSteps);
+  const formattedSourceLessons = formatSourceLessonsForPrompt(sourceLessons);
   const promptLanguage = getPromptLanguageName({ language });
 
   const userPrompt = `
-    LESSON_TITLE: ${lessonTitle}
-    LESSON_DESCRIPTION: ${lessonDescription}
     CHAPTER_TITLE: ${chapterTitle}
     COURSE_TITLE: ${courseTitle}
     LANGUAGE: ${promptLanguage}
-    EXPLANATION_STEPS: ${formattedExplanationSteps}
+    SOURCE_LESSONS:
+    ${formattedSourceLessons}
   `;
 
   const providerOptions = buildProviderOptions({
