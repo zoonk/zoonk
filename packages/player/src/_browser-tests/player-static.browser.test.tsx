@@ -33,6 +33,23 @@ function swipeLeft(target: HTMLElement) {
   fireEvent.touchEnd(globalThis.window, { changedTouches: [endTouch], touches: [] });
 }
 
+/**
+ * Exercises the intentional backward gesture without relying on browser-level
+ * swipe synthesis, which is not available inside the package browser harness.
+ */
+function swipeRight(target: HTMLElement) {
+  const startTouch = buildTouch({ identifier: 4, target, x: 120, y: 220 });
+  const endTouch = buildTouch({ identifier: 4, target, x: 320, y: 210 });
+
+  fireEvent.touchStart(target, {
+    changedTouches: [startTouch],
+    targetTouches: [startTouch],
+    touches: [startTouch],
+  });
+
+  fireEvent.touchEnd(globalThis.window, { changedTouches: [endTouch], touches: [] });
+}
+
 function tapLeft(target: HTMLElement) {
   const touch = buildTouch({ identifier: 2, target, x: 24, y: 220 });
 
@@ -55,6 +72,36 @@ function tapRight(target: HTMLElement) {
   });
 
   fireEvent.touchEnd(globalThis.window, { changedTouches: [touch], touches: [] });
+}
+
+/**
+ * Restores the real viewport object after a test forces a pinch-zoom scale.
+ * Browser runners expose this as a global read-only-ish object, so preserving
+ * the descriptor avoids leaking one test's zoom state into later tests.
+ */
+function restoreVisualViewport(descriptor: PropertyDescriptor | undefined) {
+  if (descriptor) {
+    Object.defineProperty(globalThis, "visualViewport", descriptor);
+    return;
+  }
+
+  delete (globalThis as { visualViewport?: VisualViewport }).visualViewport;
+}
+
+/**
+ * Forces `visualViewport.scale` so the gesture contract can be verified without
+ * depending on real mobile pinch gestures in the desktop browser runner.
+ */
+async function runWithViewportScale({ run, scale }: { run: () => Promise<void>; scale: number }) {
+  const descriptor = Object.getOwnPropertyDescriptor(globalThis, "visualViewport");
+
+  Object.defineProperty(globalThis, "visualViewport", { configurable: true, value: { scale } });
+
+  try {
+    await run();
+  } finally {
+    restoreVisualViewport(descriptor);
+  }
 }
 
 function buildLongStaticText() {
@@ -322,7 +369,7 @@ describe("player browser integration: static steps", () => {
     await expect.element(page.getByRole("heading", { name: "Second step" })).toBeInTheDocument();
   });
 
-  it("uses single taps on the left and right halves for touch navigation", async () => {
+  it("uses swipes for touch navigation and ignores single taps", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "explanation",
@@ -350,14 +397,79 @@ describe("player browser integration: static steps", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    tapRight(screen.getByAltText(/lantern lighting up one idea at a time/iu));
-    await expect.element(page.getByRole("heading", { name: "Second step" })).toBeInTheDocument();
-
-    tapLeft(screen.getByRole("heading", { name: "Second step" }));
+    tapLeft(screen.getByAltText(/lantern lighting up one idea at a time/iu));
 
     await expect
       .element(page.getByRole("heading", { name: "One step, one image" }))
       .toBeInTheDocument();
+
+    tapRight(screen.getByAltText(/lantern lighting up one idea at a time/iu));
+
+    await expect
+      .element(page.getByRole("heading", { name: "One step, one image" }))
+      .toBeInTheDocument();
+
+    swipeLeft(screen.getByAltText(/lantern lighting up one idea at a time/iu));
+
+    await expect.element(page.getByRole("heading", { name: "Second step" })).toBeInTheDocument();
+
+    tapLeft(screen.getByRole("heading", { name: "Second step" }));
+
+    await expect.element(page.getByRole("heading", { name: "Second step" })).toBeInTheDocument();
+
+    tapRight(screen.getByRole("heading", { name: "Second step" }));
+
+    await expect.element(page.getByRole("heading", { name: "Second step" })).toBeInTheDocument();
+
+    swipeRight(screen.getByRole("heading", { name: "Second step" }));
+
+    await expect
+      .element(page.getByRole("heading", { name: "One step, one image" }))
+      .toBeInTheDocument();
+  });
+
+  it("ignores touch navigation while the viewport is zoomed", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        kind: "explanation",
+        steps: [
+          buildSerializedStep({
+            content: {
+              image: {
+                prompt: "A lantern lighting up one idea at a time",
+                url: buildInlineImageUrl({ label: "A lantern lighting up one idea at a time" }),
+              },
+              text: "An image can now live inside the same readable step.",
+              title: "One step, one image",
+              variant: "text" as const,
+            },
+            id: "zoom-static-image",
+          }),
+          buildSerializedStep({
+            content: { text: "Second body", title: "Second step", variant: "text" as const },
+            id: "zoom-static-second",
+            position: 1,
+          }),
+        ],
+      }),
+      navigation: buildNavigation({ nextLessonHref: null }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await runWithViewportScale({
+      run: async () => {
+        swipeLeft(screen.getByAltText(/lantern lighting up one idea at a time/iu));
+
+        await expect
+          .element(page.getByRole("heading", { name: "One step, one image" }))
+          .toBeInTheDocument();
+
+        await expect
+          .element(page.getByRole("heading", { name: "Second step" }))
+          .not.toBeInTheDocument();
+      },
+      scale: 2,
+    });
   });
 
   it("supports keyboard navigation on static steps and keyboard completion actions", async () => {

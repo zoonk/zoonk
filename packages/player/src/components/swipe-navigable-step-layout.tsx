@@ -9,9 +9,9 @@ import { NavigableStepLayout } from "./step-layouts";
 
 const SWIPE_DISTANCE_THRESHOLD = 48;
 const SWIPE_HORIZONTAL_RATIO = 1.05;
-const TAP_DISTANCE_THRESHOLD = 12;
+const VIEWPORT_ZOOM_SCALE_THRESHOLD = 1.01;
 
-type SwipeGesture = { container: HTMLDivElement; startX: number; startY: number; touchId: number };
+type SwipeGesture = { startX: number; startY: number; touchId: number };
 
 export type SwipeNavigableStepFrame = "default" | "media";
 type DesktopNavigationSide = "previous" | "next";
@@ -31,9 +31,9 @@ function getNavigableFrameClass(frame: SwipeNavigableStepFrame) {
 
 /**
  * Desktop read screens still benefit from a visible navigation affordance, but
- * touch screens already use the whole surface for tap and swipe navigation.
- * Keeping these controls pointer-fine only avoids competing with the mobile
- * gesture model while giving keyboard users a discoverable mouse target.
+ * touch screens use the surface for swipe navigation. Keeping these controls
+ * pointer-fine only avoids competing with the mobile gesture model while giving
+ * keyboard users a discoverable mouse target.
  */
 function DesktopNavigationButton({
   "aria-label": ariaLabel,
@@ -69,7 +69,7 @@ function DesktopNavigationButton({
  * gestures from interactive descendants like the vocabulary audio button.
  */
 function isInteractiveSwipeTarget(target: EventTarget | null): boolean {
-  if (!(target instanceof HTMLElement)) {
+  if (!(target instanceof Element)) {
     return false;
   }
 
@@ -105,35 +105,12 @@ function isHorizontalSwipe({ deltaX, deltaY }: { deltaX: number; deltaY: number 
 }
 
 /**
- * Touch-friendly read steps should also support single-tap navigation so users
- * can move through content with one hand. Using the left/right half split keeps
- * the interaction simple and avoids adding visible controls back into the UI.
+ * Native pinch zoom should take over the image-reading interaction completely.
+ * When the viewport is zoomed, single-finger touches are usually attempts to
+ * inspect or pan the image rather than requests to change player steps.
  */
-function runTapNavigation({
-  canNavigatePrev,
-  container,
-  clientX,
-  onNavigateNext,
-  onNavigatePrev,
-}: {
-  canNavigatePrev: boolean;
-  container: HTMLDivElement;
-  clientX: number;
-  onNavigateNext: () => void;
-  onNavigatePrev: () => void;
-}) {
-  const bounds = container.getBoundingClientRect();
-  const isLeftHalf = clientX - bounds.left < bounds.width / 2;
-
-  if (isLeftHalf) {
-    if (canNavigatePrev) {
-      onNavigatePrev();
-    }
-
-    return;
-  }
-
-  onNavigateNext();
+function isViewportZoomed() {
+  return (globalThis.visualViewport?.scale ?? 1) > VIEWPORT_ZOOM_SCALE_THRESHOLD;
 }
 
 /**
@@ -154,10 +131,9 @@ function findTouchById(touchList: TouchList, touchId: number) {
 }
 
 /**
- * Navigable read steps no longer show visible arrow chrome, so touch devices
- * need a direct gesture surface that maps into the existing next/prev actions.
- * This wrapper keeps swipe behavior local to those read-only screens while
- * desktop users continue to rely on keyboard navigation.
+ * Navigable read steps keep touch gestures local to read-only screens. Taps
+ * stay available for real content controls, horizontal swipes move
+ * forward/back, and desktop users keep the subtle arrow/keyboard affordances.
  */
 export function SwipeNavigableStepLayout({
   canNavigatePrev,
@@ -219,6 +195,12 @@ export function SwipeNavigableStepLayout({
       return;
     }
 
+    if (isViewportZoomed()) {
+      detachWindowTouchListeners();
+      resetSwipeGesture();
+      return;
+    }
+
     const deltaX = clientX - gesture.startX;
     const deltaY = clientY - gesture.startY;
 
@@ -234,29 +216,21 @@ export function SwipeNavigableStepLayout({
       return;
     }
 
-    const isTap =
-      Math.abs(deltaX) <= TAP_DISTANCE_THRESHOLD && Math.abs(deltaY) <= TAP_DISTANCE_THRESHOLD;
-
-    if (isTap) {
-      runTapNavigation({
-        canNavigatePrev,
-        clientX,
-        container: gesture.container,
-        onNavigateNext,
-        onNavigatePrev,
-      });
-    }
-
     detachWindowTouchListeners();
     resetSwipeGesture();
   }
 
   /**
-   * Only touch input should trigger swipe or tap navigation. We also skip
-   * obvious interactive descendants so taps on controls keep their native job.
+   * Only unzoomed single-touch input should trigger swipe navigation. We also
+   * skip obvious interactive descendants so taps on controls keep their native
+   * job.
    */
   function handleTouchStart(event: TouchEvent<HTMLDivElement>) {
-    if (event.touches.length !== 1 || isInteractiveSwipeTarget(event.target)) {
+    if (
+      event.touches.length !== 1 ||
+      isInteractiveSwipeTarget(event.target) ||
+      isViewportZoomed()
+    ) {
       detachWindowTouchListeners();
       resetSwipeGesture();
       return;
@@ -271,7 +245,6 @@ export function SwipeNavigableStepLayout({
     detachWindowTouchListeners();
 
     gestureRef.current = {
-      container: event.currentTarget,
       startX: touch.clientX,
       startY: touch.clientY,
       touchId: touch.identifier,

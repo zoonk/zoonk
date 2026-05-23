@@ -84,6 +84,55 @@ describe("player browser integration: alphabet", () => {
     await expect.element(card.getByText("بـ")).toBeInTheDocument();
   });
 
+  it("plays alphabet audio without moving to the next card", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        kind: "alphabet",
+        steps: [
+          buildSerializedStep({
+            content: {
+              audioText: "ب",
+              audioUrl: "https://example.com/ba.mp3",
+              forms: [],
+              pronunciation: "like b in book",
+              readingAid: "b",
+              symbol: "ب",
+            },
+            id: "alphabet-audio-1",
+            kind: "alphabet",
+          }),
+          buildSerializedStep({
+            content: {
+              audioText: "ت",
+              audioUrl: "https://example.com/ta.mp3",
+              forms: [],
+              pronunciation: "like t in tea",
+              readingAid: "t",
+              symbol: "ت",
+            },
+            id: "alphabet-audio-2",
+            kind: "alphabet",
+            position: 1,
+          }),
+        ],
+      }),
+      navigation: buildNavigation({ nextLessonHref: null }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await page.getByRole("button", { name: /play pronunciation/iu }).click();
+
+    await expect
+      .element(page.getByRole("button", { name: /pause pronunciation/iu }))
+      .toBeInTheDocument();
+
+    await expect.element(page.getByRole("region", { name: /alphabet: ب/iu })).toBeInTheDocument();
+
+    await expect
+      .element(page.getByRole("region", { name: /alphabet: ت/iu }))
+      .not.toBeInTheDocument();
+  });
+
   it("navigates alphabet cards without quiz controls", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({

@@ -37,6 +37,55 @@ describe("player browser integration: vocabulary", () => {
     await expect.element(page.getByText("Hello")).toBeInTheDocument();
   });
 
+  it("plays vocabulary audio without moving to the next card", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        kind: "vocabulary",
+        steps: [
+          buildSerializedStep({
+            content: {},
+            id: "vocab-audio-1",
+            kind: "vocabulary",
+            word: buildSerializedWord({
+              audioUrl: "https://example.com/hola.mp3",
+              id: "word-audio-1",
+              translation: "Hello",
+              word: "Hola",
+            }),
+          }),
+          buildSerializedStep({
+            content: {},
+            id: "vocab-audio-2",
+            kind: "vocabulary",
+            position: 1,
+            word: buildSerializedWord({
+              audioUrl: "https://example.com/adios.mp3",
+              id: "word-audio-2",
+              translation: "Goodbye",
+              word: "Adios",
+            }),
+          }),
+        ],
+      }),
+      navigation: buildNavigation({ nextLessonHref: null }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await page.getByRole("button", { name: /play pronunciation/iu }).click();
+
+    await expect
+      .element(page.getByRole("button", { name: /pause pronunciation/iu }))
+      .toBeInTheDocument();
+
+    await expect
+      .element(page.getByRole("region", { name: /vocabulary: Hola/iu }))
+      .toBeInTheDocument();
+
+    await expect
+      .element(page.getByRole("region", { name: /vocabulary: Adios/iu }))
+      .not.toBeInTheDocument();
+  });
+
   it("navigates vocabulary cards without quiz controls", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
