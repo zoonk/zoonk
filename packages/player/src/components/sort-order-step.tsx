@@ -27,6 +27,7 @@ import { useExtracted } from "next-intl";
 import { useCallback, useId, useMemo, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
+import { stripWrappingQuotes } from "./_utils/strip-wrapping-quotes";
 import { InlineFeedback } from "./inline-feedback";
 import { QuestionText } from "./question-text";
 import { ResultKbd } from "./result-kbd";
@@ -56,6 +57,7 @@ function SortableItem({
   });
 
   const style = { transform: CSS.Transform.toString(transform), transition };
+  const displayText = stripWrappingQuotes(item.text);
 
   return (
     <div
@@ -67,7 +69,7 @@ function SortableItem({
       <button
         {...attributes}
         {...listeners}
-        aria-label={item.text}
+        aria-label={displayText}
         className={cn(
           "flex min-h-11 w-full touch-none items-center gap-3 px-3 py-2 text-left select-none sm:px-4 sm:py-2.5",
           !isDragging && "hover:bg-muted/50",
@@ -76,17 +78,19 @@ function SortableItem({
         type="button"
       >
         <ResultKbd isSelected>{String(index + 1)}</ResultKbd>
-        <span className="text-base">{item.text}</span>
+        <span className="text-base">{displayText}</span>
       </button>
     </div>
   );
 }
 
 function DragOverlayItem({ index, item }: { index: number; item: SortItem }) {
+  const displayText = stripWrappingQuotes(item.text);
+
   return (
     <div className="bg-background flex min-h-11 items-center gap-3 rounded-lg border px-3 py-2 text-left shadow-md sm:px-4 sm:py-2.5">
       <ResultKbd isSelected>{String(index + 1)}</ResultKbd>
-      <span className="text-base">{item.text}</span>
+      <span className="text-base">{displayText}</span>
     </div>
   );
 }
@@ -190,11 +194,12 @@ function ResultItemList({
       <div aria-label={t("Sort items")} className="flex flex-col gap-2" role="list">
         {correctItems.map((item, index) => {
           const resultState = getItemResultState(item, index, userOrder);
+          const displayItem = stripWrappingQuotes(item);
 
           return (
             <div
               aria-label={t("{item}. {result}.", {
-                item,
+                item: displayItem,
                 result: resultState === "correct" ? t("Correct") : t("Incorrect"),
               })}
               className={cn(
@@ -209,7 +214,7 @@ function ResultItemList({
               role="listitem"
             >
               <ResultKbd resultState={resultState}>{String(index + 1)}</ResultKbd>
-              <span className="text-base">{item}</span>
+              <span className="text-base">{displayItem}</span>
             </div>
           );
         })}
