@@ -3,6 +3,11 @@ import { getExtracted } from "next-intl/server";
 
 type LessonDisplayInput = { kind: LessonKind; title: string | null; description: string | null };
 
+type LessonSeoInput = LessonDisplayInput & {
+  chapter: { title: string; course: { title: string } };
+  position: number;
+};
+
 /**
  * Lesson kind labels are used in several app-level fallbacks. Keeping them in
  * one translated map prevents the chapter list, player metadata, and SEO copy
@@ -25,24 +30,6 @@ async function getLessonKindLabels(): Promise<Record<LessonKind, string>> {
     tutorial: t("Tutorial"),
     vocabulary: t("Vocabulary"),
   };
-}
-
-async function getLessonKinds(): Promise<{ key: LessonKind; label: string }[]> {
-  const labels = await getLessonKindLabels();
-
-  return [
-    { key: "alphabet", label: labels.alphabet },
-    { key: "tutorial", label: labels.tutorial },
-    { key: "explanation", label: labels.explanation },
-    { key: "quiz", label: labels.quiz },
-    { key: "practice", label: labels.practice },
-    { key: "vocabulary", label: labels.vocabulary },
-    { key: "translation", label: labels.translation },
-    { key: "grammar", label: labels.grammar },
-    { key: "reading", label: labels.reading },
-    { key: "listening", label: labels.listening },
-    { key: "review", label: labels.review },
-  ];
 }
 
 /**
@@ -131,40 +118,64 @@ async function getSeoDescription(kind: LessonKind, topic: string): Promise<strin
 }
 
 export async function getLessonSeoMeta(
-  lesson: { kind: LessonKind; title: string | null; description: string | null },
-  lessonTitle: string | null,
+  lesson: LessonSeoInput,
 ): Promise<{ title: string; description: string }> {
-  const displayMeta = await getLessonDisplayMeta(lesson);
-  const title = await getSeoTitle(lesson, lessonTitle ?? displayMeta.title);
-  const description = await getSeoLessonDescription(lesson, lessonTitle ?? displayMeta.title);
+  const title = await getSeoTitle({ lesson });
+
+  const description = await getSeoLessonDescription({
+    lesson,
+    lessonTitle: lesson.title ?? lesson.chapter.title,
+  });
 
   return { description, title };
 }
 
-async function getSeoTitle(
-  lesson: { kind: LessonKind; title: string | null },
-  lessonTitle: string,
-): Promise<string> {
+/**
+ * Generated companion lessons often store no title because their title would be
+ * only the lesson kind. SEO needs enough context to distinguish several quizzes
+ * or practices in the same chapter, so the fallback names the chapter, kind, and
+ * human lesson number instead of repeating the kind label.
+ */
+async function getUntitledLessonSeoTitle({
+  chapterTitle,
+  kind,
+  position,
+}: {
+  chapterTitle: string;
+  kind: LessonKind;
+  position: number;
+}) {
+  const labels = await getLessonKindLabels();
   const t = await getExtracted();
 
-  if (lesson.title) {
-    return t("{lesson} - {course}", { course: lessonTitle, lesson: lesson.title });
-  }
-
-  const kinds = await getLessonKinds();
-  const kindInfo = kinds.find((kind) => kind.key === lesson.kind);
-
-  if (kindInfo) {
-    return t("{kind} {lesson}", { kind: kindInfo.label, lesson: lessonTitle });
-  }
-
-  return lessonTitle;
+  return t("{chapter} {kind} {position}", {
+    chapter: chapterTitle,
+    kind: labels[kind],
+    position: String(position + 1),
+  });
 }
 
-async function getSeoLessonDescription(
-  lesson: { kind: LessonKind; description: string | null },
-  lessonTitle: string,
-): Promise<string> {
+async function getSeoTitle({ lesson }: { lesson: LessonSeoInput }): Promise<string> {
+  if (lesson.title) {
+    const t = await getExtracted();
+
+    return t("{lesson} - {course}", { course: lesson.chapter.course.title, lesson: lesson.title });
+  }
+
+  return getUntitledLessonSeoTitle({
+    chapterTitle: lesson.chapter.title,
+    kind: lesson.kind,
+    position: lesson.position,
+  });
+}
+
+async function getSeoLessonDescription({
+  lesson,
+  lessonTitle,
+}: {
+  lesson: { kind: LessonKind; description: string | null };
+  lessonTitle: string;
+}): Promise<string> {
   if (lesson.kind === "custom" && lesson.description) {
     return lesson.description;
   }
