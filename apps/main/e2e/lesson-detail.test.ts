@@ -609,6 +609,52 @@ test.describe("Lesson Player Page", () => {
     await expect(page).toHaveTitle(new RegExp(lessonTitle, "u"));
   });
 
+  test("page title describes lessons without a stored title", async ({ page }) => {
+    const org = await getAiOrganization();
+    const uniqueId = randomUUID().slice(0, 8);
+
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-titleless-course-${uniqueId}`,
+      title: `E2E Titleless Course ${uniqueId}`,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-titleless-chapter-${uniqueId}`,
+      title: `E2E Titleless Chapter ${uniqueId}`,
+    });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "quiz",
+      organizationId: org.id,
+      position: 2,
+      slug: `e2e-titleless-quiz-${uniqueId}`,
+      title: null,
+    });
+
+    await stepFixture({
+      content: {
+        text: `Titleless quiz step ${uniqueId}`,
+        title: `Titleless quiz ${uniqueId}`,
+        variant: "text",
+      },
+      isPublished: true,
+      lessonId: lesson.id,
+    });
+
+    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+
+    await expect(page).toHaveTitle(new RegExp(`${chapter.title} Quiz ${lesson.position + 1}`, "u"));
+    await expect(page).not.toHaveTitle(/Quiz Quiz/u);
+  });
+
   test("unpublished lesson shows 404 page", async ({ page }) => {
     const org = await getAiOrganization();
 

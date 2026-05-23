@@ -2007,9 +2007,9 @@ msgid "3198Ew"
 msgstr "Aprende nuevas palabras de {topic} con tarjetas didácticas — ve cada palabra, su traducción y pronunciación."
 
 #: src/lib/lessons.ts
-msgid "qHbgYB"
-msgstr "{lesson} - {course}"
+msgid "oCxmX9"
+msgstr "{kind} {chapter} {position}"
 
 #: src/lib/lessons.ts
-msgid "MOpDCK"
-msgstr "{kind} {lesson}"
+msgid "qHbgYB"
+msgstr "{lesson} - {course}"

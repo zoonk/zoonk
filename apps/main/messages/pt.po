@@ -2007,9 +2007,9 @@ msgid "3198Ew"
 msgstr "Aprenda novas palavras de {topic} com flashcards — veja cada palavra, sua tradução e pronúncia."
 
 #: src/lib/lessons.ts
-msgid "qHbgYB"
-msgstr "{lesson} - {course}"
+msgid "oCxmX9"
+msgstr "{kind} {chapter} {position}"
 
 #: src/lib/lessons.ts
-msgid "MOpDCK"
-msgstr "{kind} {lesson}"
+msgid "qHbgYB"
+msgstr "{lesson} - {course}"

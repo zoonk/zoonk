@@ -32,13 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {};
   }
 
-  const lesson = await getPlayerLesson({ lessonId: lessonShell.id });
-
-  if (!lesson) {
-    return {};
-  }
-
-  return getLessonSeoMeta(lesson, lesson.title);
+  return getLessonSeoMeta(lessonShell);
 }
 
 export default async function LessonPage({ params }: Props) {
