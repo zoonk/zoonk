@@ -50,7 +50,7 @@ describe(quizLessonWorkflow, () => {
     vi.clearAllMocks();
   });
 
-  it("stores quiz image questions from the uncovered explanation steps", async () => {
+  it("stores quiz image questions from the uncovered source lessons", async () => {
     const context = await createLessonContext({ kind: "quiz", organizationId, position: 2 });
 
     await createCompletedExplanation({
@@ -65,7 +65,7 @@ describe(quizLessonWorkflow, () => {
 
     expect(generateLessonQuiz).toHaveBeenCalledWith(
       expect.objectContaining({
-        explanationSteps: [{ text: "Use the quiz explanation.", title: "Quiz Source" }],
+        sourceLessons: [{ description: "Use the quiz explanation.", title: "Quiz Source" }],
       }),
     );
 

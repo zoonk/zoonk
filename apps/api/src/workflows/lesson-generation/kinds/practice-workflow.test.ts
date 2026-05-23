@@ -53,7 +53,7 @@ describe(practiceLessonWorkflow, () => {
     vi.clearAllMocks();
   });
 
-  it("stores scenario and practice questions from the uncovered explanation steps", async () => {
+  it("stores scenario and practice questions from the uncovered source lessons", async () => {
     const context = await createLessonContext({ kind: "practice", organizationId, position: 2 });
 
     await createCompletedExplanation({
@@ -68,7 +68,7 @@ describe(practiceLessonWorkflow, () => {
 
     expect(generateLessonPractice).toHaveBeenCalledWith(
       expect.objectContaining({
-        explanationSteps: [{ text: "Use the latest explanation.", title: "Latest" }],
+        sourceLessons: [{ description: "Use the latest explanation.", title: "Latest" }],
       }),
     );
 

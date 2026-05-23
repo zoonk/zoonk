@@ -79,11 +79,13 @@ export async function createCompletedExplanation({
 }) {
   const lesson = await lessonFixture({
     chapterId,
+    description: text,
     generationStatus: "completed",
     isPublished: true,
     kind: "explanation",
     organizationId,
     position,
+    title,
   });
 
   await stepFixture({

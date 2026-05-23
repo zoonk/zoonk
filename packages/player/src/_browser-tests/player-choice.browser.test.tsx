@@ -373,6 +373,8 @@ describe("player browser integration: choice steps", () => {
       .toBeInTheDocument();
 
     await expect.element(page.getByRole("radio", { name: "Cat" })).toBeInTheDocument();
+    await expect.element(page.getByText(/correct answer/iu)).toBeInTheDocument();
+    await expect.element(page.getByText(/your answer/iu)).toBeInTheDocument();
   });
 
   it("replaces {{NAME}} placeholders for authenticated viewers", async () => {

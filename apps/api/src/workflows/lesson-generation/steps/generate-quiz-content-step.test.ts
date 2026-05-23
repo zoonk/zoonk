@@ -37,7 +37,7 @@ describe(generateQuizContentStep, () => {
     vi.clearAllMocks();
   });
 
-  it("uses only explanation steps since the previous quiz", async () => {
+  it("uses only source lessons since the previous quiz", async () => {
     const context = await createLessonContext({ kind: "quiz", organizationId, position: 4 });
 
     await Promise.all([
@@ -71,7 +71,7 @@ describe(generateQuizContentStep, () => {
 
     expect(generateLessonQuiz).toHaveBeenCalledWith(
       expect.objectContaining({
-        explanationSteps: [{ text: "New quiz explanation", title: "New" }],
+        sourceLessons: [{ description: "New quiz explanation", title: "New" }],
       }),
     );
   });

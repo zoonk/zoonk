@@ -3,6 +3,7 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type SelectImageStepContent, parseStepContent } from "@zoonk/core/steps/contract/content";
 import { cn } from "@zoonk/ui/lib/utils";
+import { CircleCheck, CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
 import Image from "next/image";
 import { useState } from "react";
@@ -31,6 +32,30 @@ function getImageOptionResultState(
 
   if (option.id === selectedOptionId) {
     return "incorrect";
+  }
+
+  return null;
+}
+
+/**
+ * Result badges need the same decision in every option without nesting that
+ * branching inside the render loop.
+ */
+function getImageOptionStatusLabel({
+  correctLabel,
+  incorrectLabel,
+  resultState,
+}: {
+  correctLabel: string;
+  incorrectLabel: string;
+  resultState: "correct" | "incorrect" | null;
+}): string | null {
+  if (resultState === "correct") {
+    return correctLabel;
+  }
+
+  if (resultState === "incorrect") {
+    return incorrectLabel;
   }
 
   return null;
@@ -66,6 +91,7 @@ function ImageOptionCard({
   onSelect,
   prompt,
   resultState,
+  statusLabel,
   url,
 }: {
   disabled: boolean;
@@ -74,19 +100,24 @@ function ImageOptionCard({
   onSelect: () => void;
   prompt: string;
   resultState: "correct" | "incorrect" | null;
+  statusLabel: string | null;
   url?: string;
 }) {
+  const StatusIcon = resultState === "correct" ? CircleCheck : CircleX;
+
   return (
     <button
+      aria-label={prompt}
       aria-checked={isSelected}
       className={cn(
-        "focus-visible:border-ring focus-visible:ring-ring/50 relative overflow-hidden rounded-xl border-2 transition-colors duration-150 outline-none focus-visible:ring-[3px]",
+        "focus-visible:border-ring focus-visible:ring-ring/50 relative overflow-hidden rounded-xl border-2 transition-all duration-150 outline-none focus-visible:ring-[3px]",
         disabled && "pointer-events-none",
-        isDimmed && "opacity-50",
-        !resultState && isSelected && "border-primary bg-primary/5",
+        isDimmed && "opacity-35 grayscale",
+        !resultState && isSelected && "border-info bg-info/10 ring-info ring-4",
         !resultState && !isSelected && "border-border hover:bg-accent",
-        resultState === "correct" && "border-success/60 opacity-80",
-        resultState === "incorrect" && "border-destructive/60 opacity-80",
+        resultState === "correct" && "border-success bg-success/5 ring-success ring-4",
+        resultState === "incorrect" &&
+          "border-destructive bg-destructive/5 ring-destructive ring-4",
       )}
       disabled={disabled}
       onClick={onSelect}
@@ -94,6 +125,25 @@ function ImageOptionCard({
       type="button"
     >
       <ImageWithFallback alt={prompt} url={url} />
+
+      {!resultState && isSelected && (
+        <span className="bg-info absolute top-2 right-2 flex size-7 items-center justify-center rounded-full text-white">
+          <CircleCheck aria-hidden="true" className="size-4" />
+        </span>
+      )}
+
+      {resultState && statusLabel && (
+        <span
+          className={cn(
+            "absolute top-2 left-2 flex items-center gap-1 rounded-full border bg-white/95 px-2.5 py-1 text-xs font-semibold shadow-sm backdrop-blur-sm",
+            resultState === "correct" && "border-success/20 text-success",
+            resultState === "incorrect" && "border-destructive/20 text-destructive",
+          )}
+        >
+          <StatusIcon aria-hidden="true" className="size-3.5" />
+          {statusLabel}
+        </span>
+      )}
     </button>
   );
 }
@@ -113,6 +163,8 @@ export function SelectImageStep({
   const content = parseStepContent("selectImage", step.content);
   const selectedOptionId = getSelectedOptionId(selectedAnswer);
   const hasResult = Boolean(result);
+  const correctAnswerLabel = t("Correct answer");
+  const yourAnswerLabel = t("Your answer");
 
   const handleSelect = (index: number) => {
     if (result) {
@@ -148,6 +200,12 @@ export function SelectImageStep({
           const isDimmed = hasResult && !resultState;
           const isSelected = selectedOptionId === option.id;
 
+          const statusLabel = getImageOptionStatusLabel({
+            correctLabel: correctAnswerLabel,
+            incorrectLabel: yourAnswerLabel,
+            resultState,
+          });
+
           return (
             <ImageOptionCard
               disabled={hasResult}
@@ -157,6 +215,7 @@ export function SelectImageStep({
               onSelect={() => handleSelect(index)}
               prompt={option.prompt}
               resultState={resultState}
+              statusLabel={statusLabel}
               url={option.url}
             />
           );

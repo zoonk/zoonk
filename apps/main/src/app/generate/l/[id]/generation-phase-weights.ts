@@ -97,10 +97,10 @@ export function getPhaseWeights(kind: GeneratedLessonKind): Record<PhaseName, nu
   if (kind === "quiz") {
     return {
       ...ZERO_WEIGHTS,
-      creatingImages: 45,
+      creatingImages: 65,
       gettingStarted: 1,
       saving: 1,
-      writingContent: 30,
+      writingContent: 65,
     };
   }
 

@@ -364,12 +364,13 @@ async function completedExplanationLesson({
 }) {
   const lesson = await lessonFixture({
     chapterId,
+    description: text,
     generationStatus: "completed",
     isPublished: true,
     kind: "explanation",
     organizationId,
     position,
-    title: `Explanation ${randomUUID()}`,
+    title,
   });
 
   await stepFixture({
@@ -528,7 +529,7 @@ describe(lessonGenerationWorkflow, () => {
     ]);
   });
 
-  it("practice generation uses only explanation steps since the previous practice", async () => {
+  it("practice generation uses only source lessons since the previous practice", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
 
     const [practice] = await Promise.all([
@@ -569,7 +570,9 @@ describe(lessonGenerationWorkflow, () => {
     await lessonGenerationWorkflow(practice.id);
 
     expect(generateLessonPractice).toHaveBeenCalledWith(
-      expect.objectContaining({ explanationSteps: [{ text: "New explanation", title: "New" }] }),
+      expect.objectContaining({
+        sourceLessons: [{ description: "New explanation", title: "New" }],
+      }),
     );
 
     expect(generateContentStepImage).toHaveBeenCalledWith(
@@ -652,7 +655,7 @@ describe(lessonGenerationWorkflow, () => {
     expect(steps).toHaveLength(0);
   });
 
-  it("quiz generation uses explanations since the previous quiz and saves select-image URLs", async () => {
+  it("quiz generation uses source lessons since the previous quiz and saves select-image URLs", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
 
     const [quiz] = await Promise.all([
@@ -694,7 +697,7 @@ describe(lessonGenerationWorkflow, () => {
 
     expect(generateLessonQuiz).toHaveBeenCalledWith(
       expect.objectContaining({
-        explanationSteps: [{ text: "Unquizzed explanation", title: "New Quiz Scope" }],
+        sourceLessons: [{ description: "Unquizzed explanation", title: "New Quiz Scope" }],
       }),
     );
 

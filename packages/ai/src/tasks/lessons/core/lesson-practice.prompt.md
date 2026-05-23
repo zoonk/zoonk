@@ -49,6 +49,12 @@ Do not make the learner prepare a presentation, poster, or summary about the con
 The concept is the tool.
 The situation is the point.
 
+# Source Scope
+
+Use `SOURCE_LESSONS` to infer the practice scope. Each source lesson includes a title and description from a lesson covered by this practice. Treat them as concise scope metadata, not exhaustive lesson content.
+
+Do not reference the source lessons themselves. Do not test recall of exact wording, lesson titles, or descriptions. Build one practical story where the learner applies the underlying concepts in a new situation.
+
 # Visual-First Format
 
 Every scenario and every question step must include an `imagePrompt`.

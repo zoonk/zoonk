@@ -1,46 +1,71 @@
+import { type LessonQuizParams } from "@zoonk/ai/tasks/lessons/core/quiz";
+
 const SHARED_EXPECTATIONS = `
 EVALUATION CRITERIA:
 
-1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never read this specific explanation should be able to answer correctly. Penalize questions that:
-   - Use phrases like "according to the text," "as described," or "the explanation said"
-   - Reference specific metaphors, analogies, or examples from the explanation steps
+0. PRODUCTION-SHAPED SOURCE: Test cases provide compact lesson title/description scopes like production quiz generation. The quiz should cover the best learner-sized assessment for that scope, not invent a question for every source lesson.
+
+1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never saw this specific source lesson metadata should be able to answer correctly. Penalize questions that:
+   - Use phrases like "according to the text," "as described," or "the lesson said"
+   - Reference specific wording from the source lesson titles or descriptions
    - Ask "what is X?" instead of "what would happen if..." or "which scenario shows..."
 
-2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner hasn't seen. The scenario in the question should be different from any examples in the explanation steps. Penalize questions that:
-   - Reuse scenarios from the explanation
-   - Ask about facts that could only be known by reading this specific text
+2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner has not seen. Penalize questions that:
+   - Reuse source lesson examples with only superficial substitutions, such as changing names while keeping the same object, evidence type, or situation
+   - Ask about facts that are not reasonably supported by the source lesson scope
    - Test vocabulary definitions rather than concept application
 
-   IMPORTANT - "Novel" means a different conceptual context, not just swapping a superficial detail. For technical subjects, using a different specific instance of the same error type (e.g., missing brace vs missing parenthesis) still tests the same concept and is acceptable. What matters is that the learner must APPLY understanding, not recall a specific example from the text.
+   IMPORTANT - "Novel" means a different conceptual context, not just swapping a superficial detail. For technical subjects, using a different specific instance of the same error type still tests the same concept and is acceptable. For non-technical examples, prefer changing the setting, evidence, objects, actors, or decision being made. What matters is that the learner must APPLY understanding, not recall a specific example.
 
-   DOMAIN TERMINOLOGY: Using standard domain terminology (e.g., "innate/adaptive immunity" in biology, "abstract syntax tree" in compilers, "credit assignment" in ML) is acceptable and even desirable, even if the simplified explanation didn't use those exact terms. Do NOT penalize for introducing correct field-standard vocabulary. Only penalize when questions test recall of explanation-SPECIFIC phrasing, metaphors, or invented analogies.
+   DOMAIN TERMINOLOGY: Using standard domain terminology is acceptable and even desirable, even if the source lesson metadata did not use those exact terms. Do NOT penalize for introducing correct field-standard vocabulary. Only penalize when questions test recall of source-specific phrasing.
 
 3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.
 
-   ANTI-PATTERN - "Forced variety": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.
+   Learners prefer a varied set of interaction types. A strong quiz uses multiple formats when the content supports them, distributes those formats through the quiz, and still chooses each format because it fits the concept being tested.
+
+   Format diversity is a core requirement:
+   - Every quiz should use all 5 formats
+   - Every quiz should use exactly 1 match-columns question
+   - Every quiz should use exactly 1 sort-order question
+   - Every quiz should use exactly 1 fill-blank question
+   - All remaining questions should be multiple-choice or select-image
 
    Format guidance:
-   - Multiple choice: Often the BEST choice, not just a "default." It excels at testing whether learners can apply concepts to novel scenarios. Use it freely.
-   - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).
-   - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).
-   - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.
-   - Select image: Best when an image is the strongest way to test understanding, including visual recognition, comparing visible features, reading diagrams, or identifying spatial patterns.
+   - Multiple choice: Default for choosing an interpretation, prediction, diagnosis, explanation, or next move in a scenario.
+   - Select image: Default when visual inspection, visible comparison, a diagram, or spatial pattern is part of the concept.
+   - Match columns: Use once for connecting related items, such as observations to concepts, symptoms to causes, examples to principles, or tools to roles.
+   - Sort order: Use once when one correct order is essential, such as procedural steps, cause-effect chains, or stages that cannot be swapped.
+   - Fill blank: Use once for completing a precise relationship, contrast, formula, or term when the missing words themselves matter. It is often memorization-prone, so the single fill-blank must be especially well fit.
 
    PENALIZE when:
    - Formats are used for variety rather than fit
    - A different format would clearly test the concept better
+   - Any format is missing
+   - The quiz uses more or fewer than 1 match-columns question
+   - The quiz uses more or fewer than 1 sort-order question
+   - The quiz uses more or fewer than 1 fill-blank question
+   - Any extra question after the single match-columns, sort-order, and fill-blank questions is not multiple-choice or select-image
+   - A fill-blank question tests copied wording, broad conceptual distinctions, or terminology recall that another format could test through application
+   - A sort-order question contains optional steps, branching outcomes, alternative endings, unordered checklists, or workflows where several orders could be reasonable
+   - A select-image question requires inspecting a full board, full dashboard, full workflow, many columns, many cards, tiny labels, or several simultaneous visual clues
+   - A select-image question uses text when the distinction could be shown visually without labels
+   - A select-image question is chosen for content that needs a complex or text-heavy image to be fair
+   - A select-image option would be hard to understand on a small phone screen
+   - One format dominates even though other formats could test the content well
+   - The same format appears twice in a row
 
    Do NOT penalize when:
-   - Multiple choice is used repeatedly across several questions
-   - Some available formats are not used at all
-   - The quiz sticks to one or two well-suited formats
+   - Multiple-choice or select-image appears more often than the other formats because those are the default formats
+   - The quiz uses all five formats with exactly one match-columns, sort-order, and fill-blank question, and each one fits the concept it tests
+   - Select-image options use a few large labels only when the distinction cannot be shown clearly without text
 
-4. FEEDBACK QUALITY: Feedback must explain reasoning, not just state correct/incorrect. Good feedback:
+4. FEEDBACK QUALITY: For formats that include feedback fields in the schema, feedback must explain reasoning, not just state correct/incorrect. Good feedback:
    - For correct answers: Explains WHY it's right plus an additional insight
    - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right
    Penalize feedback that only says "Correct!" or "That's wrong."
+   Do NOT penalize match-columns questions for lacking feedback because the match-columns schema has no feedback field.
 
-5. FACTUAL ACCURACY: All questions and answers must be scientifically/technically correct. Penalize:
+5. FACTUAL ACCURACY: All questions and answers must be correct for the lesson's domain. Penalize:
    - Incorrect facts presented as correct answers
    - Correct facts marked as incorrect
    - Misleading simplifications that create misconceptions
@@ -52,280 +77,147 @@ EVALUATION CRITERIA:
 
 7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:
    - Trivially easy questions anyone could guess
-   - Questions requiring knowledge beyond the lesson scope
+   - Questions requiring knowledge beyond the source lesson scope
    - Trick questions that test careful reading rather than comprehension
 
+8. COVERAGE AND QUESTION COUNT: The quiz must contain enough questions to cover the source lesson scope without exhausting the learner. Penalize:
+   - Fewer than 5 questions
+   - More than 15 questions
+   - A quiz that ignores a major concept, mechanism, caveat, or practical distinction from the source lesson scope
+   - Complex scopes compressed into only 5 questions when more are needed to cover the taught ideas, edge cases, and linked mechanisms
+   - Simple scopes expanded into too many narrow or repetitive questions
+
+   Target ranges:
+   - 5-7 questions for a simple lesson scope
+   - 8-12 questions for broader multi-concept scopes
+   - 13-15 questions only for genuinely dense source material
+
+   Do NOT penalize for producing more than 5 questions when the extra questions cover real concepts from the source lesson scope and stay within the learner-friendly range.
+
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
-- Do NOT penalize for missing specific question formats you might expect
-- Do NOT require a specific number of questions - quality matters more than quantity
-- Do NOT check against an imagined "complete" quiz you think should exist
-- Do NOT penalize for covering some concepts more than others if coverage is reasonable
+- Do NOT expect more than one match-columns, sort-order, or fill-blank question.
+- Do NOT require an exact number of questions beyond the minimum and coverage needs
+- Do NOT check against an imagined "complete" quiz that goes beyond the source lesson scope
+- Do NOT penalize for covering some concepts more than others if every major concept is covered and the balance is reasonable
 - Do NOT expect questions to follow any particular order or progression
-- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices
+- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, inappropriate format choices, poor format diversity, too few questions, too many questions, or missing major concepts
 - Different valid quiz designs exist - assess the quality of what IS provided
 
 BINARY CHECKS:
-- "Memorization vs understanding" is checked by: does the question reference the explanation text directly or present a novel scenario? Direct text references = penalize. Novel scenarios = do not penalize.
-- Question count is not strictly enforced in this task - quality over quantity. Only penalize if the count is drastically low (under 5).
-- Format choice is only penalized when the format CANNOT test the concept (e.g., sort_order for a non-sequential concept). Repeated use of a well-suited format is NOT penalizable.
+- "Memorization vs understanding" is checked by: does the question reference the source lesson metadata directly or present a novel scenario? Direct source references = penalize. Novel scenarios = do not penalize.
+- Question count is checked by: at least 5 questions, never more than 15 questions, and no more than the lesson scope warrants.
+- Format choice is checked by fit, diversity, and sequencing. Penalize missing formats, any format distribution other than exactly one match-columns, exactly one sort-order, exactly one fill-blank, and all remaining questions as multiple-choice or select-image, plus bad-fit formats and back-to-back use of the same format.
 `;
 
 export const TEST_CASES = [
   {
     expectations: `
-TOPIC-SPECIFIC GUIDANCE:
-
-1. APPLICATION CHECK:
-   - GOOD PATTERN: Scenarios where someone encounters a networking issue and must reason about encapsulation layers or forwarding constraints to diagnose it
-   - GOOD PATTERN: Situations requiring prediction of what happens when MTU limits are exceeded or headers are corrupted
-   - BAD PATTERN: Asking to name network layers or define encapsulation without application context
-   - BAD PATTERN: Questions referencing specific metaphors from the explanation
-
-2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:
-   - Routers examining application-layer data for forwarding decisions (they typically only look at network-layer headers)
-   - Encapsulation adding headers only at the source (headers are added and removed at each layer boundary)
-   - All network devices seeing the complete data payload (each device only processes its relevant layer)
-
-3. FORMAT FIT: Multiple choice works well for "what would happen if..." networking scenarios. Sort order could work for encapsulation layer sequence.
+LANGUAGE REQUIREMENT: Questions, options, and feedback must be in Brazilian Portuguese.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "en-web-data-movement-quiz",
+    id: "pt-biology-field-evidence-production-quiz",
     userInput: {
-      chapterTitle: "Networking fundamentals",
-      courseTitle: "Web Development",
-      explanationSteps: [
-        {
-          text: "Encapsulation wraps data with headers at each network layer. Each layer adds its own addressing and control information, like putting a letter in a series of labeled envelopes.",
-          title: "Encapsulation",
-        },
-        {
-          text: "Each network device along the path reads only its layer's header, makes a forwarding decision, and passes the data to the next hop. No device sees the full picture.",
-          title: "Hop-by-Hop Forwarding",
-        },
-        {
-          text: "The maximum transmission unit limits how much data fits in a single frame. Data larger than the MTU must be fragmented into smaller pieces for transit.",
-          title: "Size Constraints",
-        },
-      ],
-      language: "en",
-      lessonDescription:
-        "Core building blocks for how data moves across networks, from encapsulation to hop-by-hop forwarding constraints.",
-      lessonTitle: "How Data Moves on Networks",
-    },
-  },
-  {
-    expectations: `
-LANGUAGE REQUIREMENT: Questions, options, and feedback must be in Portuguese.
-
-TOPIC-SPECIFIC GUIDANCE:
-
-1. APPLICATION CHECK:
-   - GOOD PATTERN: Code scenarios where learners must predict outcomes of float arithmetic or bool operations based on understanding the type hierarchy
-   - GOOD PATTERN: Situations requiring understanding of WHY True + True equals 2 or why 0.1 + 0.2 != 0.3
-   - BAD PATTERN: Asking to define float or bool without application context
-   - BAD PATTERN: Questions that test recall of specific syntax rather than type behavior
-
-2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:
-   - Float arithmetic being exact (floating-point has inherent precision limitations)
-   - Bool being a completely separate type from int (it is a subclass)
-   - True + True equaling True (it equals 2 because bool inherits int arithmetic)
-
-3. FORMAT FIT: Multiple choice works well for "what does this expression evaluate to" scenarios. Fill blank works for type relationship questions.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "pt-python-float-bool-quiz",
-    userInput: {
-      chapterTitle: "Tipos numéricos e valores especiais",
-      courseTitle: "Python",
-      explanationSteps: [
-        {
-          text: "Floats representam números com parte decimal usando ponto flutuante. A notação 3.14 ou 2.0e10 cria literais float em Python.",
-          title: "Literais Float",
-        },
-        {
-          text: "Bool é uma subclasse de int em Python. True equivale a 1 e False equivale a 0, permitindo operações aritméticas diretas com booleanos.",
-          title: "Bool como Inteiro",
-        },
-      ],
+      chapterTitle: "Observar vida e registrar evidências",
+      courseTitle: "Biologia",
       language: "pt",
-      lessonDescription:
-        "Valores de ponto flutuante e booleanos, sintaxe de literais e a relação estrutural entre bool e int.",
-      lessonTitle: "Float e bool como tipos numéricos",
-    },
+      sourceLessons: [
+        {
+          description:
+            "Pratique descrever o que dá para ver, ouvir ou tocar sem misturar palpite, explicação ou conclusão. Você vai transformar curiosidade em registros claros, separando observação, inferência e pergunta investigável.",
+          title: "Separar observação, inferência e pergunta",
+        },
+        {
+          description:
+            "Monte uma anotação de campo com data, hora, local, ambiente, organismo observado, comportamento e condições do momento. A meta é que outra pessoa consiga entender onde, quando e em que contexto a observação aconteceu.",
+          title: "Fazer anotações de campo úteis",
+        },
+        {
+          description:
+            "Use desenho simples como ferramenta de atenção, não como obra de arte. Você vai representar forma, posição, proporção, partes importantes, rótulos, vista observada e dúvidas que ainda precisam ser confirmadas.",
+          title: "Desenhar organismos para notar estruturas",
+        },
+        {
+          description:
+            "Registre fotos, vídeos ou sons de modo que sirvam como evidência, preservando contexto, horário, local, enquadramento e arquivos originais. Você também vai reconhecer o que uma imagem registra bem e o que uma anotação ou desenho registra melhor.",
+          title: "Usar fotos, vídeos e sons como evidência",
+        },
+      ],
+    } satisfies LessonQuizParams,
   },
   {
     expectations: `
-TOPIC-SPECIFIC GUIDANCE:
-
-1. APPLICATION CHECK:
-   - GOOD PATTERN: Scenarios presenting economic data where learners must identify which labor market indicator would move first or explain why unemployment lags GDP
-   - GOOD PATTERN: Situations requiring understanding of why the unemployment rate can understate labor market weakness
-   - BAD PATTERN: Asking to define unemployment rate or labor force participation without application context
-   - BAD PATTERN: Questions testing recall of specific statistics
-
-2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:
-   - Unemployment moving simultaneously with GDP (it typically lags)
-   - Discouraged workers being counted in the unemployment rate (they are not, by definition)
-   - Hours worked adjustments happening after layoffs (hours typically adjust first)
-
-3. FORMAT FIT: Multiple choice works well for interpreting economic scenarios. Match columns work for connecting indicators to their cyclical behavior.
+LANGUAGE REQUIREMENT: Questions, options, and feedback must be in American English.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "en-economics-labor-cycles-quiz",
+    id: "en-product-analytics-funnels-production-quiz",
     userInput: {
-      chapterTitle: "Business cycles",
-      courseTitle: "Economics",
-      explanationSteps: [
-        {
-          text: "The unemployment rate measures the share of the labor force actively seeking work but unable to find it. It rises during recessions but typically lags behind GDP declines.",
-          title: "Unemployment Rate",
-        },
-        {
-          text: "Average hours worked per employee often fall before headcount does. Firms reduce overtime first, making hours a leading indicator of labor market stress.",
-          title: "Hours Worked",
-        },
-        {
-          text: "Labor force participation measures who is working or looking for work. It drops during prolonged downturns as discouraged workers stop searching entirely.",
-          title: "Participation Rate",
-        },
-      ],
+      chapterTitle: "Product analytics",
+      courseTitle: "Product Management",
       language: "en",
-      lessonDescription:
-        "Empirical regularities linking downturns to labor market outcomes at the level of aggregate fluctuations, without modeling search or wage-setting mechanisms.",
-      lessonTitle: "Labor market aggregates over the cycle",
-    },
+      sourceLessons: [
+        {
+          description:
+            "Choose entry points, real outcomes, event definitions, ordering rules, and time windows that match a product question.",
+          title: "Defining product funnels",
+        },
+        {
+          description:
+            "Interpret conversion, dropoff, segmentation, cohorts, retention, acquisition, leading and lagging indicators without confusing clues for causes.",
+          title: "Reading conversion and dropoff",
+        },
+        {
+          description:
+            "Check instrumentation, properties, traffic mix, eligibility, bots, baselines, seasonality, and dashboard ownership before deciding what changed.",
+          title: "Debugging analytics data",
+        },
+        {
+          description:
+            "Use A/B tests, guardrail metrics, practical significance, and next actions to turn funnel evidence into product decisions.",
+          title: "Experiments and decisions",
+        },
+      ],
+    } satisfies LessonQuizParams,
   },
   {
     expectations: `
-LANGUAGE REQUIREMENT: Questions, options, and feedback must be in Spanish.
-
-TOPIC-SPECIFIC GUIDANCE:
-
-1. APPLICATION CHECK:
-   - GOOD PATTERN: Reaction scenarios where learners must predict which hydrogen would be abstracted or whether a given substrate can form an enolate
-   - GOOD PATTERN: Situations requiring understanding of why enolates attack at carbon rather than oxygen in certain conditions
-   - BAD PATTERN: Asking to define enolate or α-hydrogen without application context
-   - BAD PATTERN: Questions about resonance structures without practical synthesis context
-
-2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:
-   - Enolates acting as electrophiles (they are nucleophiles)
-   - All C–H bonds adjacent to carbonyls being equally acidic (acidity depends on additional stabilizing groups)
-   - Resonance stabilization occurring before deprotonation (it is a consequence of deprotonation)
-
-3. FORMAT FIT: Multiple choice works for reaction prediction scenarios. Match columns work for connecting substrate types to their enolate reactivity.
+LANGUAGE REQUIREMENT: Questions, options, and feedback must be in Latin American Spanish.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "es-quimica-acidez-enolatos-quiz",
+    id: "es-source-analysis-production-quiz",
     userInput: {
-      chapterTitle: "Carbonilos y enolatos",
-      courseTitle: "Química",
-      explanationSteps: [
-        {
-          text: "Los hidrógenos en posición α, junto al carbonilo, son inusualmente ácidos. La base sustrae este hidrógeno y el par de electrones se deslocaliza hacia el oxígeno del carbonilo.",
-          title: "Acidez en Posición α",
-        },
-        {
-          text: "El enolato resultante es un carbanión estabilizado por resonancia. La carga negativa se reparte entre el carbono α y el oxígeno, creando un nucleófilo ambidente.",
-          title: "Estabilización por Resonancia",
-        },
-        {
-          text: "Como nucleófilo, el enolato ataca electrófilos en el carbono α, formando nuevos enlaces C–C. Esta reactividad es la base de condensaciones aldólicas y de Claisen.",
-          title: "Enolato como Nucleófilo",
-        },
-      ],
+      chapterTitle: "Leer fuentes históricas",
+      courseTitle: "Historia",
       language: "es",
-      lessonDescription:
-        "Origen de la acidez en α y cómo se forma el enolato como nucleófilo clave en reacciones de construcción C–C.",
-      lessonTitle: "Acidez en α y formación de enolatos",
-    },
-  },
-  {
-    expectations: `
-LANGUAGE REQUIREMENT: Questions, options, and feedback must be in Portuguese.
-
-TOPIC-SPECIFIC GUIDANCE:
-
-1. APPLICATION CHECK:
-   - GOOD PATTERN: Scenarios where a law firm discovers automated document errors and must reason about which metrics would have caught the problem
-   - GOOD PATTERN: Situations requiring understanding of why audit trails matter for compliance and error diagnosis
-   - BAD PATTERN: Asking to list types of metrics without application context
-   - BAD PATTERN: Questions about specific software tools rather than measurement concepts
-
-2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:
-   - Monitoring being a one-time setup rather than ongoing (it requires continuous measurement)
-   - Audit trails only recording the final document (they should capture the entire generation pipeline)
-   - Quality metrics focusing only on formatting (they should also cover content accuracy and completeness)
-
-3. FORMAT FIT: Multiple choice works for diagnostic scenarios. Match columns work for connecting error types to the metrics that detect them.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "pt-direito-medicao-automacao-quiz",
-    userInput: {
-      chapterTitle: "Legal tech e automação de documentos",
-      courseTitle: "Direito",
-      explanationSteps: [
+      sourceLessons: [
         {
-          text: "Métricas de qualidade medem a taxa de erros em documentos automatizados — cláusulas faltantes, dados incorretos ou formatação quebrada. Cada erro é classificado por gravidade.",
-          title: "Métricas de Qualidade",
+          description:
+            "Distinguir fuentes primarias y secundarias según la investigación, la autoría, la fecha, el lugar, el destinatario y el propósito.",
+          title: "Clasificar fuentes según la pregunta",
         },
         {
-          text: "Rastros de auditoria registram cada etapa da geração documental: quem solicitou, qual template foi usado, quais dados alimentaram o documento e quando foi revisado.",
-          title: "Rastros de Auditoria",
+          description:
+            "Evaluar cómo contexto, punto de vista, propósito, silencios y poder del archivo afectan lo que una fuente puede revelar.",
+          title: "Perspectiva, sesgo y confiabilidad",
+        },
+        {
+          description:
+            "Comparar fuentes independientes, contradicciones, escalas y ausencias para construir afirmaciones históricas proporcionales.",
+          title: "Corroborar fuentes imperfectas",
+        },
+        {
+          description:
+            "Analizar imágenes, mapas, objetos, datos cuantitativos y testimonios orales como evidencias construidas y parciales.",
+          title: "Usar evidencias no textuales",
+        },
+        {
+          description:
+            "Usar citas, contexto, paráfrasis y lenguaje de certeza para sostener conclusiones sin exagerar la evidencia.",
+          title: "Citar y parafrasear con cuidado",
         },
       ],
-      language: "pt",
-      lessonDescription:
-        "Métricas operacionais focadas em qualidade e segurança da automação documental, com rastros para auditoria.",
-      lessonTitle: "Medição e monitoramento da automação",
-    },
-  },
-  {
-    expectations: `
-TOPIC-SPECIFIC GUIDANCE:
-
-1. APPLICATION CHECK:
-   - GOOD PATTERN: Scenarios presenting connectivity symptoms where learners must reason about which network layer is likely at fault
-   - GOOD PATTERN: Situations requiring understanding of WHY testing the gateway first eliminates local network issues before investigating remote paths
-   - BAD PATTERN: Asking to list debugging steps without a scenario
-   - BAD PATTERN: Questions testing recall of specific tool commands rather than reasoning about layers
-
-2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:
-   - DNS failures meaning the physical network is down (DNS is a service-layer issue; the network may be fine)
-   - Gateway reachability proving the destination is reachable (it only proves the local subnet works)
-   - All connectivity problems being diagnosable from the client side (some require server-side investigation)
-   - Debugging always proceeding bottom-up (sometimes symptoms clearly point to a specific layer)
-
-3. FORMAT FIT: Multiple choice works well for "given these symptoms, which layer is likely at fault" scenarios. Sort order could work for the systematic debugging sequence.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "en-web-debugging-mental-models-quiz",
-    userInput: {
-      chapterTitle: "Networking fundamentals",
-      courseTitle: "Web Development",
-      explanationSteps: [
-        {
-          text: "Start at the host: check if the network interface is up and has a valid IP. If the machine itself is misconfigured, nothing beyond it will work.",
-          title: "Host-Level Check",
-        },
-        {
-          text: "Test the local subnet by reaching the default gateway. If this fails, the problem is between your machine and the first router — a local network issue.",
-          title: "Subnet and Gateway",
-        },
-        {
-          text: "If the gateway responds but the destination doesn't, the problem is somewhere along the path — a routing issue, a firewall, or the remote host itself.",
-          title: "Path and Service Layer",
-        },
-      ],
-      language: "en",
-      lessonDescription:
-        "Practical mental models for narrowing a problem to host, subnet, gateway, path, or service-layer reachability without relying on protocol-specific details.",
-      lessonTitle: "Connectivity Debugging Mental Models",
-    },
+    } satisfies LessonQuizParams,
   },
 ];

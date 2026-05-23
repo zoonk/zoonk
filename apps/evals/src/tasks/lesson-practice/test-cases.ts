@@ -1,3 +1,5 @@
+import { type LessonPracticeParams } from "@zoonk/ai/tasks/lessons/core/practice";
+
 const SHARED_EXPECTATIONS = `
 EVALUATION CRITERIA:
 
@@ -65,29 +67,30 @@ ${SHARED_EXPECTATIONS}
     userInput: {
       chapterTitle: "Networking fundamentals",
       courseTitle: "Web Development",
-      explanationSteps: [
+      language: "en",
+      sourceLessons: [
         {
-          text: "Data is wrapped in headers at each network layer (application, transport, network, link) before transmission, with each layer adding its own control information.",
+          description:
+            "Data is wrapped in headers at each network layer (application, transport, network, link) before transmission, with each layer adding its own control information.",
           title: "Encapsulation",
         },
         {
-          text: "Each router makes independent forwarding decisions based on its own routing table, passing packets one hop at a time toward the destination.",
+          description:
+            "Each router makes independent forwarding decisions based on its own routing table, passing packets one hop at a time toward the destination.",
           title: "Hop-by-Hop Forwarding",
         },
         {
-          text: "The maximum size of a single frame that can be transmitted over a network link, typically 1500 bytes for Ethernet.",
+          description:
+            "The maximum size of a single frame that can be transmitted over a network link, typically 1500 bytes for Ethernet.",
           title: "Maximum Transmission Unit",
         },
         {
-          text: "When a packet exceeds the MTU of a link, it is split into smaller fragments that are reassembled at the destination.",
+          description:
+            "When a packet exceeds the MTU of a link, it is split into smaller fragments that are reassembled at the destination.",
           title: "Packet Fragmentation",
         },
       ],
-      language: "en",
-      lessonDescription:
-        "Core building blocks for how data moves across networks, from encapsulation to hop-by-hop forwarding constraints.",
-      lessonTitle: "How Data Moves on Networks",
-    },
+    } satisfies LessonPracticeParams,
   },
   {
     expectations: `
@@ -111,29 +114,30 @@ ${SHARED_EXPECTATIONS}
     userInput: {
       chapterTitle: "Tipos numéricos e valores especiais",
       courseTitle: "Python",
-      explanationSteps: [
+      language: "pt",
+      sourceLessons: [
         {
-          text: "Números de ponto flutuante usam representação IEEE 754, o que pode causar imprecisões em cálculos decimais como 0.1 + 0.2 != 0.3.",
+          description:
+            "Números de ponto flutuante usam representação IEEE 754, o que pode causar imprecisões em cálculos decimais como 0.1 + 0.2 != 0.3.",
           title: "Ponto Flutuante",
         },
         {
-          text: "Em Python, bool é uma subclasse de int, onde True == 1 e False == 0, permitindo operações aritméticas com booleanos.",
+          description:
+            "Em Python, bool é uma subclasse de int, onde True == 1 e False == 0, permitindo operações aritméticas com booleanos.",
           title: "Booleanos como Inteiros",
         },
         {
-          text: "Python suporta diferentes formas de literais numéricos: inteiros decimais, hexadecimais (0x), octais (0o), binários (0b) e notação científica para floats.",
+          description:
+            "Python suporta diferentes formas de literais numéricos: inteiros decimais, hexadecimais (0x), octais (0o), binários (0b) e notação científica para floats.",
           title: "Literais Numéricos",
         },
         {
-          text: "A hierarquia de tipos numéricos em Python vai de bool → int → float → complex, com conversões implícitas seguindo essa ordem.",
+          description:
+            "A hierarquia de tipos numéricos em Python vai de bool → int → float → complex, com conversões implícitas seguindo essa ordem.",
           title: "Hierarquia de Tipos",
         },
       ],
-      language: "pt",
-      lessonDescription:
-        "Valores de ponto flutuante e booleanos, sintaxe de literais e a relação estrutural entre bool e int.",
-      lessonTitle: "Float e bool como tipos numéricos",
-    },
+    } satisfies LessonPracticeParams,
   },
   {
     expectations: `
@@ -153,29 +157,30 @@ ${SHARED_EXPECTATIONS}
     userInput: {
       chapterTitle: "Business cycles",
       courseTitle: "Economics",
-      explanationSteps: [
+      language: "en",
+      sourceLessons: [
         {
-          text: "The percentage of the labor force that is jobless and actively seeking work; it is a lagging indicator that peaks after GDP has already started recovering.",
+          description:
+            "The percentage of the labor force that is jobless and actively seeking work; it is a lagging indicator that peaks after GDP has already started recovering.",
           title: "Unemployment Rate",
         },
         {
-          text: "Total hours worked across the economy tend to drop before unemployment rises during downturns, as employers cut hours before cutting jobs.",
+          description:
+            "Total hours worked across the economy tend to drop before unemployment rises during downturns, as employers cut hours before cutting jobs.",
           title: "Hours Worked",
         },
         {
-          text: "The share of the working-age population that is either employed or actively looking for work; it can decline during prolonged downturns as people exit the labor force.",
+          description:
+            "The share of the working-age population that is either employed or actively looking for work; it can decline during prolonged downturns as people exit the labor force.",
           title: "Labor Force Participation",
         },
         {
-          text: "Workers who have stopped looking for employment because they believe no jobs are available; they are not counted in the official unemployment rate.",
+          description:
+            "Workers who have stopped looking for employment because they believe no jobs are available; they are not counted in the official unemployment rate.",
           title: "Discouraged Workers",
         },
       ],
-      language: "en",
-      lessonDescription:
-        "Empirical regularities linking downturns to labor market outcomes at the level of aggregate fluctuations, without modeling search or wage-setting mechanisms.",
-      lessonTitle: "Labor market aggregates over the cycle",
-    },
+    } satisfies LessonPracticeParams,
   },
   {
     expectations: `
@@ -197,29 +202,30 @@ ${SHARED_EXPECTATIONS}
     userInput: {
       chapterTitle: "Carbonilos y enolatos",
       courseTitle: "Química",
-      explanationSteps: [
+      language: "es",
+      sourceLessons: [
         {
-          text: "Los hidrógenos en posición alfa al carbonilo son ácidos debido a la estabilización por resonancia del carbanión resultante con el grupo C=O.",
+          description:
+            "Los hidrógenos en posición alfa al carbonilo son ácidos debido a la estabilización por resonancia del carbanión resultante con el grupo C=O.",
           title: "Acidez en Posición Alfa",
         },
         {
-          text: "El enolato se estabiliza por deslocalización de la carga negativa entre el carbono alfa y el oxígeno del carbonilo, formando dos estructuras resonantes.",
+          description:
+            "El enolato se estabiliza por deslocalización de la carga negativa entre el carbono alfa y el oxígeno del carbonilo, formando dos estructuras resonantes.",
           title: "Estabilización por Resonancia",
         },
         {
-          text: "El enolato actúa como nucleófilo rico en electrones que ataca electrófilos como haluros de alquilo o carbonilos de otros compuestos.",
+          description:
+            "El enolato actúa como nucleófilo rico en electrones que ataca electrófilos como haluros de alquilo o carbonilos de otros compuestos.",
           title: "Enolato como Nucleófilo",
         },
         {
-          text: "Reacción donde un enolato ataca el carbonilo de otra molécula, formando un β-hidroxicarbonilo que puede deshidratarse a un producto α,β-insaturado.",
+          description:
+            "Reacción donde un enolato ataca el carbonilo de otra molécula, formando un β-hidroxicarbonilo que puede deshidratarse a un producto α,β-insaturado.",
           title: "Condensación Aldólica",
         },
       ],
-      language: "es",
-      lessonDescription:
-        "Origen de la acidez en α y cómo se forma el enolato como nucleófilo clave en reacciones de construcción C–C.",
-      lessonTitle: "Acidez en α y formación de enolatos",
-    },
+    } satisfies LessonPracticeParams,
   },
   {
     expectations: `
@@ -243,29 +249,30 @@ ${SHARED_EXPECTATIONS}
     userInput: {
       chapterTitle: "Legal tech e automação de documentos",
       courseTitle: "Direito",
-      explanationSteps: [
+      language: "pt",
+      sourceLessons: [
         {
-          text: "Indicadores como taxa de erro, completude de campos e conformidade com templates que medem a qualidade dos documentos gerados automaticamente.",
+          description:
+            "Indicadores como taxa de erro, completude de campos e conformidade com templates que medem a qualidade dos documentos gerados automaticamente.",
           title: "Métricas de Qualidade Documental",
         },
         {
-          text: "Registros detalhados de cada ação realizada pelo sistema de automação, incluindo quem iniciou, quando executou e quais alterações foram feitas.",
+          description:
+            "Registros detalhados de cada ação realizada pelo sistema de automação, incluindo quem iniciou, quando executou e quais alterações foram feitas.",
           title: "Rastros de Auditoria",
         },
         {
-          text: "Categorização de erros em níveis de severidade (crítico, alto, médio, baixo) para priorizar correções e identificar padrões recorrentes.",
+          description:
+            "Categorização de erros em níveis de severidade (crítico, alto, médio, baixo) para priorizar correções e identificar padrões recorrentes.",
           title: "Classificação de Erros",
         },
         {
-          text: "Métricas que monitoram riscos de segurança como acesso não autorizado, vazamento de dados sensíveis e integridade dos documentos gerados.",
+          description:
+            "Métricas que monitoram riscos de segurança como acesso não autorizado, vazamento de dados sensíveis e integridade dos documentos gerados.",
           title: "Indicadores de Segurança",
         },
       ],
-      language: "pt",
-      lessonDescription:
-        "Métricas operacionais focadas em qualidade e segurança da automação documental, com rastros para auditoria.",
-      lessonTitle: "Medição e monitoramento da automação",
-    },
+    } satisfies LessonPracticeParams,
   },
   {
     expectations: `
@@ -285,28 +292,29 @@ ${SHARED_EXPECTATIONS}
     userInput: {
       chapterTitle: "Networking fundamentals",
       courseTitle: "Web Development",
-      explanationSteps: [
+      language: "en",
+      sourceLessons: [
         {
-          text: "A systematic approach to debugging connectivity by testing each network layer independently, starting from the physical/link layer up to the application layer.",
+          description:
+            "A systematic approach to debugging connectivity by testing each network layer independently, starting from the physical/link layer up to the application layer.",
           title: "Layer-by-Layer Isolation",
         },
         {
-          text: "Verifying local network settings including IP address assignment, subnet mask, DNS resolver configuration, and routing table entries.",
+          description:
+            "Verifying local network settings including IP address assignment, subnet mask, DNS resolver configuration, and routing table entries.",
           title: "Host Configuration Check",
         },
         {
-          text: "Testing whether the default gateway is reachable, which confirms the local network segment is functioning and the first hop router is accessible.",
+          description:
+            "Testing whether the default gateway is reachable, which confirms the local network segment is functioning and the first hop router is accessible.",
           title: "Gateway Reachability",
         },
         {
-          text: "Diagnosing issues at the application layer such as DNS resolution failures, TLS handshake errors, or service port connectivity problems.",
+          description:
+            "Diagnosing issues at the application layer such as DNS resolution failures, TLS handshake errors, or service port connectivity problems.",
           title: "Service-Layer Diagnosis",
         },
       ],
-      language: "en",
-      lessonDescription:
-        "Practical mental models for narrowing a problem to host, subnet, gateway, path, or service-layer reachability without relying on protocol-specific details.",
-      lessonTitle: "Connectivity Debugging Mental Models",
-    },
+    } satisfies LessonPracticeParams,
   },
 ];

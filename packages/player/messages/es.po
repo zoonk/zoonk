@@ -33,6 +33,7 @@ msgid "vPyO9S"
 msgstr "Posición {position}: {item}. Toca para quitar."
 
 #: src/components/arrange-words-answer-area.tsx
+#: src/components/select-image-step.tsx
 msgid "1nJY2/"
 msgstr "Tu respuesta"
 
@@ -196,6 +197,10 @@ msgstr "PM"
 #: src/components/reward-badges.tsx
 msgid "cVpmV7"
 msgstr "Energía"
+
+#: src/components/select-image-step.tsx
+msgid "mhiTW7"
+msgstr "Respuesta correcta"
 
 #: src/components/select-image-step.tsx
 msgid "NA6C/+"
