@@ -193,7 +193,7 @@ describe("player browser integration: choice steps", () => {
     await expect.element(page.getByText("Berlin")).toBeInTheDocument();
   });
 
-  it("lets users expand image-led multiple-choice evidence", async () => {
+  it("renders image-led multiple-choice evidence inline", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         steps: [
@@ -230,17 +230,6 @@ describe("player browser integration: choice steps", () => {
     await expect
       .element(page.getByAltText(/sales chart with a visible drop in march/iu))
       .toBeInTheDocument();
-
-    await page.getByRole("button", { name: /open full image/iu }).click();
-
-    const dialog = page.getByRole("dialog", { name: /full image/iu });
-
-    await expect
-      .element(dialog.getByAltText(/sales chart with a visible drop in march/iu))
-      .toBeInTheDocument();
-
-    await page.getByRole("button", { name: /close full image/iu }).click();
-    await expect.element(dialog).not.toBeInTheDocument();
   });
 
   it("shows translation pronunciation, romanization, and feedback audio without app wiring", async () => {

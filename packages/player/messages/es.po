@@ -112,22 +112,6 @@ msgstr "Capítulo completado"
 msgid "P768k7"
 msgstr "correcto"
 
-#: src/components/expandable-step-image-stage.tsx
-msgid "pumVIo"
-msgstr "Abrir imagen completa"
-
-#: src/components/expandable-step-image-stage.tsx
-msgid "3Pgbio"
-msgstr "Imagen completa"
-
-#: src/components/expandable-step-image-stage.tsx
-msgid "vqV+x5"
-msgstr "Muestra la imagen completa sin recortes del paso."
-
-#: src/components/expandable-step-image-stage.tsx
-msgid "ZYZr+P"
-msgstr "Cerrar imagen completa"
-
 #: src/components/feedback-answer-blocks.tsx
 msgid "3nOd8f"
 msgstr "Tu respuesta:"
