@@ -5,9 +5,11 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
+import { getSearchInputTop, scrollSearchInputToTop } from "./catalog-search";
 import { expect, test } from "./fixtures";
 
 const uniqueId = randomUUID();
+const SEARCH_LESSONS_LABEL = /search lessons/iu;
 
 let chapterUrl: string;
 let courseSlug: string;
@@ -301,6 +303,32 @@ test.describe("Chapter Lesson Search", () => {
     await expect(
       page.getByRole("link", { name: new RegExp(lessonNames.second, "u") }),
     ).toBeVisible();
+  });
+});
+
+test.describe("Chapter Lesson Search - Mobile", () => {
+  test.use({ viewport: { height: 667, width: 375 } });
+
+  test("keeps the search field anchored when no lessons match", async ({ page }) => {
+    await page.goto(chapterUrl);
+    await scrollSearchInputToTop({ label: SEARCH_LESSONS_LABEL, page });
+
+    const searchInput = page.getByLabel(SEARCH_LESSONS_LABEL);
+
+    await searchInput.fill("E2E Testing");
+
+    await expect(
+      page.getByRole("link", { name: new RegExp(lessonNames.first, "u") }),
+    ).toBeVisible();
+
+    const matchingTop = await getSearchInputTop({ label: SEARCH_LESSONS_LABEL, page });
+
+    await searchInput.fill("nonexistent xyz");
+    await expect(page.getByText(/no lessons found/iu)).toBeVisible();
+
+    await expect
+      .poll(() => getSearchInputTop({ label: SEARCH_LESSONS_LABEL, page }))
+      .toBeLessThanOrEqual(matchingTop + 1);
   });
 });
 

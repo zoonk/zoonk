@@ -203,7 +203,8 @@ export function CatalogGridSearch({
 
 /**
  * Grid empty state stays tied to the shared search context so filtered empty
- * results do not require every catalog page to duplicate visibility logic.
+ * results do not require every catalog page to duplicate visibility logic. The
+ * empty frame keeps mobile scroll from collapsing under a focused search field.
  */
 export function CatalogGridEmpty({ className, ...props }: React.ComponentProps<"p">) {
   const context = useCatalogGridContext();
@@ -216,7 +217,15 @@ export function CatalogGridEmpty({ className, ...props }: React.ComponentProps<"
     return null;
   }
 
-  return <GridEmpty className={className} {...props} />;
+  return (
+    <GridEmpty
+      className={cn(
+        "flex min-h-[calc(100dvh-8rem)] items-center justify-center md:min-h-64",
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 /**
