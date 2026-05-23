@@ -8,6 +8,7 @@ import { useExtracted } from "next-intl";
 import { Fragment, useCallback, useMemo, useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
 import { type SelectedAnswer } from "../player-reducer";
+import { stripWrappingQuotes } from "./_utils/strip-wrapping-quotes";
 import { QuestionText } from "./question-text";
 import { InteractiveStepLayout } from "./step-layouts";
 
@@ -141,10 +142,11 @@ function MatchItem({
   state: ItemVisualState;
 }) {
   const isLocked = state === "correct" || state === "incorrectFlash";
+  const displayLabel = stripWrappingQuotes(label);
 
   return (
     <button
-      aria-label={label}
+      aria-label={displayLabel}
       aria-pressed={state === "selected"}
       className={cn(
         "border-border flex min-h-11 items-center rounded-lg border px-2.5 py-2.5 text-left text-sm wrap-break-word transition-all duration-150 sm:px-4 sm:py-3.5 sm:text-base",
@@ -155,7 +157,7 @@ function MatchItem({
       onClick={onTap}
       type="button"
     >
-      <span>{label}</span>
+      <span>{displayLabel}</span>
     </button>
   );
 }

@@ -63,6 +63,45 @@ describe("player browser integration: arrangement steps", () => {
     await expect.element(page.getByRole("heading", { name: "Match the pairs." })).toBeVisible();
   });
 
+  it("strips model-added wrapping quotes from match-column labels", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        steps: [
+          buildSerializedStep({
+            content: {
+              pairs: [
+                { left: '"Sun"', right: "“Day”" },
+                { left: "‘Moon’", right: '"Night"' },
+              ],
+              question: "Match each item",
+            },
+            id: "match-quoted-labels",
+            kind: "matchColumns",
+            matchColumnsRightItems: ["“Day”", '"Night"'],
+          }),
+        ],
+      }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    const sun = page.getByRole("button", { name: "Sun" });
+    const day = page.getByRole("button", { name: "Day" });
+    const moon = page.getByRole("button", { name: "Moon" });
+    const night = page.getByRole("button", { name: "Night" });
+
+    await expect.element(sun).toHaveTextContent(/^Sun$/u);
+    await expect.element(day).toHaveTextContent(/^Day$/u);
+    await expect.element(moon).toHaveTextContent(/^Moon$/u);
+    await expect.element(night).toHaveTextContent(/^Night$/u);
+
+    await sun.click();
+    await day.click();
+    await moon.click();
+    await night.click();
+
+    await expect.element(page.getByRole("button", { name: /check/iu })).toBeEnabled();
+  });
+
   it("keeps duplicate match-column labels selectable until each visible item is matched", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
@@ -124,6 +163,43 @@ describe("player browser integration: arrangement steps", () => {
     });
 
     await expect.element(page.getByRole("button", { name: /check/iu })).toBeEnabled();
+    await page.getByRole("button", { name: /check/iu }).click();
+
+    await expect
+      .element(page.getByRole("region", { name: /answer feedback/iu }))
+      .toBeInTheDocument();
+  });
+
+  it("strips model-added wrapping quotes from sort-order labels", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        steps: [
+          buildSerializedStep({
+            content: {
+              feedback: "Ordered",
+              items: ['"Alpha"', "“Beta”", "‘Gamma’"],
+              question: "Sort alphabetically",
+            },
+            kind: "sortOrder",
+            sortOrderItems: ['"Alpha"', "“Beta”", "‘Gamma’"],
+          }),
+        ],
+      }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await expect
+      .element(page.getByRole("button", { name: "Alpha" }).getByText(/^Alpha$/u))
+      .toBeInTheDocument();
+
+    await expect
+      .element(page.getByRole("button", { name: "Beta" }).getByText(/^Beta$/u))
+      .toBeInTheDocument();
+
+    await expect
+      .element(page.getByRole("button", { name: "Gamma" }).getByText(/^Gamma$/u))
+      .toBeInTheDocument();
+
     await page.getByRole("button", { name: /check/iu }).click();
 
     await expect

@@ -193,6 +193,36 @@ describe("player browser integration: choice steps", () => {
     await expect.element(page.getByText("Berlin")).toBeInTheDocument();
   });
 
+  it("strips model-added wrapping quotes from multiple-choice option labels", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        steps: [
+          buildSerializedStep({
+            content: {
+              options: [
+                { feedback: "Nope", id: "Paris", isCorrect: false, text: '"Paris"' },
+                { feedback: "Correct", id: "Berlin", isCorrect: true, text: "“Berlin”" },
+              ],
+              question: "What is the capital of Germany?",
+            },
+            kind: "multipleChoice",
+          }),
+        ],
+      }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    const parisOption = page.getByRole("radio", { name: "Paris" });
+    const berlinOption = page.getByRole("radio", { name: "Berlin" });
+
+    await expect.element(parisOption.getByText(/^Paris$/u)).toBeInTheDocument();
+    await expect.element(berlinOption.getByText(/^Berlin$/u)).toBeInTheDocument();
+
+    await parisOption.click();
+
+    await expect.element(page.getByRole("button", { name: /check/iu })).toBeEnabled();
+  });
+
   it("renders image-led multiple-choice evidence inline", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
