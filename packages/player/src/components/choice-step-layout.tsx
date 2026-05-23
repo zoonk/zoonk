@@ -1,7 +1,6 @@
 "use client";
 
 import { type StepImage } from "@zoonk/core/steps/contract/image";
-import { ExpandableStepImageStage } from "./expandable-step-image-stage";
 import {
   PlayerChoiceScene,
   PlayerChoiceSceneContext,
@@ -11,6 +10,7 @@ import {
   PlayerChoiceSceneQuestion,
 } from "./player-choice-scene";
 import { StepActionButton } from "./step-action-button";
+import { StepImageView } from "./step-image";
 
 /**
  * The prompt and option list are the reusable heart of every choice scene.
@@ -76,7 +76,7 @@ function ChoiceStepImageStage({ image }: { image: StepImage }) {
         className="relative aspect-square w-full overflow-hidden rounded-xl lg:aspect-auto lg:h-full lg:rounded-none"
         data-slot="choice-step-image-stage"
       >
-        <ExpandableStepImageStage image={image} />
+        <StepImageView image={image} />
       </div>
     </div>
   );

@@ -57,22 +57,6 @@ function tapRight(target: HTMLElement) {
   fireEvent.touchEnd(globalThis.window, { changedTouches: [touch], touches: [] });
 }
 
-function tapExpandedImageBackdrop(target: HTMLElement) {
-  const x = globalThis.window.innerWidth - 8;
-  const y = 8;
-  const touch = buildTouch({ identifier: 4, target, x, y });
-
-  fireEvent.touchStart(target, {
-    changedTouches: [touch],
-    targetTouches: [touch],
-    touches: [touch],
-  });
-
-  fireEvent.touchEnd(globalThis.window, { changedTouches: [touch], touches: [] });
-
-  fireEvent.click(target, { clientX: x, clientY: y });
-}
-
 function buildLongStaticText() {
   return [
     ...Array.from(
@@ -303,31 +287,6 @@ describe("player browser integration: static steps", () => {
     await expect
       .element(page.getByAltText(/lantern lighting up one idea at a time/iu))
       .toBeInTheDocument();
-
-    await page.getByRole("button", { name: /open full image/iu }).click();
-    const dialog = page.getByRole("dialog", { name: /full image/iu });
-
-    await expect
-      .element(dialog.getByAltText(/lantern lighting up one idea at a time/iu))
-      .toBeInTheDocument();
-
-    tapExpandedImageBackdrop(screen.getByRole("dialog", { name: /full image/iu }));
-
-    await expect.element(dialog).not.toBeInTheDocument();
-
-    await expect
-      .element(page.getByRole("heading", { name: "One step, one image" }))
-      .toBeInTheDocument();
-
-    await page.getByRole("button", { name: /open full image/iu }).click();
-    const reopenedDialog = page.getByRole("dialog", { name: /full image/iu });
-
-    await expect
-      .element(reopenedDialog.getByAltText(/lantern lighting up one idea at a time/iu))
-      .toBeInTheDocument();
-
-    await page.getByRole("button", { name: /close full image/iu }).click();
-    await expect.element(reopenedDialog).not.toBeInTheDocument();
   });
 
   it("swipes touch navigation forward on static steps", async () => {

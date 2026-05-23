@@ -1,7 +1,6 @@
 "use client";
 
 import { type StepImage } from "@zoonk/core/steps/contract/image";
-import { ExpandableStepImageStage } from "./expandable-step-image-stage";
 import {
   PlayerReadScene,
   PlayerReadSceneBody,
@@ -9,6 +8,7 @@ import {
   PlayerReadSceneTitle,
 } from "./player-read-scene";
 import { StepActionButton } from "./step-action-button";
+import { StepImageView } from "./step-image";
 
 /**
  * Shared intro copy for practice opening screens.
@@ -45,7 +45,7 @@ function StepHeroImage({ image }: { image: StepImage }) {
       className="bg-muted absolute inset-0 overflow-hidden lg:relative lg:inset-auto lg:aspect-square lg:w-full lg:rounded-3xl"
       data-slot="step-hero-image"
     >
-      <ExpandableStepImageStage image={image} />
+      <StepImageView image={image} />
     </div>
   );
 }

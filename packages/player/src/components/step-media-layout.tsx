@@ -1,7 +1,7 @@
 "use client";
 
 import { type StepImage } from "@zoonk/core/steps/contract/image";
-import { ExpandableStepImageStage } from "./expandable-step-image-stage";
+import { StepImageView } from "./step-image";
 
 /**
  * Static image-led reading steps share one immersive media shell: the image
@@ -22,7 +22,7 @@ export function StepMediaLayout({
       data-slot="step-media-layout"
     >
       <div className="min-h-0" data-slot="step-media-stage">
-        <ExpandableStepImageStage image={image} />
+        <StepImageView image={image} />
       </div>
 
       <div

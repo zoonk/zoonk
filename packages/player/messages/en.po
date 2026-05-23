@@ -112,22 +112,6 @@ msgstr "Chapter Complete"
 msgid "P768k7"
 msgstr "correct"
 
-#: src/components/expandable-step-image-stage.tsx
-msgid "pumVIo"
-msgstr "Open full image"
-
-#: src/components/expandable-step-image-stage.tsx
-msgid "3Pgbio"
-msgstr "Full image"
-
-#: src/components/expandable-step-image-stage.tsx
-msgid "vqV+x5"
-msgstr "Shows the full uncropped step image."
-
-#: src/components/expandable-step-image-stage.tsx
-msgid "ZYZr+P"
-msgstr "Close full image"
-
 #: src/components/feedback-answer-blocks.tsx
 msgid "3nOd8f"
 msgstr "Your answer:"
