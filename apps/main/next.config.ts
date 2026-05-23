@@ -19,7 +19,12 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   // Use separate build directories so E2E and production builds don't conflict
   distDir: isE2E ? ".next-e2e" : ".next",
-  experimental: { authInterrupts: true, staleTimes: { dynamic: 300 }, typedEnv: true },
+  experimental: {
+    appNewScrollHandler: true,
+    authInterrupts: true,
+    staleTimes: { dynamic: 300 },
+    typedEnv: true,
+  },
   headers: getPublicAppSecurityHeaders,
   images: {
     minimumCacheTTL: 60 * 60 * 24 * CACHE_IMAGE_DAYS,
