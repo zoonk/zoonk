@@ -49,14 +49,14 @@ describe(buildTranslationOptions, () => {
         id: "word-1",
         pronunciation: "tea-pron",
         romanization: null,
-        word: "tea",
+        word: "Tea",
       },
       {
         audioUrl: "/audio/cafe.mp3",
         id: "distractor-1",
         pronunciation: "ka-fe",
         romanization: "cafe",
-        word: "café",
+        word: "Café",
       },
     ]);
   });

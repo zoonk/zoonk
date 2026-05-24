@@ -6,8 +6,6 @@ const VOCABULARY_DISTRACTOR_COUNT = 3;
 const FIRST_LETTER_PATTERN = /\p{L}/u;
 const TERMINAL_PUNCTUATION_PATTERN = /[.!?…。！？؟]+$/u;
 
-type InitialCasing = "lowercase" | "none" | "uppercase";
-
 export type TranslationOption = {
   id: string;
   word: string;
@@ -76,36 +74,18 @@ function isCasedLetter(letter: string): boolean {
 }
 
 /**
- * The correct target-language answer defines the casing style learners should see.
- * Matching distractors to that first-letter style removes answer leaks such as only the
- * correct option starting with an uppercase letter.
+ * Translate options are standalone choices, so each visible label should start like a
+ * sentence. This removes casing as an answer clue without trusting generated lowercase
+ * answers like "i'm fine"; scripts without casing keep their original text.
  */
-function getInitialCasing(text: string): InitialCasing {
+function capitalizeFirstCasedLetter(text: string): string {
   const firstLetter = FIRST_LETTER_PATTERN.exec(text)?.[0];
 
   if (!firstLetter || !isCasedLetter(firstLetter)) {
-    return "none";
+    return text;
   }
 
-  if (firstLetter === firstLetter.toLocaleUpperCase()) {
-    return "uppercase";
-  }
-
-  return "lowercase";
-}
-
-/**
- * Applies one shared first-letter casing style while preserving the rest of the option.
- * This keeps phrases like "Bom dia" sentence-cased without title-casing every word.
- */
-function applyInitialCasing(params: { casing: InitialCasing; text: string }): string {
-  if (params.casing === "none") {
-    return params.text;
-  }
-
-  return params.text.replace(FIRST_LETTER_PATTERN, (letter) =>
-    params.casing === "uppercase" ? letter.toLocaleUpperCase() : letter.toLocaleLowerCase(),
-  );
+  return text.replace(FIRST_LETTER_PATTERN, (letter) => letter.toLocaleUpperCase());
 }
 
 /**
@@ -132,14 +112,13 @@ function stripTerminalPunctuation(text: string): string {
  * the correct target word and ending punctuation from the prompt being translated.
  */
 function normalizeTranslationOptionWord(params: {
-  casing: InitialCasing;
   optionWord: string;
   terminalPunctuation: string;
 }): string {
   const textWithoutPunctuation = stripTerminalPunctuation(params.optionWord);
   const textWithPunctuation = `${textWithoutPunctuation}${params.terminalPunctuation}`;
 
-  return applyInitialCasing({ casing: params.casing, text: textWithPunctuation });
+  return capitalizeFirstCasedLetter(textWithPunctuation);
 }
 
 /**
@@ -147,14 +126,12 @@ function normalizeTranslationOptionWord(params: {
  * should be normalized so option formatting cannot identify the correct answer.
  */
 function normalizeTranslationOption(params: {
-  casing: InitialCasing;
   option: TranslationOption;
   terminalPunctuation: string;
 }): TranslationOption {
   return {
     ...params.option,
     word: normalizeTranslationOptionWord({
-      casing: params.casing,
       optionWord: params.option.word,
       terminalPunctuation: params.terminalPunctuation,
     }),
@@ -227,11 +204,10 @@ export function buildTranslationOptions(params: {
     .map((word) => buildDirectDistractorOption({ distractorLookup: params.distractorLookup, word }))
     .slice(0, VOCABULARY_DISTRACTOR_COUNT);
 
-  const casing = getInitialCasing(params.word.word);
   const terminalPunctuation = getTerminalPunctuation(params.word.translation);
 
   const options = [toTranslationOption(params.word), ...directDistractors].map((option) =>
-    normalizeTranslationOption({ casing, option, terminalPunctuation }),
+    normalizeTranslationOption({ option, terminalPunctuation }),
   );
 
   return shuffle(options);
