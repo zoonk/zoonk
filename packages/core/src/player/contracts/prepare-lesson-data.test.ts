@@ -378,6 +378,84 @@ describe(preparePlayerLessonData, () => {
     ]);
   });
 
+  it("matches translation option casing to the correct target-language word", () => {
+    const word = makeLessonWord({
+      distractors: ["boa tarde", "boa noite"],
+      translation: "Good morning",
+      word: makeWordRecord({ id: "10", word: "Bom dia" }),
+    });
+
+    const result = prepare({
+      chapterWords: [word],
+      lesson: makeLesson([
+        makeStep({
+          id: "11",
+          kind: "translation",
+          word: makeStepWord({ id: "10", word: "Bom dia" }),
+        }),
+      ]),
+    });
+
+    expect(result.steps[0]?.translationOptions.map((option) => option.word)).toStrictEqual([
+      "Bom dia",
+      "Boa tarde",
+      "Boa noite",
+    ]);
+  });
+
+  it("adds the visible translation prompt punctuation to every translation option", () => {
+    const word = makeLessonWord({
+      distractors: ["Boa tarde", "Boa noite."],
+      translation: "Good morning!",
+      word: makeWordRecord({ id: "10", word: "Bom dia" }),
+    });
+
+    const result = prepare({
+      chapterWords: [word],
+      lesson: makeLesson([
+        makeStep({
+          id: "11",
+          kind: "translation",
+          word: makeStepWord({ id: "10", word: "Bom dia" }),
+        }),
+      ]),
+    });
+
+    expect(result.steps[0]?.translationOptions.map((option) => option.word)).toStrictEqual([
+      "Bom dia!",
+      "Boa tarde!",
+      "Boa noite!",
+    ]);
+  });
+
+  it("strips terminal punctuation from translation options when the prompt has none", () => {
+    const word = makeLessonWord({
+      distractors: ["Boa tarde.", "Boa noite!"],
+      translation: "Good morning",
+      word: makeWordRecord({ id: "10", word: "Bom dia" }),
+    });
+
+    const result = prepare({
+      chapterWords: [word],
+      distractorWords: [
+        makeDistractorWord({ audioUrl: "/audio/boa-tarde.mp3", id: "101", word: "Boa tarde." }),
+      ],
+      lesson: makeLesson([
+        makeStep({
+          id: "11",
+          kind: "translation",
+          word: makeStepWord({ id: "10", word: "Bom dia" }),
+        }),
+      ]),
+    });
+
+    expect(result.steps[0]?.translationOptions).toMatchObject([
+      { id: "10", word: "Bom dia" },
+      { audioUrl: "/audio/boa-tarde.mp3", id: "101", word: "Boa tarde" },
+      { id: "distractor:boa noite", word: "Boa noite" },
+    ]);
+  });
+
   it("uses the exact chapter word referenced by the step when resources share a word", () => {
     const vocabularyWord = makeLessonWord({
       distractors: ["Danke"],
