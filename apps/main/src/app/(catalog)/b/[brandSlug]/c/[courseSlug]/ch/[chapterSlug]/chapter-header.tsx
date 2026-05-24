@@ -37,7 +37,7 @@ export function ChapterHeader({
       <CatalogHeaderImage alt={chapter.title} src={chapterImage} />
 
       <MediaCardContent>
-        <MediaCardBreadcrumb>
+        <MediaCardBreadcrumb className="hidden sm:block">
           <Link
             className="hover:text-foreground truncate transition-colors"
             href={`/b/${brandSlug}/c/${courseSlug}`}

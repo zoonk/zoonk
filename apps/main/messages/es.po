@@ -100,6 +100,10 @@ msgid "SENRqu"
 msgstr "Ayuda"
 
 #: src/app/(catalog)/_components/navbar-links.tsx
+msgid "onRJrc"
+msgstr "Página del curso"
+
+#: src/app/(catalog)/_components/navbar-links.tsx
 msgid "IbrSk1"
 msgstr "Aprender"
 
