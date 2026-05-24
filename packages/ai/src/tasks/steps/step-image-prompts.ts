@@ -6,7 +6,7 @@ import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./step-image-prompts.prompt.md";
 
 const defaultModel = "openai/gpt-5.5";
-const fallbackModels = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"] as const;
+const fallbackModels = ["anthropic/claude-opus-4.7", "google/gemini-3.1-pro-preview"] as const;
 
 const imagePromptSchema = z.string().min(1);
 

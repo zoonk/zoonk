@@ -1,0 +1,167 @@
+{
+  "expectations": "\nNATIVE LANGUAGE: English (US)\nTARGET LANGUAGE: Spanish\n\nWORD: \"murciélago\"\n\nThis Spanish word (bat - the animal) is famous for containing all 5 vowels:\n- Four syllables\n- The accent on \"é\" indicates stress\n- The \"c\" before \"i\" is soft (like \"s\" in Latin American Spanish)\n- Contains all five Spanish vowels\n\nSOUND CHALLENGES:\n- The \"ci\" combination sounds like \"see\"\n- The \"g\" before \"o\" is hard\n- Stress is on the second syllable (indicated by accent)\n\nQUALITY CHECK:\n- Should be readable by an English speaker\n- Should indicate stress on the \"-CIÉ-\" syllable\n- Should handle the soft \"c\" before \"i\"\n- May separate into 4 or 5 syllables; splitting the diphthong \"ié\" into two segments (e.g., \"see-EH\") for English readability is acceptable and should NOT be penalized\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Do NOT penalize for using \"v\" instead of \"b\" (or vice versa) in Spanish — they are identical phonemes in Spanish and a native speaker pronounces them the same way\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
+  "judgedAt": "2026-05-24T17:43:20.085Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Correctly stresses SYEH, uses English-readable letters, all sounds represented. Clean and natural for English speakers.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Same as A: correct stress on SYEH, English-friendly letters, all sounds present. Natural and readable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Correct stress and readable; 'goh' is a valid stylistic choice for the final syllable. Fully acceptable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Identical to B—correct stress, readable, complete. Solid output.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Identical to B/C/G/H—correct stress, readable English phonemes, complete.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Same as the other SYEH-lah-goh outputs: correct stress, readable, complete.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Same as the other SYEH-lah-goh outputs: correct stress, readable, complete.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Stress is misplaced on LAH instead of the SYEH/CIÉ syllable, and 'thyeh' reflects Castilian theta rather than Latin American soft c (should be 's'-like). Both are significant errors for the specified Latin American target.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The model provides an excellent phonetic transcription using native English phonemes. The stress is correctly placed on the second syllable, and the Latin American pronunciation of 'c' is accurately represented.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "The model provides an excellent phonetic transcription using native English phonemes. The stress is correctly placed on the second syllable, and the Latin American pronunciation of 'c' is accurately represented.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The model provides an excellent phonetic transcription using native English phonemes. The stress is correctly placed on the second syllable, and the Latin American pronunciation of 'c' is accurately represented.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The model provides an excellent phonetic transcription using native English phonemes. The stress is correctly placed on the second syllable, and the Latin American pronunciation of 'c' is accurately represented.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The model provides an excellent phonetic transcription using native English phonemes. The stress is correctly placed on the second syllable, and the Latin American pronunciation of 'c' is accurately represented.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "The model provides an excellent phonetic transcription using native English phonemes. The stress is correctly placed on the second syllable, and the Latin American pronunciation of 'c' is accurately represented.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "The model provides an excellent phonetic transcription using native English phonemes. The stress is correctly placed on the second syllable, and the Latin American pronunciation of 'c' is accurately represented.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The model placed the stress on the wrong syllable ('LAH' instead of the second syllable). Additionally, it used the Castilian 'th' sound for the 'c', which violates the Latin American Spanish target requirement.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Clear, readable US English approximation with hyphenated syllables and exactly one stressed syllable on SYEH. It represents the soft Latin American c as an s-like sound and includes all major sounds, with final “goh” helping signal the Spanish o.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Identical to the strongest output: readable, hyphenated, complete, and correctly stresses the second syllable. The soft c is handled well with “SYEH,” and the hard g before o is preserved.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Identical to the strongest output: it uses native English-friendly spelling, marks stress correctly, and gives a recognizable pronunciation. All key sounds are represented, including the soft c and hard g.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Identical to the strongest output: strong syllable separation, correct stress on the CIÉ syllable, and a readable English approximation. It preserves the important sounds of murciélago well.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Identical to the strongest output: clear English-readable pronunciation, correct stress marking, and good sound completeness. The “SYEH” segment reasonably captures the Latin American soft c plus accented vowel.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Very strong overall: readable, hyphenated, complete, and correctly stresses the second syllable. Final “go” is still a reasonable English approximation, though “goh” is slightly clearer for the Spanish final o.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Same as Model A: it correctly marks stress on SYEH and gives a recognizable, native-English-readable approximation. The only minor weakness is that final “go” is a little less explicit than “goh,” but it remains acceptable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "This has significant issues: it stresses LAH instead of the accented CIÉ syllable and uses “th” for c, which does not match Latin American Spanish. It is still somewhat readable and complete, but the wrong stress and regional sound mismatch make it much weaker.",
+          "score": 4
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-pronunciation",
+  "testCaseId": "en-spanish-murcielago-1"
+}

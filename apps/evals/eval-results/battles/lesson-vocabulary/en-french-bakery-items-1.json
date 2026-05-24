@@ -1,0 +1,185 @@
+{
+  "expectations": "\nLANGUAGE: English output required.\n\nTOPIC: French vocabulary for breads and pastries - focused specifically on bakery items found in a French boulangerie/patisserie.\n\nTOPIC SCOPE: This is a narrow, focused lesson. Valid vocabulary categories include types of bread, pastries, and baked goods found in a French boulangerie/patisserie.\n- Do NOT expect general food vocabulary, cooking terms, or restaurant vocabulary\n- Do NOT penalize for omitting any specific category - assess only what IS provided\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Bakery items are mistranslated\n- Vocabulary drifts to general cooking or restaurant terms\n- Gendered articles are missing (le pain, la baguette, not pain, baguette)\n\n\nEVALUATION CRITERIA:\n\n1. TOPIC-APPROPRIATE COVERAGE: The vocabulary list should cover the narrow lesson topic appropriately.\n   - Include words directly relevant to the specific lesson focus\n   - A narrow topic (like \"Ordering Coffee\") needs fewer words than a broad one\n   - Do NOT penalize for vocabulary count - focus on relevance and quality\n   - Do NOT expect exhaustive coverage of the broader domain (e.g., don't expect all food words for a coffee-ordering lesson)\n\n2. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - Each word-translation pair MUST be linguistically accurate\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - The translation must match the EXACT meaning - not a broader category or related concept\n   - If a translation is incorrect or semantically imprecise, this is a SEVERE error\n   - Grammatical gender must be correct (masculine nouns with masculine articles, feminine with feminine)\n\n3. TOPIC FOCUS (STRICT BOUNDARY ENFORCEMENT): Words must be INSIDE the lesson's specific scope. Penalize SEVERELY if:\n   - Vocabulary includes words from adjacent but separate topics (e.g., adjectives when the lesson is about nouns)\n   - Words drift to related but out-of-scope categories (e.g., wild animals for a pets lesson)\n   - The output includes vocabulary that belongs in a DIFFERENT lesson on a related topic\n   - Words are \"helpful additions\" that expand beyond the defined lesson boundary\n\n4. VOCABULARY QUALITY: Words should be practical and commonly used. Penalize if:\n   - Words are obscure, archaic, or rarely used in everyday speech\n   - Words include profanity, slurs, or offensive content\n   - Words use non-standard loanwords that are not common in the target language\n\n5. LANGUAGE CORRECTNESS: Output language must match NATIVE_LANGUAGE code.\n   - Translations should be in the learner's native language\n   - Words being tested should be in the target language\n   - Penalize if languages are mixed incorrectly\n\n6. GRAMMATICAL GENDER AND ARTICLES:\n   - For languages with grammatical gender, nouns MUST include articles\n   - German: \"die Mutter\", \"der Vater\", \"das Kind\" (not \"Mutter\", \"Vater\", \"Kind\")\n   - French: \"le pain\", \"la maison\" (not \"pain\", \"maison\")\n   - Spanish: \"el gato\", \"la casa\" (not \"gato\", \"casa\")\n   - Portuguese: \"o livro\", \"a mesa\" (not \"livro\", \"mesa\")\n   - Italian: \"il gatto\", \"la casa\" (not \"gatto\", \"casa\")\n   - Penalize if nouns are shown without their articles in gendered languages\n   - Penalize if the grammatical gender is WRONG (e.g., masculine article with feminine noun)\n\n7. NO DUPLICATES: The `word` field is the unique identifier - duplicates are determined by the word field ONLY, not translations. Penalize if:\n   - The same word appears multiple times in the `word` field (even with different translations)\n   - Near-duplicates exist (same word with minor formatting differences)\n   - Semantic duplicates exist (same concept repeated with different phrasing)\n   - A word appears twice because it has multiple valid translations (should appear once with most common translation)\n\n8. CLEAN WORD FIELD - NO PARENTHETICAL CONTENT: The word field must contain ONLY the vocabulary word. Penalize SEVERELY if:\n   - The word field contains parenthetical disambiguation like \"el café (la bebida)\"\n   - The word field contains usage notes, alternative meanings, or pronunciation hints in parentheses\n   - Any text in parentheses appears in the word field (this breaks text-to-speech)\n\n9. NO OVER-ENUMERATION OF VARIANTS: Vocabulary should be representative, not exhaustive. Penalize if:\n   - Multiple variants of the same base item are listed when 1-2 would suffice\n   - The list appears inflated with excessive sub-types of a single category\n   - A base concept is represented by 5+ specific variants instead of the base term plus 1-2 examples\n   - The vocabulary count seems artificially high due to listing every possible variant\n   NOTE: This does NOT mean penalize for having many words - penalize only when those words are redundant variants of the same concept. Distinct vocabulary items are fine.\n   NOTE: Distinct practical choices within a category are NOT over-enumeration. For example, different milk types (whole, skim, almond, oat) are genuinely different menu options a learner needs to know - not redundant variants of \"milk.\"\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific word choices - accept ANY valid vocabulary relevant to the topic\n- Do NOT penalize for not including words you might expect - only penalize for actual errors\n- Do NOT require specific vocabulary items by name\n- Do NOT expect a specific number of words - narrow topics naturally have fewer words\n- FOCUS ON: translation accuracy, topic relevance, no duplicates, clean word fields\n- Different valid vocabulary selections exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-05-24T18:16:13.251Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Solid, focused list of breads and pastries with correct articles and accurate translations. No duplicates, clean word fields, appropriately scoped.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Strong coverage with accurate translations and correct articles. Minor inconsistency (millefeuille vs mille-feuille) but no real errors; translations lack 'the' but are accurate.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "Accurate translations and articles, well-scoped. Some translations just use the French loanword (pain au chocolat) which is acceptable in English usage.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Good scope and accurate. 'la miche' as 'the loaf' is fine. All articles correct, no duplicates, clean fields.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Well-scoped, accurate translations, correct gender articles. 'le flan' as custard tart is acceptable. Clean and focused.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Largely accurate but includes 'la boulangerie' and 'la pâtisserie' (shop names, not baked goods) which drift slightly out of scope. Otherwise strong.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Mostly accurate but 'le chou' translated as 'cream puff' is imprecise (chou means cabbage; chou à la crème is the pastry). Otherwise reasonable scope.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Contains parenthetical content in translations ('mille-feuille (napoleon pastry)', 'financier (almond cake)') — but parentheses are in translation field, not word field. 'pain aux raisins' as 'Danish pastry' is imprecise, and 'croissant aux amandes' as 'almond pastry' is loose. Also includes boulangerie/pâtisserie shop terms.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Includes 'la pâtisserie' translated as 'pastry' (ambiguous/shop), 'le muffin' which is not really a French boulangerie staple, and 'la tarte' as 'pie' is imprecise. Limited coverage and weaker accuracy.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "Exceptional output. Provides a perfect core list of French bakery items with natural, highly accurate English translations and correctly includes French grammatical articles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Exceptional list that includes highly authentic and distinct French pastries (like chouquette and financier) with excellent, natural English translations and accurate articles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Provides a comprehensive and highly accurate vocabulary list featuring an excellent variety of distinct breads and pastries without over-enumerating minor variants.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Meets all expectations flawlessly with a solid, fundamental list of relevant bakery items and strict adherence to the grammatical article requirement.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Very strong, accurate list with a great selection of distinct baked goods. Translations and grammatical articles are completely correct.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Very good vocabulary selection and respects the article rule. However, translating \"le pain au chocolat\" simply as \"the chocolate pastry\" is slightly less precise than typical culinary terms.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Strong and accurate list. Translations like \"the chocolate pastry\" or \"the raisin pastry\" are slightly generic compared to other outputs, but they are entirely acceptable and free of severe errors.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Excellent vocabulary selection, but translating \"le pain aux raisins\" as \"Danish pastry\" and \"le croissant aux amandes\" as \"almond pastry\" loses a bit of cultural precision.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Meets basic task requirements and includes correct articles. However, the list is shorter and relies on \"le muffin\", which is an English loanword and less representative of traditional French cuisine.",
+          "score": 8
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Excellent topic fit with practical French bakery items and correct gendered articles throughout. Translations are accurate overall, with only a minor near-duplication between “la tarte” and “la tarte aux fruits.”",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Very strong, focused list of common boulangerie/pâtisserie items with correct articles and clean word fields. Translations are accurate, with only minor imprecision in rendering items like “pain au chocolat” as “chocolate croissant.”",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Strong focused coverage with correct articles and mostly precise translations for common bakery items. Minor issues include slightly generic translations like “chocolate pastry” and “custard tart,” but nothing substantially out of scope.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Good topic-focused vocabulary with correct articles and mostly accurate translations. Minor weaknesses include “la tarte” translated as “pie” and the less standard-looking “le millefeuille,” but the list remains useful and relevant.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Mostly relevant and well-formed, with correct articles and practical bakery vocabulary. The main issue is “le chou” translated as “cream puff,” which is imprecise compared with “le chou à la crème.”",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "Relevant bakery vocabulary with correct articles and no major topic drift. However, several translations are left as French loan terms, such as “pain au chocolat” and “pain aux raisins,” which reduces usefulness for an English-speaking learner.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Contains many accurate and relevant bakery items with correct articles. It is weakened by out-of-scope place terms like “la boulangerie” and “la pâtisserie,” which are not baked goods, plus some broad category items.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Several core items are correct and relevant, with articles included. However, it includes category or ambiguous terms like “la pâtisserie” and “la viennoiserie,” and some translations are imprecise, such as “flaky pastry” and “pie.”",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Includes many valid bakery items with correct articles, but it has multiple significant issues. “Le pain aux raisins” as “Danish pastry” is inaccurate, “la boulangerie” and “la pâtisserie” are out-of-scope place terms, and there are additional imprecisions such as “almond pastry” for “le croissant aux amandes.”",
+          "score": 5.5
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-vocabulary",
+  "testCaseId": "en-french-bakery-items-1"
+}

@@ -1,0 +1,185 @@
+{
+  "expectations": "\nLANGUAGE: English output required.\n\nTOPIC: German vocabulary for parents and siblings - focused specifically on immediate family members (mother, father, brother, sister, and their variations).\n\nTOPIC SCOPE: This is a narrow, focused lesson about parents, siblings, and immediate family relationships (as stated in the lesson description). This includes children (Sohn, Tochter, Kind) since they are immediate family.\n- Do NOT expect extended family (grandparents, aunts, uncles, cousins) - those belong in separate lessons\n- Do NOT penalize for omitting any specific terms - assess only what IS provided\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Family terms are mistranslated\n- Vocabulary includes extended family members (grandparents, aunts, uncles, cousins)\n- German articles (der/die/das) are missing from nouns\n\n\nEVALUATION CRITERIA:\n\n1. TOPIC-APPROPRIATE COVERAGE: The vocabulary list should cover the narrow lesson topic appropriately.\n   - Include words directly relevant to the specific lesson focus\n   - A narrow topic (like \"Ordering Coffee\") needs fewer words than a broad one\n   - Do NOT penalize for vocabulary count - focus on relevance and quality\n   - Do NOT expect exhaustive coverage of the broader domain (e.g., don't expect all food words for a coffee-ordering lesson)\n\n2. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - Each word-translation pair MUST be linguistically accurate\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - The translation must match the EXACT meaning - not a broader category or related concept\n   - If a translation is incorrect or semantically imprecise, this is a SEVERE error\n   - Grammatical gender must be correct (masculine nouns with masculine articles, feminine with feminine)\n\n3. TOPIC FOCUS (STRICT BOUNDARY ENFORCEMENT): Words must be INSIDE the lesson's specific scope. Penalize SEVERELY if:\n   - Vocabulary includes words from adjacent but separate topics (e.g., adjectives when the lesson is about nouns)\n   - Words drift to related but out-of-scope categories (e.g., wild animals for a pets lesson)\n   - The output includes vocabulary that belongs in a DIFFERENT lesson on a related topic\n   - Words are \"helpful additions\" that expand beyond the defined lesson boundary\n\n4. VOCABULARY QUALITY: Words should be practical and commonly used. Penalize if:\n   - Words are obscure, archaic, or rarely used in everyday speech\n   - Words include profanity, slurs, or offensive content\n   - Words use non-standard loanwords that are not common in the target language\n\n5. LANGUAGE CORRECTNESS: Output language must match NATIVE_LANGUAGE code.\n   - Translations should be in the learner's native language\n   - Words being tested should be in the target language\n   - Penalize if languages are mixed incorrectly\n\n6. GRAMMATICAL GENDER AND ARTICLES:\n   - For languages with grammatical gender, nouns MUST include articles\n   - German: \"die Mutter\", \"der Vater\", \"das Kind\" (not \"Mutter\", \"Vater\", \"Kind\")\n   - French: \"le pain\", \"la maison\" (not \"pain\", \"maison\")\n   - Spanish: \"el gato\", \"la casa\" (not \"gato\", \"casa\")\n   - Portuguese: \"o livro\", \"a mesa\" (not \"livro\", \"mesa\")\n   - Italian: \"il gatto\", \"la casa\" (not \"gatto\", \"casa\")\n   - Penalize if nouns are shown without their articles in gendered languages\n   - Penalize if the grammatical gender is WRONG (e.g., masculine article with feminine noun)\n\n7. NO DUPLICATES: The `word` field is the unique identifier - duplicates are determined by the word field ONLY, not translations. Penalize if:\n   - The same word appears multiple times in the `word` field (even with different translations)\n   - Near-duplicates exist (same word with minor formatting differences)\n   - Semantic duplicates exist (same concept repeated with different phrasing)\n   - A word appears twice because it has multiple valid translations (should appear once with most common translation)\n\n8. CLEAN WORD FIELD - NO PARENTHETICAL CONTENT: The word field must contain ONLY the vocabulary word. Penalize SEVERELY if:\n   - The word field contains parenthetical disambiguation like \"el café (la bebida)\"\n   - The word field contains usage notes, alternative meanings, or pronunciation hints in parentheses\n   - Any text in parentheses appears in the word field (this breaks text-to-speech)\n\n9. NO OVER-ENUMERATION OF VARIANTS: Vocabulary should be representative, not exhaustive. Penalize if:\n   - Multiple variants of the same base item are listed when 1-2 would suffice\n   - The list appears inflated with excessive sub-types of a single category\n   - A base concept is represented by 5+ specific variants instead of the base term plus 1-2 examples\n   - The vocabulary count seems artificially high due to listing every possible variant\n   NOTE: This does NOT mean penalize for having many words - penalize only when those words are redundant variants of the same concept. Distinct vocabulary items are fine.\n   NOTE: Distinct practical choices within a category are NOT over-enumeration. For example, different milk types (whole, skim, almond, oat) are genuinely different menu options a learner needs to know - not redundant variants of \"milk.\"\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific word choices - accept ANY valid vocabulary relevant to the topic\n- Do NOT penalize for not including words you might expect - only penalize for actual errors\n- Do NOT require specific vocabulary items by name\n- Do NOT expect a specific number of words - narrow topics naturally have fewer words\n- FOCUS ON: translation accuracy, topic relevance, no duplicates, clean word fields\n- Different valid vocabulary selections exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-05-24T18:16:00.526Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Excellent topic focus on immediate family with accurate translations, correct articles, and no duplicates or out-of-scope additions. Includes useful informal variants (Mama/Papa) without over-enumeration.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Clean, accurate list with correct articles and proper scope. Includes 'Familie' which is slightly broader but reasonable for a family chapter context.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Accurate and well-scoped vocabulary with correct articles. Minor inconsistency: Mama/Papa translations lack 'the' while others have it, but content is solid.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "All translations accurate with correct articles and tight topic focus. Includes 'Familie' as a minor scope extension but otherwise solid.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Mostly accurate with correct articles, but includes stepfather/stepmother and twins which drift slightly toward extended/non-immediate family territory.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Accurate translations with correct articles, but missing 'the' in English translations is a minor consistency issue. Tight scope.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "Accurate and correctly articled but quite minimal, omitting children/son/daughter which are immediate family. Translations lack 'the' article consistency.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Includes half-siblings and step-parents which drift beyond strict immediate family scope, though arguably related. Otherwise accurate with correct articles.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Heavy over-enumeration with half-siblings, step-parents, twin, plus adjective+noun phrases like 'die ältere Schwester' which are not single vocabulary items. Drifts beyond immediate family scope significantly.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Provides an excellent, highly relevant list of vocabulary covering parents, siblings, and children. German nouns correctly include articles and capitalization, perfectly matching the strict scope.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Provides a highly relevant list of vocabulary perfectly aligned with the lesson's scope. German nouns correctly include articles, and the selection is practical and accurate.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Offers excellent coverage of the core topic, including family, parents, siblings, and children. All German words include the correct grammatical articles and are accurately translated.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Excellent vocabulary list that perfectly targets the immediate family scope. A minor inconsistency in English translations (omitting 'the' for mom/dad) does not detract from the high quality of the German targets.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Strong list that covers the core family members well and reasonably includes allowed variations like step-parents and twins. All words are accurate and properly include articles.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Very good coverage that includes the core immediate family and expands into half-siblings and step-parents. The inclusion of the singular 'das Elternteil' is accurate, though slightly clinical for everyday speech.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Solid coverage of the core immediate family. The inclusion of 'das Elternteil' for singular 'parent' is accurate though slightly clinical for everyday conversational speech.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "Accurate and properly formatted with German articles. While omissions are not strictly penalized, a 6-word list that misses children and informal variants is slightly less comprehensive and useful compared to the other models.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Penalized severely for violating strict topic boundaries. By including 'die ältere Schwester' (older sister) and 'der jüngere Bruder' (younger brother), the model introduces adjectives into a noun-focused lesson, explicitly violating the negative constraints.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Excellent focused list of parents, siblings, and immediate family terms, including common variants like Mama/Papa and children. All German nouns include correct articles, translations are accurate, and there is no scope drift or duplication.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Excellent coverage of the narrow lesson topic with accurate immediate-family vocabulary and correct German articles. The list is clean, practical, and stays within scope with no duplicates or mistranslations.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Accurate and well-focused immediate-family vocabulary with correct articles throughout. It is slightly less useful than the top outputs because it omits a few common relationship terms like siblings/Mama/Papa, but omissions are not a major penalty under the rubric.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "All translations and articles are accurate, and half-sibling/step-parent terms are plausible variations of siblings and parents. It is a bit broader than the best outputs due to including general “family” and several variants, but it remains mostly within the defined immediate-family scope.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "Very clean and accurate list centered exactly on parents and siblings, with correct German articles. It is somewhat limited for product usefulness because it does not include children/son/daughter or common parent variants, though omissions should not be penalized heavily.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Accurate immediate-family vocabulary with correct articles and no duplicates. The inclusion of “die Familie” is a slight scope broadening beyond parents, siblings, and immediate relationships, but the rest is strong.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Accurate and practical vocabulary with correct articles, covering core parents, siblings, and children. The general term “die Familie” is a mild scope drift for this narrow lesson, and it is a little less complete than similar stronger outputs.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Translations and articles are accurate, and most items are relevant parent/sibling/immediate-family terms. However, “die Familie,” “die Zwillinge,” and step-parent additions make it broader and less tightly focused than the best lists.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "All entries are linguistically accurate with correct articles, and most terms are related to parent/sibling variations. The list is noticeably over-expanded with several sibling variants such as twin, older sister, younger brother, half-sibling terms, and step-parents, making it less focused for a narrow lesson.",
+          "score": 7
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-vocabulary",
+  "testCaseId": "en-german-parents-siblings-1"
+}

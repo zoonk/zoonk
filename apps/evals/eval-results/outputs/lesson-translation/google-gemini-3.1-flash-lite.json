@@ -1,0 +1,142 @@
+{
+  "generatedAt": "2026-05-24T17:54:24.477Z",
+  "modelId": "google/gemini-3.1-flash-lite",
+  "outputs": [
+    {
+      "duration": 1089.2185839999001,
+      "inputTokens": 355,
+      "output": "{\n  \"translation\": \"the\"\n}",
+      "outputTokens": 6,
+      "systemPrompt": "# Role\n\nYou are an expert linguist specializing in word-level translation for language learners. Your expertise is providing accurate, context-appropriate translations of individual words.\n\n# Goal\n\nTranslate a single word from the target language into the user's native language. Provide the dictionary meaning that is most appropriate for the word.\n\n# Language Handling\n\n- **TARGET_LANGUAGE**: The language the word is in.\n- **USER_LANGUAGE**: The learner's native language. The translation should be in this language.\n\n# Core Principles\n\n## 1. Context-Appropriate Translation\n\nProvide the most common, general translation for the word. Choose the meaning that would appear first in a bilingual dictionary.\n\n**Examples:**\n\n- Spanish \"gato\" → English \"cat\"\n- Spanish \"el\" → English \"the\"\n- Spanish \"en\" → English \"in\"\n- Japanese \"猫\" → English \"cat\"\n\n## 2. Handle Function Words\n\nArticles, prepositions, conjunctions, and other function words must still receive translations:\n\n- \"el\" (Spanish) → \"the\"\n- \"en\" (Spanish) → \"in\"\n- \"de\" (Spanish) → \"of\"\n- \"と\" (Japanese) → \"and\"\n\n# Quality Requirements\n\n1. **Accuracy**: The translation must be correct and appropriate for the word.\n2. **Brevity**: Provide a concise translation, not a definition. One or two words maximum.\n3. **Function words**: Always translate function words (articles, prepositions, etc.).\n",
+      "testCaseId": "es-en-el-1",
+      "userPrompt": "\n    WORD: el\n    TARGET_LANGUAGE: Español Latinoamericano\n    USER_LANGUAGE: US English\n  "
+    },
+    {
+      "duration": 984.8011669998523,
+      "inputTokens": 355,
+      "output": "{\n  \"translation\": \"cat\"\n}",
+      "outputTokens": 6,
+      "systemPrompt": "# Role\n\nYou are an expert linguist specializing in word-level translation for language learners. Your expertise is providing accurate, context-appropriate translations of individual words.\n\n# Goal\n\nTranslate a single word from the target language into the user's native language. Provide the dictionary meaning that is most appropriate for the word.\n\n# Language Handling\n\n- **TARGET_LANGUAGE**: The language the word is in.\n- **USER_LANGUAGE**: The learner's native language. The translation should be in this language.\n\n# Core Principles\n\n## 1. Context-Appropriate Translation\n\nProvide the most common, general translation for the word. Choose the meaning that would appear first in a bilingual dictionary.\n\n**Examples:**\n\n- Spanish \"gato\" → English \"cat\"\n- Spanish \"el\" → English \"the\"\n- Spanish \"en\" → English \"in\"\n- Japanese \"猫\" → English \"cat\"\n\n## 2. Handle Function Words\n\nArticles, prepositions, conjunctions, and other function words must still receive translations:\n\n- \"el\" (Spanish) → \"the\"\n- \"en\" (Spanish) → \"in\"\n- \"de\" (Spanish) → \"of\"\n- \"と\" (Japanese) → \"and\"\n\n# Quality Requirements\n\n1. **Accuracy**: The translation must be correct and appropriate for the word.\n2. **Brevity**: Provide a concise translation, not a definition. One or two words maximum.\n3. **Function words**: Always translate function words (articles, prepositions, etc.).\n",
+      "testCaseId": "es-en-gato-1",
+      "userPrompt": "\n    WORD: gato\n    TARGET_LANGUAGE: Español Latinoamericano\n    USER_LANGUAGE: US English\n  "
+    },
+    {
+      "duration": 981.7300420000684,
+      "inputTokens": 355,
+      "output": "{\n  \"translation\": \"eats\"\n}",
+      "outputTokens": 12,
+      "systemPrompt": "# Role\n\nYou are an expert linguist specializing in word-level translation for language learners. Your expertise is providing accurate, context-appropriate translations of individual words.\n\n# Goal\n\nTranslate a single word from the target language into the user's native language. Provide the dictionary meaning that is most appropriate for the word.\n\n# Language Handling\n\n- **TARGET_LANGUAGE**: The language the word is in.\n- **USER_LANGUAGE**: The learner's native language. The translation should be in this language.\n\n# Core Principles\n\n## 1. Context-Appropriate Translation\n\nProvide the most common, general translation for the word. Choose the meaning that would appear first in a bilingual dictionary.\n\n**Examples:**\n\n- Spanish \"gato\" → English \"cat\"\n- Spanish \"el\" → English \"the\"\n- Spanish \"en\" → English \"in\"\n- Japanese \"猫\" → English \"cat\"\n\n## 2. Handle Function Words\n\nArticles, prepositions, conjunctions, and other function words must still receive translations:\n\n- \"el\" (Spanish) → \"the\"\n- \"en\" (Spanish) → \"in\"\n- \"de\" (Spanish) → \"of\"\n- \"と\" (Japanese) → \"and\"\n\n# Quality Requirements\n\n1. **Accuracy**: The translation must be correct and appropriate for the word.\n2. **Brevity**: Provide a concise translation, not a definition. One or two words maximum.\n3. **Function words**: Always translate function words (articles, prepositions, etc.).\n",
+      "testCaseId": "es-en-come-1",
+      "userPrompt": "\n    WORD: come\n    TARGET_LANGUAGE: Español Latinoamericano\n    USER_LANGUAGE: US English\n  "
+    },
+    {
+      "duration": 982.707583000185,
+      "inputTokens": 353,
+      "output": "{\n  \"translation\": \"cat\"\n}",
+      "outputTokens": 11,
+      "systemPrompt": "# Role\n\nYou are an expert linguist specializing in word-level translation for language learners. Your expertise is providing accurate, context-appropriate translations of individual words.\n\n# Goal\n\nTranslate a single word from the target language into the user's native language. Provide the dictionary meaning that is most appropriate for the word.\n\n# Language Handling\n\n- **TARGET_LANGUAGE**: The language the word is in.\n- **USER_LANGUAGE**: The learner's native language. The translation should be in this language.\n\n# Core Principles\n\n## 1. Context-Appropriate Translation\n\nProvide the most common, general translation for the word. Choose the meaning that would appear first in a bilingual dictionary.\n\n**Examples:**\n\n- Spanish \"gato\" → English \"cat\"\n- Spanish \"el\" → English \"the\"\n- Spanish \"en\" → English \"in\"\n- Japanese \"猫\" → English \"cat\"\n\n## 2. Handle Function Words\n\nArticles, prepositions, conjunctions, and other function words must still receive translations:\n\n- \"el\" (Spanish) → \"the\"\n- \"en\" (Spanish) → \"in\"\n- \"de\" (Spanish) → \"of\"\n- \"と\" (Japanese) → \"and\"\n\n# Quality Requirements\n\n1. **Accuracy**: The translation must be correct and appropriate for the word.\n2. **Brevity**: Provide a concise translation, not a definition. One or two words maximum.\n3. **Function words**: Always translate function words (articles, prepositions, etc.).\n",
+      "testCaseId": "ja-en-neko-1",
+      "userPrompt": "\n    WORD: 猫\n    TARGET_LANGUAGE: Japanese\n    USER_LANGUAGE: US English\n  "
+    },
+    {
+      "duration": 982.6522089999635,
+      "inputTokens": 354,
+      "output": "{\n  \"translation\": \"eat\"\n}",
+      "outputTokens": 11,
+      "systemPrompt": "# Role\n\nYou are an expert linguist specializing in word-level translation for language learners. Your expertise is providing accurate, context-appropriate translations of individual words.\n\n# Goal\n\nTranslate a single word from the target language into the user's native language. Provide the dictionary meaning that is most appropriate for the word.\n\n# Language Handling\n\n- **TARGET_LANGUAGE**: The language the word is in.\n- **USER_LANGUAGE**: The learner's native language. The translation should be in this language.\n\n# Core Principles\n\n## 1. Context-Appropriate Translation\n\nProvide the most common, general translation for the word. Choose the meaning that would appear first in a bilingual dictionary.\n\n**Examples:**\n\n- Spanish \"gato\" → English \"cat\"\n- Spanish \"el\" → English \"the\"\n- Spanish \"en\" → English \"in\"\n- Japanese \"猫\" → English \"cat\"\n\n## 2. Handle Function Words\n\nArticles, prepositions, conjunctions, and other function words must still receive translations:\n\n- \"el\" (Spanish) → \"the\"\n- \"en\" (Spanish) → \"in\"\n- \"de\" (Spanish) → \"of\"\n- \"と\" (Japanese) → \"and\"\n\n# Quality Requirements\n\n1. **Accuracy**: The translation must be correct and appropriate for the word.\n2. **Brevity**: Provide a concise translation, not a definition. One or two words maximum.\n3. **Function words**: Always translate function words (articles, prepositions, etc.).\n",
+      "testCaseId": "ja-en-taberu-1",
+      "userPrompt": "\n    WORD: 食べる\n    TARGET_LANGUAGE: Japanese\n    USER_LANGUAGE: US English\n  "
+    },
+    {
+      "duration": 982.0839589999523,
+      "inputTokens": 353,
+      "output": "{\n  \"translation\": \"topic marker\"\n}",
+      "outputTokens": 7,
+      "systemPrompt": "# Role\n\nYou are an expert linguist specializing in word-level translation for language learners. Your expertise is providing accurate, context-appropriate translations of individual words.\n\n# Goal\n\nTranslate a single word from the target language into the user's native language. Provide the dictionary meaning that is most appropriate for the word.\n\n# Language Handling\n\n- **TARGET_LANGUAGE**: The language the word is in.\n- **USER_LANGUAGE**: The learner's native language. The translation should be in this language.\n\n# Core Principles\n\n## 1. Context-Appropriate Translation\n\nProvide the most common, general translation for the word. Choose the meaning that would appear first in a bilingual dictionary.\n\n**Examples:**\n\n- Spanish \"gato\" → English \"cat\"\n- Spanish \"el\" → English \"the\"\n- Spanish \"en\" → English \"in\"\n- Japanese \"猫\" → English \"cat\"\n\n## 2. Handle Function Words\n\nArticles, prepositions, conjunctions, and other function words must still receive translations:\n\n- \"el\" (Spanish) → \"the\"\n- \"en\" (Spanish) → \"in\"\n- \"de\" (Spanish) → \"of\"\n- \"と\" (Japanese) → \"and\"\n\n# Quality Requirements\n\n1. **Accuracy**: The translation must be correct and appropriate for the word.\n2. **Brevity**: Provide a concise translation, not a definition. One or two words maximum.\n3. **Function words**: Always translate function words (articles, prepositions, etc.).\n",
+      "testCaseId": "ja-en-wa-1",
+      "userPrompt": "\n    WORD: は\n    TARGET_LANGUAGE: Japanese\n    USER_LANGUAGE: US English\n  "
+    },
+    {
+      "duration": 980.5292080000509,
+      "inputTokens": 353,
+      "output": "{\n  \"translation\": \"the\"\n}",
+      "outputTokens": 6,
+      "systemPrompt": "# Role\n\nYou are an expert linguist specializing in word-level translation for language learners. Your expertise is providing accurate, context-appropriate translations of individual words.\n\n# Goal\n\nTranslate a single word from the target language into the user's native language. Provide the dictionary meaning that is most appropriate for the word.\n\n# Language Handling\n\n- **TARGET_LANGUAGE**: The language the word is in.\n- **USER_LANGUAGE**: The learner's native language. The translation should be in this language.\n\n# Core Principles\n\n## 1. Context-Appropriate Translation\n\nProvide the most common, general translation for the word. Choose the meaning that would appear first in a bilingual dictionary.\n\n**Examples:**\n\n- Spanish \"gato\" → English \"cat\"\n- Spanish \"el\" → English \"the\"\n- Spanish \"en\" → English \"in\"\n- Japanese \"猫\" → English \"cat\"\n\n## 2. Handle Function Words\n\nArticles, prepositions, conjunctions, and other function words must still receive translations:\n\n- \"el\" (Spanish) → \"the\"\n- \"en\" (Spanish) → \"in\"\n- \"de\" (Spanish) → \"of\"\n- \"と\" (Japanese) → \"and\"\n\n# Quality Requirements\n\n1. **Accuracy**: The translation must be correct and appropriate for the word.\n2. **Brevity**: Provide a concise translation, not a definition. One or two words maximum.\n3. **Function words**: Always translate function words (articles, prepositions, etc.).\n",
+      "testCaseId": "de-en-der-1",
+      "userPrompt": "\n    WORD: der\n    TARGET_LANGUAGE: German\n    USER_LANGUAGE: US English\n  "
+    },
+    {
+      "duration": 980.4137089999858,
+      "inputTokens": 353,
+      "output": "{\n  \"translation\": \"dog\"\n}",
+      "outputTokens": 11,
+      "systemPrompt": "# Role\n\nYou are an expert linguist specializing in word-level translation for language learners. Your expertise is providing accurate, context-appropriate translations of individual words.\n\n# Goal\n\nTranslate a single word from the target language into the user's native language. Provide the dictionary meaning that is most appropriate for the word.\n\n# Language Handling\n\n- **TARGET_LANGUAGE**: The language the word is in.\n- **USER_LANGUAGE**: The learner's native language. The translation should be in this language.\n\n# Core Principles\n\n## 1. Context-Appropriate Translation\n\nProvide the most common, general translation for the word. Choose the meaning that would appear first in a bilingual dictionary.\n\n**Examples:**\n\n- Spanish \"gato\" → English \"cat\"\n- Spanish \"el\" → English \"the\"\n- Spanish \"en\" → English \"in\"\n- Japanese \"猫\" → English \"cat\"\n\n## 2. Handle Function Words\n\nArticles, prepositions, conjunctions, and other function words must still receive translations:\n\n- \"el\" (Spanish) → \"the\"\n- \"en\" (Spanish) → \"in\"\n- \"de\" (Spanish) → \"of\"\n- \"と\" (Japanese) → \"and\"\n\n# Quality Requirements\n\n1. **Accuracy**: The translation must be correct and appropriate for the word.\n2. **Brevity**: Provide a concise translation, not a definition. One or two words maximum.\n3. **Function words**: Always translate function words (articles, prepositions, etc.).\n",
+      "testCaseId": "de-en-hund-1",
+      "userPrompt": "\n    WORD: Hund\n    TARGET_LANGUAGE: German\n    USER_LANGUAGE: US English\n  "
+    },
+    {
+      "duration": 1025.4446670000907,
+      "inputTokens": 353,
+      "output": "{\n  \"translation\": \"runs\"\n}",
+      "outputTokens": 6,
+      "systemPrompt": "# Role\n\nYou are an expert linguist specializing in word-level translation for language learners. Your expertise is providing accurate, context-appropriate translations of individual words.\n\n# Goal\n\nTranslate a single word from the target language into the user's native language. Provide the dictionary meaning that is most appropriate for the word.\n\n# Language Handling\n\n- **TARGET_LANGUAGE**: The language the word is in.\n- **USER_LANGUAGE**: The learner's native language. The translation should be in this language.\n\n# Core Principles\n\n## 1. Context-Appropriate Translation\n\nProvide the most common, general translation for the word. Choose the meaning that would appear first in a bilingual dictionary.\n\n**Examples:**\n\n- Spanish \"gato\" → English \"cat\"\n- Spanish \"el\" → English \"the\"\n- Spanish \"en\" → English \"in\"\n- Japanese \"猫\" → English \"cat\"\n\n## 2. Handle Function Words\n\nArticles, prepositions, conjunctions, and other function words must still receive translations:\n\n- \"el\" (Spanish) → \"the\"\n- \"en\" (Spanish) → \"in\"\n- \"de\" (Spanish) → \"of\"\n- \"と\" (Japanese) → \"and\"\n\n# Quality Requirements\n\n1. **Accuracy**: The translation must be correct and appropriate for the word.\n2. **Brevity**: Provide a concise translation, not a definition. One or two words maximum.\n3. **Function words**: Always translate function words (articles, prepositions, etc.).\n",
+      "testCaseId": "de-en-laeuft-1",
+      "userPrompt": "\n    WORD: läuft\n    TARGET_LANGUAGE: German\n    USER_LANGUAGE: US English\n  "
+    },
+    {
+      "duration": 980.0358750000596,
+      "inputTokens": 357,
+      "output": "{\n  \"translation\": \"gato\"\n}",
+      "outputTokens": 12,
+      "systemPrompt": "# Role\n\nYou are an expert linguist specializing in word-level translation for language learners. Your expertise is providing accurate, context-appropriate translations of individual words.\n\n# Goal\n\nTranslate a single word from the target language into the user's native language. Provide the dictionary meaning that is most appropriate for the word.\n\n# Language Handling\n\n- **TARGET_LANGUAGE**: The language the word is in.\n- **USER_LANGUAGE**: The learner's native language. The translation should be in this language.\n\n# Core Principles\n\n## 1. Context-Appropriate Translation\n\nProvide the most common, general translation for the word. Choose the meaning that would appear first in a bilingual dictionary.\n\n**Examples:**\n\n- Spanish \"gato\" → English \"cat\"\n- Spanish \"el\" → English \"the\"\n- Spanish \"en\" → English \"in\"\n- Japanese \"猫\" → English \"cat\"\n\n## 2. Handle Function Words\n\nArticles, prepositions, conjunctions, and other function words must still receive translations:\n\n- \"el\" (Spanish) → \"the\"\n- \"en\" (Spanish) → \"in\"\n- \"de\" (Spanish) → \"of\"\n- \"と\" (Japanese) → \"and\"\n\n# Quality Requirements\n\n1. **Accuracy**: The translation must be correct and appropriate for the word.\n2. **Brevity**: Provide a concise translation, not a definition. One or two words maximum.\n3. **Function words**: Always translate function words (articles, prepositions, etc.).\n",
+      "testCaseId": "ko-pt-goyangi-1",
+      "userPrompt": "\n    WORD: 고양이\n    TARGET_LANGUAGE: Coreano\n    USER_LANGUAGE: Português Brasileiro\n  "
+    },
+    {
+      "duration": 977.6654169999529,
+      "inputTokens": 356,
+      "output": "{\n  \"translation\": \"tópico\"\n}",
+      "outputTokens": 13,
+      "systemPrompt": "# Role\n\nYou are an expert linguist specializing in word-level translation for language learners. Your expertise is providing accurate, context-appropriate translations of individual words.\n\n# Goal\n\nTranslate a single word from the target language into the user's native language. Provide the dictionary meaning that is most appropriate for the word.\n\n# Language Handling\n\n- **TARGET_LANGUAGE**: The language the word is in.\n- **USER_LANGUAGE**: The learner's native language. The translation should be in this language.\n\n# Core Principles\n\n## 1. Context-Appropriate Translation\n\nProvide the most common, general translation for the word. Choose the meaning that would appear first in a bilingual dictionary.\n\n**Examples:**\n\n- Spanish \"gato\" → English \"cat\"\n- Spanish \"el\" → English \"the\"\n- Spanish \"en\" → English \"in\"\n- Japanese \"猫\" → English \"cat\"\n\n## 2. Handle Function Words\n\nArticles, prepositions, conjunctions, and other function words must still receive translations:\n\n- \"el\" (Spanish) → \"the\"\n- \"en\" (Spanish) → \"in\"\n- \"de\" (Spanish) → \"of\"\n- \"と\" (Japanese) → \"and\"\n\n# Quality Requirements\n\n1. **Accuracy**: The translation must be correct and appropriate for the word.\n2. **Brevity**: Provide a concise translation, not a definition. One or two words maximum.\n3. **Function words**: Always translate function words (articles, prepositions, etc.).\n",
+      "testCaseId": "ko-pt-neun-1",
+      "userPrompt": "\n    WORD: 는\n    TARGET_LANGUAGE: Coreano\n    USER_LANGUAGE: Português Brasileiro\n  "
+    },
+    {
+      "duration": 980.8739579999819,
+      "inputTokens": 357,
+      "output": "{\n  \"translation\": \"comer\"\n}",
+      "outputTokens": 6,
+      "systemPrompt": "# Role\n\nYou are an expert linguist specializing in word-level translation for language learners. Your expertise is providing accurate, context-appropriate translations of individual words.\n\n# Goal\n\nTranslate a single word from the target language into the user's native language. Provide the dictionary meaning that is most appropriate for the word.\n\n# Language Handling\n\n- **TARGET_LANGUAGE**: The language the word is in.\n- **USER_LANGUAGE**: The learner's native language. The translation should be in this language.\n\n# Core Principles\n\n## 1. Context-Appropriate Translation\n\nProvide the most common, general translation for the word. Choose the meaning that would appear first in a bilingual dictionary.\n\n**Examples:**\n\n- Spanish \"gato\" → English \"cat\"\n- Spanish \"el\" → English \"the\"\n- Spanish \"en\" → English \"in\"\n- Japanese \"猫\" → English \"cat\"\n\n## 2. Handle Function Words\n\nArticles, prepositions, conjunctions, and other function words must still receive translations:\n\n- \"el\" (Spanish) → \"the\"\n- \"en\" (Spanish) → \"in\"\n- \"de\" (Spanish) → \"of\"\n- \"と\" (Japanese) → \"and\"\n\n# Quality Requirements\n\n1. **Accuracy**: The translation must be correct and appropriate for the word.\n2. **Brevity**: Provide a concise translation, not a definition. One or two words maximum.\n3. **Function words**: Always translate function words (articles, prepositions, etc.).\n",
+      "testCaseId": "ko-pt-meokda-1",
+      "userPrompt": "\n    WORD: 먹다\n    TARGET_LANGUAGE: Coreano\n    USER_LANGUAGE: Português Brasileiro\n  "
+    },
+    {
+      "duration": 979.9095419999212,
+      "inputTokens": 357,
+      "output": "{\n  \"translation\": \"gata\"\n}",
+      "outputTokens": 12,
+      "systemPrompt": "# Role\n\nYou are an expert linguist specializing in word-level translation for language learners. Your expertise is providing accurate, context-appropriate translations of individual words.\n\n# Goal\n\nTranslate a single word from the target language into the user's native language. Provide the dictionary meaning that is most appropriate for the word.\n\n# Language Handling\n\n- **TARGET_LANGUAGE**: The language the word is in.\n- **USER_LANGUAGE**: The learner's native language. The translation should be in this language.\n\n# Core Principles\n\n## 1. Context-Appropriate Translation\n\nProvide the most common, general translation for the word. Choose the meaning that would appear first in a bilingual dictionary.\n\n**Examples:**\n\n- Spanish \"gato\" → English \"cat\"\n- Spanish \"el\" → English \"the\"\n- Spanish \"en\" → English \"in\"\n- Japanese \"猫\" → English \"cat\"\n\n## 2. Handle Function Words\n\nArticles, prepositions, conjunctions, and other function words must still receive translations:\n\n- \"el\" (Spanish) → \"the\"\n- \"en\" (Spanish) → \"in\"\n- \"de\" (Spanish) → \"of\"\n- \"と\" (Japanese) → \"and\"\n\n# Quality Requirements\n\n1. **Accuracy**: The translation must be correct and appropriate for the word.\n2. **Brevity**: Provide a concise translation, not a definition. One or two words maximum.\n3. **Function words**: Always translate function words (articles, prepositions, etc.).\n",
+      "testCaseId": "ar-es-qitta-1",
+      "userPrompt": "\n    WORD: قطة\n    TARGET_LANGUAGE: Árabe\n    USER_LANGUAGE: Español Latinoamericano\n  "
+    },
+    {
+      "duration": 978.9656249999534,
+      "inputTokens": 356,
+      "output": "{\n  \"translation\": \"en\"\n}",
+      "outputTokens": 6,
+      "systemPrompt": "# Role\n\nYou are an expert linguist specializing in word-level translation for language learners. Your expertise is providing accurate, context-appropriate translations of individual words.\n\n# Goal\n\nTranslate a single word from the target language into the user's native language. Provide the dictionary meaning that is most appropriate for the word.\n\n# Language Handling\n\n- **TARGET_LANGUAGE**: The language the word is in.\n- **USER_LANGUAGE**: The learner's native language. The translation should be in this language.\n\n# Core Principles\n\n## 1. Context-Appropriate Translation\n\nProvide the most common, general translation for the word. Choose the meaning that would appear first in a bilingual dictionary.\n\n**Examples:**\n\n- Spanish \"gato\" → English \"cat\"\n- Spanish \"el\" → English \"the\"\n- Spanish \"en\" → English \"in\"\n- Japanese \"猫\" → English \"cat\"\n\n## 2. Handle Function Words\n\nArticles, prepositions, conjunctions, and other function words must still receive translations:\n\n- \"el\" (Spanish) → \"the\"\n- \"en\" (Spanish) → \"in\"\n- \"de\" (Spanish) → \"of\"\n- \"と\" (Japanese) → \"and\"\n\n# Quality Requirements\n\n1. **Accuracy**: The translation must be correct and appropriate for the word.\n2. **Brevity**: Provide a concise translation, not a definition. One or two words maximum.\n3. **Function words**: Always translate function words (articles, prepositions, etc.).\n",
+      "testCaseId": "ar-es-fi-1",
+      "userPrompt": "\n    WORD: في\n    TARGET_LANGUAGE: Árabe\n    USER_LANGUAGE: Español Latinoamericano\n  "
+    },
+    {
+      "duration": 1010.6966249998659,
+      "inputTokens": 356,
+      "output": "{\n  \"translation\": \"la casa\"\n}",
+      "outputTokens": 7,
+      "systemPrompt": "# Role\n\nYou are an expert linguist specializing in word-level translation for language learners. Your expertise is providing accurate, context-appropriate translations of individual words.\n\n# Goal\n\nTranslate a single word from the target language into the user's native language. Provide the dictionary meaning that is most appropriate for the word.\n\n# Language Handling\n\n- **TARGET_LANGUAGE**: The language the word is in.\n- **USER_LANGUAGE**: The learner's native language. The translation should be in this language.\n\n# Core Principles\n\n## 1. Context-Appropriate Translation\n\nProvide the most common, general translation for the word. Choose the meaning that would appear first in a bilingual dictionary.\n\n**Examples:**\n\n- Spanish \"gato\" → English \"cat\"\n- Spanish \"el\" → English \"the\"\n- Spanish \"en\" → English \"in\"\n- Japanese \"猫\" → English \"cat\"\n\n## 2. Handle Function Words\n\nArticles, prepositions, conjunctions, and other function words must still receive translations:\n\n- \"el\" (Spanish) → \"the\"\n- \"en\" (Spanish) → \"in\"\n- \"de\" (Spanish) → \"of\"\n- \"と\" (Japanese) → \"and\"\n\n# Quality Requirements\n\n1. **Accuracy**: The translation must be correct and appropriate for the word.\n2. **Brevity**: Provide a concise translation, not a definition. One or two words maximum.\n3. **Function words**: Always translate function words (articles, prepositions, etc.).\n",
+      "testCaseId": "ar-es-albayt-1",
+      "userPrompt": "\n    WORD: البيت\n    TARGET_LANGUAGE: Árabe\n    USER_LANGUAGE: Español Latinoamericano\n  "
+    }
+  ],
+  "taskId": "lesson-translation"
+}

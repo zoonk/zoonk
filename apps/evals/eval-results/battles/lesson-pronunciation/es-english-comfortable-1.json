@@ -1,0 +1,167 @@
+{
+  "expectations": "\nNATIVE LANGUAGE: Spanish (Latin American)\nTARGET LANGUAGE: English\n\nWORD: \"comfortable\"\n\nThis is a common English word with:\n- Four syllables in careful speech, often reduced to three in casual speech\n- The \"mf\" consonant cluster\n- Stress on the first syllable\n\nSOUND CHALLENGES:\n- The word is often pronounced \"KUMF-ter-bul\" in casual speech\n- The \"o\" in \"-for-\" is often reduced to a schwa\n- Spanish speakers need approximation for reduced vowels\n\nQUALITY CHECK:\n- Should be readable by a Spanish speaker\n- Should indicate stress (typically first syllable)\n- Should handle the consonant cluster \"mf\"\n- Accept either full or reduced pronunciation representations\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Do NOT penalize for using \"v\" instead of \"b\" (or vice versa) in Spanish — they are identical phonemes in Spanish and a native speaker pronounces them the same way\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
+  "judgedAt": "2026-05-24T17:44:03.401Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "CAMF-ter-bol uses Spanish-friendly letters, marks stress on first syllable, separates syllables with hyphens, and handles the 'mf' cluster. 'CAM' approximates the 'uh' sound reasonably for Spanish readers.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Identical to F: CAMF-ter-bol is readable in Spanish, stress marked, syllables separated, and 'mf' cluster preserved. Reasonable approximation of the reduced casual pronunciation.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "KAMF-ter-bol uses 'K' which is uncommon but readable in Spanish; stress marked, syllables separated, 'mf' handled. Slightly less natural than 'C' for Spanish readers but still acceptable.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "KUM-fer-ta-bol uses the full four-syllable form with stress on first syllable; 'K' is less Spanish-natural but acceptable. Splits 'mf' across syllables which slightly weakens the cluster representation but is linguistically reasonable.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "CAM-fer-ta-bol gives the full four-syllable form with proper stress and Spanish-readable letters. Splits the 'mf' cluster across syllables but remains a valid approximation.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "COMF-ter-bol is very readable for Spanish speakers with proper stress and hyphenation, but 'COM' gives an 'o' sound rather than the schwa/uh of 'comfortable', making the approximation less accurate.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Same as B: COMF-ter-bol is readable and well-formatted, but the 'o' vowel doesn't approximate the actual 'uh' sound well.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Identical to B and C: readable and formatted correctly but the initial 'o' vowel misrepresents the English 'uh' sound.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Flawlessly applies the 3-syllable reduced pronunciation of the word. It accurately maps the English sounds to Spanish syllables using natural orthography ('C' instead of 'K' for the hard /k/ sound), correctly indicates stress, and provides a highly readable approximation.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Flawlessly applies the 3-syllable reduced pronunciation of the word. It accurately maps the English sounds to Spanish syllables using natural orthography ('C' instead of 'K' for the hard /k/ sound), correctly indicates stress, and provides a highly readable approximation.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Flawlessly applies the 3-syllable reduced pronunciation of the word. It accurately maps the English sounds to Spanish syllables using natural orthography ('C' instead of 'K' for the hard /k/ sound), correctly indicates stress, and provides a highly readable approximation.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Perfectly represents the 3-syllable pronunciation. It uses natural Spanish orthography ('C') and utilizes 'A', which is an excellent phonemic approximation for the English short 'u' (/ʌ/) sound.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Perfectly represents the 3-syllable pronunciation. It uses natural Spanish orthography ('C') and utilizes 'A', which is an excellent phonemic approximation for the English short 'u' (/ʌ/) sound.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Perfectly represents the 4-syllable careful pronunciation. It uses highly natural Spanish orthography and accurately maps the English schwa sounds to Spanish vowels, maintaining excellent readability and stress placement.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Provides a very strong 3-syllable approximation with correct stress and syllable breaks. However, using 'K' instead of 'C' for the hard /k/ sound before 'a' is slightly less natural in standard Spanish orthography, though still fully readable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Represents the 4-syllable version well and indicates stress properly. However, it relies on 'K' instead of 'C', and using the Spanish 'U' (pronounced 'oo') is a less accurate phonetic approximation for the English /ʌ/ sound compared to 'A' or 'O'.",
+          "score": 8
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Strong reduced pronunciation with first-syllable stress clearly marked and syllables separated. Uses Spanish-readable spelling and preserves the important “mf” cluster, producing a recognizable approximation.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Identical to Model F: clear stress marking, good syllable breaks, and a Spanish-readable representation of the casual pronunciation. The “mf” cluster is preserved and the result would be recognizable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Very strong casual-pronunciation approximation with correct first-syllable stress and clear syllable separation. “K” is readable in Spanish but slightly less natural than “C” before “a,” so it is marginally less native-looking than the best outputs.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Acceptable full four-syllable approximation with correct stress and readable Spanish-based spelling. It handles the m-f transition across syllables, though it is less close to the common reduced “KUMF-ter-bul” form.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Acceptable four-syllable version with correct stress and clear syllable breaks, and “KUM” is a reasonable attempt at the English reduced vowel. However, it is a bit less natural-looking for Spanish readers and does not capture the common reduced “KUMF-ter-bul” cluster as directly.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Correctly marks first-syllable stress, separates syllables, and preserves the “mf” cluster. The initial “COMF” would be read with a Spanish /o/, making it less accurate for English “comfortable,” but it remains recognizable.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Identical to Model B: readable, stressed correctly, and syllabified well, with the “mf” cluster represented. The main weakness is the “COMF” vowel, which is less accurate for the English pronunciation.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Identical to Models B and C: it satisfies stress, syllable separation, and cluster representation. It is somewhat weakened by the “COMF” vowel choice, which leads Spanish speakers toward a less accurate pronunciation.",
+          "score": 7
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-pronunciation",
+  "testCaseId": "es-english-comfortable-1"
+}

@@ -1,0 +1,149 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: French press brewing has critical timing and temperature elements. Penalize if:\n   - Water temperature guidance is missing or incorrect (should be just off boiling, around 200F/93C)\n   - Steep time is not mentioned or is outside the 4-5 minute range\n\n2. RATIO CHECK: Penalize if:\n   - Coffee-to-water ratio is absent or unreasonable\n   - Grind size guidance is missing (coarse grind is essential)\n\n3. SEQUENCE CHECK: Penalize if bloom step is skipped or plunging happens before steeping is complete.\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n- Do NOT penalize for JSON output format differences (e.g., wrapping the array in an object like `{\"steps\": [...]}` instead of a raw array). This is a schema/parsing concern, not a content quality issue\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the lesson as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
+  "judgedAt": "2026-05-24T18:29:52.097Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Excellent coverage: correct temp (200°F/93°C), explicit bloom with 30-second wait, coarse grind, 30g ratio, 4-minute steep, proper plunge sequence. Clear imperative language and well-grouped steps with verification cues.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Hits all critical elements: coarse grind, 200°F water, explicit bloom step, 4-minute steep, slow plunge, pour immediately. LaTeX-style temperature notation is slightly awkward but content is solid and accurate.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Covers all key elements: 200°F, coarse grind, 30g/500g ratio, 4-minute steep, slow plunge. The 'stir the bloom' framing conflates bloom with stirring rather than a distinct rest period, slightly weakening the bloom sequence.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good sequence with explicit bloom (30-sec wait then stir), correct temp, coarse grind, 4-min steep, slow plunge. Ratio given in tablespoons per ounce is reasonable. Solid imperative language throughout.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Strong on temp, coarse grind, ratio, 4-min steep, and slow plunge. However, the bloom is mentioned only as a visual cue during the main pour rather than a discrete bloom-and-wait step, slightly weakening the sequence.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Correct temp, coarse grind, ratio, and 4-minute steep with proper plunge sequence. However, missing an explicit bloom step (just a stir at 30 seconds after full pour), which is a noted critical element.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Correct temp, coarse grind, 30g/500g ratio, 4-min timer, slow plunge. However, no bloom step at all—full water is added at once—which violates the sequence check that explicitly calls out skipping bloom.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Perfect adherence to all expectations. It accurately details the bloom sequence with specific weights and times, uses imperative language consistently, and provides excellent verification points for the user.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Excellent, concise instructions that meet all requirements. It clearly includes the critical bloom step, follows correct ratios, and uses strong, action-oriented language without any errors.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Strong output that hits all core requirements, including the mandatory bloom step and correct brewing metrics. It is docked slightly for using LaTeX formatting for temperatures, which impacts product readiness.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Features well-structured instructions with excellent use of scale measurements and verification points. However, it receives a penalty for skipping the mandatory bloom sequence by instructing the user to pour all the water at once.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Provides solid, action-oriented steps with good verification points. It is heavily penalized for violating the sequence constraint by skipping a distinct bloom phase and pouring all water in one step.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "The instructions are actionable and logical, but it skips the actual bloom phase. Pours all water at once and merely refers to the top foam as the bloom, violating a core sequence expectation.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Penalized for two notable violations: skipping the mandatory bloom phase by pouring all water at once, and violating the language constraint by using descriptive rather than imperative phrasing in the first step.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Meets all critical French press requirements: coarse grind, reasonable ratio, 200°F water, explicit bloom, 4-minute steep, and plunging only after steeping. Steps are actionable, well sequenced, and clear, with only minor formatting awkwardness from the escaped temperature notation.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Covers the key procedure very well, including a clear bloom step, coarse grind, reasonable 30g-to-450g ratio, 200°F water, and 4-minute steep. The timer handling is slightly less clear because it starts at the bloom, but the sequence remains usable and accurate.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Accurately includes temperature, coarse grind, bloom, 4-minute steep, and correct plunge timing. The ratio guidance is acceptable but less precise than the best outputs, and the instructions are slightly less measurement-focused overall.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Provides good temperature, ratio, coarse grind, steep time, and plunge guidance in a clear sequence. However, it skips a true bloom step by adding all the water at once and only describing the foam that forms, which is a notable miss under the expectations.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Has strong measurement, temperature, coarse grind, steeping, and plunging instructions, with clear verification points. It does not include a real bloom step before adding the full water amount, which is the main content gap.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Includes accurate temperature, coarse grind, reasonable ratio, and 4-minute steep guidance, and the sequence is mostly clear. It treats bloom as something that happens during the full pour rather than a separate bloom step, and the final adjustment advice can drift beyond the fixed timing guidance.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Covers ratio, coarse grind, 200°F water, 4-minute timing, and proper plunging, but skips the bloom step. It also has some procedural confusion around taring and scale readings, making the measuring sequence less reliable than the other outputs.",
+          "score": 7
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-tutorial",
+  "testCaseId": "en-cooking-brew-coffee-1"
+}

@@ -1,0 +1,185 @@
+{
+  "expectations": "\nLANGUAGE: English output required.\n\nTOPIC: Spanish vocabulary for ordering coffee - focused specifically on coffee drinks, sizes, milk options, and common cafe phrases.\n\nTOPIC SCOPE: This is a narrow, focused lesson. Valid vocabulary categories include coffee drink types, size options, milk options, and basic ordering phrases.\n- Do NOT expect general food vocabulary, restaurant vocabulary, or dining etiquette\n- Do NOT penalize for omitting any specific category - assess only what IS provided\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Coffee-specific terms are mistranslated\n- Vocabulary drifts to general food/restaurant terms unrelated to coffee ordering\n- Articles are missing from nouns (el café, la leche, not café, leche)\n\n\nEVALUATION CRITERIA:\n\n1. TOPIC-APPROPRIATE COVERAGE: The vocabulary list should cover the narrow lesson topic appropriately.\n   - Include words directly relevant to the specific lesson focus\n   - A narrow topic (like \"Ordering Coffee\") needs fewer words than a broad one\n   - Do NOT penalize for vocabulary count - focus on relevance and quality\n   - Do NOT expect exhaustive coverage of the broader domain (e.g., don't expect all food words for a coffee-ordering lesson)\n\n2. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - Each word-translation pair MUST be linguistically accurate\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - The translation must match the EXACT meaning - not a broader category or related concept\n   - If a translation is incorrect or semantically imprecise, this is a SEVERE error\n   - Grammatical gender must be correct (masculine nouns with masculine articles, feminine with feminine)\n\n3. TOPIC FOCUS (STRICT BOUNDARY ENFORCEMENT): Words must be INSIDE the lesson's specific scope. Penalize SEVERELY if:\n   - Vocabulary includes words from adjacent but separate topics (e.g., adjectives when the lesson is about nouns)\n   - Words drift to related but out-of-scope categories (e.g., wild animals for a pets lesson)\n   - The output includes vocabulary that belongs in a DIFFERENT lesson on a related topic\n   - Words are \"helpful additions\" that expand beyond the defined lesson boundary\n\n4. VOCABULARY QUALITY: Words should be practical and commonly used. Penalize if:\n   - Words are obscure, archaic, or rarely used in everyday speech\n   - Words include profanity, slurs, or offensive content\n   - Words use non-standard loanwords that are not common in the target language\n\n5. LANGUAGE CORRECTNESS: Output language must match NATIVE_LANGUAGE code.\n   - Translations should be in the learner's native language\n   - Words being tested should be in the target language\n   - Penalize if languages are mixed incorrectly\n\n6. GRAMMATICAL GENDER AND ARTICLES:\n   - For languages with grammatical gender, nouns MUST include articles\n   - German: \"die Mutter\", \"der Vater\", \"das Kind\" (not \"Mutter\", \"Vater\", \"Kind\")\n   - French: \"le pain\", \"la maison\" (not \"pain\", \"maison\")\n   - Spanish: \"el gato\", \"la casa\" (not \"gato\", \"casa\")\n   - Portuguese: \"o livro\", \"a mesa\" (not \"livro\", \"mesa\")\n   - Italian: \"il gatto\", \"la casa\" (not \"gatto\", \"casa\")\n   - Penalize if nouns are shown without their articles in gendered languages\n   - Penalize if the grammatical gender is WRONG (e.g., masculine article with feminine noun)\n\n7. NO DUPLICATES: The `word` field is the unique identifier - duplicates are determined by the word field ONLY, not translations. Penalize if:\n   - The same word appears multiple times in the `word` field (even with different translations)\n   - Near-duplicates exist (same word with minor formatting differences)\n   - Semantic duplicates exist (same concept repeated with different phrasing)\n   - A word appears twice because it has multiple valid translations (should appear once with most common translation)\n\n8. CLEAN WORD FIELD - NO PARENTHETICAL CONTENT: The word field must contain ONLY the vocabulary word. Penalize SEVERELY if:\n   - The word field contains parenthetical disambiguation like \"el café (la bebida)\"\n   - The word field contains usage notes, alternative meanings, or pronunciation hints in parentheses\n   - Any text in parentheses appears in the word field (this breaks text-to-speech)\n\n9. NO OVER-ENUMERATION OF VARIANTS: Vocabulary should be representative, not exhaustive. Penalize if:\n   - Multiple variants of the same base item are listed when 1-2 would suffice\n   - The list appears inflated with excessive sub-types of a single category\n   - A base concept is represented by 5+ specific variants instead of the base term plus 1-2 examples\n   - The vocabulary count seems artificially high due to listing every possible variant\n   NOTE: This does NOT mean penalize for having many words - penalize only when those words are redundant variants of the same concept. Distinct vocabulary items are fine.\n   NOTE: Distinct practical choices within a category are NOT over-enumeration. For example, different milk types (whole, skim, almond, oat) are genuinely different menu options a learner needs to know - not redundant variants of \"milk.\"\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific word choices - accept ANY valid vocabulary relevant to the topic\n- Do NOT penalize for not including words you might expect - only penalize for actual errors\n- Do NOT require specific vocabulary items by name\n- Do NOT expect a specific number of words - narrow topics naturally have fewer words\n- FOCUS ON: translation accuracy, topic relevance, no duplicates, clean word fields\n- Different valid vocabulary selections exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-05-24T18:16:14.581Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Strong topic focus on coffee drinks, sizes, milk options, and to-go phrases. All nouns have articles with correct gender, accurate translations, no duplicates, clean word fields.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good coverage with accurate translations and proper articles. Minor issues: 'café americano' translated as 'black coffee' is slightly imprecise (americano isn't quite black coffee), and 'la cuenta' (the bill) drifts slightly out of the coffee-ordering scope.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Solid topic focus with proper articles and accurate translations. Includes appropriate Latin American 'chico' for small. Clean word fields, no duplicates.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Focused and accurate with proper articles. Smaller list but all items relevant. No phrases like 'to go' or 'for here' which is a minor gap but not penalized per anti-checklist.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Mostly good but 'el descafeinado' as standalone noun is awkward (usually adjective), and missing articles consistency is OK. Includes 'hot' (caliente) which is borderline relevant. Overall solid.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "Good coverage but includes 'la taza' (cup) and standalone 'con'/'sin'/'por favor' which slightly stretch the scope. Translations accurate with proper articles.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Includes full phrases like '¿Qué tamaños tienen?' and '¿Me da un café, por favor?' which are useful for ordering but stretch the 'word' field concept. Otherwise accurate with articles.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Very long list with some scope drift (hot, cold, size as separate item). Inconsistent article usage: uses 'un/una' indefinite articles for some nouns rather than definite, and mixes bare adjectives. Some over-enumeration.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Critical error: first entry has translation 'el café' (Spanish) instead of English 'the coffee', violating language correctness. Otherwise reasonable content.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This output perfectly follows all instructions. It includes a highly relevant, narrow set of vocabulary for ordering coffee. Nouns are correctly paired with their definite articles, translations are accurate, and there is no scope drift.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "Excellent output that hits all the requirements. The vocabulary selection is perfectly scoped to the topic, nouns include their articles, and the translations are accurate.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "A clean, highly accurate list. It appropriately omits phrases to focus on the drinks, sizes, and milk options, which is allowed by the prompt. All nouns have proper articles and translations are precise.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Very strong output. The vocabulary is perfectly on-topic, nouns include their articles, and the Spanish choices are natural and accurate for a cafe setting.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Great output that fully respects the topic constraints. Nouns correctly include their articles in Spanish (and English, which is fine). All translations are accurate and there are no duplicates.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Strong output that includes a great mix of drinks, modifiers, and ordering phrases. It correctly uses indefinite articles (un) for the drinks, which is perfectly valid and natural. Translations are highly accurate.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Strong list that appropriately includes full phrases for ordering coffee alongside the vocabulary. The only minor flaw is translating 'el café americano' to 'the American coffee' rather than simply 'the Americano', but it remains highly effective.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Contains a severe translation error: 'black coffee' is incorrectly translated as 'el café americano' (an Americano is a specific espresso drink, whereas black coffee is café negro). It also slightly drifts out of scope by including 'the bill' (a general restaurant term).",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Fails to follow the language constraints for the very first item. 'el café' is provided as the translation for 'el café' instead of the English word 'coffee', violating the strict requirement for translations to be in the user's native language.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Highly relevant to ordering coffee, with accurate coffee drinks, sizes, milk options, and useful ordering phrases. Minor precision issue with translating “el café americano” as “American coffee,” but overall very strong and clean.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Strong, focused list with accurate translations, correct articles, and practical coffee-ordering vocabulary. No major scope drift or formatting issues.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Broad but still mostly within the coffee-ordering scope, with drinks, sizes, milk options, and useful phrases. Minor issues include some ambiguous drink terms like “un americano” and a few adjective/phrase entries that expand the list, but accuracy is generally solid.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Accurate and well-focused, with correct articles and practical coffee, milk, size, and cafe phrase vocabulary. A few items like “to order,” sugar, and sweetener are slightly less central but still relevant to the lesson.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Clean, focused, and mostly accurate vocabulary covering coffee drinks, sizes, and milk options. It is less useful for common ordering phrases, but omissions are not a major issue under the rubric.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "Mostly relevant and accurate, with good coverage of drinks, sizes, milk options, and simple phrases. Some entries are less precise or slightly outside the core scope, such as “el americano” without “café” and “la taza.”",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Most vocabulary is relevant and accurate, with useful drinks, milk options, and ordering phrases. However, one translation is incorrectly left in Spanish, and the ellipses in phrase word fields make the entries less clean.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Generally on-topic, but it has several quality and precision issues, including nonstandard or less Spanish-adapted forms like “el cappuccino” and the imprecise “el descafeinado” for “decaf.” Still, most entries are usable and relevant.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Contains several accurate relevant items, but has serious coffee-specific mistranslations such as “el café americano” as “black coffee” and “el café frío” as “iced coffee.” It also drifts out of scope with “la cuenta,” making it the weakest output.",
+          "score": 5
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-vocabulary",
+  "testCaseId": "en-spanish-ordering-coffee-1"
+}

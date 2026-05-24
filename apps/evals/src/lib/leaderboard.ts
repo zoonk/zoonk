@@ -69,7 +69,7 @@ export function getDefaultSortDirection(key: SortKey): SortDirection {
 /**
  * Compare two leaderboard entries for a given sort key.
  * Always returns values for ascending order; caller applies direction.
- * For averageScore: implements tie-breaker using totalCost (lower cost wins ties).
+ * For averageScore: implements tie-breaker using averageDuration (lower duration wins ties).
  */
 function compareEntries(a: LeaderboardEntry, b: LeaderboardEntry, key: SortKey): number {
   if (key === "averageScore") {
@@ -80,8 +80,8 @@ function compareEntries(a: LeaderboardEntry, b: LeaderboardEntry, key: SortKey):
     if (byScore !== 0) {
       return byScore;
     }
-    // Tie-breaker: lower total cost first
-    return b.totalCost - a.totalCost;
+
+    return b.averageDuration - a.averageDuration;
   }
 
   if (key === "totalCost" || key === "averageDuration") {

@@ -1,0 +1,149 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Git installation involves platform-specific steps. Penalize if:\n   - Steps assume wrong operating system without clarification\n   - Installation verification is missing (checking git version)\n   NOTE: A Windows-focused workflow that mentions Mac/Linux alternatives is a valid approach. Do NOT treat platform specificity as a major error if the guide acknowledges multiple operating systems. A linear step format cannot perfectly branch for all OSes.\n\n2. SAFETY CHECK: Penalize if:\n   - Steps suggest downloading from unofficial sources\n   - PATH configuration is skipped without noting it's handled by installer\n\n3. SPECIFICITY CHECK: Penalize vague instructions like \"install Git\" without specifying what to click, download, or run.\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n- Do NOT penalize for JSON output format differences (e.g., wrapping the array in an object like `{\"steps\": [...]}` instead of a raw array). This is a schema/parsing concern, not a content quality issue\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the lesson as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
+  "judgedAt": "2026-05-24T18:29:39.566Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Comprehensive coverage including a pre-check, clear OS-specific instructions, and verification. Uses imperative language, logical grouping, and notes both Windows and Mac/Linux paths. Steps are well-sequenced and specific about what to click.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Clean, well-sequenced steps with imperative language, official source, and clear verification. Covers Windows and macOS adequately. Slightly less detailed on Linux but solid overall.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Solid procedure with good specificity (64-bit Git for Windows Setup), clear verification, and troubleshooting note. Minor typo ('ordered not found' instead of 'command not found') is a small issue but doesn't derail usefulness.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Concise and accurate with imperative verbs, official source, and verification. Covers Windows and Mac well. Slightly less detailed than top entries but no real flaws.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Thorough and accurate with good verification including troubleshooting. Some steps feel micro-split (separating Install, Finish, Close into distinct steps), making it slightly verbose, but all imperative and clear.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Accurate and imperative but over-splits steps (separate steps for Install, Finish, opening terminal) without adding much value. Still functional and correct with proper verification.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Broken output—only two steps, one with text ':' which is unusable. Duplicate title and incomplete content fail the task entirely.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Exceptional guide that accurately handles OS differences and stays within all formatting constraints. It includes vital domain-specific knowledge, such as checking for an existing installation and restarting the terminal to refresh system PATH variables.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "An excellent, cleanly written guide with perfect pacing and logical step grouping. The platform-specific nuances are integrated seamlessly into the imperative instructions without overwhelming the user.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Strong, clear instructions that correctly handle OS differences and formatting limits. It is highly usable, though slightly less comprehensive regarding terminal PATH refresh nuances than the top models.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The instructions are accurate and actionable. However, the step grouping is slightly over-segmented by separating the installer wizard progression (accepting defaults, clicking install, clicking finish) into too many micro-steps.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The steps are generally well-paced and correctly formatted. However, it contains a noticeable factual typo ('ordered not found' instead of 'command not found') that could mislead beginners troubleshooting their setup.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "This output is overly fragmented into 10 micro-steps, which hurts readability. Arbitrarily splitting the single logical action of typing a command and reading its output into separate steps violates the grouping expectations.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Completely unusable for the expectations. The output is incomplete and contains broken text in the first step.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Best overall: it uses the official Git site, gives clear platform-aware download/install guidance, accepts recommended installer defaults, and verifies with `git --version`. Minor weakness is that Mac/Linux details are less specific than Windows, but the core procedure is accurate and usable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Clear, actionable, and well-sequenced with permission prompts, installer completion, and a strong verification/troubleshooting step. Its main gap is that it treats the process as installer-based and gives little real Linux-specific installation guidance despite mentioning Linux.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Provides a practical official-download workflow, keeps steps clear, and includes verification with `git --version`. It is somewhat generic and implies Linux uses the same installer-style flow, but it remains solid for most users.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Strong sequence with official source, default settings, and installation verification. It acknowledges Linux in the download step but then mostly gives Windows/macOS-style installer and terminal guidance, which limits platform fit.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Concise and usable for Windows/macOS, with clear installer steps and a proper `git --version` verification. It offers little Linux support and is less explicit about the official source and platform differences than stronger outputs.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Mostly accurate and actionable, with official-site download, installer steps, and version verification. However, it has a confusing typo in the error message guidance and provides limited Linux coverage, making it weaker than similar alternatives.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Unusable for the lesson: it only contains an empty placeholder-like step and one navigation step. It omits downloading, installation, PATH/default handling, and verification.",
+          "score": 1
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-tutorial",
+  "testCaseId": "en-tech-install-git-1"
+}

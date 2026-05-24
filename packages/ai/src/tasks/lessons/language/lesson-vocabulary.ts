@@ -6,8 +6,8 @@ import { getLanguagePromptContext } from "../../_utils/prompt-language";
 import { formatConceptLines } from "../config";
 import systemPrompt from "./lesson-vocabulary.prompt.md";
 
-const defaultModel = "google/gemini-3-flash";
-const fallbackModels = ["google/gemini-3.1-pro-preview", "openai/gpt-5.5"] as const;
+const defaultModel = "google/gemini-3.5-flash";
+const fallbackModels = ["openai/gpt-5.5"] as const;
 
 const wordSchema = z.object({ translation: z.string(), word: z.string() });
 

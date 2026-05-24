@@ -1,0 +1,167 @@
+{
+  "expectations": "\nNATIVE LANGUAGE: English (US)\nTARGET LANGUAGE: Portuguese\n\nWORD: \"desenvolvimento\"\n\nThis is a long Portuguese word meaning \"development\" with:\n- Six syllables\n- The nasal \"en\" sounds\n- The \"lv\" consonant cluster\n- Stress on the penultimate syllable (-MEN-)\n\nSOUND CHALLENGES:\n- Multiple nasal vowels that don't exist in English\n- The \"lh\" would need approximation but this word has \"lv\"\n- Long word requires clear syllable separation\n\nQUALITY CHECK:\n- Should be readable by an English speaker\n- Should clearly mark stress on the -MEN- syllable\n- Should handle nasal sounds with English approximations\n- Should separate all six syllables clearly\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Do NOT penalize for using \"v\" instead of \"b\" (or vice versa) in Spanish — they are identical phonemes in Spanish and a native speaker pronounces them the same way\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
+  "judgedAt": "2026-05-24T17:43:51.510Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Uses 'eng' and 'ow' to approximate Brazilian Portuguese nasal vowels and the L-vocalization ('vol' → 'vow'), which is phonetically more accurate for BR Portuguese. Clear syllable separation, stress on MENG is correct.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Uses 'eng' for nasal approximation and vocalizes the L ('voh'), reasonable for BR Portuguese. Stress correctly on MENG, six syllables separated clearly. Slightly less complete on the L sound but captures nasality well.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Clear syllable separation, stress correctly marked on MEHN, readable English approximation. Doesn't capture nasality strongly but is reasonable and complete.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Solid syllable breaks, stress on MEN correct, readable. Doesn't approximate nasal sounds but a reasonable mapping for English speakers.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Readable with proper stress and syllable breaks. No nasal approximation but all sounds represented. Equivalent to F.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Identical to C—readable, properly stressed and segmented. Lacks nasal approximation but is complete and natural for English readers.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Proper structure with stress and hyphens, but 'dah' is a less accurate approximation for the initial unstressed 'de' than 'deh'. Otherwise serviceable.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Using 'ayn' and 'AYN' suggests an inaccurate diphthongized vowel that doesn't match Portuguese 'en'. Stress and syllables fine but the vowel choice misleads pronunciation.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "This is a perfect approximation for an English speaker. It accurately captures the syllables, marks the correct stress on 'MEN', and provides highly readable phonetic equivalents without any missing sounds.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This output is functionally identical in quality to Model C. The use of 'vohl' is an excellent way to guide an English speaker toward the correct rounded 'o' sound.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Identical to Model C. It meets all expectations perfectly with clear syllables, correct stress marking, and highly readable approximations.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "This is a very strong and phonetically accurate representation of Brazilian Portuguese, correctly using 'vow' for the vocalized 'L' and 'ng' to approximate the nasal vowels. The only minor drawback is 'day', which prompts a slightly heavier diphthong than the standard Portuguese 'de'.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "This is a strong output that meets all guidelines. The use of 'zehn' and 'MEHN' accurately signals a short 'e' sound to English speakers, though it looks slightly clunkier to read than 'zen/MEN'.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This model correctly separates syllables and marks stress. However, using 'zayn' and 'MAYN' guides the reader to use a strong English /eɪ/ diphthong (like in 'rain'), which is a less accurate approximation of the Portuguese nasal 'e'.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "While the rest of the word is mapped well, using 'dah' for the first syllable introduces an incorrect vowel sound, which will mislead the English speaker.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "This output fails the completeness expectation. By using 'voh', it completely omits the 'L' (or vocalized 'W') sound from the 'vol' syllable, missing a key component of the word's pronunciation.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Best overall: it uses English-readable sounds, clear six-syllable hyphenation, and exactly one stressed syllable on MEN. “deh-zen-vohl-vee-MEN-too” gives a recognizable approximation and handles the vol/vi sequence well.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Strong output with clear syllable breaks and stress on MEHN. The nasal vowels are reasonably approximated with final n, though “vol” is a bit less clear than “vohl/vow” for Brazilian Portuguese.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Clear, readable, six-syllable pronunciation with correct stress on MEN. It is very usable, though “vol” may be read with a flatter English short-o sound rather than the closer Brazilian Portuguese vocalized-l sound.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Identical in quality to Model C: readable, complete, correctly hyphenated, and correctly stressed. The main limitation is the somewhat less precise “vol” approximation.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Good stress marking and syllable separation, and “zeng/MENG” attempts to represent nasalization. However, “day” is less accurate for the first syllable, and “MENG” may introduce an extra English ng quality that can sound less natural.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Readable and correctly stressed with good syllable separation. The main weakness is “dah” for the first syllable, which is noticeably farther from the Portuguese sound than “deh” or similar approximations.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "It is readable, hyphenated, complete, and stresses the correct syllable. However, “zayn” and “MAYN” shift the nasal e sounds toward English long-a, making the pronunciation less recognizable.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "It marks stress and uses readable English approximations for the nasal syllables. But “voh” omits the l/w sound in the vol syllable, which is a significant completeness issue given the expected lv/vol sequence.",
+          "score": 5
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-pronunciation",
+  "testCaseId": "en-portuguese-desenvolvimento-1"
+}
