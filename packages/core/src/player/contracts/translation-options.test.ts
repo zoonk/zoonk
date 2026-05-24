@@ -38,6 +38,7 @@ describe(buildTranslationOptions, () => {
         id: "word-1",
         pronunciation: "tea-pron",
         romanization: null,
+        translation: "tea",
         word: "tea",
       },
     });
