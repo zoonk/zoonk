@@ -8,6 +8,14 @@ import {
   initialGenerationState,
 } from "./generation-store";
 
+/**
+ * Replays dispatched actions through the real reducer so stream-message tests
+ * verify the same state transitions the UI store uses at runtime.
+ */
+function applyActions(actions: GenerationAction[], initial: GenerationState) {
+  return actions.reduce((state, action) => generationReducer(state, action), initial);
+}
+
 describe(generationReducer, () => {
   describe("stepCompleted", () => {
     it("adds step to completedSteps", () => {
@@ -147,16 +155,6 @@ describe(generationReducer, () => {
 });
 
 describe(handleStepStreamMessage, () => {
-  function applyActions(actions: GenerationAction[], initial: GenerationState) {
-    let state = initial;
-
-    for (const action of actions) {
-      state = generationReducer(state, action);
-    }
-
-    return state;
-  }
-
   function applyMessage(
     message: StepStreamMessage,
     initial?: Parameters<typeof initialGenerationState>[0],
