@@ -8,14 +8,8 @@
   The open-source platform for interactive learning.
   <br />
   <br />
-  <a href="https://forms.gle/jHeTqPUkw1vA7wLh8">Waitlist</a>
+  <a href="https://www.zoonk.com">Try for free</a>
 </p>
-
-> [!CAUTION]
->
-> ## Early Development Notice
->
-> This project is still in early development and **not ready for use**. There will be breaking changes before stable that won't be backwards compatible. Star this repository or follow us on social media to stay updated.
 
 ## Table of Contents
 
