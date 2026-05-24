@@ -72,6 +72,11 @@ EVALUATION CRITERIA:
     - Null is acceptable for trivially simple sentences (single-word greetings, very basic structures)
     - Penalize if explanations are in the wrong language or describe vocabulary meaning instead of grammar patterns
 
+12. WORD-BANK PUNCTUATION:
+    - Sentences and translations should avoid decorative terminal punctuation because they become word-bank tiles
+    - Penalize unnecessary punctuation on simple greetings, farewells, thanks, statements, labels, or short conversational chunks (e.g., "Good morning!" should be "Good morning"; "See you later." should be "See you later")
+    - Do NOT penalize punctuation that changes meaning or is grammatically required, especially question marks for questions (e.g., "How are you?") and required target-language question punctuation (e.g., "¿Cómo estás?")
+
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for specific sentence choices - accept ANY valid sentences that use the vocabulary
 - Do NOT penalize for not including specific contexts you might expect
@@ -96,9 +101,10 @@ These words MUST appear in the generated sentences.
 DIFFICULTY: This is clearly a BEGINNER-level lesson. Chapter "Basic Greetings and Introductions" + Lesson "Greetings and Introductions" + simple greeting vocabulary = absolute beginner.
 - Sentences MUST be very simple (2-5 words max)
 - No compound sentences, no subordinate clauses
-- Examples of acceptable complexity: "¡Hola!", "Buenos días, María.", "¡Gracias!"
+- Examples of acceptable complexity: "Hola", "Buenos días, María", "Gracias"
 - Examples of UNACCEPTABLE complexity: "As she entered the coffee shop, she immediately said good afternoon"
 - Penalize SEVERELY if any sentence has more than 5-6 words or uses complex structures
+- Penalize unnecessary exclamation marks or periods on greeting chunks; keep question marks only for actual questions
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Any sentence doesn't use at least one of the provided vocabulary words

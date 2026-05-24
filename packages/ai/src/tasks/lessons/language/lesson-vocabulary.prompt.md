@@ -111,11 +111,16 @@ Before including any noun, verify the grammatical gender is correct:
 
 The word field is used for text-to-speech and display - parenthetical content breaks these features. If a word has multiple meanings, include only the meaning relevant to the lesson topic without any disambiguation text.
 
-3. **Only valid target language words**: Every word in the `word` field must be a real word in the TARGET_LANGUAGE. Do not include words from other languages.
+3. **Clean word field - ONLY MEANINGFUL PUNCTUATION**: The `word` field may be used in word-bank lessons, so punctuation should only appear when it is part of the vocabulary item itself or required for the item to read correctly.
+   - Do NOT add decorative terminal punctuation to greetings, farewells, thanks, short phrases, or conversational chunks.
+   - Do keep punctuation that changes meaning or is required by the target language.
+   - Examples: `Good morning`, NOT `Good morning!`; `See you later`, NOT `See you later.`; `How are you?`, because the question mark is meaningful.
 
-4. **Consistent articles**: All nouns in gendered languages must include their articles (der/die/das, le/la, el/la, o/a, il/la).
+4. **Only valid target language words**: Every word in the `word` field must be a real word in the TARGET_LANGUAGE. Do not include words from other languages.
 
-5. **Focused vocabulary, not inflated lists**: Aim for a curated, learnable list. If you find yourself listing many variants of the same base concept, stop and select only the most essential 1-2. A vocabulary list with 15-20 well-chosen words is better than 40+ words padded with excessive variants. Ask yourself: "Would a learner benefit from memorizing all these variants, or would they learn the same concept from fewer examples?"
+5. **Consistent articles**: All nouns in gendered languages must include their articles (der/die/das, le/la, el/la, o/a, il/la).
+
+6. **Focused vocabulary, not inflated lists**: Aim for a curated, learnable list. If you find yourself listing many variants of the same base concept, stop and select only the most essential 1-2. A vocabulary list with 15-20 well-chosen words is better than 40+ words padded with excessive variants. Ask yourself: "Would a learner benefit from memorizing all these variants, or would they learn the same concept from fewer examples?"
 
    **Signs you're over-enumerating**:
    - You're listing 5+ items that are all "types of X"

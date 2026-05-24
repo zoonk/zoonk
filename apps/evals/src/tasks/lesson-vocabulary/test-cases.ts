@@ -51,7 +51,12 @@ EVALUATION CRITERIA:
    - The word field contains usage notes, alternative meanings, or pronunciation hints in parentheses
    - Any text in parentheses appears in the word field (this breaks text-to-speech)
 
-9. NO OVER-ENUMERATION OF VARIANTS: Vocabulary should be representative, not exhaustive. Penalize if:
+9. CLEAN WORD FIELD - ONLY MEANINGFUL PUNCTUATION: Penalize unnecessary punctuation because vocabulary can become word-bank tiles.
+   - Simple greetings, farewells, thanks, short phrases, and conversational chunks should not include decorative terminal punctuation
+   - Examples: "Good morning" is better than "Good morning!"; "See you later" is better than "See you later."
+   - Do NOT penalize punctuation that changes meaning or is grammatically required, especially question marks for question phrases
+
+10. NO OVER-ENUMERATION OF VARIANTS: Vocabulary should be representative, not exhaustive. Penalize if:
    - Multiple variants of the same base item are listed when 1-2 would suffice
    - The list appears inflated with excessive sub-types of a single category
    - A base concept is represented by 5+ specific variants instead of the base term plus 1-2 examples
