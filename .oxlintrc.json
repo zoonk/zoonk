@@ -84,7 +84,6 @@
     "react/jsx-handler-names": "off",
     "react/jsx-props-no-spreading": "off",
     "react/jsx-pascal-case": ["error", { "allowAllCaps": true }],
-    "react/no-unstable-nested-components": "off",
     // no need with react compiler
     "jsx-no-constructed-context-values": "off",
     "react/no-multi-comp": "off",

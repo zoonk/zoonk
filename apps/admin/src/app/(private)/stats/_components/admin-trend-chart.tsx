@@ -25,6 +25,37 @@ const BAR_RADIUS: [number, number, number, number] = [BAR_CORNER_RADIUS, BAR_COR
 
 type DataPoint = { date: string; label: string; value: number };
 
+/**
+ * Keeps the Recharts payload guard outside the chart render path so the
+ * tooltip renderer has a stable identity. Recharts passes `active` and
+ * `payload` at runtime, while this component owns the admin-specific label and
+ * value formatting.
+ */
+function AdminTrendTooltip({
+  active,
+  payload,
+  valueLabel,
+}: {
+  active?: boolean;
+  payload?: unknown;
+  valueLabel: string;
+}) {
+  if (!active || !isValidChartPayload<DataPoint>(payload)) {
+    return null;
+  }
+
+  const data = payload[0].payload;
+
+  return (
+    <div className="bg-background rounded-lg border px-3 py-2 shadow-sm">
+      <p className="text-muted-foreground text-xs">{data.label}</p>
+      <p className="text-sm font-medium">
+        {data.value.toLocaleString()} {valueLabel}
+      </p>
+    </div>
+  );
+}
+
 export function AdminTrendChart({
   average,
   dataPoints,
@@ -61,24 +92,7 @@ export function AdminTrendChart({
         width={40}
       />
 
-      <Tooltip
-        content={({ active, payload }) => {
-          if (!active || !isValidChartPayload<DataPoint>(payload)) {
-            return null;
-          }
-
-          const data = payload[0].payload;
-
-          return (
-            <div className="bg-background rounded-lg border px-3 py-2 shadow-sm">
-              <p className="text-muted-foreground text-xs">{data.label}</p>
-              <p className="text-sm font-medium">
-                {data.value.toLocaleString()} {valueLabel}
-              </p>
-            </div>
-          );
-        }}
-      />
+      <Tooltip content={<AdminTrendTooltip valueLabel={valueLabel} />} />
 
       <ReferenceLine
         label={{
