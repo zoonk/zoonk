@@ -13,6 +13,8 @@ type RichTextSegment =
   | { kind: "text"; text: string };
 
 const MATH_DELIMITERS = [
+  { close: "\\\\)", kind: "math" as const, open: "\\\\(" },
+  { close: "\\\\]", kind: "displayMath" as const, open: "\\\\[" },
   { close: "\\)", kind: "math" as const, open: "\\(" },
   { close: "\\]", kind: "displayMath" as const, open: "\\[" },
 ];
@@ -148,7 +150,21 @@ function parseMarkedSegment({
  * reviewable instead of invisible.
  */
 function renderMathToHtml({ displayMode, text }: { displayMode: boolean; text: string }) {
-  return renderToString(text, { displayMode, output: "mathml", throwOnError: false, trust: false });
+  return renderToString(normalizeLatexCommands(text), {
+    displayMode,
+    output: "mathml",
+    throwOnError: false,
+    trust: false,
+  });
+}
+
+/**
+ * Some structured AI responses include JSON-escaped LaTeX commands as literal
+ * learner text, such as `\\rightarrow`. KaTeX expects `\rightarrow`, so the
+ * player accepts that common over-escaped shape at render time.
+ */
+function normalizeLatexCommands(text: string) {
+  return text.replaceAll(/\\\\([A-Za-z]+)/gu, (_escapedCommand, command: string) => `\\${command}`);
 }
 
 /**

@@ -258,6 +258,34 @@ describe("player browser integration: static steps", () => {
     expect(bodyText).not.toContain("`");
   });
 
+  it("renders over-escaped generated LaTeX as math", async () => {
+    const { container } = renderPlayer({
+      lesson: buildSerializedLesson({
+        kind: "explanation",
+        steps: [
+          buildSerializedStep({
+            content: {
+              text: String.raw`A forma básica é: estado atual + ação → próximo estado esperado. Em notação curta: \\(s, a \\rightarrow s'\\), onde \\(s\\) é o estado.`,
+              title: "A seta da previsão",
+              variant: "text" as const,
+            },
+            id: "static-over-escaped-latex",
+          }),
+        ],
+      }),
+      navigation: buildNavigation({ nextLessonHref: null }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await expect
+      .element(page.getByRole("heading", { name: "A seta da previsão" }))
+      .toBeInTheDocument();
+
+    const bodyText = container.textContent?.replaceAll(/\s/gu, "");
+
+    expect(bodyText).toContain("s,a→s");
+  });
+
   it("allows long text-only static steps to scroll to the bottom", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
