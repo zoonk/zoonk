@@ -3,9 +3,7 @@ import { isAdmin } from "@/lib/admin-guard";
 import { prisma } from "@zoonk/db";
 import { cache } from "react";
 
-export const getCourseSuggestionReview = cache(async function getCourseSuggestionReview(
-  entityId: string,
-) {
+export const getCourseSuggestionReview = cache(async (entityId: string) => {
   if (!(await isAdmin())) {
     return null;
   }
@@ -16,7 +14,7 @@ export const getCourseSuggestionReview = cache(async function getCourseSuggestio
   });
 });
 
-export const getStepImageReview = cache(async function getStepImageReview(entityId: string) {
+export const getStepImageReview = cache(async (entityId: string) => {
   if (!(await isAdmin())) {
     return null;
   }
@@ -27,7 +25,7 @@ export const getStepImageReview = cache(async function getStepImageReview(entity
   });
 });
 
-export const getWordAudioReview = cache(async function getWordAudioReview(entityId: string) {
+export const getWordAudioReview = cache(async (entityId: string) => {
   if (!(await isAdmin())) {
     return null;
   }
@@ -35,9 +33,7 @@ export const getWordAudioReview = cache(async function getWordAudioReview(entity
   return prisma.word.findUnique({ where: { id: entityId } });
 });
 
-export const getSentenceAudioReview = cache(async function getSentenceAudioReview(
-  entityId: string,
-) {
+export const getSentenceAudioReview = cache(async (entityId: string) => {
   if (!(await isAdmin())) {
     return null;
   }

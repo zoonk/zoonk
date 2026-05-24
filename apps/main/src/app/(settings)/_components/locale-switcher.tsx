@@ -6,15 +6,15 @@ import { setCookie } from "@zoonk/utils/cookies";
 import { LOCALE_COOKIE, LOCALE_LABELS, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { useExtracted, useLocale } from "next-intl";
 
+async function onSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
+  const nextLocale = event.target.value;
+  await setCookie(LOCALE_COOKIE, nextLocale, { expires: 365, sameSite: "lax" });
+  globalThis.location.reload();
+}
+
 export function LocaleSwitcher() {
   const t = useExtracted();
   const locale = useLocale();
-
-  async function onSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    const nextLocale = event.target.value;
-    await setCookie(LOCALE_COOKIE, nextLocale, { expires: 365, sameSite: "lax" });
-    globalThis.location.reload();
-  }
 
   return (
     <Field>

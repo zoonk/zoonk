@@ -15,9 +15,29 @@ import { getSession } from "@zoonk/core/users/session/get";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { getExtracted } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { Suspense } from "react";
+import { type ReactNode, Suspense } from "react";
 import { sendVerificationOTPAction } from "./actions";
 import { SocialLogin } from "./social-login";
+
+/**
+ * Keeps the rich-text replacement stable between renders. The translation
+ * parser calls this function only for the terms placeholder, so the login view
+ * can pass a module-level renderer instead of creating a new component inside
+ * the page render.
+ */
+function TermsLink(children: ReactNode) {
+  return <a href="https://zoonk.com/terms">{children}</a>;
+}
+
+/**
+ * Keeps the rich-text replacement stable between renders. The translation
+ * parser calls this function only for the privacy placeholder, so the login
+ * view can pass a module-level renderer instead of creating a new component
+ * inside the page render.
+ */
+function PrivacyLink(children: ReactNode) {
+  return <a href="https://zoonk.com/privacy">{children}</a>;
+}
 
 async function LoginView({ searchParams }: PageProps<"/auth/login">) {
   const { redirectTo } = await searchParams;
@@ -55,10 +75,7 @@ async function LoginView({ searchParams }: PageProps<"/auth/login">) {
       <LoginFooter>
         {t.rich(
           "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>.",
-          {
-            privacy: (children) => <a href="https://zoonk.com/privacy">{children}</a>,
-            terms: (children) => <a href="https://zoonk.com/terms">{children}</a>,
-          },
+          { privacy: PrivacyLink, terms: TermsLink },
         )}
       </LoginFooter>
     </>

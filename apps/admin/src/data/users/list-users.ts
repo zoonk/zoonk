@@ -4,11 +4,7 @@ import { isAdmin } from "@/lib/admin-guard";
 import { type Subscription, prisma } from "@zoonk/db";
 import { cache } from "react";
 
-const cachedListUsers = cache(async function cachedListUsers(
-  limit: number,
-  offset: number,
-  search?: string,
-) {
+const cachedListUsers = cache(async (limit: number, offset: number, search?: string) => {
   if (!(await isAdmin())) {
     return { total: 0, users: [] };
   }

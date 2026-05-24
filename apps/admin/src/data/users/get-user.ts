@@ -3,7 +3,7 @@ import { isAdmin } from "@/lib/admin-guard";
 import { prisma } from "@zoonk/db";
 import { cache } from "react";
 
-export const getUser = cache(async function getUser(id: string) {
+export const getUser = cache(async (id: string) => {
   if (!(await isAdmin())) {
     return null;
   }
