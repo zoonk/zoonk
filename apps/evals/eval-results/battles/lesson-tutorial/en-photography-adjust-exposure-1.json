@@ -1,0 +1,149 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Exposure adjustment involves specific camera controls. Penalize if:\n   - ISO, aperture, and shutter speed relationship is confused\n   - Steps don't specify which dial or setting to change\n\n2. FEEDBACK CHECK: Penalize if:\n   - No mention of checking the exposure meter or histogram\n   - Steps don't explain how to verify exposure is correct\n\n3. MODE CHECK: Penalize if steps assume wrong camera mode (should specify Manual or appropriate semi-auto mode).\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n- Do NOT penalize for JSON output format differences (e.g., wrapping the array in an object like `{\"steps\": [...]}` instead of a raw array). This is a schema/parsing concern, not a content quality issue\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the lesson as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
+  "judgedAt": "2026-05-24T18:29:49.529Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Comprehensive coverage including Manual mode, meter, histogram verification, and explicit correction paths for over/underexposure with concrete one-change-at-a-time guidance. Action-oriented language and clear sequence. Slight redundancy but no factual errors.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Excellent procedural flow with Manual mode, meter activation, histogram check, and separate fix steps for under/overexposure. All exposure triangle controls correctly described with verification points. Minor: lens cap step is reasonable setup.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Strong coverage of Manual mode, ISO/aperture/shutter, meter, test shot, and histogram. Accurate relationships and good verification. Slightly less explicit correction guidance than C/G but still solid.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Clear Manual mode setup, all three controls with concrete starting values, meter check, and explicit brighten/darken correction steps plus test shot review. Missing histogram but reviews highlights/shadows, which is acceptable.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Correct Manual mode flow with meter verification and balanced ISO step. Accurate aperture/shutter/ISO descriptions. Lacks histogram or post-shot review but verification via meter is present. Solid and concise.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Covers Manual mode, all three settings with starting values, meter reading, and test photo review. Accurate but lighter on verification (no histogram, brief review). Meets expectations with small gaps.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Covers Manual mode, the three controls, meter centering, and test review. Accurate but verification is minimal (no histogram and review guidance is vague). Adequate but the weakest verification of the set.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Exceptional sequence and detail. Brilliantly integrates the histogram for verification and provides concrete, actionable steps to correct both overexposure and underexposure.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Outstanding logical flow and action-oriented instructions. Clearly explains how to adjust settings and verify exposure using practical visual cues on the camera.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Very strong and detailed, with excellent troubleshooting instructions. The sequence is slightly unrefined by having the user check the meter before setting initial baseline values, but it remains highly effective.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good sequence that properly frames the subject before adjusting settings. Verification is slightly weak as it only confirms the meter reads zero without reviewing the final captured image or histogram.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Solid, accurate procedural steps that cover all requirements effectively. Verification relies only on visually checking the LCD rather than using the more precise histogram.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Contains a notable procedural flaw: it instructs the user to balance the meter to zero (Step 5) before framing the subject (Step 6), which renders the initial meter reading meaningless.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Violates the practical focus expectation by relying heavily on conceptual explanations of what aperture and shutter speed do, rather than providing purely actionable steps.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Provides a clear manual-mode workflow with explicit controls for ISO, aperture, and shutter speed, then verifies exposure with both the meter and histogram. The under/overexposure fixes are accurate and actionable, with only minor rigidity around suggested starting values.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Strong, practical sequence with Manual mode, specific controls, exposure meter interpretation, test shot review, and histogram-based confirmation. Minor weakness: the histogram guidance is slightly overgeneralized, since not every good exposure forms a centered “hill.”",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Accurate and easy to follow, with Manual mode, specific setting changes, exposure meter verification, and clear brightening/darkening corrections. It lacks histogram guidance, but the meter and test-photo review are sufficient for the expectations.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Covers Manual mode and all three exposure controls with reasonably specific dials/settings, then uses the exposure meter and LCD review to verify results. It is a bit less complete on meter activation and over/underexposure interpretation than the stronger outputs.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Accurate and well-sequenced overall, with Manual mode, half-press meter activation, specific controls, and final meter verification. Its main limitation is that it relies on ISO as the final balancing control and does not include reviewing the captured image or histogram.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Gives correct exposure relationships and includes Manual mode, setting controls, meter centering, and test-shot review. It is less specific about activating/reading the meter and gives vaguer correction guidance than the higher-ranked outputs.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Includes the right concepts, Manual mode, meter, histogram, and test-shot review, but the sequence is weaker because it tells the user to adjust exposure before properly framing and half-pressing to meter the actual scene. The later verification steps partly recover this, but the workflow is more confusing than the others.",
+          "score": 7.3
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-tutorial",
+  "testCaseId": "en-photography-adjust-exposure-1"
+}

@@ -1,0 +1,167 @@
+{
+  "expectations": "\nNATIVE LANGUAGE: Portuguese (Brazilian)\nTARGET LANGUAGE: English\n\nWORD: \"cat\"\n\nThis is a simple, single-syllable English word:\n- Short \"a\" vowel sound\n- Simple consonants\n- No complex clusters\n\nSOUND CHALLENGES:\n- The short \"a\" in \"cat\" is between Portuguese \"a\" and \"é\"\n- Very straightforward word\n\nQUALITY CHECK:\n- Should be readable by a Brazilian Portuguese speaker\n- Single syllable, so can be entirely capitalized or just marked appropriately\n- Should be simple and direct\n- This tests handling of easy words (should not overcomplicate)\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Do NOT penalize for using \"v\" instead of \"b\" (or vice versa) in Spanish — they are identical phonemes in Spanish and a native speaker pronounces them the same way\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
+  "judgedAt": "2026-05-24T17:43:22.339Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "'QUÉT' uses Portuguese-native spelling: 'QU' produces /k/ before 'é' in Portuguese, and 'é' approximates the short 'a' in 'cat' well. Fully capitalized for single-syllable stress. Best phonetic approximation for a Brazilian reader.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "'CÉT' captures the short 'a' sound nicely with 'é', but 'C' before 'é' in Portuguese produces /s/ (as in 'cedo'), not /k/. This would mislead a Brazilian reader to say 'sét'. Good vowel choice but flawed consonant.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "'CAT' is readable by a Brazilian but would be pronounced 'kat' with an open 'a', missing the distinctive short-a sound. Stress is marked via capitalization. Acceptable but doesn't approximate the vowel difference.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Same as other 'CAT' outputs — readable but doesn't differentiate the short-a sound. Acceptable minimal approximation with stress marked.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Same as other 'CAT' outputs — readable but doesn't differentiate the short-a sound. Acceptable minimal approximation with stress marked.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Same as other 'CAT' outputs — readable but doesn't differentiate the short-a sound. Acceptable minimal approximation with stress marked.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Same as other 'CAT' outputs — readable but doesn't differentiate the short-a sound. Acceptable minimal approximation with stress marked.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Same as other 'CAT' outputs — readable but doesn't differentiate the short-a sound. Acceptable minimal approximation with stress marked.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The pronunciation \"QUÉT\" accurately maps the English /æ/ sound to the Portuguese \"é\" and correctly uses \"qu\" to preserve the hard /k/ consonant. It perfectly meets all formatting, stress, and readability expectations.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The pronunciation \"CAT\" provides a very simple and direct approximation using the Portuguese \"a\". It successfully indicates stress through capitalization and is easily readable for a native speaker.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The pronunciation \"CAT\" provides a very simple and direct approximation using the Portuguese \"a\". It successfully indicates stress through capitalization and is easily readable for a native speaker.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "The pronunciation \"CAT\" provides a very simple and direct approximation using the Portuguese \"a\". It successfully indicates stress through capitalization and is easily readable for a native speaker.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The pronunciation \"CAT\" provides a very simple and direct approximation using the Portuguese \"a\". It successfully indicates stress through capitalization and is easily readable for a native speaker.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "The pronunciation \"CAT\" provides a very simple and direct approximation using the Portuguese \"a\". It successfully indicates stress through capitalization and is easily readable for a native speaker.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The pronunciation \"CAT\" provides a very simple and direct approximation using the Portuguese \"a\". It successfully indicates stress through capitalization and is easily readable for a native speaker.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "The output \"CÉT\" is a poor phonetic approximation. In Portuguese, the letter \"c\" before \"e\" or \"é\" produces an /s/ sound, which means a native speaker would read this as \"set\" instead of \"cat\".",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Uses Portuguese-readable spelling to guide /kɛt/, which is a strong approximation for the English short 'a' in 'cat'. Stress is clearly marked by full capitalization, and all sounds are represented, though final 'T' is slightly unnatural in Portuguese orthography.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Readable and stress-marked, with all sounds represented, but it is just the English spelling rather than a Portuguese-oriented pronunciation guide. A Brazilian reader would likely say /kat/, which is recognizable but less accurate for the short English 'a'.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Identical to A: readable, complete, and stress-marked, but not well adapted to Brazilian Portuguese pronunciation. It gives a recognizable approximation, though the vowel is less precise than it could be.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Identical to A: readable, complete, and stress-marked, but it relies on the original English spelling. The resulting Portuguese-style pronunciation is acceptable but not the best approximation of the English short 'a'.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Identical to A: it is simple, complete, and capitalized for stress, but does not adapt the vowel for Brazilian Portuguese readers. Still likely produces a recognizable version of 'cat'.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Identical to A: the output is clear and complete, with acceptable stress marking. However, it is less useful as a Portuguese pronunciation guide because it preserves the English spelling unchanged.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Identical to A: it represents all sounds and is easy to read, but the vowel approximation is weaker for Brazilian Portuguese speakers. It remains recognizable but not optimal.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "'CÉT' uses a good vowel approximation, but in Portuguese 'C' before 'É' is pronounced like /s/, so it would guide readers toward 'set' rather than 'cat'. This is a significant sound error despite clear stress marking and completeness otherwise.",
+          "score": 4
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-pronunciation",
+  "testCaseId": "pt-english-cat-1"
+}

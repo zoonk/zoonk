@@ -1,0 +1,167 @@
+{
+  "expectations": "\nNATIVE LANGUAGE: Portuguese (Brazilian)\nTARGET LANGUAGE: English\n\nWORD: \"squirrel\"\n\nThis is one of the most difficult English words for Portuguese speakers with:\n- The \"squ-\" cluster\n- The American \"r\" sound\n- The unstressed \"-el\" ending\n- Two syllables with complex consonant clusters\n\nSOUND CHALLENGES:\n- The \"qu\" followed by \"i\" creates a challenging sound\n- Double \"r\" in American English\n- The \"-el\" ending is often reduced\n\nQUALITY CHECK:\n- Should be readable by a Brazilian Portuguese speaker\n- Should handle the consonant clusters reasonably\n- Should indicate which syllable is stressed\n- Accept various valid approximations for this difficult word\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Do NOT penalize for using \"v\" instead of \"b\" (or vice versa) in Spanish — they are identical phonemes in Spanish and a native speaker pronounces them the same way\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
+  "judgedAt": "2026-05-24T17:44:54.330Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Uses natural Portuguese letters with the 'cui' cluster approximating the 'squi' sound well, clear stress marking on CUIR, and the '-ou' ending reasonably approximates the reduced '-el'. Readable and recognizable for a Brazilian speaker.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Good use of Portuguese phonemes with stress clearly marked. The 'CUÉR-rou' captures the r-coloring with double r, though the 'é' sound is slightly off from the actual vowel. Natural and readable.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Clean Portuguese spelling with clear stress on CUER and reasonable approximation. Slightly less accurate than versions with accent marks but very readable.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Uses natural Portuguese letters with stress marked. The 'CUÍ' captures the 'squi' sound and '-rou' approximates the ending, though missing some r-coloring.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Natural Portuguese with stress marked. The 'CUÉ' is a reasonable approximation but misses some of the 'r' coloring before the syllable break.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Uses 'CUÂ' which is unusual for Portuguese — circumflex on 'a' is rare and the sound is not quite right for 'squir'. Stress is marked and structure is okay.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "'CUÂ' with circumflex 'a' is awkward and unusual in Portuguese. The '-râl' ending with circumflex is also unnatural. Less readable than alternatives.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Uses 'QU' which in Portuguese before E typically sounds like /k/ without the 'w' glide, losing the 'squ-' cluster sound. The '-ol' ending is also a weaker approximation of '-el'.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Perfectly captures the 'squ' cluster with 'CUÍ', preserving the required /w/ sound using native phonemes. The single 'r' safely maps to the Portuguese flap (avoiding the /h/ sound), and 'rou' excellently simulates the vocalized dark 'L' ending.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Uses 'CUÉ' to represent the alternative /ɛ/ vowel in the American English pronunciation of 'squirrel'. It is extremely readable, correctly preserves the /w/ sound, and uses native letter combinations beautifully.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Effectively captures the 'squ' cluster and uses 'Â' to successfully represent the English schwa sound. Highly readable and accurate, though 'cuâ' is slightly less common orthographically than 'cuí' or 'cué'.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Features a very accurate phonetic mapping for the vowels and consonants. However, the '-râl' ending is slightly unnatural in Portuguese orthography, even though a native speaker could still read it correctly.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Successfully preserves the /w/ sound with 'CUER'. However, placing the 'R' at the end of the stressed syllable (coda) will cause the majority of Brazilians to pronounce it as a guttural /h/ rather than an English R.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Similar to Model E, placing the 'R' in the syllable coda ('CUIR') risks it being pronounced as an /h/ in most Brazilian dialects. It is acceptable but misses the mark on guiding the native speaker to the correct 'R' sound.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Uses 'QUER' for the first syllable, which in Portuguese is pronounced /kɛr/ without any /w/ sound. This completely fails one of the primary sound challenges of the word 'squirrel'.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Attempts to map the English double 'r' by using 'rr' in Portuguese. In Portuguese, 'rr' produces a strong /h/ sound (like in 'carro'), which severely misrepresents the target American pronunciation.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Best overall: it marks stress clearly, separates syllables, and uses Portuguese-readable spelling to approximate the difficult /skw/ + r-colored vowel in “squirrel.” The ending “rou” is not a perfect reduced “-el,” and it may add an extra r-like sound, but the result is still recognizable and readable.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Strong approximation with stress and syllable breaks, and “CUER” can guide a Brazilian speaker toward something like /skwer/. It is slightly less readable than D because “cuer” is an uncommon-looking Portuguese sequence and the final “ou” only loosely represents the reduced final syllable.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Captures the /skw/ cluster and includes an r in the stressed syllable, producing a recognizable “skwir-ou” approximation. The “CUIR” spelling is less natural for Brazilian Portuguese readers and may be read as a hiatus, but it remains usable.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Readable and stress-marked, and “CUÉ” gives a reasonable /skwe/ start. However, the r is shifted into the following syllable and the final “rou” does not represent the reduced “-el” ending very well.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Very readable for Portuguese speakers, with clear stress and syllable separation. Its main weakness is that “QUER” before e is naturally read as /ker/, so it drops the important /w/ element of the English “squ-” cluster.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "It is readable and marks stress correctly, but “CUÍ” pushes the pronunciation toward “skwee,” which is not a strong approximation of US “squirrel.” The r is only in the following syllable, so the stressed r-colored part of the word is poorly represented.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "It uses Portuguese letters and marks stress, but “CUÂ” is awkward and gives a poor vowel/r-color approximation for the stressed syllable. The final “râl” includes some ending sounds, but the overall pronunciation would likely sound far from recognizable US “squirrel.”",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Readable and stress-marked, but the stressed “CUÂ” lacks the crucial r-colored sound and creates an odd approximation. The final “rou” is also a weak substitute for the reduced “-el” ending, making the result less complete and less recognizable.",
+          "score": 4.5
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-pronunciation",
+  "testCaseId": "pt-english-squirrel-1"
+}

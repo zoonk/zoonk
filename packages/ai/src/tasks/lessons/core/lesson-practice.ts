@@ -8,7 +8,7 @@ import { type SourceLesson, formatSourceLessonsForPrompt } from "./_utils/source
 import baseSystemPrompt from "./lesson-practice.prompt.md";
 
 const defaultModel = "openai/gpt-5.5";
-const fallbackModels = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"] as const;
+const fallbackModels = ["anthropic/claude-opus-4.7", "google/gemini-3.1-pro-preview"] as const;
 const systemPrompt = appendLessonRichTextPrompt(baseSystemPrompt);
 
 const practiceOptionSchema = z.object({

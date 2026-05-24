@@ -1,0 +1,149 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Spanish.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Faucet repair involves specific plumbing steps. Penalize if:\n   - Water supply shutoff is not the first step\n   - Disassembly order is incorrect (handle before cartridge/stem)\n\n2. SAFETY CHECK: Penalize if:\n   - Draining residual water is skipped\n   - No guidance on organizing removed parts for reassembly (e.g., placing in order, using a container, noting orientation). Any reasonable organization instruction counts - do NOT require the exact phrase \"place parts in order\"\n\n3. TOOL SPECIFICITY: Penalize if tools needed are not specified (adjustable wrench, screwdriver type, etc.).\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n- Do NOT penalize for JSON output format differences (e.g., wrapping the array in an object like `{\"steps\": [...]}` instead of a raw array). This is a schema/parsing concern, not a content quality issue\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the lesson as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
+  "judgedAt": "2026-05-24T18:29:45.053Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Correct sequence with shutoff first, drains via opening faucet, specifies tools (destornillador plano, Phillips/Allen, llave inglesa), and instructs guarding parts (tornillo en lugar seguro). Clear Spanish, good grouping, verification at end. Minor: organization guidance is light but acceptable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Thorough, correct sequence, tools specified, explicit organization (\"colócalo sobre un trapo en el mismo orden en que salió\"), drains residual water, verification included. Slightly long but each step is clear and action-oriented.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Correct order, tools listed, drains water, organization via \"si notas su posición\" and comparing parts. Comprehensive and well-grouped, though slightly verbose with many small steps.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Correct sequence, tools specified, notes orientation via photo/notes for reassembly, drains water through towel and opening. Solid quality with verification, though using a knife is slightly unusual.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Correct order, specifies tools (destornillador plano, cruz, llave inglesa, pinzas), good verification. Weakness: lacks explicit guidance on organizing/ordering removed parts for reassembly.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Correct sequence and tool specificity, drains pressure by opening faucet. However, lacks any guidance on organizing removed parts for reassembly, which is a penalized safety check item.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Single incomplete step with empty text and malformed title. Unusable.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E follows all instructions perfectly. It correctly makes the water shutoff the first step, explicitly includes draining the residual water, specifies exact tool types (e.g., Phillips or flathead), and includes a great safety instruction to note the orientation of parts/take a photo for reassembly. The formatting and language are impeccable.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Model A is exceptionally accurate and perfectly compliant with the strict expectations. It begins with the water shutoff, handles draining, specifies exact tools required, and includes a reasonable organization step by advising the user to keep the screw in a safe place. There are no notable flaws.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Model C provides a very strong and detailed guide with excellent part organization instructions (placing parts in order on a cloth) and tool specificity. However, it must be penalized literally according to the rules because the water supply shutoff is not the very first step (it starts with gathering tools).",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model G correctly places the water shutoff as the first step and properly specifies the types of screwdrivers and wrenches needed. However, it misses the safety check requirement as it provides no guidance on organizing removed parts for reassembly.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model B violates the literal rule requiring the water shutoff to be the very first step, opting instead for a tool-gathering step. Additionally, while it lists tools, it fails to specify the type of screwdriver needed, missing the tool specificity requirement.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model D correctly begins with the water shutoff and draining steps. However, it fails two critical checks: it does not specify the type of screwdriver required, and it provides no instruction on organizing or safely storing the removed parts.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Model F generated an incomplete, single-step response that is abruptly cut off. It is unusable for this task.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Cumple muy bien: cierra el agua primero, drena/verifica, desmonta en el orden correcto y especifica herramientas como llave ajustable y desarmadores. También incluye una buena guía de organización al tomar nota o foto de la posición del cartucho para reensamblar correctamente.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Empieza correctamente cerrando el agua, abre el grifo para confirmar/drenar y sigue un orden de desmontaje adecuado. Especifica herramientas, pero la guía para organizar piezas es mínima, limitada principalmente a guardar el tornillo en un lugar seguro.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Es muy completo, accionable y ofrece buena organización de piezas al colocarlas en orden y revisar la posición. Su principal problema es que reúne herramientas antes de cerrar el agua, violando la expectativa de que el cierre del suministro sea el primer paso.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Tiene una secuencia clara después del inicio, incluye drenaje, verificación y orientación para reinstalar la pieza. Sin embargo, no cierra el agua como primer paso y la especificidad del desarmador es algo limitada.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Cierra el agua primero, libera presión y mantiene un orden correcto de desmontaje y reparación. Especifica herramientas razonablemente, pero no da una instrucción clara para organizar piezas retiradas u orientación para el reensamblaje.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "La secuencia principal es correcta: corta el agua primero, drena presión y desmonta la manija antes del cartucho. Pierde calidad por no incluir guía de organización de piezas y por ser menos específico con algunos tipos de herramienta, como el destornillador.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Es prácticamente inutilizable: contiene solo un paso incompleto, con texto vacío y sin procedimiento real. Omite herramientas, desmontaje, reemplazo, organización de piezas y verificación de la reparación.",
+          "score": 1
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-tutorial",
+  "testCaseId": "es-home-repair-fix-faucet-1"
+}

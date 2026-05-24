@@ -6,7 +6,7 @@ import { getLanguagePromptContext } from "../../_utils/prompt-language";
 import systemPrompt from "./lesson-pronunciation.prompt.md";
 
 const defaultModel = "google/gemini-3-flash";
-const fallbackModels = ["anthropic/claude-sonnet-4.6", "openai/gpt-5.1-instant"] as const;
+const fallbackModels = ["openai/gpt-5.5", "anthropic/claude-opus-4.7"] as const;
 
 const schema = z.object({ pronunciation: z.string().min(1) });
 
