@@ -100,9 +100,9 @@ async function getNextStepSelectImage(): Promise<ReviewQueueResult> {
   return { entityId: next?.id ?? null, remaining };
 }
 
-export const getNextReviewItem = cache(async function getNextReviewItem(
+export const getNextReviewItem = cache(async (
   taskType: ReviewTaskType,
-): Promise<ReviewQueueResult> {
+): Promise<ReviewQueueResult> => {
   if (!(await isAdmin())) {
     return EMPTY_RESULT;
   }

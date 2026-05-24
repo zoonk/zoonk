@@ -61,7 +61,7 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@vercel/blob": "2.3.3",
+    "@vercel/blob": "2.4.0",
     "@zoonk/ai": "workspace:*",
     "@zoonk/auth": "workspace:*",
     "@zoonk/db": "workspace:*",

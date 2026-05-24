@@ -3,11 +3,11 @@ import { isAdmin } from "@/lib/admin-guard";
 import { prisma } from "@zoonk/db";
 import { cache } from "react";
 
-const cachedListCourses = cache(async function cachedListCourses(
+const cachedListCourses = cache(async (
   limit: number,
   offset: number,
   search?: string,
-) {
+) => {
   if (!(await isAdmin())) {
     return { courses: [], total: 0 };
   }

@@ -5,9 +5,9 @@ import { prisma } from "@zoonk/db";
 import { cache } from "react";
 import { countPendingForTask } from "./count-pending-reviews";
 
-export const countReviewStatuses = cache(async function countReviewStatuses(
+export const countReviewStatuses = cache(async (
   taskType: ReviewTaskType,
-): Promise<{ pending: number; needsChanges: number }> {
+): Promise<{ pending: number; needsChanges: number }> => {
   if (!(await isAdmin())) {
     return { needsChanges: 0, pending: 0 };
   }

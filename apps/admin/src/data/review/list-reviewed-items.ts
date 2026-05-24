@@ -4,12 +4,12 @@ import { type ReviewTaskType } from "@/lib/review-utils";
 import { prisma } from "@zoonk/db";
 import { cache } from "react";
 
-const cachedListReviewedItems = cache(async function cachedListReviewedItems(
+const cachedListReviewedItems = cache(async (
   taskType: string,
   status: string,
   limit: number,
   offset: number,
-) {
+) => {
   if (!(await isAdmin())) {
     return { items: [], total: 0 };
   }

@@ -6,9 +6,9 @@ import { prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { cache } from "react";
 
-export const reviewedEntityIds = cache(async function reviewedEntityIds(
+export const reviewedEntityIds = cache(async (
   taskType: ReviewTaskType,
-): Promise<string[]> {
+): Promise<string[]> => {
   const reviews = await prisma.contentReview.findMany({
     select: { entityId: true },
     where: { taskType },
@@ -59,9 +59,9 @@ function countPendingSentenceAudio(excludeIds: string[]): Promise<number> {
   });
 }
 
-export const countPendingForTask = cache(async function countPendingForTask(
+export const countPendingForTask = cache(async (
   taskType: ReviewTaskType,
-): Promise<number> {
+): Promise<number> => {
   const excludeIds = await reviewedEntityIds(taskType);
 
   if (taskType === "courseSuggestions") {
@@ -100,9 +100,9 @@ function emptyCountRecord(): Record<ReviewTaskType, number> {
   return Object.fromEntries(REVIEW_TASK_TYPES.map((t) => [t, 0])) as Record<ReviewTaskType, number>;
 }
 
-export const countPendingReviews = cache(async function countPendingReviews(): Promise<
+export const countPendingReviews = cache(async (): Promise<
   Record<ReviewTaskType, number>
-> {
+> => {
   if (!(await isAdmin())) {
     return emptyCountRecord();
   }
