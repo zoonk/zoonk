@@ -352,33 +352,33 @@ describe(preparePlayerLessonData, () => {
         id: "10",
         pronunciation: "boa noite",
         romanization: null,
-        word: "boa noite",
+        word: "Boa noite",
       },
       {
         audioUrl: "/audio/boa-tarde.mp3",
         id: "101",
         pronunciation: "boa tarde",
         romanization: null,
-        word: "boa tarde",
+        word: "Boa tarde",
       },
       {
         audioUrl: "/audio/bom-dia.mp3",
         id: "102",
         pronunciation: "bom dia",
         romanization: null,
-        word: "bom dia",
+        word: "Bom dia",
       },
       {
         audioUrl: null,
         id: "distractor:ate logo",
         pronunciation: null,
         romanization: null,
-        word: "até logo",
+        word: "Até logo",
       },
     ]);
   });
 
-  it("matches translation option casing to the correct target-language word", () => {
+  it("capitalizes every translation option", () => {
     const word = makeLessonWord({
       distractors: ["boa tarde", "boa noite"],
       translation: "Good morning",
@@ -400,6 +400,31 @@ describe(preparePlayerLessonData, () => {
       "Bom dia",
       "Boa tarde",
       "Boa noite",
+    ]);
+  });
+
+  it("capitalizes under-cased generated translation answers", () => {
+    const word = makeLessonWord({
+      distractors: ["i'm busy", "i'm tired"],
+      translation: "Estoy bien",
+      word: makeWordRecord({ id: "10", word: "i'm fine" }),
+    });
+
+    const result = prepare({
+      chapterWords: [word],
+      lesson: makeLesson([
+        makeStep({
+          id: "11",
+          kind: "translation",
+          word: makeStepWord({ id: "10", word: "i'm fine" }),
+        }),
+      ]),
+    });
+
+    expect(result.steps[0]?.translationOptions.map((option) => option.word)).toStrictEqual([
+      "I'm fine",
+      "I'm busy",
+      "I'm tired",
     ]);
   });
 
