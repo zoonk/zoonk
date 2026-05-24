@@ -12,6 +12,7 @@ const uniqueId = randomUUID();
 const SEARCH_LESSONS_LABEL = /search lessons/iu;
 
 let chapterUrl: string;
+let courseUrl: string;
 let courseSlug: string;
 let courseTitle: string;
 let chapterTitle: string;
@@ -53,7 +54,8 @@ test.beforeAll(async () => {
     title: chapterTitle,
   });
 
-  chapterUrl = `/b/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}`;
+  courseUrl = `/b/${AI_ORG_SLUG}/c/${courseSlug}`;
+  chapterUrl = `${courseUrl}/ch/${chapterSlug}`;
 
   lessonNames = {
     first: `What is E2E Testing ${uniqueId}`,
@@ -244,6 +246,46 @@ test.describe("Chapter Detail - Locale", () => {
     await expect(
       page.getByRole("link", { name: new RegExp(ptLessonNames.second, "u") }),
     ).toBeVisible();
+  });
+});
+
+test.describe("Chapter Navbar - Mobile", () => {
+  test.use({ viewport: { height: 667, width: 375 } });
+
+  test("shows only course back and home close links", async ({ page }) => {
+    await page.goto(chapterUrl);
+
+    const catalogNavbar = page.getByRole("navigation").first();
+    const courseLink = catalogNavbar.getByRole("link", { name: /course page/iu });
+    const homeLink = catalogNavbar.getByRole("link", { name: /home page/iu });
+
+    await expect(courseLink).toBeVisible();
+    await expect(courseLink).toHaveAttribute("href", courseUrl);
+
+    await expect(homeLink).toBeVisible();
+    await expect(homeLink).toHaveAttribute("href", "/");
+
+    await expect(page.getByRole("main").getByRole("link", { name: courseTitle })).not.toBeVisible();
+
+    await expect(
+      catalogNavbar.getByRole("link", { exact: true, name: "Courses" }),
+    ).not.toBeVisible();
+
+    await expect(catalogNavbar.getByRole("button", { name: /search/iu })).not.toBeVisible();
+    await expect(catalogNavbar.getByRole("button", { name: /user menu/iu })).not.toBeVisible();
+  });
+});
+
+test.describe("Chapter Navbar - Desktop", () => {
+  test("keeps the full catalog navbar", async ({ page }) => {
+    await page.goto(chapterUrl);
+
+    const catalogNavbar = page.getByRole("navigation").first();
+
+    await expect(catalogNavbar.getByRole("link", { exact: true, name: "Courses" })).toBeVisible();
+    await expect(catalogNavbar.getByRole("button", { name: /search/iu })).toBeVisible();
+    await expect(catalogNavbar.getByRole("link", { name: /course page/iu })).not.toBeVisible();
+    await expect(page.getByRole("main").getByRole("link", { name: courseTitle })).toBeVisible();
   });
 });
 

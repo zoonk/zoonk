@@ -20,7 +20,18 @@ import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { type CourseSearchResult, searchCoursesAction } from "./search-courses-action";
 
-export function CommandPalette({ isLoggedIn }: { isLoggedIn: boolean }) {
+/**
+ * The catalog navbar sometimes hides the search trigger responsively while the
+ * dialog logic stays unchanged. Accepting a trigger class keeps that layout
+ * concern out of the command palette state and search behavior.
+ */
+export function CommandPalette({
+  className,
+  isLoggedIn,
+}: {
+  className?: string;
+  isLoggedIn: boolean;
+}) {
   const router = useRouter();
   const t = useExtracted();
   const locale = useLocale();
@@ -72,7 +83,13 @@ export function CommandPalette({ isLoggedIn }: { isLoggedIn: boolean }) {
 
   return (
     <>
-      <Button aria-keyshortcuts="Meta+K Control+K" onClick={open} size="icon" variant="outline">
+      <Button
+        aria-keyshortcuts="Meta+K Control+K"
+        className={className}
+        onClick={open}
+        size="icon"
+        variant="outline"
+      >
         <Search aria-hidden="true" />
         <span className="sr-only">{t("Search")}</span>
       </Button>

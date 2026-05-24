@@ -4,6 +4,7 @@ import { AvatarSkeleton } from "@zoonk/ui/components/avatar";
 import { Navbar } from "@zoonk/ui/components/navbar";
 import { Suspense } from "react";
 import { NavbarLinks, NavbarLinksSkeleton } from "./_components/navbar-links";
+import { NavbarUserSlot } from "./_components/navbar-user-slot";
 import { UserAvatarMenu } from "./_components/user-avatar-menu";
 
 async function NavbarLinksWithAuth() {
@@ -19,9 +20,11 @@ export default function CatalogLayout({ children }: LayoutProps<"/">) {
           <NavbarLinksWithAuth />
         </Suspense>
 
-        <Suspense fallback={<AvatarSkeleton />}>
-          <UserAvatarMenu />
-        </Suspense>
+        <NavbarUserSlot>
+          <Suspense fallback={<AvatarSkeleton />}>
+            <UserAvatarMenu />
+          </Suspense>
+        </NavbarUserSlot>
       </Navbar>
 
       <div aria-hidden="true" className="scroll-mt-20" id={CATALOG_TOP_TARGET_ID} />
