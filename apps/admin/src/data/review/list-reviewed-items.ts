@@ -4,31 +4,28 @@ import { type ReviewTaskType } from "@/lib/review-utils";
 import { prisma } from "@zoonk/db";
 import { cache } from "react";
 
-const cachedListReviewedItems = cache(async (
-  taskType: string,
-  status: string,
-  limit: number,
-  offset: number,
-) => {
-  if (!(await isAdmin())) {
-    return { items: [], total: 0 };
-  }
+const cachedListReviewedItems = cache(
+  async (taskType: string, status: string, limit: number, offset: number) => {
+    if (!(await isAdmin())) {
+      return { items: [], total: 0 };
+    }
 
-  const where = { status, taskType };
+    const where = { status, taskType };
 
-  const [items, total] = await Promise.all([
-    prisma.contentReview.findMany({
-      include: { user: { select: { name: true } } },
-      orderBy: { reviewedAt: "desc" },
-      skip: offset,
-      take: limit,
-      where,
-    }),
-    prisma.contentReview.count({ where }),
-  ]);
+    const [items, total] = await Promise.all([
+      prisma.contentReview.findMany({
+        include: { user: { select: { name: true } } },
+        orderBy: { reviewedAt: "desc" },
+        skip: offset,
+        take: limit,
+        where,
+      }),
+      prisma.contentReview.count({ where }),
+    ]);
 
-  return { items, total };
-});
+    return { items, total };
+  },
+);
 
 export async function listReviewedItems(params: {
   taskType: ReviewTaskType;

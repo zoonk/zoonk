@@ -100,32 +100,32 @@ async function getNextStepSelectImage(): Promise<ReviewQueueResult> {
   return { entityId: next?.id ?? null, remaining };
 }
 
-export const getNextReviewItem = cache(async (
-  taskType: ReviewTaskType,
-): Promise<ReviewQueueResult> => {
-  if (!(await isAdmin())) {
+export const getNextReviewItem = cache(
+  async (taskType: ReviewTaskType): Promise<ReviewQueueResult> => {
+    if (!(await isAdmin())) {
+      return EMPTY_RESULT;
+    }
+
+    if (taskType === "courseSuggestions") {
+      return getNextCourseSuggestion();
+    }
+
+    if (taskType === "stepImage") {
+      return getNextStepImage();
+    }
+
+    if (taskType === "stepSelectImage") {
+      return getNextStepSelectImage();
+    }
+
+    if (taskType === "wordAudio") {
+      return getNextWordAudio();
+    }
+
+    if (taskType === "sentenceAudio") {
+      return getNextSentenceAudio();
+    }
+
     return EMPTY_RESULT;
-  }
-
-  if (taskType === "courseSuggestions") {
-    return getNextCourseSuggestion();
-  }
-
-  if (taskType === "stepImage") {
-    return getNextStepImage();
-  }
-
-  if (taskType === "stepSelectImage") {
-    return getNextStepSelectImage();
-  }
-
-  if (taskType === "wordAudio") {
-    return getNextWordAudio();
-  }
-
-  if (taskType === "sentenceAudio") {
-    return getNextSentenceAudio();
-  }
-
-  return EMPTY_RESULT;
-});
+  },
+);
