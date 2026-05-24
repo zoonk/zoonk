@@ -67,6 +67,20 @@ ${SHARED_EXPECTATIONS}
   {
     expectations: `
 EXPECTED BEHAVIOR:
+- This output is used as English options for a Portuguese learner who sees the prompt "Boa noite"
+- Do NOT return "Good night" because "Boa noite" can mean both "Good evening" and "Good night"; both would be valid learner answers without extra context
+- Do NOT return near-equivalent evening/night greetings that a teacher could accept for the same Portuguese prompt
+- Safe distractors can be other greetings or social phrases that are clearly wrong for "Boa noite", such as "Good morning", "Good afternoon", "Thank you", or "Excuse me"
+- Every distractor must stay in English
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "en-good-evening-pt-boa-noite-prompt",
+    userInput: { input: "Good evening", language: "en", shape: "any" },
+  },
+  {
+    expectations: `
+EXPECTED BEHAVIOR:
 - Do NOT return highly polysemous distractors like "bank", "change", "note", or "bill"
 - Do NOT return synonyms like "cash" that could still be accepted as correct
 - Prefer clearly wrong English output that is less ambiguous
