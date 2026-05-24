@@ -12,6 +12,7 @@ import { generateWithOpenAI } from "./provider-openai";
 const DEFAULT_VOICE: TTSVoice = "Kore";
 const MAX_ATTEMPTS_PER_PROVIDER = 3;
 const INITIAL_BACKOFF_MS = 1000;
+const READ_ALOUD_TEMPLATE = "The following text is {{LANGUAGE}}. Read it aloud in {{LANGUAGE}}.";
 
 type AudioFormat = "opus" | "wav";
 
@@ -48,8 +49,13 @@ function buildInstructions({
     : getPromptLanguageName({ language: "en" });
 
   const usagePrompt = usage ? usagePrompts[usage] : "";
+  const readAloudPrompt = READ_ALOUD_TEMPLATE.replaceAll("{{LANGUAGE}}", () => languageName);
 
-  return [promptTemplate.replaceAll("{{LANGUAGE}}", () => languageName), usagePrompt]
+  return [
+    promptTemplate.replaceAll("{{LANGUAGE}}", () => languageName),
+    usagePrompt,
+    readAloudPrompt,
+  ]
     .filter(Boolean)
     .join("\n\n");
 }

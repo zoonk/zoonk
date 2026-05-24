@@ -35,7 +35,7 @@ Analyze CHAPTER_TITLE, LESSON_TITLE, LESSON_DESCRIPTION, VOCABULARY_WORDS, and C
 - **Intermediate**: medium sentences (4-8 words), simple + compound, some additional common vocabulary
 - **Advanced**: longer/complex sentences, subordinate clauses, broader vocabulary
 
-Example: A lesson on "Greetings" with vocabulary ["hola", "buenos días"] should produce "¡Buenos días!" — NOT "As she entered the coffee shop, she immediately said good afternoon."
+Example: A lesson on "Greetings" with vocabulary ["hola", "buenos días"] should produce "Buenos días" — NOT "As she entered the coffee shop, she immediately said good afternoon."
 
 # Sentence Generation Principles
 
@@ -61,6 +61,22 @@ Example: A lesson on "Greetings" with vocabulary ["hola", "buenos días"] should
 - Vary sentence beginnings - avoid starting every sentence the same way
 - Include different sentence types (statements, questions, exclamations) when appropriate
 - Keep sentences focused and clear - avoid overly complex constructions that obscure the vocabulary
+
+## Punctuation for Word Banks
+
+The `sentence` and `translation` fields are split into word-bank tiles. Punctuation should only appear when it changes the meaning, grammar, or natural reading of the text.
+
+- Do NOT add decorative terminal punctuation to simple statements, greetings, farewells, thanks, labels, or short conversational chunks.
+- Do keep punctuation that is required for meaning or grammar, especially question marks for questions.
+- Do keep punctuation required by the target language when the sentence type needs it, such as Spanish inverted question marks in questions.
+- Do keep internal punctuation when it is part of the natural sentence structure, such as commas in direct address.
+
+Examples:
+
+- `Good morning` — NOT `Good morning!`
+- `See you later` — NOT `See you later.`
+- `How are you?` — keep `?` because this is a question.
+- `¿Cómo estás?` — keep both question marks because Spanish questions require them.
 
 ## What to Avoid
 
