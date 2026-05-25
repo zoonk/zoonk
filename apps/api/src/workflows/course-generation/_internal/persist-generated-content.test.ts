@@ -5,8 +5,8 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { type CourseContext } from "../steps/initialize-course-step";
+import { type ExistingCourseContent } from "./existing-course-content";
 import { type GeneratedContent } from "./generate-missing-content";
-import { type ExistingCourseContent } from "./get-or-create-course";
 import { persistGeneratedContent } from "./persist-generated-content";
 
 describe(persistGeneratedContent, () => {

@@ -12,14 +12,14 @@ import {
   getAiGenerationCourseWhere,
   prisma,
 } from "@zoonk/db";
-import { ensureLocaleSuffix, normalizeString, toSlug } from "@zoonk/utils/string";
+import { normalizeString, toSlug } from "@zoonk/utils/string";
+import { getCourseSlugForTitle } from "../_internal/course-slug";
+import { courseContentInclude } from "../_internal/existing-course-content";
 
 const IDENTITY_SEARCH_STEP = "generateCourseIdentitySearchQueries";
 const IDENTITY_CLASSIFICATION_STEP = "resolveCourseIdentity";
 
-const courseInclude = { _count: { select: { categories: true, chapters: true } } } as const;
-
-export type ExistingCourse = CourseGetPayload<{ include: typeof courseInclude }>;
+export type ExistingCourse = CourseGetPayload<{ include: typeof courseContentInclude }>;
 
 type CourseWhereInput = NonNullable<Parameters<typeof getAiGenerationCourseWhere>[0]>;
 type CourseIdentityStream = ReturnType<typeof createStepStream<CourseWorkflowStepName>>;
@@ -77,7 +77,7 @@ function getSearchTextWhereClauses({
 }): CourseWhereInput[] {
   const normalizedText = normalizeString(text);
   const normalizedSlug = toSlug(text);
-  const suffixedSlug = ensureLocaleSuffix(normalizedSlug, language);
+  const suffixedSlug = getCourseSlugForTitle({ language, title: text });
 
   const clauses: (CourseWhereInput | null)[] = [
     normalizedText ? { normalizedTitle: normalizedText } : null,
@@ -137,7 +137,7 @@ async function findCandidateCourses({
   }
 
   return prisma.course.findMany({
-    include: courseInclude,
+    include: courseContentInclude,
     where: getAiGenerationCourseWhere({ OR: whereClauses, language: suggestion.language }),
   });
 }
@@ -154,7 +154,7 @@ function getDirectMatch({
   candidates: ExistingCourse[];
   suggestion: CourseSuggestion;
 }): ExistingCourse | null {
-  const slug = ensureLocaleSuffix(toSlug(suggestion.slug), suggestion.language);
+  const slug = getCourseSlugForTitle({ language: suggestion.language, title: suggestion.title });
   const normalizedTitle = normalizeString(suggestion.title);
 
   return (
@@ -179,7 +179,7 @@ async function getCachedCourse(courseId: string | null): Promise<ExistingCourse 
   }
 
   return prisma.course.findFirst({
-    include: courseInclude,
+    include: courseContentInclude,
     where: getAiGenerationCourseWhere({ id: courseId }),
   });
 }

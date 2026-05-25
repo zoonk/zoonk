@@ -5,7 +5,7 @@ import { generateChaptersStep } from "../steps/generate-chapters-step";
 import { generateDescriptionStep } from "../steps/generate-description-step";
 import { generateImageStep } from "../steps/generate-image-step";
 import { type CourseContext } from "../steps/initialize-course-step";
-import { type ExistingCourseContent } from "./get-or-create-course";
+import { type ExistingCourseContent } from "./existing-course-content";
 
 export type GeneratedContent = {
   description: string;

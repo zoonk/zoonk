@@ -7,9 +7,9 @@ import { getSettledFailureError, settledFailures } from "@zoonk/utils/settled";
 
 /**
  * Marks a course-generation run as permanently failed after the workflow has
- * stopped retrying the step that threw. The original error is logged here so
- * Workflow can keep retryable steps clean while final failure diagnostics still
- * show the provider or database error that caused the run to fail.
+ * stopped retrying the step that threw. Suggestions linked by duplicate starts
+ * fail with the shared course so no request stays stuck in a running state
+ * after the winning workflow gives up.
  */
 export async function handleCourseFailureStep(input: {
   courseId: string | null;
@@ -31,6 +31,10 @@ export async function handleCourseFailureStep(input: {
       prisma.courseSuggestion.update({
         data: { generationRunId: null, generationStatus: "failed" },
         where: { id: courseSuggestionId },
+      }),
+      prisma.courseSuggestion.updateMany({
+        data: { generationRunId: null, generationStatus: "failed" },
+        where: { courseId, generationStatus: { not: "completed" } },
       }),
     ]);
 

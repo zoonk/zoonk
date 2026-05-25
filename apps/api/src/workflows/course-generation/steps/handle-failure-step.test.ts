@@ -55,6 +55,42 @@ describe(handleCourseFailureStep, () => {
     );
   });
 
+  it("marks linked running suggestions as failed when the course run fails", async () => {
+    const course = await courseFixture({
+      generationRunId: "old-run",
+      generationStatus: "running",
+      organizationId,
+      title: `Linked Fail Course ${randomUUID()}`,
+    });
+
+    const [primarySuggestion, linkedSuggestion] = await Promise.all([
+      courseSuggestionFixture({
+        courseId: course.id,
+        generationRunId: "old-run",
+        generationStatus: "running",
+        title: `Primary Fail Suggestion ${randomUUID()}`,
+      }),
+      courseSuggestionFixture({
+        courseId: course.id,
+        generationRunId: "other-run",
+        generationStatus: "running",
+        title: `Linked Fail Suggestion ${randomUUID()}`,
+      }),
+    ]);
+
+    await handleCourseFailureStep({
+      courseId: course.id,
+      courseSuggestionId: primarySuggestion.id,
+    });
+
+    const updatedLinkedSuggestion = await prisma.courseSuggestion.findUniqueOrThrow({
+      where: { id: linkedSuggestion.id },
+    });
+
+    expect(updatedLinkedSuggestion.generationStatus).toBe("failed");
+    expect(updatedLinkedSuggestion.generationRunId).toBeNull();
+  });
+
   it("throws all status update failures", async () => {
     const promise = handleCourseFailureStep({
       courseId: randomUUID(),
