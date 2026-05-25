@@ -122,7 +122,7 @@ export async function courseGenerationWorkflow(courseSuggestionId: string): Prom
     return;
   }
 
-  const { course, existing } = await getOrCreateCourse(
+  const courseSetup = await getOrCreateCourse(
     existingCourse,
     suggestion,
     courseSuggestionId,
@@ -139,14 +139,28 @@ export async function courseGenerationWorkflow(courseSuggestionId: string): Prom
     throw error;
   });
 
+  if (courseSetup.status === "running") {
+    return;
+  }
+
+  if (courseSetup.status === "completed") {
+    await completeCourseSetupStep({
+      courseId: courseSetup.course.courseId,
+      courseSlug: courseSetup.course.courseSlug,
+      courseSuggestionId,
+    });
+
+    return;
+  }
+
   const chapters = await setupCourseContent({
-    course,
+    course: courseSetup.course,
     courseSuggestionId,
     description: suggestion.description,
-    existing,
+    existing: courseSetup.existing,
   }).catch(async (error: unknown) => {
     await handleCourseFailureStep({
-      courseId: course.courseId,
+      courseId: courseSetup.course.courseId,
       courseSuggestionId,
       error: serializeWorkflowError(error),
     });

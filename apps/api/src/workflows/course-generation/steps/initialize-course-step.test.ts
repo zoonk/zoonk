@@ -45,18 +45,20 @@ describe(initializeCourseStep, () => {
 
     const result = await initializeCourseStep({ suggestion, workflowRunId });
 
-    expect(result.courseTitle).toBe(suggestion.title);
-    expect(result.language).toBe(suggestion.language);
-    expect(result.courseId).toStrictEqual(expect.any(String));
+    expect(result.course.courseTitle).toBe(suggestion.title);
+    expect(result.course.language).toBe(suggestion.language);
+    expect(result.course.courseId).toStrictEqual(expect.any(String));
+    expect(result.existing).toBeNull();
+    expect(result.generationStatus).toBe("running");
 
     const [updatedSuggestion, createdCourse] = await Promise.all([
       prisma.courseSuggestion.findUniqueOrThrow({ where: { id: suggestion.id } }),
-      prisma.course.findUniqueOrThrow({ where: { id: result.courseId } }),
+      prisma.course.findUniqueOrThrow({ where: { id: result.course.courseId } }),
     ]);
 
     expect(updatedSuggestion.generationStatus).toBe("running");
     expect(updatedSuggestion.generationRunId).toBe(workflowRunId);
-    expect(updatedSuggestion.courseId).toBe(result.courseId);
+    expect(updatedSuggestion.courseId).toBe(result.course.courseId);
     expect(createdCourse.generationStatus).toBe("running");
     expect(createdCourse.isPublished).toBe(true);
     expect(createdCourse.title).toBe(suggestion.title);
@@ -80,9 +82,9 @@ describe(initializeCourseStep, () => {
 
     const result = await initializeCourseStep({ suggestion, workflowRunId: `run-${randomUUID()}` });
 
-    expect(result.targetLanguage).toBe("es");
+    expect(result.course.targetLanguage).toBe("es");
 
-    const course = await prisma.course.findUniqueOrThrow({ where: { id: result.courseId } });
+    const course = await prisma.course.findUniqueOrThrow({ where: { id: result.course.courseId } });
 
     expect(course.targetLanguage).toBe("es");
   });

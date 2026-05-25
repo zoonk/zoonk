@@ -1,57 +1,126 @@
 import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
-import { type CourseSuggestion } from "@zoonk/db";
+import { type Course, type CourseSuggestion } from "@zoonk/db";
 import { getAIOrganizationStep } from "../steps/get-ai-organization-step";
-import { type CourseContext, initializeCourseStep } from "../steps/initialize-course-step";
+import {
+  type CourseContext,
+  type InitializedCourse,
+  getCourseContext,
+  initializeCourseStep,
+} from "../steps/initialize-course-step";
 import { type ExistingCourse } from "../steps/resolve-course-identity-step";
 import { setCourseAsRunningStep } from "../steps/set-course-as-running-step";
+import {
+  EMPTY_EXISTING_CONTENT,
+  type ExistingCourseContent,
+  getExistingCourseContent,
+} from "./existing-course-content";
 
-export type ExistingCourseContent = {
-  description: string | null;
-  imageUrl: string | null;
-  hasCategories: boolean;
-  hasChapters: boolean;
+type CourseSetupStatus = "completed" | "ready" | "running";
+
+export type GetOrCreateCourseResult = {
+  course: CourseContext;
+  existing: ExistingCourseContent;
+  status: CourseSetupStatus;
 };
 
-const DEFAULT_EXISTING_CONTENT: ExistingCourseContent = {
-  description: null,
-  hasCategories: false,
-  hasChapters: false,
-  imageUrl: null,
-};
+/**
+ * Only failed or pending existing courses need this workflow to continue setup.
+ * Running and completed courses already have another run or a finished result,
+ * so the caller should stop after linking the suggestion.
+ */
+function getCourseSetupStatus(generationStatus: Course["generationStatus"]): CourseSetupStatus {
+  if (generationStatus === "running") {
+    return "running";
+  }
 
+  if (generationStatus === "completed") {
+    return "completed";
+  }
+
+  return "ready";
+}
+
+/**
+ * Starts generation for reusable existing courses, or reports that setup should
+ * stop because a concurrent run is already responsible for this course.
+ */
+async function prepareExistingCourse({
+  course,
+  courseSuggestionId,
+  existing,
+  generationStatus,
+  workflowRunId,
+}: {
+  course: CourseContext;
+  courseSuggestionId: string;
+  existing: ExistingCourseContent;
+  generationStatus: Course["generationStatus"];
+  workflowRunId: string;
+}): Promise<GetOrCreateCourseResult> {
+  const status = getCourseSetupStatus(generationStatus);
+
+  if (status !== "ready") {
+    await streamSkipStep("setCourseAsRunning");
+    return { course, existing, status };
+  }
+
+  await setCourseAsRunningStep({ courseId: course.courseId, courseSuggestionId, workflowRunId });
+
+  return { course, existing, status: "ready" };
+}
+
+/**
+ * Converts the initialize step result into the caller's setup plan. A recovered
+ * existing course can be running or completed, so creation recovery must go
+ * through the same status gate as a resolver-found existing course.
+ */
+async function prepareInitializedCourse({
+  courseSuggestionId,
+  initialized,
+  workflowRunId,
+}: {
+  courseSuggestionId: string;
+  initialized: InitializedCourse;
+  workflowRunId: string;
+}): Promise<GetOrCreateCourseResult> {
+  if (!initialized.existing) {
+    await streamSkipStep("setCourseAsRunning");
+    return { course: initialized.course, existing: EMPTY_EXISTING_CONTENT, status: "ready" };
+  }
+
+  return prepareExistingCourse({
+    course: initialized.course,
+    courseSuggestionId,
+    existing: initialized.existing,
+    generationStatus: initialized.generationStatus,
+    workflowRunId,
+  });
+}
+
+/**
+ * Produces the course setup plan after identity resolution. It creates a new
+ * course when possible, recovers from concurrent unique-key inserts, and tells
+ * the workflow to stop when another run already owns the same course.
+ */
 export async function getOrCreateCourse(
   existingCourse: ExistingCourse | null,
   suggestion: CourseSuggestion,
   courseSuggestionId: string,
   workflowRunId: string,
-): Promise<{ course: CourseContext; existing: ExistingCourseContent }> {
+): Promise<GetOrCreateCourseResult> {
   if (!existingCourse) {
-    const course = await initializeCourseStep({ suggestion, workflowRunId });
-    await streamSkipStep("setCourseAsRunning");
-    return { course, existing: DEFAULT_EXISTING_CONTENT };
+    const initialized = await initializeCourseStep({ suggestion, workflowRunId });
+    return prepareInitializedCourse({ courseSuggestionId, initialized, workflowRunId });
   }
 
   await streamSkipStep("initializeCourse");
   const aiOrg = await getAIOrganizationStep();
 
-  const course: CourseContext = {
-    courseId: existingCourse.id,
-    courseSlug: existingCourse.slug,
-    courseTitle: suggestion.title,
-    language: suggestion.language,
-    organizationId: aiOrg.id,
-    targetLanguage: suggestion.targetLanguage,
-  };
-
-  await setCourseAsRunningStep({ courseId: existingCourse.id, courseSuggestionId, workflowRunId });
-
-  return {
-    course,
-    existing: {
-      description: existingCourse.description,
-      hasCategories: existingCourse._count.categories > 0,
-      hasChapters: existingCourse._count.chapters > 0,
-      imageUrl: existingCourse.imageUrl,
-    },
-  };
+  return prepareExistingCourse({
+    course: getCourseContext({ course: existingCourse, organizationId: aiOrg.id, suggestion }),
+    courseSuggestionId,
+    existing: getExistingCourseContent(existingCourse),
+    generationStatus: existingCourse.generationStatus,
+    workflowRunId,
+  });
 }

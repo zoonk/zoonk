@@ -2,8 +2,8 @@ import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { type Chapter } from "@zoonk/db";
 import { getCourseChaptersStep } from "../steps/get-course-chapters-step";
 import { type CourseContext } from "../steps/initialize-course-step";
+import { type ExistingCourseContent } from "./existing-course-content";
 import { generateMissingContent } from "./generate-missing-content";
-import { type ExistingCourseContent } from "./get-or-create-course";
 import { persistGeneratedContent } from "./persist-generated-content";
 
 async function getChapters(

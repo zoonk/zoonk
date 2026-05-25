@@ -80,4 +80,38 @@ describe(completeCourseSetupStep, () => {
       }),
     );
   });
+
+  it("marks linked suggestions as completed when another run finishes the course", async () => {
+    const course = await courseFixture({
+      generationStatus: "running",
+      organizationId,
+      title: `Linked Complete Setup ${randomUUID()}`,
+    });
+
+    const [primarySuggestion, linkedSuggestion] = await Promise.all([
+      courseSuggestionFixture({
+        courseId: course.id,
+        generationStatus: "running",
+        title: `Primary Complete Suggestion ${randomUUID()}`,
+      }),
+      courseSuggestionFixture({
+        courseId: course.id,
+        generationRunId: "other-run",
+        generationStatus: "running",
+        title: `Linked Complete Suggestion ${randomUUID()}`,
+      }),
+    ]);
+
+    await completeCourseSetupStep({
+      courseId: course.id,
+      courseSlug: course.slug,
+      courseSuggestionId: primarySuggestion.id,
+    });
+
+    const updatedLinkedSuggestion = await prisma.courseSuggestion.findUniqueOrThrow({
+      where: { id: linkedSuggestion.id },
+    });
+
+    expect(updatedLinkedSuggestion.generationStatus).toBe("completed");
+  });
 });

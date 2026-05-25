@@ -1,8 +1,8 @@
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { type CourseContext } from "../steps/initialize-course-step";
+import { type ExistingCourseContent } from "./existing-course-content";
 import { generateMissingContent } from "./generate-missing-content";
-import { type ExistingCourseContent } from "./get-or-create-course";
 
 const {
   generateCourseDescriptionMock,
