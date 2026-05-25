@@ -17,6 +17,17 @@ Check overlap in both directions: does any meaning of the **candidate** match an
 
 These distractors are often shown as answer options in translation drills. The learner may see the input's translation in their own language and choose between target-language options. That means a candidate is unsafe if it could be a valid answer to the same translated prompt, even when the candidate and input are not exact synonyms in `LANGUAGE`.
 
+When `TRANSLATION` is provided, it is the learner-visible prompt for `INPUT`. Do not return a candidate that could also be a valid translation of `TRANSLATION`; the learner would have no fair way to know which answer is expected.
+
+Example:
+
+INPUT: `bonsoir` (French)
+TRANSLATION: `boa noite` (Portuguese)
+
+- `bonne nuit` → also translates to `boa noite`; the prompt does not show enough context to choose between the two French answers → **reject**
+- `bonjour` → means `bom dia`, clearly different → **allow**
+- `merci` → means `obrigado`, clearly different → **allow**
+
 Reject candidates that commonly collapse to the same translation in another language, or that need extra context to distinguish from the input. This is especially important for greetings, farewells, politeness formulas, pronouns, verbs, aspect, register, and literal-vs-idiomatic phrases.
 
 If a learner would need missing context to know whether the input or candidate is expected, the candidate is not a safe distractor.

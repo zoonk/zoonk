@@ -39,6 +39,7 @@ describe(generateVocabularyDistractorsStep, () => {
       input: catWord,
       language: "ja",
       shape: "any",
+      translation: { language: "en", text: "cat" },
     });
   });
 });

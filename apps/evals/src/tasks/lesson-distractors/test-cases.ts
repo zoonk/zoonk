@@ -13,25 +13,33 @@ EVALUATION CRITERIA:
    - Penalize alternative answers, near-equivalent expressions, polysemous overlaps, synonym overlaps, and alternative readings
    - Do NOT reject nearby greetings or nearby categories automatically when they are still clearly wrong for the exact input
 
-2. ONE WORD ONLY:
-   - For single-word mode, every distractor must be exactly one word
-   - Penalize phrases, rewrites, clauses, explanations, or multi-word options
-
-3. SAME LANGUAGE ONLY:
+2. SAME LANGUAGE ONLY:
    - Every distractor must stay in the source language
    - Penalize translations, mixed-language output, or romanized output for non-Roman scripts
 
-4. NON-ROMAN SCRIPT SAFETY:
+3. NON-ROMAN SCRIPT SAFETY:
    - For Japanese, Chinese, Korean, and similar scripts, keep distractors in the original script
    - Penalize romanized output like romaji, pinyin, or hangul transliterations written in Latin letters
 
-5. CLEAN OUTPUT:
+4. CLEAN OUTPUT:
    - Penalize duplicates, punctuation-only variants, casing-only variants, and repetitions of the source input
 
 ANTI-CHECKLIST GUIDANCE:
 - Do NOT require a specific semantic category if the distractors are clearly safe and plausible
 - Do NOT reward "clever" distractors if they introduce ambiguity
-- FOCUS ON: safety, one-word format, correct script, and clean output
+- FOCUS ON: safety, correct language/script, and clean output
+`;
+
+const SINGLE_WORD_EXPECTATIONS = `
+ONE WORD ONLY:
+- For single-word mode, every distractor must be exactly one word
+- Penalize phrases, rewrites, clauses, explanations, or multi-word options
+`;
+
+const ANY_SHAPE_EXPECTATIONS = `
+ANY SHAPE:
+- This test case uses shape "any", so distractors may be one word or multi-word phrases.
+- Do NOT penalize multi-word options when they are safe, natural, and in the correct language.
 `;
 
 export const TEST_CASES = [
@@ -43,9 +51,15 @@ EXPECTED BEHAVIOR:
 - Distractors may be one word or phrases, but they must stay in Italian
 
 ${SHARED_EXPECTATIONS}
+${ANY_SHAPE_EXPECTATIONS}
     `,
     id: "it-ciao-polysemy",
-    userInput: { input: "ciao", language: "it", shape: "any" },
+    userInput: {
+      input: "ciao",
+      language: "it",
+      shape: "any",
+      translation: { language: "en", text: "hello" },
+    },
   },
   {
     expectations: `
@@ -60,9 +74,15 @@ EXPECTED BEHAVIOR:
 - Do NOT return English translations
 
 ${SHARED_EXPECTATIONS}
+${ANY_SHAPE_EXPECTATIONS}
     `,
     id: "pt-boa-noite-greeting",
-    userInput: { input: "boa noite", language: "pt", shape: "any" },
+    userInput: {
+      input: "boa noite",
+      language: "pt",
+      shape: "any",
+      translation: { language: "en", text: "Good evening" },
+    },
   },
   {
     expectations: `
@@ -74,21 +94,74 @@ EXPECTED BEHAVIOR:
 - Every distractor must stay in English
 
 ${SHARED_EXPECTATIONS}
+${ANY_SHAPE_EXPECTATIONS}
     `,
     id: "en-good-evening-pt-boa-noite-prompt",
-    userInput: { input: "Good evening", language: "en", shape: "any" },
+    userInput: {
+      input: "Good evening",
+      language: "en",
+      shape: "any",
+      translation: { language: "pt", text: "Boa noite" },
+    },
   },
   {
     expectations: `
 EXPECTED BEHAVIOR:
-- Do NOT return highly polysemous distractors like "bank", "change", "note", or "bill"
-- Do NOT return synonyms like "cash" that could still be accepted as correct
-- Prefer clearly wrong English output that is less ambiguous
+- This output is used as Italian options for a Portuguese learner who sees the prompt "Boa noite"
+- Do NOT return "buonanotte" because "boa noite" can mean both "buonasera" and "buonanotte"; both would be valid learner answers without extra context
+- Do NOT return near-equivalent evening/night greetings that a teacher could accept for the same Portuguese prompt
+- Safe distractors can be other Italian greetings or social phrases that are clearly wrong for "Boa noite", such as "buongiorno", "buon pomeriggio", "grazie", or "scusa"
+- Every distractor must stay in Italian
 
 ${SHARED_EXPECTATIONS}
+${ANY_SHAPE_EXPECTATIONS}
+    `,
+    id: "it-buonasera-pt-boa-noite-prompt",
+    userInput: {
+      input: "buonasera",
+      language: "it",
+      shape: "any",
+      translation: { language: "pt", text: "Boa noite" },
+    },
+  },
+  {
+    expectations: `
+EXPECTED BEHAVIOR:
+- The learner-visible prompt is Portuguese "banco", which can mean both "bank" and "bench"
+- Do NOT return "bench" because it could also be accepted as a valid translation of "banco" without extra context
+- Do NOT return near-equivalent financial institution terms that a teacher could accept for the same prompt
+- Safe distractors can be finance-adjacent or place-adjacent English words that are clearly wrong for "banco", such as "wallet", "store", "office", or "chair"
+- Every distractor must stay in English
+
+${SHARED_EXPECTATIONS}
+${ANY_SHAPE_EXPECTATIONS}
+    `,
+    id: "en-bank-pt-banco-prompt",
+    userInput: {
+      input: "bank",
+      language: "en",
+      shape: "any",
+      translation: { language: "pt", text: "banco" },
+    },
+  },
+  {
+    expectations: `
+EXPECTED BEHAVIOR:
+- The learner-visible prompt is Portuguese "dinheiro", so reject English candidates that could be accepted as "money" or "dinheiro"
+- Do NOT return synonyms or near-synonyms like "cash", "funds", or "currency" that could still be accepted as correct
+- Finance-adjacent words like "bank" are valid when they are clearly not translations of "dinheiro"
+- Prefer clearly wrong English output from the same broad finance/payment domain
+
+${SHARED_EXPECTATIONS}
+${ANY_SHAPE_EXPECTATIONS}
     `,
     id: "en-money-polysemy",
-    userInput: { input: "money", language: "en", shape: "any" },
+    userInput: {
+      input: "money",
+      language: "en",
+      shape: "any",
+      translation: { language: "pt", text: "dinheiro" },
+    },
   },
   {
     expectations: `
@@ -99,9 +172,15 @@ EXPECTED BEHAVIOR:
 - "Guten Morgen" is NOT polysemous — it only means "good morning", never "goodbye". So farewell words like "Tschüss" are valid distractors (clearly wrong, no overlap). Do NOT penalize nearby greetings/farewells that are still clearly wrong for this input
 
 ${SHARED_EXPECTATIONS}
+${SINGLE_WORD_EXPECTATIONS}
     `,
     id: "de-sentence-one-word-only",
-    userInput: { input: "Guten Morgen, Anna!", language: "de", shape: "single-word" },
+    userInput: {
+      input: "Guten Morgen, Anna!",
+      language: "de",
+      shape: "single-word",
+      translation: { language: "en", text: "Good morning, Anna!" },
+    },
   },
   {
     expectations: `
@@ -110,9 +189,15 @@ EXPECTED BEHAVIOR:
 - Do NOT output romaji like "inu" or "neko"
 
 ${SHARED_EXPECTATIONS}
+${ANY_SHAPE_EXPECTATIONS}
     `,
     id: "ja-non-roman",
-    userInput: { input: "猫", language: "ja", shape: "any" },
+    userInput: {
+      input: "猫",
+      language: "ja",
+      shape: "any",
+      translation: { language: "en", text: "cat" },
+    },
   },
   {
     expectations: `
@@ -121,9 +206,15 @@ EXPECTED BEHAVIOR:
 - Do NOT output Latin-script romanizations
 
 ${SHARED_EXPECTATIONS}
+${ANY_SHAPE_EXPECTATIONS}
     `,
     id: "ko-non-roman",
-    userInput: { input: "학교", language: "ko", shape: "any" },
+    userInput: {
+      input: "학교",
+      language: "ko",
+      shape: "any",
+      translation: { language: "en", text: "school" },
+    },
   },
   {
     expectations: `
@@ -133,9 +224,15 @@ EXPECTED BEHAVIOR:
 - Do NOT output pinyin or English
 
 ${SHARED_EXPECTATIONS}
+${SINGLE_WORD_EXPECTATIONS}
     `,
     id: "zh-sentence-non-roman",
-    userInput: { input: "我喜欢咖啡。", language: "zh", shape: "single-word" },
+    userInput: {
+      input: "我喜欢咖啡。",
+      language: "zh",
+      shape: "single-word",
+      translation: { language: "en", text: "I like coffee." },
+    },
   },
   {
     expectations: `
@@ -144,8 +241,14 @@ EXPECTED BEHAVIOR:
 - Do NOT return duplicates or formatting variants
 
 ${SHARED_EXPECTATIONS}
+${ANY_SHAPE_EXPECTATIONS}
     `,
     id: "fr-clean-output",
-    userInput: { input: "petit", language: "fr", shape: "any" },
+    userInput: {
+      input: "petit",
+      language: "fr",
+      shape: "any",
+      translation: { language: "en", text: "small" },
+    },
   },
 ];

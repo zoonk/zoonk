@@ -13,14 +13,36 @@ const schema = z.object({ distractors: z.array(z.string().min(1)).min(1) });
 
 export type LessonDistractorsSchema = z.infer<typeof schema>;
 
+export type LessonDistractorTranslation = { language: string; text: string };
+
 export type LessonDistractorsParams = {
   input: string;
   language: string;
   shape: DistractorShape;
+  translation?: LessonDistractorTranslation;
   model?: string;
   reasoningEffort?: ReasoningEffort;
   useFallback?: boolean;
 };
+
+/**
+ * Adds the known learner-language translation when vocabulary generation has
+ * it. Translation options are unfair when a wrong option could also answer the
+ * same visible prompt, so the distractor prompt needs that prompt text instead
+ * of guessing from the target-language word alone.
+ */
+function getTranslationPromptLines(params: { translation?: LessonDistractorTranslation }) {
+  if (!params.translation) {
+    return [];
+  }
+
+  const translationLanguage = getPromptLanguageName({ language: params.translation.language });
+
+  return [
+    `TRANSLATION: ${params.translation.text}`,
+    `TRANSLATION_LANGUAGE: ${translationLanguage}`,
+  ];
+}
 
 /**
  * Generates direct distractor words for a word or sentence in one language.
@@ -30,13 +52,15 @@ export type LessonDistractorsParams = {
  * - target-language sentence for reading distractors
  * - user-language sentence translation for listening distractors
  *
- * This task intentionally receives only the surface text and language. Quality is
- * enforced by a strict prompt plus eval coverage instead of runtime semantic logic.
+ * Translation-answer distractors may also include the known learner-language
+ * translation so the model can avoid wrong options that are actually valid
+ * answers to the same visible prompt.
  */
 export async function generateLessonDistractors({
   input,
   language,
   shape,
+  translation,
   model = defaultModel,
   reasoningEffort,
   useFallback = true,
@@ -50,11 +74,12 @@ export async function generateLessonDistractors({
     useFallback,
   });
 
-  const userPrompt = `
-    INPUT: ${input}
-    LANGUAGE: ${languageName}
-    SHAPE: ${shape}
-  `;
+  const userPrompt = [
+    `INPUT: ${input}`,
+    `LANGUAGE: ${languageName}`,
+    ...getTranslationPromptLines({ translation }),
+    `SHAPE: ${shape}`,
+  ].join("\n");
 
   const { output, usage } = await generateText({
     model,

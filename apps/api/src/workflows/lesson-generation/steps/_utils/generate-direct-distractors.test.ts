@@ -34,6 +34,29 @@ describe(generateDirectDistractors, () => {
     });
   });
 
+  it("passes translation context when an entry provides it", async () => {
+    generateLessonDistractorsMock.mockResolvedValue({
+      data: { distractors: ["wrong1", "wrong2", "wrong3"] },
+    });
+
+    const translation = { language: "pt", text: "learner prompt" };
+
+    const result = await generateDirectDistractors({
+      entries: [{ input: "correct", key: "word-1", translation }],
+      language: "it",
+      shape: "any",
+    });
+
+    expect(result["word-1"]).toStrictEqual(expect.arrayContaining(["wrong1", "wrong2", "wrong3"]));
+
+    expect(generateLessonDistractorsMock).toHaveBeenCalledWith({
+      input: "correct",
+      language: "it",
+      shape: "any",
+      translation,
+    });
+  });
+
   it("throws when an AI call fails", async () => {
     generateLessonDistractorsMock.mockRejectedValue(new Error("AI failure"));
 
