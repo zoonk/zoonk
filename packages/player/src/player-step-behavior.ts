@@ -130,14 +130,6 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     scene: "read",
     validation: "none",
   },
-  staticGrammarRule: {
-    check: "none",
-    feedback: "none",
-    layout: "navigable",
-    render: "static",
-    scene: "read",
-    validation: "none",
-  },
   staticText: {
     check: "none",
     feedback: "none",

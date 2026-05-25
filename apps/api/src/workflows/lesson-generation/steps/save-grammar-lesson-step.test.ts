@@ -13,7 +13,7 @@ describe(saveGrammarLessonStep, () => {
     organizationId = organization.id;
   });
 
-  it("saves grammar examples, discovery, rule, and practice steps", async () => {
+  it("saves grammar explanations, examples, and practice steps", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
 
     const context = await createLessonContext({
@@ -26,13 +26,22 @@ describe(saveGrammarLessonStep, () => {
       context,
       grammarContent: {
         examples: [
-          { highlight: `ist${id}`, sentence: `Das ist${id} gut` },
-          { highlight: `war${id}`, sentence: `Das war${id} toll` },
+          { highlight: `ist${id}`, sentence: `Das ist${id} gut`, translation: `That is${id} good` },
+          {
+            highlight: `war${id}`,
+            sentence: `Das war${id} toll`,
+            translation: `That was${id} great`,
+          },
         ],
-        exercises: [
+        explanations: [
+          { text: `Use ist${id} when something is true now.`, title: `Present tense ${id}` },
+        ],
+        questions: [
           {
             answer: `ist${id}`,
             distractors: [`war${id}`, `hat${id}`],
+            feedback: `Because ist${id} fits here`,
+            question: `Fill in the blank ${id}`,
             template: "Das [BLANK] gut",
           },
         ],
@@ -42,22 +51,6 @@ describe(saveGrammarLessonStep, () => {
         [`Das war${id} toll`]: `das war${id} toll`,
         [`ist${id}`]: `ist${id}`,
         [`war${id}`]: `war${id}`,
-      },
-      userContent: {
-        discovery: {
-          context: `Look at the examples ${id}`,
-          options: [
-            { feedback: "Correct!", isCorrect: true, text: `ist${id}` },
-            { feedback: "Not quite.", isCorrect: false, text: `war${id}` },
-          ],
-          question: `What verb fits? ${id}`,
-        },
-        exampleTranslations: [`That is${id} good`, `That was${id} great`],
-        exerciseFeedback: [`Because ist${id} fits here`],
-        exerciseQuestions: [`Fill in the blank ${id}`],
-        exerciseTranslations: [`That is${id} good`],
-        ruleName: `Present tense ${id}`,
-        ruleSummary: `Use ist${id} for present tense`,
       },
     });
 
@@ -69,30 +62,24 @@ describe(saveGrammarLessonStep, () => {
     expect(steps.map((step) => [step.position, step.kind])).toStrictEqual([
       [0, "static"],
       [1, "static"],
-      [2, "multipleChoice"],
-      [3, "static"],
-      [4, "fillBlank"],
+      [2, "static"],
+      [3, "fillBlank"],
     ]);
 
-    expect(steps[0]?.content).toMatchObject({
+    expect(steps[0]?.content).toStrictEqual({
+      text: `Use ist${id} when something is true now.`,
+      title: `Present tense ${id}`,
+      variant: "text",
+    });
+
+    expect(steps[1]?.content).toMatchObject({
       romanization: `das ist${id} gut`,
       sentence: `Das ist${id} gut`,
       translation: `That is${id} good`,
       variant: "grammarExample",
     });
 
-    expect(steps[2]?.content).toMatchObject({
-      context: `Look at the examples ${id}`,
-      question: `What verb fits? ${id}`,
-    });
-
     expect(steps[3]?.content).toStrictEqual({
-      ruleName: `Present tense ${id}`,
-      ruleSummary: `Use ist${id} for present tense`,
-      variant: "grammarRule",
-    });
-
-    expect(steps[4]?.content).toStrictEqual({
       answers: [`ist${id}`],
       distractors: [`war${id}`, `hat${id}`],
       feedback: `Because ist${id} fits here`,

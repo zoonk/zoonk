@@ -46,15 +46,6 @@ function GrammarExampleVariant({
   );
 }
 
-function GrammarRuleVariant({ ruleName, ruleSummary }: { ruleName: string; ruleSummary: string }) {
-  return (
-    <PlayerReadSceneStack>
-      <PlayerReadSceneTitle>{ruleName}</PlayerReadSceneTitle>
-      <PlayerReadSceneBody>{ruleSummary}</PlayerReadSceneBody>
-    </PlayerReadSceneStack>
-  );
-}
-
 function StaticStepContent({ step }: { step: SerializedStep }) {
   const descriptor = describePlayerStep(step);
 
@@ -69,15 +60,6 @@ function StaticStepContent({ step }: { step: SerializedStep }) {
         romanization={descriptor.content.romanization}
         sentence={descriptor.content.sentence}
         translation={descriptor.content.translation}
-      />
-    );
-  }
-
-  if (descriptor.kind === "staticGrammarRule") {
-    return (
-      <GrammarRuleVariant
-        ruleName={descriptor.content.ruleName}
-        ruleSummary={descriptor.content.ruleSummary}
       />
     );
   }

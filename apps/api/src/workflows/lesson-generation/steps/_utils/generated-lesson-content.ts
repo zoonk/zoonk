@@ -1,8 +1,7 @@
 import { type LessonPracticeSchema } from "@zoonk/ai/tasks/lessons/core/practice";
 import { type QuizQuestion } from "@zoonk/ai/tasks/lessons/core/quiz";
 import { type LessonAlphabetSchema } from "@zoonk/ai/tasks/lessons/language/alphabet";
-import { type LessonGrammarContentSchema } from "@zoonk/ai/tasks/lessons/language/grammar-content";
-import { type LessonGrammarUserContentSchema } from "@zoonk/ai/tasks/lessons/language/grammar-user-content";
+import { type LessonGrammarSchema } from "@zoonk/ai/tasks/lessons/language/grammar";
 import { type LessonSentencesSchema } from "@zoonk/ai/tasks/lessons/language/sentences";
 import { type VocabularyWord } from "@zoonk/ai/tasks/lessons/language/vocabulary";
 
@@ -16,11 +15,7 @@ export type PracticeLessonContent = {
 
 export type QuizLessonContent = { kind: "quiz"; questions: QuizQuestion[] };
 
-export type GrammarLessonContent = {
-  grammarContent: LessonGrammarContentSchema;
-  kind: "grammar";
-  userContent: LessonGrammarUserContentSchema;
-};
+export type GrammarLessonContent = { grammarContent: LessonGrammarSchema; kind: "grammar" };
 
 export type VocabularyLessonContent = { kind: "vocabulary"; words: VocabularyWord[] };
 

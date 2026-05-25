@@ -27,8 +27,17 @@ describe(generateGrammarRomanizationStep, () => {
     const grammarSentence = "猫がいます";
 
     const grammarContent = {
-      examples: [{ highlight: catWord, sentence: grammarSentence }],
-      exercises: [{ answer: catWord, distractors: [dogWord], template: "[BLANK]がいます" }],
+      examples: [{ highlight: catWord, sentence: grammarSentence, translation: "There is a cat." }],
+      explanations: [{ text: "Use がいます for living things.", title: "Living things" }],
+      questions: [
+        {
+          answer: catWord,
+          distractors: [dogWord],
+          feedback: "Use the noun before がいます.",
+          question: "Which noun completes the sentence?",
+          template: "[BLANK]がいます",
+        },
+      ],
     };
 
     const romanizations = await generateGrammarRomanizationStep({ context, grammarContent });
@@ -49,8 +58,17 @@ describe(generateGrammarRomanizationStep, () => {
     const context = createRomanizationLessonContext({ targetLanguage: "es" });
 
     const grammarContent = {
-      examples: [{ highlight: "gato", sentence: "Hay un gato" }],
-      exercises: [{ answer: "gato", distractors: ["perro"], template: "Hay un [BLANK]" }],
+      examples: [{ highlight: "gato", sentence: "Hay un gato", translation: "There is a cat." }],
+      explanations: [{ text: "Use hay to say there is.", title: "There is" }],
+      questions: [
+        {
+          answer: "gato",
+          distractors: ["perro"],
+          feedback: "Use gato for cat.",
+          question: "Which noun completes the sentence?",
+          template: "Hay un [BLANK]",
+        },
+      ],
     };
 
     await expect(

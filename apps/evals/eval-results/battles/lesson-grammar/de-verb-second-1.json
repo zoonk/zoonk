@@ -1,0 +1,149 @@
+{
+  "expectations": "\n\nLANGUAGE EXPECTATIONS:\n\n- Explanations, example translations, non-null question prompts, and feedback should be in English, except when quoting German.\n- Example sentences, highlights, fill-in-the-blank templates, answers, and distractors should be in German.\n\n\nTOPIC: Verb-second (V2) word order in main clauses.\n\nGRAMMAR PATTERN: In German declarative sentences, the conjugated verb must occupy the second position. The first position can be filled by the subject, an adverb, or another element, but the verb always comes second.\n\nACCURACY PITFALLS:\n- Penalize if examples show the verb outside the second position.\n- Penalize if examples use subordinate clauses, which have different word order.\n\n\nEVALUATION CRITERIA:\n\n1. LANGUAGE CONTRACT (CRITICAL - highest priority):\n   - explanations.title, explanations.text, examples.translation, questions.feedback, and non-null questions.question MUST be in the USER language\n   - examples.sentence, examples.highlight, questions.template, questions.answer, and questions.distractors MUST be in the TARGET language\n   - There should be NO romanization\n   - Penalize SEVERELY if learner-facing explanations are in the target language instead of the user language\n   - Penalize SEVERELY if target-language practice fields contain translated/user-language answers\n   - Format tokens ([BLANK] placeholder, JSON keys) are part of the required output structure, NOT language-mixing issues\n\n2. EXPLANATION-FIRST TEACHING:\n   - Must include 1-3 explanation sections\n   - Explanations must teach what to look for before the learner sees examples\n   - Do NOT use a discovery-question approach that asks learners to infer the rule before it is explained\n   - Explanations should be short, concrete, and beginner-safe\n   - Do NOT penalize the JSON object key order. Only evaluate whether the content supports an explanation-first lesson when saved/rendered.\n\n3. EXAMPLES QUALITY:\n   - Must include 2-4 example sentences demonstrating the grammar pattern\n   - Each example MUST have a highlight field isolating the grammar element\n   - Each example MUST have a natural user-language translation\n   - Sentences should be simple enough for learners to focus on the pattern\n\n4. QUESTIONS - FILL-IN-THE-BLANK:\n   - Must include 1-3 fill-in-the-blank questions\n   - The question prompt may be null when the template is self-explanatory\n   - Each question MUST have exactly one [BLANK] placeholder in the template\n   - The answer field MUST contain exactly one correct answer (a single string, not an array)\n   - Distractors MUST be plausible wrong answers testing common mistakes\n   - Feedback MUST explain why the correct answer fits the grammar pattern\n   - Penalize SEVERELY if questions test different grammar than the examples\n\n5. LINGUISTIC ACCURACY (CRITICAL):\n   - ALL target-language sentences, templates, and answers must be grammatically valid\n   - Distractors should be plausible learner mistakes or real forms used in the wrong context. Do not require distractors to make the completed sentence grammatical, but penalize malformed fake forms that a learner would not reasonably produce.\n   - The explanation must match what examples and questions actually demonstrate\n   - Penalize SEVERELY for incorrect grammar or misleading explanations\n\n6. HIGHLIGHT SCOPE:\n   - Highlights that include slightly more context than the minimum (e.g., noun+particle, subject+verb, noun+adjective+article) are acceptable as long as the target grammar element is clearly visible\n   - Only penalize if the highlight is so broad that the grammar element is buried or unclear\n\n7. PARADIGM AND FORM COVERAGE:\n   - For conjugation patterns, evaluate coverage across examples AND questions combined as a single set\n   - For agreement patterns, prefer forms where the contrast is visible (e.g., adjectives with clearly different masculine/feminine forms over invariable ones)\n\n8. SCRIPT CONSISTENCY (for non-Roman scripts):\n   - Only penalize if the SAME word is written in different scripts across examples and questions\n   - Different words using different scripts is normal and not a consistency issue\n\nSCORING DISCIPLINE (CRITICAL - read before assigning a score):\n- If something is explicitly marked as acceptable in the criteria above, do NOT deduct points for it.\n- Only deduct for CONCRETE errors: wrong grammar, wrong answers, missing structural requirements, wrong language, or unclear rule alignment.\n- Do NOT deduct for specific vocabulary choices, sentence structures, or sentence variety.\n- FOCUS ON: explanation-first structure, language contract, structural completeness, linguistic accuracy, pattern clarity.\n\n    ",
+  "judgedAt": "2026-05-25T13:58:26.512Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Strong V2 examples all using inversion, clear explanations, and questions that directly test verb+subject order with plausible distractors. Highlights cleanly isolate the verb-subject inversion. Minor concern: all examples start with non-subject elements, but pattern is taught well.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Excellent explanation-first teaching with both subject-first and fronted examples. Questions cover verb+subject inversion well. Minor issue: the first example's highlight 'trinke jeden Morgen' is odd (groups verb with following adverbial rather than isolating the V2 position), but overall accurate and useful.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Solid explanations contrasting subject-first and fronted variants, accurate examples, and questions testing inversion. Distractors like 'lernen Anna' and 'trinken er' are plausible learner errors. Well-structured and accurate.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good coverage with both subject-first and fronted examples. Questions test inversion appropriately with plausible distractors. Clear explanations and accurate German throughout.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Accurate examples showing both orders and clear explanations of inversion. Questions test V2 inversion well. Distractor 'wir gefahren' is a participle which is somewhat odd but plausible as a learner mistake.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Accurate but only 2 questions and 3 examples (meets minimums). Distractors include 'wir reisen morgen' and 'wir machen jetzt' which test word order plausibly. Solid but less comprehensive than top entries.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Examples are accurate but questions test verb conjugation (subject-verb agreement) rather than V2 word order specifically—distractors are just different conjugation forms, not word-order alternatives. This is a notable mismatch between explanation focus (word order/inversion) and what questions actually drill.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "This model provides an exceptional lesson. The explanations perfectly describe the rule and the inversion that occurs. The examples feature tight, highly effective highlights ('trinke ich', 'spielt sie'), and the questions test word order flawlessly with extremely plausible distractors.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "A very strong output that successfully contrasts standard subject-first word order with inverted word order. The questions perfectly target the grammar pattern with great distractors. The highlights are slightly broader than necessary, but still clearly demonstrate the verb's position.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "The lesson structure is solid and provides great contrast between regular and inverted word order. The distractors are mostly good, though some ('wir reisen morgen', 'wir machen jetzt') awkwardly repeat the time adverbs already present in the question templates.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The lesson clearly explains and demonstrates the V2 rule. However, one of the distractors ('wir gehen wir') is a malformed fake form that repeats the pronoun, which makes it an unrealistic learner mistake.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Provides a decent explanation and good examples. However, the questions contain slightly sloppy distractors, such as repeating the time word ('ich lerne heute') in a sentence that already starts with 'Heute', and using an ungrammatical participle ('wir gefahren') as a main verb option.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "The first example's highlight ('trinke jeden Morgen') is awkward and misses the subject. Furthermore, the second question tests basic verb conjugation rather than the V2 word order rule, which breaks the alignment between the lesson and the assessment.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "This model severely violates the assessment criteria. While the examples and explanations teach V2 word order, all three questions provide templates with fixed word order and simply ask the learner to conjugate the verb. It completely fails to test the core concept.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Fully satisfies the language contract and gives clear, explanation-first teaching of V2 as the second sentence part, not necessarily the second word. Examples and questions are grammatically valid, aligned with main-clause V2, and the distractors mostly test common subject-verb order mistakes.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Strong explanation-first lesson with accurate German main-clause examples and well-aligned word-order questions. It is slightly less explicit than Model B about “second position” being a sentence slot rather than the literal second word, but the examples and feedback make the pattern clear.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Accurate, beginner-friendly explanations and examples, with questions that directly practice verb-second inversion after fronted elements. Minor weakness: a few distractors are somewhat malformed or less natural, but they remain plausible learner errors and do not undermine the lesson.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Meets the structural and language requirements and teaches the V2 rule clearly with valid examples and mostly good practice items. Some distractors include extra or awkward material, making them a bit less clean as targeted V2 mistakes.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Accurate explanations and examples, and the questions test the intended verb-subject order after fronted elements. The distractors are weaker because some contain extra adverbs that would create odd or duplicated sentences, but the core grammar remains correct.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Generally accurate and clear, with valid German examples and mostly aligned V2 practice. However, some highlights are less focused, and one question mainly tests verb conjugation rather than V2 word order, reducing its fit to the target pattern.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The explanations and examples are mostly accurate, but the questions primarily test verb conjugation rather than V2 word order, especially because the word order is already fixed by the template. This is a notable alignment issue for a lesson specifically about verb-second structure.",
+          "score": 6
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-grammar",
+  "testCaseId": "de-verb-second-1"
+}

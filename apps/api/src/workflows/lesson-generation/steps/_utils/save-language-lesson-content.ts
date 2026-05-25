@@ -1,18 +1,12 @@
-import { type LessonGrammarContentSchema } from "@zoonk/ai/tasks/lessons/language/grammar-content";
-import { type LessonGrammarUserContentSchema } from "@zoonk/ai/tasks/lessons/language/grammar-user-content";
+import { type LessonGrammarSchema } from "@zoonk/ai/tasks/lessons/language/grammar";
 import { assertStepContent } from "@zoonk/core/steps/contract/content";
 import { prisma } from "@zoonk/db";
 import { type LessonContext } from "../get-lesson-step";
 import { type GrammarLessonContent } from "./generated-lesson-content";
-import {
-  type StepRecord,
-  addOptionIds,
-  getOptionalContext,
-  getOptionalQuestion,
-} from "./save-lesson-content-helpers";
+import { type StepRecord, getOptionalQuestion } from "./save-lesson-content-helpers";
 
 /**
- * Saves the grammar discovery flow: examples, discovery question, rule, then practice.
+ * Saves the explanation-first grammar flow: explanations, examples, then practice.
  */
 export async function saveGrammarLessonContent({
   content,
@@ -24,12 +18,7 @@ export async function saveGrammarLessonContent({
   romanizations?: Record<string, string> | null;
 }): Promise<void> {
   await prisma.step.createMany({
-    data: buildGrammarSteps({
-      content: content.grammarContent,
-      context,
-      romanizations,
-      userContent: content.userContent,
-    }),
+    data: buildGrammarSteps({ content: content.grammarContent, context, romanizations }),
   });
 }
 
@@ -49,25 +38,34 @@ function buildOptionRomanizations(
 }
 
 /**
- * Builds ordered grammar step records from target-language and user-language content.
+ * Builds ordered grammar step records from the combined grammar content.
  */
 function buildGrammarSteps({
   content,
   context,
   romanizations,
-  userContent,
 }: {
-  content: LessonGrammarContentSchema;
+  content: LessonGrammarSchema;
   context: LessonContext;
   romanizations: Record<string, string> | null;
-  userContent: LessonGrammarUserContentSchema;
 }): StepRecord[] {
-  const exampleSteps = content.examples.map((example, index) => ({
+  const explanationSteps = content.explanations.map((explanation) => ({
+    content: assertStepContent("static", {
+      text: explanation.text,
+      title: explanation.title,
+      variant: "text",
+    }),
+    isPublished: true,
+    kind: "static" as const,
+    lessonId: context.id,
+  }));
+
+  const exampleSteps = content.examples.map((example) => ({
     content: assertStepContent("static", {
       highlight: example.highlight,
       romanization: romanizations?.[example.sentence] ?? null,
       sentence: example.sentence,
-      translation: userContent.exampleTranslations[index] ?? "",
+      translation: example.translation,
       variant: "grammarExample",
     }),
     isPublished: true,
@@ -75,44 +73,22 @@ function buildGrammarSteps({
     lessonId: context.id,
   }));
 
-  const discoveryStep = {
-    content: assertStepContent("multipleChoice", {
-      ...getOptionalQuestion(userContent.discovery.question),
-      ...getOptionalContext(userContent.discovery.context),
-      options: addOptionIds({ options: userContent.discovery.options }),
-    }),
-    isPublished: true,
-    kind: "multipleChoice" as const,
-    lessonId: context.id,
-  };
-
-  const ruleStep = {
-    content: assertStepContent("static", {
-      ruleName: userContent.ruleName,
-      ruleSummary: userContent.ruleSummary,
-      variant: "grammarRule",
-    }),
-    isPublished: true,
-    kind: "static" as const,
-    lessonId: context.id,
-  };
-
-  const exerciseSteps = content.exercises.map((exercise, index) => {
-    const fullSentence = exercise.template.replace("[BLANK]", exercise.answer);
+  const questionSteps = content.questions.map((question) => {
+    const fullSentence = question.template.replace("[BLANK]", question.answer);
 
     const optionRomanizations = buildOptionRomanizations(
-      [fullSentence, exercise.answer, ...exercise.distractors],
+      [fullSentence, question.answer, ...question.distractors],
       romanizations,
     );
 
     return {
       content: assertStepContent("fillBlank", {
-        answers: [exercise.answer],
-        distractors: exercise.distractors,
-        feedback: userContent.exerciseFeedback[index] ?? "",
+        answers: [question.answer],
+        distractors: question.distractors,
+        feedback: question.feedback,
         ...(optionRomanizations ? { romanizations: optionRomanizations } : {}),
-        ...getOptionalQuestion(userContent.exerciseQuestions[index]),
-        template: exercise.template,
+        ...getOptionalQuestion(question.question),
+        template: question.template,
       }),
       isPublished: true,
       kind: "fillBlank" as const,
@@ -120,7 +96,7 @@ function buildGrammarSteps({
     };
   });
 
-  return [...exampleSteps, discoveryStep, ruleStep, ...exerciseSteps].map((step, position) => ({
+  return [...explanationSteps, ...exampleSteps, ...questionSteps].map((step, position) => ({
     ...step,
     position,
   }));

@@ -1,0 +1,149 @@
+{
+  "expectations": "\n\nLANGUAGE EXPECTATIONS:\n\n- Explanations, example translations, non-null question prompts, and feedback should be in English, except when quoting Japanese.\n- Example sentences, highlights, fill-in-the-blank templates, answers, and distractors should be in Japanese.\n\n\nTOPIC: Topic marker particle (wa) - how it marks the topic of a sentence.\n\nGRAMMAR PATTERN: The particle marks the topic of a sentence, indicating what the sentence is about. It attaches to nouns to establish them as the topic of discussion.\n\n\nEVALUATION CRITERIA:\n\n1. LANGUAGE CONTRACT (CRITICAL - highest priority):\n   - explanations.title, explanations.text, examples.translation, questions.feedback, and non-null questions.question MUST be in the USER language\n   - examples.sentence, examples.highlight, questions.template, questions.answer, and questions.distractors MUST be in the TARGET language\n   - There should be NO romanization\n   - Penalize SEVERELY if learner-facing explanations are in the target language instead of the user language\n   - Penalize SEVERELY if target-language practice fields contain translated/user-language answers\n   - Format tokens ([BLANK] placeholder, JSON keys) are part of the required output structure, NOT language-mixing issues\n\n2. EXPLANATION-FIRST TEACHING:\n   - Must include 1-3 explanation sections\n   - Explanations must teach what to look for before the learner sees examples\n   - Do NOT use a discovery-question approach that asks learners to infer the rule before it is explained\n   - Explanations should be short, concrete, and beginner-safe\n   - Do NOT penalize the JSON object key order. Only evaluate whether the content supports an explanation-first lesson when saved/rendered.\n\n3. EXAMPLES QUALITY:\n   - Must include 2-4 example sentences demonstrating the grammar pattern\n   - Each example MUST have a highlight field isolating the grammar element\n   - Each example MUST have a natural user-language translation\n   - Sentences should be simple enough for learners to focus on the pattern\n\n4. QUESTIONS - FILL-IN-THE-BLANK:\n   - Must include 1-3 fill-in-the-blank questions\n   - The question prompt may be null when the template is self-explanatory\n   - Each question MUST have exactly one [BLANK] placeholder in the template\n   - The answer field MUST contain exactly one correct answer (a single string, not an array)\n   - Distractors MUST be plausible wrong answers testing common mistakes\n   - Feedback MUST explain why the correct answer fits the grammar pattern\n   - Penalize SEVERELY if questions test different grammar than the examples\n\n5. LINGUISTIC ACCURACY (CRITICAL):\n   - ALL target-language sentences, templates, and answers must be grammatically valid\n   - Distractors should be plausible learner mistakes or real forms used in the wrong context. Do not require distractors to make the completed sentence grammatical, but penalize malformed fake forms that a learner would not reasonably produce.\n   - The explanation must match what examples and questions actually demonstrate\n   - Penalize SEVERELY for incorrect grammar or misleading explanations\n\n6. HIGHLIGHT SCOPE:\n   - Highlights that include slightly more context than the minimum (e.g., noun+particle, subject+verb, noun+adjective+article) are acceptable as long as the target grammar element is clearly visible\n   - Only penalize if the highlight is so broad that the grammar element is buried or unclear\n\n7. PARADIGM AND FORM COVERAGE:\n   - For conjugation patterns, evaluate coverage across examples AND questions combined as a single set\n   - For agreement patterns, prefer forms where the contrast is visible (e.g., adjectives with clearly different masculine/feminine forms over invariable ones)\n\n8. SCRIPT CONSISTENCY (for non-Roman scripts):\n   - Only penalize if the SAME word is written in different scripts across examples and questions\n   - Different words using different scripts is normal and not a consistency issue\n\nSCORING DISCIPLINE (CRITICAL - read before assigning a score):\n- If something is explicitly marked as acceptable in the criteria above, do NOT deduct points for it.\n- Only deduct for CONCRETE errors: wrong grammar, wrong answers, missing structural requirements, wrong language, or unclear rule alignment.\n- Do NOT deduct for specific vocabulary choices, sentence structures, or sentence variety.\n- FOCUS ON: explanation-first structure, language contract, structural completeness, linguistic accuracy, pattern clarity.\n\n    ",
+  "judgedAt": "2026-05-25T13:58:30.823Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Strong explanation-first structure with three clear sections covering meaning, spelling/pronunciation, and usage. Examples and questions are accurate, highlights are properly scoped, and distractors are plausible. Includes the わ vs は spelling distinction which is pedagogically valuable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Clean two-section explanation, four accurate examples, and three solid questions with plausible distractors. All language contract requirements met and grammar is correct throughout.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good explanation-first structure with two sections, accurate examples, and well-constructed questions. Distractors are plausible and the spelling vs pronunciation point is helpful. Solid all around.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Good explanations and examples. However, two questions use the answer 私は/今日は (noun+particle) rather than just the particle, which is a slight scope drift from the topic marker pattern shown in examples — though still valid Japanese. Otherwise solid.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Decent explanations and examples, but the third example's highlight covers the entire sentence (この本はおもしろいです。), which buries the grammar element and violates highlight scope guidance.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Only one explanation section but it's clear and accurate. Examples and questions are correct but minimal. Acceptable but less thorough than peers.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Critical error: the first question template 「たなかさんは[BLANK]せんせいです。」 already contains は before the blank, and the answer は doesn't fit the slot grammatically — the resulting sentence is malformed. This is a significant linguistic accuracy issue.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Exceptional output that flawlessly adheres to all instructions. It successfully explains the particle without resorting to romanization, perfectly honoring the critical language contract. The examples, explanations, and questions are well-structured and accurate.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Successfully avoids the romanization trap that caught most models. However, it receives a penalty because the highlight in Example 3 covers the entire sentence, completely burying the target grammar element and violating the highlight scope constraints.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "The examples and questions are structurally strong and thoroughly developed. However, it violates the critical language contract by using romanization ('ha', 'wa') in the explanations and feedback.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Violates the critical negative constraint against romanization by including 'wa' in the explanations. Additionally, the fill-in-the-blank questions inconsistently target just the particle in one instance and the noun+particle in others.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Fails the critical language contract by relying on romanization ('ha', 'wa') in both the explanations and question feedback to teach the pronunciation rule.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Fails the critical no-romanization rule by using 'ha' and 'wa' in the explanations. The question and example content are otherwise acceptable but minimal.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Violates the critical no-romanization constraint multiple times, using 'ha' and 'wa' in explanations, and 'Tanaka-san' in the question feedback.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Excellent fit: explanations are in English, examples and practice fields are in Japanese, and there is no romanization. The examples and questions consistently test は as the topic marker with valid, simple Japanese and clear feedback.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Very strong overall with correct language separation, no romanization, clear explanations, and valid questions. Minor weaknesses are slightly unnatural “As for…” translations and one overly broad highlight, but the grammar element remains clear.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Strong explanations and examples, with valid Japanese and useful feedback. Some question answers include the whole topic phrase rather than isolating は, which is less focused for a particle lesson, but the questions still test topic marking correctly.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Content is accurate, well structured, and the examples/questions clearly teach は as the topic marker. However, it repeatedly uses romanization like “wa” and “ha,” violating the no-romanization requirement.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Generally accurate and structurally complete, with simple valid examples and questions. It loses points for romanization in the explanation and for slightly less developed teaching than the strongest outputs.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Accurate and useful overall, with valid examples and questions focused on the topic marker. It repeatedly violates the no-romanization rule in explanations and feedback, and a few distractors are less targeted.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Has a serious question error: the first template already contains は before the blank, so the provided answer creates an ungrammatical sentence and does not properly test the target grammar. It also uses romanization in the explanation, making it much weaker despite mostly valid examples.",
+          "score": 3
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-grammar",
+  "testCaseId": "ja-topic-marker-wa-1"
+}

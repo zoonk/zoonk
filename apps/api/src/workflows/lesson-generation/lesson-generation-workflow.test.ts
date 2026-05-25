@@ -5,8 +5,7 @@ import { generateLessonPractice } from "@zoonk/ai/tasks/lessons/core/practice";
 import { generateLessonQuiz } from "@zoonk/ai/tasks/lessons/core/quiz";
 import { generateLessonAlphabet } from "@zoonk/ai/tasks/lessons/language/alphabet";
 import { generateLessonDistractors } from "@zoonk/ai/tasks/lessons/language/distractors";
-import { generateLessonGrammarContent } from "@zoonk/ai/tasks/lessons/language/grammar-content";
-import { generateLessonGrammarUserContent } from "@zoonk/ai/tasks/lessons/language/grammar-user-content";
+import { generateLessonGrammar } from "@zoonk/ai/tasks/lessons/language/grammar";
 import { generateLessonPronunciation } from "@zoonk/ai/tasks/lessons/language/pronunciation";
 import { generateLessonRomanization } from "@zoonk/ai/tasks/lessons/language/romanization";
 import { generateLessonSentences } from "@zoonk/ai/tasks/lessons/language/sentences";
@@ -167,36 +166,29 @@ vi.mock("@zoonk/ai/tasks/lessons/language/distractors", () => ({
     ),
 }));
 
-vi.mock("@zoonk/ai/tasks/lessons/language/grammar-content", () => ({
-  generateLessonGrammarContent: vi
+vi.mock("@zoonk/ai/tasks/lessons/language/grammar", () => ({
+  generateLessonGrammar: vi
     .fn()
     .mockResolvedValue({
       data: {
-        examples: [{ highlight: "猫", sentence: "猫がいます" }],
-        exercises: [{ answer: "猫", distractors: ["犬", "鳥"], template: "[BLANK]がいます" }],
+        examples: [{ highlight: "猫", sentence: "猫がいます", translation: "There is a cat." }],
+        explanations: [
+          {
+            text: "Use がいます to say that a living thing exists.",
+            title: "Existence with がいます",
+          },
+        ],
+        questions: [
+          {
+            answer: "猫",
+            distractors: ["犬", "鳥"],
+            feedback: "Use the noun before the marker.",
+            question: "Which noun completes the sentence?",
+            template: "[BLANK]がいます",
+          },
+        ],
       },
     }),
-}));
-
-vi.mock("@zoonk/ai/tasks/lessons/language/grammar-user-content", () => ({
-  generateLessonGrammarUserContent: vi.fn().mockResolvedValue({
-    data: {
-      discovery: {
-        context: "Choose the sentence with the same pattern.",
-        options: [
-          { feedback: "Correct.", isCorrect: true, text: "It keeps the subject marker." },
-          { feedback: "Not quite.", isCorrect: false, text: "It changes the marker." },
-        ],
-        question: "Which option matches the pattern?",
-      },
-      exampleTranslations: ["There is a cat."],
-      exerciseFeedback: ["Use the noun before the marker."],
-      exerciseQuestions: ["Which noun completes the sentence?"],
-      exerciseTranslations: ["There is a cat."],
-      ruleName: "Existence with がいます",
-      ruleSummary: "Use がいます to say that a living thing exists.",
-    },
-  }),
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/language/sentences", () => ({
@@ -1088,7 +1080,7 @@ describe(lessonGenerationWorkflow, () => {
     expect(parseStepContent("listening", listeningStep?.content)).toStrictEqual({});
   });
 
-  it("grammar generation keeps content, user-language exercises, romanization, and saving phases", async () => {
+  it("grammar generation keeps content, romanization, and saving phases", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const { chapter } = await createLanguageWorkflowTree({ organizationId });
 
@@ -1103,11 +1095,7 @@ describe(lessonGenerationWorkflow, () => {
 
     await lessonGenerationWorkflow(lesson.id);
 
-    expect(generateLessonGrammarContent).toHaveBeenCalledOnce();
-
-    expect(generateLessonGrammarUserContent).toHaveBeenCalledWith(
-      expect.objectContaining({ examples: [{ highlight: "猫", sentence: "猫がいます" }] }),
-    );
+    expect(generateLessonGrammar).toHaveBeenCalledOnce();
 
     expect(generateLessonRomanization).toHaveBeenCalledWith(
       expect.objectContaining({ texts: expect.arrayContaining(["猫がいます", "猫", "犬", "鳥"]) }),
@@ -1115,8 +1103,7 @@ describe(lessonGenerationWorkflow, () => {
 
     expect(completedStreamedSteps()).toStrictEqual(
       expect.arrayContaining([
-        "generateGrammarContent",
-        "generateGrammarUserContent",
+        "generateGrammar",
         "generateGrammarRomanization",
         "saveGrammarLesson",
         "setLessonAsCompleted",
@@ -1128,12 +1115,7 @@ describe(lessonGenerationWorkflow, () => {
       where: { lessonId: lesson.id },
     });
 
-    expect(steps.map((step) => step.kind)).toStrictEqual([
-      "static",
-      "multipleChoice",
-      "static",
-      "fillBlank",
-    ]);
+    expect(steps.map((step) => step.kind)).toStrictEqual(["static", "static", "fillBlank"]);
   });
 
   it("repairs a pending lesson with existing steps without calling AI", async () => {

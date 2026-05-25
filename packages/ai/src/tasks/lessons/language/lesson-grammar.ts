@@ -2,29 +2,38 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { getPromptLanguageName } from "../../_utils/prompt-language";
+import { getLanguagePromptContext } from "../../_utils/prompt-language";
 import { formatConceptLines } from "../config";
-import systemPrompt from "./lesson-grammar-content.prompt.md";
+import systemPrompt from "./lesson-grammar.prompt.md";
 
-const defaultModel = "google/gemini-3.1-pro-preview";
-const fallbackModels = ["openai/gpt-5.5", "anthropic/claude-opus-4.7"] as const;
+const defaultModel = "openai/gpt-5.5";
+const fallbackModels = ["anthropic/claude-opus-4.7", "google/gemini-3.5-flash"] as const;
 
-const exampleSchema = z.object({ highlight: z.string(), sentence: z.string() });
+const explanationSchema = z.object({ text: z.string(), title: z.string() });
 
-const exerciseSchema = z.object({
+const exampleSchema = z.object({
+  highlight: z.string(),
+  sentence: z.string(),
+  translation: z.string(),
+});
+
+const questionSchema = z.object({
   answer: z.string(),
   distractors: z.array(z.string()),
+  feedback: z.string(),
+  question: z.string().nullable(),
   template: z.string(),
 });
 
 const schema = z.object({
   examples: z.array(exampleSchema).min(1),
-  exercises: z.array(exerciseSchema).min(1),
+  explanations: z.array(explanationSchema).min(1),
+  questions: z.array(questionSchema).min(1),
 });
 
-export type LessonGrammarContentSchema = z.infer<typeof schema>;
+export type LessonGrammarSchema = z.infer<typeof schema>;
 
-export type LessonGrammarContentParams = {
+export type LessonGrammarParams = {
   chapterTitle: string;
   concepts?: string[];
   lessonDescription: string;
@@ -34,16 +43,18 @@ export type LessonGrammarContentParams = {
   reasoningEffort?: ReasoningEffort;
   targetLanguage: string;
   useFallback?: boolean;
+  userLanguage: string;
 };
 
 /**
- * Generates the monolingual (TARGET_LANGUAGE only) portion of a grammar lesson.
- * Produces example sentences with highlights and fill-in-the-blank exercises
- * without any translations, romanization, or user-language explanations.
- * Those are added by a separate user content task so the two concerns
- * can run on different models and be cached independently.
+ * Generates the full grammar lesson content in one pass.
+ *
+ * Grammar lessons need the explanation, examples, and fill-in-the-blank
+ * questions to teach the same exact rule. Keeping that structure in one AI
+ * task prevents index-matching drift between separate target-language and
+ * user-language generations.
  */
-export async function generateLessonGrammarContent({
+export async function generateLessonGrammar({
   chapterTitle,
   concepts = [],
   lessonDescription,
@@ -53,11 +64,13 @@ export async function generateLessonGrammarContent({
   reasoningEffort,
   targetLanguage,
   useFallback = true,
-}: LessonGrammarContentParams) {
-  const targetLanguageName = getPromptLanguageName({ language: targetLanguage });
+  userLanguage,
+}: LessonGrammarParams) {
+  const promptContext = getLanguagePromptContext({ targetLanguage, userLanguage });
 
   const userPrompt = `
-    TARGET_LANGUAGE: ${targetLanguageName}
+    TARGET_LANGUAGE: ${promptContext.targetLanguageName}
+    USER_LANGUAGE: ${promptContext.userLanguageName}
     CHAPTER_TITLE: ${chapterTitle}
     LESSON_TITLE: ${lessonTitle}
     LESSON_DESCRIPTION: ${lessonDescription}
