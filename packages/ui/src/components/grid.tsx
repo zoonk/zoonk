@@ -90,7 +90,7 @@ const gridGroupVariants = cva("grid grid-cols-1 gap-4", {
   defaultVariants: { variant: "default" },
   variants: {
     variant: {
-      default: "sm:grid-cols-2 lg:grid-cols-3",
+      default: "sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5",
       pane: "sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4",
     },
   },
