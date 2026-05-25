@@ -49,6 +49,7 @@ describe(generateSentenceDistractorsStep, () => {
       input: `${catWord} ${waterWord}`,
       language: "ja",
       shape: "single-word",
+      translation: { language: "en", text: "cat and water" },
     });
 
     expect(generateLessonDistractors).toHaveBeenCalledWith({
