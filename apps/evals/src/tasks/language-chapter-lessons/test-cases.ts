@@ -39,6 +39,8 @@ const SHARED_EXPECTATIONS = `
   ## Evaluating copy and progression
 
   - Lesson descriptions should be concise — no filler words like "introduces", "presents", "teaches"
+  - Lesson descriptions should use direct learner-facing wording, not third-person or future boilerplate such as "O aluno vai...", "The learner will...", or "El estudiante va a..."
+  - Prefer direct action phrasing such as "Reconheça...", "Use...", "Compare...", "Choose...", or the natural equivalent in the user's language
   - Logical progression from foundational to advanced
   - No summary, review, or assessment lessons
   - No duplicate lesson scope across lessons
@@ -71,6 +73,24 @@ export const TEST_CASES = [
       chapterTitle: "Present Tense",
       targetLanguage: "es",
       userLanguage: "en",
+    },
+  },
+  {
+    expectations: `
+      USER LANGUAGE: Brazilian Portuguese
+      TARGET LANGUAGE: English
+
+      Lesson descriptions should be direct and concise. A description like "Reconheça e use cumprimentos comuns como hello, hi, good morning e good evening" is better than "O aluno vai reconhecer e usar cumprimentos...". Repeated "O aluno vai..." phrasing is a copy issue even when the lesson scope is correct.
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-english-greetings-direct-descriptions",
+    userInput: {
+      chapterDescription:
+        "Cumprimentos, despedidas, apresentações simples, perguntas sobre nome e origem, e expressões básicas de cortesia.",
+      chapterTitle: "Saudações e Apresentações",
+      targetLanguage: "en",
+      userLanguage: "pt",
     },
   },
   {
