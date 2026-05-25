@@ -1,0 +1,149 @@
+{
+  "expectations": "\n\nLANGUAGE EXPECTATIONS:\n\n- Explanations, example translations, non-null question prompts, and feedback should be in Latin American Spanish, except when quoting French.\n- Example sentences, highlights, fill-in-the-blank templates, answers, and distractors should be in French.\n\n\nTOPIC: Adjective-noun gender agreement.\n\nGRAMMAR PATTERN: In French, adjectives must agree in gender with the noun they modify. Masculine nouns take masculine adjectives; feminine nouns take feminine adjectives. Most adjectives add -e for feminine form.\n\nACCURACY PITFALLS:\n- Penalize if adjective forms do not match noun gender.\n- Penalize if examples or questions use invariable adjectives, because they fail to demonstrate visible gender contrast.\n\n\nEVALUATION CRITERIA:\n\n1. LANGUAGE CONTRACT (CRITICAL - highest priority):\n   - explanations.title, explanations.text, examples.translation, questions.feedback, and non-null questions.question MUST be in the USER language\n   - examples.sentence, examples.highlight, questions.template, questions.answer, and questions.distractors MUST be in the TARGET language\n   - There should be NO romanization\n   - Penalize SEVERELY if learner-facing explanations are in the target language instead of the user language\n   - Penalize SEVERELY if target-language practice fields contain translated/user-language answers\n   - Format tokens ([BLANK] placeholder, JSON keys) are part of the required output structure, NOT language-mixing issues\n\n2. EXPLANATION-FIRST TEACHING:\n   - Must include 1-3 explanation sections\n   - Explanations must teach what to look for before the learner sees examples\n   - Do NOT use a discovery-question approach that asks learners to infer the rule before it is explained\n   - Explanations should be short, concrete, and beginner-safe\n   - Do NOT penalize the JSON object key order. Only evaluate whether the content supports an explanation-first lesson when saved/rendered.\n\n3. EXAMPLES QUALITY:\n   - Must include 2-4 example sentences demonstrating the grammar pattern\n   - Each example MUST have a highlight field isolating the grammar element\n   - Each example MUST have a natural user-language translation\n   - Sentences should be simple enough for learners to focus on the pattern\n\n4. QUESTIONS - FILL-IN-THE-BLANK:\n   - Must include 1-3 fill-in-the-blank questions\n   - The question prompt may be null when the template is self-explanatory\n   - Each question MUST have exactly one [BLANK] placeholder in the template\n   - The answer field MUST contain exactly one correct answer (a single string, not an array)\n   - Distractors MUST be plausible wrong answers testing common mistakes\n   - Feedback MUST explain why the correct answer fits the grammar pattern\n   - Penalize SEVERELY if questions test different grammar than the examples\n\n5. LINGUISTIC ACCURACY (CRITICAL):\n   - ALL target-language sentences, templates, and answers must be grammatically valid\n   - Distractors should be plausible learner mistakes or real forms used in the wrong context. Do not require distractors to make the completed sentence grammatical, but penalize malformed fake forms that a learner would not reasonably produce.\n   - The explanation must match what examples and questions actually demonstrate\n   - Penalize SEVERELY for incorrect grammar or misleading explanations\n\n6. HIGHLIGHT SCOPE:\n   - Highlights that include slightly more context than the minimum (e.g., noun+particle, subject+verb, noun+adjective+article) are acceptable as long as the target grammar element is clearly visible\n   - Only penalize if the highlight is so broad that the grammar element is buried or unclear\n\n7. PARADIGM AND FORM COVERAGE:\n   - For conjugation patterns, evaluate coverage across examples AND questions combined as a single set\n   - For agreement patterns, prefer forms where the contrast is visible (e.g., adjectives with clearly different masculine/feminine forms over invariable ones)\n\n8. SCRIPT CONSISTENCY (for non-Roman scripts):\n   - Only penalize if the SAME word is written in different scripts across examples and questions\n   - Different words using different scripts is normal and not a consistency issue\n\nSCORING DISCIPLINE (CRITICAL - read before assigning a score):\n- If something is explicitly marked as acceptable in the criteria above, do NOT deduct points for it.\n- Only deduct for CONCRETE errors: wrong grammar, wrong answers, missing structural requirements, wrong language, or unclear rule alignment.\n- Do NOT deduct for specific vocabulary choices, sentence structures, or sentence variety.\n- FOCUS ON: explanation-first structure, language contract, structural completeness, linguistic accuracy, pattern clarity.\n\n    ",
+  "judgedAt": "2026-05-25T13:58:31.834Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Strong language contract, valid grammar, clear explanation-first structure. Examples demonstrate visible gender contrast (petit/petite). Distractors are plausible including a malformed 'vertte' which is a minor concern but plausible learner error.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Excellent contrast pairs (chaud/chaude, noir/noire), accurate grammar, clear explanations, and well-formed questions including blanche as a useful irregular. Null questions appropriate given self-explanatory templates.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Comprehensive explanations covering general rule, formation, and invariable -e adjectives. Examples show clear contrast and questions align with explanations including the invariable case. Solid all-around.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Good contrast pairs and accurate grammar including the -eux/-euse irregular. However, the third question has duplicate distractors ('curieux' listed twice) which is a structural flaw.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Generally accurate with good gender contrast examples. However, 'jaunée' is a malformed fake form unlikely to be a real learner mistake, and the third example uses 'cette' rather than showing gender contrast clearly.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Accurate grammar and clear teaching, but the first example translation 'Es un carro pequeño' mismatches the French feminine 'une petite voiture' (should be 'un carro' vs 'una'... actually voiture=carro/coche is fine but gender of translation noun doesn't match). Distractor 'facil' is Spanish, not a plausible French learner error.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Accurate grammar and good contrast pairs. However, distractors mix entirely different adjectives (petit/petite as distractors for noir question), which doesn't isolate the gender agreement test as cleanly since learners could pick by lexical meaning rather than form.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Perfect execution. The explanations clearly cover both regular and invariable adjectives. Examples and questions perfectly align with the explanations, and the distractors are highly plausible.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Exceptional quality. The explanations are thorough and correctly teach invariable adjectives. The examples and questions demonstrate the patterns effectively, and the distractors test common learner errors well.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Strong and accurate. The examples and explanations are clear, correctly covering regular and invariable adjective forms. The questions align perfectly with the taught concepts.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Very good overall. The explanations, examples, and questions are well-aligned. The distractor 'jaunée' for the invariable adjective 'jaune' is slightly contrived but acceptable for testing over-application of the rule.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Acceptable, but has a notable gap in content alignment. It introduces the irregular feminine form 'blanche' in the questions without teaching irregular formations in the explanations, which violates explanation-first principles.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Poorly designed distractors. By including other adjectives (like 'petite') as distractors for a blank that comes after the noun, it creates sentences that are wrong due to syntax, not just gender. The feedback fails to clarify this, which would confuse learners.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Unusable due to a structural flaw in the question distractors. In the third question, the correct answer 'curieuse' is included in the distractors array alongside a duplicate 'curieux', which breaks multiple-choice logic.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Meets the language contract and structure cleanly, with Spanish explanations/feedback and French practice fields. The examples and questions use visible masculine/feminine contrasts like chaud/chaude and noir/noire, with accurate grammar and useful feedback.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Strong overall: explanations are clear, questions test the intended gender agreement pattern, and most forms are accurate. The main weakness is the use of the invariable adjective facile in an example, which weakens the visible gender-contrast focus, plus one malformed distractor vertte.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Clear explanations and good visible-contrast examples, with accurate French sentences overall. However, one question tests rouge, an invariable adjective, and includes the malformed distractor rougee, so part of the practice does not demonstrate the target contrast well.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Good language contract and generally accurate examples showing visible agreement contrasts. The major issue is that one question includes the correct answer curieuse as a distractor and duplicates distractors, making that item invalid/confusing.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The explanations and examples are strong, simple, and focused on visible gender agreement. The questions are weakened because the intended adjective is not specified and distractors include other adjectives that can form grammatically valid sentences, making the blanks ambiguous rather than purely testing agreement.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Mostly follows the language contract and has some valid visible agreement practice, especially vert/verte. It also uses invariable adjectives in an example and a question, and includes malformed distractors like jaun and jaunée, reducing the quality of the practice.",
+          "score": 6.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The output is structurally complete and mostly in the correct languages, but the examples are all feminine and include an invariable adjective, so they do not clearly show masculine/feminine contrast. Some questions also rely on invariable or malformed forms like facilee, making the practice less aligned with the expected visible agreement pattern.",
+          "score": 5.8
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-grammar",
+  "testCaseId": "fr-gender-agreement-1"
+}

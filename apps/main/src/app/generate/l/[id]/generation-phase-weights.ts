@@ -48,10 +48,9 @@ export function getPhaseWeights(kind: GeneratedLessonKind): Record<PhaseName, nu
     return {
       ...ZERO_WEIGHTS,
       addingRomanization: 4,
-      creatingExercises: 8,
       gettingStarted: 1,
       saving: 1,
-      writingContent: 15,
+      writingContent: 20,
     };
   }
 

@@ -1,12 +1,12 @@
 import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type generateLessonGrammarContent } from "@zoonk/ai/tasks/lessons/language/grammar-content";
+import { type generateLessonGrammar } from "@zoonk/ai/tasks/lessons/language/grammar";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { needsRomanization } from "@zoonk/utils/languages";
 import { generateLessonRomanizations } from "./_utils/generate-lesson-romanizations";
 import { type RomanizationStepContext } from "./_utils/romanization-step-context";
 
-type GrammarContent = Awaited<ReturnType<typeof generateLessonGrammarContent>>["data"];
+type GrammarContent = Awaited<ReturnType<typeof generateLessonGrammar>>["data"];
 
 export async function generateGrammarRomanizationStep({
   context,
@@ -29,10 +29,10 @@ export async function generateGrammarRomanizationStep({
 
   const texts = [
     ...grammarContent.examples.map((example) => example.sentence),
-    ...grammarContent.exercises.flatMap((exercise) => [
-      exercise.template.replace("[BLANK]", exercise.answer),
-      exercise.answer,
-      ...exercise.distractors,
+    ...grammarContent.questions.flatMap((question) => [
+      question.template.replace("[BLANK]", question.answer),
+      question.answer,
+      ...question.distractors,
     ]),
   ];
 

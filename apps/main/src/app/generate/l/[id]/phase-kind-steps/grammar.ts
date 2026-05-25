@@ -5,18 +5,16 @@ import { type PhaseName } from "../generation-phase-config";
 type GrammarSteps =
   | "getLesson"
   | "setLessonAsRunning"
-  | "generateGrammarContent"
-  | "generateGrammarUserContent"
+  | "generateGrammar"
   | "generateGrammarRomanization"
   | "saveGrammarLesson"
   | "setLessonAsCompleted";
 
 export const GRAMMAR_PHASE_STEPS = {
   addingRomanization: ["generateGrammarRomanization"],
-  creatingExercises: ["generateGrammarUserContent"],
   gettingStarted: ["getLesson", "setLessonAsRunning"],
   saving: ["saveGrammarLesson", "setLessonAsCompleted"],
-  writingContent: ["generateGrammarContent"],
+  writingContent: ["generateGrammar"],
 } as const satisfies Record<string, readonly LessonStepName[]>;
 
 type _ValidateGrammar = AssertAllCovered<
@@ -26,7 +24,6 @@ type _ValidateGrammar = AssertAllCovered<
 export const GRAMMAR_PHASE_ORDER: PhaseName[] = [
   "gettingStarted",
   "writingContent",
-  "creatingExercises",
   "addingRomanization",
   "saving",
 ];

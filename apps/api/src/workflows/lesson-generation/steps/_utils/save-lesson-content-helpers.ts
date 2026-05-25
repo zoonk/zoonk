@@ -28,14 +28,3 @@ export function getOptionalQuestion(question?: string | null): { question?: stri
 
   return { question };
 }
-
-/**
- * Preserves optional context text only when the generated string has content.
- */
-export function getOptionalContext(context?: string | null): { context?: string } {
-  if (!context?.trim()) {
-    return {};
-  }
-
-  return { context };
-}

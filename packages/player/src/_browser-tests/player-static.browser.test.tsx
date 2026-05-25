@@ -181,7 +181,7 @@ describe("player browser integration: static steps", () => {
     await expect.element(page.getByRole("heading", { name: "First step" })).toBeInTheDocument();
   });
 
-  it("renders grammar example and grammar rule static variants through the shared shell", async () => {
+  it("renders grammar example static variants through the shared shell", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "explanation",
@@ -198,11 +198,11 @@ describe("player browser integration: static steps", () => {
           }),
           buildSerializedStep({
             content: {
-              ruleName: "Past tense",
-              ruleSummary: "Add -ed to regular verbs",
-              variant: "grammarRule" as const,
+              text: "Add -ed to regular verbs",
+              title: "Past tense",
+              variant: "text" as const,
             },
-            id: "static-grammar-rule",
+            id: "static-rule-explanation",
             position: 1,
           }),
         ],

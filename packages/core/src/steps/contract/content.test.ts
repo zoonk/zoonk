@@ -104,18 +104,14 @@ describe("step content contracts", () => {
     });
   });
 
-  it("parses static grammarRule variant", () => {
-    const content = parseStepContent("static", {
-      ruleName: "Present tense endings",
-      ruleSummary: "Use -o for yo and -es for tú.",
-      variant: "grammarRule",
-    });
-
-    expect(content).toStrictEqual({
-      ruleName: "Present tense endings",
-      ruleSummary: "Use -o for yo and -es for tú.",
-      variant: "grammarRule",
-    });
+  it("rejects obsolete static grammarRule variant", () => {
+    expect(() =>
+      parseStepContent("static", {
+        ruleName: "Present tense endings",
+        ruleSummary: "Use -o for yo and -es for tú.",
+        variant: "grammarRule",
+      }),
+    ).toThrow();
   });
 
   it("parses vocabulary step content", () => {

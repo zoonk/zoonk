@@ -31,17 +31,10 @@ const staticGrammarExampleContentSchema = withOptionalImage({
   variant: z.literal("grammarExample"),
 });
 
-const staticGrammarRuleContentSchema = withOptionalImage({
-  ruleName: z.string(),
-  ruleSummary: z.string(),
-  variant: z.literal("grammarRule"),
-});
-
 export const staticContentSchema = z.discriminatedUnion("variant", [
   staticIntroContentSchema,
   staticTextContentSchema,
   staticGrammarExampleContentSchema,
-  staticGrammarRuleContentSchema,
 ]);
 
 export type StaticStepContent = z.infer<typeof staticContentSchema>;

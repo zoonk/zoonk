@@ -15,10 +15,6 @@ type StaticGrammarExampleStepDescriptor = StepDescriptorBase<"static", "staticGr
   content: Extract<SerializedStep<"static">["content"], { variant: "grammarExample" }>;
 };
 
-type StaticGrammarRuleStepDescriptor = StepDescriptorBase<"static", "staticGrammarRule"> & {
-  content: Extract<SerializedStep<"static">["content"], { variant: "grammarRule" }>;
-};
-
 type IntroStepContent = Extract<SerializedStep<"static">["content"], { variant: "intro" }>;
 
 type IntroStepDescriptor = StepDescriptorBase<"static", "intro"> & {
@@ -36,7 +32,6 @@ export type PlayerStepDescriptor =
   | StepDescriptorBase<"selectImage", "selectImage">
   | StepDescriptorBase<"sortOrder", "sortOrder">
   | StaticGrammarExampleStepDescriptor
-  | StaticGrammarRuleStepDescriptor
   | StaticTextStepDescriptor
   | IntroStepDescriptor
   | StepDescriptorBase<"translation", "translation">
@@ -83,10 +78,6 @@ function describeStaticStep(step: SerializedStep<"static">): PlayerStepDescripto
 
   if (content.variant === "grammarExample") {
     return { content, kind: "staticGrammarExample", step };
-  }
-
-  if (content.variant === "grammarRule") {
-    return { content, kind: "staticGrammarRule", step };
   }
 
   return { content, kind: "staticText", step };
