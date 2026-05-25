@@ -67,6 +67,9 @@ Only pure language acquisition content is allowed:
 - Write 1-2 plain sentences in `USER_LANGUAGE`.
 - Say what the learner will recognize, say, compare, build, or choose.
 - Do not start with "introduces", "presents", "shows", "teaches", "covers", or "explains".
+- Prefer direct learner-facing wording: "Recognize and use common greetings like hello, hi, good morning, and good evening."
+- Do not describe the learner from the outside. Avoid phrasing like "O aluno vai...", "The learner will...", or "El estudiante va a...".
+- Do not default to future framing like "You will..." when a direct verb is clearer. Prefer "Recognize", "Use", "Compare", "Choose", "Build", "Distinguish", or the natural equivalent in `USER_LANGUAGE`.
 
 # Final Check
 
