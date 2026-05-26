@@ -61,12 +61,7 @@ export function useContentPhaseGenerators(): Partial<Record<PhaseName, ThinkingM
       ),
     gettingStarted: (index) =>
       cycleMessage(
-        [
-          t("Getting everything ready..."),
-          t("Setting things up..."),
-          t("Loading lesson data..."),
-          t("Checking what we need..."),
-        ],
+        [t("Getting started..."), t("Loading lesson data..."), t("Checking what we need...")],
         index,
       ),
     preparingImages: (index) =>
@@ -80,15 +75,7 @@ export function useContentPhaseGenerators(): Partial<Record<PhaseName, ThinkingM
         index,
       ),
     saving: (index) =>
-      cycleMessage(
-        [
-          t("Saving your lesson..."),
-          t("Wrapping things up..."),
-          t("Almost done..."),
-          t("Finishing up..."),
-        ],
-        index,
-      ),
+      cycleMessage([t("Saving your lesson..."), t("Almost done..."), t("Finishing up...")], index),
     savingPrerequisites: (index) =>
       cycleMessage(
         [

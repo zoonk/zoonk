@@ -30,7 +30,7 @@ export function useGenerationPhases(
     checkingCourseIdentity: t("Checking for duplicates"),
     creatingCoverImage: t("Creating the cover image"),
     findingSimilarCourses: t("Finding similar courses"),
-    gettingReady: t("Getting things ready"),
+    gettingReady: t("Getting started"),
     outliningChapters: t("Writing chapters"),
     preparingCourse: t("Preparing your course"),
     savingCourseInfo: t("Saving your course"),
@@ -92,8 +92,7 @@ export function useGenerationPhases(
         ],
         index,
       ),
-    gettingReady: (index) =>
-      cycleMessage([t("Setting things up..."), t("Getting everything ready...")], index),
+    gettingReady: (index) => cycleMessage([t("Getting started...")], index),
     outliningChapters: createCountingGenerator({
       intro: [t("Planning the course structure...")],
       itemTemplate: (num) => t("Writing chapter {number}...", { number: String(num) }),
@@ -102,7 +101,7 @@ export function useGenerationPhases(
     preparingCourse: (index) =>
       cycleMessage([t("Creating the course shell..."), t("Preparing the workspace...")], index),
     savingCourseInfo: (index) =>
-      cycleMessage([t("Saving your progress..."), t("Putting it all together...")], index),
+      cycleMessage([t("Saving your progress..."), t("Finishing up...")], index),
     writingDescription: (index) =>
       cycleMessage([t("Summarizing what you'll learn..."), t("Writing the overview...")], index),
   };

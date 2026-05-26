@@ -1032,8 +1032,9 @@ msgstr "Escolhendo os tipos de aulas"
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
 #: src/app/generate/cs/[id]/use-generation-phases.ts
-msgid "aJev/w"
-msgstr "Preparando as coisas"
+#: src/app/generate/l/[id]/use-phase-labels.ts
+msgid "EKtClK"
+msgstr "Começando"
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
 msgid "SF9AtA"
@@ -1058,14 +1059,8 @@ msgstr "Revisando a combinação de aulas..."
 #: src/app/generate/ch/[id]/use-generation-phases.ts
 #: src/app/generate/cs/[id]/use-generation-phases.ts
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
-msgid "xrLiIe"
-msgstr "Configurando as coisas..."
-
-#: src/app/generate/ch/[id]/use-generation-phases.ts
-#: src/app/generate/cs/[id]/use-generation-phases.ts
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
-msgid "5nJVpw"
-msgstr "Preparando tudo..."
+msgid "5342HA"
+msgstr "Começando..."
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
 msgid "nwGJ65"
@@ -1090,8 +1085,9 @@ msgstr "Salvando seu progresso..."
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
 #: src/app/generate/cs/[id]/use-generation-phases.ts
-msgid "XxZuJi"
-msgstr "Juntando tudo..."
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgid "JUr8Er"
+msgstr "Finalizando..."
 
 #: src/app/generate/cs/[id]/generate-course-suggestion-content.tsx
 msgid "rPgekg"
@@ -1346,16 +1342,8 @@ msgid "BszFlm"
 msgstr "Salvando sua aula..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
-msgid "2e5abC"
-msgstr "Finalizando as coisas..."
-
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgid "bC9979"
 msgstr "Quase pronto..."
-
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
-msgid "JUr8Er"
-msgstr "Finalizando..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgid "ZRt4oT"
@@ -1600,10 +1588,6 @@ msgstr "Criando miniatura da aula"
 #: src/app/generate/l/[id]/use-phase-labels.ts
 msgid "mIpv67"
 msgstr "Criando frases"
-
-#: src/app/generate/l/[id]/use-phase-labels.ts
-msgid "EKtClK"
-msgstr "Começando"
 
 #: src/app/generate/l/[id]/use-phase-labels.ts
 msgid "0zeST/"

@@ -27,7 +27,7 @@ export function useGenerationPhases(
 
   const labels: Record<PhaseName, string> = {
     classifyingLessons: t("Choosing lesson types"),
-    gettingReady: t("Getting things ready"),
+    gettingReady: t("Getting started"),
     preparingLessons: t("Preparing lessons"),
     savingLessons: t("Saving your lessons"),
   };
@@ -63,15 +63,14 @@ export function useGenerationPhases(
       itemTemplate: (num) => t("Choosing type for lesson {number}...", { number: String(num) }),
       reviewMessage: t("Reviewing the lesson mix..."),
     }),
-    gettingReady: (index) =>
-      cycleMessage([t("Setting things up..."), t("Getting everything ready...")], index),
+    gettingReady: (index) => cycleMessage([t("Getting started...")], index),
     preparingLessons: createCountingGenerator({
       intro: [t("Exploring your topic..."), t("Mapping out the learning path...")],
       itemTemplate: (num) => t("Writing lesson {number}...", { number: String(num) }),
       reviewMessage: t("Reviewing the flow so far..."),
     }),
     savingLessons: (index) =>
-      cycleMessage([t("Saving your progress..."), t("Putting it all together...")], index),
+      cycleMessage([t("Saving your progress..."), t("Finishing up...")], index),
   };
 
   return {

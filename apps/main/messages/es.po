@@ -1032,8 +1032,9 @@ msgstr "Eligiendo tipos de lección"
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
 #: src/app/generate/cs/[id]/use-generation-phases.ts
-msgid "aJev/w"
-msgstr "Preparando todo"
+#: src/app/generate/l/[id]/use-phase-labels.ts
+msgid "EKtClK"
+msgstr "Comenzando"
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
 msgid "SF9AtA"
@@ -1058,14 +1059,8 @@ msgstr "Revisando la combinación de lecciones..."
 #: src/app/generate/ch/[id]/use-generation-phases.ts
 #: src/app/generate/cs/[id]/use-generation-phases.ts
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
-msgid "xrLiIe"
-msgstr "Configurando todo..."
-
-#: src/app/generate/ch/[id]/use-generation-phases.ts
-#: src/app/generate/cs/[id]/use-generation-phases.ts
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
-msgid "5nJVpw"
-msgstr "Preparando todo..."
+msgid "5342HA"
+msgstr "Comenzando..."
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
 msgid "nwGJ65"
@@ -1090,8 +1085,9 @@ msgstr "Guardando tu progreso..."
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
 #: src/app/generate/cs/[id]/use-generation-phases.ts
-msgid "XxZuJi"
-msgstr "Juntando todo..."
+#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+msgid "JUr8Er"
+msgstr "Terminando..."
 
 #: src/app/generate/cs/[id]/generate-course-suggestion-content.tsx
 msgid "rPgekg"
@@ -1135,7 +1131,7 @@ msgstr "Escribiendo capítulos"
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
 msgid "d2xrsv"
-msgstr "Preparando todo"
+msgstr "Preparando tu curso"
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
 msgid "CFWOGF"
@@ -1346,16 +1342,8 @@ msgid "BszFlm"
 msgstr "Guardando tu lección..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
-msgid "2e5abC"
-msgstr "Terminando los detalles..."
-
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgid "bC9979"
 msgstr "Casi listo..."
-
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
-msgid "JUr8Er"
-msgstr "Terminando..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgid "ZRt4oT"
@@ -1600,10 +1588,6 @@ msgstr "Creando miniatura de la lección"
 #: src/app/generate/l/[id]/use-phase-labels.ts
 msgid "mIpv67"
 msgstr "Creando oraciones"
-
-#: src/app/generate/l/[id]/use-phase-labels.ts
-msgid "EKtClK"
-msgstr "Comenzando"
 
 #: src/app/generate/l/[id]/use-phase-labels.ts
 msgid "0zeST/"
