@@ -3,7 +3,7 @@
 import { getMenu } from "@/lib/menu";
 import { trackCommandPaletteSearch } from "@/lib/track-events";
 import { logout } from "@zoonk/core/auth/client";
-import { Button } from "@zoonk/ui/components/button";
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import {
   CommandDialog,
   CommandEmpty,
@@ -13,10 +13,11 @@ import {
   CommandList,
 } from "@zoonk/ui/components/command";
 import { useCommandPaletteSearch } from "@zoonk/ui/hooks/command-palette-search";
-import { BookOpenIcon, LogOut, Search } from "lucide-react";
+import { BookOpenIcon, LogOut, PlusIcon, Search } from "lucide-react";
 import { type Route } from "next";
 import { useExtracted, useLocale } from "next-intl";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { type CourseSearchResult, searchCoursesAction } from "./search-courses-action";
@@ -118,7 +119,7 @@ export function CommandPalette({
 
         <CommandList>
           <CommandEmpty>
-            <p>{t("No results found")}</p>
+            <CreateCourseEmptyState onSelect={onSelectItem} query={query} />
           </CommandEmpty>
 
           <CommandGroup heading={t("Pages")}>
@@ -180,6 +181,62 @@ export function CommandPalette({
       </CommandDialog>
     </>
   );
+}
+
+/**
+ * Empty palette searches usually mean the learner asked for something Zoonk
+ * cannot find yet, so the dead end should lead into the same prompt-based
+ * creation flow used by the Learn page.
+ */
+function CreateCourseEmptyState({ onSelect, query }: { onSelect: () => void; query: string }) {
+  const t = useExtracted();
+  const prompt = getCreateCoursePrompt(query);
+
+  return (
+    <div className="flex flex-col items-center gap-3 px-4">
+      <p className="text-muted-foreground">{t("No results found")}</p>
+
+      {prompt && (
+        <Link
+          className={buttonVariants({
+            className:
+              "h-auto min-h-8 max-w-full whitespace-normal py-1.5 text-center leading-snug",
+            size: "sm",
+            variant: "outline",
+          })}
+          href={getLearnPromptHref(prompt)}
+          onClick={onSelect}
+        >
+          <PlusIcon aria-hidden="true" />
+          <span className="min-w-0 wrap-break-word">
+            {t("Create {term} course", { term: prompt })}
+          </span>
+        </Link>
+      )}
+    </div>
+  );
+}
+
+/**
+ * The palette input may contain only whitespace while cmdk is still rendering
+ * an empty result, and the Learn route should only receive a real subject.
+ */
+function getCreateCoursePrompt(query: string) {
+  const prompt = query.trim();
+
+  if (!prompt) {
+    return null;
+  }
+
+  return prompt;
+}
+
+/**
+ * The Learn prompt is stored in a dynamic path segment, so the raw search term
+ * must be encoded before it is sent through Next.js navigation.
+ */
+function getLearnPromptHref(prompt: string) {
+  return `/learn/${encodeURIComponent(prompt)}` as const;
 }
 
 function CourseItem({
