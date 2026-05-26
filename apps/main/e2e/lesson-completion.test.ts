@@ -183,8 +183,8 @@ async function createChapterCompleteScenario(prefix: string) {
 
 /**
  * The next chapter can exist before its lesson shells are generated. Completing
- * the current chapter should still show a chapter milestone, then let the
- * chapter page redirect to generation instead of declaring the course done.
+ * the current chapter should still show a chapter milestone, then send the
+ * learner to the next chapter page where generation is an explicit action.
  */
 async function createChapterCompleteWithUngeneratedNextChapterScenario(prefix: string) {
   const org = await getAiOrganization();
@@ -229,6 +229,7 @@ async function createChapterCompleteWithUngeneratedNextChapterScenario(prefix: s
   return {
     chapter2,
     lessonUrl: `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter1.slug}/l/${lesson.slug}`,
+    nextChapterUrl: `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter2.slug}`,
     uniqueId,
   };
 }
@@ -368,7 +369,7 @@ test.describe("Lesson Completion UX", () => {
     const email = await createUniqueUser(baseURL!);
     const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
 
-    const { chapter2, lessonUrl, uniqueId } =
+    const { chapter2, lessonUrl, nextChapterUrl, uniqueId } =
       await createChapterCompleteWithUngeneratedNextChapterScenario("chpending");
 
     await page.goto(lessonUrl);
@@ -380,7 +381,13 @@ test.describe("Lesson Completion UX", () => {
     await expect(completionScreen.getByText(/course complete/iu)).not.toBeVisible();
 
     await completionScreen.getByRole("link", { name: /next chapter/iu }).click();
-    await expect(page).toHaveURL(new RegExp(`/generate/ch/${chapter2.id}$`, "u"));
+    await expect(page).toHaveURL(nextChapterUrl);
+
+    const createChapterLink = page.getByRole("link", { name: /create chapter/iu });
+
+    await expect(createChapterLink).toBeVisible();
+    await expect(createChapterLink).toHaveAttribute("href", `/generate/ch/${chapter2.id}`);
+    await expect(createChapterLink).toHaveAttribute("rel", "nofollow");
 
     await browserContext.close();
   });
