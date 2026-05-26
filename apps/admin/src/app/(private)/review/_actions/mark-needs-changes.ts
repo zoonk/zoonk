@@ -2,7 +2,7 @@
 
 import { getNextReviewItem } from "@/data/review/get-next-review-item";
 import { assertAdmin } from "@/lib/admin-guard";
-import { getTaskPath, isValidTaskType } from "@/lib/review-utils";
+import { getReviewQueuePath, isValidTaskType } from "@/lib/review-utils";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
@@ -13,6 +13,7 @@ export async function markNeedsChangesAction(formData: FormData) {
 
   const taskType = parseFormField(formData, "taskType");
   const entityId = parseFormField(formData, "entityId");
+  const lessonSlug = parseFormField(formData, "lessonSlug") ?? undefined;
 
   if (!taskType || !entityId || !isValidTaskType(taskType)) {
     throw new Error("Invalid form data");
@@ -32,12 +33,7 @@ export async function markNeedsChangesAction(formData: FormData) {
     throw error;
   }
 
-  const next = await getNextReviewItem(taskType);
-  const basePath = getTaskPath(taskType);
+  const next = await getNextReviewItem(taskType, lessonSlug);
 
-  if (next.entityId) {
-    redirect(`${basePath}?current=${next.entityId}`);
-  }
-
-  redirect(basePath);
+  redirect(getReviewQueuePath({ currentId: next.entityId, lessonSlug, taskType }));
 }

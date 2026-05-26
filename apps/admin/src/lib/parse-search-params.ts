@@ -5,6 +5,16 @@ const MIN_PAGE_SIZE = 1;
 
 type SearchParamValue = string | string[] | undefined;
 
+/**
+ * Free-text filters should treat repeated URL params the same way as admin
+ * pagination and should not pass blank strings into Prisma filters.
+ */
+export function parseOptionalSearchParam(value: SearchParamValue): string | undefined {
+  const trimmedValue = getFirstSearchParam(value)?.trim();
+
+  return trimmedValue || undefined;
+}
+
 export function parseSearchParams(params: Partial<Record<string, string | string[]>>): {
   page: number;
   limit: number;

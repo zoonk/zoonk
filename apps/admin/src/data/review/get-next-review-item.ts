@@ -11,6 +11,25 @@ type ReviewQueueResult = { entityId: string | null; remaining: number };
 
 const EMPTY_RESULT: ReviewQueueResult = { entityId: null, remaining: 0 };
 
+/**
+ * Step image review stores image eligibility inside the JSON step content, so
+ * Prisma can narrow the cheap relational fields first and the caller can then
+ * keep only static steps whose parsed content actually contains an image URL.
+ */
+function getStepImageReviewWhere({
+  excludeIds,
+  lessonSlug,
+}: {
+  excludeIds: string[];
+  lessonSlug?: string;
+}) {
+  return {
+    NOT: { id: { in: excludeIds } },
+    kind: "static" as const,
+    lesson: { organization: { slug: AI_ORG_SLUG }, ...(lessonSlug ? { slug: lessonSlug } : {}) },
+  };
+}
+
 function hasStepImage(content: unknown): boolean {
   try {
     return Boolean(parseStepContent("static", content).image?.url);
@@ -32,17 +51,14 @@ async function getNextCourseSuggestion(): Promise<ReviewQueueResult> {
   return { entityId: next?.id ?? null, remaining };
 }
 
-async function getNextStepImage(): Promise<ReviewQueueResult> {
+async function getNextStepImage(lessonSlug?: string): Promise<ReviewQueueResult> {
   const excludeIds = await reviewedEntityIds("stepImage");
+  const where = getStepImageReviewWhere({ excludeIds, lessonSlug });
 
   const steps = await prisma.step.findMany({
     orderBy: { createdAt: "asc" },
     select: { content: true, id: true },
-    where: {
-      NOT: { id: { in: excludeIds } },
-      kind: "static",
-      lesson: { organization: { slug: AI_ORG_SLUG } },
-    },
+    where,
   });
 
   const pending = steps.filter((step) => hasStepImage(step.content));
@@ -101,7 +117,7 @@ async function getNextStepSelectImage(): Promise<ReviewQueueResult> {
 }
 
 export const getNextReviewItem = cache(
-  async (taskType: ReviewTaskType): Promise<ReviewQueueResult> => {
+  async (taskType: ReviewTaskType, lessonSlug?: string): Promise<ReviewQueueResult> => {
     if (!(await isAdmin())) {
       return EMPTY_RESULT;
     }
@@ -111,7 +127,7 @@ export const getNextReviewItem = cache(
     }
 
     if (taskType === "stepImage") {
-      return getNextStepImage();
+      return getNextStepImage(lessonSlug);
     }
 
     if (taskType === "stepSelectImage") {

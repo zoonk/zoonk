@@ -64,11 +64,13 @@ async function renderContent(taskType: ReviewTaskType, entityId: string) {
 export async function ReviewQueue({
   taskType,
   currentId,
+  lessonSlug,
 }: {
   taskType: ReviewTaskType;
   currentId?: string;
+  lessonSlug?: string;
 }) {
-  const queue = await getNextReviewItem(taskType);
+  const queue = await getNextReviewItem(taskType, lessonSlug);
   const entityId = currentId ?? queue.entityId;
 
   if (!entityId) {
@@ -87,7 +89,7 @@ export async function ReviewQueue({
 
       {content}
 
-      <ReviewActions taskType={taskType} entityId={entityId} />
+      <ReviewActions taskType={taskType} entityId={entityId} lessonSlug={lessonSlug} />
     </div>
   );
 }
