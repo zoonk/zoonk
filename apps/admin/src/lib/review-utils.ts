@@ -46,6 +46,41 @@ function getTaskPath(taskType: ReviewTaskType) {
   return REVIEW_TASKS[taskType].path;
 }
 
+/**
+ * URLSearchParams only accepts complete string pairs. Review queue links build
+ * their params from optional filters, so this keeps the final constructor input
+ * narrow without mutating an array as each optional value is discovered.
+ */
+function isReviewQueueParam(entry: [string, string] | undefined): entry is [string, string] {
+  return Array.isArray(entry);
+}
+
+/**
+ * Review actions redirect to the next item after each decision. Building that
+ * queue URL in one place keeps route filters such as `lessonSlug` attached
+ * without duplicating query-string rules across every action.
+ */
+function getReviewQueuePath({
+  currentId,
+  lessonSlug,
+  taskType,
+}: {
+  currentId?: string | null;
+  lessonSlug?: string | null;
+  taskType: ReviewTaskType;
+}) {
+  const queueParams: ([string, string] | undefined)[] = [
+    lessonSlug ? ["lessonSlug", lessonSlug] : undefined,
+    currentId ? ["current", currentId] : undefined,
+  ];
+
+  const params = new URLSearchParams(queueParams.filter((entry) => isReviewQueueParam(entry)));
+  const queryString = params.toString();
+  const taskPath = getTaskPath(taskType);
+
+  return queryString ? `${taskPath}?${queryString}` : taskPath;
+}
+
 function resolveTaskType(group: string, task: string): ReviewTaskType | null {
   const taskType = fromKebabCase(task);
 
@@ -75,6 +110,7 @@ export {
   REVIEW_TASK_TYPES,
   getTaskLabel,
   getTaskPath,
+  getReviewQueuePath,
   getTasksByGroup,
   isValidTaskType,
   resolveTaskType,

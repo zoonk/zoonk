@@ -18,18 +18,28 @@ function NeedsChangesButton() {
   );
 }
 
-export function ReviewActions({ taskType, entityId }: { taskType: string; entityId: string }) {
+export function ReviewActions({
+  taskType,
+  entityId,
+  lessonSlug,
+}: {
+  taskType: string;
+  entityId: string;
+  lessonSlug?: string;
+}) {
   return (
     <div className="flex items-center justify-between pt-4">
       <form action={markNeedsChangesAction}>
         <input type="hidden" name="taskType" value={taskType} />
         <input type="hidden" name="entityId" value={entityId} />
+        {lessonSlug ? <input type="hidden" name="lessonSlug" value={lessonSlug} /> : null}
         <NeedsChangesButton />
       </form>
 
       <form action={markReviewedAction}>
         <input type="hidden" name="taskType" value={taskType} />
         <input type="hidden" name="entityId" value={entityId} />
+        {lessonSlug ? <input type="hidden" name="lessonSlug" value={lessonSlug} /> : null}
         <SubmitButton>Looks good</SubmitButton>
       </form>
     </div>

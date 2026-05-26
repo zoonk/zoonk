@@ -1,3 +1,4 @@
+import { parseOptionalSearchParam } from "@/lib/parse-search-params";
 import { getTaskLabel, resolveTaskType } from "@/lib/review-utils";
 import {
   Container,
@@ -10,6 +11,7 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { FlaggedList } from "./flagged-list";
+import { LessonSlugFilter } from "./lesson-slug-filter";
 import { ReviewQueue } from "./review-queue";
 import { ReviewTabs } from "./review-tabs";
 
@@ -35,8 +37,13 @@ export default async function ReviewTaskPage({
   }
 
   const resolvedParams = await searchParams;
-  const view = typeof resolvedParams.view === "string" ? resolvedParams.view : undefined;
-  const currentId = typeof resolvedParams.current === "string" ? resolvedParams.current : undefined;
+  const view = parseOptionalSearchParam(resolvedParams.view);
+  const currentId = parseOptionalSearchParam(resolvedParams.current);
+
+  const lessonSlug =
+    taskType === "stepImage" ? parseOptionalSearchParam(resolvedParams.lessonSlug) : undefined;
+
+  const showLessonSlugFilter = taskType === "stepImage" && view !== "flagged";
 
   return (
     <Container>
@@ -51,11 +58,13 @@ export default async function ReviewTaskPage({
           <ReviewTabs taskType={taskType} view={view} />
         </Suspense>
 
+        {showLessonSlugFilter ? <LessonSlugFilter lessonSlug={lessonSlug} /> : null}
+
         <Suspense fallback={<QueueSkeleton />}>
           {view === "flagged" ? (
             <FlaggedList taskType={taskType} searchParams={searchParams} />
           ) : (
-            <ReviewQueue taskType={taskType} currentId={currentId} />
+            <ReviewQueue taskType={taskType} currentId={currentId} lessonSlug={lessonSlug} />
           )}
         </Suspense>
       </ContainerBody>
