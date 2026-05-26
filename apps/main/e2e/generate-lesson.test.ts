@@ -258,6 +258,27 @@ test.describe("Generate Lesson Page - No Subscription", () => {
     await expect(upgradeLink).toBeVisible();
     await expect(upgradeLink).toHaveAttribute("href", /\/subscription/u);
   });
+
+  test("allows signed-in users to retry failed generation without subscription", async ({
+    authenticatedPage,
+  }) => {
+    const { lesson } = await createPendingLesson(1);
+
+    await prisma.lesson.update({ data: { generationStatus: "failed" }, where: { id: lesson.id } });
+
+    await setupMockApis(authenticatedPage, {
+      statusDelayMs: 2500,
+      streamMessages: [{ status: "started", step: "getLesson" }],
+    });
+
+    await authenticatedPage.goto(`/generate/l/${lesson.id}`);
+
+    await expect(authenticatedPage.getByText(/upgrade to create/iu)).toHaveCount(0);
+
+    await expect(
+      authenticatedPage.getByRole("heading", { name: lesson.title ?? "" }),
+    ).toBeVisible();
+  });
 });
 
 test.describe("Generate Lesson Page - First Chapter Free", () => {

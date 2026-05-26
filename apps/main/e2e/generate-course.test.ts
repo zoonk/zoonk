@@ -216,7 +216,9 @@ test.describe("Generate Course Page", () => {
   });
 
   test.describe("Workflow completion and redirect", () => {
-    test("redirects to linked completed course without starting generation", async ({ page }) => {
+    test("redirects to linked completed course without starting generation", async ({
+      authenticatedPage,
+    }) => {
       const sourceSlug = `e2e-linked-source-${randomUUID().slice(0, 8)}`;
       const courseSlug = `e2e-linked-course-${randomUUID().slice(0, 8)}`;
 
@@ -234,13 +236,15 @@ test.describe("Generate Course Page", () => {
         title: "E2E Linked Completed Suggestion",
       });
 
-      await page.route("**/v1/workflows/course-generation/**", async (route) => {
+      await authenticatedPage.route("**/v1/workflows/course-generation/**", async (route) => {
         throw new Error(`Generation workflow should not start: ${route.request().url()}`);
       });
 
-      await page.goto(`/generate/cs/${suggestion.id}`);
+      await authenticatedPage.goto(`/generate/cs/${suggestion.id}`);
 
-      await page.waitForURL(new RegExp(`/b/ai/c/${courseSlug}`, "u"), { timeout: 10_000 });
+      await authenticatedPage.waitForURL(new RegExp(`/b/ai/c/${courseSlug}`, "u"), {
+        timeout: 10_000,
+      });
     });
 
     test("shows completion state and redirects to course page", async ({ authenticatedPage }) => {
@@ -394,14 +398,14 @@ test.describe("Generate Course Page", () => {
   });
 
   test.describe("Not found", () => {
-    test("invalid suggestion ID shows 404 page", async ({ page }) => {
-      await page.goto("/generate/cs/999999");
-      await expect(page.getByText(/not found|404/iu)).toBeVisible();
+    test("invalid suggestion ID shows 404 page", async ({ authenticatedPage }) => {
+      await authenticatedPage.goto("/generate/cs/999999");
+      await expect(authenticatedPage.getByText(/not found|404/iu)).toBeVisible();
     });
 
-    test("non-numeric suggestion ID shows 404 page", async ({ page }) => {
-      await page.goto("/generate/cs/invalid-id");
-      await expect(page.getByText(/not found|404/iu)).toBeVisible();
+    test("non-numeric suggestion ID shows 404 page", async ({ authenticatedPage }) => {
+      await authenticatedPage.goto("/generate/cs/invalid-id");
+      await expect(authenticatedPage.getByText(/not found|404/iu)).toBeVisible();
     });
   });
 });

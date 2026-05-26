@@ -59,6 +59,7 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
   const bypassSubscription =
     isFirstChapter ||
     lesson.generationStatus === "running" ||
+    lesson.generationStatus === "failed" ||
     lesson.generationStatus === "completed";
 
   const t = await getExtracted();

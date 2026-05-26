@@ -186,6 +186,27 @@ test.describe("Generate Chapter Page - No Subscription", () => {
     await expect(upgradeLink).toBeVisible();
     await expect(upgradeLink).toHaveAttribute("href", /\/subscription/u);
   });
+
+  test("allows signed-in users to retry failed generation without subscription", async ({
+    authenticatedPage,
+  }) => {
+    const { chapter } = await createPendingChapter(1);
+
+    await prisma.chapter.update({
+      data: { generationStatus: "failed" },
+      where: { id: chapter.id },
+    });
+
+    await setupMockApis(authenticatedPage, {
+      statusDelayMs: 2500,
+      streamMessages: [{ status: "started", step: "getChapter" }],
+    });
+
+    await authenticatedPage.goto(`/generate/ch/${chapter.id}`);
+
+    await expect(authenticatedPage.getByText(/upgrade to create/iu)).toHaveCount(0);
+    await expect(authenticatedPage.getByRole("heading", { name: chapter.title })).toBeVisible();
+  });
 });
 
 test.describe("Generate Chapter Page - With Subscription", () => {

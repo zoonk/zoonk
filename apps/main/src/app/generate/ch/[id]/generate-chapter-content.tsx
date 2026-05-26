@@ -31,6 +31,7 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
   const bypassSubscription =
     isFirstChapter ||
     chapter.generationStatus === "running" ||
+    chapter.generationStatus === "failed" ||
     chapter.generationStatus === "completed";
 
   const t = await getExtracted();
