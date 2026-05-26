@@ -1,3 +1,4 @@
+import { GenerationExitLink } from "@/components/generation/generation-exit-link";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Empty,
@@ -13,18 +14,23 @@ import { getExtracted } from "next-intl/server";
 import Link from "next/link";
 
 export async function LessonNotGenerated({
-  lessonId,
   brandSlug,
+  chapterSlug,
+  courseSlug,
+  lessonId,
   prerequisiteLessonId,
 }: {
-  lessonId: string;
   brandSlug: string;
+  chapterSlug: string;
+  courseSlug: string;
+  lessonId: string;
   prerequisiteLessonId?: string | null;
 }) {
   const t = await getExtracted();
   const canGenerateLesson = brandSlug === AI_ORG_SLUG;
   const generationLessonId = prerequisiteLessonId ?? lessonId;
   const isBlockedByPrerequisite = Boolean(prerequisiteLessonId);
+  const chapterHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}` as const;
 
   return (
     <Empty className="border-0">
@@ -44,8 +50,8 @@ export async function LessonNotGenerated({
         </EmptyDescription>
       </EmptyHeader>
 
-      {canGenerateLesson && (
-        <EmptyContent>
+      <EmptyContent>
+        {canGenerateLesson && (
           <Link
             className={buttonVariants({ variant: "outline" })}
             href={`/generate/l/${generationLessonId}`}
@@ -55,8 +61,9 @@ export async function LessonNotGenerated({
             <SparklesIcon data-icon="inline-start" />
             {isBlockedByPrerequisite ? t("Open required lesson") : t("Create lesson")}
           </Link>
-        </EmptyContent>
-      )}
+        )}
+        <GenerationExitLink href={chapterHref}>{t("Back to chapter")}</GenerationExitLink>
+      </EmptyContent>
     </Empty>
   );
 }

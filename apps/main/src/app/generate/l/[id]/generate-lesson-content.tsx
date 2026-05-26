@@ -1,4 +1,5 @@
 import { LoginRequired } from "@/components/auth/login-required";
+import { GenerationExitLink } from "@/components/generation/generation-exit-link";
 import { SubscriptionGate } from "@/components/subscription/subscription-gate";
 import { getLessonForGeneration } from "@/data/lessons/get-lesson-for-generation";
 import { getLessonDisplayMeta } from "@/lib/lessons";
@@ -107,6 +108,7 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
                 <SparklesIcon data-icon="inline-start" />
                 {t("Open required lesson")}
               </Link>
+              <GenerationExitLink href={backHref}>{backLabel}</GenerationExitLink>
             </EmptyContent>
           </Empty>
         </ContainerBody>
@@ -138,6 +140,7 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
             lessonKind={lesson.kind}
             lessonSlug={lesson.slug}
           />
+          <GenerationExitLink href={backHref}>{backLabel}</GenerationExitLink>
         </SubscriptionGate>
       </ContainerBody>
     </Container>

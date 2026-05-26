@@ -181,6 +181,10 @@ test.describe("Generate Course Page", () => {
       await expect(page.getByText(/creating your course/iu)).toBeVisible({ timeout: 10_000 });
 
       await expect(page.getByText(/this usually takes about 2 minutes/iu)).toBeVisible();
+
+      const exitLink = page.getByRole("link", { name: /back home/iu });
+      await expect(exitLink).toBeVisible();
+      await expect(exitLink).toHaveAttribute("href", "/");
     });
   });
 

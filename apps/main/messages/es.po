@@ -963,6 +963,11 @@ msgstr "Abrir la lección requerida"
 msgid "ZzznjM"
 msgstr "Crear lección"
 
+#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
+#: src/app/generate/l/[id]/generate-lesson-content.tsx
+msgid "/N8rYN"
+msgstr "Volver al capítulo"
+
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgid "mA7vCW"
 msgstr "Revisión bloqueada"
@@ -1088,6 +1093,10 @@ msgstr "Guardando tu progreso..."
 msgid "XxZuJi"
 msgstr "Juntando todo..."
 
+#: src/app/generate/cs/[id]/generate-course-suggestion-content.tsx
+msgid "rPgekg"
+msgstr "Volver al inicio"
+
 #: src/app/generate/cs/[id]/generation-client.tsx
 msgid "DFlapX"
 msgstr "Creando tu curso"
@@ -1207,10 +1216,6 @@ msgstr "Resumiendo lo que aprenderás..."
 #: src/app/generate/cs/[id]/use-generation-phases.ts
 msgid "9r/4zz"
 msgstr "Escribiendo la descripción general..."
-
-#: src/app/generate/l/[id]/generate-lesson-content.tsx
-msgid "/N8rYN"
-msgstr "Volver al capítulo"
 
 #: src/app/generate/l/[id]/generate-lesson-content.tsx
 msgid "kXZ7ZI"

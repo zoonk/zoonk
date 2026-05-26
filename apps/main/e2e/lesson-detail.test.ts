@@ -460,6 +460,11 @@ test.describe("Lesson Player Page", () => {
     await expect(generateLink).toBeVisible();
     await expect(generateLink).toHaveAttribute("href", new RegExp(`/generate/l/${lesson.id}`, "u"));
     await expect(generateLink).toHaveAttribute("rel", "nofollow");
+
+    const chapterLink = page.getByRole("link", { name: /back to chapter/iu });
+    await expect(chapterLink).toBeVisible();
+
+    await expect(chapterLink).toHaveAttribute("href", `/b/ai/c/${course.slug}/ch/${chapter.slug}`);
   });
 
   test("blocked practice lessons link to the required explanation generation page", async ({
