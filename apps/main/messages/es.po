@@ -267,6 +267,18 @@ msgstr "Aciertos"
 msgid "4dsZTc"
 msgstr "{value}% de respuestas correctas"
 
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
+msgid "9SgWiD"
+msgstr "Capítulo no disponible"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
+msgid "ml8Duy"
+msgstr "Este capítulo aún no se ha creado."
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
+msgid "3IOFp2"
+msgstr "Crear capítulo"
+
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgid "ssvp3R"
 msgstr "Buscar lecciones..."
