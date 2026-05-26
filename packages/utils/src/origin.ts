@@ -48,26 +48,26 @@ export function buildAuthLoginUrl({ callbackUrl }: { callbackUrl: string }): str
 }
 
 const ZOONK_DOMAINS = ["zoonk.com", "zoonk.dev"];
-const ZOONK_STAGING_API_DOMAIN = "api.zoonk.dev";
-const ZOONK_VERCEL_PREVIEW_HOST = "*-zoonk.vercel.app";
-const ZOONK_VERCEL_PREVIEW_ORIGIN_SUFFIX = "-zoonk.vercel.app";
 
 /**
  * Builds the allowed hosts list for Better Auth's dynamic base URL.
- * Includes zoonk domains, localhost (dev/e2e), and Vercel previews for
- * environments that are allowed to receive requests from preview frontends.
+ * Includes zoonk domains, localhost (dev/e2e), and Vercel previews (non-production).
  */
 export function getAllowedHosts(): string[] {
   return [
     ...ZOONK_DOMAINS.flatMap((domain) => [domain, `*.${domain}`]),
     ...(isLocalhostSupported() ? ["localhost:*"] : []),
-    ...(canAcceptVercelPreviewOrigins() ? [ZOONK_VERCEL_PREVIEW_HOST] : []),
+    ...(getEnvironment() === "production" ? [] : ["*-zoonk.vercel.app"]),
   ];
 }
 
 /**
- * Matches the exact domain or an HTTPS subdomain. This keeps origin checks
- * small and explicit so lookalike domains such as zoonk.com.evil.com fail.
+ * Checks if an origin is allowed for CORS.
+ *
+ * Allows:
+ * - Any subdomain of zoonk.com, zoonk.dev (https only)
+ * - localhost with valid port (dev/e2e only)
+ * - Vercel preview deployments (*-zoonk.vercel.app, https only, non-production only)
  */
 function isHttpsOriginOf(origin: string, domain: string): boolean {
   return (
@@ -76,32 +76,6 @@ function isHttpsOriginOf(origin: string, domain: string): boolean {
   );
 }
 
-/**
- * Tells shared origin checks whether this API host is the custom staging
- * environment. Vercel can still expose that deployment with production-like
- * runtime flags, so the configured app domain is the stable product boundary.
- */
-function isStagingApiDomain(): boolean {
-  return process.env.NEXT_PUBLIC_APP_DOMAIN === ZOONK_STAGING_API_DOMAIN;
-}
-
-/**
- * Decides whether this API deployment can receive browser requests from
- * Zoonk Vercel preview frontends. The staging API must support previews, while
- * the production API must stay closed to unreviewed preview deployments.
- */
-function canAcceptVercelPreviewOrigins(): boolean {
-  return getEnvironment() !== "production" || isStagingApiDomain();
-}
-
-/**
- * Checks if a browser origin may call the public API with credentials.
- *
- * Allows:
- * - Any subdomain of zoonk.com, zoonk.dev (https only)
- * - localhost with valid port (dev/e2e only)
- * - Vercel preview deployments (*-zoonk.vercel.app, https only, preview/staging only)
- */
 export function isCorsAllowedOrigin(origin: string): boolean {
   if (ZOONK_DOMAINS.some((domain) => isHttpsOriginOf(origin, domain))) {
     return true;
@@ -115,12 +89,12 @@ export function isCorsAllowedOrigin(origin: string): boolean {
     return true;
   }
 
-  // The production API domain rejects Vercel preview origins to prevent
-  // untested preview deployments from making requests to production data.
+  // Production servers reject Vercel preview origins to prevent
+  // untested preview deployments from making requests to production.
   const isAllowedVercelPreview =
-    canAcceptVercelPreviewOrigins() &&
+    getEnvironment() !== "production" &&
     origin.startsWith("https://") &&
-    origin.endsWith(ZOONK_VERCEL_PREVIEW_ORIGIN_SUFFIX);
+    origin.endsWith("-zoonk.vercel.app");
 
   return isAllowedVercelPreview;
 }

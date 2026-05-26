@@ -74,15 +74,8 @@ describe(getAllowedHosts, () => {
   });
 
   it("excludes *-zoonk.vercel.app in Vercel production", () => {
-    vi.stubEnv("NEXT_PUBLIC_APP_DOMAIN", "api.zoonk.com");
     vi.stubEnv("VERCEL_ENV", "production");
     expect(getAllowedHosts()).not.toContain("*-zoonk.vercel.app");
-  });
-
-  it("includes *-zoonk.vercel.app for the staging API domain", () => {
-    vi.stubEnv("NEXT_PUBLIC_APP_DOMAIN", "api.zoonk.dev");
-    vi.stubEnv("VERCEL_ENV", "production");
-    expect(getAllowedHosts()).toContain("*-zoonk.vercel.app");
   });
 });
 
@@ -171,20 +164,8 @@ describe(isCorsAllowedOrigin, () => {
     });
 
     it("rejects vercel preview deployments in production", () => {
-      vi.stubEnv("NEXT_PUBLIC_APP_DOMAIN", "api.zoonk.com");
       vi.stubEnv("VERCEL_ENV", "production");
       expect(isCorsAllowedOrigin("https://my-branch-zoonk.vercel.app")).toBe(false);
-    });
-
-    it("allows vercel preview deployments for the staging API domain", () => {
-      vi.stubEnv("NEXT_PUBLIC_APP_DOMAIN", "api.zoonk.dev");
-      vi.stubEnv("VERCEL_ENV", "production");
-
-      const isAllowed = isCorsAllowedOrigin(
-        "https://zoonk-git-cw-restore-explore-courses-link-zoonk.vercel.app",
-      );
-
-      expect(isAllowed).toBe(true);
     });
   });
 
