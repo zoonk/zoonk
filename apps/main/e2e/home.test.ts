@@ -18,10 +18,13 @@ test.describe("Home Page - Unauthenticated", () => {
 
     await expect(hero.getByRole("heading", { name: /learn anything with ai/iu })).toBeVisible();
 
-    const loginLink = hero.getByRole("link", { name: "Log in to save your progress" });
+    const exploreCoursesLink = hero.getByRole("link", { name: "Explore courses" });
 
-    await expect(hero.getByRole("link", { name: "Explore courses" })).not.toBeVisible();
-    await expect(loginLink).toHaveAttribute("href", "/login");
+    await expect(exploreCoursesLink).toHaveAttribute("href", "/courses");
+
+    await expect(
+      hero.getByRole("link", { name: "Log in to save your progress" }),
+    ).not.toBeVisible();
 
     await hero.getByRole("link", { exact: true, name: "Create a course with AI" }).click();
 
@@ -60,6 +63,8 @@ test.describe("Home Page - Authenticated", () => {
     await expect(
       userWithoutProgress.getByRole("heading", { name: /learn anything with ai/iu }),
     ).toBeVisible();
+
+    await expect(userWithoutProgress.getByRole("link", { name: "Explore courses" })).toBeVisible();
 
     await expect(
       userWithoutProgress.getByRole("link", { name: "Log in to save your progress" }),
