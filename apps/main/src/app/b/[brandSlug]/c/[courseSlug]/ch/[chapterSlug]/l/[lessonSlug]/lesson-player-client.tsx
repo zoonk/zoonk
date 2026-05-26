@@ -29,6 +29,7 @@ export function LessonPlayerClient({
   chapterSlug,
   isAuthenticated,
   lessonDescription,
+  lessonSlug,
   lessonTitle,
   nextChapter,
   nextLesson,
@@ -43,6 +44,7 @@ export function LessonPlayerClient({
   chapterSlug: string;
   isAuthenticated: boolean;
   lessonDescription: string;
+  lessonSlug: string;
   lessonTitle: string;
   nextChapter: { brandSlug: string; chapterSlug: string; courseSlug: string } | null;
   nextLesson: { chapterSlug: string; lessonSlug: string; lessonTitle: string | null } | null;
@@ -76,18 +78,20 @@ export function LessonPlayerClient({
     }
 
     trackPlayerLoaded({
-      lessonId: lesson.id,
+      courseSlug,
       lessonKind: lesson.kind,
+      lessonSlug,
       stepCount: lesson.steps.length,
     });
-  }, [lesson.id, lesson.kind, lesson.steps.length]);
+  }, [courseSlug, lesson.id, lesson.kind, lessonSlug, lesson.steps.length]);
 
   /** Fire-and-forget: analytics runs for all learners; persistence requires auth. */
   const handleComplete = useCallback(
     (input: CompletionInput) => {
       trackLessonCompleted({
-        lessonId: input.lessonId,
+        courseSlug,
         lessonKind: lesson.kind,
+        lessonSlug,
         startedAt: input.startedAt,
         stepCount: lesson.steps.length,
       });
@@ -98,7 +102,7 @@ export function LessonPlayerClient({
 
       void submitCompletion(input);
     },
-    [isAuthenticated, lesson.kind, lesson.steps.length],
+    [courseSlug, isAuthenticated, lesson.kind, lessonSlug, lesson.steps.length],
   );
 
   /** Fire once after the first forward step change; completion handles short lessons. */
@@ -108,8 +112,9 @@ export function LessonPlayerClient({
         hasTrackedSecondStep.current = true;
 
         trackPlayerSecondStep({
-          lessonId: event.lessonId,
+          courseSlug,
           lessonKind: lesson.kind,
+          lessonSlug,
           stepCount: lesson.steps.length,
         });
       }
@@ -126,7 +131,7 @@ export function LessonPlayerClient({
       hasRequestedNextLessonPreload.current = true;
       void preloadNextLesson(event.lessonId);
     },
-    [isAuthenticated, lesson.kind, lesson.steps.length],
+    [courseSlug, isAuthenticated, lesson.kind, lessonSlug, lesson.steps.length],
   );
 
   return (
