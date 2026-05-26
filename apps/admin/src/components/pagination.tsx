@@ -8,21 +8,44 @@ import {
   PaginationPrevious,
 } from "@zoonk/ui/components/pagination";
 
-function buildPageUrl(
-  basePath: string,
-  pageNumber: number,
-  limit: number,
-  search?: string,
-): string {
-  const params = new URLSearchParams();
-  params.set("page", pageNumber.toString());
-  params.set("limit", limit.toString());
+type PaginationQueryParams = Record<string, string | undefined>;
+type PaginationEntry = [string, string | undefined] | undefined;
 
-  if (search) {
-    params.set("search", search);
-  }
+/**
+ * Pagination links need to carry page state plus route-specific filters, such
+ * as the generated lesson status, while dropping empty query values.
+ */
+function buildPageUrl({
+  basePath,
+  limit,
+  pageNumber,
+  queryParams,
+  search,
+}: {
+  basePath: string;
+  limit: number;
+  pageNumber: number;
+  queryParams?: PaginationQueryParams;
+  search?: string;
+}): string {
+  const rawEntries: PaginationEntry[] = [
+    ...Object.entries(queryParams ?? {}),
+    ["page", pageNumber.toString()],
+    ["limit", limit.toString()],
+    search ? ["search", search] : undefined,
+  ];
 
-  return `${basePath}?${params.toString()}`;
+  const entries = rawEntries.filter((entry) => isPaginationEntry(entry));
+
+  return `${basePath}?${new URLSearchParams(entries).toString()}`;
+}
+
+/**
+ * URLSearchParams only accepts complete string pairs. This guard lets callers
+ * build declarative conditional arrays without leaking falsey placeholders.
+ */
+function isPaginationEntry(entry: PaginationEntry): entry is [string, string] {
+  return Array.isArray(entry) && Boolean(entry[1]);
 }
 
 function getVisiblePageNumbers(currentPage: number, totalPages: number): number[] {
@@ -46,12 +69,14 @@ export function AdminPagination({
   limit,
   totalPages,
   search,
+  queryParams,
 }: {
   basePath: string;
   page: number;
   limit: number;
   totalPages: number;
   search?: string;
+  queryParams?: PaginationQueryParams;
 }) {
   if (totalPages <= 1) {
     return null;
@@ -69,7 +94,11 @@ export function AdminPagination({
           <PaginationPrevious
             aria-disabled={isFirstPage}
             className={isFirstPage ? "pointer-events-none opacity-50" : ""}
-            href={isFirstPage ? "#" : buildPageUrl(basePath, page - 1, limit, search)}
+            href={
+              isFirstPage
+                ? "#"
+                : buildPageUrl({ basePath, limit, pageNumber: page - 1, queryParams, search })
+            }
           />
         </PaginationItem>
 
@@ -83,7 +112,13 @@ export function AdminPagination({
                 href={
                   pageOrEllipsis === page
                     ? "#"
-                    : buildPageUrl(basePath, pageOrEllipsis, limit, search)
+                    : buildPageUrl({
+                        basePath,
+                        limit,
+                        pageNumber: pageOrEllipsis,
+                        queryParams,
+                        search,
+                      })
                 }
                 isActive={pageOrEllipsis === page}
               >
@@ -97,7 +132,11 @@ export function AdminPagination({
           <PaginationNext
             aria-disabled={isLastPage}
             className={isLastPage ? "pointer-events-none opacity-50" : ""}
-            href={isLastPage ? "#" : buildPageUrl(basePath, page + 1, limit, search)}
+            href={
+              isLastPage
+                ? "#"
+                : buildPageUrl({ basePath, limit, pageNumber: page + 1, queryParams, search })
+            }
           />
         </PaginationItem>
       </PaginationContent>

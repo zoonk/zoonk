@@ -15,13 +15,14 @@ export async function CourseList({
 
   return (
     <>
-      <div className="rounded-lg border">
+      <div className="overflow-x-auto rounded-lg border">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Title</TableHead>
               <TableHead>Organization</TableHead>
               <TableHead>Language</TableHead>
+              <TableHead className="text-right">Completed Lessons</TableHead>
               <TableHead>Published</TableHead>
               <TableHead>Created At</TableHead>
             </TableRow>

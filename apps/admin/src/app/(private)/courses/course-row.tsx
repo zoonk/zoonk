@@ -1,12 +1,15 @@
-import { type Course, type Organization } from "@zoonk/db";
+import { type ListedCourse } from "@/data/courses/list-courses";
 import { TableCell, TableRow } from "@zoonk/ui/components/table";
 
-export function CourseRow({ course }: { course: Course & { organization: Organization | null } }) {
+export function CourseRow({ course }: { course: ListedCourse }) {
   return (
     <TableRow>
       <TableCell className="font-medium">{course.title}</TableCell>
       <TableCell>{course.organization?.name ?? "—"}</TableCell>
       <TableCell className="uppercase">{course.language}</TableCell>
+      <TableCell className="text-right tabular-nums">
+        {course.completedLessonCount.toLocaleString()}
+      </TableCell>
 
       <TableCell>
         {course.isPublished ? (
