@@ -170,7 +170,7 @@ function UnauthenticatedContent({
           )}
           href={loginHref}
         >
-          {t("Login")}
+          {t("Log in to save your progress")}
         </PlayerLink>
 
         {nextLessonHref && (

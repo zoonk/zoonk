@@ -82,8 +82,8 @@ msgstr "Sign up to track your progress"
 
 #: src/components/completion-auth-branch.tsx
 #: src/components/completion-milestone-actions.tsx
-msgid "AyGauy"
-msgstr "Login"
+msgid "M8B177"
+msgstr "Log in to save your progress"
 
 #: src/components/completion-milestone-actions.tsx
 msgid "DiIkZH"

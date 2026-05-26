@@ -94,7 +94,7 @@ export function UnauthenticatedMilestoneActions({ loginHref }: { loginHref: Play
 
       <div className="flex w-full flex-col gap-3" data-slot="completion-actions">
         <PlayerLink className={cn(buttonVariants(), "w-full")} href={loginHref}>
-          {t("Login")}
+          {t("Log in to save your progress")}
         </PlayerLink>
 
         <SecondaryActionLink href={milestone.reviewHref} shortcut="Esc">
