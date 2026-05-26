@@ -1,3 +1,5 @@
+import { LoginRequired } from "@/components/auth/login-required";
+import { getSession } from "@zoonk/core/users/session/get";
 import { shuffle } from "@zoonk/utils/shuffle";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -19,6 +21,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Learn() {
   const t = await getExtracted();
+  const session = await getSession();
+
+  if (!session) {
+    return <LoginRequired backHref="/" backLabel={t("Back home")} title={t("Create Course")} />;
+  }
 
   const allSuggestions = [
     t("Computer Science"),

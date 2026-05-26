@@ -48,11 +48,19 @@ export function workflowTriggerEndpoint({
 }) {
   return {
     post: {
-      ...(requiresSubscription && { description: "Requires active subscription." }),
+      description: [
+        "Requires authentication.",
+        requiresSubscription
+          ? "Requires active subscription when the free generation rule does not apply."
+          : null,
+      ]
+        .filter(Boolean)
+        .join(" "),
       requestBody: { content: { "application/json": { schema } } },
       responses: {
         "200": workflowStartedResponse,
         "400": validationErrorResponse,
+        "401": unauthorizedResponse,
         ...(requiresSubscription && { "402": subscriptionRequiredResponse }),
       },
       summary,

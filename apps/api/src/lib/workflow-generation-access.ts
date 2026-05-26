@@ -1,3 +1,4 @@
+import { auth } from "@zoonk/core/auth";
 import { hasActiveSubscription } from "@zoonk/core/auth/subscription";
 import {
   type Chapter,
@@ -6,6 +7,7 @@ import {
   getAiGenerationLessonWhere,
   prisma,
 } from "@zoonk/db";
+import { errors } from "./api-errors";
 
 type LessonWithChapter = Lesson & { chapter: Chapter };
 
@@ -54,16 +56,39 @@ export function requiresSubscriptionForLessonGeneration(lesson: {
 }
 
 /**
- * First-chapter workflow triggers should not even touch auth, while later
- * chapters must keep using the normal active-subscription check.
+ * Workflow generation is account-bound before route-specific ids are parsed or
+ * looked up. That keeps anonymous callers from probing workflow trigger inputs
+ * and prevents client-only page gates from protecting expensive starts.
  */
-export async function hasWorkflowSubscriptionAccess(params: {
+export async function getWorkflowAuthenticationError(params: { headers: Headers }) {
+  const session = await auth.api.getSession({ headers: params.headers });
+
+  if (!session) {
+    return errors.unauthorized();
+  }
+
+  return null;
+}
+
+/**
+ * Paid-plan checks still depend on the trusted chapter or lesson row because
+ * first-chapter content is free for signed-in learners. Run this only after the
+ * route has loaded the AI-owned entity and knows whether the subscription rule
+ * applies.
+ */
+export async function getWorkflowSubscriptionAccessError(params: {
   headers: Headers;
   requiresSubscription: boolean;
 }) {
   if (!params.requiresSubscription) {
-    return true;
+    return null;
   }
 
-  return hasActiveSubscription(params.headers);
+  const hasSubscription = await hasActiveSubscription(params.headers);
+
+  if (!hasSubscription) {
+    return errors.paymentRequired();
+  }
+
+  return null;
 }

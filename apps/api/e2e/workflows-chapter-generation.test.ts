@@ -4,6 +4,7 @@ import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { createOrganization, getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { normalizeString } from "@zoonk/utils/string";
+import { createAuthenticatedApiContext, createSubscribedApiContext } from "./helpers/auth";
 
 test.describe("Chapter Generation Workflow API", () => {
   let baseURL: string;
@@ -20,8 +21,58 @@ test.describe("Chapter Generation Workflow API", () => {
     await prisma.$disconnect();
   });
 
-  test("returns validation error when chapterId is missing", async () => {
+  test("returns 401 when triggering chapter generation without a session", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const courseTitle = `E2E Chapter Auth ${uniqueId}`;
+
+    const course = await prisma.course.create({
+      data: {
+        description: "Test course for chapter generation auth",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: normalizeString(courseTitle),
+        organizationId: aiOrgId,
+        slug: `e2e-chapter-auth-${uniqueId}`,
+        title: courseTitle,
+      },
+    });
+
+    const chapter = await prisma.chapter.create({
+      data: {
+        courseId: course.id,
+        description: "Test chapter for auth",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: normalizeString("Test Chapter Auth"),
+        organizationId: aiOrgId,
+        position: 0,
+        slug: `e2e-chapter-auth-${uniqueId}`,
+        title: "Test Chapter Auth",
+      },
+    });
+
     const apiContext = await request.newContext({ baseURL });
+
+    const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
+      data: { chapterId: chapter.id },
+    });
+
+    expect(response.status()).toBe(401);
+
+    const body = await response.json();
+
+    expect(body.error).toBeDefined();
+    expect(body.error.code).toBe("UNAUTHORIZED");
+    expect(body.error.message).toBe("Authentication required");
+
+    await apiContext.dispose();
+  });
+
+  test("returns validation error when chapterId is missing", async () => {
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "chapter-validation-missing",
+    });
 
     const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
       data: {},
@@ -38,7 +89,10 @@ test.describe("Chapter Generation Workflow API", () => {
   });
 
   test("returns validation error when chapterId is invalid type", async () => {
-    const apiContext = await request.newContext({ baseURL });
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "chapter-validation-type",
+    });
 
     const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
       data: { chapterId: "invalid" },
@@ -55,7 +109,10 @@ test.describe("Chapter Generation Workflow API", () => {
   });
 
   test("returns validation error when chapterId is negative", async () => {
-    const apiContext = await request.newContext({ baseURL });
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "chapter-validation-negative",
+    });
 
     const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
       data: { chapterId: -1 },
@@ -102,7 +159,10 @@ test.describe("Chapter Generation Workflow API", () => {
       },
     });
 
-    const apiContext = await request.newContext({ baseURL });
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "chapter-no-subscription",
+    });
 
     const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
       data: { chapterId: chapter.id },
@@ -123,7 +183,7 @@ test.describe("Chapter Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("allows first chapter generation without subscription", async () => {
+  test("allows signed-in first chapter generation without subscription", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const courseTitle = `E2E First Chapter Free ${uniqueId}`;
 
@@ -154,7 +214,10 @@ test.describe("Chapter Generation Workflow API", () => {
       },
     });
 
-    const apiContext = await request.newContext({ baseURL });
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "chapter-first-free",
+    });
 
     const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
       data: { chapterId: chapter.id },
@@ -200,7 +263,10 @@ test.describe("Chapter Generation Workflow API", () => {
       },
     });
 
-    const apiContext = await request.newContext({ baseURL });
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "chapter-non-ai",
+    });
 
     const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
       data: { chapterId: chapter.id },
@@ -227,32 +293,7 @@ test.describe("Chapter Generation Workflow API", () => {
 
   test("starts workflow successfully with active subscription", async () => {
     const uniqueId = randomUUID().slice(0, 8);
-    const email = `e2e-chapter-${uniqueId}@zoonk.test`;
-    const password = "password123";
-
-    // Create unique user via sign-up API
-    const signupContext = await request.newContext({ baseURL });
-
-    const signupResponse = await signupContext.post("/v1/auth/sign-up/email", {
-      data: { email, name: `E2E User ${uniqueId}`, password },
-    });
-
-    expect(signupResponse.ok()).toBe(true);
-    await signupContext.dispose();
-
-    // Get the user and create subscription
-    const user = await prisma.user.findUniqueOrThrow({ where: { email } });
-
-    await prisma.subscription.create({
-      data: {
-        id: randomUUID(),
-        plan: "hobby",
-        referenceId: user.id,
-        status: "active",
-        stripeCustomerId: `cus_test_${uniqueId}`,
-        stripeSubscriptionId: `sub_test_${uniqueId}`,
-      },
-    });
+    const { apiContext } = await createSubscribedApiContext({ baseURL, prefix: "chapter-success" });
 
     // Create test course and chapter with unique slugs
     const course = await prisma.course.create({
@@ -281,15 +322,6 @@ test.describe("Chapter Generation Workflow API", () => {
         title: "Test Chapter Success",
       },
     });
-
-    // Sign in and test
-    const apiContext = await request.newContext({ baseURL });
-
-    const signInResponse = await apiContext.post("/v1/auth/sign-in/email", {
-      data: { email, password },
-    });
-
-    expect(signInResponse.ok()).toBe(true);
 
     const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
       data: { chapterId: chapter.id },

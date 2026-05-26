@@ -387,12 +387,20 @@ msgid "47FYwb"
 msgstr "Cancel"
 
 #: src/app/(catalog)/learn/[prompt]/course-suggestions.tsx
-msgid "7x4411"
-msgstr "Course ideas for {prompt}"
-
-#: src/app/(catalog)/learn/[prompt]/course-suggestions.tsx
+#: src/app/generate/c/[slug]/generate-course-content.tsx
 msgid "RbslnC"
 msgstr "Change subject"
+
+#: src/app/(catalog)/learn/[prompt]/course-suggestions.tsx
+#: src/app/(catalog)/learn/page.tsx
+#: src/app/generate/c/[slug]/generate-course-content.tsx
+#: src/app/generate/cs/[id]/generate-course-suggestion-content.tsx
+msgid "LvUoVs"
+msgstr "Create Course"
+
+#: src/app/(catalog)/learn/[prompt]/course-suggestions.tsx
+msgid "7x4411"
+msgstr "Course ideas for {prompt}"
 
 #: src/app/(catalog)/learn/[prompt]/page.tsx
 msgid "CaU/nf"
@@ -413,6 +421,11 @@ msgstr "Tell Zoonk what you want to learn and get a course created with AI. Star
 #: src/app/(catalog)/learn/page.tsx
 msgid "Zs1QEq"
 msgstr "Learn Anything with AI"
+
+#: src/app/(catalog)/learn/page.tsx
+#: src/app/generate/cs/[id]/generate-course-suggestion-content.tsx
+msgid "rPgekg"
+msgstr "Back home"
 
 #: src/app/(catalog)/learn/page.tsx
 msgid "l450Bl"
@@ -993,6 +1006,7 @@ msgid "ZzznjM"
 msgstr "Create lesson"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
+#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
 #: src/app/generate/l/[id]/generate-lesson-content.tsx
 msgid "/N8rYN"
 msgstr "Back to chapter"
@@ -1105,10 +1119,6 @@ msgstr "Saving your progress..."
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgid "JUr8Er"
 msgstr "Finishing up..."
-
-#: src/app/generate/cs/[id]/generate-course-suggestion-content.tsx
-msgid "rPgekg"
-msgstr "Back home"
 
 #: src/app/generate/cs/[id]/generation-client.tsx
 msgid "DFlapX"

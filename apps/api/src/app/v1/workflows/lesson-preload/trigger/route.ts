@@ -3,7 +3,8 @@ import { parseBody } from "@/lib/body-parser";
 import { lessonPreloadTriggerSchema } from "@/lib/openapi/schemas/workflows";
 import {
   getAiGenerationLessonForWorkflow,
-  hasWorkflowSubscriptionAccess,
+  getWorkflowAuthenticationError,
+  getWorkflowSubscriptionAccessError,
   requiresSubscriptionForLessonGeneration,
 } from "@/lib/workflow-generation-access";
 import { lessonPreloadWorkflow } from "@/workflows/lesson-preload/lesson-preload-workflow";
@@ -11,6 +12,12 @@ import { type NextRequest, NextResponse } from "next/server";
 import { start } from "workflow/api";
 
 export async function POST(request: NextRequest) {
+  const authError = await getWorkflowAuthenticationError({ headers: request.headers });
+
+  if (authError) {
+    return authError;
+  }
+
   const parsed = await parseBody(request, lessonPreloadTriggerSchema);
 
   if (!parsed.success) {
@@ -23,13 +30,13 @@ export async function POST(request: NextRequest) {
     return errors.notFound();
   }
 
-  const hasAccess = await hasWorkflowSubscriptionAccess({
+  const accessError = await getWorkflowSubscriptionAccessError({
     headers: request.headers,
     requiresSubscription: requiresSubscriptionForLessonGeneration(lesson),
   });
 
-  if (!hasAccess) {
-    return errors.paymentRequired();
+  if (accessError) {
+    return accessError;
   }
 
   const run = await start(lessonPreloadWorkflow, [parsed.data.lessonId]);

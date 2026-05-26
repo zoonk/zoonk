@@ -54,10 +54,24 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
     notFound();
   }
 
-  const hasStarted = lesson.generationStatus !== "pending";
   const isFirstChapter = lesson.chapter.position === 0;
-  const bypassAuth = isFirstChapter || hasStarted;
+
+  const bypassSubscription =
+    isFirstChapter ||
+    lesson.generationStatus === "running" ||
+    lesson.generationStatus === "completed";
+
   const t = await getExtracted();
+
+  const backHref =
+    `/b/${AI_ORG_SLUG}/c/${lesson.chapter.course.slug}/ch/${lesson.chapter.slug}` as const;
+
+  const backLabel = t("Back to chapter");
+
+  if (!session) {
+    return <LoginRequired backHref={backHref} backLabel={backLabel} title={t("Create Lesson")} />;
+  }
+
   const lessonMeta = await getLessonDisplayMeta(lesson);
 
   const blockingPrerequisite = shouldCheckGenerationPrerequisites({
@@ -65,11 +79,6 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
   })
     ? await getBlockingLessonGenerationPrerequisite(lesson)
     : null;
-
-  const backHref =
-    `/b/${AI_ORG_SLUG}/c/${lesson.chapter.course.slug}/ch/${lesson.chapter.slug}` as const;
-
-  const backLabel = t("Back to chapter");
 
   const initialStatus = getInitialGenerationPageStatus({
     generationStatus: lesson.generationStatus,
@@ -116,10 +125,6 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
     );
   }
 
-  if (!session && !bypassAuth) {
-    return <LoginRequired backHref={backHref} backLabel={backLabel} title={t("Create Lesson")} />;
-  }
-
   return (
     <Container variant="narrow">
       <ContainerHeader>
@@ -130,7 +135,7 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
       </ContainerHeader>
 
       <ContainerBody>
-        <SubscriptionGate backHref={backHref} backLabel={backLabel} bypass={bypassAuth}>
+        <SubscriptionGate backHref={backHref} backLabel={backLabel} bypass={bypassSubscription}>
           <GenerationClient
             chapterSlug={lesson.chapter.slug}
             courseSlug={lesson.chapter.course.slug}

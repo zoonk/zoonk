@@ -1,8 +1,10 @@
+import { LoginRequired } from "@/components/auth/login-required";
 import { GenerationExitLink } from "@/components/generation/generation-exit-link";
 import {
   getCourseSuggestionById,
   getLinkedCourseForSuggestion,
 } from "@/data/courses/course-suggestions";
+import { getSession } from "@zoonk/core/users/session/get";
 import {
   Container,
   ContainerBody,
@@ -38,6 +40,11 @@ export async function GenerateCourseSuggestionContent({
   }
 
   const t = await getExtracted();
+  const session = await getSession();
+
+  if (!session) {
+    return <LoginRequired backHref="/" backLabel={t("Back home")} title={t("Create Course")} />;
+  }
 
   return (
     <Container variant="narrow">
