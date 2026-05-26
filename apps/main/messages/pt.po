@@ -213,8 +213,10 @@ msgid "jHCDDq"
 msgstr "Criar um curso com IA"
 
 #: src/app/(catalog)/(home)/hero.tsx
-msgid "M8B177"
-msgstr "Entrar para salvar seu progresso"
+#: src/app/(catalog)/courses/page.tsx
+#: src/app/(catalog)/my/user-course-list.tsx
+msgid "s+Ncqj"
+msgstr "Explorar cursos"
 
 #: src/app/(catalog)/(home)/level.tsx
 #: src/app/(progress)/level/level-stats.tsx
@@ -359,11 +361,6 @@ msgstr "Explore todos os cursos do Zoonk para aprender qualquer coisa usando IA.
 #: src/app/(catalog)/courses/page.tsx
 msgid "P5jxUC"
 msgstr "Cursos online usando IA"
-
-#: src/app/(catalog)/courses/page.tsx
-#: src/app/(catalog)/my/user-course-list.tsx
-msgid "s+Ncqj"
-msgstr "Explorar cursos"
 
 #: src/app/(catalog)/courses/page.tsx
 msgid "hUF3bo"
