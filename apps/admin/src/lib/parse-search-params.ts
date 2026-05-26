@@ -54,7 +54,13 @@ function parsePageSize(value: SearchParamValue): number {
  */
 function parseIntegerParam(value: SearchParamValue): number | null {
   const firstValue = getFirstSearchParam(value);
-  const parsedValue = Number(firstValue);
+  const trimmedValue = firstValue?.trim();
+
+  if (!trimmedValue) {
+    return null;
+  }
+
+  const parsedValue = Number(trimmedValue);
 
   if (!Number.isFinite(parsedValue)) {
     return null;
