@@ -6,6 +6,7 @@ import { createOrganization, getAiOrganization } from "@zoonk/e2e/fixtures/orgs"
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { createAuthenticatedApiContext } from "./helpers/auth";
 
 /**
  * Preload trigger tests should prove the subscription gate, not the lesson
@@ -60,12 +61,35 @@ test.describe("Lesson Preload Workflow API", () => {
     await prisma.$disconnect();
   });
 
+  test("returns 401 when triggering lesson preload without a session", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const lesson = await createAiLessonForPreload({ aiOrgId, chapterPosition: 0, uniqueId });
+    const apiContext = await request.newContext({ baseURL });
+
+    const response = await apiContext.post("/v1/workflows/lesson-preload/trigger", {
+      data: { lessonId: lesson.id },
+    });
+
+    expect(response.status()).toBe(401);
+
+    const body = await response.json();
+
+    expect(body.error).toBeDefined();
+    expect(body.error.code).toBe("UNAUTHORIZED");
+    expect(body.error.message).toBe("Authentication required");
+
+    await apiContext.dispose();
+  });
+
   test("returns 402 when a later chapter lesson has no active subscription", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
     const lesson = await createAiLessonForPreload({ aiOrgId, chapterPosition: 1, uniqueId });
 
-    const apiContext = await request.newContext({ baseURL });
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "preload-no-subscription",
+    });
 
     const response = await apiContext.post("/v1/workflows/lesson-preload/trigger", {
       data: { lessonId: lesson.id },
@@ -82,12 +106,15 @@ test.describe("Lesson Preload Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("allows first chapter lesson preload without subscription", async () => {
+  test("allows signed-in first chapter lesson preload without subscription", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
     const lesson = await createAiLessonForPreload({ aiOrgId, chapterPosition: 0, uniqueId });
 
-    const apiContext = await request.newContext({ baseURL });
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "preload-first-free",
+    });
 
     const response = await apiContext.post("/v1/workflows/lesson-preload/trigger", {
       data: { lessonId: lesson.id },
@@ -104,7 +131,7 @@ test.describe("Lesson Preload Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("returns 404 before skipping auth for non-AI first chapter lessons", async () => {
+  test("returns 404 for signed-in requests to non-AI first chapter lessons", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const org = await createOrganization();
 
@@ -130,7 +157,10 @@ test.describe("Lesson Preload Workflow API", () => {
       title: `E2E Non-AI Preload Lesson ${uniqueId}`,
     });
 
-    const apiContext = await request.newContext({ baseURL });
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "preload-non-ai",
+    });
 
     const response = await apiContext.post("/v1/workflows/lesson-preload/trigger", {
       data: { lessonId: lesson.id },

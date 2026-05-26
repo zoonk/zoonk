@@ -20,16 +20,16 @@ test.beforeAll(async () => {
 
 // Content feedback is tested on the course suggestions page where it's used
 test.describe("Content Feedback", () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`/learn/${encodeURIComponent(prompt)}`);
+  test.beforeEach(async ({ authenticatedPage }) => {
+    await authenticatedPage.goto(`/learn/${encodeURIComponent(prompt)}`);
 
     // Wait for content to load
-    await expect(page.getByText(suggestionTitle)).toBeVisible();
+    await expect(authenticatedPage.getByText(suggestionTitle)).toBeVisible();
   });
 
-  test("clicking feedback button marks it as pressed", async ({ page }) => {
-    const thumbsUp = page.getByRole("button", { name: /i liked it/iu });
-    const thumbsDown = page.getByRole("button", { name: /i didn't like it/iu });
+  test("clicking feedback button marks it as pressed", async ({ authenticatedPage }) => {
+    const thumbsUp = authenticatedPage.getByRole("button", { name: /i liked it/iu });
+    const thumbsDown = authenticatedPage.getByRole("button", { name: /i didn't like it/iu });
 
     // Initially neither should be pressed
     await expect(thumbsUp).toHaveAttribute("aria-pressed", "false");
@@ -46,11 +46,11 @@ test.describe("Content Feedback", () => {
     await expect(thumbsUp).toHaveAttribute("aria-pressed", "false");
   });
 
-  test("submit with valid data shows success message", async ({ page }) => {
-    const feedbackSubmission = await mockFeedbackSubmission(page);
+  test("submit with valid data shows success message", async ({ authenticatedPage }) => {
+    const feedbackSubmission = await mockFeedbackSubmission(authenticatedPage);
 
-    const feedbackButton = page.getByRole("button", { name: /send feedback/iu });
-    const dialog = page.getByRole("dialog");
+    const feedbackButton = authenticatedPage.getByRole("button", { name: /send feedback/iu });
+    const dialog = authenticatedPage.getByRole("dialog");
     await openDialog(feedbackButton, dialog);
 
     const emailInput = dialog.getByRole("textbox", { name: /email address/iu });
@@ -74,9 +74,9 @@ test.describe("Content Feedback", () => {
     });
   });
 
-  test("submit with invalid email shows validation error", async ({ page }) => {
-    const feedbackButton = page.getByRole("button", { name: /send feedback/iu });
-    const dialog = page.getByRole("dialog");
+  test("submit with invalid email shows validation error", async ({ authenticatedPage }) => {
+    const feedbackButton = authenticatedPage.getByRole("button", { name: /send feedback/iu });
+    const dialog = authenticatedPage.getByRole("dialog");
     await openDialog(feedbackButton, dialog);
 
     const emailInput = dialog.getByRole("textbox", { name: /email address/iu });
@@ -100,9 +100,9 @@ test.describe("Content Feedback", () => {
     await expect(emailInput).toBeFocused();
   });
 
-  test("submit failure shows error message", async ({ page }) => {
-    const feedbackButton = page.getByRole("button", { name: /send feedback/iu });
-    const dialog = page.getByRole("dialog");
+  test("submit failure shows error message", async ({ authenticatedPage }) => {
+    const feedbackButton = authenticatedPage.getByRole("button", { name: /send feedback/iu });
+    const dialog = authenticatedPage.getByRole("dialog");
     await openDialog(feedbackButton, dialog);
 
     const emailInput = dialog.getByRole("textbox", { name: /email address/iu });

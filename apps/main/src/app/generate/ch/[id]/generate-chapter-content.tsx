@@ -26,9 +26,14 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
     notFound();
   }
 
-  const hasStarted = chapter.generationStatus !== "pending";
   const isFirstChapter = chapter.position === 0;
-  const bypassAuth = isFirstChapter || hasStarted;
+
+  const bypassSubscription =
+    isFirstChapter ||
+    chapter.generationStatus === "running" ||
+    chapter.generationStatus === "failed" ||
+    chapter.generationStatus === "completed";
+
   const t = await getExtracted();
 
   const backHref = `/b/${AI_ORG_SLUG}/c/${chapter.course.slug}` as const;
@@ -39,7 +44,7 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
     isReadyForRedirect: chapter._count.lessons > 0,
   });
 
-  if (!session && !bypassAuth) {
+  if (!session) {
     return <LoginRequired backHref={backHref} backLabel={backLabel} title={t("Create Chapter")} />;
   }
 
@@ -55,7 +60,7 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
       </ContainerHeader>
 
       <ContainerBody>
-        <SubscriptionGate backHref={backHref} backLabel={backLabel} bypass={bypassAuth}>
+        <SubscriptionGate backHref={backHref} backLabel={backLabel} bypass={bypassSubscription}>
           <GenerationClient
             chapterId={id}
             chapterSlug={chapter.slug}

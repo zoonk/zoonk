@@ -3,6 +3,7 @@ import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
+import { createAuthenticatedApiContext } from "./helpers/auth";
 
 /**
  * Creates a valid suggestion that will not drive the real generation pipeline.
@@ -36,8 +37,37 @@ test.describe("Course Generation Workflow API", () => {
     await prisma.$disconnect();
   });
 
-  test("returns validation error when courseSuggestionId is missing", async () => {
+  test("returns 401 when triggering course generation without a session", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+
+    const suggestion = await createCompletedCourseSuggestion({
+      slug: `e2e-unauth-course-${uniqueId}`,
+      title: `E2E Unauth Course ${uniqueId}`,
+    });
+
     const apiContext = await request.newContext({ baseURL });
+
+    const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
+      data: { courseSuggestionId: suggestion.id },
+    });
+
+    expect(response.status()).toBe(401);
+
+    const body = await response.json();
+
+    expect(body.error).toBeDefined();
+    expect(body.error.code).toBe("UNAUTHORIZED");
+    expect(body.error.message).toBe("Authentication required");
+
+    await apiContext.dispose();
+  });
+
+  test("returns validation error when courseSuggestionId is missing", async () => {
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "course-validation-missing",
+    });
+
     const response = await apiContext.post("/v1/workflows/course-generation/trigger", { data: {} });
 
     expect(response.status()).toBe(400);
@@ -51,7 +81,10 @@ test.describe("Course Generation Workflow API", () => {
   });
 
   test("returns validation error when courseSuggestionId is invalid type", async () => {
-    const apiContext = await request.newContext({ baseURL });
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "course-validation-type",
+    });
 
     const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
       data: { courseSuggestionId: "invalid" },
@@ -68,7 +101,10 @@ test.describe("Course Generation Workflow API", () => {
   });
 
   test("returns validation error when courseSuggestionId is negative", async () => {
-    const apiContext = await request.newContext({ baseURL });
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "course-validation-negative",
+    });
 
     const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
       data: { courseSuggestionId: -1 },
@@ -92,7 +128,10 @@ test.describe("Course Generation Workflow API", () => {
       title: `E2E Workflow Test ${uniqueId}`,
     });
 
-    const apiContext = await request.newContext({ baseURL });
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "course-workflow",
+    });
 
     const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
       data: { courseSuggestionId: suggestion.id },
@@ -131,7 +170,10 @@ test.describe("Course Generation Workflow API", () => {
       title: `E2E Status Test ${uniqueId}`,
     });
 
-    const apiContext = await request.newContext({ baseURL });
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "course-status",
+    });
 
     // First trigger the workflow to get a runId
     const triggerResponse = await apiContext.post("/v1/workflows/course-generation/trigger", {

@@ -25,7 +25,8 @@ test.describe("Home Page - Unauthenticated", () => {
 
     await hero.getByRole("link", { exact: true, name: "Create a course with AI" }).click();
 
-    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
+    await expect(page).toHaveURL(/\/learn$/u);
+    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
   });
 
   test("does not show progress section", async ({ page }) => {

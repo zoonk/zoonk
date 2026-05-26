@@ -80,19 +80,23 @@ test.beforeAll(async () => {
 });
 
 test.describe("Learn Form", () => {
-  test("shows form with auto-focused input", async ({ page }) => {
-    await page.goto("/learn");
+  test("shows form with auto-focused input", async ({ authenticatedPage }) => {
+    await authenticatedPage.goto("/learn");
 
-    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
+    await expect(
+      authenticatedPage.getByRole("heading", { name: /learn anything/iu }),
+    ).toBeVisible();
 
-    const input = page.getByRole("textbox");
+    const input = authenticatedPage.getByRole("textbox");
     await expect(input).toBeFocused();
   });
 
-  test("clicking a suggestion link navigates to the subject page", async ({ page }) => {
-    await page.goto("/learn");
+  test("clicking a suggestion link navigates to the subject page", async ({
+    authenticatedPage,
+  }) => {
+    await authenticatedPage.goto("/learn");
 
-    const suggestions = page.getByRole("navigation", { name: /suggested subjects/iu });
+    const suggestions = authenticatedPage.getByRole("navigation", { name: /suggested subjects/iu });
     const firstLink = suggestions.getByRole("link").first();
     const subject = await firstLink.textContent();
 
@@ -103,54 +107,83 @@ test.describe("Learn Form", () => {
     await ensureSuggestionsForPrompt(subject);
     await firstLink.click();
 
-    await expect(page).toHaveURL(/\/learn\/.+/u);
+    await expect(authenticatedPage).toHaveURL(/\/learn\/.+/u);
   });
 
-  test("submitting prompt navigates to suggestions page", async ({ page }) => {
+  test("submitting prompt navigates signed-in users to suggestions page", async ({
+    authenticatedPage,
+  }) => {
+    await authenticatedPage.goto("/learn");
+
+    await authenticatedPage.getByRole("textbox").fill(prompt);
+    await authenticatedPage.keyboard.press("Enter");
+
+    await expect(
+      authenticatedPage.getByRole("heading", { name: /course ideas for/iu }),
+    ).toBeVisible();
+  });
+
+  test("shows login prompt for unauthenticated users", async ({ page }) => {
     await page.goto("/learn");
 
-    await page.getByRole("textbox").fill(prompt);
-    await page.keyboard.press("Enter");
-
-    await expect(page.getByRole("heading", { name: /course ideas for/iu })).toBeVisible();
+    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
+    await expect(page.getByRole("link", { name: /login/iu })).toBeVisible();
   });
 });
 
 test.describe("Course Suggestions", () => {
-  test("shows suggestions with title, description, and generate link", async ({ page }) => {
+  test("shows login prompt for unauthenticated users", async ({ page }) => {
     await page.goto(`/learn/${encodeURIComponent(prompt)}`);
 
+    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
+  });
+
+  test("shows suggestions with title, description, and generate link", async ({
+    authenticatedPage,
+  }) => {
+    await authenticatedPage.goto(`/learn/${encodeURIComponent(prompt)}`);
+
     await expect(
-      page.getByRole("heading", { name: new RegExp(`course ideas for ${prompt}`, "iu") }),
+      authenticatedPage.getByRole("heading", {
+        name: new RegExp(`course ideas for ${prompt}`, "iu"),
+      }),
     ).toBeVisible();
 
-    await expect(page.getByText(suggestionTitle)).toBeVisible();
-    await expect(page.getByText(suggestionDescription)).toBeVisible();
+    await expect(authenticatedPage.getByText(suggestionTitle)).toBeVisible();
+    await expect(authenticatedPage.getByText(suggestionDescription)).toBeVisible();
 
-    const generateLinks = page.getByRole("link", { name: /create/iu });
+    const generateLinks = authenticatedPage.getByRole("link", { name: /create/iu });
     await expect(generateLinks.first()).toBeVisible();
   });
 
-  test("Generate link navigates to generate page", async ({ page }) => {
-    await mockCourseGenerationWorkflow(page);
+  test("Generate link navigates signed-in users to generate page", async ({
+    authenticatedPage,
+  }) => {
+    await mockCourseGenerationWorkflow(authenticatedPage);
 
-    await page.goto(`/learn/${encodeURIComponent(prompt)}`);
+    await authenticatedPage.goto(`/learn/${encodeURIComponent(prompt)}`);
 
-    await expect(page.getByRole("heading", { name: /course ideas for/iu })).toBeVisible();
+    await expect(
+      authenticatedPage.getByRole("heading", { name: /course ideas for/iu }),
+    ).toBeVisible();
 
-    const generateLink = page.getByRole("link", { name: /create/iu }).first();
+    const generateLink = authenticatedPage.getByRole("link", { name: /create/iu }).first();
     await generateLink.click();
 
-    await expect(page).toHaveURL(/\/generate\/cs\/\d+/u);
+    await expect(authenticatedPage).toHaveURL(/\/generate\/cs\/[-a-f0-9]+/u);
   });
 
-  test("Change subject navigates back to learn form", async ({ page }) => {
-    await page.goto(`/learn/${encodeURIComponent(prompt)}`);
+  test("Change subject navigates back to learn form", async ({ authenticatedPage }) => {
+    await authenticatedPage.goto(`/learn/${encodeURIComponent(prompt)}`);
 
-    await expect(page.getByRole("heading", { name: /course ideas for/iu })).toBeVisible();
+    await expect(
+      authenticatedPage.getByRole("heading", { name: /course ideas for/iu }),
+    ).toBeVisible();
 
-    await page.getByRole("link", { name: /change subject/iu }).click();
+    await authenticatedPage.getByRole("link", { name: /change subject/iu }).click();
 
-    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
+    await expect(
+      authenticatedPage.getByRole("heading", { name: /learn anything/iu }),
+    ).toBeVisible();
   });
 });

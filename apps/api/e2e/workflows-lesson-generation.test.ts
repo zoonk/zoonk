@@ -7,55 +7,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { normalizeString } from "@zoonk/utils/string";
-
-/**
- * Workflow trigger routes require the same signed-in, subscribed session that
- * the main app generation pages use. Creating it through the public auth API
- * keeps these route tests close to the real request path instead of bypassing
- * cookies or Better Auth session state.
- */
-async function createSubscribedApiContext({
-  baseURL,
-  uniqueId,
-}: {
-  baseURL: string;
-  uniqueId: string;
-}) {
-  const email = `e2e-lesson-${uniqueId}@zoonk.test`;
-  const password = "password123";
-
-  const signupContext = await request.newContext({ baseURL });
-
-  const signupResponse = await signupContext.post("/v1/auth/sign-up/email", {
-    data: { email, name: `E2E User ${uniqueId}`, password },
-  });
-
-  expect(signupResponse.ok()).toBe(true);
-  await signupContext.dispose();
-
-  const user = await prisma.user.findUniqueOrThrow({ where: { email } });
-
-  await prisma.subscription.create({
-    data: {
-      id: randomUUID(),
-      plan: "hobby",
-      referenceId: user.id,
-      status: "active",
-      stripeCustomerId: `cus_test_${uniqueId}`,
-      stripeSubscriptionId: `sub_test_${uniqueId}`,
-    },
-  });
-
-  const apiContext = await request.newContext({ baseURL });
-
-  const signInResponse = await apiContext.post("/v1/auth/sign-in/email", {
-    data: { email, password },
-  });
-
-  expect(signInResponse.ok()).toBe(true);
-
-  return apiContext;
-}
+import { createAuthenticatedApiContext, createSubscribedApiContext } from "./helpers/auth";
 
 /**
  * Route-contract tests only need a published AI-owned lesson with a specific
@@ -110,8 +62,32 @@ test.describe("Lesson Generation Workflow API", () => {
     await prisma.$disconnect();
   });
 
-  test("returns validation error when lessonId is missing", async () => {
+  test("returns 401 when triggering lesson generation without a session", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const lesson = await createAiLessonForWorkflow({ aiOrgId, chapterPosition: 0, uniqueId });
     const apiContext = await request.newContext({ baseURL });
+
+    const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
+      data: { lessonId: lesson.id },
+    });
+
+    expect(response.status()).toBe(401);
+
+    const body = await response.json();
+
+    expect(body.error).toBeDefined();
+    expect(body.error.code).toBe("UNAUTHORIZED");
+    expect(body.error.message).toBe("Authentication required");
+
+    await apiContext.dispose();
+  });
+
+  test("returns validation error when lessonId is missing", async () => {
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "lesson-validation-missing",
+    });
+
     const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", { data: {} });
 
     expect(response.status()).toBe(400);
@@ -125,7 +101,10 @@ test.describe("Lesson Generation Workflow API", () => {
   });
 
   test("returns validation error when lessonId is invalid type", async () => {
-    const apiContext = await request.newContext({ baseURL });
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "lesson-validation-type",
+    });
 
     const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
       data: { lessonId: "invalid" },
@@ -142,7 +121,10 @@ test.describe("Lesson Generation Workflow API", () => {
   });
 
   test("returns validation error when lessonId is negative", async () => {
-    const apiContext = await request.newContext({ baseURL });
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "lesson-validation-negative",
+    });
 
     const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
       data: { lessonId: -1 },
@@ -162,7 +144,10 @@ test.describe("Lesson Generation Workflow API", () => {
     const uniqueId = randomUUID().slice(0, 8);
     const lesson = await createAiLessonForWorkflow({ aiOrgId, chapterPosition: 1, uniqueId });
 
-    const apiContext = await request.newContext({ baseURL });
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "lesson-no-subscription",
+    });
 
     const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
       data: { lessonId: lesson.id },
@@ -179,12 +164,15 @@ test.describe("Lesson Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("allows first chapter lesson generation without subscription", async () => {
+  test("allows signed-in first chapter lesson generation without subscription", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
     const lesson = await createAiLessonForWorkflow({ aiOrgId, chapterPosition: 0, uniqueId });
 
-    const apiContext = await request.newContext({ baseURL });
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "lesson-first-free",
+    });
 
     const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
       data: { lessonId: lesson.id },
@@ -202,7 +190,11 @@ test.describe("Lesson Generation Workflow API", () => {
   });
 
   test("returns validation error for status endpoint when runId is missing", async () => {
-    const apiContext = await request.newContext({ baseURL });
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "lesson-non-ai",
+    });
+
     const response = await apiContext.get("/v1/workflows/lesson-generation/status");
 
     expect(response.status()).toBe(400);
@@ -260,7 +252,10 @@ test.describe("Lesson Generation Workflow API", () => {
       },
     });
 
-    const apiContext = await request.newContext({ baseURL });
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "lesson-non-ai",
+    });
 
     const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
       data: { lessonId: lesson.id },
@@ -273,7 +268,11 @@ test.describe("Lesson Generation Workflow API", () => {
 
   test("returns 409 when practice has an incomplete explanation prerequisite", async () => {
     const uniqueId = randomUUID().slice(0, 8);
-    const apiContext = await createSubscribedApiContext({ baseURL, uniqueId });
+
+    const { apiContext } = await createSubscribedApiContext({
+      baseURL,
+      prefix: "lesson-blocked-practice",
+    });
 
     const course = await prisma.course.create({
       data: {
@@ -351,7 +350,11 @@ test.describe("Lesson Generation Workflow API", () => {
 
   test("returns 409 when translation has an incomplete vocabulary prerequisite", async () => {
     const uniqueId = randomUUID().slice(0, 8);
-    const apiContext = await createSubscribedApiContext({ baseURL, uniqueId });
+
+    const { apiContext } = await createSubscribedApiContext({
+      baseURL,
+      prefix: "lesson-blocked-translation",
+    });
 
     const course = await prisma.course.create({
       data: {
@@ -430,7 +433,7 @@ test.describe("Lesson Generation Workflow API", () => {
 
   test("starts workflow successfully with active subscription", async () => {
     const uniqueId = randomUUID().slice(0, 8);
-    const apiContext = await createSubscribedApiContext({ baseURL, uniqueId });
+    const { apiContext } = await createSubscribedApiContext({ baseURL, prefix: "lesson-success" });
 
     const course = await prisma.course.create({
       data: {

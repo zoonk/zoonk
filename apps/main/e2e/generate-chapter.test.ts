@@ -186,10 +186,33 @@ test.describe("Generate Chapter Page - No Subscription", () => {
     await expect(upgradeLink).toBeVisible();
     await expect(upgradeLink).toHaveAttribute("href", /\/subscription/u);
   });
+
+  test("allows signed-in users to retry failed generation without subscription", async ({
+    authenticatedPage,
+  }) => {
+    const { chapter } = await createPendingChapter(1);
+
+    await prisma.chapter.update({
+      data: { generationStatus: "failed" },
+      where: { id: chapter.id },
+    });
+
+    await setupMockApis(authenticatedPage, {
+      statusDelayMs: 2500,
+      streamMessages: [{ status: "started", step: "getChapter" }],
+    });
+
+    await authenticatedPage.goto(`/generate/ch/${chapter.id}`);
+
+    await expect(authenticatedPage.getByText(/upgrade to create/iu)).toHaveCount(0);
+    await expect(authenticatedPage.getByRole("heading", { name: chapter.title })).toBeVisible();
+  });
 });
 
 test.describe("Generate Chapter Page - With Subscription", () => {
-  test("shows completion UI before redirecting when chapter is already ready", async ({ page }) => {
+  test("shows completion UI before redirecting when chapter is already ready", async ({
+    authenticatedPage,
+  }) => {
     const { chapter, course, organizationId } = await createPendingChapter();
     const uniqueId = randomUUID().slice(0, 8);
 
@@ -204,12 +227,12 @@ test.describe("Generate Chapter Page - With Subscription", () => {
       prisma.chapter.update({ data: { generationStatus: "completed" }, where: { id: chapter.id } }),
     ]);
 
-    await page.goto(`/generate/ch/${chapter.id}`);
+    await authenticatedPage.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(page.getByText(/your lessons are ready/iu)).toBeVisible();
-    await expect(page.getByText(/taking you to your chapter/iu)).toBeVisible();
+    await expect(authenticatedPage.getByText(/your lessons are ready/iu)).toBeVisible();
+    await expect(authenticatedPage.getByText(/taking you to your chapter/iu)).toBeVisible();
 
-    await page.waitForURL(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`, {
+    await authenticatedPage.waitForURL(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`, {
       timeout: 10_000,
     });
   });
@@ -369,22 +392,16 @@ test.describe("Generate Chapter Page - With Subscription", () => {
 });
 
 test.describe("Generate Chapter Page - First Chapter Free", () => {
-  test("unauthenticated user sees generation UI for first chapter", async ({ page }) => {
-    const { chapter, course } = await createPendingChapter(0);
-
-    await setupMockApis(page, {
-      statusDelayMs: 2500,
-      streamMessages: [{ status: "started", step: "getChapter" }],
-    });
+  test("unauthenticated user sees login prompt for first chapter", async ({ page }) => {
+    const { chapter } = await createPendingChapter(0);
 
     await page.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toHaveCount(0);
-    await expect(page.getByRole("heading", { name: chapter.title })).toBeVisible();
+    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
 
-    const exitLink = page.getByRole("link", { name: /back to course/iu });
-    await expect(exitLink).toBeVisible();
-    await expect(exitLink).toHaveAttribute("href", `/b/${AI_ORG_SLUG}/c/${course.slug}`);
+    const loginLink = page.getByRole("link", { name: /login/iu });
+    await expect(loginLink).toBeVisible();
+    await expect(loginLink).toHaveAttribute("href", "/login");
   });
 
   test("authenticated user without subscription sees generation UI for first chapter", async ({
@@ -404,8 +421,8 @@ test.describe("Generate Chapter Page - First Chapter Free", () => {
   });
 });
 
-test.describe("Generate Chapter Page - Running Generation Bypasses Auth", () => {
-  test("unauthenticated user sees generation UI for non-first chapter when status is running", async ({
+test.describe("Generate Chapter Page - Running Generation Requires Auth", () => {
+  test("unauthenticated user sees login prompt for non-first chapter when status is running", async ({
     page,
   }) => {
     const org = await getAiOrganization();
@@ -432,16 +449,13 @@ test.describe("Generate Chapter Page - Running Generation Bypasses Auth", () => 
       title: `E2E Running Chapter ${uniqueId}`,
     });
 
-    await setupMockApis(page, {
-      statusDelayMs: 2500,
-      streamMessages: [{ status: "started", step: "getChapter" }],
-    });
-
     await page.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toHaveCount(0);
-    await expect(page.getByText(/upgrade to create/iu)).toHaveCount(0);
-    await expect(page.getByRole("heading", { name: chapter.title })).toBeVisible();
+    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
+
+    const loginLink = page.getByRole("link", { name: /login/iu });
+    await expect(loginLink).toBeVisible();
+    await expect(loginLink).toHaveAttribute("href", "/login");
   });
 });
 

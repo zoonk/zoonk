@@ -16,7 +16,7 @@ import { expect, test } from "./fixtures";
  * The generation page has 4 access states:
  * 1. Unauthenticated later chapter - Shows login prompt
  * 2. Authenticated later chapter without subscription - Shows upgrade CTA
- * 3. First chapter or running generation - Shows generation UI without gating
+ * 3. Authenticated first chapter - Shows generation UI without subscription
  * 4. Authenticated with subscription - Shows generation UI
  *
  * The generation flow interacts with 2 APIs on the API server:
@@ -258,30 +258,40 @@ test.describe("Generate Lesson Page - No Subscription", () => {
     await expect(upgradeLink).toBeVisible();
     await expect(upgradeLink).toHaveAttribute("href", /\/subscription/u);
   });
-});
 
-test.describe("Generate Lesson Page - First Chapter Free", () => {
-  test("unauthenticated user sees generation UI for first chapter lesson", async ({ page }) => {
-    const { chapter, course, lesson } = await createPendingLesson(0);
+  test("allows signed-in users to retry failed generation without subscription", async ({
+    authenticatedPage,
+  }) => {
+    const { lesson } = await createPendingLesson(1);
 
-    await setupMockApis(page, {
+    await prisma.lesson.update({ data: { generationStatus: "failed" }, where: { id: lesson.id } });
+
+    await setupMockApis(authenticatedPage, {
       statusDelayMs: 2500,
       streamMessages: [{ status: "started", step: "getLesson" }],
     });
 
+    await authenticatedPage.goto(`/generate/l/${lesson.id}`);
+
+    await expect(authenticatedPage.getByText(/upgrade to create/iu)).toHaveCount(0);
+
+    await expect(
+      authenticatedPage.getByRole("heading", { name: lesson.title ?? "" }),
+    ).toBeVisible();
+  });
+});
+
+test.describe("Generate Lesson Page - First Chapter Free", () => {
+  test("unauthenticated user sees login prompt for first chapter lesson", async ({ page }) => {
+    const { lesson } = await createPendingLesson(0);
+
     await page.goto(`/generate/l/${lesson.id}`);
 
-    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toHaveCount(0);
-    await expect(page.getByText(/upgrade to create/iu)).toHaveCount(0);
-    await expect(page.getByRole("heading", { name: lesson.title ?? "" })).toBeVisible();
+    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
 
-    const exitLink = page.getByRole("link", { name: /back to chapter/iu });
-    await expect(exitLink).toBeVisible();
-
-    await expect(exitLink).toHaveAttribute(
-      "href",
-      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`,
-    );
+    const loginLink = page.getByRole("link", { name: /login/iu });
+    await expect(loginLink).toBeVisible();
+    await expect(loginLink).toHaveAttribute("href", "/login");
   });
 
   test("authenticated user without subscription sees generation UI for first chapter lesson", async ({
@@ -305,23 +315,33 @@ test.describe("Generate Lesson Page - First Chapter Free", () => {
 });
 
 test.describe("Generate Lesson Page - Prerequisites", () => {
-  test("links to the required explanation when practice is blocked", async ({ page }) => {
+  test("links to the required explanation when practice is blocked", async ({
+    authenticatedPage,
+  }) => {
     const { explanation, practice } = await createBlockedPracticeLesson();
 
-    await page.goto(`/generate/l/${practice.id}`);
+    await authenticatedPage.goto(`/generate/l/${practice.id}`);
 
-    await expect(page.getByRole("heading", { name: practice.title ?? "" })).toBeVisible();
-    await expect(page.getByText("Lesson locked")).toBeVisible();
-    await expect(page.getByText("Create the required lesson first.")).toBeVisible();
+    await expect(
+      authenticatedPage.getByRole("heading", { name: practice.title ?? "" }),
+    ).toBeVisible();
 
-    const requiredLessonLink = page.getByRole("link", { name: "Open required lesson" });
+    await expect(authenticatedPage.getByText("Lesson locked")).toBeVisible();
+    await expect(authenticatedPage.getByText("Create the required lesson first.")).toBeVisible();
+
+    const requiredLessonLink = authenticatedPage.getByRole("link", {
+      name: "Open required lesson",
+    });
+
     await expect(requiredLessonLink).toBeVisible();
     await expect(requiredLessonLink).toHaveAttribute("href", `/generate/l/${explanation.id}`);
   });
 });
 
 test.describe("Generate Lesson Page - With Subscription", () => {
-  test("shows completion UI before redirecting when lesson is already ready", async ({ page }) => {
+  test("shows completion UI before redirecting when lesson is already ready", async ({
+    authenticatedPage,
+  }) => {
     const { lesson } = await createPendingLesson();
     const uniqueId = randomUUID().slice(0, 8);
 
@@ -339,14 +359,15 @@ test.describe("Generate Lesson Page - With Subscription", () => {
       prisma.lesson.update({ data: { generationStatus: "completed" }, where: { id: lesson.id } }),
     ]);
 
-    await page.goto(`/generate/l/${lesson.id}`);
+    await authenticatedPage.goto(`/generate/l/${lesson.id}`);
 
-    await expect(page.getByText(/your lesson is ready/iu)).toBeVisible();
-    await expect(page.getByText(/taking you to your lesson/iu)).toBeVisible();
+    await expect(authenticatedPage.getByText(/your lesson is ready/iu)).toBeVisible();
+    await expect(authenticatedPage.getByText(/taking you to your lesson/iu)).toBeVisible();
 
-    await page.waitForURL(new RegExp(`/b/${AI_ORG_SLUG}/c/.+/ch/.+/l/${lesson.slug}`, "u"), {
-      timeout: 10_000,
-    });
+    await authenticatedPage.waitForURL(
+      new RegExp(`/b/${AI_ORG_SLUG}/c/.+/ch/.+/l/${lesson.slug}`, "u"),
+      { timeout: 10_000 },
+    );
   });
 
   test("shows generation UI and completes workflow", async ({
@@ -442,8 +463,8 @@ test.describe("Generate Lesson Page - With Subscription", () => {
   });
 });
 
-test.describe("Generate Lesson Page - Running Generation Bypasses Auth", () => {
-  test("unauthenticated user sees generation UI when status is running", async ({ page }) => {
+test.describe("Generate Lesson Page - Running Generation Requires Auth", () => {
+  test("unauthenticated user sees login prompt when status is running", async ({ page }) => {
     const org = await getAiOrganization();
     const uniqueId = randomUUID().slice(0, 8);
 
@@ -478,16 +499,13 @@ test.describe("Generate Lesson Page - Running Generation Bypasses Auth", () => {
       title: lessonTitle,
     });
 
-    await setupMockApis(page, {
-      statusDelayMs: 2500,
-      streamMessages: [{ status: "started", step: "getLesson" }],
-    });
-
     await page.goto(`/generate/l/${lesson.id}`);
 
-    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toHaveCount(0);
-    await expect(page.getByText(/upgrade to create/iu)).toHaveCount(0);
-    await expect(page.getByRole("heading", { name: lessonTitle })).toBeVisible();
+    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
+
+    const loginLink = page.getByRole("link", { name: /login/iu });
+    await expect(loginLink).toBeVisible();
+    await expect(loginLink).toHaveAttribute("href", "/login");
   });
 });
 

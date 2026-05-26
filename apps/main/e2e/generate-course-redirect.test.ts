@@ -13,7 +13,7 @@ async function mockWorkflowApis(route: Route) {
   const url = route.request().url();
   const method = route.request().method();
 
-  if (url.includes("/api/workflows/course-generation/trigger") && method === "POST") {
+  if (url.includes("/v1/workflows/course-generation/trigger") && method === "POST") {
     await route.fulfill({
       body: JSON.stringify({ message: "Workflow started", runId: TEST_RUN_ID }),
       contentType: "application/json",
@@ -23,7 +23,7 @@ async function mockWorkflowApis(route: Route) {
     return;
   }
 
-  if (url.includes("/api/workflows/course-generation/status")) {
+  if (url.includes("/v1/workflows/course-generation/status")) {
     // Return a simple in-progress message to show the generation UI
     await route.fulfill({
       body: `data: ${JSON.stringify({ status: "running", step: "getCourseSuggestion" })}\n\n`,
@@ -38,7 +38,9 @@ async function mockWorkflowApis(route: Route) {
 }
 
 test.describe("Generate Course Redirect", () => {
-  test("redirects to generate/cs/[id] when course suggestion exists", async ({ page }) => {
+  test("redirects signed-in users to generate/cs/[id] when course suggestion exists", async ({
+    authenticatedPage,
+  }) => {
     const slug = `e2e-redirect-${randomUUID().slice(0, 8)}`;
 
     const suggestion = await courseSuggestionFixture({
@@ -49,20 +51,37 @@ test.describe("Generate Course Redirect", () => {
     });
 
     // Mock the workflow APIs before navigating
-    await page.route("**/api/workflows/**", mockWorkflowApis);
+    await authenticatedPage.route("**/v1/workflows/**", mockWorkflowApis);
+
+    await authenticatedPage.goto(`/generate/c/${slug}`);
+
+    // Should redirect to /generate/cs/{id}
+    await authenticatedPage.waitForURL(`/generate/cs/${suggestion.id}`, { timeout: 10_000 });
+
+    // Verify we're on the generation page by checking for the header
+    await expect(authenticatedPage.getByText(/creating your course/iu)).toBeVisible({
+      timeout: 10_000,
+    });
+  });
+
+  test("shows login prompt before redirecting unauthenticated users", async ({ page }) => {
+    const slug = `e2e-redirect-unauth-${randomUUID().slice(0, 8)}`;
+
+    await courseSuggestionFixture({
+      generationStatus: "pending",
+      language: "en",
+      slug,
+      title: "E2E Redirect Unauth Test",
+    });
 
     await page.goto(`/generate/c/${slug}`);
 
-    // Should redirect to /generate/cs/{id}
-    await page.waitForURL(`/generate/cs/${suggestion.id}`, { timeout: 10_000 });
-
-    // Verify we're on the generation page by checking for the header
-    await expect(page.getByText(/creating your course/iu)).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
   });
 
-  test("shows 404 when course suggestion does not exist", async ({ page }) => {
-    await page.goto(`/generate/c/nonexistent-${randomUUID()}`);
+  test("shows 404 when course suggestion does not exist", async ({ authenticatedPage }) => {
+    await authenticatedPage.goto(`/generate/c/nonexistent-${randomUUID()}`);
 
-    await expect(page.getByText(/not found|404/iu)).toBeVisible();
+    await expect(authenticatedPage.getByText(/not found|404/iu)).toBeVisible();
   });
 });

@@ -9,7 +9,9 @@ import { chapterWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { type Page, expect, test } from "./fixtures";
 
 async function createTestLesson(options?: {
+  chapterPosition?: number;
   generationStatus?: "pending" | "completed";
+  lessonPosition?: number;
   stepCount?: number;
 }) {
   const org = await getAiOrganization();
@@ -27,6 +29,7 @@ async function createTestLesson(options?: {
     courseId: course.id,
     isPublished: true,
     organizationId: org.id,
+    ...(options?.chapterPosition === undefined ? {} : { position: options.chapterPosition }),
     slug: `e2e-lesson-chapter-${uniqueId}`,
     title: `E2E Lesson Chapter ${uniqueId}`,
   });
@@ -40,6 +43,7 @@ async function createTestLesson(options?: {
     isPublished: true,
     kind: "explanation",
     organizationId: org.id,
+    ...(options?.lessonPosition === undefined ? {} : { position: options.lessonPosition }),
     slug: `e2e-lesson-lesson-${uniqueId}`,
     title: lessonTitle,
   });
@@ -424,7 +428,7 @@ async function createDerivedListeningLesson() {
 }
 
 test.describe("Lesson Player Page", () => {
-  test("generated lesson player renders the seeded step content", async ({ page }) => {
+  test("unauthenticated users can play the first lesson of the first chapter", async ({ page }) => {
     const { chapter, course, lesson, uniqueId } = await createTestLesson({
       generationStatus: "completed",
     });
@@ -433,6 +437,21 @@ test.describe("Lesson Player Page", () => {
 
     await expect(page.getByRole("heading", { name: `Step ${uniqueId} #0` })).toBeVisible();
     await expect(page.getByText(`Test step content ${uniqueId} #0`)).toBeVisible();
+  });
+
+  test("unauthenticated users see login prompt for later lessons", async ({ page }) => {
+    const { chapter, course, lesson } = await createTestLesson({
+      generationStatus: "completed",
+      lessonPosition: 1,
+    });
+
+    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+
+    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
+
+    const loginLink = page.getByRole("link", { name: /login/iu });
+    await expect(loginLink).toBeVisible();
+    await expect(loginLink).toHaveAttribute("href", "/login");
   });
 
   test("close link has correct href", async ({ page }) => {
@@ -468,82 +487,98 @@ test.describe("Lesson Player Page", () => {
   });
 
   test("blocked practice lessons link to the required explanation generation page", async ({
-    page,
+    authenticatedPage,
   }) => {
     const { chapter, course, explanation, practice } = await createBlockedPracticeLesson();
 
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${practice.slug}`);
+    await authenticatedPage.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${practice.slug}`);
 
-    await expect(page.getByText("Lesson locked")).toBeVisible();
-    await expect(page.getByText("Create the required lesson first.")).toBeVisible();
+    await expect(authenticatedPage.getByText("Lesson locked")).toBeVisible();
+    await expect(authenticatedPage.getByText("Create the required lesson first.")).toBeVisible();
 
-    const requiredLessonLink = page.getByRole("link", { name: "Open required lesson" });
+    const requiredLessonLink = authenticatedPage.getByRole("link", {
+      name: "Open required lesson",
+    });
+
     await expect(requiredLessonLink).toBeVisible();
     await expect(requiredLessonLink).toHaveAttribute("href", `/generate/l/${explanation.id}`);
     await expect(requiredLessonLink).toHaveAttribute("rel", "nofollow");
   });
 
   test("empty review lessons link to the first earlier lesson that needs generation", async ({
-    page,
+    authenticatedPage,
   }) => {
     const { chapter, course, requiredLesson, review } = await createEmptyReviewLesson();
 
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${review.slug}`);
+    await authenticatedPage.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${review.slug}`);
 
-    await expect(page.getByText("Review locked")).toBeVisible();
+    await expect(authenticatedPage.getByText("Review locked")).toBeVisible();
 
     await expect(
-      page.getByText("Create earlier lessons first, then come back to review."),
+      authenticatedPage.getByText("Create earlier lessons first, then come back to review."),
     ).toBeVisible();
 
-    const requiredLessonLink = page.getByRole("link", { name: "Open required lesson" });
+    const requiredLessonLink = authenticatedPage.getByRole("link", {
+      name: "Open required lesson",
+    });
+
     await expect(requiredLessonLink).toBeVisible();
     await expect(requiredLessonLink).toHaveAttribute("href", `/generate/l/${requiredLesson.id}`);
     await expect(requiredLessonLink).toHaveAttribute("rel", "nofollow");
   });
 
-  test("derived translation lessons show source vocabulary distractors", async ({ page }) => {
+  test("derived translation lessons show source vocabulary distractors", async ({
+    authenticatedPage,
+  }) => {
     const { correctOption, distractorOption, prompt, url } = await createDerivedTranslationLesson();
 
-    await page.goto(url);
+    await authenticatedPage.goto(url);
 
-    await expect(page.getByText(prompt)).toBeVisible();
+    await expect(authenticatedPage.getByText(prompt)).toBeVisible();
 
-    const options = page.getByRole("radiogroup", { name: /answer options/iu });
+    const options = authenticatedPage.getByRole("radiogroup", { name: /answer options/iu });
     await expect(options.getByRole("radio", { name: correctOption })).toBeVisible();
     await expect(options.getByRole("radio", { name: distractorOption })).toBeVisible();
   });
 
-  test("derived listening lessons show source reading word banks", async ({ page }) => {
+  test("derived listening lessons show source reading word banks", async ({
+    authenticatedPage,
+  }) => {
     const { distractor, firstWord, secondWord, url } = await createDerivedListeningLesson();
 
-    await page.goto(url);
+    await authenticatedPage.goto(url);
 
-    const wordBank = page.getByRole("group", { name: /word bank/iu });
+    const wordBank = authenticatedPage.getByRole("group", { name: /word bank/iu });
     await expect(wordBank.getByRole("button", { name: firstWord })).toBeVisible();
     await expect(wordBank.getByRole("button", { name: secondWord })).toBeVisible();
     await expect(wordBank.getByRole("button", { name: distractor })).toBeVisible();
   });
 
-  test("review translation steps show source vocabulary distractors", async ({ page }) => {
+  test("review translation steps show source vocabulary distractors", async ({
+    authenticatedPage,
+  }) => {
     const { correctOption, distractorOption, prompt, reviewUrl } =
       await createDerivedTranslationLesson();
 
-    await page.goto(reviewUrl);
+    await authenticatedPage.goto(reviewUrl);
 
-    await showReviewTranslationStep({ page, prompt, readingAnswer: correctOption });
+    await showReviewTranslationStep({
+      page: authenticatedPage,
+      prompt,
+      readingAnswer: correctOption,
+    });
 
-    const options = page.getByRole("radiogroup", { name: /answer options/iu });
+    const options = authenticatedPage.getByRole("radiogroup", { name: /answer options/iu });
     await expect(options.getByRole("radio", { name: correctOption })).toBeVisible();
     await expect(options.getByRole("radio", { name: distractorOption })).toBeVisible();
   });
 
-  test("review listening steps show source reading word banks", async ({ page }) => {
+  test("review listening steps show source reading word banks", async ({ authenticatedPage }) => {
     const { distractor, firstWord, reviewUrl, secondWord } = await createDerivedListeningLesson();
 
-    await page.goto(reviewUrl);
+    await authenticatedPage.goto(reviewUrl);
 
-    const wordBank = page.getByRole("group", { name: /word bank/iu });
+    const wordBank = authenticatedPage.getByRole("group", { name: /word bank/iu });
     await expect(wordBank.getByRole("button", { name: firstWord })).toBeVisible();
     await expect(wordBank.getByRole("button", { name: secondWord })).toBeVisible();
     await expect(wordBank.getByRole("button", { name: distractor })).toBeVisible();
@@ -614,7 +649,7 @@ test.describe("Lesson Player Page", () => {
     await expect(page).toHaveTitle(new RegExp(lessonTitle, "u"));
   });
 
-  test("page title describes lessons without a stored title", async ({ page }) => {
+  test("page title describes lessons without a stored title", async ({ authenticatedPage }) => {
     const org = await getAiOrganization();
     const uniqueId = randomUUID().slice(0, 8);
 
@@ -654,10 +689,13 @@ test.describe("Lesson Player Page", () => {
       lessonId: lesson.id,
     });
 
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+    await authenticatedPage.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await expect(page).toHaveTitle(new RegExp(`${chapter.title} Quiz ${lesson.position + 1}`, "u"));
-    await expect(page).not.toHaveTitle(/Quiz Quiz/u);
+    await expect(authenticatedPage).toHaveTitle(
+      new RegExp(`${chapter.title} Quiz ${lesson.position + 1}`, "u"),
+    );
+
+    await expect(authenticatedPage).not.toHaveTitle(/Quiz Quiz/u);
   });
 
   test("unpublished lesson shows 404 page", async ({ page }) => {

@@ -19,7 +19,7 @@ async function mockWorkflowApis(route: Route) {
   const url = route.request().url();
   const method = route.request().method();
 
-  if (url.includes("/api/workflows/course-generation/trigger") && method === "POST") {
+  if (url.includes("/v1/workflows/course-generation/trigger") && method === "POST") {
     await route.fulfill({
       body: JSON.stringify({ message: "Workflow started", runId: TEST_RUN_ID }),
       contentType: "application/json",
@@ -29,7 +29,7 @@ async function mockWorkflowApis(route: Route) {
     return;
   }
 
-  if (url.includes("/api/workflows/course-generation/status")) {
+  if (url.includes("/v1/workflows/course-generation/status")) {
     await route.fulfill({
       body: `data: ${JSON.stringify({ status: "running", step: "getCourseSuggestion" })}\n\n`,
       contentType: "text/event-stream",
@@ -150,7 +150,7 @@ test.describe("Course Detail Page", () => {
     await expect(page.getByText(/not found|404/iu)).toBeVisible();
   });
 
-  test("redirects to generate page when course has no chapters", async ({ page }) => {
+  test("redirects to generate page when course has no chapters", async ({ authenticatedPage }) => {
     const org = await getAiOrganization();
 
     const slug = `e2e-no-chapters-${randomUUID().slice(0, UUID_SHORT_LENGTH)}`;
@@ -172,13 +172,15 @@ test.describe("Course Detail Page", () => {
       }),
     ]);
 
-    await page.route("**/api/workflows/**", mockWorkflowApis);
+    await authenticatedPage.route("**/v1/workflows/**", mockWorkflowApis);
 
-    await page.goto(`/b/${AI_ORG_SLUG}/c/${slug}`);
+    await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${slug}`);
 
-    await page.waitForURL(`/generate/cs/${suggestion.id}`, { timeout: 10_000 });
+    await authenticatedPage.waitForURL(`/generate/cs/${suggestion.id}`, { timeout: 10_000 });
 
-    await expect(page.getByText(/creating your course/iu)).toBeVisible({ timeout: 10_000 });
+    await expect(authenticatedPage.getByText(/creating your course/iu)).toBeVisible({
+      timeout: 10_000,
+    });
   });
 
   test("non-AI courses with no chapters stay on the course page", async ({ page }) => {
