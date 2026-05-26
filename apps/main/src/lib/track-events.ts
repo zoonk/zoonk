@@ -1,7 +1,12 @@
 import { track } from "@vercel/analytics";
 import { type LessonKind } from "@zoonk/core/steps/contract/content";
 
-type PlayerEventInput = { lessonId: string; lessonKind: LessonKind; stepCount: number };
+type PlayerEventInput = {
+  courseSlug: string;
+  lessonKind: LessonKind;
+  lessonSlug: string;
+  stepCount: number;
+};
 
 /**
  * Records only submitted command-palette searches because the shared search
@@ -51,8 +56,8 @@ export function trackLessonCompleted({
  * Reuses the same primitive payload shape across player events because Vercel
  * Analytics custom event properties do not support nested objects.
  */
-function getPlayerEventData({ lessonId, lessonKind, stepCount }: PlayerEventInput) {
-  return { lessonId, lessonKind, stepCount };
+function getPlayerEventData({ courseSlug, lessonKind, lessonSlug, stepCount }: PlayerEventInput) {
+  return { courseSlug, lessonKind, lessonSlug, stepCount };
 }
 
 /**
