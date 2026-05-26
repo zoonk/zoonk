@@ -4,7 +4,12 @@ import { Input } from "@zoonk/ui/components/input";
 import { Search } from "lucide-react";
 import { useQueryState } from "nuqs";
 
-export function CourseSearch() {
+/**
+ * Admin list pages share the same query-param backed search behavior. Keeping
+ * it centralized prevents each list from drifting on throttle, shallow routing,
+ * or icon/input spacing.
+ */
+export function AdminSearch({ placeholder }: { placeholder: string }) {
   const [search, setSearch] = useQueryState("search", {
     defaultValue: "",
     shallow: false,
@@ -17,7 +22,7 @@ export function CourseSearch() {
       <Input
         className="pl-9"
         onChange={(event) => setSearch(event.target.value)}
-        placeholder="Search by title..."
+        placeholder={placeholder}
         type="search"
         value={search}
       />

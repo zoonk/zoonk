@@ -1,3 +1,4 @@
+import { AdminSearch } from "@/components/admin-search";
 import {
   Container,
   ContainerBody,
@@ -9,7 +10,6 @@ import {
 import { type Metadata } from "next";
 import { Suspense } from "react";
 import { CourseList } from "./course-list";
-import { CourseSearch } from "./course-search";
 
 export const metadata: Metadata = { title: "Courses" };
 
@@ -25,7 +25,7 @@ export default function CoursesPage({ searchParams }: PageProps<"/courses">) {
 
       <ContainerBody>
         <Suspense fallback={<div className="h-10" />}>
-          <CourseSearch />
+          <AdminSearch placeholder="Search by title..." />
         </Suspense>
 
         <Suspense>

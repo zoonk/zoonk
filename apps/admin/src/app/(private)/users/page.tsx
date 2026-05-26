@@ -1,3 +1,4 @@
+import { AdminSearch } from "@/components/admin-search";
 import {
   Container,
   ContainerBody,
@@ -9,7 +10,6 @@ import {
 import { type Metadata } from "next";
 import { Suspense } from "react";
 import { UserList } from "./user-list";
-import { UserSearch } from "./user-search";
 
 export const metadata: Metadata = { title: "Users" };
 
@@ -25,7 +25,7 @@ export default function UsersPage({ searchParams }: PageProps<"/users">) {
 
       <ContainerBody>
         <Suspense fallback={<div className="h-10" />}>
-          <UserSearch />
+          <AdminSearch placeholder="Search by name, username, or email..." />
         </Suspense>
 
         <Suspense>
