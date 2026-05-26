@@ -21,13 +21,21 @@ export type PlayerActions = {
   selectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
 };
 
-export function usePlayerActions(
-  state: PlayerState,
-  dispatch: Dispatch<Parameters<typeof playerReducer>[1]>,
-  onComplete: (input: CompletionInput) => void,
-  isAuthenticated: boolean,
-  onStepChange?: (event: PlayerStepChangeEvent) => void,
-) {
+/**
+ * Owns reducer dispatch side effects so host apps can react to semantic player
+ * events without needing to inspect reducer states themselves.
+ */
+export function usePlayerActions({
+  dispatch,
+  onComplete,
+  onStepChange,
+  state,
+}: {
+  dispatch: Dispatch<Parameters<typeof playerReducer>[1]>;
+  onComplete: (input: CompletionInput) => void;
+  onStepChange?: (event: PlayerStepChangeEvent) => void;
+  state: PlayerState;
+}) {
   const currentStep = state.steps[state.currentStepIndex];
 
   const dispatchTransition = useCallback(
@@ -35,7 +43,7 @@ export function usePlayerActions(
       const transition = getPlayerTransition(state, action);
       dispatch(action);
 
-      if (transition.shouldPersistCompletion && isAuthenticated) {
+      if (transition.shouldPersistCompletion) {
         onComplete(buildCompletionInput(transition.nextState));
       }
 
@@ -45,7 +53,7 @@ export function usePlayerActions(
         onStepChange?.(stepChangeEvent);
       }
     },
-    [dispatch, isAuthenticated, onComplete, onStepChange, state],
+    [dispatch, onComplete, onStepChange, state],
   );
 
   const selectAnswer = useCallback(

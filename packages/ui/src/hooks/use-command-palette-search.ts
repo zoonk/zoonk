@@ -3,15 +3,18 @@
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useKeyboardCallback } from "./use-keyboard";
 
+const DEFAULT_SEARCH_DEBOUNCE_MS = 300;
+
 /**
  * A hook that handles common command palette search logic:
  * - Open/close state with Cmd+K keyboard shortcut
  * - Query state with controlled input
- * - Search with useTransition and race condition handling
+ * - Debounced search with useTransition and race condition handling
  * - Minimum query length before searching
  * - Reset on close
  */
 export function useCommandPaletteSearch<TResults>(options: {
+  debounceMs?: number;
   emptyResults: TResults;
   minQueryLength?: number;
   onSearch: (query: string) => Promise<TResults>;
@@ -26,7 +29,12 @@ export function useCommandPaletteSearch<TResults>(options: {
   setQuery: (query: string) => void;
   toggle: () => void;
 } {
-  const { emptyResults, minQueryLength = 2, onSearch } = options;
+  const {
+    debounceMs = DEFAULT_SEARCH_DEBOUNCE_MS,
+    emptyResults,
+    minQueryLength = 2,
+    onSearch,
+  } = options;
 
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -52,35 +60,35 @@ export function useCommandPaletteSearch<TResults>(options: {
     closePalette();
   }, [closePalette]);
 
-  // Search effect with race condition handling
   useEffect(() => {
     const trimmedQuery = query.trim();
+    requestIdRef.current += 1;
 
-    // Clear results if query is too short
     if (trimmedQuery.length < minQueryLength) {
       setResults(emptyResults);
       return;
     }
 
-    // Increment request ID to handle race conditions
-    requestIdRef.current += 1;
     const currentRequestId = requestIdRef.current;
 
-    startTransition(async () => {
-      try {
-        const data = await onSearch(trimmedQuery);
+    const timeoutId = globalThis.setTimeout(() => {
+      startTransition(async () => {
+        try {
+          const data = await onSearch(trimmedQuery);
 
-        // Only update if this is still the latest request
-        if (currentRequestId === requestIdRef.current) {
-          setResults(data);
+          if (currentRequestId === requestIdRef.current) {
+            setResults(data);
+          }
+        } catch {
+          if (currentRequestId === requestIdRef.current) {
+            setResults(emptyResults);
+          }
         }
-      } catch {
-        if (currentRequestId === requestIdRef.current) {
-          setResults(emptyResults);
-        }
-      }
-    });
-  }, [query, minQueryLength, onSearch, emptyResults]);
+      });
+    }, debounceMs);
+
+    return () => globalThis.clearTimeout(timeoutId);
+  }, [query, debounceMs, minQueryLength, onSearch, emptyResults]);
 
   return { closePalette, isOpen, isPending, onSelectItem, open, query, results, setQuery, toggle };
 }

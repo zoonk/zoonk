@@ -56,13 +56,7 @@ export function PlayerProvider({
 
   const [state, dispatch] = useReducer(playerReducer, initInput, createInitialState);
 
-  const actions = usePlayerActions(
-    state,
-    dispatch,
-    onComplete,
-    viewer.isAuthenticated,
-    onStepChange,
-  );
+  const actions = usePlayerActions({ dispatch, onComplete, onStepChange, state });
 
   const screen = useMemo(() => getPlayerScreenModel(state), [state]);
 

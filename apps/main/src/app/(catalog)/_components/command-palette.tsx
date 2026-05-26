@@ -1,6 +1,7 @@
 "use client";
 
 import { getMenu } from "@/lib/menu";
+import { trackCommandPaletteSearch } from "@/lib/track-events";
 import { logout } from "@zoonk/core/auth/client";
 import { Button } from "@zoonk/ui/components/button";
 import {
@@ -20,6 +21,8 @@ import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { type CourseSearchResult, searchCoursesAction } from "./search-courses-action";
 
+const EMPTY_COURSE_RESULTS: CourseSearchResult[] = [];
+
 /**
  * The catalog navbar sometimes hides the search trigger responsively while the
  * dialog logic stays unchanged. Accepting a trigger class keeps that layout
@@ -37,7 +40,11 @@ export function CommandPalette({
   const locale = useLocale();
 
   const handleSearch = useCallback(
-    (searchQuery: string) => searchCoursesAction({ language: locale, query: searchQuery }),
+    (searchQuery: string) => {
+      trackCommandPaletteSearch({ searchTerm: searchQuery });
+
+      return searchCoursesAction({ language: locale, query: searchQuery });
+    },
     [locale],
   );
 
@@ -49,7 +56,10 @@ export function CommandPalette({
     query,
     results: courses,
     setQuery,
-  } = useCommandPaletteSearch<CourseSearchResult[]>({ emptyResults: [], onSearch: handleSearch });
+  } = useCommandPaletteSearch<CourseSearchResult[]>({
+    emptyResults: EMPTY_COURSE_RESULTS,
+    onSearch: handleSearch,
+  });
 
   function handleSelect<T extends string>(url: Route<T>) {
     onSelectItem();

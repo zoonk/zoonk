@@ -59,7 +59,7 @@ describe(usePlayerActions, () => {
       ],
     });
 
-    const { result } = renderHook(() => usePlayerActions(state, dispatch, onComplete, false));
+    const { result } = renderHook(() => usePlayerActions({ dispatch, onComplete, state }));
 
     act(() => {
       result.current.check();
