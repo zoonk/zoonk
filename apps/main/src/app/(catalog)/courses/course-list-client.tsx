@@ -3,6 +3,7 @@
 import { CatalogGridContent, CatalogGridItem } from "@/components/catalog/catalog-grid";
 import { CatalogGridImage } from "@/components/catalog/catalog-grid-image";
 import { type CourseWithOrg } from "@/data/courses/list-courses";
+import { Button } from "@zoonk/ui/components/button";
 import {
   GridGroup,
   GridItemContent,
@@ -13,7 +14,7 @@ import {
 import { useInfiniteList } from "@zoonk/ui/hooks/infinite-list";
 import { EmptyView } from "@zoonk/ui/patterns/empty";
 import { type CourseCategory } from "@zoonk/utils/categories";
-import { Loader2Icon, NotebookPenIcon } from "lucide-react";
+import { Loader2Icon, NotebookPenIcon, RefreshCwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { loadMoreCourses } from "./actions";
 
@@ -59,8 +60,10 @@ export function CourseListClient({
   const t = useExtracted();
 
   const {
+    hasLoadError,
     items: courses,
     isLoading,
+    retry,
     sentryRef,
   } = useInfiniteList<CourseWithOrg>({
     fetchMore: (cursor) => loadMoreCourses({ category, cursor: String(cursor), language }),
@@ -93,6 +96,18 @@ export function CourseListClient({
             aria-label={t("Loading more courses…")}
             className="text-muted-foreground size-5 animate-spin"
           />
+        )}
+
+        {hasLoadError && !isLoading && (
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <p className="text-muted-foreground text-sm">
+              {t("Something went wrong. Please try again.")}
+            </p>
+            <Button onClick={retry} size="sm" variant="outline">
+              <RefreshCwIcon aria-hidden="true" />
+              {t("Try again")}
+            </Button>
+          </div>
         )}
       </div>
     </CatalogGridContent>

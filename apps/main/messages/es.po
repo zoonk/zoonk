@@ -326,6 +326,20 @@ msgstr "No hay cursos"
 msgid "T0mfNV"
 msgstr "Cargando más cursos…"
 
+#: src/app/(catalog)/courses/course-list-client.tsx
+#: src/app/generate/ch/[id]/generation-client.tsx
+#: src/app/generate/cs/[id]/generation-client.tsx
+#: src/app/generate/l/[id]/generation-client.tsx
+msgid "W/5hwr"
+msgstr "Algo salió mal. Por favor, intenta de nuevo."
+
+#: src/app/(catalog)/courses/course-list-client.tsx
+#: src/app/generate/ch/[id]/generation-client.tsx
+#: src/app/generate/cs/[id]/generation-client.tsx
+#: src/app/generate/l/[id]/generation-client.tsx
+msgid "FazwRl"
+msgstr "Intentar de nuevo"
+
 #: src/app/(catalog)/courses/page.tsx
 msgid "WgPMAP"
 msgstr "Explora todos los cursos de Zoonk para aprender cualquier cosa usando IA. Encuentra lecciones interactivas para aprender temas como ciencia, matemáticas, tecnología y más."
@@ -1010,18 +1024,6 @@ msgstr "Llevándote a tu capítulo..."
 #: src/app/generate/ch/[id]/generation-client.tsx
 msgid "45uo73"
 msgstr "Tus lecciones están listas"
-
-#: src/app/generate/ch/[id]/generation-client.tsx
-#: src/app/generate/cs/[id]/generation-client.tsx
-#: src/app/generate/l/[id]/generation-client.tsx
-msgid "W/5hwr"
-msgstr "Algo salió mal. Por favor, intenta de nuevo."
-
-#: src/app/generate/ch/[id]/generation-client.tsx
-#: src/app/generate/cs/[id]/generation-client.tsx
-#: src/app/generate/l/[id]/generation-client.tsx
-msgid "FazwRl"
-msgstr "Intentar de nuevo"
 
 #: src/app/generate/ch/[id]/generation-client.tsx
 #: src/app/generate/cs/[id]/generation-client.tsx

@@ -5,7 +5,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
-import { expect, test } from "./fixtures";
+import { type Page, expect, test } from "./fixtures";
 
 const UUID_SHORT_LENGTH = 8;
 
@@ -33,6 +33,36 @@ async function createPublishedCourse(language: string) {
   });
 
   return course;
+}
+
+/**
+ * Sentry reports this regression through the browser's unhandled rejection
+ * handler, so the e2e test records that same signal while the UI keeps running.
+ */
+async function recordUnhandledRejections(page: Page) {
+  await page.addInitScript(() => {
+    const unhandledRejections: string[] = [];
+
+    Object.defineProperty(globalThis, "zoonkE2EUnhandledRejections", {
+      value: unhandledRejections,
+    });
+
+    globalThis.addEventListener("unhandledrejection", (event) => {
+      const reason = event.reason;
+      unhandledRejections.push(reason instanceof Error ? reason.message : String(reason));
+    });
+  });
+}
+
+/**
+ * Browser-side rejection events are stored in the page context because
+ * Playwright does not expose all `unhandledrejection` events as test failures.
+ */
+async function getUnhandledRejections(page: Page): Promise<string[]> {
+  return page.evaluate(() => {
+    const target = globalThis as unknown as { zoonkE2EUnhandledRejections?: string[] };
+    return target.zoonkE2EUnhandledRejections ?? [];
+  });
 }
 
 test.describe("Courses Page - Basic", () => {
@@ -74,13 +104,75 @@ test.describe("Courses Page - Infinite Loading", () => {
     }).toPass({ timeout: 15_000 });
 
     // Scroll to the bottom to trigger infinite loading
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await page.evaluate(() => globalThis.scrollTo(0, document.body.scrollHeight));
 
     // Verify more courses loaded after scrolling
     await expect(async () => {
       const count = await courseLinks.count();
       expect(count).toBeGreaterThan(20);
     }).toPass({ timeout: 10_000 });
+  });
+
+  test("lets users retry failed load-more requests without unhandled rejections", async ({
+    page,
+  }) => {
+    const org = await getAiOrganization();
+    const failedLoadMoreRequests: string[] = [];
+    const loadMoreRequests: string[] = [];
+
+    await recordUnhandledRejections(page);
+
+    await Promise.all(
+      Array.from({ length: 25 }, () =>
+        courseFixture({ isPublished: true, language: "en", organizationId: org.id }),
+      ),
+    );
+
+    await page.route("**/courses", async (route) => {
+      const request = route.request();
+      const isLoadMoreAction = request.method() === "POST";
+
+      if (isLoadMoreAction) {
+        loadMoreRequests.push(request.url());
+
+        if (loadMoreRequests.length === 1) {
+          failedLoadMoreRequests.push(request.url());
+          await route.abort("failed");
+          return;
+        }
+      }
+
+      await route.continue();
+    });
+
+    const courseList = page.getByRole("main").getByRole("list");
+    const courseLinks = courseList.getByRole("link");
+
+    await expect(async () => {
+      await page.goto("/courses");
+      await expect(courseLinks).toHaveCount(20, { timeout: 5000 });
+    }).toPass({ timeout: 15_000 });
+
+    await page.evaluate(() => globalThis.scrollTo(0, document.body.scrollHeight));
+
+    await expect(async () => {
+      expect(failedLoadMoreRequests.length).toBeGreaterThan(0);
+    }).toPass({ timeout: 10_000 });
+
+    await expect(page.getByLabel(/loading more courses/iu)).not.toBeVisible();
+    await expect(page.getByRole("button", { name: /try again/iu })).toBeVisible();
+    expect(failedLoadMoreRequests).toHaveLength(1);
+    expect(await getUnhandledRejections(page)).toEqual([]);
+
+    await page.getByRole("button", { name: /try again/iu }).click();
+
+    await expect(async () => {
+      const count = await courseLinks.count();
+      expect(count).toBeGreaterThan(20);
+    }).toPass({ timeout: 10_000 });
+
+    expect(loadMoreRequests).toHaveLength(2);
+    expect(await getUnhandledRejections(page)).toEqual([]);
   });
 });
 
