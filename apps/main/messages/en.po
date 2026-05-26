@@ -267,6 +267,18 @@ msgstr "Score"
 msgid "4dsZTc"
 msgstr "{value}% correct answers"
 
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
+msgid "9SgWiD"
+msgstr "Chapter not available"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
+msgid "ml8Duy"
+msgstr "This chapter hasn't been created yet."
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
+msgid "3IOFp2"
+msgstr "Create chapter"
+
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgid "ssvp3R"
 msgstr "Search lessons..."

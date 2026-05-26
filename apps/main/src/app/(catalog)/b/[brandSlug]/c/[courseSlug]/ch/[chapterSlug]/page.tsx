@@ -12,9 +12,10 @@ import { getSession } from "@zoonk/core/users/session/get";
 import { Grid, GridToolbar } from "@zoonk/ui/components/grid";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ChapterHeader } from "./chapter-header";
+import { ChapterNotGenerated } from "./chapter-not-generated";
 import { LessonList } from "./lesson-list";
 
 export async function generateMetadata({
@@ -50,9 +51,7 @@ export default async function ChapterPage({
     getNextChapterInCourse({ chapterPosition: chapter.position, courseId: chapter.courseId }),
   ]);
 
-  if (brandSlug === AI_ORG_SLUG && lessons.length === 0) {
-    redirect(`/generate/ch/${chapter.id}`);
-  }
+  const shouldShowCreateChapterPrompt = brandSlug === AI_ORG_SLUG && lessons.length === 0;
 
   const completedHref = nextChapter
     ? (`/b/${nextChapter.brandSlug}/c/${nextChapter.courseSlug}/ch/${nextChapter.chapterSlug}` as const)
@@ -72,35 +71,41 @@ export default async function ChapterPage({
             courseSlug={courseSlug}
             variant="sidebar"
           />
-          <GridToolbar>
-            <Suspense fallback={<ContinueLessonLinkSkeleton />}>
-              <ContinueLessonLink
-                chapterId={chapter.id}
-                completedHref={completedHref}
-                fallbackHref={fallbackHref}
+          {!shouldShowCreateChapterPrompt && (
+            <GridToolbar>
+              <Suspense fallback={<ContinueLessonLinkSkeleton />}>
+                <ContinueLessonLink
+                  chapterId={chapter.id}
+                  completedHref={completedHref}
+                  fallbackHref={fallbackHref}
+                />
+              </Suspense>
+              <CatalogActions
+                contentId={`${courseSlug}/${chapterSlug}`}
+                defaultEmail={session?.user.email}
+                kind="chapter"
               />
-            </Suspense>
-            <CatalogActions
-              contentId={`${courseSlug}/${chapterSlug}`}
-              defaultEmail={session?.user.email}
-              kind="chapter"
-            />
-          </GridToolbar>
+            </GridToolbar>
+          )}
         </>
       }
     >
       <Grid variant="pane">
-        <Suspense
-          fallback={<CatalogGridSkeleton count={lessons.length} groupVariant="pane" search />}
-        >
-          <LessonList
-            brandSlug={brandSlug}
-            chapterId={chapter.id}
-            chapterSlug={chapterSlug}
-            courseSlug={courseSlug}
-            lessons={lessons}
-          />
-        </Suspense>
+        {shouldShowCreateChapterPrompt ? (
+          <ChapterNotGenerated chapterId={chapter.id} />
+        ) : (
+          <Suspense
+            fallback={<CatalogGridSkeleton count={lessons.length} groupVariant="pane" search />}
+          >
+            <LessonList
+              brandSlug={brandSlug}
+              chapterId={chapter.id}
+              chapterSlug={chapterSlug}
+              courseSlug={courseSlug}
+              lessons={lessons}
+            />
+          </Suspense>
+        )}
       </Grid>
     </CatalogDetailLayout>
   );

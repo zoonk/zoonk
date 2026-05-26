@@ -375,10 +375,27 @@ test.describe("Chapter Lesson Search - Mobile", () => {
 });
 
 test.describe("Chapter - No Lessons", () => {
-  test("chapter with no lessons redirects to generate page", async ({ page }) => {
+  test("AI chapter with no lessons shows a create chapter link", async ({ page }) => {
     await page.goto(noLessonsChapterUrl);
 
-    await page.waitForURL(new RegExp(`/generate/ch/${noLessonsChapterId}`, "u"));
+    await expect(page).toHaveURL(noLessonsChapterUrl);
+    await expect(page.getByText(/chapter not available/iu)).toBeVisible();
+    await expect(page.getByText(/hasn't been created yet/iu)).toBeVisible();
+
+    const generateLink = page.getByRole("link", { name: /create chapter/iu });
+
+    await expect(generateLink).toBeVisible();
+
+    await expect(generateLink).toHaveAttribute(
+      "href",
+      new RegExp(`/generate/ch/${noLessonsChapterId}`, "u"),
+    );
+
+    await expect(generateLink).toHaveAttribute("rel", "nofollow");
+
+    const actionsButton = page.getByRole("main").getByRole("button", { name: /more options/iu });
+
+    await expect(actionsButton).toHaveCount(0);
   });
 
   test("non-AI chapters with no lessons stay on the chapter page", async ({ page }) => {
