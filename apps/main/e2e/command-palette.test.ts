@@ -287,14 +287,24 @@ test.describe("Command Palette - Course Search", () => {
     });
   });
 
-  test("shows No results found for non-matching query", async ({ page }) => {
+  test("suggests creating a course for non-matching query", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const prompt = `E2E Empty Search ${uniqueId}`;
+
     await page.goto("/");
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
-    await dialog.getByPlaceholder(/search/iu).fill("xyznonexistent");
+    await dialog.getByPlaceholder(/search/iu).fill(prompt);
 
     await expect(dialog.getByText(/no results found/iu)).toBeVisible();
+
+    const createCourseLink = dialog.getByRole("link", { name: `Create ${prompt} course` });
+
+    await expect(createCourseLink).toBeVisible();
+    await createCourseLink.click();
+
+    await expect(page).toHaveURL(new RegExp(`/learn/${encodeURIComponent(prompt)}$`, "u"));
   });
 
   test("handles rapid typing correctly", async ({ page }) => {

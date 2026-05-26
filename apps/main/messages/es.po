@@ -78,10 +78,6 @@ msgid "HC7Mi4"
 msgstr "Buscar cursos o páginas..."
 
 #: src/app/(catalog)/_components/command-palette.tsx
-msgid "hX5PAb"
-msgstr "No se encontraron resultados"
-
-#: src/app/(catalog)/_components/command-palette.tsx
 msgid "CxfKLC"
 msgstr "Páginas"
 
@@ -98,6 +94,14 @@ msgstr "Cerrar sesión"
 #: src/app/(catalog)/_components/command-palette.tsx
 msgid "SENRqu"
 msgstr "Ayuda"
+
+#: src/app/(catalog)/_components/command-palette.tsx
+msgid "hX5PAb"
+msgstr "No se encontraron resultados"
+
+#: src/app/(catalog)/_components/command-palette.tsx
+msgid "XZfEtS"
+msgstr "Crear curso de {term}"
 
 #: src/app/(catalog)/_components/navbar-links.tsx
 msgid "onRJrc"
