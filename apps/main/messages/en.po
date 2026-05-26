@@ -209,14 +209,12 @@ msgid "VcxnWX"
 msgstr "Interactive courses built for you. Just tell us what you want to learn."
 
 #: src/app/(catalog)/(home)/hero.tsx
-msgid "nlT+zW"
-msgstr "Learn anything"
+msgid "jHCDDq"
+msgstr "Create a course with AI"
 
 #: src/app/(catalog)/(home)/hero.tsx
-#: src/app/(catalog)/courses/page.tsx
-#: src/app/(catalog)/my/user-course-list.tsx
-msgid "s+Ncqj"
-msgstr "Explore courses"
+msgid "M8B177"
+msgstr "Log in to save your progress"
 
 #: src/app/(catalog)/(home)/level.tsx
 #: src/app/(progress)/level/level-stats.tsx
@@ -335,6 +333,11 @@ msgstr "Explore all Zoonk courses to learn anything using AI. Find interactive l
 #: src/app/(catalog)/courses/page.tsx
 msgid "P5jxUC"
 msgstr "Online Courses using AI"
+
+#: src/app/(catalog)/courses/page.tsx
+#: src/app/(catalog)/my/user-course-list.tsx
+msgid "s+Ncqj"
+msgstr "Explore courses"
 
 #: src/app/(catalog)/courses/page.tsx
 msgid "hUF3bo"

@@ -82,8 +82,8 @@ msgstr "Cadastre-se para acompanhar seu progresso"
 
 #: src/components/completion-auth-branch.tsx
 #: src/components/completion-milestone-actions.tsx
-msgid "AyGauy"
-msgstr "Entrar"
+msgid "M8B177"
+msgstr "Entrar para salvar seu progresso"
 
 #: src/components/completion-milestone-actions.tsx
 msgid "DiIkZH"

@@ -141,7 +141,11 @@ describe("player browser integration: completion", () => {
     await completeSingleChoiceLesson();
 
     const completionScreen = page.getByRole("status");
-    const loginLink = completionScreen.getByRole("link", { name: /login/iu });
+
+    const loginLink = completionScreen.getByRole("link", {
+      name: /log in to save your progress/iu,
+    });
+
     const nextLink = completionScreen.getByRole("link", { name: "Next" });
 
     await expect.element(completionScreen.getByText("1/1")).toBeInTheDocument();
@@ -229,7 +233,10 @@ describe("player browser integration: completion", () => {
     await completeSingleChoiceLesson();
 
     const completionScreen = page.getByRole("status");
-    const loginLink = completionScreen.getByRole("link", { name: /login/iu });
+
+    const loginLink = completionScreen.getByRole("link", {
+      name: /log in to save your progress/iu,
+    });
 
     await expect
       .element(completionScreen.getByText(/sign up to track your progress/iu))

@@ -82,8 +82,8 @@ msgstr "Regístrate para seguir tu progreso"
 
 #: src/components/completion-auth-branch.tsx
 #: src/components/completion-milestone-actions.tsx
-msgid "AyGauy"
-msgstr "Iniciar sesión"
+msgid "M8B177"
+msgstr "Iniciar sesión para guardar tu progreso"
 
 #: src/components/completion-milestone-actions.tsx
 msgid "DiIkZH"

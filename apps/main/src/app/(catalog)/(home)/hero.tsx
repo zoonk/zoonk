@@ -1,9 +1,15 @@
+import { getSession } from "@zoonk/core/users/session/get";
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { ArrowRightIcon, SparklesIcon } from "lucide-react";
+import { SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import Link from "next/link";
 
+/**
+ * Shows the zero-progress home state. The hero stays focused on course creation,
+ * while guests get a quiet login prompt because anonymous progress is not saved.
+ */
 export async function Hero() {
+  const session = await getSession();
   const t = await getExtracted();
 
   return (
@@ -18,24 +24,25 @@ export async function Hero() {
         </p>
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+      <div className="flex flex-col items-center gap-3">
         <Link
           className={buttonVariants({ className: "gap-2", size: "lg", variant: "default" })}
           href="/learn"
           prefetch
         >
           <SparklesIcon aria-hidden="true" />
-          {t("Learn anything")}
+          {t("Create a course with AI")}
         </Link>
 
-        <Link
-          className={buttonVariants({ className: "gap-2", size: "lg", variant: "outline" })}
-          href="/courses"
-          prefetch
-        >
-          {t("Explore courses")}
-          <ArrowRightIcon aria-hidden="true" />
-        </Link>
+        {!session && (
+          <Link
+            className="text-muted-foreground hover:text-foreground text-sm underline-offset-4 transition-colors hover:underline"
+            href="/login"
+            prefetch={false}
+          >
+            {t("Log in to save your progress")}
+          </Link>
+        )}
       </div>
     </main>
   );

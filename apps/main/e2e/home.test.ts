@@ -18,8 +18,12 @@ test.describe("Home Page - Unauthenticated", () => {
 
     await expect(hero.getByRole("heading", { name: /learn anything with ai/iu })).toBeVisible();
 
-    // Test Learn anything CTA
-    await hero.getByRole("link", { exact: true, name: "Learn anything" }).click();
+    const loginLink = hero.getByRole("link", { name: "Log in to save your progress" });
+
+    await expect(hero.getByRole("link", { name: "Explore courses" })).not.toBeVisible();
+    await expect(loginLink).toHaveAttribute("href", "/login");
+
+    await hero.getByRole("link", { exact: true, name: "Create a course with AI" }).click();
 
     await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
   });
@@ -55,6 +59,10 @@ test.describe("Home Page - Authenticated", () => {
     await expect(
       userWithoutProgress.getByRole("heading", { name: /learn anything with ai/iu }),
     ).toBeVisible();
+
+    await expect(
+      userWithoutProgress.getByRole("link", { name: "Log in to save your progress" }),
+    ).not.toBeVisible();
   });
 
   test("shows pending course when next lesson has no generated lessons", async ({
