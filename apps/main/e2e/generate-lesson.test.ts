@@ -262,7 +262,7 @@ test.describe("Generate Lesson Page - No Subscription", () => {
 
 test.describe("Generate Lesson Page - First Chapter Free", () => {
   test("unauthenticated user sees generation UI for first chapter lesson", async ({ page }) => {
-    const { lesson } = await createPendingLesson(0);
+    const { chapter, course, lesson } = await createPendingLesson(0);
 
     await setupMockApis(page, {
       statusDelayMs: 2500,
@@ -274,6 +274,14 @@ test.describe("Generate Lesson Page - First Chapter Free", () => {
     await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toHaveCount(0);
     await expect(page.getByText(/upgrade to create/iu)).toHaveCount(0);
     await expect(page.getByRole("heading", { name: lesson.title ?? "" })).toBeVisible();
+
+    const exitLink = page.getByRole("link", { name: /back to chapter/iu });
+    await expect(exitLink).toBeVisible();
+
+    await expect(exitLink).toHaveAttribute(
+      "href",
+      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`,
+    );
   });
 
   test("authenticated user without subscription sees generation UI for first chapter lesson", async ({

@@ -73,8 +73,10 @@ export default async function LessonPage({ params }: Props) {
     return (
       <main className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center p-4">
         <LessonNotGenerated
-          lessonId={lesson.id}
           brandSlug={brandSlug}
+          chapterSlug={chapterSlug}
+          courseSlug={courseSlug}
+          lessonId={lesson.id}
           prerequisiteLessonId={blockingPrerequisite?.lessonId ?? null}
         />
       </main>

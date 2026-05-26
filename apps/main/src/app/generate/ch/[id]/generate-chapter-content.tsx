@@ -1,4 +1,5 @@
 import { LoginRequired } from "@/components/auth/login-required";
+import { GenerationExitLink } from "@/components/generation/generation-exit-link";
 import { SubscriptionGate } from "@/components/subscription/subscription-gate";
 import { getChapterForGeneration } from "@/data/chapters/get-chapter-for-generation";
 import { getInitialGenerationPageStatus } from "@/lib/workflow/get-initial-generation-page-status";
@@ -62,6 +63,7 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
             generationRunId={chapter.generationRunId}
             initialStatus={initialStatus}
           />
+          <GenerationExitLink href={backHref}>{backLabel}</GenerationExitLink>
         </SubscriptionGate>
       </ContainerBody>
     </Container>

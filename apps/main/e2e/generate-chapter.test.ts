@@ -370,7 +370,7 @@ test.describe("Generate Chapter Page - With Subscription", () => {
 
 test.describe("Generate Chapter Page - First Chapter Free", () => {
   test("unauthenticated user sees generation UI for first chapter", async ({ page }) => {
-    const { chapter } = await createPendingChapter(0);
+    const { chapter, course } = await createPendingChapter(0);
 
     await setupMockApis(page, {
       statusDelayMs: 2500,
@@ -381,6 +381,10 @@ test.describe("Generate Chapter Page - First Chapter Free", () => {
 
     await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toHaveCount(0);
     await expect(page.getByRole("heading", { name: chapter.title })).toBeVisible();
+
+    const exitLink = page.getByRole("link", { name: /back to course/iu });
+    await expect(exitLink).toBeVisible();
+    await expect(exitLink).toHaveAttribute("href", `/b/${AI_ORG_SLUG}/c/${course.slug}`);
   });
 
   test("authenticated user without subscription sees generation UI for first chapter", async ({

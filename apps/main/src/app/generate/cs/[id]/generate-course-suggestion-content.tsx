@@ -1,3 +1,4 @@
+import { GenerationExitLink } from "@/components/generation/generation-exit-link";
 import {
   getCourseSuggestionById,
   getLinkedCourseForSuggestion,
@@ -14,6 +15,7 @@ import { Empty, EmptyContent, EmptyHeader } from "@zoonk/ui/components/empty";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { ensureLocaleSuffix } from "@zoonk/utils/string";
+import { getExtracted } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";
 import { GenerationClient } from "./generation-client";
 
@@ -35,6 +37,8 @@ export async function GenerateCourseSuggestionContent({
     redirect(`/b/${AI_ORG_SLUG}/c/${linkedCourse.slug}`);
   }
 
+  const t = await getExtracted();
+
   return (
     <Container variant="narrow">
       <ContainerHeader>
@@ -52,6 +56,7 @@ export async function GenerateCourseSuggestionContent({
           generationStatus={suggestion.generationStatus}
           suggestionId={id}
         />
+        <GenerationExitLink href="/">{t("Back home")}</GenerationExitLink>
       </ContainerBody>
     </Container>
   );
