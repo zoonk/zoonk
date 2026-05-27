@@ -97,6 +97,30 @@ describe(generationReducer, () => {
     });
   });
 
+  describe("setError", () => {
+    it("stores connection errors separately from generation errors", () => {
+      const state = generationReducer(initialGenerationState({ status: "streaming" }), {
+        error: null,
+        errorKind: "connection",
+        type: "setError",
+      });
+
+      expect(state.status).toBe("error");
+      expect(state.error).toBeNull();
+      expect(state.errorKind).toBe("connection");
+    });
+
+    it("treats unclassified errors as generation errors", () => {
+      const state = generationReducer(initialGenerationState({ status: "streaming" }), {
+        error: "Step failed",
+        type: "setError",
+      });
+
+      expect(state.status).toBe("error");
+      expect(state.errorKind).toBe("generation");
+    });
+  });
+
   describe("streamEnded", () => {
     it("does not transition from error state", () => {
       const state = generationReducer(

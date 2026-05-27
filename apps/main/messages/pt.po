@@ -345,16 +345,12 @@ msgid "T0mfNV"
 msgstr "Carregando mais cursos…"
 
 #: src/app/(catalog)/courses/course-list-client.tsx
-#: src/app/generate/ch/[id]/generation-client.tsx
-#: src/app/generate/cs/[id]/generation-client.tsx
-#: src/app/generate/l/[id]/generation-client.tsx
+#: src/components/generation/workflow-generation-error.tsx
 msgid "W/5hwr"
 msgstr "Algo deu errado. Por favor, tente novamente."
 
 #: src/app/(catalog)/courses/course-list-client.tsx
-#: src/app/generate/ch/[id]/generation-client.tsx
-#: src/app/generate/cs/[id]/generation-client.tsx
-#: src/app/generate/l/[id]/generation-client.tsx
+#: src/components/generation/workflow-generation-error.tsx
 msgid "FazwRl"
 msgstr "Tentar de novo"
 
@@ -1051,12 +1047,6 @@ msgstr "Levando você para seu capítulo..."
 #: src/app/generate/ch/[id]/generation-client.tsx
 msgid "45uo73"
 msgstr "Suas aulas estão prontas"
-
-#: src/app/generate/ch/[id]/generation-client.tsx
-#: src/app/generate/cs/[id]/generation-client.tsx
-#: src/app/generate/l/[id]/generation-client.tsx
-msgid "JqiqNj"
-msgstr "Algo deu errado"
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
 msgid "gnxL73"
@@ -1766,6 +1756,22 @@ msgstr "Opinião"
 #: src/components/feedback/feedback-dialog.tsx
 msgid "eUzs3M"
 msgstr "Envie sua opinião, perguntas ou sugestões para a gente. Preencha o formulário abaixo ou envie um email diretamente para contato@zoonk.com."
+
+#: src/components/generation/workflow-generation-error.tsx
+msgid "ctqXbT"
+msgstr "Perdemos a conexão do progresso. Seu conteúdo ainda pode estar sendo gerado."
+
+#: src/components/generation/workflow-generation-error.tsx
+msgid "1A8Z/l"
+msgstr "Verificar novamente"
+
+#: src/components/generation/workflow-generation-error.tsx
+msgid "yHqv96"
+msgstr "Conexão interrompida"
+
+#: src/components/generation/workflow-generation-error.tsx
+msgid "JqiqNj"
+msgstr "Algo deu errado"
 
 #: src/components/subscription/upgrade-cta.tsx
 msgid "IS/YjO"

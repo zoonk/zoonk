@@ -369,6 +369,130 @@ test.describe("Generate Chapter Page - With Subscription", () => {
     await userWithoutProgress.waitForURL(/\/b\/ai\/c\//u, { timeout: 10_000 });
   });
 
+  test("keeps checking progress when the status connection is interrupted", async ({
+    userWithoutProgress,
+    noProgressUser,
+  }) => {
+    await createTestSubscription(noProgressUser.id);
+    const { chapter, organizationId } = await createPendingChapter();
+
+    const uniqueId = randomUUID().slice(0, 8);
+
+    await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId,
+      slug: `e2e-interrupted-lesson-${uniqueId}`,
+      title: `E2E Interrupted Lesson ${uniqueId}`,
+    });
+
+    await userWithoutProgress.route("**/v1/workflows/chapter-generation/**", async (route) => {
+      const url = route.request().url();
+      const method = route.request().method();
+
+      if (url.includes("/trigger") && method === "POST") {
+        await route.fulfill({
+          body: JSON.stringify({ message: "Workflow started", runId: TEST_RUN_ID }),
+          contentType: "application/json",
+          status: 200,
+        });
+
+        return;
+      }
+
+      if (url.includes("/status")) {
+        const reconnectCount = new URL(url).searchParams.get("_rc");
+
+        if (reconnectCount === "0") {
+          await route.abort("failed");
+          return;
+        }
+
+        await route.fulfill({
+          body: createSSEStream([
+            { status: "started", step: "setChapterAsCompleted" },
+            { status: "completed", step: "setChapterAsCompleted" },
+          ]),
+          contentType: "text/event-stream",
+          status: 200,
+        });
+
+        return;
+      }
+
+      await route.continue();
+    });
+
+    await userWithoutProgress.goto(`/generate/ch/${chapter.id}`);
+
+    await expect(userWithoutProgress.getByText(/something went wrong/iu)).toHaveCount(0);
+
+    await expect(userWithoutProgress.getByText(/your lessons are ready/iu)).toBeVisible({
+      timeout: 15_000,
+    });
+
+    await prisma.chapter.update({
+      data: { generationStatus: "completed" },
+      where: { id: chapter.id },
+    });
+
+    await userWithoutProgress.waitForURL(/\/b\/ai\/c\//u, { timeout: 10_000 });
+  });
+
+  test("checks server state when connection retry is clicked", async ({
+    userWithoutProgress,
+    noProgressUser,
+  }) => {
+    await createTestSubscription(noProgressUser.id);
+    const { chapter, organizationId } = await createPendingChapter();
+
+    const uniqueId = randomUUID().slice(0, 8);
+
+    await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId,
+      slug: `e2e-retry-lesson-${uniqueId}`,
+      title: `E2E Retry Lesson ${uniqueId}`,
+    });
+
+    await userWithoutProgress.route("**/v1/workflows/chapter-generation/**", async (route) => {
+      const url = route.request().url();
+      const method = route.request().method();
+
+      if (url.includes("/trigger") && method === "POST") {
+        await route.fulfill({
+          body: JSON.stringify({ message: "Workflow started", runId: TEST_RUN_ID }),
+          contentType: "application/json",
+          status: 200,
+        });
+
+        return;
+      }
+
+      if (url.includes("/status")) {
+        await route.abort("failed");
+        return;
+      }
+
+      await route.continue();
+    });
+
+    await userWithoutProgress.goto(`/generate/ch/${chapter.id}`);
+
+    await expect(userWithoutProgress.getByText(/connection interrupted/iu)).toBeVisible({
+      timeout: 12_000,
+    });
+
+    await prisma.chapter.update({
+      data: { generationStatus: "completed" },
+      where: { id: chapter.id },
+    });
+
+    await userWithoutProgress.getByRole("button", { name: /check again/iu }).click();
+    await userWithoutProgress.waitForURL(/\/b\/ai\/c\//u, { timeout: 10_000 });
+  });
+
   test("shows error when stream returns error status", async ({
     userWithoutProgress,
     noProgressUser,

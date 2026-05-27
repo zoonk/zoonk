@@ -2,7 +2,6 @@
 
 import {
   GenerationProgressCompleted,
-  GenerationProgressError,
   GenerationTimeline,
   GenerationTimelineHeader,
   GenerationTimelineProgress,
@@ -11,6 +10,7 @@ import {
   GenerationTimelineSubtitle,
   GenerationTimelineTitle,
 } from "@/components/generation/generation-progress";
+import { WorkflowGenerationError } from "@/components/generation/workflow-generation-error";
 import { type GenerationStatus } from "@/lib/workflow/generation-store";
 import { useAnimatedProgress } from "@/lib/workflow/use-animated-progress";
 import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
@@ -116,13 +116,11 @@ export function GenerationClient({
 
   if (generation.status === "error") {
     return (
-      <GenerationProgressError
-        description={generation.error || t("Something went wrong. Please try again.")}
+      <WorkflowGenerationError
+        error={generation.error}
+        errorKind={generation.errorKind}
         onRetry={generation.retry}
-        retryLabel={t("Try again")}
-      >
-        {t("Something went wrong")}
-      </GenerationProgressError>
+      />
     );
   }
 
