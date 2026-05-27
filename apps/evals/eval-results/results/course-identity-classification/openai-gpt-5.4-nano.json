@@ -43,41 +43,6 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n      - Must choose \"useExisting\"\n      - Must choose courseSlug \"frontend-development\"\n      - \"Client Side Development\" and \"Frontend Development\" are synonyms for the same course\n      - Must prefer the precise frontend candidate over the broader web development candidate\n\n      \n  - Must choose \"useExisting\" only when a candidate clearly covers the same learner goal\n  - Must choose \"createNew\" when candidates are broader, narrower, siblings, ambiguous, or jurisdictionally different\n  - If using an existing course, courseSlug must exactly match the correct candidate slug\n  - If creating new, courseSlug must be null\n  - Ignore the reason field when scoring this eval\n  - If both decision and courseSlug match the expected values, the score must be 10\n  - If only one of decision or courseSlug matches the expected value, the score must be 7\n  - If neither decision nor courseSlug matches the expected values, the score must be the lowest possible score\n  - False positives are major errors because they redirect learners to the wrong course\n\n    ",
-        "id": "en-client-side-development-1",
-        "userInput": {
-          "candidates": [
-            {
-              "description": "Build user-facing web interfaces.",
-              "language": "en",
-              "slug": "frontend-development",
-              "targetLanguage": null,
-              "title": "Frontend Development"
-            },
-            {
-              "description": "Build complete web applications across frontend and backend.",
-              "language": "en",
-              "slug": "web-development",
-              "targetLanguage": null,
-              "title": "Web Development"
-            }
-          ],
-          "suggestion": {
-            "description": "Build browser-based product interfaces.",
-            "language": "en",
-            "targetLanguage": null,
-            "title": "Client Side Development"
-          }
-        }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
         "expectations": "\n      - Must choose \"useExisting\"\n      - Must choose courseSlug \"python\"\n      - \"Introduction to Python\" is a level/package variant of \"Python\"\n\n      \n  - Must choose \"useExisting\" only when a candidate clearly covers the same learner goal\n  - Must choose \"createNew\" when candidates are broader, narrower, siblings, ambiguous, or jurisdictionally different\n  - If using an existing course, courseSlug must exactly match the correct candidate slug\n  - If creating new, courseSlug must be null\n  - Ignore the reason field when scoring this eval\n  - If both decision and courseSlug match the expected values, the score must be 10\n  - If only one of decision or courseSlug matches the expected value, the score must be 7\n  - If neither decision nor courseSlug matches the expected values, the score must be the lowest possible score\n  - False positives are major errors because they redirect learners to the wrong course\n\n    ",
         "id": "en-introduction-to-python-1",
         "userInput": {
@@ -101,9 +66,17 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The result fails both required fields: it chooses `createNew` instead of the expected `useExisting`, and sets `courseSlug` to null instead of the expected `python`. This violates the explicit dedupe expectation that “Python for Data Science” should consolidate into the existing Python course and prefer the Python candidate over Data Science or Pandas. Since neither decision nor courseSlug matches, the rubric requires the lowest possible score.",
+          "kind": "majorErrors",
+          "score": 6
+        },
         { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "The result should choose `useExisting` with `courseSlug` exactly `python`. The reason field is ignored for scoring, but if included it should explain that the proposed learner goal is Python-focused and is best consolidated into the existing Python course rather than creating a separate course.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
       ],
       "testCase": {
         "expectations": "\n      - Must choose \"useExisting\"\n      - Must choose courseSlug \"python\"\n      - \"Python for Data Science\" should consolidate into the existing Python course for dedupe\n      - Must prefer the Python candidate over the application-domain Data Science candidate\n      - Must not choose narrower tool candidates such as Pandas\n\n      \n  - Must choose \"useExisting\" only when a candidate clearly covers the same learner goal\n  - Must choose \"createNew\" when candidates are broader, narrower, siblings, ambiguous, or jurisdictionally different\n  - If using an existing course, courseSlug must exactly match the correct candidate slug\n  - If creating new, courseSlug must be null\n  - Ignore the reason field when scoring this eval\n  - If both decision and courseSlug match the expected values, the score must be 10\n  - If only one of decision or courseSlug matches the expected value, the score must be 7\n  - If neither decision nor courseSlug matches the expected values, the score must be the lowest possible score\n  - False positives are major errors because they redirect learners to the wrong course\n\n    ",
@@ -176,6 +149,167 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
+        "expectations": "\n      - Must choose \"createNew\"\n      - courseSlug must be null\n      - \"Aprendizado de Máquina\" is a narrower standalone field, not the same course as \"Inteligência Artificial\"\n      - Must not use a broader umbrella course just because no explicit Machine Learning candidate is present\n      - Must ignore unrelated broad catalog candidates such as Ciência de Dados, Ciência da Computação, and other popular courses\n\n      \n  - Must choose \"useExisting\" only when a candidate clearly covers the same learner goal\n  - Must choose \"createNew\" when candidates are broader, narrower, siblings, ambiguous, or jurisdictionally different\n  - If using an existing course, courseSlug must exactly match the correct candidate slug\n  - If creating new, courseSlug must be null\n  - Ignore the reason field when scoring this eval\n  - If both decision and courseSlug match the expected values, the score must be 10\n  - If only one of decision or courseSlug matches the expected value, the score must be 7\n  - If neither decision nor courseSlug matches the expected values, the score must be the lowest possible score\n  - False positives are major errors because they redirect learners to the wrong course\n\n    ",
+        "id": "pt-aprendizado-de-maquina-not-inteligencia-artificial-1",
+        "userInput": {
+          "candidates": [
+            {
+              "description": "O italiano é uma língua românica usada na comunicação do dia a dia, em viagens, estudos e negócios. Desenvolve a capacidade de falar, compreender, ler e escrever em diferentes níveis de proficiência, ampliando oportunidades em turismo, comércio internacional, educação e relações culturais.",
+              "language": "pt",
+              "slug": "italiano-pt",
+              "targetLanguage": "it",
+              "title": "Italiano"
+            },
+            {
+              "description": "A história estuda as transformações das sociedades ao longo do tempo, analisando acontecimentos, ideias e conflitos que moldaram o mundo atual. O curso desenvolve leitura crítica de fontes, interpretação de contextos e visão histórica para fortalecer a análise de fatos no estudo, no trabalho e na vida pública.",
+              "language": "pt",
+              "slug": "historia-pt",
+              "targetLanguage": null,
+              "title": "História"
+            },
+            {
+              "description": "A astronomia estuda os corpos celestes, o universo e os fenômenos que acontecem além da Terra. O curso aborda estrelas, planetas, galáxias e a formação do cosmos, mostrando por que esse campo é essencial para entender nossa origem e o funcionamento do universo.",
+              "language": "pt",
+              "slug": "astronomia-pt",
+              "targetLanguage": null,
+              "title": "Astronomia"
+            },
+            {
+              "description": "A engenharia de Fórmula 1 aplica ciência, dados e estratégia para transformar desempenho em velocidade nas pistas. O curso aborda aerodinâmica, dinâmica do carro, pneus, telemetria e tomada de decisão em corrida, mostrando como cada detalhe impacta a performance. Abre caminho para atuar em equipes de automobilismo, centros de pesquisa e desenvolvimento, e na indústria automotiva de alta performance.",
+              "language": "pt",
+              "slug": "engenharia-de-formula-1-pt",
+              "targetLanguage": null,
+              "title": "Engenharia de Fórmula 1"
+            },
+            {
+              "description": "A biologia estuda os seres vivos, seus processos e as relações com o ambiente. Aborda como a vida funciona em diferentes níveis, da célula aos ecossistemas, e por que isso é essencial para saúde, meio ambiente e inovação científica.",
+              "language": "pt",
+              "slug": "biologia-pt",
+              "targetLanguage": null,
+              "title": "Biologia"
+            },
+            {
+              "description": "A História do Brasil estuda os processos políticos, sociais, econômicos e culturais que moldaram o país, da colonização ao mundo contemporâneo. O curso desenvolve a análise crítica dos principais períodos e debates históricos, mostrando por que esse conhecimento é essencial para compreender a sociedade brasileira atual.",
+              "language": "pt",
+              "slug": "historia-do-brasil-pt",
+              "targetLanguage": null,
+              "title": "História do Brasil"
+            },
+            {
+              "description": "A filosofia investiga as grandes questões sobre conhecimento, ética, realidade e sentido da vida. Desenvolve pensamento crítico, argumentação clara e análise de ideias, habilidades valiosas para educação, pesquisa, jornalismo, consultoria e áreas que exigem reflexão e tomada de decisão.",
+              "language": "pt",
+              "slug": "filosofia-pt",
+              "targetLanguage": null,
+              "title": "Filosofia"
+            },
+            {
+              "description": "Ciência da Computação estuda como softwares, sistemas e dados funcionam para resolver problemas do mundo real. Cobre lógica, programação, algoritmos e organização de sistemas, preparando para atuar em empresas de tecnologia, startups, consultorias e equipes de inovação.",
+              "language": "pt",
+              "slug": "ciencia-da-computacao-pt",
+              "targetLanguage": null,
+              "title": "Ciência da Computação"
+            },
+            {
+              "description": "Geografia estuda a relação entre sociedade, natureza e espaço, explicando como os territórios se transformam ao longo do tempo. Aborda clima, relevo, população, economia e organização do espaço para desenvolver uma visão crítica sobre o mundo e seus desafios atuais.",
+              "language": "pt",
+              "slug": "geografia-pt",
+              "targetLanguage": null,
+              "title": "Geografia"
+            },
+            {
+              "description": "A fotografia é a arte e a técnica de registrar imagens com intenção, luz e composição. Aborda enquadramento, narrativa visual, retrato, paisagem e edição básica para criar fotos mais impactantes em contextos pessoais, criativos e profissionais.",
+              "language": "pt",
+              "slug": "fotografia-pt",
+              "targetLanguage": null,
+              "title": "Fotografia"
+            },
+            {
+              "description": "A psicologia estuda o comportamento, as emoções e os processos mentais que influenciam a vida humana. O curso aborda como analisar pessoas e contextos, apoiar o bem-estar e aplicar esse conhecimento em saúde, educação, organizações e atendimento clínico.",
+              "language": "pt",
+              "slug": "psicologia-pt",
+              "targetLanguage": null,
+              "title": "Psicologia"
+            },
+            {
+              "description": "A economia estuda como pessoas, empresas e governos usam recursos limitados para tomar decisões e organizar a produção, o consumo e a distribuição de riqueza. O curso aborda os principais conceitos da área e seus impactos no mercado, nas políticas públicas e no dia a dia, preparando para atuar em empresas, instituições financeiras, consultorias, órgãos públicos e pesquisa.",
+              "language": "pt",
+              "slug": "economia-pt",
+              "targetLanguage": null,
+              "title": "Economia"
+            },
+            {
+              "description": "Ciência de Dados transforma dados brutos em insights para decisões mais precisas e estratégias melhores. O curso aborda análise, visualização e previsão de resultados para gerar valor em negócios, pesquisa e tecnologia. Abre caminhos para atuar como cientista de dados em empresas, consultorias e equipes de produto.",
+              "language": "pt",
+              "slug": "ciencia-de-dados-pt",
+              "targetLanguage": null,
+              "title": "Ciência de Dados"
+            },
+            {
+              "description": "A escrita criativa transforma ideias em textos originais com voz própria. Desenvolve narrativa, personagens, ritmo, estilo e revisão para criar contos, romances, roteiros e conteúdos autorais. Abre caminhos para atuação como redator, roteirista, autor independente e criador de conteúdo.",
+              "language": "pt",
+              "slug": "escrita-criativa-pt",
+              "targetLanguage": null,
+              "title": "Escrita Criativa"
+            },
+            {
+              "description": "A farmácia estuda os medicamentos, sua produção, uso seguro e os cuidados que garantem tratamentos mais eficazes. O curso desenvolve competências para atuar na dispensação, orientação ao paciente, controle de qualidade e apoio à saúde em farmácias, hospitais, laboratórios e indústrias farmacêuticas.",
+              "language": "pt",
+              "slug": "farmacia-pt",
+              "targetLanguage": null,
+              "title": "Farmácia"
+            },
+            {
+              "description": "A fisioterapia atua na prevenção, avaliação e reabilitação de movimentos e funções do corpo após lesões, dores ou limitações físicas. O curso desenvolve habilidades para cuidar da mobilidade, reduzir desconfortos e promover mais autonomia e qualidade de vida. Abre oportunidades em clínicas, hospitais, centros de reabilitação, atendimento domiciliar e esporte.",
+              "language": "pt",
+              "slug": "fisioterapia-pt",
+              "targetLanguage": null,
+              "title": "Fisioterapia"
+            },
+            {
+              "description": "A inteligência artificial cria sistemas capazes de automatizar tarefas, analisar dados e apoiar decisões em diversos contextos. O curso aborda aplicações práticas, uso responsável e impacto nos negócios, preparando você para atuar em empresas de tecnologia, inovação, consultoria e equipes de transformação digital.",
+              "language": "pt",
+              "slug": "inteligencia-artificial-pt",
+              "targetLanguage": null,
+              "title": "Inteligência Artificial"
+            },
+            {
+              "description": "A pedagogia estuda os processos de ensino, aprendizagem e desenvolvimento humano em diferentes contextos. O curso aborda planejamento pedagógico, mediação de aprendizagem, avaliação e práticas inclusivas, preparando para atuar em escolas, projetos educacionais, instituições de formação e áreas de coordenação pedagógica.",
+              "language": "pt",
+              "slug": "pedagogia-pt",
+              "targetLanguage": null,
+              "title": "Pedagogia"
+            },
+            {
+              "description": "A Administração Financeira Orçamentária organiza recursos, custos e metas para manter a saúde financeira de uma empresa. Aborda planejamento, controle de gastos, análise de resultados e tomada de decisão, habilidades essenciais para atuar em finanças, controladoria e gestão em empresas de diferentes portes.",
+              "language": "pt",
+              "slug": "administracao-financeira-orcamentaria-pt",
+              "targetLanguage": null,
+              "title": "Administração Financeira Orçamentária"
+            },
+            {
+              "description": "A Medicina Veterinária cuida da saúde, do bem-estar e da prevenção de doenças em animais de companhia, de produção e silvestres. Aborda diagnóstico, tratamento, manejo e saúde pública, preparando para atuar em clínicas, hospitais veterinários, fazendas, órgãos públicos e centros de pesquisa.",
+              "language": "pt",
+              "slug": "medicina-veterinaria-pt",
+              "targetLanguage": null,
+              "title": "Medicina Veterinária"
+            }
+          ],
+          "suggestion": {
+            "description": "Aprenda a construir modelos preditivos para resolver problemas com dados.",
+            "language": "pt",
+            "targetLanguage": null,
+            "title": "Aprendizado de Máquina"
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
         "expectations": "\n      - Must choose \"createNew\"\n      - courseSlug must be null\n      - \"Deep Learning\" is a narrower independent field, not the same course as \"Machine Learning\"\n\n      \n  - Must choose \"useExisting\" only when a candidate clearly covers the same learner goal\n  - Must choose \"createNew\" when candidates are broader, narrower, siblings, ambiguous, or jurisdictionally different\n  - If using an existing course, courseSlug must exactly match the correct candidate slug\n  - If creating new, courseSlug must be null\n  - Ignore the reason field when scoring this eval\n  - If both decision and courseSlug match the expected values, the score must be 10\n  - If only one of decision or courseSlug matches the expected value, the score must be 7\n  - If neither decision nor courseSlug matches the expected values, the score must be the lowest possible score\n  - False positives are major errors because they redirect learners to the wrong course\n\n    ",
         "id": "en-deep-learning-not-machine-learning-1",
         "userInput": {
@@ -232,6 +366,42 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
+        "expectations": "\n      - Must choose \"createNew\"\n      - courseSlug must be null\n      - \"Administração Pública\" is broader than \"Direito Administrativo\", so the existing candidate does not cover the same learner goal\n      - The proposed description sounds legalistic, but the course title should still prevent merging the broader public administration course into the narrower administrative law course\n\n      \n  - Must choose \"useExisting\" only when a candidate clearly covers the same learner goal\n  - Must choose \"createNew\" when candidates are broader, narrower, siblings, ambiguous, or jurisdictionally different\n  - If using an existing course, courseSlug must exactly match the correct candidate slug\n  - If creating new, courseSlug must be null\n  - Ignore the reason field when scoring this eval\n  - If both decision and courseSlug match the expected values, the score must be 10\n  - If only one of decision or courseSlug matches the expected value, the score must be 7\n  - If neither decision nor courseSlug matches the expected values, the score must be the lowest possible score\n  - False positives are major errors because they redirect learners to the wrong course\n\n    ",
+        "id": "pt-administracao-publica-not-direito-administrativo-1",
+        "userInput": {
+          "candidates": [
+            {
+              "description": "O Direito Administrativo regula a atuação do Estado e sua relação com cidadãos, empresas e servidores públicos. Aborda princípios, atos administrativos, contratos, licitações e responsabilidade do poder público, formando base para atuar em órgãos públicos, escritórios de advocacia e concursos da área jurídica.",
+              "language": "pt",
+              "slug": "direito-administrativo-pt",
+              "targetLanguage": null,
+              "title": "Direito Administrativo"
+            }
+          ],
+          "suggestion": {
+            "description": "Entenda como controlar a atuação do Estado por meio de princípios, competências e limites jurídicos.",
+            "language": "pt",
+            "targetLanguage": null,
+            "title": "Administração Pública"
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The result incorrectly chooses createNew instead of the expected useExisting, and sets courseSlug to null instead of the required existing slug ingles-pt. This fails both required fields and would wrongly create a duplicate/incorrect course instead of routing TOEFL preparation to the existing English course.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Select decision useExisting and set courseSlug exactly to ingles-pt, since TOEFL preparation belongs under the English language course candidate.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
         "expectations": "\n      - Must choose \"useExisting\"\n      - Must choose courseSlug \"ingles-pt\"\n      - TOEFL preparation belongs to the English language course\n\n      \n  - Must choose \"useExisting\" only when a candidate clearly covers the same learner goal\n  - Must choose \"createNew\" when candidates are broader, narrower, siblings, ambiguous, or jurisdictionally different\n  - If using an existing course, courseSlug must exactly match the correct candidate slug\n  - If creating new, courseSlug must be null\n  - Ignore the reason field when scoring this eval\n  - If both decision and courseSlug match the expected values, the score must be 10\n  - If only one of decision or courseSlug matches the expected value, the score must be 7\n  - If neither decision nor courseSlug matches the expected values, the score must be the lowest possible score\n  - False positives are major errors because they redirect learners to the wrong course\n\n    ",
         "id": "pt-toefl-english-1",
         "userInput": {
@@ -249,6 +419,42 @@
             "language": "pt",
             "targetLanguage": "en",
             "title": "TOEFL"
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The result fails both required fields: it chose decision \"createNew\" instead of \"useExisting\", and courseSlug null instead of \"matematica-pt\". This is a major error because ENEM math preparation should be routed to the existing Mathematics course, not a separate exam-prep course. Under the rubric, neither decision nor courseSlug matches, so this receives the lowest possible score.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "It should choose decision \"useExisting\" with courseSlug \"matematica-pt\". The reason field does not affect scoring.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Must choose \"useExisting\"\n      - Must choose courseSlug \"matematica-pt\"\n      - ENEM math preparation belongs to the Mathematics course\n      - Must not create a separate prep-exam course when the underlying subject course exists\n\n      \n  - Must choose \"useExisting\" only when a candidate clearly covers the same learner goal\n  - Must choose \"createNew\" when candidates are broader, narrower, siblings, ambiguous, or jurisdictionally different\n  - If using an existing course, courseSlug must exactly match the correct candidate slug\n  - If creating new, courseSlug must be null\n  - Ignore the reason field when scoring this eval\n  - If both decision and courseSlug match the expected values, the score must be 10\n  - If only one of decision or courseSlug matches the expected value, the score must be 7\n  - If neither decision nor courseSlug matches the expected values, the score must be the lowest possible score\n  - False positives are major errors because they redirect learners to the wrong course\n\n    ",
+        "id": "pt-matematica-para-enem-1",
+        "userInput": {
+          "candidates": [
+            {
+              "description": "Curso para aprender matemática.",
+              "language": "pt",
+              "slug": "matematica-pt",
+              "targetLanguage": null,
+              "title": "Matemática"
+            }
+          ],
+          "suggestion": {
+            "description": "Preparação para resolver questões de matemática do ENEM.",
+            "language": "pt",
+            "targetLanguage": null,
+            "title": "Matemática para o ENEM"
           }
         }
       }

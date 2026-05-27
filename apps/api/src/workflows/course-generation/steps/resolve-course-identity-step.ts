@@ -18,6 +18,7 @@ import { courseContentInclude } from "../_internal/existing-course-content";
 
 const IDENTITY_SEARCH_STEP = "generateCourseIdentitySearchQueries";
 const IDENTITY_CLASSIFICATION_STEP = "resolveCourseIdentity";
+const MIN_SEARCH_TEXT_LENGTH = 3;
 
 export type ExistingCourse = CourseGetPayload<{ include: typeof courseContentInclude }>;
 
@@ -32,6 +33,16 @@ type CourseIdentityStream = ReturnType<typeof createStepStream<CourseWorkflowSte
  */
 function isCourseWhereInput(value: CourseWhereInput | false | null): value is CourseWhereInput {
   return Boolean(value);
+}
+
+/**
+ * Prevents tiny standalone AI search terms from turning candidate retrieval
+ * into a broad substring scan. Short acronyms such as "AI" or "IA" can appear
+ * inside many unrelated normalized titles, so they add much more noise than
+ * recall when used with `contains`.
+ */
+function isSearchTextLongEnough(text: string): boolean {
+  return normalizeString(text).length >= MIN_SEARCH_TEXT_LENGTH;
 }
 
 /**
@@ -75,6 +86,10 @@ function getSearchTextWhereClauses({
   language: string;
   text: string;
 }): CourseWhereInput[] {
+  if (!isSearchTextLongEnough(text)) {
+    return [];
+  }
+
   const normalizedText = normalizeString(text);
   const normalizedSlug = toSlug(text);
   const suffixedSlug = getCourseSlugForTitle({ language, title: text });
