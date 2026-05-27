@@ -45,7 +45,6 @@ Do not reference the source lessons themselves. If a source lesson title or desc
 - Use sortOrder only for a clear sequence where each item must happen before the next. Do not use sortOrder for optional steps, branching outcomes, alternative endings, unordered checklists, or workflows where several orders could be reasonable.
 - Do not let one format dominate when other formats can test the content well.
 - Do not make the correct multiple-choice option easier to spot by making it longer, more specific, more careful, or more confident than the wrong options.
-- Do not use copyrighted or trademarked characters in image prompts. Describe original, generic people, objects, and scenes instead.
 
 # Formats
 

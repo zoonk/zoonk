@@ -18,6 +18,7 @@ type ProviderOptionsResult = {
 };
 
 type ImageProviderOptionsResult = {
+  gateway: Pick<GatewayProviderOptions, "models">;
   openai: { output_format: "webp"; quality: ImageGenerationQuality };
 };
 
@@ -72,11 +73,13 @@ function isSupportedModelPrefix(value: string): value is SupportedModelPrefix {
  * drifting across each task entry point.
  */
 export function buildImageProviderOptions({
+  fallbackModels,
   quality,
 }: {
+  fallbackModels: readonly string[];
   quality: ImageGenerationQuality;
 }): ImageProviderOptionsResult {
-  return { openai: { output_format: "webp", quality } };
+  return { gateway: { models: [...fallbackModels] }, openai: { output_format: "webp", quality } };
 }
 
 /**

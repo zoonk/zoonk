@@ -7,8 +7,6 @@
   "ignoreDependencies": [
     "@prisma/client",
     "@tailwindcss/postcss",
-    "@types/react",
-    "@types/react-dom",
     "@typescript/native-preview",
     "next",
     "postcss-load-config",

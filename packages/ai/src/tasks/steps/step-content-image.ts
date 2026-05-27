@@ -1,13 +1,21 @@
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
-import { type GeneratedFile, type ImageModel, generateImage } from "ai";
+import { type GeneratedFile, type ImageModel } from "ai";
 import { type ImageGenerationQuality, buildImageProviderOptions } from "../../provider-options";
+import { generateImageWithSafetyRetry } from "../_utils/generate-image-with-safety-retry";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import illustrationPromptTemplate from "./step-content-image.prompt.md";
 import practicePromptTemplate from "./step-content-practice-image.prompt.md";
 
 const defaultModel = "openai/gpt-image-2";
 const DEFAULT_QUALITY = "low";
+
+const fallbackModels = [
+  "bfl/flux-kontext-max",
+  "xai/grok-imagine-image",
+  "bytedance/seedream-5.0-lite",
+  "recraft/recraft-v4.1-utility",
+] as const;
 
 const STEP_CONTENT_IMAGE_PRESETS = {
   illustration: { promptTemplate: illustrationPromptTemplate, size: "1024x1280" },
@@ -57,11 +65,12 @@ export async function generateStepContentImage({
   const imagePreset = STEP_CONTENT_IMAGE_PRESETS[preset];
 
   const { data, error } = await safeAsync(() =>
-    generateImage({
+    generateImageWithSafetyRetry({
+      buildPrompt: ({ input }) => getStepContentImagePrompt({ language, preset, prompt: input }),
+      input: prompt,
       maxImagesPerCall: 1,
       model,
-      prompt: getStepContentImagePrompt({ language, preset, prompt }),
-      providerOptions: buildImageProviderOptions({ quality }),
+      providerOptions: buildImageProviderOptions({ fallbackModels, quality }),
       size: imagePreset.size,
     }),
   );
