@@ -2,10 +2,13 @@ import { type StepStreamMessage } from "@zoonk/core/workflows/steps";
 
 export type GenerationStatus = "idle" | "triggering" | "streaming" | "completed" | "error";
 
+export type GenerationErrorKind = "connection" | "generation";
+
 export type GenerationState<TStep extends string = string> = {
   completedSteps: TStep[];
   currentStep: TStep | null;
   error: string | null;
+  errorKind: GenerationErrorKind | null;
   completionEntityId: string | null;
   reconnectCount: number;
   runId: string | null;
@@ -16,7 +19,7 @@ export type GenerationState<TStep extends string = string> = {
 export type GenerationAction<TStep extends string = string> =
   | { type: "reconnect" }
   | { type: "reset" }
-  | { type: "setError"; error: string }
+  | { type: "setError"; error: string | null; errorKind?: GenerationErrorKind }
   | { type: "stepCompleted"; step: TStep }
   | { type: "stepStarted"; step: TStep }
   | { type: "streamEnded"; completionStep?: TStep; entityId?: string }
@@ -31,6 +34,7 @@ export function initialGenerationState<TStep extends string = string>(
     completionEntityId: null,
     currentStep: null,
     error: null,
+    errorKind: null,
     reconnectCount: 0,
     runId: null,
     startedSteps: [] as TStep[],
@@ -49,7 +53,12 @@ export function generationReducer<TStep extends string>(
     case "reset":
       return initialGenerationState<TStep>();
     case "setError":
-      return { ...state, error: action.error, status: "error" };
+      return {
+        ...state,
+        error: action.error,
+        errorKind: action.errorKind ?? "generation",
+        status: "error",
+      };
     case "stepCompleted":
       return {
         ...state,
@@ -82,7 +91,7 @@ export function generationReducer<TStep extends string>(
       return { ...state, completionEntityId: action.entityId ?? null, status: "completed" };
 
     case "triggerStart":
-      return { ...state, error: null, status: "triggering" };
+      return { ...state, error: null, errorKind: null, status: "triggering" };
     case "triggerSuccess":
       return { ...state, runId: action.runId, status: "streaming" };
     default: {

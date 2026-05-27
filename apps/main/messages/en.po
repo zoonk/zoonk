@@ -345,16 +345,12 @@ msgid "T0mfNV"
 msgstr "Loading more courses…"
 
 #: src/app/(catalog)/courses/course-list-client.tsx
-#: src/app/generate/ch/[id]/generation-client.tsx
-#: src/app/generate/cs/[id]/generation-client.tsx
-#: src/app/generate/l/[id]/generation-client.tsx
+#: src/components/generation/workflow-generation-error.tsx
 msgid "W/5hwr"
 msgstr "Something went wrong. Please try again."
 
 #: src/app/(catalog)/courses/course-list-client.tsx
-#: src/app/generate/ch/[id]/generation-client.tsx
-#: src/app/generate/cs/[id]/generation-client.tsx
-#: src/app/generate/l/[id]/generation-client.tsx
+#: src/components/generation/workflow-generation-error.tsx
 msgid "FazwRl"
 msgstr "Try again"
 
@@ -1051,12 +1047,6 @@ msgstr "Taking you to your chapter..."
 #: src/app/generate/ch/[id]/generation-client.tsx
 msgid "45uo73"
 msgstr "Your lessons are ready"
-
-#: src/app/generate/ch/[id]/generation-client.tsx
-#: src/app/generate/cs/[id]/generation-client.tsx
-#: src/app/generate/l/[id]/generation-client.tsx
-msgid "JqiqNj"
-msgstr "Something went wrong"
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
 msgid "gnxL73"
@@ -1766,6 +1756,22 @@ msgstr "Feedback"
 #: src/components/feedback/feedback-dialog.tsx
 msgid "eUzs3M"
 msgstr "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com."
+
+#: src/components/generation/workflow-generation-error.tsx
+msgid "ctqXbT"
+msgstr "We lost the progress connection. Your content may still be generating."
+
+#: src/components/generation/workflow-generation-error.tsx
+msgid "1A8Z/l"
+msgstr "Check again"
+
+#: src/components/generation/workflow-generation-error.tsx
+msgid "yHqv96"
+msgstr "Connection interrupted"
+
+#: src/components/generation/workflow-generation-error.tsx
+msgid "JqiqNj"
+msgstr "Something went wrong"
 
 #: src/components/subscription/upgrade-cta.tsx
 msgid "IS/YjO"

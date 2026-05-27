@@ -53,6 +53,23 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
   );
 
   /**
+   * Status streams are best-effort browser connections. Mobile browsers can
+   * suspend or tear them down while the workflow keeps running on the server,
+   * so a transport failure should resume the same run instead of being shown as
+   * a failed generation.
+   */
+  const reconnectStream = useEffectEvent(() => {
+    if (state.reconnectCount >= MAX_STREAM_RECONNECTS) {
+      dispatch({ error: null, errorKind: "connection", type: "setError" });
+      return;
+    }
+
+    setTimeout(() => {
+      dispatch({ type: "reconnect" });
+    }, 1000);
+  });
+
+  /**
    * When the SSE stream closes, check whether we received the expected completion
    * step. If not, the stream was likely cut off (e.g., Vercel function timeout)
    * while the workflow is still running. In that case, schedule a reconnection
@@ -68,19 +85,15 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
      */
     const isComplete = state.status === "completed" || !completionStep;
 
-    if (isComplete || state.reconnectCount >= MAX_STREAM_RECONNECTS) {
+    if (isComplete) {
       dispatch({ completionStep, type: "streamEnded" });
       return;
     }
 
-    setTimeout(() => {
-      dispatch({ type: "reconnect" });
-    }, 1000);
+    reconnectStream();
   });
 
-  const handleError = useEffectEvent((err: Error) =>
-    dispatch({ error: err.message, type: "setError" }),
-  );
+  const handleError = useEffectEvent(() => reconnectStream());
 
   /**
    * Include `_rc` (reconnect count) in the URL so that when `reconnectCount`
@@ -141,16 +154,22 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
   }, [autoTrigger, state.status]);
 
   const retry = useCallback(() => {
+    if (state.errorKind === "connection") {
+      globalThis.location.reload();
+      return;
+    }
+
     hasTriggeredRef.current = false;
     resetIndex();
     dispatch({ type: "reset" });
-  }, [resetIndex]);
+  }, [resetIndex, state.errorKind]);
 
   return {
     completedSteps: state.completedSteps,
     completionEntityId: state.completionEntityId,
     currentStep: state.currentStep,
     error: state.error,
+    errorKind: state.errorKind,
     retry,
     startedSteps: state.startedSteps,
     status: state.status,
