@@ -203,6 +203,35 @@ describe(resolveCourseIdentityStep, () => {
     expect(resolveCourseIdentity).not.toHaveBeenCalled();
   });
 
+  it("ignores short AI search terms that would create noisy substring matches", async () => {
+    const [suggestion] = await Promise.all([
+      courseSuggestionFixture({
+        language: "pt",
+        slug: `aprendizado-de-maquina-${randomUUID()}`,
+        title: "Aprendizado de Máquina",
+      }),
+      courseFixture({
+        language: "pt",
+        normalizedTitle: normalizeString("Inteligência Artificial"),
+        organizationId,
+        slug: `inteligencia-artificial-${randomUUID()}-pt`,
+        title: "Inteligência Artificial",
+      }),
+    ]);
+
+    vi.mocked(generateCourseIdentitySearchQueries).mockResolvedValueOnce({
+      data: { queries: ["ia"] },
+      systemPrompt: "system",
+      usage,
+      userPrompt: "user",
+    });
+
+    const result = await resolveCourseIdentityStep(suggestion);
+
+    expect(result).toBeNull();
+    expect(resolveCourseIdentity).not.toHaveBeenCalled();
+  });
+
   it("uses the cached course link before querying AI again", async () => {
     const course = await courseFixture({
       organizationId,

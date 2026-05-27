@@ -5,7 +5,7 @@ import { type ReasoningEffort, buildProviderOptions } from "../../provider-optio
 import classificationPrompt from "./course-identity.prompt.md";
 
 const defaultModel = "google/gemini-3.1-flash-lite";
-const fallbackModels = ["openai/gpt-5.4-nano", "deepseek/deepseek-v4-flash"] as const;
+const fallbackModels = ["openai/gpt-5.4-mini", "deepseek/deepseek-v4-flash"] as const;
 
 const identitySchema = z.object({
   courseSlug: z.string().nullable(),
@@ -52,6 +52,20 @@ function buildIdentityUserPrompt(params: CourseIdentityParams): string {
 }
 
 /**
+ * Enforces the output invariant that the schema cannot express strongly across
+ * every provider: creating a new course must not carry an existing-course slug.
+ * This keeps downstream workflow logic and eval scoring aligned even when a
+ * model gets the decision right but leaves a stale candidate slug in the JSON.
+ */
+function normalizeIdentityOutput(output: CourseIdentitySchema): CourseIdentitySchema {
+  if (output.decision === "createNew") {
+    return { ...output, courseSlug: null };
+  }
+
+  return output;
+}
+
+/**
  * Classifies whether a proposed course should reuse one of the supplied
  * candidates. The database remains the source of candidate truth; the model only
  * decides semantic identity among those explicit options.
@@ -80,5 +94,10 @@ export async function resolveCourseIdentity({
     system: classificationPrompt,
   });
 
-  return { data: output, systemPrompt: classificationPrompt, usage, userPrompt };
+  return {
+    data: normalizeIdentityOutput(output),
+    systemPrompt: classificationPrompt,
+    usage,
+    userPrompt,
+  };
 }
