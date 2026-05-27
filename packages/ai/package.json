@@ -28,6 +28,7 @@
     "./tasks/courses/identity-search": "./src/tasks/courses/course-identity-search.ts",
     "./tasks/courses/language-chapters": "./src/tasks/courses/language-course-chapters.ts",
     "./tasks/courses/suggestions": "./src/tasks/courses/course-suggestions.ts",
+    "./tasks/images/input-safety-rewrite": "./src/tasks/images/image-prompt-safety-rewrite.ts",
     "./tasks/content/thumbnail": "./src/tasks/content/content-thumbnail.ts",
     "./tasks/steps/content-image": "./src/tasks/steps/step-content-image.ts",
     "./tasks/steps/image-prompts": "./src/tasks/steps/step-image-prompts.ts",

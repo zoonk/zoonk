@@ -1,12 +1,20 @@
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
-import { type GeneratedFile, type ImageModel, generateImage } from "ai";
+import { type GeneratedFile, type ImageModel } from "ai";
 import { type ImageGenerationQuality, buildImageProviderOptions } from "../../provider-options";
+import { generateImageWithSafetyRetry } from "../_utils/generate-image-with-safety-retry";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import promptTemplate from "./step-select-image.prompt.md";
 
 const defaultModel = "openai/gpt-image-2";
 const DEFAULT_QUALITY = "low";
+
+const fallbackModels = [
+  "bfl/flux-kontext-max",
+  "xai/grok-imagine-image",
+  "bytedance/seedream-5.0-lite",
+  "recraft/recraft-v4.1-utility",
+] as const;
 
 /**
  * Builds the final select-image prompt with an expanded language name so the
@@ -34,11 +42,12 @@ export async function generateSelectImageStep({
   quality = DEFAULT_QUALITY,
 }: SelectImageStepParams): Promise<SafeReturn<GeneratedFile>> {
   const { data, error } = await safeAsync(() =>
-    generateImage({
+    generateImageWithSafetyRetry({
+      buildPrompt: ({ input }) => getSelectImageStepPrompt({ language, prompt: input }),
+      input: prompt,
       maxImagesPerCall: 1,
       model,
-      prompt: getSelectImageStepPrompt({ language, prompt }),
-      providerOptions: buildImageProviderOptions({ quality }),
+      providerOptions: buildImageProviderOptions({ fallbackModels, quality }),
       size: "1024x1024",
     }),
   );

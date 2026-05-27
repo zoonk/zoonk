@@ -26,7 +26,6 @@ The image prompt should:
 - Use labels, arrows, simple text, numbers, or structured layout inside the image only when they are the main evidence the learner must inspect.
 - Avoid defaulting to vague metaphors when a more direct explanatory image would teach better.
 - Avoid repeating the same metaphor or composition across multiple prompts in the same response unless the concept truly needs visual continuity.
-- Do not reference copyrighted or trademarked characters, logos, or brands.
 - If the step is abstract, choose the clearest visual explanation available. Use a metaphor only when it genuinely improves understanding.
 - Prefer a tight crop of the important part over a complete board, dashboard, workflow, document, timeline, or room.
 - Prefer one centered primary artifact, diagram, screen, scene, or object over a wide layout with many panels.

@@ -6,6 +6,7 @@ import { courseDescriptionTask } from "./course-description/task";
 import { courseIdentitySearchTask } from "./course-identity-search/task";
 import { courseIdentityClassificationTask } from "./course-identity/task";
 import { courseSuggestionsTask } from "./course-suggestions/task";
+import { imageInputSafetyRewriteTask } from "./image-prompt-safety-rewrite/task";
 import { languageChapterLessonsTask } from "./language-chapter-lessons/task";
 import { languageCourseChaptersTask } from "./language-course-chapters/task";
 import { lessonAlphabetTask } from "./lesson-alphabet/task";
@@ -43,6 +44,7 @@ export const TASKS: readonly Task[] = [
   courseChaptersTask,
   courseDescriptionTask,
   courseSuggestionsTask,
+  imageInputSafetyRewriteTask,
   languageChapterLessonsTask,
   languageCourseChaptersTask,
 ];

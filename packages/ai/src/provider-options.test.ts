@@ -66,8 +66,14 @@ describe(buildProviderOptions, () => {
 });
 
 describe(buildImageProviderOptions, () => {
-  it("preserves the openai image settings", () => {
-    expect(buildImageProviderOptions({ quality: "low" })).toStrictEqual({
+  it("adds caller-owned image fallback models while preserving the openai image settings", () => {
+    expect(
+      buildImageProviderOptions({
+        fallbackModels: ["bfl/flux-kontext-max", "xai/grok-imagine-image"],
+        quality: "low",
+      }),
+    ).toStrictEqual({
+      gateway: { models: ["bfl/flux-kontext-max", "xai/grok-imagine-image"] },
       openai: { output_format: "webp", quality: "low" },
     });
   });

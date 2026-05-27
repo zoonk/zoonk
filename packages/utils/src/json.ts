@@ -63,3 +63,30 @@ function getJsonNumberCandidate(value: unknown): number | null {
 
   return Number(normalized);
 }
+
+/**
+ * Converts an unknown value into searchable text while staying tolerant of
+ * unserializable objects. Nullish and unsupported values return an empty string
+ * so callers can compose multiple fields without special cases.
+ */
+export function stringifyUnknown(value: unknown): string {
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  if (typeof value === "string") {
+    return value;
+  }
+
+  if (typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+
+  try {
+    const json = JSON.stringify(value);
+
+    return typeof json === "string" ? json : "";
+  } catch {
+    return "";
+  }
+}
