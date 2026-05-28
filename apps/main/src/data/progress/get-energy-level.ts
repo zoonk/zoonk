@@ -1,4 +1,5 @@
 import "server-only";
+import { hasUserLearningProgress } from "@zoonk/core/progress/user-progress";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
 import { computeDecayedEnergy } from "@zoonk/utils/energy";
@@ -19,7 +20,7 @@ export const getEnergyLevel = cache(
       prisma.userProgress.findUnique({ where: { userId } }),
     );
 
-    if (error || !progress) {
+    if (error || !hasUserLearningProgress(progress)) {
       return null;
     }
 

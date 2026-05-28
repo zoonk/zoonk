@@ -20,6 +20,16 @@ describe("authenticated users", () => {
     expect(result).toBeNull();
   });
 
+  it("returns null for zeroed placeholder progress", async () => {
+    const user = await userFixture();
+    const headers = await signInAs(user.email, user.password);
+
+    await prisma.userProgress.create({ data: { userId: user.id } });
+
+    const result = await getEnergyLevel(headers);
+    expect(result).toBeNull();
+  });
+
   it("returns energy unchanged when lastActiveAt is today", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);

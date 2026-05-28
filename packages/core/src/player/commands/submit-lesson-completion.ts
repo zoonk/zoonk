@@ -1,29 +1,14 @@
 import "server-only";
-import { type UserProgress, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { MS_PER_DAY, parseLocalDate } from "@zoonk/utils/date";
 import { clampEnergy, computeDecayedEnergy, toUTCMidnight } from "@zoonk/utils/energy";
+import { hasUserLearningProgress } from "../../progress/user-progress";
 import { type ScoreResult } from "../contracts/compute-score";
 import { fillDecayGaps, getCompletionField, upsertDailyProgress } from "./_utils/daily-progress";
 import { syncDurableCurriculumCompletion } from "./_utils/durable-curriculum-completion";
 
 const MAX_LOCAL_DATE_DRIFT_MS = 2 * MS_PER_DAY;
-
-/**
- * UserProgress can now exist before the learner completes anything because
- * auth creation and data backfills create zeroed placeholder rows. Those rows
- * make admin sorting simple, but they should not make the first lesson after
- * signup look like the learner was inactive for every day since account
- * creation. A real completion always adds brain power, so any positive brain
- * power or energy means the row represents actual learning history.
- */
-function hasLearningProgress(progress: UserProgress | null): progress is UserProgress {
-  if (!progress) {
-    return false;
-  }
-
-  return progress.totalBrainPower > 0n || progress.currentEnergy > 0;
-}
 
 export async function submitLessonCompletion(input: {
   durationSeconds: number;
@@ -103,7 +88,7 @@ export async function submitLessonCompletion(input: {
 
     // Find existing UserProgress to apply decay
     const existingProgress = await tx.userProgress.findUnique({ where: { userId: input.userId } });
-    const shouldApplyDecay = hasLearningProgress(existingProgress);
+    const shouldApplyDecay = hasUserLearningProgress(existingProgress);
 
     const decayedBase = shouldApplyDecay
       ? computeDecayedEnergy(existingProgress.currentEnergy, existingProgress.lastActiveAt, today)
