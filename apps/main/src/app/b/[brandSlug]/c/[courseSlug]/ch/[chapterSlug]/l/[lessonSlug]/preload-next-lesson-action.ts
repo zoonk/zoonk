@@ -1,13 +1,18 @@
 "use server";
 
-import { triggerLessonPreload } from "@/data/progress/trigger-lesson-preload";
-import { getNextLessonPreloadTarget } from "@zoonk/core/player/commands/get-next-lesson-preload-target";
+import { triggerPreloadTarget } from "@/data/progress/trigger-preload-target";
+import { getNextPreloadTarget } from "@zoonk/core/player/commands/get-next-lesson-preload-target";
 import { getSession } from "@zoonk/core/users/session/get";
 import { logError } from "@zoonk/utils/logger";
 import { headers } from "next/headers";
 import { after } from "next/server";
 
-type NextLessonPreloadInput = { cookieHeader: string; lessonId: string; userId: string };
+type NextPreloadInput = {
+  cookieHeader: string;
+  lessonId: string;
+  requestHeaders: Headers;
+  userId: string;
+};
 
 /**
  * Runs the expensive preload path after the server action returns. Keeping this
@@ -15,28 +20,29 @@ type NextLessonPreloadInput = { cookieHeader: string; lessonId: string; userId: 
  * while still swallowing background errors so preload failures do not surface
  * as user-visible player errors.
  */
-async function triggerNextLessonPreload(input: NextLessonPreloadInput): Promise<void> {
+async function triggerNextPreload(input: NextPreloadInput): Promise<void> {
   try {
-    const preloadLessonId = await getNextLessonPreloadTarget({
-      lessonId: input.lessonId,
-      userId: input.userId,
-    });
+    const target = await getNextPreloadTarget({ lessonId: input.lessonId, userId: input.userId });
 
-    if (!preloadLessonId) {
+    if (!target) {
       return;
     }
 
-    await triggerLessonPreload({ cookieHeader: input.cookieHeader, lessonId: preloadLessonId });
+    await triggerPreloadTarget({
+      cookieHeader: input.cookieHeader,
+      requestHeaders: input.requestHeaders,
+      target,
+    });
   } catch (error) {
-    logError("[preloadNextLesson] Failed to trigger next lesson preload:", error);
+    logError("[preloadNextLesson] Failed to trigger preload:", error);
   }
 }
 
 /**
- * Starts generating the next lesson after the learner has shown real progress
- * in the current lesson. The client only sends the current lesson id; the
- * server derives the expensive generation target after auth and visibility
- * checks so this cannot be used as a generic lesson-generation proxy.
+ * Starts preparing the next generated item after the learner has shown real
+ * progress in the current lesson. The client only sends the current lesson id;
+ * the server derives the expensive generation target after auth and visibility
+ * checks so this cannot be used as a generic generation proxy.
  */
 export async function preloadNextLesson(lessonId: string): Promise<void> {
   const reqHeaders = await headers();
@@ -47,9 +53,10 @@ export async function preloadNextLesson(lessonId: string): Promise<void> {
   }
 
   after(() =>
-    triggerNextLessonPreload({
+    triggerNextPreload({
       cookieHeader: reqHeaders.get("cookie") ?? "",
       lessonId,
+      requestHeaders: reqHeaders,
       userId: session.user.id,
     }),
   );

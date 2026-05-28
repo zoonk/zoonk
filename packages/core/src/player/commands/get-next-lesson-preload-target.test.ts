@@ -1,11 +1,10 @@
-import { randomUUID } from "node:crypto";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
-import { getNextLessonPreloadTarget } from "./get-next-lesson-preload-target";
+import { getNextPreloadTarget } from "./get-next-lesson-preload-target";
 
 type PreloadTargetVisibility = {
   chapterIsPublished?: boolean;
@@ -80,21 +79,46 @@ async function createLessonPair(params: {
   return { currentLesson, nextLesson };
 }
 
-describe(getNextLessonPreloadTarget, () => {
+describe(getNextPreloadTarget, () => {
+  it("returns the next lesson target before considering chapter generation", async () => {
+    const [user, lessons] = await Promise.all([
+      userFixture(),
+      createLessonPair({ nextLessonGenerationStatus: "pending" }),
+    ]);
+
+    const result = await getNextPreloadTarget({
+      lessonId: lessons.currentLesson.id,
+      userId: user.id,
+    });
+
+    expect(result).toStrictEqual({ kind: "lesson", lessonId: lessons.nextLesson.id });
+  });
+
   it.each(preloadGenerationStatuses)(
-    "returns the next lesson id when its generation state is %s",
-    async (nextLessonGenerationStatus) => {
-      const [user, lessons] = await Promise.all([
-        userFixture(),
-        createLessonPair({ nextLessonGenerationStatus }),
+    "returns the next chapter target when the current lesson is last and the chapter is %s",
+    async (nextChapterGenerationStatus) => {
+      const [user, context] = await Promise.all([userFixture(), createChapterContext()]);
+
+      const [currentLesson, nextChapter] = await Promise.all([
+        lessonFixture({
+          chapterId: context.chapter.id,
+          generationStatus: "completed",
+          isPublished: true,
+          organizationId: context.organization.id,
+          position: 0,
+        }),
+        chapterFixture({
+          courseId: context.chapter.courseId,
+          generationStatus: nextChapterGenerationStatus,
+          isPublished: true,
+          organizationId: context.organization.id,
+          position: 1,
+        }),
       ]);
 
-      const result = await getNextLessonPreloadTarget({
-        lessonId: lessons.currentLesson.id,
-        userId: user.id,
-      });
+      const result = await getNextPreloadTarget({ lessonId: currentLesson.id, userId: user.id });
 
-      expect(result).toBe(lessons.nextLesson.id);
+      expect(result).toStrictEqual({ chapterId: nextChapter.id, kind: "chapter" });
     },
   );
 
@@ -106,7 +130,7 @@ describe(getNextLessonPreloadTarget, () => {
         createLessonPair({ nextLessonGenerationStatus }),
       ]);
 
-      const result = await getNextLessonPreloadTarget({
+      const result = await getNextPreloadTarget({
         lessonId: lessons.currentLesson.id,
         userId: user.id,
       });
@@ -129,7 +153,7 @@ describe(getNextLessonPreloadTarget, () => {
         }),
       ]);
 
-      const result = await getNextLessonPreloadTarget({
+      const result = await getNextPreloadTarget({
         lessonId: lessons.currentLesson.id,
         userId: user.id,
       });
@@ -141,11 +165,36 @@ describe(getNextLessonPreloadTarget, () => {
   it("returns null for malformed lesson ids before querying UUID columns", async () => {
     const user = await userFixture();
 
-    const result = await getNextLessonPreloadTarget({
-      lessonId: `not-a-uuid-${randomUUID()}`,
-      userId: user.id,
-    });
+    const result = await getNextPreloadTarget({ lessonId: "not-a-uuid", userId: user.id });
 
     expect(result).toBeNull();
   });
+
+  it.each(nonPreloadGenerationStatuses)(
+    "returns null when the next chapter generation state is %s",
+    async (nextChapterGenerationStatus) => {
+      const [user, context] = await Promise.all([userFixture(), createChapterContext()]);
+
+      const [currentLesson] = await Promise.all([
+        lessonFixture({
+          chapterId: context.chapter.id,
+          generationStatus: "completed",
+          isPublished: true,
+          organizationId: context.organization.id,
+          position: 0,
+        }),
+        chapterFixture({
+          courseId: context.chapter.courseId,
+          generationStatus: nextChapterGenerationStatus,
+          isPublished: true,
+          organizationId: context.organization.id,
+          position: 1,
+        }),
+      ]);
+
+      const result = await getNextPreloadTarget({ lessonId: currentLesson.id, userId: user.id });
+
+      expect(result).toBeNull();
+    },
+  );
 });

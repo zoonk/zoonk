@@ -1,6 +1,5 @@
 "use server";
 
-import { triggerLessonPreload } from "@/data/progress/trigger-lesson-preload";
 import { submitPlayerCompletion } from "@zoonk/core/player/commands/submit-player-completion";
 import {
   type CompletionInput,
@@ -36,7 +35,6 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
   }
 
   const userId = session.user.id;
-  const lessonId = input.lessonId;
 
   // Revalidate outside after() so the signal is included in the RSC response.
   // This tells the client Router Cache to purge "/", ensuring the next
@@ -47,18 +45,7 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
 
   after(async () => {
     try {
-      const effects = await submitPlayerCompletion({ input, userId });
-
-      if (!effects) {
-        logError(`[submitCompletion] Lesson ${lessonId} not found`);
-        return;
-      }
-
-      const cookieHeader = reqHeaders.get("cookie") ?? "";
-
-      if (effects.preloadLessonId) {
-        await triggerLessonPreload({ cookieHeader, lessonId: effects.preloadLessonId });
-      }
+      await submitPlayerCompletion({ input, userId });
     } catch (error) {
       logError("[submitCompletion] Failed to persist lesson completion:", error);
     }
