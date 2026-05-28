@@ -241,6 +241,40 @@ describe(submitLessonCompletion, () => {
     expect(userProgress?.currentEnergy).toBeCloseTo(0.2);
   });
 
+  it("does not fill decay gaps for a zeroed UserProgress placeholder", async () => {
+    const user = await userFixture();
+    const userId = user.id;
+    const localDate = todayLocalDate();
+    const fiveDaysBefore = new Date(parseLocalDate(localDate).getTime() - 5 * 86_400_000);
+
+    await userProgressFixture({
+      currentEnergy: 0,
+      lastActiveAt: fiveDaysBefore,
+      totalBrainPower: 0n,
+      userId,
+    });
+
+    await submitLessonCompletion({
+      durationSeconds: 10,
+      lessonId: lesson.id,
+
+      localDate,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 10_000),
+      stepResults: [stepResult(true)],
+      userId,
+    });
+
+    const dailyRecords = await prisma.dailyProgress.findMany({
+      orderBy: { date: "asc" },
+      where: { userId },
+    });
+
+    expect(dailyRecords).toHaveLength(1);
+    expect(dailyRecords[0]?.date).toStrictEqual(parseLocalDate(localDate));
+    expect(dailyRecords[0]?.energyAtEnd).toBeCloseTo(0.2);
+  });
+
   it("creates DailyProgress with correct counters", async () => {
     const user = await userFixture();
     const userId = user.id;
