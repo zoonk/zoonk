@@ -5,24 +5,22 @@ export async function LevelExplanation() {
   const t = await getExtracted();
 
   return (
-    <Explanation>
-      <ExplanationTitle>{t("About Levels")}</ExplanationTitle>
+    <Explanation className="gap-1 border-t pt-6">
+      <ExplanationTitle>{t("About Brain Power")}</ExplanationTitle>
 
       <ExplanationText>
         {t(
-          "Brain Power (BP) represents your knowledge growth. Unlike energy, BP never decreases - it only grows as you learn more.",
+          "Brain Power is your reputation. You earn Brain Power after each lesson you complete. It never goes down because knowledge is not something anyone can take from you.",
         )}
       </ExplanationText>
 
       <ExplanationText>
-        {t(
-          "Every time you complete a lesson, you earn Brain Power. As you accumulate BP, you progress through 10 belt colors, each with 10 levels.",
-        )}
+        {t("You do not lose Brain Power when your Energy drops or when you miss days.")}
       </ExplanationText>
 
       <ExplanationText>
         {t(
-          "Belt colors in order: White, Yellow, Orange, Green, Blue, Purple, Brown, Red, Gray, and Black. Keep learning to reach the highest level!",
+          "Brain Power is like martial arts for your mind: the more you study, the stronger it gets. You start as a white belt and can work your way up to black belt.",
         )}
       </ExplanationText>
     </Explanation>

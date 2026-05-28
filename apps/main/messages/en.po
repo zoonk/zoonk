@@ -660,16 +660,24 @@ msgid "tqJIUh"
 msgstr "About Energy"
 
 #: src/app/(progress)/energy/energy-explanation.tsx
-msgid "/1gcM1"
-msgstr "Energy reflects your learning consistency. It increases with correct answers, decreases with wrong answers, and drops for each inactive day."
+msgid "OWC2V9"
+msgstr "Energy is a score from 0% to 100%. The goal is to keep it near 100%."
+
+#: src/app/(progress)/energy/energy-explanation.tsx
+msgid "5oXyw+"
+msgstr "It goes up when you answer correctly and goes down when you answer incorrectly or go a day without studying."
+
+#: src/app/(progress)/energy/energy-explanation.tsx
+msgid "okV1HG"
+msgstr "It is not a streak. Missing a day does not reset Energy to zero. It drops a little, and you can recover it when you return."
 
 #: src/app/(progress)/energy/page.tsx
-msgid "1IwE3q"
-msgstr "Track your energy over time and see how your learning consistency affects your progress."
+msgid "AZMpf3"
+msgstr "Energy is a 0% to 100% score based on recent activity and accuracy."
 
 #: src/app/(progress)/energy/page.tsx
-msgid "7Rfk+O"
-msgstr "Track your learning energy over time"
+msgid "rsIaGW"
+msgstr "A 0% to 100% score for recent activity and accuracy"
 
 #: src/app/(progress)/level/level-chart-client.tsx
 msgid "GA8RuL"
@@ -684,20 +692,20 @@ msgid "tDbspx"
 msgstr "Total Brain Power earned: {total}"
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "l2jnwA"
-msgstr "About Levels"
+msgid "aAScNr"
+msgstr "About Brain Power"
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "C6bCZT"
-msgstr "Brain Power (BP) represents your knowledge growth. Unlike energy, BP never decreases - it only grows as you learn more."
+msgid "hRYALR"
+msgstr "Brain Power is your reputation. You earn Brain Power after each lesson you complete. It never goes down because knowledge is not something anyone can take from you."
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "0kiEdE"
-msgstr "Every time you complete a lesson, you earn Brain Power. As you accumulate BP, you progress through 10 belt colors, each with 10 levels."
+msgid "YhaJIG"
+msgstr "You do not lose Brain Power when your Energy drops or when you miss days."
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "J60fb6"
-msgstr "Belt colors in order: White, Yellow, Orange, Green, Blue, Purple, Brown, Red, Gray, and Black. Keep learning to reach the highest level!"
+msgid "98M49A"
+msgstr "Brain Power is like martial arts for your mind: the more you study, the stronger it gets. You start as a white belt and can work your way up to black belt."
 
 #: src/app/(progress)/level/level-progression.tsx
 msgid "VHH0kD"

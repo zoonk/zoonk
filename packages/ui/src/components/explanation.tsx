@@ -29,7 +29,7 @@ function ExplanationTitle({ className, ...props }: React.ComponentProps<"h3">) {
 function ExplanationText({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("text-muted-foreground text-sm", className)}
+      className={cn("text-muted-foreground text-sm leading-relaxed", className)}
       data-slot="explanation-text"
       {...props}
     />

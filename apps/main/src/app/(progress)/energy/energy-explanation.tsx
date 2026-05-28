@@ -17,9 +17,19 @@ export async function EnergyExplanation() {
         <ExplanationTitle>{t("About Energy")}</ExplanationTitle>
       </ExplanationHeader>
 
-      <ExplanationText className="leading-relaxed">
+      <ExplanationText>
+        {t("Energy is a score from 0% to 100%. The goal is to keep it near 100%.")}
+      </ExplanationText>
+
+      <ExplanationText>
         {t(
-          "Energy reflects your learning consistency. It increases with correct answers, decreases with wrong answers, and drops for each inactive day.",
+          "It goes up when you answer correctly and goes down when you answer incorrectly or go a day without studying.",
+        )}
+      </ExplanationText>
+
+      <ExplanationText>
+        {t(
+          "It is not a streak. Missing a day does not reset Energy to zero. It drops a little, and you can recover it when you return.",
         )}
       </ExplanationText>
     </Explanation>
