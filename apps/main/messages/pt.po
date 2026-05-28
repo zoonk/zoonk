@@ -188,11 +188,11 @@ msgstr "Continue aprendendo"
 
 #: src/app/(catalog)/(home)/energy.tsx
 msgid "soDmlG"
-msgstr "Continue aprendendo para aumentá-lo"
+msgstr "Continue aprendendo para aumentá-la"
 
 #: src/app/(catalog)/(home)/energy.tsx
 msgid "WgeB0r"
-msgstr "Continue aprendendo para mantê-lo"
+msgstr "Continue aprendendo para mantê-la"
 
 #: src/app/(catalog)/(home)/energy.tsx
 #: src/app/(progress)/_components/metric-pills.tsx
@@ -660,16 +660,24 @@ msgid "tqJIUh"
 msgstr "Sobre energia"
 
 #: src/app/(progress)/energy/energy-explanation.tsx
-msgid "/1gcM1"
-msgstr "A energia reflete a sua consistência de aprendizado. Ela aumenta com respostas corretas, diminui com respostas erradas e cai a cada dia inativo."
+msgid "OWC2V9"
+msgstr "Energia é uma pontuação de 0% a 100%. O objetivo é mantê-la perto de 100%."
+
+#: src/app/(progress)/energy/energy-explanation.tsx
+msgid "5oXyw+"
+msgstr "Ela sobe quando você responde corretamente e cai quando você responde errado ou fica um dia sem estudar."
+
+#: src/app/(progress)/energy/energy-explanation.tsx
+msgid "okV1HG"
+msgstr "Não é uma sequência. Ficar um dia sem estudar não zera a energia. Ela cai um pouquinho, mas você consegue recuperar quando voltar."
 
 #: src/app/(progress)/energy/page.tsx
-msgid "1IwE3q"
-msgstr "Acompanhe sua energia ao longo do tempo e veja como sua consistência de aprendizado afeta seu progresso."
+msgid "AZMpf3"
+msgstr "Energia é uma pontuação de 0% a 100% baseada em atividade e precisão recentes."
 
 #: src/app/(progress)/energy/page.tsx
-msgid "7Rfk+O"
-msgstr "Acompanhe sua energia de aprendizado ao longo do tempo"
+msgid "rsIaGW"
+msgstr "Uma pontuação de 0% a 100% para atividade e precisão recentes"
 
 #: src/app/(progress)/level/level-chart-client.tsx
 msgid "GA8RuL"
@@ -684,20 +692,20 @@ msgid "tDbspx"
 msgstr "Total de Poder Mental ganho: {total}"
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "l2jnwA"
-msgstr "Sobre Níveis"
+msgid "aAScNr"
+msgstr "Sobre Poder Mental"
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "C6bCZT"
-msgstr "Poder Mental (PM) representa seu crescimento de conhecimento. Diferente da energia, o PM nunca diminui - ele só cresce conforme você aprende mais."
+msgid "hRYALR"
+msgstr "Poder Mental é a sua reputação. Você ganha Poder Mental após cada aula que completa. Ele nunca cai porque conhecimento é algo que ninguém tira de você."
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "0kiEdE"
-msgstr "Toda vez que você conclui uma aula, você ganha poder mental. À medida que acumula PM, você avança por 10 cores de faixa, cada uma com 10 níveis."
+msgid "YhaJIG"
+msgstr "Você não perde Poder Mental quando a energia cai ou quando fica um dia sem estudar."
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "J60fb6"
-msgstr "Cores das faixas em ordem: Branca, Amarela, Laranja, Verde, Azul, Roxa, Marrom, Vermelha, Cinza e Preta. Continue aprendendo pra alcançar o nível mais alto!"
+msgid "98M49A"
+msgstr "O Poder Mental é como artes marciais para a sua mente: quanto mais você estuda, mais forte fica. Você começa como faixa branca e pode evoluir até faixa preta."
 
 #: src/app/(progress)/level/level-progression.tsx
 msgid "VHH0kD"
@@ -737,11 +745,11 @@ msgstr "{value} PM ganho"
 
 #: src/app/(progress)/level/page.tsx
 msgid "4+USpX"
-msgstr "Acompanhe o progresso do seu nível e veja como você avança."
+msgstr "Acompanhe seu progresso de nível e veja como você avança."
 
 #: src/app/(progress)/level/page.tsx
 msgid "L9hqMH"
-msgstr "Acompanhe o progresso do seu nível"
+msgstr "Acompanhe seu progresso de nível"
 
 #: src/app/(progress)/score/page.tsx
 msgid "qHWZBu"

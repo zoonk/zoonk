@@ -15,9 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 
   return {
-    description: t(
-      "Track your energy over time and see how your learning consistency affects your progress.",
-    ),
+    description: t("Energy is a 0% to 100% score based on recent activity and accuracy."),
     title: t("Energy"),
   };
 }
@@ -30,7 +28,9 @@ export default async function EnergyPage({ searchParams }: PageProps<"/energy">)
       <ContainerHeader>
         <ContainerHeaderGroup>
           <ContainerTitle>{t("Energy")}</ContainerTitle>
-          <ContainerDescription>{t("Track your learning energy over time")}</ContainerDescription>
+          <ContainerDescription>
+            {t("A 0% to 100% score for recent activity and accuracy")}
+          </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 
