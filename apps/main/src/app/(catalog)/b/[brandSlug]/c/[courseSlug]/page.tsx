@@ -70,9 +70,8 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
               <ContinueLessonLink courseId={course.id} fallbackHref={fallbackHref} />
             </Suspense>
             <CatalogActions
-              contentId={courseSlug}
               defaultEmail={session?.user.email}
-              kind="course"
+              feedbackTarget={{ courseSlug, kind: "course" }}
             />
           </GridToolbar>
         </>

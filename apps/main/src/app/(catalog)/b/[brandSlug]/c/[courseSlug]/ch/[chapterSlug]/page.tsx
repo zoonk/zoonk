@@ -81,9 +81,8 @@ export default async function ChapterPage({
                 />
               </Suspense>
               <CatalogActions
-                contentId={`${courseSlug}/${chapterSlug}`}
                 defaultEmail={session?.user.email}
-                kind="chapter"
+                feedbackTarget={{ chapterSlug, courseSlug, kind: "chapter" }}
               />
             </GridToolbar>
           )}

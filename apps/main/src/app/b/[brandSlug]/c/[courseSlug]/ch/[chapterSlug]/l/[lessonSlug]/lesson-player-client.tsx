@@ -151,9 +151,8 @@ export function LessonPlayerClient({
         completionFooter: (
           <ContentFeedback
             className="pt-8"
-            contentId={lesson.id}
             defaultEmail={userEmail}
-            kind="lesson"
+            feedbackTarget={{ chapterSlug, courseSlug, kind: "lesson", lessonSlug }}
             variant="minimal"
           />
         ),

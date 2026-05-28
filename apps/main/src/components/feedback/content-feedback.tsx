@@ -1,7 +1,7 @@
 "use client";
 
 import { FeedbackDialog } from "@/components/feedback/feedback-dialog";
-import { type FeedbackKind, type FeedbackValue, trackFeedback } from "@/lib/track-feedback";
+import { type FeedbackTarget, type FeedbackValue, trackFeedback } from "@/lib/track-events";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { MessageSquareIcon, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
@@ -9,15 +9,13 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 
 export function ContentFeedback({
-  kind,
-  contentId,
+  feedbackTarget,
   defaultEmail,
   variant = "default",
   className,
   ...props
 }: {
-  kind: FeedbackKind;
-  contentId: string;
+  feedbackTarget: FeedbackTarget;
   defaultEmail?: string;
   variant?: "default" | "minimal";
 } & React.ComponentProps<"footer">) {
@@ -29,7 +27,7 @@ export function ContentFeedback({
   function handleFeedback(value: FeedbackValue) {
     if (feedback !== value) {
       setFeedback(value);
-      trackFeedback({ contentId, feedback: value, kind });
+      trackFeedback({ ...feedbackTarget, feedback: value });
     }
   }
 
