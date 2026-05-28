@@ -1676,12 +1676,14 @@ msgid "IzCVhG"
 msgstr "Mais opções"
 
 #: src/components/catalog/catalog-actions.tsx
-msgid "5vwKkg"
-msgstr "Foi útil"
+#: src/components/feedback/content-feedback.tsx
+msgid "rTFrsw"
+msgstr "Gostei"
 
 #: src/components/catalog/catalog-actions.tsx
-msgid "04tuTF"
-msgstr "Não foi útil"
+#: src/components/feedback/content-feedback.tsx
+msgid "Hqn5Uo"
+msgstr "Não gostei"
 
 #: src/components/catalog/catalog-actions.tsx
 #: src/components/feedback/content-feedback.tsx
@@ -1740,14 +1742,6 @@ msgstr "Enviar mensagem"
 #: src/components/feedback/content-feedback.tsx
 msgid "BlI1/9"
 msgstr "Você gostou deste conteúdo?"
-
-#: src/components/feedback/content-feedback.tsx
-msgid "rTFrsw"
-msgstr "Gostei"
-
-#: src/components/feedback/content-feedback.tsx
-msgid "Hqn5Uo"
-msgstr "Não gostei"
 
 #: src/components/feedback/feedback-dialog.tsx
 msgid "Ejhdi4"

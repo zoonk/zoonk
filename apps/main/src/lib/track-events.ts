@@ -8,6 +8,34 @@ type PlayerEventInput = {
   stepCount: number;
 };
 
+export type FeedbackValue = "upvote" | "downvote";
+
+export type FeedbackTarget =
+  | { courseSlug: string; kind: "course" }
+  | { chapterSlug: string; courseSlug: string; kind: "chapter" }
+  | { chapterSlug: string; courseSlug: string; kind: "lesson"; lessonSlug: string }
+  | { kind: "courseSuggestions"; locale: string; prompt: string };
+
+type FeedbackInput = FeedbackTarget & { feedback: FeedbackValue };
+
+const FEEDBACK_VALUES: ReadonlySet<string> = new Set<FeedbackValue>(["upvote", "downvote"]);
+
+/**
+ * Keeps menu values constrained to analytics values so malformed dropdown
+ * events cannot send arbitrary feedback labels.
+ */
+export function isFeedbackValue(value: string): value is FeedbackValue {
+  return FEEDBACK_VALUES.has(value);
+}
+
+/**
+ * Records generated-content reactions with human-readable identifiers so
+ * analytics can be inspected without looking up database ids.
+ */
+export function trackFeedback(input: FeedbackInput) {
+  track("Feedback", getFeedbackEventData(input));
+}
+
 /**
  * Records only submitted command-palette searches because the shared search
  * hook debounces before calling the `onSearch` callback.
@@ -58,6 +86,49 @@ export function trackLessonCompleted({
  */
 function getPlayerEventData({ courseSlug, lessonKind, lessonSlug, stepCount }: PlayerEventInput) {
   return { courseSlug, lessonKind, lessonSlug, stepCount };
+}
+
+/**
+ * Sends flat analytics properties because Vercel Analytics does not support
+ * nested event payloads, while each feedback kind needs a different slug set.
+ */
+function getFeedbackEventData(input: FeedbackInput) {
+  switch (input.kind) {
+    case "course":
+      return { courseSlug: input.courseSlug, feedback: input.feedback, kind: input.kind };
+    case "chapter":
+      return {
+        chapterSlug: input.chapterSlug,
+        courseSlug: input.courseSlug,
+        feedback: input.feedback,
+        kind: input.kind,
+      };
+    case "lesson":
+      return {
+        chapterSlug: input.chapterSlug,
+        courseSlug: input.courseSlug,
+        feedback: input.feedback,
+        kind: input.kind,
+        lessonSlug: input.lessonSlug,
+      };
+    case "courseSuggestions":
+      return {
+        feedback: input.feedback,
+        kind: input.kind,
+        locale: input.locale,
+        prompt: input.prompt,
+      };
+    default:
+      return throwUnexpectedFeedbackTarget(input);
+  }
+}
+
+/**
+ * Makes the feedback target switch exhaustive so adding a new target fails at
+ * compile time unless the analytics payload shape is explicitly defined.
+ */
+function throwUnexpectedFeedbackTarget(input: never): never {
+  throw new Error(`Unexpected feedback target: ${String(input)}`);
 }
 
 /**

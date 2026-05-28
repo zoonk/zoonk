@@ -56,9 +56,8 @@ export async function CourseSuggestions({ prompt }: { prompt: string }) {
 
       <ContentFeedback
         className="py-4"
-        contentId={`${locale}:${prompt}`}
         defaultEmail={session?.user.email}
-        kind="courseSuggestions"
+        feedbackTarget={{ kind: "courseSuggestions", locale, prompt }}
       />
     </Container>
   );

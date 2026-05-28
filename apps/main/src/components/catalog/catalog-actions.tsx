@@ -2,11 +2,11 @@
 
 import { FeedbackDialogContent } from "@/components/feedback/feedback-dialog";
 import {
-  type FeedbackKind,
+  type FeedbackTarget,
   type FeedbackValue,
   isFeedbackValue,
   trackFeedback,
-} from "@/lib/track-feedback";
+} from "@/lib/track-events";
 import { Button } from "@zoonk/ui/components/button";
 import { Dialog, DialogTrigger } from "@zoonk/ui/components/dialog";
 import {
@@ -29,13 +29,11 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 
 export function CatalogActions({
-  contentId,
+  feedbackTarget,
   defaultEmail,
-  kind,
 }: {
-  contentId: string;
+  feedbackTarget: FeedbackTarget;
   defaultEmail?: string;
-  kind: FeedbackKind;
 }) {
   const t = useExtracted();
   const [feedback, setFeedback] = useState<FeedbackValue | "">("");
@@ -46,7 +44,7 @@ export function CatalogActions({
     }
 
     setFeedback(value);
-    trackFeedback({ contentId, feedback: value, kind });
+    trackFeedback({ ...feedbackTarget, feedback: value });
     toast.success(t("Thanks for your feedback"));
   }
 
@@ -69,12 +67,12 @@ export function CatalogActions({
           >
             <DropdownMenuRadioItem value="upvote">
               <ThumbsUpIcon />
-              {t("Helpful")}
+              {t("I liked it")}
             </DropdownMenuRadioItem>
 
             <DropdownMenuRadioItem value="downvote">
               <ThumbsDownIcon />
-              {t("Not helpful")}
+              {t("I didn't like it")}
             </DropdownMenuRadioItem>
           </DropdownMenuRadioGroup>
 
