@@ -19,6 +19,7 @@ import {
   AUTH_ORGANIZATION_LIMIT,
   BETTER_AUTH_BASE_PATH,
   COOKIE_CACHE_MINUTES,
+  IS_COOKIE_CACHE_ENABLED,
   SESSION_EXPIRES_IN_DAYS,
 } from "./config";
 import { ac, admin, member, owner } from "./permissions";
@@ -47,7 +48,7 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   experimental: { joins: true },
   session: {
-    cookieCache: { enabled: true, maxAge: 60 * COOKIE_CACHE_MINUTES },
+    cookieCache: { enabled: IS_COOKIE_CACHE_ENABLED, maxAge: 60 * COOKIE_CACHE_MINUTES },
     expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,
   },
   trustedOrigins: ["https://appleid.apple.com"],
