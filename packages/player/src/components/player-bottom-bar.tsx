@@ -5,8 +5,8 @@ import { cn } from "@zoonk/ui/lib/utils";
 /**
  * Fixed bottom bar for the player's action buttons on mobile and tablet.
  *
- * Read-only step navigation now happens via swipe and keyboard, so this shell
- * only needs to anchor the primary action row above the device safe area.
+ * It anchors primary actions and explicit read-step navigation above the
+ * device safe area so touch users always have a visible way to continue.
  */
 export function PlayerBottomBar({ className, ...props }: React.ComponentProps<"div">) {
   return (

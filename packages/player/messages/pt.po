@@ -72,6 +72,7 @@ msgstr "Tentar de novo"
 
 #: src/components/completion-auth-branch.tsx
 #: src/components/completion-milestone-actions.tsx
+#: src/components/step-navigation-button-group.tsx
 msgid "9+Ddtu"
 msgstr "Próxima"
 
@@ -229,6 +230,10 @@ msgstr "Verificar"
 #: src/components/step-action-button.tsx
 msgid "acrOoz"
 msgstr "Continuar"
+
+#: src/components/step-navigation-button-group.tsx
+msgid "JJNc3c"
+msgstr "Anterior"
 
 #: src/components/swipe-navigable-step-layout.tsx
 msgid "aNzy1T"

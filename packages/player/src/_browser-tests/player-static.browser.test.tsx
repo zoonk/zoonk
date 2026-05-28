@@ -139,7 +139,7 @@ function getScrollableAncestor(element: HTMLElement | null): HTMLElement | null 
 }
 
 describe("player browser integration: static steps", () => {
-  it("shows desktop arrows while preserving keyboard navigation", async () => {
+  it("shows explicit navigation controls while preserving keyboard navigation", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "explanation",
@@ -160,15 +160,12 @@ describe("player browser integration: static steps", () => {
     });
 
     await expect.element(page.getByRole("heading", { name: "First step" })).toBeInTheDocument();
+    await expect.element(page.getByRole("button", { name: /^Previous$/u })).not.toBeInTheDocument();
 
-    await expect
-      .element(page.getByRole("button", { name: /previous step/iu }))
-      .not.toBeInTheDocument();
-
-    await page.getByRole("button", { name: /next step/iu }).click();
+    await page.getByRole("button", { name: /^Next$/u }).click();
     await expect.element(page.getByRole("heading", { name: "Second step" })).toBeInTheDocument();
 
-    await page.getByRole("button", { name: /previous step/iu }).click();
+    await page.getByRole("button", { name: /^Previous$/u }).click();
     await expect.element(page.getByRole("heading", { name: "First step" })).toBeInTheDocument();
 
     fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
@@ -178,6 +175,38 @@ describe("player browser integration: static steps", () => {
     await expect.element(page.getByRole("status")).toBeInTheDocument();
 
     await page.getByRole("button", { name: /try again/iu }).click();
+    await expect.element(page.getByRole("heading", { name: "First step" })).toBeInTheDocument();
+  });
+
+  it("shows tappable mobile navigation controls on static steps", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        kind: "explanation",
+        steps: [
+          buildSerializedStep({
+            content: { text: "First body", title: "First step", variant: "text" as const },
+            id: "static-mobile-nav-1",
+          }),
+          buildSerializedStep({
+            content: { text: "Second body", title: "Second step", variant: "text" as const },
+            id: "static-mobile-nav-2",
+            position: 1,
+          }),
+        ],
+      }),
+      navigation: buildNavigation({ nextLessonHref: null }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await expect.element(page.getByRole("heading", { name: "First step" })).toBeInTheDocument();
+    await expect.element(page.getByRole("button", { name: /^Previous$/u })).not.toBeInTheDocument();
+
+    await page.getByRole("button", { name: /^Next$/u }).click();
+
+    await expect.element(page.getByRole("heading", { name: "Second step" })).toBeInTheDocument();
+
+    await page.getByRole("button", { name: /^Previous$/u }).click();
+
     await expect.element(page.getByRole("heading", { name: "First step" })).toBeInTheDocument();
   });
 

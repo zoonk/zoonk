@@ -16,16 +16,27 @@ import { StageContent } from "./stage-content";
 import { StepActionButton } from "./step-action-button";
 import { StepImagePreloader } from "./step-image-preloader";
 import { PlayerContentFrame } from "./step-layouts";
+import { StepNavigationButtonGroup } from "./step-navigation-button-group";
 
 /**
- * The mobile bottom bar only exists for primary actions like Check or Continue.
- * Navigable read screens now rely on swipe and keyboard input instead of a
- * second row of visible navigation controls.
+ * The mobile bottom bar owns the explicit controls that are easy to miss when
+ * they only exist as gestures or keyboard shortcuts. Primary-action screens
+ * render Check/Continue, while read-only screens render Previous/Next buttons.
  */
 function BottomBarContent() {
+  const { actions, screen } = usePlayerRuntime();
+
   return (
     <PlayerContentFrame>
-      <StepActionButton />
+      {screen.bottomBar?.kind === "navigation" ? (
+        <StepNavigationButtonGroup
+          canNavigatePrev={screen.bottomBar.canNavigatePrev}
+          onNavigateNext={actions.navigateNext}
+          onNavigatePrev={actions.navigatePrev}
+        />
+      ) : (
+        <StepActionButton />
+      )}
     </PlayerContentFrame>
   );
 }
@@ -49,7 +60,7 @@ export function PlayerShell() {
   const currentStep = getCurrentStep(state);
 
   const shouldShowStickyBottomBar =
-    screen.showChrome && screen.bottomBar?.kind === "primaryAction" && !screen.stageIsFullBleed;
+    screen.showChrome && Boolean(screen.bottomBar) && !screen.stageIsFullBleed;
 
   const progressValue = getProgressValue(state);
   const upcomingImages = getUpcomingImages(state);
