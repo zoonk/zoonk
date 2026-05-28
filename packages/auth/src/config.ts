@@ -4,6 +4,7 @@ export const BETTER_AUTH_BASE_PATH = process.env.NEXT_PUBLIC_AUTH_BASE_PATH || "
 
 export const SESSION_EXPIRES_IN_DAYS = 30;
 export const COOKIE_CACHE_MINUTES = 60;
+export const IS_COOKIE_CACHE_ENABLED = process.env.AUTH_COOKIE_CACHE_ENABLED !== "false";
 
 // We don't want to limit the number of memberships or organizations
 // So we use the maximum safe integer because Better Auth doesn't support infinity.
