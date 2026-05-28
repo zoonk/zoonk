@@ -9,7 +9,12 @@ export const getCourseSuggestionReview = cache(async (entityId: string) => {
   }
 
   return prisma.searchPrompt.findUnique({
-    include: { suggestions: { include: { courseSuggestion: true }, orderBy: { position: "asc" } } },
+    include: {
+      suggestions: {
+        include: { courseSuggestion: true },
+        orderBy: [{ position: "asc" }, { createdAt: "asc" }, { id: "asc" }],
+      },
+    },
     where: { id: entityId },
   });
 });
