@@ -40,21 +40,13 @@ describe("authenticated users", () => {
     });
   });
 
-  it("returns white belt level 1 for zero brain power", async () => {
+  it("returns null for zeroed placeholder progress", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
     await prisma.userProgress.create({ data: { totalBrainPower: BigInt(0), userId: user.id } });
 
     const result = await getBeltLevel(headers);
-
-    expect(result).toStrictEqual({
-      bpPerLevel: 250,
-      bpToNextLevel: 250,
-      color: "white",
-      isMaxLevel: false,
-      level: 1,
-      progressInLevel: 0,
-    });
+    expect(result).toBeNull();
   });
 });

@@ -1,4 +1,5 @@
 import "server-only";
+import { hasUserLearningProgress } from "@zoonk/core/progress/user-progress";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
 import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
@@ -18,7 +19,7 @@ export const getBeltLevel = cache(async (headers?: Headers): Promise<BeltLevelRe
     prisma.userProgress.findUnique({ where: { userId } }),
   );
 
-  if (error || !progress) {
+  if (error || !hasUserLearningProgress(progress)) {
     return null;
   }
 

@@ -17,6 +17,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { UserAccount } from "./user-account";
+import { UserCourses } from "./user-courses";
 import { UserHeader } from "./user-header";
 import { UserLesson } from "./user-lesson";
 import { UserSubscription } from "./user-subscription";
@@ -76,7 +77,7 @@ export default async function UserDetailPage({ params }: PageProps<"/users/[id]"
         </ContainerHeaderGroup>
       </ContainerHeader>
 
-      <ContainerBody className="max-w-2xl gap-8">
+      <ContainerBody className="max-w-4xl gap-8">
         <Suspense fallback={<HeaderSkeleton />}>
           <UserHeader userId={userId} />
         </Suspense>
@@ -91,6 +92,10 @@ export default async function UserDetailPage({ params }: PageProps<"/users/[id]"
 
         <Suspense fallback={<SectionSkeleton />}>
           <UserLesson userId={userId} />
+        </Suspense>
+
+        <Suspense fallback={<SectionSkeleton />}>
+          <UserCourses userId={userId} />
         </Suspense>
       </ContainerBody>
     </Container>

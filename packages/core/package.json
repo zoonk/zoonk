@@ -47,6 +47,7 @@
     "./progress/lessons": "./src/progress/get-lesson-progress.ts",
     "./progress/continue-lesson-target": "./src/progress/get-continue-lesson-target.ts",
     "./progress/next-lesson-state": "./src/progress/get-next-lesson-state.ts",
+    "./progress/user-progress": "./src/progress/user-progress.ts",
     "./steps/content-image": "./src/steps/step-content-image.ts",
     "./steps/contract/content": "./src/steps/contract/content.ts",
     "./steps/contract/image": "./src/steps/contract/image.ts",

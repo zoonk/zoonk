@@ -22,6 +22,7 @@ import {
   IS_COOKIE_CACHE_ENABLED,
   SESSION_EXPIRES_IN_DAYS,
 } from "./config";
+import { ensureUserProgressAfterAuthCreate } from "./db-hooks";
 import { ac, admin, member, owner } from "./permissions";
 import { sendVerificationOTP } from "./plugins/otp";
 import { trustedOriginPlugin } from "./plugins/trusted-origin";
@@ -46,6 +47,7 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
     protocol: isLocalhostSupported() ? "http" : "https",
   },
   database: prismaAdapter(prisma, { provider: "postgresql" }),
+  databaseHooks: { user: { create: { after: ensureUserProgressAfterAuthCreate } } },
   experimental: { joins: true },
   session: {
     cookieCache: { enabled: IS_COOKIE_CACHE_ENABLED, maxAge: 60 * COOKIE_CACHE_MINUTES },

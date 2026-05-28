@@ -21,6 +21,7 @@ export async function UserList({
             <TableRow>
               <TableHead>User</TableHead>
               <TableHead>Username</TableHead>
+              <TableHead className="text-right">Brain Power</TableHead>
               <TableHead>Subscription</TableHead>
             </TableRow>
           </TableHeader>

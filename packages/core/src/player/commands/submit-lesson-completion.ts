@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { MS_PER_DAY, parseLocalDate } from "@zoonk/utils/date";
 import { clampEnergy, computeDecayedEnergy, toUTCMidnight } from "@zoonk/utils/energy";
+import { hasUserLearningProgress } from "../../progress/user-progress";
 import { type ScoreResult } from "../contracts/compute-score";
 import { fillDecayGaps, getCompletionField, upsertDailyProgress } from "./_utils/daily-progress";
 import { syncDurableCurriculumCompletion } from "./_utils/durable-curriculum-completion";
@@ -87,13 +88,14 @@ export async function submitLessonCompletion(input: {
 
     // Find existing UserProgress to apply decay
     const existingProgress = await tx.userProgress.findUnique({ where: { userId: input.userId } });
+    const shouldApplyDecay = hasUserLearningProgress(existingProgress);
 
-    const decayedBase = existingProgress
+    const decayedBase = shouldApplyDecay
       ? computeDecayedEnergy(existingProgress.currentEnergy, existingProgress.lastActiveAt, today)
       : 0;
 
     // Fill DailyProgress records for inactive days
-    if (existingProgress) {
+    if (shouldApplyDecay) {
       const lastActiveDate = toUTCMidnight(existingProgress.lastActiveAt);
 
       await fillDecayGaps({

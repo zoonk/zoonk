@@ -39,6 +39,7 @@ export type {
   Sentence,
   Subscription,
   StepKind,
+  UserProgress,
   Word,
   WordPronunciation,
 } from "./generated/prisma/client";
