@@ -1,12 +1,10 @@
 import "server-only";
 import { type StepKind, prisma } from "@zoonk/db";
-import { getNextLessonInCourse } from "../../lessons/get-next-lesson-in-course";
 import { type CompletionInput } from "../contracts/completion-input-schema";
 import { computeLessonScore } from "../contracts/compute-score";
 import { countAnswerableSteps, validateAnswers } from "../contracts/validate-answers";
 import { getReviewValidationData } from "../queries/get-review-steps";
 import { getCompletableLessonWhere } from "./_utils/completable-lesson";
-import { getNextLessonPreloadId } from "./get-next-lesson-preload-target";
 import { submitLessonCompletion } from "./submit-lesson-completion";
 
 const MAX_DURATION_SECONDS = 7200;
@@ -25,8 +23,6 @@ type StepWithSentence = {
   word: { id: string } | null;
   sentence: { id: string; sentence: string } | null;
 };
-
-type PlayerCompletionEffects = { preloadLessonId: string | null };
 
 /**
  * Attaches chapter-scoped sentence translation data to steps.
@@ -65,13 +61,13 @@ function hasCompleteAnswerCoverage(params: {
 /**
  * The app shell should only orchestrate request-specific concerns such as auth,
  * cache revalidation, and background execution. This command owns the shared
- * completion workflow: validate the submission, persist authoritative progress,
- * and describe any follow-up lesson work the host app should trigger.
+ * completion workflow: validate the submission and persist authoritative
+ * progress without coupling lesson completion to generation side effects.
  */
 export async function submitPlayerCompletion(params: {
   input: CompletionInput;
   userId: string;
-}): Promise<PlayerCompletionEffects | null> {
+}): Promise<void> {
   const lessonId = params.input.lessonId;
 
   const lesson = await prisma.lesson.findFirst({
@@ -87,7 +83,7 @@ export async function submitPlayerCompletion(params: {
   });
 
   if (!lesson) {
-    return null;
+    return;
   }
 
   const validationData =
@@ -111,7 +107,7 @@ export async function submitPlayerCompletion(params: {
       validatedStepCount: stepResults.length,
     })
   ) {
-    return null;
+    return;
   }
 
   const score = computeLessonScore({ results: stepResults });
@@ -142,13 +138,4 @@ export async function submitPlayerCompletion(params: {
     stepResults: mergedStepResults,
     userId: params.userId,
   });
-
-  const nextLesson = await getNextLessonInCourse({
-    chapterId: lesson.chapterId,
-    chapterPosition: lesson.chapter.position,
-    courseId: lesson.chapter.courseId,
-    lessonPosition: lesson.position,
-  });
-
-  return { preloadLessonId: getNextLessonPreloadId({ nextLesson }) };
 }
