@@ -1,5 +1,10 @@
 import { prisma } from "@zoonk/db";
 
+/**
+ * Create daily progress rows in bulk for tests that need chart or history data.
+ * The helper keeps per-row defaults in one place so test setup can focus on the
+ * dates and counters that matter for the behavior under test.
+ */
 export async function dailyProgressFixtureMany(
   inputs: {
     brainPowerEarned?: number;
@@ -25,18 +30,27 @@ export async function dailyProgressFixtureMany(
 
 const DEFAULT_ENERGY = 50;
 
+/**
+ * Set the singleton UserProgress row for a test user.
+ * Auth-created users already have a zeroed progress row, while lower-level
+ * tests often create users directly without one. Upserting lets callers express
+ * the desired progress state without caring which path created the user.
+ */
 export async function userProgressFixture(attrs: {
   currentEnergy?: number;
   lastActiveAt?: Date;
   totalBrainPower?: bigint;
   userId: string;
 }) {
-  return prisma.userProgress.create({
-    data: {
-      currentEnergy: attrs.currentEnergy ?? DEFAULT_ENERGY,
-      lastActiveAt: attrs.lastActiveAt ?? new Date(),
-      totalBrainPower: attrs.totalBrainPower ?? 0n,
-      userId: attrs.userId,
-    },
+  const data = {
+    currentEnergy: attrs.currentEnergy ?? DEFAULT_ENERGY,
+    lastActiveAt: attrs.lastActiveAt ?? new Date(),
+    totalBrainPower: attrs.totalBrainPower ?? 0n,
+  };
+
+  return prisma.userProgress.upsert({
+    create: { ...data, userId: attrs.userId },
+    update: data,
+    where: { userId: attrs.userId },
   });
 }
