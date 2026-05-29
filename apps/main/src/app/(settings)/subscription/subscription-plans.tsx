@@ -9,11 +9,18 @@ import { getExtracted, getFormatter } from "next-intl/server";
 import { headers } from "next/headers";
 import { ManagedSubscription } from "./managed-subscription";
 import { PlanList } from "./plan-list";
+import { SubscriptionConversionTracker } from "./subscription-conversion-tracker";
 
-export async function SubscriptionPlans() {
+export async function SubscriptionPlans({
+  searchParams,
+}: {
+  searchParams: PageProps<"/subscription">["searchParams"];
+}) {
   const requestHeaders = await headers();
+  const query = await searchParams;
   const t = await getExtracted();
   const format = await getFormatter();
+  const stripeCheckoutCompleted = query.stripe_checkout === "complete";
 
   const countryCode =
     requestHeaders.get("x-vercel-ip-country") ??
@@ -54,14 +61,22 @@ export async function SubscriptionPlans() {
     ? t("Current billing period ends on {date}.", { date: periodEndDate })
     : null;
 
+  const activeStripeSubscriptionId = subscription?.provider === "stripe" ? subscription.id : null;
+
   if (subscription && !isWebManagedSubscriptionProvider(subscription.provider)) {
     return (
-      <ManagedSubscription
-        cancelMessage={cancelMessage}
-        periodMessage={periodMessage}
-        planTitle={titles[subscription.plan] ?? subscription.plan}
-        provider={subscription.provider}
-      />
+      <>
+        <SubscriptionConversionTracker
+          activeSubscriptionId={activeStripeSubscriptionId}
+          stripeCheckoutCompleted={stripeCheckoutCompleted}
+        />
+        <ManagedSubscription
+          cancelMessage={cancelMessage}
+          periodMessage={periodMessage}
+          planTitle={titles[subscription.plan] ?? subscription.plan}
+          provider={subscription.provider}
+        />
+      </>
     );
   }
 
@@ -87,13 +102,19 @@ export async function SubscriptionPlans() {
   };
 
   return (
-    <PlanList
-      cancelMessage={cancelMessage}
-      currentPlan={currentPlan}
-      descriptions={descriptions}
-      plans={plans}
-      titles={titles}
-    />
+    <>
+      <SubscriptionConversionTracker
+        activeSubscriptionId={activeStripeSubscriptionId}
+        stripeCheckoutCompleted={stripeCheckoutCompleted}
+      />
+      <PlanList
+        cancelMessage={cancelMessage}
+        currentPlan={currentPlan}
+        descriptions={descriptions}
+        plans={plans}
+        titles={titles}
+      />
+    </>
   );
 }
 

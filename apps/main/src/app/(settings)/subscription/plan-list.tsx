@@ -92,7 +92,7 @@ export function PlanList({
       annual: period === "yearly",
       cancelUrl: "/subscription",
       plan: selectedPlan,
-      successUrl: "/subscription",
+      successUrl: "/subscription?stripe_checkout=complete",
     });
 
     if (error) {

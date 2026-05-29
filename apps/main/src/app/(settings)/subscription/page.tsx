@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function Subscription() {
+export default async function Subscription({ searchParams }: PageProps<"/subscription">) {
   const t = await getExtracted();
 
   return (
@@ -40,7 +40,7 @@ export default async function Subscription() {
       <ContainerBody>
         <ProtectedSection>
           <Suspense fallback={<SubscriptionPlansSkeleton />}>
-            <SubscriptionPlans />
+            <SubscriptionPlans searchParams={searchParams} />
           </Suspense>
         </ProtectedSection>
       </ContainerBody>

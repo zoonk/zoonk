@@ -20,6 +20,14 @@ type FeedbackInput = FeedbackTarget & { feedback: FeedbackValue };
 
 const FEEDBACK_VALUES: ReadonlySet<string> = new Set<FeedbackValue>(["upvote", "downvote"]);
 
+const googleAdsSubscriptionConversionId =
+  process.env.NEXT_PUBLIC_GOOGLE_ADS_SUBSCRIPTION_CONVERSION_ID;
+
+type GoogleTagScope = typeof globalThis & {
+  dataLayer?: unknown[];
+  gtag?: (...args: unknown[]) => void;
+};
+
 /**
  * Keeps menu values constrained to analytics values so malformed dropdown
  * events cannot send arbitrary feedback labels.
@@ -78,6 +86,50 @@ export function trackLessonCompleted({
     ...getPlayerEventData(input),
     durationSeconds: getCompletionDurationSeconds({ startedAt }),
   });
+}
+
+/**
+ * Reports completed subscription checkouts to Google Ads using the conversion
+ * action created in Google Ads. This stays separate from the button click
+ * because the checkout provider is the system that decides whether a purchase
+ * actually happened.
+ */
+export function trackGoogleAdsSubscriptionConversion() {
+  if (!googleAdsSubscriptionConversionId) {
+    return;
+  }
+
+  getGoogleTag()("event", "conversion", { send_to: googleAdsSubscriptionConversionId });
+}
+
+/**
+ * Uses the same global queue shape as Google's snippet so conversion events are
+ * not coupled to Next's module-scoped helper state. The Google tag script drains
+ * this queue after it loads, so the event is still recorded if checkout returns
+ * before the remote script has finished loading.
+ */
+function getGoogleTag() {
+  const scope = getGoogleTagScope();
+  scope.dataLayer ??= [];
+  scope.gtag ??= queueGoogleTagArguments;
+
+  return scope.gtag;
+}
+
+/**
+ * Narrows the browser global to the Google tag fields without making every
+ * TypeScript consumer in the app believe those fields always exist.
+ */
+function getGoogleTagScope(): GoogleTagScope {
+  return globalThis as GoogleTagScope;
+}
+
+/**
+ * Matches Google's queueing contract while using rest parameters so the
+ * function can be shared safely by linted app code.
+ */
+function queueGoogleTagArguments(...args: unknown[]) {
+  getGoogleTagScope().dataLayer?.push(args);
 }
 
 /**

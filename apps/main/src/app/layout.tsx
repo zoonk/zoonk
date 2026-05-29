@@ -1,3 +1,4 @@
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "@zoonk/ui/components/sonner";
 import { SITE_URL } from "@zoonk/utils/url";
@@ -12,6 +13,8 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: { default: "Zoonk", template: "%s | Zoonk" },
 };
+
+const googleAdsTagId = process.env.NEXT_PUBLIC_GOOGLE_ADS_TAG_ID;
 
 async function HtmlDocument({ children }: React.PropsWithChildren) {
   const locale = await getLocale();
@@ -29,6 +32,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <Analytics debug={false} />
           <Toaster />
         </body>
+        {googleAdsTagId && <GoogleAnalytics gaId={googleAdsTagId} />}
       </HtmlDocument>
     </Suspense>
   );
