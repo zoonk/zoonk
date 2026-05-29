@@ -1,6 +1,12 @@
 import "server-only";
-import { type GenerationStatus, getPublishedChapterWhere, prisma } from "@zoonk/db";
+import {
+  type GenerationStatus,
+  type LessonKind,
+  getPublishedChapterWhere,
+  prisma,
+} from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
+import { getBlockingLessonGenerationPrerequisite } from "../../lessons/generation-prerequisites";
 import {
   type NextLessonInCourse,
   getNextLessonInCourse,
@@ -8,10 +14,22 @@ import {
 import { getCompletableLessonWhere } from "./_utils/completable-lesson";
 
 const preloadableGenerationStatuses = new Set<GenerationStatus>(["pending", "failed"]);
+const preloadLookaheadLessonKinds = new Set<LessonKind>(["grammar", "listening", "translation"]);
+const maxPreloadTargets = 2;
+const maxLookaheadHops = 1;
 
 export type NextPreloadTarget =
   | { kind: "chapter"; chapterId: string }
   | { kind: "lesson"; lessonId: string };
+
+type LessonPreloadCursor = {
+  chapterId: string;
+  chapterPosition: number;
+  courseId: string;
+  lessonPosition: number;
+};
+
+type LessonPreloadDecision = { shouldContinue: boolean; target: NextPreloadTarget | null };
 
 /**
  * Chapter generation should only be preloaded when the next chapter is still
@@ -55,19 +73,53 @@ function isPreloadableNextLesson(
 }
 
 /**
- * Callers that already have the next lesson row can reuse the same preload
- * eligibility rule without doing another current-lesson lookup.
+ * Some language lessons are commonly finished before the next heavy generated
+ * lesson is ready. These are the only lesson kinds this command may look
+ * through, and the shared target cap still prevents broad course generation.
  */
-function getNextLessonPreloadId({
+function isPreloadLookaheadLesson({ lessonKind }: NextLessonInCourse): boolean {
+  return preloadLookaheadLessonKinds.has(lessonKind);
+}
+
+/**
+ * Avoids starting workflow runs that the shared prerequisite guard would block
+ * anyway. This keeps lookahead generation from skipping over unfinished source
+ * lessons while still reusing the same rule the generation workflow enforces.
+ */
+async function isBlockedByGenerationPrerequisite({
   nextLesson,
 }: {
-  nextLesson: NextLessonInCourse | null;
-}): string | null {
-  if (!isPreloadableNextLesson(nextLesson)) {
-    return null;
+  nextLesson: NextLessonInCourse;
+}): Promise<boolean> {
+  const blockingPrerequisite = await getBlockingLessonGenerationPrerequisite({
+    chapterId: nextLesson.chapterId,
+    kind: nextLesson.lessonKind,
+    position: nextLesson.lessonPosition,
+  });
+
+  return Boolean(blockingPrerequisite);
+}
+
+/**
+ * Decides whether the next structural lesson should be started and whether the
+ * selector may continue behind it. Lookahead lessons can be looked through only
+ * when their own source content is already complete.
+ */
+async function getLessonPreloadDecision({
+  nextLesson,
+}: {
+  nextLesson: NextLessonInCourse;
+}): Promise<LessonPreloadDecision> {
+  if (await isBlockedByGenerationPrerequisite({ nextLesson })) {
+    return { shouldContinue: false, target: null };
   }
 
-  return nextLesson.lessonId;
+  return {
+    shouldContinue: isPreloadLookaheadLesson(nextLesson),
+    target: isPreloadableNextLesson(nextLesson)
+      ? { kind: "lesson", lessonId: nextLesson.lessonId }
+      : null,
+  };
 }
 
 /**
@@ -95,21 +147,49 @@ function getChapterPreloadTarget(
 }
 
 /**
- * The second-step preload entry point needs one structural decision: prefer a
- * concrete next lesson when it exists, otherwise generate the next empty
- * chapter if the learner is at the chapter boundary.
+ * Keeps the returned target list typed after composing the optional current
+ * lesson target with any target found behind a lookahead lesson.
  */
-async function getNextPreloadTargetAfterLessonPosition({
+function getPreloadTargets(input: {
+  laterTargets: NextPreloadTarget[];
+  target: NextPreloadTarget | null;
+}): NextPreloadTarget[] {
+  return input.target ? [input.target, ...input.laterTargets] : input.laterTargets;
+}
+
+/**
+ * Counts how many target slots remain after the current lesson decision. The
+ * cap keeps early preload from becoming broad course generation.
+ */
+function getRemainingTargetCount({
+  remainingTargets,
+  target,
+}: {
+  remainingTargets: number;
+  target: NextPreloadTarget | null;
+}): number {
+  return target ? remainingTargets - 1 : remainingTargets;
+}
+
+/**
+ * The second-step preload entry point normally starts the immediate next
+ * generated lesson. Short language lessons are special: the selector may walk
+ * one lookahead hop and start the slower generated lesson behind them too.
+ */
+async function getNextPreloadTargetsAfterLessonPosition({
   chapterId,
   chapterPosition,
   courseId,
   lessonPosition,
-}: {
-  chapterId: string;
-  chapterPosition: number;
-  courseId: string;
-  lessonPosition: number;
-}): Promise<NextPreloadTarget | null> {
+  remainingLookaheadHops,
+  remainingTargets,
+}: { remainingLookaheadHops: number; remainingTargets: number } & LessonPreloadCursor): Promise<
+  NextPreloadTarget[]
+> {
+  if (remainingTargets <= 0) {
+    return [];
+  }
+
   const nextLesson = await getNextLessonInCourse({
     chapterId,
     chapterPosition,
@@ -117,35 +197,50 @@ async function getNextPreloadTargetAfterLessonPosition({
     lessonPosition,
   });
 
-  const nextLessonId = getNextLessonPreloadId({ nextLesson });
+  if (!nextLesson) {
+    const nextChapter = await getNextChapterPreloadCandidate({ chapterPosition, courseId });
+    const target = getChapterPreloadTarget(nextChapter);
 
-  if (nextLessonId) {
-    return { kind: "lesson", lessonId: nextLessonId };
+    return target ? [target] : [];
   }
 
-  if (nextLesson) {
-    return null;
+  const decision = await getLessonPreloadDecision({ nextLesson });
+
+  const nextRemainingTargets = getRemainingTargetCount({
+    remainingTargets,
+    target: decision.target,
+  });
+
+  if (!decision.shouldContinue || remainingLookaheadHops <= 0 || nextRemainingTargets <= 0) {
+    return getPreloadTargets({ laterTargets: [], target: decision.target });
   }
 
-  const nextChapter = await getNextChapterPreloadCandidate({ chapterPosition, courseId });
+  const laterTargets = await getNextPreloadTargetsAfterLessonPosition({
+    chapterId: nextLesson.chapterId,
+    chapterPosition: nextLesson.chapterPosition,
+    courseId,
+    lessonPosition: nextLesson.lessonPosition,
+    remainingLookaheadHops: remainingLookaheadHops - 1,
+    remainingTargets: nextRemainingTargets,
+  });
 
-  return getChapterPreloadTarget(nextChapter);
+  return getPreloadTargets({ laterTargets, target: decision.target });
 }
 
 /**
  * The browser only proves that a learner interacted with the current lesson.
- * This command derives the next preload target on the server so callers do not
+ * This command derives the next preload targets on the server so callers do not
  * trust a client-provided lesson or chapter id for an expensive AI job.
  */
-export async function getNextPreloadTarget({
+export async function getNextPreloadTargets({
   lessonId,
   userId,
 }: {
   lessonId: string;
   userId: string;
-}): Promise<NextPreloadTarget | null> {
+}): Promise<NextPreloadTarget[]> {
   if (!isUuid(lessonId) || !isUuid(userId)) {
-    return null;
+    return [];
   }
 
   const lesson = await prisma.lesson.findFirst({
@@ -154,13 +249,15 @@ export async function getNextPreloadTarget({
   });
 
   if (!lesson) {
-    return null;
+    return [];
   }
 
-  return getNextPreloadTargetAfterLessonPosition({
+  return getNextPreloadTargetsAfterLessonPosition({
     chapterId: lesson.chapterId,
     chapterPosition: lesson.chapter.position,
     courseId: lesson.chapter.courseId,
     lessonPosition: lesson.position,
+    remainingLookaheadHops: maxLookaheadHops,
+    remainingTargets: maxPreloadTargets,
   });
 }
