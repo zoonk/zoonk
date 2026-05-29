@@ -23,27 +23,23 @@ export function StepNavigationButtonGroup({
   const t = useExtracted();
 
   return (
-    <div
-      className={cn("grid w-full gap-2", canNavigatePrev ? "grid-cols-2" : "grid-cols-1")}
-      data-slot="step-navigation-button-group"
-    >
+    <div className="flex w-full gap-2" data-slot="step-navigation-button-group">
       {canNavigatePrev && (
         <Button
+          aria-label={t("Previous")}
           aria-keyshortcuts="ArrowLeft"
-          className="min-w-0"
           onClick={onNavigatePrev}
-          size="lg"
+          size="icon-lg"
           type="button"
           variant="outline"
         >
-          <ChevronLeftIcon aria-hidden="true" data-icon="inline-start" />
-          <span>{t("Previous")}</span>
+          <ChevronLeftIcon aria-hidden="true" />
         </Button>
       )}
 
       <Button
         aria-keyshortcuts="ArrowRight"
-        className="min-w-0"
+        className={cn("min-w-0 flex-1", !canNavigatePrev && "w-full")}
         onClick={onNavigateNext}
         size="lg"
         type="button"
