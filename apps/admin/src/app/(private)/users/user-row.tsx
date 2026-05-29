@@ -4,8 +4,8 @@ import { TableCell, TableRow } from "@zoonk/ui/components/table";
 import Link from "next/link";
 
 /**
- * The admin user list is ordered by Brain Power, so each row shows the score
- * that explains why the user appears in that position.
+ * Admins can sort users by Brain Power or signup recency, so the row keeps both
+ * values visible without making either sort mode require a separate detail page.
  */
 export function UserRow({
   user,
@@ -25,6 +25,10 @@ export function UserRow({
 
       <TableCell className="text-right tabular-nums">
         {Number(user.progress?.totalBrainPower ?? 0).toLocaleString()}
+      </TableCell>
+
+      <TableCell className="text-muted-foreground">
+        {new Date(user.createdAt).toLocaleDateString()}
       </TableCell>
 
       <TableCell>

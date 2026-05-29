@@ -1,8 +1,19 @@
 import "server-only";
 import { isAdmin } from "@/lib/admin-guard";
 import { type GeneratedLessonStatus } from "@/lib/generated-lesson-status";
-import { prisma } from "@zoonk/db";
+import { type LessonKind, prisma } from "@zoonk/db";
 import { cache } from "react";
+
+const aiGeneratedLessonKinds = [
+  "alphabet",
+  "explanation",
+  "grammar",
+  "practice",
+  "quiz",
+  "reading",
+  "tutorial",
+  "vocabulary",
+] as const satisfies readonly LessonKind[];
 
 const cachedListGeneratedLessons = cache(
   async (limit: number, offset: number, status: GeneratedLessonStatus, search?: string) => {
@@ -64,11 +75,14 @@ function buildGeneratedLessonWhere({
   search?: string;
   status: GeneratedLessonStatus;
 }) {
+  const baseWhere = getAiGeneratedLessonWhere({ status });
+
   if (!search) {
-    return { generationStatus: status };
+    return baseWhere;
   }
 
   return {
+    ...baseWhere,
     OR: [
       { normalizedTitle: { contains: search, mode: "insensitive" as const } },
       { chapter: { normalizedTitle: { contains: search, mode: "insensitive" as const } } },
@@ -78,6 +92,15 @@ function buildGeneratedLessonWhere({
         },
       },
     ],
-    generationStatus: status,
   };
+}
+
+/**
+ * The generated lesson log should show lessons whose content was produced by
+ * the AI workflow. Companion rows like review, translation, and listening reuse
+ * existing generated resources, so including them makes the log look larger
+ * than the set of lessons that actually went through model-authored generation.
+ */
+function getAiGeneratedLessonWhere({ status }: { status: GeneratedLessonStatus }) {
+  return { generationStatus: status, kind: { in: [...aiGeneratedLessonKinds] } };
 }
