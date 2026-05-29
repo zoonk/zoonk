@@ -1,7 +1,7 @@
 "use server";
 
 import { triggerPreloadTarget } from "@/data/progress/trigger-preload-target";
-import { getNextPreloadTarget } from "@zoonk/core/player/commands/get-next-lesson-preload-target";
+import { getNextPreloadTargets } from "@zoonk/core/player/commands/get-next-lesson-preload-target";
 import { getSession } from "@zoonk/core/users/session/get";
 import { logError } from "@zoonk/utils/logger";
 import { headers } from "next/headers";
@@ -22,17 +22,21 @@ type NextPreloadInput = {
  */
 async function triggerNextPreload(input: NextPreloadInput): Promise<void> {
   try {
-    const target = await getNextPreloadTarget({ lessonId: input.lessonId, userId: input.userId });
+    const targets = await getNextPreloadTargets({ lessonId: input.lessonId, userId: input.userId });
 
-    if (!target) {
+    if (targets.length === 0) {
       return;
     }
 
-    await triggerPreloadTarget({
-      cookieHeader: input.cookieHeader,
-      requestHeaders: input.requestHeaders,
-      target,
-    });
+    await Promise.all(
+      targets.map((target) =>
+        triggerPreloadTarget({
+          cookieHeader: input.cookieHeader,
+          requestHeaders: input.requestHeaders,
+          target,
+        }),
+      ),
+    );
   } catch (error) {
     logError("[preloadNextLesson] Failed to trigger preload:", error);
   }
