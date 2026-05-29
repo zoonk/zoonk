@@ -1,21 +1,15 @@
-"use client";
-
-import YT from "react-youtube";
+import { YouTubeEmbed } from "@next/third-parties/google";
 
 type YouTubeProps = { id: string };
 
 /**
- * Responsive YouTube video embed.
- * Client component because react-youtube uses browser APIs.
+ * Keeps MDX posts using a short `<YouTube id="..." />` API while Next's optimized embed
+ * delays the real YouTube iframe until the reader chooses to play the video.
  */
 export function YouTube({ id }: YouTubeProps) {
   return (
-    <span className="my-6 block aspect-video">
-      <YT
-        videoId={id}
-        opts={{ height: "100%", width: "100%" }}
-        className="h-full w-full overflow-hidden rounded-lg"
-      />
-    </span>
+    <div className="not-prose my-6 w-full overflow-hidden rounded-lg">
+      <YouTubeEmbed videoid={id} playlabel="Play YouTube video" />
+    </div>
   );
 }
