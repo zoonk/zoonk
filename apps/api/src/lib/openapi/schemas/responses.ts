@@ -38,10 +38,12 @@ const sseStreamResponse = {
 } as const;
 
 export function workflowTriggerEndpoint({
+  mayRequireAuthentication = false,
   schema,
   summary,
   requiresSubscription = false,
 }: {
+  mayRequireAuthentication?: boolean;
   schema: z.ZodType;
   summary: string;
   requiresSubscription?: boolean;
@@ -49,7 +51,9 @@ export function workflowTriggerEndpoint({
   return {
     post: {
       description: [
-        "Requires authentication.",
+        mayRequireAuthentication
+          ? "May require authentication when the expanded free preview rule applies."
+          : null,
         requiresSubscription
           ? "Requires active subscription when the free generation rule does not apply."
           : null,
@@ -60,7 +64,7 @@ export function workflowTriggerEndpoint({
       responses: {
         "200": workflowStartedResponse,
         "400": validationErrorResponse,
-        "401": unauthorizedResponse,
+        ...(mayRequireAuthentication && { "401": unauthorizedResponse }),
         ...(requiresSubscription && { "402": subscriptionRequiredResponse }),
       },
       summary,

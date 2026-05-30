@@ -143,7 +143,7 @@ test.describe("Command Palette - Unauthenticated", () => {
     await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
   });
 
-  test("selecting Learn asks unauthenticated users to log in", async ({ page }) => {
+  test("selecting Learn shows the course creation form", async ({ page }) => {
     await openCommandPalette(page);
 
     await page
@@ -151,7 +151,7 @@ test.describe("Command Palette - Unauthenticated", () => {
       .getByText(/learn something/iu)
       .click();
 
-    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
   });
 });
 

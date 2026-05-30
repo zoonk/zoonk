@@ -16,9 +16,13 @@ import Link from "next/link";
 export async function UpgradeCTA<Href extends string>({
   backHref,
   backLabel,
+  description,
+  title,
 }: {
   backHref: Route<Href>;
   backLabel: string;
+  description?: string;
+  title?: string;
 }) {
   const t = await getExtracted();
 
@@ -29,10 +33,10 @@ export async function UpgradeCTA<Href extends string>({
           <SparklesIcon />
         </EmptyMedia>
 
-        <EmptyTitle>{t("Upgrade to create")}</EmptyTitle>
+        <EmptyTitle>{title ?? t("Upgrade to create")}</EmptyTitle>
 
         <EmptyDescription>
-          {t("Creating content with AI requires an active subscription.")}
+          {description ?? t("Creating content with AI requires an active subscription.")}
         </EmptyDescription>
       </EmptyHeader>
 

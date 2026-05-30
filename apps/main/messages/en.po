@@ -384,20 +384,12 @@ msgid "47FYwb"
 msgstr "Cancel"
 
 #: src/app/(catalog)/learn/[prompt]/course-suggestions.tsx
-#: src/app/generate/c/[slug]/generate-course-content.tsx
-msgid "RbslnC"
-msgstr "Change subject"
-
-#: src/app/(catalog)/learn/[prompt]/course-suggestions.tsx
-#: src/app/(catalog)/learn/page.tsx
-#: src/app/generate/c/[slug]/generate-course-content.tsx
-#: src/app/generate/cs/[id]/generate-course-suggestion-content.tsx
-msgid "LvUoVs"
-msgstr "Create Course"
-
-#: src/app/(catalog)/learn/[prompt]/course-suggestions.tsx
 msgid "7x4411"
 msgstr "Course ideas for {prompt}"
+
+#: src/app/(catalog)/learn/[prompt]/course-suggestions.tsx
+msgid "RbslnC"
+msgstr "Change subject"
 
 #: src/app/(catalog)/learn/[prompt]/page.tsx
 msgid "CaU/nf"
@@ -418,11 +410,6 @@ msgstr "Tell Zoonk what you want to learn and get a course created with AI. Star
 #: src/app/(catalog)/learn/page.tsx
 msgid "Zs1QEq"
 msgstr "Learn Anything with AI"
-
-#: src/app/(catalog)/learn/page.tsx
-#: src/app/generate/cs/[id]/generate-course-suggestion-content.tsx
-msgid "rPgekg"
-msgstr "Back home"
 
 #: src/app/(catalog)/learn/page.tsx
 msgid "l450Bl"
@@ -1016,6 +1003,14 @@ msgstr "Create lesson"
 msgid "/N8rYN"
 msgstr "Back to chapter"
 
+#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
+msgid "3pyC1G"
+msgstr "This lesson requires an active subscription."
+
+#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
+msgid "xu3uCX"
+msgstr "Upgrade to keep learning"
+
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgid "mA7vCW"
 msgstr "Review locked"
@@ -1035,10 +1030,6 @@ msgstr "There are no practice questions to review yet."
 #: src/app/generate/ch/[id]/generate-chapter-content.tsx
 msgid "qrEiLa"
 msgstr "Back to course"
-
-#: src/app/generate/ch/[id]/generate-chapter-content.tsx
-msgid "qNiSDe"
-msgstr "Create Chapter"
 
 #: src/app/generate/ch/[id]/generation-client.tsx
 msgid "ViO6Dt"
@@ -1118,6 +1109,10 @@ msgstr "Saving your progress..."
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgid "JUr8Er"
 msgstr "Finishing up..."
+
+#: src/app/generate/cs/[id]/generate-course-suggestion-content.tsx
+msgid "rPgekg"
+msgstr "Back home"
 
 #: src/app/generate/cs/[id]/generation-client.tsx
 msgid "DFlapX"

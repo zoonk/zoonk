@@ -384,20 +384,12 @@ msgid "47FYwb"
 msgstr "Cancelar"
 
 #: src/app/(catalog)/learn/[prompt]/course-suggestions.tsx
-#: src/app/generate/c/[slug]/generate-course-content.tsx
-msgid "RbslnC"
-msgstr "Cambiar tema"
-
-#: src/app/(catalog)/learn/[prompt]/course-suggestions.tsx
-#: src/app/(catalog)/learn/page.tsx
-#: src/app/generate/c/[slug]/generate-course-content.tsx
-#: src/app/generate/cs/[id]/generate-course-suggestion-content.tsx
-msgid "LvUoVs"
-msgstr "Crear Curso"
-
-#: src/app/(catalog)/learn/[prompt]/course-suggestions.tsx
 msgid "7x4411"
 msgstr "Ideas de cursos para {prompt}"
+
+#: src/app/(catalog)/learn/[prompt]/course-suggestions.tsx
+msgid "RbslnC"
+msgstr "Cambiar tema"
 
 #: src/app/(catalog)/learn/[prompt]/page.tsx
 msgid "CaU/nf"
@@ -418,11 +410,6 @@ msgstr "Dile a Zoonk qué quieres aprender y obtén un curso creado con IA. Empi
 #: src/app/(catalog)/learn/page.tsx
 msgid "Zs1QEq"
 msgstr "Aprende cualquier cosa con IA"
-
-#: src/app/(catalog)/learn/page.tsx
-#: src/app/generate/cs/[id]/generate-course-suggestion-content.tsx
-msgid "rPgekg"
-msgstr "Volver al inicio"
 
 #: src/app/(catalog)/learn/page.tsx
 msgid "l450Bl"
@@ -1016,6 +1003,14 @@ msgstr "Crear lección"
 msgid "/N8rYN"
 msgstr "Volver al capítulo"
 
+#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
+msgid "3pyC1G"
+msgstr "Esta lección requiere una suscripción activa."
+
+#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
+msgid "xu3uCX"
+msgstr "Suscríbete para seguir aprendiendo"
+
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgid "mA7vCW"
 msgstr "Revisión bloqueada"
@@ -1035,10 +1030,6 @@ msgstr "Aún no hay preguntas para revisar."
 #: src/app/generate/ch/[id]/generate-chapter-content.tsx
 msgid "qrEiLa"
 msgstr "Volver al curso"
-
-#: src/app/generate/ch/[id]/generate-chapter-content.tsx
-msgid "qNiSDe"
-msgstr "Crear Capítulo"
 
 #: src/app/generate/ch/[id]/generation-client.tsx
 msgid "ViO6Dt"
@@ -1118,6 +1109,10 @@ msgstr "Guardando tu progreso..."
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgid "JUr8Er"
 msgstr "Terminando..."
+
+#: src/app/generate/cs/[id]/generate-course-suggestion-content.tsx
+msgid "rPgekg"
+msgstr "Volver al inicio"
 
 #: src/app/generate/cs/[id]/generation-client.tsx
 msgid "DFlapX"

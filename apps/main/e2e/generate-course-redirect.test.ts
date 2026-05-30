@@ -64,19 +64,23 @@ test.describe("Generate Course Redirect", () => {
     });
   });
 
-  test("shows login prompt before redirecting unauthenticated users", async ({ page }) => {
+  test("redirects unauthenticated users to generate/cs/[id]", async ({ page }) => {
     const slug = `e2e-redirect-unauth-${randomUUID().slice(0, 8)}`;
 
-    await courseSuggestionFixture({
-      generationStatus: "pending",
+    const suggestion = await courseSuggestionFixture({
+      generationStatus: "running",
       language: "en",
       slug,
       title: "E2E Redirect Unauth Test",
     });
 
+    await page.route("**/v1/workflows/**", mockWorkflowApis);
+
     await page.goto(`/generate/c/${slug}`);
 
-    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
+    await page.waitForURL(`/generate/cs/${suggestion.id}`, { timeout: 10_000 });
+
+    await expect(page.getByText(/creating your course/iu)).toBeVisible({ timeout: 10_000 });
   });
 
   test("shows 404 when course suggestion does not exist", async ({ authenticatedPage }) => {

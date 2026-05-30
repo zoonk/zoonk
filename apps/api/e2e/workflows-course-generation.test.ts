@@ -37,12 +37,12 @@ test.describe("Course Generation Workflow API", () => {
     await prisma.$disconnect();
   });
 
-  test("returns 401 when triggering course generation without a session", async () => {
+  test("starts workflow without a session", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
     const suggestion = await createCompletedCourseSuggestion({
-      slug: `e2e-unauth-course-${uniqueId}`,
-      title: `E2E Unauth Course ${uniqueId}`,
+      slug: `e2e-public-course-${uniqueId}`,
+      title: `E2E Public Course ${uniqueId}`,
     });
 
     const apiContext = await request.newContext({ baseURL });
@@ -51,13 +51,13 @@ test.describe("Course Generation Workflow API", () => {
       data: { courseSuggestionId: suggestion.id },
     });
 
-    expect(response.status()).toBe(401);
+    expect(response.status()).toBe(200);
 
     const body = await response.json();
 
-    expect(body.error).toBeDefined();
-    expect(body.error.code).toBe("UNAUTHORIZED");
-    expect(body.error.message).toBe("Authentication required");
+    expect(body.message).toBe("Workflow started");
+    expect(body.runId).toBeDefined();
+    expect(typeof body.runId).toBe("string");
 
     await apiContext.dispose();
   });

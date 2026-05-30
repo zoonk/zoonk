@@ -4,6 +4,7 @@ import { SubscriptionGate } from "@/components/subscription/subscription-gate";
 import { getLessonForGeneration } from "@/data/lessons/get-lesson-for-generation";
 import { getLessonDisplayMeta } from "@/lib/lessons";
 import { getInitialGenerationPageStatus } from "@/lib/workflow/get-initial-generation-page-status";
+import { getLessonAccessRequirement } from "@zoonk/core/lessons/access";
 import { getBlockingLessonGenerationPrerequisite } from "@zoonk/core/lessons/generation-prerequisites";
 import { getSession } from "@zoonk/core/users/session/get";
 import { type GenerationStatus } from "@zoonk/db";
@@ -54,14 +55,6 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
     notFound();
   }
 
-  const isFirstChapter = lesson.chapter.position === 0;
-
-  const bypassSubscription =
-    isFirstChapter ||
-    lesson.generationStatus === "running" ||
-    lesson.generationStatus === "failed" ||
-    lesson.generationStatus === "completed";
-
   const t = await getExtracted();
 
   const backHref =
@@ -69,7 +62,12 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
 
   const backLabel = t("Back to chapter");
 
-  if (!session) {
+  const accessRequirement = getLessonAccessRequirement({
+    isAuthenticated: Boolean(session),
+    lesson,
+  });
+
+  if (accessRequirement === "authentication") {
     return <LoginRequired backHref={backHref} backLabel={backLabel} title={t("Create Lesson")} />;
   }
 
@@ -86,45 +84,45 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
     isReadyForRedirect: lesson.generationStatus === "completed" || lesson._count.steps > 0,
   });
 
-  if (blockingPrerequisite) {
-    return (
-      <Container variant="narrow">
-        <ContainerHeader>
-          <ContainerHeaderGroup>
-            <ContainerTitle>{lessonMeta.title}</ContainerTitle>
-            <ContainerDescription>{lessonMeta.description}</ContainerDescription>
-          </ContainerHeaderGroup>
-        </ContainerHeader>
+  const content = blockingPrerequisite ? (
+    <Empty className="border-0">
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <SparklesIcon />
+        </EmptyMedia>
 
-        <ContainerBody>
-          <Empty className="border-0">
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <SparklesIcon />
-              </EmptyMedia>
+        <EmptyTitle>{t("Lesson locked")}</EmptyTitle>
 
-              <EmptyTitle>{t("Lesson locked")}</EmptyTitle>
+        <EmptyDescription>{t("Create the required lesson first.")}</EmptyDescription>
+      </EmptyHeader>
 
-              <EmptyDescription>{t("Create the required lesson first.")}</EmptyDescription>
-            </EmptyHeader>
-
-            <EmptyContent>
-              <Link
-                className={buttonVariants({ variant: "outline" })}
-                href={`/generate/l/${blockingPrerequisite.lessonId}`}
-                prefetch={false}
-                rel="nofollow"
-              >
-                <SparklesIcon data-icon="inline-start" />
-                {t("Open required lesson")}
-              </Link>
-              <GenerationExitLink href={backHref}>{backLabel}</GenerationExitLink>
-            </EmptyContent>
-          </Empty>
-        </ContainerBody>
-      </Container>
-    );
-  }
+      <EmptyContent>
+        <Link
+          className={buttonVariants({ variant: "outline" })}
+          href={`/generate/l/${blockingPrerequisite.lessonId}`}
+          prefetch={false}
+          rel="nofollow"
+        >
+          <SparklesIcon data-icon="inline-start" />
+          {t("Open required lesson")}
+        </Link>
+        <GenerationExitLink href={backHref}>{backLabel}</GenerationExitLink>
+      </EmptyContent>
+    </Empty>
+  ) : (
+    <>
+      <GenerationClient
+        chapterSlug={lesson.chapter.slug}
+        courseSlug={lesson.chapter.course.slug}
+        generationRunId={lesson.generationRunId}
+        initialStatus={initialStatus}
+        lessonId={id}
+        lessonKind={lesson.kind}
+        lessonSlug={lesson.slug}
+      />
+      <GenerationExitLink href={backHref}>{backLabel}</GenerationExitLink>
+    </>
+  );
 
   return (
     <Container variant="narrow">
@@ -136,17 +134,12 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
       </ContainerHeader>
 
       <ContainerBody>
-        <SubscriptionGate backHref={backHref} backLabel={backLabel} bypass={bypassSubscription}>
-          <GenerationClient
-            chapterSlug={lesson.chapter.slug}
-            courseSlug={lesson.chapter.course.slug}
-            generationRunId={lesson.generationRunId}
-            initialStatus={initialStatus}
-            lessonId={id}
-            lessonKind={lesson.kind}
-            lessonSlug={lesson.slug}
-          />
-          <GenerationExitLink href={backHref}>{backLabel}</GenerationExitLink>
+        <SubscriptionGate
+          backHref={backHref}
+          backLabel={backLabel}
+          bypass={accessRequirement === "free"}
+        >
+          {content}
         </SubscriptionGate>
       </ContainerBody>
     </Container>

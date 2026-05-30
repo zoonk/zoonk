@@ -1,6 +1,9 @@
 import { LoginRequired } from "@/components/auth/login-required";
+import { UpgradeCTA } from "@/components/subscription/upgrade-cta";
 import { getLesson as getCatalogLesson } from "@/data/lessons/get-lesson";
 import { getLessonDisplayMeta, getLessonSeoMeta } from "@/lib/lessons";
+import { hasActiveSubscription } from "@zoonk/core/auth/subscription";
+import { getLessonAccessRequirement } from "@zoonk/core/lessons/access";
 import { getBlockingLessonGenerationPrerequisite } from "@zoonk/core/lessons/generation-prerequisites";
 import { getNextChapterInCourse } from "@zoonk/core/lessons/next-chapter-in-course";
 import { getNextLessonInCourse } from "@zoonk/core/lessons/next-in-course";
@@ -14,9 +17,18 @@ import { getLesson as getPlayerLesson } from "@zoonk/core/player/queries/get-les
 import { getPlayerResourceIds } from "@zoonk/core/player/queries/get-player-resource-ids";
 import { getTotalBrainPower } from "@zoonk/core/player/queries/get-total-brain-power";
 import { getSession } from "@zoonk/core/users/session/get";
+import {
+  Container,
+  ContainerBody,
+  ContainerDescription,
+  ContainerHeader,
+  ContainerHeaderGroup,
+  ContainerTitle,
+} from "@zoonk/ui/components/container";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { after } from "next/server";
 import { fetchReviewLessonData } from "./lesson-data-loaders";
@@ -30,21 +42,12 @@ type LessonSession = Awaited<ReturnType<typeof getSession>>;
 type PlayerLesson = NonNullable<Awaited<ReturnType<typeof getPlayerLesson>>>;
 
 /**
- * The public lesson preview is intentionally only the first lesson in the
- * first chapter. Later lessons may include progression-dependent review,
- * preload, and completion behavior, so anonymous learners need to sign in
- * before the player loads them.
+ * Stops the player route before expensive player queries when the lesson sits
+ * outside the viewer's free window. Lessons 6-10 ask anonymous learners to log
+ * in, while lesson 11+ and later chapters require an active subscription even
+ * if the lesson content was already generated.
  */
-function canPlayWithoutSession(lesson: { position: number; chapter: { position: number } }) {
-  return lesson.chapter.position === 0 && lesson.position === 0;
-}
-
-/**
- * Keeps anonymous users out of player-only queries unless they are opening the
- * public preview lesson. The login wall needs the lesson title, so this lives
- * beside the route instead of inside a generic auth component.
- */
-async function getAnonymousLessonGate({
+async function getLessonAccessGate({
   brandSlug,
   chapterSlug,
   courseSlug,
@@ -57,7 +60,9 @@ async function getAnonymousLessonGate({
   lesson: LessonShell;
   session: LessonSession;
 }) {
-  if (session || canPlayWithoutSession(lesson)) {
+  const requirement = getLessonAccessRequirement({ isAuthenticated: Boolean(session), lesson });
+
+  if (requirement === "free") {
     return null;
   }
 
@@ -65,8 +70,40 @@ async function getAnonymousLessonGate({
   const lessonMeta = await getLessonDisplayMeta(lesson);
   const t = await getExtracted();
 
+  if (requirement === "authentication") {
+    return (
+      <LoginRequired
+        backHref={backHref}
+        backLabel={t("Back to chapter")}
+        title={lessonMeta.title}
+      />
+    );
+  }
+
+  const hasSubscription = await hasActiveSubscription(await headers());
+
+  if (hasSubscription) {
+    return null;
+  }
+
   return (
-    <LoginRequired backHref={backHref} backLabel={t("Back to chapter")} title={lessonMeta.title} />
+    <Container variant="narrow">
+      <ContainerHeader>
+        <ContainerHeaderGroup>
+          <ContainerTitle>{lessonMeta.title}</ContainerTitle>
+          <ContainerDescription>{lessonMeta.description}</ContainerDescription>
+        </ContainerHeaderGroup>
+      </ContainerHeader>
+
+      <ContainerBody>
+        <UpgradeCTA
+          backHref={backHref}
+          backLabel={t("Back to chapter")}
+          description={t("This lesson requires an active subscription.")}
+          title={t("Upgrade to keep learning")}
+        />
+      </ContainerBody>
+    </Container>
   );
 }
 
@@ -111,7 +148,7 @@ export default async function LessonPage({ params }: Props) {
 
   const session = await getSession();
 
-  const anonymousGate = await getAnonymousLessonGate({
+  const accessGate = await getLessonAccessGate({
     brandSlug,
     chapterSlug,
     courseSlug,
@@ -119,8 +156,8 @@ export default async function LessonPage({ params }: Props) {
     session,
   });
 
-  if (anonymousGate) {
-    return anonymousGate;
+  if (accessGate) {
+    return accessGate;
   }
 
   const [lesson, nextChapter, nextLesson, reviewLessonData, totalBrainPower] = await Promise.all([
