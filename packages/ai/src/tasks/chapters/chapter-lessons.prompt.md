@@ -8,16 +8,17 @@ Each lesson later becomes a playable learning unit. Your job is to choose the su
 
 Create a usable lesson plan for the requested chapter.
 
-A strong plan turns the chapter scope into self-contained learner capabilities. Each lesson should teach one clear topic or skill: the core explanation should fit in no more than 3,000 characters, including spaces. If a lesson would need more than that because it has several unrelated ideas, split it. If two proposed lessons cannot make sense without teaching each other's core idea, merge them.
+A strong plan turns the chapter scope into small, self-contained learner capabilities. Each lesson should teach one clear topic or skill: the core explanation should fit in 1-2 minutes, roughly 700-1,500 characters including spaces. If a lesson would need more than that because it contains several distinct mechanisms, parts, decisions, or ideas, split it.
 
-Use the fewest lessons that can cover the chapter well. Do not create extra lessons just because a topic can be named more granularly.
+Cover the full chapter at this small lesson size, even when that means returning more lessons than before. Do not drop a chapter pillar just to keep the lesson count low. Avoid extra lessons that exist only because a topic can be named more granularly, but do split large umbrella lessons that would take too long to teach clearly.
 
 # Success Criteria
 
-- Lessons are capability-sized: each one teaches a distinct mechanism, decision, artifact, workflow, evidence type, or practical task as one self-contained unit.
-- Each lesson can be explained clearly within 3,000 characters, including spaces. If it would need several unrelated explanations, split it into multiple lessons.
-- Related concepts that are mutually defining stay in the same lesson.
-- The plan covers the chapter's canonical fundamentals, important modern practice, and required named entities from the domain.
+- Lessons are compact and bite-sized: each one teaches a distinct mechanism, decision, artifact, workflow, evidence type, practical task, or structural role as one self-contained unit.
+- Each lesson can be explained clearly in 1-2 minutes, roughly 700-1,500 characters including spaces. If it would need several explanations, split it into multiple lessons.
+- Related concepts that are mutually defining stay in the same lesson only when splitting them would force the same explanation to repeat.
+- The plan covers the chapter's canonical fundamentals, important modern conventions, and required named entities from the domain.
+- Splitting an overloaded lesson preserves the rest of the chapter's coverage instead of spending the whole plan on the first mechanism.
 - Lessons stay inside this chapter's scope and avoid topics that primarily belong to neighboring chapters.
 - Titles are concrete and learner-facing, not dry textbook headings.
 - Descriptions say what the learner will do, trace, compare, build, recognize, or reason through.
@@ -28,37 +29,42 @@ Start by deciding what each lesson lets the learner do.
 
 Use this test before splitting two adjacent ideas:
 
-If explaining or practicing lesson A would require teaching lesson B's core idea, A and B probably belong in one lesson.
+If teaching lesson A would require teaching lesson B's core idea in detail, A and B probably belong in one lesson.
 
 Use this test before accepting a large lesson:
 
-If explaining the lesson clearly would require more than 3,000 characters, including spaces, or several separate explanations, split it by what the learner needs to do or understand. Do not keep a giant umbrella lesson just to avoid false granularity.
+If explaining the lesson clearly would take more than 1-2 minutes, split it by what the learner needs to do or understand. Do not keep a giant umbrella lesson just to avoid false granularity.
+
+A lesson may briefly mention neighboring pieces for context. Do not merge several parts just because one sentence of context is useful. Merge only when the learner cannot understand one part without learning the other part's core mechanism too.
 
 Collapse these into one cohesive lesson when they are first introduced:
 
-- input -> process -> result chains
-- parts that define each other, such as variable/name/value/output, function declaration/call/parameter/return, or loop/condition/body
+- simple input -> process -> result chains where all parts use the same example and teaching move
+- small parts that define each other, such as variable/name/value/output, function declaration/call/parameter/return, or loop/condition/body
 - adjacent labels that would use the same example with only slightly different wording
 - glossary-like method, phase, or subtopic lists where each lesson would repeat the same teaching move
 
 Split lessons when the learner move is genuinely different:
 
-- different mechanisms that can be explained and practiced independently
+- different mechanisms that can be explained and used independently
+- different parts of a biological, legal, technical, or physical process when each part has a distinct role, failure mode, or recognition task
 - different evidence types, source categories, or interpretation tasks
 - different procedural moves with different effects, deadlines, parties, remedies, or failure modes
 - different real-world decisions or workflows
 - different named people, missions, models, tools, works, cases, or groups when each anchors a distinct comparison, evidence source, or practical decision
 
-Do not add overview, summary, review, checklist, quiz, project, or "putting it together" lessons. Every lesson should teach new substance inside this chapter.
+Do not add overview, summary, checklist, project, or "putting it together" lessons. Every lesson should teach new substance inside this chapter.
 
 # Coverage Rules
 
 Cover the chapter deeply enough that a serious learner would not notice a missing pillar.
 
+Start by identifying the chapter pillars from the title, description, and neighboring-chapter boundaries. Then create bite-sized lessons for those pillars. If one pillar needs to be split into several lessons, keep the other pillars too instead of replacing them.
+
 Include:
 
 - the fundamentals needed to understand the chapter
-- modern idioms, tools, techniques, or conventions when the field has changed in recent practice
+- modern idioms, tools, techniques, or conventions when the field has changed recently
 - named entities when the domain is made of specific people, tools, missions, models, works, organisms, compounds, events, groups, cases, or landmark systems
 
 Prefer canonical, well-established domain knowledge. Do not invent obscure specifics to make the plan look more complete.
@@ -95,11 +101,11 @@ Examples:
 
 Before returning, validate the plan in this order:
 
-1. Lesson size: can each lesson be taught clearly within 3,000 characters, including spaces?
+1. Lesson size: can each lesson be taught clearly in 1-2 minutes?
 2. Boundary quality: would each lesson teach something distinct without repeating another lesson?
 3. Collapse test: did any mutually defining parts become separate lessons?
-4. Coverage: are the canonical pillars, modern practice, and required named entities present?
+4. Coverage after splitting: are the canonical pillars, modern conventions, and required named entities still present?
 5. Scope: did any lesson primarily belong to a neighboring chapter?
 6. Tone: do titles and descriptions feel concrete, learner-facing, and useful?
 
-If a lesson exists only because a concept label could be named separately, merge it. If a lesson is too large to teach clearly within 3,000 characters, including spaces, split it by what the learner needs to do or understand. If a chapter pillar is missing, add or adjust a lesson. Then stop.
+If a lesson exists only because a concept label could be named separately, merge it. If a lesson is too large to teach clearly in 1-2 minutes, split it by what the learner needs to do or understand. If a chapter pillar is missing, add or adjust a lesson. Then stop.

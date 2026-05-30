@@ -14,7 +14,7 @@ The lesson should feel:
 
 The learner should mostly inspect the image, notice what matters, and decide what to do next.
 
-This should feel closer to a great Duolingo story beat than to a quiz with long paragraphs.
+This should feel like a quick real problem with a bit of personality, not a skit. The learner should understand the problem on the first read, then enjoy the human detail around it.
 
 ## Naturalness Rules
 
@@ -22,11 +22,11 @@ This should feel closer to a great Duolingo story beat than to a quiz with long 
 - Write spoken language for the requested locale, not polished written prose.
 - Prefer short, everyday sentences.
 - The partner should sound like a real person trying to solve a real problem with the learner.
-- Keep the concrete details that make the scene feel alive: a messy artifact, a mild annoyance, a recurring quirk, or a useful oddity.
-- Light humor is welcome when it fits naturally.
-- Mild absurdity is welcome when it still feels grounded in the scene.
+- Keep concrete details that make the scene feel alive: a messy artifact, a mild annoyance, a recurring quirk, or a useful oddity.
+- Light humor is welcome when the problem stays clear. It should add flavor around the decision, not become the thing the learner has to decode.
 - Do not force quirky or goofy lines just to sound entertaining.
-- Do not compress the dialogue until it turns generic. Short is good. Skeletal is not.
+- Put clarity first in the setup for each decision. If a joke, prop, character quirk, or side comment makes the task harder to understand, move it later, make it simpler, or let it pay off after the learner already knows the problem.
+- Do not compress the dialogue until it turns generic. Short is good. Confusing is not.
 - Avoid coaching, therapist, or customer-support phrasing unless the scene truly calls for it.
 - Avoid over-validating lines like "great question", "excellent point", or "honestly" unless that exact phrasing would sound normal for that character.
 - Do not write dialogue about how something should sound.
@@ -104,7 +104,7 @@ Image rules:
 - Every `imagePrompt` must stand on its own. The image model sees each prompt in isolation.
 - Do not write references like "same laptop", "same terminal", "same person as before", "continue the previous scene", or "again" unless you also restate what that recurring thing looks like.
 - If continuity matters, explicitly restate the recurring person, device, room, document, or artifact inside the current prompt.
-- Let later images reveal changed states, new evidence, or the twist when possible.
+- Let later images reveal changed states or new evidence when useful.
 
 Bad standalone prompt:
 
@@ -129,7 +129,7 @@ Better focused step prompt:
 Also generate a `scenario` object that sets up the practice before the dialogue starts.
 
 - `scenario.title`: A short label. Soft target: 1-3 words.
-- `scenario.text`: A short first-person setup paragraph. Soft target: around 300 characters or less.
+- `scenario.text`: A short first-person setup paragraph. Soft target: around 220 characters or less.
 - `scenario.imagePrompt`: The opening image for the situation.
 
 Scenario rules:
@@ -154,7 +154,7 @@ Each step must have:
 
 Soft targets:
 
-- `context`: Usually 2-4 short spoken sentences. Give enough detail to carry the concrete situation, the person's reaction, and why this decision matters. Pure dialogue only.
+- `context`: Usually 1-3 short spoken sentences. Give enough detail to understand the real problem, the clue, and why the decision matters. Pure dialogue only.
 - `question`: short and direct, usually under 70 characters.
 - `options`: usually 4 choices. Prefer 2-4 words. Using 5 words is fine when clarity needs it.
 - `feedback`: short, conversational, specific, and helpful. It should explain the decision, not just react to it.
@@ -166,10 +166,10 @@ Important:
 - For question steps, the image should usually be tighter and more selective than the opening scenario image.
 - Each `imagePrompt` must be self-contained and understandable without seeing any earlier image.
 - Return `context` as plain dialogue text, not as a quoted string. Do not add surrounding quotation marks.
-- `context` should be short enough that the learner is not reading a wall of dialogue before every choice, but rich enough that the scene still feels understandable and alive.
+- `context` should make the real problem clear on the first read. Personality is good after the clue is clear; it should not hide the clue.
 - `context` should usually mention one specific clue, mismatch, consequence, or oddly human detail from this exact scene instead of generic filler.
 - Keep the dialogue lean, but do not strip out the useful setup, tension, or personality that makes the moment feel real.
-- If the scene feels flat after shortening, add one more concrete spoken sentence instead of turning the image into the only source of meaning.
+- If a funny line competes with the clue, make the clue more direct or place the funny line after the learner can already tell what problem they are solving.
 - Options should feel like real actions or interpretations someone in the scene might suggest.
 
 Good option styles:
@@ -238,33 +238,31 @@ Better wrong-answer feedback:
 Your story must follow this structure:
 
 1. **Opening Step**: Start in the middle of the problem. The setup already lives in `scenario`.
-2. **Rising Complexity**: Each step builds from the previous one.
-3. **Reveal or Reframe**: Near the end, reveal one concrete fact that changes how earlier clues should be understood.
+2. **Rising Complexity Without Padding**: Each step adds one useful clue, decision, or state change.
+3. **Reveal or Reframe When Useful**: Near the end, a concrete reveal can make the story more satisfying when it clarifies the concept. Do not force a twist that distracts from the problem.
 4. **Resolution**: Solve the problem and reinforce the lesson's main takeaway.
 
-The best reveals:
+The best reveals, when used:
 
 - build one strong assumption
 - quietly reinforce it for several steps
-- then flip it with one concrete fact
+- then reframe it with one concrete fact
 - make earlier clues feel different in hindsight
 
-The reveal should change the situation itself, not just add one more requirement.
+The reveal should change the situation itself, not just add one more requirement. If no reveal is needed, use a straightforward final decision.
 
 Whenever possible, let the reveal land through the image, or through the mismatch between what the image shows and what the characters assumed.
 
 ## Fun and Personality
 
-- Give the lesson at least one small human detail, running assumption, mildly funny mismatch, or workplace oddity that makes the story feel alive.
-- Let the humor come from the situation, the artifact, or the colleague dynamic, not from random jokes pasted on top.
-- Not every step needs a joke, but the full lesson should feel engaging, not sterile.
-- The reveal can feel wry, satisfying, or lightly funny in hindsight when it fits the scene.
-- A dry but correct case study is not enough. The learner should want to see what happens next.
+- Give the lesson small human details, a running assumption, a mildly funny mismatch, or a workplace oddity when it helps the scene feel alive.
+- Let humor come from the situation, artifact, decision, or colleague dynamic, not from random jokes pasted on top.
+- The best balance is: clear problem first, personality second.
+- A dry but correct case study is not enough, but a clever story that slows comprehension is worse.
 
 ## Step Count
 
-- Soft target: 7-20 steps
-- Let the lesson's complexity decide the length
+Use as many question steps as the problem needs, and no more. Complex source scopes can need more decisions; simple scopes should finish quickly. The right length is the point where every remaining step asks the learner to make a distinct decision and removing any step would skip a useful part of the problem.
 
 ## Choosing the Right Scenario
 
@@ -300,7 +298,7 @@ Every decision must:
 - have plausible distractors
 - keep all options at the same level of specificity and confidence
 - avoid making the correct answer the obvious longest or most polished one
-- allow mild humor, as long as the option still feels believable in the scene
+- allow mild humor only when the option still feels believable and clear in the scene
 
 ## Tone and Style
 
@@ -338,6 +336,8 @@ Every decision must:
 - lines that announce the story structure with labels like "twist" or "big reveal"
 - dialogue so compressed that the learner loses the useful context or the human voice
 - bland filler lines like "look at this", "what now?", or "that's weird" when they could mention the actual clue
+- recurring jokes, props, or side characters that do not change the decision
+- context that requires rereading because the joke, metaphor, or setup hides what is being asked
 - workplace dialogue that is technically correct but emotionally flat, generic, or humorless
 
 # Quality Checks
@@ -353,7 +353,9 @@ Before finalizing, verify:
 - [ ] Would a real person in this scene actually say these lines?
 - [ ] Would the learner get useful evidence from the image, not just decoration?
 - [ ] Does each `context` include enough concrete detail to make the decision feel motivated?
+- [ ] Is the real problem clear before any joke or side detail?
 - [ ] Are the options short, action-like, and easy to scan?
-- [ ] Does the late reveal reframe earlier clues instead of adding a random surprise?
-- [ ] Did the story keep at least one small human or lightly funny detail instead of flattening into dry prompts?
+- [ ] Does every question step add a new decision instead of repeating the same move?
+- [ ] If there is a late reveal, does it clarify the concept instead of adding a random surprise?
+- [ ] Did the story keep personality without making the task harder to understand?
 - [ ] Does the whole lesson feel practical, fun, and grounded in a real situation?

@@ -23,30 +23,24 @@ EVALUATION CRITERIA:
 
    Learners prefer a varied set of interaction types. A strong quiz uses multiple formats when the content supports them, distributes those formats through the quiz, and still chooses each format because it fits the concept being tested.
 
-   Format diversity is a core requirement:
-   - Every quiz should use all 5 formats
-   - Every quiz should use exactly 1 match-columns question
-   - Every quiz should use exactly 1 sort-order question
-   - Every quiz should use exactly 1 fill-blank question
-   - All remaining questions should be multiple-choice or select-image
+   Format diversity matters, but format fit matters more. A strong quiz uses the required formats when the content supports them, without forcing sort-order onto a concept it does not fit.
 
    Format guidance:
    - Multiple choice: Default for choosing an interpretation, prediction, diagnosis, explanation, or next move in a scenario.
    - Select image: Default when visual inspection, visible comparison, a diagram, or spatial pattern is part of the concept.
    - Match columns: Use once for connecting related items, such as observations to concepts, symptoms to causes, examples to principles, or tools to roles.
-   - Sort order: Use once when one correct order is essential, such as procedural steps, cause-effect chains, or stages that cannot be swapped.
+   - Sort order: Use at most once when one correct order is essential, such as procedural steps, cause-effect chains, historical events, dependency chains, or stages that cannot be swapped. Omit sort-order when the scope does not contain a genuinely ordered concept.
    - Fill blank: Use once for completing a precise relationship, contrast, formula, or term when the missing words themselves matter. It is often memorization-prone, so the single fill-blank must be especially well fit.
 
    PENALIZE when:
    - Formats are used for variety rather than fit
    - A different format would clearly test the concept better
-   - Any format is missing
    - The quiz uses more or fewer than 1 match-columns question
-   - The quiz uses more or fewer than 1 sort-order question
+   - The quiz uses more than 1 sort-order question
    - The quiz uses more or fewer than 1 fill-blank question
-   - Any extra question after the single match-columns, sort-order, and fill-blank questions is not multiple-choice or select-image
    - A fill-blank question tests copied wording, broad conceptual distinctions, or terminology recall that another format could test through application
-   - A sort-order question contains optional steps, branching outcomes, alternative endings, unordered checklists, or workflows where several orders could be reasonable
+   - A sort-order question contains optional steps, branching outcomes, alternative endings, unordered checklists, diagnostic criteria, reasoning checklists, or workflows where several orders could be reasonable
+   - The sort-order answer would still be defensible if neighboring items were swapped
    - A select-image question requires inspecting a full board, full dashboard, full workflow, many columns, many cards, tiny labels, or several simultaneous visual clues
    - A select-image question uses text when the distinction could be shown visually without labels
    - A select-image question is chosen for content that needs a complex or text-heavy image to be fair
@@ -56,7 +50,7 @@ EVALUATION CRITERIA:
 
    Do NOT penalize when:
    - Multiple-choice or select-image appears more often than the other formats because those are the default formats
-   - The quiz uses all five formats with exactly one match-columns, sort-order, and fill-blank question, and each one fits the concept it tests
+   - The quiz omits sort-order because the source scope lacks a necessary, non-ambiguous sequence
    - Select-image options use a few large labels only when the distinction cannot be shown clearly without text
 
 4. FEEDBACK QUALITY: For formats that include feedback fields in the schema, feedback must explain reasoning, not just state correct/incorrect. Good feedback:
@@ -106,10 +100,47 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 BINARY CHECKS:
 - "Memorization vs understanding" is checked by: does the question reference the source lesson metadata directly or present a novel scenario? Direct source references = penalize. Novel scenarios = do not penalize.
 - Question count is checked by: at least 5 questions, never more than 15 questions, and no more than the lesson scope warrants.
-- Format choice is checked by fit, diversity, and sequencing. Penalize missing formats, any format distribution other than exactly one match-columns, exactly one sort-order, exactly one fill-blank, and all remaining questions as multiple-choice or select-image, plus bad-fit formats and back-to-back use of the same format.
+- Format choice is checked by fit, diversity, and sequencing. Penalize missing match-columns or fill-blank, overusing heavier formats, forced sort-order for ambiguous sequences, and back-to-back use of the same format.
 `;
 
 export const TEST_CASES = [
+  {
+    expectations: `
+LANGUAGE REQUIREMENT: Questions, options, and feedback must be in Brazilian Portuguese.
+
+${SHARED_EXPECTATIONS}
+
+SPECIFIC EXPECTATION: This scope contains classification and judgment criteria for deciding whether transactions should be recorded. Do not require or reward a sort-order question for ordering the criteria, because entity separation, evidence, monetary measurement, and effect identification can be checked in different defensible orders. A sort-order question is only acceptable if it tests a genuinely fixed accounting sequence.
+    `,
+    id: "pt-accounting-recordable-transactions-production-quiz",
+    userInput: {
+      chapterTitle: "Transações que precisam ser registradas",
+      courseTitle: "Contabilidade",
+      language: "pt",
+      sourceLessons: [
+        {
+          description:
+            "Decida se um acontecimento pertence à empresa ou à vida pessoal de sócios, clientes ou funcionários antes de transformar o fato em registro contábil.",
+          title: "Separar a empresa das pessoas",
+        },
+        {
+          description:
+            "Reconheça quando existe um evento com data, partes envolvidas e evidência suficiente para ser analisado pela contabilidade.",
+          title: "Identificar eventos registráveis",
+        },
+        {
+          description:
+            "Verifique se o acontecimento pode ser medido em dinheiro de forma confiável, sem confundir intenção, promessa vaga ou estimativa sem base com transação contábil.",
+          title: "Medir a transação em dinheiro",
+        },
+        {
+          description:
+            "Classifique o efeito do evento sobre caixa, bens, direitos, dívidas, patrimônio, receitas ou despesas para decidir o registro apropriado.",
+          title: "Encontrar o efeito contábil",
+        },
+      ],
+    } satisfies LessonQuizParams,
+  },
   {
     expectations: `
 LANGUAGE REQUIREMENT: Questions, options, and feedback must be in Brazilian Portuguese.
@@ -141,6 +172,38 @@ ${SHARED_EXPECTATIONS}
           description:
             "Registre fotos, vídeos ou sons de modo que sirvam como evidência, preservando contexto, horário, local, enquadramento e arquivos originais. Você também vai reconhecer o que uma imagem registra bem e o que uma anotação ou desenho registra melhor.",
           title: "Usar fotos, vídeos e sons como evidência",
+        },
+      ],
+    } satisfies LessonQuizParams,
+  },
+  {
+    expectations: `
+LANGUAGE REQUIREMENT: Questions, options, and feedback must be in American English.
+
+${SHARED_EXPECTATIONS}
+
+SPECIFIC EXPECTATION: This scope contains a genuinely fixed sequence. A strong quiz should include one sort-order question that asks learners to order the request lifecycle or debugging sequence. Penalize a quiz that omits sort-order entirely, because this is exactly the kind of non-ambiguous procedural chain the format is meant to test.
+    `,
+    id: "en-web-debugging-request-lifecycle-production-quiz",
+    userInput: {
+      chapterTitle: "Debugging web requests",
+      courseTitle: "Web Development",
+      language: "en",
+      sourceLessons: [
+        {
+          description:
+            "Trace a browser request from URL entry through DNS lookup, TCP/TLS connection, HTTP request, server response, download, parsing, and rendering.",
+          title: "Follow a request from browser to page",
+        },
+        {
+          description:
+            "Use status codes, headers, network timing, console errors, and server logs to identify which stage of the request lifecycle failed.",
+          title: "Locate where a request failed",
+        },
+        {
+          description:
+            "Debug cache, redirect, CORS, authentication, and timeout failures by checking the evidence in the order the browser and server actually process the request.",
+          title: "Debug request failures in sequence",
         },
       ],
     } satisfies LessonQuizParams,
