@@ -267,7 +267,7 @@ describe(courseGenerationWorkflow, () => {
 
       const firstChapter = course?.chapters[0];
       expect(firstChapter?.generationStatus).toBe("completed");
-      expect(firstChapter?.lessons).toHaveLength(5);
+      expect(firstChapter?.lessons).toHaveLength(6);
       expect(firstChapter?.imageUrl).toBeNull();
 
       const secondChapter = course?.chapters[1];

@@ -24,21 +24,27 @@ function kinds(lessons: ReturnType<typeof expandChapterLessons>) {
 }
 
 describe(expandChapterLessons, () => {
-  it("adds practice, quiz, and review for three explanations", () => {
+  it("adds practice and final quiz before review after one explanation", () => {
     expect(
-      kinds(expandChapterLessons({ lessons: explanationLessons(3), targetLanguage: null })),
-    ).toStrictEqual(["explanation", "explanation", "explanation", "practice", "quiz", "review"]);
+      kinds(expandChapterLessons({ lessons: explanationLessons(1), targetLanguage: null })),
+    ).toStrictEqual(["explanation", "practice", "quiz", "review"]);
   });
 
-  it("groups five explanations as three then two before quiz and review", () => {
+  it("adds a quiz after every two explanation practice pairs", () => {
     expect(
-      kinds(expandChapterLessons({ lessons: explanationLessons(5), targetLanguage: null })),
+      kinds(expandChapterLessons({ lessons: explanationLessons(2), targetLanguage: null })),
+    ).toStrictEqual(["explanation", "practice", "explanation", "practice", "quiz", "review"]);
+  });
+
+  it("adds a final quiz when the last explanation practice pair is unquizzed", () => {
+    expect(
+      kinds(expandChapterLessons({ lessons: explanationLessons(3), targetLanguage: null })),
     ).toStrictEqual([
-      "explanation",
-      "explanation",
       "explanation",
       "practice",
       "explanation",
+      "practice",
+      "quiz",
       "explanation",
       "practice",
       "quiz",
@@ -46,18 +52,43 @@ describe(expandChapterLessons, () => {
     ]);
   });
 
-  it("groups six explanations as pairs with quiz after every two practices", () => {
+  it("keeps adding quizzes after each pair of explanation practice lessons", () => {
     expect(
-      kinds(expandChapterLessons({ lessons: explanationLessons(6), targetLanguage: null })),
+      kinds(expandChapterLessons({ lessons: explanationLessons(5), targetLanguage: null })),
     ).toStrictEqual([
       "explanation",
-      "explanation",
       "practice",
-      "explanation",
       "explanation",
       "practice",
       "quiz",
       "explanation",
+      "practice",
+      "explanation",
+      "practice",
+      "quiz",
+      "explanation",
+      "practice",
+      "quiz",
+      "review",
+    ]);
+  });
+
+  it("keeps quiz cadence stable for an even number of explanation practice pairs", () => {
+    expect(
+      kinds(expandChapterLessons({ lessons: explanationLessons(6), targetLanguage: null })),
+    ).toStrictEqual([
+      "explanation",
+      "practice",
+      "explanation",
+      "practice",
+      "quiz",
+      "explanation",
+      "practice",
+      "explanation",
+      "practice",
+      "quiz",
+      "explanation",
+      "practice",
       "explanation",
       "practice",
       "quiz",

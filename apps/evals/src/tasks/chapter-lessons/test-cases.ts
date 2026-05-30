@@ -3,14 +3,17 @@ const SHARED_EXPECTATIONS = `
 
   Evaluate whether the result is a usable lesson plan for the requested chapter.
 
-  A strong lesson plan turns the chapter scope into self-contained learner capabilities. Each lesson should teach one clear topic or skill: the core explanation should fit in no more than 3,000 characters, including spaces. It should also be large enough that its parts make sense together, instead of becoming tiny fragments that repeat each other. Coverage matters, but only when the lesson boundaries would produce a good playable unit.
+  A strong lesson plan turns the chapter scope into small, self-contained learner capabilities. Each lesson should teach one clear topic or skill: the core explanation should fit in 1-2 minutes, roughly 700-1,500 characters including spaces. The follow-up practice should fit in 3-4 minutes because it focuses on the same small capability. Coverage and lesson size both matter: splitting overloaded lessons should create more focused lessons, not a thinner chapter.
+
+  The app adds one practice lesson after each explanation, quizzes after every two practices, and a final quiz before review. The generated lesson plan should still return only substantive lessons that teach new content, not practice, quiz, review, summary, or capstone lessons.
 
   # What Good Looks Like
 
-  - Lessons are capability-sized: each one teaches a distinct mechanism, decision, artifact, workflow, evidence type, or practical task as one self-contained unit.
-  - Each lesson can be explained clearly within 3,000 characters, including spaces. If it would need several unrelated explanations, it should be split into multiple lessons.
-  - Related concepts that are mutually defining stay together in one lesson.
+  - Lessons are compact and practice-sized: each one teaches a distinct mechanism, decision, artifact, workflow, evidence type, practical task, or structural role as one self-contained unit.
+  - Each lesson can be explained clearly in 1-2 minutes, roughly 700-1,500 characters including spaces. If it would need several explanations, it should be split into multiple lessons.
+  - Related concepts that are mutually defining stay together in one lesson only when splitting them would force the same explanation and practice to repeat.
   - The plan covers the chapter's canonical fundamentals, important modern practice, and required named entities from the domain.
+  - Splitting an overloaded lesson preserves the rest of the chapter's coverage instead of spending the whole plan on the first mechanism.
   - Lessons stay inside this chapter's scope and avoid concepts that primarily belong to neighboring chapters.
   - Titles are concrete and learner-facing, not dry textbook categories.
   - Descriptions explain what the learner will do or be able to reason through.
@@ -18,16 +21,37 @@ const SHARED_EXPECTATIONS = `
 
   # Major Failures
 
+  ## Overloaded Lessons
+
+  Overloaded lessons are the main failure this eval must now catch. They happen when the output hides too much inside one umbrella lesson, producing explanations and practices that take too long for learners to complete.
+
+  A lesson may briefly mention neighboring pieces for context. Do not treat that as a reason to merge several distinct lesson targets. Merge only when the learner cannot understand or practice one part without learning the other part's core mechanism too.
+
+  Penalize as a major failure when the output:
+
+  - combines multiple independent chapter pillars into one lesson
+  - makes one lesson responsible for several mechanisms, workflows, decisions, structures, or roles that can be learned without re-teaching each other
+  - hides a sequence of distinct parts inside one title, such as "trace X from input to output," when each part has a different function or recognition task
+  - depends on vague wording to fit a lesson that would actually need more than 1-2 minutes to explain clearly
+  - uses vague umbrella titles to avoid making necessary lesson boundaries
+  - creates lessons that would need several separate explanations to teach clearly
+
+  Score caps:
+
+  - Clear overloaded umbrella lesson: \`majorErrors\` score must be 7.5 or lower.
+  - Repeated overloaded lessons across the output: \`majorErrors\` score must be 6.5 or lower.
+  - A lesson that would plausibly create a 7+ minute explanation or a 10+ minute practice because it combines several independently teachable concepts: \`majorErrors\` score must be 6.5 or lower.
+
   ## False Granularity
 
-  False granularity is the main failure this eval must catch. It happens when the output looks comprehensive because it split the chapter into many tiny lessons, but those lessons would repeat the same explanation.
+  False granularity is the opposite boundary failure. It happens when the output looks comprehensive because it split the chapter into many tiny lessons, but those lessons would repeat the same explanation.
 
   Use this test: if the explanation or practice for lesson A must teach lesson B's core idea for lesson A to make sense, A and B should probably be one lesson.
 
   Penalize as a major failure when the output:
 
-  - splits one input -> process -> result chain into separate lessons
-  - splits first-exposure parts that define each other, such as variable/name/value/output, function declaration/call/parameter/return, or loop/condition/body
+  - splits one simple input -> process -> result chain into separate lessons when all parts use the same example and practice move
+  - splits small first-exposure parts that define each other, such as variable/name/value/output, function declaration/call/parameter/return, or loop/condition/body
   - creates many adjacent lessons that would use the same example with slightly different labels
   - turns every method, subtopic, phase, or label into its own lesson even though the learner experience would be repetitive
   - rewards glossary completeness over teachable lesson boundaries
@@ -47,22 +71,11 @@ const SHARED_EXPECTATIONS = `
   - Repeated false granularity across the output, after excluding valid domain decomposition: \`majorErrors\` score must be 6.5 or lower.
   - Glossary-expanded syllabus where many lessons are too small to stand as distinct self-contained units: \`majorErrors\` score must be 6.5 or lower.
 
-  ## Overloaded Lessons
-
-  The opposite failure is hiding too much inside one lesson. A lesson is too broad when a clear explanation would need more than 3,000 characters, including spaces, or several mostly independent explanations to deliver it clearly. The chapter should split those by what the learner needs to do or understand, not by tiny labels.
-
-  Penalize as a major failure when the output:
-
-  - combines multiple independent chapter pillars into one lesson
-  - makes one lesson responsible for several mechanisms, workflows, or decisions that can be learned without re-teaching each other
-  - depends on vague wording to fit a lesson that would actually need more than 3,000 characters to teach clearly
-  - uses vague umbrella titles to avoid making necessary lesson boundaries
-  - creates lessons that would need several separate explanations to teach clearly
-
   ## Coverage, Accuracy, and Scope
 
   Penalize as major failures when the output:
 
+  - drops important chapter pillars because the lessons became smaller
   - misses canonical chapter pillars or modern practices a serious learner needs
   - omits important named entities in domains built around specific people, tools, missions, models, works, groups, cases, or landmark systems
   - includes factual, historical, legal, scientific, technical, or linguistic errors
@@ -81,7 +94,7 @@ const SHARED_EXPECTATIONS = `
 
   # Scoring Order
 
-  First check whether the lesson boundaries would produce distinct, non-repetitive lessons. Then check coverage, accuracy, scope, and title quality. Do not reward extra length, exhaustive lists, or high concept count by themselves.
+  First check whether the output preserves the requested chapter coverage. Then check whether the lesson boundaries would produce short, distinct, non-repetitive lessons. Do not reward extra length, exhaustive lists, or high concept count by themselves, but also do not reward a short plan that became short by dropping core chapter pillars.
 
   If the output has no concrete major failures, the \`majorErrors\` conclusion should be "None" and the score should be 10.
 `;
@@ -123,6 +136,48 @@ export const TEST_CASES = [
           description:
             "Handle forms, validate input, save data in the browser, and build interactions that feel complete to a user. The work here looks much closer to everyday front-end tasks.",
           title: "Forms, Validation, and Local Storage",
+        },
+      ],
+    },
+  },
+  // Initial chapter: beginner-level neuroscience with overloaded neuron-path risk
+  {
+    expectations: `
+      - MUST be in US English
+      - Neuroscience-specific overload check: do not accept a single lesson that talks about dendrites, soma, axon hillock, axon, myelin, nodes of Ranvier, and terminals all at once. Each of those should probably be its own lesson because each structure has a distinct role and recognition task. If the output combines most of those structures into one umbrella lesson, the \`majorErrors\` score must be 6.5 or lower.
+      - Do not apply the JavaScript-style collapse rule to this case. A biological signal path can be split when each structure performs a distinct job that can be explained independently with only brief context from neighboring structures.
+      - Coverage check: after splitting the neuron-path lesson, the plan must still cover the rest of this chapter. It should include neuron shapes matched to jobs, glial cell roles, how gray matter, white matter, nerves, and ganglia are built from cell parts, what stains and microscopes reveal, and how to choose evidence for a cell-level claim. If the output mostly covers dendrites/soma/axon parts and drops those pillars, the \`majorErrors\` score must be 6.5 or lower.
+      - Keep this chapter focused on the cells and cell parts that build the nervous system. It may include neurons, dendrites, soma, axon hillock, axons, myelin, nodes of Ranvier, terminals, neuron shapes, glial support roles, tissue organization, microscopy evidence, and cell-level evidence claims, but it should not drift into brain regions, full neural circuits, learning, psychiatric disorders, or detailed neurotransmitter pharmacology except as brief context.
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-neuroscience-cells-that-build-the-nervous-system",
+    userInput: {
+      chapterDescription:
+        "Neurons, glial cells, dendrites, soma, axon hillock, axons, myelin, nodes of Ranvier, terminals, neuron shapes, gray matter, white matter, nerves, ganglia, stains, microscopes, and cell-level evidence form the cellular toolkit of the nervous system. The learner identifies what each part does without turning the whole neuron into one overloaded lesson.",
+      chapterTitle: "Cells that build the nervous system",
+      courseTitle: "Neuroscience",
+      language: "en",
+      neighboringChapters: [
+        {
+          description:
+            "Start with the big map: brain, spinal cord, peripheral nerves, sensory systems, movement, and behavior. The learner learns what neuroscience studies before zooming into cells.",
+          title: "What the Nervous System Does",
+        },
+        {
+          description:
+            "Work through synapses, neurotransmitters, receptors, reuptake, and how chemical messages change the next cell. This chapter takes over after the signal reaches the terminal.",
+          title: "Synapses and Chemical Messages",
+        },
+        {
+          description:
+            "Connect groups of neurons into circuits for reflexes, sensation, movement, memory, and emotion. The focus shifts from one cell to network behavior.",
+          title: "Neural Circuits That Shape Behavior",
+        },
+        {
+          description:
+            "See how repeated activity changes synapses and circuits through plasticity. The learner connects cellular change to learning, adaptation, and recovery.",
+          title: "How the Brain Changes With Experience",
         },
       ],
     },

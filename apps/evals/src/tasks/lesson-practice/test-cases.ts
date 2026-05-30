@@ -9,13 +9,13 @@ EVALUATION CRITERIA:
 
 3. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons. Penalize meta-scenarios where the main action is preparing a presentation, poster, cartaz, slogan, summary, or wording about the lesson topic instead of using the concept in a real situation.
 
-4. PLOT COHERENCE: Steps must flow naturally as a continuous practice where each step builds from the previous dialogue. Near the end (within the final 2-3 steps), the practice should introduce a fun, surprising twist that reframes the narrative — the best twists subvert an assumption the practice has been building. A mere escalation or a new requirement from a teacher, boss, or client is not enough to count as a twist. Strong twists usually reinterpret earlier details rather than just adding a late surprise. The final step must resolve the problem AND reinforce the main learning takeaway. Do NOT penalize for exact twist placement (e.g., 2nd-to-last vs 3rd-to-last) as long as the narrative flow is good.
+4. FLOW COHERENCE: Steps must flow naturally as a continuous practice where each step adds one useful clue, decision, or state change. A late reveal can be useful when it clarifies the concept or makes the story more satisfying, but it should not distract from the problem. The final step must resolve the problem AND reinforce the main learning takeaway. Penalize forced twists, recurring jokes, or side plots that make the learner reread the context.
 
 5. FORMAT COMPLIANCE: Verify these constraints:
    - scenario has: title, text, imagePrompt
    - every step has: imagePrompt, context, question, options
    - scenario.text is first person and short
-   - context is pure dialogue and should stay short enough to scan quickly
+   - context is pure dialogue and should make the real problem clear before any joke or side detail
    - question should be short and direct
    - option text should usually be short and action-like
    - Exactly 1 option must have isCorrect: true
@@ -26,25 +26,27 @@ EVALUATION CRITERIA:
 
 7. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.
 
-8. STEP COUNT: Practice should usually have between 7 and 20 steps. Let problem complexity dictate length. Do not over-penalize a small miss if the lesson is otherwise strong.
+8. STEP COUNT: Practice should use as many question steps as the problem needs, and no more. Penalize practices that feel padded, ask the same decision repeatedly, or stretch a focused problem past what a learner should need. Do not penalize longer practices when every step tests a distinct necessary decision.
 
-9. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Do not penalize light humor, playful wording, or a mildly funny option if it is still believable in the scene. Penalize distractors that are so silly or absurd that no reasonable person would choose them.
+9. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Do not penalize light humor, playful wording, or a mildly funny option if it is still believable and clear in the scene. Penalize distractors that are so silly, absurd, or joke-shaped that no reasonable person would choose them.
 
-10. DIALOGUE NATURALNESS: Penalize dialogue that sounds like prompt residue, coaching language, polished writing advice, or translated corporate speech instead of something a real person in the scene would say. This includes lines that comment on how a question or sentence sounds rather than moving the scene forward. Examples of suspicious phrasing include things like "great question", "honestly", "without sounding rehearsed", "How do I say that without sounding awkward?", "What wording works better?", or local-language equivalents of that same delivery-focused wording when they feel copied from instructions rather than motivated by the scene. Also penalize dialogue that announces the story structure with labels like "twist", "plot twist", "big reveal", or local-language equivalents instead of letting the surprise happen naturally. Do not penalize light humor, playful exchanges, or a mildly silly twist when they still feel natural for the scene.
+10. DIALOGUE NATURALNESS AND CLARITY: Penalize dialogue that sounds like prompt residue, coaching language, polished writing advice, or translated corporate speech instead of something a real person in the scene would say. This includes lines that comment on how a question or sentence sounds rather than moving the scene forward. Examples of suspicious phrasing include things like "great question", "honestly", "without sounding rehearsed", "How do I say that without sounding awkward?", "What wording works better?", or local-language equivalents of that same delivery-focused wording when they feel copied from instructions rather than motivated by the scene. Also penalize dialogue that announces the story structure with labels like "twist", "plot twist", "big reveal", or local-language equivalents instead of letting the surprise happen naturally. Penalize context that is so jokey, metaphorical, or side-story-heavy that the learner must reread it to understand what is being asked. Do not penalize light humor, playful exchanges, or a mildly silly twist when the real problem is still clear.
+
+11. REPETITION AND FILLER: Penalize practice steps that ask the same decision repeatedly with only a new prop, character, or joke. Every question should test a distinct application move, clue, or consequence.
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for specific plot choices, character names, or scenario settings you might expect
 - Do NOT require specific steps like "investigation" or "resolution" by name - focus on whether the practice has good flow
 - Do NOT check against an imagined "ideal" practice structure
-- Do NOT penalize for exact twist placement — if the twist occurs anywhere in the final third of the story, that's fine
+- Do NOT require a twist, but do not penalize a good twist when it clarifies the problem and feels natural
 - Do NOT penalize for output being wrapped in {"steps": [...]} instead of a raw array
-- Do NOT penalize a small overrun on text length if the step is still fast and readable
+- Do NOT penalize a small overrun on text length if the step is still fast, clear, and readable on the first pass
 - Do NOT penalize 3-5 options if the step quality stays high and there is no filler
-- Do NOT penalize light humor, a playful tone, or slightly silly moments when they still sound natural and scene-appropriate
+- Do NOT penalize light humor, a playful tone, or slightly silly moments when they still sound natural, scene-appropriate, and clear
 - Do penalize scenes whose main task is choosing wording, polishing phrasing, or presenting the concept instead of using it
 - Do penalize image prompts that are generic decoration instead of useful evidence
 - Do penalize lines that feel like prompt instructions leaking into dialogue, even if grammar and structure are otherwise correct
-- ONLY penalize for: major format violations, missing or low-value image prompts, narrator/description text in dialogue, decisions that test memorization instead of reasoning, complete absence of any twist or surprise, poor distractor quality, or factually incorrect lesson application
+- ONLY penalize for: major format violations, missing or low-value image prompts, narrator/description text in dialogue, decisions that test memorization instead of reasoning, confusing over-playful context, forced story twists, repetitive/filler decisions, poor distractor quality, or factually incorrect lesson application
 - Different valid practice approaches exist - assess the quality of what IS provided
 `;
 

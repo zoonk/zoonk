@@ -15,8 +15,6 @@ export type ExpandedChapterLesson = {
 
 type CompanionKind = "listening" | "practice" | "quiz" | "reading" | "review" | "translation";
 
-const DEFAULT_EXPLANATION_GROUP_SIZE = 2;
-const MAX_EXPLANATION_GROUP_SIZE = 3;
 const BALANCED_VOCABULARY_COUNT = 4;
 const BALANCED_VOCABULARY_GROUP_SIZE = 2;
 const MAX_VOCABULARY_GROUP_SIZE = 3;
@@ -50,33 +48,6 @@ function authoredLesson({
 }
 
 /**
- * Explanation lessons are best practiced in pairs, but an odd count should not
- * leave one explanation stranded. Giving the first group three explanations
- * keeps later groups as pairs and matches the chapter cadence the learner sees.
- */
-function getExplanationGroupSizes(count: number): number[] {
-  if (count === 0) {
-    return [];
-  }
-
-  if (count <= MAX_EXPLANATION_GROUP_SIZE) {
-    return [count];
-  }
-
-  if (count % DEFAULT_EXPLANATION_GROUP_SIZE === 1) {
-    return [
-      MAX_EXPLANATION_GROUP_SIZE,
-      ...getExplanationGroupSizes(count - MAX_EXPLANATION_GROUP_SIZE),
-    ];
-  }
-
-  return [
-    DEFAULT_EXPLANATION_GROUP_SIZE,
-    ...getExplanationGroupSizes(count - DEFAULT_EXPLANATION_GROUP_SIZE),
-  ];
-}
-
-/**
  * Vocabulary lessons feed reading/listening lessons in groups of up to three.
  * A final singleton is too thin for a reading/listening pair, so a run of four
  * becomes two groups of two instead of three plus one.
@@ -98,24 +69,36 @@ function getVocabularyGroupSizes(count: number): number[] {
 }
 
 /**
- * Converts group sizes into the explanation ordinal that should trigger each
- * generated practice lesson while preserving the model's original lesson order.
+ * Each explanation now receives its own practice so a practice lesson stays
+ * focused on one small concept. Quizzes still checkpoint every two practices,
+ * so this helper returns the authored lesson plus any companion rows triggered
+ * by that one authored lesson.
  */
-function getGroupEndOrdinals(sizes: number[], previous = 0): number[] {
-  const [size, ...rest] = sizes;
+function expandContentLesson({
+  lesson,
+  practiceCount,
+}: {
+  lesson: GeneratedChapterLesson;
+  practiceCount: number;
+}): { practiceCount: number; rows: ExpandedChapterLesson[] } {
+  const shouldAddPractice = lesson.kind === "explanation";
+  const nextPracticeCount = shouldAddPractice ? practiceCount + 1 : practiceCount;
+  const shouldAddQuiz = shouldAddPractice && nextPracticeCount % 2 === 0;
 
-  if (!size) {
-    return [];
-  }
-
-  const end = previous + size;
-  return [end, ...getGroupEndOrdinals(rest, end)];
+  return {
+    practiceCount: nextPracticeCount,
+    rows: [
+      authoredLesson({ lesson }),
+      ...(shouldAddPractice ? [companionLesson("practice")] : []),
+      ...(shouldAddQuiz ? [companionLesson("quiz")] : []),
+    ],
+  };
 }
 
 /**
- * Practice and quiz rows are inserted after the explanation groups they assess.
- * Quiz rows cover the explanations since the previous quiz because each quiz
- * appears after every two practice rows, with a final quiz before review.
+ * Practice rows sit directly after the explanation they assess. Quiz rows cover
+ * the explanations since the previous quiz because each quiz appears after
+ * every two practice rows, with a final quiz before review when needed.
  */
 function expandContentLessons({
   lessons,
@@ -128,31 +111,16 @@ function expandContentLessons({
     return lessons.map((lesson) => authoredLesson({ lesson }));
   }
 
-  const groupEnds = new Set(getGroupEndOrdinals(getExplanationGroupSizes(explanationCount)));
-
   const expanded = lessons.reduce(
     (state, lesson) => {
-      const nextExplanationCount =
-        lesson.kind === "explanation" ? state.explanationCount + 1 : state.explanationCount;
-
-      const shouldAddPractice =
-        lesson.kind === "explanation" && groupEnds.has(nextExplanationCount);
-
-      const nextPracticeCount = shouldAddPractice ? state.practiceCount + 1 : state.practiceCount;
-      const shouldAddQuiz = shouldAddPractice && nextPracticeCount % 2 === 0;
+      const expandedLesson = expandContentLesson({ lesson, practiceCount: state.practiceCount });
 
       return {
-        explanationCount: nextExplanationCount,
-        practiceCount: nextPracticeCount,
-        rows: [
-          ...state.rows,
-          authoredLesson({ lesson }),
-          ...(shouldAddPractice ? [companionLesson("practice")] : []),
-          ...(shouldAddQuiz ? [companionLesson("quiz")] : []),
-        ],
+        practiceCount: expandedLesson.practiceCount,
+        rows: [...state.rows, ...expandedLesson.rows],
       };
     },
-    { explanationCount: 0, practiceCount: 0, rows: [] as ExpandedChapterLesson[] },
+    { practiceCount: 0, rows: [] as ExpandedChapterLesson[] },
   );
 
   const needsFinalQuiz = expanded.practiceCount % 2 === 1;
