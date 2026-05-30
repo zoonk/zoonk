@@ -1,5 +1,6 @@
 import { auth } from "@zoonk/core/auth";
 import { hasActiveSubscription } from "@zoonk/core/auth/subscription";
+import { getLessonAccessRequirement } from "@zoonk/core/lessons/access";
 import {
   type Chapter,
   type Lesson,
@@ -23,10 +24,9 @@ export async function getAiGenerationChapterForWorkflow(params: { chapterId: str
 }
 
 /**
- * Lesson generation and preload share the same subscription exception: lessons
- * in the first course chapter are free, later chapters require a subscription.
- * Loading the chapter with the lesson keeps that rule tied to the trusted row
- * instead of accepting a client-provided course or chapter position.
+ * Lesson generation and preload share one free-tier rule. Loading the chapter
+ * with the lesson keeps that rule tied to trusted database positions instead
+ * of accepting client-provided course or chapter order.
  */
 export async function getAiGenerationLessonForWorkflow(params: {
   lessonId: string;
@@ -38,43 +38,17 @@ export async function getAiGenerationLessonForWorkflow(params: {
 }
 
 /**
- * Position 0 is the product's first-chapter marker. That chapter is the free
- * starter experience; any later chapter stays behind the subscription gate.
+ * Position 0 is the product's first-chapter marker. Only that chapter can be
+ * generated before the learner has an active subscription.
  */
 export function requiresSubscriptionForChapterGeneration(chapter: Pick<Chapter, "position">) {
   return chapter.position !== 0;
 }
 
 /**
- * Lesson access follows the parent chapter, not the lesson position. This lets
- * every lesson in the first chapter be generated or preloaded before purchase.
- */
-export function requiresSubscriptionForLessonGeneration(lesson: {
-  chapter: Pick<Chapter, "position">;
-}) {
-  return requiresSubscriptionForChapterGeneration(lesson.chapter);
-}
-
-/**
- * Workflow generation is account-bound before route-specific ids are parsed or
- * looked up. That keeps anonymous callers from probing workflow trigger inputs
- * and prevents client-only page gates from protecting expensive starts.
- */
-export async function getWorkflowAuthenticationError(params: { headers: Headers }) {
-  const session = await auth.api.getSession({ headers: params.headers });
-
-  if (!session) {
-    return errors.unauthorized();
-  }
-
-  return null;
-}
-
-/**
- * Paid-plan checks still depend on the trusted chapter or lesson row because
- * first-chapter content is free for signed-in learners. Run this only after the
- * route has loaded the AI-owned entity and knows whether the subscription rule
- * applies.
+ * Paid-plan checks depend on the trusted chapter or lesson row because first
+ * chapter generation has a free exception. Run this only after the route has
+ * loaded the AI-owned entity and knows whether the subscription rule applies.
  */
 export async function getWorkflowSubscriptionAccessError(params: {
   headers: Headers;
@@ -91,4 +65,30 @@ export async function getWorkflowSubscriptionAccessError(params: {
   }
 
   return null;
+}
+
+/**
+ * Lesson workflows have three access states: public preview, login-expanded
+ * preview, and paid access. Keeping that decision here lets generation and
+ * preload return the same 401-or-402 contract for the same lesson position.
+ */
+export async function getWorkflowLessonAccessError(params: {
+  headers: Headers;
+  lesson: LessonWithChapter;
+}) {
+  const session = await auth.api.getSession({ headers: params.headers });
+
+  const requirement = getLessonAccessRequirement({
+    isAuthenticated: Boolean(session),
+    lesson: params.lesson,
+  });
+
+  if (requirement === "authentication") {
+    return errors.unauthorized();
+  }
+
+  return getWorkflowSubscriptionAccessError({
+    headers: params.headers,
+    requiresSubscription: requirement === "subscription",
+  });
 }

@@ -14,7 +14,7 @@ import { expect, test } from "./fixtures";
  * Test Architecture for Lesson Generation Page
  *
  * The generation page has 4 access states:
- * 1. Unauthenticated later chapter - Shows login prompt
+ * 1. Unauthenticated free preview - Shows generation UI
  * 2. Authenticated later chapter without subscription - Shows upgrade CTA
  * 3. Authenticated first chapter - Shows generation UI without subscription
  * 4. Authenticated with subscription - Shows generation UI
@@ -114,7 +114,10 @@ async function setupMockApis(page: Page, options: MockApiOptions = {}): Promise<
 /**
  * Creates a lesson with pending generation status for testing the generation workflow.
  */
-async function createPendingLesson(chapterPosition = 0) {
+async function createPendingLesson({
+  chapterPosition = 0,
+  lessonPosition = 0,
+}: { chapterPosition?: number; lessonPosition?: number } = {}) {
   const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
@@ -147,6 +150,7 @@ async function createPendingLesson(chapterPosition = 0) {
     isPublished: true,
     normalizedTitle: normalizeString(lessonTitle),
     organizationId: org.id,
+    position: lessonPosition,
     slug: `e2e-gen-lesson-${uniqueId}`,
     title: lessonTitle,
   });
@@ -235,21 +239,21 @@ async function createTestSubscription(userId: string) {
 }
 
 test.describe("Generate Lesson Page - Unauthenticated", () => {
-  test("shows login prompt with link to login page", async ({ page }) => {
-    const { lesson } = await createPendingLesson(1);
+  test("shows upgrade CTA for later chapter lessons", async ({ page }) => {
+    const { lesson } = await createPendingLesson({ chapterPosition: 1 });
     await page.goto(`/generate/l/${lesson.id}`);
 
-    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
+    await expect(page.getByText(/upgrade to create/iu)).toBeVisible();
 
-    const loginLink = page.getByRole("link", { name: /login/iu });
-    await expect(loginLink).toBeVisible();
-    await expect(loginLink).toHaveAttribute("href", "/login");
+    const upgradeLink = page.getByRole("link", { name: /upgrade/iu });
+    await expect(upgradeLink).toBeVisible();
+    await expect(upgradeLink).toHaveAttribute("href", /\/subscription/u);
   });
 });
 
 test.describe("Generate Lesson Page - No Subscription", () => {
   test("shows upgrade CTA with link to subscription page", async ({ authenticatedPage }) => {
-    const { lesson } = await createPendingLesson(1);
+    const { lesson } = await createPendingLesson({ chapterPosition: 1 });
     await authenticatedPage.goto(`/generate/l/${lesson.id}`);
 
     await expect(authenticatedPage.getByText(/upgrade to create/iu)).toBeVisible();
@@ -259,10 +263,10 @@ test.describe("Generate Lesson Page - No Subscription", () => {
     await expect(upgradeLink).toHaveAttribute("href", /\/subscription/u);
   });
 
-  test("allows signed-in users to retry failed generation without subscription", async ({
+  test("requires subscription to retry failed later-chapter generation", async ({
     authenticatedPage,
   }) => {
-    const { lesson } = await createPendingLesson(1);
+    const { lesson } = await createPendingLesson({ chapterPosition: 1 });
 
     await prisma.lesson.update({ data: { generationStatus: "failed" }, where: { id: lesson.id } });
 
@@ -273,17 +277,28 @@ test.describe("Generate Lesson Page - No Subscription", () => {
 
     await authenticatedPage.goto(`/generate/l/${lesson.id}`);
 
-    await expect(authenticatedPage.getByText(/upgrade to create/iu)).toHaveCount(0);
-
-    await expect(
-      authenticatedPage.getByRole("heading", { name: lesson.title ?? "" }),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByText(/upgrade to create/iu)).toBeVisible();
   });
 });
 
 test.describe("Generate Lesson Page - First Chapter Free", () => {
-  test("unauthenticated user sees login prompt for first chapter lesson", async ({ page }) => {
-    const { lesson } = await createPendingLesson(0);
+  test("unauthenticated user sees generation UI through lesson five", async ({ page }) => {
+    const { lesson } = await createPendingLesson({ chapterPosition: 0, lessonPosition: 4 });
+
+    await setupMockApis(page, {
+      statusDelayMs: 2500,
+      streamMessages: [{ status: "started", step: "getLesson" }],
+    });
+
+    await page.goto(`/generate/l/${lesson.id}`);
+
+    await expect(page.getByText(/upgrade to create/iu)).toHaveCount(0);
+
+    await expect(page.getByRole("heading", { name: lesson.title ?? "" })).toBeVisible();
+  });
+
+  test("unauthenticated user sees login prompt for lessons six through ten", async ({ page }) => {
+    const { lesson } = await createPendingLesson({ chapterPosition: 0, lessonPosition: 5 });
 
     await page.goto(`/generate/l/${lesson.id}`);
 
@@ -297,7 +312,7 @@ test.describe("Generate Lesson Page - First Chapter Free", () => {
   test("authenticated user without subscription sees generation UI for first chapter lesson", async ({
     authenticatedPage,
   }) => {
-    const { lesson } = await createPendingLesson(0);
+    const { lesson } = await createPendingLesson({ chapterPosition: 0, lessonPosition: 9 });
 
     await setupMockApis(authenticatedPage, {
       statusDelayMs: 2500,
@@ -311,6 +326,16 @@ test.describe("Generate Lesson Page - First Chapter Free", () => {
     await expect(
       authenticatedPage.getByRole("heading", { name: lesson.title ?? "" }),
     ).toBeVisible();
+  });
+
+  test("authenticated user without subscription sees upgrade CTA from lesson eleven", async ({
+    authenticatedPage,
+  }) => {
+    const { lesson } = await createPendingLesson({ chapterPosition: 0, lessonPosition: 10 });
+
+    await authenticatedPage.goto(`/generate/l/${lesson.id}`);
+
+    await expect(authenticatedPage.getByText(/upgrade to create/iu)).toBeVisible();
   });
 });
 
@@ -463,8 +488,8 @@ test.describe("Generate Lesson Page - With Subscription", () => {
   });
 });
 
-test.describe("Generate Lesson Page - Running Generation Requires Auth", () => {
-  test("unauthenticated user sees login prompt when status is running", async ({ page }) => {
+test.describe("Generate Lesson Page - Running Later Lesson Requires Subscription", () => {
+  test("unauthenticated user sees upgrade CTA when status is running", async ({ page }) => {
     const org = await getAiOrganization();
     const uniqueId = randomUUID().slice(0, 8);
 
@@ -482,6 +507,7 @@ test.describe("Generate Lesson Page - Running Generation Requires Auth", () => {
       isPublished: true,
       normalizedTitle: normalizeString(`E2E Running Lesson Chapter ${uniqueId}`),
       organizationId: org.id,
+      position: 1,
       slug: `e2e-running-lesson-chapter-${uniqueId}`,
       title: `E2E Running Lesson Chapter ${uniqueId}`,
     });
@@ -501,11 +527,7 @@ test.describe("Generate Lesson Page - Running Generation Requires Auth", () => {
 
     await page.goto(`/generate/l/${lesson.id}`);
 
-    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
-
-    const loginLink = page.getByRole("link", { name: /login/iu });
-    await expect(loginLink).toBeVisible();
-    await expect(loginLink).toHaveAttribute("href", "/login");
+    await expect(page.getByText(/upgrade to create/iu)).toBeVisible();
   });
 });
 

@@ -157,7 +157,7 @@ async function createPublishedCourseWithLesson({
 }
 
 test.describe("Generate Course Page", () => {
-  test("shows login prompt before starting course generation", async ({ page }) => {
+  test("starts course generation for unauthenticated users", async ({ page }) => {
     const slug = `e2e-unauth-course-${randomUUID().slice(0, 8)}`;
 
     const suggestion = await courseSuggestionFixture({
@@ -167,17 +167,14 @@ test.describe("Generate Course Page", () => {
       title: "E2E Unauth Course Generation",
     });
 
-    await page.route("**/v1/workflows/course-generation/**", async (route) => {
-      throw new Error(`Generation workflow should not start: ${route.request().url()}`);
+    await setupMockApis(page, {
+      statusDelayMs: 2500,
+      streamMessages: [{ status: "started", step: "getCourseSuggestion" }],
     });
 
     await page.goto(`/generate/cs/${suggestion.id}`);
 
-    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
-
-    const loginLink = page.getByRole("link", { name: /login/iu });
-    await expect(loginLink).toBeVisible();
-    await expect(loginLink).toHaveAttribute("href", "/login");
+    await expect(page.getByText(/creating your course/iu)).toBeVisible({ timeout: 10_000 });
   });
 
   test.describe("Initial triggering state", () => {

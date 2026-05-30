@@ -80,14 +80,12 @@ test.beforeAll(async () => {
 });
 
 test.describe("Learn Form", () => {
-  test("shows form with auto-focused input", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/learn");
+  test("shows form with auto-focused input", async ({ page }) => {
+    await page.goto("/learn");
 
-    await expect(
-      authenticatedPage.getByRole("heading", { name: /learn anything/iu }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
 
-    const input = authenticatedPage.getByRole("textbox");
+    const input = page.getByRole("textbox");
     await expect(input).toBeFocused();
   });
 
@@ -123,19 +121,28 @@ test.describe("Learn Form", () => {
     ).toBeVisible();
   });
 
-  test("shows login prompt for unauthenticated users", async ({ page }) => {
+  test("submitting prompt navigates unauthenticated users to suggestions page", async ({
+    page,
+  }) => {
     await page.goto("/learn");
 
-    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
-    await expect(page.getByRole("link", { name: /login/iu })).toBeVisible();
+    await page.getByRole("textbox").fill(prompt);
+    await page.keyboard.press("Enter");
+
+    await expect(page.getByRole("heading", { name: /course ideas for/iu })).toBeVisible();
   });
 });
 
 test.describe("Course Suggestions", () => {
-  test("shows login prompt for unauthenticated users", async ({ page }) => {
+  test("shows suggestions to unauthenticated users", async ({ page }) => {
     await page.goto(`/learn/${encodeURIComponent(prompt)}`);
 
-    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`course ideas for ${prompt}`, "iu") }),
+    ).toBeVisible();
+
+    await expect(page.getByText(suggestionTitle)).toBeVisible();
+    await expect(page.getByText(suggestionDescription)).toBeVisible();
   });
 
   test("shows suggestions with title, description, and generate link", async ({
@@ -156,21 +163,17 @@ test.describe("Course Suggestions", () => {
     await expect(generateLinks.first()).toBeVisible();
   });
 
-  test("Generate link navigates signed-in users to generate page", async ({
-    authenticatedPage,
-  }) => {
-    await mockCourseGenerationWorkflow(authenticatedPage);
+  test("Generate link navigates unauthenticated users to generate page", async ({ page }) => {
+    await mockCourseGenerationWorkflow(page);
 
-    await authenticatedPage.goto(`/learn/${encodeURIComponent(prompt)}`);
+    await page.goto(`/learn/${encodeURIComponent(prompt)}`);
 
-    await expect(
-      authenticatedPage.getByRole("heading", { name: /course ideas for/iu }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: /course ideas for/iu })).toBeVisible();
 
-    const generateLink = authenticatedPage.getByRole("link", { name: /create/iu }).first();
+    const generateLink = page.getByRole("link", { name: /create/iu }).first();
     await generateLink.click();
 
-    await expect(authenticatedPage).toHaveURL(/\/generate\/cs\/[-a-f0-9]+/u);
+    await expect(page).toHaveURL(/\/generate\/cs\/[-a-f0-9]+/u);
   });
 
   test("Change subject navigates back to learn form", async ({ authenticatedPage }) => {

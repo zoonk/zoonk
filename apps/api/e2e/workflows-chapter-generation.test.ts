@@ -21,18 +21,18 @@ test.describe("Chapter Generation Workflow API", () => {
     await prisma.$disconnect();
   });
 
-  test("returns 401 when triggering chapter generation without a session", async () => {
+  test("allows first chapter generation without a session", async () => {
     const uniqueId = randomUUID().slice(0, 8);
-    const courseTitle = `E2E Chapter Auth ${uniqueId}`;
+    const courseTitle = `E2E Chapter Public ${uniqueId}`;
 
     const course = await prisma.course.create({
       data: {
-        description: "Test course for chapter generation auth",
+        description: "Test course for public first chapter generation",
         isPublished: true,
         language: "en",
         normalizedTitle: normalizeString(courseTitle),
         organizationId: aiOrgId,
-        slug: `e2e-chapter-auth-${uniqueId}`,
+        slug: `e2e-chapter-public-${uniqueId}`,
         title: courseTitle,
       },
     });
@@ -40,14 +40,14 @@ test.describe("Chapter Generation Workflow API", () => {
     const chapter = await prisma.chapter.create({
       data: {
         courseId: course.id,
-        description: "Test chapter for auth",
+        description: "Test first chapter for public generation",
         isPublished: true,
         language: "en",
-        normalizedTitle: normalizeString("Test Chapter Auth"),
+        normalizedTitle: normalizeString("Test Chapter Public"),
         organizationId: aiOrgId,
         position: 0,
-        slug: `e2e-chapter-auth-${uniqueId}`,
-        title: "Test Chapter Auth",
+        slug: `e2e-chapter-public-${uniqueId}`,
+        title: "Test Chapter Public",
       },
     });
 
@@ -57,13 +57,58 @@ test.describe("Chapter Generation Workflow API", () => {
       data: { chapterId: chapter.id },
     });
 
-    expect(response.status()).toBe(401);
+    expect(response.status()).toBe(200);
+
+    const body = await response.json();
+
+    expect(body.message).toBe("Workflow started");
+    expect(body.runId).toBeDefined();
+
+    await apiContext.dispose();
+  });
+
+  test("returns 402 when later chapter generation has no session", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const courseTitle = `E2E Chapter Paid ${uniqueId}`;
+
+    const course = await prisma.course.create({
+      data: {
+        description: "Test course for paid chapter generation",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: normalizeString(courseTitle),
+        organizationId: aiOrgId,
+        slug: `e2e-chapter-paid-${uniqueId}`,
+        title: courseTitle,
+      },
+    });
+
+    const chapter = await prisma.chapter.create({
+      data: {
+        courseId: course.id,
+        description: "Later chapter requires subscription",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: normalizeString("Test Chapter Paid"),
+        organizationId: aiOrgId,
+        position: 1,
+        slug: `e2e-chapter-paid-${uniqueId}`,
+        title: "Test Chapter Paid",
+      },
+    });
+
+    const apiContext = await request.newContext({ baseURL });
+
+    const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
+      data: { chapterId: chapter.id },
+    });
+
+    expect(response.status()).toBe(402);
 
     const body = await response.json();
 
     expect(body.error).toBeDefined();
-    expect(body.error.code).toBe("UNAUTHORIZED");
-    expect(body.error.message).toBe("Authentication required");
+    expect(body.error.code).toBe("PAYMENT_REQUIRED");
 
     await apiContext.dispose();
   });

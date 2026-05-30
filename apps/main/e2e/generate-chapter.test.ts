@@ -13,7 +13,7 @@ import { expect, test } from "./fixtures";
  * Test Architecture for Chapter Generation Page
  *
  * The generation page has 3 access states:
- * 1. Unauthenticated - Shows login prompt
+ * 1. First chapter - Shows generation UI without login
  * 2. Authenticated without subscription - Shows upgrade CTA
  * 3. Authenticated with subscription - Shows generation UI
  *
@@ -163,15 +163,15 @@ async function createTestSubscription(userId: string) {
 }
 
 test.describe("Generate Chapter Page - Unauthenticated", () => {
-  test("shows login prompt with link to login page", async ({ page }) => {
+  test("shows upgrade CTA for later chapters", async ({ page }) => {
     const { chapter } = await createPendingChapter(1);
     await page.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
+    await expect(page.getByText(/upgrade to create/iu)).toBeVisible();
 
-    const loginLink = page.getByRole("link", { name: /login/iu });
-    await expect(loginLink).toBeVisible();
-    await expect(loginLink).toHaveAttribute("href", "/login");
+    const upgradeLink = page.getByRole("link", { name: /upgrade/iu });
+    await expect(upgradeLink).toBeVisible();
+    await expect(upgradeLink).toHaveAttribute("href", /\/subscription/u);
   });
 });
 
@@ -187,7 +187,7 @@ test.describe("Generate Chapter Page - No Subscription", () => {
     await expect(upgradeLink).toHaveAttribute("href", /\/subscription/u);
   });
 
-  test("allows signed-in users to retry failed generation without subscription", async ({
+  test("requires subscription to retry failed later-chapter generation", async ({
     authenticatedPage,
   }) => {
     const { chapter } = await createPendingChapter(1);
@@ -204,8 +204,7 @@ test.describe("Generate Chapter Page - No Subscription", () => {
 
     await authenticatedPage.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(authenticatedPage.getByText(/upgrade to create/iu)).toHaveCount(0);
-    await expect(authenticatedPage.getByRole("heading", { name: chapter.title })).toBeVisible();
+    await expect(authenticatedPage.getByText(/upgrade to create/iu)).toBeVisible();
   });
 });
 
@@ -516,16 +515,18 @@ test.describe("Generate Chapter Page - With Subscription", () => {
 });
 
 test.describe("Generate Chapter Page - First Chapter Free", () => {
-  test("unauthenticated user sees login prompt for first chapter", async ({ page }) => {
+  test("unauthenticated user sees generation UI for first chapter", async ({ page }) => {
     const { chapter } = await createPendingChapter(0);
+
+    await setupMockApis(page, {
+      statusDelayMs: 2500,
+      streamMessages: [{ status: "started", step: "getChapter" }],
+    });
 
     await page.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
-
-    const loginLink = page.getByRole("link", { name: /login/iu });
-    await expect(loginLink).toBeVisible();
-    await expect(loginLink).toHaveAttribute("href", "/login");
+    await expect(page.getByText(/upgrade to create/iu)).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: chapter.title })).toBeVisible();
   });
 
   test("authenticated user without subscription sees generation UI for first chapter", async ({
@@ -545,8 +546,8 @@ test.describe("Generate Chapter Page - First Chapter Free", () => {
   });
 });
 
-test.describe("Generate Chapter Page - Running Generation Requires Auth", () => {
-  test("unauthenticated user sees login prompt for non-first chapter when status is running", async ({
+test.describe("Generate Chapter Page - Running Later Chapter Requires Subscription", () => {
+  test("unauthenticated user sees upgrade CTA for non-first chapter when status is running", async ({
     page,
   }) => {
     const org = await getAiOrganization();
@@ -575,11 +576,7 @@ test.describe("Generate Chapter Page - Running Generation Requires Auth", () => 
 
     await page.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
-
-    const loginLink = page.getByRole("link", { name: /login/iu });
-    await expect(loginLink).toBeVisible();
-    await expect(loginLink).toHaveAttribute("href", "/login");
+    await expect(page.getByText(/upgrade to create/iu)).toBeVisible();
   });
 });
 

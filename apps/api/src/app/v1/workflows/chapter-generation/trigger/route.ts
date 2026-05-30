@@ -3,7 +3,6 @@ import { parseBody } from "@/lib/body-parser";
 import { chapterGenerationTriggerSchema } from "@/lib/openapi/schemas/workflows";
 import {
   getAiGenerationChapterForWorkflow,
-  getWorkflowAuthenticationError,
   getWorkflowSubscriptionAccessError,
   requiresSubscriptionForChapterGeneration,
 } from "@/lib/workflow-generation-access";
@@ -12,12 +11,6 @@ import { type NextRequest, NextResponse } from "next/server";
 import { start } from "workflow/api";
 
 export async function POST(request: NextRequest) {
-  const authError = await getWorkflowAuthenticationError({ headers: request.headers });
-
-  if (authError) {
-    return authError;
-  }
-
   const parsed = await parseBody(request, chapterGenerationTriggerSchema);
 
   if (!parsed.success) {

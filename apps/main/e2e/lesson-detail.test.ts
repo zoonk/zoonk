@@ -428,9 +428,12 @@ async function createDerivedListeningLesson() {
 }
 
 test.describe("Lesson Player Page", () => {
-  test("unauthenticated users can play the first lesson of the first chapter", async ({ page }) => {
+  test("unauthenticated users can play through lesson five of the first chapter", async ({
+    page,
+  }) => {
     const { chapter, course, lesson, uniqueId } = await createTestLesson({
       generationStatus: "completed",
+      lessonPosition: 4,
     });
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
@@ -439,10 +442,10 @@ test.describe("Lesson Player Page", () => {
     await expect(page.getByText(`Test step content ${uniqueId} #0`)).toBeVisible();
   });
 
-  test("unauthenticated users see login prompt for later lessons", async ({ page }) => {
+  test("unauthenticated users see login prompt for lessons six through ten", async ({ page }) => {
     const { chapter, course, lesson } = await createTestLesson({
       generationStatus: "completed",
-      lessonPosition: 1,
+      lessonPosition: 5,
     });
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
@@ -452,6 +455,49 @@ test.describe("Lesson Player Page", () => {
     const loginLink = page.getByRole("link", { name: /login/iu });
     await expect(loginLink).toBeVisible();
     await expect(loginLink).toHaveAttribute("href", "/login");
+  });
+
+  test("authenticated users without subscription can play through lesson ten", async ({
+    authenticatedPage,
+  }) => {
+    const { chapter, course, lesson, uniqueId } = await createTestLesson({
+      generationStatus: "completed",
+      lessonPosition: 9,
+    });
+
+    await authenticatedPage.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+
+    await expect(
+      authenticatedPage.getByRole("heading", { name: `Step ${uniqueId} #0` }),
+    ).toBeVisible();
+  });
+
+  test("authenticated users without subscription see upgrade CTA from lesson eleven", async ({
+    authenticatedPage,
+  }) => {
+    const { chapter, course, lesson } = await createTestLesson({
+      generationStatus: "completed",
+      lessonPosition: 10,
+    });
+
+    await authenticatedPage.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+
+    await expect(authenticatedPage.getByText(/upgrade to keep learning/iu)).toBeVisible();
+    await expect(authenticatedPage.getByRole("link", { name: /upgrade/iu })).toBeVisible();
+  });
+
+  test("authenticated users without subscription see upgrade CTA for later chapters", async ({
+    authenticatedPage,
+  }) => {
+    const { chapter, course, lesson } = await createTestLesson({
+      chapterPosition: 1,
+      generationStatus: "completed",
+      lessonPosition: 0,
+    });
+
+    await authenticatedPage.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+
+    await expect(authenticatedPage.getByText(/upgrade to keep learning/iu)).toBeVisible();
   });
 
   test("close link has correct href", async ({ page }) => {

@@ -1,9 +1,7 @@
-import { LoginRequired } from "@/components/auth/login-required";
 import { GenerationExitLink } from "@/components/generation/generation-exit-link";
 import { SubscriptionGate } from "@/components/subscription/subscription-gate";
 import { getChapterForGeneration } from "@/data/chapters/get-chapter-for-generation";
 import { getInitialGenerationPageStatus } from "@/lib/workflow/get-initial-generation-page-status";
-import { getSession } from "@zoonk/core/users/session/get";
 import {
   Container,
   ContainerBody,
@@ -20,19 +18,11 @@ import { GenerationClient } from "./generation-client";
 
 export async function GenerateChapterContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [session, chapter] = await Promise.all([getSession(), getChapterForGeneration(id)]);
+  const chapter = await getChapterForGeneration(id);
 
   if (!chapter) {
     notFound();
   }
-
-  const isFirstChapter = chapter.position === 0;
-
-  const bypassSubscription =
-    isFirstChapter ||
-    chapter.generationStatus === "running" ||
-    chapter.generationStatus === "failed" ||
-    chapter.generationStatus === "completed";
 
   const t = await getExtracted();
 
@@ -43,10 +33,6 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
     generationStatus: chapter.generationStatus,
     isReadyForRedirect: chapter._count.lessons > 0,
   });
-
-  if (!session) {
-    return <LoginRequired backHref={backHref} backLabel={backLabel} title={t("Create Chapter")} />;
-  }
 
   return (
     <Container variant="narrow">
@@ -60,7 +46,7 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
       </ContainerHeader>
 
       <ContainerBody>
-        <SubscriptionGate backHref={backHref} backLabel={backLabel} bypass={bypassSubscription}>
+        <SubscriptionGate backHref={backHref} backLabel={backLabel} bypass={chapter.position === 0}>
           <GenerationClient
             chapterId={id}
             chapterSlug={chapter.slug}
