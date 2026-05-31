@@ -31,6 +31,7 @@ export async function UserCourses({ userId }: { userId: string }) {
               <TableRow>
                 <TableHead>Course</TableHead>
                 <TableHead>Organization</TableHead>
+                <TableHead className="text-right">Completed chapters</TableHead>
                 <TableHead>Last updated</TableHead>
                 <TableHead>Started</TableHead>
               </TableRow>
@@ -59,6 +60,10 @@ function UserCourseRow({ course }: { course: UserStartedCourse }) {
     <TableRow>
       <TableCell className="font-medium">{course.course.title}</TableCell>
       <TableCell>{course.course.organization?.name ?? "—"}</TableCell>
+      <TableCell className="text-right tabular-nums">
+        {course.completedChapterCount.toLocaleString()} /{" "}
+        {course.course._count.chapters.toLocaleString()}
+      </TableCell>
       <TableCell className="text-muted-foreground">{formatDate(course.course.updatedAt)}</TableCell>
       <TableCell className="text-muted-foreground">{formatDate(course.startedAt)}</TableCell>
     </TableRow>
