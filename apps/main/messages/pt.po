@@ -286,6 +286,10 @@ msgid "3IOFp2"
 msgstr "Criar capítulo"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+msgid "orGV/i"
+msgstr "Aula atual"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgid "ssvp3R"
 msgstr "Buscar aulas..."
 
@@ -302,6 +306,10 @@ msgstr "Concluído"
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
 msgid "xTTP0x"
 msgstr "Não começou"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
+msgid "iRubpl"
+msgstr "Capítulo atual"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
 msgid "3SOcGR"
@@ -1666,7 +1674,11 @@ msgstr "Não gostei"
 msgid "G5YSJR"
 msgstr "Enviar opinião"
 
-#: src/components/catalog/catalog-grid.tsx
+#: src/components/catalog/catalog-grid-back-to-top.tsx
+msgid "izuy1D"
+msgstr "Item atual"
+
+#: src/components/catalog/catalog-grid-back-to-top.tsx
 msgid "Gs9Kfp"
 msgstr "Voltar ao topo"
 

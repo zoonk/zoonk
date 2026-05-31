@@ -46,6 +46,7 @@
     "./player/queries/get-review-steps": "./src/player/queries/get-review-steps.ts",
     "./player/queries/get-total-brain-power": "./src/player/queries/get-total-brain-power.ts",
     "./progress/chapters": "./src/progress/get-chapter-progress.ts",
+    "./progress/active-catalog-target": "./src/progress/get-active-catalog-target.ts",
     "./progress/lessons": "./src/progress/get-lesson-progress.ts",
     "./progress/continue-lesson-target": "./src/progress/get-continue-lesson-target.ts",
     "./progress/next-lesson-state": "./src/progress/get-next-lesson-state.ts",
