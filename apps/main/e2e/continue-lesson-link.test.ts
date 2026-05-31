@@ -4,7 +4,27 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { expect, test } from "./fixtures";
+import { type Page, expect, test } from "./fixtures";
+
+type ContinueActionLabel = "Continue" | "Review" | "Start";
+
+/**
+ * Continue buttons expose the compact progress suffix in their accessible
+ * names, so route-focused tests should match the action while allowing the
+ * optional progress details appended after it.
+ */
+function getContinueActionLink({ label, page }: { label: ContinueActionLabel; page: Page }) {
+  return page.getByRole("link", { name: getContinueActionName({ label }) });
+}
+
+/**
+ * The progress suffix differs by scope: courses announce chapters while
+ * chapters announce lessons. These tests only need the CTA action, so this
+ * helper keeps that accessible-name detail in one place.
+ */
+function getContinueActionName({ label }: { label: ContinueActionLabel }) {
+  return new RegExp(`^${label}(?: \\d+ of \\d+ (?:chapters|lessons) completed)?$`, "iu");
+}
 
 async function createTestCourseWithLesson() {
   const org = await getAiOrganization();
@@ -114,7 +134,7 @@ test.describe("Continue Lesson Link", () => {
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const startLink = page.getByRole("link", { name: /^start$/iu });
+    const startLink = getContinueActionLink({ label: "Start", page });
     await expect(startLink).toBeVisible();
   });
 
@@ -123,7 +143,7 @@ test.describe("Continue Lesson Link", () => {
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const startLink = page.getByRole("link", { name: /^start$/iu });
+    const startLink = getContinueActionLink({ label: "Start", page });
     await expect(startLink).toBeVisible();
     await startLink.click();
 
@@ -137,7 +157,7 @@ test.describe("Continue Lesson Link", () => {
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
 
-    const startLink = page.getByRole("link", { name: /^start$/iu });
+    const startLink = getContinueActionLink({ label: "Start", page });
     await expect(startLink).toBeVisible();
   });
 
@@ -159,7 +179,7 @@ test.describe("Continue Lesson Link", () => {
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const startLink = page.getByRole("link", { name: /^start$/iu });
+    const startLink = getContinueActionLink({ label: "Start", page });
     await expect(startLink).toBeVisible();
 
     await expect(startLink).toHaveAttribute(
@@ -173,7 +193,7 @@ test.describe("Continue Lesson Link", () => {
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
 
-    const startLink = page.getByRole("link", { name: /^start$/iu });
+    const startLink = getContinueActionLink({ label: "Start", page });
     await expect(startLink).toBeVisible();
 
     await expect(startLink).toHaveAttribute(
@@ -209,7 +229,7 @@ test.describe("Continue Lesson Link", () => {
 
     await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const continueLink = authenticatedPage.getByRole("link", { name: /^continue$/iu });
+    const continueLink = getContinueActionLink({ label: "Continue", page: authenticatedPage });
     await expect(continueLink).toBeVisible();
 
     await expect(continueLink).toHaveAttribute(
@@ -243,7 +263,7 @@ test.describe("Continue Lesson Link", () => {
 
     await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const continueLink = authenticatedPage.getByRole("link", { name: /^continue$/iu });
+    const continueLink = getContinueActionLink({ label: "Continue", page: authenticatedPage });
     await expect(continueLink).toBeVisible();
   });
 
@@ -273,7 +293,7 @@ test.describe("Continue Lesson Link", () => {
 
     await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const continueLink = authenticatedPage.getByRole("link", { name: /^continue$/iu });
+    const continueLink = getContinueActionLink({ label: "Continue", page: authenticatedPage });
     await expect(continueLink).toBeVisible();
 
     await expect(continueLink).toHaveAttribute(
@@ -334,7 +354,7 @@ test.describe("Continue Lesson Link", () => {
 
     await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const continueLink = authenticatedPage.getByRole("link", { name: /^continue$/iu });
+    const continueLink = getContinueActionLink({ label: "Continue", page: authenticatedPage });
     await expect(continueLink).toBeVisible();
 
     await expect(continueLink).toHaveAttribute(
@@ -404,7 +424,7 @@ test.describe("Continue Lesson Link", () => {
 
     await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter1.slug}`);
 
-    const continueLink = authenticatedPage.getByRole("link", { name: /^continue$/iu });
+    const continueLink = getContinueActionLink({ label: "Continue", page: authenticatedPage });
     await expect(continueLink).toBeVisible();
 
     await expect(continueLink).toHaveAttribute(
@@ -428,7 +448,7 @@ test.describe("Continue Lesson Link", () => {
 
     await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const reviewLink = authenticatedPage.getByRole("link", { name: /^review$/iu });
+    const reviewLink = getContinueActionLink({ label: "Review", page: authenticatedPage });
     await expect(reviewLink).toBeVisible();
   });
 });

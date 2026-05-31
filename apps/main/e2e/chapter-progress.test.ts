@@ -83,7 +83,7 @@ async function completeLessons({ lessons, userId }: { lessons: { id: string }[];
 }
 
 test.describe("Chapter Progress Indicators", () => {
-  test("shows no indicators when user has no progress", async ({ authenticatedPage }) => {
+  test("shows zero lesson progress without card indicators", async ({ authenticatedPage }) => {
     const { chapter, course } = await createChapterProgressScenario();
 
     await authenticatedPage.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}`);
@@ -93,6 +93,8 @@ test.describe("Chapter Progress Indicators", () => {
     ).toBeVisible();
 
     const main = authenticatedPage.getByRole("main");
+    await expect(main.getByRole("link", { name: "Start 0 of 3 lessons completed" })).toBeVisible();
+    await expect(main.getByText("0/3")).toBeVisible();
     await expect(main.getByText(/^completed$/iu)).toHaveCount(0);
     await expect(main.getByText(/\d+\/\d+ done/u)).toHaveCount(0);
   });
@@ -129,6 +131,12 @@ test.describe("Chapter Progress Indicators", () => {
     ).toBeVisible();
 
     const main = authenticatedPage.getByRole("main");
+
+    await expect(
+      main.getByRole("link", { name: "Continue 1 of 3 lessons completed" }),
+    ).toBeVisible();
+
+    await expect(main.getByText("1/3")).toBeVisible();
     await expect(main.getByText(/^completed$/iu)).toHaveCount(1);
     await expect(main.getByText(/\d+\/\d+ done/u)).toHaveCount(0);
   });
