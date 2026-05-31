@@ -1,10 +1,15 @@
 import { randomUUID } from "node:crypto";
-import { type Browser } from "@playwright/test";
+import { type Browser, type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { request } from "@zoonk/e2e/fixtures";
+import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { expect, test } from "./fixtures";
 
 type TestSubscriptionProvider = "apple" | "google" | "stripe" | "zoonk";
+
+type StripeSubscriptionActionPath =
+  | "/api/auth/subscription/billing-portal"
+  | "/api/auth/subscription/upgrade";
 
 /**
  * Billing page tests need to create subscriptions owned by different billing
@@ -80,6 +85,47 @@ function getStripeSubscriptionFields({
   };
 }
 
+/**
+ * Capture the billing handoff before it reaches Stripe's fake E2E API key.
+ * This test only needs the request body sent by the subscription UI, so the
+ * route responds locally and avoids turning a locale assertion into a Stripe
+ * integration test.
+ */
+async function captureStripeActionRequest({
+  page,
+  path,
+}: {
+  page: Page;
+  path: StripeSubscriptionActionPath;
+}) {
+  await page.route(`**${path}`, async (route) => {
+    await route.fulfill({
+      body: JSON.stringify({ url: "/subscription" }),
+      contentType: "application/json",
+      status: 200,
+    });
+  });
+
+  return page
+    .waitForRequest(
+      (actionRequest) => actionRequest.method() === "POST" && actionRequest.url().endsWith(path),
+    )
+    .then((actionRequest) => actionRequest.postDataJSON() as unknown);
+}
+
+/**
+ * Drive checkout through the visible plan controls because the locale is added
+ * by the client-side Better Auth call, not by the server-rendered plan page.
+ */
+async function requestHobbyCheckout({ page }: { page: Page }) {
+  const requestBody = captureStripeActionRequest({ page, path: "/api/auth/subscription/upgrade" });
+
+  await page.getByRole("radio", { name: /hobby/iu }).click();
+  await page.getByRole("button", { name: /hobby/iu }).click();
+
+  return requestBody;
+}
+
 test.describe("Subscription Page - Unauthenticated", () => {
   test("shows login prompt with link to login page", async ({ page }) => {
     await page.goto("/subscription");
@@ -149,6 +195,37 @@ test.describe("Subscription Page - No Subscription", () => {
     await expect(
       authenticatedPage.getByRole("button", { name: /upgrade to pro/iu }),
     ).not.toBeVisible();
+  });
+});
+
+test.describe("Subscription Page - Stripe Locale", () => {
+  test("passes Spanish locale to Stripe checkout", async ({ authenticatedPage }) => {
+    await setLocale(authenticatedPage, "es");
+    await authenticatedPage.goto("/subscription");
+
+    await expect(requestHobbyCheckout({ page: authenticatedPage })).resolves.toMatchObject({
+      locale: "es",
+    });
+  });
+
+  test("passes Portuguese locale as Brazilian Portuguese to Stripe checkout", async ({
+    authenticatedPage,
+  }) => {
+    await setLocale(authenticatedPage, "pt");
+    await authenticatedPage.goto("/subscription");
+
+    await expect(requestHobbyCheckout({ page: authenticatedPage })).resolves.toMatchObject({
+      locale: "pt-BR",
+    });
+  });
+
+  test("keeps English Stripe checkout locale unset", async ({ authenticatedPage }) => {
+    await setLocale(authenticatedPage, "en");
+    await authenticatedPage.goto("/subscription");
+
+    const requestBody = await requestHobbyCheckout({ page: authenticatedPage });
+
+    expect(requestBody).not.toHaveProperty("locale");
   });
 });
 
