@@ -3,7 +3,6 @@ import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-o
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { getLanguagePromptContext } from "../../_utils/prompt-language";
-import { formatConceptLines } from "../config";
 import systemPrompt from "./lesson-vocabulary.prompt.md";
 
 const defaultModel = "google/gemini-3.5-flash";
@@ -18,24 +17,24 @@ export type VocabularyWord = LessonVocabularySchema["words"][number];
 
 export type LessonVocabularyParams = {
   chapterTitle: string;
-  concepts?: string[];
   lessonDescription: string;
   lessonTitle: string;
   model?: string;
-  neighboringConcepts?: string[];
   reasoningEffort?: ReasoningEffort;
   targetLanguage: string;
   userLanguage: string;
   useFallback?: boolean;
 };
 
+/**
+ * Generates vocabulary from the lesson plan metadata so the lesson row remains
+ * the single source of truth for generation scope.
+ */
 export async function generateLessonVocabulary({
   chapterTitle,
-  concepts = [],
   lessonDescription,
   lessonTitle,
   model = defaultModel,
-  neighboringConcepts = [],
   reasoningEffort,
   targetLanguage,
   userLanguage,
@@ -49,7 +48,6 @@ export async function generateLessonVocabulary({
     CHAPTER_TITLE: ${chapterTitle}
     LESSON_TITLE: ${lessonTitle}
     LESSON_DESCRIPTION: ${lessonDescription}
-    ${formatConceptLines(concepts, neighboringConcepts)}
   `;
 
   const providerOptions = buildProviderOptions({

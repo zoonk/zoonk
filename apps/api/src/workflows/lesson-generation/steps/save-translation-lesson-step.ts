@@ -1,31 +1,10 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
+import { getGeneratedCompanionForSourceLesson } from "@zoonk/core/lessons/generated-companions";
 import { assertStepContent } from "@zoonk/core/steps/contract/content";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
-import { type LessonKind, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
 import { type LessonContext } from "./get-lesson-step";
-
-/**
- * Translation lessons copy from the nearest completed vocabulary source so the
- * translated prompts stay tied to the exact word IDs already taught.
- */
-async function getPreviousLessonByKind({
-  context,
-  kinds,
-}: {
-  context: LessonContext;
-  kinds: LessonKind[];
-}) {
-  return prisma.lesson.findFirst({
-    orderBy: { position: "desc" },
-    where: {
-      chapterId: context.chapterId,
-      generationStatus: "completed",
-      kind: { in: kinds },
-      position: { lt: context.position },
-    },
-  });
-}
 
 /**
  * Prisma does not narrow nullable fields from `not: null` filters in the
@@ -44,9 +23,9 @@ function getTranslationResource(step: {
 }
 
 /**
- * Translation steps reuse the exact chapter-word resources from vocabulary
- * steps instead of regenerating words. That keeps translation practice aligned
- * with the generated translation and distractor bank.
+ * Translation steps reuse the exact chapter-word resources just created by the
+ * vocabulary workflow. The translation lesson row is a companion view over the
+ * vocabulary content, so this step also marks that row completed.
  */
 export async function saveTranslationLessonStep(context: LessonContext): Promise<void> {
   "use step";
@@ -54,13 +33,15 @@ export async function saveTranslationLessonStep(context: LessonContext): Promise
   await using stream = createStepStream<LessonStepName>();
   await stream.status({ status: "started", step: "saveTranslationLesson" });
 
-  const sourceLesson = await getPreviousLessonByKind({
-    context,
-    kinds: ["alphabet", "vocabulary"],
-  });
+  const translationLesson = await getGeneratedCompanionForSourceLesson(context);
 
-  if (!sourceLesson) {
-    throw new FatalError("Translation generation needs a completed vocabulary lesson");
+  if (
+    !translationLesson ||
+    (translationLesson.generationStatus !== "pending" &&
+      translationLesson.generationStatus !== "failed")
+  ) {
+    await stream.status({ status: "completed", step: "saveTranslationLesson" });
+    return;
   }
 
   const sourceSteps = await prisma.step.findMany({
@@ -68,7 +49,7 @@ export async function saveTranslationLessonStep(context: LessonContext): Promise
     where: {
       chapterWordId: { not: null },
       kind: "vocabulary",
-      lessonId: sourceLesson.id,
+      lessonId: context.id,
       wordId: { not: null },
     },
   });
@@ -76,21 +57,28 @@ export async function saveTranslationLessonStep(context: LessonContext): Promise
   const wordSteps = sourceSteps.flatMap((step) => getTranslationResource(step) ?? []);
 
   if (wordSteps.length === 0) {
-    throw new FatalError("Translation generation needs vocabulary words");
+    throw new FatalError("Translation save needs vocabulary words");
   }
 
-  await prisma.step.deleteMany({ where: { lessonId: context.id } });
+  await prisma.$transaction(async (tx) => {
+    await tx.step.deleteMany({ where: { lessonId: translationLesson.id } });
 
-  await prisma.step.createMany({
-    data: wordSteps.map((step, position) => ({
-      chapterWordId: step.chapterWordId,
-      content: assertStepContent("translation", {}),
-      isPublished: true,
-      kind: "translation" as const,
-      lessonId: context.id,
-      position,
-      wordId: step.wordId,
-    })),
+    await tx.step.createMany({
+      data: wordSteps.map((step, position) => ({
+        chapterWordId: step.chapterWordId,
+        content: assertStepContent("translation", {}),
+        isPublished: true,
+        kind: "translation" as const,
+        lessonId: translationLesson.id,
+        position,
+        wordId: step.wordId,
+      })),
+    });
+
+    await tx.lesson.update({
+      data: { generationRunId: null, generationStatus: "completed" },
+      where: { id: translationLesson.id },
+    });
   });
 
   await stream.status({ status: "completed", step: "saveTranslationLesson" });

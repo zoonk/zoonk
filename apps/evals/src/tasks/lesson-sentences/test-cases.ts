@@ -1,11 +1,11 @@
 const SHARED_EXPECTATIONS = `
 EVALUATION CRITERIA:
 
-1. VOCABULARY WORD USAGE (CRITICAL - highest priority):
-   - Each generated sentence MUST use at least one of the provided vocabulary words
-   - The words should be used in their natural form (conjugated verbs, declined nouns are acceptable)
-   - Penalize SEVERELY if sentences don't incorporate the provided vocabulary
-   - Penalize if words are used incorrectly or out of context
+1. LESSON SCOPE USAGE (CRITICAL - highest priority):
+   - Each generated sentence MUST fit the lesson title, description, and source lesson metadata
+   - Important words and phrases implied by the lesson scope should be used in their natural form (conjugated verbs, declined nouns are acceptable)
+   - Penalize SEVERELY if sentences drift away from the lesson scope
+   - Penalize if lesson-scope words or phrases are used incorrectly or out of context
 
 2. TRANSLATION ACCURACY (CRITICAL):
    - Each sentence-translation pair MUST be linguistically accurate
@@ -39,7 +39,7 @@ EVALUATION CRITERIA:
    - Sentences should present different contexts or situations
    - Avoid repetitive sentence structures
    - Use variety in sentence types (statements, questions, commands where appropriate)
-   - Do NOT penalize for covering similar themes if vocabulary words naturally relate to each other
+   - Do NOT penalize for covering similar themes if the lesson scope naturally groups those situations together
 
 7. LESSON RELEVANCE:
    - Sentences should relate to the lesson topic
@@ -48,8 +48,8 @@ EVALUATION CRITERIA:
    - Do NOT require every sentence to explicitly reference the lesson topic - implicit relevance is fine
 
 8. APPROPRIATE DIFFICULTY (CRITICAL):
-   - The model MUST infer difficulty from the chapter title, lesson title, lesson description, and vocabulary
-   - Beginner context (basic topics + simple vocabulary) → simple sentences (2-5 words)
+   - The model MUST infer difficulty from the chapter title, lesson title, lesson description, and source scope
+   - Beginner context (basic topics + simple source scope) → simple sentences (2-5 words)
    - Intermediate context → medium sentences (4-8 words)
    - Advanced context (complex topics + advanced vocabulary) → complex sentences allowed
    - Penalize SEVERELY if beginner-level context produces complex sentences (compound sentences, subordinate clauses, long constructions)
@@ -78,13 +78,22 @@ EVALUATION CRITERIA:
     - Do NOT penalize punctuation that changes meaning or is grammatically required, especially question marks for questions (e.g., "How are you?") and required target-language question punctuation (e.g., "¿Cómo estás?")
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
-- Do NOT penalize for specific sentence choices - accept ANY valid sentences that use the vocabulary
+- Do NOT penalize for specific sentence choices - accept ANY valid sentences that fit the lesson scope
 - Do NOT penalize for not including specific contexts you might expect
 - Do NOT require a specific number of sentences
 - Do NOT expect sentences to follow any particular template or pattern
 - Different valid sentence constructions exist - assess the quality of what IS provided
-- FOCUS ON: vocabulary usage, translation accuracy, romanization correctness, grammatical correctness, naturalness, difficulty appropriateness
+- FOCUS ON: lesson-scope usage, translation accuracy, romanization correctness, grammatical correctness, naturalness, difficulty appropriateness
 `;
+
+/**
+ * Sentence evals should use the same contract as production reading
+ * generation: planned lesson metadata defines scope, not generated vocabulary
+ * output from another workflow.
+ */
+function sourceLessonMetadata({ description, title }: { description: string; title: string }) {
+  return [{ description, title }];
+}
 
 export const TEST_CASES = [
   {
@@ -95,8 +104,8 @@ TOPIC: Spanish sentences for greetings and introductions - using basic greeting 
 
 SCRIPT: Roman (romanization should be null)
 
-VOCABULARY WORDS PROVIDED: hola, buenos días, buenas noches, adiós, gracias
-These words MUST appear in the generated sentences.
+SOURCE LESSON METADATA: basic greeting phrases such as hola, buenos días, buenas noches, adiós, gracias.
+Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: This is clearly a BEGINNER-level lesson. Chapter "Basic Greetings and Introductions" + Lesson "Greetings and Introductions" + simple greeting vocabulary = absolute beginner.
 - Sentences MUST be very simple (2-5 words max)
@@ -107,7 +116,7 @@ DIFFICULTY: This is clearly a BEGINNER-level lesson. Chapter "Basic Greetings an
 - Penalize unnecessary exclamation marks or periods on greeting chunks; keep question marks only for actual questions
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
-- Any sentence doesn't use at least one of the provided vocabulary words
+- Sentences drift away from the source lesson scope
 - Greetings are used incorrectly (e.g., "buenas noches" used for morning)
 - Translations don't match the Spanish sentences
 - Romanization contains any text (should be null)
@@ -125,9 +134,13 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Learn the most common Spanish greetings and how to introduce yourself in everyday situations.",
       lessonTitle: "Greetings and Introductions",
+      sourceLessons: sourceLessonMetadata({
+        description:
+          "Basic greeting and introduction phrases such as hola, buenos días, buenas noches, adiós, and gracias.",
+        title: "Greeting Vocabulary",
+      }),
       targetLanguage: "es",
       userLanguage: "en",
-      words: ["hola", "buenos días", "buenas noches", "adiós", "gracias"],
     },
   },
   {
@@ -138,13 +151,13 @@ TOPIC: French sentences for food and dining - using food-related vocabulary.
 
 SCRIPT: Roman (romanization should be null)
 
-VOCABULARY WORDS PROVIDED: le pain, le fromage, le vin, la soupe, le dessert
-These words MUST appear in the generated sentences.
+SOURCE LESSON METADATA: food and dining nouns such as le pain, le fromage, le vin, la soupe, le dessert.
+Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: Beginner-to-intermediate level. Chapter "Food and Meals" + common food nouns = beginner vocabulary, but dining contexts allow slightly longer sentences.
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
-- Any sentence doesn't use at least one of the provided vocabulary words
+- Sentences drift away from the source lesson scope
 - Food items are used in unrealistic contexts
 - Gender agreement is incorrect (le/la must match the noun)
 - Translations don't accurately convey the French meaning
@@ -162,9 +175,13 @@ ${SHARED_EXPECTATIONS}
       chapterTitle: "Food and Meals",
       lessonDescription: "Learn to name common foods and order at a restaurant.",
       lessonTitle: "Food and Dining",
+      sourceLessons: sourceLessonMetadata({
+        description:
+          "Common food and dining nouns such as le pain, le fromage, le vin, la soupe, and le dessert.",
+        title: "Food Vocabulary",
+      }),
       targetLanguage: "fr",
       userLanguage: "en",
-      words: ["le pain", "le fromage", "le vin", "la soupe", "le dessert"],
     },
   },
   {
@@ -175,13 +192,13 @@ TOPIC: German sentences for family members - using family vocabulary.
 
 SCRIPT: Roman (romanization should be null)
 
-VOCABULARY WORDS PROVIDED: die Mutter, der Vater, die Schwester, der Bruder, die Familie
-These words MUST appear in the generated sentences.
+SOURCE LESSON METADATA: family nouns such as die Mutter, der Vater, die Schwester, der Bruder, die Familie.
+Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: Beginner level. Chapter "Family and Relationships" + basic family nouns = foundational vocabulary.
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
-- Any sentence doesn't use at least one of the provided vocabulary words
+- Sentences drift away from the source lesson scope
 - Case endings are incorrect (nominative, accusative, dative contexts)
 - Article-noun agreement is wrong
 - Translations don't accurately convey the German meaning
@@ -199,9 +216,13 @@ ${SHARED_EXPECTATIONS}
       chapterTitle: "Family and Relationships",
       lessonDescription: "Learn to talk about your family members in German.",
       lessonTitle: "Family Members",
+      sourceLessons: sourceLessonMetadata({
+        description:
+          "Basic family nouns such as die Mutter, der Vater, die Schwester, der Bruder, and die Familie.",
+        title: "Family Vocabulary",
+      }),
       targetLanguage: "de",
       userLanguage: "en",
-      words: ["die Mutter", "der Vater", "die Schwester", "der Bruder", "die Familie"],
     },
   },
   {
@@ -212,8 +233,8 @@ TOPIC: Japanese sentences for numbers and counting - using basic number vocabula
 
 SCRIPT: Non-Roman (romanization MUST be included)
 
-VOCABULARY WORDS PROVIDED: 一, 二, 三, 五, 十
-These number kanji MUST appear in the generated sentences.
+SOURCE LESSON METADATA: basic number kanji such as 一, 二, 三, 五, 十.
+Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: Beginner level. Chapter "Numbers and Basics" + basic number kanji = foundational vocabulary.
 
@@ -224,7 +245,7 @@ ROMANIZATION REQUIREMENTS:
 - Penalize if romanization is missing or uses non-standard systems
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
-- Any sentence doesn't use at least one of the provided number kanji
+- Sentences drift away from the source lesson scope
 - Counter words are used incorrectly
 - Japanese number readings are wrong in context
 - Translations don't match the Japanese sentences
@@ -242,9 +263,12 @@ ${SHARED_EXPECTATIONS}
       chapterTitle: "Numbers and Basics",
       lessonDescription: "Learn to count and use numbers in everyday Japanese.",
       lessonTitle: "Numbers and Counting",
+      sourceLessons: sourceLessonMetadata({
+        description: "Basic number kanji and counting contexts such as 一, 二, 三, 五, and 十.",
+        title: "Number Vocabulary",
+      }),
       targetLanguage: "ja",
       userLanguage: "en",
-      words: ["一", "二", "三", "五", "十"],
     },
   },
   {
@@ -255,8 +279,8 @@ TOPIC: Korean sentences for colors - using basic color vocabulary.
 
 SCRIPT: Non-Roman (romanization MUST be included)
 
-VOCABULARY WORDS PROVIDED: 빨간색, 파란색, 노란색, 초록색, 검은색
-These color words MUST appear in the generated sentences.
+SOURCE LESSON METADATA: basic color words such as 빨간색, 파란색, 노란색, 초록색, 검은색.
+Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: Beginner level. Chapter "Colors and Descriptions" + basic color words = foundational vocabulary.
 
@@ -267,7 +291,7 @@ ROMANIZATION REQUIREMENTS:
 - Penalize if romanization is missing or incorrect
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
-- Any sentence doesn't use at least one of the provided color words
+- Sentences drift away from the source lesson scope
 - Color words are used grammatically incorrectly
 - Translations don't match the Korean sentences
 - Romanization is missing or uses non-standard systems
@@ -284,9 +308,13 @@ ${SHARED_EXPECTATIONS}
       chapterTitle: "Colors and Descriptions",
       lessonDescription: "Learn the basic color words in Korean and how to describe objects.",
       lessonTitle: "Colors",
+      sourceLessons: sourceLessonMetadata({
+        description:
+          "Basic color words and object descriptions such as 빨간색, 파란색, 노란색, 초록색, and 검은색.",
+        title: "Color Vocabulary",
+      }),
       targetLanguage: "ko",
       userLanguage: "en",
-      words: ["빨간색", "파란색", "노란색", "초록색", "검은색"],
     },
   },
   {
@@ -297,13 +325,13 @@ TOPIC: Italian sentences for travel and transportation - using travel vocabulary
 
 SCRIPT: Roman (romanization should be null)
 
-VOCABULARY WORDS PROVIDED: il treno, l'aereo, la macchina, il biglietto, la stazione
-These words MUST appear in the generated sentences.
+SOURCE LESSON METADATA: travel and transportation vocabulary such as il treno, l'aereo, la macchina, il biglietto, la stazione.
+Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: Intermediate level. Chapter "Getting Around" + travel/transport vocabulary = practical intermediate topic.
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
-- Any sentence doesn't use at least one of the provided vocabulary words
+- Sentences drift away from the source lesson scope
 - Article contractions are incorrect (e.g., l'aereo not la aereo)
 - Translations are in English instead of Portuguese
 - Gender agreement is incorrect
@@ -322,9 +350,13 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Learn vocabulary for transportation and traveling in Italian-speaking countries.",
       lessonTitle: "Viagens e Transporte",
+      sourceLessons: sourceLessonMetadata({
+        description:
+          "Travel and transportation vocabulary such as il treno, l'aereo, la macchina, il biglietto, and la stazione.",
+        title: "Transportation Vocabulary",
+      }),
       targetLanguage: "it",
       userLanguage: "pt",
-      words: ["il treno", "l'aereo", "la macchina", "il biglietto", "la stazione"],
     },
   },
   {
@@ -335,13 +367,13 @@ TOPIC: Spanish sentences for shopping - using shopping vocabulary.
 
 SCRIPT: Roman (romanization should be null)
 
-VOCABULARY WORDS PROVIDED: comprar, la tienda, el precio, caro, barato
-These words MUST appear in the generated sentences.
+SOURCE LESSON METADATA: shopping and price vocabulary such as comprar, la tienda, el precio, caro, barato.
+Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: Intermediate level. Chapter "Shopping and Commerce" + verbs and adjectives = intermediate vocabulary.
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
-- Any sentence doesn't use at least one of the provided vocabulary words
+- Sentences drift away from the source lesson scope
 - Verb conjugation is incorrect (comprar conjugated forms)
 - Adjective gender agreement is wrong (caro/cara, barato/barata)
 - Translations are in English instead of Portuguese
@@ -359,9 +391,13 @@ ${SHARED_EXPECTATIONS}
       chapterTitle: "Shopping and Commerce",
       lessonDescription: "Learn to talk about prices, compare costs, and shop in Spanish.",
       lessonTitle: "Compras",
+      sourceLessons: sourceLessonMetadata({
+        description:
+          "Shopping and price vocabulary such as comprar, la tienda, el precio, caro, and barato.",
+        title: "Shopping Vocabulary",
+      }),
       targetLanguage: "es",
       userLanguage: "pt",
-      words: ["comprar", "la tienda", "el precio", "caro", "barato"],
     },
   },
   {
@@ -372,13 +408,13 @@ TOPIC: French sentences for weather - using weather vocabulary.
 
 SCRIPT: Roman (romanization should be null)
 
-VOCABULARY WORDS PROVIDED: le soleil, la pluie, le vent, il fait chaud, il fait froid
-These words/expressions MUST appear in the generated sentences.
+SOURCE LESSON METADATA: weather nouns and expressions such as le soleil, la pluie, le vent, il fait chaud, il fait froid.
+Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: Intermediate level. Chapter "Weather and Seasons" + weather expressions (including impersonal "il fait" constructions) = intermediate.
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
-- Any sentence doesn't use at least one of the provided vocabulary words/expressions
+- Sentences drift away from the source lesson scope
 - Weather expressions are used incorrectly
 - Translations are in English instead of Spanish
 - Romanization contains any text (should be null)
@@ -395,9 +431,13 @@ ${SHARED_EXPECTATIONS}
       chapterTitle: "Weather and Seasons",
       lessonDescription: "Learn to describe the weather and talk about seasonal lessons in French.",
       lessonTitle: "El Clima",
+      sourceLessons: sourceLessonMetadata({
+        description:
+          "Weather nouns and expressions such as le soleil, la pluie, le vent, il fait chaud, and il fait froid.",
+        title: "Weather Vocabulary",
+      }),
       targetLanguage: "fr",
       userLanguage: "es",
-      words: ["le soleil", "la pluie", "le vent", "il fait chaud", "il fait froid"],
     },
   },
   {
@@ -408,8 +448,8 @@ TOPIC: Japanese sentences for time expressions - using time-related vocabulary.
 
 SCRIPT: Non-Roman (romanization MUST be included)
 
-VOCABULARY WORDS PROVIDED: 今日, 明日, 昨日, 朝, 夜
-These time words MUST appear in the generated sentences.
+SOURCE LESSON METADATA: basic time expressions such as 今日, 明日, 昨日, 朝, 夜.
+Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: Beginner-to-intermediate level. Chapter "Time and Daily Life" + basic time words = foundational vocabulary but with context for short sentences.
 
@@ -420,7 +460,7 @@ ROMANIZATION REQUIREMENTS:
 - Penalize if romanization is missing or uses non-standard systems
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
-- Any sentence doesn't use at least one of the provided time words
+- Sentences drift away from the source lesson scope
 - Time expressions are used incorrectly in context
 - Translations are in English instead of Spanish
 - Romanization is missing or incorrect
@@ -438,9 +478,13 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Learn basic time expressions to talk about your daily schedule in Japanese.",
       lessonTitle: "Expresiones de Tiempo",
+      sourceLessons: sourceLessonMetadata({
+        description:
+          "Basic time expressions for daily schedules such as 今日, 明日, 昨日, 朝, and 夜.",
+        title: "Time Vocabulary",
+      }),
       targetLanguage: "ja",
       userLanguage: "es",
-      words: ["今日", "明日", "昨日", "朝", "夜"],
     },
   },
   {
@@ -451,8 +495,8 @@ TOPIC: Mandarin Chinese sentences for common verbs - using action verbs.
 
 SCRIPT: Non-Roman (romanization MUST be included)
 
-VOCABULARY WORDS PROVIDED: 吃, 喝, 看, 听, 说
-These verbs MUST appear in the generated sentences.
+SOURCE LESSON METADATA: common action verbs such as 吃, 喝, 看, 听, 说.
+Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: Beginner level. Chapter "Essential Verbs" + basic action verbs = foundational vocabulary.
 
@@ -463,7 +507,7 @@ ROMANIZATION REQUIREMENTS:
 - Penalize if romanization is missing or doesn't include tones
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
-- Any sentence doesn't use at least one of the provided verbs
+- Sentences drift away from the source lesson scope
 - Chinese word order is incorrect
 - Aspect markers are used incorrectly (了, 着, 过)
 - Translations don't match the Chinese sentences
@@ -481,9 +525,12 @@ ${SHARED_EXPECTATIONS}
       chapterTitle: "Essential Verbs",
       lessonDescription: "Learn the most common action verbs used in daily Mandarin Chinese.",
       lessonTitle: "Common Verbs",
+      sourceLessons: sourceLessonMetadata({
+        description: "Common action verbs for daily life such as 吃, 喝, 看, 听, and 说.",
+        title: "Action Verb Vocabulary",
+      }),
       targetLanguage: "zh",
       userLanguage: "en",
-      words: ["吃", "喝", "看", "听", "说"],
     },
   },
   {
@@ -494,8 +541,8 @@ TOPIC: Russian sentences for places in the city - using location vocabulary.
 
 SCRIPT: Non-Roman (romanization MUST be included)
 
-VOCABULARY WORDS PROVIDED: магазин, ресторан, парк, школа, библиотека
-These place words MUST appear in the generated sentences.
+SOURCE LESSON METADATA: common city places such as магазин, ресторан, парк, школа, библиотека.
+Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: Beginner-to-intermediate level. Chapter "Around Town" + common location nouns = practical vocabulary that requires preposition usage.
 
@@ -506,7 +553,7 @@ ROMANIZATION REQUIREMENTS:
 - Penalize if romanization is missing or incorrect
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
-- Any sentence doesn't use at least one of the provided place words
+- Sentences drift away from the source lesson scope
 - Case endings are incorrect (prepositional for location, accusative for direction)
 - Preposition usage is wrong (в/на)
 - Translations don't match the Russian sentences
@@ -524,9 +571,13 @@ ${SHARED_EXPECTATIONS}
       chapterTitle: "Around Town",
       lessonDescription: "Learn to name and navigate common places in your city in Russian.",
       lessonTitle: "Places in the City",
+      sourceLessons: sourceLessonMetadata({
+        description:
+          "Common city places and navigation contexts such as магазин, ресторан, парк, школа, and библиотека.",
+        title: "City Place Vocabulary",
+      }),
       targetLanguage: "ru",
       userLanguage: "en",
-      words: ["магазин", "ресторан", "парк", "школа", "библиотека"],
     },
   },
   {
@@ -537,8 +588,8 @@ TOPIC: Arabic sentences for common adjectives - using descriptive vocabulary.
 
 SCRIPT: Non-Roman (romanization MUST be included)
 
-VOCABULARY WORDS PROVIDED: كبير, صغير, جميل, جديد, قديم
-These adjectives MUST appear in the generated sentences.
+SOURCE LESSON METADATA: common descriptive adjectives such as كبير, صغير, جميل, جديد, قديم.
+Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: Beginner-to-intermediate level. Chapter "Describing Things" + basic adjectives = foundational vocabulary, but Arabic adjective agreement requires some complexity.
 
@@ -549,7 +600,7 @@ ROMANIZATION REQUIREMENTS:
 - Penalize if romanization is missing or incorrect
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
-- Any sentence doesn't use at least one of the provided adjectives
+- Sentences drift away from the source lesson scope
 - Adjective-noun agreement is incorrect (gender, number)
 - Word order is unnatural
 - Translations don't match the Arabic sentences
@@ -568,9 +619,13 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Learn common adjectives to describe objects, people, and places in Arabic.",
       lessonTitle: "Common Adjectives",
+      sourceLessons: sourceLessonMetadata({
+        description:
+          "Basic descriptive adjectives such as كبير, صغير, جميل, جديد, and قديم in object and place descriptions.",
+        title: "Descriptive Vocabulary",
+      }),
       targetLanguage: "ar",
       userLanguage: "en",
-      words: ["كبير", "صغير", "جميل", "جديد", "قديم"],
     },
   },
   {
@@ -581,13 +636,13 @@ TOPIC: Portuguese sentences for emotions and feelings - using emotion vocabulary
 
 SCRIPT: Roman (romanization should be null)
 
-VOCABULARY WORDS PROVIDED: feliz, triste, cansado, com fome, com sede
-These words/expressions MUST appear in the generated sentences.
+SOURCE LESSON METADATA: emotion and physical-state expressions such as feliz, triste, cansado, com fome, com sede.
+Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: Beginner level. Chapter "How Are You Feeling?" + basic emotion/state vocabulary = foundational topic.
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
-- Any sentence doesn't use at least one of the provided vocabulary words
+- Sentences drift away from the source lesson scope
 - Estar vs ser usage is incorrect for states (estar feliz, not ser feliz for temporary states)
 - Gender agreement is wrong (cansado/cansada)
 - Translations don't match the Portuguese sentences
@@ -605,9 +660,13 @@ ${SHARED_EXPECTATIONS}
       chapterTitle: "How Are You Feeling?",
       lessonDescription: "Learn to express emotions and physical states in Brazilian Portuguese.",
       lessonTitle: "Emotions and Feelings",
+      sourceLessons: sourceLessonMetadata({
+        description:
+          "Emotion and physical-state expressions such as feliz, triste, cansado, com fome, and com sede.",
+        title: "Emotion Vocabulary",
+      }),
       targetLanguage: "pt",
       userLanguage: "en",
-      words: ["feliz", "triste", "cansado", "com fome", "com sede"],
     },
   },
   {
@@ -618,13 +677,13 @@ TOPIC: German sentences for daily routines - using routine action vocabulary.
 
 SCRIPT: Roman (romanization should be null)
 
-VOCABULARY WORDS PROVIDED: aufstehen, frühstücken, arbeiten, schlafen, essen
-These verbs MUST appear in the generated sentences.
+SOURCE LESSON METADATA: daily routine verbs such as aufstehen, frühstücken, arbeiten, schlafen, essen.
+Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: Intermediate level. Chapter "Daily Routines" + separable prefix verbs and verb conjugation = intermediate grammar required.
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
-- Any sentence doesn't use at least one of the provided verbs
+- Sentences drift away from the source lesson scope
 - Separable prefix verbs are handled incorrectly (aufstehen -> ich stehe auf)
 - Verb conjugation is wrong
 - Translations are in English instead of Portuguese
@@ -642,9 +701,13 @@ ${SHARED_EXPECTATIONS}
       chapterTitle: "Daily Routines",
       lessonDescription: "Learn to describe your daily routine using common German verbs.",
       lessonTitle: "Rotinas Diárias",
+      sourceLessons: sourceLessonMetadata({
+        description:
+          "Daily routine verbs such as aufstehen, frühstücken, arbeiten, schlafen, and essen.",
+        title: "Daily Routine Vocabulary",
+      }),
       targetLanguage: "de",
       userLanguage: "pt",
-      words: ["aufstehen", "frühstücken", "arbeiten", "schlafen", "essen"],
     },
   },
   {
@@ -655,8 +718,8 @@ TOPIC: Thai sentences for polite expressions - using politeness vocabulary.
 
 SCRIPT: Non-Roman (romanization MUST be included)
 
-VOCABULARY WORDS PROVIDED: ขอบคุณ, ขอโทษ, ได้โปรด, สวัสดี, ลาก่อน
-These polite expressions MUST appear in the generated sentences.
+SOURCE LESSON METADATA: essential polite expressions such as ขอบคุณ, ขอโทษ, ได้โปรด, สวัสดี, ลาก่อน.
+Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: Beginner level. Chapter "Basic Politeness" + common polite expressions = foundational vocabulary.
 
@@ -667,13 +730,13 @@ ROMANIZATION REQUIREMENTS:
 - Penalize if romanization is missing or unclear
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
-- Any sentence doesn't use at least one of the provided expressions
+- Sentences drift away from the source lesson scope
 - Politeness particles are missing where required (ครับ/คะ)
 - Translations don't match the Thai sentences
 - Romanization is missing or inconsistent
 
 VOCABULARY NATURALNESS NOTE:
-- ได้โปรด is inherently formal/pleading in Thai. Since it is REQUIRED vocabulary, accept it in various polite request contexts (asking for help, directions, favors, etc.)
+- ได้โปรด is inherently formal/pleading in Thai. Since it is part of the source scope, accept it in various polite request contexts (asking for help, directions, favors, etc.)
 - Only penalize ได้โปรด usage if it appears in completely inappropriate situations (e.g., casual greetings between friends)
 - Prefer contexts where the formality of ได้โปรด fits naturally (urgent requests, formal situations, asking strangers for help)
 
@@ -689,9 +752,12 @@ ${SHARED_EXPECTATIONS}
       chapterTitle: "Basic Politeness",
       lessonDescription: "Learn essential polite expressions for everyday interactions in Thai.",
       lessonTitle: "Polite Expressions",
+      sourceLessons: sourceLessonMetadata({
+        description: "Essential polite expressions such as ขอบคุณ, ขอโทษ, ได้โปรด, สวัสดี, and ลาก่อน.",
+        title: "Polite Expression Vocabulary",
+      }),
       targetLanguage: "th",
       userLanguage: "en",
-      words: ["ขอบคุณ", "ขอโทษ", "ได้โปรด", "สวัสดี", "ลาก่อน"],
     },
   },
   {
@@ -702,8 +768,8 @@ TOPIC: Spanish sentences for advanced grammar - subjunctive mood with complex ve
 
 SCRIPT: Roman (romanization should be null)
 
-VOCABULARY WORDS PROVIDED: hubiera sabido, a pesar de que, no obstante, en caso de que, siempre y cuando
-These expressions MUST appear in the generated sentences.
+SOURCE LESSON METADATA: advanced subjunctive and concessive expressions such as hubiera sabido, a pesar de que, no obstante, en caso de que, siempre y cuando.
+Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: This is clearly an ADVANCED-level lesson. Chapter "Advanced Grammar" + Lesson "Subjunctive Mood in Complex Clauses" + advanced grammar constructions = advanced level.
 - Sentences SHOULD use complex structures (subordinate clauses, conditional constructions, compound-complex sentences)
@@ -712,7 +778,7 @@ DIFFICULTY: This is clearly an ADVANCED-level lesson. Chapter "Advanced Grammar"
 - Advanced grammatical accuracy is critical (subjunctive mood usage must be correct)
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
-- Any sentence doesn't use at least one of the provided expressions
+- Sentences drift away from the source lesson scope
 - Subjunctive mood is used incorrectly
 - Conditional/hypothetical structures are grammatically wrong
 - Translations don't accurately convey the nuanced meaning
@@ -731,15 +797,13 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Master the subjunctive mood in complex clause structures, including conditional, concessive, and hypothetical expressions.",
       lessonTitle: "Subjunctive Mood in Complex Clauses",
+      sourceLessons: sourceLessonMetadata({
+        description:
+          "Advanced subjunctive and concessive expressions such as hubiera sabido, a pesar de que, no obstante, en caso de que, and siempre y cuando.",
+        title: "Advanced Clause Vocabulary",
+      }),
       targetLanguage: "es",
       userLanguage: "en",
-      words: [
-        "hubiera sabido",
-        "a pesar de que",
-        "no obstante",
-        "en caso de que",
-        "siempre y cuando",
-      ],
     },
   },
 ];

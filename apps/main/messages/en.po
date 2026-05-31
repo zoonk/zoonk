@@ -970,18 +970,8 @@ msgid "l1XTI5"
 msgstr "Follow us"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
-#: src/app/generate/l/[id]/generate-lesson-content.tsx
-msgid "dAecIj"
-msgstr "Lesson locked"
-
-#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
 msgid "A/VPtF"
 msgstr "Lesson not available"
-
-#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
-#: src/app/generate/l/[id]/generate-lesson-content.tsx
-msgid "mDEcv4"
-msgstr "Create the required lesson first."
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
 msgid "bHscXj"
@@ -989,11 +979,6 @@ msgstr "This lesson hasn't been created yet."
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
-#: src/app/generate/l/[id]/generate-lesson-content.tsx
-msgid "xJPcOx"
-msgstr "Open required lesson"
-
-#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
 msgid "ZzznjM"
 msgstr "Create lesson"
 
@@ -1367,14 +1352,6 @@ msgid "bC9979"
 msgstr "Almost done..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
-msgid "ZRt4oT"
-msgstr "Saving earlier lessons..."
-
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
-msgid "jH56mP"
-msgstr "Storing prerequisite content..."
-
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgid "5Jyenk"
 msgstr "Getting ready for the next step..."
 
@@ -1633,10 +1610,6 @@ msgstr "Recording word audio"
 #: src/app/generate/l/[id]/use-phase-labels.ts
 msgid "2ZPUqg"
 msgstr "Saving your lesson"
-
-#: src/app/generate/l/[id]/use-phase-labels.ts
-msgid "ZZMstH"
-msgstr "Saving earlier lessons"
 
 #: src/app/generate/l/[id]/use-phase-labels.ts
 msgid "v4iFHN"

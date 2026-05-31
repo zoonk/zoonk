@@ -1,4 +1,5 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
+import { getGeneratedCompanionForSourceLesson } from "@zoonk/core/lessons/generated-companions";
 import { assertStepContent } from "@zoonk/core/steps/contract/content";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
@@ -27,8 +28,8 @@ function getListeningResource(step: {
 }
 
 /**
- * Listening steps reuse chapter-sentence resources from the nearest completed
- * reading lesson so audio, romanization, translations, and review metadata stay
+ * Listening steps reuse chapter-sentence resources just created by the reading
+ * workflow so audio, romanization, translations, and review metadata stay
  * attached to the same generated sentence rows.
  */
 export async function saveListeningLessonStep(context: LessonContext): Promise<void> {
@@ -37,18 +38,15 @@ export async function saveListeningLessonStep(context: LessonContext): Promise<v
   await using stream = createStepStream<LessonStepName>();
   await stream.status({ status: "started", step: "saveListeningLesson" });
 
-  const sourceLesson = await prisma.lesson.findFirst({
-    orderBy: { position: "desc" },
-    where: {
-      chapterId: context.chapterId,
-      generationStatus: "completed",
-      kind: "reading",
-      position: { lt: context.position },
-    },
-  });
+  const listeningLesson = await getGeneratedCompanionForSourceLesson(context);
 
-  if (!sourceLesson) {
-    throw new FatalError("Listening generation needs a completed reading lesson");
+  if (
+    !listeningLesson ||
+    (listeningLesson.generationStatus !== "pending" &&
+      listeningLesson.generationStatus !== "failed")
+  ) {
+    await stream.status({ status: "completed", step: "saveListeningLesson" });
+    return;
   }
 
   const readingSteps = await prisma.step.findMany({
@@ -56,7 +54,7 @@ export async function saveListeningLessonStep(context: LessonContext): Promise<v
     where: {
       chapterSentenceId: { not: null },
       kind: "reading",
-      lessonId: sourceLesson.id,
+      lessonId: context.id,
       sentenceId: { not: null },
     },
   });
@@ -64,21 +62,28 @@ export async function saveListeningLessonStep(context: LessonContext): Promise<v
   const sentenceSteps = readingSteps.flatMap((step) => getListeningResource(step) ?? []);
 
   if (sentenceSteps.length === 0) {
-    throw new FatalError("Listening generation needs reading sentences");
+    throw new FatalError("Listening save needs reading sentences");
   }
 
-  await prisma.step.deleteMany({ where: { lessonId: context.id } });
+  await prisma.$transaction(async (tx) => {
+    await tx.step.deleteMany({ where: { lessonId: listeningLesson.id } });
 
-  await prisma.step.createMany({
-    data: sentenceSteps.map((readingStep) => ({
-      chapterSentenceId: readingStep.chapterSentenceId,
-      content: assertStepContent("listening", {}),
-      isPublished: true,
-      kind: "listening" as const,
-      lessonId: context.id,
-      position: readingStep.position,
-      sentenceId: readingStep.sentenceId,
-    })),
+    await tx.step.createMany({
+      data: sentenceSteps.map((readingStep) => ({
+        chapterSentenceId: readingStep.chapterSentenceId,
+        content: assertStepContent("listening", {}),
+        isPublished: true,
+        kind: "listening" as const,
+        lessonId: listeningLesson.id,
+        position: readingStep.position,
+        sentenceId: readingStep.sentenceId,
+      })),
+    });
+
+    await tx.lesson.update({
+      data: { generationRunId: null, generationStatus: "completed" },
+      where: { id: listeningLesson.id },
+    });
   });
 
   await stream.status({ status: "completed", step: "saveListeningLesson" });

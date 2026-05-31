@@ -3,7 +3,7 @@ import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-o
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { getLanguagePromptContext } from "../../_utils/prompt-language";
-import { formatConceptLines } from "../config";
+import { type SourceLesson, formatSourceLessonsForPrompt } from "../_utils/source-lessons";
 import systemPrompt from "./lesson-sentences.prompt.md";
 
 const defaultModel = "openai/gpt-5.5";
@@ -21,30 +21,30 @@ export type LessonSentencesSchema = z.infer<typeof schema>;
 
 export type LessonSentencesParams = {
   chapterTitle?: string;
-  concepts?: string[];
   lessonDescription?: string;
   lessonTitle: string;
   model?: string;
-  neighboringConcepts?: string[];
   reasoningEffort?: ReasoningEffort;
+  sourceLessons: SourceLesson[];
   targetLanguage: string;
   userLanguage: string;
   useFallback?: boolean;
-  words: string[];
 };
 
+/**
+ * Generates reading practice sentences from planned lesson metadata so reading
+ * lessons do not need to wait for vocabulary content from another workflow.
+ */
 export async function generateLessonSentences({
   chapterTitle,
-  concepts = [],
   lessonDescription,
   lessonTitle,
   model = defaultModel,
-  neighboringConcepts = [],
   reasoningEffort,
+  sourceLessons,
   targetLanguage,
   userLanguage,
   useFallback = true,
-  words,
 }: LessonSentencesParams) {
   const promptContext = getLanguagePromptContext({ targetLanguage, userLanguage });
 
@@ -54,8 +54,7 @@ export async function generateLessonSentences({
     CHAPTER_TITLE: ${chapterTitle}
     LESSON_TITLE: ${lessonTitle}
     LESSON_DESCRIPTION: ${lessonDescription}
-    VOCABULARY_WORDS: ${words.join(", ")}
-    ${formatConceptLines(concepts, neighboringConcepts)}
+    SOURCE_LESSONS: ${formatSourceLessonsForPrompt(sourceLessons)}
   `;
 
   const providerOptions = buildProviderOptions({

@@ -15,30 +15,30 @@ describe(saveListeningLessonStep, () => {
     organizationId = organization.id;
   });
 
-  it("copies reading sentence steps into listening lessons", async () => {
+  it("copies reading sentence steps into the listening companion lesson", async () => {
     const context = await createLessonContext({
-      kind: "listening",
+      kind: "reading",
       organizationId,
-      position: 2,
+      position: 1,
       targetLanguage: "de",
     });
 
-    const [readingLesson, firstSentence, secondSentence] = await Promise.all([
+    const [listeningLesson, firstSentence, secondSentence] = await Promise.all([
       lessonFixture({
         chapterId: context.chapterId,
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
-        kind: "reading",
+        kind: "listening",
         organizationId,
-        position: 1,
+        position: 2,
       }),
       sentenceFixture({ organizationId, targetLanguage: "de" }),
       sentenceFixture({ organizationId, targetLanguage: "de" }),
     ]);
 
     const [firstChapterSentence, secondChapterSentence] = await Promise.all([
-      chapterSentenceFixture({ sentenceId: firstSentence.id, sourceLessonId: readingLesson.id }),
-      chapterSentenceFixture({ sentenceId: secondSentence.id, sourceLessonId: readingLesson.id }),
+      chapterSentenceFixture({ sentenceId: firstSentence.id, sourceLessonId: context.id }),
+      chapterSentenceFixture({ sentenceId: secondSentence.id, sourceLessonId: context.id }),
     ]);
 
     await Promise.all([
@@ -46,7 +46,7 @@ describe(saveListeningLessonStep, () => {
         chapterSentenceId: firstChapterSentence.id,
         content: {},
         kind: "reading",
-        lessonId: readingLesson.id,
+        lessonId: context.id,
         position: 0,
         sentenceId: firstSentence.id,
       }),
@@ -54,7 +54,7 @@ describe(saveListeningLessonStep, () => {
         chapterSentenceId: secondChapterSentence.id,
         content: {},
         kind: "reading",
-        lessonId: readingLesson.id,
+        lessonId: context.id,
         position: 1,
         sentenceId: secondSentence.id,
       }),
@@ -64,7 +64,7 @@ describe(saveListeningLessonStep, () => {
 
     const steps = await prisma.step.findMany({
       orderBy: { position: "asc" },
-      where: { kind: "listening", lessonId: context.id },
+      where: { kind: "listening", lessonId: listeningLesson.id },
     });
 
     expect(
@@ -73,18 +73,22 @@ describe(saveListeningLessonStep, () => {
       [0, firstSentence.id, firstChapterSentence.id],
       [1, secondSentence.id, secondChapterSentence.id],
     ]);
+
+    const dbListeningLesson = await prisma.lesson.findUniqueOrThrow({
+      where: { id: listeningLesson.id },
+    });
+
+    expect(dbListeningLesson.generationStatus).toBe("completed");
   });
 
-  it("throws when a listening lesson has no completed reading source", async () => {
+  it("does nothing when reading has no listening companion", async () => {
     const context = await createLessonContext({
-      kind: "listening",
+      kind: "reading",
       organizationId,
-      position: 2,
+      position: 1,
       targetLanguage: "de",
     });
 
-    await expect(saveListeningLessonStep(context)).rejects.toThrow(
-      "Listening generation needs a completed reading lesson",
-    );
+    await expect(saveListeningLessonStep(context)).resolves.toBeUndefined();
   });
 });

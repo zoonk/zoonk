@@ -5,10 +5,12 @@ import { getLessonForGeneration } from "@/data/lessons/get-lesson-for-generation
 import { getLessonDisplayMeta } from "@/lib/lessons";
 import { getInitialGenerationPageStatus } from "@/lib/workflow/get-initial-generation-page-status";
 import { getLessonAccessRequirement } from "@zoonk/core/lessons/access";
-import { getBlockingLessonGenerationPrerequisite } from "@zoonk/core/lessons/generation-prerequisites";
+import {
+  getGeneratedCompanionForSourceLesson,
+  getSourceLessonForGeneratedCompanion,
+  isGeneratedCompanionLessonKind,
+} from "@zoonk/core/lessons/generated-companions";
 import { getSession } from "@zoonk/core/users/session/get";
-import { type GenerationStatus } from "@zoonk/db";
-import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Container,
   ContainerBody,
@@ -17,34 +19,25 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@zoonk/ui/components/empty";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
-import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { GenerationClient } from "./generation-client";
 import { isGeneratedLessonKind } from "./generation-phase-config";
 
-/**
- * Pending and failed lessons are the only states where a prerequisite should
- * redirect the learner elsewhere. Running lessons already have a workflow page
- * to watch, and completed lessons should redirect into the player.
- */
-function shouldCheckGenerationPrerequisites({
-  generationStatus,
-}: {
-  generationStatus: GenerationStatus;
-}): boolean {
-  return generationStatus === "pending" || generationStatus === "failed";
+type LessonForGeneration = NonNullable<Awaited<ReturnType<typeof getLessonForGeneration>>>;
+
+async function GeneratedCompanionRedirect({ lesson }: { lesson: LessonForGeneration }) {
+  const sourceLesson = await getSourceLessonForGeneratedCompanion(lesson);
+
+  if (!sourceLesson) {
+    notFound();
+  }
+
+  redirect(`/generate/l/${sourceLesson.id}`);
+
+  return null;
 }
 
 export async function GenerateLessonContent({ params }: { params: Promise<{ id: string }> }) {
@@ -72,57 +65,36 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
   }
 
   const lessonMeta = await getLessonDisplayMeta(lesson);
+  const companionLesson = await getGeneratedCompanionForSourceLesson(lesson);
 
-  const blockingPrerequisite = shouldCheckGenerationPrerequisites({
-    generationStatus: lesson.generationStatus,
-  })
-    ? await getBlockingLessonGenerationPrerequisite(lesson)
-    : null;
+  const hasIncompleteCompanion =
+    companionLesson?.generationStatus === "pending" ||
+    companionLesson?.generationStatus === "failed";
 
   const initialStatus = getInitialGenerationPageStatus({
     generationStatus: lesson.generationStatus,
-    isReadyForRedirect: lesson.generationStatus === "completed" || lesson._count.steps > 0,
+    isReadyForRedirect:
+      (lesson.generationStatus === "completed" || lesson._count.steps > 0) &&
+      !hasIncompleteCompanion,
   });
 
-  const content = blockingPrerequisite ? (
-    <Empty className="border-0">
-      <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <SparklesIcon />
-        </EmptyMedia>
-
-        <EmptyTitle>{t("Lesson locked")}</EmptyTitle>
-
-        <EmptyDescription>{t("Create the required lesson first.")}</EmptyDescription>
-      </EmptyHeader>
-
-      <EmptyContent>
-        <Link
-          className={buttonVariants({ variant: "outline" })}
-          href={`/generate/l/${blockingPrerequisite.lessonId}`}
-          prefetch={false}
-          rel="nofollow"
-        >
-          <SparklesIcon data-icon="inline-start" />
-          {t("Open required lesson")}
-        </Link>
+  const content =
+    lesson.generationStatus !== "completed" && isGeneratedCompanionLessonKind(lesson.kind) ? (
+      <GeneratedCompanionRedirect lesson={lesson} />
+    ) : (
+      <>
+        <GenerationClient
+          chapterSlug={lesson.chapter.slug}
+          courseSlug={lesson.chapter.course.slug}
+          generationRunId={lesson.generationRunId}
+          initialStatus={initialStatus}
+          lessonId={id}
+          lessonKind={lesson.kind}
+          lessonSlug={lesson.slug}
+        />
         <GenerationExitLink href={backHref}>{backLabel}</GenerationExitLink>
-      </EmptyContent>
-    </Empty>
-  ) : (
-    <>
-      <GenerationClient
-        chapterSlug={lesson.chapter.slug}
-        courseSlug={lesson.chapter.course.slug}
-        generationRunId={lesson.generationRunId}
-        initialStatus={initialStatus}
-        lessonId={id}
-        lessonKind={lesson.kind}
-        lessonSlug={lesson.slug}
-      />
-      <GenerationExitLink href={backHref}>{backLabel}</GenerationExitLink>
-    </>
-  );
+      </>
+    );
 
   return (
     <Container variant="narrow">

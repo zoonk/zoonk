@@ -71,12 +71,11 @@ async function createTestLesson(options?: {
 }
 
 /**
- * A practice lesson depends on the explanation lessons before it. This creates
- * the smallest published AI chapter where the practice player page should send
- * the learner to the missing explanation's generation page instead of starting
- * practice generation.
+ * Practice lessons can be generated from explanation metadata before those
+ * explanations finish generating, so the player empty state should point at
+ * the practice lesson itself instead of sending learners to an explanation row.
  */
-async function createBlockedPracticeLesson() {
+async function createPracticeWithPendingExplanation() {
   const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
@@ -96,7 +95,7 @@ async function createBlockedPracticeLesson() {
     title: `E2E Blocked Player Chapter ${uniqueId}`,
   });
 
-  const [explanation, practice] = await Promise.all([
+  const [, practice] = await Promise.all([
     lessonFixture({
       chapterId: chapter.id,
       generationStatus: "pending",
@@ -119,7 +118,72 @@ async function createBlockedPracticeLesson() {
     }),
   ]);
 
-  return { chapter, course, explanation, practice };
+  return { chapter, course, practice };
+}
+
+async function createPendingCompanionLesson({
+  sourceKind,
+  targetKind,
+}: {
+  sourceKind: "reading" | "vocabulary";
+  targetKind: "listening" | "translation";
+}) {
+  const org = await getAiOrganization();
+  const uniqueId = randomUUID().slice(0, 8);
+
+  const course = await courseFixture({
+    isPublished: true,
+    language: "en",
+    organizationId: org.id,
+    slug: `e2e-companion-player-course-${uniqueId}`,
+    targetLanguage: "de",
+    title: `E2E Companion Player Course ${uniqueId}`,
+  });
+
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    isPublished: true,
+    language: "en",
+    organizationId: org.id,
+    slug: `e2e-companion-player-chapter-${uniqueId}`,
+    title: `E2E Companion Player Chapter ${uniqueId}`,
+  });
+
+  const [sourceLesson, companionLesson] = await Promise.all([
+    lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "completed",
+      isPublished: true,
+      kind: sourceKind,
+      organizationId: org.id,
+      position: 0,
+      slug: `e2e-source-${sourceKind}-${uniqueId}`,
+      title: `E2E Source ${sourceKind} ${uniqueId}`,
+    }),
+    lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: targetKind,
+      organizationId: org.id,
+      position: 1,
+      slug: `e2e-companion-${targetKind}-${uniqueId}`,
+      title: `E2E Companion ${targetKind} ${uniqueId}`,
+    }),
+  ]);
+
+  await stepFixture({
+    content: {
+      text: `Source companion step ${uniqueId}`,
+      title: `Source ${sourceKind} ${uniqueId}`,
+      variant: "text",
+    },
+    isPublished: true,
+    kind: "static",
+    lessonId: sourceLesson.id,
+  });
+
+  return { chapter, companionLesson, course, sourceLesson };
 }
 
 /**
@@ -532,23 +596,47 @@ test.describe("Lesson Player Page", () => {
     await expect(chapterLink).toHaveAttribute("href", `/b/ai/c/${course.slug}/ch/${chapter.slug}`);
   });
 
-  test("blocked practice lessons link to the required explanation generation page", async ({
+  test("pending practice lessons link to their own generation page", async ({
     authenticatedPage,
   }) => {
-    const { chapter, course, explanation, practice } = await createBlockedPracticeLesson();
+    const { chapter, course, practice } = await createPracticeWithPendingExplanation();
 
     await authenticatedPage.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${practice.slug}`);
 
-    await expect(authenticatedPage.getByText("Lesson locked")).toBeVisible();
-    await expect(authenticatedPage.getByText("Create the required lesson first.")).toBeVisible();
+    await expect(authenticatedPage.getByText("Lesson not available")).toBeVisible();
+    await expect(authenticatedPage.getByText("This lesson hasn't been created yet.")).toBeVisible();
 
-    const requiredLessonLink = authenticatedPage.getByRole("link", {
-      name: "Open required lesson",
+    const generateLink = authenticatedPage.getByRole("link", { name: "Create lesson" });
+
+    await expect(generateLink).toBeVisible();
+    await expect(generateLink).toHaveAttribute("href", `/generate/l/${practice.id}`);
+    await expect(generateLink).toHaveAttribute("rel", "nofollow");
+  });
+
+  test("pending translation player redirects to source vocabulary player", async ({ page }) => {
+    const { chapter, companionLesson, course, sourceLesson } = await createPendingCompanionLesson({
+      sourceKind: "vocabulary",
+      targetKind: "translation",
     });
 
-    await expect(requiredLessonLink).toBeVisible();
-    await expect(requiredLessonLink).toHaveAttribute("href", `/generate/l/${explanation.id}`);
-    await expect(requiredLessonLink).toHaveAttribute("rel", "nofollow");
+    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${companionLesson.slug}`);
+
+    await expect(page).toHaveURL(
+      new RegExp(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${sourceLesson.slug}$`, "u"),
+    );
+  });
+
+  test("pending listening player redirects to source reading player", async ({ page }) => {
+    const { chapter, companionLesson, course, sourceLesson } = await createPendingCompanionLesson({
+      sourceKind: "reading",
+      targetKind: "listening",
+    });
+
+    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${companionLesson.slug}`);
+
+    await expect(page).toHaveURL(
+      new RegExp(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${sourceLesson.slug}$`, "u"),
+    );
   });
 
   test("empty review lessons link to the first earlier lesson that needs generation", async ({
@@ -564,9 +652,7 @@ test.describe("Lesson Player Page", () => {
       authenticatedPage.getByText("Create earlier lessons first, then come back to review."),
     ).toBeVisible();
 
-    const requiredLessonLink = authenticatedPage.getByRole("link", {
-      name: "Open required lesson",
-    });
+    const requiredLessonLink = authenticatedPage.getByRole("link", { name: "Create lesson" });
 
     await expect(requiredLessonLink).toBeVisible();
     await expect(requiredLessonLink).toHaveAttribute("href", `/generate/l/${requiredLesson.id}`);

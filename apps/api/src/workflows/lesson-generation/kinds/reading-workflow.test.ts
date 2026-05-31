@@ -7,7 +7,6 @@ import { generateLanguageAudio } from "@zoonk/core/audio/generate";
 import { prisma } from "@zoonk/db";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { chapterWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "../steps/_test-utils/create-lesson-context";
 import { readingLessonWorkflow } from "./reading-workflow";
@@ -84,7 +83,7 @@ describe(readingLessonWorkflow, () => {
     readingState.translation = "";
   });
 
-  it("stores reading sentences and word metadata from uncovered vocabulary lessons", async () => {
+  it("stores reading sentences and word metadata from vocabulary lesson metadata", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const sourceWords = [`guten${uniqueId}`, `morgen${uniqueId}`];
     const sentence = sourceWords.join(" ");
@@ -97,30 +96,16 @@ describe(readingLessonWorkflow, () => {
       targetLanguage: "de",
     });
 
-    const [vocabularyLesson, wordRecords] = await Promise.all([
-      lessonFixture({
-        chapterId: context.chapterId,
-        generationStatus: "completed",
-        isPublished: true,
-        kind: "vocabulary",
-        organizationId,
-        position: 1,
-      }),
-      Promise.all(
-        sourceWords.map((word) => wordFixture({ organizationId, targetLanguage: "de", word })),
-      ),
-    ]);
-
-    await Promise.all(
-      wordRecords.map((word) =>
-        chapterWordFixture({
-          sourceLessonId: vocabularyLesson.id,
-          translation: `${word.word} translation`,
-          userLanguage: "en",
-          wordId: word.id,
-        }),
-      ),
-    );
+    const vocabularyLesson = await lessonFixture({
+      chapterId: context.chapterId,
+      description: `German greeting words ${uniqueId}`,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "vocabulary",
+      organizationId,
+      position: 1,
+      title: `Greeting Vocabulary ${uniqueId}`,
+    });
 
     readingState.sentence = sentence;
     readingState.translation = translation;
@@ -133,9 +118,17 @@ describe(readingLessonWorkflow, () => {
     await readingLessonWorkflow(context);
 
     expect(generateLessonSentences).toHaveBeenCalledWith(
-      expect.objectContaining({ words: expect.arrayContaining(sourceWords) }),
+      expect.objectContaining({
+        sourceLessons: [
+          {
+            description: `German greeting words ${uniqueId}`,
+            title: `Greeting Vocabulary ${uniqueId}`,
+          },
+        ],
+      }),
     );
 
+    expect(vocabularyLesson.generationStatus).toBe("pending");
     expect(generateLessonDistractors).toHaveBeenCalledTimes(2);
     expect(generateTranslation).toHaveBeenCalledTimes(sourceWords.length);
     expect(generateLessonPronunciation).toHaveBeenCalledTimes(sourceWords.length + 2);
@@ -197,23 +190,15 @@ describe(readingLessonWorkflow, () => {
       targetLanguage: "de",
     });
 
-    const [vocabularyLesson, wordRecord] = await Promise.all([
-      lessonFixture({
-        chapterId: context.chapterId,
-        generationStatus: "completed",
-        isPublished: true,
-        kind: "vocabulary",
-        organizationId,
-        position: 1,
-      }),
-      wordFixture({ organizationId, targetLanguage: "de", word: canonicalWord }),
-    ]);
-
-    await chapterWordFixture({
-      sourceLessonId: vocabularyLesson.id,
-      translation,
-      userLanguage: "en",
-      wordId: wordRecord.id,
+    await lessonFixture({
+      chapterId: context.chapterId,
+      description: `Portuguese water words ${uniqueId}`,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "vocabulary",
+      organizationId,
+      position: 1,
+      title: `Water Vocabulary ${uniqueId}`,
     });
 
     readingState.sentence = canonicalWord;

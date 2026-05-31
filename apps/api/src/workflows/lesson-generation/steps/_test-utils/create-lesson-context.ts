@@ -60,9 +60,9 @@ export async function createLessonContext({
 }
 
 /**
- * Practice and quiz generation should only use completed explanation text
- * since the previous practice or quiz lesson. This helper creates a source
- * explanation lesson with one static text step for those boundary tests.
+ * Practice and quiz generation use explanation title and description metadata
+ * since the previous practice or quiz lesson. This helper still creates a
+ * completed source lesson with one step for tests that need saved content too.
  */
 export async function createCompletedExplanation({
   chapterId,

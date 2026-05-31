@@ -16,30 +16,30 @@ describe(saveTranslationLessonStep, () => {
     organizationId = organization.id;
   });
 
-  it("creates translation steps from the previous completed vocabulary lesson", async () => {
+  it("creates translation steps for the vocabulary companion lesson", async () => {
     const context = await createLessonContext({
-      kind: "translation",
+      kind: "vocabulary",
       organizationId,
-      position: 2,
+      position: 1,
       targetLanguage: "pt",
     });
 
-    const [vocabularyLesson, firstWord, secondWord] = await Promise.all([
+    const [translationLesson, firstWord, secondWord] = await Promise.all([
       lessonFixture({
         chapterId: context.chapterId,
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
-        kind: "vocabulary",
+        kind: "translation",
         organizationId,
-        position: 1,
+        position: 2,
       }),
       wordFixture({ organizationId, targetLanguage: "pt", word: `word-a-${randomUUID()}` }),
       wordFixture({ organizationId, targetLanguage: "pt", word: `word-b-${randomUUID()}` }),
     ]);
 
     const [firstChapterWord, secondChapterWord] = await Promise.all([
-      chapterWordFixture({ sourceLessonId: vocabularyLesson.id, wordId: firstWord.id }),
-      chapterWordFixture({ sourceLessonId: vocabularyLesson.id, wordId: secondWord.id }),
+      chapterWordFixture({ sourceLessonId: context.id, wordId: firstWord.id }),
+      chapterWordFixture({ sourceLessonId: context.id, wordId: secondWord.id }),
     ]);
 
     await Promise.all([
@@ -47,7 +47,7 @@ describe(saveTranslationLessonStep, () => {
         chapterWordId: firstChapterWord.id,
         content: {},
         kind: "vocabulary",
-        lessonId: vocabularyLesson.id,
+        lessonId: context.id,
         position: 0,
         wordId: firstWord.id,
       }),
@@ -55,7 +55,7 @@ describe(saveTranslationLessonStep, () => {
         chapterWordId: secondChapterWord.id,
         content: {},
         kind: "vocabulary",
-        lessonId: vocabularyLesson.id,
+        lessonId: context.id,
         position: 1,
         wordId: secondWord.id,
       }),
@@ -65,25 +65,29 @@ describe(saveTranslationLessonStep, () => {
 
     const steps = await prisma.step.findMany({
       orderBy: { position: "asc" },
-      where: { kind: "translation", lessonId: context.id },
+      where: { kind: "translation", lessonId: translationLesson.id },
     });
 
     expect(steps.map((step) => [step.position, step.wordId, step.chapterWordId])).toStrictEqual([
       [0, firstWord.id, firstChapterWord.id],
       [1, secondWord.id, secondChapterWord.id],
     ]);
+
+    const dbTranslationLesson = await prisma.lesson.findUniqueOrThrow({
+      where: { id: translationLesson.id },
+    });
+
+    expect(dbTranslationLesson.generationStatus).toBe("completed");
   });
 
-  it("throws when a translation lesson has no completed vocabulary source", async () => {
+  it("does nothing when vocabulary has no translation companion", async () => {
     const context = await createLessonContext({
-      kind: "translation",
+      kind: "vocabulary",
       organizationId,
-      position: 2,
+      position: 1,
       targetLanguage: "pt",
     });
 
-    await expect(saveTranslationLessonStep(context)).rejects.toThrow(
-      "Translation generation needs a completed vocabulary lesson",
-    );
+    await expect(saveTranslationLessonStep(context)).resolves.toBeUndefined();
   });
 });

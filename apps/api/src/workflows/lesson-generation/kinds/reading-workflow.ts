@@ -7,11 +7,13 @@ import { generateSentenceWordAudioStep } from "../steps/generate-sentence-word-a
 import { generateSentenceWordMetadataStep } from "../steps/generate-sentence-word-metadata-step";
 import { generateSentenceWordPronunciationStep } from "../steps/generate-sentence-word-pronunciation-step";
 import { type LessonContext } from "../steps/get-lesson-step";
+import { saveListeningLessonStep } from "../steps/save-listening-lesson-step";
 import { saveReadingLessonStep } from "../steps/save-reading-lesson-step";
 
 /**
  * Reading generation is bounded by the previous reading lesson so each reading
- * lesson only reinforces the vocabulary group immediately before it.
+ * lesson follows the vocabulary metadata group immediately before it without
+ * depending on generated vocabulary rows.
  */
 export async function readingLessonWorkflow(context: LessonContext): Promise<void> {
   "use workflow";
@@ -52,4 +54,6 @@ export async function readingLessonWorkflow(context: LessonContext): Promise<voi
     wordAudioUrls,
     wordMetadata,
   });
+
+  await saveListeningLessonStep(context);
 }

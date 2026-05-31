@@ -1,9 +1,9 @@
 export type SourceLesson = { title: string; description: string };
 
 /**
- * Source lessons can come from incomplete user drafts, so each row should omit
- * empty title or description fields instead of producing awkward prompt text
- * such as `": description"`.
+ * Source lessons can come from planned rows that are not generated yet, so
+ * each row should omit empty title or description fields instead of producing
+ * awkward prompt text such as `": description"`.
  */
 function formatSourceLesson({ index, lesson }: { index: number; lesson: SourceLesson }) {
   const prefix = `${index + 1}.`;
@@ -20,9 +20,8 @@ function formatSourceLesson({ index, lesson }: { index: number; lesson: SourceLe
 }
 
 /**
- * Core practice and quiz prompts need the covered lesson scope without sending
- * every generated explanation step. Titles and descriptions keep the prompt
- * compact while still telling the model which concepts the lesson must cover.
+ * Generated lesson prompts need source scope without waiting for generated
+ * content. Titles and descriptions keep prompt context compact and stable.
  */
 export function formatSourceLessonsForPrompt(sourceLessons: SourceLesson[]) {
   return sourceLessons.map((lesson, index) => formatSourceLesson({ index, lesson })).join("\n");

@@ -1,22 +1,16 @@
 import "server-only";
 import {
   type GenerationStatus,
-  type LessonKind,
   getPublishedChapterWhere,
+  getPublishedLessonWhere,
   prisma,
 } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
-import { getBlockingLessonGenerationPrerequisite } from "../../lessons/generation-prerequisites";
-import {
-  type NextLessonInCourse,
-  getNextLessonInCourse,
-} from "../../lessons/get-next-lesson-in-course";
+import { NON_STANDALONE_GENERATED_LESSON_KINDS } from "../../lessons/generated-companion-kinds";
 import { getCompletableLessonWhere } from "./_utils/completable-lesson";
 
 const preloadableGenerationStatuses = new Set<GenerationStatus>(["pending", "failed"]);
-const preloadLookaheadLessonKinds = new Set<LessonKind>(["grammar", "listening", "translation"]);
-const maxPreloadTargets = 2;
-const maxLookaheadHops = 1;
+const maxPreloadTargets = 3;
 
 export type NextPreloadTarget =
   | { kind: "chapter"; chapterId: string }
@@ -29,8 +23,6 @@ type LessonPreloadCursor = {
   lessonPosition: number;
 };
 
-type LessonPreloadDecision = { shouldContinue: boolean; target: NextPreloadTarget | null };
-
 /**
  * Chapter generation should only be preloaded when the next chapter is still
  * empty and retryable. Running chapters already have a workflow in flight, and
@@ -38,17 +30,17 @@ type LessonPreloadDecision = { shouldContinue: boolean; target: NextPreloadTarge
  * lesson lookup instead of starting a second chapter workflow.
  */
 async function getNextChapterPreloadCandidate({
-  chapterPosition,
+  afterChapterPosition,
   courseId,
 }: {
-  chapterPosition: number;
+  afterChapterPosition: number;
   courseId: string;
 }) {
   return prisma.chapter.findFirst({
     include: { _count: { select: { lessons: true } } },
     orderBy: { position: "asc" },
     where: getPublishedChapterWhere({
-      chapterWhere: { courseId, position: { gt: chapterPosition } },
+      chapterWhere: { courseId, position: { gt: afterChapterPosition } },
     }),
   });
 }
@@ -57,69 +49,61 @@ type NextChapterPreloadCandidate = NonNullable<
   Awaited<ReturnType<typeof getNextChapterPreloadCandidate>>
 >;
 
+type NextLessonPreloadCandidate = Awaited<
+  ReturnType<typeof getNextLessonPreloadCandidates>
+>[number];
+
+/**
+ * Finds the next standalone lesson rows in course order. Generated companion
+ * rows are skipped because vocabulary and reading generation create translation
+ * and listening content.
+ */
+async function getNextLessonPreloadCandidates({
+  chapterId,
+  chapterPosition,
+  courseId,
+  lessonPosition,
+}: LessonPreloadCursor) {
+  return prisma.lesson.findMany({
+    include: { chapter: true },
+    orderBy: [{ chapter: { position: "asc" } }, { position: "asc" }],
+    take: maxPreloadTargets,
+    where: getPublishedLessonWhere({
+      courseWhere: { id: courseId },
+      lessonWhere: {
+        OR: [
+          { chapter: { id: chapterId }, position: { gt: lessonPosition } },
+          { chapter: { position: { gt: chapterPosition } } },
+        ],
+        kind: { notIn: [...NON_STANDALONE_GENERATED_LESSON_KINDS] },
+      },
+    }),
+  });
+}
+
 /**
  * Early preload should only enqueue work that can still become useful. Pending
  * and failed lessons need generation, while running and completed lessons
  * already have either active work or usable content.
  */
-function isPreloadableNextLesson(
-  nextLesson: NextLessonInCourse | null,
-): nextLesson is NextLessonInCourse {
-  if (!nextLesson) {
-    return false;
-  }
-
-  return preloadableGenerationStatuses.has(nextLesson.lessonGenerationStatus);
+function isPreloadableNextLesson(nextLesson: NextLessonPreloadCandidate): boolean {
+  return preloadableGenerationStatuses.has(nextLesson.generationStatus);
 }
 
 /**
- * Some language lessons are commonly finished before the next heavy generated
- * lesson is ready. These are the only lesson kinds this command may look
- * through, and the shared target cap still prevents broad course generation.
+ * Converts one standalone lesson row into a workflow target only when it still
+ * needs generation.
  */
-function isPreloadLookaheadLesson({ lessonKind }: NextLessonInCourse): boolean {
-  return preloadLookaheadLessonKinds.has(lessonKind);
-}
-
-/**
- * Avoids starting workflow runs that the shared prerequisite guard would block
- * anyway. This keeps lookahead generation from skipping over unfinished source
- * lessons while still reusing the same rule the generation workflow enforces.
- */
-async function isBlockedByGenerationPrerequisite({
+function getLessonPreloadTarget({
   nextLesson,
 }: {
-  nextLesson: NextLessonInCourse;
-}): Promise<boolean> {
-  const blockingPrerequisite = await getBlockingLessonGenerationPrerequisite({
-    chapterId: nextLesson.chapterId,
-    kind: nextLesson.lessonKind,
-    position: nextLesson.lessonPosition,
-  });
-
-  return Boolean(blockingPrerequisite);
-}
-
-/**
- * Decides whether the next structural lesson should be started and whether the
- * selector may continue behind it. Lookahead lessons can be looked through only
- * when their own source content is already complete.
- */
-async function getLessonPreloadDecision({
-  nextLesson,
-}: {
-  nextLesson: NextLessonInCourse;
-}): Promise<LessonPreloadDecision> {
-  if (await isBlockedByGenerationPrerequisite({ nextLesson })) {
-    return { shouldContinue: false, target: null };
+  nextLesson: NextLessonPreloadCandidate;
+}): NextPreloadTarget | null {
+  if (!isPreloadableNextLesson(nextLesson)) {
+    return null;
   }
 
-  return {
-    shouldContinue: isPreloadLookaheadLesson(nextLesson),
-    target: isPreloadableNextLesson(nextLesson)
-      ? { kind: "lesson", lessonId: nextLesson.lessonId }
-      : null,
-  };
+  return { kind: "lesson", lessonId: nextLesson.id };
 }
 
 /**
@@ -147,84 +131,81 @@ function getChapterPreloadTarget(
 }
 
 /**
- * Keeps the returned target list typed after composing the optional current
- * lesson target with any target found behind a lookahead lesson.
+ * Keeps arrays typed after filtering optional lesson and chapter targets.
  */
-function getPreloadTargets(input: {
-  laterTargets: NextPreloadTarget[];
-  target: NextPreloadTarget | null;
-}): NextPreloadTarget[] {
-  return input.target ? [input.target, ...input.laterTargets] : input.laterTargets;
+function isNextPreloadTarget(target: NextPreloadTarget | null): target is NextPreloadTarget {
+  return Boolean(target);
 }
 
 /**
- * Counts how many target slots remain after the current lesson decision. The
- * cap keeps early preload from becoming broad course generation.
+ * The next empty chapter only matters when fewer than three future lesson rows
+ * already exist. That lets chapter generation create the next lesson shells
+ * early without replacing concrete lesson rows that are already visible.
  */
-function getRemainingTargetCount({
-  remainingTargets,
-  target,
-}: {
-  remainingTargets: number;
-  target: NextPreloadTarget | null;
-}): number {
-  return target ? remainingTargets - 1 : remainingTargets;
-}
-
-/**
- * The second-step preload entry point normally starts the immediate next
- * generated lesson. Short language lessons are special: the selector may walk
- * one lookahead hop and start the slower generated lesson behind them too.
- */
-async function getNextPreloadTargetsAfterLessonPosition({
-  chapterId,
-  chapterPosition,
+async function getChapterPreloadTargetWhenNeeded({
   courseId,
-  lessonPosition,
-  remainingLookaheadHops,
-  remainingTargets,
-}: { remainingLookaheadHops: number; remainingTargets: number } & LessonPreloadCursor): Promise<
-  NextPreloadTarget[]
-> {
-  if (remainingTargets <= 0) {
-    return [];
+  currentChapterPosition,
+  nextLessons,
+}: {
+  courseId: string;
+  currentChapterPosition: number;
+  nextLessons: NextLessonPreloadCandidate[];
+}): Promise<NextPreloadTarget | null> {
+  if (nextLessons.length >= maxPreloadTargets) {
+    return null;
   }
 
-  const nextLesson = await getNextLessonInCourse({
-    chapterId,
-    chapterPosition,
-    courseId,
-    lessonPosition,
+  const afterChapterPosition = nextLessons.at(-1)?.chapter.position ?? currentChapterPosition;
+  const nextChapter = await getNextChapterPreloadCandidate({ afterChapterPosition, courseId });
+
+  return getChapterPreloadTarget(nextChapter);
+}
+
+/**
+ * Turns the next three standalone lesson rows into the subset of workflow
+ * targets that still need generation.
+ */
+function getLessonPreloadTargets(nextLessons: NextLessonPreloadCandidate[]) {
+  return nextLessons
+    .map((nextLesson) => getLessonPreloadTarget({ nextLesson }))
+    .filter((target) => isNextPreloadTarget(target));
+}
+
+/**
+ * Combines lesson and chapter targets without allowing background preload to
+ * grow past the small lookahead window used by the player.
+ */
+function getPreloadTargets({
+  chapterTarget,
+  lessonTargets,
+}: {
+  chapterTarget: NextPreloadTarget | null;
+  lessonTargets: NextPreloadTarget[];
+}): NextPreloadTarget[] {
+  return [...lessonTargets, chapterTarget]
+    .filter((target) => isNextPreloadTarget(target))
+    .slice(0, maxPreloadTargets);
+}
+
+/**
+ * The second-step preload entry point follows one simple rule: inspect the
+ * next three standalone lesson rows, generate the ones that need work, and ask
+ * for the next empty chapter only when fewer than three rows already exist.
+ */
+async function getNextPreloadTargetsAfterLessonPosition(
+  cursor: LessonPreloadCursor,
+): Promise<NextPreloadTarget[]> {
+  const nextLessons = await getNextLessonPreloadCandidates(cursor);
+
+  const lessonTargets = getLessonPreloadTargets(nextLessons);
+
+  const chapterTarget = await getChapterPreloadTargetWhenNeeded({
+    courseId: cursor.courseId,
+    currentChapterPosition: cursor.chapterPosition,
+    nextLessons,
   });
 
-  if (!nextLesson) {
-    const nextChapter = await getNextChapterPreloadCandidate({ chapterPosition, courseId });
-    const target = getChapterPreloadTarget(nextChapter);
-
-    return target ? [target] : [];
-  }
-
-  const decision = await getLessonPreloadDecision({ nextLesson });
-
-  const nextRemainingTargets = getRemainingTargetCount({
-    remainingTargets,
-    target: decision.target,
-  });
-
-  if (!decision.shouldContinue || remainingLookaheadHops <= 0 || nextRemainingTargets <= 0) {
-    return getPreloadTargets({ laterTargets: [], target: decision.target });
-  }
-
-  const laterTargets = await getNextPreloadTargetsAfterLessonPosition({
-    chapterId: nextLesson.chapterId,
-    chapterPosition: nextLesson.chapterPosition,
-    courseId,
-    lessonPosition: nextLesson.lessonPosition,
-    remainingLookaheadHops: remainingLookaheadHops - 1,
-    remainingTargets: nextRemainingTargets,
-  });
-
-  return getPreloadTargets({ laterTargets, target: decision.target });
+  return getPreloadTargets({ chapterTarget, lessonTargets });
 }
 
 /**
@@ -257,7 +238,5 @@ export async function getNextPreloadTargets({
     chapterPosition: lesson.chapter.position,
     courseId: lesson.chapter.courseId,
     lessonPosition: lesson.position,
-    remainingLookaheadHops: maxLookaheadHops,
-    remainingTargets: maxPreloadTargets,
   });
 }

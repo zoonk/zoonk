@@ -2,6 +2,7 @@ import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { serializeWorkflowError } from "@/workflows/_shared/workflow-error";
 import { handleChapterFailureStep } from "@/workflows/course-generation/steps/handle-failure-step";
 import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-generation-workflow";
+import { isStandaloneGeneratedLessonKind } from "@zoonk/core/lessons/generated-companion-kinds";
 import { CHAPTER_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
 import { type Lesson } from "@zoonk/db";
 import { getWorkflowMetadata } from "workflow";
@@ -15,6 +16,8 @@ import { generateLessonsStep } from "./steps/generate-lessons-step";
 import { getChapterStep } from "./steps/get-chapter-step";
 import { setChapterAsCompletedStep } from "./steps/set-chapter-as-completed-step";
 import { setChapterAsRunningStep } from "./steps/set-chapter-as-running-step";
+
+const INITIAL_LESSON_GENERATION_TARGET_COUNT = 3;
 
 async function generateExpandedLessons(
   context: Awaited<ReturnType<typeof getChapterStep>>,
@@ -43,6 +46,19 @@ async function generateLessonsAndCompleteChapter({
   await setChapterAsCompletedStep({ context, workflowRunId });
 
   return createdLessons;
+}
+
+/**
+ * Initial lesson generation should warm up the first standalone lesson
+ * workflows without serializing on each one. Translation and listening rows are
+ * materialized by vocabulary and reading generation, respectively.
+ */
+async function generateInitialLessons(createdLessons: Lesson[]): Promise<void> {
+  const initialLessons = createdLessons
+    .filter((lesson) => isStandaloneGeneratedLessonKind(lesson.kind))
+    .slice(0, INITIAL_LESSON_GENERATION_TARGET_COUNT);
+
+  await Promise.allSettled(initialLessons.map((lesson) => lessonGenerationWorkflow(lesson.id)));
 }
 
 export async function chapterGenerationWorkflow(chapterId: string): Promise<void> {
@@ -83,11 +99,7 @@ export async function chapterGenerationWorkflow(chapterId: string): Promise<void
     },
   );
 
-  // Generate the first lesson outside chapter failure handling so lesson
-  // failures mark that lesson without rolling back the completed chapter plan.
-  const firstLesson = createdLessons[0];
-
-  if (firstLesson) {
-    await lessonGenerationWorkflow(firstLesson.id);
-  }
+  // Generate the initial standalone lessons outside chapter failure handling so
+  // lesson failures do not roll back the completed chapter plan.
+  await generateInitialLessons(createdLessons);
 }

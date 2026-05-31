@@ -3,7 +3,6 @@ import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-o
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { getLanguagePromptContext } from "../../_utils/prompt-language";
-import { formatConceptLines } from "../config";
 import systemPrompt from "./lesson-grammar.prompt.md";
 
 const defaultModel = "openai/gpt-5.5";
@@ -35,11 +34,9 @@ export type LessonGrammarSchema = z.infer<typeof schema>;
 
 export type LessonGrammarParams = {
   chapterTitle: string;
-  concepts?: string[];
   lessonDescription: string;
   lessonTitle: string;
   model?: string;
-  neighboringConcepts?: string[];
   reasoningEffort?: ReasoningEffort;
   targetLanguage: string;
   useFallback?: boolean;
@@ -56,11 +53,9 @@ export type LessonGrammarParams = {
  */
 export async function generateLessonGrammar({
   chapterTitle,
-  concepts = [],
   lessonDescription,
   lessonTitle,
   model = defaultModel,
-  neighboringConcepts = [],
   reasoningEffort,
   targetLanguage,
   useFallback = true,
@@ -74,7 +69,6 @@ export async function generateLessonGrammar({
     CHAPTER_TITLE: ${chapterTitle}
     LESSON_TITLE: ${lessonTitle}
     LESSON_DESCRIPTION: ${lessonDescription}
-    ${formatConceptLines(concepts, neighboringConcepts)}
   `;
 
   const providerOptions = buildProviderOptions({

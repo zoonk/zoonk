@@ -50,7 +50,7 @@ export async function ReviewLessonEmpty({
             rel="nofollow"
           >
             <SparklesIcon data-icon="inline-start" />
-            {t("Open required lesson")}
+            {t("Create lesson")}
           </Link>
         </EmptyContent>
       )}

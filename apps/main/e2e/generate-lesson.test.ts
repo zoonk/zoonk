@@ -159,11 +159,10 @@ async function createPendingLesson({
 }
 
 /**
- * A pending practice lesson is locked until the explanation lessons in its
- * source range are completed. This creates the smallest chapter shape that can
- * prove the generate page sends learners to the missing explanation instead.
+ * A pending practice lesson should be generatable from explanation metadata
+ * even while the explanation content itself is still pending.
  */
-async function createBlockedPracticeLesson() {
+async function createPracticeWithPendingExplanation() {
   const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
@@ -190,7 +189,7 @@ async function createBlockedPracticeLesson() {
     title: chapterTitle,
   });
 
-  const [explanation, practice] = await Promise.all([
+  const [, practice] = await Promise.all([
     lessonFixture({
       chapterId: chapter.id,
       generationStatus: "pending",
@@ -215,7 +214,64 @@ async function createBlockedPracticeLesson() {
     }),
   ]);
 
-  return { explanation, practice };
+  return { practice };
+}
+
+async function createPendingCompanionLesson({
+  sourceKind,
+  targetKind,
+}: {
+  sourceKind: "reading" | "vocabulary";
+  targetKind: "listening" | "translation";
+}) {
+  const org = await getAiOrganization();
+  const uniqueId = randomUUID().slice(0, 8);
+
+  const course = await courseFixture({
+    isPublished: true,
+    normalizedTitle: normalizeString(`E2E Companion Generate Course ${uniqueId}`),
+    organizationId: org.id,
+    slug: `e2e-companion-generate-course-${uniqueId}`,
+    targetLanguage: "de",
+    title: `E2E Companion Generate Course ${uniqueId}`,
+  });
+
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    generationStatus: "completed",
+    isPublished: true,
+    normalizedTitle: normalizeString(`E2E Companion Generate Chapter ${uniqueId}`),
+    organizationId: org.id,
+    slug: `e2e-companion-generate-chapter-${uniqueId}`,
+    title: `E2E Companion Generate Chapter ${uniqueId}`,
+  });
+
+  const [sourceLesson, companionLesson] = await Promise.all([
+    lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: sourceKind,
+      normalizedTitle: normalizeString(`E2E Source ${sourceKind} ${uniqueId}`),
+      organizationId: org.id,
+      position: 0,
+      slug: `e2e-source-${sourceKind}-${uniqueId}`,
+      title: `E2E Source ${sourceKind} ${uniqueId}`,
+    }),
+    lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: targetKind,
+      normalizedTitle: normalizeString(`E2E Companion ${targetKind} ${uniqueId}`),
+      organizationId: org.id,
+      position: 1,
+      slug: `e2e-companion-${targetKind}-${uniqueId}`,
+      title: `E2E Companion ${targetKind} ${uniqueId}`,
+    }),
+  ]);
+
+  return { companionLesson, sourceLesson };
 }
 
 /**
@@ -339,11 +395,16 @@ test.describe("Generate Lesson Page - First Chapter Free", () => {
   });
 });
 
-test.describe("Generate Lesson Page - Prerequisites", () => {
-  test("links to the required explanation when practice is blocked", async ({
+test.describe("Generate Lesson Page - Independent Lessons", () => {
+  test("shows generation UI when practice has a pending explanation before it", async ({
     authenticatedPage,
   }) => {
-    const { explanation, practice } = await createBlockedPracticeLesson();
+    const { practice } = await createPracticeWithPendingExplanation();
+
+    await setupMockApis(authenticatedPage, {
+      statusDelayMs: 2500,
+      streamMessages: [{ status: "started", step: "getLesson" }],
+    });
 
     await authenticatedPage.goto(`/generate/l/${practice.id}`);
 
@@ -351,15 +412,43 @@ test.describe("Generate Lesson Page - Prerequisites", () => {
       authenticatedPage.getByRole("heading", { name: practice.title ?? "" }),
     ).toBeVisible();
 
-    await expect(authenticatedPage.getByText("Lesson locked")).toBeVisible();
-    await expect(authenticatedPage.getByText("Create the required lesson first.")).toBeVisible();
+    await expect(authenticatedPage.getByText(/this usually takes 1-2 minutes/iu)).toBeVisible({
+      timeout: 10_000,
+    });
+  });
 
-    const requiredLessonLink = authenticatedPage.getByRole("link", {
-      name: "Open required lesson",
+  test("redirects pending translation generation to source vocabulary generation", async ({
+    page,
+  }) => {
+    const { companionLesson, sourceLesson } = await createPendingCompanionLesson({
+      sourceKind: "vocabulary",
+      targetKind: "translation",
     });
 
-    await expect(requiredLessonLink).toBeVisible();
-    await expect(requiredLessonLink).toHaveAttribute("href", `/generate/l/${explanation.id}`);
+    await setupMockApis(page, {
+      statusDelayMs: 2500,
+      streamMessages: [{ status: "started", step: "getLesson" }],
+    });
+
+    await page.goto(`/generate/l/${companionLesson.id}`);
+
+    await expect(page).toHaveURL(new RegExp(`/generate/l/${sourceLesson.id}$`, "u"));
+  });
+
+  test("redirects pending listening generation to source reading generation", async ({ page }) => {
+    const { companionLesson, sourceLesson } = await createPendingCompanionLesson({
+      sourceKind: "reading",
+      targetKind: "listening",
+    });
+
+    await setupMockApis(page, {
+      statusDelayMs: 2500,
+      streamMessages: [{ status: "started", step: "getLesson" }],
+    });
+
+    await page.goto(`/generate/l/${companionLesson.id}`);
+
+    await expect(page).toHaveURL(new RegExp(`/generate/l/${sourceLesson.id}$`, "u"));
   });
 });
 

@@ -3,7 +3,7 @@ import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-o
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
-import { type SourceLesson, formatSourceLessonsForPrompt } from "./_utils/source-lessons";
+import { type SourceLesson, formatSourceLessonsForPrompt } from "../_utils/source-lessons";
 import systemPrompt from "./lesson-quiz.prompt.md";
 
 const defaultModel = "openai/gpt-5.5";

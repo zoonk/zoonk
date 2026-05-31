@@ -13,6 +13,7 @@ type ReadingSteps =
   | "generateSentenceWordAudio"
   | "generateSentenceWordPronunciation"
   | "saveReadingLesson"
+  | "saveListeningLesson"
   | "setLessonAsCompleted";
 
 export const READING_PHASE_STEPS = {
@@ -24,7 +25,7 @@ export const READING_PHASE_STEPS = {
   lookingUpWords: ["generateSentenceWordMetadata"],
   recordingAudio: ["generateReadingAudio"],
   recordingWordAudio: ["generateSentenceWordAudio"],
-  saving: ["saveReadingLesson", "setLessonAsCompleted"],
+  saving: ["saveReadingLesson", "saveListeningLesson", "setLessonAsCompleted"],
 } as const satisfies Record<string, readonly LessonStepName[]>;
 
 type _ValidateReading = AssertAllCovered<

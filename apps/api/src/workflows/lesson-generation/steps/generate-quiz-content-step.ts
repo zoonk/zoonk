@@ -7,9 +7,9 @@ import { type QuizLessonContent } from "./_utils/generated-lesson-content";
 import { type LessonContext } from "./get-lesson-step";
 
 /**
- * Generates quiz questions from the completed explanation lessons that have
- * not already fed an earlier quiz. The fatal prerequisite check keeps the
- * workflow from creating disconnected quizzes when source scope is missing.
+ * Generates quiz questions from explanation lesson metadata that has not
+ * already fed an earlier quiz. A fatal error still protects genuinely missing
+ * scope, but pending explanation content no longer blocks quiz generation.
  */
 export async function generateQuizContentStep(context: LessonContext): Promise<QuizLessonContent> {
   "use step";
@@ -20,7 +20,7 @@ export async function generateQuizContentStep(context: LessonContext): Promise<Q
   const sourceLessons = await getSourceLessonsSinceLastLessonKind({ context, kind: "quiz" });
 
   if (sourceLessons.length === 0) {
-    throw new FatalError("Quiz generation needs completed explanation lessons");
+    throw new FatalError("Quiz generation needs explanation lesson metadata");
   }
 
   const result = await generateLessonQuiz({

@@ -63,6 +63,7 @@ describe(chapterGenerationWorkflow, () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(lessonGenerationWorkflow).mockResolvedValue("ready");
   });
 
   describe("early returns", () => {
@@ -140,7 +141,7 @@ describe(chapterGenerationWorkflow, () => {
   });
 
   describe("happy path", () => {
-    it("calls lessonGenerationWorkflow with first lesson's ID without generating a chapter image", async () => {
+    it("starts the first three generated lessons in parallel without generating a chapter image", async () => {
       const title = `Lesson Gen Chapter ${randomUUID()}`;
 
       const chapter = await chapterFixture({
@@ -150,18 +151,72 @@ describe(chapterGenerationWorkflow, () => {
         title,
       });
 
-      await chapterGenerationWorkflow(chapter.id);
+      const lessonResolvers: (() => void)[] = [];
+
+      vi.mocked(lessonGenerationWorkflow).mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            lessonResolvers.push(() => resolve("ready"));
+          }),
+      );
+
+      const workflowPromise = chapterGenerationWorkflow(chapter.id);
+
+      await vi.waitFor(() => {
+        expect(lessonGenerationWorkflow).toHaveBeenCalledTimes(3);
+      });
+
+      lessonResolvers.forEach((resolveLesson) => resolveLesson());
+
+      await workflowPromise;
 
       const [lessons, dbChapter] = await Promise.all([
         prisma.lesson.findMany({ orderBy: { position: "asc" }, where: { chapterId: chapter.id } }),
         prisma.chapter.findUnique({ where: { id: chapter.id } }),
       ]);
 
-      expect(lessonGenerationWorkflow).toHaveBeenCalledWith(lessons[0]?.id);
+      expect(lessonGenerationWorkflow).toHaveBeenCalledTimes(3);
+      expect(lessonGenerationWorkflow).toHaveBeenNthCalledWith(1, lessons[0]?.id);
+      expect(lessonGenerationWorkflow).toHaveBeenNthCalledWith(2, lessons[1]?.id);
+      expect(lessonGenerationWorkflow).toHaveBeenNthCalledWith(3, lessons[2]?.id);
       expect(lessons.every((lesson) => lesson.imageUrl === null)).toBe(true);
 
       expect(dbChapter?.imageUrl).toBeNull();
       expect(generateContentThumbnailImage).not.toHaveBeenCalled();
+    });
+
+    it("skips derived language lessons when starting the initial generated lesson batch", async () => {
+      const languageCourse = await courseFixture({
+        organizationId,
+        targetLanguage: "es",
+        title: `Language Course ${randomUUID()}`,
+      });
+
+      const chapter = await chapterFixture({
+        courseId: languageCourse.id,
+        generationStatus: "pending",
+        organizationId,
+        title: `Language Chapter ${randomUUID()}`,
+      });
+
+      await chapterGenerationWorkflow(chapter.id);
+
+      const lessons = await prisma.lesson.findMany({
+        orderBy: { position: "asc" },
+        where: { chapterId: chapter.id },
+      });
+
+      const calledLessonIds = new Set(
+        vi.mocked(lessonGenerationWorkflow).mock.calls.map(([lessonId]) => lessonId),
+      );
+
+      const calledLessonKinds = lessons
+        .filter((lesson) => calledLessonIds.has(lesson.id))
+        .map((lesson) => lesson.kind);
+
+      expect(calledLessonKinds).toStrictEqual(["vocabulary", "vocabulary", "reading"]);
+      expect(calledLessonKinds).not.toContain("translation");
+      expect(calledLessonKinds).not.toContain("listening");
     });
 
     it("sets chapter as completed before the first lesson generation runs", async () => {
@@ -208,7 +263,7 @@ describe(chapterGenerationWorkflow, () => {
   });
 
   describe("error handling", () => {
-    it("chapter stays completed when first lesson generation throws", async () => {
+    it("keeps the chapter completed when an initial lesson generation fails", async () => {
       vi.mocked(lessonGenerationWorkflow).mockRejectedValueOnce(
         new Error("Lesson generation failed"),
       );
@@ -222,9 +277,7 @@ describe(chapterGenerationWorkflow, () => {
         title,
       });
 
-      await expect(chapterGenerationWorkflow(chapter.id)).rejects.toThrow(
-        "Lesson generation failed",
-      );
+      await expect(chapterGenerationWorkflow(chapter.id)).resolves.toBeUndefined();
 
       const dbChapter = await prisma.chapter.findUnique({ where: { id: chapter.id } });
 

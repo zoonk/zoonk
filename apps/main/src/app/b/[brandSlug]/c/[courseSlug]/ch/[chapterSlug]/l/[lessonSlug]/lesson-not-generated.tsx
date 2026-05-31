@@ -17,19 +17,15 @@ export async function LessonNotGenerated({
   brandSlug,
   chapterSlug,
   courseSlug,
-  lessonId,
-  prerequisiteLessonId,
+  generationLessonId,
 }: {
   brandSlug: string;
   chapterSlug: string;
   courseSlug: string;
-  lessonId: string;
-  prerequisiteLessonId?: string | null;
+  generationLessonId?: string | null;
 }) {
   const t = await getExtracted();
-  const canGenerateLesson = brandSlug === AI_ORG_SLUG;
-  const generationLessonId = prerequisiteLessonId ?? lessonId;
-  const isBlockedByPrerequisite = Boolean(prerequisiteLessonId);
+  const canGenerateLesson = brandSlug === AI_ORG_SLUG && Boolean(generationLessonId);
   const chapterHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}` as const;
 
   return (
@@ -39,19 +35,13 @@ export async function LessonNotGenerated({
           <SparklesIcon />
         </EmptyMedia>
 
-        <EmptyTitle>
-          {isBlockedByPrerequisite ? t("Lesson locked") : t("Lesson not available")}
-        </EmptyTitle>
+        <EmptyTitle>{t("Lesson not available")}</EmptyTitle>
 
-        <EmptyDescription>
-          {isBlockedByPrerequisite
-            ? t("Create the required lesson first.")
-            : t("This lesson hasn't been created yet.")}
-        </EmptyDescription>
+        <EmptyDescription>{t("This lesson hasn't been created yet.")}</EmptyDescription>
       </EmptyHeader>
 
       <EmptyContent>
-        {canGenerateLesson && (
+        {canGenerateLesson && generationLessonId && (
           <Link
             className={buttonVariants({ variant: "outline" })}
             href={`/generate/l/${generationLessonId}`}
@@ -59,7 +49,7 @@ export async function LessonNotGenerated({
             rel="nofollow"
           >
             <SparklesIcon data-icon="inline-start" />
-            {isBlockedByPrerequisite ? t("Open required lesson") : t("Create lesson")}
+            {t("Create lesson")}
           </Link>
         )}
         <GenerationExitLink href={chapterHref}>{t("Back to chapter")}</GenerationExitLink>

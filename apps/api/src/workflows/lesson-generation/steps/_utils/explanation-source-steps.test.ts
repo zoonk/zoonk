@@ -58,18 +58,19 @@ async function createContext({
 }
 
 /**
- * Completed explanation lessons are the only source content practice and quiz
- * lessons should see. Title and description are the compact metadata passed to
- * the AI prompt for both generated lesson kinds.
+ * Explanation source metadata comes from planned lesson rows, so generation
+ * status should not decide whether practice and quiz can receive that scope.
  */
-async function createCompletedExplanation({
+async function createSourceExplanation({
   chapterId,
+  generationStatus = "completed",
   organizationId,
   position,
   text,
   title,
 }: {
   chapterId: string;
+  generationStatus?: "completed" | "pending";
   organizationId: string;
   position: number;
   text: string;
@@ -78,7 +79,7 @@ async function createCompletedExplanation({
   const lesson = await lessonFixture({
     chapterId,
     description: text,
-    generationStatus: "completed",
+    generationStatus,
     isPublished: true,
     kind: "explanation",
     organizationId,
@@ -129,7 +130,7 @@ describe("explanation source lesson helpers", () => {
     const context = await createContext({ kind: "practice", organizationId, position: 4 });
 
     await Promise.all([
-      createCompletedExplanation({
+      createSourceExplanation({
         chapterId: context.chapterId,
         organizationId,
         position: 0,
@@ -144,8 +145,9 @@ describe("explanation source lesson helpers", () => {
         organizationId,
         position: 1,
       }),
-      createCompletedExplanation({
+      createSourceExplanation({
         chapterId: context.chapterId,
+        generationStatus: "pending",
         organizationId,
         position: 2,
         text: "New explanation",
@@ -164,14 +166,17 @@ describe("explanation source lesson helpers", () => {
 
     const sourceLessons = await getSourceLessonsSinceLastLessonKind({ context, kind: "practice" });
 
-    expect(sourceLessons).toStrictEqual([{ description: "New explanation", title: "New" }]);
+    expect(sourceLessons).toStrictEqual([
+      { description: "New explanation", title: "New" },
+      { description: "Test lesson description", title: "Pending explanation" },
+    ]);
   });
 
   it("returns source lesson metadata since the previous quiz", async () => {
     const context = await createContext({ kind: "quiz", organizationId, position: 5 });
 
     await Promise.all([
-      createCompletedExplanation({
+      createSourceExplanation({
         chapterId: context.chapterId,
         organizationId,
         position: 0,
@@ -186,8 +191,9 @@ describe("explanation source lesson helpers", () => {
         organizationId,
         position: 1,
       }),
-      createCompletedExplanation({
+      createSourceExplanation({
         chapterId: context.chapterId,
+        generationStatus: "pending",
         organizationId,
         position: 2,
         text: "New quiz source",

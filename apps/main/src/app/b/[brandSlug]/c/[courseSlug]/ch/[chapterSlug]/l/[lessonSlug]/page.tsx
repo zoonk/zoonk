@@ -4,7 +4,11 @@ import { getLesson as getCatalogLesson } from "@/data/lessons/get-lesson";
 import { getLessonDisplayMeta, getLessonSeoMeta } from "@/lib/lessons";
 import { hasActiveSubscription } from "@zoonk/core/auth/subscription";
 import { getLessonAccessRequirement } from "@zoonk/core/lessons/access";
-import { getBlockingLessonGenerationPrerequisite } from "@zoonk/core/lessons/generation-prerequisites";
+import { isStandaloneGeneratedLessonKind } from "@zoonk/core/lessons/generated-companion-kinds";
+import {
+  getSourceLessonForGeneratedCompanion,
+  isGeneratedCompanionLessonKind,
+} from "@zoonk/core/lessons/generated-companions";
 import { getNextChapterInCourse } from "@zoonk/core/lessons/next-chapter-in-course";
 import { getNextLessonInCourse } from "@zoonk/core/lessons/next-in-course";
 import { startLesson } from "@zoonk/core/player/commands/start-lesson";
@@ -29,7 +33,7 @@ import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { headers } from "next/headers";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { after } from "next/server";
 import { fetchReviewLessonData } from "./lesson-data-loaders";
 import { LessonNotGenerated } from "./lesson-not-generated";
@@ -107,23 +111,44 @@ async function getLessonAccessGate({
   );
 }
 
-/**
- * Generation recovery links only apply to AI-owned lessons. Courses from other
- * organizations can still show the not-generated state, but they should not
- * expose AI generation prerequisite links.
- */
-async function getAiBlockingLessonGenerationPrerequisite({
+async function getNotGeneratedStandaloneGenerationId({
   brandSlug,
   lesson,
 }: {
   brandSlug: string;
   lesson: PlayerLesson;
-}) {
+}): Promise<string | null> {
   if (brandSlug !== AI_ORG_SLUG) {
     return null;
   }
 
-  return getBlockingLessonGenerationPrerequisite(lesson);
+  if (isStandaloneGeneratedLessonKind(lesson.kind)) {
+    return lesson.id;
+  }
+
+  return null;
+}
+
+async function redirectGeneratedCompanionToSourceLesson({
+  brandSlug,
+  chapterSlug,
+  courseSlug,
+  lesson,
+}: {
+  brandSlug: string;
+  chapterSlug: string;
+  courseSlug: string;
+  lesson: PlayerLesson;
+}): Promise<void> {
+  if (brandSlug !== AI_ORG_SLUG || !isGeneratedCompanionLessonKind(lesson.kind)) {
+    return;
+  }
+
+  const sourceLesson = await getSourceLessonForGeneratedCompanion(lesson);
+
+  if (sourceLesson) {
+    redirect(`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${sourceLesson.slug}`);
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -181,10 +206,8 @@ export default async function LessonPage({ params }: Props) {
   }
 
   if (lesson.generationStatus !== "completed") {
-    const blockingPrerequisite = await getAiBlockingLessonGenerationPrerequisite({
-      brandSlug,
-      lesson,
-    });
+    await redirectGeneratedCompanionToSourceLesson({ brandSlug, chapterSlug, courseSlug, lesson });
+    const generationLessonId = await getNotGeneratedStandaloneGenerationId({ brandSlug, lesson });
 
     return (
       <main className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center p-4">
@@ -192,8 +215,7 @@ export default async function LessonPage({ params }: Props) {
           brandSlug={brandSlug}
           chapterSlug={chapterSlug}
           courseSlug={courseSlug}
-          lessonId={lesson.id}
-          prerequisiteLessonId={blockingPrerequisite?.lessonId ?? null}
+          generationLessonId={generationLessonId}
         />
       </main>
     );

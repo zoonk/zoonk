@@ -1,31 +1,32 @@
 import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { serializeWorkflowError } from "@/workflows/_shared/workflow-error";
+import {
+  type StandaloneGeneratedLessonKind,
+  isStandaloneGeneratedLessonKind,
+} from "@zoonk/core/lessons/generated-companion-kinds";
 import { LESSON_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata } from "workflow";
 import { alphabetLessonWorkflow } from "./kinds/alphabet-workflow";
 import { explanationLessonWorkflow } from "./kinds/explanation-workflow";
 import { grammarLessonWorkflow } from "./kinds/grammar-workflow";
-import { listeningLessonWorkflow } from "./kinds/listening-workflow";
 import { practiceLessonWorkflow } from "./kinds/practice-workflow";
 import { quizLessonWorkflow } from "./kinds/quiz-workflow";
 import { readingLessonWorkflow } from "./kinds/reading-workflow";
-import { translationLessonWorkflow } from "./kinds/translation-workflow";
 import { tutorialLessonWorkflow } from "./kinds/tutorial-workflow";
 import { vocabularyLessonWorkflow } from "./kinds/vocabulary-workflow";
 import { generateLessonImageStep } from "./steps/generate-lesson-image-step";
-import { getBlockingGenerationPrerequisiteStep } from "./steps/get-blocking-generation-prerequisite-step";
 import { getLessonStep } from "./steps/get-lesson-step";
 import { handleLessonFailureStep } from "./steps/handle-failure-step";
+import { saveListeningLessonStep } from "./steps/save-listening-lesson-step";
+import { saveTranslationLessonStep } from "./steps/save-translation-lesson-step";
 import { setLessonAsCompletedStep } from "./steps/set-lesson-as-completed-step";
 import { setLessonAsRunningStep } from "./steps/set-lesson-as-running-step";
 
 type LessonGenerationContext = Awaited<ReturnType<typeof getLessonStep>>;
 
-type GeneratedLessonContext = LessonGenerationContext & {
-  kind: Exclude<LessonGenerationContext["kind"], "custom" | "review">;
-};
+type GeneratedLessonContext = LessonGenerationContext & { kind: StandaloneGeneratedLessonKind };
 
-type LessonGenerationResult = "blocked" | "filtered" | "ready";
+type LessonGenerationResult = "filtered" | "ready";
 
 /**
  * Running lessons already have another workflow owner, so this run should avoid
@@ -52,11 +53,11 @@ function shouldRepairExistingSteps(context: LessonGenerationContext): boolean {
   return context.generationStatus !== "failed" && context._count.steps > 0;
 }
 
-/** Custom and review lesson rows are not AI-generated lesson content. */
+/** Custom, review, and generated-companion rows have no standalone AI workflow. */
 function isGeneratedLessonContext(
   context: LessonGenerationContext,
 ): context is GeneratedLessonContext {
-  return context.kind !== "custom" && context.kind !== "review";
+  return isStandaloneGeneratedLessonKind(context.kind);
 }
 
 /**
@@ -95,18 +96,8 @@ async function generateLessonForKind(context: GeneratedLessonContext): Promise<v
     return;
   }
 
-  if (context.kind === "translation") {
-    await translationLessonWorkflow(context);
-    return;
-  }
-
   if (context.kind === "reading") {
     await readingLessonWorkflow(context);
-    return;
-  }
-
-  if (context.kind === "listening") {
-    await listeningLessonWorkflow(context);
     return;
   }
 
@@ -116,10 +107,25 @@ async function generateLessonForKind(context: GeneratedLessonContext): Promise<v
 }
 
 /**
+ * Completed vocabulary and reading rows may be revisited from a pending
+ * translation/listening redirect. In that repair path, reuse the completed
+ * source resources to materialize the companion row without rerunning AI work.
+ */
+async function saveGeneratedCompanionForSource(context: LessonGenerationContext): Promise<void> {
+  if (context.kind === "vocabulary") {
+    await saveTranslationLessonStep(context);
+    return;
+  }
+
+  if (context.kind === "reading") {
+    await saveListeningLessonStep(context);
+  }
+}
+
+/**
  * Owns the lesson row lifecycle for first-time content generation: skip active
  * reruns, emit completion for already-generated lessons, repair stale statuses,
- * block on unfinished source lessons, run the kind-specific workflow, and mark
- * the lesson completed or failed.
+ * run the kind-specific workflow, and mark the lesson completed or failed.
  */
 async function runLessonGeneration(input: {
   context: LessonGenerationContext;
@@ -131,6 +137,7 @@ async function runLessonGeneration(input: {
   }
 
   if (shouldStreamExistingCompletion(input.context)) {
+    await saveGeneratedCompanionForSource(input.context);
     await streamSkipStep(LESSON_COMPLETION_STEP);
     return "ready";
   }
@@ -142,12 +149,6 @@ async function runLessonGeneration(input: {
 
   if (!isGeneratedLessonContext(input.context)) {
     return "filtered";
-  }
-
-  const blockingPrerequisite = await getBlockingGenerationPrerequisiteStep(input.context);
-
-  if (blockingPrerequisite) {
-    return "blocked";
   }
 
   const claimResult = await setLessonAsRunningStep({

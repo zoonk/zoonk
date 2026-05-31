@@ -7,7 +7,7 @@ import {
 import { TEST_CASES } from "./test-cases";
 
 export const lessonSentencesTask: Task<LessonSentencesParams, LessonSentencesSchema> = {
-  description: "Generate practice sentences using vocabulary words for language learning",
+  description: "Generate practice sentences from language lesson metadata",
   generate: generateLessonSentences,
   id: "lesson-sentences",
   name: "Lesson Sentences",

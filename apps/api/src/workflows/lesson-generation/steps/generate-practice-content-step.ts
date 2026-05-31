@@ -7,9 +7,9 @@ import { type PracticeLessonContent } from "./_utils/generated-lesson-content";
 import { type LessonContext } from "./get-lesson-step";
 
 /**
- * Generates practice content from the completed explanation lessons that have
- * not already fed an earlier practice. That keeps each practice focused on the
- * preceding explanation group instead of the whole chapter.
+ * Generates practice content from explanation lesson metadata that has not
+ * already fed an earlier practice. The source lessons do not need generated
+ * content because title and description carry the practice scope.
  */
 export async function generatePracticeContentStep(
   context: LessonContext,
@@ -22,7 +22,7 @@ export async function generatePracticeContentStep(
   const sourceLessons = await getSourceLessonsSinceLastLessonKind({ context, kind: "practice" });
 
   if (sourceLessons.length === 0) {
-    throw new FatalError("Practice generation needs completed explanation lessons");
+    throw new FatalError("Practice generation needs explanation lesson metadata");
   }
 
   const result = await generateLessonPractice({
