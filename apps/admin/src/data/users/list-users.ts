@@ -1,16 +1,11 @@
 import "server-only";
+import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { findUserActiveSubscription } from "@/data/users/find-active-subscription";
-import { isAdmin } from "@/lib/admin-guard";
 import { type UserSort } from "@/lib/user-sort";
 import { type Subscription, prisma } from "@zoonk/db";
-import { cache } from "react";
 
-const cachedListUsers = cache(
+const cachedListUsers = cacheAdminData(
   async (limit: number, offset: number, sort: UserSort, search?: string) => {
-    if (!(await isAdmin())) {
-      return { total: 0, users: [] };
-    }
-
     const where = getUserSearchWhere({ search });
 
     const [users, total] = await Promise.all([

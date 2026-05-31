@@ -1,8 +1,8 @@
 import "server-only";
-import { adminStatsCache as cache } from "@/data/stats/_utils/admin-stats-cache";
+import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { prisma } from "@zoonk/db";
 
-export const countContent = cache(async () => {
+export const countContent = cacheAdminData(async () => {
   const [courses, chapters, lessons, steps, completedLessonsByKind] = await Promise.all([
     prisma.course.count(),
     prisma.chapter.count(),

@@ -1,8 +1,8 @@
 import "server-only";
-import { adminStatsCache as cache } from "@/data/stats/_utils/admin-stats-cache";
+import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { prisma } from "@zoonk/db";
 
-export const getActivationRate = cache(async () => {
+export const getActivationRate = cacheAdminData(async () => {
   const [activatedResult, total] = await Promise.all([
     prisma.$queryRaw<[{ count: bigint }]>`
       SELECT COUNT(DISTINCT user_id) as count

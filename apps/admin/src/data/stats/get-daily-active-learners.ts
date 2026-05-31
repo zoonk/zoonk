@@ -1,8 +1,8 @@
 import "server-only";
-import { adminStatsCache as cache } from "@/data/stats/_utils/admin-stats-cache";
+import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { prisma } from "@zoonk/db";
 
-export const getDailyActiveLearners = cache(async (start: Date, end: Date) => {
+export const getDailyActiveLearners = cacheAdminData(async (start: Date, end: Date) => {
   const results = await prisma.$queryRaw<{ date: Date; count: bigint }[]>`
     SELECT date, COUNT(DISTINCT user_id) as count
     FROM daily_progress

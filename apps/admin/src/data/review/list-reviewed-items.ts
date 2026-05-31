@@ -1,15 +1,10 @@
 import "server-only";
-import { isAdmin } from "@/lib/admin-guard";
+import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { type ReviewTaskType } from "@/lib/review-utils";
 import { prisma } from "@zoonk/db";
-import { cache } from "react";
 
-const cachedListReviewedItems = cache(
+const cachedListReviewedItems = cacheAdminData(
   async (taskType: string, status: string, limit: number, offset: number) => {
-    if (!(await isAdmin())) {
-      return { items: [], total: 0 };
-    }
-
     const where = { status, taskType };
 
     const [items, total] = await Promise.all([

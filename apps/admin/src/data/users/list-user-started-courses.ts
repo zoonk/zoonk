@@ -1,7 +1,6 @@
 import "server-only";
-import { isAdmin } from "@/lib/admin-guard";
+import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { prisma } from "@zoonk/db";
-import { cache } from "react";
 
 type UserStartedCourseRow = Awaited<ReturnType<typeof findUserStartedCourseRows>>[number];
 
@@ -11,11 +10,7 @@ type UserCompletedCourseChapter = Awaited<
 
 export type UserStartedCourse = UserStartedCourseRow & { completedChapterCount: number };
 
-const cachedListUserStartedCourses = cache(async (userId: string) => {
-  if (!(await isAdmin())) {
-    return [];
-  }
-
+const cachedListUserStartedCourses = cacheAdminData(async (userId: string) => {
   const courses = await findUserStartedCourseRows({ userId });
 
   return addCompletedChapterCounts({ courses, userId });

@@ -1,7 +1,6 @@
 import "server-only";
-import { isAdmin } from "@/lib/admin-guard";
+import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { type LessonKind, prisma } from "@zoonk/db";
-import { cache } from "react";
 
 type CompletedLessonRow = Awaited<ReturnType<typeof findUserCompletedLessonRows>>[number];
 type LearningDayRow = Awaited<ReturnType<typeof findUserLearningDayRows>>[number];
@@ -26,25 +25,16 @@ export type UserLearningStats = {
   totalLearningSeconds: number;
 };
 
-const emptyUserLearningStats: UserLearningStats = {
-  completedLessons: 0,
-  learningDays: 0,
-  lessonKinds: [],
-  totalLearningSeconds: 0,
-};
+const cachedGetUserLearningStats = cacheAdminData(
+  async (userId: string): Promise<UserLearningStats> => {
+    const [completedLessons, learningDays] = await Promise.all([
+      findUserCompletedLessonRows({ userId }),
+      findUserLearningDayRows({ userId }),
+    ]);
 
-const cachedGetUserLearningStats = cache(async (userId: string): Promise<UserLearningStats> => {
-  if (!(await isAdmin())) {
-    return emptyUserLearningStats;
-  }
-
-  const [completedLessons, learningDays] = await Promise.all([
-    findUserCompletedLessonRows({ userId }),
-    findUserLearningDayRows({ userId }),
-  ]);
-
-  return buildUserLearningStats({ completedLessons, learningDays });
-});
+    return buildUserLearningStats({ completedLessons, learningDays });
+  },
+);
 
 /**
  * User detail sections pass route params as primitive cache keys so React can

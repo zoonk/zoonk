@@ -1,19 +1,20 @@
 import "server-only";
-import { isAdmin } from "@/lib/admin-guard";
+import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { REVIEW_TASK_TYPES, type ReviewTaskType } from "@/lib/review-utils";
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { cache } from "react";
 
-export const reviewedEntityIds = cache(async (taskType: ReviewTaskType): Promise<string[]> => {
-  const reviews = await prisma.contentReview.findMany({
-    select: { entityId: true },
-    where: { taskType },
-  });
+export const reviewedEntityIds = cacheAdminData(
+  async (taskType: ReviewTaskType): Promise<string[]> => {
+    const reviews = await prisma.contentReview.findMany({
+      select: { entityId: true },
+      where: { taskType },
+    });
 
-  return reviews.map((review) => review.entityId);
-});
+    return reviews.map((review) => review.entityId);
+  },
+);
 
 function hasStepImage(content: unknown): boolean {
   try {
@@ -57,56 +58,56 @@ function countPendingSentenceAudio(excludeIds: string[]): Promise<number> {
   });
 }
 
-export const countPendingForTask = cache(async (taskType: ReviewTaskType): Promise<number> => {
-  const excludeIds = await reviewedEntityIds(taskType);
+export const countPendingForTask = cacheAdminData(
+  async (taskType: ReviewTaskType): Promise<number> => {
+    const excludeIds = await reviewedEntityIds(taskType);
 
-  if (taskType === "courseSuggestions") {
-    return prisma.searchPrompt.count({
-      where: { NOT: { id: { in: excludeIds } }, suggestions: { some: {} } },
-    });
-  }
+    if (taskType === "courseSuggestions") {
+      return prisma.searchPrompt.count({
+        where: { NOT: { id: { in: excludeIds } }, suggestions: { some: {} } },
+      });
+    }
 
-  if (taskType === "stepImage") {
-    return countPendingStepImage(excludeIds);
-  }
+    if (taskType === "stepImage") {
+      return countPendingStepImage(excludeIds);
+    }
 
-  if (taskType === "stepSelectImage") {
-    return prisma.step.count({
-      where: {
-        NOT: { id: { in: excludeIds } },
-        kind: "selectImage",
-        lesson: { organization: { slug: AI_ORG_SLUG } },
-      },
-    });
-  }
+    if (taskType === "stepSelectImage") {
+      return prisma.step.count({
+        where: {
+          NOT: { id: { in: excludeIds } },
+          kind: "selectImage",
+          lesson: { organization: { slug: AI_ORG_SLUG } },
+        },
+      });
+    }
 
-  if (taskType === "wordAudio") {
-    return countPendingWordAudio(excludeIds);
-  }
+    if (taskType === "wordAudio") {
+      return countPendingWordAudio(excludeIds);
+    }
 
-  if (taskType === "sentenceAudio") {
-    return countPendingSentenceAudio(excludeIds);
-  }
+    if (taskType === "sentenceAudio") {
+      return countPendingSentenceAudio(excludeIds);
+    }
 
-  return 0;
-});
+    return 0;
+  },
+);
 
 function emptyCountRecord(): Record<ReviewTaskType, number> {
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- entries are generated from REVIEW_TASK_TYPES
   return Object.fromEntries(REVIEW_TASK_TYPES.map((t) => [t, 0])) as Record<ReviewTaskType, number>;
 }
 
-export const countPendingReviews = cache(async (): Promise<Record<ReviewTaskType, number>> => {
-  if (!(await isAdmin())) {
-    return emptyCountRecord();
-  }
+export const countPendingReviews = cacheAdminData(
+  async (): Promise<Record<ReviewTaskType, number>> => {
+    const counts = await Promise.all(
+      REVIEW_TASK_TYPES.map(async (taskType) => {
+        const count = await countPendingForTask(taskType);
+        return [taskType, count] as const;
+      }),
+    );
 
-  const counts = await Promise.all(
-    REVIEW_TASK_TYPES.map(async (taskType) => {
-      const count = await countPendingForTask(taskType);
-      return [taskType, count] as const;
-    }),
-  );
-
-  return { ...emptyCountRecord(), ...Object.fromEntries(counts) };
-});
+    return { ...emptyCountRecord(), ...Object.fromEntries(counts) };
+  },
+);

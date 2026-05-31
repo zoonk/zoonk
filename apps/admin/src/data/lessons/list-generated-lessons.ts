@@ -1,8 +1,7 @@
 import "server-only";
-import { isAdmin } from "@/lib/admin-guard";
+import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { type GeneratedLessonStatus } from "@/lib/generated-lesson-status";
 import { type LessonKind, prisma } from "@zoonk/db";
-import { cache } from "react";
 
 const aiGeneratedLessonKinds = [
   "alphabet",
@@ -15,12 +14,8 @@ const aiGeneratedLessonKinds = [
   "vocabulary",
 ] as const satisfies readonly LessonKind[];
 
-const cachedListGeneratedLessons = cache(
+const cachedListGeneratedLessons = cacheAdminData(
   async (limit: number, offset: number, status: GeneratedLessonStatus, search?: string) => {
-    if (!(await isAdmin())) {
-      return { lessons: [], total: 0 };
-    }
-
     const where = buildGeneratedLessonWhere({ search, status });
 
     const [lessons, total] = await Promise.all([

@@ -1,5 +1,5 @@
 import "server-only";
-import { adminStatsCache as cache } from "@/data/stats/_utils/admin-stats-cache";
+import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { prisma } from "@zoonk/db";
 
-export const countUsers = cache(() => prisma.user.count());
+export const countUsers = cacheAdminData(() => prisma.user.count());

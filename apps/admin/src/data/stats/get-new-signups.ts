@@ -1,7 +1,7 @@
 import "server-only";
-import { adminStatsCache as cache } from "@/data/stats/_utils/admin-stats-cache";
+import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { prisma } from "@zoonk/db";
 
-export const getNewSignups = cache(async (start: Date, end: Date) =>
+export const getNewSignups = cacheAdminData(async (start: Date, end: Date) =>
   prisma.user.count({ where: { createdAt: { gte: start, lte: end } } }),
 );
