@@ -1,3 +1,8 @@
+import {
+  type ContinueLessonProgress,
+  getChapterContinueProgress,
+  getCourseContinueProgress,
+} from "@/data/progress/catalog-progress";
 import { type LessonScope } from "@zoonk/core/lessons/last-completed";
 import { getContinueLessonTarget } from "@zoonk/core/progress/continue-lesson-target";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
@@ -6,6 +11,8 @@ import { ChevronRightIcon } from "lucide-react";
 import { type Route } from "next";
 import { getExtracted } from "next-intl/server";
 import Link from "next/link";
+
+type ContinueLessonProgressContent = { ariaLabel: string; text: string };
 
 function getScope(props: {
   chapterId?: string;
@@ -27,6 +34,74 @@ function getScope(props: {
   throw new Error("ContinueLessonLink requires a course, chapter, or lesson id.");
 }
 
+/**
+ * Progress can start at zero, but it still needs a valid total before it is
+ * worth replacing the arrow. Clamping the completed count keeps stale or
+ * duplicated completion rows from making the compact fraction impossible.
+ */
+function getVisibleProgress({ progress }: { progress?: ContinueLessonProgress | null }) {
+  if (!progress || progress.totalItems <= 0) {
+    return null;
+  }
+
+  return {
+    completedItems: Math.min(Math.max(progress.completedItems, 0), progress.totalItems),
+    totalItems: progress.totalItems,
+    unit: progress.unit,
+  };
+}
+
+/**
+ * The Continue button owns its compact progress suffix. Looking up progress
+ * from the scope keeps pages from threading promises through sibling
+ * components just to feed this small visual hint.
+ */
+function getContinueLessonProgress({ scope }: { scope: LessonScope }) {
+  if ("courseId" in scope) {
+    return getCourseContinueProgress(scope.courseId);
+  }
+
+  if ("chapterId" in scope) {
+    return getChapterContinueProgress(scope.chapterId);
+  }
+
+  return Promise.resolve(null);
+}
+
+/**
+ * The visible suffix is intentionally just a fraction so the mobile CTA stays
+ * compact, while the hidden text gives screen readers the full meaning.
+ */
+function ContinueLessonLinkContent({
+  label,
+  progress,
+}: {
+  label: string;
+  progress: ContinueLessonProgressContent | null;
+}) {
+  if (!progress) {
+    return (
+      <span className="inline-flex min-w-0 items-center justify-center gap-1.5">
+        {label}
+        <ChevronRightIcon aria-hidden="true" />
+      </span>
+    );
+  }
+
+  return (
+    <span className="inline-flex min-w-0 items-baseline justify-center gap-1.5 leading-none">
+      <span className="min-w-0 truncate leading-none">{label}</span>
+      <span
+        aria-hidden="true"
+        className="text-primary-foreground/65 text-[0.7rem] leading-none font-medium tabular-nums"
+      >
+        {progress.text}
+      </span>
+      <span className="sr-only">{progress.ariaLabel}</span>
+    </span>
+  );
+}
+
 export async function ContinueLessonLink<Href extends string, CompletedHref extends string>({
   chapterId,
   completedHref,
@@ -42,8 +117,30 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
 }) {
   const t = await getExtracted();
   const scope = getScope({ chapterId, courseId, lessonId });
-  const data = await getContinueLessonTarget({ scope });
+
+  const [data, resolvedProgress] = await Promise.all([
+    getContinueLessonTarget({ scope }),
+    getContinueLessonProgress({ scope }),
+  ]);
+
   const className = cn(buttonVariants(), "min-w-0 flex-1 gap-2");
+  const visibleProgress = getVisibleProgress({ progress: resolvedProgress });
+
+  const progressContent = visibleProgress
+    ? {
+        ariaLabel:
+          visibleProgress.unit === "chapters"
+            ? t("{completed} of {total} chapters completed", {
+                completed: String(visibleProgress.completedItems),
+                total: String(visibleProgress.totalItems),
+              })
+            : t("{completed} of {total} lessons completed", {
+                completed: String(visibleProgress.completedItems),
+                total: String(visibleProgress.totalItems),
+              }),
+        text: `${visibleProgress.completedItems}/${visibleProgress.totalItems}`,
+      }
+    : null;
 
   /**
    * Some catalog pages can compute a safe first-child route, while others may
@@ -57,8 +154,7 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
 
     return (
       <Link className={className} href={fallbackHref} prefetch={false}>
-        {label}
-        <ChevronRightIcon aria-hidden="true" />
+        <ContinueLessonLinkContent label={label} progress={progressContent} />
       </Link>
     );
   }
@@ -95,8 +191,7 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
   if (data.completed && completedHref) {
     return (
       <Link className={className} href={completedHref}>
-        {label}
-        <ChevronRightIcon aria-hidden="true" />
+        <ContinueLessonLinkContent label={label} progress={progressContent} />
       </Link>
     );
   }
@@ -122,8 +217,7 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
         href={`/b/${data.brandSlug}/c/${data.courseSlug}/ch/${data.chapterSlug}`}
         prefetch={false}
       >
-        {label}
-        <ChevronRightIcon aria-hidden="true" />
+        <ContinueLessonLinkContent label={label} progress={progressContent} />
       </Link>
     );
   }
@@ -135,8 +229,7 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
         href={`/b/${data.brandSlug}/c/${data.courseSlug}/ch/${data.chapterSlug}/l/${data.lessonSlug}`}
         prefetch
       >
-        {label}
-        <ChevronRightIcon aria-hidden="true" />
+        <ContinueLessonLinkContent label={label} progress={progressContent} />
       </Link>
     );
   }
@@ -151,8 +244,7 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
       href={`/b/${data.brandSlug}/c/${data.courseSlug}/ch/${data.chapterSlug}/l/${data.lessonSlug}`}
       prefetch={false}
     >
-      {label}
-      <ChevronRightIcon aria-hidden="true" />
+      <ContinueLessonLinkContent label={label} progress={progressContent} />
     </Link>
   );
 }

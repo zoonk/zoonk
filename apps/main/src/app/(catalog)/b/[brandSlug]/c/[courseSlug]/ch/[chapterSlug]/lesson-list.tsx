@@ -5,13 +5,13 @@ import {
   CatalogGridSearch,
 } from "@/components/catalog/catalog-grid";
 import { CatalogGridImage } from "@/components/catalog/catalog-grid-image";
+import { getCatalogLessonProgress } from "@/data/progress/catalog-progress";
 import { getDefaultLessonImage } from "@/lib/catalog/default-images";
 import { getLessonDisplayMeta } from "@/lib/lessons";
 import {
   type ActiveCatalogTarget,
   getActiveCatalogTarget,
 } from "@zoonk/core/progress/active-catalog-target";
-import { getLessonProgress } from "@zoonk/core/progress/lessons";
 import { type Lesson } from "@zoonk/db";
 import {
   GridGroup,
@@ -153,7 +153,7 @@ export async function LessonList({
   const t = await getExtracted();
 
   const [completionData, activeTarget] = await Promise.all([
-    getLessonProgress({ chapterId }),
+    getCatalogLessonProgress(chapterId),
     getActiveCatalogTarget({ scope: { chapterId } }),
   ]);
 

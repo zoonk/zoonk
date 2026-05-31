@@ -6,11 +6,11 @@ import {
 } from "@/components/catalog/catalog-grid";
 import { CatalogGridImage } from "@/components/catalog/catalog-grid-image";
 import { type CourseChapter } from "@/data/chapters/list-course-chapters";
+import { getCatalogChapterProgress } from "@/data/progress/catalog-progress";
 import {
   type ActiveCatalogTarget,
   getActiveCatalogTarget,
 } from "@zoonk/core/progress/active-catalog-target";
-import { getChapterProgress } from "@zoonk/core/progress/chapters";
 import {
   GridGroup,
   GridItemContent,
@@ -197,7 +197,7 @@ export async function ChapterList({
   const t = await getExtracted();
 
   const [completionData, activeTarget] = await Promise.all([
-    getChapterProgress({ courseId }),
+    getCatalogChapterProgress(courseId),
     getActiveCatalogTarget({ scope: { courseId } }),
   ]);
 

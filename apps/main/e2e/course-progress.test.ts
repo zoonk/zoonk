@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -153,8 +154,8 @@ async function createCourseWithIncompleteChapter() {
 }
 
 /**
- * Direct lesson completion is the only progress signal these catalog tests
- * need. This helper keeps the setup consistent across aggregate scenarios.
+ * Chapter cards still derive their status from direct lesson completion, so
+ * this helper keeps that lower-level setup consistent across scenarios.
  */
 async function completeLessons({ lessons, userId }: { lessons: { id: string }[]; userId: string }) {
   await Promise.all(
@@ -169,8 +170,26 @@ async function completeLessons({ lessons, userId }: { lessons: { id: string }[];
   );
 }
 
+/**
+ * The course Continue button counts durable chapter completions because
+ * generated lessons are not a stable course-level unit.
+ */
+async function completeChapters({
+  chapters,
+  userId,
+}: {
+  chapters: { id: string }[];
+  userId: string;
+}) {
+  await Promise.all(
+    chapters.map((chapter) =>
+      prisma.chapterCompletion.create({ data: { chapterId: chapter.id, userId } }),
+    ),
+  );
+}
+
 test.describe("Course Progress Indicators", () => {
-  test("shows no indicators when user has no progress", async ({ authenticatedPage }) => {
+  test("shows zero chapter progress without card indicators", async ({ authenticatedPage }) => {
     const { course } = await createCourseProgressScenario();
 
     await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
@@ -180,6 +199,8 @@ test.describe("Course Progress Indicators", () => {
     ).toBeVisible();
 
     const main = authenticatedPage.getByRole("main");
+    await expect(main.getByRole("link", { name: "Start 0 of 3 chapters completed" })).toBeVisible();
+    await expect(main.getByText("0/3")).toBeVisible();
     await expect(main.getByText(/^completed$/iu)).toHaveCount(0);
     await expect(main.getByText(/\d+\/\d+ done/u)).toHaveCount(0);
   });
@@ -188,9 +209,14 @@ test.describe("Course Progress Indicators", () => {
     authenticatedPage,
     withProgressUser,
   }) => {
-    const { lessons, course } = await createCourseProgressScenario();
+    const { chapter1, chapter2, chapter3, lessons, course } = await createCourseProgressScenario();
 
     await completeLessons({ lessons: Object.values(lessons), userId: withProgressUser.id });
+
+    await completeChapters({
+      chapters: [chapter1, chapter2, chapter3],
+      userId: withProgressUser.id,
+    });
 
     await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
 
@@ -198,10 +224,17 @@ test.describe("Course Progress Indicators", () => {
       authenticatedPage.getByRole("heading", { level: 1, name: course.title }),
     ).toBeVisible();
 
+    const main = authenticatedPage.getByRole("main");
+
+    await expect(
+      main.getByRole("link", { name: "Review 3 of 3 chapters completed" }),
+    ).toBeVisible();
+
+    await expect(main.getByText("3/3")).toBeVisible();
     await expect(authenticatedPage.getByRole("main").getByText(/^completed$/iu)).toHaveCount(3);
   });
 
-  test("shows fraction text for partially completed chapters", async ({
+  test("shows chapter fraction even when only lessons are partially completed", async ({
     authenticatedPage,
     withProgressUser,
   }) => {
@@ -218,6 +251,13 @@ test.describe("Course Progress Indicators", () => {
       authenticatedPage.getByRole("heading", { level: 1, name: course.title }),
     ).toBeVisible();
 
+    const main = authenticatedPage.getByRole("main");
+
+    await expect(
+      main.getByRole("link", { name: "Continue 0 of 3 chapters completed" }),
+    ).toBeVisible();
+
+    await expect(main.getByText("0/3")).toBeVisible();
     await expect(authenticatedPage.getByText("1/3 done")).toBeVisible();
     await expect(authenticatedPage.getByText("1/2 done")).toBeVisible();
   });
