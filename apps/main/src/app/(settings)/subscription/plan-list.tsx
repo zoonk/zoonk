@@ -15,7 +15,7 @@ import { Tabs, TabsList, TabsTrigger } from "@zoonk/ui/components/tabs";
 import { type PriceInfo, formatPrice } from "@zoonk/utils/currency";
 import { FREE_PLAN, getPlanTier } from "@zoonk/utils/subscription";
 import { Loader2Icon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { useExtracted, useLocale } from "next-intl";
 import { useState } from "react";
 
 type PlanData = {
@@ -28,6 +28,7 @@ type PlanData = {
 };
 
 type BillingPeriod = "monthly" | "yearly";
+type StripeLocaleOverride = "es" | "pt-BR";
 
 function isBillingPeriod(value: unknown): value is BillingPeriod {
   return value === "monthly" || value === "yearly";
@@ -51,6 +52,8 @@ export function PlanList({
   const [selectedPlan, setSelectedPlan] = useState(currentPlanName);
   const [state, setState] = useState<"error" | "idle" | "loading">("idle");
   const t = useExtracted();
+  const locale = useLocale();
+  const stripeLocale = getStripeLocaleOverride(locale);
 
   const fallback: PlanData = { ...FREE_PLAN, monthlyPrice: null, yearlyPrice: null };
   const selected = plans.find((plan) => plan.name === selectedPlan) ?? fallback;
@@ -77,7 +80,10 @@ export function PlanList({
       const action =
         selectedPlan === "free"
           ? authClient.subscription.cancel({ returnUrl: "/subscription" })
-          : authClient.subscription.billingPortal({ returnUrl: "/subscription" });
+          : authClient.subscription.billingPortal({
+              locale: stripeLocale,
+              returnUrl: "/subscription",
+            });
 
       const { error } = await action;
 
@@ -91,6 +97,7 @@ export function PlanList({
     const { error } = await authClient.subscription.upgrade({
       annual: period === "yearly",
       cancelUrl: "/subscription",
+      locale: stripeLocale,
       plan: selectedPlan,
       successUrl: "/subscription?stripe_checkout=complete",
     });
@@ -208,6 +215,25 @@ function getPriceLabel(planName: string, price: PriceInfo | null): string {
   }
 
   return formatPrice(price.amount, price.currency);
+}
+
+/**
+ * Stripe can auto-detect the browser language when we omit `locale`, which is
+ * still the best behavior for English and any app locale we do not explicitly
+ * support in billing yet. Spanish and Portuguese need explicit overrides
+ * because Stripe expects `es` for Spanish and `pt-BR` for Brazilian Portuguese,
+ * while the app stores Portuguese as the shorter `pt` locale.
+ */
+function getStripeLocaleOverride(locale: string): StripeLocaleOverride | undefined {
+  if (locale === "es") {
+    return "es";
+  }
+
+  if (locale === "pt") {
+    return "pt-BR";
+  }
+
+  return undefined;
 }
 
 function getCTAAction(
