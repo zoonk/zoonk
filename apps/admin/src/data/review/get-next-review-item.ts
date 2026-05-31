@@ -1,10 +1,9 @@
 import "server-only";
-import { isAdmin } from "@/lib/admin-guard";
+import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { type ReviewTaskType } from "@/lib/review-utils";
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { cache } from "react";
 import { reviewedEntityIds } from "./count-pending-reviews";
 
 type ReviewQueueResult = { entityId: string | null; remaining: number };
@@ -116,12 +115,8 @@ async function getNextStepSelectImage(): Promise<ReviewQueueResult> {
   return { entityId: next?.id ?? null, remaining };
 }
 
-export const getNextReviewItem = cache(
+export const getNextReviewItem = cacheAdminData(
   async (taskType: ReviewTaskType, lessonSlug?: string): Promise<ReviewQueueResult> => {
-    if (!(await isAdmin())) {
-      return EMPTY_RESULT;
-    }
-
     if (taskType === "courseSuggestions") {
       return getNextCourseSuggestion();
     }

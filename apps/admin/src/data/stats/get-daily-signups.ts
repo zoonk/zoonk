@@ -1,8 +1,8 @@
 import "server-only";
-import { adminStatsCache as cache } from "@/data/stats/_utils/admin-stats-cache";
+import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { prisma } from "@zoonk/db";
 
-export const getDailySignups = cache(async (start: Date, end: Date) => {
+export const getDailySignups = cacheAdminData(async (start: Date, end: Date) => {
   const results = await prisma.$queryRaw<{ date: Date; count: bigint }[]>`
     SELECT DATE(created_at) as date, COUNT(*) as count
     FROM users

@@ -1,14 +1,9 @@
 import "server-only";
+import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { findUserActiveSubscription } from "@/data/users/find-active-subscription";
-import { isAdmin } from "@/lib/admin-guard";
 import { prisma } from "@zoonk/db";
-import { cache } from "react";
 
-export const getUserSubscription = cache(async (userId: string) => {
-  if (!(await isAdmin())) {
-    return null;
-  }
-
+export const getUserSubscription = cacheAdminData(async (userId: string) => {
   const subscriptions = await prisma.subscription.findMany({ where: { referenceId: userId } });
 
   return findUserActiveSubscription(subscriptions) ?? null;

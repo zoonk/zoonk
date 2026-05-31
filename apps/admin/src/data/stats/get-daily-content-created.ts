@@ -1,5 +1,5 @@
 import "server-only";
-import { adminStatsCache as cache } from "@/data/stats/_utils/admin-stats-cache";
+import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { prisma } from "@zoonk/db";
 
 export type DailyContentRow = {
@@ -10,7 +10,7 @@ export type DailyContentRow = {
   steps: number;
 };
 
-export const getDailyContentCreated = cache(async (start: Date, end: Date) => {
+export const getDailyContentCreated = cacheAdminData(async (start: Date, end: Date) => {
   const results = await prisma.$queryRaw<{ date: Date; type: string; count: bigint }[]>`
     SELECT DATE(created_at) as date, 'courses' as type, COUNT(*) as count
     FROM courses

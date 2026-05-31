@@ -1,14 +1,9 @@
 import "server-only";
-import { isAdmin } from "@/lib/admin-guard";
+import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { prisma } from "@zoonk/db";
-import { cache } from "react";
 
-export const getUser = cache(async (id: string) => {
-  if (!(await isAdmin())) {
-    return null;
-  }
-
-  return prisma.user.findUnique({
+export const getUser = cacheAdminData(async (id: string) =>
+  prisma.user.findUnique({
     include: {
       _count: { select: { ownedCourses: true } },
       accounts: { select: { providerId: true } },
@@ -17,5 +12,5 @@ export const getUser = cache(async (id: string) => {
       sessions: { orderBy: { updatedAt: "desc" }, select: { updatedAt: true }, take: 1 },
     },
     where: { id },
-  });
-});
+  }),
+);

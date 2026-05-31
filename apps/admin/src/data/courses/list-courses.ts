@@ -1,7 +1,6 @@
 import "server-only";
-import { isAdmin } from "@/lib/admin-guard";
+import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { type CourseGetPayload, prisma } from "@zoonk/db";
-import { cache } from "react";
 
 const courseListInclude = {
   chapters: {
@@ -17,11 +16,7 @@ export type ListedCourse = Omit<CourseWithCompletedLessonChapters, "chapters"> &
   completedLessonCount: number;
 };
 
-const cachedListCourses = cache(async (limit: number, offset: number, search?: string) => {
-  if (!(await isAdmin())) {
-    return { courses: [], total: 0 };
-  }
-
+const cachedListCourses = cacheAdminData(async (limit: number, offset: number, search?: string) => {
   const where = search
     ? { normalizedTitle: { contains: search, mode: "insensitive" as const } }
     : undefined;

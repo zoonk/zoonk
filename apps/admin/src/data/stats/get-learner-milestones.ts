@@ -1,5 +1,5 @@
 import "server-only";
-import { adminStatsCache as cache } from "@/data/stats/_utils/admin-stats-cache";
+import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { type LearnerMilestoneKind } from "@/lib/learner-milestone-filters";
 import { type Sql, prisma, sql } from "@zoonk/db";
 
@@ -33,7 +33,7 @@ export type LearnerMilestoneUser = {
  * The engagement page needs the two milestone counts together so it can answer
  * the threshold questions without making each card own a separate data path.
  */
-export const getLearnerMilestoneSummary = cache(
+export const getLearnerMilestoneSummary = cacheAdminData(
   async (completedLessonsThreshold: number, learningDaysThreshold: number) => {
     const [completedLessonsUsers, learningDaysUsers] = await Promise.all([
       countUsersByLearnerMilestone({
@@ -59,7 +59,7 @@ export const getLearnerMilestoneSummary = cache(
  * kind decides which threshold rule filters users, while each row still shows
  * both completion totals for context.
  */
-export const listLearnerMilestoneUsers = cache(
+export const listLearnerMilestoneUsers = cacheAdminData(
   async (kind: LearnerMilestoneKind, threshold: number, limit: number, offset: number) => {
     const queryParts = getLearnerMilestoneQueryParts({ kind, threshold });
 
