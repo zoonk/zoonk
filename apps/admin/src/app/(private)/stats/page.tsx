@@ -30,7 +30,7 @@ const sections = [
   },
   {
     description:
-      "Active learners, accuracy rate, time per lesson, learning time trends, and lesson breakdown.",
+      "Active learners, learner milestones, accuracy rate, time per lesson, and lesson breakdown.",
     href: "/stats/engagement",
     icon: BookOpenIcon,
     title: "Engagement & Learning",

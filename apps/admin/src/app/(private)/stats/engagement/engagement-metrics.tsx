@@ -18,10 +18,15 @@ import { LessonBreakdownTable } from "./lesson-breakdown-table";
 export async function EngagementMetrics({
   searchParams,
 }: {
-  searchParams: Promise<{ period?: string; offset?: string }>;
+  searchParams: {
+    completedLessons?: string | string[];
+    learningDays?: string | string[];
+    offset?: string | string[];
+    period?: string | string[];
+  };
 }) {
-  const { period: rawPeriod, offset: rawOffset } = await searchParams;
-  const period = validatePeriod(rawPeriod ?? "month");
+  const { period: rawPeriod, offset: rawOffset } = searchParams;
+  const period = validatePeriod(String(rawPeriod ?? "month"));
   const offset = validateOffset(rawOffset);
   const { current, previous } = calculateDateRanges(period, offset);
 
