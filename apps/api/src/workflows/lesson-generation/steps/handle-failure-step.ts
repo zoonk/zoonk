@@ -1,3 +1,4 @@
+import { captureWorkflowFailure } from "@/workflows/_shared/capture-workflow-failure";
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type WorkflowErrorLog } from "@/workflows/_shared/workflow-error";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
@@ -18,6 +19,13 @@ export async function handleLessonFailureStep(input: {
   await using stream = createStepStream();
 
   logError("[Lesson Workflow Failure]", { error: input.error, lessonId: input.lessonId });
+
+  await captureWorkflowFailure({
+    entity: "lesson",
+    entityId: input.lessonId,
+    error: input.error,
+    workflowName: "lessonGenerationWorkflow",
+  });
 
   await prisma.lesson.update({
     data: { generationStatus: "failed" },
