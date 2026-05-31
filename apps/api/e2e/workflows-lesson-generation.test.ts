@@ -362,37 +362,37 @@ test.describe("Lesson Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("returns 409 when practice has an incomplete explanation prerequisite", async () => {
+  test("starts workflow when practice has an incomplete explanation neighbor", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
     const { apiContext } = await createSubscribedApiContext({
       baseURL,
-      prefix: "lesson-blocked-practice",
+      prefix: "lesson-practice-metadata",
     });
 
     const course = await prisma.course.create({
       data: {
-        description: "Test course for blocked practice generation",
+        description: "Test course for practice generation without explanation dependency",
         isPublished: true,
         language: "en",
-        normalizedTitle: normalizeString(`E2E Blocked Practice Test ${uniqueId}`),
+        normalizedTitle: normalizeString(`E2E Practice Metadata Test ${uniqueId}`),
         organizationId: aiOrgId,
-        slug: `e2e-blocked-practice-${uniqueId}`,
-        title: `E2E Blocked Practice Test ${uniqueId}`,
+        slug: `e2e-practice-metadata-${uniqueId}`,
+        title: `E2E Practice Metadata Test ${uniqueId}`,
       },
     });
 
     const chapter = await prisma.chapter.create({
       data: {
         courseId: course.id,
-        description: "Test chapter for blocked practice generation",
+        description: "Test chapter for practice generation without explanation dependency",
         isPublished: true,
         language: "en",
-        normalizedTitle: normalizeString("Blocked Practice Chapter"),
+        normalizedTitle: normalizeString("Practice Metadata Chapter"),
         organizationId: aiOrgId,
         position: 0,
-        slug: `e2e-blocked-practice-chapter-${uniqueId}`,
-        title: "Blocked Practice Chapter",
+        slug: `e2e-practice-metadata-chapter-${uniqueId}`,
+        title: "Practice Metadata Chapter",
       },
     });
 
@@ -400,31 +400,31 @@ test.describe("Lesson Generation Workflow API", () => {
       prisma.lesson.create({
         data: {
           chapterId: chapter.id,
-          description: "Incomplete explanation prerequisite",
+          description: "Incomplete explanation neighbor",
           generationStatus: "pending",
           isPublished: true,
           kind: "explanation",
           language: "en",
-          normalizedTitle: normalizeString("Blocked Practice Explanation"),
+          normalizedTitle: normalizeString("Practice Metadata Explanation"),
           organizationId: aiOrgId,
           position: 0,
-          slug: `e2e-blocked-practice-explanation-${uniqueId}`,
-          title: "Blocked Practice Explanation",
+          slug: `e2e-practice-metadata-explanation-${uniqueId}`,
+          title: "Practice Metadata Explanation",
         },
       }),
       prisma.lesson.create({
         data: {
           chapterId: chapter.id,
-          description: "Practice blocked by incomplete explanation",
+          description: "Practice generated from its own lesson metadata",
           generationStatus: "pending",
           isPublished: true,
           kind: "practice",
           language: "en",
-          normalizedTitle: normalizeString("Blocked Practice"),
+          normalizedTitle: normalizeString("Practice Metadata"),
           organizationId: aiOrgId,
           position: 1,
-          slug: `e2e-blocked-practice-${uniqueId}`,
-          title: "Blocked Practice",
+          slug: `e2e-practice-metadata-lesson-${uniqueId}`,
+          title: "Practice Metadata",
         },
       }),
     ]);
@@ -433,49 +433,49 @@ test.describe("Lesson Generation Workflow API", () => {
       data: { lessonId: practice.id },
     });
 
-    expect(response.status()).toBe(409);
+    expect(response.status()).toBe(200);
 
     const body = await response.json();
 
-    expect(body.error).toBeDefined();
-    expect(body.error.code).toBe("CONFLICT");
-    expect(body.error.message).toBe("Create the required lesson first");
+    expect(body.message).toBe("Workflow started");
+    expect(body.runId).toBeDefined();
+    expect(typeof body.runId).toBe("string");
 
     await apiContext.dispose();
   });
 
-  test("returns 409 when translation has an incomplete vocabulary prerequisite", async () => {
+  test("returns 404 for translation companion lessons", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
     const { apiContext } = await createSubscribedApiContext({
       baseURL,
-      prefix: "lesson-blocked-translation",
+      prefix: "lesson-translation-companion",
     });
 
     const course = await prisma.course.create({
       data: {
-        description: "Test course for blocked translation generation",
+        description: "Test course for translation companion generation",
         isPublished: true,
         language: "en",
-        normalizedTitle: normalizeString(`E2E Blocked Translation Test ${uniqueId}`),
+        normalizedTitle: normalizeString(`E2E Translation Companion Test ${uniqueId}`),
         organizationId: aiOrgId,
-        slug: `e2e-blocked-translation-${uniqueId}`,
+        slug: `e2e-translation-companion-${uniqueId}`,
         targetLanguage: "de",
-        title: `E2E Blocked Translation Test ${uniqueId}`,
+        title: `E2E Translation Companion Test ${uniqueId}`,
       },
     });
 
     const chapter = await prisma.chapter.create({
       data: {
         courseId: course.id,
-        description: "Test chapter for blocked translation generation",
+        description: "Test chapter for translation companion generation",
         isPublished: true,
         language: "en",
-        normalizedTitle: normalizeString("Blocked Translation Chapter"),
+        normalizedTitle: normalizeString("Translation Companion Chapter"),
         organizationId: aiOrgId,
         position: 0,
-        slug: `e2e-blocked-translation-chapter-${uniqueId}`,
-        title: "Blocked Translation Chapter",
+        slug: `e2e-translation-companion-chapter-${uniqueId}`,
+        title: "Translation Companion Chapter",
       },
     });
 
@@ -483,31 +483,31 @@ test.describe("Lesson Generation Workflow API", () => {
       prisma.lesson.create({
         data: {
           chapterId: chapter.id,
-          description: "Incomplete vocabulary prerequisite",
+          description: "Vocabulary source",
           generationStatus: "pending",
           isPublished: true,
           kind: "vocabulary",
           language: "en",
-          normalizedTitle: normalizeString("Blocked Translation Vocabulary"),
+          normalizedTitle: normalizeString("Translation Companion Vocabulary"),
           organizationId: aiOrgId,
           position: 0,
-          slug: `e2e-blocked-translation-vocabulary-${uniqueId}`,
-          title: "Blocked Translation Vocabulary",
+          slug: `e2e-translation-companion-vocabulary-${uniqueId}`,
+          title: "Translation Companion Vocabulary",
         },
       }),
       prisma.lesson.create({
         data: {
           chapterId: chapter.id,
-          description: "Translation blocked by incomplete vocabulary",
+          description: "Translation companion",
           generationStatus: "pending",
           isPublished: true,
           kind: "translation",
           language: "en",
-          normalizedTitle: normalizeString("Blocked Translation"),
+          normalizedTitle: normalizeString("Translation Companion"),
           organizationId: aiOrgId,
           position: 1,
-          slug: `e2e-blocked-translation-${uniqueId}`,
-          title: "Blocked Translation",
+          slug: `e2e-translation-companion-${uniqueId}`,
+          title: "Translation Companion",
         },
       }),
     ]);
@@ -516,13 +516,12 @@ test.describe("Lesson Generation Workflow API", () => {
       data: { lessonId: translation.id },
     });
 
-    expect(response.status()).toBe(409);
+    expect(response.status()).toBe(404);
 
     const body = await response.json();
 
     expect(body.error).toBeDefined();
-    expect(body.error.code).toBe("CONFLICT");
-    expect(body.error.message).toBe("Create the required lesson first");
+    expect(body.error.code).toBe("NOT_FOUND");
 
     await apiContext.dispose();
   });

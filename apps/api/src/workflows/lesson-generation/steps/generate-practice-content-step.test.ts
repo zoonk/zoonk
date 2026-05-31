@@ -77,11 +77,11 @@ describe(generatePracticeContentStep, () => {
     );
   });
 
-  it("throws when practice has no completed explanation source steps", async () => {
+  it("throws when practice has no explanation source metadata", async () => {
     const context = await createLessonContext({ kind: "practice", organizationId });
 
     await expect(generatePracticeContentStep(context)).rejects.toThrow(
-      "Practice generation needs completed explanation lessons",
+      "Practice generation needs explanation lesson metadata",
     );
   });
 });

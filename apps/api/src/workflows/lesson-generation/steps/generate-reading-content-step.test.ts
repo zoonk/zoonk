@@ -2,7 +2,6 @@ import { randomUUID } from "node:crypto";
 import { generateLessonSentences } from "@zoonk/ai/tasks/lessons/language/sentences";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { chapterWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLessonContext } from "./_test-utils/create-lesson-context";
 import { generateReadingContentStep } from "./generate-reading-content-step";
@@ -31,7 +30,7 @@ describe(generateReadingContentStep, () => {
     vi.clearAllMocks();
   });
 
-  it("generates reading content from vocabulary lessons since the previous reading", async () => {
+  it("generates reading content from vocabulary lesson metadata since the previous reading", async () => {
     const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
 
     const context = await createLessonContext({
@@ -44,11 +43,13 @@ describe(generateReadingContentStep, () => {
     const [oldVocabularyLesson, previousReading, currentVocabularyLesson] = await Promise.all([
       lessonFixture({
         chapterId: context.chapterId,
+        description: `Old vocabulary ${uniqueId}`,
         generationStatus: "completed",
         isPublished: true,
         kind: "vocabulary",
         organizationId,
         position: 0,
+        title: `Old Vocabulary ${uniqueId}`,
       }),
       lessonFixture({
         chapterId: context.chapterId,
@@ -60,44 +61,20 @@ describe(generateReadingContentStep, () => {
       }),
       lessonFixture({
         chapterId: context.chapterId,
-        generationStatus: "completed",
+        description: `Current vocabulary ${uniqueId}`,
+        generationStatus: "pending",
         isPublished: true,
         kind: "vocabulary",
         organizationId,
         position: 2,
-      }),
-    ]);
-
-    const [oldWord, catWord, waterWord] = await Promise.all([
-      wordFixture({ organizationId, targetLanguage: "ja", word: `古い${uniqueId}` }),
-      wordFixture({ organizationId, targetLanguage: "ja", word: `猫${uniqueId}` }),
-      wordFixture({ organizationId, targetLanguage: "ja", word: `水${uniqueId}` }),
-    ]);
-
-    await Promise.all([
-      chapterWordFixture({
-        sourceLessonId: oldVocabularyLesson.id,
-        translation: "old",
-        userLanguage: "en",
-        wordId: oldWord.id,
-      }),
-      chapterWordFixture({
-        sourceLessonId: currentVocabularyLesson.id,
-        translation: "cat",
-        userLanguage: "en",
-        wordId: catWord.id,
-      }),
-      chapterWordFixture({
-        sourceLessonId: currentVocabularyLesson.id,
-        translation: "water",
-        userLanguage: "en",
-        wordId: waterWord.id,
+        title: `Current Vocabulary ${uniqueId}`,
       }),
     ]);
 
     const result = await generateReadingContentStep(context);
 
     expect(previousReading.position).toBe(1);
+    expect(oldVocabularyLesson.position).toBe(0);
 
     expect(result).toStrictEqual({
       kind: "reading",
@@ -108,10 +85,11 @@ describe(generateReadingContentStep, () => {
 
     const sentenceInput = vi.mocked(generateLessonSentences).mock.calls[0]?.[0];
 
-    expect(sentenceInput?.words).toStrictEqual(
-      expect.arrayContaining([`猫${uniqueId}`, `水${uniqueId}`]),
-    );
+    expect(sentenceInput?.sourceLessons).toStrictEqual([
+      { description: `Current vocabulary ${uniqueId}`, title: `Current Vocabulary ${uniqueId}` },
+    ]);
 
-    expect(sentenceInput?.words).toHaveLength(2);
+    expect(sentenceInput?.lessonTitle).toBe(context.title);
+    expect(currentVocabularyLesson.generationStatus).toBe("pending");
   });
 });

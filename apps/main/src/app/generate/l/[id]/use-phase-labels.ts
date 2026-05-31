@@ -26,7 +26,7 @@ export function usePhaseLabels(): Record<PhaseName, string> {
     recordingVocabularyAudio: t("Recording vocabulary audio"),
     recordingWordAudio: t("Recording word audio"),
     saving: t("Saving your lesson"),
-    savingPrerequisites: t("Saving earlier lessons"),
+    savingPrerequisites: t("Saving your lesson"),
     writingContent: t("Writing the content"),
     writingExplanation: t("Writing the explanation"),
   };

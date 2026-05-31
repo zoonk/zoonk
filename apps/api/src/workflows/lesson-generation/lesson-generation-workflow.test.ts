@@ -23,7 +23,6 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { chapterSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { chapterWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -338,8 +337,9 @@ async function createLanguageWorkflowTree({ organizationId }: { organizationId: 
 }
 
 /**
- * Persists one completed explanation lesson so practice and quiz generation
- * can read the same static steps they use in production.
+ * Persists one completed explanation lesson with metadata. Practice and quiz
+ * generation read the title and description; the static step keeps older
+ * workflow assertions realistic where saved content still exists.
  */
 async function completedExplanationLesson({
   chapterId,
@@ -601,7 +601,7 @@ describe(lessonGenerationWorkflow, () => {
     expect(generateContentThumbnailImage).not.toHaveBeenCalled();
   });
 
-  it("blocks practice generation until all source explanations are completed", async () => {
+  it("practice generation uses source lesson metadata before explanations complete", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
 
     vi.mocked(generateLessonPractice).mockClear();
@@ -625,6 +625,7 @@ describe(lessonGenerationWorkflow, () => {
       }),
       lessonFixture({
         chapterId: chapter.id,
+        description: "Pending explanation metadata",
         generationStatus: "pending",
         isPublished: true,
         kind: "explanation",
@@ -634,17 +635,23 @@ describe(lessonGenerationWorkflow, () => {
       }),
     ]);
 
-    await expect(lessonGenerationWorkflow(practice.id)).resolves.toBe("blocked");
+    await expect(lessonGenerationWorkflow(practice.id)).resolves.toBe("ready");
 
-    expect(generateLessonPractice).not.toHaveBeenCalled();
-    expect(completedStreamedSteps()).not.toContain("setLessonAsRunning");
+    expect(generateLessonPractice).toHaveBeenCalledWith(
+      expect.objectContaining({
+        sourceLessons: expect.arrayContaining([
+          { description: "Generated explanation", title: "Generated" },
+          { description: "Pending explanation metadata", title: expect.any(String) },
+        ]),
+      }),
+    );
 
     const dbLesson = await prisma.lesson.findUniqueOrThrow({ where: { id: practice.id } });
     const steps = await prisma.step.findMany({ where: { lessonId: practice.id } });
 
-    expect(dbLesson.generationStatus).toBe("pending");
-    expect(dbLesson.generationRunId).toBeNull();
-    expect(steps).toHaveLength(0);
+    expect(dbLesson.generationStatus).toBe("completed");
+    expect(dbLesson.generationRunId).toBe("test-run-id");
+    expect(steps.length).toBeGreaterThan(0);
   });
 
   it("quiz generation uses source lessons since the previous quiz and saves select-image URLs", async () => {
@@ -757,7 +764,18 @@ describe(lessonGenerationWorkflow, () => {
       isPublished: true,
       kind: "vocabulary",
       organizationId,
+      position: 0,
       title: `Vocabulary Lesson ${uniqueId}`,
+    });
+
+    const translationLesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "translation",
+      organizationId,
+      position: 1,
+      title: `Translation Lesson ${uniqueId}`,
     });
 
     await lessonGenerationWorkflow(lesson.id);
@@ -779,6 +797,7 @@ describe(lessonGenerationWorkflow, () => {
         "generateVocabularyAudio",
         "generateVocabularyRomanization",
         "saveVocabularyLesson",
+        "saveTranslationLesson",
         "setLessonAsCompleted",
       ]),
     );
@@ -818,6 +837,19 @@ describe(lessonGenerationWorkflow, () => {
         word: waterWord,
       },
     ]);
+
+    const translationSteps = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      where: { lessonId: translationLesson.id },
+    });
+
+    expect(translationSteps.map((step) => step.kind)).toStrictEqual(["translation", "translation"]);
+
+    const dbTranslationLesson = await prisma.lesson.findUniqueOrThrow({
+      where: { id: translationLesson.id },
+    });
+
+    expect(dbTranslationLesson.generationStatus).toBe("completed");
   });
 
   it("alphabet generation saves writing-system cards and a final matching drill without vocabulary rows", async () => {
@@ -881,7 +913,29 @@ describe(lessonGenerationWorkflow, () => {
     });
   });
 
-  it("translation generation creates translation steps from the previous vocabulary lesson", async () => {
+  it("translation lessons are not standalone workflow targets", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { chapter } = await createLanguageWorkflowTree({ organizationId });
+
+    const translationLesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "translation",
+      organizationId,
+      position: 1,
+      title: `Translation Lesson ${uniqueId}`,
+    });
+
+    await expect(lessonGenerationWorkflow(translationLesson.id)).resolves.toBe("filtered");
+
+    const steps = await prisma.step.findMany({ where: { lessonId: translationLesson.id } });
+
+    expect(steps).toStrictEqual([]);
+    expect(completedStreamedSteps()).not.toContain("saveTranslationLesson");
+  });
+
+  it("completed vocabulary generation repairs a pending translation companion", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const { chapter } = await createLanguageWorkflowTree({ organizationId });
 
@@ -926,7 +980,9 @@ describe(lessonGenerationWorkflow, () => {
       wordId: word.id,
     });
 
-    await lessonGenerationWorkflow(translationLesson.id);
+    await lessonGenerationWorkflow(vocabularyLesson.id);
+
+    expect(generateLessonVocabulary).not.toHaveBeenCalled();
 
     expect(completedStreamedSteps()).toStrictEqual(
       expect.arrayContaining(["saveTranslationLesson", "setLessonAsCompleted"]),
@@ -939,56 +995,63 @@ describe(lessonGenerationWorkflow, () => {
     expect(translationStep?.kind).toBe("translation");
     expect(translationStep?.chapterWordId).toBe(chapterWord.id);
     expect(translationStep?.wordId).toBe(word.id);
-    expect(parseStepContent("translation", translationStep?.content)).toStrictEqual({});
+
+    const dbTranslationLesson = await prisma.lesson.findUniqueOrThrow({
+      where: { id: translationLesson.id },
+    });
+
+    expect(dbTranslationLesson.generationStatus).toBe("completed");
   });
 
-  it("reading generation uses vocabulary since the previous reading and saves enriched sentences", async () => {
+  it("reading generation uses vocabulary lesson metadata and saves enriched sentences", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const { chapter } = await createLanguageWorkflowTree({ organizationId });
 
-    const [vocabularyLesson, catWord, waterWord] = await Promise.all([
-      lessonFixture({
-        chapterId: chapter.id,
-        generationStatus: "completed",
-        isPublished: true,
-        kind: "vocabulary",
-        organizationId,
-        position: 0,
-        title: `Reading Source ${uniqueId}`,
-      }),
-      wordFixture({ organizationId, targetLanguage: "ja", word: `猫-${uniqueId}` }),
-      wordFixture({ organizationId, targetLanguage: "ja", word: `水-${uniqueId}` }),
-    ]);
+    const vocabularyLesson = await lessonFixture({
+      chapterId: chapter.id,
+      description: `Reading source description ${uniqueId}`,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "vocabulary",
+      organizationId,
+      position: 0,
+      title: `Reading Source ${uniqueId}`,
+    });
 
-    const [readingLesson] = await Promise.all([
-      lessonFixture({
-        chapterId: chapter.id,
-        generationStatus: "pending",
-        isPublished: true,
-        kind: "reading",
-        organizationId,
-        position: 1,
-        title: `Reading Lesson ${uniqueId}`,
-      }),
-      chapterWordFixture({
-        sourceLessonId: vocabularyLesson.id,
-        translation: `cat ${uniqueId}`,
-        userLanguage: "en",
-        wordId: catWord.id,
-      }),
-      chapterWordFixture({
-        sourceLessonId: vocabularyLesson.id,
-        translation: `water ${uniqueId}`,
-        userLanguage: "en",
-        wordId: waterWord.id,
-      }),
-    ]);
+    const readingLesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "reading",
+      organizationId,
+      position: 1,
+      title: `Reading Lesson ${uniqueId}`,
+    });
+
+    const listeningLesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "listening",
+      organizationId,
+      position: 2,
+      title: `Listening Lesson ${uniqueId}`,
+    });
 
     await lessonGenerationWorkflow(readingLesson.id);
 
     expect(generateLessonSentences).toHaveBeenCalledWith(
-      expect.objectContaining({ words: expect.arrayContaining([catWord.word, waterWord.word]) }),
+      expect.objectContaining({
+        sourceLessons: [
+          {
+            description: `Reading source description ${uniqueId}`,
+            title: `Reading Source ${uniqueId}`,
+          },
+        ],
+      }),
     );
+
+    expect(vocabularyLesson.generationStatus).toBe("pending");
 
     expect(generateTranslation).toHaveBeenCalledWith(expect.objectContaining({ word: "猫" }));
     expect(generateTranslation).toHaveBeenCalledWith(expect.objectContaining({ word: "水" }));
@@ -1003,6 +1066,7 @@ describe(lessonGenerationWorkflow, () => {
         "generateSentenceWordAudio",
         "generateSentenceWordPronunciation",
         "saveReadingLesson",
+        "saveListeningLesson",
         "setLessonAsCompleted",
       ]),
     );
@@ -1019,65 +1083,40 @@ describe(lessonGenerationWorkflow, () => {
     expect(readingStep?.kind).toBe("reading");
     expect(readingStep?.sentence?.sentence).toBe("猫と水");
     expect(sentenceLink?.translation).toBe("cat and water");
-  });
-
-  it("listening generation copies sentence steps from the previous reading lesson", async () => {
-    const uniqueId = randomUUID().slice(0, 8);
-    const { chapter } = await createLanguageWorkflowTree({ organizationId });
-
-    const [readingLesson, sentence] = await Promise.all([
-      lessonFixture({
-        chapterId: chapter.id,
-        generationStatus: "completed",
-        isPublished: true,
-        kind: "reading",
-        organizationId,
-        position: 0,
-        title: `Reading Source ${uniqueId}`,
-      }),
-      sentenceFixture({ organizationId, sentence: `猫と水 ${uniqueId}`, targetLanguage: "ja" }),
-    ]);
-
-    const [listeningLesson, chapterSentence] = await Promise.all([
-      lessonFixture({
-        chapterId: chapter.id,
-        generationStatus: "pending",
-        isPublished: true,
-        kind: "listening",
-        organizationId,
-        position: 1,
-        title: `Listening Lesson ${uniqueId}`,
-      }),
-      chapterSentenceFixture({
-        sentenceId: sentence.id,
-        sourceLessonId: readingLesson.id,
-        translation: `cat and water ${uniqueId}`,
-        userLanguage: "en",
-      }),
-    ]);
-
-    await stepFixture({
-      chapterSentenceId: chapterSentence.id,
-      content: assertStepContent("reading", {}),
-      isPublished: true,
-      kind: "reading",
-      lessonId: readingLesson.id,
-      position: 0,
-      sentenceId: sentence.id,
-    });
-
-    await lessonGenerationWorkflow(listeningLesson.id);
-
-    expect(completedStreamedSteps()).toStrictEqual(
-      expect.arrayContaining(["saveListeningLesson", "setLessonAsCompleted"]),
-    );
 
     const [listeningStep] = await prisma.step.findMany({ where: { lessonId: listeningLesson.id } });
 
     expect(listeningStep?.kind).toBe("listening");
-    expect(listeningStep?.chapterSentenceId).toBe(chapterSentence.id);
-    expect(listeningStep?.sentenceId).toBe(sentence.id);
-    expect(parseStepContent("listening", listeningStep?.content)).toStrictEqual({});
+    expect(listeningStep?.chapterSentenceId).toBe(readingStep?.chapterSentenceId);
+    expect(listeningStep?.sentenceId).toBe(readingStep?.sentenceId);
+
+    const dbListeningLesson = await prisma.lesson.findUniqueOrThrow({
+      where: { id: listeningLesson.id },
+    });
+
+    expect(dbListeningLesson.generationStatus).toBe("completed");
+  });
+
+  it("listening lessons are not standalone workflow targets", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { chapter } = await createLanguageWorkflowTree({ organizationId });
+
+    const listeningLesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "listening",
+      organizationId,
+      position: 1,
+      title: `Listening Lesson ${uniqueId}`,
+    });
+
+    await expect(lessonGenerationWorkflow(listeningLesson.id)).resolves.toBe("filtered");
+
+    const steps = await prisma.step.findMany({ where: { lessonId: listeningLesson.id } });
+
+    expect(steps).toStrictEqual([]);
+    expect(completedStreamedSteps()).not.toContain("saveListeningLesson");
   });
 
   it("grammar generation keeps content, romanization, and saving phases", async () => {

@@ -4,7 +4,7 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import { appendLessonRichTextPrompt } from "../_utils/append-lesson-rich-text-prompt";
-import { type SourceLesson, formatSourceLessonsForPrompt } from "./_utils/source-lessons";
+import { type SourceLesson, formatSourceLessonsForPrompt } from "../_utils/source-lessons";
 import baseSystemPrompt from "./lesson-practice.prompt.md";
 
 const defaultModel = "openai/gpt-5.5";

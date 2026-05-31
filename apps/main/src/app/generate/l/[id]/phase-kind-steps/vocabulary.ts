@@ -11,6 +11,7 @@ type VocabularySteps =
   | "generateVocabularyRomanization"
   | "generateVocabularyAudio"
   | "saveVocabularyLesson"
+  | "saveTranslationLesson"
   | "setLessonAsCompleted";
 
 export const VOCABULARY_PHASE_STEPS = {
@@ -20,7 +21,7 @@ export const VOCABULARY_PHASE_STEPS = {
   creatingExercises: ["generateVocabularyDistractors"],
   gettingStarted: ["getLesson", "setLessonAsRunning"],
   recordingAudio: ["generateVocabularyAudio"],
-  saving: ["saveVocabularyLesson", "setLessonAsCompleted"],
+  saving: ["saveVocabularyLesson", "saveTranslationLesson", "setLessonAsCompleted"],
 } as const satisfies Record<string, readonly LessonStepName[]>;
 
 type _ValidateVocabulary = AssertAllCovered<

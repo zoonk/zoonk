@@ -4,38 +4,31 @@ import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
 import { type ReadingLessonContent } from "./_utils/generated-lesson-content";
+import { getSourceLessonMetadataInRange } from "./_utils/source-lesson-metadata";
 import { type LessonContext } from "./get-lesson-step";
 
 /**
- * Reading lessons should only cover vocabulary that has not already been
- * consumed by an earlier reading lesson in the same chapter.
+ * Reading lessons should only use vocabulary lesson metadata that has not
+ * already been consumed by an earlier reading lesson in the same chapter.
  */
-async function getVocabularyWordsSincePreviousReading(context: LessonContext): Promise<string[]> {
+async function getVocabularySourceLessonsSincePreviousReading(context: LessonContext) {
   const previousReading = await prisma.lesson.findFirst({
     orderBy: { position: "desc" },
     where: { chapterId: context.chapterId, kind: "reading", position: { lt: context.position } },
   });
 
-  const vocabularyLessons = await prisma.lesson.findMany({
-    include: { sourceWords: { include: { word: true }, orderBy: { createdAt: "asc" } } },
-    orderBy: { position: "asc" },
-    where: {
-      chapterId: context.chapterId,
-      generationStatus: "completed",
-      kind: "vocabulary",
-      position: { gt: previousReading?.position ?? -1, lt: context.position },
-    },
+  return getSourceLessonMetadataInRange({
+    afterPosition: previousReading?.position ?? -1,
+    beforePosition: context.position,
+    chapterId: context.chapterId,
+    kinds: ["vocabulary"],
   });
-
-  return vocabularyLessons.flatMap((lesson) =>
-    lesson.sourceWords.map((chapterWord) => chapterWord.word.word),
-  );
 }
 
 /**
- * Generates reading sentences from the vocabulary group immediately before the
- * reading lesson. This boundary keeps later readings from repeating words that
- * were already covered by an earlier reading/listening pair.
+ * Generates reading sentences from vocabulary lesson metadata immediately
+ * before the reading lesson. This removes the need for generated vocabulary
+ * content while preserving the chapter's planned topic boundary.
  */
 export async function generateReadingContentStep(
   context: LessonContext,
@@ -46,23 +39,23 @@ export async function generateReadingContentStep(
   await stream.status({ status: "started", step: "generateReadingContent" });
 
   const targetLanguage = context.chapter.course.targetLanguage;
-  const words = await getVocabularyWordsSincePreviousReading(context);
+  const sourceLessons = await getVocabularySourceLessonsSincePreviousReading(context);
 
   if (!targetLanguage) {
     throw new FatalError("Reading generation needs a target language");
   }
 
-  if (words.length === 0) {
-    throw new FatalError("Reading generation needs completed vocabulary lessons");
+  if (sourceLessons.length === 0) {
+    throw new FatalError("Reading generation needs vocabulary lesson metadata");
   }
 
   const result = await generateLessonSentences({
     chapterTitle: context.chapter.title,
     lessonDescription: context.description ?? undefined,
     lessonTitle: context.title ?? "",
+    sourceLessons,
     targetLanguage,
     userLanguage: context.language,
-    words,
   });
 
   await stream.status({ status: "completed", step: "generateReadingContent" });

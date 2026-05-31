@@ -78,11 +78,7 @@ export function useContentPhaseGenerators(): Partial<Record<PhaseName, ThinkingM
       cycleMessage([t("Saving your lesson..."), t("Almost done..."), t("Finishing up...")], index),
     savingPrerequisites: (index) =>
       cycleMessage(
-        [
-          t("Saving earlier lessons..."),
-          t("Storing prerequisite content..."),
-          t("Getting ready for the next step..."),
-        ],
+        [t("Saving your lesson..."), t("Almost done..."), t("Getting ready for the next step...")],
         index,
       ),
     writingContent: (index) =>

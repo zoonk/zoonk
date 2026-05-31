@@ -5,6 +5,7 @@ import { generateVocabularyDistractorsStep } from "../steps/generate-vocabulary-
 import { generateVocabularyPronunciationStep } from "../steps/generate-vocabulary-pronunciation-step";
 import { generateVocabularyRomanizationStep } from "../steps/generate-vocabulary-romanization-step";
 import { type LessonContext } from "../steps/get-lesson-step";
+import { saveTranslationLessonStep } from "../steps/save-translation-lesson-step";
 import { saveVocabularyLessonStep } from "../steps/save-vocabulary-lesson-step";
 
 /**
@@ -38,4 +39,6 @@ export async function vocabularyLessonWorkflow(context: LessonContext): Promise<
     wordAudioUrls,
     words: content.words,
   });
+
+  await saveTranslationLessonStep(context);
 }

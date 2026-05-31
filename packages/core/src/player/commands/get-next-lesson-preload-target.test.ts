@@ -94,6 +94,43 @@ describe(getNextPreloadTargets, () => {
     expect(result).toStrictEqual([{ kind: "lesson", lessonId: lessons.nextLesson.id }]);
   });
 
+  it("returns up to three next pending lesson targets in course order", async () => {
+    const [user, context] = await Promise.all([userFixture(), createChapterContext()]);
+
+    const lessons = await Promise.all([
+      lessonFixture({
+        chapterId: context.chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: context.organization.id,
+        position: 0,
+      }),
+      ...Array.from({ length: 4 }, (_, index) =>
+        lessonFixture({
+          chapterId: context.chapter.id,
+          generationStatus: "pending",
+          isPublished: true,
+          organizationId: context.organization.id,
+          position: index + 1,
+        }),
+      ),
+    ]);
+
+    const [currentLesson, first, second, third] = lessons;
+
+    if (!currentLesson || !first || !second || !third) {
+      throw new Error("Expected current lesson plus three preload candidates");
+    }
+
+    const result = await getNextPreloadTargets({ lessonId: currentLesson.id, userId: user.id });
+
+    expect(result).toStrictEqual([
+      { kind: "lesson", lessonId: first.id },
+      { kind: "lesson", lessonId: second.id },
+      { kind: "lesson", lessonId: third.id },
+    ]);
+  });
+
   it.each(preloadGenerationStatuses)(
     "returns the next chapter target when the current lesson is last and the chapter is %s",
     async (nextChapterGenerationStatus) => {
@@ -198,13 +235,13 @@ describe(getNextPreloadTargets, () => {
     },
   );
 
-  it("preloads a pending translation lesson and the generated reading lesson behind it", async () => {
+  it("skips generated companion lessons inside the three-lesson window", async () => {
     const [user, context] = await Promise.all([userFixture(), createChapterContext()]);
 
     const lessons = await Promise.all([
       lessonFixture({
         chapterId: context.chapter.id,
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "vocabulary",
         organizationId: context.organization.id,
@@ -226,140 +263,58 @@ describe(getNextPreloadTargets, () => {
         organizationId: context.organization.id,
         position: 2,
       }),
-    ]);
-
-    const [vocabulary, translation, reading] = lessons;
-
-    const result = await getNextPreloadTargets({ lessonId: vocabulary.id, userId: user.id });
-
-    expect(result).toStrictEqual([
-      { kind: "lesson", lessonId: translation.id },
-      { kind: "lesson", lessonId: reading.id },
-    ]);
-  });
-
-  it("preloads a pending grammar lesson and the vocabulary lesson behind it", async () => {
-    const [user, context] = await Promise.all([userFixture(), createChapterContext()]);
-
-    const lessons = await Promise.all([
-      lessonFixture({
-        chapterId: context.chapter.id,
-        generationStatus: "completed",
-        isPublished: true,
-        kind: "vocabulary",
-        organizationId: context.organization.id,
-        position: 0,
-      }),
       lessonFixture({
         chapterId: context.chapter.id,
         generationStatus: "pending",
         isPublished: true,
         kind: "grammar",
-        organizationId: context.organization.id,
-        position: 1,
-      }),
-      lessonFixture({
-        chapterId: context.chapter.id,
-        generationStatus: "pending",
-        isPublished: true,
-        kind: "vocabulary",
-        organizationId: context.organization.id,
-        position: 2,
-      }),
-    ]);
-
-    const [previousVocabulary, grammar, vocabulary] = lessons;
-
-    const result = await getNextPreloadTargets({
-      lessonId: previousVocabulary.id,
-      userId: user.id,
-    });
-
-    expect(result).toStrictEqual([
-      { kind: "lesson", lessonId: grammar.id },
-      { kind: "lesson", lessonId: vocabulary.id },
-    ]);
-  });
-
-  it("preloads the generated lesson behind an already-running listening lesson", async () => {
-    const [user, context] = await Promise.all([userFixture(), createChapterContext()]);
-
-    const lessons = await Promise.all([
-      lessonFixture({
-        chapterId: context.chapter.id,
-        generationStatus: "completed",
-        isPublished: true,
-        kind: "reading",
-        organizationId: context.organization.id,
-        position: 0,
-      }),
-      lessonFixture({
-        chapterId: context.chapter.id,
-        generationStatus: "running",
-        isPublished: true,
-        kind: "listening",
-        organizationId: context.organization.id,
-        position: 1,
-      }),
-      lessonFixture({
-        chapterId: context.chapter.id,
-        generationStatus: "pending",
-        isPublished: true,
-        kind: "grammar",
-        organizationId: context.organization.id,
-        position: 2,
-      }),
-    ]);
-
-    const [reading, , grammar] = lessons;
-
-    const result = await getNextPreloadTargets({ lessonId: reading.id, userId: user.id });
-
-    expect(result).toStrictEqual([{ kind: "lesson", lessonId: grammar.id }]);
-  });
-
-  it("does not preload through a derived lesson with unfinished source content", async () => {
-    const [user, context] = await Promise.all([userFixture(), createChapterContext()]);
-
-    const lessons = await Promise.all([
-      lessonFixture({
-        chapterId: context.chapter.id,
-        generationStatus: "pending",
-        isPublished: true,
-        kind: "vocabulary",
-        organizationId: context.organization.id,
-        position: 0,
-      }),
-      lessonFixture({
-        chapterId: context.chapter.id,
-        generationStatus: "completed",
-        isPublished: true,
-        kind: "explanation",
-        organizationId: context.organization.id,
-        position: 1,
-      }),
-      lessonFixture({
-        chapterId: context.chapter.id,
-        generationStatus: "pending",
-        isPublished: true,
-        kind: "translation",
-        organizationId: context.organization.id,
-        position: 2,
-      }),
-      lessonFixture({
-        chapterId: context.chapter.id,
-        generationStatus: "pending",
-        isPublished: true,
-        kind: "reading",
         organizationId: context.organization.id,
         position: 3,
       }),
     ]);
 
-    const currentLesson = lessons[1];
+    const [vocabulary, , reading, grammar] = lessons;
+
+    const result = await getNextPreloadTargets({ lessonId: vocabulary.id, userId: user.id });
+
+    expect(result).toStrictEqual([
+      { kind: "lesson", lessonId: reading.id },
+      { kind: "lesson", lessonId: grammar.id },
+    ]);
+  });
+
+  it("adds a next chapter target when fewer than three future lesson rows exist", async () => {
+    const [user, context] = await Promise.all([userFixture(), createChapterContext()]);
+
+    const [currentLesson, nextLesson, nextChapter] = await Promise.all([
+      lessonFixture({
+        chapterId: context.chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: context.organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: context.chapter.id,
+        generationStatus: "pending",
+        isPublished: true,
+        organizationId: context.organization.id,
+        position: 1,
+      }),
+      chapterFixture({
+        courseId: context.chapter.courseId,
+        generationStatus: "pending",
+        isPublished: true,
+        organizationId: context.organization.id,
+        position: 1,
+      }),
+    ]);
 
     const result = await getNextPreloadTargets({ lessonId: currentLesson.id, userId: user.id });
 
-    expect(result).toStrictEqual([]);
+    expect(result).toStrictEqual([
+      { kind: "lesson", lessonId: nextLesson.id },
+      { chapterId: nextChapter.id, kind: "chapter" },
+    ]);
   });
 });

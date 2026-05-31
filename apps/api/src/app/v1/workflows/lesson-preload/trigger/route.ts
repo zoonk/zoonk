@@ -6,6 +6,7 @@ import {
   getWorkflowLessonAccessError,
 } from "@/lib/workflow-generation-access";
 import { lessonPreloadWorkflow } from "@/workflows/lesson-preload/lesson-preload-workflow";
+import { isStandaloneGeneratedLessonKind } from "@zoonk/core/lessons/generated-companion-kinds";
 import { type NextRequest, NextResponse } from "next/server";
 import { start } from "workflow/api";
 
@@ -26,6 +27,10 @@ export async function POST(request: NextRequest) {
 
   if (accessError) {
     return accessError;
+  }
+
+  if (!isStandaloneGeneratedLessonKind(lesson.kind)) {
+    return errors.notFound();
   }
 
   const run = await start(lessonPreloadWorkflow, [parsed.data.lessonId]);

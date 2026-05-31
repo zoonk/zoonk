@@ -6,10 +6,7 @@ import {
   getWorkflowLessonAccessError,
 } from "@/lib/workflow-generation-access";
 import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-generation-workflow";
-import {
-  getBlockingLessonGenerationPrerequisite,
-  hasLessonGenerationPrerequisites,
-} from "@zoonk/core/lessons/generation-prerequisites";
+import { isStandaloneGeneratedLessonKind } from "@zoonk/core/lessons/generated-companion-kinds";
 import { type NextRequest, NextResponse } from "next/server";
 import { start } from "workflow/api";
 
@@ -32,12 +29,8 @@ export async function POST(request: NextRequest) {
     return accessError;
   }
 
-  const blockingPrerequisite = hasLessonGenerationPrerequisites(lesson.kind)
-    ? await getBlockingLessonGenerationPrerequisite(lesson)
-    : null;
-
-  if (blockingPrerequisite) {
-    return errors.conflict("Create the required lesson first");
+  if (!isStandaloneGeneratedLessonKind(lesson.kind)) {
+    return errors.notFound();
   }
 
   const run = await start(lessonGenerationWorkflow, [parsed.data.lessonId]);
