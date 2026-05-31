@@ -88,7 +88,11 @@ export async function chapterGenerationWorkflow(chapterId: string): Promise<void
   }
 
   // Mark chapter as running
-  await setChapterAsRunningStep({ chapterId, workflowRunId });
+  const isClaimed = await setChapterAsRunningStep({ chapterId, workflowRunId });
+
+  if (!isClaimed) {
+    return;
+  }
 
   // Chapter-specific work with failure handling
   const createdLessons = await generateLessonsAndCompleteChapter({ context, workflowRunId }).catch(
