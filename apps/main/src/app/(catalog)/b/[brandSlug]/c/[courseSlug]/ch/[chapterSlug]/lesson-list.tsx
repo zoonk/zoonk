@@ -7,6 +7,10 @@ import {
 import { CatalogGridImage } from "@/components/catalog/catalog-grid-image";
 import { getDefaultLessonImage } from "@/lib/catalog/default-images";
 import { getLessonDisplayMeta } from "@/lib/lessons";
+import {
+  type ActiveCatalogTarget,
+  getActiveCatalogTarget,
+} from "@zoonk/core/progress/active-catalog-target";
 import { getLessonProgress } from "@zoonk/core/progress/lessons";
 import { type Lesson } from "@zoonk/db";
 import {
@@ -43,6 +47,21 @@ function LessonListItemStatus({
   }
 
   return <GridItemStatusIdle>{notStartedLabel}</GridItemStatusIdle>;
+}
+
+/**
+ * The active shortcut on a chapter page should land on a lesson tile. Progress
+ * resolves from the last completed lesson so opening a lesson without finishing
+ * it does not make that lesson look active.
+ */
+function getActiveLessonKey({
+  activeTarget,
+  lessons,
+}: {
+  activeTarget: ActiveCatalogTarget | null;
+  lessons: Lesson[];
+}) {
+  return lessons.find((lesson) => lesson.slug === activeTarget?.lessonSlug)?.id ?? null;
 }
 
 /**
@@ -132,9 +151,15 @@ export async function LessonList({
   }
 
   const t = await getExtracted();
-  const completionData = await getLessonProgress({ chapterId });
+
+  const [completionData, activeTarget] = await Promise.all([
+    getLessonProgress({ chapterId }),
+    getActiveCatalogTarget({ scope: { chapterId } }),
+  ]);
+
   const completionMap = new Map(completionData.map((row) => [row.lessonId, row]));
   const lessonRows = await getLessonRows(lessons);
+  const activeLessonKey = getActiveLessonKey({ activeTarget, lessons });
 
   const searchItems = lessonRows.map(({ display, lesson }) => ({
     description: display.description,
@@ -143,7 +168,7 @@ export async function LessonList({
   }));
 
   return (
-    <CatalogGridContent>
+    <CatalogGridContent activeItemKey={activeLessonKey} activeLabel={t("Current lesson")}>
       <CatalogGridSearch items={searchItems} placeholder={t("Search lessons...")}>
         <CatalogGridEmpty>{t("No lessons found")}</CatalogGridEmpty>
         <GridGroup variant="pane">

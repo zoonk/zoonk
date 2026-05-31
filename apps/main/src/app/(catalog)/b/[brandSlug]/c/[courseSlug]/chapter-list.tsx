@@ -6,6 +6,10 @@ import {
 } from "@/components/catalog/catalog-grid";
 import { CatalogGridImage } from "@/components/catalog/catalog-grid-image";
 import { type CourseChapter } from "@/data/chapters/list-course-chapters";
+import {
+  type ActiveCatalogTarget,
+  getActiveCatalogTarget,
+} from "@zoonk/core/progress/active-catalog-target";
 import { getChapterProgress } from "@zoonk/core/progress/chapters";
 import {
   GridGroup,
@@ -102,6 +106,20 @@ function ChapterListItemStatus({
 }
 
 /**
+ * The active shortcut on a course page should land on a chapter tile, even
+ * though progress is tracked at the lesson level.
+ */
+function getActiveChapterKey({
+  activeTarget,
+  chapters,
+}: {
+  activeTarget: ActiveCatalogTarget | null;
+  chapters: CourseChapter[];
+}) {
+  return chapters.find((chapter) => chapter.slug === activeTarget?.chapterSlug)?.id ?? null;
+}
+
+/**
  * A chapter tile gives the image more room than the old row, making the course
  * path easier to scan on wide screens without dropping the compact mobile flow.
  */
@@ -177,11 +195,17 @@ export async function ChapterList({
   }
 
   const t = await getExtracted();
-  const completionData = await getChapterProgress({ courseId });
+
+  const [completionData, activeTarget] = await Promise.all([
+    getChapterProgress({ courseId }),
+    getActiveCatalogTarget({ scope: { courseId } }),
+  ]);
+
   const completionMap = new Map(completionData.map((row) => [row.chapterId, row]));
+  const activeChapterKey = getActiveChapterKey({ activeTarget, chapters });
 
   return (
-    <CatalogGridContent>
+    <CatalogGridContent activeItemKey={activeChapterKey} activeLabel={t("Current chapter")}>
       <CatalogGridSearch items={chapters} placeholder={t("Search chapters...")}>
         <CatalogGridEmpty>{t("No chapters found")}</CatalogGridEmpty>
         <GridGroup variant="pane">

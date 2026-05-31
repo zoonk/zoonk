@@ -286,6 +286,10 @@ msgid "3IOFp2"
 msgstr "Create chapter"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+msgid "orGV/i"
+msgstr "Current lesson"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgid "ssvp3R"
 msgstr "Search lessons..."
 
@@ -302,6 +306,10 @@ msgstr "Completed"
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
 msgid "xTTP0x"
 msgstr "Not started"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
+msgid "iRubpl"
+msgstr "Current chapter"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
 msgid "3SOcGR"
@@ -1666,7 +1674,11 @@ msgstr "I didn't like it"
 msgid "G5YSJR"
 msgstr "Send feedback"
 
-#: src/components/catalog/catalog-grid.tsx
+#: src/components/catalog/catalog-grid-back-to-top.tsx
+msgid "izuy1D"
+msgstr "Current item"
+
+#: src/components/catalog/catalog-grid-back-to-top.tsx
 msgid "Gs9Kfp"
 msgstr "Back to top"
 
