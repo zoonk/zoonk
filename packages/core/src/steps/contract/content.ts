@@ -1,3 +1,4 @@
+import { isJsonObject } from "@zoonk/utils/json";
 import { z } from "zod";
 import {
   type FillBlankStepContent,
@@ -54,6 +55,9 @@ const stepContentSchemas = {
   vocabulary: vocabularyContentSchema,
 } as const;
 
+const malformedJsonBackslashEscape = "\u00005c";
+const postgresUnsupportedNullCharacter = "\u0000";
+
 export type SupportedStepKind = keyof typeof stepContentSchemas;
 
 type AlphabetStepContent = z.infer<typeof alphabetContentSchema>;
@@ -80,6 +84,61 @@ export function isSupportedStepKind(kind: string): kind is SupportedStepKind {
   return Object.hasOwn(stepContentSchemas, kind);
 }
 
+/**
+ * Repairs malformed JSON escapes that models sometimes emit when they meant a
+ * literal backslash for LaTeX, then removes any remaining NULs because
+ * PostgreSQL JSONB cannot store U+0000 inside text values.
+ */
+function normalizeStepContentString(value: string): string {
+  return value
+    .replaceAll(malformedJsonBackslashEscape, "\\")
+    .replaceAll(postgresUnsupportedNullCharacter, "");
+}
+
+/**
+ * Normalizes one object entry while keeping object keys untouched because only
+ * generated string values need this database-safe repair.
+ */
+function normalizeStepContentEntry([key, value]: [string, unknown]): [string, unknown] {
+  return [key, normalizeStepContentValue(value)];
+}
+
+/**
+ * Recurses through array content so nested options, pairs, forms, and image
+ * prompts follow the same JSONB-safe string contract as top-level fields.
+ */
+function normalizeStepContentArray(value: unknown[]): unknown[] {
+  return value.map((item) => normalizeStepContentValue(item));
+}
+
+/**
+ * Recurses through parsed step-content objects without mutating the Zod output
+ * object, which keeps validation and normalization as separate operations.
+ */
+function normalizeStepContentObject(value: Record<string, unknown>): Record<string, unknown> {
+  return Object.fromEntries(Object.entries(value).map((entry) => normalizeStepContentEntry(entry)));
+}
+
+/**
+ * Walks validated step content and repairs only string leaves. Non-string JSON
+ * values are already safe for Postgres and should pass through unchanged.
+ */
+function normalizeStepContentValue(value: unknown): unknown {
+  if (typeof value === "string") {
+    return normalizeStepContentString(value);
+  }
+
+  if (Array.isArray(value)) {
+    return normalizeStepContentArray(value);
+  }
+
+  if (isJsonObject(value)) {
+    return normalizeStepContentObject(value);
+  }
+
+  return value;
+}
+
 export function parseStepContent(kind: "alphabet", content: unknown): AlphabetStepContent;
 export function parseStepContent(kind: "fillBlank", content: unknown): FillBlankStepContent;
 export function parseStepContent(kind: "listening", content: unknown): ListeningStepContent;
@@ -99,7 +158,7 @@ export function parseStepContent(
   content: unknown,
 ): StepContentByKind[SupportedStepKind];
 export function parseStepContent(kind: SupportedStepKind, content: unknown) {
-  return stepContentSchemas[kind].parse(content);
+  return normalizeStepContentValue(stepContentSchemas[kind].parse(content));
 }
 
 export function assertStepContent(kind: "alphabet", content: unknown): AlphabetStepContent;

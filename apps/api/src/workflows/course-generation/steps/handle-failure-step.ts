@@ -1,3 +1,4 @@
+import { captureWorkflowFailure } from "@/workflows/_shared/capture-workflow-failure";
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type WorkflowErrorLog, serializeWorkflowError } from "@/workflows/_shared/workflow-error";
 import { type CourseWorkflowStepName, WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
@@ -21,6 +22,13 @@ export async function handleCourseFailureStep(input: {
   const { courseId, courseSuggestionId } = input;
 
   logError("[Course Workflow Failure]", { courseId, courseSuggestionId, error: input.error });
+
+  await captureWorkflowFailure({
+    entity: "course",
+    entityId: courseId ?? courseSuggestionId,
+    error: input.error,
+    workflowName: "courseGenerationWorkflow",
+  });
 
   if (courseId) {
     const results = await Promise.allSettled([
@@ -75,6 +83,13 @@ export async function handleChapterFailureStep(input: {
   "use step";
 
   logError("[Chapter Workflow Failure]", { chapterId: input.chapterId, error: input.error });
+
+  await captureWorkflowFailure({
+    entity: "chapter",
+    entityId: input.chapterId,
+    error: input.error,
+    workflowName: "chapterGenerationWorkflow",
+  });
 
   await prisma.chapter.update({
     data: { generationRunId: null, generationStatus: "failed" },

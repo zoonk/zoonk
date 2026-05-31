@@ -67,4 +67,32 @@ describe(saveExplanationLessonStep, () => {
       ]),
     );
   });
+
+  it("normalizes malformed JSON backslash escapes before saving static content", async () => {
+    const context = await createLessonContext({ kind: "explanation", organizationId });
+
+    const malformedLatexText = JSON.parse(
+      String.raw`"FE preservada, geralmente \u00005c(\\ge 50\\%\\), não fecha diagnóstico sozinha."`,
+    ) as string;
+
+    const image = {
+      prompt: "A chart showing preserved ejection fraction.",
+      url: "https://example.com/heart.webp",
+    };
+
+    await saveExplanationLessonStep({
+      context,
+      images: [image],
+      steps: [{ text: malformedLatexText, title: "FE normal não basta" }],
+    });
+
+    const step = await prisma.step.findFirstOrThrow({ where: { lessonId: context.id } });
+
+    expect(step.content).toStrictEqual({
+      image,
+      text: String.raw`FE preservada, geralmente \(\ge 50\%\), não fecha diagnóstico sozinha.`,
+      title: "FE normal não basta",
+      variant: "text",
+    });
+  });
 });

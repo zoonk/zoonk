@@ -40,6 +40,31 @@ describe("step content contracts", () => {
     });
   });
 
+  it("normalizes malformed generated unicode escapes in nested text fields", () => {
+    const malformedLatexText = JSON.parse(
+      String.raw`"FE preservada, geralmente \u00005c(\\ge 50\\%\\), não fecha."`,
+    ) as string;
+
+    const content = parseStepContent("multipleChoice", {
+      context: malformedLatexText,
+      options: [{ feedback: "Correct", id: "a", isCorrect: true, text: malformedLatexText }],
+      question: "What is correct?",
+    });
+
+    expect(content).toStrictEqual({
+      context: String.raw`FE preservada, geralmente \(\ge 50\%\), não fecha.`,
+      options: [
+        {
+          feedback: "Correct",
+          id: "a",
+          isCorrect: true,
+          text: String.raw`FE preservada, geralmente \(\ge 50\%\), não fecha.`,
+        },
+      ],
+      question: "What is correct?",
+    });
+  });
+
   it("rejects multipleChoice options with extra fields", () => {
     expect(() =>
       parseStepContent("multipleChoice", {
