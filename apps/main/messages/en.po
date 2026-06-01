@@ -285,6 +285,26 @@ msgstr "This chapter hasn't been created yet."
 msgid "3IOFp2"
 msgstr "Create chapter"
 
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
+msgid "a0eayI"
+msgstr "Could not update lesson filters. Please try again."
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
+msgid "d6tcJn"
+msgstr "Filter lesson types"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
+msgid "kxP9GJ"
+msgstr "Types"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
+msgid "wi5osl"
+msgstr "Show lesson types"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
+msgid "OhgOkH"
+msgstr "Clear filter"
+
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgid "orGV/i"
 msgstr "Current lesson"

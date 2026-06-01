@@ -2,14 +2,16 @@ import {
   CatalogGridContent,
   CatalogGridEmpty,
   CatalogGridItem,
-  CatalogGridSearch,
 } from "@/components/catalog/catalog-grid";
 import { CatalogGridImage } from "@/components/catalog/catalog-grid-image";
 import { getCatalogActiveItemKey } from "@/components/catalog/catalog-item-target";
 import { getCatalogLessonProgress } from "@/data/progress/catalog-progress";
+import { getUserHiddenLessonKinds } from "@/data/users/lesson-filter-settings";
 import { getDefaultLessonImage } from "@/lib/catalog/default-images";
-import { getLessonDisplayMeta } from "@/lib/lessons";
+import { getLessonDisplayMeta, getLessonKindLabels } from "@/lib/lessons";
+import { getFilterableLessonKinds } from "@/lib/lessons/lesson-kind-filters";
 import { getActiveCatalogTarget } from "@zoonk/core/progress/active-catalog-target";
+import { getSession } from "@zoonk/core/users/session/get";
 import { type Lesson } from "@zoonk/db";
 import {
   GridGroup,
@@ -24,6 +26,7 @@ import {
 } from "@zoonk/ui/components/grid";
 import { getExtracted } from "next-intl/server";
 import { getLessonKindTone } from "./_utils/lesson-kind-tones";
+import { LessonListFilters } from "./lesson-list-filters";
 
 type LessonRow = { display: Awaited<ReturnType<typeof getLessonDisplayMeta>>; lesson: Lesson };
 
@@ -121,12 +124,14 @@ export async function LessonList({
   chapterId,
   chapterSlug,
   courseSlug,
+  isLanguageCourse,
   lessons,
 }: {
   brandSlug: string;
   chapterId: string;
   chapterSlug: string;
   courseSlug: string;
+  isLanguageCourse: boolean;
   lessons: Lesson[];
 }) {
   if (lessons.length === 0) {
@@ -135,11 +140,14 @@ export async function LessonList({
 
   const t = await getExtracted();
 
-  const [completionData, activeTarget] = await Promise.all([
+  const [completionData, activeTarget, session, hiddenLessonKinds] = await Promise.all([
     getCatalogLessonProgress(chapterId),
     getActiveCatalogTarget({ scope: { chapterId } }),
+    getSession(),
+    getUserHiddenLessonKinds(),
   ]);
 
+  const lessonKindLabels = await getLessonKindLabels();
   const completionMap = new Map(completionData.map((row) => [row.lessonId, row]));
   const lessonRows = await getLessonRows(lessons);
 
@@ -151,12 +159,29 @@ export async function LessonList({
   const searchItems = lessonRows.map(({ display, lesson }) => ({
     description: display.description,
     id: lesson.id,
+    kind: lesson.kind,
     title: display.title,
+  }));
+
+  const filterableLessonKinds = getFilterableLessonKinds({
+    isLanguageCourse,
+    lessonKinds: lessons.map((lesson) => lesson.kind),
+  });
+
+  const lessonKindOptions = filterableLessonKinds.map((kind) => ({
+    kind,
+    label: lessonKindLabels[kind],
   }));
 
   return (
     <CatalogGridContent activeItemKey={activeLessonKey} activeLabel={t("Current lesson")}>
-      <CatalogGridSearch items={searchItems} placeholder={t("Search lessons...")}>
+      <LessonListFilters
+        canPersistFilters={Boolean(session)}
+        initialHiddenLessonKinds={hiddenLessonKinds}
+        items={searchItems}
+        lessonKindOptions={lessonKindOptions}
+        placeholder={t("Search lessons...")}
+      >
         <CatalogGridEmpty>{t("No lessons found")}</CatalogGridEmpty>
         <GridGroup variant="pane">
           {lessonRows.map(({ display, lesson }) => {
@@ -178,7 +203,7 @@ export async function LessonList({
             );
           })}
         </GridGroup>
-      </CatalogGridSearch>
+      </LessonListFilters>
     </CatalogGridContent>
   );
 }

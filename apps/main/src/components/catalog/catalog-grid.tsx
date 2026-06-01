@@ -13,7 +13,11 @@ import { CatalogGridBackToTop } from "./catalog-grid-back-to-top";
 import { CatalogGridContext, useCatalogGridContext } from "./catalog-grid-context";
 import { type CatalogGridItemKey, getCatalogItemTargetId } from "./catalog-item-target";
 
-type CatalogGridSearchItem = { description?: string | null; id: CatalogGridItemKey; title: string };
+export type CatalogGridSearchItem = {
+  description?: string | null;
+  id: CatalogGridItemKey;
+  title: string;
+};
 
 /**
  * Catalog search should match the text learners scan inside each tile. Generated
@@ -28,7 +32,7 @@ function getCatalogSearchText(item: CatalogGridSearchItem): string {
  * Normalizing the combined tile text once per candidate keeps chapter and lesson
  * search accent-insensitive without each page rebuilding the same rules.
  */
-function matchesCatalogSearchQuery({
+export function matchesCatalogSearchQuery({
   item,
   query,
 }: {
@@ -84,34 +88,65 @@ export function CatalogGridSearch({
     throttleMs: 300,
   });
 
-  const { filteredIds, isSearchActive } = useMemo(() => {
+  const { filteredIds, isFilterActive } = useMemo(() => {
     const query = normalizeString(search);
 
     if (!query) {
-      return { filteredIds: null, isSearchActive: false };
+      return { filteredIds: null, isFilterActive: false };
     }
 
     const matching = items.filter((item) => matchesCatalogSearchQuery({ item, query }));
-    return { filteredIds: new Set(matching.map((item) => String(item.id))), isSearchActive: true };
+    return { filteredIds: new Set(matching.map((item) => String(item.id))), isFilterActive: true };
   }, [items, search]);
 
   return (
-    <CatalogGridContext value={{ filteredIds, isSearchActive }}>
-      <div className={cn("w-full", className)} data-slot="catalog-grid-search">
-        <div className="relative">
-          <SearchIcon className="text-muted-foreground/60 absolute top-1/2 left-3 size-4 -translate-y-1/2" />
-          <Input
-            aria-label={placeholder}
-            className="border-border/40 placeholder:text-muted-foreground/50 focus-visible:border-border h-10 bg-transparent pl-9 focus-visible:ring-0"
-            onChange={(event) => setSearch(event.target.value || null)}
-            placeholder={placeholder}
-            type="search"
-            value={search}
-          />
-        </div>
-      </div>
+    <CatalogGridContext value={{ filteredIds, isFilterActive }}>
+      <CatalogGridSearchField
+        className={className}
+        onSearchChange={(value) => setSearch(value || null)}
+        placeholder={placeholder}
+        search={search}
+      />
       {children}
     </CatalogGridContext>
+  );
+}
+
+/**
+ * Search controls keep the same icon, sizing, and responsive row behavior while
+ * letting specialized catalog pages place small filter actions beside the field.
+ */
+export function CatalogGridSearchField({
+  children,
+  className,
+  onSearchChange,
+  placeholder,
+  search,
+}: {
+  children?: ReactNode;
+  className?: string;
+  onSearchChange: (value: string) => void;
+  placeholder: string;
+  search: string;
+}) {
+  return (
+    <div
+      className={cn("flex w-full min-w-0 items-center gap-2", className)}
+      data-slot="catalog-grid-search"
+    >
+      <div className="relative min-w-0 flex-1">
+        <SearchIcon className="text-muted-foreground/60 absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+        <Input
+          aria-label={placeholder}
+          className="border-border/40 placeholder:text-muted-foreground/50 focus-visible:border-border h-10 bg-transparent pl-9 focus-visible:ring-0"
+          onChange={(event) => onSearchChange(event.target.value)}
+          placeholder={placeholder}
+          type="search"
+          value={search}
+        />
+      </div>
+      {children}
+    </div>
   );
 }
 
@@ -123,9 +158,9 @@ export function CatalogGridSearch({
 export function CatalogGridEmpty({ className, ...props }: React.ComponentProps<"p">) {
   const context = useCatalogGridContext();
   const filteredIds = context?.filteredIds ?? null;
-  const isSearchActive = context?.isSearchActive ?? false;
+  const isFilterActive = context?.isFilterActive ?? false;
 
-  const isEmpty = isSearchActive && filteredIds?.size === 0;
+  const isEmpty = isFilterActive && filteredIds?.size === 0;
 
   if (!isEmpty) {
     return null;

@@ -13,7 +13,7 @@ type LessonSeoInput = LessonDisplayInput & {
  * one translated map prevents the chapter list, player metadata, and SEO copy
  * from drifting when a label changes.
  */
-async function getLessonKindLabels(): Promise<Record<LessonKind, string>> {
+export async function getLessonKindLabels(): Promise<Record<LessonKind, string>> {
   const t = await getExtracted();
 
   return {
