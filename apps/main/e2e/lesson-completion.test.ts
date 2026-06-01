@@ -114,7 +114,6 @@ async function createLessonCompleteScenario(prefix: string) {
 
   return {
     chapter,
-    lesson1,
     lesson2,
     lessonUrl: `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson1.slug}`,
     uniqueId,
@@ -160,6 +159,7 @@ async function createChapterCompleteScenario(prefix: string) {
     organizationId: org.id,
     position: 0,
     slug: `e2e-${prefix}-lesson-${uniqueId}`,
+    title: `Chapter Lesson ${uniqueId}`,
   });
 
   // Chapter2 needs a lesson so structural next-lesson navigation finds it.
@@ -265,6 +265,7 @@ async function createCourseCompleteScenario(prefix: string) {
     organizationId: org.id,
     position: 0,
     slug: `e2e-${prefix}-lesson-${uniqueId}`,
+    title: `Final Lesson ${uniqueId}`,
   });
 
   await createQuizLesson(lesson.id, uniqueId);
@@ -287,11 +288,14 @@ test.describe("Lesson Completion UX", () => {
 
     await page.goto(lessonUrl);
     await page.waitForLoadState("networkidle");
+    await expect(page.getByText("Lesson 1 of 2")).toBeVisible();
     await completeQuiz(page, uniqueId);
 
     const completionScreen = page.getByRole("status");
     await expect(completionScreen.getByText("1/1")).toBeVisible();
     await expect(completionScreen.getByText(/correct/iu)).toBeVisible();
+    await expect(completionScreen.getByText(`First Lesson ${uniqueId}`)).toBeVisible();
+    await expect(completionScreen.getByText("1 lesson left in this chapter")).toBeVisible();
 
     await completionScreen.getByRole("link", { name: "Next" }).click();
     await expect(page).toHaveURL(new RegExp(`/l/${lesson2.slug}$`, "u"));
@@ -335,6 +339,8 @@ test.describe("Lesson Completion UX", () => {
 
     const completionScreen = page.getByRole("status");
     await expect(completionScreen.getByText(/chapter complete/iu)).toBeVisible();
+    await expect(completionScreen.getByText(`Chapter Lesson ${uniqueId}`)).toBeVisible();
+    await expect(completionScreen.getByText("1 chapter left in this course")).toBeVisible();
 
     await completionScreen.getByRole("link", { name: /next chapter/iu }).click();
     await expect(page.getByRole("heading", { level: 1, name: chapter2.title })).toBeVisible();
@@ -405,6 +411,8 @@ test.describe("Lesson Completion UX", () => {
 
     const completionScreen = page.getByRole("status");
     await expect(completionScreen.getByText(/course complete/iu)).toBeVisible();
+    await expect(completionScreen.getByText(`Final Lesson ${uniqueId}`)).toBeVisible();
+    await expect(completionScreen.getByText("No chapters left in this course")).toBeVisible();
 
     await completionScreen.getByRole("link", { name: /review course/iu }).click();
     await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();

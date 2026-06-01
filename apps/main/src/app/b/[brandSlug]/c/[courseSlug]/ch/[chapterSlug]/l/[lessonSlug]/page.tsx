@@ -1,6 +1,8 @@
 import { LoginRequired } from "@/components/auth/login-required";
 import { UpgradeCTA } from "@/components/subscription/upgrade-cta";
+import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getLesson as getCatalogLesson } from "@/data/lessons/get-lesson";
+import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
 import { getLessonDisplayMeta, getLessonSeoMeta } from "@/lib/lessons";
 import { hasActiveSubscription } from "@zoonk/core/auth/subscription";
 import { getLessonAccessRequirement } from "@zoonk/core/lessons/access";
@@ -38,6 +40,7 @@ import { after } from "next/server";
 import { fetchReviewLessonData } from "./lesson-data-loaders";
 import { LessonNotGenerated } from "./lesson-not-generated";
 import { LessonPlayerClient } from "./lesson-player-client";
+import { buildLessonProgressMeta } from "./lesson-player-model";
 import { ReviewLessonEmpty } from "./review-lesson-empty";
 
 type Props = PageProps<"/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">;
@@ -185,7 +188,15 @@ export default async function LessonPage({ params }: Props) {
     return accessGate;
   }
 
-  const [lesson, nextChapter, nextLesson, reviewLessonData, totalBrainPower] = await Promise.all([
+  const [
+    lesson,
+    nextChapter,
+    nextLesson,
+    reviewLessonData,
+    totalBrainPower,
+    chapterLessons,
+    courseChapters,
+  ] = await Promise.all([
     getPlayerLesson({ lessonId: lessonShell.id }),
     getNextChapterInCourse({
       chapterPosition: lessonShell.chapter.position,
@@ -199,6 +210,8 @@ export default async function LessonPage({ params }: Props) {
     }),
     fetchReviewLessonData(lessonShell.id),
     getTotalBrainPower(),
+    listChapterLessons({ chapterId: lessonShell.chapter.id }),
+    listCourseChapters({ courseId: lessonShell.chapter.course.id }),
   ]);
 
   if (!lesson) {
@@ -258,6 +271,13 @@ export default async function LessonPage({ params }: Props) {
     after(() => startLesson({ lessonId: lesson.id, userId: session.user.id }));
   }
 
+  const lessonProgress = buildLessonProgressMeta({
+    chapterId: lessonShell.chapter.id,
+    chapterLessons,
+    courseChapters,
+    lessonId: lessonShell.id,
+  });
+
   return (
     <LessonPlayerClient
       lesson={serialized}
@@ -267,6 +287,7 @@ export default async function LessonPage({ params }: Props) {
       chapterSlug={chapterSlug}
       isAuthenticated={Boolean(session)}
       lessonDescription={lessonMeta.description}
+      lessonProgress={lessonProgress}
       lessonSlug={lessonSlug}
       lessonTitle={lessonMeta.title}
       nextChapter={nextChapter}

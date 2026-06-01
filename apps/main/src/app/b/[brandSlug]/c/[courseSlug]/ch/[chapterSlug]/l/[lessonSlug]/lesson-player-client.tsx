@@ -8,7 +8,7 @@ import { PlayerProvider, type PlayerStepChangeEvent } from "@zoonk/player/provid
 import { PlayerShell } from "@zoonk/player/shell";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef } from "react";
-import { buildLessonPlayerModel } from "./lesson-player-model";
+import { type LessonProgressMeta, buildLessonPlayerModel } from "./lesson-player-model";
 import { preloadNextLesson } from "./preload-next-lesson-action";
 import { submitCompletion } from "./submit-completion-action";
 
@@ -29,6 +29,7 @@ export function LessonPlayerClient({
   chapterSlug,
   isAuthenticated,
   lessonDescription,
+  lessonProgress,
   lessonSlug,
   lessonTitle,
   nextChapter,
@@ -44,6 +45,7 @@ export function LessonPlayerClient({
   chapterSlug: string;
   isAuthenticated: boolean;
   lessonDescription: string;
+  lessonProgress: LessonProgressMeta;
   lessonSlug: string;
   lessonTitle: string;
   nextChapter: { brandSlug: string; chapterSlug: string; courseSlug: string } | null;
@@ -60,6 +62,7 @@ export function LessonPlayerClient({
     brandSlug,
     chapterSlug,
     courseSlug,
+    lessonProgress,
     nextChapter,
     nextLesson,
   });
@@ -139,6 +142,7 @@ export function LessonPlayerClient({
       lesson={lesson}
       chapterTitle={chapterTitle}
       lessonDescription={lessonDescription}
+      lessonProgress={model.lessonProgress}
       lessonTitle={lessonTitle}
       milestone={model.milestone}
       navigation={model.navigation}

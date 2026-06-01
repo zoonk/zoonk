@@ -23,6 +23,13 @@ export type PlayerNavigation = {
   nextLessonHref: PlayerRoute | null;
 };
 
+export type PlayerLessonProgress = {
+  currentLessonNumber: number;
+  remainingChaptersInCourse: number;
+  remainingLessonsInChapter: number;
+  totalLessonsInChapter: number;
+};
+
 type ReviewMilestone = { kind: "chapter"; nextHref: PlayerRoute | null; reviewHref: PlayerRoute };
 
 type CourseMilestone = {
@@ -43,6 +50,7 @@ type PlayerLessonMeta = {
   chapterTitle: string;
   description: string;
   kind: LessonKind;
+  lessonProgress: PlayerLessonProgress;
   lessonTitle: string;
   title: string | null;
 };
