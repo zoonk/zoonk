@@ -57,6 +57,43 @@ async function expectTargetNearTop({ page, title }: { page: Page; title: string 
 }
 
 /**
+ * Smooth scrolling is browser behavior, so the focused assertion records the
+ * options passed to scrollIntoView instead of trying to time animation frames.
+ */
+async function recordScrollIntoViewOptions(page: Page) {
+  await page.addInitScript(() => {
+    // oxlint-disable-next-line unicorn/consistent-function-scoping -- Playwright init scripts need browser-side patches inside the serialized callback.
+    Element.prototype.scrollIntoView = function scrollIntoView(
+      options?: boolean | ScrollIntoViewOptions,
+    ) {
+      Object.assign(globalThis, { catalogScrollIntoViewOptions: options });
+    };
+  });
+}
+
+/**
+ * Toolbar shortcuts should animate for users who have not asked the browser to
+ * reduce motion.
+ */
+async function expectSmoothScrollRequest(page: Page) {
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const options: unknown = Reflect.get(globalThis, "catalogScrollIntoViewOptions");
+
+        if (!options || typeof options !== "object") {
+          return null;
+        }
+
+        const behavior: unknown = Reflect.get(options, "behavior");
+
+        return typeof behavior === "string" ? behavior : null;
+      }),
+    )
+    .toBe("smooth");
+}
+
+/**
  * Course pages need enough chapters to make the active chapter useful as a
  * shortcut. The completed lesson sits just before the active chapter, while a
  * later opened lesson proves incomplete progress does not move the target.
@@ -223,11 +260,46 @@ test.describe("Catalog Active Scroll", () => {
 
     await scrollDown(authenticatedPage);
 
-    const currentChapterLink = authenticatedPage.getByRole("link", { name: /current chapter/iu });
+    const currentChapterLink = authenticatedPage.getByRole("link", { name: /^current chapter$/iu });
     await expect(currentChapterLink).toBeVisible();
 
     await currentChapterLink.click();
     await expectTargetNearTop({ page: authenticatedPage, title: target.title });
+  });
+
+  test("course page toolbar jumps to the current chapter", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
+    const target = await createScrollableCourseTarget({ userId: withProgressUser.id });
+
+    await authenticatedPage.emulateMedia({ reducedMotion: "reduce" });
+    await authenticatedPage.goto(target.url);
+    await expect(authenticatedPage.getByRole("heading", { level: 1 })).toBeVisible();
+
+    const currentChapterLink = authenticatedPage.getByRole("link", {
+      name: /^go to current chapter$/iu,
+    });
+
+    await expect(currentChapterLink).toBeVisible();
+
+    await currentChapterLink.click();
+    await expectTargetNearTop({ page: authenticatedPage, title: target.title });
+  });
+
+  test("course page toolbar uses smooth scrolling", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
+    const target = await createScrollableCourseTarget({ userId: withProgressUser.id });
+
+    await recordScrollIntoViewOptions(authenticatedPage);
+    await authenticatedPage.goto(target.url);
+    await expect(authenticatedPage.getByRole("heading", { level: 1 })).toBeVisible();
+
+    await authenticatedPage.getByRole("link", { name: /^go to current chapter$/iu }).click();
+
+    await expectSmoothScrollRequest(authenticatedPage);
   });
 
   test("course page keeps back-to-top when no chapter is active", async ({
@@ -262,7 +334,7 @@ test.describe("Catalog Active Scroll", () => {
 
     await scrollDown(authenticatedPage);
 
-    const currentLessonLink = authenticatedPage.getByRole("link", { name: /current lesson/iu });
+    const currentLessonLink = authenticatedPage.getByRole("link", { name: /^current lesson$/iu });
     await expect(currentLessonLink).toBeVisible();
 
     await currentLessonLink.click();
@@ -275,10 +347,33 @@ test.describe("Catalog Active Scroll", () => {
     });
 
     await expect(backToTopAfterPassingLink).toBeVisible();
-    await expect(authenticatedPage.getByRole("link", { name: /current lesson/iu })).toHaveCount(0);
+
+    await expect(authenticatedPage.getByRole("link", { name: /^current lesson$/iu })).toHaveCount(
+      0,
+    );
 
     await backToTopAfterPassingLink.click();
     await expect.poll(() => authenticatedPage.evaluate(() => globalThis.scrollY)).toBe(0);
+  });
+
+  test("chapter page toolbar jumps to the current lesson", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
+    const target = await createScrollableLessonTarget({ userId: withProgressUser.id });
+
+    await authenticatedPage.emulateMedia({ reducedMotion: "reduce" });
+    await authenticatedPage.goto(target.url);
+    await expect(authenticatedPage.getByRole("heading", { level: 1 })).toBeVisible();
+
+    const currentLessonLink = authenticatedPage.getByRole("link", {
+      name: /^go to current lesson$/iu,
+    });
+
+    await expect(currentLessonLink).toBeVisible();
+
+    await currentLessonLink.click();
+    await expectTargetNearTop({ page: authenticatedPage, title: target.title });
   });
 
   test("chapter page keeps back-to-top when only opened lesson is incomplete", async ({

@@ -4,9 +4,8 @@ import { GridBackToTop } from "@zoonk/ui/components/grid";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type MouseEvent, useEffect, useRef, useState } from "react";
+import { type CatalogGridItemKey, getCatalogItemTargetId } from "./catalog-item-target";
 import { CATALOG_TOP_TARGET_ID } from "./catalog-top-target";
-
-export type CatalogGridItemKey = string | number | bigint;
 
 type CatalogActiveTargetPosition = "ahead" | "unavailable";
 type CatalogScrollActionMode = "active" | "top";
@@ -25,14 +24,6 @@ const DEFAULT_CATALOG_SCROLL_STATE = {
   direction: "up",
   isVisible: false,
 } satisfies CatalogScrollState;
-
-/**
- * Catalog tiles need stable DOM anchors so the floating action can target the
- * current chapter or lesson without coupling scroll behavior to route URLs.
- */
-export function getCatalogItemTargetId(itemKey: CatalogGridItemKey): string {
-  return `catalog-item-${String(itemKey)}`;
-}
 
 /**
  * The floating top action should appear only after the reader has left the

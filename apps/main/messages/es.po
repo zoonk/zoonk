@@ -1674,6 +1674,14 @@ msgstr "No me gustó"
 msgid "G5YSJR"
 msgstr "Enviar comentarios"
 
+#: src/components/catalog/catalog-active-shortcut-link.tsx
+msgid "PAKDzS"
+msgstr "Ir al capítulo actual"
+
+#: src/components/catalog/catalog-active-shortcut-link.tsx
+msgid "Js2dT3"
+msgstr "Ir a la lección actual"
+
 #: src/components/catalog/catalog-grid-back-to-top.tsx
 msgid "izuy1D"
 msgstr "Elemento actual"
