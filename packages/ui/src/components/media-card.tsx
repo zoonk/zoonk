@@ -153,7 +153,7 @@ export function MediaCardDescription({ children, className }: React.ComponentPro
   return (
     <p
       className={cn(
-        "text-muted-foreground mt-1.5 line-clamp-3 text-sm leading-snug text-pretty sm:text-base sm:leading-relaxed",
+        "text-muted-foreground mt-0.5 line-clamp-3 text-sm leading-snug text-pretty sm:text-base sm:leading-relaxed",
         className,
       )}
       data-slot="media-card-description"
