@@ -1,9 +1,25 @@
+import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { buildInlineImageUrl } from "../_test-utils/build-inline-image-url";
 import { buildSerializedLesson, buildSerializedStep } from "../_test-utils/player-test-data";
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { buildNavigation, renderPlayer } from "../_test-utils/render-player";
+
+/**
+ * Practice intros are image-led setup screens. The image should behave like a
+ * full-stage background, not like the contained diagrams used inside regular
+ * static explanation steps.
+ */
+function expectImageToFillPlayerStage(image: HTMLElement) {
+  const playerStage = screen.getByLabelText("Player screen");
+  const imageRect = image.getBoundingClientRect();
+  const stageRect = playerStage.getBoundingClientRect();
+
+  expect(globalThis.getComputedStyle(image).objectFit).toBe("cover");
+  expect(Math.round(imageRect.width)).toBe(Math.round(stageRect.width));
+  expect(Math.round(imageRect.height)).toBe(Math.round(stageRect.height));
+}
 
 describe("player browser integration: practice lessons", () => {
   it("renders a leading static scenario step and still completes with question scoring", async () => {
@@ -73,6 +89,12 @@ describe("player browser integration: practice lessons", () => {
         ),
       )
       .toBeInTheDocument();
+
+    expectImageToFillPlayerStage(
+      screen.getByAltText(
+        /late-night support war room with a refund dashboard on a laptop and a teammate reviewing notes/iu,
+      ),
+    );
 
     await expect
       .element(

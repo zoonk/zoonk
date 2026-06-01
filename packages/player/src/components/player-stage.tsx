@@ -4,9 +4,9 @@ import { type PlayerPhase } from "../player-reducer";
 /**
  * Chooses the stage scroll/alignment mode from the screen layout flags.
  *
- * Hero screens need full-bleed mobile layout and desktop scrolling. Static read
- * screens keep overflow locked for swipe navigation, while interactive screens
- * own normal vertical scrolling.
+ * Hero screens need the child to own the whole stage at every breakpoint.
+ * Static read screens keep overflow locked for swipe navigation, while
+ * interactive screens own normal vertical scrolling.
  */
 function getStageLayoutClass({
   isFullBleed,
@@ -16,7 +16,7 @@ function getStageLayoutClass({
   isStatic?: boolean;
 }) {
   if (isFullBleed) {
-    return "items-stretch overflow-hidden lg:items-center lg:overflow-y-auto";
+    return "items-stretch overflow-hidden";
   }
 
   if (isStatic) {
