@@ -17,6 +17,8 @@ type WordDataInput = {
 
 type WordMetadata = Omit<WordBankOption, "word">;
 
+const WORD_BANK_DISTRACTOR_LIMIT = 4;
+
 /**
  * Word-bank lookups should ignore punctuation and casing so the same visible token resolves
  * to one metadata entry regardless of where it came from.
@@ -254,6 +256,26 @@ function removeCanonicalWordCollisions(distractors: string[], correctWords: stri
 }
 
 /**
+ * Lowercase visible distractors so generated capitalization cannot identify
+ * which word-bank tiles are extra options.
+ */
+function normalizeDistractorCasing(distractor: string): string {
+  return distractor.toLocaleLowerCase();
+}
+
+/**
+ * `prepareLessonData` is the boundary that turns generated lesson resources
+ * into the player payload. Capping here keeps the stored AI distractor set
+ * intact while sending the UI four varied extra tiles instead of always taking
+ * the first generated distractors.
+ */
+function getVisibleDistractors(distractors: string[]): string[] {
+  return shuffle(distractors)
+    .slice(0, WORD_BANK_DISTRACTOR_LIMIT)
+    .map((distractor) => normalizeDistractorCasing(distractor));
+}
+
+/**
  * Builds the final arrange-words option list from canonical tokens plus stored direct
  * distractors. There is no semantic filtering, fallback lesson lookup, or local top-up.
  */
@@ -269,7 +291,10 @@ export function buildWordBankOptions(
     return [];
   }
 
-  const distractors = removeCanonicalWordCollisions(config.distractors, config.correctWords);
+  const distractors = getVisibleDistractors(
+    removeCanonicalWordCollisions(config.distractors, config.correctWords),
+  );
+
   const words = shuffle([...config.correctWords, ...distractors]);
 
   const buildOption = config.usesTargetLanguageMetadata
