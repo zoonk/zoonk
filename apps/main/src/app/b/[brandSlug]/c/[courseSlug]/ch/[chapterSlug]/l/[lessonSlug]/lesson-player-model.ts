@@ -83,7 +83,10 @@ export function buildLessonProgressMeta({
       currentId: chapterId,
       items: courseChapters,
     }),
-    remainingLessonsInChapter: Math.max(totalLessonsInChapter - currentLessonNumber, 0),
+    remainingLessonsInChapter: getRemainingItemCount({
+      currentId: lessonId,
+      items: chapterLessons,
+    }),
     totalLessonsInChapter,
   };
 }

@@ -99,9 +99,7 @@ export function renderPlayer({
  * keeps the public provider contract realistic without making every scenario
  * restate one-lesson progress metadata.
  */
-export function buildLessonProgress(
-  overrides: Partial<PlayerLessonProgress> = {},
-): PlayerLessonProgress {
+function buildLessonProgress(overrides: Partial<PlayerLessonProgress> = {}): PlayerLessonProgress {
   return {
     currentLessonNumber: 1,
     remainingChaptersInCourse: 0,
