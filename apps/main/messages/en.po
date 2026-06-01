@@ -1960,52 +1960,52 @@ msgid "lqtP+R"
 msgstr "Vocabulary"
 
 #: src/lib/lessons.ts
-msgid "KWi2PI"
-msgstr "Learn the alphabet and writing system with focused practice."
+msgid "22k1CY"
+msgstr "Learn how letters and sounds work in this writing system."
 
 #: src/lib/lessons.ts
-msgid "1h+4hA"
-msgstr "Work through a guided lesson."
+msgid "LZC7R9"
+msgstr "Work through a lesson created for your goal."
 
 #: src/lib/lessons.ts
-msgid "yGskby"
-msgstr "Understand the key ideas before applying them."
+msgid "fOfLbt"
+msgstr "Understand the key ideas using everyday language and practical examples."
 
 #: src/lib/lessons.ts
 msgid "dHmgw1"
 msgstr "Practice grammar patterns with examples and exercises."
 
 #: src/lib/lessons.ts
-msgid "kvq0XW"
-msgstr "Listen to sentences built from the latest vocabulary."
+msgid "AetsPy"
+msgstr "Listen to sentences using words you recently learned."
 
 #: src/lib/lessons.ts
-msgid "4dAUaa"
-msgstr "Apply the previous explanations in a guided problem."
+msgid "6oNgY9"
+msgstr "Use what you learned in the previous lesson to solve real-world problems."
 
 #: src/lib/lessons.ts
-msgid "t+ekBV"
-msgstr "Check your understanding with a short quiz."
+msgid "vO6aLm"
+msgstr "Check what you understood with a short quiz."
 
 #: src/lib/lessons.ts
-msgid "nuMTc1"
-msgstr "Read sentences built from the latest vocabulary."
+msgid "OIim7M"
+msgstr "Read sentences using words you recently learned."
 
 #: src/lib/lessons.ts
 msgid "pwrprO"
 msgstr "Review this chapter with practice based on your mistakes."
 
 #: src/lib/lessons.ts
-msgid "Gm85VV"
-msgstr "Translate the words from the previous vocabulary lesson."
+msgid "IQOJhk"
+msgstr "Translate words from your previous vocabulary lesson."
 
 #: src/lib/lessons.ts
 msgid "9XByXq"
 msgstr "Follow a guided step-by-step tutorial."
 
 #: src/lib/lessons.ts
-msgid "DfYRbN"
-msgstr "Learn new words with focused vocabulary practice."
+msgid "IHSVS5"
+msgstr "Learn new words and practice using them."
 
 #: src/lib/lessons.ts
 msgid "OjyuQ+"
