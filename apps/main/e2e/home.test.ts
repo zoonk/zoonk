@@ -40,6 +40,82 @@ test.describe("Home Page - Unauthenticated", () => {
 });
 
 test.describe("Home Page - Authenticated", () => {
+  test("continue learning lesson description navigates to the player", async ({
+    baseURL,
+    browser,
+  }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const [org, user] = await Promise.all([getAiOrganization(), createE2EUser(baseURL!)]);
+
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-description-course-${uniqueId}`,
+      title: `E2E Description Course ${uniqueId}`,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-description-chapter-${uniqueId}`,
+      title: `E2E Description Chapter ${uniqueId}`,
+    });
+
+    const lessonDescription = `E2E Description target ${uniqueId}`;
+
+    const [completedLesson, nextLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: org.id,
+        position: 0,
+        slug: `e2e-description-completed-${uniqueId}`,
+        title: `E2E Description Completed ${uniqueId}`,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        description: lessonDescription,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: org.id,
+        position: 1,
+        slug: `e2e-description-next-${uniqueId}`,
+        title: `E2E Description Next ${uniqueId}`,
+      }),
+    ]);
+
+    await Promise.all([
+      lessonProgressFixture({
+        completedAt: new Date(),
+        durationSeconds: 60,
+        lessonId: completedLesson.id,
+        userId: user.id,
+      }),
+      userProgressFixture({ totalBrainPower: 100n, userId: user.id }),
+      prisma.courseUser.create({ data: { courseId: course.id, userId: user.id } }),
+    ]);
+
+    const ctx = await browser.newContext({ storageState: user.storageState });
+    const page = await ctx.newPage();
+
+    try {
+      await page.goto("/");
+
+      const descriptionLink = page.getByRole("link", { name: lessonDescription });
+
+      await expect(descriptionLink).toBeVisible();
+      await descriptionLink.click();
+
+      await expect(page).toHaveURL(
+        new RegExp(`/b/${org.slug}/c/${course.slug}/ch/${chapter.slug}/l/${nextLesson.slug}$`, "u"),
+      );
+    } finally {
+      await ctx.close();
+    }
+  });
+
   test("user with progress sees continue learning instead of hero", async ({
     authenticatedPage,
   }) => {

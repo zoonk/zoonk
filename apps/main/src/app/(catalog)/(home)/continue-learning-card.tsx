@@ -109,7 +109,15 @@ export async function ContinueLearningCard({ item }: { item: ContinueLearningIte
           </FeatureCardSubtitle>
 
           {lessonMeta ? (
-            <FeatureCardDescription>{lessonMeta.description}</FeatureCardDescription>
+            <Link
+              className="focus-visible:ring-ring block rounded-sm focus-visible:ring-2 focus-visible:outline-none"
+              href={headerHref}
+              prefetch={prefetch}
+            >
+              <FeatureCardDescription className="hover:text-muted-foreground transition-colors hover:underline">
+                {lessonMeta.description}
+              </FeatureCardDescription>
+            </Link>
           ) : null}
         </FeatureCardBody>
       </FeatureCardContent>
