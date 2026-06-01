@@ -1,6 +1,7 @@
 "use client";
 
 import { useExtracted } from "next-intl";
+import { PlayerAudioProvider } from "../player-audio-context";
 import { usePlayerRuntime } from "../player-context";
 import {
   getCurrentResult,
@@ -10,6 +11,7 @@ import {
 } from "../player-selectors";
 import { usePlayerHaptics } from "../use-player-haptics";
 import { InPlayStickyHeader } from "./in-play-sticky-header";
+import { PlayAudioButton } from "./play-audio-button";
 import { PlayerBottomBar } from "./player-bottom-bar";
 import { PlayerStage } from "./player-stage";
 import { StageContent } from "./stage-content";
@@ -25,20 +27,36 @@ import { StepNavigationButtonGroup } from "./step-navigation-button-group";
  */
 function BottomBarContent() {
   const { actions, screen } = usePlayerRuntime();
+  const audioUrl = screen.bottomBar?.audioUrl ?? null;
+  const audioAction = audioUrl ? <BottomBarAudioAction audioUrl={audioUrl} /> : null;
 
   return (
     <PlayerContentFrame>
       {screen.bottomBar?.kind === "navigation" ? (
         <StepNavigationButtonGroup
+          audioAction={audioAction}
           canNavigatePrev={screen.bottomBar.canNavigatePrev}
           onNavigateNext={actions.navigateNext}
           onNavigatePrev={actions.navigatePrev}
         />
       ) : (
-        <StepActionButton />
+        <div className="flex w-full gap-2">
+          <StepActionButton className="min-w-0 flex-1" />
+          {audioAction}
+        </div>
       )}
     </PlayerContentFrame>
   );
+}
+
+/**
+ * Renders the secondary bottom-bar audio icon only for steps with prompt audio.
+ *
+ * The center play button stays in the step content; this small duplicate gives
+ * thumb-reachable access on mobile without adding noise to non-audio steps.
+ */
+function BottomBarAudioAction({ audioUrl }: { audioUrl: string }) {
+  return <PlayAudioButton audioUrl={audioUrl} variant="outline" />;
 }
 
 /**
@@ -50,6 +68,17 @@ function BottomBarContent() {
  */
 function getStageResetKey({ screenKind, stepId }: { screenKind: string; stepId?: string }) {
   return `${stepId ?? "completion"}:${screenKind}`;
+}
+
+/**
+ * Remounts the shared audio provider when the active step changes.
+ *
+ * The provider owns the reusable audio element for duplicate prompt controls,
+ * so keying by step and URL guarantees any still-playing clip is cleaned up
+ * when the learner advances to a different prompt.
+ */
+function getAudioProviderKey({ audioUrl, stepId }: { audioUrl: string | null; stepId?: string }) {
+  return `${stepId ?? "completion"}:${audioUrl ?? "no-audio"}`;
 }
 
 export function PlayerShell() {
@@ -64,6 +93,13 @@ export function PlayerShell() {
 
   const progressValue = getProgressValue(state);
   const upcomingImages = getUpcomingImages(state);
+  const bottomBarAudioUrl = screen.bottomBar?.audioUrl ?? null;
+
+  const audioProviderKey = getAudioProviderKey({
+    audioUrl: bottomBarAudioUrl,
+    stepId: currentStep?.id,
+  });
+
   const stageResetKey = getStageResetKey({ screenKind: screen.kind, stepId: currentStep?.id });
 
   usePlayerHaptics({ current: { phase: state.phase, result: currentResult, step: currentStep } });
@@ -72,22 +108,24 @@ export function PlayerShell() {
     <main className="flex h-dvh flex-col overflow-hidden">
       {screen.showChrome && <InPlayStickyHeader progressValue={progressValue} />}
 
-      <PlayerStage
-        aria-label={t("Player screen")}
-        isFullBleed={screen.stageIsFullBleed}
-        isStatic={screen.stageIsStatic}
-        key={stageResetKey}
-        phase={state.phase}
-        scene={screen.scene}
-      >
-        <StageContent />
-      </PlayerStage>
+      <PlayerAudioProvider audioUrl={bottomBarAudioUrl} key={audioProviderKey}>
+        <PlayerStage
+          aria-label={t("Player screen")}
+          isFullBleed={screen.stageIsFullBleed}
+          isStatic={screen.stageIsStatic}
+          key={stageResetKey}
+          phase={state.phase}
+          scene={screen.scene}
+        >
+          <StageContent />
+        </PlayerStage>
 
-      {shouldShowStickyBottomBar && (
-        <PlayerBottomBar className="lg:hidden">
-          <BottomBarContent />
-        </PlayerBottomBar>
-      )}
+        {shouldShowStickyBottomBar && (
+          <PlayerBottomBar aria-label={t("Player controls")} className="lg:hidden" role="toolbar">
+            <BottomBarContent />
+          </PlayerBottomBar>
+        )}
+      </PlayerAudioProvider>
 
       <StepImagePreloader images={upcomingImages} />
     </main>

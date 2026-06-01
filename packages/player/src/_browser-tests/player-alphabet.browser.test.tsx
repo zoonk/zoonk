@@ -120,13 +120,15 @@ describe("player browser integration: alphabet", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    await page.getByRole("button", { name: /play pronunciation/iu }).click();
+    const currentCard = page.getByRole("region", { name: /alphabet: ب/iu });
+
+    await currentCard.getByRole("button", { name: /play pronunciation/iu }).click();
 
     await expect
-      .element(page.getByRole("button", { name: /pause pronunciation/iu }))
+      .element(currentCard.getByRole("button", { name: /pause pronunciation/iu }))
       .toBeInTheDocument();
 
-    await expect.element(page.getByRole("region", { name: /alphabet: ب/iu })).toBeInTheDocument();
+    await expect.element(currentCard).toBeInTheDocument();
 
     await expect
       .element(page.getByRole("region", { name: /alphabet: ت/iu }))

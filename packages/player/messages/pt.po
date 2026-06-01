@@ -202,6 +202,10 @@ msgstr "Progresso da aula"
 msgid "tJtNzs"
 msgstr "Tela do jogador"
 
+#: src/components/player-shell.tsx
+msgid "QmGDqt"
+msgstr "Controles da aula"
+
 #: src/components/reward-badges.tsx
 msgid "/Q0taG"
 msgstr "PM"

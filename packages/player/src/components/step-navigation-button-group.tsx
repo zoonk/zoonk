@@ -6,16 +6,19 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 
 /**
- * Read-only steps need an explicit touch target because swipe gestures are
+ * Read-only steps need explicit touch targets because swipe gestures are
  * discoverable only after the learner already knows they exist. This group
  * keeps swipe navigation intact while giving mobile and tablet users a clear
- * tappable path through static, vocabulary, and alphabet screens.
+ * tappable path through static, vocabulary, and alphabet screens, plus an
+ * optional trailing control for prompt-specific actions like audio playback.
  */
 export function StepNavigationButtonGroup({
+  audioAction,
   canNavigatePrev,
   onNavigateNext,
   onNavigatePrev,
 }: {
+  audioAction?: React.ReactNode;
   canNavigatePrev: boolean;
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
@@ -39,7 +42,7 @@ export function StepNavigationButtonGroup({
 
       <Button
         aria-keyshortcuts="ArrowRight"
-        className={cn("min-w-0 flex-1", !canNavigatePrev && "w-full")}
+        className={cn("min-w-0 flex-1", !canNavigatePrev && !audioAction && "w-full")}
         onClick={onNavigateNext}
         size="lg"
         type="button"
@@ -47,6 +50,8 @@ export function StepNavigationButtonGroup({
         <span>{t("Next")}</span>
         <ChevronRightIcon aria-hidden="true" data-icon="inline-end" />
       </Button>
+
+      {audioAction}
     </div>
   );
 }
