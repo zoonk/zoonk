@@ -74,8 +74,8 @@ msgid "xmcVZ0"
 msgstr "Search"
 
 #: src/app/(catalog)/_components/command-palette.tsx
-msgid "HC7Mi4"
-msgstr "Search courses or pages..."
+msgid "PSiLeL"
+msgstr "Search courses, chapters, or pages..."
 
 #: src/app/(catalog)/_components/command-palette.tsx
 msgid "CxfKLC"
@@ -94,6 +94,10 @@ msgstr "Logout"
 #: src/app/(catalog)/_components/command-palette.tsx
 msgid "SENRqu"
 msgstr "Help"
+
+#: src/app/(catalog)/_components/command-palette.tsx
+msgid "Do1Pfd"
+msgstr "Chapters"
 
 #: src/app/(catalog)/_components/command-palette.tsx
 msgid "hX5PAb"

@@ -20,9 +20,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
-import { type CourseSearchResult, searchCoursesAction } from "./search-courses-action";
+import {
+  type CatalogSearchResults,
+  type ChapterSearchResult,
+  type CourseSearchResult,
+  searchCatalogAction,
+} from "./search-courses-action";
 
-const EMPTY_COURSE_RESULTS: CourseSearchResult[] = [];
+const EMPTY_SEARCH_RESULTS: CatalogSearchResults = { chapters: [], courses: [] };
 
 /**
  * The catalog navbar sometimes hides the search trigger responsively while the
@@ -44,23 +49,16 @@ export function CommandPalette({
     (searchQuery: string) => {
       trackCommandPaletteSearch({ searchTerm: searchQuery });
 
-      return searchCoursesAction({ language: locale, query: searchQuery });
+      return searchCatalogAction({ language: locale, query: searchQuery });
     },
     [locale],
   );
 
-  const {
-    closePalette,
-    isOpen,
-    onSelectItem,
-    open,
-    query,
-    results: courses,
-    setQuery,
-  } = useCommandPaletteSearch<CourseSearchResult[]>({
-    emptyResults: EMPTY_COURSE_RESULTS,
-    onSearch: handleSearch,
-  });
+  const { closePalette, isOpen, onSelectItem, open, query, results, setQuery } =
+    useCommandPaletteSearch<CatalogSearchResults>({
+      emptyResults: EMPTY_SEARCH_RESULTS,
+      onSearch: handleSearch,
+    });
 
   function handleSelect<T extends string>(url: Route<T>) {
     onSelectItem();
@@ -90,7 +88,8 @@ export function CommandPalette({
     { key: t("Feedback & Support"), ...getMenu("support") },
   ];
 
-  const hasCourses = courses.length > 0;
+  const hasChapters = results.chapters.length > 0;
+  const hasCourses = results.courses.length > 0;
 
   return (
     <>
@@ -106,14 +105,14 @@ export function CommandPalette({
       </Button>
 
       <CommandDialog
-        description={t("Search courses or pages...")}
+        description={t("Search courses, chapters, or pages...")}
         onOpenChange={closePalette}
         open={isOpen}
         title={t("Search")}
       >
         <CommandInput
           onValueChange={setQuery}
-          placeholder={t("Search courses or pages...")}
+          placeholder={t("Search courses, chapters, or pages...")}
           value={query}
         />
 
@@ -172,8 +171,16 @@ export function CommandPalette({
 
           {hasCourses && (
             <CommandGroup heading={t("Courses")}>
-              {courses.map((course) => (
+              {results.courses.map((course) => (
                 <CourseItem course={course} key={course.id} onSelect={handleSelect} />
+              ))}
+            </CommandGroup>
+          )}
+
+          {hasChapters && (
+            <CommandGroup heading={t("Chapters")}>
+              {results.chapters.map((chapter) => (
+                <ChapterItem chapter={chapter} key={chapter.id} onSelect={handleSelect} />
               ))}
             </CommandGroup>
           )}
@@ -271,6 +278,52 @@ function CourseItem({
         {course.description && (
           <p className="text-muted-foreground truncate text-xs">{course.description}</p>
         )}
+      </div>
+    </CommandItem>
+  );
+}
+
+/**
+ * Chapter results need to carry their parent course context because chapter
+ * titles are often reused across courses. Including the course and description
+ * in the command value also lets cmdk keep description-only server matches
+ * visible after its local filtering runs.
+ */
+function ChapterItem({
+  chapter,
+  onSelect,
+}: {
+  chapter: ChapterSearchResult;
+  onSelect: <T extends string>(url: Route<T>) => void;
+}) {
+  return (
+    <CommandItem
+      className="flex items-start gap-3"
+      onSelect={() =>
+        onSelect(`/b/${chapter.brandSlug}/c/${chapter.courseSlug}/ch/${chapter.slug}`)
+      }
+      value={[chapter.title, chapter.courseTitle, chapter.description, chapter.id]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      {chapter.imageUrl ? (
+        <Image
+          alt={chapter.title}
+          className="size-8 shrink-0 rounded-md object-cover"
+          height={32}
+          src={chapter.imageUrl}
+          width={32}
+        />
+      ) : (
+        <div className="bg-muted flex size-8 shrink-0 items-center justify-center rounded-md">
+          <BookOpenIcon aria-hidden="true" className="size-4" />
+        </div>
+      )}
+
+      <div className="min-w-0 flex-1">
+        <p className="truncate font-medium">{chapter.title}</p>
+        <p className="text-muted-foreground truncate text-xs">{chapter.courseTitle}</p>
+        <p className="text-muted-foreground truncate text-xs">{chapter.description}</p>
       </div>
     </CommandItem>
   );
