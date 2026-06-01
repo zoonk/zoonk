@@ -57,18 +57,18 @@ export async function getLessonDisplayMeta(
     }
 
     const descriptions: Record<LessonKind, string> = {
-      alphabet: t("Learn the alphabet and writing system with focused practice."),
-      custom: t("Work through a guided lesson."),
-      explanation: t("Understand the key ideas before applying them."),
+      alphabet: t("Learn how letters and sounds work in this writing system."),
+      custom: t("Work through a lesson created for your goal."),
+      explanation: t("Understand the key ideas using everyday language and practical examples."),
       grammar: t("Practice grammar patterns with examples and exercises."),
-      listening: t("Listen to sentences built from the latest vocabulary."),
-      practice: t("Apply the previous explanations in a guided problem."),
-      quiz: t("Check your understanding with a short quiz."),
-      reading: t("Read sentences built from the latest vocabulary."),
+      listening: t("Listen to sentences using words you recently learned."),
+      practice: t("Use what you learned in the previous lesson to solve real-world problems."),
+      quiz: t("Check what you understood with a short quiz."),
+      reading: t("Read sentences using words you recently learned."),
       review: t("Review this chapter with practice based on your mistakes."),
-      translation: t("Translate the words from the previous vocabulary lesson."),
+      translation: t("Translate words from your previous vocabulary lesson."),
       tutorial: t("Follow a guided step-by-step tutorial."),
-      vocabulary: t("Learn new words with focused vocabulary practice."),
+      vocabulary: t("Learn new words and practice using them."),
     };
 
     return descriptions[lesson.kind];

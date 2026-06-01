@@ -1960,52 +1960,52 @@ msgid "lqtP+R"
 msgstr "Vocabulário"
 
 #: src/lib/lessons.ts
-msgid "KWi2PI"
-msgstr "Aprenda o alfabeto e o sistema de escrita com prática focada."
+msgid "22k1CY"
+msgstr "Entenda como as letras e os sons funcionam neste sistema de escrita."
 
 #: src/lib/lessons.ts
-msgid "1h+4hA"
-msgstr "Trabalhe em uma aula guiada."
+msgid "LZC7R9"
+msgstr "Faça uma aula criada para o seu objetivo."
 
 #: src/lib/lessons.ts
-msgid "yGskby"
-msgstr "Entenda as ideias principais antes de aplicá-las."
+msgid "fOfLbt"
+msgstr "Entenda as ideias principais com linguagem simples e exemplos práticos."
 
 #: src/lib/lessons.ts
 msgid "dHmgw1"
 msgstr "Pratique padrões de gramática com exemplos e exercícios."
 
 #: src/lib/lessons.ts
-msgid "kvq0XW"
-msgstr "Ouça frases montadas com o vocabulário mais recente."
+msgid "AetsPy"
+msgstr "Ouça frases com palavras que você acabou de aprender."
 
 #: src/lib/lessons.ts
-msgid "4dAUaa"
-msgstr "Aplique as explicações anteriores em um problema guiado."
+msgid "6oNgY9"
+msgstr "Use o que você aprendeu na aula anterior para resolver problemas em situações reais."
 
 #: src/lib/lessons.ts
-msgid "t+ekBV"
-msgstr "Veja se você entendeu com um quiz curto."
+msgid "vO6aLm"
+msgstr "Veja o que você entendeu com um quiz curto."
 
 #: src/lib/lessons.ts
-msgid "nuMTc1"
-msgstr "Leia frases montadas com o vocabulário mais recente."
+msgid "OIim7M"
+msgstr "Leia frases com palavras que você acabou de aprender."
 
 #: src/lib/lessons.ts
 msgid "pwrprO"
 msgstr "Revise este capítulo com prática baseada nos seus erros."
 
 #: src/lib/lessons.ts
-msgid "Gm85VV"
-msgstr "Traduza as palavras da aula anterior de vocabulário."
+msgid "IQOJhk"
+msgstr "Traduza palavras da sua aula anterior de vocabulário."
 
 #: src/lib/lessons.ts
 msgid "9XByXq"
 msgstr "Siga um tutorial guiado passo a passo."
 
 #: src/lib/lessons.ts
-msgid "DfYRbN"
-msgstr "Aprenda palavras novas com prática focada de vocabulário."
+msgid "IHSVS5"
+msgstr "Aprenda palavras novas e pratique como usá-las."
 
 #: src/lib/lessons.ts
 msgid "OjyuQ+"

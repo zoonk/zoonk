@@ -1960,52 +1960,52 @@ msgid "lqtP+R"
 msgstr "Vocabulario"
 
 #: src/lib/lessons.ts
-msgid "KWi2PI"
-msgstr "Aprende el alfabeto y el sistema de escritura con práctica enfocada."
+msgid "22k1CY"
+msgstr "Entiende cómo funcionan las letras y los sonidos en este sistema de escritura."
 
 #: src/lib/lessons.ts
-msgid "1h+4hA"
-msgstr "Trabaja en una lección guiada."
+msgid "LZC7R9"
+msgstr "Avanza por una lección creada para tu objetivo."
 
 #: src/lib/lessons.ts
-msgid "yGskby"
-msgstr "Entiende las ideas clave antes de aplicarlas."
+msgid "fOfLbt"
+msgstr "Entiende las ideas clave con lenguaje claro y ejemplos prácticos."
 
 #: src/lib/lessons.ts
 msgid "dHmgw1"
 msgstr "Practica estructuras gramaticales con ejemplos y ejercicios."
 
 #: src/lib/lessons.ts
-msgid "kvq0XW"
-msgstr "Escucha oraciones construidas con el vocabulario más reciente."
+msgid "AetsPy"
+msgstr "Escucha oraciones con palabras que acabas de aprender."
 
 #: src/lib/lessons.ts
-msgid "4dAUaa"
-msgstr "Aplica las explicaciones anteriores en un problema guiado."
+msgid "6oNgY9"
+msgstr "Usa lo que aprendiste en la lección anterior para resolver problemas en situaciones reales."
 
 #: src/lib/lessons.ts
-msgid "t+ekBV"
-msgstr "Comprueba tu comprensión con un cuestionario breve."
+msgid "vO6aLm"
+msgstr "Comprueba lo que entendiste con un cuestionario breve."
 
 #: src/lib/lessons.ts
-msgid "nuMTc1"
-msgstr "Lee oraciones construidas con el vocabulario más reciente."
+msgid "OIim7M"
+msgstr "Lee oraciones con palabras que acabas de aprender."
 
 #: src/lib/lessons.ts
 msgid "pwrprO"
 msgstr "Repasa este capítulo con práctica basada en tus errores."
 
 #: src/lib/lessons.ts
-msgid "Gm85VV"
-msgstr "Traduce las palabras de la lección anterior de vocabulario."
+msgid "IQOJhk"
+msgstr "Traduce palabras de tu lección anterior de vocabulario."
 
 #: src/lib/lessons.ts
 msgid "9XByXq"
 msgstr "Sigue un tutorial guiado paso a paso."
 
 #: src/lib/lessons.ts
-msgid "DfYRbN"
-msgstr "Aprende palabras nuevas con práctica enfocada de vocabulario."
+msgid "IHSVS5"
+msgstr "Aprende palabras nuevas y practica cómo usarlas."
 
 #: src/lib/lessons.ts
 msgid "OjyuQ+"
