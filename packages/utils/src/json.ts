@@ -1,8 +1,11 @@
+export type JsonObject = { [key: string]: JsonValue };
+type JsonValue = JsonObject | JsonValue[] | boolean | null | number | string;
+
 /**
  * Narrows unknown JSON-like values to keyed objects so callers can safely read
  * named fields without accidentally treating arrays as records.
  */
-export function isJsonObject(value: unknown): value is Record<string, unknown> {
+export function isJsonObject(value: unknown): value is JsonObject {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 

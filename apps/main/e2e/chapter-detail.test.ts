@@ -1,5 +1,8 @@
 import { randomUUID } from "node:crypto";
+import { type Browser, type Page } from "@playwright/test";
+import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createOrganization, getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
+import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -22,8 +25,37 @@ let noLessonsChapterUrl: string;
 let lessonNames: { first: string; second: string };
 let lessonDescriptions: { first: string; second: string };
 let lessonSlugs: { first: string; second: string };
+let languageChapterUrl: string;
 let ptChapterUrl: string;
 let ptLessonNames: { first: string; second: string };
+
+/**
+ * Lesson type filters are saved to the user profile, so filter tests need a
+ * dedicated user instead of the shared worker auth fixture that parallel tests
+ * may also be using.
+ */
+async function createFilterTestPage({ browser }: { browser: Browser }) {
+  const user = await createE2EUser(getBaseURL(), { orgRole: "member" });
+  const context = await browser.newContext({ storageState: user.storageState });
+  const page = await context.newPage();
+
+  return { context, page, user };
+}
+
+/**
+ * The filter menu is rendered through a portal, so tests should wait for the
+ * trigger and the menu label before checking specific checkbox items.
+ */
+async function openLessonTypeFilterMenu({ page }: { page: Page }) {
+  const filterButton = page.getByRole("button", { name: /filter lesson types/iu });
+
+  await expect(filterButton).toBeVisible();
+  await expect(filterButton).toBeEnabled();
+  await filterButton.click();
+  await expect(page.getByText(/show lesson types/iu)).toBeVisible();
+
+  return filterButton;
+}
 
 test.beforeAll(async () => {
   const org = await getAiOrganization();
@@ -86,6 +118,7 @@ test.beforeAll(async () => {
       chapterId: chapter.id,
       description: lessonDescriptions.second,
       isPublished: true,
+      kind: "quiz",
       normalizedTitle: normalizeString(lessonNames.second),
       organizationId: org.id,
       position: 1,
@@ -100,6 +133,64 @@ test.beforeAll(async () => {
       position: 2,
       slug: `e2e-unpub-lesson-${uniqueId}`,
       title: unpublishedLessonTitle,
+    }),
+  ]);
+
+  const languageCourse = await courseFixture({
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString(`E2E Language Course ${uniqueId}`),
+    organizationId: org.id,
+    slug: `e2e-language-course-${uniqueId}`,
+    targetLanguage: "es",
+    title: `E2E Language Course ${uniqueId}`,
+  });
+
+  const languageChapter = await chapterFixture({
+    courseId: languageCourse.id,
+    description: `Language learning chapter ${uniqueId}`,
+    isPublished: true,
+    normalizedTitle: normalizeString(`E2E Language Chapter ${uniqueId}`),
+    organizationId: org.id,
+    position: 0,
+    slug: `e2e-language-ch-${uniqueId}`,
+    title: `E2E Language Chapter ${uniqueId}`,
+  });
+
+  languageChapterUrl = `/b/${AI_ORG_SLUG}/c/${languageCourse.slug}/ch/${languageChapter.slug}`;
+
+  await Promise.all([
+    lessonFixture({
+      chapterId: languageChapter.id,
+      isPublished: true,
+      kind: "vocabulary",
+      organizationId: org.id,
+      position: 0,
+      title: `Spanish Words ${uniqueId}`,
+    }),
+    lessonFixture({
+      chapterId: languageChapter.id,
+      isPublished: true,
+      kind: "grammar",
+      organizationId: org.id,
+      position: 1,
+      title: `Spanish Grammar ${uniqueId}`,
+    }),
+    lessonFixture({
+      chapterId: languageChapter.id,
+      isPublished: true,
+      kind: "quiz",
+      organizationId: org.id,
+      position: 2,
+      title: `Language Quiz ${uniqueId}`,
+    }),
+    lessonFixture({
+      chapterId: languageChapter.id,
+      isPublished: true,
+      kind: "explanation",
+      organizationId: org.id,
+      position: 3,
+      title: `Language Explanation ${uniqueId}`,
     }),
   ]);
 
@@ -304,6 +395,25 @@ test.describe("Chapter Lesson Search", () => {
     ).not.toBeVisible();
   });
 
+  test("persists search in URL and survives page reload", async ({ page }) => {
+    await page.goto(chapterUrl);
+
+    await page.getByLabel(/search lessons/iu).fill("History");
+    await expect(page).toHaveURL(/\?q=History/u);
+
+    await page.reload();
+
+    await expect(page.getByLabel(/search lessons/iu)).toHaveValue("History");
+
+    await expect(
+      page.getByRole("link", { name: new RegExp(lessonNames.second, "u") }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByRole("link", { name: new RegExp(lessonNames.first, "u") }),
+    ).not.toBeVisible();
+  });
+
   test("filters lessons by description", async ({ page }) => {
     await page.goto(chapterUrl);
 
@@ -371,6 +481,98 @@ test.describe("Chapter Lesson Search - Mobile", () => {
     await expect
       .poll(() => getSearchInputTop({ label: SEARCH_LESSONS_LABEL, page }))
       .toBeLessThanOrEqual(matchingTop + 1);
+  });
+});
+
+test.describe("Chapter Lesson Type Filters", () => {
+  test("lets guests hide lesson types locally without a save error", async ({ page }) => {
+    await page.goto(chapterUrl);
+
+    await openLessonTypeFilterMenu({ page });
+    await expect(page.getByRole("menuitemcheckbox", { name: /^explanation$/iu })).toBeVisible();
+    await expect(page.getByRole("menuitemcheckbox", { name: /^quiz$/iu })).toBeVisible();
+    await expect(page.getByRole("menuitemcheckbox", { name: /^grammar$/iu })).not.toBeVisible();
+    await expect(page.getByRole("menuitemcheckbox", { name: /^vocabulary$/iu })).not.toBeVisible();
+    await page.getByRole("menuitemcheckbox", { name: /^quiz$/iu }).click();
+
+    await expect(
+      page.getByRole("link", { name: new RegExp(lessonNames.first, "u") }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByRole("link", { name: new RegExp(lessonNames.second, "u") }),
+    ).not.toBeVisible();
+
+    await expect(page.getByRole("menuitem", { name: /clear filter/iu })).toBeVisible();
+    await expect(page.getByText(/could not update lesson filters/iu)).not.toBeVisible();
+  });
+
+  test("shows only language lesson types for language courses", async ({ page }) => {
+    await page.goto(languageChapterUrl);
+
+    await openLessonTypeFilterMenu({ page });
+
+    await expect(page.getByRole("menuitemcheckbox", { name: /^grammar$/iu })).toBeVisible();
+    await expect(page.getByRole("menuitemcheckbox", { name: /^vocabulary$/iu })).toBeVisible();
+    await expect(page.getByRole("menuitemcheckbox", { name: /^explanation$/iu })).not.toBeVisible();
+    await expect(page.getByRole("menuitemcheckbox", { name: /^quiz$/iu })).not.toBeVisible();
+  });
+
+  test("hides lesson types and clears filters from the filter menu", async ({ browser }) => {
+    const { context, page } = await createFilterTestPage({ browser });
+
+    await page.goto(chapterUrl);
+
+    const filterButton = await openLessonTypeFilterMenu({ page });
+    await page.getByRole("menuitemcheckbox", { name: /^quiz$/iu }).click();
+
+    await expect(
+      page.getByRole("link", { name: new RegExp(lessonNames.first, "u") }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByRole("link", { name: new RegExp(lessonNames.second, "u") }),
+    ).not.toBeVisible();
+
+    await expect(page.getByRole("menuitem", { name: /clear filter/iu })).toBeVisible();
+    await expect(filterButton).toBeEnabled();
+
+    await page.getByRole("menuitem", { name: /clear filter/iu }).click();
+
+    await expect(
+      page.getByRole("link", { name: new RegExp(lessonNames.second, "u") }),
+    ).toBeVisible();
+
+    await expect(filterButton).toBeEnabled();
+
+    await context.close();
+  });
+
+  test("persists hidden lesson types for the user", async ({ browser }) => {
+    const { context, page, user } = await createFilterTestPage({ browser });
+
+    await page.goto(chapterUrl);
+
+    const filterButton = await openLessonTypeFilterMenu({ page });
+    await page.getByRole("menuitemcheckbox", { name: /^quiz$/iu }).click();
+    await expect(filterButton).toBeEnabled();
+
+    const secondContext = await browser.newContext({ storageState: user.storageState });
+    const secondPage = await secondContext.newPage();
+
+    await secondPage.goto(chapterUrl);
+
+    await expect(
+      secondPage.getByRole("link", { name: new RegExp(lessonNames.second, "u") }),
+    ).not.toBeVisible();
+
+    await openLessonTypeFilterMenu({ page: secondPage });
+
+    await expect(secondPage.getByRole("menuitem", { name: /clear filter/iu })).toBeVisible();
+
+    await secondPage.getByRole("menuitem", { name: /clear filter/iu }).click();
+    await expect(secondPage.getByRole("button", { name: /filter lesson types/iu })).toBeEnabled();
+    await Promise.all([context.close(), secondContext.close()]);
   });
 });
 

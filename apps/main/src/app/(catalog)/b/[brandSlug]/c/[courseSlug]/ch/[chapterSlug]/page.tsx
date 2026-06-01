@@ -109,6 +109,7 @@ export default async function ChapterPage({
               chapterId={chapter.id}
               chapterSlug={chapterSlug}
               courseSlug={courseSlug}
+              isLanguageCourse={Boolean(chapter.course.targetLanguage)}
               lessons={lessons}
             />
           </Suspense>
