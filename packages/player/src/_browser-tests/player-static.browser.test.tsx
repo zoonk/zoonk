@@ -391,6 +391,11 @@ describe("player browser integration: static steps", () => {
     await expect
       .element(page.getByAltText(/lantern lighting up one idea at a time/iu))
       .toBeInTheDocument();
+
+    expect(
+      globalThis.getComputedStyle(screen.getByAltText(/lantern lighting up one idea at a time/iu))
+        .objectFit,
+    ).toBe("contain");
   });
 
   it("swipes touch navigation forward on static steps", async () => {

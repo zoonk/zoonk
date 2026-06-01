@@ -33,19 +33,16 @@ function StepIntroHeroContent({ text, title }: { text: string; title: string }) 
 }
 
 /**
- * Hero illustrations are immersive on mobile and composed on desktop.
+ * Hero illustrations behave like the scene behind the practice setup.
  *
- * Small screens keep the image behind the bottom card. Large screens reuse the
- * feedback-screen treatment: a centered, rounded square image above the content
- * so the generated scene feels intentional instead of oversized.
+ * Practice intros need the image to fill the whole available stage because the
+ * picture is the scenario context, not a contained diagram. The readable setup
+ * stays in the overlay card so the image can keep bleeding to every edge.
  */
 function StepHeroImage({ image }: { image: StepImage }) {
   return (
-    <div
-      className="bg-muted absolute inset-0 overflow-hidden lg:relative lg:inset-auto lg:aspect-square lg:w-full lg:rounded-3xl"
-      data-slot="step-hero-image"
-    >
-      <StepImageView image={image} />
+    <div className="bg-muted absolute inset-0 overflow-hidden" data-slot="step-hero-image">
+      <StepImageView fit="cover" image={image} />
     </div>
   );
 }
@@ -53,18 +50,18 @@ function StepHeroImage({ image }: { image: StepImage }) {
 /**
  * The hero card owns the readable content and embedded CTA.
  *
- * The outer layer keeps the card pinned to the bottom and centered on larger
- * touch screens. Desktop removes the card chrome and lets the content sit
- * below the image like feedback screens.
+ * The outer layer keeps the card pinned to the bottom so the image can fill the
+ * rest of the frame. Desktop keeps the same overlay model instead of switching
+ * back to the regular static-step composition.
  */
 function StepHeroCard({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-center px-0 sm:px-6 lg:pointer-events-auto lg:static lg:block lg:px-0"
+      className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-center px-0 sm:px-6 lg:px-8 lg:pb-8"
       data-slot="step-hero-card-shell"
     >
       <div
-        className="bg-background pointer-events-auto max-h-[70dvh] w-full max-w-2xl overflow-y-auto rounded-t-4xl px-5 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:p-8 sm:pb-[max(2rem,env(safe-area-inset-bottom))] lg:max-h-none lg:max-w-none lg:overflow-visible lg:rounded-none lg:bg-transparent lg:p-0"
+        className="bg-background pointer-events-auto max-h-[70dvh] w-full max-w-2xl overflow-y-auto rounded-t-4xl px-5 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:p-8 sm:pb-[max(2rem,env(safe-area-inset-bottom))] lg:max-h-[48dvh] lg:rounded-3xl lg:p-8"
         data-slot="step-hero-card"
       >
         {children}
@@ -76,9 +73,9 @@ function StepHeroCard({ children }: { children: React.ReactNode }) {
 /**
  * Shared responsive image/card frame for immersive static steps.
  *
- * Mobile uses a full-screen image with a bottom card, while desktop uses the
- * feedback-style centered image stack. Keeping that structure here prevents
- * intro and outcome screens from accumulating separate layout rules over time.
+ * Image-backed intros use one full-stage composition across breakpoints. That
+ * keeps practice scenarios visually distinct from regular static images and
+ * avoids a second desktop-only media policy.
  */
 function StepHero({ children, image }: { children: React.ReactNode; image?: StepImage | null }) {
   if (!image) {
@@ -91,7 +88,7 @@ function StepHero({ children, image }: { children: React.ReactNode; image?: Step
 
   return (
     <div
-      className="relative h-full min-h-0 w-full flex-1 self-stretch overflow-hidden lg:my-auto lg:flex lg:h-auto lg:max-w-2xl lg:flex-none lg:flex-col lg:gap-6 lg:self-center lg:overflow-visible lg:px-4 lg:py-6"
+      className="relative h-full min-h-0 w-full flex-1 self-stretch overflow-hidden"
       data-slot="step-hero-layout"
     >
       <StepHeroImage image={image} />
