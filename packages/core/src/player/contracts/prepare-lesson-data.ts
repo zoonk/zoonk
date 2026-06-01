@@ -56,6 +56,7 @@ type SerializedSentence = {
 export type WordBankOption = {
   word: string;
   translation: string | null;
+  pronunciation: string | null;
   romanization: string | null;
   audioUrl: string | null;
 };
@@ -196,6 +197,7 @@ function buildFillBlankOptions(step: SerializedStep): WordBankOption[] {
 
   return words.map((word) => ({
     audioUrl: null,
+    pronunciation: null,
     romanization: content.romanizations?.[word] ?? null,
     translation: null,
     word,

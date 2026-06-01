@@ -7,7 +7,6 @@ msgstr ""
 "X-Crowdin-SourceKey: msgstr\n"
 
 #: src/components/alphabet-step.tsx
-#: src/use-lesson-kind-label.ts
 msgid "w0J/gv"
 msgstr "Alfabeto"
 
@@ -268,7 +267,6 @@ msgid "++l7ni"
 msgstr "No del todo"
 
 #: src/components/vocabulary-step.tsx
-#: src/use-lesson-kind-label.ts
 msgid "lqtP+R"
 msgstr "Vocabulario"
 
@@ -311,43 +309,3 @@ msgstr "Blanco"
 #: src/use-belt-color-label.ts
 msgid "5Tw3Ta"
 msgstr "Amarillo"
-
-#: src/use-lesson-kind-label.ts
-msgid "PJivSX"
-msgstr "Lección"
-
-#: src/use-lesson-kind-label.ts
-msgid "E1bF/X"
-msgstr "Explicación"
-
-#: src/use-lesson-kind-label.ts
-msgid "QzTY8x"
-msgstr "Gramática"
-
-#: src/use-lesson-kind-label.ts
-msgid "1TOMnj"
-msgstr "Escucha"
-
-#: src/use-lesson-kind-label.ts
-msgid "KV+O0y"
-msgstr "Practica"
-
-#: src/use-lesson-kind-label.ts
-msgid "OuR/Ij"
-msgstr "Cuestionario"
-
-#: src/use-lesson-kind-label.ts
-msgid "MOK/yK"
-msgstr "Lectura"
-
-#: src/use-lesson-kind-label.ts
-msgid "R+J5ox"
-msgstr "Repaso"
-
-#: src/use-lesson-kind-label.ts
-msgid "/vCXIP"
-msgstr "Traducción"
-
-#: src/use-lesson-kind-label.ts
-msgid "Ox+Z+K"
-msgstr "Tutorial"

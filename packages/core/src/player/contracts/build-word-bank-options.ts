@@ -8,7 +8,12 @@ import {
 } from "./prepare-lesson-data";
 import { type DistractorWord } from "./translation-options";
 
-type WordDataInput = { audioUrl: string | null; romanization: string | null; word: string };
+type WordDataInput = {
+  audioUrl: string | null;
+  pronunciation: string | null;
+  romanization: string | null;
+  word: string;
+};
 
 type WordMetadata = Omit<WordBankOption, "word">;
 
@@ -31,13 +36,16 @@ function splitMultiWordEntries(lessonWord: SerializedWord): [string, WordMetadat
     return [];
   }
 
+  const pronunciationTokens = lessonWord.pronunciation?.split(" ").filter(Boolean) ?? [];
   const romanizationTokens = lessonWord.romanization?.split(" ").filter(Boolean) ?? [];
+  const canSlicePronunciation = pronunciationTokens.length === wordTokens.length;
   const canSlice = romanizationTokens.length === wordTokens.length;
 
   return wordTokens.map((token, index) => [
     normalizeWordKey(token),
     {
       audioUrl: null,
+      pronunciation: canSlicePronunciation ? (pronunciationTokens[index] ?? null) : null,
       romanization: canSlice ? (romanizationTokens[index] ?? null) : null,
       translation: null,
     },
@@ -58,6 +66,7 @@ function mergeWordMetadata({
 }): WordMetadata {
   return {
     audioUrl: incoming.audioUrl ?? current?.audioUrl ?? null,
+    pronunciation: incoming.pronunciation ?? current?.pronunciation ?? null,
     romanization: incoming.romanization ?? current?.romanization ?? null,
     translation: incoming.translation ?? current?.translation ?? null,
   };
@@ -114,6 +123,7 @@ function buildWordMetadataLookup(params: {
       normalizeWordKey(lessonWord.word),
       {
         audioUrl: lessonWord.audioUrl,
+        pronunciation: lessonWord.pronunciation,
         romanization: lessonWord.romanization,
         translation: lessonWord.translation,
       },
@@ -124,7 +134,12 @@ function buildWordMetadataLookup(params: {
     (word) =>
       [
         normalizeWordKey(word.word),
-        { audioUrl: word.audioUrl, romanization: word.romanization, translation: null },
+        {
+          audioUrl: word.audioUrl,
+          pronunciation: word.pronunciation,
+          romanization: word.romanization,
+          translation: null,
+        },
       ] as const,
   );
 
@@ -132,7 +147,12 @@ function buildWordMetadataLookup(params: {
     (word) =>
       [
         normalizeWordKey(word.word),
-        { audioUrl: word.audioUrl, romanization: word.romanization, translation: null },
+        {
+          audioUrl: word.audioUrl,
+          pronunciation: word.pronunciation,
+          romanization: word.romanization,
+          translation: null,
+        },
       ] as const,
   );
 
@@ -159,6 +179,7 @@ function createWordOptionBuilder(params: {
 
     return {
       audioUrl: metadata?.audioUrl ?? null,
+      pronunciation: metadata?.pronunciation ?? null,
       romanization: metadata?.romanization ?? null,
       translation: metadata?.translation ?? null,
       word,
@@ -171,7 +192,7 @@ function createWordOptionBuilder(params: {
  * distractors do not get target-language enrichment.
  */
 function emptyWordOption(word: string): WordBankOption {
-  return { audioUrl: null, romanization: null, translation: null, word };
+  return { audioUrl: null, pronunciation: null, romanization: null, translation: null, word };
 }
 
 /**

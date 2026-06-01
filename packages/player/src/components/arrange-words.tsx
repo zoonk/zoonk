@@ -5,7 +5,7 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { useWordAudio } from "../use-word-audio";
@@ -13,12 +13,28 @@ import { ArrangeWordsAnswerArea, type PlacedWord } from "./arrange-words-answer-
 import { RomanizationText } from "./romanization-text";
 import { InteractiveStepLayout } from "./step-layouts";
 
-function BankTileContent({ option }: { option: WordBankOption }) {
+function BankTileContent({
+  descriptionId,
+  option,
+}: {
+  descriptionId?: string;
+  option: WordBankOption;
+}) {
+  const hasDescription = Boolean(option.romanization || option.pronunciation);
+
   return (
     <>
       <span>{option.word}</span>
 
-      <RomanizationText>{option.romanization}</RomanizationText>
+      {hasDescription && (
+        <span className="flex flex-col items-center" id={descriptionId}>
+          <RomanizationText>{option.romanization}</RomanizationText>
+
+          {option.pronunciation && (
+            <span className="text-muted-foreground text-xs">{option.pronunciation}</span>
+          )}
+        </span>
+      )}
     </>
   );
 }
@@ -32,8 +48,13 @@ function BankTile({
   onPlace: () => void;
   option: WordBankOption;
 }) {
+  const descriptionId = useId();
+  const hasDescription = Boolean(option.romanization || option.pronunciation);
+
   return (
     <button
+      aria-describedby={hasDescription ? descriptionId : undefined}
+      aria-label={option.word}
       aria-disabled={isUsed}
       className={cn(
         "border-border flex min-h-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 transition-all duration-150",
@@ -45,7 +66,7 @@ function BankTile({
       tabIndex={isUsed ? -1 : 0}
       type="button"
     >
-      <BankTileContent option={option} />
+      <BankTileContent descriptionId={descriptionId} option={option} />
     </button>
   );
 }
@@ -115,7 +136,15 @@ export function ArrangeWordsInteraction({
       return result.answer.arrangedWords.map((word) => {
         const id = String(idCounter.current);
         idCounter.current += 1;
-        return { audioUrl: null, id, romanization: null, translation: null, word };
+
+        return {
+          audioUrl: null,
+          id,
+          pronunciation: null,
+          romanization: null,
+          translation: null,
+          word,
+        };
       });
     }
 

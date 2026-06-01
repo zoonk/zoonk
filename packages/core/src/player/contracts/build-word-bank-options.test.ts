@@ -98,6 +98,7 @@ describe(buildWordBankOptions, () => {
         makeDistractorWord({
           audioUrl: "/audio/dog.mp3",
           id: "dog-1",
+          pronunciation: "EE-noo",
           romanization: "inu",
           word: "犬",
         }),
@@ -107,6 +108,7 @@ describe(buildWordBankOptions, () => {
 
     expect(options.find((option) => option.word === "犬")).toStrictEqual({
       audioUrl: "/audio/dog.mp3",
+      pronunciation: "EE-noo",
       romanization: "inu",
       translation: null,
       word: "犬",
@@ -145,6 +147,7 @@ describe(buildWordBankOptions, () => {
 
     expect(options.find((option) => option.word === "noite")).toStrictEqual({
       audioUrl: null,
+      pronunciation: null,
       romanization: null,
       translation: null,
       word: "noite",
@@ -173,8 +176,20 @@ describe(buildSentenceWordOptions, () => {
     );
 
     expect(options).toStrictEqual([
-      { audioUrl: null, romanization: "guten", translation: null, word: "Guten" },
-      { audioUrl: null, romanization: "morgen", translation: null, word: "Morgen" },
+      {
+        audioUrl: null,
+        pronunciation: null,
+        romanization: "guten",
+        translation: null,
+        word: "Guten",
+      },
+      {
+        audioUrl: null,
+        pronunciation: null,
+        romanization: "morgen",
+        translation: null,
+        word: "Morgen",
+      },
     ]);
   });
 
@@ -191,13 +206,22 @@ describe(buildSentenceWordOptions, () => {
       ],
       [],
       new Map([
-        ["hola", { audioUrl: "/audio/hola-sentence.mp3", romanization: "o-la", word: "Hola" }],
+        [
+          "hola",
+          {
+            audioUrl: "/audio/hola-sentence.mp3",
+            pronunciation: "OH-lah",
+            romanization: "o-la",
+            word: "Hola",
+          },
+        ],
       ]),
     );
 
     expect(options).toStrictEqual([
       {
         audioUrl: "/audio/hola-sentence.mp3",
+        pronunciation: "OH-lah",
         romanization: "o-la",
         translation: "hello",
         word: "Hola",

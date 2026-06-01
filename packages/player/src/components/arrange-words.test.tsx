@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { type Mock, describe, expect, it, vi } from "vitest";
+import { buildWordBankOption } from "../_test-utils/player-test-data";
 import { ArrangeWordsInteraction } from "./arrange-words";
 
 vi.mock("next-intl", () => ({ useExtracted: () => (value: string) => value }));
@@ -26,9 +27,9 @@ describe(ArrangeWordsInteraction, () => {
         selectedAnswer={undefined}
         stepId="step-1"
         wordBankOptions={[
-          { audioUrl: null, romanization: null, translation: null, word: "Hola" },
-          { audioUrl: null, romanization: null, translation: null, word: "mundo" },
-          { audioUrl: null, romanization: null, translation: null, word: "gato" },
+          buildWordBankOption({ word: "Hola" }),
+          buildWordBankOption({ word: "mundo" }),
+          buildWordBankOption({ word: "gato" }),
         ]}
       >
         <p>Prompt</p>

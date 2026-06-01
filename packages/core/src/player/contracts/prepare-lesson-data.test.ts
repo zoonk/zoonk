@@ -265,8 +265,14 @@ describe(preparePlayerLessonData, () => {
     expect(result.steps[0]?.sortOrderItems).toStrictEqual(["first", "second", "third"]);
 
     expect(result.steps[1]?.fillBlankOptions).toStrictEqual([
-      { audioUrl: null, romanization: null, translation: null, word: "sky" },
-      { audioUrl: null, romanization: "ground-rom", translation: null, word: "ground" },
+      { audioUrl: null, pronunciation: null, romanization: null, translation: null, word: "sky" },
+      {
+        audioUrl: null,
+        pronunciation: null,
+        romanization: "ground-rom",
+        translation: null,
+        word: "ground",
+      },
     ]);
 
     expect(result.steps[2]?.matchColumnsRightItems).toStrictEqual(["1", "2"]);
@@ -642,18 +648,36 @@ describe(preparePlayerLessonData, () => {
     });
 
     expect(result.steps[0]?.wordBankOptions).toStrictEqual([
-      { audioUrl: null, romanization: null, translation: null, word: "Guten" },
-      { audioUrl: null, romanization: null, translation: null, word: "Morgen," },
-      { audioUrl: null, romanization: null, translation: null, word: "Lara." },
-      { audioUrl: "/audio/abend.mp3", romanization: "abend", translation: null, word: "Abend" },
-      { audioUrl: null, romanization: null, translation: null, word: "Fenster" },
+      { audioUrl: null, pronunciation: null, romanization: null, translation: null, word: "Guten" },
+      {
+        audioUrl: null,
+        pronunciation: null,
+        romanization: null,
+        translation: null,
+        word: "Morgen,",
+      },
+      { audioUrl: null, pronunciation: null, romanization: null, translation: null, word: "Lara." },
+      {
+        audioUrl: "/audio/abend.mp3",
+        pronunciation: "abend",
+        romanization: "abend",
+        translation: null,
+        word: "Abend",
+      },
+      {
+        audioUrl: null,
+        pronunciation: null,
+        romanization: null,
+        translation: null,
+        word: "Fenster",
+      },
     ]);
 
     expect(result.steps[1]?.wordBankOptions).toStrictEqual([
-      { audioUrl: null, romanization: null, translation: null, word: "Bom" },
-      { audioUrl: null, romanization: null, translation: null, word: "dia," },
-      { audioUrl: null, romanization: null, translation: null, word: "Lara." },
-      { audioUrl: null, romanization: null, translation: null, word: "tchau" },
+      { audioUrl: null, pronunciation: null, romanization: null, translation: null, word: "Bom" },
+      { audioUrl: null, pronunciation: null, romanization: null, translation: null, word: "dia," },
+      { audioUrl: null, pronunciation: null, romanization: null, translation: null, word: "Lara." },
+      { audioUrl: null, pronunciation: null, romanization: null, translation: null, word: "tchau" },
     ]);
   });
 
@@ -681,8 +705,20 @@ describe(preparePlayerLessonData, () => {
     });
 
     expect(result.steps[0]?.sentenceWordOptions).toStrictEqual([
-      { audioUrl: null, romanization: "guten", translation: null, word: "Guten" },
-      { audioUrl: null, romanization: "morgen", translation: null, word: "Morgen" },
+      {
+        audioUrl: null,
+        pronunciation: null,
+        romanization: "guten",
+        translation: null,
+        word: "Guten",
+      },
+      {
+        audioUrl: null,
+        pronunciation: null,
+        romanization: "morgen",
+        translation: null,
+        word: "Morgen",
+      },
     ]);
   });
 
@@ -723,11 +759,18 @@ describe(preparePlayerLessonData, () => {
     expect(result.steps[0]?.sentenceWordOptions).toStrictEqual([
       {
         audioUrl: "/audio/sentence-gato.mp3",
+        pronunciation: null,
         romanization: "ga-to",
         translation: "cat (lesson)",
         word: "gato",
       },
-      { audioUrl: null, romanization: null, translation: null, word: "bonito" },
+      {
+        audioUrl: null,
+        pronunciation: null,
+        romanization: null,
+        translation: null,
+        word: "bonito",
+      },
     ]);
   });
 
@@ -784,8 +827,8 @@ describe(preparePlayerLessonData, () => {
     });
 
     expect(result.steps[0]?.wordBankOptions).toStrictEqual([
-      { audioUrl: null, romanization: null, translation: null, word: "Hola" },
-      { audioUrl: null, romanization: null, translation: null, word: "mundo" },
+      { audioUrl: null, pronunciation: null, romanization: null, translation: null, word: "Hola" },
+      { audioUrl: null, pronunciation: null, romanization: null, translation: null, word: "mundo" },
     ]);
   });
 
