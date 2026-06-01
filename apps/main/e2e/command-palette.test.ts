@@ -287,6 +287,60 @@ test.describe("Command Palette - Course Search", () => {
     });
   });
 
+  test("shows chapter results below courses and navigates to chapter page", async ({ page }) => {
+    const org = await getAiOrganization();
+    const uniqueId = randomUUID().slice(0, 8);
+    const searchTerm = `E2E Palette Mixed ${uniqueId}`;
+    const courseName = `${searchTerm} Course`;
+    const chapterName = `${searchTerm} Chapter`;
+    const chapterDescription = `Chapter result description ${uniqueId}`;
+
+    const course = await courseFixture({
+      description: `Course result description ${uniqueId}`,
+      isPublished: true,
+      normalizedTitle: normalizeString(courseName),
+      organizationId: org.id,
+      slug: `e2e-palette-course-${uniqueId}`,
+      title: courseName,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      description: chapterDescription,
+      isPublished: true,
+      normalizedTitle: normalizeString(chapterName),
+      organizationId: org.id,
+      position: 0,
+      slug: `e2e-palette-chapter-${uniqueId}`,
+      title: chapterName,
+    });
+
+    await page.goto("/");
+    await openCommandPalette(page);
+
+    const dialog = page.getByRole("dialog");
+    await dialog.getByPlaceholder(/search/iu).fill(searchTerm);
+
+    const courseOption = dialog.getByRole("option", { name: new RegExp(`^${courseName}`, "u") });
+    const chapterOption = dialog.getByRole("option", { name: new RegExp(`^${chapterName}`, "u") });
+
+    await expect(courseOption).toBeVisible();
+    await expect(chapterOption).toBeVisible();
+    await expect(chapterOption.getByText(chapterDescription)).toBeVisible();
+
+    const optionsText = await dialog.getByRole("option").allTextContents();
+    const courseIndex = optionsText.findIndex((text) => text.includes(courseName));
+    const chapterIndex = optionsText.findIndex((text) => text.includes(chapterName));
+
+    expect(courseIndex).toBeGreaterThanOrEqual(0);
+    expect(chapterIndex).toBeGreaterThan(courseIndex);
+
+    await chapterOption.click();
+
+    await expect(page).toHaveURL(`/b/${org.slug}/c/${course.slug}/ch/${chapter.slug}`);
+    await expect(page.getByRole("button", { name: new RegExp(chapterName, "u") })).toBeVisible();
+  });
+
   test("suggests creating a course for non-matching query", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const prompt = `E2E Empty Search ${uniqueId}`;

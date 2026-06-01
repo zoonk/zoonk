@@ -45,6 +45,7 @@ export type {
 } from "./generated/prisma/client";
 
 export type { ChapterCreateManyInput } from "./generated/prisma/models/Chapter";
+export type { ChapterGetPayload } from "./generated/prisma/models/Chapter";
 export type { CourseGetPayload } from "./generated/prisma/models/Course";
 export type { LessonCreateManyInput } from "./generated/prisma/models/Lesson";
 
