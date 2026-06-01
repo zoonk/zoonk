@@ -9,12 +9,9 @@ import { type Route } from "next";
 import Link from "next/link";
 import { useQueryState } from "nuqs";
 import { type ReactNode, useMemo } from "react";
-import {
-  CatalogGridBackToTop,
-  type CatalogGridItemKey,
-  getCatalogItemTargetId,
-} from "./catalog-grid-back-to-top";
+import { CatalogGridBackToTop } from "./catalog-grid-back-to-top";
 import { CatalogGridContext, useCatalogGridContext } from "./catalog-grid-context";
+import { type CatalogGridItemKey, getCatalogItemTargetId } from "./catalog-item-target";
 
 type CatalogGridSearchItem = { description?: string | null; id: CatalogGridItemKey; title: string };
 

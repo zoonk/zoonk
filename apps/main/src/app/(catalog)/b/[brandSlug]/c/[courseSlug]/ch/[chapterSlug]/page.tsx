@@ -1,4 +1,5 @@
 import { CatalogActions } from "@/components/catalog/catalog-actions";
+import { CatalogActiveShortcutLink } from "@/components/catalog/catalog-active-shortcut-link";
 import { CatalogDetailLayout } from "@/components/catalog/catalog-detail-layout";
 import { CatalogGridSkeleton } from "@/components/catalog/catalog-skeletons";
 import {
@@ -78,6 +79,13 @@ export default async function ChapterPage({
                   chapterId={chapter.id}
                   completedHref={completedHref}
                   fallbackHref={fallbackHref}
+                />
+              </Suspense>
+              <Suspense fallback={null}>
+                <CatalogActiveShortcutLink
+                  items={lessons}
+                  kind="lesson"
+                  scope={{ chapterId: chapter.id }}
                 />
               </Suspense>
               <CatalogActions

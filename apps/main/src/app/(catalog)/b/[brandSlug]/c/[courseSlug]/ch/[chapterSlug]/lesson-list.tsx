@@ -5,13 +5,11 @@ import {
   CatalogGridSearch,
 } from "@/components/catalog/catalog-grid";
 import { CatalogGridImage } from "@/components/catalog/catalog-grid-image";
+import { getCatalogActiveItemKey } from "@/components/catalog/catalog-item-target";
 import { getCatalogLessonProgress } from "@/data/progress/catalog-progress";
 import { getDefaultLessonImage } from "@/lib/catalog/default-images";
 import { getLessonDisplayMeta } from "@/lib/lessons";
-import {
-  type ActiveCatalogTarget,
-  getActiveCatalogTarget,
-} from "@zoonk/core/progress/active-catalog-target";
+import { getActiveCatalogTarget } from "@zoonk/core/progress/active-catalog-target";
 import { type Lesson } from "@zoonk/db";
 import {
   GridGroup,
@@ -47,21 +45,6 @@ function LessonListItemStatus({
   }
 
   return <GridItemStatusIdle>{notStartedLabel}</GridItemStatusIdle>;
-}
-
-/**
- * The active shortcut on a chapter page should land on a lesson tile. Progress
- * resolves from the last completed lesson so opening a lesson without finishing
- * it does not make that lesson look active.
- */
-function getActiveLessonKey({
-  activeTarget,
-  lessons,
-}: {
-  activeTarget: ActiveCatalogTarget | null;
-  lessons: Lesson[];
-}) {
-  return lessons.find((lesson) => lesson.slug === activeTarget?.lessonSlug)?.id ?? null;
 }
 
 /**
@@ -159,7 +142,11 @@ export async function LessonList({
 
   const completionMap = new Map(completionData.map((row) => [row.lessonId, row]));
   const lessonRows = await getLessonRows(lessons);
-  const activeLessonKey = getActiveLessonKey({ activeTarget, lessons });
+
+  const activeLessonKey = getCatalogActiveItemKey({
+    activeSlug: activeTarget?.lessonSlug,
+    items: lessons,
+  });
 
   const searchItems = lessonRows.map(({ display, lesson }) => ({
     description: display.description,
