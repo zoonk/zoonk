@@ -2,6 +2,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { type ReactNode, StrictMode, useCallback, useState } from "react";
 import { type Mock, afterEach, describe, expect, it, vi } from "vitest";
+import { buildWordBankOption } from "../_test-utils/player-test-data";
 import { type SelectedAnswer } from "../player-reducer";
 import { FillBlankStep } from "./fill-blank-step";
 
@@ -18,9 +19,9 @@ function buildFillBlankStep(overrides: Record<string, unknown> = {}) {
       template: "Say [BLANK] then [BLANK]",
     },
     fillBlankOptions: [
-      { audioUrl: null, romanization: null, translation: null, word: "alpha" },
-      { audioUrl: null, romanization: null, translation: null, word: "beta" },
-      { audioUrl: null, romanization: null, translation: null, word: "gamma" },
+      buildWordBankOption({ word: "alpha" }),
+      buildWordBankOption({ word: "beta" }),
+      buildWordBankOption({ word: "gamma" }),
     ],
     id: "step-fb",
     kind: "fillBlank" as const,
@@ -132,9 +133,9 @@ describe("fill in the blank step", () => {
         template: "お金[BLANK]お願いします。",
       },
       fillBlankOptions: [
-        { audioUrl: null, romanization: "o", translation: null, word: "を" },
-        { audioUrl: null, romanization: "wa", translation: null, word: "は" },
-        { audioUrl: null, romanization: "ni", translation: null, word: "に" },
+        buildWordBankOption({ romanization: "o", word: "を" }),
+        buildWordBankOption({ romanization: "wa", word: "は" }),
+        buildWordBankOption({ romanization: "ni", word: "に" }),
       ],
     });
 
@@ -171,8 +172,8 @@ describe("fill in the blank step", () => {
         template: "お金[BLANK]お願いします。",
       },
       fillBlankOptions: [
-        { audioUrl: null, romanization: "o", translation: null, word: "を" },
-        { audioUrl: null, romanization: "wa", translation: null, word: "は" },
+        buildWordBankOption({ romanization: "o", word: "を" }),
+        buildWordBankOption({ romanization: "wa", word: "は" }),
       ],
     });
 
@@ -203,8 +204,8 @@ describe("fill in the blank step", () => {
         template: "[BLANK], wie geht's?",
       },
       fillBlankOptions: [
-        { audioUrl: null, romanization: null, translation: null, word: "Guten Morgen" },
-        { audioUrl: null, romanization: null, translation: null, word: "Guten Tag" },
+        buildWordBankOption({ word: "Guten Morgen" }),
+        buildWordBankOption({ word: "Guten Tag" }),
       ],
     });
 

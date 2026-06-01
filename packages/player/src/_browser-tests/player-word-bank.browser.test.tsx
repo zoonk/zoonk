@@ -4,6 +4,7 @@ import {
   buildSerializedLesson,
   buildSerializedSentence,
   buildSerializedStep,
+  buildWordBankOption,
 } from "../_test-utils/player-test-data";
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { renderPlayer } from "../_test-utils/render-player";
@@ -21,9 +22,9 @@ describe("player browser integration: word bank steps", () => {
               template: "The [BLANK] sat on the [BLANK]",
             },
             fillBlankOptions: [
-              { audioUrl: null, romanization: null, translation: null, word: "cat" },
-              { audioUrl: null, romanization: null, translation: null, word: "mat" },
-              { audioUrl: null, romanization: null, translation: null, word: "dog" },
+              buildWordBankOption({ word: "cat" }),
+              buildWordBankOption({ word: "mat" }),
+              buildWordBankOption({ word: "dog" }),
             ],
             kind: "fillBlank",
           }),
@@ -58,9 +59,9 @@ describe("player browser integration: word bank steps", () => {
               translation: "Hello world",
             }),
             wordBankOptions: [
-              { audioUrl: null, romanization: null, translation: null, word: "Hola" },
-              { audioUrl: null, romanization: null, translation: null, word: "mundo" },
-              { audioUrl: null, romanization: null, translation: null, word: "gato" },
+              buildWordBankOption({ pronunciation: "OH-lah", word: "Hola" }),
+              buildWordBankOption({ word: "mundo" }),
+              buildWordBankOption({ word: "gato" }),
             ],
           }),
         ],
@@ -69,8 +70,11 @@ describe("player browser integration: word bank steps", () => {
     });
 
     const wordBank = page.getByRole("group", { name: /word bank/iu });
+    const holaOption = wordBank.getByRole("button", { exact: true, name: "Hola" });
 
-    await wordBank.getByRole("button", { exact: true, name: "Hola" }).click();
+    await expect.element(holaOption.getByText("OH-lah")).toBeInTheDocument();
+
+    await holaOption.click();
     await wordBank.getByRole("button", { exact: true, name: "mundo" }).click();
     await page.getByRole("button", { name: /check/iu }).click();
 
@@ -93,9 +97,9 @@ describe("player browser integration: word bank steps", () => {
               translation: "Hello world",
             }),
             wordBankOptions: [
-              { audioUrl: null, romanization: null, translation: null, word: "Hello" },
-              { audioUrl: null, romanization: null, translation: null, word: "world" },
-              { audioUrl: null, romanization: null, translation: null, word: "bird" },
+              buildWordBankOption({ word: "Hello" }),
+              buildWordBankOption({ word: "world" }),
+              buildWordBankOption({ word: "bird" }),
             ],
           }),
         ],
@@ -130,8 +134,8 @@ describe("player browser integration: word bank steps", () => {
               template: "The sky is [BLANK]",
             },
             fillBlankOptions: [
-              { audioUrl: null, romanization: null, translation: null, word: "blue" },
-              { audioUrl: null, romanization: null, translation: null, word: "red" },
+              buildWordBankOption({ word: "blue" }),
+              buildWordBankOption({ word: "red" }),
             ],
             kind: "fillBlank",
           }),
@@ -172,9 +176,9 @@ describe("player browser integration: word bank steps", () => {
               translation: "Hello world",
             }),
             wordBankOptions: [
-              { audioUrl: null, romanization: null, translation: null, word: "mundo" },
-              { audioUrl: null, romanization: null, translation: null, word: "Hola" },
-              { audioUrl: null, romanization: null, translation: null, word: "gato" },
+              buildWordBankOption({ word: "mundo" }),
+              buildWordBankOption({ word: "Hola" }),
+              buildWordBankOption({ word: "gato" }),
             ],
           }),
         ],
@@ -211,9 +215,9 @@ describe("player browser integration: word bank steps", () => {
               translation: "Hello world",
             }),
             wordBankOptions: [
-              { audioUrl: null, romanization: null, translation: null, word: "Hello" },
-              { audioUrl: null, romanization: null, translation: null, word: "world" },
-              { audioUrl: null, romanization: null, translation: null, word: "bird" },
+              buildWordBankOption({ word: "Hello" }),
+              buildWordBankOption({ word: "world" }),
+              buildWordBankOption({ word: "bird" }),
             ],
           }),
         ],
