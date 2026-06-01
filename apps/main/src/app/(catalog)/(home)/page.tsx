@@ -7,6 +7,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 
   return {
+    alternates: { canonical: "/" },
     description: t(
       "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses and lessons.",
     ),
