@@ -30,7 +30,11 @@ export async function generateMetadata({
     return {};
   }
 
-  return { description: chapter.description, title: chapter.title };
+  return {
+    description: chapter.description,
+    robots: { follow: true, index: chapter.generationStatus === "completed" },
+    title: chapter.title,
+  };
 }
 
 export default async function ChapterPage({

@@ -159,7 +159,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {};
   }
 
-  return getLessonSeoMeta(lessonShell);
+  return { ...(await getLessonSeoMeta(lessonShell)), robots: { follow: true, index: false } };
 }
 
 export default async function LessonPage({ params }: Props) {

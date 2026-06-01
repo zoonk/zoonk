@@ -14,6 +14,29 @@ describe(countSitemapChapters, () => {
     const count = await countSitemapChapters();
     expect(count).toBeGreaterThan(0);
   });
+
+  it("only counts completed generated chapters", async () => {
+    const countBefore = await countSitemapChapters();
+    const organization = await organizationFixture({ kind: "brand" });
+    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
+
+    await Promise.all([
+      chapterFixture({
+        courseId: course.id,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: organization.id,
+      }),
+      chapterFixture({
+        courseId: course.id,
+        generationStatus: "pending",
+        isPublished: true,
+        organizationId: organization.id,
+      }),
+    ]);
+
+    await expect(countSitemapChapters()).resolves.toBe(countBefore + 1);
+  });
 });
 
 describe(listSitemapChapters, () => {
