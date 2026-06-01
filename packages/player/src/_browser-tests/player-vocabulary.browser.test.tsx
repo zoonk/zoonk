@@ -1,6 +1,7 @@
 import { fireEvent } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
+import { runInMobilePlayerViewport } from "../_test-utils/browser-viewport";
 import {
   buildSerializedLesson,
   buildSerializedStep,
@@ -71,19 +72,73 @@ describe("player browser integration: vocabulary", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    await page.getByRole("button", { name: /play pronunciation/iu }).click();
+    const currentCard = page.getByRole("region", { name: /vocabulary: Hola/iu });
+
+    await currentCard.getByRole("button", { name: /play pronunciation/iu }).click();
 
     await expect
-      .element(page.getByRole("button", { name: /pause pronunciation/iu }))
+      .element(currentCard.getByRole("button", { name: /pause pronunciation/iu }))
       .toBeInTheDocument();
 
-    await expect
-      .element(page.getByRole("region", { name: /vocabulary: Hola/iu }))
-      .toBeInTheDocument();
+    await expect.element(currentCard).toBeInTheDocument();
 
     await expect
       .element(page.getByRole("region", { name: /vocabulary: Adios/iu }))
       .not.toBeInTheDocument();
+  });
+
+  it("plays vocabulary audio from the mobile bottom bar", async () => {
+    await runInMobilePlayerViewport(async () => {
+      renderPlayer({
+        lesson: buildSerializedLesson({
+          kind: "vocabulary",
+          steps: [
+            buildSerializedStep({
+              content: {},
+              id: "vocab-bottom-audio-1",
+              kind: "vocabulary",
+              word: buildSerializedWord({
+                audioUrl: "https://example.com/hola.mp3",
+                id: "word-bottom-audio-1",
+                translation: "Hello",
+                word: "Hola",
+              }),
+            }),
+            buildSerializedStep({
+              content: {},
+              id: "vocab-bottom-audio-2",
+              kind: "vocabulary",
+              position: 1,
+              word: buildSerializedWord({
+                audioUrl: "https://example.com/adios.mp3",
+                id: "word-bottom-audio-2",
+                translation: "Goodbye",
+                word: "Adios",
+              }),
+            }),
+          ],
+        }),
+        navigation: buildNavigation({ nextLessonHref: null }),
+        viewer: buildAuthenticatedViewer(),
+      });
+
+      const controls = page.getByRole("toolbar", { name: /player controls/iu });
+      const currentCard = page.getByRole("region", { name: /vocabulary: Hola/iu });
+
+      await controls.getByRole("button", { name: /play pronunciation/iu }).click();
+
+      await expect
+        .element(controls.getByRole("button", { name: /pause pronunciation/iu }))
+        .toBeInTheDocument();
+
+      await expect
+        .element(currentCard.getByRole("button", { name: /pause pronunciation/iu }))
+        .toBeInTheDocument();
+
+      await expect
+        .element(page.getByRole("region", { name: /vocabulary: Adios/iu }))
+        .not.toBeInTheDocument();
+    });
   });
 
   it("navigates vocabulary cards without quiz controls", async () => {

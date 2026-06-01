@@ -156,3 +156,27 @@ export function getPlayerStepImage(descriptor?: PlayerStepDescriptor | null): St
 
   return descriptor.content.image ?? null;
 }
+
+/**
+ * Returns the primary audio prompt for steps where listening is required.
+ *
+ * This intentionally excludes option-selection sounds, such as translation
+ * choices and word-bank tiles, because those sounds belong to the selected
+ * option rather than the step prompt that should be reachable from the bottom
+ * bar.
+ */
+export function getPlayerStepAudioUrl(descriptor?: PlayerStepDescriptor | null): string | null {
+  if (descriptor?.kind === "alphabet") {
+    return descriptor.content.audioUrl ?? null;
+  }
+
+  if (descriptor?.kind === "listening") {
+    return descriptor.step.sentence?.audioUrl ?? null;
+  }
+
+  if (descriptor?.kind === "vocabulary") {
+    return descriptor.step.word?.audioUrl ?? null;
+  }
+
+  return null;
+}

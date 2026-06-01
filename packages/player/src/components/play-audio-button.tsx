@@ -1,10 +1,48 @@
 "use client";
 
+import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PauseIcon, Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { useSharedPlayerAudio } from "../player-audio-context";
 import { useWordAudio } from "../use-word-audio";
+
+type PlayAudioButtonVariant = "filled" | "outline" | "text";
+
+/**
+ * Picks the shared player audio controller when this button represents the
+ * active step prompt, otherwise falls back to a local controller. That keeps
+ * duplicate prompt buttons synchronized while preserving standalone audio
+ * buttons in other contexts.
+ */
+function usePlayAudioButtonState({ audioUrl, preload }: { audioUrl: string; preload: boolean }) {
+  const sharedAudio = useSharedPlayerAudio(audioUrl);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const { pause, play } = useWordAudio({
+    onEnded: () => setIsPlaying(false),
+    preloadUrls: preload && !sharedAudio ? [audioUrl] : undefined,
+  });
+
+  if (sharedAudio) {
+    return { handleClick: sharedAudio.toggle, isPlaying: sharedAudio.isPlaying };
+  }
+
+  return {
+    handleClick: () => {
+      if (isPlaying) {
+        pause();
+        setIsPlaying(false);
+        return;
+      }
+
+      play(audioUrl);
+      setIsPlaying(true);
+    },
+    isPlaying,
+  };
+}
 
 export function PlayAudioButton({
   audioUrl,
@@ -15,25 +53,10 @@ export function PlayAudioButton({
   audioUrl: string;
   preload?: boolean;
   size?: "sm" | "md";
-  variant?: "filled" | "text";
+  variant?: PlayAudioButtonVariant;
 }) {
   const t = useExtracted();
-  const [isPlaying, setIsPlaying] = useState(false);
-
-  const { pause, play } = useWordAudio({
-    onEnded: () => setIsPlaying(false),
-    preloadUrls: preload ? [audioUrl] : undefined,
-  });
-
-  const handleClick = () => {
-    if (isPlaying) {
-      pause();
-      setIsPlaying(false);
-    } else {
-      play(audioUrl);
-      setIsPlaying(true);
-    }
-  };
+  const { handleClick, isPlaying } = usePlayAudioButtonState({ audioUrl, preload });
 
   const Icon = isPlaying ? PauseIcon : Volume2Icon;
   const label = isPlaying ? t("Pause pronunciation") : t("Play pronunciation");
@@ -48,6 +71,20 @@ export function PlayAudioButton({
         <Icon aria-hidden className="size-4" />
         {label}
       </button>
+    );
+  }
+
+  if (variant === "outline") {
+    return (
+      <Button
+        aria-label={label}
+        onClick={handleClick}
+        size={size === "md" ? "icon-lg" : "icon"}
+        type="button"
+        variant="outline"
+      >
+        <Icon aria-hidden className={size === "md" ? "size-5" : "size-4"} />
+      </Button>
     );
   }
 

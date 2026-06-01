@@ -1,5 +1,9 @@
 import { type PlayerState } from "./player-reducer";
-import { type PlayerStepDescriptor, describePlayerStep } from "./player-step";
+import {
+  type PlayerStepDescriptor,
+  describePlayerStep,
+  getPlayerStepAudioUrl,
+} from "./player-step";
 import {
   getPlayerStepBehavior,
   getPlayerStepScene,
@@ -13,8 +17,9 @@ type PlayerPrimaryActionRun = "check" | "continue" | "navigateNext";
 type InPlayScreenScene = "choice" | "feedback" | "read";
 
 type PlayerBottomBarModel =
-  | { canNavigatePrev: boolean; kind: "navigation" }
+  | { audioUrl: string | null; canNavigatePrev: boolean; kind: "navigation" }
   | {
+      audioUrl: string | null;
       button: PlayerPrimaryActionKind;
       disabled: boolean;
       kind: "primaryAction";
@@ -81,6 +86,25 @@ function getCompletedScreenModel(): PlayerCompletedScreenModel {
 }
 
 /**
+ * Bottom-bar audio is only useful while the learner is answering or reading
+ * the active prompt. Feedback screens should keep the bar focused on Continue
+ * so the audio button does not follow the learner into a result screen.
+ */
+function getBottomBarAudioUrl({
+  phase,
+  step,
+}: {
+  phase: PlayerState["phase"];
+  step: PlayerStepDescriptor;
+}): string | null {
+  if (phase !== "playing") {
+    return null;
+  }
+
+  return getPlayerStepAudioUrl(step);
+}
+
+/**
  * The bottom bar is the clearest description of the player's current control
  * mode. Building it in one place prevents shell and keyboard code from
  * independently re-deriving which action should be active.
@@ -97,24 +121,37 @@ function getBottomBarModel({
   step: PlayerStepDescriptor;
 }): PlayerBottomBarModel {
   const behavior = getPlayerStepBehavior(step);
+  const audioUrl = getBottomBarAudioUrl({ phase, step });
 
   if (!behavior) {
-    return { canNavigatePrev: canMovePrev, kind: "navigation" };
+    return { audioUrl, canNavigatePrev: canMovePrev, kind: "navigation" };
   }
 
   if (phase === "feedback") {
-    return { button: "continue", disabled: false, kind: "primaryAction", run: "continue" };
+    return {
+      audioUrl,
+      button: "continue",
+      disabled: false,
+      kind: "primaryAction",
+      run: "continue",
+    };
   }
 
   if (step.kind === "intro") {
-    return { button: "begin", disabled: false, kind: "primaryAction", run: "navigateNext" };
+    return {
+      audioUrl,
+      button: "begin",
+      disabled: false,
+      kind: "primaryAction",
+      run: "navigateNext",
+    };
   }
 
   if (behavior.layout === "navigable") {
-    return { canNavigatePrev: canMovePrev, kind: "navigation" };
+    return { audioUrl, canNavigatePrev: canMovePrev, kind: "navigation" };
   }
 
-  return { button: "check", disabled: !hasAnswer, kind: "primaryAction", run: "check" };
+  return { audioUrl, button: "check", disabled: !hasAnswer, kind: "primaryAction", run: "check" };
 }
 
 /**

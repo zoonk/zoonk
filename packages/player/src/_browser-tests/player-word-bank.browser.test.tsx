@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
+import { runInMobilePlayerViewport } from "../_test-utils/browser-viewport";
 import {
   buildSerializedLesson,
   buildSerializedSentence,
@@ -84,41 +85,53 @@ describe("player browser integration: word bank steps", () => {
   });
 
   it("renders listening audio controls and completes from the word bank flow", async () => {
-    renderPlayer({
-      lesson: buildSerializedLesson({
-        kind: "listening",
-        steps: [
-          buildSerializedStep({
-            content: {},
-            kind: "listening",
-            sentence: buildSerializedSentence({
-              audioUrl: "https://example.com/audio.mp3",
-              sentence: "Hola mundo",
-              translation: "Hello world",
+    await runInMobilePlayerViewport(async () => {
+      renderPlayer({
+        lesson: buildSerializedLesson({
+          kind: "listening",
+          steps: [
+            buildSerializedStep({
+              content: {},
+              kind: "listening",
+              sentence: buildSerializedSentence({
+                audioUrl: "https://example.com/audio.mp3",
+                sentence: "Hola mundo",
+                translation: "Hello world",
+              }),
+              wordBankOptions: [
+                buildWordBankOption({ word: "Hello" }),
+                buildWordBankOption({ word: "world" }),
+                buildWordBankOption({ word: "bird" }),
+              ],
             }),
-            wordBankOptions: [
-              buildWordBankOption({ word: "Hello" }),
-              buildWordBankOption({ word: "world" }),
-              buildWordBankOption({ word: "bird" }),
-            ],
-          }),
-        ],
-      }),
-      viewer: buildAuthenticatedViewer(),
+          ],
+        }),
+        viewer: buildAuthenticatedViewer(),
+      });
+
+      const controls = page.getByRole("toolbar", { name: /player controls/iu });
+
+      await expect
+        .element(controls.getByRole("button", { name: /play pronunciation/iu }))
+        .toBeInTheDocument();
+
+      await expect.element(controls.getByRole("button", { name: /check/iu })).toBeDisabled();
+
+      await controls.getByRole("button", { name: /play pronunciation/iu }).click();
+
+      await expect
+        .element(controls.getByRole("button", { name: /pause pronunciation/iu }))
+        .toBeInTheDocument();
+
+      const wordBank = page.getByRole("group", { name: /word bank/iu });
+
+      await wordBank.getByRole("button", { exact: true, name: "Hello" }).click();
+      await wordBank.getByRole("button", { exact: true, name: "world" }).click();
+      await controls.getByRole("button", { name: /check/iu }).click();
+      await controls.getByRole("button", { name: /continue/iu }).click();
+
+      await expect.element(page.getByText("1/1")).toBeInTheDocument();
     });
-
-    await expect
-      .element(page.getByRole("button", { name: /play pronunciation/iu }))
-      .toBeInTheDocument();
-
-    const wordBank = page.getByRole("group", { name: /word bank/iu });
-
-    await wordBank.getByRole("button", { exact: true, name: "Hello" }).click();
-    await wordBank.getByRole("button", { exact: true, name: "world" }).click();
-    await page.getByRole("button", { name: /check/iu }).click();
-    await page.getByRole("button", { name: /continue/iu }).click();
-
-    await expect.element(page.getByText("1/1")).toBeInTheDocument();
   });
 
   it("lets learners remove fill-blank words before checking and shows the correct-answer hint", async () => {
