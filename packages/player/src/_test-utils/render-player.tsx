@@ -4,10 +4,43 @@ import { render } from "@testing-library/react";
 import { type CompletionInput } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { PlayerShell } from "../components/player-shell";
-import { type PlayerMilestone, type PlayerNavigation, type PlayerViewer } from "../player-context";
+import {
+  type PlayerLessonProgress,
+  type PlayerMilestone,
+  type PlayerNavigation,
+  type PlayerViewer,
+} from "../player-context";
 import { PlayerProvider } from "../player-provider";
 
 const noop = () => null;
+
+const TEST_LESSON_KIND_LABELS: Record<SerializedLesson["kind"], string> = {
+  alphabet: "Alphabet",
+  custom: "Lesson",
+  explanation: "Explanation",
+  grammar: "Grammar",
+  listening: "Listening",
+  practice: "Practice",
+  quiz: "Quiz",
+  reading: "Reading",
+  review: "Review",
+  translation: "Translation",
+  tutorial: "Tutorial",
+  vocabulary: "Vocabulary",
+};
+
+/**
+ * Test renders should mirror the app's display-title contract. Apps pass the
+ * resolved lesson title into the provider, so this helper derives the same
+ * English fallback for browser tests that only provide serialized lesson data.
+ */
+function getDefaultLessonTitle(lesson: SerializedLesson) {
+  if (lesson.title) {
+    return lesson.title;
+  }
+
+  return TEST_LESSON_KIND_LABELS[lesson.kind];
+}
 
 /**
  * Browser tests should exercise the same public surface as consuming apps. This
@@ -18,7 +51,8 @@ export function renderPlayer({
   lesson,
   chapterTitle = "Test Chapter",
   lessonDescription = "Test lesson description",
-  lessonTitle = "Test Lesson",
+  lessonProgress = buildLessonProgress(),
+  lessonTitle = getDefaultLessonTitle(lesson),
   milestone = null,
   navigation = buildNavigation(),
   onComplete = noop,
@@ -30,6 +64,7 @@ export function renderPlayer({
   lesson: SerializedLesson;
   chapterTitle?: string;
   lessonDescription?: string;
+  lessonProgress?: PlayerLessonProgress;
   lessonTitle?: string;
   milestone?: PlayerMilestone | null;
   navigation?: PlayerNavigation;
@@ -44,6 +79,7 @@ export function renderPlayer({
       lesson={lesson}
       chapterTitle={chapterTitle}
       lessonDescription={lessonDescription}
+      lessonProgress={lessonProgress}
       lessonTitle={lessonTitle}
       milestone={milestone}
       navigation={navigation}
@@ -56,6 +92,21 @@ export function renderPlayer({
       <PlayerShell />
     </PlayerProvider>,
   );
+}
+
+/**
+ * Most shared player tests do not care about curriculum position. This default
+ * keeps the public provider contract realistic without making every scenario
+ * restate one-lesson progress metadata.
+ */
+function buildLessonProgress(overrides: Partial<PlayerLessonProgress> = {}): PlayerLessonProgress {
+  return {
+    currentLessonNumber: 1,
+    remainingChaptersInCourse: 0,
+    remainingLessonsInChapter: 0,
+    totalLessonsInChapter: 1,
+    ...overrides,
+  };
 }
 
 /**

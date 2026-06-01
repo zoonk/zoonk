@@ -1,5 +1,39 @@
 import { describe, expect, it } from "vitest";
-import { buildLessonPlayerModel } from "./lesson-player-model";
+import { buildLessonPlayerModel, buildLessonProgressMeta } from "./lesson-player-model";
+
+describe(buildLessonProgressMeta, () => {
+  it("counts visible lesson position and remaining curriculum from ordered published lists", () => {
+    expect(
+      buildLessonProgressMeta({
+        chapterId: "chapter-2",
+        chapterLessons: [{ id: "lesson-1" }, { id: "lesson-3" }],
+        courseChapters: [{ id: "chapter-1" }, { id: "chapter-2" }, { id: "chapter-4" }],
+        lessonId: "lesson-3",
+      }),
+    ).toStrictEqual({
+      currentLessonNumber: 2,
+      remainingChaptersInCourse: 1,
+      remainingLessonsInChapter: 0,
+      totalLessonsInChapter: 2,
+    });
+  });
+
+  it("does not overstate remaining lessons when the current lesson is missing from a stale list", () => {
+    expect(
+      buildLessonProgressMeta({
+        chapterId: "chapter-2",
+        chapterLessons: [{ id: "lesson-1" }, { id: "lesson-2" }],
+        courseChapters: [{ id: "chapter-2" }],
+        lessonId: "missing-lesson",
+      }),
+    ).toStrictEqual({
+      currentLessonNumber: 1,
+      remainingChaptersInCourse: 0,
+      remainingLessonsInChapter: 0,
+      totalLessonsInChapter: 2,
+    });
+  });
+});
 
 describe(buildLessonPlayerModel, () => {
   it("returns no milestone when another lesson exists in the same chapter", () => {

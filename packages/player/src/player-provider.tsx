@@ -5,6 +5,7 @@ import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-less
 import { useCallback, useMemo, useReducer } from "react";
 import {
   PlayerConfigContext,
+  type PlayerLessonProgress,
   type PlayerMilestone,
   type PlayerNavigation,
   PlayerRuntimeContext,
@@ -25,6 +26,7 @@ export function PlayerProvider({
   chapterTitle,
   children,
   lessonDescription,
+  lessonProgress,
   lessonTitle,
   milestone,
   navigation,
@@ -39,6 +41,7 @@ export function PlayerProvider({
   chapterTitle: string;
   children: React.ReactNode;
   lessonDescription: string;
+  lessonProgress: PlayerLessonProgress;
   lessonTitle: string;
   milestone: PlayerMilestone | null;
   navigation: PlayerNavigation;
@@ -83,6 +86,7 @@ export function PlayerProvider({
         fallbackDescription: lessonDescription,
         kind: lesson.kind,
         lessonDescription: lesson.description,
+        lessonProgress,
         lessonTitle,
         title: lesson.title,
       },
@@ -98,6 +102,7 @@ export function PlayerProvider({
       chapterTitle,
       handleNext,
       lessonDescription,
+      lessonProgress,
       lessonTitle,
       milestone,
       navigation,

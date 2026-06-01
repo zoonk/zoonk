@@ -1,5 +1,95 @@
 type NextLesson = { chapterSlug: string; lessonSlug: string; lessonTitle: string | null };
 type NextChapter = { brandSlug: string; chapterSlug: string; courseSlug: string };
+type OrderedItem = { id: string };
+
+export type LessonProgressMeta = {
+  currentLessonNumber: number;
+  remainingChaptersInCourse: number;
+  remainingLessonsInChapter: number;
+  totalLessonsInChapter: number;
+};
+
+const DEFAULT_LESSON_PROGRESS: LessonProgressMeta = {
+  currentLessonNumber: 1,
+  remainingChaptersInCourse: 0,
+  remainingLessonsInChapter: 0,
+  totalLessonsInChapter: 1,
+};
+
+/**
+ * Converts an ordered curriculum list into the human position learners expect.
+ * Database positions can have gaps when unpublished rows are hidden, so the UI
+ * should count visible published items instead of showing raw stored positions.
+ */
+function getHumanPosition({
+  currentId,
+  items,
+}: {
+  currentId: string;
+  items: readonly OrderedItem[];
+}) {
+  const index = items.findIndex((item) => item.id === currentId);
+
+  if (index === -1) {
+    return 1;
+  }
+
+  return index + 1;
+}
+
+/**
+ * Counts what remains after the current published item in the visible sequence.
+ * If the current row is missing from a stale list, returning zero avoids
+ * overstating unfinished work on the completion screen.
+ */
+function getRemainingItemCount({
+  currentId,
+  items,
+}: {
+  currentId: string;
+  items: readonly OrderedItem[];
+}) {
+  const index = items.findIndex((item) => item.id === currentId);
+
+  if (index === -1) {
+    return 0;
+  }
+
+  return Math.max(items.length - index - 1, 0);
+}
+
+/**
+ * Builds the small progress facts the player needs without exposing raw
+ * curriculum rows to the client. The header needs lesson X of Y, while the
+ * completion screen needs the remaining count for the next curriculum boundary.
+ */
+export function buildLessonProgressMeta({
+  chapterId,
+  chapterLessons,
+  courseChapters,
+  lessonId,
+}: {
+  chapterId: string;
+  chapterLessons: readonly OrderedItem[];
+  courseChapters: readonly OrderedItem[];
+  lessonId: string;
+}): LessonProgressMeta {
+  const currentLessonNumber = getHumanPosition({ currentId: lessonId, items: chapterLessons });
+  const totalLessonsInChapter = Math.max(chapterLessons.length, currentLessonNumber);
+
+  return {
+    currentLessonNumber,
+    remainingChaptersInCourse: getRemainingItemCount({
+      currentId: chapterId,
+      items: courseChapters,
+    }),
+    remainingLessonsInChapter: getRemainingItemCount({
+      currentId: lessonId,
+      items: chapterLessons,
+    }),
+    totalLessonsInChapter,
+  };
+}
 
 /**
  * The next playable lesson is only available after generation has created a
@@ -64,12 +154,14 @@ export function buildLessonPlayerModel({
   brandSlug,
   chapterSlug,
   courseSlug,
+  lessonProgress = DEFAULT_LESSON_PROGRESS,
   nextChapter = null,
   nextLesson,
 }: {
   brandSlug: string;
   chapterSlug: string;
   courseSlug: string;
+  lessonProgress?: LessonProgressMeta;
   nextChapter?: NextChapter | null;
   nextLesson: NextLesson | null;
 }) {
@@ -98,6 +190,7 @@ export function buildLessonPlayerModel({
   })();
 
   return {
+    lessonProgress,
     milestone,
     navigation: {
       chapterHref,
