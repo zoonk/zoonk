@@ -662,14 +662,14 @@ describe(preparePlayerLessonData, () => {
         pronunciation: "abend",
         romanization: "abend",
         translation: null,
-        word: "Abend",
+        word: "abend",
       },
       {
         audioUrl: null,
         pronunciation: null,
         romanization: null,
         translation: null,
-        word: "Fenster",
+        word: "fenster",
       },
     ]);
 

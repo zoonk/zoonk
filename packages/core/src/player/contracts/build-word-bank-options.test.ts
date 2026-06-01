@@ -5,7 +5,9 @@ import { type DistractorWord } from "./translation-options";
 
 type SerializedSentence = NonNullable<SerializedStep["sentence"]>;
 
-vi.mock("@zoonk/utils/shuffle", () => ({ shuffle: <T>(items: T[]) => items }));
+const shuffleMock = vi.hoisted(() => vi.fn((items: readonly unknown[]) => [...items]));
+
+vi.mock("@zoonk/utils/shuffle", () => ({ shuffle: shuffleMock }));
 
 function makeLessonWord(overrides: Partial<SerializedWord> = {}): SerializedWord {
   return {
@@ -85,8 +87,8 @@ describe(buildWordBankOptions, () => {
       "Guten",
       "Morgen,",
       "Anna!",
-      "Abend",
-      "Fenster",
+      "abend",
+      "fenster",
     ]);
   });
 
@@ -141,7 +143,7 @@ describe(buildWordBankOptions, () => {
       "Boa",
       "tarde,",
       "Lara.",
-      "Bom",
+      "bom",
       "noite",
     ]);
 
@@ -154,6 +156,85 @@ describe(buildWordBankOptions, () => {
     });
   });
 
+  it("limits reading word banks to four distractors", () => {
+    const options = buildWordBankOptions(
+      makeStep(
+        "reading",
+        makeSentence({
+          distractors: ["uno", "dos", "tres", "cuatro", "cinco"],
+          sentence: "Hola mundo",
+        }),
+      ),
+      [],
+      [],
+      new Map(),
+    );
+
+    expect(options.map((option) => option.word)).toStrictEqual([
+      "Hola",
+      "mundo",
+      "uno",
+      "dos",
+      "tres",
+      "cuatro",
+    ]);
+  });
+
+  it("shuffles reading distractors before applying the visible cap", () => {
+    shuffleMock
+      .mockImplementationOnce((items: readonly unknown[]) => [...items].toReversed())
+      .mockImplementationOnce((items: readonly unknown[]) => [...items]);
+
+    const options = buildWordBankOptions(
+      makeStep(
+        "reading",
+        makeSentence({
+          distractors: ["uno", "dos", "tres", "cuatro", "cinco"],
+          sentence: "Hola mundo",
+        }),
+      ),
+      [],
+      [],
+      new Map(),
+    );
+
+    expect(options.map((option) => option.word)).toStrictEqual([
+      "Hola",
+      "mundo",
+      "cinco",
+      "cuatro",
+      "tres",
+      "dos",
+    ]);
+  });
+
+  it("lowercases listening distractors before display", () => {
+    const options = buildWordBankOptions(
+      makeStep(
+        "listening",
+        makeSentence({
+          sentence: "Como você está?",
+          translation: "Hi, how are you?",
+          translationDistractors: ["Farewell", "Thanks", "Goodbye", "Please"],
+        }),
+      ),
+      [],
+      [],
+      new Map(),
+    );
+
+    expect(options.map((option) => option.word)).toStrictEqual([
+      "Hi,",
+      "how",
+      "are",
+      "you?",
+      "farewell",
+      "thanks",
+      "goodbye",
+      "please",
+    ]);
+  });
+
   it("shows fewer distractors when sanitation removes entries", () => {
     const options = buildWordBankOptions(
       makeStep("reading", makeSentence({ distractors: ["Hola", "Salut"], sentence: "Hola mundo" })),
@@ -162,7 +243,7 @@ describe(buildWordBankOptions, () => {
       new Map(),
     );
 
-    expect(options.map((option) => option.word)).toStrictEqual(["Hola", "mundo", "Salut"]);
+    expect(options.map((option) => option.word)).toStrictEqual(["Hola", "mundo", "salut"]);
   });
 });
 
