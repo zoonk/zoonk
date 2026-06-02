@@ -3,6 +3,11 @@ import { normalizeString, segmentWords, stripPunctuation } from "@zoonk/utils/st
 
 type TargetWordHint = { key: string; translation: string };
 
+type DirectTargetIndexAssignment = {
+  directTargetIndexes: (number | null)[];
+  usedTargetIndexes: Set<number>;
+};
+
 export type ReadingPromptWordHint = { translation: string | null; word: string };
 
 /**
@@ -79,23 +84,86 @@ function getPromptTranslation({
 }
 
 /**
- * Matches a prompt word against generated target-word translations.
+ * Matches a prompt word against the first generated target-word translation
+ * that has not already powered an earlier prompt word.
+ *
+ * Repeated prompt words can share a lookup key while still mapping to distinct
+ * target sentence words. Consuming each target hint once keeps those repeated
+ * words from all pointing at the first matching hint.
  */
-function getDirectTargetIndex({
+function getUnusedDirectTargetIndex({
   targetHints,
+  usedTargetIndexes,
   word,
 }: {
   targetHints: TargetWordHint[];
+  usedTargetIndexes: Set<number>;
   word: string;
 }): number | null {
   const key = getPromptWordKey(word);
-  const index = targetHints.findIndex((hint) => hint.key === key);
+
+  const index = targetHints.findIndex(
+    (hint, targetIndex) => hint.key === key && !usedTargetIndexes.has(targetIndex),
+  );
 
   if (index === -1) {
     return null;
   }
 
   return index;
+}
+
+/**
+ * Adds one prompt word's exact match while preserving target hints that were
+ * already assigned to earlier visible words.
+ */
+function appendDirectTargetIndex({
+  assignment,
+  targetHints,
+  word,
+}: {
+  assignment: DirectTargetIndexAssignment;
+  targetHints: TargetWordHint[];
+  word: string;
+}): DirectTargetIndexAssignment {
+  const index = getUnusedDirectTargetIndex({
+    targetHints,
+    usedTargetIndexes: assignment.usedTargetIndexes,
+    word,
+  });
+
+  return {
+    directTargetIndexes: [...assignment.directTargetIndexes, index],
+    usedTargetIndexes:
+      index === null
+        ? assignment.usedTargetIndexes
+        : new Set([...assignment.usedTargetIndexes, index]),
+  };
+}
+
+/**
+ * Assigns exact prompt-word matches from left to right before the looser
+ * position fallback runs.
+ */
+function getDirectTargetIndexes({
+  promptWords,
+  targetHints,
+}: {
+  promptWords: string[];
+  targetHints: TargetWordHint[];
+}): (number | null)[] {
+  const initialAssignment: DirectTargetIndexAssignment = {
+    directTargetIndexes: [],
+    usedTargetIndexes: new Set(),
+  };
+
+  const assignment = promptWords.reduce(
+    (currentAssignment, word) =>
+      appendDirectTargetIndex({ assignment: currentAssignment, targetHints, word }),
+    initialAssignment,
+  );
+
+  return assignment.directTargetIndexes;
 }
 
 /**
@@ -169,9 +237,7 @@ export function buildReadingPromptWordHints({
   const promptWords = segmentWords(prompt);
   const targetHints = getTargetWordHints(sentenceWordOptions);
 
-  const directTargetIndexes = promptWords.map((word) =>
-    getDirectTargetIndex({ targetHints, word }),
-  );
+  const directTargetIndexes = getDirectTargetIndexes({ promptWords, targetHints });
 
   const fallbackTargetIndexes = buildFallbackTargetIndexMap({ directTargetIndexes, targetHints });
 

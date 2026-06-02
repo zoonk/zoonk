@@ -45,6 +45,21 @@ describe(buildReadingPromptWordHints, () => {
     expect(hints).toStrictEqual([{ translation: "Hello", word: "Olá!" }]);
   });
 
+  it("uses each repeated direct match once", () => {
+    const hints = buildReadingPromptWordHints({
+      prompt: "um um",
+      sentenceWordOptions: [
+        makeOption({ translation: "um", word: "a" }),
+        makeOption({ translation: "um", word: "one" }),
+      ],
+    });
+
+    expect(hints).toStrictEqual([
+      { translation: "a", word: "um" },
+      { translation: "one", word: "um" },
+    ]);
+  });
+
   it("only falls back to remaining target words after exact matches", () => {
     const hints = buildReadingPromptWordHints({
       prompt: "Tenha um bom dia!",
