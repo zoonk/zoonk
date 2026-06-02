@@ -12,6 +12,7 @@ type WordDataInput = {
   audioUrl: string | null;
   pronunciation: string | null;
   romanization: string | null;
+  translation: string;
   word: string;
 };
 
@@ -55,9 +56,9 @@ function splitMultiWordEntries(lessonWord: SerializedWord): [string, WordMetadat
 }
 
 /**
- * Sentence-level token metadata is more precise for audio and romanization, but it does
- * not carry translations. Preserve any existing translation when a later source only
- * contributes render metadata.
+ * Sentence-level token metadata is more precise for audio and romanization and can now
+ * fill reading prompt hints. Existing lesson-word translations still win because those
+ * are attached to the explicit lesson resource the learner is practicing.
  */
 function mergeWordMetadata({
   current,
@@ -70,7 +71,7 @@ function mergeWordMetadata({
     audioUrl: incoming.audioUrl ?? current?.audioUrl ?? null,
     pronunciation: incoming.pronunciation ?? current?.pronunciation ?? null,
     romanization: incoming.romanization ?? current?.romanization ?? null,
-    translation: incoming.translation ?? current?.translation ?? null,
+    translation: current?.translation ?? incoming.translation ?? null,
   };
 }
 
@@ -153,7 +154,7 @@ function buildWordMetadataLookup(params: {
           audioUrl: word.audioUrl,
           pronunciation: word.pronunciation,
           romanization: word.romanization,
-          translation: null,
+          translation: word.translation || null,
         },
       ] as const,
   );

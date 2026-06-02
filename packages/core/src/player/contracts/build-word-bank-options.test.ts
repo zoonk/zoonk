@@ -293,6 +293,37 @@ describe(buildSentenceWordOptions, () => {
             audioUrl: "/audio/hola-sentence.mp3",
             pronunciation: "OH-lah",
             romanization: "o-la",
+            translation: "hello from sentence",
+            word: "Hola",
+          },
+        ],
+      ]),
+    );
+
+    expect(options).toStrictEqual([
+      {
+        audioUrl: "/audio/hola-sentence.mp3",
+        pronunciation: "OH-lah",
+        romanization: "o-la",
+        translation: "hello",
+        word: "Hola",
+      },
+    ]);
+  });
+
+  it("uses sentence word translations when lesson words do not provide one", () => {
+    const options = buildSentenceWordOptions(
+      "Hola",
+      [],
+      [],
+      new Map([
+        [
+          "hola",
+          {
+            audioUrl: "/audio/hola-sentence.mp3",
+            pronunciation: "OH-lah",
+            romanization: "o-la",
+            translation: "hello",
             word: "Hola",
           },
         ],

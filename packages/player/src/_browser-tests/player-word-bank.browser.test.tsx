@@ -84,6 +84,42 @@ describe("player browser integration: word bank steps", () => {
     await expect.element(page.getByText("1/1")).toBeInTheDocument();
   });
 
+  it("shows reading word translations from the prompt sentence", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        kind: "reading",
+        steps: [
+          buildSerializedStep({
+            content: {},
+            kind: "reading",
+            sentence: buildSerializedSentence({
+              sentence: "Hola mundo",
+              translation: "Hello world",
+            }),
+            sentenceWordOptions: [
+              buildWordBankOption({ translation: "Hello", word: "Hola" }),
+              buildWordBankOption({ translation: "world", word: "mundo" }),
+            ],
+            wordBankOptions: [
+              buildWordBankOption({ word: "Hola" }),
+              buildWordBankOption({ word: "mundo" }),
+              buildWordBankOption({ word: "gato" }),
+            ],
+          }),
+        ],
+      }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await page.getByRole("button", { exact: true, name: "Hello" }).click();
+
+    const translationPopover = page.getByRole("dialog", { name: "Hola" });
+
+    await expect.element(translationPopover).toBeInTheDocument();
+
+    await expect.element(translationPopover.getByText("Hola", { exact: true })).toBeInTheDocument();
+  });
+
   it("renders listening audio controls and completes from the word bank flow", async () => {
     await runInMobilePlayerViewport(async () => {
       renderPlayer({
