@@ -52,7 +52,7 @@ describe("player browser integration: completion", () => {
     renderPlayer({
       lesson: buildCompletionQuizLesson(),
       navigation: buildNavigation({ nextLessonHref: "/lesson/play" }),
-      totalBrainPower: 240,
+      totalBrainPower: 0,
       viewer: buildAuthenticatedViewer({ completionFooter: <p>Custom completion footer</p> }),
     });
 
@@ -71,7 +71,9 @@ describe("player browser integration: completion", () => {
 
     await expect
       .element(completionScreen.getByRole("progressbar", { name: /level progress/iu }))
-      .toBeInTheDocument();
+      .not.toBeInTheDocument();
+
+    await expect.element(completionScreen.getByText(/belt/iu)).not.toBeInTheDocument();
 
     await expect.element(completionScreen.getByRole("link", { name: "Next" })).toBeInTheDocument();
 
@@ -97,6 +99,63 @@ describe("player browser integration: completion", () => {
       .toBeInTheDocument();
 
     await expect.element(page.getByRole("link", { name: /close/iu })).toBeInTheDocument();
+  });
+
+  it("shows a belt level milestone before the ordinary completion summary", async () => {
+    renderPlayer({
+      lesson: buildCompletionQuizLesson(),
+      navigation: buildNavigation({ levelHref: "/level", nextLessonHref: "/lesson/play" }),
+      totalBrainPower: 240,
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await completeSingleChoiceLesson();
+
+    const milestoneScreen = page.getByRole("status");
+
+    await expect.element(milestoneScreen.getByText(/brain power up/iu)).toBeInTheDocument();
+
+    await expect.element(milestoneScreen.getByText(/your brain power is up/iu)).toBeInTheDocument();
+
+    await expect
+      .element(milestoneScreen.getByRole("link", { name: /learn about levels/iu }))
+      .toHaveAttribute("href", "/level");
+
+    await expect.element(milestoneScreen.getByText("1/1")).not.toBeInTheDocument();
+
+    await milestoneScreen.getByRole("button", { name: /continue/iu }).click();
+
+    const completionScreen = page.getByRole("status");
+
+    await expect.element(completionScreen.getByText("1/1")).toBeInTheDocument();
+    await expect.element(completionScreen.getByText(/\+10\s*BP/iu)).toBeInTheDocument();
+
+    await expect.element(completionScreen.getByRole("link", { name: "Next" })).toBeInTheDocument();
+  });
+
+  it("shows a halfway level milestone before the ordinary completion summary", async () => {
+    renderPlayer({
+      lesson: buildCompletionQuizLesson(),
+      navigation: buildNavigation({ levelHref: "/level", nextLessonHref: "/lesson/play" }),
+      totalBrainPower: 120,
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await completeSingleChoiceLesson();
+
+    const milestoneScreen = page.getByRole("status");
+
+    await expect
+      .element(milestoneScreen.getByText(/halfway to your next level/iu))
+      .toBeInTheDocument();
+
+    await expect.element(milestoneScreen.getByText(/complete/iu)).toBeInTheDocument();
+
+    await milestoneScreen.getByRole("button", { name: /continue/iu }).click();
+
+    await expect
+      .element(page.getByRole("status").getByRole("link", { name: "Next" }))
+      .toBeInTheDocument();
   });
 
   it("omits next lesson and level progress when optional lesson links are missing", async () => {

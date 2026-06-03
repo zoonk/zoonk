@@ -1,5 +1,6 @@
 import { type CompletionResult } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { getCompletionMilestones } from "./completion-milestones";
 import { type PlayerState } from "./player-reducer";
 import { describePlayerStep, getPlayerStepImage } from "./player-step";
 
@@ -15,6 +16,26 @@ function computeProgress(currentIndex: number, total: number): number {
 /** Returns the completion payload once the lesson is finished, or null while still playing. */
 export function getCompletionResult(state: PlayerState): CompletionResult | null {
   return state.completion;
+}
+
+/**
+ * Returns the completion milestone currently blocking the final summary.
+ *
+ * Milestone data is derived from the completion payload so reducer state only
+ * needs to store which milestone index is active. That keeps the stored state
+ * small while still letting future milestone kinds join the same array.
+ */
+export function getActiveCompletionMilestone(state: PlayerState) {
+  if (state.completionMilestoneIndex === null || !state.completion) {
+    return null;
+  }
+
+  return (
+    getCompletionMilestones({
+      completion: state.completion,
+      previousTotalBrainPower: state.totalBrainPower,
+    })[state.completionMilestoneIndex] ?? null
+  );
 }
 
 /** Returns the checked result for the current step, or undefined if not yet checked. */

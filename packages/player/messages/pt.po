@@ -45,22 +45,6 @@ msgstr "Toque nas palavras para construir sua resposta"
 msgid "e7WNdK"
 msgstr "Banco de palavras"
 
-#: src/components/belt-progress.tsx
-msgid "3UK8wh"
-msgstr "faixa {color}"
-
-#: src/components/belt-progress.tsx
-msgid "xiSVL4"
-msgstr "Faixa {color} — Nível {level}"
-
-#: src/components/belt-progress.tsx
-msgid "IGs0wl"
-msgstr "Progresso do nível"
-
-#: src/components/belt-progress.tsx
-msgid "oMEE4o"
-msgstr "{value} PM para subir de nível"
-
 #: src/components/completion-auth-branch.tsx
 msgid "Ak+bLZ"
 msgstr "Todas as aulas"
@@ -84,6 +68,35 @@ msgstr "Cadastre-se para acompanhar seu progresso"
 #: src/components/completion-milestone-actions.tsx
 msgid "M8B177"
 msgstr "Entrar para salvar seu progresso"
+
+#: src/components/completion-level-milestone-screen.tsx
+msgid "3UK8wh"
+msgstr "faixa {color}"
+
+#: src/components/completion-level-milestone-screen.tsx
+msgid "4VdoD5"
+msgstr "Poder Mental aumentou"
+
+#: src/components/completion-level-milestone-screen.tsx
+msgid "Fdgxkm"
+msgstr "Seu Poder Mental aumentou. Isso significa que seu conhecimento está crescendo, e você se tornou faixa {color}, nível {level}."
+
+#: src/components/completion-level-milestone-screen.tsx
+msgid "DTbXYC"
+msgstr "Metade do caminho até o próximo nível"
+
+#: src/components/completion-level-milestone-screen.tsx
+msgid "HmzBWG"
+msgstr "{count, plural, one {Complete mais # aula para alcançar a faixa {color}, nível {level}.} other {Complete mais # aulas para alcançar a faixa {color}, nível {level}.}}"
+
+#: src/components/completion-level-milestone-screen.tsx
+#: src/components/step-action-button.tsx
+msgid "acrOoz"
+msgstr "Continuar"
+
+#: src/components/completion-level-milestone-screen.tsx
+msgid "Q0R3MU"
+msgstr "Saiba mais sobre níveis"
 
 #: src/components/completion-milestone-actions.tsx
 msgid "DiIkZH"
@@ -241,10 +254,6 @@ msgstr "Começar"
 #: src/components/step-action-button.tsx
 msgid "RDZVQL"
 msgstr "Verificar"
-
-#: src/components/step-action-button.tsx
-msgid "acrOoz"
-msgstr "Continuar"
 
 #: src/components/step-navigation-button-group.tsx
 msgid "JJNc3c"

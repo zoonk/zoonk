@@ -45,22 +45,6 @@ msgstr "Toca las palabras para construir tu respuesta"
 msgid "e7WNdK"
 msgstr "Banco de palabras"
 
-#: src/components/belt-progress.tsx
-msgid "3UK8wh"
-msgstr "Cinturón {color}"
-
-#: src/components/belt-progress.tsx
-msgid "xiSVL4"
-msgstr "Cinturón {color} — Nivel {level}"
-
-#: src/components/belt-progress.tsx
-msgid "IGs0wl"
-msgstr "Progreso de nivel"
-
-#: src/components/belt-progress.tsx
-msgid "oMEE4o"
-msgstr "{value} PM para subir de nivel"
-
 #: src/components/completion-auth-branch.tsx
 msgid "Ak+bLZ"
 msgstr "Todas las lecciones"
@@ -84,6 +68,35 @@ msgstr "Regístrate para seguir tu progreso"
 #: src/components/completion-milestone-actions.tsx
 msgid "M8B177"
 msgstr "Iniciar sesión para guardar tu progreso"
+
+#: src/components/completion-level-milestone-screen.tsx
+msgid "3UK8wh"
+msgstr "Cinturón {color}"
+
+#: src/components/completion-level-milestone-screen.tsx
+msgid "4VdoD5"
+msgstr "Tu Poder Mental aumentó"
+
+#: src/components/completion-level-milestone-screen.tsx
+msgid "Fdgxkm"
+msgstr "Tu Poder Mental aumentó. Eso significa que tu conocimiento está creciendo y que te convertiste en cinturón {color}, nivel {level}."
+
+#: src/components/completion-level-milestone-screen.tsx
+msgid "DTbXYC"
+msgstr "A mitad de camino hacia tu próximo nivel"
+
+#: src/components/completion-level-milestone-screen.tsx
+msgid "HmzBWG"
+msgstr "{count, plural, one {Completa # lección más para llegar al cinturón {color}, nivel {level}.} other {Completa # lecciones más para llegar al cinturón {color}, nivel {level}.}}"
+
+#: src/components/completion-level-milestone-screen.tsx
+#: src/components/step-action-button.tsx
+msgid "acrOoz"
+msgstr "Continuar"
+
+#: src/components/completion-level-milestone-screen.tsx
+msgid "Q0R3MU"
+msgstr "Aprende sobre los niveles"
 
 #: src/components/completion-milestone-actions.tsx
 msgid "DiIkZH"
@@ -241,10 +254,6 @@ msgstr "Comenzar"
 #: src/components/step-action-button.tsx
 msgid "RDZVQL"
 msgstr "Revisar"
-
-#: src/components/step-action-button.tsx
-msgid "acrOoz"
-msgstr "Continuar"
 
 #: src/components/step-navigation-button-group.tsx
 msgid "JJNc3c"

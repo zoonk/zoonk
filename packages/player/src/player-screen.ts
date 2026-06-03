@@ -1,4 +1,5 @@
 import { type PlayerState } from "./player-reducer";
+import { getActiveCompletionMilestone } from "./player-selectors";
 import {
   type PlayerStepDescriptor,
   describePlayerStep,
@@ -48,7 +49,7 @@ type PlayerCompletedScreenModel = {
   bottomBar: null;
   keyboard: PlayerKeyboardModel;
   kind: "completed";
-  scene: "completion";
+  scene: "completion" | "completionMilestone";
   showChrome: false;
   stageIsFullBleed: false;
   stageIsStatic: false;
@@ -64,11 +65,28 @@ export type PlayerScreenModel =
   | PlayerStepScreenModel;
 
 /**
- * A completed player only exposes completion controls. Keeping this in a
- * helper lets the main screen model focus on active play and gives the
- * keyboard hook a consistent shape even when there is no current step.
+ * A completed player exposes either an intermediate milestone or the final
+ * completion controls. Keeping this in a helper lets the main screen model
+ * focus on active play and gives the keyboard hook a consistent shape even
+ * when there is no current step.
  */
-function getCompletedScreenModel(): PlayerCompletedScreenModel {
+function getCompletedScreenModel({
+  hasActiveMilestone,
+}: {
+  hasActiveMilestone: boolean;
+}): PlayerCompletedScreenModel {
+  if (hasActiveMilestone) {
+    return {
+      bottomBar: null,
+      keyboard: { canRestart: false, enterAction: "continue", leftAction: null, rightAction: null },
+      kind: "completed",
+      scene: "completionMilestone",
+      showChrome: false,
+      stageIsFullBleed: false,
+      stageIsStatic: false,
+    };
+  }
+
   return {
     bottomBar: null,
     keyboard: {
@@ -216,19 +234,21 @@ function getPlayerScreenScene({
  */
 export function getPlayerScreenModel(state: PlayerState): PlayerScreenModel {
   if (state.phase === "completed") {
-    return getCompletedScreenModel();
+    return getCompletedScreenModel({
+      hasActiveMilestone: Boolean(getActiveCompletionMilestone(state)),
+    });
   }
 
   const currentStep = state.steps[state.currentStepIndex];
 
   if (!currentStep) {
-    return getCompletedScreenModel();
+    return getCompletedScreenModel({ hasActiveMilestone: false });
   }
 
   const step = describePlayerStep(currentStep);
 
   if (!step) {
-    return getCompletedScreenModel();
+    return getCompletedScreenModel({ hasActiveMilestone: false });
   }
 
   const hasAnswer = Boolean(state.selectedAnswers[currentStep.id]);

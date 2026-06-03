@@ -11,7 +11,6 @@ import {
   usePlayerViewer,
 } from "../player-context";
 import { PlayerLink } from "../player-link";
-import { BeltProgressHint } from "./belt-progress";
 import { PrimaryActionLink, PrimaryKbd, SecondaryKbd } from "./completion-action-link";
 import { MilestoneActions, UnauthenticatedMilestoneActions } from "./completion-milestone-actions";
 import { RewardBadges } from "./reward-badges";
@@ -111,16 +110,10 @@ function AuthenticatedContent({
   return (
     <>
       {showRewards && completionResult && (
-        <>
-          <RewardBadges
-            brainPower={completionResult.brainPower}
-            energyDelta={completionResult.energyDelta}
-          />
-          <BeltProgressHint
-            brainPower={completionResult.brainPower}
-            newTotalBp={completionResult.newTotalBp}
-          />
-        </>
+        <RewardBadges
+          brainPower={completionResult.brainPower}
+          energyDelta={completionResult.energyDelta}
+        />
       )}
 
       <CompletionActions>

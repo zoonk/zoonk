@@ -311,6 +311,6 @@ describe("player browser integration: vocabulary", () => {
 
     await expect
       .element(completionScreen.getByRole("progressbar", { name: /level progress/iu }))
-      .toBeInTheDocument();
+      .not.toBeInTheDocument();
   });
 });
