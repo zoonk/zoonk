@@ -60,6 +60,27 @@ describe("authenticated users", () => {
     expect(result).toStrictEqual([]);
   });
 
+  it("ignores courses where the user started but did not complete a lesson", async () => {
+    const user = await userFixture();
+    const headers = await signInAs(user.email, user.password);
+
+    const { course, lesson1 } = await createCourseWithLessons(organization.id);
+
+    await Promise.all([
+      prisma.courseUser.create({ data: { courseId: course.id, userId: user.id } }),
+      lessonProgressFixture({
+        completedAt: null,
+        durationSeconds: null,
+        lessonId: lesson1.id,
+        userId: user.id,
+      }),
+    ]);
+
+    const result = await getContinueLearning(headers);
+
+    expect(result).toStrictEqual([]);
+  });
+
   it("returns courses with next lesson info based on completions", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
