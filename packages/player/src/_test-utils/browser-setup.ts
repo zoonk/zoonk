@@ -16,6 +16,8 @@ type MockAudioInstance = {
   src: string;
 };
 
+const playAudio = vi.fn(() => Promise.resolve());
+
 /**
  * Audio playback is not part of these interaction tests, but several player
  * variants render audio controls. This stub makes those controls mount and
@@ -29,9 +31,18 @@ const MockAudio = vi.fn(function MockAudio(this: MockAudioInstance) {
   this.addEventListener = () => null;
   this.load = () => null;
   this.pause = () => null;
-  this.play = () => Promise.resolve();
+  this.play = playAudio;
   this.removeAttribute = () => null;
 });
+
+/**
+ * Browser autoplay rules are represented by play() rejecting. Tests use this
+ * helper for the next playback attempt so the player fallback stays covered
+ * without depending on a real browser policy decision.
+ */
+export function mockNextAudioPlayFailure() {
+  playAudio.mockRejectedValueOnce(new DOMException("Autoplay blocked", "NotAllowedError"));
+}
 
 beforeAll(() => {
   vi.stubGlobal("Audio", MockAudio);
@@ -40,4 +51,6 @@ beforeAll(() => {
 
 afterEach(() => {
   cleanup();
+  playAudio.mockReset();
+  playAudio.mockResolvedValue();
 });

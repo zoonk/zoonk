@@ -1,6 +1,7 @@
 import { fireEvent } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
+import { mockNextAudioPlayFailure } from "../_test-utils/browser-setup";
 import { runInMobilePlayerViewport } from "../_test-utils/browser-viewport";
 import {
   buildSerializedLesson,
@@ -84,6 +85,113 @@ describe("player browser integration: vocabulary", () => {
 
     await expect
       .element(page.getByRole("region", { name: /vocabulary: Adios/iu }))
+      .not.toBeInTheDocument();
+  });
+
+  it("automatically plays the next vocabulary prompt after audio is started", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        kind: "vocabulary",
+        steps: [
+          buildSerializedStep({
+            content: {},
+            id: "vocab-autoplay-1",
+            kind: "vocabulary",
+            word: buildSerializedWord({
+              audioUrl: "https://example.com/hola.mp3",
+              id: "word-autoplay-1",
+              translation: "Hello",
+              word: "Hola",
+            }),
+          }),
+          buildSerializedStep({
+            content: {},
+            id: "vocab-autoplay-2",
+            kind: "vocabulary",
+            position: 1,
+            word: buildSerializedWord({
+              audioUrl: "https://example.com/adios.mp3",
+              id: "word-autoplay-2",
+              translation: "Goodbye",
+              word: "Adios",
+            }),
+          }),
+        ],
+      }),
+      navigation: buildNavigation({ nextLessonHref: null }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    const firstCard = page.getByRole("region", { name: /vocabulary: Hola/iu });
+
+    await firstCard.getByRole("button", { name: /play pronunciation/iu }).click();
+
+    await expect
+      .element(firstCard.getByRole("button", { name: /pause pronunciation/iu }))
+      .toBeInTheDocument();
+
+    fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
+
+    const secondCard = page.getByRole("region", { name: /vocabulary: Adios/iu });
+
+    await expect
+      .element(secondCard.getByRole("button", { name: /pause pronunciation/iu }))
+      .toBeInTheDocument();
+  });
+
+  it("keeps the play control ready when automatic vocabulary audio is blocked", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        kind: "vocabulary",
+        steps: [
+          buildSerializedStep({
+            content: {},
+            id: "vocab-blocked-autoplay-1",
+            kind: "vocabulary",
+            word: buildSerializedWord({
+              audioUrl: "https://example.com/hola.mp3",
+              id: "word-blocked-autoplay-1",
+              translation: "Hello",
+              word: "Hola",
+            }),
+          }),
+          buildSerializedStep({
+            content: {},
+            id: "vocab-blocked-autoplay-2",
+            kind: "vocabulary",
+            position: 1,
+            word: buildSerializedWord({
+              audioUrl: "https://example.com/adios.mp3",
+              id: "word-blocked-autoplay-2",
+              translation: "Goodbye",
+              word: "Adios",
+            }),
+          }),
+        ],
+      }),
+      navigation: buildNavigation({ nextLessonHref: null }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    const firstCard = page.getByRole("region", { name: /vocabulary: Hola/iu });
+
+    await firstCard.getByRole("button", { name: /play pronunciation/iu }).click();
+
+    await expect
+      .element(firstCard.getByRole("button", { name: /pause pronunciation/iu }))
+      .toBeInTheDocument();
+
+    mockNextAudioPlayFailure();
+    fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
+
+    const secondCard = page.getByRole("region", { name: /vocabulary: Adios/iu });
+
+    await expect
+      .element(secondCard.getByRole("button", { name: /play pronunciation/iu }))
+      .toBeInTheDocument();
+
+    await expect
+      .element(secondCard.getByRole("button", { name: /pause pronunciation/iu }))
       .not.toBeInTheDocument();
   });
 

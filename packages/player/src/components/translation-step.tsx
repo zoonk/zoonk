@@ -68,7 +68,7 @@ export function TranslationStep({
       return;
     }
 
-    play(word.audioUrl);
+    void play(word.audioUrl);
     onSelectAnswer(step.id, { kind: "translation", selectedOptionId: word.id });
   };
 

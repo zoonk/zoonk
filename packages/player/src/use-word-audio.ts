@@ -9,6 +9,7 @@ import {
 } from "./_utils/audio-blob-cache";
 
 type UseWordAudioOptions = { onEnded?: () => void; preloadUrls?: (string | null)[] };
+type AudioPlaybackStatus = "failed" | "started";
 
 const AUDIO_PRELOAD_CONCURRENCY = 2;
 
@@ -148,6 +149,20 @@ function startAudioFromSource(audio: HTMLAudioElement, sourceUrl: string): void 
 }
 
 /**
+ * Browsers confirm media playback asynchronously and may reject audible audio
+ * when the call is not tied to an accepted user gesture. Returning an explicit
+ * status lets controls show the pause state only after playback really starts.
+ */
+async function getAudioPlaybackStatus(audio: HTMLAudioElement): Promise<AudioPlaybackStatus> {
+  try {
+    await audio.play();
+    return "started";
+  } catch {
+    return "failed";
+  }
+}
+
+/**
  * Short language clips need to start as close to instantly as possible. This
  * hook warms audio bytes in a bounded blob cache, then plays those bytes through
  * one reusable media element so mobile Safari does not retain a media element
@@ -155,7 +170,7 @@ function startAudioFromSource(audio: HTMLAudioElement, sourceUrl: string): void 
  */
 export function useWordAudio(options?: UseWordAudioOptions): {
   pause: () => void;
-  play: (url: string | null) => void;
+  play: (url: string | null) => Promise<AudioPlaybackStatus>;
 } {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioBlobCacheRef = useRef<AudioBlobCache>(new Map());
@@ -197,9 +212,9 @@ export function useWordAudio(options?: UseWordAudioOptions): {
   }, []);
 
   const play = useCallback(
-    (url: string | null) => {
+    async (url: string | null) => {
       if (!url) {
-        return;
+        return "failed";
       }
 
       const audio = getAudio();
@@ -210,9 +225,7 @@ export function useWordAudio(options?: UseWordAudioOptions): {
       });
 
       startAudioFromSource(audio, sourceUrl);
-      // Browser rejects play() when rapid clicks lose the user-gesture association.
-      // oxlint-disable-next-line no-empty-function -- intentional no-op for rejected play()
-      audio.play().catch(() => {});
+      return getAudioPlaybackStatus(audio);
     },
     [getAudio],
   );
