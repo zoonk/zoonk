@@ -10,6 +10,10 @@ import { describe, expect, it } from "vitest";
 import { type CompletionInput } from "../contracts/completion-input-schema";
 import { submitPlayerCompletion } from "./submit-player-completion";
 
+const TEST_SECONDS_PER_MINUTE = 60;
+const TEST_COMPLETION_CAP_MINUTES = 30;
+const TEST_COMPLETION_CAP_SECONDS = TEST_COMPLETION_CAP_MINUTES * TEST_SECONDS_PER_MINUTE;
+
 const REVIEW_TARGET_STEP_COUNT = 10;
 const REVIEW_SUBMITTED_STEP_COUNT = REVIEW_TARGET_STEP_COUNT + 1;
 
@@ -396,6 +400,69 @@ describe(submitPlayerCompletion, () => {
     expect(lessonProgress?.completedAt).toBeInstanceOf(Date);
     expect(stepAttempts).toHaveLength(1);
     expect(stepAttempts[0]?.isCorrect).toBe(true);
+  });
+
+  it("caps lesson duration so idle tabs do not inflate learning time", async () => {
+    const [user, { chapter, organization }] = await Promise.all([
+      userFixture(),
+      createChapterContext(),
+    ]);
+
+    const { lesson } = await createStaticLesson({
+      chapterId: chapter.id,
+      organizationId: organization.id,
+    });
+
+    await submitPlayerCompletion({
+      input: {
+        ...buildEmptyCompletionInput({ lessonId: lesson.id }),
+        startedAt: Date.now() - (TEST_COMPLETION_CAP_SECONDS + TEST_SECONDS_PER_MINUTE) * 1000,
+      },
+      userId: user.id,
+    });
+
+    const [dailyProgress, lessonProgress] = await Promise.all([
+      prisma.dailyProgress.findFirst({ where: { userId: user.id } }),
+      prisma.lessonProgress.findUnique({
+        where: { userLesson: { lessonId: lesson.id, userId: user.id } },
+      }),
+    ]);
+
+    expect(dailyProgress?.timeSpentSeconds).toBe(TEST_COMPLETION_CAP_SECONDS);
+    expect(lessonProgress?.durationSeconds).toBe(TEST_COMPLETION_CAP_SECONDS);
+  });
+
+  it("caps submitted step timings before creating attempt rows", async () => {
+    const [user, { chapter, organization }] = await Promise.all([
+      userFixture(),
+      createChapterContext(),
+    ]);
+
+    const { lesson, step } = await createMultipleChoiceLesson({
+      chapterId: chapter.id,
+      organizationId: organization.id,
+    });
+
+    const input = buildCompletionInput({ lessonId: lesson.id, stepId: step.id });
+
+    await submitPlayerCompletion({
+      input: {
+        ...input,
+        stepTimings: {
+          [step.id]: {
+            ...input.stepTimings[step.id]!,
+            durationSeconds: TEST_COMPLETION_CAP_SECONDS + TEST_SECONDS_PER_MINUTE,
+          },
+        },
+      },
+      userId: user.id,
+    });
+
+    const attempt = await prisma.stepAttempt.findFirst({
+      where: { stepId: step.id, userId: user.id },
+    });
+
+    expect(attempt?.durationSeconds).toBe(TEST_COMPLETION_CAP_SECONDS);
   });
 
   it("rejects empty answers for an interactive lesson without writing progress", async () => {

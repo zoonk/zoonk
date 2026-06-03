@@ -1,4 +1,5 @@
 import { track } from "@vercel/analytics";
+import { getCappedLessonDurationSeconds } from "@zoonk/core/player/contracts/completion-duration";
 import { type LessonKind } from "@zoonk/core/steps/contract/content";
 
 type PlayerEventInput = {
@@ -184,9 +185,9 @@ function throwUnexpectedFeedbackTarget(input: never): never {
 }
 
 /**
- * Clamps client timing so clock edge cases cannot send negative durations to
- * analytics while still matching the server's whole-second completion metric.
+ * Uses the same capped duration as persistence so browser analytics cannot
+ * report idle tab time that the database correctly ignores.
  */
 function getCompletionDurationSeconds({ startedAt }: { startedAt: number }) {
-  return Math.max(0, Math.floor((Date.now() - startedAt) / 1000));
+  return getCappedLessonDurationSeconds({ startedAt });
 }
