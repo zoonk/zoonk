@@ -57,8 +57,8 @@ function findUserCompletedLessonRows({ userId }: { userId: string }) {
 }
 
 /**
- * DailyProgress stores the learner's client-local completion date, so it is the
- * best source for counting calendar learning days and total app learning time.
+ * DailyProgress stores the learner's client-local completion date, so it stays
+ * the best source for counting calendar learning days.
  */
 function findUserLearningDayRows({ userId }: { userId: string }) {
   return prisma.dailyProgress.findMany({
@@ -87,8 +87,9 @@ function buildUserLearningStats({
 }
 
 /**
- * DailyProgress may contain decay-only rows, so callers filter to learning days
- * first and this helper can stay a simple duration sum.
+ * DailyProgress is the durable aggregate for total learning time. Completion
+ * writes cap each increment before updating this row so admin metrics can keep
+ * using the cheap per-day summary without replaying raw lesson events.
  */
 function sumLearningTime({ rows }: { rows: LearningDayRow[] }) {
   return rows.reduce((total, row) => total + row.timeSpentSeconds, 0);

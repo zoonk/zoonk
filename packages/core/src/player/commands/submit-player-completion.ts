@@ -1,18 +1,15 @@
 import "server-only";
 import { type StepKind, prisma } from "@zoonk/db";
+import {
+  getCappedLessonDurationSeconds,
+  getCappedStepAttemptDurationSeconds,
+} from "../contracts/completion-duration";
 import { type CompletionInput } from "../contracts/completion-input-schema";
 import { computeLessonScore } from "../contracts/compute-score";
 import { countAnswerableSteps, validateAnswers } from "../contracts/validate-answers";
 import { getReviewValidationData } from "../queries/get-review-steps";
 import { getCompletableLessonWhere } from "./_utils/completable-lesson";
 import { submitLessonCompletion } from "./submit-lesson-completion";
-
-const MAX_DURATION_SECONDS = 7200;
-
-function clampDuration(startedAt: number): number {
-  const raw = Math.floor((Date.now() - startedAt) / 1000);
-  return Math.max(0, Math.min(raw, MAX_DURATION_SECONDS));
-}
 
 type StepWithSentence = {
   id: string;
@@ -112,7 +109,7 @@ export async function submitPlayerCompletion(params: {
 
   const score = computeLessonScore({ results: stepResults });
 
-  const durationSeconds = clampDuration(params.input.startedAt);
+  const durationSeconds = getCappedLessonDurationSeconds({ startedAt: params.input.startedAt });
 
   const mergedStepResults = stepResults.map((validated) => {
     const stepId = validated.stepId;
@@ -122,7 +119,9 @@ export async function submitPlayerCompletion(params: {
       answer: validated.answer,
       answeredAt: timing ? new Date(timing.answeredAt) : new Date(),
       dayOfWeek: timing?.dayOfWeek ?? new Date().getDay(),
-      durationSeconds: timing?.durationSeconds ?? 0,
+      durationSeconds: getCappedStepAttemptDurationSeconds({
+        durationSeconds: timing?.durationSeconds ?? 0,
+      }),
       hourOfDay: timing?.hourOfDay ?? new Date().getHours(),
       isCorrect: validated.isCorrect,
       stepId: validated.stepId,
