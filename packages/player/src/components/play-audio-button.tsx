@@ -37,8 +37,11 @@ function usePlayAudioButtonState({ audioUrl, preload }: { audioUrl: string; prel
         return;
       }
 
-      play(audioUrl);
-      setIsPlaying(true);
+      void play(audioUrl).then((playbackStatus) => {
+        if (playbackStatus === "started") {
+          setIsPlaying(true);
+        }
+      });
     },
     isPlaying,
   };

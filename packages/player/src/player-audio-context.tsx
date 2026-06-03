@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useWordAudio } from "./use-word-audio";
 
 type PlayerAudioContextValue = {
@@ -21,11 +21,16 @@ const PlayerAudioContext = createContext<PlayerAudioContextValue | null>(null);
  */
 export function PlayerAudioProvider({
   audioUrl,
+  autoPlayAudio,
   children,
+  onAutoPlayAudioEnabled,
 }: {
   audioUrl: string | null;
+  autoPlayAudio: boolean;
   children: React.ReactNode;
+  onAutoPlayAudioEnabled: () => void;
 }) {
+  const [hasHandledAudioPrompt, setHasHandledAudioPrompt] = useState(false);
   const [playingAudioUrl, setPlayingAudioUrl] = useState<string | null>(null);
 
   const { pause, play } = useWordAudio({
@@ -35,19 +40,58 @@ export function PlayerAudioProvider({
 
   const isPlaying = Boolean(audioUrl && playingAudioUrl === audioUrl);
 
-  const toggleAudio = useCallback(
-    (targetAudioUrl: string) => {
-      if (playingAudioUrl === targetAudioUrl) {
-        pause();
+  /**
+   * Starts the active prompt and records that this step already had its automatic
+   * or manual playback attempt. That prevents an opt-in click or pause from
+   * immediately triggering another autoplay attempt for the same prompt.
+   */
+  const startAudio = useCallback(
+    async ({
+      shouldEnableAutoplay,
+      targetAudioUrl,
+    }: {
+      shouldEnableAutoplay: boolean;
+      targetAudioUrl: string;
+    }) => {
+      setHasHandledAudioPrompt(true);
+
+      const playbackStatus = await play(targetAudioUrl);
+
+      if (playbackStatus === "failed") {
         setPlayingAudioUrl(null);
         return;
       }
 
-      play(targetAudioUrl);
       setPlayingAudioUrl(targetAudioUrl);
+
+      if (shouldEnableAutoplay) {
+        onAutoPlayAudioEnabled();
+      }
     },
-    [pause, play, playingAudioUrl],
+    [onAutoPlayAudioEnabled, play],
   );
+
+  const toggleAudio = useCallback(
+    (targetAudioUrl: string) => {
+      if (playingAudioUrl === targetAudioUrl) {
+        pause();
+        setHasHandledAudioPrompt(true);
+        setPlayingAudioUrl(null);
+        return;
+      }
+
+      void startAudio({ shouldEnableAutoplay: true, targetAudioUrl });
+    },
+    [pause, playingAudioUrl, startAudio],
+  );
+
+  useEffect(() => {
+    if (!audioUrl || !autoPlayAudio || hasHandledAudioPrompt || isPlaying) {
+      return;
+    }
+
+    void startAudio({ shouldEnableAutoplay: false, targetAudioUrl: audioUrl });
+  }, [audioUrl, autoPlayAudio, hasHandledAudioPrompt, isPlaying, startAudio]);
 
   const value = useMemo(
     () => ({ audioUrl, isPlaying, toggleAudio }),

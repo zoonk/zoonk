@@ -177,7 +177,7 @@ export function ArrangeWordsInteraction({
         return;
       }
 
-      play(option.audioUrl);
+      void play(option.audioUrl);
       const placed: PlacedWord = { ...option, id: String(idCounter.current) };
       idCounter.current += 1;
       const next = [...placedWords, placed];

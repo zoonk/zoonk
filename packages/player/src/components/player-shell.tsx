@@ -1,6 +1,7 @@
 "use client";
 
 import { useExtracted } from "next-intl";
+import { useCallback, useState } from "react";
 import { PlayerAudioProvider } from "../player-audio-context";
 import { usePlayerRuntime } from "../player-context";
 import {
@@ -84,6 +85,7 @@ function getAudioProviderKey({ audioUrl, stepId }: { audioUrl: string | null; st
 export function PlayerShell() {
   const t = useExtracted();
   const { screen, state } = usePlayerRuntime();
+  const [autoPlayAudio, setAutoPlayAudio] = useState(false);
 
   const currentResult = getCurrentResult(state);
   const currentStep = getCurrentStep(state);
@@ -102,13 +104,20 @@ export function PlayerShell() {
 
   const stageResetKey = getStageResetKey({ screenKind: screen.kind, stepId: currentStep?.id });
 
+  const enableAutoPlayAudio = useCallback(() => setAutoPlayAudio(true), []);
+
   usePlayerHaptics({ current: { phase: state.phase, result: currentResult, step: currentStep } });
 
   return (
     <main className="flex h-dvh flex-col overflow-hidden">
       {screen.showChrome && <InPlayStickyHeader progressValue={progressValue} />}
 
-      <PlayerAudioProvider audioUrl={bottomBarAudioUrl} key={audioProviderKey}>
+      <PlayerAudioProvider
+        audioUrl={bottomBarAudioUrl}
+        autoPlayAudio={autoPlayAudio}
+        key={audioProviderKey}
+        onAutoPlayAudioEnabled={enableAutoPlayAudio}
+      >
         <PlayerStage
           aria-label={t("Player screen")}
           isFullBleed={screen.stageIsFullBleed}
