@@ -7,7 +7,7 @@ EVALUATION CRITERIA:
 
 2. VISUAL GROUNDING: Every scenario and every step should include an imagePrompt that gives useful evidence, not decoration. The image should help the learner reason about the decision through an artifact, screen, diagram, label, table, document, or concrete scene clue. Penalize generic image prompts that add no value.
 
-3. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons. Penalize meta-scenarios where the main action is preparing a presentation, poster, cartaz, slogan, summary, or wording about the lesson topic instead of using the concept in a real situation.
+3. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons. Penalize meta-scenarios where the main action is preparing a workshop, presentation, poster, cartaz, slogan, classroom demo, teaching display, worksheet, flashcards, label cleanup for a teaching aid, summary, or wording about the lesson topic instead of using the concept in a real situation.
 
 4. FLOW COHERENCE: Steps must flow naturally as a continuous practice where each step adds one useful clue, decision, or state change. A late reveal can be useful when it clarifies the concept or makes the story more satisfying, but it should not distract from the problem. The final step must resolve the problem AND reinforce the main learning takeaway. Penalize forced twists, recurring jokes, or side plots that make the learner reread the context.
 
@@ -43,11 +43,19 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize a small overrun on text length if the step is still fast, clear, and readable on the first pass
 - Do NOT penalize 3-5 options if the step quality stays high and there is no filler
 - Do NOT penalize light humor, a playful tone, or slightly silly moments when they still sound natural, scene-appropriate, and clear
-- Do penalize scenes whose main task is choosing wording, polishing phrasing, or presenting the concept instead of using it
+- Do penalize scenes whose main task is choosing wording, polishing phrasing, teaching, labeling a learning aid, or presenting the concept instead of using it
 - Do penalize image prompts that are generic decoration instead of useful evidence
 - Do penalize lines that feel like prompt instructions leaking into dialogue, even if grammar and structure are otherwise correct
 - ONLY penalize for: major format violations, missing or low-value image prompts, narrator/description text in dialogue, decisions that test memorization instead of reasoning, confusing over-playful context, forced story twists, repetitive/filler decisions, poor distractor quality, or factually incorrect lesson application
 - Different valid practice approaches exist - assess the quality of what IS provided
+`;
+
+const NEUROSCIENCE_REAL_APPLICATION_EXPECTATIONS = `
+REAL APPLICATION REGRESSION CHECK:
+
+This case is based on production Neuroscience practice lessons that drifted into meta practice. Penalize SEVERELY if the scene is mainly about preparing a lab demo, open-house station, workshop, classroom display, student handout, card sort, diagram labels, or teaching aid. Those scenarios make the learner explain or organize the concept instead of using neuroscience to solve a real problem.
+
+A strong scenario should use neuroscience in a real research, clinical, lab, or evidence-review situation where the decision changes what someone does next. The learner may inspect images, diagrams, labels, or notes, but the artifact must be evidence inside the real problem, not the thing being prepared for students.
 `;
 
 export const TEST_CASES = [
@@ -90,6 +98,99 @@ ${SHARED_EXPECTATIONS}
           description:
             "When a packet exceeds the MTU of a link, it is split into smaller fragments that are reassembled at the destination.",
           title: "Packet Fragmentation",
+        },
+      ],
+    } satisfies LessonPracticeParams,
+  },
+  {
+    expectations: `
+${NEUROSCIENCE_REAL_APPLICATION_EXPECTATIONS}
+
+TOPIC-SPECIFIC GUIDANCE:
+
+1. ACCURACY CHECK: Neuron versus glia decisions must reflect genuine nervous-system cell roles. Penalize if:
+   - Branches alone are treated as enough evidence that a cell is a neuron
+   - Glial cells are described as passive filler instead of support, regulation, protection, or cleanup cells
+   - Job clues like signaling, supporting axons, managing local environment, or reacting to injury are ignored
+
+2. SCENARIO CHECK: The real problem should involve realistic neuroscience work like reviewing a confusing microscopy result, deciding which sample needs another marker, interpreting a tissue finding, or triaging a research annotation that affects the next lab step. Penalize classroom demos, student-facing slide cleanup, diagram-labeling stations, flashcards, or any scene where the main goal is to teach neuron/glia labels to someone else.
+
+3. CONCEPTUAL FOCUS: Decisions should require using shape, location, marker, and job clues to decide what the cell evidence means in context. The learner should not merely choose the right vocabulary label for a teaching diagram.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "en-neuroscience-neuron-glia-real-problem",
+    userInput: {
+      chapterTitle: "Cells that build the nervous system",
+      courseTitle: "Neuroscience",
+      language: "en",
+      sourceLessons: [
+        {
+          description:
+            "Compare a communication-focused neuron with support-focused glial cells, then use shape, location, and job clues to tell which kind of cell you are looking at.",
+          title: "Deciding whether a cell is a neuron or glia",
+        },
+      ],
+    } satisfies LessonPracticeParams,
+  },
+  {
+    expectations: `
+${NEUROSCIENCE_REAL_APPLICATION_EXPECTATIONS}
+
+TOPIC-SPECIFIC GUIDANCE:
+
+1. ACCURACY CHECK: Neuron signal-path decisions must preserve the functional direction of the neuron. Penalize if:
+   - Dendrites, soma, axon, or terminals are assigned the wrong main job
+   - The signal path is reversed or treated as arbitrary
+   - Axon terminals are confused with the gap or with receiving structures
+
+2. SCENARIO CHECK: The real problem should involve a practical neuroscience decision like interpreting a tracing artifact, checking a stimulation setup, reviewing a simplified circuit record, or deciding which part of a neuron explains an observed signal problem. Penalize open-house displays, classroom models, LED teaching boards, label-maker problems, or any scenario where the learner is mainly arranging a teaching demonstration.
+
+3. CONCEPTUAL FOCUS: Decisions should require tracing how information moves through dendrites, soma, axon, and terminals to solve the situation. The practice should not reduce the concept to placing labels in the correct order on a display.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "en-neuroscience-signal-path-real-problem",
+    userInput: {
+      chapterTitle: "Cells that build the nervous system",
+      courseTitle: "Neuroscience",
+      language: "en",
+      sourceLessons: [
+        {
+          description:
+            "Trace how dendrites, the soma, the axon, and axon terminals divide up a neuron’s work. You will connect each part to receiving, integrating, carrying, or passing along information without diving into electrical details yet.",
+          title: "Reading a neuron’s signal path",
+        },
+      ],
+    } satisfies LessonPracticeParams,
+  },
+  {
+    expectations: `
+${NEUROSCIENCE_REAL_APPLICATION_EXPECTATIONS}
+
+TOPIC-SPECIFIC GUIDANCE:
+
+1. ACCURACY CHECK: Neuron shape and function decisions must keep structural and functional labels distinct. Penalize if:
+   - Multipolar, bipolar, or pseudounipolar shapes are mixed up
+   - Shape labels are treated as identical to sensory, motor, or interneuron functions
+   - Special senses, body sensation, and motor output are assigned without anatomical or pathway clues
+
+2. SCENARIO CHECK: The real problem should involve applying neuron shape/function evidence in a plausible lab, clinical, or research situation, such as interpreting a tissue image, checking a pathway note, or deciding which observation matches a sample. Penalize lab-class sorting stations, mixed cards, student worksheets, teaching keys, or scenes where the main task is sorting examples for learners.
+
+3. CONCEPTUAL FOCUS: Decisions should require matching shape and job clues to what is happening in the real situation. The learner should not merely sort cards or attach paired labels for a lesson activity.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "en-neuroscience-shape-function-real-problem",
+    userInput: {
+      chapterTitle: "Cells that build the nervous system",
+      courseTitle: "Neuroscience",
+      language: "en",
+      sourceLessons: [
+        {
+          description:
+            "Compare multipolar, bipolar, and pseudounipolar neurons, then connect their shapes to motor output, special senses, or body sensation. You will also separate shape labels from functional labels like sensory neuron, motor neuron, and interneuron.",
+          title: "Matching neuron shapes to jobs",
         },
       ],
     } satisfies LessonPracticeParams,
