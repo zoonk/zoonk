@@ -1,10 +1,25 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { isValidChartPayload } from "@zoonk/utils/chart";
 import { type CSSProperties, type ComponentProps, type ReactNode } from "react";
-import { Area, AreaChart, CartesianGrid, ReferenceLine, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ReferenceLine,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 type ProgressAreaChartProps = Omit<
   ComponentProps<typeof AreaChart>,
+  "margin" | "responsive" | "style"
+>;
+
+type ProgressBarChartProps = Omit<
+  ComponentProps<typeof BarChart>,
   "margin" | "responsive" | "style"
 >;
 
@@ -16,9 +31,22 @@ type ProgressChartGradientProps = { color: string; id: string };
 
 type ProgressChartAreaProps = { color: string; dataKey: string; gradientId: string };
 
+type ProgressChartBarProps = { color: string; dataKey: string };
+
 type ProgressChartAverageLineProps = { children: string; y: number };
 
 type ProgressChartCompactYAxisProps = { locale: string };
+
+const PROGRESS_BAR_RADIUS = 4;
+
+const PROGRESS_BAR_CHART_MARGIN = { bottom: 0, left: 0, right: 0, top: 12 };
+
+const PROGRESS_BAR_RADIUS_VALUES: [number, number, number, number] = [
+  PROGRESS_BAR_RADIUS,
+  PROGRESS_BAR_RADIUS,
+  0,
+  0,
+];
 
 const PROGRESS_CHART_MARGIN = { bottom: 0, left: 0, right: 0, top: 10 };
 
@@ -48,6 +76,24 @@ export function ProgressChartFigure({ children, label }: ProgressChartFigureProp
 export function ProgressAreaChart(props: ProgressAreaChartProps) {
   return (
     <AreaChart {...props} margin={PROGRESS_CHART_MARGIN} responsive style={PROGRESS_CHART_STYLE} />
+  );
+}
+
+/**
+ * Keeps period-based progress bars on the same sizing path as the area charts.
+ * Brain Power is earned in discrete daily, weekly, monthly, or yearly buckets,
+ * so a bar chart can show each bucket directly while still avoiding the
+ * ResponsiveContainer measurement warning this chart family already fixed.
+ */
+export function ProgressBarChart(props: ProgressBarChartProps) {
+  return (
+    <BarChart
+      {...props}
+      barCategoryGap="28%"
+      margin={PROGRESS_BAR_CHART_MARGIN}
+      responsive
+      style={PROGRESS_CHART_STYLE}
+    />
   );
 }
 
@@ -146,6 +192,24 @@ export function ProgressChartArea({ color, dataKey, gradientId }: ProgressChartA
       stroke={color}
       strokeWidth={2}
       type="monotone"
+    />
+  );
+}
+
+/**
+ * Keeps bar-series styling focused on discrete progress totals. The radius and
+ * maximum width make a single short period readable without letting a sparse
+ * chart turn into oversized blocks.
+ */
+export function ProgressChartBar({ color, dataKey }: ProgressChartBarProps) {
+  return (
+    <Bar
+      activeBar={{ fill: color, opacity: 1 }}
+      dataKey={dataKey}
+      fill={color}
+      maxBarSize={40}
+      opacity={0.82}
+      radius={PROGRESS_BAR_RADIUS_VALUES}
     />
   );
 }

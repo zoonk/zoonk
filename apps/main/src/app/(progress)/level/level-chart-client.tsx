@@ -2,11 +2,10 @@
 
 import { useExtracted, useLocale } from "next-intl";
 import {
-  ProgressAreaChart,
-  ProgressChartArea,
+  ProgressBarChart,
+  ProgressChartBar,
   ProgressChartCompactYAxis,
   ProgressChartFigure,
-  ProgressChartGradient,
   ProgressChartGrid,
   ProgressChartTooltip,
   ProgressChartTooltipContent,
@@ -29,15 +28,10 @@ export function LevelChartClient({
 
   const formattedTotal = new Intl.NumberFormat(locale).format(total);
   const color = "var(--primary)";
-  const gradientId = "bpGradient";
 
   return (
     <ProgressChartFigure label={t("Brain Power chart")}>
-      <ProgressAreaChart data={dataPoints}>
-        <defs>
-          <ProgressChartGradient color={color} id={gradientId} />
-        </defs>
-
+      <ProgressBarChart data={dataPoints}>
         <ProgressChartGrid />
         <ProgressChartXAxis />
         <ProgressChartCompactYAxis locale={locale} />
@@ -57,8 +51,8 @@ export function LevelChartClient({
           }}
         </ProgressChartTooltip>
 
-        <ProgressChartArea color={color} dataKey="bp" gradientId={gradientId} />
-      </ProgressAreaChart>
+        <ProgressChartBar color={color} dataKey="bp" />
+      </ProgressBarChart>
 
       <figcaption className="sr-only">
         {t("Total Brain Power earned: {total}", { total: formattedTotal })}
