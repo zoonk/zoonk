@@ -123,12 +123,17 @@ msgid "t2VOpl"
 msgstr "Chapter Complete"
 
 #: src/components/completion-screen.tsx
-msgid "/hH+KT"
-msgstr "{count, plural, =0 {No lessons left in this chapter} one {# lesson left in this chapter} other {# lessons left in this chapter}}"
-
-#: src/components/completion-screen.tsx
 msgid "2kQf/C"
 msgstr "{count, plural, =0 {No chapters left in this course} one {# chapter left in this course} other {# chapters left in this course}}"
+
+#: src/components/completion-screen.tsx
+#: src/components/in-play-sticky-header.tsx
+msgid "qXzoF7"
+msgstr "Lesson {current} of {total}"
+
+#: src/components/completion-screen.tsx
+msgid "9wxMoj"
+msgstr "Chapter progress"
 
 #: src/components/completion-screen.tsx
 msgid "P768k7"
@@ -161,10 +166,6 @@ msgstr "Blank {position}"
 #: src/components/fill-blank-step.tsx
 msgid "xvWuPP"
 msgstr "Correct answer: {answer}"
-
-#: src/components/in-play-sticky-header.tsx
-msgid "qXzoF7"
-msgstr "Lesson {current} of {total}"
 
 #: src/components/inline-feedback.tsx
 msgid "HvLGEN"
@@ -218,14 +219,6 @@ msgstr "Player screen"
 #: src/components/player-shell.tsx
 msgid "QmGDqt"
 msgstr "Player controls"
-
-#: src/components/reward-badges.tsx
-msgid "/Q0taG"
-msgstr "BP"
-
-#: src/components/reward-badges.tsx
-msgid "cVpmV7"
-msgstr "Energy"
 
 #: src/components/select-image-step.tsx
 msgid "mhiTW7"

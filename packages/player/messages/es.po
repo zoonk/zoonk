@@ -123,12 +123,17 @@ msgid "t2VOpl"
 msgstr "Capítulo completado"
 
 #: src/components/completion-screen.tsx
-msgid "/hH+KT"
-msgstr "{count, plural, =0 {No quedan lecciones en este capítulo} one {Queda # lección en este capítulo} other {Quedan # lecciones en este capítulo}}"
-
-#: src/components/completion-screen.tsx
 msgid "2kQf/C"
 msgstr "{count, plural, =0 {No quedan capítulos en este curso} one {Queda # capítulo en este curso} other {Quedan # capítulos en este curso}}"
+
+#: src/components/completion-screen.tsx
+#: src/components/in-play-sticky-header.tsx
+msgid "qXzoF7"
+msgstr "Lección {current} de {total}"
+
+#: src/components/completion-screen.tsx
+msgid "9wxMoj"
+msgstr "Progreso del capítulo"
 
 #: src/components/completion-screen.tsx
 msgid "P768k7"
@@ -161,10 +166,6 @@ msgstr "Espacio {position}"
 #: src/components/fill-blank-step.tsx
 msgid "xvWuPP"
 msgstr "Respuesta correcta: {answer}"
-
-#: src/components/in-play-sticky-header.tsx
-msgid "qXzoF7"
-msgstr "Lección {current} de {total}"
 
 #: src/components/inline-feedback.tsx
 msgid "HvLGEN"
@@ -218,14 +219,6 @@ msgstr "Pantalla del jugador"
 #: src/components/player-shell.tsx
 msgid "QmGDqt"
 msgstr "Controles de la lección"
-
-#: src/components/reward-badges.tsx
-msgid "/Q0taG"
-msgstr "PM"
-
-#: src/components/reward-badges.tsx
-msgid "cVpmV7"
-msgstr "Energía"
 
 #: src/components/select-image-step.tsx
 msgid "mhiTW7"

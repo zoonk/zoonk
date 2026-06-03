@@ -1,6 +1,5 @@
 "use client";
 
-import { type CompletionResult } from "@zoonk/core/player/contracts/completion-input-schema";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
@@ -13,7 +12,6 @@ import {
 import { PlayerLink } from "../player-link";
 import { PrimaryActionLink, PrimaryKbd, SecondaryKbd } from "./completion-action-link";
 import { MilestoneActions, UnauthenticatedMilestoneActions } from "./completion-milestone-actions";
-import { RewardBadges } from "./reward-badges";
 
 function CompletionActions({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -84,17 +82,13 @@ function SecondaryActions({
 }
 
 function AuthenticatedContent({
-  completionResult,
   chapterHref,
   nextLessonHref,
   onRestart,
-  showRewards,
 }: {
   chapterHref: PlayerRoute;
-  completionResult: CompletionResult | null;
   nextLessonHref: PlayerRoute | null;
   onRestart: () => void;
-  showRewards: boolean;
 }) {
   const t = useExtracted();
   const milestone = usePlayerMilestone();
@@ -108,28 +102,19 @@ function AuthenticatedContent({
   }
 
   return (
-    <>
-      {showRewards && completionResult && (
-        <RewardBadges
-          brainPower={completionResult.brainPower}
-          energyDelta={completionResult.energyDelta}
-        />
+    <CompletionActions>
+      {nextLessonHref ? (
+        <>
+          <PrimaryActionLink href={nextLessonHref} shortcut="Enter">
+            {t("Next")}
+          </PrimaryActionLink>
+
+          <SecondaryActions chapterHref={chapterHref} onRestart={onRestart} variant="inline" />
+        </>
+      ) : (
+        <SecondaryActions chapterHref={chapterHref} onRestart={onRestart} variant="stacked" />
       )}
-
-      <CompletionActions>
-        {nextLessonHref ? (
-          <>
-            <PrimaryActionLink href={nextLessonHref} shortcut="Enter">
-              {t("Next")}
-            </PrimaryActionLink>
-
-            <SecondaryActions chapterHref={chapterHref} onRestart={onRestart} variant="inline" />
-          </>
-        ) : (
-          <SecondaryActions chapterHref={chapterHref} onRestart={onRestart} variant="stacked" />
-        )}
-      </CompletionActions>
-    </>
+    </CompletionActions>
   );
 }
 
@@ -179,17 +164,13 @@ function UnauthenticatedContent({
 }
 
 export function AuthBranch({
-  completionResult,
   chapterHref,
   nextLessonHref,
   onRestart,
-  showRewards = true,
 }: {
   chapterHref: PlayerRoute;
-  completionResult: CompletionResult | null;
   nextLessonHref: PlayerRoute | null;
   onRestart: () => void;
-  showRewards?: boolean;
 }) {
   const { loginHref } = usePlayerNavigation();
   const { isAuthenticated } = usePlayerViewer();
@@ -207,11 +188,9 @@ export function AuthBranch({
 
   return (
     <AuthenticatedContent
-      completionResult={completionResult}
       chapterHref={chapterHref}
       nextLessonHref={nextLessonHref}
       onRestart={onRestart}
-      showRewards={showRewards}
     />
   );
 }

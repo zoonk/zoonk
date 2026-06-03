@@ -26,9 +26,7 @@ function HeaderLessonTitle() {
         aria-label={fullPositionLabel}
         className="text-muted-foreground shrink-0 text-sm leading-none font-medium tabular-nums sm:text-xs sm:leading-normal"
       >
-        <span className="sm:hidden">
-          {lessonProgress.currentLessonNumber}/{lessonProgress.totalLessonsInChapter}
-        </span>
+        <span className="sm:hidden">{lessonProgress.currentLessonNumber}</span>
         <span className="hidden sm:inline">{fullPositionLabel}</span>
       </p>
       <p className="text-foreground min-w-0 truncate text-sm leading-none font-medium sm:leading-normal">
