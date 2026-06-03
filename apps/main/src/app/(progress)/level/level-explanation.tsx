@@ -1,4 +1,5 @@
 import { Explanation, ExplanationText, ExplanationTitle } from "@zoonk/ui/components/explanation";
+import { BRAIN_POWER_PER_LESSON } from "@zoonk/utils/brain-power";
 import { getExtracted } from "next-intl/server";
 
 export async function LevelExplanation() {
@@ -10,12 +11,15 @@ export async function LevelExplanation() {
 
       <ExplanationText>
         {t(
-          "Brain Power is your reputation. You earn Brain Power after each lesson you complete. It never goes down because knowledge is not something anyone can take from you.",
+          "Brain Power (BP) represents how much you have learned. You earn {brainPower} BP after each lesson you complete. It never goes down because knowledge is not something anyone can take from you.",
+          { brainPower: String(BRAIN_POWER_PER_LESSON) },
         )}
       </ExplanationText>
 
       <ExplanationText>
-        {t("You do not lose Brain Power when your Energy drops or when you miss days.")}
+        {t(
+          "The more Brain Power you have, the more knowledge you have built. You do not lose Brain Power when your Energy drops or when you miss days.",
+        )}
       </ExplanationText>
 
       <ExplanationText>

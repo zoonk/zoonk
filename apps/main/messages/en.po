@@ -715,12 +715,12 @@ msgid "aAScNr"
 msgstr "About Brain Power"
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "hRYALR"
-msgstr "Brain Power is your reputation. You earn Brain Power after each lesson you complete. It never goes down because knowledge is not something anyone can take from you."
+msgid "RLC4Ov"
+msgstr "Brain Power (BP) represents how much you have learned. You earn {brainPower} BP after each lesson you complete. It never goes down because knowledge is not something anyone can take from you."
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "YhaJIG"
-msgstr "You do not lose Brain Power when your Energy drops or when you miss days."
+msgid "3vDry3"
+msgstr "The more Brain Power you have, the more knowledge you have built. You do not lose Brain Power when your Energy drops or when you miss days."
 
 #: src/app/(progress)/level/level-explanation.tsx
 msgid "98M49A"

@@ -715,12 +715,12 @@ msgid "aAScNr"
 msgstr "Sobre Poder Mental"
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "hRYALR"
-msgstr "Poder Mental é a sua reputação. Você ganha Poder Mental após cada aula que completa. Ele nunca cai porque conhecimento é algo que ninguém tira de você."
+msgid "RLC4Ov"
+msgstr "Poder Mental (BP) representa o quanto você aprendeu. Você ganha {brainPower} BP depois de cada aula que completa. Ele nunca cai porque conhecimento é algo que ninguém tira de você."
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "YhaJIG"
-msgstr "Você não perde Poder Mental quando a energia cai ou quando fica um dia sem estudar."
+msgid "3vDry3"
+msgstr "Quanto mais Poder Mental você tem, mais conhecimento construiu. Você não perde Poder Mental quando sua Energia cai ou quando fica dias sem estudar."
 
 #: src/app/(progress)/level/level-explanation.tsx
 msgid "98M49A"
