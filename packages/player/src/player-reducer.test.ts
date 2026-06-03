@@ -59,6 +59,7 @@ function buildLesson(overrides: Partial<SerializedLesson> = {}): SerializedLesso
 function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
   return {
     completion: null,
+    completionMilestoneIndex: null,
     currentStepIndex: 0,
     lessonId: "lesson-1",
     lessonKind: "quiz",
@@ -462,6 +463,7 @@ describe("local completion computation", () => {
     expect(next.completion?.brainPower).toBe(10);
     expect(next.completion?.newTotalBp).toBe(110);
     expect(next.completion?.belt).toBeDefined();
+    expect(next.completionMilestoneIndex).toBeNull();
   });
 
   it("computes completion result when NAVIGATE_STEP passes last step", () => {
@@ -474,6 +476,55 @@ describe("local completion computation", () => {
     expect(next.completion).not.toBeNull();
     expect(next.completion?.brainPower).toBe(10);
     expect(next.completion?.newTotalBp).toBe(60);
+    expect(next.completionMilestoneIndex).toBeNull();
+  });
+
+  it("activates a completion milestone when completion reaches a new level", () => {
+    const state = buildState({
+      currentStepIndex: 0,
+      phase: "feedback",
+      results: {
+        "step-1": {
+          answer: multipleChoiceAnswer,
+          result: { correctAnswer: null, feedback: "Yes", isCorrect: true },
+          stepId: "step-1",
+        },
+      },
+      steps: [buildMultipleChoiceStep()],
+      totalBrainPower: 240,
+    });
+
+    const next = playerReducer(state, { type: "CONTINUE" });
+
+    expect(next.phase).toBe("completed");
+    expect(next.completionMilestoneIndex).toBe(0);
+  });
+
+  it("uses CONTINUE to move from a completion milestone to the summary", () => {
+    const state = buildState({
+      completion: {
+        belt: {
+          bpPerLevel: 250,
+          bpToNextLevel: 250,
+          color: "white",
+          isMaxLevel: false,
+          level: 2,
+          progressInLevel: 0,
+        },
+        brainPower: 10,
+        correctCount: 1,
+        energyDelta: 0.2,
+        incorrectCount: 0,
+        newTotalBp: 250,
+      },
+      completionMilestoneIndex: 0,
+      phase: "completed",
+      totalBrainPower: 240,
+    });
+
+    const next = playerReducer(state, { type: "CONTINUE" });
+
+    expect(next.completionMilestoneIndex).toBeNull();
   });
 
   it("resets completion to null on RESTART", () => {
@@ -493,12 +544,14 @@ describe("local completion computation", () => {
         incorrectCount: 0,
         newTotalBp: 10,
       },
+      completionMilestoneIndex: 0,
       phase: "completed",
     });
 
     const next = playerReducer(state, { type: "RESTART" });
 
     expect(next.completion).toBeNull();
+    expect(next.completionMilestoneIndex).toBeNull();
   });
 });
 

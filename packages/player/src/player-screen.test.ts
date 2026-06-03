@@ -27,6 +27,7 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
 function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
   return {
     completion: null,
+    completionMilestoneIndex: null,
     currentStepIndex: 0,
     lessonId: "lesson-1",
     lessonKind: "quiz",
@@ -123,9 +124,40 @@ describe(getPlayerScreenModel, () => {
     const screen = buildScreen({ state: buildState({ phase: "completed" }) });
 
     expect(screen.kind).toBe("completed");
+    expect(screen.scene).toBe("completion");
     expect(screen.bottomBar).toBeNull();
     expect(screen.keyboard.enterAction).toBe("nextOrEscape");
     expect(screen.keyboard.canRestart).toBe(true);
+  });
+
+  it("uses continue keyboard behavior for active completion milestones", () => {
+    const screen = buildScreen({
+      state: buildState({
+        completion: {
+          belt: {
+            bpPerLevel: 250,
+            bpToNextLevel: 250,
+            color: "white",
+            isMaxLevel: false,
+            level: 2,
+            progressInLevel: 0,
+          },
+          brainPower: 10,
+          correctCount: 1,
+          energyDelta: 0.2,
+          incorrectCount: 0,
+          newTotalBp: 250,
+        },
+        completionMilestoneIndex: 0,
+        phase: "completed",
+        totalBrainPower: 240,
+      }),
+    });
+
+    expect(screen.kind).toBe("completed");
+    expect(screen.scene).toBe("completionMilestone");
+    expect(screen.keyboard.enterAction).toBe("continue");
+    expect(screen.keyboard.canRestart).toBe(false);
   });
 
   it("adds bottom audio to vocabulary, alphabet, and listening prompt steps", () => {

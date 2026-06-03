@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateBeltLevel, getBeltProgressPercent } from "./belt-level";
+import { calculateBeltLevel } from "./belt-level";
 
 describe(calculateBeltLevel, () => {
   describe("white belt (250 BP per level)", () => {
@@ -376,44 +376,19 @@ describe(calculateBeltLevel, () => {
   });
 
   describe("progress percentage at boundaries", () => {
-    it("0% progress at start of level", () => {
+    it("tracks 0 BP progress at start of level", () => {
       const result = calculateBeltLevel(0);
       expect(result.progressInLevel).toBe(0);
-      expect(getBeltProgressPercent(result)).toBe(0);
     });
 
-    it("50% progress at mid-level", () => {
+    it("tracks mid-level BP progress", () => {
       const result = calculateBeltLevel(125);
       expect(result.progressInLevel).toBe(125);
-      expect(getBeltProgressPercent(result)).toBe(50);
     });
 
-    it("99% progress just before level-up", () => {
+    it("tracks BP progress just before level-up", () => {
       const result = calculateBeltLevel(248);
       expect(result.progressInLevel).toBe(248);
-      expect(getBeltProgressPercent(result)).toBe(99);
     });
-  });
-});
-
-describe(getBeltProgressPercent, () => {
-  it("returns 0 for start of level", () => {
-    const result = calculateBeltLevel(250);
-    expect(getBeltProgressPercent(result)).toBe(0);
-  });
-
-  it("returns 50 for mid-level", () => {
-    const result = calculateBeltLevel(375);
-    expect(getBeltProgressPercent(result)).toBe(50);
-  });
-
-  it("returns 100 for near-boundary (rounds up)", () => {
-    const result = calculateBeltLevel(249);
-    expect(getBeltProgressPercent(result)).toBe(100);
-  });
-
-  it("returns 0 for max level", () => {
-    const result = calculateBeltLevel(5_000_000);
-    expect(getBeltProgressPercent(result)).toBe(0);
   });
 });

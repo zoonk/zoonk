@@ -26,6 +26,7 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
 function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
   return {
     completion: null,
+    completionMilestoneIndex: null,
     currentStepIndex: 0,
     lessonId: "lesson-1",
     lessonKind: "quiz",

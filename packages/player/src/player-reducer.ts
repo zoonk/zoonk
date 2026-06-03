@@ -2,6 +2,10 @@ import { type AnswerResult } from "@zoonk/core/player/contracts/check-answer";
 import { type CompletionResult } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type LessonKind } from "@zoonk/core/steps/contract/content";
+import {
+  getCompletionMilestones,
+  getInitialCompletionMilestoneIndex,
+} from "./completion-milestones";
 import { computeLocalCompletion } from "./player-completion";
 import { buildInitialAnswers } from "./player-initial-state";
 import { describePlayerStep } from "./player-step";
@@ -30,6 +34,7 @@ type StepTiming = {
 };
 
 export type PlayerState = {
+  completionMilestoneIndex: number | null;
   lessonId: string;
   lessonKind: LessonKind;
   completion: CompletionResult | null;
@@ -121,10 +126,47 @@ function handleCheckAnswer(
 
 function completeWith(state: PlayerState): PlayerState {
   const completed: PlayerState = { ...state, phase: "completed" };
-  return { ...completed, completion: computeLocalCompletion(completed) };
+  const completion = computeLocalCompletion(completed);
+
+  return {
+    ...completed,
+    completion,
+    completionMilestoneIndex: getInitialCompletionMilestoneIndex({
+      completion,
+      previousTotalBrainPower: state.totalBrainPower,
+    }),
+  };
+}
+
+/**
+ * Advances through completion milestone screens before exposing the normal
+ * completion summary. The reducer owns this instead of component state so
+ * Enter, visible buttons, and restart all observe the same completed state.
+ */
+function continueCompletionMilestone(state: PlayerState): PlayerState {
+  if (state.phase !== "completed" || state.completionMilestoneIndex === null || !state.completion) {
+    return state;
+  }
+
+  const nextIndex = state.completionMilestoneIndex + 1;
+
+  const milestones = getCompletionMilestones({
+    completion: state.completion,
+    previousTotalBrainPower: state.totalBrainPower,
+  });
+
+  if (nextIndex >= milestones.length) {
+    return { ...state, completionMilestoneIndex: null };
+  }
+
+  return { ...state, completionMilestoneIndex: nextIndex };
 }
 
 function handleContinue(state: PlayerState): PlayerState {
+  if (state.phase === "completed") {
+    return continueCompletionMilestone(state);
+  }
+
   if (state.phase !== "feedback") {
     return state;
   }
@@ -197,6 +239,7 @@ function handleRestart(state: PlayerState): PlayerState {
   return {
     ...state,
     completion: null,
+    completionMilestoneIndex: null,
     currentStepIndex: 0,
     phase: "playing",
     results: {},

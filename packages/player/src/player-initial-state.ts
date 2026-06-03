@@ -31,6 +31,7 @@ export function createInitialState({ lesson, totalBrainPower }: InitialStateInpu
 
   return {
     completion: null,
+    completionMilestoneIndex: null,
     currentStepIndex: 0,
     lessonId: lesson.id,
     lessonKind: lesson.kind,

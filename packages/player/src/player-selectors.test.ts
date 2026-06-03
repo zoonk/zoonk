@@ -1,7 +1,7 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { describe, expect, it } from "vitest";
 import { type PlayerState } from "./player-reducer";
-import { getUpcomingImages } from "./player-selectors";
+import { getActiveCompletionMilestone, getUpcomingImages } from "./player-selectors";
 
 function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
   return {
@@ -25,6 +25,7 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
 function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
   return {
     completion: null,
+    completionMilestoneIndex: null,
     currentStepIndex: 0,
     lessonId: "lesson-1",
     lessonKind: "quiz",
@@ -274,5 +275,46 @@ describe(getUpcomingImages, () => {
     expect(getUpcomingImages(state)).toStrictEqual([
       { kind: "selectImage", url: "https://example.com/img.jpg" },
     ]);
+  });
+});
+
+describe(getActiveCompletionMilestone, () => {
+  it("returns the active completion milestone by index", () => {
+    const state = buildState({
+      completion: {
+        belt: {
+          bpPerLevel: 250,
+          bpToNextLevel: 250,
+          color: "white",
+          isMaxLevel: false,
+          level: 2,
+          progressInLevel: 0,
+        },
+        brainPower: 10,
+        correctCount: 1,
+        energyDelta: 0.2,
+        incorrectCount: 0,
+        newTotalBp: 250,
+      },
+      completionMilestoneIndex: 0,
+      totalBrainPower: 240,
+    });
+
+    expect(getActiveCompletionMilestone(state)).toStrictEqual({
+      belt: {
+        bpPerLevel: 250,
+        bpToNextLevel: 250,
+        color: "white",
+        isMaxLevel: false,
+        level: 2,
+        progressInLevel: 0,
+      },
+      kind: "level",
+      status: "achieved",
+    });
+  });
+
+  it("returns null when the completion summary is active", () => {
+    expect(getActiveCompletionMilestone(buildState())).toBeNull();
   });
 });

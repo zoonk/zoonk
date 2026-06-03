@@ -64,11 +64,19 @@ function BottomBarAudioAction({ audioUrl }: { audioUrl: string }) {
  * Gives the scroll-owning stage a new DOM identity when the visible player
  * surface changes. Inline feedback keeps the same step surface so learners
  * stay near the answer they checked, while dedicated feedback and completion
- * screens start from the top because their first content is a new result image
- * or summary.
+ * screens start from the top because their first content is a new result image,
+ * milestone, or summary.
  */
-function getStageResetKey({ screenKind, stepId }: { screenKind: string; stepId?: string }) {
-  return `${stepId ?? "completion"}:${screenKind}`;
+function getStageResetKey({
+  scene,
+  screenKind,
+  stepId,
+}: {
+  scene?: string;
+  screenKind: string;
+  stepId?: string;
+}) {
+  return `${stepId ?? scene ?? "completion"}:${screenKind}`;
 }
 
 /**
@@ -102,7 +110,11 @@ export function PlayerShell() {
     stepId: currentStep?.id,
   });
 
-  const stageResetKey = getStageResetKey({ screenKind: screen.kind, stepId: currentStep?.id });
+  const stageResetKey = getStageResetKey({
+    scene: screen.scene,
+    screenKind: screen.kind,
+    stepId: currentStep?.id,
+  });
 
   const enableAutoPlayAudio = useCallback(() => setAutoPlayAudio(true), []);
 

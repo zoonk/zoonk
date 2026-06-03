@@ -5,12 +5,14 @@ import {
   usePlayerRuntime,
 } from "../player-context";
 import {
+  getActiveCompletionMilestone,
   getCompletionResult,
   getCurrentResult,
   getCurrentStep,
   getSelectedAnswer,
 } from "../player-selectors";
 import { describePlayerStep } from "../player-step";
+import { CompletionLevelMilestoneScreen } from "./completion-level-milestone-screen";
 import { CompletionScreenContent } from "./completion-screen";
 import { FeedbackScreenContent } from "./feedback-screen";
 import { StepActionButton } from "./step-action-button";
@@ -70,14 +72,25 @@ function hasEmbeddedDesktopAction({
 
 export function StageContent() {
   const { actions, screen, state } = usePlayerRuntime();
-  const { chapterHref, nextLessonHref } = usePlayerNavigation();
+  const { chapterHref, levelHref, nextLessonHref } = usePlayerNavigation();
 
+  const activeCompletionMilestone = getActiveCompletionMilestone(state);
   const completionResult = getCompletionResult(state);
   const currentResult = getCurrentResult(state);
   const currentStep = getCurrentStep(state);
   const selectedAnswer = getSelectedAnswer(state);
 
   if (screen.kind === "completed") {
+    if (activeCompletionMilestone) {
+      return (
+        <CompletionLevelMilestoneScreen
+          levelHref={levelHref}
+          milestone={activeCompletionMilestone}
+          onContinue={actions.continue}
+        />
+      );
+    }
+
     return (
       <CompletionScreenContent
         completionResult={completionResult}

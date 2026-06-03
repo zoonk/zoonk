@@ -45,22 +45,6 @@ msgstr "Tap words to build your answer"
 msgid "e7WNdK"
 msgstr "Word bank"
 
-#: src/components/belt-progress.tsx
-msgid "3UK8wh"
-msgstr "{color} belt"
-
-#: src/components/belt-progress.tsx
-msgid "xiSVL4"
-msgstr "{color} Belt — Level {level}"
-
-#: src/components/belt-progress.tsx
-msgid "IGs0wl"
-msgstr "Level progress"
-
-#: src/components/belt-progress.tsx
-msgid "oMEE4o"
-msgstr "{value} BP to level up"
-
 #: src/components/completion-auth-branch.tsx
 msgid "Ak+bLZ"
 msgstr "All Lessons"
@@ -84,6 +68,35 @@ msgstr "Sign up to track your progress"
 #: src/components/completion-milestone-actions.tsx
 msgid "M8B177"
 msgstr "Log in to save your progress"
+
+#: src/components/completion-level-milestone-screen.tsx
+msgid "3UK8wh"
+msgstr "{color} belt"
+
+#: src/components/completion-level-milestone-screen.tsx
+msgid "4VdoD5"
+msgstr "Brain Power up"
+
+#: src/components/completion-level-milestone-screen.tsx
+msgid "Fdgxkm"
+msgstr "Your Brain Power is up. That means your knowledge is increasing, and you became a {color} belt, level {level}."
+
+#: src/components/completion-level-milestone-screen.tsx
+msgid "DTbXYC"
+msgstr "Halfway to your next level"
+
+#: src/components/completion-level-milestone-screen.tsx
+msgid "HmzBWG"
+msgstr "{count, plural, one {Complete # more lesson to reach {color} belt, level {level}.} other {Complete # more lessons to reach {color} belt, level {level}.}}"
+
+#: src/components/completion-level-milestone-screen.tsx
+#: src/components/step-action-button.tsx
+msgid "acrOoz"
+msgstr "Continue"
+
+#: src/components/completion-level-milestone-screen.tsx
+msgid "Q0R3MU"
+msgstr "Learn about levels"
 
 #: src/components/completion-milestone-actions.tsx
 msgid "DiIkZH"
@@ -241,10 +254,6 @@ msgstr "Begin"
 #: src/components/step-action-button.tsx
 msgid "RDZVQL"
 msgstr "Check"
-
-#: src/components/step-action-button.tsx
-msgid "acrOoz"
-msgstr "Continue"
 
 #: src/components/step-navigation-button-group.tsx
 msgid "JJNc3c"

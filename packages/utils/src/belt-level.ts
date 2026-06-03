@@ -91,7 +91,3 @@ export function calculateBeltLevel(totalBrainPower: number): BeltLevelResult {
     progressInLevel,
   };
 }
-
-export function getBeltProgressPercent(result: BeltLevelResult): number {
-  return Math.round((result.progressInLevel / result.bpPerLevel) * 100);
-}
