@@ -284,7 +284,7 @@ describe("player browser integration: vocabulary", () => {
     await expect.element(page.getByText("Sol")).toBeInTheDocument();
   });
 
-  it("completes flashcard vocabulary lessons through the shared rewards flow", async () => {
+  it("completes flashcard vocabulary lessons through the shared completion flow", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "vocabulary",
@@ -307,7 +307,7 @@ describe("player browser integration: vocabulary", () => {
     const completionScreen = page.getByRole("status");
 
     await expect.element(completionScreen).toBeInTheDocument();
-    await expect.element(completionScreen.getByText(/\+10\s*BP/iu)).toBeInTheDocument();
+    await expect.element(completionScreen.getByText(/\+10\s*BP/iu)).not.toBeInTheDocument();
 
     await expect
       .element(completionScreen.getByRole("progressbar", { name: /level progress/iu }))

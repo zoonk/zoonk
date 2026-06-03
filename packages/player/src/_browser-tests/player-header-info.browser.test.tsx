@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
+import { runInMobilePlayerViewport } from "../_test-utils/browser-viewport";
 import { buildSerializedLesson } from "../_test-utils/player-test-data";
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { renderPlayer } from "../_test-utils/render-player";
@@ -21,6 +22,39 @@ describe("player header: lesson title and lesson info", () => {
     });
 
     await expect.element(page.getByText("Vocabulary")).toBeInTheDocument();
+  });
+
+  it("shows only the lesson number in the mobile header", async () => {
+    await runInMobilePlayerViewport(async () => {
+      renderPlayer({
+        lesson: buildSerializedLesson({ title: "Basic Greetings" }),
+        lessonProgress: {
+          currentLessonNumber: 3,
+          remainingChaptersInCourse: 1,
+          remainingLessonsInChapter: 5,
+          totalLessonsInChapter: 8,
+        },
+        viewer: buildAuthenticatedViewer(),
+      });
+
+      await expect.element(page.getByText(/^3$/u)).toBeInTheDocument();
+      await expect.element(page.getByText("3/8")).not.toBeInTheDocument();
+    });
+  });
+
+  it("keeps the explicit lesson position in the desktop header", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({ title: "Basic Greetings" }),
+      lessonProgress: {
+        currentLessonNumber: 3,
+        remainingChaptersInCourse: 1,
+        remainingLessonsInChapter: 5,
+        totalLessonsInChapter: 8,
+      },
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await expect.element(page.getByText("Lesson 3 of 8")).toBeInTheDocument();
   });
 
   it("lesson info popover prefers the current lesson description", async () => {

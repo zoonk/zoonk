@@ -7,7 +7,7 @@ import { buildNavigation, renderPlayer } from "../_test-utils/render-player";
 /**
  * Completion browser tests all start from the same one-step quiz because it is
  * the smallest lesson that reaches the shared completion screen while still
- * producing a real score and rewards. Keeping that shape in one place lets
+ * producing a real score. Keeping that shape in one place lets
  * each scenario focus on the completion branch it is verifying.
  */
 function buildCompletionQuizLesson({
@@ -48,9 +48,15 @@ async function completeSingleChoiceLesson({
 }
 
 describe("player browser integration: completion", () => {
-  it("renders authenticated lesson completion rewards, actions, footer, and hidden chrome", async () => {
+  it("renders authenticated lesson completion progress, actions, footer, and hidden chrome", async () => {
     renderPlayer({
       lesson: buildCompletionQuizLesson(),
+      lessonProgress: {
+        currentLessonNumber: 2,
+        remainingChaptersInCourse: 1,
+        remainingLessonsInChapter: 3,
+        totalLessonsInChapter: 5,
+      },
       navigation: buildNavigation({ nextLessonHref: "/lesson/play" }),
       totalBrainPower: 0,
       viewer: buildAuthenticatedViewer({ completionFooter: <p>Custom completion footer</p> }),
@@ -67,7 +73,20 @@ describe("player browser integration: completion", () => {
     const completionScreen = page.getByRole("status");
 
     await expect.element(completionScreen.getByText("1/1")).toBeInTheDocument();
-    await expect.element(completionScreen.getByText(/\+10\s*BP/iu)).toBeInTheDocument();
+    await expect.element(completionScreen.getByText("Lesson 2 of 5")).toBeInTheDocument();
+
+    const chapterProgress = completionScreen.getByRole("progressbar", {
+      name: /chapter progress/iu,
+    });
+
+    await expect.element(chapterProgress).toBeInTheDocument();
+    await expect.element(chapterProgress).toHaveAttribute("aria-valuenow", "40");
+
+    await expect
+      .element(completionScreen.getByText(/lessons left in this chapter/iu))
+      .not.toBeInTheDocument();
+
+    await expect.element(completionScreen.getByText(/\+10\s*BP/iu)).not.toBeInTheDocument();
 
     await expect
       .element(completionScreen.getByRole("progressbar", { name: /level progress/iu }))
@@ -128,7 +147,7 @@ describe("player browser integration: completion", () => {
     const completionScreen = page.getByRole("status");
 
     await expect.element(completionScreen.getByText("1/1")).toBeInTheDocument();
-    await expect.element(completionScreen.getByText(/\+10\s*BP/iu)).toBeInTheDocument();
+    await expect.element(completionScreen.getByText(/\+10\s*BP/iu)).not.toBeInTheDocument();
 
     await expect.element(completionScreen.getByRole("link", { name: "Next" })).toBeInTheDocument();
   });
@@ -169,7 +188,7 @@ describe("player browser integration: completion", () => {
 
     const completionScreen = page.getByRole("status");
 
-    await expect.element(completionScreen.getByText(/\+10\s*BP/iu)).toBeInTheDocument();
+    await expect.element(completionScreen.getByText(/\+10\s*BP/iu)).not.toBeInTheDocument();
 
     await expect
       .element(completionScreen.getByRole("link", { name: /all lessons/iu }))

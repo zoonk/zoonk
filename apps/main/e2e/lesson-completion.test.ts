@@ -295,7 +295,14 @@ test.describe("Lesson Completion UX", () => {
     await expect(completionScreen.getByText("1/1")).toBeVisible();
     await expect(completionScreen.getByText(/correct/iu)).toBeVisible();
     await expect(completionScreen.getByText(`First Lesson ${uniqueId}`)).toBeVisible();
-    await expect(completionScreen.getByText("1 lesson left in this chapter")).toBeVisible();
+    await expect(completionScreen.getByText("Lesson 1 of 2")).toBeVisible();
+
+    const chapterProgress = completionScreen.getByRole("progressbar", {
+      name: /chapter progress/iu,
+    });
+
+    await expect(chapterProgress).toBeVisible();
+    await expect(chapterProgress).toHaveAttribute("aria-valuenow", "50");
 
     await completionScreen.getByRole("link", { name: "Next" }).click();
     await expect(page).toHaveURL(new RegExp(`/l/${lesson2.slug}$`, "u"));

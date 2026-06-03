@@ -119,6 +119,10 @@ describe("player browser integration: practice lessons", () => {
     await page.getByRole("button", { name: /continue/iu }).click();
 
     await expect.element(page.getByText("1/1")).toBeInTheDocument();
-    await expect.element(page.getByText(/\+10\s*BP/iu)).toBeInTheDocument();
+    await expect.element(page.getByText(/\+10\s*BP/iu)).not.toBeInTheDocument();
+
+    await expect
+      .element(page.getByRole("progressbar", { name: /chapter progress/iu }))
+      .toBeInTheDocument();
   });
 });
