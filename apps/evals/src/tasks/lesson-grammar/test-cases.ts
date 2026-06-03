@@ -16,13 +16,19 @@ EVALUATION CRITERIA:
    - Explanations should be short, concrete, and beginner-safe
    - Do NOT penalize the JSON object key order. Only evaluate whether the content supports an explanation-first lesson when saved/rendered.
 
-3. EXAMPLES QUALITY:
+3. TARGET-LANGUAGE HIGHLIGHTING:
+   - When explanations.text mentions a target-language word, phrase, particle, or form inside user-language prose, that target-language text should be wrapped in single backticks
+   - Do NOT require backticks around user-language words
+   - Do NOT reward or require bold, italic, or other rich-text formats for this highlighting rule
+   - Only evaluate this rule for explanations.text. Do NOT require this formatting in examples, questions, feedback, translations, or target-language fields.
+
+4. EXAMPLES QUALITY:
    - Must include 2-4 example sentences demonstrating the grammar pattern
    - Each example MUST have a highlight field isolating the grammar element
    - Each example MUST have a natural user-language translation
    - Sentences should be simple enough for learners to focus on the pattern
 
-4. QUESTIONS - FILL-IN-THE-BLANK:
+5. QUESTIONS - FILL-IN-THE-BLANK:
    - Must include 1-3 fill-in-the-blank questions
    - The question prompt may be null when the template is self-explanatory
    - Each question MUST have exactly one [BLANK] placeholder in the template
@@ -31,21 +37,21 @@ EVALUATION CRITERIA:
    - Feedback MUST explain why the correct answer fits the grammar pattern
    - Penalize SEVERELY if questions test different grammar than the examples
 
-5. LINGUISTIC ACCURACY (CRITICAL):
+6. LINGUISTIC ACCURACY (CRITICAL):
    - ALL target-language sentences, templates, and answers must be grammatically valid
    - Distractors should be plausible learner mistakes or real forms used in the wrong context. Do not require distractors to make the completed sentence grammatical, but penalize malformed fake forms that a learner would not reasonably produce.
    - The explanation must match what examples and questions actually demonstrate
    - Penalize SEVERELY for incorrect grammar or misleading explanations
 
-6. HIGHLIGHT SCOPE:
+7. HIGHLIGHT SCOPE:
    - Highlights that include slightly more context than the minimum (e.g., noun+particle, subject+verb, noun+adjective+article) are acceptable as long as the target grammar element is clearly visible
    - Only penalize if the highlight is so broad that the grammar element is buried or unclear
 
-7. PARADIGM AND FORM COVERAGE:
+8. PARADIGM AND FORM COVERAGE:
    - For conjugation patterns, evaluate coverage across examples AND questions combined as a single set
    - For agreement patterns, prefer forms where the contrast is visible (e.g., adjectives with clearly different masculine/feminine forms over invariable ones)
 
-8. SCRIPT CONSISTENCY (for non-Roman scripts):
+9. SCRIPT CONSISTENCY (for non-Roman scripts):
    - Only penalize if the SAME word is written in different scripts across examples and questions
    - Different words using different scripts is normal and not a consistency issue
 
@@ -53,7 +59,7 @@ SCORING DISCIPLINE (CRITICAL - read before assigning a score):
 - If something is explicitly marked as acceptable in the criteria above, do NOT deduct points for it.
 - Only deduct for CONCRETE errors: wrong grammar, wrong answers, missing structural requirements, wrong language, or unclear rule alignment.
 - Do NOT deduct for specific vocabulary choices, sentence structures, or sentence variety.
-- FOCUS ON: explanation-first structure, language contract, structural completeness, linguistic accuracy, pattern clarity.
+- FOCUS ON: explanation-first structure, language contract, target-language highlighting in explanations.text, structural completeness, linguistic accuracy, pattern clarity.
 `;
 
 /**

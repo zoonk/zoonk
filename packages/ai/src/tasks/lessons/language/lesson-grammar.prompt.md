@@ -13,6 +13,8 @@ Provide 1-3 short teaching sections in USER_LANGUAGE.
 - `title`: short label for the rule or sub-rule
 - `text`: plain-language explanation of how the grammar works and what learners should watch for
 
+When `text` mentions a TARGET_LANGUAGE word, phrase, particle, or form inside USER_LANGUAGE prose, wrap only that target-language text in single backticks. Do not wrap USER_LANGUAGE words, and do not use bold or other rich-text formats for this. Example: "You can say `hola` in Spanish."
+
 ## `examples`
 
 Provide 2-4 examples after the explanation.
