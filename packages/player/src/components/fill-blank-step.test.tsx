@@ -106,8 +106,12 @@ describe("fill in the blank step", () => {
     const alphaButton = buttons.find((button) => button.textContent === "alpha");
     const betaButton = buttons.find((button) => button.textContent === "beta");
 
-    fireEvent.click(alphaButton!);
-    fireEvent.click(betaButton!);
+    if (!alphaButton || !betaButton) {
+      throw new Error("Expected alpha and beta buttons to render.");
+    }
+
+    fireEvent.click(alphaButton);
+    fireEvent.click(betaButton);
 
     const renderWarnings = consoleErrorSpy.mock.calls.filter((args: unknown[]) =>
       String(args[0]).includes("Cannot update a component"),

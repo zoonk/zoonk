@@ -29,9 +29,9 @@ export function HighlightText({ text, highlight }: { text: string; highlight: st
   return (
     <>
       {before}
-      <span className="bg-primary/10 text-primary rounded-sm px-1 py-0.5 font-semibold">
+      <mark className="bg-foreground text-background rounded-sm px-1 py-0.5 font-semibold">
         {match}
-      </span>
+      </mark>
       {after}
     </>
   );
