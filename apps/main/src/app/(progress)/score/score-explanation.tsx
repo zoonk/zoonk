@@ -11,17 +11,37 @@ export async function ScoreExplanation() {
   const t = await getExtracted();
 
   return (
-    <Explanation className="gap-1 border-t pt-6">
-      <ExplanationHeader className="text-score">
-        <Target aria-hidden />
-        <ExplanationTitle>{t("About Score")}</ExplanationTitle>
-      </ExplanationHeader>
+    <div className="flex flex-col gap-5 border-t pt-6">
+      <Explanation className="gap-1">
+        <ExplanationHeader className="text-score">
+          <Target aria-hidden />
+          <ExplanationTitle>{t("What is Score?")}</ExplanationTitle>
+        </ExplanationHeader>
 
-      <ExplanationText className="leading-relaxed">
-        {t(
-          "Your score shows the percentage of questions you answered correctly. It helps you track your accuracy over time and identify your best days and times for learning.",
-        )}
-      </ExplanationText>
-    </Explanation>
+        <ExplanationText>
+          {t("Score is the percentage of questions you answered correctly during this period.")}
+        </ExplanationText>
+      </Explanation>
+
+      <Explanation className="gap-1">
+        <ExplanationTitle>{t("How do I improve Score?")}</ExplanationTitle>
+
+        <ExplanationText>
+          {t(
+            "Review mistakes and retry lessons. As you answer more questions correctly, your Score goes up.",
+          )}
+        </ExplanationText>
+      </Explanation>
+
+      <Explanation className="gap-1">
+        <ExplanationTitle>{t("Why is Score important?")}</ExplanationTitle>
+
+        <ExplanationText>
+          {t(
+            "Score shows accuracy, not activity. Best day and best time help you find when you learn most effectively.",
+          )}
+        </ExplanationText>
+      </Explanation>
+    </div>
   );
 }

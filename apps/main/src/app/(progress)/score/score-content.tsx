@@ -1,10 +1,10 @@
 import { getScoreHistory } from "@/data/progress/get-score-history";
 import { getSession } from "@zoonk/core/users/session/get";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { validatePeriod } from "@zoonk/utils/date-ranges";
 import { getLocale } from "next-intl/server";
 import { ProgressChartSkeleton } from "../_components/progress-chart-skeleton";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
+import { ProgressExplanationSkeleton } from "../_components/progress-explanation-skeleton";
 import { ScoreChart } from "./score-chart";
 import { ScoreExplanation } from "./score-explanation";
 import { ScoreInsights, ScoreInsightsSkeleton } from "./score-insights";
@@ -71,12 +71,7 @@ export function ScoreContentSkeleton() {
       <ScoreStatsSkeleton />
       <ProgressChartSkeleton />
       <ScoreInsightsSkeleton />
-
-      <div className="flex flex-col gap-2">
-        <Skeleton className="h-4 w-36" />
-        <Skeleton className="h-5 w-64" />
-        <Skeleton className="h-4 w-full" />
-      </div>
+      <ProgressExplanationSkeleton />
     </div>
   );
 }

@@ -119,6 +119,24 @@ test.describe("Energy Page", () => {
         authenticatedPage.getByText(/start learning to track your progress/iu),
       ).not.toBeVisible();
     });
+
+    test("displays energy explanation sections", async ({ authenticatedPage }) => {
+      await authenticatedPage.goto("/energy");
+
+      await expect(
+        authenticatedPage.getByRole("heading", { name: /what is energy/iu }),
+      ).toBeVisible();
+
+      await expect(
+        authenticatedPage.getByRole("heading", { name: /how do i improve energy/iu }),
+      ).toBeVisible();
+
+      await expect(
+        authenticatedPage.getByRole("heading", { name: /why is energy important/iu }),
+      ).toBeVisible();
+
+      await expect(authenticatedPage.getByText(/not a streak/iu)).toBeVisible();
+    });
   });
 
   test.describe("Users Without Progress", () => {
