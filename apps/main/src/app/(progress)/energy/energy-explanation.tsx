@@ -11,27 +11,37 @@ export async function EnergyExplanation() {
   const t = await getExtracted();
 
   return (
-    <Explanation className="gap-1 border-t pt-6">
-      <ExplanationHeader className="text-energy">
-        <ZapIcon aria-hidden />
-        <ExplanationTitle>{t("About Energy")}</ExplanationTitle>
-      </ExplanationHeader>
+    <div className="flex flex-col gap-5 border-t pt-6">
+      <Explanation className="gap-1">
+        <ExplanationHeader className="text-energy">
+          <ZapIcon aria-hidden />
+          <ExplanationTitle>{t("What is Energy?")}</ExplanationTitle>
+        </ExplanationHeader>
 
-      <ExplanationText>
-        {t("Energy is a score from 0% to 100%. The goal is to keep it near 100%.")}
-      </ExplanationText>
+        <ExplanationText>
+          {t("Energy is a 0% to 100% score for your recent learning consistency and accuracy.")}
+        </ExplanationText>
+      </Explanation>
 
-      <ExplanationText>
-        {t(
-          "It goes up when you answer correctly and goes down when you answer incorrectly or go a day without studying.",
-        )}
-      </ExplanationText>
+      <Explanation className="gap-1">
+        <ExplanationTitle>{t("How do I improve Energy?")}</ExplanationTitle>
 
-      <ExplanationText>
-        {t(
-          "It is not a streak. Missing a day does not reset Energy to zero. It drops a little, and you can recover it when you return.",
-        )}
-      </ExplanationText>
-    </Explanation>
+        <ExplanationText>
+          {t(
+            "Answer questions correctly and keep learning regularly. Correct answers raise Energy; wrong answers and days away from studying lower it.",
+          )}
+        </ExplanationText>
+      </Explanation>
+
+      <Explanation className="gap-1">
+        <ExplanationTitle>{t("Why is Energy important?")}</ExplanationTitle>
+
+        <ExplanationText>
+          {t(
+            "Energy is like heart rate in a health app: it shows your current learning rhythm. It is not a streak; missing a day does not reset it, and you can recover when you come back.",
+          )}
+        </ExplanationText>
+      </Explanation>
+    </div>
   );
 }

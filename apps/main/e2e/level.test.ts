@@ -115,6 +115,24 @@ test.describe("Level Page", () => {
 
       await expect(authenticatedPage.getByText(/vs last 6 months/iu)).toBeVisible();
     });
+
+    test("displays brain power explanation sections", async ({ authenticatedPage }) => {
+      await authenticatedPage.goto("/level");
+
+      await expect(
+        authenticatedPage.getByRole("heading", { name: /what is brain power/iu }),
+      ).toBeVisible();
+
+      await expect(
+        authenticatedPage.getByRole("heading", { name: /how do i increase brain power/iu }),
+      ).toBeVisible();
+
+      await expect(
+        authenticatedPage.getByRole("heading", { name: /why is brain power important/iu }),
+      ).toBeVisible();
+
+      await expect(authenticatedPage.getByText(/never goes down/iu)).toBeVisible();
+    });
   });
 
   test.describe("Users Without Progress", () => {

@@ -675,20 +675,28 @@ msgid "rGSqvt"
 msgstr "Prom"
 
 #: src/app/(progress)/energy/energy-explanation.tsx
-msgid "tqJIUh"
-msgstr "Acerca de la energía"
+msgid "TLPAMC"
+msgstr "¿Qué es la energía?"
 
 #: src/app/(progress)/energy/energy-explanation.tsx
-msgid "OWC2V9"
-msgstr "La energía es una puntuación de 0% a 100%. El objetivo es mantenerla cerca del 100%."
+msgid "OvOWOR"
+msgstr "La energía es una puntuación de 0% a 100% que muestra tu constancia reciente y tus aciertos."
 
 #: src/app/(progress)/energy/energy-explanation.tsx
-msgid "5oXyw+"
-msgstr "Sube cuando respondes correctamente y baja cuando respondes mal o pasas un día sin estudiar."
+msgid "K3jN6p"
+msgstr "¿Cómo mejoro mi energía?"
 
 #: src/app/(progress)/energy/energy-explanation.tsx
-msgid "okV1HG"
-msgstr "No es una racha. Pasar un día sin estudiar no pone la energía en cero. Baja un poco, pero puedes recuperarla cuando vuelves."
+msgid "pssms6"
+msgstr "Responde correctamente y mantén una rutina de estudio. Las respuestas correctas hacen que la energía suba; las incorrectas y los días sin estudiar hacen que baje."
+
+#: src/app/(progress)/energy/energy-explanation.tsx
+msgid "+8Qx8X"
+msgstr "¿Por qué es importante la energía?"
+
+#: src/app/(progress)/energy/energy-explanation.tsx
+msgid "TRcArs"
+msgstr "La energía es como la frecuencia cardíaca en una app de salud: muestra el ritmo actual de tu aprendizaje. No es una racha; pasar un día sin estudiar no la pone en cero, y puedes recuperarla cuando vuelves."
 
 #: src/app/(progress)/energy/energy-stats.tsx
 msgid "zLCmVM"
@@ -719,20 +727,28 @@ msgid "tDbspx"
 msgstr "Poder Mental total ganado: {total}"
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "aAScNr"
-msgstr "Sobre el Poder Mental"
+msgid "EMy5Vs"
+msgstr "¿Qué es el Poder Mental?"
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "RLC4Ov"
-msgstr "El Poder Mental (BP) representa cuánto has aprendido. Ganas {brainPower} BP después de cada lección que completas. Nunca baja porque el conocimiento es algo que nadie te puede quitar."
+msgid "MIjvOA"
+msgstr "El Poder Mental (PM) es el total de aprendizaje que has acumulado. Cada lección completada añade {brainPower} PM."
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "3vDry3"
-msgstr "Cuanto más Poder Mental tienes, más conocimiento has construido. No pierdes Poder Mental cuando baja tu Energía o cuando pasas días sin estudiar."
+msgid "jzKXJS"
+msgstr "¿Cómo aumento mi Poder Mental?"
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "98M49A"
-msgstr "El Poder Mental es como artes marciales para tu mente: cuanto más estudias, más fuerte se vuelve. Empiezas como cinturón blanco y puedes avanzar hasta cinturón negro."
+msgid "Gzq1tT"
+msgstr "Completa lecciones. El Poder Mental nunca baja, incluso cuando baja tu energía o tomas una pausa."
+
+#: src/app/(progress)/level/level-explanation.tsx
+msgid "JGLOtn"
+msgstr "¿Por qué es importante el Poder Mental?"
+
+#: src/app/(progress)/level/level-explanation.tsx
+msgid "6g8QfE"
+msgstr "Es como los pasos en una app de salud: un registro de cuánto has aprendido. También funciona como artes marciales para la mente: aumenta tu Poder Mental para pasar del cinturón blanco al cinturón negro del conocimiento."
 
 #: src/app/(progress)/level/level-progression.tsx
 msgid "VHH0kD"
@@ -791,12 +807,28 @@ msgid "J+05ol"
 msgstr "Gráfico de aciertos"
 
 #: src/app/(progress)/score/score-explanation.tsx
-msgid "dN8FhY"
-msgstr "Sobre aciertos"
+msgid "bIZaXJ"
+msgstr "¿Qué son los aciertos?"
 
 #: src/app/(progress)/score/score-explanation.tsx
-msgid "vWQIxU"
-msgstr "Tus aciertos muestran el porcentaje de preguntas que has respondido correctamente. Te ayudan a rastrear tu precisión a lo largo del tiempo y a identificar tus mejores días y horarios para aprender."
+msgid "JA+N5Z"
+msgstr "Los aciertos son el porcentaje de preguntas que respondiste correctamente en este período."
+
+#: src/app/(progress)/score/score-explanation.tsx
+msgid "z9kvhA"
+msgstr "¿Cómo mejoro mis aciertos?"
+
+#: src/app/(progress)/score/score-explanation.tsx
+msgid "7/C9do"
+msgstr "Revisa tus errores y repite lecciones. A medida que respondes más preguntas correctamente, tus aciertos mejoran."
+
+#: src/app/(progress)/score/score-explanation.tsx
+msgid "WqH8eP"
+msgstr "¿Por qué son importantes los aciertos?"
+
+#: src/app/(progress)/score/score-explanation.tsx
+msgid "E0saoA"
+msgstr "Los aciertos muestran precisión, no actividad. El mejor día y la mejor hora te ayudan a encontrar cuándo aprendes mejor."
 
 #: src/app/(progress)/score/score-insights.tsx
 msgid "J3fNDZ"

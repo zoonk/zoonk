@@ -675,20 +675,28 @@ msgid "rGSqvt"
 msgstr "Avg"
 
 #: src/app/(progress)/energy/energy-explanation.tsx
-msgid "tqJIUh"
-msgstr "About Energy"
+msgid "TLPAMC"
+msgstr "What is Energy?"
 
 #: src/app/(progress)/energy/energy-explanation.tsx
-msgid "OWC2V9"
-msgstr "Energy is a score from 0% to 100%. The goal is to keep it near 100%."
+msgid "OvOWOR"
+msgstr "Energy is a 0% to 100% score for your recent learning consistency and accuracy."
 
 #: src/app/(progress)/energy/energy-explanation.tsx
-msgid "5oXyw+"
-msgstr "It goes up when you answer correctly and goes down when you answer incorrectly or go a day without studying."
+msgid "K3jN6p"
+msgstr "How do I improve Energy?"
 
 #: src/app/(progress)/energy/energy-explanation.tsx
-msgid "okV1HG"
-msgstr "It is not a streak. Missing a day does not reset Energy to zero. It drops a little, and you can recover it when you return."
+msgid "pssms6"
+msgstr "Answer questions correctly and keep learning regularly. Correct answers raise Energy; wrong answers and days away from studying lower it."
+
+#: src/app/(progress)/energy/energy-explanation.tsx
+msgid "+8Qx8X"
+msgstr "Why is Energy important?"
+
+#: src/app/(progress)/energy/energy-explanation.tsx
+msgid "TRcArs"
+msgstr "Energy is like heart rate in a health app: it shows your current learning rhythm. It is not a streak; missing a day does not reset it, and you can recover when you come back."
 
 #: src/app/(progress)/energy/energy-stats.tsx
 msgid "zLCmVM"
@@ -719,20 +727,28 @@ msgid "tDbspx"
 msgstr "Total Brain Power earned: {total}"
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "aAScNr"
-msgstr "About Brain Power"
+msgid "EMy5Vs"
+msgstr "What is Brain Power?"
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "RLC4Ov"
-msgstr "Brain Power (BP) represents how much you have learned. You earn {brainPower} BP after each lesson you complete. It never goes down because knowledge is not something anyone can take from you."
+msgid "MIjvOA"
+msgstr "Brain Power (BP) is the total learning credit you have earned. Each completed lesson adds {brainPower} BP."
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "3vDry3"
-msgstr "The more Brain Power you have, the more knowledge you have built. You do not lose Brain Power when your Energy drops or when you miss days."
+msgid "jzKXJS"
+msgstr "How do I increase Brain Power?"
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "98M49A"
-msgstr "Brain Power is like martial arts for your mind: the more you study, the stronger it gets. You start as a white belt and can work your way up to black belt."
+msgid "Gzq1tT"
+msgstr "Complete lessons. Brain Power never goes down, even when your Energy drops or you take a break."
+
+#: src/app/(progress)/level/level-explanation.tsx
+msgid "JGLOtn"
+msgstr "Why is Brain Power important?"
+
+#: src/app/(progress)/level/level-explanation.tsx
+msgid "6g8QfE"
+msgstr "It is like steps in a health app: a record of how much you have learned. It also works like martial arts for your mind: build Brain Power to move from white belt toward black belt in knowledge."
 
 #: src/app/(progress)/level/level-progression.tsx
 msgid "VHH0kD"
@@ -791,12 +807,28 @@ msgid "J+05ol"
 msgstr "Score chart"
 
 #: src/app/(progress)/score/score-explanation.tsx
-msgid "dN8FhY"
-msgstr "About Score"
+msgid "bIZaXJ"
+msgstr "What is Score?"
 
 #: src/app/(progress)/score/score-explanation.tsx
-msgid "vWQIxU"
-msgstr "Your score shows the percentage of questions you answered correctly. It helps you track your accuracy over time and identify your best days and times for learning."
+msgid "JA+N5Z"
+msgstr "Score is the percentage of questions you answered correctly during this period."
+
+#: src/app/(progress)/score/score-explanation.tsx
+msgid "z9kvhA"
+msgstr "How do I improve Score?"
+
+#: src/app/(progress)/score/score-explanation.tsx
+msgid "7/C9do"
+msgstr "Review mistakes and retry lessons. As you answer more questions correctly, your Score goes up."
+
+#: src/app/(progress)/score/score-explanation.tsx
+msgid "WqH8eP"
+msgstr "Why is Score important?"
+
+#: src/app/(progress)/score/score-explanation.tsx
+msgid "E0saoA"
+msgstr "Score shows accuracy, not activity. Best day and best time help you find when you learn most effectively."
 
 #: src/app/(progress)/score/score-insights.tsx
 msgid "J3fNDZ"

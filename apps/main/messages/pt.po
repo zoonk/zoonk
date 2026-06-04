@@ -675,20 +675,28 @@ msgid "rGSqvt"
 msgstr "Média"
 
 #: src/app/(progress)/energy/energy-explanation.tsx
-msgid "tqJIUh"
-msgstr "Sobre energia"
+msgid "TLPAMC"
+msgstr "O que é Energia?"
 
 #: src/app/(progress)/energy/energy-explanation.tsx
-msgid "OWC2V9"
-msgstr "Energia é uma pontuação de 0% a 100%. O objetivo é mantê-la perto de 100%."
+msgid "OvOWOR"
+msgstr "Energia é uma pontuação de 0% a 100% que mostra sua constância recente e seus acertos."
 
 #: src/app/(progress)/energy/energy-explanation.tsx
-msgid "5oXyw+"
-msgstr "Ela sobe quando você responde corretamente e cai quando você responde errado ou fica um dia sem estudar."
+msgid "K3jN6p"
+msgstr "Como melhoro minha Energia?"
 
 #: src/app/(progress)/energy/energy-explanation.tsx
-msgid "okV1HG"
-msgstr "Não é uma sequência. Ficar um dia sem estudar não zera a energia. Ela cai um pouquinho, mas você consegue recuperar quando voltar."
+msgid "pssms6"
+msgstr "Responda corretamente e mantenha uma rotina de estudo. Respostas corretas fazem a Energia subir; respostas erradas e dias sem estudar fazem a Energia cair."
+
+#: src/app/(progress)/energy/energy-explanation.tsx
+msgid "+8Qx8X"
+msgstr "Por que a Energia importa?"
+
+#: src/app/(progress)/energy/energy-explanation.tsx
+msgid "TRcArs"
+msgstr "A Energia é como a frequência cardíaca em um app de saúde: mostra o ritmo atual do seu aprendizado. Ela não é uma sequência; ficar um dia sem estudar não zera a Energia, e você pode recuperar quando voltar."
 
 #: src/app/(progress)/energy/energy-stats.tsx
 msgid "zLCmVM"
@@ -719,20 +727,28 @@ msgid "tDbspx"
 msgstr "Total de Poder Mental ganho: {total}"
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "aAScNr"
-msgstr "Sobre Poder Mental"
+msgid "EMy5Vs"
+msgstr "O que é Poder Mental?"
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "RLC4Ov"
-msgstr "Poder Mental (BP) representa o quanto você aprendeu. Você ganha {brainPower} BP depois de cada aula que completa. Ele nunca cai porque conhecimento é algo que ninguém tira de você."
+msgid "MIjvOA"
+msgstr "Poder Mental (PM) é o total de aprendizado que você acumulou. Cada aula concluída adiciona {brainPower} PM."
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "3vDry3"
-msgstr "Quanto mais Poder Mental você tem, mais conhecimento construiu. Você não perde Poder Mental quando sua Energia cai ou quando fica dias sem estudar."
+msgid "jzKXJS"
+msgstr "Como aumento meu Poder Mental?"
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "98M49A"
-msgstr "O Poder Mental é como artes marciais para a sua mente: quanto mais você estuda, mais forte fica. Você começa como faixa branca e pode evoluir até faixa preta."
+msgid "Gzq1tT"
+msgstr "Conclua aulas. O Poder Mental nunca cai, mesmo quando sua Energia cai ou você faz uma pausa."
+
+#: src/app/(progress)/level/level-explanation.tsx
+msgid "JGLOtn"
+msgstr "Por que o Poder Mental importa?"
+
+#: src/app/(progress)/level/level-explanation.tsx
+msgid "6g8QfE"
+msgstr "Ele é como os passos em um app de saúde: um registro do quanto você aprendeu. Também funciona como artes marciais para a mente: aumente seu Poder Mental para sair da faixa branca e chegar à faixa preta do conhecimento."
 
 #: src/app/(progress)/level/level-progression.tsx
 msgid "VHH0kD"
@@ -791,12 +807,28 @@ msgid "J+05ol"
 msgstr "Gráfico de acertos"
 
 #: src/app/(progress)/score/score-explanation.tsx
-msgid "dN8FhY"
-msgstr "Sobre acertos"
+msgid "bIZaXJ"
+msgstr "O que são acertos?"
 
 #: src/app/(progress)/score/score-explanation.tsx
-msgid "vWQIxU"
-msgstr "Seu acerto mostra o percentual de questões que você respondeu corretamente. Ele ajuda você a acompanhar sua precisão ao longo do tempo e identificar seus melhores dias e horários para aprender."
+msgid "JA+N5Z"
+msgstr "Acertos são o percentual de questões que você respondeu corretamente neste período."
+
+#: src/app/(progress)/score/score-explanation.tsx
+msgid "z9kvhA"
+msgstr "Como melhoro meus acertos?"
+
+#: src/app/(progress)/score/score-explanation.tsx
+msgid "7/C9do"
+msgstr "Revise seus erros e refaça aulas. À medida que você responde mais questões corretamente, seus acertos melhoram."
+
+#: src/app/(progress)/score/score-explanation.tsx
+msgid "WqH8eP"
+msgstr "Por que os acertos importam?"
+
+#: src/app/(progress)/score/score-explanation.tsx
+msgid "E0saoA"
+msgstr "Os acertos mostram precisão, não atividade. Melhor dia e melhor horário ajudam você a encontrar quando aprende melhor."
 
 #: src/app/(progress)/score/score-insights.tsx
 msgid "J3fNDZ"

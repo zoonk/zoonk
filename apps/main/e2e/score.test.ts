@@ -110,10 +110,18 @@ test.describe("Score Page", () => {
     test("displays score explanation section", async ({ authenticatedPage }) => {
       await authenticatedPage.goto("/score");
 
-      // User sees the explanation about score
-      await expect(authenticatedPage.getByText(/about score/iu)).toBeVisible();
+      await expect(
+        authenticatedPage.getByRole("heading", { name: /what is score/iu }),
+      ).toBeVisible();
 
-      // User sees the explanation text
+      await expect(
+        authenticatedPage.getByRole("heading", { name: /how do i improve score/iu }),
+      ).toBeVisible();
+
+      await expect(
+        authenticatedPage.getByRole("heading", { name: /why is score important/iu }),
+      ).toBeVisible();
+
       await expect(
         authenticatedPage.getByText(/percentage of questions you answered correctly/iu),
       ).toBeVisible();
