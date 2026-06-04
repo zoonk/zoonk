@@ -61,18 +61,11 @@ export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevel
                   />
                 </div>
 
-                <span
-                  className={cn(
-                    "text-xs tabular-nums",
-                    isCurrent && "text-foreground font-medium",
-                    isPast && "text-muted-foreground/50",
-                    isFuture && "invisible",
-                  )}
-                >
-                  {isCurrent
-                    ? t("{current}/10", { current: String(currentBelt.level) })
-                    : t("Done")}
-                </span>
+                {isCurrent && (
+                  <span className="text-foreground text-xs font-medium tabular-nums">
+                    {t("{current}/10", { current: String(currentBelt.level) })}
+                  </span>
+                )}
               </div>
             );
           })}

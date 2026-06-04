@@ -805,10 +805,6 @@ msgid "ZKbTsS"
 msgstr "{current}/10"
 
 #: src/app/(progress)/level/level-progression.tsx
-msgid "JXdbo8"
-msgstr "Done"
-
-#: src/app/(progress)/level/level-progression.tsx
 msgid "FM+wHG"
 msgstr "Level {current} of 10 in {color} belt"
 
