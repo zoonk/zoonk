@@ -7,6 +7,7 @@ import { ProgressEmptyState } from "../_components/progress-empty-state";
 import { ProgressExplanationSkeleton } from "../_components/progress-explanation-skeleton";
 import { EnergyChart } from "./energy-chart";
 import { EnergyExplanation } from "./energy-explanation";
+import { EnergyInsights, EnergyInsightsSkeleton } from "./energy-insights";
 import { EnergyStats, EnergyStatsSkeleton } from "./energy-stats";
 
 export async function EnergyContent({
@@ -54,6 +55,12 @@ export async function EnergyContent({
         periodStart={data.periodStart}
       />
 
+      <EnergyInsights
+        period={validPeriod}
+        periodEnd={data.periodEnd}
+        periodStart={data.periodStart}
+      />
+
       <EnergyExplanation />
     </div>
   );
@@ -64,6 +71,7 @@ export function EnergyContentSkeleton() {
     <div className="flex flex-col gap-8">
       <EnergyStatsSkeleton />
       <ProgressChartSkeleton />
+      <EnergyInsightsSkeleton />
       <ProgressExplanationSkeleton />
     </div>
   );

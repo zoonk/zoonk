@@ -1,3 +1,4 @@
+import { getCurrentUtcProgressInsightDateLabel } from "./_utils/progress-insight-date";
 import { expect, test } from "./fixtures";
 
 test.describe("Level Page", () => {
@@ -53,6 +54,19 @@ test.describe("Level Page", () => {
       await expect(authenticatedPage.getByText(/belt progression/iu)).toBeVisible();
 
       await expect(authenticatedPage.getByRole("progressbar")).toBeVisible();
+    });
+
+    test("displays current-month level insight values", async ({ authenticatedPage }) => {
+      await authenticatedPage.goto("/level");
+
+      const highestBpCard = authenticatedPage.getByRole("article", { name: /highest bp/iu });
+      const learningDaysCard = authenticatedPage.getByRole("article", { name: /learning days/iu });
+      const todayLabel = getCurrentUtcProgressInsightDateLabel();
+
+      await expect(highestBpCard).toContainText(`${todayLabel} with 250 BP`);
+      await expect(highestBpCard).toContainText("This month");
+      await expect(learningDaysCard).toContainText("1 day");
+      await expect(learningDaysCard).toContainText("This month");
     });
 
     test("switching to 6 months shows different comparison text", async ({ authenticatedPage }) => {

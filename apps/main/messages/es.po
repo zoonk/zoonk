@@ -137,6 +137,7 @@ msgid "HHFpcy"
 msgstr "Mejor día"
 
 #: src/app/(catalog)/(home)/best-day.tsx
+#: src/app/(progress)/energy/energy-insights.tsx
 #: src/app/(progress)/score/score-insights.tsx
 msgid "bcsugq"
 msgstr "{day} con {value}%"
@@ -614,8 +615,9 @@ msgid "R9qHBU"
 msgstr "vs últimos 6 meses"
 
 #: src/app/(progress)/_components/metric-comparison.tsx
-msgid "HOfw3D"
-msgstr "todo el tiempo"
+#: src/app/(progress)/_components/progress-insight-period-label.ts
+msgid "s+lPP3"
+msgstr "Todo el tiempo"
 
 #: src/app/(progress)/_components/metric-comparison.tsx
 msgid "YFV6dH"
@@ -657,6 +659,10 @@ msgstr "Año"
 msgid "OlW5Z8"
 msgstr "No hay datos disponibles para este período"
 
+#: src/app/(progress)/_components/progress-day-count-label.ts
+msgid "r9koty"
+msgstr "{count, plural, =0 {# días} one {# día} other {# días}}"
+
 #: src/app/(progress)/_components/progress-empty-state.tsx
 msgid "FVh2Tr"
 msgstr "Empieza a aprender para seguir tu progreso"
@@ -664,6 +670,18 @@ msgstr "Empieza a aprender para seguir tu progreso"
 #: src/app/(progress)/_components/progress-empty-state.tsx
 msgid "Y1zzQt"
 msgstr "Inicia sesión para seguir tu progreso"
+
+#: src/app/(progress)/_components/progress-insight-period-label.ts
+msgid "J3fNDZ"
+msgstr "Este mes"
+
+#: src/app/(progress)/_components/progress-insight-period-label.ts
+msgid "eWUXBX"
+msgstr "Últimos 6 meses"
+
+#: src/app/(progress)/_components/progress-insight-period-label.ts
+msgid "lPShsT"
+msgstr "Este año"
 
 #: src/app/(progress)/energy/energy-chart-client.tsx
 msgid "M+JIpD"
@@ -697,6 +715,14 @@ msgstr "¿Por qué es importante la energía?"
 #: src/app/(progress)/energy/energy-explanation.tsx
 msgid "TRcArs"
 msgstr "La energía es como la frecuencia cardíaca en una app de salud: muestra el ritmo actual de tu aprendizaje. No es una racha; pasar un día sin estudiar no la pone en cero, y puedes recuperarla cuando vuelves."
+
+#: src/app/(progress)/energy/energy-insights.tsx
+msgid "XxS+he"
+msgstr "Día con más energía"
+
+#: src/app/(progress)/energy/energy-insights.tsx
+msgid "aaiQkv"
+msgstr "Energía completa"
 
 #: src/app/(progress)/energy/energy-stats.tsx
 msgid "zLCmVM"
@@ -749,6 +775,18 @@ msgstr "¿Por qué es importante el Poder Mental?"
 #: src/app/(progress)/level/level-explanation.tsx
 msgid "6g8QfE"
 msgstr "Es como los pasos en una app de salud: un registro de cuánto has aprendido. También funciona como artes marciales para la mente: aumenta tu Poder Mental para pasar del cinturón blanco al cinturón negro del conocimiento."
+
+#: src/app/(progress)/level/level-insights.tsx
+msgid "elq+tg"
+msgstr "Mayor PM"
+
+#: src/app/(progress)/level/level-insights.tsx
+msgid "BW4bMl"
+msgstr "{date} con {value} PM"
+
+#: src/app/(progress)/level/level-insights.tsx
+msgid "8F6teD"
+msgstr "Días de aprendizaje"
 
 #: src/app/(progress)/level/level-progression.tsx
 msgid "VHH0kD"
@@ -829,18 +867,6 @@ msgstr "¿Por qué son importantes los aciertos?"
 #: src/app/(progress)/score/score-explanation.tsx
 msgid "E0saoA"
 msgstr "Los aciertos muestran precisión, no actividad. El mejor día y la mejor hora te ayudan a encontrar cuándo aprendes mejor."
-
-#: src/app/(progress)/score/score-insights.tsx
-msgid "J3fNDZ"
-msgstr "Este mes"
-
-#: src/app/(progress)/score/score-insights.tsx
-msgid "eWUXBX"
-msgstr "Últimos 6 meses"
-
-#: src/app/(progress)/score/score-insights.tsx
-msgid "lPShsT"
-msgstr "Este año"
 
 #: src/app/(settings)/_components/protected-section.tsx
 #: src/components/auth/login-required.tsx

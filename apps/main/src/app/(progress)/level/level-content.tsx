@@ -7,6 +7,7 @@ import { ProgressEmptyState } from "../_components/progress-empty-state";
 import { ProgressExplanationSkeleton } from "../_components/progress-explanation-skeleton";
 import { LevelChart } from "./level-chart";
 import { LevelExplanation } from "./level-explanation";
+import { LevelInsights, LevelInsightsSkeleton } from "./level-insights";
 import { LevelProgression, LevelProgressionSkeleton } from "./level-progression";
 import { LevelStats, LevelStatsSkeleton } from "./level-stats";
 
@@ -56,6 +57,12 @@ export async function LevelContent({
         periodTotal={data.periodTotal}
       />
 
+      <LevelInsights
+        period={validPeriod}
+        periodEnd={data.periodEnd}
+        periodStart={data.periodStart}
+      />
+
       <LevelProgression currentBelt={data.currentBelt} />
 
       <LevelExplanation />
@@ -68,6 +75,7 @@ export function LevelContentSkeleton() {
     <div className="flex flex-col gap-8">
       <LevelStatsSkeleton />
       <ProgressChartSkeleton />
+      <LevelInsightsSkeleton />
       <LevelProgressionSkeleton />
       <ProgressExplanationSkeleton />
     </div>

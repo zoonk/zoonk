@@ -1,3 +1,4 @@
+import { getCurrentUtcProgressInsightDateLabel } from "./_utils/progress-insight-date";
 import { expect, test } from "./fixtures";
 
 test.describe("Energy Page", () => {
@@ -43,6 +44,22 @@ test.describe("Energy Page", () => {
 
       await expect(authenticatedPage.getByText(/current energy/iu)).toBeVisible();
       await expect(authenticatedPage.getByText(/% average/iu)).toBeVisible();
+    });
+
+    test("displays current-month energy insight values", async ({ authenticatedPage }) => {
+      await authenticatedPage.goto("/energy");
+
+      const highestEnergyCard = authenticatedPage.getByRole("article", {
+        name: /highest energy day/iu,
+      });
+
+      const fullEnergyCard = authenticatedPage.getByRole("article", { name: /full energy/iu });
+      const todayLabel = getCurrentUtcProgressInsightDateLabel();
+
+      await expect(highestEnergyCard).toContainText(`${todayLabel} with 100%`);
+      await expect(highestEnergyCard).toContainText("This month");
+      await expect(fullEnergyCard).toContainText("1 day");
+      await expect(fullEnergyCard).toContainText("This month");
     });
 
     test("switching to 6 months shows different comparison text", async ({ authenticatedPage }) => {

@@ -147,6 +147,8 @@ page.getByLabel(/email/i);
 - Use `getExtracted` (server) or `useExtracted` (client) for translations, don't use `getTranslations` or `useTranslations`
 - Pass string literals, never variables or keys (e.g., `getExtracted("Hello world")`, not `getExtracted(greeting)` nor `getExtracted("greeting")`)
 - **NEVER pass `t` / `getExtracted` / `useExtracted` as a function argument, prop, or store it in a variable to call later.** Always call `t("literal")` directly in the component. If you need translated text in a helper, use conditionals in the component: `verdict === "correct" ? t("Correct!") : t("Not quite")`
+- Always use ICU standards for translation, see the [next-intl docs](https://next-intl.dev/docs/usage/translations)
+- For plural text, always use ICU plural syntax in one message (e.g., `{count, plural, one {# item} other {# items}}`) instead of branching in code or creating separate singular/plural strings
 - Translation strings are extracted to PO files automatically when running `pnpm --filter {app} build`
 - After extracting messages, translate empty strings in PO files maintaining consistency with terms used in the app
 - When using `render` prop with base-ui components (e.g., `useRender`), use `ClientLink` instead of `Link` since the render prop requires a client component

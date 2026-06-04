@@ -40,7 +40,7 @@ export async function MetricComparison({
     }
 
     if (period === "all") {
-      return t("all time");
+      return t("All time");
     }
 
     return t("vs last year");
@@ -56,7 +56,7 @@ export async function MetricComparison({
       <Icon aria-hidden className="size-4 shrink-0" />
       <span className="whitespace-nowrap">
         <span>{t("{value}%", { value: formattedChange })}</span>
-        <span className="hidden sm:inline"> {getComparisonLabel()}</span>
+        <span className="hidden lowercase sm:inline"> {getComparisonLabel()}</span>
       </span>
     </div>
   );
