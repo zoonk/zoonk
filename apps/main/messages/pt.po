@@ -690,6 +690,14 @@ msgstr "Ela sobe quando você responde corretamente e cai quando você responde 
 msgid "okV1HG"
 msgstr "Não é uma sequência. Ficar um dia sem estudar não zera a energia. Ela cai um pouquinho, mas você consegue recuperar quando voltar."
 
+#: src/app/(progress)/energy/energy-stats.tsx
+msgid "zLCmVM"
+msgstr "Energia atual"
+
+#: src/app/(progress)/energy/energy-stats.tsx
+msgid "yGxJvo"
+msgstr "{value}% em média"
+
 #: src/app/(progress)/energy/page.tsx
 msgid "AZMpf3"
 msgstr "Energia é uma pontuação de 0% a 100% baseada em atividade e precisão recentes."

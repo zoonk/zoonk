@@ -4,6 +4,7 @@ import { prisma } from "@zoonk/db";
 import { type TimePeriod, aggregateByPeriod } from "@zoonk/utils/aggregation";
 import { formatLabel } from "@zoonk/utils/chart";
 import { type HistoryPeriod, calculateDateRanges } from "@zoonk/utils/date-ranges";
+import { computeDecayedEnergy } from "@zoonk/utils/energy";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 import { fillGapsWithDecay } from "./_fill-gaps";
@@ -15,6 +16,7 @@ export type EnergyDataPoint = { date: Date; energy: number; label: string };
 type EnergyHistoryData = {
   dataPoints: EnergyDataPoint[];
   average: number;
+  currentEnergy: number;
   previousAverage: number | null;
   periodStart: Date;
   periodEnd: Date;
@@ -76,9 +78,10 @@ const cachedGetEnergyHistory = cache(
     const userId = session.user.id;
     const { current, previous } = calculateDateRanges(period, offset);
 
-    const [currentResult, previousResult] = await Promise.all([
+    const [currentResult, previousResult, progressResult] = await Promise.all([
       fetchDailyData(userId, current.start, current.end),
       fetchDailyData(userId, previous.start, previous.end),
+      safeAsync(() => prisma.userProgress.findUnique({ where: { userId } })),
     ]);
 
     if (currentResult.error || !currentResult.data || currentResult.data.length === 0) {
@@ -95,6 +98,13 @@ const cachedGetEnergyHistory = cache(
 
     return {
       average: calculateAverage(currentData),
+      currentEnergy: progressResult.data
+        ? computeDecayedEnergy(
+            progressResult.data.currentEnergy,
+            progressResult.data.lastActiveAt,
+            new Date(),
+          )
+        : 0,
       dataPoints,
       hasNextPeriod: offset > 0,
       hasPreviousPeriod: await hasEarlierData(userId, current.start),

@@ -38,6 +38,13 @@ test.describe("Energy Page", () => {
       await expect(authenticatedPage.getByText(/vs last month/iu)).toBeVisible();
     });
 
+    test("displays current energy and selected-period average", async ({ authenticatedPage }) => {
+      await authenticatedPage.goto("/energy");
+
+      await expect(authenticatedPage.getByText(/current energy/iu)).toBeVisible();
+      await expect(authenticatedPage.getByText(/% average/iu)).toBeVisible();
+    });
+
     test("switching to 6 months shows different comparison text", async ({ authenticatedPage }) => {
       await authenticatedPage.goto("/energy");
 

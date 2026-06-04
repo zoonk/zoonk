@@ -37,6 +37,7 @@ export async function EnergyContent({
     <div className="flex flex-col gap-8">
       <EnergyStats
         average={data.average}
+        currentEnergy={data.currentEnergy}
         period={validPeriod}
         periodEnd={data.periodEnd}
         periodStart={data.periodStart}

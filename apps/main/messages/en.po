@@ -690,6 +690,14 @@ msgstr "It goes up when you answer correctly and goes down when you answer incor
 msgid "okV1HG"
 msgstr "It is not a streak. Missing a day does not reset Energy to zero. It drops a little, and you can recover it when you return."
 
+#: src/app/(progress)/energy/energy-stats.tsx
+msgid "zLCmVM"
+msgstr "Current Energy"
+
+#: src/app/(progress)/energy/energy-stats.tsx
+msgid "yGxJvo"
+msgstr "{value}% average"
+
 #: src/app/(progress)/energy/page.tsx
 msgid "AZMpf3"
 msgstr "Energy is a 0% to 100% score based on recent activity and accuracy."

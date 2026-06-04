@@ -5,12 +5,14 @@ import { MetricComparison } from "../_components/metric-comparison";
 
 export async function EnergyStats({
   average,
+  currentEnergy,
   period,
   periodEnd,
   periodStart,
   previousAverage,
 }: {
   average: number;
+  currentEnergy: number;
   period: HistoryPeriod;
   periodEnd: Date;
   periodStart: Date;
@@ -24,20 +26,35 @@ export async function EnergyStats({
     trailingZeroDisplay: "stripIfInteger",
   }).format(average);
 
+  const formattedCurrentEnergy = new Intl.NumberFormat(locale, {
+    maximumFractionDigits: 1,
+    trailingZeroDisplay: "stripIfInteger",
+  }).format(currentEnergy);
+
   const periodLabel = formatPeriodLabel(periodStart, periodEnd, period, locale);
 
   return (
-    <div className="flex flex-col gap-1">
-      <span className="text-muted-foreground text-sm">{periodLabel}</span>
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-1">
+        <span className="text-muted-foreground text-sm">{t("Current Energy")}</span>
 
-      <div className="flex items-baseline gap-3">
         <span className="text-energy text-5xl font-bold tracking-tight tabular-nums">
-          {t("{value}%", { value: formattedAverage })}
+          {t("{value}%", { value: formattedCurrentEnergy })}
         </span>
+      </div>
 
-        {previousAverage !== null && (
-          <MetricComparison current={average} period={period} previous={previousAverage} />
-        )}
+      <div className="flex flex-col gap-1">
+        <span className="text-muted-foreground text-sm">{periodLabel}</span>
+
+        <div className="flex items-baseline gap-3">
+          <span className="text-2xl font-semibold tracking-tight tabular-nums">
+            {t("{value}% average", { value: formattedAverage })}
+          </span>
+
+          {previousAverage !== null && (
+            <MetricComparison current={average} period={period} previous={previousAverage} />
+          )}
+        </div>
       </div>
     </div>
   );
@@ -45,11 +62,18 @@ export async function EnergyStats({
 
 export function EnergyStatsSkeleton() {
   return (
-    <div className="flex flex-col gap-1">
-      <Skeleton className="h-4 w-28" />
-      <div className="flex items-baseline gap-3">
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-1">
+        <Skeleton className="h-4 w-28" />
         <Skeleton className="h-12 w-28" />
-        <Skeleton className="h-5 w-32" />
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <Skeleton className="h-4 w-24" />
+        <div className="flex items-baseline gap-3">
+          <Skeleton className="h-7 w-28" />
+          <Skeleton className="h-5 w-32" />
+        </div>
       </div>
     </div>
   );
