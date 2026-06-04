@@ -13,6 +13,7 @@ const DAYS_PER_GROUP = 5;
 const CURRENT_MONTH_CORRECT = 17;
 const PREVIOUS_MONTH_CORRECT = 13;
 const CURRENT_MONTH_ENERGY = 75;
+const CURRENT_MONTH_FULL_ENERGY = 100;
 const PREVIOUS_MONTH_ENERGY = 65;
 const CURRENT_MONTH_INCORRECT = 3;
 const PREVIOUS_MONTH_INCORRECT = 7;
@@ -20,6 +21,30 @@ const COMPLETED_LESSON_DURATION_SECONDS = 120;
 const COMPLETED_LESSON_START_OFFSET_SECONDS = 180;
 
 const ALL_PERIODS = ["month", "6months", "year"] as const;
+
+/**
+ * The authenticated e2e user needs one visible full-energy day so the Energy
+ * insight card proves a non-zero count without changing the broader chart data.
+ */
+function getEnergyAtEnd({ dayIndex, isCurrent }: { dayIndex: number; isCurrent: boolean }) {
+  if (isCurrent && dayIndex === 0) {
+    return CURRENT_MONTH_FULL_ENERGY;
+  }
+
+  return isCurrent ? CURRENT_MONTH_ENERGY : PREVIOUS_MONTH_ENERGY;
+}
+
+/**
+ * The Level learning-days card counts DailyProgress completion rows, so the
+ * fixture marks the same current-day row that represents the completed lesson.
+ */
+function getStaticCompleted({ dayIndex, isCurrent }: { dayIndex: number; isCurrent: boolean }) {
+  if (isCurrent && dayIndex === 0) {
+    return 1;
+  }
+
+  return 0;
+}
 
 /**
  * Build a small but stable group of dates for a reporting window.
@@ -32,9 +57,9 @@ function buildGroupDates(today: Date, range: { start: Date; end: Date }, isCurre
   const midpoint = new Date(midpointMs);
   const baseDate = isCurrent ? today : midpoint;
 
-  return Array.from({ length: DAYS_PER_GROUP }, (_, i) => {
+  return Array.from({ length: DAYS_PER_GROUP }, (_, dayIndex) => {
     const date = new Date(
-      Date.UTC(baseDate.getUTCFullYear(), baseDate.getUTCMonth(), baseDate.getUTCDate() - i),
+      Date.UTC(baseDate.getUTCFullYear(), baseDate.getUTCMonth(), baseDate.getUTCDate() - dayIndex),
     );
 
     if (date < range.start || date > range.end) {
@@ -45,8 +70,9 @@ function buildGroupDates(today: Date, range: { start: Date; end: Date }, isCurre
       brainPowerEarned: 250,
       correctAnswers: isCurrent ? CURRENT_MONTH_CORRECT : PREVIOUS_MONTH_CORRECT,
       date,
-      energyAtEnd: isCurrent ? CURRENT_MONTH_ENERGY : PREVIOUS_MONTH_ENERGY,
+      energyAtEnd: getEnergyAtEnd({ dayIndex, isCurrent }),
       incorrectAnswers: isCurrent ? CURRENT_MONTH_INCORRECT : PREVIOUS_MONTH_INCORRECT,
+      staticCompleted: getStaticCompleted({ dayIndex, isCurrent }),
     };
   }).filter((entry): entry is NonNullable<typeof entry> => entry !== null);
 }

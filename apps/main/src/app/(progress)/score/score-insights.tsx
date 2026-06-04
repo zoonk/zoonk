@@ -15,20 +15,7 @@ import { EPOCH_YEAR, FIRST_SUNDAY_OFFSET } from "@zoonk/utils/date";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 import { CalendarDays, Clock } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
-
-async function getPeriodLabel(period: HistoryPeriod): Promise<string> {
-  const t = await getExtracted();
-
-  if (period === "month") {
-    return t("This month");
-  }
-
-  if (period === "6months") {
-    return t("Past 6 months");
-  }
-
-  return t("This year");
-}
+import { getProgressInsightPeriodLabel } from "../_components/progress-insight-period-label";
 
 export async function ScoreInsights({
   period,
@@ -41,15 +28,16 @@ export async function ScoreInsights({
 }) {
   const locale = await getLocale();
 
-  const [bestDayData, bestTimeData, periodLabel] = await Promise.all([
+  const [bestDayData, bestTimeData] = await Promise.all([
     getBestDay({ endDate: periodEnd, startDate: periodStart }),
     getBestTime({ endDate: periodEnd, startDate: periodStart }),
-    getPeriodLabel(period),
   ]);
 
   if (!(bestDayData || bestTimeData)) {
     return null;
   }
+
+  const periodLabel = await getProgressInsightPeriodLabel({ period });
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
