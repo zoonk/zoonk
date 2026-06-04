@@ -31,9 +31,9 @@ function getNavigableFrameClass(frame: SwipeNavigableStepFrame) {
 
 /**
  * Desktop read screens still benefit from a visible navigation affordance, but
- * touch screens use the surface for swipe navigation. Keeping these controls
- * pointer-fine only avoids competing with the mobile gesture model while giving
- * keyboard users a discoverable mouse target.
+ * small touch screens use the surface for swipe navigation. The visibility
+ * should follow the same width breakpoint as the bottom bar so landscape
+ * tablets do not lose both explicit navigation surfaces.
  */
 function DesktopNavigationButton({
   "aria-label": ariaLabel,
@@ -51,7 +51,7 @@ function DesktopNavigationButton({
       aria-label={ariaLabel}
       aria-keyshortcuts={side === "previous" ? "ArrowLeft" : "ArrowRight"}
       className={cn(
-        "bg-background/95 text-foreground border-border/70 ring-border/30 hover:bg-background hover:border-border absolute top-1/2 z-20 hidden size-11 -translate-y-1/2 opacity-95 shadow-lg ring-1 shadow-black/5 backdrop-blur-md transition-[background-color,border-color,color,opacity,scale,box-shadow] hover:opacity-100 hover:shadow-xl focus-visible:opacity-100 lg:flex pointer-coarse:hidden [&_svg]:size-5",
+        "bg-background/95 text-foreground border-border/70 ring-border/30 hover:bg-background hover:border-border absolute top-1/2 z-20 hidden size-11 -translate-y-1/2 opacity-95 shadow-lg ring-1 shadow-black/5 backdrop-blur-md transition-[background-color,border-color,color,opacity,scale,box-shadow] hover:opacity-100 hover:shadow-xl focus-visible:opacity-100 lg:flex [&_svg]:size-5",
         side === "previous" ? "left-4 xl:left-6" : "right-4 xl:right-6",
       )}
       onClick={onClick}

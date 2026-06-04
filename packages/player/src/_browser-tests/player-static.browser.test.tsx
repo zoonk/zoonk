@@ -1,10 +1,13 @@
 import { fireEvent, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { page } from "vitest/browser";
+import { cdp, page } from "vitest/browser";
+import { runInTabletLandscapePlayerViewport } from "../_test-utils/browser-viewport";
 import { buildInlineImageUrl } from "../_test-utils/build-inline-image-url";
 import { buildSerializedLesson, buildSerializedStep } from "../_test-utils/player-test-data";
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { buildNavigation, renderPlayer } from "../_test-utils/render-player";
+
+type CdpClient = { send: (method: string, params?: unknown) => Promise<unknown> };
 
 function buildTouch({
   identifier,
@@ -18,6 +21,42 @@ function buildTouch({
   y: number;
 }) {
   return new Touch({ clientX: x, clientY: y, identifier, target });
+}
+
+/**
+ * CDP touch emulation lets this browser test recreate a real landscape tablet:
+ * the viewport has large-screen width, but CSS still evaluates
+ * `(pointer: coarse)` like it does on touch-first hardware.
+ */
+async function emulatePointer(pointer: "coarse" | null) {
+  const client = cdp() as CdpClient;
+
+  if (pointer === "coarse") {
+    await client.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
+    return;
+  }
+
+  await client.send("Emulation.setTouchEmulationEnabled", { enabled: false });
+}
+
+/**
+ * Resets emulated pointer behavior after a targeted pointer test so later browser
+ * tests continue to run with the provider's default desktop environment.
+ */
+async function runWithPointerMedia({
+  pointer,
+  run,
+}: {
+  pointer: "coarse";
+  run: () => Promise<void>;
+}) {
+  await emulatePointer(pointer);
+
+  try {
+    await run();
+  } finally {
+    await emulatePointer(null);
+  }
 }
 
 function swipeLeft(target: HTMLElement) {
@@ -208,6 +247,52 @@ describe("player browser integration: static steps", () => {
     await page.getByRole("button", { name: /^Previous$/u }).click();
 
     await expect.element(page.getByRole("heading", { name: "First step" })).toBeInTheDocument();
+  });
+
+  it("shows arrow navigation on landscape tablets", async () => {
+    await runInTabletLandscapePlayerViewport(async () => {
+      await runWithPointerMedia({
+        pointer: "coarse",
+        run: async () => {
+          expect(globalThis.matchMedia("(pointer: coarse)").matches).toBe(true);
+
+          renderPlayer({
+            lesson: buildSerializedLesson({
+              kind: "explanation",
+              steps: [
+                buildSerializedStep({
+                  content: { text: "First body", title: "First step", variant: "text" as const },
+                  id: "static-tablet-landscape-1",
+                }),
+                buildSerializedStep({
+                  content: { text: "Second body", title: "Second step", variant: "text" as const },
+                  id: "static-tablet-landscape-2",
+                  position: 1,
+                }),
+              ],
+            }),
+            navigation: buildNavigation({ nextLessonHref: null }),
+            viewer: buildAuthenticatedViewer(),
+          });
+
+          await expect
+            .element(page.getByRole("heading", { name: "First step" }))
+            .toBeInTheDocument();
+
+          await page.getByRole("button", { name: /^Next step$/u }).click();
+
+          await expect
+            .element(page.getByRole("heading", { name: "Second step" }))
+            .toBeInTheDocument();
+
+          await page.getByRole("button", { name: /^Previous step$/u }).click();
+
+          await expect
+            .element(page.getByRole("heading", { name: "First step" }))
+            .toBeInTheDocument();
+        },
+      });
+    });
   });
 
   it("renders grammar example static variants through the shared shell", async () => {
