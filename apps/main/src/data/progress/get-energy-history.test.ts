@@ -65,6 +65,35 @@ describe("authenticated users", () => {
       expect(result?.average).toBe(75);
     });
 
+    it("includes current energy from the user progress row", async () => {
+      const user = await userFixture();
+      const headers = await signInAs(user.email, user.password);
+
+      const today = new Date();
+
+      const todayMidnight = new Date(
+        Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
+      );
+
+      const fiveDaysAgo = new Date(todayMidnight.getTime() - 5 * 86_400_000);
+
+      await prisma.userProgress.create({
+        data: { currentEnergy: 50, lastActiveAt: fiveDaysAgo, userId: user.id },
+      });
+
+      const date = createSafeDate(0);
+
+      await prisma.dailyProgress.create({
+        data: { date, dayOfWeek: date.getDay(), energyAtEnd: 75, userId: user.id },
+      });
+
+      const result = await getEnergyHistory({ headers, period: "month" });
+
+      expect(result).not.toBeNull();
+      expect(result?.average).toBe(75);
+      expect(result?.currentEnergy).toBe(46);
+    });
+
     it("calculates comparison with previous month", async () => {
       const user = await userFixture();
       const headers = await signInAs(user.email, user.password);

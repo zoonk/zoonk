@@ -690,6 +690,14 @@ msgstr "Sube cuando respondes correctamente y baja cuando respondes mal o pasas 
 msgid "okV1HG"
 msgstr "No es una racha. Pasar un día sin estudiar no pone la energía en cero. Baja un poco, pero puedes recuperarla cuando vuelves."
 
+#: src/app/(progress)/energy/energy-stats.tsx
+msgid "zLCmVM"
+msgstr "Energía actual"
+
+#: src/app/(progress)/energy/energy-stats.tsx
+msgid "yGxJvo"
+msgstr "{value}% promedio"
+
 #: src/app/(progress)/energy/page.tsx
 msgid "AZMpf3"
 msgstr "La energía es una puntuación de 0% a 100% basada en tu actividad y precisión recientes."
