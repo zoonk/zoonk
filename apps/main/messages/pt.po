@@ -660,7 +660,7 @@ msgid "OlW5Z8"
 msgstr "Nenhum dado disponível para este período"
 
 #: src/app/(progress)/_components/progress-day-count-label.ts
-msgid "xcWsw2"
+msgid "r9koty"
 msgstr "{count, plural, =0 {# dias} one {# dia} other {# dias}}"
 
 #: src/app/(progress)/_components/progress-empty-state.tsx
