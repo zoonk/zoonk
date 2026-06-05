@@ -305,7 +305,7 @@ async function completeRemainingReviewSteps({
 }
 
 test.describe("Review Step", () => {
-  test("complete all review steps to reach completion screen", async ({ authenticatedPage }) => {
+  test("complete all review steps to reach completion screen", async ({ userWithoutProgress }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const completionScoreText = "5/5";
     const sentenceWord1 = `Hola-${uniqueId}`;
@@ -332,20 +332,20 @@ test.describe("Review Step", () => {
       words,
     });
 
-    await authenticatedPage.goto(url);
+    await userWithoutProgress.goto(url);
 
     // Steps are shuffled, so complete each step by detecting its type.
     // 5 total steps: 4 vocabulary + 1 reading
     await completeRemainingReviewSteps({
       completionScoreText,
-      page: authenticatedPage,
+      page: userWithoutProgress,
       remainingStepCount: 5,
       sentenceWord1,
       sentenceWord2,
       translationToWord,
     });
 
-    const completionScreen = authenticatedPage.getByRole("status");
+    const completionScreen = userWithoutProgress.getByRole("status");
 
     await expect(completionScreen).toBeVisible();
 

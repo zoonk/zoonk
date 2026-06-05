@@ -3,6 +3,7 @@ import { UpgradeCTA } from "@/components/subscription/upgrade-cta";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getLesson as getCatalogLesson } from "@/data/lessons/get-lesson";
 import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
+import { getPlayerProgressSnapshot } from "@/data/progress/get-player-progress-snapshot";
 import { getLessonDisplayMeta, getLessonSeoMeta } from "@/lib/lessons";
 import { hasActiveSubscription } from "@zoonk/core/auth/subscription";
 import { getLessonAccessRequirement } from "@zoonk/core/lessons/access";
@@ -194,6 +195,7 @@ export default async function LessonPage({ params }: Props) {
     nextLesson,
     reviewLessonData,
     totalBrainPower,
+    progressSnapshot,
     chapterLessons,
     courseChapters,
   ] = await Promise.all([
@@ -210,6 +212,7 @@ export default async function LessonPage({ params }: Props) {
     }),
     fetchReviewLessonData(lessonShell.id),
     getTotalBrainPower(),
+    getPlayerProgressSnapshot(),
     listChapterLessons({ chapterId: lessonShell.chapter.id }),
     listCourseChapters({ courseId: lessonShell.chapter.course.id }),
   ]);
@@ -292,6 +295,7 @@ export default async function LessonPage({ params }: Props) {
       lessonTitle={lessonMeta.title}
       nextChapter={nextChapter}
       nextLesson={nextLesson}
+      progressSnapshot={progressSnapshot}
       totalBrainPower={totalBrainPower}
       userEmail={session?.user.email}
       userName={session?.user.name ?? null}

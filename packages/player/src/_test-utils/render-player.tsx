@@ -3,6 +3,7 @@
 import { render } from "@testing-library/react";
 import { type CompletionInput } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { type PlayerProgressSnapshot } from "../completion-milestones";
 import { PlayerShell } from "../components/player-shell";
 import {
   type PlayerLessonProgress,
@@ -58,6 +59,7 @@ export function renderPlayer({
   onComplete = noop,
   onEscape = noop,
   onNext,
+  progressSnapshot = null,
   totalBrainPower = 0,
   viewer = { isAuthenticated: false, userName: null },
 }: {
@@ -71,6 +73,7 @@ export function renderPlayer({
   onComplete?: (input: CompletionInput) => void;
   onEscape?: () => void;
   onNext?: () => void;
+  progressSnapshot?: PlayerProgressSnapshot | null;
   totalBrainPower?: number;
   viewer?: PlayerViewer;
 }) {
@@ -86,6 +89,7 @@ export function renderPlayer({
       onComplete={onComplete}
       onEscape={onEscape}
       onNext={onNext}
+      progressSnapshot={progressSnapshot}
       totalBrainPower={totalBrainPower}
       viewer={viewer}
     >
@@ -117,6 +121,7 @@ export function buildNavigation(overrides: Partial<PlayerNavigation> = {}): Play
   return {
     chapterHref: "/chapter",
     courseHref: "/course",
+    energyHref: "/energy",
     levelHref: "/level",
     loginHref: "/login",
     nextLessonHref: "/lesson/play",

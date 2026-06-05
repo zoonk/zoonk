@@ -3,6 +3,11 @@
 import { type CompletionInput } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type Dispatch, useCallback } from "react";
 import { checkStep } from "./check-step";
+import {
+  rememberCompletionMilestones,
+  rememberCompletionProgress,
+} from "./completion-milestone-storage";
+import { getCompletionMilestones } from "./completion-milestones";
 import { buildCompletionInput, getPlayerTransition } from "./player-controller";
 import { type PlayerStepChangeEvent, getPlayerStepChangeEvent } from "./player-events";
 import {
@@ -20,6 +25,32 @@ export type PlayerActions = {
   restart: () => void;
   selectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
 };
+
+/**
+ * Stores the milestones that this completion will show so later prefetched
+ * lesson pages do not repeat the same milestone from an older progress snapshot.
+ */
+function rememberCompletedStateMilestones(state: PlayerState) {
+  if (!state.completion) {
+    return;
+  }
+
+  const milestones = getCompletionMilestones({
+    completion: state.completion,
+    localDate: state.localDate,
+    previousTotalBrainPower: state.totalBrainPower,
+    progressSnapshot: state.progressSnapshot,
+    shownMilestoneKeys: state.shownCompletionMilestoneKeys,
+  });
+
+  rememberCompletionMilestones({ localDate: state.localDate, milestones });
+
+  rememberCompletionProgress({
+    completion: state.completion,
+    localDate: state.localDate,
+    progressSnapshot: state.progressSnapshot,
+  });
+}
 
 /**
  * Owns reducer dispatch side effects so host apps can react to semantic player
@@ -44,6 +75,7 @@ export function usePlayerActions({
       dispatch(action);
 
       if (transition.shouldPersistCompletion) {
+        rememberCompletedStateMilestones(transition.nextState);
         onComplete(buildCompletionInput(transition.nextState));
       }
 

@@ -4,6 +4,11 @@ import { type CompletionInput } from "@zoonk/core/player/contracts/completion-in
 import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { useCallback, useMemo, useReducer } from "react";
 import {
+  getEffectiveCompletionProgressSnapshot,
+  getStoredCompletionMilestoneKeys,
+} from "./completion-milestone-storage";
+import { type PlayerProgressSnapshot } from "./completion-milestones";
+import {
   PlayerConfigContext,
   type PlayerLessonProgress,
   type PlayerMilestone,
@@ -11,6 +16,7 @@ import {
   PlayerRuntimeContext,
   type PlayerViewer,
 } from "./player-context";
+import { getLocalDate } from "./player-date";
 import { type PlayerStepChangeEvent } from "./player-events";
 import { type InitialStateInput } from "./player-initial-state";
 import { createInitialState, playerReducer } from "./player-reducer";
@@ -20,6 +26,7 @@ import { usePlayerKeyboard } from "./use-player-keyboard";
 import { UserNameProvider } from "./user-name-context";
 
 export type { PlayerStepChangeEvent } from "./player-events";
+export type { PlayerProgressSnapshot } from "./completion-milestones";
 
 export function PlayerProvider({
   lesson,
@@ -34,6 +41,7 @@ export function PlayerProvider({
   onEscape,
   onNext,
   onStepChange,
+  progressSnapshot = null,
   totalBrainPower,
   viewer,
 }: {
@@ -49,12 +57,21 @@ export function PlayerProvider({
   onEscape: () => void;
   onNext?: () => void;
   onStepChange?: (event: PlayerStepChangeEvent) => void;
+  progressSnapshot?: PlayerProgressSnapshot | null;
   totalBrainPower: number;
   viewer: PlayerViewer;
 }) {
   const initInput: InitialStateInput = useMemo(
-    () => ({ lesson, totalBrainPower }),
-    [lesson, totalBrainPower],
+    () => ({
+      lesson,
+      progressSnapshot: getEffectiveCompletionProgressSnapshot({
+        localDate: getLocalDate(new Date()),
+        progressSnapshot,
+      }),
+      shownCompletionMilestoneKeys: getStoredCompletionMilestoneKeys(),
+      totalBrainPower,
+    }),
+    [lesson, progressSnapshot, totalBrainPower],
   );
 
   const [state, dispatch] = useReducer(playerReducer, initInput, createInitialState);

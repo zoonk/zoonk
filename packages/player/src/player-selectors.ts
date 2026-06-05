@@ -33,7 +33,10 @@ export function getActiveCompletionMilestone(state: PlayerState) {
   return (
     getCompletionMilestones({
       completion: state.completion,
+      localDate: state.localDate,
       previousTotalBrainPower: state.totalBrainPower,
+      progressSnapshot: state.progressSnapshot,
+      shownMilestoneKeys: state.shownCompletionMilestoneKeys,
     })[state.completionMilestoneIndex] ?? null
   );
 }

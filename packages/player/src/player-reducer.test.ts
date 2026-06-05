@@ -63,9 +63,12 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
     currentStepIndex: 0,
     lessonId: "lesson-1",
     lessonKind: "quiz",
+    localDate: "2026-06-05",
     phase: "playing",
+    progressSnapshot: null,
     results: {},
     selectedAnswers: {},
+    shownCompletionMilestoneKeys: [],
     startedAt: 1000,
     stepStartedAt: 1000,
     stepTimings: {},
@@ -105,6 +108,24 @@ describe(createInitialState, () => {
   it("stores totalBrainPower from input", () => {
     const state = createInitialState({ lesson: buildLesson(), totalBrainPower: 500 });
     expect(state.totalBrainPower).toBe(500);
+  });
+
+  it("stores the progress snapshot from input", () => {
+    const progressSnapshot = {
+      currentEnergy: 20,
+      fullEnergyDays: 30,
+      highestPreviousDailyBrainPower: 40,
+      todayBrainPower: 10,
+      todayEnergyAtEnd: 20,
+    };
+
+    const state = createInitialState({
+      lesson: buildLesson(),
+      progressSnapshot,
+      totalBrainPower: 0,
+    });
+
+    expect(state.progressSnapshot).toStrictEqual(progressSnapshot);
   });
 
   it("pre-populates selectedAnswers for sortOrder steps", () => {
@@ -525,6 +546,42 @@ describe("local completion computation", () => {
     const next = playerReducer(state, { type: "CONTINUE" });
 
     expect(next.completionMilestoneIndex).toBeNull();
+  });
+
+  it("uses CONTINUE to move through multiple completion milestones before the summary", () => {
+    const state = buildState({
+      completion: {
+        belt: {
+          bpPerLevel: 250,
+          bpToNextLevel: 250,
+          color: "white",
+          isMaxLevel: false,
+          level: 2,
+          progressInLevel: 0,
+        },
+        brainPower: 10,
+        correctCount: 1,
+        energyDelta: 0.2,
+        incorrectCount: 0,
+        newTotalBp: 250,
+      },
+      completionMilestoneIndex: 0,
+      phase: "completed",
+      progressSnapshot: {
+        currentEnergy: 9.9,
+        fullEnergyDays: 0,
+        highestPreviousDailyBrainPower: 100,
+        todayBrainPower: 0,
+        todayEnergyAtEnd: null,
+      },
+      totalBrainPower: 240,
+    });
+
+    const energyMilestoneState = playerReducer(state, { type: "CONTINUE" });
+    const summaryState = playerReducer(energyMilestoneState, { type: "CONTINUE" });
+
+    expect(energyMilestoneState.completionMilestoneIndex).toBe(1);
+    expect(summaryState.completionMilestoneIndex).toBeNull();
   });
 
   it("resets completion to null on RESTART", () => {

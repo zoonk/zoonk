@@ -69,34 +69,61 @@ msgstr "Sign up to track your progress"
 msgid "M8B177"
 msgstr "Log in to save your progress"
 
-#: src/components/completion-level-milestone-screen.tsx
+#: src/components/completion-brain-power-milestone.tsx
+msgid "D7TYjj"
+msgstr "Daily record"
+
+#: src/components/completion-brain-power-milestone.tsx
+msgid "d9jO0T"
+msgstr "You have never learned as much as you did today. Your Brain Power increased by {brainPower} BP. Congrats!"
+
+#: src/components/completion-energy-milestone.tsx
+msgid "m2WzLQ"
+msgstr "Max Energy!"
+
+#: src/components/completion-energy-milestone.tsx
+msgid "Fo6YtA"
+msgstr "Congrats! You reached max Energy. Keep practicing every day to keep your Energy at 100%."
+
+#: src/components/completion-energy-milestone.tsx
+msgid "vlOyrO"
+msgstr "{energy}% Energy"
+
+#: src/components/completion-energy-milestone.tsx
+msgid "3Jd+mJ"
+msgstr "Your effort is paying off. Complete lessons every day to increase your Energy."
+
+#: src/components/completion-energy-milestone.tsx
+msgid "5YVYKd"
+msgstr "1 year of max Energy"
+
+#: src/components/completion-energy-milestone.tsx
+msgid "1WNk4i"
+msgstr "{days} days of max Energy"
+
+#: src/components/completion-energy-milestone.tsx
+msgid "cIxpmv"
+msgstr "Wow, what incredible consistency! Keep studying every day to keep your Energy at 100%."
+
+#: src/components/completion-level-milestone.tsx
 msgid "3UK8wh"
 msgstr "{color} belt"
 
-#: src/components/completion-level-milestone-screen.tsx
-msgid "4VdoD5"
-msgstr "Brain Power up"
+#: src/components/completion-level-milestone.tsx
+msgid "155cHi"
+msgstr "Level achieved"
 
-#: src/components/completion-level-milestone-screen.tsx
-msgid "Fdgxkm"
-msgstr "Your Brain Power is up. That means your knowledge is increasing, and you became a {color} belt, level {level}."
+#: src/components/completion-level-milestone.tsx
+msgid "mb2zm+"
+msgstr "You strengthened your mind and reached level {level} of the {color} belt. Congrats!"
 
-#: src/components/completion-level-milestone-screen.tsx
-msgid "DTbXYC"
-msgstr "Halfway to your next level"
+#: src/components/completion-level-milestone.tsx
+msgid "Bk6B6r"
+msgstr "Almost there"
 
-#: src/components/completion-level-milestone-screen.tsx
-msgid "HmzBWG"
-msgstr "{count, plural, one {Complete # more lesson to reach {color} belt, level {level}.} other {Complete # more lessons to reach {color} belt, level {level}.}}"
-
-#: src/components/completion-level-milestone-screen.tsx
-#: src/components/step-action-button.tsx
-msgid "acrOoz"
-msgstr "Continue"
-
-#: src/components/completion-level-milestone-screen.tsx
-msgid "Q0R3MU"
-msgstr "Learn about levels"
+#: src/components/completion-level-milestone.tsx
+msgid "34q+SH"
+msgstr "{count, plural, one {Your knowledge is growing. Complete # more lesson to reach level {level} of the {color} belt.} other {Your knowledge is growing. Complete # more lessons to reach level {level} of the {color} belt.}}"
 
 #: src/components/completion-milestone-actions.tsx
 msgid "DiIkZH"
@@ -109,6 +136,19 @@ msgstr "Review Course"
 #: src/components/completion-milestone-actions.tsx
 msgid "wm/M34"
 msgstr "Review Chapter"
+
+#: src/components/completion-progress-milestone-screen.tsx
+msgid "iSioEh"
+msgstr "Learn about Energy"
+
+#: src/components/completion-progress-milestone-screen.tsx
+msgid "Q0R3MU"
+msgstr "Learn about levels"
+
+#: src/components/completion-progress-milestone-screen.tsx
+#: src/components/step-action-button.tsx
+msgid "acrOoz"
+msgstr "Continue"
 
 #: src/components/completion-screen.tsx
 msgid "95stPq"

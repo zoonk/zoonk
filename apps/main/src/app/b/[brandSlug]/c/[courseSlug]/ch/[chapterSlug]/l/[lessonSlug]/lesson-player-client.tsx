@@ -4,7 +4,11 @@ import { ContentFeedback } from "@/components/feedback/content-feedback";
 import { trackLessonCompleted, trackPlayerLoaded, trackPlayerSecondStep } from "@/lib/track-events";
 import { type CompletionInput } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { PlayerProvider, type PlayerStepChangeEvent } from "@zoonk/player/provider";
+import {
+  type PlayerProgressSnapshot,
+  PlayerProvider,
+  type PlayerStepChangeEvent,
+} from "@zoonk/player/provider";
 import { PlayerShell } from "@zoonk/player/shell";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef } from "react";
@@ -34,6 +38,7 @@ export function LessonPlayerClient({
   lessonTitle,
   nextChapter,
   nextLesson,
+  progressSnapshot,
   totalBrainPower,
   userEmail,
   userName,
@@ -50,6 +55,7 @@ export function LessonPlayerClient({
   lessonTitle: string;
   nextChapter: { brandSlug: string; chapterSlug: string; courseSlug: string } | null;
   nextLesson: { chapterSlug: string; lessonSlug: string; lessonTitle: string | null } | null;
+  progressSnapshot: PlayerProgressSnapshot | null;
   totalBrainPower: number;
   userEmail?: string;
   userName: string | null;
@@ -150,6 +156,7 @@ export function LessonPlayerClient({
       onEscape={() => router.push(model.navigation.chapterHref)}
       onNext={handleNext}
       onStepChange={handleStepChange}
+      progressSnapshot={progressSnapshot}
       totalBrainPower={totalBrainPower}
       viewer={{
         completionFooter: (
