@@ -195,6 +195,7 @@ export function buildLessonPlayerModel({
     navigation: {
       chapterHref,
       courseHref,
+      energyHref: "/energy",
       levelHref: "/level",
       loginHref: "/login",
       nextLessonHref,

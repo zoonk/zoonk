@@ -12,7 +12,7 @@ import {
   getSelectedAnswer,
 } from "../player-selectors";
 import { describePlayerStep } from "../player-step";
-import { CompletionLevelMilestoneScreen } from "./completion-level-milestone-screen";
+import { CompletionProgressMilestoneScreen } from "./completion-progress-milestone-screen";
 import { CompletionScreenContent } from "./completion-screen";
 import { FeedbackScreenContent } from "./feedback-screen";
 import { StepActionButton } from "./step-action-button";
@@ -72,7 +72,7 @@ function hasEmbeddedDesktopAction({
 
 export function StageContent() {
   const { actions, screen, state } = usePlayerRuntime();
-  const { chapterHref, levelHref, nextLessonHref } = usePlayerNavigation();
+  const { chapterHref, energyHref, levelHref, nextLessonHref } = usePlayerNavigation();
 
   const activeCompletionMilestone = getActiveCompletionMilestone(state);
   const completionResult = getCompletionResult(state);
@@ -83,7 +83,8 @@ export function StageContent() {
   if (screen.kind === "completed") {
     if (activeCompletionMilestone) {
       return (
-        <CompletionLevelMilestoneScreen
+        <CompletionProgressMilestoneScreen
+          energyHref={energyHref}
           levelHref={levelHref}
           milestone={activeCompletionMilestone}
           onContinue={actions.continue}

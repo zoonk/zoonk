@@ -132,9 +132,9 @@ describe("player browser integration: completion", () => {
 
     const milestoneScreen = page.getByRole("status");
 
-    await expect.element(milestoneScreen.getByText(/brain power up/iu)).toBeInTheDocument();
+    await expect.element(milestoneScreen.getByText(/level achieved/iu)).toBeInTheDocument();
 
-    await expect.element(milestoneScreen.getByText(/your brain power is up/iu)).toBeInTheDocument();
+    await expect.element(milestoneScreen.getByText(/strengthened your mind/iu)).toBeInTheDocument();
 
     await expect
       .element(milestoneScreen.getByRole("link", { name: /learn about levels/iu }))
@@ -164,9 +164,7 @@ describe("player browser integration: completion", () => {
 
     const milestoneScreen = page.getByRole("status");
 
-    await expect
-      .element(milestoneScreen.getByText(/halfway to your next level/iu))
-      .toBeInTheDocument();
+    await expect.element(milestoneScreen.getByText(/almost there/iu)).toBeInTheDocument();
 
     await expect.element(milestoneScreen.getByText(/complete/iu)).toBeInTheDocument();
 
@@ -175,6 +173,90 @@ describe("player browser integration: completion", () => {
     await expect
       .element(page.getByRole("status").getByRole("link", { name: "Next" }))
       .toBeInTheDocument();
+  });
+
+  it("shows an Energy threshold milestone with an Energy page link", async () => {
+    renderPlayer({
+      lesson: buildCompletionQuizLesson(),
+      progressSnapshot: {
+        currentEnergy: 9.9,
+        fullEnergyDays: 0,
+        highestPreviousDailyBrainPower: 100,
+        todayBrainPower: 0,
+        todayEnergyAtEnd: null,
+      },
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await completeSingleChoiceLesson();
+
+    const milestoneScreen = page.getByRole("status");
+
+    await expect.element(milestoneScreen.getByText(/10% energy/iu)).toBeInTheDocument();
+
+    await expect.element(milestoneScreen.getByText(/effort is paying off/iu)).toBeInTheDocument();
+
+    await expect
+      .element(milestoneScreen.getByRole("link", { name: /learn about energy/iu }))
+      .toHaveAttribute("href", "/energy");
+  });
+
+  it("shows full-energy day milestones after the Energy threshold screen", async () => {
+    renderPlayer({
+      lesson: buildCompletionQuizLesson(),
+      progressSnapshot: {
+        currentEnergy: 99.8,
+        fullEnergyDays: 29,
+        highestPreviousDailyBrainPower: 100,
+        todayBrainPower: 0,
+        todayEnergyAtEnd: 99.8,
+      },
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await completeSingleChoiceLesson();
+
+    const thresholdScreen = page.getByRole("status");
+
+    await expect
+      .element(thresholdScreen.getByRole("heading", { name: /max energy/iu }))
+      .toBeInTheDocument();
+
+    await thresholdScreen.getByRole("button", { name: /continue/iu }).click();
+
+    const fullEnergyScreen = page.getByRole("status");
+
+    await expect.element(fullEnergyScreen.getByText(/30 days of max energy/iu)).toBeInTheDocument();
+
+    await expect
+      .element(fullEnergyScreen.getByRole("link", { name: /learn about energy/iu }))
+      .toHaveAttribute("href", "/energy");
+  });
+
+  it("shows a daily Brain Power record milestone with a level page link", async () => {
+    renderPlayer({
+      lesson: buildCompletionQuizLesson(),
+      progressSnapshot: {
+        currentEnergy: 20,
+        fullEnergyDays: 0,
+        highestPreviousDailyBrainPower: 40,
+        todayBrainPower: 40,
+        todayEnergyAtEnd: 20,
+      },
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await completeSingleChoiceLesson();
+
+    const milestoneScreen = page.getByRole("status");
+
+    await expect.element(milestoneScreen.getByText(/daily record/iu)).toBeInTheDocument();
+
+    await expect.element(milestoneScreen.getByText(/50 BP/iu)).toBeInTheDocument();
+
+    await expect
+      .element(milestoneScreen.getByRole("link", { name: /learn about levels/iu }))
+      .toHaveAttribute("href", "/level");
   });
 
   it("omits next lesson and level progress when optional lesson links are missing", async () => {

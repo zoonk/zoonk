@@ -2,11 +2,14 @@ import { type AnswerResult } from "@zoonk/core/player/contracts/check-answer";
 import { type CompletionResult } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type LessonKind } from "@zoonk/core/steps/contract/content";
+import { type PlayerCompletionMilestoneKey } from "./completion-milestone-keys";
 import {
+  type PlayerProgressSnapshot,
   getCompletionMilestones,
   getInitialCompletionMilestoneIndex,
 } from "./completion-milestones";
 import { computeLocalCompletion } from "./player-completion";
+import { getLocalDate } from "./player-date";
 import { buildInitialAnswers } from "./player-initial-state";
 import { describePlayerStep } from "./player-step";
 import { getPlayerStepBehavior } from "./player-step-behavior";
@@ -39,13 +42,16 @@ export type PlayerState = {
   lessonKind: LessonKind;
   completion: CompletionResult | null;
   currentStepIndex: number;
+  localDate: string;
   phase: PlayerPhase;
+  progressSnapshot: PlayerProgressSnapshot | null;
   results: Record<string, StepResult>;
   selectedAnswers: Record<string, SelectedAnswer>;
   startedAt: number;
   stepStartedAt: number;
   steps: SerializedStep[];
   stepTimings: Record<string, StepTiming>;
+  shownCompletionMilestoneKeys: PlayerCompletionMilestoneKey[];
   totalBrainPower: number;
 };
 
@@ -125,7 +131,8 @@ function handleCheckAnswer(
 }
 
 function completeWith(state: PlayerState): PlayerState {
-  const completed: PlayerState = { ...state, phase: "completed" };
+  const localDate = getLocalDate(new Date());
+  const completed: PlayerState = { ...state, localDate, phase: "completed" };
   const completion = computeLocalCompletion(completed);
 
   return {
@@ -133,7 +140,10 @@ function completeWith(state: PlayerState): PlayerState {
     completion,
     completionMilestoneIndex: getInitialCompletionMilestoneIndex({
       completion,
+      localDate,
       previousTotalBrainPower: state.totalBrainPower,
+      progressSnapshot: state.progressSnapshot,
+      shownMilestoneKeys: state.shownCompletionMilestoneKeys,
     }),
   };
 }
@@ -152,7 +162,10 @@ function continueCompletionMilestone(state: PlayerState): PlayerState {
 
   const milestones = getCompletionMilestones({
     completion: state.completion,
+    localDate: state.localDate,
     previousTotalBrainPower: state.totalBrainPower,
+    progressSnapshot: state.progressSnapshot,
+    shownMilestoneKeys: state.shownCompletionMilestoneKeys,
   });
 
   if (nextIndex >= milestones.length) {
@@ -241,7 +254,9 @@ function handleRestart(state: PlayerState): PlayerState {
     completion: null,
     completionMilestoneIndex: null,
     currentStepIndex: 0,
+    localDate: getLocalDate(new Date()),
     phase: "playing",
+    progressSnapshot: state.progressSnapshot,
     results: {},
     selectedAnswers: buildInitialAnswers(state.steps),
     startedAt: now,
