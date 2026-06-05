@@ -27,7 +27,43 @@ type StoredCompletionProgress = {
  * Keeping the guard in one place lets callers stay focused on milestone logic.
  */
 function getSessionStorage() {
-  return globalThis.sessionStorage;
+  if (globalThis.window === undefined) {
+    return null;
+  }
+
+  try {
+    return globalThis.window.sessionStorage;
+  } catch {
+    return null;
+  }
+}
+
+function getSessionStorageItem(key: string) {
+  const storage = getSessionStorage();
+
+  if (!storage) {
+    return null;
+  }
+
+  try {
+    return storage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function setSessionStorageItem(key: string, value: string) {
+  const storage = getSessionStorage();
+
+  if (!storage) {
+    return;
+  }
+
+  try {
+    storage.setItem(key, value);
+  } catch {
+    // Completion storage is a best-effort cache; persistence must continue.
+  }
 }
 
 /**
@@ -82,11 +118,7 @@ export function getEffectiveCompletionProgressSnapshot({
   localDate: string;
   progressSnapshot: PlayerProgressSnapshot | null;
 }): PlayerProgressSnapshot | null {
-  const storage = getSessionStorage();
-
-  const storedProgress = parseStoredCompletionProgress(
-    storage?.getItem(PROGRESS_STORAGE_KEY) ?? null,
-  );
+  const storedProgress = parseStoredCompletionProgress(getSessionStorageItem(PROGRESS_STORAGE_KEY));
 
   if (!storedProgress || storedProgress.localDate !== localDate) {
     return progressSnapshot;
@@ -120,13 +152,7 @@ export function getEffectiveCompletionProgressSnapshot({
  * can still suppress milestones already shown in the same tab.
  */
 export function getStoredCompletionMilestoneKeys(): PlayerCompletionMilestoneKey[] {
-  const storage = getSessionStorage();
-
-  if (!storage) {
-    return [];
-  }
-
-  const rawValue = storage.getItem(MILESTONE_KEYS_STORAGE_KEY);
+  const rawValue = getSessionStorageItem(MILESTONE_KEYS_STORAGE_KEY);
 
   if (!rawValue) {
     return [];
@@ -189,14 +215,13 @@ export function rememberCompletionProgress({
   localDate: string;
   progressSnapshot: PlayerProgressSnapshot | null;
 }) {
-  const storage = getSessionStorage();
   const nextProgress = getNextStoredCompletionProgress({ completion, localDate, progressSnapshot });
 
-  if (!storage || !nextProgress) {
+  if (!nextProgress) {
     return;
   }
 
-  storage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(nextProgress));
+  setSessionStorageItem(PROGRESS_STORAGE_KEY, JSON.stringify(nextProgress));
 }
 
 /**
@@ -211,9 +236,7 @@ export function rememberCompletionMilestones({
   localDate: string;
   milestones: PlayerCompletionMilestone[];
 }) {
-  const storage = getSessionStorage();
-
-  if (!storage || milestones.length === 0) {
+  if (milestones.length === 0) {
     return;
   }
 
@@ -225,5 +248,5 @@ export function rememberCompletionMilestones({
 
   const uniqueKeys = [...new Set([...existingKeys, ...nextKeys])].slice(-MAX_STORED_MILESTONE_KEYS);
 
-  storage.setItem(MILESTONE_KEYS_STORAGE_KEY, JSON.stringify(uniqueKeys));
+  setSessionStorageItem(MILESTONE_KEYS_STORAGE_KEY, JSON.stringify(uniqueKeys));
 }
