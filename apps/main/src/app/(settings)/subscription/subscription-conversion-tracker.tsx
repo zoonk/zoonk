@@ -11,14 +11,17 @@ const MAX_CONFIRMATION_REFRESH_COUNT = 5;
 
 /**
  * Reports the Google Ads conversion only when Stripe returned to the
- * subscription page and the server-rendered billing state already shows an
- * active Stripe subscription.
+ * subscription page, analytics are enabled, and the server-rendered billing
+ * state already shows an active Stripe subscription. Disabled users still need
+ * the refresh and URL cleanup path, so only the conversion call is skipped.
  */
 export function SubscriptionConversionTracker({
   activeSubscriptionId,
+  analyticsDisabled,
   stripeCheckoutCompleted,
 }: {
   activeSubscriptionId: string | null;
+  analyticsDisabled: boolean;
   stripeCheckoutCompleted: boolean;
 }) {
   const router = useRouter();
@@ -39,10 +42,13 @@ export function SubscriptionConversionTracker({
       return;
     }
 
-    trackGoogleAdsSubscriptionConversion();
+    if (!analyticsDisabled) {
+      trackGoogleAdsSubscriptionConversion();
+    }
+
     markSubscriptionConversionHandled(activeSubscriptionId);
     removeStripeCheckoutParamFromCurrentUrl();
-  }, [activeSubscriptionId, refresh, stripeCheckoutCompleted]);
+  }, [activeSubscriptionId, analyticsDisabled, refresh, stripeCheckoutCompleted]);
 
   return null;
 }

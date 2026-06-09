@@ -42,6 +42,7 @@ export async function UserHeader({ userId }: { userId: string }) {
               </Badge>
 
               {user.emailVerified && <Badge variant="secondary">Verified</Badge>}
+              {user.analyticsDisabled && <Badge variant="secondary">Analytics excluded</Badge>}
               {user.banned && <Badge variant="destructive">Banned</Badge>}
             </div>
           </div>

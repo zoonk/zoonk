@@ -1,5 +1,6 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
+import { trackedAnalyticsUserSql } from "@/data/stats/_utils/analytics-user-filter";
 import { prisma } from "@zoonk/db";
 
 export const getAvgLessonsPerLearner = cacheAdminData(async () => {
@@ -8,7 +9,8 @@ export const getAvgLessonsPerLearner = cacheAdminData(async () => {
       COUNT(*) as total,
       COUNT(DISTINCT user_id) as learners
     FROM lesson_progress
-    WHERE completed_at IS NOT NULL
+    JOIN users ON users.id = lesson_progress.user_id
+    WHERE ${trackedAnalyticsUserSql} AND completed_at IS NOT NULL
   `;
 
   const total = Number(result[0].total);

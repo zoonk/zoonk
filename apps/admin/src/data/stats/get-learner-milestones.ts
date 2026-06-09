@@ -1,5 +1,6 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
+import { trackedAnalyticsUserSql } from "@/data/stats/_utils/analytics-user-filter";
 import { type LearnerMilestoneKind } from "@/lib/learner-milestone-filters";
 import { type Sql, prisma, sql } from "@zoonk/db";
 
@@ -113,7 +114,8 @@ async function countUsersByLearnerMilestone({
     FROM (
       SELECT user_id
       FROM lesson_progress
-      WHERE completed_at IS NOT NULL
+      JOIN users ON users.id = lesson_progress.user_id
+      WHERE ${trackedAnalyticsUserSql} AND completed_at IS NOT NULL
       GROUP BY user_id
       HAVING ${queryParts.havingFilter}
     ) qualifying_users
@@ -154,7 +156,8 @@ async function listUsersByLearnerMilestone({
         COUNT(DISTINCT completed_at::date) AS learning_days,
         MAX(completed_at) AS last_completed_at
       FROM lesson_progress
-      WHERE completed_at IS NOT NULL
+      JOIN users ON users.id = lesson_progress.user_id
+      WHERE ${trackedAnalyticsUserSql} AND completed_at IS NOT NULL
       GROUP BY user_id
       HAVING ${queryParts.havingFilter}
     ) learner_progress

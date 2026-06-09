@@ -1,5 +1,9 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
+import {
+  trackedAnalyticsUserSql,
+  trackedAnalyticsUserWhere,
+} from "@/data/stats/_utils/analytics-user-filter";
 import { prisma } from "@zoonk/db";
 
 export const getActivationRate = cacheAdminData(async () => {
@@ -7,9 +11,10 @@ export const getActivationRate = cacheAdminData(async () => {
     prisma.$queryRaw<[{ count: bigint }]>`
       SELECT COUNT(DISTINCT user_id) as count
       FROM lesson_progress
-      WHERE completed_at IS NOT NULL
+      JOIN users ON users.id = lesson_progress.user_id
+      WHERE ${trackedAnalyticsUserSql} AND completed_at IS NOT NULL
     `,
-    prisma.user.count(),
+    prisma.user.count({ where: trackedAnalyticsUserWhere }),
   ]);
 
   const activated = Number(activatedResult[0].count);

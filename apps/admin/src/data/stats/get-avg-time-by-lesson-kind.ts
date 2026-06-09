@@ -1,5 +1,6 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
+import { trackedAnalyticsUserSql } from "@/data/stats/_utils/analytics-user-filter";
 import { prisma } from "@zoonk/db";
 
 export const getAvgTimeByLessonKind = cacheAdminData(async (start: Date, end: Date) => {
@@ -13,7 +14,8 @@ export const getAvgTimeByLessonKind = cacheAdminData(async (start: Date, end: Da
       COUNT(*) as started
     FROM lesson_progress lp
     JOIN lessons l ON l.id = lp.lesson_id
-    WHERE lp.started_at >= ${start} AND lp.started_at <= ${end}
+    JOIN users ON users.id = lp.user_id
+    WHERE ${trackedAnalyticsUserSql} AND lp.started_at >= ${start} AND lp.started_at <= ${end}
     GROUP BY l.kind
     ORDER BY avg_duration DESC
   `;
