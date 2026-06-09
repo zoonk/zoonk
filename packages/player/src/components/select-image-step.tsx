@@ -61,6 +61,31 @@ function getImageOptionStatusLabel({
   return null;
 }
 
+/**
+ * Select-image quizzes usually compare two to four square images. A two-column
+ * mobile grid is easy to scan by touch, but larger screens should keep every
+ * option in one row so learners can compare the visual evidence without
+ * scrolling between rows.
+ */
+function getImageOptionLayout(optionCount: number): {
+  frameClassName: string;
+  gridClassName: string;
+} {
+  if (optionCount <= 1) {
+    return { frameClassName: "md:max-w-sm", gridClassName: "md:grid-cols-1" };
+  }
+
+  if (optionCount === 2) {
+    return { frameClassName: "md:max-w-2xl", gridClassName: "md:grid-cols-2" };
+  }
+
+  if (optionCount === 3) {
+    return { frameClassName: "md:max-w-3xl", gridClassName: "md:grid-cols-3" };
+  }
+
+  return { frameClassName: "md:max-w-4xl", gridClassName: "md:grid-cols-4" };
+}
+
 function ImageWithFallback({ alt, url }: { alt: string; url?: string }) {
   const [hasError, setHasError] = useState(false);
 
@@ -165,6 +190,7 @@ export function SelectImageStep({
   const hasResult = Boolean(result);
   const correctAnswerLabel = t("Correct answer");
   const yourAnswerLabel = t("Your answer");
+  const imageOptionLayout = getImageOptionLayout(content.options.length);
 
   const handleSelect = (index: number) => {
     if (result) {
@@ -187,10 +213,14 @@ export function SelectImageStep({
   });
 
   return (
-    <InteractiveStepLayout>
+    <InteractiveStepLayout className={imageOptionLayout.frameClassName}>
       {content.question && <QuestionText>{content.question}</QuestionText>}
 
-      <div aria-label={t("Image options")} className="grid grid-cols-2 gap-3" role="radiogroup">
+      <div
+        aria-label={t("Image options")}
+        className={cn("grid grid-cols-2 gap-3", imageOptionLayout.gridClassName)}
+        role="radiogroup"
+      >
         {content.options.map((option, index) => {
           const resultState =
             hasResult && selectedOptionId
