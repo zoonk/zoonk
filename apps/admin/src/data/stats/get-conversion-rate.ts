@@ -8,7 +8,7 @@ import { prisma } from "@zoonk/db";
 
 export const getConversionRate = cacheAdminData(async () => {
   const [paid, total] = await Promise.all([
-    countPaidTrackedSubscriptions(),
+    countPaidTrackedUsers(),
     prisma.user.count({ where: trackedAnalyticsUserWhere }),
   ]);
 
@@ -18,13 +18,12 @@ export const getConversionRate = cacheAdminData(async () => {
 });
 
 /**
- * Subscription rows store the owning user id as Better Auth's `reference_id`,
- * so raw SQL is the simplest way to apply the user analytics exclusion without
- * introducing a duplicate Prisma relation just for admin reporting.
+ * Conversion rate compares paid users against total users, so duplicate active
+ * subscription rows for one user must still count as one paid account.
  */
-async function countPaidTrackedSubscriptions() {
+async function countPaidTrackedUsers() {
   const result = await prisma.$queryRaw<[{ count: bigint }]>`
-    SELECT COUNT(*) AS count
+    SELECT COUNT(DISTINCT subscriptions.reference_id) AS count
     FROM subscriptions
     JOIN users ON users.id = subscriptions.reference_id
     WHERE
