@@ -1,3 +1,4 @@
+import { getCurrentUserAnalyticsDisabled } from "@/data/users/get-current-user-analytics-disabled";
 import { getStripePrices } from "@zoonk/core/auth/stripe-prices";
 import { getActiveSubscription } from "@zoonk/core/auth/subscription";
 import { prisma } from "@zoonk/db";
@@ -32,9 +33,10 @@ export async function SubscriptionPlans({
     [plan.lookupKey, plan.annualLookupKey].filter((key) => key !== null),
   );
 
-  const [subscription, priceMap] = await Promise.all([
+  const [subscription, priceMap, analyticsDisabled] = await Promise.all([
     getCurrentSubscription(requestHeaders),
     getStripePrices(lookupKeys, currency),
+    getCurrentUserAnalyticsDisabled(),
   ]);
 
   const titles: Record<string, string> = {
@@ -68,6 +70,7 @@ export async function SubscriptionPlans({
       <>
         <SubscriptionConversionTracker
           activeSubscriptionId={activeStripeSubscriptionId}
+          analyticsDisabled={analyticsDisabled}
           stripeCheckoutCompleted={stripeCheckoutCompleted}
         />
         <ManagedSubscription
@@ -105,6 +108,7 @@ export async function SubscriptionPlans({
     <>
       <SubscriptionConversionTracker
         activeSubscriptionId={activeStripeSubscriptionId}
+        analyticsDisabled={analyticsDisabled}
         stripeCheckoutCompleted={stripeCheckoutCompleted}
       />
       <PlanList

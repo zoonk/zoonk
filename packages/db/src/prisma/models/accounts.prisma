@@ -12,6 +12,7 @@ model User {
   banned             Boolean?             @default(false)
   banReason          String?              @map("ban_reason")
   banExpires         DateTime?            @map("ban_expires")
+  analyticsDisabled  Boolean              @default(false) @map("analytics_disabled")
   stripeCustomerId   String?              @map("stripe_customer_id")
   username           String?
   displayUsername    String?              @map("display_username")
