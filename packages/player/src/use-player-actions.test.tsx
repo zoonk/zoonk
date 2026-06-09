@@ -6,6 +6,7 @@ import {
   getEffectiveCompletionProgressSnapshot,
   getStoredCompletionMilestoneKeys,
 } from "./completion-milestone-storage";
+import { getLocalDate } from "./player-date";
 import { type PlayerState } from "./player-reducer";
 import { usePlayerActions } from "./use-player-actions";
 
@@ -64,8 +65,14 @@ describe(usePlayerActions, () => {
 
     const dispatch = vi.fn();
     const onComplete = vi.fn();
+    const completionDate = new Date(2026, 5, 5, 12);
+    const localDate = getLocalDate(completionDate);
+
+    vi.useFakeTimers();
+    vi.setSystemTime(completionDate);
 
     const state = buildState({
+      localDate,
       phase: "feedback",
       progressSnapshot: {
         currentEnergy: 9.9,
@@ -92,7 +99,7 @@ describe(usePlayerActions, () => {
 
     expect(
       getEffectiveCompletionProgressSnapshot({
-        localDate: "2026-06-05",
+        localDate,
         progressSnapshot: {
           currentEnergy: 9.9,
           fullEnergyDays: 0,

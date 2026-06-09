@@ -155,6 +155,33 @@ function buildLongStaticText() {
 }
 
 /**
+ * Rich text renders plain text inside inline spans, while the visual collision
+ * risk belongs to the block-level paragraph. Measuring the nearest paragraph
+ * keeps the regression focused on the readable copy box the learner sees.
+ */
+function getMeasuredTextBlock(element: HTMLElement) {
+  return element.closest("p") ?? element;
+}
+
+/**
+ * Desktop side arrows are allowed to float above empty stage space, but they
+ * should never cover readable lesson copy. A small gap gives the focus ring and
+ * touch target room without forcing tablet users back to the bottom bar.
+ */
+function expectHorizontalGap({
+  firstElement,
+  secondElement,
+}: {
+  firstElement: HTMLElement;
+  secondElement: HTMLElement;
+}) {
+  const firstRect = firstElement.getBoundingClientRect();
+  const secondRect = secondElement.getBoundingClientRect();
+
+  expect(secondRect.left).toBeGreaterThanOrEqual(firstRect.right + 8);
+}
+
+/**
  * Long static copy should not rely on the page body to scroll because the
  * player shell owns the viewport. This finds the nearest element that can
  * actually scroll the semantic content the learner is trying to read.
@@ -291,6 +318,45 @@ describe("player browser integration: static steps", () => {
             .element(page.getByRole("heading", { name: "First step" }))
             .toBeInTheDocument();
         },
+      });
+    });
+  });
+
+  it("keeps landscape tablet arrows outside image-backed static copy", async () => {
+    await runInTabletLandscapePlayerViewport(async () => {
+      renderPlayer({
+        lesson: buildSerializedLesson({
+          kind: "explanation",
+          steps: [
+            buildSerializedStep({
+              content: {
+                image: {
+                  prompt: "A tablet-safe static explanation image",
+                  url: buildInlineImageUrl({ label: "A tablet-safe static explanation image" }),
+                },
+                text: "This copy intentionally sits in the media column on a landscape tablet, where the next arrow used to cover the readable paragraph.",
+                title: "Tablet explanation",
+                variant: "text" as const,
+              },
+              id: "static-tablet-copy-safe",
+            }),
+          ],
+        }),
+        navigation: buildNavigation({ nextLessonHref: null }),
+        viewer: buildAuthenticatedViewer(),
+      });
+
+      await expect
+        .element(page.getByRole("heading", { name: "Tablet explanation" }))
+        .toBeInTheDocument();
+
+      const copy = getMeasuredTextBlock(
+        screen.getByText(/next arrow used to cover the readable paragraph/u),
+      );
+
+      expectHorizontalGap({
+        firstElement: copy,
+        secondElement: screen.getByRole("button", { name: /^Next step$/u }),
       });
     });
   });
