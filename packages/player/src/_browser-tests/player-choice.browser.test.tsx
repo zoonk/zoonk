@@ -43,7 +43,7 @@ describe("player browser integration: choice steps", () => {
 
     await page.getByRole("button", { name: /continue/iu }).click();
 
-    await expect.element(page.getByText("1/1")).toBeInTheDocument();
+    await expect.element(page.getByText("100%")).toBeInTheDocument();
     expect(onComplete).toHaveBeenCalledOnce();
   });
 
@@ -103,7 +103,7 @@ describe("player browser integration: choice steps", () => {
     await expect.element(page.getByText(/your answer:/iu)).toBeInTheDocument();
 
     await page.getByRole("button", { name: /continue/iu }).click();
-    await expect.element(page.getByText("1/1")).toBeInTheDocument();
+    await expect.element(page.getByText("100%")).toBeInTheDocument();
   });
 
   it("selects an image option and shows inline feedback", async () => {

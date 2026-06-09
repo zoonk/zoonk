@@ -241,7 +241,7 @@ describe("player browser integration: arrangement steps", () => {
     await page.getByRole("button", { name: /check/iu }).click();
 
     await expect.element(page.getByRole("status")).toBeInTheDocument();
-    await expect.element(page.getByText("0/1")).toBeInTheDocument();
+    await expect.element(page.getByText("0%")).toBeInTheDocument();
   });
 
   it("shows the correct order when the shared sort-order answer is wrong", async () => {

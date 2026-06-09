@@ -44,7 +44,7 @@ describe("player browser integration: word bank steps", () => {
     await expect.element(page.getByText(/correct!/iu)).toBeInTheDocument();
 
     await page.getByRole("button", { name: /continue/iu }).click();
-    await expect.element(page.getByText("1/1")).toBeInTheDocument();
+    await expect.element(page.getByText("100%")).toBeInTheDocument();
   });
 
   it("builds a reading answer from the word bank and shows inline feedback", async () => {
@@ -81,7 +81,7 @@ describe("player browser integration: word bank steps", () => {
 
     await expect.element(page.getByRole("button", { name: /continue/iu })).toBeInTheDocument();
     await page.getByRole("button", { name: /continue/iu }).click();
-    await expect.element(page.getByText("1/1")).toBeInTheDocument();
+    await expect.element(page.getByText("100%")).toBeInTheDocument();
   });
 
   it("shows reading word translations from the prompt sentence", async () => {
@@ -166,7 +166,7 @@ describe("player browser integration: word bank steps", () => {
       await controls.getByRole("button", { name: /check/iu }).click();
       await controls.getByRole("button", { name: /continue/iu }).click();
 
-      await expect.element(page.getByText("1/1")).toBeInTheDocument();
+      await expect.element(page.getByText("100%")).toBeInTheDocument();
     });
   });
 
