@@ -1,23 +1,25 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
-import {
-  trackedAnalyticsUserSql,
-  trackedAnalyticsUserWhere,
-} from "@/data/stats/_utils/analytics-user-filter";
+import { trackedAnalyticsUserWhere } from "@/data/stats/_utils/analytics-user-filter";
 import { prisma } from "@zoonk/db";
+import { BRAIN_POWER_PER_LESSON } from "@zoonk/utils/brain-power";
 
+/**
+ * Activation should follow earned Brain Power instead of lesson progress rows
+ * because progress resets can remove lesson rows while preserving the durable
+ * learning credit that proves the user completed at least one lesson.
+ */
 export const getActivationRate = cacheAdminData(async () => {
-  const [activatedResult, total] = await Promise.all([
-    prisma.$queryRaw<[{ count: bigint }]>`
-      SELECT COUNT(DISTINCT user_id) as count
-      FROM lesson_progress
-      JOIN users ON users.id = lesson_progress.user_id
-      WHERE ${trackedAnalyticsUserSql} AND completed_at IS NOT NULL
-    `,
+  const [activated, total] = await Promise.all([
+    prisma.user.count({
+      where: {
+        ...trackedAnalyticsUserWhere,
+        progress: { is: { totalBrainPower: { gte: BigInt(BRAIN_POWER_PER_LESSON) } } },
+      },
+    }),
     prisma.user.count({ where: trackedAnalyticsUserWhere }),
   ]);
 
-  const activated = Number(activatedResult[0].count);
   const rate = total === 0 ? 0 : (activated / total) * 100;
 
   return { activated, rate, total };
