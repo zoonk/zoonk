@@ -10,6 +10,29 @@ msgstr ""
 msgid "dVItHD"
 msgstr "Sign in to Zoonk"
 
+#: src/app/auth/login/email-login-form.tsx
+msgid "sy+pv5"
+msgstr "Email"
+
+#: src/app/auth/login/email-login-form.tsx
+msgid "apQW0E"
+msgstr "me@gmail.com"
+
+#: src/app/auth/login/email-login-form.tsx
+msgid "YRe93Y"
+msgstr "Enter a valid email address"
+
+#: src/app/auth/login/email-login-form.tsx
+#: src/app/auth/login/social-login.tsx
+msgid "pN2p0t"
+msgstr "There was an error signing you in. Please try again or contact hello@zoonk.com"
+
+#: src/app/auth/login/email-login-form.tsx
+#: src/app/auth/otp/otp-form.tsx
+#: src/app/auth/setup/setup-form.tsx
+msgid "acrOoz"
+msgstr "Continue"
+
 #: src/app/auth/login/page.tsx
 msgid "eN8MTJ"
 msgstr "Sign in or create an account"
@@ -23,20 +46,6 @@ msgid "4wpUNc"
 msgstr "Or"
 
 #: src/app/auth/login/page.tsx
-msgid "sy+pv5"
-msgstr "Email"
-
-#: src/app/auth/login/page.tsx
-msgid "4nOs3z"
-msgstr "me@myorg.com"
-
-#: src/app/auth/login/page.tsx
-#: src/app/auth/otp/otp-form.tsx
-#: src/app/auth/setup/setup-form.tsx
-msgid "acrOoz"
-msgstr "Continue"
-
-#: src/app/auth/login/page.tsx
 msgid "Ju9oB+"
 msgstr "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
 
@@ -47,10 +56,6 @@ msgstr "Continue with Google"
 #: src/app/auth/login/social-login.tsx
 msgid "BmecBA"
 msgstr "Continue with Apple"
-
-#: src/app/auth/login/social-login.tsx
-msgid "pN2p0t"
-msgstr "There was an error signing you in. Please try again or contact hello@zoonk.com"
 
 #: src/app/auth/otp/otp-form.tsx
 msgid "HkHvQv"

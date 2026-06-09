@@ -53,10 +53,13 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
 describe(usePlayerActions, () => {
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.useRealTimers();
     globalThis.sessionStorage.clear();
   });
 
   it("stores shown completion milestone keys before persistence returns", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 5, 5, 12));
     globalThis.sessionStorage.clear();
 
     const dispatch = vi.fn();

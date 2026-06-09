@@ -19,4 +19,17 @@ test.describe("Login Page", () => {
 
     await expect(page.getByRole("button", { name: /continue with apple/iu })).toBeVisible();
   });
+
+  test("shows a validation error when Better Auth rejects the email", async ({ page }) => {
+    await page.goto("/auth/login");
+
+    const emailInput = page.getByLabel(/email/iu);
+
+    await emailInput.fill("not-an-email");
+    await emailInput.evaluate((input) => input.closest("form")?.setAttribute("novalidate", ""));
+    await page.getByRole("button", { name: /^continue$/iu }).click();
+
+    await expect(page).toHaveURL(/\/auth\/login/u);
+    await expect(page.getByText(/enter a valid email address/iu)).toBeVisible();
+  });
 });
