@@ -43,6 +43,25 @@ function CompletionScore({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/**
+ * Converts the raw correct/incorrect counts into the score users expect to see
+ * on completion. The persisted score still keeps counts, but the summary reads
+ * as accuracy, so a whole percentage is easier to scan than a fraction.
+ */
+function getCompletionScorePercent({
+  correctCount,
+  totalCount,
+}: {
+  correctCount: number;
+  totalCount: number;
+}) {
+  if (totalCount === 0) {
+    return 0;
+  }
+
+  return Math.round((correctCount / totalCount) * 100);
+}
+
 function CompletionSignal() {
   const t = useExtracted();
 
@@ -188,13 +207,15 @@ export function CompletionScreenContent({
     ? completionResult.correctCount + completionResult.incorrectCount
     : 0;
 
+  const scorePercent = completionResult
+    ? getCompletionScorePercent({ correctCount: completionResult.correctCount, totalCount })
+    : 0;
+
   return (
     <CompletionScreen>
       {totalCount > 0 && completionResult ? (
         <CompletionScore>
-          <p className="text-5xl font-bold tracking-tight tabular-nums">
-            {completionResult.correctCount}/{totalCount}
-          </p>
+          <p className="text-5xl font-bold tracking-tight tabular-nums">{scorePercent}%</p>
           <PlayerSupportingText>{t("correct")}</PlayerSupportingText>
         </CompletionScore>
       ) : (
