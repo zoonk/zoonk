@@ -1,6 +1,7 @@
 import "server-only";
 import { getPublishedLessonWhere, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
+import { type LessonKindExclusion, getLessonKindExclusionWhere } from "./lesson-kind-exclusions";
 
 export type LessonScope = { courseId: string } | { chapterId: string } | { lessonId: string };
 
@@ -19,16 +20,21 @@ type LastCompletedLesson = {
 /**
  * Builds the published lesson filter for the requested curriculum scope.
  */
-function getScopeLessonWhere(scope: LessonScope) {
+function getScopeLessonWhere({
+  excludedLessonKinds,
+  scope,
+}: LessonKindExclusion & { scope: LessonScope }) {
+  const lessonWhere = getLessonKindExclusionWhere({ excludedLessonKinds });
+
   if ("courseId" in scope) {
-    return getPublishedLessonWhere({ courseWhere: { id: scope.courseId } });
+    return getPublishedLessonWhere({ courseWhere: { id: scope.courseId }, lessonWhere });
   }
 
   if ("chapterId" in scope) {
-    return getPublishedLessonWhere({ chapterWhere: { id: scope.chapterId } });
+    return getPublishedLessonWhere({ chapterWhere: { id: scope.chapterId }, lessonWhere });
   }
 
-  return getPublishedLessonWhere({ lessonWhere: { id: scope.lessonId } });
+  return getPublishedLessonWhere({ lessonWhere: { ...lessonWhere, id: scope.lessonId } });
 }
 
 /**
@@ -38,6 +44,7 @@ function getScopeLessonWhere(scope: LessonScope) {
 export async function findLastCompleted(
   userId: string,
   scope: LessonScope,
+  options: LessonKindExclusion = {},
 ): Promise<LastCompletedLesson | null> {
   const { data: progress, error } = await safeAsync(() =>
     prisma.lessonProgress.findFirst({
@@ -51,7 +58,11 @@ export async function findLastCompleted(
         { lesson: { chapter: { position: "desc" } } },
         { lesson: { position: "desc" } },
       ],
-      where: { completedAt: { not: null }, lesson: getScopeLessonWhere(scope), userId },
+      where: {
+        completedAt: { not: null },
+        lesson: getScopeLessonWhere({ excludedLessonKinds: options.excludedLessonKinds, scope }),
+        userId,
+      },
     }),
   );
 

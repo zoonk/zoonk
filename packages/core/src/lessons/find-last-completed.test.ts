@@ -138,6 +138,65 @@ describe(findLastCompleted, () => {
     expect(result).toHaveProperty("orgSlug");
   });
 
+  it("ignores completed excluded lesson kinds when choosing the latest completion", async () => {
+    const [user, course] = await Promise.all([
+      userFixture(),
+      courseFixture({ isPublished: true, organizationId: orgId }),
+    ]);
+
+    const uid = user.id;
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: orgId,
+      position: 0,
+    });
+
+    const [visibleLesson, hiddenCompletedLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "explanation",
+        organizationId: orgId,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "quiz",
+        organizationId: orgId,
+        position: 1,
+      }),
+    ]);
+
+    await Promise.all([
+      lessonProgressFixture({
+        completedAt: new Date("2024-01-01"),
+        durationSeconds: 60,
+        lessonId: visibleLesson.id,
+        userId: uid,
+      }),
+      lessonProgressFixture({
+        completedAt: new Date("2024-01-02"),
+        durationSeconds: 60,
+        lessonId: hiddenCompletedLesson.id,
+        userId: uid,
+      }),
+    ]);
+
+    const result = await findLastCompleted(
+      uid,
+      { courseId: course.id },
+      { excludedLessonKinds: ["quiz"] },
+    );
+
+    expect(result).toMatchObject({ lessonId: visibleLesson.id, lessonPosition: 0 });
+    expect(result).not.toMatchObject({ lessonId: hiddenCompletedLesson.id });
+  });
+
   it("tiebreaker: returns furthest lesson when completedAt is identical", async () => {
     const user = await userFixture();
     const uid = user.id;

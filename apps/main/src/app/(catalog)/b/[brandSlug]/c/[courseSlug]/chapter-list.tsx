@@ -9,6 +9,7 @@ import { getCatalogActiveItemKey } from "@/components/catalog/catalog-item-targe
 import { type CourseChapter } from "@/data/chapters/list-course-chapters";
 import { getCatalogChapterProgress } from "@/data/progress/catalog-progress";
 import { getActiveCatalogTarget } from "@zoonk/core/progress/active-catalog-target";
+import { type LessonKind } from "@zoonk/db";
 import {
   GridGroup,
   GridItemContent,
@@ -167,12 +168,14 @@ export async function ChapterList({
   courseId,
   courseSlug,
   defaultChapterImage,
+  hiddenLessonKinds,
 }: {
   brandSlug: string;
   chapters: CourseChapter[];
   courseId: string;
   courseSlug: string;
   defaultChapterImage: string;
+  hiddenLessonKinds: LessonKind[];
 }) {
   if (chapters.length === 0) {
     return null;
@@ -181,8 +184,8 @@ export async function ChapterList({
   const t = await getExtracted();
 
   const [completionData, activeTarget] = await Promise.all([
-    getCatalogChapterProgress(courseId),
-    getActiveCatalogTarget({ scope: { courseId } }),
+    getCatalogChapterProgress(courseId, hiddenLessonKinds),
+    getActiveCatalogTarget({ excludedLessonKinds: hiddenLessonKinds, scope: { courseId } }),
   ]);
 
   const completionMap = new Map(completionData.map((row) => [row.chapterId, row]));
@@ -200,7 +203,7 @@ export async function ChapterList({
           {chapters.map((chapter) => {
             const completion = completionMap.get(chapter.id);
             const completedLessons = completion?.completedLessons ?? 0;
-            const totalLessons = chapter._count.lessons;
+            const totalLessons = completion?.totalLessons ?? chapter._count.lessons;
 
             return (
               <ChapterTile

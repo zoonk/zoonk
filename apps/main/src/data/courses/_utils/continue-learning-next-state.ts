@@ -2,6 +2,7 @@ import {
   type NextLessonState,
   getNextLessonStateForUser,
 } from "@zoonk/core/progress/next-lesson-state";
+import { type LessonKind } from "@zoonk/db";
 import { type ContinueLearningRow } from "./continue-learning-queries";
 
 export type ContinueLearningState = NextLessonState | null;
@@ -12,9 +13,11 @@ export type ContinueLearningState = NextLessonState | null;
  * jumping back to earlier skipped lessons.
  */
 export async function listNextLessonStates({
+  excludedLessonKinds,
   rows,
   userId,
 }: {
+  excludedLessonKinds?: LessonKind[];
   rows: ContinueLearningRow[];
   userId: string;
 }) {
@@ -26,6 +29,7 @@ export async function listNextLessonStates({
           lessonId: row.lessonId,
           lessonPosition: row.lessonPosition,
         },
+        excludedLessonKinds,
         scope: { courseId: row.courseId },
         userId,
       }),

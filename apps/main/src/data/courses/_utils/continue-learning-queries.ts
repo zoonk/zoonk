@@ -1,4 +1,5 @@
-import { prisma } from "@zoonk/db";
+import { getLessonKindExclusionSql } from "@zoonk/core/lessons/kind-exclusions";
+import { type LessonKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
 /**
@@ -32,10 +33,14 @@ const SQL_LIMIT = 10;
  * published curriculum.
  */
 export async function listRecentContinueLearningRows({
+  excludedLessonKinds,
   userId,
 }: {
+  excludedLessonKinds?: LessonKind[];
   userId: string;
 }): Promise<ContinueLearningRow[]> {
+  const lessonKindFilter = getLessonKindExclusionSql({ excludedLessonKinds });
+
   const { data, error } = await safeAsync(
     () =>
       prisma.$queryRaw<ContinueLearningRow[]>`
@@ -57,7 +62,10 @@ export async function listRecentContinueLearningRows({
           JOIN chapters ch ON ch.id = l.chapter_id
           JOIN courses c ON c.id = ch.course_id AND c.is_published = true
           LEFT JOIN organizations o ON o.id = c.organization_id
-          WHERE ap.user_id = ${userId} AND ap.completed_at IS NOT NULL AND (o.kind = 'brand' OR o.id IS NULL)
+          WHERE ap.user_id = ${userId}
+            AND ap.completed_at IS NOT NULL
+            AND ${lessonKindFilter}
+            AND (o.kind = 'brand' OR o.id IS NULL)
           ORDER BY ch.course_id, ap.completed_at DESC
         )
         SELECT

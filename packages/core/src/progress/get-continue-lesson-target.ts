@@ -1,6 +1,8 @@
 import { type LessonScope, findLastCompleted } from "@zoonk/core/lessons/last-completed";
+import { type LessonKind } from "@zoonk/db";
 import { cache } from "react";
 import { getNextChapterInCourse } from "../lessons/get-next-chapter-in-course";
+import { getLessonKindExclusionCacheArgs } from "../lessons/lesson-kind-exclusions";
 import { getSession } from "../users/get-user-session";
 import { type NextLessonState, getNextLessonStateForUser } from "./get-next-lesson-state";
 
@@ -65,12 +67,16 @@ const cachedGetContinueLessonTarget = cache(
     scopeKind: LessonScopeKind,
     scopeId: string,
     headers?: Headers,
+    ...excludedLessonKinds: LessonKind[]
   ): Promise<ContinueChapterTarget | ContinueLessonTarget | null> => {
     const scope = getLessonScopeFromParts({ id: scopeId, kind: scopeKind });
 
     const session = await getSession(headers);
     const userId = session?.user.id;
-    const lastCompleted = userId ? await findLastCompleted(userId, scope) : null;
+
+    const lastCompleted = userId
+      ? await findLastCompleted(userId, scope, { excludedLessonKinds })
+      : null;
 
     const state = await getNextLessonStateForUser({
       after: lastCompleted
@@ -80,6 +86,7 @@ const cachedGetContinueLessonTarget = cache(
             lessonPosition: lastCompleted.lessonPosition,
           }
         : undefined,
+      excludedLessonKinds,
       scope,
       userId,
     });
@@ -108,15 +115,22 @@ const cachedGetContinueLessonTarget = cache(
 );
 
 export function getContinueLessonTarget({
+  excludedLessonKinds,
   headers,
   scope,
 }: {
+  excludedLessonKinds?: LessonKind[];
   headers?: Headers;
   scope: LessonScope;
 }): Promise<ContinueChapterTarget | ContinueLessonTarget | null> {
   const { id, kind } = getLessonScopeParts(scope);
 
-  return cachedGetContinueLessonTarget(kind, id, headers);
+  return cachedGetContinueLessonTarget(
+    kind,
+    id,
+    headers,
+    ...getLessonKindExclusionCacheArgs({ excludedLessonKinds }),
+  );
 }
 
 /**

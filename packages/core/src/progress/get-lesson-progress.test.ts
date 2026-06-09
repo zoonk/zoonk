@@ -129,6 +129,45 @@ describe(getLessonProgress, () => {
     expect(result).toStrictEqual([{ isCompleted: true, lessonId: publishedLesson.id }]);
   });
 
+  it("excludes hidden lesson kinds from progress rows", async () => {
+    const [user, chapter] = await Promise.all([userFixture(), createPublishedChapter()]);
+
+    const [visibleLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        kind: "explanation",
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        kind: "quiz",
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
+
+    const [headers] = await Promise.all([
+      signInAs(user.email, user.password),
+      lessonProgressFixture({
+        completedAt: new Date(),
+        durationSeconds: 60,
+        lessonId: visibleLesson.id,
+        userId: user.id,
+      }),
+    ]);
+
+    const result = await getLessonProgress({
+      chapterId: chapter.id,
+      excludedLessonKinds: ["quiz"],
+      headers,
+    });
+
+    expect(result).toStrictEqual([{ isCompleted: true, lessonId: visibleLesson.id }]);
+  });
+
   it("keeps a completed lesson completed when a new lesson is added later", async () => {
     const [user, chapter] = await Promise.all([userFixture(), createPublishedChapter()]);
 

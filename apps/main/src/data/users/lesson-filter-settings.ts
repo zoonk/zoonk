@@ -12,8 +12,8 @@ import { logError } from "@zoonk/utils/logger";
  * The chapter lesson list reads hidden kinds from the learner profile so the
  * same filters follow the signed-in learner across devices and browser sessions.
  */
-export async function getUserHiddenLessonKinds(): Promise<LessonKind[]> {
-  const session = await getSession();
+export async function getUserHiddenLessonKinds(headers?: Headers): Promise<LessonKind[]> {
+  const session = await getSession(headers);
 
   if (!session) {
     return [];

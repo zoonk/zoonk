@@ -8,6 +8,7 @@ import {
 } from "@/components/catalog/continue-lesson-link";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
+import { getUserHiddenLessonKinds } from "@/data/users/lesson-filter-settings";
 import { getDefaultChapterImage } from "@/lib/catalog/default-images";
 import { getSession } from "@zoonk/core/users/session/get";
 import { Grid, GridToolbar } from "@zoonk/ui/components/grid";
@@ -43,7 +44,11 @@ export async function generateMetadata({
 export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c/[courseSlug]">) {
   const { brandSlug, courseSlug } = await params;
 
-  const [course, session] = await Promise.all([getCourse({ brandSlug, courseSlug }), getSession()]);
+  const [course, hiddenLessonKinds, session] = await Promise.all([
+    getCourse({ brandSlug, courseSlug }),
+    getUserHiddenLessonKinds(),
+    getSession(),
+  ]);
 
   if (!course) {
     notFound();
@@ -68,10 +73,15 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
           <CourseHeader brandSlug={brandSlug} course={course} variant="sidebar" />
           <GridToolbar>
             <Suspense fallback={<ContinueLessonLinkSkeleton />}>
-              <ContinueLessonLink courseId={course.id} fallbackHref={fallbackHref} />
+              <ContinueLessonLink
+                courseId={course.id}
+                excludedLessonKinds={hiddenLessonKinds}
+                fallbackHref={fallbackHref}
+              />
             </Suspense>
             <Suspense fallback={null}>
               <CatalogActiveShortcutLink
+                excludedLessonKinds={hiddenLessonKinds}
                 items={chapters}
                 kind="chapter"
                 scope={{ courseId: course.id }}
@@ -95,6 +105,7 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
             courseId={course.id}
             courseSlug={courseSlug}
             defaultChapterImage={defaultChapterImage}
+            hiddenLessonKinds={hiddenLessonKinds}
           />
         </Suspense>
       </Grid>

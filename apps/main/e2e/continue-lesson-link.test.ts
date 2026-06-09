@@ -1,5 +1,9 @@
 import { randomUUID } from "node:crypto";
+import { type Browser } from "@playwright/test";
+import { type LessonKind, prisma } from "@zoonk/db";
+import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
+import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
@@ -126,6 +130,32 @@ async function createTestCourseWithPendingFirstLesson() {
   });
 
   return { chapter, course, lesson };
+}
+
+/**
+ * Lesson-type preferences are user-specific, so this helper creates a fresh
+ * browser user and stores the hidden kinds before the page renders. That keeps
+ * this regression isolated from the shared authenticated worker users.
+ */
+async function createPageWithHiddenLessonKinds({
+  browser,
+  hiddenLessonKinds,
+}: {
+  browser: Browser;
+  hiddenLessonKinds: LessonKind[];
+}) {
+  const user = await createE2EUser(getBaseURL(), { orgRole: "member" });
+
+  const [context] = await Promise.all([
+    browser.newContext({ storageState: user.storageState }),
+    prisma.userLearningProfile.create({
+      data: { preferences: { hiddenLessonKinds }, userId: user.id },
+    }),
+  ]);
+
+  const page = await context.newPage();
+
+  return { context, page, user };
 }
 
 test.describe("Continue Lesson Link", () => {
@@ -300,6 +330,123 @@ test.describe("Continue Lesson Link", () => {
       "href",
       `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${nextLesson.slug}`,
     );
+  });
+
+  test("hidden lesson types do not drive continue links or lesson progress", async ({
+    browser,
+  }) => {
+    const org = await getAiOrganization();
+    const uniqueId = randomUUID().slice(0, 8);
+
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-cal-filter-course-${uniqueId}`,
+      title: `E2E CAL Filter Course ${uniqueId}`,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 0,
+      slug: `e2e-cal-filter-ch-${uniqueId}`,
+      title: `E2E CAL Filter Ch ${uniqueId}`,
+    });
+
+    const [completedLesson, hiddenLesson, nextVisibleLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "explanation",
+        organizationId: org.id,
+        position: 0,
+        slug: `e2e-cal-filter-l1-${uniqueId}`,
+        title: `E2E CAL Filter L1 ${uniqueId}`,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "quiz",
+        organizationId: org.id,
+        position: 1,
+        slug: `e2e-cal-filter-l2-${uniqueId}`,
+        title: `E2E CAL Filter L2 ${uniqueId}`,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "explanation",
+        organizationId: org.id,
+        position: 2,
+        slug: `e2e-cal-filter-l3-${uniqueId}`,
+        title: `E2E CAL Filter L3 ${uniqueId}`,
+      }),
+    ]);
+
+    const { context, page, user } = await createPageWithHiddenLessonKinds({
+      browser,
+      hiddenLessonKinds: ["quiz"],
+    });
+
+    await lessonProgressFixture({
+      completedAt: new Date("2024-01-01"),
+      durationSeconds: 60,
+      lessonId: completedLesson.id,
+      userId: user.id,
+    });
+
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
+
+    const continueLink = getContinueActionLink({ label: "Continue", page });
+
+    await expect(continueLink).toHaveAttribute(
+      "href",
+      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${nextVisibleLesson.slug}`,
+    );
+
+    await expect(continueLink).not.toHaveAttribute(
+      "href",
+      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${hiddenLesson.slug}`,
+    );
+
+    const chapterLink = page.getByRole("link", { name: new RegExp(chapter.title, "u") });
+    await expect(chapterLink.getByText("1/2 done")).toBeVisible();
+
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
+
+    await page.getByRole("button", { name: "Filter lesson types" }).click();
+    await expect(page.getByRole("menuitemcheckbox", { name: "Explanation" })).toBeDisabled();
+    await expect(page.getByRole("menuitemcheckbox", { name: "Quiz" })).toBeEnabled();
+    await page.keyboard.press("Escape");
+
+    const chapterContinueLink = page
+      .getByRole("main")
+      .getByRole("link", { name: "Continue 1 of 2 lessons completed" });
+
+    const nextVisibleLessonTitle = nextVisibleLesson.title ?? nextVisibleLesson.slug;
+
+    const nextVisibleLessonLink = page.getByRole("link", {
+      name: new RegExp(nextVisibleLessonTitle, "u"),
+    });
+
+    await expect(chapterContinueLink).toHaveAttribute(
+      "href",
+      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${nextVisibleLesson.slug}`,
+    );
+
+    await expect(chapterContinueLink).not.toHaveAttribute(
+      "href",
+      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${hiddenLesson.slug}`,
+    );
+
+    await expect(nextVisibleLessonLink.getByText("2", { exact: true })).toBeVisible();
+    await expect(nextVisibleLessonLink.getByText("3", { exact: true })).toHaveCount(0);
+
+    await context.close();
   });
 
   test("course page shows Continue linking to ungenerated next chapter", async ({

@@ -1,6 +1,7 @@
 import "server-only";
-import { type Sql, prisma, sql } from "@zoonk/db";
+import { type LessonKind, type Sql, prisma, sql } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
+import { getLessonKindExclusionSql } from "../../lessons/lesson-kind-exclusions";
 import {
   type PublishedLessonProgressRow,
   type PublishedLessonProgressScope,
@@ -12,13 +13,15 @@ import {
  * This helper dispatches to the narrowest query for the requested scope.
  */
 export async function listPublishedLessonProgressRows({
+  excludedLessonKinds,
   scope,
   userId,
 }: {
+  excludedLessonKinds?: LessonKind[];
   scope: PublishedLessonProgressScope;
   userId?: string;
 }): Promise<PublishedLessonProgressRow[]> {
-  return queryPublishedLessonProgressRows({ scope, userId });
+  return queryPublishedLessonProgressRows({ excludedLessonKinds, scope, userId });
 }
 
 /**
@@ -48,12 +51,15 @@ export async function listPublishedChaptersForCourse({
  * predicate for the requested scope.
  */
 async function queryPublishedLessonProgressRows({
+  excludedLessonKinds,
   scope,
   userId,
 }: {
+  excludedLessonKinds?: LessonKind[];
   scope: PublishedLessonProgressScope;
   userId?: string;
 }) {
+  const lessonKindFilter = getLessonKindExclusionSql({ excludedLessonKinds });
   const scopeFilter = getPublishedLessonProgressScopeFilter({ scope });
   const progressUserFilter = userId ? sql`lp.user_id = ${userId}` : sql`FALSE`;
 
@@ -92,6 +98,7 @@ async function queryPublishedLessonProgressRows({
           AND lp.completed_at IS NOT NULL
         WHERE l.is_published = true
           AND ${scopeFilter}
+          AND ${lessonKindFilter}
         GROUP BY o.slug, ch.id, c.id, l.id
         ORDER BY ch.position ASC, l.position ASC
       `,

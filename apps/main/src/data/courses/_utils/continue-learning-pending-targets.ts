@@ -1,6 +1,6 @@
 import { getNextChapterInCourse } from "@zoonk/core/lessons/next-chapter-in-course";
 import { getNextLessonInCourse } from "@zoonk/core/lessons/next-in-course";
-import { type Chapter, type Lesson } from "@zoonk/db";
+import { type Chapter, type Lesson, type LessonKind } from "@zoonk/db";
 import { type ContinueLearningState } from "./continue-learning-next-state";
 import { type ContinueLearningRow } from "./continue-learning-queries";
 
@@ -16,14 +16,18 @@ export type PendingTarget = {
  * rows that actually need them.
  */
 export async function listPendingTargets({
+  excludedLessonKinds,
   rows,
   states,
 }: {
+  excludedLessonKinds?: LessonKind[];
   rows: ContinueLearningRow[];
   states: ContinueLearningState[];
 }) {
   return Promise.all(
-    rows.map((row, idx) => listPendingTarget({ row, state: states[idx] ?? null })),
+    rows.map((row, idx) =>
+      listPendingTarget({ excludedLessonKinds, row, state: states[idx] ?? null }),
+    ),
   );
 }
 
@@ -41,9 +45,11 @@ function shouldLoadPendingTarget({ state }: { state: ContinueLearningState }) {
  * avoids embedding branching logic directly inside the array mapping step.
  */
 async function listPendingTarget({
+  excludedLessonKinds,
   row,
   state,
 }: {
+  excludedLessonKinds?: LessonKind[];
   row: ContinueLearningRow;
   state: ContinueLearningState;
 }) {
@@ -51,7 +57,7 @@ async function listPendingTarget({
     return null;
   }
 
-  return findPendingTarget({ row });
+  return findPendingTarget({ excludedLessonKinds, row });
 }
 
 /**
@@ -60,14 +66,17 @@ async function listPendingTarget({
  * chapter. That keeps the card useful even while generation is pending.
  */
 async function findPendingTarget({
+  excludedLessonKinds,
   row,
 }: {
+  excludedLessonKinds?: LessonKind[];
   row: ContinueLearningRow;
 }): Promise<PendingTarget | null> {
   const nextLesson = await getNextLessonInCourse({
     chapterId: row.chapterId,
     chapterPosition: row.chapterPosition,
     courseId: row.courseId,
+    excludedLessonKinds,
     lessonPosition: row.lessonPosition,
   });
 

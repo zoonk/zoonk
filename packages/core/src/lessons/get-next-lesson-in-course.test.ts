@@ -188,6 +188,63 @@ describe(getNextLessonInCourse, () => {
     });
   });
 
+  it("skips excluded lesson kinds", async () => {
+    const testOrg = await organizationFixture({ kind: "brand" });
+    const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
+
+    const testChapter = await chapterFixture({
+      courseId: testCourse.id,
+      isPublished: true,
+      organizationId: testOrg.id,
+      position: 0,
+    });
+
+    const lessons = await Promise.all([
+      lessonFixture({
+        chapterId: testChapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "explanation",
+        organizationId: testOrg.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: testChapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "quiz",
+        organizationId: testOrg.id,
+        position: 1,
+      }),
+      lessonFixture({
+        chapterId: testChapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "practice",
+        organizationId: testOrg.id,
+        position: 2,
+      }),
+    ]);
+
+    const practiceLesson = lessons[2];
+
+    const result = await getNextLessonInCourse({
+      chapterId: testChapter.id,
+      chapterPosition: 0,
+      courseId: testCourse.id,
+      excludedLessonKinds: ["quiz"],
+      lessonPosition: 0,
+    });
+
+    expect(result).toMatchObject({
+      chapterSlug: testChapter.slug,
+      lessonId: practiceLesson.id,
+      lessonKind: "practice",
+      lessonPosition: 2,
+      lessonSlug: practiceLesson.slug,
+    });
+  });
+
   it("returns the next lesson shell even when it still needs generation", async () => {
     const testOrg = await organizationFixture({ kind: "brand" });
     const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });

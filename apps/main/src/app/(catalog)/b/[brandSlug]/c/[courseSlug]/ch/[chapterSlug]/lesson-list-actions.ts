@@ -4,6 +4,7 @@ import { updateUserHiddenLessonKinds } from "@/data/users/lesson-filter-settings
 import { type LessonKind } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
+import { revalidatePath } from "next/cache";
 
 /**
  * Lesson type visibility is a user setting, so the data helper owns current
@@ -28,6 +29,8 @@ export async function updateHiddenLessonKindsAction({
   if (!result?.saved) {
     return { status: "error" as const };
   }
+
+  revalidatePath("/(catalog)", "layout");
 
   return { status: "success" as const };
 }

@@ -3,6 +3,7 @@ import {
   type ActiveCatalogTarget,
   getActiveCatalogTarget,
 } from "@zoonk/core/progress/active-catalog-target";
+import { type LessonKind } from "@zoonk/db";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { ArrowDownIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
@@ -15,6 +16,8 @@ import { CatalogSmoothScrollLink } from "./catalog-smooth-scroll-link";
 
 type CatalogActiveShortcutKind = "chapter" | "lesson";
 type CatalogActiveShortcutItem = { id: CatalogGridItemKey; slug: string };
+
+const EMPTY_EXCLUDED_LESSON_KINDS: LessonKind[] = [];
 
 /**
  * Course pages jump to chapters, while chapter pages jump to lessons. Keeping
@@ -45,15 +48,17 @@ function getActiveShortcutSlug({
  * the floating action.
  */
 export async function CatalogActiveShortcutLink({
+  excludedLessonKinds = EMPTY_EXCLUDED_LESSON_KINDS,
   items,
   kind,
   scope,
 }: {
+  excludedLessonKinds?: LessonKind[];
   items: readonly CatalogActiveShortcutItem[];
   kind: CatalogActiveShortcutKind;
   scope: LessonScope;
 }) {
-  const activeTarget = await getActiveCatalogTarget({ scope });
+  const activeTarget = await getActiveCatalogTarget({ excludedLessonKinds, scope });
   const activeSlug = getActiveShortcutSlug({ activeTarget, kind });
   const activeItemKey = getCatalogActiveItemKey({ activeSlug, items });
 

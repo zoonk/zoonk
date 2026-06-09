@@ -1,8 +1,16 @@
 import "server-only";
+import {
+  getLessonKindExclusionCacheArgs,
+  getLessonKindExclusionWhere,
+} from "@zoonk/core/lessons/kind-exclusions";
 import { getChapterProgress } from "@zoonk/core/progress/chapters";
 import { getLessonProgress } from "@zoonk/core/progress/lessons";
-import { getSession } from "@zoonk/core/users/session/get";
-import { getPublishedChapterWhere, getPublishedLessonWhere, prisma } from "@zoonk/db";
+import {
+  type LessonKind,
+  getPublishedChapterWhere,
+  getPublishedLessonWhere,
+  prisma,
+} from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
@@ -17,45 +25,88 @@ export type ContinueLessonProgress = {
  * progress. React cache keeps repeated reads for the same course inside one
  * server render from issuing duplicate progress queries.
  */
-export const getCatalogChapterProgress = cache(async (courseId: string) =>
-  getChapterProgress({ courseId }),
+const cachedCatalogChapterProgress = cache(
+  async (courseId: string, ...excludedLessonKinds: LessonKind[]) =>
+    getChapterProgress({ courseId, excludedLessonKinds }),
 );
+
+export function getCatalogChapterProgress(
+  courseId: string,
+  excludedLessonKinds: LessonKind[] = [],
+) {
+  return cachedCatalogChapterProgress(
+    courseId,
+    ...getLessonKindExclusionCacheArgs({ excludedLessonKinds }),
+  );
+}
 
 /**
  * The Continue button and lesson grid both need the same lesson completion
  * rows on chapter pages. Caching by chapter id keeps those sibling Suspense
  * boundaries independent without paying for the query twice in one render.
  */
-export const getCatalogLessonProgress = cache(async (chapterId: string) =>
-  getLessonProgress({ chapterId }),
+const cachedCatalogLessonProgress = cache(
+  async (chapterId: string, ...excludedLessonKinds: LessonKind[]) =>
+    getLessonProgress({ chapterId, excludedLessonKinds }),
 );
 
+export function getCatalogLessonProgress(
+  chapterId: string,
+  excludedLessonKinds: LessonKind[] = [],
+) {
+  return cachedCatalogLessonProgress(
+    chapterId,
+    ...getLessonKindExclusionCacheArgs({ excludedLessonKinds }),
+  );
+}
+
 /**
- * Course-level progress counts completed chapters, not generated lesson rows.
- * Lessons are generated on demand, so chapter completions are the stable unit
- * learners expect when scanning overall course progress.
+ * A chapter counts as complete on the course CTA when every visible lesson is
+ * complete. Reusing the same filtered chapter rows as the cards prevents a
+ * hidden lesson type from keeping the course progress suffix stuck behind the
+ * lesson set the learner chose not to see.
  */
-export const getCourseContinueProgress = cache(
-  async (courseId: string): Promise<ContinueLessonProgress> => {
-    const [completedItems, totalItems] = await Promise.all([
-      countCompletedPublishedCourseChapters(courseId),
+const cachedCourseContinueProgress = cache(
+  async (
+    courseId: string,
+    ...excludedLessonKinds: LessonKind[]
+  ): Promise<ContinueLessonProgress> => {
+    const [chapterProgressRows, totalItems] = await Promise.all([
+      cachedCatalogChapterProgress(courseId, ...excludedLessonKinds),
       countPublishedCourseChapters(courseId),
     ]);
 
-    return { completedItems, totalItems, unit: "chapters" };
+    return {
+      completedItems: countCompletedChapterProgressRows({ rows: chapterProgressRows }),
+      totalItems,
+      unit: "chapters",
+    };
   },
 );
+
+export function getCourseContinueProgress(
+  courseId: string,
+  excludedLessonKinds: LessonKind[] = [],
+) {
+  return cachedCourseContinueProgress(
+    courseId,
+    ...getLessonKindExclusionCacheArgs({ excludedLessonKinds }),
+  );
+}
 
 /**
  * Chapter-level progress still counts lessons because chapter pages list the
  * concrete lesson rows. Reusing cached lesson progress keeps this aligned with
  * the status badges rendered by the lesson grid.
  */
-export const getChapterContinueProgress = cache(
-  async (chapterId: string): Promise<ContinueLessonProgress> => {
+const cachedChapterContinueProgress = cache(
+  async (
+    chapterId: string,
+    ...excludedLessonKinds: LessonKind[]
+  ): Promise<ContinueLessonProgress> => {
     const [progressRows, totalItems] = await Promise.all([
-      getCatalogLessonProgress(chapterId),
-      countPublishedChapterLessons(chapterId),
+      cachedCatalogLessonProgress(chapterId, ...excludedLessonKinds),
+      countPublishedChapterLessons({ chapterId, excludedLessonKinds }),
     ]);
 
     return {
@@ -66,25 +117,28 @@ export const getChapterContinueProgress = cache(
   },
 );
 
-/**
- * Anonymous users have no durable completions, but the course button still
- * needs a zero count against the visible chapter total.
- */
-async function countCompletedPublishedCourseChapters(courseId: string) {
-  const session = await getSession();
-  const userId = session?.user.id;
-
-  if (!userId) {
-    return 0;
-  }
-
-  const { data } = await safeAsync(() =>
-    prisma.chapterCompletion.count({
-      where: { chapter: getPublishedChapterWhere({ chapterWhere: { courseId } }), userId },
-    }),
+export function getChapterContinueProgress(
+  chapterId: string,
+  excludedLessonKinds: LessonKind[] = [],
+) {
+  return cachedChapterContinueProgress(
+    chapterId,
+    ...getLessonKindExclusionCacheArgs({ excludedLessonKinds }),
   );
+}
 
-  return data ?? 0;
+/**
+ * Empty chapters should not count as completed just because there are no
+ * visible lessons left after filtering. They stay at zero progress until the
+ * course has at least one visible completed lesson in that chapter.
+ */
+function countCompletedChapterProgressRows({
+  rows,
+}: {
+  rows: Awaited<ReturnType<typeof getCatalogChapterProgress>>;
+}) {
+  return rows.filter((row) => row.totalLessons > 0 && row.completedLessons >= row.totalLessons)
+    .length;
 }
 
 /**
@@ -103,9 +157,20 @@ async function countPublishedCourseChapters(courseId: string) {
  * Chapter progress uses the visible lesson total so the Continue button and
  * lesson grid agree about the same generated lesson set.
  */
-async function countPublishedChapterLessons(chapterId: string) {
+async function countPublishedChapterLessons({
+  chapterId,
+  excludedLessonKinds,
+}: {
+  chapterId: string;
+  excludedLessonKinds: LessonKind[];
+}) {
   const { data } = await safeAsync(() =>
-    prisma.lesson.count({ where: getPublishedLessonWhere({ chapterWhere: { id: chapterId } }) }),
+    prisma.lesson.count({
+      where: getPublishedLessonWhere({
+        chapterWhere: { id: chapterId },
+        lessonWhere: getLessonKindExclusionWhere({ excludedLessonKinds }),
+      }),
+    }),
   );
 
   return data ?? 0;

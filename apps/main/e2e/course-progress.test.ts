@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
+import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
@@ -154,6 +156,54 @@ async function createCourseWithIncompleteChapter() {
 }
 
 /**
+ * This scenario isolates the course-level progress suffix from the chapter
+ * card details. The only unfinished lesson is hidden by the user's preference,
+ * so the chapter should count as complete in both places.
+ */
+async function createCourseWithHiddenIncompleteLesson() {
+  const org = await getAiOrganization();
+  const uniqueId = randomUUID().slice(0, 8);
+
+  const course = await courseFixture({
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-progress-hidden-course-${uniqueId}`,
+    title: `E2E Progress Hidden Course ${uniqueId}`,
+  });
+
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    description: `Hidden lesson chapter ${uniqueId}`,
+    isPublished: true,
+    organizationId: org.id,
+    position: 0,
+    slug: `e2e-progress-hidden-ch-${uniqueId}`,
+    title: `E2E Hidden Progress Chapter ${uniqueId}`,
+  });
+
+  const [visibleLesson] = await Promise.all([
+    lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      kind: "explanation",
+      organizationId: org.id,
+      position: 0,
+      title: `Visible Lesson ${uniqueId}`,
+    }),
+    lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      kind: "quiz",
+      organizationId: org.id,
+      position: 1,
+      title: `Hidden Quiz ${uniqueId}`,
+    }),
+  ]);
+
+  return { chapter, course, visibleLesson };
+}
+
+/**
  * Chapter cards still derive their status from direct lesson completion, so
  * this helper keeps that lower-level setup consistent across scenarios.
  */
@@ -171,8 +221,8 @@ async function completeLessons({ lessons, userId }: { lessons: { id: string }[];
 }
 
 /**
- * The course Continue button counts durable chapter completions because
- * generated lessons are not a stable course-level unit.
+ * Some scenarios still need durable chapter completions to cover the path
+ * where previously finished chapters stay complete after lesson changes.
  */
 async function completeChapters({
   chapters,
@@ -301,5 +351,37 @@ test.describe("Course Progress Indicators", () => {
     await expect(chapterLink).toBeVisible();
     await expect(chapterLink.getByText("1/2 done")).toBeVisible();
     await expect(chapterLink.getByText(/^completed$/iu)).toHaveCount(0);
+  });
+
+  test("ignores hidden lesson types in course progress", async ({ browser }) => {
+    const [{ chapter, course, visibleLesson }, user] = await Promise.all([
+      createCourseWithHiddenIncompleteLesson(),
+      createE2EUser(getBaseURL(), { orgRole: "member" }),
+    ]);
+
+    const [context] = await Promise.all([
+      browser.newContext({ storageState: user.storageState }),
+      completeLessons({ lessons: [visibleLesson], userId: user.id }),
+      prisma.userLearningProfile.create({
+        data: { preferences: { hiddenLessonKinds: ["quiz"] }, userId: user.id },
+      }),
+    ]);
+
+    const page = await context.newPage();
+
+    await page.goto(`/b/ai/c/${course.slug}`);
+
+    const main = page.getByRole("main");
+
+    await expect(
+      main.getByRole("link", { name: "Review 1 of 1 chapters completed" }),
+    ).toBeVisible();
+
+    const chapterLink = main.getByRole("link", { name: new RegExp(chapter.title, "u") });
+
+    await expect(chapterLink.getByText(/^completed$/iu)).toBeVisible();
+    await expect(chapterLink.getByText("1/2 done")).toHaveCount(0);
+
+    await context.close();
   });
 });

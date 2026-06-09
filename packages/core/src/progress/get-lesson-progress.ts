@@ -1,3 +1,4 @@
+import { type LessonKind } from "@zoonk/db";
 import { getSession } from "../users/get-user-session";
 import { listDurableLessonCompletionIds } from "./_utils/durable-completion-queries";
 import { toEffectiveLessonProgressRows } from "./_utils/published-lesson-progress";
@@ -9,9 +10,11 @@ import { listPublishedLessonProgressRows } from "./_utils/published-lesson-progr
  */
 export async function getLessonProgress({
   chapterId,
+  excludedLessonKinds,
   headers,
 }: {
   chapterId: string;
+  excludedLessonKinds?: LessonKind[];
   headers?: Headers;
 }): Promise<{ isCompleted: boolean; lessonId: string }[]> {
   const session = await getSession(headers);
@@ -21,7 +24,11 @@ export async function getLessonProgress({
     return [];
   }
 
-  const rows = await listPublishedLessonProgressRows({ scope: { chapterId }, userId });
+  const rows = await listPublishedLessonProgressRows({
+    excludedLessonKinds,
+    scope: { chapterId },
+    userId,
+  });
 
   const durableLessonIds = await listDurableLessonCompletionIds({
     lessonIds: [...new Set(rows.map((row) => row.lessonId))],

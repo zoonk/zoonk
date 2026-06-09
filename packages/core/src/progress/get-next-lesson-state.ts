@@ -51,14 +51,16 @@ export type NextLessonState = {
  */
 export async function getNextLessonStateForUser({
   after,
+  excludedLessonKinds,
   scope,
   userId,
 }: {
   after?: NextLessonStateAnchor;
+  excludedLessonKinds?: LessonKind[];
   scope: PublishedLessonProgressScope;
   userId?: string;
 }): Promise<NextLessonState | null> {
-  const rows = await listPublishedLessonProgressRows({ scope, userId });
+  const rows = await listPublishedLessonProgressRows({ excludedLessonKinds, scope, userId });
 
   if (rows.length === 0) {
     return null;
