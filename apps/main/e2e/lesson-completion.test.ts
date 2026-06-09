@@ -292,7 +292,7 @@ test.describe("Lesson Completion UX", () => {
     await completeQuiz(page, uniqueId);
 
     const completionScreen = page.getByRole("status");
-    await expect(completionScreen.getByText("1/1")).toBeVisible();
+    await expect(completionScreen.getByText("100%")).toBeVisible();
     await expect(completionScreen.getByText(/correct/iu)).toBeVisible();
     await expect(completionScreen.getByText(`First Lesson ${uniqueId}`)).toBeVisible();
     await expect(completionScreen.getByText("Lesson 1 of 2")).toBeVisible();
@@ -496,7 +496,7 @@ test.describe("Lesson Completion UX", () => {
     await completeQuiz(page, uniqueId);
 
     const completionScreen = page.getByRole("status");
-    await expect(completionScreen.getByText("1/1")).toBeVisible();
+    await expect(completionScreen.getByText("100%")).toBeVisible();
     await expect(completionScreen.getByRole("link", { name: "Next" })).toBeVisible();
 
     await browserContext.close();
