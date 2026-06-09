@@ -2,13 +2,8 @@ import {
   Login,
   LoginDescription,
   LoginDivider,
-  LoginEmailInput,
-  LoginEmailLabel,
-  LoginField,
   LoginFooter,
-  LoginForm,
   LoginHeader,
-  LoginSubmit,
   LoginTitle,
 } from "@/components/login";
 import { getSession } from "@zoonk/core/users/session/get";
@@ -16,7 +11,7 @@ import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { getExtracted } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { type ReactNode, Suspense } from "react";
-import { sendVerificationOTPAction } from "./actions";
+import { EmailLoginForm } from "./email-login-form";
 import { SocialLogin } from "./social-login";
 
 /**
@@ -61,16 +56,7 @@ async function LoginView({ searchParams }: PageProps<"/auth/login">) {
 
       <LoginDivider>{t("Or")}</LoginDivider>
 
-      <LoginForm action={sendVerificationOTPAction}>
-        <input name="redirectTo" type="hidden" value={redirectTo ? String(redirectTo) : ""} />
-
-        <LoginField>
-          <LoginEmailLabel>{t("Email")}</LoginEmailLabel>
-          <LoginEmailInput placeholder={t("me@myorg.com")} />
-        </LoginField>
-
-        <LoginSubmit>{t("Continue")}</LoginSubmit>
-      </LoginForm>
+      <EmailLoginForm redirectTo={redirectTo ? String(redirectTo) : undefined} />
 
       <LoginFooter>
         {t.rich(
