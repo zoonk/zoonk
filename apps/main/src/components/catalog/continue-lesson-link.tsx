@@ -5,6 +5,7 @@ import {
 } from "@/data/progress/catalog-progress";
 import { type LessonScope } from "@zoonk/core/lessons/last-completed";
 import { getContinueLessonTarget } from "@zoonk/core/progress/continue-lesson-target";
+import { type LessonKind } from "@zoonk/db";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
@@ -13,6 +14,8 @@ import { getExtracted } from "next-intl/server";
 import Link from "next/link";
 
 type ContinueLessonProgressContent = { ariaLabel: string; text: string };
+
+const EMPTY_EXCLUDED_LESSON_KINDS: LessonKind[] = [];
 
 function getScope(props: {
   chapterId?: string;
@@ -56,13 +59,19 @@ function getVisibleProgress({ progress }: { progress?: ContinueLessonProgress | 
  * from the scope keeps pages from threading promises through sibling
  * components just to feed this small visual hint.
  */
-function getContinueLessonProgress({ scope }: { scope: LessonScope }) {
+function getContinueLessonProgress({
+  excludedLessonKinds,
+  scope,
+}: {
+  excludedLessonKinds: LessonKind[];
+  scope: LessonScope;
+}) {
   if ("courseId" in scope) {
-    return getCourseContinueProgress(scope.courseId);
+    return getCourseContinueProgress(scope.courseId, excludedLessonKinds);
   }
 
   if ("chapterId" in scope) {
-    return getChapterContinueProgress(scope.chapterId);
+    return getChapterContinueProgress(scope.chapterId, excludedLessonKinds);
   }
 
   return Promise.resolve(null);
@@ -106,12 +115,14 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
   chapterId,
   completedHref,
   courseId,
+  excludedLessonKinds = EMPTY_EXCLUDED_LESSON_KINDS,
   fallbackHref,
   lessonId,
 }: {
   chapterId?: string;
   completedHref?: Route<CompletedHref>;
   courseId?: string;
+  excludedLessonKinds?: LessonKind[];
   fallbackHref?: Route<Href>;
   lessonId?: string;
 }) {
@@ -119,8 +130,8 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
   const scope = getScope({ chapterId, courseId, lessonId });
 
   const [data, resolvedProgress] = await Promise.all([
-    getContinueLessonTarget({ scope }),
-    getContinueLessonProgress({ scope }),
+    getContinueLessonTarget({ excludedLessonKinds, scope }),
+    getContinueLessonProgress({ excludedLessonKinds, scope }),
   ]);
 
   const className = cn(buttonVariants(), "min-w-0 flex-1 gap-2");

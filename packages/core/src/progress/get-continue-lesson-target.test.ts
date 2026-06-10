@@ -1,3 +1,4 @@
+import { type LessonKind } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -26,8 +27,10 @@ describe(getContinueLessonTarget, () => {
    * being tested instead of repeating catalog setup.
    */
   async function createCourseTree({
+    lessonKinds = [],
     lessonStatuses = ["completed", "completed"],
   }: {
+    lessonKinds?: LessonKind[];
     lessonStatuses?: ("completed" | "failed" | "pending" | "running")[];
   } = {}): Promise<CourseTree> {
     const course = await courseFixture({ isPublished: true, organizationId: organization.id });
@@ -45,6 +48,7 @@ describe(getContinueLessonTarget, () => {
           chapterId: chapter.id,
           generationStatus,
           isPublished: true,
+          kind: lessonKinds[position] ?? "explanation",
           organizationId: organization.id,
           position,
         }),
@@ -121,6 +125,92 @@ describe(getContinueLessonTarget, () => {
       lessonPosition: 1,
       lessonSlug: nextLesson?.slug,
     });
+  });
+
+  it("continues from the latest visible completion when a newer hidden lesson is completed", async () => {
+    const [user, tree] = await Promise.all([
+      userFixture(),
+      createCourseTree({
+        lessonKinds: ["explanation", "explanation", "quiz"],
+        lessonStatuses: ["completed", "completed", "completed"],
+      }),
+    ]);
+
+    const [completedLesson, nextVisibleLesson, hiddenCompletedLesson] = tree.lessons;
+
+    const [headers] = await Promise.all([
+      signInAs(user.email, user.password),
+      lessonProgressFixture({
+        completedAt: new Date("2024-01-01"),
+        durationSeconds: 60,
+        lessonId: completedLesson?.id ?? "",
+        userId: user.id,
+      }),
+      lessonProgressFixture({
+        completedAt: new Date("2024-01-02"),
+        durationSeconds: 60,
+        lessonId: hiddenCompletedLesson?.id ?? "",
+        userId: user.id,
+      }),
+    ]);
+
+    const result = await getContinueLessonTarget({
+      excludedLessonKinds: ["quiz"],
+      headers,
+      scope: { courseId: tree.course.id },
+    });
+
+    expect(result).toStrictEqual({
+      brandSlug: organization.slug,
+      canPrefetch: true,
+      chapterSlug: tree.chapter.slug,
+      completed: false,
+      courseSlug: tree.course.slug,
+      hasStarted: true,
+      lessonPosition: 1,
+      lessonSlug: nextVisibleLesson?.slug,
+    });
+  });
+
+  it("skips hidden incomplete lessons when choosing the next lesson", async () => {
+    const [user, tree] = await Promise.all([
+      userFixture(),
+      createCourseTree({
+        lessonKinds: ["explanation", "quiz", "explanation"],
+        lessonStatuses: ["completed", "completed", "completed"],
+      }),
+    ]);
+
+    const [completedLesson, hiddenLesson, nextVisibleLesson] = tree.lessons;
+
+    const [headers] = await Promise.all([
+      signInAs(user.email, user.password),
+      lessonProgressFixture({
+        completedAt: new Date("2024-01-01"),
+        durationSeconds: 60,
+        lessonId: completedLesson?.id ?? "",
+        userId: user.id,
+      }),
+    ]);
+
+    const result = await getContinueLessonTarget({
+      excludedLessonKinds: ["quiz"],
+      headers,
+      scope: { courseId: tree.course.id },
+    });
+
+    expect(result).toStrictEqual({
+      brandSlug: organization.slug,
+      canPrefetch: true,
+      chapterSlug: tree.chapter.slug,
+      completed: false,
+      courseSlug: tree.course.slug,
+      hasStarted: true,
+      lessonPosition: 2,
+      lessonSlug: nextVisibleLesson?.slug,
+    });
+
+    expect(result).not.toMatchObject({ lessonSlug: hiddenLesson?.slug });
   });
 
   it("returns the latest completed lesson as review state when the course is complete", async () => {

@@ -2,6 +2,11 @@ import "server-only";
 import { type GenerationStatus, type LessonKind, getPublishedLessonWhere, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
+import {
+  type LessonKindExclusion,
+  getLessonKindExclusionCacheArgs,
+  getLessonKindExclusionWhere,
+} from "./lesson-kind-exclusions";
 
 export type NextLessonInCourse = {
   lessonId: string;
@@ -23,6 +28,7 @@ const cachedGetNextLesson = cache(
     chapterPosition: number,
     courseId: string,
     lessonPosition: number,
+    ...excludedLessonKinds: LessonKind[]
   ): Promise<NextLessonInCourse | null> => {
     const { data: lesson, error } = await safeAsync(() =>
       prisma.lesson.findFirst({
@@ -31,6 +37,7 @@ const cachedGetNextLesson = cache(
         where: getPublishedLessonWhere({
           courseWhere: { id: courseId },
           lessonWhere: {
+            ...getLessonKindExclusionWhere({ excludedLessonKinds }),
             OR: [
               { chapter: { id: chapterId }, position: { gt: lessonPosition } },
               { chapter: { position: { gt: chapterPosition } } },
@@ -67,6 +74,7 @@ export function getNextLessonInCourse(params: {
   chapterId: string;
   chapterPosition: number;
   courseId: string;
+  excludedLessonKinds?: LessonKindExclusion["excludedLessonKinds"];
   lessonPosition: number;
 }): Promise<NextLessonInCourse | null> {
   return cachedGetNextLesson(
@@ -74,5 +82,6 @@ export function getNextLessonInCourse(params: {
     params.chapterPosition,
     params.courseId,
     params.lessonPosition,
+    ...getLessonKindExclusionCacheArgs({ excludedLessonKinds: params.excludedLessonKinds }),
   );
 }

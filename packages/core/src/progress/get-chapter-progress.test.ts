@@ -225,6 +225,55 @@ describe(getChapterProgress, () => {
     expect(result).toStrictEqual([{ chapterId: chapter.id, completedLessons: 1, totalLessons: 1 }]);
   });
 
+  it("excludes hidden lesson kinds from chapter totals", async () => {
+    const [user, course] = await Promise.all([
+      userFixture(),
+      courseFixture({ isPublished: true, organizationId: organization.id }),
+    ]);
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const [visibleLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        kind: "explanation",
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        kind: "quiz",
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
+
+    const [headers] = await Promise.all([
+      signInAs(user.email, user.password),
+      lessonProgressFixture({
+        completedAt: new Date(),
+        durationSeconds: 60,
+        lessonId: visibleLesson.id,
+        userId: user.id,
+      }),
+    ]);
+
+    const result = await getChapterProgress({
+      courseId: course.id,
+      excludedLessonKinds: ["quiz"],
+      headers,
+    });
+
+    expect(result).toStrictEqual([{ chapterId: chapter.id, completedLessons: 1, totalLessons: 1 }]);
+  });
+
   it("chapters with 0 published lessons return totalLessons 0", async () => {
     const [user, course] = await Promise.all([
       userFixture(),

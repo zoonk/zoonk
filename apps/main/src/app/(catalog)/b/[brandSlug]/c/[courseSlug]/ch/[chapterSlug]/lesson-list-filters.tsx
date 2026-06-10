@@ -219,6 +219,42 @@ function getLessonFilterState({
 }
 
 /**
+ * The menu stores hidden kinds, but checkbox rendering reads better from the
+ * positive visible state. Naming this avoids repeating the negated Set lookup
+ * in every guard and checkbox prop.
+ */
+function isLessonKindVisible({
+  hiddenLessonKindSet,
+  kind,
+}: {
+  hiddenLessonKindSet: Set<LessonKind>;
+  kind: LessonKind;
+}) {
+  return !hiddenLessonKindSet.has(kind);
+}
+
+/**
+ * A learner should not be able to hide every lesson type currently available
+ * in the chapter. Hidden kinds must stay toggleable so the user can recover by
+ * showing them again, but the last visible kind needs to stay checked.
+ */
+function canChangeLessonKindVisibility({
+  hiddenLessonKindSet,
+  kind,
+  visibleLessonKindCount,
+}: {
+  hiddenLessonKindSet: Set<LessonKind>;
+  kind: LessonKind;
+  visibleLessonKindCount: number;
+}) {
+  if (!isLessonKindVisible({ hiddenLessonKindSet, kind })) {
+    return true;
+  }
+
+  return visibleLessonKindCount > 1;
+}
+
+/**
  * The dropdown keeps the control compact beside search while still showing the
  * full list of lesson kinds as regular menu checkbox items for keyboard users.
  */
@@ -242,6 +278,10 @@ function LessonTypeFilterMenu({
   if (lessonKindOptions.length === 0) {
     return null;
   }
+
+  const visibleLessonKindCount = lessonKindOptions.filter((option) =>
+    isLessonKindVisible({ hiddenLessonKindSet, kind: option.kind }),
+  ).length;
 
   return (
     <DropdownMenu>
@@ -276,18 +316,30 @@ function LessonTypeFilterMenu({
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuGroup>
           <DropdownMenuLabel>{t("Show lesson types")}</DropdownMenuLabel>
-          {lessonKindOptions.map((option) => (
-            <DropdownMenuCheckboxItem
-              checked={!hiddenLessonKindSet.has(option.kind)}
-              disabled={isPending}
-              key={option.kind}
-              onCheckedChange={(checked) =>
-                onVisibilityChange({ isVisible: checked, kind: option.kind })
-              }
-            >
-              {option.label}
-            </DropdownMenuCheckboxItem>
-          ))}
+          {lessonKindOptions.map((option) => {
+            const canChangeVisibility = canChangeLessonKindVisibility({
+              hiddenLessonKindSet,
+              kind: option.kind,
+              visibleLessonKindCount,
+            });
+
+            return (
+              <DropdownMenuCheckboxItem
+                checked={isLessonKindVisible({ hiddenLessonKindSet, kind: option.kind })}
+                disabled={isPending || !canChangeVisibility}
+                key={option.kind}
+                onCheckedChange={(checked) => {
+                  if (!canChangeVisibility) {
+                    return;
+                  }
+
+                  onVisibilityChange({ isVisible: checked, kind: option.kind });
+                }}
+              >
+                {option.label}
+              </DropdownMenuCheckboxItem>
+            );
+          })}
         </DropdownMenuGroup>
 
         {hiddenCount > 0 && (

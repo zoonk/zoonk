@@ -1,3 +1,4 @@
+import { type LessonKind } from "@zoonk/db";
 import { getSession } from "../users/get-user-session";
 import {
   listDurableChapterCompletionIds,
@@ -57,9 +58,11 @@ function getChapterProgressRows({
  */
 export async function getChapterProgress({
   courseId,
+  excludedLessonKinds,
   headers,
 }: {
   courseId: string;
+  excludedLessonKinds?: LessonKind[];
   headers?: Headers;
 }): Promise<{ chapterId: string; completedLessons: number; totalLessons: number }[]> {
   const session = await getSession(headers);
@@ -71,7 +74,7 @@ export async function getChapterProgress({
 
   const [chapterIds, rows] = await Promise.all([
     listPublishedChaptersForCourse({ courseId }),
-    listPublishedLessonProgressRows({ scope: { courseId }, userId }),
+    listPublishedLessonProgressRows({ excludedLessonKinds, scope: { courseId }, userId }),
   ]);
 
   const [durableLessonIds, durableChapterIds] = await Promise.all([

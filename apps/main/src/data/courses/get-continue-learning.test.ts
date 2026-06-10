@@ -106,6 +106,75 @@ describe("authenticated users", () => {
     });
   });
 
+  it("uses visible lesson kinds when choosing the next home continue target", async () => {
+    const [user, course] = await Promise.all([
+      userFixture(),
+      courseFixture({ isPublished: true, organizationId: organization.id }),
+    ]);
+
+    const [headers, chapter] = await Promise.all([
+      signInAs(user.email, user.password),
+      chapterFixture({
+        courseId: course.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+    ]);
+
+    const [completedLesson, hiddenLesson, nextVisibleLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "explanation",
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "quiz",
+        organizationId: organization.id,
+        position: 1,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "explanation",
+        organizationId: organization.id,
+        position: 2,
+      }),
+    ]);
+
+    await Promise.all([
+      prisma.userLearningProfile.create({
+        data: { preferences: { hiddenLessonKinds: ["quiz"] }, userId: user.id },
+      }),
+      lessonProgressFixture({
+        completedAt: new Date("2024-01-01"),
+        durationSeconds: 60,
+        lessonId: completedLesson.id,
+        userId: user.id,
+      }),
+    ]);
+
+    const result = await getContinueLearning(headers);
+
+    expect(result).toHaveLength(1);
+
+    expect(result[0]).toMatchObject({
+      chapter: { id: chapter.id, title: chapter.title },
+      course: { id: course.id },
+      lesson: { id: nextVisibleLesson.id },
+      status: "completed",
+    });
+
+    expect(result[0]).not.toMatchObject({ lesson: { id: hiddenLesson.id } });
+  });
+
   it("does not reopen a durably completed lesson after new lessons are added", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);

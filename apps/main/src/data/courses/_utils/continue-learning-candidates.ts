@@ -1,5 +1,5 @@
 import { type NextLessonInCourse, getNextLessonInCourse } from "@zoonk/core/lessons/next-in-course";
-import { prisma } from "@zoonk/db";
+import { type LessonKind, prisma } from "@zoonk/db";
 import { type ContinueLearningState, listNextLessonStates } from "./continue-learning-next-state";
 import { type PendingTarget, listPendingTargets } from "./continue-learning-pending-targets";
 import { type ContinueLearningRow } from "./continue-learning-queries";
@@ -24,20 +24,22 @@ type SequentialTargetIds = { chapterIds: string[]; lessonIds: string[] };
  * function focused on choosing the final card for each course.
  */
 export async function listContinueLearningCandidates({
+  excludedLessonKinds,
   rows,
   userId,
 }: {
+  excludedLessonKinds?: LessonKind[];
   rows: ContinueLearningRow[];
   userId: string;
 }): Promise<ContinueLearningCandidate[]> {
   const [sequentialNextLessons, nextStates] = await Promise.all([
-    listSequentialNextLessons({ rows }),
-    listNextLessonStates({ rows, userId }),
+    listSequentialNextLessons({ excludedLessonKinds, rows }),
+    listNextLessonStates({ excludedLessonKinds, rows, userId }),
   ]);
 
   const [blockedSequentialTargetIds, pendingTargets] = await Promise.all([
     listBlockedSequentialTargetIds({ sequentialNextLessons, userId }),
-    listPendingTargets({ rows, states: nextStates }),
+    listPendingTargets({ excludedLessonKinds, rows, states: nextStates }),
   ]);
 
   return rows.map((row, idx) =>
@@ -56,13 +58,20 @@ export async function listContinueLearningCandidates({
  * first resolving the structural next lesson after the learner's most recent
  * completion in each course.
  */
-async function listSequentialNextLessons({ rows }: { rows: ContinueLearningRow[] }) {
+async function listSequentialNextLessons({
+  excludedLessonKinds,
+  rows,
+}: {
+  excludedLessonKinds?: LessonKind[];
+  rows: ContinueLearningRow[];
+}) {
   return Promise.all(
     rows.map((row) =>
       getNextLessonInCourse({
         chapterId: row.chapterId,
         chapterPosition: row.chapterPosition,
         courseId: row.courseId,
+        excludedLessonKinds,
         lessonPosition: row.lessonPosition,
       }),
     ),

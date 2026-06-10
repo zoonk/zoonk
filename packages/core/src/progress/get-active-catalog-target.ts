@@ -1,3 +1,4 @@
+import { type LessonKind } from "@zoonk/db";
 import { type LessonScope } from "../lessons/find-last-completed";
 import { getContinueLessonTarget } from "./get-continue-lesson-target";
 
@@ -9,13 +10,15 @@ export type ActiveCatalogTarget = { chapterSlug: string; lessonSlug?: string };
  * actually completed something in the requested scope.
  */
 export async function getActiveCatalogTarget({
+  excludedLessonKinds,
   headers,
   scope,
 }: {
+  excludedLessonKinds?: LessonKind[];
   headers?: Headers;
   scope: LessonScope;
 }): Promise<ActiveCatalogTarget | null> {
-  const target = await getContinueLessonTarget({ headers, scope });
+  const target = await getContinueLessonTarget({ excludedLessonKinds, headers, scope });
 
   if (!target?.hasStarted) {
     return null;

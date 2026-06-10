@@ -6,20 +6,18 @@ import {
 import { CatalogGridImage } from "@/components/catalog/catalog-grid-image";
 import { getCatalogActiveItemKey } from "@/components/catalog/catalog-item-target";
 import { getCatalogLessonProgress } from "@/data/progress/catalog-progress";
-import { getUserHiddenLessonKinds } from "@/data/users/lesson-filter-settings";
 import { getDefaultLessonImage } from "@/lib/catalog/default-images";
 import { getLessonDisplayMeta, getLessonKindLabels } from "@/lib/lessons";
 import { getFilterableLessonKinds } from "@/lib/lessons/lesson-kind-filters";
 import { getActiveCatalogTarget } from "@zoonk/core/progress/active-catalog-target";
 import { getSession } from "@zoonk/core/users/session/get";
-import { type Lesson } from "@zoonk/db";
+import { type Lesson, type LessonKind } from "@zoonk/db";
 import {
   GridGroup,
   GridItemContent,
   GridItemDescription,
   GridItemFooter,
   GridItemMedia,
-  GridItemPosition,
   GridItemStatusCompleted,
   GridItemStatusIdle,
   GridItemTitle,
@@ -27,6 +25,7 @@ import {
 import { getExtracted } from "next-intl/server";
 import { getLessonKindTone } from "./_utils/lesson-kind-tones";
 import { LessonListFilters } from "./lesson-list-filters";
+import { LessonListPosition } from "./lesson-list-position";
 
 type LessonRow = { display: Awaited<ReturnType<typeof getLessonDisplayMeta>>; lesson: Lesson };
 
@@ -63,6 +62,7 @@ function LessonTile({
   isCompleted,
   lesson,
   notStartedLabel,
+  position,
 }: {
   brandSlug: string;
   chapterSlug: string;
@@ -72,9 +72,8 @@ function LessonTile({
   isCompleted: boolean;
   lesson: Lesson;
   notStartedLabel: string;
+  position: number;
 }) {
-  const lessonNumber = lesson.position + 1;
-
   return (
     <CatalogGridItem
       href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lesson.slug}`}
@@ -89,9 +88,11 @@ function LessonTile({
       </GridItemMedia>
 
       <GridItemContent>
-        <GridItemPosition tone={getLessonKindTone({ kind: lesson.kind })}>
-          {lessonNumber}
-        </GridItemPosition>
+        <LessonListPosition
+          lessonId={lesson.id}
+          position={position}
+          tone={getLessonKindTone({ kind: lesson.kind })}
+        />
         <GridItemTitle>{display.title}</GridItemTitle>
         <GridItemDescription>{display.description}</GridItemDescription>
       </GridItemContent>
@@ -124,6 +125,7 @@ export async function LessonList({
   chapterId,
   chapterSlug,
   courseSlug,
+  hiddenLessonKinds,
   isLanguageCourse,
   lessons,
 }: {
@@ -131,6 +133,7 @@ export async function LessonList({
   chapterId: string;
   chapterSlug: string;
   courseSlug: string;
+  hiddenLessonKinds: LessonKind[];
   isLanguageCourse: boolean;
   lessons: Lesson[];
 }) {
@@ -139,12 +142,11 @@ export async function LessonList({
   }
 
   const t = await getExtracted();
+  const session = await getSession();
 
-  const [completionData, activeTarget, session, hiddenLessonKinds] = await Promise.all([
-    getCatalogLessonProgress(chapterId),
-    getActiveCatalogTarget({ scope: { chapterId } }),
-    getSession(),
-    getUserHiddenLessonKinds(),
+  const [completionData, activeTarget] = await Promise.all([
+    getCatalogLessonProgress(chapterId, hiddenLessonKinds),
+    getActiveCatalogTarget({ excludedLessonKinds: hiddenLessonKinds, scope: { chapterId } }),
   ]);
 
   const lessonKindLabels = await getLessonKindLabels();
@@ -184,7 +186,7 @@ export async function LessonList({
       >
         <CatalogGridEmpty>{t("No lessons found")}</CatalogGridEmpty>
         <GridGroup variant="pane">
-          {lessonRows.map(({ display, lesson }) => {
+          {lessonRows.map(({ display, lesson }, index) => {
             const completion = completionMap.get(lesson.id);
             const isCompleted = completion?.isCompleted ?? false;
 
@@ -199,6 +201,7 @@ export async function LessonList({
                 key={lesson.id}
                 lesson={lesson}
                 notStartedLabel={t("Not started")}
+                position={index + 1}
               />
             );
           })}

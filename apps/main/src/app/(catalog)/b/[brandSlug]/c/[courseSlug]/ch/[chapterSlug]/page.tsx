@@ -8,8 +8,10 @@ import {
 } from "@/components/catalog/continue-lesson-link";
 import { getChapter } from "@/data/chapters/get-chapter";
 import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
+import { getUserHiddenLessonKinds } from "@/data/users/lesson-filter-settings";
 import { getNextChapterInCourse } from "@zoonk/core/lessons/next-chapter-in-course";
 import { getSession } from "@zoonk/core/users/session/get";
+import { type Lesson, type LessonKind } from "@zoonk/db";
 import { Grid, GridToolbar } from "@zoonk/ui/components/grid";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Metadata } from "next";
@@ -18,6 +20,23 @@ import { Suspense } from "react";
 import { ChapterHeader } from "./chapter-header";
 import { ChapterNotGenerated } from "./chapter-not-generated";
 import { LessonList } from "./lesson-list";
+
+/**
+ * Chapter fallbacks are only used when the shared continue target cannot find
+ * a destination. They still need to honor hidden lesson kinds so a filtered-out
+ * lesson never becomes the backup route.
+ */
+function getFirstVisibleLesson({
+  hiddenLessonKinds,
+  lessons,
+}: {
+  hiddenLessonKinds: LessonKind[];
+  lessons: Lesson[];
+}) {
+  const hiddenLessonKindSet = new Set(hiddenLessonKinds);
+
+  return lessons.find((lesson) => !hiddenLessonKindSet.has(lesson.kind));
+}
 
 export async function generateMetadata({
   params,
@@ -42,8 +61,9 @@ export default async function ChapterPage({
 }: PageProps<"/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]">) {
   const { brandSlug, chapterSlug, courseSlug } = await params;
 
-  const [chapter, session] = await Promise.all([
+  const [chapter, hiddenLessonKinds, session] = await Promise.all([
     getChapter({ brandSlug, chapterSlug, courseSlug }),
+    getUserHiddenLessonKinds(),
     getSession(),
   ]);
 
@@ -62,8 +82,10 @@ export default async function ChapterPage({
     ? (`/b/${nextChapter.brandSlug}/c/${nextChapter.courseSlug}/ch/${nextChapter.chapterSlug}` as const)
     : undefined;
 
-  const fallbackHref = lessons[0]
-    ? (`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessons[0].slug}` as const)
+  const firstVisibleLesson = getFirstVisibleLesson({ hiddenLessonKinds, lessons });
+
+  const fallbackHref = firstVisibleLesson
+    ? (`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${firstVisibleLesson.slug}` as const)
     : undefined;
 
   return (
@@ -82,11 +104,13 @@ export default async function ChapterPage({
                 <ContinueLessonLink
                   chapterId={chapter.id}
                   completedHref={completedHref}
+                  excludedLessonKinds={hiddenLessonKinds}
                   fallbackHref={fallbackHref}
                 />
               </Suspense>
               <Suspense fallback={null}>
                 <CatalogActiveShortcutLink
+                  excludedLessonKinds={hiddenLessonKinds}
                   items={lessons}
                   kind="lesson"
                   scope={{ chapterId: chapter.id }}
@@ -113,6 +137,7 @@ export default async function ChapterPage({
               chapterId={chapter.id}
               chapterSlug={chapterSlug}
               courseSlug={courseSlug}
+              hiddenLessonKinds={hiddenLessonKinds}
               isLanguageCourse={Boolean(chapter.course.targetLanguage)}
               lessons={lessons}
             />

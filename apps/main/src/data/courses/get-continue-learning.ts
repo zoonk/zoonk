@@ -3,6 +3,7 @@ import { type NextLessonInCourse } from "@zoonk/core/lessons/next-in-course";
 import { getSession } from "@zoonk/core/users/session/get";
 import { type Chapter, type Course, type LessonKind, type Organization } from "@zoonk/db";
 import { cache } from "react";
+import { getUserHiddenLessonKinds } from "../users/lesson-filter-settings";
 import {
   type ContinueLearningCandidate,
   listContinueLearningCandidates,
@@ -275,13 +276,22 @@ export const getContinueLearning = cache(
     }
 
     const userId = session.user.id;
-    const rows = await listRecentContinueLearningRows({ userId });
+    const hiddenLessonKinds = await getUserHiddenLessonKinds(headers);
+
+    const rows = await listRecentContinueLearningRows({
+      excludedLessonKinds: hiddenLessonKinds,
+      userId,
+    });
 
     if (rows.length === 0) {
       return [];
     }
 
-    const candidates = await listContinueLearningCandidates({ rows, userId });
+    const candidates = await listContinueLearningCandidates({
+      excludedLessonKinds: hiddenLessonKinds,
+      rows,
+      userId,
+    });
 
     return candidates
       .map((candidate) => toContinueLearningItem({ candidate }))

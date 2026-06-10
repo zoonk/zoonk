@@ -26,6 +26,7 @@
     "./lessons/access": "./src/lessons/access.ts",
     "./lessons/generated-companion-kinds": "./src/lessons/generated-companion-kinds.ts",
     "./lessons/generated-companions": "./src/lessons/generated-companions.ts",
+    "./lessons/kind-exclusions": "./src/lessons/lesson-kind-exclusions.ts",
     "./lessons/last-completed": "./src/lessons/find-last-completed.ts",
     "./lessons/next-chapter-in-course": "./src/lessons/get-next-chapter-in-course.ts",
     "./lessons/next-in-course": "./src/lessons/get-next-lesson-in-course.ts",
