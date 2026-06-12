@@ -11,6 +11,7 @@ allowBuilds:
   "@swc/core": true
   "@tailwindcss/oxide": true
   cbor-extract: false
+  core-js: false
   esbuild: true
   prisma: true
   protobufjs: false
