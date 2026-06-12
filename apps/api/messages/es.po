@@ -12,7 +12,7 @@ msgstr "Inicia sesión en Zoonk"
 
 #: src/app/auth/login/email-login-form.tsx
 msgid "sy-pv5"
-msgstr ""
+msgstr "Correo electrónico"
 
 #: src/app/auth/login/email-login-form.tsx
 msgid "apQW0E"
@@ -39,7 +39,7 @@ msgstr "Inicia sesión o crea una cuenta"
 
 #: src/app/auth/login/page.tsx
 msgid "CoMQ1-"
-msgstr ""
+msgstr "Continúa con tu correo o una cuenta social"
 
 #: src/app/auth/login/page.tsx
 msgid "4wpUNc"
@@ -47,7 +47,7 @@ msgstr "O"
 
 #: src/app/auth/login/page.tsx
 msgid "Ju9oB-"
-msgstr ""
+msgstr "Al hacer clic en Continuar, aceptas nuestros <terms>Términos de servicio</terms> y <privacy>Política de privacidad</privacy>."
 
 #: src/app/auth/login/social-login.tsx
 msgid "FJ6r9E"
@@ -87,7 +87,7 @@ msgstr "Verificando..."
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "9N4_rz"
-msgstr ""
+msgstr "{username} está disponible"
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "R76cpj"
@@ -107,7 +107,7 @@ msgstr "Nombre de usuario"
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "XLl_pd"
-msgstr ""
+msgstr "tu-nombre-de-usuario"
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "yCCLud"
@@ -131,4 +131,4 @@ msgstr "Por tu seguridad, no podemos redirigirte a un destino no reconocido."
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "-e4BVR"
-msgstr ""
+msgstr "Continuar a Zoonk"
