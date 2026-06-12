@@ -3,6 +3,7 @@
 import { type StepStreamMessage } from "@zoonk/core/workflows/steps";
 import { getString } from "@zoonk/utils/json";
 import { useCallback, useEffect, useEffectEvent, useReducer, useRef } from "react";
+import { getWorkflowAuthHeaders } from "./auth-headers";
 import {
   type GenerationAction,
   type GenerationState,
@@ -117,10 +118,11 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
     dispatch({ type: "triggerStart" });
 
     try {
+      const authHeaders = await getWorkflowAuthHeaders();
+
       const response = await fetch(triggerUrl, {
         body: JSON.stringify(triggerBody),
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
+        headers: { ...authHeaders, "Content-Type": "application/json" },
         method: "POST",
       });
 
