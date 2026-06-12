@@ -49,6 +49,7 @@ catalog:
   react-dom: 19.2.6
   recharts: 3.8.1
   server-only: 0.0.1
+  sharp: 0.34.5
   tsx: 4.22.3
   vitest: 4.1.7
   zod: 4.4.3

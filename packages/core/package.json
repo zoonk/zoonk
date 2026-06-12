@@ -87,6 +87,6 @@
     "next": "catalog:",
     "react": "catalog:",
     "server-only": "catalog:",
-    "sharp": ">=0.34"
+    "sharp": "catalog:"
   }
 }
