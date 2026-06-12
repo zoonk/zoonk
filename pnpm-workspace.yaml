@@ -11,6 +11,7 @@ allowBuilds:
   "@swc/core": true
   "@tailwindcss/oxide": true
   cbor-extract: false
+  core-js: false
   esbuild: true
   prisma: true
   protobufjs: false
@@ -42,6 +43,7 @@ catalog:
   next: 16.2.6
   next-intl: 4.12.0
   nuqs: 2.8.9
+  posthog-js: 1.386.6
   raw-loader: 4.0.2
   react: 19.2.6
   react-dom: 19.2.6

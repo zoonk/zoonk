@@ -1,6 +1,6 @@
 "use client";
 
-import { logout } from "@zoonk/core/auth/client";
+import { logout } from "@/lib/logout";
 import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
 import { LogOut, User } from "lucide-react";
 import { useExtracted } from "next-intl";

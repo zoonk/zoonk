@@ -29,6 +29,7 @@
     "lucide-react": "catalog:",
     "next": "catalog:",
     "next-intl": "catalog:",
+    "posthog-js": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "server-only": "catalog:",

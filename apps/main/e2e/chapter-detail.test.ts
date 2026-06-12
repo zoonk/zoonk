@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type Browser, type Page } from "@playwright/test";
+import { type LessonKind, prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createOrganization, getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
@@ -40,6 +41,35 @@ async function createFilterTestPage({ browser }: { browser: Browser }) {
   const page = await context.newPage();
 
   return { context, page, user };
+}
+
+async function getSavedHiddenLessonKinds(userId: string) {
+  const profile = await prisma.userLearningProfile.findUnique({
+    select: { preferences: true },
+    where: { userId },
+  });
+
+  const preferences = profile?.preferences;
+
+  if (!preferences || typeof preferences !== "object" || Array.isArray(preferences)) {
+    return [];
+  }
+
+  const hiddenLessonKinds = (preferences as { hiddenLessonKinds?: unknown }).hiddenLessonKinds;
+
+  return Array.isArray(hiddenLessonKinds)
+    ? hiddenLessonKinds.filter((kind): kind is LessonKind => typeof kind === "string")
+    : [];
+}
+
+async function expectSavedHiddenLessonKinds({
+  hiddenLessonKinds,
+  userId,
+}: {
+  hiddenLessonKinds: LessonKind[];
+  userId: string;
+}) {
+  await expect.poll(() => getSavedHiddenLessonKinds(userId)).toEqual(hiddenLessonKinds);
 }
 
 /**
@@ -553,9 +583,9 @@ test.describe("Chapter Lesson Type Filters", () => {
 
     await page.goto(chapterUrl);
 
-    const filterButton = await openLessonTypeFilterMenu({ page });
+    await openLessonTypeFilterMenu({ page });
     await page.getByRole("menuitemcheckbox", { name: /^quiz$/iu }).click();
-    await expect(filterButton).toBeEnabled();
+    await expectSavedHiddenLessonKinds({ hiddenLessonKinds: ["quiz"], userId: user.id });
 
     const secondContext = await browser.newContext({ storageState: user.storageState });
     const secondPage = await secondContext.newPage();
@@ -571,7 +601,12 @@ test.describe("Chapter Lesson Type Filters", () => {
     await expect(secondPage.getByRole("menuitem", { name: /clear filter/iu })).toBeVisible();
 
     await secondPage.getByRole("menuitem", { name: /clear filter/iu }).click();
-    await expect(secondPage.getByRole("button", { name: /filter lesson types/iu })).toBeEnabled();
+    await expectSavedHiddenLessonKinds({ hiddenLessonKinds: [], userId: user.id });
+
+    await expect(
+      secondPage.getByRole("link", { name: new RegExp(lessonNames.second, "u") }),
+    ).toBeVisible();
+
     await Promise.all([context.close(), secondContext.close()]);
   });
 });

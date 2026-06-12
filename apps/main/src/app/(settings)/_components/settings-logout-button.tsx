@@ -1,6 +1,6 @@
 "use client";
 
-import { logout } from "@zoonk/core/auth/client";
+import { logout } from "@/lib/logout";
 import { Button } from "@zoonk/ui/components/button";
 import { LogOutIcon } from "lucide-react";
 

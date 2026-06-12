@@ -1,8 +1,8 @@
 "use client";
 
+import { logout } from "@/lib/logout";
 import { getMenu } from "@/lib/menu";
 import { trackCommandPaletteSearch } from "@/lib/track-events";
-import { logout } from "@zoonk/core/auth/client";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import {
   CommandDialog,

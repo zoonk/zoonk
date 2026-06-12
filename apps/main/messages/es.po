@@ -10,7 +10,7 @@ msgstr ""
 #: src/app/(catalog)/_components/navbar-links.tsx
 #: src/app/(progress)/_components/progress-navbar.tsx
 #: src/app/(settings)/_components/settings-navbar.tsx
-msgid "U3l+Q9"
+msgid "U3l-Q9"
 msgstr "Página de inicio"
 
 #: src/app/(catalog)/_components/command-palette.tsx
@@ -39,7 +39,7 @@ msgstr "Idioma"
 
 #: src/app/(catalog)/_components/command-palette.tsx
 #: src/app/(catalog)/_components/user-dropdown-menu.tsx
-msgid "I+38K2"
+msgid "I-38K2"
 msgstr "Mis cursos"
 
 #: src/app/(catalog)/_components/command-palette.tsx
@@ -88,7 +88,7 @@ msgstr "Mi cuenta"
 #: src/app/(catalog)/_components/command-palette.tsx
 #: src/app/(catalog)/_components/logout-dropdown-item.tsx
 #: src/app/(settings)/_components/settings-navbar.tsx
-msgid "C81/uG"
+msgid "C81_uG"
 msgstr "Cerrar sesión"
 
 #: src/app/(catalog)/_components/command-palette.tsx
@@ -128,7 +128,7 @@ msgstr "Perfil"
 #: src/app/(catalog)/_components/user-dropdown-menu.tsx
 #: src/app/(settings)/_components/settings-pills.tsx
 #: src/app/(settings)/subscription/page.tsx
-msgid "R/6nsx"
+msgid "R_6nsx"
 msgstr "Suscripción"
 
 #: src/app/(catalog)/(home)/best-day.tsx
@@ -145,22 +145,22 @@ msgstr "{day} con {value}%"
 #: src/app/(catalog)/(home)/best-day.tsx
 #: src/app/(catalog)/(home)/best-time.tsx
 #: src/app/(catalog)/(home)/score.tsx
-msgid "zml1/y"
+msgid "zml1_y"
 msgstr "Últimos 3 meses"
 
 #: src/app/(catalog)/(home)/best-time.tsx
 #: src/app/(progress)/score/score-insights.tsx
-msgid "00/IyC"
+msgid "00_IyC"
 msgstr "Madrugada"
 
 #: src/app/(catalog)/(home)/best-time.tsx
 #: src/app/(progress)/score/score-insights.tsx
-msgid "/kzk/m"
+msgid "_kzk_m"
 msgstr "Mañana"
 
 #: src/app/(catalog)/(home)/best-time.tsx
 #: src/app/(progress)/score/score-insights.tsx
-msgid "mF+J9o"
+msgid "mF-J9o"
 msgstr "Tarde"
 
 #: src/app/(catalog)/(home)/best-time.tsx
@@ -188,7 +188,7 @@ msgid "acrOoz"
 msgstr "Continuar"
 
 #: src/app/(catalog)/(home)/continue-learning.tsx
-msgid "0X+xfW"
+msgid "0X-xfW"
 msgstr "Continúa aprendiendo"
 
 #: src/app/(catalog)/(home)/energy.tsx
@@ -224,7 +224,7 @@ msgstr "Crear un curso con IA"
 #: src/app/(catalog)/(home)/hero.tsx
 #: src/app/(catalog)/courses/page.tsx
 #: src/app/(catalog)/my/user-course-list.tsx
-msgid "s+Ncqj"
+msgid "s-Ncqj"
 msgstr "Explorar cursos"
 
 #: src/app/(catalog)/(home)/level.tsx
@@ -311,7 +311,7 @@ msgid "OhgOkH"
 msgstr "Borrar filtro"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
-msgid "orGV/i"
+msgid "orGV_i"
 msgstr "Lección actual"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
@@ -341,7 +341,7 @@ msgid "3SOcGR"
 msgstr "Buscar capítulos..."
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
-msgid "8udPa+"
+msgid "8udPa-"
 msgstr "No se encontraron capítulos"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
@@ -357,7 +357,7 @@ msgid "gyGolN"
 msgstr "Aprende {course}"
 
 #: src/app/(catalog)/courses/category-pills.tsx
-msgid "tuZsq+"
+msgid "tuZsq-"
 msgstr "Categorías de cursos"
 
 #: src/app/(catalog)/courses/category-pills.tsx
@@ -379,7 +379,7 @@ msgstr "Cargando más cursos…"
 
 #: src/app/(catalog)/courses/course-list-client.tsx
 #: src/components/generation/workflow-generation-error.tsx
-msgid "W/5hwr"
+msgid "W_5hwr"
 msgstr "Algo salió mal. Por favor, intenta de nuevo."
 
 #: src/app/(catalog)/courses/course-list-client.tsx
@@ -425,7 +425,7 @@ msgid "RbslnC"
 msgstr "Cambiar tema"
 
 #: src/app/(catalog)/learn/[prompt]/page.tsx
-msgid "CaU/nf"
+msgid "CaU_nf"
 msgstr "Descubre cursos y recursos personalizados para aprender {prompt}. Zoonk usa IA para crear lecciones interactivas hechas para ti."
 
 #: src/app/(catalog)/learn/[prompt]/page.tsx
@@ -462,7 +462,7 @@ msgid "cHCwbF"
 msgstr "Fotografía"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "zE1J/t"
+msgid "zE1J_t"
 msgstr "Filosofía"
 
 #: src/app/(catalog)/learn/page.tsx
@@ -474,7 +474,7 @@ msgid "1qsU2j"
 msgstr "Escritura creativa"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "RGkBg/"
+msgid "RGkBg_"
 msgstr "Biología"
 
 #: src/app/(catalog)/learn/page.tsx
@@ -491,11 +491,11 @@ msgid "O9mDkA"
 msgstr "Marketing"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "/VD159"
+msgid "_VD159"
 msgstr "Aprende cualquier cosa."
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "zfDq+e"
+msgid "zfDq-e"
 msgstr "Física cuántica"
 
 #: src/app/(catalog)/learn/page.tsx
@@ -507,7 +507,7 @@ msgid "Osb4bp"
 msgstr "Aprendizaje automático"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "OdZ/n1"
+msgid "OdZ_n1"
 msgstr "Escritura creativa"
 
 #: src/app/(catalog)/learn/page.tsx
@@ -519,7 +519,7 @@ msgid "XFPrU4"
 msgstr "Economía conductual"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "+0gz/i"
+msgid "-0gz_i"
 msgstr "Química orgánica"
 
 #: src/app/(catalog)/learn/page.tsx
@@ -583,7 +583,7 @@ msgid "riE3I5"
 msgstr "Ve todos los cursos que empezaste en Zoonk. Continúa donde lo dejaste y sigue tu progreso en las lecciones interactivas."
 
 #: src/app/(catalog)/my/page.tsx
-msgid "eeNr/Y"
+msgid "eeNr_Y"
 msgstr "Mis cursos"
 
 #: src/app/(catalog)/my/page.tsx
@@ -607,7 +607,7 @@ msgid "dtRj3N"
 msgstr "Los cursos personalizados llegarán pronto."
 
 #: src/app/(progress)/_components/metric-comparison.tsx
-msgid "pev/fB"
+msgid "pev_fB"
 msgstr "vs mes pasado"
 
 #: src/app/(progress)/_components/metric-comparison.tsx
@@ -616,7 +616,7 @@ msgstr "vs últimos 6 meses"
 
 #: src/app/(progress)/_components/metric-comparison.tsx
 #: src/app/(progress)/_components/progress-insight-period-label.ts
-msgid "s+lPP3"
+msgid "s-lPP3"
 msgstr "Todo el tiempo"
 
 #: src/app/(progress)/_components/metric-comparison.tsx
@@ -636,11 +636,11 @@ msgid "hCCWuZ"
 msgstr "Período anterior"
 
 #: src/app/(progress)/_components/period-navigation.tsx
-msgid "I2z5s/"
+msgid "I2z5s_"
 msgstr "Período siguiente"
 
 #: src/app/(progress)/_components/period-tabs.tsx
-msgid "PIaUh+"
+msgid "PIaUh-"
 msgstr "Selección de período"
 
 #: src/app/(progress)/_components/period-tabs.tsx
@@ -684,7 +684,7 @@ msgid "lPShsT"
 msgstr "Este año"
 
 #: src/app/(progress)/energy/energy-chart-client.tsx
-msgid "M+JIpD"
+msgid "M-JIpD"
 msgstr "Gráfico de energía"
 
 #: src/app/(progress)/energy/energy-chart-client.tsx
@@ -709,7 +709,7 @@ msgid "pssms6"
 msgstr "Responde correctamente y mantén una rutina de estudio. Las respuestas correctas hacen que la energía suba; las incorrectas y los días sin estudiar hacen que baje."
 
 #: src/app/(progress)/energy/energy-explanation.tsx
-msgid "+8Qx8X"
+msgid "-8Qx8X"
 msgstr "¿Por qué es importante la energía?"
 
 #: src/app/(progress)/energy/energy-explanation.tsx
@@ -717,7 +717,7 @@ msgid "TRcArs"
 msgstr "La energía es como la frecuencia cardíaca en una app de salud: muestra el ritmo actual de tu aprendizaje. No es una racha; pasar un día sin estudiar no la pone en cero, y puedes recuperarla cuando vuelves."
 
 #: src/app/(progress)/energy/energy-insights.tsx
-msgid "XxS+he"
+msgid "XxS-he"
 msgstr "Día con más energía"
 
 #: src/app/(progress)/energy/energy-insights.tsx
@@ -777,7 +777,7 @@ msgid "6g8QfE"
 msgstr "Es como los pasos en una app de salud: un registro de cuánto has aprendido. También funciona como artes marciales para la mente: aumenta tu Poder Mental para pasar del cinturón blanco al cinturón negro del conocimiento."
 
 #: src/app/(progress)/level/level-insights.tsx
-msgid "elq+tg"
+msgid "elq-tg"
 msgstr "Mayor PM"
 
 #: src/app/(progress)/level/level-insights.tsx
@@ -797,7 +797,7 @@ msgid "t2WYIo"
 msgstr "Cinturón {color}, nivel {level} de 10. {bp} de Poder Mental hasta el siguiente nivel."
 
 #: src/app/(progress)/level/level-progression.tsx
-msgid "n/mgOm"
+msgid "n_mgOm"
 msgstr "Progresión de cinturón"
 
 #: src/app/(progress)/level/level-progression.tsx
@@ -805,7 +805,7 @@ msgid "ZKbTsS"
 msgstr "{current}/10"
 
 #: src/app/(progress)/level/level-progression.tsx
-msgid "FM+wHG"
+msgid "FM-wHG"
 msgstr "Nivel {current} de 10 en cinturón {color}"
 
 #: src/app/(progress)/level/level-stats.tsx
@@ -813,15 +813,15 @@ msgid "v5yNm3"
 msgstr "Poder Mental total"
 
 #: src/app/(progress)/level/level-stats.tsx
-msgid "/Q0taG"
+msgid "_Q0taG"
 msgstr "PM"
 
 #: src/app/(progress)/level/level-stats.tsx
-msgid "u/oEJA"
+msgid "u_oEJA"
 msgstr "{value} PM ganado"
 
 #: src/app/(progress)/level/page.tsx
-msgid "4+USpX"
+msgid "4-USpX"
 msgstr "Sigue tu progreso de nivel y ve cómo avanzas."
 
 #: src/app/(progress)/level/page.tsx
@@ -837,7 +837,7 @@ msgid "GWkswX"
 msgstr "Sigue tus aciertos y las tendencias de tu progreso"
 
 #: src/app/(progress)/score/score-chart-client.tsx
-msgid "J+05ol"
+msgid "J-05ol"
 msgstr "Gráfico de aciertos"
 
 #: src/app/(progress)/score/score-explanation.tsx
@@ -845,7 +845,7 @@ msgid "bIZaXJ"
 msgstr "¿Qué son los aciertos?"
 
 #: src/app/(progress)/score/score-explanation.tsx
-msgid "JA+N5Z"
+msgid "JA-N5Z"
 msgstr "Los aciertos son el porcentaje de preguntas que respondiste correctamente en este período."
 
 #: src/app/(progress)/score/score-explanation.tsx
@@ -853,7 +853,7 @@ msgid "z9kvhA"
 msgstr "¿Cómo mejoro mis aciertos?"
 
 #: src/app/(progress)/score/score-explanation.tsx
-msgid "7/C9do"
+msgid "7_C9do"
 msgstr "Revisa tus errores y repite lecciones. A medida que respondes más preguntas correctamente, tus aciertos mejoran."
 
 #: src/app/(progress)/score/score-explanation.tsx
@@ -890,7 +890,7 @@ msgid "1SvspN"
 msgstr "Verificando..."
 
 #: src/app/(settings)/profile/profile-form.tsx
-msgid "9N4/rz"
+msgid "9N4_rz"
 msgstr "{username} está disponible"
 
 #: src/app/(settings)/profile/profile-form.tsx
@@ -906,11 +906,11 @@ msgid "HAlOn1"
 msgstr "Nombre"
 
 #: src/app/(settings)/profile/profile-form.tsx
-msgid "yNHZ+a"
+msgid "yNHZ-a"
 msgstr "¡Tu perfil se actualizó correctamente!"
 
 #: src/app/(settings)/profile/profile-form.tsx
-msgid "VT+G/7"
+msgid "VT-G_7"
 msgstr "Este nombre será visible para otros usuarios."
 
 #: src/app/(settings)/profile/profile-form.tsx
@@ -966,7 +966,7 @@ msgid "0Azlrb"
 msgstr "Administrar"
 
 #: src/app/(settings)/subscription/plan-list.tsx
-msgid "/gko4g"
+msgid "_gko4g"
 msgstr "Suscribirse a {plan}"
 
 #: src/app/(settings)/subscription/plan-list.tsx
@@ -1011,7 +1011,7 @@ msgid "lOdoIb"
 msgstr "Plus"
 
 #: src/app/(settings)/subscription/subscription-plans.tsx
-msgid "R/eOkj"
+msgid "R_eOkj"
 msgstr "Pro"
 
 #: src/app/(settings)/subscription/subscription-plans.tsx
@@ -1064,7 +1064,7 @@ msgid "l1XTI5"
 msgstr "Síguenos"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
-msgid "A/VPtF"
+msgid "A_VPtF"
 msgstr "Lección no disponible"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
@@ -1079,7 +1079,7 @@ msgstr "Crear lección"
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
 #: src/app/generate/l/[id]/generate-lesson-content.tsx
-msgid "/N8rYN"
+msgid "_N8rYN"
 msgstr "Volver al capítulo"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
@@ -1103,7 +1103,7 @@ msgid "lOdIcU"
 msgstr "Crea primero las lecciones anteriores y luego vuelve para revisar."
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
-msgid "9AOq2+"
+msgid "9AOq2-"
 msgstr "Aún no hay preguntas para revisar."
 
 #: src/app/generate/ch/[id]/generate-chapter-content.tsx
@@ -1167,11 +1167,11 @@ msgid "nwGJ65"
 msgstr "Explorando tu tema..."
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
-msgid "VKFa/t"
+msgid "VKFa_t"
 msgstr "Trazando el camino de aprendizaje..."
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
-msgid "zQWv1/"
+msgid "zQWv1_"
 msgstr "Escribiendo la lección {number}..."
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
@@ -1214,11 +1214,11 @@ msgid "i3JgLB"
 msgstr "Categorizando tu curso"
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
-msgid "WOe+OA"
+msgid "WOe-OA"
 msgstr "Buscando duplicados"
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
-msgid "Gjutu+"
+msgid "Gjutu-"
 msgstr "Creando la imagen de portada"
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
@@ -1242,7 +1242,7 @@ msgid "HbhIvm"
 msgstr "Escribiendo la descripción de tu curso"
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
-msgid "aev/pt"
+msgid "aev_pt"
 msgstr "Determinando las categorías correctas..."
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
@@ -1254,7 +1254,7 @@ msgid "JJrUOR"
 msgstr "Comparando cursos cercanos..."
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
-msgid "uw23V+"
+msgid "uw23V-"
 msgstr "Comprobando si este curso ya existe..."
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
@@ -1282,7 +1282,7 @@ msgid "Auz1tl"
 msgstr "Buscando nombres alternativos..."
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
-msgid "Gt/VNO"
+msgid "Gt_VNO"
 msgstr "Ampliando la búsqueda del curso..."
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
@@ -1298,7 +1298,7 @@ msgid "tXkuD8"
 msgstr "Revisando el flujo general..."
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
-msgid "4LsE/n"
+msgid "4LsE_n"
 msgstr "Creando la estructura del curso..."
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
@@ -1310,7 +1310,7 @@ msgid "a7FJJd"
 msgstr "Resumiendo lo que aprenderás..."
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
-msgid "9r/4zz"
+msgid "9r_4zz"
 msgstr "Escribiendo la descripción general..."
 
 #: src/app/generate/l/[id]/generate-lesson-content.tsx
@@ -1354,7 +1354,7 @@ msgid "6xEJTk"
 msgstr "Diseñando ejercicios de práctica..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
-msgid "6hjA6/"
+msgid "6hjA6_"
 msgstr "Creando ejemplos para probar..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
@@ -1362,7 +1362,7 @@ msgid "KddvJw"
 msgstr "Escribiendo ejercicios de llenar los espacios..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
-msgid "C05+tM"
+msgid "C05-tM"
 msgstr "Creando tareas interactivas..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
@@ -1422,7 +1422,7 @@ msgid "l486Kx"
 msgstr "Verificando lo que necesitamos..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
-msgid "EAqAX/"
+msgid "EAqAX_"
 msgstr "Pensando qué ilustrar..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
@@ -1454,7 +1454,7 @@ msgid "r8xznK"
 msgstr "Investigando el tema..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
-msgid "K/JznZ"
+msgid "K_JznZ"
 msgstr "Escribiendo la explicación..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
@@ -1470,7 +1470,7 @@ msgid "nwi1Ym"
 msgstr "Creando el contenido..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
-msgid "+QrqeN"
+msgid "-QrqeN"
 msgstr "Escribiendo primero la explicación..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
@@ -1510,7 +1510,7 @@ msgid "HDNFHk"
 msgstr "Verificando cómo se dice cada palabra..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/language.ts
-msgid "/Fl7bm"
+msgid "_Fl7bm"
 msgstr "Buscando los sonidos correctos..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/language.ts
@@ -1546,11 +1546,11 @@ msgid "zYx0UG"
 msgstr "Añadiendo pronunciación para cada palabra..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/language.ts
-msgid "VQ3+C2"
+msgid "VQ3-C2"
 msgstr "Anotando cómo suena cada palabra..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/language.ts
-msgid "YWB+K/"
+msgid "YWB-K_"
 msgstr "Detallando los sonidos de las palabras..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/language.ts
@@ -1558,11 +1558,11 @@ msgid "L6f1Zq"
 msgstr "Registrando información de pronunciación..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/language.ts
-msgid "i+rNdh"
+msgid "i-rNdh"
 msgstr "Seleccionando el vocabulario clave..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/language.ts
-msgid "IdWf9/"
+msgid "IdWf9_"
 msgstr "Eligiendo palabras para practicar..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/language.ts
@@ -1578,7 +1578,7 @@ msgid "6BQo6o"
 msgstr "Traduciendo palabras individuales..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/language.ts
-msgid "k0Q/Ph"
+msgid "k0Q_Ph"
 msgstr "Buscando cada término..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/language.ts
@@ -1606,7 +1606,7 @@ msgid "ScA7Xm"
 msgstr "Haciendo que suene natural..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/language.ts
-msgid "1vO+bV"
+msgid "1vO-bV"
 msgstr "Grabando audio de vocabulario..."
 
 #: src/app/generate/l/[id]/phase-thinking-generators/language.ts
@@ -1670,7 +1670,7 @@ msgid "c7xJGQ"
 msgstr "Creando ejercicios"
 
 #: src/app/generate/l/[id]/use-phase-labels.ts
-msgid "aKNA/b"
+msgid "aKNA_b"
 msgstr "Creando imágenes"
 
 #: src/app/generate/l/[id]/use-phase-labels.ts
@@ -1682,7 +1682,7 @@ msgid "mIpv67"
 msgstr "Creando oraciones"
 
 #: src/app/generate/l/[id]/use-phase-labels.ts
-msgid "0zeST/"
+msgid "0zeST_"
 msgstr "Buscando palabras"
 
 #: src/app/generate/l/[id]/use-phase-labels.ts
@@ -1698,7 +1698,7 @@ msgid "v2DAdY"
 msgstr "Grabando audio de vocabulario"
 
 #: src/app/generate/l/[id]/use-phase-labels.ts
-msgid "j+pO55"
+msgid "j-pO55"
 msgstr "Grabando audio de palabras"
 
 #: src/app/generate/l/[id]/use-phase-labels.ts
@@ -1710,11 +1710,11 @@ msgid "v4iFHN"
 msgstr "Escribiendo el contenido"
 
 #: src/app/generate/l/[id]/use-phase-labels.ts
-msgid "ZA0/P+"
+msgid "ZA0_P-"
 msgstr "Escribiendo la explicación"
 
 #: src/app/generate/layout.tsx
-msgid "/tq5fR"
+msgid "_tq5fR"
 msgstr "Creando contenido"
 
 #: src/app/privacy/page.tsx
@@ -1790,7 +1790,7 @@ msgstr "Comenzar"
 
 #: src/components/catalog/continue-lesson-link.tsx
 #: src/lib/lessons.ts
-msgid "R+J5ox"
+msgid "R-J5ox"
 msgstr "Repaso"
 
 #: src/components/feedback/contact-form.tsx
@@ -1818,7 +1818,7 @@ msgid "vD72E5"
 msgstr "¡Mensaje enviado con éxito! Te responderemos pronto."
 
 #: src/components/feedback/contact-form.tsx
-msgid "+5vOOu"
+msgid "-5vOOu"
 msgstr "Por favor, proporciona tantos detalles como sea posible."
 
 #: src/components/feedback/contact-form.tsx
@@ -1830,7 +1830,7 @@ msgid "Xx0WZV"
 msgstr "Enviar mensaje"
 
 #: src/components/feedback/content-feedback.tsx
-msgid "BlI1/9"
+msgid "BlI1_9"
 msgstr "¿Te gustó este contenido?"
 
 #: src/components/feedback/feedback-dialog.tsx
@@ -1846,7 +1846,7 @@ msgid "ctqXbT"
 msgstr "Perdimos la conexión del progreso. Es posible que tu contenido aún se esté generando."
 
 #: src/components/generation/workflow-generation-error.tsx
-msgid "1A8Z/l"
+msgid "1A8Z_l"
 msgstr "Comprobar de nuevo"
 
 #: src/components/generation/workflow-generation-error.tsx
@@ -1858,7 +1858,7 @@ msgid "JqiqNj"
 msgstr "Algo salió mal"
 
 #: src/components/subscription/upgrade-cta.tsx
-msgid "IS/YjO"
+msgid "IS_YjO"
 msgstr "Suscríbete para crear"
 
 #: src/components/subscription/upgrade-cta.tsx
@@ -1866,11 +1866,11 @@ msgid "jxZJ5k"
 msgstr "Crear contenido con IA requiere una suscripción activa."
 
 #: src/components/subscription/upgrade-cta.tsx
-msgid "0h/lPM"
+msgid "0h_lPM"
 msgstr "Suscribirse"
 
 #: src/lib/belt-colors.ts
-msgid "OAG+sQ"
+msgid "OAG-sQ"
 msgstr "Blanco"
 
 #: src/lib/belt-colors.ts
@@ -1894,11 +1894,11 @@ msgid "tihmF3"
 msgstr "Morado"
 
 #: src/lib/belt-colors.ts
-msgid "eM/4ho"
+msgid "eM_4ho"
 msgstr "Café"
 
 #: src/lib/belt-colors.ts
-msgid "D+ZFS/"
+msgid "D-ZFS_"
 msgstr "Rojo"
 
 #: src/lib/belt-colors.ts
@@ -1918,7 +1918,7 @@ msgid "w1Fanr"
 msgstr "Negocios"
 
 #: src/lib/categories/category.ts
-msgid "n5D/Ku"
+msgid "n5D_Ku"
 msgstr "Comunicación"
 
 #: src/lib/categories/category.ts
@@ -1954,7 +1954,7 @@ msgid "qydxOd"
 msgstr "Ciencia"
 
 #: src/lib/categories/category.ts
-msgid "OV/2+4"
+msgid "OV_2-4"
 msgstr "Sociedad"
 
 #: src/lib/categories/category.ts
@@ -1974,11 +1974,11 @@ msgid "EMi23I"
 msgstr "Explorar todos los cursos de {category}"
 
 #: src/lib/categories/category.ts
-msgid "Rz9oL+"
+msgid "Rz9oL-"
 msgstr "Cursos de {category}"
 
 #: src/lib/lessons.ts
-msgid "w0J/gv"
+msgid "w0J_gv"
 msgstr "Alfabeto"
 
 #: src/lib/lessons.ts
@@ -1986,7 +1986,7 @@ msgid "4TTYDR"
 msgstr "Lección personalizada"
 
 #: src/lib/lessons.ts
-msgid "E1bF/X"
+msgid "E1bF_X"
 msgstr "Explicación"
 
 #: src/lib/lessons.ts
@@ -1998,27 +1998,27 @@ msgid "1TOMnj"
 msgstr "Escucha"
 
 #: src/lib/lessons.ts
-msgid "KV+O0y"
+msgid "KV-O0y"
 msgstr "Practica"
 
 #: src/lib/lessons.ts
-msgid "OuR/Ij"
+msgid "OuR_Ij"
 msgstr "Cuestionario"
 
 #: src/lib/lessons.ts
-msgid "MOK/yK"
+msgid "MOK_yK"
 msgstr "Lectura"
 
 #: src/lib/lessons.ts
-msgid "/vCXIP"
+msgid "_vCXIP"
 msgstr "Traducción"
 
 #: src/lib/lessons.ts
-msgid "Ox+Z+K"
+msgid "Ox-Z-K"
 msgstr "Tutorial"
 
 #: src/lib/lessons.ts
-msgid "lqtP+R"
+msgid "lqtP-R"
 msgstr "Vocabulario"
 
 #: src/lib/lessons.ts
@@ -2070,7 +2070,7 @@ msgid "IHSVS5"
 msgstr "Aprende palabras nuevas y practica cómo usarlas."
 
 #: src/lib/lessons.ts
-msgid "OjyuQ+"
+msgid "OjyuQ-"
 msgstr "Aprende el sistema de escritura de {topic} con práctica enfocada."
 
 #: src/lib/lessons.ts
