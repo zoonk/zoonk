@@ -7,7 +7,7 @@ msgstr ""
 "X-Crowdin-SourceKey: msgstr\n"
 
 #: src/components/alphabet-step.tsx
-msgid "w0J/gv"
+msgid "w0J_gv"
 msgstr "Alfabeto"
 
 #: src/components/arrange-words-answer-area.tsx
@@ -24,7 +24,7 @@ msgstr "Incorrecto"
 
 #: src/components/arrange-words-answer-area.tsx
 #: src/components/sort-order-step.tsx
-msgid "hFFOe+"
+msgid "hFFOe-"
 msgstr "{item}. {result}."
 
 #: src/components/arrange-words-answer-area.tsx
@@ -33,11 +33,11 @@ msgstr "Posición {position}: {item}. Toca para quitar."
 
 #: src/components/arrange-words-answer-area.tsx
 #: src/components/select-image-step.tsx
-msgid "1nJY2/"
+msgid "1nJY2_"
 msgstr "Tu respuesta"
 
 #: src/components/arrange-words-answer-area.tsx
-msgid "7R/rOB"
+msgid "7R_rOB"
 msgstr "Toca las palabras para construir tu respuesta"
 
 #: src/components/arrange-words.tsx
@@ -46,7 +46,7 @@ msgid "e7WNdK"
 msgstr "Banco de palabras"
 
 #: src/components/completion-auth-branch.tsx
-msgid "Ak+bLZ"
+msgid "Ak-bLZ"
 msgstr "Todas las lecciones"
 
 #: src/components/completion-auth-branch.tsx
@@ -56,7 +56,7 @@ msgstr "Intentar de nuevo"
 #: src/components/completion-auth-branch.tsx
 #: src/components/completion-milestone-actions.tsx
 #: src/components/step-navigation-button-group.tsx
-msgid "9+Ddtu"
+msgid "9-Ddtu"
 msgstr "Siguiente"
 
 #: src/components/completion-auth-branch.tsx
@@ -90,7 +90,7 @@ msgid "vlOyrO"
 msgstr "{energy}% de energía"
 
 #: src/components/completion-energy-milestone.tsx
-msgid "3Jd+mJ"
+msgid "3Jd-mJ"
 msgstr "Tu esfuerzo está dando resultado. Completa lecciones todos los días para aumentar tu energía."
 
 #: src/components/completion-energy-milestone.tsx
@@ -114,7 +114,7 @@ msgid "155cHi"
 msgstr "Nivel conquistado"
 
 #: src/components/completion-level-milestone.tsx
-msgid "mb2zm+"
+msgid "mb2zm-"
 msgstr "Fortaleciste tu mente y conquistaste el nivel {level} del cinturón {color}. ¡Felicidades!"
 
 #: src/components/completion-level-milestone.tsx
@@ -122,7 +122,7 @@ msgid "Bk6B6r"
 msgstr "Casi llegas"
 
 #: src/components/completion-level-milestone.tsx
-msgid "34q+SH"
+msgid "34q-SH"
 msgstr "{count, plural, one {Tu conocimiento está aumentando. Completa # lección más para alcanzar el nivel {level} del cinturón {color}.} other {Tu conocimiento está aumentando. Completa # lecciones más para alcanzar el nivel {level} del cinturón {color}.}}"
 
 #: src/components/completion-milestone-actions.tsx
@@ -134,7 +134,7 @@ msgid "w0D7HC"
 msgstr "Repasar curso"
 
 #: src/components/completion-milestone-actions.tsx
-msgid "wm/M34"
+msgid "wm_M34"
 msgstr "Repasar capítulo"
 
 #: src/components/completion-progress-milestone-screen.tsx
@@ -163,7 +163,7 @@ msgid "t2VOpl"
 msgstr "Capítulo completado"
 
 #: src/components/completion-screen.tsx
-msgid "2kQf/C"
+msgid "2kQf_C"
 msgstr "{count, plural, =0 {No quedan capítulos en este curso} one {Queda # capítulo en este curso} other {Quedan # capítulos en este curso}}"
 
 #: src/components/completion-screen.tsx
@@ -184,7 +184,7 @@ msgid "3nOd8f"
 msgstr "Tu respuesta:"
 
 #: src/components/feedback-answer-blocks.tsx
-msgid "QAJ/Tl"
+msgid "QAJ_Tl"
 msgstr "Respuesta correcta:"
 
 #: src/components/feedback-screen.tsx
@@ -200,7 +200,7 @@ msgid "wUEGVH"
 msgstr "Espacio {position}: {item}. Toca para quitar."
 
 #: src/components/fill-blank-step.tsx
-msgid "FmmJ/j"
+msgid "FmmJ_j"
 msgstr "Espacio {position}"
 
 #: src/components/fill-blank-step.tsx
@@ -241,7 +241,7 @@ msgid "lYWSeP"
 msgstr "Reproducir pronunciación"
 
 #: src/components/player-choice-scene.tsx
-msgid "akd+cv"
+msgid "akd-cv"
 msgstr "Opciones de respuesta"
 
 #: src/components/player-header.tsx
@@ -265,7 +265,7 @@ msgid "mhiTW7"
 msgstr "Respuesta correcta"
 
 #: src/components/select-image-step.tsx
-msgid "NA6C/+"
+msgid "NA6C_-"
 msgstr "Opciones de imagen"
 
 #: src/components/sort-order-step.tsx
@@ -273,7 +273,7 @@ msgid "p5llOK"
 msgstr "Ordenar elementos"
 
 #: src/components/sort-order-step.tsx
-msgid "VA8c/A"
+msgid "VA8c_A"
 msgstr "Orden correcto:"
 
 #: src/components/sort-order-step.tsx
@@ -297,7 +297,7 @@ msgid "aNzy1T"
 msgstr "Paso anterior"
 
 #: src/components/swipe-navigable-step-layout.tsx
-msgid "d+qgix"
+msgid "d-qgix"
 msgstr "Siguiente paso"
 
 #: src/components/translation-step.tsx
@@ -309,11 +309,11 @@ msgid "xmF49T"
 msgstr "¡Correcto!"
 
 #: src/components/verdict-label.tsx
-msgid "++l7ni"
+msgid "--l7ni"
 msgstr "No del todo"
 
 #: src/components/vocabulary-step.tsx
-msgid "lqtP+R"
+msgid "lqtP-R"
 msgstr "Vocabulario"
 
 #: src/use-belt-color-label.ts
@@ -325,7 +325,7 @@ msgid "k2tJ9k"
 msgstr "Azul"
 
 #: src/use-belt-color-label.ts
-msgid "eM/4ho"
+msgid "eM_4ho"
 msgstr "Café"
 
 #: src/use-belt-color-label.ts
@@ -345,11 +345,11 @@ msgid "tihmF3"
 msgstr "Morado"
 
 #: src/use-belt-color-label.ts
-msgid "D+ZFS/"
+msgid "D-ZFS_"
 msgstr "Rojo"
 
 #: src/use-belt-color-label.ts
-msgid "OAG+sQ"
+msgid "OAG-sQ"
 msgstr "Blanco"
 
 #: src/use-belt-color-label.ts
