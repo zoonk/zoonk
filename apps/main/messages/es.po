@@ -1003,8 +1003,8 @@ msgid "fF376U"
 msgstr "Actual"
 
 #: src/app/(settings)/subscription/subscription-plans.tsx
-msgid "HYX1JL"
-msgstr "Hobby"
+msgid "kkjl2v"
+msgstr "Max"
 
 #: src/app/(settings)/subscription/subscription-plans.tsx
 msgid "lOdoIb"
@@ -1027,16 +1027,16 @@ msgid "uNQcTY"
 msgstr "Lecciones limitadas con anuncios"
 
 #: src/app/(settings)/subscription/subscription-plans.tsx
+msgid "mqHNd6"
+msgstr "Lecciones personalizadas, IA más inteligente"
+
+#: src/app/(settings)/subscription/subscription-plans.tsx
 msgid "LnosqI"
 msgstr "Lecciones ilimitadas, sin anuncios"
 
 #: src/app/(settings)/subscription/subscription-plans.tsx
 msgid "eaOADK"
 msgstr "Lecciones personalizadas, IA rápida"
-
-#: src/app/(settings)/subscription/subscription-plans.tsx
-msgid "mqHNd6"
-msgstr "Lecciones personalizadas, IA más inteligente"
 
 #: src/app/(settings)/support/page.tsx
 #: src/app/(settings)/support/support-content.tsx

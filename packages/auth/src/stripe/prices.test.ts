@@ -25,42 +25,42 @@ describe(getStripePrices, () => {
         {
           currency: "usd",
           currency_options: { brl: { unit_amount: 2990 } },
-          lookup_key: "hobby_monthly",
+          lookup_key: "plus_monthly",
           unit_amount: 999,
         },
       ],
     });
 
-    const result = await getStripePrices(["hobby_monthly"], "brl");
+    const result = await getStripePrices(["plus_monthly"], "brl");
 
-    expect(result.get("hobby_monthly")).toStrictEqual({ amount: 2990, currency: "brl" });
+    expect(result.get("plus_monthly")).toStrictEqual({ amount: 2990, currency: "brl" });
   });
 
   it("falls back to default price when currency option is unavailable", async () => {
     mockList.mockResolvedValue({
       data: [
-        { currency: "usd", currency_options: {}, lookup_key: "hobby_monthly", unit_amount: 999 },
+        { currency: "usd", currency_options: {}, lookup_key: "plus_monthly", unit_amount: 999 },
       ],
     });
 
-    const result = await getStripePrices(["hobby_monthly"], "xyz");
+    const result = await getStripePrices(["plus_monthly"], "xyz");
 
-    expect(result.get("hobby_monthly")).toStrictEqual({ amount: 999, currency: "usd" });
+    expect(result.get("plus_monthly")).toStrictEqual({ amount: 999, currency: "usd" });
   });
 
   it("handles multiple lookup keys", async () => {
     mockList.mockResolvedValue({
       data: [
-        { currency: "usd", currency_options: {}, lookup_key: "hobby_monthly", unit_amount: 999 },
-        { currency: "usd", currency_options: {}, lookup_key: "plus_monthly", unit_amount: 1999 },
+        { currency: "usd", currency_options: {}, lookup_key: "plus_monthly", unit_amount: 999 },
+        { currency: "usd", currency_options: {}, lookup_key: "pro_monthly", unit_amount: 1999 },
       ],
     });
 
-    const result = await getStripePrices(["hobby_monthly", "plus_monthly"], "usd");
+    const result = await getStripePrices(["plus_monthly", "pro_monthly"], "usd");
 
     expect(result.size).toBe(2);
-    expect(result.get("hobby_monthly")?.amount).toBe(999);
-    expect(result.get("plus_monthly")?.amount).toBe(1999);
+    expect(result.get("plus_monthly")?.amount).toBe(999);
+    expect(result.get("pro_monthly")?.amount).toBe(1999);
   });
 
   it("skips prices without lookup_key", async () => {
@@ -68,7 +68,7 @@ describe(getStripePrices, () => {
       data: [{ currency: "usd", currency_options: {}, lookup_key: null, unit_amount: 999 }],
     });
 
-    const result = await getStripePrices(["hobby_monthly"], "usd");
+    const result = await getStripePrices(["plus_monthly"], "usd");
     expect(result.size).toBe(0);
   });
 });

@@ -67,7 +67,7 @@ export async function createE2EUser(
     await prisma.subscription.create({
       data: {
         id: randomUUID(),
-        plan: "hobby",
+        plan: "plus",
         referenceId: user.id,
         status: "active",
         stripeCustomerId: `cus_e2e_${uniqueId}`,

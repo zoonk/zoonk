@@ -117,11 +117,11 @@ async function captureStripeActionRequest({
  * Drive checkout through the visible plan controls because the locale is added
  * by the client-side Better Auth call, not by the server-rendered plan page.
  */
-async function requestHobbyCheckout({ page }: { page: Page }) {
+async function requestPlusCheckout({ page }: { page: Page }) {
   const requestBody = captureStripeActionRequest({ page, path: "/api/auth/subscription/upgrade" });
 
-  await page.getByRole("radio", { name: /hobby/iu }).click();
-  await page.getByRole("button", { name: /hobby/iu }).click();
+  await page.getByRole("radio", { name: /plus/iu }).click();
+  await page.getByRole("button", { name: /plus/iu }).click();
 
   return requestBody;
 }
@@ -146,9 +146,9 @@ test.describe("Subscription Page - No Subscription", () => {
     ).toBeVisible();
 
     await expect(authenticatedPage.getByRole("radio", { name: /free/iu })).toBeVisible();
-    await expect(authenticatedPage.getByRole("radio", { name: /hobby/iu })).toBeVisible();
     await expect(authenticatedPage.getByRole("radio", { name: /plus/iu })).toBeVisible();
     await expect(authenticatedPage.getByRole("radio", { name: /pro/iu })).toBeVisible();
+    await expect(authenticatedPage.getByRole("radio", { name: /max/iu })).toBeVisible();
   });
 
   test("has Free plan selected by default when no subscription", async ({ authenticatedPage }) => {
@@ -177,23 +177,23 @@ test.describe("Subscription Page - No Subscription", () => {
   test("shows Upgrade button when selecting a paid plan", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/subscription");
 
-    await authenticatedPage.getByRole("radio", { name: /hobby/iu }).click();
+    await authenticatedPage.getByRole("radio", { name: /plus/iu }).click();
 
     await expect(
-      authenticatedPage.getByRole("button", { name: /upgrade to hobby/iu }),
+      authenticatedPage.getByRole("button", { name: /upgrade to plus/iu }),
     ).toBeVisible();
   });
 
   test("changes CTA label when selecting different plans", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/subscription");
 
-    await authenticatedPage.getByRole("radio", { name: /pro/iu }).click();
-    await expect(authenticatedPage.getByRole("button", { name: /upgrade to pro/iu })).toBeVisible();
+    await authenticatedPage.getByRole("radio", { name: /max/iu }).click();
+    await expect(authenticatedPage.getByRole("button", { name: /upgrade to max/iu })).toBeVisible();
 
     await authenticatedPage.getByRole("radio", { name: /free/iu }).click();
 
     await expect(
-      authenticatedPage.getByRole("button", { name: /upgrade to pro/iu }),
+      authenticatedPage.getByRole("button", { name: /upgrade to max/iu }),
     ).not.toBeVisible();
   });
 });
@@ -203,7 +203,7 @@ test.describe("Subscription Page - Stripe Locale", () => {
     await setLocale(authenticatedPage, "es");
     await authenticatedPage.goto("/subscription");
 
-    await expect(requestHobbyCheckout({ page: authenticatedPage })).resolves.toMatchObject({
+    await expect(requestPlusCheckout({ page: authenticatedPage })).resolves.toMatchObject({
       locale: "es",
     });
   });
@@ -214,7 +214,7 @@ test.describe("Subscription Page - Stripe Locale", () => {
     await setLocale(authenticatedPage, "pt");
     await authenticatedPage.goto("/subscription");
 
-    await expect(requestHobbyCheckout({ page: authenticatedPage })).resolves.toMatchObject({
+    await expect(requestPlusCheckout({ page: authenticatedPage })).resolves.toMatchObject({
       locale: "pt-BR",
     });
   });
@@ -223,23 +223,23 @@ test.describe("Subscription Page - Stripe Locale", () => {
     await setLocale(authenticatedPage, "en");
     await authenticatedPage.goto("/subscription");
 
-    const requestBody = await requestHobbyCheckout({ page: authenticatedPage });
+    const requestBody = await requestPlusCheckout({ page: authenticatedPage });
 
     expect(requestBody).not.toHaveProperty("locale");
   });
 });
 
-test.describe("Subscription Page - With Hobby Subscription", () => {
+test.describe("Subscription Page - With Plus Subscription", () => {
   test("has current plan selected by default and shows Current badge", async ({
     browser,
     baseURL,
   }) => {
-    const email = await createUserWithSubscription(baseURL!, "hobby");
+    const email = await createUserWithSubscription(baseURL!, "plus");
     const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
 
     await page.goto("/subscription");
 
-    await expect(page.getByRole("radio", { name: /hobby/iu })).toBeChecked();
+    await expect(page.getByRole("radio", { name: /plus/iu })).toBeChecked();
     await expect(page.getByLabel(/current plan/iu)).toBeVisible();
     await expect(page.getByRole("button", { name: /manage/iu })).toBeVisible();
 
@@ -247,19 +247,19 @@ test.describe("Subscription Page - With Hobby Subscription", () => {
   });
 
   test("shows Upgrade when selecting a higher plan", async ({ browser, baseURL }) => {
-    const email = await createUserWithSubscription(baseURL!, "hobby");
+    const email = await createUserWithSubscription(baseURL!, "plus");
     const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
 
     await page.goto("/subscription");
 
-    await page.getByRole("radio", { name: /plus/iu }).click();
-    await expect(page.getByRole("button", { name: /upgrade to plus/iu })).toBeVisible();
+    await page.getByRole("radio", { name: /pro/iu }).click();
+    await expect(page.getByRole("button", { name: /upgrade to pro/iu })).toBeVisible();
 
     await browserContext.close();
   });
 
   test("shows Cancel when selecting Free plan", async ({ browser, baseURL }) => {
-    const email = await createUserWithSubscription(baseURL!, "hobby");
+    const email = await createUserWithSubscription(baseURL!, "plus");
     const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
 
     await page.goto("/subscription");
@@ -271,7 +271,7 @@ test.describe("Subscription Page - With Hobby Subscription", () => {
   });
 
   test("CTA button shows loading state when clicked", async ({ browser, baseURL }) => {
-    const email = await createUserWithSubscription(baseURL!, "hobby");
+    const email = await createUserWithSubscription(baseURL!, "plus");
     const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
 
     await page.goto("/subscription");
@@ -284,18 +284,18 @@ test.describe("Subscription Page - With Hobby Subscription", () => {
   });
 });
 
-test.describe("Subscription Page - With Pro Subscription", () => {
+test.describe("Subscription Page - With Max Subscription", () => {
   test("shows Switch to for lower paid plans and Cancel for Free", async ({ browser, baseURL }) => {
-    const email = await createUserWithSubscription(baseURL!, "pro");
+    const email = await createUserWithSubscription(baseURL!, "max");
     const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
 
     await page.goto("/subscription");
 
-    await expect(page.getByRole("radio", { name: /pro/iu })).toBeChecked();
+    await expect(page.getByRole("radio", { name: /max/iu })).toBeChecked();
     await expect(page.getByLabel(/current plan/iu)).toBeVisible();
 
-    await page.getByRole("radio", { name: /hobby/iu }).click();
-    await expect(page.getByRole("button", { name: /switch to hobby/iu })).toBeVisible();
+    await page.getByRole("radio", { name: /plus/iu }).click();
+    await expect(page.getByRole("button", { name: /switch to plus/iu })).toBeVisible();
 
     await page.getByRole("radio", { name: /free/iu }).click();
     await expect(page.getByRole("button", { name: /cancel/iu })).toBeVisible();
@@ -309,7 +309,7 @@ test.describe("Subscription Page - Provider Managed", () => {
     browser,
     baseURL,
   }) => {
-    const email = await createUserWithSubscription(baseURL!, "hobby", { provider: "apple" });
+    const email = await createUserWithSubscription(baseURL!, "plus", { provider: "apple" });
     const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
 
     await page.goto("/subscription");
@@ -337,7 +337,7 @@ test.describe("Subscription Page - Provider Managed", () => {
     browser,
     baseURL,
   }) => {
-    const email = await createUserWithSubscription(baseURL!, "hobby", { provider: "zoonk" });
+    const email = await createUserWithSubscription(baseURL!, "plus", { provider: "zoonk" });
     const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
 
     await page.goto("/subscription");
@@ -359,7 +359,7 @@ test.describe("Subscription Page - Provider Managed", () => {
 test.describe("Subscription Page - With Cancelled Subscription", () => {
   test("shows cancellation notice when cancel_at is set", async ({ browser, baseURL }) => {
     const cancelAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-    const email = await createUserWithSubscription(baseURL!, "hobby", { cancelAt });
+    const email = await createUserWithSubscription(baseURL!, "plus", { cancelAt });
     const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
 
     await page.goto("/subscription");
@@ -369,7 +369,7 @@ test.describe("Subscription Page - With Cancelled Subscription", () => {
   });
 
   test("does not show cancellation notice when cancel_at is null", async ({ browser, baseURL }) => {
-    const email = await createUserWithSubscription(baseURL!, "hobby");
+    const email = await createUserWithSubscription(baseURL!, "plus");
     const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
 
     await page.goto("/subscription");

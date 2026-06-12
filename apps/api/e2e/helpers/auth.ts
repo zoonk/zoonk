@@ -90,7 +90,7 @@ export async function createSubscribedApiContext({
   await prisma.subscription.create({
     data: {
       id: randomUUID(),
-      plan: "hobby",
+      plan: "plus",
       referenceId: authContext.user.id,
       status: "active",
       stripeCustomerId: `cus_test_${authContext.uniqueId}`,

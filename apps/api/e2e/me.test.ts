@@ -58,7 +58,7 @@ async function createBearerApiContext({
     await prisma.subscription.create({
       data: {
         id: randomUUID(),
-        plan: "hobby",
+        plan: "plus",
         provider: "zoonk",
         referenceId: user.id,
         status: "active",
@@ -141,7 +141,7 @@ test.describe("Current User API", () => {
     expect(body.account.hasActiveSubscription).toBe(true);
 
     expect(body.account.subscription).toMatchObject({
-      plan: "hobby",
+      plan: "plus",
       provider: "zoonk",
       status: "active",
     });

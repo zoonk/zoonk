@@ -1,11 +1,11 @@
-const PLAN_NAMES = ["free", "hobby", "plus", "pro"] as const;
+const PLAN_NAMES = ["free", "plus", "pro", "max"] as const;
 type PlanName = (typeof PLAN_NAMES)[number];
 
 const SUBSCRIPTION_PROVIDERS = ["stripe", "google", "apple", "zoonk"] as const;
 export type SubscriptionProvider = (typeof SUBSCRIPTION_PROVIDERS)[number];
 
 const PLAN_LOOKUP_KEYS: Record<Exclude<PlanName, "free">, { monthly: string; yearly: string }> = {
-  hobby: { monthly: "hobby_monthly", yearly: "hobby_yearly" },
+  max: { monthly: "max_monthly", yearly: "max_yearly" },
   plus: { monthly: "plus_monthly", yearly: "plus_yearly" },
   pro: { monthly: "pro_monthly", yearly: "pro_yearly" },
 };
@@ -32,21 +32,21 @@ const HIDDEN_PLANS = new Set(
 
 const ALL_PAID_PLANS: readonly PaidPlan[] = [
   {
-    annualLookupKey: PLAN_LOOKUP_KEYS.hobby.yearly,
-    lookupKey: PLAN_LOOKUP_KEYS.hobby.monthly,
-    name: "hobby",
-    tier: 1,
-  },
-  {
     annualLookupKey: PLAN_LOOKUP_KEYS.plus.yearly,
     lookupKey: PLAN_LOOKUP_KEYS.plus.monthly,
     name: "plus",
-    tier: 2,
+    tier: 1,
   },
   {
     annualLookupKey: PLAN_LOOKUP_KEYS.pro.yearly,
     lookupKey: PLAN_LOOKUP_KEYS.pro.monthly,
     name: "pro",
+    tier: 2,
+  },
+  {
+    annualLookupKey: PLAN_LOOKUP_KEYS.max.yearly,
+    lookupKey: PLAN_LOOKUP_KEYS.max.monthly,
+    name: "max",
     tier: 3,
   },
 ];
