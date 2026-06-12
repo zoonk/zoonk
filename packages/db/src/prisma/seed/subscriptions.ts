@@ -14,7 +14,7 @@ export async function seedSubscriptions(prisma: PrismaClient, users: SeedUsers):
   const subscriptionData = allUsers.map((user) => ({
     periodEnd: oneYearFromNow,
     periodStart: now,
-    plan: "hobby",
+    plan: "plus",
     provider: "zoonk" as const,
     referenceId: user.id,
     status: "active",

@@ -14,6 +14,7 @@ export const zoonkSpecific = [
   "hobby",
   "language",
   "level",
+  "max",
   "official",
   "personalized",
   "plus",

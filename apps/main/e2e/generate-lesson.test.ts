@@ -283,7 +283,7 @@ async function createTestSubscription(userId: string) {
   const subscription = await prisma.subscription.create({
     data: {
       id: randomUUID(),
-      plan: "hobby",
+      plan: "plus",
       referenceId: userId,
       status: "active",
       stripeCustomerId: `cus_test_e2e_lesson_${uniqueId}`,
