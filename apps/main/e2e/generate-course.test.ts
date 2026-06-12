@@ -31,6 +31,7 @@ import { expect, test } from "./fixtures";
 const TEST_RUN_ID = "test-run-id-12345";
 
 type MockApiOptions = {
+  assertBearerAuth?: boolean;
   triggerResponse?: { runId?: string; error?: string; status?: number };
   streamMessages?: { entityId?: string; reason?: string; step: string; status: string }[];
   streamError?: boolean;
@@ -48,11 +49,21 @@ function createSSEStream(
 }
 
 /**
+ * Confirms authenticated workflow calls use the API's bearer-token contract
+ * instead of depending on cross-origin cookies that do not work in previews
+ * and custom-domain environments.
+ */
+function expectBearerAuthorization(route: Route): void {
+  expect(route.request().headers().authorization).toMatch(/^Bearer .+/u);
+}
+
+/**
  * Creates the route handler function for mocking APIs.
  * Extracted to reduce complexity in test functions.
  */
 function createRouteHandler(options: MockApiOptions) {
   const {
+    assertBearerAuth = false,
     statusDelayMs = 0,
     triggerResponse = { runId: TEST_RUN_ID },
     streamMessages = [],
@@ -65,6 +76,10 @@ function createRouteHandler(options: MockApiOptions) {
 
     // Mock trigger API
     if (url.includes("/v1/workflows/course-generation/trigger") && method === "POST") {
+      if (assertBearerAuth) {
+        expectBearerAuthorization(route);
+      }
+
       if (triggerResponse.error) {
         await route.fulfill({
           body: JSON.stringify({ error: triggerResponse.error }),
@@ -86,6 +101,10 @@ function createRouteHandler(options: MockApiOptions) {
 
     // Mock status stream API
     if (url.includes("/v1/workflows/course-generation/status")) {
+      if (assertBearerAuth) {
+        expectBearerAuthorization(route);
+      }
+
       if (streamError) {
         await route.abort("failed");
         return;
@@ -272,6 +291,7 @@ test.describe("Generate Course Page", () => {
       await lessonFixture({ chapterId: chapter.id, isPublished: true, organizationId: org.id });
 
       await setupMockApis(authenticatedPage, {
+        assertBearerAuth: true,
         streamMessages: [
           { status: "started", step: "getCourseSuggestion" },
           { status: "completed", step: "getCourseSuggestion" },

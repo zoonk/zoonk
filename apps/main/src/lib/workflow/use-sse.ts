@@ -2,6 +2,7 @@
 
 import { type EventSourceMessage, createParser } from "eventsource-parser";
 import { useEffect, useEffectEvent, useRef } from "react";
+import { getWorkflowAuthHeaders } from "./auth-headers";
 
 export function useSSE<T>(
   url: string | null,
@@ -29,9 +30,10 @@ export function useSSE<T>(
     void (async () => {
       try {
         const fullUrl = `${url}&startIndex=${indexRef.current}`;
+        const headers = await getWorkflowAuthHeaders();
 
         const response = await fetch(fullUrl, {
-          credentials: "include",
+          headers,
           signal: controller.signal,
         });
 

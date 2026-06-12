@@ -11,6 +11,7 @@ import {
   handleStepStreamMessage,
   initialGenerationState,
 } from "./generation-store";
+import { getWorkflowAuthHeaders } from "./auth-headers";
 import { useSSE } from "./use-sse";
 
 const MAX_STREAM_RECONNECTS = 5;
@@ -117,10 +118,11 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
     dispatch({ type: "triggerStart" });
 
     try {
+      const authHeaders = await getWorkflowAuthHeaders();
+
       const response = await fetch(triggerUrl, {
         body: JSON.stringify(triggerBody),
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
+        headers: { ...authHeaders, "Content-Type": "application/json" },
         method: "POST",
       });
 
