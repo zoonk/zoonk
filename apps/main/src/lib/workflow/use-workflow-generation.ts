@@ -3,6 +3,7 @@
 import { type StepStreamMessage } from "@zoonk/core/workflows/steps";
 import { getString } from "@zoonk/utils/json";
 import { useCallback, useEffect, useEffectEvent, useReducer, useRef } from "react";
+import { getWorkflowAuthHeaders } from "./auth-headers";
 import {
   type GenerationAction,
   type GenerationState,
@@ -11,7 +12,6 @@ import {
   handleStepStreamMessage,
   initialGenerationState,
 } from "./generation-store";
-import { getWorkflowAuthHeaders } from "./auth-headers";
 import { useSSE } from "./use-sse";
 
 const MAX_STREAM_RECONNECTS = 5;

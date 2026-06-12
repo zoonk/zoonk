@@ -32,10 +32,7 @@ export function useSSE<T>(
         const fullUrl = `${url}&startIndex=${indexRef.current}`;
         const headers = await getWorkflowAuthHeaders();
 
-        const response = await fetch(fullUrl, {
-          headers,
-          signal: controller.signal,
-        });
+        const response = await fetch(fullUrl, { headers, signal: controller.signal });
 
         if (!response.ok) {
           onErrorEvent(new Error(`HTTP ${response.status}`));
