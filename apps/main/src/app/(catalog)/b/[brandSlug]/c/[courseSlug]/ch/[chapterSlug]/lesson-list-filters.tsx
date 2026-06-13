@@ -29,7 +29,7 @@ import { normalizeString } from "@zoonk/utils/string";
 import { ListFilterIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useQueryState } from "nuqs";
-import { type ReactNode, useState, useTransition } from "react";
+import { type ReactNode, useRef, useState, useTransition } from "react";
 import { updateHiddenLessonKindsAction } from "./lesson-list-actions";
 
 type LessonKindOption = { kind: LessonKind; label: string };
@@ -57,7 +57,8 @@ export function LessonListFilters({
   placeholder: string;
 }) {
   const t = useExtracted();
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
+  const saveRequestId = useRef(0);
 
   const [search, setSearch] = useQueryState("q", {
     defaultValue: "",
@@ -85,8 +86,8 @@ export function LessonListFilters({
 
   /**
    * The UI updates optimistically because hiding one kind is a lightweight
-   * preference change; failed saves roll back so the visible list still matches
-   * the server-owned setting.
+   * preference change. Only the latest failed save can roll back the visible
+   * list, otherwise an older request could undo a newer learner choice.
    */
   function persistHiddenLessonKinds(nextHiddenLessonKinds: LessonKind[]) {
     const previousHiddenLessonKinds = hiddenLessonKinds;
@@ -97,12 +98,15 @@ export function LessonListFilters({
       return;
     }
 
+    const currentSaveRequestId = saveRequestId.current + 1;
+    saveRequestId.current = currentSaveRequestId;
+
     startTransition(async () => {
       const result = await updateHiddenLessonKindsAction({
         hiddenLessonKinds: nextHiddenLessonKinds,
       });
 
-      if (result.status === "error") {
+      if (result.status === "error" && saveRequestId.current === currentSaveRequestId) {
         setHiddenLessonKinds(previousHiddenLessonKinds);
         toast.error(t("Could not update lesson filters. Please try again."));
       }
@@ -141,7 +145,6 @@ export function LessonListFilters({
         <LessonTypeFilterMenu
           hiddenLessonKindSet={hiddenLessonKindSet}
           hiddenCount={hiddenCount}
-          isPending={isPending}
           lessonKindOptions={lessonKindOptions}
           onClear={() =>
             persistHiddenLessonKinds(
@@ -261,14 +264,12 @@ function canChangeLessonKindVisibility({
 function LessonTypeFilterMenu({
   hiddenLessonKindSet,
   hiddenCount,
-  isPending,
   lessonKindOptions,
   onClear,
   onVisibilityChange,
 }: {
   hiddenLessonKindSet: Set<LessonKind>;
   hiddenCount: number;
-  isPending: boolean;
   lessonKindOptions: LessonKindOption[];
   onClear: () => void;
   onVisibilityChange: (params: { isVisible: boolean; kind: LessonKind }) => void;
@@ -289,7 +290,6 @@ function LessonTypeFilterMenu({
         render={
           <Button
             aria-label={t("Filter lesson types")}
-            disabled={isPending}
             size="adaptive"
             variant={hiddenCount > 0 ? "secondary" : "outline"}
           />
@@ -326,7 +326,7 @@ function LessonTypeFilterMenu({
             return (
               <DropdownMenuCheckboxItem
                 checked={isLessonKindVisible({ hiddenLessonKindSet, kind: option.kind })}
-                disabled={isPending || !canChangeVisibility}
+                disabled={!canChangeVisibility}
                 key={option.kind}
                 onCheckedChange={(checked) => {
                   if (!canChangeVisibility) {
@@ -345,7 +345,7 @@ function LessonTypeFilterMenu({
         {hiddenCount > 0 && (
           <>
             <DropdownMenuSeparator />
-            <DropdownMenuItem disabled={isPending} onClick={onClear} variant="destructive">
+            <DropdownMenuItem onClick={onClear} variant="destructive">
               <XIcon aria-hidden="true" />
               {t("Clear filter")}
             </DropdownMenuItem>
