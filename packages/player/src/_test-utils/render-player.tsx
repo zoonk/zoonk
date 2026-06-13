@@ -51,6 +51,7 @@ function getDefaultLessonTitle(lesson: SerializedLesson) {
 export function renderPlayer({
   lesson,
   chapterTitle = "Test Chapter",
+  courseTitle = "Test Course",
   lessonDescription = "Test lesson description",
   lessonProgress = buildLessonProgress(),
   lessonTitle = getDefaultLessonTitle(lesson),
@@ -65,6 +66,7 @@ export function renderPlayer({
 }: {
   lesson: SerializedLesson;
   chapterTitle?: string;
+  courseTitle?: string;
   lessonDescription?: string;
   lessonProgress?: PlayerLessonProgress;
   lessonTitle?: string;
@@ -81,6 +83,7 @@ export function renderPlayer({
     <PlayerProvider
       lesson={lesson}
       chapterTitle={chapterTitle}
+      courseTitle={courseTitle}
       lessonDescription={lessonDescription}
       lessonProgress={lessonProgress}
       lessonTitle={lessonTitle}

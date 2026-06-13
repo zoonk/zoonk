@@ -163,10 +163,6 @@ msgid "t2VOpl"
 msgstr "Capítulo Concluído"
 
 #: src/components/completion-screen.tsx
-msgid "2kQf_C"
-msgstr "{count, plural, =0 {Não há mais capítulos neste curso} one {Falta # capítulo neste curso} other {Faltam # capítulos neste curso}}"
-
-#: src/components/completion-screen.tsx
 #: src/components/in-play-sticky-header.tsx
 msgid "qXzoF7"
 msgstr "Aula {current} de {total}"

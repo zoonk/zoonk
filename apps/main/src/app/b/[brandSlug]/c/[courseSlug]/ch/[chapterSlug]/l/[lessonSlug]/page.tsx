@@ -287,6 +287,7 @@ export default async function LessonPage({ params }: Props) {
       brandSlug={brandSlug}
       chapterPosition={lessonShell.chapter.position}
       chapterTitle={lessonShell.chapter.title}
+      courseTitle={lessonShell.chapter.course.title}
       courseSlug={courseSlug}
       chapterSlug={chapterSlug}
       isAuthenticated={Boolean(session)}

@@ -32,6 +32,7 @@ export function PlayerProvider({
   lesson,
   chapterTitle,
   children,
+  courseTitle,
   lessonDescription,
   lessonProgress,
   lessonTitle,
@@ -48,6 +49,7 @@ export function PlayerProvider({
   lesson: SerializedLesson;
   chapterTitle: string;
   children: React.ReactNode;
+  courseTitle: string;
   lessonDescription: string;
   lessonProgress: PlayerLessonProgress;
   lessonTitle: string;
@@ -100,6 +102,7 @@ export function PlayerProvider({
       escape: onEscape,
       lessonMeta: {
         chapterTitle,
+        courseTitle,
         fallbackDescription: lessonDescription,
         kind: lesson.kind,
         lessonDescription: lesson.description,
@@ -117,6 +120,7 @@ export function PlayerProvider({
       lesson.kind,
       lesson.title,
       chapterTitle,
+      courseTitle,
       handleNext,
       lessonDescription,
       lessonProgress,

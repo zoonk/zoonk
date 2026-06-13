@@ -338,7 +338,9 @@ test.describe("Lesson Completion UX", () => {
   }) => {
     const email = await createUniqueUser(baseURL!);
     const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
-    const { lessonUrl, chapter2, uniqueId } = await createChapterCompleteScenario("chnext");
+
+    const { lessonUrl, chapter1, chapter2, uniqueId } =
+      await createChapterCompleteScenario("chnext");
 
     await page.goto(lessonUrl);
     await page.waitForLoadState("networkidle");
@@ -346,8 +348,9 @@ test.describe("Lesson Completion UX", () => {
 
     const completionScreen = page.getByRole("status");
     await expect(completionScreen.getByText(/chapter complete/iu)).toBeVisible();
-    await expect(completionScreen.getByText(`Chapter Lesson ${uniqueId}`)).toBeVisible();
-    await expect(completionScreen.getByText("1 chapter left in this course")).toBeVisible();
+    await expect(completionScreen.getByText(chapter1.title)).toBeVisible();
+    await expect(completionScreen.getByText(`Chapter Lesson ${uniqueId}`)).not.toBeVisible();
+    await expect(completionScreen.getByText("1 chapter left in this course")).not.toBeVisible();
 
     await completionScreen.getByRole("link", { name: /next chapter/iu }).click();
     await expect(page.getByRole("heading", { level: 1, name: chapter2.title })).toBeVisible();
@@ -418,8 +421,9 @@ test.describe("Lesson Completion UX", () => {
 
     const completionScreen = page.getByRole("status");
     await expect(completionScreen.getByText(/course complete/iu)).toBeVisible();
-    await expect(completionScreen.getByText(`Final Lesson ${uniqueId}`)).toBeVisible();
-    await expect(completionScreen.getByText("No chapters left in this course")).toBeVisible();
+    await expect(completionScreen.getByText(course.title)).toBeVisible();
+    await expect(completionScreen.getByText(`Final Lesson ${uniqueId}`)).not.toBeVisible();
+    await expect(completionScreen.getByText("No chapters left in this course")).not.toBeVisible();
 
     await completionScreen.getByRole("link", { name: /review course/iu }).click();
     await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();

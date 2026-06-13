@@ -88,16 +88,33 @@ function MilestoneHeading({ milestone }: { milestone: PlayerMilestone }) {
 }
 
 /**
- * Keeps chapter-count grammar in one ICU message. Course completion naturally
- * becomes the zero case, while chapter milestones use the locale's singular
- * and plural rules for the remaining chapter count.
+ * Groups the focused context below a completion or milestone headline. Both
+ * regular lesson completion and structural milestones need the same centered
+ * width, spacing, and text alignment, so keeping this chrome in one component
+ * prevents the two branches from drifting as the screen evolves.
  */
-function RemainingChaptersText({ count }: { count: number }) {
-  const t = useExtracted();
+function CompletionContext({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      className={cn("flex w-full max-w-md flex-col items-center gap-3 text-center", className)}
+      data-slot="completion-context"
+      {...props}
+    />
+  );
+}
 
-  return t(
-    "{count, plural, =0 {No chapters left in this course} one {# chapter left in this course} other {# chapters left in this course}}",
-    { count },
+/**
+ * Renders the main context label with the shared completion typography. Callers
+ * can choose the exact text size for the screen hierarchy while the color,
+ * weight, and line-height stay consistent.
+ */
+function CompletionContextTitle({ className, ...props }: React.ComponentProps<"p">) {
+  return (
+    <p
+      className={cn("text-foreground leading-snug font-medium", className)}
+      data-slot="completion-context-title"
+      {...props}
+    />
   );
 }
 
@@ -151,21 +168,56 @@ function CompletionChapterProgress({ lessonProgress }: { lessonProgress: PlayerL
  * This keeps orientation near the score while avoiding reward-like badges or
  * ambiguous remaining-work copy.
  */
-function CompletionLessonContext({ milestone }: { milestone: PlayerMilestone | null }) {
+function CompletionLessonContext() {
   const { lessonProgress, lessonTitle } = usePlayerLessonMeta();
 
   return (
-    <div className="flex w-full max-w-md flex-col items-center gap-3 text-center">
-      <p className="text-foreground text-base leading-snug font-medium">{lessonTitle}</p>
+    <CompletionContext>
+      <CompletionContextTitle className="text-base">{lessonTitle}</CompletionContextTitle>
 
       <CompletionChapterProgress lessonProgress={lessonProgress} />
+    </CompletionContext>
+  );
+}
 
-      {milestone && (
-        <PlayerSupportingText>
-          <RemainingChaptersText count={lessonProgress.remainingChaptersInCourse} />
-        </PlayerSupportingText>
-      )}
-    </div>
+/**
+ * Picks the completed curriculum title for structural completion milestones.
+ * A chapter milestone should orient the learner around the finished chapter,
+ * while a course milestone should celebrate the finished course instead of the
+ * final lesson that happened to trigger completion.
+ */
+function getMilestoneTitle({
+  chapterTitle,
+  courseTitle,
+  milestone,
+}: {
+  chapterTitle: string;
+  courseTitle: string;
+  milestone: PlayerMilestone;
+}) {
+  if (milestone.kind === "course") {
+    return courseTitle;
+  }
+
+  return chapterTitle;
+}
+
+/**
+ * Structural milestones should be quiet and focused: the milestone label plus
+ * the curriculum title are enough. Lesson score, lesson title, and chapter
+ * position stay on the ordinary completion screen where they belong.
+ */
+function CompletionMilestoneContext({ milestone }: { milestone: PlayerMilestone }) {
+  const { chapterTitle, courseTitle } = usePlayerLessonMeta();
+  const milestoneTitle = getMilestoneTitle({ chapterTitle, courseTitle, milestone });
+
+  return (
+    <CompletionContext>
+      <MilestoneHeading milestone={milestone} />
+      <CompletionContextTitle className="text-lg sm:text-xl">
+        {milestoneTitle}
+      </CompletionContextTitle>
+    </CompletionContext>
   );
 }
 
@@ -187,10 +239,7 @@ export function CompletionScreenContent({
   if (milestone) {
     return (
       <CompletionScreen className="min-h-[60vh] justify-center gap-6 sm:gap-8">
-        <div className="flex flex-col items-center gap-3">
-          <MilestoneHeading milestone={milestone} />
-          <CompletionLessonContext milestone={milestone} />
-        </div>
+        <CompletionMilestoneContext milestone={milestone} />
 
         <div className="flex w-full flex-col gap-3">
           <AuthBranch
@@ -222,7 +271,7 @@ export function CompletionScreenContent({
         <CompletionSignal />
       )}
 
-      <CompletionLessonContext milestone={milestone} />
+      <CompletionLessonContext />
 
       <AuthBranch chapterHref={chapterHref} nextLessonHref={nextLessonHref} onRestart={onRestart} />
 

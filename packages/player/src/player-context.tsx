@@ -49,6 +49,7 @@ export type PlayerRuntimeContextValue = {
 
 type PlayerLessonMeta = {
   chapterTitle: string;
+  courseTitle: string;
   description: string;
   kind: LessonKind;
   lessonProgress: PlayerLessonProgress;
