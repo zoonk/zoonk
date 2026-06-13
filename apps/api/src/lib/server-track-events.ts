@@ -1,5 +1,6 @@
 import "server-only";
 import { createServerPostHogClient } from "@/lib/server-posthog";
+import { safeAsync } from "@zoonk/utils/error";
 
 type AuthCompletionAction = "sign-in" | "sign-up";
 type ServerEventProperties = Record<string, boolean | number | string>;
@@ -18,15 +19,17 @@ async function trackServerEvent({
   event: string;
   properties?: ServerEventProperties;
 }) {
-  const posthog = createServerPostHogClient();
+  await safeAsync(async () => {
+    const posthog = createServerPostHogClient();
 
-  if (!posthog) {
-    return;
-  }
+    if (!posthog) {
+      return;
+    }
 
-  await using client = posthog;
+    await using client = posthog;
 
-  client.capture({ distinctId, event, properties });
+    client.capture({ distinctId, event, properties });
+  });
 }
 
 /**
