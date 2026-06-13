@@ -1,15 +1,20 @@
-import { getPostHogConfig } from "@/lib/posthog";
 import { track as trackVercelEvent } from "@vercel/analytics";
-import { getCappedLessonDurationSeconds } from "@zoonk/core/player/contracts/completion-duration";
 import { type LessonKind } from "@zoonk/core/steps/contract/content";
+import { getPostHogConfig } from "@zoonk/utils/posthog";
 import posthog from "posthog-js";
 
-type PlayerEventInput = {
+type LessonProgressEventInput = {
+  chapterPosition: number;
   courseSlug: string;
   lessonKind: LessonKind;
+  lessonPosition: number;
   lessonSlug: string;
   stepCount: number;
 };
+
+type LessonCompletionEventInput = Omit<LessonProgressEventInput, "stepCount">;
+
+type SubscriptionBillingPeriod = "monthly" | "yearly";
 
 export type FeedbackValue = "upvote" | "downvote";
 
@@ -50,64 +55,63 @@ export function trackFeedback(input: FeedbackInput) {
 }
 
 /**
- * Records only submitted command-palette searches because the shared search
- * hook debounces before calling the `onSearch` callback.
- */
-export function trackCommandPaletteSearch({ searchTerm }: { searchTerm: string }) {
-  const trimmedSearchTerm = searchTerm.trim();
-
-  if (!trimmedSearchTerm) {
-    return;
-  }
-
-  trackEvent({ name: "Command Palette Search", properties: { searchTerm: trimmedSearchTerm } });
-}
-
-/**
  * Counts learners who reached the first playable step after the player shell
  * mounted, which is the funnel denominator for later player events.
  */
-export function trackPlayerLoaded(input: PlayerEventInput) {
-  trackEvent({ name: "Player Loaded", properties: getPlayerEventData(input) });
+export function trackLessonStarted(input: LessonProgressEventInput) {
+  trackEvent({ name: "Lesson Started", properties: getLessonProgressEventData(input) });
 }
 
 /**
  * Counts learners who moved beyond the first step without depending on a
  * specific step renderer or interaction type.
  */
-export function trackPlayerSecondStep(input: PlayerEventInput) {
-  trackEvent({ name: "Player Second Step", properties: getPlayerEventData(input) });
+export function trackLessonSecondStep(input: LessonProgressEventInput) {
+  trackEvent({ name: "Lesson Second Step", properties: getLessonProgressEventData(input) });
 }
 
 /**
- * Reports lesson completions with the client-side duration because the player
- * already owns the local lesson start timestamp before persistence runs.
+ * Counts learners who reached the lesson completion event without sending
+ * volatile step counts or client-side timing values.
  */
-export function trackLessonCompleted({
-  startedAt,
-  ...input
-}: PlayerEventInput & { startedAt: number }) {
-  trackEvent({
-    name: "Lesson Completed",
-    properties: {
-      ...getPlayerEventData(input),
-      durationSeconds: getCompletionDurationSeconds({ startedAt }),
-    },
-  });
+export function trackLessonCompleted(input: LessonCompletionEventInput) {
+  trackEvent({ name: "Lesson Completed", properties: getLessonEventData(input) });
 }
 
 /**
  * Reports completed subscription checkouts after Stripe confirms the purchase
  * so analytics count real conversions instead of checkout button clicks.
  */
-export function trackGoogleAdsSubscriptionConversion() {
-  trackEvent({ name: "Subscription Conversion" });
+export function trackGoogleAdsSubscriptionConversion({ plan }: { plan: string }) {
+  trackEvent({ name: "Subscription Conversion", properties: { plan } });
 
   if (!googleAdsSubscriptionConversionId) {
     return;
   }
 
   getGoogleTag()("event", "conversion", { send_to: googleAdsSubscriptionConversionId });
+}
+
+/**
+ * Captures the plan a learner selected before they leave the app for Stripe
+ * checkout, which is the subscription funnel denominator.
+ */
+export function trackSubscriptionCheckoutStarted({
+  billingPeriod,
+  plan,
+}: {
+  billingPeriod: SubscriptionBillingPeriod;
+  plan: string;
+}) {
+  trackEvent({ name: "Subscription Checkout Started", properties: { billingPeriod, plan } });
+}
+
+/**
+ * Counts zero-progress home visits where the learner actually saw the main
+ * creation hero instead of the authenticated progress dashboard.
+ */
+export function trackHeroShown() {
+  trackEvent({ name: "Hero Shown" });
 }
 
 /**
@@ -146,9 +150,11 @@ function queueGoogleTagArguments(...args: unknown[]) {
  */
 function trackEvent({
   name,
+  postHogOptions,
   properties = {},
 }: {
   name: string;
+  postHogOptions?: { send_instantly?: boolean; transport?: "sendBeacon" };
   properties?: AnalyticsEventProperties;
 }) {
   trackVercelEvent(name, properties);
@@ -157,20 +163,29 @@ function trackEvent({
     return;
   }
 
-  posthog.capture(name, properties);
+  posthog.capture(name, properties, postHogOptions);
 }
 
 /**
- * Reuses the same primitive payload shape across player events because Vercel
+ * Reuses the same primitive payload shape across lesson events because Vercel
  * Analytics custom event properties do not support nested objects.
  */
-function getPlayerEventData({
+function getLessonProgressEventData(input: LessonProgressEventInput): AnalyticsEventProperties {
+  return { ...getLessonEventData(input), stepCount: input.stepCount };
+}
+
+/**
+ * Keeps every lesson funnel event filterable by course position while omitting
+ * properties that are not stable enough for activation cohorts.
+ */
+function getLessonEventData({
+  chapterPosition,
   courseSlug,
   lessonKind,
+  lessonPosition,
   lessonSlug,
-  stepCount,
-}: PlayerEventInput): AnalyticsEventProperties {
-  return { courseSlug, lessonKind, lessonSlug, stepCount };
+}: LessonCompletionEventInput): AnalyticsEventProperties {
+  return { chapterPosition, courseSlug, lessonKind, lessonPosition, lessonSlug };
 }
 
 /**
@@ -214,12 +229,4 @@ function getFeedbackEventData(input: FeedbackInput): AnalyticsEventProperties {
  */
 function throwUnexpectedFeedbackTarget(input: never): never {
   throw new Error(`Unexpected feedback target: ${String(input)}`);
-}
-
-/**
- * Uses the same capped duration as persistence so browser analytics cannot
- * report idle tab time that the database correctly ignores.
- */
-function getCompletionDurationSeconds({ startedAt }: { startedAt: number }) {
-  return getCappedLessonDurationSeconds({ startedAt });
 }

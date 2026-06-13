@@ -18,10 +18,12 @@ const MAX_CONFIRMATION_REFRESH_COUNT = 5;
 export function SubscriptionConversionTracker({
   activeSubscriptionId,
   analyticsDisabled,
+  plan,
   stripeCheckoutCompleted,
 }: {
   activeSubscriptionId: string | null;
   analyticsDisabled: boolean;
+  plan: string;
   stripeCheckoutCompleted: boolean;
 }) {
   const router = useRouter();
@@ -43,12 +45,12 @@ export function SubscriptionConversionTracker({
     }
 
     if (!analyticsDisabled) {
-      trackGoogleAdsSubscriptionConversion();
+      trackGoogleAdsSubscriptionConversion({ plan });
     }
 
     markSubscriptionConversionHandled(activeSubscriptionId);
     removeStripeCheckoutParamFromCurrentUrl();
-  }, [activeSubscriptionId, analyticsDisabled, refresh, stripeCheckoutCompleted]);
+  }, [activeSubscriptionId, analyticsDisabled, plan, refresh, stripeCheckoutCompleted]);
 
   return null;
 }

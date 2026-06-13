@@ -25,6 +25,7 @@
     "./number": "./src/number.ts",
     "./org": "./src/org.ts",
     "./origin": "./src/origin.ts",
+    "./posthog": "./src/posthog.ts",
     "./search": "./src/search.ts",
     "./settled": "./src/settled.ts",
     "./shuffle": "./src/shuffle.ts",

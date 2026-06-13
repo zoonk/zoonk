@@ -10,11 +10,11 @@ const googleAdsTagId = process.env.NEXT_PUBLIC_GOOGLE_ADS_TAG_ID;
  * root layout can stream the rest of the route without waiting on this flag.
  */
 export async function AppAnalytics() {
-  const { analyticsDisabled, userId } = await getCurrentUserAnalyticsState();
+  const { analyticsDisabled, plan, userId } = await getCurrentUserAnalyticsState();
 
   return (
     <>
-      <PostHogIdentify analyticsDisabled={analyticsDisabled} userId={userId} />
+      <PostHogIdentify analyticsDisabled={analyticsDisabled} plan={plan} userId={userId} />
       {analyticsDisabled ? null : (
         <>
           <Analytics debug={false} />

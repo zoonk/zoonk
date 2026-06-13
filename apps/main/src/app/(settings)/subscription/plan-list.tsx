@@ -1,5 +1,6 @@
 "use client";
 
+import { trackSubscriptionCheckoutStarted } from "@/lib/track-events";
 import { authClient } from "@zoonk/core/auth/client";
 import { Badge } from "@zoonk/ui/components/badge";
 import { Button } from "@zoonk/ui/components/button";
@@ -13,6 +14,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@zoonk/ui/components/radio-group";
 import { Tabs, TabsList, TabsTrigger } from "@zoonk/ui/components/tabs";
 import { type PriceInfo, formatPrice } from "@zoonk/utils/currency";
+import { logError } from "@zoonk/utils/logger";
 import { FREE_PLAN, getPlanTier } from "@zoonk/utils/subscription";
 import { Loader2Icon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
@@ -89,10 +91,13 @@ export function PlanList({
 
       if (error) {
         setState("error");
+        logError("Subscription action failed", { error });
       }
 
       return;
     }
+
+    trackSubscriptionCheckoutStarted({ billingPeriod: period, plan: selectedPlan });
 
     const { error } = await authClient.subscription.upgrade({
       annual: period === "yearly",
@@ -104,6 +109,7 @@ export function PlanList({
 
     if (error) {
       setState("error");
+      logError("Subscription upgrade failed", { error });
     }
   };
 

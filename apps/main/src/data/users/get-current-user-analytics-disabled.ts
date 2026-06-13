@@ -1,6 +1,8 @@
 import "server-only";
+import { getActiveSubscription } from "@zoonk/core/auth/subscription";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
+import { headers } from "next/headers";
 import { cache } from "react";
 
 /**
@@ -9,19 +11,27 @@ import { cache } from "react";
  * row stays the source of truth.
  */
 export const getCurrentUserAnalyticsState = cache(async () => {
-  const session = await getSession();
+  const requestHeaders = await headers();
+  const session = await getSession(requestHeaders);
 
   if (!session) {
-    return { analyticsDisabled: false, userId: null };
+    return { analyticsDisabled: false, plan: "free", userId: null };
   }
 
-  const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+  const [subscription, user] = await Promise.all([
+    getActiveSubscription(requestHeaders),
+    prisma.user.findUnique({ where: { id: session.user.id } }),
+  ]);
 
   if (!user) {
-    return { analyticsDisabled: false, userId: null };
+    return { analyticsDisabled: false, plan: "free", userId: null };
   }
 
-  return { analyticsDisabled: user.analyticsDisabled, userId: user.id };
+  return {
+    analyticsDisabled: user.analyticsDisabled,
+    plan: subscription?.plan ?? "free",
+    userId: user.id,
+  };
 });
 
 /**

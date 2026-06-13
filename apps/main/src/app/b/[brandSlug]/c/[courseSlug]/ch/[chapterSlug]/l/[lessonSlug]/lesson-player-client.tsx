@@ -1,7 +1,11 @@
 "use client";
 
 import { ContentFeedback } from "@/components/feedback/content-feedback";
-import { trackLessonCompleted, trackPlayerLoaded, trackPlayerSecondStep } from "@/lib/track-events";
+import {
+  trackLessonCompleted,
+  trackLessonSecondStep,
+  trackLessonStarted,
+} from "@/lib/track-events";
 import { type CompletionInput } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import {
@@ -16,6 +20,27 @@ import { type LessonProgressMeta, buildLessonPlayerModel } from "./lesson-player
 import { preloadNextLesson } from "./preload-next-lesson-action";
 import { submitCompletion } from "./submit-completion-action";
 
+type LessonPlayerClientProps = {
+  lesson: SerializedLesson;
+  brandSlug: string;
+  chapterPosition: number;
+  chapterTitle: string;
+  courseSlug: string;
+  chapterSlug: string;
+  isAuthenticated: boolean;
+  lessonDescription: string;
+  lessonProgress: LessonProgressMeta;
+  lessonPosition: number;
+  lessonSlug: string;
+  lessonTitle: string;
+  nextChapter: { brandSlug: string; chapterSlug: string; courseSlug: string } | null;
+  nextLesson: { chapterSlug: string; lessonSlug: string; lessonTitle: string | null } | null;
+  progressSnapshot: PlayerProgressSnapshot | null;
+  totalBrainPower: number;
+  userEmail?: string;
+  userName: string | null;
+};
+
 /**
  * Identifies the exact funnel moment where a learner has advanced from the
  * first player step to the second, regardless of whether the first step was
@@ -28,12 +53,14 @@ function isSecondStepForwardEvent(event: PlayerStepChangeEvent) {
 export function LessonPlayerClient({
   lesson,
   brandSlug,
+  chapterPosition,
   chapterTitle,
   courseSlug,
   chapterSlug,
   isAuthenticated,
   lessonDescription,
   lessonProgress,
+  lessonPosition,
   lessonSlug,
   lessonTitle,
   nextChapter,
@@ -42,24 +69,7 @@ export function LessonPlayerClient({
   totalBrainPower,
   userEmail,
   userName,
-}: {
-  lesson: SerializedLesson;
-  brandSlug: string;
-  chapterTitle: string;
-  courseSlug: string;
-  chapterSlug: string;
-  isAuthenticated: boolean;
-  lessonDescription: string;
-  lessonProgress: LessonProgressMeta;
-  lessonSlug: string;
-  lessonTitle: string;
-  nextChapter: { brandSlug: string; chapterSlug: string; courseSlug: string } | null;
-  nextLesson: { chapterSlug: string; lessonSlug: string; lessonTitle: string | null } | null;
-  progressSnapshot: PlayerProgressSnapshot | null;
-  totalBrainPower: number;
-  userEmail?: string;
-  userName: string | null;
-}) {
+}: LessonPlayerClientProps) {
   const router = useRouter();
   const hasRequestedNextLessonPreload = useRef(false);
   const hasTrackedSecondStep = useRef(false);
@@ -86,23 +96,33 @@ export function LessonPlayerClient({
       return;
     }
 
-    trackPlayerLoaded({
+    trackLessonStarted({
+      chapterPosition,
       courseSlug,
       lessonKind: lesson.kind,
+      lessonPosition,
       lessonSlug,
       stepCount: lesson.steps.length,
     });
-  }, [courseSlug, lesson.id, lesson.kind, lessonSlug, lesson.steps.length]);
+  }, [
+    chapterPosition,
+    courseSlug,
+    lesson.id,
+    lesson.kind,
+    lessonPosition,
+    lessonSlug,
+    lesson.steps.length,
+  ]);
 
   /** Fire-and-forget: analytics runs for all learners; persistence requires auth. */
   const handleComplete = useCallback(
     (input: CompletionInput) => {
       trackLessonCompleted({
+        chapterPosition,
         courseSlug,
         lessonKind: lesson.kind,
+        lessonPosition,
         lessonSlug,
-        startedAt: input.startedAt,
-        stepCount: lesson.steps.length,
       });
 
       if (!isAuthenticated) {
@@ -111,7 +131,7 @@ export function LessonPlayerClient({
 
       void submitCompletion(input);
     },
-    [courseSlug, isAuthenticated, lesson.kind, lessonSlug, lesson.steps.length],
+    [chapterPosition, courseSlug, isAuthenticated, lesson.kind, lessonPosition, lessonSlug],
   );
 
   /** Fire once after the first forward step change; completion handles short lessons. */
@@ -120,9 +140,11 @@ export function LessonPlayerClient({
       if (isSecondStepForwardEvent(event) && !hasTrackedSecondStep.current) {
         hasTrackedSecondStep.current = true;
 
-        trackPlayerSecondStep({
+        trackLessonSecondStep({
+          chapterPosition,
           courseSlug,
           lessonKind: lesson.kind,
+          lessonPosition,
           lessonSlug,
           stepCount: lesson.steps.length,
         });
@@ -140,7 +162,15 @@ export function LessonPlayerClient({
       hasRequestedNextLessonPreload.current = true;
       void preloadNextLesson(event.lessonId);
     },
-    [courseSlug, isAuthenticated, lesson.kind, lessonSlug, lesson.steps.length],
+    [
+      chapterPosition,
+      courseSlug,
+      isAuthenticated,
+      lesson.kind,
+      lessonPosition,
+      lessonSlug,
+      lesson.steps.length,
+    ],
   );
 
   return (

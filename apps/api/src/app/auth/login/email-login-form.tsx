@@ -8,6 +8,7 @@ import {
   LoginForm,
   LoginSubmit,
 } from "@/components/login";
+import { trackSignInMethodChosen } from "@/lib/track-events";
 import { useExtracted } from "next-intl";
 import { useActionState } from "react";
 import { sendVerificationOTPAction } from "./actions";
@@ -29,7 +30,7 @@ export function EmailLoginForm({ redirectTo }: { redirectTo?: string }) {
   const hasError = hasEmailError || hasGenericError;
 
   return (
-    <LoginForm action={formAction}>
+    <LoginForm action={formAction} onSubmit={() => trackSignInMethodChosen({ method: "otp" })}>
       <input name="redirectTo" type="hidden" value={redirectTo ?? ""} />
 
       <LoginField>
