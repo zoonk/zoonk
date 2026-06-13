@@ -99,7 +99,7 @@ export function removeLocaleSuffix(value: string, language: string): string {
 }
 
 export function normalizePunctuation(text: string): string {
-  return text.replaceAll(/(?<!\s)\s+([!?.,;:!?。、！？؟])/gu, "$1");
+  return text.replaceAll(/(?<!\s)\s+(?<punctuation>[!?.,;:!?。、！？؟])/gu, "$<punctuation>");
 }
 
 export function stripPunctuation(text: string): string {

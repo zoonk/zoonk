@@ -26,7 +26,7 @@ test.describe("Energy Page", () => {
       // User clicks energy card on home page (use flexible matcher for energy percentage)
       await authenticatedPage
         .getByRole("link")
-        .filter({ has: authenticatedPage.getByText(/your energy is \d+(\.\d+)?%/iu) })
+        .filter({ has: authenticatedPage.getByText(/your energy is \d+(?:\.\d+)?%/iu) })
         .click();
 
       // Wait for navigation to energy page

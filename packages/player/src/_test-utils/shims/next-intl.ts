@@ -11,7 +11,7 @@ function formatPluralBlocks({
   values: Record<string, number | string>;
 }) {
   return value.replaceAll(
-    /\{(\w+),\s*plural,\s*one\s*\{([^{}]*(?:\{\w+\}[^{}]*)*)\}\s*other\s*\{([^{}]*(?:\{\w+\}[^{}]*)*)\}\}/gu,
+    /\{(?<key>\w+),\s*plural,\s*one\s*\{(?<one>[^{}]*(?:\{\w+\}[^{}]*)*)\}\s*other\s*\{(?<other>[^{}]*(?:\{\w+\}[^{}]*)*)\}\}/gu,
     (token, key: string, one: string, other: string) => {
       const count = Number(values[key]);
 
@@ -33,7 +33,7 @@ function formatExtractedMessage({
 }) {
   const withPluralBlocks = formatPluralBlocks({ value, values });
 
-  return withPluralBlocks.replaceAll(/\{(\w+)\}/gu, (token, key: string) =>
+  return withPluralBlocks.replaceAll(/\{(?<key>\w+)\}/gu, (token, key: string) =>
     String(values[key] ?? token),
   );
 }

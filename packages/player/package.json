@@ -32,7 +32,7 @@
     "@types/react": "catalog:",
     "@typescript/native-preview": "catalog:",
     "@vitejs/plugin-react": "6.0.2",
-    "@vitest/browser-playwright": "4.1.7",
+    "@vitest/browser-playwright": "4.1.8",
     "@zoonk/tsconfig": "workspace:*",
     "jsdom": "catalog:",
     "playwright": "1.60.0",

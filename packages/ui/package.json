@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "catalog:",
-    "@tailwindcss/typography": "0.5.19",
+    "@tailwindcss/typography": "0.5.20",
     "@testing-library/react": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",

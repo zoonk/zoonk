@@ -23,6 +23,12 @@ type TaskResult<T = unknown> = {
   systemPrompt: string;
 };
 
+export type TaskGenerateInput<TInput> = TInput & {
+  model: string;
+  useFallback?: boolean;
+  reasoningEffort?: ReasoningEffort;
+};
+
 export type EvalResult = {
   testCase: TestCase;
   output: string;
@@ -34,16 +40,17 @@ export type EvalResult = {
 
 export type TaskEvalResults = { taskId: string; modelId: string; results: EvalResult[] };
 
-export type Task<TInput = unknown, TOutput = unknown> = {
+/**
+ * The default input is never because the task registry stores many tasks with
+ * different input shapes. A registry task is safe to inspect, but execution
+ * must happen through the paired test case data for that concrete task.
+ */
+export type Task<TInput = never, TOutput = unknown> = {
   id: string;
   name: string;
   description: string;
   testCases: TestCase[];
-  // Using method signature instead of property signature makes this bivariant,
-  // Allowing Task<SpecificInput> to be assignable to Task<unknown>
-  generate(
-    input: TInput & { model: string; useFallback?: boolean; reasoningEffort?: ReasoningEffort },
-  ): Promise<TaskResult<TOutput>>;
+  generate: (input: TaskGenerateInput<TInput>) => Promise<TaskResult<TOutput>>;
 };
 
 // === Output Types (Separated from Eval Results) ===

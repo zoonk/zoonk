@@ -164,7 +164,7 @@ function renderMathToHtml({ displayMode, text }: { displayMode: boolean; text: s
  * player accepts that common over-escaped shape at render time.
  */
 function normalizeLatexCommands(text: string) {
-  return text.replaceAll(/\\\\([A-Za-z]+)/gu, (_escapedCommand, command: string) => `\\${command}`);
+  return text.replaceAll(/\\\\[A-Za-z]+/gu, (escapedCommand) => escapedCommand.slice(1));
 }
 
 /**

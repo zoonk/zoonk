@@ -108,6 +108,7 @@
     "typescript/strict-void-return": "off",
     "unicorn/no-array-for-each": "off",
     "unicorn/no-array-reduce": "off",
+    "unicorn/import-style": "off",
     "unicorn/no-null": "off",
     "unicorn/prefer-bigint-literals": "off",
     "unicorn/prefer-native-coercion-functions": "off",

@@ -2,26 +2,49 @@ import { RUNS_PER_TEST_CASE } from "@/tasks";
 import { logError, logInfo } from "@zoonk/utils/logger";
 import { getGatewayModelId, getModelById } from "./models";
 import { loadModelOutputs, saveModelOutputs } from "./output-loader";
-import { type ModelOutputs, type OutputEntry, type Task, type TestCase } from "./types";
+import {
+  type ModelOutputs,
+  type OutputEntry,
+  type Task,
+  type TaskGenerateInput,
+  type TestCase,
+} from "./types";
 
-async function generateOutputForTestCase(
-  task: Task,
+/**
+ * The eval registry intentionally erases each task's concrete input type so it
+ * can list heterogeneous tasks together. At execution time, the test case and
+ * task come from the same registry entry, so this restores the concrete input
+ * type before calling the task generator.
+ */
+function getTaskGenerateInput<TInput>({
+  modelId,
+  testCase,
+}: {
+  modelId: string;
+  testCase: TestCase;
+}): TaskGenerateInput<TInput> {
+  const model = getModelById(modelId);
+  const gatewayModelId = getGatewayModelId(modelId);
+
+  return {
+    ...testCase.userInput,
+    model: gatewayModelId,
+    reasoningEffort: model?.reasoningEffort,
+    useFallback: false,
+  } as TaskGenerateInput<TInput>;
+}
+
+async function generateOutputForTestCase<TInput>(
+  task: Task<TInput>,
   testCase: TestCase,
   modelId: string,
   runNumber: number,
 ): Promise<OutputEntry> {
   logInfo(`Generating output for: ${testCase.id} (run ${runNumber})`);
 
-  const model = getModelById(modelId);
-  const gatewayModelId = getGatewayModelId(modelId);
   const startTime = performance.now();
-
-  const result = await task.generate({
-    ...testCase.userInput,
-    model: gatewayModelId,
-    reasoningEffort: model?.reasoningEffort,
-    useFallback: false,
-  });
+  const input = getTaskGenerateInput<TInput>({ modelId, testCase });
+  const result = await task.generate(input);
 
   const duration = performance.now() - startTime;
 
