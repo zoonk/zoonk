@@ -235,7 +235,7 @@ test.describe("Home Page - Progress Section", () => {
     await expect(authenticatedPage.getByText(/^progress$/iu)).toBeVisible();
 
     // Use regex to match "Your energy is X%" where X can be any number (including decimals)
-    await expect(authenticatedPage.getByText(/your energy is \d+(\.\d+)?%/iu)).toBeVisible();
+    await expect(authenticatedPage.getByText(/your energy is \d+(?:\.\d+)?%/iu)).toBeVisible();
   });
 
   test("authenticated user with progress sees belt level", async ({ authenticatedPage }) => {
@@ -256,7 +256,7 @@ test.describe("Home Page - Progress Section", () => {
     await expect(authenticatedPage.getByText(/^progress$/iu)).toBeVisible();
 
     // Use regex to match any percentage of correct answers (e.g., "75%" or "75.2%")
-    await expect(authenticatedPage.getByText(/\d+(\.\d+)?% correct answers/iu)).toBeVisible();
+    await expect(authenticatedPage.getByText(/\d+(?:\.\d+)?% correct answers/iu)).toBeVisible();
   });
 
   test("authenticated user with progress sees best day", async ({ authenticatedPage }) => {
@@ -268,7 +268,7 @@ test.describe("Home Page - Progress Section", () => {
     // Use regex to match any day of week with percentage (e.g., "Sunday with 76.1%")
     await expect(
       authenticatedPage.getByText(
-        /(monday|tuesday|wednesday|thursday|friday|saturday|sunday) with \d+(\.\d+)?%/iu,
+        /(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday) with \d+(?:\.\d+)?%/iu,
       ),
     ).toBeVisible();
   });
@@ -281,7 +281,7 @@ test.describe("Home Page - Progress Section", () => {
 
     // Use regex to match time period with percentage (e.g., "Morning with 90%")
     await expect(
-      authenticatedPage.getByText(/(morning|afternoon|evening|night) with \d+%/iu),
+      authenticatedPage.getByText(/(?:morning|afternoon|evening|night) with \d+%/iu),
     ).toBeVisible();
   });
 
