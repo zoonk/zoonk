@@ -554,7 +554,9 @@ test.describe("Chapter Lesson Type Filters", () => {
     await page.goto(chapterUrl);
 
     const filterButton = await openLessonTypeFilterMenu({ page });
-    await page.getByRole("menuitemcheckbox", { name: /^quiz$/iu }).click();
+    const quizFilterItem = page.getByRole("menuitemcheckbox", { name: /^quiz$/iu });
+
+    await quizFilterItem.click();
 
     await expect(
       page.getByRole("link", { name: new RegExp(lessonNames.first, "u") }),
@@ -564,10 +566,13 @@ test.describe("Chapter Lesson Type Filters", () => {
       page.getByRole("link", { name: new RegExp(lessonNames.second, "u") }),
     ).not.toBeVisible();
 
-    await expect(page.getByRole("menuitem", { name: /clear filter/iu })).toBeVisible();
+    const clearFilterItem = page.getByRole("menuitem", { name: /clear filter/iu });
+
+    await expect(quizFilterItem).toBeEnabled();
+    await expect(clearFilterItem).toBeEnabled();
     await expect(filterButton).toBeEnabled();
 
-    await page.getByRole("menuitem", { name: /clear filter/iu }).click();
+    await clearFilterItem.click();
 
     await expect(
       page.getByRole("link", { name: new RegExp(lessonNames.second, "u") }),
@@ -598,9 +603,11 @@ test.describe("Chapter Lesson Type Filters", () => {
 
     await openLessonTypeFilterMenu({ page: secondPage });
 
-    await expect(secondPage.getByRole("menuitem", { name: /clear filter/iu })).toBeVisible();
+    const clearFilterItem = secondPage.getByRole("menuitem", { name: /clear filter/iu });
 
-    await secondPage.getByRole("menuitem", { name: /clear filter/iu }).click();
+    await expect(clearFilterItem).toBeEnabled();
+
+    await clearFilterItem.click();
     await expectSavedHiddenLessonKinds({ hiddenLessonKinds: [], userId: user.id });
 
     await expect(
