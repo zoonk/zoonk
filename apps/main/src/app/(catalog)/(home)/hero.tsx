@@ -2,6 +2,7 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { ArrowRightIcon, SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import Link from "next/link";
+import { HeroTracker } from "./hero-tracker";
 
 /**
  * Shows the zero-progress home state with one action for creating a new course
@@ -12,6 +13,8 @@ export async function Hero() {
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-8 px-4 py-16 md:py-24">
+      <HeroTracker />
+
       <div className="flex flex-col items-center gap-4 text-center">
         <h1 className="text-foreground/90 text-3xl font-semibold tracking-tight text-balance md:text-5xl md:tracking-tighter">
           {t("Learn anything with AI")}

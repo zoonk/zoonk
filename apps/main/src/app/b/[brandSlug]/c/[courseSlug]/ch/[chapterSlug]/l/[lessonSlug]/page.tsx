@@ -285,12 +285,14 @@ export default async function LessonPage({ params }: Props) {
     <LessonPlayerClient
       lesson={serialized}
       brandSlug={brandSlug}
+      chapterPosition={lessonShell.chapter.position}
       chapterTitle={lessonShell.chapter.title}
       courseSlug={courseSlug}
       chapterSlug={chapterSlug}
       isAuthenticated={Boolean(session)}
       lessonDescription={lessonMeta.description}
       lessonProgress={lessonProgress}
+      lessonPosition={lessonShell.position}
       lessonSlug={lessonSlug}
       lessonTitle={lessonMeta.title}
       nextChapter={nextChapter}

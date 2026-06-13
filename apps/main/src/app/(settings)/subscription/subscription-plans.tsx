@@ -71,6 +71,7 @@ export async function SubscriptionPlans({
         <SubscriptionConversionTracker
           activeSubscriptionId={activeStripeSubscriptionId}
           analyticsDisabled={analyticsDisabled}
+          plan={currentPlan ?? "free"}
           stripeCheckoutCompleted={stripeCheckoutCompleted}
         />
         <ManagedSubscription
@@ -109,6 +110,7 @@ export async function SubscriptionPlans({
       <SubscriptionConversionTracker
         activeSubscriptionId={activeStripeSubscriptionId}
         analyticsDisabled={analyticsDisabled}
+        plan={currentPlan ?? "free"}
         stripeCheckoutCompleted={stripeCheckoutCompleted}
       />
       <PlanList

@@ -2,7 +2,6 @@
 
 import { logout } from "@/lib/logout";
 import { getMenu } from "@/lib/menu";
-import { trackCommandPaletteSearch } from "@/lib/track-events";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import {
   CommandDialog,
@@ -46,11 +45,7 @@ export function CommandPalette({
   const locale = useLocale();
 
   const handleSearch = useCallback(
-    (searchQuery: string) => {
-      trackCommandPaletteSearch({ searchTerm: searchQuery });
-
-      return searchCatalogAction({ language: locale, query: searchQuery });
-    },
+    (searchQuery: string) => searchCatalogAction({ language: locale, query: searchQuery }),
     [locale],
   );
 

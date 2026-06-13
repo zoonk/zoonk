@@ -1,5 +1,5 @@
-import { getPostHogConfig } from "@/lib/posthog";
 import { captureRouterTransitionStart, init } from "@sentry/nextjs";
+import { getPostHogConfig } from "@zoonk/utils/posthog";
 import { initBotId } from "botid/client/core";
 import posthog from "posthog-js";
 
@@ -17,7 +17,7 @@ if (process.env.NODE_ENV === "production") {
 if (postHogConfig) {
   posthog.init(postHogConfig.projectToken, {
     api_host: postHogConfig.host,
-    defaults: "2026-05-30",
+    defaults: postHogConfig.defaults,
   });
 }
 

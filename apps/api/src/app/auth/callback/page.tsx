@@ -1,3 +1,4 @@
+import { trackAuthCompleted } from "@/lib/server-track-events";
 import { getSession } from "@zoonk/core/users/session/get";
 import { externalRedirect } from "@zoonk/next/navigation/external-redirect";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
@@ -23,6 +24,7 @@ async function CallbackHandler({
   const needsSetup = !session?.user.username || !session?.user.name;
 
   if (session && needsSetup) {
+    await trackAuthCompleted({ action: "sign-up", userId: session.user.id });
     redirect(`/auth/setup?redirectTo=${encodeURIComponent(redirectToStr)}`);
   }
 
@@ -30,6 +32,10 @@ async function CallbackHandler({
 
   if (!result.success) {
     return redirect("/auth/untrusted-origin");
+  }
+
+  if (session) {
+    await trackAuthCompleted({ action: "sign-in", userId: session.user.id });
   }
 
   return externalRedirect(result.url);

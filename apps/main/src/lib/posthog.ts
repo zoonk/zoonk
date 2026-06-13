@@ -1,21 +1,5 @@
+import { getPostHogConfig } from "@zoonk/utils/posthog";
 import posthog from "posthog-js";
-
-type PostHogConfig = { host: string; projectToken: string };
-
-/**
- * Reads PostHog config from public environment variables so the SDK can be
- * disabled in environments that do not define both required client values.
- */
-export function getPostHogConfig(): PostHogConfig | null {
-  const host = process.env.NEXT_PUBLIC_POSTHOG_HOST;
-  const projectToken = process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN;
-
-  if (!host || !projectToken) {
-    return null;
-  }
-
-  return { host, projectToken };
-}
 
 /**
  * Links browser events to the authenticated Zoonk user and stores the user flag
@@ -23,9 +7,11 @@ export function getPostHogConfig(): PostHogConfig | null {
  */
 export function identifyPostHogUser({
   analyticsDisabled,
+  plan,
   userId,
 }: {
   analyticsDisabled: boolean;
+  plan: string;
   userId: string | null;
 }) {
   if (!getPostHogConfig()) {
@@ -36,7 +22,7 @@ export function identifyPostHogUser({
     return;
   }
 
-  posthog.identify(userId, { analyticsDisabled });
+  posthog.identify(userId, { analyticsDisabled, plan });
 }
 
 /**

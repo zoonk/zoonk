@@ -9,14 +9,16 @@ import { useEffect } from "react";
  */
 export function PostHogIdentify({
   analyticsDisabled,
+  plan,
   userId,
 }: {
   analyticsDisabled: boolean;
+  plan: string;
   userId: string | null;
 }) {
   useEffect(() => {
-    identifyPostHogUser({ analyticsDisabled, userId });
-  }, [analyticsDisabled, userId]);
+    identifyPostHogUser({ analyticsDisabled, plan, userId });
+  }, [analyticsDisabled, plan, userId]);
 
   return null;
 }
