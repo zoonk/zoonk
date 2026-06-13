@@ -8,7 +8,13 @@ type SubscriptionUser = Awaited<ReturnType<typeof findSubscriptionUsers>>[number
 type IncompleteSubscriptionWithUser = Subscription & { user: SubscriptionUser };
 
 const cachedListIncompleteSubscriptions = cacheAdminData(async (limit: number, offset: number) => {
-  const where = { status: INCOMPLETE_SUBSCRIPTION_STATUS };
+  const existingUserIds = await findExistingIncompleteSubscriptionUserIds();
+
+  if (existingUserIds.length === 0) {
+    return { subscriptions: [], total: 0 };
+  }
+
+  const where = { referenceId: { in: existingUserIds }, status: INCOMPLETE_SUBSCRIPTION_STATUS };
 
   const [subscriptions, total] = await Promise.all([
     prisma.subscription.findMany({
@@ -61,11 +67,33 @@ function getIncompleteSubscriptionOrderBy() {
 }
 
 /**
+ * Pagination must run after orphan subscription rows are excluded. Because the
+ * Better Auth table does not define a Prisma relation to users, we first find
+ * the referenced users that actually exist and then use those ids in the page
+ * query and count query.
+ */
+async function findExistingIncompleteSubscriptionUserIds() {
+  const subscriptionReferences = await prisma.subscription.findMany({
+    distinct: ["referenceId"],
+    select: { referenceId: true },
+    where: { status: INCOMPLETE_SUBSCRIPTION_STATUS },
+  });
+
+  const users = await findSubscriptionUsers({ subscriptions: subscriptionReferences });
+
+  return users.map((user) => user.id);
+}
+
+/**
  * The Better Auth subscription table stores the user id as `referenceId`
  * instead of a Prisma relation, so the page loads those users in one follow-up
  * query after fetching the paginated subscription records.
  */
-async function findSubscriptionUsers({ subscriptions }: { subscriptions: Subscription[] }) {
+async function findSubscriptionUsers<T extends { referenceId: string }>({
+  subscriptions,
+}: {
+  subscriptions: T[];
+}) {
   const userIds = subscriptions.map((subscription) => subscription.referenceId);
 
   if (userIds.length === 0) {
