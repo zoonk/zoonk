@@ -336,7 +336,15 @@ describe("player browser integration: completion", () => {
 
   it("falls back to review-only chapter completion when there is no next chapter", async () => {
     renderPlayer({
+      chapterTitle: "Completed Chapter",
       lesson: buildCompletionQuizLesson(),
+      lessonProgress: {
+        currentLessonNumber: 4,
+        remainingChaptersInCourse: 1,
+        remainingLessonsInChapter: 0,
+        totalLessonsInChapter: 4,
+      },
+      lessonTitle: "Completed Lesson",
       milestone: { kind: "chapter", nextHref: null, reviewHref: "/review-chapter" },
       viewer: buildAuthenticatedViewer(),
     });
@@ -346,6 +354,17 @@ describe("player browser integration: completion", () => {
     const completionScreen = page.getByRole("status");
 
     await expect.element(completionScreen.getByText(/chapter complete/iu)).toBeInTheDocument();
+    await expect.element(completionScreen.getByText("Completed Chapter")).toBeInTheDocument();
+    await expect.element(completionScreen.getByText("Completed Lesson")).not.toBeInTheDocument();
+    await expect.element(completionScreen.getByText("Lesson 4 of 4")).not.toBeInTheDocument();
+
+    await expect
+      .element(completionScreen.getByRole("progressbar", { name: /chapter progress/iu }))
+      .not.toBeInTheDocument();
+
+    await expect
+      .element(completionScreen.getByText(/chapter left in this course/iu))
+      .not.toBeInTheDocument();
 
     await expect
       .element(completionScreen.getByRole("link", { name: /review chapter/iu }))
@@ -358,7 +377,9 @@ describe("player browser integration: completion", () => {
 
   it("renders course completion review actions", async () => {
     renderPlayer({
+      courseTitle: "Completed Course",
       lesson: buildCompletionQuizLesson(),
+      lessonTitle: "Final Lesson",
       milestone: {
         kind: "course",
         reviewHref: "/review-course",
@@ -372,6 +393,17 @@ describe("player browser integration: completion", () => {
     const completionScreen = page.getByRole("status");
 
     await expect.element(completionScreen.getByText(/course complete/iu)).toBeInTheDocument();
+    await expect.element(completionScreen.getByText("Completed Course")).toBeInTheDocument();
+    await expect.element(completionScreen.getByText("Final Lesson")).not.toBeInTheDocument();
+    await expect.element(completionScreen.getByText("Lesson 1 of 1")).not.toBeInTheDocument();
+
+    await expect
+      .element(completionScreen.getByRole("progressbar", { name: /chapter progress/iu }))
+      .not.toBeInTheDocument();
+
+    await expect
+      .element(completionScreen.getByText(/chapters left in this course/iu))
+      .not.toBeInTheDocument();
 
     await expect
       .element(completionScreen.getByRole("link", { name: /review course/iu }))

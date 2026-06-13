@@ -25,6 +25,7 @@ type LessonPlayerClientProps = {
   brandSlug: string;
   chapterPosition: number;
   chapterTitle: string;
+  courseTitle: string;
   courseSlug: string;
   chapterSlug: string;
   isAuthenticated: boolean;
@@ -55,6 +56,7 @@ export function LessonPlayerClient({
   brandSlug,
   chapterPosition,
   chapterTitle,
+  courseTitle,
   courseSlug,
   chapterSlug,
   isAuthenticated,
@@ -177,6 +179,7 @@ export function LessonPlayerClient({
     <PlayerProvider
       lesson={lesson}
       chapterTitle={chapterTitle}
+      courseTitle={courseTitle}
       lessonDescription={lessonDescription}
       lessonProgress={model.lessonProgress}
       lessonTitle={lessonTitle}

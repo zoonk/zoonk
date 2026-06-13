@@ -163,10 +163,6 @@ msgid "t2VOpl"
 msgstr "Chapter Complete"
 
 #: src/components/completion-screen.tsx
-msgid "2kQf_C"
-msgstr "{count, plural, =0 {No chapters left in this course} one {# chapter left in this course} other {# chapters left in this course}}"
-
-#: src/components/completion-screen.tsx
 #: src/components/in-play-sticky-header.tsx
 msgid "qXzoF7"
 msgstr "Lesson {current} of {total}"
