@@ -41,7 +41,7 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@formatjs/intl-localematcher": "0.8.8",
+    "@formatjs/intl-localematcher": "0.8.10",
     "negotiator": "1.0.0"
   },
   "devDependencies": {
