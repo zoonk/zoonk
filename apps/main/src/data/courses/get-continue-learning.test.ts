@@ -617,7 +617,7 @@ describe("authenticated users", () => {
     });
   });
 
-  it("returns the next pending lesson target after the latest completed lesson", async () => {
+  it("returns the next pending lesson target after the completed lesson", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 

@@ -38,10 +38,13 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
 
   // Revalidate outside after() so the signal is included in the RSC response.
   // This tells the client Router Cache to purge "/", ensuring the next
-  // client-side navigation fetches fresh data from the server.
+  // client-side navigation fetches fresh data from the server. Catalog pages
+  // need the same signal because their Continue links are derived from lesson
+  // progress and can otherwise keep pointing at the old lesson.
   // Placing it inside after() would run it after the response is sent,
   // meaning the client never receives the invalidation signal.
   revalidatePath("/");
+  revalidatePath("/(catalog)", "layout");
 
   after(async () => {
     try {

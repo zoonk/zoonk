@@ -156,7 +156,7 @@ describe(getActiveCatalogTarget, () => {
     expect(result).toBeNull();
   });
 
-  it("uses the next lesson after the latest completed lesson", async () => {
+  it("uses the next lesson after the furthest completed lesson", async () => {
     const [user, tree] = await Promise.all([userFixture(), createCourseTree()]);
     const [completedLesson, nextLesson, startedLesson] = tree.lessons;
 

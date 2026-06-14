@@ -38,8 +38,10 @@ function getScopeLessonWhere({
 }
 
 /**
- * Finds the user's most recently completed lesson in a scope and returns the
- * position data needed to locate the next lesson in course order.
+ * Finds the furthest lesson the user completed in the current course order and
+ * returns the position data needed to locate the next lesson. Review attempts
+ * can happen on earlier lessons later in time, so tree position must define the
+ * continuation frontier before completion recency is used as a tie-breaker.
  */
 export async function findLastCompleted(
   userId: string,
@@ -54,9 +56,9 @@ export async function findLastCompleted(
         },
       },
       orderBy: [
-        { completedAt: "desc" },
         { lesson: { chapter: { position: "desc" } } },
         { lesson: { position: "desc" } },
+        { completedAt: "desc" },
       ],
       where: {
         completedAt: { not: null },

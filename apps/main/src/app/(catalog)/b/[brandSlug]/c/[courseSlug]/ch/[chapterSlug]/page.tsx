@@ -9,7 +9,6 @@ import {
 import { getChapter } from "@/data/chapters/get-chapter";
 import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
 import { getUserHiddenLessonKinds } from "@/data/users/lesson-filter-settings";
-import { getNextChapterInCourse } from "@zoonk/core/lessons/next-chapter-in-course";
 import { getSession } from "@zoonk/core/users/session/get";
 import { type Lesson, type LessonKind } from "@zoonk/db";
 import { Grid, GridToolbar } from "@zoonk/ui/components/grid";
@@ -71,16 +70,9 @@ export default async function ChapterPage({
     notFound();
   }
 
-  const [lessons, nextChapter] = await Promise.all([
-    listChapterLessons({ chapterId: chapter.id }),
-    getNextChapterInCourse({ chapterPosition: chapter.position, courseId: chapter.courseId }),
-  ]);
+  const lessons = await listChapterLessons({ chapterId: chapter.id });
 
   const shouldShowCreateChapterPrompt = brandSlug === AI_ORG_SLUG && lessons.length === 0;
-
-  const completedHref = nextChapter
-    ? (`/b/${nextChapter.brandSlug}/c/${nextChapter.courseSlug}/ch/${nextChapter.chapterSlug}` as const)
-    : undefined;
 
   const firstVisibleLesson = getFirstVisibleLesson({ hiddenLessonKinds, lessons });
 
@@ -103,7 +95,6 @@ export default async function ChapterPage({
               <Suspense fallback={<ContinueLessonLinkSkeleton />}>
                 <ContinueLessonLink
                   chapterId={chapter.id}
-                  completedHref={completedHref}
                   excludedLessonKinds={hiddenLessonKinds}
                   fallbackHref={fallbackHref}
                 />

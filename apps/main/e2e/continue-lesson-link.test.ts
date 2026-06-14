@@ -133,6 +133,105 @@ async function createTestCourseWithPendingFirstLesson() {
 }
 
 /**
+ * Review-link tests need a course where the first chapter can be either
+ * partially or fully complete, and the final chapter ends with a review lesson.
+ * That lets the assertions distinguish missing work, chapter review, and
+ * course review without repeating catalog setup in each test.
+ */
+async function createTestCourseWithReviewChapters() {
+  const org = await getAiOrganization();
+  const uniqueId = randomUUID().slice(0, 8);
+
+  const course = await courseFixture({
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-cal-review-course-${uniqueId}`,
+    title: `E2E CAL Review Course ${uniqueId}`,
+  });
+
+  const [firstChapter, secondChapter] = await Promise.all([
+    chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 0,
+      slug: `e2e-cal-review-ch1-${uniqueId}`,
+      title: `E2E CAL Review Ch1 ${uniqueId}`,
+    }),
+    chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 1,
+      slug: `e2e-cal-review-ch2-${uniqueId}`,
+      title: `E2E CAL Review Ch2 ${uniqueId}`,
+    }),
+  ]);
+
+  const [firstLesson, firstMiddleLesson, firstReviewLesson, secondLesson, secondReviewLesson] =
+    await Promise.all([
+      lessonFixture({
+        chapterId: firstChapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: org.id,
+        position: 0,
+        slug: `e2e-cal-review-l1-${uniqueId}`,
+        title: `E2E CAL Review L1 ${uniqueId}`,
+      }),
+      lessonFixture({
+        chapterId: firstChapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: org.id,
+        position: 1,
+        slug: `e2e-cal-review-l1b-${uniqueId}`,
+        title: `E2E CAL Review L1B ${uniqueId}`,
+      }),
+      lessonFixture({
+        chapterId: firstChapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "review",
+        organizationId: org.id,
+        position: 2,
+        slug: `e2e-cal-review-r1-${uniqueId}`,
+        title: `E2E CAL Review R1 ${uniqueId}`,
+      }),
+      lessonFixture({
+        chapterId: secondChapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: org.id,
+        position: 0,
+        slug: `e2e-cal-review-l2-${uniqueId}`,
+        title: `E2E CAL Review L2 ${uniqueId}`,
+      }),
+      lessonFixture({
+        chapterId: secondChapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "review",
+        organizationId: org.id,
+        position: 1,
+        slug: `e2e-cal-review-r2-${uniqueId}`,
+        title: `E2E CAL Review R2 ${uniqueId}`,
+      }),
+    ]);
+
+  return {
+    course,
+    firstChapter,
+    firstLesson,
+    firstMiddleLesson,
+    firstReviewLesson,
+    secondChapter,
+    secondLesson,
+    secondReviewLesson,
+  };
+}
+
+/**
  * Lesson-type preferences are user-specific, so this helper creates a fresh
  * browser user and stores the hidden kinds before the page renders. That keeps
  * this regression isolated from the shared authenticated worker users.
@@ -510,73 +609,97 @@ test.describe("Continue Lesson Link", () => {
     );
   });
 
-  test("chapter page shows Continue linking to next chapter when completed", async ({
+  test("chapter page shows Review linking to the current chapter review when completed", async ({
     authenticatedPage,
     withProgressUser,
   }) => {
-    const org = await getAiOrganization();
-    const uniqueId = randomUUID().slice(0, 8);
+    const {
+      course,
+      firstChapter,
+      firstLesson,
+      firstMiddleLesson,
+      firstReviewLesson,
+      secondChapter,
+    } = await createTestCourseWithReviewChapters();
 
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: org.id,
-      slug: `e2e-cal-chcomp-${uniqueId}`,
-      title: `E2E CAL ChComp ${uniqueId}`,
-    });
-
-    const [chapter1, chapter2] = await Promise.all([
-      chapterFixture({
-        courseId: course.id,
-        isPublished: true,
-        organizationId: org.id,
-        position: 0,
-        slug: `e2e-cal-chcomp-ch1-${uniqueId}`,
-        title: `E2E CAL ChComp Ch1 ${uniqueId}`,
+    await Promise.all([
+      lessonProgressFixture({
+        completedAt: new Date("2024-01-01"),
+        durationSeconds: 60,
+        lessonId: firstLesson.id,
+        userId: withProgressUser.id,
       }),
-      chapterFixture({
-        courseId: course.id,
-        isPublished: true,
-        organizationId: org.id,
-        position: 1,
-        slug: `e2e-cal-chcomp-ch2-${uniqueId}`,
-        title: `E2E CAL ChComp Ch2 ${uniqueId}`,
+      lessonProgressFixture({
+        completedAt: new Date("2024-01-02"),
+        durationSeconds: 60,
+        lessonId: firstMiddleLesson.id,
+        userId: withProgressUser.id,
       }),
-    ]);
-
-    const [lesson1] = await Promise.all([
-      lessonFixture({
-        chapterId: chapter1.id,
-        isPublished: true,
-        organizationId: org.id,
-        position: 0,
-        slug: `e2e-cal-chcomp-l1-${uniqueId}`,
-        title: `E2E CAL ChComp L1 ${uniqueId}`,
-      }),
-      lessonFixture({
-        chapterId: chapter2.id,
-        isPublished: true,
-        organizationId: org.id,
-        position: 0,
-        slug: `e2e-cal-chcomp-l2-${uniqueId}`,
-        title: `E2E CAL ChComp L2 ${uniqueId}`,
+      lessonProgressFixture({
+        completedAt: new Date("2024-01-03"),
+        durationSeconds: 60,
+        lessonId: firstReviewLesson.id,
+        userId: withProgressUser.id,
       }),
     ]);
 
-    await lessonProgressFixture({
-      completedAt: new Date(),
-      durationSeconds: 60,
-      lessonId: lesson1.id,
-      userId: withProgressUser.id,
-    });
+    await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${firstChapter.slug}`);
 
-    await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter1.slug}`);
+    const reviewLink = getContinueActionLink({ label: "Review", page: authenticatedPage });
+    await expect(reviewLink).toBeVisible();
+
+    await expect(reviewLink).toHaveAttribute(
+      "href",
+      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${firstChapter.slug}/l/${firstReviewLesson.slug}`,
+    );
+
+    await expect(reviewLink).not.toHaveAttribute(
+      "href",
+      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${secondChapter.slug}`,
+    );
+  });
+
+  test("chapter page keeps Continue on the first incomplete lesson after final review", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
+    const {
+      course,
+      firstChapter,
+      firstLesson,
+      firstMiddleLesson,
+      firstReviewLesson,
+      secondChapter,
+    } = await createTestCourseWithReviewChapters();
+
+    await Promise.all([
+      lessonProgressFixture({
+        completedAt: new Date("2024-01-01"),
+        durationSeconds: 60,
+        lessonId: firstLesson.id,
+        userId: withProgressUser.id,
+      }),
+      lessonProgressFixture({
+        completedAt: new Date("2024-01-02"),
+        durationSeconds: 60,
+        lessonId: firstReviewLesson.id,
+        userId: withProgressUser.id,
+      }),
+    ]);
+
+    await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${firstChapter.slug}`);
 
     const continueLink = getContinueActionLink({ label: "Continue", page: authenticatedPage });
     await expect(continueLink).toBeVisible();
 
     await expect(continueLink).toHaveAttribute(
       "href",
-      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter2.slug}`,
+      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${firstChapter.slug}/l/${firstMiddleLesson.slug}`,
+    );
+
+    await expect(continueLink).not.toHaveAttribute(
+      "href",
+      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${secondChapter.slug}`,
     );
   });
 
@@ -584,18 +707,57 @@ test.describe("Continue Lesson Link", () => {
     authenticatedPage,
     withProgressUser,
   }) => {
-    const { lesson, course } = await createTestCourseWithLesson();
+    const {
+      course,
+      firstLesson,
+      firstMiddleLesson,
+      firstReviewLesson,
+      secondChapter,
+      secondLesson,
+      secondReviewLesson,
+    } = await createTestCourseWithReviewChapters();
 
-    await lessonProgressFixture({
-      completedAt: new Date(),
-      durationSeconds: 60,
-      lessonId: lesson.id,
-      userId: withProgressUser.id,
-    });
+    await Promise.all([
+      lessonProgressFixture({
+        completedAt: new Date("2024-01-01"),
+        durationSeconds: 60,
+        lessonId: firstLesson.id,
+        userId: withProgressUser.id,
+      }),
+      lessonProgressFixture({
+        completedAt: new Date("2024-01-02"),
+        durationSeconds: 60,
+        lessonId: firstMiddleLesson.id,
+        userId: withProgressUser.id,
+      }),
+      lessonProgressFixture({
+        completedAt: new Date("2024-01-03"),
+        durationSeconds: 60,
+        lessonId: firstReviewLesson.id,
+        userId: withProgressUser.id,
+      }),
+      lessonProgressFixture({
+        completedAt: new Date("2024-01-04"),
+        durationSeconds: 60,
+        lessonId: secondLesson.id,
+        userId: withProgressUser.id,
+      }),
+      lessonProgressFixture({
+        completedAt: new Date("2024-01-05"),
+        durationSeconds: 60,
+        lessonId: secondReviewLesson.id,
+        userId: withProgressUser.id,
+      }),
+    ]);
 
     await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
     const reviewLink = getContinueActionLink({ label: "Review", page: authenticatedPage });
     await expect(reviewLink).toBeVisible();
+
+    await expect(reviewLink).toHaveAttribute(
+      "href",
+      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${secondChapter.slug}/l/${secondReviewLesson.slug}`,
+    );
   });
 });

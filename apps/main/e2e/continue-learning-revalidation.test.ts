@@ -7,7 +7,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { expect, test } from "./fixtures";
+import { type Page, expect, test } from "./fixtures";
 
 async function createCourseWithThreeLessons() {
   const org = await getAiOrganization();
@@ -64,15 +64,70 @@ async function createCourseWithThreeLessons() {
     title: `After Next ${uniqueId}`,
   });
 
-  // Add a static step to lesson 1 so we can complete it
-  await stepFixture({
-    content: { text: `Step body ${uniqueId}`, title: `Step Title ${uniqueId}`, variant: "text" },
-    isPublished: true,
-    lessonId: lesson1.id,
-    position: 0,
-  });
+  // Add static steps to the lessons completed through the player in these tests.
+  await Promise.all([
+    stepFixture({
+      content: {
+        text: `Review step body ${uniqueId}`,
+        title: `Review Step Title ${uniqueId}`,
+        variant: "text",
+      },
+      isPublished: true,
+      lessonId: lesson0.id,
+      position: 0,
+    }),
+    stepFixture({
+      content: { text: `Step body ${uniqueId}`, title: `Step Title ${uniqueId}`, variant: "text" },
+      isPublished: true,
+      lessonId: lesson1.id,
+      position: 0,
+    }),
+  ]);
 
-  return { course, lesson0, lesson1, lesson2, uniqueId };
+  return { chapter, course, lesson0, lesson1, lesson2, uniqueId };
+}
+
+/**
+ * The completion action persists progress in `after()`, so tests that need
+ * the following navigation to read fresh progress must wait for the database
+ * row rather than only the server action response.
+ */
+async function expectLessonCompleted({ lessonId, userId }: { lessonId: string; userId: string }) {
+  await expect(async () => {
+    const progress = await prisma.lessonProgress.findUnique({
+      where: { userLesson: { lessonId, userId } },
+    });
+
+    expect(progress?.completedAt).not.toBeNull();
+  }).toPass({ timeout: 10_000 });
+}
+
+/**
+ * Static text lessons complete after one keyboard continue action. Waiting on
+ * the server action response plus the DB row keeps the next navigation from
+ * racing the background persistence work.
+ */
+async function completeStaticLesson({
+  lessonId,
+  page,
+  userId,
+}: {
+  lessonId: string;
+  page: Page;
+  userId: string;
+}) {
+  const serverActionResponse = page.waitForResponse(
+    (resp) => resp.request().method() === "POST" && resp.ok(),
+  );
+
+  await expect(async () => {
+    await page.keyboard.press("ArrowRight");
+    await expect(page.getByRole("status")).toBeVisible({ timeout: 1000 });
+  }).toPass({ timeout: 10_000 });
+
+  await expect(page.getByRole("status").getByText("Completed", { exact: true })).toBeVisible();
+  await serverActionResponse;
+  await expectLessonCompleted({ lessonId, userId });
 }
 
 test.describe("Continue Learning Revalidation", () => {
@@ -143,6 +198,65 @@ test.describe("Continue Learning Revalidation", () => {
     await expect(
       page.getByText(new RegExp(`Next:.*After Next ${uniqueId}`, "u")).first(),
     ).toBeVisible();
+
+    await browserContext.close();
+  });
+
+  test("chapter continue link stays on the furthest incomplete lesson after review", async ({
+    baseURL,
+    browser,
+  }) => {
+    const user = await createE2EUser(baseURL!);
+    const browserContext = await browser.newContext({ storageState: user.storageState });
+    const page = await browserContext.newPage();
+
+    const { chapter, course, lesson0, lesson1, lesson2, uniqueId } =
+      await createCourseWithThreeLessons();
+
+    await Promise.all([
+      lessonProgressFixture({
+        completedAt: new Date("2024-01-01"),
+        durationSeconds: 60,
+        lessonId: lesson0.id,
+        userId: user.id,
+      }),
+      userProgressFixture({ totalBrainPower: 100n, userId: user.id }),
+      prisma.courseUser.create({ data: { courseId: course.id, userId: user.id } }),
+      prisma.course.update({ data: { userCount: { increment: 1 } }, where: { id: course.id } }),
+    ]);
+
+    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}`);
+
+    const staleContinueLink = page.getByRole("link", { name: "Continue 1 of 3 lessons completed" });
+
+    await expect(staleContinueLink).toHaveAttribute(
+      "href",
+      `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson1.slug}`,
+    );
+
+    await staleContinueLink.click();
+    await page.waitForURL(new RegExp(`/l/e2e-cl-reval-current-${uniqueId}$`, "u"));
+    await completeStaticLesson({ lessonId: lesson1.id, page, userId: user.id });
+
+    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson0.slug}`);
+    await completeStaticLesson({ lessonId: lesson0.id, page, userId: user.id });
+
+    await page.getByRole("link", { name: /all lessons/iu }).click();
+    await page.waitForURL(new RegExp(`e2e-cl-reval-chapter-${uniqueId}$`, "u"));
+
+    const currentContinueLink = page.getByRole("link", {
+      name: "Continue 2 of 3 lessons completed",
+    });
+
+    await expect(currentContinueLink).toHaveAttribute(
+      "href",
+      `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson2.slug}`,
+    );
+
+    await expect(currentContinueLink).not.toHaveAttribute(
+      "href",
+      `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson1.slug}`,
+    );
 
     await browserContext.close();
   });
