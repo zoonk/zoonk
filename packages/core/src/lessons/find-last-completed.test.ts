@@ -77,7 +77,7 @@ describe(findLastCompleted, () => {
     expect(result).toBeNull();
   });
 
-  it("returns the most recently completed lesson", async () => {
+  it("returns the furthest completed lesson in course order", async () => {
     const user = await userFixture();
     const uid = user.id;
 
@@ -138,7 +138,57 @@ describe(findLastCompleted, () => {
     expect(result).toHaveProperty("orgSlug");
   });
 
-  it("ignores completed excluded lesson kinds when choosing the latest completion", async () => {
+  it("keeps the furthest completion when an earlier lesson was reviewed later", async () => {
+    const user = await userFixture();
+    const uid = user.id;
+
+    const course = await courseFixture({ isPublished: true, organizationId: orgId });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: orgId,
+      position: 0,
+    });
+
+    const [reviewedLesson, furthestLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: orgId,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: orgId,
+        position: 1,
+      }),
+    ]);
+
+    await Promise.all([
+      lessonProgressFixture({
+        completedAt: new Date("2024-01-03"),
+        durationSeconds: 60,
+        lessonId: reviewedLesson.id,
+        userId: uid,
+      }),
+      lessonProgressFixture({
+        completedAt: new Date("2024-01-02"),
+        durationSeconds: 60,
+        lessonId: furthestLesson.id,
+        userId: uid,
+      }),
+    ]);
+
+    const result = await findLastCompleted(uid, { courseId: course.id });
+
+    expect(result).toMatchObject({ lessonId: furthestLesson.id, lessonPosition: 1 });
+  });
+
+  it("ignores completed excluded lesson kinds when choosing the furthest completion", async () => {
     const [user, course] = await Promise.all([
       userFixture(),
       courseFixture({ isPublished: true, organizationId: orgId }),

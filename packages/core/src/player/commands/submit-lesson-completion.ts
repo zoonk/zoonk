@@ -67,8 +67,17 @@ export async function submitLessonCompletion(input: {
         startedAt: input.startedAt,
         userId: input.userId,
       },
-      update: { completedAt: now, durationSeconds: input.durationSeconds },
+      update: {},
       where: { userLesson: { lessonId: input.lessonId, userId: input.userId } },
+    });
+
+    // A review completion is fresh practice, not a new first-completion event.
+    // Only start-only rows should cross the completed boundary here; completed rows
+    // keep their original timestamp and duration so continue links and completion
+    // metrics do not move backward when a learner revisits an earlier lesson.
+    await tx.lessonProgress.updateMany({
+      data: { completedAt: now, durationSeconds: input.durationSeconds },
+      where: { completedAt: null, lessonId: input.lessonId, userId: input.userId },
     });
 
     const { courseId } = await syncDurableCurriculumCompletion(tx, {

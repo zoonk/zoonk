@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/knip/schema.json",
-  "ignore": ["**/*.d.**.ts", ".agents/**", ".claude/**"],
+  "ignore": ["**/*.d.**.ts"],
   "ignoreIssues": { "**/.next/**/types/routes.d.ts": ["types"] },
   "ignoreWorkspaces": ["packages/e2e!", "packages/testing!"],
   "ignoreBinaries": ["stripe", "build-and-start", "turbo!"],

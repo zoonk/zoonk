@@ -219,6 +219,141 @@ describe(submitLessonCompletion, () => {
     expect(courseCompletion).not.toBeNull();
   });
 
+  it("does not mark chapter or course complete when only the final lesson is completed", async () => {
+    const user = await userFixture();
+    const userId = user.id;
+
+    const publishedCourse = await courseFixture({ isPublished: true, organizationId: org.id });
+
+    const chapter = await chapterFixture({
+      courseId: publishedCourse.id,
+      isPublished: true,
+      organizationId: org.id,
+    });
+
+    const [firstLesson, finalLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        kind: "quiz",
+        organizationId: org.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        kind: "quiz",
+        organizationId: org.id,
+        position: 1,
+      }),
+    ]);
+
+    await submitLessonCompletion({
+      durationSeconds: 15,
+      lessonId: finalLesson.id,
+      localDate: todayLocalDate(),
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 15_000),
+      stepResults: [stepResult(true)],
+      userId,
+    });
+
+    const [firstLessonCompletion, finalLessonCompletion, chapterCompletion, courseCompletion] =
+      await Promise.all([
+        prisma.lessonProgress.findUnique({
+          where: { userLesson: { lessonId: firstLesson.id, userId } },
+        }),
+        prisma.lessonProgress.findUnique({
+          where: { userLesson: { lessonId: finalLesson.id, userId } },
+        }),
+        prisma.chapterCompletion.findUnique({
+          where: { userChapterCompletion: { chapterId: chapter.id, userId } },
+        }),
+        prisma.courseCompletion.findUnique({
+          where: { userCourseCompletion: { courseId: publishedCourse.id, userId } },
+        }),
+      ]);
+
+    expect(firstLessonCompletion).toBeNull();
+    expect(finalLessonCompletion?.completedAt).not.toBeNull();
+    expect(chapterCompletion).toBeNull();
+    expect(courseCompletion).toBeNull();
+  });
+
+  it("does not mark course complete when only the final chapter is completed", async () => {
+    const user = await userFixture();
+    const userId = user.id;
+
+    const publishedCourse = await courseFixture({ isPublished: true, organizationId: org.id });
+
+    const [firstChapter, finalChapter] = await Promise.all([
+      chapterFixture({
+        courseId: publishedCourse.id,
+        isPublished: true,
+        organizationId: org.id,
+        position: 0,
+      }),
+      chapterFixture({
+        courseId: publishedCourse.id,
+        isPublished: true,
+        organizationId: org.id,
+        position: 1,
+      }),
+    ]);
+
+    const [firstChapterLesson, finalChapterLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: firstChapter.id,
+        isPublished: true,
+        kind: "quiz",
+        organizationId: org.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: finalChapter.id,
+        isPublished: true,
+        kind: "quiz",
+        organizationId: org.id,
+        position: 0,
+      }),
+    ]);
+
+    await submitLessonCompletion({
+      durationSeconds: 15,
+      lessonId: finalChapterLesson.id,
+      localDate: todayLocalDate(),
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 15_000),
+      stepResults: [stepResult(true)],
+      userId,
+    });
+
+    const [
+      firstChapterLessonCompletion,
+      finalChapterCompletion,
+      firstChapterCompletion,
+      courseCompletion,
+    ] = await Promise.all([
+      prisma.lessonProgress.findUnique({
+        where: { userLesson: { lessonId: firstChapterLesson.id, userId } },
+      }),
+      prisma.chapterCompletion.findUnique({
+        where: { userChapterCompletion: { chapterId: finalChapter.id, userId } },
+      }),
+      prisma.chapterCompletion.findUnique({
+        where: { userChapterCompletion: { chapterId: firstChapter.id, userId } },
+      }),
+      prisma.courseCompletion.findUnique({
+        where: { userCourseCompletion: { courseId: publishedCourse.id, userId } },
+      }),
+    ]);
+
+    expect(firstChapterLessonCompletion).toBeNull();
+    expect(finalChapterCompletion).not.toBeNull();
+    expect(firstChapterCompletion).toBeNull();
+    expect(courseCompletion).toBeNull();
+  });
+
   it("creates UserProgress with correct BP increment and energy delta", async () => {
     const user = await userFixture();
     const userId = user.id;
@@ -365,6 +500,37 @@ describe(submitLessonCompletion, () => {
 
     const userProgress = await prisma.userProgress.findUnique({ where: { userId } });
     expect(Number(userProgress?.totalBrainPower)).toBe(20);
+  });
+
+  it("re-completion preserves the original lesson completion metadata", async () => {
+    const user = await userFixture();
+    const userId = user.id;
+
+    const baseInput = {
+      durationSeconds: 10,
+      lessonId: lesson.id,
+
+      localDate: todayLocalDate(),
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 10_000),
+      stepResults: [stepResult(true)],
+      userId,
+    };
+
+    await submitLessonCompletion(baseInput);
+
+    const firstProgress = await prisma.lessonProgress.findUniqueOrThrow({
+      where: { userLesson: { lessonId: lesson.id, userId } },
+    });
+
+    await submitLessonCompletion({ ...baseInput, durationSeconds: 25 });
+
+    const secondProgress = await prisma.lessonProgress.findUniqueOrThrow({
+      where: { userLesson: { lessonId: lesson.id, userId } },
+    });
+
+    expect(secondProgress.completedAt).toStrictEqual(firstProgress.completedAt);
+    expect(secondProgress.durationSeconds).toBe(10);
   });
 
   it("static lesson increments staticCompleted, not interactiveCompleted", async () => {

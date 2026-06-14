@@ -110,6 +110,16 @@ export async function getNextLessonStateForUser({
       return buildOpenLessonState({ hasStarted, lesson: forwardLesson });
     }
 
+    const firstIncompleteLesson = getFirstIncompleteLesson({
+      courseCompleted,
+      durableChapterIds,
+      rows: effectiveRows,
+    });
+
+    if (firstIncompleteLesson) {
+      return buildOpenLessonState({ hasStarted, lesson: firstIncompleteLesson });
+    }
+
     const reviewLesson = getReviewLesson({ after, rows: effectiveRows });
 
     return buildCompletedScopeState({
@@ -138,7 +148,7 @@ export async function getNextLessonStateForUser({
 /**
  * Once a learner reaches a review state, UI surfaces should keep that state
  * anchored to one concrete lesson row. For a normal completed scope that is
- * the first structural lesson; for forward-only started navigation it is the
+ * the last structural lesson; for forward-only started navigation it is the
  * anchored lesson passed in by the caller.
  */
 function buildCompletedScopeState({
@@ -148,30 +158,30 @@ function buildCompletedScopeState({
   rows: EffectiveLessonProgressRow[];
   scopeDurablyCompleted: boolean;
 }): NextLessonState {
-  const [firstRow] = rows;
+  const row = rows.at(-1);
 
-  if (!firstRow) {
+  if (!row) {
     throw new Error("Cannot build completed lesson state without lesson rows");
   }
 
   return {
-    brandSlug: firstRow.brandSlug,
-    canPrefetch: canPrefetchLesson({ row: firstRow }),
-    chapterId: firstRow.chapterId,
-    chapterPosition: firstRow.chapterPosition,
-    chapterSlug: firstRow.chapterSlug,
-    chapterTitle: firstRow.chapterTitle,
+    brandSlug: row.brandSlug,
+    canPrefetch: canPrefetchLesson({ row }),
+    chapterId: row.chapterId,
+    chapterPosition: row.chapterPosition,
+    chapterSlug: row.chapterSlug,
+    chapterTitle: row.chapterTitle,
     completed: true,
-    courseId: firstRow.courseId,
-    courseSlug: firstRow.courseSlug,
+    courseId: row.courseId,
+    courseSlug: row.courseSlug,
     hasStarted: true,
-    lessonDescription: firstRow.lessonDescription,
+    lessonDescription: row.lessonDescription,
     lessonHasPendingContent: false,
-    lessonId: firstRow.lessonId,
-    lessonKind: firstRow.lessonKind,
-    lessonPosition: firstRow.lessonPosition,
-    lessonSlug: firstRow.lessonSlug,
-    lessonTitle: firstRow.lessonTitle,
+    lessonId: row.lessonId,
+    lessonKind: row.lessonKind,
+    lessonPosition: row.lessonPosition,
+    lessonSlug: row.lessonSlug,
+    lessonTitle: row.lessonTitle,
     scopeDurablyCompleted,
   };
 }
