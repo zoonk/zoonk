@@ -212,6 +212,15 @@ describe(toSlug, () => {
     expect(toSlug("わけ・はず")).toBe("わけはず");
   });
 
+  it("preserves common symbolic course names", () => {
+    expect(toSlug("C++")).toBe("c-plus-plus");
+    expect(toSlug("C#")).toBe("c-sharp");
+    expect(toSlug("F#")).toBe("f-sharp");
+    expect(toSlug(".NET")).toBe("dot-net");
+    expect(toSlug("Learn .NET")).toBe("learn-dot-net");
+    expect(toSlug("Hello! @World #1")).toBe("hello-world-1");
+  });
+
   it("edge cases", () => {
     expect(toSlug("")).toBe("");
     expect(toSlug("   ")).toBe("");

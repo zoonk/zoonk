@@ -14,6 +14,9 @@ export function normalizeString(str: string): string {
 export function toSlug(str: string): string {
   return removeAccents(str.trim())
     .normalize("NFC")
+    .replaceAll(/(?<prefix>^|\s)\.(?=\p{L})/gu, "$<prefix>dot ")
+    .replaceAll("+", " plus ")
+    .replaceAll(/(?<=[\p{L}\p{N}])#/gu, " sharp ")
     .toLowerCase()
     .replaceAll(/[^\p{L}\p{N}\p{M}\s-]/gu, "")
     .replaceAll(/\s+/gu, "-")
