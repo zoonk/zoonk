@@ -62,7 +62,7 @@ describe(checkFillBlankAnswer, () => {
 
   it("returns correct for exact match", () => {
     expect(checkFillBlankAnswer(content, ["hablo", "español"])).toStrictEqual({
-      correctAnswer: null,
+      correctAnswer: "Yo hablo español.",
       feedback: "Use first person singular.",
       isCorrect: true,
     });
@@ -70,7 +70,7 @@ describe(checkFillBlankAnswer, () => {
 
   it("returns correct for case-insensitive match", () => {
     expect(checkFillBlankAnswer(content, ["HABLO", "ESPAÑOL"])).toStrictEqual({
-      correctAnswer: null,
+      correctAnswer: "Yo hablo español.",
       feedback: "Use first person singular.",
       isCorrect: true,
     });
@@ -78,7 +78,7 @@ describe(checkFillBlankAnswer, () => {
 
   it("returns correct with trimmed whitespace", () => {
     expect(checkFillBlankAnswer(content, ["  hablo  ", " español "])).toStrictEqual({
-      correctAnswer: null,
+      correctAnswer: "Yo hablo español.",
       feedback: "Use first person singular.",
       isCorrect: true,
     });
@@ -86,7 +86,7 @@ describe(checkFillBlankAnswer, () => {
 
   it("returns incorrect for wrong answer", () => {
     expect(checkFillBlankAnswer(content, ["habla", "español"])).toStrictEqual({
-      correctAnswer: null,
+      correctAnswer: "Yo hablo español.",
       feedback: "Use first person singular.",
       isCorrect: false,
     });
@@ -94,7 +94,7 @@ describe(checkFillBlankAnswer, () => {
 
   it("returns incorrect when user provides extra answers", () => {
     expect(checkFillBlankAnswer(content, ["hablo", "español", "extra"])).toStrictEqual({
-      correctAnswer: null,
+      correctAnswer: "Yo hablo español.",
       feedback: "Use first person singular.",
       isCorrect: false,
     });

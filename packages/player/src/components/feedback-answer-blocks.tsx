@@ -20,17 +20,10 @@ function AnswerLine({
     <div
       className={cn(
         "flex items-start gap-2 rounded-lg px-3 py-2 text-sm",
-        variant === "correct" ? "bg-success/10" : "bg-destructive/10",
+        variant === "correct" ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive",
       )}
     >
-      <span
-        className={cn(
-          "mt-0.5 shrink-0",
-          variant === "correct" ? "text-success" : "text-destructive",
-        )}
-      >
-        {icon}
-      </span>
+      <span className="mt-0.5 shrink-0">{icon}</span>
       <div>
         <span className="text-muted-foreground">{label}</span>{" "}
         <span className="font-medium">{children}</span>

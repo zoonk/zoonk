@@ -180,6 +180,7 @@ msgid "3nOd8f"
 msgstr "Your answer:"
 
 #: src/components/feedback-answer-blocks.tsx
+#: src/components/inline-feedback.tsx
 msgid "QAJ_Tl"
 msgstr "Correct answer:"
 
@@ -198,10 +199,6 @@ msgstr "Blank {position}: {item}. Tap to remove."
 #: src/components/fill-blank-step.tsx
 msgid "FmmJ_j"
 msgstr "Blank {position}"
-
-#: src/components/fill-blank-step.tsx
-msgid "xvWuPP"
-msgstr "Correct answer: {answer}"
 
 #: src/components/inline-feedback.tsx
 msgid "HvLGEN"

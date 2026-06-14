@@ -14,6 +14,7 @@ export function InlineFeedback({
 }) {
   const t = useExtracted();
   const isCorrect = result.result.isCorrect;
+  const correctAnswer = result.result.correctAnswer;
   const feedback = result.result.feedback;
 
   return (
@@ -28,6 +29,13 @@ export function InlineFeedback({
       {feedback && (
         <p className="text-muted-foreground text-sm">
           <PlayerRichText text={feedback} />
+        </p>
+      )}
+
+      {!isCorrect && correctAnswer && (
+        <p className="text-sm">
+          <span className="text-muted-foreground">{t("Correct answer:")}</span>{" "}
+          <span className="text-success font-medium">{correctAnswer}</span>
         </p>
       )}
 

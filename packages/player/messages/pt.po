@@ -180,6 +180,7 @@ msgid "3nOd8f"
 msgstr "Sua resposta:"
 
 #: src/components/feedback-answer-blocks.tsx
+#: src/components/inline-feedback.tsx
 msgid "QAJ_Tl"
 msgstr "Resposta correta:"
 
@@ -198,10 +199,6 @@ msgstr "Espaço {position}: {item}. Toque para remover."
 #: src/components/fill-blank-step.tsx
 msgid "FmmJ_j"
 msgstr "Espaço {position}"
-
-#: src/components/fill-blank-step.tsx
-msgid "xvWuPP"
-msgstr "Resposta correta: {answer}"
 
 #: src/components/inline-feedback.tsx
 msgid "HvLGEN"

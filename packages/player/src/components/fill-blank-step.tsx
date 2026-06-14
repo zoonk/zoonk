@@ -191,12 +191,6 @@ function WordBank({
   );
 }
 
-function getCorrectSentence(template: string, answers: string[]): string {
-  return template
-    .split("[BLANK]")
-    .reduce((acc, segment, index) => acc + segment + (answers[index] ?? ""), "");
-}
-
 function isComplete(blanks: (string | null)[]): blanks is string[] {
   return blanks.every((blank) => blank !== null);
 }
@@ -212,7 +206,6 @@ export function FillBlankStep({
   selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
 }) {
-  const t = useExtracted();
   const content = useMemo(() => parseStepContent("fillBlank", step.content), [step.content]);
   const blankCount = content.answers.length;
   const hasResult = result !== undefined;
@@ -273,8 +266,6 @@ export function FillBlankStep({
     [blanks, onSelectAnswer, selectedAnswer, step.id],
   );
 
-  const isIncorrect = result && !result.result.isCorrect;
-
   return (
     <InteractiveStepLayout>
       {content.question && <QuestionText>{content.question}</QuestionText>}
@@ -296,17 +287,7 @@ export function FillBlankStep({
         options={step.fillBlankOptions}
       />
 
-      {result && (
-        <InlineFeedback result={result}>
-          {isIncorrect && (
-            <p className="text-muted-foreground text-sm">
-              {t("Correct answer: {answer}", {
-                answer: getCorrectSentence(content.template, content.answers),
-              })}
-            </p>
-          )}
-        </InlineFeedback>
-      )}
+      {result && <InlineFeedback result={result} />}
     </InteractiveStepLayout>
   );
 }

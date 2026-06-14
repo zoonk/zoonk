@@ -13,6 +13,18 @@ export type AnswerResult = {
   feedback: string | null;
 };
 
+/**
+ * Fill-blank feedback should show the full sentence learners were trying to
+ * build, not only the isolated blank values. Replaying the template with the
+ * canonical answers gives the player one readable correction string.
+ */
+function getFillBlankCorrectAnswer(content: FillBlankStepContent): string {
+  return content.template
+    .split("[BLANK]")
+    .map((segment, index) => `${segment}${content.answers[index] ?? ""}`)
+    .join("");
+}
+
 export function checkMultipleChoiceAnswer(
   content: MultipleChoiceStepContent,
   selectedOptionId: string,
@@ -31,6 +43,7 @@ export function checkFillBlankAnswer(
   content: FillBlankStepContent,
   userAnswers: string[],
 ): AnswerResult {
+  const correctAnswer = getFillBlankCorrectAnswer(content);
   const isSameLength = content.answers.length === userAnswers.length;
 
   const isCorrect =
@@ -39,7 +52,7 @@ export function checkFillBlankAnswer(
       (answer, index) => answer.toLowerCase() === (userAnswers[index] ?? "").trim().toLowerCase(),
     );
 
-  return { correctAnswer: null, feedback: content.feedback, isCorrect };
+  return { correctAnswer, feedback: content.feedback, isCorrect };
 }
 
 export function checkSingleMatchPair(

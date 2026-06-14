@@ -368,13 +368,17 @@ describe("player browser integration: choice steps", () => {
     await page.getByRole("radio", { name: "Dog" }).click();
     await page.getByRole("button", { name: /check/iu }).click();
 
+    const feedback = page.getByRole("region", { name: /answer feedback/iu });
+
+    await expect.element(feedback).toBeInTheDocument();
+
     await expect
-      .element(page.getByRole("region", { name: /answer feedback/iu }))
+      .element(page.getByRole("radio", { name: "Cat" }).getByText("Correct answer"))
       .toBeInTheDocument();
 
-    await expect.element(page.getByRole("radio", { name: "Cat" })).toBeInTheDocument();
-    await expect.element(page.getByText(/correct answer/iu)).toBeInTheDocument();
-    await expect.element(page.getByText(/your answer/iu)).toBeInTheDocument();
+    await expect
+      .element(page.getByRole("radio", { name: "Dog" }).getByText("Your answer"))
+      .toBeInTheDocument();
   });
 
   it("replaces {{NAME}} placeholders for authenticated viewers", async () => {
