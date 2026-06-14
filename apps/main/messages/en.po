@@ -227,6 +227,15 @@ msgstr "Create a course with AI"
 msgid "s-Ncqj"
 msgstr "Explore courses"
 
+#: src/app/(catalog)/(home)/learning-days.tsx
+#: src/app/(progress)/level/level-insights.tsx
+msgid "8F6teD"
+msgstr "Learning days"
+
+#: src/app/(catalog)/(home)/learning-days.tsx
+msgid "QbNcMh"
+msgstr "At least one completed lesson"
+
 #: src/app/(catalog)/(home)/level.tsx
 #: src/app/(progress)/level/level-stats.tsx
 msgid "pgt3eW"
@@ -659,10 +668,6 @@ msgstr "Year"
 msgid "OlW5Z8"
 msgstr "No data available for this period"
 
-#: src/app/(progress)/_components/progress-day-count-label.ts
-msgid "r9koty"
-msgstr "{count, plural, =0 {# days} one {# day} other {# days}}"
-
 #: src/app/(progress)/_components/progress-empty-state.tsx
 msgid "FVh2Tr"
 msgstr "Start learning to track your progress"
@@ -783,10 +788,6 @@ msgstr "Highest BP"
 #: src/app/(progress)/level/level-insights.tsx
 msgid "BW4bMl"
 msgstr "{date} with {value} BP"
-
-#: src/app/(progress)/level/level-insights.tsx
-msgid "8F6teD"
-msgstr "Learning days"
 
 #: src/app/(progress)/level/level-progression.tsx
 msgid "VHH0kD"
@@ -1856,6 +1857,10 @@ msgstr "Connection interrupted"
 #: src/components/generation/workflow-generation-error.tsx
 msgid "JqiqNj"
 msgstr "Something went wrong"
+
+#: src/components/progress/progress-day-count-label.ts
+msgid "r9koty"
+msgstr "{count, plural, =0 {# days} one {# day} other {# days}}"
 
 #: src/components/subscription/upgrade-cta.tsx
 msgid "IS_YjO"

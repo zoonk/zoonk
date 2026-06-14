@@ -250,6 +250,26 @@ test.describe("Home Page - Progress Section", () => {
     await expect(authenticatedPage.getByText(/\d+ bp to next level/iu)).toBeVisible();
   });
 
+  test("authenticated user with progress sees total learning days after level", async ({
+    authenticatedPage,
+  }) => {
+    await authenticatedPage.goto("/");
+
+    const progressSection = authenticatedPage.getByRole("region", { name: /^progress$/iu });
+
+    await expect(progressSection).toBeVisible();
+
+    const progressCards = progressSection.getByRole("link");
+    await expect(progressCards.nth(1)).toContainText(/belt - level \d+/iu);
+    await expect(progressCards.nth(2)).toContainText(/learning days/iu);
+
+    const learningDaysCard = progressCards.nth(2);
+
+    await expect(learningDaysCard).toContainText("1 day");
+
+    await expect(learningDaysCard).toContainText("At least one completed lesson");
+  });
+
   test("authenticated user with progress sees score", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/");
 

@@ -1,3 +1,4 @@
+import { getProgressDayCountLabel } from "@/components/progress/progress-day-count-label";
 import { getLevelInsights } from "@/data/progress/get-level-insights";
 import {
   FeatureCard,
@@ -13,7 +14,6 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 import { BrainIcon, CalendarDays } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
-import { getProgressDayCountLabel } from "../_components/progress-day-count-label";
 import { getProgressInsightPeriodLabel } from "../_components/progress-insight-period-label";
 
 /**

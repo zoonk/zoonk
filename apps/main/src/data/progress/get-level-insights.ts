@@ -2,29 +2,11 @@ import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
 import { cache } from "react";
-import { type ProgressDateFilter, getProgressDateFilter } from "./_utils/progress-date-filter";
+import { getCompletedLessonDayWhere } from "./_utils/completed-lesson-day-where";
+import { getProgressDateFilter } from "./_utils/progress-date-filter";
 
 type HighestBpDayData = { brainPower: number; date: Date };
 type LevelInsightsData = { highestBpDay: HighestBpDayData | null; learningDays: number };
-
-/**
- * DailyProgress stores the learner's local calendar day and completion counts.
- * Counting those rows matches the admin learning-days stat and avoids drifting
- * when server-side LessonProgress timestamps cross a local day boundary.
- */
-function getCompletedLessonDayWhere({
-  dateFilter,
-  userId,
-}: {
-  dateFilter: ProgressDateFilter;
-  userId: string;
-}) {
-  return {
-    OR: [{ interactiveCompleted: { gt: 0 } }, { staticCompleted: { gt: 0 } }],
-    date: dateFilter,
-    userId,
-  };
-}
 
 /**
  * A period can have progress rows without any BP earned, for example when only
