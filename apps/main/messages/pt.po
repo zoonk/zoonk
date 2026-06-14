@@ -227,6 +227,15 @@ msgstr "Criar um curso com IA"
 msgid "s-Ncqj"
 msgstr "Explorar cursos"
 
+#: src/app/(catalog)/(home)/learning-days.tsx
+#: src/app/(progress)/level/level-insights.tsx
+msgid "8F6teD"
+msgstr "Dias de estudo"
+
+#: src/app/(catalog)/(home)/learning-days.tsx
+msgid "QbNcMh"
+msgstr "Pelo menos uma aula concluída"
+
 #: src/app/(catalog)/(home)/level.tsx
 #: src/app/(progress)/level/level-stats.tsx
 msgid "pgt3eW"
@@ -659,10 +668,6 @@ msgstr "Ano"
 msgid "OlW5Z8"
 msgstr "Nenhum dado disponível para este período"
 
-#: src/app/(progress)/_components/progress-day-count-label.ts
-msgid "r9koty"
-msgstr "{count, plural, =0 {# dias} one {# dia} other {# dias}}"
-
 #: src/app/(progress)/_components/progress-empty-state.tsx
 msgid "FVh2Tr"
 msgstr "Comece a aprender para acompanhar seu progresso"
@@ -783,10 +788,6 @@ msgstr "Maior PM"
 #: src/app/(progress)/level/level-insights.tsx
 msgid "BW4bMl"
 msgstr "{date} com {value} PM"
-
-#: src/app/(progress)/level/level-insights.tsx
-msgid "8F6teD"
-msgstr "Dias de aprendizado"
 
 #: src/app/(progress)/level/level-progression.tsx
 msgid "VHH0kD"
@@ -1856,6 +1857,10 @@ msgstr "Conexão interrompida"
 #: src/components/generation/workflow-generation-error.tsx
 msgid "JqiqNj"
 msgstr "Algo deu errado"
+
+#: src/components/progress/progress-day-count-label.ts
+msgid "r9koty"
+msgstr "{count, plural, =0 {# dias} one {# dia} other {# dias}}"
 
 #: src/components/subscription/upgrade-cta.tsx
 msgid "IS_YjO"
