@@ -413,12 +413,12 @@ msgid "VzzYJk"
 msgstr "Create"
 
 #: src/app/(catalog)/learn/[prompt]/course-suggestions-fallback.tsx
-msgid "TUuPG9"
-msgstr "Cooking up some course ideas"
+msgid "Ne7HRV"
+msgstr "Finding the best way to reach your goal"
 
 #: src/app/(catalog)/learn/[prompt]/course-suggestions-fallback.tsx
-msgid "uQHhkm"
-msgstr "We're putting together a few course suggestions for you. This may take a few seconds."
+msgid "FKEYKI"
+msgstr "We're checking your goal and putting together the right starting point. This may take a few seconds."
 
 #: src/app/(catalog)/learn/[prompt]/course-suggestions-fallback.tsx
 #: src/app/(settings)/subscription/plan-list.tsx
@@ -430,8 +430,60 @@ msgid "7x4411"
 msgstr "Course ideas for {prompt}"
 
 #: src/app/(catalog)/learn/[prompt]/course-suggestions.tsx
-msgid "RbslnC"
-msgstr "Change subject"
+#: src/app/(catalog)/learn/[prompt]/learning-goal-message.tsx
+msgid "2iJ8h5"
+msgstr "Change goal"
+
+#: src/app/(catalog)/learn/[prompt]/learning-goal-message.tsx
+msgid "G2FIq8"
+msgstr "You can't learn this on Zoonk"
+
+#: src/app/(catalog)/learn/[prompt]/learning-goal-message.tsx
+msgid "ccZkBm"
+msgstr "Zoonk can't help with unsafe, illegal, or harmful goals. This violates our terms of use and may lead to account suspension."
+
+#: src/app/(catalog)/learn/[prompt]/learning-goal-message.tsx
+#: src/app/(catalog)/p/[courseId]/page.tsx
+msgid "e61Jf3"
+msgstr "Coming soon"
+
+#: src/app/(catalog)/learn/[prompt]/learning-goal-message.tsx
+msgid "yeJbfU"
+msgstr "Soon you'll be able to reach this goal with Zoonk."
+
+#: src/app/(catalog)/learn/[prompt]/learning-goal-notification.tsx
+msgid "EHdMj9"
+msgstr "We'll send you an email when it's available."
+
+#: src/app/(catalog)/learn/[prompt]/learning-goal-notification.tsx
+msgid "Of2N-H"
+msgstr "Failed to save your email. Please try again."
+
+#: src/app/(catalog)/learn/[prompt]/learning-goal-notification.tsx
+#: src/components/feedback/contact-form.tsx
+msgid "hJZwTS"
+msgstr "Email address"
+
+#: src/app/(catalog)/learn/[prompt]/learning-goal-notification.tsx
+#: src/components/feedback/contact-form.tsx
+msgid "OiSL94"
+msgstr "myemail@gmail.com"
+
+#: src/app/(catalog)/learn/[prompt]/learning-goal-notification.tsx
+msgid "HDy8r-"
+msgstr "We'll only use this email to let you know when this goal is available."
+
+#: src/app/(catalog)/learn/[prompt]/learning-goal-notification.tsx
+msgid "ipGe-B"
+msgstr "Notify me"
+
+#: src/app/(catalog)/learn/[prompt]/learning-goal-notification.tsx
+msgid "5K8Cnp"
+msgstr "Get notified"
+
+#: src/app/(catalog)/learn/[prompt]/learning-goal-notification.tsx
+msgid "XSZ8CF"
+msgstr "Leave your email and we'll let you know when this goal is available."
 
 #: src/app/(catalog)/learn/[prompt]/page.tsx
 msgid "CaU_nf"
@@ -442,150 +494,148 @@ msgid "X2b6pH"
 msgstr "Learn {prompt} with AI"
 
 #: src/app/(catalog)/learn/learn-form.tsx
-msgid "uCb1nG"
-msgstr "Enter a subject"
+msgid "NaGPAs"
+msgstr "Enter your goal"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "JlJVf1"
-msgstr "Tell Zoonk what you want to learn and get a course created with AI. Start learning any subject with interactive lessons."
+msgid "Lkij-V"
+msgstr "Tell us your goal and we'll create an AI course to help you reach it."
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "Zs1QEq"
-msgstr "Learn Anything with AI"
+msgid "yYMqts"
+msgstr "Start Learning with AI"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "l450Bl"
-msgstr "Computer Science"
+msgid "wAqki4"
+msgstr "Learn computer science"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "ElyVN0"
-msgstr "Psychology"
+msgid "VKMKsn"
+msgstr "Speak Spanish"
 
 #: src/app/(catalog)/learn/page.tsx
-#: src/lib/categories/category.ts
-msgid "KOuDOE"
-msgstr "Economics"
+msgid "P9mfHe"
+msgstr "Pass the SAT"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "cHCwbF"
-msgstr "Photography"
+msgid "5IafKR"
+msgstr "Understand how microwaves work"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "zE1J_t"
-msgstr "Philosophy"
+msgid "O6_8Cs"
+msgstr "Build an app without knowing how to code"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "y68y7h"
-msgstr "Data Science"
+msgid "PU8MHD"
+msgstr "Learn mindfulness for autistic people"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "1qsU2j"
-msgstr "Creative Writing"
+msgid "gnCKsv"
+msgstr "Master photography"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "RGkBg_"
-msgstr "Biology"
+msgid "CRX9gH"
+msgstr "Study the Cold War"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "oiUZCZ"
-msgstr "Graphic Design"
+msgid "J_dmP3"
+msgstr "Learn Django"
 
 #: src/app/(catalog)/learn/page.tsx
-#: src/lib/categories/category.ts
-msgid "djJp6c"
-msgstr "History"
+msgid "yXh56s"
+msgstr "Improve time management"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "O9mDkA"
-msgstr "Marketing"
+msgid "nLo3su"
+msgstr "Understand black holes"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "_VD159"
-msgstr "Learn anything."
+msgid "AaFZIp"
+msgstr "What's your goal?"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "zfDq-e"
-msgstr "Quantum physics"
+msgid "aazg92"
+msgstr "learn biology"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "oqfOwA"
-msgstr "Ancient philosophy"
+msgid "DKzf2J"
+msgstr "speak English"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "Osb4bp"
-msgstr "Machine learning"
+msgid "ebUDdw"
+msgstr "prepare for the GRE"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "OdZ_n1"
-msgstr "Creative writing"
+msgid "K7vAYs"
+msgstr "understand how TV works"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "N9FWiz"
-msgstr "Molecular biology"
+msgid "Li6UmK"
+msgstr "create a website without coding"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "XFPrU4"
-msgstr "Behavioral economics"
+msgid "K7pGD1"
+msgstr "understand quantum physics basics"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "-0gz_i"
-msgstr "Organic chemistry"
+msgid "_iKLxN"
+msgstr "learn ancient philosophy"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "1axOcX"
-msgstr "UFOs"
+msgid "snmRML"
+msgstr "improve creative writing"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "e7q85h"
-msgstr "Dinosaur extinction"
+msgid "WcrtZc"
+msgstr "learn molecular biology"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "MO2lwh"
-msgstr "How volcanoes work"
+msgid "getXhq"
+msgstr "learn behavioral economics"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "ZzbdHP"
-msgstr "World history"
+msgid "59y9SA"
+msgstr "learn organic chemistry"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "XfC6Cs"
-msgstr "Cognitive psychology"
+msgid "aZeiZ4"
+msgstr "learn about UFOs"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "X5XXVF"
-msgstr "Linear algebra"
+msgid "S_FdHs"
+msgstr "learn about dinosaurs"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "5gOFKJ"
-msgstr "Black holes"
+msgid "qYwBjv"
+msgstr "understand how volcanoes work"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "eQHeGX"
-msgstr "How the internet works"
+msgid "2hVK3Q"
+msgstr "learn world history"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "QOSGzc"
-msgstr "Roman Empire"
+msgid "Vg3ky_"
+msgstr "learn cognitive psychology"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "gyEihl"
-msgstr "Deep sea creatures"
+msgid "9RTXDu"
+msgstr "learn linear algebra"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "0MqSJ1"
-msgstr "Solar system"
+msgid "aYExbE"
+msgstr "understand how the internet works"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "5qPAxv"
-msgstr "Artificial intelligence"
+msgid "T9_X8Y"
+msgstr "learn about the Roman Empire"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "3WiAG4"
-msgstr "Harry Potter"
+msgid "FsY1NK"
+msgstr "learn about Harry Potter"
 
 #: src/app/(catalog)/learn/page.tsx
-msgid "NvSCuG"
-msgstr "Suggested subjects"
+msgid "YG7ib-"
+msgstr "Suggested goals"
 
 #: src/app/(catalog)/my/page.tsx
 msgid "riE3I5"
@@ -606,10 +656,6 @@ msgstr "No courses yet"
 #: src/app/(catalog)/my/user-course-list.tsx
 msgid "azX41u"
 msgstr "Start learning something new today."
-
-#: src/app/(catalog)/p/[courseId]/page.tsx
-msgid "e61Jf3"
-msgstr "Coming soon"
 
 #: src/app/(catalog)/p/[courseId]/page.tsx
 msgid "dtRj3N"
@@ -1791,14 +1837,6 @@ msgid "R-J5ox"
 msgstr "Review"
 
 #: src/components/feedback/contact-form.tsx
-msgid "hJZwTS"
-msgstr "Email address"
-
-#: src/components/feedback/contact-form.tsx
-msgid "OiSL94"
-msgstr "myemail@gmail.com"
-
-#: src/components/feedback/contact-form.tsx
 msgid "WzCvaN"
 msgstr "We'll use this email to contact you."
 
@@ -1927,6 +1965,10 @@ msgid "mn6pIm"
 msgstr "Culture"
 
 #: src/lib/categories/category.ts
+msgid "KOuDOE"
+msgstr "Economics"
+
+#: src/lib/categories/category.ts
 msgid "hwL7a0"
 msgstr "Engineering"
 
@@ -1937,6 +1979,10 @@ msgstr "Geography"
 #: src/lib/categories/category.ts
 msgid "hlmkcL"
 msgstr "Health"
+
+#: src/lib/categories/category.ts
+msgid "djJp6c"
+msgstr "History"
 
 #: src/lib/categories/category.ts
 msgid "GsBRWL"

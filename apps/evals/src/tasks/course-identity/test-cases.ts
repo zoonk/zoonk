@@ -74,10 +74,9 @@ export const TEST_CASES = [
   },
   {
     expectations: `
-      - Must choose "useExisting"
-      - Must choose courseSlug "python"
-      - "Python for Data Science" should consolidate into the existing Python course for dedupe
-      - Must prefer the Python candidate over the application-domain Data Science candidate
+      - Must choose "createNew"
+      - Must return courseSlug null
+      - "Python for Data Science" is a targeted reusable course, not the same course as "Python" or "Data Science"
       - Must not choose narrower tool candidates such as Pandas
 
       ${SHARED_EXPECTATIONS}

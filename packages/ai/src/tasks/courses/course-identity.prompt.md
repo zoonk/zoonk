@@ -27,8 +27,6 @@ These should use the existing course:
 - Locale or translation variants within the same course language: "Aprendizado de máquina" -> "Machine Learning" for a Portuguese course.
 - Level or packaging variants: "Introduction to Python", "Python 101", "Advanced Python" -> "Python".
 - Exam-prep, certification-prep, interview-prep, and test-prep variants should use the underlying subject course when that subject course exists.
-- Application framing where the candidate is the named base subject: "Python for Data Science" -> "Python"; "ML with TensorFlow" -> "Machine Learning".
-- For application framing, only reuse the candidate when the candidate title is the base subject named by the proposal. Do not reuse the application domain, adjacent field, or broader workplace context.
 - Language-learning prep exams and aspects must use the matching language course: "TOEFL", "IELTS", "English Grammar", "Business English" -> "English" when the candidate is the matching language course.
 - Sub-areas we intentionally consolidate into the parent course: "Differential Calculus" -> "Calculus".
 
@@ -38,6 +36,7 @@ These should create a new course:
 
 - Broader umbrella domains: "Programming" is not "Python"; "Web Development" is not "Frontend Development".
 - Broader adjacent fields are not the same course just because they include, use, or overlap with the proposed subject.
+- Targeted application or audience courses are not the same course as their base subject or application domain: "R for Statistics" is not "R" or "Statistics"; "Leadership for First-Time Managers" is not "Leadership".
 - Missing precise candidates: if the proposed subject is absent and no candidate title is a synonym, translation, abbreviation, package variant, or allowed language-learning aspect, create new instead of choosing the closest available course.
 - Standalone narrower subjects with independent identity: "React" is not "JavaScript"; "Deep Learning" is not "Machine Learning"; "Django" is not "Python".
 - Sibling fields: "UX Design" is not "UI Design"; "Statistics" is not "Data Science".

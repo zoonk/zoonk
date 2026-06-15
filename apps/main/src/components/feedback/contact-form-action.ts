@@ -1,12 +1,10 @@
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
-import { API_URL } from "@zoonk/utils/url";
+import { FEEDBACK_URL } from "@zoonk/utils/url";
 
 export type ContactFormState = { status: "idle" | "error" | "success" };
 
 type FeedbackPayload = { email: string; message: string };
-
-const FEEDBACK_URL = new URL("/v1/feedback", API_URL).toString();
 
 /**
  * Normalizes the form before sending it to the API so the UI can fail fast for

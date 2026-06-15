@@ -10,10 +10,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 
   return {
-    description: t(
-      "Tell Zoonk what you want to learn and get a course created with AI. Start learning any subject with interactive lessons.",
-    ),
-    title: t("Learn Anything with AI"),
+    description: t("Tell us your goal and we'll create an AI course to help you reach it."),
+    title: t("Start Learning with AI"),
   };
 }
 
@@ -21,17 +19,17 @@ export default async function Learn() {
   const t = await getExtracted();
 
   const allSuggestions = [
-    t("Computer Science"),
-    t("Psychology"),
-    t("Economics"),
-    t("Photography"),
-    t("Philosophy"),
-    t("Data Science"),
-    t("Creative Writing"),
-    t("Biology"),
-    t("Graphic Design"),
-    t("History"),
-    t("Marketing"),
+    t("Learn computer science"),
+    t("Speak Spanish"),
+    t("Pass the SAT"),
+    t("Understand how microwaves work"),
+    t("Build an app without knowing how to code"),
+    t("Learn mindfulness for autistic people"),
+    t("Master photography"),
+    t("Study the Cold War"),
+    t("Learn Django"),
+    t("Improve time management"),
+    t("Understand black holes"),
   ];
 
   const suggestions = shuffle(allSuggestions).slice(0, VISIBLE_SUGGESTIONS);
@@ -39,36 +37,36 @@ export default async function Learn() {
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-8 p-4 pb-28 md:gap-10">
       <h1 className="text-center text-4xl font-bold tracking-tight md:text-5xl" id="learn-title">
-        {t("Learn anything.")}
+        {t("What's your goal?")}
       </h1>
 
       <LearnForm
         placeholders={shuffle([
-          t("Quantum physics"),
-          t("Ancient philosophy"),
-          t("Machine learning"),
-          t("Creative writing"),
-          t("Molecular biology"),
-          t("Behavioral economics"),
-          t("Organic chemistry"),
-          t("UFOs"),
-          t("Dinosaur extinction"),
-          t("How volcanoes work"),
-          t("World history"),
-          t("Cognitive psychology"),
-          t("Linear algebra"),
-          t("Black holes"),
-          t("How the internet works"),
-          t("Roman Empire"),
-          t("Deep sea creatures"),
-          t("Solar system"),
-          t("Artificial intelligence"),
-          t("Harry Potter"),
+          t("learn biology"),
+          t("speak English"),
+          t("prepare for the GRE"),
+          t("understand how TV works"),
+          t("create a website without coding"),
+          t("understand quantum physics basics"),
+          t("learn ancient philosophy"),
+          t("improve creative writing"),
+          t("learn molecular biology"),
+          t("learn behavioral economics"),
+          t("learn organic chemistry"),
+          t("learn about UFOs"),
+          t("learn about dinosaurs"),
+          t("understand how volcanoes work"),
+          t("learn world history"),
+          t("learn cognitive psychology"),
+          t("learn linear algebra"),
+          t("understand how the internet works"),
+          t("learn about the Roman Empire"),
+          t("learn about Harry Potter"),
         ])}
       />
 
       <nav
-        aria-label={t("Suggested subjects")}
+        aria-label={t("Suggested goals")}
         className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2"
       >
         {suggestions.map((subject) => (

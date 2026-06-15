@@ -21,11 +21,11 @@ export async function CourseSuggestionsFallback() {
           <Spinner />
         </EmptyMedia>
 
-        <EmptyTitle>{t("Cooking up some course ideas")}</EmptyTitle>
+        <EmptyTitle>{t("Finding the best way to reach your goal")}</EmptyTitle>
 
         <EmptyDescription>
           {t(
-            "We're putting together a few course suggestions for you. This may take a few seconds.",
+            "We're checking your goal and putting together the right starting point. This may take a few seconds.",
           )}
         </EmptyDescription>
       </EmptyHeader>

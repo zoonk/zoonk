@@ -33,7 +33,7 @@ export function LearnForm({ placeholders }: { placeholders: string[] }) {
   return (
     <form aria-labelledby="learn-title" className="w-full" onSubmit={handleSubmit}>
       <Label className="sr-only" htmlFor={queryId}>
-        {t("Enter a subject")}
+        {t("Enter your goal")}
       </Label>
 
       <InputGroup

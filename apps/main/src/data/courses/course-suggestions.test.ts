@@ -1,17 +1,25 @@
 import { randomUUID } from "node:crypto";
+import * as courseDescriptions from "@zoonk/ai/tasks/courses/description";
+import * as courseGoalRouting from "@zoonk/ai/tasks/courses/goal-routing";
+import * as courseLearnLanguage from "@zoonk/ai/tasks/courses/learn-language";
 import * as courseSuggestions from "@zoonk/ai/tasks/courses/suggestions";
 import { prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   generateCourseSuggestions,
+  generateLearningGoalSuggestions,
   getCourseSuggestionById,
   getCourseSuggestionBySlug,
   getLinkedCourseForSuggestion,
 } from "./course-suggestions";
 
 describe("course-suggestions", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("get an existing item", async () => {
     const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
 
@@ -333,5 +341,185 @@ describe("course-suggestions", () => {
     const result = await getLinkedCourseForSuggestion({ courseId: course.id });
 
     expect(result?.id).toBe(course.id);
+  });
+
+  it("generateLearningGoalSuggestions returns cached suggestions before routing", async () => {
+    const routeSpy = vi.spyOn(courseGoalRouting, "routeCourseGoal");
+    const language = "en";
+    const prompt = `cached-route-skip-${randomUUID()}`;
+    const title = `Cached Route Skip ${randomUUID()}`;
+    const searchPrompt = await prisma.searchPrompt.create({ data: { language, prompt } });
+
+    const courseSuggestion = await prisma.courseSuggestion.create({
+      data: { description: "Cached suggestion description", language, slug: toSlug(title), title },
+    });
+
+    await prisma.searchPromptSuggestion.create({
+      data: {
+        courseSuggestionId: courseSuggestion.id,
+        position: 0,
+        searchPromptId: searchPrompt.id,
+      },
+    });
+
+    const result = await generateLearningGoalSuggestions({ language, prompt });
+
+    expect(result).toMatchObject({
+      goal: "masterSubject",
+      kind: "courseSuggestions",
+      prompt,
+      sourcePrompt: prompt,
+    });
+
+    expect(result.kind === "courseSuggestions" ? result.suggestions[0]?.id : null).toBe(
+      courseSuggestion.id,
+    );
+
+    expect(routeSpy).not.toHaveBeenCalled();
+  });
+
+  it("generateLearningGoalSuggestions routes master subjects through the current suggestions flow", async () => {
+    const routeSpy = vi.spyOn(courseGoalRouting, "routeCourseGoal");
+    const suggestionsSpy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
+    const language = "en";
+    const prompt = `i want to code ${randomUUID()}`;
+    const title = `Computer Science ${randomUUID()}`;
+
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
+    routeSpy.mockResolvedValueOnce({ data: { goal: "masterSubject" } } as never);
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
+    suggestionsSpy.mockResolvedValueOnce({
+      data: [{ description: "Computer science description", targetLanguageCode: null, title }],
+    } as never);
+
+    const result = await generateLearningGoalSuggestions({ language, prompt });
+
+    expect(result).toMatchObject({
+      goal: "masterSubject",
+      kind: "courseSuggestions",
+      language,
+      prompt,
+      sourcePrompt: prompt,
+    });
+
+    expect(result.kind === "courseSuggestions" ? result.suggestions[0]?.title : null).toBe(title);
+    expect(routeSpy).toHaveBeenCalledWith({ prompt });
+    expect(suggestionsSpy).toHaveBeenCalledWith({ language, prompt });
+  });
+
+  it("generateLearningGoalSuggestions creates language suggestions in the inferred learner language", async () => {
+    const routeSpy = vi.spyOn(courseGoalRouting, "routeCourseGoal");
+    const learnLanguageSpy = vi.spyOn(courseLearnLanguage, "resolveCourseLearnLanguage");
+    const descriptionSpy = vi.spyOn(courseDescriptions, "generateCourseDescription");
+    const language = "en";
+    const prompt = `quero falar sueco ${randomUUID()}`;
+
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
+    routeSpy.mockResolvedValueOnce({ data: { goal: "learnLanguage" } } as never);
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
+    learnLanguageSpy.mockResolvedValueOnce({
+      data: { targetLanguage: "sv", userLanguage: "pt" },
+    } as never);
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
+    descriptionSpy.mockResolvedValueOnce({
+      data: { description: "Progrida do nível A1 ao C2 em sueco." },
+    } as never);
+
+    const result = await generateLearningGoalSuggestions({ language, prompt });
+
+    expect(result).toMatchObject({
+      goal: "learnLanguage",
+      kind: "courseSuggestions",
+      language: "pt",
+      prompt: "Sueco",
+      sourcePrompt: prompt,
+    });
+
+    expect(result.kind === "courseSuggestions" ? result.suggestions : []).toMatchObject([
+      { description: "Progrida do nível A1 ao C2 em sueco.", targetLanguage: "sv", title: "Sueco" },
+    ]);
+
+    expect(descriptionSpy).toHaveBeenCalledWith({ language: "pt", title: "Sueco" });
+
+    const searchPrompt = await prisma.searchPrompt.findUnique({
+      where: { languagePrompt: { language: "pt", prompt: normalizeString(prompt) } },
+    });
+
+    expect(searchPrompt).not.toBeNull();
+  });
+
+  it("generateLearningGoalSuggestions normalizes language variants before creating language suggestions", async () => {
+    const routeSpy = vi.spyOn(courseGoalRouting, "routeCourseGoal");
+    const learnLanguageSpy = vi.spyOn(courseLearnLanguage, "resolveCourseLearnLanguage");
+    const descriptionSpy = vi.spyOn(courseDescriptions, "generateCourseDescription");
+    const language = "en";
+    const prompt = `sono italiano e voglio imparare portoghese brasiliano ${randomUUID()}`;
+
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
+    routeSpy.mockResolvedValueOnce({ data: { goal: "learnLanguage" } } as never);
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
+    learnLanguageSpy.mockResolvedValueOnce({
+      data: { targetLanguage: "pt-BR", userLanguage: "it-IT" },
+    } as never);
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
+    descriptionSpy.mockResolvedValueOnce({
+      data: { description: "Dal livello A1 al C2 in portoghese." },
+    } as never);
+
+    const result = await generateLearningGoalSuggestions({ language, prompt });
+
+    expect(result).toMatchObject({
+      goal: "learnLanguage",
+      kind: "courseSuggestions",
+      language: "it",
+      prompt: "Portoghese",
+      sourcePrompt: prompt,
+    });
+
+    expect(result.kind === "courseSuggestions" ? result.suggestions : []).toMatchObject([
+      {
+        description: "Dal livello A1 al C2 in portoghese.",
+        targetLanguage: "pt",
+        title: "Portoghese",
+      },
+    ]);
+
+    expect(descriptionSpy).toHaveBeenCalledWith({ language: "it", title: "Portoghese" });
+
+    const searchPrompt = await prisma.searchPrompt.findUnique({
+      where: { languagePrompt: { language: "it", prompt: normalizeString(prompt) } },
+    });
+
+    expect(searchPrompt).not.toBeNull();
+  });
+
+  it("generateLearningGoalSuggestions returns coming soon for unsupported goals", async () => {
+    const routeSpy = vi.spyOn(courseGoalRouting, "routeCourseGoal");
+    const suggestionsSpy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
+    const language = "en";
+    const prompt = `why is the sky blue ${randomUUID()}`;
+
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
+    routeSpy.mockResolvedValueOnce({ data: { goal: "quickLearning" } } as never);
+
+    const result = await generateLearningGoalSuggestions({ language, prompt });
+
+    expect(result).toStrictEqual({ goal: "quickLearning", kind: "comingSoon", prompt });
+    expect(suggestionsSpy).not.toHaveBeenCalled();
+  });
+
+  it("generateLearningGoalSuggestions returns unsafe without generating suggestions", async () => {
+    const routeSpy = vi.spyOn(courseGoalRouting, "routeCourseGoal");
+    const suggestionsSpy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
+    const language = "en";
+    const prompt = `phishing ${randomUUID()}`;
+
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
+    routeSpy.mockResolvedValueOnce({ data: { goal: "unsafe" } } as never);
+
+    const result = await generateLearningGoalSuggestions({ language, prompt });
+
+    expect(result).toStrictEqual({ kind: "unsafe", prompt });
+    expect(suggestionsSpy).not.toHaveBeenCalled();
   });
 });

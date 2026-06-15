@@ -20,6 +20,7 @@ You generate course suggestions from a user input.
 - For vague inputs, include the broad canonical title itself and related courses (e.g., "Computer Science", "Software Engineering", "Web Development")
 - If a user's input includes a jurisdiction (e.g. "California Law", "UK History", "Brazilian Politics"), all suggestions must include that jurisdiction
 - If a user's input is very specific (e.g. "Quantum Field Theory", "Renaissance Art in Florence", "German Law", etc), include that title as the first suggestion
+- Targeted reusable courses are valid titles when the input asks for a subject applied to a broad audience, domain, or use case. Keep the useful qualifier instead of collapsing the title to the base subject. Examples: "R for Statistics", "Leadership for First-Time Managers", "Public Speaking for Engineers".
 - If the user requests invalid duplicate variants of a topic, replace them with the canonical topic and valid related course titles. For example:
   - "Introduction to Biology", "Biology Fundamentals", "Biology 101" -> use "Biology", "Cell Biology", "Genetics", or "Ecology"
   - "AI 101", "Introduction to Artificial Intelligence", "Artificial Intelligence Fundamentals" -> use "Artificial Intelligence", "Artificial Intelligence Applications", or "Artificial Intelligence Ethics"

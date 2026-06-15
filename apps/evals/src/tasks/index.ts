@@ -3,8 +3,10 @@ import { chapterLessonsTask } from "./chapter-lessons/task";
 import { courseCategoriesTask } from "./course-categories/task";
 import { courseChaptersTask } from "./course-chapters/task";
 import { courseDescriptionTask } from "./course-description/task";
+import { courseGoalRoutingTask } from "./course-goal-routing/task";
 import { courseIdentitySearchTask } from "./course-identity-search/task";
 import { courseIdentityClassificationTask } from "./course-identity/task";
+import { courseLearnLanguageTask } from "./course-learn-language/task";
 import { courseSuggestionsTask } from "./course-suggestions/task";
 import { imageInputSafetyRewriteTask } from "./image-prompt-safety-rewrite/task";
 import { languageChapterLessonsTask } from "./language-chapter-lessons/task";
@@ -39,6 +41,8 @@ export const TASKS: readonly Task[] = [
   lessonVocabularyTask,
   courseIdentitySearchTask,
   courseIdentityClassificationTask,
+  courseGoalRoutingTask,
+  courseLearnLanguageTask,
   chapterLessonsTask,
   courseCategoriesTask,
   courseChaptersTask,

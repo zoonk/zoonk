@@ -83,7 +83,7 @@ test.describe("Learn Form", () => {
   test("shows form with auto-focused input", async ({ page }) => {
     await page.goto("/learn");
 
-    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /what's your goal/iu })).toBeVisible();
 
     const input = page.getByRole("textbox");
     await expect(input).toBeFocused();
@@ -94,7 +94,7 @@ test.describe("Learn Form", () => {
   }) => {
     await authenticatedPage.goto("/learn");
 
-    const suggestions = authenticatedPage.getByRole("navigation", { name: /suggested subjects/iu });
+    const suggestions = authenticatedPage.getByRole("navigation", { name: /suggested goals/iu });
     const firstLink = suggestions.getByRole("link").first();
     const subject = await firstLink.textContent();
 
@@ -176,17 +176,36 @@ test.describe("Course Suggestions", () => {
     await expect(page).toHaveURL(/\/generate\/cs\/[-a-f0-9]+/u);
   });
 
-  test("Change subject navigates back to learn form", async ({ authenticatedPage }) => {
+  test("single-suggestion goals redirect directly to generate page", async ({ page }) => {
+    const fixture = await searchPromptWithSuggestionsFixture({
+      suggestions: [
+        { description: "A direct generation suggestion", title: "Direct Generation Course" },
+      ],
+    });
+
+    const [suggestion] = fixture.suggestions;
+
+    if (!suggestion) {
+      throw new Error("No suggestion created by fixture");
+    }
+
+    await mockCourseGenerationWorkflow(page);
+    await page.goto(`/learn/${encodeURIComponent(fixture.prompt)}`);
+
+    await expect(page).toHaveURL(new RegExp(`/generate/cs/${suggestion.id}`, "u"));
+  });
+
+  test("Change goal navigates back to learn form", async ({ authenticatedPage }) => {
     await authenticatedPage.goto(`/learn/${encodeURIComponent(prompt)}`);
 
     await expect(
       authenticatedPage.getByRole("heading", { name: /course ideas for/iu }),
     ).toBeVisible();
 
-    await authenticatedPage.getByRole("link", { name: /change subject/iu }).click();
+    await authenticatedPage.getByRole("link", { name: /change goal/iu }).click();
 
     await expect(
-      authenticatedPage.getByRole("heading", { name: /learn anything/iu }),
+      authenticatedPage.getByRole("heading", { name: /what's your goal/iu }),
     ).toBeVisible();
   });
 });

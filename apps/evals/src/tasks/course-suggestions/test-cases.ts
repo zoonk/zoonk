@@ -118,6 +118,19 @@ export const TEST_CASES = [
   },
   {
     expectations: `
+      - first result should be exactly "Python for Data Science"
+      - should NOT collapse the user's targeted reusable course into only "Python" or only "Data Science"
+      - may include related suggestions like "Python", "Data Science", or "Pandas"
+      - all titles and descriptions in US English
+      - targetLanguageCode must be null for all suggestions
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-python-for-data-science",
+    userInput: { language: "en", prompt: "python for data science" },
+  },
+  {
+    expectations: `
       - at least one title should be exactly "Biology" (this is very important, not including it is a major error)
       - related suggestions like "Cell Biology", "Genetics", and "Ecology" are valid and do NOT need to include the word "Biology"
       - do NOT include "Intro to Biology", "Introduction to Biology", "Biology 101", or "Biology Fundamentals"
