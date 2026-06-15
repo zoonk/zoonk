@@ -138,7 +138,7 @@ test.describe("Continue Learning Revalidation", () => {
     const user = await createE2EUser(baseURL!);
     const browserContext = await browser.newContext({ storageState: user.storageState });
     const page = await browserContext.newPage();
-    const { lesson0, course, uniqueId } = await createCourseWithThreeLessons();
+    const { lesson0, lesson1, course, uniqueId } = await createCourseWithThreeLessons();
 
     // Pre-complete lesson 0 so getContinueLearning returns this course with lesson 1 as "next"
     await Promise.all([
@@ -167,23 +167,8 @@ test.describe("Continue Learning Revalidation", () => {
     await page.waitForURL(new RegExp(`/l/e2e-cl-reval-current-${uniqueId}$`, "u"));
     await page.waitForLoadState("networkidle");
 
-    // Listen for the server action response BEFORE triggering completion.
-    // The server action (submitCompletion) is fire-and-forget from the UI,
-    // so waitForResponse is the only way to know it finished and revalidatePath ran.
-    const serverActionResponse = page.waitForResponse(
-      (resp) => resp.request().method() === "POST" && resp.ok(),
-    );
-
-    // 3. Complete the static lesson — retry handles hydration delay under parallel load
-    await expect(async () => {
-      await page.keyboard.press("ArrowRight");
-      await expect(page.getByRole("status")).toBeVisible({ timeout: 1000 });
-    }).toPass({ timeout: 10_000 });
-
-    await expect(page.getByText(/completed/iu)).toBeVisible();
-
-    // Wait for the server action response (includes the revalidatePath signal for Router Cache)
-    await serverActionResponse;
+    // 3. Complete the static lesson and wait for durable progress before navigating again.
+    await completeStaticLesson({ lessonId: lesson1.id, page, userId: user.id });
 
     // 4. Click "All Lessons" (client-side navigation)
     await page.getByRole("link", { name: /all lessons/iu }).click();
@@ -227,7 +212,7 @@ test.describe("Continue Learning Revalidation", () => {
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}`);
 
-    const staleContinueLink = page.getByRole("link", { name: "Continue 1 of 3 lessons completed" });
+    const staleContinueLink = page.getByRole("link", { name: "Continue 33% complete" });
 
     await expect(staleContinueLink).toHaveAttribute(
       "href",
@@ -244,9 +229,7 @@ test.describe("Continue Learning Revalidation", () => {
     await page.getByRole("link", { name: /all lessons/iu }).click();
     await page.waitForURL(new RegExp(`e2e-cl-reval-chapter-${uniqueId}$`, "u"));
 
-    const currentContinueLink = page.getByRole("link", {
-      name: "Continue 2 of 3 lessons completed",
-    });
+    const currentContinueLink = page.getByRole("link", { name: "Continue 67% complete" });
 
     await expect(currentContinueLink).toHaveAttribute(
       "href",

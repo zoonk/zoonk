@@ -13,12 +13,13 @@ import {
 } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
+import {
+  type CourseContinueProgressChapter,
+  calculateCourseContinueProgressPercent,
+  calculateProgressPercent,
+} from "./_utils/continue-progress-percent";
 
-export type ContinueLessonProgress = {
-  completedItems: number;
-  totalItems: number;
-  unit: "chapters" | "lessons";
-};
+export type ContinueLessonProgress = { percentComplete: number };
 
 /**
  * Course and chapter page components can independently ask for chapter-card
@@ -26,16 +27,22 @@ export type ContinueLessonProgress = {
  * server render from issuing duplicate progress queries.
  */
 const cachedCatalogChapterProgress = cache(
-  async (courseId: string, ...excludedLessonKinds: LessonKind[]) =>
-    getChapterProgress({ courseId, excludedLessonKinds }),
+  async (courseId: string, headers: Headers | undefined, ...excludedLessonKinds: LessonKind[]) =>
+    getChapterProgress({ courseId, excludedLessonKinds, headers }),
 );
 
-export function getCatalogChapterProgress(
-  courseId: string,
-  excludedLessonKinds: LessonKind[] = [],
-) {
+export function getCatalogChapterProgress({
+  courseId,
+  excludedLessonKinds = [],
+  headers,
+}: {
+  courseId: string;
+  excludedLessonKinds?: LessonKind[];
+  headers?: Headers;
+}) {
   return cachedCatalogChapterProgress(
     courseId,
+    headers,
     ...getLessonKindExclusionCacheArgs({ excludedLessonKinds }),
   );
 }
@@ -46,16 +53,22 @@ export function getCatalogChapterProgress(
  * boundaries independent without paying for the query twice in one render.
  */
 const cachedCatalogLessonProgress = cache(
-  async (chapterId: string, ...excludedLessonKinds: LessonKind[]) =>
-    getLessonProgress({ chapterId, excludedLessonKinds }),
+  async (chapterId: string, headers: Headers | undefined, ...excludedLessonKinds: LessonKind[]) =>
+    getLessonProgress({ chapterId, excludedLessonKinds, headers }),
 );
 
-export function getCatalogLessonProgress(
-  chapterId: string,
-  excludedLessonKinds: LessonKind[] = [],
-) {
+export function getCatalogLessonProgress({
+  chapterId,
+  excludedLessonKinds = [],
+  headers,
+}: {
+  chapterId: string;
+  excludedLessonKinds?: LessonKind[];
+  headers?: Headers;
+}) {
   return cachedCatalogLessonProgress(
     chapterId,
+    headers,
     ...getLessonKindExclusionCacheArgs({ excludedLessonKinds }),
   );
 }
@@ -69,27 +82,38 @@ export function getCatalogLessonProgress(
 const cachedCourseContinueProgress = cache(
   async (
     courseId: string,
+    headers: Headers | undefined,
     ...excludedLessonKinds: LessonKind[]
-  ): Promise<ContinueLessonProgress> => {
-    const [chapterProgressRows, totalItems] = await Promise.all([
-      cachedCatalogChapterProgress(courseId, ...excludedLessonKinds),
-      countPublishedCourseChapters(courseId),
+  ): Promise<ContinueLessonProgress | null> => {
+    const [chapterProgressRows, chapters] = await Promise.all([
+      cachedCatalogChapterProgress(courseId, headers, ...excludedLessonKinds),
+      listPublishedCourseChaptersForProgress({ courseId }),
     ]);
 
-    return {
-      completedItems: countCompletedChapterProgressRows({ rows: chapterProgressRows }),
-      totalItems,
-      unit: "chapters",
-    };
+    const progressRowsByChapterId = new Map(chapterProgressRows.map((row) => [row.chapterId, row]));
+
+    const progressChapters = chapters.map((chapter) =>
+      getCourseContinueProgressChapter({ chapter, progressRowsByChapterId }),
+    );
+
+    return toContinueLessonProgress({
+      percentComplete: calculateCourseContinueProgressPercent({ chapters: progressChapters }),
+    });
   },
 );
 
-export function getCourseContinueProgress(
-  courseId: string,
-  excludedLessonKinds: LessonKind[] = [],
-) {
+export function getCourseContinueProgress({
+  courseId,
+  excludedLessonKinds = [],
+  headers,
+}: {
+  courseId: string;
+  excludedLessonKinds?: LessonKind[];
+  headers?: Headers;
+}) {
   return cachedCourseContinueProgress(
     courseId,
+    headers,
     ...getLessonKindExclusionCacheArgs({ excludedLessonKinds }),
   );
 }
@@ -102,55 +126,88 @@ export function getCourseContinueProgress(
 const cachedChapterContinueProgress = cache(
   async (
     chapterId: string,
+    headers: Headers | undefined,
     ...excludedLessonKinds: LessonKind[]
-  ): Promise<ContinueLessonProgress> => {
+  ): Promise<ContinueLessonProgress | null> => {
     const [progressRows, totalItems] = await Promise.all([
-      cachedCatalogLessonProgress(chapterId, ...excludedLessonKinds),
+      cachedCatalogLessonProgress(chapterId, headers, ...excludedLessonKinds),
       countPublishedChapterLessons({ chapterId, excludedLessonKinds }),
     ]);
 
-    return {
-      completedItems: progressRows.filter((row) => row.isCompleted).length,
-      totalItems,
-      unit: "lessons",
-    };
+    return toContinueLessonProgress({
+      percentComplete: calculateProgressPercent({
+        completedItems: progressRows.filter((row) => row.isCompleted).length,
+        totalItems,
+      }),
+    });
   },
 );
 
-export function getChapterContinueProgress(
-  chapterId: string,
-  excludedLessonKinds: LessonKind[] = [],
-) {
+export function getChapterContinueProgress({
+  chapterId,
+  excludedLessonKinds = [],
+  headers,
+}: {
+  chapterId: string;
+  excludedLessonKinds?: LessonKind[];
+  headers?: Headers;
+}) {
   return cachedChapterContinueProgress(
     chapterId,
+    headers,
     ...getLessonKindExclusionCacheArgs({ excludedLessonKinds }),
   );
 }
 
 /**
- * Empty chapters should not count as completed just because there are no
- * visible lessons left after filtering. They stay at zero progress until the
- * course has at least one visible completed lesson in that chapter.
+ * The UI only needs a visible percentage. Returning null lets callers keep the
+ * existing no-progress fallback when there is no useful denominator.
  */
-function countCompletedChapterProgressRows({
-  rows,
+function toContinueLessonProgress({
+  percentComplete,
 }: {
-  rows: Awaited<ReturnType<typeof getCatalogChapterProgress>>;
-}) {
-  return rows.filter((row) => row.totalLessons > 0 && row.completedLessons >= row.totalLessons)
-    .length;
+  percentComplete: number | null;
+}): ContinueLessonProgress | null {
+  if (percentComplete === null) {
+    return null;
+  }
+
+  return { percentComplete };
 }
 
 /**
- * Course progress needs the visible chapter total even when none of those
- * chapters have generated lesson content yet.
+ * Course estimates need chapter generation status in addition to the lesson
+ * progress rows, because pending chapters may not have lesson rows yet.
  */
-async function countPublishedCourseChapters(courseId: string) {
+async function listPublishedCourseChaptersForProgress({ courseId }: { courseId: string }) {
   const { data } = await safeAsync(() =>
-    prisma.chapter.count({ where: getPublishedChapterWhere({ chapterWhere: { courseId } }) }),
+    prisma.chapter.findMany({
+      orderBy: { position: "asc" },
+      where: getPublishedChapterWhere({ chapterWhere: { courseId } }),
+    }),
   );
 
-  return data ?? 0;
+  return data ?? [];
+}
+
+/**
+ * The course estimate consumes one row per published chapter, so chapters with
+ * no visible lessons still contribute their generation status and zero counts.
+ */
+function getCourseContinueProgressChapter({
+  chapter,
+  progressRowsByChapterId,
+}: {
+  chapter: Awaited<ReturnType<typeof listPublishedCourseChaptersForProgress>>[number];
+  progressRowsByChapterId: Map<string, { completedLessons: number; totalLessons: number }>;
+}): CourseContinueProgressChapter {
+  const progress = progressRowsByChapterId.get(chapter.id);
+
+  return {
+    completedLessons: progress?.completedLessons ?? 0,
+    generationStatus: chapter.generationStatus,
+    totalLessons: progress?.totalLessons ?? 0,
+  };
 }
 
 /**

@@ -93,8 +93,9 @@ test.describe("Chapter Progress Indicators", () => {
     ).toBeVisible();
 
     const main = authenticatedPage.getByRole("main");
-    await expect(main.getByRole("link", { name: "Start 0 of 3 lessons completed" })).toBeVisible();
-    await expect(main.getByText("0/3")).toBeVisible();
+    const startLink = main.getByRole("link", { name: "Start 0% complete" });
+    await expect(startLink).toBeVisible();
+    await expect(startLink.getByText("0%", { exact: true })).toBeVisible();
     await expect(main.getByText(/^completed$/iu)).toHaveCount(0);
     await expect(main.getByText(/\d+\/\d+ done/u)).toHaveCount(0);
   });
@@ -132,11 +133,10 @@ test.describe("Chapter Progress Indicators", () => {
 
     const main = authenticatedPage.getByRole("main");
 
-    await expect(
-      main.getByRole("link", { name: "Continue 1 of 3 lessons completed" }),
-    ).toBeVisible();
+    const continueLink = main.getByRole("link", { name: "Continue 33% complete" });
+    await expect(continueLink).toBeVisible();
 
-    await expect(main.getByText("1/3")).toBeVisible();
+    await expect(continueLink.getByText("33%", { exact: true })).toBeVisible();
     await expect(main.getByText(/^completed$/iu)).toHaveCount(1);
     await expect(main.getByText(/\d+\/\d+ done/u)).toHaveCount(0);
   });
