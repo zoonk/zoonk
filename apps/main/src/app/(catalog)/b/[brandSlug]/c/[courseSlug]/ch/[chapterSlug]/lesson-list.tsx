@@ -145,7 +145,7 @@ export async function LessonList({
   const session = await getSession();
 
   const [completionData, activeTarget] = await Promise.all([
-    getCatalogLessonProgress(chapterId, hiddenLessonKinds),
+    getCatalogLessonProgress({ chapterId, excludedLessonKinds: hiddenLessonKinds }),
     getActiveCatalogTarget({ excludedLessonKinds: hiddenLessonKinds, scope: { chapterId } }),
   ]);
 

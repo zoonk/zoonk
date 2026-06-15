@@ -27,7 +27,7 @@ function getContinueActionLink({ label, page }: { label: ContinueActionLabel; pa
  * helper keeps that accessible-name detail in one place.
  */
 function getContinueActionName({ label }: { label: ContinueActionLabel }) {
-  return new RegExp(`^${label}(?: \\d+ of \\d+ (?:chapters|lessons) completed)?$`, "iu");
+  return new RegExp(`^${label}(?: \\d+% complete)?$`, "iu");
 }
 
 async function createTestCourseWithLesson() {
@@ -524,7 +524,7 @@ test.describe("Continue Lesson Link", () => {
 
     const chapterContinueLink = page
       .getByRole("main")
-      .getByRole("link", { name: "Continue 1 of 2 lessons completed" });
+      .getByRole("link", { name: "Continue 50% complete" });
 
     const nextVisibleLessonTitle = nextVisibleLesson.title ?? nextVisibleLesson.slug;
 
@@ -565,6 +565,7 @@ test.describe("Continue Lesson Link", () => {
     const [chapter1, chapter2] = await Promise.all([
       chapterFixture({
         courseId: course.id,
+        generationStatus: "completed",
         isPublished: true,
         organizationId: org.id,
         position: 0,
@@ -573,6 +574,7 @@ test.describe("Continue Lesson Link", () => {
       }),
       chapterFixture({
         courseId: course.id,
+        generationStatus: "pending",
         isPublished: true,
         organizationId: org.id,
         position: 1,
@@ -600,7 +602,7 @@ test.describe("Continue Lesson Link", () => {
 
     await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const continueLink = getContinueActionLink({ label: "Continue", page: authenticatedPage });
+    const continueLink = authenticatedPage.getByRole("link", { name: "Continue 50% complete" });
     await expect(continueLink).toBeVisible();
 
     await expect(continueLink).toHaveAttribute(

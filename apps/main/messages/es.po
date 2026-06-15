@@ -1778,12 +1778,8 @@ msgid "Gs9Kfp"
 msgstr "Volver arriba"
 
 #: src/components/catalog/continue-lesson-link.tsx
-msgid "4gKxIm"
-msgstr "{completed} de {total} capítulos completados"
-
-#: src/components/catalog/continue-lesson-link.tsx
-msgid "grFxqs"
-msgstr "{completed} de {total} lecciones completadas"
+msgid "AvySqa"
+msgstr "{percent}% completado"
 
 #: src/components/catalog/continue-lesson-link.tsx
 msgid "mOFG3K"

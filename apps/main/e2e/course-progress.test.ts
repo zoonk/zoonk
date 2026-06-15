@@ -249,8 +249,9 @@ test.describe("Course Progress Indicators", () => {
     ).toBeVisible();
 
     const main = authenticatedPage.getByRole("main");
-    await expect(main.getByRole("link", { name: "Start 0 of 3 chapters completed" })).toBeVisible();
-    await expect(main.getByText("0/3")).toBeVisible();
+    const startLink = main.getByRole("link", { name: "Start 0% complete" });
+    await expect(startLink).toBeVisible();
+    await expect(startLink.getByText("0%", { exact: true })).toBeVisible();
     await expect(main.getByText(/^completed$/iu)).toHaveCount(0);
     await expect(main.getByText(/\d+\/\d+ done/u)).toHaveCount(0);
   });
@@ -276,15 +277,14 @@ test.describe("Course Progress Indicators", () => {
 
     const main = authenticatedPage.getByRole("main");
 
-    await expect(
-      main.getByRole("link", { name: "Review 3 of 3 chapters completed" }),
-    ).toBeVisible();
+    const reviewLink = main.getByRole("link", { name: "Review 100% complete" });
+    await expect(reviewLink).toBeVisible();
 
-    await expect(main.getByText("3/3")).toBeVisible();
+    await expect(reviewLink.getByText("100%", { exact: true })).toBeVisible();
     await expect(authenticatedPage.getByRole("main").getByText(/^completed$/iu)).toHaveCount(3);
   });
 
-  test("shows chapter fraction even when only lessons are partially completed", async ({
+  test("shows lesson percentage when only lessons are partially completed", async ({
     authenticatedPage,
     withProgressUser,
   }) => {
@@ -303,11 +303,10 @@ test.describe("Course Progress Indicators", () => {
 
     const main = authenticatedPage.getByRole("main");
 
-    await expect(
-      main.getByRole("link", { name: "Continue 0 of 3 chapters completed" }),
-    ).toBeVisible();
+    const continueLink = main.getByRole("link", { name: "Continue 29% complete" });
+    await expect(continueLink).toBeVisible();
 
-    await expect(main.getByText("0/3")).toBeVisible();
+    await expect(continueLink.getByText("29%", { exact: true })).toBeVisible();
     await expect(authenticatedPage.getByText("1/3 done")).toBeVisible();
     await expect(authenticatedPage.getByText("1/2 done")).toBeVisible();
   });
@@ -373,9 +372,7 @@ test.describe("Course Progress Indicators", () => {
 
     const main = page.getByRole("main");
 
-    await expect(
-      main.getByRole("link", { name: "Review 1 of 1 chapters completed" }),
-    ).toBeVisible();
+    await expect(main.getByRole("link", { name: "Review 100% complete" })).toBeVisible();
 
     const chapterLink = main.getByRole("link", { name: new RegExp(chapter.title, "u") });
 

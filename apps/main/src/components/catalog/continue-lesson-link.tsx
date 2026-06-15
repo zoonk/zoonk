@@ -38,20 +38,16 @@ function getScope(props: {
 }
 
 /**
- * Progress can start at zero, but it still needs a valid total before it is
- * worth replacing the arrow. Clamping the completed count keeps stale or
- * duplicated completion rows from making the compact fraction impossible.
+ * Progress can start at zero, but it still needs a valid percentage before it
+ * is worth replacing the arrow. Clamping keeps stale data from leaking an
+ * impossible value into the compact suffix.
  */
 function getVisibleProgress({ progress }: { progress?: ContinueLessonProgress | null }) {
-  if (!progress || progress.totalItems <= 0) {
+  if (!progress) {
     return null;
   }
 
-  return {
-    completedItems: Math.min(Math.max(progress.completedItems, 0), progress.totalItems),
-    totalItems: progress.totalItems,
-    unit: progress.unit,
-  };
+  return { percentComplete: Math.min(Math.max(progress.percentComplete, 0), 100) };
 }
 
 /**
@@ -67,18 +63,18 @@ function getContinueLessonProgress({
   scope: LessonScope;
 }) {
   if ("courseId" in scope) {
-    return getCourseContinueProgress(scope.courseId, excludedLessonKinds);
+    return getCourseContinueProgress({ courseId: scope.courseId, excludedLessonKinds });
   }
 
   if ("chapterId" in scope) {
-    return getChapterContinueProgress(scope.chapterId, excludedLessonKinds);
+    return getChapterContinueProgress({ chapterId: scope.chapterId, excludedLessonKinds });
   }
 
   return Promise.resolve(null);
 }
 
 /**
- * The visible suffix is intentionally just a fraction so the mobile CTA stays
+ * The visible suffix is intentionally just a percent so the mobile CTA stays
  * compact, while the hidden text gives screen readers the full meaning.
  */
 function ContinueLessonLinkContent({
@@ -139,17 +135,8 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
 
   const progressContent = visibleProgress
     ? {
-        ariaLabel:
-          visibleProgress.unit === "chapters"
-            ? t("{completed} of {total} chapters completed", {
-                completed: String(visibleProgress.completedItems),
-                total: String(visibleProgress.totalItems),
-              })
-            : t("{completed} of {total} lessons completed", {
-                completed: String(visibleProgress.completedItems),
-                total: String(visibleProgress.totalItems),
-              }),
-        text: `${visibleProgress.completedItems}/${visibleProgress.totalItems}`,
+        ariaLabel: t("{percent}% complete", { percent: String(visibleProgress.percentComplete) }),
+        text: `${visibleProgress.percentComplete}%`,
       }
     : null;
 

@@ -184,7 +184,7 @@ export async function ChapterList({
   const t = await getExtracted();
 
   const [completionData, activeTarget] = await Promise.all([
-    getCatalogChapterProgress(courseId, hiddenLessonKinds),
+    getCatalogChapterProgress({ courseId, excludedLessonKinds: hiddenLessonKinds }),
     getActiveCatalogTarget({ excludedLessonKinds: hiddenLessonKinds, scope: { courseId } }),
   ]);
 
