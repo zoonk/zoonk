@@ -222,8 +222,12 @@ msgid "i7IHHZ"
 msgstr "Start free"
 
 #: src/app/(catalog)/(home)/hero.tsx
-msgid "pjKGpc"
-msgstr "No credit card required. No commitment."
+msgid "u3noaU"
+msgstr "No credit card required."
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "b6dFV2"
+msgstr "No commitment required."
 
 #: src/app/(catalog)/(home)/learning-days.tsx
 #: src/app/(progress)/level/level-insights.tsx
