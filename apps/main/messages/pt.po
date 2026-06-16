@@ -210,22 +210,20 @@ msgid "C7ROJx"
 msgstr "Sua energia está em {value}%"
 
 #: src/app/(catalog)/(home)/hero.tsx
-msgid "qvmpye"
-msgstr "Aprenda qualquer coisa com IA"
+msgid "FQFGyy"
+msgstr "Mude de vida"
 
 #: src/app/(catalog)/(home)/hero.tsx
-msgid "VcxnWX"
-msgstr "Cursos interativos criados para você. Apenas nos diga o que você quer aprender."
+msgid "XgGQQP"
+msgstr "Passe no concurso, aprenda um idioma, desenvolva habilidades e conquiste o trabalho dos sonhos. O Zoonk te ajuda a mudar de vida."
 
 #: src/app/(catalog)/(home)/hero.tsx
-msgid "jHCDDq"
-msgstr "Criar um curso com IA"
+msgid "i7IHHZ"
+msgstr "Teste grátis"
 
 #: src/app/(catalog)/(home)/hero.tsx
-#: src/app/(catalog)/courses/page.tsx
-#: src/app/(catalog)/my/user-course-list.tsx
-msgid "s-Ncqj"
-msgstr "Explorar cursos"
+msgid "pjKGpc"
+msgstr "Não precisa de cartão de crédito. Sem compromisso."
 
 #: src/app/(catalog)/(home)/learning-days.tsx
 #: src/app/(progress)/level/level-insights.tsx
@@ -407,6 +405,11 @@ msgstr "Explore todos os cursos do Zoonk para aprender qualquer coisa usando IA.
 #: src/app/(catalog)/courses/page.tsx
 msgid "P5jxUC"
 msgstr "Cursos online usando IA"
+
+#: src/app/(catalog)/courses/page.tsx
+#: src/app/(catalog)/my/user-course-list.tsx
+msgid "s-Ncqj"
+msgstr "Explorar cursos"
 
 #: src/app/(catalog)/courses/page.tsx
 msgid "hUF3bo"
