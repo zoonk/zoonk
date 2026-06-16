@@ -1,12 +1,12 @@
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { ArrowRightIcon, SparklesIcon } from "lucide-react";
+import { SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import Link from "next/link";
 import { HeroTracker } from "./hero-tracker";
 
 /**
- * Shows the zero-progress home state with one action for creating a new course
- * and one action for browsing existing courses.
+ * Shows the zero-progress home state for people who need a concrete reason to
+ * start learning before they understand how Zoonk creates personalized courses.
  */
 export async function Hero() {
   const t = await getExtracted();
@@ -17,32 +17,29 @@ export async function Hero() {
 
       <div className="flex flex-col items-center gap-4 text-center">
         <h1 className="text-foreground/90 text-3xl font-semibold tracking-tight text-balance md:text-5xl md:tracking-tighter">
-          {t("Learn anything with AI")}
+          {t("Change your life")}
         </h1>
 
-        <p className="text-muted-foreground max-w-md text-lg text-pretty md:text-xl">
-          {t("Interactive courses built for you. Just tell us what you want to learn.")}
+        <p className="text-muted-foreground text-lg text-balance md:text-xl">
+          {t(
+            "Pass your exams, learn a language, build skills, and land your dream job. Zoonk helps you change your life.",
+          )}
         </p>
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+      <div className="flex flex-col items-center gap-3">
         <Link
           className={buttonVariants({ className: "gap-2", size: "lg", variant: "default" })}
           href="/learn"
           prefetch
         >
           <SparklesIcon aria-hidden="true" />
-          {t("Create a course with AI")}
+          {t("Start free")}
         </Link>
 
-        <Link
-          className={buttonVariants({ className: "gap-2", size: "lg", variant: "outline" })}
-          href="/courses"
-          prefetch
-        >
-          {t("Explore courses")}
-          <ArrowRightIcon aria-hidden="true" />
-        </Link>
+        <p className="text-muted-foreground text-sm">
+          {t("No credit card required. No commitment.")}
+        </p>
       </div>
     </main>
   );

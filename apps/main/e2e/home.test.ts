@@ -16,17 +16,17 @@ test.describe("Home Page - Unauthenticated", () => {
 
     const hero = page.getByRole("main");
 
-    await expect(hero.getByRole("heading", { name: /learn anything with ai/iu })).toBeVisible();
+    await expect(hero.getByRole("heading", { name: /change your life/iu })).toBeVisible();
 
-    const exploreCoursesLink = hero.getByRole("link", { name: "Explore courses" });
+    const startFreeLink = hero.getByRole("link", { name: "Start free" });
 
-    await expect(exploreCoursesLink).toHaveAttribute("href", "/courses");
+    await expect(startFreeLink).toHaveAttribute("href", "/learn");
 
     await expect(
       hero.getByRole("link", { name: "Log in to save your progress" }),
     ).not.toBeVisible();
 
-    await hero.getByRole("link", { exact: true, name: "Create a course with AI" }).click();
+    await startFreeLink.click();
 
     await expect(page).toHaveURL(/\/learn$/u);
     await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
@@ -127,7 +127,7 @@ test.describe("Home Page - Authenticated", () => {
     ).toBeVisible();
 
     await expect(
-      authenticatedPage.getByRole("heading", { name: /learn anything with ai/iu }),
+      authenticatedPage.getByRole("heading", { name: /change your life/iu }),
     ).not.toBeVisible();
   });
 
@@ -137,10 +137,10 @@ test.describe("Home Page - Authenticated", () => {
     await expect(userWithoutProgress.getByText(/continue learning/iu)).not.toBeVisible();
 
     await expect(
-      userWithoutProgress.getByRole("heading", { name: /learn anything with ai/iu }),
+      userWithoutProgress.getByRole("heading", { name: /change your life/iu }),
     ).toBeVisible();
 
-    await expect(userWithoutProgress.getByRole("link", { name: "Explore courses" })).toBeVisible();
+    await expect(userWithoutProgress.getByRole("link", { name: "Start free" })).toBeVisible();
 
     await expect(
       userWithoutProgress.getByRole("link", { name: "Log in to save your progress" }),
