@@ -189,7 +189,7 @@ export function PlayerRichText({ text }: { text: string }) {
     if (segment.kind === "code") {
       return (
         <code
-          className="bg-muted text-foreground rounded-sm px-1 py-0.5 font-mono text-[0.85em]"
+          className="bg-foreground text-background rounded-sm px-1 py-0.5 font-mono text-[0.85em]"
           key={key}
         >
           {segment.text}
