@@ -222,8 +222,12 @@ msgid "i7IHHZ"
 msgstr "Teste grátis"
 
 #: src/app/(catalog)/(home)/hero.tsx
-msgid "pjKGpc"
-msgstr "Não precisa de cartão de crédito. Sem compromisso."
+msgid "u3noaU"
+msgstr "Não precisa de cartão de crédito."
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "b6dFV2"
+msgstr "Teste sem compromisso."
 
 #: src/app/(catalog)/(home)/learning-days.tsx
 #: src/app/(progress)/level/level-insights.tsx

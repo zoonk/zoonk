@@ -37,8 +37,9 @@ export async function Hero() {
           {t("Start free")}
         </Link>
 
-        <p className="text-muted-foreground text-sm">
-          {t("No credit card required. No commitment.")}
+        <p className="text-muted-foreground flex flex-col items-center text-sm">
+          <span>{t("No credit card required.")}</span>
+          <span>{t("No commitment required.")}</span>
         </p>
       </div>
     </main>
