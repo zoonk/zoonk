@@ -959,6 +959,10 @@ msgid "NBEnVd"
 msgstr "Compare planos e gerencie sua assinatura."
 
 #: src/app/(settings)/subscription/plan-list.tsx
+msgid "PJfdJl"
+msgstr "Economize até {amount}"
+
+#: src/app/(settings)/subscription/plan-list.tsx
 msgid "KAb0Yr"
 msgstr "Mudar para {plan}"
 

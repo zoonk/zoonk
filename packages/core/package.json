@@ -21,7 +21,6 @@
     "./courses/search": "./src/courses/search-courses.ts",
     "./feedback/send": "./src/feedback/send-feedback-message.ts",
     "./images/optimize": "./src/images/optimize-image.ts",
-    "./images/process-and-upload": "./src/images/process-and-upload-image.ts",
     "./images/upload": "./src/images/upload-image.ts",
     "./lessons/access": "./src/lessons/access.ts",
     "./lessons/generated-companion-kinds": "./src/lessons/generated-companion-kinds.ts",
