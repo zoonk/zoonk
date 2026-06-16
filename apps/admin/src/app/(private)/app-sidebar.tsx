@@ -12,10 +12,10 @@ import {
 import {
   BarChart3Icon,
   BookOpen,
-  CheckSquareIcon,
   CreditCardIcon,
   HomeIcon,
   LayersIcon,
+  MessageSquareTextIcon,
   Users,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -27,8 +27,8 @@ const menuItems = [
   { icon: Users, label: "Users", url: "/users" },
   { icon: CreditCardIcon, label: "Subscriptions", url: "/subscriptions" },
   { icon: BookOpen, label: "Courses", url: "/courses" },
+  { icon: MessageSquareTextIcon, label: "Course Suggestions", url: "/course-suggestions" },
   { icon: LayersIcon, label: "Lessons", url: "/lessons" },
-  { icon: CheckSquareIcon, label: "Review", url: "/review" },
 ] as const;
 
 function isActive(pathname: string, url: string) {
