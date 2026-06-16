@@ -47,4 +47,11 @@ We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm
 
 ## Supporters
 
+<br />
+<a href="https://vercel.com/open-source-program">
+  <img alt="Vercel OSS Program" src="https://vercel.com/oss/program-badge-2026.svg" />
+</a>
+<br />
+<br />
+
 See everyone who has [supported this project](./SUPPORTERS.md).
