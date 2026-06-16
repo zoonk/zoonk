@@ -128,7 +128,7 @@ test.describe("Command Palette - Unauthenticated", () => {
       .click();
 
     // Verify user sees home page content
-    await expect(page.getByRole("heading", { name: /learn anything with ai/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /change your life/iu })).toBeVisible();
   });
 
   test("selecting Courses shows courses content", async ({ page }) => {
@@ -265,7 +265,7 @@ test.describe("Command Palette - Course Search", () => {
     });
 
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: /learn anything with ai/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /change your life/iu })).toBeVisible();
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
@@ -487,7 +487,7 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     await page.keyboard.press("Enter");
 
     // Verify user sees home page content
-    await expect(page.getByRole("heading", { name: /learn anything with ai/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /change your life/iu })).toBeVisible();
   });
 
   test("focus trap within dialog", async ({ page }) => {

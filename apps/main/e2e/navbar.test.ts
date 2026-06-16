@@ -8,12 +8,12 @@ test.describe("Navbar - Unauthenticated", () => {
     // Scope to navigation to avoid conflicts with links in main content
     await page.getByRole("navigation").getByRole("link", { name: /home/iu }).click();
 
-    await expect(page.getByRole("heading", { name: /learn anything with ai/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /change your life/iu })).toBeVisible();
   });
 
   test("Courses link navigates to courses page", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: /learn anything with ai/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /change your life/iu })).toBeVisible();
 
     // Scope to navigation to avoid conflicts with "Explore courses" in hero
     await page.getByRole("navigation").getByRole("link", { exact: true, name: "Courses" }).click();
@@ -23,7 +23,7 @@ test.describe("Navbar - Unauthenticated", () => {
 
   test("Learn link navigates to learn page", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: /learn anything with ai/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /change your life/iu })).toBeVisible();
 
     // Scope to navigation to avoid conflicts with "Learn anything" in hero
     await page.getByRole("navigation").getByRole("link", { exact: true, name: "Learn" }).click();

@@ -213,7 +213,7 @@ test.describe("Home Page - Authenticated", () => {
 
     await expect(page.getByRole("heading", { name: /continue learning/iu }).first()).toBeVisible();
 
-    await expect(page.getByRole("heading", { name: /learn anything with ai/iu })).not.toBeVisible();
+    await expect(page.getByRole("heading", { name: /change your life/iu })).not.toBeVisible();
 
     await expect(
       page.getByRole("link", { name: new RegExp(`Next:.*E2E Pending Lesson ${uniqueId}`, "u") }),
