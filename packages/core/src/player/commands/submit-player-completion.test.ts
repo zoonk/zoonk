@@ -4,6 +4,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { chapterSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
@@ -14,6 +15,7 @@ const TEST_SECONDS_PER_MINUTE = 60;
 const TEST_COMPLETION_CAP_MINUTES = 30;
 const TEST_COMPLETION_CAP_SECONDS = TEST_COMPLETION_CAP_MINUTES * TEST_SECONDS_PER_MINUTE;
 
+const LANGUAGE_SENTENCE_STEP_LIMIT = 6;
 const REVIEW_TARGET_STEP_COUNT = 10;
 const REVIEW_SUBMITTED_STEP_COUNT = REVIEW_TARGET_STEP_COUNT + 1;
 
@@ -23,6 +25,9 @@ type CompletableLessonVisibility = {
   lessonIsPublished?: boolean;
   organizationKind?: string;
 };
+
+type LanguageSentenceCompletionStep = { answerText: string; id: string };
+type LanguageSentenceLessonKind = "listening" | "reading";
 
 const inaccessibleLessonCases: { name: string; visibility: CompletableLessonVisibility }[] = [
   { name: "course", visibility: { courseIsPublished: false } },
@@ -122,6 +127,107 @@ async function createTwoStepMultipleChoiceLesson(params: {
   );
 
   return { lesson, steps };
+}
+
+/**
+ * Reading and listening lessons can store a larger generated sentence bank than
+ * the player shows in one run. This fixture creates independently valid
+ * sentence-backed steps so completion tests can prove the server accepts the
+ * six-step player subset without accepting too few answers.
+ */
+async function createLanguageSentenceLesson(params: {
+  chapterId: string;
+  kind: LanguageSentenceLessonKind;
+  organizationId: string;
+  stepCount: number;
+}) {
+  const lesson = await lessonFixture({
+    chapterId: params.chapterId,
+    isPublished: true,
+    kind: params.kind,
+    organizationId: params.organizationId,
+    position: 0,
+  });
+
+  const steps = await Promise.all(
+    Array.from({ length: params.stepCount }, (_, position) =>
+      createLanguageSentenceStep({
+        chapterId: params.chapterId,
+        kind: params.kind,
+        lessonId: lesson.id,
+        organizationId: params.organizationId,
+        position,
+      }),
+    ),
+  );
+
+  return { lesson, steps };
+}
+
+/**
+ * Server validation checks reading against the target-language sentence and
+ * listening against the learner-language translation. Returning the exact
+ * answer text with the step id lets forged completion payloads answer each
+ * step correctly without depending on player UI code.
+ */
+async function createLanguageSentenceStep(params: {
+  chapterId: string;
+  kind: LanguageSentenceLessonKind;
+  lessonId: string;
+  organizationId: string;
+  position: number;
+}): Promise<LanguageSentenceCompletionStep> {
+  const sentenceText = `word${params.position}`;
+  const translationText = `translation${params.position}`;
+
+  const sentence = await sentenceFixture({
+    organizationId: params.organizationId,
+    sentence: sentenceText,
+  });
+
+  const chapterSentence = await chapterSentenceFixture({
+    chapterId: params.chapterId,
+    sentenceId: sentence.id,
+    sourceLessonId: params.lessonId,
+    translation: translationText,
+  });
+
+  const step = await stepFixture({
+    chapterSentenceId: chapterSentence.id,
+    content: {},
+    isPublished: true,
+    kind: params.kind,
+    lessonId: params.lessonId,
+    position: params.position,
+    sentenceId: sentence.id,
+  });
+
+  return {
+    answerText: getLanguageSentenceAnswerText({ kind: params.kind, sentenceText, translationText }),
+    id: step.id,
+  };
+}
+
+/**
+ * Reading asks the learner to reconstruct the target sentence, while listening
+ * asks them to reconstruct its learner-language translation from audio. Keeping
+ * this distinction explicit prevents listening tests from accidentally reusing
+ * reading's answer text.
+ */
+function getLanguageSentenceAnswerText({
+  kind,
+  sentenceText,
+  translationText,
+}: {
+  kind: LanguageSentenceLessonKind;
+  sentenceText: string;
+  translationText: string;
+}): string {
+  if (kind === "reading") {
+    return sentenceText;
+  }
+
+  return translationText;
 }
 
 /**
@@ -262,6 +368,65 @@ function buildCompletionInputForSteps(params: {
       params.stepIds.map((stepId) => buildStepTimingEntry({ startedAt, stepId })),
     ),
   };
+}
+
+/**
+ * Reading and listening completion payloads use arranged words rather than
+ * option ids, so this keeps the sentence-cap tests focused on answer coverage
+ * instead of multiple-choice fixture assumptions.
+ */
+function buildLanguageSentenceCompletionInput(params: {
+  kind: LanguageSentenceLessonKind;
+  lessonId: string;
+  startedAt?: number;
+  steps: LanguageSentenceCompletionStep[];
+}): CompletionInput {
+  const startedAt = params.startedAt ?? Date.now() - 10_000;
+
+  return {
+    answers: Object.fromEntries(
+      params.steps.map((step) => buildLanguageSentenceAnswerEntry({ kind: params.kind, step })),
+    ),
+    lessonId: params.lessonId,
+    localDate: todayLocalDate(),
+    startedAt,
+    stepTimings: Object.fromEntries(
+      params.steps.map((step) => buildStepTimingEntry({ startedAt, stepId: step.id })),
+    ),
+  };
+}
+
+/**
+ * The fixture answer text is a single token, so the correct sentence-bank
+ * answer is the one-word arrangement containing that exact text.
+ */
+function buildLanguageSentenceAnswerEntry({
+  kind,
+  step,
+}: {
+  kind: LanguageSentenceLessonKind;
+  step: LanguageSentenceCompletionStep;
+}): [string, CompletionInput["answers"][string]] {
+  return [step.id, buildLanguageSentenceAnswer({ kind, step })];
+}
+
+/**
+ * Returning concrete discriminated-union members keeps the completion input
+ * typed exactly like the player submission instead of relying on a widened
+ * `reading | listening` kind.
+ */
+function buildLanguageSentenceAnswer({
+  kind,
+  step,
+}: {
+  kind: LanguageSentenceLessonKind;
+  step: LanguageSentenceCompletionStep;
+}): CompletionInput["answers"][string] {
+  if (kind === "reading") {
+    return { arrangedWords: [step.answerText], kind: "reading" };
+  }
+
+  return { arrangedWords: [step.answerText], kind: "listening" };
 }
 
 /**
@@ -521,6 +686,125 @@ describe(submitPlayerCompletion, () => {
     expect(writes.lessonProgress).toBeNull();
     expect(writes.stepAttempts).toHaveLength(0);
     expect(writes.userProgress).toBeNull();
+  });
+
+  it("persists reading completion when the six visible sentence answers are submitted", async () => {
+    const [user, { chapter, organization }] = await Promise.all([
+      userFixture(),
+      createChapterContext(),
+    ]);
+
+    const { lesson, steps } = await createLanguageSentenceLesson({
+      chapterId: chapter.id,
+      kind: "reading",
+      organizationId: organization.id,
+      stepCount: LANGUAGE_SENTENCE_STEP_LIMIT + 2,
+    });
+
+    const visibleSteps = steps.slice(0, LANGUAGE_SENTENCE_STEP_LIMIT);
+
+    await submitPlayerCompletion({
+      input: buildLanguageSentenceCompletionInput({
+        kind: "reading",
+        lessonId: lesson.id,
+        steps: visibleSteps,
+      }),
+      userId: user.id,
+    });
+
+    const [lessonProgress, stepAttempts] = await Promise.all([
+      prisma.lessonProgress.findUnique({
+        where: { userLesson: { lessonId: lesson.id, userId: user.id } },
+      }),
+      prisma.stepAttempt.findMany({
+        where: { stepId: { in: steps.map((step) => step.id) }, userId: user.id },
+      }),
+    ]);
+
+    expect(lessonProgress?.completedAt).toBeInstanceOf(Date);
+    expect(stepAttempts).toHaveLength(LANGUAGE_SENTENCE_STEP_LIMIT);
+
+    expect(new Set(stepAttempts.map((attempt) => attempt.stepId))).toStrictEqual(
+      new Set(visibleSteps.map((step) => step.id)),
+    );
+  });
+
+  it("persists listening completion when the six visible translated sentence answers are submitted", async () => {
+    const [user, { chapter, organization }] = await Promise.all([
+      userFixture(),
+      createChapterContext(),
+    ]);
+
+    const { lesson, steps } = await createLanguageSentenceLesson({
+      chapterId: chapter.id,
+      kind: "listening",
+      organizationId: organization.id,
+      stepCount: LANGUAGE_SENTENCE_STEP_LIMIT + 2,
+    });
+
+    const visibleSteps = steps.slice(0, LANGUAGE_SENTENCE_STEP_LIMIT);
+
+    await submitPlayerCompletion({
+      input: buildLanguageSentenceCompletionInput({
+        kind: "listening",
+        lessonId: lesson.id,
+        steps: visibleSteps,
+      }),
+      userId: user.id,
+    });
+
+    const [lessonProgress, stepAttempts] = await Promise.all([
+      prisma.lessonProgress.findUnique({
+        where: { userLesson: { lessonId: lesson.id, userId: user.id } },
+      }),
+      prisma.stepAttempt.findMany({
+        where: { stepId: { in: steps.map((step) => step.id) }, userId: user.id },
+      }),
+    ]);
+
+    expect(lessonProgress?.completedAt).toBeInstanceOf(Date);
+    expect(stepAttempts).toHaveLength(LANGUAGE_SENTENCE_STEP_LIMIT);
+
+    expect(new Set(stepAttempts.map((attempt) => attempt.stepId))).toStrictEqual(
+      new Set(visibleSteps.map((step) => step.id)),
+    );
+  });
+
+  it("rejects reading completion when fewer than six visible sentence answers are submitted", async () => {
+    const [user, { chapter, organization }] = await Promise.all([
+      userFixture(),
+      createChapterContext(),
+    ]);
+
+    const { lesson, steps } = await createLanguageSentenceLesson({
+      chapterId: chapter.id,
+      kind: "reading",
+      organizationId: organization.id,
+      stepCount: LANGUAGE_SENTENCE_STEP_LIMIT + 2,
+    });
+
+    const partialSteps = steps.slice(0, LANGUAGE_SENTENCE_STEP_LIMIT - 1);
+
+    await submitPlayerCompletion({
+      input: buildLanguageSentenceCompletionInput({
+        kind: "reading",
+        lessonId: lesson.id,
+        steps: partialSteps,
+      }),
+      userId: user.id,
+    });
+
+    const [lessonProgress, stepAttempts] = await Promise.all([
+      prisma.lessonProgress.findUnique({
+        where: { userLesson: { lessonId: lesson.id, userId: user.id } },
+      }),
+      prisma.stepAttempt.findMany({
+        where: { stepId: { in: steps.map((step) => step.id) }, userId: user.id },
+      }),
+    ]);
+
+    expect(lessonProgress).toBeNull();
+    expect(stepAttempts).toHaveLength(0);
   });
 
   it("persists completion when every interactive answer is present but incorrect", async () => {

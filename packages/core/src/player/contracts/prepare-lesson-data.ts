@@ -23,6 +23,7 @@ import {
   toSentenceWordInputs,
 } from "./_utils/lesson-data-mappers";
 import { buildSentenceWordOptions, buildWordBankOptions } from "./build-word-bank-options";
+import { getPlayableLessonSteps } from "./playable-lesson-steps";
 import {
   type TranslationOption,
   buildDistractorWordLookup,
@@ -325,7 +326,9 @@ function buildSerializedLesson(
  * serialization, shuffling, or derived option building after ids were standardized to UUIDs.
  */
 export function preparePlayerLessonData(params: PreparePlayerLessonInput): SerializedLesson {
-  const steps = params.steps ?? params.lesson.steps;
+  const steps = getPlayableLessonSteps({
+    lesson: { kind: params.lesson.kind, steps: params.steps ?? params.lesson.steps },
+  });
 
   return buildSerializedLesson(
     {

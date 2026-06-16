@@ -5,6 +5,8 @@ import { preparePlayerLessonData } from "./prepare-lesson-data";
 
 vi.mock("@zoonk/utils/shuffle", () => ({ shuffle: vi.fn(<T>(items: T[]) => items) }));
 
+const LANGUAGE_SENTENCE_STEP_LIMIT = 6;
+
 type PreparePlayerLessonInput = Parameters<typeof preparePlayerLessonData>[0];
 type LessonInput = PreparePlayerLessonInput["lesson"];
 type RawStep = LessonInput["steps"][number];
@@ -612,6 +614,63 @@ describe(preparePlayerLessonData, () => {
     const selectImageContent = parseStepContent("selectImage", selectImageStep.content);
 
     expect(selectImageContent.options.map(({ id }) => id)).toStrictEqual(["image-2", "image-1"]);
+  });
+
+  it("shuffles and caps reading lesson steps during serialization", () => {
+    shuffleMock.mockImplementationOnce((items) => items.toReversed());
+
+    const steps = Array.from({ length: LANGUAGE_SENTENCE_STEP_LIMIT + 2 }, (_, index) =>
+      makeStep({ id: String(index + 1), kind: "reading", position: index }),
+    );
+
+    const result = prepare({ lesson: makeLesson(steps, { kind: "reading" }) });
+
+    expect(result.steps.map((step) => step.id)).toStrictEqual(
+      steps
+        .toReversed()
+        .slice(0, LANGUAGE_SENTENCE_STEP_LIMIT)
+        .map((step) => step.id),
+    );
+  });
+
+  it("shuffles and caps listening lesson steps during serialization", () => {
+    shuffleMock.mockImplementationOnce((items) => items.toReversed());
+
+    const steps = Array.from({ length: LANGUAGE_SENTENCE_STEP_LIMIT + 2 }, (_, index) =>
+      makeStep({ id: String(index + 1), kind: "listening", position: index }),
+    );
+
+    const result = prepare({ lesson: makeLesson(steps, { kind: "listening" }) });
+
+    expect(result.steps.map((step) => step.id)).toStrictEqual(
+      steps
+        .toReversed()
+        .slice(0, LANGUAGE_SENTENCE_STEP_LIMIT)
+        .map((step) => step.id),
+    );
+  });
+
+  it("keeps every step for non-sentence lesson kinds", () => {
+    const steps = Array.from({ length: 8 }, (_, index) =>
+      makeStep({
+        content: { text: `Step ${index + 1}`, title: `Step ${index + 1}`, variant: "text" },
+        id: String(index + 1),
+        position: index,
+      }),
+    );
+
+    const result = prepare({ lesson: makeLesson(steps, { kind: "explanation" }) });
+
+    expect(result.steps.map((step) => step.id)).toStrictEqual([
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+    ]);
   });
 
   it("builds reading and listening word banks from stored distractors only", () => {
