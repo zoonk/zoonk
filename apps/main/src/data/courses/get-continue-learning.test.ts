@@ -466,7 +466,7 @@ describe("authenticated users", () => {
 
     const course = await courseFixture({
       isPublished: true,
-      mode: "quickLesson",
+      mode: "quick",
       organizationId: null,
       userId: user.id,
     });

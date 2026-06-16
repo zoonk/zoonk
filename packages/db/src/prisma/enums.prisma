@@ -37,10 +37,11 @@ enum StepKind {
 }
 
 enum CourseMode {
+  exam
   full
-  quickLesson  @map("quick_lesson")
+  overview
   personalized
-  examPrep     @map("exam_prep")
+  quick
 }
 
 enum SubscriptionProvider {
