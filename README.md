@@ -5,7 +5,7 @@
 </picture>
 
 <p align="center">
-  The open-source platform for interactive learning.
+  Turn any topic into clear, structured lessons.
   <br />
   <br />
   <a href="https://www.zoonk.com">Try for free</a>
