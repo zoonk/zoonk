@@ -47,6 +47,19 @@ function getStaticCompleted({ dayIndex, isCurrent }: { dayIndex: number; isCurre
 }
 
 /**
+ * The visible total-learning-time cards should match the completed lesson row
+ * seeded for the authenticated e2e learner, so only that completed current-day
+ * progress row receives a duration.
+ */
+function getTimeSpentSeconds({ dayIndex, isCurrent }: { dayIndex: number; isCurrent: boolean }) {
+  if (isCurrent && dayIndex === 0) {
+    return COMPLETED_LESSON_DURATION_SECONDS;
+  }
+
+  return 0;
+}
+
+/**
  * Build a small but stable group of dates for a reporting window.
  * The e2e progress dashboards only need enough rows to exercise grouping,
  * comparisons, and gap handling. Centralizing those rows here keeps account
@@ -73,6 +86,7 @@ function buildGroupDates(today: Date, range: { start: Date; end: Date }, isCurre
       energyAtEnd: getEnergyAtEnd({ dayIndex, isCurrent }),
       incorrectAnswers: isCurrent ? CURRENT_MONTH_INCORRECT : PREVIOUS_MONTH_INCORRECT,
       staticCompleted: getStaticCompleted({ dayIndex, isCurrent }),
+      timeSpentSeconds: getTimeSpentSeconds({ dayIndex, isCurrent }),
     };
   }).filter((entry): entry is NonNullable<typeof entry> => entry !== null);
 }

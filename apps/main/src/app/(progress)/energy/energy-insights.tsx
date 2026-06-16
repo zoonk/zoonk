@@ -14,6 +14,7 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 import { CalendarDays, ZapIcon } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
+import { getProgressInsightDateLabel } from "../_components/progress-insight-date-label";
 import { getProgressInsightPeriodLabel } from "../_components/progress-insight-period-label";
 
 /**
@@ -69,12 +70,7 @@ async function HighestEnergyDayCard({
 }) {
   const t = await getExtracted();
 
-  const formattedDate = new Intl.DateTimeFormat(locale, {
-    day: "numeric",
-    month: "short",
-    timeZone: "UTC",
-    year: "numeric",
-  }).format(date);
+  const formattedDate = getProgressInsightDateLabel({ date, locale });
 
   const formattedEnergy = new Intl.NumberFormat(locale, {
     maximumFractionDigits: 1,

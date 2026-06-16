@@ -1,4 +1,8 @@
 import { getProgressDayCountLabel } from "@/components/progress/progress-day-count-label";
+import {
+  TotalLearningTimeCard,
+  TotalLearningTimeCardSkeleton,
+} from "@/components/progress/total-learning-time-card";
 import { getLevelInsights } from "@/data/progress/get-level-insights";
 import {
   FeatureCard,
@@ -14,11 +18,13 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 import { BrainIcon, CalendarDays } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
+import { getProgressInsightDateLabel } from "../_components/progress-insight-date-label";
 import { getProgressInsightPeriodLabel } from "../_components/progress-insight-period-label";
 
 /**
- * Level insights add calendar context to Brain Power: the best learning day and
- * how often the learner completed at least one lesson in the selected window.
+ * Level insights add calendar context to Brain Power: the best learning day,
+ * how often the learner completed lessons, and how much lesson time they logged
+ * in the selected window.
  */
 export async function LevelInsights({
   period,
@@ -50,6 +56,12 @@ export async function LevelInsights({
       )}
 
       <LearningDaysCard count={insights.learningDays} periodLabel={periodLabel} />
+
+      <TotalLearningTimeCard
+        labelId="level-total-learning-time-label"
+        subtitle={periodLabel}
+        totalLearningSeconds={insights.totalLearningSeconds}
+      />
     </div>
   );
 }
@@ -71,13 +83,7 @@ async function HighestBpCard({
 }) {
   const t = await getExtracted();
 
-  const formattedDate = new Intl.DateTimeFormat(locale, {
-    day: "numeric",
-    month: "short",
-    timeZone: "UTC",
-    year: "numeric",
-  }).format(date);
-
+  const formattedDate = getProgressInsightDateLabel({ date, locale });
   const formattedBrainPower = new Intl.NumberFormat(locale).format(brainPower);
 
   return (
@@ -129,7 +135,7 @@ async function LearningDaysCard({ count, periodLabel }: { count: number; periodL
 }
 
 /**
- * Keep the Level page skeleton aligned with the two loaded insight cards.
+ * Keep the Level page skeleton aligned with the loaded insight cards.
  */
 export function LevelInsightsSkeleton() {
   return (
@@ -149,6 +155,8 @@ export function LevelInsightsSkeleton() {
           <Skeleton className="h-3 w-full max-w-28" />
         </FeatureCardBody>
       </FeatureCard>
+
+      <TotalLearningTimeCardSkeleton />
     </div>
   );
 }

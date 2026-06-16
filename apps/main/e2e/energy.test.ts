@@ -1,4 +1,4 @@
-import { getCurrentUtcProgressInsightDateLabel } from "./_utils/progress-insight-date";
+import { getProgressInsightDateLabel } from "../src/app/(progress)/_components/progress-insight-date-label";
 import { expect, test } from "./fixtures";
 
 test.describe("Energy Page", () => {
@@ -54,7 +54,7 @@ test.describe("Energy Page", () => {
       });
 
       const fullEnergyCard = authenticatedPage.getByRole("article", { name: /full energy/iu });
-      const todayLabel = getCurrentUtcProgressInsightDateLabel();
+      const todayLabel = getProgressInsightDateLabel({ date: new Date(), locale: "en" });
 
       await expect(highestEnergyCard).toContainText(`${todayLabel} with 100%`);
       await expect(highestEnergyCard).toContainText("This month");

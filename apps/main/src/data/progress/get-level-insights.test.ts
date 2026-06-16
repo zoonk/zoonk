@@ -31,6 +31,7 @@ describe("authenticated users", () => {
           date: new Date("2025-01-05T00:00:00Z"),
           dayOfWeek: 0,
           staticCompleted: 1,
+          timeSpentSeconds: 60,
           userId: user.id,
         },
         {
@@ -38,6 +39,7 @@ describe("authenticated users", () => {
           date: new Date("2025-01-06T00:00:00Z"),
           dayOfWeek: 1,
           interactiveCompleted: 1,
+          timeSpentSeconds: 120,
           userId: user.id,
         },
         {
@@ -52,6 +54,7 @@ describe("authenticated users", () => {
           date: new Date("2025-02-01T00:00:00Z"),
           dayOfWeek: 6,
           interactiveCompleted: 1,
+          timeSpentSeconds: 600,
           userId: user.id,
         },
       ],
@@ -71,5 +74,6 @@ describe("authenticated users", () => {
     });
 
     expect(result?.learningDays).toBe(3);
+    expect(result?.totalLearningSeconds).toBe(180);
   });
 });

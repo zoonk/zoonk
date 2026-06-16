@@ -14,6 +14,7 @@ export async function dailyProgressFixtureMany(
     interactiveCompleted?: number;
     incorrectAnswers?: number;
     staticCompleted?: number;
+    timeSpentSeconds?: number;
     userId: string;
   }[],
 ) {
@@ -27,6 +28,7 @@ export async function dailyProgressFixtureMany(
       incorrectAnswers: input.incorrectAnswers ?? 0,
       interactiveCompleted: input.interactiveCompleted ?? 0,
       staticCompleted: input.staticCompleted ?? 0,
+      timeSpentSeconds: input.timeSpentSeconds ?? 0,
       userId: input.userId,
     })),
   });
