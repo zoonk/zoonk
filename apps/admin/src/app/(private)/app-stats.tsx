@@ -15,7 +15,7 @@ export function AppStats() {
         <EngagementStats />
       </Suspense>
 
-      <Suspense fallback={<StatsSectionSkeleton items={6} />}>
+      <Suspense fallback={<StatsSectionSkeleton items={5} />}>
         <ContentStats />
       </Suspense>
     </div>
@@ -27,7 +27,7 @@ export function AppStatsFallback() {
     <div className="flex flex-col gap-12">
       <StatsSectionSkeleton items={4} />
       <StatsSectionSkeleton items={6} />
-      <StatsSectionSkeleton items={6} />
+      <StatsSectionSkeleton items={5} />
     </div>
   );
 }

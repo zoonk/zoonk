@@ -34,12 +34,3 @@ export async function requireAdminRouteAccess() {
 
   return session;
 }
-
-/**
- * Read-only admin data helpers use a boolean guard when the safest fallback is
- * an empty result instead of interrupting the whole route render.
- */
-export async function isAdmin() {
-  const session = await getSession();
-  return session?.user.role === "admin";
-}

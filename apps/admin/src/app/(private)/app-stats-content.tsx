@@ -1,18 +1,18 @@
 import { Stats } from "@/components/stats";
 import { StatsSection } from "@/components/stats-section";
+import { countCourseSuggestionPrompts } from "@/data/course-suggestions/list-course-suggestion-prompts";
 import { countContent } from "@/data/stats/count-content";
 import { countCourses } from "@/data/stats/count-courses";
-import { countTotalPendingReviews } from "@/data/stats/count-total-pending-reviews";
-import { AlertCircleIcon, BookOpenIcon, LayersIcon } from "lucide-react";
+import { BookOpenIcon, LayersIcon, MessageSquareTextIcon } from "lucide-react";
 import { connection } from "next/server";
 
 export async function ContentStats() {
   await connection();
 
-  const [totalCourses, content, pendingReviews] = await Promise.all([
+  const [totalCourses, content, promptCount] = await Promise.all([
     countCourses(),
     countContent(),
-    countTotalPendingReviews(),
+    countCourseSuggestionPrompts(),
   ]);
 
   return (
@@ -47,11 +47,11 @@ export async function ContentStats() {
       />
 
       <Stats
-        help="Content awaiting admin review"
-        href="/review"
-        icon={<AlertCircleIcon />}
-        title="Pending Reviews"
-        value={pendingReviews.toLocaleString()}
+        help="Course suggestion prompts submitted by learners"
+        href="/course-suggestions"
+        icon={<MessageSquareTextIcon />}
+        title="Course Prompts"
+        value={promptCount.toLocaleString()}
       />
     </StatsSection>
   );
