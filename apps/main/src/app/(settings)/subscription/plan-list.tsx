@@ -19,6 +19,7 @@ import { FREE_PLAN, getPlanTier } from "@zoonk/utils/subscription";
 import { Loader2Icon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
 import { useState } from "react";
+import { getLargestYearlySavings } from "./_utils/billing-savings";
 
 type PlanData = {
   annualLookupKey: string | null;
@@ -63,6 +64,13 @@ export function PlanList({
   const isLoading = state === "loading";
   const showCTA = cta.action !== "manage" || currentPlanName !== "free";
   const selectedTitle = titles[selected.name] ?? selected.name;
+  const yearlySavings = getLargestYearlySavings(plans);
+
+  const yearlySavingsLabel = yearlySavings
+    ? t("Save up to {amount}", {
+        amount: formatPrice(yearlySavings.amount, yearlySavings.currency),
+      })
+    : null;
 
   const ctaLabel = {
     cancel: t("Cancel"),
@@ -127,7 +135,15 @@ export function PlanList({
       >
         <TabsList>
           <TabsTrigger value="monthly">{t("Monthly")}</TabsTrigger>
-          <TabsTrigger value="yearly">{t("Yearly")}</TabsTrigger>
+          <TabsTrigger value="yearly">
+            {t("Yearly")}
+
+            {yearlySavingsLabel && (
+              <Badge className="h-4 px-1.5 text-[10px] leading-none" variant="success">
+                {yearlySavingsLabel}
+              </Badge>
+            )}
+          </TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -203,7 +219,7 @@ function PlanRow({
         </FieldContent>
 
         <div className="flex items-center gap-3">
-          <span className="text-muted-foreground text-sm">{displayPrice}</span>
+          <span className="text-info text-sm font-medium tabular-nums">{displayPrice}</span>
           <RadioGroupItem aria-label={title} id={`plan-${plan.name}`} value={plan.name} />
         </div>
       </Field>
