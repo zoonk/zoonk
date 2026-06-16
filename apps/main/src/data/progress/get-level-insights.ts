@@ -6,21 +6,28 @@ import { getCompletedLessonDayWhere } from "./_utils/completed-lesson-day-where"
 import { getProgressDateFilter } from "./_utils/progress-date-filter";
 
 type HighestBpDayData = { brainPower: number; date: Date };
-type LevelInsightsData = { highestBpDay: HighestBpDayData | null; learningDays: number };
+
+type LevelInsightsData = {
+  highestBpDay: HighestBpDayData | null;
+  learningDays: number;
+  totalLearningSeconds: number;
+};
 
 /**
  * A period can have progress rows without any BP earned, for example when only
- * energy decay rows exist. In that case the learning-day card can still report
- * zero while the highest-BP card stays hidden.
+ * energy decay rows exist. In that case the learning-day and learning-time cards
+ * can still report zero while the highest-BP card stays hidden.
  */
 function buildLevelInsights({
   highestBpDay,
   learningDays,
   periodProgress,
+  totalLearningSeconds,
 }: {
   highestBpDay: { brainPowerEarned: number; date: Date } | null;
   learningDays: number;
   periodProgress: { date: Date } | null;
+  totalLearningSeconds: number;
 }): LevelInsightsData | null {
   if (!periodProgress) {
     return null;
@@ -31,6 +38,7 @@ function buildLevelInsights({
       ? { brainPower: highestBpDay.brainPowerEarned, date: highestBpDay.date }
       : null,
     learningDays,
+    totalLearningSeconds,
   };
 }
 
@@ -49,16 +57,25 @@ const cachedGetLevelInsights = cache(
     const userId = session.user.id;
     const dateFilter = getProgressDateFilter({ endDateIso, startDateIso });
 
-    const [periodProgress, highestBpDay, learningDays] = await Promise.all([
+    const [periodProgress, highestBpDay, learningDays, totalLearningTime] = await Promise.all([
       prisma.dailyProgress.findFirst({ where: { date: dateFilter, userId } }),
       prisma.dailyProgress.findFirst({
         orderBy: [{ brainPowerEarned: "desc" }, { date: "desc" }],
         where: { brainPowerEarned: { gt: 0 }, date: dateFilter, userId },
       }),
       prisma.dailyProgress.count({ where: getCompletedLessonDayWhere({ dateFilter, userId }) }),
+      prisma.dailyProgress.aggregate({
+        _sum: { timeSpentSeconds: true },
+        where: { date: dateFilter, userId },
+      }),
     ]);
 
-    return buildLevelInsights({ highestBpDay, learningDays, periodProgress });
+    return buildLevelInsights({
+      highestBpDay,
+      learningDays,
+      periodProgress,
+      totalLearningSeconds: totalLearningTime._sum.timeSpentSeconds ?? 0,
+    });
   },
 );
 

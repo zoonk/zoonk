@@ -28,13 +28,13 @@ export async function LearningDays({ learningDays }: { learningDays: number }) {
 
   return (
     <FeatureCardLink render={<Link href={levelMenu.url} prefetch />}>
-      <FeatureCard>
+      <FeatureCard aria-labelledby="home-learning-days-label">
         <FeatureCardHeader>
           <FeatureCardHeaderContent>
             <FeatureCardIcon>
               <CalendarDays />
             </FeatureCardIcon>
-            <FeatureCardLabel>{t("Learning days")}</FeatureCardLabel>
+            <FeatureCardLabel id="home-learning-days-label">{t("Learning days")}</FeatureCardLabel>
           </FeatureCardHeaderContent>
           <FeatureCardIndicator />
         </FeatureCardHeader>

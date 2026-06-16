@@ -4,6 +4,7 @@ import { getBestTime } from "@/data/progress/get-best-time";
 import { getEnergyLevel } from "@/data/progress/get-energy-level";
 import { getScore } from "@/data/progress/get-score";
 import { getTotalLearningDays } from "@/data/progress/get-total-learning-days";
+import { getTotalLearningTime } from "@/data/progress/get-total-learning-time";
 import { FeatureCardSectionTitle } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { getExtracted } from "next-intl/server";
@@ -11,21 +12,30 @@ import { BestDay, BestDaySkeleton } from "./best-day";
 import { BestTime, BestTimeSkeleton } from "./best-time";
 import { Energy, EnergySkeleton } from "./energy";
 import { LearningDays, LearningDaysSkeleton } from "./learning-days";
+import { LearningTime, LearningTimeSkeleton } from "./learning-time";
 import { Level, LevelSkeleton } from "./level";
 import { Score, ScoreSkeleton } from "./score";
 
 export async function Progress() {
   const t = await getExtracted();
 
-  const [energyData, beltData, learningDaysData, scoreData, bestDayData, bestTimeData] =
-    await Promise.all([
-      getEnergyLevel(),
-      getBeltLevel(),
-      getTotalLearningDays(),
-      getScore(),
-      getBestDay(),
-      getBestTime(),
-    ]);
+  const [
+    energyData,
+    beltData,
+    learningDaysData,
+    learningTimeData,
+    scoreData,
+    bestDayData,
+    bestTimeData,
+  ] = await Promise.all([
+    getEnergyLevel(),
+    getBeltLevel(),
+    getTotalLearningDays(),
+    getTotalLearningTime(),
+    getScore(),
+    getBestDay(),
+    getBestTime(),
+  ]);
 
   return (
     <section aria-labelledby="progress-title" className="flex flex-col gap-3 py-4 md:py-6">
@@ -47,6 +57,10 @@ export async function Progress() {
 
         {learningDaysData && <LearningDays learningDays={learningDaysData.learningDays} />}
 
+        {learningTimeData && (
+          <LearningTime totalLearningSeconds={learningTimeData.totalLearningSeconds} />
+        )}
+
         {scoreData && <Score score={scoreData.score} />}
 
         {bestDayData && <BestDay dayOfWeek={bestDayData.dayOfWeek} score={bestDayData.score} />}
@@ -66,6 +80,7 @@ export function ProgressSkeleton() {
         <EnergySkeleton />
         <LevelSkeleton />
         <LearningDaysSkeleton />
+        <LearningTimeSkeleton />
         <ScoreSkeleton />
         <BestDaySkeleton />
         <BestTimeSkeleton />

@@ -1,4 +1,4 @@
-import { getCurrentUtcProgressInsightDateLabel } from "./_utils/progress-insight-date";
+import { getProgressInsightDateLabel } from "../src/app/(progress)/_components/progress-insight-date-label";
 import { expect, test } from "./fixtures";
 
 test.describe("Level Page", () => {
@@ -61,12 +61,17 @@ test.describe("Level Page", () => {
 
       const highestBpCard = authenticatedPage.getByRole("article", { name: /highest bp/iu });
       const learningDaysCard = authenticatedPage.getByRole("article", { name: /learning days/iu });
-      const todayLabel = getCurrentUtcProgressInsightDateLabel();
+
+      const learningTimeCard = authenticatedPage.getByRole("article", { name: /learning time/iu });
+
+      const todayLabel = getProgressInsightDateLabel({ date: new Date(), locale: "en" });
 
       await expect(highestBpCard).toContainText(`${todayLabel} with 250 BP`);
       await expect(highestBpCard).toContainText("This month");
       await expect(learningDaysCard).toContainText("1 day");
       await expect(learningDaysCard).toContainText("This month");
+      await expect(learningTimeCard).toContainText("2 min");
+      await expect(learningTimeCard).toContainText("This month");
     });
 
     test("switching to 6 months shows different comparison text", async ({ authenticatedPage }) => {

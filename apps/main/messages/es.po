@@ -236,6 +236,10 @@ msgstr "Días de estudio"
 msgid "QbNcMh"
 msgstr "Al menos una lección completada"
 
+#: src/app/(catalog)/(home)/learning-time.tsx
+msgid "F6B8A3"
+msgstr "Tiempo dedicado a lecciones"
+
 #: src/app/(catalog)/(home)/level.tsx
 #: src/app/(progress)/level/level-stats.tsx
 msgid "pgt3eW"
@@ -1861,6 +1865,30 @@ msgstr "Algo salió mal"
 #: src/components/progress/progress-day-count-label.ts
 msgid "r9koty"
 msgstr "{count, plural, =0 {# días} one {# día} other {# días}}"
+
+#: src/components/progress/progress-learning-time-label.ts
+msgid "tRA46q"
+msgstr "0 min"
+
+#: src/components/progress/progress-learning-time-label.ts
+msgid "yMhrnF"
+msgstr "{seconds, plural, one {# s} other {# s}}"
+
+#: src/components/progress/progress-learning-time-label.ts
+msgid "a-oHjQ"
+msgstr "{minutes, plural, one {# min} other {# min}}"
+
+#: src/components/progress/progress-learning-time-label.ts
+msgid "QqnZaw"
+msgstr "{hours, plural, one {# h} other {# h}}"
+
+#: src/components/progress/progress-learning-time-label.ts
+msgid "Frd5VU"
+msgstr "{hours, plural, one {# h} other {# h}} {minutes, plural, one {# min} other {# min}}"
+
+#: src/components/progress/total-learning-time-card.tsx
+msgid "-V74AY"
+msgstr "Tiempo de estudio"
 
 #: src/components/subscription/upgrade-cta.tsx
 msgid "IS_YjO"
