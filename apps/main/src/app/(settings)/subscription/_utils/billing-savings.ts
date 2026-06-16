@@ -13,7 +13,17 @@ export function getLargestYearlySavings(plans: PlanPrices[]): PriceInfo | null {
     .map((plan) => getYearlySavings(plan))
     .filter((yearlySavings) => isPriceInfo(yearlySavings));
 
-  return savings.toSorted(compareSavingsDescending)[0] ?? null;
+  const displayCurrency = savings[0]?.currency;
+
+  if (!displayCurrency) {
+    return null;
+  }
+
+  const comparableSavings = savings.filter(
+    (yearlySavings) => yearlySavings.currency === displayCurrency,
+  );
+
+  return comparableSavings.toSorted(compareSavingsDescending)[0] ?? null;
 }
 
 /**

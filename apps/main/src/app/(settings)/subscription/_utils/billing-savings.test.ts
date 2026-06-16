@@ -32,4 +32,19 @@ describe(getLargestYearlySavings, () => {
 
     expect(savings).toBeNull();
   });
+
+  it("does not compare savings amounts across different currencies", () => {
+    const savings = getLargestYearlySavings([
+      {
+        monthlyPrice: { amount: 5000, currency: "brl" },
+        yearlyPrice: { amount: 50_000, currency: "brl" },
+      },
+      {
+        monthlyPrice: { amount: 2000, currency: "usd" },
+        yearlyPrice: { amount: 12_000, currency: "usd" },
+      },
+    ]);
+
+    expect(savings).toStrictEqual({ amount: 10_000, currency: "brl" });
+  });
 });
