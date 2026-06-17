@@ -79,6 +79,14 @@ export function trackLessonCompleted(input: LessonCompletionEventInput) {
 }
 
 /**
+ * Counts when the course goal form is visible, regardless of whether the
+ * learner reached it from `/learn`, `/`, or another reusable placement.
+ */
+export function trackLearnForm() {
+  trackEvent({ name: "Learn Form" });
+}
+
+/**
  * Reports completed subscription checkouts after Stripe confirms the purchase
  * so analytics count real conversions instead of checkout button clicks.
  */
@@ -104,14 +112,6 @@ export function trackSubscriptionCheckoutStarted({
   plan: string;
 }) {
   trackEvent({ name: "Subscription Checkout Started", properties: { billingPeriod, plan } });
-}
-
-/**
- * Counts zero-progress home visits where the learner actually saw the main
- * creation hero instead of the authenticated progress dashboard.
- */
-export function trackHeroShown() {
-  trackEvent({ name: "Hero Shown" });
 }
 
 /**

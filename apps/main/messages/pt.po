@@ -14,11 +14,6 @@ msgid "U3l-Q9"
 msgstr "Página inicial"
 
 #: src/app/(catalog)/_components/command-palette.tsx
-#: src/app/(catalog)/_components/navbar-links.tsx
-msgid "R85gsW"
-msgstr "Cursos"
-
-#: src/app/(catalog)/_components/command-palette.tsx
 msgid "L6kaJv"
 msgstr "Aprenda algo"
 
@@ -94,6 +89,10 @@ msgstr "Sair"
 #: src/app/(catalog)/_components/command-palette.tsx
 msgid "SENRqu"
 msgstr "Ajuda"
+
+#: src/app/(catalog)/_components/command-palette.tsx
+msgid "R85gsW"
+msgstr "Cursos"
 
 #: src/app/(catalog)/_components/command-palette.tsx
 msgid "Do1Pfd"
@@ -208,147 +207,6 @@ msgstr "Energia"
 #: src/app/(catalog)/(home)/energy.tsx
 msgid "C7ROJx"
 msgstr "Sua energia está em {value}%"
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "F7f6bJ"
-msgstr "Aprenda o que importa"
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "mFdKy1"
-msgstr "Passe nas provas. Aprenda idiomas. Desenvolva habilidades. Conquiste o trabalho dos sonhos. Estudar com o Zoonk é fácil, claro e prático."
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "i7IHHZ"
-msgstr "Teste grátis"
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "u3noaU"
-msgstr "Não precisa de cartão de crédito."
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "b6dFV2"
-msgstr "Teste sem compromisso."
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "W_1wLS"
-msgstr "Por que estudar parece tão difícil?"
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "rUC9KA"
-msgstr "Muita aula complica o que deveria ser simples. Muito estudo vira decoreba. E, com vídeo, PDF, anotação e IA pra todo lado, você continua sem saber por onde começar."
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "yd8MxR"
-msgstr "O Zoonk deixa tudo mastigadinho: aulas curtas, linguagem simples, exemplos do dia a dia, quizzes, exercícios e situações reais para entender a teoria na prática."
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "GLMfdK"
-msgstr "Diga seu objetivo e siga um passo de cada vez, sem ficar pulando entre vídeo, PDF, anotação e chat de IA."
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "dcyc_u"
-msgstr "Um caminho, não mil abas abertas"
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "bvynQk"
-msgstr "A gente quebra assuntos difíceis sem jargão, sem enrolação e sem aula que complica o que deveria ser simples."
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "rBBKNr"
-msgstr "Linguagem simples, sem ruído acadêmico"
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "77gA5w"
-msgstr "Veja como as ideias aparecem no dia a dia, no trabalho e nas decisões que você precisa resolver."
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "xKYp3h"
-msgstr "Exemplos reais, não teoria solta"
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "iuNq-Z"
-msgstr "Use quizzes, exercícios, exemplos e cenários para resolver problemas em vez de só assistir explicação."
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "MR0hb4"
-msgstr "Prática que faz pensar"
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "8iVdxW"
-msgstr "Veja o que você acertou, o que precisa melhorar e se está mantendo ritmo, pra saber o próximo passo."
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "_EUvRF"
-msgstr "Feedback pra não estudar no escuro"
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "SDH1bI"
-msgstr "Como o Zoonk ajuda"
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "wUXg4Q"
-msgstr "Chega de aula chata e decoreba sem sentido"
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "tbojsI"
-msgstr "Aprenda 70 idiomas. Veja a pronúncia do jeito que faz sentido no seu idioma, pra falar sem travar."
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "We_5D-"
-msgstr "Aprenda idiomas"
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "zfV50G"
-msgstr "Precisa de um pré-requisito para uma matéria, projeto ou vaga? Desenvolva a habilidade com aulas claras e exercícios práticos."
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "5rp9p5"
-msgstr "Desenvolva habilidades"
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "po_f41"
-msgstr "Pare de caçar o vídeo ou PDF certo. Siga um curso que explica, te coloca para praticar e acompanha seu progresso em um só lugar."
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "F-T3y7"
-msgstr "Siga cursos guiados"
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "54l-im"
-msgstr "Prepare-se com um caminho que mostra o que estudar, o que já tá bom e o que precisa reforçar, com simulados, quizzes e explicações práticas."
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "dP8fUZ"
-msgstr "Em breve"
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "-MB81o"
-msgstr "Prepare-se para provas"
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "Ca4yug"
-msgstr "Um curso focado nos seus objetivos, nível, interesses, hobbies e realidade, com exemplos que fazem sentido pra você."
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "eosMlL"
-msgstr "Aulas personalizadas"
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "T0Zjcm"
-msgstr "Use o Zoonk para o que importa"
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "fDYYaI"
-msgstr "Comece pelo objetivo que importa agora"
-
-#: src/app/(catalog)/(home)/hero.tsx
-msgid "Cs8rf9"
-msgstr "Disponível agora"
-
-#: src/app/(catalog)/(home)/hero.tsx
-#: src/app/(catalog)/p/[courseId]/page.tsx
-msgid "e61Jf3"
-msgstr "Em breve"
 
 #: src/app/(catalog)/(home)/learning-days.tsx
 #: src/app/(progress)/level/level-insights.tsx
@@ -532,7 +390,6 @@ msgid "P5jxUC"
 msgstr "Cursos online usando IA"
 
 #: src/app/(catalog)/courses/page.tsx
-#: src/app/(catalog)/my/user-course-list.tsx
 msgid "s-Ncqj"
 msgstr "Explorar cursos"
 
@@ -573,6 +430,140 @@ msgstr "Descubra cursos e recursos personalizados para aprender {prompt}. O Zoon
 msgid "X2b6pH"
 msgstr "Aprenda {prompt} com IA"
 
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "l450Bl"
+msgstr "Ciência da Computação"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "ElyVN0"
+msgstr "Psicologia"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+#: src/lib/categories/category.ts
+msgid "KOuDOE"
+msgstr "Economia"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "cHCwbF"
+msgstr "Fotografia"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "zE1J_t"
+msgstr "Filosofia"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "y68y7h"
+msgstr "Ciência de Dados"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "1qsU2j"
+msgstr "Escrita Criativa"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "RGkBg_"
+msgstr "Biologia"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "oiUZCZ"
+msgstr "Design Gráfico"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+#: src/lib/categories/category.ts
+msgid "djJp6c"
+msgstr "História"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "O9mDkA"
+msgstr "Marketing"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "_VD159"
+msgstr "Aprenda qualquer coisa."
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "zfDq-e"
+msgstr "Física quântica"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "oqfOwA"
+msgstr "Filosofia antiga"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "Osb4bp"
+msgstr "Aprendizado de máquina"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "OdZ_n1"
+msgstr "Escrita criativa"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "N9FWiz"
+msgstr "Biologia molecular"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "XFPrU4"
+msgstr "Economia comportamental"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "-0gz_i"
+msgstr "Química orgânica"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "1axOcX"
+msgstr "OVNIs"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "e7q85h"
+msgstr "Extinção dos dinossauros"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "MO2lwh"
+msgstr "Como os vulcões funcionam"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "ZzbdHP"
+msgstr "História mundial"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "XfC6Cs"
+msgstr "Psicologia cognitiva"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "X5XXVF"
+msgstr "Álgebra linear"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "5gOFKJ"
+msgstr "Buracos negros"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "eQHeGX"
+msgstr "Como a internet funciona"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "QOSGzc"
+msgstr "Império Romano"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "gyEihl"
+msgstr "Criaturas do fundo do mar"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "0MqSJ1"
+msgstr "Sistema solar"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "5qPAxv"
+msgstr "Inteligência artificial"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "3WiAG4"
+msgstr "Harry Potter"
+
+#: src/app/(catalog)/learn/learn-content.tsx
+msgid "NvSCuG"
+msgstr "Assuntos sugeridos"
+
 #: src/app/(catalog)/learn/learn-form.tsx
 msgid "uCb1nG"
 msgstr "Digite um assunto"
@@ -584,140 +575,6 @@ msgstr "Conte ao Zoonk o que você quer aprender e receba um curso criado com IA
 #: src/app/(catalog)/learn/page.tsx
 msgid "Zs1QEq"
 msgstr "Aprenda qualquer coisa com IA"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "l450Bl"
-msgstr "Ciência da Computação"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "ElyVN0"
-msgstr "Psicologia"
-
-#: src/app/(catalog)/learn/page.tsx
-#: src/lib/categories/category.ts
-msgid "KOuDOE"
-msgstr "Economia"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "cHCwbF"
-msgstr "Fotografia"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "zE1J_t"
-msgstr "Filosofia"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "y68y7h"
-msgstr "Ciência de Dados"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "1qsU2j"
-msgstr "Escrita Criativa"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "RGkBg_"
-msgstr "Biologia"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "oiUZCZ"
-msgstr "Design Gráfico"
-
-#: src/app/(catalog)/learn/page.tsx
-#: src/lib/categories/category.ts
-msgid "djJp6c"
-msgstr "História"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "O9mDkA"
-msgstr "Marketing"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "_VD159"
-msgstr "Aprenda qualquer coisa."
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "zfDq-e"
-msgstr "Física quântica"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "oqfOwA"
-msgstr "Filosofia antiga"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "Osb4bp"
-msgstr "Aprendizado de máquina"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "OdZ_n1"
-msgstr "Escrita criativa"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "N9FWiz"
-msgstr "Biologia molecular"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "XFPrU4"
-msgstr "Economia comportamental"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "-0gz_i"
-msgstr "Química orgânica"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "1axOcX"
-msgstr "OVNIs"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "e7q85h"
-msgstr "Extinção dos dinossauros"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "MO2lwh"
-msgstr "Como os vulcões funcionam"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "ZzbdHP"
-msgstr "História mundial"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "XfC6Cs"
-msgstr "Psicologia cognitiva"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "X5XXVF"
-msgstr "Álgebra linear"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "5gOFKJ"
-msgstr "Buracos negros"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "eQHeGX"
-msgstr "Como a internet funciona"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "QOSGzc"
-msgstr "Império Romano"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "gyEihl"
-msgstr "Criaturas do fundo do mar"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "0MqSJ1"
-msgstr "Sistema solar"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "5qPAxv"
-msgstr "Inteligência artificial"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "3WiAG4"
-msgstr "Harry Potter"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "NvSCuG"
-msgstr "Assuntos sugeridos"
 
 #: src/app/(catalog)/my/page.tsx
 msgid "riE3I5"
@@ -738,6 +595,14 @@ msgstr "Ainda não há cursos"
 #: src/app/(catalog)/my/user-course-list.tsx
 msgid "azX41u"
 msgstr "Comece a aprender algo novo hoje."
+
+#: src/app/(catalog)/my/user-course-list.tsx
+msgid "9m9h0p"
+msgstr "Começar um curso"
+
+#: src/app/(catalog)/p/[courseId]/page.tsx
+msgid "e61Jf3"
+msgstr "Em breve"
 
 #: src/app/(catalog)/p/[courseId]/page.tsx
 msgid "dtRj3N"

@@ -9,33 +9,12 @@ import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { expect, test } from "./fixtures";
 
 test.describe("Home Page - Unauthenticated", () => {
-  test("shows hero with CTAs that navigate to correct pages", async ({ page }) => {
+  test("shows learn form without redirecting", async ({ page }) => {
     await page.goto("/");
 
-    await expect(page.getByText(/continue learning/iu)).not.toBeVisible();
-
-    const hero = page.getByRole("main");
-
-    await expect(hero.getByRole("heading", { name: /learn what matters/iu })).toBeVisible();
-
-    const startFreeLink = hero.getByRole("link", { name: "Start free" });
-
-    await expect(startFreeLink).toHaveAttribute("href", "/learn");
-
-    await expect(
-      hero.getByRole("link", { name: "Log in to save your progress" }),
-    ).not.toBeVisible();
-
-    await startFreeLink.click();
-
-    await expect(page).toHaveURL(/\/learn$/u);
+    await expect(page).toHaveURL(/\/$/u);
     await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
-  });
-
-  test("does not show progress section", async ({ page }) => {
-    await page.goto("/");
-
-    await expect(page.getByText(/^progress$/iu)).not.toBeVisible();
+    await expect(page.getByLabel(/enter a subject/iu)).toBeVisible();
   });
 });
 
@@ -116,7 +95,7 @@ test.describe("Home Page - Authenticated", () => {
     }
   });
 
-  test("user with progress sees continue learning instead of hero", async ({
+  test("user with progress sees continue learning instead of learn form", async ({
     authenticatedPage,
   }) => {
     await authenticatedPage.goto("/");
@@ -127,24 +106,20 @@ test.describe("Home Page - Authenticated", () => {
     ).toBeVisible();
 
     await expect(
-      authenticatedPage.getByRole("heading", { name: /learn what matters/iu }),
+      authenticatedPage.getByRole("heading", { name: /learn anything/iu }),
     ).not.toBeVisible();
   });
 
-  test("user without progress sees hero section", async ({ userWithoutProgress }) => {
+  test("user without progress sees learn form", async ({ userWithoutProgress }) => {
     await userWithoutProgress.goto("/");
 
     await expect(userWithoutProgress.getByText(/continue learning/iu)).not.toBeVisible();
 
     await expect(
-      userWithoutProgress.getByRole("heading", { name: /learn what matters/iu }),
+      userWithoutProgress.getByRole("heading", { name: /learn anything/iu }),
     ).toBeVisible();
 
-    await expect(userWithoutProgress.getByRole("link", { name: "Start free" })).toBeVisible();
-
-    await expect(
-      userWithoutProgress.getByRole("link", { name: "Log in to save your progress" }),
-    ).not.toBeVisible();
+    await expect(userWithoutProgress.getByLabel(/enter a subject/iu)).toBeVisible();
   });
 
   test("shows pending course when next lesson has no generated lessons", async ({
@@ -213,7 +188,7 @@ test.describe("Home Page - Authenticated", () => {
 
     await expect(page.getByRole("heading", { name: /continue learning/iu }).first()).toBeVisible();
 
-    await expect(page.getByRole("heading", { name: /learn what matters/iu })).not.toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn anything/iu })).not.toBeVisible();
 
     await expect(
       page.getByRole("link", { name: new RegExp(`Next:.*E2E Pending Lesson ${uniqueId}`, "u") }),

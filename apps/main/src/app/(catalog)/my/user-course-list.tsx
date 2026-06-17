@@ -39,8 +39,8 @@ export async function UserCourseList() {
         </EmptyHeader>
 
         <EmptyContent>
-          <Link className={buttonVariants({ variant: "outline" })} href="/courses" prefetch>
-            {t("Explore courses")}
+          <Link className={buttonVariants({ variant: "outline" })} href="/learn" prefetch>
+            {t("Start a course")}
           </Link>
         </EmptyContent>
       </Empty>

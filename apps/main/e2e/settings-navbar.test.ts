@@ -1,11 +1,12 @@
 import { expect, test } from "./fixtures";
 
 test.describe("Settings Navbar", () => {
-  test("home link navigates to home page", async ({ page }) => {
+  test("home link shows the learn form on the home page", async ({ page }) => {
     await page.goto("/subscription");
     await page.getByRole("link", { name: /home page/iu }).click();
 
-    await expect(page.getByRole("heading", { name: /learn what matters/iu })).toBeVisible();
+    await expect(page).toHaveURL(/\/$/u);
+    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
   });
 
   test("displays all settings navigation pills", async ({ page }) => {
@@ -53,7 +54,7 @@ test.describe("Settings Navbar", () => {
     await expect(logoutPage.getByRole("button", { name: /logout/iu })).toBeVisible();
 
     await logoutPage.getByRole("button", { name: /logout/iu }).click();
-    await logoutPage.waitForURL(/^[^?]*\/$/u);
+    await logoutPage.waitForURL(/\/$/u);
     await logoutPage.waitForLoadState("networkidle");
 
     // Scope to navigation to avoid strict mode violation

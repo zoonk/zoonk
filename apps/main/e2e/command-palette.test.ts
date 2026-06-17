@@ -21,13 +21,17 @@ async function createTestCourse() {
   });
 }
 
-// Helper to open command palette via click (reliable for tests that don't test keyboard shortcuts)
-// Scoped to navigation to avoid strict mode violation when multiple search buttons exist during streaming
+/**
+ * Opens the command palette through the real navbar trigger so tests interact
+ * with the same hydrated chrome learners use.
+ */
 async function openCommandPalette(page: Page) {
-  await page
-    .getByRole("navigation")
-    .getByRole("button", { name: /search/iu })
-    .click();
+  const searchButton = page.getByRole("navigation").getByRole("button", { name: /search/iu });
+
+  await expect(async () => {
+    await searchButton.click();
+    await expect(page.getByRole("dialog")).toBeVisible({ timeout: 1000 });
+  }).toPass();
 }
 
 // Helper to get the correct modifier key for the platform
@@ -86,13 +90,13 @@ test.describe("Command Palette - Unauthenticated", () => {
     await expect(page.getByRole("dialog")).not.toBeVisible();
   });
 
-  test("shows Pages group with Home, Courses, Learn", async ({ page }) => {
+  test("shows Pages group with Home and Learn", async ({ page }) => {
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByText("Pages")).toBeVisible();
     await expect(dialog.getByText(/home page/iu)).toBeVisible();
-    await expect(dialog.getByText(/^courses$/iu)).toBeVisible();
+    await expect(dialog.getByRole("option", { name: /^courses$/iu })).not.toBeVisible();
     await expect(dialog.getByText(/learn something/iu)).toBeVisible();
   });
 
@@ -117,7 +121,7 @@ test.describe("Command Palette - Unauthenticated", () => {
     await expect(dialog.getByText(/feedback & support/iu)).toBeVisible();
   });
 
-  test("selecting Home shows home content", async ({ page }) => {
+  test("selecting Home shows the learn form on the home page", async ({ page }) => {
     await page.goto("/courses"); // Start from different page
     await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
     await openCommandPalette(page);
@@ -127,20 +131,8 @@ test.describe("Command Palette - Unauthenticated", () => {
       .getByText(/home page/iu)
       .click();
 
-    // Verify user sees home page content
-    await expect(page.getByRole("heading", { name: /learn what matters/iu })).toBeVisible();
-  });
-
-  test("selecting Courses shows courses content", async ({ page }) => {
-    await openCommandPalette(page);
-
-    await page
-      .getByRole("dialog")
-      .getByText(/^courses$/iu)
-      .click();
-
-    // Verify user sees courses page content
-    await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
+    await expect(page).toHaveURL(/\/$/u);
+    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
   });
 
   test("selecting Learn shows the course creation form", async ({ page }) => {
@@ -205,7 +197,7 @@ test.describe("Command Palette - Authenticated", () => {
   });
 
   // Logout test uses dedicated logoutPage fixture to avoid session interference
-  test("selecting Logout logs user out and redirects to home", async ({ logoutPage }) => {
+  test("selecting Logout logs user out and shows the home learn form", async ({ logoutPage }) => {
     await logoutPage.goto("/");
 
     // Verify authenticated state by checking command palette shows Logout option
@@ -218,7 +210,7 @@ test.describe("Command Palette - Authenticated", () => {
       .getByText(/^logout$/iu)
       .click();
 
-    await logoutPage.waitForURL(/^[^?]*\/$/u);
+    await logoutPage.waitForURL(/\/$/u);
     await logoutPage.waitForLoadState("networkidle");
 
     // Verify user is logged out - command palette should show Login option
@@ -265,7 +257,7 @@ test.describe("Command Palette - Course Search", () => {
     });
 
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: /learn what matters/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
@@ -463,19 +455,19 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     await expect(homeOption).toHaveAttribute("aria-selected", "true");
 
     // Also wait for the second option to be present before navigating
-    const coursesOption = dialog.getByRole("option", { name: /^courses$/iu });
-    await expect(coursesOption).toBeVisible();
+    const learnOption = dialog.getByRole("option", { name: /learn something/iu });
+    await expect(learnOption).toBeVisible();
 
-    // Press ArrowDown - "Courses" should now be selected
+    // Press ArrowDown - "Learn something" should now be selected
     await page.keyboard.press("ArrowDown");
-    await expect(coursesOption).toHaveAttribute("aria-selected", "true");
+    await expect(learnOption).toHaveAttribute("aria-selected", "true");
 
     // Press ArrowUp - "Home page" should be selected again
     await page.keyboard.press("ArrowUp");
     await expect(homeOption).toHaveAttribute("aria-selected", "true");
   });
 
-  test("Enter to select navigates correctly", async ({ page }) => {
+  test("Enter to select shows the learn form on the home page", async ({ page }) => {
     await page.goto("/courses"); // Start from courses page so Home navigation is verifiable
     await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
     await openCommandPalette(page);
@@ -486,8 +478,8 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("Enter");
 
-    // Verify user sees home page content
-    await expect(page.getByRole("heading", { name: /learn what matters/iu })).toBeVisible();
+    await expect(page).toHaveURL(/\/$/u);
+    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
   });
 
   test("focus trap within dialog", async ({ page }) => {
