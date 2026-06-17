@@ -91,6 +91,31 @@ describe(createInitialState, () => {
     expect(state.currentStepIndex).toBe(0);
   });
 
+  it("starts in the warning phase when the host requires start confirmation", () => {
+    const lesson = buildLesson();
+
+    const state = createInitialState({
+      lesson,
+      requiresStartConfirmation: true,
+      totalBrainPower: 0,
+    });
+
+    expect(state.phase).toBe("startWarning");
+    expect(state.currentStepIndex).toBe(0);
+  });
+
+  it("does not show the warning phase for empty lessons", () => {
+    const lesson = buildLesson({ steps: [] });
+
+    const state = createInitialState({
+      lesson,
+      requiresStartConfirmation: true,
+      totalBrainPower: 0,
+    });
+
+    expect(state.phase).toBe("completed");
+  });
+
   it("copies lessonId and steps", () => {
     const steps = [buildStep({ id: "s1" }), buildStep({ id: "s2", position: 1 })];
     const lesson = buildLesson({ steps });
@@ -188,6 +213,33 @@ describe("SELECT_ANSWER", () => {
     });
 
     expect(next.selectedAnswers["step-1"]).toStrictEqual(multipleChoiceAnswer);
+  });
+});
+
+describe("START", () => {
+  it("begins a lesson from the warning phase and resets the lesson timers", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-06-05T12:00:10Z"));
+
+    try {
+      const state = buildState({ phase: "startWarning", startedAt: 1000, stepStartedAt: 1000 });
+
+      const next = playerReducer(state, { type: "START" });
+
+      expect(next.phase).toBe("playing");
+      expect(next.startedAt).toBe(Date.now());
+      expect(next.stepStartedAt).toBe(Date.now());
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("does not restart an already playing lesson", () => {
+    const state = buildState({ phase: "playing", startedAt: 1000, stepStartedAt: 1000 });
+
+    const next = playerReducer(state, { type: "START" });
+
+    expect(next).toBe(state);
   });
 });
 

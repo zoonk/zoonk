@@ -24,6 +24,7 @@ export type PlayerActions = {
   navigatePrev: () => void;
   restart: () => void;
   selectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
+  start: () => void;
 };
 
 /**
@@ -131,5 +132,17 @@ export function usePlayerActions({
     dispatchTransition({ type: "RESTART" });
   }, [dispatchTransition]);
 
-  return { check, continue: handleContinue, navigateNext, navigatePrev, restart, selectAnswer };
+  const start = useCallback(() => {
+    dispatchTransition({ type: "START" });
+  }, [dispatchTransition]);
+
+  return {
+    check,
+    continue: handleContinue,
+    navigateNext,
+    navigatePrev,
+    restart,
+    selectAnswer,
+    start,
+  };
 }

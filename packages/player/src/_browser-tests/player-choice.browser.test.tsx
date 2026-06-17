@@ -434,7 +434,10 @@ describe("player browser integration: choice steps", () => {
           }),
         ],
       }),
+      viewer: { isAuthenticated: false, userName: null },
     });
+
+    await page.getByRole("button", { name: /continue without saving/iu }).click();
 
     await expect.element(page.getByText(/^we have a situation$/iu)).toBeInTheDocument();
     await expect.element(page.getByText("{{NAME}}")).not.toBeInTheDocument();

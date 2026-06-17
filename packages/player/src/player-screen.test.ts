@@ -123,6 +123,22 @@ describe(getPlayerScreenModel, () => {
     expect(screen.keyboard.enterAction).toBeNull();
   });
 
+  it("uses the start warning screen before unauthenticated lessons begin", () => {
+    const screen = buildScreen({ state: buildState({ phase: "startWarning" }) });
+
+    expect(screen.kind).toBe("startWarning");
+    expect(screen.scene).toBe("startWarning");
+    expect(screen.bottomBar).toBeNull();
+    expect(screen.showChrome).toBe(false);
+
+    expect(screen.keyboard).toStrictEqual({
+      canRestart: false,
+      enterAction: null,
+      leftAction: null,
+      rightAction: null,
+    });
+  });
+
   it("keeps completed state in completion mode", () => {
     const screen = buildScreen({ state: buildState({ phase: "completed" }) });
 

@@ -1,6 +1,7 @@
 import "server-only";
 import { type NextRequest } from "next/server";
 import { auth } from "./auth";
+import { getSafeAppRelativePath } from "./ott-redirect";
 import { ONE_TIME_TOKEN_LOGIN_STATE_COOKIE } from "./ott-state";
 
 const AUTH_ERROR_REDIRECT = "/login?error=auth";
@@ -24,6 +25,16 @@ function redirectTo(location: string): Response {
   headers.append("set-cookie", getExpiredLoginStateCookie());
 
   return new Response(null, { headers, status: 302 });
+}
+
+/**
+ * Returns the post-login destination requested by the app login page. Only
+ * app-relative paths are allowed here so a valid one-time token cannot become
+ * an open redirect to another origin.
+ */
+function getSafeSuccessRedirect(request: NextRequest): string {
+  const nextPath = request.nextUrl.searchParams.get("next");
+  return getSafeAppRelativePath(nextPath) ?? AUTH_SUCCESS_REDIRECT;
 }
 
 /**
@@ -67,7 +78,7 @@ export async function verifyOneTimeTokenCallback(request: NextRequest): Promise<
     return redirectTo(AUTH_ERROR_REDIRECT);
   }
 
-  const headers = new Headers({ Location: AUTH_SUCCESS_REDIRECT });
+  const headers = new Headers({ Location: getSafeSuccessRedirect(request) });
   headers.append("set-cookie", getExpiredLoginStateCookie());
 
   for (const cookie of response.headers.getSetCookie()) {

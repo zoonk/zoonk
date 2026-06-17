@@ -70,6 +70,15 @@ async function createTestLesson(options?: {
   return { chapter, course, lesson, lessonTitle, uniqueId };
 }
 
+async function expectGuestProgressWarning(page: Page) {
+  await expect(page.getByRole("heading", { name: "Progress won't be saved" })).toBeVisible();
+}
+
+async function continueWithoutSaving(page: Page) {
+  await expectGuestProgressWarning(page);
+  await page.getByRole("button", { name: "Continue without saving" }).click();
+}
+
 /**
  * Practice lessons can be generated from explanation metadata before those
  * explanations finish generating, so the player empty state should point at
@@ -501,6 +510,7 @@ test.describe("Lesson Player Page", () => {
     });
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+    await continueWithoutSaving(page);
 
     await expect(page.getByRole("heading", { name: `Step ${uniqueId} #0` })).toBeVisible();
     await expect(page.getByText(`Test step content ${uniqueId} #0`)).toBeVisible();
@@ -568,6 +578,7 @@ test.describe("Lesson Player Page", () => {
     const { chapter, course, lesson } = await createTestLesson({ generationStatus: "completed" });
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+    await continueWithoutSaving(page);
 
     const closeLink = page.getByRole("link", { name: /close/iu });
 
@@ -755,7 +766,7 @@ test.describe("Lesson Player Page", () => {
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await expect(page.getByRole("link", { name: /close/iu })).toBeVisible();
+    await expectGuestProgressWarning(page);
 
     await page.waitForLoadState("networkidle");
     await page.keyboard.press("Escape");

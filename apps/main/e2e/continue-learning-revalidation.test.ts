@@ -170,8 +170,8 @@ test.describe("Continue Learning Revalidation", () => {
     // 3. Complete the static lesson and wait for durable progress before navigating again.
     await completeStaticLesson({ lessonId: lesson1.id, page, userId: user.id });
 
-    // 4. Click "All Lessons" (client-side navigation)
-    await page.getByRole("link", { name: /all lessons/iu }).click();
+    // 4. Click "Exit" (client-side navigation)
+    await page.getByRole("link", { name: /exit/iu }).click();
     await page.waitForURL(new RegExp(`e2e-cl-reval-chapter-${uniqueId}$`, "u"));
 
     // 5. Click the Home link in the navbar (client-side navigation — Router Cache)
@@ -226,7 +226,7 @@ test.describe("Continue Learning Revalidation", () => {
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson0.slug}`);
     await completeStaticLesson({ lessonId: lesson0.id, page, userId: user.id });
 
-    await page.getByRole("link", { name: /all lessons/iu }).click();
+    await page.getByRole("link", { name: /exit/iu }).click();
     await page.waitForURL(new RegExp(`e2e-cl-reval-chapter-${uniqueId}$`, "u"));
 
     const currentContinueLink = page.getByRole("link", { name: "Continue 67% complete" });

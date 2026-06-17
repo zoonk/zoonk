@@ -46,8 +46,8 @@ msgid "e7WNdK"
 msgstr "Word bank"
 
 #: src/components/completion-auth-branch.tsx
-msgid "Ak-bLZ"
-msgstr "All Lessons"
+msgid "E2sGaF"
+msgstr "Exit"
 
 #: src/components/completion-auth-branch.tsx
 msgid "FazwRl"
@@ -60,14 +60,8 @@ msgid "9-Ddtu"
 msgstr "Next"
 
 #: src/components/completion-auth-branch.tsx
-#: src/components/completion-milestone-actions.tsx
-msgid "e1M39C"
-msgstr "Sign up to track your progress"
-
-#: src/components/completion-auth-branch.tsx
-#: src/components/completion-milestone-actions.tsx
-msgid "M8B177"
-msgstr "Log in to save your progress"
+msgid "odXlk8"
+msgstr "Log in"
 
 #: src/components/completion-brain-power-milestone.tsx
 msgid "D7TYjj"
@@ -296,6 +290,30 @@ msgstr "Next step"
 #: src/components/translation-step.tsx
 msgid "MxLxkr"
 msgstr "Translate this word:"
+
+#: src/components/unauthenticated-progress-prompt.tsx
+msgid "czygLT"
+msgstr "Log in to save progress"
+
+#: src/components/unauthenticated-progress-prompt.tsx
+msgid "yBJVJw"
+msgstr "Continue without saving"
+
+#: src/components/unauthenticated-progress-prompt.tsx
+msgid "O781mu"
+msgstr "Progress won't be saved"
+
+#: src/components/unauthenticated-progress-prompt.tsx
+msgid "JDumQX"
+msgstr "You can try this lesson without an account, but your score, course progress, levels, and Energy won't be saved."
+
+#: src/components/unauthenticated-progress-prompt.tsx
+msgid "rxdOwg"
+msgstr "This lesson wasn't saved"
+
+#: src/components/unauthenticated-progress-prompt.tsx
+msgid "Wamgyz"
+msgstr "Log in before your next lesson to keep future progress, scores, levels, and Energy."
 
 #: src/components/verdict-label.tsx
 msgid "xmF49T"

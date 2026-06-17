@@ -113,6 +113,34 @@ function getNextLessonHref({
 }
 
 /**
+ * Builds the current player URL once so guest auth links can return learners
+ * to the exact lesson where they chose to log in. The callback only accepts
+ * app-relative paths, so this helper intentionally returns a path instead of
+ * an absolute URL.
+ */
+function getCurrentLessonHref({
+  brandSlug,
+  chapterSlug,
+  courseSlug,
+  lessonSlug,
+}: {
+  brandSlug: string;
+  chapterSlug: string;
+  courseSlug: string;
+  lessonSlug: string;
+}) {
+  return `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}` as const;
+}
+
+/**
+ * Encodes the current lesson into the login route so central-auth redirects
+ * can come back to the player instead of dropping learners on the home page.
+ */
+function getLoginHref({ currentLessonHref }: { currentLessonHref: string }) {
+  return `/login?next=${encodeURIComponent(currentLessonHref)}` as const;
+}
+
+/**
  * Chapter completion is a structural boundary, not proof that the next lesson
  * is ready. A next chapter with no lessons should still show the chapter
  * milestone and send learners to the chapter page, where generation can start.
@@ -154,6 +182,7 @@ export function buildLessonPlayerModel({
   brandSlug,
   chapterSlug,
   courseSlug,
+  lessonSlug,
   lessonProgress = DEFAULT_LESSON_PROGRESS,
   nextChapter = null,
   nextLesson,
@@ -161,12 +190,21 @@ export function buildLessonPlayerModel({
   brandSlug: string;
   chapterSlug: string;
   courseSlug: string;
+  lessonSlug: string;
   lessonProgress?: LessonProgressMeta;
   nextChapter?: NextChapter | null;
   nextLesson: NextLesson | null;
 }) {
   const chapterHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}` as const;
   const courseHref = `/b/${brandSlug}/c/${courseSlug}` as const;
+
+  const currentLessonHref = getCurrentLessonHref({
+    brandSlug,
+    chapterSlug,
+    courseSlug,
+    lessonSlug,
+  });
+
   const nextLessonHref = getNextLessonHref({ brandSlug, courseSlug, nextLesson });
 
   const nextChapterHref = getNextChapterHref({
@@ -197,7 +235,7 @@ export function buildLessonPlayerModel({
       courseHref,
       energyHref: "/energy",
       levelHref: "/level",
-      loginHref: "/login",
+      loginHref: getLoginHref({ currentLessonHref }),
       nextLessonHref,
     },
     onNextHref: nextLessonHref ?? nextChapterHref,

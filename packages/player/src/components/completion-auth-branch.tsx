@@ -11,7 +11,8 @@ import {
 } from "../player-context";
 import { PlayerLink } from "../player-link";
 import { PrimaryActionLink, PrimaryKbd, SecondaryKbd } from "./completion-action-link";
-import { MilestoneActions, UnauthenticatedMilestoneActions } from "./completion-milestone-actions";
+import { MilestoneActions } from "./completion-milestone-actions";
+import { UnauthenticatedCompletionPrompt } from "./unauthenticated-progress-prompt";
 
 function CompletionActions({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -48,7 +49,7 @@ function SecondaryActions({
       )}
       href={chapterHref}
     >
-      {t("All Lessons")}
+      {t("Exit")}
       {isInline ? <SecondaryKbd>Esc</SecondaryKbd> : <PrimaryKbd>Esc</PrimaryKbd>}
     </PlayerLink>
   );
@@ -130,36 +131,34 @@ function UnauthenticatedContent({
   onRestart: () => void;
 }) {
   const t = useExtracted();
-  const milestone = usePlayerMilestone();
-
-  if (milestone) {
-    return <UnauthenticatedMilestoneActions loginHref={loginHref} />;
-  }
 
   return (
-    <>
-      <p className="text-muted-foreground text-sm">{t("Sign up to track your progress")}</p>
+    <CompletionActions>
+      <UnauthenticatedCompletionPrompt />
 
-      <CompletionActions>
-        <PlayerLink
-          className={cn(
-            buttonVariants({ variant: nextLessonHref ? "outline" : undefined }),
-            "w-full",
-          )}
-          href={loginHref}
-        >
-          {t("Log in to save your progress")}
-        </PlayerLink>
+      {nextLessonHref && (
+        <ActionRow>
+          <PlayerLink
+            className={cn(buttonVariants({ size: "lg" }), "min-w-0 flex-1")}
+            href={loginHref}
+          >
+            {t("Log in")}
+          </PlayerLink>
 
-        {nextLessonHref && (
-          <PrimaryActionLink href={nextLessonHref} shortcut="Enter">
+          <PrimaryActionLink className="min-w-0 flex-1" href={nextLessonHref} shortcut="Enter">
             {t("Next")}
           </PrimaryActionLink>
-        )}
+        </ActionRow>
+      )}
 
-        <SecondaryActions chapterHref={chapterHref} onRestart={onRestart} variant="inline" />
-      </CompletionActions>
-    </>
+      {!nextLessonHref && (
+        <PlayerLink className={cn(buttonVariants({ size: "lg" }), "w-full")} href={loginHref}>
+          {t("Log in")}
+        </PlayerLink>
+      )}
+
+      <SecondaryActions chapterHref={chapterHref} onRestart={onRestart} variant="inline" />
+    </CompletionActions>
   );
 }
 

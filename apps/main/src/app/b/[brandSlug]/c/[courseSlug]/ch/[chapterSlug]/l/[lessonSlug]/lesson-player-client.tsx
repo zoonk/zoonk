@@ -81,6 +81,7 @@ export function LessonPlayerClient({
     chapterSlug,
     courseSlug,
     lessonProgress,
+    lessonSlug,
     nextChapter,
     nextLesson,
   });

@@ -3,6 +3,7 @@ import {
   type PlayerRuntimeContextValue,
   usePlayerNavigation,
   usePlayerRuntime,
+  usePlayerViewer,
 } from "../player-context";
 import {
   getActiveCompletionMilestone,
@@ -18,6 +19,7 @@ import { FeedbackScreenContent } from "./feedback-screen";
 import { StepActionButton } from "./step-action-button";
 import { PlayerContentFrame } from "./step-layouts";
 import { StepRenderer } from "./step-renderer";
+import { UnauthenticatedStartWarningScreen } from "./unauthenticated-progress-prompt";
 
 /**
  * Renders the desktop inline action inside the shared player frame so the
@@ -72,7 +74,8 @@ function hasEmbeddedDesktopAction({
 
 export function StageContent() {
   const { actions, screen, state } = usePlayerRuntime();
-  const { chapterHref, energyHref, levelHref, nextLessonHref } = usePlayerNavigation();
+  const { chapterHref, energyHref, levelHref, loginHref, nextLessonHref } = usePlayerNavigation();
+  const { isAuthenticated } = usePlayerViewer();
 
   const activeCompletionMilestone = getActiveCompletionMilestone(state);
   const completionResult = getCompletionResult(state);
@@ -80,8 +83,17 @@ export function StageContent() {
   const currentStep = getCurrentStep(state);
   const selectedAnswer = getSelectedAnswer(state);
 
+  if (screen.kind === "startWarning") {
+    return (
+      <UnauthenticatedStartWarningScreen
+        loginHref={loginHref ?? "/login"}
+        onContinue={actions.start}
+      />
+    );
+  }
+
   if (screen.kind === "completed") {
-    if (activeCompletionMilestone) {
+    if (isAuthenticated && activeCompletionMilestone) {
       return (
         <CompletionProgressMilestoneScreen
           energyHref={energyHref}
