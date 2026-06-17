@@ -62,7 +62,6 @@ export function CommandPalette({
 
   const getStarted = [
     { key: t("Home page"), ...getMenu("home") },
-    { key: t("Courses"), ...getMenu("courses") },
     { key: t("Learn something"), ...getMenu("learn") },
   ];
 

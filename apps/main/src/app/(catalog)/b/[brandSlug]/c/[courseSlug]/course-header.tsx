@@ -20,7 +20,6 @@ import {
   MediaCardTrigger,
 } from "@zoonk/ui/components/media-card";
 import { NotebookPenIcon } from "lucide-react";
-import Link from "next/link";
 
 export async function CourseHeader({
   brandSlug,
@@ -69,11 +68,7 @@ export async function CourseHeader({
           {displayCategories.length > 0 && (
             <MediaCardPopoverBadges>
               {displayCategories.map((cat) => (
-                <Badge
-                  key={cat.key}
-                  render={<Link href={`/courses/${cat.key}`} />}
-                  variant="outline"
-                >
+                <Badge key={cat.key} variant="outline">
                   {cat.label}
                 </Badge>
               ))}

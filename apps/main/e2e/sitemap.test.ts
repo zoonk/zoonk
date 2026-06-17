@@ -21,7 +21,7 @@ test.describe("sitemap.xml", () => {
 
     const body = await response.text();
     expect(body).toContain("https://www.zoonk.com");
-    expect(body).toContain("https://www.zoonk.com/courses");
+    expect(body).not.toContain("https://www.zoonk.com/courses");
   });
 });
 

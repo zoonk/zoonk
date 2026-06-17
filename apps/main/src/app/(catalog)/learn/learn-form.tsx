@@ -1,20 +1,29 @@
 "use client";
 
+import { trackLearnForm } from "@/lib/track-events";
 import { InputGroup, InputGroupInput } from "@zoonk/ui/components/input-group";
 import { Label } from "@zoonk/ui/components/label";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useId, useTransition } from "react";
+import { useEffect, useId, useTransition } from "react";
 
 const PROMPT_MAX_LENGTH = 128;
 const CYCLE_DURATION_MS = 3200;
 
+/**
+ * Owns the interactive course goal input and records the form visibility event
+ * from the browser, which keeps `/learn` and reused placements counted alike.
+ */
 export function LearnForm({ placeholders }: { placeholders: string[] }) {
   const t = useExtracted();
   const queryId = useId();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    trackLearnForm();
+  }, []);
 
   function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();

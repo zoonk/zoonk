@@ -1,52 +1,34 @@
 import { expect, test } from "./fixtures";
 
 test.describe("Navbar - Unauthenticated", () => {
-  test("Home link navigates to home page", async ({ page }) => {
+  test("Home link shows the learn form on the home page", async ({ page }) => {
     await page.goto("/courses");
     await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
 
-    // Scope to navigation to avoid conflicts with links in main content
     await page.getByRole("navigation").getByRole("link", { name: /home/iu }).click();
 
-    await expect(page.getByRole("heading", { name: /learn what matters/iu })).toBeVisible();
-  });
-
-  test("Courses link navigates to courses page", async ({ page }) => {
-    await page.goto("/");
-    await expect(page.getByRole("heading", { name: /learn what matters/iu })).toBeVisible();
-
-    // Scope to navigation to avoid conflicts with links in main content
-    await page.getByRole("navigation").getByRole("link", { exact: true, name: "Courses" }).click();
-
-    await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
+    await expect(page).toHaveURL(/\/$/u);
+    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
   });
 
   test("Learn link navigates to learn page", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: /learn what matters/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
 
-    // Scope to navigation to avoid conflicts with links in main content
     await page.getByRole("navigation").getByRole("link", { exact: true, name: "Learn" }).click();
 
     await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
   });
 
-  test("Home link is active on home page", async ({ page }) => {
-    await page.goto("/");
-
-    const homeLink = page.getByRole("navigation").getByRole("link", { name: /home/iu });
-
-    await expect(homeLink).toHaveAttribute("aria-current", "page");
-  });
-
-  test("Courses link is active on courses page", async ({ page }) => {
+  test("Courses page stays directly available without a navbar link", async ({ page }) => {
     await page.goto("/courses");
 
     const coursesLink = page
       .getByRole("navigation")
       .getByRole("link", { exact: true, name: "Courses" });
 
-    await expect(coursesLink).toHaveAttribute("aria-current", "page");
+    await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
+    await expect(coursesLink).not.toBeVisible();
   });
 
   test("Learn link is active on learn page", async ({ page }) => {
@@ -61,6 +43,16 @@ test.describe("Navbar - Unauthenticated", () => {
 });
 
 test.describe("Navbar - Authenticated", () => {
+  test("Home link is active on home page", async ({ authenticatedPage }) => {
+    await authenticatedPage.goto("/");
+
+    const homeLink = authenticatedPage
+      .getByRole("navigation")
+      .getByRole("link", { name: /home/iu });
+
+    await expect(homeLink).toHaveAttribute("aria-current", "page");
+  });
+
   test("My courses menu item navigates to my courses page", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/");
     await authenticatedPage.waitForLoadState("networkidle");
