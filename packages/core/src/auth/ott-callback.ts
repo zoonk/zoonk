@@ -1,6 +1,7 @@
 import "server-only";
 import { type NextRequest } from "next/server";
 import { auth } from "./auth";
+import { getSafeAppRelativePath } from "./ott-redirect";
 import { ONE_TIME_TOKEN_LOGIN_STATE_COOKIE } from "./ott-state";
 
 const AUTH_ERROR_REDIRECT = "/login?error=auth";
@@ -33,16 +34,7 @@ function redirectTo(location: string): Response {
  */
 function getSafeSuccessRedirect(request: NextRequest): string {
   const nextPath = request.nextUrl.searchParams.get("next");
-
-  if (!nextPath) {
-    return AUTH_SUCCESS_REDIRECT;
-  }
-
-  if (!nextPath.startsWith("/") || nextPath.startsWith("//")) {
-    return AUTH_SUCCESS_REDIRECT;
-  }
-
-  return nextPath;
+  return getSafeAppRelativePath(nextPath) ?? AUTH_SUCCESS_REDIRECT;
 }
 
 /**

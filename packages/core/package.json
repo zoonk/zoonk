@@ -12,6 +12,7 @@
     "./auth/next": "./src/auth/next.ts",
     "./auth/ott/callback": "./src/auth/ott-callback.ts",
     "./auth/ott/login": "./src/auth/ott-login.tsx",
+    "./auth/ott/redirect": "./src/auth/ott-redirect.ts",
     "./auth/ott/state": "./src/auth/ott-state.ts",
     "./auth/stripe-prices": "./src/auth/stripe-prices.ts",
     "./auth/subscription": "./src/auth/subscription.ts",

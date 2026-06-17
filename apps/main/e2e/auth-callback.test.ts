@@ -122,6 +122,32 @@ test.describe("Auth Callback", () => {
     expect(stateCookie?.value).toBe(state);
   });
 
+  test("drops backslash-based network-path return targets when starting login", async ({
+    context,
+    page,
+  }) => {
+    const baseURL = getBaseURL();
+    const authUrls: string[] = [];
+    const unsafeNextPath = String.raw`/\\evil.example/path`;
+
+    await page.route("**/auth/login**", async (route) => {
+      authUrls.push(route.request().url());
+      await route.fulfill({ body: "Auth app", contentType: "text/html", status: 200 });
+    });
+
+    await page.goto(`/login?next=${encodeURIComponent(unsafeNextPath)}`);
+    await expect.poll(() => authUrls.length).toBe(1);
+
+    const authUrl = getInterceptedAuthUrl(authUrls);
+    const callbackUrl = getRequiredSearchParam({ name: "redirectTo", url: authUrl });
+    const state = getRequiredSearchParam({ name: "state", url: callbackUrl });
+    const cookies = await context.cookies(baseURL);
+    const stateCookie = cookies.find((cookie) => cookie.name === ONE_TIME_TOKEN_LOGIN_STATE_COOKIE);
+
+    expect(new URL(callbackUrl).searchParams.get("next")).toBeNull();
+    expect(stateCookie?.value).toBe(state);
+  });
+
   test("redirects to home and sets session on valid token", async ({ browser }) => {
     const baseURL = getBaseURL();
     const user = await createE2EUser(baseURL);
@@ -158,6 +184,26 @@ test.describe("Auth Callback", () => {
     );
 
     await page.waitForURL(/\/level$/u);
+
+    await ctx.close();
+  });
+
+  test("redirects to home for backslash-based network-path return targets", async ({ browser }) => {
+    const baseURL = getBaseURL();
+    const user = await createE2EUser(baseURL);
+    const token = await generateOneTimeToken(baseURL, user);
+    const unsafeNextPath = String.raw`/\\evil.example/path`;
+
+    const ctx = await browser.newContext({ baseURL });
+    const state = await createLoginState({ baseURL, context: ctx });
+
+    const response = await ctx.request.get(
+      `/auth/callback?state=${encodeURIComponent(state)}&token=${encodeURIComponent(token)}&next=${encodeURIComponent(unsafeNextPath)}`,
+      { maxRedirects: 0 },
+    );
+
+    expect(response.status()).toBe(302);
+    expect(getRedirectLocation(response)).toBe("/");
 
     await ctx.close();
   });
