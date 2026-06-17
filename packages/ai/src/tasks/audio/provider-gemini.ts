@@ -16,7 +16,11 @@ const MAX_GEMINI_AUDIO_BYTES = 850 * 1024;
  * small target after the instructions instead of leaving it to infer what text
  * should be spoken from the whole prompt.
  */
-function buildGeminiPrompt({ instructions, text }: { instructions: string; text: string }) {
+function buildGeminiPrompt({ instructions, text }: { instructions?: string; text: string }) {
+  if (!instructions) {
+    return text;
+  }
+
   return `${instructions}\n\nText to speak exactly:\n${text}`;
 }
 
@@ -47,7 +51,7 @@ export async function generateWithGemini({
   text,
   voice,
 }: {
-  instructions: string;
+  instructions?: string;
   languageCode?: string;
   text: string;
   voice: TTSVoice;

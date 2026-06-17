@@ -27,7 +27,7 @@ const usagePrompts = { alphabetSymbol: alphabetSymbolPrompt } satisfies Record<
 >;
 
 type AudioProvider = (params: {
-  instructions: string;
+  instructions?: string;
   languageCode?: string;
   text: string;
   voice: TTSVoice;
@@ -36,9 +36,25 @@ type AudioProvider = (params: {
 type ScheduledAttempt = { backoffMs: number; generate: AudioProvider; name: string };
 
 /**
- * Expands the base TTS prompt with optional usage-specific instructions.
- * Keeping the usage structured avoids passing learner-facing romanization or
- * pronunciation hints into the audio model, which can make output less stable.
+ * Skips prompt guidance for normal English word and sentence audio because the
+ * extra instructions exist to prevent non-English words from being read with
+ * English pronunciation. Usage-specific audio, such as alphabet symbols, still
+ * gets guidance because the text may not be a normal word.
+ */
+function shouldBuildInstructions({
+  languageCode,
+  usage,
+}: {
+  languageCode?: string;
+  usage?: LanguageAudioUsage;
+}) {
+  return Boolean(usage) || Boolean(languageCode && languageCode !== "en");
+}
+
+/**
+ * Expands the TTS prompt with optional usage-specific instructions. Keeping the
+ * usage structured avoids passing learner-facing romanization or pronunciation
+ * hints into the audio model, which can make output less stable.
  */
 function buildInstructions({
   languageCode,
@@ -46,21 +62,24 @@ function buildInstructions({
 }: {
   languageCode?: string;
   usage?: LanguageAudioUsage;
-}): string {
+}): string | undefined {
+  if (!shouldBuildInstructions({ languageCode, usage })) {
+    return undefined;
+  }
+
   const languageName = languageCode
     ? getPromptLanguageName({ language: languageCode })
     : getPromptLanguageName({ language: "en" });
 
+  const languagePrompt =
+    languageCode && languageCode !== "en"
+      ? promptTemplate.replaceAll("{{LANGUAGE}}", () => languageName)
+      : "";
+
   const usagePrompt = usage ? usagePrompts[usage] : "";
   const readAloudPrompt = READ_ALOUD_TEMPLATE.replaceAll("{{LANGUAGE}}", () => languageName);
 
-  return [
-    promptTemplate.replaceAll("{{LANGUAGE}}", () => languageName),
-    usagePrompt,
-    readAloudPrompt,
-  ]
-    .filter(Boolean)
-    .join("\n\n");
+  return [languagePrompt, usagePrompt, readAloudPrompt].filter(Boolean).join("\n\n");
 }
 
 /**
@@ -97,7 +116,7 @@ async function generateWithFallback({
   text,
   voice,
 }: {
-  instructions: string;
+  instructions?: string;
   languageCode?: string;
   text: string;
   voice: TTSVoice;
@@ -118,7 +137,7 @@ async function generateWithFallback({
 
     try {
       return await attempt.generate({
-        instructions,
+        ...(instructions ? { instructions } : {}),
         ...(languageCode ? { languageCode } : {}),
         text,
         voice,
@@ -153,7 +172,7 @@ export async function generateLanguageAudio({
 
   return safeAsync(() =>
     generateWithFallback({
-      instructions,
+      ...(instructions ? { instructions } : {}),
       ...(language ? { languageCode: language } : {}),
       text,
       voice,

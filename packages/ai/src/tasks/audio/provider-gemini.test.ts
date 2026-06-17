@@ -70,6 +70,26 @@ describe(generateWithGemini, () => {
     });
   });
 
+  it("sends only the text when no TTS instructions are needed", async () => {
+    const text = "fruit";
+
+    const result = await generateWithGemini({ languageCode: "en", text, voice: "Kore" });
+
+    expect(result.format).toBe("wav");
+
+    expect(generateContentMock).toHaveBeenCalledExactlyOnceWith({
+      config: {
+        responseModalities: ["AUDIO"],
+        speechConfig: {
+          languageCode: "en",
+          voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } },
+        },
+      },
+      contents: [{ parts: [{ text }] }],
+      model: "gemini-2.5-flash-preview-tts",
+    });
+  });
+
   it("rejects oversized Gemini audio so fallback providers can retry", async () => {
     const oversizedPcmBytes = MAX_EXPECTED_WAV_BYTES - WAV_HEADER_BYTES + 1;
 
