@@ -1,10 +1,7 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { type PlayerRoute, usePlayerMilestone } from "../player-context";
-import { PlayerLink } from "../player-link";
+import { usePlayerMilestone } from "../player-context";
 import { PrimaryActionLink, SecondaryActionLink } from "./completion-action-link";
 
 function NextButtonLabel() {
@@ -77,30 +74,5 @@ export function MilestoneActions() {
     <PrimaryActionLink href={milestone.reviewHref} shortcut="Esc">
       <ReviewLabel />
     </PrimaryActionLink>
-  );
-}
-
-export function UnauthenticatedMilestoneActions({ loginHref }: { loginHref: PlayerRoute }) {
-  const t = useExtracted();
-  const milestone = usePlayerMilestone();
-
-  if (!milestone) {
-    return null;
-  }
-
-  return (
-    <>
-      <p className="text-muted-foreground text-sm">{t("Sign up to track your progress")}</p>
-
-      <div className="flex w-full flex-col gap-3" data-slot="completion-actions">
-        <PlayerLink className={cn(buttonVariants(), "w-full")} href={loginHref}>
-          {t("Log in to save your progress")}
-        </PlayerLink>
-
-        <SecondaryActionLink href={milestone.reviewHref} shortcut="Esc">
-          <ReviewLabel />
-        </SecondaryActionLink>
-      </div>
-    </>
   );
 }

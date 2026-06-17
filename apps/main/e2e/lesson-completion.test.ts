@@ -310,10 +310,7 @@ test.describe("Lesson Completion UX", () => {
     await browserContext.close();
   });
 
-  test("lesson complete: all lessons navigates to the chapter page", async ({
-    baseURL,
-    browser,
-  }) => {
+  test("lesson complete: exit navigates to the chapter page", async ({ baseURL, browser }) => {
     const email = await createUniqueUser(baseURL!);
     const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
     const { chapter, lessonUrl, uniqueId } = await createLessonCompleteScenario("lrev");
@@ -324,7 +321,7 @@ test.describe("Lesson Completion UX", () => {
 
     const completionScreen = page.getByRole("status");
 
-    await completionScreen.getByRole("link", { name: /all lessons/iu }).click();
+    await completionScreen.getByRole("link", { name: /exit/iu }).click();
     await expect(page.getByRole("heading", { level: 1, name: chapter.title })).toBeVisible();
 
     await browserContext.close();

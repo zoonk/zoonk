@@ -62,7 +62,7 @@ export function renderPlayer({
   onNext,
   progressSnapshot = null,
   totalBrainPower = 0,
-  viewer = { isAuthenticated: false, userName: null },
+  viewer = { isAuthenticated: true, userName: "Alex" },
 }: {
   lesson: SerializedLesson;
   chapterTitle?: string;

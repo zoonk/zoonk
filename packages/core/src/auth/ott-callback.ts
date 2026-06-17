@@ -27,6 +27,25 @@ function redirectTo(location: string): Response {
 }
 
 /**
+ * Returns the post-login destination requested by the app login page. Only
+ * app-relative paths are allowed here so a valid one-time token cannot become
+ * an open redirect to another origin.
+ */
+function getSafeSuccessRedirect(request: NextRequest): string {
+  const nextPath = request.nextUrl.searchParams.get("next");
+
+  if (!nextPath) {
+    return AUTH_SUCCESS_REDIRECT;
+  }
+
+  if (!nextPath.startsWith("/") || nextPath.startsWith("//")) {
+    return AUTH_SUCCESS_REDIRECT;
+  }
+
+  return nextPath;
+}
+
+/**
  * Checks the callback state before the one-time token is redeemed so attacker
  * tokens cannot force a browser into an attacker-controlled session.
  */
@@ -67,7 +86,7 @@ export async function verifyOneTimeTokenCallback(request: NextRequest): Promise<
     return redirectTo(AUTH_ERROR_REDIRECT);
   }
 
-  const headers = new Headers({ Location: AUTH_SUCCESS_REDIRECT });
+  const headers = new Headers({ Location: getSafeSuccessRedirect(request) });
   headers.append("set-cookie", getExpiredLoginStateCookie());
 
   for (const cookie of response.headers.getSetCookie()) {

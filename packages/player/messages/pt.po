@@ -46,8 +46,8 @@ msgid "e7WNdK"
 msgstr "Banco de palavras"
 
 #: src/components/completion-auth-branch.tsx
-msgid "Ak-bLZ"
-msgstr "Todas as aulas"
+msgid "E2sGaF"
+msgstr "Sair"
 
 #: src/components/completion-auth-branch.tsx
 msgid "FazwRl"
@@ -60,14 +60,8 @@ msgid "9-Ddtu"
 msgstr "Próxima"
 
 #: src/components/completion-auth-branch.tsx
-#: src/components/completion-milestone-actions.tsx
-msgid "e1M39C"
-msgstr "Cadastre-se para acompanhar seu progresso"
-
-#: src/components/completion-auth-branch.tsx
-#: src/components/completion-milestone-actions.tsx
-msgid "M8B177"
-msgstr "Entrar para salvar seu progresso"
+msgid "odXlk8"
+msgstr "Entrar"
 
 #: src/components/completion-brain-power-milestone.tsx
 msgid "D7TYjj"
@@ -296,6 +290,30 @@ msgstr "Próxima etapa"
 #: src/components/translation-step.tsx
 msgid "MxLxkr"
 msgstr "Traduza esta palavra:"
+
+#: src/components/unauthenticated-progress-prompt.tsx
+msgid "czygLT"
+msgstr "Entrar para salvar seu progresso"
+
+#: src/components/unauthenticated-progress-prompt.tsx
+msgid "yBJVJw"
+msgstr "Continuar sem salvar"
+
+#: src/components/unauthenticated-progress-prompt.tsx
+msgid "O781mu"
+msgstr "O progresso não será salvo"
+
+#: src/components/unauthenticated-progress-prompt.tsx
+msgid "JDumQX"
+msgstr "Você pode testar esta aula sem uma conta, mas sua pontuação, progresso no curso, níveis e Energia não serão salvos."
+
+#: src/components/unauthenticated-progress-prompt.tsx
+msgid "rxdOwg"
+msgstr "Esta aula não foi salva"
+
+#: src/components/unauthenticated-progress-prompt.tsx
+msgid "Wamgyz"
+msgstr "Entre antes da próxima aula para manter o progresso, as pontuações, os níveis e a Energia daqui em diante."
 
 #: src/components/verdict-label.tsx
 msgid "xmF49T"

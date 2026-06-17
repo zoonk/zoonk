@@ -19,9 +19,19 @@ export function buildInitialAnswers(steps: SerializedStep[]): Record<string, Sel
   return Object.fromEntries(entries);
 }
 
-function getInitialPhase(steps: SerializedStep[]): PlayerPhase {
+function getInitialPhase({
+  requiresStartConfirmation,
+  steps,
+}: {
+  requiresStartConfirmation: boolean;
+  steps: SerializedStep[];
+}): PlayerPhase {
   if (steps.length === 0) {
     return "completed";
+  }
+
+  if (requiresStartConfirmation) {
+    return "startWarning";
   }
 
   return "playing";
@@ -30,6 +40,7 @@ function getInitialPhase(steps: SerializedStep[]): PlayerPhase {
 export type InitialStateInput = {
   lesson: SerializedLesson;
   progressSnapshot?: PlayerProgressSnapshot | null;
+  requiresStartConfirmation?: boolean;
   shownCompletionMilestoneKeys?: PlayerCompletionMilestoneKey[];
   totalBrainPower: number;
 };
@@ -37,6 +48,7 @@ export type InitialStateInput = {
 export function createInitialState({
   lesson,
   progressSnapshot = null,
+  requiresStartConfirmation = false,
   shownCompletionMilestoneKeys = [],
   totalBrainPower,
 }: InitialStateInput): PlayerState {
@@ -49,7 +61,7 @@ export function createInitialState({
     lessonId: lesson.id,
     lessonKind: lesson.kind,
     localDate: getLocalDate(new Date(now)),
-    phase: getInitialPhase(lesson.steps),
+    phase: getInitialPhase({ requiresStartConfirmation, steps: lesson.steps }),
     progressSnapshot,
     results: {},
     selectedAnswers: buildInitialAnswers(lesson.steps),

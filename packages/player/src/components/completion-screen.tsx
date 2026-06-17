@@ -234,7 +234,19 @@ export function CompletionScreenContent({
 }) {
   const t = useExtracted();
   const milestone = usePlayerMilestone();
-  const { completionFooter } = usePlayerViewer();
+  const { completionFooter, isAuthenticated } = usePlayerViewer();
+
+  if (!isAuthenticated) {
+    return (
+      <CompletionScreen className="min-h-[60vh] justify-center">
+        <AuthBranch
+          chapterHref={chapterHref}
+          nextLessonHref={nextLessonHref}
+          onRestart={onRestart}
+        />
+      </CompletionScreen>
+    );
+  }
 
   if (milestone) {
     return (

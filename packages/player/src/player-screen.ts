@@ -55,6 +55,16 @@ type PlayerCompletedScreenModel = {
   stageIsStatic: false;
 };
 
+type PlayerStartWarningScreenModel = {
+  bottomBar: null;
+  keyboard: PlayerKeyboardModel;
+  kind: "startWarning";
+  scene: "startWarning";
+  showChrome: false;
+  stageIsFullBleed: false;
+  stageIsStatic: false;
+};
+
 type PlayerFeedbackScreenModel = InPlayScreenModel & { kind: "feedbackScreen"; scene: "feedback" };
 
 type PlayerStepScreenModel = InPlayScreenModel & { kind: "step" };
@@ -62,7 +72,25 @@ type PlayerStepScreenModel = InPlayScreenModel & { kind: "step" };
 export type PlayerScreenModel =
   | PlayerCompletedScreenModel
   | PlayerFeedbackScreenModel
+  | PlayerStartWarningScreenModel
   | PlayerStepScreenModel;
+
+/**
+ * The signed-out warning is an explicit pre-play state. It has no keyboard
+ * shortcuts or bottom controls because the learner must choose between logging
+ * in and knowingly continuing without saved progress.
+ */
+function getStartWarningScreenModel(): PlayerStartWarningScreenModel {
+  return {
+    bottomBar: null,
+    keyboard: { canRestart: false, enterAction: null, leftAction: null, rightAction: null },
+    kind: "startWarning",
+    scene: "startWarning",
+    showChrome: false,
+    stageIsFullBleed: false,
+    stageIsStatic: false,
+  };
+}
 
 /**
  * A completed player exposes either an intermediate milestone or the final
@@ -233,6 +261,10 @@ function getPlayerScreenScene({
  * screen mode from scattered booleans.
  */
 export function getPlayerScreenModel(state: PlayerState): PlayerScreenModel {
+  if (state.phase === "startWarning") {
+    return getStartWarningScreenModel();
+  }
+
   if (state.phase === "completed") {
     return getCompletedScreenModel({
       hasActiveMilestone: Boolean(getActiveCompletionMilestone(state)),

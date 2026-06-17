@@ -41,6 +41,7 @@ describe(buildLessonPlayerModel, () => {
       brandSlug: "brand",
       chapterSlug: "chapter-1",
       courseSlug: "course",
+      lessonSlug: "current-lesson",
       nextLesson: { chapterSlug: "chapter-1", lessonSlug: "lesson-1", lessonTitle: "Lesson 1" },
     });
 
@@ -54,6 +55,7 @@ describe(buildLessonPlayerModel, () => {
       brandSlug: "brand",
       chapterSlug: "chapter-1",
       courseSlug: "course",
+      lessonSlug: "current-lesson",
       nextLesson: { chapterSlug: "chapter-1", lessonSlug: "lesson-2", lessonTitle: "Lesson 2" },
     });
 
@@ -67,6 +69,7 @@ describe(buildLessonPlayerModel, () => {
       brandSlug: "brand",
       chapterSlug: "chapter-1",
       courseSlug: "course",
+      lessonSlug: "current-lesson",
       nextLesson: { chapterSlug: "chapter-2", lessonSlug: "lesson-2", lessonTitle: "Lesson 2" },
     });
 
@@ -84,6 +87,7 @@ describe(buildLessonPlayerModel, () => {
       brandSlug: "brand",
       chapterSlug: "chapter-1",
       courseSlug: "course",
+      lessonSlug: "current-lesson",
       nextLesson: null,
     });
 
@@ -101,6 +105,7 @@ describe(buildLessonPlayerModel, () => {
       brandSlug: "brand",
       chapterSlug: "chapter-1",
       courseSlug: "course",
+      lessonSlug: "current-lesson",
       nextChapter: { brandSlug: "brand", chapterSlug: "chapter-2", courseSlug: "course" },
       nextLesson: null,
     });
@@ -112,5 +117,19 @@ describe(buildLessonPlayerModel, () => {
     });
 
     expect(model.onNextHref).toBe("/b/brand/c/course/ch/chapter-2");
+  });
+
+  it("returns a login href that brings learners back to the current lesson", () => {
+    const model = buildLessonPlayerModel({
+      brandSlug: "brand",
+      chapterSlug: "chapter-1",
+      courseSlug: "course",
+      lessonSlug: "current-lesson",
+      nextLesson: null,
+    });
+
+    expect(model.navigation.loginHref).toBe(
+      "/login?next=%2Fb%2Fbrand%2Fc%2Fcourse%2Fch%2Fchapter-1%2Fl%2Fcurrent-lesson",
+    );
   });
 });

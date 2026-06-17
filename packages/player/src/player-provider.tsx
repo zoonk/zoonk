@@ -66,14 +66,19 @@ export function PlayerProvider({
   const initInput: InitialStateInput = useMemo(
     () => ({
       lesson,
-      progressSnapshot: getEffectiveCompletionProgressSnapshot({
-        localDate: getLocalDate(new Date()),
-        progressSnapshot,
-      }),
-      shownCompletionMilestoneKeys: getStoredCompletionMilestoneKeys(),
-      totalBrainPower,
+      progressSnapshot: viewer.isAuthenticated
+        ? getEffectiveCompletionProgressSnapshot({
+            localDate: getLocalDate(new Date()),
+            progressSnapshot,
+          })
+        : null,
+      requiresStartConfirmation: !viewer.isAuthenticated,
+      shownCompletionMilestoneKeys: viewer.isAuthenticated
+        ? getStoredCompletionMilestoneKeys()
+        : [],
+      totalBrainPower: viewer.isAuthenticated ? totalBrainPower : 0,
     }),
-    [lesson, progressSnapshot, totalBrainPower],
+    [lesson, progressSnapshot, totalBrainPower, viewer.isAuthenticated],
   );
 
   const [state, dispatch] = useReducer(playerReducer, initInput, createInitialState);
