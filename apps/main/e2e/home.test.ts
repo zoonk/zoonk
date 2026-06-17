@@ -16,7 +16,7 @@ test.describe("Home Page - Unauthenticated", () => {
 
     const hero = page.getByRole("main");
 
-    await expect(hero.getByRole("heading", { name: /change your life/iu })).toBeVisible();
+    await expect(hero.getByRole("heading", { name: /learn what matters/iu })).toBeVisible();
 
     const startFreeLink = hero.getByRole("link", { name: "Start free" });
 
@@ -127,7 +127,7 @@ test.describe("Home Page - Authenticated", () => {
     ).toBeVisible();
 
     await expect(
-      authenticatedPage.getByRole("heading", { name: /change your life/iu }),
+      authenticatedPage.getByRole("heading", { name: /learn what matters/iu }),
     ).not.toBeVisible();
   });
 
@@ -137,7 +137,7 @@ test.describe("Home Page - Authenticated", () => {
     await expect(userWithoutProgress.getByText(/continue learning/iu)).not.toBeVisible();
 
     await expect(
-      userWithoutProgress.getByRole("heading", { name: /change your life/iu }),
+      userWithoutProgress.getByRole("heading", { name: /learn what matters/iu }),
     ).toBeVisible();
 
     await expect(userWithoutProgress.getByRole("link", { name: "Start free" })).toBeVisible();
@@ -213,7 +213,7 @@ test.describe("Home Page - Authenticated", () => {
 
     await expect(page.getByRole("heading", { name: /continue learning/iu }).first()).toBeVisible();
 
-    await expect(page.getByRole("heading", { name: /change your life/iu })).not.toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn what matters/iu })).not.toBeVisible();
 
     await expect(
       page.getByRole("link", { name: new RegExp(`Next:.*E2E Pending Lesson ${uniqueId}`, "u") }),
