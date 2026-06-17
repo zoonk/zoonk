@@ -21,6 +21,7 @@ export async function generateWithOpenAI({
   text,
 }: {
   instructions: string;
+  languageCode?: string;
   text: string;
   voice: TTSVoice;
 }): Promise<AudioResult> {

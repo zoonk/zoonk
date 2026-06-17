@@ -12,7 +12,9 @@ import { generateWithOpenAI } from "./provider-openai";
 const DEFAULT_VOICE: TTSVoice = "Kore";
 const MAX_ATTEMPTS_PER_PROVIDER = 3;
 const INITIAL_BACKOFF_MS = 1000;
-const READ_ALOUD_TEMPLATE = "The following text is {{LANGUAGE}}. Read it aloud in {{LANGUAGE}}.";
+
+const READ_ALOUD_TEMPLATE =
+  "The following text is {{LANGUAGE}}. Speak clearly at a moderate pace suitable for language learners. Enunciate each word precisely; read it aloud in {{LANGUAGE}}.";
 
 type AudioFormat = "opus" | "wav";
 
@@ -26,6 +28,7 @@ const usagePrompts = { alphabetSymbol: alphabetSymbolPrompt } satisfies Record<
 
 type AudioProvider = (params: {
   instructions: string;
+  languageCode?: string;
   text: string;
   voice: TTSVoice;
 }) => Promise<AudioResult>;
@@ -90,10 +93,12 @@ function buildAttemptSchedule(
  */
 async function generateWithFallback({
   instructions,
+  languageCode,
   text,
   voice,
 }: {
   instructions: string;
+  languageCode?: string;
   text: string;
   voice: TTSVoice;
 }): Promise<AudioResult> {
@@ -112,7 +117,12 @@ async function generateWithFallback({
     }
 
     try {
-      return await attempt.generate({ instructions, text, voice });
+      return await attempt.generate({
+        instructions,
+        ...(languageCode ? { languageCode } : {}),
+        text,
+        voice,
+      });
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error));
     }
@@ -141,5 +151,12 @@ export async function generateLanguageAudio({
 }): Promise<SafeReturn<AudioResult>> {
   const instructions = buildInstructions({ languageCode: language, usage });
 
-  return safeAsync(() => generateWithFallback({ instructions, text, voice }));
+  return safeAsync(() =>
+    generateWithFallback({
+      instructions,
+      ...(language ? { languageCode: language } : {}),
+      text,
+      voice,
+    }),
+  );
 }
