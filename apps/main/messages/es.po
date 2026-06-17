@@ -210,12 +210,12 @@ msgid "C7ROJx"
 msgstr "Tu energía es {value}%"
 
 #: src/app/(catalog)/(home)/hero.tsx
-msgid "FQFGyy"
-msgstr "Cambia tu vida"
+msgid "F7f6bJ"
+msgstr "Aprende lo que importa"
 
 #: src/app/(catalog)/(home)/hero.tsx
-msgid "XgGQQP"
-msgstr "Aprueba tus exámenes, aprende un idioma, desarrolla habilidades y consigue el trabajo de tus sueños. Zoonk te ayuda a cambiar tu vida."
+msgid "mFdKy1"
+msgstr "Aprueba exámenes. Aprende idiomas. Desarrolla habilidades. Consigue el trabajo que quieres. Estudiar con Zoonk es fácil, claro y práctico."
 
 #: src/app/(catalog)/(home)/hero.tsx
 msgid "i7IHHZ"
@@ -228,6 +228,127 @@ msgstr "No necesitas tarjeta de crédito."
 #: src/app/(catalog)/(home)/hero.tsx
 msgid "b6dFV2"
 msgstr "Pruébalo sin compromiso."
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "W_1wLS"
+msgstr "¿Por qué estudiar se siente tan difícil?"
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "rUC9KA"
+msgstr "Muchas clases complican lo que debería ser simple. Mucho estudio se vuelve memorización sin sentido. Y con videos, PDFs, notas e IA por todas partes, sigues sin saber por dónde empezar."
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "yd8MxR"
+msgstr "Zoonk lo deja simple: lecciones cortas, lenguaje claro, ejemplos del día a día, cuestionarios, ejercicios y situaciones reales para entender la teoría en la práctica."
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "GLMfdK"
+msgstr "Dile a Zoonk tu objetivo y sigue un paso a la vez, sin saltar entre videos, PDFs, notas y chats de IA."
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "dcyc_u"
+msgstr "Un camino, no mil pestañas abiertas"
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "bvynQk"
+msgstr "Dividimos temas difíciles sin jerga, sin vueltas y sin clases que complican lo que debería ser simple."
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "rBBKNr"
+msgstr "Lenguaje simple, sin ruido académico"
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "77gA5w"
+msgstr "Ve cómo las ideas aparecen en el día a día, en el trabajo y en las decisiones que necesitas resolver."
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "xKYp3h"
+msgstr "Ejemplos reales, no teoría suelta"
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "iuNq-Z"
+msgstr "Usa cuestionarios, ejercicios, ejemplos y escenarios para resolver problemas en vez de solo mirar explicaciones."
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "MR0hb4"
+msgstr "Práctica que te hace pensar"
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "8iVdxW"
+msgstr "Ve qué acertaste, qué necesitas mejorar y si mantienes el ritmo, para saber cuál es el próximo paso."
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "_EUvRF"
+msgstr "Feedback para no estudiar a ciegas"
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "SDH1bI"
+msgstr "Cómo ayuda Zoonk"
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "wUXg4Q"
+msgstr "Basta de clases aburridas y memorización sin sentido"
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "tbojsI"
+msgstr "Aprende 70 idiomas. Ve la pronunciación de una forma que tiene sentido en tu idioma, para hablar sin trabarte."
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "We_5D-"
+msgstr "Aprende idiomas"
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "zfV50G"
+msgstr "¿Necesitas un requisito para una clase, proyecto o trabajo? Desarrolla la habilidad con lecciones claras y ejercicios prácticos."
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "5rp9p5"
+msgstr "Desarrolla habilidades"
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "po_f41"
+msgstr "Deja de buscar el video o PDF correcto. Sigue un curso que explica, te pone a practicar y sigue tu progreso en un solo lugar."
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "F-T3y7"
+msgstr "Sigue cursos guiados"
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "54l-im"
+msgstr "Prepárate con un camino que muestra qué estudiar, qué ya está bien y qué necesitas reforzar, con simulacros, cuestionarios y explicaciones prácticas."
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "dP8fUZ"
+msgstr "Pronto"
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "-MB81o"
+msgstr "Prepárate para exámenes"
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "Ca4yug"
+msgstr "Un curso enfocado en tus objetivos, nivel, intereses, hobbies y contexto, con ejemplos que tengan sentido para ti."
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "eosMlL"
+msgstr "Lecciones personalizadas"
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "T0Zjcm"
+msgstr "Usa Zoonk para lo que importa"
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "fDYYaI"
+msgstr "Empieza por el objetivo que importa ahora"
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgid "Cs8rf9"
+msgstr "Disponible ahora"
+
+#: src/app/(catalog)/(home)/hero.tsx
+#: src/app/(catalog)/p/[courseId]/page.tsx
+msgid "e61Jf3"
+msgstr "Próximamente"
 
 #: src/app/(catalog)/(home)/learning-days.tsx
 #: src/app/(progress)/level/level-insights.tsx
@@ -617,10 +738,6 @@ msgstr "Aún no hay cursos"
 #: src/app/(catalog)/my/user-course-list.tsx
 msgid "azX41u"
 msgstr "Comienza a aprender algo nuevo hoy."
-
-#: src/app/(catalog)/p/[courseId]/page.tsx
-msgid "e61Jf3"
-msgstr "Próximamente"
 
 #: src/app/(catalog)/p/[courseId]/page.tsx
 msgid "dtRj3N"

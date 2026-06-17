@@ -5,7 +5,7 @@ test.describe("Settings Navbar", () => {
     await page.goto("/subscription");
     await page.getByRole("link", { name: /home page/iu }).click();
 
-    await expect(page.getByRole("heading", { name: /change your life/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn what matters/iu })).toBeVisible();
   });
 
   test("displays all settings navigation pills", async ({ page }) => {
