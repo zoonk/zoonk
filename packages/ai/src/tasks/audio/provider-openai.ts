@@ -20,12 +20,13 @@ export async function generateWithOpenAI({
   instructions,
   text,
 }: {
-  instructions: string;
+  instructions?: string;
+  languageCode?: string;
   text: string;
   voice: TTSVoice;
 }): Promise<AudioResult> {
   const { audio } = await generateSpeech({
-    instructions,
+    ...(instructions ? { instructions } : {}),
     model: MODEL,
     outputFormat: "opus",
     text,
