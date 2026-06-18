@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { type Page, type Route } from "@zoonk/e2e/fixtures";
 import { searchPromptWithSuggestionsFixture } from "@zoonk/testing/fixtures/course-suggestions";
@@ -134,6 +135,57 @@ test.describe("Learn Form", () => {
 });
 
 test.describe("Course Suggestions", () => {
+  test("redirects to generate page when there is only one suggestion", async ({ page }) => {
+    await mockCourseGenerationWorkflow(page);
+
+    const singlePrompt = `single suggestion ${randomUUID()}`;
+
+    const fixture = await searchPromptWithSuggestionsFixture({
+      prompt: singlePrompt,
+      suggestions: [
+        { description: `Only course for ${singlePrompt}`, title: `Course for ${singlePrompt}` },
+      ],
+    });
+
+    const onlySuggestion = fixture.suggestions[0];
+
+    if (!onlySuggestion) {
+      throw new Error("No single suggestion created by fixture");
+    }
+
+    await page.goto(`/learn/${encodeURIComponent(singlePrompt)}`);
+
+    await expect(page).toHaveURL(new RegExp(`/generate/cs/${onlySuggestion.id}$`, "u"));
+  });
+
+  test("redirects to exact prompt match when there are multiple suggestions", async ({ page }) => {
+    await mockCourseGenerationWorkflow(page);
+
+    const uniqueId = randomUUID().slice(0, 8);
+    const exactPrompt = `biology ${uniqueId}`;
+
+    const fixture = await searchPromptWithSuggestionsFixture({
+      prompt: exactPrompt,
+      suggestions: [
+        {
+          description: `Adjacent course for ${exactPrompt}`,
+          title: `Advanced biology ${uniqueId}`,
+        },
+        { description: `Exact course for ${exactPrompt}`, title: `Biology ${uniqueId}` },
+      ],
+    });
+
+    const exactSuggestion = fixture.suggestions[1];
+
+    if (!exactSuggestion) {
+      throw new Error("No exact suggestion created by fixture");
+    }
+
+    await page.goto(`/learn/${encodeURIComponent(exactPrompt)}`);
+
+    await expect(page).toHaveURL(new RegExp(`/generate/cs/${exactSuggestion.id}$`, "u"));
+  });
+
   test("shows suggestions to unauthenticated users", async ({ page }) => {
     await page.goto(`/learn/${encodeURIComponent(prompt)}`);
 
