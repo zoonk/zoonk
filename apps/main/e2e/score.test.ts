@@ -1,3 +1,4 @@
+import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { expect, test } from "./fixtures";
 
 test.describe("Score Page", () => {
@@ -129,12 +130,18 @@ test.describe("Score Page", () => {
   });
 
   test.describe("Users Without Progress", () => {
-    test("sees prompt to start learning", async ({ userWithoutProgress }) => {
-      await userWithoutProgress.goto("/score");
+    test("sees prompt to start learning", async ({ baseURL, browser }) => {
+      const user = await createE2EUser(baseURL!, { orgRole: "member" });
+      const context = await browser.newContext({ storageState: user.storageState });
+      const page = await context.newPage();
 
-      await expect(
-        userWithoutProgress.getByText(/start learning to track your progress/iu),
-      ).toBeVisible();
+      try {
+        await page.goto("/score");
+
+        await expect(page.getByText(/start learning to track your progress/iu)).toBeVisible();
+      } finally {
+        await context.close();
+      }
     });
   });
 });
