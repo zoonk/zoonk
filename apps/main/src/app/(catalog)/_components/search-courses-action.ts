@@ -39,11 +39,13 @@ export type ChapterSearchResult = {
  */
 export async function searchCatalogAction(params: {
   query: string;
-  language?: string;
+  language: string;
 }): Promise<CatalogSearchResults> {
+  const searchParams = { filterByLanguage: true, language: params.language, query: params.query };
+
   const [courses, chapters] = await Promise.all([
-    searchCourses(params),
-    searchChapters({ ...params, limit: COMMAND_PALETTE_CHAPTER_LIMIT }),
+    searchCourses(searchParams),
+    searchChapters({ ...searchParams, limit: COMMAND_PALETTE_CHAPTER_LIMIT }),
   ]);
 
   return {

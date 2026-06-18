@@ -1,9 +1,12 @@
 import { randomUUID } from "node:crypto";
+import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { normalizeString } from "@zoonk/utils/string";
 import { type Page, expect, test } from "./fixtures";
+
+const SEARCH_CONTROL_NAME = /search|pesquisar/iu;
 
 async function createTestCourse() {
   const org = await getAiOrganization();
@@ -22,11 +25,75 @@ async function createTestCourse() {
 }
 
 /**
+ * The command palette searches courses and chapters together, so locale
+ * filtering needs a mixed catalog setup where both result kinds share the same
+ * query in different languages.
+ */
+async function createLocalizedSearchCatalog() {
+  const org = await getAiOrganization();
+  const uniqueId = randomUUID().slice(0, 8);
+  const enCourseTitle = `E2E Locale EN ${uniqueId}`;
+  const ptCourseTitle = `E2E Locale PT ${uniqueId}`;
+  const enChapterTitle = `E2E Locale Chapter EN ${uniqueId}`;
+  const ptChapterTitle = `E2E Locale Chapter PT ${uniqueId}`;
+
+  const [enCourse, ptCourse] = await Promise.all([
+    courseFixture({
+      description: `English locale result ${uniqueId}`,
+      isPublished: true,
+      language: "en",
+      normalizedTitle: normalizeString(enCourseTitle),
+      organizationId: org.id,
+      slug: `e2e-locale-en-${uniqueId}`,
+      title: enCourseTitle,
+    }),
+    courseFixture({
+      description: `Portuguese locale result ${uniqueId}`,
+      isPublished: true,
+      language: "pt",
+      normalizedTitle: normalizeString(ptCourseTitle),
+      organizationId: org.id,
+      slug: `e2e-locale-pt-${uniqueId}`,
+      title: ptCourseTitle,
+    }),
+  ]);
+
+  await Promise.all([
+    chapterFixture({
+      courseId: enCourse.id,
+      description: `English chapter locale result ${uniqueId}`,
+      isPublished: true,
+      language: "en",
+      normalizedTitle: normalizeString(enChapterTitle),
+      organizationId: org.id,
+      position: 0,
+      slug: `e2e-locale-chapter-en-${uniqueId}`,
+      title: enChapterTitle,
+    }),
+    chapterFixture({
+      courseId: ptCourse.id,
+      description: `Portuguese chapter locale result ${uniqueId}`,
+      isPublished: true,
+      language: "pt",
+      normalizedTitle: normalizeString(ptChapterTitle),
+      organizationId: org.id,
+      position: 0,
+      slug: `e2e-locale-chapter-pt-${uniqueId}`,
+      title: ptChapterTitle,
+    }),
+  ]);
+
+  return { enChapterTitle, enCourseTitle, ptChapterTitle, ptCourseTitle, uniqueId };
+}
+
+/**
  * Opens the command palette through the real navbar trigger so tests interact
  * with the same hydrated chrome learners use.
  */
 async function openCommandPalette(page: Page) {
-  const searchButton = page.getByRole("navigation").getByRole("button", { name: /search/iu });
+  const searchButton = page
+    .getByRole("navigation")
+    .getByRole("button", { name: SEARCH_CONTROL_NAME });
 
   await expect(async () => {
     await searchButton.click();
@@ -427,6 +494,34 @@ test.describe("Command Palette - Course Search", () => {
     for (const partialTitle of partialMatchTitles) {
       expect(firstOptionText!.startsWith(partialTitle)).toBe(false);
     }
+  });
+
+  test("shows only results from the active app language", async ({ page }) => {
+    const { enChapterTitle, enCourseTitle, ptChapterTitle, ptCourseTitle, uniqueId } =
+      await createLocalizedSearchCatalog();
+
+    await setLocale(page, "pt");
+    await page.goto("/");
+    await openCommandPalette(page);
+
+    const dialog = page.getByRole("dialog");
+    await dialog.getByPlaceholder(SEARCH_CONTROL_NAME).fill(uniqueId);
+
+    await expect(
+      dialog.getByRole("option", { name: new RegExp(`^${ptCourseTitle}`, "u") }),
+    ).toBeVisible();
+
+    await expect(
+      dialog.getByRole("option", { name: new RegExp(`^${ptChapterTitle}`, "u") }),
+    ).toBeVisible();
+
+    await expect(
+      dialog.getByRole("option", { name: new RegExp(`^${enCourseTitle}`, "u") }),
+    ).not.toBeVisible();
+
+    await expect(
+      dialog.getByRole("option", { name: new RegExp(`^${enChapterTitle}`, "u") }),
+    ).not.toBeVisible();
   });
 });
 

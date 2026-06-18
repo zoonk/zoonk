@@ -125,6 +125,55 @@ describe(searchChapters, () => {
     expect(result).toHaveLength(5);
   });
 
+  it("filters by language when language filtering is requested", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const searchTerm = `chapterlanguage${uniqueId}`;
+
+    const [enCourse, ptCourse] = await Promise.all([
+      courseFixture({ isPublished: true, language: "en", organizationId: brandOrg.id }),
+      courseFixture({ isPublished: true, language: "pt", organizationId: brandOrg.id }),
+    ]);
+
+    const [enChapter, ptChapter] = await Promise.all([
+      chapterFixture({
+        courseId: enCourse.id,
+        isPublished: true,
+        language: "en",
+        normalizedTitle: normalizeString(searchTerm),
+        organizationId: brandOrg.id,
+        title: searchTerm,
+      }),
+      chapterFixture({
+        courseId: ptCourse.id,
+        isPublished: true,
+        language: "pt",
+        normalizedTitle: normalizeString(searchTerm),
+        organizationId: brandOrg.id,
+        title: searchTerm,
+      }),
+    ]);
+
+    const enResult = await searchChapters({
+      filterByLanguage: true,
+      language: "en",
+      query: searchTerm,
+    });
+
+    const ptResult = await searchChapters({
+      filterByLanguage: true,
+      language: "pt",
+      query: searchTerm,
+    });
+
+    const enIds = enResult.map((chapter) => chapter.id);
+    const ptIds = ptResult.map((chapter) => chapter.id);
+
+    expect(enIds).toContain(enChapter.id);
+    expect(enIds).not.toContain(ptChapter.id);
+    expect(ptIds).not.toContain(enChapter.id);
+    expect(ptIds).toContain(ptChapter.id);
+  });
+
   it("returns only published chapters from published brand courses", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const searchTerm = `chaptervisibility${uniqueId}`;
