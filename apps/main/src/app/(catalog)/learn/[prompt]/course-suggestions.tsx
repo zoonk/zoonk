@@ -10,9 +10,37 @@ import {
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { ItemGroup } from "@zoonk/ui/components/item";
+import { normalizeString } from "@zoonk/utils/string";
 import { getExtracted, getLocale } from "next-intl/server";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { CourseSuggestionItem } from "./course-suggestion-item";
+
+type AutomaticCourseSuggestion = { id: string; title: string };
+
+/**
+ * The learn results page should only ask learners to choose when there is a real
+ * choice to make. A single suggestion or an exact title match means the prompt
+ * already identifies one course, so returning that suggestion lets the page send
+ * the learner straight into course generation.
+ */
+function getAutomaticCourseSuggestion({
+  prompt,
+  suggestions,
+}: {
+  prompt: string;
+  suggestions: AutomaticCourseSuggestion[];
+}): AutomaticCourseSuggestion | null {
+  if (suggestions.length === 1) {
+    return suggestions[0] ?? null;
+  }
+
+  const normalizedPrompt = normalizeString(prompt);
+
+  return (
+    suggestions.find((suggestion) => normalizeString(suggestion.title) === normalizedPrompt) ?? null
+  );
+}
 
 export async function CourseSuggestions({ prompt }: { prompt: string }) {
   const locale = await getLocale();
@@ -22,6 +50,12 @@ export async function CourseSuggestions({ prompt }: { prompt: string }) {
     getSession(),
     generateCourseSuggestions({ language: locale, prompt }),
   ]);
+
+  const automaticSuggestion = getAutomaticCourseSuggestion({ prompt, suggestions });
+
+  if (automaticSuggestion) {
+    redirect(`/generate/cs/${automaticSuggestion.id}`);
+  }
 
   return (
     <Container variant="narrow">
