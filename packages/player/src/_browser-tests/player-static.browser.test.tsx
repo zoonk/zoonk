@@ -401,6 +401,64 @@ describe("player browser integration: static steps", () => {
     await expect.element(page.getByText("Add -ed to regular verbs")).toBeInTheDocument();
   });
 
+  it("splits leading grammar explanation sentences into separate player lines", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        kind: "grammar",
+        steps: [
+          buildSerializedStep({
+            content: {
+              text: "Use el for masculine nouns. Use la for feminine nouns, e.g. la mesa. This changes the article.",
+              title: "Articles",
+              variant: "text" as const,
+            },
+            id: "grammar-explanation",
+          }),
+          buildSerializedStep({
+            content: {
+              highlight: "la",
+              romanization: null,
+              sentence: "La mesa es grande",
+              translation: "The table is big",
+              variant: "grammarExample" as const,
+            },
+            id: "grammar-example",
+            position: 1,
+          }),
+          buildSerializedStep({
+            content: {
+              text: "Keep this later note together. It is no longer part of the opening explanation.",
+              title: "Later note",
+              variant: "text" as const,
+            },
+            id: "later-static-note",
+            position: 2,
+          }),
+        ],
+      }),
+      navigation: buildNavigation({ nextLessonHref: null }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await expect.element(page.getByRole("heading", { name: "Articles" })).toBeInTheDocument();
+    expect(screen.getByText("Use el for masculine nouns.")).toBeInTheDocument();
+    expect(screen.getByText("Use la for feminine nouns, e.g. la mesa.")).toBeInTheDocument();
+    expect(screen.getByText("This changes the article.")).toBeInTheDocument();
+
+    fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
+    fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
+
+    await expect.element(page.getByRole("heading", { name: "Later note" })).toBeInTheDocument();
+
+    expect(
+      screen.getByText(
+        "Keep this later note together. It is no longer part of the opening explanation.",
+      ),
+    ).toBeInTheDocument();
+
+    expect(screen.queryByText("Keep this later note together.")).not.toBeInTheDocument();
+  });
+
   it("renders generated rich text without exposing LaTeX delimiters", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
