@@ -3,10 +3,12 @@ import { type Course, type Organization, getPublishedCourseWhere, prisma } from 
 import { MAX_QUERY_ITEMS, clampQueryItems } from "@zoonk/db/utils";
 import { DEFAULT_SEARCH_LIMIT, mergeSearchResults } from "@zoonk/utils/search";
 import { normalizeString } from "@zoonk/utils/string";
+import { getSearchLanguageFilter } from "../_utils/search-language-filter";
 
 type CourseWithOrganization = Course & { organization: Organization };
 
 export async function searchCourses(params: {
+  filterByLanguage?: boolean;
   query: string;
   language?: string;
   limit?: number;
@@ -20,7 +22,13 @@ export async function searchCourses(params: {
     return [];
   }
 
-  const baseWhere = getPublishedCourseWhere({ organization: { kind: "brand" } as const });
+  const baseWhere = getPublishedCourseWhere({
+    organization: { kind: "brand" } as const,
+    ...getSearchLanguageFilter({
+      filterByLanguage: params.filterByLanguage,
+      language: params.language,
+    }),
+  });
 
   const [exactMatch, containsMatches] = await Promise.all([
     prisma.course.findFirst({

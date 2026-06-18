@@ -134,6 +134,48 @@ describe(searchCourses, () => {
     expect(ptResult[0]?.language).toBe("pt");
   });
 
+  it("filters by language when language filtering is requested", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const searchTerm = `langfilter${uniqueId}`;
+
+    const [enCourse, ptCourse] = await Promise.all([
+      courseFixture({
+        isPublished: true,
+        language: "en",
+        normalizedTitle: searchTerm,
+        organizationId: brandOrg.id,
+        title: searchTerm,
+      }),
+      courseFixture({
+        isPublished: true,
+        language: "pt",
+        normalizedTitle: searchTerm,
+        organizationId: brandOrg.id,
+        title: searchTerm,
+      }),
+    ]);
+
+    const enResult = await searchCourses({
+      filterByLanguage: true,
+      language: "en",
+      query: searchTerm,
+    });
+
+    const ptResult = await searchCourses({
+      filterByLanguage: true,
+      language: "pt",
+      query: searchTerm,
+    });
+
+    const enIds = enResult.map((course) => course.id);
+    const ptIds = ptResult.map((course) => course.id);
+
+    expect(enIds).toContain(enCourse.id);
+    expect(enIds).not.toContain(ptCourse.id);
+    expect(ptIds).not.toContain(enCourse.id);
+    expect(ptIds).toContain(ptCourse.id);
+  });
+
   it("returns all languages when no language is specified", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const searchTerm = `nolang${uniqueId}`;

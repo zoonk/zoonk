@@ -7,6 +7,7 @@ import {
 } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
 import { normalizeString } from "@zoonk/utils/string";
+import { getSearchLanguageFilter } from "../_utils/search-language-filter";
 
 type ChapterFindManyArgs = NonNullable<Parameters<typeof prisma.chapter.findMany>[0]>;
 type ChapterSearchWhere = ChapterFindManyArgs["where"];
@@ -27,6 +28,7 @@ const DEFAULT_CHAPTER_SEARCH_LIMIT = 5;
  * ranks exact title matches ahead of partial title and description matches.
  */
 export async function searchChapters(params: {
+  filterByLanguage?: boolean;
   query: string;
   language?: string;
   limit?: number;
@@ -39,6 +41,12 @@ export async function searchChapters(params: {
   }
 
   const baseWhere = getPublishedChapterWhere({
+    chapterWhere: {
+      ...getSearchLanguageFilter({
+        filterByLanguage: params.filterByLanguage,
+        language: params.language,
+      }),
+    },
     courseWhere: { organization: { kind: "brand" } as const },
   });
 
