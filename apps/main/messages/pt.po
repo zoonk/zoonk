@@ -248,12 +248,12 @@ msgid "uiwFZe"
 msgstr "Faixa {color} - Nível {level}"
 
 #: src/app/(catalog)/(home)/page.tsx
-msgid "fEOaZF"
-msgstr "Zoonk é uma plataforma de aprendizado com IA onde você pode aprender qualquer coisa por meio de cursos e aulas interativos."
+msgid "a50ZRn"
+msgstr "Plataforma de estudos para para estudar com IA. App de estudos para passar em provas, concursos, aprender idiomas e qualquer assunto."
 
 #: src/app/(catalog)/(home)/page.tsx
-msgid "qsfeMJ"
-msgstr "Zoonk: plataforma de aprendizagem com IA"
+msgid "leBFvu"
+msgstr "Zoonk: IA para Estudos"
 
 #: src/app/(catalog)/(home)/progress.tsx
 #: src/app/generate/ch/[id]/generation-client.tsx
