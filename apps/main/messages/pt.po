@@ -249,7 +249,7 @@ msgstr "Faixa {color} - Nível {level}"
 
 #: src/app/(catalog)/(home)/page.tsx
 msgid "a50ZRn"
-msgstr "Plataforma de estudos para para estudar com IA. App de estudos para passar em provas, concursos, aprender idiomas e qualquer assunto."
+msgstr "Plataforma de estudos para estudar com IA. App de estudos para passar em provas, concursos, aprender idiomas e qualquer assunto."
 
 #: src/app/(catalog)/(home)/page.tsx
 msgid "leBFvu"
