@@ -9,9 +9,9 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     alternates: { canonical: "/" },
     description: t(
-      "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses and lessons.",
+      "Zoonk is an AI learning platform and study app to create courses about any topic using AI. Study for your exams or learn new skills.",
     ),
-    title: { absolute: t("Zoonk: AI Learning Platform") },
+    title: { absolute: t("Zoonk: Study App with AI") },
   };
 }
 

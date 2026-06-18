@@ -248,12 +248,12 @@ msgid "uiwFZe"
 msgstr "{color} Belt - Level {level}"
 
 #: src/app/(catalog)/(home)/page.tsx
-msgid "fEOaZF"
-msgstr "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses and lessons."
+msgid "a50ZRn"
+msgstr "Zoonk is an AI learning platform and study app to create courses about any topic using AI. Study for your exams or learn new skills."
 
 #: src/app/(catalog)/(home)/page.tsx
-msgid "qsfeMJ"
-msgstr "Zoonk: AI Learning Platform"
+msgid "leBFvu"
+msgstr "Zoonk: Study App with AI"
 
 #: src/app/(catalog)/(home)/progress.tsx
 #: src/app/generate/ch/[id]/generation-client.tsx
