@@ -8,7 +8,7 @@ test.describe("Locale Behavior - English", () => {
     const nav = page.getByRole("navigation");
 
     await expect(nav.getByRole("link", { exact: true, name: "Courses" })).not.toBeVisible();
-    await expect(nav.getByRole("link", { exact: true, name: "Learn" })).toBeVisible();
+    await expect(nav.getByRole("link", { exact: true, name: "New course" })).toBeVisible();
 
     await expect(page).toHaveURL(/\/$/u);
     await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
@@ -23,7 +23,7 @@ test.describe("Locale Behavior - Portuguese", () => {
     const nav = page.getByRole("navigation");
 
     await expect(nav.getByRole("link", { exact: true, name: "Cursos" })).not.toBeVisible();
-    await expect(nav.getByRole("link", { exact: true, name: "Aprender" })).toBeVisible();
+    await expect(nav.getByRole("link", { exact: true, name: "Novo curso" })).toBeVisible();
 
     await expect(page).toHaveURL(/\/$/u);
     await expect(page.getByRole("heading", { name: /aprenda qualquer coisa/iu })).toBeVisible();
@@ -37,7 +37,10 @@ test.describe("Locale Navigation", () => {
 
     await expect(page.getByRole("heading", { name: /explorar cursos/iu })).toBeVisible();
 
-    await page.getByRole("navigation").getByRole("link", { exact: true, name: "Aprender" }).click();
+    await page
+      .getByRole("navigation")
+      .getByRole("link", { exact: true, name: "Novo curso" })
+      .click();
 
     await expect(page).toHaveURL(/\/learn$/u);
     await expect(page.getByRole("heading", { name: /aprenda qualquer coisa/iu })).toBeVisible();

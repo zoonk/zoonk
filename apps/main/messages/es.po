@@ -14,8 +14,8 @@ msgid "U3l-Q9"
 msgstr "Página de inicio"
 
 #: src/app/(catalog)/_components/command-palette.tsx
-msgid "L6kaJv"
-msgstr "Aprende algo"
+msgid "jboh4c"
+msgstr "Empezar un nuevo curso"
 
 #: src/app/(catalog)/_components/command-palette.tsx
 #: src/app/(catalog)/_components/logout-dropdown-item.tsx
@@ -111,8 +111,8 @@ msgid "onRJrc"
 msgstr "Página del curso"
 
 #: src/app/(catalog)/_components/navbar-links.tsx
-msgid "IbrSk1"
-msgstr "Aprender"
+msgid "m826WB"
+msgstr "Nuevo curso"
 
 #: src/app/(catalog)/_components/user-avatar-menu.tsx
 msgid "6b2CRH"
