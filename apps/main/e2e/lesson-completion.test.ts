@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { type Browser, type Page } from "@playwright/test";
 import { request } from "@zoonk/e2e/fixtures";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
+import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
@@ -504,9 +505,10 @@ test.describe("Lesson Completion UX", () => {
   });
 
   test("completed lesson shows check indicator in chapter lesson list", async ({
-    authenticatedPage,
-    withProgressUser,
+    baseURL,
+    browser,
   }) => {
+    const user = await createE2EUser(baseURL!);
     const org = await getAiOrganization();
     const uniqueId = randomUUID().slice(0, 8);
 
@@ -549,41 +551,43 @@ test.describe("Lesson Completion UX", () => {
       title: pendingLessonTitle,
     });
 
-    await stepFixture({
-      content: { text: `Completed content ${uniqueId}`, title: `Completed ${uniqueId}` },
-      isPublished: true,
-      kind: "static",
-      lessonId: completedLesson.id,
-    });
+    await Promise.all([
+      stepFixture({
+        content: { text: `Completed content ${uniqueId}`, title: `Completed ${uniqueId}` },
+        isPublished: true,
+        kind: "static",
+        lessonId: completedLesson.id,
+      }),
+      stepFixture({
+        content: { text: `Pending content ${uniqueId}`, title: `Pending ${uniqueId}` },
+        isPublished: true,
+        kind: "static",
+        lessonId: pendingLesson.id,
+      }),
+      lessonProgressFixture({
+        completedAt: new Date(),
+        durationSeconds: 60,
+        lessonId: completedLesson.id,
+        userId: user.id,
+      }),
+    ]);
 
-    await stepFixture({
-      content: { text: `Pending content ${uniqueId}`, title: `Pending ${uniqueId}` },
-      isPublished: true,
-      kind: "static",
-      lessonId: pendingLesson.id,
-    });
+    const browserContext = await browser.newContext({ storageState: user.storageState });
+    const page = await browserContext.newPage();
 
-    await lessonProgressFixture({
-      completedAt: new Date(),
-      durationSeconds: 60,
-      lessonId: completedLesson.id,
-      userId: withProgressUser.id,
-    });
+    try {
+      await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
 
-    await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
-    await authenticatedPage.waitForLoadState("networkidle");
+      const completedItem = page.getByRole("link", { name: new RegExp(completedLessonTitle, "u") });
 
-    const completedItem = authenticatedPage.getByRole("link", {
-      name: new RegExp(completedLessonTitle, "u"),
-    });
+      await expect(completedItem).toBeVisible();
+      await expect(completedItem.getByText(/^completed$/iu)).toBeVisible();
 
-    await expect(completedItem).toBeVisible();
-    await expect(completedItem.getByText(/^completed$/iu)).toBeVisible();
+      const pendingItem = page.getByRole("link", { name: new RegExp(pendingLessonTitle, "u") });
 
-    const pendingItem = authenticatedPage.getByRole("link", {
-      name: new RegExp(pendingLessonTitle, "u"),
-    });
-
-    await expect(pendingItem).toBeVisible();
+      await expect(pendingItem).toBeVisible();
+    } finally {
+      await browserContext.close();
+    }
   });
 });

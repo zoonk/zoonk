@@ -42,7 +42,7 @@ export default defineConfig({
             enabled: true,
             headless: true,
             instances: [{ browser: "chromium", name: "chromium" }],
-            provider: playwright(),
+            provider: playwright({ launchOptions: { channel: "chrome" } }),
           },
           include: browserTests,
           name: "browser",
