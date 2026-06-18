@@ -11,11 +11,14 @@ test.describe("Navbar - Unauthenticated", () => {
     await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
   });
 
-  test("Learn link navigates to learn page", async ({ page }) => {
+  test("New course link navigates to learn page", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
 
-    await page.getByRole("navigation").getByRole("link", { exact: true, name: "Learn" }).click();
+    await page
+      .getByRole("navigation")
+      .getByRole("link", { exact: true, name: "New course" })
+      .click();
 
     await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
   });
@@ -31,12 +34,12 @@ test.describe("Navbar - Unauthenticated", () => {
     await expect(coursesLink).not.toBeVisible();
   });
 
-  test("Learn link is active on learn page", async ({ page }) => {
+  test("New course link is active on learn page", async ({ page }) => {
     await page.goto("/learn");
 
     const learnLink = page
       .getByRole("navigation")
-      .getByRole("link", { exact: true, name: "Learn" });
+      .getByRole("link", { exact: true, name: "New course" });
 
     await expect(learnLink).toHaveAttribute("aria-current", "page");
   });

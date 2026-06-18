@@ -157,14 +157,14 @@ test.describe("Command Palette - Unauthenticated", () => {
     await expect(page.getByRole("dialog")).not.toBeVisible();
   });
 
-  test("shows Pages group with Home and Learn", async ({ page }) => {
+  test("shows Pages group with Home and new course", async ({ page }) => {
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
-    await expect(dialog.getByText("Pages")).toBeVisible();
+    await expect(dialog.getByRole("group", { name: "Pages" })).toBeVisible();
     await expect(dialog.getByText(/home page/iu)).toBeVisible();
     await expect(dialog.getByRole("option", { name: /^courses$/iu })).not.toBeVisible();
-    await expect(dialog.getByText(/learn something/iu)).toBeVisible();
+    await expect(dialog.getByText(/start a new course/iu)).toBeVisible();
   });
 
   test("shows My account group with Login and Language only", async ({ page }) => {
@@ -202,12 +202,12 @@ test.describe("Command Palette - Unauthenticated", () => {
     await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
   });
 
-  test("selecting Learn shows the course creation form", async ({ page }) => {
+  test("selecting Start a new course shows the course creation form", async ({ page }) => {
     await openCommandPalette(page);
 
     await page
       .getByRole("dialog")
-      .getByText(/learn something/iu)
+      .getByText(/start a new course/iu)
       .click();
 
     await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
@@ -550,10 +550,10 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     await expect(homeOption).toHaveAttribute("aria-selected", "true");
 
     // Also wait for the second option to be present before navigating
-    const learnOption = dialog.getByRole("option", { name: /learn something/iu });
+    const learnOption = dialog.getByRole("option", { name: /start a new course/iu });
     await expect(learnOption).toBeVisible();
 
-    // Press ArrowDown - "Learn something" should now be selected
+    // Press ArrowDown - "Start a new course" should now be selected
     await page.keyboard.press("ArrowDown");
     await expect(learnOption).toHaveAttribute("aria-selected", "true");
 

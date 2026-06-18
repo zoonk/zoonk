@@ -127,7 +127,7 @@ export function NavbarLinks({ isLoggedIn }: { isLoggedIn: boolean }) {
         prefetch
       >
         <learnMenu.icon aria-hidden="true" />
-        <span className="sr-only sm:not-sr-only">{t("Learn")}</span>
+        <span className="sr-only sm:not-sr-only">{t("New course")}</span>
       </Link>
     </>
   );
