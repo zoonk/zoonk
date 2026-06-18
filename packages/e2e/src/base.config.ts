@@ -18,7 +18,11 @@ export function createBaseConfig(options: {
     reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : [["list"]],
     retries: process.env.CI ? 2 : 0,
     testDir: options.testDir,
-    use: { screenshot: "only-on-failure", trace: "on-first-retry", video: "retain-on-failure" },
+    use: {
+      screenshot: process.env.CI ? "off" : "only-on-failure",
+      trace: process.env.CI ? "off" : "on-first-retry",
+      video: process.env.CI ? "off" : "retain-on-failure",
+    },
     webServer: {
       command: "pnpm start -p 0",
       env: {
