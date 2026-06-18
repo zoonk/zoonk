@@ -1,7 +1,13 @@
 "use client";
 
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { type LessonKind } from "@zoonk/core/steps/contract/content";
+import { usePlayerLessonMeta, usePlayerRuntime } from "../player-context";
 import { describePlayerStep, getPlayerStepImage } from "../player-step";
+import {
+  getGrammarExplanationSentenceLines,
+  isInitialGrammarExplanationStep,
+} from "./_utils/grammar-explanation-lines";
 import { HighlightText } from "./highlight-text";
 import {
   PlayerReadScene,
@@ -9,15 +15,55 @@ import {
   PlayerReadSceneStack,
   PlayerReadSceneTitle,
 } from "./player-read-scene";
+import { PlayerRichText } from "./player-rich-text";
 import { RomanizationText } from "./romanization-text";
 import { StaticStepLayout } from "./static-step-layout";
 import { StepIntroHero } from "./step-intro-hero-layout";
 
-function TextVariant({ title, text }: { title: string; text: string }) {
+/**
+ * Renders one display sentence with the same rich-text support as regular
+ * player copy. Grammar explanations can include target-word code markers,
+ * emphasis, or formulas, so splitting the text must not downgrade formatting.
+ */
+function SentenceLine({ sentence }: { sentence: string }) {
+  return (
+    <span className="block">
+      <PlayerRichText text={sentence} />
+    </span>
+  );
+}
+
+/**
+ * Adds a small pause between generated explanation sentences. The wrapper stays
+ * inline-compatible with the existing paragraph body while visually making each
+ * sentence scan as its own line.
+ */
+function SentenceLineGroup({ sentences }: { sentences: string[] }) {
+  return (
+    <span className="block space-y-3">
+      {sentences.map((sentence, index) => (
+        // oxlint-disable-next-line react/no-array-index-key -- Sentence lines come from immutable generated text and never reorder after render.
+        <SentenceLine key={`${sentence}-${index}`} sentence={sentence} />
+      ))}
+    </span>
+  );
+}
+
+function TextVariant({
+  sentenceLines,
+  title,
+  text,
+}: {
+  sentenceLines: string[] | null;
+  title: string;
+  text: string;
+}) {
   return (
     <PlayerReadSceneStack>
       <PlayerReadSceneTitle>{title}</PlayerReadSceneTitle>
-      <PlayerReadSceneBody>{text}</PlayerReadSceneBody>
+      <PlayerReadSceneBody>
+        {sentenceLines ? <SentenceLineGroup sentences={sentenceLines} /> : text}
+      </PlayerReadSceneBody>
     </PlayerReadSceneStack>
   );
 }
@@ -46,7 +92,39 @@ function GrammarExampleVariant({
   );
 }
 
-function StaticStepContent({ step }: { step: SerializedStep }) {
+/**
+ * Returns sentence lines only for the leading grammar explanation block. The
+ * guard keeps the visual treatment away from regular static lessons, grammar
+ * examples, and any static text that may appear after examples or questions.
+ */
+function getStaticTextSentenceLines({
+  lessonKind,
+  step,
+  steps,
+}: {
+  lessonKind: LessonKind;
+  step: SerializedStep;
+  steps: SerializedStep[];
+}) {
+  const descriptor = describePlayerStep(step);
+
+  if (
+    descriptor?.kind !== "staticText" ||
+    !isInitialGrammarExplanationStep({ lessonKind, step, steps })
+  ) {
+    return null;
+  }
+
+  return getGrammarExplanationSentenceLines(descriptor.content.text);
+}
+
+function StaticStepContent({
+  sentenceLines,
+  step,
+}: {
+  sentenceLines: string[] | null;
+  step: SerializedStep;
+}) {
   const descriptor = describePlayerStep(step);
 
   if (!descriptor) {
@@ -68,7 +146,13 @@ function StaticStepContent({ step }: { step: SerializedStep }) {
     return null;
   }
 
-  return <TextVariant text={descriptor.content.text} title={descriptor.content.title} />;
+  return (
+    <TextVariant
+      sentenceLines={sentenceLines}
+      text={descriptor.content.text}
+      title={descriptor.content.title}
+    />
+  );
 }
 
 /**
@@ -85,7 +169,15 @@ function TextOnlyStaticScene({ children }: { children: React.ReactNode }) {
 }
 
 export function StaticStep({ step }: { step: SerializedStep }) {
+  const lessonMeta = usePlayerLessonMeta();
+  const { state } = usePlayerRuntime();
   const descriptor = describePlayerStep(step);
+
+  const sentenceLines = getStaticTextSentenceLines({
+    lessonKind: lessonMeta.kind,
+    step,
+    steps: state.steps,
+  });
 
   if (descriptor?.kind === "intro") {
     return (
@@ -97,7 +189,7 @@ export function StaticStep({ step }: { step: SerializedStep }) {
     );
   }
 
-  const content = <StaticStepContent step={step} />;
+  const content = <StaticStepContent sentenceLines={sentenceLines} step={step} />;
   const image = getPlayerStepImage(descriptor);
 
   if (!image) {
