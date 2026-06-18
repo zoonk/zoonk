@@ -14,7 +14,7 @@ export function createBaseConfig(options: {
     forbidOnly: Boolean(process.env.CI),
     fullyParallel: true,
     globalSetup: options.globalSetup,
-    projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+    projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"], channel: "chrome" } }],
     reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : [["list"]],
     retries: process.env.CI ? 2 : 0,
     testDir: options.testDir,
