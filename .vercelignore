@@ -1,0 +1,11 @@
+# Local caches and generated build outputs are not source inputs for Vercel.
+.turbo/
+**/.next/
+**/.next-e2e/
+**/coverage/
+**/playwright-report/
+**/test-results/
+**/e2e/.auth/
+.vitest-attachments/
+__screenshots__/
+.next-docs/
