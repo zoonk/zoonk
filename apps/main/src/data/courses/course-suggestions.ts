@@ -1,7 +1,7 @@
 import "server-only";
 import { generateCourseSuggestions as generateTask } from "@zoonk/ai/tasks/courses/suggestions";
 import { type CourseSuggestion, getAiGenerationCourseWhere, prisma } from "@zoonk/db";
-import { getLanguageName } from "@zoonk/utils/languages";
+import { getLanguageName, isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { normalizeString, removeLocaleSuffix, toSlug } from "@zoonk/utils/string";
 import { isUuid } from "@zoonk/utils/uuid";
 
@@ -18,6 +18,12 @@ async function findSearchPrompt(params: { language: string; prompt: string }) {
 }
 
 type SuggestionInput = { title: string; description: string; targetLanguage: string | null };
+
+type GeneratedSuggestion = {
+  description: string;
+  targetLanguageCode: string | null;
+  title: string;
+};
 
 async function upsertSearchPromptWithSuggestions(input: {
   language: string;
@@ -78,24 +84,73 @@ async function upsertSearchPromptWithSuggestions(input: {
   });
 }
 
-function resolveLanguageSuggestion(
-  suggestion: { title: string; description: string; targetLanguageCode: string | null },
-  language: string,
-): SuggestionInput {
-  if (!suggestion.targetLanguageCode) {
+/**
+ * Normalizes model-generated language codes before we treat a suggestion as a
+ * language course. The prompt asks for ISO 639-1 codes, but model output is
+ * still untrusted: values such as `zh-TW`, `traditional-chinese`, or the raw
+ * learner input can otherwise reach `Intl.DisplayNames` and crash the page with
+ * `RangeError: invalid_argument`.
+ */
+function normalizeGeneratedTargetLanguage({
+  targetLanguageCode,
+}: {
+  targetLanguageCode: string | null;
+}): string | null {
+  const language = getBaseLanguageCode({ targetLanguageCode });
+
+  if (!language || !isTTSSupportedLanguage(language)) {
+    return null;
+  }
+
+  return language;
+}
+
+/**
+ * Extracts the base language subtag from BCP 47-like model output. Region and
+ * script variants such as `zh-Hant-TW` still describe the same app-level target
+ * language, while malformed values should become `null` so the suggestion stays
+ * a normal course suggestion instead of crashing.
+ */
+function getBaseLanguageCode({
+  targetLanguageCode,
+}: {
+  targetLanguageCode: string | null;
+}): string | null {
+  if (!targetLanguageCode) {
+    return null;
+  }
+
+  try {
+    return new Intl.Locale(targetLanguageCode.trim()).language ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Converts one AI suggestion into the database shape we trust. Language-course
+ * suggestions get a deterministic localized title from our language utilities;
+ * malformed language codes stay as ordinary course suggestions with the model's
+ * original title and a null target language.
+ */
+function resolveLanguageSuggestion({
+  language,
+  suggestion,
+}: {
+  language: string;
+  suggestion: GeneratedSuggestion;
+}): SuggestionInput {
+  const targetLanguage = normalizeGeneratedTargetLanguage({
+    targetLanguageCode: suggestion.targetLanguageCode,
+  });
+
+  if (!targetLanguage) {
     return { description: suggestion.description, targetLanguage: null, title: suggestion.title };
   }
 
-  const title = getLanguageName({
-    targetLanguage: suggestion.targetLanguageCode,
-    userLanguage: language,
-  });
+  const title = getLanguageName({ targetLanguage, userLanguage: language });
 
-  return {
-    description: suggestion.description,
-    targetLanguage: suggestion.targetLanguageCode,
-    title,
-  };
+  return { description: suggestion.description, targetLanguage, title };
 }
 
 function deduplicateByTargetLanguage(suggestions: SuggestionInput[]): SuggestionInput[] {
@@ -138,7 +193,7 @@ export async function generateCourseSuggestions({
 
   const { data } = await generateTask({ language, prompt });
 
-  const resolved = data.map((item) => resolveLanguageSuggestion(item, language));
+  const resolved = data.map((suggestion) => resolveLanguageSuggestion({ language, suggestion }));
   const deduplicated = deduplicateByTargetLanguage(resolved);
 
   return upsertSearchPromptWithSuggestions({ language, prompt, suggestions: deduplicated });
