@@ -31,7 +31,7 @@ export async function CourseSuggestionsFallback() {
       </EmptyHeader>
 
       <EmptyContent>
-        <Link className={buttonVariants({ size: "sm", variant: "outline" })} href="/learn">
+        <Link className={buttonVariants({ size: "sm", variant: "outline" })} href="/start/learn">
           {t("Cancel")}
         </Link>
       </EmptyContent>

@@ -9,12 +9,14 @@ import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { expect, test } from "./fixtures";
 
 test.describe("Home Page - Unauthenticated", () => {
-  test("shows learn form without redirecting", async ({ page }) => {
+  test("shows start goals without redirecting", async ({ page }) => {
     await page.goto("/");
 
     await expect(page).toHaveURL(/\/$/u);
-    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
-    await expect(page.getByLabel(/enter a subject/iu)).toBeVisible();
+    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
+    await expect(page.getByRole("link", { name: /speak a language/iu })).toBeVisible();
+    await expect(page.getByRole("link", { name: /learn something/iu })).toBeVisible();
+    await expect(page.getByRole("link", { name: /pass an exam/iu })).toBeVisible();
   });
 });
 
@@ -95,7 +97,7 @@ test.describe("Home Page - Authenticated", () => {
     }
   });
 
-  test("user with progress sees continue learning instead of learn form", async ({
+  test("user with progress sees continue learning instead of start goals", async ({
     authenticatedPage,
   }) => {
     await authenticatedPage.goto("/");
@@ -106,20 +108,22 @@ test.describe("Home Page - Authenticated", () => {
     ).toBeVisible();
 
     await expect(
-      authenticatedPage.getByRole("heading", { name: /learn anything/iu }),
+      authenticatedPage.getByRole("heading", { name: "What's your goal?" }),
     ).not.toBeVisible();
   });
 
-  test("user without progress sees learn form", async ({ userWithoutProgress }) => {
+  test("user without progress sees start goals", async ({ userWithoutProgress }) => {
     await userWithoutProgress.goto("/");
 
     await expect(userWithoutProgress.getByText(/continue learning/iu)).not.toBeVisible();
 
     await expect(
-      userWithoutProgress.getByRole("heading", { name: /learn anything/iu }),
+      userWithoutProgress.getByRole("heading", { name: "What's your goal?" }),
     ).toBeVisible();
 
-    await expect(userWithoutProgress.getByLabel(/enter a subject/iu)).toBeVisible();
+    await expect(
+      userWithoutProgress.getByRole("link", { name: /learn something/iu }),
+    ).toBeVisible();
   });
 
   test("shows pending course when next lesson has no generated lessons", async ({
@@ -188,7 +192,7 @@ test.describe("Home Page - Authenticated", () => {
 
     await expect(page.getByRole("heading", { name: /continue learning/iu }).first()).toBeVisible();
 
-    await expect(page.getByRole("heading", { name: /learn anything/iu })).not.toBeVisible();
+    await expect(page.getByRole("heading", { name: "What's your goal?" })).not.toBeVisible();
 
     await expect(
       page.getByRole("link", { name: new RegExp(`Next:.*E2E Pending Lesson ${uniqueId}`, "u") }),

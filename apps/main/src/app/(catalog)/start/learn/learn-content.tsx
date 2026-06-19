@@ -6,9 +6,8 @@ import { LearnForm } from "./learn-form";
 const VISIBLE_SUGGESTIONS = 5;
 
 /**
- * Renders the goal-entry surface anywhere learners need a starting point. The
- * standalone `/learn` route and empty home state should stay identical, so
- * this component owns the heading, prompt form, and suggestions.
+ * Renders the open-ended subject entry after learners choose the "learn
+ * something" path from the start goal picker.
  */
 export async function LearnContent() {
   const t = await getExtracted();
@@ -68,7 +67,7 @@ export async function LearnContent() {
           <Link
             key={subject}
             className="text-muted-foreground/70 hover:text-foreground text-sm transition-colors"
-            href={`/learn/${encodeURIComponent(subject)}`}
+            href={`/start/learn/${encodeURIComponent(subject)}`}
             prefetch={false}
           >
             {subject}

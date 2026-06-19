@@ -82,7 +82,7 @@ test.beforeAll(async () => {
 
 test.describe("Learn Form", () => {
   test("shows form with auto-focused input", async ({ page }) => {
-    await page.goto("/learn");
+    await page.goto("/start/learn");
 
     await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
 
@@ -93,7 +93,7 @@ test.describe("Learn Form", () => {
   test("clicking a suggestion link navigates to the subject page", async ({
     authenticatedPage,
   }) => {
-    await authenticatedPage.goto("/learn");
+    await authenticatedPage.goto("/start/learn");
 
     const suggestions = authenticatedPage.getByRole("navigation", { name: /suggested subjects/iu });
     const firstLink = suggestions.getByRole("link").first();
@@ -106,13 +106,13 @@ test.describe("Learn Form", () => {
     await ensureSuggestionsForPrompt(subject);
     await firstLink.click();
 
-    await expect(authenticatedPage).toHaveURL(/\/learn\/.+/u);
+    await expect(authenticatedPage).toHaveURL(/\/start\/learn\/.+/u);
   });
 
   test("submitting prompt navigates signed-in users to suggestions page", async ({
     authenticatedPage,
   }) => {
-    await authenticatedPage.goto("/learn");
+    await authenticatedPage.goto("/start/learn");
 
     await authenticatedPage.getByRole("textbox").fill(prompt);
     await authenticatedPage.keyboard.press("Enter");
@@ -125,7 +125,7 @@ test.describe("Learn Form", () => {
   test("submitting prompt navigates unauthenticated users to suggestions page", async ({
     page,
   }) => {
-    await page.goto("/learn");
+    await page.goto("/start/learn");
 
     await page.getByRole("textbox").fill(prompt);
     await page.keyboard.press("Enter");
@@ -153,7 +153,7 @@ test.describe("Course Suggestions", () => {
       throw new Error("No single suggestion created by fixture");
     }
 
-    await page.goto(`/learn/${encodeURIComponent(singlePrompt)}`);
+    await page.goto(`/start/learn/${encodeURIComponent(singlePrompt)}`);
 
     await expect(page).toHaveURL(new RegExp(`/generate/cs/${onlySuggestion.id}$`, "u"));
   });
@@ -181,13 +181,13 @@ test.describe("Course Suggestions", () => {
       throw new Error("No exact suggestion created by fixture");
     }
 
-    await page.goto(`/learn/${encodeURIComponent(exactPrompt)}`);
+    await page.goto(`/start/learn/${encodeURIComponent(exactPrompt)}`);
 
     await expect(page).toHaveURL(new RegExp(`/generate/cs/${exactSuggestion.id}$`, "u"));
   });
 
   test("shows suggestions to unauthenticated users", async ({ page }) => {
-    await page.goto(`/learn/${encodeURIComponent(prompt)}`);
+    await page.goto(`/start/learn/${encodeURIComponent(prompt)}`);
 
     await expect(
       page.getByRole("heading", { name: new RegExp(`course ideas for ${prompt}`, "iu") }),
@@ -200,7 +200,7 @@ test.describe("Course Suggestions", () => {
   test("shows suggestions with title, description, and generate link", async ({
     authenticatedPage,
   }) => {
-    await authenticatedPage.goto(`/learn/${encodeURIComponent(prompt)}`);
+    await authenticatedPage.goto(`/start/learn/${encodeURIComponent(prompt)}`);
 
     await expect(
       authenticatedPage.getByRole("heading", {
@@ -218,7 +218,7 @@ test.describe("Course Suggestions", () => {
   test("Generate link navigates unauthenticated users to generate page", async ({ page }) => {
     await mockCourseGenerationWorkflow(page);
 
-    await page.goto(`/learn/${encodeURIComponent(prompt)}`);
+    await page.goto(`/start/learn/${encodeURIComponent(prompt)}`);
 
     await expect(page.getByRole("heading", { name: /course ideas for/iu })).toBeVisible();
 
@@ -229,13 +229,15 @@ test.describe("Course Suggestions", () => {
   });
 
   test("Change subject navigates back to learn form", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto(`/learn/${encodeURIComponent(prompt)}`);
+    await authenticatedPage.goto(`/start/learn/${encodeURIComponent(prompt)}`);
 
     await expect(
       authenticatedPage.getByRole("heading", { name: /course ideas for/iu }),
     ).toBeVisible();
 
     await authenticatedPage.getByRole("link", { name: /change subject/iu }).click();
+
+    await expect(authenticatedPage).toHaveURL(/\/start\/learn$/u);
 
     await expect(
       authenticatedPage.getByRole("heading", { name: /learn anything/iu }),

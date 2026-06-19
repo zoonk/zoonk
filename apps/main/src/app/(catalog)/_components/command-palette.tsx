@@ -62,7 +62,10 @@ export function CommandPalette({
 
   const getStarted = [
     { key: t("Home page"), ...getMenu("home") },
-    { key: t("Start a new course"), ...getMenu("learn") },
+    { key: t("Start a new course"), ...getMenu("start") },
+    { key: t("Speak a language"), ...getMenu("startSpeak") },
+    { key: t("Learn something"), ...getMenu("startLearn") },
+    { key: t("Pass an exam"), ...getMenu("startExam") },
   ];
 
   const accountPublic = [
@@ -237,7 +240,7 @@ function getCreateCoursePrompt(query: string) {
  * must be encoded before it is sent through Next.js navigation.
  */
 function getLearnPromptHref(prompt: string) {
-  return `/learn/${encodeURIComponent(prompt)}` as const;
+  return `/start/learn/${encodeURIComponent(prompt)}` as const;
 }
 
 function CourseItem({

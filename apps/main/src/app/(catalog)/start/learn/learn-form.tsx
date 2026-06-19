@@ -13,7 +13,8 @@ const CYCLE_DURATION_MS = 3200;
 
 /**
  * Owns the interactive course goal input and records the form visibility event
- * from the browser, which keeps `/learn` and reused placements counted alike.
+ * from the browser, while submitted prompts still enter the existing
+ * `/start/learn/[prompt]` suggestion route.
  */
 export function LearnForm({ placeholders }: { placeholders: string[] }) {
   const t = useExtracted();
@@ -35,7 +36,7 @@ export function LearnForm({ placeholders }: { placeholders: string[] }) {
     }
 
     startTransition(() => {
-      router.push(`/learn/${encodeURIComponent(query.trim())}`);
+      router.push(`/start/learn/${encodeURIComponent(query.trim())}`);
     });
   }
 

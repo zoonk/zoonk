@@ -21,7 +21,7 @@ test.beforeAll(async () => {
 // Content feedback is tested on the course suggestions page where it's used
 test.describe("Content Feedback", () => {
   test.beforeEach(async ({ authenticatedPage }) => {
-    await authenticatedPage.goto(`/learn/${encodeURIComponent(prompt)}`);
+    await authenticatedPage.goto(`/start/learn/${encodeURIComponent(prompt)}`);
 
     // Wait for content to load
     await expect(authenticatedPage.getByText(suggestionTitle)).toBeVisible();
@@ -129,7 +129,7 @@ test.describe("Content Feedback - Authenticated", () => {
     authenticatedPage,
     withProgressUser,
   }) => {
-    await authenticatedPage.goto(`/learn/${encodeURIComponent(prompt)}`);
+    await authenticatedPage.goto(`/start/learn/${encodeURIComponent(prompt)}`);
     // Wait for content to load
     await expect(authenticatedPage.getByText(suggestionTitle)).toBeVisible();
 

@@ -1,6 +1,8 @@
 import {
+  BookOpenTextIcon,
   Brain,
   Gem,
+  GraduationCapIcon,
   Home,
   IdCardLanyard,
   Languages,
@@ -20,7 +22,6 @@ const menu = {
   energy: { icon: ZapIcon, url: "/energy" },
   home: { icon: Home, url: "/" },
   language: { icon: Languages, url: "/language" },
-  learn: { icon: PlusIcon, url: "/learn" },
   level: { icon: Brain, url: "/level" },
   login: { icon: LogIn, url: "/login" },
   myCourses: { icon: LayoutGrid, url: "/my" },
@@ -28,6 +29,10 @@ const menu = {
   score: { icon: TargetIcon, url: "/score" },
   search: { icon: Search, url: "/search" },
   settings: { icon: Settings, url: "/settings" },
+  start: { icon: PlusIcon, url: "/start" },
+  startExam: { icon: GraduationCapIcon, url: "/start/exam" },
+  startLearn: { icon: BookOpenTextIcon, url: "/start/learn" },
+  startSpeak: { icon: Languages, url: "/start/speak" },
   subscription: { icon: Gem, url: "/subscription" },
   support: { icon: LifeBuoy, url: "/support" },
 } as const;

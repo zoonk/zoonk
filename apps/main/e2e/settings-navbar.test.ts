@@ -1,12 +1,12 @@
 import { expect, test } from "./fixtures";
 
 test.describe("Settings Navbar", () => {
-  test("home link shows the learn form on the home page", async ({ page }) => {
+  test("home link shows start goals on the home page", async ({ page }) => {
     await page.goto("/subscription");
     await page.getByRole("link", { name: /home page/iu }).click();
 
     await expect(page).toHaveURL(/\/$/u);
-    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
   });
 
   test("displays all settings navigation pills", async ({ page }) => {

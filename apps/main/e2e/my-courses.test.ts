@@ -1,7 +1,7 @@
 import { expect, test } from "./fixtures";
 
 test.describe("My Courses", () => {
-  test("empty state starts a course from the learn page", async ({ userWithoutProgress }) => {
+  test("empty state starts a course from the start page", async ({ userWithoutProgress }) => {
     await userWithoutProgress.goto("/my");
 
     await expect(userWithoutProgress.getByRole("heading", { name: /my courses/iu })).toBeVisible();
@@ -13,14 +13,14 @@ test.describe("My Courses", () => {
       0,
     );
 
-    await expect(startCourseLink).toHaveAttribute("href", "/learn");
+    await expect(startCourseLink).toHaveAttribute("href", "/start");
 
     await startCourseLink.click();
 
-    await expect(userWithoutProgress).toHaveURL(/\/learn$/u);
+    await expect(userWithoutProgress).toHaveURL(/\/start$/u);
 
     await expect(
-      userWithoutProgress.getByRole("heading", { name: /learn anything/iu }),
+      userWithoutProgress.getByRole("heading", { name: "What's your goal?" }),
     ).toBeVisible();
   });
 });

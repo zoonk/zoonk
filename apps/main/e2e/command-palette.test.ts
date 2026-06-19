@@ -157,7 +157,7 @@ test.describe("Command Palette - Unauthenticated", () => {
     await expect(page.getByRole("dialog")).not.toBeVisible();
   });
 
-  test("shows Pages group with Home and new course", async ({ page }) => {
+  test("shows Pages group with Home and start goals", async ({ page }) => {
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
@@ -165,6 +165,9 @@ test.describe("Command Palette - Unauthenticated", () => {
     await expect(dialog.getByText(/home page/iu)).toBeVisible();
     await expect(dialog.getByRole("option", { name: /^courses$/iu })).not.toBeVisible();
     await expect(dialog.getByText(/start a new course/iu)).toBeVisible();
+    await expect(dialog.getByText(/speak a language/iu)).toBeVisible();
+    await expect(dialog.getByText(/learn something/iu)).toBeVisible();
+    await expect(dialog.getByText(/pass an exam/iu)).toBeVisible();
   });
 
   test("shows My account group with Login and Language only", async ({ page }) => {
@@ -188,7 +191,7 @@ test.describe("Command Palette - Unauthenticated", () => {
     await expect(dialog.getByText(/feedback & support/iu)).toBeVisible();
   });
 
-  test("selecting Home shows the learn form on the home page", async ({ page }) => {
+  test("selecting Home shows start goals on the home page", async ({ page }) => {
     await page.goto("/courses"); // Start from different page
     await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
     await openCommandPalette(page);
@@ -199,10 +202,10 @@ test.describe("Command Palette - Unauthenticated", () => {
       .click();
 
     await expect(page).toHaveURL(/\/$/u);
-    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
   });
 
-  test("selecting Start a new course shows the course creation form", async ({ page }) => {
+  test("selecting Start a new course shows the goal picker", async ({ page }) => {
     await openCommandPalette(page);
 
     await page
@@ -210,7 +213,20 @@ test.describe("Command Palette - Unauthenticated", () => {
       .getByText(/start a new course/iu)
       .click();
 
-    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
+    await expect(page).toHaveURL(/\/start$/u);
+    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
+  });
+
+  test("selecting a start goal opens that path", async ({ page }) => {
+    await openCommandPalette(page);
+
+    await page
+      .getByRole("dialog")
+      .getByText(/pass an exam/iu)
+      .click();
+
+    await expect(page).toHaveURL(/\/start\/exam$/u);
+    await expect(page.getByRole("heading", { name: /pass an exam/iu })).toBeVisible();
   });
 });
 
@@ -264,7 +280,7 @@ test.describe("Command Palette - Authenticated", () => {
   });
 
   // Logout test uses dedicated logoutPage fixture to avoid session interference
-  test("selecting Logout logs user out and shows the home learn form", async ({ logoutPage }) => {
+  test("selecting Logout logs user out and shows the home start goals", async ({ logoutPage }) => {
     await logoutPage.goto("/");
 
     // Verify authenticated state by checking command palette shows Logout option
@@ -324,7 +340,7 @@ test.describe("Command Palette - Course Search", () => {
     });
 
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
@@ -417,7 +433,7 @@ test.describe("Command Palette - Course Search", () => {
     await expect(createCourseLink).toBeVisible();
     await createCourseLink.click();
 
-    await expect(page).toHaveURL(new RegExp(`/learn/${encodeURIComponent(prompt)}$`, "u"));
+    await expect(page).toHaveURL(new RegExp(`/start/learn/${encodeURIComponent(prompt)}$`, "u"));
   });
 
   test("handles rapid typing correctly", async ({ page }) => {
@@ -562,7 +578,7 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     await expect(homeOption).toHaveAttribute("aria-selected", "true");
   });
 
-  test("Enter to select shows the learn form on the home page", async ({ page }) => {
+  test("Enter to select shows start goals on the home page", async ({ page }) => {
     await page.goto("/courses"); // Start from courses page so Home navigation is verifiable
     await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
     await openCommandPalette(page);
@@ -574,7 +590,7 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     await page.keyboard.press("Enter");
 
     await expect(page).toHaveURL(/\/$/u);
-    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
   });
 
   test("focus trap within dialog", async ({ page }) => {

@@ -6,7 +6,7 @@ import { CourseSuggestionsFallback } from "./course-suggestions-fallback";
 
 export async function generateMetadata({
   params,
-}: PageProps<"/learn/[prompt]">): Promise<Metadata> {
+}: PageProps<"/start/learn/[prompt]">): Promise<Metadata> {
   const { prompt: rawPrompt } = await params;
   const t = await getExtracted();
   const prompt = decodeURIComponent(rawPrompt);
@@ -20,7 +20,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function Learn({ params }: PageProps<"/learn/[prompt]">) {
+export default async function Learn({ params }: PageProps<"/start/learn/[prompt]">) {
   const { prompt: rawPrompt } = await params;
   const prompt = decodeURIComponent(rawPrompt);
 

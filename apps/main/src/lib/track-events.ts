@@ -80,10 +80,18 @@ export function trackLessonCompleted(input: LessonCompletionEventInput) {
 
 /**
  * Counts when the course goal form is visible, regardless of whether the
- * learner reached it from `/learn`, `/`, or another reusable placement.
+ * learner reached it from `/start/learn`, `/`, or another reusable placement.
  */
 export function trackLearnForm() {
   trackEvent({ name: "Learn Form" });
+}
+
+/**
+ * Counts when the shared start goal picker is visible, regardless of whether
+ * learners reached it from `/start`, `/`, or another reusable placement.
+ */
+export function trackStartContent() {
+  trackEvent({ name: "Start Goal" });
 }
 
 /**

@@ -23,7 +23,7 @@ function getVariant(href: string, pathname: string): "outline" | "secondary" | "
     return "default";
   }
 
-  if (href === "/learn") {
+  if (href === "/start") {
     return "secondary";
   }
 
@@ -31,7 +31,7 @@ function getVariant(href: string, pathname: string): "outline" | "secondary" | "
 }
 
 const homeMenu = getMenu("home");
-const learnMenu = getMenu("learn");
+const startMenu = getMenu("start");
 const MOBILE_CHAPTER_NAV_CLASS = "sm:hidden";
 const DESKTOP_CHAPTER_NAV_CLASS = "hidden sm:inline-flex";
 
@@ -96,7 +96,7 @@ export function NavbarLinks({ isLoggedIn }: { isLoggedIn: boolean }) {
   const desktopClassName = mobileChapterNavTarget ? DESKTOP_CHAPTER_NAV_CLASS : undefined;
 
   const homeVariant = getVariant(homeMenu.url, pathname);
-  const learnVariant = getVariant(learnMenu.url, pathname);
+  const startVariant = getVariant(startMenu.url, pathname);
 
   return (
     <>
@@ -117,16 +117,16 @@ export function NavbarLinks({ isLoggedIn }: { isLoggedIn: boolean }) {
       <CommandPalette className={desktopClassName} isLoggedIn={isLoggedIn} />
 
       <Link
-        aria-current={learnVariant === "default" ? "page" : undefined}
+        aria-current={startVariant === "default" ? "page" : undefined}
         className={cn(
-          buttonVariants({ size: "adaptive", variant: learnVariant }),
+          buttonVariants({ size: "adaptive", variant: startVariant }),
           "ml-auto",
           desktopClassName,
         )}
-        href={learnMenu.url}
+        href={startMenu.url}
         prefetch
       >
-        <learnMenu.icon aria-hidden="true" />
+        <startMenu.icon aria-hidden="true" />
         <span className="sr-only sm:not-sr-only">{t("New course")}</span>
       </Link>
     </>

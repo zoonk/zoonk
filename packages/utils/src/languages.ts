@@ -7,7 +7,7 @@
  * since that's what the rest of our app uses. Gemini auto-detects language from
  * text, so the exact code doesn't need to match their internal identifiers.
  */
-const TTS_SUPPORTED_LANGUAGE_CODES = [
+export const TTS_SUPPORTED_LANGUAGE_CODES = [
   "af",
   "am",
   "ar",
@@ -79,6 +79,8 @@ const TTS_SUPPORTED_LANGUAGE_CODES = [
   "vi",
   "zh",
 ] as const;
+
+export type TTSSupportedLanguageCode = (typeof TTS_SUPPORTED_LANGUAGE_CODES)[number];
 
 const TTS_SUPPORTED_LANGUAGE_SET: ReadonlySet<string> = new Set(TTS_SUPPORTED_LANGUAGE_CODES);
 

@@ -1,26 +1,27 @@
 import { expect, test } from "./fixtures";
 
 test.describe("Navbar - Unauthenticated", () => {
-  test("Home link shows the learn form on the home page", async ({ page }) => {
+  test("Home link shows start goals on the home page", async ({ page }) => {
     await page.goto("/courses");
     await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
 
     await page.getByRole("navigation").getByRole("link", { name: /home/iu }).click();
 
     await expect(page).toHaveURL(/\/$/u);
-    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
   });
 
-  test("New course link navigates to learn page", async ({ page }) => {
+  test("New course link navigates to start page", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
 
     await page
       .getByRole("navigation")
       .getByRole("link", { exact: true, name: "New course" })
       .click();
 
-    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
+    await expect(page).toHaveURL(/\/start$/u);
+    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
   });
 
   test("Courses page stays directly available without a navbar link", async ({ page }) => {
@@ -34,8 +35,8 @@ test.describe("Navbar - Unauthenticated", () => {
     await expect(coursesLink).not.toBeVisible();
   });
 
-  test("New course link is active on learn page", async ({ page }) => {
-    await page.goto("/learn");
+  test("New course link is active on start page", async ({ page }) => {
+    await page.goto("/start");
 
     const learnLink = page
       .getByRole("navigation")
