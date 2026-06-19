@@ -6,7 +6,7 @@ const DEFAULT_LOCALE = "en";
 const DEFAULT_COUNTRY = "US";
 export const LOCALE_COOKIE = "NEXT_LOCALE";
 
-type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
+export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 
 export function isValidLocale(value: string): value is SupportedLocale {
   return SUPPORTED_LOCALES.some((locale) => locale === value);

@@ -18,6 +18,22 @@ msgid "jboh4c"
 msgstr "Começar um novo curso"
 
 #: src/app/(catalog)/_components/command-palette.tsx
+#: src/app/(catalog)/start/start-content.tsx
+msgid "rS0suY"
+msgstr "Falar um idioma"
+
+#: src/app/(catalog)/_components/command-palette.tsx
+#: src/app/(catalog)/start/start-content.tsx
+msgid "L6kaJv"
+msgstr "Aprender algo"
+
+#: src/app/(catalog)/_components/command-palette.tsx
+#: src/app/(catalog)/start/exam/page.tsx
+#: src/app/(catalog)/start/start-content.tsx
+msgid "3wvH7G"
+msgstr "Passar em uma prova"
+
+#: src/app/(catalog)/_components/command-palette.tsx
 #: src/app/(catalog)/_components/logout-dropdown-item.tsx
 #: src/app/(progress)/_components/progress-empty-state.tsx
 #: src/app/(settings)/_components/protected-section.tsx
@@ -397,185 +413,6 @@ msgstr "Explorar cursos"
 msgid "hUF3bo"
 msgstr "Comece a aprender algo novo hoje"
 
-#: src/app/(catalog)/learn/[prompt]/course-suggestion-item.tsx
-msgid "VzzYJk"
-msgstr "Criar"
-
-#: src/app/(catalog)/learn/[prompt]/course-suggestions-fallback.tsx
-msgid "TUuPG9"
-msgstr "Preparando algumas ideias de cursos"
-
-#: src/app/(catalog)/learn/[prompt]/course-suggestions-fallback.tsx
-msgid "uQHhkm"
-msgstr "Estamos reunindo algumas sugestões de cursos para você. Isso pode levar alguns segundos."
-
-#: src/app/(catalog)/learn/[prompt]/course-suggestions-fallback.tsx
-#: src/app/(settings)/subscription/plan-list.tsx
-msgid "47FYwb"
-msgstr "Cancelar"
-
-#: src/app/(catalog)/learn/[prompt]/course-suggestions.tsx
-msgid "7x4411"
-msgstr "Ideias de cursos para {prompt}"
-
-#: src/app/(catalog)/learn/[prompt]/course-suggestions.tsx
-msgid "RbslnC"
-msgstr "Mudar assunto"
-
-#: src/app/(catalog)/learn/[prompt]/page.tsx
-msgid "CaU_nf"
-msgstr "Descubra cursos e recursos personalizados para aprender {prompt}. O Zoonk usa IA para criar aulas interativas feitas pra você."
-
-#: src/app/(catalog)/learn/[prompt]/page.tsx
-msgid "X2b6pH"
-msgstr "Aprenda {prompt} com IA"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "l450Bl"
-msgstr "Ciência da Computação"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "ElyVN0"
-msgstr "Psicologia"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-#: src/lib/categories/category.ts
-msgid "KOuDOE"
-msgstr "Economia"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "cHCwbF"
-msgstr "Fotografia"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "zE1J_t"
-msgstr "Filosofia"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "y68y7h"
-msgstr "Ciência de Dados"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "1qsU2j"
-msgstr "Escrita Criativa"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "RGkBg_"
-msgstr "Biologia"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "oiUZCZ"
-msgstr "Design Gráfico"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-#: src/lib/categories/category.ts
-msgid "djJp6c"
-msgstr "História"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "O9mDkA"
-msgstr "Marketing"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "_VD159"
-msgstr "Aprenda qualquer coisa."
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "zfDq-e"
-msgstr "Física quântica"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "oqfOwA"
-msgstr "Filosofia antiga"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "Osb4bp"
-msgstr "Aprendizado de máquina"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "OdZ_n1"
-msgstr "Escrita criativa"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "N9FWiz"
-msgstr "Biologia molecular"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "XFPrU4"
-msgstr "Economia comportamental"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "-0gz_i"
-msgstr "Química orgânica"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "1axOcX"
-msgstr "OVNIs"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "e7q85h"
-msgstr "Extinção dos dinossauros"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "MO2lwh"
-msgstr "Como os vulcões funcionam"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "ZzbdHP"
-msgstr "História mundial"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "XfC6Cs"
-msgstr "Psicologia cognitiva"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "X5XXVF"
-msgstr "Álgebra linear"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "5gOFKJ"
-msgstr "Buracos negros"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "eQHeGX"
-msgstr "Como a internet funciona"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "QOSGzc"
-msgstr "Império Romano"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "gyEihl"
-msgstr "Criaturas do fundo do mar"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "0MqSJ1"
-msgstr "Sistema solar"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "5qPAxv"
-msgstr "Inteligência artificial"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "3WiAG4"
-msgstr "Harry Potter"
-
-#: src/app/(catalog)/learn/learn-content.tsx
-msgid "NvSCuG"
-msgstr "Assuntos sugeridos"
-
-#: src/app/(catalog)/learn/learn-form.tsx
-msgid "uCb1nG"
-msgstr "Digite um assunto"
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "JlJVf1"
-msgstr "Conte ao Zoonk o que você quer aprender e receba um curso criado com IA. Comece a aprender qualquer assunto com aulas interativas."
-
-#: src/app/(catalog)/learn/page.tsx
-msgid "Zs1QEq"
-msgstr "Aprenda qualquer coisa com IA"
-
 #: src/app/(catalog)/my/page.tsx
 msgid "riE3I5"
 msgstr "Veja todos os cursos que você começou no Zoonk. Continue de onde parou e acompanhe seu progresso ao longo das aulas interativas."
@@ -601,12 +438,299 @@ msgid "9m9h0p"
 msgstr "Começar um curso"
 
 #: src/app/(catalog)/p/[courseId]/page.tsx
+#: src/app/(catalog)/start/exam/page.tsx
+#: src/app/(catalog)/start/start-content.tsx
 msgid "e61Jf3"
 msgstr "Em breve"
 
 #: src/app/(catalog)/p/[courseId]/page.tsx
 msgid "dtRj3N"
 msgstr "Cursos personalizados em breve."
+
+#: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
+#: src/components/feedback/contact-form.tsx
+msgid "hJZwTS"
+msgstr "Endereço de email"
+
+#: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
+#: src/components/feedback/contact-form.tsx
+msgid "OiSL94"
+msgstr "meuemail@gmail.com"
+
+#: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
+msgid "45yKj9"
+msgstr "Vamos usar este email para avisar quando a preparação para provas estiver pronta."
+
+#: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
+msgid "Xy7a7A"
+msgstr "Prova"
+
+#: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
+msgid "cDZwI_"
+msgstr "TOEFL, ENEM, OAB, concurso..."
+
+#: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
+msgid "E_0Y4u"
+msgstr "Conte para a gente qual teste, certificação ou prova escolar é importante para você."
+
+#: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
+msgid "6eV4UR"
+msgstr "Não conseguimos adicionar você à lista de espera. Tente novamente."
+
+#: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
+msgid "W78DIe"
+msgstr "Você está na lista. Avisaremos quando a preparação para provas estiver pronta."
+
+#: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
+msgid "ipGe-B"
+msgstr "Me avise"
+
+#: src/app/(catalog)/start/exam/page.tsx
+msgid "gs2Dwu"
+msgstr "Estudar online com IA para ENEM, concursos, certificações e provas. Explicações práticas e com quiz interativo para ajudar você a passar em qualquer prova."
+
+#: src/app/(catalog)/start/exam/page.tsx
+msgid "z8OyvL"
+msgstr "Estudar para concursos e provas com IA"
+
+#: src/app/(catalog)/start/exam/page.tsx
+msgid "CzV5fE"
+msgstr "A preparação para provas ainda não está disponível. Conte para a gente o que você está preparando e avisaremos quando for lançada."
+
+#: src/app/(catalog)/start/learn/[prompt]/course-suggestion-item.tsx
+msgid "VzzYJk"
+msgstr "Criar"
+
+#: src/app/(catalog)/start/learn/[prompt]/course-suggestions-fallback.tsx
+msgid "TUuPG9"
+msgstr "Preparando algumas ideias de cursos"
+
+#: src/app/(catalog)/start/learn/[prompt]/course-suggestions-fallback.tsx
+msgid "uQHhkm"
+msgstr "Estamos reunindo algumas sugestões de cursos para você. Isso pode levar alguns segundos."
+
+#: src/app/(catalog)/start/learn/[prompt]/course-suggestions-fallback.tsx
+#: src/app/(settings)/subscription/plan-list.tsx
+msgid "47FYwb"
+msgstr "Cancelar"
+
+#: src/app/(catalog)/start/learn/[prompt]/course-suggestions.tsx
+msgid "7x4411"
+msgstr "Ideias de cursos para {prompt}"
+
+#: src/app/(catalog)/start/learn/[prompt]/course-suggestions.tsx
+msgid "RbslnC"
+msgstr "Mudar assunto"
+
+#: src/app/(catalog)/start/learn/[prompt]/page.tsx
+msgid "CaU_nf"
+msgstr "Descubra cursos e recursos personalizados para aprender {prompt}. O Zoonk usa IA para criar aulas interativas feitas pra você."
+
+#: src/app/(catalog)/start/learn/[prompt]/page.tsx
+msgid "X2b6pH"
+msgstr "Aprenda {prompt} com IA"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "l450Bl"
+msgstr "Ciência da Computação"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "ElyVN0"
+msgstr "Psicologia"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/lib/categories/category.ts
+msgid "KOuDOE"
+msgstr "Economia"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "cHCwbF"
+msgstr "Fotografia"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "zE1J_t"
+msgstr "Filosofia"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "y68y7h"
+msgstr "Ciência de Dados"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "1qsU2j"
+msgstr "Escrita Criativa"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "RGkBg_"
+msgstr "Biologia"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "oiUZCZ"
+msgstr "Design Gráfico"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/lib/categories/category.ts
+msgid "djJp6c"
+msgstr "História"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "O9mDkA"
+msgstr "Marketing"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "_VD159"
+msgstr "Aprenda qualquer coisa."
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "zfDq-e"
+msgstr "Física quântica"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "oqfOwA"
+msgstr "Filosofia antiga"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "Osb4bp"
+msgstr "Aprendizado de máquina"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "OdZ_n1"
+msgstr "Escrita criativa"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "N9FWiz"
+msgstr "Biologia molecular"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "XFPrU4"
+msgstr "Economia comportamental"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "-0gz_i"
+msgstr "Química orgânica"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "1axOcX"
+msgstr "OVNIs"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "e7q85h"
+msgstr "Extinção dos dinossauros"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "MO2lwh"
+msgstr "Como os vulcões funcionam"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "ZzbdHP"
+msgstr "História mundial"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "XfC6Cs"
+msgstr "Psicologia cognitiva"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "X5XXVF"
+msgstr "Álgebra linear"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "5gOFKJ"
+msgstr "Buracos negros"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "eQHeGX"
+msgstr "Como a internet funciona"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "QOSGzc"
+msgstr "Império Romano"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "gyEihl"
+msgstr "Criaturas do fundo do mar"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "0MqSJ1"
+msgstr "Sistema solar"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "5qPAxv"
+msgstr "Inteligência artificial"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "3WiAG4"
+msgstr "Harry Potter"
+
+#: src/app/(catalog)/start/learn/learn-content.tsx
+msgid "NvSCuG"
+msgstr "Assuntos sugeridos"
+
+#: src/app/(catalog)/start/learn/learn-form.tsx
+msgid "uCb1nG"
+msgstr "Digite um assunto"
+
+#: src/app/(catalog)/start/learn/page.tsx
+msgid "JlJVf1"
+msgstr "Conte ao Zoonk o que você quer aprender e receba um curso criado com IA. Comece a aprender qualquer assunto com aulas interativas."
+
+#: src/app/(catalog)/start/learn/page.tsx
+msgid "Zs1QEq"
+msgstr "Aprenda qualquer coisa com IA"
+
+#: src/app/(catalog)/start/page.tsx
+msgid "UFOGo9"
+msgstr "Comece cursos online com IA para aprender idiomas no Zoonk. Aprenda inglês, espanhol ou qualquer assunto com aulas interativas."
+
+#: src/app/(catalog)/start/page.tsx
+msgid "rqpQgj"
+msgstr "Cursos online com IA para aprender idiomas"
+
+#: src/app/(catalog)/start/speak/[language]/page.tsx
+msgid "1pB-3l"
+msgstr "Aprenda {language} do zero com vocabulário prático, pronúncia, gramática e prática de escuta."
+
+#: src/app/(catalog)/start/speak/page.tsx
+msgid "K4jMHW"
+msgstr "Cursos online de idiomas com IA. Aprender idiomas com dicas de pronúncia, vocabulário, leitura e prática de escuta."
+
+#: src/app/(catalog)/start/speak/page.tsx
+msgid "Ht6aMH"
+msgstr "Aprender idiomas online com IA"
+
+#: src/app/(catalog)/start/speak/page.tsx
+msgid "lSAK6U"
+msgstr "Qual idioma você quer aprender?"
+
+#: src/app/(catalog)/start/speak/page.tsx
+msgid "ptPPVk"
+msgstr "Nenhum idioma encontrado"
+
+#: src/app/(catalog)/start/speak/page.tsx
+msgid "L820yz"
+msgstr "Pesquisar idiomas"
+
+#: src/app/(catalog)/start/speak/source-language-switcher.tsx
+msgid "Yl4ReI"
+msgstr "Escolha o idioma a partir do qual você aprende"
+
+#: src/app/(catalog)/start/speak/source-language-switcher.tsx
+msgid "sPHVML"
+msgstr "Você vai aprender a partir de"
+
+#: src/app/(catalog)/start/start-content.tsx
+msgid "ah2CR6"
+msgstr "Aprenda um idioma com dicas de pronúncia, vocabulário, leitura e escuta."
+
+#: src/app/(catalog)/start/start-content.tsx
+msgid "_E8OKF"
+msgstr "Transforme qualquer assunto em um curso claro com exemplos práticos e sem enrolação."
+
+#: src/app/(catalog)/start/start-content.tsx
+msgid "IF6NT-"
+msgstr "Preparamos uma trilha para você passar em um concurso, ENEM, certificação ou prova escolar."
+
+#: src/app/(catalog)/start/start-content.tsx
+msgid "AaFZIp"
+msgstr "Qual é o seu objetivo?"
 
 #: src/app/(progress)/_components/metric-comparison.tsx
 msgid "pev_fB"
@@ -1786,14 +1910,6 @@ msgstr "Começar"
 #: src/lib/lessons.ts
 msgid "R-J5ox"
 msgstr "Revisão"
-
-#: src/components/feedback/contact-form.tsx
-msgid "hJZwTS"
-msgstr "Endereço de email"
-
-#: src/components/feedback/contact-form.tsx
-msgid "OiSL94"
-msgstr "meuemail@gmail.com"
 
 #: src/components/feedback/contact-form.tsx
 msgid "WzCvaN"

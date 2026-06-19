@@ -14,9 +14,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Keeps `/learn` as a thin route wrapper because the same goal form is also
- * the empty state on `/`.
+ * Hosts the open-ended subject prompt inside the new goal-based start flow.
  */
-export default function Learn() {
+export default function StartLearn() {
   return <LearnContent />;
 }

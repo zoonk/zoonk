@@ -63,7 +63,7 @@ export async function CourseSuggestions({ prompt }: { prompt: string }) {
         <ContainerHeaderGroup>
           <ContainerTitle>{t("Course ideas for {prompt}", { prompt })}</ContainerTitle>
 
-          <Link href="/learn">
+          <Link href="/start/learn">
             <ContainerDescription className="text-sm hover:underline">
               {t("Change subject")}
             </ContainerDescription>

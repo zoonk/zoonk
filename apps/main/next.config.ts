@@ -38,6 +38,12 @@ const nextConfig: NextConfig = {
   logging: { browserToTerminal: true },
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
   reactCompiler: true,
+  async redirects() {
+    return [
+      { destination: "/start/learn", permanent: true, source: "/learn" },
+      { destination: "/start/learn/:prompt", permanent: true, source: "/learn/:prompt" },
+    ];
+  },
   turbopack: {
     resolveAlias: { ...e2eAliases },
     rules: {
