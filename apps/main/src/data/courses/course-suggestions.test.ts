@@ -160,7 +160,7 @@ describe("course-suggestions", () => {
     expect(result.suggestions[0]?.targetLanguage).toBe("en");
   });
 
-  it("accepts non-TTS language and uses Intl-derived title", async () => {
+  it("accepts less common supported languages and uses Intl-derived title", async () => {
     const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
 
     const language = "en";
@@ -177,6 +177,68 @@ describe("course-suggestions", () => {
 
     expect(result.suggestions[0]?.title).toBe("Amharic");
     expect(result.suggestions[0]?.targetLanguage).toBe("am");
+  });
+
+  it("treats invalid targetLanguageCode values as normal course suggestions", async () => {
+    const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
+
+    const language = "en";
+    const prompt = `invalid-target-language-${randomUUID()}`;
+
+    const title = `Zoonk ${randomUUID()}`;
+
+    const generatedSuggestions = [
+      {
+        description: "Use Zoonk to build a language-learning habit.",
+        targetLanguageCode: "多鄰國",
+        title,
+      },
+    ];
+
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
+    spy.mockResolvedValueOnce({ data: generatedSuggestions } as never);
+
+    const result = await generateCourseSuggestions({ language, prompt });
+
+    expect(result.suggestions[0]?.title).toBe(title);
+    expect(result.suggestions[0]?.targetLanguage).toBeNull();
+
+    const dbItem = await prisma.courseSuggestion.findUnique({
+      where: { languageSlug: { language, slug: toSlug(title) } },
+    });
+
+    expect(dbItem?.title).toBe(title);
+    expect(dbItem?.targetLanguage).toBeNull();
+  });
+
+  it("normalizes regional targetLanguageCode values to supported app language codes", async () => {
+    const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
+
+    const language = "en";
+    const prompt = `regional-target-language-${randomUUID()}`;
+
+    const generatedSuggestions = [
+      {
+        description: "Learn Traditional Chinese for everyday conversations.",
+        targetLanguageCode: "zh-TW",
+        title: "Traditional Chinese",
+      },
+    ];
+
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
+    spy.mockResolvedValueOnce({ data: generatedSuggestions } as never);
+
+    const result = await generateCourseSuggestions({ language, prompt });
+
+    expect(result.suggestions[0]?.title).toBe("Chinese");
+    expect(result.suggestions[0]?.targetLanguage).toBe("zh");
+
+    const dbItem = await prisma.courseSuggestion.findUnique({
+      where: { languageSlug: { language, slug: toSlug("Chinese") } },
+    });
+
+    expect(dbItem?.title).toBe("Chinese");
+    expect(dbItem?.targetLanguage).toBe("zh");
   });
 
   it("deduplicates suggestions with the same targetLanguageCode", async () => {
