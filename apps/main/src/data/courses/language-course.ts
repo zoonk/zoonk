@@ -8,10 +8,6 @@ type LanguageCourseInput = { language: string; targetLanguage: string };
 type LanguageCourseSuggestionInput = LanguageCourseInput & { description: string; title: string };
 type LanguageCourseHref = `/b/${typeof AI_ORG_SLUG}/c/${string}`;
 
-function getLanguageCourseSuggestionSlug(targetLanguage: string): string {
-  return `language-${targetLanguage}`;
-}
-
 /**
  * Finds the existing public AI language course before we create any workflow
  * input. Language courses have one stable identity per learner language and
@@ -34,10 +30,11 @@ export async function getCompletedLanguageCourse({
 }
 
 /**
- * Reuses the controlled language-start suggestion for the same target language,
- * or creates the row the current course-generation workflow already knows how
- * to process. The slug is the stable boundary here because generic prompt
- * suggestions can also have a target language.
+ * Reuses any existing language suggestion for the same target language, or
+ * creates the controlled suggestion row the current course-generation workflow
+ * already knows how to process. This keeps language starts deterministic while
+ * avoiding a new workflow API shape until the old suggestion boundary is fully
+ * replaced.
  */
 export async function getOrCreateLanguageCourseSuggestion({
   description,
@@ -49,10 +46,9 @@ export async function getOrCreateLanguageCourseSuggestion({
     throw new Error(`Unsupported TTS language: ${targetLanguage}`);
   }
 
-  const slug = getLanguageCourseSuggestionSlug(targetLanguage);
-
-  const existing = await prisma.courseSuggestion.findUnique({
-    where: { languageSlug: { language, slug } },
+  const existing = await prisma.courseSuggestion.findFirst({
+    orderBy: { createdAt: "asc" },
+    where: { language, targetLanguage },
   });
 
   if (existing) {
@@ -60,7 +56,7 @@ export async function getOrCreateLanguageCourseSuggestion({
   }
 
   return prisma.courseSuggestion.create({
-    data: { description, language, slug, targetLanguage, title },
+    data: { description, language, slug: `language-${targetLanguage}`, targetLanguage, title },
   });
 }
 
