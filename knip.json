@@ -16,10 +16,13 @@
   "includeEntryExports": true,
   "tags": ["-lintignore", "-internal", "-public"],
   "workspaces": {
-    "apps/api": { "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts", "!**/_test-utils/**!"] },
+    "apps/api": {
+      "entry": [".eloqnt/config.ts"],
+      "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts", "!**/_test-utils/**!"]
+    },
     "apps/blog": { "project": ["src/**/*.{ts,tsx}!"] },
     "apps/main": {
-      "entry": ["src/app/privacy/*.mdx", "src/app/terms/*.mdx"],
+      "entry": [".eloqnt/config.ts", "src/app/privacy/*.mdx", "src/app/terms/*.mdx"],
       "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts"]
     },
     "apps/video": {
@@ -33,7 +36,11 @@
       "ignore": ["src/prisma/seed.ts", "src/prisma/seed/**"],
       "prisma": false
     },
-    "packages/player": { "project": ["src/**/*.{ts,tsx}!", "!**/_test-utils/**!"] },
+    "packages/i18n": { "includeEntryExports": false },
+    "packages/player": {
+      "entry": [".eloqnt/config.ts"],
+      "project": ["src/**/*.{ts,tsx}!", "!**/_test-utils/**!"]
+    },
     "packages/ui": { "includeEntryExports": false }
   }
 }
