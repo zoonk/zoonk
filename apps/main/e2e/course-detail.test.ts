@@ -180,9 +180,9 @@ test.describe("Course Detail Page", () => {
 
     await authenticatedPage.waitForURL(`/generate/course/${request.id}`, { timeout: 10_000 });
 
-    await expect(authenticatedPage.getByText(/creating your course/iu)).toBeVisible({
-      timeout: 10_000,
-    });
+    await expect(
+      authenticatedPage.getByRole("heading", { name: `Creating the ${title} course` }),
+    ).toBeVisible({ timeout: 10_000 });
   });
 
   test("non-AI courses with no chapters stay on the course page", async ({ page }) => {

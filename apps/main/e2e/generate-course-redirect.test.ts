@@ -72,10 +72,9 @@ test.describe("Generate Course Redirect", () => {
 
     await authenticatedPage.waitForURL(`/generate/course/${request.id}`, { timeout: 10_000 });
 
-    // Verify we're on the generation page by checking for the header
-    await expect(authenticatedPage.getByText(/creating your course/iu)).toBeVisible({
-      timeout: 10_000,
-    });
+    await expect(
+      authenticatedPage.getByRole("heading", { name: `Creating the ${title} course` }),
+    ).toBeVisible({ timeout: 10_000 });
   });
 
   test("redirects unauthenticated users to generate/course/[id]", async ({ page }) => {
@@ -106,7 +105,9 @@ test.describe("Generate Course Redirect", () => {
 
     await page.waitForURL(`/generate/course/${request.id}`, { timeout: 10_000 });
 
-    await expect(page.getByText(/creating your course/iu)).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole("heading", { name: `Creating the ${title} course` })).toBeVisible({
+      timeout: 10_000,
+    });
   });
 
   test("shows 404 when course request does not exist", async ({ authenticatedPage }) => {
