@@ -3,25 +3,18 @@ import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
+import { courseStartRequestFixture } from "@zoonk/testing/fixtures/course-start-requests";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 
 /**
- * Creates a valid suggestion that will not drive the real generation pipeline.
- * Pending suggestions enqueue AI/database work in the background, which makes
+ * Creates a valid request that will not drive the real generation pipeline.
+ * Pending requests enqueue AI/database work in the background, which makes
  * route-contract tests noisy when they only need to prove the API starts a
- * workflow and exposes its status stream. A completed suggestion exercises the
+ * workflow and exposes its status stream. A completed request exercises the
  * same route path while making the workflow finish after its completion event.
  */
-async function createCompletedCourseSuggestion({ slug, title }: { slug: string; title: string }) {
-  return prisma.courseSuggestion.create({
-    data: {
-      description: `E2E test course description for ${title}`,
-      generationStatus: "completed",
-      language: "en",
-      slug,
-      title,
-    },
-  });
+async function createCompletedCourseStartRequest(title: string) {
+  return courseStartRequestFixture({ canonicalTitle: title, generationStatus: "completed" });
 }
 
 test.describe("Course Generation Workflow API", () => {
@@ -40,15 +33,12 @@ test.describe("Course Generation Workflow API", () => {
   test("starts workflow without a session", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
-    const suggestion = await createCompletedCourseSuggestion({
-      slug: `e2e-public-course-${uniqueId}`,
-      title: `E2E Public Course ${uniqueId}`,
-    });
+    const startRequest = await createCompletedCourseStartRequest(`E2E Public Course ${uniqueId}`);
 
     const apiContext = await request.newContext({ baseURL });
 
     const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
-      data: { courseSuggestionId: suggestion.id },
+      data: { courseStartRequestId: startRequest.id },
     });
 
     expect(response.status()).toBe(200);
@@ -62,7 +52,7 @@ test.describe("Course Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("returns validation error when courseSuggestionId is missing", async () => {
+  test("returns validation error when courseStartRequestId is missing", async () => {
     const { apiContext } = await createAuthenticatedApiContext({
       baseURL,
       prefix: "course-validation-missing",
@@ -80,14 +70,14 @@ test.describe("Course Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("returns validation error when courseSuggestionId is invalid type", async () => {
+  test("returns validation error when courseStartRequestId is invalid type", async () => {
     const { apiContext } = await createAuthenticatedApiContext({
       baseURL,
       prefix: "course-validation-type",
     });
 
     const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
-      data: { courseSuggestionId: "invalid" },
+      data: { courseStartRequestId: "invalid" },
     });
 
     expect(response.status()).toBe(400);
@@ -100,14 +90,14 @@ test.describe("Course Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("returns validation error when courseSuggestionId is negative", async () => {
+  test("returns validation error when courseStartRequestId is invalid number", async () => {
     const { apiContext } = await createAuthenticatedApiContext({
       baseURL,
       prefix: "course-validation-negative",
     });
 
     const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
-      data: { courseSuggestionId: -1 },
+      data: { courseStartRequestId: -1 },
     });
 
     expect(response.status()).toBe(400);
@@ -120,13 +110,10 @@ test.describe("Course Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("starts workflow for valid course suggestion", async () => {
+  test("starts workflow for valid course start request", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
-    const suggestion = await createCompletedCourseSuggestion({
-      slug: `e2e-workflow-test-${uniqueId}`,
-      title: `E2E Workflow Test ${uniqueId}`,
-    });
+    const startRequest = await createCompletedCourseStartRequest(`E2E Workflow Test ${uniqueId}`);
 
     const { apiContext } = await createAuthenticatedApiContext({
       baseURL,
@@ -134,7 +121,7 @@ test.describe("Course Generation Workflow API", () => {
     });
 
     const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
-      data: { courseSuggestionId: suggestion.id },
+      data: { courseStartRequestId: startRequest.id },
     });
 
     expect(response.status()).toBe(200);
@@ -165,10 +152,7 @@ test.describe("Course Generation Workflow API", () => {
   test("returns SSE stream for valid runId", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
-    const suggestion = await createCompletedCourseSuggestion({
-      slug: `e2e-status-test-${uniqueId}`,
-      title: `E2E Status Test ${uniqueId}`,
-    });
+    const startRequest = await createCompletedCourseStartRequest(`E2E Status Test ${uniqueId}`);
 
     const { apiContext } = await createAuthenticatedApiContext({
       baseURL,
@@ -177,7 +161,7 @@ test.describe("Course Generation Workflow API", () => {
 
     // First trigger the workflow to get a runId
     const triggerResponse = await apiContext.post("/v1/workflows/course-generation/trigger", {
-      data: { courseSuggestionId: suggestion.id },
+      data: { courseStartRequestId: startRequest.id },
     });
 
     const triggerBody = await triggerResponse.json();

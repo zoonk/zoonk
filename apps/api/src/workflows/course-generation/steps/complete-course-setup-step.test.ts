@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { getRejectedAggregateError } from "@/workflows/_test-utils/rejected-error";
 import { prisma } from "@zoonk/db";
-import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
+import { courseStartRequestFixture } from "@zoonk/testing/fixtures/course-start-requests";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -24,7 +24,7 @@ describe(completeCourseSetupStep, () => {
     const promise = completeCourseSetupStep({
       courseId: randomUUID(),
       courseSlug: `missing-course-${randomUUID()}`,
-      courseSuggestionId: randomUUID(),
+      courseStartRequestId: randomUUID(),
     });
 
     const error = await getRejectedAggregateError(promise);
@@ -38,33 +38,33 @@ describe(completeCourseSetupStep, () => {
     );
   });
 
-  it("marks both course and suggestion as completed", async () => {
-    const [course, suggestion] = await Promise.all([
+  it("marks both course and request as completed", async () => {
+    const [course, request] = await Promise.all([
       courseFixture({
         generationStatus: "running",
         organizationId,
         title: `Complete Setup ${randomUUID()}`,
       }),
-      courseSuggestionFixture({
+      courseStartRequestFixture({
+        canonicalTitle: `Complete Request ${randomUUID()}`,
         generationStatus: "running",
-        title: `Complete Suggestion ${randomUUID()}`,
       }),
     ]);
 
     await completeCourseSetupStep({
       courseId: course.id,
       courseSlug: course.slug,
-      courseSuggestionId: suggestion.id,
+      courseStartRequestId: request.id,
     });
 
-    const [updatedCourse, updatedSuggestion] = await Promise.all([
+    const [updatedCourse, updatedRequest] = await Promise.all([
       prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
-      prisma.courseSuggestion.findUniqueOrThrow({ where: { id: suggestion.id } }),
+      prisma.courseStartRequest.findUniqueOrThrow({ where: { id: request.id } }),
     ]);
 
     expect(updatedCourse.generationStatus).toBe("completed");
-    expect(updatedSuggestion.generationStatus).toBe("completed");
-    expect(updatedSuggestion.courseId).toBe(course.id);
+    expect(updatedRequest.generationStatus).toBe("completed");
+    expect(updatedRequest.courseId).toBe(course.id);
 
     const events = getStreamedEvents();
 
@@ -81,37 +81,37 @@ describe(completeCourseSetupStep, () => {
     );
   });
 
-  it("marks linked suggestions as completed when another run finishes the course", async () => {
+  it("marks linked requests as completed when another run finishes the course", async () => {
     const course = await courseFixture({
       generationStatus: "running",
       organizationId,
       title: `Linked Complete Setup ${randomUUID()}`,
     });
 
-    const [primarySuggestion, linkedSuggestion] = await Promise.all([
-      courseSuggestionFixture({
+    const [primaryRequest, linkedRequest] = await Promise.all([
+      courseStartRequestFixture({
+        canonicalTitle: `Primary Complete Request ${randomUUID()}`,
         courseId: course.id,
         generationStatus: "running",
-        title: `Primary Complete Suggestion ${randomUUID()}`,
       }),
-      courseSuggestionFixture({
+      courseStartRequestFixture({
+        canonicalTitle: `Linked Complete Request ${randomUUID()}`,
         courseId: course.id,
         generationRunId: "other-run",
         generationStatus: "running",
-        title: `Linked Complete Suggestion ${randomUUID()}`,
       }),
     ]);
 
     await completeCourseSetupStep({
       courseId: course.id,
       courseSlug: course.slug,
-      courseSuggestionId: primarySuggestion.id,
+      courseStartRequestId: primaryRequest.id,
     });
 
-    const updatedLinkedSuggestion = await prisma.courseSuggestion.findUniqueOrThrow({
-      where: { id: linkedSuggestion.id },
+    const updatedLinkedRequest = await prisma.courseStartRequest.findUniqueOrThrow({
+      where: { id: linkedRequest.id },
     });
 
-    expect(updatedLinkedSuggestion.generationStatus).toBe("completed");
+    expect(updatedLinkedRequest.generationStatus).toBe("completed");
   });
 });

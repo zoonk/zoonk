@@ -27,7 +27,7 @@ const menuItems = [
   { icon: Users, label: "Users", url: "/users" },
   { icon: CreditCardIcon, label: "Subscriptions", url: "/subscriptions" },
   { icon: BookOpen, label: "Courses", url: "/courses" },
-  { icon: MessageSquareTextIcon, label: "Course Suggestions", url: "/course-suggestions" },
+  { icon: MessageSquareTextIcon, label: "Course Starts", url: "/course-start-requests" },
   { icon: LayersIcon, label: "Lessons", url: "/lessons" },
 ] as const;
 

@@ -13,7 +13,7 @@ const identitySchema = z.object({
   reason: z.string(),
 });
 
-export type CourseIdentitySuggestion = {
+export type CourseIdentityProposedCourse = {
   description: string | null;
   language: string;
   targetLanguage: string | null;
@@ -32,7 +32,7 @@ export type CourseIdentitySchema = z.infer<typeof identitySchema>;
 
 export type CourseIdentityParams = {
   candidates: CourseIdentityCandidate[];
-  suggestion: CourseIdentitySuggestion;
+  proposedCourse: CourseIdentityProposedCourse;
   model?: string;
   useFallback?: boolean;
   reasoningEffort?: ReasoningEffort;
@@ -45,7 +45,7 @@ export type CourseIdentityParams = {
  */
 function buildIdentityUserPrompt(params: CourseIdentityParams): string {
   return JSON.stringify(
-    { candidates: params.candidates, proposedCourse: params.suggestion },
+    { candidates: params.candidates, proposedCourse: params.proposedCourse },
     null,
     2,
   );
@@ -73,11 +73,11 @@ function normalizeIdentityOutput(output: CourseIdentitySchema): CourseIdentitySc
 export async function resolveCourseIdentity({
   candidates,
   model = defaultModel,
+  proposedCourse,
   reasoningEffort,
-  suggestion,
   useFallback = true,
 }: CourseIdentityParams) {
-  const userPrompt = buildIdentityUserPrompt({ candidates, suggestion });
+  const userPrompt = buildIdentityUserPrompt({ candidates, proposedCourse });
 
   const providerOptions = buildProviderOptions({
     fallbackModels,

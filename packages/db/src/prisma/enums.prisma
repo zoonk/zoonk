@@ -44,6 +44,15 @@ enum CourseMode {
   quick
 }
 
+enum CourseStartScope {
+  exam
+  language
+  personalized
+  question
+  topic
+  unsafe
+}
+
 enum SubscriptionProvider {
   stripe
   google

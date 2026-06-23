@@ -4,13 +4,13 @@ import { prisma } from "@zoonk/db";
 import { throwSettledFailures } from "@zoonk/utils/settled";
 
 /**
- * Marks the course and every suggestion already linked to it as completed.
- * Duplicate workflow starts can link more than one suggestion to the same
+ * Marks the course and every start request already linked to it as completed.
+ * Duplicate workflow starts can link more than one request to the same
  * in-progress course, and they should all resolve when the winning run
  * finishes the shared course.
  */
 export async function completeCourseSetupStep(input: {
-  courseSuggestionId: string;
+  courseStartRequestId: string;
   courseId: string;
   courseSlug: string;
 }): Promise<void> {
@@ -25,11 +25,11 @@ export async function completeCourseSetupStep(input: {
       data: { generationStatus: "completed" },
       where: { id: input.courseId },
     }),
-    prisma.courseSuggestion.update({
+    prisma.courseStartRequest.update({
       data: { courseId: input.courseId, generationStatus: "completed" },
-      where: { id: input.courseSuggestionId },
+      where: { id: input.courseStartRequestId },
     }),
-    prisma.courseSuggestion.updateMany({
+    prisma.courseStartRequest.updateMany({
       data: { generationStatus: "completed" },
       where: { courseId: input.courseId },
     }),

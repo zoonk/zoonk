@@ -1,19 +1,15 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
+import { getCourseSlugForTitle } from "@zoonk/core/courses/slug";
 import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
-import {
-  type Course,
-  type CourseSuggestion,
-  isPrismaUniqueConstraintError,
-  prisma,
-} from "@zoonk/db";
+import { type Course, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
-import { getCourseSlugForTitle } from "../_internal/course-slug";
 import {
   type ExistingCourseContent,
   courseContentInclude,
   getExistingCourseContent,
 } from "../_internal/existing-course-content";
+import { type GeneratableCourseStartRequest } from "./get-course-start-request-step";
 
 export type CourseContext = {
   courseId: string;
@@ -31,72 +27,72 @@ export type InitializedCourse = {
 };
 
 /**
- * Links the suggestion to the new course and marks it as running. The course id
- * is required because later generation requests use it to reuse the in-progress
- * course instead of creating another one.
+ * Links the request to the new course and marks it as running. The course id is
+ * required because later starts reuse the in-progress course instead of creating
+ * another one.
  */
-async function updateCourseSuggestionToRunning({
+async function updateStartRequestToRunning({
   courseId,
-  suggestionId,
+  requestId,
   workflowRunId,
 }: {
   courseId: string;
-  suggestionId: string;
+  requestId: string;
   workflowRunId: string;
 }): Promise<void> {
-  await prisma.courseSuggestion.update({
+  await prisma.courseStartRequest.update({
     data: { courseId, generationRunId: workflowRunId, generationStatus: "running" },
-    where: { id: suggestionId },
+    where: { id: requestId },
   });
 }
 
 /**
- * Links a suggestion to a course discovered after a unique-key race. Completed
- * courses can satisfy the suggestion immediately; every other state means this
- * workflow or the already-running workflow should keep the suggestion in a
- * running state until the course finishes or fails.
+ * Links a request to a course discovered after a unique-key race. Completed
+ * courses can satisfy the request immediately; every other state means this
+ * workflow or the already-running workflow should keep the request in a running
+ * state until the course finishes or fails.
  */
-async function updateCourseSuggestionForRecoveredCourse({
+async function updateStartRequestForRecoveredCourse({
   courseId,
   generationStatus,
-  suggestionId,
+  requestId,
   workflowRunId,
 }: {
   courseId: string;
   generationStatus: Course["generationStatus"];
-  suggestionId: string;
+  requestId: string;
   workflowRunId: string;
 }): Promise<void> {
-  await prisma.courseSuggestion.update({
+  await prisma.courseStartRequest.update({
     data:
       generationStatus === "completed"
         ? { courseId, generationStatus: "completed" }
         : { courseId, generationRunId: workflowRunId, generationStatus: "running" },
-    where: { id: suggestionId },
+    where: { id: requestId },
   });
 }
 
 /**
  * Converts a persisted course row into the stable workflow context shape.
- * The workflow keeps the suggestion title/language as the learner-facing
+ * The workflow keeps the request title/language as the learner-facing
  * request while using the database course id and slug as the durable target.
  */
 export function getCourseContext({
   course,
   organizationId,
-  suggestion,
+  request,
 }: {
   course: Pick<Course, "id" | "slug">;
   organizationId: string;
-  suggestion: CourseSuggestion;
+  request: Pick<GeneratableCourseStartRequest, "canonicalTitle" | "language" | "targetLanguage">;
 }): CourseContext {
   return {
     courseId: course.id,
     courseSlug: course.slug,
-    courseTitle: suggestion.title,
-    language: suggestion.language,
+    courseTitle: request.canonicalTitle,
+    language: request.language,
     organizationId,
-    targetLanguage: suggestion.targetLanguage,
+    targetLanguage: request.targetLanguage,
   };
 }
 
@@ -106,27 +102,28 @@ export function getCourseContext({
  */
 async function createCourseEntity({
   organizationId,
-  suggestion,
+  request,
   workflowRunId,
 }: {
   organizationId: string;
-  suggestion: CourseSuggestion;
+  request: GeneratableCourseStartRequest;
   workflowRunId: string;
 }): Promise<Course> {
-  const slug = getCourseSlugForTitle({ language: suggestion.language, title: suggestion.title });
-  const normalizedTitle = normalizeString(suggestion.title);
+  const slug = getCourseSlugForTitle({ language: request.language, title: request.canonicalTitle });
+  const normalizedTitle = normalizeString(request.canonicalTitle);
 
   return prisma.course.create({
     data: {
       generationRunId: workflowRunId,
       generationStatus: "running",
       isPublished: true,
-      language: suggestion.language,
+      language: request.language,
+      mode: request.courseMode ?? "full",
       normalizedTitle,
       organizationId,
       slug,
-      targetLanguage: suggestion.targetLanguage,
-      title: suggestion.title,
+      targetLanguage: request.targetLanguage,
+      title: request.canonicalTitle,
     },
   });
 }
@@ -169,41 +166,41 @@ async function getRecoveredCourse({
  */
 async function createOrRecoverCourse({
   organizationId,
-  suggestion,
+  request,
   workflowRunId,
 }: {
   organizationId: string;
-  suggestion: CourseSuggestion;
+  request: GeneratableCourseStartRequest;
   workflowRunId: string;
 }): Promise<InitializedCourse> {
-  const slug = getCourseSlugForTitle({ language: suggestion.language, title: suggestion.title });
+  const slug = getCourseSlugForTitle({ language: request.language, title: request.canonicalTitle });
 
   try {
-    const course = await createCourseEntity({ organizationId, suggestion, workflowRunId });
+    const course = await createCourseEntity({ organizationId, request, workflowRunId });
 
-    await updateCourseSuggestionToRunning({
+    await updateStartRequestToRunning({
       courseId: course.id,
-      suggestionId: suggestion.id,
+      requestId: request.id,
       workflowRunId,
     });
 
     return {
-      course: getCourseContext({ course, organizationId, suggestion }),
+      course: getCourseContext({ course, organizationId, request }),
       existing: null,
       generationStatus: course.generationStatus,
     };
   } catch (error) {
     const course = await getRecoveredCourse({ error, organizationId, slug });
 
-    await updateCourseSuggestionForRecoveredCourse({
+    await updateStartRequestForRecoveredCourse({
       courseId: course.id,
       generationStatus: course.generationStatus,
-      suggestionId: suggestion.id,
+      requestId: request.id,
       workflowRunId,
     });
 
     return {
-      course: getCourseContext({ course, organizationId, suggestion }),
+      course: getCourseContext({ course, organizationId, request }),
       existing: getExistingCourseContent(course),
       generationStatus: course.generationStatus,
     };
@@ -211,13 +208,13 @@ async function createOrRecoverCourse({
 }
 
 /**
- * Initializes the course target for a suggestion. The normal path creates the
- * course and links the suggestion; the duplicate-start path links to the row
+ * Initializes the course target for a start request. The normal path creates the
+ * course and links the request; the duplicate-start path links to the row
  * that won the unique slug race so the workflow can stop or resume based on
  * that course's current generation status.
  */
 export async function initializeCourseStep(input: {
-  suggestion: CourseSuggestion;
+  request: GeneratableCourseStartRequest;
   workflowRunId: string;
 }): Promise<InitializedCourse> {
   "use step";
@@ -226,15 +223,11 @@ export async function initializeCourseStep(input: {
 
   await stream.status({ status: "started", step: "initializeCourse" });
 
-  const { suggestion, workflowRunId } = input;
+  const { request, workflowRunId } = input;
 
   const aiOrg = await prisma.organization.findUniqueOrThrow({ where: { slug: AI_ORG_SLUG } });
 
-  const course = await createOrRecoverCourse({
-    organizationId: aiOrg.id,
-    suggestion,
-    workflowRunId,
-  });
+  const course = await createOrRecoverCourse({ organizationId: aiOrg.id, request, workflowRunId });
 
   await stream.status({ status: "completed", step: "initializeCourse" });
 

@@ -1,6 +1,13 @@
-import { Badge } from "@zoonk/ui/components/badge";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
+import {
+  StartSurface,
+  StartSurfaceBadge,
+  StartSurfaceContent,
+  StartSurfaceDescription,
+  StartSurfaceHeader,
+  StartSurfaceTitle,
+} from "../_components/start-surface";
 import { ExamWaitlistForm } from "./exam-waitlist-form";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -22,23 +29,21 @@ export default async function StartExam() {
   const t = await getExtracted();
 
   return (
-    <main className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center gap-8 p-4 pb-28">
-      <div className="flex flex-col items-start gap-4">
-        <Badge variant="secondary">{t("Coming soon")}</Badge>
+    <StartSurface>
+      <StartSurfaceHeader>
+        <StartSurfaceBadge>{t("Coming soon")}</StartSurfaceBadge>
 
-        <div className="flex flex-col gap-3">
-          <h1 className="text-3xl font-bold tracking-tight text-balance md:text-5xl">
-            {t("Pass an exam")}
-          </h1>
-          <p className="text-muted-foreground text-pretty">
+        <StartSurfaceContent>
+          <StartSurfaceTitle>{t("Pass an exam")}</StartSurfaceTitle>
+          <StartSurfaceDescription>
             {t(
               "Exam prep is not available yet. Tell us what you're preparing for and we'll notify you when it launches.",
             )}
-          </p>
-        </div>
-      </div>
+          </StartSurfaceDescription>
+        </StartSurfaceContent>
+      </StartSurfaceHeader>
 
       <ExamWaitlistForm />
-    </main>
+    </StartSurface>
   );
 }

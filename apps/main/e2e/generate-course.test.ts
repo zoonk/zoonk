@@ -2,9 +2,10 @@ import { randomUUID } from "node:crypto";
 import { type Page, type Route } from "@zoonk/e2e/fixtures";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
+import { courseStartRequestFixture } from "@zoonk/testing/fixtures/course-start-requests";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
 
 /**
@@ -16,7 +17,7 @@ import { expect, test } from "./fixtures";
  *
  * Client behavior:
  * - Auto-triggers workflow on mount (no idle state)
- * - Shows "Creating your course" while triggering/streaming
+ * - Shows the course-specific creation title while triggering/streaming
  * - Shows current step label + spinner while streaming
  * - Shows completed steps with checkmarks
  * - Workflow completes when the configured completion step is received
@@ -177,49 +178,45 @@ async function createPublishedCourseWithLesson({
 
 test.describe("Generate Course Page", () => {
   test("starts course generation for unauthenticated users", async ({ page }) => {
-    const slug = `e2e-unauth-course-${randomUUID().slice(0, 8)}`;
-
-    const suggestion = await courseSuggestionFixture({
+    const request = await courseStartRequestFixture({
+      canonicalTitle: "E2E Unauth Course Generation",
       generationStatus: "pending",
       language: "en",
-      slug,
-      title: "E2E Unauth Course Generation",
     });
 
     await setupMockApis(page, {
       statusDelayMs: 2500,
-      streamMessages: [{ status: "started", step: "getCourseSuggestion" }],
+      streamMessages: [{ status: "started", step: "getCourseStartRequest" }],
     });
 
-    await page.goto(`/generate/cs/${suggestion.id}`);
+    await page.goto(`/generate/course/${request.id}`);
 
-    await expect(page.getByText(/creating your course/iu)).toBeVisible({ timeout: 10_000 });
+    await expect(
+      page.getByRole("heading", { name: "Creating the E2E Unauth Course Generation course" }),
+    ).toBeVisible({ timeout: 10_000 });
   });
 
   test.describe("Initial triggering state", () => {
     test("shows triggering state immediately on page load", async ({ authenticatedPage }) => {
-      // Create a unique suggestion to avoid PPR caching issues with seeded data
-      const slug = `e2e-trigger-${randomUUID().slice(0, 8)}`;
-
-      const suggestion = await courseSuggestionFixture({
+      // Create a unique request to avoid PPR caching issues with seeded data
+      const request = await courseStartRequestFixture({
+        canonicalTitle: "E2E Triggering Test",
         generationStatus: "running",
         language: "en",
-        slug,
-        title: "E2E Triggering Test",
       });
 
       // Set up route mocking before navigation
       await setupMockApis(authenticatedPage, {
-        streamMessages: [{ status: "started", step: "getCourseSuggestion" }],
+        streamMessages: [{ status: "started", step: "getCourseStartRequest" }],
       });
 
-      // Navigate directly to the generate page with the unique suggestion
-      await authenticatedPage.goto(`/generate/cs/${suggestion.id}`);
+      // Navigate directly to the generate page with the unique request
+      await authenticatedPage.goto(`/generate/course/${request.id}`);
 
       // Should show triggering or streaming state (no idle state)
-      await expect(authenticatedPage.getByText(/creating your course/iu)).toBeVisible({
-        timeout: 10_000,
-      });
+      await expect(
+        authenticatedPage.getByRole("heading", { name: "Creating the E2E Triggering Test course" }),
+      ).toBeVisible({ timeout: 10_000 });
 
       await expect(
         authenticatedPage.getByText(/this usually takes about 2 minutes/iu),
@@ -235,7 +232,6 @@ test.describe("Generate Course Page", () => {
     test("redirects to linked completed course without starting generation", async ({
       authenticatedPage,
     }) => {
-      const sourceSlug = `e2e-linked-source-${randomUUID().slice(0, 8)}`;
       const courseSlug = `e2e-linked-course-${randomUUID().slice(0, 8)}`;
 
       const course = await createPublishedCourseWithLesson({
@@ -244,19 +240,18 @@ test.describe("Generate Course Page", () => {
         title: "E2E Linked Completed Course",
       });
 
-      const suggestion = await courseSuggestionFixture({
+      const request = await courseStartRequestFixture({
+        canonicalTitle: "E2E Linked Completed Request",
         courseId: course.id,
         generationStatus: "pending",
         language: "en",
-        slug: sourceSlug,
-        title: "E2E Linked Completed Suggestion",
       });
 
       await authenticatedPage.route("**/v1/workflows/course-generation/**", async (route) => {
         throw new Error(`Generation workflow should not start: ${route.request().url()}`);
       });
 
-      await authenticatedPage.goto(`/generate/cs/${suggestion.id}`);
+      await authenticatedPage.goto(`/generate/course/${request.id}`);
 
       await authenticatedPage.waitForURL(new RegExp(`/b/ai/c/${courseSlug}`, "u"), {
         timeout: 10_000,
@@ -264,14 +259,14 @@ test.describe("Generate Course Page", () => {
     });
 
     test("shows completion state and redirects to course page", async ({ authenticatedPage }) => {
-      const slug = `e2e-completion-${randomUUID().slice(0, 8)}`;
       const org = await getAiOrganization();
+      const title = "E2E Completion Test";
+      const slug = `e2e-completion-${randomUUID().slice(0, 8)}`;
 
-      const suggestion = await courseSuggestionFixture({
+      const request = await courseStartRequestFixture({
+        canonicalTitle: title,
         generationStatus: "pending",
         language: "en",
-        slug,
-        title: "E2E Completion Test",
       });
 
       // Create a real course so the redirect after "completion" works
@@ -279,7 +274,7 @@ test.describe("Generate Course Page", () => {
         isPublished: true,
         organizationId: org.id,
         slug,
-        title: "E2E Completion Test",
+        title,
       });
 
       const chapter = await chapterFixture({
@@ -293,28 +288,26 @@ test.describe("Generate Course Page", () => {
       await setupMockApis(authenticatedPage, {
         assertBearerAuth: true,
         streamMessages: [
-          { status: "started", step: "getCourseSuggestion" },
-          { status: "completed", step: "getCourseSuggestion" },
+          { status: "started", step: "getCourseStartRequest" },
+          { status: "completed", step: "getCourseStartRequest" },
           { status: "started", step: "completeCourseSetup" },
           { status: "completed", step: "completeCourseSetup" },
         ],
       });
 
-      await authenticatedPage.goto(`/generate/cs/${suggestion.id}`);
+      await authenticatedPage.goto(`/generate/course/${request.id}`);
 
       // Should complete and redirect to course page
       await authenticatedPage.waitForURL(/\/b\/ai\/c\//u, { timeout: 10_000 });
     });
 
     test("redirects to the completed workflow course slug", async ({ authenticatedPage }) => {
-      const sourceSlug = `e2e-identity-source-${randomUUID().slice(0, 8)}`;
       const courseSlug = `e2e-identity-course-${randomUUID().slice(0, 8)}`;
 
-      const suggestion = await courseSuggestionFixture({
+      const request = await courseStartRequestFixture({
+        canonicalTitle: "E2E Identity Redirect Request",
         generationStatus: "pending",
         language: "en",
-        slug: sourceSlug,
-        title: "E2E Identity Redirect Suggestion",
       });
 
       await createPublishedCourseWithLesson({
@@ -324,33 +317,32 @@ test.describe("Generate Course Page", () => {
 
       await setupMockApis(authenticatedPage, {
         streamMessages: [
-          { status: "started", step: "getCourseSuggestion" },
-          { status: "completed", step: "getCourseSuggestion" },
+          { status: "started", step: "getCourseStartRequest" },
+          { status: "completed", step: "getCourseStartRequest" },
           { status: "started", step: "completeCourseSetup" },
           { entityId: courseSlug, status: "completed", step: "completeCourseSetup" },
         ],
       });
 
-      await authenticatedPage.goto(`/generate/cs/${suggestion.id}`);
+      await authenticatedPage.goto(`/generate/course/${request.id}`);
 
       await authenticatedPage.waitForURL(new RegExp(`/b/ai/c/${courseSlug}`, "u"), {
         timeout: 10_000,
       });
 
-      expect(authenticatedPage.url()).not.toContain(sourceSlug);
+      expect(authenticatedPage.url()).not.toContain(request.id);
     });
 
     test("redirects to suffixed slug for non-English courses", async ({ authenticatedPage }) => {
-      const slug = `e2e-locale-${randomUUID().slice(0, 8)}`;
-      const suffixedSlug = `${slug}-pt`;
+      const title = `E2E Locale Redirect ${randomUUID().slice(0, 8)}`;
+      const suffixedSlug = ensureLocaleSuffix(toSlug(title), "pt");
       const org = await getAiOrganization();
 
-      const [suggestion] = await Promise.all([
-        courseSuggestionFixture({
+      const [request] = await Promise.all([
+        courseStartRequestFixture({
+          canonicalTitle: title,
           generationStatus: "pending",
           language: "pt",
-          slug,
-          title: "E2E Locale Redirect Test",
         }),
         // Use generationStatus "running" so the server-side redirect is skipped
         // and the client-side redirect (the one we're testing) fires instead.
@@ -359,7 +351,7 @@ test.describe("Generate Course Page", () => {
           isPublished: true,
           organizationId: org.id,
           slug: suffixedSlug,
-          title: "E2E Locale Redirect Test",
+          title,
         }).then(async (course) => {
           const chapter = await chapterFixture({
             courseId: course.id,
@@ -373,16 +365,16 @@ test.describe("Generate Course Page", () => {
 
       await setupMockApis(authenticatedPage, {
         streamMessages: [
-          { status: "started", step: "getCourseSuggestion" },
-          { status: "completed", step: "getCourseSuggestion" },
+          { status: "started", step: "getCourseStartRequest" },
+          { status: "completed", step: "getCourseStartRequest" },
           { status: "started", step: "completeCourseSetup" },
           { status: "completed", step: "completeCourseSetup" },
         ],
       });
 
-      await authenticatedPage.goto(`/generate/cs/${suggestion.id}`);
+      await authenticatedPage.goto(`/generate/course/${request.id}`);
 
-      // Should redirect to the suffixed slug, not the raw suggestion slug
+      // Should redirect to the suffixed slug, not the raw canonical slug.
       await authenticatedPage.waitForURL(new RegExp(`/b/ai/c/${suffixedSlug}`, "u"), {
         timeout: 10_000,
       });
@@ -391,21 +383,20 @@ test.describe("Generate Course Page", () => {
 
   test.describe("Error handling", () => {
     test("shows error when stream returns error status", async ({ authenticatedPage }) => {
-      const suggestion = await courseSuggestionFixture({
+      const request = await courseStartRequestFixture({
+        canonicalTitle: "E2E Error Handling Test",
         generationStatus: "pending",
         language: "en",
-        slug: `e2e-error-${randomUUID().slice(0, 8)}`,
-        title: "E2E Error Handling Test",
       });
 
       await setupMockApis(authenticatedPage, {
         streamMessages: [
-          { status: "started", step: "getCourseSuggestion" },
-          { reason: "notFound", status: "error", step: "getCourseSuggestion" },
+          { status: "started", step: "getCourseStartRequest" },
+          { reason: "notFound", status: "error", step: "getCourseStartRequest" },
         ],
       });
 
-      await authenticatedPage.goto(`/generate/cs/${suggestion.id}`);
+      await authenticatedPage.goto(`/generate/course/${request.id}`);
 
       // Should show error message when a step errors
       await expect(authenticatedPage.getByText(/something went wrong/iu)).toBeVisible({
@@ -415,13 +406,13 @@ test.describe("Generate Course Page", () => {
   });
 
   test.describe("Not found", () => {
-    test("invalid suggestion ID shows 404 page", async ({ authenticatedPage }) => {
-      await authenticatedPage.goto("/generate/cs/999999");
+    test("unknown request ID shows 404 page", async ({ authenticatedPage }) => {
+      await authenticatedPage.goto(`/generate/course/${randomUUID()}`);
       await expect(authenticatedPage.getByText(/not found|404/iu)).toBeVisible();
     });
 
-    test("non-numeric suggestion ID shows 404 page", async ({ authenticatedPage }) => {
-      await authenticatedPage.goto("/generate/cs/invalid-id");
+    test("invalid request ID shows 404 page", async ({ authenticatedPage }) => {
+      await authenticatedPage.goto("/generate/course/invalid-id");
       await expect(authenticatedPage.getByText(/not found|404/iu)).toBeVisible();
     });
   });

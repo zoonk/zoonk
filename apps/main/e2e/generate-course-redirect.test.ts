@@ -1,6 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { type Route } from "@zoonk/e2e/fixtures";
-import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
+import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
+import { courseStartRequestFixture } from "@zoonk/testing/fixtures/course-start-requests";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
 
 const TEST_RUN_ID = "test-run-id-redirect";
@@ -26,7 +29,7 @@ async function mockWorkflowApis(route: Route) {
   if (url.includes("/v1/workflows/course-generation/status")) {
     // Return a simple in-progress message to show the generation UI
     await route.fulfill({
-      body: `data: ${JSON.stringify({ status: "running", step: "getCourseSuggestion" })}\n\n`,
+      body: `data: ${JSON.stringify({ status: "running", step: "getCourseStartRequest" })}\n\n`,
       contentType: "text/event-stream",
       status: 200,
     });
@@ -38,16 +41,28 @@ async function mockWorkflowApis(route: Route) {
 }
 
 test.describe("Generate Course Redirect", () => {
-  test("redirects signed-in users to generate/cs/[id] when course suggestion exists", async ({
+  test("redirects signed-in users to generate/course/[id] when request exists", async ({
     authenticatedPage,
   }) => {
     const slug = `e2e-redirect-${randomUUID().slice(0, 8)}`;
+    const org = await getAiOrganization();
+    const title = "E2E Redirect Test";
 
-    const suggestion = await courseSuggestionFixture({
+    const course = await courseFixture({
       generationStatus: "running",
+      isPublished: true,
       language: "en",
+      normalizedTitle: normalizeString(title),
+      organizationId: org.id,
       slug,
-      title: "E2E Redirect Test",
+      title,
+    });
+
+    const request = await courseStartRequestFixture({
+      canonicalTitle: title,
+      courseId: course.id,
+      generationStatus: "running",
+      prompt: `Generate ${title} ${slug}`,
     });
 
     // Mock the workflow APIs before navigating
@@ -55,35 +70,47 @@ test.describe("Generate Course Redirect", () => {
 
     await authenticatedPage.goto(`/generate/c/${slug}`);
 
-    // Should redirect to /generate/cs/{id}
-    await authenticatedPage.waitForURL(`/generate/cs/${suggestion.id}`, { timeout: 10_000 });
+    await authenticatedPage.waitForURL(`/generate/course/${request.id}`, { timeout: 10_000 });
 
-    // Verify we're on the generation page by checking for the header
-    await expect(authenticatedPage.getByText(/creating your course/iu)).toBeVisible({
-      timeout: 10_000,
-    });
+    await expect(
+      authenticatedPage.getByRole("heading", { name: `Creating the ${title} course` }),
+    ).toBeVisible({ timeout: 10_000 });
   });
 
-  test("redirects unauthenticated users to generate/cs/[id]", async ({ page }) => {
+  test("redirects unauthenticated users to generate/course/[id]", async ({ page }) => {
     const slug = `e2e-redirect-unauth-${randomUUID().slice(0, 8)}`;
+    const org = await getAiOrganization();
+    const title = "E2E Redirect Unauth Test";
 
-    const suggestion = await courseSuggestionFixture({
+    const course = await courseFixture({
       generationStatus: "running",
+      isPublished: true,
       language: "en",
+      normalizedTitle: normalizeString(title),
+      organizationId: org.id,
       slug,
-      title: "E2E Redirect Unauth Test",
+      title,
+    });
+
+    const request = await courseStartRequestFixture({
+      canonicalTitle: title,
+      courseId: course.id,
+      generationStatus: "running",
+      prompt: `Generate ${title} ${slug}`,
     });
 
     await page.route("**/v1/workflows/**", mockWorkflowApis);
 
     await page.goto(`/generate/c/${slug}`);
 
-    await page.waitForURL(`/generate/cs/${suggestion.id}`, { timeout: 10_000 });
+    await page.waitForURL(`/generate/course/${request.id}`, { timeout: 10_000 });
 
-    await expect(page.getByText(/creating your course/iu)).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole("heading", { name: `Creating the ${title} course` })).toBeVisible({
+      timeout: 10_000,
+    });
   });
 
-  test("shows 404 when course suggestion does not exist", async ({ authenticatedPage }) => {
+  test("shows 404 when course request does not exist", async ({ authenticatedPage }) => {
     await authenticatedPage.goto(`/generate/c/nonexistent-${randomUUID()}`);
 
     await expect(authenticatedPage.getByText(/not found|404/iu)).toBeVisible();

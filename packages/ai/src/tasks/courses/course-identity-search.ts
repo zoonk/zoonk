@@ -11,7 +11,7 @@ const searchSchema = z.object({ queries: z.array(z.string()) });
 
 export type CourseIdentitySearchSchema = z.infer<typeof searchSchema>;
 
-type CourseIdentitySuggestion = {
+type CourseIdentityProposedCourse = {
   description: string | null;
   language: string;
   targetLanguage: string | null;
@@ -19,7 +19,7 @@ type CourseIdentitySuggestion = {
 };
 
 export type CourseIdentitySearchParams = {
-  suggestion: CourseIdentitySuggestion;
+  proposedCourse: CourseIdentityProposedCourse;
   model?: string;
   useFallback?: boolean;
   reasoningEffort?: ReasoningEffort;
@@ -31,7 +31,7 @@ export type CourseIdentitySearchParams = {
  * once candidates are known.
  */
 function buildSearchUserPrompt(params: CourseIdentitySearchParams): string {
-  return JSON.stringify({ proposedCourse: params.suggestion }, null, 2);
+  return JSON.stringify({ proposedCourse: params.proposedCourse }, null, 2);
 }
 
 /**
@@ -41,11 +41,11 @@ function buildSearchUserPrompt(params: CourseIdentitySearchParams): string {
  */
 export async function generateCourseIdentitySearchQueries({
   model = defaultModel,
+  proposedCourse,
   reasoningEffort,
-  suggestion,
   useFallback = true,
 }: CourseIdentitySearchParams) {
-  const userPrompt = buildSearchUserPrompt({ suggestion });
+  const userPrompt = buildSearchUserPrompt({ proposedCourse });
 
   const providerOptions = buildProviderOptions({
     fallbackModels,

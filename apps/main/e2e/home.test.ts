@@ -230,27 +230,36 @@ test.describe("Home Page - Progress Section", () => {
   });
 
   test("authenticated user with progress sees learning totals after level", async ({
-    authenticatedPage,
+    baseURL,
+    browser,
   }) => {
-    await authenticatedPage.goto("/");
+    const user = await createE2EUser(baseURL!, { orgRole: "member", withProgress: true });
+    const ctx = await browser.newContext({ storageState: user.storageState });
+    const page = await ctx.newPage();
 
-    const progressSection = authenticatedPage.getByRole("region", { name: /^progress$/iu });
+    try {
+      await page.goto("/");
 
-    await expect(progressSection).toBeVisible();
+      const progressSection = page.getByRole("region", { name: /^progress$/iu });
 
-    const progressCards = progressSection.getByRole("article");
-    await expect(progressCards.nth(1)).toContainText(/belt - level \d+/iu);
+      await expect(progressSection).toBeVisible();
 
-    const learningDaysCard = progressSection.getByRole("article", { name: /learning days/iu });
+      const progressCards = progressSection.getByRole("article");
+      await expect(progressCards.nth(1)).toContainText(/belt - level \d+/iu);
 
-    await expect(learningDaysCard).toContainText("1 day");
+      const learningDaysCard = progressSection.getByRole("article", { name: /learning days/iu });
 
-    await expect(learningDaysCard).toContainText("At least one completed lesson");
+      await expect(learningDaysCard).toContainText("1 day");
 
-    const learningTimeCard = progressSection.getByRole("article", { name: /learning time/iu });
+      await expect(learningDaysCard).toContainText("At least one completed lesson");
 
-    await expect(learningTimeCard).toContainText("2 min");
-    await expect(learningTimeCard).toContainText("Time spent in lessons");
+      const learningTimeCard = progressSection.getByRole("article", { name: /learning time/iu });
+
+      await expect(learningTimeCard).toContainText("2 min");
+      await expect(learningTimeCard).toContainText("Time spent in lessons");
+    } finally {
+      await ctx.close();
+    }
   });
 
   test("authenticated user with progress sees score", async ({ authenticatedPage }) => {

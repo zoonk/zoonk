@@ -20,7 +20,7 @@ const course: CourseContext = {
   targetLanguage: null,
 };
 
-const description = "Course suggestion description";
+const description = "Course request description";
 
 describe(generateImageStep, () => {
   beforeEach(() => {

@@ -31,7 +31,7 @@ export async function LearnContent() {
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-8 p-4 pb-28 md:gap-10">
       <h1 className="text-center text-4xl font-bold tracking-tight md:text-5xl" id="learn-title">
-        {t("Learn anything.")}
+        {t("What do you want to learn?")}
       </h1>
 
       <LearnForm

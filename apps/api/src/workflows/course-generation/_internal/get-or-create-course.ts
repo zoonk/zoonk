@@ -1,6 +1,7 @@
 import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
-import { type Course, type CourseSuggestion } from "@zoonk/db";
+import { type Course } from "@zoonk/db";
 import { getAIOrganizationStep } from "../steps/get-ai-organization-step";
+import { type GeneratableCourseStartRequest } from "../steps/get-course-start-request-step";
 import {
   type CourseContext,
   type InitializedCourse,
@@ -26,7 +27,7 @@ export type GetOrCreateCourseResult = {
 /**
  * Only failed or pending existing courses need this workflow to continue setup.
  * Running and completed courses already have another run or a finished result,
- * so the caller should stop after linking the suggestion.
+ * so the caller should stop after linking the request.
  */
 function getCourseSetupStatus(generationStatus: Course["generationStatus"]): CourseSetupStatus {
   if (generationStatus === "running") {
@@ -46,13 +47,13 @@ function getCourseSetupStatus(generationStatus: Course["generationStatus"]): Cou
  */
 async function prepareExistingCourse({
   course,
-  courseSuggestionId,
+  courseStartRequestId,
   existing,
   generationStatus,
   workflowRunId,
 }: {
   course: CourseContext;
-  courseSuggestionId: string;
+  courseStartRequestId: string;
   existing: ExistingCourseContent;
   generationStatus: Course["generationStatus"];
   workflowRunId: string;
@@ -64,7 +65,7 @@ async function prepareExistingCourse({
     return { course, existing, status };
   }
 
-  await setCourseAsRunningStep({ courseId: course.courseId, courseSuggestionId, workflowRunId });
+  await setCourseAsRunningStep({ courseId: course.courseId, courseStartRequestId, workflowRunId });
 
   return { course, existing, status: "ready" };
 }
@@ -75,11 +76,11 @@ async function prepareExistingCourse({
  * through the same status gate as a resolver-found existing course.
  */
 async function prepareInitializedCourse({
-  courseSuggestionId,
+  courseStartRequestId,
   initialized,
   workflowRunId,
 }: {
-  courseSuggestionId: string;
+  courseStartRequestId: string;
   initialized: InitializedCourse;
   workflowRunId: string;
 }): Promise<GetOrCreateCourseResult> {
@@ -90,7 +91,7 @@ async function prepareInitializedCourse({
 
   return prepareExistingCourse({
     course: initialized.course,
-    courseSuggestionId,
+    courseStartRequestId,
     existing: initialized.existing,
     generationStatus: initialized.generationStatus,
     workflowRunId,
@@ -104,21 +105,21 @@ async function prepareInitializedCourse({
  */
 export async function getOrCreateCourse(
   existingCourse: ExistingCourse | null,
-  suggestion: CourseSuggestion,
-  courseSuggestionId: string,
+  request: GeneratableCourseStartRequest,
+  courseStartRequestId: string,
   workflowRunId: string,
 ): Promise<GetOrCreateCourseResult> {
   if (!existingCourse) {
-    const initialized = await initializeCourseStep({ suggestion, workflowRunId });
-    return prepareInitializedCourse({ courseSuggestionId, initialized, workflowRunId });
+    const initialized = await initializeCourseStep({ request, workflowRunId });
+    return prepareInitializedCourse({ courseStartRequestId, initialized, workflowRunId });
   }
 
   await streamSkipStep("initializeCourse");
   const aiOrg = await getAIOrganizationStep();
 
   return prepareExistingCourse({
-    course: getCourseContext({ course: existingCourse, organizationId: aiOrg.id, suggestion }),
-    courseSuggestionId,
+    course: getCourseContext({ course: existingCourse, organizationId: aiOrg.id, request }),
+    courseStartRequestId,
     existing: getExistingCourseContent(existingCourse),
     generationStatus: existingCourse.generationStatus,
     workflowRunId,

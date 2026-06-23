@@ -37,7 +37,7 @@ export const TEST_CASES = [
           title: "Web Development",
         },
       ],
-      suggestion: {
+      proposedCourse: {
         description: "Build client-side product interfaces.",
         language: "en",
         targetLanguage: null,
@@ -64,7 +64,7 @@ export const TEST_CASES = [
           title: "Python",
         },
       ],
-      suggestion: {
+      proposedCourse: {
         description: "Start writing Python programs.",
         language: "en",
         targetLanguage: null,
@@ -107,7 +107,7 @@ export const TEST_CASES = [
           title: "Pandas",
         },
       ],
-      suggestion: {
+      proposedCourse: {
         description: "Use Python to analyze data and build practical models.",
         language: "en",
         targetLanguage: null,
@@ -134,7 +134,7 @@ export const TEST_CASES = [
           title: "Machine Learning",
         },
       ],
-      suggestion: {
+      proposedCourse: {
         description: "Modelos que aprendem com dados.",
         language: "pt",
         targetLanguage: null,
@@ -316,7 +316,7 @@ export const TEST_CASES = [
           title: "Medicina Veterinária",
         },
       ],
-      suggestion: {
+      proposedCourse: {
         description: "Aprenda a construir modelos preditivos para resolver problemas com dados.",
         language: "pt",
         targetLanguage: null,
@@ -343,7 +343,7 @@ export const TEST_CASES = [
           title: "Machine Learning",
         },
       ],
-      suggestion: {
+      proposedCourse: {
         description: "Neural-network methods with many layers.",
         language: "en",
         targetLanguage: null,
@@ -370,7 +370,7 @@ export const TEST_CASES = [
           title: "JavaScript",
         },
       ],
-      suggestion: {
+      proposedCourse: {
         description: "Build interfaces with React.",
         language: "en",
         targetLanguage: null,
@@ -399,7 +399,7 @@ export const TEST_CASES = [
           title: "Direito Administrativo",
         },
       ],
-      suggestion: {
+      proposedCourse: {
         description:
           "Entenda como controlar a atuação do Estado por meio de princípios, competências e limites jurídicos.",
         language: "pt",
@@ -427,7 +427,7 @@ export const TEST_CASES = [
           title: "Inglês",
         },
       ],
-      suggestion: {
+      proposedCourse: {
         description: "Preparação para uma prova de proficiência em inglês.",
         language: "pt",
         targetLanguage: "en",
@@ -455,7 +455,7 @@ export const TEST_CASES = [
           title: "Matemática",
         },
       ],
-      suggestion: {
+      proposedCourse: {
         description: "Preparação para resolver questões de matemática do ENEM.",
         language: "pt",
         targetLanguage: null,
@@ -482,7 +482,7 @@ export const TEST_CASES = [
           title: "English",
         },
       ],
-      suggestion: {
+      proposedCourse: {
         description: "Study major works written in English.",
         language: "en",
         targetLanguage: null,
@@ -509,7 +509,7 @@ export const TEST_CASES = [
           title: "Brazilian Law",
         },
       ],
-      suggestion: {
+      proposedCourse: {
         description: "Legal systems and rules in California.",
         language: "en",
         targetLanguage: null,
@@ -536,7 +536,7 @@ export const TEST_CASES = [
           title: "The Matrix",
         },
       ],
-      suggestion: {
+      proposedCourse: {
         description: "A course about matrices or media.",
         language: "en",
         targetLanguage: null,
@@ -570,7 +570,7 @@ export const TEST_CASES = [
           title: "Linear Algebra",
         },
       ],
-      suggestion: {
+      proposedCourse: {
         description: "Derivatives and rates of change.",
         language: "en",
         targetLanguage: null,

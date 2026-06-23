@@ -273,7 +273,7 @@ msgstr "Zoonk: IA para Estudos"
 
 #: src/app/(catalog)/(home)/progress.tsx
 #: src/app/generate/ch/[id]/generation-client.tsx
-#: src/app/generate/cs/[id]/generation-client.tsx
+#: src/app/generate/course/[id]/generation-client.tsx
 #: src/app/generate/l/[id]/generation-client.tsx
 msgid "sIMS7i"
 msgstr "Progresso"
@@ -439,6 +439,7 @@ msgstr "Começar um curso"
 
 #: src/app/(catalog)/p/[courseId]/page.tsx
 #: src/app/(catalog)/start/exam/page.tsx
+#: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
 #: src/app/(catalog)/start/start-content.tsx
 msgid "e61Jf3"
 msgstr "Em breve"
@@ -448,11 +449,13 @@ msgid "dtRj3N"
 msgstr "Cursos personalizados em breve."
 
 #: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
+#: src/app/(catalog)/start/learn/[prompt]/course-mode-waitlist-form.tsx
 #: src/components/feedback/contact-form.tsx
 msgid "hJZwTS"
 msgstr "Endereço de email"
 
 #: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
+#: src/app/(catalog)/start/learn/[prompt]/course-mode-waitlist-form.tsx
 #: src/components/feedback/contact-form.tsx
 msgid "OiSL94"
 msgstr "meuemail@gmail.com"
@@ -474,6 +477,7 @@ msgid "E_0Y4u"
 msgstr "Conte para a gente qual teste, certificação ou prova escolar é importante para você."
 
 #: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
+#: src/app/(catalog)/start/learn/[prompt]/course-mode-waitlist-form.tsx
 msgid "6eV4UR"
 msgstr "Não conseguimos adicionar você à lista de espera. Tente novamente."
 
@@ -482,6 +486,7 @@ msgid "W78DIe"
 msgstr "Você está na lista. Avisaremos quando a preparação para provas estiver pronta."
 
 #: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
+#: src/app/(catalog)/start/learn/[prompt]/course-mode-waitlist-form.tsx
 msgid "ipGe-B"
 msgstr "Me avise"
 
@@ -497,30 +502,46 @@ msgstr "Estudar para concursos e provas com IA"
 msgid "CzV5fE"
 msgstr "A preparação para provas ainda não está disponível. Conte para a gente o que você está preparando e avisaremos quando for lançada."
 
-#: src/app/(catalog)/start/learn/[prompt]/course-suggestion-item.tsx
-msgid "VzzYJk"
-msgstr "Criar"
+#: src/app/(catalog)/start/learn/[prompt]/course-mode-waitlist-form.tsx
+msgid "hCixWc"
+msgstr "Você está na lista. Vamos avisar por email quando estiver disponível."
 
-#: src/app/(catalog)/start/learn/[prompt]/course-suggestions-fallback.tsx
-msgid "TUuPG9"
-msgstr "Preparando algumas ideias de cursos"
+#: src/app/(catalog)/start/learn/[prompt]/course-start-fallback.tsx
+msgid "UdDpuW"
+msgstr "Encontrando a melhor forma de ajudar"
 
-#: src/app/(catalog)/start/learn/[prompt]/course-suggestions-fallback.tsx
-msgid "uQHhkm"
-msgstr "Estamos reunindo algumas sugestões de cursos para você. Isso pode levar alguns segundos."
+#: src/app/(catalog)/start/learn/[prompt]/course-start-fallback.tsx
+msgid "1A36NM"
+msgstr "Estamos analisando seu objetivo de aprendizagem. Isso pode levar alguns segundos."
 
-#: src/app/(catalog)/start/learn/[prompt]/course-suggestions-fallback.tsx
+#: src/app/(catalog)/start/learn/[prompt]/course-start-fallback.tsx
 #: src/app/(settings)/subscription/plan-list.tsx
 msgid "47FYwb"
 msgstr "Cancelar"
 
-#: src/app/(catalog)/start/learn/[prompt]/course-suggestions.tsx
-msgid "7x4411"
-msgstr "Ideias de cursos para {prompt}"
+#: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
+msgid "8Zy06C"
+msgstr "Esta opção ainda não está disponível"
 
-#: src/app/(catalog)/start/learn/[prompt]/course-suggestions.tsx
-msgid "RbslnC"
-msgstr "Mudar assunto"
+#: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
+msgid "TV5hlz"
+msgstr "Entre na lista de espera e vamos avisar quando você puder aprender <strong>{title}</strong> com o Zoonk."
+
+#: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
+msgid "cPhKTw"
+msgstr "Não disponível"
+
+#: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
+msgid "5DZYgN"
+msgstr "Não podemos criar este curso"
+
+#: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
+msgid "P-1tVP"
+msgstr "O Zoonk não pode ajudar com pedidos que envolvam atividades inseguras, ilegais ou prejudiciais. Tente um objetivo de aprendizagem mais seguro."
+
+#: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
+msgid "PDFZz6"
+msgstr "Tentar outro objetivo"
 
 #: src/app/(catalog)/start/learn/[prompt]/page.tsx
 msgid "CaU_nf"
@@ -577,8 +598,8 @@ msgid "O9mDkA"
 msgstr "Marketing"
 
 #: src/app/(catalog)/start/learn/learn-content.tsx
-msgid "_VD159"
-msgstr "Aprenda qualquer coisa."
+msgid "9zLpJ_"
+msgstr "O que você quer aprender?"
 
 #: src/app/(catalog)/start/learn/learn-content.tsx
 msgid "zfDq-e"
@@ -683,10 +704,6 @@ msgstr "Comece cursos online com IA para aprender idiomas no Zoonk. Aprenda ingl
 #: src/app/(catalog)/start/page.tsx
 msgid "rqpQgj"
 msgstr "Cursos online com IA para aprender idiomas"
-
-#: src/app/(catalog)/start/speak/[language]/page.tsx
-msgid "1pB-3l"
-msgstr "Aprenda {language} do zero com vocabulário prático, pronúncia, gramática e prática de escuta."
 
 #: src/app/(catalog)/start/speak/page.tsx
 msgid "K4jMHW"
@@ -1233,8 +1250,8 @@ msgid "qrEiLa"
 msgstr "Voltar para o curso"
 
 #: src/app/generate/ch/[id]/generation-client.tsx
-msgid "ViO6Dt"
-msgstr "Criando suas aulas"
+msgid "txNTbP"
+msgstr "Criando o capítulo {title}"
 
 #: src/app/generate/ch/[id]/generation-client.tsx
 msgid "kiZUDf"
@@ -1253,7 +1270,7 @@ msgid "gnxL73"
 msgstr "Escolhendo os tipos de aulas"
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 #: src/app/generate/l/[id]/use-phase-labels.ts
 msgid "EKtClK"
 msgstr "Começando"
@@ -1279,7 +1296,7 @@ msgid "Vbn5Wz"
 msgstr "Revisando a combinação de aulas..."
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgid "5342HA"
 msgstr "Começando..."
@@ -1301,137 +1318,137 @@ msgid "HWSnYS"
 msgstr "Revisando o fluxo até agora..."
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "txvxwS"
 msgstr "Salvando seu progresso..."
 
 #: src/app/generate/ch/[id]/use-generation-phases.ts
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgid "JUr8Er"
 msgstr "Finalizando..."
 
-#: src/app/generate/cs/[id]/generate-course-suggestion-content.tsx
+#: src/app/generate/course/[id]/generate-course-start-request-content.tsx
 msgid "rPgekg"
 msgstr "Voltar para o início"
 
-#: src/app/generate/cs/[id]/generation-client.tsx
-msgid "DFlapX"
-msgstr "Criando seu curso"
+#: src/app/generate/course/[id]/generation-client.tsx
+msgid "u6ROZF"
+msgstr "Criando o curso {title}"
 
-#: src/app/generate/cs/[id]/generation-client.tsx
+#: src/app/generate/course/[id]/generation-client.tsx
 msgid "GJKrUK"
 msgstr "Isso geralmente leva cerca de 2 minutos"
 
-#: src/app/generate/cs/[id]/generation-client.tsx
+#: src/app/generate/course/[id]/generation-client.tsx
 msgid "0o41MR"
 msgstr "Levando você para seu curso..."
 
-#: src/app/generate/cs/[id]/generation-client.tsx
+#: src/app/generate/course/[id]/generation-client.tsx
 msgid "15FsdE"
 msgstr "Seu curso está pronto"
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "i3JgLB"
 msgstr "Categorizando seu curso"
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "WOe-OA"
 msgstr "Verificando duplicatas"
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "Gjutu-"
 msgstr "Criando a imagem de capa"
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "SQFyKH"
 msgstr "Encontrando cursos semelhantes"
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "WZpB8D"
 msgstr "Escrevendo capítulos"
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "d2xrsv"
 msgstr "Preparando tudo"
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "CFWOGF"
 msgstr "Salvando seu curso"
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "HbhIvm"
 msgstr "Escrevendo a descrição do seu curso"
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "aev_pt"
 msgstr "Descobrindo as categorias certas..."
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "EKAN6s"
 msgstr "Marcando seu curso..."
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "JJrUOR"
 msgstr "Comparando cursos próximos..."
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "uw23V-"
 msgstr "Verificando se este curso já existe..."
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "qFmZfG"
 msgstr "Evitando cursos duplicados..."
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "lxBtcx"
 msgstr "Criando a capa..."
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "W8n2i3"
 msgstr "Escolhendo a aparência certa..."
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "At4rk1"
 msgstr "Adicionando os toques finais..."
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "NgONb4"
 msgstr "Buscando tópicos correspondentes..."
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "Auz1tl"
 msgstr "Procurando nomes alternativos..."
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "Gt_VNO"
 msgstr "Expandindo a busca do curso..."
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "AEG3Ol"
 msgstr "Planejando a estrutura do curso..."
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "OW9vMd"
 msgstr "Escrevendo o capítulo {number}..."
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "tXkuD8"
 msgstr "Revisando o fluxo geral..."
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "4LsE_n"
 msgstr "Criando a estrutura do curso..."
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "3hEaI4"
 msgstr "Preparando o espaço de trabalho..."
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "a7FJJd"
 msgstr "Resumindo o que você vai aprender..."
 
-#: src/app/generate/cs/[id]/use-generation-phases.ts
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "9r_4zz"
 msgstr "Escrevendo a visão geral..."
 
@@ -1440,8 +1457,8 @@ msgid "kXZ7ZI"
 msgstr "Criar Aula"
 
 #: src/app/generate/l/[id]/generation-client.tsx
-msgid "mFR5UU"
-msgstr "Criando sua aula"
+msgid "WihX6L"
+msgstr "Criando a aula {title}"
 
 #: src/app/generate/l/[id]/generation-client.tsx
 msgid "3vY0Zu"

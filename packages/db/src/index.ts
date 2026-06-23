@@ -28,7 +28,9 @@ export type {
   Course,
   CourseCategory,
   CourseCompletion,
-  CourseSuggestion,
+  CourseMode,
+  CourseStartRequest,
+  CourseStartScope,
   CourseUser,
   GenerationStatus,
   Lesson,
@@ -46,6 +48,10 @@ export type {
 
 export type { ChapterCreateManyInput } from "./generated/prisma/models/Chapter";
 export type { ChapterGetPayload } from "./generated/prisma/models/Chapter";
+export type {
+  CourseStartRequestGetPayload,
+  CourseStartRequestWhereInput,
+} from "./generated/prisma/models/CourseStartRequest";
 export type { CourseGetPayload } from "./generated/prisma/models/Course";
 export type { LessonCreateManyInput } from "./generated/prisma/models/Lesson";
 

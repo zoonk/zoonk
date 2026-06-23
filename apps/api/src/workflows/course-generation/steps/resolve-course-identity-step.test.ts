@@ -2,11 +2,12 @@ import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { resolveCourseIdentity } from "@zoonk/ai/tasks/courses/identity";
 import { generateCourseIdentitySearchQueries } from "@zoonk/ai/tasks/courses/identity-search";
+import { getCourseSlugForTitle } from "@zoonk/core/courses/slug";
 import { prisma } from "@zoonk/db";
-import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
+import { generatableCourseStartRequestFixture } from "@zoonk/testing/fixtures/course-start-requests";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { normalizeString, toSlug } from "@zoonk/utils/string";
+import { normalizeString } from "@zoonk/utils/string";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { resolveCourseIdentityStep } from "./resolve-course-identity-step";
 
@@ -48,9 +49,11 @@ describe(resolveCourseIdentityStep, () => {
   });
 
   it("returns null without calling the classifier when no candidate course exists", async () => {
-    const suggestion = await courseSuggestionFixture({ title: `No Candidate ${randomUUID()}` });
+    const request = await generatableCourseStartRequestFixture({
+      canonicalTitle: `No Candidate ${randomUUID()}`,
+    });
 
-    const result = await resolveCourseIdentityStep(suggestion);
+    const result = await resolveCourseIdentityStep(request);
 
     expect(result).toBeNull();
     expect(resolveCourseIdentity).not.toHaveBeenCalled();
@@ -70,36 +73,35 @@ describe(resolveCourseIdentityStep, () => {
 
   it("returns and stores the existing course when the slug matches", async () => {
     const title = `Existing Course ${randomUUID()}`;
-    const slug = toSlug(title);
+    const slug = getCourseSlugForTitle({ language: "en", title });
 
-    const [course, suggestion] = await Promise.all([
+    const [course, request] = await Promise.all([
       courseFixture({ organizationId, slug, title }),
-      courseSuggestionFixture({ language: "en", slug, title }),
+      generatableCourseStartRequestFixture({ canonicalTitle: title, language: "en" }),
     ]);
 
-    const result = await resolveCourseIdentityStep(suggestion);
+    const result = await resolveCourseIdentityStep(request);
 
-    const linkedSuggestion = await prisma.courseSuggestion.findUniqueOrThrow({
-      where: { id: suggestion.id },
+    const linkedRequest = await prisma.courseStartRequest.findUniqueOrThrow({
+      where: { id: request.id },
     });
 
     expect(result?.id).toBe(course.id);
-    expect(linkedSuggestion.courseId).toBe(course.id);
+    expect(linkedRequest.courseId).toBe(course.id);
     expect(resolveCourseIdentity).not.toHaveBeenCalled();
   });
 
   it("uses AI classification to link semantically equivalent course titles", async () => {
-    const [course, suggestion] = await Promise.all([
+    const [course, request] = await Promise.all([
       courseFixture({
         normalizedTitle: normalizeString("Frontend Development"),
         organizationId,
         slug: `frontend-development-${randomUUID()}`,
         title: "Frontend Development",
       }),
-      courseSuggestionFixture({
+      generatableCourseStartRequestFixture({
+        canonicalTitle: "Frontend Engineering",
         language: "en",
-        slug: `frontend-engineering-${randomUUID()}`,
-        title: "Frontend Engineering",
       }),
     ]);
 
@@ -117,32 +119,28 @@ describe(resolveCourseIdentityStep, () => {
       userPrompt: "user",
     });
 
-    const result = await resolveCourseIdentityStep(suggestion);
+    const result = await resolveCourseIdentityStep(request);
 
-    const linkedSuggestion = await prisma.courseSuggestion.findUniqueOrThrow({
-      where: { id: suggestion.id },
+    const linkedRequest = await prisma.courseStartRequest.findUniqueOrThrow({
+      where: { id: request.id },
     });
 
     expect(result?.id).toBe(course.id);
-    expect(linkedSuggestion.courseId).toBe(course.id);
+    expect(linkedRequest.courseId).toBe(course.id);
 
     expect(resolveCourseIdentity).toHaveBeenCalledWith(
       expect.objectContaining({
         candidates: expect.arrayContaining([
           expect.objectContaining({ slug: course.slug, title: "Frontend Development" }),
         ]),
-        suggestion: expect.objectContaining({ title: "Frontend Engineering" }),
+        proposedCourse: expect.objectContaining({ title: "Frontend Engineering" }),
       }),
     );
   });
 
-  it("leaves the suggestion unlinked when AI says the candidate is different", async () => {
-    const [suggestion] = await Promise.all([
-      courseSuggestionFixture({
-        language: "en",
-        slug: `machine-learning-${randomUUID()}`,
-        title: "Machine Learning",
-      }),
+  it("leaves the request unlinked when AI says the candidate is different", async () => {
+    const [request] = await Promise.all([
+      generatableCourseStartRequestFixture({ canonicalTitle: "Machine Learning", language: "en" }),
       courseFixture({
         normalizedTitle: normalizeString("Deep Learning"),
         organizationId,
@@ -165,23 +163,19 @@ describe(resolveCourseIdentityStep, () => {
       userPrompt: "user",
     });
 
-    const result = await resolveCourseIdentityStep(suggestion);
+    const result = await resolveCourseIdentityStep(request);
 
-    const linkedSuggestion = await prisma.courseSuggestion.findUniqueOrThrow({
-      where: { id: suggestion.id },
+    const linkedRequest = await prisma.courseStartRequest.findUniqueOrThrow({
+      where: { id: request.id },
     });
 
     expect(result).toBeNull();
-    expect(linkedSuggestion.courseId).toBeNull();
+    expect(linkedRequest.courseId).toBeNull();
   });
 
   it("does not split AI search phrases into loose standalone word matches", async () => {
-    const [suggestion] = await Promise.all([
-      courseSuggestionFixture({
-        language: "en",
-        slug: `unique-topic-${randomUUID()}`,
-        title: "Unique Topic",
-      }),
+    const [request] = await Promise.all([
+      generatableCourseStartRequestFixture({ canonicalTitle: "Unique Topic", language: "en" }),
       courseFixture({
         normalizedTitle: normalizeString("Science"),
         organizationId,
@@ -197,18 +191,17 @@ describe(resolveCourseIdentityStep, () => {
       userPrompt: "user",
     });
 
-    const result = await resolveCourseIdentityStep(suggestion);
+    const result = await resolveCourseIdentityStep(request);
 
     expect(result).toBeNull();
     expect(resolveCourseIdentity).not.toHaveBeenCalled();
   });
 
   it("ignores short AI search terms that would create noisy substring matches", async () => {
-    const [suggestion] = await Promise.all([
-      courseSuggestionFixture({
+    const [request] = await Promise.all([
+      generatableCourseStartRequestFixture({
+        canonicalTitle: "Aprendizado de Máquina",
         language: "pt",
-        slug: `aprendizado-de-maquina-${randomUUID()}`,
-        title: "Aprendizado de Máquina",
       }),
       courseFixture({
         language: "pt",
@@ -226,7 +219,7 @@ describe(resolveCourseIdentityStep, () => {
       userPrompt: "user",
     });
 
-    const result = await resolveCourseIdentityStep(suggestion);
+    const result = await resolveCourseIdentityStep(request);
 
     expect(result).toBeNull();
     expect(resolveCourseIdentity).not.toHaveBeenCalled();
@@ -239,12 +232,12 @@ describe(resolveCourseIdentityStep, () => {
       title: "Cached Course",
     });
 
-    const suggestion = await courseSuggestionFixture({
+    const request = await generatableCourseStartRequestFixture({
+      canonicalTitle: `Cached Request ${randomUUID()}`,
       courseId: course.id,
-      title: `Cached Suggestion ${randomUUID()}`,
     });
 
-    const result = await resolveCourseIdentityStep(suggestion);
+    const result = await resolveCourseIdentityStep(request);
 
     expect(result?.id).toBe(course.id);
     expect(resolveCourseIdentity).not.toHaveBeenCalled();
@@ -252,7 +245,7 @@ describe(resolveCourseIdentityStep, () => {
   });
 
   it("uses AI search queries before classifying cross-language title matches", async () => {
-    const [course, suggestion] = await Promise.all([
+    const [course, request] = await Promise.all([
       courseFixture({
         language: "pt",
         normalizedTitle: normalizeString("Machine Learning"),
@@ -260,10 +253,10 @@ describe(resolveCourseIdentityStep, () => {
         slug: `machine-learning-${randomUUID()}-pt`,
         title: "Machine Learning",
       }),
-      courseSuggestionFixture({
+      generatableCourseStartRequestFixture({
+        canonicalTitle: "Aprendizado de máquina",
         language: "pt",
-        slug: `aprendizado-de-maquina-${randomUUID()}`,
-        title: "Aprendizado de máquina",
+        prompt: `Aprendizado de máquina ${randomUUID()}`,
       }),
     ]);
 
@@ -281,7 +274,7 @@ describe(resolveCourseIdentityStep, () => {
       userPrompt: "user",
     });
 
-    const result = await resolveCourseIdentityStep(suggestion);
+    const result = await resolveCourseIdentityStep(request);
 
     expect(result?.id).toBe(course.id);
 

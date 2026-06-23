@@ -6,7 +6,7 @@ An internal evaluation system for testing and monitoring AI-generated content qu
 
 - **Task Evaluation**: Run evaluations on AI tasks using different models
 - **Model Comparison**: Compare performance and cost across supported models
-- **Automatic Scoring**: AI-powered scoring system evaluates outputs against expectations
+- **Automatic Scoring**: Task-specific deterministic scoring when outputs have exact pass/fail rules, with AI-powered judge scoring as the fallback for open-ended tasks
 
 ## Running the App
 
@@ -58,12 +58,14 @@ export const yourTask: Task<YourInput, YourOutput> = {
 };
 ```
 
+For structured classifier or extractor tasks, add `expected` data to each test case and a task-level `score` function. Use deterministic scoring when the output can be checked by parsing fields and comparing them to an explicit accepted list. Leave `score` unset for open-ended generation tasks that need the judge model.
+
 3. **Register the task** in `src/tasks/index.ts`:
 
 ```typescript
 import { yourNewTask } from "./your-task/task";
 
-export const TASKS = [courseSuggestionsTask, yourNewTask];
+export const TASKS = [courseRequestRoutingTask, yourNewTask];
 ```
 
 That's it! Your task will automatically appear in the dashboard.
@@ -90,7 +92,7 @@ pnpm evals:export taskId testCaseId
 **Example:**
 
 ```bash
-pnpm evals:export course-suggestions en-black-holes-1
+pnpm evals:export course-request-routing topic-biology
 ```
 
 This will create a JSON file in `apps/evals/eval-results/[taskId]/comparisons/[testCaseId].json` with:

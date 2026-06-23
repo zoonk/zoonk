@@ -25,12 +25,14 @@ import { useGenerationPhases } from "./use-generation-phases";
 export function GenerationClient({
   chapterId,
   chapterSlug,
+  chapterTitle,
   courseSlug,
   generationRunId,
   initialStatus,
 }: {
   chapterId: string;
   chapterSlug: string;
+  chapterTitle: string;
   courseSlug: string;
   generationRunId: string | null;
   initialStatus: GenerationStatus;
@@ -82,7 +84,9 @@ export function GenerationClient({
     return (
       <GenerationTimeline>
         <GenerationTimelineHeader>
-          <GenerationTimelineTitle>{t("Creating your lessons")}</GenerationTimelineTitle>
+          <GenerationTimelineTitle>
+            {t("Creating the {title} chapter", { title: chapterTitle })}
+          </GenerationTimelineTitle>
           <GenerationTimelineSubtitle>
             {t("This usually takes about a minute")}
           </GenerationTimelineSubtitle>

@@ -59,12 +59,12 @@ test.describe("Start page", () => {
     await page.getByRole("link", { name: /learn something/iu }).click();
 
     await expect(page).toHaveURL(/\/start\/learn$/u);
-    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /what do you want to learn/iu })).toBeVisible();
   });
 });
 
 test.describe("Start language path", () => {
-  test("filters languages and creates a controlled language suggestion", async ({ page }) => {
+  test("filters languages and creates a controlled language request", async ({ page }) => {
     await mockCourseGenerationWorkflow(page);
     await page.goto("/start/speak");
 
@@ -81,17 +81,17 @@ test.describe("Start language path", () => {
 
     await page.getByRole("link", { name: /javanese/iu }).click();
 
-    await expect(page).toHaveURL(/\/generate\/cs\/[-a-f0-9]+$/u);
+    await expect(page).toHaveURL(/\/generate\/course\/[-a-f0-9]+$/u);
 
-    const suggestionId = page.url().split("/").at(-1);
+    const requestId = page.url().split("/").at(-1);
 
-    if (!suggestionId) {
-      throw new Error("Missing generated suggestion id in URL");
+    if (!requestId) {
+      throw new Error("Missing generated request id in URL");
     }
 
-    const suggestion = await prisma.courseSuggestion.findUnique({ where: { id: suggestionId } });
+    const request = await prisma.courseStartRequest.findUnique({ where: { id: requestId } });
 
-    expect(suggestion?.targetLanguage).toBe("jv");
+    expect(request?.targetLanguage).toBe("jv");
   });
 
   test("does not generate a course for the current app language", async ({ page }) => {

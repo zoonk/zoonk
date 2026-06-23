@@ -5,7 +5,7 @@ import { throwSettledFailures } from "@zoonk/utils/settled";
 
 export async function setCourseAsRunningStep(input: {
   courseId: string;
-  courseSuggestionId: string;
+  courseStartRequestId: string;
   workflowRunId: string;
 }): Promise<void> {
   "use step";
@@ -16,13 +16,13 @@ export async function setCourseAsRunningStep(input: {
 
   const results = await Promise.allSettled([
     prisma.course.update({ data: { generationStatus: "running" }, where: { id: input.courseId } }),
-    prisma.courseSuggestion.update({
+    prisma.courseStartRequest.update({
       data: {
         courseId: input.courseId,
         generationRunId: input.workflowRunId,
         generationStatus: "running",
       },
-      where: { id: input.courseSuggestionId },
+      where: { id: input.courseStartRequestId },
     }),
   ]);
 

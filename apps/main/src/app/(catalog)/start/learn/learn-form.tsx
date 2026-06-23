@@ -14,7 +14,7 @@ const CYCLE_DURATION_MS = 3200;
 /**
  * Owns the interactive course goal input and records the form visibility event
  * from the browser, while submitted prompts still enter the existing
- * `/start/learn/[prompt]` suggestion route.
+ * `/start/learn/[prompt]` route for server-side routing.
  */
 export function LearnForm({ placeholders }: { placeholders: string[] }) {
   const t = useExtracted();

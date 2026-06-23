@@ -44,6 +44,7 @@ function LanguageOptionLink({ language }: { language: LanguageOption }) {
         )}
         href={language.href}
         prefetch={false}
+        rel="nofollow"
       >
         <span aria-hidden="true" className="text-2xl leading-none">
           {language.flag}

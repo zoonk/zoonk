@@ -7,7 +7,7 @@ import {
 import { TEST_CASES } from "./test-cases";
 
 export const courseIdentityClassificationTask: Task<CourseIdentityParams, CourseIdentitySchema> = {
-  description: "Decide whether a course suggestion should reuse an existing course",
+  description: "Decide whether a proposed course should reuse an existing course",
   generate: resolveCourseIdentity,
   id: "course-identity-classification",
   name: "Course Identity Classification",

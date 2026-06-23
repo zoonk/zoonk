@@ -9,7 +9,10 @@ import { getOrCreateCourse } from "./_internal/get-or-create-course";
 import { setupCourse } from "./_internal/setup-course";
 import { completeCourseSetupStep } from "./steps/complete-course-setup-step";
 import { type ChapterImageInput } from "./steps/generate-chapter-image-step";
-import { getCourseSuggestionStep } from "./steps/get-course-suggestion-step";
+import {
+  assertGeneratableCourseStartRequest,
+  getCourseStartRequestStep,
+} from "./steps/get-course-start-request-step";
 import { handleCourseFailureStep } from "./steps/handle-failure-step";
 import { resolveCourseIdentityStep } from "./steps/resolve-course-identity-step";
 import { startChapterImagesWorkflowStep } from "./steps/start-chapter-images-workflow-step";
@@ -23,12 +26,12 @@ import { startChapterImagesWorkflowStep } from "./steps/start-chapter-images-wor
 async function setupCourseContent({
   course,
   description,
-  courseSuggestionId,
+  courseStartRequestId,
   existing,
 }: {
   course: Awaited<ReturnType<typeof getOrCreateCourse>>["course"];
   description: string | null;
-  courseSuggestionId: string;
+  courseStartRequestId: string;
   existing: Awaited<ReturnType<typeof getOrCreateCourse>>["existing"];
 }): Promise<Chapter[]> {
   const chapters = await setupCourse(course, description, existing);
@@ -36,7 +39,7 @@ async function setupCourseContent({
   await completeCourseSetupStep({
     courseId: course.courseId,
     courseSlug: course.courseSlug,
-    courseSuggestionId,
+    courseStartRequestId,
   });
 
   return chapters;
@@ -86,25 +89,27 @@ async function generateFirstChapterAndStartChapterImages(chapters: Chapter[]): P
   }
 }
 
-export async function courseGenerationWorkflow(courseSuggestionId: string): Promise<void> {
+export async function courseGenerationWorkflow(courseStartRequestId: string): Promise<void> {
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
 
-  const suggestion = await getCourseSuggestionStep(courseSuggestionId);
+  const request = await getCourseStartRequestStep(courseStartRequestId);
+
+  assertGeneratableCourseStartRequest(request);
 
   // Skip if actively running to avoid conflicts with another workflow instance.
-  if (suggestion.generationStatus === "running") {
+  if (request.generationStatus === "running") {
     return;
   }
 
   // Already completed — stream the completion step so the client can redirect.
-  if (suggestion.generationStatus === "completed") {
+  if (request.generationStatus === "completed") {
     await streamSkipStep(COURSE_COMPLETION_STEP);
     return;
   }
 
-  const existingCourse = await resolveCourseIdentityStep(suggestion);
+  const existingCourse = await resolveCourseIdentityStep(request);
 
   // Skip running courses to avoid conflicts with another workflow instance.
   if (existingCourse?.generationStatus === "running") {
@@ -116,7 +121,7 @@ export async function courseGenerationWorkflow(courseSuggestionId: string): Prom
     await completeCourseSetupStep({
       courseId: existingCourse.id,
       courseSlug: existingCourse.slug,
-      courseSuggestionId,
+      courseStartRequestId,
     });
 
     return;
@@ -124,13 +129,13 @@ export async function courseGenerationWorkflow(courseSuggestionId: string): Prom
 
   const courseSetup = await getOrCreateCourse(
     existingCourse,
-    suggestion,
-    courseSuggestionId,
+    request,
+    courseStartRequestId,
     workflowRunId,
   ).catch(async (error: unknown) => {
     await handleCourseFailureStep({
       courseId: existingCourse?.id ?? null,
-      courseSuggestionId,
+      courseStartRequestId,
       error: serializeWorkflowError(error),
     });
 
@@ -147,7 +152,7 @@ export async function courseGenerationWorkflow(courseSuggestionId: string): Prom
     await completeCourseSetupStep({
       courseId: courseSetup.course.courseId,
       courseSlug: courseSetup.course.courseSlug,
-      courseSuggestionId,
+      courseStartRequestId,
     });
 
     return;
@@ -155,13 +160,13 @@ export async function courseGenerationWorkflow(courseSuggestionId: string): Prom
 
   const chapters = await setupCourseContent({
     course: courseSetup.course,
-    courseSuggestionId,
-    description: suggestion.description,
+    courseStartRequestId,
+    description: null,
     existing: courseSetup.existing,
   }).catch(async (error: unknown) => {
     await handleCourseFailureStep({
       courseId: courseSetup.course.courseId,
-      courseSuggestionId,
+      courseStartRequestId,
       error: serializeWorkflowError(error),
     });
 

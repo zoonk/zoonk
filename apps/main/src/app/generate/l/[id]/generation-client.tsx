@@ -31,6 +31,7 @@ export function GenerationClient({
   lessonId,
   lessonKind,
   lessonSlug,
+  lessonTitle,
 }: {
   chapterSlug: string;
   courseSlug: string;
@@ -39,6 +40,7 @@ export function GenerationClient({
   lessonId: string;
   lessonKind: GeneratedLessonKind;
   lessonSlug: string;
+  lessonTitle: string;
 }) {
   const t = useExtracted();
 
@@ -88,7 +90,9 @@ export function GenerationClient({
     return (
       <GenerationTimeline>
         <GenerationTimelineHeader>
-          <GenerationTimelineTitle>{t("Creating your lesson")}</GenerationTimelineTitle>
+          <GenerationTimelineTitle>
+            {t("Creating the {title} lesson", { title: lessonTitle })}
+          </GenerationTimelineTitle>
           <GenerationTimelineSubtitle>
             {t("This usually takes 1-2 minutes")}
           </GenerationTimelineSubtitle>

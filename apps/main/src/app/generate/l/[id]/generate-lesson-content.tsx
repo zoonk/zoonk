@@ -11,14 +11,7 @@ import {
   isGeneratedCompanionLessonKind,
 } from "@zoonk/core/lessons/generated-companions";
 import { getSession } from "@zoonk/core/users/session/get";
-import {
-  Container,
-  ContainerBody,
-  ContainerDescription,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { Container, ContainerBody } from "@zoonk/ui/components/container";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { getExtracted } from "next-intl/server";
@@ -91,6 +84,7 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
           lessonId={id}
           lessonKind={lesson.kind}
           lessonSlug={lesson.slug}
+          lessonTitle={lessonMeta.title}
         />
         <GenerationExitLink href={backHref}>{backLabel}</GenerationExitLink>
       </>
@@ -98,13 +92,6 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
 
   return (
     <Container variant="narrow">
-      <ContainerHeader>
-        <ContainerHeaderGroup>
-          <ContainerTitle>{lessonMeta.title}</ContainerTitle>
-          <ContainerDescription>{lessonMeta.description}</ContainerDescription>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
-
       <ContainerBody>
         <SubscriptionGate
           backHref={backHref}
@@ -121,13 +108,6 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
 export function GenerateLessonFallback() {
   return (
     <Container variant="narrow">
-      <ContainerHeader>
-        <ContainerHeaderGroup>
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="mt-1 h-4 w-72" />
-        </ContainerHeaderGroup>
-      </ContainerHeader>
-
       <ContainerBody>
         <Skeleton className="h-64 w-full rounded-xl" />
       </ContainerBody>

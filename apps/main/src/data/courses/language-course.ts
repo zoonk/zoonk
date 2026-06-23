@@ -1,12 +1,16 @@
 import "server-only";
-import { type Course, type CourseSuggestion, getAiGenerationCourseWhere, prisma } from "@zoonk/db";
+import {
+  type Course,
+  type CourseStartRequest,
+  getAiGenerationCourseWhere,
+  prisma,
+} from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
-import { AI_ORG_SLUG } from "@zoonk/utils/org";
+import { normalizeString } from "@zoonk/utils/string";
 
 type LanguageCourseInput = { language: string; targetLanguage: string };
 
-type LanguageCourseSuggestionInput = LanguageCourseInput & { description: string; title: string };
-type LanguageCourseHref = `/b/${typeof AI_ORG_SLUG}/c/${string}`;
+type LanguageCourseStartRequestInput = LanguageCourseInput & { title: string };
 
 /**
  * Finds the existing public AI language course before we create any workflow
@@ -30,40 +34,48 @@ export async function getCompletedLanguageCourse({
 }
 
 /**
- * Reuses any existing language suggestion for the same target language, or
- * creates the controlled suggestion row the current course-generation workflow
- * already knows how to process. This keeps language starts deterministic while
- * avoiding a new workflow API shape until the old suggestion boundary is fully
- * replaced.
+ * Creates the controlled request used by `/start/speak/[language]`. Language
+ * courses still use the course-generation workflow, but the workflow input is a
+ * language-scoped start request instead of an adapter row.
  */
-export async function getOrCreateLanguageCourseSuggestion({
-  description,
+async function getOrCreateLanguageCourseStartRequest({
   language,
   targetLanguage,
   title,
-}: LanguageCourseSuggestionInput): Promise<CourseSuggestion> {
-  if (!isTTSSupportedLanguage(targetLanguage)) {
-    throw new Error(`Unsupported TTS language: ${targetLanguage}`);
-  }
+}: LanguageCourseStartRequestInput): Promise<CourseStartRequest> {
+  const prompt = `Learn ${title}`;
+  const normalizedPrompt = normalizeString(prompt);
 
-  const existing = await prisma.courseSuggestion.findFirst({
-    orderBy: { createdAt: "asc" },
-    where: { language, targetLanguage },
-  });
-
-  if (existing) {
-    return existing;
-  }
-
-  return prisma.courseSuggestion.create({
-    data: { description, language, slug: `language-${targetLanguage}`, targetLanguage, title },
+  return prisma.courseStartRequest.upsert({
+    create: {
+      canonicalTitle: title,
+      courseMode: "full",
+      generationStatus: "pending",
+      language,
+      normalizedPrompt,
+      prompt,
+      scope: "language",
+      targetLanguage,
+    },
+    update: {},
+    where: { languageNormalizedPrompt: { language, normalizedPrompt } },
   });
 }
 
 /**
- * Converts a completed language course into the public catalog URL that the
- * language start redirect can use without importing app route helpers.
+ * Reuses or creates the controlled request the course-generation workflow uses
+ * for language courses. The request stores the target language directly, so the
+ * generation path no longer needs an adapter row between `/start/speak` and the
+ * workflow.
  */
-export function getLanguageCourseHref(course: Pick<Course, "slug">): LanguageCourseHref {
-  return `/b/${AI_ORG_SLUG}/c/${course.slug}`;
+export async function getOrCreateLanguageCourseRequest({
+  language,
+  targetLanguage,
+  title,
+}: LanguageCourseStartRequestInput) {
+  if (!isTTSSupportedLanguage(targetLanguage)) {
+    throw new Error(`Unsupported TTS language: ${targetLanguage}`);
+  }
+
+  return getOrCreateLanguageCourseStartRequest({ language, targetLanguage, title });
 }
