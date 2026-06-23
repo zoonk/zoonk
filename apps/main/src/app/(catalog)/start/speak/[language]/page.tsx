@@ -1,10 +1,10 @@
 import {
   getCompletedLanguageCourse,
   getLanguageCourseHref,
-  getOrCreateLanguageCourseSuggestion,
+  getOrCreateLanguageCourseRequest,
 } from "@/data/courses/language-course";
 import { getLanguageName, isTTSSupportedLanguage } from "@zoonk/utils/languages";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getLocale } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";
 
 /**
@@ -30,20 +30,13 @@ export default async function StartSpeakLanguage({ params }: PageProps<"/start/s
     redirect(getLanguageCourseHref(completedCourse));
   }
 
-  const t = await getExtracted();
   const title = getLanguageName({ targetLanguage, userLanguage: locale });
 
-  const description = t(
-    "Learn {language} from scratch with practical vocabulary, pronunciation, grammar, and listening practice.",
-    { language: title },
-  );
-
-  const suggestion = await getOrCreateLanguageCourseSuggestion({
-    description,
+  const request = await getOrCreateLanguageCourseRequest({
     language: locale,
     targetLanguage,
     title,
   });
 
-  redirect(`/generate/cs/${suggestion.id}`);
+  redirect(`/generate/course/${request.id}`);
 }

@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
+import { generatableCourseStartRequestFixture } from "@zoonk/testing/fixtures/course-start-requests";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -21,14 +21,16 @@ describe(getOrCreateCourse, () => {
   });
 
   it("creates a new course when no existing course is found", async () => {
-    const suggestion = await courseSuggestionFixture({ title: `New Course ${randomUUID()}` });
+    const request = await generatableCourseStartRequestFixture({
+      canonicalTitle: `New Course ${randomUUID()}`,
+    });
 
     const workflowRunId = `run-${randomUUID()}`;
 
-    const result = await getOrCreateCourse(null, suggestion, suggestion.id, workflowRunId);
+    const result = await getOrCreateCourse(null, request, request.id, workflowRunId);
 
     expect(result.status).toBe("ready");
-    expect(result.course.courseTitle).toBe(suggestion.title);
+    expect(result.course.courseTitle).toBe(request.canonicalTitle);
     expect(result.course.courseId).toStrictEqual(expect.any(String));
 
     expect(result.existing).toStrictEqual({
@@ -42,12 +44,12 @@ describe(getOrCreateCourse, () => {
       where: { id: result.course.courseId },
     });
 
-    const updatedSuggestion = await prisma.courseSuggestion.findUniqueOrThrow({
-      where: { id: suggestion.id },
+    const updatedRequest = await prisma.courseStartRequest.findUniqueOrThrow({
+      where: { id: request.id },
     });
 
     expect(createdCourse.generationStatus).toBe("running");
-    expect(updatedSuggestion.courseId).toBe(createdCourse.id);
+    expect(updatedRequest.courseId).toBe(createdCourse.id);
   });
 
   it("returns the running course when creation loses an org slug race", async () => {
@@ -63,23 +65,23 @@ describe(getOrCreateCourse, () => {
       title,
     });
 
-    const suggestion = await courseSuggestionFixture({ language, title });
+    const request = await generatableCourseStartRequestFixture({ canonicalTitle: title, language });
     const workflowRunId = `run-${randomUUID()}`;
 
-    const result = await getOrCreateCourse(null, suggestion, suggestion.id, workflowRunId);
+    const result = await getOrCreateCourse(null, request, request.id, workflowRunId);
 
     expect(result.status).toBe("running");
     expect(result.course.courseId).toBe(existingCourse.id);
 
-    const [courses, updatedSuggestion] = await Promise.all([
+    const [courses, updatedRequest] = await Promise.all([
       prisma.course.findMany({ where: { organizationId, slug } }),
-      prisma.courseSuggestion.findUniqueOrThrow({ where: { id: suggestion.id } }),
+      prisma.courseStartRequest.findUniqueOrThrow({ where: { id: request.id } }),
     ]);
 
     expect(courses).toHaveLength(1);
-    expect(updatedSuggestion.courseId).toBe(existingCourse.id);
-    expect(updatedSuggestion.generationStatus).toBe("running");
-    expect(updatedSuggestion.generationRunId).toBe(workflowRunId);
+    expect(updatedRequest.courseId).toBe(existingCourse.id);
+    expect(updatedRequest.generationStatus).toBe("running");
+    expect(updatedRequest.generationRunId).toBe(workflowRunId);
   });
 
   it("reuses existing course and marks it as running", async () => {
@@ -91,18 +93,13 @@ describe(getOrCreateCourse, () => {
       title: `Existing Course ${randomUUID()}`,
     });
 
-    const suggestion = await courseSuggestionFixture({ title: course.title });
+    const request = await generatableCourseStartRequestFixture({ canonicalTitle: course.title });
 
     const existingCourse: ExistingCourse = { ...course, _count: { categories: 1, chapters: 3 } };
 
     const workflowRunId = `run-${randomUUID()}`;
 
-    const result = await getOrCreateCourse(
-      existingCourse,
-      suggestion,
-      suggestion.id,
-      workflowRunId,
-    );
+    const result = await getOrCreateCourse(existingCourse, request, request.id, workflowRunId);
 
     expect(result.status).toBe("ready");
     expect(result.course.courseId).toBe(course.id);
@@ -114,14 +111,14 @@ describe(getOrCreateCourse, () => {
       imageUrl: "https://example.com/img.webp",
     });
 
-    const [updatedCourse, updatedSuggestion] = await Promise.all([
+    const [updatedCourse, updatedRequest] = await Promise.all([
       prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
-      prisma.courseSuggestion.findUniqueOrThrow({ where: { id: suggestion.id } }),
+      prisma.courseStartRequest.findUniqueOrThrow({ where: { id: request.id } }),
     ]);
 
     expect(updatedCourse.generationStatus).toBe("running");
-    expect(updatedSuggestion.courseId).toBe(course.id);
-    expect(updatedSuggestion.generationStatus).toBe("running");
-    expect(updatedSuggestion.generationRunId).toBe(workflowRunId);
+    expect(updatedRequest.courseId).toBe(course.id);
+    expect(updatedRequest.generationStatus).toBe("running");
+    expect(updatedRequest.generationRunId).toBe(workflowRunId);
   });
 });

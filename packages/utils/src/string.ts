@@ -91,16 +91,6 @@ export function ensureLocaleSuffix(value: string, language: string): string {
   return `${value}${suffix}`;
 }
 
-export function removeLocaleSuffix(value: string, language: string): string {
-  if (language === "en") {
-    return value;
-  }
-
-  const suffix = `-${language}`;
-
-  return value.endsWith(suffix) ? value.slice(0, -suffix.length) : value;
-}
-
 export function normalizePunctuation(text: string): string {
   return text.replaceAll(/(?<!\s)\s+(?<punctuation>[!?.,;:!?。、！？؟])/gu, "$<punctuation>");
 }

@@ -6,9 +6,9 @@ import { findTestCaseForOutput, loadModelOutputs } from "./output-loader";
 import { generateScore } from "./score";
 import {
   type OutputEntry,
+  type RegisteredTask,
   type ScoredResult,
   type ScoredTaskResults,
-  type Task,
   type TaskEvalResults,
   type TestCase,
 } from "./types";
@@ -47,14 +47,24 @@ async function saveScoredResults(taskId: string, modelId: string, results: Score
   await fs.writeFile(filePath, JSON.stringify(taskResults, null, 2));
 }
 
-async function scoreOutput(output: OutputEntry, testCase: TestCase): Promise<ScoredResult> {
+async function scoreOutput({
+  output,
+  task,
+  testCase,
+}: {
+  output: OutputEntry;
+  task: RegisteredTask;
+  testCase: TestCase;
+}): Promise<ScoredResult> {
   logInfo(`Scoring output: ${output.testCaseId}`);
 
-  const scoreResult = await generateScore({
-    expectations: testCase.expectations,
-    output: output.output,
-    prompt: output.userPrompt,
-  });
+  const scoreResult = task.score
+    ? await task.score({ output: output.output, testCase } as never)
+    : await generateScore({
+        expectations: testCase.expectations,
+        output: output.output,
+        prompt: output.userPrompt,
+      });
 
   logInfo(`Score: ${scoreResult.score}`);
 
@@ -67,7 +77,7 @@ function isAlreadyScored(existingResults: ScoredResult[], testCaseId: string): b
   return existingResults.some((result) => result.testCase.id === testCaseId);
 }
 
-export async function runEval(task: Task, modelId: string): Promise<TaskEvalResults> {
+export async function runEval(task: RegisteredTask, modelId: string): Promise<TaskEvalResults> {
   const safeModelId = modelId.replaceAll(/[\r\n]/gu, "");
 
   logInfo(`\nStarting eval for task: ${task.name}, model: [${safeModelId}]`);
@@ -105,7 +115,7 @@ export async function runEval(task: Task, modelId: string): Promise<TaskEvalResu
         return Promise.reject(new Error(`Test case not found for output: ${output.testCaseId}`));
       }
 
-      return scoreOutput(output, testCase);
+      return scoreOutput({ output, task, testCase });
     }),
   );
 

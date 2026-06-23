@@ -5,7 +5,7 @@
   "exports": {
     "./fixtures/auth": "./src/fixtures/auth.ts",
     "./fixtures/chapters": "./src/fixtures/chapters.ts",
-    "./fixtures/course-suggestions": "./src/fixtures/course-suggestions.ts",
+    "./fixtures/course-start-requests": "./src/fixtures/course-start-requests.ts",
     "./fixtures/courses": "./src/fixtures/courses.ts",
     "./fixtures/dates": "./src/fixtures/dates.ts",
     "./fixtures/lessons": "./src/fixtures/lessons.ts",

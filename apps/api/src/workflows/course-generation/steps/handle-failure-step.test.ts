@@ -3,7 +3,7 @@ import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { getRejectedAggregateError } from "@/workflows/_test-utils/rejected-error";
 import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
+import { courseStartRequestFixture } from "@zoonk/testing/fixtures/course-start-requests";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -21,32 +21,32 @@ describe(handleCourseFailureStep, () => {
     vi.clearAllMocks();
   });
 
-  it("marks both course and suggestion as failed when courseId is provided", async () => {
-    const [course, suggestion] = await Promise.all([
+  it("marks both course and request as failed when courseId is provided", async () => {
+    const [course, request] = await Promise.all([
       courseFixture({
         generationRunId: "old-run",
         generationStatus: "running",
         organizationId,
         title: `Fail Course ${randomUUID()}`,
       }),
-      courseSuggestionFixture({
+      courseStartRequestFixture({
+        canonicalTitle: `Fail Request ${randomUUID()}`,
         generationRunId: "old-run",
         generationStatus: "running",
-        title: `Fail Suggestion ${randomUUID()}`,
       }),
     ]);
 
-    await handleCourseFailureStep({ courseId: course.id, courseSuggestionId: suggestion.id });
+    await handleCourseFailureStep({ courseId: course.id, courseStartRequestId: request.id });
 
-    const [updatedCourse, updatedSuggestion] = await Promise.all([
+    const [updatedCourse, updatedRequest] = await Promise.all([
       prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
-      prisma.courseSuggestion.findUniqueOrThrow({ where: { id: suggestion.id } }),
+      prisma.courseStartRequest.findUniqueOrThrow({ where: { id: request.id } }),
     ]);
 
     expect(updatedCourse.generationStatus).toBe("failed");
     expect(updatedCourse.generationRunId).toBeNull();
-    expect(updatedSuggestion.generationStatus).toBe("failed");
-    expect(updatedSuggestion.generationRunId).toBeNull();
+    expect(updatedRequest.generationStatus).toBe("failed");
+    expect(updatedRequest.generationRunId).toBeNull();
 
     const events = getStreamedEvents();
 
@@ -55,7 +55,7 @@ describe(handleCourseFailureStep, () => {
     );
   });
 
-  it("marks linked running suggestions as failed when the course run fails", async () => {
+  it("marks linked running requests as failed when the course run fails", async () => {
     const course = await courseFixture({
       generationRunId: "old-run",
       generationStatus: "running",
@@ -63,38 +63,35 @@ describe(handleCourseFailureStep, () => {
       title: `Linked Fail Course ${randomUUID()}`,
     });
 
-    const [primarySuggestion, linkedSuggestion] = await Promise.all([
-      courseSuggestionFixture({
+    const [primaryRequest, linkedRequest] = await Promise.all([
+      courseStartRequestFixture({
+        canonicalTitle: `Primary Fail Request ${randomUUID()}`,
         courseId: course.id,
         generationRunId: "old-run",
         generationStatus: "running",
-        title: `Primary Fail Suggestion ${randomUUID()}`,
       }),
-      courseSuggestionFixture({
+      courseStartRequestFixture({
+        canonicalTitle: `Linked Fail Request ${randomUUID()}`,
         courseId: course.id,
         generationRunId: "other-run",
         generationStatus: "running",
-        title: `Linked Fail Suggestion ${randomUUID()}`,
       }),
     ]);
 
-    await handleCourseFailureStep({
-      courseId: course.id,
-      courseSuggestionId: primarySuggestion.id,
+    await handleCourseFailureStep({ courseId: course.id, courseStartRequestId: primaryRequest.id });
+
+    const updatedLinkedRequest = await prisma.courseStartRequest.findUniqueOrThrow({
+      where: { id: linkedRequest.id },
     });
 
-    const updatedLinkedSuggestion = await prisma.courseSuggestion.findUniqueOrThrow({
-      where: { id: linkedSuggestion.id },
-    });
-
-    expect(updatedLinkedSuggestion.generationStatus).toBe("failed");
-    expect(updatedLinkedSuggestion.generationRunId).toBeNull();
+    expect(updatedLinkedRequest.generationStatus).toBe("failed");
+    expect(updatedLinkedRequest.generationRunId).toBeNull();
   });
 
   it("throws all status update failures", async () => {
     const promise = handleCourseFailureStep({
       courseId: randomUUID(),
-      courseSuggestionId: randomUUID(),
+      courseStartRequestId: randomUUID(),
     });
 
     const error = await getRejectedAggregateError(promise);
@@ -102,21 +99,21 @@ describe(handleCourseFailureStep, () => {
     expect(error.errors).toHaveLength(2);
   });
 
-  it("marks only suggestion as failed when courseId is null", async () => {
-    const suggestion = await courseSuggestionFixture({
+  it("marks only request as failed when courseId is null", async () => {
+    const request = await courseStartRequestFixture({
+      canonicalTitle: `No Course Fail ${randomUUID()}`,
       generationRunId: "old-run",
       generationStatus: "running",
-      title: `No Course Fail ${randomUUID()}`,
     });
 
-    await handleCourseFailureStep({ courseId: null, courseSuggestionId: suggestion.id });
+    await handleCourseFailureStep({ courseId: null, courseStartRequestId: request.id });
 
-    const updatedSuggestion = await prisma.courseSuggestion.findUniqueOrThrow({
-      where: { id: suggestion.id },
+    const updatedRequest = await prisma.courseStartRequest.findUniqueOrThrow({
+      where: { id: request.id },
     });
 
-    expect(updatedSuggestion.generationStatus).toBe("failed");
-    expect(updatedSuggestion.generationRunId).toBeNull();
+    expect(updatedRequest.generationStatus).toBe("failed");
+    expect(updatedRequest.generationRunId).toBeNull();
   });
 });
 

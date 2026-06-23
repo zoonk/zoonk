@@ -3,7 +3,6 @@ import { prisma } from "../index";
 import { seedAccounts } from "./seed/accounts";
 import { seedCategories } from "./seed/categories";
 import { seedChapters } from "./seed/chapters";
-import { seedCourseSuggestions } from "./seed/course-suggestions";
 import { seedCourseUsers } from "./seed/course-users";
 import { seedCourses } from "./seed/courses";
 import { seedLessons } from "./seed/lessons";
@@ -29,7 +28,6 @@ async function main() {
   await seedCourseUsers(prisma, orgs.ai, users);
   await seedSteps(prisma, orgs.ai);
   await seedProgress(prisma, orgs.ai, users);
-  await seedCourseSuggestions(prisma);
 }
 
 main()

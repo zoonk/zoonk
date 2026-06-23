@@ -83,7 +83,7 @@ describe(setupCourse, () => {
       data: { chapters: [{ description: "Ch desc", title: `Setup Ch ${randomUUID()}` }] },
     });
 
-    const chapters = await setupCourse(courseContext, "Course suggestion description", existing);
+    const chapters = await setupCourse(courseContext, "Course request description", existing);
 
     expect(chapters).toHaveLength(1);
 

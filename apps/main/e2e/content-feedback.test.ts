@@ -1,46 +1,111 @@
+import { randomUUID } from "node:crypto";
+import { type Page } from "@playwright/test";
 import { openDialog } from "@zoonk/e2e/fixtures/dialog";
-import { searchPromptWithSuggestionsFixture } from "@zoonk/testing/fixtures/course-suggestions";
+import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { stepFixture } from "@zoonk/testing/fixtures/steps";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { mockFeedbackSubmission } from "./feedback";
 import { expect, test } from "./fixtures";
 
-let prompt: string;
-let suggestionTitle: string;
+/**
+ * Creates a one-step quiz because content feedback now appears on the lesson
+ * completion surface instead of the removed course-suggestion picker.
+ */
+async function createFeedbackLessonScenario() {
+  const org = await getAiOrganization();
+  const uniqueId = randomUUID().slice(0, 8);
 
-test.beforeAll(async () => {
-  const fixture = await searchPromptWithSuggestionsFixture();
-  const firstSuggestion = fixture.suggestions[0];
+  const course = await courseFixture({
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-feedback-course-${uniqueId}`,
+  });
 
-  if (!firstSuggestion) {
-    throw new Error("No suggestions created by fixture");
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-feedback-chapter-${uniqueId}`,
+  });
+
+  const lesson = await lessonFixture({
+    chapterId: chapter.id,
+    isPublished: true,
+    kind: "quiz",
+    organizationId: org.id,
+    position: 0,
+    slug: `e2e-feedback-lesson-${uniqueId}`,
+  });
+
+  await lessonFixture({
+    chapterId: chapter.id,
+    isPublished: true,
+    organizationId: org.id,
+    position: 1,
+    slug: `e2e-feedback-next-lesson-${uniqueId}`,
+  });
+
+  await stepFixture({
+    content: {
+      options: [
+        { feedback: "Correct!", id: "right", isCorrect: true, text: `Right ${uniqueId}` },
+        { feedback: "Wrong", id: "wrong", isCorrect: false, text: `Wrong ${uniqueId}` },
+      ],
+      question: `Question ${uniqueId}`,
+    },
+    isPublished: true,
+    kind: "multipleChoice",
+    lessonId: lesson.id,
+  });
+
+  return {
+    correctAnswer: `Right ${uniqueId}`,
+    lessonUrl: `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`,
+  };
+}
+
+/**
+ * Opens a unique lesson, completes it, and waits for the content feedback
+ * controls to render on the completion screen.
+ */
+async function openCompletedLessonFeedback(page: Page) {
+  const scenario = await createFeedbackLessonScenario();
+
+  await page.goto(scenario.lessonUrl);
+  await page.getByRole("radio", { name: scenario.correctAnswer }).click();
+  await page.getByRole("button", { name: /check/iu }).click();
+  await page.getByRole("button", { name: /continue/iu }).click();
+
+  const dailyRecordHeading = page.getByRole("heading", { name: /daily record/iu });
+
+  if (await dailyRecordHeading.isVisible()) {
+    const continueButton = page.getByRole("button", { name: /continue/iu });
+    await expect(continueButton).toBeVisible();
+    await continueButton.click();
   }
 
-  prompt = fixture.prompt;
-  suggestionTitle = firstSuggestion.title;
-});
+  await expect(page.getByRole("button", { name: /send feedback/iu })).toBeVisible();
+}
 
-// Content feedback is tested on the course suggestions page where it's used
 test.describe("Content Feedback", () => {
   test.beforeEach(async ({ authenticatedPage }) => {
-    await authenticatedPage.goto(`/start/learn/${encodeURIComponent(prompt)}`);
-
-    // Wait for content to load
-    await expect(authenticatedPage.getByText(suggestionTitle)).toBeVisible();
+    await openCompletedLessonFeedback(authenticatedPage);
   });
 
   test("clicking feedback button marks it as pressed", async ({ authenticatedPage }) => {
     const thumbsUp = authenticatedPage.getByRole("button", { name: /i liked it/iu });
     const thumbsDown = authenticatedPage.getByRole("button", { name: /i didn't like it/iu });
 
-    // Initially neither should be pressed
     await expect(thumbsUp).toHaveAttribute("aria-pressed", "false");
     await expect(thumbsDown).toHaveAttribute("aria-pressed", "false");
 
-    // Click thumbs up
     await thumbsUp.click();
     await expect(thumbsUp).toHaveAttribute("aria-pressed", "true");
     await expect(thumbsDown).toHaveAttribute("aria-pressed", "false");
 
-    // Switch to thumbs down
     await thumbsDown.click();
     await expect(thumbsDown).toHaveAttribute("aria-pressed", "true");
     await expect(thumbsUp).toHaveAttribute("aria-pressed", "false");
@@ -56,7 +121,6 @@ test.describe("Content Feedback", () => {
     const emailInput = dialog.getByRole("textbox", { name: /email address/iu });
     const messageInput = dialog.getByRole("textbox", { name: /^message$/iu });
 
-    // Wait for dialog to be fully visible and inputs to be enabled
     await expect(emailInput).toBeEnabled();
     await expect(messageInput).toBeEnabled();
 
@@ -82,7 +146,6 @@ test.describe("Content Feedback", () => {
     const emailInput = dialog.getByRole("textbox", { name: /email address/iu });
     const messageInput = dialog.getByRole("textbox", { name: /^message$/iu });
 
-    // Wait for dialog to be fully visible and inputs to be enabled
     await expect(emailInput).toBeEnabled();
     await expect(messageInput).toBeEnabled();
 
@@ -92,11 +155,7 @@ test.describe("Content Feedback", () => {
     await messageInput.fill("This is test feedback");
     await dialog.getByRole("button", { name: /send message/iu }).click();
 
-    // Browser validation prevents submission - verify semantically:
-    // 1. Dialog remains visible (form wasn't submitted)
     await expect(dialog).toBeVisible();
-
-    // 2. Email input is focused (browser focuses invalid fields)
     await expect(emailInput).toBeFocused();
   });
 
@@ -108,14 +167,11 @@ test.describe("Content Feedback", () => {
     const emailInput = dialog.getByRole("textbox", { name: /email address/iu });
     const messageInput = dialog.getByRole("textbox", { name: /^message$/iu });
 
-    // Wait for dialog to be fully visible and inputs to be enabled
     await expect(emailInput).toBeEnabled();
     await expect(messageInput).toBeEnabled();
 
     await emailInput.click();
     await emailInput.fill("test@example.com");
-
-    // Whitespace passes HTML5 "required" but fails server-side when trimmed
     await messageInput.click();
     await messageInput.fill("   ");
     await dialog.getByRole("button", { name: /send message/iu }).click();
@@ -129,9 +185,7 @@ test.describe("Content Feedback - Authenticated", () => {
     authenticatedPage,
     withProgressUser,
   }) => {
-    await authenticatedPage.goto(`/start/learn/${encodeURIComponent(prompt)}`);
-    // Wait for content to load
-    await expect(authenticatedPage.getByText(suggestionTitle)).toBeVisible();
+    await openCompletedLessonFeedback(authenticatedPage);
 
     const feedbackButton = authenticatedPage.getByRole("button", { name: /send feedback/iu });
     const dialog = authenticatedPage.getByRole("dialog");
@@ -141,7 +195,6 @@ test.describe("Content Feedback - Authenticated", () => {
 
     await expect(emailInput).toBeEnabled();
 
-    // Should be pre-filled with user's email
     await expect(emailInput).toHaveValue(
       new RegExp(withProgressUser.email.replaceAll(/[.]/gu, String.raw`\.`), "u"),
     );

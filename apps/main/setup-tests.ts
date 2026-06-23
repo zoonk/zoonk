@@ -13,7 +13,9 @@ vi.mock("next/cache", () => ({
   unstable_cache: vi.fn(),
 }));
 
-vi.mock("@zoonk/ai/tasks/courses/suggestions", { spy: true });
+vi.mock("@zoonk/ai/tasks/courses/canonical-title", { spy: true });
+vi.mock("@zoonk/ai/tasks/courses/learn-classification", { spy: true });
+vi.mock("@zoonk/ai/tasks/courses/request-routing", { spy: true });
 
 beforeEach(() => {
   vi.clearAllMocks();

@@ -3,7 +3,7 @@ import { type Route } from "@playwright/test";
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { createOrganization, getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
+import { courseStartRequestFixture } from "@zoonk/testing/fixtures/course-start-requests";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
@@ -31,7 +31,7 @@ async function mockWorkflowApis(route: Route) {
 
   if (url.includes("/v1/workflows/course-generation/status")) {
     await route.fulfill({
-      body: `data: ${JSON.stringify({ status: "running", step: "getCourseSuggestion" })}\n\n`,
+      body: `data: ${JSON.stringify({ status: "running", step: "getCourseStartRequest" })}\n\n`,
       contentType: "text/event-stream",
       status: 200,
     });
@@ -155,28 +155,30 @@ test.describe("Course Detail Page", () => {
 
     const slug = `e2e-no-chapters-${randomUUID().slice(0, UUID_SHORT_LENGTH)}`;
 
-    const [, suggestion] = await Promise.all([
-      courseFixture({
-        generationStatus: "running",
-        isPublished: true,
-        language: "en",
-        organizationId: org.id,
-        slug,
-        title: "E2E No Chapters Course",
-      }),
-      courseSuggestionFixture({
-        generationStatus: "running",
-        language: "en",
-        slug,
-        title: "E2E No Chapters Course",
-      }),
-    ]);
+    const title = "E2E No Chapters Course";
+
+    const course = await courseFixture({
+      generationStatus: "running",
+      isPublished: true,
+      language: "en",
+      normalizedTitle: normalizeString(title),
+      organizationId: org.id,
+      slug,
+      title,
+    });
+
+    const request = await courseStartRequestFixture({
+      canonicalTitle: title,
+      courseId: course.id,
+      generationStatus: "running",
+      prompt: `Generate ${title} ${slug}`,
+    });
 
     await authenticatedPage.route("**/v1/workflows/**", mockWorkflowApis);
 
     await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${slug}`);
 
-    await authenticatedPage.waitForURL(`/generate/cs/${suggestion.id}`, { timeout: 10_000 });
+    await authenticatedPage.waitForURL(`/generate/course/${request.id}`, { timeout: 10_000 });
 
     await expect(authenticatedPage.getByText(/creating your course/iu)).toBeVisible({
       timeout: 10_000,

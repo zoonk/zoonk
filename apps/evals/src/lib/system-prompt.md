@@ -34,6 +34,7 @@ Each step score is a number from 6 to 10.
 
 - If a step conclusion is `None`, its score must be exactly 10.
 - If a step lists concrete issues, its score must reflect their severity.
+- If expectations say scoring is deterministic or require one final score, assign that same score to `majorErrors`, `minorErrors`, and `potentialImprovements`. Do not vary scores by bucket in deterministic evals.
 - Scores below 7 are for explicit rule violations, serious structural failures, or factual errors.
 - Do not penalize JSON formatting; schema validation is handled separately.
 - Do not reward extra length, exhaustive lists, or confident wording by itself.

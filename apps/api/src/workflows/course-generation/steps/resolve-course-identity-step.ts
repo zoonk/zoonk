@@ -1,20 +1,16 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import {
   type CourseIdentityCandidate,
-  type CourseIdentitySuggestion,
+  type CourseIdentityProposedCourse,
   resolveCourseIdentity,
 } from "@zoonk/ai/tasks/courses/identity";
 import { generateCourseIdentitySearchQueries } from "@zoonk/ai/tasks/courses/identity-search";
 import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
-import {
-  type CourseGetPayload,
-  type CourseSuggestion,
-  getAiGenerationCourseWhere,
-  prisma,
-} from "@zoonk/db";
+import { type CourseGetPayload, getAiGenerationCourseWhere, prisma } from "@zoonk/db";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { getCourseSlugForTitle } from "../_internal/course-slug";
 import { courseContentInclude } from "../_internal/existing-course-content";
+import { type GeneratableCourseStartRequest } from "./get-course-start-request-step";
 
 const IDENTITY_SEARCH_STEP = "generateCourseIdentitySearchQueries";
 const IDENTITY_CLASSIFICATION_STEP = "resolveCourseIdentity";
@@ -27,9 +23,9 @@ type CourseIdentityStream = ReturnType<typeof createStepStream<CourseWorkflowSte
 
 /**
  * Keeps optional query clauses type-safe after the conditional array pattern.
- * The resolver builds many small Prisma clauses from title, slug, target
+ * The resolver builds many small Prisma clauses from title, prompt, target
  * language, and AI-generated search phrases, and falsey clauses mean "this
- * signal is not available for the current suggestion."
+ * signal is not available for the current request."
  */
 function isCourseWhereInput(value: CourseWhereInput | false | null): value is CourseWhereInput {
   return Boolean(value);
@@ -61,15 +57,15 @@ function toIdentityCandidate(course: ExistingCourse): CourseIdentityCandidate {
 }
 
 /**
- * Converts a course suggestion into the model input shape. Keeping this mapper
+ * Converts a course start request into the model input shape. Keeping this mapper
  * local to the workflow prevents the AI package from depending on Prisma types.
  */
-function toIdentitySuggestion(suggestion: CourseSuggestion): CourseIdentitySuggestion {
+function toIdentityRequest(request: GeneratableCourseStartRequest): CourseIdentityProposedCourse {
   return {
-    description: suggestion.description,
-    language: suggestion.language,
-    targetLanguage: suggestion.targetLanguage,
-    title: suggestion.title,
+    description: null,
+    language: request.language,
+    targetLanguage: request.targetLanguage,
+    title: request.canonicalTitle,
   };
 }
 
@@ -110,15 +106,15 @@ function getSearchTextWhereClauses({
  */
 function getCandidateWhereClauses({
   searchTexts,
-  suggestion,
+  request,
 }: {
   searchTexts: string[];
-  suggestion: CourseSuggestion;
+  request: GeneratableCourseStartRequest;
 }): CourseWhereInput[] {
   const clauses: (CourseWhereInput | null)[] = [
-    suggestion.targetLanguage ? { targetLanguage: suggestion.targetLanguage } : null,
+    request.targetLanguage ? { targetLanguage: request.targetLanguage } : null,
     ...searchTexts.flatMap((text) =>
-      getSearchTextWhereClauses({ language: suggestion.language, text }),
+      getSearchTextWhereClauses({ language: request.language, text }),
     ),
   ];
 
@@ -135,17 +131,17 @@ function uniqueCourses(courses: ExistingCourse[]): ExistingCourse[] {
 
 /**
  * Loads public AI-catalog courses that might be the same identity as the
- * suggestion. This step intentionally favors recall; the AI classifier makes
+ * request. This step intentionally favors recall; the AI classifier makes
  * the conservative final decision.
  */
 async function findCandidateCourses({
+  request,
   searchTexts,
-  suggestion,
 }: {
+  request: GeneratableCourseStartRequest;
   searchTexts: string[];
-  suggestion: CourseSuggestion;
 }): Promise<ExistingCourse[]> {
-  const whereClauses = getCandidateWhereClauses({ searchTexts, suggestion });
+  const whereClauses = getCandidateWhereClauses({ request, searchTexts });
 
   if (whereClauses.length === 0) {
     return [];
@@ -153,7 +149,7 @@ async function findCandidateCourses({
 
   return prisma.course.findMany({
     include: courseContentInclude,
-    where: getAiGenerationCourseWhere({ OR: whereClauses, language: suggestion.language }),
+    where: getAiGenerationCourseWhere({ OR: whereClauses, language: request.language }),
   });
 }
 
@@ -164,20 +160,20 @@ async function findCandidateCourses({
  */
 function getDirectMatch({
   candidates,
-  suggestion,
+  request,
 }: {
   candidates: ExistingCourse[];
-  suggestion: CourseSuggestion;
+  request: GeneratableCourseStartRequest;
 }): ExistingCourse | null {
-  const slug = getCourseSlugForTitle({ language: suggestion.language, title: suggestion.title });
-  const normalizedTitle = normalizeString(suggestion.title);
+  const slug = getCourseSlugForTitle({ language: request.language, title: request.canonicalTitle });
+  const normalizedTitle = normalizeString(request.canonicalTitle);
 
   return (
     candidates.find((course) => course.slug === slug) ??
     candidates.find((course) => course.normalizedTitle === normalizedTitle) ??
     candidates.find(
       (course) =>
-        Boolean(suggestion.targetLanguage) && course.targetLanguage === suggestion.targetLanguage,
+        Boolean(request.targetLanguage) && course.targetLanguage === request.targetLanguage,
     ) ??
     null
   );
@@ -185,7 +181,7 @@ function getDirectMatch({
 
 /**
  * Loads the already-linked course for repeat attempts. This is the cache that
- * keeps repeat attempts cheap: once a suggestion is resolved, future generation
+ * keeps repeat attempts cheap: once a request is resolved, future generation
  * requests use the saved course id directly.
  */
 async function getCachedCourse(courseId: string | null): Promise<ExistingCourse | null> {
@@ -200,17 +196,17 @@ async function getCachedCourse(courseId: string | null): Promise<ExistingCourse 
 }
 
 /**
- * Persists a positive identity resolution on the suggestion so the same title
+ * Persists a positive identity resolution on the request so the same title
  * does not need semantic classification again.
  */
-async function linkSuggestionToCourse({
+async function linkRequestToCourse({
   courseId,
-  suggestionId,
+  requestId,
 }: {
   courseId: string;
-  suggestionId: string;
+  requestId: string;
 }): Promise<void> {
-  await prisma.courseSuggestion.update({ data: { courseId }, where: { id: suggestionId } });
+  await prisma.courseStartRequest.update({ data: { courseId }, where: { id: requestId } });
 }
 
 /**
@@ -256,16 +252,16 @@ async function streamSkippedIdentityClassification(stream: CourseIdentityStream)
  * learner can see that duplicate-course search is doing model work.
  */
 async function generateSearchQueriesWithStatus({
+  request,
   stream,
-  suggestion,
 }: {
+  request: GeneratableCourseStartRequest;
   stream: CourseIdentityStream;
-  suggestion: CourseSuggestion;
 }): ReturnType<typeof generateCourseIdentitySearchQueries> {
   await stream.status({ status: "started", step: IDENTITY_SEARCH_STEP });
 
   const search = await generateCourseIdentitySearchQueries({
-    suggestion: toIdentitySuggestion(suggestion),
+    proposedCourse: toIdentityRequest(request),
   });
 
   await stream.status({ status: "completed", step: IDENTITY_SEARCH_STEP });
@@ -280,18 +276,18 @@ async function generateSearchQueriesWithStatus({
  */
 async function resolveIdentityWithStatus({
   candidates,
+  request,
   stream,
-  suggestion,
 }: {
   candidates: ExistingCourse[];
+  request: GeneratableCourseStartRequest;
   stream: CourseIdentityStream;
-  suggestion: CourseSuggestion;
 }): ReturnType<typeof resolveCourseIdentity> {
   await stream.status({ status: "started", step: IDENTITY_CLASSIFICATION_STEP });
 
   const identity = await resolveCourseIdentity({
     candidates: candidates.map((course) => toIdentityCandidate(course)),
-    suggestion: toIdentitySuggestion(suggestion),
+    proposedCourse: toIdentityRequest(request),
   });
 
   await stream.status({ status: "completed", step: IDENTITY_CLASSIFICATION_STEP });
@@ -300,18 +296,18 @@ async function resolveIdentityWithStatus({
 }
 
 /**
- * Resolves whether the course suggestion should use an existing AI-catalog
+ * Resolves whether the course start request should use an existing AI-catalog
  * course. Deterministic links run first, AI search expands candidate recall,
  * and the final classifier only chooses among explicit database rows.
  */
 export async function resolveCourseIdentityStep(
-  suggestion: CourseSuggestion,
+  request: GeneratableCourseStartRequest,
 ): Promise<ExistingCourse | null> {
   "use step";
 
   await using stream = createStepStream<CourseWorkflowStepName>();
 
-  const cachedCourse = await getCachedCourse(suggestion.courseId);
+  const cachedCourse = await getCachedCourse(request.courseId);
 
   if (cachedCourse) {
     await streamSkippedIdentityAiSteps(stream);
@@ -319,21 +315,21 @@ export async function resolveCourseIdentityStep(
   }
 
   const deterministicCandidates = await findCandidateCourses({
-    searchTexts: [suggestion.title, suggestion.slug],
-    suggestion,
+    request,
+    searchTexts: [request.canonicalTitle, request.prompt],
   });
 
-  const directMatch = getDirectMatch({ candidates: deterministicCandidates, suggestion });
+  const directMatch = getDirectMatch({ candidates: deterministicCandidates, request });
 
   if (directMatch) {
-    await linkSuggestionToCourse({ courseId: directMatch.id, suggestionId: suggestion.id });
+    await linkRequestToCourse({ courseId: directMatch.id, requestId: request.id });
     await streamSkippedIdentityAiSteps(stream);
     return directMatch;
   }
 
-  const search = await generateSearchQueriesWithStatus({ stream, suggestion });
+  const search = await generateSearchQueriesWithStatus({ request, stream });
 
-  const aiCandidates = await findCandidateCourses({ searchTexts: search.data.queries, suggestion });
+  const aiCandidates = await findCandidateCourses({ request, searchTexts: search.data.queries });
 
   const candidates = uniqueCourses([...deterministicCandidates, ...aiCandidates]);
 
@@ -342,7 +338,7 @@ export async function resolveCourseIdentityStep(
     return null;
   }
 
-  const identity = await resolveIdentityWithStatus({ candidates, stream, suggestion });
+  const identity = await resolveIdentityWithStatus({ candidates, request, stream });
 
   const selectedCourse =
     identity.data.decision === "useExisting"
@@ -350,7 +346,7 @@ export async function resolveCourseIdentityStep(
       : null;
 
   if (selectedCourse) {
-    await linkSuggestionToCourse({ courseId: selectedCourse.id, suggestionId: suggestion.id });
+    await linkRequestToCourse({ courseId: selectedCourse.id, requestId: request.id });
   }
 
   return selectedCourse;

@@ -1,11 +1,13 @@
-import { type Task } from "@/lib/types";
+import { type RegisteredTask } from "@/lib/types";
 import { chapterLessonsTask } from "./chapter-lessons/task";
+import { courseCanonicalTitleTask } from "./course-canonical-title/task";
 import { courseCategoriesTask } from "./course-categories/task";
 import { courseChaptersTask } from "./course-chapters/task";
 import { courseDescriptionTask } from "./course-description/task";
 import { courseIdentitySearchTask } from "./course-identity-search/task";
 import { courseIdentityClassificationTask } from "./course-identity/task";
-import { courseSuggestionsTask } from "./course-suggestions/task";
+import { courseLearnClassificationTask } from "./course-learn-classification/task";
+import { courseRequestRoutingTask } from "./course-request-routing/task";
 import { imageInputSafetyRewriteTask } from "./image-prompt-safety-rewrite/task";
 import { languageChapterLessonsTask } from "./language-chapter-lessons/task";
 import { languageCourseChaptersTask } from "./language-course-chapters/task";
@@ -23,7 +25,7 @@ import { lessonTranslationTask } from "./lesson-translation/task";
 import { lessonTutorialTask } from "./lesson-tutorial/task";
 import { lessonVocabularyTask } from "./lesson-vocabulary/task";
 
-export const TASKS: readonly Task[] = [
+export const TASKS: readonly RegisteredTask[] = [
   lessonDistractorsTask,
   lessonQuizTask,
   lessonExplanationTask,
@@ -39,11 +41,13 @@ export const TASKS: readonly Task[] = [
   lessonVocabularyTask,
   courseIdentitySearchTask,
   courseIdentityClassificationTask,
+  courseRequestRoutingTask,
+  courseLearnClassificationTask,
+  courseCanonicalTitleTask,
   chapterLessonsTask,
   courseCategoriesTask,
   courseChaptersTask,
   courseDescriptionTask,
-  courseSuggestionsTask,
   imageInputSafetyRewriteTask,
   languageChapterLessonsTask,
   languageCourseChaptersTask,
@@ -52,7 +56,7 @@ export const TASKS: readonly Task[] = [
 // Number of times each test case should be run for more reliable results
 export const RUNS_PER_TEST_CASE = 1;
 
-export function getTaskById(taskId: string): Task | null {
+export function getTaskById(taskId: string): RegisteredTask | null {
   return TASKS.find((t) => t.id === taskId) ?? null;
 }
 

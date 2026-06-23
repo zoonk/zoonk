@@ -15,7 +15,12 @@ export const scoreSchema = z.object({ steps: z.array(stepSchema) });
 type Score = z.infer<typeof scoreSchema>;
 export type ScoreStep = z.infer<typeof stepSchema>;
 
-export type TestCase = { id: string; userInput: Record<string, unknown>; expectations: string };
+export type TestCase<TExpected = unknown> = {
+  id: string;
+  userInput: Record<string, unknown>;
+  expectations: string;
+  expected?: TExpected;
+};
 type TaskResult<T = unknown> = {
   data: T;
   usage: LanguageModelUsage;
@@ -23,7 +28,15 @@ type TaskResult<T = unknown> = {
   systemPrompt: string;
 };
 
-export type TaskGenerateInput<TInput> = TInput & {
+type TaskScoreResult = { score: number; steps: Score["steps"] };
+
+type TaskScoreParams<TExpected = unknown> = { output: string; testCase: TestCase<TExpected> };
+
+export type TaskScorer<TExpected = unknown> = (
+  params: TaskScoreParams<TExpected>,
+) => Promise<TaskScoreResult> | TaskScoreResult;
+
+type TaskGenerateInput<TInput> = TInput & {
   model: string;
   useFallback?: boolean;
   reasoningEffort?: ReasoningEffort;
@@ -45,12 +58,24 @@ export type TaskEvalResults = { taskId: string; modelId: string; results: EvalRe
  * different input shapes. A registry task is safe to inspect, but execution
  * must happen through the paired test case data for that concrete task.
  */
-export type Task<TInput = never, TOutput = unknown> = {
+export type Task<TInput = never, TOutput = unknown, TExpected = unknown> = {
   id: string;
   name: string;
   description: string;
-  testCases: TestCase[];
+  testCases: TestCase<TExpected>[];
   generate: (input: TaskGenerateInput<TInput>) => Promise<TaskResult<TOutput>>;
+  score?: TaskScorer<TExpected>;
+};
+
+/**
+ * The task registry stores many tasks with incompatible input and expected
+ * shapes. Individual task files keep their concrete Task type, while registry
+ * consumers use this erased shape and only call generate/score with the paired
+ * test case that came from the same task entry.
+ */
+export type RegisteredTask = Omit<Task<never, unknown, never>, "score" | "testCases"> & {
+  testCases: TestCase[];
+  score?: (params: never) => Promise<TaskScoreResult> | TaskScoreResult;
 };
 
 // === Output Types (Separated from Eval Results) ===

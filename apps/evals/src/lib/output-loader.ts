@@ -4,7 +4,7 @@ import { cache } from "react";
 import {
   type ModelOutputs,
   type OutputEntry,
-  type Task,
+  type RegisteredTask,
   type TaskModelOutputResults,
   type TestCase,
 } from "./types";
@@ -39,7 +39,7 @@ export function findTestCaseForOutput({
   task,
   testCaseId,
 }: {
-  task: Pick<Task, "testCases">;
+  task: Pick<RegisteredTask, "testCases">;
   testCaseId: string;
 }): TestCase | null {
   const baseId = getBaseTestCaseId(testCaseId);
@@ -55,7 +55,7 @@ export function combineOutputsWithTestCases({
   task,
 }: {
   modelOutputs: ModelOutputs;
-  task: Pick<Task, "testCases">;
+  task: Pick<RegisteredTask, "testCases">;
 }): TaskModelOutputResults {
   const outputs = modelOutputs.outputs.flatMap((output) => {
     const testCase = findTestCaseForOutput({ task, testCaseId: output.testCaseId });

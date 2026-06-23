@@ -1,20 +1,15 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { type Page, type Route } from "@zoonk/e2e/fixtures";
-import { searchPromptWithSuggestionsFixture } from "@zoonk/testing/fixtures/course-suggestions";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
 
 const TEST_RUN_ID = "test-run-id-learn-generate-link";
 
-let prompt: string;
-let suggestionTitle: string;
-let suggestionDescription: string;
-
 /**
- * The suggestion-link test only verifies navigation into the generation page.
- * Mocking the workflow API keeps that page from starting real course generation
- * after the URL assertion has already proved the behavior under test.
+ * The learn-flow tests only verify navigation into the generation page. Mocking
+ * the workflow API keeps that page from starting real course generation after
+ * the URL assertion has already proved the behavior under test.
  */
 async function mockCourseGenerationWorkflow(page: Page): Promise<void> {
   await page.route("**/v1/workflows/course-generation/**", handleCourseGenerationRoute);
@@ -23,7 +18,7 @@ async function mockCourseGenerationWorkflow(page: Page): Promise<void> {
 /**
  * The generation client expects the trigger endpoint to return a run id and
  * the status endpoint to speak SSE. Returning an empty stream is enough for
- * the navigation test while preventing the API app from touching AI providers.
+ * navigation tests while preventing the API app from touching AI providers.
  */
 async function handleCourseGenerationRoute(route: Route): Promise<void> {
   const url = route.request().url();
@@ -48,51 +43,85 @@ async function handleCourseGenerationRoute(route: Route): Promise<void> {
 }
 
 /**
- * The visible subject links are shuffled from fixed copy on the learn page.
- * Seeding the clicked prompt before navigation keeps the destination page on
- * the cached DB path instead of asking AI to create suggestions during e2e.
+ * Seeds one already-routed topic request so E2E can exercise the public page
+ * without making an AI Gateway request, which is intentionally disabled in E2E.
  */
-async function ensureSuggestionsForPrompt(rawPrompt: string): Promise<void> {
+async function cacheTopicPrompt(rawPrompt: string) {
+  const uniqueId = randomUUID().slice(0, 8);
+  const language = "en";
+  const title = `E2E Topic ${uniqueId}`;
   const normalizedPrompt = normalizeString(rawPrompt);
 
-  const existing = await prisma.searchPrompt.findUnique({
-    include: { suggestions: true },
-    where: { languagePrompt: { language: "en", prompt: normalizedPrompt } },
+  const request = await prisma.courseStartRequest.upsert({
+    create: {
+      canonicalTitle: title,
+      courseMode: "full",
+      generationStatus: "pending",
+      language,
+      normalizedPrompt,
+      prompt: rawPrompt,
+      scope: "topic",
+    },
+    update: {
+      canonicalTitle: title,
+      courseMode: "full",
+      generationStatus: "pending",
+      prompt: rawPrompt,
+      scope: "topic",
+      targetLanguage: null,
+    },
+    where: { languageNormalizedPrompt: { language, normalizedPrompt } },
   });
 
-  if (existing && existing.suggestions.length > 0) {
-    return;
-  }
-
-  await searchPromptWithSuggestionsFixture({ prompt: rawPrompt });
+  return { prompt: rawPrompt, request };
 }
 
-test.beforeAll(async () => {
-  const fixture = await searchPromptWithSuggestionsFixture();
-  const firstSuggestion = fixture.suggestions[0];
+/**
+ * Seeds one unsupported request so E2E can verify the waitlist surface without
+ * calling the AI router or relying on model output to choose that branch.
+ */
+async function cacheWaitlistedPrompt(rawPrompt: string) {
+  const language = "en";
+  const normalizedPrompt = normalizeString(rawPrompt);
 
-  if (!firstSuggestion) {
-    throw new Error("No suggestions created by fixture");
-  }
+  const request = await prisma.courseStartRequest.upsert({
+    create: {
+      canonicalTitle: rawPrompt,
+      courseMode: "quick",
+      generationStatus: null,
+      language,
+      normalizedPrompt,
+      prompt: rawPrompt,
+      scope: "question",
+    },
+    update: {
+      canonicalTitle: rawPrompt,
+      courseMode: "quick",
+      generationStatus: null,
+      prompt: rawPrompt,
+      scope: "question",
+      targetLanguage: null,
+    },
+    where: { languageNormalizedPrompt: { language, normalizedPrompt } },
+  });
 
-  prompt = fixture.prompt;
-  suggestionTitle = firstSuggestion.title;
-  suggestionDescription = firstSuggestion.description;
-});
+  return { prompt: rawPrompt, request };
+}
 
 test.describe("Learn Form", () => {
   test("shows form with auto-focused input", async ({ page }) => {
     await page.goto("/start/learn");
 
-    await expect(page.getByRole("heading", { name: /learn anything/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /what do you want to learn/iu })).toBeVisible();
 
     const input = page.getByRole("textbox");
     await expect(input).toBeFocused();
   });
 
-  test("clicking a suggestion link navigates to the subject page", async ({
+  test("clicking a suggested subject starts topic course generation", async ({
     authenticatedPage,
   }) => {
+    await mockCourseGenerationWorkflow(authenticatedPage);
     await authenticatedPage.goto("/start/learn");
 
     const suggestions = authenticatedPage.getByRole("navigation", { name: /suggested subjects/iu });
@@ -103,144 +132,73 @@ test.describe("Learn Form", () => {
       throw new Error("No subject link text found");
     }
 
-    await ensureSuggestionsForPrompt(subject);
+    const cached = await cacheTopicPrompt(subject);
+
     await firstLink.click();
 
-    await expect(authenticatedPage).toHaveURL(/\/start\/learn\/.+/u);
+    await expect(authenticatedPage).toHaveURL(
+      new RegExp(`/generate/course/${cached.request.id}$`, "u"),
+    );
   });
 
-  test("submitting prompt navigates signed-in users to suggestions page", async ({
+  test("submitting prompt starts topic course generation for signed-in users", async ({
     authenticatedPage,
   }) => {
-    await authenticatedPage.goto("/start/learn");
+    await mockCourseGenerationWorkflow(authenticatedPage);
 
-    await authenticatedPage.getByRole("textbox").fill(prompt);
+    const cached = await cacheTopicPrompt(`e2e signed-in topic ${randomUUID()}`);
+
+    await authenticatedPage.goto("/start/learn");
+    await authenticatedPage.getByRole("textbox").fill(cached.prompt);
     await authenticatedPage.keyboard.press("Enter");
 
-    await expect(
-      authenticatedPage.getByRole("heading", { name: /course ideas for/iu }),
-    ).toBeVisible();
+    await expect(authenticatedPage).toHaveURL(
+      new RegExp(`/generate/course/${cached.request.id}$`, "u"),
+    );
   });
 
-  test("submitting prompt navigates unauthenticated users to suggestions page", async ({
+  test("submitting prompt starts topic course generation for unauthenticated users", async ({
     page,
   }) => {
-    await page.goto("/start/learn");
+    await mockCourseGenerationWorkflow(page);
 
-    await page.getByRole("textbox").fill(prompt);
+    const cached = await cacheTopicPrompt(`e2e guest topic ${randomUUID()}`);
+
+    await page.goto("/start/learn");
+    await page.getByRole("textbox").fill(cached.prompt);
     await page.keyboard.press("Enter");
 
-    await expect(page.getByRole("heading", { name: /course ideas for/iu })).toBeVisible();
+    await expect(page).toHaveURL(new RegExp(`/generate/course/${cached.request.id}$`, "u"));
   });
 });
 
-test.describe("Course Suggestions", () => {
-  test("redirects to generate page when there is only one suggestion", async ({ page }) => {
+test.describe("Course Start Routing", () => {
+  test("redirects cached topic prompts to the generation page", async ({ page }) => {
     await mockCourseGenerationWorkflow(page);
 
-    const singlePrompt = `single suggestion ${randomUUID()}`;
+    const cached = await cacheTopicPrompt(`e2e direct topic ${randomUUID()}`);
 
-    const fixture = await searchPromptWithSuggestionsFixture({
-      prompt: singlePrompt,
-      suggestions: [
-        { description: `Only course for ${singlePrompt}`, title: `Course for ${singlePrompt}` },
-      ],
-    });
+    await page.goto(`/start/learn/${encodeURIComponent(cached.prompt)}`);
 
-    const onlySuggestion = fixture.suggestions[0];
-
-    if (!onlySuggestion) {
-      throw new Error("No single suggestion created by fixture");
-    }
-
-    await page.goto(`/start/learn/${encodeURIComponent(singlePrompt)}`);
-
-    await expect(page).toHaveURL(new RegExp(`/generate/cs/${onlySuggestion.id}$`, "u"));
+    await expect(page).toHaveURL(new RegExp(`/generate/course/${cached.request.id}$`, "u"));
   });
 
-  test("redirects to exact prompt match when there are multiple suggestions", async ({ page }) => {
-    await mockCourseGenerationWorkflow(page);
-
-    const uniqueId = randomUUID().slice(0, 8);
-    const exactPrompt = `biology ${uniqueId}`;
-
-    const fixture = await searchPromptWithSuggestionsFixture({
-      prompt: exactPrompt,
-      suggestions: [
-        {
-          description: `Adjacent course for ${exactPrompt}`,
-          title: `Advanced biology ${uniqueId}`,
-        },
-        { description: `Exact course for ${exactPrompt}`, title: `Biology ${uniqueId}` },
-      ],
-    });
-
-    const exactSuggestion = fixture.suggestions[1];
-
-    if (!exactSuggestion) {
-      throw new Error("No exact suggestion created by fixture");
-    }
-
-    await page.goto(`/start/learn/${encodeURIComponent(exactPrompt)}`);
-
-    await expect(page).toHaveURL(new RegExp(`/generate/cs/${exactSuggestion.id}$`, "u"));
-  });
-
-  test("shows suggestions to unauthenticated users", async ({ page }) => {
-    await page.goto(`/start/learn/${encodeURIComponent(prompt)}`);
-
-    await expect(
-      page.getByRole("heading", { name: new RegExp(`course ideas for ${prompt}`, "iu") }),
-    ).toBeVisible();
-
-    await expect(page.getByText(suggestionTitle)).toBeVisible();
-    await expect(page.getByText(suggestionDescription)).toBeVisible();
-  });
-
-  test("shows suggestions with title, description, and generate link", async ({
+  test("prefills the waitlist email for signed-in users", async ({
     authenticatedPage,
+    withProgressUser,
   }) => {
-    await authenticatedPage.goto(`/start/learn/${encodeURIComponent(prompt)}`);
+    const cached = await cacheWaitlistedPrompt(`e2e waitlist goal ${randomUUID()}`);
+
+    await authenticatedPage.goto(`/start/learn/${encodeURIComponent(cached.prompt)}`);
 
     await expect(
-      authenticatedPage.getByRole("heading", {
-        name: new RegExp(`course ideas for ${prompt}`, "iu"),
-      }),
+      authenticatedPage.getByRole("heading", { name: /this option isn't available yet/iu }),
     ).toBeVisible();
 
-    await expect(authenticatedPage.getByText(suggestionTitle)).toBeVisible();
-    await expect(authenticatedPage.getByText(suggestionDescription)).toBeVisible();
+    await expect(authenticatedPage.getByLabel(/email address/iu)).toHaveValue(
+      withProgressUser.email,
+    );
 
-    const generateLinks = authenticatedPage.getByRole("link", { name: /create/iu });
-    await expect(generateLinks.first()).toBeVisible();
-  });
-
-  test("Generate link navigates unauthenticated users to generate page", async ({ page }) => {
-    await mockCourseGenerationWorkflow(page);
-
-    await page.goto(`/start/learn/${encodeURIComponent(prompt)}`);
-
-    await expect(page.getByRole("heading", { name: /course ideas for/iu })).toBeVisible();
-
-    const generateLink = page.getByRole("link", { name: /create/iu }).first();
-    await generateLink.click();
-
-    await expect(page).toHaveURL(/\/generate\/cs\/[-a-f0-9]+/u);
-  });
-
-  test("Change subject navigates back to learn form", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto(`/start/learn/${encodeURIComponent(prompt)}`);
-
-    await expect(
-      authenticatedPage.getByRole("heading", { name: /course ideas for/iu }),
-    ).toBeVisible();
-
-    await authenticatedPage.getByRole("link", { name: /change subject/iu }).click();
-
-    await expect(authenticatedPage).toHaveURL(/\/start\/learn$/u);
-
-    await expect(
-      authenticatedPage.getByRole("heading", { name: /learn anything/iu }),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByText(cached.prompt, { exact: true })).toBeVisible();
   });
 });

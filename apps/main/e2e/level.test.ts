@@ -1,3 +1,4 @@
+import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { getProgressInsightDateLabel } from "../src/app/(progress)/_components/progress-insight-date-label";
 import { expect, test } from "./fixtures";
 
@@ -56,13 +57,16 @@ test.describe("Level Page", () => {
       await expect(authenticatedPage.getByRole("progressbar")).toBeVisible();
     });
 
-    test("displays current-month level insight values", async ({ authenticatedPage }) => {
-      await authenticatedPage.goto("/level");
+    test("displays current-month level insight values", async ({ baseURL, browser }) => {
+      const user = await createE2EUser(baseURL!, { orgRole: "member", withProgress: true });
+      const browserContext = await browser.newContext({ storageState: user.storageState });
+      const page = await browserContext.newPage();
 
-      const highestBpCard = authenticatedPage.getByRole("article", { name: /highest bp/iu });
-      const learningDaysCard = authenticatedPage.getByRole("article", { name: /learning days/iu });
+      await page.goto("/level");
 
-      const learningTimeCard = authenticatedPage.getByRole("article", { name: /learning time/iu });
+      const highestBpCard = page.getByRole("article", { name: /highest bp/iu });
+      const learningDaysCard = page.getByRole("article", { name: /learning days/iu });
+      const learningTimeCard = page.getByRole("article", { name: /learning time/iu });
 
       const todayLabel = getProgressInsightDateLabel({ date: new Date(), locale: "en" });
 
@@ -72,6 +76,8 @@ test.describe("Level Page", () => {
       await expect(learningDaysCard).toContainText("This month");
       await expect(learningTimeCard).toContainText("2 min");
       await expect(learningTimeCard).toContainText("This month");
+
+      await browserContext.close();
     });
 
     test("switching to 6 months shows different comparison text", async ({ authenticatedPage }) => {

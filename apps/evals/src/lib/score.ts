@@ -5,6 +5,7 @@ import { type ScoreStep, scoreSchema } from "./types";
 
 const BAD_SCORE = 8;
 const GOOD_SCORE = 9.2;
+const SCORE_STEP_KINDS = ["majorErrors", "minorErrors", "potentialImprovements"] as const;
 
 // Weight configuration for different step types
 const STEP_WEIGHTS = { majorErrors: 3, minorErrors: 2, potentialImprovements: 1 } as const;
@@ -19,6 +20,18 @@ export function calculateScore(steps: ScoreStep[]): number {
   const totalWeight = steps.reduce((acc, step) => acc + STEP_WEIGHTS[step.kind], 0);
 
   return weightedTotal / totalWeight;
+}
+
+/**
+ * Builds deterministic score steps for extractor-style tasks where one exact
+ * pass/fail score should apply to the whole output. This avoids judge-model
+ * drift where the same classification error receives different scores in the
+ * major, minor, and improvement buckets.
+ */
+export function createFixedScore({ conclusion, score }: { conclusion: string; score: number }) {
+  const steps: ScoreStep[] = SCORE_STEP_KINDS.map((kind) => ({ conclusion, kind, score }));
+
+  return { score: calculateScore(steps), steps };
 }
 
 /**

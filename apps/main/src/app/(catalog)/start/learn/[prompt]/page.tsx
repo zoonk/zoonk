@@ -1,8 +1,8 @@
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
-import { CourseSuggestions } from "./course-suggestions";
-import { CourseSuggestionsFallback } from "./course-suggestions-fallback";
+import { CourseStartFallback } from "./course-start-fallback";
+import { CourseStartResult } from "./course-start-result";
 
 export async function generateMetadata({
   params,
@@ -25,8 +25,8 @@ export default async function Learn({ params }: PageProps<"/start/learn/[prompt]
   const prompt = decodeURIComponent(rawPrompt);
 
   return (
-    <Suspense fallback={<CourseSuggestionsFallback />}>
-      <CourseSuggestions prompt={prompt} />
+    <Suspense fallback={<CourseStartFallback />}>
+      <CourseStartResult prompt={prompt} />
     </Suspense>
   );
 }

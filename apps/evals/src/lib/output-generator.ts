@@ -2,27 +2,14 @@ import { RUNS_PER_TEST_CASE } from "@/tasks";
 import { logError, logInfo } from "@zoonk/utils/logger";
 import { getGatewayModelId, getModelById } from "./models";
 import { loadModelOutputs, saveModelOutputs } from "./output-loader";
-import {
-  type ModelOutputs,
-  type OutputEntry,
-  type Task,
-  type TaskGenerateInput,
-  type TestCase,
-} from "./types";
+import { type ModelOutputs, type OutputEntry, type RegisteredTask, type TestCase } from "./types";
 
 /**
  * The eval registry intentionally erases each task's concrete input type so it
- * can list heterogeneous tasks together. At execution time, the test case and
- * task come from the same registry entry, so this restores the concrete input
- * type before calling the task generator.
+ * can list heterogeneous tasks together. This builds the runtime input from
+ * the paired test case; the generator call casts it back at the boundary.
  */
-function getTaskGenerateInput<TInput>({
-  modelId,
-  testCase,
-}: {
-  modelId: string;
-  testCase: TestCase;
-}): TaskGenerateInput<TInput> {
+function getTaskGenerateInput({ modelId, testCase }: { modelId: string; testCase: TestCase }) {
   const model = getModelById(modelId);
   const gatewayModelId = getGatewayModelId(modelId);
 
@@ -31,11 +18,16 @@ function getTaskGenerateInput<TInput>({
     model: gatewayModelId,
     reasoningEffort: model?.reasoningEffort,
     useFallback: false,
-  } as TaskGenerateInput<TInput>;
+  };
 }
 
-async function generateOutputForTestCase<TInput>(
-  task: Task<TInput>,
+/**
+ * Runs one model output for one registry test case. The cast is contained here
+ * because registry tasks are intentionally type-erased, while each task module
+ * still keeps its concrete input type.
+ */
+async function generateOutputForTestCase(
+  task: RegisteredTask,
   testCase: TestCase,
   modelId: string,
   runNumber: number,
@@ -43,8 +35,8 @@ async function generateOutputForTestCase<TInput>(
   logInfo(`Generating output for: ${testCase.id} (run ${runNumber})`);
 
   const startTime = performance.now();
-  const input = getTaskGenerateInput<TInput>({ modelId, testCase });
-  const result = await task.generate(input);
+  const input = getTaskGenerateInput({ modelId, testCase });
+  const result = await task.generate(input as never);
 
   const duration = performance.now() - startTime;
 
@@ -104,7 +96,10 @@ function createModelOutputs(taskId: string, modelId: string, outputs: OutputEntr
   return { generatedAt: new Date().toISOString(), modelId, outputs, taskId };
 }
 
-export async function generateOutputs(task: Task, modelId: string): Promise<ModelOutputs> {
+export async function generateOutputs(
+  task: RegisteredTask,
+  modelId: string,
+): Promise<ModelOutputs> {
   const safeModelId = modelId.replaceAll(/[\r\n]/gu, "");
   logInfo(`\nGenerating outputs for task: ${task.name}, model: [${safeModelId}]`);
 

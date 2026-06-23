@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { getRejectedAggregateError } from "@/workflows/_test-utils/rejected-error";
 import { prisma } from "@zoonk/db";
-import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
+import { courseStartRequestFixture } from "@zoonk/testing/fixtures/course-start-requests";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -23,7 +23,7 @@ describe(setCourseAsRunningStep, () => {
   it("throws all DB save failures without streaming error", async () => {
     const promise = setCourseAsRunningStep({
       courseId: randomUUID(),
-      courseSuggestionId: randomUUID(),
+      courseStartRequestId: randomUUID(),
       workflowRunId: "run-id",
     });
 
@@ -38,28 +38,28 @@ describe(setCourseAsRunningStep, () => {
     );
   });
 
-  it("marks both course and suggestion as running", async () => {
-    const [course, suggestion] = await Promise.all([
+  it("marks both course and request as running", async () => {
+    const [course, request] = await Promise.all([
       courseFixture({ organizationId, title: `Set Running ${randomUUID()}` }),
-      courseSuggestionFixture({ title: `Running Suggestion ${randomUUID()}` }),
+      courseStartRequestFixture({ canonicalTitle: `Running Request ${randomUUID()}` }),
     ]);
 
     const workflowRunId = `run-${randomUUID()}`;
 
     await setCourseAsRunningStep({
       courseId: course.id,
-      courseSuggestionId: suggestion.id,
+      courseStartRequestId: request.id,
       workflowRunId,
     });
 
-    const [updatedCourse, updatedSuggestion] = await Promise.all([
+    const [updatedCourse, updatedRequest] = await Promise.all([
       prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
-      prisma.courseSuggestion.findUniqueOrThrow({ where: { id: suggestion.id } }),
+      prisma.courseStartRequest.findUniqueOrThrow({ where: { id: request.id } }),
     ]);
 
     expect(updatedCourse.generationStatus).toBe("running");
-    expect(updatedSuggestion.generationStatus).toBe("running");
-    expect(updatedSuggestion.generationRunId).toBe(workflowRunId);
+    expect(updatedRequest.generationStatus).toBe("running");
+    expect(updatedRequest.generationRunId).toBe(workflowRunId);
 
     const events = getStreamedEvents();
 

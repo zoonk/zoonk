@@ -1,11 +1,12 @@
 import "server-only";
-import { type Course, type CourseSuggestion, getAiGenerationCourseWhere, prisma } from "@zoonk/db";
+import { type Course, getAiGenerationCourseWhere, prisma } from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
+import { getOrCreateLanguageCourseStartRequest } from "./course-start-request";
 
 type LanguageCourseInput = { language: string; targetLanguage: string };
 
-type LanguageCourseSuggestionInput = LanguageCourseInput & { description: string; title: string };
+type LanguageCourseStartRequestInput = LanguageCourseInput & { title: string };
 type LanguageCourseHref = `/b/${typeof AI_ORG_SLUG}/c/${string}`;
 
 /**
@@ -30,34 +31,21 @@ export async function getCompletedLanguageCourse({
 }
 
 /**
- * Reuses any existing language suggestion for the same target language, or
- * creates the controlled suggestion row the current course-generation workflow
- * already knows how to process. This keeps language starts deterministic while
- * avoiding a new workflow API shape until the old suggestion boundary is fully
- * replaced.
+ * Reuses or creates the controlled request the course-generation workflow uses
+ * for language courses. The request stores the target language directly, so the
+ * generation path no longer needs an adapter row between `/start/speak` and the
+ * workflow.
  */
-export async function getOrCreateLanguageCourseSuggestion({
-  description,
+export async function getOrCreateLanguageCourseRequest({
   language,
   targetLanguage,
   title,
-}: LanguageCourseSuggestionInput): Promise<CourseSuggestion> {
+}: LanguageCourseStartRequestInput) {
   if (!isTTSSupportedLanguage(targetLanguage)) {
     throw new Error(`Unsupported TTS language: ${targetLanguage}`);
   }
 
-  const existing = await prisma.courseSuggestion.findFirst({
-    orderBy: { createdAt: "asc" },
-    where: { language, targetLanguage },
-  });
-
-  if (existing) {
-    return existing;
-  }
-
-  return prisma.courseSuggestion.create({
-    data: { description, language, slug: `language-${targetLanguage}`, targetLanguage, title },
-  });
+  return getOrCreateLanguageCourseStartRequest({ language, targetLanguage, title });
 }
 
 /**

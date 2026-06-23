@@ -54,7 +54,7 @@ const emptyExisting: ExistingCourseContent = {
   imageUrl: null,
 };
 
-const courseSuggestionDescription = "Course suggestion description";
+const courseRequestDescription = "Course request description";
 
 describe(generateMissingContent, () => {
   beforeEach(() => {
@@ -77,7 +77,7 @@ describe(generateMissingContent, () => {
 
     const result = await generateMissingContent({
       course,
-      description: courseSuggestionDescription,
+      description: courseRequestDescription,
       existing: emptyExisting,
     });
 
@@ -88,7 +88,7 @@ describe(generateMissingContent, () => {
     expect(result.chapters).toStrictEqual([{ description: "Ch1 desc", title: "Ch1" }]);
 
     expect(generateContentThumbnailImageMock).toHaveBeenCalledWith({
-      description: courseSuggestionDescription,
+      description: courseRequestDescription,
       kind: "course",
       title: course.courseTitle,
     });
@@ -104,7 +104,7 @@ describe(generateMissingContent, () => {
 
     const result = await generateMissingContent({
       course,
-      description: courseSuggestionDescription,
+      description: courseRequestDescription,
       existing,
     });
 
@@ -138,7 +138,7 @@ describe(generateMissingContent, () => {
 
     const result = await generateMissingContent({
       course: langCourse,
-      description: courseSuggestionDescription,
+      description: courseRequestDescription,
       existing: emptyExisting,
     });
 
@@ -162,7 +162,7 @@ describe(generateMissingContent, () => {
 
     const result = await generateMissingContent({
       course,
-      description: courseSuggestionDescription,
+      description: courseRequestDescription,
       existing: emptyExisting,
     });
 

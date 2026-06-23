@@ -21,8 +21,7 @@ export type FeedbackValue = "upvote" | "downvote";
 export type FeedbackTarget =
   | { courseSlug: string; kind: "course" }
   | { chapterSlug: string; courseSlug: string; kind: "chapter" }
-  | { chapterSlug: string; courseSlug: string; kind: "lesson"; lessonSlug: string }
-  | { kind: "courseSuggestions"; locale: string; prompt: string };
+  | { chapterSlug: string; courseSlug: string; kind: "lesson"; lessonSlug: string };
 
 type FeedbackInput = FeedbackTarget & { feedback: FeedbackValue };
 
@@ -218,13 +217,6 @@ function getFeedbackEventData(input: FeedbackInput): AnalyticsEventProperties {
         feedback: input.feedback,
         kind: input.kind,
         lessonSlug: input.lessonSlug,
-      };
-    case "courseSuggestions":
-      return {
-        feedback: input.feedback,
-        kind: input.kind,
-        locale: input.locale,
-        prompt: input.prompt,
       };
     default:
       return throwUnexpectedFeedbackTarget(input);

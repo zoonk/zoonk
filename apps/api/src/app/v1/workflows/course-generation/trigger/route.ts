@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     return errors.validation(parsed.error);
   }
 
-  const run = await start(courseGenerationWorkflow, [parsed.data.courseSuggestionId]);
+  const run = await start(courseGenerationWorkflow, [parsed.data.courseStartRequestId]);
 
   return NextResponse.json({ message: "Workflow started", runId: run.runId });
 }

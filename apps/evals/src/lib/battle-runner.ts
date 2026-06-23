@@ -8,7 +8,7 @@ import {
   getModelsWithCompleteOutputs,
   getOutputForTestCase,
 } from "./output-loader";
-import { type BattleMatchup, type ModelOutputs, type Task, type TestCase } from "./types";
+import { type BattleMatchup, type ModelOutputs, type RegisteredTask, type TestCase } from "./types";
 
 const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
 const BATTLES_DIR = path.join(EVAL_RESULTS_DIR, "battles");
@@ -177,7 +177,7 @@ async function runJudges(params: {
 }
 
 async function runBattleForTestCase(
-  task: Task,
+  task: RegisteredTask,
   testCase: TestCase,
   allOutputs: Map<string, ModelOutputs>,
   existingMatchup: BattleMatchup | null,
@@ -235,7 +235,7 @@ async function runBattleForTestCase(
   return matchup;
 }
 
-export async function runBattleMode(task: Task): Promise<void> {
+export async function runBattleMode(task: RegisteredTask): Promise<void> {
   logInfo(`\n=== Starting Battle Mode for task: ${task.name} ===\n`);
 
   const totalTestCases = task.testCases.length;

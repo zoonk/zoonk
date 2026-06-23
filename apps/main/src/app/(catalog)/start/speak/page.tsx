@@ -1,5 +1,11 @@
 import { type Metadata } from "next";
 import { getExtracted, getLocale } from "next-intl/server";
+import {
+  StartSurface,
+  StartSurfaceContent,
+  StartSurfaceHeader,
+  StartSurfaceTitle,
+} from "../_components/start-surface";
 import { LanguageList } from "./language-list";
 import { getLanguageOptions } from "./language-options";
 import { SourceLanguageSwitcher } from "./source-language-switcher";
@@ -25,12 +31,12 @@ export default async function StartSpeak() {
   const languages = getLanguageOptions({ locale });
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center gap-8 p-4 pb-28 md:gap-10">
-      <div className="flex max-w-2xl flex-col items-center gap-3 text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-balance md:text-5xl">
-          {t("What language do you want to learn?")}
-        </h1>
-      </div>
+    <StartSurface>
+      <StartSurfaceHeader>
+        <StartSurfaceContent>
+          <StartSurfaceTitle>{t("What language do you want to learn?")}</StartSurfaceTitle>
+        </StartSurfaceContent>
+      </StartSurfaceHeader>
 
       <SourceLanguageSwitcher />
 
@@ -39,6 +45,6 @@ export default async function StartSpeak() {
         languages={languages}
         searchPlaceholder={t("Search languages")}
       />
-    </main>
+    </StartSurface>
   );
 }
