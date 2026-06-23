@@ -1250,8 +1250,8 @@ msgid "qrEiLa"
 msgstr "Volver al curso"
 
 #: src/app/generate/ch/[id]/generation-client.tsx
-msgid "ViO6Dt"
-msgstr "Creando tus lecciones"
+msgid "txNTbP"
+msgstr "Creando el capítulo {title}"
 
 #: src/app/generate/ch/[id]/generation-client.tsx
 msgid "kiZUDf"
@@ -1333,8 +1333,8 @@ msgid "rPgekg"
 msgstr "Volver al inicio"
 
 #: src/app/generate/course/[id]/generation-client.tsx
-msgid "DFlapX"
-msgstr "Creando tu curso"
+msgid "u6ROZF"
+msgstr "Creando el curso {title}"
 
 #: src/app/generate/course/[id]/generation-client.tsx
 msgid "GJKrUK"
@@ -1457,8 +1457,8 @@ msgid "kXZ7ZI"
 msgstr "Crear Lección"
 
 #: src/app/generate/l/[id]/generation-client.tsx
-msgid "mFR5UU"
-msgstr "Creando tu lección"
+msgid "WihX6L"
+msgstr "Creando la lección {title}"
 
 #: src/app/generate/l/[id]/generation-client.tsx
 msgid "3vY0Zu"

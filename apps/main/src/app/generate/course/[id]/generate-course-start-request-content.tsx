@@ -1,13 +1,7 @@
 import { GenerationExitLink } from "@/components/generation/generation-exit-link";
 import { getCourseStartRequestById } from "@/data/courses/course-start-request";
 import { getCourseSlugForTitle } from "@zoonk/core/courses/slug";
-import {
-  Container,
-  ContainerBody,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { Container, ContainerBody } from "@zoonk/ui/components/container";
 import { Empty, EmptyContent, EmptyHeader } from "@zoonk/ui/components/empty";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
@@ -42,15 +36,10 @@ export async function GenerateCourseStartRequestContent({
 
   return (
     <Container variant="narrow">
-      <ContainerHeader>
-        <ContainerHeaderGroup>
-          <ContainerTitle>{request.canonicalTitle}</ContainerTitle>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
-
       <ContainerBody>
         <GenerationClient
           courseSlug={courseSlug}
+          courseTitle={request.canonicalTitle}
           linkedCourseSlug={linkedCourse?.slug ?? null}
           generationRunId={request.generationRunId}
           generationStatus={request.generationStatus}
@@ -65,13 +54,6 @@ export async function GenerateCourseStartRequestContent({
 export function GenerateCourseStartRequestFallback() {
   return (
     <Container variant="narrow">
-      <ContainerHeader>
-        <ContainerHeaderGroup>
-          <Skeleton className="h-6 w-48" />
-          <Skeleton className="mt-1 h-4 w-72" />
-        </ContainerHeaderGroup>
-      </ContainerHeader>
-
       <ContainerBody>
         <Empty className="border-0">
           <EmptyHeader>

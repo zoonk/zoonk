@@ -2,14 +2,7 @@ import { GenerationExitLink } from "@/components/generation/generation-exit-link
 import { SubscriptionGate } from "@/components/subscription/subscription-gate";
 import { getChapterForGeneration } from "@/data/chapters/get-chapter-for-generation";
 import { getInitialGenerationPageStatus } from "@/lib/workflow/get-initial-generation-page-status";
-import {
-  Container,
-  ContainerBody,
-  ContainerDescription,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { Container, ContainerBody } from "@zoonk/ui/components/container";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { getExtracted } from "next-intl/server";
@@ -36,20 +29,12 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
 
   return (
     <Container variant="narrow">
-      <ContainerHeader>
-        <ContainerHeaderGroup>
-          <ContainerTitle>{chapter.title}</ContainerTitle>
-          {chapter.description && (
-            <ContainerDescription>{chapter.description}</ContainerDescription>
-          )}
-        </ContainerHeaderGroup>
-      </ContainerHeader>
-
       <ContainerBody>
         <SubscriptionGate backHref={backHref} backLabel={backLabel} bypass={chapter.position === 0}>
           <GenerationClient
             chapterId={id}
             chapterSlug={chapter.slug}
+            chapterTitle={chapter.title}
             courseSlug={chapter.course.slug}
             generationRunId={chapter.generationRunId}
             initialStatus={initialStatus}
@@ -64,13 +49,6 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
 export function GenerateChapterFallback() {
   return (
     <Container variant="narrow">
-      <ContainerHeader>
-        <ContainerHeaderGroup>
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="mt-1 h-4 w-72" />
-        </ContainerHeaderGroup>
-      </ContainerHeader>
-
       <ContainerBody>
         <Skeleton className="h-64 w-full rounded-xl" />
       </ContainerBody>

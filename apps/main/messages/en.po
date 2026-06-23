@@ -1250,8 +1250,8 @@ msgid "qrEiLa"
 msgstr "Back to course"
 
 #: src/app/generate/ch/[id]/generation-client.tsx
-msgid "ViO6Dt"
-msgstr "Creating your lessons"
+msgid "txNTbP"
+msgstr "Creating the {title} chapter"
 
 #: src/app/generate/ch/[id]/generation-client.tsx
 msgid "kiZUDf"
@@ -1333,8 +1333,8 @@ msgid "rPgekg"
 msgstr "Back home"
 
 #: src/app/generate/course/[id]/generation-client.tsx
-msgid "DFlapX"
-msgstr "Creating your course"
+msgid "u6ROZF"
+msgstr "Creating the {title} course"
 
 #: src/app/generate/course/[id]/generation-client.tsx
 msgid "GJKrUK"
@@ -1457,8 +1457,8 @@ msgid "kXZ7ZI"
 msgstr "Create Lesson"
 
 #: src/app/generate/l/[id]/generation-client.tsx
-msgid "mFR5UU"
-msgstr "Creating your lesson"
+msgid "WihX6L"
+msgstr "Creating the {title} lesson"
 
 #: src/app/generate/l/[id]/generation-client.tsx
 msgid "3vY0Zu"

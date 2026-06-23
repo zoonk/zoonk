@@ -17,7 +17,7 @@ import { expect, test } from "./fixtures";
  *
  * Client behavior:
  * - Auto-triggers workflow on mount (no idle state)
- * - Shows "Creating your course" while triggering/streaming
+ * - Shows the course-specific creation title while triggering/streaming
  * - Shows current step label + spinner while streaming
  * - Shows completed steps with checkmarks
  * - Workflow completes when the configured completion step is received
@@ -191,7 +191,9 @@ test.describe("Generate Course Page", () => {
 
     await page.goto(`/generate/course/${request.id}`);
 
-    await expect(page.getByText(/creating your course/iu)).toBeVisible({ timeout: 10_000 });
+    await expect(
+      page.getByRole("heading", { name: "Creating the E2E Unauth Course Generation course" }),
+    ).toBeVisible({ timeout: 10_000 });
   });
 
   test.describe("Initial triggering state", () => {
@@ -212,9 +214,9 @@ test.describe("Generate Course Page", () => {
       await authenticatedPage.goto(`/generate/course/${request.id}`);
 
       // Should show triggering or streaming state (no idle state)
-      await expect(authenticatedPage.getByText(/creating your course/iu)).toBeVisible({
-        timeout: 10_000,
-      });
+      await expect(
+        authenticatedPage.getByRole("heading", { name: "Creating the E2E Triggering Test course" }),
+      ).toBeVisible({ timeout: 10_000 });
 
       await expect(
         authenticatedPage.getByText(/this usually takes about 2 minutes/iu),
