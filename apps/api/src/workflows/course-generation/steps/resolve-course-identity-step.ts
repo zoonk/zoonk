@@ -5,10 +5,10 @@ import {
   resolveCourseIdentity,
 } from "@zoonk/ai/tasks/courses/identity";
 import { generateCourseIdentitySearchQueries } from "@zoonk/ai/tasks/courses/identity-search";
+import { getCourseSlugForTitle } from "@zoonk/core/courses/slug";
 import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { type CourseGetPayload, getAiGenerationCourseWhere, prisma } from "@zoonk/db";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
-import { getCourseSlugForTitle } from "../_internal/course-slug";
 import { courseContentInclude } from "../_internal/existing-course-content";
 import { type GeneratableCourseStartRequest } from "./get-course-start-request-step";
 

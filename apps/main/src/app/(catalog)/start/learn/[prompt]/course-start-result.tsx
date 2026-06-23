@@ -109,12 +109,12 @@ export async function CourseStartResult({ prompt }: { prompt: string }) {
   const locale = await getLocale();
   const result = await resolveCourseStartRequest({ language: locale, prompt });
 
-  if (result.kind === "generate") {
-    redirect(`/generate/course/${result.request.id}`);
+  if (result.kind === "course" || result.kind === "redirect") {
+    redirect(result.href);
   }
 
-  if (result.kind === "redirect") {
-    redirect(result.href);
+  if (result.kind === "generate") {
+    redirect(`/generate/course/${result.request.id}`);
   }
 
   if (result.kind === "unsafe") {

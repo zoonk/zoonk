@@ -7,6 +7,7 @@ import { generateCourseDescription } from "@zoonk/ai/tasks/courses/description";
 import { resolveCourseIdentity } from "@zoonk/ai/tasks/courses/identity";
 import { generateCourseIdentitySearchQueries } from "@zoonk/ai/tasks/courses/identity-search";
 import { generateContentThumbnailImage } from "@zoonk/core/content/thumbnail";
+import { getCourseSlugForTitle } from "@zoonk/core/courses/slug";
 import { COURSE_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -15,7 +16,6 @@ import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/co
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { normalizeString } from "@zoonk/utils/string";
 import { beforeAll, describe, expect, it, vi } from "vitest";
-import { getCourseSlugForTitle } from "./_internal/course-slug";
 import { getOrCreateCourse } from "./_internal/get-or-create-course";
 import { chapterImagesWorkflow } from "./chapter-images-workflow";
 import { courseGenerationWorkflow } from "./course-generation-workflow";

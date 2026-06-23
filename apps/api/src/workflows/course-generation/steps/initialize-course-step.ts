@@ -1,9 +1,9 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
+import { getCourseSlugForTitle } from "@zoonk/core/courses/slug";
 import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { type Course, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
-import { getCourseSlugForTitle } from "../_internal/course-slug";
 import {
   type ExistingCourseContent,
   courseContentInclude,

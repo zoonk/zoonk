@@ -2,13 +2,13 @@ import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { resolveCourseIdentity } from "@zoonk/ai/tasks/courses/identity";
 import { generateCourseIdentitySearchQueries } from "@zoonk/ai/tasks/courses/identity-search";
+import { getCourseSlugForTitle } from "@zoonk/core/courses/slug";
 import { prisma } from "@zoonk/db";
 import { generatableCourseStartRequestFixture } from "@zoonk/testing/fixtures/course-start-requests";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { normalizeString } from "@zoonk/utils/string";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { getCourseSlugForTitle } from "../_internal/course-slug";
 import { resolveCourseIdentityStep } from "./resolve-course-identity-step";
 
 vi.mock("@zoonk/ai/tasks/courses/identity-search", () => ({

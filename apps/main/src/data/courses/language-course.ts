@@ -1,13 +1,16 @@
 import "server-only";
-import { type Course, getAiGenerationCourseWhere, prisma } from "@zoonk/db";
+import {
+  type Course,
+  type CourseStartRequest,
+  getAiGenerationCourseWhere,
+  prisma,
+} from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
-import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { getOrCreateLanguageCourseStartRequest } from "./course-start-request";
+import { normalizeString } from "@zoonk/utils/string";
 
 type LanguageCourseInput = { language: string; targetLanguage: string };
 
 type LanguageCourseStartRequestInput = LanguageCourseInput & { title: string };
-type LanguageCourseHref = `/b/${typeof AI_ORG_SLUG}/c/${string}`;
 
 /**
  * Finds the existing public AI language course before we create any workflow
@@ -31,6 +34,35 @@ export async function getCompletedLanguageCourse({
 }
 
 /**
+ * Creates the controlled request used by `/start/speak/[language]`. Language
+ * courses still use the course-generation workflow, but the workflow input is a
+ * language-scoped start request instead of an adapter row.
+ */
+async function getOrCreateLanguageCourseStartRequest({
+  language,
+  targetLanguage,
+  title,
+}: LanguageCourseStartRequestInput): Promise<CourseStartRequest> {
+  const prompt = `Learn ${title}`;
+  const normalizedPrompt = normalizeString(prompt);
+
+  return prisma.courseStartRequest.upsert({
+    create: {
+      canonicalTitle: title,
+      courseMode: "full",
+      generationStatus: "pending",
+      language,
+      normalizedPrompt,
+      prompt,
+      scope: "language",
+      targetLanguage,
+    },
+    update: {},
+    where: { languageNormalizedPrompt: { language, normalizedPrompt } },
+  });
+}
+
+/**
  * Reuses or creates the controlled request the course-generation workflow uses
  * for language courses. The request stores the target language directly, so the
  * generation path no longer needs an adapter row between `/start/speak` and the
@@ -46,12 +78,4 @@ export async function getOrCreateLanguageCourseRequest({
   }
 
   return getOrCreateLanguageCourseStartRequest({ language, targetLanguage, title });
-}
-
-/**
- * Converts a completed language course into the public catalog URL that the
- * language start redirect can use without importing app route helpers.
- */
-export function getLanguageCourseHref(course: Pick<Course, "slug">): LanguageCourseHref {
-  return `/b/${AI_ORG_SLUG}/c/${course.slug}`;
 }

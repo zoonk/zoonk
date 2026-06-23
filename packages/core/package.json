@@ -18,6 +18,7 @@
     "./auth/subscription": "./src/auth/subscription.ts",
     "./auth/username-rules": "./src/auth/username-rules.ts",
     "./chapters/search": "./src/chapters/search-chapters.ts",
+    "./courses/slug": "./src/courses/course-slug.ts",
     "./content/thumbnail": "./src/content/content-thumbnail.ts",
     "./courses/search": "./src/courses/search-courses.ts",
     "./feedback/send": "./src/feedback/send-feedback-message.ts",

@@ -1,11 +1,11 @@
 import { randomUUID } from "node:crypto";
+import { getCourseSlugForTitle } from "@zoonk/core/courses/slug";
 import { prisma } from "@zoonk/db";
 import { generatableCourseStartRequestFixture } from "@zoonk/testing/fixtures/course-start-requests";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { type ExistingCourse } from "../steps/resolve-course-identity-step";
-import { getCourseSlugForTitle } from "./course-slug";
 import { getOrCreateCourse } from "./get-or-create-course";
 
 describe(getOrCreateCourse, () => {

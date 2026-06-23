@@ -2,8 +2,12 @@ import { randomUUID } from "node:crypto";
 import * as canonicalTitleTask from "@zoonk/ai/tasks/courses/canonical-title";
 import * as learnClassificationTask from "@zoonk/ai/tasks/courses/learn-classification";
 import * as routingTask from "@zoonk/ai/tasks/courses/request-routing";
+import { getCourseSlugForTitle } from "@zoonk/core/courses/slug";
 import { prisma } from "@zoonk/db";
 import { courseStartRequestFixture } from "@zoonk/testing/fixtures/course-start-requests";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
 import { describe, expect, it, vi } from "vitest";
 import {
@@ -14,6 +18,11 @@ import {
 type GenerateCourseStartRequestResolution = Extract<
   CourseStartRequestResolution,
   { kind: "generate" }
+>;
+
+type CourseRedirectStartRequestResolution = Extract<
+  CourseStartRequestResolution,
+  { kind: "course" }
 >;
 
 /**
@@ -28,6 +37,40 @@ function expectGenerateResult(
   if (result.kind !== "generate") {
     throw new Error(`Expected generate result, got ${result.kind}`);
   }
+}
+
+/**
+ * Narrows direct-course results so tests can assert the public destination
+ * without weakening the resolver union type.
+ */
+function expectCourseResult(
+  result: CourseStartRequestResolution,
+): asserts result is CourseRedirectStartRequestResolution {
+  expect(result.kind).toBe("course");
+
+  if (result.kind !== "course") {
+    throw new Error(`Expected course result, got ${result.kind}`);
+  }
+}
+
+/**
+ * Creates the exact reusable course row the start resolver should find from a
+ * canonical title. The slug intentionally mirrors generation so direct reuse
+ * and workflow creation stay covered by the same identity rule.
+ */
+async function createCompletedAiCourse({ language, title }: { language: string; title: string }) {
+  const organization = await aiOrganizationFixture();
+  const slug = getCourseSlugForTitle({ language, title });
+
+  return courseFixture({
+    generationStatus: "completed",
+    isPublished: true,
+    language,
+    normalizedTitle: normalizeString(title),
+    organizationId: organization.id,
+    slug,
+    title,
+  });
 }
 
 /**
@@ -87,6 +130,31 @@ describe("course-start-request", () => {
     });
   });
 
+  it("redirects first-time topic prompts to an existing reusable course", async () => {
+    const prompt = `existing topic ${randomUUID()}`;
+    const title = `Existing Biology ${randomUUID().slice(0, 8)}`;
+    const course = await createCompletedAiCourse({ language: "en", title });
+    mockStartTasks({ scope: "topic", title });
+
+    const result = await resolveCourseStartRequest({ language: "en", prompt });
+
+    expectCourseResult(result);
+    expect(result.href).toBe(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
+
+    const request = await prisma.courseStartRequest.findUnique({
+      where: {
+        languageNormalizedPrompt: { language: "en", normalizedPrompt: normalizeString(prompt) },
+      },
+    });
+
+    expect(request).toMatchObject({
+      canonicalTitle: title,
+      courseId: course.id,
+      generationStatus: "completed",
+      scope: "topic",
+    });
+  });
+
   it("uses a cached topic request without calling model tasks", async () => {
     const prompt = `cached topic ${randomUUID()}`;
 
@@ -107,6 +175,44 @@ describe("course-start-request", () => {
     expect(routeSpy).not.toHaveBeenCalled();
     expect(classificationSpy).not.toHaveBeenCalled();
     expect(titleSpy).not.toHaveBeenCalled();
+  });
+
+  it("redirects cached topic requests to an existing reusable course without model tasks", async () => {
+    const prompt = `cached existing topic ${randomUUID()}`;
+    const title = `Cached Existing Course ${randomUUID().slice(0, 8)}`;
+    const course = await createCompletedAiCourse({ language: "en", title });
+
+    await courseStartRequestFixture({
+      canonicalTitle: title,
+      normalizedPrompt: normalizeString(prompt),
+      prompt,
+    });
+
+    const routeSpy = vi.spyOn(routingTask, "routeCourseRequest");
+    const classificationSpy = vi.spyOn(learnClassificationTask, "classifyLearnRequest");
+    const titleSpy = vi.spyOn(canonicalTitleTask, "generateCanonicalCourseTitle");
+
+    const result = await resolveCourseStartRequest({ language: "en", prompt });
+
+    expectCourseResult(result);
+    expect(result.href).toBe(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
+    expect(routeSpy).not.toHaveBeenCalled();
+    expect(classificationSpy).not.toHaveBeenCalled();
+    expect(titleSpy).not.toHaveBeenCalled();
+  });
+
+  it("appends the locale when finding existing non-English courses", async () => {
+    const prompt = `topico em portugues ${randomUUID()}`;
+    const title = `Biologia ${randomUUID().slice(0, 8)}`;
+    const course = await createCompletedAiCourse({ language: "pt", title });
+    mockStartTasks({ scope: "topic", title });
+
+    const result = await resolveCourseStartRequest({ language: "pt", prompt });
+
+    expect(course.slug).toBe(getCourseSlugForTitle({ language: "pt", title }));
+    expect(course.slug.endsWith("-pt")).toBe(true);
+    expectCourseResult(result);
+    expect(result.href).toBe(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
   });
 
   it("reuses the winning request when the same prompt is resolved concurrently", async () => {

@@ -1,6 +1,11 @@
 import { randomUUID } from "node:crypto";
+import { getCourseSlugForTitle } from "@zoonk/core/courses/slug";
 import { prisma } from "@zoonk/db";
 import { type Page, type Route } from "@zoonk/e2e/fixtures";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
 
@@ -108,6 +113,54 @@ async function cacheWaitlistedPrompt(rawPrompt: string) {
   return { prompt: rawPrompt, request };
 }
 
+/**
+ * Seeds the reusable-course branch without calling the AI router. This proves
+ * the learn route can skip generation when the cached decision points to a
+ * completed course that already exists in the AI catalog.
+ */
+async function cacheExistingCoursePrompt(rawPrompt: string) {
+  const language = "en";
+  const uniqueId = randomUUID().slice(0, 8);
+  const title = `E2E Existing Course ${uniqueId}`;
+  const slug = getCourseSlugForTitle({ language, title });
+  const organization = await aiOrganizationFixture();
+
+  const course = await courseFixture({
+    generationStatus: "completed",
+    isPublished: true,
+    language,
+    normalizedTitle: normalizeString(title),
+    organizationId: organization.id,
+    slug,
+    title,
+  });
+
+  await chapterFixture({
+    courseId: course.id,
+    generationStatus: "completed",
+    isPublished: true,
+    language,
+    organizationId: organization.id,
+    slug: `e2e-existing-chapter-${uniqueId}`,
+    title: `E2E Existing Chapter ${uniqueId}`,
+  });
+
+  await prisma.courseStartRequest.create({
+    data: {
+      canonicalTitle: title,
+      courseId: course.id,
+      courseMode: "full",
+      generationStatus: "completed",
+      language,
+      normalizedPrompt: normalizeString(rawPrompt),
+      prompt: rawPrompt,
+      scope: "topic",
+    },
+  });
+
+  return { course, prompt: rawPrompt };
+}
+
 test.describe("Learn Form", () => {
   test("shows form with auto-focused input", async ({ page }) => {
     await page.goto("/start/learn");
@@ -181,6 +234,15 @@ test.describe("Course Start Routing", () => {
     await page.goto(`/start/learn/${encodeURIComponent(cached.prompt)}`);
 
     await expect(page).toHaveURL(new RegExp(`/generate/course/${cached.request.id}$`, "u"));
+  });
+
+  test("redirects cached topic prompts to existing reusable courses", async ({ page }) => {
+    const cached = await cacheExistingCoursePrompt(`e2e existing topic ${randomUUID()}`);
+
+    await page.goto(`/start/learn/${encodeURIComponent(cached.prompt)}`);
+
+    await expect(page).toHaveURL(new RegExp(`/b/${AI_ORG_SLUG}/c/${cached.course.slug}$`, "u"));
+    await expect(page.getByRole("heading", { level: 1, name: cached.course.title })).toBeVisible();
   });
 
   test("prefills the waitlist email for signed-in users", async ({

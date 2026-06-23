@@ -1,9 +1,9 @@
 import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
 
 /**
- * Generated course rows use the locale-aware slug protected by the organization
- * unique index. Deriving that value in one place keeps duplicate detection
- * aligned with the database write that can fail under concurrent workflow starts.
+ * Generated course identity is keyed by the canonical title plus learner
+ * locale. English keeps the plain canonical slug, while other locales append
+ * the locale so translated courses do not collide with the English catalog.
  */
 export function getCourseSlugForTitle({
   language,

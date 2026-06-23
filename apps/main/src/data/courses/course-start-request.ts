@@ -8,10 +8,14 @@ import {
   type CourseRequestScope,
   routeCourseRequest,
 } from "@zoonk/ai/tasks/courses/request-routing";
-import { type Course, type CourseStartRequest, prisma } from "@zoonk/db";
-import { AI_ORG_SLUG } from "@zoonk/utils/org";
+import { type CourseStartRequest, prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { isUuid } from "@zoonk/utils/uuid";
+import {
+  type CourseStartRequestWithCourse,
+  getReusableCourseHrefForStartRequest,
+} from "./_utils/course-start-reusable-course";
+import { type AiCourseHref } from "./course-href";
 
 type CourseStartScope = CourseStartRequest["scope"];
 type LearnCourseStartScope = Extract<CourseStartScope, "personalized" | "question" | "topic">;
@@ -19,6 +23,7 @@ type LearnCourseStartScope = Extract<CourseStartScope, "personalized" | "questio
 export type UnsupportedCourseStartScope = Extract<CourseStartScope, "personalized" | "question">;
 
 export type CourseStartRequestResolution =
+  | { href: AiCourseHref; kind: "course" }
   | { kind: "generate"; request: Pick<CourseStartRequest, "id" | "canonicalTitle" | "scope"> }
   | { kind: "redirect"; href: "/start/exam" | "/start/speak" }
   | { kind: "unsafe" }
@@ -28,8 +33,6 @@ type CourseStartRequestInput = Pick<
   CourseStartRequest,
   "canonicalTitle" | "courseMode" | "generationStatus" | "scope" | "targetLanguage"
 >;
-
-type CourseStartRequestWithCourse = CourseStartRequest & { course: Course | null };
 
 /**
  * Finds the cached routing decision for this locale and prompt. The request row
@@ -42,8 +45,9 @@ async function findCachedStartRequest({
 }: {
   language: string;
   prompt: string;
-}): Promise<CourseStartRequest | null> {
+}): Promise<CourseStartRequestWithCourse | null> {
   return prisma.courseStartRequest.findUnique({
+    include: { course: true },
     where: { languageNormalizedPrompt: { language, normalizedPrompt: normalizeString(prompt) } },
   });
 }
@@ -53,7 +57,17 @@ async function findCachedStartRequest({
  * the same mapping used for newly routed requests so cached prompts and first
  * submissions cannot drift.
  */
-function getStartRequestResolution(request: CourseStartRequest): CourseStartRequestResolution {
+async function getStartRequestResolution(
+  request: CourseStartRequestWithCourse,
+): Promise<CourseStartRequestResolution> {
+  if (request.scope === "topic") {
+    const href = await getReusableCourseHrefForStartRequest(request);
+
+    if (href) {
+      return { href, kind: "course" };
+    }
+  }
+
   if (request.scope === "topic" || (request.scope === "language" && request.targetLanguage)) {
     return {
       kind: "generate",
@@ -148,7 +162,7 @@ async function upsertCourseStartRequest({
   language: string;
   prompt: string;
   request: CourseStartRequestInput;
-}): Promise<CourseStartRequest> {
+}): Promise<CourseStartRequestWithCourse> {
   const normalizedPrompt = normalizeString(prompt);
 
   return prisma.courseStartRequest.upsert({
@@ -162,6 +176,7 @@ async function upsertCourseStartRequest({
       scope: request.scope,
       targetLanguage: request.targetLanguage,
     },
+    include: { course: true },
     update: {},
     where: { languageNormalizedPrompt: { language, normalizedPrompt } },
   });
@@ -238,64 +253,6 @@ export async function getCourseStartRequestById(
   }
 
   return prisma.courseStartRequest.findUnique({ include: { course: true }, where: { id } });
-}
-
-/**
- * Finds the request that owns an existing course shell. Course pages redirect
- * empty AI courses here so learners can resume the generation run that created
- * that shell.
- */
-export async function getCourseStartRequestByCourseSlug({
-  language,
-  slug,
-}: {
-  language: string;
-  slug: string;
-}): Promise<CourseStartRequest | null> {
-  const course = await prisma.course.findFirst({
-    include: { startRequests: { orderBy: { createdAt: "asc" }, take: 1 } },
-    where: { language, organization: { slug: AI_ORG_SLUG }, slug },
-  });
-
-  return course?.startRequests[0] ?? null;
-}
-
-/**
- * Creates the controlled request used by `/start/speak/[language]`. Language
- * courses still use the course-generation workflow, but the workflow input is a
- * language-scoped start request instead of an adapter row.
- */
-export async function getOrCreateLanguageCourseStartRequest({
-  language,
-  targetLanguage,
-  title,
-}: {
-  language: string;
-  targetLanguage: string;
-  title: string;
-}): Promise<CourseStartRequest> {
-  const prompt = `Learn ${title}`;
-  const normalizedPrompt = normalizeString(prompt);
-
-  const existing = await prisma.courseStartRequest.findUnique({
-    where: { languageNormalizedPrompt: { language, normalizedPrompt } },
-  });
-
-  if (existing) {
-    return existing;
-  }
-
-  return upsertCourseStartRequest({
-    language,
-    prompt,
-    request: {
-      canonicalTitle: title,
-      courseMode: "full",
-      generationStatus: "pending",
-      scope: "language",
-      targetLanguage,
-    },
-  });
 }
 
 /**

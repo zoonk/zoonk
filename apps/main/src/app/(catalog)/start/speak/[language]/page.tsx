@@ -1,6 +1,6 @@
+import { getAiCourseHref } from "@/data/courses/course-href";
 import {
   getCompletedLanguageCourse,
-  getLanguageCourseHref,
   getOrCreateLanguageCourseRequest,
 } from "@/data/courses/language-course";
 import { getLanguageName, isTTSSupportedLanguage } from "@zoonk/utils/languages";
@@ -27,7 +27,7 @@ export default async function StartSpeakLanguage({ params }: PageProps<"/start/s
   const completedCourse = await getCompletedLanguageCourse({ language: locale, targetLanguage });
 
   if (completedCourse) {
-    redirect(getLanguageCourseHref(completedCourse));
+    redirect(getAiCourseHref(completedCourse));
   }
 
   const title = getLanguageName({ targetLanguage, userLanguage: locale });

@@ -1,4 +1,4 @@
-import { getCourseStartRequestByCourseSlug } from "@/data/courses/course-start-request";
+import { getCourseStartRequestByCourseSlug } from "@/data/courses/course-start-request-by-course";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { getLocale } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";

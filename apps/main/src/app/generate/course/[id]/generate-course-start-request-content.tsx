@@ -1,5 +1,6 @@
 import { GenerationExitLink } from "@/components/generation/generation-exit-link";
 import { getCourseStartRequestById } from "@/data/courses/course-start-request";
+import { getCourseSlugForTitle } from "@zoonk/core/courses/slug";
 import {
   Container,
   ContainerBody,
@@ -10,7 +11,6 @@ import {
 import { Empty, EmptyContent, EmptyHeader } from "@zoonk/ui/components/empty";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";
 import { GenerationClient } from "./generation-client";
@@ -34,7 +34,11 @@ export async function GenerateCourseStartRequestContent({
   }
 
   const t = await getExtracted();
-  const courseSlug = ensureLocaleSuffix(toSlug(request.canonicalTitle), request.language);
+
+  const courseSlug = getCourseSlugForTitle({
+    language: request.language,
+    title: request.canonicalTitle,
+  });
 
   return (
     <Container variant="narrow">
