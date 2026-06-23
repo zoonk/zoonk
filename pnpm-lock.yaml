@@ -16,8 +16,8 @@ catalogs:
       specifier: 3.2.2
       version: 3.2.2
     '@eloqnt/cli':
-      specifier: 0.0.2
-      version: 0.0.2
+      specifier: 0.0.4
+      version: 0.0.4
     '@mdx-js/loader':
       specifier: 3.1.1
       version: 3.1.1
@@ -128,7 +128,7 @@ importers:
     devDependencies:
       '@eloqnt/cli':
         specifier: 'catalog:'
-        version: 0.0.2
+        version: 0.0.4
       '@playwright/test':
         specifier: 1.60.0
         version: 1.60.0
@@ -759,7 +759,7 @@ importers:
     dependencies:
       '@eloqnt/cli':
         specifier: 'catalog:'
-        version: 0.0.2
+        version: 0.0.4
     devDependencies:
       '@typescript/native-preview':
         specifier: 'catalog:'
@@ -1434,15 +1434,15 @@ packages:
   '@electric-sql/pglite@0.4.1':
     resolution: {integrity: sha512-mZ9NzzUSYPOCnxHH1oAHPRzoMFJHY472raDKwXl/+6oPbpdJ7g8LsCN4FSaIIfkiCKHhb3iF/Zqo3NYxaIhU7Q==}
 
-  '@eloqnt/cli@0.0.2':
-    resolution: {integrity: sha512-6GQH/if/WYBYwiunY8MkvN2/+AnGpwL+p0MQmVzAjASbzMzT/wxZEU2tvrHw/SbKC1OKQLXp2cXpyFRzYRyX5w==}
+  '@eloqnt/cli@0.0.4':
+    resolution: {integrity: sha512-vmLdGpg3MaoEE6tmU7AzxECP6dsdLRrfJV4Zv7bu+XPLEVM0nhrY+HO4EQgAE5Pa84V/2jCuuOrhZd37RCvGjQ==}
     hasBin: true
 
   '@eloqnt/inference@0.0.1':
     resolution: {integrity: sha512-I6wb0adVBwr/LD3Ps49B04vuR841upLSOUPYfbcOc9PzdZzLGp58dj1iDoHALoyJ4q4weCbkpdCpsCvX1rxWDA==}
 
-  '@eloqnt/sdk@0.0.2':
-    resolution: {integrity: sha512-poq9u4lFrK2crPmrFLxPnlb0MMHNN33yFNP+bsMCIQ+sP2rfjQBphQTc9d/7VpuJ6tPROH1XicJYgzhd2EmDDw==}
+  '@eloqnt/sdk@0.0.4':
+    resolution: {integrity: sha512-aKT+TaLPmV8KC7vjyz2j9DxMgm+xsJlrxnTR8XRlajqPNjmHlsfz91PKXCu60gQgB6mgQCh5gIclId6sORO6cw==}
 
   '@emnapi/core@1.10.0':
     resolution: {integrity: sha512-yq6OkJ4p82CAfPl0u9mQebQHKPJkY7WrIuk205cTYnYe+k2Z8YBh11FrbRG/H6ihirqcacOgl2BIO8oyMQLeXw==}
@@ -8167,10 +8167,10 @@ snapshots:
 
   '@electric-sql/pglite@0.4.1': {}
 
-  '@eloqnt/cli@0.0.2':
+  '@eloqnt/cli@0.0.4':
     dependencies:
       '@clack/prompts': 1.6.0
-      '@eloqnt/sdk': 0.0.2
+      '@eloqnt/sdk': 0.0.4
       citty: 0.1.6
       open: 11.0.0
       picocolors: 1.1.1
@@ -8182,7 +8182,7 @@ snapshots:
       ai: 6.0.203(zod@4.4.3)
       zod: 4.4.3
 
-  '@eloqnt/sdk@0.0.2':
+  '@eloqnt/sdk@0.0.4':
     dependencies:
       '@eloqnt/inference': 0.0.1
       '@formatjs/icu-messageformat-parser': 3.5.11
