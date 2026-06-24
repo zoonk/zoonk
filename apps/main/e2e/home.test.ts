@@ -291,9 +291,9 @@ test.describe("Home Page - Progress Section", () => {
     await expect(authenticatedPage.getByText(/^progress$/iu)).toBeVisible();
     await expect(authenticatedPage.getByText(/best time/iu)).toBeVisible();
 
-    // Use regex to match time period with percentage (e.g., "Morning with 90%")
+    // Use regex to match time period with percentage (e.g., "Morning with 90%" or "Morning with 90.5%")
     await expect(
-      authenticatedPage.getByText(/(?:morning|afternoon|evening|night) with \d+%/iu),
+      authenticatedPage.getByText(/(?:morning|afternoon|evening|night) with \d+(?:\.\d+)?%/iu),
     ).toBeVisible();
   });
 

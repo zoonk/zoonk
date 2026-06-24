@@ -60,9 +60,9 @@ export async function createLessonContext({
 }
 
 /**
- * Practice and quiz generation use explanation title and description metadata
- * since the previous practice or quiz lesson. This helper still creates a
- * completed source lesson with one step for tests that need saved content too.
+ * Practice and quiz generation use explanation title and description metadata.
+ * This helper still creates a completed source lesson with one step for tests
+ * that need saved content too.
  */
 export async function createCompletedExplanation({
   chapterId,

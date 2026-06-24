@@ -26,6 +26,8 @@ type LessonGenerationContext = Awaited<ReturnType<typeof getLessonStep>>;
 
 type GeneratedLessonContext = LessonGenerationContext & { kind: StandaloneGeneratedLessonKind };
 
+type GeneratedLessonCompletion = { description?: string; title?: string };
+
 type LessonGenerationResult = "filtered" | "ready";
 
 /**
@@ -65,45 +67,48 @@ function isGeneratedLessonContext(
  * Chapter generation has already planned the lesson kind, so this step should
  * only dispatch to the matching lesson workflow instead of reclassifying it.
  */
-async function generateLessonForKind(context: GeneratedLessonContext): Promise<void> {
+async function generateLessonForKind(
+  context: GeneratedLessonContext,
+): Promise<GeneratedLessonCompletion> {
   if (context.kind === "tutorial") {
     await tutorialLessonWorkflow(context);
-    return;
+    return {};
   }
 
   if (context.kind === "explanation") {
     await explanationLessonWorkflow(context);
-    return;
+    return {};
   }
 
   if (context.kind === "practice") {
-    await practiceLessonWorkflow(context);
-    return;
+    return practiceLessonWorkflow(context);
   }
 
   if (context.kind === "quiz") {
     await quizLessonWorkflow(context);
-    return;
+    return {};
   }
 
   if (context.kind === "alphabet") {
     await alphabetLessonWorkflow(context);
-    return;
+    return {};
   }
 
   if (context.kind === "vocabulary") {
     await vocabularyLessonWorkflow(context);
-    return;
+    return {};
   }
 
   if (context.kind === "reading") {
     await readingLessonWorkflow(context);
-    return;
+    return {};
   }
 
   if (context.kind === "grammar") {
     await grammarLessonWorkflow(context);
   }
+
+  return {};
 }
 
 /**
@@ -167,12 +172,17 @@ async function runLessonGeneration(input: {
   }
 
   try {
-    const [, imageUrl] = await Promise.all([
+    const [completion, imageUrl] = await Promise.all([
       generateLessonForKind(input.context),
       generateLessonImageStep(input.context),
     ]);
 
-    await setLessonAsCompletedStep({ context: input.context, imageUrl });
+    await setLessonAsCompletedStep({
+      context: input.context,
+      description: completion.description,
+      imageUrl,
+      title: completion.title,
+    });
 
     return "ready";
   } catch (error) {

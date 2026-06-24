@@ -4,7 +4,7 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import { appendLessonRichTextPrompt } from "../_utils/append-lesson-rich-text-prompt";
-import { type SourceLesson, formatSourceLessonsForPrompt } from "../_utils/source-lessons";
+import { type SourceLesson, formatSourceLessonForPrompt } from "../_utils/source-lessons";
 import baseSystemPrompt from "./lesson-practice.prompt.md";
 
 const defaultModel = "openai/gpt-5.5";
@@ -17,8 +17,8 @@ const practiceOptionSchema = z.object({
   text: z.string(),
 });
 
-const practiceStepSchema = z.object({
-  context: z.string(),
+const practiceSceneSchema = z.object({
+  dialogue: z.string(),
   imagePrompt: z.string(),
   options: z.array(practiceOptionSchema).min(1),
   question: z.string(),
@@ -26,8 +26,7 @@ const practiceStepSchema = z.object({
 
 const schema = z.object({
   scenario: z.object({ imagePrompt: z.string(), text: z.string(), title: z.string() }),
-  steps: z.array(practiceStepSchema).min(1),
-  title: z.string(),
+  scenes: z.array(practiceSceneSchema).min(1),
 });
 
 export type LessonPracticeSchema = z.infer<typeof schema>;
@@ -36,7 +35,7 @@ export type LessonPracticeParams = {
   chapterTitle: string;
   courseTitle: string;
   language: string;
-  sourceLessons: SourceLesson[];
+  lesson: SourceLesson;
   model?: string;
   useFallback?: boolean;
   reasoningEffort?: ReasoningEffort;
@@ -46,20 +45,19 @@ export async function generateLessonPractice({
   chapterTitle,
   courseTitle,
   language,
-  sourceLessons,
+  lesson,
   model = defaultModel,
   useFallback = true,
   reasoningEffort,
 }: LessonPracticeParams) {
-  const formattedSourceLessons = formatSourceLessonsForPrompt(sourceLessons);
+  const formattedLesson = formatSourceLessonForPrompt(lesson);
   const promptLanguage = getPromptLanguageName({ language });
 
   const userPrompt = `
     CHAPTER_TITLE: ${chapterTitle}
     COURSE_TITLE: ${courseTitle}
     LANGUAGE: ${promptLanguage}
-    SOURCE_LESSONS:
-    ${formattedSourceLessons}
+    LESSON: ${formattedLesson}
   `;
 
   const providerOptions = buildProviderOptions({

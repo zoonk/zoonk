@@ -65,7 +65,8 @@ export async function saveStaticLessonContent({
 }
 
 /**
- * Saves the scenario intro plus multiple-choice practice questions.
+ * Saves the scenario intro and multiple-choice questions that make up the
+ * stored practice step content.
  */
 export async function savePracticeLessonContent({
   content,

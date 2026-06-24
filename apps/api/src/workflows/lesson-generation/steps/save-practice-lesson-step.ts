@@ -8,7 +8,7 @@ import { type LessonContext } from "./get-lesson-step";
 
 /**
  * Replaces any partial practice steps with the generated scenario, questions,
- * and images in one save operation so retries do not leave mixed content.
+ * and images so retries do not leave mixed content.
  */
 export async function savePracticeLessonStep({
   content,

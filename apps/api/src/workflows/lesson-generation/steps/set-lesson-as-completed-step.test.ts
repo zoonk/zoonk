@@ -29,17 +29,21 @@ describe(setLessonAsCompletedStep, () => {
     );
   });
 
-  it("saves the generated lesson image with the completion status", async () => {
+  it("saves generated lesson metadata with the completion status", async () => {
     const context = await createLessonContext({ generationStatus: "running", organizationId });
 
     await setLessonAsCompletedStep({
       context,
+      description: "Generated practice scenario",
       imageUrl: "https://example.com/lesson-complete.webp",
+      title: "Generated Practice",
     });
 
     const updatedLesson = await prisma.lesson.findUniqueOrThrow({ where: { id: context.id } });
 
+    expect(updatedLesson.description).toBe("Generated practice scenario");
     expect(updatedLesson.generationStatus).toBe("completed");
     expect(updatedLesson.imageUrl).toBe("https://example.com/lesson-complete.webp");
+    expect(updatedLesson.title).toBe("Generated Practice");
   });
 });
