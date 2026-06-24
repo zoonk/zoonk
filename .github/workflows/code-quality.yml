@@ -63,6 +63,9 @@ jobs:
       - name: Generate Prisma client
         run: pnpm db:generate
 
+      - name: Check for i18n errors
+        run: pnpm eloqnt:lint
+
       - name: Run type check
         run: pnpm typecheck
 
