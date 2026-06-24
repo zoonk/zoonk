@@ -67,7 +67,7 @@ msgstr "Vérifie ton email"
 
 #: src/app/auth/otp/page.tsx
 msgid "LZHcmZ"
-msgstr "Saisis le code que nous avons envoyé à {email}:"
+msgstr "Saisis le code que nous avons envoyé à {email} :"
 
 #: src/app/auth/otp/page.tsx
 msgid "ChATeO"
