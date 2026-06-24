@@ -725,14 +725,6 @@ msgstr "No se encontraron idiomas"
 msgid "L820yz"
 msgstr "Buscar idiomas"
 
-#: src/app/(catalog)/start/speak/source-language-switcher.tsx
-msgid "Yl4ReI"
-msgstr "Elige el idioma desde el que aprendes"
-
-#: src/app/(catalog)/start/speak/source-language-switcher.tsx
-msgid "sPHVML"
-msgstr "Aprenderás a partir de"
-
 #: src/app/(catalog)/start/start-content.tsx
 msgid "ah2CR6"
 msgstr "Aprende un idioma con consejos de pronunciación, vocabulario, lectura y escucha."

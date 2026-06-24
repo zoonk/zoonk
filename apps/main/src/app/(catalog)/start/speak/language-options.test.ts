@@ -63,4 +63,38 @@ describe(getLanguageOptions, () => {
 
     expect(languages.some((language) => language.code === "pt")).toBe(false);
   });
+
+  it("pins popular languages for French learners and removes French", () => {
+    const languages = getLanguageOptions({ locale: "fr" });
+
+    expect(languages.slice(0, 8).map((language) => language.code)).toStrictEqual([
+      "en",
+      "es",
+      "de",
+      "it",
+      "pt",
+      "ja",
+      "ko",
+      "zh",
+    ]);
+
+    expect(languages.some((language) => language.code === "fr")).toBe(false);
+  });
+
+  it("pins popular languages for German learners and removes German", () => {
+    const languages = getLanguageOptions({ locale: "de" });
+
+    expect(languages.slice(0, 8).map((language) => language.code)).toStrictEqual([
+      "en",
+      "es",
+      "fr",
+      "it",
+      "pt",
+      "ja",
+      "ko",
+      "zh",
+    ]);
+
+    expect(languages.some((language) => language.code === "de")).toBe(false);
+  });
 });

@@ -72,6 +72,7 @@ test.describe("Start language path", () => {
       page.getByRole("heading", { name: /what language do you want to learn/iu }),
     ).toBeVisible();
 
+    await expect(page.getByRole("button", { name: "Português" })).not.toBeVisible();
     await expect(page.getByRole("link", { name: /^english/iu })).not.toBeVisible();
 
     await page.getByRole("searchbox", { name: /search languages/iu }).fill("Javanese");
@@ -106,30 +107,6 @@ test.describe("Start language path", () => {
     ).toBeVisible();
 
     await expect(page.getByRole("link", { name: /^english/iu })).not.toBeVisible();
-  });
-
-  test("switches the app language from the language picker", async ({ page }) => {
-    await page.goto("/start/speak");
-
-    await expect(page.getByText(/you'll learn from/iu)).toBeVisible();
-
-    await expect(page.getByRole("button", { name: "English" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
-
-    await page.getByRole("button", { name: "Português" }).click();
-
-    await expect(
-      page.getByRole("heading", { name: /qual idioma você quer aprender/iu }),
-    ).toBeVisible();
-
-    await expect(page.getByText(/você vai aprender a partir de/iu)).toBeVisible();
-
-    await expect(page.getByRole("button", { name: "Português" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
   });
 
   test("opens an existing completed language course without generation", async ({ page }) => {

@@ -1,5 +1,20 @@
 import { describe, expect, it } from "vitest";
-import { getCountryFromAcceptLanguage } from "./locale";
+import {
+  getCountryFromAcceptLanguage,
+  getLocaleFromHeaders,
+  getLocaleFromRequest,
+  isValidLocale,
+} from "./locale";
+
+describe(isValidLocale, () => {
+  it("accepts every app locale", () => {
+    expect(["en", "es", "pt", "fr", "de"].every((locale) => isValidLocale(locale))).toBe(true);
+  });
+
+  it("rejects unsupported locale codes", () => {
+    expect(isValidLocale("it")).toBe(false);
+  });
+});
 
 describe(getCountryFromAcceptLanguage, () => {
   it("extracts country from first tag with region", () => {
@@ -40,5 +55,36 @@ describe(getCountryFromAcceptLanguage, () => {
 
   it("extracts region from tags with script subtags", () => {
     expect(getCountryFromAcceptLanguage("zh-Hant-TW")).toBe("TW");
+  });
+});
+
+describe(getLocaleFromHeaders, () => {
+  it("matches French from regional browser preferences", () => {
+    expect(getLocaleFromHeaders("fr-FR,fr;q=0.9,en;q=0.8")).toBe("fr");
+  });
+
+  it("matches German from regional browser preferences", () => {
+    expect(getLocaleFromHeaders("de-DE,de;q=0.9,en;q=0.8")).toBe("de");
+  });
+});
+
+describe(getLocaleFromRequest, () => {
+  it("uses a valid manual locale cookie before browser detection", () => {
+    expect(
+      getLocaleFromRequest({ acceptLanguage: "fr-FR,fr;q=0.9,en;q=0.8", cookieLocale: "de" }),
+    ).toBe("de");
+  });
+
+  it("ignores invalid manual locale cookies and detects from the browser", () => {
+    expect(
+      getLocaleFromRequest({
+        acceptLanguage: "fr-FR,fr;q=0.9,en;q=0.8",
+        cookieLocale: "NEXT_LOCALE",
+      }),
+    ).toBe("fr");
+  });
+
+  it("detects from the browser when there is no manual locale cookie", () => {
+    expect(getLocaleFromRequest({ acceptLanguage: "de-DE,de;q=0.9,en;q=0.8" })).toBe("de");
   });
 });

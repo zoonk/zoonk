@@ -6,13 +6,20 @@ import {
 import { type SupportedLocale, isValidLocale } from "@zoonk/utils/locale";
 import { normalizeString } from "@zoonk/utils/string";
 
-const DEFAULT_LANGUAGE_REGIONS: Readonly<Record<string, string>> = { en: "US", pt: "BR" };
+const DEFAULT_LANGUAGE_REGIONS: Readonly<Record<string, string>> = {
+  de: "DE",
+  en: "US",
+  fr: "FR",
+  pt: "BR",
+};
 
 const REGIONAL_INDICATOR_SYMBOL_OFFSET = 127_397;
 
 const POPULAR_LANGUAGE_CODES_BY_LOCALE = {
+  de: ["en", "es", "fr", "it", "pt", "ja", "ko", "zh"],
   en: ["es", "fr", "ja", "de", "ko", "it", "zh", "pt"],
   es: ["en", "pt", "fr", "it", "ja", "de", "ko", "zh"],
+  fr: ["en", "es", "de", "it", "pt", "ja", "ko", "zh"],
   pt: ["en", "es", "fr", "it", "ja", "de", "ko", "zh"],
 } as const satisfies Record<SupportedLocale, readonly TTSSupportedLanguageCode[]>;
 
@@ -71,8 +78,8 @@ function getPopularLanguageRanks(locale: string): Map<TTSSupportedLanguageCode, 
 /**
  * Builds the language picker from the canonical TTS support list so the UI
  * cannot drift from the audio generation capability it is promising. The
- * current app language is excluded because an en-en, es-es, or pt-pt course
- * does not teach a new language.
+ * current app language is excluded because a course where the source and
+ * target language are identical does not teach a new language.
  */
 export function getLanguageOptions({ locale }: { locale: string }): LanguageOption[] {
   const popularLanguageRanks = getPopularLanguageRanks(locale);

@@ -6,10 +6,11 @@ describe(getPromptLanguageName, () => {
     expect(getPromptLanguageName({ language: "en" })).toBe("US English");
     expect(getPromptLanguageName({ language: "pt" })).toBe("Português Brasileiro");
     expect(getPromptLanguageName({ language: "es" })).toBe("Español Latinoamericano");
+    expect(getPromptLanguageName({ language: "fr" })).toBe("Français");
+    expect(getPromptLanguageName({ language: "de" })).toBe("Deutsch");
   });
 
   it("falls back to localized language names for languages outside the app locale set", () => {
-    expect(getPromptLanguageName({ language: "de" })).toBe("Deutsch");
     expect(getPromptLanguageName({ language: "ja", userLanguage: "en" })).toBe("Japanese");
     expect(getPromptLanguageName({ language: "ja", userLanguage: "pt" })).toBe("Japonês");
   });
