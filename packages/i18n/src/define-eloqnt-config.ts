@@ -5,6 +5,7 @@ type EloqntProjectOptions = { srcPath?: string | string[] };
 
 /**
  * Shares configuration for consumers while allowing local overrides.
+ * @public
  */
 export default function defineEloqntConfig(options: EloqntProjectOptions = {}) {
   return defineConfig({

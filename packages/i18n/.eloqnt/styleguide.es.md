@@ -7,3 +7,4 @@
 - "course": "curso"
 - "chapter": "capítulo"
 - "lesson": "lección"
+- "hello@zoonk.com": "contacto@zoonk.com"

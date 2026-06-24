@@ -36,7 +36,6 @@
       "ignore": ["src/prisma/seed.ts", "src/prisma/seed/**"],
       "prisma": false
     },
-    "packages/i18n": { "includeEntryExports": false },
     "packages/player": {
       "entry": [".eloqnt/config.ts"],
       "project": ["src/**/*.{ts,tsx}!", "!**/_test-utils/**!"]

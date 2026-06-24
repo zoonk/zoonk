@@ -204,15 +204,15 @@ msgstr "Continuar"
 
 #: src/app/(catalog)/(home)/continue-learning.tsx
 msgid "0X-xfW"
-msgstr "Continue aprendendo"
+msgstr "Continue estudando"
 
 #: src/app/(catalog)/(home)/energy.tsx
 msgid "soDmlG"
-msgstr "Continue aprendendo para aumentá-la"
+msgstr "Continue estudando para aumentar sua energia"
 
 #: src/app/(catalog)/(home)/energy.tsx
 msgid "WgeB0r"
-msgstr "Continue aprendendo para mantê-la"
+msgstr "Continue estudando para manter sua energia"
 
 #: src/app/(catalog)/(home)/energy.tsx
 #: src/app/(progress)/_components/metric-pills.tsx
