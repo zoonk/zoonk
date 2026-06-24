@@ -1,5 +1,34 @@
+import { type Browser, type Page } from "@playwright/test";
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { expect, test } from "./fixtures";
+
+/**
+ * Recreate the old fallback cookie without using the new locale fixture. This
+ * proves a stale cookie from before the manual-override rename cannot block
+ * browser language detection after a language becomes supported.
+ */
+async function setLegacyLocaleCookie({ locale, page }: { locale: string; page: Page }) {
+  await page
+    .context()
+    .addCookies([{ domain: "localhost", name: "NEXT_LOCALE", path: "/", value: locale }]);
+}
+
+/**
+ * Create a page with a real browser locale because that is how Playwright sets
+ * the Accept-Language header used by server-side locale negotiation.
+ */
+async function createPageWithBrowserLocale({
+  browser,
+  locale,
+}: {
+  browser: Browser;
+  locale: string;
+}) {
+  const context = await browser.newContext({ locale });
+  const page = await context.newPage();
+
+  return { context, page };
+}
 
 test.describe("Locale Behavior - English", () => {
   test("home page shows English start content", async ({ page }) => {
@@ -27,6 +56,36 @@ test.describe("Locale Behavior - Portuguese", () => {
 
     await expect(page).toHaveURL(/\/$/u);
     await expect(page.getByRole("heading", { name: /qual é o seu objetivo/iu })).toBeVisible();
+  });
+});
+
+test.describe("Locale Detection", () => {
+  test("ignores legacy English locale cookie when browser language is now supported", async ({
+    browser,
+  }) => {
+    const { context, page } = await createPageWithBrowserLocale({ browser, locale: "fr-FR" });
+
+    try {
+      await setLegacyLocaleCookie({ locale: "en", page });
+      await page.goto("/");
+
+      await expect(page.getByRole("heading", { name: "Quel est votre objectif ?" })).toBeVisible();
+    } finally {
+      await context.close();
+    }
+  });
+
+  test("manual locale cookie wins over browser language detection", async ({ browser }) => {
+    const { context, page } = await createPageWithBrowserLocale({ browser, locale: "fr-FR" });
+
+    try {
+      await setLocale(page, "de");
+      await page.goto("/");
+
+      await expect(page.getByRole("heading", { name: "Was ist Ihr Ziel?" })).toBeVisible();
+    } finally {
+      await context.close();
+    }
   });
 });
 

@@ -8,7 +8,6 @@ import {
 } from "../_components/start-surface";
 import { LanguageList } from "./language-list";
 import { getLanguageOptions } from "./language-options";
-import { SourceLanguageSwitcher } from "./source-language-switcher";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
@@ -37,8 +36,6 @@ export default async function StartSpeak() {
           <StartSurfaceTitle>{t("What language do you want to learn?")}</StartSurfaceTitle>
         </StartSurfaceContent>
       </StartSurfaceHeader>
-
-      <SourceLanguageSwitcher />
 
       <LanguageList
         emptyLabel={t("No languages found")}

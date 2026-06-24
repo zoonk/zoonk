@@ -1,0 +1,368 @@
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: next-intl\n"
+"X-Crowdin-SourceKey: msgstr\n"
+
+#: src/components/alphabet-step.tsx
+msgid "w0J_gv"
+msgstr "Alphabet"
+
+#: src/components/arrange-words-answer-area.tsx
+#: src/components/fill-blank-step.tsx
+#: src/components/sort-order-step.tsx
+msgid "6NoIUl"
+msgstr "Correct"
+
+#: src/components/arrange-words-answer-area.tsx
+#: src/components/fill-blank-step.tsx
+#: src/components/sort-order-step.tsx
+msgid "Ypr9T5"
+msgstr "Incorrect"
+
+#: src/components/arrange-words-answer-area.tsx
+#: src/components/sort-order-step.tsx
+msgid "hFFOe-"
+msgstr "{item}. {result}."
+
+#: src/components/arrange-words-answer-area.tsx
+msgid "vPyO9S"
+msgstr "Position {position} : {item}. Appuyez pour supprimer."
+
+#: src/components/arrange-words-answer-area.tsx
+#: src/components/select-image-step.tsx
+msgid "1nJY2_"
+msgstr "Votre réponse"
+
+#: src/components/arrange-words-answer-area.tsx
+msgid "7R_rOB"
+msgstr "Appuyez sur des mots pour construire votre réponse"
+
+#: src/components/arrange-words.tsx
+#: src/components/fill-blank-step.tsx
+msgid "e7WNdK"
+msgstr "Banque de mots"
+
+#: src/components/completion-auth-branch.tsx
+msgid "E2sGaF"
+msgstr "Quitter"
+
+#: src/components/completion-auth-branch.tsx
+msgid "FazwRl"
+msgstr "Réessayez"
+
+#: src/components/completion-auth-branch.tsx
+#: src/components/completion-milestone-actions.tsx
+#: src/components/step-navigation-button-group.tsx
+msgid "9-Ddtu"
+msgstr "Suivant"
+
+#: src/components/completion-auth-branch.tsx
+msgid "odXlk8"
+msgstr "Connectez-vous"
+
+#: src/components/completion-brain-power-milestone.tsx
+msgid "D7TYjj"
+msgstr "Enregistrement quotidien"
+
+#: src/components/completion-brain-power-milestone.tsx
+msgid "d9jO0T"
+msgstr "Vous n’avez jamais autant appris qu’aujourd’hui. Votre puissance cérébrale a augmenté de {brainPower} BP. Bravo!"
+
+#: src/components/completion-energy-milestone.tsx
+msgid "m2WzLQ"
+msgstr "Énergie maximale !"
+
+#: src/components/completion-energy-milestone.tsx
+msgid "Fo6YtA"
+msgstr "Félicitations ! Vous avez atteint l'énergie maximale. Continuez à pratiquer chaque jour pour maintenir votre énergie à 100 %."
+
+#: src/components/completion-energy-milestone.tsx
+msgid "vlOyrO"
+msgstr "{energy}% d'énergie"
+
+#: src/components/completion-energy-milestone.tsx
+msgid "3Jd-mJ"
+msgstr "Vos efforts portent leurs fruits. Suivez des leçons chaque jour pour augmenter votre énergie."
+
+#: src/components/completion-energy-milestone.tsx
+msgid "5YVYKd"
+msgstr "1 an d'énergie maximale"
+
+#: src/components/completion-energy-milestone.tsx
+msgid "1WNk4i"
+msgstr "{days} jours d'énergie maximale"
+
+#: src/components/completion-energy-milestone.tsx
+msgid "cIxpmv"
+msgstr "Wow, quelle incroyable cohérence ! Continuez à étudier tous les jours pour maintenir votre énergie à 100 %."
+
+#: src/components/completion-level-milestone.tsx
+msgid "3UK8wh"
+msgstr "Ceinture {color}"
+
+#: src/components/completion-level-milestone.tsx
+msgid "155cHi"
+msgstr "Niveau atteint"
+
+#: src/components/completion-level-milestone.tsx
+msgid "mb2zm-"
+msgstr "Vous avez renforcé votre esprit et atteint le niveau {level} de la ceinture {color}. Bravo!"
+
+#: src/components/completion-level-milestone.tsx
+msgid "Bk6B6r"
+msgstr "Presque là"
+
+#: src/components/completion-level-milestone.tsx
+msgid "34q-SH"
+msgstr "{count, plural, one {Vos connaissances progressent. Terminez encore # leçon pour atteindre le niveau {level} de la ceinture {color}.} other {Vos connaissances progressent. Terminez encore # leçons pour atteindre le niveau {level} de la ceinture {color}.}}"
+
+#: src/components/completion-milestone-actions.tsx
+msgid "DiIkZH"
+msgstr "Chapitre suivant"
+
+#: src/components/completion-milestone-actions.tsx
+msgid "w0D7HC"
+msgstr "Cours de révision"
+
+#: src/components/completion-milestone-actions.tsx
+msgid "wm_M34"
+msgstr "Chapitre de révision"
+
+#: src/components/completion-progress-milestone-screen.tsx
+msgid "iSioEh"
+msgstr "En savoir plus sur l'énergie"
+
+#: src/components/completion-progress-milestone-screen.tsx
+msgid "Q0R3MU"
+msgstr "En savoir plus sur les niveaux"
+
+#: src/components/completion-progress-milestone-screen.tsx
+#: src/components/step-action-button.tsx
+msgid "acrOoz"
+msgstr "Continuer"
+
+#: src/components/completion-screen.tsx
+msgid "95stPq"
+msgstr "Terminé"
+
+#: src/components/completion-screen.tsx
+msgid "2wDWd0"
+msgstr "Cours terminé"
+
+#: src/components/completion-screen.tsx
+msgid "t2VOpl"
+msgstr "Chapitre terminé"
+
+#: src/components/completion-screen.tsx
+#: src/components/in-play-sticky-header.tsx
+msgid "qXzoF7"
+msgstr "Leçon {current} sur {total}"
+
+#: src/components/completion-screen.tsx
+msgid "9wxMoj"
+msgstr "Avancement du chapitre"
+
+#: src/components/completion-screen.tsx
+msgid "P768k7"
+msgstr "correct"
+
+#: src/components/feedback-answer-blocks.tsx
+msgid "3nOd8f"
+msgstr "Votre réponse :"
+
+#: src/components/feedback-answer-blocks.tsx
+#: src/components/inline-feedback.tsx
+msgid "QAJ_Tl"
+msgstr "Bonne réponse :"
+
+#: src/components/feedback-screen.tsx
+msgid "fpO9TK"
+msgstr "Traduire :"
+
+#: src/components/fill-blank-step.tsx
+msgid "SL2Bob"
+msgstr "Vide {position} : {item}. {result}."
+
+#: src/components/fill-blank-step.tsx
+msgid "wUEGVH"
+msgstr "Vide {position} : {item}. Appuyez pour supprimer."
+
+#: src/components/fill-blank-step.tsx
+msgid "FmmJ_j"
+msgstr "Vide {position}"
+
+#: src/components/inline-feedback.tsx
+msgid "HvLGEN"
+msgstr "Répondre aux commentaires"
+
+#: src/components/lesson-info-popover.tsx
+msgid "RwePAQ"
+msgstr "Informations sur la leçon"
+
+#: src/components/listening-step.tsx
+msgid "aAmWaS"
+msgstr "Qu'entendez-vous ?"
+
+#: src/components/listening-step.tsx
+#: src/components/reading-step.tsx
+msgid "19nXyC"
+msgstr "Traduisez cette phrase :"
+
+#: src/components/match-columns-step.tsx
+msgid "fV1MzK"
+msgstr "Faites correspondre les paires."
+
+#: src/components/match-columns-step.tsx
+msgid "ja1JDt"
+msgstr "Toutes les paires correspondaient. Appuyez sur Vérifier pour continuer."
+
+#: src/components/play-audio-button.tsx
+msgid "WGft2H"
+msgstr "Mettre en pause la prononciation"
+
+#: src/components/play-audio-button.tsx
+msgid "lYWSeP"
+msgstr "Jouer la prononciation"
+
+#: src/components/player-choice-scene.tsx
+msgid "akd-cv"
+msgstr "Options de réponse"
+
+#: src/components/player-header.tsx
+msgid "rbrahO"
+msgstr "Fermer"
+
+#: src/components/player-progress-bar.tsx
+msgid "dYp90P"
+msgstr "Progression de la leçon"
+
+#: src/components/player-shell.tsx
+msgid "tJtNzs"
+msgstr "Écran du joueur"
+
+#: src/components/player-shell.tsx
+msgid "QmGDqt"
+msgstr "Contrôles du joueur"
+
+#: src/components/select-image-step.tsx
+msgid "mhiTW7"
+msgstr "Bonne réponse"
+
+#: src/components/select-image-step.tsx
+msgid "NA6C_-"
+msgstr "Options d'images"
+
+#: src/components/sort-order-step.tsx
+msgid "p5llOK"
+msgstr "Trier les éléments"
+
+#: src/components/sort-order-step.tsx
+msgid "VA8c_A"
+msgstr "Bon ordre :"
+
+#: src/components/sort-order-step.tsx
+msgid "9lc1oV"
+msgstr "Faites glisser les éléments dans le bon ordre"
+
+#: src/components/step-action-button.tsx
+msgid "PVe26p"
+msgstr "Commencer"
+
+#: src/components/step-action-button.tsx
+msgid "RDZVQL"
+msgstr "Vérifier"
+
+#: src/components/step-navigation-button-group.tsx
+msgid "JJNc3c"
+msgstr "Précédent"
+
+#: src/components/swipe-navigable-step-layout.tsx
+msgid "aNzy1T"
+msgstr "Étape précédente"
+
+#: src/components/swipe-navigable-step-layout.tsx
+msgid "d-qgix"
+msgstr "Étape suivante"
+
+#: src/components/translation-step.tsx
+msgid "MxLxkr"
+msgstr "Traduisez ce mot :"
+
+#: src/components/unauthenticated-progress-prompt.tsx
+msgid "czygLT"
+msgstr "Connectez-vous pour enregistrer la progression"
+
+#: src/components/unauthenticated-progress-prompt.tsx
+msgid "yBJVJw"
+msgstr "Continuer sans enregistrer"
+
+#: src/components/unauthenticated-progress-prompt.tsx
+msgid "O781mu"
+msgstr "La progression ne sera pas enregistrée"
+
+#: src/components/unauthenticated-progress-prompt.tsx
+msgid "JDumQX"
+msgstr "Vous pouvez essayer cette leçon sans compte, mais votre score, votre progression dans le cours, vos niveaux et votre énergie ne seront pas enregistrés."
+
+#: src/components/unauthenticated-progress-prompt.tsx
+msgid "rxdOwg"
+msgstr "Cette leçon n'a pas été enregistrée"
+
+#: src/components/unauthenticated-progress-prompt.tsx
+msgid "Wamgyz"
+msgstr "Connectez-vous avant votre prochaine leçon pour conserver vos progrès futurs, vos scores, vos niveaux et votre énergie."
+
+#: src/components/verdict-label.tsx
+msgid "xmF49T"
+msgstr "Exactement !"
+
+#: src/components/verdict-label.tsx
+msgid "--l7ni"
+msgstr "Pas tout à fait"
+
+#: src/components/vocabulary-step.tsx
+msgid "lqtP-R"
+msgstr "Vocabulaire"
+
+#: src/use-belt-color-label.ts
+msgid "XjGbuY"
+msgstr "Noir"
+
+#: src/use-belt-color-label.ts
+msgid "k2tJ9k"
+msgstr "Bleu"
+
+#: src/use-belt-color-label.ts
+msgid "eM_4ho"
+msgstr "Marron"
+
+#: src/use-belt-color-label.ts
+msgid "Yp7v0H"
+msgstr "Gris"
+
+#: src/use-belt-color-label.ts
+msgid "1W4okO"
+msgstr "Vert"
+
+#: src/use-belt-color-label.ts
+msgid "n3m1xt"
+msgstr "Orange"
+
+#: src/use-belt-color-label.ts
+msgid "tihmF3"
+msgstr "Violet"
+
+#: src/use-belt-color-label.ts
+msgid "D-ZFS_"
+msgstr "Rouge"
+
+#: src/use-belt-color-label.ts
+msgid "OAG-sQ"
+msgstr "Blanc"
+
+#: src/use-belt-color-label.ts
+msgid "5Tw3Ta"
+msgstr "Jaune"

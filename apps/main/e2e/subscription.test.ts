@@ -120,7 +120,7 @@ async function captureStripeActionRequest({
 async function requestPlusCheckout({ page }: { page: Page }) {
   const requestBody = captureStripeActionRequest({ page, path: "/api/auth/subscription/upgrade" });
 
-  await page.getByRole("radio", { name: /plus/iu }).click();
+  await page.getByRole("radio", { name: /^plus\b/iu }).click();
   await page.getByRole("button", { name: /plus/iu }).click();
 
   return requestBody;
@@ -216,6 +216,24 @@ test.describe("Subscription Page - Stripe Locale", () => {
 
     await expect(requestPlusCheckout({ page: authenticatedPage })).resolves.toMatchObject({
       locale: "pt-BR",
+    });
+  });
+
+  test("passes French locale to Stripe checkout", async ({ authenticatedPage }) => {
+    await setLocale(authenticatedPage, "fr");
+    await authenticatedPage.goto("/subscription");
+
+    await expect(requestPlusCheckout({ page: authenticatedPage })).resolves.toMatchObject({
+      locale: "fr",
+    });
+  });
+
+  test("passes German locale to Stripe checkout", async ({ authenticatedPage }) => {
+    await setLocale(authenticatedPage, "de");
+    await authenticatedPage.goto("/subscription");
+
+    await expect(requestPlusCheckout({ page: authenticatedPage })).resolves.toMatchObject({
+      locale: "de",
     });
   });
 

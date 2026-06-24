@@ -1,0 +1,134 @@
+msgid ""
+msgstr ""
+"Language: de\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: next-intl\n"
+"X-Crowdin-SourceKey: msgstr\n"
+
+#: src/app/auth/layout.tsx
+msgid "dVItHD"
+msgstr "Melden Sie sich bei Zoonk an"
+
+#: src/app/auth/login/email-login-form.tsx
+msgid "sy-pv5"
+msgstr "E-Mail"
+
+#: src/app/auth/login/email-login-form.tsx
+msgid "apQW0E"
+msgstr "me@gmail.com"
+
+#: src/app/auth/login/email-login-form.tsx
+msgid "YRe93Y"
+msgstr "Geben Sie eine gültige E-Mail-Adresse ein"
+
+#: src/app/auth/login/email-login-form.tsx
+#: src/app/auth/login/social-login.tsx
+msgid "pN2p0t"
+msgstr "Beim Anmelden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder wenden Sie sich an hello@zoonk.com"
+
+#: src/app/auth/login/email-login-form.tsx
+#: src/app/auth/otp/otp-form.tsx
+#: src/app/auth/setup/setup-form.tsx
+msgid "acrOoz"
+msgstr "Weiter"
+
+#: src/app/auth/login/page.tsx
+msgid "eN8MTJ"
+msgstr "Melden Sie sich an oder erstellen Sie ein Konto"
+
+#: src/app/auth/login/page.tsx
+msgid "CoMQ1-"
+msgstr "Fahren Sie mit Ihrer E-Mail-Adresse oder einem sozialen Konto fort"
+
+#: src/app/auth/login/page.tsx
+msgid "4wpUNc"
+msgstr "Oder"
+
+#: src/app/auth/login/page.tsx
+msgid "Ju9oB-"
+msgstr "Indem Sie auf „Weiter“ klicken, stimmen Sie unseren <terms>Nutzungsbedingungen</terms> und <privacy>Datenschutzerklärung</privacy> zu."
+
+#: src/app/auth/login/social-login.tsx
+msgid "FJ6r9E"
+msgstr "Weiter mit Google"
+
+#: src/app/auth/login/social-login.tsx
+msgid "BmecBA"
+msgstr "Weiter mit Apple"
+
+#: src/app/auth/otp/otp-form.tsx
+msgid "HkHvQv"
+msgstr "Der von Ihnen eingegebene Code ist falsch. Bitte versuchen Sie es erneut oder kontaktieren Sie hello@zoonk.com"
+
+#: src/app/auth/otp/page.tsx
+msgid "zx7CKB"
+msgstr "Überprüfen Sie Ihre E-Mails"
+
+#: src/app/auth/otp/page.tsx
+msgid "LZHcmZ"
+msgstr "Geben Sie den Code ein, den wir an {email} gesendet haben:"
+
+#: src/app/auth/otp/page.tsx
+msgid "ChATeO"
+msgstr "E-Mail ändern"
+
+#: src/app/auth/setup/page.tsx
+msgid "CYqIel"
+msgstr "Vervollständigen Sie Ihr Profil"
+
+#: src/app/auth/setup/page.tsx
+msgid "7463XU"
+msgstr "Wählen Sie einen Namen und einen Benutzernamen, bevor Sie fortfahren."
+
+#: src/app/auth/setup/setup-form.tsx
+msgid "1SvspN"
+msgstr "Überprüfen..."
+
+#: src/app/auth/setup/setup-form.tsx
+msgid "9N4_rz"
+msgstr "{username} ist verfügbar"
+
+#: src/app/auth/setup/setup-form.tsx
+msgid "R76cpj"
+msgstr "{username} ist bereits vergeben"
+
+#: src/app/auth/setup/setup-form.tsx
+msgid "vLl7z0"
+msgstr "3-30 Zeichen. Nur Buchstaben, Zahlen und Unterstriche."
+
+#: src/app/auth/setup/setup-form.tsx
+msgid "HAlOn1"
+msgstr "Name"
+
+#: src/app/auth/setup/setup-form.tsx
+msgid "JCIgkj"
+msgstr "Benutzername"
+
+#: src/app/auth/setup/setup-form.tsx
+msgid "XLl_pd"
+msgstr "Ihr-Benutzername"
+
+#: src/app/auth/setup/setup-form.tsx
+msgid "yCCLud"
+msgstr "Ihr Profil konnte nicht eingerichtet werden. Bitte versuchen Sie es erneut oder kontaktieren Sie hello@zoonk.com"
+
+#: src/app/auth/untrusted-origin/page.tsx
+msgid "1vqX2W"
+msgstr "Umleitung nicht möglich"
+
+#: src/app/auth/untrusted-origin/page.tsx
+msgid "83K2kN"
+msgstr "Die Ziel-URL wird nicht als vertrauenswürdige Zoonk-Anwendung erkannt."
+
+#: src/app/auth/untrusted-origin/page.tsx
+msgid "wkO19y"
+msgstr "Sicherheitswarnung"
+
+#: src/app/auth/untrusted-origin/page.tsx
+msgid "585u5Z"
+msgstr "Zu Ihrer Sicherheit können wir Sie nicht zu einem unbekannten Ziel umleiten."
+
+#: src/app/auth/untrusted-origin/page.tsx
+msgid "-e4BVR"
+msgstr "Weiter zu Zoonk"

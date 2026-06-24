@@ -31,7 +31,14 @@ type PlanData = {
 };
 
 type BillingPeriod = "monthly" | "yearly";
-type StripeLocaleOverride = "es" | "pt-BR";
+type StripeLocaleOverride = "de" | "es" | "fr" | "pt-BR";
+
+const STRIPE_LOCALE_OVERRIDES: Readonly<Record<string, StripeLocaleOverride | undefined>> = {
+  de: "de",
+  es: "es",
+  fr: "fr",
+  pt: "pt-BR",
+};
 
 function isBillingPeriod(value: unknown): value is BillingPeriod {
   return value === "monthly" || value === "yearly";
@@ -242,20 +249,12 @@ function getPriceLabel(planName: string, price: PriceInfo | null): string {
 /**
  * Stripe can auto-detect the browser language when we omit `locale`, which is
  * still the best behavior for English and any app locale we do not explicitly
- * support in billing yet. Spanish and Portuguese need explicit overrides
- * because Stripe expects `es` for Spanish and `pt-BR` for Brazilian Portuguese,
- * while the app stores Portuguese as the shorter `pt` locale.
+ * support in billing yet. Supported non-English billing locales are passed
+ * explicitly so the checkout follows the app language; Portuguese uses Stripe's
+ * Brazilian Portuguese code because the app stores it as the shorter `pt`.
  */
 function getStripeLocaleOverride(locale: string): StripeLocaleOverride | undefined {
-  if (locale === "es") {
-    return "es";
-  }
-
-  if (locale === "pt") {
-    return "pt-BR";
-  }
-
-  return undefined;
+  return STRIPE_LOCALE_OVERRIDES[locale];
 }
 
 function getCTAAction(

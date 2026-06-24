@@ -1,16 +1,18 @@
 import { getLanguageName } from "@zoonk/utils/languages";
 
 const PROMPT_LANGUAGE_NAMES: Record<string, string> = {
+  de: "Deutsch",
   en: "US English",
   es: "Español Latinoamericano",
+  fr: "Français",
   pt: "Português Brasileiro",
 };
 
 /**
  * Converts language codes into the exact language name an AI prompt should see.
- * The app stores `en`, `pt`, and `es` as compact locale codes, but prompts need
- * the dialect spelled out so every task follows the same output-language rule
- * without repeating code-to-dialect instructions in markdown.
+ * The app stores compact locale codes, but prompts need the intended language
+ * name spelled out so every task follows the same output-language rule without
+ * repeating code-to-dialect instructions in markdown.
  */
 export function getPromptLanguageName(params: { language: string; userLanguage?: string }): string {
   return PROMPT_LANGUAGE_NAMES[params.language] ?? getFallbackLanguageName(params);
