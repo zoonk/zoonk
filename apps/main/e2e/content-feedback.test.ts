@@ -79,15 +79,17 @@ async function openCompletedLessonFeedback(page: Page) {
   await page.getByRole("button", { name: /check/iu }).click();
   await page.getByRole("button", { name: /continue/iu }).click();
 
-  const dailyRecordHeading = page.getByRole("heading", { name: /daily record/iu });
+  const feedbackButton = page.getByRole("button", { name: /send feedback/iu });
 
-  if (await dailyRecordHeading.isVisible()) {
-    const continueButton = page.getByRole("button", { name: /continue/iu });
-    await expect(continueButton).toBeVisible();
-    await continueButton.click();
-  }
+  await expect(async () => {
+    if (!(await feedbackButton.isVisible())) {
+      const continueButton = page.getByRole("button", { name: /continue/iu });
+      await expect(continueButton).toBeVisible({ timeout: 1000 });
+      await continueButton.click();
+    }
 
-  await expect(page.getByRole("button", { name: /send feedback/iu })).toBeVisible();
+    await expect(feedbackButton).toBeVisible({ timeout: 1000 });
+  }).toPass();
 }
 
 test.describe("Content Feedback", () => {

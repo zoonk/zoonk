@@ -1,0 +1,18 @@
+{
+  "name": "@zoonk/i18n",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./define-eloqnt-config": "./src/define-eloqnt-config.ts"
+  },
+  "scripts": {
+    "typecheck": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "@eloqnt/cli": "catalog:"
+  },
+  "devDependencies": {
+    "@typescript/native-preview": "catalog:",
+    "@zoonk/tsconfig": "workspace:*"
+  }
+}

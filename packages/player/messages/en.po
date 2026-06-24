@@ -64,12 +64,12 @@ msgid "odXlk8"
 msgstr "Log in"
 
 #: src/components/completion-brain-power-milestone.tsx
-msgid "D7TYjj"
-msgstr "Daily record"
+msgid "fS3hB9"
+msgstr "New daily best"
 
 #: src/components/completion-brain-power-milestone.tsx
-msgid "d9jO0T"
-msgstr "You have never learned as much as you did today. Your Brain Power increased by {brainPower} BP. Congrats!"
+msgid "VaM8Q9"
+msgstr "You reached {brainPower} BP today, your highest Brain Power in a single day. Keep learning every day to set a new best."
 
 #: src/components/completion-energy-milestone.tsx
 msgid "m2WzLQ"
@@ -240,12 +240,12 @@ msgid "dYp90P"
 msgstr "Lesson progress"
 
 #: src/components/player-shell.tsx
-msgid "tJtNzs"
-msgstr "Player screen"
+msgid "ZHEKO0"
+msgstr "Lesson content"
 
 #: src/components/player-shell.tsx
-msgid "QmGDqt"
-msgstr "Player controls"
+msgid "41rDiT"
+msgstr "Lesson controls"
 
 #: src/components/select-image-step.tsx
 msgid "mhiTW7"

@@ -145,7 +145,7 @@ describe("player browser integration: word bank steps", () => {
         viewer: buildAuthenticatedViewer(),
       });
 
-      const controls = page.getByRole("toolbar", { name: /player controls/iu });
+      const controls = page.getByRole("toolbar", { name: /lesson controls/iu });
 
       await expect
         .element(controls.getByRole("button", { name: /play pronunciation/iu }))

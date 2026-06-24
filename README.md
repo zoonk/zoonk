@@ -44,6 +44,8 @@ We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm
 - `pnpm knip --production` to check for unused code
 - `pnpm test` to run tests with Vitest
 - `pnpm e2e` to run end-to-end tests with Playwright
+- `pnpm eloqnt:lint` to run i18n linting
+- `pnpm eloqnt:translate` to translate missing i18n keys
 
 ## Supporters
 

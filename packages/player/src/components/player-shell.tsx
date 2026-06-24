@@ -131,7 +131,7 @@ export function PlayerShell() {
         onAutoPlayAudioEnabled={enableAutoPlayAudio}
       >
         <PlayerStage
-          aria-label={t("Player screen")}
+          aria-label={t("Lesson content")}
           isFullBleed={screen.stageIsFullBleed}
           isStatic={screen.stageIsStatic}
           key={stageResetKey}
@@ -142,7 +142,7 @@ export function PlayerShell() {
         </PlayerStage>
 
         {shouldShowStickyBottomBar && (
-          <PlayerBottomBar aria-label={t("Player controls")} className="lg:hidden" role="toolbar">
+          <PlayerBottomBar aria-label={t("Lesson controls")} className="lg:hidden" role="toolbar">
             <BottomBarContent />
           </PlayerBottomBar>
         )}

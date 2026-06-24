@@ -25,10 +25,10 @@ export function BrainPowerMilestoneCopy({ milestone }: { milestone: BrainPowerMi
 
   return (
     <>
-      <CompletionMilestoneTitle>{t("Daily record")}</CompletionMilestoneTitle>
+      <CompletionMilestoneTitle>{t("New daily best")}</CompletionMilestoneTitle>
       <PlayerSupportingText>
         {t(
-          "You have never learned as much as you did today. Your Brain Power increased by {brainPower} BP. Congrats!",
+          "You reached {brainPower} BP today, your highest Brain Power in a single day. Keep learning every day to set a new best.",
           { brainPower: formattedBrainPower },
         )}
       </PlayerSupportingText>

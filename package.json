@@ -13,7 +13,8 @@
     "evals:remove": "./apps/evals/scripts/remove-test-cases.sh",
     "format": "oxfmt --check",
     "format:fix": "oxfmt .",
-    "i18n": "./scripts/i18n.sh",
+    "eloqnt:lint": "turbo eloqnt:lint",
+    "eloqnt:translate": "turbo eloqnt:translate",
     "knip": "knip",
     "lint": "oxlint --deny-warnings .",
     "lint:fix": "oxlint --fix --deny-warnings .",
@@ -24,6 +25,7 @@
     "typecheck": "turbo typecheck"
   },
   "devDependencies": {
+    "@eloqnt/cli": "catalog:",
     "@playwright/test": "1.60.0",
     "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",

@@ -230,7 +230,7 @@ describe("player browser integration: vocabulary", () => {
         viewer: buildAuthenticatedViewer(),
       });
 
-      const controls = page.getByRole("toolbar", { name: /player controls/iu });
+      const controls = page.getByRole("toolbar", { name: /lesson controls/iu });
       const currentCard = page.getByRole("region", { name: /vocabulary: Hola/iu });
 
       await controls.getByRole("button", { name: /play pronunciation/iu }).click();

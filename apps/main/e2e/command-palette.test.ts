@@ -6,7 +6,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { normalizeString } from "@zoonk/utils/string";
 import { type Page, expect, test } from "./fixtures";
 
-const SEARCH_CONTROL_NAME = /search|pesquisar/iu;
+const SEARCH_CONTROL_NAME = /search|buscar|pesquisar/iu;
 
 async function createTestCourse() {
   const org = await getAiOrganization();

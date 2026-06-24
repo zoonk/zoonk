@@ -69,7 +69,7 @@ test.describe("Locale Detection", () => {
       await setLegacyLocaleCookie({ locale: "en", page });
       await page.goto("/");
 
-      await expect(page.getByRole("heading", { name: "Quel est votre objectif ?" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Quel est ton objectif ?" })).toBeVisible();
     } finally {
       await context.close();
     }
@@ -82,7 +82,7 @@ test.describe("Locale Detection", () => {
       await setLocale(page, "de");
       await page.goto("/");
 
-      await expect(page.getByRole("heading", { name: "Was ist Ihr Ziel?" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Was ist dein Ziel?" })).toBeVisible();
     } finally {
       await context.close();
     }

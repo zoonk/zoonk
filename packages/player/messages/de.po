@@ -29,47 +29,47 @@ msgstr "{item}. {result}."
 
 #: src/components/arrange-words-answer-area.tsx
 msgid "vPyO9S"
-msgstr "Position {position}: {item}. Zum Entfernen antippen."
+msgstr "Position {position}: {item}. Tippe, um zu entfernen."
 
 #: src/components/arrange-words-answer-area.tsx
 #: src/components/select-image-step.tsx
 msgid "1nJY2_"
-msgstr "Ihre Antwort"
+msgstr "Deine Antwort"
 
 #: src/components/arrange-words-answer-area.tsx
 msgid "7R_rOB"
-msgstr "Tippen Sie auf Wörter, um Ihre Antwort zu erstellen"
+msgstr "Tippe Wörter an, um deine Antwort zu bilden"
 
 #: src/components/arrange-words.tsx
 #: src/components/fill-blank-step.tsx
 msgid "e7WNdK"
-msgstr "Wortbank"
+msgstr "Wortschatz"
 
 #: src/components/completion-auth-branch.tsx
 msgid "E2sGaF"
-msgstr "Ausstieg"
+msgstr "Beenden"
 
 #: src/components/completion-auth-branch.tsx
 msgid "FazwRl"
-msgstr "Versuchen Sie es erneut"
+msgstr "Erneut versuchen"
 
 #: src/components/completion-auth-branch.tsx
 #: src/components/completion-milestone-actions.tsx
 #: src/components/step-navigation-button-group.tsx
 msgid "9-Ddtu"
-msgstr "Als nächstes"
+msgstr "Weiter"
 
 #: src/components/completion-auth-branch.tsx
 msgid "odXlk8"
-msgstr "Melden Sie sich an"
+msgstr "Anmelden"
 
 #: src/components/completion-brain-power-milestone.tsx
-msgid "D7TYjj"
-msgstr "Tagesrekord"
+msgid "fS3hB9"
+msgstr "Neuer Tagesrekord"
 
 #: src/components/completion-brain-power-milestone.tsx
-msgid "d9jO0T"
-msgstr "Sie haben noch nie so viel gelernt wie heute. Ihre Gehirnleistung ist um {brainPower} BP gestiegen. Glückwunsch!"
+msgid "VaM8Q9"
+msgstr "Du hast heute {brainPower} GK erreicht, deine höchste Geisteskraft an einem Tag. Lern jeden Tag weiter, um einen neuen Rekord zu setzen."
 
 #: src/components/completion-energy-milestone.tsx
 msgid "m2WzLQ"
@@ -77,7 +77,7 @@ msgstr "Maximale Energie!"
 
 #: src/components/completion-energy-milestone.tsx
 msgid "Fo6YtA"
-msgstr "Herzlichen Glückwunsch! Du hast die maximale Energie erreicht. Üben Sie jeden Tag weiter, um Ihre Energie bei 100 % zu halten."
+msgstr "Glückwunsch! Du hast maximale Energie erreicht. Übe jeden Tag, um deine Energie bei 100 % zu halten."
 
 #: src/components/completion-energy-milestone.tsx
 msgid "vlOyrO"
@@ -85,19 +85,19 @@ msgstr "{energy}% Energie"
 
 #: src/components/completion-energy-milestone.tsx
 msgid "3Jd-mJ"
-msgstr "Ihr Einsatz zahlt sich aus. Absolvieren Sie jeden Tag Lektionen, um Ihre Energie zu steigern."
+msgstr "Dein Einsatz zahlt sich aus. Schließe jeden Tag Lektionen ab, um deine Energie zu steigern."
 
 #: src/components/completion-energy-milestone.tsx
 msgid "5YVYKd"
-msgstr "1 Jahr maximale Energie"
+msgstr "1 Jahr volle Energie"
 
 #: src/components/completion-energy-milestone.tsx
 msgid "1WNk4i"
-msgstr "{days} Tage mit maximaler Energie"
+msgstr "{days} Tage volle Energie"
 
 #: src/components/completion-energy-milestone.tsx
 msgid "cIxpmv"
-msgstr "Wow, was für eine unglaubliche Konsistenz! Lernen Sie jeden Tag weiter, um Ihre Energie auf 100 % zu halten."
+msgstr "Wow, was für eine unglaubliche Beständigkeit! Lern weiter jeden Tag, damit deine Energie bei 100 % bleibt."
 
 #: src/components/completion-level-milestone.tsx
 msgid "3UK8wh"
@@ -109,15 +109,15 @@ msgstr "Level erreicht"
 
 #: src/components/completion-level-milestone.tsx
 msgid "mb2zm-"
-msgstr "Du hast deinen Geist gestärkt und Level {level} des {color}-Gürtels erreicht. Glückwunsch!"
+msgstr "Du hast deinen Geist gestärkt und Level {level} des {color} Gürtels erreicht. Glückwunsch!"
 
 #: src/components/completion-level-milestone.tsx
 msgid "Bk6B6r"
-msgstr "Fast da"
+msgstr "Fast geschafft"
 
 #: src/components/completion-level-milestone.tsx
 msgid "34q-SH"
-msgstr "{count, plural, one {Ihr Wissen wächst. Schließen Sie noch # Lektion ab, um Level {level} des {color}-Gürtels zu erreichen.} other {Ihr Wissen wächst. Schließen Sie noch # Lektionen ab, um Level {level} des {color}-Gürtels zu erreichen.}}"
+msgstr "{count, plural, one {Dein Wissen wächst. Schließe noch # Lektion ab, um Level {level} des {color} Gürtels zu erreichen.} other {Dein Wissen wächst. Schließe noch # Lektionen ab, um Level {level} des {color} Gürtels zu erreichen.}}"
 
 #: src/components/completion-milestone-actions.tsx
 msgid "DiIkZH"
@@ -125,24 +125,24 @@ msgstr "Nächstes Kapitel"
 
 #: src/components/completion-milestone-actions.tsx
 msgid "w0D7HC"
-msgstr "Wiederholungskurs"
+msgstr "Kurs wiederholen"
 
 #: src/components/completion-milestone-actions.tsx
 msgid "wm_M34"
-msgstr "Rezensionskapitel"
+msgstr "Kapitel wiederholen"
 
 #: src/components/completion-progress-milestone-screen.tsx
 msgid "iSioEh"
-msgstr "Erfahren Sie mehr über Energie"
+msgstr "Mehr über Energie erfahren"
 
 #: src/components/completion-progress-milestone-screen.tsx
 msgid "Q0R3MU"
-msgstr "Erfahren Sie mehr über Level"
+msgstr "Mehr über Levels erfahren"
 
 #: src/components/completion-progress-milestone-screen.tsx
 #: src/components/step-action-button.tsx
 msgid "acrOoz"
-msgstr "Weiter"
+msgstr "Fortfahren"
 
 #: src/components/completion-screen.tsx
 msgid "95stPq"
@@ -163,7 +163,7 @@ msgstr "Lektion {current} von {total}"
 
 #: src/components/completion-screen.tsx
 msgid "9wxMoj"
-msgstr "Kapitelfortschritt"
+msgstr "Kapitel-Fortschritt"
 
 #: src/components/completion-screen.tsx
 msgid "P768k7"
@@ -171,7 +171,7 @@ msgstr "richtig"
 
 #: src/components/feedback-answer-blocks.tsx
 msgid "3nOd8f"
-msgstr "Ihre Antwort:"
+msgstr "Deine Antwort:"
 
 #: src/components/feedback-answer-blocks.tsx
 #: src/components/inline-feedback.tsx
@@ -180,27 +180,27 @@ msgstr "Richtige Antwort:"
 
 #: src/components/feedback-screen.tsx
 msgid "fpO9TK"
-msgstr "Übersetzen:"
+msgstr "Übersetze:"
 
 #: src/components/fill-blank-step.tsx
 msgid "SL2Bob"
-msgstr "Leer {position}: {item}. {result}."
+msgstr "Lücke {position}: {item}. {result}."
 
 #: src/components/fill-blank-step.tsx
 msgid "wUEGVH"
-msgstr "Leer {position}: {item}. Zum Entfernen antippen."
+msgstr "Lücke {position}: {item}. Tippe, um zu entfernen."
 
 #: src/components/fill-blank-step.tsx
 msgid "FmmJ_j"
-msgstr "Leer {position}"
+msgstr "Lücke {position}"
 
 #: src/components/inline-feedback.tsx
 msgid "HvLGEN"
-msgstr "Beantworten Sie Feedback"
+msgstr "Feedback zur Antwort"
 
 #: src/components/lesson-info-popover.tsx
 msgid "RwePAQ"
-msgstr "Unterrichtsinfo"
+msgstr "Lektionsinfo"
 
 #: src/components/listening-step.tsx
 msgid "aAmWaS"
@@ -209,7 +209,7 @@ msgstr "Was hörst du?"
 #: src/components/listening-step.tsx
 #: src/components/reading-step.tsx
 msgid "19nXyC"
-msgstr "Übersetzen Sie diesen Satz:"
+msgstr "Übersetze diesen Satz:"
 
 #: src/components/match-columns-step.tsx
 msgid "fV1MzK"
@@ -217,7 +217,7 @@ msgstr "Ordne die Paare zu."
 
 #: src/components/match-columns-step.tsx
 msgid "ja1JDt"
-msgstr "Alle Paare stimmten überein. Drücken Sie auf „Prüfen“, um fortzufahren."
+msgstr "Alle Paare zugeordnet. Drücke Prüfen, um fortzufahren."
 
 #: src/components/play-audio-button.tsx
 msgid "WGft2H"
@@ -225,11 +225,11 @@ msgstr "Aussprache pausieren"
 
 #: src/components/play-audio-button.tsx
 msgid "lYWSeP"
-msgstr "Spielen Sie die Aussprache"
+msgstr "Aussprache abspielen"
 
 #: src/components/player-choice-scene.tsx
 msgid "akd-cv"
-msgstr "Antwortmöglichkeiten"
+msgstr "Antwortoptionen"
 
 #: src/components/player-header.tsx
 msgid "rbrahO"
@@ -237,15 +237,15 @@ msgstr "Schließen"
 
 #: src/components/player-progress-bar.tsx
 msgid "dYp90P"
-msgstr "Unterrichtsfortschritt"
+msgstr "Lektionsfortschritt"
 
 #: src/components/player-shell.tsx
-msgid "tJtNzs"
-msgstr "Spielerbildschirm"
+msgid "ZHEKO0"
+msgstr "Lektionsinhalt"
 
 #: src/components/player-shell.tsx
-msgid "QmGDqt"
-msgstr "Spielerkontrollen"
+msgid "41rDiT"
+msgstr "Lektionssteuerung"
 
 #: src/components/select-image-step.tsx
 msgid "mhiTW7"
@@ -257,7 +257,7 @@ msgstr "Bildoptionen"
 
 #: src/components/sort-order-step.tsx
 msgid "p5llOK"
-msgstr "Artikel sortieren"
+msgstr "Elemente sortieren"
 
 #: src/components/sort-order-step.tsx
 msgid "VA8c_A"
@@ -265,15 +265,15 @@ msgstr "Richtige Reihenfolge:"
 
 #: src/components/sort-order-step.tsx
 msgid "9lc1oV"
-msgstr "Ziehen Sie Elemente in die richtige Reihenfolge"
+msgstr "Ziehe die Elemente in die richtige Reihenfolge"
 
 #: src/components/step-action-button.tsx
 msgid "PVe26p"
-msgstr "Beginnen Sie"
+msgstr "Beginnen"
 
 #: src/components/step-action-button.tsx
 msgid "RDZVQL"
-msgstr "Überprüfen"
+msgstr "Prüfen"
 
 #: src/components/step-navigation-button-group.tsx
 msgid "JJNc3c"
@@ -289,11 +289,11 @@ msgstr "Nächster Schritt"
 
 #: src/components/translation-step.tsx
 msgid "MxLxkr"
-msgstr "Übersetzen Sie dieses Wort:"
+msgstr "Übersetze dieses Wort:"
 
 #: src/components/unauthenticated-progress-prompt.tsx
 msgid "czygLT"
-msgstr "Melden Sie sich an, um den Fortschritt zu speichern"
+msgstr "Melde dich an, um den Fortschritt zu speichern"
 
 #: src/components/unauthenticated-progress-prompt.tsx
 msgid "yBJVJw"
@@ -301,11 +301,11 @@ msgstr "Ohne Speichern fortfahren"
 
 #: src/components/unauthenticated-progress-prompt.tsx
 msgid "O781mu"
-msgstr "Der Fortschritt wird nicht gespeichert"
+msgstr "Fortschritt wird nicht gespeichert"
 
 #: src/components/unauthenticated-progress-prompt.tsx
 msgid "JDumQX"
-msgstr "Sie können diese Lektion ohne Konto ausprobieren, Ihre Punktzahl, Ihr Kursfortschritt, Ihre Level und Ihre Energie werden jedoch nicht gespeichert."
+msgstr "Du kannst diese Lektion ohne Konto ausprobieren, aber deine Punktzahl, Kursfortschritt, Levels und Energy werden nicht gespeichert."
 
 #: src/components/unauthenticated-progress-prompt.tsx
 msgid "rxdOwg"
@@ -313,7 +313,7 @@ msgstr "Diese Lektion wurde nicht gespeichert"
 
 #: src/components/unauthenticated-progress-prompt.tsx
 msgid "Wamgyz"
-msgstr "Melden Sie sich vor Ihrer nächsten Unterrichtsstunde an, um zukünftige Fortschritte, Ergebnisse, Level und Energie im Auge zu behalten."
+msgstr "Melde dich vor deiner nächsten Lektion an, damit künftige Fortschritte, Punktzahlen, Levels und Energy gespeichert werden."
 
 #: src/components/verdict-label.tsx
 msgid "xmF49T"

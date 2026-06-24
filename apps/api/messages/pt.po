@@ -16,16 +16,16 @@ msgstr "Email"
 
 #: src/app/auth/login/email-login-form.tsx
 msgid "apQW0E"
-msgstr "eu@gmail.com"
+msgstr "meu@email.com"
 
 #: src/app/auth/login/email-login-form.tsx
 msgid "YRe93Y"
-msgstr "Digite um email válido"
+msgstr "Digite um endereço de email válido"
 
 #: src/app/auth/login/email-login-form.tsx
 #: src/app/auth/login/social-login.tsx
 msgid "pN2p0t"
-msgstr "Houve um erro ao conectar você. Por favor, tente novamente ou entre em contato com contato@zoonk.com"
+msgstr "Ocorreu um erro ao fazer login. Tente novamente ou contate contato@zoonk.com"
 
 #: src/app/auth/login/email-login-form.tsx
 #: src/app/auth/otp/otp-form.tsx
@@ -35,7 +35,7 @@ msgstr "Continuar"
 
 #: src/app/auth/login/page.tsx
 msgid "eN8MTJ"
-msgstr "Entre ou crie uma conta"
+msgstr "Entrar ou criar uma conta"
 
 #: src/app/auth/login/page.tsx
 msgid "CoMQ1-"
@@ -59,11 +59,11 @@ msgstr "Continuar com Apple"
 
 #: src/app/auth/otp/otp-form.tsx
 msgid "HkHvQv"
-msgstr "O código que você digitou está incorreto. Por favor, tente novamente ou entre em contato com contato@zoonk.com"
+msgstr "O código que você inseriu está incorreto. Tente novamente ou contate contato@zoonk.com"
 
 #: src/app/auth/otp/page.tsx
 msgid "zx7CKB"
-msgstr "Confira seu email"
+msgstr "Verifique seu email"
 
 #: src/app/auth/otp/page.tsx
 msgid "LZHcmZ"
@@ -95,7 +95,7 @@ msgstr "{username} já está em uso"
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "vLl7z0"
-msgstr "3-30 caracteres. Apenas letras, números e sublinhados."
+msgstr "3–30 caracteres. Apenas letras, números e sublinhados."
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "HAlOn1"
@@ -107,11 +107,11 @@ msgstr "Nome de usuário"
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "XLl_pd"
-msgstr "seu-nome-de-usuario"
+msgstr "seu-usuario"
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "yCCLud"
-msgstr "Falha ao configurar seu perfil. Por favor, tente novamente ou entre em contato com contato@zoonk.com"
+msgstr "Falha ao configurar seu perfil. Tente novamente ou contate contato@zoonk.com"
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "1vqX2W"
@@ -131,4 +131,4 @@ msgstr "Para sua segurança, não podemos redirecionar você para um destino nã
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "-e4BVR"
-msgstr "Continuar para o Zoonk"
+msgstr "Continuar no Zoonk"

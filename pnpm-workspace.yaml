@@ -21,6 +21,7 @@ catalog:
   "@dnd-kit/core": 6.3.1
   "@dnd-kit/sortable": 10.0.0
   "@dnd-kit/utilities": 3.2.2
+  "@eloqnt/cli": 0.0.4
   "@mdx-js/loader": 3.1.1
   "@mdx-js/react": 3.1.1
   "@next/mdx": 16.2.9
@@ -58,6 +59,8 @@ minimumReleaseAgeExclude:
   - "@hono/node-server@1.19.13"
   - postcss@8.5.10
   - esbuild@0.28.1
+  - "@eloqnt/cli@0.0.4"
+  - "@eloqnt/sdk@0.0.4"
 
 overrides:
   "@hono/node-server@<1.19.13": ^1.19.13

@@ -8,7 +8,7 @@ msgstr ""
 
 #: src/app/auth/layout.tsx
 msgid "dVItHD"
-msgstr "Melden Sie sich bei Zoonk an"
+msgstr "Bei Zoonk anmelden"
 
 #: src/app/auth/login/email-login-form.tsx
 msgid "sy-pv5"
@@ -20,12 +20,12 @@ msgstr "me@gmail.com"
 
 #: src/app/auth/login/email-login-form.tsx
 msgid "YRe93Y"
-msgstr "Geben Sie eine gültige E-Mail-Adresse ein"
+msgstr "Gib eine gültige E-Mail‑Adresse ein"
 
 #: src/app/auth/login/email-login-form.tsx
 #: src/app/auth/login/social-login.tsx
 msgid "pN2p0t"
-msgstr "Beim Anmelden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder wenden Sie sich an hello@zoonk.com"
+msgstr "Beim Anmelden ist ein Fehler aufgetreten. Bitte versuche es erneut oder kontaktiere hello@zoonk.com"
 
 #: src/app/auth/login/email-login-form.tsx
 #: src/app/auth/otp/otp-form.tsx
@@ -35,11 +35,11 @@ msgstr "Weiter"
 
 #: src/app/auth/login/page.tsx
 msgid "eN8MTJ"
-msgstr "Melden Sie sich an oder erstellen Sie ein Konto"
+msgstr "Anmelden oder ein Konto erstellen"
 
 #: src/app/auth/login/page.tsx
 msgid "CoMQ1-"
-msgstr "Fahren Sie mit Ihrer E-Mail-Adresse oder einem sozialen Konto fort"
+msgstr "Weiter mit deiner E‑Mail oder einem Social‑Konto"
 
 #: src/app/auth/login/page.tsx
 msgid "4wpUNc"
@@ -47,7 +47,7 @@ msgstr "Oder"
 
 #: src/app/auth/login/page.tsx
 msgid "Ju9oB-"
-msgstr "Indem Sie auf „Weiter“ klicken, stimmen Sie unseren <terms>Nutzungsbedingungen</terms> und <privacy>Datenschutzerklärung</privacy> zu."
+msgstr "Indem du auf Weiter klickst, stimmst du unseren <terms>Nutzungsbedingungen</terms> und der <privacy>Datenschutzrichtlinie</privacy> zu."
 
 #: src/app/auth/login/social-login.tsx
 msgid "FJ6r9E"
@@ -59,31 +59,31 @@ msgstr "Weiter mit Apple"
 
 #: src/app/auth/otp/otp-form.tsx
 msgid "HkHvQv"
-msgstr "Der von Ihnen eingegebene Code ist falsch. Bitte versuchen Sie es erneut oder kontaktieren Sie hello@zoonk.com"
+msgstr "Der eingegebene Code ist falsch. Bitte versuche es erneut oder kontaktiere hello@zoonk.com"
 
 #: src/app/auth/otp/page.tsx
 msgid "zx7CKB"
-msgstr "Überprüfen Sie Ihre E-Mails"
+msgstr "Prüfe deine E‑Mails"
 
 #: src/app/auth/otp/page.tsx
 msgid "LZHcmZ"
-msgstr "Geben Sie den Code ein, den wir an {email} gesendet haben:"
+msgstr "Gib den Code ein, den wir an {email} gesendet haben:"
 
 #: src/app/auth/otp/page.tsx
 msgid "ChATeO"
-msgstr "E-Mail ändern"
+msgstr "E‑Mail ändern"
 
 #: src/app/auth/setup/page.tsx
 msgid "CYqIel"
-msgstr "Vervollständigen Sie Ihr Profil"
+msgstr "Vervollständige dein Profil"
 
 #: src/app/auth/setup/page.tsx
 msgid "7463XU"
-msgstr "Wählen Sie einen Namen und einen Benutzernamen, bevor Sie fortfahren."
+msgstr "Wähle einen Namen und einen Benutzernamen, bevor du fortfährst."
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "1SvspN"
-msgstr "Überprüfen..."
+msgstr "Wird geprüft..."
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "9N4_rz"
@@ -95,7 +95,7 @@ msgstr "{username} ist bereits vergeben"
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "vLl7z0"
-msgstr "3-30 Zeichen. Nur Buchstaben, Zahlen und Unterstriche."
+msgstr "3–30 Zeichen. Nur Buchstaben, Zahlen und Unterstriche."
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "HAlOn1"
@@ -107,15 +107,15 @@ msgstr "Benutzername"
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "XLl_pd"
-msgstr "Ihr-Benutzername"
+msgstr "dein-benutzername"
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "yCCLud"
-msgstr "Ihr Profil konnte nicht eingerichtet werden. Bitte versuchen Sie es erneut oder kontaktieren Sie hello@zoonk.com"
+msgstr "Dein Profil konnte nicht eingerichtet werden. Bitte versuche es erneut oder kontaktiere hello@zoonk.com"
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "1vqX2W"
-msgstr "Umleitung nicht möglich"
+msgstr "Weiterleitung nicht möglich"
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "83K2kN"
@@ -123,11 +123,11 @@ msgstr "Die Ziel-URL wird nicht als vertrauenswürdige Zoonk-Anwendung erkannt."
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "wkO19y"
-msgstr "Sicherheitswarnung"
+msgstr "Sicherheitshinweis"
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "585u5Z"
-msgstr "Zu Ihrer Sicherheit können wir Sie nicht zu einem unbekannten Ziel umleiten."
+msgstr "Deiner Sicherheit zuliebe können wir dich nicht zu einer unbekannten Zieladresse weiterleiten."
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "-e4BVR"

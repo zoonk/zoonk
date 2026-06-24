@@ -11,6 +11,8 @@
     "build": "pnpm extract:messages",
     "build:e2e": "pnpm extract:messages",
     "extract:messages": "tsx extract-messages.ts",
+    "eloqnt:lint": "eloqnt lint",
+    "eloqnt:translate": "eloqnt translate",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsgo --noEmit"
@@ -33,6 +35,7 @@
     "@typescript/native-preview": "catalog:",
     "@vitejs/plugin-react": "6.0.2",
     "@vitest/browser-playwright": "4.1.8",
+    "@zoonk/i18n": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "jsdom": "catalog:",
     "playwright": "1.60.0",
