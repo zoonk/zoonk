@@ -38,7 +38,10 @@ test.describe("Language settings page", () => {
     await expect(page.getByRole("heading", { level: 1, name: /^idioma$/iu })).toBeVisible();
 
     await expect(
-      page.getByText(/escolha o idioma do aplicativo que você prefere para este dispositivo/iu),
+      page.getByRole("heading", {
+        level: 2,
+        name: /escolha o idioma do app que você prefere para este dispositivo/iu,
+      }),
     ).toBeVisible();
   });
 
