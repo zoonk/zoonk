@@ -1,3 +1,4 @@
+import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { getProgressInsightDateLabel } from "../src/app/(progress)/_components/progress-insight-date-label";
 import { expect, test } from "./fixtures";
 
@@ -46,20 +47,25 @@ test.describe("Energy Page", () => {
       await expect(authenticatedPage.getByText(/% average/iu)).toBeVisible();
     });
 
-    test("displays current-month energy insight values", async ({ authenticatedPage }) => {
-      await authenticatedPage.goto("/energy");
+    test("displays current-month energy insight values", async ({ baseURL, browser }) => {
+      const user = await createE2EUser(baseURL!, { orgRole: "member", withProgress: true });
+      const browserContext = await browser.newContext({ storageState: user.storageState });
+      const page = await browserContext.newPage();
 
-      const highestEnergyCard = authenticatedPage.getByRole("article", {
-        name: /highest energy day/iu,
-      });
+      try {
+        await page.goto("/energy");
 
-      const fullEnergyCard = authenticatedPage.getByRole("article", { name: /full energy/iu });
-      const todayLabel = getProgressInsightDateLabel({ date: new Date(), locale: "en" });
+        const highestEnergyCard = page.getByRole("article", { name: /highest energy day/iu });
+        const fullEnergyCard = page.getByRole("article", { name: /full energy/iu });
+        const todayLabel = getProgressInsightDateLabel({ date: new Date(), locale: "en" });
 
-      await expect(highestEnergyCard).toContainText(`${todayLabel} with 100%`);
-      await expect(highestEnergyCard).toContainText("This month");
-      await expect(fullEnergyCard).toContainText("1 day");
-      await expect(fullEnergyCard).toContainText("This month");
+        await expect(highestEnergyCard).toContainText(`${todayLabel} with 100%`);
+        await expect(highestEnergyCard).toContainText("This month");
+        await expect(fullEnergyCard).toContainText("1 day");
+        await expect(fullEnergyCard).toContainText("This month");
+      } finally {
+        await browserContext.close();
+      }
     });
 
     test("switching to 6 months shows different comparison text", async ({ authenticatedPage }) => {

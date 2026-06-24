@@ -5,18 +5,31 @@ export type SourceLesson = { title: string; description: string };
  * each row should omit empty title or description fields instead of producing
  * awkward prompt text such as `": description"`.
  */
-function formatSourceLesson({ index, lesson }: { index: number; lesson: SourceLesson }) {
-  const prefix = `${index + 1}.`;
-
+function formatSourceLessonText(lesson: SourceLesson) {
   if (lesson.title && lesson.description) {
-    return `${prefix} ${lesson.title}: ${lesson.description}`;
+    return `${lesson.title}: ${lesson.description}`;
   }
 
   if (lesson.title) {
-    return `${prefix} ${lesson.title}`;
+    return lesson.title;
   }
 
-  return `${prefix} ${lesson.description}`;
+  return lesson.description;
+}
+
+/**
+ * Single-source prompts should read like one lesson brief, not a numbered list.
+ */
+export function formatSourceLessonForPrompt(lesson: SourceLesson) {
+  return formatSourceLessonText(lesson);
+}
+
+/**
+ * Multi-source prompts keep numbering so the model can distinguish each lesson
+ * brief without extra prose around the input.
+ */
+function formatSourceLesson({ index, lesson }: { index: number; lesson: SourceLesson }) {
+  return `${index + 1}. ${formatSourceLessonText(lesson)}`;
 }
 
 /**

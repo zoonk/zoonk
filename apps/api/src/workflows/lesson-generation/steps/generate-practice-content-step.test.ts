@@ -14,9 +14,9 @@ vi.mock("@zoonk/ai/tasks/lessons/core/practice", () => ({
     .mockResolvedValue({
       data: {
         scenario: { imagePrompt: "scenario prompt", text: "Scenario", title: "Scenario" },
-        steps: [
+        scenes: [
           {
-            context: "Use the explanation.",
+            dialogue: "Use the explanation.",
             imagePrompt: "question prompt",
             options: [{ feedback: "yes", isCorrect: true, text: "Apply it" }],
             question: "What should happen?",
@@ -38,7 +38,7 @@ describe(generatePracticeContentStep, () => {
     vi.clearAllMocks();
   });
 
-  it("uses only source lessons since the previous practice", async () => {
+  it("uses the nearest previous explanation as its source lesson", async () => {
     const context = await createLessonContext({ kind: "practice", organizationId, position: 4 });
 
     await createCompletedExplanation({
@@ -69,11 +69,19 @@ describe(generatePracticeContentStep, () => {
     const result = await generatePracticeContentStep(context);
 
     expect(result.kind).toBe("practice");
+    expect(result.scenario.title).toBe("Scenario");
+
+    expect(result.steps).toStrictEqual([
+      {
+        context: "Use the explanation.",
+        imagePrompt: "question prompt",
+        options: [{ feedback: "yes", isCorrect: true, text: "Apply it" }],
+        question: "What should happen?",
+      },
+    ]);
 
     expect(generateLessonPractice).toHaveBeenCalledWith(
-      expect.objectContaining({
-        sourceLessons: [{ description: "New explanation", title: "New" }],
-      }),
+      expect.objectContaining({ lesson: { description: "New explanation", title: "New" } }),
     );
   });
 

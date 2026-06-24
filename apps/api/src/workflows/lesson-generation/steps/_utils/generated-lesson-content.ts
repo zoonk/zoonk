@@ -7,10 +7,16 @@ import { type VocabularyWord } from "@zoonk/ai/tasks/lessons/language/vocabulary
 
 export type StaticLessonStep = { text: string; title: string };
 
+type PracticeScene = LessonPracticeSchema["scenes"][number];
+
+export type PracticeLessonStep = Omit<PracticeScene, "dialogue"> & {
+  context: PracticeScene["dialogue"];
+};
+
 export type PracticeLessonContent = {
   kind: "practice";
   scenario: LessonPracticeSchema["scenario"];
-  steps: LessonPracticeSchema["steps"];
+  steps: PracticeLessonStep[];
 };
 
 export type QuizLessonContent = { kind: "quiz"; questions: QuizQuestion[] };

@@ -8,6 +8,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { type LessonContext } from "../get-lesson-step";
 import {
   getOtherExplanationLessonTitles,
+  getPreviousExplanationSourceLesson,
   getSourceLessonsSinceLastLessonKind,
 } from "./explanation-source-steps";
 
@@ -126,7 +127,7 @@ describe("explanation source lesson helpers", () => {
     ]);
   });
 
-  it("returns source lesson metadata since the previous practice", async () => {
+  it("returns the nearest previous explanation metadata for practice", async () => {
     const context = await createContext({ kind: "practice", organizationId, position: 4 });
 
     await Promise.all([
@@ -164,12 +165,12 @@ describe("explanation source lesson helpers", () => {
       }),
     ]);
 
-    const sourceLessons = await getSourceLessonsSinceLastLessonKind({ context, kind: "practice" });
+    const sourceLesson = await getPreviousExplanationSourceLesson(context);
 
-    expect(sourceLessons).toStrictEqual([
-      { description: "New explanation", title: "New" },
-      { description: "Test lesson description", title: "Pending explanation" },
-    ]);
+    expect(sourceLesson).toStrictEqual({
+      description: "Test lesson description",
+      title: "Pending explanation",
+    });
   });
 
   it("returns source lesson metadata since the previous quiz", async () => {

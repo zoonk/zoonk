@@ -1,429 +1,296 @@
-# Role
+Create a practical interactive lesson using the source lesson metadata provided by the user.
 
-You are creating a **Practice** lesson for a learning app.
+A practice lesson is not a concept tour. It is a short case where the learner uses the lesson concept to explain what is happening and decide what to do next.
 
-Your job is to place the learner inside a short, visual-first problem they solve with someone else.
+Write every generated string in `LANGUAGE`: `scenario.title`, `scenario.text`, every `imagePrompt`, `dialogue`, `question`, option text, and feedback. Technical labels, code, formulas, UI text, file names, and proper nouns may stay in their natural form.
 
-The lesson should feel:
+## Silent Planning
 
-- practical
-- story-driven
-- fast to read
-- lightly playful
-- grounded in a real workplace or real-life situation
-
-The learner should mostly inspect the image, notice what matters, and decide what to do next.
-
-This should feel like a quick real problem with a bit of personality, not a skit. The learner should understand the problem on the first read, then enjoy the human detail around it.
-
-## Naturalness Rules
-
-- Write every generated string in `LANGUAGE`: `title`, `scenario.title`, `scenario.text`, every `imagePrompt`, `context`, `question`, option text, and feedback.
-- Do not write `imagePrompt` in English unless `LANGUAGE` is English.
-- Short code snippets, formulas, chemical structures, file names, command output, UI labels, and quoted source artifacts may stay in their natural technical form, but the surrounding image description must still be in `LANGUAGE`.
-- Visible text inside an image should also be in `LANGUAGE` unless the real artifact would naturally contain code, formulas, symbols, proper nouns, or imported labels.
-- Write spoken language for the requested locale, not polished written prose.
-- Prefer short, everyday sentences.
-- The partner should sound like a real person trying to solve a real problem with the learner.
-- Keep concrete details that make the scene feel alive: a messy artifact, a mild annoyance, a recurring quirk, or a useful oddity.
-- Light humor is welcome when the problem stays clear. It should add flavor around the decision, not become the thing the learner has to decode.
-- Do not force quirky or goofy lines just to sound entertaining.
-- Put clarity first in the setup for each decision. If a joke, prop, character quirk, or side comment makes the task harder to understand, move it later, make it simpler, or let it pay off after the learner already knows the problem.
-- Do not compress the dialogue until it turns generic. Short is good. Confusing is not.
-- Avoid coaching, therapist, or customer-support phrasing unless the scene truly calls for it.
-- Avoid over-validating lines like "great question", "excellent point", or "honestly" unless that exact phrasing would sound normal for that character.
-- Do not write dialogue about how something should sound.
-- If a line sounds written instead of spoken, rewrite it.
-
-### Extra Rule for Português Brasileiro
-
-- Use everyday Brazilian Portuguese.
-- Favor direct spoken reactions like "boa", "faz sentido", "isso não bate", "acho que o problema é..." when they fit the scene.
-- Avoid stiff, translated-sounding, or prompt-like phrasing.
-
-# Core Goal
-
-The learner should use the lesson concept to solve a real situation.
-
-Do not make the learner explain the concept.
-Do not make the learner polish wording about the concept.
-Do not make the learner prepare a presentation, poster, classroom demo, workshop, public exhibit, educational touchscreen, worksheet, flashcards, answer key, label set, card sort, slide deck, or summary about the concept unless the topic is about teaching or explaining the concept itself.
-
-The concept is the tool.
-The situation is the point.
-
-## Real Situation Filter
-
-Before writing the scenario, ask: "Would this problem still matter if nobody were learning the concept?"
-
-If the answer is no, pick a different scenario.
-
-Avoid meta-practice where the learner is making educational material, fixing labels for a teaching aid, arranging examples for students, designing a demo, writing explanations, or choosing the best wording for the concept.
-
-The artifact can be a diagram, label, table, note, image, or screen only when it is evidence inside a real problem. It must not be the thing being prepared to teach the concept.
-
-Bad scenario shapes:
-
-- Sorting labels for a safety-training poster about hazard types.
-- Reordering cards for a public display about database indexes.
-- Fixing a workshop slide that explains tax deductions.
-- Choosing friendlier wording for a kiosk that teaches sleep stages.
-
-Better scenario shapes:
-
-- Inspecting a safety report to decide which hazard needs containment first.
-- Reading slow-query logs to decide which index change to test.
-- Reviewing an invoice and receipts to decide which deduction is unsupported.
-- Comparing sleep-study traces to decide which segment needs a technician review.
-
-In a good practice, each decision should change what someone does next: investigate, isolate, approve, reject, escalate, choose a tool, correct a process, stop a risky action, or verify a result.
-
-# Source Scope
-
-Use `SOURCE_LESSONS` to infer the practice scope. Each source lesson includes a title and description from a lesson covered by this practice. Treat them as concise scope metadata, not exhaustive lesson content.
-
-Do not reference the source lessons themselves. Do not test recall of exact wording, lesson titles, or descriptions. Build one practical story where the learner applies the underlying concepts in a new situation.
-
-# Visual-First Format
-
-Every scenario and every question step must include an `imagePrompt`.
-
-The image is the main source of context and evidence.
-The text should guide attention, not carry the whole scene.
-
-Good practice images include:
-
-- dashboards
-- receipts
-- labels
-- tables
-- maps
-- diagrams
-- timelines
-- code screens
-- terminal output
-- schedules
-- packaging
-- signs
-- whiteboards
-- forms
-- annotated photos
-- simple infographics
-- realistic workplace or everyday scenes with a few readable clues
-
-Image rules:
-
-- Describe exactly what should be visible.
-- Prefer concrete evidence over decorative metaphor art.
-- Each step image should usually have one primary clue, contrast, or state change that helps answer that step's question.
-- Show only the evidence needed for this step. Do not keep unrelated cards, labels, widgets, people, or side details just to make the image feel busy or realistic.
-- When the artifact is complex, zoom in or crop to the relevant section instead of showing the entire room, board, app, or document.
-- Prefer a few readable clues over many competing ones. It is better to show 2 useful labels clearly than 12 labels at once.
-- Background details are optional. Include them only when they help orient the learner or support the story.
-- Compose each image prompt around one centered primary artifact, screen, document, device, scene detail, or clue.
-- Avoid wide side-by-side panels unless the question truly depends on comparing two states at once.
-- If the step needs comparison, stack the states vertically or place them inside one centered artifact instead of spreading important details across the full width.
-- For screens, dashboards, code editors, tables, forms, receipts, and documents, ask for only the relevant section. Do not include sidebars, browser chrome, file trees, toolbars, or extra columns unless they are the clue.
-- If text is needed inside the image, keep it short and legible.
-- Use labels, totals, column names, timestamps, badges, short notes, or short dialogue bubbles when useful.
-- Do not rely on dense paragraphs, tiny unreadable text, or walls of copy inside the image.
-- Do not overload the frame with extra information that does not change the decision.
-- Do not spend the prompt on art-style instructions. Focus on content, objects, clues, and relationships.
-- Reuse the same setting, people, and artifacts across steps when that makes the story feel more coherent.
-- Every `imagePrompt` must stand on its own. The image model sees each prompt in isolation.
-- Do not write references like "same laptop", "same terminal", "same person as before", "continue the previous scene", or "again" unless you also restate what that recurring thing looks like.
-- If continuity matters, explicitly restate the recurring person, device, room, document, or artifact inside the current prompt.
-- Let later images reveal changed states or new evidence when useful.
-
-Bad standalone prompt:
-
-- Same laptop and same dark terminal.
-
-Good standalone prompt:
-
-- Dark laptop open to a black terminal with green text. Visible text: `Hi! What is your name?`. A blinking cursor sits on an empty line. Beside it, a simple Python file is open in the editor.
-
-Bad cluttered step prompt:
-
-- Meeting room with the whole Kanban wall, six columns, many colorful cards, people around the table, laptops, mugs, sticky notes, window, plant, and side whiteboard full of notes.
-
-Better focused step prompt:
-
-- Close view of the Kanban wall section that matters. Three cards are visible in `Ready`, including one client bug, one admin reminder, and one sticky note that says `buy coffee`. The mixed card types should be easy to read at a glance.
-
-# Requirements
-
-## Scenario
-
-Also generate a `scenario` object that sets up the practice before the dialogue starts.
-
-- `scenario.title`: A short label. Soft target: 1-3 words.
-- `scenario.text`: A short first-person setup paragraph. Soft target: around 220 characters or less.
-- `scenario.imagePrompt`: The opening image for the situation.
-
-Scenario rules:
-
-- Write `scenario.text` in first person.
-- Keep it short and vivid.
-- Return plain text only. Do not wrap `scenario.text` in quotation marks.
-- Set up one realistic situation where the lesson concepts matter.
-- Surface the concrete tension, confusion, or annoyance that makes the learner lean in.
-- Introduce the colleague, friend, client, or other recurring person here when useful.
-- Keep that same person and situation consistent across all later steps unless the story deliberately reveals why the frame changed.
-- This is setup only. The actual `steps` should continue the same situation instead of restarting with a new scene.
-
-## Step Structure
-
-Each step must have:
-
-- `imagePrompt`
-- `context`
-- `question`
-- `options`
-
-Soft targets:
-
-- `context`: Usually 1-3 short spoken sentences that someone says directly to the learner. Give enough detail to understand the real problem, the clue, and why the decision matters. Pure dialogue only.
-- `question`: short and direct, usually under 70 characters.
-- `options`: usually 4 choices. Prefer 2-4 words. Using 5 words is fine when clarity needs it.
-- `feedback`: short, conversational, specific, and helpful. It should explain the decision, not just react to it.
-
-Important:
-
-- The learner should often need the image to answer well.
-- The image should show the clue, artifact, mismatch, or state change that matters.
-- For question steps, the image should usually be tighter and more selective than the opening scenario image.
-- Each `imagePrompt` must be self-contained and understandable without seeing any earlier image.
-- Return `context` as plain dialogue text, not as a quoted string. Do not add surrounding quotation marks.
-- `context` must read as direct speech, not as scene narration. It can mention what the speaker sees, but it cannot narrate what a person did, found, restored, noticed, or is doing from the outside.
-- A quick test: if the line sounds like a caption, stage direction, or story summary, rewrite it as something the colleague would actually say to `{{NAME}}`.
-- `context` should make the real problem clear on the first read. Personality is good after the clue is clear; it should not hide the clue.
-- `context` should usually mention one specific clue, mismatch, consequence, or oddly human detail from this exact scene instead of generic filler.
-- Keep the dialogue lean, but do not strip out the useful setup, tension, or personality that makes the moment feel real.
-- If a funny line competes with the clue, make the clue more direct or place the funny line after the learner can already tell what problem they are solving.
-- Options should feel like real actions, decisions, or interpretations someone in the scene might suggest.
-- Prefer verbs and decision phrases over bare vocabulary labels when the concept allows it.
-- It is okay to choose between labels when the real-world problem genuinely depends on classification, but the classification must affect the next action. Do not make label cleanup itself the whole task.
-
-Good option styles:
-
-- Check totals
-- Trace route
-- Ask Maya
-- Compare records
-- Filter refunds
-- Open raw logs
-- Compare timestamps
-- Add one marker
-- Quarantine batch
-- Escalate sample
-- Stop the run
-
-Bad generic context:
-
-- {{NAME}}, look at this. Where do we even start?
-
-Better context:
-
-- {{NAME}}, this board has bugs, client requests, and someone's "buy coffee" note in the same lane. If all of that counts as one flow, how are we supposed to know what belongs here?
-
-Bad narrated context:
-
-- The analyst opens the weekly chart and finds the hours line dropping before the headline metric changes.
-- Now the script shows a strange total, and Priya points at the type column.
-- Priya restored the missing attachment and looks at the audit log.
-
-Better dialogue context:
-
-- {{NAME}}, the hours line is already dropping, but the headline rate has not moved yet. That usually means the slowdown is showing up before layoffs.
-- This total has `+0j` at the end, and the type column says `complex`. Something pulled the whole calculation up the numeric ladder.
-- {{NAME}}, the attachment is back, but the audit log still has a gap before the export. We need the clue that proves who changed it.
-
-## Lesson Title
-
-Also generate a `title` for the whole lesson.
-
-- This is the lesson title, not the `scenario.title`.
-- `scenario.title` is the tiny label for the opening setup step.
-- `title` is the memorable name shown in the lesson list.
-
-- It must be a short, memorable title based on the specific scenario you created.
-- It should feel like a practical case, incident, or situation, not a textbook heading.
-- Do NOT use generic titles like "Practice", "Applying the lesson", or the lesson title copied back unchanged.
-
-Good example styles:
-
-- The checkout line that stopped moving
-- Maya's last-minute inventory problem
-- Why the refund numbers do not match
-- The game store signup mix-up
-- Who changed the shipping labels?
-
-## Feedback Rules
-
-Feedback should feel like the other person's immediate reaction, not a score report.
-
-- For correct answers: briefly confirm why the choice works here.
-- For wrong answers: explain why the chosen option is wrong in this exact scene, then point to the better option and why it fits better.
-- Keep feedback conversational and specific.
-- Light personality is great when it feels natural.
-- Do not sound like a rubric, lecture, or generic praise message.
-- Every feedback line should answer the learner's implicit question: "Why is this right or wrong here?"
-- Wrong-answer feedback should do two jobs:
-  - say what is misleading, missing, or mistaken about the chosen option
-  - say what the better move, interpretation, or clue is instead
-- Do not stop at "not quite" or "that helps later." Finish the thought.
-
-Bad wrong-answer feedback:
-
-- That helps later, but not yet.
-
-Better wrong-answer feedback:
-
-- Counting cards might tell us volume, but the problem here is that the board does not show what belongs in the flow. Defining the board's scope comes first, because otherwise we are counting a mixed pile.
-
-## Story Arc
-
-Your story must follow this structure:
-
-1. **Opening Step**: Start in the middle of the problem. The setup already lives in `scenario`.
-2. **Rising Complexity Without Padding**: Each step adds one useful clue, decision, or state change.
-3. **Reveal or Reframe When Useful**: Near the end, a concrete reveal can make the story more satisfying when it clarifies the concept. Do not force a twist that distracts from the problem.
-4. **Resolution**: Solve the problem and reinforce the lesson's main takeaway.
-
-## Evidence Coherence
-
-The story must stay logically and factually consistent from start to finish.
-
-- Do not add a late reveal that makes earlier evidence impossible.
-- A reveal may reframe earlier clues, but it must be compatible with every visible clue, result, label, sample, log, trace, or document already shown.
-- If an early step shows evidence for a product, diagnosis, output, or cause, a later step must not reveal a mutually exclusive cause unless you clearly frame it as a separate sample, separate run, separate patient, separate request, or separate failed attempt with its own evidence.
-- For technical, scientific, legal, medical, financial, or programming topics, preserve the domain logic across the whole scenario. Do not trade correctness for a twist.
-- When uncertain, use a straightforward investigation flow instead of a surprise reveal.
-
-The best reveals, when used:
-
-- build one strong assumption
-- quietly reinforce it for several steps
-- then reframe it with one concrete fact
-- make earlier clues feel different in hindsight
-
-The reveal should change the situation itself, not just add one more requirement. If no reveal is needed, use a straightforward final decision.
-
-Whenever possible, let the reveal land through the image, or through the mismatch between what the image shows and what the characters assumed.
-
-## Fun and Personality
-
-- Give the lesson small human details, a running assumption, a mildly funny mismatch, or a workplace oddity when it helps the scene feel alive.
-- Let humor come from the situation, artifact, decision, or colleague dynamic, not from random jokes pasted on top.
-- The best balance is: clear problem first, personality second.
-- A dry but correct case study is not enough, but a clever story that slows comprehension is worse.
-
-## Step Count
-
-Use as many question steps as the problem needs, and no more. Complex source scopes can need more decisions; simple scopes should finish quickly. The right length is the point where every remaining step asks the learner to make a distinct decision and removing any step would skip a useful part of the problem.
-
-## Choosing the Right Scenario
-
-This is a learning and career development platform, so workplace scenarios are the default.
-
-The learner should usually be solving a real job-shaped problem with a colleague, teammate, client, or partner.
-
-However, if the topic fits everyday life better, use the most natural setting for that level.
+Before writing, silently translate the lesson into a practical mechanism. Do not output this plan.
 
 Ask:
 
-**Where would someone at this level most naturally face this problem?**
+- What does this concept receive, change, compare, control, move, produce, block, or reveal?
+- What would someone observe if it worked correctly?
+- What would someone observe if it were missing, blocked, reversed, overloaded, confused, or misunderstood?
+- What real decision would change because of that observation?
+- What tempting wrong move could a reasonable person make from the same evidence?
+- What single decision axis is this scene testing: a measurement, record, threshold, sequence, authorization, signal, comparison, or action?
 
-Use that setting.
+Choose one real case where those effects matter even if nobody were learning the concept.
 
-## The `{{NAME}}` Placeholder
+## Core Shape
 
-Use `{{NAME}}` wherever the learner's name should appear in dialogue.
+The learner should work with a colleague on one concrete case. Each scene should follow this shape:
 
-Examples:
+1. Show or mention an observable effect: a symptom, behavior, failed output, mismatch, trace, record, measurement, or visible state.
+2. Let the learner infer the cause, failure point, next check, best comparison, or best action.
+3. Use the answer to move the same case forward.
 
-- {{NAME}}, I think we missed something.
-- Nice catch, {{NAME}}. That explains the timestamp.
+Keep the learner one inference away from the answer. The image and dialogue should give evidence, stakes, and uncertainty. They should not translate the evidence into the exact cause, category, or action the question asks the learner to choose.
 
-## Decision Design
+Good practice question shapes:
 
-Every decision must:
+- What could be causing this failure?
+- What should we check next?
+- Which part of the system is not doing its job?
+- Which comparison best explains the mismatch?
+- What action fixes the problem without making a worse one?
 
-- require reasoning, not recall
-- feel like a real choice someone could face
-- depend on the lesson concept being used inside the situation
-- usually depend on the image plus the short dialogue
-- have plausible distractors
-- keep all options at the same level of specificity and confidence
-- avoid making the correct answer the obvious longest or most polished one
-- allow mild humor only when the option still feels believable and clear in the scene
+Bad rote question shapes:
 
-## Tone and Style
+- What are dendrites?
+- What is the function of dendrites?
+- Which neuron receives signals?
+- What role does this organism have?
+- Which process is happening?
 
-- Pure dialogue only in `context`
-- No surrounding quotation marks in `scenario.text` or `context`
-- No narrator text
-- No character name prefixes
-- No action descriptions in `context`
-- No third-person narration in `context`, such as "someone finds...", "the chart now shows...", "the teammate looks at...", or "the file appears..."
-- Fast pacing
-- Short sentences
-- Specific, not generic
-- Friendly and clear
-- Light humor welcome
-- Practical, not academic
-- Enough situational detail to feel real
-- Short does not mean stripped of personality
-- More "real problem with a colleague" than "content review disguised as dialogue"
+If the correct answer is a concept label, the scene must still make the learner choose it because it explains the observed case, not because the question asks for vocabulary recall.
 
-## What to Avoid
+## Difficulty And Evidence
+
+Each scene should be answerable, but not solved before the learner sees the question and options.
+
+Give the learner:
+
+- the observable clue
+- the practical constraint or consequence
+- one plausible ambiguity, near miss, or tempting wrong interpretation
+
+Do not give the learner:
+
+- the correct option text or a close paraphrase in `dialogue`
+- the complete causal explanation before the question
+- a sentence that turns the visible clue into the lesson concept
+- a recap of previously solved concept names as the main basis for a new answer
+- a vague question that combines different roles, such as material input, energy source, control signal, authorization, or evidence source, when the lesson needs those roles kept separate
+
+Bad:
+
+- {{NAME}}, the batch is too cold because the valve is stuck open, so the compressor is overworking.
+
+Better:
+
+- {{NAME}}, the batch is below the safe range, the valve indicator is still open, and the compressor has not cycled off. If we guess wrong, the whole tray is gone.
+
+Question:
+
+- Which check should come first?
+
+If the answer depends on counting, alignment, leftover items, before/after order, a threshold, a field label, or a visible mismatch, make that decisive difference visible in `imagePrompt`. Do not make the learner rely only on `dialogue` to notice it.
+
+## Output Structure
+
+Return a `scenario` object and a `scenes` array.
+
+`scenario`:
+
+- `title`: short, memorable case title.
+- `text`: short setup paragraph, maximum 300 characters. Explain the real problem, who needs help, and why the outcome matters.
+- `imagePrompt`: opening image prompt with the main artifact, place, or evidence for the case.
+- Do not use `{{NAME}}` in `scenario.title`, `scenario.text`, or `scenario.imagePrompt`.
+
+Each item in `scenes`:
+
+- `imagePrompt`: visual evidence for this decision.
+- `dialogue`: maximum 300 characters. Only the words a colleague says directly to the learner.
+- `question`: one practical inference or decision.
+- `options`: exactly 4 short options, usually 2-4 words. Use one-word options only when they are still concrete enough to decide from the case evidence.
+- `feedback` for each option.
+
+Use `{{NAME}}` only in `dialogue`, and only when a colleague naturally addresses the learner. Do not use `{{NAME}}` in scenario text, image prompts, questions, options, or feedback.
+
+## Dialogue
+
+Dialogue should sound like a colleague solving the case with the learner.
+
+It should usually contain:
+
+- the concrete effect or clue
+- the practical tension, consequence, or constraint
+- what is still uncertain or competing, without resolving it
+
+It should not contain:
 
 - narrator text
-- surrounding quotation marks around `scenario.text` or `context`
-- character name prefixes
-- action descriptions inside `context`
-- step contexts that summarize the scene from outside instead of speaking to the learner
-- memorization questions disguised as dialogue
-- scenarios about explaining the concept instead of using it
-- scenarios about teaching the concept, preparing a demo, fixing educational labels, sorting cards, or polishing a learning aid
-- images that only decorate and do not help with the decision
-- giant blocks of tiny text inside the image
-- generic stock-scene prompts with no useful clues
-- options so long they turn back into mini-sentences unless absolutely necessary
-- distractors so absurd that nobody in the scene would consider them
-- meta-commentary
-- fourth-wall breaking
-- dialogue about how to phrase something better
-- lines that announce the story structure with labels like "twist" or "big reveal"
-- dialogue so compressed that the learner loses the useful context or the human voice
-- bland filler lines like "look at this", "what now?", or "that's weird" when they could mention the actual clue
-- recurring jokes, props, or side characters that do not change the decision
-- context that requires rereading because the joke, metaphor, or setup hides what is being asked
-- workplace dialogue that is technically correct but emotionally flat, generic, or humorless
+- stage directions
+- speaker labels
+- surrounding quotation marks
+- the same question already asked in `question`
+- the cause, category, or action the question asks the learner to infer
+- a definition or mini-lecture about the lesson concept
+- a punchline pasted onto the end
 
-# Quality Checks
+Avoid question marks in `dialogue` by default. If a natural question is unavoidable, it must not duplicate `question`.
+
+Write `dialogue` as the next thing a colleague would say during work, not as narration or an explanatory monologue. It can say what the colleague checked, what does not match, or why the decision matters. It cannot describe the scene from outside.
+
+Good:
+
+- {{NAME}}, look at this grip test. The patient feels the cup and moves his fingers, but every attempt crushes the rim. The trace reaches the hand circuit, and one section looks almost flat.
+
+Question:
+
+- Which failure point should we check first?
+
+Bad:
+
+- {{NAME}}, dendrites receive signals from other neurons. What is the function of dendrites?
+- Maya points to the chart and notices the line dropped after lunch.
+- {{NAME}}, the audit gap means the export failed, so we need to rerun it.
+
+## Tone
+
+Use clear, practical, spoken language. Light humor is welcome. It works best when it helps the learner understand the case.
+
+The best light humor is a concrete comparison that carries meaning:
+
+- the patient squeezes the cup like a lemon
+- the robot arm taps the box like a doorbell instead of gripping it
+- the gearbox skips like a zipper missing a tooth
+
+Avoid:
+
+- random object jokes
+- forced personification
+- "good news / bad news" as a repeated formula
+- making the whole scene about the joke
+- making all distractors silly
+- humor that hides the clue
+
+Dialogue should feel alive, concrete, and focused.
+
+## Decisions And Options
+
+Questions should test transfer, not recall.
+
+Prefer options that are:
+
+- causes
+- next actions
+- failure points
+- competing interpretations
+- comparisons
+
+Avoid options that are only bare vocabulary labels unless the label is needed to explain the case. Keep all four options at the same level of specificity and plausibility.
+
+Prefer option text that sounds like a real move someone in the case might choose:
+
+- Restore cycle
+- Compare records
+- Verify batch ID
+- Isolate sample
+- Replace worn seal
+
+Use bare labels only when all options are competing interpretations at the same level and the label changes the next action. Wrong options should be tempting near misses, not obviously bad commands like ignoring the problem, repeating the failed move, or choosing a random unrelated detail.
+
+Keep all options on the same decision axis. If the question asks which measurement to verify, all options should be measurements or specs. If it asks which signal to use, all options should be plausible signals. If it asks which formal action to take, all options should be actions at that workflow stage.
+
+Wrong options should be plausible for this exact moment, not just related to the overall scenario. Strong wrong options often use the wrong unit, wrong threshold, wrong record, wrong timing, wrong scope, wrong side, wrong field, or wrong next step.
+
+Correct options should be specific enough to execute or interpret. Avoid broad verbs like "fix", "adjust", "regularize", "handle", or "review" when the domain requires a more precise action, record, comparison, approval, placement, or measurement.
+
+Bad mixed-axis option set for a machine calibration scene:
+
+- Sensor offset
+- Blue housing
+- Lunch break
+- Printer ink
+
+Better same-axis option set:
+
+- Sensor offset
+- Wrong unit
+- Loose mount
+- Old calibration
+
+One playful or silly distractor can be fine when the other wrong options are plausible and the scene still tests reasoning. The problem is when all distractors are joke answers or obvious throwaways.
+
+Bad option set:
+
+- Sensor
+- Record
+- Decoration
+- Banana
+
+Better options:
+
+- Check valve
+- Compare logs
+- Isolate batch
+- Stop the run
+
+## Story Flow
+
+Use as many scenes as the lesson concepts need, and no more. The right count depends on the lesson. Some lessons need a short case; others need more scenes to develop all important mechanisms, comparisons, or consequences.
+
+Scenes should stay in one case. Do not restart with unrelated examples just to cover more vocabulary.
+
+Cover all lesson concepts implied by the source metadata by showing distinct effects or failure modes in the case. Do not turn the lesson into a checklist of terms.
+
+Every scene after the first should add fresh evidence: a changed measurement, failed attempted fix, new constraint, contradiction, side effect, cost, deadline, safety risk, or consequence. A later scene should not exist only to summarize earlier answers.
+
+The final scene should resolve the case by adding a concrete final pressure or consequence, not by asking the learner to pick a recap of the named flows, parts, roles, or rules already solved.
+
+If the same artifact evolves across scenes, keep the changes coherent. Change one controlled piece at a time when possible. If a teammate swaps in a different draft, sample, link, record, or setup, say that directly in `dialogue` and show it in `imagePrompt`.
+
+A late reveal is optional. Use one only if it naturally changes the diagnosis or explains earlier clues. Do not announce it with phrases like "plot twist", "big reveal", or local-language equivalents.
+
+## Real Situation Filter
+
+Before writing the scenario, ask:
+
+Would this problem still matter if nobody were learning the concept?
+
+If the answer is no, choose a different case.
+
+Avoid scenarios where the main task is preparing a lesson, fixing educational labels, sorting examples for students, making a poster, building a classroom demo, writing a summary, or choosing wording about the concept.
+
+Artifacts like diagrams, labels, tables, notes, images, or screens are allowed only when they are evidence inside a real problem.
+
+## Image Prompt Rules
+
+- Describe exactly what should be visible.
+- Write image prompts in `LANGUAGE`.
+- Make each image prompt stand alone. The image model sees each prompt in isolation.
+- Show the evidence needed for this scene's decision.
+- Prefer concrete clues over decorative scenes.
+- Use a centered artifact, screen, document, device, sample, behavior, or measurement when possible.
+- Keep visible text short and legible.
+- Do not rely on dense paragraphs or tiny text inside the image.
+- Do not add unrelated props, cards, labels, people, or side details just to make the scene busy.
+- If a text label matters, write it in `LANGUAGE` unless it is naturally code, a file name, a formula, a technical field name, or imported UI text.
+- If the decision depends on an exact visual difference, spell out that difference: show the extra item, missing row, shifted alignment, changed threshold, mismatched label, or out-of-range value directly.
+- If continuity matters, restate the recurring person, device, room, document, or artifact inside the current prompt.
+
+## Feedback
+
+Feedback should feel like the colleague's immediate reaction, not a score report.
+
+For correct answers:
+
+- confirm why the choice explains this scene
+- connect it to the practical next step
+
+For wrong answers:
+
+- explain what is misleading or missing in that option
+- state the better answer and why it fits the observed evidence
+
+Keep feedback short, specific, and conversational.
+
+## Final Check
 
 Before finalizing, verify:
 
-- [ ] Does every `scenario` and every step include an `imagePrompt`?
-- [ ] Is every generated string in `LANGUAGE`, including every `imagePrompt`?
-- [ ] Is every `imagePrompt` fully standalone, with no unexplained references to earlier images?
-- [ ] Does each question image focus on the evidence needed for that exact decision instead of showing extra clutter?
-- [ ] Is every `context` pure dialogue with no narrator, prefixes, or action descriptions?
-- [ ] Could every `context` be spoken aloud by the colleague exactly as written?
-- [ ] Did you avoid third-person scene updates like "the teammate found", "now the chart shows", or "someone is looking at" inside `context`?
-- [ ] Are `scenario.text` and `context` plain text, with no surrounding quotation marks?
-- [ ] Does the dialogue sound like real spoken language in the requested locale?
-- [ ] Would a real person in this scene actually say these lines?
-- [ ] Would the learner get useful evidence from the image, not just decoration?
-- [ ] Does each `context` include enough concrete detail to make the decision feel motivated?
-- [ ] Is the real problem clear before any joke or side detail?
-- [ ] Are the options short, action-like, and easy to scan?
-- [ ] Does every question step add a new decision instead of repeating the same move?
-- [ ] Would this problem still matter if nobody were learning the concept?
-- [ ] Is any label, diagram, card, screen, or document used as evidence for a real decision instead of as a teaching aid?
-- [ ] If there is a late reveal, does it clarify the concept instead of adding a random surprise?
-- [ ] Is any late reveal compatible with all earlier evidence, results, labels, samples, logs, traces, and documents?
-- [ ] Did the story keep personality without making the task harder to understand?
-- [ ] Does the whole lesson feel practical, fun, and grounded in a real situation?
+- Does every scene begin from an observable effect rather than a concept name?
+- Could the learner answer by memorizing a definition? If yes, rewrite the scene.
+- Does `dialogue` give clues without giving away the cause, category, or action?
+- Is `{{NAME}}` used only in `dialogue`, never in scenario text or feedback?
+- Are all options plausible, useful, and action-oriented when the concept allows it?
+- Are all options on the same decision axis, with wrong answers that are plausible for this exact moment?
+- Is the correct option specific enough for the domain instead of a vague "fix/adjust/review" label?
+- If the answer depends on a count, label, threshold, or alignment, does `imagePrompt` make that evidence visible?
+- Does every later scene add fresh evidence or pressure instead of recapping solved concepts?
+- Does the case stay focused instead of becoming a tour of vocabulary?
+- Does any humor fit the scene and keep the clue clear?

@@ -3,19 +3,31 @@ import { type LessonKind, prisma } from "@zoonk/db";
 export type SourceLessonMetadata = { description: string; title: string };
 
 /**
- * Source lesson metadata is optional because companion lessons can have empty
- * titles and descriptions. Skipping empty rows prevents prompt input like `:`
- * while still allowing pending planned lessons to define generation scope.
+ * Normalizes planned lesson metadata for prompts while skipping empty companion
+ * rows that do not define a real source scope. Pending lessons can still define
+ * scope through title and description before generated content exists.
+ */
+export function getSourceLessonMetadata(lesson: {
+  description: string | null;
+  title: string | null;
+}): SourceLessonMetadata | null {
+  if (!lesson.title && !lesson.description) {
+    return null;
+  }
+
+  return { description: lesson.description ?? "", title: lesson.title ?? "" };
+}
+
+/**
+ * Range-based prompts need arrays, so this adapts one row into zero or one
+ * prompt-ready metadata item.
  */
 function sourceLessonForPrompt(lesson: {
   description: string | null;
   title: string | null;
 }): SourceLessonMetadata[] {
-  if (!lesson.title && !lesson.description) {
-    return [];
-  }
-
-  return [{ description: lesson.description ?? "", title: lesson.title ?? "" }];
+  const metadata = getSourceLessonMetadata(lesson);
+  return metadata ? [metadata] : [];
 }
 
 /**

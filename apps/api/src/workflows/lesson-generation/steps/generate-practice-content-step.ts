@@ -1,15 +1,38 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { generateLessonPractice } from "@zoonk/ai/tasks/lessons/core/practice";
+import {
+  type LessonPracticeSchema,
+  generateLessonPractice,
+} from "@zoonk/ai/tasks/lessons/core/practice";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { FatalError } from "workflow";
-import { getSourceLessonsSinceLastLessonKind } from "./_utils/explanation-source-steps";
-import { type PracticeLessonContent } from "./_utils/generated-lesson-content";
+import { getPreviousExplanationSourceLesson } from "./_utils/explanation-source-steps";
+import {
+  type PracticeLessonContent,
+  type PracticeLessonStep,
+} from "./_utils/generated-lesson-content";
 import { type LessonContext } from "./get-lesson-step";
 
 /**
- * Generates practice content from explanation lesson metadata that has not
- * already fed an earlier practice. The source lessons do not need generated
- * content because title and description carry the practice scope.
+ * The generation task uses story language (`scenes.dialogue`) because that
+ * produces better structured output. The player stores multiple-choice content
+ * as `steps.context`, so the workflow translates the model-facing shape at the
+ * boundary before image generation and persistence.
+ */
+function buildPracticeLessonStep(
+  scene: LessonPracticeSchema["scenes"][number],
+): PracticeLessonStep {
+  return {
+    context: scene.dialogue,
+    imagePrompt: scene.imagePrompt,
+    options: scene.options,
+    question: scene.question,
+  };
+}
+
+/**
+ * Generates practice content from the nearest previous explanation metadata.
+ * Practice rows are 1:1 companions, so title and description are the complete
+ * source scope even before the explanation content itself has generated.
  */
 export async function generatePracticeContentStep(
   context: LessonContext,
@@ -19,9 +42,9 @@ export async function generatePracticeContentStep(
   await using stream = createStepStream<LessonStepName>();
   await stream.status({ status: "started", step: "generatePracticeContent" });
 
-  const sourceLessons = await getSourceLessonsSinceLastLessonKind({ context, kind: "practice" });
+  const sourceLesson = await getPreviousExplanationSourceLesson(context);
 
-  if (sourceLessons.length === 0) {
+  if (!sourceLesson) {
     throw new FatalError("Practice generation needs explanation lesson metadata");
   }
 
@@ -29,10 +52,14 @@ export async function generatePracticeContentStep(
     chapterTitle: context.chapter.title,
     courseTitle: context.chapter.course.title,
     language: context.language,
-    sourceLessons,
+    lesson: sourceLesson,
   });
 
   await stream.status({ status: "completed", step: "generatePracticeContent" });
 
-  return { kind: "practice", scenario: result.data.scenario, steps: result.data.steps };
+  return {
+    kind: "practice",
+    scenario: result.data.scenario,
+    steps: result.data.scenes.map(buildPracticeLessonStep),
+  };
 }

@@ -3,196 +3,160 @@ import { type LessonPracticeParams } from "@zoonk/ai/tasks/lessons/core/practice
 const SHARED_EXPECTATIONS = `
 EVALUATION CRITERIA:
 
-1. PRACTICE AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like "Sarah:"), and no action descriptions. The learner should feel immersed in a real workplace conversation.
+1. REAL CASE: The practice must be one concrete case where the lesson concept affects an outcome that would matter outside a lesson. Penalize meta-scenarios where the learner is preparing teaching material, fixing labels, sorting examples, making a poster, building a classroom demo, writing a summary, or choosing wording about the concept.
 
-2. VISUAL GROUNDING: Every scenario and every step should include an imagePrompt that gives useful evidence, not decoration. The image should help the learner reason about the decision through an artifact, screen, diagram, label, table, document, or concrete scene clue. Penalize generic image prompts that add no value.
+2. MECHANISM TRANSFER: Every scene should start from an observable effect, symptom, behavior, failed output, mismatch, trace, record, measurement, or visible state. The question should ask the learner to infer a cause, failure point, next check, best comparison, or best action. Penalize questions that can be answered by recalling a definition, function, role, or process label without reasoning from the scene.
 
-3. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons. Penalize meta-scenarios where the main action is preparing a workshop, presentation, poster, cartaz, slogan, classroom demo, teaching display, worksheet, flashcards, label cleanup for a teaching aid, summary, or wording about the lesson topic instead of using the concept in a real situation.
+3. CONCEPT COVERAGE WITHOUT A CONCEPT TOUR: The practice should cover all lesson concepts implied by the lesson metadata through distinct effects or failure modes in the same case. Penalize outputs that skip important concepts, but also penalize outputs that become a tour of vocabulary, roles, or processes even if each individual scene is accurate.
 
-4. FLOW COHERENCE: Steps must flow naturally as a continuous practice where each step adds one useful clue, decision, or state change. A late reveal can be useful when it clarifies the concept or makes the story more satisfying, but it should not distract from the problem. The final step must resolve the problem AND reinforce the main learning takeaway. Penalize forced twists, recurring jokes, or side plots that make the learner reread the context.
+4. STORY CONTINUITY: Scenes must flow through one case. Each scene should add useful evidence, narrow the diagnosis, change the decision, or reveal a consequence. Penalize disconnected examples that only share a topic.
 
-5. FORMAT COMPLIANCE: Verify these constraints:
+5. VISUAL GROUNDING: Every scenario and every scene should include an imagePrompt that gives useful evidence, not decoration. The image should help the learner reason about the decision through an artifact, screen, diagram, label, table, document, measurement, sample, behavior, or concrete scene clue. Penalize generic image prompts that add no value.
+
+6. DIALOGUE QUALITY: Dialogue must be pure conversation with no narrator text, speaker labels, stage directions, colons before quoted speech, or surrounding quotation marks. A single colleague speaking directly to {{NAME}} is valid for this schema; do not require a scripted back-and-forth exchange. Dialogue should sound like something a real colleague would say while working the case: it gives evidence, tension, or uncertainty, while the separate question field asks the learner-facing decision. Penalize dialogue that duplicates the question, gives away the inferred cause/action, or reads like a lecture, narrator summary, or formal briefing instead of direct speech.
+
+7. TONE: Light humor is good. Strong humor usually appears as a concrete comparison or analogy that keeps the case clear. Penalize humor that hides the clue, turns the whole scene into the joke, or makes all distractors silly. Do not penalize one playful or silly distractor when the other wrong options are plausible and the scene still tests reasoning.
+
+8. FORMAT COMPLIANCE: Verify these constraints:
    - scenario has: title, text, imagePrompt
-   - every step has: imagePrompt, context, question, options
-   - scenario.text is first person and short
-   - context is pure dialogue and should make the real problem clear before any joke or side detail
-   - question should be short and direct
-   - option text should usually be short and action-like
+   - scenario.title should feel like a short, memorable practical case title, not a generic label or a copied source lesson title
+   - every scene has: imagePrompt, dialogue, question, options
+   - scenario.text is short, clear on the first read, and written as scenario setup rather than first-person narration
+   - scenario.text sets the stage, gives the learner a concrete task, and explains why the outcome matters in the scenario
+   - question should be short, direct, not already asked inside dialogue, and grounded in an observable effect from the scene
+   - option text should usually be short and easy to scan; terse options are fine when the question and scene make them unambiguous
+   - prefer causes, next actions, failure points, or comparisons over bare vocabulary labels, but do not penalize a short label when it is a real case decision and all options are at the same level
    - Exactly 1 option must have isCorrect: true
    - The recurring person or situation introduced in scenario.text should stay consistent across the dialogue unless the story deliberately reveals a reason for the change
-   - Do NOT penalize for output being wrapped in {"steps": [...]} vs a raw array — both are valid formats
+   - Do NOT penalize for output being wrapped in {"scenes": [...]} vs a raw array - both are valid formats
 
-6. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.
+9. PERSONALIZATION: The {{NAME}} placeholder should be used appropriately in dialogue or feedback to personalize the experience.
 
-7. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.
+10. FEEDBACK QUALITY: Each option must explain why it is right or wrong in this exact scene. Wrong-answer feedback should name what is misleading and state the better answer. Penalize generic score-report feedback.
 
-8. STEP COUNT: Practice should use as many question steps as the problem needs, and no more. Penalize practices that feel padded, ask the same decision repeatedly, or stretch a focused problem past what a learner should need. Do not penalize longer practices when every step tests a distinct necessary decision.
+11. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider for this exact decision. Penalize absurd, joke-shaped, random, or obviously irrelevant options, including details from the general scenario that do not belong to the current compatibility, diagnosis, calculation, or evidence decision.
 
-9. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Do not penalize light humor, playful wording, or a mildly funny option if it is still believable and clear in the scene. Penalize distractors that are so silly, absurd, or joke-shaped that no reasonable person would choose them.
-
-10. DIALOGUE NATURALNESS AND CLARITY: Penalize dialogue that sounds like prompt residue, coaching language, polished writing advice, or translated corporate speech instead of something a real person in the scene would say. This includes lines that comment on how a question or sentence sounds rather than moving the scene forward. Examples of suspicious phrasing include things like "great question", "honestly", "without sounding rehearsed", "How do I say that without sounding awkward?", "What wording works better?", or local-language equivalents of that same delivery-focused wording when they feel copied from instructions rather than motivated by the scene. Also penalize dialogue that announces the story structure with labels like "twist", "plot twist", "big reveal", or local-language equivalents instead of letting the surprise happen naturally. Penalize context that is so jokey, metaphorical, or side-story-heavy that the learner must reread it to understand what is being asked. Do not penalize light humor, playful exchanges, or a mildly silly twist when the real problem is still clear.
-
-11. REPETITION AND FILLER: Penalize practice steps that ask the same decision repeatedly with only a new prop, character, or joke. Every question should test a distinct application move, clue, or consequence.
+12. SCENE COUNT: Practice should use as many scenes as the lesson concepts need, and no more. The right count depends on the lesson. Penalize outputs that skip important lesson concepts, and penalize padded, repetitive, or same-question-with-new-prop scenes.
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for specific plot choices, character names, or scenario settings you might expect
-- Do NOT require specific steps like "investigation" or "resolution" by name - focus on whether the practice has good flow
-- Do NOT check against an imagined "ideal" practice structure
-- Do NOT require a twist, but do not penalize a good twist when it clarifies the problem and feels natural
-- Do NOT penalize for output being wrapped in {"steps": [...]} instead of a raw array
-- Do NOT penalize a small overrun on text length if the step is still fast, clear, and readable on the first pass
-- Do NOT penalize 3-5 options if the step quality stays high and there is no filler
+- Do NOT require one exact plot, character, setting, or sample set
+- Do NOT penalize a valid real-world scenario just because it is not the scenario you would have chosen
+- Do NOT require a plot twist; a reveal is optional and should only be used when it naturally changes the diagnosis or explains earlier clues
+- Do NOT penalize for output being wrapped in {"scenes": [...]} instead of a raw array
+- Do NOT penalize a small overrun on text length if the scene is still fast, clear, and readable on the first pass
 - Do NOT penalize light humor, a playful tone, or slightly silly moments when they still sound natural, scene-appropriate, and clear
-- Do penalize scenes whose main task is choosing wording, polishing phrasing, teaching, labeling a learning aid, or presenting the concept instead of using it
-- Do penalize image prompts that are generic decoration instead of useful evidence
-- Do penalize lines that feel like prompt instructions leaking into dialogue, even if grammar and structure are otherwise correct
-- ONLY penalize for: major format violations, missing or low-value image prompts, narrator/description text in dialogue, decisions that test memorization instead of reasoning, confusing over-playful context, forced story twists, repetitive/filler decisions, poor distractor quality, or factually incorrect lesson application
+- Do NOT require every dialogue line to contain a joke; clarity comes first
+- Do NOT penalize dialogue just because one colleague speaks to {{NAME}} instead of alternating turns; penalize only if it stops sounding like direct workplace speech or removes the learner's inference
+- Do NOT penalize terse option text by itself; penalize it only when it becomes vague, purely vocabulary-based, or answerable without the scene evidence
+- Do NOT penalize a single playful or silly option when the rest of the distractors remain plausible
+- Do penalize direct definition/function/role/process questions when the learner can answer without using the case evidence
+- Do penalize scenes where the concept is merely named instead of shown through an effect
+- Do penalize generic decoration image prompts
+- Do penalize prompt residue, narrator text in dialogue, duplicated dialogue questions, disconnected scene flow, repetitive/filler decisions, all-silly distractor sets, poor distractor quality, and factually incorrect lesson application
 - Different valid practice approaches exist - assess the quality of what IS provided
-`;
-
-const NEUROSCIENCE_REAL_APPLICATION_EXPECTATIONS = `
-REAL APPLICATION REGRESSION CHECK:
-
-This case is based on production Neuroscience practice lessons that drifted into meta practice. Penalize SEVERELY if the scene is mainly about preparing a lab demo, open-house station, workshop, classroom display, student handout, card sort, diagram labels, or teaching aid. Those scenarios make the learner explain or organize the concept instead of using neuroscience to solve a real problem.
-
-A strong scenario should use neuroscience in a real research, clinical, lab, or evidence-review situation where the decision changes what someone does next. The learner may inspect images, diagrams, labels, or notes, but the artifact must be evidence inside the real problem, not the thing being prepared for students.
 `;
 
 export const TEST_CASES = [
   {
     expectations: `
+LANGUAGE REQUIREMENT: All content must be in Portuguese.
+
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Network data movement decisions must reflect genuine networking concepts. Penalize if:
-   - Encapsulation layers are confused or misordered
-   - Forwarding decisions are described as centralized rather than hop-by-hop
-
-2. SCENARIO CHECK: The workplace problem should involve realistic networking challenges like: debugging connectivity issues, optimizing data transfer, diagnosing packet loss, or designing network architectures.
-
-3. CONCEPTUAL FOCUS: Decisions should require reasoning about how data encapsulation and forwarding constraints affect network behavior.
+1. ACCURACY CHECK: Energy and matter flow must be biologically accurate at a simple introductory level. Penalize if:
+   - Light is treated as matter or as food by itself
+   - Producers are described as eating soil, light, or ready sugar from the environment
+   - Fungi or similar heterotrophs are described as photosynthesizing in the dark
+   - Organic matter, biological work, and residues are not connected to the same case
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "en-web-data-movement",
+    id: "pt-biologia-energia-atividade-vital",
     userInput: {
-      chapterTitle: "Networking fundamentals",
-      courseTitle: "Web Development",
-      language: "en",
-      sourceLessons: [
-        {
-          description:
-            "Data is wrapped in headers at each network layer (application, transport, network, link) before transmission, with each layer adding its own control information.",
-          title: "Encapsulation",
-        },
-        {
-          description:
-            "Each router makes independent forwarding decisions based on its own routing table, passing packets one hop at a time toward the destination.",
-          title: "Hop-by-Hop Forwarding",
-        },
-        {
-          description:
-            "The maximum size of a single frame that can be transmitted over a network link, typically 1500 bytes for Ethernet.",
-          title: "Maximum Transmission Unit",
-        },
-        {
-          description:
-            "When a packet exceeds the MTU of a link, it is split into smaller fragments that are reassembled at the destination.",
-          title: "Packet Fragmentation",
-        },
-      ],
+      chapterTitle: "O que conta como vida",
+      courseTitle: "Biologia",
+      language: "pt",
+      lesson: {
+        description:
+          "Trace como um ser vivo obtém energia e matéria, transforma isso em trabalho biológico e elimina resíduos. Você vai diferenciar, em nível simples, organismos que produzem seu próprio alimento dos que precisam consumir ou absorver matéria orgânica.",
+        title: "Siga energia virando atividade vital",
+      },
     } satisfies LessonPracticeParams,
   },
   {
     expectations: `
-${NEUROSCIENCE_REAL_APPLICATION_EXPECTATIONS}
-
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Neuron versus glia decisions must reflect genuine nervous-system cell roles. Penalize if:
-   - Branches alone are treated as enough evidence that a cell is a neuron
-   - Glial cells are described as passive filler instead of support, regulation, protection, or cleanup cells
-   - Job clues like signaling, supporting axons, managing local environment, or reacting to injury are ignored
+1. ACCURACY CHECK: URL decisions must preserve the browser-facing meaning of each part. Penalize if:
+   - Scheme, domain, path, query, or fragment are swapped or treated as interchangeable
+   - A fragment is described as causing a new network request by default
+   - Query parameters are treated as page path segments instead of extra instructions or filters
 
-2. SCENARIO CHECK: The real problem should involve realistic neuroscience work like reviewing a confusing microscopy result, deciding which sample needs another marker, interpreting a tissue finding, or triaging a research annotation that affects the next lab step. Penalize classroom demos, student-facing slide cleanup, diagram-labeling stations, flashcards, or any scene where the main goal is to teach neuron/glia labels to someone else.
-
-3. CONCEPTUAL FOCUS: Decisions should require using shape, location, marker, and job clues to decide what the cell evidence means in context. The learner should not merely choose the right vocabulary label for a teaching diagram.
+2. SCENARIO CHECK: The case should involve a real browser, product, support, analytics, routing, or link-sharing problem where one character changes the destination, filtered result, or on-page position. Penalize classroom URL labeling, poster cleanup, or generic definitions detached from a concrete broken link.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "en-neuroscience-neuron-glia-real-problem",
+    id: "en-web-design-url-parts",
     userInput: {
-      chapterTitle: "Cells that build the nervous system",
-      courseTitle: "Neuroscience",
+      chapterTitle: "How a website shows up in a browser",
+      courseTitle: "Web Design",
       language: "en",
-      sourceLessons: [
-        {
-          description:
-            "Compare a communication-focused neuron with support-focused glial cells, then use shape, location, and job clues to tell which kind of cell you are looking at.",
-          title: "Deciding whether a cell is a neuron or glia",
-        },
-      ],
+      lesson: {
+        description:
+          "Read the parts of a URL—scheme, domain, path, query, and fragment—and predict what each part tells the browser to do. You’ll see why changing one character can mean a different page, a filtered result, or no network request at all.",
+        title: "Read a URL like a browser",
+      },
     } satisfies LessonPracticeParams,
   },
   {
     expectations: `
-${NEUROSCIENCE_REAL_APPLICATION_EXPECTATIONS}
-
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Neuron signal-path decisions must preserve the functional direction of the neuron. Penalize if:
-   - Dendrites, soma, axon, or terminals are assigned the wrong main job
-   - The signal path is reversed or treated as arbitrary
-   - Axon terminals are confused with the gap or with receiving structures
+1. ACCURACY CHECK: Sample-space reasoning must be mathematically sound. Penalize if:
+   - Outcomes are missing, duplicated, or allowed to overlap
+   - Events are confused with the complete sample space
+   - Visual arrangement or label style changes the counted outcomes without a real change in the trial
 
-2. SCENARIO CHECK: The real problem should involve a practical neuroscience decision like interpreting a tracing artifact, checking a stimulation setup, reviewing a simplified circuit record, or deciding which part of a neuron explains an observed signal problem. Penalize open-house displays, classroom models, LED teaching boards, label-maker problems, or any scenario where the learner is mainly arranging a teaching demonstration.
-
-3. CONCEPTUAL FOCUS: Decisions should require tracing how information moves through dendrites, soma, axon, and terminals to solve the situation. The practice should not reduce the concept to placing labels in the correct order on a display.
+2. SCENARIO CHECK: The case should involve a practical uncertainty decision, such as checking a simulation, game rule, experiment design, risk table, or random draw setup. Penalize outputs that only ask the learner to recite what a sample space is.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "en-neuroscience-signal-path-real-problem",
+    id: "en-probability-sample-space",
     userInput: {
-      chapterTitle: "Cells that build the nervous system",
-      courseTitle: "Neuroscience",
+      chapterTitle: "Outcomes, events, and the probability scale",
+      courseTitle: "Probability",
       language: "en",
-      sourceLessons: [
-        {
-          description:
-            "Trace how dendrites, the soma, the axon, and axon terminals divide up a neuron’s work. You will connect each part to receiving, integrating, carrying, or passing along information without diving into electrical details yet.",
-          title: "Reading a neuron’s signal path",
-        },
-      ],
+      lesson: {
+        description:
+          "Build a sample space by listing every result that could happen, with no result fitting in two places at once. Check simple examples for missing outcomes and overlapping labels.",
+        title: "List a clean sample space",
+      },
     } satisfies LessonPracticeParams,
   },
   {
     expectations: `
-${NEUROSCIENCE_REAL_APPLICATION_EXPECTATIONS}
-
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Neuron shape and function decisions must keep structural and functional labels distinct. Penalize if:
-   - Multipolar, bipolar, or pseudounipolar shapes are mixed up
-   - Shape labels are treated as identical to sensory, motor, or interneuron functions
-   - Special senses, body sensation, and motor output are assigned without anatomical or pathway clues
+1. ACCURACY CHECK: Mechanical-wave reasoning must keep the wave and medium distinct. Penalize if:
+   - The medium is said to travel all the way with the wave
+   - A mechanical wave is shown moving through empty space without matter
+   - Rope, spring, air, water, and ground examples are treated as decorative rather than the material carrying the disturbance
 
-2. SCENARIO CHECK: The real problem should involve applying neuron shape/function evidence in a plausible lab, clinical, or research situation, such as interpreting a tissue image, checking a pathway note, or deciding which observation matches a sample. Penalize lab-class sorting stations, mixed cards, student worksheets, teaching keys, or scenes where the main task is sorting examples for learners.
-
-3. CONCEPTUAL FOCUS: Decisions should require matching shape and job clues to what is happening in the real situation. The learner should not merely sort cards or attach paired labels for a lesson activity.
+2. SCENARIO CHECK: The case should make the learner use evidence from a rope, spring, sound, water, vibration, or ground-motion situation to decide what carries the disturbance or why a measurement failed.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "en-neuroscience-shape-function-real-problem",
+    id: "en-mechanical-waves-medium",
     userInput: {
-      chapterTitle: "Cells that build the nervous system",
-      courseTitle: "Neuroscience",
+      chapterTitle: "Disturbances that move through matter",
+      courseTitle: "Mechanical Waves",
       language: "en",
-      sourceLessons: [
-        {
-          description:
-            "Compare multipolar, bipolar, and pseudounipolar neurons, then connect their shapes to motor output, special senses, or body sensation. You will also separate shape labels from functional labels like sensory neuron, motor neuron, and interneuron.",
-          title: "Matching neuron shapes to jobs",
-        },
-      ],
+      lesson: {
+        description:
+          "Identify the material that carries a mechanical wave: rope, spring, air, water, or ground. Decide why the wave needs matter to move through, even when that matter does not travel all the way with the wave.",
+        title: "Spot the medium carrying the wave",
+      },
     } satisfies LessonPracticeParams,
   },
   {
@@ -201,88 +165,131 @@ LANGUAGE REQUIREMENT: All content must be in Portuguese.
 
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Python float and bool concepts must be technically accurate. Penalize if:
-   - Bool-int subclass relationship is misrepresented
-   - Float precision issues are incorrectly described
+1. ACCURACY CHECK: Public-money flow must stay legally and financially accurate. Penalize if:
+   - Receita, orçamento, caixa, despesa, and registros patrimoniais are collapsed into one generic "money account"
+   - Spending is treated as valid just because the purpose seems good, without the path through authorization and records
+   - Public money is described like private cash with no accountability trail
 
-2. PORTUGUESE NATURALNESS CHECK: Prefer everyday Brazilian Portuguese. Penalize stiff, translated, or prompt-like phrasing that sounds written instead of spoken, including local-language versions of phrases like "without sounding rehearsed" when they do not fit the scene.
-
-3. SCENARIO CHECK: The workplace problem should involve realistic Python programming challenges like: debugging unexpected numeric behavior, handling precision in financial calculations, or resolving type coercion surprises.
-
-4. CONCEPTUAL FOCUS: Decisions should require reasoning about the structural relationship between bool and int, and about float precision limitations.
+2. SCENARIO CHECK: The case should involve tracing a real public value through records, authorization, payment, delivery, audit, or accountability. Penalize broad civics summaries or scenes that only define budget terms.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-python-float-bool",
+    id: "pt-direito-financeiro-dinheiro-publico",
     userInput: {
-      chapterTitle: "Tipos numéricos e valores especiais",
-      courseTitle: "Python",
+      chapterTitle: "O caminho do dinheiro público",
+      courseTitle: "Direito Financeiro",
       language: "pt",
-      sourceLessons: [
-        {
-          description:
-            "Números de ponto flutuante usam representação IEEE 754, o que pode causar imprecisões em cálculos decimais como 0.1 + 0.2 != 0.3.",
-          title: "Ponto Flutuante",
-        },
-        {
-          description:
-            "Em Python, bool é uma subclasse de int, onde True == 1 e False == 0, permitindo operações aritméticas com booleanos.",
-          title: "Booleanos como Inteiros",
-        },
-        {
-          description:
-            "Python suporta diferentes formas de literais numéricos: inteiros decimais, hexadecimais (0x), octais (0o), binários (0b) e notação científica para floats.",
-          title: "Literais Numéricos",
-        },
-        {
-          description:
-            "A hierarquia de tipos numéricos em Python vai de bool → int → float → complex, com conversões implícitas seguindo essa ordem.",
-          title: "Hierarquia de Tipos",
-        },
-      ],
+      lesson: {
+        description:
+          "Acompanhe um valor desde a entrada no Estado até a entrega de um serviço, uma obra, um salário ou um benefício. Você vai reconhecer que o caminho passa por receita, orçamento, caixa, despesa e registros patrimoniais, sem tratar tudo como “dinheiro na conta”.",
+        title: "Seguir um real dentro do Estado",
+      },
+    } satisfies LessonPracticeParams,
+  },
+  {
+    expectations: `
+LANGUAGE REQUIREMENT: All content must be in Portuguese.
+
+TOPIC-SPECIFIC GUIDANCE:
+
+1. ACCURACY CHECK: Brush-cutter part compatibility must use the physical fit clues in the lesson. Penalize if:
+   - Diameter, blade hole, thread, spline, handedness, or mounting position are ignored
+   - Any part is treated as compatible because it has a similar name or looks close enough
+   - The practice skips the purchase-risk consequence of ordering the wrong replacement
+
+2. SCENARIO CHECK: The case should involve identifying or buying a replacement part from measurements, photos, packaging, a manual, or a damaged machine. Penalize outputs that turn the lesson into a vocabulary tour of parts.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-rocadeira-encaixes-pecas",
+    userInput: {
+      chapterTitle: "A roçadeira por fora e por dentro",
+      courseTitle: "Manutenção de Roçadeira",
+      language: "pt",
+      lesson: {
+        description:
+          "Leia medidas e encaixes comuns: diâmetro do tubo, furo da lâmina, rosca, estrias, lado direito ou esquerdo e posição de montagem. Use esse vocabulário para conferir compatibilidade antes de comprar uma peça.",
+        title: "Descrever encaixes para pedir peças",
+      },
+    } satisfies LessonPracticeParams,
+  },
+  {
+    expectations: `
+LANGUAGE REQUIREMENT: All content must be in Portuguese.
+
+TOPIC-SPECIFIC GUIDANCE:
+
+1. ACCURACY CHECK: CPA and ROAS reasoning must connect ad cost to business economics. Penalize if:
+   - CPA is judged without ticket médio, margem, closing rate, or lifetime value when those facts are relevant
+   - ROAS is treated as automatically good without checking margin or break-even
+   - Lead and purchase conversions are mixed without accounting for taxa de fechamento
+
+2. SCENARIO CHECK: The case should involve a campaign budget, offer, margin, conversion data, or break-even decision where the learner chooses a viable next action. Penalize generic ad-optimization advice with no numbers or economic constraint.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-google-ads-cpa-roas-margem",
+    userInput: {
+      chapterTitle: "Metas de negócio que viram campanhas",
+      courseTitle: "Google Ads",
+      language: "pt",
+      lesson: {
+        description:
+          "Calcule quanto uma conversão pode custar usando ticket médio, margem, taxa de fechamento e valor de vida do cliente quando fizer sentido. Isso permite estimar CPA ou ROAS de equilíbrio antes de gastar orçamento.",
+        title: "Usar margem para definir CPA e ROAS viáveis",
+      },
     } satisfies LessonPracticeParams,
   },
   {
     expectations: `
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Labor market cycle concepts must reflect genuine economic dynamics. Penalize if:
-   - Unemployment is described as leading rather than lagging GDP
-   - Recovery dynamics are presented as symmetric to contraction
+1. ACCURACY CHECK: Attention reasoning must preserve the query-key-value mechanism. Penalize if:
+   - Queries, keys, and values are treated as interchangeable labels
+   - Dot-product scores, softmax weights, and blended value vectors are collapsed into one vague "attention score"
+   - The output ignores scaling, masking, or the fact that each position attends from its own query when those details matter in the scene
 
-2. SCENARIO CHECK: The workplace problem should involve realistic economic analysis challenges like: interpreting labor data during a downturn, advising on workforce planning, or communicating economic indicators to stakeholders.
-
-3. CONCEPTUAL FOCUS: Decisions should require reasoning about the timing and relationships between different labor market indicators during cycles.
+2. SCENARIO CHECK: The case should involve a real model-debugging, attention-trace, token-ranking, or inference-quality problem where the learner uses visible scores, weights, masks, or vector roles to explain an output. Penalize classroom matrix-labeling or definition recall.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "en-economics-labor-cycles",
+    id: "en-transformers-qkv-attention",
     userInput: {
-      chapterTitle: "Business cycles",
-      courseTitle: "Economics",
+      chapterTitle: "Transformers",
+      courseTitle: "Machine Learning",
       language: "en",
-      sourceLessons: [
-        {
-          description:
-            "The percentage of the labor force that is jobless and actively seeking work; it is a lagging indicator that peaks after GDP has already started recovering.",
-          title: "Unemployment Rate",
-        },
-        {
-          description:
-            "Total hours worked across the economy tend to drop before unemployment rises during downturns, as employers cut hours before cutting jobs.",
-          title: "Hours Worked",
-        },
-        {
-          description:
-            "The share of the working-age population that is either employed or actively looking for work; it can decline during prolonged downturns as people exit the labor force.",
-          title: "Labor Force Participation",
-        },
-        {
-          description:
-            "Workers who have stopped looking for employment because they believe no jobs are available; they are not counted in the official unemployment rate.",
-          title: "Discouraged Workers",
-        },
-      ],
+      lesson: {
+        description:
+          "Follow the query-key-value calculation behind scaled dot-product attention. Compute which tokens matter most to one position and how their value vectors are blended into a new representation.",
+        title: "Computing attention with Q, K, and V",
+      },
+    } satisfies LessonPracticeParams,
+  },
+  {
+    expectations: `
+LANGUAGE REQUIREMENT: All content must be in Portuguese.
+
+TOPIC-SPECIFIC GUIDANCE:
+
+1. ACCURACY CHECK: Mutation-effect reasoning must stay precise from DNA change to protein consequence. Penalize if:
+   - Every mutation is treated as harmful or guaranteed to change the observable trait
+   - Silent, missense, nonsense, insertion, deletion, and frameshift effects are mixed up
+   - Insertions or deletions are described without checking whether the reading frame changes
+
+2. SCENARIO CHECK: The case should involve a sequence report, variant review, codon table, protein note, or lab decision where the learner predicts the likely molecular consequence from evidence. Penalize generic mutation vocabulary drills with no sequence or codon reasoning.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-biologia-mutacao-mensagem",
+    userInput: {
+      chapterTitle: "Do DNA à proteína",
+      courseTitle: "Biologia",
+      language: "pt",
+      lesson: {
+        description:
+          "Analise substituições, inserções e deleções no DNA e preveja como elas podem alterar códons, aminoácidos e proteínas. Compare mutações silenciosas, de sentido trocado, sem sentido e mudanças no quadro de leitura.",
+        title: "Quando uma mutação muda a mensagem",
+      },
     } satisfies LessonPracticeParams,
   },
   {
@@ -291,133 +298,25 @@ LANGUAGE REQUIREMENT: All content must be in Spanish.
 
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Enolate chemistry concepts must be chemically accurate. Penalize if:
-   - Enolates are treated as electrophiles rather than nucleophiles
-   - α-acidity mechanisms are incorrectly described
+1. ACCURACY CHECK: Data-source reasoning must distinguish recorded signals from assumptions. Penalize if:
+   - Facts, measurements, responses, clicks, photos, texts, or logs are called data without checking what was actually captured
+   - Unrecorded context is treated as if it were in the dataset
+   - The model skips the loss that happens when reality becomes a simplified record
 
-2. SCENARIO CHECK: The workplace problem should involve realistic organic chemistry challenges like: planning a synthesis route, troubleshooting a failed aldol reaction, or choosing between enolate formation conditions.
-
-3. CONCEPTUAL FOCUS: Decisions should require reasoning about α-acidity, enolate stability, and nucleophilic reactivity in C–C bond formation.
+2. SCENARIO CHECK: The case should involve deciding what an app, form, sensor, survey, photo, log, or dataset really captured. Penalize examples where "data" is just a buzzword and no recorded evidence changes the decision.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "es-quimica-acidez-enolatos",
+    id: "es-ciencia-datos-que-cuenta",
     userInput: {
-      chapterTitle: "Carbonilos y enolatos",
-      courseTitle: "Química",
+      chapterTitle: "Datos que vienen del mundo real",
+      courseTitle: "Ciencia de Datos",
       language: "es",
-      sourceLessons: [
-        {
-          description:
-            "Los hidrógenos en posición alfa al carbonilo son ácidos debido a la estabilización por resonancia del carbanión resultante con el grupo C=O.",
-          title: "Acidez en Posición Alfa",
-        },
-        {
-          description:
-            "El enolato se estabiliza por deslocalización de la carga negativa entre el carbono alfa y el oxígeno del carbonilo, formando dos estructuras resonantes.",
-          title: "Estabilización por Resonancia",
-        },
-        {
-          description:
-            "El enolato actúa como nucleófilo rico en electrones que ataca electrófilos como haluros de alquilo o carbonilos de otros compuestos.",
-          title: "Enolato como Nucleófilo",
-        },
-        {
-          description:
-            "Reacción donde un enolato ataca el carbonilo de otra molécula, formando un β-hidroxicarbonilo que puede deshidratarse a un producto α,β-insaturado.",
-          title: "Condensación Aldólica",
-        },
-      ],
-    } satisfies LessonPracticeParams,
-  },
-  {
-    expectations: `
-LANGUAGE REQUIREMENT: All content must be in Portuguese.
-
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Legal automation monitoring concepts must be technically sound. Penalize if:
-   - Audit requirements are misrepresented for the legal context
-   - Quality metrics are described without connection to document safety
-
-2. PORTUGUESE NATURALNESS CHECK: Prefer everyday Brazilian Portuguese. Penalize stiff, translated, or prompt-like phrasing that sounds written instead of spoken, including lines like "foi uma otima pergunta" when they do not fit the scene.
-
-3. SCENARIO CHECK: The workplace problem should involve realistic legal tech challenges like: investigating a batch of documents with errors, setting up monitoring for a new automation pipeline, or responding to an audit finding.
-
-4. CONCEPTUAL FOCUS: Decisions should require reasoning about how metrics and audit trails ensure quality and safety in automated legal document generation.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "pt-direito-medicao-automacao",
-    userInput: {
-      chapterTitle: "Legal tech e automação de documentos",
-      courseTitle: "Direito",
-      language: "pt",
-      sourceLessons: [
-        {
-          description:
-            "Indicadores como taxa de erro, completude de campos e conformidade com templates que medem a qualidade dos documentos gerados automaticamente.",
-          title: "Métricas de Qualidade Documental",
-        },
-        {
-          description:
-            "Registros detalhados de cada ação realizada pelo sistema de automação, incluindo quem iniciou, quando executou e quais alterações foram feitas.",
-          title: "Rastros de Auditoria",
-        },
-        {
-          description:
-            "Categorização de erros em níveis de severidade (crítico, alto, médio, baixo) para priorizar correções e identificar padrões recorrentes.",
-          title: "Classificação de Erros",
-        },
-        {
-          description:
-            "Métricas que monitoram riscos de segurança como acesso não autorizado, vazamento de dados sensíveis e integridade dos documentos gerados.",
-          title: "Indicadores de Segurança",
-        },
-      ],
-    } satisfies LessonPracticeParams,
-  },
-  {
-    expectations: `
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Connectivity debugging concepts must be technically accurate. Penalize if:
-   - Layer isolation logic is incorrect (e.g., claiming a DNS failure means the physical link is down)
-   - Debugging steps are presented in a wrong or illogical order
-
-2. SCENARIO CHECK: The workplace problem should involve realistic networking challenges like: diagnosing why an app can't reach its database, troubleshooting a deployment that works locally but fails in production, or investigating intermittent connectivity in a distributed system.
-
-3. CONCEPTUAL FOCUS: Decisions should require reasoning about which network layer is likely at fault based on symptoms, and how to systematically narrow the problem.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "en-web-debugging-mental-models",
-    userInput: {
-      chapterTitle: "Networking fundamentals",
-      courseTitle: "Web Development",
-      language: "en",
-      sourceLessons: [
-        {
-          description:
-            "A systematic approach to debugging connectivity by testing each network layer independently, starting from the physical/link layer up to the application layer.",
-          title: "Layer-by-Layer Isolation",
-        },
-        {
-          description:
-            "Verifying local network settings including IP address assignment, subnet mask, DNS resolver configuration, and routing table entries.",
-          title: "Host Configuration Check",
-        },
-        {
-          description:
-            "Testing whether the default gateway is reachable, which confirms the local network segment is functioning and the first hop router is accessible.",
-          title: "Gateway Reachability",
-        },
-        {
-          description:
-            "Diagnosing issues at the application layer such as DNS resolution failures, TLS handshake errors, or service port connectivity problems.",
-          title: "Service-Layer Diagnosis",
-        },
-      ],
+      lesson: {
+        description:
+          "Distingue hechos, mediciones, respuestas, clics, fotos, textos y registros como posibles datos cuando se transforman en una señal que puede analizarse. Practica decidir qué parte de una situación cotidiana sí quedó registrada y qué parte solo se asumió.",
+        title: "Reconocer qué cuenta como dato",
+      },
     } satisfies LessonPracticeParams,
   },
 ];

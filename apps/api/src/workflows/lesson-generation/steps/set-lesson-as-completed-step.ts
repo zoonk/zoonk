@@ -5,7 +5,9 @@ import { type LessonContext } from "./get-lesson-step";
 
 export async function setLessonAsCompletedStep(input: {
   context: LessonContext;
+  description?: string;
   imageUrl?: string | null;
+  title?: string;
 }): Promise<void> {
   "use step";
 
@@ -15,7 +17,9 @@ export async function setLessonAsCompletedStep(input: {
 
   await prisma.lesson.update({
     data: {
+      ...(input.description === undefined ? {} : { description: input.description }),
       ...(input.imageUrl ? { imageUrl: input.imageUrl } : {}),
+      ...(input.title === undefined ? {} : { title: input.title }),
       generationStatus: "completed",
     },
     where: { id: input.context.id },

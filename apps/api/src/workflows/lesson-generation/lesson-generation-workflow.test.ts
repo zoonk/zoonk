@@ -85,9 +85,9 @@ vi.mock("@zoonk/ai/tasks/lessons/core/practice", () => ({
         text: "A concrete situation for applying the explanations.",
         title: "Scenario",
       },
-      steps: [
+      scenes: [
         {
-          context: "Use the scenario details.",
+          dialogue: "Use the scenario details.",
           imagePrompt: "practice question image",
           options: [
             { feedback: "Correct.", isCorrect: true, text: "Use the rule." },
@@ -96,7 +96,6 @@ vi.mock("@zoonk/ai/tasks/lessons/core/practice", () => ({
           question: "What should happen next?",
         },
       ],
-      title: "Practice",
     },
   }),
 }));
@@ -521,7 +520,7 @@ describe(lessonGenerationWorkflow, () => {
     ]);
   });
 
-  it("practice generation uses only source lessons since the previous practice", async () => {
+  it("practice generation uses the nearest previous explanation", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
 
     const [practice] = await Promise.all([
@@ -562,9 +561,7 @@ describe(lessonGenerationWorkflow, () => {
     await lessonGenerationWorkflow(practice.id);
 
     expect(generateLessonPractice).toHaveBeenCalledWith(
-      expect.objectContaining({
-        sourceLessons: [{ description: "New explanation", title: "New" }],
-      }),
+      expect.objectContaining({ lesson: { description: "New explanation", title: "New" } }),
     );
 
     expect(generateContentStepImage).toHaveBeenCalledWith(
@@ -598,6 +595,8 @@ describe(lessonGenerationWorkflow, () => {
     const dbLesson = await prisma.lesson.findUniqueOrThrow({ where: { id: practice.id } });
 
     expect(dbLesson.imageUrl).toBeNull();
+    expect(dbLesson.description).toBe("A concrete situation for applying the explanations.");
+    expect(dbLesson.title).toBe("Scenario");
     expect(generateContentThumbnailImage).not.toHaveBeenCalled();
   });
 
@@ -639,10 +638,7 @@ describe(lessonGenerationWorkflow, () => {
 
     expect(generateLessonPractice).toHaveBeenCalledWith(
       expect.objectContaining({
-        sourceLessons: expect.arrayContaining([
-          { description: "Generated explanation", title: "Generated" },
-          { description: "Pending explanation metadata", title: expect.any(String) },
-        ]),
+        lesson: { description: "Pending explanation metadata", title: expect.any(String) },
       }),
     );
 
@@ -651,6 +647,8 @@ describe(lessonGenerationWorkflow, () => {
 
     expect(dbLesson.generationStatus).toBe("completed");
     expect(dbLesson.generationRunId).toBe("test-run-id");
+    expect(dbLesson.description).toBe("A concrete situation for applying the explanations.");
+    expect(dbLesson.title).toBe("Scenario");
     expect(steps.length).toBeGreaterThan(0);
   });
 

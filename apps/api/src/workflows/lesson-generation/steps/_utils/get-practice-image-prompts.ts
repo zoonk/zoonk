@@ -1,7 +1,7 @@
-import { type LessonPracticeSchema } from "@zoonk/ai/tasks/lessons/core/practice";
+import { type PracticeLessonContent } from "./generated-lesson-content";
 
-type PracticeScenario = LessonPracticeSchema["scenario"];
-type PracticeStep = LessonPracticeSchema["steps"][number];
+type PracticeScenario = PracticeLessonContent["scenario"];
+type PracticeStep = PracticeLessonContent["steps"][number];
 
 export function getPracticeImagePrompts({
   scenario,

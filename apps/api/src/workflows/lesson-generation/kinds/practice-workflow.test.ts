@@ -14,9 +14,9 @@ vi.mock("@zoonk/ai/tasks/lessons/core/practice", () => ({
   generateLessonPractice: vi.fn().mockResolvedValue({
     data: {
       scenario: { imagePrompt: "scenario prompt", text: "Scenario text", title: "Scenario" },
-      steps: [
+      scenes: [
         {
-          context: "Question context",
+          dialogue: "Question context",
           imagePrompt: "question prompt",
           options: [
             { feedback: "Correct", isCorrect: true, text: "Answer" },
@@ -25,7 +25,6 @@ vi.mock("@zoonk/ai/tasks/lessons/core/practice", () => ({
           question: "What now?",
         },
       ],
-      title: "Practice",
     },
   }),
 }));
@@ -53,7 +52,7 @@ describe(practiceLessonWorkflow, () => {
     vi.clearAllMocks();
   });
 
-  it("stores scenario and practice questions from the uncovered source lessons", async () => {
+  it("stores scenario and practice questions from the previous explanation", async () => {
     const context = await createLessonContext({ kind: "practice", organizationId, position: 2 });
 
     await createCompletedExplanation({
@@ -64,11 +63,13 @@ describe(practiceLessonWorkflow, () => {
       title: "Latest",
     });
 
-    await practiceLessonWorkflow(context);
+    const result = await practiceLessonWorkflow(context);
+
+    expect(result).toStrictEqual({ description: "Scenario text", title: "Scenario" });
 
     expect(generateLessonPractice).toHaveBeenCalledWith(
       expect.objectContaining({
-        sourceLessons: [{ description: "Use the latest explanation.", title: "Latest" }],
+        lesson: { description: "Use the latest explanation.", title: "Latest" },
       }),
     );
 
