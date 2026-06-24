@@ -193,6 +193,48 @@ describe("player browser integration: choice steps", () => {
     await expect.element(page.getByText("Berlin")).toBeInTheDocument();
   });
 
+  it("renders math in feedback answer rows", async () => {
+    const { container } = renderPlayer({
+      lesson: buildSerializedLesson({
+        steps: [
+          buildSerializedStep({
+            content: {
+              options: [
+                {
+                  feedback: "That uses velocity instead of acceleration.",
+                  id: "wrong-force",
+                  isCorrect: false,
+                  text: String.raw`Wrong force \(F = mv\)`,
+                },
+                {
+                  feedback: "Correct",
+                  id: "right-force",
+                  isCorrect: true,
+                  text: String.raw`Right force \(F = ma\)`,
+                },
+              ],
+              question: "Which formula matches Newton's second law?",
+            },
+            kind: "multipleChoice",
+          }),
+        ],
+      }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await page.getByRole("radio", { name: /wrong force/iu }).click();
+    await page.getByRole("button", { name: /check/iu }).click();
+
+    await expect.element(page.getByRole("status")).toBeInTheDocument();
+
+    const statusText = container.textContent?.replaceAll(/\s/gu, "") ?? "";
+
+    expect(statusText).toContain("Youranswer:WrongforceF=mv");
+    expect(statusText).toContain("Correctanswer:RightforceF=ma");
+    expect(statusText).not.toContain(String.raw`\(`);
+    expect(statusText).not.toContain(String.raw`\)`);
+  });
+
   it("strips model-added wrapping quotes from multiple-choice option labels", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({

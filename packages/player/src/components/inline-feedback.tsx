@@ -35,7 +35,9 @@ export function InlineFeedback({
       {!isCorrect && correctAnswer && (
         <p className="text-sm">
           <span className="text-muted-foreground">{t("Correct answer:")}</span>{" "}
-          <span className="text-success font-medium">{correctAnswer}</span>
+          <span className="text-success font-medium">
+            <PlayerRichText text={correctAnswer} />
+          </span>
         </p>
       )}
 
