@@ -250,7 +250,7 @@ describe("player browser integration: completion", () => {
 
     const milestoneScreen = page.getByRole("status");
 
-    await expect.element(milestoneScreen.getByText(/daily record/iu)).toBeInTheDocument();
+    await expect.element(milestoneScreen.getByText(/new daily best/iu)).toBeInTheDocument();
 
     await expect.element(milestoneScreen.getByText(/50 BP/iu)).toBeInTheDocument();
 

@@ -8,11 +8,11 @@ msgstr ""
 
 #: src/app/auth/layout.tsx
 msgid "dVItHD"
-msgstr "Connectez-vous à Zoonk"
+msgstr "Connecte-toi à Zoonk"
 
 #: src/app/auth/login/email-login-form.tsx
 msgid "sy-pv5"
-msgstr "Courriel"
+msgstr "Email"
 
 #: src/app/auth/login/email-login-form.tsx
 msgid "apQW0E"
@@ -20,12 +20,12 @@ msgstr "moi@gmail.com"
 
 #: src/app/auth/login/email-login-form.tsx
 msgid "YRe93Y"
-msgstr "Entrez une adresse e-mail valide"
+msgstr "Saisis une adresse email valide"
 
 #: src/app/auth/login/email-login-form.tsx
 #: src/app/auth/login/social-login.tsx
 msgid "pN2p0t"
-msgstr "Une erreur s'est produite lors de votre connexion. Veuillez réessayer ou contacter hello@zoonk.com."
+msgstr "Une erreur est survenue lors de ta connexion. Réessaie ou contacte hello@zoonk.com"
 
 #: src/app/auth/login/email-login-form.tsx
 #: src/app/auth/otp/otp-form.tsx
@@ -35,11 +35,11 @@ msgstr "Continuer"
 
 #: src/app/auth/login/page.tsx
 msgid "eN8MTJ"
-msgstr "Connectez-vous ou créez un compte"
+msgstr "Connecte-toi ou crée un compte"
 
 #: src/app/auth/login/page.tsx
 msgid "CoMQ1-"
-msgstr "Continuez avec votre e-mail ou un compte social"
+msgstr "Continue avec ton email ou un compte social"
 
 #: src/app/auth/login/page.tsx
 msgid "4wpUNc"
@@ -47,7 +47,7 @@ msgstr "Ou"
 
 #: src/app/auth/login/page.tsx
 msgid "Ju9oB-"
-msgstr "En cliquant sur Continuer, vous acceptez nos <terms>Conditions d'utilisation</terms> et <privacy>Politique de confidentialité</privacy>."
+msgstr "En cliquant sur Continuer, tu acceptes nos <terms>Conditions d'utilisation</terms> et <privacy>Politique de confidentialité</privacy>."
 
 #: src/app/auth/login/social-login.tsx
 msgid "FJ6r9E"
@@ -59,27 +59,27 @@ msgstr "Continuer avec Apple"
 
 #: src/app/auth/otp/otp-form.tsx
 msgid "HkHvQv"
-msgstr "Le code que vous avez entré est incorrect. Veuillez réessayer ou contacter hello@zoonk.com"
+msgstr "Le code saisi est incorrect. Réessaie ou contacte hello@zoonk.com"
 
 #: src/app/auth/otp/page.tsx
 msgid "zx7CKB"
-msgstr "Vérifiez votre courrier électronique"
+msgstr "Vérifie ton email"
 
 #: src/app/auth/otp/page.tsx
 msgid "LZHcmZ"
-msgstr "Entrez le code que nous avons envoyé à {email} :"
+msgstr "Saisis le code que nous avons envoyé à {email}:"
 
 #: src/app/auth/otp/page.tsx
 msgid "ChATeO"
-msgstr "Changer d'e-mail"
+msgstr "Changer d'email"
 
 #: src/app/auth/setup/page.tsx
 msgid "CYqIel"
-msgstr "Complétez votre profil"
+msgstr "Complète ton profil"
 
 #: src/app/auth/setup/page.tsx
 msgid "7463XU"
-msgstr "Choisissez un nom et un nom d'utilisateur avant de continuer."
+msgstr "Choisis un nom et un nom d'utilisateur avant de continuer."
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "1SvspN"
@@ -95,7 +95,7 @@ msgstr "{username} est déjà pris"
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "vLl7z0"
-msgstr "3 à 30 caractères. Lettres, chiffres et traits de soulignement uniquement."
+msgstr "3 à 30 caractères. Lettres, chiffres et tirets bas seulement."
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "HAlOn1"
@@ -107,11 +107,11 @@ msgstr "Nom d'utilisateur"
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "XLl_pd"
-msgstr "votre nom d'utilisateur"
+msgstr "ton-nomdutilisateur"
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "yCCLud"
-msgstr "Échec de la configuration de votre profil. Veuillez réessayer ou contacter hello@zoonk.com"
+msgstr "Impossible de configurer ton profil. Réessaie ou contacte hello@zoonk.com"
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "1vqX2W"
@@ -119,7 +119,7 @@ msgstr "Impossible de rediriger"
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "83K2kN"
-msgstr "L'URL de destination n'est pas reconnue comme une application Zoonk approuvée."
+msgstr "L'URL de destination n'est pas reconnue comme une application Zoonk de confiance."
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "wkO19y"
@@ -127,7 +127,7 @@ msgstr "Avertissement de sécurité"
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "585u5Z"
-msgstr "Pour votre sécurité, nous ne pouvons pas vous rediriger vers une destination non reconnue."
+msgstr "Pour ta sécurité, nous ne pouvons pas te rediriger vers une destination non reconnue."
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "-e4BVR"

@@ -14,7 +14,15 @@
 - "Bar exam": "prova da OAB"
 - "exam": "prova"
 - "learning": "estudo" (eg "learning days" = "dias de estudo")
+- "Brain Power": "Poder Mental"
+- "BP": "PM"
+- "ajudar você": "te ajudar"
+- "questions": "perguntas"
+- "practice questions": "perguntas práticas"
+- "options": "alternativas" (when used in the context of multiple choice questions)
+- "listening": "escuta"
 
 ## Special Cases
 
 - When translating exam names, adapt them to Brazilian Portuguese. For example, SAT, AP, Bar, etc aren't relevant to Brazilian audiences. Instead, use concurso público, Enem, vestibular, etc. as appropriate. For example, instead of "SAT prep course", use "curso preparatório para o Enem" or "curso preparatório para concurso público", depending on the context.
+- For belt colors, use feminine forms. For example, "White Belt" = "Faixa Branca", "Yellow Belt" = "Faixa Amarela", etc. If it's color alone in the context of belts, use "Yellow" = "Amarela", "White" = "Branca", etc.

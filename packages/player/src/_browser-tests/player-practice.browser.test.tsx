@@ -12,7 +12,7 @@ import { buildNavigation, renderPlayer } from "../_test-utils/render-player";
  * static explanation steps.
  */
 function expectImageToFillPlayerStage(image: HTMLElement) {
-  const playerStage = screen.getByLabelText("Player screen");
+  const playerStage = screen.getByLabelText("Lesson content");
   const imageRect = image.getBoundingClientRect();
   const stageRect = playerStage.getBoundingClientRect();
 

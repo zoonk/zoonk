@@ -8,7 +8,7 @@ msgstr ""
 
 #: src/app/auth/layout.tsx
 msgid "dVItHD"
-msgstr "Inicia sesión en Zoonk"
+msgstr "Iniciar sesión en Zoonk"
 
 #: src/app/auth/login/email-login-form.tsx
 msgid "sy-pv5"
@@ -20,12 +20,12 @@ msgstr "yo@gmail.com"
 
 #: src/app/auth/login/email-login-form.tsx
 msgid "YRe93Y"
-msgstr "Ingresa un correo electrónico válido"
+msgstr "Introduce una dirección de correo válida"
 
 #: src/app/auth/login/email-login-form.tsx
 #: src/app/auth/login/social-login.tsx
 msgid "pN2p0t"
-msgstr "Hubo un error al iniciar sesión. Intenta de nuevo o contacta a contacto@zoonk.com"
+msgstr "Hubo un error al iniciar sesión. Inténtalo de nuevo o contacta a contacto@zoonk.com"
 
 #: src/app/auth/login/email-login-form.tsx
 #: src/app/auth/otp/otp-form.tsx
@@ -47,7 +47,7 @@ msgstr "O"
 
 #: src/app/auth/login/page.tsx
 msgid "Ju9oB-"
-msgstr "Al hacer clic en Continuar, aceptas nuestros <terms>Términos de servicio</terms> y <privacy>Política de privacidad</privacy>."
+msgstr "Al hacer clic en Continuar, aceptas nuestros <terms>Términos de servicio</terms> y la <privacy>Política de privacidad</privacy>."
 
 #: src/app/auth/login/social-login.tsx
 msgid "FJ6r9E"
@@ -59,7 +59,7 @@ msgstr "Continuar con Apple"
 
 #: src/app/auth/otp/otp-form.tsx
 msgid "HkHvQv"
-msgstr "El código que ingresaste es incorrecto. Intenta de nuevo o contacta a contacto@zoonk.com"
+msgstr "El código que ingresaste es incorrecto. Inténtalo de nuevo o contacta a contacto@zoonk.com"
 
 #: src/app/auth/otp/page.tsx
 msgid "zx7CKB"
@@ -67,7 +67,7 @@ msgstr "Revisa tu correo"
 
 #: src/app/auth/otp/page.tsx
 msgid "LZHcmZ"
-msgstr "Ingresa el código que enviamos a {email}:"
+msgstr "Introduce el código que enviamos a {email}:"
 
 #: src/app/auth/otp/page.tsx
 msgid "ChATeO"
@@ -79,11 +79,11 @@ msgstr "Completa tu perfil"
 
 #: src/app/auth/setup/page.tsx
 msgid "7463XU"
-msgstr "Elige un nombre y nombre de usuario antes de continuar."
+msgstr "Elige un nombre y un nombre de usuario antes de continuar."
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "1SvspN"
-msgstr "Verificando..."
+msgstr "Comprobando..."
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "9N4_rz"
@@ -111,7 +111,7 @@ msgstr "tu-nombre-de-usuario"
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "yCCLud"
-msgstr "No se pudo configurar tu perfil. Intenta de nuevo o contacta a contacto@zoonk.com"
+msgstr "No se pudo configurar tu perfil. Inténtalo de nuevo o contacta a contacto@zoonk.com"
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "1vqX2W"
@@ -119,7 +119,7 @@ msgstr "No se puede redirigir"
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "83K2kN"
-msgstr "La URL de destino no es reconocida como una aplicación de Zoonk confiable."
+msgstr "La URL de destino no está reconocida como una aplicación de Zoonk confiable."
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "wkO19y"
