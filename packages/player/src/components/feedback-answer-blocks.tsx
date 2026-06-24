@@ -3,7 +3,18 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleCheck, CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { PlayerRichText } from "./player-rich-text";
 import { RomanizationText } from "./romanization-text";
+
+/**
+ * Feedback rows repeat learner-facing answer text that may have already been
+ * shown as rich option copy during play. Rendering it through the shared rich
+ * text path keeps LaTeX, lightweight formatting, name replacement, and quote
+ * cleanup consistent between the prompt and result screens.
+ */
+function FeedbackAnswerText({ text }: { text: string }) {
+  return <PlayerRichText text={text} />;
+}
 
 function AnswerLine({
   children,
@@ -48,7 +59,9 @@ export function CorrectAnswerBlock({
       variant="correct"
     >
       <span className="flex flex-col">
-        <span>{selectedText}</span>
+        <span>
+          <FeedbackAnswerText text={selectedText} />
+        </span>
         <RomanizationText>{romanization}</RomanizationText>
       </span>
     </AnswerLine>
@@ -74,7 +87,7 @@ export function IncorrectAnswerBlock({
           label={t("Your answer:")}
           variant="incorrect"
         >
-          {selectedText}
+          <FeedbackAnswerText text={selectedText} />
         </AnswerLine>
       )}
       {correctAnswer && (
@@ -84,7 +97,9 @@ export function IncorrectAnswerBlock({
           variant="correct"
         >
           <span className="flex flex-col">
-            <span>{correctAnswer}</span>
+            <span>
+              <FeedbackAnswerText text={correctAnswer} />
+            </span>
             <RomanizationText>{romanization}</RomanizationText>
           </span>
         </AnswerLine>
