@@ -80,8 +80,8 @@ msgid "Fo6YtA"
 msgstr "¡Felicidades! Has alcanzado la Energía máxima. Practica todos los días para mantener tu Energía al 100%."
 
 #: src/components/completion-energy-milestone.tsx
-msgid "vlOyrO"
-msgstr "{energy}% de energía"
+msgid "J89SkG"
+msgstr "{percentage} Energía"
 
 #: src/components/completion-energy-milestone.tsx
 msgid "3Jd-mJ"
@@ -100,24 +100,20 @@ msgid "cIxpmv"
 msgstr "¡Vaya, qué constancia increíble! Sigue estudiando todos los días para mantener tu Energía al 100%."
 
 #: src/components/completion-level-milestone.tsx
-msgid "3UK8wh"
-msgstr "Cinturón {color}"
-
-#: src/components/completion-level-milestone.tsx
 msgid "155cHi"
 msgstr "Nivel alcanzado"
 
 #: src/components/completion-level-milestone.tsx
-msgid "mb2zm-"
-msgstr "Has fortalecido tu mente y alcanzaste el nivel {level} del cinturón {color}. ¡Felicidades!"
+msgid "Ar7dNY"
+msgstr "Alcanzaste un nuevo nivel: {belt}, nivel {level}. ¡Felicidades!"
 
 #: src/components/completion-level-milestone.tsx
 msgid "Bk6B6r"
 msgstr "Casi lo consigues"
 
 #: src/components/completion-level-milestone.tsx
-msgid "34q-SH"
-msgstr "{count, plural, one {Tu conocimiento está creciendo. Completa # lección más para alcanzar el nivel {level} del cinturón {color}.} other {Tu conocimiento está creciendo. Completa # lecciones más para alcanzar el nivel {level} del cinturón {color}.}}"
+msgid "b7ZoLo"
+msgstr "Tu conocimiento está creciendo. Completa {count, plural, one {# lección más} other {# lecciones más}} para alcanzar {belt}, nivel {level}."
 
 #: src/components/completion-milestone-actions.tsx
 msgid "DiIkZH"
@@ -327,42 +323,6 @@ msgstr "No del todo"
 msgid "lqtP-R"
 msgstr "Vocabulario"
 
-#: src/use-belt-color-label.ts
-msgid "XjGbuY"
-msgstr "Negro"
-
-#: src/use-belt-color-label.ts
-msgid "k2tJ9k"
-msgstr "Azul"
-
-#: src/use-belt-color-label.ts
-msgid "eM_4ho"
-msgstr "Marrón"
-
-#: src/use-belt-color-label.ts
-msgid "Yp7v0H"
-msgstr "Gris"
-
-#: src/use-belt-color-label.ts
-msgid "1W4okO"
-msgstr "Verde"
-
-#: src/use-belt-color-label.ts
-msgid "n3m1xt"
-msgstr "Naranja"
-
-#: src/use-belt-color-label.ts
-msgid "tihmF3"
-msgstr "Morado"
-
-#: src/use-belt-color-label.ts
-msgid "D-ZFS_"
-msgstr "Rojo"
-
-#: src/use-belt-color-label.ts
-msgid "OAG-sQ"
-msgstr "Blanco"
-
-#: src/use-belt-color-label.ts
-msgid "5Tw3Ta"
-msgstr "Amarillo"
+#: src/use-belt-label.ts
+msgid "znY9eW"
+msgstr "{color, select, white {Cinturón Blanco} yellow {Cinturón Amarillo} orange {Cinturón Naranja} green {Cinturón Verde} blue {Cinturón Azul} purple {Cinturón Morado} brown {Cinturón Marrón} red {Cinturón Rojo} gray {Cinturón Gris} black {Cinturón Negro} other {Cinturón}}"

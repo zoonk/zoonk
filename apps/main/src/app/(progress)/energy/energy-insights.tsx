@@ -12,8 +12,9 @@ import {
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
+import { formatMetricPercent } from "@zoonk/utils/number";
 import { CalendarDays, ZapIcon } from "lucide-react";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted, getFormatter, getLocale } from "next-intl/server";
 import { getProgressInsightDateLabel } from "../_components/progress-insight-date-label";
 import { getProgressInsightPeriodLabel } from "../_components/progress-insight-period-label";
 
@@ -69,13 +70,10 @@ async function HighestEnergyDayCard({
   periodLabel: string;
 }) {
   const t = await getExtracted();
+  const format = await getFormatter();
 
   const formattedDate = getProgressInsightDateLabel({ date, locale });
-
-  const formattedEnergy = new Intl.NumberFormat(locale, {
-    maximumFractionDigits: 1,
-    trailingZeroDisplay: "stripIfInteger",
-  }).format(energy);
+  const formattedEnergy = formatMetricPercent({ format, value: energy });
 
   return (
     <FeatureCard aria-labelledby="energy-highest-day-label">
@@ -92,7 +90,7 @@ async function HighestEnergyDayCard({
 
       <FeatureCardBody>
         <FeatureCardTitle>
-          {t("{day} with {value}%", { day: formattedDate, value: formattedEnergy })}
+          {t("{day} with {percentage}", { day: formattedDate, percentage: formattedEnergy })}
         </FeatureCardTitle>
         <FeatureCardSubtitle>{periodLabel}</FeatureCardSubtitle>
       </FeatureCardBody>

@@ -16,8 +16,9 @@ import {
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
+import { formatWholeNumber } from "@zoonk/utils/number";
 import { BrainIcon, CalendarDays } from "lucide-react";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted, getFormatter, getLocale } from "next-intl/server";
 import { getProgressInsightDateLabel } from "../_components/progress-insight-date-label";
 import { getProgressInsightPeriodLabel } from "../_components/progress-insight-period-label";
 
@@ -82,9 +83,10 @@ async function HighestBpCard({
   periodLabel: string;
 }) {
   const t = await getExtracted();
+  const format = await getFormatter();
 
   const formattedDate = getProgressInsightDateLabel({ date, locale });
-  const formattedBrainPower = new Intl.NumberFormat(locale).format(brainPower);
+  const formattedBrainPower = formatWholeNumber({ format, value: brainPower });
 
   return (
     <FeatureCard aria-labelledby="level-highest-bp-label">

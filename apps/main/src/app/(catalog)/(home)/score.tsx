@@ -12,18 +12,15 @@ import {
   FeatureCardTitle,
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { getExtracted, getLocale } from "next-intl/server";
+import { formatMetricPercent } from "@zoonk/utils/number";
+import { getExtracted, getFormatter } from "next-intl/server";
 import Link from "next/link";
 
 export async function Score({ score }: { score: number }) {
   const t = await getExtracted();
-  const locale = await getLocale();
+  const format = await getFormatter();
   const scoreMenu = getMenu("score");
-
-  const formattedScore = new Intl.NumberFormat(locale, {
-    maximumFractionDigits: 1,
-    trailingZeroDisplay: "stripIfInteger",
-  }).format(score);
+  const formattedScore = formatMetricPercent({ format, value: score });
 
   return (
     <FeatureCardLink render={<Link href={scoreMenu.url} prefetch />}>
@@ -40,7 +37,7 @@ export async function Score({ score }: { score: number }) {
 
         <FeatureCardBody>
           <FeatureCardTitle>
-            {t("{value}% correct answers", { value: formattedScore })}
+            {t("{percentage} correct answers", { percentage: formattedScore })}
           </FeatureCardTitle>
           <FeatureCardSubtitle>{t("Past 3 months")}</FeatureCardSubtitle>
         </FeatureCardBody>

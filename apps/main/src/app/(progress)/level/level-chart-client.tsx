@@ -1,6 +1,7 @@
 "use client";
 
-import { useExtracted, useLocale } from "next-intl";
+import { formatCompactNumber, formatWholeNumber } from "@zoonk/utils/number";
+import { useExtracted, useFormatter } from "next-intl";
 import {
   ProgressBarChart,
   ProgressChartBar,
@@ -24,9 +25,9 @@ export function LevelChartClient({
   total: number;
 }) {
   const t = useExtracted();
-  const locale = useLocale();
+  const format = useFormatter();
 
-  const formattedTotal = new Intl.NumberFormat(locale).format(total);
+  const formattedTotal = formatWholeNumber({ format, value: total });
   const color = "var(--primary)";
 
   return (
@@ -34,11 +35,13 @@ export function LevelChartClient({
       <ProgressBarChart data={dataPoints}>
         <ProgressChartGrid />
         <ProgressChartXAxis />
-        <ProgressChartCompactYAxis locale={locale} />
+        <ProgressChartCompactYAxis
+          formatValue={(value) => formatCompactNumber({ format, value })}
+        />
 
         <ProgressChartTooltip<SerializedDataPoint>>
           {(data) => {
-            const formattedValue = new Intl.NumberFormat(locale).format(data.bp);
+            const formattedValue = formatWholeNumber({ format, value: data.bp });
 
             return (
               <ProgressChartTooltipContent>

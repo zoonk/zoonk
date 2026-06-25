@@ -1,6 +1,7 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type HistoryPeriod, formatPeriodLabel } from "@zoonk/utils/date-ranges";
-import { getExtracted, getLocale } from "next-intl/server";
+import { formatMetricPercent } from "@zoonk/utils/number";
+import { getExtracted, getFormatter, getLocale } from "next-intl/server";
 import { MetricComparison } from "../_components/metric-comparison";
 
 export async function EnergyStats({
@@ -19,18 +20,11 @@ export async function EnergyStats({
   previousAverage: number | null;
 }) {
   const t = await getExtracted();
+  const format = await getFormatter();
   const locale = await getLocale();
 
-  const formattedAverage = new Intl.NumberFormat(locale, {
-    maximumFractionDigits: 1,
-    trailingZeroDisplay: "stripIfInteger",
-  }).format(average);
-
-  const formattedCurrentEnergy = new Intl.NumberFormat(locale, {
-    maximumFractionDigits: 1,
-    trailingZeroDisplay: "stripIfInteger",
-  }).format(currentEnergy);
-
+  const formattedAverage = formatMetricPercent({ format, value: average });
+  const formattedCurrentEnergy = formatMetricPercent({ format, value: currentEnergy });
   const periodLabel = formatPeriodLabel(periodStart, periodEnd, period, locale);
 
   return (
@@ -39,7 +33,7 @@ export async function EnergyStats({
         <span className="text-muted-foreground text-sm">{t("Current Energy")}</span>
 
         <span className="text-energy text-5xl font-bold tracking-tight tabular-nums">
-          {t("{value}%", { value: formattedCurrentEnergy })}
+          {formattedCurrentEnergy}
         </span>
       </div>
 
@@ -48,7 +42,7 @@ export async function EnergyStats({
 
         <div className="flex items-baseline gap-3">
           <span className="text-2xl font-semibold tracking-tight tabular-nums">
-            {t("{value}% average", { value: formattedAverage })}
+            {t("{percentage} average", { percentage: formattedAverage })}
           </span>
 
           {previousAverage !== null && (

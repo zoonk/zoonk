@@ -119,8 +119,8 @@ msgid "hX5PAb"
 msgstr "No results found"
 
 #: src/app/(catalog)/_components/command-palette.tsx
-msgid "XZfEtS"
-msgstr "Create {term} course"
+msgid "OXAZiT"
+msgstr "Create a course about {term}"
 
 #: src/app/(catalog)/_components/navbar-links.tsx
 msgid "onRJrc"
@@ -154,8 +154,8 @@ msgstr "Best day"
 #: src/app/(catalog)/(home)/best-day.tsx
 #: src/app/(progress)/energy/energy-insights.tsx
 #: src/app/(progress)/score/score-insights.tsx
-msgid "bcsugq"
-msgstr "{day} with {value}%"
+msgid "auPwZG"
+msgstr "{day} with {percentage}"
 
 #: src/app/(catalog)/(home)/best-day.tsx
 #: src/app/(catalog)/(home)/best-time.tsx
@@ -190,8 +190,8 @@ msgstr "Best time"
 
 #: src/app/(catalog)/(home)/best-time.tsx
 #: src/app/(progress)/score/score-insights.tsx
-msgid "vG7kPp"
-msgstr "{period} with {value}%"
+msgid "r0R6ZG"
+msgstr "{period} with {percentage}"
 
 #: src/app/(catalog)/(home)/continue-learning-card.tsx
 msgid "NubPSk"
@@ -221,8 +221,8 @@ msgid "cVpmV7"
 msgstr "Energy"
 
 #: src/app/(catalog)/(home)/energy.tsx
-msgid "C7ROJx"
-msgstr "Your energy is {value}%"
+msgid "AV5XNu"
+msgstr "Your energy is {percentage}"
 
 #: src/app/(catalog)/(home)/learning-days.tsx
 #: src/app/(progress)/level/level-insights.tsx
@@ -248,11 +248,6 @@ msgid "8N9BRu"
 msgstr "{value} BP to next level"
 
 #: src/app/(catalog)/(home)/level.tsx
-#: src/app/(progress)/level/level-stats.tsx
-msgid "3UK8wh"
-msgstr "{color} belt"
-
-#: src/app/(catalog)/(home)/level.tsx
 #: src/app/(progress)/_components/metric-pills.tsx
 #: src/app/(progress)/level/page.tsx
 msgid "y1Qr81"
@@ -260,8 +255,8 @@ msgstr "Level"
 
 #: src/app/(catalog)/(home)/level.tsx
 #: src/app/(progress)/level/level-stats.tsx
-msgid "uiwFZe"
-msgstr "{color} Belt - Level {level}"
+msgid "s0KB2i"
+msgstr "{belt} - Level {level}"
 
 #: src/app/(catalog)/(home)/page.tsx
 msgid "a50ZRn"
@@ -285,8 +280,8 @@ msgid "oLkLww"
 msgstr "Score"
 
 #: src/app/(catalog)/(home)/score.tsx
-msgid "4dsZTc"
-msgstr "{value}% correct answers"
+msgid "_lCW0j"
+msgstr "{percentage} correct answers"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
 msgid "9SgWiD"
@@ -301,8 +296,8 @@ msgid "3IOFp2"
 msgstr "Create chapter"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
-msgid "a0eayI"
-msgstr "Could not update lesson filters. Please try again."
+msgid "Ap-oRa"
+msgstr "Could not apply lesson filters. Please try again."
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
 msgid "d6tcJn"
@@ -355,12 +350,12 @@ msgid "8udPa-"
 msgstr "No chapters found"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
-msgid "V1rAYd"
-msgstr "{completed}/{total} done"
+msgid "vcaAXp"
+msgstr "{completed, number}/{total, number} done"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
-msgid "wPdQ13"
-msgstr "Online and interactive course on {course}. Learn everything about {course} using real-life examples and everyday language. {description}"
+msgid "_allXG"
+msgstr "Learn {course} online with practical examples and everyday language. {description}"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
 msgid "gyGolN"
@@ -536,8 +531,8 @@ msgid "5DZYgN"
 msgstr "We can't create this course"
 
 #: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
-msgid "P-1tVP"
-msgstr "Zoonk can't help with requests that involve unsafe, illegal, or harmful activity. Try a safer learning goal instead."
+msgid "m6ju4Q"
+msgstr "Zoonk can't help with requests that involve unsafe, illegal, or harmful activity. Try a different subject instead."
 
 #: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
 msgid "PDFZz6"
@@ -758,14 +753,6 @@ msgstr "All time"
 msgid "YFV6dH"
 msgstr "vs last year"
 
-#: src/app/(progress)/_components/metric-comparison.tsx
-#: src/app/(progress)/energy/energy-chart-client.tsx
-#: src/app/(progress)/energy/energy-stats.tsx
-#: src/app/(progress)/score/score-chart-client.tsx
-#: src/app/(progress)/score/score-stats.tsx
-msgid "kggwrj"
-msgstr "{value}%"
-
 #: src/app/(progress)/_components/period-navigation.tsx
 msgid "hCCWuZ"
 msgstr "Previous period"
@@ -844,8 +831,8 @@ msgid "-8Qx8X"
 msgstr "Why is Energy important?"
 
 #: src/app/(progress)/energy/energy-explanation.tsx
-msgid "TRcArs"
-msgstr "Energy is like heart rate in a health app: it shows your current learning rhythm. It is not a streak; missing a day does not reset it, and you can recover when you come back."
+msgid "UfEfhq"
+msgstr "Energy is like heart rate in a health app: it shows your current learning rhythm. Missing a day doesn't reset your progress; you recover as soon as you start learning again."
 
 #: src/app/(progress)/energy/energy-insights.tsx
 msgid "XxS-he"
@@ -860,8 +847,8 @@ msgid "zLCmVM"
 msgstr "Current Energy"
 
 #: src/app/(progress)/energy/energy-stats.tsx
-msgid "yGxJvo"
-msgstr "{value}% average"
+msgid "e9DcQa"
+msgstr "{percentage} average"
 
 #: src/app/(progress)/energy/page.tsx
 msgid "AZMpf3"
@@ -904,8 +891,8 @@ msgid "JGLOtn"
 msgstr "Why is Brain Power important?"
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "6g8QfE"
-msgstr "It is like steps in a health app: a record of how much you have learned. It also works like martial arts for your mind: build Brain Power to move from white belt toward black belt in knowledge."
+msgid "tC6vNz"
+msgstr "It is like steps in a health app: a record of how much you have learned. It also works like martial arts for your mind: build Brain Power to advance from white belt to black belt."
 
 #: src/app/(progress)/level/level-insights.tsx
 msgid "elq-tg"
@@ -916,12 +903,12 @@ msgid "BW4bMl"
 msgstr "{date} with {value} BP"
 
 #: src/app/(progress)/level/level-progression.tsx
-msgid "VHH0kD"
-msgstr "{color} Belt, Level {level} of 10. Maximum level achieved."
+msgid "WfaE4H"
+msgstr "{belt}, Level {level} of 10. Maximum level achieved."
 
 #: src/app/(progress)/level/level-progression.tsx
-msgid "t2WYIo"
-msgstr "{color} Belt, Level {level} of 10. {bp} Brain Power until next level."
+msgid "2Y-P4e"
+msgstr "{belt}, Level {level} of 10. {bp} Brain Power until next level."
 
 #: src/app/(progress)/level/level-progression.tsx
 msgid "n_mgOm"
@@ -932,8 +919,8 @@ msgid "ZKbTsS"
 msgstr "{current}/10"
 
 #: src/app/(progress)/level/level-progression.tsx
-msgid "FM-wHG"
-msgstr "Level {current} of 10 in {color} belt"
+msgid "-Sn2yd"
+msgstr "{belt}: Level {current} of 10"
 
 #: src/app/(progress)/level/level-stats.tsx
 msgid "v5yNm3"
@@ -997,8 +984,8 @@ msgid "yOFm9C"
 msgstr "You need to be logged in to access this page."
 
 #: src/app/(settings)/language/page.tsx
-msgid "gr4VpD"
-msgstr "Update your Zoonk app language to learn in English, Portuguese, Spanish, French, or other supported languages."
+msgid "2WHx14"
+msgstr "Update your app language to learn in English, Portuguese, Spanish, French, or other supported languages."
 
 #: src/app/(settings)/language/page.tsx
 msgid "aNLa1G"
@@ -1849,8 +1836,8 @@ msgid "_tq5fR"
 msgstr "Creating content"
 
 #: src/app/privacy/page.tsx
-msgid "iql85X"
-msgstr "Read Zoonk's privacy policy to understand how we collect, use, and protect your personal information."
+msgid "afKQHy"
+msgstr "Read Zoonk's privacy policy to understand how we use and protect your personal information."
 
 #: src/app/privacy/page.tsx
 msgid "vx0nkZ"
@@ -2017,44 +2004,8 @@ msgid "0h_lPM"
 msgstr "Upgrade"
 
 #: src/lib/belt-colors.ts
-msgid "OAG-sQ"
-msgstr "White"
-
-#: src/lib/belt-colors.ts
-msgid "5Tw3Ta"
-msgstr "Yellow"
-
-#: src/lib/belt-colors.ts
-msgid "n3m1xt"
-msgstr "Orange"
-
-#: src/lib/belt-colors.ts
-msgid "1W4okO"
-msgstr "Green"
-
-#: src/lib/belt-colors.ts
-msgid "k2tJ9k"
-msgstr "Blue"
-
-#: src/lib/belt-colors.ts
-msgid "tihmF3"
-msgstr "Purple"
-
-#: src/lib/belt-colors.ts
-msgid "eM_4ho"
-msgstr "Brown"
-
-#: src/lib/belt-colors.ts
-msgid "D-ZFS_"
-msgstr "Red"
-
-#: src/lib/belt-colors.ts
-msgid "Yp7v0H"
-msgstr "Gray"
-
-#: src/lib/belt-colors.ts
-msgid "XjGbuY"
-msgstr "Black"
+msgid "znY9eW"
+msgstr "{color, select, white {White Belt} yellow {Yellow Belt} orange {Orange Belt} green {Green Belt} blue {Blue Belt} purple {Purple Belt} brown {Brown Belt} red {Red Belt} gray {Gray Belt} black {Black Belt} other {Belt}}"
 
 #: src/lib/categories/category.ts
 msgid "fFt3il"
@@ -2233,8 +2184,8 @@ msgid "tlgfSZ"
 msgstr "Practice {topic} grammar rules with exercises designed to help you remember and apply them."
 
 #: src/lib/lessons.ts
-msgid "gAYlHX"
-msgstr "Sharpen your {topic} listening skills by translating audio sentences."
+msgid "xCvEE1"
+msgstr "Practice listening in {topic} by translating audio sentences."
 
 #: src/lib/lessons.ts
 msgid "wHBT6R"
@@ -2253,16 +2204,16 @@ msgid "bzFQEy"
 msgstr "Review everything you learned about {topic} with a comprehensive quiz."
 
 #: src/lib/lessons.ts
-msgid "pDtxFt"
-msgstr "Test your {topic} vocabulary by translating words you've learned."
+msgid "X8Gqiq"
+msgstr "Practice vocabulary in {topic} by translating words you've learned."
 
 #: src/lib/lessons.ts
 msgid "3bJDQa"
 msgstr "Learn {topic} with a guided step-by-step tutorial."
 
 #: src/lib/lessons.ts
-msgid "3198Ew"
-msgstr "Learn new {topic} words with flashcards — see each word, its translation, and pronunciation."
+msgid "77SLH5"
+msgstr "Learn new words in {topic} with flashcards — see each word, its translation, and pronunciation."
 
 #: src/lib/lessons.ts
 msgid "oCxmX9"

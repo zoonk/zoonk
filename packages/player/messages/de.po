@@ -69,20 +69,19 @@ msgstr "Neuer Tagesrekord"
 
 #: src/components/completion-brain-power-milestone.tsx
 msgid "VaM8Q9"
-msgstr "Du hast heute {brainPower} GK erreicht, deine höchste Geisteskraft an einem Tag. Lern jeden Tag weiter, um einen neuen Rekord zu setzen."
+msgstr "Du hast heute {brainPower} BP erreicht, deine höchste Brain Power an einem Tag. Lern jeden Tag weiter, um einen neuen Rekord zu setzen."
 
 #: src/components/completion-energy-milestone.tsx
 msgid "m2WzLQ"
 msgstr "Maximale Energie!"
 
-# There shouldn't be a space before the % sign, I need to look into this.
 #: src/components/completion-energy-milestone.tsx
 msgid "Fo6YtA"
 msgstr "Glückwunsch! Du hast maximale Energie erreicht. Übe jeden Tag, um deine Energie bei 100% zu halten."
 
 #: src/components/completion-energy-milestone.tsx
-msgid "vlOyrO"
-msgstr "{energy}% Energie"
+msgid "J89SkG"
+msgstr "{percentage} Energie"
 
 #: src/components/completion-energy-milestone.tsx
 msgid "3Jd-mJ"
@@ -96,31 +95,25 @@ msgstr "1 Jahr volle Energie"
 msgid "1WNk4i"
 msgstr "{days} Tage volle Energie"
 
-# "consistency" is a bit tough to translate here, an alternative noun is needed I'd say.
 #: src/components/completion-energy-milestone.tsx
 msgid "cIxpmv"
 msgstr "Wow, was für eine unglaubliche Ausdauer! Lern weiter jeden Tag, damit deine Energie bei 100% bleibt."
-
-#: src/components/completion-level-milestone.tsx
-msgid "3UK8wh"
-msgstr "{color} Gürtel"
 
 #: src/components/completion-level-milestone.tsx
 msgid "155cHi"
 msgstr "Level erreicht"
 
 #: src/components/completion-level-milestone.tsx
-msgid "mb2zm-"
-msgstr "Du hast deinen Geist gestärkt und Level {level} des {color} Gürtels erreicht. Glückwunsch!"
+msgid "Ar7dNY"
+msgstr "Du hast ein neues Level erreicht: {belt}, Level {level}. Glückwunsch!"
 
 #: src/components/completion-level-milestone.tsx
 msgid "Bk6B6r"
 msgstr "Fast geschafft"
 
-# The source text could be simplified by wrapping the {count} plural only around what really needs to change.
 #: src/components/completion-level-milestone.tsx
-msgid "34q-SH"
-msgstr "{count, plural, one {Dein Wissen wächst. Schließe noch # Lektion ab, um Level {level} des {color} Gürtels zu erreichen.} other {Dein Wissen wächst. Schließe noch # Lektionen ab, um Level {level} des {color} Gürtels zu erreichen.}}"
+msgid "b7ZoLo"
+msgstr "Dein Wissen wächst. Schließe {count, plural, one {noch # Lektion} other {noch # Lektionen}} ab, um {belt}, Level {level}, zu erreichen."
 
 #: src/components/completion-milestone-actions.tsx
 msgid "DiIkZH"
@@ -306,10 +299,9 @@ msgstr "Ohne Speichern fortfahren"
 msgid "O781mu"
 msgstr "Fortschritt wird nicht gespeichert"
 
-# "Energie" or "Energy"? Should go into the glossary I'd say to be consistent.
 #: src/components/unauthenticated-progress-prompt.tsx
 msgid "JDumQX"
-msgstr "Du kannst diese Lektion ohne Konto ausprobieren, aber deine Punktzahl, Kursfortschritt, Levels und Energy werden nicht gespeichert."
+msgstr "Du kannst diese Lektion ohne Konto ausprobieren, aber deine Punktzahl, Kursfortschritt, Levels und Energie werden nicht gespeichert."
 
 #: src/components/unauthenticated-progress-prompt.tsx
 msgid "rxdOwg"
@@ -317,7 +309,7 @@ msgstr "Diese Lektion wurde nicht gespeichert"
 
 #: src/components/unauthenticated-progress-prompt.tsx
 msgid "Wamgyz"
-msgstr "Melde dich vor deiner nächsten Lektion an, damit künftige Fortschritte, Punktzahlen, Levels und Energy gespeichert werden."
+msgstr "Melde dich vor deiner nächsten Lektion an, damit künftige Fortschritte, Punktzahlen, Levels und Energie gespeichert werden."
 
 #: src/components/verdict-label.tsx
 msgid "xmF49T"
@@ -331,42 +323,6 @@ msgstr "Nicht ganz"
 msgid "lqtP-R"
 msgstr "Wortschatz"
 
-#: src/use-belt-color-label.ts
-msgid "XjGbuY"
-msgstr "Schwarz"
-
-#: src/use-belt-color-label.ts
-msgid "k2tJ9k"
-msgstr "Blau"
-
-#: src/use-belt-color-label.ts
-msgid "eM_4ho"
-msgstr "Braun"
-
-#: src/use-belt-color-label.ts
-msgid "Yp7v0H"
-msgstr "Grau"
-
-#: src/use-belt-color-label.ts
-msgid "1W4okO"
-msgstr "Grün"
-
-#: src/use-belt-color-label.ts
-msgid "n3m1xt"
-msgstr "Orange"
-
-#: src/use-belt-color-label.ts
-msgid "tihmF3"
-msgstr "Lila"
-
-#: src/use-belt-color-label.ts
-msgid "D-ZFS_"
-msgstr "Rot"
-
-#: src/use-belt-color-label.ts
-msgid "OAG-sQ"
-msgstr "Weiß"
-
-#: src/use-belt-color-label.ts
-msgid "5Tw3Ta"
-msgstr "Gelb"
+#: src/use-belt-label.ts
+msgid "znY9eW"
+msgstr "{color, select, white {Weißer Gürtel} yellow {Gelber Gürtel} orange {Orangefarbener Gürtel} green {Grüner Gürtel} blue {Blauer Gürtel} purple {Lilafarbener Gürtel} brown {Brauner Gürtel} red {Roter Gürtel} gray {Grauer Gürtel} black {Schwarzer Gürtel} other {Gürtel}}"

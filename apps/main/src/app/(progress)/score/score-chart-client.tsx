@@ -1,6 +1,7 @@
 "use client";
 
-import { useExtracted } from "next-intl";
+import { formatMetricPercent } from "@zoonk/utils/number";
+import { useExtracted, useFormatter } from "next-intl";
 import {
   ProgressAreaChart,
   ProgressChartArea,
@@ -26,8 +27,10 @@ export function ScoreChartClient({
   dataPoints: SerializedDataPoint[];
 }) {
   const t = useExtracted();
+  const format = useFormatter();
   const color = "var(--score)";
   const gradientId = "scoreGradient";
+  const formattedAverage = formatMetricPercent({ format, value: average });
 
   return (
     <ProgressChartFigure label={t("Score chart")}>
@@ -42,22 +45,22 @@ export function ScoreChartClient({
 
         <ProgressChartTooltip<SerializedDataPoint>>
           {(data) => {
-            const value = data.score.toFixed(1);
+            const formattedScore = formatMetricPercent({ format, value: data.score });
 
             return (
               <ProgressChartTooltipContent>
                 <ProgressChartTooltipLabel>{data.label}</ProgressChartTooltipLabel>
                 <ProgressChartTooltipValue className="text-score">
-                  {t("{value}%", { value })}
+                  {formattedScore}
                 </ProgressChartTooltipValue>
               </ProgressChartTooltipContent>
             );
           }}
         </ProgressChartTooltip>
 
-        <ProgressChartAverageLine y={average}>
-          {`${t("Avg")}: ${average.toFixed(1)}%`}
-        </ProgressChartAverageLine>
+        <ProgressChartAverageLine
+          y={average}
+        >{`${t("Avg")}: ${formattedAverage}`}</ProgressChartAverageLine>
 
         <ProgressChartArea color={color} dataKey="score" gradientId={gradientId} />
       </ProgressAreaChart>

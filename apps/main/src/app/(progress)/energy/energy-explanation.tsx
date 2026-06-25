@@ -38,7 +38,7 @@ export async function EnergyExplanation() {
 
         <ExplanationText>
           {t(
-            "Energy is like heart rate in a health app: it shows your current learning rhythm. It is not a streak; missing a day does not reset it, and you can recover when you come back.",
+            "Energy is like heart rate in a health app: it shows your current learning rhythm. Missing a day doesn't reset your progress; you recover as soon as you start learning again.",
           )}
         </ExplanationText>
       </Explanation>

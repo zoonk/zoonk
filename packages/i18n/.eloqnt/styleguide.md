@@ -13,3 +13,7 @@ Zoonk helps anyone learn anything, with a focus on people outside privileged env
 ## Do not translate
 
 - The brand name "Zoonk"
+
+## Punctuation
+
+- Use the ellipsis character "…" instead of three periods "..." for loading states and other UI copy.

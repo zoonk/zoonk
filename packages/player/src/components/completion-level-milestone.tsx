@@ -4,21 +4,19 @@ import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import { type BeltColor } from "@zoonk/utils/belt-level";
 import { useExtracted } from "next-intl";
 import { type PlayerCompletionMilestone } from "../completion-milestones";
-import { useBeltColorLabel } from "../use-belt-color-label";
+import { useBeltLabel } from "../use-belt-label";
 import { CompletionMilestoneMark, CompletionMilestoneTitle } from "./completion-milestone-shell";
 import { PlayerSupportingText } from "./player-supporting-text";
 
 type LevelMilestone = Extract<PlayerCompletionMilestone, { kind: "level" }>;
 
-function BeltMilestoneIndicator({ color, colorLabel }: { color: BeltColor; colorLabel: string }) {
-  const t = useExtracted();
-
+function BeltMilestoneIndicator({ color, label }: { color: BeltColor; label: string }) {
   return (
     <CompletionMilestoneMark>
       <BeltIndicator
         className="animate-dot-pulse size-8 motion-reduce:animate-none"
         color={color}
-        label={t("{color} belt", { color: colorLabel })}
+        label={label}
         size="lg"
       />
     </CompletionMilestoneMark>
@@ -31,14 +29,14 @@ function AchievedLevelCopy({
   milestone: Extract<LevelMilestone, { status: "achieved" }>;
 }) {
   const t = useExtracted();
-  const colorLabel = useBeltColorLabel(milestone.belt.color);
+  const beltLabel = useBeltLabel(milestone.belt.color);
 
   return (
     <>
       <CompletionMilestoneTitle>{t("Level achieved")}</CompletionMilestoneTitle>
       <PlayerSupportingText>
-        {t("You strengthened your mind and reached level {level} of the {color} belt. Congrats!", {
-          color: colorLabel,
+        {t("You reached a new level: {belt}, level {level}. Congrats!", {
+          belt: beltLabel,
           level: String(milestone.belt.level),
         })}
       </PlayerSupportingText>
@@ -52,16 +50,16 @@ function HalfwayLevelCopy({
   milestone: Extract<LevelMilestone, { status: "halfway" }>;
 }) {
   const t = useExtracted();
-  const colorLabel = useBeltColorLabel(milestone.targetBelt.color);
+  const beltLabel = useBeltLabel(milestone.targetBelt.color);
 
   return (
     <>
       <CompletionMilestoneTitle>{t("Almost there")}</CompletionMilestoneTitle>
       <PlayerSupportingText>
         {t(
-          "{count, plural, one {Your knowledge is growing. Complete # more lesson to reach level {level} of the {color} belt.} other {Your knowledge is growing. Complete # more lessons to reach level {level} of the {color} belt.}}",
+          "Your knowledge is growing. Complete {count, plural, one {# more lesson} other {# more lessons}} to reach {belt}, level {level}.",
           {
-            color: colorLabel,
+            belt: beltLabel,
             count: milestone.remainingLessons,
             level: String(milestone.targetBelt.level),
           },
@@ -89,7 +87,7 @@ function getLevelMilestoneTarget(milestone: LevelMilestone) {
 
 export function LevelMilestoneIndicator({ milestone }: { milestone: LevelMilestone }) {
   const target = getLevelMilestoneTarget(milestone);
-  const colorLabel = useBeltColorLabel(target.color);
+  const beltLabel = useBeltLabel(target.color);
 
-  return <BeltMilestoneIndicator color={target.color} colorLabel={colorLabel} />;
+  return <BeltMilestoneIndicator color={target.color} label={beltLabel} />;
 }

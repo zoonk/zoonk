@@ -1,26 +1,27 @@
-import { BELT_BG_CLASSES, getBeltColorLabel, getBeltColors } from "@/lib/belt-colors";
+import { BELT_BG_CLASSES, getBeltColors } from "@/lib/belt-colors";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BELT_COLORS_ORDER, type BeltLevelResult } from "@zoonk/utils/belt-level";
-import { getExtracted, getLocale } from "next-intl/server";
+import { formatWholeNumber } from "@zoonk/utils/number";
+import { getExtracted, getFormatter } from "next-intl/server";
 
 export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevelResult }) {
   const t = await getExtracted();
-  const locale = await getLocale();
+  const format = await getFormatter();
 
   const beltColors = await getBeltColors();
   const currentIndex = BELT_COLORS_ORDER.indexOf(currentBelt.color);
-  const colorName = await getBeltColorLabel(currentBelt.color);
-  const formattedBpToNext = new Intl.NumberFormat(locale).format(currentBelt.bpToNextLevel);
+  const beltLabel = beltColors[currentIndex]?.label ?? currentBelt.color;
+  const formattedBpToNext = formatWholeNumber({ format, value: currentBelt.bpToNextLevel });
 
   const progressLabel = currentBelt.isMaxLevel
-    ? t("{color} Belt, Level {level} of 10. Maximum level achieved.", {
-        color: colorName,
+    ? t("{belt}, Level {level} of 10. Maximum level achieved.", {
+        belt: beltLabel,
         level: String(currentBelt.level),
       })
-    : t("{color} Belt, Level {level} of 10. {bp} Brain Power until next level.", {
+    : t("{belt}, Level {level} of 10. {bp} Brain Power until next level.", {
+        belt: beltLabel,
         bp: formattedBpToNext,
-        color: colorName,
         level: String(currentBelt.level),
       });
 
@@ -80,8 +81,8 @@ export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevel
               />
             </div>
             <span className="text-muted-foreground text-xs">
-              {t("Level {current} of 10 in {color} belt", {
-                color: colorName,
+              {t("{belt}: Level {current} of 10", {
+                belt: beltLabel,
                 current: String(currentBelt.level),
               })}
             </span>

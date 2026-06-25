@@ -158,7 +158,7 @@ test.describe("Energy Page", () => {
         authenticatedPage.getByRole("heading", { name: /why is energy important/iu }),
       ).toBeVisible();
 
-      await expect(authenticatedPage.getByText(/not a streak/iu)).toBeVisible();
+      await expect(authenticatedPage.getByText(/doesn't reset your progress/iu)).toBeVisible();
     });
   });
 

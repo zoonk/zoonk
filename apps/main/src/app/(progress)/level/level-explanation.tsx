@@ -42,7 +42,7 @@ export async function LevelExplanation() {
 
         <ExplanationText>
           {t(
-            "It is like steps in a health app: a record of how much you have learned. It also works like martial arts for your mind: build Brain Power to move from white belt toward black belt in knowledge.",
+            "It is like steps in a health app: a record of how much you have learned. It also works like martial arts for your mind: build Brain Power to advance from white belt to black belt.",
           )}
         </ExplanationText>
       </Explanation>

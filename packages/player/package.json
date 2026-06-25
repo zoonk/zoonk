@@ -11,8 +11,8 @@
     "build": "pnpm extract:messages",
     "build:e2e": "pnpm extract:messages",
     "extract:messages": "tsx extract-messages.ts",
-    "eloqnt:lint": "eloqnt lint",
-    "eloqnt:translate": "eloqnt translate",
+    "i18n:lint": "eloqnt lint",
+    "i18n": "eloqnt translate",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsgo --noEmit"

@@ -213,7 +213,7 @@ function CreateCourseEmptyState({ onSelect, query }: { onSelect: () => void; que
         >
           <PlusIcon aria-hidden="true" />
           <span className="min-w-0 wrap-break-word">
-            {t("Create {term} course", { term: prompt })}
+            {t("Create a course about {term}", { term: prompt })}
           </span>
         </Link>
       )}

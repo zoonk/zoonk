@@ -11,22 +11,20 @@ import {
   FeatureCardTitle,
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { formatMetricPercent } from "@zoonk/utils/number";
 import { Clock } from "lucide-react";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted, getFormatter } from "next-intl/server";
 import Link from "next/link";
 
 export async function BestTime({ score, period }: { score: number; period: number }) {
   const t = await getExtracted();
-  const locale = await getLocale();
+  const format = await getFormatter();
 
   const periodNames = [t("Night"), t("Morning"), t("Afternoon"), t("Evening")] as const;
 
   const periodName = periodNames[period] ?? periodNames[1];
 
-  const formattedScore = new Intl.NumberFormat(locale, {
-    maximumFractionDigits: 1,
-    trailingZeroDisplay: "stripIfInteger",
-  }).format(score);
+  const formattedScore = formatMetricPercent({ format, value: score });
 
   return (
     <FeatureCardLink render={<Link href="/score" prefetch />}>
@@ -43,7 +41,7 @@ export async function BestTime({ score, period }: { score: number; period: numbe
 
         <FeatureCardBody>
           <FeatureCardTitle className="first-letter:uppercase">
-            {t("{period} with {value}%", { period: periodName, value: formattedScore })}
+            {t("{period} with {percentage}", { percentage: formattedScore, period: periodName })}
           </FeatureCardTitle>
           <FeatureCardSubtitle>{t("Past 3 months")}</FeatureCardSubtitle>
         </FeatureCardBody>

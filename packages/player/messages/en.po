@@ -80,8 +80,8 @@ msgid "Fo6YtA"
 msgstr "Congrats! You reached max Energy. Keep practicing every day to keep your Energy at 100%."
 
 #: src/components/completion-energy-milestone.tsx
-msgid "vlOyrO"
-msgstr "{energy}% Energy"
+msgid "J89SkG"
+msgstr "{percentage} Energy"
 
 #: src/components/completion-energy-milestone.tsx
 msgid "3Jd-mJ"
@@ -100,24 +100,20 @@ msgid "cIxpmv"
 msgstr "Wow, what incredible consistency! Keep studying every day to keep your Energy at 100%."
 
 #: src/components/completion-level-milestone.tsx
-msgid "3UK8wh"
-msgstr "{color} belt"
-
-#: src/components/completion-level-milestone.tsx
 msgid "155cHi"
 msgstr "Level achieved"
 
 #: src/components/completion-level-milestone.tsx
-msgid "mb2zm-"
-msgstr "You strengthened your mind and reached level {level} of the {color} belt. Congrats!"
+msgid "Ar7dNY"
+msgstr "You reached a new level: {belt}, level {level}. Congrats!"
 
 #: src/components/completion-level-milestone.tsx
 msgid "Bk6B6r"
 msgstr "Almost there"
 
 #: src/components/completion-level-milestone.tsx
-msgid "34q-SH"
-msgstr "{count, plural, one {Your knowledge is growing. Complete # more lesson to reach level {level} of the {color} belt.} other {Your knowledge is growing. Complete # more lessons to reach level {level} of the {color} belt.}}"
+msgid "b7ZoLo"
+msgstr "Your knowledge is growing. Complete {count, plural, one {# more lesson} other {# more lessons}} to reach {belt}, level {level}."
 
 #: src/components/completion-milestone-actions.tsx
 msgid "DiIkZH"
@@ -327,42 +323,6 @@ msgstr "Not quite"
 msgid "lqtP-R"
 msgstr "Vocabulary"
 
-#: src/use-belt-color-label.ts
-msgid "XjGbuY"
-msgstr "Black"
-
-#: src/use-belt-color-label.ts
-msgid "k2tJ9k"
-msgstr "Blue"
-
-#: src/use-belt-color-label.ts
-msgid "eM_4ho"
-msgstr "Brown"
-
-#: src/use-belt-color-label.ts
-msgid "Yp7v0H"
-msgstr "Gray"
-
-#: src/use-belt-color-label.ts
-msgid "1W4okO"
-msgstr "Green"
-
-#: src/use-belt-color-label.ts
-msgid "n3m1xt"
-msgstr "Orange"
-
-#: src/use-belt-color-label.ts
-msgid "tihmF3"
-msgstr "Purple"
-
-#: src/use-belt-color-label.ts
-msgid "D-ZFS_"
-msgstr "Red"
-
-#: src/use-belt-color-label.ts
-msgid "OAG-sQ"
-msgstr "White"
-
-#: src/use-belt-color-label.ts
-msgid "5Tw3Ta"
-msgstr "Yellow"
+#: src/use-belt-label.ts
+msgid "znY9eW"
+msgstr "{color, select, white {White Belt} yellow {Yellow Belt} orange {Orange Belt} green {Green Belt} blue {Blue Belt} purple {Purple Belt} brown {Brown Belt} red {Red Belt} gray {Gray Belt} black {Black Belt} other {Belt}}"

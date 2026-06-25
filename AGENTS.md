@@ -149,9 +149,9 @@ page.getByLabel(/email/i);
 - **NEVER pass `t` / `getExtracted` / `useExtracted` as a function argument, prop, or store it in a variable to call later.** Always call `t("literal")` directly in the component. If you need translated text in a helper, use conditionals in the component: `verdict === "correct" ? t("Correct!") : t("Not quite")`
 - Always use ICU standards for translation, see the [next-intl docs](https://next-intl.dev/docs/usage/translations)
 - For plural text, always use ICU plural syntax in one message (e.g., `{count, plural, one {# item} other {# items}}`) instead of branching in code or creating separate singular/plural strings
-- Translation strings are extracted to PO files either automatically while `next dev` is running, or when `pnpm --filter {app} build` is invoked
 - When writing UI copy, follow the [eloqnt styleguide](packages/i18n/.eloqnt/styleguide.md) that's also used for translations
-- When you're finished with a task and new strings are extracted, translate them with `pnpm eloqnt:translate`
+- Don't edit PO files directly. When you're finished with a task, extract new strings with `pnpm build` and translate them with `pnpm i18n`
+- Translation strings are extracted to PO files either automatically while `next dev` is running, or when `pnpm --filter {app} build` is invoked
 - When using `render` prop with base-ui components (e.g., `useRender`), use `ClientLink` instead of `Link` since the render prop requires a client component
 - i18n functions like `getExtracted` can't be called inside `Promise.all`
 
@@ -216,7 +216,7 @@ How to verify your work:
 - pnpm build --filter <app>
 - pnpm test --filter <app>
 - pnpm e2e --filter <app>
-- pnpm eloqnt:lint (fix errors in source locale directly, translate missing strings in target locales with eloqnt:translate)
+- pnpm i18n:lint (fix errors in source locale directly, translate missing strings in target locales with i18n)
 
 ## Docs
 

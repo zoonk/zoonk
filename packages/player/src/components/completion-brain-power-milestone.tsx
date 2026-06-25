@@ -1,7 +1,8 @@
 "use client";
 
+import { formatWholeNumber } from "@zoonk/utils/number";
 import { BrainIcon } from "lucide-react";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { type PlayerCompletionMilestone } from "../completion-milestones";
 import { CompletionMilestoneMark, CompletionMilestoneTitle } from "./completion-milestone-shell";
 import { PlayerSupportingText } from "./player-supporting-text";
@@ -20,8 +21,8 @@ export function BrainPowerMilestoneIndicator() {
 
 export function BrainPowerMilestoneCopy({ milestone }: { milestone: BrainPowerMilestone }) {
   const t = useExtracted();
-  const locale = useLocale();
-  const formattedBrainPower = new Intl.NumberFormat(locale).format(milestone.brainPower);
+  const format = useFormatter();
+  const formattedBrainPower = formatWholeNumber({ format, value: milestone.brainPower });
 
   return (
     <>

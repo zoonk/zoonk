@@ -134,7 +134,9 @@ describe("player browser integration: completion", () => {
 
     await expect.element(milestoneScreen.getByText(/level achieved/iu)).toBeInTheDocument();
 
-    await expect.element(milestoneScreen.getByText(/strengthened your mind/iu)).toBeInTheDocument();
+    await expect
+      .element(milestoneScreen.getByText(/you reached a new level/iu))
+      .toBeInTheDocument();
 
     await expect
       .element(milestoneScreen.getByRole("link", { name: /learn about levels/iu }))

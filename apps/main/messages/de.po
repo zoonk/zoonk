@@ -118,10 +118,9 @@ msgstr "Kapitel"
 msgid "hX5PAb"
 msgstr "Keine Ergebnisse gefunden"
 
-# This is correct grammatically ("Durchkoppeln" is the grammar rule), but maybe needs some verification in the actual app how this looks like with a few examples, esp. with multiple words (e.g. "Creative Writing-Kurs erstellen" is mostly technically correct, but stylistically with only a single hyphen maybe not ideal). Otherwise "Kurs über {term} erstellen" is a bit more wordy, but maybe less intrusive.
 #: src/app/(catalog)/_components/command-palette.tsx
-msgid "XZfEtS"
-msgstr "{term}-Kurs erstellen"
+msgid "OXAZiT"
+msgstr "Kurs über {term} erstellen"
 
 #: src/app/(catalog)/_components/navbar-links.tsx
 msgid "onRJrc"
@@ -155,8 +154,8 @@ msgstr "Bester Tag"
 #: src/app/(catalog)/(home)/best-day.tsx
 #: src/app/(progress)/energy/energy-insights.tsx
 #: src/app/(progress)/score/score-insights.tsx
-msgid "bcsugq"
-msgstr "{day} mit {value}%"
+msgid "auPwZG"
+msgstr "{day} mit {percentage}"
 
 #: src/app/(catalog)/(home)/best-day.tsx
 #: src/app/(catalog)/(home)/best-time.tsx
@@ -191,8 +190,8 @@ msgstr "Beste Zeit"
 
 #: src/app/(catalog)/(home)/best-time.tsx
 #: src/app/(progress)/score/score-insights.tsx
-msgid "vG7kPp"
-msgstr "{period} mit {value}%"
+msgid "r0R6ZG"
+msgstr "{period} mit {percentage}"
 
 #: src/app/(catalog)/(home)/continue-learning-card.tsx
 msgid "NubPSk"
@@ -207,12 +206,10 @@ msgstr "Weiter"
 msgid "0X-xfW"
 msgstr "Weiterlernen"
 
-# Here's an interesting problem. "es" refers to "Geisteskraft" in your current glossary, but should use the feminine "sie" for this term (only in your English version it's actually it/es). eloqnt/studio should resolve these implicit references and pick the right pronoun based on the language.
 #: src/app/(catalog)/(home)/energy.tsx
 msgid "soDmlG"
 msgstr "Lerne weiter, um sie zu steigern"
 
-# Same as for msgid "soDmlG"
 #: src/app/(catalog)/(home)/energy.tsx
 msgid "WgeB0r"
 msgstr "Lerne weiter, um sie zu halten"
@@ -224,8 +221,8 @@ msgid "cVpmV7"
 msgstr "Energie"
 
 #: src/app/(catalog)/(home)/energy.tsx
-msgid "C7ROJx"
-msgstr "Deine Energie liegt bei {value}%"
+msgid "AV5XNu"
+msgstr "Deine Energie liegt bei {percentage}"
 
 #: src/app/(catalog)/(home)/learning-days.tsx
 #: src/app/(progress)/level/level-insights.tsx
@@ -248,13 +245,7 @@ msgstr "Höchstes Level erreicht"
 #: src/app/(catalog)/(home)/level.tsx
 #: src/app/(progress)/level/level-stats.tsx
 msgid "8N9BRu"
-msgstr "{value} GK bis zum nächsten Level"
-
-# This is an interesting case. While this works for most colors (e.g. "grün_er_ Gürtel" is fine), it breaks for other ones ("orangeer", "lilaer", "rosaer"). Since the belt colors are known, the source text should use an enum select which allows to use language-specific variants.
-#: src/app/(catalog)/(home)/level.tsx
-#: src/app/(progress)/level/level-stats.tsx
-msgid "3UK8wh"
-msgstr "{color}er Gürtel"
+msgstr "{value} BP bis zum nächsten Level"
 
 #: src/app/(catalog)/(home)/level.tsx
 #: src/app/(progress)/_components/metric-pills.tsx
@@ -262,11 +253,10 @@ msgstr "{color}er Gürtel"
 msgid "y1Qr81"
 msgstr "Level"
 
-# See the other comment, this would need an enum select in the source text to work properly. Maybe you could create a `const getBeltLabel = useBeltLabel()` hook to share label creation across call sites, so you don't have to duplicate the enum.
 #: src/app/(catalog)/(home)/level.tsx
 #: src/app/(progress)/level/level-stats.tsx
-msgid "uiwFZe"
-msgstr "{color} Gürtel – Stufe {level}"
+msgid "s0KB2i"
+msgstr "{belt} – Level {level}"
 
 #: src/app/(catalog)/(home)/page.tsx
 msgid "a50ZRn"
@@ -289,10 +279,9 @@ msgstr "Fortschritt"
 msgid "oLkLww"
 msgstr "Punktestand"
 
-# Side note, next-intl also offers the {value, number, percent} formatter for percentages.
 #: src/app/(catalog)/(home)/score.tsx
-msgid "4dsZTc"
-msgstr "{value}% richtige Antworten"
+msgid "_lCW0j"
+msgstr "{percentage} richtige Antworten"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
 msgid "9SgWiD"
@@ -306,10 +295,9 @@ msgstr "Dieses Kapitel wurde noch nicht erstellt."
 msgid "3IOFp2"
 msgstr "Kapitel erstellen"
 
-# This reads a bit awkward, but I'd argue also the English "Could not update lesson filters.". I guess the user is not _updating_ filters in that sense, but they are _applying_ them.
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
-msgid "a0eayI"
-msgstr "Konnte die Lektionenfilter nicht aktualisieren. Bitte versuche es erneut."
+msgid "Ap-oRa"
+msgstr "Filter für Lektionen konnten nicht angewendet werden. Bitte versuche es erneut."
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
 msgid "d6tcJn"
@@ -361,15 +349,13 @@ msgstr "Kapitel suchen..."
 msgid "8udPa-"
 msgstr "Keine Kapitel gefunden"
 
-# Also a bit off topic, but next-intl offers "{completed, number}" to ensure locale-specific number formatting is used when it becomes necessary (in case this number could get high enough)
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
-msgid "V1rAYd"
-msgstr "{completed}/{total} erledigt"
+msgid "vcaAXp"
+msgstr "{completed, number}/{total, number} erledigt"
 
-# Reads also a bit awkward, but I think there's a chance to fix the source text here. "Interactive online course on …" would work better IMO and likely would also translate better.
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
-msgid "wPdQ13"
-msgstr "Online‑ und interaktiver Kurs zu {course}. Lerne alles über {course} mit praxisnahen Beispielen und einfacher Sprache. {description}"
+msgid "_allXG"
+msgstr "Lerne {course} online mit praxisnahen Beispielen und einfacher Sprache. {description}"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
 msgid "gyGolN"
@@ -392,7 +378,6 @@ msgstr "Noch keine Kurse verfügbar."
 msgid "zJxO2f"
 msgstr "Keine Kurse"
 
-# I noticed that that here you use the ellipsis character, but there was another label where you had three dots ("..."). This could be something to express in a (source locale) styleguide, and link to your agent to produce text consistently. Reviewing of source text is on my todo list for eloqnt/studio though.
 #: src/app/(catalog)/courses/course-list-client.tsx
 msgid "T0mfNV"
 msgstr "Lade mehr Kurse…"
@@ -464,7 +449,6 @@ msgstr "Personalisierte Kurse kommen bald."
 msgid "hJZwTS"
 msgstr "E‑Mail‑Adresse"
 
-# I guess this should be localized
 #: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
 #: src/app/(catalog)/start/learn/[prompt]/course-mode-waitlist-form.tsx
 #: src/components/feedback/contact-form.tsx
@@ -546,10 +530,9 @@ msgstr "Nicht verfügbar"
 msgid "5DZYgN"
 msgstr "Wir können diesen Kurs nicht erstellen"
 
-# "Safer" doesn't translate so well here. But maybe "appropriate" could be better in the source text as well.
 #: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
-msgid "P-1tVP"
-msgstr "Zoonk kann bei Anfragen, die unsichere, illegale oder schädliche Aktivitäten betreffen, nicht helfen. Versuch stattdessen ein geeigneteres Lernziel."
+msgid "m6ju4Q"
+msgstr "Zoonk kann bei Anfragen zu unsicheren, illegalen oder schädlichen Aktivitäten nicht helfen. Versuch stattdessen ein anderes Thema."
 
 #: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
 msgid "PDFZz6"
@@ -770,14 +753,6 @@ msgstr "Gesamt"
 msgid "YFV6dH"
 msgstr "vs. letztes Jahr"
 
-#: src/app/(progress)/_components/metric-comparison.tsx
-#: src/app/(progress)/energy/energy-chart-client.tsx
-#: src/app/(progress)/energy/energy-stats.tsx
-#: src/app/(progress)/score/score-chart-client.tsx
-#: src/app/(progress)/score/score-stats.tsx
-msgid "kggwrj"
-msgstr "{value}%"
-
 #: src/app/(progress)/_components/period-navigation.tsx
 msgid "hCCWuZ"
 msgstr "Vorheriger Zeitraum"
@@ -839,7 +814,6 @@ msgstr "Durchschn."
 msgid "TLPAMC"
 msgstr "Was ist Energie?"
 
-# Reads a bit awkward, this is a rephrased version that carries the meaning.
 #: src/app/(progress)/energy/energy-explanation.tsx
 msgid "OvOWOR"
 msgstr "Energie ist ein Wert von 0–100 %, der zeigt, wie regelmäßig und genau du in letzter Zeit gelernt hast."
@@ -856,10 +830,9 @@ msgstr "Beantworte Fragen richtig und lerne regelmäßig. Richtige Antworten erh
 msgid "-8Qx8X"
 msgstr "Warum ist Energie wichtig?"
 
-# "Streak" was left untranslated, and is hard to translate in a literal sense here. I guess you could argue that the English "streak" could be understood by German speakers, but I'd rephrase it to avoid a noun here. Maybe even the English version reads better without the noun? ("Energy is like heart rate in a health app: it shows your current learning rhythm. Missing a day resets nothing — you recover as soon as you start learning again.")
 #: src/app/(progress)/energy/energy-explanation.tsx
-msgid "TRcArs"
-msgstr "Energie ist wie der Herzschlag in einer Gesundheits-App: Sie zeigt deinen aktuellen Lernrhythmus. Ein verpasster Tag setzt nichts zurück – du erholst dich, sobald du wieder lernst."
+msgid "UfEfhq"
+msgstr "Energie ist wie der Herzschlag in einer Gesundheits-App: Sie zeigt deinen aktuellen Lernrhythmus. Wenn du einen Tag aussetzt, wird dein Fortschritt nicht zurückgesetzt; du erholst dich, sobald du wieder lernst."
 
 #: src/app/(progress)/energy/energy-insights.tsx
 msgid "XxS-he"
@@ -874,8 +847,8 @@ msgid "zLCmVM"
 msgstr "Aktuelle Energie"
 
 #: src/app/(progress)/energy/energy-stats.tsx
-msgid "yGxJvo"
-msgstr "{value}% Durchschnitt"
+msgid "e9DcQa"
+msgstr "{percentage} im Schnitt"
 
 #: src/app/(progress)/energy/page.tsx
 msgid "AZMpf3"
@@ -887,57 +860,55 @@ msgstr "Ein 0%–100%‑Wert für jüngste Aktivität und Genauigkeit"
 
 #: src/app/(progress)/level/level-chart-client.tsx
 msgid "GA8RuL"
-msgstr "Geisteskraft‑Diagramm"
+msgstr "Brain-Power-Diagramm"
 
 #: src/app/(progress)/level/level-chart-client.tsx
 msgid "XdkaHc"
-msgstr "{value} GK"
+msgstr "{value} BP"
 
 #: src/app/(progress)/level/level-chart-client.tsx
 msgid "tDbspx"
-msgstr "Insgesamt erreichte Geisteskraft: {total}"
+msgstr "Insgesamt erreichte Brain Power: {total}"
 
 #: src/app/(progress)/level/level-explanation.tsx
 msgid "EMy5Vs"
-msgstr "Was ist Geisteskraft?"
+msgstr "Was ist Brain Power?"
 
-# "erarbeitet" is more in the sense that you've worked for it, not just something that you've been rewarded ("verdient" also means "deserve").
 #: src/app/(progress)/level/level-explanation.tsx
 msgid "MIjvOA"
-msgstr "Geisteskraft (GK) ist das gesamte Lernguthaben, das du erarbeitet hast. Jede abgeschlossene Lektion fügt {brainPower} GK hinzu."
+msgstr "Brain Power (BP) ist das gesamte Lernguthaben, das du erarbeitet hast. Jede abgeschlossene Lektion fügt {brainPower} BP hinzu."
 
 #: src/app/(progress)/level/level-explanation.tsx
 msgid "jzKXJS"
-msgstr "Wie erhöhe ich meine Geisteskraft?"
+msgstr "Wie erhöhe ich Brain Power?"
 
 #: src/app/(progress)/level/level-explanation.tsx
 msgid "Gzq1tT"
-msgstr "Schließe Lektionen ab. Geisteskraft sinkt nie, auch wenn deine Energie abnimmt oder du eine Pause machst."
+msgstr "Schließe Lektionen ab. Brain Power sinkt nie, auch wenn deine Energie abnimmt oder du eine Pause machst."
 
 #: src/app/(progress)/level/level-explanation.tsx
 msgid "JGLOtn"
-msgstr "Warum ist Geisteskraft wichtig?"
+msgstr "Warum ist Brain Power wichtig?"
 
-# "im Wissen zu kommen" is awkward. Arguably, the English version could also use "build Brain Power to advance from white belt to black belt.".
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "6g8QfE"
-msgstr "Sie ist wie Schritte in einer Gesundheits-App: ein Protokoll dessen, wie viel du gelernt hast. Sie funktioniert auch wie Kampfkunst für deinen Geist: Baue Geisteskraft auf, um vom weißen Gürtel zum schwarzem Gürtel aufzusteigen."
+msgid "tC6vNz"
+msgstr "Sie ist wie Schritte in einer Gesundheits-App: ein Protokoll dessen, wie viel du gelernt hast. Sie funktioniert auch wie Kampfkunst für deinen Geist: Baue Geisteskraft auf, um vom weißen Gürtel zum schwarzem Gürtel aufzusteigen"
 
 #: src/app/(progress)/level/level-insights.tsx
 msgid "elq-tg"
-msgstr "Höchste GK"
+msgstr "Höchster BP-Wert"
 
 #: src/app/(progress)/level/level-insights.tsx
 msgid "BW4bMl"
-msgstr "{date} mit {value} GK"
+msgstr "{date} mit {value} BP"
 
 #: src/app/(progress)/level/level-progression.tsx
-msgid "VHH0kD"
-msgstr "{color} Gürtel, Stufe {level} von 10. Maximalstufe erreicht."
+msgid "WfaE4H"
+msgstr "{belt}, Level {level} von 10. Maximales Level erreicht."
 
 #: src/app/(progress)/level/level-progression.tsx
-msgid "t2WYIo"
-msgstr "{color} Gürtel, Stufe {level} von 10. Noch {bp} Geisteskraft bis zur nächsten Stufe."
+msgid "2Y-P4e"
+msgstr "{belt}, Level {level} von 10. Noch {bp} Brain Power bis zum nächsten Level."
 
 #: src/app/(progress)/level/level-progression.tsx
 msgid "n_mgOm"
@@ -948,26 +919,25 @@ msgid "ZKbTsS"
 msgstr "{current}/10"
 
 #: src/app/(progress)/level/level-progression.tsx
-msgid "FM-wHG"
-msgstr "Stufe {current} von 10 im {color} Gürtel"
+msgid "-Sn2yd"
+msgstr "{belt}: Level {current} von 10"
 
 #: src/app/(progress)/level/level-stats.tsx
 msgid "v5yNm3"
-msgstr "Gesamte Geisteskraft"
+msgstr "Gesamte Brain Power"
 
 #: src/app/(progress)/level/level-stats.tsx
 msgid "_Q0taG"
-msgstr "GK"
+msgstr "BP"
 
 #: src/app/(progress)/level/level-stats.tsx
 msgid "u_oEJA"
-msgstr "{value} GK verdient"
+msgstr "{value} BP erreicht"
 
 #: src/app/(progress)/level/page.tsx
 msgid "4-USpX"
 msgstr "Verfolge deinen Fortschritt in den Stufen und sieh, wie du vorankommst."
 
-# I think you want an explicit entry for "level" in your DE glossary. It was kept as "level" sometimes, but here it's "Stufe". "Level" is still English, but very commonly understood I'd say and used frequently. I'd like to add automatic, continuous glossary extraction to eloqnt/studio at some point, let's see if I can pull it off.
 #: src/app/(progress)/level/page.tsx
 msgid "L9hqMH"
 msgstr "Verfolge deinen Level-Fortschritt"
@@ -1013,9 +983,8 @@ msgstr "Die Punktzahl zeigt Genauigkeit, nicht Aktivität. Bester Tag und beste 
 msgid "yOFm9C"
 msgstr "Du musst eingeloggt sein, um auf diese Seite zuzugreifen."
 
-# It's technically correct to use "durchkoppeln" like "Zoonk-App-Sprache" to connect the brand, but stylistically, I'd avoid linking the brand term with dashes. Maybe just drop "Zoonk" in the source text?
 #: src/app/(settings)/language/page.tsx
-msgid "gr4VpD"
+msgid "2WHx14"
 msgstr "Ändere die App‑Sprache, um auf Englisch, Portugiesisch, Spanisch, Französisch oder anderen unterstützten Sprachen zu lernen."
 
 #: src/app/(settings)/language/page.tsx
@@ -1094,7 +1063,6 @@ msgstr "Dieses Abonnement wird von Zoonk verwaltet. Kontaktiere den Support, wen
 msgid "5CI3KH"
 msgstr "Support kontaktieren"
 
-# First sentence was imperative, second one switches to infinitives, resulting in an odd mix stylistically. eloqnt/studio should do better here.
 #: src/app/(settings)/subscription/page.tsx
 msgid "TKk9oj"
 msgstr "Vergleiche Pläne und verwalte dein Zoonk-Abonnement. Sieh dir Preise an, wechsle den Plan oder aktualisiere deine Zahlungsdaten."
@@ -1483,7 +1451,6 @@ msgstr "Deine Lektion öffnen..."
 msgid "4Wktrz"
 msgstr "Deine Lektion ist fertig"
 
-# Most of these phase-thinking-generators strings read off to me. The source text is fine though. Infinitives as loading states feel static and impersonal in German. English "-ing" naturally implies ongoing action; German infinitives don't carry that.
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgid "cVoRCh"
 msgstr "Optionen werden vorbereitet…"
@@ -1868,10 +1835,9 @@ msgstr "Erklärung schreiben"
 msgid "_tq5fR"
 msgstr "Inhalte erstellen"
 
-# The "collect" -> "sammeln" translation reads a bit alarming to me here, it has a bit of a "hoarding" characteristic. "erfassen" is better. Or you could consider dropping the "collect" aspect entirely, only keeping the "use" and "protect" aspect.
 #: src/app/privacy/page.tsx
-msgid "iql85X"
-msgstr "Lies Zoonks Datenschutzerklärung, um zu verstehen, wie wir deine persönlichen Daten erfassen, verwenden und schützen."
+msgid "afKQHy"
+msgstr "Lies Zoonks Datenschutzerklärung, um zu verstehen, wie wir deine persönlichen Daten verwenden und schützen."
 
 #: src/app/privacy/page.tsx
 msgid "vx0nkZ"
@@ -2001,7 +1967,6 @@ msgstr "Etwas ist schiefgelaufen"
 msgid "r9koty"
 msgstr "{count, plural, =0 {0 Tage} one {# Tag} other {# Tage}}"
 
-# Arguably correct, but since we use "Sek." and "Std." below, this should be adapted as well.
 #: src/components/progress/progress-learning-time-label.ts
 msgid "tRA46q"
 msgstr "0 Min."
@@ -2039,44 +2004,8 @@ msgid "0h_lPM"
 msgstr "Upgrade"
 
 #: src/lib/belt-colors.ts
-msgid "OAG-sQ"
-msgstr "Weiß"
-
-#: src/lib/belt-colors.ts
-msgid "5Tw3Ta"
-msgstr "Gelb"
-
-#: src/lib/belt-colors.ts
-msgid "n3m1xt"
-msgstr "Orange"
-
-#: src/lib/belt-colors.ts
-msgid "1W4okO"
-msgstr "Grün"
-
-#: src/lib/belt-colors.ts
-msgid "k2tJ9k"
-msgstr "Blau"
-
-#: src/lib/belt-colors.ts
-msgid "tihmF3"
-msgstr "Lila"
-
-#: src/lib/belt-colors.ts
-msgid "eM_4ho"
-msgstr "Braun"
-
-#: src/lib/belt-colors.ts
-msgid "D-ZFS_"
-msgstr "Rot"
-
-#: src/lib/belt-colors.ts
-msgid "Yp7v0H"
-msgstr "Grau"
-
-#: src/lib/belt-colors.ts
-msgid "XjGbuY"
-msgstr "Schwarz"
+msgid "znY9eW"
+msgstr "{color, select, white {Weißer Gürtel} yellow {Gelber Gürtel} orange {Orangefarbener Gürtel} green {Grüner Gürtel} blue {Blauer Gürtel} purple {Lilafarbener Gürtel} brown {Brauner Gürtel} red {Roter Gürtel} gray {Grauer Gürtel} black {Schwarzer Gürtel} other {Gürtel}}"
 
 #: src/lib/categories/category.ts
 msgid "fFt3il"
@@ -2254,10 +2183,9 @@ msgstr "Verstehe, was {topic} ist – Kernkonzepte und Definitionen erklärt mit
 msgid "tlgfSZ"
 msgstr "Übe die Grammatikregeln zu {topic} mit Übungen, die dir helfen, sie zu behalten und anzuwenden."
 
-# Similar to before, you could consider rephrasing this to avoid the dash.
 #: src/lib/lessons.ts
-msgid "gAYlHX"
-msgstr "Schärfe dein {topic}-Hörverständnis, indem du Audiosätze übersetzt."
+msgid "xCvEE1"
+msgstr "Übe Hören in {topic}, indem du Audiosätze übersetzt."
 
 #: src/lib/lessons.ts
 msgid "wHBT6R"
@@ -2275,19 +2203,17 @@ msgstr "Verbessere dein Leseverständnis zu {topic}, indem du Sätze und Texte �
 msgid "bzFQEy"
 msgstr "Wiederhole alles, was du über {topic} gelernt hast, mit einem umfassenden Quiz."
 
-# Same here
 #: src/lib/lessons.ts
-msgid "pDtxFt"
-msgstr "Teste deinen {topic}-Wortschatz, indem du gelernte Wörter übersetzt."
+msgid "X8Gqiq"
+msgstr "Übe Vokabeln in {topic}, indem du die gelernten Wörter übersetzt."
 
 #: src/lib/lessons.ts
 msgid "3bJDQa"
 msgstr "Lerne {topic} mit einem geführten Schritt-für-Schritt-Tutorial."
 
-# Same here
 #: src/lib/lessons.ts
-msgid "3198Ew"
-msgstr "Lerne neue {topic}-Wörter mit Karteikarten — sieh jedes Wort, seine Übersetzung und Aussprache."
+msgid "77SLH5"
+msgstr "Lerne neue Wörter in {topic} mit Karteikarten — sieh jedes Wort, seine Übersetzung und die Aussprache."
 
 #: src/lib/lessons.ts
 msgid "oCxmX9"

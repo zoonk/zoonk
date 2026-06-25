@@ -12,18 +12,15 @@ import {
   FeatureCardTitle,
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { getExtracted, getLocale } from "next-intl/server";
+import { formatMetricPercent } from "@zoonk/utils/number";
+import { getExtracted, getFormatter } from "next-intl/server";
 import Link from "next/link";
 
 export async function Energy({ energy }: { energy: number }) {
   const t = await getExtracted();
-  const locale = await getLocale();
+  const format = await getFormatter();
   const energyMenu = getMenu("energy");
-
-  const formattedEnergy = new Intl.NumberFormat(locale, {
-    maximumFractionDigits: 1,
-    trailingZeroDisplay: "stripIfInteger",
-  }).format(energy);
+  const formattedEnergy = formatMetricPercent({ format, value: energy });
 
   const description =
     energy < 100 ? t("Keep learning to increase it") : t("Keep learning to maintain it");
@@ -43,7 +40,7 @@ export async function Energy({ energy }: { energy: number }) {
 
         <FeatureCardBody>
           <FeatureCardTitle>
-            {t("Your energy is {value}%", { value: formattedEnergy })}
+            {t("Your energy is {percentage}", { percentage: formattedEnergy })}
           </FeatureCardTitle>
           <FeatureCardSubtitle>{description}</FeatureCardSubtitle>
         </FeatureCardBody>

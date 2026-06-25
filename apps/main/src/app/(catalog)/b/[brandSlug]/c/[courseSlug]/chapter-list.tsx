@@ -213,9 +213,9 @@ export async function ChapterList({
                 completedLessons={completedLessons}
                 courseSlug={courseSlug}
                 defaultChapterImage={defaultChapterImage}
-                inProgressLabel={t("{completed}/{total} done", {
-                  completed: String(completedLessons),
-                  total: String(totalLessons),
+                inProgressLabel={t("{completed, number}/{total, number} done", {
+                  completed: completedLessons,
+                  total: totalLessons,
                 })}
                 key={chapter.id}
                 notStartedLabel={t("Not started")}

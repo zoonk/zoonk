@@ -1,11 +1,4 @@
-import {
-  Login,
-  LoginDescription,
-  LoginDivider,
-  LoginFooter,
-  LoginHeader,
-  LoginTitle,
-} from "@/components/login";
+import { Login, LoginDivider, LoginFooter, LoginHeader, LoginTitle } from "@/components/login";
 import { getSession } from "@zoonk/core/users/session/get";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { getExtracted } from "next-intl/server";
@@ -49,7 +42,6 @@ async function LoginView({ searchParams }: PageProps<"/auth/login">) {
     <>
       <LoginHeader>
         <LoginTitle>{t("Sign in or create an account")}</LoginTitle>
-        <LoginDescription>{t("Continue with your email or a social account")}</LoginDescription>
       </LoginHeader>
 
       <SocialLogin redirectTo={redirectTo ? String(redirectTo) : undefined} />

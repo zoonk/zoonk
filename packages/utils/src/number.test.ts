@@ -1,5 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { validateOffset } from "./number";
+import {
+  type LocalizedNumberFormatter,
+  formatCompactNumber,
+  formatMetricPercent,
+  formatSignedMetricPercent,
+  formatWholeNumber,
+  validateOffset,
+} from "./number";
+
+function createFormatter(locale: string): LocalizedNumberFormatter {
+  return { number: (value, options) => new Intl.NumberFormat(locale, options).format(value) };
+}
 
 describe(validateOffset, () => {
   it("parses valid positive integer", () => {
@@ -32,5 +43,37 @@ describe(validateOffset, () => {
 
   it("returns 0 for empty string", () => {
     expect(validateOffset("")).toBe(0);
+  });
+});
+
+describe(formatWholeNumber, () => {
+  it("formats grouped counts with the provided formatter", () => {
+    expect(formatWholeNumber({ format: createFormatter("en-US"), value: 1234 })).toBe("1,234");
+  });
+});
+
+describe(formatMetricPercent, () => {
+  it("formats 0-100 metric values as localized percentages", () => {
+    expect(formatMetricPercent({ format: createFormatter("en-US"), value: 88 })).toBe("88%");
+  });
+
+  it("keeps one decimal only when needed", () => {
+    expect(
+      formatMetricPercent({ format: createFormatter("en-US"), value: 88.515_376_853_753_7 }),
+    ).toBe("88.5%");
+  });
+});
+
+describe(formatSignedMetricPercent, () => {
+  it("formats signed 0-100 metric deltas as percentages", () => {
+    expect(formatSignedMetricPercent({ format: createFormatter("en-US"), value: 12.5345 })).toBe(
+      "+12.5%",
+    );
+  });
+});
+
+describe(formatCompactNumber, () => {
+  it("formats compact chart-axis values with the provided formatter", () => {
+    expect(formatCompactNumber({ format: createFormatter("en-US"), value: 1200 })).toBe("1.2K");
   });
 });
