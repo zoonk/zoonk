@@ -119,8 +119,8 @@ msgid "hX5PAb"
 msgstr "No se encontraron resultados"
 
 #: src/app/(catalog)/_components/command-palette.tsx
-msgid "XZfEtS"
-msgstr "Crear curso de {term}"
+msgid "OXAZiT"
+msgstr "Crear curso sobre {term}"
 
 #: src/app/(catalog)/_components/navbar-links.tsx
 msgid "onRJrc"
@@ -154,8 +154,8 @@ msgstr "Mejor día"
 #: src/app/(catalog)/(home)/best-day.tsx
 #: src/app/(progress)/energy/energy-insights.tsx
 #: src/app/(progress)/score/score-insights.tsx
-msgid "bcsugq"
-msgstr "{day} con {value}%"
+msgid "auPwZG"
+msgstr "{day} con {percentage}"
 
 #: src/app/(catalog)/(home)/best-day.tsx
 #: src/app/(catalog)/(home)/best-time.tsx
@@ -190,8 +190,8 @@ msgstr "Mejor hora"
 
 #: src/app/(catalog)/(home)/best-time.tsx
 #: src/app/(progress)/score/score-insights.tsx
-msgid "vG7kPp"
-msgstr "{period} con {value}%"
+msgid "r0R6ZG"
+msgstr "{period} con {percentage}"
 
 #: src/app/(catalog)/(home)/continue-learning-card.tsx
 msgid "NubPSk"
@@ -221,8 +221,8 @@ msgid "cVpmV7"
 msgstr "Energía"
 
 #: src/app/(catalog)/(home)/energy.tsx
-msgid "C7ROJx"
-msgstr "Tu energía es {value}%"
+msgid "AV5XNu"
+msgstr "Tu energía es {percentage}"
 
 #: src/app/(catalog)/(home)/learning-days.tsx
 #: src/app/(progress)/level/level-insights.tsx
@@ -248,11 +248,6 @@ msgid "8N9BRu"
 msgstr "{value} PM para el siguiente nivel"
 
 #: src/app/(catalog)/(home)/level.tsx
-#: src/app/(progress)/level/level-stats.tsx
-msgid "3UK8wh"
-msgstr "Cinturón {color}"
-
-#: src/app/(catalog)/(home)/level.tsx
 #: src/app/(progress)/_components/metric-pills.tsx
 #: src/app/(progress)/level/page.tsx
 msgid "y1Qr81"
@@ -260,8 +255,8 @@ msgstr "Nivel"
 
 #: src/app/(catalog)/(home)/level.tsx
 #: src/app/(progress)/level/level-stats.tsx
-msgid "uiwFZe"
-msgstr "Cinturón {color} - Nivel {level}"
+msgid "s0KB2i"
+msgstr "{belt} - Nivel {level}"
 
 #: src/app/(catalog)/(home)/page.tsx
 msgid "a50ZRn"
@@ -285,8 +280,8 @@ msgid "oLkLww"
 msgstr "Puntuación"
 
 #: src/app/(catalog)/(home)/score.tsx
-msgid "4dsZTc"
-msgstr "{value}% de respuestas correctas"
+msgid "_lCW0j"
+msgstr "{percentage} respuestas correctas"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
 msgid "9SgWiD"
@@ -301,8 +296,8 @@ msgid "3IOFp2"
 msgstr "Crear capítulo"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
-msgid "a0eayI"
-msgstr "No se pudieron actualizar los filtros de lecciones. Inténtalo de nuevo."
+msgid "Ap-oRa"
+msgstr "No se pudieron aplicar los filtros de lecciones. Inténtalo de nuevo."
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
 msgid "d6tcJn"
@@ -355,12 +350,12 @@ msgid "8udPa-"
 msgstr "No se encontraron capítulos"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
-msgid "V1rAYd"
-msgstr "{completed}/{total} completados"
+msgid "vcaAXp"
+msgstr "{completed, number}/{total, number} completadas"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
-msgid "wPdQ13"
-msgstr "Curso en línea e interactivo sobre {course}. Aprende todo sobre {course} con ejemplos de la vida real y lenguaje cotidiano. {description}"
+msgid "_allXG"
+msgstr "Aprende {course} online con ejemplos prácticos y lenguaje sencillo. {description}"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
 msgid "gyGolN"
@@ -536,8 +531,8 @@ msgid "5DZYgN"
 msgstr "No podemos crear este curso"
 
 #: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
-msgid "P-1tVP"
-msgstr "Zoonk no puede ayudar con solicitudes que impliquen actividades inseguras, ilegales o dañinas. Prueba un objetivo de aprendizaje más seguro."
+msgid "m6ju4Q"
+msgstr "Zoonk no puede ayudar con solicitudes que impliquen actividades inseguras, ilegales o dañinas. Intenta con otro tema."
 
 #: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
 msgid "PDFZz6"
@@ -758,14 +753,6 @@ msgstr "Todo el tiempo"
 msgid "YFV6dH"
 msgstr "vs año pasado"
 
-#: src/app/(progress)/_components/metric-comparison.tsx
-#: src/app/(progress)/energy/energy-chart-client.tsx
-#: src/app/(progress)/energy/energy-stats.tsx
-#: src/app/(progress)/score/score-chart-client.tsx
-#: src/app/(progress)/score/score-stats.tsx
-msgid "kggwrj"
-msgstr "{value}%"
-
 #: src/app/(progress)/_components/period-navigation.tsx
 msgid "hCCWuZ"
 msgstr "Periodo anterior"
@@ -844,8 +831,8 @@ msgid "-8Qx8X"
 msgstr "¿Por qué es importante la Energía?"
 
 #: src/app/(progress)/energy/energy-explanation.tsx
-msgid "TRcArs"
-msgstr "La Energía es como el ritmo cardíaco en una app de salud: muestra tu ritmo de aprendizaje actual. No es una racha; saltarte un día no la reinicia y puedes recuperarla al volver."
+msgid "UfEfhq"
+msgstr "Energía es como la frecuencia cardíaca en una app de salud: muestra tu ritmo de estudio actual. Saltarte un día no reinicia tu progreso; te recuperas en cuanto vuelves a estudiar."
 
 #: src/app/(progress)/energy/energy-insights.tsx
 msgid "XxS-he"
@@ -860,8 +847,8 @@ msgid "zLCmVM"
 msgstr "Energía actual"
 
 #: src/app/(progress)/energy/energy-stats.tsx
-msgid "yGxJvo"
-msgstr "{value}% de promedio"
+msgid "e9DcQa"
+msgstr "{percentage} de media"
 
 #: src/app/(progress)/energy/page.tsx
 msgid "AZMpf3"
@@ -889,7 +876,7 @@ msgstr "¿Qué es Poder Mental?"
 
 #: src/app/(progress)/level/level-explanation.tsx
 msgid "MIjvOA"
-msgstr "Poder Mental (PM) es el total de aprendizaje que has ganado. Cada lección completada añade {brainPower} PM."
+msgstr "Poder Mental (PM) es el crédito total de estudio que has acumulado. Cada lección completada suma {brainPower} PM."
 
 #: src/app/(progress)/level/level-explanation.tsx
 msgid "jzKXJS"
@@ -897,15 +884,15 @@ msgstr "¿Cómo aumento mi Poder Mental?"
 
 #: src/app/(progress)/level/level-explanation.tsx
 msgid "Gzq1tT"
-msgstr "Completa lecciones. El Poder Mental nunca baja, ni cuando tu Energía cae ni si te tomas un descanso."
+msgstr "Completa lecciones. El Poder Mental nunca disminuye, incluso cuando tu Energía baja o haces una pausa."
 
 #: src/app/(progress)/level/level-explanation.tsx
 msgid "JGLOtn"
 msgstr "¿Por qué es importante el Poder Mental?"
 
 #: src/app/(progress)/level/level-explanation.tsx
-msgid "6g8QfE"
-msgstr "Es como los pasos en una app de salud: un registro de cuánto has aprendido. También funciona como las artes marciales para la mente: construye Poder Mental para avanzar de cinturón blanco hacia el cinturón negro del conocimiento."
+msgid "tC6vNz"
+msgstr "Es como los pasos en una app de salud: un registro de cuánto has aprendido. También funciona como las artes marciales para tu mente: aumenta tu Poder Mental para avanzar de cinturón blanco a cinturón negro."
 
 #: src/app/(progress)/level/level-insights.tsx
 msgid "elq-tg"
@@ -916,12 +903,12 @@ msgid "BW4bMl"
 msgstr "{date} con {value} PM"
 
 #: src/app/(progress)/level/level-progression.tsx
-msgid "VHH0kD"
-msgstr "Cinturón {color}, nivel {level} de 10. Nivel máximo alcanzado."
+msgid "WfaE4H"
+msgstr "{belt}, nivel {level} de 10. Nivel máximo alcanzado."
 
 #: src/app/(progress)/level/level-progression.tsx
-msgid "t2WYIo"
-msgstr "Cinturón {color}, nivel {level} de 10. {bp} Poder Mental para el siguiente nivel."
+msgid "2Y-P4e"
+msgstr "{belt}, nivel {level} de 10. {bp} de Poder Mental para el siguiente nivel."
 
 #: src/app/(progress)/level/level-progression.tsx
 msgid "n_mgOm"
@@ -932,8 +919,8 @@ msgid "ZKbTsS"
 msgstr "{current}/10"
 
 #: src/app/(progress)/level/level-progression.tsx
-msgid "FM-wHG"
-msgstr "Nivel {current} de 10 en cinturón {color}"
+msgid "-Sn2yd"
+msgstr "{belt}: Nivel {current} de 10"
 
 #: src/app/(progress)/level/level-stats.tsx
 msgid "v5yNm3"
@@ -997,8 +984,8 @@ msgid "yOFm9C"
 msgstr "Necesitas iniciar sesión para acceder a esta página."
 
 #: src/app/(settings)/language/page.tsx
-msgid "gr4VpD"
-msgstr "Actualiza el idioma de la app Zoonk para aprender en inglés, portugués, español, francés u otros idiomas compatibles."
+msgid "2WHx14"
+msgstr "Actualiza el idioma de la app para aprender en inglés, portugués, español, francés u otros idiomas compatibles."
 
 #: src/app/(settings)/language/page.tsx
 msgid "aNLa1G"
@@ -1849,8 +1836,8 @@ msgid "_tq5fR"
 msgstr "Creando contenido"
 
 #: src/app/privacy/page.tsx
-msgid "iql85X"
-msgstr "Lee la política de privacidad de Zoonk para entender cómo recopilamos, usamos y protegemos tu información personal."
+msgid "afKQHy"
+msgstr "Lee la política de privacidad de Zoonk para entender cómo usamos y protegemos tu información personal."
 
 #: src/app/privacy/page.tsx
 msgid "vx0nkZ"
@@ -2017,44 +2004,8 @@ msgid "0h_lPM"
 msgstr "Suscribirse"
 
 #: src/lib/belt-colors.ts
-msgid "OAG-sQ"
-msgstr "Blanco"
-
-#: src/lib/belt-colors.ts
-msgid "5Tw3Ta"
-msgstr "Amarillo"
-
-#: src/lib/belt-colors.ts
-msgid "n3m1xt"
-msgstr "Naranja"
-
-#: src/lib/belt-colors.ts
-msgid "1W4okO"
-msgstr "Verde"
-
-#: src/lib/belt-colors.ts
-msgid "k2tJ9k"
-msgstr "Azul"
-
-#: src/lib/belt-colors.ts
-msgid "tihmF3"
-msgstr "Morado"
-
-#: src/lib/belt-colors.ts
-msgid "eM_4ho"
-msgstr "Marrón"
-
-#: src/lib/belt-colors.ts
-msgid "D-ZFS_"
-msgstr "Rojo"
-
-#: src/lib/belt-colors.ts
-msgid "Yp7v0H"
-msgstr "Gris"
-
-#: src/lib/belt-colors.ts
-msgid "XjGbuY"
-msgstr "Negro"
+msgid "znY9eW"
+msgstr "{color, select, white {Cinturón Blanco} yellow {Cinturón Amarillo} orange {Cinturón Naranja} green {Cinturón Verde} blue {Cinturón Azul} purple {Cinturón Morado} brown {Cinturón Marrón} red {Cinturón Rojo} gray {Cinturón Gris} black {Cinturón Negro} other {Cinturón}}"
 
 #: src/lib/categories/category.ts
 msgid "fFt3il"
@@ -2233,8 +2184,8 @@ msgid "tlgfSZ"
 msgstr "Practica las reglas gramaticales de {topic} con ejercicios diseñados para ayudarte a recordarlas y aplicarlas."
 
 #: src/lib/lessons.ts
-msgid "gAYlHX"
-msgstr "Mejora tus habilidades de escucha de {topic} traduciendo oraciones de audio."
+msgid "xCvEE1"
+msgstr "Practica la escucha en {topic} traduciendo oraciones de audio."
 
 #: src/lib/lessons.ts
 msgid "wHBT6R"
@@ -2253,16 +2204,16 @@ msgid "bzFQEy"
 msgstr "Repasa todo lo que aprendiste sobre {topic} con un cuestionario completo."
 
 #: src/lib/lessons.ts
-msgid "pDtxFt"
-msgstr "Evalúa tu vocabulario de {topic} traduciendo las palabras que aprendiste."
+msgid "X8Gqiq"
+msgstr "Practica vocabulario en {topic} traduciendo palabras que aprendiste."
 
 #: src/lib/lessons.ts
 msgid "3bJDQa"
 msgstr "Aprende {topic} con un tutorial guiado paso a paso."
 
 #: src/lib/lessons.ts
-msgid "3198Ew"
-msgstr "Aprende palabras nuevas de {topic} con tarjetas — ve cada palabra, su traducción y su pronunciación."
+msgid "77SLH5"
+msgstr "Aprende palabras nuevas en {topic} con tarjetas — ve cada palabra, su traducción y pronunciación."
 
 #: src/lib/lessons.ts
 msgid "oCxmX9"

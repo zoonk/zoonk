@@ -35,7 +35,7 @@ type ProgressChartBarProps = { color: string; dataKey: string };
 
 type ProgressChartAverageLineProps = { children: string; y: number };
 
-type ProgressChartCompactYAxisProps = { locale: string };
+type ProgressChartCompactYAxisProps = { formatValue: (value: number) => string };
 
 const PROGRESS_BAR_RADIUS = 4;
 
@@ -148,15 +148,13 @@ export function ProgressChartPercentYAxis() {
  * numbers. BP can grow beyond a percent range, so it needs its own axis variant
  * but should still match the shared progress chart typography and chrome.
  */
-export function ProgressChartCompactYAxis({ locale }: ProgressChartCompactYAxisProps) {
+export function ProgressChartCompactYAxis({ formatValue }: ProgressChartCompactYAxisProps) {
   return (
     <YAxis
       axisLine={false}
       fontSize={12}
       stroke="var(--muted-foreground)"
-      tickFormatter={(value: number) =>
-        new Intl.NumberFormat(locale, { notation: "compact" }).format(value)
-      }
+      tickFormatter={formatValue}
       tickLine={false}
       tickMargin={8}
       width={48}

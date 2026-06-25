@@ -6,7 +6,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     description: t(
-      "Read Zoonk's privacy policy to understand how we collect, use, and protect your personal information.",
+      "Read Zoonk's privacy policy to understand how we use and protect your personal information.",
     ),
     title: t("Privacy Policy"),
   };

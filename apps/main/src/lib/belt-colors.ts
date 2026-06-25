@@ -1,5 +1,7 @@
-import { type BeltColor } from "@zoonk/utils/belt-level";
+import { BELT_COLORS_ORDER, type BeltColor } from "@zoonk/utils/belt-level";
 import { getExtracted } from "next-intl/server";
+
+type BeltColorOption = { bgClass: string; key: BeltColor; label: string };
 
 export const BELT_BG_CLASSES: Record<BeltColor, string> = {
   black: "bg-belt-black",
@@ -14,29 +16,29 @@ export const BELT_BG_CLASSES: Record<BeltColor, string> = {
   yellow: "bg-belt-yellow",
 };
 
-export async function getBeltColors(params?: {
-  locale: string;
-}): Promise<{ bgClass: string; key: BeltColor; label: string }[]> {
-  const t = await getExtracted(params);
+/**
+ * The progression dots and visible level copy share these options so every belt
+ * color uses the same translated full label.
+ */
+export async function getBeltColors(): Promise<BeltColorOption[]> {
+  const t = await getExtracted();
 
-  return [
-    { bgClass: BELT_BG_CLASSES.white, key: "white", label: t("White") },
-    { bgClass: BELT_BG_CLASSES.yellow, key: "yellow", label: t("Yellow") },
-    { bgClass: BELT_BG_CLASSES.orange, key: "orange", label: t("Orange") },
-    { bgClass: BELT_BG_CLASSES.green, key: "green", label: t("Green") },
-    { bgClass: BELT_BG_CLASSES.blue, key: "blue", label: t("Blue") },
-    { bgClass: BELT_BG_CLASSES.purple, key: "purple", label: t("Purple") },
-    { bgClass: BELT_BG_CLASSES.brown, key: "brown", label: t("Brown") },
-    { bgClass: BELT_BG_CLASSES.red, key: "red", label: t("Red") },
-    { bgClass: BELT_BG_CLASSES.gray, key: "gray", label: t("Gray") },
-    { bgClass: BELT_BG_CLASSES.black, key: "black", label: t("Black") },
-  ];
+  return BELT_COLORS_ORDER.map((key) => ({
+    bgClass: BELT_BG_CLASSES[key],
+    key,
+    label: t(
+      "{color, select, white {White Belt} yellow {Yellow Belt} orange {Orange Belt} green {Green Belt} blue {Blue Belt} purple {Purple Belt} brown {Brown Belt} red {Red Belt} gray {Gray Belt} black {Black Belt} other {Belt}}",
+      { color: key },
+    ),
+  }));
 }
 
-export async function getBeltColorLabel(
-  color: BeltColor,
-  opts?: { locale: string },
-): Promise<string> {
-  const colors = await getBeltColors(opts);
-  return colors.find((item) => item.key === color)?.label ?? "";
+/**
+ * Call sites that only render the current belt still read from the shared belt
+ * options so belt copy cannot drift from the progression labels.
+ */
+export async function getBeltLabel({ color }: { color: BeltColor }): Promise<string> {
+  const beltColors = await getBeltColors();
+
+  return beltColors.find((belt) => belt.key === color)?.label ?? color;
 }

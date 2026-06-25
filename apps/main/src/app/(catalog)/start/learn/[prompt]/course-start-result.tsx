@@ -85,7 +85,7 @@ async function UnsafeCourseRequest() {
           <StartSurfaceTitle>{t("We can't create this course")}</StartSurfaceTitle>
           <StartSurfaceDescription>
             {t(
-              "Zoonk can't help with requests that involve unsafe, illegal, or harmful activity. Try a safer learning goal instead.",
+              "Zoonk can't help with requests that involve unsafe, illegal, or harmful activity. Try a different subject instead.",
             )}
           </StartSurfaceDescription>
         </StartSurfaceContent>

@@ -64,7 +64,7 @@ jobs:
         run: pnpm db:generate
 
       - name: Check for i18n errors
-        run: pnpm eloqnt:lint
+        run: pnpm i18n:lint
 
       - name: Run type check
         run: pnpm typecheck

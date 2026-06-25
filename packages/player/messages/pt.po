@@ -80,8 +80,8 @@ msgid "Fo6YtA"
 msgstr "Parabéns! Você alcançou Energia máxima. Pratique todos os dias para manter sua Energia em 100%."
 
 #: src/components/completion-energy-milestone.tsx
-msgid "vlOyrO"
-msgstr "{energy}% de Energia"
+msgid "J89SkG"
+msgstr "{percentage} de Energia"
 
 #: src/components/completion-energy-milestone.tsx
 msgid "3Jd-mJ"
@@ -100,24 +100,20 @@ msgid "cIxpmv"
 msgstr "Uau, que consistência incrível! Estude todo dia para manter sua Energia em 100%."
 
 #: src/components/completion-level-milestone.tsx
-msgid "3UK8wh"
-msgstr "faixa {color}"
-
-#: src/components/completion-level-milestone.tsx
 msgid "155cHi"
 msgstr "Nível conquistado"
 
 #: src/components/completion-level-milestone.tsx
-msgid "mb2zm-"
-msgstr "Você fortaleceu sua mente e alcançou o nível {level} da faixa {color}. Parabéns!"
+msgid "Ar7dNY"
+msgstr "Você alcançou um novo nível: {belt}, nível {level}. Parabéns!"
 
 #: src/components/completion-level-milestone.tsx
 msgid "Bk6B6r"
 msgstr "Quase lá"
 
 #: src/components/completion-level-milestone.tsx
-msgid "34q-SH"
-msgstr "{count, plural, one {Seu conhecimento está crescendo. Complete mais # aula para alcançar o nível {level} da faixa {color}.} other {Seu conhecimento está crescendo. Complete mais # aulas para alcançar o nível {level} da faixa {color}.}}"
+msgid "b7ZoLo"
+msgstr "Seu conhecimento está crescendo. Complete {count, plural, one {mais # aula} other {mais # aulas}} para alcançar {belt}, nível {level}."
 
 #: src/components/completion-milestone-actions.tsx
 msgid "DiIkZH"
@@ -327,42 +323,6 @@ msgstr "Quase lá"
 msgid "lqtP-R"
 msgstr "Vocabulário"
 
-#: src/use-belt-color-label.ts
-msgid "XjGbuY"
-msgstr "Preta"
-
-#: src/use-belt-color-label.ts
-msgid "k2tJ9k"
-msgstr "Azul"
-
-#: src/use-belt-color-label.ts
-msgid "eM_4ho"
-msgstr "Marrom"
-
-#: src/use-belt-color-label.ts
-msgid "Yp7v0H"
-msgstr "Cinza"
-
-#: src/use-belt-color-label.ts
-msgid "1W4okO"
-msgstr "Verde"
-
-#: src/use-belt-color-label.ts
-msgid "n3m1xt"
-msgstr "Laranja"
-
-#: src/use-belt-color-label.ts
-msgid "tihmF3"
-msgstr "Roxa"
-
-#: src/use-belt-color-label.ts
-msgid "D-ZFS_"
-msgstr "Vermelha"
-
-#: src/use-belt-color-label.ts
-msgid "OAG-sQ"
-msgstr "Branca"
-
-#: src/use-belt-color-label.ts
-msgid "5Tw3Ta"
-msgstr "Amarela"
+#: src/use-belt-label.ts
+msgid "znY9eW"
+msgstr "{color, select, white {Faixa Branca} yellow {Faixa Amarela} orange {Faixa Laranja} green {Faixa Verde} blue {Faixa Azul} purple {Faixa Roxa} brown {Faixa Marrom} red {Faixa Vermelha} gray {Faixa Cinza} black {Faixa Preta} other {Faixa}}"

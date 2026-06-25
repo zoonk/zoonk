@@ -1,9 +1,10 @@
-import { getBeltColorLabel } from "@/lib/belt-colors";
+import { getBeltLabel } from "@/lib/belt-colors";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type BeltLevelResult } from "@zoonk/utils/belt-level";
 import { type HistoryPeriod, formatPeriodLabel } from "@zoonk/utils/date-ranges";
-import { getExtracted, getLocale } from "next-intl/server";
+import { formatWholeNumber } from "@zoonk/utils/number";
+import { getExtracted, getFormatter, getLocale } from "next-intl/server";
 import { MetricComparison } from "../_components/metric-comparison";
 
 export async function LevelStats({
@@ -24,14 +25,14 @@ export async function LevelStats({
   totalBp: number;
 }) {
   const t = await getExtracted();
+  const format = await getFormatter();
   const locale = await getLocale();
 
-  const formattedTotalBp = new Intl.NumberFormat(locale).format(totalBp);
-  const formattedPeriodTotal = new Intl.NumberFormat(locale).format(periodTotal);
-  const formattedBpToNext = new Intl.NumberFormat(locale).format(currentBelt.bpToNextLevel);
-  const colorName = await getBeltColorLabel(currentBelt.color);
+  const formattedTotalBp = formatWholeNumber({ format, value: totalBp });
+  const formattedPeriodTotal = formatWholeNumber({ format, value: periodTotal });
+  const formattedBpToNext = formatWholeNumber({ format, value: currentBelt.bpToNextLevel });
+  const beltLabel = await getBeltLabel({ color: currentBelt.color });
   const periodLabel = formatPeriodLabel(periodStart, periodEnd, period, locale);
-  const beltLabel = t("{color} belt", { color: colorName });
 
   return (
     <div className="flex flex-col gap-6">
@@ -47,10 +48,7 @@ export async function LevelStats({
         <BeltIndicator color={currentBelt.color} label={beltLabel} size="lg" />
         <div className="flex flex-col">
           <span className="font-medium">
-            {t("{color} Belt - Level {level}", {
-              color: colorName,
-              level: String(currentBelt.level),
-            })}
+            {t("{belt} - Level {level}", { belt: beltLabel, level: String(currentBelt.level) })}
           </span>
           {currentBelt.isMaxLevel ? (
             <span className="text-muted-foreground text-sm">{t("Max level reached")}</span>

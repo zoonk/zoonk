@@ -108,7 +108,7 @@ export function LessonListFilters({
 
       if (result.status === "error" && saveRequestId.current === currentSaveRequestId) {
         setHiddenLessonKinds(previousHiddenLessonKinds);
-        toast.error(t("Could not update lesson filters. Please try again."));
+        toast.error(t("Could not apply lesson filters. Please try again."));
       }
     });
   }

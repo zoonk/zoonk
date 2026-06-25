@@ -1,4 +1,4 @@
-import { getBeltColorLabel } from "@/lib/belt-colors";
+import { getBeltLabel } from "@/lib/belt-colors";
 import { getMenu } from "@/lib/menu";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import {
@@ -14,7 +14,8 @@ import {
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type BeltColor } from "@zoonk/utils/belt-level";
-import { getExtracted, getLocale } from "next-intl/server";
+import { formatWholeNumber } from "@zoonk/utils/number";
+import { getExtracted, getFormatter } from "next-intl/server";
 import Link from "next/link";
 
 export async function Level({
@@ -29,18 +30,16 @@ export async function Level({
   level: number;
 }) {
   const t = await getExtracted();
-  const locale = await getLocale();
+  const format = await getFormatter();
   const levelMenu = getMenu("level");
 
-  const colorName = await getBeltColorLabel(color);
+  const beltLabel = await getBeltLabel({ color });
 
-  const formattedBp = new Intl.NumberFormat(locale).format(bpToNextLevel);
+  const formattedBp = formatWholeNumber({ format, value: bpToNextLevel });
 
   const subtitle = isMaxLevel
     ? t("Max level reached")
     : t("{value} BP to next level", { value: formattedBp });
-
-  const beltLabel = t("{color} belt", { color: colorName });
 
   return (
     <FeatureCardLink render={<Link href={levelMenu.url} prefetch />}>
@@ -55,7 +54,7 @@ export async function Level({
 
         <FeatureCardBody>
           <FeatureCardTitle>
-            {t("{color} Belt - Level {level}", { color: colorName, level: String(level) })}
+            {t("{belt} - Level {level}", { belt: beltLabel, level: String(level) })}
           </FeatureCardTitle>
           <FeatureCardSubtitle>{subtitle}</FeatureCardSubtitle>
         </FeatureCardBody>

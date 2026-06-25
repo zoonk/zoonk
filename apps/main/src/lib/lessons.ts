@@ -91,9 +91,7 @@ async function getSeoDescription(kind: LessonKind, topic: string): Promise<strin
       "Practice {topic} grammar rules with exercises designed to help you remember and apply them.",
       { topic },
     ),
-    listening: t("Sharpen your {topic} listening skills by translating audio sentences.", {
-      topic,
-    }),
+    listening: t("Practice listening in {topic} by translating audio sentences.", { topic }),
     practice: t("Apply {topic} through a visual real-world problem with short decisions.", {
       topic,
     }),
@@ -106,10 +104,12 @@ async function getSeoDescription(kind: LessonKind, topic: string): Promise<strin
       { topic },
     ),
     review: t("Review everything you learned about {topic} with a comprehensive quiz.", { topic }),
-    translation: t("Test your {topic} vocabulary by translating words you've learned.", { topic }),
+    translation: t("Practice vocabulary in {topic} by translating words you've learned.", {
+      topic,
+    }),
     tutorial: t("Learn {topic} with a guided step-by-step tutorial.", { topic }),
     vocabulary: t(
-      "Learn new {topic} words with flashcards — see each word, its translation, and pronunciation.",
+      "Learn new words in {topic} with flashcards — see each word, its translation, and pronunciation.",
       { topic },
     ),
   };

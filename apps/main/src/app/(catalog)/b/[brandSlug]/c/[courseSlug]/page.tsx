@@ -34,7 +34,7 @@ export async function generateMetadata({
 
   return {
     description: t(
-      "Online and interactive course on {course}. Learn everything about {course} using real-life examples and everyday language. {description}",
+      "Learn {course} online with practical examples and everyday language. {description}",
       { course: course.title, description: course.description ?? "" },
     ),
     title: t("Learn {course}", { course: course.title }),

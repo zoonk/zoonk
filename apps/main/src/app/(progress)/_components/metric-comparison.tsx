@@ -1,7 +1,8 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
+import { formatSignedMetricPercent } from "@zoonk/utils/number";
 import { TrendingDownIcon, TrendingUpIcon } from "lucide-react";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted, getFormatter } from "next-intl/server";
 
 export async function MetricComparison({
   current,
@@ -13,7 +14,7 @@ export async function MetricComparison({
   previous: number;
 }) {
   const t = await getExtracted();
-  const locale = await getLocale();
+  const format = await getFormatter();
 
   if (previous === 0) {
     return null;
@@ -22,11 +23,7 @@ export async function MetricComparison({
   const percentageChange = ((current - previous) / previous) * 100;
   const isPositive = percentageChange >= 0;
 
-  const formattedChange = new Intl.NumberFormat(locale, {
-    maximumFractionDigits: 1,
-    signDisplay: "always",
-    trailingZeroDisplay: "stripIfInteger",
-  }).format(percentageChange);
+  const formattedChange = formatSignedMetricPercent({ format, value: percentageChange });
 
   const Icon = isPositive ? TrendingUpIcon : TrendingDownIcon;
 
@@ -55,7 +52,7 @@ export async function MetricComparison({
     >
       <Icon aria-hidden className="size-4 shrink-0" />
       <span className="whitespace-nowrap">
-        <span>{t("{value}%", { value: formattedChange })}</span>
+        <span>{formattedChange}</span>
         <span className="hidden lowercase sm:inline"> {getComparisonLabel()}</span>
       </span>
     </div>

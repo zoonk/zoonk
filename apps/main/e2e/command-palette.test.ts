@@ -428,7 +428,7 @@ test.describe("Command Palette - Course Search", () => {
 
     await expect(dialog.getByText(/no results found/iu)).toBeVisible();
 
-    const createCourseLink = dialog.getByRole("link", { name: `Create ${prompt} course` });
+    const createCourseLink = dialog.getByRole("link", { name: `Create a course about ${prompt}` });
 
     await expect(createCourseLink).toBeVisible();
     await createCourseLink.click();

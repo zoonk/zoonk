@@ -1,6 +1,7 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type HistoryPeriod, formatPeriodLabel } from "@zoonk/utils/date-ranges";
-import { getExtracted, getLocale } from "next-intl/server";
+import { formatMetricPercent } from "@zoonk/utils/number";
+import { getFormatter, getLocale } from "next-intl/server";
 import { MetricComparison } from "../_components/metric-comparison";
 
 export async function ScoreStats({
@@ -16,14 +17,10 @@ export async function ScoreStats({
   periodStart: Date;
   previousAverage: number | null;
 }) {
-  const t = await getExtracted();
+  const format = await getFormatter();
   const locale = await getLocale();
 
-  const formattedAverage = new Intl.NumberFormat(locale, {
-    maximumFractionDigits: 1,
-    trailingZeroDisplay: "stripIfInteger",
-  }).format(average);
-
+  const formattedAverage = formatMetricPercent({ format, value: average });
   const periodLabel = formatPeriodLabel(periodStart, periodEnd, period, locale);
 
   return (
@@ -32,7 +29,7 @@ export async function ScoreStats({
 
       <div className="flex items-baseline gap-3">
         <span className="text-score text-5xl font-bold tracking-tight tabular-nums">
-          {t("{value}%", { value: formattedAverage })}
+          {formattedAverage}
         </span>
 
         {previousAverage !== null && (

@@ -38,10 +38,6 @@ msgid "eN8MTJ"
 msgstr "Sign in or create an account"
 
 #: src/app/auth/login/page.tsx
-msgid "CoMQ1-"
-msgstr "Continue with your email or a social account"
-
-#: src/app/auth/login/page.tsx
 msgid "4wpUNc"
 msgstr "Or"
 

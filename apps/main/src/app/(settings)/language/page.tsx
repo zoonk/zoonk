@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     description: t(
-      "Update your Zoonk app language to learn in English, Portuguese, Spanish, French, or other supported languages.",
+      "Update your app language to learn in English, Portuguese, Spanish, French, or other supported languages.",
     ),
     title: t("Update language"),
   };

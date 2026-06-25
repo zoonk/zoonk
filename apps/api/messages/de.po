@@ -38,10 +38,6 @@ msgid "eN8MTJ"
 msgstr "Anmelden oder ein Konto erstellen"
 
 #: src/app/auth/login/page.tsx
-msgid "CoMQ1-"
-msgstr "Weiter mit deiner E‑Mail oder einem Social‑Konto"
-
-#: src/app/auth/login/page.tsx
 msgid "4wpUNc"
 msgstr "Oder"
 
@@ -63,7 +59,7 @@ msgstr "Der eingegebene Code ist falsch. Bitte versuche es erneut oder kontaktie
 
 #: src/app/auth/otp/page.tsx
 msgid "zx7CKB"
-msgstr "Prüfe deine E‑Mails"
+msgstr "Schau in dein Postfach"
 
 #: src/app/auth/otp/page.tsx
 msgid "LZHcmZ"
@@ -127,7 +123,7 @@ msgstr "Sicherheitshinweis"
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "585u5Z"
-msgstr "Deiner Sicherheit zuliebe können wir dich nicht zu einer unbekannten Zieladresse weiterleiten."
+msgstr "Zu deiner Sicherheit können wir dich nicht zu einer unbekannten Zieladresse weiterleiten."
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "-e4BVR"

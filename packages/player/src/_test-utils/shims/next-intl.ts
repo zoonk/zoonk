@@ -24,6 +24,30 @@ function formatPluralBlocks({
   );
 }
 
+function formatSelectBlocks({
+  value,
+  values,
+}: {
+  value: string;
+  values: Record<string, number | string>;
+}) {
+  return value.replaceAll(
+    /\{(?<key>\w+),\s*select,\s*(?<options>(?:\w+\s*\{[^{}]*\}\s*)+)\}/gu,
+    (token, key: string, options: string) => {
+      const selected = String(values[key] ?? "");
+      const parsedOptions = new Map<string, string>();
+
+      for (const match of options.matchAll(/(?<option>\w+)\s*\{(?<label>[^{}]*)\}/gu)) {
+        if (match.groups?.option && match.groups.label) {
+          parsedOptions.set(match.groups.option, match.groups.label);
+        }
+      }
+
+      return parsedOptions.get(selected) ?? parsedOptions.get("other") ?? token;
+    },
+  );
+}
+
 function formatExtractedMessage({
   value,
   values = {},
@@ -31,7 +55,8 @@ function formatExtractedMessage({
   value: string;
   values?: Record<string, number | string>;
 }) {
-  const withPluralBlocks = formatPluralBlocks({ value, values });
+  const withSelectBlocks = formatSelectBlocks({ value, values });
+  const withPluralBlocks = formatPluralBlocks({ value: withSelectBlocks, values });
 
   return withPluralBlocks.replaceAll(/\{(?<key>\w+)\}/gu, (token, key: string) =>
     String(values[key] ?? token),
@@ -45,4 +70,13 @@ export function useExtracted() {
 
 export function useLocale() {
   return "en";
+}
+
+export function useFormatter() {
+  const locale = useLocale();
+
+  return {
+    number: (value: number | bigint, options?: Intl.NumberFormatOptions) =>
+      new Intl.NumberFormat(locale, options).format(value),
+  };
 }

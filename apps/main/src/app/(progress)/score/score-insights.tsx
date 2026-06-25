@@ -13,8 +13,9 @@ import {
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { EPOCH_YEAR, FIRST_SUNDAY_OFFSET } from "@zoonk/utils/date";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
+import { formatMetricPercent } from "@zoonk/utils/number";
 import { CalendarDays, Clock } from "lucide-react";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted, getFormatter, getLocale } from "next-intl/server";
 import { getProgressInsightPeriodLabel } from "../_components/progress-insight-period-label";
 
 export async function ScoreInsights({
@@ -73,15 +74,12 @@ async function BestDayCard({
   periodLabel: string;
 }) {
   const t = await getExtracted();
+  const format = await getFormatter();
 
   const referenceDate = new Date(EPOCH_YEAR, 0, FIRST_SUNDAY_OFFSET + dayOfWeek);
 
   const dayName = new Intl.DateTimeFormat(locale, { weekday: "long" }).format(referenceDate);
-
-  const formattedScore = new Intl.NumberFormat(locale, {
-    maximumFractionDigits: 1,
-    trailingZeroDisplay: "stripIfInteger",
-  }).format(score);
+  const formattedScore = formatMetricPercent({ format, value: score });
 
   return (
     <FeatureCard>
@@ -96,7 +94,7 @@ async function BestDayCard({
 
       <FeatureCardBody>
         <FeatureCardTitle className="first-letter:uppercase">
-          {t("{day} with {value}%", { day: dayName, value: formattedScore })}
+          {t("{day} with {percentage}", { day: dayName, percentage: formattedScore })}
         </FeatureCardTitle>
         <FeatureCardSubtitle>{periodLabel}</FeatureCardSubtitle>
       </FeatureCardBody>
@@ -114,16 +112,13 @@ async function BestTimeCard({
   periodLabel: string;
 }) {
   const t = await getExtracted();
-  const locale = await getLocale();
+  const format = await getFormatter();
 
   const periodNames = [t("Night"), t("Morning"), t("Afternoon"), t("Evening")] as const;
 
   const periodName = periodNames[period] ?? periodNames[1];
 
-  const formattedScore = new Intl.NumberFormat(locale, {
-    maximumFractionDigits: 1,
-    trailingZeroDisplay: "stripIfInteger",
-  }).format(score);
+  const formattedScore = formatMetricPercent({ format, value: score });
 
   return (
     <FeatureCard>
@@ -138,7 +133,7 @@ async function BestTimeCard({
 
       <FeatureCardBody>
         <FeatureCardTitle className="first-letter:uppercase">
-          {t("{period} with {value}%", { period: periodName, value: formattedScore })}
+          {t("{period} with {percentage}", { percentage: formattedScore, period: periodName })}
         </FeatureCardTitle>
         <FeatureCardSubtitle>{periodLabel}</FeatureCardSubtitle>
       </FeatureCardBody>

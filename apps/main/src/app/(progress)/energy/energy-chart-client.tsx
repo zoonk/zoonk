@@ -1,6 +1,7 @@
 "use client";
 
-import { useExtracted } from "next-intl";
+import { formatMetricPercent } from "@zoonk/utils/number";
+import { useExtracted, useFormatter } from "next-intl";
 import {
   ProgressAreaChart,
   ProgressChartArea,
@@ -26,8 +27,10 @@ export function EnergyChartClient({
   dataPoints: SerializedDataPoint[];
 }) {
   const t = useExtracted();
+  const format = useFormatter();
   const color = "var(--energy)";
   const gradientId = "energyGradient";
+  const formattedAverage = formatMetricPercent({ format, value: average });
 
   return (
     <ProgressChartFigure label={t("Energy chart")}>
@@ -42,22 +45,22 @@ export function EnergyChartClient({
 
         <ProgressChartTooltip<SerializedDataPoint>>
           {(data) => {
-            const value = data.energy.toFixed(1);
+            const formattedEnergy = formatMetricPercent({ format, value: data.energy });
 
             return (
               <ProgressChartTooltipContent>
                 <ProgressChartTooltipLabel>{data.label}</ProgressChartTooltipLabel>
                 <ProgressChartTooltipValue className="text-energy">
-                  {t("{value}%", { value })}
+                  {formattedEnergy}
                 </ProgressChartTooltipValue>
               </ProgressChartTooltipContent>
             );
           }}
         </ProgressChartTooltip>
 
-        <ProgressChartAverageLine y={average}>
-          {`${t("Avg")}: ${average.toFixed(1)}%`}
-        </ProgressChartAverageLine>
+        <ProgressChartAverageLine
+          y={average}
+        >{`${t("Avg")}: ${formattedAverage}`}</ProgressChartAverageLine>
 
         <ProgressChartArea color={color} dataKey="energy" gradientId={gradientId} />
       </ProgressAreaChart>

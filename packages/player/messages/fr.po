@@ -80,8 +80,8 @@ msgid "Fo6YtA"
 msgstr "Bravo ! Tu as atteint l’Énergie max. Pratique chaque jour pour garder ton Énergie à 100 %."
 
 #: src/components/completion-energy-milestone.tsx
-msgid "vlOyrO"
-msgstr "{energy}% d’Énergie"
+msgid "J89SkG"
+msgstr "{percentage} Énergie"
 
 #: src/components/completion-energy-milestone.tsx
 msgid "3Jd-mJ"
@@ -100,24 +100,20 @@ msgid "cIxpmv"
 msgstr "Wow, quelle régularité ! Continue d’étudier chaque jour pour garder ton Énergie à 100 %."
 
 #: src/components/completion-level-milestone.tsx
-msgid "3UK8wh"
-msgstr "Ceinture {color}"
-
-#: src/components/completion-level-milestone.tsx
 msgid "155cHi"
 msgstr "Niveau atteint"
 
 #: src/components/completion-level-milestone.tsx
-msgid "mb2zm-"
-msgstr "Tu as renforcé ton esprit et atteint le niveau {level} de la ceinture {color}. Félicitations !"
+msgid "Ar7dNY"
+msgstr "Tu as atteint un nouveau niveau : {belt}, niveau {level}. Félicitations !"
 
 #: src/components/completion-level-milestone.tsx
 msgid "Bk6B6r"
 msgstr "Presque là"
 
 #: src/components/completion-level-milestone.tsx
-msgid "34q-SH"
-msgstr "{count, plural, one {Ta connaissance grandit. Termine encore # leçon pour atteindre le niveau {level} de la ceinture {color}.} other {Ta connaissance grandit. Termine encore # leçons pour atteindre le niveau {level} de la ceinture {color}.}}"
+msgid "b7ZoLo"
+msgstr "Ta connaissance grandit. Termine {count, plural, one {encore # leçon} other {encore # leçons}} pour atteindre {belt}, niveau {level}."
 
 #: src/components/completion-milestone-actions.tsx
 msgid "DiIkZH"
@@ -327,42 +323,6 @@ msgstr "Pas tout à fait"
 msgid "lqtP-R"
 msgstr "Vocabulaire"
 
-#: src/use-belt-color-label.ts
-msgid "XjGbuY"
-msgstr "Noire"
-
-#: src/use-belt-color-label.ts
-msgid "k2tJ9k"
-msgstr "Bleue"
-
-#: src/use-belt-color-label.ts
-msgid "eM_4ho"
-msgstr "Brune"
-
-#: src/use-belt-color-label.ts
-msgid "Yp7v0H"
-msgstr "Grise"
-
-#: src/use-belt-color-label.ts
-msgid "1W4okO"
-msgstr "Verte"
-
-#: src/use-belt-color-label.ts
-msgid "n3m1xt"
-msgstr "Orange"
-
-#: src/use-belt-color-label.ts
-msgid "tihmF3"
-msgstr "Violette"
-
-#: src/use-belt-color-label.ts
-msgid "D-ZFS_"
-msgstr "Rouge"
-
-#: src/use-belt-color-label.ts
-msgid "OAG-sQ"
-msgstr "Blanche"
-
-#: src/use-belt-color-label.ts
-msgid "5Tw3Ta"
-msgstr "Jaune"
+#: src/use-belt-label.ts
+msgid "znY9eW"
+msgstr "{color, select, white {Ceinture Blanche} yellow {Ceinture Jaune} orange {Ceinture Orange} green {Ceinture Verte} blue {Ceinture Bleue} purple {Ceinture Violette} brown {Ceinture Marron} red {Ceinture Rouge} gray {Ceinture Grise} black {Ceinture Noire} other {Ceinture}}"

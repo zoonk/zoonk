@@ -1,7 +1,8 @@
 "use client";
 
+import { formatMetricPercent, formatWholeNumber } from "@zoonk/utils/number";
 import { ZapIcon } from "lucide-react";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { type PlayerCompletionMilestone } from "../completion-milestones";
 import { CompletionMilestoneMark, CompletionMilestoneTitle } from "./completion-milestone-shell";
 import { PlayerSupportingText } from "./player-supporting-text";
@@ -24,6 +25,7 @@ function EnergyThresholdCopy({
   milestone: Extract<EnergyMilestone, { status: "threshold" }>;
 }) {
   const t = useExtracted();
+  const format = useFormatter();
 
   if (milestone.energy === 100) {
     return (
@@ -41,7 +43,9 @@ function EnergyThresholdCopy({
   return (
     <>
       <CompletionMilestoneTitle>
-        {t("{energy}% Energy", { energy: String(milestone.energy) })}
+        {t("{percentage} Energy", {
+          percentage: formatMetricPercent({ format, value: milestone.energy }),
+        })}
       </CompletionMilestoneTitle>
       <PlayerSupportingText>
         {t("Your effort is paying off. Complete lessons every day to increase your Energy.")}
@@ -52,8 +56,8 @@ function EnergyThresholdCopy({
 
 function FullEnergyDaysTitle({ days }: { days: number }) {
   const t = useExtracted();
-  const locale = useLocale();
-  const formattedDays = new Intl.NumberFormat(locale).format(days);
+  const format = useFormatter();
+  const formattedDays = formatWholeNumber({ format, value: days });
 
   if (days === 365) {
     return <CompletionMilestoneTitle>{t("1 year of max Energy")}</CompletionMilestoneTitle>;
