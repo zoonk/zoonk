@@ -650,6 +650,20 @@ describe(preparePlayerLessonData, () => {
     );
   });
 
+  it("shuffles every translation lesson step during serialization", () => {
+    shuffleMock.mockImplementationOnce((items) => items.toReversed());
+
+    const steps = Array.from({ length: LANGUAGE_SENTENCE_STEP_LIMIT + 2 }, (_, index) =>
+      makeStep({ id: String(index + 1), kind: "translation", position: index }),
+    );
+
+    const result = prepare({ lesson: makeLesson(steps, { kind: "translation" }) });
+
+    expect(result.steps.map((step) => step.id)).toStrictEqual(
+      steps.toReversed().map((step) => step.id),
+    );
+  });
+
   it("keeps every step for non-sentence lesson kinds", () => {
     const steps = Array.from({ length: 8 }, (_, index) =>
       makeStep({
