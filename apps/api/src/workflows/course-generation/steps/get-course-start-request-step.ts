@@ -2,6 +2,7 @@ import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { type CourseStartRequest, type GenerationStatus, prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
+import { getCourseStartRequestGenerationError } from "../_utils/course-start-request-validation";
 
 export type GeneratableCourseStartRequest = CourseStartRequest & {
   canonicalTitle: string;
@@ -16,8 +17,10 @@ export type GeneratableCourseStartRequest = CourseStartRequest & {
 export function assertGeneratableCourseStartRequest(
   request: CourseStartRequest,
 ): asserts request is GeneratableCourseStartRequest {
-  if (!(request.canonicalTitle && request.generationStatus)) {
-    throw new FatalError("Course start request is not generatable");
+  const generationError = getCourseStartRequestGenerationError(request);
+
+  if (generationError) {
+    throw new FatalError(generationError);
   }
 }
 

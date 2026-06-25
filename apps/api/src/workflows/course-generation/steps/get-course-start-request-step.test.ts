@@ -41,4 +41,17 @@ describe(getCourseStartRequestStep, () => {
       expect.objectContaining({ status: "error", step: "getCourseStartRequest" }),
     );
   });
+
+  it("throws FatalError when a language request uses the same user and target language", async () => {
+    const request = await courseStartRequestFixture({
+      canonicalTitle: `Same Language Request ${randomUUID()}`,
+      language: "en",
+      scope: "language",
+      targetLanguage: "en",
+    });
+
+    await expect(getCourseStartRequestStep(request.id)).rejects.toThrow(
+      "Language course source and target languages must be different",
+    );
+  });
 });

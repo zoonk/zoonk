@@ -52,6 +52,33 @@ test.describe("Course Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
+  test("rejects language course requests with the same user and target language", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+
+    const startRequest = await courseStartRequestFixture({
+      canonicalTitle: `E2E Same Language Course ${uniqueId}`,
+      generationStatus: "completed",
+      language: "en",
+      scope: "language",
+      targetLanguage: "en",
+    });
+
+    const apiContext = await request.newContext({ baseURL });
+
+    const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
+      data: { courseStartRequestId: startRequest.id },
+    });
+
+    expect(response.status()).toBe(400);
+
+    const body = await response.json();
+
+    expect(body.error).toBeDefined();
+    expect(body.error.code).toBe("BAD_REQUEST");
+
+    await apiContext.dispose();
+  });
+
   test("returns validation error when courseStartRequestId is missing", async () => {
     const { apiContext } = await createAuthenticatedApiContext({
       baseURL,
