@@ -1,6 +1,7 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { prisma } from "@zoonk/db";
+import { isUuid } from "@zoonk/utils/uuid";
 
 type CompletedLessonCourseRow = {
   completedChapterCount: bigint | null;
@@ -18,6 +19,10 @@ export type UserCompletedLessonCourse = {
 };
 
 const cachedListUserCompletedLessonCourses = cacheAdminData(async (userId: string) => {
+  if (!isUuid(userId)) {
+    return [];
+  }
+
   const rows = await findUserCompletedLessonCourseRows({ userId });
 
   return rows.map((row) => serializeCompletedLessonCourse({ row }));
