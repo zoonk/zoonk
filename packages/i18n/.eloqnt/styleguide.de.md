@@ -12,6 +12,7 @@
 - "Brain Power": "Geisteskraft"
 - "BP": "GK"
 - "listening": "Hören"
+- "level": "Level"
 
 ## Special Cases
 

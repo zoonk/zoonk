@@ -37,6 +37,7 @@ msgstr "Weiter"
 msgid "eN8MTJ"
 msgstr "Anmelden oder ein Konto erstellen"
 
+# "Social-Konto" sounds a bit awkward. "Social Media Account" is an English term I'd also use in German, but is Google or Apple even a social account? I just checked Duolingo for reference, they just avoid this label in the first place—maybe something to consider.
 #: src/app/auth/login/page.tsx
 msgid "CoMQ1-"
 msgstr "Weiter mit deiner E‑Mail oder einem Social‑Konto"
@@ -61,9 +62,10 @@ msgstr "Weiter mit Apple"
 msgid "HkHvQv"
 msgstr "Der eingegebene Code ist falsch. Bitte versuche es erneut oder kontaktiere hello@zoonk.com"
 
+# "Prüfe" means to "verify" something. This is a case where the translation was too literal.
 #: src/app/auth/otp/page.tsx
 msgid "zx7CKB"
-msgstr "Prüfe deine E‑Mails"
+msgstr "Schau in dein Postfach"
 
 #: src/app/auth/otp/page.tsx
 msgid "LZHcmZ"
@@ -125,9 +127,10 @@ msgstr "Die Ziel-URL wird nicht als vertrauenswürdige Zoonk-Anwendung erkannt."
 msgid "wkO19y"
 msgstr "Sicherheitshinweis"
 
+# "Zuliebe" sounds awkward here, like doing the user a favor. 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "585u5Z"
-msgstr "Deiner Sicherheit zuliebe können wir dich nicht zu einer unbekannten Zieladresse weiterleiten."
+msgstr "Zu deiner Sicherheit können wir dich nicht zu einer unbekannten Zieladresse weiterleiten."
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "-e4BVR"
