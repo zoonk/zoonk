@@ -8,7 +8,7 @@ import {
   type CourseRequestScope,
   routeCourseRequest,
 } from "@zoonk/ai/tasks/courses/request-routing";
-import { type CourseStartRequest, prisma } from "@zoonk/db";
+import { type CourseStartRequest, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { isUuid } from "@zoonk/utils/uuid";
 import {
@@ -165,21 +165,35 @@ async function upsertCourseStartRequest({
 }): Promise<CourseStartRequestWithCourse> {
   const normalizedPrompt = normalizeString(prompt);
 
-  return prisma.courseStartRequest.upsert({
-    create: {
-      canonicalTitle: request.canonicalTitle,
-      courseMode: request.courseMode,
-      generationStatus: request.generationStatus,
-      language,
-      normalizedPrompt,
-      prompt,
-      scope: request.scope,
-      targetLanguage: request.targetLanguage,
-    },
-    include: { course: true },
-    update: {},
-    where: { languageNormalizedPrompt: { language, normalizedPrompt } },
-  });
+  try {
+    return await prisma.courseStartRequest.upsert({
+      create: {
+        canonicalTitle: request.canonicalTitle,
+        courseMode: request.courseMode,
+        generationStatus: request.generationStatus,
+        language,
+        normalizedPrompt,
+        prompt,
+        scope: request.scope,
+        targetLanguage: request.targetLanguage,
+      },
+      include: { course: true },
+      update: {},
+      where: { languageNormalizedPrompt: { language, normalizedPrompt } },
+    });
+  } catch (error) {
+    if (!isPrismaUniqueConstraintError(error)) {
+      throw error;
+    }
+
+    const cachedRequest = await findCachedStartRequest({ language, prompt });
+
+    if (!cachedRequest) {
+      throw error;
+    }
+
+    return cachedRequest;
+  }
 }
 
 /**

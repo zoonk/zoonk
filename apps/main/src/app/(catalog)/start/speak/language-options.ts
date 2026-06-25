@@ -1,3 +1,5 @@
+import { type AiCourseHref } from "@/data/courses/course-href";
+import { type CompletedLanguageCourseHrefs } from "@/data/courses/language-course";
 import {
   type TTSSupportedLanguageCode,
   TTS_SUPPORTED_LANGUAGE_CODES,
@@ -26,9 +28,11 @@ const POPULAR_LANGUAGE_CODES_BY_LOCALE = {
 export type LanguageOption = {
   code: TTSSupportedLanguageCode;
   flag: string;
-  href: `/start/speak/${TTSSupportedLanguageCode}`;
+  href: `/start/speak/${TTSSupportedLanguageCode}` | AiCourseHref;
   name: string;
   nativeName: string;
+  prefetch: boolean;
+  rel?: "nofollow";
   searchText: string;
 };
 
@@ -76,25 +80,56 @@ function getPopularLanguageRanks(locale: string): Map<TTSSupportedLanguageCode, 
 }
 
 /**
+ * Keeps navigation rules next to the language option builder so every row has a
+ * single source of truth for its href, prefetch behavior, and crawl hint. Known
+ * completed courses should behave like normal catalog links, while ungenerated
+ * languages still point at the generation route without prefetching that GET.
+ */
+function getLanguageOptionNavigation({
+  code,
+  completedLanguageCourseHrefs,
+}: {
+  code: TTSSupportedLanguageCode;
+  completedLanguageCourseHrefs: CompletedLanguageCourseHrefs;
+}): Pick<LanguageOption, "href" | "prefetch" | "rel"> {
+  const completedCourseHref = completedLanguageCourseHrefs[code];
+
+  if (completedCourseHref) {
+    return { href: completedCourseHref, prefetch: true };
+  }
+
+  return { href: `/start/speak/${code}` as const, prefetch: false, rel: "nofollow" };
+}
+
+/**
  * Builds the language picker from the canonical TTS support list so the UI
  * cannot drift from the audio generation capability it is promising. The
  * current app language is excluded because a course where the source and
  * target language are identical does not teach a new language.
  */
-export function getLanguageOptions({ locale }: { locale: string }): LanguageOption[] {
+export function getLanguageOptions({
+  completedLanguageCourseHrefs = {},
+  locale,
+}: {
+  completedLanguageCourseHrefs?: CompletedLanguageCourseHrefs;
+  locale: string;
+}): LanguageOption[] {
   const popularLanguageRanks = getPopularLanguageRanks(locale);
 
   return TTS_SUPPORTED_LANGUAGE_CODES.filter((code) => code !== locale)
     .map((code) => {
       const name = getLanguageName({ targetLanguage: code, userLanguage: locale });
       const nativeName = getLanguageName({ targetLanguage: code });
+      const navigation = getLanguageOptionNavigation({ code, completedLanguageCourseHrefs });
 
       return {
         code,
         flag: getLanguageFlag(code),
-        href: `/start/speak/${code}` as const,
+        href: navigation.href,
         name,
         nativeName,
+        prefetch: navigation.prefetch,
+        rel: navigation.rel,
         searchText: normalizeString([code, name, nativeName].join(" ")),
       };
     })
