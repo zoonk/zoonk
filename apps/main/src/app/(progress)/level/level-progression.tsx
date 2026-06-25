@@ -76,7 +76,12 @@ export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevel
           <div className="flex flex-col gap-1">
             <div className="bg-muted h-1.5 w-full overflow-hidden rounded-full">
               <div
-                className={cn("h-full transition-all", BELT_BG_CLASSES[currentBelt.color])}
+                className={cn(
+                  "h-full transition-all",
+                  BELT_BG_CLASSES[currentBelt.color],
+                  currentBelt.color === "white" && "ring-border ring-1 ring-inset dark:ring-0",
+                  currentBelt.color === "black" && "dark:ring-1 dark:ring-white/20 dark:ring-inset",
+                )}
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>
