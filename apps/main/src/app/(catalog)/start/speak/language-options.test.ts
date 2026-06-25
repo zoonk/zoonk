@@ -19,6 +19,20 @@ describe(getLanguageOptions, () => {
     expect(languages.some((language) => language.code === "en")).toBe(false);
   });
 
+  it("links completed language courses directly and keeps ungenerated languages on the start path", () => {
+    const languages = getLanguageOptions({
+      completedLanguageCourseHrefs: { is: "/b/ai/c/icelandic" },
+      locale: "en",
+    });
+
+    const icelandic = languages.find((language) => language.code === "is");
+    const javanese = languages.find((language) => language.code === "jv");
+
+    expect(icelandic).toMatchObject({ href: "/b/ai/c/icelandic", prefetch: true, rel: undefined });
+
+    expect(javanese).toMatchObject({ href: "/start/speak/jv", prefetch: false, rel: "nofollow" });
+  });
+
   it("derives flags for supported languages without a per-language map", () => {
     const languages = [
       ...getLanguageOptions({ locale: "en" }),

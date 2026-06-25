@@ -1,3 +1,4 @@
+import { getCompletedLanguageCourseHrefs } from "@/data/courses/language-course";
 import { type Metadata } from "next";
 import { getExtracted, getLocale } from "next-intl/server";
 import {
@@ -27,7 +28,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function StartSpeak() {
   const locale = await getLocale();
   const t = await getExtracted();
-  const languages = getLanguageOptions({ locale });
+  const completedLanguageCourseHrefs = await getCompletedLanguageCourseHrefs({ language: locale });
+  const languages = getLanguageOptions({ completedLanguageCourseHrefs, locale });
 
   return (
     <StartSurface>

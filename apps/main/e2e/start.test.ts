@@ -80,7 +80,12 @@ test.describe("Start language path", () => {
     await expect(page.getByRole("link", { name: /javanese/iu })).toBeVisible();
     await expect(page.getByRole("link", { name: /^english/iu })).not.toBeVisible();
 
-    await page.getByRole("link", { name: /javanese/iu }).click();
+    const javaneseLink = page.getByRole("link", { name: /javanese/iu });
+
+    await expect(javaneseLink).toHaveAttribute("href", "/start/speak/jv");
+    await expect(javaneseLink).toHaveAttribute("rel", "nofollow");
+
+    await javaneseLink.click();
 
     await expect(page).toHaveURL(/\/generate\/course\/[-a-f0-9]+$/u);
 
@@ -135,9 +140,16 @@ test.describe("Start language path", () => {
 
     await page.goto("/start/speak");
     await page.getByRole("searchbox", { name: /search languages/iu }).fill("Icelandic");
-    await page.getByRole("link", { name: /icelandic/iu }).click();
 
-    await expect(page).toHaveURL(new RegExp(`/b/${org.slug}/c/${course.slug}$`, "u"));
+    const courseHref = `/b/${org.slug}/c/${course.slug}`;
+    const icelandicLink = page.getByRole("link", { name: /icelandic/iu });
+
+    await expect(icelandicLink).toHaveAttribute("href", courseHref);
+    await expect(icelandicLink).not.toHaveAttribute("rel", "nofollow");
+
+    await icelandicLink.click();
+
+    await expect(page).toHaveURL(new RegExp(`${courseHref}$`, "u"));
   });
 });
 

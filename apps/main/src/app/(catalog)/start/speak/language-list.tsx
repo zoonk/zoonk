@@ -43,8 +43,8 @@ function LanguageOptionLink({ language }: { language: LanguageOption }) {
           "border-border/40 bg-background hover:border-foreground/20 hover:bg-muted/30 focus-visible:border-ring focus-visible:ring-ring/40 flex w-full min-w-0 items-center gap-3 rounded-lg border px-4 py-3 text-left transition-all duration-150 outline-none focus-visible:ring-[3px]",
         )}
         href={language.href}
-        prefetch={false}
-        rel="nofollow"
+        prefetch={language.prefetch}
+        rel={language.rel}
       >
         <span aria-hidden="true" className="text-2xl leading-none">
           {language.flag}
