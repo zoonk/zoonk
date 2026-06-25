@@ -11,13 +11,39 @@ import { BookOpenIcon, CheckCircleIcon, ClockIcon, LayersIcon, TargetIcon } from
 import { connection } from "next/server";
 
 const DAYS_7 = 7;
-const DAYS_30 = 30;
+
+/**
+ * Dashboard comparisons use whole UTC dates because the source table stores a
+ * date-only learning day instead of a timestamp.
+ */
+function startOfUtcToday(now: Date) {
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+}
+
+/**
+ * Date math is kept in one helper so the current and previous 7-day windows
+ * stay the same length when the dashboard card builds its comparison.
+ */
+function addUtcDays({ date, days }: { date: Date; days: number }) {
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + days));
+}
+
+/**
+ * The current 7-day window includes today and the 6 preceding calendar days;
+ * the previous window is the 7 calendar days immediately before that.
+ */
+function getActiveLearnerWindows(now: Date) {
+  const today = startOfUtcToday(now);
+  const currentPeriodStart = addUtcDays({ date: today, days: 1 - DAYS_7 });
+  const previousPeriodStart = addUtcDays({ date: currentPeriodStart, days: -DAYS_7 });
+
+  return { currentPeriodStart, previousPeriodStart };
+}
 
 export async function EngagementStats() {
   await connection();
   const now = new Date();
-  const sevenDaysAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - DAYS_7);
-  const thirtyDaysAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - DAYS_30);
+  const { currentPeriodStart, previousPeriodStart } = getActiveLearnerWindows(now);
 
   const [
     activeLearners,
@@ -27,7 +53,7 @@ export async function EngagementStats() {
     completionRate,
     totalLearningTime,
   ] = await Promise.all([
-    countActiveLearners(sevenDaysAgo, thirtyDaysAgo),
+    countActiveLearners({ currentPeriodStart, previousPeriodStart }),
     getAccuracyRate(),
     getAvgLessonTime(),
     getAvgLessonsPerLearner(),
@@ -38,16 +64,16 @@ export async function EngagementStats() {
   return (
     <StatsSection subtitle="How learners interact with content" title="Engagement & Learning">
       <Stats
-        description={`vs ${activeLearners.last30Days.toLocaleString()} in last 30d`}
-        help="Users with activity in the last 7 days"
+        description={`vs ${activeLearners.previousPeriod.toLocaleString()} in previous 7d`}
+        help="Users who completed at least 1 lesson in the last 7 days"
         href="/stats/engagement"
         icon={<BookOpenIcon />}
         title="Active Learners (7d)"
-        value={activeLearners.last7Days.toLocaleString()}
+        value={activeLearners.currentPeriod.toLocaleString()}
       />
 
       <Stats
-        help="Correct answers vs total attempts"
+        help="Correct step answers divided by all step attempts"
         href="/stats/engagement"
         icon={<TargetIcon />}
         title="Accuracy Rate"
@@ -55,7 +81,7 @@ export async function EngagementStats() {
       />
 
       <Stats
-        help="Lessons completed vs started"
+        help="Completed lessons divided by lessons users started"
         href="/stats/engagement"
         icon={<CheckCircleIcon />}
         title="Completion Rate"
@@ -63,7 +89,7 @@ export async function EngagementStats() {
       />
 
       <Stats
-        help="Average time to complete a lesson"
+        help="Average recorded duration for completed lessons"
         href="/stats/engagement"
         icon={<ClockIcon />}
         title="Avg Time / Lesson"
@@ -71,14 +97,14 @@ export async function EngagementStats() {
       />
 
       <Stats
-        help="Average lessons completed per active learner"
+        help="Completed lessons divided by learners who completed at least 1 lesson"
         icon={<LayersIcon />}
         title="Lessons / Learner"
         value={avgLessonsPerLearner.toLocaleString()}
       />
 
       <Stats
-        help="Cumulative time spent learning on the platform"
+        help="Total recorded lesson time across all learners"
         icon={<ClockIcon />}
         title="Total Learning Time"
         value={formatDuration(totalLearningTime)}

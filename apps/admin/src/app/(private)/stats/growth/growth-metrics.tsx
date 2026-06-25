@@ -49,7 +49,7 @@ export async function GrowthMetrics({
       <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
         <AdminMetricCard
           change={{ current: currentSignups, period, previous: previousSignups }}
-          help="New user registrations in this period"
+          help="User accounts created during the selected period"
           icon={<UsersIcon />}
           title="New Signups"
           value={currentSignups.toLocaleString()}
@@ -57,7 +57,7 @@ export async function GrowthMetrics({
 
         <AdminMetricCard
           description={`${currentActivation.activated.toLocaleString()} of ${currentActivation.total.toLocaleString()} users`}
-          help="Users who completed at least 1 lesson"
+          help="Users who completed at least 1 lesson divided by all users"
           icon={<TargetIcon />}
           title="Activation Rate"
           value={`${currentActivation.rate.toFixed(1)}%`}
@@ -65,7 +65,7 @@ export async function GrowthMetrics({
 
         <AdminMetricCard
           description={`${currentConversion.paid.toLocaleString()} paid of ${currentConversion.total.toLocaleString()} total`}
-          help="Active paid subscribers vs all users"
+          help="Users with an active paid subscription divided by all users"
           icon={<CreditCardIcon />}
           title="Free-to-Paid"
           value={`${currentConversion.rate.toFixed(1)}%`}

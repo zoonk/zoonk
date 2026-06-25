@@ -1,7 +1,7 @@
 import {
-  type UserStartedCourse,
-  listUserStartedCourses,
-} from "@/data/users/list-user-started-courses";
+  type UserCompletedLessonCourse,
+  listUserCompletedLessonCourses,
+} from "@/data/users/list-user-completed-lesson-courses";
 import { Separator } from "@zoonk/ui/components/separator";
 import {
   Table,
@@ -13,15 +13,15 @@ import {
 } from "@zoonk/ui/components/table";
 
 /**
- * User details need the courses a learner actually started, ordered by the
- * course update timestamp so support can quickly find the freshest course rows.
+ * User details focus on courses where the learner completed lessons, ordered
+ * by the most recent completion so support can scan recent learning context.
  */
 export async function UserCourses({ userId }: { userId: string }) {
-  const courses = await listUserStartedCourses({ userId });
+  const courses = await listUserCompletedLessonCourses({ userId });
 
   return (
     <section>
-      <h3 className="mb-2 text-sm font-semibold">Started courses</h3>
+      <h3 className="mb-2 text-sm font-semibold">Courses with completed lessons</h3>
       <Separator />
 
       {courses.length > 0 ? (
@@ -30,22 +30,21 @@ export async function UserCourses({ userId }: { userId: string }) {
             <TableHeader>
               <TableRow>
                 <TableHead>Course</TableHead>
-                <TableHead>Organization</TableHead>
+                <TableHead className="text-right">Completed lessons</TableHead>
                 <TableHead className="text-right">Completed chapters</TableHead>
-                <TableHead>Last updated</TableHead>
-                <TableHead>Started</TableHead>
+                <TableHead>Last completed</TableHead>
               </TableRow>
             </TableHeader>
 
             <TableBody>
               {courses.map((course) => (
-                <UserCourseRow course={course} key={course.id} />
+                <UserCourseRow course={course} key={course.course.id} />
               ))}
             </TableBody>
           </Table>
         </div>
       ) : (
-        <p className="text-muted-foreground mt-2 text-sm">No started courses.</p>
+        <p className="text-muted-foreground mt-2 text-sm">No completed lessons yet.</p>
       )}
     </section>
   );
@@ -55,17 +54,17 @@ export async function UserCourses({ userId }: { userId: string }) {
  * Keeping the row renderer separate keeps the section focused on empty-state
  * vs table rendering, while the row owns the date and number formatting.
  */
-function UserCourseRow({ course }: { course: UserStartedCourse }) {
+function UserCourseRow({ course }: { course: UserCompletedLessonCourse }) {
   return (
     <TableRow>
       <TableCell className="font-medium">{course.course.title}</TableCell>
-      <TableCell>{course.course.organization?.name ?? "—"}</TableCell>
       <TableCell className="text-right tabular-nums">
-        {course.completedChapterCount.toLocaleString()} /{" "}
-        {course.course._count.chapters.toLocaleString()}
+        {course.completedLessonCount.toLocaleString()}
       </TableCell>
-      <TableCell className="text-muted-foreground">{formatDate(course.course.updatedAt)}</TableCell>
-      <TableCell className="text-muted-foreground">{formatDate(course.startedAt)}</TableCell>
+      <TableCell className="text-right tabular-nums">
+        {course.completedChapterCount.toLocaleString()}
+      </TableCell>
+      <TableCell className="text-muted-foreground">{formatDate(course.lastCompletedAt)}</TableCell>
     </TableRow>
   );
 }

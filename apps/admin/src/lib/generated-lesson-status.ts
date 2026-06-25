@@ -1,13 +1,13 @@
 import { type GenerationStatus } from "@zoonk/db";
 
 export const generatedLessonStatuses = [
-  "completed",
   "failed",
+  "completed",
 ] as const satisfies readonly GenerationStatus[];
 
 export type GeneratedLessonStatus = (typeof generatedLessonStatuses)[number];
 
-const defaultGeneratedLessonStatus: GeneratedLessonStatus = "completed";
+const defaultGeneratedLessonStatus: GeneratedLessonStatus = "failed";
 
 /**
  * Generated lesson logs intentionally expose only terminal states. Pending and

@@ -13,6 +13,7 @@ import {
   ContainerHeaderGroup,
 } from "@zoonk/ui/components/container";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { isUuid } from "@zoonk/utils/uuid";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -65,7 +66,7 @@ function SectionSkeleton() {
 export default async function UserDetailPage({ params }: PageProps<"/users/[id]">) {
   const { id: userId } = await params;
 
-  if (!userId) {
+  if (!isUuid(userId)) {
     notFound();
   }
 

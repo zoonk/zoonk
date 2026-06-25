@@ -17,7 +17,7 @@ export const metadata: Metadata = { title: "Generated Lessons" };
 
 /**
  * This page gives admins a terminal-state log for lesson generation so they can
- * audit completed output by default and switch to failures when debugging.
+ * see failed generations first and switch to completed output when auditing.
  */
 export default async function GeneratedLessonsPage({ searchParams }: PageProps<"/lessons">) {
   const params = await searchParams;

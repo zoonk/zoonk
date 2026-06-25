@@ -45,7 +45,7 @@ export async function ContentMetrics({
       <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
         <AdminMetricCard
           change={{ current: currentCreated.courses, period, previous: previousCreated.courses }}
-          help="Courses created in this period"
+          help="Courses created during the selected period"
           icon={<BookOpenIcon />}
           title="New Courses"
           value={currentCreated.courses.toLocaleString()}
@@ -53,7 +53,7 @@ export async function ContentMetrics({
 
         <AdminMetricCard
           change={{ current: currentCreated.lessons, period, previous: previousCreated.lessons }}
-          help="Lessons created in this period"
+          help="Completed-generation lessons created during the selected period"
           icon={<LayersIcon />}
           title="New Lessons"
           value={currentCreated.lessons.toLocaleString()}
