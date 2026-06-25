@@ -15,7 +15,10 @@ export const getAvgTimeByLessonKind = cacheAdminData(async (start: Date, end: Da
     FROM lesson_progress lp
     JOIN lessons l ON l.id = lp.lesson_id
     JOIN users ON users.id = lp.user_id
-    WHERE ${trackedAnalyticsUserSql} AND lp.started_at >= ${start} AND lp.started_at <= ${end}
+    WHERE
+      ${trackedAnalyticsUserSql}
+      AND lp.started_at >= ${start}
+      AND lp.started_at <= ${end}
     GROUP BY l.kind
     ORDER BY avg_duration DESC
   `;

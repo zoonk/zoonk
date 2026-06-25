@@ -21,15 +21,20 @@ export const getDailyContentCreated = cacheAdminData(async (start: Date, end: Da
 
     SELECT DATE(created_at) as date, 'chapters' as type, COUNT(*) as count
     FROM chapters
-    WHERE created_at >= ${start} AND created_at <= ${end}
+    WHERE created_at >= ${start} AND created_at <= ${end} AND generation_status = 'completed'
     GROUP BY DATE(created_at)
 
     UNION ALL
 
-    SELECT DATE(created_at) as date, 'lessons' as type, COUNT(*) as count
+    SELECT DATE(lessons.created_at) as date, 'lessons' as type, COUNT(*) as count
     FROM lessons
-    WHERE created_at >= ${start} AND created_at <= ${end}
-    GROUP BY DATE(created_at)
+    JOIN chapters ON chapters.id = lessons.chapter_id
+    WHERE
+      lessons.created_at >= ${start}
+      AND lessons.created_at <= ${end}
+      AND lessons.generation_status = 'completed'
+      AND chapters.generation_status = 'completed'
+    GROUP BY DATE(lessons.created_at)
 
     UNION ALL
 

@@ -5,14 +5,16 @@ import { prisma } from "@zoonk/db";
 export const countContent = cacheAdminData(async () => {
   const [courses, chapters, lessons, steps, completedLessonsByKind] = await Promise.all([
     prisma.course.count(),
-    prisma.chapter.count(),
-    prisma.lesson.count(),
+    prisma.chapter.count({ where: { generationStatus: "completed" } }),
+    prisma.lesson.count({
+      where: { chapter: { generationStatus: "completed" }, generationStatus: "completed" },
+    }),
     prisma.step.count(),
     prisma.lesson.groupBy({
       _count: { kind: true },
       by: ["kind"],
       orderBy: { kind: "asc" },
-      where: { generationStatus: "completed" },
+      where: { chapter: { generationStatus: "completed" }, generationStatus: "completed" },
     }),
   ]);
 

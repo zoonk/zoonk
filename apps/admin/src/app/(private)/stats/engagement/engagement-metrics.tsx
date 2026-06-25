@@ -69,7 +69,7 @@ export async function EngagementMetrics({
       <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-5">
         <AdminMetricCard
           change={{ current: currentActiveLearners, period, previous: previousActiveLearners }}
-          help="Distinct users with learning activity"
+          help="Users who completed at least 1 lesson in the selected period"
           icon={<BookOpenIcon />}
           title="Active Learners"
           value={currentActiveLearners.toLocaleString()}
@@ -77,7 +77,7 @@ export async function EngagementMetrics({
 
         <AdminMetricCard
           change={{ current: currentAccuracy, period, previous: previousAccuracy }}
-          help="Correct answers vs total attempts"
+          help="Correct step answers divided by all step attempts"
           icon={<TargetIcon />}
           title="Accuracy Rate"
           value={`${currentAccuracy.toFixed(1)}%`}
@@ -85,7 +85,7 @@ export async function EngagementMetrics({
 
         <AdminMetricCard
           change={{ current: currentCompletionRate, period, previous: previousCompletionRate }}
-          help="Lessons completed vs started"
+          help="Completed lessons divided by lessons users started"
           icon={<CheckCircleIcon />}
           title="Completion Rate"
           value={`${currentCompletionRate.toFixed(1)}%`}
@@ -93,7 +93,7 @@ export async function EngagementMetrics({
 
         <AdminMetricCard
           change={{ current: currentAvgTime, period, previous: previousAvgTime }}
-          help="Average time to complete a lesson"
+          help="Average recorded duration for completed lessons"
           icon={<ClockIcon />}
           title="Avg Time / Lesson"
           value={formatDuration(currentAvgTime)}
@@ -101,7 +101,7 @@ export async function EngagementMetrics({
 
         <AdminMetricCard
           change={{ current: currentLearningTime, period, previous: previousLearningTime }}
-          help="Total time spent learning in this period"
+          help="Total recorded lesson time in the selected period"
           icon={<TimerIcon />}
           title="Total Learning Time"
           value={formatDuration(currentLearningTime)}

@@ -6,7 +6,11 @@ import { prisma } from "@zoonk/db";
 export const getAvgLessonTime = cacheAdminData(async () => {
   const result = await prisma.lessonProgress.aggregate({
     _avg: { durationSeconds: true },
-    where: { ...trackedAnalyticsUserRelationWhere, durationSeconds: { not: null } },
+    where: {
+      ...trackedAnalyticsUserRelationWhere,
+      completedAt: { not: null },
+      durationSeconds: { not: null },
+    },
   });
 
   return result._avg.durationSeconds ?? 0;

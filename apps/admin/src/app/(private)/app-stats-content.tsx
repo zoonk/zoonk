@@ -18,7 +18,7 @@ export async function ContentStats() {
   return (
     <StatsSection subtitle="Content catalog and review pipeline" title="Content & Operations">
       <Stats
-        help="Published and draft courses"
+        help="All courses, including published and draft courses"
         href="/courses"
         icon={<BookOpenIcon />}
         title="Courses"
@@ -26,21 +26,21 @@ export async function ContentStats() {
       />
 
       <Stats
-        help="Total chapter count"
+        help="Chapters with completed generation status"
         icon={<LayersIcon />}
         title="Chapters"
         value={content.chapters.toLocaleString()}
       />
 
       <Stats
-        help="Total lesson count"
+        help="Lessons with completed generation status"
         icon={<LayersIcon />}
         title="Lessons"
         value={content.lessons.toLocaleString()}
       />
 
       <Stats
-        help="Total step count"
+        help="All generated step rows"
         icon={<LayersIcon />}
         title="Steps"
         value={content.steps.toLocaleString()}

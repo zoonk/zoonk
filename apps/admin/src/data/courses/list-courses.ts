@@ -7,6 +7,7 @@ const courseListInclude = {
     select: {
       _count: { select: { lessons: { where: { generationStatus: "completed" as const } } } },
     },
+    where: { generationStatus: "completed" as const },
   },
   organization: true,
 } as const;

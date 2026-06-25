@@ -20,7 +20,7 @@ export async function GrowthStats() {
   return (
     <StatsSection subtitle="Platform growth and revenue health" title="Growth & Sustainability">
       <Stats
-        help="All registered accounts"
+        help="All registered user accounts"
         href="/users"
         icon={<UsersIcon />}
         title="Total Users"
@@ -29,7 +29,7 @@ export async function GrowthStats() {
 
       <Stats
         description={`${activation.activated.toLocaleString()} of ${activation.total.toLocaleString()} users`}
-        help="Users who completed at least 1 lesson"
+        help="Users who completed at least 1 lesson divided by all users"
         href="/stats/growth"
         icon={<TargetIcon />}
         title="Activation Rate"
@@ -38,7 +38,7 @@ export async function GrowthStats() {
 
       <Stats
         description={`${conversion.paid.toLocaleString()} paid of ${conversion.total.toLocaleString()} total`}
-        help="Active paid subscribers vs all users"
+        help="Users with an active paid subscription divided by all users"
         href="/stats/growth"
         icon={<CreditCardIcon />}
         title="Free-to-Paid"
@@ -47,7 +47,7 @@ export async function GrowthStats() {
 
       {subscribersByPlan.map((sub) => (
         <Stats
-          help={`Active subscribers on ${sub.plan} plan`}
+          help={`Users with an active ${sub.plan} subscription`}
           icon={<CreditCardIcon />}
           key={sub.plan}
           title={`${sub.plan.charAt(0).toUpperCase() + sub.plan.slice(1)} Subscribers`}

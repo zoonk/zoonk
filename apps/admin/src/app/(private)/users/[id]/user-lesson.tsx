@@ -16,6 +16,11 @@ import {
 } from "@zoonk/ui/components/table";
 import { DetailField } from "./detail-field";
 
+const ENERGY_FORMATTER = new Intl.NumberFormat("en", {
+  maximumFractionDigits: 1,
+  trailingZeroDisplay: "stripIfInteger",
+});
+
 /**
  * The admin user detail page combines account progress with durable lesson
  * completion stats so support can answer learning-history questions in one view.
@@ -42,7 +47,9 @@ export async function UserLesson({ userId }: { userId: string }) {
           {progress ? Number(progress.totalBrainPower).toLocaleString() : "0"}
         </DetailField>
 
-        <DetailField label="Current energy">{progress?.currentEnergy ?? 0}</DetailField>
+        <DetailField label="Current energy">
+          {formatEnergyLevel(progress?.currentEnergy ?? 0)}
+        </DetailField>
 
         <DetailField label="Total learning time">
           {formatDuration(learningStats.totalLearningSeconds)}
@@ -72,6 +79,14 @@ export async function UserLesson({ userId }: { userId: string }) {
       <LessonKindBreakdown rows={learningStats.lessonKinds} />
     </section>
   );
+}
+
+/**
+ * Energy is stored as a float, so display rounds to the single decimal place
+ * admins can act on while hiding binary precision artifacts like 10.0000000002.
+ */
+function formatEnergyLevel(value: number) {
+  return ENERGY_FORMATTER.format(value);
 }
 
 /**
