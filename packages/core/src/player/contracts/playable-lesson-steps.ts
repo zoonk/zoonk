@@ -15,22 +15,36 @@ export function isLimitedLanguageSentenceLesson(kind: LessonKind): boolean {
 }
 
 /**
+ * Translation lessons are generated from the same chapter words as vocabulary
+ * lessons. Shuffling the full set keeps that companion lesson from replaying
+ * the vocabulary order while still practicing every generated word.
+ */
+function isShuffledFullLesson(kind: LessonKind): boolean {
+  return kind === "translation";
+}
+
+/**
  * Chooses the steps that one player session should show. The database can keep
  * more generated sentence steps for reuse, while the player receives a shuffled
- * six-step slice for reading and listening lessons only. Other lesson kinds
- * keep their full ordered step list because their steps are authored as one
- * complete lesson flow.
+ * six-step slice for reading and listening lessons. Translation keeps every
+ * step but shuffles the order because it reuses the vocabulary lesson's words.
+ * Other lesson kinds keep their full ordered step list because their steps are
+ * authored as one complete lesson flow.
  */
 export function getPlayableLessonSteps<Step>({
   lesson,
 }: {
   lesson: { kind: LessonKind; steps: readonly Step[] };
 }): Step[] {
-  if (!isLimitedLanguageSentenceLesson(lesson.kind)) {
-    return [...lesson.steps];
+  if (isLimitedLanguageSentenceLesson(lesson.kind)) {
+    return shuffle(lesson.steps).slice(0, LANGUAGE_SENTENCE_STEP_LIMIT);
   }
 
-  return shuffle(lesson.steps).slice(0, LANGUAGE_SENTENCE_STEP_LIMIT);
+  if (isShuffledFullLesson(lesson.kind)) {
+    return shuffle(lesson.steps);
+  }
+
+  return [...lesson.steps];
 }
 
 /**
