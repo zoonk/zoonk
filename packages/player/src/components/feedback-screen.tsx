@@ -8,8 +8,12 @@ import { getFeedbackRomanization } from "./_utils/feedback-romanization";
 import { CorrectAnswerBlock, IncorrectAnswerBlock } from "./feedback-answer-blocks";
 import { PlayAudioButton } from "./play-audio-button";
 import { PlayerFeedbackScene, PlayerFeedbackSceneMessage } from "./player-feedback-scene";
+import { PlayerRichText } from "./player-rich-text";
 import { PlayerSupportingText } from "./player-supporting-text";
 import { RomanizationText } from "./romanization-text";
+import { SectionLabel } from "./section-label";
+
+type FeedbackPromptReviewContent = { context: string | null; question: string | null };
 
 function getArrangeWordsSelectedText(result: StepResult): string | null {
   if (result.answer?.kind === "reading" || result.answer?.kind === "listening") {
@@ -76,6 +80,36 @@ function getQuestionText(result: StepResult, step?: SerializedStep): string | nu
 }
 
 /**
+ * Dedicated multiple-choice feedback replaces the original prompt, so missed
+ * answers need a small copy-only reminder of the context the learner just used.
+ * Inline feedback step kinds keep their prompt on screen and do not need this.
+ */
+function getMultipleChoicePromptReview({
+  result,
+  step,
+}: {
+  result: StepResult;
+  step?: SerializedStep;
+}): FeedbackPromptReviewContent | null {
+  if (
+    result.result.isCorrect ||
+    result.answer?.kind !== "multipleChoice" ||
+    step?.kind !== "multipleChoice"
+  ) {
+    return null;
+  }
+
+  const content = parseStepContent("multipleChoice", step.content);
+  const promptReview = { context: content.context ?? null, question: content.question ?? null };
+
+  if (!promptReview.context && !promptReview.question) {
+    return null;
+  }
+
+  return promptReview;
+}
+
+/**
  * Returns the audio URL for the feedback screen's pronunciation button.
  * Reading/listening steps use sentence audio; translation steps use word audio.
  */
@@ -89,6 +123,36 @@ function getFeedbackAudioUrl(step?: SerializedStep): string | null {
   }
 
   return null;
+}
+
+/**
+ * Shows the original missed prompt with quieter typography than the answer
+ * rows. It gives learners enough context to understand the correction without
+ * turning the feedback scene back into the full question screen.
+ */
+function FeedbackPromptReview({ prompt }: { prompt: FeedbackPromptReviewContent }) {
+  const t = useExtracted();
+
+  return (
+    <div
+      className="flex flex-col gap-1.5 text-sm leading-relaxed"
+      data-slot="feedback-prompt-review"
+    >
+      <SectionLabel>{t("Question")}</SectionLabel>
+
+      {prompt.context && (
+        <p className="text-muted-foreground">
+          <PlayerRichText text={prompt.context} />
+        </p>
+      )}
+
+      {prompt.question && (
+        <p className="text-foreground font-medium">
+          <PlayerRichText text={prompt.question} />
+        </p>
+      )}
+    </div>
+  );
 }
 
 /**
@@ -107,12 +171,15 @@ export function FeedbackScreenContent({
   const { isCorrect, feedback, correctAnswer } = result.result;
   const selectedText = getSelectedText(result, step);
   const questionText = getQuestionText(result, step);
+  const promptReview = getMultipleChoicePromptReview({ result, step });
   const rom = getFeedbackRomanization({ correctAnswer, questionText, result, selectedText, step });
   const audioUrl = getFeedbackAudioUrl(step);
 
   return (
     <PlayerFeedbackScene>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
+        {promptReview && <FeedbackPromptReview prompt={promptReview} />}
+
         {questionText && (
           <div className="flex flex-col gap-1">
             <PlayerSupportingText>

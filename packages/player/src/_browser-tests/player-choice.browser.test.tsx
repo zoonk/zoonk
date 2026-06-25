@@ -40,6 +40,7 @@ describe("player browser integration: choice steps", () => {
 
     await page.getByRole("button", { name: /check/iu }).click();
     await expect.element(page.getByText(/your answer:/iu)).toBeInTheDocument();
+    await expect.element(page.getByText("What is the capital of Germany?")).not.toBeInTheDocument();
 
     await page.getByRole("button", { name: /continue/iu }).click();
 
@@ -142,6 +143,48 @@ describe("player browser integration: choice steps", () => {
 
     await expect
       .element(page.getByRole("region", { name: /answer feedback/iu }))
+      .toBeInTheDocument();
+  });
+
+  it("shows the missed multiple-choice prompt on incorrect feedback", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        steps: [
+          buildSerializedStep({
+            content: {
+              context: "Review the robot's report before choosing.",
+              options: [
+                {
+                  feedback: "The oil spots point to friction, not a clean energy transfer.",
+                  id: "clean-transfer",
+                  isCorrect: false,
+                  text: "The gears are transferring energy perfectly.",
+                },
+                {
+                  feedback: "Correct",
+                  id: "friction",
+                  isCorrect: true,
+                  text: "Friction is turning useful motion into heat.",
+                },
+              ],
+              question: "What explains the robot's overheating?",
+            },
+            kind: "multipleChoice",
+          }),
+        ],
+      }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await page.getByRole("radio", { name: "The gears are transferring energy perfectly." }).click();
+    await page.getByRole("button", { name: /check/iu }).click();
+
+    await expect
+      .element(page.getByText("Review the robot's report before choosing."))
+      .toBeInTheDocument();
+
+    await expect
+      .element(page.getByText("What explains the robot's overheating?"))
       .toBeInTheDocument();
   });
 

@@ -175,6 +175,10 @@ msgid "QAJ_Tl"
 msgstr "Respuesta correcta:"
 
 #: src/components/feedback-screen.tsx
+msgid "kgOBET"
+msgstr "Pregunta"
+
+#: src/components/feedback-screen.tsx
 msgid "fpO9TK"
 msgstr "Traducir:"
 
