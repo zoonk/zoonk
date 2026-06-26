@@ -2,7 +2,6 @@
 
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { useExtracted } from "next-intl";
-import { PlayAudioButton } from "./play-audio-button";
 import { PlayerReadScene, PlayerReadSceneBody, PlayerReadSceneStack } from "./player-read-scene";
 import { RomanizationText } from "./romanization-text";
 
@@ -21,8 +20,6 @@ export function VocabularyStep({ step }: { step: SerializedStep }) {
         role="region"
         className="flex flex-col gap-6"
       >
-        {word.audioUrl && <PlayAudioButton audioUrl={word.audioUrl} size="sm" />}
-
         <PlayerReadSceneStack className="gap-2">
           <p className="text-4xl font-bold tracking-tight sm:text-5xl">{word.word}</p>
 

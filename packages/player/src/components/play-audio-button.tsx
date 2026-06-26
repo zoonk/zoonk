@@ -49,11 +49,13 @@ function usePlayAudioButtonState({ audioUrl, preload }: { audioUrl: string; prel
 
 export function PlayAudioButton({
   audioUrl,
+  className,
   preload = true,
   size = "md",
   variant = "filled",
 }: {
   audioUrl: string;
+  className?: string;
   preload?: boolean;
   size?: "sm" | "md";
   variant?: PlayAudioButtonVariant;
@@ -67,7 +69,10 @@ export function PlayAudioButton({
   if (variant === "text") {
     return (
       <button
-        className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 text-sm transition-colors"
+        className={cn(
+          "text-muted-foreground hover:text-foreground flex items-center gap-1.5 text-sm transition-colors",
+          className,
+        )}
         onClick={handleClick}
         type="button"
       >
@@ -81,6 +86,7 @@ export function PlayAudioButton({
     return (
       <Button
         aria-label={label}
+        className={className}
         onClick={handleClick}
         size={size === "md" ? "icon-lg" : "icon"}
         type="button"
@@ -98,6 +104,7 @@ export function PlayAudioButton({
         "bg-primary text-primary-foreground flex items-center justify-center rounded-full transition-all duration-150",
         "hover:bg-primary/90 focus-visible:ring-ring/50 outline-none hover:scale-105 focus-visible:ring-[3px] active:scale-95",
         size === "md" ? "size-14" : "size-12",
+        className,
       )}
       onClick={handleClick}
       type="button"

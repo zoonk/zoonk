@@ -1,20 +1,22 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type TouchEvent, useEffect, useRef } from "react";
+import { PlayAudioButton } from "./play-audio-button";
 import { NavigableStepLayout } from "./step-layouts";
 
 const SWIPE_DISTANCE_THRESHOLD = 48;
 const SWIPE_HORIZONTAL_RATIO = 1.05;
 const VIEWPORT_ZOOM_SCALE_THRESHOLD = 1.01;
 
+const DESKTOP_NAVIGATION_CONTROL_CLASS =
+  "bg-background/95 text-foreground border-border/70 ring-border/30 hover:bg-background hover:border-border size-11 opacity-95 shadow-lg ring-1 shadow-black/5 backdrop-blur-md transition-[background-color,border-color,opacity,scale,box-shadow] hover:opacity-100 hover:shadow-xl focus-visible:opacity-100 [&_svg]:size-5";
+
 type SwipeGesture = { startX: number; startY: number; touchId: number };
 
 export type SwipeNavigableStepFrame = "default" | "media";
-type DesktopNavigationSide = "previous" | "next";
 
 /**
  * Image-backed read steps need the swipe surface to use the full stage width
@@ -37,23 +39,20 @@ function getNavigableFrameClass(frame: SwipeNavigableStepFrame) {
  */
 function DesktopNavigationButton({
   "aria-label": ariaLabel,
+  "aria-keyshortcuts": ariaKeyshortcuts,
   children,
   onClick,
-  side,
 }: {
   "aria-label": string;
+  "aria-keyshortcuts": string;
   children: React.ReactNode;
   onClick: () => void;
-  side: DesktopNavigationSide;
 }) {
   return (
     <Button
       aria-label={ariaLabel}
-      aria-keyshortcuts={side === "previous" ? "ArrowLeft" : "ArrowRight"}
-      className={cn(
-        "bg-background/95 text-foreground border-border/70 ring-border/30 hover:bg-background hover:border-border absolute top-1/2 z-20 hidden size-11 -translate-y-1/2 opacity-95 shadow-lg ring-1 shadow-black/5 backdrop-blur-md transition-[background-color,border-color,color,opacity,scale,box-shadow] hover:opacity-100 hover:shadow-xl focus-visible:opacity-100 lg:flex [&_svg]:size-5",
-        side === "previous" ? "left-4 xl:left-6" : "right-4 xl:right-6",
-      )}
+      aria-keyshortcuts={ariaKeyshortcuts}
+      className={DESKTOP_NAVIGATION_CONTROL_CLASS}
       onClick={onClick}
       size="icon-lg"
       type="button"
@@ -61,6 +60,64 @@ function DesktopNavigationButton({
     >
       {children}
     </Button>
+  );
+}
+
+/**
+ * Desktop users usually move the pointer between prompt audio and the next
+ * arrow. Keeping those controls in one floating toolbar reduces that travel
+ * while preserving the content-level play button for learners who focus on the
+ * card itself.
+ */
+function DesktopNavigationToolbar({
+  canNavigatePrev,
+  onNavigateNext,
+  onNavigatePrev,
+  promptAudioUrl,
+}: {
+  canNavigatePrev: boolean;
+  onNavigateNext: () => void;
+  onNavigatePrev: () => void;
+  promptAudioUrl?: string | null;
+}) {
+  const t = useExtracted();
+
+  return (
+    <div
+      aria-label={t("Lesson controls")}
+      className="pointer-events-none absolute inset-x-4 top-1/2 z-20 hidden -translate-y-1/2 items-center justify-between lg:flex xl:inset-x-6"
+      role="toolbar"
+    >
+      <div className="pointer-events-auto flex min-w-11 justify-start">
+        {canNavigatePrev && (
+          <DesktopNavigationButton
+            aria-label={t("Previous step")}
+            aria-keyshortcuts="ArrowLeft"
+            onClick={onNavigatePrev}
+          >
+            <ChevronLeftIcon />
+          </DesktopNavigationButton>
+        )}
+      </div>
+
+      <div className="pointer-events-auto flex items-center gap-2">
+        {promptAudioUrl && (
+          <PlayAudioButton
+            audioUrl={promptAudioUrl}
+            className={DESKTOP_NAVIGATION_CONTROL_CLASS}
+            variant="outline"
+          />
+        )}
+
+        <DesktopNavigationButton
+          aria-label={t("Next step")}
+          aria-keyshortcuts="ArrowRight"
+          onClick={onNavigateNext}
+        >
+          <ChevronRightIcon />
+        </DesktopNavigationButton>
+      </div>
+    </div>
   );
 }
 
@@ -142,14 +199,15 @@ export function SwipeNavigableStepLayout({
   frame = "default",
   onNavigateNext,
   onNavigatePrev,
+  promptAudioUrl,
 }: {
   canNavigatePrev: boolean;
   children: React.ReactNode;
   frame?: SwipeNavigableStepFrame;
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
+  promptAudioUrl?: string | null;
 }) {
-  const t = useExtracted();
   const gestureRef = useRef<SwipeGesture | null>(null);
   const endHandlerRef = useRef<((event: globalThis.TouchEvent) => void) | null>(null);
   const cancelHandlerRef = useRef<(() => void) | null>(null);
@@ -289,19 +347,12 @@ export function SwipeNavigableStepLayout({
     <NavigableStepLayout className={getNavigableFrameClass(frame)} onTouchStart={handleTouchStart}>
       <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col items-center">{children}</div>
 
-      {canNavigatePrev && (
-        <DesktopNavigationButton
-          aria-label={t("Previous step")}
-          onClick={onNavigatePrev}
-          side="previous"
-        >
-          <ChevronLeftIcon />
-        </DesktopNavigationButton>
-      )}
-
-      <DesktopNavigationButton aria-label={t("Next step")} onClick={onNavigateNext} side="next">
-        <ChevronRightIcon />
-      </DesktopNavigationButton>
+      <DesktopNavigationToolbar
+        canNavigatePrev={canNavigatePrev}
+        onNavigateNext={onNavigateNext}
+        onNavigatePrev={onNavigatePrev}
+        promptAudioUrl={promptAudioUrl}
+      />
     </NavigableStepLayout>
   );
 }

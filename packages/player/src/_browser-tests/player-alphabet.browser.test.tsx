@@ -82,9 +82,13 @@ describe("player browser integration: alphabet", () => {
     await expect.element(card.getByText("like b in book")).toBeInTheDocument();
     await expect.element(card.getByText("initial")).toBeInTheDocument();
     await expect.element(card.getByText("بـ")).toBeInTheDocument();
+
+    await expect
+      .element(card.getByRole("button", { name: /play pronunciation/iu }))
+      .not.toBeInTheDocument();
   });
 
-  it("plays alphabet audio without moving to the next card", async () => {
+  it("plays alphabet audio from desktop controls without moving to the next card", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "alphabet",
@@ -120,12 +124,13 @@ describe("player browser integration: alphabet", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
+    const controls = page.getByRole("toolbar", { name: /lesson controls/iu });
     const currentCard = page.getByRole("region", { name: /alphabet: ب/iu });
 
-    await currentCard.getByRole("button", { name: /play pronunciation/iu }).click();
+    await controls.getByRole("button", { name: /play pronunciation/iu }).click();
 
     await expect
-      .element(currentCard.getByRole("button", { name: /pause pronunciation/iu }))
+      .element(controls.getByRole("button", { name: /pause pronunciation/iu }))
       .toBeInTheDocument();
 
     await expect.element(currentCard).toBeInTheDocument();

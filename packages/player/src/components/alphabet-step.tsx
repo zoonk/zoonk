@@ -3,7 +3,6 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { useExtracted } from "next-intl";
-import { PlayAudioButton } from "./play-audio-button";
 import { PlayerReadScene, PlayerReadSceneStack } from "./player-read-scene";
 
 type AlphabetContent = ReturnType<typeof getAlphabetContent>;
@@ -86,8 +85,6 @@ export function AlphabetStep({ step }: { step: SerializedStep }) {
         className="flex w-full flex-col gap-6"
         role="region"
       >
-        {content.audioUrl && <PlayAudioButton audioUrl={content.audioUrl} size="sm" />}
-
         <PlayerReadSceneStack className="gap-3">
           <AlphabetSymbol>{content.symbol}</AlphabetSymbol>
           <AlphabetReading pronunciation={content.pronunciation} readingAid={content.readingAid} />

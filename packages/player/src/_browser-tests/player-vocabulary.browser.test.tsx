@@ -37,9 +37,15 @@ describe("player browser integration: vocabulary", () => {
     await expect.element(page.getByText(/^ola$/u)).toBeInTheDocument();
     await expect.element(page.getByText("OH-lah")).toBeInTheDocument();
     await expect.element(page.getByText("Hello")).toBeInTheDocument();
+
+    const card = page.getByRole("region", { name: /vocabulary: Hola/iu });
+
+    await expect
+      .element(card.getByRole("button", { name: /play pronunciation/iu }))
+      .not.toBeInTheDocument();
   });
 
-  it("plays vocabulary audio without moving to the next card", async () => {
+  it("plays vocabulary audio from desktop controls without moving to the next card", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "vocabulary",
@@ -73,12 +79,13 @@ describe("player browser integration: vocabulary", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
+    const controls = page.getByRole("toolbar", { name: /lesson controls/iu });
     const currentCard = page.getByRole("region", { name: /vocabulary: Hola/iu });
 
-    await currentCard.getByRole("button", { name: /play pronunciation/iu }).click();
+    await controls.getByRole("button", { name: /play pronunciation/iu }).click();
 
     await expect
-      .element(currentCard.getByRole("button", { name: /pause pronunciation/iu }))
+      .element(controls.getByRole("button", { name: /pause pronunciation/iu }))
       .toBeInTheDocument();
 
     await expect.element(currentCard).toBeInTheDocument();
@@ -122,20 +129,22 @@ describe("player browser integration: vocabulary", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    const firstCard = page.getByRole("region", { name: /vocabulary: Hola/iu });
+    const controls = page.getByRole("toolbar", { name: /lesson controls/iu });
 
-    await firstCard.getByRole("button", { name: /play pronunciation/iu }).click();
+    await controls.getByRole("button", { name: /play pronunciation/iu }).click();
 
     await expect
-      .element(firstCard.getByRole("button", { name: /pause pronunciation/iu }))
+      .element(controls.getByRole("button", { name: /pause pronunciation/iu }))
       .toBeInTheDocument();
 
     fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
 
     const secondCard = page.getByRole("region", { name: /vocabulary: Adios/iu });
 
+    await expect.element(secondCard).toBeInTheDocument();
+
     await expect
-      .element(secondCard.getByRole("button", { name: /pause pronunciation/iu }))
+      .element(controls.getByRole("button", { name: /pause pronunciation/iu }))
       .toBeInTheDocument();
   });
 
@@ -173,12 +182,12 @@ describe("player browser integration: vocabulary", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    const firstCard = page.getByRole("region", { name: /vocabulary: Hola/iu });
+    const controls = page.getByRole("toolbar", { name: /lesson controls/iu });
 
-    await firstCard.getByRole("button", { name: /play pronunciation/iu }).click();
+    await controls.getByRole("button", { name: /play pronunciation/iu }).click();
 
     await expect
-      .element(firstCard.getByRole("button", { name: /pause pronunciation/iu }))
+      .element(controls.getByRole("button", { name: /pause pronunciation/iu }))
       .toBeInTheDocument();
 
     mockNextAudioPlayFailure();
@@ -186,12 +195,14 @@ describe("player browser integration: vocabulary", () => {
 
     const secondCard = page.getByRole("region", { name: /vocabulary: Adios/iu });
 
+    await expect.element(secondCard).toBeInTheDocument();
+
     await expect
-      .element(secondCard.getByRole("button", { name: /play pronunciation/iu }))
+      .element(controls.getByRole("button", { name: /play pronunciation/iu }))
       .toBeInTheDocument();
 
     await expect
-      .element(secondCard.getByRole("button", { name: /pause pronunciation/iu }))
+      .element(controls.getByRole("button", { name: /pause pronunciation/iu }))
       .not.toBeInTheDocument();
   });
 
@@ -240,8 +251,8 @@ describe("player browser integration: vocabulary", () => {
         .toBeInTheDocument();
 
       await expect
-        .element(currentCard.getByRole("button", { name: /pause pronunciation/iu }))
-        .toBeInTheDocument();
+        .element(currentCard.getByRole("button", { name: /play pronunciation/iu }))
+        .not.toBeInTheDocument();
 
       await expect
         .element(page.getByRole("region", { name: /vocabulary: Adios/iu }))
