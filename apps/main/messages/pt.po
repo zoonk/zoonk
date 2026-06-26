@@ -284,12 +284,12 @@ msgid "_lCW0j"
 msgstr "{percentage} de respostas corretas"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
-msgid "9SgWiD"
-msgstr "Capítulo indisponível"
+msgid "QhvU1f"
+msgstr "Criar este capítulo"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
-msgid "ml8Duy"
-msgstr "Este capítulo ainda não foi criado."
+msgid "YQGe0H"
+msgstr "Este capítulo faz parte do curso, mas ainda não foi criado. Crie ele para ver todas as aulas."
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
 msgid "3IOFp2"
@@ -1182,12 +1182,12 @@ msgid "l1XTI5"
 msgstr "Siga-nos"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
-msgid "A_VPtF"
-msgstr "Aula indisponível"
+msgid "rCpmYD"
+msgstr "Criar esta aula"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
-msgid "bHscXj"
-msgstr "Esta aula ainda não foi criada."
+msgid "AtnLyn"
+msgstr "Esta aula faz parte do curso, mas ainda não foi criada. Crie ela para começar a estudar."
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
@@ -1201,24 +1201,24 @@ msgid "_N8rYN"
 msgstr "Voltar ao capítulo"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
-msgid "3pyC1G"
-msgstr "Esta aula exige uma assinatura ativa."
+msgid "rPcS-X"
+msgstr "Contas grátis incluem as 10 primeiras aulas de cada curso. Faça upgrade para ter acesso ilimitado a todas as aulas de todos os cursos."
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
-msgid "xu3uCX"
-msgstr "Assine para continuar aprendendo"
+msgid "ZnMcrz"
+msgstr "Desbloqueie o resto do curso"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
-msgid "mA7vCW"
-msgstr "Revisão bloqueada"
+msgid "A_uNk-"
+msgstr "Crie aulas antes de revisar"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgid "Qy4EsI"
 msgstr "Nada para revisar ainda"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
-msgid "lOdIcU"
-msgstr "Crie as aulas anteriores primeiro e depois volte para revisar."
+msgid "4w9Y_P"
+msgstr "A revisão será liberada depois que as aulas anteriores deste capítulo forem criadas."
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgid "9AOq2-"

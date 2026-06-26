@@ -295,7 +295,7 @@ test.describe("Continue Lesson Link", () => {
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await expect(page.getByText(/lesson not available/iu)).toBeVisible();
+    await expect(page.getByText(/create this lesson/iu)).toBeVisible();
 
     await expect(page.getByRole("link", { name: /create lesson/iu })).toHaveAttribute(
       "href",

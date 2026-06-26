@@ -284,12 +284,12 @@ msgid "_lCW0j"
 msgstr "{percentage} correct answers"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
-msgid "9SgWiD"
-msgstr "Chapter not available"
+msgid "QhvU1f"
+msgstr "Create this chapter"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
-msgid "ml8Duy"
-msgstr "This chapter hasn't been created yet."
+msgid "YQGe0H"
+msgstr "This chapter is part of the course, but it hasn't been created yet. Create it to see all of its lessons."
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
 msgid "3IOFp2"
@@ -1182,12 +1182,12 @@ msgid "l1XTI5"
 msgstr "Follow us"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
-msgid "A_VPtF"
-msgstr "Lesson not available"
+msgid "rCpmYD"
+msgstr "Create this lesson"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
-msgid "bHscXj"
-msgstr "This lesson hasn't been created yet."
+msgid "AtnLyn"
+msgstr "This lesson is part of the course, but it hasn't been created yet. Create it to start learning."
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
@@ -1201,24 +1201,24 @@ msgid "_N8rYN"
 msgstr "Back to chapter"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
-msgid "3pyC1G"
-msgstr "This lesson requires an active subscription."
+msgid "rPcS-X"
+msgstr "Free accounts include the first 10 lessons in each course. Upgrade for unlimited access to every lesson in every course."
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
-msgid "xu3uCX"
-msgstr "Upgrade to keep learning"
+msgid "ZnMcrz"
+msgstr "Unlock the rest of this course"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
-msgid "mA7vCW"
-msgstr "Review locked"
+msgid "A_uNk-"
+msgstr "Create lessons before reviewing"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgid "Qy4EsI"
 msgstr "Nothing to review yet"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
-msgid "lOdIcU"
-msgstr "Create earlier lessons first, then come back to review."
+msgid "4w9Y_P"
+msgstr "Review unlocks after the earlier lessons in this chapter have been created."
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgid "9AOq2-"
