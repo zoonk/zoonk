@@ -5,7 +5,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { PauseIcon, Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { useSharedPlayerAudio } from "../player-audio-context";
+import { PLAYER_AUDIO_KEYBOARD_SHORTCUT, useSharedPlayerAudio } from "../player-audio-context";
 import { useWordAudio } from "../use-word-audio";
 
 type PlayAudioButtonVariant = "filled" | "outline" | "text";
@@ -26,7 +26,11 @@ function usePlayAudioButtonState({ audioUrl, preload }: { audioUrl: string; prel
   });
 
   if (sharedAudio) {
-    return { handleClick: sharedAudio.toggle, isPlaying: sharedAudio.isPlaying };
+    return {
+      handleClick: sharedAudio.toggle,
+      isPlaying: sharedAudio.isPlaying,
+      keyboardShortcut: PLAYER_AUDIO_KEYBOARD_SHORTCUT,
+    };
   }
 
   return {
@@ -44,6 +48,7 @@ function usePlayAudioButtonState({ audioUrl, preload }: { audioUrl: string; prel
       });
     },
     isPlaying,
+    keyboardShortcut: undefined,
   };
 }
 
@@ -61,7 +66,11 @@ export function PlayAudioButton({
   variant?: PlayAudioButtonVariant;
 }) {
   const t = useExtracted();
-  const { handleClick, isPlaying } = usePlayAudioButtonState({ audioUrl, preload });
+
+  const { handleClick, isPlaying, keyboardShortcut } = usePlayAudioButtonState({
+    audioUrl,
+    preload,
+  });
 
   const Icon = isPlaying ? PauseIcon : Volume2Icon;
   const label = isPlaying ? t("Pause pronunciation") : t("Play pronunciation");
@@ -69,6 +78,7 @@ export function PlayAudioButton({
   if (variant === "text") {
     return (
       <button
+        aria-keyshortcuts={keyboardShortcut}
         className={cn(
           "text-muted-foreground hover:text-foreground flex items-center gap-1.5 text-sm transition-colors",
           className,
@@ -86,6 +96,7 @@ export function PlayAudioButton({
     return (
       <Button
         aria-label={label}
+        aria-keyshortcuts={keyboardShortcut}
         className={className}
         onClick={handleClick}
         size={size === "md" ? "icon-lg" : "icon"}
@@ -100,6 +111,7 @@ export function PlayAudioButton({
   return (
     <button
       aria-label={label}
+      aria-keyshortcuts={keyboardShortcut}
       className={cn(
         "bg-primary text-primary-foreground flex items-center justify-center rounded-full transition-all duration-150",
         "hover:bg-primary/90 focus-visible:ring-ring/50 outline-none hover:scale-105 focus-visible:ring-[3px] active:scale-95",

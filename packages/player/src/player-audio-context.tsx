@@ -1,7 +1,10 @@
 "use client";
 
+import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useWordAudio } from "./use-word-audio";
+
+export const PLAYER_AUDIO_KEYBOARD_SHORTCUT = "p";
 
 type PlayerAudioContextValue = {
   audioUrl: string | null;
@@ -85,6 +88,8 @@ export function PlayerAudioProvider({
     [pause, playingAudioUrl, startAudio],
   );
 
+  usePlayerAudioKeyboardShortcut({ audioUrl, onToggleAudio: toggleAudio });
+
   useEffect(() => {
     if (!audioUrl || !autoPlayAudio || hasHandledAudioPrompt || isPlaying) {
       return;
@@ -116,4 +121,29 @@ export function useSharedPlayerAudio(audioUrl: string) {
   }
 
   return { isPlaying: context.isPlaying, toggle: () => context.toggleAudio(audioUrl) };
+}
+
+/**
+ * Connects the prompt-audio keyboard shortcut to the provider-owned audio
+ * controller. Keeping this as a hook inside PlayerAudioProvider makes the
+ * shortcut part of the same state owner as desktop and mobile play buttons.
+ */
+function usePlayerAudioKeyboardShortcut({
+  audioUrl,
+  onToggleAudio,
+}: {
+  audioUrl: string | null;
+  onToggleAudio: (audioUrl: string) => void;
+}) {
+  useKeyboardCallback(
+    PLAYER_AUDIO_KEYBOARD_SHORTCUT,
+    () => {
+      if (!audioUrl) {
+        return false;
+      }
+
+      onToggleAudio(audioUrl);
+    },
+    { ignoreEditable: true, mode: "none" },
+  );
 }

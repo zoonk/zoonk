@@ -95,6 +95,55 @@ describe("player browser integration: vocabulary", () => {
       .not.toBeInTheDocument();
   });
 
+  it("plays vocabulary audio from the P keyboard shortcut", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        kind: "vocabulary",
+        steps: [
+          buildSerializedStep({
+            content: {},
+            id: "vocab-shortcut-1",
+            kind: "vocabulary",
+            word: buildSerializedWord({
+              audioUrl: "https://example.com/hola.mp3",
+              id: "word-shortcut-1",
+              translation: "Hello",
+              word: "Hola",
+            }),
+          }),
+          buildSerializedStep({
+            content: {},
+            id: "vocab-shortcut-2",
+            kind: "vocabulary",
+            position: 1,
+            word: buildSerializedWord({
+              audioUrl: "https://example.com/adios.mp3",
+              id: "word-shortcut-2",
+              translation: "Goodbye",
+              word: "Adios",
+            }),
+          }),
+        ],
+      }),
+      navigation: buildNavigation({ nextLessonHref: null }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    const currentCard = page.getByRole("region", { name: /vocabulary: Hola/iu });
+
+    fireEvent.keyDown(globalThis.window, { key: "p" });
+
+    await expect
+      .element(page.getByRole("button", { name: /pause pronunciation/iu }))
+      .toBeInTheDocument();
+
+    await expect.element(currentCard).toBeInTheDocument();
+
+    await expect
+      .element(page.getByRole("region", { name: /vocabulary: Adios/iu }))
+      .not.toBeInTheDocument();
+  });
+
   it("automatically plays the next vocabulary prompt after audio is started", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({

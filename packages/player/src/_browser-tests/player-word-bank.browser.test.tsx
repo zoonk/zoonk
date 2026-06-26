@@ -1,3 +1,4 @@
+import { fireEvent } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { runInMobilePlayerViewport } from "../_test-utils/browser-viewport";
@@ -168,6 +169,39 @@ describe("player browser integration: word bank steps", () => {
 
       await expect.element(page.getByText("100%")).toBeInTheDocument();
     });
+  });
+
+  it("plays listening prompt audio from the P keyboard shortcut", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        kind: "listening",
+        steps: [
+          buildSerializedStep({
+            content: {},
+            kind: "listening",
+            sentence: buildSerializedSentence({
+              audioUrl: "https://example.com/audio.mp3",
+              sentence: "Hola mundo",
+              translation: "Hello world",
+            }),
+            wordBankOptions: [
+              buildWordBankOption({ word: "Hello" }),
+              buildWordBankOption({ word: "world" }),
+              buildWordBankOption({ word: "bird" }),
+            ],
+          }),
+        ],
+      }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    fireEvent.keyDown(globalThis.window, { key: "p" });
+
+    await expect
+      .element(page.getByRole("button", { name: /pause pronunciation/iu }))
+      .toBeInTheDocument();
+
+    await expect.element(page.getByRole("button", { name: /check/iu })).toBeDisabled();
   });
 
   it("lets learners remove fill-blank words before checking and shows the correct-answer hint", async () => {
