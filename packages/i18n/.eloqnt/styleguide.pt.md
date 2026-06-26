@@ -3,6 +3,9 @@
 - Use an informal, approachable register. Address the user as "você".
 - Use Brazilian Portuguese (pt-BR) spelling and grammar.
 - Use Zoonk as masculine (o Zoonk, no Zoonk, do Zoonk, etc).
+- Translations should be like regular people speak in everyday language. For example:
+  - "You can create it" = "Você pode criar ela/ele" (not "Você pode criá-la/o")
+  - using "-la" or "-lo" is too formal and not how people speak in Brazil.
 
 ## Glossary
 
