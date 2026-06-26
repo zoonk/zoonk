@@ -1,4 +1,5 @@
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { GenerationExitLink } from "@/components/generation/generation-exit-link";
+import { GenerationShortcutLink } from "@/components/generation/generation-shortcut-link";
 import {
   Empty,
   EmptyContent,
@@ -9,19 +10,24 @@ import {
 } from "@zoonk/ui/components/empty";
 import { SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
-import Link from "next/link";
 
 /**
  * AI chapter pages can exist before their lesson rows are generated. Showing a
  * normal page-level empty state keeps the chapter URL stable while making the
  * generation step an explicit learner action.
  */
-export async function ChapterNotGenerated({ chapterId }: { chapterId: string }) {
+export async function ChapterNotGenerated({
+  chapterId,
+  courseHref,
+}: {
+  chapterId: string;
+  courseHref: `/b/${string}/c/${string}`;
+}) {
   const t = await getExtracted();
 
   return (
     <Empty className="min-h-80 border-0">
-      <EmptyHeader>
+      <EmptyHeader align="start">
         <EmptyMedia variant="icon">
           <SparklesIcon />
         </EmptyMedia>
@@ -35,16 +41,21 @@ export async function ChapterNotGenerated({ chapterId }: { chapterId: string }) 
         </EmptyDescription>
       </EmptyHeader>
 
-      <EmptyContent>
-        <Link
-          className={buttonVariants({ variant: "outline" })}
+      <EmptyContent align="stretch">
+        <GenerationShortcutLink
           href={`/generate/ch/${chapterId}`}
           prefetch={false}
           rel="nofollow"
+          shortcut="N"
+          variant="outline"
         >
           <SparklesIcon data-icon="inline-start" />
           {t("Create chapter")}
-        </Link>
+        </GenerationShortcutLink>
+
+        <GenerationExitLink href={courseHref} shortcut="Esc">
+          {t("Back to course")}
+        </GenerationExitLink>
       </EmptyContent>
     </Empty>
   );

@@ -7,19 +7,20 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "@zoonk/ui/components/input-otp";
+import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 
 export function OTP({ children, className }: React.ComponentProps<"div">) {
   return (
-    <div className={cn("flex w-full flex-col items-center gap-6 text-center", className)}>
+    <div className={cn("flex w-full flex-col items-start gap-6 p-4 text-left", className)}>
       {children}
     </div>
   );
 }
 
 export function OTPHeader({ children, className }: React.ComponentProps<"header">) {
-  return <header className={cn("flex flex-col items-center gap-2", className)}>{children}</header>;
+  return <header className={cn("flex flex-col items-start gap-2", className)}>{children}</header>;
 }
 
 export function OTPTitle({ children, className }: React.ComponentProps<"h1">) {
@@ -27,14 +28,20 @@ export function OTPTitle({ children, className }: React.ComponentProps<"h1">) {
 }
 
 export function OTPDescription({ children, className }: React.ComponentProps<"p">) {
-  return <p className={cn("text-center text-sm text-balance", className)}>{children}</p>;
+  return <p className={cn("text-sm text-balance", className)}>{children}</p>;
 }
 
 export function OTPForm({ children, className, ...props }: React.ComponentProps<"form">) {
   return (
-    <form className={cn("flex flex-col items-center gap-4", className)} {...props}>
+    <form className={cn("flex w-full flex-col items-start gap-4", className)} {...props}>
       {children}
     </form>
+  );
+}
+
+export function OTPActions({ children, className }: React.ComponentProps<"div">) {
+  return (
+    <div className={cn("flex w-full flex-col items-stretch gap-3", className)}>{children}</div>
   );
 }
 
@@ -70,13 +77,24 @@ export function OTPError({
 
 export function OTPSubmit({
   children,
+  className,
   isLoading,
+  disabled,
   ...props
 }: React.ComponentProps<"button"> & { isLoading?: boolean }) {
+  const isDisabled = isLoading || disabled;
+
   return (
-    <Button disabled={isLoading} type="submit" {...props}>
+    <Button
+      aria-keyshortcuts="Enter"
+      className={cn("w-full", className)}
+      disabled={isDisabled}
+      type="submit"
+      {...props}
+    >
       {isLoading && <Spinner />}
       {children}
+      <ShortcutKbd tone="inverse">Enter</ShortcutKbd>
     </Button>
   );
 }

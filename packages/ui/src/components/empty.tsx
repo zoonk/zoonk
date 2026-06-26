@@ -14,10 +14,19 @@ function Empty({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function EmptyHeader({ className, ...props }: React.ComponentProps<"div">) {
+const emptyHeaderVariants = cva("flex max-w-sm flex-col gap-2", {
+  defaultVariants: { align: "center" },
+  variants: { align: { center: "items-center", start: "items-start text-left" } },
+});
+
+function EmptyHeader({
+  align,
+  className,
+  ...props
+}: React.ComponentProps<"div"> & VariantProps<typeof emptyHeaderVariants>) {
   return (
     <div
-      className={cn("flex max-w-sm flex-col items-center gap-2", className)}
+      className={emptyHeaderVariants({ align, className })}
       data-slot="empty-header"
       {...props}
     />
@@ -75,13 +84,22 @@ function EmptyDescription({ className, ...props }: React.ComponentProps<"p">) {
   );
 }
 
-function EmptyContent({ className, ...props }: React.ComponentProps<"div">) {
+const emptyContentVariants = cva(
+  "flex w-full max-w-sm min-w-0 flex-col gap-4 text-sm text-balance",
+  {
+    defaultVariants: { align: "center" },
+    variants: { align: { center: "items-center", stretch: "items-stretch" } },
+  },
+);
+
+function EmptyContent({
+  align,
+  className,
+  ...props
+}: React.ComponentProps<"div"> & VariantProps<typeof emptyContentVariants>) {
   return (
     <div
-      className={cn(
-        "flex w-full max-w-sm min-w-0 flex-col items-center gap-4 text-sm text-balance",
-        className,
-      )}
+      className={emptyContentVariants({ align, className })}
       data-slot="empty-content"
       {...props}
     />

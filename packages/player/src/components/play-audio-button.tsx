@@ -1,11 +1,13 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PauseIcon, Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { PLAYER_AUDIO_KEYBOARD_SHORTCUT, useSharedPlayerAudio } from "../player-audio-context";
+import { useSharedPlayerAudio } from "../player-audio-context";
+import { PLAYER_AUDIO_KEYBOARD_SHORTCUT } from "../player-shortcuts";
 import { useWordAudio } from "../use-word-audio";
 
 type PlayAudioButtonVariant = "filled" | "outline" | "text";
@@ -97,13 +99,17 @@ export function PlayAudioButton({
       <Button
         aria-label={label}
         aria-keyshortcuts={keyboardShortcut}
-        className={className}
+        className={cn("relative", className)}
         onClick={handleClick}
         size={size === "md" ? "icon-lg" : "icon"}
         type="button"
         variant="outline"
       >
         <Icon aria-hidden className={size === "md" ? "size-5" : "size-4"} />
+
+        {keyboardShortcut && (
+          <ShortcutKbd variant="badge">{keyboardShortcut.toUpperCase()}</ShortcutKbd>
+        )}
       </Button>
     );
   }
@@ -113,7 +119,7 @@ export function PlayAudioButton({
       aria-label={label}
       aria-keyshortcuts={keyboardShortcut}
       className={cn(
-        "bg-primary text-primary-foreground flex items-center justify-center rounded-full transition-all duration-150",
+        "bg-primary text-primary-foreground relative flex items-center justify-center rounded-full transition-all duration-150",
         "hover:bg-primary/90 focus-visible:ring-ring/50 outline-none hover:scale-105 focus-visible:ring-[3px] active:scale-95",
         size === "md" ? "size-14" : "size-12",
         className,
@@ -122,6 +128,10 @@ export function PlayAudioButton({
       type="button"
     >
       <Icon className={size === "md" ? "size-6" : "size-5"} />
+
+      {keyboardShortcut && (
+        <ShortcutKbd variant="badge">{keyboardShortcut.toUpperCase()}</ShortcutKbd>
+      )}
     </button>
   );
 }

@@ -2,9 +2,8 @@
 
 import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { PLAYER_AUDIO_KEYBOARD_SHORTCUT } from "./player-shortcuts";
 import { useWordAudio } from "./use-word-audio";
-
-export const PLAYER_AUDIO_KEYBOARD_SHORTCUT = "p";
 
 type PlayerAudioContextValue = {
   audioUrl: string | null;

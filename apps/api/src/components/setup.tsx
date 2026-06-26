@@ -8,7 +8,7 @@ export function Setup({ children, className }: React.ComponentProps<"div">) {
 }
 
 export function SetupHeader({ children, className }: React.ComponentProps<"header">) {
-  return <header className={cn("flex flex-col items-center gap-2", className)}>{children}</header>;
+  return <header className={cn("flex flex-col items-start gap-2", className)}>{children}</header>;
 }
 
 export function SetupTitle({ children, className }: React.ComponentProps<"h1">) {
@@ -16,7 +16,7 @@ export function SetupTitle({ children, className }: React.ComponentProps<"h1">) 
 }
 
 export function SetupDescription({ children, className }: React.ComponentProps<"p">) {
-  return <p className={cn("text-center text-sm text-balance", className)}>{children}</p>;
+  return <p className={cn("text-sm text-pretty", className)}>{children}</p>;
 }
 
 export function SetupForm({ children, className, ...props }: React.ComponentProps<"form">) {

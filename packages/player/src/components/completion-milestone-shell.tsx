@@ -106,7 +106,7 @@ export function CompletionMilestoneContinueButton({
   onContinue: () => void;
 }) {
   return (
-    <Button className="w-full lg:justify-between" onClick={onContinue} size="lg">
+    <Button aria-keyshortcuts="Enter" className="w-full" onClick={onContinue} size="lg">
       {children}
       <PrimaryKbd>Enter</PrimaryKbd>
     </Button>

@@ -1,4 +1,4 @@
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { GenerationShortcutLink } from "@/components/generation/generation-shortcut-link";
 import {
   Empty,
   EmptyContent,
@@ -7,11 +7,9 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@zoonk/ui/components/empty";
-import { cn } from "@zoonk/ui/lib/utils";
 import { SparklesIcon } from "lucide-react";
 import { type Route } from "next";
 import { getExtracted } from "next-intl/server";
-import Link from "next/link";
 
 export async function UpgradeCTA<Href extends string>({
   backHref,
@@ -28,7 +26,7 @@ export async function UpgradeCTA<Href extends string>({
 
   return (
     <Empty className="border-0">
-      <EmptyHeader>
+      <EmptyHeader align="start">
         <EmptyMedia variant="icon">
           <SparklesIcon />
         </EmptyMedia>
@@ -40,18 +38,14 @@ export async function UpgradeCTA<Href extends string>({
         </EmptyDescription>
       </EmptyHeader>
 
-      <EmptyContent>
-        <Link
-          className={cn(buttonVariants({ variant: "outline" }), "w-max")}
-          href={backHref}
-          prefetch
-        >
+      <EmptyContent align="stretch">
+        <GenerationShortcutLink href={backHref} prefetch shortcut="Esc" variant="outline">
           {backLabel}
-        </Link>
+        </GenerationShortcutLink>
 
-        <Link className={cn(buttonVariants(), "w-max")} href="/subscription" prefetch>
+        <GenerationShortcutLink href="/subscription" prefetch shortcut="Enter">
           {t("Upgrade")}
-        </Link>
+        </GenerationShortcutLink>
       </EmptyContent>
     </Empty>
   );

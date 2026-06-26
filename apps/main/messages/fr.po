@@ -295,6 +295,11 @@ msgstr "Ce chapitre fait partie du cours, mais il n’a pas encore été créé.
 msgid "3IOFp2"
 msgstr "Créer le chapitre"
 
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
+#: src/app/generate/ch/[id]/generate-chapter-content.tsx
+msgid "qrEiLa"
+msgstr "Retour au cours"
+
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
 msgid "Ap-oRa"
 msgstr "Impossible d'appliquer les filtres de leçons. Réessaie."
@@ -1223,10 +1228,6 @@ msgstr "La révision se débloque après la création des leçons précédentes 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgid "9AOq2-"
 msgstr "Aucune question d'entraînement à réviser pour l'instant."
-
-#: src/app/generate/ch/[id]/generate-chapter-content.tsx
-msgid "qrEiLa"
-msgstr "Retour au cours"
 
 #: src/app/generate/ch/[id]/generation-client.tsx
 msgid "txNTbP"

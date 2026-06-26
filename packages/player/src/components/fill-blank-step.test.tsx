@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { type ReactNode, StrictMode, useCallback, useState } from "react";
 import { type Mock, afterEach, describe, expect, it, vi } from "vitest";
 import { buildWordBankOption } from "../_test-utils/player-test-data";
@@ -102,13 +102,8 @@ describe("fill in the blank step", () => {
     );
 
     const wordBank = screen.getByRole("group", { name: /word bank/iu });
-    const buttons = [...wordBank.querySelectorAll("button")];
-    const alphaButton = buttons.find((button) => button.textContent === "alpha");
-    const betaButton = buttons.find((button) => button.textContent === "beta");
-
-    if (!alphaButton || !betaButton) {
-      throw new Error("Expected alpha and beta buttons to render.");
-    }
+    const alphaButton = within(wordBank).getByRole("button", { name: "alpha" });
+    const betaButton = within(wordBank).getByRole("button", { name: "beta" });
 
     fireEvent.click(alphaButton);
     fireEvent.click(betaButton);
@@ -226,10 +221,8 @@ describe("fill in the blank step", () => {
     );
 
     const wordBank = screen.getByRole("group", { name: /word bank/iu });
-    const buttons = [...wordBank.querySelectorAll("button")];
-
-    expect(buttons).toHaveLength(2);
-    expect(buttons.some((btn) => btn.textContent === "Guten Morgen")).toBeTruthy();
-    expect(buttons.some((btn) => btn.textContent === "Guten Tag")).toBeTruthy();
+    expect(within(wordBank).getAllByRole("button")).toHaveLength(2);
+    expect(within(wordBank).getByRole("button", { name: "Guten Morgen" })).toBeTruthy();
+    expect(within(wordBank).getByRole("button", { name: "Guten Tag" })).toBeTruthy();
   });
 });

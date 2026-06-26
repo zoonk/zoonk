@@ -21,6 +21,7 @@ export function OptionCard({
   return (
     <button
       aria-checked={isSelected}
+      aria-keyshortcuts={String(index + 1)}
       className={cn(
         "focus-visible:border-ring focus-visible:ring-ring/50 flex w-full items-center gap-3 rounded-xl border px-4 py-3.5 text-left transition-all duration-150 outline-none focus-visible:ring-[3px]",
         !disabled && !isSelected && "border-border hover:bg-accent",

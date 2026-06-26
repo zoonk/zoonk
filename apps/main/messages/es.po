@@ -295,6 +295,11 @@ msgstr "Este capítulo forma parte del curso, pero todavía no se ha creado. Cr�
 msgid "3IOFp2"
 msgstr "Crear capítulo"
 
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
+#: src/app/generate/ch/[id]/generate-chapter-content.tsx
+msgid "qrEiLa"
+msgstr "Volver al curso"
+
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
 msgid "Ap-oRa"
 msgstr "No se pudieron aplicar los filtros de lecciones. Inténtalo de nuevo."
@@ -1223,10 +1228,6 @@ msgstr "La revisión se desbloquea después de que se hayan creado las lecciones
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgid "9AOq2-"
 msgstr "Aún no hay preguntas de práctica para repasar."
-
-#: src/app/generate/ch/[id]/generate-chapter-content.tsx
-msgid "qrEiLa"
-msgstr "Volver al curso"
 
 #: src/app/generate/ch/[id]/generation-client.tsx
 msgid "txNTbP"

@@ -7,6 +7,7 @@ import { chapterSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { chapterWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { type Page, expect, test } from "./fixtures";
+import { pressShortcutAndWaitForUrl } from "./keyboard-shortcuts";
 
 async function createTestLesson(options?: {
   chapterPosition?: number;
@@ -549,12 +550,15 @@ test.describe("Lesson Player Page", () => {
   test("authenticated users without subscription see upgrade CTA from lesson eleven", async ({
     authenticatedPage,
   }) => {
-    const { chapter, course, lesson } = await createTestLesson({
+    const { chapter, course, lesson, lessonTitle, uniqueId } = await createTestLesson({
       generationStatus: "completed",
       lessonPosition: 10,
     });
 
-    await authenticatedPage.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+    const lessonHref = `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`;
+    const chapterHref = `/b/ai/c/${course.slug}/ch/${chapter.slug}`;
+
+    await authenticatedPage.goto(lessonHref);
 
     await expect(authenticatedPage.getByText(/unlock the rest of this course/iu)).toBeVisible();
 
@@ -562,7 +566,39 @@ test.describe("Lesson Player Page", () => {
       authenticatedPage.getByText(/free accounts include the first 10 lessons/iu),
     ).toBeVisible();
 
+    await expect(authenticatedPage.getByRole("heading", { name: lessonTitle })).not.toBeVisible();
+
+    await expect(
+      authenticatedPage.getByText(`E2E lesson description ${uniqueId}`),
+    ).not.toBeVisible();
+
+    const backLink = authenticatedPage.getByRole("link", { name: /back to chapter/iu });
+    const upgradeLink = authenticatedPage.getByRole("link", { name: /upgrade/iu });
+
+    await expect(backLink).toBeVisible();
+    await expect(backLink.getByText(/^Esc$/u)).toBeVisible();
+    await expect(backLink).toHaveAttribute("aria-keyshortcuts", "Escape");
+    await expect(backLink).toHaveAttribute("href", chapterHref);
+
+    await expect(upgradeLink).toBeVisible();
+    await expect(upgradeLink.getByText(/^Enter$/u)).toBeVisible();
+    await expect(upgradeLink).toHaveAttribute("aria-keyshortcuts", "Enter");
+    await expect(upgradeLink).toHaveAttribute("href", "/subscription");
+
+    await pressShortcutAndWaitForUrl({
+      expectedUrl: chapterHref,
+      key: "Escape",
+      page: authenticatedPage,
+    });
+
+    await authenticatedPage.goto(lessonHref);
     await expect(authenticatedPage.getByRole("link", { name: /upgrade/iu })).toBeVisible();
+
+    await pressShortcutAndWaitForUrl({
+      expectedUrl: "/subscription",
+      key: "Enter",
+      page: authenticatedPage,
+    });
   });
 
   test("authenticated users without subscription see upgrade CTA for later chapters", async ({
@@ -607,13 +643,32 @@ test.describe("Lesson Player Page", () => {
     const generateLink = page.getByRole("link", { name: /create lesson/iu });
 
     await expect(generateLink).toBeVisible();
+    await expect(generateLink.getByText(/^N$/u)).toBeVisible();
+    await expect(generateLink).toHaveAttribute("aria-keyshortcuts", "n");
     await expect(generateLink).toHaveAttribute("href", new RegExp(`/generate/l/${lesson.id}`, "u"));
     await expect(generateLink).toHaveAttribute("rel", "nofollow");
 
     const chapterLink = page.getByRole("link", { name: /back to chapter/iu });
     await expect(chapterLink).toBeVisible();
+    await expect(chapterLink.getByText(/^Esc$/u)).toBeVisible();
+    await expect(chapterLink).toHaveAttribute("aria-keyshortcuts", "Escape");
 
     await expect(chapterLink).toHaveAttribute("href", `/b/ai/c/${course.slug}/ch/${chapter.slug}`);
+
+    await pressShortcutAndWaitForUrl({
+      expectedUrl: new RegExp(`/generate/l/${lesson.id}`, "u"),
+      key: "n",
+      page,
+    });
+
+    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+    await expect(page.getByRole("link", { name: /back to chapter/iu })).toBeVisible();
+
+    await pressShortcutAndWaitForUrl({
+      expectedUrl: `/b/ai/c/${course.slug}/ch/${chapter.slug}`,
+      key: "Escape",
+      page,
+    });
   });
 
   test("pending practice lessons link to their own generation page", async ({

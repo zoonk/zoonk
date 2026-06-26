@@ -39,7 +39,9 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
             generationRunId={chapter.generationRunId}
             initialStatus={initialStatus}
           />
-          <GenerationExitLink href={backHref}>{backLabel}</GenerationExitLink>
+          <GenerationExitLink href={backHref} shortcut="Esc">
+            {backLabel}
+          </GenerationExitLink>
         </SubscriptionGate>
       </ContainerBody>
     </Container>

@@ -1,6 +1,7 @@
 "use client";
 
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -25,10 +26,12 @@ export function PlayerCloseLink({ className, href }: { className?: string; href:
 
   return (
     <PlayerLink
-      className={cn(buttonVariants({ size: "icon", variant: "ghost" }), className)}
+      aria-keyshortcuts="Escape"
+      className={cn("relative", buttonVariants({ size: "icon", variant: "ghost" }), className)}
       href={href}
     >
       <XIcon />
+      <ShortcutKbd variant="badge">Esc</ShortcutKbd>
       <span className="sr-only">{t("Close")}</span>
     </PlayerLink>
   );

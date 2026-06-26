@@ -1,6 +1,7 @@
 import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
+import { runInMobilePlayerViewport } from "../_test-utils/browser-viewport";
 import { buildInlineImageUrl } from "../_test-utils/build-inline-image-url";
 import { buildSerializedLesson, buildSerializedStep } from "../_test-utils/player-test-data";
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
@@ -22,6 +23,64 @@ function expectImageToFillPlayerStage(image: HTMLElement) {
 }
 
 describe("player browser integration: practice lessons", () => {
+  it("shows only the bottom-bar check button on mobile practice questions", async () => {
+    await runInMobilePlayerViewport(async () => {
+      renderPlayer({
+        lesson: buildSerializedLesson({
+          kind: "practice",
+          steps: [
+            buildSerializedStep({
+              content: {
+                context: "Maya says the mismatch only appears on orders with manual discounts.",
+                image: {
+                  prompt:
+                    "A refund dashboard filtered to discounted orders with one outlier row highlighted",
+                  url: buildInlineImageUrl({
+                    label:
+                      "A refund dashboard filtered to discounted orders with one outlier row highlighted",
+                  }),
+                },
+                options: [
+                  {
+                    feedback: "Yes. Start with the shared pattern before blaming a random order.",
+                    id: "check-discounted-orders",
+                    isCorrect: true,
+                    text: "Check the discounted orders first",
+                  },
+                  {
+                    feedback: "That skips the one pattern we already know matters.",
+                    id: "inspect-latest-order",
+                    isCorrect: false,
+                    text: "Ignore discounts and inspect the latest order",
+                  },
+                ],
+                question: "What should I check first?",
+              },
+              id: "practice-question",
+              kind: "multipleChoice",
+            }),
+          ],
+        }),
+        navigation: buildNavigation({ nextLessonHref: null }),
+        viewer: buildAuthenticatedViewer(),
+      });
+
+      await page.getByRole("radio", { name: "Check the discounted orders first" }).click();
+
+      const visibleCheckButtons = screen.getAllByRole("button", { name: /check/iu });
+
+      expect(visibleCheckButtons).toHaveLength(1);
+
+      await expect
+        .element(
+          page
+            .getByRole("toolbar", { name: /lesson controls/iu })
+            .getByRole("button", { name: /check/iu }),
+        )
+        .toBeInTheDocument();
+    });
+  });
+
   it("renders a leading static scenario step and still completes with question scoring", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({

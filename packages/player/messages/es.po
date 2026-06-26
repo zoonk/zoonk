@@ -41,7 +41,7 @@ msgid "7R_rOB"
 msgstr "Toca las palabras para formar tu respuesta"
 
 #: src/components/arrange-words.tsx
-#: src/components/fill-blank-step.tsx
+#: src/components/fill-blank-word-bank.tsx
 msgid "e7WNdK"
 msgstr "Banco de palabras"
 

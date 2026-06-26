@@ -1,4 +1,24 @@
 import { cn } from "@zoonk/ui/lib/utils";
+import { type VariantProps, cva } from "class-variance-authority";
+
+const shortcutKbdVariants = cva("", {
+  defaultVariants: { tone: "default", variant: "inline" },
+  variants: {
+    tone: { default: "", inverse: "bg-primary-foreground/15 text-primary-foreground" },
+    variant: {
+      badge:
+        "bg-background text-muted-foreground ring-border/60 absolute -top-1 -right-1 hidden h-4 min-w-4 rounded-full px-1 text-[9px] leading-none shadow-sm ring-1 lg:pointer-fine:inline-flex",
+      inline: "hidden opacity-70 lg:pointer-fine:inline-flex",
+    },
+  },
+});
+
+type ShortcutKbdProps = { children: React.ReactNode; className?: string } & VariantProps<
+  typeof shortcutKbdVariants
+>;
+
+type ShortcutKbdVariant = NonNullable<ShortcutKbdProps["variant"]>;
+type ShortcutKbdTone = NonNullable<ShortcutKbdProps["tone"]>;
 
 function Kbd({ className, ...props }: React.ComponentProps<"kbd">) {
   return (
@@ -13,6 +33,22 @@ function Kbd({ className, ...props }: React.ComponentProps<"kbd">) {
   );
 }
 
+/**
+ * Shows keyboard shortcut hints only when keyboard input is useful. The host
+ * control owns `aria-keyshortcuts`; this component is visual-only.
+ */
+function ShortcutKbd({ children, className, tone, variant }: ShortcutKbdProps) {
+  return (
+    <Kbd
+      aria-hidden="true"
+      className={shortcutKbdVariants({ className, tone, variant })}
+      data-slot={variant === "badge" ? "shortcut-kbd-badge" : "shortcut-kbd"}
+    >
+      {children}
+    </Kbd>
+  );
+}
+
 function KbdGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <kbd
@@ -23,4 +59,4 @@ function KbdGroup({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-export { Kbd, KbdGroup };
+export { Kbd, KbdGroup, ShortcutKbd, type ShortcutKbdTone, type ShortcutKbdVariant };

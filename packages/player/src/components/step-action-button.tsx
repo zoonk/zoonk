@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { usePlayerRuntime } from "../player-context";
@@ -40,11 +41,17 @@ export function StepActionButton({
 
   const buttonProps = {
     ...props,
+    "aria-keyshortcuts": "Enter",
     className: cn("w-full", className),
     disabled: model.disabled,
     onClick: actionByRun[model.run],
     size: "lg" as const,
   };
 
-  return <Button {...buttonProps}>{labelByButton[model.button]}</Button>;
+  return (
+    <Button {...buttonProps}>
+      {labelByButton[model.button]}
+      <ShortcutKbd tone="inverse">Enter</ShortcutKbd>
+    </Button>
+  );
 }

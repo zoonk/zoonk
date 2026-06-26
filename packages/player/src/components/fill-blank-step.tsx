@@ -1,15 +1,19 @@
 "use client";
 
-import {
-  type SerializedStep,
-  type WordBankOption,
-} from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
+import {
+  type BlankState,
+  type WordPlacement,
+  getBlankWords,
+  getCompletedUserAnswers,
+} from "./_utils/fill-blank-state";
 import { getTemplateRomanization } from "./_utils/template-romanization";
+import { FillBlankWordBank } from "./fill-blank-word-bank";
 import { InlineFeedback } from "./inline-feedback";
 import { QuestionText } from "./question-text";
 import { RomanizationText } from "./romanization-text";
@@ -119,82 +123,6 @@ function TemplateText({
   );
 }
 
-function WordTile({
-  isUsed,
-  onPlace,
-  option,
-}: {
-  isUsed: boolean;
-  onPlace: () => void;
-  option: WordBankOption;
-}) {
-  return (
-    <button
-      aria-disabled={isUsed}
-      className={cn(
-        "border-border flex min-h-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 transition-all duration-150",
-        isUsed
-          ? "pointer-events-none opacity-50"
-          : "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]",
-      )}
-      onClick={onPlace}
-      tabIndex={isUsed ? -1 : 0}
-      type="button"
-    >
-      <span>{option.word}</span>
-
-      <RomanizationText>{option.romanization}</RomanizationText>
-    </button>
-  );
-}
-
-function WordBank({
-  blanks,
-  disabled,
-  onPlaceWord,
-  options,
-}: {
-  blanks: (string | null)[];
-  disabled: boolean;
-  onPlaceWord: (word: string) => void;
-  options: WordBankOption[];
-}) {
-  const t = useExtracted();
-  const usedWords = blanks.filter(Boolean);
-
-  return (
-    <div
-      aria-label={t("Word bank")}
-      className={cn("flex flex-wrap gap-2.5", disabled && "pointer-events-none opacity-50")}
-      role="group"
-    >
-      {options.map((option, index) => {
-        const usedCount = usedWords.filter((used) => used === option.word).length;
-
-        const totalCount = options
-          .slice(0, index + 1)
-          .filter((item) => item.word === option.word).length;
-
-        const isUsed = usedCount >= totalCount;
-
-        return (
-          <WordTile
-            isUsed={isUsed}
-            // oxlint-disable-next-line react/no-array-index-key -- Words can repeat in word bank, no unique ID
-            key={`${option.word}-${index}`}
-            onPlace={() => onPlaceWord(option.word)}
-            option={option}
-          />
-        );
-      })}
-    </div>
-  );
-}
-
-function isComplete(blanks: (string | null)[]): blanks is string[] {
-  return blanks.every((blank) => blank !== null);
-}
-
 export function FillBlankStep({
   onSelectAnswer,
   result,
@@ -222,16 +150,16 @@ export function FillBlankStep({
     });
   }, [content.romanizations, content.answers, content.template]);
 
-  const [blanks, setBlanks] = useState<(string | null)[]>(() => {
+  const [blanks, setBlanks] = useState<BlankState>(() => {
     if (result?.answer?.kind === "fillBlank") {
-      return result.answer.userAnswers;
+      return result.answer.userAnswers.map((word) => ({ sourceIndex: null, word }));
     }
 
     return Array.from({ length: blankCount }, () => null);
   });
 
   const handlePlaceWord = useCallback(
-    (word: string) => {
+    ({ option, sourceIndex }: WordPlacement) => {
       const firstEmptyIndex = blanks.indexOf(null);
 
       if (firstEmptyIndex === -1) {
@@ -239,11 +167,13 @@ export function FillBlankStep({
       }
 
       const next = [...blanks];
-      next[firstEmptyIndex] = word;
+      next[firstEmptyIndex] = { sourceIndex, word: option.word };
       setBlanks(next);
 
-      if (isComplete(next)) {
-        onSelectAnswer(step.id, { kind: "fillBlank", userAnswers: next });
+      const userAnswers = getCompletedUserAnswers(next);
+
+      if (userAnswers) {
+        onSelectAnswer(step.id, { kind: "fillBlank", userAnswers });
       }
     },
     [blanks, onSelectAnswer, step.id],
@@ -272,7 +202,7 @@ export function FillBlankStep({
 
       <TemplateText
         answers={content.answers}
-        blanks={blanks}
+        blanks={getBlankWords(blanks)}
         hasResult={hasResult}
         onRemoveWord={handleRemoveWord}
         template={content.template}
@@ -280,10 +210,11 @@ export function FillBlankStep({
 
       <RomanizationText>{templateRomanization}</RomanizationText>
 
-      <WordBank
+      <FillBlankWordBank
         blanks={blanks}
         disabled={hasResult}
         onPlaceWord={handlePlaceWord}
+        onRemoveWord={handleRemoveWord}
         options={step.fillBlankOptions}
       />
 

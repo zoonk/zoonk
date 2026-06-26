@@ -1,5 +1,5 @@
 import { GenerationExitLink } from "@/components/generation/generation-exit-link";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { GenerationShortcutLink } from "@/components/generation/generation-shortcut-link";
 import {
   Empty,
   EmptyContent,
@@ -11,7 +11,6 @@ import {
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
-import Link from "next/link";
 
 export async function LessonNotGenerated({
   brandSlug,
@@ -30,7 +29,7 @@ export async function LessonNotGenerated({
 
   return (
     <Empty className="border-0">
-      <EmptyHeader>
+      <EmptyHeader align="start">
         <EmptyMedia variant="icon">
           <SparklesIcon />
         </EmptyMedia>
@@ -44,19 +43,22 @@ export async function LessonNotGenerated({
         </EmptyDescription>
       </EmptyHeader>
 
-      <EmptyContent>
+      <EmptyContent align="stretch">
         {canGenerateLesson && generationLessonId && (
-          <Link
-            className={buttonVariants({ variant: "outline" })}
+          <GenerationShortcutLink
             href={`/generate/l/${generationLessonId}`}
             prefetch={false}
             rel="nofollow"
+            shortcut="N"
+            variant="outline"
           >
             <SparklesIcon data-icon="inline-start" />
             {t("Create lesson")}
-          </Link>
+          </GenerationShortcutLink>
         )}
-        <GenerationExitLink href={chapterHref}>{t("Back to chapter")}</GenerationExitLink>
+        <GenerationExitLink href={chapterHref} shortcut="Esc">
+          {t("Back to chapter")}
+        </GenerationExitLink>
       </EmptyContent>
     </Empty>
   );

@@ -1,7 +1,5 @@
 import { OTP, OTPDescription, OTPHeader, OTPTitle } from "@/components/otp";
-import { buttonVariants } from "@zoonk/ui/components/button";
 import { getExtracted } from "next-intl/server";
-import Link from "next/link";
 import { OTPForm } from "./otp-form";
 
 export default async function OTPPage({ searchParams }: PageProps<"/auth/otp">) {
@@ -19,13 +17,6 @@ export default async function OTPPage({ searchParams }: PageProps<"/auth/otp">) 
       </OTPHeader>
 
       <OTPForm email={String(email)} redirectTo={String(redirectTo)} />
-
-      <Link
-        className={buttonVariants({ variant: "outline" })}
-        href={{ pathname: "/auth/login", query: { redirectTo: String(redirectTo) } }}
-      >
-        {t("Change email")}
-      </Link>
     </OTP>
   );
 }

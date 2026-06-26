@@ -1,6 +1,8 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { ShortcutKbd } from "@zoonk/ui/components/kbd";
+import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type TouchEvent, useEffect, useRef } from "react";
@@ -52,13 +54,14 @@ function DesktopNavigationButton({
     <Button
       aria-label={ariaLabel}
       aria-keyshortcuts={ariaKeyshortcuts}
-      className={DESKTOP_NAVIGATION_CONTROL_CLASS}
+      className={cn("relative", DESKTOP_NAVIGATION_CONTROL_CLASS)}
       onClick={onClick}
       size="icon-lg"
       type="button"
       variant="outline"
     >
       {children}
+      <ShortcutKbd variant="badge">{ariaKeyshortcuts === "ArrowLeft" ? "←" : "→"}</ShortcutKbd>
     </Button>
   );
 }

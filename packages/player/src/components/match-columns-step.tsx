@@ -8,148 +8,54 @@ import { useExtracted } from "next-intl";
 import { Fragment, useCallback, useMemo, useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
 import { type SelectedAnswer } from "../player-reducer";
+import { MAX_NUMBER_KEY_SHORTCUT, getNumberKeyShortcut } from "../player-shortcuts";
+import { useOptionKeyboard } from "../use-option-keyboard";
+import {
+  type ItemVisualState,
+  type MatchAttempt,
+  type MatchItemData,
+  type MatchSelection,
+  type MatchSide,
+  buildLeftMatchItems,
+  buildMatchAttempt,
+  buildRightMatchItems,
+  getActiveKeyboardSide,
+  getItemClassName,
+  getItemVisualState,
+  getKeyboardItems,
+  isItemMatched,
+} from "./_utils/match-columns";
 import { stripWrappingQuotes } from "./_utils/strip-wrapping-quotes";
 import { QuestionText } from "./question-text";
+import { ResultKbd } from "./result-kbd";
 import { InteractiveStepLayout } from "./step-layouts";
-
-type Pair = { left: string; right: string };
-type ItemVisualState = "correct" | "idle" | "incorrectFlash" | "selected";
-type MatchSide = "left" | "right";
 
 const FLASH_DURATION = 800;
 
-type MatchItemData = { id: string; label: string; side: MatchSide };
-type MatchSelection = MatchItemData;
-type MatchAttempt = { leftId: string; pair: Pair; rightId: string };
-
-/**
- * Match-column content only stores display labels, and duplicate labels are valid authored content.
- * The player still needs one identity per visible button so solving one duplicate does not lock every
- * other button with the same text.
- */
-function buildLeftMatchItems(pairs: Pair[]): MatchItemData[] {
-  return pairs.map((pair, index) => ({ id: `left:${index}`, label: pair.left, side: "left" }));
-}
-
-/**
- * Right-side labels are already shuffled before they reach the component, so their rendered order is
- * the only stable identity available. That is enough because equal labels are interchangeable for
- * answer checking, but each visible button must still be selectable exactly once.
- */
-function buildRightMatchItems(labels: string[]): MatchItemData[] {
-  return labels.map((label, index) => ({ id: `right:${index}`, label, side: "right" }));
-}
-
-/**
- * Correct and flashing states belong to a clicked visual item, not every item with the same label.
- * This keeps duplicate labels independent while preserving the label-only answer contract.
- */
-function getAttemptItemId({ attempt, side }: { attempt: MatchAttempt; side: MatchSide }): string {
-  return side === "left" ? attempt.leftId : attempt.rightId;
-}
-
-/**
- * The answer contract still uses labels, so the pair sent to shared checking is built from the two
- * selected buttons while the local ids remember which rendered buttons should become locked.
- */
-function buildMatchAttempt({
-  current,
-  selected,
-}: {
-  current: MatchSelection;
-  selected: MatchSelection;
-}): MatchAttempt {
-  if (current.side === "left") {
-    return {
-      leftId: current.id,
-      pair: { left: current.label, right: selected.label },
-      rightId: selected.id,
-    };
-  }
-
-  return {
-    leftId: selected.id,
-    pair: { left: selected.label, right: current.label },
-    rightId: current.id,
-  };
-}
-
-/**
- * A visible button is matched when its local id was used in a successful pair. Labels are intentionally
- * ignored here because duplicate labels need independent state.
- */
-function isItemMatched({
-  correctMatches,
-  item,
-}: {
-  correctMatches: MatchAttempt[];
-  item: MatchItemData;
-}): boolean {
-  return correctMatches.some(
-    (match) => getAttemptItemId({ attempt: match, side: item.side }) === item.id,
-  );
-}
-
-function getItemVisualState({
-  correctMatches,
-  flashingMatch,
-  item,
-  selected,
-}: {
-  correctMatches: MatchAttempt[];
-  flashingMatch: MatchAttempt | null;
-  item: MatchItemData;
-  selected: MatchSelection | null;
-}): ItemVisualState {
-  if (isItemMatched({ correctMatches, item })) {
-    return "correct";
-  }
-
-  if (flashingMatch && getAttemptItemId({ attempt: flashingMatch, side: item.side }) === item.id) {
-    return "incorrectFlash";
-  }
-
-  if (selected && selected.id === item.id) {
-    return "selected";
-  }
-
-  return "idle";
-}
-
-function getItemClassName(state: ItemVisualState): string {
-  if (state === "correct") {
-    return "bg-success/5 border-transparent text-success opacity-75 pointer-events-none";
-  }
-
-  if (state === "incorrectFlash") {
-    return "border-destructive bg-destructive/5 animate-shake";
-  }
-
-  if (state === "selected") {
-    return "border-primary bg-primary/5";
-  }
-
-  return "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]";
-}
-
 function MatchItem({
+  isShortcutActive,
   label,
   onTap,
+  shortcut,
   state,
 }: {
+  isShortcutActive: boolean;
   label: string;
   onTap: () => void;
+  shortcut: string | null;
   state: ItemVisualState;
 }) {
   const isLocked = state === "correct" || state === "incorrectFlash";
   const displayLabel = stripWrappingQuotes(label);
+  const visibleShortcut = !isLocked && isShortcutActive ? shortcut : null;
 
   return (
     <button
       aria-label={displayLabel}
+      aria-keyshortcuts={visibleShortcut ?? undefined}
       aria-pressed={state === "selected"}
       className={cn(
-        "border-border flex min-h-11 items-center rounded-lg border px-2.5 py-2.5 text-left text-sm wrap-break-word transition-all duration-150 sm:px-4 sm:py-3.5 sm:text-base",
+        "border-border flex min-h-11 items-center gap-2 rounded-lg border px-2.5 py-2.5 text-left text-sm wrap-break-word transition-all duration-150 sm:px-4 sm:py-3.5 sm:text-base",
         getItemClassName(state),
       )}
       aria-disabled={isLocked || undefined}
@@ -157,12 +63,25 @@ function MatchItem({
       onClick={onTap}
       type="button"
     >
-      <span>{displayLabel}</span>
+      {shortcut && (
+        <ResultKbd
+          className={cn(
+            "hidden shrink-0 lg:pointer-fine:inline-flex",
+            !visibleShortcut && "invisible",
+          )}
+          isSelected={state === "selected"}
+        >
+          {shortcut}
+        </ResultKbd>
+      )}
+
+      <span className="min-w-0">{displayLabel}</span>
     </button>
   );
 }
 
 function MatchGrid({
+  activeKeyboardSide,
   correctMatches,
   flashingMatch,
   leftItems,
@@ -170,6 +89,7 @@ function MatchGrid({
   rightItems,
   selected,
 }: {
+  activeKeyboardSide: MatchSide;
   correctMatches: MatchAttempt[];
   flashingMatch: MatchAttempt | null;
   leftItems: MatchItemData[];
@@ -202,8 +122,21 @@ function MatchGrid({
 
         return (
           <Fragment key={left.id}>
-            <MatchItem label={left.label} onTap={() => onTap(left)} state={leftState} />
-            <MatchItem label={right.label} onTap={() => onTap(right)} state={rightState} />
+            <MatchItem
+              isShortcutActive={activeKeyboardSide === "left"}
+              label={left.label}
+              onTap={() => onTap(left)}
+              shortcut={getNumberKeyShortcut(index)}
+              state={leftState}
+            />
+
+            <MatchItem
+              isShortcutActive={activeKeyboardSide === "right"}
+              label={right.label}
+              onTap={() => onTap(right)}
+              shortcut={getNumberKeyShortcut(index)}
+              state={rightState}
+            />
           </Fragment>
         );
       })}
@@ -235,6 +168,9 @@ export function MatchColumnsStep({
   const [flashingMatch, setFlashingMatch] = useState<MatchAttempt | null>(null);
   const [mistakes, setMistakes] = useState(0);
   const flashTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const allMatched = correctMatches.length === content.pairs.length;
+  const activeKeyboardSide = getActiveKeyboardSide(selected);
+  const keyboardItems = getKeyboardItems({ activeKeyboardSide, leftItems, rightItems });
 
   const handleTap = useCallback(
     (item: MatchItemData) => {
@@ -292,7 +228,18 @@ export function MatchColumnsStep({
     [content, correctMatches, flashingMatch, mistakes, onSelectAnswer, selected, step.id, trigger],
   );
 
-  const allMatched = correctMatches.length === content.pairs.length;
+  useOptionKeyboard({
+    enabled: !allMatched && flashingMatch === null,
+    onSelect: (index) => {
+      const item = keyboardItems[index];
+
+      if (item) {
+        handleTap(item);
+      }
+    },
+    optionCount: Math.min(keyboardItems.length, MAX_NUMBER_KEY_SHORTCUT),
+  });
+
   const question = content.question ?? t("Match the pairs.");
 
   return (
@@ -300,6 +247,7 @@ export function MatchColumnsStep({
       <QuestionText>{question}</QuestionText>
 
       <MatchGrid
+        activeKeyboardSide={activeKeyboardSide}
         correctMatches={correctMatches}
         flashingMatch={flashingMatch}
         leftItems={leftItems}

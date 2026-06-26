@@ -1,11 +1,18 @@
 "use client";
 
-import { OTPError, OTPForm as OTPFormContainer, OTPInput, OTPSubmit } from "@/components/otp";
+import {
+  OTPActions,
+  OTPError,
+  OTPForm as OTPFormContainer,
+  OTPInput,
+  OTPSubmit,
+} from "@/components/otp";
 import { authClient } from "@zoonk/core/auth/client";
 import { parseFormField } from "@zoonk/utils/form";
 import { useExtracted } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { ChangeEmailLink } from "./change-email-link";
 
 export function OTPForm({ email, redirectTo }: { email: string; redirectTo: string }) {
   const router = useRouter();
@@ -43,7 +50,10 @@ export function OTPForm({ email, redirectTo }: { email: string; redirectTo: stri
         {t("The code you entered is incorrect. Please try again or contact hello@zoonk.com")}
       </OTPError>
 
-      <OTPSubmit isLoading={state === "pending"}>{t("Continue")}</OTPSubmit>
+      <OTPActions>
+        <OTPSubmit isLoading={state === "pending"}>{t("Continue")}</OTPSubmit>
+        <ChangeEmailLink redirectTo={redirectTo}>{t("Change email")}</ChangeEmailLink>
+      </OTPActions>
     </OTPFormContainer>
   );
 }

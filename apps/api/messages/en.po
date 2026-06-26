@@ -57,6 +57,10 @@ msgstr "Continue with Apple"
 msgid "HkHvQv"
 msgstr "The code you entered is incorrect. Please try again or contact hello@zoonk.com"
 
+#: src/app/auth/otp/otp-form.tsx
+msgid "ChATeO"
+msgstr "Change email"
+
 #: src/app/auth/otp/page.tsx
 msgid "zx7CKB"
 msgstr "Check your email"
@@ -64,10 +68,6 @@ msgstr "Check your email"
 #: src/app/auth/otp/page.tsx
 msgid "LZHcmZ"
 msgstr "Enter the code we sent to {email}:"
-
-#: src/app/auth/otp/page.tsx
-msgid "ChATeO"
-msgstr "Change email"
 
 #: src/app/auth/setup/page.tsx
 msgid "CYqIel"
