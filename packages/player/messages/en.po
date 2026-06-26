@@ -244,6 +244,7 @@ msgid "ZHEKO0"
 msgstr "Lesson content"
 
 #: src/components/player-shell.tsx
+#: src/components/swipe-navigable-step-layout.tsx
 msgid "41rDiT"
 msgstr "Lesson controls"
 

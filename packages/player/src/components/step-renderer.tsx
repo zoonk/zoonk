@@ -31,6 +31,7 @@ type StepRendererProps = {
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
+  promptAudioUrl?: string | null;
   result?: StepResult;
   selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
@@ -153,6 +154,7 @@ export function StepRenderer({
   onNavigateNext,
   onNavigatePrev,
   onSelectAnswer,
+  promptAudioUrl,
   result,
   selectedAnswer,
   step,
@@ -187,6 +189,7 @@ export function StepRenderer({
       key={`step-${step.id}`}
       onNavigateNext={onNavigateNext}
       onNavigatePrev={onNavigatePrev}
+      promptAudioUrl={promptAudioUrl}
     >
       {content}
     </SwipeNavigableStepLayout>

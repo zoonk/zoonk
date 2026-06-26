@@ -133,6 +133,7 @@ export function StageContent() {
         onNavigateNext={actions.navigateNext}
         onNavigatePrev={actions.navigatePrev}
         onSelectAnswer={actions.selectAnswer}
+        promptAudioUrl={screen.bottomBar?.audioUrl}
         result={state.phase === "feedback" ? currentResult : undefined}
         selectedAnswer={selectedAnswer}
         step={currentStep}
