@@ -556,7 +556,12 @@ test.describe("Lesson Player Page", () => {
 
     await authenticatedPage.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await expect(authenticatedPage.getByText(/upgrade to keep learning/iu)).toBeVisible();
+    await expect(authenticatedPage.getByText(/unlock the rest of this course/iu)).toBeVisible();
+
+    await expect(
+      authenticatedPage.getByText(/free accounts include the first 10 lessons/iu),
+    ).toBeVisible();
+
     await expect(authenticatedPage.getByRole("link", { name: /upgrade/iu })).toBeVisible();
   });
 
@@ -571,7 +576,11 @@ test.describe("Lesson Player Page", () => {
 
     await authenticatedPage.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await expect(authenticatedPage.getByText(/upgrade to keep learning/iu)).toBeVisible();
+    await expect(authenticatedPage.getByText(/unlock the rest of this course/iu)).toBeVisible();
+
+    await expect(
+      authenticatedPage.getByText(/free accounts include the first 10 lessons/iu),
+    ).toBeVisible();
   });
 
   test("close link has correct href", async ({ page }) => {
@@ -593,8 +602,8 @@ test.describe("Lesson Player Page", () => {
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await expect(page.getByText(/lesson not available/iu)).toBeVisible();
-    await expect(page.getByText(/hasn't been created yet/iu)).toBeVisible();
+    await expect(page.getByText(/create this lesson/iu)).toBeVisible();
+    await expect(page.getByText(/create it to start learning/iu)).toBeVisible();
     const generateLink = page.getByRole("link", { name: /create lesson/iu });
 
     await expect(generateLink).toBeVisible();
@@ -614,8 +623,13 @@ test.describe("Lesson Player Page", () => {
 
     await authenticatedPage.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${practice.slug}`);
 
-    await expect(authenticatedPage.getByText("Lesson not available")).toBeVisible();
-    await expect(authenticatedPage.getByText("This lesson hasn't been created yet.")).toBeVisible();
+    await expect(authenticatedPage.getByText("Create this lesson")).toBeVisible();
+
+    await expect(
+      authenticatedPage.getByText(
+        "This lesson is part of the course, but it hasn't been created yet. Create it to start learning.",
+      ),
+    ).toBeVisible();
 
     const generateLink = authenticatedPage.getByRole("link", { name: "Create lesson" });
 
@@ -657,10 +671,12 @@ test.describe("Lesson Player Page", () => {
 
     await authenticatedPage.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${review.slug}`);
 
-    await expect(authenticatedPage.getByText("Review locked")).toBeVisible();
+    await expect(authenticatedPage.getByText("Create lessons before reviewing")).toBeVisible();
 
     await expect(
-      authenticatedPage.getByText("Create earlier lessons first, then come back to review."),
+      authenticatedPage.getByText(
+        "Review unlocks after the earlier lessons in this chapter have been created.",
+      ),
     ).toBeVisible();
 
     const requiredLessonLink = authenticatedPage.getByRole("link", { name: "Create lesson" });
@@ -757,7 +773,7 @@ test.describe("Lesson Player Page", () => {
 
     await page.goto(`/b/${org.slug}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await expect(page.getByText(/lesson not available/iu)).toBeVisible();
+    await expect(page.getByText(/create this lesson/iu)).toBeVisible();
     await expect(page.getByRole("link", { name: /create lesson/iu })).not.toBeVisible();
   });
 

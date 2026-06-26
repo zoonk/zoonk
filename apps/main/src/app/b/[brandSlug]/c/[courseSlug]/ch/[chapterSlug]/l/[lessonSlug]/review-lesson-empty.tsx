@@ -31,12 +31,14 @@ export async function ReviewLessonEmpty({
         </EmptyMedia>
 
         <EmptyTitle>
-          {isWaitingForGeneration ? t("Review locked") : t("Nothing to review yet")}
+          {isWaitingForGeneration
+            ? t("Create lessons before reviewing")
+            : t("Nothing to review yet")}
         </EmptyTitle>
 
         <EmptyDescription>
           {isWaitingForGeneration
-            ? t("Create earlier lessons first, then come back to review.")
+            ? t("Review unlocks after the earlier lessons in this chapter have been created.")
             : t("There are no practice questions to review yet.")}
         </EmptyDescription>
       </EmptyHeader>

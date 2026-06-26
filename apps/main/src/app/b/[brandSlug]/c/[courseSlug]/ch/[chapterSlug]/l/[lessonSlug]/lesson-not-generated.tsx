@@ -35,9 +35,13 @@ export async function LessonNotGenerated({
           <SparklesIcon />
         </EmptyMedia>
 
-        <EmptyTitle>{t("Lesson not available")}</EmptyTitle>
+        <EmptyTitle>{t("Create this lesson")}</EmptyTitle>
 
-        <EmptyDescription>{t("This lesson hasn't been created yet.")}</EmptyDescription>
+        <EmptyDescription>
+          {t(
+            "This lesson is part of the course, but it hasn't been created yet. Create it to start learning.",
+          )}
+        </EmptyDescription>
       </EmptyHeader>
 
       <EmptyContent>

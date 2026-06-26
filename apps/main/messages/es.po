@@ -284,12 +284,12 @@ msgid "_lCW0j"
 msgstr "{percentage} respuestas correctas"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
-msgid "9SgWiD"
-msgstr "Capítulo no disponible"
+msgid "QhvU1f"
+msgstr "Crear este capítulo"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
-msgid "ml8Duy"
-msgstr "Este capítulo aún no se ha creado."
+msgid "YQGe0H"
+msgstr "Este capítulo forma parte del curso, pero todavía no se ha creado. Créalo para ver todas sus lecciones."
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
 msgid "3IOFp2"
@@ -1182,12 +1182,12 @@ msgid "l1XTI5"
 msgstr "Síguenos"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
-msgid "A_VPtF"
-msgstr "Lección no disponible"
+msgid "rCpmYD"
+msgstr "Crear esta lección"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
-msgid "bHscXj"
-msgstr "Esta lección aún no se ha creado."
+msgid "AtnLyn"
+msgstr "Esta lección forma parte del curso, pero todavía no se ha creado. Créala para empezar a estudiar."
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
@@ -1201,24 +1201,24 @@ msgid "_N8rYN"
 msgstr "Volver al capítulo"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
-msgid "3pyC1G"
-msgstr "Esta lección requiere una suscripción activa."
+msgid "rPcS-X"
+msgstr "Las cuentas gratis incluyen las primeras 10 lecciones de cada curso. Actualiza para tener acceso ilimitado a todas las lecciones de todos los cursos."
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
-msgid "xu3uCX"
-msgstr "Suscríbete para seguir aprendiendo"
+msgid "ZnMcrz"
+msgstr "Desbloquea el resto de este curso"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
-msgid "mA7vCW"
-msgstr "Repaso bloqueado"
+msgid "A_uNk-"
+msgstr "Crea lecciones antes de revisar"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgid "Qy4EsI"
 msgstr "Nada para repasar todavía"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
-msgid "lOdIcU"
-msgstr "Crea primero las lecciones anteriores y vuelve para repasar."
+msgid "4w9Y_P"
+msgstr "La revisión se desbloquea después de que se hayan creado las lecciones anteriores de este capítulo."
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgid "9AOq2-"

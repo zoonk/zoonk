@@ -107,8 +107,10 @@ async function getLessonAccessGate({
         <UpgradeCTA
           backHref={backHref}
           backLabel={t("Back to chapter")}
-          description={t("This lesson requires an active subscription.")}
-          title={t("Upgrade to keep learning")}
+          description={t(
+            "Free accounts include the first 10 lessons in each course. Upgrade for unlimited access to every lesson in every course.",
+          )}
+          title={t("Unlock the rest of this course")}
         />
       </ContainerBody>
     </Container>

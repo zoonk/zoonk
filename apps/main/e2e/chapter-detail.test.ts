@@ -626,8 +626,8 @@ test.describe("Chapter - No Lessons", () => {
     await page.goto(noLessonsChapterUrl);
 
     await expect(page).toHaveURL(noLessonsChapterUrl);
-    await expect(page.getByText(/chapter not available/iu)).toBeVisible();
-    await expect(page.getByText(/hasn't been created yet/iu)).toBeVisible();
+    await expect(page.getByText(/create this chapter/iu)).toBeVisible();
+    await expect(page.getByText(/create it to see all of its lessons/iu)).toBeVisible();
 
     const generateLink = page.getByRole("link", { name: /create chapter/iu });
 

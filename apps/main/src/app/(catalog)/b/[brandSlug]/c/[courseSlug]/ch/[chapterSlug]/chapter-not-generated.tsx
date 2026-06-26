@@ -26,9 +26,13 @@ export async function ChapterNotGenerated({ chapterId }: { chapterId: string }) 
           <SparklesIcon />
         </EmptyMedia>
 
-        <EmptyTitle>{t("Chapter not available")}</EmptyTitle>
+        <EmptyTitle>{t("Create this chapter")}</EmptyTitle>
 
-        <EmptyDescription>{t("This chapter hasn't been created yet.")}</EmptyDescription>
+        <EmptyDescription>
+          {t(
+            "This chapter is part of the course, but it hasn't been created yet. Create it to see all of its lessons.",
+          )}
+        </EmptyDescription>
       </EmptyHeader>
 
       <EmptyContent>
