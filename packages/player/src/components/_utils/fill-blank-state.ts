@@ -1,22 +1,10 @@
-import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson-data";
-
-type BlankValue = { sourceIndex: number | null; word: string };
-export type BlankState = (BlankValue | null)[];
-export type WordPlacement = { option: WordBankOption; sourceIndex: number };
-
-/**
- * Fill-blank answer state tracks source tile indexes only for interaction.
- * The selected-answer contract remains the original string array.
- */
-export function getBlankWords(blanks: BlankState): (string | null)[] {
-  return blanks.map((blank) => blank?.word ?? null);
-}
+export type BlankState = (string | null)[];
 
 /**
  * Complete blanks can be serialized into the public answer shape. Incomplete
  * blanks return null so callers do not accidentally submit partial answers.
  */
-function isComplete(blanks: BlankState): blanks is BlankValue[] {
+function isComplete(blanks: BlankState): blanks is string[] {
   return blanks.every((blank) => blank !== null);
 }
 
@@ -29,5 +17,5 @@ export function getCompletedUserAnswers(blanks: BlankState): string[] | null {
     return null;
   }
 
-  return blanks.map((blank) => blank.word);
+  return blanks;
 }

@@ -141,7 +141,7 @@ describe("player browser integration: word bank steps", () => {
       .toBeInTheDocument();
   });
 
-  it("keeps fill-blank number shortcuts while hiding selected options", async () => {
+  it("hides selected fill-blank options without number shortcuts", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         steps: [
@@ -166,10 +166,17 @@ describe("player browser integration: word bank steps", () => {
     const wordBank = page.getByRole("group", { name: /word bank/iu });
     const catOption = wordBank.getByRole("button", { exact: true, name: "cat" });
 
-    await expect.element(catOption.getByText(/^2$/u)).toBeInTheDocument();
-    await expect.element(catOption).toHaveAttribute("aria-keyshortcuts", "2");
+    await expect.element(catOption).not.toHaveAttribute("aria-keyshortcuts");
 
     fireEvent.keyDown(globalThis.window, { key: "2" });
+
+    await expect
+      .element(page.getByRole("button", { name: /tap to remove/iu }))
+      .not.toBeInTheDocument();
+
+    await expect.element(catOption).toBeInTheDocument();
+
+    await catOption.click();
 
     const selectedBlank = page.getByRole("button", { name: /tap to remove/iu });
 

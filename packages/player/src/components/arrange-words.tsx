@@ -3,14 +3,15 @@
 import { type DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useCallback, useId, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { useWordAudio } from "../use-word-audio";
 import { ArrangeWordsAnswerArea, type PlacedWord } from "./arrange-words-answer-area";
-import { RomanizationText } from "./romanization-text";
 import { InteractiveStepLayout } from "./step-layouts";
+import { WordBankOptionButton } from "./word-bank-option-content";
 
 type WordBankTile = { isUsed: boolean; key: string; option: WordBankOption };
 
@@ -54,54 +55,13 @@ function getVisibleWordBankTiles({
     .filter((tile) => !tile.isUsed);
 }
 
-function BankTileContent({
-  descriptionId,
-  option,
-}: {
-  descriptionId?: string;
-  option: WordBankOption;
-}) {
-  const hasDescription = Boolean(option.romanization || option.pronunciation);
-
-  return (
-    <>
-      <span>{option.word}</span>
-
-      {hasDescription && (
-        <span className="flex flex-col items-center" id={descriptionId}>
-          <RomanizationText>{option.romanization}</RomanizationText>
-
-          {option.pronunciation && (
-            <span className="text-muted-foreground text-xs">{option.pronunciation}</span>
-          )}
-        </span>
-      )}
-    </>
-  );
-}
-
-function BankTile({ onPlace, option }: { onPlace: () => void; option: WordBankOption }) {
-  const descriptionId = useId();
-  const hasDescription = Boolean(option.romanization || option.pronunciation);
-
-  return (
-    <button
-      aria-describedby={hasDescription ? descriptionId : undefined}
-      aria-label={option.word}
-      className="border-border hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 transition-all duration-150 outline-none focus-visible:ring-[3px]"
-      onClick={onPlace}
-      type="button"
-    >
-      <BankTileContent descriptionId={descriptionId} option={option} />
-    </button>
-  );
-}
-
 function WordBank({
+  disabled,
   onPlace,
   placedWords,
   words,
 }: {
+  disabled: boolean;
   onPlace: (option: WordBankOption) => void;
   placedWords: PlacedWord[];
   words: WordBankOption[];
@@ -110,9 +70,18 @@ function WordBank({
   const tiles = getVisibleWordBankTiles({ placedWords, words });
 
   return (
-    <div aria-label={t("Word bank")} className="flex flex-wrap gap-2.5" role="group">
+    <div
+      aria-label={t("Word bank")}
+      className={cn("flex flex-wrap gap-2.5", disabled && "pointer-events-none opacity-50")}
+      role="group"
+    >
       {tiles.map((tile) => (
-        <BankTile key={tile.key} onPlace={() => onPlace(tile.option)} option={tile.option} />
+        <WordBankOptionButton
+          disabled={disabled}
+          key={tile.key}
+          onToggle={() => onPlace(tile.option)}
+          option={tile.option}
+        />
       ))}
     </div>
   );
@@ -184,7 +153,7 @@ export function ArrangeWordsInteraction({
 
   const handlePlace = useCallback(
     (option: WordBankOption) => {
-      if (placedWords.length >= maxAnswerLength) {
+      if (result || placedWords.length >= maxAnswerLength) {
         return;
       }
 
@@ -196,7 +165,7 @@ export function ArrangeWordsInteraction({
 
       syncSelectedAnswer(next);
     },
-    [maxAnswerLength, placedWords, play, syncSelectedAnswer],
+    [maxAnswerLength, placedWords, play, result, syncSelectedAnswer],
   );
 
   const handleRemove = useCallback(
@@ -248,7 +217,12 @@ export function ArrangeWordsInteraction({
         result={result}
       />
 
-      <WordBank onPlace={handlePlace} placedWords={placedWords} words={wordBankOptions} />
+      <WordBank
+        disabled={result !== undefined}
+        onPlace={handlePlace}
+        placedWords={placedWords}
+        words={wordBankOptions}
+      />
     </InteractiveStepLayout>
   );
 }

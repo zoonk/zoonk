@@ -6,12 +6,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
-import {
-  type BlankState,
-  type WordPlacement,
-  getBlankWords,
-  getCompletedUserAnswers,
-} from "./_utils/fill-blank-state";
+import { type BlankState, getCompletedUserAnswers } from "./_utils/fill-blank-state";
 import { getTemplateRomanization } from "./_utils/template-romanization";
 import { FillBlankWordBank } from "./fill-blank-word-bank";
 import { InlineFeedback } from "./inline-feedback";
@@ -152,14 +147,14 @@ export function FillBlankStep({
 
   const [blanks, setBlanks] = useState<BlankState>(() => {
     if (result?.answer?.kind === "fillBlank") {
-      return result.answer.userAnswers.map((word) => ({ sourceIndex: null, word }));
+      return result.answer.userAnswers;
     }
 
     return Array.from({ length: blankCount }, () => null);
   });
 
   const handlePlaceWord = useCallback(
-    ({ option, sourceIndex }: WordPlacement) => {
+    (word: string) => {
       const firstEmptyIndex = blanks.indexOf(null);
 
       if (firstEmptyIndex === -1) {
@@ -167,7 +162,7 @@ export function FillBlankStep({
       }
 
       const next = [...blanks];
-      next[firstEmptyIndex] = { sourceIndex, word: option.word };
+      next[firstEmptyIndex] = word;
       setBlanks(next);
 
       const userAnswers = getCompletedUserAnswers(next);
@@ -202,7 +197,7 @@ export function FillBlankStep({
 
       <TemplateText
         answers={content.answers}
-        blanks={getBlankWords(blanks)}
+        blanks={blanks}
         hasResult={hasResult}
         onRemoveWord={handleRemoveWord}
         template={content.template}
@@ -214,7 +209,6 @@ export function FillBlankStep({
         blanks={blanks}
         disabled={hasResult}
         onPlaceWord={handlePlaceWord}
-        onRemoveWord={handleRemoveWord}
         options={step.fillBlankOptions}
       />
 
