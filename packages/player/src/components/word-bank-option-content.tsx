@@ -10,7 +10,7 @@ import { RomanizationText } from "./romanization-text";
  * prevents those surrounding controls from flattening pronunciation hints into
  * the main text row.
  */
-export function WordBankOptionContent({
+function WordBankOptionContent({
   descriptionId,
   option,
 }: {

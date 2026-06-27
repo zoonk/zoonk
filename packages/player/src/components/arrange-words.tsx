@@ -3,84 +3,20 @@
 import { type DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
-import { MAX_NUMBER_KEY_SHORTCUT, getNumberKeyShortcut } from "../player-shortcuts";
-import { useOptionKeyboard } from "../use-option-keyboard";
 import { useWordAudio } from "../use-word-audio";
 import { ArrangeWordsAnswerArea, type PlacedWord } from "./arrange-words-answer-area";
+import { RomanizationText } from "./romanization-text";
 import { InteractiveStepLayout } from "./step-layouts";
-import { WordBankOptionButton } from "./word-bank-option-content";
 
-type WordBankTile = {
-  index: number;
-  isUsed: boolean;
-  key: string;
-  option: WordBankOption;
-  occurrenceNumber: number;
-  shortcut: string | null;
-};
-
-type WordBankPlacement = { option: WordBankOption; sourceIndex: number };
+type WordBankTile = { isUsed: boolean; key: string; option: WordBankOption };
 
 /**
- * Source indexes are added when a learner chooses a tile in this session. They
- * let duplicate words behave like distinct toggles instead of guessing from the
- * visible word text alone.
- */
-function hasPlacedWordSourceIndex(placedWord: PlacedWord): boolean {
-  return typeof placedWord.sourceIndex === "number";
-}
-
-/**
- * Old saved/result answers only contain words. The occurrence number keeps that
- * legacy shape usable by matching the first tile to the first placed copy, the
- * second tile to the second placed copy, and so on.
- */
-function getPlacedWordOccurrenceNumber({
-  index,
-  option,
-  words,
-}: {
-  index: number;
-  option: WordBankOption;
-  words: WordBankOption[];
-}): number {
-  return words.slice(0, index + 1).filter((item) => item.word === option.word).length;
-}
-
-/**
- * Tile usage prefers exact source indexes when available and falls back to
- * occurrence counting for restored answers that predate source-index tracking.
- */
-function isWordBankTileUsed({
-  index,
-  occurrenceNumber,
-  option,
-  placedWords,
-}: {
-  index: number;
-  occurrenceNumber: number;
-  option: WordBankOption;
-  placedWords: PlacedWord[];
-}): boolean {
-  const hasSourceIndexes = placedWords.some((placedWord) => hasPlacedWordSourceIndex(placedWord));
-
-  if (hasSourceIndexes) {
-    return placedWords.some((placedWord) => placedWord.sourceIndex === index);
-  }
-
-  const usedCount = placedWords.filter((placed) => placed.word === option.word).length;
-  return usedCount >= occurrenceNumber;
-}
-
-/**
- * Duplicate words are valid in generated word banks. Counting earlier
- * occurrences lets each duplicate tile become unavailable only after the
- * learner has placed that many copies of the same word.
+ * Duplicate words are valid, so a tile is considered used only when the learner
+ * has already placed this exact occurrence of that word.
  */
 function getWordBankTile({
   index,
@@ -93,125 +29,90 @@ function getWordBankTile({
   placedWords: PlacedWord[];
   words: WordBankOption[];
 }): WordBankTile {
-  const occurrenceNumber = getPlacedWordOccurrenceNumber({ index, option, words });
+  const usedCount = placedWords.filter((placed) => placed.word === option.word).length;
 
-  return {
-    index,
-    isUsed: isWordBankTileUsed({ index, occurrenceNumber, option, placedWords }),
-    key: `bank-${option.word}-${index}`,
-    occurrenceNumber,
-    option,
-    shortcut: getNumberKeyShortcut(index),
-  };
+  const occurrenceCount = words
+    .slice(0, index + 1)
+    .filter((item) => item.word === option.word).length;
+
+  return { isUsed: usedCount >= occurrenceCount, key: `bank-${option.word}-${index}`, option };
 }
 
 /**
- * Builds the render and keyboard model for the word bank once so pointer and
- * number-key selection cannot disagree about which duplicate tile is still
- * available.
+ * The word bank should only show words the learner can still choose. Selected
+ * words remain removable from the answer area, then reappear here.
  */
-function getWordBankTiles({
+function getVisibleWordBankTiles({
   placedWords,
   words,
 }: {
   placedWords: PlacedWord[];
   words: WordBankOption[];
 }): WordBankTile[] {
-  return words.map((option, index) => getWordBankTile({ index, option, placedWords, words }));
+  return words
+    .map((option, index) => getWordBankTile({ index, option, placedWords, words }))
+    .filter((tile) => !tile.isUsed);
 }
 
-/**
- * Finds the selected answer word controlled by a bank tile. Exact source-index
- * matches handle normal play, while occurrence matching keeps restored answers
- * removable even though they only know the selected word text.
- */
-function getPlacedWordIndexForTile({
-  placedWords,
-  tile,
+function BankTileContent({
+  descriptionId,
+  option,
 }: {
-  placedWords: PlacedWord[];
-  tile: WordBankTile;
-}): number | null {
-  const sourceIndexMatch = placedWords.findIndex(
-    (placedWord) => placedWord.sourceIndex === tile.index,
+  descriptionId?: string;
+  option: WordBankOption;
+}) {
+  const hasDescription = Boolean(option.romanization || option.pronunciation);
+
+  return (
+    <>
+      <span>{option.word}</span>
+
+      {hasDescription && (
+        <span className="flex flex-col items-center" id={descriptionId}>
+          <RomanizationText>{option.romanization}</RomanizationText>
+
+          {option.pronunciation && (
+            <span className="text-muted-foreground text-xs">{option.pronunciation}</span>
+          )}
+        </span>
+      )}
+    </>
   );
+}
 
-  if (sourceIndexMatch !== -1) {
-    return sourceIndexMatch;
-  }
+function BankTile({ onPlace, option }: { onPlace: () => void; option: WordBankOption }) {
+  const descriptionId = useId();
+  const hasDescription = Boolean(option.romanization || option.pronunciation);
 
-  if (placedWords.some((placedWord) => hasPlacedWordSourceIndex(placedWord))) {
-    return null;
-  }
-
-  const matchingIndexes = placedWords.flatMap((placedWord, index) =>
-    placedWord.word === tile.option.word ? [index] : [],
+  return (
+    <button
+      aria-describedby={hasDescription ? descriptionId : undefined}
+      aria-label={option.word}
+      className="border-border hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 transition-all duration-150 outline-none focus-visible:ring-[3px]"
+      onClick={onPlace}
+      type="button"
+    >
+      <BankTileContent descriptionId={descriptionId} option={option} />
+    </button>
   );
-
-  return matchingIndexes[tile.occurrenceNumber - 1] ?? null;
 }
 
 function WordBank({
-  disabled,
   onPlace,
-  onRemove,
   placedWords,
   words,
 }: {
-  disabled: boolean;
-  onPlace: (placement: WordBankPlacement) => void;
-  onRemove: (index: number) => void;
+  onPlace: (option: WordBankOption) => void;
   placedWords: PlacedWord[];
   words: WordBankOption[];
 }) {
   const t = useExtracted();
-  const tiles = getWordBankTiles({ placedWords, words });
-
-  const handleToggleTile = useCallback(
-    (tile: WordBankTile) => {
-      if (!tile.isUsed) {
-        onPlace({ option: tile.option, sourceIndex: tile.index });
-        return;
-      }
-
-      const placedWordIndex = getPlacedWordIndexForTile({ placedWords, tile });
-
-      if (placedWordIndex !== null) {
-        onRemove(placedWordIndex);
-      }
-    },
-    [onPlace, onRemove, placedWords],
-  );
-
-  useOptionKeyboard({
-    enabled: !disabled,
-    onSelect: (index) => {
-      const tile = tiles[index];
-
-      if (!tile) {
-        return;
-      }
-
-      handleToggleTile(tile);
-    },
-    optionCount: Math.min(words.length, MAX_NUMBER_KEY_SHORTCUT),
-  });
+  const tiles = getVisibleWordBankTiles({ placedWords, words });
 
   return (
-    <div
-      aria-label={t("Word bank")}
-      className={cn("flex flex-wrap gap-2.5", disabled && "pointer-events-none opacity-50")}
-      role="group"
-    >
+    <div aria-label={t("Word bank")} className="flex flex-wrap gap-2.5" role="group">
       {tiles.map((tile) => (
-        <WordBankOptionButton
-          disabled={disabled}
-          isUsed={tile.isUsed}
-          key={tile.key}
-          onToggle={() => handleToggleTile(tile)}
-          option={tile.option}
-          shortcut={tile.shortcut}
-        />
+        <BankTile key={tile.key} onPlace={() => onPlace(tile.option)} option={tile.option} />
       ))}
     </div>
   );
@@ -282,13 +183,13 @@ export function ArrangeWordsInteraction({
   );
 
   const handlePlace = useCallback(
-    ({ option, sourceIndex }: WordBankPlacement) => {
+    (option: WordBankOption) => {
       if (placedWords.length >= maxAnswerLength) {
         return;
       }
 
       void play(option.audioUrl);
-      const placed: PlacedWord = { ...option, id: String(idCounter.current), sourceIndex };
+      const placed: PlacedWord = { ...option, id: String(idCounter.current) };
       idCounter.current += 1;
       const next = [...placedWords, placed];
       setPlacedWords(next);
@@ -347,13 +248,7 @@ export function ArrangeWordsInteraction({
         result={result}
       />
 
-      <WordBank
-        disabled={result !== undefined}
-        onPlace={handlePlace}
-        onRemove={handleRemove}
-        placedWords={placedWords}
-        words={wordBankOptions}
-      />
+      <WordBank onPlace={handlePlace} placedWords={placedWords} words={wordBankOptions} />
     </InteractiveStepLayout>
   );
 }

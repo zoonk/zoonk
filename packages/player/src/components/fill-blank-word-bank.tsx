@@ -171,16 +171,18 @@ export function FillBlankWordBank({
       className={cn("flex flex-wrap gap-2.5", disabled && "pointer-events-none opacity-50")}
       role="group"
     >
-      {tiles.map((tile) => (
-        <WordBankOptionButton
-          disabled={disabled}
-          isUsed={tile.isUsed}
-          key={tile.key}
-          onToggle={() => handleToggleTile(tile)}
-          option={tile.option}
-          shortcut={tile.shortcut}
-        />
-      ))}
+      {tiles
+        .filter((tile) => !tile.isUsed)
+        .map((tile) => (
+          <WordBankOptionButton
+            disabled={disabled}
+            isUsed={tile.isUsed}
+            key={tile.key}
+            onToggle={() => handleToggleTile(tile)}
+            option={tile.option}
+            shortcut={tile.shortcut}
+          />
+        ))}
     </div>
   );
 }
