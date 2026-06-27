@@ -43,7 +43,7 @@ export type CompletionProgress = Pick<
   };
 
 export type PlayerProgressSnapshot = {
-  bestDayScores: BestDayScore[];
+  bestDayScores: BestDayScore[] | null;
   currentEnergy: number;
   fullEnergyDays: number;
   highestPreviousDailyBrainPower: number;

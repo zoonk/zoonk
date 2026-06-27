@@ -57,23 +57,21 @@ function getTodayScore({
  * is saved, without mutating the server snapshot used by other milestones.
  */
 function getPostCompletionBestDayScores({
+  bestDayScores,
   completion,
-  progressSnapshot,
   todayDayOfWeek,
 }: {
+  bestDayScores: BestDayScore[];
   completion: CompletionProgress;
-  progressSnapshot: PlayerProgressSnapshot;
   todayDayOfWeek: number;
 }) {
-  const hasTodayScore = progressSnapshot.bestDayScores.some(
-    (score) => score.dayOfWeek === todayDayOfWeek,
-  );
+  const hasTodayScore = bestDayScores.some((score) => score.dayOfWeek === todayDayOfWeek);
 
   if (!hasTodayScore) {
-    return [...progressSnapshot.bestDayScores, getTodayScore({ completion, todayDayOfWeek })];
+    return [...bestDayScores, getTodayScore({ completion, todayDayOfWeek })];
   }
 
-  return progressSnapshot.bestDayScores.map((score) =>
+  return bestDayScores.map((score) =>
     getUpdatedBestDayScore({ completion, score, todayDayOfWeek }),
   );
 }
@@ -92,8 +90,11 @@ export function getBestDayMilestone({
   localDate: string;
   progressSnapshot: PlayerProgressSnapshot | null;
 }): ScoreCompletionMilestone | null {
+  const bestDayScores = progressSnapshot?.bestDayScores;
+
   if (
     !progressSnapshot ||
+    !bestDayScores ||
     !completion.completedInteractiveLesson ||
     (progressSnapshot.todayInteractiveLessons ?? 0) > 0
   ) {
@@ -103,7 +104,7 @@ export function getBestDayMilestone({
   const todayDayOfWeek = parseLocalDate(localDate).getUTCDay();
 
   const bestDay = getBestDayScore(
-    getPostCompletionBestDayScores({ completion, progressSnapshot, todayDayOfWeek }),
+    getPostCompletionBestDayScores({ bestDayScores, completion, todayDayOfWeek }),
   );
 
   if (!bestDay || bestDay.key !== todayDayOfWeek) {

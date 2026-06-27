@@ -182,7 +182,7 @@ msgstr "{day} es tu mejor día"
 
 #: src/components/completion-score-milestone.tsx
 msgid "PTQ0ah"
-msgstr "Sueles acertar el {percentage} % de las respuestas en {day}, tu mejor promedio de la semana."
+msgstr "Sueles acertar el {percentage} de las respuestas en {day}, tu mejor promedio de la semana."
 
 #: src/components/completion-screen.tsx
 msgid "95stPq"

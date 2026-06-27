@@ -145,7 +145,7 @@ export function getEffectiveCompletionProgressSnapshot({
 
   if (!progressSnapshot) {
     return {
-      bestDayScores: [],
+      bestDayScores: null,
       currentEnergy: storedProgress.currentEnergy,
       fullEnergyDays: storedProgress.fullEnergyDays,
       highestPreviousDailyBrainPower: 0,
@@ -160,7 +160,7 @@ export function getEffectiveCompletionProgressSnapshot({
 
   return {
     ...progressSnapshot,
-    bestDayScores: progressSnapshot.bestDayScores ?? [],
+    bestDayScores: progressSnapshot.bestDayScores ?? null,
     currentEnergy: Math.max(progressSnapshot.currentEnergy, storedProgress.currentEnergy),
     fullEnergyDays: Math.max(progressSnapshot.fullEnergyDays, storedProgress.fullEnergyDays),
     learningDays: Math.max(progressSnapshot.learningDays ?? 0, storedProgress.learningDays),
