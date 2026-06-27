@@ -1,37 +1,25 @@
 import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useId } from "react";
-import { ResultKbd } from "./result-kbd";
+import { type ReactNode, useId } from "react";
 import { RomanizationText } from "./romanization-text";
 
 /**
- * Word-bank buttons add shortcut badges and selection states around the word.
- * Keeping the word, romanization, and pronunciation in one vertical stack
- * prevents those surrounding controls from flattening pronunciation hints into
- * the main text row.
+ * Word-bank buttons keep the word, romanization, and pronunciation in one
+ * vertical stack so metadata reads as a hint for the word instead of a separate
+ * option.
  */
-export function WordBankOptionContent({
-  descriptionId,
-  option,
-}: {
-  descriptionId?: string;
-  option: WordBankOption;
-}) {
-  const hasDescription = hasWordBankOptionDescription(option);
+function WordBankOptionContent({ children }: { children: ReactNode }) {
+  return <span className="flex min-w-0 flex-col items-center gap-0.5 text-center">{children}</span>;
+}
 
+/**
+ * Description metadata has its own slot so layout stays coordinated without
+ * callers passing styling props into the shared button.
+ */
+function WordBankOptionDescription({ children, id }: { children: ReactNode; id: string }) {
   return (
-    <span className="flex min-w-0 flex-col items-start gap-0.5 text-left">
-      <span>{option.word}</span>
-
-      {hasDescription && (
-        <span className="flex flex-col items-start" id={descriptionId}>
-          <RomanizationText>{option.romanization}</RomanizationText>
-
-          {option.pronunciation && (
-            <span className="text-muted-foreground text-xs">{option.pronunciation}</span>
-          )}
-        </span>
-      )}
+    <span className="flex flex-col items-center" id={id}>
+      {children}
     </span>
   );
 }
@@ -46,21 +34,17 @@ function hasWordBankOptionDescription(option: WordBankOption): boolean {
 
 /**
  * Shared word-bank button chrome keeps fill-blank, reading, and listening tiles
- * visually identical. The shortcut badge sits next to the text stack so
- * pronunciation and romanization stay below the word instead of beside it.
+ * visually identical. The compact centered layout lets short words size to
+ * their text plus padding instead of reserving space for unavailable controls.
  */
 export function WordBankOptionButton({
   disabled,
-  isUsed,
   onToggle,
   option,
-  shortcut,
 }: {
   disabled: boolean;
-  isUsed: boolean;
   onToggle: () => void;
   option: WordBankOption;
-  shortcut: string | null;
 }) {
   const descriptionId = useId();
   const hasDescription = hasWordBankOptionDescription(option);
@@ -69,26 +53,29 @@ export function WordBankOptionButton({
     <button
       aria-describedby={hasDescription ? descriptionId : undefined}
       aria-label={option.word}
-      aria-keyshortcuts={shortcut ?? undefined}
-      aria-pressed={isUsed}
       className={cn(
-        "border-border flex min-h-11 min-w-16 items-center justify-start gap-2.5 rounded-lg border px-3 py-2.5 text-left transition-all duration-150",
+        "border-border flex min-h-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 text-center transition-all duration-150 outline-none",
         disabled
           ? "opacity-50"
-          : "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]",
-        isUsed && !disabled && "opacity-70",
+          : "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
       )}
       disabled={disabled}
       onClick={onToggle}
       type="button"
     >
-      {shortcut && (
-        <ResultKbd className="hidden lg:pointer-fine:inline-flex" isSelected={isUsed}>
-          {shortcut}
-        </ResultKbd>
-      )}
+      <WordBankOptionContent>
+        <span>{option.word}</span>
 
-      <WordBankOptionContent descriptionId={descriptionId} option={option} />
+        {hasDescription && (
+          <WordBankOptionDescription id={descriptionId}>
+            <RomanizationText>{option.romanization}</RomanizationText>
+
+            {option.pronunciation && (
+              <span className="text-muted-foreground text-xs">{option.pronunciation}</span>
+            )}
+          </WordBankOptionDescription>
+        )}
+      </WordBankOptionContent>
     </button>
   );
 }

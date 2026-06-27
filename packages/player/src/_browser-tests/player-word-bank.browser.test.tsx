@@ -85,7 +85,7 @@ describe("player browser integration: word bank steps", () => {
     await expect.element(page.getByText("100%")).toBeInTheDocument();
   });
 
-  it("toggles reading word-bank options from number shortcuts", async () => {
+  it("hides selected arrange-word options without number shortcuts", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "reading",
@@ -110,39 +110,38 @@ describe("player browser integration: word bank steps", () => {
 
     const wordBank = page.getByRole("group", { name: /word bank/iu });
     const mundoOption = wordBank.getByRole("button", { exact: true, name: "mundo" });
+    const answerArea = page.getByRole("group", { name: /your answer/iu });
 
-    await expect.element(mundoOption.getByText(/^2$/u)).toBeInTheDocument();
-    await expect.element(mundoOption).toHaveAttribute("aria-keyshortcuts", "2");
-
-    fireEvent.keyDown(globalThis.window, { key: "2" });
-
-    const answerTile = page
-      .getByRole("group", { name: /your answer/iu })
-      .getByRole("button", { name: /mundo/iu });
-
-    await expect.element(answerTile).toBeInTheDocument();
-
-    await expect.element(answerTile.getByText(/^2$/u)).toBeInTheDocument();
-    await expect.element(answerTile).toHaveAttribute("aria-keyshortcuts", "2");
-    await expect.element(mundoOption).toHaveAttribute("aria-pressed", "true");
+    await expect.element(mundoOption).not.toHaveAttribute("aria-keyshortcuts");
 
     fireEvent.keyDown(globalThis.window, { key: "2" });
 
     await expect
-      .element(
-        page.getByRole("group", { name: /your answer/iu }).getByRole("button", { name: /mundo/iu }),
-      )
+      .element(answerArea.getByRole("button", { name: /mundo/iu }))
       .not.toBeInTheDocument();
 
-    await expect.element(mundoOption).toHaveAttribute("aria-pressed", "false");
+    await expect.element(mundoOption).toBeInTheDocument();
 
-    fireEvent.keyDown(globalThis.window, { key: "1" });
-    fireEvent.keyDown(globalThis.window, { key: "2" });
+    await mundoOption.click();
 
-    await expect.element(page.getByRole("button", { name: /check/iu })).toBeEnabled();
+    await expect.element(answerArea.getByRole("button", { name: /mundo/iu })).toBeInTheDocument();
+
+    await expect
+      .element(wordBank.getByRole("button", { exact: true, name: "mundo" }))
+      .not.toBeInTheDocument();
+
+    await expect
+      .element(wordBank.getByRole("button", { exact: true, name: "Hola" }))
+      .toBeInTheDocument();
+
+    await answerArea.getByRole("button", { name: /mundo/iu }).click();
+
+    await expect
+      .element(wordBank.getByRole("button", { exact: true, name: "mundo" }))
+      .toBeInTheDocument();
   });
 
-  it("toggles fill-blank word-bank options from number shortcuts", async () => {
+  it("hides selected fill-blank options without number shortcuts", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         steps: [
@@ -167,19 +166,32 @@ describe("player browser integration: word bank steps", () => {
     const wordBank = page.getByRole("group", { name: /word bank/iu });
     const catOption = wordBank.getByRole("button", { exact: true, name: "cat" });
 
-    await expect.element(catOption.getByText(/^2$/u)).toBeInTheDocument();
-    await expect.element(catOption).toHaveAttribute("aria-keyshortcuts", "2");
-
-    fireEvent.keyDown(globalThis.window, { key: "2" });
-
-    await expect.element(page.getByRole("button", { name: /tap to remove/iu })).toBeInTheDocument();
-    await expect.element(page.getByRole("button", { name: /check/iu })).toBeEnabled();
+    await expect.element(catOption).not.toHaveAttribute("aria-keyshortcuts");
 
     fireEvent.keyDown(globalThis.window, { key: "2" });
 
     await expect
       .element(page.getByRole("button", { name: /tap to remove/iu }))
       .not.toBeInTheDocument();
+
+    await expect.element(catOption).toBeInTheDocument();
+
+    await catOption.click();
+
+    const selectedBlank = page.getByRole("button", { name: /tap to remove/iu });
+
+    await expect.element(selectedBlank).toBeInTheDocument();
+    await expect.element(page.getByRole("button", { name: /check/iu })).toBeEnabled();
+
+    await expect
+      .element(wordBank.getByRole("button", { exact: true, name: "cat" }))
+      .not.toBeInTheDocument();
+
+    await selectedBlank.click();
+
+    await expect
+      .element(wordBank.getByRole("button", { exact: true, name: "cat" }))
+      .toBeInTheDocument();
 
     await expect.element(page.getByRole("button", { name: /check/iu })).toBeDisabled();
   });
