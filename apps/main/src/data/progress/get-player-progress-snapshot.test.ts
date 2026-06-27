@@ -23,11 +23,16 @@ describe("authenticated users", () => {
     });
 
     expect(result).toStrictEqual({
+      bestDayScores: [],
       currentEnergy: 0,
       fullEnergyDays: 0,
       highestPreviousDailyBrainPower: 0,
+      learningDays: 0,
       todayBrainPower: 0,
+      todayCompletedLessons: 0,
       todayEnergyAtEnd: null,
+      todayInteractiveLessons: 0,
+      totalLearningSeconds: 0,
     });
   });
 
@@ -48,26 +53,35 @@ describe("authenticated users", () => {
         data: [
           {
             brainPowerEarned: 60,
+            correctAnswers: 18,
             date: new Date("2026-01-05T00:00:00Z"),
             dayOfWeek: 1,
             energyAtEnd: 100,
+            incorrectAnswers: 2,
             interactiveCompleted: 1,
+            timeSpentSeconds: 300,
             userId: user.id,
           },
           {
             brainPowerEarned: 80,
+            correctAnswers: 8,
             date: new Date("2026-01-09T00:00:00Z"),
             dayOfWeek: 5,
             energyAtEnd: 100,
+            incorrectAnswers: 2,
             interactiveCompleted: 1,
+            timeSpentSeconds: 600,
             userId: user.id,
           },
           {
             brainPowerEarned: 40,
+            correctAnswers: 4,
             date: new Date("2026-01-10T00:00:00Z"),
             dayOfWeek: 6,
             energyAtEnd: 99,
+            incorrectAnswers: 1,
             interactiveCompleted: 1,
+            timeSpentSeconds: 120,
             userId: user.id,
           },
         ],
@@ -80,11 +94,20 @@ describe("authenticated users", () => {
     });
 
     expect(result).toStrictEqual({
+      bestDayScores: [
+        { correctAnswers: 18, dayOfWeek: 1, incorrectAnswers: 2 },
+        { correctAnswers: 8, dayOfWeek: 5, incorrectAnswers: 2 },
+        { correctAnswers: 4, dayOfWeek: 6, incorrectAnswers: 1 },
+      ],
       currentEnergy: 49,
       fullEnergyDays: 2,
       highestPreviousDailyBrainPower: 80,
+      learningDays: 3,
       todayBrainPower: 40,
+      todayCompletedLessons: 1,
       todayEnergyAtEnd: 99,
+      todayInteractiveLessons: 1,
+      totalLearningSeconds: 1020,
     });
   });
 });

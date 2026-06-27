@@ -22,6 +22,7 @@ export type PlayerNavigation = {
   levelHref?: PlayerRoute;
   loginHref?: PlayerRoute;
   nextLessonHref: PlayerRoute | null;
+  scoreHref?: PlayerRoute;
 };
 
 export type PlayerLessonProgress = {

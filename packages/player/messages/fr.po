@@ -99,6 +99,38 @@ msgstr "{days} jours d’Énergie max"
 msgid "cIxpmv"
 msgstr "Wow, quelle régularité ! Continue d’étudier chaque jour pour garder ton Énergie à 100 %."
 
+#: src/components/completion-learning-days-milestone.tsx
+msgid "SIXtG5"
+msgstr "{days} jours d’apprentissage"
+
+#: src/components/completion-learning-days-milestone.tsx
+msgid "hjXoGI"
+msgstr "Tu as terminé des leçons sur {days} jours différents. S’entraîner souvent t’aide à retenir ce que tu apprends."
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "dZvEPp"
+msgstr "{minutes} minutes d’apprentissage"
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "kw1W3C"
+msgstr "1 journée entière d’apprentissage"
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "BlVoPr"
+msgstr "{hours, plural, one {# heure d’apprentissage} other {# heures d’apprentissage}}"
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "WcAhMT"
+msgstr "Tu peux apprendre beaucoup en t’entraînant quelques minutes par jour."
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "LzEQnT"
+msgstr "Ça fait une journée entière de pratique concentrée."
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "PpK3hX"
+msgstr "Ça fait plus de {days, plural, one {# journée entière} other {# journées entières}} de pratique concentrée."
+
 #: src/components/completion-level-milestone.tsx
 msgid "155cHi"
 msgstr "Niveau atteint"
@@ -132,6 +164,10 @@ msgid "iSioEh"
 msgstr "En savoir plus sur l’Énergie"
 
 #: src/components/completion-progress-milestone-screen.tsx
+msgid "DC0WoT"
+msgstr "En savoir plus sur Score"
+
+#: src/components/completion-progress-milestone-screen.tsx
 msgid "Q0R3MU"
 msgstr "En savoir plus sur les niveaux"
 
@@ -139,6 +175,14 @@ msgstr "En savoir plus sur les niveaux"
 #: src/components/step-action-button.tsx
 msgid "acrOoz"
 msgstr "Continuer"
+
+#: src/components/completion-score-milestone.tsx
+msgid "e6_3Ke"
+msgstr "Le {day} est ton meilleur jour"
+
+#: src/components/completion-score-milestone.tsx
+msgid "PTQ0ah"
+msgstr "Tu réponds juste à {percentage} des questions en général le {day}, ta meilleure moyenne de la semaine."
 
 #: src/components/completion-screen.tsx
 msgid "95stPq"

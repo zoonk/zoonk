@@ -3,6 +3,7 @@ import {
   type SerializedStep,
 } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { type PlayerProgressSnapshot } from "./completion-milestones";
 import {
   type PlayerState,
   type SelectedAnswer,
@@ -78,6 +79,24 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
   };
 }
 
+function buildProgressSnapshot(
+  overrides: Partial<PlayerProgressSnapshot> = {},
+): PlayerProgressSnapshot {
+  return {
+    bestDayScores: [],
+    currentEnergy: 0,
+    fullEnergyDays: 0,
+    highestPreviousDailyBrainPower: 0,
+    learningDays: 0,
+    todayBrainPower: 0,
+    todayCompletedLessons: 0,
+    todayEnergyAtEnd: null,
+    todayInteractiveLessons: 0,
+    totalLearningSeconds: 0,
+    ...overrides,
+  };
+}
+
 const multipleChoiceAnswer: SelectedAnswer = {
   kind: "multipleChoice",
   selectedOptionId: "option-a",
@@ -136,13 +155,13 @@ describe(createInitialState, () => {
   });
 
   it("stores the progress snapshot from input", () => {
-    const progressSnapshot = {
+    const progressSnapshot = buildProgressSnapshot({
       currentEnergy: 20,
       fullEnergyDays: 30,
       highestPreviousDailyBrainPower: 40,
       todayBrainPower: 10,
       todayEnergyAtEnd: 20,
-    };
+    });
 
     const state = createInitialState({
       lesson: buildLesson(),
@@ -619,13 +638,10 @@ describe("local completion computation", () => {
       },
       completionMilestoneIndex: 0,
       phase: "completed",
-      progressSnapshot: {
+      progressSnapshot: buildProgressSnapshot({
         currentEnergy: 9.9,
-        fullEnergyDays: 0,
         highestPreviousDailyBrainPower: 100,
-        todayBrainPower: 0,
-        todayEnergyAtEnd: null,
-      },
+      }),
       totalBrainPower: 240,
     });
 

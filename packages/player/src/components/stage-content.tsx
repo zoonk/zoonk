@@ -74,7 +74,10 @@ function hasEmbeddedDesktopAction({
 
 export function StageContent() {
   const { actions, screen, state } = usePlayerRuntime();
-  const { chapterHref, energyHref, levelHref, loginHref, nextLessonHref } = usePlayerNavigation();
+
+  const { chapterHref, energyHref, levelHref, loginHref, nextLessonHref, scoreHref } =
+    usePlayerNavigation();
+
   const { isAuthenticated } = usePlayerViewer();
 
   const activeCompletionMilestone = getActiveCompletionMilestone(state);
@@ -100,6 +103,7 @@ export function StageContent() {
           levelHref={levelHref}
           milestone={activeCompletionMilestone}
           onContinue={actions.continue}
+          scoreHref={scoreHref}
         />
       );
     }

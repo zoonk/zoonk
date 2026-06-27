@@ -8,6 +8,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
+import { advanceToCompletionSummary } from "./completion";
 import { expect, test } from "./fixtures";
 
 async function createUniqueUser(baseURL: string) {
@@ -55,16 +56,28 @@ async function createQuizLesson(lessonId: string, uniqueId: string) {
   });
 }
 
-async function completeQuiz(page: Page, uniqueId: string) {
+/**
+ * Quiz completion can pause on progress milestones before the normal summary.
+ * These specs verify the summary actions, so this helper completes the quiz
+ * and advances through any intermediate milestone screens first.
+ */
+async function completeQuizAndShowCompletionSummary({
+  page,
+  uniqueId,
+}: {
+  page: Page;
+  uniqueId: string;
+}) {
   await page.getByRole("radio", { name: new RegExp(`Right ${uniqueId}`, "u") }).click();
   await page.getByRole("button", { name: /check/iu }).click();
   await page.getByRole("button", { name: /continue/iu }).click();
+  await advanceToCompletionSummary({ page });
 }
 
 /**
- * Two lessons in one chapter. Completing the first lesson stays on the normal
- * scored completion screen because only chapter and course boundaries are
- * milestones.
+ * Two lessons in one chapter. Completing the first lesson eventually reaches
+ * the normal scored completion summary, even if progress milestones appear
+ * before that summary.
  */
 async function createLessonCompleteScenario(prefix: string) {
   const org = await getAiOrganization();
@@ -290,7 +303,7 @@ test.describe("Lesson Completion UX", () => {
     await page.goto(lessonUrl);
     await page.waitForLoadState("networkidle");
     await expect(page.getByText("Lesson 1 of 2")).toBeVisible();
-    await completeQuiz(page, uniqueId);
+    await completeQuizAndShowCompletionSummary({ page, uniqueId });
 
     const completionScreen = page.getByRole("status");
     await expect(completionScreen.getByText("100%")).toBeVisible();
@@ -318,7 +331,7 @@ test.describe("Lesson Completion UX", () => {
 
     await page.goto(lessonUrl);
     await page.waitForLoadState("networkidle");
-    await completeQuiz(page, uniqueId);
+    await completeQuizAndShowCompletionSummary({ page, uniqueId });
 
     const completionScreen = page.getByRole("status");
 
@@ -342,7 +355,7 @@ test.describe("Lesson Completion UX", () => {
 
     await page.goto(lessonUrl);
     await page.waitForLoadState("networkidle");
-    await completeQuiz(page, uniqueId);
+    await completeQuizAndShowCompletionSummary({ page, uniqueId });
 
     const completionScreen = page.getByRole("status");
     await expect(completionScreen.getByText(/chapter complete/iu)).toBeVisible();
@@ -366,7 +379,7 @@ test.describe("Lesson Completion UX", () => {
 
     await page.goto(lessonUrl);
     await page.waitForLoadState("networkidle");
-    await completeQuiz(page, uniqueId);
+    await completeQuizAndShowCompletionSummary({ page, uniqueId });
 
     const completionScreen = page.getByRole("status");
 
@@ -388,7 +401,7 @@ test.describe("Lesson Completion UX", () => {
 
     await page.goto(lessonUrl);
     await page.waitForLoadState("networkidle");
-    await completeQuiz(page, uniqueId);
+    await completeQuizAndShowCompletionSummary({ page, uniqueId });
 
     const completionScreen = page.getByRole("status");
     await expect(completionScreen.getByText(/chapter complete/iu)).toBeVisible();
@@ -415,7 +428,7 @@ test.describe("Lesson Completion UX", () => {
 
     await page.goto(lessonUrl);
     await page.waitForLoadState("networkidle");
-    await completeQuiz(page, uniqueId);
+    await completeQuizAndShowCompletionSummary({ page, uniqueId });
 
     const completionScreen = page.getByRole("status");
     await expect(completionScreen.getByText(/course complete/iu)).toBeVisible();
@@ -439,7 +452,7 @@ test.describe("Lesson Completion UX", () => {
 
     await page.goto(lessonUrl);
     await page.waitForLoadState("networkidle");
-    await completeQuiz(page, uniqueId);
+    await completeQuizAndShowCompletionSummary({ page, uniqueId });
 
     const completionScreen = page.getByRole("status");
 
@@ -495,7 +508,7 @@ test.describe("Lesson Completion UX", () => {
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson1.slug}`);
     await page.waitForLoadState("networkidle");
-    await completeQuiz(page, uniqueId);
+    await completeQuizAndShowCompletionSummary({ page, uniqueId });
 
     const completionScreen = page.getByRole("status");
     await expect(completionScreen.getByText("100%")).toBeVisible();

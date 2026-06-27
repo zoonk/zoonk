@@ -1,9 +1,10 @@
 import { type AnswerResult } from "@zoonk/core/player/contracts/check-answer";
-import { type CompletionResult } from "@zoonk/core/player/contracts/completion-input-schema";
+import { getCappedLessonDurationSeconds } from "@zoonk/core/player/contracts/completion-duration";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type LessonKind } from "@zoonk/core/steps/contract/content";
 import { type PlayerCompletionMilestoneKey } from "./completion-milestone-keys";
 import {
+  type PlayerCompletionResult,
   type PlayerProgressSnapshot,
   getCompletionMilestones,
   getInitialCompletionMilestoneIndex,
@@ -40,7 +41,7 @@ export type PlayerState = {
   completionMilestoneIndex: number | null;
   lessonId: string;
   lessonKind: LessonKind;
-  completion: CompletionResult | null;
+  completion: PlayerCompletionResult | null;
   currentStepIndex: number;
   localDate: string;
   phase: PlayerPhase;
@@ -123,6 +124,28 @@ function recordStepTiming(state: PlayerState, stepId: string): Record<string, St
   };
 }
 
+/**
+ * Only answer-producing completions should count as interactive progress.
+ * Static lessons can complete without checked answers, and score-based nudges
+ * would feel wrong there because no weekday score changed.
+ */
+function hasCompletedInteractiveLesson(state: Pick<PlayerState, "results">) {
+  return Object.keys(state.results).length > 0;
+}
+
+/**
+ * The milestone preview uses the same lesson-duration cap as persistence. The
+ * value is attached to the completion result so later milestone screens do not
+ * change if the learner pauses before pressing Continue.
+ */
+function getCompletionWithDuration(state: PlayerState): PlayerCompletionResult {
+  return {
+    ...computeLocalCompletion(state),
+    completedInteractiveLesson: hasCompletedInteractiveLesson(state),
+    lessonDurationSeconds: getCappedLessonDurationSeconds({ startedAt: state.startedAt }),
+  };
+}
+
 function handleCheckAnswer(
   state: PlayerState,
   action: Extract<PlayerAction, { type: "CHECK_ANSWER" }>,
@@ -157,13 +180,14 @@ function handleCheckAnswer(
 function completeWith(state: PlayerState): PlayerState {
   const localDate = getLocalDate(new Date());
   const completed: PlayerState = { ...state, localDate, phase: "completed" };
-  const completion = computeLocalCompletion(completed);
+  const completion = getCompletionWithDuration(completed);
 
   return {
     ...completed,
     completion,
     completionMilestoneIndex: getInitialCompletionMilestoneIndex({
       completion,
+      lessonDurationSeconds: completion.lessonDurationSeconds,
       localDate,
       previousTotalBrainPower: state.totalBrainPower,
       progressSnapshot: state.progressSnapshot,
@@ -186,6 +210,7 @@ function continueCompletionMilestone(state: PlayerState): PlayerState {
 
   const milestones = getCompletionMilestones({
     completion: state.completion,
+    lessonDurationSeconds: state.completion.lessonDurationSeconds,
     localDate: state.localDate,
     previousTotalBrainPower: state.totalBrainPower,
     progressSnapshot: state.progressSnapshot,
