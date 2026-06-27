@@ -7,6 +7,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
+import { advanceToCompletionSummary } from "./completion";
 import { type Page, expect, test } from "./fixtures";
 
 async function createCourseWithThreeLessons() {
@@ -103,34 +104,6 @@ async function expectLessonCompleted({ lessonId, userId }: { lessonId: string; u
 }
 
 /**
- * Completion can show progress milestones before the final action links. The
- * revalidation tests need the stable chapter exit link, so they advance through
- * any intermediate milestone screens after the DB has confirmed completion.
- */
-async function expectCompletionActionsVisible({ page, steps = 0 }: { page: Page; steps?: number }) {
-  const exitLink = page.getByRole("link", { name: /exit/iu });
-
-  if (await exitLink.isVisible()) {
-    return;
-  }
-
-  if (steps >= 5) {
-    await expect(exitLink).toBeVisible();
-    return;
-  }
-
-  const continueButton = page.getByRole("button", { name: /continue/iu });
-
-  if (await continueButton.isVisible()) {
-    await continueButton.click();
-    await expectCompletionActionsVisible({ page, steps: steps + 1 });
-    return;
-  }
-
-  await expect(exitLink).toBeVisible();
-}
-
-/**
  * Static text lessons complete after one keyboard continue action. Waiting on
  * the server action response plus the DB row keeps the next navigation from
  * racing the background persistence work.
@@ -155,7 +128,7 @@ async function completeStaticLesson({
 
   await serverActionResponse;
   await expectLessonCompleted({ lessonId, userId });
-  await expectCompletionActionsVisible({ page });
+  await advanceToCompletionSummary({ page });
 }
 
 test.describe("Continue Learning Revalidation", () => {

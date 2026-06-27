@@ -3,6 +3,26 @@ import { page } from "vitest/browser";
 import { buildSerializedLesson, buildSerializedStep } from "../_test-utils/player-test-data";
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { buildNavigation, renderPlayer } from "../_test-utils/render-player";
+import { type PlayerProgressSnapshot } from "../completion-milestones";
+import { getLocalDate } from "../player-date";
+
+function buildProgressSnapshot(
+  overrides: Partial<PlayerProgressSnapshot> = {},
+): PlayerProgressSnapshot {
+  return {
+    bestDayScores: [],
+    currentEnergy: 0,
+    fullEnergyDays: 0,
+    highestPreviousDailyBrainPower: 100,
+    learningDays: 0,
+    todayBrainPower: 0,
+    todayCompletedLessons: 0,
+    todayEnergyAtEnd: null,
+    todayInteractiveLessons: 0,
+    totalLearningSeconds: 0,
+    ...overrides,
+  };
+}
 
 /**
  * Completion browser tests all start from the same one-step quiz because it is
@@ -45,6 +65,17 @@ async function completeSingleChoiceLesson({
   await page.getByRole("radio", { name: optionName }).click();
   await page.getByRole("button", { name: /check/iu }).click();
   await page.getByRole("button", { name: /continue/iu }).click();
+}
+
+/**
+ * The milestone logic keys best day by local date, while DailyProgress stores
+ * weekday numbers on UTC-midnight date rows. Mirroring that conversion lets the
+ * browser test stay independent of the machine's current weekday.
+ */
+function getCurrentLocalDayOfWeek() {
+  const localDate = getLocalDate(new Date());
+
+  return new Date(`${localDate}T00:00:00Z`).getUTCDay();
 }
 
 describe("player browser integration: completion", () => {
@@ -180,13 +211,7 @@ describe("player browser integration: completion", () => {
   it("shows an Energy threshold milestone with an Energy page link", async () => {
     renderPlayer({
       lesson: buildCompletionQuizLesson(),
-      progressSnapshot: {
-        currentEnergy: 9.9,
-        fullEnergyDays: 0,
-        highestPreviousDailyBrainPower: 100,
-        todayBrainPower: 0,
-        todayEnergyAtEnd: null,
-      },
+      progressSnapshot: buildProgressSnapshot({ currentEnergy: 9.9 }),
       viewer: buildAuthenticatedViewer(),
     });
 
@@ -206,13 +231,11 @@ describe("player browser integration: completion", () => {
   it("shows full-energy day milestones after the Energy threshold screen", async () => {
     renderPlayer({
       lesson: buildCompletionQuizLesson(),
-      progressSnapshot: {
+      progressSnapshot: buildProgressSnapshot({
         currentEnergy: 99.8,
         fullEnergyDays: 29,
-        highestPreviousDailyBrainPower: 100,
-        todayBrainPower: 0,
         todayEnergyAtEnd: 99.8,
-      },
+      }),
       viewer: buildAuthenticatedViewer(),
     });
 
@@ -238,13 +261,12 @@ describe("player browser integration: completion", () => {
   it("shows a daily Brain Power record milestone with a level page link", async () => {
     renderPlayer({
       lesson: buildCompletionQuizLesson(),
-      progressSnapshot: {
+      progressSnapshot: buildProgressSnapshot({
         currentEnergy: 20,
-        fullEnergyDays: 0,
         highestPreviousDailyBrainPower: 40,
         todayBrainPower: 40,
         todayEnergyAtEnd: 20,
-      },
+      }),
       viewer: buildAuthenticatedViewer(),
     });
 
@@ -259,6 +281,60 @@ describe("player browser integration: completion", () => {
     await expect
       .element(milestoneScreen.getByRole("link", { name: /learn about levels/iu }))
       .toHaveAttribute("href", "/level");
+  });
+
+  it("shows a learning-days milestone with a level page link", async () => {
+    globalThis.sessionStorage.clear();
+
+    renderPlayer({
+      lesson: buildCompletionQuizLesson(),
+      progressSnapshot: buildProgressSnapshot({ learningDays: 4 }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await completeSingleChoiceLesson();
+
+    const milestoneScreen = page.getByRole("status");
+
+    await expect.element(milestoneScreen.getByText(/5 learning days/iu)).toBeInTheDocument();
+
+    await expect.element(milestoneScreen.getByText(/different days/iu)).toBeInTheDocument();
+
+    await expect
+      .element(milestoneScreen.getByRole("link", { name: /learn about levels/iu }))
+      .toHaveAttribute("href", "/level");
+  });
+
+  it("shows a best-day milestone with a Score page link", async () => {
+    globalThis.sessionStorage.clear();
+
+    const todayDayOfWeek = getCurrentLocalDayOfWeek();
+    const weakerDayOfWeek = (todayDayOfWeek + 1) % 7;
+
+    renderPlayer({
+      lesson: buildCompletionQuizLesson(),
+      progressSnapshot: buildProgressSnapshot({
+        bestDayScores: [
+          { correctAnswers: 18, dayOfWeek: todayDayOfWeek, incorrectAnswers: 2 },
+          { correctAnswers: 14, dayOfWeek: weakerDayOfWeek, incorrectAnswers: 6 },
+        ],
+      }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await completeSingleChoiceLesson();
+
+    const milestoneScreen = page.getByRole("status");
+
+    await expect.element(milestoneScreen.getByText(/is your best day/iu)).toBeInTheDocument();
+
+    await expect
+      .element(milestoneScreen.getByText(/you usually get .* of answers right/iu))
+      .toBeInTheDocument();
+
+    await expect
+      .element(milestoneScreen.getByRole("link", { name: /learn about score/iu }))
+      .toHaveAttribute("href", "/score");
   });
 
   it("omits next lesson and level progress when optional lesson links are missing", async () => {

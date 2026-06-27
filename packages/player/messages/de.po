@@ -99,6 +99,38 @@ msgstr "{days} Tage volle Energie"
 msgid "cIxpmv"
 msgstr "Wow, was für eine unglaubliche Ausdauer! Lern weiter jeden Tag, damit deine Energie bei 100% bleibt."
 
+#: src/components/completion-learning-days-milestone.tsx
+msgid "SIXtG5"
+msgstr "{days} Lerntage"
+
+#: src/components/completion-learning-days-milestone.tsx
+msgid "hjXoGI"
+msgstr "Du hast an {days} verschiedenen Tagen Lektionen abgeschlossen. Wenn du oft übst, kannst du dir das Gelernte besser merken."
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "dZvEPp"
+msgstr "{minutes} Minuten lernen"
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "kw1W3C"
+msgstr "1 voller Lerntag"
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "BlVoPr"
+msgstr "{hours, plural, one {# Stunde gelernt} other {# Stunden gelernt}}"
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "WcAhMT"
+msgstr "Du kannst viel lernen, wenn du täglich ein paar Minuten übst."
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "LzEQnT"
+msgstr "Das ist ein ganzer Tag konzentriertes Üben."
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "PpK3hX"
+msgstr "Das sind mehr als {days, plural, one {# voller Tag} other {# volle Tage}} konzentriertes Üben."
+
 #: src/components/completion-level-milestone.tsx
 msgid "155cHi"
 msgstr "Level erreicht"
@@ -132,6 +164,10 @@ msgid "iSioEh"
 msgstr "Mehr über Energie erfahren"
 
 #: src/components/completion-progress-milestone-screen.tsx
+msgid "DC0WoT"
+msgstr "Mehr über Score"
+
+#: src/components/completion-progress-milestone-screen.tsx
 msgid "Q0R3MU"
 msgstr "Mehr über Levels erfahren"
 
@@ -139,6 +175,14 @@ msgstr "Mehr über Levels erfahren"
 #: src/components/step-action-button.tsx
 msgid "acrOoz"
 msgstr "Fortfahren"
+
+#: src/components/completion-score-milestone.tsx
+msgid "e6_3Ke"
+msgstr "{day} ist dein bester Tag"
+
+#: src/components/completion-score-milestone.tsx
+msgid "PTQ0ah"
+msgstr "An {day} hast du normalerweise {percentage} der Antworten richtig – dein bester Durchschnitt in dieser Woche."
 
 #: src/components/completion-screen.tsx
 msgid "95stPq"

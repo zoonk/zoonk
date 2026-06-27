@@ -99,6 +99,38 @@ msgstr "{days} days of max Energy"
 msgid "cIxpmv"
 msgstr "Wow, what incredible consistency! Keep studying every day to keep your Energy at 100%."
 
+#: src/components/completion-learning-days-milestone.tsx
+msgid "SIXtG5"
+msgstr "{days} learning days"
+
+#: src/components/completion-learning-days-milestone.tsx
+msgid "hjXoGI"
+msgstr "You've completed lessons on {days} different days. Practicing often helps you remember what you learn."
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "dZvEPp"
+msgstr "{minutes} minutes of learning"
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "kw1W3C"
+msgstr "1 full day of learning"
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "BlVoPr"
+msgstr "{hours, plural, one {# hour of learning} other {# hours of learning}}"
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "WcAhMT"
+msgstr "You can learn a lot by practicing for a few minutes a day."
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "LzEQnT"
+msgstr "That's a full day of focused practice."
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "PpK3hX"
+msgstr "That's more than {days, plural, one {# full day} other {# full days}} of focused practice."
+
 #: src/components/completion-level-milestone.tsx
 msgid "155cHi"
 msgstr "Level achieved"
@@ -132,6 +164,10 @@ msgid "iSioEh"
 msgstr "Learn about Energy"
 
 #: src/components/completion-progress-milestone-screen.tsx
+msgid "DC0WoT"
+msgstr "Learn about Score"
+
+#: src/components/completion-progress-milestone-screen.tsx
 msgid "Q0R3MU"
 msgstr "Learn about levels"
 
@@ -139,6 +175,14 @@ msgstr "Learn about levels"
 #: src/components/step-action-button.tsx
 msgid "acrOoz"
 msgstr "Continue"
+
+#: src/components/completion-score-milestone.tsx
+msgid "e6_3Ke"
+msgstr "{day} is your best day"
+
+#: src/components/completion-score-milestone.tsx
+msgid "PTQ0ah"
+msgstr "You usually get {percentage} of answers right on {day}, your highest average of the week."
 
 #: src/components/completion-screen.tsx
 msgid "95stPq"

@@ -48,7 +48,7 @@
     "dev": { "cache": false, "dependsOn": ["db:generate", "^dev"], "persistent": true },
     "e2e": { "dependsOn": ["build:e2e"], "passThroughEnv": ["PLAYWRIGHT_*", "E2E_BASE_URL"] },
     "i18n:lint": {},
-    "i18n": {},
+    "i18n": { "cache": false },
     "start": { "cache": false, "dependsOn": ["^start"], "persistent": true },
     "test": { "dependsOn": ["db:generate", "^db:setup:test", "^test"] },
     "test:watch": {

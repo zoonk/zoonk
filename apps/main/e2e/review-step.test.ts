@@ -7,6 +7,7 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { chapterSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { chapterWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
+import { advanceToCompletionSummary } from "./completion";
 import { expect, test } from "./fixtures";
 
 async function createReviewLesson(options: {
@@ -344,6 +345,8 @@ test.describe("Review Step", () => {
       sentenceWord2,
       translationToWord,
     });
+
+    await advanceToCompletionSummary({ page: userWithoutProgress });
 
     const completionScreen = userWithoutProgress.getByRole("status");
 

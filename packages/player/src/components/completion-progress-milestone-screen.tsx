@@ -11,6 +11,14 @@ import {
   BrainPowerMilestoneIndicator,
 } from "./completion-brain-power-milestone";
 import { EnergyMilestoneCopy, EnergyMilestoneIndicator } from "./completion-energy-milestone";
+import {
+  LearningDaysMilestoneCopy,
+  LearningDaysMilestoneIndicator,
+} from "./completion-learning-days-milestone";
+import {
+  LearningTimeMilestoneCopy,
+  LearningTimeMilestoneIndicator,
+} from "./completion-learning-time-milestone";
 import { LevelMilestoneCopy, LevelMilestoneIndicator } from "./completion-level-milestone";
 import {
   CompletionMilestoneActions,
@@ -18,6 +26,7 @@ import {
   CompletionMilestoneCopy,
   CompletionMilestoneScreen,
 } from "./completion-milestone-shell";
+import { ScoreMilestoneCopy, ScoreMilestoneIndicator } from "./completion-score-milestone";
 
 /**
  * Routes each milestone kind to the copy that explains the specific progress
@@ -30,6 +39,18 @@ function CompletionMilestoneCopyContent({ milestone }: { milestone: PlayerComple
 
   if (milestone.kind === "energy") {
     return <EnergyMilestoneCopy milestone={milestone} />;
+  }
+
+  if (milestone.kind === "learningDays") {
+    return <LearningDaysMilestoneCopy milestone={milestone} />;
+  }
+
+  if (milestone.kind === "learningTime") {
+    return <LearningTimeMilestoneCopy milestone={milestone} />;
+  }
+
+  if (milestone.kind === "score") {
+    return <ScoreMilestoneCopy milestone={milestone} />;
   }
 
   return <BrainPowerMilestoneCopy milestone={milestone} />;
@@ -47,6 +68,18 @@ function CompletionMilestoneIndicator({ milestone }: { milestone: PlayerCompleti
     return <EnergyMilestoneIndicator />;
   }
 
+  if (milestone.kind === "learningDays") {
+    return <LearningDaysMilestoneIndicator />;
+  }
+
+  if (milestone.kind === "learningTime") {
+    return <LearningTimeMilestoneIndicator />;
+  }
+
+  if (milestone.kind === "score") {
+    return <ScoreMilestoneIndicator />;
+  }
+
   return <BrainPowerMilestoneIndicator />;
 }
 
@@ -58,13 +91,19 @@ function getMilestoneHref({
   energyHref,
   levelHref,
   milestone,
+  scoreHref,
 }: {
   energyHref?: PlayerRoute;
   levelHref?: PlayerRoute;
   milestone: PlayerCompletionMilestone;
+  scoreHref?: PlayerRoute;
 }) {
   if (milestone.kind === "energy") {
     return energyHref;
+  }
+
+  if (milestone.kind === "score") {
+    return scoreHref;
   }
 
   return levelHref;
@@ -73,27 +112,48 @@ function getMilestoneHref({
 /**
  * Labels the secondary link with the metric-specific page it opens.
  */
+function CompletionMilestoneLearnLinkLabel({
+  milestone,
+}: {
+  milestone: PlayerCompletionMilestone;
+}) {
+  const t = useExtracted();
+
+  if (milestone.kind === "energy") {
+    return <>{t("Learn about Energy")}</>;
+  }
+
+  if (milestone.kind === "score") {
+    return <>{t("Learn about Score")}</>;
+  }
+
+  return <>{t("Learn about levels")}</>;
+}
+
+/**
+ * Renders the optional secondary link without coupling the shared player
+ * package to concrete app routes.
+ */
 function CompletionMilestoneLearnLink({
   energyHref,
   levelHref,
   milestone,
+  scoreHref,
 }: {
   energyHref?: PlayerRoute;
   levelHref?: PlayerRoute;
   milestone: PlayerCompletionMilestone;
+  scoreHref?: PlayerRoute;
 }) {
-  const t = useExtracted();
-  const href = getMilestoneHref({ energyHref, levelHref, milestone });
+  const href = getMilestoneHref({ energyHref, levelHref, milestone, scoreHref });
 
   if (!href) {
     return null;
   }
 
-  const label = milestone.kind === "energy" ? t("Learn about Energy") : t("Learn about levels");
-
   return (
     <PlayerLink className={cn(buttonVariants({ variant: "outline" }), "w-full")} href={href}>
-      {label}
+      <CompletionMilestoneLearnLinkLabel milestone={milestone} />
     </PlayerLink>
   );
 }
@@ -107,11 +167,13 @@ export function CompletionProgressMilestoneScreen({
   levelHref,
   milestone,
   onContinue,
+  scoreHref,
 }: {
   energyHref?: PlayerRoute;
   levelHref?: PlayerRoute;
   milestone: PlayerCompletionMilestone;
   onContinue: () => void;
+  scoreHref?: PlayerRoute;
 }) {
   const t = useExtracted();
 
@@ -132,6 +194,7 @@ export function CompletionProgressMilestoneScreen({
           energyHref={energyHref}
           levelHref={levelHref}
           milestone={milestone}
+          scoreHref={scoreHref}
         />
       </CompletionMilestoneActions>
     </CompletionMilestoneScreen>

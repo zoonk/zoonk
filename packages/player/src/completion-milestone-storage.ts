@@ -17,9 +17,13 @@ const FULL_ENERGY = 100;
 type StoredCompletionProgress = {
   currentEnergy: number;
   fullEnergyDays: number;
+  learningDays: number;
   localDate: string;
   todayBrainPower: number;
+  todayCompletedLessons: number;
   todayEnergyAtEnd: number | null;
+  todayInteractiveLessons: number;
+  totalLearningSeconds: number;
 };
 
 /**
@@ -67,6 +71,18 @@ function setSessionStorageItem(key: string, value: string) {
 }
 
 /**
+ * Stored progress can come from an older tab payload that predates newer
+ * milestone fields. Centralizing this fallback keeps backward-compatible
+ * parsing readable while still requiring core fields above to be valid.
+ */
+function getStoredNumber({ value }: { value: unknown }): number;
+function getStoredNumber({ fallback, value }: { fallback: null; value: unknown }): number | null;
+
+function getStoredNumber({ fallback = 0, value }: { fallback?: number | null; value: unknown }) {
+  return typeof value === "number" ? value : fallback;
+}
+
+/**
  * Parses the stored progress override conservatively so a corrupted value never
  * blocks milestone screens.
  */
@@ -96,10 +112,13 @@ function parseStoredCompletionProgress(rawValue: string | null): StoredCompletio
     return {
       currentEnergy: progress.currentEnergy,
       fullEnergyDays: progress.fullEnergyDays,
+      learningDays: getStoredNumber({ value: progress.learningDays }),
       localDate: progress.localDate,
       todayBrainPower: progress.todayBrainPower,
-      todayEnergyAtEnd:
-        typeof progress.todayEnergyAtEnd === "number" ? progress.todayEnergyAtEnd : null,
+      todayCompletedLessons: getStoredNumber({ value: progress.todayCompletedLessons }),
+      todayEnergyAtEnd: getStoredNumber({ fallback: null, value: progress.todayEnergyAtEnd }),
+      todayInteractiveLessons: getStoredNumber({ value: progress.todayInteractiveLessons }),
+      totalLearningSeconds: getStoredNumber({ value: progress.totalLearningSeconds }),
     };
   } catch {
     return null;
@@ -126,22 +145,41 @@ export function getEffectiveCompletionProgressSnapshot({
 
   if (!progressSnapshot) {
     return {
+      bestDayScores: null,
       currentEnergy: storedProgress.currentEnergy,
       fullEnergyDays: storedProgress.fullEnergyDays,
       highestPreviousDailyBrainPower: 0,
+      learningDays: storedProgress.learningDays,
       todayBrainPower: storedProgress.todayBrainPower,
+      todayCompletedLessons: storedProgress.todayCompletedLessons,
       todayEnergyAtEnd: storedProgress.todayEnergyAtEnd,
+      todayInteractiveLessons: storedProgress.todayInteractiveLessons,
+      totalLearningSeconds: storedProgress.totalLearningSeconds,
     };
   }
 
   return {
     ...progressSnapshot,
+    bestDayScores: progressSnapshot.bestDayScores ?? null,
     currentEnergy: Math.max(progressSnapshot.currentEnergy, storedProgress.currentEnergy),
     fullEnergyDays: Math.max(progressSnapshot.fullEnergyDays, storedProgress.fullEnergyDays),
+    learningDays: Math.max(progressSnapshot.learningDays ?? 0, storedProgress.learningDays),
     todayBrainPower: Math.max(progressSnapshot.todayBrainPower, storedProgress.todayBrainPower),
+    todayCompletedLessons: Math.max(
+      progressSnapshot.todayCompletedLessons ?? 0,
+      storedProgress.todayCompletedLessons,
+    ),
     todayEnergyAtEnd: Math.max(
       progressSnapshot.todayEnergyAtEnd ?? 0,
       storedProgress.todayEnergyAtEnd ?? 0,
+    ),
+    todayInteractiveLessons: Math.max(
+      progressSnapshot.todayInteractiveLessons ?? 0,
+      storedProgress.todayInteractiveLessons,
+    ),
+    totalLearningSeconds: Math.max(
+      progressSnapshot.totalLearningSeconds ?? 0,
+      storedProgress.totalLearningSeconds,
     ),
   };
 }
@@ -180,7 +218,10 @@ function getNextStoredCompletionProgress({
   localDate,
   progressSnapshot,
 }: {
-  completion: Pick<CompletionResult, "brainPower" | "energyDelta">;
+  completion: Pick<
+    CompletionResult,
+    "brainPower" | "correctCount" | "energyDelta" | "incorrectCount"
+  > & { completedInteractiveLesson?: boolean; lessonDurationSeconds?: number };
   localDate: string;
   progressSnapshot: PlayerProgressSnapshot | null;
 }): StoredCompletionProgress | null {
@@ -192,13 +233,22 @@ function getNextStoredCompletionProgress({
   const todayWasAlreadyFull = (progressSnapshot.todayEnergyAtEnd ?? 0) >= FULL_ENERGY;
   const todayIsNowFull = currentEnergy >= FULL_ENERGY;
 
+  const completedNewLearningDay = (progressSnapshot.todayCompletedLessons ?? 0) === 0;
+
   return {
     currentEnergy,
     fullEnergyDays:
       progressSnapshot.fullEnergyDays + (!todayWasAlreadyFull && todayIsNowFull ? 1 : 0),
+    learningDays: (progressSnapshot.learningDays ?? 0) + (completedNewLearningDay ? 1 : 0),
     localDate,
     todayBrainPower: progressSnapshot.todayBrainPower + completion.brainPower,
+    todayCompletedLessons: (progressSnapshot.todayCompletedLessons ?? 0) + 1,
     todayEnergyAtEnd: currentEnergy,
+    todayInteractiveLessons:
+      (progressSnapshot.todayInteractiveLessons ?? 0) +
+      (completion.completedInteractiveLesson ? 1 : 0),
+    totalLearningSeconds:
+      (progressSnapshot.totalLearningSeconds ?? 0) + (completion.lessonDurationSeconds ?? 0),
   };
 }
 
@@ -211,7 +261,10 @@ export function rememberCompletionProgress({
   localDate,
   progressSnapshot,
 }: {
-  completion: Pick<CompletionResult, "brainPower" | "energyDelta">;
+  completion: Pick<
+    CompletionResult,
+    "brainPower" | "correctCount" | "energyDelta" | "incorrectCount"
+  > & { completedInteractiveLesson?: boolean; lessonDurationSeconds?: number };
   localDate: string;
   progressSnapshot: PlayerProgressSnapshot | null;
 }) {

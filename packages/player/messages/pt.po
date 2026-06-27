@@ -99,6 +99,38 @@ msgstr "{days} dias com Energia máxima"
 msgid "cIxpmv"
 msgstr "Uau, que consistência incrível! Estude todo dia para manter sua Energia em 100%."
 
+#: src/components/completion-learning-days-milestone.tsx
+msgid "SIXtG5"
+msgstr "{days} dias de estudo"
+
+#: src/components/completion-learning-days-milestone.tsx
+msgid "hjXoGI"
+msgstr "Você completou aulas em {days} dias diferentes. Praticar com frequência te ajuda a lembrar do que você aprende."
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "dZvEPp"
+msgstr "{minutes} minutos de estudo"
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "kw1W3C"
+msgstr "1 dia inteiro de estudo"
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "BlVoPr"
+msgstr "{hours, plural, one {# hora de estudo} other {# horas de estudo}}"
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "WcAhMT"
+msgstr "Você pode aprender muita coisa praticando alguns minutos por dia."
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "LzEQnT"
+msgstr "Isso é um dia inteiro de prática focada."
+
+#: src/components/completion-learning-time-milestone.tsx
+msgid "PpK3hX"
+msgstr "Isso é mais de {days, plural, one {# dia inteiro} other {# dias inteiros}} de prática focada."
+
 #: src/components/completion-level-milestone.tsx
 msgid "155cHi"
 msgstr "Nível conquistado"
@@ -132,6 +164,10 @@ msgid "iSioEh"
 msgstr "Saiba mais sobre Energia"
 
 #: src/components/completion-progress-milestone-screen.tsx
+msgid "DC0WoT"
+msgstr "Saiba mais sobre a pontuação"
+
+#: src/components/completion-progress-milestone-screen.tsx
 msgid "Q0R3MU"
 msgstr "Saiba mais sobre níveis"
 
@@ -139,6 +175,14 @@ msgstr "Saiba mais sobre níveis"
 #: src/components/step-action-button.tsx
 msgid "acrOoz"
 msgstr "Continuar"
+
+#: src/components/completion-score-milestone.tsx
+msgid "e6_3Ke"
+msgstr "{day} é o seu melhor dia"
+
+#: src/components/completion-score-milestone.tsx
+msgid "PTQ0ah"
+msgstr "Você costuma acertar {percentage} das respostas em {day}, sua maior média da semana."
 
 #: src/components/completion-screen.tsx
 msgid "95stPq"

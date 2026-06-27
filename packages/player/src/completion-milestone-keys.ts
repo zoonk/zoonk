@@ -26,6 +26,18 @@ export function getCompletionMilestoneKey({
     return `brain-power:daily-record:${localDate}`;
   }
 
+  if (milestone.kind === "learningDays") {
+    return `learning-days:${milestone.days}`;
+  }
+
+  if (milestone.kind === "learningTime") {
+    return `learning-time:${milestone.seconds}`;
+  }
+
+  if (milestone.kind === "score") {
+    return `score:best-day:${localDate}`;
+  }
+
   if (milestone.status === "achieved") {
     return `level:achieved:${milestone.belt.color}:${milestone.belt.level}`;
   }

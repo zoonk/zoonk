@@ -38,6 +38,7 @@ function rememberCompletedStateMilestones(state: PlayerState) {
 
   const milestones = getCompletionMilestones({
     completion: state.completion,
+    lessonDurationSeconds: state.completion.lessonDurationSeconds,
     localDate: state.localDate,
     previousTotalBrainPower: state.totalBrainPower,
     progressSnapshot: state.progressSnapshot,

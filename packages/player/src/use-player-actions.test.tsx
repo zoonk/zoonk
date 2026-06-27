@@ -5,7 +5,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   getEffectiveCompletionProgressSnapshot,
   getStoredCompletionMilestoneKeys,
+  rememberCompletionProgress,
 } from "./completion-milestone-storage";
+import { type PlayerProgressSnapshot, getCompletionMilestones } from "./completion-milestones";
 import { getLocalDate } from "./player-date";
 import { type PlayerState } from "./player-reducer";
 import { usePlayerActions } from "./use-player-actions";
@@ -51,6 +53,24 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
   };
 }
 
+function buildProgressSnapshot(
+  overrides: Partial<PlayerProgressSnapshot> = {},
+): PlayerProgressSnapshot {
+  return {
+    bestDayScores: [],
+    currentEnergy: 0,
+    fullEnergyDays: 0,
+    highestPreviousDailyBrainPower: 0,
+    learningDays: 0,
+    todayBrainPower: 0,
+    todayCompletedLessons: 0,
+    todayEnergyAtEnd: null,
+    todayInteractiveLessons: 0,
+    totalLearningSeconds: 0,
+    ...overrides,
+  };
+}
+
 describe(usePlayerActions, () => {
   afterEach(() => {
     vi.restoreAllMocks();
@@ -74,13 +94,10 @@ describe(usePlayerActions, () => {
     const state = buildState({
       localDate,
       phase: "feedback",
-      progressSnapshot: {
+      progressSnapshot: buildProgressSnapshot({
         currentEnergy: 9.9,
-        fullEnergyDays: 0,
         highestPreviousDailyBrainPower: 100,
-        todayBrainPower: 0,
-        todayEnergyAtEnd: null,
-      },
+      }),
       results: {
         "step-1": {
           result: { correctAnswer: null, feedback: "Done", isCorrect: true },
@@ -100,31 +117,33 @@ describe(usePlayerActions, () => {
     expect(
       getEffectiveCompletionProgressSnapshot({
         localDate,
-        progressSnapshot: {
+        progressSnapshot: buildProgressSnapshot({
           currentEnergy: 9.9,
-          fullEnergyDays: 0,
           highestPreviousDailyBrainPower: 100,
-          todayBrainPower: 0,
-          todayEnergyAtEnd: null,
-        },
+        }),
       }),
     ).toStrictEqual({
+      bestDayScores: [],
       currentEnergy: 10.1,
       fullEnergyDays: 0,
       highestPreviousDailyBrainPower: 100,
+      learningDays: 1,
       todayBrainPower: 10,
+      todayCompletedLessons: 1,
       todayEnergyAtEnd: 10.1,
+      todayInteractiveLessons: 1,
+      totalLearningSeconds: 1800,
     });
   });
 
   it("falls back to server progress when session storage reads fail", () => {
-    const progressSnapshot = {
+    const progressSnapshot = buildProgressSnapshot({
       currentEnergy: 9.9,
       fullEnergyDays: 0,
       highestPreviousDailyBrainPower: 100,
       todayBrainPower: 0,
       todayEnergyAtEnd: null,
-    };
+    });
 
     vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
       throw new DOMException("Blocked", "SecurityError");
@@ -135,6 +154,47 @@ describe(usePlayerActions, () => {
     expect(
       getEffectiveCompletionProgressSnapshot({ localDate: "2026-06-05", progressSnapshot }),
     ).toStrictEqual(progressSnapshot);
+  });
+
+  it("does not show score milestones when stored progress has no server best-day history", () => {
+    const localDate = "2026-06-08";
+
+    rememberCompletionProgress({
+      completion: {
+        brainPower: 10,
+        correctCount: 0,
+        energyDelta: 0.2,
+        incorrectCount: 0,
+        lessonDurationSeconds: 60,
+      },
+      localDate,
+      progressSnapshot: buildProgressSnapshot({
+        bestDayScores: [{ correctAnswers: 18, dayOfWeek: 2, incorrectAnswers: 2 }],
+      }),
+    });
+
+    const effectiveSnapshot = getEffectiveCompletionProgressSnapshot({
+      localDate,
+      progressSnapshot: null,
+    });
+
+    const milestones = getCompletionMilestones({
+      completion: {
+        brainPower: 10,
+        completedInteractiveLesson: true,
+        correctCount: 1,
+        energyDelta: 0.2,
+        incorrectCount: 0,
+        newTotalBp: 20,
+      },
+      localDate,
+      previousTotalBrainPower: 10,
+      progressSnapshot: effectiveSnapshot,
+    });
+
+    expect(milestones).not.toContainEqual(
+      expect.objectContaining({ kind: "score", status: "bestDay" }),
+    );
   });
 
   it("check still no-ops for unanswered interactive steps", () => {
@@ -172,13 +232,10 @@ describe(usePlayerActions, () => {
 
     const state = buildState({
       phase: "feedback",
-      progressSnapshot: {
+      progressSnapshot: buildProgressSnapshot({
         currentEnergy: 9.9,
-        fullEnergyDays: 0,
         highestPreviousDailyBrainPower: 100,
-        todayBrainPower: 0,
-        todayEnergyAtEnd: null,
-      },
+      }),
       results: {
         "step-1": {
           result: { correctAnswer: null, feedback: "Done", isCorrect: true },
