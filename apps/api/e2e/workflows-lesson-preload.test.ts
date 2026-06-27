@@ -64,13 +64,13 @@ test.describe("Lesson Preload Workflow API", () => {
     await prisma.$disconnect();
   });
 
-  test("allows unauthenticated preload through the first five first-chapter lessons", async () => {
+  test("allows unauthenticated preload for every first-chapter lesson", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
     const lesson = await createAiLessonForPreload({
       aiOrgId,
       chapterPosition: 0,
-      lessonPosition: 4,
+      lessonPosition: 99,
       uniqueId,
     });
 
@@ -90,42 +90,10 @@ test.describe("Lesson Preload Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("returns 401 when unauthenticated preload needs the login-expanded preview", async () => {
+  test("returns 402 when unauthenticated preload is outside the first chapter", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
-    const lesson = await createAiLessonForPreload({
-      aiOrgId,
-      chapterPosition: 0,
-      lessonPosition: 5,
-      uniqueId,
-    });
-
-    const apiContext = await request.newContext({ baseURL });
-
-    const response = await apiContext.post("/v1/workflows/lesson-preload/trigger", {
-      data: { lessonId: lesson.id },
-    });
-
-    expect(response.status()).toBe(401);
-
-    const body = await response.json();
-
-    expect(body.error).toBeDefined();
-    expect(body.error.code).toBe("UNAUTHORIZED");
-    expect(body.error.message).toBe("Authentication required");
-
-    await apiContext.dispose();
-  });
-
-  test("returns 402 when unauthenticated preload is outside the free preview", async () => {
-    const uniqueId = randomUUID().slice(0, 8);
-
-    const lesson = await createAiLessonForPreload({
-      aiOrgId,
-      chapterPosition: 0,
-      lessonPosition: 10,
-      uniqueId,
-    });
+    const lesson = await createAiLessonForPreload({ aiOrgId, chapterPosition: 1, uniqueId });
 
     const apiContext = await request.newContext({ baseURL });
 
@@ -168,13 +136,13 @@ test.describe("Lesson Preload Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("allows signed-in first-chapter preload through lesson ten without subscription", async () => {
+  test("allows signed-in first-chapter preload without checking lesson position", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
     const lesson = await createAiLessonForPreload({
       aiOrgId,
       chapterPosition: 0,
-      lessonPosition: 9,
+      lessonPosition: 99,
       uniqueId,
     });
 
@@ -194,35 +162,6 @@ test.describe("Lesson Preload Workflow API", () => {
     expect(body.message).toBe("Workflow started");
     expect(body.runId).toBeDefined();
     expect(typeof body.runId).toBe("string");
-
-    await apiContext.dispose();
-  });
-
-  test("returns 402 for signed-in first-chapter lesson eleven without subscription", async () => {
-    const uniqueId = randomUUID().slice(0, 8);
-
-    const lesson = await createAiLessonForPreload({
-      aiOrgId,
-      chapterPosition: 0,
-      lessonPosition: 10,
-      uniqueId,
-    });
-
-    const { apiContext } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "preload-eleven-no-subscription",
-    });
-
-    const response = await apiContext.post("/v1/workflows/lesson-preload/trigger", {
-      data: { lessonId: lesson.id },
-    });
-
-    expect(response.status()).toBe(402);
-
-    const body = await response.json();
-
-    expect(body.error).toBeDefined();
-    expect(body.error.code).toBe("PAYMENT_REQUIRED");
 
     await apiContext.dispose();
   });

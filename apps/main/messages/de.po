@@ -37,7 +37,6 @@ msgstr "Prüfung bestehen"
 #: src/app/(catalog)/_components/logout-dropdown-item.tsx
 #: src/app/(progress)/_components/progress-empty-state.tsx
 #: src/app/(settings)/_components/protected-section.tsx
-#: src/components/auth/login-required.tsx
 msgid "AyGauy"
 msgstr "Anmelden"
 
@@ -984,7 +983,6 @@ msgid "E0saoA"
 msgstr "Die Punktzahl zeigt Genauigkeit, nicht Aktivität. Bester Tag und beste Zeit helfen dir zu erkennen, wann du am effektivsten lernst."
 
 #: src/app/(settings)/_components/protected-section.tsx
-#: src/components/auth/login-required.tsx
 msgid "yOFm9C"
 msgstr "Du musst eingeloggt sein, um auf diese Seite zuzugreifen."
 
@@ -1146,16 +1144,16 @@ msgid "vaN1qz"
 msgstr "Der aktuelle Abrechnungszeitraum endet am {date}."
 
 #: src/app/(settings)/subscription/subscription-plans.tsx
-msgid "uNQcTY"
-msgstr "Begrenzte Lektionen mit Werbung"
+msgid "EV_gJ6"
+msgstr "Erstes Kapitel enthalten"
 
 #: src/app/(settings)/subscription/subscription-plans.tsx
 msgid "mqHNd6"
 msgstr "Personalisierte Lektionen, klügste KI"
 
 #: src/app/(settings)/subscription/subscription-plans.tsx
-msgid "LnosqI"
-msgstr "Unbegrenzte Lektionen, keine Werbung"
+msgid "SC0MFR"
+msgstr "Unbegrenzte Lektionen"
 
 #: src/app/(settings)/subscription/subscription-plans.tsx
 msgid "eaOADK"
@@ -1204,10 +1202,6 @@ msgstr "Lektion erstellen"
 #: src/app/generate/l/[id]/generate-lesson-content.tsx
 msgid "_N8rYN"
 msgstr "Zurück zum Kapitel"
-
-#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
-msgid "FHCzlw"
-msgstr "Die ersten 10 Lektionen in jedem Kurs sind kostenlos. Mit einem Upgrade bekommst du unbegrenzten Zugriff auf alle Lektionen in allen Kursen."
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
 msgid "ZnMcrz"
@@ -1431,10 +1425,6 @@ msgstr "Zusammenfassen, was du lernen wirst..."
 #: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "9r_4zz"
 msgstr "Überblick schreiben..."
-
-#: src/app/generate/l/[id]/generate-lesson-content.tsx
-msgid "kXZ7ZI"
-msgstr "Lektion erstellen"
 
 #: src/app/generate/l/[id]/generation-client.tsx
 msgid "WihX6L"
@@ -1997,8 +1987,8 @@ msgid "IS_YjO"
 msgstr "Zum Erstellen upgraden"
 
 #: src/components/subscription/upgrade-cta.tsx
-msgid "jxZJ5k"
-msgstr "Zum Erstellen von Inhalten mit KI ist ein aktives Abonnement erforderlich."
+msgid "ZMU6iN"
+msgstr "Du hast dein Limit für kostenlose Lektionen erreicht. Upgrade für unbegrenzte Lektionen"
 
 #: src/components/subscription/upgrade-cta.tsx
 msgid "0h_lPM"

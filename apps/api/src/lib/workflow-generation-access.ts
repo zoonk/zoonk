@@ -1,4 +1,3 @@
-import { auth } from "@zoonk/core/auth";
 import { hasActiveSubscription } from "@zoonk/core/auth/subscription";
 import { getLessonAccessRequirement } from "@zoonk/core/lessons/access";
 import {
@@ -68,24 +67,15 @@ export async function getWorkflowSubscriptionAccessError(params: {
 }
 
 /**
- * Lesson workflows have three access states: public preview, login-expanded
- * preview, and paid access. Keeping that decision here lets generation and
- * preload return the same 401-or-402 contract for the same lesson position.
+ * Lesson workflows share the chapter-level free rule. Keeping that decision
+ * here lets generation and preload return the same paid-access contract for
+ * the same trusted lesson row.
  */
 export async function getWorkflowLessonAccessError(params: {
   headers: Headers;
   lesson: LessonWithChapter;
 }) {
-  const session = await auth.api.getSession({ headers: params.headers });
-
-  const requirement = getLessonAccessRequirement({
-    isAuthenticated: Boolean(session),
-    lesson: params.lesson,
-  });
-
-  if (requirement === "authentication") {
-    return errors.unauthorized();
-  }
+  const requirement = getLessonAccessRequirement({ lesson: params.lesson });
 
   return getWorkflowSubscriptionAccessError({
     headers: params.headers,

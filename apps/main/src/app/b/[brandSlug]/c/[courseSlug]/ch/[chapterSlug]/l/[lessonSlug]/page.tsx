@@ -1,4 +1,3 @@
-import { LoginRequired } from "@/components/auth/login-required";
 import { UpgradeCTA } from "@/components/subscription/upgrade-cta";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getLesson as getCatalogLesson } from "@/data/lessons/get-lesson";
@@ -39,29 +38,25 @@ import { ReviewLessonEmpty } from "./review-lesson-empty";
 
 type Props = PageProps<"/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">;
 type LessonShell = NonNullable<Awaited<ReturnType<typeof getCatalogLesson>>>;
-type LessonSession = Awaited<ReturnType<typeof getSession>>;
 type PlayerLesson = NonNullable<Awaited<ReturnType<typeof getPlayerLesson>>>;
 
 /**
  * Stops the player route before expensive player queries when the lesson sits
- * outside the viewer's free window. Lessons 6-10 ask anonymous learners to log
- * in, while lesson 11+ and later chapters require an active subscription even
- * if the lesson content was already generated.
+ * outside the free first chapter. Later chapters require an active
+ * subscription even if the lesson content was already generated.
  */
 async function getLessonAccessGate({
   brandSlug,
   chapterSlug,
   courseSlug,
   lesson,
-  session,
 }: {
   brandSlug: string;
   chapterSlug: string;
   courseSlug: string;
   lesson: LessonShell;
-  session: LessonSession;
 }) {
-  const requirement = getLessonAccessRequirement({ isAuthenticated: Boolean(session), lesson });
+  const requirement = getLessonAccessRequirement({ lesson });
 
   if (requirement === "free") {
     return null;
@@ -69,18 +64,6 @@ async function getLessonAccessGate({
 
   const backHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}` as const;
   const t = await getExtracted();
-
-  if (requirement === "authentication") {
-    const lessonMeta = await getLessonDisplayMeta(lesson);
-
-    return (
-      <LoginRequired
-        backHref={backHref}
-        backLabel={t("Back to chapter")}
-        title={lessonMeta.title}
-      />
-    );
-  }
 
   const hasSubscription = await hasActiveSubscription(await headers());
 
@@ -94,9 +77,6 @@ async function getLessonAccessGate({
         <UpgradeCTA
           backHref={backHref}
           backLabel={t("Back to chapter")}
-          description={t(
-            "The first 10 lessons in every course are free. Upgrade for unlimited access to every lesson in every course.",
-          )}
           title={t("Unlock the rest of this course")}
         />
       </ContainerBody>
@@ -164,14 +144,11 @@ export default async function LessonPage({ params }: Props) {
     notFound();
   }
 
-  const session = await getSession();
-
   const accessGate = await getLessonAccessGate({
     brandSlug,
     chapterSlug,
     courseSlug,
     lesson: lessonShell,
-    session,
   });
 
   if (accessGate) {
@@ -179,6 +156,7 @@ export default async function LessonPage({ params }: Props) {
   }
 
   const [
+    session,
     lesson,
     nextChapter,
     nextLesson,
@@ -188,6 +166,7 @@ export default async function LessonPage({ params }: Props) {
     chapterLessons,
     courseChapters,
   ] = await Promise.all([
+    getSession(),
     getPlayerLesson({ lessonId: lessonShell.id }),
     getNextChapterInCourse({
       chapterPosition: lessonShell.chapter.position,

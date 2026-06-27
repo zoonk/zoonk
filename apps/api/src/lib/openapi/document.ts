@@ -170,13 +170,11 @@ export const openAPIDocument = createDocument({
       "Stream lesson generation status (SSE)",
     ),
     "/workflows/lesson-generation/trigger": workflowTriggerEndpoint({
-      mayRequireAuthentication: true,
       requiresSubscription: true,
       schema: lessonGenerationTriggerSchema,
       summary: "Trigger lesson generation workflow",
     }),
     "/workflows/lesson-preload/trigger": workflowTriggerEndpoint({
-      mayRequireAuthentication: true,
       requiresSubscription: true,
       schema: lessonPreloadTriggerSchema,
       summary: "Trigger lesson preload workflow",

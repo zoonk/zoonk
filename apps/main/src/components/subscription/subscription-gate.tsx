@@ -4,6 +4,10 @@ import { type Route } from "next";
 import { headers } from "next/headers";
 import { UpgradeCTA } from "./upgrade-cta";
 
+/**
+ * Keeps generation pages on one subscription check and one upgrade message, so
+ * chapter and lesson generation explain the free limit consistently.
+ */
 export async function SubscriptionGate<Href extends string>({
   backHref,
   backLabel,

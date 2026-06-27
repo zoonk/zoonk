@@ -65,13 +65,13 @@ test.describe("Lesson Generation Workflow API", () => {
     await prisma.$disconnect();
   });
 
-  test("allows unauthenticated generation through the first five first-chapter lessons", async () => {
+  test("allows unauthenticated generation for every first-chapter lesson", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
     const lesson = await createAiLessonForWorkflow({
       aiOrgId,
       chapterPosition: 0,
-      lessonPosition: 4,
+      lessonPosition: 99,
       uniqueId,
     });
 
@@ -91,42 +91,10 @@ test.describe("Lesson Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("returns 401 when unauthenticated generation needs the login-expanded preview", async () => {
+  test("returns 402 when unauthenticated generation is outside the first chapter", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
-    const lesson = await createAiLessonForWorkflow({
-      aiOrgId,
-      chapterPosition: 0,
-      lessonPosition: 5,
-      uniqueId,
-    });
-
-    const apiContext = await request.newContext({ baseURL });
-
-    const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
-      data: { lessonId: lesson.id },
-    });
-
-    expect(response.status()).toBe(401);
-
-    const body = await response.json();
-
-    expect(body.error).toBeDefined();
-    expect(body.error.code).toBe("UNAUTHORIZED");
-    expect(body.error.message).toBe("Authentication required");
-
-    await apiContext.dispose();
-  });
-
-  test("returns 402 when unauthenticated generation is outside the free preview", async () => {
-    const uniqueId = randomUUID().slice(0, 8);
-
-    const lesson = await createAiLessonForWorkflow({
-      aiOrgId,
-      chapterPosition: 0,
-      lessonPosition: 10,
-      uniqueId,
-    });
+    const lesson = await createAiLessonForWorkflow({ aiOrgId, chapterPosition: 1, uniqueId });
 
     const apiContext = await request.newContext({ baseURL });
 
@@ -226,13 +194,13 @@ test.describe("Lesson Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("allows signed-in first-chapter generation through lesson ten without subscription", async () => {
+  test("allows signed-in first-chapter generation without checking lesson position", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
     const lesson = await createAiLessonForWorkflow({
       aiOrgId,
       chapterPosition: 0,
-      lessonPosition: 9,
+      lessonPosition: 99,
       uniqueId,
     });
 
@@ -252,35 +220,6 @@ test.describe("Lesson Generation Workflow API", () => {
     expect(body.message).toBe("Workflow started");
     expect(body.runId).toBeDefined();
     expect(typeof body.runId).toBe("string");
-
-    await apiContext.dispose();
-  });
-
-  test("returns 402 for signed-in first-chapter lesson eleven without subscription", async () => {
-    const uniqueId = randomUUID().slice(0, 8);
-
-    const lesson = await createAiLessonForWorkflow({
-      aiOrgId,
-      chapterPosition: 0,
-      lessonPosition: 10,
-      uniqueId,
-    });
-
-    const { apiContext } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "lesson-eleven-no-subscription",
-    });
-
-    const response = await apiContext.post("/v1/workflows/lesson-generation/trigger", {
-      data: { lessonId: lesson.id },
-    });
-
-    expect(response.status()).toBe(402);
-
-    const body = await response.json();
-
-    expect(body.error).toBeDefined();
-    expect(body.error.code).toBe("PAYMENT_REQUIRED");
 
     await apiContext.dispose();
   });
