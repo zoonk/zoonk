@@ -85,6 +85,105 @@ describe("player browser integration: word bank steps", () => {
     await expect.element(page.getByText("100%")).toBeInTheDocument();
   });
 
+  it("toggles reading word-bank options from number shortcuts", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        kind: "reading",
+        steps: [
+          buildSerializedStep({
+            content: {},
+            kind: "reading",
+            sentence: buildSerializedSentence({
+              sentence: "Hola mundo",
+              translation: "Hello world",
+            }),
+            wordBankOptions: [
+              buildWordBankOption({ word: "Hola" }),
+              buildWordBankOption({ word: "mundo" }),
+              buildWordBankOption({ word: "gato" }),
+            ],
+          }),
+        ],
+      }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    const wordBank = page.getByRole("group", { name: /word bank/iu });
+    const mundoOption = wordBank.getByRole("button", { exact: true, name: "mundo" });
+
+    await expect.element(mundoOption.getByText(/^2$/u)).toBeInTheDocument();
+    await expect.element(mundoOption).toHaveAttribute("aria-keyshortcuts", "2");
+
+    fireEvent.keyDown(globalThis.window, { key: "2" });
+
+    const answerTile = page
+      .getByRole("group", { name: /your answer/iu })
+      .getByRole("button", { name: /mundo/iu });
+
+    await expect.element(answerTile).toBeInTheDocument();
+
+    await expect.element(answerTile.getByText(/^2$/u)).toBeInTheDocument();
+    await expect.element(answerTile).toHaveAttribute("aria-keyshortcuts", "2");
+    await expect.element(mundoOption).toHaveAttribute("aria-pressed", "true");
+
+    fireEvent.keyDown(globalThis.window, { key: "2" });
+
+    await expect
+      .element(
+        page.getByRole("group", { name: /your answer/iu }).getByRole("button", { name: /mundo/iu }),
+      )
+      .not.toBeInTheDocument();
+
+    await expect.element(mundoOption).toHaveAttribute("aria-pressed", "false");
+
+    fireEvent.keyDown(globalThis.window, { key: "1" });
+    fireEvent.keyDown(globalThis.window, { key: "2" });
+
+    await expect.element(page.getByRole("button", { name: /check/iu })).toBeEnabled();
+  });
+
+  it("toggles fill-blank word-bank options from number shortcuts", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        steps: [
+          buildSerializedStep({
+            content: {
+              answers: ["cat"],
+              distractors: ["dog"],
+              feedback: "Nice work",
+              template: "The [BLANK] sleeps",
+            },
+            fillBlankOptions: [
+              buildWordBankOption({ word: "dog" }),
+              buildWordBankOption({ word: "cat" }),
+            ],
+            kind: "fillBlank",
+          }),
+        ],
+      }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    const wordBank = page.getByRole("group", { name: /word bank/iu });
+    const catOption = wordBank.getByRole("button", { exact: true, name: "cat" });
+
+    await expect.element(catOption.getByText(/^2$/u)).toBeInTheDocument();
+    await expect.element(catOption).toHaveAttribute("aria-keyshortcuts", "2");
+
+    fireEvent.keyDown(globalThis.window, { key: "2" });
+
+    await expect.element(page.getByRole("button", { name: /tap to remove/iu })).toBeInTheDocument();
+    await expect.element(page.getByRole("button", { name: /check/iu })).toBeEnabled();
+
+    fireEvent.keyDown(globalThis.window, { key: "2" });
+
+    await expect
+      .element(page.getByRole("button", { name: /tap to remove/iu }))
+      .not.toBeInTheDocument();
+
+    await expect.element(page.getByRole("button", { name: /check/iu })).toBeDisabled();
+  });
+
   it("shows reading word translations from the prompt sentence", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({

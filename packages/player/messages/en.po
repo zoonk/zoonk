@@ -41,7 +41,7 @@ msgid "7R_rOB"
 msgstr "Tap words to build your answer"
 
 #: src/components/arrange-words.tsx
-#: src/components/fill-blank-step.tsx
+#: src/components/fill-blank-word-bank.tsx
 msgid "e7WNdK"
 msgstr "Word bank"
 

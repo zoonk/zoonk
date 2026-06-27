@@ -64,7 +64,16 @@ test.describe("OTP Login Flow", () => {
       `/auth/otp?email=${encodeURIComponent(TEST_EMAIL)}&redirectTo=${encodeURIComponent(REDIRECT_URL)}`,
     );
 
-    await page.getByRole("link", { name: /change email/iu }).click();
+    const continueButton = page.getByRole("button", { name: /^continue$/iu });
+    const changeEmailLink = page.getByRole("link", { name: /change email/iu });
+
+    await expect(continueButton).toHaveAttribute("aria-keyshortcuts", "Enter");
+    await expect(continueButton.getByText("Enter")).toBeVisible();
+    await expect(changeEmailLink).toHaveAttribute("aria-keyshortcuts", "Escape");
+    await expect(changeEmailLink.getByText("Esc")).toBeVisible();
+
+    await page.getByRole("textbox").click();
+    await page.keyboard.press("Escape");
     await page.waitForURL(/\/auth\/login/u);
 
     await expect(

@@ -1,4 +1,4 @@
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { GenerationShortcutLink } from "@/components/generation/generation-shortcut-link";
 import {
   Empty,
   EmptyContent,
@@ -9,7 +9,6 @@ import {
 } from "@zoonk/ui/components/empty";
 import { BookOpenCheckIcon, SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
-import Link from "next/link";
 
 /**
  * Replaces the misleading zero-step completion screen for review lessons with
@@ -25,7 +24,7 @@ export async function ReviewLessonEmpty({
 
   return (
     <Empty className="border-0">
-      <EmptyHeader>
+      <EmptyHeader align="start">
         <EmptyMedia variant="icon">
           <BookOpenCheckIcon />
         </EmptyMedia>
@@ -44,16 +43,17 @@ export async function ReviewLessonEmpty({
       </EmptyHeader>
 
       {generationLessonId && (
-        <EmptyContent>
-          <Link
-            className={buttonVariants({ variant: "outline" })}
+        <EmptyContent align="stretch">
+          <GenerationShortcutLink
             href={`/generate/l/${generationLessonId}`}
             prefetch={false}
             rel="nofollow"
+            shortcut="N"
+            variant="outline"
           >
             <SparklesIcon data-icon="inline-start" />
             {t("Create lesson")}
-          </Link>
+          </GenerationShortcutLink>
         </EmptyContent>
       )}
     </Empty>

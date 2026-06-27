@@ -295,6 +295,11 @@ msgstr "Dieses Kapitel ist Teil des Kurses, wurde aber noch nicht erstellt. Erst
 msgid "3IOFp2"
 msgstr "Kapitel erstellen"
 
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
+#: src/app/generate/ch/[id]/generate-chapter-content.tsx
+msgid "qrEiLa"
+msgstr "Zurück zum Kurs"
+
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
 msgid "Ap-oRa"
 msgstr "Filter für Lektionen konnten nicht angewendet werden. Bitte versuche es erneut."
@@ -1223,10 +1228,6 @@ msgstr "Die Überprüfung wird freigeschaltet, nachdem die vorherigen Lektionen 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgid "9AOq2-"
 msgstr "Es gibt noch keine Übungsfragen zum Wiederholen."
-
-#: src/app/generate/ch/[id]/generate-chapter-content.tsx
-msgid "qrEiLa"
-msgstr "Zurück zum Kurs"
 
 #: src/app/generate/ch/[id]/generation-client.tsx
 msgid "txNTbP"

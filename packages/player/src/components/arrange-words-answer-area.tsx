@@ -18,9 +18,11 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useId, useMemo, useState } from "react";
 import { type StepResult } from "../player-reducer";
-import { RomanizationText } from "./romanization-text";
+import { getNumberKeyShortcut } from "../player-shortcuts";
+import { ResultKbd } from "./result-kbd";
+import { WordBankOptionContent } from "./word-bank-option-content";
 
-export type PlacedWord = WordBankOption & { id: string };
+export type PlacedWord = WordBankOption & { id: string; sourceIndex?: number };
 
 function getWordResultState(
   word: string,
@@ -39,12 +41,15 @@ function PlacedWordTile({
 }: {
   id: string;
   onClick: () => void;
-  option: WordBankOption;
+  option: PlacedWord;
   position: number;
   resultState?: "correct" | "incorrect";
 }) {
   const t = useExtracted();
   const hasResult = Boolean(resultState);
+
+  const shortcut =
+    typeof option.sourceIndex === "number" ? getNumberKeyShortcut(option.sourceIndex) : null;
 
   const { attributes, isDragging, listeners, setNodeRef, transform, transition } = useSortable({
     disabled: hasResult,
@@ -68,8 +73,9 @@ function PlacedWordTile({
       {...attributes}
       {...listeners}
       aria-label={ariaLabel}
+      aria-keyshortcuts={shortcut ?? undefined}
       className={cn(
-        "border-border flex min-h-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 text-base transition-all duration-150",
+        "border-border flex min-h-11 min-w-16 items-center justify-start gap-2.5 rounded-lg border px-3 py-2.5 text-left text-base transition-all duration-150",
         hasResult && "pointer-events-none",
         !hasResult &&
           "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]",
@@ -85,9 +91,13 @@ function PlacedWordTile({
       style={{ transform: CSS.Transform.toString(transform), transition }}
       type="button"
     >
-      <span>{option.word}</span>
+      {shortcut && (
+        <ResultKbd className="hidden lg:pointer-fine:inline-flex" isSelected>
+          {shortcut}
+        </ResultKbd>
+      )}
 
-      <RomanizationText>{option.romanization}</RomanizationText>
+      <WordBankOptionContent option={option} />
     </button>
   );
 }
@@ -95,8 +105,7 @@ function PlacedWordTile({
 function DragOverlayWord({ option }: { option: WordBankOption }) {
   return (
     <div className="bg-background border-border flex min-h-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 text-base shadow-md">
-      <span>{option.word}</span>
-      <RomanizationText>{option.romanization}</RomanizationText>
+      <WordBankOptionContent option={option} />
     </div>
   );
 }

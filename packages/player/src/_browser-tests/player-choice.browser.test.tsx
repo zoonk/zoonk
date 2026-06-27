@@ -1,6 +1,7 @@
 import { fireEvent } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
+import { runInMobilePlayerViewport } from "../_test-utils/browser-viewport";
 import { buildInlineImageUrl } from "../_test-utils/build-inline-image-url";
 import {
   buildSerializedLesson,
@@ -107,27 +108,17 @@ describe("player browser integration: choice steps", () => {
     await expect.element(page.getByText("100%")).toBeInTheDocument();
   });
 
-  it("selects an image option and shows inline feedback", async () => {
+  it("shows number shortcuts on image options", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         steps: [
           buildSerializedStep({
             content: {
               options: [
-                {
-                  feedback: "Correct cat",
-                  id: "cat",
-                  isCorrect: true,
-                  prompt: "Cat",
-                  url: "https://example.com/cat.png",
-                },
-                {
-                  feedback: "Wrong dog",
-                  id: "dog",
-                  isCorrect: false,
-                  prompt: "Dog",
-                  url: "https://example.com/dog.png",
-                },
+                { feedback: "Correct cat", id: "cat", isCorrect: true, prompt: "Cat" },
+                { feedback: "Wrong dog", id: "dog", isCorrect: false, prompt: "Dog" },
+                { feedback: "Wrong bird", id: "bird", isCorrect: false, prompt: "Bird" },
+                { feedback: "Wrong fish", id: "fish", isCorrect: false, prompt: "Fish" },
               ],
               question: "Select the cat",
             },
@@ -138,12 +129,88 @@ describe("player browser integration: choice steps", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
-    await page.getByRole("radio", { name: "Cat" }).click();
+    const imageOptions = page.getByRole("radiogroup", { name: /image options/iu });
+
+    await expect
+      .element(imageOptions.getByRole("radio", { name: "Cat" }).getByText(/^1$/u))
+      .toBeInTheDocument();
+
+    await expect
+      .element(imageOptions.getByRole("radio", { name: "Fish" }).getByText(/^4$/u))
+      .toBeInTheDocument();
+
+    await expect
+      .element(imageOptions.getByRole("radio", { name: "Fish" }))
+      .toHaveAttribute("aria-keyshortcuts", "4");
+
+    await imageOptions.getByRole("radio", { name: "Cat" }).click();
     await page.getByRole("button", { name: /check/iu }).click();
+
+    await expect
+      .element(imageOptions.getByRole("radio", { name: "Cat" }).getByText(/^1$/u))
+      .toBeInTheDocument();
+
+    await expect
+      .element(imageOptions.getByRole("radio", { name: "Cat" }))
+      .toHaveAttribute("aria-keyshortcuts", "1");
 
     await expect
       .element(page.getByRole("region", { name: /answer feedback/iu }))
       .toBeInTheDocument();
+  });
+
+  it("hides image shortcut badges on mobile", async () => {
+    await runInMobilePlayerViewport(async () => {
+      renderPlayer({
+        lesson: buildSerializedLesson({
+          steps: [
+            buildSerializedStep({
+              content: {
+                options: [
+                  { feedback: "Correct cat", id: "cat", isCorrect: true, prompt: "Cat" },
+                  { feedback: "Wrong dog", id: "dog", isCorrect: false, prompt: "Dog" },
+                ],
+                question: "Select the cat",
+              },
+              kind: "selectImage",
+            }),
+          ],
+        }),
+        viewer: buildAuthenticatedViewer(),
+      });
+
+      const imageOptions = page.getByRole("radiogroup", { name: /image options/iu });
+      const catImageOption = imageOptions.getByRole("radio", { name: "Cat" });
+
+      await expect.element(catImageOption.getByText(/^1$/u)).not.toBeVisible();
+      await expect.element(catImageOption).toHaveAttribute("aria-keyshortcuts", "1");
+    });
+  });
+
+  it("keeps multiple-choice numbers visible on mobile", async () => {
+    await runInMobilePlayerViewport(async () => {
+      renderPlayer({
+        lesson: buildSerializedLesson({
+          steps: [
+            buildSerializedStep({
+              content: {
+                options: [
+                  { feedback: "Nope", id: "Paris", isCorrect: false, text: "Paris" },
+                  { feedback: "Correct", id: "Berlin", isCorrect: true, text: "Berlin" },
+                ],
+                question: "What is the capital of Germany?",
+              },
+              kind: "multipleChoice",
+            }),
+          ],
+        }),
+        viewer: buildAuthenticatedViewer(),
+      });
+
+      await expect
+        .element(page.getByRole("radio", { name: "Berlin" }).getByText(/^2$/u))
+        .toBeVisible();
+    });
   });
 
   it("shows the missed multiple-choice prompt on incorrect feedback", async () => {
@@ -186,6 +253,41 @@ describe("player browser integration: choice steps", () => {
     await expect
       .element(page.getByText("What explains the robot's overheating?"))
       .toBeInTheDocument();
+  });
+
+  it("shows compact shortcut badges and places Enter inside the enabled action button", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        steps: [
+          buildSerializedStep({
+            content: {
+              options: [
+                { feedback: "Nope", id: "Paris", isCorrect: false, text: "Paris" },
+                { feedback: "Correct", id: "Berlin", isCorrect: true, text: "Berlin" },
+              ],
+              question: "What is the capital of Germany?",
+            },
+            kind: "multipleChoice",
+          }),
+        ],
+      }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await expect
+      .element(page.getByRole("link", { name: /close/iu }).getByText(/^Esc$/u))
+      .toBeInTheDocument();
+
+    await expect.element(page.getByText(/^Exit$/u)).not.toBeInTheDocument();
+
+    const checkButton = page.getByRole("button", { name: /check/iu });
+
+    await expect.element(checkButton).toHaveAttribute("aria-keyshortcuts", "Enter");
+    await expect.element(checkButton.getByText(/^Enter$/u)).toBeVisible();
+
+    await page.getByRole("radio", { name: "Berlin" }).click();
+
+    await expect.element(checkButton.getByText(/^Enter$/u)).toBeInTheDocument();
   });
 
   it("lets multiple-choice users toggle selections and shows the correct answer on mistakes", async () => {

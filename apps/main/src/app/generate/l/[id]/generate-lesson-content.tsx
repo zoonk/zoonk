@@ -86,7 +86,9 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
           lessonSlug={lesson.slug}
           lessonTitle={lessonMeta.title}
         />
-        <GenerationExitLink href={backHref}>{backLabel}</GenerationExitLink>
+        <GenerationExitLink href={backHref} shortcut="Esc">
+          {backLabel}
+        </GenerationExitLink>
       </>
     );
 

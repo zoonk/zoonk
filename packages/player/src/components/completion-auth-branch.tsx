@@ -45,7 +45,7 @@ function SecondaryActions({
     <PlayerLink
       className={cn(
         buttonVariants({ variant: isInline ? "outline" : "default" }),
-        isInline ? "flex-1 lg:justify-between" : "w-full lg:justify-between",
+        isInline ? "flex-1" : "w-full",
       )}
       href={chapterHref}
     >
@@ -56,7 +56,8 @@ function SecondaryActions({
 
   const restartButton = (
     <Button
-      className={cn(isInline ? "flex-1" : "w-full", "lg:justify-between")}
+      aria-keyshortcuts="r"
+      className={cn(isInline ? "flex-1" : "w-full")}
       onClick={onRestart}
       variant="outline"
     >

@@ -24,14 +24,7 @@ import { getLesson as getPlayerLesson } from "@zoonk/core/player/queries/get-les
 import { getPlayerResourceIds } from "@zoonk/core/player/queries/get-player-resource-ids";
 import { getTotalBrainPower } from "@zoonk/core/player/queries/get-total-brain-power";
 import { getSession } from "@zoonk/core/users/session/get";
-import {
-  Container,
-  ContainerBody,
-  ContainerDescription,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { Container, ContainerBody } from "@zoonk/ui/components/container";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -75,10 +68,11 @@ async function getLessonAccessGate({
   }
 
   const backHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}` as const;
-  const lessonMeta = await getLessonDisplayMeta(lesson);
   const t = await getExtracted();
 
   if (requirement === "authentication") {
+    const lessonMeta = await getLessonDisplayMeta(lesson);
+
     return (
       <LoginRequired
         backHref={backHref}
@@ -95,15 +89,8 @@ async function getLessonAccessGate({
   }
 
   return (
-    <Container variant="narrow">
-      <ContainerHeader>
-        <ContainerHeaderGroup>
-          <ContainerTitle>{lessonMeta.title}</ContainerTitle>
-          <ContainerDescription>{lessonMeta.description}</ContainerDescription>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
-
-      <ContainerBody>
+    <Container className="min-h-dvh" variant="narrow">
+      <ContainerBody className="justify-center sm:flex-1">
         <UpgradeCTA
           backHref={backHref}
           backLabel={t("Back to chapter")}

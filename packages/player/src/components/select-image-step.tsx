@@ -12,6 +12,7 @@ import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { useOptionKeyboard } from "../use-option-keyboard";
 import { InlineFeedback } from "./inline-feedback";
 import { QuestionText } from "./question-text";
+import { ResultKbd } from "./result-kbd";
 import { InteractiveStepLayout } from "./step-layouts";
 
 function getSelectedOptionId(selectedAnswer?: SelectedAnswer): string | null {
@@ -111,6 +112,7 @@ function ImageWithFallback({ alt, url }: { alt: string; url?: string }) {
 
 function ImageOptionCard({
   disabled,
+  index,
   isDimmed,
   isSelected,
   onSelect,
@@ -120,6 +122,7 @@ function ImageOptionCard({
   url,
 }: {
   disabled: boolean;
+  index: number;
   isDimmed: boolean;
   isSelected: boolean;
   onSelect: () => void;
@@ -134,6 +137,7 @@ function ImageOptionCard({
     <button
       aria-label={prompt}
       aria-checked={isSelected}
+      aria-keyshortcuts={String(index + 1)}
       className={cn(
         "focus-visible:border-ring focus-visible:ring-ring/50 relative overflow-hidden rounded-xl border-2 transition-all duration-150 outline-none focus-visible:ring-[3px]",
         disabled && "pointer-events-none",
@@ -151,6 +155,12 @@ function ImageOptionCard({
     >
       <ImageWithFallback alt={prompt} url={url} />
 
+      <span className="absolute top-2 left-2 hidden lg:pointer-fine:block">
+        <ResultKbd isSelected={isSelected} resultState={resultState ?? undefined}>
+          {index + 1}
+        </ResultKbd>
+      </span>
+
       {!resultState && isSelected && (
         <span className="bg-info absolute top-2 right-2 flex size-7 items-center justify-center rounded-full text-white">
           <CircleCheck aria-hidden="true" className="size-4" />
@@ -160,7 +170,7 @@ function ImageOptionCard({
       {resultState && statusLabel && (
         <span
           className={cn(
-            "absolute top-2 left-2 flex items-center gap-1 rounded-full border bg-white/95 px-2.5 py-1 text-xs font-semibold shadow-sm backdrop-blur-sm",
+            "absolute top-2 right-2 flex items-center gap-1 rounded-full border bg-white/95 px-2.5 py-1 text-xs font-semibold shadow-sm backdrop-blur-sm",
             resultState === "correct" && "border-success/20 text-success",
             resultState === "incorrect" && "border-destructive/20 text-destructive",
           )}
@@ -239,6 +249,7 @@ export function SelectImageStep({
           return (
             <ImageOptionCard
               disabled={hasResult}
+              index={index}
               isDimmed={isDimmed}
               isSelected={isSelected}
               key={option.id}

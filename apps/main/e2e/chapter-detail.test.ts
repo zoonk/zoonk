@@ -11,6 +11,7 @@ import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
 import { getSearchInputTop, scrollSearchInputToTop } from "./catalog-search";
 import { expect, test } from "./fixtures";
+import { pressShortcutAndWaitForUrl } from "./keyboard-shortcuts";
 
 const uniqueId = randomUUID();
 const SEARCH_LESSONS_LABEL = /search lessons/iu;
@@ -380,9 +381,11 @@ test.describe("Chapter Navbar - Mobile", () => {
     const courseLink = catalogNavbar.getByRole("link", { name: /course page/iu });
     const homeLink = catalogNavbar.getByRole("link", { name: /home page/iu });
 
+    await expect(courseLink).toHaveCount(1);
     await expect(courseLink).toBeVisible();
     await expect(courseLink).toHaveAttribute("href", courseUrl);
 
+    await expect(homeLink).toHaveCount(1);
     await expect(homeLink).toBeVisible();
     await expect(homeLink).toHaveAttribute("href", "/");
 
@@ -392,7 +395,8 @@ test.describe("Chapter Navbar - Mobile", () => {
       catalogNavbar.getByRole("link", { exact: true, name: "Courses" }),
     ).not.toBeVisible();
 
-    await expect(catalogNavbar.getByRole("button", { name: /search/iu })).not.toBeVisible();
+    await expect(catalogNavbar.getByRole("link", { name: /new course/iu })).toHaveCount(0);
+    await expect(catalogNavbar.getByRole("button", { name: /search/iu })).toHaveCount(0);
     await expect(catalogNavbar.getByRole("button", { name: /user menu/iu })).not.toBeVisible();
   });
 });
@@ -632,6 +636,8 @@ test.describe("Chapter - No Lessons", () => {
     const generateLink = page.getByRole("link", { name: /create chapter/iu });
 
     await expect(generateLink).toBeVisible();
+    await expect(generateLink.getByText(/^N$/u)).toBeVisible();
+    await expect(generateLink).toHaveAttribute("aria-keyshortcuts", "n");
 
     await expect(generateLink).toHaveAttribute(
       "href",
@@ -640,9 +646,26 @@ test.describe("Chapter - No Lessons", () => {
 
     await expect(generateLink).toHaveAttribute("rel", "nofollow");
 
+    const courseLink = page.getByRole("link", { name: /back to course/iu });
+    await expect(courseLink).toBeVisible();
+    await expect(courseLink.getByText(/^Esc$/u)).toBeVisible();
+    await expect(courseLink).toHaveAttribute("aria-keyshortcuts", "Escape");
+    await expect(courseLink).toHaveAttribute("href", courseUrl);
+
     const actionsButton = page.getByRole("main").getByRole("button", { name: /more options/iu });
 
     await expect(actionsButton).toHaveCount(0);
+
+    await pressShortcutAndWaitForUrl({
+      expectedUrl: new RegExp(`/generate/ch/${noLessonsChapterId}`, "u"),
+      key: "n",
+      page,
+    });
+
+    await page.goto(noLessonsChapterUrl);
+    await expect(page.getByRole("link", { name: /back to course/iu })).toBeVisible();
+
+    await pressShortcutAndWaitForUrl({ expectedUrl: courseUrl, key: "Escape", page });
   });
 
   test("non-AI chapters with no lessons stay on the chapter page", async ({ page }) => {

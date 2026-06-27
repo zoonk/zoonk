@@ -1,3 +1,4 @@
+import { fireEvent } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { buildSerializedLesson, buildSerializedStep } from "../_test-utils/player-test-data";
@@ -63,6 +64,45 @@ describe("player browser integration: arrangement steps", () => {
     await expect.element(page.getByRole("heading", { name: "Match the pairs." })).toBeVisible();
   });
 
+  it("matches pairs from number shortcuts", async () => {
+    renderPlayer({
+      lesson: buildSerializedLesson({
+        steps: [
+          buildSerializedStep({
+            content: {
+              pairs: [
+                { left: "Sun", right: "Day" },
+                { left: "Moon", right: "Night" },
+              ],
+              question: "Match each item",
+            },
+            id: "match-keyboard",
+            kind: "matchColumns",
+            matchColumnsRightItems: ["Day", "Night"],
+          }),
+        ],
+      }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    const sun = page.getByRole("button", { name: "Sun" });
+    const day = page.getByRole("button", { name: "Day" });
+
+    await expect.element(sun.getByText(/^1$/u)).toBeInTheDocument();
+    await expect.element(sun).toHaveAttribute("aria-keyshortcuts", "1");
+
+    fireEvent.keyDown(globalThis.window, { key: "1" });
+
+    await expect.element(day.getByText(/^1$/u)).toBeInTheDocument();
+    await expect.element(day).toHaveAttribute("aria-keyshortcuts", "1");
+
+    fireEvent.keyDown(globalThis.window, { key: "1" });
+    fireEvent.keyDown(globalThis.window, { key: "2" });
+    fireEvent.keyDown(globalThis.window, { key: "2" });
+
+    await expect.element(page.getByRole("button", { name: /check/iu })).toBeEnabled();
+  });
+
   it("strips model-added wrapping quotes from match-column labels", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
@@ -89,10 +129,10 @@ describe("player browser integration: arrangement steps", () => {
     const moon = page.getByRole("button", { name: "Moon" });
     const night = page.getByRole("button", { name: "Night" });
 
-    await expect.element(sun).toHaveTextContent(/^Sun$/u);
-    await expect.element(day).toHaveTextContent(/^Day$/u);
-    await expect.element(moon).toHaveTextContent(/^Moon$/u);
-    await expect.element(night).toHaveTextContent(/^Night$/u);
+    await expect.element(sun.getByText(/^Sun$/u)).toBeInTheDocument();
+    await expect.element(day.getByText(/^Day$/u)).toBeInTheDocument();
+    await expect.element(moon.getByText(/^Moon$/u)).toBeInTheDocument();
+    await expect.element(night.getByText(/^Night$/u)).toBeInTheDocument();
 
     await sun.click();
     await day.click();

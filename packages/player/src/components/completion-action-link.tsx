@@ -1,21 +1,34 @@
 "use client";
 
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { Kbd } from "@zoonk/ui/components/kbd";
+import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type PlayerRoute } from "../player-context";
 import { PlayerLink } from "../player-link";
 
 export function PrimaryKbd({ children }: { children: React.ReactNode }) {
-  return (
-    <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden opacity-70 lg:inline-flex">
-      {children}
-    </Kbd>
-  );
+  return <ShortcutKbd tone="inverse">{children}</ShortcutKbd>;
 }
 
 export function SecondaryKbd({ children }: { children: React.ReactNode }) {
-  return <Kbd className="hidden opacity-60 lg:inline-flex">{children}</Kbd>;
+  return <ShortcutKbd className="opacity-60">{children}</ShortcutKbd>;
+}
+
+/**
+ * Completion buttons use the short visible key label, but ARIA expects the
+ * canonical key name for keys like Escape. Keeping the conversion here avoids
+ * every completion action restating the same mapping.
+ */
+function getAriaKeyboardShortcut(shortcut: string): string {
+  if (shortcut === "Esc") {
+    return "Escape";
+  }
+
+  if (shortcut === "R") {
+    return "r";
+  }
+
+  return shortcut;
 }
 
 export function PrimaryActionLink({
@@ -31,7 +44,8 @@ export function PrimaryActionLink({
 }) {
   return (
     <PlayerLink
-      className={cn(buttonVariants({ size: "lg" }), "w-full lg:justify-between", className)}
+      aria-keyshortcuts={getAriaKeyboardShortcut(shortcut)}
+      className={cn(buttonVariants({ size: "lg" }), "w-full", className)}
       href={href}
     >
       {children}
@@ -53,7 +67,8 @@ export function SecondaryActionLink({
 }) {
   return (
     <PlayerLink
-      className={cn(buttonVariants({ variant: "outline" }), "w-full lg:justify-between", className)}
+      aria-keyshortcuts={getAriaKeyboardShortcut(shortcut)}
+      className={cn(buttonVariants({ variant: "outline" }), "w-full", className)}
       href={href}
     >
       {children}

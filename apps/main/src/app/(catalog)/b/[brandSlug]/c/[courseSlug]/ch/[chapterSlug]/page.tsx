@@ -118,7 +118,10 @@ export default async function ChapterPage({
     >
       <Grid variant="pane">
         {shouldShowCreateChapterPrompt ? (
-          <ChapterNotGenerated chapterId={chapter.id} />
+          <ChapterNotGenerated
+            chapterId={chapter.id}
+            courseHref={`/b/${brandSlug}/c/${courseSlug}`}
+          />
         ) : (
           <Suspense
             fallback={<CatalogGridSkeleton count={lessons.length} groupVariant="pane" search />}

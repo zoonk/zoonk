@@ -295,6 +295,11 @@ msgstr "This chapter is part of the course, but it hasn't been created yet. Crea
 msgid "3IOFp2"
 msgstr "Create chapter"
 
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
+#: src/app/generate/ch/[id]/generate-chapter-content.tsx
+msgid "qrEiLa"
+msgstr "Back to course"
+
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
 msgid "Ap-oRa"
 msgstr "Could not apply lesson filters. Please try again."
@@ -1223,10 +1228,6 @@ msgstr "Review unlocks after the earlier lessons in this chapter have been creat
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgid "9AOq2-"
 msgstr "There are no practice questions to review yet."
-
-#: src/app/generate/ch/[id]/generate-chapter-content.tsx
-msgid "qrEiLa"
-msgstr "Back to course"
 
 #: src/app/generate/ch/[id]/generation-client.tsx
 msgid "txNTbP"
