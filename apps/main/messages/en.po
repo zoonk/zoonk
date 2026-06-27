@@ -1206,8 +1206,8 @@ msgid "_N8rYN"
 msgstr "Back to chapter"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
-msgid "rPcS-X"
-msgstr "Free accounts include the first 10 lessons in each course. Upgrade for unlimited access to every lesson in every course."
+msgid "FHCzlw"
+msgstr "The first 10 lessons in every course are free. Upgrade for unlimited access to every lesson in every course."
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
 msgid "ZnMcrz"

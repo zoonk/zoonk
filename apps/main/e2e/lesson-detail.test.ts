@@ -563,7 +563,7 @@ test.describe("Lesson Player Page", () => {
     await expect(authenticatedPage.getByText(/unlock the rest of this course/iu)).toBeVisible();
 
     await expect(
-      authenticatedPage.getByText(/free accounts include the first 10 lessons/iu),
+      authenticatedPage.getByText(/the first 10 lessons in every course are free/iu),
     ).toBeVisible();
 
     await expect(authenticatedPage.getByRole("heading", { name: lessonTitle })).not.toBeVisible();
@@ -615,7 +615,7 @@ test.describe("Lesson Player Page", () => {
     await expect(authenticatedPage.getByText(/unlock the rest of this course/iu)).toBeVisible();
 
     await expect(
-      authenticatedPage.getByText(/free accounts include the first 10 lessons/iu),
+      authenticatedPage.getByText(/the first 10 lessons in every course are free/iu),
     ).toBeVisible();
   });
 
