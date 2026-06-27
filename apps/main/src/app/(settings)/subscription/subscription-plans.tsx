@@ -99,9 +99,9 @@ export async function SubscriptionPlans({
   });
 
   const descriptions: Record<string, string> = {
-    free: t("Limited lessons with ads"),
+    free: t("First chapter included"),
     max: t("Personalized lessons, smartest AI"),
-    plus: t("Unlimited lessons, no ads"),
+    plus: t("Unlimited lessons"),
     pro: t("Personalized lessons, fast AI"),
   };
 

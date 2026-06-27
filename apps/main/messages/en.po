@@ -37,7 +37,6 @@ msgstr "Pass an exam"
 #: src/app/(catalog)/_components/logout-dropdown-item.tsx
 #: src/app/(progress)/_components/progress-empty-state.tsx
 #: src/app/(settings)/_components/protected-section.tsx
-#: src/components/auth/login-required.tsx
 msgid "AyGauy"
 msgstr "Login"
 
@@ -984,7 +983,6 @@ msgid "E0saoA"
 msgstr "Score shows accuracy, not activity. Best day and best time help you find when you learn most effectively."
 
 #: src/app/(settings)/_components/protected-section.tsx
-#: src/components/auth/login-required.tsx
 msgid "yOFm9C"
 msgstr "You need to be logged in to access this page."
 
@@ -1146,16 +1144,16 @@ msgid "vaN1qz"
 msgstr "Current billing period ends on {date}."
 
 #: src/app/(settings)/subscription/subscription-plans.tsx
-msgid "uNQcTY"
-msgstr "Limited lessons with ads"
+msgid "EV_gJ6"
+msgstr "First chapter included"
 
 #: src/app/(settings)/subscription/subscription-plans.tsx
 msgid "mqHNd6"
 msgstr "Personalized lessons, smartest AI"
 
 #: src/app/(settings)/subscription/subscription-plans.tsx
-msgid "LnosqI"
-msgstr "Unlimited lessons, no ads"
+msgid "SC0MFR"
+msgstr "Unlimited lessons"
 
 #: src/app/(settings)/subscription/subscription-plans.tsx
 msgid "eaOADK"
@@ -1204,10 +1202,6 @@ msgstr "Create lesson"
 #: src/app/generate/l/[id]/generate-lesson-content.tsx
 msgid "_N8rYN"
 msgstr "Back to chapter"
-
-#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
-msgid "FHCzlw"
-msgstr "The first 10 lessons in every course are free. Upgrade for unlimited access to every lesson in every course."
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
 msgid "ZnMcrz"
@@ -1431,10 +1425,6 @@ msgstr "Summarizing what you'll learn..."
 #: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "9r_4zz"
 msgstr "Writing the overview..."
-
-#: src/app/generate/l/[id]/generate-lesson-content.tsx
-msgid "kXZ7ZI"
-msgstr "Create Lesson"
 
 #: src/app/generate/l/[id]/generation-client.tsx
 msgid "WihX6L"
@@ -1997,8 +1987,8 @@ msgid "IS_YjO"
 msgstr "Upgrade to create"
 
 #: src/components/subscription/upgrade-cta.tsx
-msgid "jxZJ5k"
-msgstr "Creating content with AI requires an active subscription."
+msgid "ZMU6iN"
+msgstr "You’ve reached your free lesson limit. Upgrade for unlimited lessons"
 
 #: src/components/subscription/upgrade-cta.tsx
 msgid "0h_lPM"

@@ -34,7 +34,7 @@ export async function UpgradeCTA<Href extends string>({
         <EmptyTitle>{title ?? t("Upgrade to create")}</EmptyTitle>
 
         <EmptyDescription>
-          {description ?? t("Creating content with AI requires an active subscription.")}
+          {description ?? t("You’ve reached your free lesson limit. Upgrade for unlimited lessons")}
         </EmptyDescription>
       </EmptyHeader>
 

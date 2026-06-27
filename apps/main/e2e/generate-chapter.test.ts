@@ -167,7 +167,7 @@ test.describe("Generate Chapter Page - Unauthenticated", () => {
     const { chapter } = await createPendingChapter(1);
     await page.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(page.getByText(/upgrade to create/iu)).toBeVisible();
+    await expect(page.getByText(/^upgrade to create$/iu)).toBeVisible();
 
     const upgradeLink = page.getByRole("link", { name: /upgrade/iu });
     await expect(upgradeLink).toBeVisible();
@@ -180,7 +180,7 @@ test.describe("Generate Chapter Page - No Subscription", () => {
     const { chapter } = await createPendingChapter(1);
     await authenticatedPage.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(authenticatedPage.getByText(/upgrade to create/iu)).toBeVisible();
+    await expect(authenticatedPage.getByText(/^upgrade to create$/iu)).toBeVisible();
 
     const upgradeLink = authenticatedPage.getByRole("link", { name: /upgrade/iu });
     await expect(upgradeLink).toBeVisible();
@@ -204,7 +204,7 @@ test.describe("Generate Chapter Page - No Subscription", () => {
 
     await authenticatedPage.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(authenticatedPage.getByText(/upgrade to create/iu)).toBeVisible();
+    await expect(authenticatedPage.getByText(/^upgrade to create$/iu)).toBeVisible();
   });
 });
 
@@ -525,7 +525,7 @@ test.describe("Generate Chapter Page - First Chapter Free", () => {
 
     await page.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(page.getByText(/upgrade to create/iu)).toHaveCount(0);
+    await expect(page.getByText(/^upgrade to create$/iu)).toHaveCount(0);
     await expect(page.getByRole("heading", { name: chapter.title })).toBeVisible();
   });
 
@@ -541,7 +541,7 @@ test.describe("Generate Chapter Page - First Chapter Free", () => {
 
     await authenticatedPage.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(authenticatedPage.getByText(/upgrade to create/iu)).toHaveCount(0);
+    await expect(authenticatedPage.getByText(/^upgrade to create$/iu)).toHaveCount(0);
     await expect(authenticatedPage.getByRole("heading", { name: chapter.title })).toBeVisible();
   });
 });
@@ -576,7 +576,8 @@ test.describe("Generate Chapter Page - Running Later Chapter Requires Subscripti
 
     await page.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(page.getByText(/upgrade to create/iu)).toBeVisible();
+    await expect(page.getByText(/^upgrade to create$/iu)).toBeVisible();
+    await expect(page.getByText(/you.ve reached your free lesson limit/iu)).toBeVisible();
   });
 });
 

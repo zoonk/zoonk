@@ -1,4 +1,3 @@
-import { LoginRequired } from "@/components/auth/login-required";
 import { GenerationExitLink } from "@/components/generation/generation-exit-link";
 import { SubscriptionGate } from "@/components/subscription/subscription-gate";
 import { getLessonForGeneration } from "@/data/lessons/get-lesson-for-generation";
@@ -10,7 +9,6 @@ import {
   getSourceLessonForGeneratedCompanion,
   isGeneratedCompanionLessonKind,
 } from "@zoonk/core/lessons/generated-companions";
-import { getSession } from "@zoonk/core/users/session/get";
 import { Container, ContainerBody } from "@zoonk/ui/components/container";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
@@ -35,7 +33,7 @@ async function GeneratedCompanionRedirect({ lesson }: { lesson: LessonForGenerat
 
 export async function GenerateLessonContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [session, lesson] = await Promise.all([getSession(), getLessonForGeneration(id)]);
+  const lesson = await getLessonForGeneration(id);
 
   if (!lesson || !isGeneratedLessonKind(lesson.kind)) {
     notFound();
@@ -48,14 +46,7 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
 
   const backLabel = t("Back to chapter");
 
-  const accessRequirement = getLessonAccessRequirement({
-    isAuthenticated: Boolean(session),
-    lesson,
-  });
-
-  if (accessRequirement === "authentication") {
-    return <LoginRequired backHref={backHref} backLabel={backLabel} title={t("Create Lesson")} />;
-  }
+  const accessRequirement = getLessonAccessRequirement({ lesson });
 
   const lessonMeta = await getLessonDisplayMeta(lesson);
   const companionLesson = await getGeneratedCompanionForSourceLesson(lesson);
