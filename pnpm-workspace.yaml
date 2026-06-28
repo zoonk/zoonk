@@ -3,7 +3,6 @@ packages:
   - packages/*
 
 allowBuilds:
-  "@google/genai": false
   "@nestjs/core": false
   "@parcel/watcher": false
   "@prisma/engines": true
@@ -36,7 +35,7 @@ catalog:
   "@types/react-dom": ^19.2.3
   "@typescript/native-preview": 7.0.0-dev.20260612.1
   "@vercel/analytics": 2.0.1
-  ai: 6.0.203
+  ai: 7.0.4
   babel-plugin-react-compiler: 1.0.0
   botid: 1.5.11
   jsdom: 29.1.1
@@ -61,6 +60,10 @@ minimumReleaseAgeExclude:
   - esbuild@0.28.1
   - "@eloqnt/cli@0.0.4"
   - "@eloqnt/sdk@0.0.4"
+  - "@ai-sdk/gateway@4.0.4"
+  - "@ai-sdk/openai@4.0.2"
+  - "@ai-sdk/provider-utils@5.0.1"
+  - ai@7.0.4
 
 overrides:
   "@hono/node-server@<1.19.13": ^1.19.13

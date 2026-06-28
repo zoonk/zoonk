@@ -1,5 +1,6 @@
 import "server-only";
 import {
+  type LanguageAudioModel,
   type LanguageAudioUsage,
   generateLanguageAudio as generateAudio,
 } from "@zoonk/ai/tasks/audio";
@@ -10,12 +11,14 @@ import { uploadAudio } from "./upload-audio";
 
 export async function generateLanguageAudio({
   language,
+  model,
   orgSlug,
   text,
   usage,
   voice,
 }: {
   language?: string;
+  model?: LanguageAudioModel;
   orgSlug?: string;
   text: string;
   usage?: LanguageAudioUsage;
@@ -23,6 +26,7 @@ export async function generateLanguageAudio({
 }): Promise<SafeReturn<string>> {
   const { data: audioResult, error: generateError } = await generateAudio({
     language,
+    ...(model ? { model } : {}),
     text,
     voice,
     ...(usage ? { usage } : {}),

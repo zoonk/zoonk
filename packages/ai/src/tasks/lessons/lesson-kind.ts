@@ -1,7 +1,7 @@
 import "server-only";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
+import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./lesson-kind.prompt.md";
 
@@ -25,7 +25,7 @@ type LessonKindParams = {
   lessonTitle: string;
   model?: string;
   useFallback?: boolean;
-  reasoningEffort?: ReasoningEffort;
+  reasoning?: Reasoning;
 };
 
 /**
@@ -41,7 +41,7 @@ export async function generateLessonKind({
   lessonTitle,
   model = defaultModel,
   useFallback = true,
-  reasoningEffort,
+  reasoning,
 }: LessonKindParams) {
   const promptLanguage = getPromptLanguageName({ language });
 
@@ -53,18 +53,14 @@ export async function generateLessonKind({
     LANGUAGE: ${promptLanguage}
   `;
 
-  const providerOptions = buildProviderOptions({
-    fallbackModels,
-    model,
-    reasoningEffort,
-    useFallback,
-  });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
   const { output, usage } = await generateText({
     model,
     output: Output.object({ schema }),
     prompt: userPrompt,
     providerOptions,
+    reasoning,
     system: systemPrompt,
   });
 

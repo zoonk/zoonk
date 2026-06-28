@@ -1,9 +1,11 @@
+import { type Reasoning } from "@zoonk/ai/provider-options";
+
 export type ModelConfig = {
   id: string;
   name: string;
   inputCost: number;
   outputCost: number;
-  reasoningEffort?: "auto" | "low" | "medium" | "high";
+  reasoning?: Reasoning;
 };
 
 export const EVAL_MODELS: ModelConfig[] = [
@@ -35,8 +37,8 @@ export const EVAL_MODELS: ModelConfig[] = [
 ];
 
 export function getModelDisplayName(model: ModelConfig): string {
-  if (model.reasoningEffort) {
-    return `${model.name} (${model.reasoningEffort})`;
+  if (model.reasoning) {
+    return `${model.name} (${model.reasoning})`;
   }
 
   return model.name;
@@ -48,7 +50,7 @@ export function getModelById(modelId: string): ModelConfig | null {
 
 /**
  * Get the base model ID to pass to the AI gateway.
- * Strips any reasoning effort suffix (e.g., "openai/gpt-5.2:high" -> "openai/gpt-5.2")
+ * Strips any reasoning suffix (e.g., "openai/gpt-5.2:high" -> "openai/gpt-5.2")
  */
 export function getGatewayModelId(modelId: string): string {
   const colonIndex = modelId.indexOf(":");

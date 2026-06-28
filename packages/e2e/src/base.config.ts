@@ -35,7 +35,7 @@ export function createBaseConfig(options: {
         DATABASE_URL: E2E_DATABASE_URL,
         DATABASE_URL_UNPOOLED: E2E_DATABASE_URL,
         E2E_TESTING: "true",
-        GEMINI_API_KEY: "e2e-disabled",
+        GOOGLE_GENERATIVE_AI_API_KEY: "e2e-disabled",
         NEXT_PUBLIC_API_URL: E2E_API_URL,
         OPENAI_API_KEY: "e2e-disabled",
         STRIPE_SECRET_KEY: "sk_test_fake",

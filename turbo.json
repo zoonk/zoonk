@@ -10,7 +10,6 @@
       "BLOB_READ_WRITE_TOKEN",
       "DATABASE_*",
       "E2E_TESTING",
-      "GEMINI_API_KEY",
       "GOOGLE_*",
       "HIDDEN_SUBSCRIPTION_PLANS",
       "MAILER_API_KEY",

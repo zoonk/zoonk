@@ -1,7 +1,7 @@
 import "server-only";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
+import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import searchPrompt from "./course-identity-search.prompt.md";
 
 const defaultModel = "openai/gpt-5.4-mini";
@@ -22,7 +22,7 @@ export type CourseIdentitySearchParams = {
   proposedCourse: CourseIdentityProposedCourse;
   model?: string;
   useFallback?: boolean;
-  reasoningEffort?: ReasoningEffort;
+  reasoning?: Reasoning;
 };
 
 /**
@@ -42,23 +42,19 @@ function buildSearchUserPrompt(params: CourseIdentitySearchParams): string {
 export async function generateCourseIdentitySearchQueries({
   model = defaultModel,
   proposedCourse,
-  reasoningEffort,
+  reasoning,
   useFallback = true,
 }: CourseIdentitySearchParams) {
   const userPrompt = buildSearchUserPrompt({ proposedCourse });
 
-  const providerOptions = buildProviderOptions({
-    fallbackModels,
-    model,
-    reasoningEffort,
-    useFallback,
-  });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
   const { output, usage } = await generateText({
     model,
     output: Output.object({ schema: searchSchema }),
     prompt: userPrompt,
     providerOptions,
+    reasoning,
     system: searchPrompt,
   });
 

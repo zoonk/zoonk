@@ -19,6 +19,7 @@
     "./tasks/lessons/language/vocabulary": "./src/tasks/lessons/language/lesson-vocabulary.ts",
     "./tasks/lessons/tutorial": "./src/tasks/lessons/tutorial/lesson-tutorial.ts",
     "./tasks/audio": "./src/tasks/audio/generate-language-audio.ts",
+    "./tasks/audio/models": "./src/tasks/audio/language-audio-models.ts",
     "./tasks/chapters/language-lessons": "./src/tasks/chapters/language-chapter-lessons.ts",
     "./tasks/chapters/lessons": "./src/tasks/chapters/chapter-lessons.ts",
     "./tasks/courses/categories": "./src/tasks/courses/course-categories.ts",
@@ -42,9 +43,9 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/gateway": "3.0.129",
-    "@ai-sdk/openai": "3.0.71",
-    "@google/genai": "2.8.0",
+    "@ai-sdk/gateway": "4.0.4",
+    "@ai-sdk/google": "4.0.2",
+    "@ai-sdk/openai": "4.0.2",
     "@zoonk/utils": "workspace:*",
     "ai": "catalog:"
   },

@@ -1,5 +1,5 @@
 import "server-only";
-import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
+import { type Reasoning, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
@@ -38,7 +38,7 @@ export type LessonPracticeParams = {
   lesson: SourceLesson;
   model?: string;
   useFallback?: boolean;
-  reasoningEffort?: ReasoningEffort;
+  reasoning?: Reasoning;
 };
 
 export async function generateLessonPractice({
@@ -48,7 +48,7 @@ export async function generateLessonPractice({
   lesson,
   model = defaultModel,
   useFallback = true,
-  reasoningEffort,
+  reasoning,
 }: LessonPracticeParams) {
   const formattedLesson = formatSourceLessonForPrompt(lesson);
   const promptLanguage = getPromptLanguageName({ language });
@@ -60,18 +60,14 @@ export async function generateLessonPractice({
     LESSON: ${formattedLesson}
   `;
 
-  const providerOptions = buildProviderOptions({
-    fallbackModels,
-    model,
-    reasoningEffort,
-    useFallback,
-  });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
   const { output, usage } = await generateText({
     model,
     output: Output.object({ schema }),
     prompt: userPrompt,
     providerOptions,
+    reasoning,
     system: systemPrompt,
   });
 

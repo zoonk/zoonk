@@ -1,4 +1,4 @@
-import { type ReasoningEffort } from "@zoonk/ai/provider-options";
+import { type Reasoning } from "@zoonk/ai/provider-options";
 import { type LanguageModelUsage } from "ai";
 import z from "zod";
 
@@ -39,7 +39,7 @@ export type TaskScorer<TExpected = unknown> = (
 type TaskGenerateInput<TInput> = TInput & {
   model: string;
   useFallback?: boolean;
-  reasoningEffort?: ReasoningEffort;
+  reasoning?: Reasoning;
 };
 
 export type EvalResult = {

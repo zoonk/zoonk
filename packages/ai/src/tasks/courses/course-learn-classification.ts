@@ -1,7 +1,7 @@
 import "server-only";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
+import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./course-learn-classification.prompt.md";
 
@@ -20,7 +20,7 @@ export type CourseLearnClassificationParams = {
   prompt: string;
   model?: string;
   useFallback?: boolean;
-  reasoningEffort?: ReasoningEffort;
+  reasoning?: Reasoning;
 };
 
 /**
@@ -33,7 +33,7 @@ export async function classifyLearnRequest({
   language,
   model = defaultModel,
   prompt,
-  reasoningEffort,
+  reasoning,
   useFallback = true,
 }: CourseLearnClassificationParams) {
   const promptLanguage = getPromptLanguageName({ language });
@@ -43,18 +43,14 @@ export async function classifyLearnRequest({
     USER_INPUT: ${prompt}
   `;
 
-  const providerOptions = buildProviderOptions({
-    fallbackModels,
-    model,
-    reasoningEffort,
-    useFallback,
-  });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
   const { output, usage } = await generateText({
     model,
     output: Output.object({ schema }),
     prompt: userPrompt,
     providerOptions,
+    reasoning,
     system: systemPrompt,
   });
 

@@ -2,7 +2,7 @@ import "server-only";
 import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
+import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import promptTemplate from "./course-categories.prompt.md";
 
 const defaultModel = "google/gemini-3.1-flash-lite";
@@ -29,14 +29,14 @@ export type CourseCategoriesParams = {
   courseTitle: string;
   model?: string;
   useFallback?: boolean;
-  reasoningEffort?: ReasoningEffort;
+  reasoning?: Reasoning;
 };
 
 export async function generateCourseCategories({
   courseTitle,
   model = defaultModel,
   useFallback = true,
-  reasoningEffort,
+  reasoning,
 }: CourseCategoriesParams) {
   const userPrompt = `
     COURSE_TITLE: ${courseTitle}
@@ -44,18 +44,14 @@ export async function generateCourseCategories({
 
   const systemPrompt = promptTemplate.replace("{{CATEGORIES}}", () => AI_CATEGORIES.join(", "));
 
-  const providerOptions = buildProviderOptions({
-    fallbackModels,
-    model,
-    reasoningEffort,
-    useFallback,
-  });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
   const { output, usage } = await generateText({
     model,
     output: Output.object({ schema }),
     prompt: userPrompt,
     providerOptions,
+    reasoning,
     system: systemPrompt,
   });
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { LANGUAGE_AUDIO_MODELS } from "@zoonk/ai/tasks/audio/models";
 import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
@@ -56,6 +57,22 @@ export function AudioTestForm() {
             placeholder="e.g. en, es, fr, pt, ja"
             type="text"
           />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="model">Model</Label>
+          <Select defaultValue={LANGUAGE_AUDIO_MODELS[0].id} name="model">
+            <SelectTrigger id="model">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {LANGUAGE_AUDIO_MODELS.map((model) => (
+                <SelectItem key={model.id} value={model.id}>
+                  {model.provider} · {model.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="flex flex-col gap-2">

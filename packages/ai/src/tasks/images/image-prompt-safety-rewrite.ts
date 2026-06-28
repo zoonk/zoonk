@@ -1,5 +1,5 @@
 import "server-only";
-import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
+import { type Reasoning, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import systemPrompt from "./image-prompt-safety-rewrite.prompt.md";
@@ -17,7 +17,7 @@ export type ImageInputSafetyRewriteParams = {
   input: string;
   model?: string;
   useFallback?: boolean;
-  reasoningEffort?: ReasoningEffort;
+  reasoning?: Reasoning;
 };
 
 /**
@@ -31,22 +31,18 @@ export async function rewriteImageInputForSafetyRetry({
   input,
   model = defaultModel,
   useFallback = true,
-  reasoningEffort,
+  reasoning,
 }: ImageInputSafetyRewriteParams) {
   const userPrompt = getImageInputSafetyRewriteUserPrompt({ errorContext, input });
 
-  const providerOptions = buildProviderOptions({
-    fallbackModels,
-    model,
-    reasoningEffort,
-    useFallback,
-  });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
   const { output, usage } = await generateText({
     model,
     output: Output.object({ schema }),
     prompt: userPrompt,
     providerOptions,
+    reasoning,
     system: systemPrompt,
   });
 

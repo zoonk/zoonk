@@ -1,5 +1,5 @@
 import "server-only";
-import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
+import { type Reasoning, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { getLanguagePromptContext } from "../../_utils/prompt-language";
@@ -14,7 +14,7 @@ export type TranslationSchema = z.infer<typeof schema>;
 
 export type TranslationParams = {
   model?: string;
-  reasoningEffort?: ReasoningEffort;
+  reasoning?: Reasoning;
   targetLanguage: string;
   userLanguage: string;
   useFallback?: boolean;
@@ -28,7 +28,7 @@ export type TranslationParams = {
  */
 export async function generateTranslation({
   model = defaultModel,
-  reasoningEffort,
+  reasoning,
   targetLanguage,
   userLanguage,
   useFallback = true,
@@ -42,18 +42,14 @@ export async function generateTranslation({
     USER_LANGUAGE: ${promptContext.userLanguageName}
   `;
 
-  const providerOptions = buildProviderOptions({
-    fallbackModels,
-    model,
-    reasoningEffort,
-    useFallback,
-  });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
   const { output, usage } = await generateText({
     model,
     output: Output.object({ schema }),
     prompt: userPrompt,
     providerOptions,
+    reasoning,
     system: systemPrompt,
   });
 
