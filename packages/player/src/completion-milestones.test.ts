@@ -376,6 +376,7 @@ describe(getCompletionMilestones, () => {
           { correctAnswers: 17, dayOfWeek: 1, incorrectAnswers: 2 },
           { correctAnswers: 14, dayOfWeek: 2, incorrectAnswers: 6 },
         ],
+        learningDays: 6,
       }),
     });
 
@@ -401,6 +402,7 @@ describe(getCompletionMilestones, () => {
       previousTotalBrainPower: 0,
       progressSnapshot: buildProgressSnapshot({
         bestDayScores: [{ correctAnswers: 8, dayOfWeek: 2, incorrectAnswers: 2 }],
+        learningDays: 6,
       }),
     });
 
@@ -429,6 +431,7 @@ describe(getCompletionMilestones, () => {
           { correctAnswers: 1, dayOfWeek: 1, incorrectAnswers: 0 },
           { correctAnswers: 8, dayOfWeek: 2, incorrectAnswers: 2 },
         ],
+        learningDays: 6,
       }),
     });
 
@@ -454,6 +457,7 @@ describe(getCompletionMilestones, () => {
       previousTotalBrainPower: 0,
       progressSnapshot: buildProgressSnapshot({
         bestDayScores: [{ correctAnswers: 18, dayOfWeek: 1, incorrectAnswers: 2 }],
+        learningDays: 6,
         todayInteractiveLessons: 1,
       }),
     });
@@ -480,10 +484,63 @@ describe(getCompletionMilestones, () => {
       previousTotalBrainPower: 0,
       progressSnapshot: buildProgressSnapshot({
         bestDayScores: [{ correctAnswers: 18, dayOfWeek: 1, incorrectAnswers: 2 }],
+        learningDays: 6,
       }),
     });
 
     expect(milestones).not.toContainEqual({
+      dayOfWeek: 1,
+      kind: "score",
+      score: 90,
+      status: "bestDay",
+    });
+  });
+
+  it("does not show best-day milestones before the learner has more than five learning days", () => {
+    const milestones = getCompletionMilestones({
+      completion: {
+        brainPower: 10,
+        completedInteractiveLesson: true,
+        correctCount: 1,
+        energyDelta: 0.2,
+        incorrectCount: 0,
+        newTotalBp: 10,
+      },
+      localDate: "2026-06-08",
+      previousTotalBrainPower: 0,
+      progressSnapshot: buildProgressSnapshot({
+        bestDayScores: [{ correctAnswers: 17, dayOfWeek: 1, incorrectAnswers: 2 }],
+        learningDays: 4,
+      }),
+    });
+
+    expect(milestones).not.toContainEqual({
+      dayOfWeek: 1,
+      kind: "score",
+      score: 90,
+      status: "bestDay",
+    });
+  });
+
+  it("returns a best-day milestone when this completion pushes learning days above five", () => {
+    const milestones = getCompletionMilestones({
+      completion: {
+        brainPower: 10,
+        completedInteractiveLesson: true,
+        correctCount: 1,
+        energyDelta: 0.2,
+        incorrectCount: 0,
+        newTotalBp: 10,
+      },
+      localDate: "2026-06-08",
+      previousTotalBrainPower: 0,
+      progressSnapshot: buildProgressSnapshot({
+        bestDayScores: [{ correctAnswers: 17, dayOfWeek: 1, incorrectAnswers: 2 }],
+        learningDays: 5,
+      }),
+    });
+
+    expect(milestones).toContainEqual({
       dayOfWeek: 1,
       kind: "score",
       score: 90,
