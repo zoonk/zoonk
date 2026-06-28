@@ -318,6 +318,7 @@ describe("player browser integration: completion", () => {
           { correctAnswers: 18, dayOfWeek: todayDayOfWeek, incorrectAnswers: 2 },
           { correctAnswers: 14, dayOfWeek: weakerDayOfWeek, incorrectAnswers: 6 },
         ],
+        learningDays: 6,
       }),
       viewer: buildAuthenticatedViewer(),
     });

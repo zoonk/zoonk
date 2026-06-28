@@ -1,6 +1,10 @@
 import { parseLocalDate } from "@zoonk/utils/date";
 import { type CompletionProgress, type PlayerProgressSnapshot } from "../completion-milestones";
-import { type BestDayScore, getBestDayScore } from "./completion-milestone-thresholds";
+import {
+  type BestDayScore,
+  getBestDayScore,
+  hasCompletedNewLearningDay,
+} from "./completion-milestone-thresholds";
 
 export type ScoreCompletionMilestone = {
   dayOfWeek: number;
@@ -8,6 +12,37 @@ export type ScoreCompletionMilestone = {
   score: number;
   status: "bestDay";
 };
+
+const MIN_BEST_DAY_LEARNING_DAYS = 5;
+
+/**
+ * The best-day insight needs enough calendar history to be useful. Counting the
+ * just-finished lesson keeps the milestone aligned with the post-save progress
+ * the learner will see on the score page.
+ */
+function getPostCompletionLearningDays({
+  progressSnapshot,
+}: {
+  progressSnapshot: PlayerProgressSnapshot;
+}) {
+  const completedNewLearningDay = hasCompletedNewLearningDay({
+    todayCompletedLessons: progressSnapshot.todayCompletedLessons,
+  });
+
+  return (progressSnapshot.learningDays ?? 0) + (completedNewLearningDay ? 1 : 0);
+}
+
+/**
+ * A weekday ranking is noisy before the learner has completed lessons across
+ * several different days, so the milestone waits until the data is more stable.
+ */
+function hasEnoughLearningDaysForBestDayMilestone({
+  progressSnapshot,
+}: {
+  progressSnapshot: PlayerProgressSnapshot;
+}) {
+  return getPostCompletionLearningDays({ progressSnapshot }) > MIN_BEST_DAY_LEARNING_DAYS;
+}
 
 /**
  * Applies the just-finished lesson to the weekday totals before ranking them.
@@ -96,6 +131,7 @@ export function getBestDayMilestone({
     !progressSnapshot ||
     !bestDayScores ||
     !completion.completedInteractiveLesson ||
+    !hasEnoughLearningDaysForBestDayMilestone({ progressSnapshot }) ||
     (progressSnapshot.todayInteractiveLessons ?? 0) > 0
   ) {
     return null;
