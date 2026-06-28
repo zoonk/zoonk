@@ -10,6 +10,7 @@ import {
 import { SparklesIcon } from "lucide-react";
 import { type Route } from "next";
 import { getExtracted } from "next-intl/server";
+import { SubscriptionGateTracker } from "./subscription-gate-tracker";
 
 export async function UpgradeCTA<Href extends string>({
   backHref,
@@ -26,6 +27,8 @@ export async function UpgradeCTA<Href extends string>({
 
   return (
     <Empty className="border-0">
+      <SubscriptionGateTracker />
+
       <EmptyHeader align="start">
         <EmptyMedia variant="icon">
           <SparklesIcon />

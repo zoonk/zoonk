@@ -1,10 +1,9 @@
 "use client";
 
-import { ContentFeedback } from "@/components/feedback/content-feedback";
 import {
+  trackChapterCompleted,
   trackLessonCompleted,
   trackLessonSecondStep,
-  trackLessonStarted,
 } from "@/lib/track-events";
 import { type CompletionInput } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
@@ -16,9 +15,11 @@ import {
 import { PlayerShell } from "@zoonk/player/shell";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef } from "react";
+import { getPlayerViewer } from "./get-player-viewer";
 import { type LessonProgressMeta, buildLessonPlayerModel } from "./lesson-player-model";
 import { preloadNextLesson } from "./preload-next-lesson-action";
 import { submitCompletion } from "./submit-completion-action";
+import { useTrackLessonStarted } from "./use-track-lesson-started";
 
 type LessonPlayerClientProps = {
   lesson: SerializedLesson;
@@ -94,30 +95,8 @@ export function LessonPlayerClient({
     hasTrackedSecondStep.current = false;
   }, [lesson.id]);
 
-  useEffect(() => {
-    if (lesson.steps.length === 0) {
-      return;
-    }
+  useTrackLessonStarted({ chapterPosition, courseSlug, lesson, lessonPosition, lessonSlug });
 
-    trackLessonStarted({
-      chapterPosition,
-      courseSlug,
-      lessonKind: lesson.kind,
-      lessonPosition,
-      lessonSlug,
-      stepCount: lesson.steps.length,
-    });
-  }, [
-    chapterPosition,
-    courseSlug,
-    lesson.id,
-    lesson.kind,
-    lessonPosition,
-    lessonSlug,
-    lesson.steps.length,
-  ]);
-
-  /** Fire-and-forget: analytics runs for all learners; persistence requires auth. */
   const handleComplete = useCallback(
     (input: CompletionInput) => {
       trackLessonCompleted({
@@ -128,16 +107,28 @@ export function LessonPlayerClient({
         lessonSlug,
       });
 
+      if (model.milestone) {
+        trackChapterCompleted({ chapterPosition, chapterSlug, courseSlug });
+      }
+
       if (!isAuthenticated) {
         return;
       }
 
       void submitCompletion(input);
     },
-    [chapterPosition, courseSlug, isAuthenticated, lesson.kind, lessonPosition, lessonSlug],
+    [
+      chapterPosition,
+      chapterSlug,
+      courseSlug,
+      isAuthenticated,
+      lesson.kind,
+      lessonPosition,
+      lessonSlug,
+      model.milestone,
+    ],
   );
 
-  /** Fire once after the first forward step change; completion handles short lessons. */
   const handleStepChange = useCallback(
     (event: PlayerStepChangeEvent) => {
       if (isSecondStepForwardEvent(event) && !hasTrackedSecondStep.current) {
@@ -192,18 +183,14 @@ export function LessonPlayerClient({
       onStepChange={handleStepChange}
       progressSnapshot={progressSnapshot}
       totalBrainPower={totalBrainPower}
-      viewer={{
-        completionFooter: (
-          <ContentFeedback
-            className="pt-8"
-            defaultEmail={userEmail}
-            feedbackTarget={{ chapterSlug, courseSlug, kind: "lesson", lessonSlug }}
-            variant="minimal"
-          />
-        ),
+      viewer={getPlayerViewer({
+        chapterSlug,
+        courseSlug,
         isAuthenticated,
+        lessonSlug,
+        userEmail,
         userName,
-      }}
+      })}
     >
       <PlayerShell />
     </PlayerProvider>

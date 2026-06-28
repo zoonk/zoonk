@@ -14,6 +14,12 @@ type LessonProgressEventInput = {
 
 type LessonCompletionEventInput = Omit<LessonProgressEventInput, "stepCount">;
 
+type ChapterCompletionEventInput = {
+  chapterPosition: number;
+  chapterSlug: string;
+  courseSlug: string;
+};
+
 type SubscriptionBillingPeriod = "monthly" | "yearly";
 
 export type FeedbackValue = "upvote" | "downvote";
@@ -78,6 +84,15 @@ export function trackLessonCompleted(input: LessonCompletionEventInput) {
 }
 
 /**
+ * Counts learners who reach the structural end of a chapter, including the
+ * final chapter of a course where the visible milestone is the course
+ * completion screen.
+ */
+export function trackChapterCompleted(input: ChapterCompletionEventInput) {
+  trackEvent({ name: "Chapter Completed", properties: getChapterCompletionEventData(input) });
+}
+
+/**
  * Counts when the course goal form is visible, regardless of whether the
  * learner reached it from `/start/learn`, `/`, or another reusable placement.
  */
@@ -119,6 +134,15 @@ export function trackSubscriptionCheckoutStarted({
   plan: string;
 }) {
   trackEvent({ name: "Subscription Checkout Started", properties: { billingPeriod, plan } });
+}
+
+/**
+ * Counts learners who hit the reusable generation paywall instead of inferring
+ * the subscription funnel from pageviews that look the same for subscribed and
+ * gated learners.
+ */
+export function trackSubscriptionGateShown() {
+  trackEvent({ name: "Subscription Gate Shown" });
 }
 
 /**
@@ -193,6 +217,18 @@ function getLessonEventData({
   lessonSlug,
 }: LessonCompletionEventInput): AnalyticsEventProperties {
   return { chapterPosition, courseSlug, lessonKind, lessonPosition, lessonSlug };
+}
+
+/**
+ * Keeps chapter completion filters focused on the completed chapter instead of
+ * the lesson that happened to trigger the structural milestone.
+ */
+function getChapterCompletionEventData({
+  chapterPosition,
+  chapterSlug,
+  courseSlug,
+}: ChapterCompletionEventInput): AnalyticsEventProperties {
+  return { chapterPosition, chapterSlug, courseSlug };
 }
 
 /**
