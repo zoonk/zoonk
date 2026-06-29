@@ -1,175 +1,214 @@
 "use client";
 
 import {
+  Autocomplete,
+  type AutocompleteCollectionProps,
+  type AutocompleteEmptyProps,
+  type AutocompleteGroupLabelProps,
+  type AutocompleteGroupProps,
+  type AutocompleteInputProps,
+  type AutocompleteItemProps,
+  type AutocompleteListProps,
+} from "@base-ui/react/autocomplete";
+import {
   Dialog,
-  DialogContent,
   DialogDescription,
-  DialogHeader,
+  DialogOverlay,
+  DialogPopup,
+  DialogPortal,
   DialogTitle,
+  DialogViewport,
 } from "@zoonk/ui/components/dialog";
-import { InputGroup, InputGroupAddon } from "@zoonk/ui/components/input-group";
+import {
+  ScrollAreaContent,
+  ScrollAreaRoot,
+  ScrollAreaScrollbar,
+  ScrollAreaThumb,
+  ScrollAreaViewport,
+} from "@zoonk/ui/components/scroll-area";
 import { cn } from "@zoonk/ui/lib/utils";
-import { removeAccents } from "@zoonk/utils/string";
-import { Command as CommandPrimitive, defaultFilter } from "cmdk";
-import { CheckIcon, SearchIcon } from "lucide-react";
+import { SearchIcon } from "lucide-react";
 import type * as React from "react";
 
-function defaultNormalizedFilter(value: string, search: string, keywords?: string[]) {
-  return defaultFilter(removeAccents(value), removeAccents(search), keywords);
-}
+const Command = Autocomplete.Root;
 
-function Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {
-  return (
-    <CommandPrimitive
-      className={cn(
-        "bg-popover text-popover-foreground flex size-full flex-col overflow-hidden rounded-4xl p-1",
-        className,
-      )}
-      data-slot="command"
-      filter={defaultNormalizedFilter}
-      {...props}
-    />
-  );
-}
-
+/**
+ * CommandDialog provides the Base UI dialog structure used by command palettes:
+ * backdrop, visual viewport positioning, and a popup that keeps scrolling inside
+ * the palette on iOS.
+ */
 function CommandDialog({
-  title = "Command Palette",
-  description = "Search for a command to run...",
   children,
   className,
-  showCloseButton = false,
   ...props
-}: Omit<React.ComponentProps<typeof Dialog>, "children"> & {
-  title?: string;
-  description?: string;
-  className?: string;
-  showCloseButton?: boolean;
-  children: React.ReactNode;
-}) {
+}: React.ComponentProps<typeof Dialog> & { className?: string; children: React.ReactNode }) {
   return (
     <Dialog {...props}>
-      <DialogHeader className="sr-only">
-        <DialogTitle>{title}</DialogTitle>
-        <DialogDescription>{description}</DialogDescription>
-      </DialogHeader>
-      <DialogContent
-        className={cn(
-          "top-4 translate-y-0 overflow-hidden rounded-4xl! p-0 pointer-fine:top-1/2 pointer-fine:-translate-y-1/2",
-          className,
-        )}
-        showCloseButton={showCloseButton}
-      >
-        <Command>{children}</Command>
-      </DialogContent>
+      <DialogPortal>
+        <DialogOverlay className="bg-black/50" />
+        <DialogViewport className="flex items-start justify-center px-4 pt-[calc(1rem+env(safe-area-inset-top))] pb-[calc(1rem+env(safe-area-inset-bottom))] pointer-fine:pt-[20vh]">
+          <DialogPopup
+            className={cn(
+              "ring-foreground/5 bg-popover text-popover-foreground w-full max-w-xl overflow-hidden rounded-4xl p-1 shadow-lg ring-1 pointer-fine:max-h-[calc(100dvh-20vh-2rem)]",
+              className,
+            )}
+          >
+            {children}
+          </DialogPopup>
+        </DialogViewport>
+      </DialogPortal>
     </Dialog>
   );
 }
 
-function CommandInput({
+/**
+ * CommandDialogTitle keeps the accessible dialog title in the DOM without
+ * adding visible chrome above the command input.
+ */
+function CommandDialogTitle({ className, ...props }: React.ComponentProps<typeof DialogTitle>) {
+  return <DialogTitle className={cn("sr-only", className)} {...props} />;
+}
+
+/**
+ * CommandDialogDescription keeps the accessible dialog description in the DOM
+ * without adding visible text that duplicates the command input placeholder.
+ */
+function CommandDialogDescription({
   className,
   ...props
-}: React.ComponentProps<typeof CommandPrimitive.Input>) {
+}: React.ComponentProps<typeof DialogDescription>) {
+  return <DialogDescription className={cn("sr-only", className)} {...props} />;
+}
+
+/**
+ * CommandInput matches the Base UI autocomplete demo: the input is focused when
+ * the dialog opens and keeps a 16px mobile font size to avoid iOS Safari zoom.
+ */
+function CommandInput({ className, ...props }: AutocompleteInputProps) {
   return (
     <div className="p-1 pb-0" data-slot="command-input-wrapper">
-      <InputGroup className="bg-input/30 h-9">
-        <CommandPrimitive.Input
+      <div className="bg-input/30 flex h-9 items-center gap-2 rounded-full px-3">
+        <SearchIcon aria-hidden="true" className="text-muted-foreground size-4" />
+        <Autocomplete.Input
+          autoFocus
           className={cn(
-            "w-full text-base outline-hidden disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm",
+            "placeholder:text-muted-foreground h-full min-w-0 flex-1 bg-transparent text-base outline-none disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm",
             className,
           )}
           data-slot="command-input"
           {...props}
         />
-        <InputGroupAddon>
-          <SearchIcon className="size-4 shrink-0 opacity-50" />
-        </InputGroupAddon>
-      </InputGroup>
+      </div>
     </div>
   );
 }
 
-function CommandList({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.List>) {
+/**
+ * CommandList follows Base UI's ScrollArea structure while overriding the
+ * content's fit-content width because command results should only scroll
+ * vertically and truncate long labels horizontally.
+ */
+function CommandList({ children, className, ...props }: Omit<AutocompleteListProps, "render">) {
   return (
-    <CommandPrimitive.List
-      className={cn(
-        "no-scrollbar max-h-72 scroll-py-1 overflow-x-hidden overflow-y-auto outline-none",
-        className,
-      )}
-      data-slot="command-list"
-      {...props}
-    />
+    <ScrollAreaRoot
+      className="h-[min(var(--total-height,18rem),18rem)] max-h-[calc(100dvh-8rem)]"
+      data-slot="command-scroll-area"
+    >
+      <ScrollAreaViewport>
+        <ScrollAreaContent style={{ minWidth: 0 }}>
+          <Autocomplete.List
+            className={cn("flex flex-col gap-1 p-1 outline-none", className)}
+            data-slot="command-list"
+            {...props}
+          >
+            {children}
+          </Autocomplete.List>
+        </ScrollAreaContent>
+      </ScrollAreaViewport>
+      <ScrollAreaScrollbar>
+        <ScrollAreaThumb />
+      </ScrollAreaScrollbar>
+    </ScrollAreaRoot>
   );
 }
 
-function CommandEmpty({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.Empty>) {
+/**
+ * CommandEmpty must stay mounted for Base UI's live-region announcements, so
+ * the default styles remove it from layout when Base UI renders no children.
+ */
+function CommandEmpty({ className, ...props }: AutocompleteEmptyProps) {
   return (
-    <CommandPrimitive.Empty
-      className={cn("py-6 text-center text-sm", className)}
+    <Autocomplete.Empty
+      className={cn("py-6 text-center text-sm empty:sr-only empty:p-0", className)}
       data-slot="command-empty"
       {...props}
     />
   );
 }
 
-function CommandGroup({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.Group>) {
+/**
+ * CommandGroup scopes a set of related command items and passes the group's
+ * items to Base UI's collection renderer for keyboard navigation order.
+ */
+function CommandGroup({ className, ...props }: AutocompleteGroupProps) {
   return (
-    <CommandPrimitive.Group
-      className={cn(
-        "text-foreground **:[[cmdk-group-heading]]:text-muted-foreground overflow-hidden p-1 **:[[cmdk-group-heading]]:px-3 **:[[cmdk-group-heading]]:py-2 **:[[cmdk-group-heading]]:text-xs **:[[cmdk-group-heading]]:font-medium",
-        className,
-      )}
+    <Autocomplete.Group
+      className={cn("text-foreground w-full max-w-full min-w-0 overflow-hidden p-1", className)}
       data-slot="command-group"
       {...props}
     />
   );
 }
 
-function CommandSeparator({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.Separator>) {
+/**
+ * CommandGroupLabel provides the accessible and visual label for a command
+ * group without coupling group layout to a heading prop.
+ */
+function CommandGroupLabel({ className, ...props }: AutocompleteGroupLabelProps) {
   return (
-    <CommandPrimitive.Separator
-      className={cn("bg-border/50 my-1 h-px", className)}
-      data-slot="command-separator"
+    <Autocomplete.GroupLabel
+      className={cn("text-muted-foreground px-3 py-2 text-xs font-medium", className)}
+      data-slot="command-group-label"
       {...props}
     />
   );
 }
 
-function CommandItem({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.Item>) {
+/**
+ * CommandCollection renders the filtered items from the nearest command group
+ * or root, letting consumers choose their own item contents.
+ */
+function CommandCollection({ ...props }: AutocompleteCollectionProps) {
+  return <Autocomplete.Collection {...props} />;
+}
+
+/**
+ * CommandItem delegates pointer and keyboard activation to Base UI while
+ * keeping the compact command-row styling shared across apps.
+ */
+function CommandItem({ className, ...props }: AutocompleteItemProps) {
   return (
-    <CommandPrimitive.Item
+    <Autocomplete.Item
       className={cn(
-        "group/command-item data-[selected=true]:bg-muted data-[selected=true]:text-foreground data-[selected=true]:*:[svg]:text-foreground relative flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm outline-hidden select-none in-data-[slot=dialog-content]:rounded-2xl data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "group/command-item relative flex w-full max-w-full min-w-0 cursor-default items-center gap-2 overflow-hidden rounded-2xl px-3 py-2 text-sm outline-hidden select-none",
+        "data-highlighted:bg-muted data-highlighted:text-foreground data-disabled:pointer-events-none data-disabled:opacity-50",
+        "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       data-slot="command-item"
       {...props}
-    >
-      {children}
-      <CheckIcon className="ml-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:opacity-100" />
-    </CommandPrimitive.Item>
+    />
   );
 }
 
+/**
+ * CommandShortcut gives command rows a consistent trailing shortcut treatment
+ * when an app wants to show keyboard accelerators.
+ */
 function CommandShortcut({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn(
-        "text-muted-foreground group-data-[selected=true]/command-item:text-foreground ml-auto text-xs tracking-widest",
-        className,
-      )}
+      className={cn("text-muted-foreground ml-auto text-xs tracking-widest", className)}
       data-slot="command-shortcut"
       {...props}
     />
@@ -178,12 +217,15 @@ function CommandShortcut({ className, ...props }: React.ComponentProps<"span">) 
 
 export {
   Command,
+  CommandCollection,
   CommandDialog,
-  CommandInput,
-  CommandList,
+  CommandDialogDescription,
+  CommandDialogTitle,
   CommandEmpty,
   CommandGroup,
+  CommandGroupLabel,
+  CommandInput,
   CommandItem,
+  CommandList,
   CommandShortcut,
-  CommandSeparator,
 };

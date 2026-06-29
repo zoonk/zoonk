@@ -35,6 +35,21 @@ function DialogPortal({ ...props }: DialogPrimitive.Portal.Props) {
   return <DialogPrimitive.Portal data-slot="dialog-portal" ref={ref} {...props} />;
 }
 
+/**
+ * Some dialog layouts need Base UI's viewport between the backdrop and popup so
+ * the popup can be positioned and clipped like the upstream command palette
+ * demo instead of using the centered default DialogContent wrapper.
+ */
+function DialogViewport({ className, ...props }: DialogPrimitive.Viewport.Props) {
+  return (
+    <DialogPrimitive.Viewport
+      className={cn("fixed inset-0 z-50", className)}
+      data-slot="dialog-viewport"
+      {...props}
+    />
+  );
+}
+
 function DialogClose({ ...props }: DialogPrimitive.Close.Props) {
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
 }
@@ -81,6 +96,21 @@ function DialogContent({
         )}
       </DialogPrimitive.Popup>
     </DialogPortal>
+  );
+}
+
+/**
+ * DialogPopup exposes the raw Base UI popup for custom layouts that cannot use
+ * DialogContent because they need to supply their own portal, backdrop, or
+ * viewport structure.
+ */
+function DialogPopup({ className, ...props }: DialogPrimitive.Popup.Props) {
+  return (
+    <DialogPrimitive.Popup
+      className={cn("bg-background text-foreground outline-none", className)}
+      data-slot="dialog-content"
+      {...props}
+    />
   );
 }
 
@@ -141,7 +171,9 @@ export {
   DialogFooter,
   DialogHeader,
   DialogOverlay,
+  DialogPopup,
   DialogPortal,
   DialogTitle,
   DialogTrigger,
+  DialogViewport,
 };

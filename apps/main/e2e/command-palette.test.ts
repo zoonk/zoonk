@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { type Locator } from "@playwright/test";
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -99,6 +100,48 @@ async function openCommandPalette(page: Page) {
     await searchButton.click();
     await expect(page.getByRole("dialog")).toBeVisible({ timeout: 1000 });
   }).toPass();
+}
+
+/**
+ * Base UI keeps listbox focus on the input and points assistive technology to
+ * the highlighted option with aria-activedescendant, so keyboard navigation
+ * assertions should follow that semantic relationship.
+ */
+async function expectActiveOption(page: Page, optionName: RegExp) {
+  const dialog = page.getByRole("dialog");
+  const input = dialog.getByPlaceholder(/search/iu);
+  const option = dialog.getByRole("option", { name: optionName });
+  const optionId = await option.getAttribute("id");
+
+  expect(optionId).toBeTruthy();
+  await expect(input).toHaveAttribute("aria-activedescendant", optionId!);
+}
+
+/**
+ * Long catalog titles and descriptions should truncate inside the palette; if
+ * they increase scrollWidth, touch users can accidentally pan sideways instead
+ * of only scrolling vertically through the result list.
+ */
+async function expectNoHorizontalScrollableOverflow(container: Locator) {
+  const overflowingElements = await container.evaluate((element: HTMLElement) =>
+    [element, ...element.querySelectorAll<HTMLElement>("*")]
+      .filter((node) => {
+        const { overflowX } = getComputedStyle(node);
+
+        return (
+          (overflowX === "auto" || overflowX === "scroll") &&
+          node.scrollWidth > node.clientWidth + 1
+        );
+      })
+      .map((node) => ({
+        clientWidth: node.clientWidth,
+        overflowX: getComputedStyle(node).overflowX,
+        scrollWidth: node.scrollWidth,
+        slot: node.dataset.slot,
+      })),
+  );
+
+  expect(overflowingElements).toEqual([]);
 }
 
 // Helper to get the correct modifier key for the platform
@@ -416,6 +459,53 @@ test.describe("Command Palette - Course Search", () => {
     await expect(page.getByRole("button", { name: new RegExp(chapterName, "u") })).toBeVisible();
   });
 
+  test("truncates long result content without horizontal overflow", async ({ page }) => {
+    const org = await getAiOrganization();
+    const uniqueId = randomUUID().slice(0, 8);
+    const searchTerm = `E2E Long Result ${uniqueId}`;
+    const courseName = `${searchTerm} Course`;
+    const chapterName = `${searchTerm} Chapter`;
+
+    const longDescription =
+      "This result has a deliberately long description that should stay inside the command palette and truncate instead of making the dialog pan sideways on touch devices.";
+
+    const course = await courseFixture({
+      description: longDescription,
+      isPublished: true,
+      normalizedTitle: normalizeString(courseName),
+      organizationId: org.id,
+      slug: `e2e-long-result-course-${uniqueId}`,
+      title: courseName,
+    });
+
+    await chapterFixture({
+      courseId: course.id,
+      description: longDescription,
+      isPublished: true,
+      normalizedTitle: normalizeString(chapterName),
+      organizationId: org.id,
+      position: 0,
+      slug: `e2e-long-result-chapter-${uniqueId}`,
+      title: chapterName,
+    });
+
+    await page.goto("/");
+    await openCommandPalette(page);
+
+    const dialog = page.getByRole("dialog");
+    await dialog.getByPlaceholder(/search/iu).fill(searchTerm);
+
+    await expect(
+      dialog.getByRole("option", { name: new RegExp(`^${courseName}`, "u") }),
+    ).toBeVisible();
+
+    await expect(
+      dialog.getByRole("option", { name: new RegExp(`^${chapterName}`, "u") }),
+    ).toBeVisible();
+
+    await expectNoHorizontalScrollableOverflow(dialog);
+  });
+
   test("suggests creating a course for non-matching query", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const prompt = `E2E Empty Search ${uniqueId}`;
@@ -557,13 +647,14 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
 
-    // Ensure the search input is focused so cmdk receives keyboard events
+    // Ensure the search input is focused so Base UI receives keyboard events
     const input = dialog.getByPlaceholder(/search/iu);
     await expect(input).toBeFocused();
 
-    // Wait for cmdk to initialize - first item "Home page" should be selected
+    // Wait for Base UI to initialize - first item "Home page" should be active
     const homeOption = dialog.getByRole("option", { name: /home page/iu });
-    await expect(homeOption).toHaveAttribute("aria-selected", "true");
+    await expect(homeOption).toBeVisible();
+    await expectActiveOption(page, /home page/iu);
 
     // Also wait for the second option to be present before navigating
     const learnOption = dialog.getByRole("option", { name: /start a new course/iu });
@@ -571,11 +662,11 @@ test.describe("Command Palette - Keyboard Navigation", () => {
 
     // Press ArrowDown - "Start a new course" should now be selected
     await page.keyboard.press("ArrowDown");
-    await expect(learnOption).toHaveAttribute("aria-selected", "true");
+    await expectActiveOption(page, /start a new course/iu);
 
     // Press ArrowUp - "Home page" should be selected again
     await page.keyboard.press("ArrowUp");
-    await expect(homeOption).toHaveAttribute("aria-selected", "true");
+    await expectActiveOption(page, /home page/iu);
   });
 
   test("Enter to select shows start goals on the home page", async ({ page }) => {
