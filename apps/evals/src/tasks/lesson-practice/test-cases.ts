@@ -74,13 +74,13 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-biologia-energia-atividade-vital",
     userInput: {
-      chapterTitle: "O que conta como vida",
+      chapterTitle: "Características dos seres vivos",
       courseTitle: "Biologia",
       language: "pt",
       lesson: {
         description:
-          "Trace como um ser vivo obtém energia e matéria, transforma isso em trabalho biológico e elimina resíduos. Você vai diferenciar, em nível simples, organismos que produzem seu próprio alimento dos que precisam consumir ou absorver matéria orgânica.",
-        title: "Siga energia virando atividade vital",
+          "Relacione metabolismo, obtenção de matéria, obtenção de energia, trabalho biológico e eliminação de resíduos. O aluno diferencia produtores, consumidores e decompositores em exemplos simples sem tratar luz como alimento ou matéria.",
+        title: "Metabolismo, energia e matéria",
       },
     } satisfies LessonPracticeParams,
   },
@@ -99,13 +99,13 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-web-design-url-parts",
     userInput: {
-      chapterTitle: "How a website shows up in a browser",
+      chapterTitle: "URLs, HTTP, and browser navigation",
       courseTitle: "Web Design",
       language: "en",
       lesson: {
         description:
-          "Read the parts of a URL—scheme, domain, path, query, and fragment—and predict what each part tells the browser to do. You’ll see why changing one character can mean a different page, a filtered result, or no network request at all.",
-        title: "Read a URL like a browser",
+          "Identify the scheme, domain, path, query string, and fragment in a URL. Predict how each part changes the browser destination, filtered result, network request, or on-page position.",
+        title: "URL structure: scheme, domain, path, query, and fragment",
       },
     } satisfies LessonPracticeParams,
   },
@@ -129,8 +129,8 @@ ${SHARED_EXPECTATIONS}
       language: "en",
       lesson: {
         description:
-          "Build a sample space by listing every result that could happen, with no result fitting in two places at once. Check simple examples for missing outcomes and overlapping labels.",
-        title: "List a clean sample space",
+          "Build a sample space by listing every possible outcome exactly once. Check simple trials for missing outcomes, duplicated outcomes, and overlapping labels before defining events.",
+        title: "Sample spaces and mutually exclusive outcomes",
       },
     } satisfies LessonPracticeParams,
   },
@@ -149,13 +149,13 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-mechanical-waves-medium",
     userInput: {
-      chapterTitle: "Disturbances that move through matter",
+      chapterTitle: "Mechanical waves and media",
       courseTitle: "Mechanical Waves",
       language: "en",
       lesson: {
         description:
-          "Identify the material that carries a mechanical wave: rope, spring, air, water, or ground. Decide why the wave needs matter to move through, even when that matter does not travel all the way with the wave.",
-        title: "Spot the medium carrying the wave",
+          "Identify the medium that carries a mechanical wave, such as rope, spring, air, water, or ground. Explain why the disturbance travels through matter while the medium itself only oscillates locally.",
+        title: "Mechanical wave media",
       },
     } satisfies LessonPracticeParams,
   },
@@ -176,13 +176,13 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-direito-financeiro-dinheiro-publico",
     userInput: {
-      chapterTitle: "O caminho do dinheiro público",
+      chapterTitle: "Direito financeiro",
       courseTitle: "Direito Financeiro",
       language: "pt",
       lesson: {
         description:
-          "Acompanhe um valor desde a entrada no Estado até a entrega de um serviço, uma obra, um salário ou um benefício. Você vai reconhecer que o caminho passa por receita, orçamento, caixa, despesa e registros patrimoniais, sem tratar tudo como “dinheiro na conta”.",
-        title: "Seguir um real dentro do Estado",
+          "Acompanhe recursos públicos desde receita, orçamento e caixa até despesa, pagamento, entrega e registros patrimoniais. O aluno diferencia autorização orçamentária, fluxo financeiro e prestação de contas.",
+        title: "Receita, orçamento, despesa e controle público",
       },
     } satisfies LessonPracticeParams,
   },
@@ -203,13 +203,13 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-rocadeira-encaixes-pecas",
     userInput: {
-      chapterTitle: "A roçadeira por fora e por dentro",
+      chapterTitle: "Componentes e encaixes da roçadeira",
       courseTitle: "Manutenção de Roçadeira",
       language: "pt",
       lesson: {
         description:
-          "Leia medidas e encaixes comuns: diâmetro do tubo, furo da lâmina, rosca, estrias, lado direito ou esquerdo e posição de montagem. Use esse vocabulário para conferir compatibilidade antes de comprar uma peça.",
-        title: "Descrever encaixes para pedir peças",
+          "Leia medidas e encaixes de peças de roçadeira: diâmetro do tubo, furo da lâmina, rosca, estrias, lado de montagem e posição de fixação. O aluno confere compatibilidade antes de comprar uma peça de reposição.",
+        title: "Medidas e encaixes de peças de roçadeira",
       },
     } satisfies LessonPracticeParams,
   },
@@ -230,13 +230,13 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-google-ads-cpa-roas-margem",
     userInput: {
-      chapterTitle: "Metas de negócio que viram campanhas",
+      chapterTitle: "Métricas de performance e economia de campanhas",
       courseTitle: "Google Ads",
       language: "pt",
       lesson: {
         description:
-          "Calcule quanto uma conversão pode custar usando ticket médio, margem, taxa de fechamento e valor de vida do cliente quando fizer sentido. Isso permite estimar CPA ou ROAS de equilíbrio antes de gastar orçamento.",
-        title: "Usar margem para definir CPA e ROAS viáveis",
+          "Calcule CPA e ROAS de equilíbrio usando ticket médio, margem, taxa de fechamento e valor de vida do cliente quando fizer sentido. O aluno decide se uma campanha pode escalar sem vender abaixo do ponto de equilíbrio.",
+        title: "CPA, ROAS e margem de contribuição",
       },
     } satisfies LessonPracticeParams,
   },
@@ -255,13 +255,13 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-transformers-qkv-attention",
     userInput: {
-      chapterTitle: "Transformers",
+      chapterTitle: "Attention mechanisms",
       courseTitle: "Machine Learning",
       language: "en",
       lesson: {
         description:
-          "Follow the query-key-value calculation behind scaled dot-product attention. Compute which tokens matter most to one position and how their value vectors are blended into a new representation.",
-        title: "Computing attention with Q, K, and V",
+          "Compute scaled dot-product attention with queries, keys, values, attention scores, softmax weights, masks, and blended value vectors. Trace which tokens matter most to one position and why each position attends from its own query.",
+        title: "Scaled dot-product attention with Q, K, and V",
       },
     } satisfies LessonPracticeParams,
   },
@@ -282,13 +282,13 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-biologia-mutacao-mensagem",
     userInput: {
-      chapterTitle: "Do DNA à proteína",
+      chapterTitle: "Mutações, recombinação e regulação gênica",
       courseTitle: "Biologia",
       language: "pt",
       lesson: {
         description:
-          "Analise substituições, inserções e deleções no DNA e preveja como elas podem alterar códons, aminoácidos e proteínas. Compare mutações silenciosas, de sentido trocado, sem sentido e mudanças no quadro de leitura.",
-        title: "Quando uma mutação muda a mensagem",
+          "Analise substituições, inserções e deleções no DNA e preveja efeitos sobre códons, aminoácidos e proteínas. Compare mutações silenciosas, missense, nonsense e frameshift usando o quadro de leitura.",
+        title: "Tipos de mutação e efeitos no quadro de leitura",
       },
     } satisfies LessonPracticeParams,
   },
@@ -309,13 +309,13 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "es-ciencia-datos-que-cuenta",
     userInput: {
-      chapterTitle: "Datos que vienen del mundo real",
+      chapterTitle: "Datos, medición y registros",
       courseTitle: "Ciencia de Datos",
       language: "es",
       lesson: {
         description:
-          "Distingue hechos, mediciones, respuestas, clics, fotos, textos y registros como posibles datos cuando se transforman en una señal que puede analizarse. Practica decidir qué parte de una situación cotidiana sí quedó registrada y qué parte solo se asumió.",
-        title: "Reconocer qué cuenta como dato",
+          "Distingue hechos, mediciones, respuestas, clics, fotos, textos y logs como datos cuando quedan registrados en una señal analizable. El alumno decide qué parte de una situación quedó capturada y qué parte solo fue asumida.",
+        title: "Datos registrados y supuestos no observados",
       },
     } satisfies LessonPracticeParams,
   },

@@ -114,29 +114,29 @@ SPECIFIC EXPECTATION: This scope contains classification and judgment criteria f
     `,
     id: "pt-accounting-recordable-transactions-production-quiz",
     userInput: {
-      chapterTitle: "Transações que precisam ser registradas",
+      chapterTitle: "Transações contábeis e registros",
       courseTitle: "Contabilidade",
       language: "pt",
       sourceLessons: [
         {
           description:
-            "Decida se um acontecimento pertence à empresa ou à vida pessoal de sócios, clientes ou funcionários antes de transformar o fato em registro contábil.",
-          title: "Separar a empresa das pessoas",
+            "Aplique o princípio da entidade para separar fatos da empresa de fatos pessoais de sócios, clientes ou funcionários antes de registrar uma transação.",
+          title: "Princípio da entidade contábil",
         },
         {
           description:
-            "Reconheça quando existe um evento com data, partes envolvidas e evidência suficiente para ser analisado pela contabilidade.",
-          title: "Identificar eventos registráveis",
+            "Identifique eventos com data, partes envolvidas e evidência suficiente para análise contábil. O aluno distingue acontecimento observável de intenção, conversa informal ou plano futuro.",
+          title: "Eventos registráveis",
         },
         {
           description:
-            "Verifique se o acontecimento pode ser medido em dinheiro de forma confiável, sem confundir intenção, promessa vaga ou estimativa sem base com transação contábil.",
-          title: "Medir a transação em dinheiro",
+            "Verifique se um acontecimento pode ser mensurado em dinheiro com base confiável. O aluno diferencia valor comprovável de promessa vaga, expectativa ou estimativa sem suporte.",
+          title: "Mensuração monetária confiável",
         },
         {
           description:
-            "Classifique o efeito do evento sobre caixa, bens, direitos, dívidas, patrimônio, receitas ou despesas para decidir o registro apropriado.",
-          title: "Encontrar o efeito contábil",
+            "Classifique o efeito da transação sobre caixa, bens, direitos, dívidas, patrimônio, receitas ou despesas. O aluno usa esse efeito para decidir se e como o registro contábil deve aparecer.",
+          title: "Efeito patrimonial da transação",
         },
       ],
     } satisfies LessonQuizParams,
@@ -149,29 +149,29 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-biology-field-evidence-production-quiz",
     userInput: {
-      chapterTitle: "Observar vida e registrar evidências",
+      chapterTitle: "Observação biológica e evidências de campo",
       courseTitle: "Biologia",
       language: "pt",
       sourceLessons: [
         {
           description:
-            "Pratique descrever o que dá para ver, ouvir ou tocar sem misturar palpite, explicação ou conclusão. Você vai transformar curiosidade em registros claros, separando observação, inferência e pergunta investigável.",
+            "Separe observações diretas, inferências e perguntas investigáveis em registros de campo. O aluno descreve o que foi visto, ouvido ou tocado sem misturar palpite, explicação ou conclusão.",
           title: "Separar observação, inferência e pergunta",
         },
         {
           description:
-            "Monte uma anotação de campo com data, hora, local, ambiente, organismo observado, comportamento e condições do momento. A meta é que outra pessoa consiga entender onde, quando e em que contexto a observação aconteceu.",
-          title: "Fazer anotações de campo úteis",
+            "Monte anotações de campo com data, hora, local, ambiente, organismo observado, comportamento e condições do momento. O registro deve permitir que outra pessoa entenda onde, quando e em que contexto a observação aconteceu.",
+          title: "Anotações de campo",
         },
         {
           description:
-            "Use desenho simples como ferramenta de atenção, não como obra de arte. Você vai representar forma, posição, proporção, partes importantes, rótulos, vista observada e dúvidas que ainda precisam ser confirmadas.",
-          title: "Desenhar organismos para notar estruturas",
+            "Use desenho biológico simples para registrar forma, posição, proporção, partes importantes, rótulos, vista observada e dúvidas a confirmar. O aluno trata o desenho como evidência observacional, não como ilustração decorativa.",
+          title: "Desenho biológico de campo",
         },
         {
           description:
-            "Registre fotos, vídeos ou sons de modo que sirvam como evidência, preservando contexto, horário, local, enquadramento e arquivos originais. Você também vai reconhecer o que uma imagem registra bem e o que uma anotação ou desenho registra melhor.",
-          title: "Usar fotos, vídeos e sons como evidência",
+            "Registre fotos, vídeos e sons preservando contexto, horário, local, enquadramento e arquivos originais. O aluno reconhece o que mídia digital registra bem e quando anotação ou desenho registra melhor.",
+          title: "Fotos, vídeos e sons como evidência",
         },
       ],
     } satisfies LessonQuizParams,
@@ -192,18 +192,18 @@ SPECIFIC EXPECTATION: This scope contains a genuinely fixed sequence. A strong q
       sourceLessons: [
         {
           description:
-            "Trace a browser request from URL entry through DNS lookup, TCP/TLS connection, HTTP request, server response, download, parsing, and rendering.",
-          title: "Follow a request from browser to page",
+            "Trace the browser request lifecycle from URL entry through DNS lookup, TCP/TLS connection, HTTP request, server response, download, parsing, and rendering.",
+          title: "Browser request lifecycle",
         },
         {
           description:
             "Use status codes, headers, network timing, console errors, and server logs to identify which stage of the request lifecycle failed.",
-          title: "Locate where a request failed",
+          title: "Request failure localization",
         },
         {
           description:
-            "Debug cache, redirect, CORS, authentication, and timeout failures by checking the evidence in the order the browser and server actually process the request.",
-          title: "Debug request failures in sequence",
+            "Debug cache, redirect, CORS, authentication, and timeout failures by checking evidence in browser and server processing order.",
+          title: "Sequential request debugging",
         },
       ],
     } satisfies LessonQuizParams,
@@ -216,29 +216,29 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-product-analytics-funnels-production-quiz",
     userInput: {
-      chapterTitle: "Product analytics",
+      chapterTitle: "Product analytics and funnel analysis",
       courseTitle: "Product Management",
       language: "en",
       sourceLessons: [
         {
           description:
-            "Choose entry points, real outcomes, event definitions, ordering rules, and time windows that match a product question.",
-          title: "Defining product funnels",
+            "Define product funnels with entry points, real outcomes, event definitions, ordering rules, and time windows that match a product question.",
+          title: "Product funnel definition",
         },
         {
           description:
-            "Interpret conversion, dropoff, segmentation, cohorts, retention, acquisition, leading and lagging indicators without confusing clues for causes.",
-          title: "Reading conversion and dropoff",
+            "Interpret conversion rate, dropoff, segmentation, cohorts, retention, acquisition, leading indicators, and lagging indicators without confusing clues for causes.",
+          title: "Conversion and dropoff analysis",
         },
         {
           description:
-            "Check instrumentation, properties, traffic mix, eligibility, bots, baselines, seasonality, and dashboard ownership before deciding what changed.",
-          title: "Debugging analytics data",
+            "Check instrumentation, event properties, traffic mix, eligibility, bots, baselines, seasonality, and dashboard ownership before deciding what changed.",
+          title: "Analytics instrumentation debugging",
         },
         {
           description:
             "Use A/B tests, guardrail metrics, practical significance, and next actions to turn funnel evidence into product decisions.",
-          title: "Experiments and decisions",
+          title: "A/B tests and product decisions",
         },
       ],
     } satisfies LessonQuizParams,
@@ -251,34 +251,34 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "es-source-analysis-production-quiz",
     userInput: {
-      chapterTitle: "Leer fuentes históricas",
+      chapterTitle: "Análisis de fuentes históricas",
       courseTitle: "Historia",
       language: "es",
       sourceLessons: [
         {
           description:
-            "Distinguir fuentes primarias y secundarias según la investigación, la autoría, la fecha, el lugar, el destinatario y el propósito.",
-          title: "Clasificar fuentes según la pregunta",
+            "Distingue fuentes primarias y secundarias según la pregunta de investigación, la autoría, la fecha, el lugar, el destinatario y el propósito.",
+          title: "Fuentes primarias y secundarias",
         },
         {
           description:
-            "Evaluar cómo contexto, punto de vista, propósito, silencios y poder del archivo afectan lo que una fuente puede revelar.",
+            "Evalúa cómo contexto, punto de vista, propósito, silencios y poder del archivo afectan lo que una fuente puede revelar.",
           title: "Perspectiva, sesgo y confiabilidad",
         },
         {
           description:
-            "Comparar fuentes independientes, contradicciones, escalas y ausencias para construir afirmaciones históricas proporcionales.",
-          title: "Corroborar fuentes imperfectas",
+            "Compara fuentes independientes, contradicciones, escalas y ausencias para construir afirmaciones históricas proporcionales.",
+          title: "Corroboración de fuentes",
         },
         {
           description:
-            "Analizar imágenes, mapas, objetos, datos cuantitativos y testimonios orales como evidencias construidas y parciales.",
-          title: "Usar evidencias no textuales",
+            "Analiza imágenes, mapas, objetos, datos cuantitativos y testimonios orales como evidencias construidas y parciales.",
+          title: "Evidencias no textuales",
         },
         {
           description:
-            "Usar citas, contexto, paráfrasis y lenguaje de certeza para sostener conclusiones sin exagerar la evidencia.",
-          title: "Citar y parafrasear con cuidado",
+            "Usa citas, contexto, paráfrasis y lenguaje de certeza para sostener conclusiones históricas sin exagerar la evidencia.",
+          title: "Citas, paráfrasis y lenguaje de certeza",
         },
       ],
     } satisfies LessonQuizParams,
