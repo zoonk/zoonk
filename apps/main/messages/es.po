@@ -7,6 +7,53 @@ msgstr ""
 "X-Crowdin-SourceKey: msgstr\n"
 
 #: src/app/(catalog)/_components/command-palette.tsx
+msgid "xmcVZ0"
+msgstr "Buscar"
+
+#: src/app/(catalog)/_components/command-palette.tsx
+msgid "PSiLeL"
+msgstr "Buscar cursos, capítulos o páginas..."
+
+#: src/app/(catalog)/_components/command-palette.tsx
+#: src/app/(catalog)/_components/user-dropdown-menu.tsx
+msgid "I-38K2"
+msgstr "Mis cursos"
+
+#: src/app/(catalog)/_components/command-palette.tsx
+msgid "Oj9Phc"
+msgstr "Gestionar suscripción"
+
+#: src/app/(catalog)/_components/command-palette.tsx
+#: src/app/(settings)/_components/locale-switcher.tsx
+#: src/app/(settings)/language/page.tsx
+msgid "OhXwmw"
+msgstr "Actualizar idioma"
+
+#: src/app/(catalog)/_components/command-palette.tsx
+msgid "O7ozeo"
+msgstr "Actualizar perfil"
+
+#: src/app/(catalog)/_components/command-palette.tsx
+#: src/app/(catalog)/_components/logout-dropdown-item.tsx
+#: src/app/(settings)/_components/settings-navbar.tsx
+msgid "C81_uG"
+msgstr "Cerrar sesión"
+
+#: src/app/(catalog)/_components/command-palette.tsx
+#: src/app/(catalog)/_components/logout-dropdown-item.tsx
+#: src/app/(progress)/_components/progress-empty-state.tsx
+#: src/app/(settings)/_components/protected-section.tsx
+msgid "AyGauy"
+msgstr "Iniciar sesión"
+
+#: src/app/(catalog)/_components/command-palette.tsx
+#: src/app/(settings)/_components/locale-switcher.tsx
+#: src/app/(settings)/_components/settings-pills.tsx
+#: src/app/(settings)/language/page.tsx
+msgid "y1Z3or"
+msgstr "Idioma"
+
+#: src/app/(catalog)/_components/command-palette.tsx
 #: src/app/(catalog)/_components/navbar-links.tsx
 #: src/app/(progress)/_components/progress-navbar.tsx
 #: src/app/(settings)/_components/settings-navbar.tsx
@@ -34,37 +81,12 @@ msgid "3wvH7G"
 msgstr "Aprobar un examen"
 
 #: src/app/(catalog)/_components/command-palette.tsx
-#: src/app/(catalog)/_components/logout-dropdown-item.tsx
-#: src/app/(progress)/_components/progress-empty-state.tsx
-#: src/app/(settings)/_components/protected-section.tsx
-msgid "AyGauy"
-msgstr "Iniciar sesión"
+msgid "CxfKLC"
+msgstr "Páginas"
 
 #: src/app/(catalog)/_components/command-palette.tsx
-#: src/app/(settings)/_components/locale-switcher.tsx
-#: src/app/(settings)/_components/settings-pills.tsx
-#: src/app/(settings)/language/page.tsx
-msgid "y1Z3or"
-msgstr "Idioma"
-
-#: src/app/(catalog)/_components/command-palette.tsx
-#: src/app/(catalog)/_components/user-dropdown-menu.tsx
-msgid "I-38K2"
-msgstr "Mis cursos"
-
-#: src/app/(catalog)/_components/command-palette.tsx
-msgid "Oj9Phc"
-msgstr "Gestionar suscripción"
-
-#: src/app/(catalog)/_components/command-palette.tsx
-#: src/app/(settings)/_components/locale-switcher.tsx
-#: src/app/(settings)/language/page.tsx
-msgid "OhXwmw"
-msgstr "Actualizar idioma"
-
-#: src/app/(catalog)/_components/command-palette.tsx
-msgid "O7ozeo"
-msgstr "Actualizar perfil"
+msgid "dXSivY"
+msgstr "Mi cuenta"
 
 #: src/app/(catalog)/_components/command-palette.tsx
 #: src/app/(catalog)/_components/user-dropdown-menu.tsx
@@ -78,28 +100,6 @@ msgstr "Blog"
 #: src/app/(settings)/support/support-content.tsx
 msgid "fFZ0Wd"
 msgstr "Comentarios y soporte"
-
-#: src/app/(catalog)/_components/command-palette.tsx
-msgid "xmcVZ0"
-msgstr "Buscar"
-
-#: src/app/(catalog)/_components/command-palette.tsx
-msgid "PSiLeL"
-msgstr "Buscar cursos, capítulos o páginas..."
-
-#: src/app/(catalog)/_components/command-palette.tsx
-msgid "CxfKLC"
-msgstr "Páginas"
-
-#: src/app/(catalog)/_components/command-palette.tsx
-msgid "dXSivY"
-msgstr "Mi cuenta"
-
-#: src/app/(catalog)/_components/command-palette.tsx
-#: src/app/(catalog)/_components/logout-dropdown-item.tsx
-#: src/app/(settings)/_components/settings-navbar.tsx
-msgid "C81_uG"
-msgstr "Cerrar sesión"
 
 #: src/app/(catalog)/_components/command-palette.tsx
 msgid "SENRqu"

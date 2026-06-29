@@ -4,27 +4,31 @@ import { logout } from "@/lib/logout";
 import { getMenu } from "@/lib/menu";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import {
+  Command,
   CommandDialog,
+  CommandDialogDescription,
+  CommandDialogTitle,
   CommandEmpty,
-  CommandGroup,
   CommandInput,
-  CommandItem,
   CommandList,
 } from "@zoonk/ui/components/command";
 import { useCommandPaletteSearch } from "@zoonk/ui/hooks/command-palette-search";
-import { BookOpenIcon, LogOut, PlusIcon, Search } from "lucide-react";
-import { type Route } from "next";
+import { PlusIcon, SearchIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import {
-  type CatalogSearchResults,
-  type ChapterSearchResult,
-  type CourseSearchResult,
-  searchCatalogAction,
-} from "./search-courses-action";
+  type PaletteItem,
+  createChapterPaletteItem,
+  createCoursePaletteItem,
+  createLogoutPaletteItem,
+  createNavigationPaletteItem,
+  getPaletteItemSearchValue,
+  getVisiblePaletteGroups,
+} from "./command-palette-items";
+import { PaletteResultGroup } from "./command-palette-options";
+import { type CatalogSearchResults, searchCatalogAction } from "./search-courses-action";
 
 const EMPTY_SEARCH_RESULTS: CatalogSearchResults = { chapters: [], courses: [] };
 
@@ -55,38 +59,43 @@ export function CommandPalette({
       onSearch: handleSearch,
     });
 
-  function handleSelect<T extends string>(url: Route<T>) {
+  function handlePaletteItemSelect(item: PaletteItem) {
+    if (item.kind === "logout") {
+      closePalette();
+      logout();
+      return;
+    }
+
     onSelectItem();
-    router.push(url);
+
+    if (item.kind === "navigation") {
+      router.push(item.url);
+      return;
+    }
+
+    if (item.kind === "course") {
+      router.push(`/b/${item.course.brandSlug}/c/${item.course.slug}` as const);
+      return;
+    }
+
+    router.push(
+      `/b/${item.chapter.brandSlug}/c/${item.chapter.courseSlug}/ch/${item.chapter.slug}` as const,
+    );
   }
 
-  const getStarted = [
-    { key: t("Home page"), ...getMenu("home") },
-    { key: t("Start a new course"), ...getMenu("start") },
-    { key: t("Speak a language"), ...getMenu("startSpeak") },
-    { key: t("Learn something"), ...getMenu("startLearn") },
-    { key: t("Pass an exam"), ...getMenu("startExam") },
-  ];
+  const searchLabel = t("Search");
+  const searchPlaceholder = t("Search courses, chapters, or pages...");
+  const paletteGroups = usePaletteGroups({ isLoggedIn, query, results });
 
-  const accountPublic = [
-    { key: t("Login"), ...getMenu("login") },
-    { key: t("Language"), ...getMenu("language") },
-  ];
-
-  const accountPrivate = [
-    { key: t("My courses"), ...getMenu("myCourses") },
-    { key: t("Manage subscription"), ...getMenu("subscription") },
-    { key: t("Update language"), ...getMenu("language") },
-    { key: t("Update profile"), ...getMenu("profile") },
-  ];
-
-  const contactUs = [
-    { key: t("Blog"), ...getMenu("blog") },
-    { key: t("Feedback & Support"), ...getMenu("support") },
-  ];
-
-  const hasChapters = results.chapters.length > 0;
-  const hasCourses = results.courses.length > 0;
+  /**
+   * The dialog may close from Escape or an outside press. The search hook owns
+   * query/result reset, so close events should go through that single path.
+   */
+  function handleDialogOpenChange(nextOpen: boolean) {
+    if (!nextOpen) {
+      closePalette();
+    }
+  }
 
   return (
     <>
@@ -97,94 +106,144 @@ export function CommandPalette({
         size="icon"
         variant="outline"
       >
-        <Search aria-hidden="true" />
-        <span className="sr-only">{t("Search")}</span>
+        <SearchIcon aria-hidden="true" />
+        <span className="sr-only">{searchLabel}</span>
       </Button>
 
-      <CommandDialog
-        description={t("Search courses, chapters, or pages...")}
-        onOpenChange={closePalette}
-        open={isOpen}
-        title={t("Search")}
-      >
-        <CommandInput
+      <CommandDialog onOpenChange={handleDialogOpenChange} open={isOpen}>
+        <CommandDialogTitle>{searchLabel}</CommandDialogTitle>
+        <CommandDialogDescription>{searchPlaceholder}</CommandDialogDescription>
+        <Command
+          autoHighlight="always"
+          inline
+          itemToStringValue={getPaletteItemSearchValue}
+          items={paletteGroups}
+          keepHighlight
+          mode="none"
           onValueChange={setQuery}
-          placeholder={t("Search courses, chapters, or pages...")}
+          open
           value={query}
-        />
+        >
+          <CommandInput aria-label={searchLabel} placeholder={searchPlaceholder} />
+          <CommandList>
+            <CommandEmpty>
+              <CreateCourseEmptyState onSelect={onSelectItem} query={query} />
+            </CommandEmpty>
 
-        <CommandList>
-          <CommandEmpty>
-            <CreateCourseEmptyState onSelect={onSelectItem} query={query} />
-          </CommandEmpty>
-
-          <CommandGroup heading={t("Pages")}>
-            {getStarted.map((item) => (
-              <CommandItem key={item.key} onSelect={() => handleSelect(item.url)}>
-                <item.icon aria-hidden="true" />
-                {item.key}
-              </CommandItem>
+            {paletteGroups.map((group) => (
+              <PaletteResultGroup
+                group={group}
+                key={group.id}
+                onSelectItem={handlePaletteItemSelect}
+              />
             ))}
-          </CommandGroup>
-
-          <CommandGroup heading={t("My account")}>
-            {!isLoggedIn &&
-              accountPublic.map((item) => (
-                <CommandItem key={item.key} onSelect={() => handleSelect(item.url)}>
-                  <item.icon aria-hidden="true" />
-                  {item.key}
-                </CommandItem>
-              ))}
-
-            {isLoggedIn &&
-              accountPrivate.map((item) => (
-                <CommandItem key={item.key} onSelect={() => handleSelect(item.url)}>
-                  <item.icon aria-hidden="true" />
-                  {item.key}
-                </CommandItem>
-              ))}
-
-            {isLoggedIn && (
-              <CommandItem
-                onSelect={() => {
-                  closePalette();
-                  logout();
-                }}
-              >
-                <LogOut aria-hidden="true" />
-                {t("Logout")}
-              </CommandItem>
-            )}
-          </CommandGroup>
-
-          <CommandGroup heading={t("Help")}>
-            {contactUs.map((item) => (
-              <CommandItem key={item.key} onSelect={() => handleSelect(item.url)}>
-                <item.icon aria-hidden="true" />
-                {item.key}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-
-          {hasCourses && (
-            <CommandGroup heading={t("Courses")}>
-              {results.courses.map((course) => (
-                <CourseItem course={course} key={course.id} onSelect={handleSelect} />
-              ))}
-            </CommandGroup>
-          )}
-
-          {hasChapters && (
-            <CommandGroup heading={t("Chapters")}>
-              {results.chapters.map((chapter) => (
-                <ChapterItem chapter={chapter} key={chapter.id} onSelect={handleSelect} />
-              ))}
-            </CommandGroup>
-          )}
-        </CommandList>
+          </CommandList>
+        </Command>
       </CommandDialog>
     </>
   );
+}
+
+/**
+ * Palette groups are assembled in a hook because translated labels must be read
+ * with `t("literal")` at the render boundary, not passed through a translation
+ * helper or stored outside the component.
+ */
+function usePaletteGroups({
+  isLoggedIn,
+  query,
+  results,
+}: {
+  isLoggedIn: boolean;
+  query: string;
+  results: CatalogSearchResults;
+}) {
+  const t = useExtracted();
+
+  const accountItems = isLoggedIn
+    ? [
+        createNavigationPaletteItem({
+          id: "my-courses",
+          label: t("My courses"),
+          menu: getMenu("myCourses"),
+        }),
+        createNavigationPaletteItem({
+          id: "subscription",
+          label: t("Manage subscription"),
+          menu: getMenu("subscription"),
+        }),
+        createNavigationPaletteItem({
+          id: "update-language",
+          label: t("Update language"),
+          menu: getMenu("language"),
+        }),
+        createNavigationPaletteItem({
+          id: "profile",
+          label: t("Update profile"),
+          menu: getMenu("profile"),
+        }),
+        createLogoutPaletteItem({ label: t("Logout") }),
+      ]
+    : [
+        createNavigationPaletteItem({ id: "login", label: t("Login"), menu: getMenu("login") }),
+        createNavigationPaletteItem({
+          id: "language",
+          label: t("Language"),
+          menu: getMenu("language"),
+        }),
+      ];
+
+  return getVisiblePaletteGroups({
+    groups: [
+      {
+        id: "pages",
+        items: [
+          createNavigationPaletteItem({ id: "home", label: t("Home page"), menu: getMenu("home") }),
+          createNavigationPaletteItem({
+            id: "start",
+            label: t("Start a new course"),
+            menu: getMenu("start"),
+          }),
+          createNavigationPaletteItem({
+            id: "start-speak",
+            label: t("Speak a language"),
+            menu: getMenu("startSpeak"),
+          }),
+          createNavigationPaletteItem({
+            id: "start-learn",
+            label: t("Learn something"),
+            menu: getMenu("startLearn"),
+          }),
+          createNavigationPaletteItem({
+            id: "start-exam",
+            label: t("Pass an exam"),
+            menu: getMenu("startExam"),
+          }),
+        ],
+        label: t("Pages"),
+      },
+      { id: "account", items: accountItems, label: t("My account") },
+      {
+        id: "help",
+        items: [
+          createNavigationPaletteItem({ id: "blog", label: t("Blog"), menu: getMenu("blog") }),
+          createNavigationPaletteItem({
+            id: "support",
+            label: t("Feedback & Support"),
+            menu: getMenu("support"),
+          }),
+        ],
+        label: t("Help"),
+      },
+      { id: "courses", items: results.courses.map(createCoursePaletteItem), label: t("Courses") },
+      {
+        id: "chapters",
+        items: results.chapters.map(createChapterPaletteItem),
+        label: t("Chapters"),
+      },
+    ],
+    query,
+  });
 }
 
 /**
@@ -222,8 +281,8 @@ function CreateCourseEmptyState({ onSelect, query }: { onSelect: () => void; que
 }
 
 /**
- * The palette input may contain only whitespace while cmdk is still rendering
- * an empty result, and the Learn route should only receive a real subject.
+ * The palette input may contain only whitespace while the empty state is still
+ * rendering, and the Learn route should only receive a real subject.
  */
 function getCreateCoursePrompt(query: string) {
   const prompt = query.trim();
@@ -241,87 +300,4 @@ function getCreateCoursePrompt(query: string) {
  */
 function getLearnPromptHref(prompt: string) {
   return `/start/learn/${encodeURIComponent(prompt)}` as const;
-}
-
-function CourseItem({
-  course,
-  onSelect,
-}: {
-  course: CourseSearchResult;
-  onSelect: <T extends string>(url: Route<T>) => void;
-}) {
-  return (
-    <CommandItem
-      className="flex items-start gap-3"
-      onSelect={() => onSelect(`/b/${course.brandSlug}/c/${course.slug}`)}
-      value={`${course.title}-${course.id}`}
-    >
-      {course.imageUrl ? (
-        <Image
-          alt={course.title}
-          className="size-8 shrink-0 rounded-md object-cover"
-          height={32}
-          src={course.imageUrl}
-          width={32}
-        />
-      ) : (
-        <div className="bg-muted flex size-8 shrink-0 items-center justify-center rounded-md">
-          <BookOpenIcon aria-hidden="true" className="size-4" />
-        </div>
-      )}
-
-      <div className="min-w-0 flex-1">
-        <p className="truncate font-medium">{course.title}</p>
-        {course.description && (
-          <p className="text-muted-foreground truncate text-xs">{course.description}</p>
-        )}
-      </div>
-    </CommandItem>
-  );
-}
-
-/**
- * Chapter results need to carry their parent course context because chapter
- * titles are often reused across courses. Including the course and description
- * in the command value also lets cmdk keep description-only server matches
- * visible after its local filtering runs.
- */
-function ChapterItem({
-  chapter,
-  onSelect,
-}: {
-  chapter: ChapterSearchResult;
-  onSelect: <T extends string>(url: Route<T>) => void;
-}) {
-  return (
-    <CommandItem
-      className="flex items-start gap-3"
-      onSelect={() =>
-        onSelect(`/b/${chapter.brandSlug}/c/${chapter.courseSlug}/ch/${chapter.slug}`)
-      }
-      value={[chapter.title, chapter.courseTitle, chapter.description, chapter.id]
-        .filter(Boolean)
-        .join(" ")}
-    >
-      {chapter.imageUrl ? (
-        <Image
-          alt={chapter.title}
-          className="size-8 shrink-0 rounded-md object-cover"
-          height={32}
-          src={chapter.imageUrl}
-          width={32}
-        />
-      ) : (
-        <div className="bg-muted flex size-8 shrink-0 items-center justify-center rounded-md">
-          <BookOpenIcon aria-hidden="true" className="size-4" />
-        </div>
-      )}
-
-      <div className="min-w-0 flex-1">
-        <p className="truncate font-medium">{chapter.title}</p>
-        <p className="text-muted-foreground truncate text-xs">{chapter.courseTitle}</p>
-        <p className="text-muted-foreground truncate text-xs">{chapter.description}</p>
-      </div>
-    </CommandItem>
-  );
 }
