@@ -14,6 +14,8 @@ import {
 import { getExtracted } from "next-intl/server";
 import { type ComponentProps } from "react";
 
+export type CourseLandingListItems = [string, ...string[]];
+
 type CourseLandingMethodItem = { description: string; icon: LucideIcon; title: string };
 
 /**
@@ -21,11 +23,7 @@ type CourseLandingMethodItem = { description: string; icon: LucideIcon; title: s
  * uses generated outcomes as proof points without making the page feel like a
  * dense course syllabus.
  */
-export async function CourseLandingOutcomes({ items }: { items: string[] }) {
-  if (items.length === 0) {
-    return null;
-  }
-
+export async function CourseLandingOutcomes({ items }: { items: CourseLandingListItems }) {
   const t = await getExtracted();
 
   return (
@@ -72,11 +70,7 @@ export async function CourseLandingAudience({ items }: { items: string[] }) {
  * shared list-section shape makes the tabs feel like one system instead of
  * three unrelated content treatments.
  */
-export async function CourseLandingOpportunities({ items }: { items: string[] }) {
-  if (items.length === 0) {
-    return null;
-  }
-
+export async function CourseLandingOpportunities({ items }: { items: CourseLandingListItems }) {
   const t = await getExtracted();
 
   return (

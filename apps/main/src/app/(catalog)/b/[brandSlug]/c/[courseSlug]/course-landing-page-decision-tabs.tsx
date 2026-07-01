@@ -10,6 +10,7 @@ import { COURSE_LANDING_FRAME_CLASS_NAME } from "./course-landing-page-layout";
 import {
   CourseLandingAudience,
   CourseLandingCredentialNote,
+  type CourseLandingListItems,
   CourseLandingMethodSection,
   CourseLandingOpportunities,
   CourseLandingOutcomes,
@@ -22,6 +23,10 @@ type CourseLandingDecisionPanel = {
   id: CourseLandingDecisionId;
   label: string;
 };
+
+const LANGUAGE_DECISION_PANEL_COUNT = 2;
+const MINIMAL_GENERAL_DECISION_PANEL_COUNT = 3;
+const PARTIAL_GENERAL_DECISION_PANEL_COUNT = 4;
 
 /**
  * The landing page should answer one visitor question at a time. This keeps the
@@ -70,16 +75,26 @@ export async function CourseLandingDecisionTabs({
   const panels: CourseLandingDecisionPanel[] = isLanguageCourse
     ? [methodPanel, contentPanel]
     : [
-        { content: <CourseLandingOutcomes items={outcomes} />, id: "outcomes", label: t("What") },
-        { content: <CourseLandingAudience items={audience} />, id: "audience", label: t("Who") },
+        hasCourseLandingListItems(outcomes) &&
+          ({
+            content: <CourseLandingOutcomes items={outcomes} />,
+            id: "outcomes",
+            label: t("What"),
+          } satisfies CourseLandingDecisionPanel),
         {
-          content: <CourseLandingOpportunities items={opportunities} />,
-          id: "uses",
-          label: t("Where"),
-        },
+          content: <CourseLandingAudience items={audience} />,
+          id: "audience",
+          label: t("Who"),
+        } satisfies CourseLandingDecisionPanel,
+        hasCourseLandingListItems(opportunities) &&
+          ({
+            content: <CourseLandingOpportunities items={opportunities} />,
+            id: "uses",
+            label: t("Where"),
+          } satisfies CourseLandingDecisionPanel),
         methodPanel,
         contentPanel,
-      ];
+      ].filter((panel) => isCourseLandingDecisionPanel(panel));
 
   return (
     <section className={cn(COURSE_LANDING_FRAME_CLASS_NAME, "px-4 py-3 lg:py-6")}>
@@ -111,12 +126,43 @@ export async function CourseLandingDecisionTabs({
 }
 
 /**
- * Keeps the sticky tab grid balanced when language courses have two panels and
- * general courses have five. The strings stay explicit so Tailwind can emit
- * both grid variants.
+ * Keeps the sticky tab grid balanced when optional generated sections are not
+ * available. The strings stay explicit so Tailwind can emit each grid variant.
  */
 function getDecisionGridClassName({ panelCount }: { panelCount: number }) {
-  return panelCount === 2 ? "sm:grid-cols-2" : "sm:grid-cols-5";
+  if (panelCount === LANGUAGE_DECISION_PANEL_COUNT) {
+    return "sm:grid-cols-2";
+  }
+
+  if (panelCount === MINIMAL_GENERAL_DECISION_PANEL_COUNT) {
+    return "sm:grid-cols-3";
+  }
+
+  if (panelCount === PARTIAL_GENERAL_DECISION_PANEL_COUNT) {
+    return "sm:grid-cols-4";
+  }
+
+  return "sm:grid-cols-5";
+}
+
+/**
+ * Generated landing-page fields can be validly empty, especially when older
+ * courses do not have saved landing copy yet. The tab parent uses this guard
+ * before creating a trigger so the tab list only points to real panel content.
+ */
+function hasCourseLandingListItems(items: string[]): items is CourseLandingListItems {
+  return items.length > 0;
+}
+
+/**
+ * Conditional panel creation keeps the tab trigger and tab content arrays in a
+ * single source of truth. This guard removes skipped optional panels while
+ * preserving the concrete panel type for the render loop.
+ */
+function isCourseLandingDecisionPanel(
+  panel: CourseLandingDecisionPanel | false,
+): panel is CourseLandingDecisionPanel {
+  return Boolean(panel);
 }
 
 /**

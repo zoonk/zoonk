@@ -410,6 +410,20 @@ test.describe("Course Detail Page", () => {
     await expect(main.getByRole("heading", { name: "A course, not a credential" })).toBeVisible();
   });
 
+  test("omits tabs for empty generated landing sections", async ({ page }) => {
+    await page.goto(testData.courseNoImageUrl);
+
+    const main = page.getByRole("main");
+    const questions = main.getByRole("tablist", { name: "Course questions" });
+
+    await expect(questions.getByRole("tab", { name: "What" })).toHaveCount(0);
+    await expect(questions.getByRole("tab", { name: "Where" })).toHaveCount(0);
+    await expect(questions.getByRole("tab", { name: "Who" })).toBeVisible();
+    await expect(questions.getByRole("tab", { name: "How" })).toBeVisible();
+    await expect(questions.getByRole("tab", { name: "Content" })).toBeVisible();
+    await expect(main.getByRole("heading", { name: "Who this course is for" })).toBeVisible();
+  });
+
   test("shows language-specific teaching method for language courses", async ({ page }) => {
     await page.goto(testData.languageCourseUrl);
 
