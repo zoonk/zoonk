@@ -265,13 +265,28 @@ describe(courseGenerationWorkflow, () => {
       await courseGenerationWorkflow(request.id);
 
       const course = await prisma.course.findFirst({
-        include: { chapters: { include: { lessons: true }, orderBy: { position: "asc" } } },
+        include: {
+          chapters: {
+            include: { lessons: { orderBy: { position: "asc" } } },
+            orderBy: { position: "asc" },
+          },
+        },
         where: { slug },
       });
 
       const firstChapter = course?.chapters[0];
       expect(firstChapter?.generationStatus).toBe("completed");
-      expect(firstChapter?.lessons).toHaveLength(6);
+
+      expect(firstChapter?.lessons.map((lesson) => lesson.kind)).toStrictEqual([
+        "explanation",
+        "practice",
+        "quiz",
+        "explanation",
+        "practice",
+        "quiz",
+        "review",
+      ]);
+
       expect(firstChapter?.imageUrl).toBeNull();
 
       const secondChapter = course?.chapters[1];
