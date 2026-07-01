@@ -81,7 +81,8 @@ async function generateLessonForKind(
   }
 
   if (context.kind === "practice") {
-    return practiceLessonWorkflow(context);
+    await practiceLessonWorkflow(context);
+    return {};
   }
 
   if (context.kind === "quiz") {

@@ -478,27 +478,6 @@ describe("NAVIGATE_STEP", () => {
     expect(next).toBe(state);
   });
 
-  it("next advances on practice intro hero step", () => {
-    const steps = [
-      buildStep({
-        content: {
-          text: "Practice the situation.",
-          title: "Practice setup",
-          variant: "intro" as const,
-        },
-        id: "practice-intro",
-        kind: "static",
-        position: 0,
-      }),
-      buildMultipleChoiceStep({ id: "question-1", position: 1 }),
-    ];
-
-    const state = buildState({ lessonKind: "practice", steps });
-    const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });
-
-    expect(next.currentStepIndex).toBe(1);
-  });
-
   it("no-ops in feedback phase", () => {
     const state = buildState({ phase: "feedback", steps: staticSteps });
     const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });

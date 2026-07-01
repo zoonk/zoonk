@@ -13,8 +13,8 @@ import {
 } from "./player-step-behavior";
 import { canNavigatePrev as getCanNavigatePrev } from "./step-navigation";
 
-type PlayerPrimaryActionKind = "begin" | "check" | "continue";
-type PlayerPrimaryActionRun = "check" | "continue" | "navigateNext";
+type PlayerPrimaryActionKind = "check" | "continue";
+type PlayerPrimaryActionRun = "check" | "continue";
 type InPlayScreenScene = "choice" | "feedback" | "read";
 
 type PlayerBottomBarModel =
@@ -40,7 +40,6 @@ type InPlayScreenModel = {
   keyboard: PlayerKeyboardModel;
   scene: InPlayScreenScene;
   showChrome: true;
-  stageIsFullBleed: boolean;
   stageIsStatic: boolean;
   step: PlayerStepDescriptor;
 };
@@ -51,7 +50,6 @@ type PlayerCompletedScreenModel = {
   kind: "completed";
   scene: "completion" | "completionMilestone";
   showChrome: false;
-  stageIsFullBleed: false;
   stageIsStatic: false;
 };
 
@@ -61,7 +59,6 @@ type PlayerStartWarningScreenModel = {
   kind: "startWarning";
   scene: "startWarning";
   showChrome: false;
-  stageIsFullBleed: false;
   stageIsStatic: false;
 };
 
@@ -87,7 +84,6 @@ function getStartWarningScreenModel(): PlayerStartWarningScreenModel {
     kind: "startWarning",
     scene: "startWarning",
     showChrome: false,
-    stageIsFullBleed: false,
     stageIsStatic: false,
   };
 }
@@ -110,7 +106,6 @@ function getCompletedScreenModel({
       kind: "completed",
       scene: "completionMilestone",
       showChrome: false,
-      stageIsFullBleed: false,
       stageIsStatic: false,
     };
   }
@@ -126,7 +121,6 @@ function getCompletedScreenModel({
     kind: "completed",
     scene: "completion",
     showChrome: false,
-    stageIsFullBleed: false,
     stageIsStatic: false,
   };
 }
@@ -180,16 +174,6 @@ function getBottomBarModel({
       disabled: false,
       kind: "primaryAction",
       run: "continue",
-    };
-  }
-
-  if (step.kind === "intro") {
-    return {
-      audioUrl,
-      button: "begin",
-      disabled: false,
-      kind: "primaryAction",
-      run: "navigateNext",
     };
   }
 
@@ -295,7 +279,6 @@ export function getPlayerScreenModel(state: PlayerState): PlayerScreenModel {
   const keyboard = getKeyboardModel({ bottomBar, canMovePrev, phase: state.phase, step });
 
   const scene = getPlayerScreenScene({ phase: state.phase, step });
-  const behavior = getPlayerStepBehavior(step);
 
   const model = {
     bottomBar,
@@ -303,7 +286,6 @@ export function getPlayerScreenModel(state: PlayerState): PlayerScreenModel {
     keyboard,
     scene,
     showChrome: true as const,
-    stageIsFullBleed: behavior?.layout === "hero",
     stageIsStatic: state.phase === "playing" && hasStaticNavigation(step),
     step,
   };

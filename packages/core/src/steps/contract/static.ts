@@ -17,12 +17,6 @@ const staticTextContentSchema = withOptionalImage({
   variant: z.literal("text"),
 });
 
-const staticIntroContentSchema = withOptionalImage({
-  text: z.string(),
-  title: z.string(),
-  variant: z.literal("intro"),
-});
-
 const staticGrammarExampleContentSchema = withOptionalImage({
   highlight: z.string(),
   romanization: z.string().min(1).nullable(),
@@ -32,7 +26,6 @@ const staticGrammarExampleContentSchema = withOptionalImage({
 });
 
 export const staticContentSchema = z.discriminatedUnion("variant", [
-  staticIntroContentSchema,
   staticTextContentSchema,
   staticGrammarExampleContentSchema,
 ]);

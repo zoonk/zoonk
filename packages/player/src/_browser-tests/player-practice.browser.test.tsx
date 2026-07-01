@@ -7,21 +7,6 @@ import { buildSerializedLesson, buildSerializedStep } from "../_test-utils/playe
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { buildNavigation, renderPlayer } from "../_test-utils/render-player";
 
-/**
- * Practice intros are image-led setup screens. The image should behave like a
- * full-stage background, not like the contained diagrams used inside regular
- * static explanation steps.
- */
-function expectImageToFillPlayerStage(image: HTMLElement) {
-  const playerStage = screen.getByLabelText("Lesson content");
-  const imageRect = image.getBoundingClientRect();
-  const stageRect = playerStage.getBoundingClientRect();
-
-  expect(globalThis.getComputedStyle(image).objectFit).toBe("cover");
-  expect(Math.round(imageRect.width)).toBe(Math.round(stageRect.width));
-  expect(Math.round(imageRect.height)).toBe(Math.round(stageRect.height));
-}
-
 describe("player browser integration: practice lessons", () => {
   it("shows only the bottom-bar check button on mobile practice questions", async () => {
     await runInMobilePlayerViewport(async () => {
@@ -81,27 +66,11 @@ describe("player browser integration: practice lessons", () => {
     });
   });
 
-  it("renders a leading static scenario step and still completes with question scoring", async () => {
+  it("starts on the first practice question and completes with question scoring", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "practice",
         steps: [
-          buildSerializedStep({
-            content: {
-              image: {
-                prompt:
-                  "Late-night support war room with a refund dashboard on a laptop and a teammate reviewing notes",
-                url: buildInlineImageUrl({
-                  label:
-                    "Late-night support war room with a refund dashboard on a laptop and a teammate reviewing notes",
-                }),
-              },
-              text: "I'm closing the support queue with Maya, and one customer report still does not line up with the refund totals.",
-              title: "Night shift",
-              variant: "intro" as const,
-            },
-            id: "practice-scenario",
-          }),
           buildSerializedStep({
             content: {
               context: "Maya says the mismatch only appears on orders with manual discounts.",
@@ -138,32 +107,6 @@ describe("player browser integration: practice lessons", () => {
       navigation: buildNavigation({ nextLessonHref: null }),
       viewer: buildAuthenticatedViewer(),
     });
-
-    await expect.element(page.getByRole("heading", { name: "Night shift" })).toBeInTheDocument();
-
-    await expect
-      .element(
-        page.getByAltText(
-          /late-night support war room with a refund dashboard on a laptop and a teammate reviewing notes/iu,
-        ),
-      )
-      .toBeInTheDocument();
-
-    expectImageToFillPlayerStage(
-      screen.getByAltText(
-        /late-night support war room with a refund dashboard on a laptop and a teammate reviewing notes/iu,
-      ),
-    );
-
-    await expect
-      .element(
-        page.getByText(
-          "I'm closing the support queue with Maya, and one customer report still does not line up with the refund totals.",
-        ),
-      )
-      .toBeInTheDocument();
-
-    await page.getByRole("button", { name: /begin/iu }).click();
 
     await expect
       .element(page.getByRole("heading", { name: "What should I check first?" }))

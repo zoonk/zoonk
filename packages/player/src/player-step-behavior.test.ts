@@ -42,22 +42,4 @@ describe(getPlayerStepBehavior, () => {
     expect(hasStaticNavigation(descriptor)).toBe(true);
     expect(hasFeedbackScreen(descriptor)).toBe(false);
   });
-
-  it("upgrades the practice scenario intro to the hero layout", () => {
-    const descriptor = describePlayerStep(
-      buildStep({ content: { text: "Hello", title: "Intro", variant: "intro" as const } }),
-    );
-
-    const behavior = getPlayerStepBehavior(descriptor);
-
-    expect(behavior).toMatchObject({
-      check: "none",
-      feedback: "none",
-      layout: "hero",
-      render: "static",
-      validation: "none",
-    });
-
-    expect(hasStaticNavigation(descriptor)).toBe(false);
-  });
 });

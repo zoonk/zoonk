@@ -8,7 +8,7 @@ import { TEST_CASES } from "./test-cases";
 
 export const lessonPracticeTask: Task<LessonPracticeParams, LessonPracticeSchema> = {
   description:
-    "Generate a visual-first practice lesson from a source lesson where learners solve real problems with a colleague",
+    "Generate visual-first practice situations where learners apply source lesson concepts to real-life problems",
   generate: generateLessonPractice,
   id: "lesson-practice",
   name: "Lesson Practice",

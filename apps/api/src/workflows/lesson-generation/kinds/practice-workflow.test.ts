@@ -13,8 +13,7 @@ import { practiceLessonWorkflow } from "./practice-workflow";
 vi.mock("@zoonk/ai/tasks/lessons/core/practice", () => ({
   generateLessonPractice: vi.fn().mockResolvedValue({
     data: {
-      scenario: { imagePrompt: "scenario prompt", text: "Scenario text", title: "Scenario" },
-      scenes: [
+      situations: [
         {
           dialogue: "Question context",
           imagePrompt: "question prompt",
@@ -52,7 +51,7 @@ describe(practiceLessonWorkflow, () => {
     vi.clearAllMocks();
   });
 
-  it("stores scenario and practice questions from the previous explanation", async () => {
+  it("stores practice questions from the previous explanation", async () => {
     const context = await createLessonContext({ kind: "practice", organizationId, position: 2 });
 
     await createCompletedExplanation({
@@ -63,9 +62,7 @@ describe(practiceLessonWorkflow, () => {
       title: "Latest",
     });
 
-    const result = await practiceLessonWorkflow(context);
-
-    expect(result).toStrictEqual({ description: "Scenario text", title: "Scenario" });
+    await practiceLessonWorkflow(context);
 
     expect(generateLessonPractice).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -73,27 +70,16 @@ describe(practiceLessonWorkflow, () => {
       }),
     );
 
-    expect(generateContentStepImage).toHaveBeenCalledTimes(2);
+    expect(generateContentStepImage).toHaveBeenCalledOnce();
 
     const steps = await prisma.step.findMany({
       orderBy: { position: "asc" },
       where: { lessonId: context.id },
     });
 
-    const intro = parseStepContent("static", steps[0]?.content);
-    const question = parseStepContent("multipleChoice", steps[1]?.content);
+    const question = parseStepContent("multipleChoice", steps[0]?.content);
 
-    expect(steps.map((step) => [step.position, step.kind])).toStrictEqual([
-      [0, "static"],
-      [1, "multipleChoice"],
-    ]);
-
-    expect(intro).toStrictEqual({
-      image: { prompt: "scenario prompt", url: "https://example.com/scenario%20prompt.webp" },
-      text: "Scenario text",
-      title: "Scenario",
-      variant: "intro",
-    });
+    expect(steps.map((step) => [step.position, step.kind])).toStrictEqual([[0, "multipleChoice"]]);
 
     expect(question).toMatchObject({
       context: "Question context",

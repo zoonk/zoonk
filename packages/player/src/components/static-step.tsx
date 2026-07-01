@@ -18,7 +18,6 @@ import {
 import { PlayerRichText } from "./player-rich-text";
 import { RomanizationText } from "./romanization-text";
 import { StaticStepLayout } from "./static-step-layout";
-import { StepIntroHero } from "./step-intro-hero-layout";
 
 /**
  * Renders one display sentence with the same rich-text support as regular
@@ -178,16 +177,6 @@ export function StaticStep({ step }: { step: SerializedStep }) {
     step,
     steps: state.steps,
   });
-
-  if (descriptor?.kind === "intro") {
-    return (
-      <StepIntroHero
-        image={descriptor.intro.image}
-        text={descriptor.intro.text}
-        title={descriptor.intro.title}
-      />
-    );
-  }
 
   const content = <StaticStepContent sentenceLines={sentenceLines} step={step} />;
   const image = getPlayerStepImage(descriptor);
