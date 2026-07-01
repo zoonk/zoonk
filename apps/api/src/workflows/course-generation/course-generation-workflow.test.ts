@@ -279,11 +279,11 @@ describe(courseGenerationWorkflow, () => {
 
       expect(firstChapter?.lessons.map((lesson) => lesson.kind)).toStrictEqual([
         "explanation",
-        "practice",
         "quiz",
+        "practice",
         "explanation",
-        "practice",
         "quiz",
+        "practice",
         "review",
       ]);
 

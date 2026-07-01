@@ -93,8 +93,8 @@ describe(addLessonsStep, () => {
     expect(dbLessons[0]!.isPublished).toBe(true);
     expect(dbLessons[0]!.position).toBe(0);
     expect(dbLessons[1]!.position).toBe(1);
-    expect(dbLessons[1]!.kind).toBe("practice");
-    expect(dbLessons[2]!.kind).toBe("quiz");
+    expect(dbLessons[1]!.kind).toBe("quiz");
+    expect(dbLessons[2]!.kind).toBe("practice");
     expect(dbLessons[2]!.title).toBeNull();
     expect(dbLessons[2]!.description).toBeNull();
     expect(dbLessons[3]!.kind).toBe("tutorial");

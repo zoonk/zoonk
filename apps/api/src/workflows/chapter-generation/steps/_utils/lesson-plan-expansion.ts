@@ -69,7 +69,7 @@ function getVocabularyGroupSizes(count: number): number[] {
 }
 
 /**
- * Each explanation receives its own practice and quiz so the interactive rows
+ * Each explanation receives its own quiz and practice so the interactive rows
  * stay focused on one small concept instead of grouping multiple explanations
  * into a broader checkpoint.
  */
@@ -83,15 +83,15 @@ function expandContentLesson({
   return [
     authoredLesson({ lesson }),
     ...(shouldAddInteractiveCompanions
-      ? [companionLesson("practice"), companionLesson("quiz")]
+      ? [companionLesson("quiz"), companionLesson("practice")]
       : []),
   ];
 }
 
 /**
- * Practice rows sit directly after the explanation they assess. Quiz rows cover
- * the same single explanation because each explanation has one practice and
- * one quiz companion before the chapter review.
+ * Quiz rows sit directly after the explanation they check. Practice rows cover
+ * the same single explanation because each explanation has one quiz and one
+ * practice companion before the chapter review.
  */
 function expandContentLessons({
   lessons,
