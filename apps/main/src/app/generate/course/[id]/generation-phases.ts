@@ -27,8 +27,14 @@ export type PhaseName =
   | "creatingCoverImage"
   | "categorizingCourse"
   | "outliningChapters"
+  | "writingLandingPage"
   | "savingCourseInfo";
 
+/**
+ * Keep each AI generation task in its own phase. These phases drive the
+ * thinking messages users see, so grouping model calls hides what the workflow
+ * is generating right now.
+ */
 const PHASE_STEPS = {
   categorizingCourse: ["generateCategories"],
   checkingCourseIdentity: ["resolveCourseIdentity"],
@@ -45,6 +51,7 @@ const PHASE_STEPS = {
     "completeCourseSetup",
   ],
   writingDescription: ["generateDescription"],
+  writingLandingPage: ["generateLandingPage"],
 } as const satisfies Record<PhaseName, readonly CourseStepName[]>;
 
 type AssignedSteps = (typeof PHASE_STEPS)[PhaseName][number];
@@ -59,6 +66,7 @@ const PHASE_ORDER: PhaseName[] = [
   "creatingCoverImage",
   "categorizingCourse",
   "outliningChapters",
+  "writingLandingPage",
   "savingCourseInfo",
 ];
 
@@ -76,6 +84,7 @@ export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
   preparingCourse: SettingsIcon,
   savingCourseInfo: CheckCircleIcon,
   writingDescription: PenLineIcon,
+  writingLandingPage: PenLineIcon,
 };
 
 const PHASE_WEIGHTS: Record<PhaseName, number> = {
@@ -88,6 +97,7 @@ const PHASE_WEIGHTS: Record<PhaseName, number> = {
   preparingCourse: 1,
   savingCourseInfo: 1,
   writingDescription: 4,
+  writingLandingPage: 8,
 };
 
 export function getActivePhaseDurationMs(activePhaseNames: PhaseName[]): number | undefined {

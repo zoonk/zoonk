@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { calculateWeightedProgress, getPhaseOrder, getPhaseStatus } from "./generation-phases";
 
 describe("course generation phases", () => {
-  it("returns all 9 course phases in workflow order", () => {
+  it("returns all 10 course phases in workflow order", () => {
     const phases = getPhaseOrder();
 
     expect(phases).toStrictEqual([
@@ -14,6 +14,7 @@ describe("course generation phases", () => {
       "creatingCoverImage",
       "categorizingCourse",
       "outliningChapters",
+      "writingLandingPage",
       "savingCourseInfo",
     ]);
   });
@@ -35,6 +36,16 @@ describe("course generation phases", () => {
 
   it("marks phase as active when its step is the current step", () => {
     const status = getPhaseStatus("writingDescription", [], "generateDescription");
+    expect(status).toBe("active");
+  });
+
+  it("marks the landing-page phase as active when generating landing copy", () => {
+    const status = getPhaseStatus(
+      "writingLandingPage",
+      ["generateChapters"],
+      "generateLandingPage",
+    );
+
     expect(status).toBe("active");
   });
 
@@ -69,6 +80,7 @@ describe("course generation phases", () => {
       "generateImage",
       "generateCategories",
       "generateChapters",
+      "generateLandingPage",
       "getExistingChapters",
       "updateCourse",
       "addCategories",

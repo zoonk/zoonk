@@ -1,3 +1,7 @@
+import {
+  type CourseLandingPageContent,
+  parseCourseLandingPageContent,
+} from "@zoonk/core/courses/landing-page";
 import { type CourseGetPayload } from "@zoonk/db";
 
 export const courseContentInclude = {
@@ -11,6 +15,7 @@ export type ExistingCourseContent = {
   imageUrl: string | null;
   hasCategories: boolean;
   hasChapters: boolean;
+  landingPage: CourseLandingPageContent | null;
 };
 
 export const EMPTY_EXISTING_CONTENT: ExistingCourseContent = {
@@ -18,7 +23,17 @@ export const EMPTY_EXISTING_CONTENT: ExistingCourseContent = {
   hasCategories: false,
   hasChapters: false,
   imageUrl: null,
+  landingPage: null,
 };
+
+/**
+ * Existing courses may predate this generated copy or contain edited JSON, so
+ * setup only treats the landing page as reusable when it still matches the
+ * structured copy contract the course page can render.
+ */
+function getExistingLandingPage(course: CourseWithContentCounts): CourseLandingPageContent | null {
+  return parseCourseLandingPageContent(course.landingPage);
+}
 
 /**
  * Course setup only needs to know which persisted content already exists.
@@ -32,5 +47,6 @@ export function getExistingCourseContent(course: CourseWithContentCounts): Exist
     hasCategories: course._count.categories > 0,
     hasChapters: course._count.chapters > 0,
     imageUrl: course.imageUrl,
+    landingPage: getExistingLandingPage(course),
   };
 }

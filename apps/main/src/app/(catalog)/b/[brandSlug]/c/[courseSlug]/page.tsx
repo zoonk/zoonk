@@ -8,8 +8,10 @@ import {
 } from "@/components/catalog/continue-lesson-link";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
+import { hasCourseProgress } from "@/data/courses/has-course-progress";
 import { getUserHiddenLessonKinds } from "@/data/users/lesson-filter-settings";
 import { getDefaultChapterImage } from "@/lib/catalog/default-images";
+import { parseCourseLandingPageContent } from "@zoonk/core/courses/landing-page";
 import { getSession } from "@zoonk/core/users/session/get";
 import { Grid, GridToolbar } from "@zoonk/ui/components/grid";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
@@ -19,6 +21,7 @@ import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { ChapterList } from "./chapter-list";
 import { CourseHeader } from "./course-header";
+import { CourseLandingPage } from "./course-landing-page";
 
 export async function generateMetadata({
   params,
@@ -54,10 +57,28 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
     notFound();
   }
 
-  const chapters = await listCourseChapters({ courseId: course.id });
+  const [chapters, courseHasProgress] = await Promise.all([
+    listCourseChapters({ courseId: course.id }),
+    hasCourseProgress({ courseId: course.id }),
+  ]);
 
   if (brandSlug === AI_ORG_SLUG && chapters.length === 0) {
     redirect(`/generate/c/${course.slug}`);
+  }
+
+  const landingPage = parseCourseLandingPageContent(course.landingPage);
+
+  if (!courseHasProgress) {
+    return (
+      <CourseLandingPage
+        brandSlug={brandSlug}
+        chapters={chapters}
+        course={course}
+        courseSlug={courseSlug}
+        excludedLessonKinds={hiddenLessonKinds}
+        landingPage={landingPage}
+      />
+    );
   }
 
   const fallbackHref = chapters[0]

@@ -245,8 +245,7 @@ function handleContinue(state: PlayerState): PlayerState {
 
 /**
  * Moves the player to the next step, or completes the lesson if there
- * are no more steps. Static forward navigation and hero CTAs share this to
- * avoid duplicating the advance-or-complete logic.
+ * are no more steps.
  */
 function advanceForward(state: PlayerState): PlayerState {
   const nextIndex = state.currentStepIndex + 1;
@@ -268,15 +267,6 @@ function handleNavigateStep(
 
   const currentStep = state.steps[state.currentStepIndex];
   const currentBehavior = getPlayerStepBehavior(describePlayerStep(currentStep));
-
-  /**
-   * Hero screens own their CTA inside the step content and only move forward.
-   * They do not participate in static left/right navigation, but their primary
-   * action still dispatches the same next-step transition as read screens.
-   */
-  if (currentBehavior?.layout === "hero" && action.direction === "next") {
-    return advanceForward(state);
-  }
 
   if (currentBehavior?.layout !== "navigable") {
     return state;

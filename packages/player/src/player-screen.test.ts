@@ -70,31 +70,6 @@ describe(getPlayerScreenModel, () => {
     expect(screen.stageIsStatic).toBe(true);
   });
 
-  it("uses primary action mode for the practice scenario intro", () => {
-    const screen = buildScreen({
-      lessonKind: "practice",
-      state: buildState({
-        steps: [
-          buildStep({ content: { text: "Hello", title: "Intro", variant: "intro" as const } }),
-        ],
-      }),
-    });
-
-    expect(screen.kind).toBe("step");
-
-    expect(screen.bottomBar).toStrictEqual({
-      audioUrl: null,
-      button: "begin",
-      disabled: false,
-      kind: "primaryAction",
-      run: "navigateNext",
-    });
-
-    expect(screen.keyboard.enterAction).toBe("navigateNext");
-    expect(screen.keyboard.rightAction).toBeNull();
-    expect(screen.stageIsFullBleed).toBe(true);
-  });
-
   it("keeps unanswered interactive steps disabled", () => {
     const screen = buildScreen({
       state: buildState({

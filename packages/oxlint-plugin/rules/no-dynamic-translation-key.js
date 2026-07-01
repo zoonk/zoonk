@@ -53,6 +53,59 @@ function isStringLiteral(node) {
   return false;
 }
 
+function getStaticPropertyName(property) {
+  if (!property || property.computed) {
+    return null;
+  }
+
+  if (property.key.type === "Identifier") {
+    return property.key.name;
+  }
+
+  if (property.key.type === "Literal" && typeof property.key.value === "string") {
+    return property.key.value;
+  }
+
+  return null;
+}
+
+function isStaticMessageDescriptor(node) {
+  if (!node || node.type !== "ObjectExpression") {
+    return false;
+  }
+
+  let hasStaticMessage = false;
+
+  for (const property of node.properties) {
+    if (property.type !== "Property") {
+      return false;
+    }
+
+    const propertyName = getStaticPropertyName(property);
+
+    if (!propertyName) {
+      return false;
+    }
+
+    if (propertyName === "message") {
+      hasStaticMessage = isStringLiteral(property.value);
+    }
+
+    if (
+      (propertyName === "id" || propertyName === "description") &&
+      !isStringLiteral(property.value)
+    ) {
+      return false;
+    }
+  }
+
+  return hasStaticMessage;
+}
+
+function isStaticTranslationArgument(node) {
+  return isStringLiteral(node) || isStaticMessageDescriptor(node);
+}
+
 export default defineRule({
   createOnce(context) {
     let tVariableNames;
@@ -102,8 +155,9 @@ export default defineRule({
           return;
         }
 
-        // Check if first argument is a string literal
-        if (!isStringLiteral(firstArg)) {
+        // Check if first argument is a string literal or a static next-intl
+        // message descriptor with translator context.
+        if (!isStaticTranslationArgument(firstArg)) {
           context.report({ loc: firstArg.loc, messageId: "noDynamicKey" });
         }
       },
@@ -117,7 +171,7 @@ export default defineRule({
     },
     messages: {
       noDynamicKey:
-        'Translation key must be a string literal. Dynamic keys like t(variable) or t(`template`) break i18n extraction. Use t("String literal") instead.',
+        'Translation key must be a string literal or static message descriptor. Dynamic keys like t(variable) or t(`template`) break i18n extraction. Use t("String literal") or t({message: "String literal"}) instead.',
     },
     schema: [],
     type: "problem",

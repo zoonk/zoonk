@@ -15,6 +15,11 @@ import Link from "next/link";
 
 type ContinueLessonProgressContent = { ariaLabel: string; text: string };
 
+type ContinueLessonLinkAppearance = Pick<
+  NonNullable<Parameters<typeof buttonVariants>[0]>,
+  "size" | "variant"
+> & { className?: string };
+
 const EMPTY_EXCLUDED_LESSON_KINDS: LessonKind[] = [];
 
 function getScope(props: {
@@ -107,20 +112,29 @@ function ContinueLessonLinkContent({
   );
 }
 
+/**
+ * Catalog start and continue buttons share this component so every surface uses
+ * the same progress-aware target. The optional appearance only changes the
+ * button styling for placements like landing-page heroes.
+ */
 export async function ContinueLessonLink<Href extends string, CompletedHref extends string>({
+  appearance,
   chapterId,
   completedHref,
   courseId,
   excludedLessonKinds = EMPTY_EXCLUDED_LESSON_KINDS,
   fallbackHref,
   lessonId,
+  startLabel,
 }: {
+  appearance?: ContinueLessonLinkAppearance;
   chapterId?: string;
   completedHref?: Route<CompletedHref>;
   courseId?: string;
   excludedLessonKinds?: LessonKind[];
   fallbackHref?: Route<Href>;
   lessonId?: string;
+  startLabel?: string;
 }) {
   const t = await getExtracted();
   const scope = getScope({ chapterId, courseId, lessonId });
@@ -130,7 +144,12 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
     getContinueLessonProgress({ excludedLessonKinds, scope }),
   ]);
 
-  const className = cn(buttonVariants(), "min-w-0 flex-1 gap-2");
+  const className = buttonVariants({
+    className: cn("min-w-0 flex-1 gap-2", appearance?.className),
+    size: appearance?.size,
+    variant: appearance?.variant,
+  });
+
   const visibleProgress = getVisibleProgress({ progress: resolvedProgress });
 
   const progressContent = visibleProgress
@@ -139,6 +158,8 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
         text: `${visibleProgress.percentComplete}%`,
       }
     : null;
+
+  const initialLabel = startLabel ?? t("Start");
 
   /**
    * Some catalog pages can compute a safe first-child route, while others may
@@ -164,7 +185,7 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
    * routing rules here.
    */
   if (!data) {
-    return renderFallback({ label: t("Start") });
+    return renderFallback({ label: initialLabel });
   }
 
   const getLabel = () => {
@@ -176,7 +197,7 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
       return t("Continue");
     }
 
-    return t("Start");
+    return initialLabel;
   };
 
   const label = getLabel();

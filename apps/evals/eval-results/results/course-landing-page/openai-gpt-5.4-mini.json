@@ -1,0 +1,447 @@
+{
+  "modelId": "openai/gpt-5.4-mini",
+  "results": [
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "The value proposition could be slightly more learner-facing and idea-driven, closer to the expected tone of turning ideas into websites or apps people enjoy using, while keeping the current concrete focus on responsive, accessible interfaces.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should position frontend development as practical interface and web-product work\n      - valueProposition should feel concrete and learner-facing, similar to \"Turn your ideas into great websites and apps people will love to use\"\n      - valueProposition should not use abstract phrasing like \"turns ideas into usable web experiences people can interact with\"\n      - audience should include beginners and people collaborating with product/design/engineering teams\n      - outcomes should focus on usable interfaces, responsive pages, accessibility, and improving real web experiences\n      - opportunities should mention realistic work environments without salary or job guarantees\n      - Should be in US English\n\n      \n  - Must be written in the specified language\n  - Must include exactly these fields: valueProposition, audience, outcomes, opportunities\n  - valueProposition must be one concise sentence\n  - audience must contain 3-5 short, specific learner profiles or fit statements\n  - audience entries may be concise labels such as \"People preparing for medical school\" when they clearly answer who the course is for\n  - outcomes must contain 4-6 concrete abilities learners can build\n  - opportunities must contain 3-5 realistic career, academic, life, or cultural opportunities\n  - Must be specific to the course topic, not generic education copy\n  - valueProposition must sound natural and concrete, not like an abstract definition of the field\n  - For non-English cases, must not mix in English audience or framing words such as \"learners\", \"students\", \"beginners\", or \"professionals\"; translate them naturally\n  - Must not mention course duration, completion time, salaries, certificates, job guarantees, guaranteed fluency, pricing, subscriptions, or free chapters\n  - Must avoid inflated claims such as \"master\", \"become an expert\", and \"unlock your potential\"\n\n    ",
+        "id": "en-frontend-development-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "Set up a browser, editor, local files, and developer tools so you can inspect pages, run small changes, and read errors without guessing.",
+              "title": "Frontend development setup"
+            },
+            {
+              "description": "Use semantic HTML, document structure, links, forms, media, and landmarks to create pages that browsers and assistive technologies can understand.",
+              "title": "HTML structure and semantic markup"
+            },
+            {
+              "description": "Control typography, spacing, color, the cascade, selectors, custom properties, and responsive sizing without fighting the browser.",
+              "title": "CSS foundations"
+            },
+            {
+              "description": "Build layouts with normal flow, flexbox, grid, positioning, and container-aware decisions that work across phones, tablets, and desktops.",
+              "title": "Responsive layout systems"
+            },
+            {
+              "description": "Run JavaScript in the browser, read and change DOM nodes, handle events, and update the interface from user actions.",
+              "title": "JavaScript for interactive pages"
+            },
+            {
+              "description": "Collect user input with accessible labels, validation, disabled states, error messages, and feedback that helps people recover.",
+              "title": "Forms, validation, and feedback"
+            },
+            {
+              "description": "Manage focus, keyboard paths, ARIA used only where needed, reduced motion, contrast, and screen reader-friendly updates.",
+              "title": "Accessibility and inclusive interaction"
+            },
+            {
+              "description": "Organize interfaces with reusable components, props, state, rendering cycles, and composition patterns used by modern frontend frameworks.",
+              "title": "Component-based UI architecture"
+            },
+            {
+              "description": "Load data with fetch, handle loading and error states, parse JSON, update UI from APIs, and protect users from stale or missing data.",
+              "title": "API data and async UI states"
+            },
+            {
+              "description": "Use package management, bundlers, dev servers, TypeScript, linting, formatting, and build outputs with a clear mental model.",
+              "title": "Frontend tooling and TypeScript"
+            },
+            {
+              "description": "Profile rendering, layout shifts, bundle size, network waterfalls, image loading, and Core Web Vitals before shipping changes.",
+              "title": "Frontend performance"
+            },
+            {
+              "description": "Take a feature from user need through layout, component design, states, accessibility checks, tests, build, and deployment handoff.",
+              "title": "End-to-end frontend feature workflow"
+            }
+          ],
+          "description": "Frontend development powers the visual and interactive layer of modern web products.",
+          "language": "en",
+          "title": "Frontend Development"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Could more explicitly reflect the beginner-to-advanced scope and include a clearer writing-focused outcome, but the result already satisfies the stated requirements well.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should treat French as a language course and focus on communication contexts\n      - Should mention travel, culture, study, or work use cases\n      - Should not promise fluency by the end of the course\n      - Should be in US English\n\n      \n  - Must be written in the specified language\n  - Must include exactly these fields: valueProposition, audience, outcomes, opportunities\n  - valueProposition must be one concise sentence\n  - audience must contain 3-5 short, specific learner profiles or fit statements\n  - audience entries may be concise labels such as \"People preparing for medical school\" when they clearly answer who the course is for\n  - outcomes must contain 4-6 concrete abilities learners can build\n  - opportunities must contain 3-5 realistic career, academic, life, or cultural opportunities\n  - Must be specific to the course topic, not generic education copy\n  - valueProposition must sound natural and concrete, not like an abstract definition of the field\n  - For non-English cases, must not mix in English audience or framing words such as \"learners\", \"students\", \"beginners\", or \"professionals\"; translate them naturally\n  - Must not mention course duration, completion time, salaries, certificates, job guarantees, guaranteed fluency, pricing, subscriptions, or free chapters\n  - Must avoid inflated claims such as \"master\", \"become an expert\", and \"unlock your potential\"\n\n    ",
+        "id": "en-french-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "Polite greetings, farewells, introductions, and basic courtesy formulas with formal and informal address.",
+              "title": "Greetings and introductions"
+            },
+            {
+              "description": "Subject pronouns, gender, articles, and simple affirmative or negative sentences in everyday contexts.",
+              "title": "Nouns, gender, and basic sentences"
+            },
+            {
+              "description": "Numbers, prices, dates, time expressions, and talking about schedules and frequency.",
+              "title": "Numbers, time, and dates"
+            },
+            {
+              "description": "Regular and high-frequency irregular verbs in the present tense, with common verb patterns and spelling changes.",
+              "title": "Present tense"
+            },
+            {
+              "description": "Family members, relationships, basic personal descriptions, and possessive determiners.",
+              "title": "Family and possession"
+            },
+            {
+              "description": "Adjective agreement and position, common descriptive vocabulary, and comparative forms.",
+              "title": "Descriptions and adjectives"
+            },
+            {
+              "description": "Common questions with est-ce que, inversion, intonation, question words, and short answers.",
+              "title": "Asking questions"
+            },
+            {
+              "description": "Negation patterns such as ne pas, ne plus, and ne jamais, plus essential sentence-building connectors.",
+              "title": "Negation and simple connectors"
+            },
+            {
+              "description": "Food items, ordering and paying, quantities, partitive articles, and expressing preferences.",
+              "title": "Food and dining"
+            },
+            {
+              "description": "Daily routines, telling time in context, reflexive verbs, and frequency adverbs.",
+              "title": "Daily life and routines"
+            },
+            {
+              "description": "Places in town, asking for and giving directions, and prepositions of place.",
+              "title": "Around town and directions"
+            },
+            {
+              "description": "Transportation modes, tickets, schedules, and expressing destinations and itineraries.",
+              "title": "Transportation and getting around"
+            },
+            {
+              "description": "Body parts, symptoms, pharmacies, appointments, and giving basic health information.",
+              "title": "Health and the body"
+            },
+            {
+              "description": "Past narration with passe compose and imparfait, including sequence, background, and common irregular participles.",
+              "title": "Telling stories in the past"
+            },
+            {
+              "description": "Subjunctive triggers, wishes, doubt, emotion, necessity, and dependent clauses used in natural conversation.",
+              "title": "Present subjunctive"
+            }
+          ],
+          "description": "French from beginner to advanced communication across speaking, reading, writing, and listening.",
+          "language": "en",
+          "targetLanguage": "fr",
+          "title": "French"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "The result could be slightly improved by making the valueProposition a bit shorter and by adding one academic or everyday-life opportunity to broaden the currently mostly organizational/professional framing.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should explain artificial intelligence as a practical field with business, technical, and everyday impact\n      - outcomes should not become a list of specific tools or vendor products\n      - opportunities should include realistic professional or academic contexts without guaranteeing a job\n      - Should be in Brazilian Portuguese\n\n      \n  - Must be written in the specified language\n  - Must include exactly these fields: valueProposition, audience, outcomes, opportunities\n  - valueProposition must be one concise sentence\n  - audience must contain 3-5 short, specific learner profiles or fit statements\n  - audience entries may be concise labels such as \"People preparing for medical school\" when they clearly answer who the course is for\n  - outcomes must contain 4-6 concrete abilities learners can build\n  - opportunities must contain 3-5 realistic career, academic, life, or cultural opportunities\n  - Must be specific to the course topic, not generic education copy\n  - valueProposition must sound natural and concrete, not like an abstract definition of the field\n  - For non-English cases, must not mix in English audience or framing words such as \"learners\", \"students\", \"beginners\", or \"professionals\"; translate them naturally\n  - Must not mention course duration, completion time, salaries, certificates, job guarantees, guaranteed fluency, pricing, subscriptions, or free chapters\n  - Must avoid inflated claims such as \"master\", \"become an expert\", and \"unlock your potential\"\n\n    ",
+        "id": "pt-inteligencia-artificial-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "Constrói o primeiro modelo mental de IA: dados, regras, atributos, rótulos, previsões, erros e decisões em sistemas que pessoas realmente usam.",
+              "title": "Dados, regras e previsões"
+            },
+            {
+              "description": "Acompanha a IA desde sistemas simbólicos e regras de especialistas até aprendizado de máquina, deep learning e modelos de fundação.",
+              "title": "Evolução da inteligência artificial"
+            },
+            {
+              "description": "Transforma um pedido real em problema de previsão, classificação, ranqueamento, geração, planejamento ou automação com medidas claras de sucesso.",
+              "title": "Formulação de problemas de IA"
+            },
+            {
+              "description": "Cobre coleta, limpeza, rotulagem, documentação e divisão de bases de dados, evitando vazamento, vieses escondidos e métricas fora da tarefa real.",
+              "title": "Coleta e preparação de dados"
+            },
+            {
+              "description": "Treina e compara regressão, classificação, clusterização, árvores e modelos ensemble com métricas ligadas ao custo dos erros.",
+              "title": "Modelos clássicos de aprendizado de máquina"
+            },
+            {
+              "description": "Usa redes neurais, backpropagation, otimização, GPUs e frameworks de deep learning para modelar imagens, texto, áudio e dados estruturados.",
+              "title": "Redes neurais e deep learning"
+            },
+            {
+              "description": "Trabalha atenção, transformers, embeddings, pré-treinamento, ajuste por instruções e limites dos grandes modelos de linguagem.",
+              "title": "Transformers e grandes modelos de linguagem"
+            },
+            {
+              "description": "Desenha prompts, saídas estruturadas, chamadas de ferramentas, versionamento e testes para deixar o comportamento da IA mais fácil de manter.",
+              "title": "Prompting e design de aplicações de IA"
+            },
+            {
+              "description": "Constrói geração aumentada por recuperação com ingestão de documentos, chunking, embeddings, busca vetorial, reranking, montagem de contexto e citações.",
+              "title": "Geração aumentada por recuperação"
+            },
+            {
+              "description": "Avalia IA com baselines, dados separados, revisão humana, juízes automáticos, red teaming, análise de alucinações e testes de regressão.",
+              "title": "Avaliação de IA e análise de alucinações"
+            },
+            {
+              "description": "Verifica justiça, privacidade, consentimento, explicabilidade, model cards, riscos de uso indevido e governança antes que sistemas de IA afetem pessoas.",
+              "title": "IA responsável e governança"
+            },
+            {
+              "description": "Implanta recursos de IA com serving de modelos, monitoramento, fallbacks, orçamento de latência, controle de custo, resposta a incidentes e revisão humana.",
+              "title": "Operação e implantação de IA"
+            },
+            {
+              "description": "Acompanha um recurso de IA da formulação do problema até checagem de dados, desenho de modelo ou prompt, avaliação, lançamento, monitoramento e iteração.",
+              "title": "Fluxo completo de produto com IA"
+            }
+          ],
+          "description": "A inteligência artificial transforma dados, regras e modelos em sistemas capazes de apoiar decisões.",
+          "language": "pt",
+          "title": "Inteligência Artificial"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Could more explicitly frame practice-adjacent activities like briefs, document review, and legal writing as supervised, academic, or support work to further reinforce that the course does not qualify learners to practice law.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should treat law as a regulated profession and avoid implying the course qualifies someone to practice law\n      - Must not say learners can become lawyers, represent clients, provide legal advice, or practice law because of this course\n      - Should frame opportunities around law school preparation, legal vocabulary, civic understanding, compliance, policy, or working better with legal professionals\n      - outcomes should focus on reading cases, understanding institutions/procedure, and preparing for deeper supervised or academic legal study\n      - Should be in US English\n\n      \n  - Must be written in the specified language\n  - Must include exactly these fields: valueProposition, audience, outcomes, opportunities\n  - valueProposition must be one concise sentence\n  - audience must contain 3-5 short, specific learner profiles or fit statements\n  - audience entries may be concise labels such as \"People preparing for medical school\" when they clearly answer who the course is for\n  - outcomes must contain 4-6 concrete abilities learners can build\n  - opportunities must contain 3-5 realistic career, academic, life, or cultural opportunities\n  - Must be specific to the course topic, not generic education copy\n  - valueProposition must sound natural and concrete, not like an abstract definition of the field\n  - For non-English cases, must not mix in English audience or framing words such as \"learners\", \"students\", \"beginners\", or \"professionals\"; translate them naturally\n  - Must not mention course duration, completion time, salaries, certificates, job guarantees, guaranteed fluency, pricing, subscriptions, or free chapters\n  - Must avoid inflated claims such as \"master\", \"become an expert\", and \"unlock your potential\"\n\n    ",
+        "id": "en-law-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "Build the vocabulary needed to read statutes, contracts, cases, and legal news, including rights, duties, liability, jurisdiction, validity, and remedies.",
+              "title": "Essential legal language"
+            },
+            {
+              "description": "See how everyday events become legal facts, claims, defenses, obligations, and consequences across contracts, harm, property, work, and crime.",
+              "title": "Legal rules, facts, and relationships"
+            },
+            {
+              "description": "Compare constitutions, statutes, regulations, precedent, administrative rules, treaties, and legal customs so you can locate the governing authority.",
+              "title": "Sources of law"
+            },
+            {
+              "description": "Map courts, legislatures, agencies, prosecutors, defenders, private lawyers, clerks, and enforcement bodies in the path of a legal problem.",
+              "title": "Legal systems and institutions"
+            },
+            {
+              "description": "Trace how legal systems developed through common law, civil law, constitutionalism, codification, rights movements, regulation, and digital courts.",
+              "title": "Legal history and institutional evolution"
+            },
+            {
+              "description": "Read legal texts by language, context, purpose, precedent, principles, and practical consequences without treating interpretation as guesswork.",
+              "title": "Legal interpretation"
+            },
+            {
+              "description": "Identify issues, holdings, reasoning, dicta, precedent strength, factual distinctions, and how one case can support or weaken another argument.",
+              "title": "Case reading and precedent"
+            },
+            {
+              "description": "Build legal arguments from facts, rules, evidence, analogies, counterarguments, and conclusions while staying honest about uncertainty.",
+              "title": "Legal reasoning and argumentation"
+            },
+            {
+              "description": "Research statutes, cases, regulations, secondary sources, citators, and updates, then assemble a reliable answer with verifiable sources.",
+              "title": "Legal research"
+            },
+            {
+              "description": "Write clear memos, client letters, case briefs, contract notes, and procedural documents for readers who need to decide or act.",
+              "title": "Legal writing"
+            },
+            {
+              "description": "Follow a matter from intake through documents, deadlines, research, strategy, filing, negotiation, hearing, decision, enforcement, and follow-up.",
+              "title": "End-to-end legal matter workflow"
+            },
+            {
+              "description": "Cover confidentiality, conflicts of interest, unauthorized practice, supervision, legal advice boundaries, and professional responsibility in regulated settings.",
+              "title": "Legal ethics and professional responsibility"
+            }
+          ],
+          "description": "A structured path through legal systems, case reading, legal reasoning, procedure, and professional responsibility.",
+          "language": "en",
+          "title": "Law"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The outcome about applying pharmacology ideas to dosing could be read slightly too close to medication-management practice if taken out of context, though it does include safety and does not claim prescribing authority. The opportunity about understanding prescriptions and diagnoses is acceptable but could be phrased more clearly as understanding clinician-provided information.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Add a clearer supervised-study or non-licensure framing, such as preparing for medical or allied-health study and working better with qualified clinicians. Replace “health-care” with the more standard US spelling “healthcare” for consistency.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should treat medicine as a regulated profession and avoid implying the course qualifies someone to practice medicine\n      - Must not say learners can become doctors, diagnose patients, prescribe medication, treat patients, or replace medical school because of this course\n      - Should frame opportunities around preparation for medical or health science study, clinical vocabulary, patient-care context, or working better with qualified clinicians\n      - outcomes should focus on foundational medical knowledge, vocabulary, body systems, clinical reasoning context, and readiness for supervised study\n      - Should be in US English\n\n      \n  - Must be written in the specified language\n  - Must include exactly these fields: valueProposition, audience, outcomes, opportunities\n  - valueProposition must be one concise sentence\n  - audience must contain 3-5 short, specific learner profiles or fit statements\n  - audience entries may be concise labels such as \"People preparing for medical school\" when they clearly answer who the course is for\n  - outcomes must contain 4-6 concrete abilities learners can build\n  - opportunities must contain 3-5 realistic career, academic, life, or cultural opportunities\n  - Must be specific to the course topic, not generic education copy\n  - valueProposition must sound natural and concrete, not like an abstract definition of the field\n  - For non-English cases, must not mix in English audience or framing words such as \"learners\", \"students\", \"beginners\", or \"professionals\"; translate them naturally\n  - Must not mention course duration, completion time, salaries, certificates, job guarantees, guaranteed fluency, pricing, subscriptions, or free chapters\n  - Must avoid inflated claims such as \"master\", \"become an expert\", and \"unlock your potential\"\n\n    ",
+        "id": "en-medicine-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "Build vocabulary for medical records, body regions, symptoms, pain, temperature, pulse, blood pressure, respiratory rate, oxygen saturation, and clinical measurement.",
+              "title": "Medical terminology and vital signs"
+            },
+            {
+              "description": "Connect cells, tissues, organs, vessels, nerves, and body regions to physical exams, imaging, procedures, and common clinical language.",
+              "title": "Anatomy and histology"
+            },
+            {
+              "description": "Study homeostasis, circulation, ventilation, kidney function, digestion, hormones, and neurologic control as the normal baseline for disease.",
+              "title": "Physiology"
+            },
+            {
+              "description": "Cover DNA, inheritance, mutations, genetic testing, enzymes, metabolism, acid-base balance, and the biochemical basis of disease and medication effects.",
+              "title": "Genetics and medical biochemistry"
+            },
+            {
+              "description": "Learn inflammation, immune responses, infection, microbiology, parasites, vaccines, allergies, autoimmunity, and immune deficiency.",
+              "title": "Immunology and microbiology"
+            },
+            {
+              "description": "Study cell injury, inflammation, thrombosis, necrosis, repair, neoplasia, and the mechanisms that turn normal function into disease.",
+              "title": "Pathology"
+            },
+            {
+              "description": "Connect pharmacokinetics, pharmacodynamics, dosing, adverse effects, interactions, toxicity, and medication safety in supervised care contexts.",
+              "title": "Pharmacology and safe medication use"
+            },
+            {
+              "description": "Use incidence, prevalence, risk, bias, confounding, confidence intervals, diagnostic accuracy, and evidence appraisal in clinical decisions.",
+              "title": "Epidemiology and evidence-based medicine"
+            },
+            {
+              "description": "Practice communication, history taking, review of systems, physical examination, differential diagnosis, and clinical reasoning from symptoms and signs.",
+              "title": "Anamnesis, physical exam, and clinical reasoning"
+            },
+            {
+              "description": "Interpret common labs, pathology reports, radiography, ultrasound, CT, MRI, and bedside imaging with attention to indications and limits.",
+              "title": "Laboratory and diagnostic imaging"
+            },
+            {
+              "description": "Cover infection control, patient identification, medication reconciliation, informed consent, adverse events, documentation, privacy, and care handoffs.",
+              "title": "Patient safety and clinical documentation"
+            },
+            {
+              "description": "Follow a patient encounter from intake through history, exam, differential diagnosis, tests, treatment plan, counseling, documentation, and follow-up.",
+              "title": "End-to-end clinical encounter workflow"
+            },
+            {
+              "description": "Frame medical ethics, licensing rules, professional responsibility, prescribing limits, controlled substances, certificates, death documentation, and reporting duties.",
+              "title": "Medical ethics, regulation, and professional duties"
+            }
+          ],
+          "description": "A beginner-to-advanced foundation in anatomy, physiology, pathology, pharmacology, clinical reasoning, and modern health care systems.",
+          "language": "en",
+          "title": "Medicine"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "The value proposition could be slightly shorter, and the course-specific framing could mention late-1990s cyberpunk or transmedia worldbuilding more explicitly, but the result otherwise fits the expectations very well.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should treat The Matrix as a pop-culture and media-analysis course\n      - opportunities should focus on cultural understanding, storytelling, discussion, or creative analysis instead of careers\n      - Should not force professional outcomes onto a general-interest topic\n      - Should be in US English\n\n      \n  - Must be written in the specified language\n  - Must include exactly these fields: valueProposition, audience, outcomes, opportunities\n  - valueProposition must be one concise sentence\n  - audience must contain 3-5 short, specific learner profiles or fit statements\n  - audience entries may be concise labels such as \"People preparing for medical school\" when they clearly answer who the course is for\n  - outcomes must contain 4-6 concrete abilities learners can build\n  - opportunities must contain 3-5 realistic career, academic, life, or cultural opportunities\n  - Must be specific to the course topic, not generic education copy\n  - valueProposition must sound natural and concrete, not like an abstract definition of the field\n  - For non-English cases, must not mix in English audience or framing words such as \"learners\", \"students\", \"beginners\", or \"professionals\"; translate them naturally\n  - Must not mention course duration, completion time, salaries, certificates, job guarantees, guaranteed fluency, pricing, subscriptions, or free chapters\n  - Must avoid inflated claims such as \"master\", \"become an expert\", and \"unlock your potential\"\n\n    ",
+        "id": "en-the-matrix-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "Place The Matrix in late-1990s cinema, cyberpunk fiction, hacker culture, anime influence, action filmmaking, and the rise of internet culture.",
+              "title": "Cyberpunk and late-1990s cinema"
+            },
+            {
+              "description": "Trace the Wachowskis' development process, casting, production design, training, choreography, visual effects planning, and release context.",
+              "title": "Making The Matrix"
+            },
+            {
+              "description": "Follow Neo, Trinity, Morpheus, Cypher, the Agents, and the film's core conflict from ordinary life to awakening and choice.",
+              "title": "Story, characters, and the hero's path"
+            },
+            {
+              "description": "Analyze simulation, reality, perception, free will, control, skepticism, and the philosophical questions the story makes visible.",
+              "title": "Simulation, reality, and control"
+            },
+            {
+              "description": "Study bullet time, wire work, Hong Kong action influence, martial arts staging, editing rhythms, and how fights communicate character.",
+              "title": "Action language and bullet time"
+            },
+            {
+              "description": "Read costumes, color palettes, phones, code rain, sunglasses, architecture, and interfaces as part of the film's visual system.",
+              "title": "Visual design and symbolism"
+            },
+            {
+              "description": "Compare the sequels' expansion of Zion, machines, prophecy, choice, programs, Smith, and the trilogy's debated ending.",
+              "title": "Reloaded, Revolutions, and trilogy structure"
+            },
+            {
+              "description": "Connect The Animatrix, games, comics, and transmedia storytelling to canon, side stories, and how fans piece the world together.",
+              "title": "Transmedia worldbuilding"
+            },
+            {
+              "description": "Examine The Matrix Resurrections as sequel, critique, love story, reboot commentary, and reflection on franchise memory.",
+              "title": "The Matrix Resurrections"
+            },
+            {
+              "description": "Track influence on visual effects, games, fashion, music videos, internet aesthetics, political language, and later science fiction.",
+              "title": "Cultural impact"
+            },
+            {
+              "description": "Practice a complete media-analysis workflow: scene selection, close viewing, evidence notes, context research, argument drafting, and discussion.",
+              "title": "End-to-end film analysis workflow"
+            }
+          ],
+          "description": "The Matrix reshaped action cinema, cyberpunk aesthetics, and philosophical science fiction.",
+          "language": "en",
+          "title": "The Matrix"
+        }
+      }
+    }
+  ],
+  "taskId": "course-landing-page"
+}

@@ -3,11 +3,11 @@ import { type LessonQuizParams } from "@zoonk/ai/tasks/lessons/core/quiz";
 const SHARED_EXPECTATIONS = `
 EVALUATION CRITERIA:
 
-0. PRODUCTION-SHAPED SOURCE: Test cases provide compact lesson title/description scopes like production quiz generation. The quiz should cover the best learner-sized assessment for that scope, not invent a question for every source lesson.
+0. PRODUCTION-SHAPED SOURCE: Test cases provide one compact lesson title/description scope like production quiz generation. The quiz should cover the best learner-sized assessment for that single lesson.
 
 1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never saw this specific source lesson metadata should be able to answer correctly. Penalize questions that:
    - Use phrases like "according to the text," "as described," or "the lesson said"
-   - Reference specific wording from the source lesson titles or descriptions
+   - Reference specific wording from the source lesson title or description
    - Ask "what is X?" instead of "what would happen if..." or "which scenario shows..."
 
 2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner has not seen. Penalize questions that:
@@ -83,8 +83,8 @@ EVALUATION CRITERIA:
 
    Target ranges:
    - 5-7 questions for a simple lesson scope
-   - 8-12 questions for broader multi-concept scopes
-   - 13-15 questions only for genuinely dense source material
+   - 8-12 questions for a dense lesson scope
+   - 13-15 questions only when the lesson scope is unusually dense
 
    Do NOT penalize for producing more than 5 questions when the extra questions cover real concepts from the source lesson scope and stay within the learner-friendly range.
 
@@ -114,31 +114,14 @@ SPECIFIC EXPECTATION: This scope contains classification and judgment criteria f
     `,
     id: "pt-accounting-recordable-transactions-production-quiz",
     userInput: {
-      chapterTitle: "Transações que precisam ser registradas",
+      chapterTitle: "Transações contábeis e registros",
       courseTitle: "Contabilidade",
       language: "pt",
-      sourceLessons: [
-        {
-          description:
-            "Decida se um acontecimento pertence à empresa ou à vida pessoal de sócios, clientes ou funcionários antes de transformar o fato em registro contábil.",
-          title: "Separar a empresa das pessoas",
-        },
-        {
-          description:
-            "Reconheça quando existe um evento com data, partes envolvidas e evidência suficiente para ser analisado pela contabilidade.",
-          title: "Identificar eventos registráveis",
-        },
-        {
-          description:
-            "Verifique se o acontecimento pode ser medido em dinheiro de forma confiável, sem confundir intenção, promessa vaga ou estimativa sem base com transação contábil.",
-          title: "Medir a transação em dinheiro",
-        },
-        {
-          description:
-            "Classifique o efeito do evento sobre caixa, bens, direitos, dívidas, patrimônio, receitas ou despesas para decidir o registro apropriado.",
-          title: "Encontrar o efeito contábil",
-        },
-      ],
+      lesson: {
+        description:
+          "Classifique o efeito da transação sobre caixa, bens, direitos, dívidas, patrimônio, receitas ou despesas. O aluno usa esse efeito para decidir se e como o registro contábil deve aparecer.",
+        title: "Efeito patrimonial da transação",
+      },
     } satisfies LessonQuizParams,
   },
   {
@@ -149,31 +132,14 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-biology-field-evidence-production-quiz",
     userInput: {
-      chapterTitle: "Observar vida e registrar evidências",
+      chapterTitle: "Observação biológica e evidências de campo",
       courseTitle: "Biologia",
       language: "pt",
-      sourceLessons: [
-        {
-          description:
-            "Pratique descrever o que dá para ver, ouvir ou tocar sem misturar palpite, explicação ou conclusão. Você vai transformar curiosidade em registros claros, separando observação, inferência e pergunta investigável.",
-          title: "Separar observação, inferência e pergunta",
-        },
-        {
-          description:
-            "Monte uma anotação de campo com data, hora, local, ambiente, organismo observado, comportamento e condições do momento. A meta é que outra pessoa consiga entender onde, quando e em que contexto a observação aconteceu.",
-          title: "Fazer anotações de campo úteis",
-        },
-        {
-          description:
-            "Use desenho simples como ferramenta de atenção, não como obra de arte. Você vai representar forma, posição, proporção, partes importantes, rótulos, vista observada e dúvidas que ainda precisam ser confirmadas.",
-          title: "Desenhar organismos para notar estruturas",
-        },
-        {
-          description:
-            "Registre fotos, vídeos ou sons de modo que sirvam como evidência, preservando contexto, horário, local, enquadramento e arquivos originais. Você também vai reconhecer o que uma imagem registra bem e o que uma anotação ou desenho registra melhor.",
-          title: "Usar fotos, vídeos e sons como evidência",
-        },
-      ],
+      lesson: {
+        description:
+          "Use desenho biológico simples para registrar forma, posição, proporção, partes importantes, rótulos, vista observada e dúvidas a confirmar. O aluno trata o desenho como evidência observacional, não como ilustração decorativa.",
+        title: "Desenho biológico de campo",
+      },
     } satisfies LessonQuizParams,
   },
   {
@@ -189,23 +155,11 @@ SPECIFIC EXPECTATION: This scope contains a genuinely fixed sequence. A strong q
       chapterTitle: "Debugging web requests",
       courseTitle: "Web Development",
       language: "en",
-      sourceLessons: [
-        {
-          description:
-            "Trace a browser request from URL entry through DNS lookup, TCP/TLS connection, HTTP request, server response, download, parsing, and rendering.",
-          title: "Follow a request from browser to page",
-        },
-        {
-          description:
-            "Use status codes, headers, network timing, console errors, and server logs to identify which stage of the request lifecycle failed.",
-          title: "Locate where a request failed",
-        },
-        {
-          description:
-            "Debug cache, redirect, CORS, authentication, and timeout failures by checking the evidence in the order the browser and server actually process the request.",
-          title: "Debug request failures in sequence",
-        },
-      ],
+      lesson: {
+        description:
+          "Trace the browser request lifecycle from URL entry through DNS lookup, TCP/TLS connection, HTTP request, server response, download, parsing, and rendering.",
+        title: "Browser request lifecycle",
+      },
     } satisfies LessonQuizParams,
   },
   {
@@ -216,31 +170,14 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-product-analytics-funnels-production-quiz",
     userInput: {
-      chapterTitle: "Product analytics",
+      chapterTitle: "Product analytics and funnel analysis",
       courseTitle: "Product Management",
       language: "en",
-      sourceLessons: [
-        {
-          description:
-            "Choose entry points, real outcomes, event definitions, ordering rules, and time windows that match a product question.",
-          title: "Defining product funnels",
-        },
-        {
-          description:
-            "Interpret conversion, dropoff, segmentation, cohorts, retention, acquisition, leading and lagging indicators without confusing clues for causes.",
-          title: "Reading conversion and dropoff",
-        },
-        {
-          description:
-            "Check instrumentation, properties, traffic mix, eligibility, bots, baselines, seasonality, and dashboard ownership before deciding what changed.",
-          title: "Debugging analytics data",
-        },
-        {
-          description:
-            "Use A/B tests, guardrail metrics, practical significance, and next actions to turn funnel evidence into product decisions.",
-          title: "Experiments and decisions",
-        },
-      ],
+      lesson: {
+        description:
+          "Interpret conversion rate, dropoff, segmentation, cohorts, retention, acquisition, leading indicators, and lagging indicators without confusing clues for causes.",
+        title: "Conversion and dropoff analysis",
+      },
     } satisfies LessonQuizParams,
   },
   {
@@ -251,36 +188,14 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "es-source-analysis-production-quiz",
     userInput: {
-      chapterTitle: "Leer fuentes históricas",
+      chapterTitle: "Análisis de fuentes históricas",
       courseTitle: "Historia",
       language: "es",
-      sourceLessons: [
-        {
-          description:
-            "Distinguir fuentes primarias y secundarias según la investigación, la autoría, la fecha, el lugar, el destinatario y el propósito.",
-          title: "Clasificar fuentes según la pregunta",
-        },
-        {
-          description:
-            "Evaluar cómo contexto, punto de vista, propósito, silencios y poder del archivo afectan lo que una fuente puede revelar.",
-          title: "Perspectiva, sesgo y confiabilidad",
-        },
-        {
-          description:
-            "Comparar fuentes independientes, contradicciones, escalas y ausencias para construir afirmaciones históricas proporcionales.",
-          title: "Corroborar fuentes imperfectas",
-        },
-        {
-          description:
-            "Analizar imágenes, mapas, objetos, datos cuantitativos y testimonios orales como evidencias construidas y parciales.",
-          title: "Usar evidencias no textuales",
-        },
-        {
-          description:
-            "Usar citas, contexto, paráfrasis y lenguaje de certeza para sostener conclusiones sin exagerar la evidencia.",
-          title: "Citar y parafrasear con cuidado",
-        },
-      ],
+      lesson: {
+        description:
+          "Compara fuentes independientes, contradicciones, escalas y ausencias para construir afirmaciones históricas proporcionales.",
+        title: "Corroboración de fuentes",
+      },
     } satisfies LessonQuizParams,
   },
 ];

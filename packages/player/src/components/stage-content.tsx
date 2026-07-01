@@ -48,21 +48,10 @@ function hasDesktopInlineAction(screen: PlayerRuntimeContextValue["screen"]) {
 /**
  * Some visual steps own their CTA placement inside the content itself.
  *
- * Image-led choice steps keep the action inside the right-hand column, while
- * full-screen hero steps keep their action inside the bottom card. The global
- * desktop action slot still serves every other primary-action screen.
+ * Image-led choice steps keep the action inside the right-hand column. The
+ * global desktop action slot still serves every other primary-action screen.
  */
-function hasEmbeddedDesktopAction({
-  screen,
-  step,
-}: {
-  screen: PlayerRuntimeContextValue["screen"];
-  step?: SerializedStep;
-}) {
-  if (screen.stageIsFullBleed) {
-    return true;
-  }
-
+function hasEmbeddedDesktopAction({ step }: { step?: SerializedStep }) {
   const descriptor = describePlayerStep(step);
 
   if (descriptor?.kind === "multipleChoice") {
@@ -129,7 +118,7 @@ export function StageContent() {
 
   if (screen.kind === "step" && currentStep) {
     const showInlineAction =
-      hasDesktopInlineAction(screen) && !hasEmbeddedDesktopAction({ screen, step: currentStep });
+      hasDesktopInlineAction(screen) && !hasEmbeddedDesktopAction({ step: currentStep });
 
     const stepContent = (
       <StepRenderer

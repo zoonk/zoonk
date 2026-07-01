@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - Should treat law as a regulated profession and avoid implying the course qualifies someone to practice law\n      - Must not say learners can become lawyers, represent clients, provide legal advice, or practice law because of this course\n      - Should frame opportunities around law school preparation, legal vocabulary, civic understanding, compliance, policy, or working better with legal professionals\n      - outcomes should focus on reading cases, understanding institutions/procedure, and preparing for deeper supervised or academic legal study\n      - Should be in US English\n\n      \n  - Must be written in the specified language\n  - Must include exactly these fields: valueProposition, audience, outcomes, opportunities\n  - valueProposition must be one concise sentence\n  - audience must contain 3-5 short, specific learner profiles or fit statements\n  - audience entries may be concise labels such as \"People preparing for medical school\" when they clearly answer who the course is for\n  - outcomes must contain 4-6 concrete abilities learners can build\n  - opportunities must contain 3-5 realistic career, academic, life, or cultural opportunities\n  - Must be specific to the course topic, not generic education copy\n  - valueProposition must sound natural and concrete, not like an abstract definition of the field\n  - For non-English cases, must not mix in English audience or framing words such as \"learners\", \"students\", \"beginners\", or \"professionals\"; translate them naturally\n  - Must not mention course duration, completion time, salaries, certificates, job guarantees, guaranteed fluency, pricing, subscriptions, or free chapters\n  - Must avoid inflated claims such as \"master\", \"become an expert\", and \"unlock your potential\"\n\n    ",
+  "judgedAt": "2026-07-01T01:04:36.206Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Excellent adherence to expectations—explicitly notes 'appropriate professional boundaries,' 'supervision,' and 'limits on legal advice.' All fields present with correct counts, specific to the course, and frames opportunities around preparation, compliance, and civic understanding.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Strong output with clear framing around supervision, preparation, and civic/policy work. Audience and opportunities are specific and appropriately hedged; outcomes map well to chapters. Minor: only 4 audience entries but within range.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Concrete, well-written entries specific to the course. Opportunities appropriately frame law school prep and working with lawyers. Slight risk in 'without relying entirely on a lawyer' phrasing but doesn't cross into practicing law.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Well-structured and specific with good framing around collaborating with counsel and academic prep. All counts met and outcomes align to chapters. Solid but slightly less explicit about supervision boundaries than top entries.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Clean, specific, and appropriately frames opportunities around law school prep and collaboration with attorneys. Outcomes include ethics boundaries. Meets all counts and constraints well.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Good specificity and appropriate framing (supporting lawyers, understanding issues 'before seeking advice'). All counts met and outcomes tied to chapters. Solid overall.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Specific and appropriately framed with references to qualified attorneys and knowing when to seek help. Value proposition is a bit long but concrete. Meets counts and constraints.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Only 4 audience entries (acceptable) but only 5 outcomes and slightly generic value proposition that reads more like an abstract definition. Content is safe and appropriate but less concrete and specific than others.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Flawlessly aligns with task expectations, particularly the strict safety rules regarding the regulated nature of law. The outcomes and opportunities accurately emphasize \"supervised legal support\" and \"appropriate professional boundaries\" while remaining highly specific to the course chapters.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Excellent adherence to the course content and task rules. It safely frames the legal applications by explicitly mentioning working \"under proper supervision\" and learning to \"explain uncertainty honestly,\" preventing any inflated claims about the learner's capabilities.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Perfectly captures the required tone by framing career opportunities around \"collaboration with qualified attorneys\" and academic preparation. The outcomes strongly reflect the syllabus while strictly honoring the ethical boundaries of a regulated profession.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "A very strong entry that seamlessly integrates the source material into natural, concrete language. It successfully avoids unauthorized practice implications by emphasizing \"knowing when to seek professional help\" and working effectively with attorneys.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Meets expectations with solid, compliant language and explicitly mentions the boundary between general information and professional legal advice. However, the value proposition reads as slightly abstract and lacks the concrete spark found in the top outputs.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "A strong, safe output that accurately maps to the course chapters without violating legal boundaries. It misses a top score only due to minor redundancy in the audience profiles, listing both pre-law students and students preparing for further legal study.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Generally well-written and covers the syllabus accurately. However, claiming a founder can handle legal obligations \"without relying entirely on a lawyer\" skirts the negative constraint, as it potentially implies pro se representation or unauthorized legal practice.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Captures much of the course accurately but includes a significant expectation violation. By stating learners can navigate legal issues in \"advisory roles,\" it directly violates the strict negative constraint against implying learners can provide legal advice.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Best aligns with the regulated-profession constraints by explicitly mentioning supervised work and limits on legal advice. It is specific to the course chapters, with concrete outcomes around vocabulary, sources of law, case reading, argumentation, and ethics.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Very strong and well scoped, especially the opportunity to support legal/compliance work under proper supervision. Outcomes are concrete and course-specific, though “client-facing summaries” is slightly sensitive without repeating supervision in that outcome.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Strong fit with clear academic preparation, work alongside legal professionals, and an explicit outcome on ethical boundaries and limits of legal advice. Minor weakness: “law school admissions” and “contract negotiation” are a bit broader/riskier than the safest framing.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Course-specific and realistic, with good emphasis on reading, research, writing, and supporting lawyers rather than practicing law. It avoids major regulated-profession violations, though some opportunities around personal legal issues could be more clearly framed as understanding before seeking professional help.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Strong, concrete, and well aligned with law school preparation, civic understanding, case reading, and working with attorneys. Slight concerns are “before signing or responding” and writing “client letters,” which could use clearer boundaries around not providing legal advice.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Well written and specific, with strong outcomes for cases, statutes, research, writing, and institutions. The phrase “supervised or advisory roles” is somewhat ambiguous for a regulated profession, and it could more clearly avoid any implication of legal advising authority.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Mostly specific and useful, with strong outcomes tied to legal vocabulary, sources, case reading, and procedure. However, phrases like “on your own” and “without relying entirely on a lawyer” risk nudging learners toward independent legal judgment rather than bounded legal literacy.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Safe and compliant, with appropriate framing around compliance, policy, civic debate, and boundaries between information and legal advice. It is less concrete and less tailored to the full course scope than the stronger outputs, especially around institutions, procedure, and case-reading detail.",
+          "score": 7
+        }
+      ]
+    }
+  ],
+  "taskId": "course-landing-page",
+  "testCaseId": "en-law-1"
+}

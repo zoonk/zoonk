@@ -7,8 +7,8 @@ import { savePracticeLessonContent } from "./_utils/save-core-lesson-content";
 import { type LessonContext } from "./get-lesson-step";
 
 /**
- * Replaces any partial practice steps with the generated scenario, questions,
- * and images so retries do not leave mixed content.
+ * Replaces any partial practice questions with the generated situations and
+ * images so retries do not leave mixed content.
  */
 export async function savePracticeLessonStep({
   content,

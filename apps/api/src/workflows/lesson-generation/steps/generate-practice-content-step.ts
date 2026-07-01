@@ -13,19 +13,19 @@ import {
 import { type LessonContext } from "./get-lesson-step";
 
 /**
- * The generation task uses story language (`scenes.dialogue`) because that
- * produces better structured output. The player stores multiple-choice content
- * as `steps.context`, so the workflow translates the model-facing shape at the
- * boundary before image generation and persistence.
+ * The generation task uses conversational situation copy (`dialogue`) because
+ * it gives the learner useful context. The player stores multiple-choice
+ * content as `steps.context`, so the workflow translates the model-facing shape
+ * at the boundary before image generation and persistence.
  */
 function buildPracticeLessonStep(
-  scene: LessonPracticeSchema["scenes"][number],
+  situation: LessonPracticeSchema["situations"][number],
 ): PracticeLessonStep {
   return {
-    context: scene.dialogue,
-    imagePrompt: scene.imagePrompt,
-    options: scene.options,
-    question: scene.question,
+    context: situation.dialogue,
+    imagePrompt: situation.imagePrompt,
+    options: situation.options,
+    question: situation.question,
   };
 }
 
@@ -57,9 +57,5 @@ export async function generatePracticeContentStep(
 
   await stream.status({ status: "completed", step: "generatePracticeContent" });
 
-  return {
-    kind: "practice",
-    scenario: result.data.scenario,
-    steps: result.data.scenes.map(buildPracticeLessonStep),
-  };
+  return { kind: "practice", steps: result.data.situations.map(buildPracticeLessonStep) };
 }

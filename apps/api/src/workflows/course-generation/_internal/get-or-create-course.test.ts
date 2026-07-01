@@ -38,6 +38,7 @@ describe(getOrCreateCourse, () => {
       hasCategories: false,
       hasChapters: false,
       imageUrl: null,
+      landingPage: null,
     });
 
     const createdCourse = await prisma.course.findUniqueOrThrow({
@@ -109,6 +110,7 @@ describe(getOrCreateCourse, () => {
       hasCategories: true,
       hasChapters: true,
       imageUrl: "https://example.com/img.webp",
+      landingPage: null,
     });
 
     const [updatedCourse, updatedRequest] = await Promise.all([

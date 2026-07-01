@@ -284,40 +284,4 @@ describe("step content contracts", () => {
       parseStepContent("static", { text: "Hello", title: "World", variant: "unknown" }),
     ).toThrow();
   });
-
-  describe("static intro", () => {
-    it("parses generic intro", () => {
-      const content = parseStepContent("static", {
-        text: "You arrive in the middle of the problem.",
-        title: "Opening",
-        variant: "intro",
-      });
-
-      expect(content).toStrictEqual({
-        text: "You arrive in the middle of the problem.",
-        title: "Opening",
-        variant: "intro",
-      });
-    });
-
-    it("rejects intro without title", () => {
-      expect(() =>
-        parseStepContent("static", {
-          text: "You arrive in the middle of the problem.",
-          variant: "intro",
-        }),
-      ).toThrow();
-    });
-
-    it("rejects intro with unsupported metrics", () => {
-      expect(() =>
-        parseStepContent("static", {
-          metrics: [{ label: "Production" }, { label: "Morale" }],
-          text: "You are a factory manager.",
-          title: "Factory crisis",
-          variant: "intro",
-        }),
-      ).toThrow();
-    });
-  });
 });

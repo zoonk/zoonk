@@ -17,17 +17,14 @@ const practiceOptionSchema = z.object({
   text: z.string(),
 });
 
-const practiceSceneSchema = z.object({
+const practiceSituationSchema = z.object({
   dialogue: z.string(),
   imagePrompt: z.string(),
   options: z.array(practiceOptionSchema).min(1),
   question: z.string(),
 });
 
-const schema = z.object({
-  scenario: z.object({ imagePrompt: z.string(), text: z.string(), title: z.string() }),
-  scenes: z.array(practiceSceneSchema).min(1),
-});
+const schema = z.object({ situations: z.array(practiceSituationSchema).min(1) });
 
 export type LessonPracticeSchema = z.infer<typeof schema>;
 

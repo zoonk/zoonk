@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { courseFixture, courseUserFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
@@ -18,7 +18,7 @@ let chapterDescriptions: { first: string; second: string; third: string };
 let ptChapterNames: { first: string; second: string };
 let unpublishedChapterName: string;
 
-test.beforeAll(async () => {
+test.beforeAll(async ({ withProgressUser }) => {
   const org = await getAiOrganization();
   const uniqueId = randomUUID();
 
@@ -116,6 +116,8 @@ test.beforeAll(async () => {
   };
 
   await Promise.all([
+    courseUserFixture({ courseId: enCourse.id, userId: withProgressUser.id }),
+    courseUserFixture({ courseId: ptCourse.id, userId: withProgressUser.id }),
     chapterFixture({
       courseId: ptCourse.id,
       isPublished: true,
@@ -142,7 +144,9 @@ test.beforeAll(async () => {
 });
 
 test.describe("Course Chapters List", () => {
-  test("displays chapter rows", async ({ page }) => {
+  test("displays chapter rows", async ({ authenticatedPage }) => {
+    const page = authenticatedPage;
+
     await page.goto(courseUrl);
 
     await expect(
@@ -158,7 +162,9 @@ test.describe("Course Chapters List", () => {
     ).toBeVisible();
   });
 
-  test("chapter link navigates to chapter page", async ({ page }) => {
+  test("chapter link navigates to chapter page", async ({ authenticatedPage }) => {
+    const page = authenticatedPage;
+
     await page.goto(courseUrl);
 
     const chapterLink = page.getByRole("link", { name: new RegExp(chapterNames.first, "u") });
@@ -171,7 +177,9 @@ test.describe("Course Chapters List", () => {
     await expect(page.getByRole("heading", { level: 1, name: chapterNames.first })).toBeVisible();
   });
 
-  test("excludes unpublished chapters from the list", async ({ page }) => {
+  test("excludes unpublished chapters from the list", async ({ authenticatedPage }) => {
+    const page = authenticatedPage;
+
     await page.goto(courseUrl);
 
     await expect(
@@ -185,7 +193,9 @@ test.describe("Course Chapters List", () => {
 });
 
 test.describe("Course Chapters - Locale", () => {
-  test("shows chapters in Portuguese for Portuguese locale", async ({ page }) => {
+  test("shows chapters in Portuguese for Portuguese locale", async ({ authenticatedPage }) => {
+    const page = authenticatedPage;
+
     await setLocale(page, "pt");
     await page.goto(ptCourseUrl);
 
@@ -200,7 +210,9 @@ test.describe("Course Chapters - Locale", () => {
 });
 
 test.describe("Course Chapter Search", () => {
-  test("filters chapters by title", async ({ page }) => {
+  test("filters chapters by title", async ({ authenticatedPage }) => {
+    const page = authenticatedPage;
+
     await page.goto(courseUrl);
 
     await page.getByLabel(/search chapters/iu).fill("Gamma");
@@ -214,7 +226,9 @@ test.describe("Course Chapter Search", () => {
     await expect(secondChapter).not.toBeVisible();
   });
 
-  test("filters chapters by description", async ({ page }) => {
+  test("filters chapters by description", async ({ authenticatedPage }) => {
+    const page = authenticatedPage;
+
     await page.goto(courseUrl);
 
     await page.getByLabel(/search chapters/iu).fill("orbital keyword");
@@ -228,7 +242,9 @@ test.describe("Course Chapter Search", () => {
     await expect(secondChapter).not.toBeVisible();
   });
 
-  test("persists search in URL and survives page reload", async ({ page }) => {
+  test("persists search in URL and survives page reload", async ({ authenticatedPage }) => {
+    const page = authenticatedPage;
+
     await page.goto(courseUrl);
 
     await page.getByLabel(/search chapters/iu).fill("Gamma");
@@ -243,14 +259,18 @@ test.describe("Course Chapter Search", () => {
     ).toBeVisible();
   });
 
-  test("shows empty state when no matches found", async ({ page }) => {
+  test("shows empty state when no matches found", async ({ authenticatedPage }) => {
+    const page = authenticatedPage;
+
     await page.goto(courseUrl);
 
     await page.getByLabel(/search chapters/iu).fill("nonexistent xyz");
     await expect(page.getByText(/no chapters found/iu)).toBeVisible();
   });
 
-  test("clears search and shows all chapters again", async ({ page }) => {
+  test("clears search and shows all chapters again", async ({ authenticatedPage }) => {
+    const page = authenticatedPage;
+
     await page.goto(courseUrl);
 
     const searchInput = page.getByLabel(/search chapters/iu);
@@ -269,8 +289,10 @@ test.describe("Course Chapter Search", () => {
   });
 
   test("matches Portuguese chapters without accents (accent-insensitive search)", async ({
-    page,
+    authenticatedPage,
   }) => {
+    const page = authenticatedPage;
+
     await setLocale(page, "pt");
     await page.goto(ptCourseUrl);
 
@@ -287,7 +309,9 @@ test.describe("Course Chapter Search", () => {
 test.describe("Course Chapter Search - Mobile", () => {
   test.use({ viewport: { height: 667, width: 375 } });
 
-  test("keeps the search field anchored when no chapters match", async ({ page }) => {
+  test("keeps the search field anchored when no chapters match", async ({ authenticatedPage }) => {
+    const page = authenticatedPage;
+
     await page.goto(courseUrl);
     await scrollSearchInputToTop({ label: SEARCH_CHAPTERS_LABEL, page });
 

@@ -104,6 +104,7 @@ const COURSE_STEPS = [
   "setCourseAsRunning",
   "getExistingChapters",
   "generateDescription",
+  "generateLandingPage",
   "generateImage",
   "generateCategories",
   "generateChapters",

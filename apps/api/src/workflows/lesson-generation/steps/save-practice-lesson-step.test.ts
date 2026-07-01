@@ -12,14 +12,10 @@ describe(savePracticeLessonStep, () => {
     organizationId = organization.id;
   });
 
-  it("saves practice scenario and question steps with option ids", async () => {
+  it("saves practice question steps with option ids", async () => {
     const context = await createLessonContext({ kind: "practice", organizationId });
 
     const images = [
-      {
-        prompt: "Support desk with refund dashboard.",
-        url: "https://example.com/practice-scenario.webp",
-      },
       {
         prompt: "Refund dashboard with a highlighted row.",
         url: "https://example.com/practice-question.webp",
@@ -29,15 +25,10 @@ describe(savePracticeLessonStep, () => {
     await savePracticeLessonStep({
       content: {
         kind: "practice",
-        scenario: {
-          imagePrompt: images[0]!.prompt,
-          text: "A support report does not line up with the refund totals.",
-          title: "Night shift",
-        },
         steps: [
           {
             context: "The discounted orders are the only ones acting weird.",
-            imagePrompt: images[1]!.prompt,
+            imagePrompt: images[0]!.prompt,
             options: [
               { feedback: "Correct!", isCorrect: true, text: "Check discounts" },
               { feedback: "Not yet.", isCorrect: false, text: "Ignore it" },
@@ -55,21 +46,11 @@ describe(savePracticeLessonStep, () => {
       where: { lessonId: context.id },
     });
 
-    expect(steps.map((step) => [step.position, step.kind])).toStrictEqual([
-      [0, "static"],
-      [1, "multipleChoice"],
-    ]);
+    expect(steps.map((step) => [step.position, step.kind])).toStrictEqual([[0, "multipleChoice"]]);
 
     expect(steps[0]?.content).toStrictEqual({
-      image: images[0],
-      text: "A support report does not line up with the refund totals.",
-      title: "Night shift",
-      variant: "intro",
-    });
-
-    expect(steps[1]?.content).toStrictEqual({
       context: "The discounted orders are the only ones acting weird.",
-      image: images[1],
+      image: images[0],
       options: [
         { feedback: "Correct!", id: "option-1", isCorrect: true, text: "Check discounts" },
         { feedback: "Not yet.", id: "option-2", isCorrect: false, text: "Ignore it" },

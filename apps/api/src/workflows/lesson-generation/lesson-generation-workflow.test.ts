@@ -80,14 +80,9 @@ vi.mock("@zoonk/ai/tasks/lessons/core/explanation", () => ({
 vi.mock("@zoonk/ai/tasks/lessons/core/practice", () => ({
   generateLessonPractice: vi.fn().mockResolvedValue({
     data: {
-      scenario: {
-        imagePrompt: "practice scenario image",
-        text: "A concrete situation for applying the explanations.",
-        title: "Scenario",
-      },
-      scenes: [
+      situations: [
         {
-          dialogue: "Use the scenario details.",
+          dialogue: "Use the situation details.",
           imagePrompt: "practice question image",
           options: [
             { feedback: "Correct.", isCorrect: true, text: "Use the rule." },
@@ -565,7 +560,7 @@ describe(lessonGenerationWorkflow, () => {
     );
 
     expect(generateContentStepImage).toHaveBeenCalledWith(
-      expect.objectContaining({ preset: "practice", prompt: "practice scenario image" }),
+      expect.objectContaining({ preset: "practice", prompt: "practice question image" }),
     );
 
     expect(completedStreamedSteps()).toStrictEqual(
@@ -582,11 +577,9 @@ describe(lessonGenerationWorkflow, () => {
       where: { lessonId: practice.id },
     });
 
-    const intro = parseStepContent("static", steps[0]?.content);
-    const question = parseStepContent("multipleChoice", steps[1]?.content);
+    const question = parseStepContent("multipleChoice", steps[0]?.content);
 
-    expect(intro.variant).toBe("intro");
-    expect(intro.image?.url).toBe("https://example.com/content/practice%20scenario%20image.webp");
+    expect(steps.map((step) => [step.position, step.kind])).toStrictEqual([[0, "multipleChoice"]]);
 
     expect(question.image?.url).toBe(
       "https://example.com/content/practice%20question%20image.webp",
@@ -595,8 +588,8 @@ describe(lessonGenerationWorkflow, () => {
     const dbLesson = await prisma.lesson.findUniqueOrThrow({ where: { id: practice.id } });
 
     expect(dbLesson.imageUrl).toBeNull();
-    expect(dbLesson.description).toBe("A concrete situation for applying the explanations.");
-    expect(dbLesson.title).toBe("Scenario");
+    expect(dbLesson.description).toBe(practice.description);
+    expect(dbLesson.title).toBe(practice.title);
     expect(generateContentThumbnailImage).not.toHaveBeenCalled();
   });
 
@@ -647,12 +640,12 @@ describe(lessonGenerationWorkflow, () => {
 
     expect(dbLesson.generationStatus).toBe("completed");
     expect(dbLesson.generationRunId).toBe("test-run-id");
-    expect(dbLesson.description).toBe("A concrete situation for applying the explanations.");
-    expect(dbLesson.title).toBe("Scenario");
+    expect(dbLesson.description).toBe(practice.description);
+    expect(dbLesson.title).toBe(practice.title);
     expect(steps.length).toBeGreaterThan(0);
   });
 
-  it("quiz generation uses source lessons since the previous quiz and saves select-image URLs", async () => {
+  it("quiz generation uses the nearest previous explanation and saves select-image URLs", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
 
     const [quiz] = await Promise.all([
@@ -694,7 +687,7 @@ describe(lessonGenerationWorkflow, () => {
 
     expect(generateLessonQuiz).toHaveBeenCalledWith(
       expect.objectContaining({
-        sourceLessons: [{ description: "Unquizzed explanation", title: "New Quiz Scope" }],
+        lesson: { description: "Unquizzed explanation", title: "New Quiz Scope" },
       }),
     );
 

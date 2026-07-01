@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - Should treat The Matrix as a pop-culture and media-analysis course\n      - opportunities should focus on cultural understanding, storytelling, discussion, or creative analysis instead of careers\n      - Should not force professional outcomes onto a general-interest topic\n      - Should be in US English\n\n      \n  - Must be written in the specified language\n  - Must include exactly these fields: valueProposition, audience, outcomes, opportunities\n  - valueProposition must be one concise sentence\n  - audience must contain 3-5 short, specific learner profiles or fit statements\n  - audience entries may be concise labels such as \"People preparing for medical school\" when they clearly answer who the course is for\n  - outcomes must contain 4-6 concrete abilities learners can build\n  - opportunities must contain 3-5 realistic career, academic, life, or cultural opportunities\n  - Must be specific to the course topic, not generic education copy\n  - valueProposition must sound natural and concrete, not like an abstract definition of the field\n  - For non-English cases, must not mix in English audience or framing words such as \"learners\", \"students\", \"beginners\", or \"professionals\"; translate them naturally\n  - Must not mention course duration, completion time, salaries, certificates, job guarantees, guaranteed fluency, pricing, subscriptions, or free chapters\n  - Must avoid inflated claims such as \"master\", \"become an expert\", and \"unlock your potential\"\n\n    ",
+  "judgedAt": "2026-07-01T01:04:22.670Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Strong cultural/analysis focus with specific, concrete outcomes tied to chapters (bullet time, code rain, Resurrections). Audience profiles are specific and natural, opportunities are discussion/creative rather than career-forced. Value proposition is concrete and grounded.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Well-scoped to media analysis with specific, chapter-aligned outcomes and natural audience profiles. Opportunities emphasize discussion, writing, and fan communities without career inflation. Value proposition is clear and concrete.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Clean, specific outputs oriented toward cultural understanding and analysis. Opportunities avoid career framing and audience entries are concrete. Slightly more generic than the top entries but solidly meets expectations.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Solid audience and outcomes tied to the course, with opportunities focused on discussion and criticism. Slightly more generic phrasing in opportunities but stays within scope and avoids inflated claims.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Comprehensive and specific outcomes drawing from multiple chapters; audience and opportunities appropriately cultural. Value proposition is a bit long/list-like but natural and concrete.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Rich, specific content well-aligned with cultural analysis focus. However, audience entries lean long and descriptive rather than concise profiles, and some outcomes are wordy. Still avoids career inflation and inflated claims.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Leans somewhat toward professional/career framing (\"aspiring film critics,\" \"online publications,\" \"screenwriting, narrative design\"), pushing slightly against the pop-culture focus. Content is specific but tilts more career-oriented than expected.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Generic phrasing (\"Students of film production,\" \"90s science fiction\") and less specific to The Matrix itself in several entries. Audience and opportunities feel more abstract, and outcomes are less tied to concrete chapter content.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "This model provides an exceptional output that perfectly synthesizes the syllabus into highly concrete, natural-sounding outcomes. The audience profiles are short and specific, and the opportunities correctly focus on cultural and creative analysis without forcing career outcomes. The value proposition is engaging and clearly addresses the analytical nature of the course.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "This output is nearly flawless, tightly aligning with the course's focus on media analysis, philosophy, and pop-culture influence. It follows all formatting constraints, provides excellent non-professional opportunities, and includes a highly effective, one-sentence value proposition.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Model C delivers highly specific and accurate outcomes based directly on the chapter inputs. The audience definitions are suitably concise, and the opportunities reflect the requested focus on discussion and writing rather than career advancement.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "A highly effective output that follows all constraints and correctly interprets the course as a cultural analysis exercise. The entries are perfectly sized, avoid inflated claims, and align well with the provided chapters.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "This is a strong output that captures the essence of the course well. The phrasing is slightly more standard and less uniquely engaging than the top models, but it strictly adheres to all negative constraints and tone guidelines.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "This model provides a well-structured response but violates the explicit instruction to avoid forcing professional outcomes onto a general-interest topic. Opportunities like 'Screenwriting, narrative design, and worldbuilding for speculative fiction projects' treat the film analysis class as a career-prep course for filmmakers.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "While technically accurate to the topic, this model completely ignores the instruction to provide 'short, specific learner profiles'. The audience and opportunity fields are heavily bloated, reading more like paragraphs than concise entries.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "This output falls into writing generic education copy, violating the prompt's instruction to be specific to the topic. The value proposition fails to even name the movie, instead using a placeholder description ('one of cinema's most significant science fiction trilogies'), making it largely unusable as marketing copy.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Best overall fit: it treats The Matrix as media analysis and pop culture, with concrete outcomes tied to action language, philosophy, visual design, franchise structure, transmedia, and evidence-based scene analysis. Opportunities stay focused on discussion, writing, classroom use, fandom, and cultural literacy rather than careers.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Very strong and highly specific to the course, with good coverage of cyberpunk roots, production, character arcs, philosophy, visual symbolism, and analysis workflow. Opportunities are realistic cultural and discussion-based uses, though transmedia and Resurrections are less developed in the outcomes.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Strong topic fit with concrete outcomes covering characters, philosophy, action design, visual symbolism, and scene-based analysis. Opportunities are mostly appropriate, though the references to creators and screenwriting/worldbuilding lean slightly more professional than ideal for a general-interest course.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Meets the structural requirements and frames the course well as film, philosophy, and cultural analysis. It is specific and useful, but slightly less complete on story/character and production context than the top entries.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Clear, concise, and well aligned with the course as pop-culture and media analysis. It covers the major themes and skills, but with less specificity around production, transmedia, Resurrections, and the broader franchise than stronger outputs.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Strong outcomes and good specificity around influence, aesthetics, philosophy, sequels, and close viewing. However, the audience and opportunities lean more toward critics, creators, and professional-style applications than the expectations prefer for a general-interest topic.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Well structured and mostly relevant, with useful outcomes around scene analysis, philosophy, visual systems, and transmedia. It overemphasizes aspiring critics, publications, screenwriting, narrative design, and academic preparation, which pushes the course toward professional outcomes more than desired.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Acceptable structure and generally relevant content, but it is more generic and less clearly anchored in The Matrix’s specific chapters and franchise scope. The value proposition’s focus on a “science fiction trilogy” is imprecise for a course that includes the original film, sequels, Resurrections, and transmedia, and some outcomes are broad rather than concrete to the course.",
+          "score": 6.5
+        }
+      ]
+    }
+  ],
+  "taskId": "course-landing-page",
+  "testCaseId": "en-the-matrix-1"
+}

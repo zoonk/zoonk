@@ -13,8 +13,7 @@ vi.mock("@zoonk/ai/tasks/lessons/core/practice", () => ({
     .fn()
     .mockResolvedValue({
       data: {
-        scenario: { imagePrompt: "scenario prompt", text: "Scenario", title: "Scenario" },
-        scenes: [
+        situations: [
           {
             dialogue: "Use the explanation.",
             imagePrompt: "question prompt",
@@ -69,7 +68,6 @@ describe(generatePracticeContentStep, () => {
     const result = await generatePracticeContentStep(context);
 
     expect(result.kind).toBe("practice");
-    expect(result.scenario.title).toBe("Scenario");
 
     expect(result.steps).toStrictEqual([
       {

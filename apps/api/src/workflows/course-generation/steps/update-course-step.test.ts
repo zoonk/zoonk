@@ -30,7 +30,17 @@ describe(updateCourseStep, () => {
     };
 
     await expect(
-      updateCourseStep({ course: brokenContext, description: "desc", imageUrl: null }),
+      updateCourseStep({
+        course: brokenContext,
+        description: "desc",
+        imageUrl: null,
+        landingPage: {
+          audience: ["Audience"],
+          opportunities: ["Opportunity"],
+          outcomes: ["Outcome"],
+          valueProposition: "Value.",
+        },
+      }),
     ).rejects.toThrow();
 
     const events = getStreamedEvents();
@@ -60,12 +70,26 @@ describe(updateCourseStep, () => {
       course: courseContext,
       description: "Updated description",
       imageUrl: "https://example.com/image.webp",
+      landingPage: {
+        audience: ["New learners"],
+        opportunities: ["Use this in real projects"],
+        outcomes: ["Build practical skill"],
+        valueProposition: "A clear path into the subject.",
+      },
     });
 
     const updated = await prisma.course.findUniqueOrThrow({ where: { id: course.id } });
 
     expect(updated.description).toBe("Updated description");
     expect(updated.imageUrl).toBe("https://example.com/image.webp");
+
+    expect(updated.landingPage).toStrictEqual({
+      audience: ["New learners"],
+      opportunities: ["Use this in real projects"],
+      outcomes: ["Build practical skill"],
+      valueProposition: "A clear path into the subject.",
+    });
+
     expect(updated.generationStatus).toBe("running");
 
     const events = getStreamedEvents();
@@ -99,6 +123,12 @@ describe(updateCourseStep, () => {
       course: courseContext,
       description: "Updated description",
       imageUrl: null,
+      landingPage: {
+        audience: ["New learners"],
+        opportunities: ["Use this in real projects"],
+        outcomes: ["Build practical skill"],
+        valueProposition: "A clear path into the subject.",
+      },
     });
 
     const updated = await prisma.course.findUniqueOrThrow({ where: { id: course.id } });

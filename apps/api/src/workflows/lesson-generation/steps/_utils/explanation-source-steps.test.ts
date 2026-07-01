@@ -9,7 +9,6 @@ import { type LessonContext } from "../get-lesson-step";
 import {
   getOtherExplanationLessonTitles,
   getPreviousExplanationSourceLesson,
-  getSourceLessonsSinceLastLessonKind,
 } from "./explanation-source-steps";
 
 /**
@@ -173,7 +172,7 @@ describe("explanation source lesson helpers", () => {
     });
   });
 
-  it("returns source lesson metadata since the previous quiz", async () => {
+  it("returns the nearest previous explanation metadata for quiz", async () => {
     const context = await createContext({ kind: "quiz", organizationId, position: 5 });
 
     await Promise.all([
@@ -188,9 +187,9 @@ describe("explanation source lesson helpers", () => {
         chapterId: context.chapterId,
         generationStatus: "completed",
         isPublished: true,
-        kind: "quiz",
+        kind: "practice",
         organizationId,
-        position: 1,
+        position: 3,
       }),
       createSourceExplanation({
         chapterId: context.chapterId,
@@ -202,8 +201,8 @@ describe("explanation source lesson helpers", () => {
       }),
     ]);
 
-    const sourceLessons = await getSourceLessonsSinceLastLessonKind({ context, kind: "quiz" });
+    const sourceLesson = await getPreviousExplanationSourceLesson(context);
 
-    expect(sourceLessons).toStrictEqual([{ description: "New quiz source", title: "New" }]);
+    expect(sourceLesson).toStrictEqual({ description: "New quiz source", title: "New" });
   });
 });

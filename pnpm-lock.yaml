@@ -16,8 +16,8 @@ catalogs:
       specifier: 3.2.2
       version: 3.2.2
     '@eloqnt/cli':
-      specifier: 0.0.4
-      version: 0.0.4
+      specifier: 0.2.0
+      version: 0.2.0
     '@mdx-js/loader':
       specifier: 3.1.1
       version: 3.1.1
@@ -128,7 +128,7 @@ importers:
     devDependencies:
       '@eloqnt/cli':
         specifier: 'catalog:'
-        version: 0.0.4
+        version: 0.2.0
       '@playwright/test':
         specifier: 1.60.0
         version: 1.60.0
@@ -759,7 +759,7 @@ importers:
     dependencies:
       '@eloqnt/cli':
         specifier: 'catalog:'
-        version: 0.0.4
+        version: 0.2.0
     devDependencies:
       '@typescript/native-preview':
         specifier: 'catalog:'
@@ -1042,6 +1042,12 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
+  '@ai-sdk/gateway@4.0.6':
+    resolution: {integrity: sha512-8GjssUxXeTd8tst2fYXNOFbtNNZFv3sG7aq7wKnQYrU2eB3JFR7np6o4F3Snp/fy/rJZSeH28LvjSWq5wkdL8Q==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
   '@ai-sdk/openai@3.0.71':
     resolution: {integrity: sha512-j6eBAa5oHFZ4U5CxpIV3T4zXNM/BviodNCZCL1qHkA4aqkwK9iQ18TWYz2DZcXpw4BO5pikKzqpXORxb1EnZGA==}
     engines: {node: '>=18'}
@@ -1054,9 +1060,19 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
+  '@ai-sdk/provider-utils@5.0.2':
+    resolution: {integrity: sha512-EcmdjJb7yggsZPCbS3MFBpvAUnKaPW+QvanU5GzF00XCq0bqqAmvJ3MN19ejlmOETbW8sJNiq6qam48wTcbUNw==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
   '@ai-sdk/provider@3.0.10':
     resolution: {integrity: sha512-Q3BZ27qfpYqnCYGvE3vt+Qi6LGOF9R5Nmzn+9JoM1lCRsD9mYaIhfJLkSunN48nfGXJ6n+XNV0J/XVpqGQl7Dw==}
     engines: {node: '>=18'}
+
+  '@ai-sdk/provider@4.0.1':
+    resolution: {integrity: sha512-6p3C/vGqVIjcptBu1DnVd/BZJ2wWmV9TUv9192vT6ZvT9KNED8EwRTqyqFpoQZKgSbMDSvBSq3dqR524Nt/Crw==}
+    engines: {node: '>=22'}
 
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
@@ -1431,15 +1447,15 @@ packages:
   '@electric-sql/pglite@0.4.1':
     resolution: {integrity: sha512-mZ9NzzUSYPOCnxHH1oAHPRzoMFJHY472raDKwXl/+6oPbpdJ7g8LsCN4FSaIIfkiCKHhb3iF/Zqo3NYxaIhU7Q==}
 
-  '@eloqnt/cli@0.0.4':
-    resolution: {integrity: sha512-vmLdGpg3MaoEE6tmU7AzxECP6dsdLRrfJV4Zv7bu+XPLEVM0nhrY+HO4EQgAE5Pa84V/2jCuuOrhZd37RCvGjQ==}
+  '@eloqnt/cli@0.2.0':
+    resolution: {integrity: sha512-o3gY0iCjXy5f2jNOMbGvMLFGnmKSqd//V5ra2PAz64/IoSZNcB7bf7Yyxe/gxrquKo2+G3PcTm2deOY/V3dNBg==}
     hasBin: true
 
-  '@eloqnt/inference@0.0.1':
-    resolution: {integrity: sha512-I6wb0adVBwr/LD3Ps49B04vuR841upLSOUPYfbcOc9PzdZzLGp58dj1iDoHALoyJ4q4weCbkpdCpsCvX1rxWDA==}
+  '@eloqnt/inference@0.1.0':
+    resolution: {integrity: sha512-YXE7NYlFlePN6q2QmE2/8i+ferRK4DfJQNvQMqkIyeJP6ysBbFIUlesJT19oorV8hkL8adA7IwOVjX6TMAZIEg==}
 
-  '@eloqnt/sdk@0.0.4':
-    resolution: {integrity: sha512-aKT+TaLPmV8KC7vjyz2j9DxMgm+xsJlrxnTR8XRlajqPNjmHlsfz91PKXCu60gQgB6mgQCh5gIclId6sORO6cw==}
+  '@eloqnt/sdk@0.2.0':
+    resolution: {integrity: sha512-hP29liax3kfVfH2FEv0LDtFFksTgUAH5F81IlZZnTMg+zHYqctdlUj78Bcxw1ZY4RD4yxhjh2EqbkU0c7KO36g==}
 
   '@emnapi/core@1.10.0':
     resolution: {integrity: sha512-yq6OkJ4p82CAfPl0u9mQebQHKPJkY7WrIuk205cTYnYe+k2Z8YBh11FrbRG/H6ihirqcacOgl2BIO8oyMQLeXw==}
@@ -4115,6 +4131,9 @@ packages:
   '@workflow/rollup@4.0.9':
     resolution: {integrity: sha512-opbd58othmzJFh0LA60K4FHdjwN4AwYCAhEgTcqX+a4OD5bjvv+hN0VSbIM2ofFTI6uuGbm0jzY/LU/EWahUcg==}
 
+  '@workflow/serde@4.1.0':
+    resolution: {integrity: sha512-pav4F2BoirECWR7Nf1TKt+2eETcBj7jj4cBefQ8VXQCA6NPkaKeLfj/zMgi+3zYV5ZIBT4GuUiphsj0/b9hPQQ==}
+
   '@workflow/serde@4.1.2':
     resolution: {integrity: sha512-KkkSUddEcaIvW7/QfVUk2PR93117HkDum45cXQEGkoxEmHOmqfOLJ4T1m4a1QABVC7O9TIqPxsBtDPgKIO+LOw==}
 
@@ -4243,6 +4262,12 @@ packages:
   ai@6.0.203:
     resolution: {integrity: sha512-2Qi1ZPGF/FnlvnRqntVgRbUYGeA5ZKFYwTtgu8rcUzMmddArM/nLsvCW69Ip99B1cop6XHRHl+GCKk9t9B+GDA==}
     engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
+  ai@7.0.8:
+    resolution: {integrity: sha512-vTEKl6fDBZ2IxBXTRaZOajf9W2Ev57Ju8iKtUvqlmDk8Z9BrEP4c22SWJsg1RcWHSFmJMSBa/s5dlUBHUq3YwA==}
+    engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
@@ -7510,6 +7535,13 @@ snapshots:
       '@vercel/oidc': 3.2.0
       zod: 4.4.3
 
+  '@ai-sdk/gateway@4.0.6(zod@4.4.3)':
+    dependencies:
+      '@ai-sdk/provider': 4.0.1
+      '@ai-sdk/provider-utils': 5.0.2(zod@4.4.3)
+      '@vercel/oidc': 3.2.0
+      zod: 4.4.3
+
   '@ai-sdk/openai@3.0.71(zod@4.4.3)':
     dependencies:
       '@ai-sdk/provider': 3.0.10
@@ -7523,7 +7555,19 @@ snapshots:
       eventsource-parser: 3.1.0
       zod: 4.4.3
 
+  '@ai-sdk/provider-utils@5.0.2(zod@4.4.3)':
+    dependencies:
+      '@ai-sdk/provider': 4.0.1
+      '@standard-schema/spec': 1.1.0
+      '@workflow/serde': 4.1.0
+      eventsource-parser: 3.1.0
+      zod: 4.4.3
+
   '@ai-sdk/provider@3.0.10':
+    dependencies:
+      json-schema: 0.4.0
+
+  '@ai-sdk/provider@4.0.1':
     dependencies:
       json-schema: 0.4.0
 
@@ -7655,7 +7699,7 @@ snapshots:
       '@babel/helpers': 7.29.7
       '@babel/parser': 7.29.7
       '@babel/template': 7.29.7
-      '@babel/traverse': 7.29.7(supports-color@8.1.1)
+      '@babel/traverse': 7.29.7
       '@babel/types': 7.29.7
       '@jridgewell/remapping': 2.3.5
       convert-source-map: 2.0.0
@@ -7686,7 +7730,7 @@ snapshots:
 
   '@babel/helper-module-imports@7.29.7':
     dependencies:
-      '@babel/traverse': 7.29.7(supports-color@8.1.1)
+      '@babel/traverse': 7.29.7
       '@babel/types': 7.29.7
     transitivePeerDependencies:
       - supports-color
@@ -7696,7 +7740,7 @@ snapshots:
       '@babel/core': 7.29.7(supports-color@8.1.1)
       '@babel/helper-module-imports': 7.29.7
       '@babel/helper-validator-identifier': 7.29.7
-      '@babel/traverse': 7.29.7(supports-color@8.1.1)
+      '@babel/traverse': 7.29.7
     transitivePeerDependencies:
       - supports-color
 
@@ -7723,7 +7767,7 @@ snapshots:
       '@babel/parser': 7.29.7
       '@babel/types': 7.29.7
 
-  '@babel/traverse@7.29.7(supports-color@8.1.1)':
+  '@babel/traverse@7.29.7':
     dependencies:
       '@babel/code-frame': 7.29.7
       '@babel/generator': 7.29.7
@@ -7926,27 +7970,27 @@ snapshots:
 
   '@electric-sql/pglite@0.4.1': {}
 
-  '@eloqnt/cli@0.0.4':
+  '@eloqnt/cli@0.2.0':
     dependencies:
       '@clack/prompts': 1.6.0
-      '@eloqnt/sdk': 0.0.4
+      '@eloqnt/sdk': 0.2.0
       citty: 0.1.6
       open: 11.0.0
       picocolors: 1.1.1
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@eloqnt/inference@0.0.1':
+  '@eloqnt/inference@0.1.0':
     dependencies:
-      ai: 6.0.203(zod@4.4.3)
+      ai: 7.0.8(zod@4.4.3)
       zod: 4.4.3
 
-  '@eloqnt/sdk@0.0.4':
+  '@eloqnt/sdk@0.2.0':
     dependencies:
-      '@eloqnt/inference': 0.0.1
+      '@eloqnt/inference': 0.1.0
       '@formatjs/icu-messageformat-parser': 3.5.11
       '@swc/core': 1.15.41
-      ai: 6.0.203(zod@4.4.3)
+      ai: 7.0.8(zod@4.4.3)
       next-intl-swc-plugin-extractor: 0.0.0-canary-375b031
       po-parser: 2.1.1
       zod: 4.4.3
@@ -9249,11 +9293,11 @@ snapshots:
       '@sentry-internal/replay-canvas': 10.57.0
       '@sentry/core': 10.57.0
 
-  '@sentry/bundler-plugin-core@5.3.0':
+  '@sentry/bundler-plugin-core@5.3.0(supports-color@8.1.1)':
     dependencies:
       '@babel/core': 7.29.7(supports-color@8.1.1)
       '@sentry/babel-plugin-component-annotate': 5.3.0
-      '@sentry/cli': 2.58.6
+      '@sentry/cli': 2.58.6(supports-color@8.1.1)
       dotenv: 16.6.1
       find-up: 5.0.0
       glob: 13.0.6
@@ -9286,9 +9330,9 @@ snapshots:
   '@sentry/cli-win32-x64@2.58.6':
     optional: true
 
-  '@sentry/cli@2.58.6':
+  '@sentry/cli@2.58.6(supports-color@8.1.1)':
     dependencies:
-      https-proxy-agent: 5.0.1
+      https-proxy-agent: 5.0.1(supports-color@8.1.1)
       node-fetch: 2.7.0
       progress: 2.0.3
       proxy-from-env: 1.1.0
@@ -9314,7 +9358,7 @@ snapshots:
       '@opentelemetry/semantic-conventions': 1.41.1
       '@rollup/plugin-commonjs': 28.0.1(rollup@4.61.1)
       '@sentry-internal/browser-utils': 10.57.0
-      '@sentry/bundler-plugin-core': 5.3.0
+      '@sentry/bundler-plugin-core': 5.3.0(supports-color@8.1.1)
       '@sentry/core': 10.57.0
       '@sentry/node': 10.57.0(supports-color@8.1.1)
       '@sentry/opentelemetry': 10.57.0(@opentelemetry/api@1.9.1)(@opentelemetry/core@2.8.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.8.0(@opentelemetry/api@1.9.1))(@opentelemetry/semantic-conventions@1.41.1)
@@ -9339,7 +9383,7 @@ snapshots:
       '@opentelemetry/semantic-conventions': 1.41.1
       '@rollup/plugin-commonjs': 28.0.1(rollup@4.61.1)
       '@sentry-internal/browser-utils': 10.57.0
-      '@sentry/bundler-plugin-core': 5.3.0
+      '@sentry/bundler-plugin-core': 5.3.0(supports-color@8.1.1)
       '@sentry/core': 10.57.0
       '@sentry/node': 10.57.0(supports-color@8.1.1)
       '@sentry/opentelemetry': 10.57.0(@opentelemetry/api@1.9.1)(@opentelemetry/core@2.8.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.8.0(@opentelemetry/api@1.9.1))(@opentelemetry/semantic-conventions@1.41.1)
@@ -9408,7 +9452,7 @@ snapshots:
 
   '@sentry/webpack-plugin@5.3.0(webpack@5.107.2(@swc/core@1.15.3)(esbuild@0.28.1))':
     dependencies:
-      '@sentry/bundler-plugin-core': 5.3.0
+      '@sentry/bundler-plugin-core': 5.3.0(supports-color@8.1.1)
       webpack: 5.107.2(@swc/core@1.15.3)(esbuild@0.28.1)
     transitivePeerDependencies:
       - encoding
@@ -9416,7 +9460,7 @@ snapshots:
 
   '@sentry/webpack-plugin@5.3.0(webpack@5.107.2(esbuild@0.28.1))':
     dependencies:
-      '@sentry/bundler-plugin-core': 5.3.0
+      '@sentry/bundler-plugin-core': 5.3.0(supports-color@8.1.1)
       webpack: 5.107.2(esbuild@0.28.1)
     transitivePeerDependencies:
       - encoding
@@ -10285,6 +10329,8 @@ snapshots:
       - supports-color
       - ws
 
+  '@workflow/serde@4.1.0': {}
+
   '@workflow/serde@4.1.2': {}
 
   '@workflow/sveltekit@4.0.9(@opentelemetry/api@1.9.1)(ws@8.21.0)':
@@ -10476,7 +10522,7 @@ snapshots:
 
   acorn@8.17.0: {}
 
-  agent-base@6.0.2:
+  agent-base@6.0.2(supports-color@8.1.1):
     dependencies:
       debug: 4.4.3(supports-color@8.1.1)
     transitivePeerDependencies:
@@ -10490,6 +10536,13 @@ snapshots:
       '@ai-sdk/provider': 3.0.10
       '@ai-sdk/provider-utils': 4.0.29(zod@4.4.3)
       '@opentelemetry/api': 1.9.1
+      zod: 4.4.3
+
+  ai@7.0.8(zod@4.4.3):
+    dependencies:
+      '@ai-sdk/gateway': 4.0.6(zod@4.4.3)
+      '@ai-sdk/provider': 4.0.1
+      '@ai-sdk/provider-utils': 5.0.2(zod@4.4.3)
       zod: 4.4.3
 
   ajv-formats@2.1.1(ajv@8.20.0):
@@ -11588,9 +11641,9 @@ snapshots:
       quick-lru: 5.1.1
       resolve-alpn: 1.2.1
 
-  https-proxy-agent@5.0.1:
+  https-proxy-agent@5.0.1(supports-color@8.1.1):
     dependencies:
-      agent-base: 6.0.2
+      agent-base: 6.0.2(supports-color@8.1.1)
       debug: 4.4.3(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color

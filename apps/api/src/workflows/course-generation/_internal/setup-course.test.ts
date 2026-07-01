@@ -9,6 +9,7 @@ import { setupCourse } from "./setup-course";
 
 const {
   generateCourseDescriptionMock,
+  generateCourseLandingPageMock,
   generateContentThumbnailImageMock,
   generateCourseCategoriesMock,
   generateCourseChaptersMock,
@@ -17,10 +18,15 @@ const {
   generateCourseCategoriesMock: vi.fn(),
   generateCourseChaptersMock: vi.fn(),
   generateCourseDescriptionMock: vi.fn(),
+  generateCourseLandingPageMock: vi.fn(),
 }));
 
 vi.mock("@zoonk/ai/tasks/courses/description", () => ({
   generateCourseDescription: generateCourseDescriptionMock,
+}));
+
+vi.mock("@zoonk/ai/tasks/courses/landing-page", () => ({
+  generateCourseLandingPage: generateCourseLandingPageMock,
 }));
 
 vi.mock("@zoonk/core/content/thumbnail", () => ({
@@ -68,9 +74,19 @@ describe(setupCourse, () => {
       hasCategories: false,
       hasChapters: false,
       imageUrl: null,
+      landingPage: null,
     };
 
     generateCourseDescriptionMock.mockResolvedValue({ data: { description: "Setup desc" } });
+
+    generateCourseLandingPageMock.mockResolvedValue({
+      data: {
+        audience: ["New learners"],
+        opportunities: ["Use this in real projects"],
+        outcomes: ["Build practical skill"],
+        valueProposition: "A clear path into the subject.",
+      },
+    });
 
     generateContentThumbnailImageMock.mockResolvedValue({
       data: "https://example.com/setup.webp",
@@ -91,5 +107,12 @@ describe(setupCourse, () => {
 
     expect(updatedCourse.generationStatus).toBe("running");
     expect(updatedCourse.description).toBe("Setup desc");
+
+    expect(updatedCourse.landingPage).toStrictEqual({
+      audience: ["New learners"],
+      opportunities: ["Use this in real projects"],
+      outcomes: ["Build practical skill"],
+      valueProposition: "A clear path into the subject.",
+    });
   });
 });
