@@ -3,7 +3,7 @@ import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-o
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
-import { type SourceLesson, formatSourceLessonsForPrompt } from "../_utils/source-lessons";
+import { type SourceLesson, formatSourceLessonForPrompt } from "../_utils/source-lessons";
 import systemPrompt from "./lesson-quiz.prompt.md";
 
 const defaultModel = "openai/gpt-5.5";
@@ -67,7 +67,7 @@ export type LessonQuizParams = {
   chapterTitle: string;
   courseTitle: string;
   language: string;
-  sourceLessons: SourceLesson[];
+  lesson: SourceLesson;
   model?: string;
   useFallback?: boolean;
   reasoningEffort?: ReasoningEffort;
@@ -77,19 +77,19 @@ export async function generateLessonQuiz({
   chapterTitle,
   courseTitle,
   language,
-  sourceLessons,
+  lesson,
   model = defaultModel,
   useFallback = true,
   reasoningEffort,
 }: LessonQuizParams) {
-  const formattedSourceLessons = formatSourceLessonsForPrompt(sourceLessons);
+  const formattedLesson = formatSourceLessonForPrompt(lesson);
   const promptLanguage = getPromptLanguageName({ language });
 
   const userPrompt = `
     CHAPTER_TITLE: ${chapterTitle}
     COURSE_TITLE: ${courseTitle}
     LANGUAGE: ${promptLanguage}
-    SOURCE_LESSONS: ${formattedSourceLessons}
+    LESSON: ${formattedLesson}
   `;
 
   const providerOptions = buildProviderOptions({

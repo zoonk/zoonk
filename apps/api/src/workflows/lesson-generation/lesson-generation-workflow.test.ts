@@ -652,7 +652,7 @@ describe(lessonGenerationWorkflow, () => {
     expect(steps.length).toBeGreaterThan(0);
   });
 
-  it("quiz generation uses source lessons since the previous quiz and saves select-image URLs", async () => {
+  it("quiz generation uses the nearest previous explanation and saves select-image URLs", async () => {
     const { chapter } = await createWorkflowTree({ organizationId });
 
     const [quiz] = await Promise.all([
@@ -694,7 +694,7 @@ describe(lessonGenerationWorkflow, () => {
 
     expect(generateLessonQuiz).toHaveBeenCalledWith(
       expect.objectContaining({
-        sourceLessons: [{ description: "Unquizzed explanation", title: "New Quiz Scope" }],
+        lesson: { description: "Unquizzed explanation", title: "New Quiz Scope" },
       }),
     );
 

@@ -69,65 +69,43 @@ function getVocabularyGroupSizes(count: number): number[] {
 }
 
 /**
- * Each explanation now receives its own practice so a practice lesson stays
- * focused on one small concept. Quizzes still checkpoint every two practices,
- * so this helper returns the authored lesson plus any companion rows triggered
- * by that one authored lesson.
+ * Each explanation receives its own practice and quiz so the interactive rows
+ * stay focused on one small concept instead of grouping multiple explanations
+ * into a broader checkpoint.
  */
 function expandContentLesson({
   lesson,
-  practiceCount,
 }: {
   lesson: GeneratedChapterLesson;
-  practiceCount: number;
-}): { practiceCount: number; rows: ExpandedChapterLesson[] } {
-  const shouldAddPractice = lesson.kind === "explanation";
-  const nextPracticeCount = shouldAddPractice ? practiceCount + 1 : practiceCount;
-  const shouldAddQuiz = shouldAddPractice && nextPracticeCount % 2 === 0;
+}): ExpandedChapterLesson[] {
+  const shouldAddInteractiveCompanions = lesson.kind === "explanation";
 
-  return {
-    practiceCount: nextPracticeCount,
-    rows: [
-      authoredLesson({ lesson }),
-      ...(shouldAddPractice ? [companionLesson("practice")] : []),
-      ...(shouldAddQuiz ? [companionLesson("quiz")] : []),
-    ],
-  };
+  return [
+    authoredLesson({ lesson }),
+    ...(shouldAddInteractiveCompanions
+      ? [companionLesson("practice"), companionLesson("quiz")]
+      : []),
+  ];
 }
 
 /**
  * Practice rows sit directly after the explanation they assess. Quiz rows cover
- * the explanations since the previous quiz because each quiz appears after
- * every two practice rows, with a final quiz before review when needed.
+ * the same single explanation because each explanation has one practice and
+ * one quiz companion before the chapter review.
  */
 function expandContentLessons({
   lessons,
 }: {
   lessons: GeneratedChapterLesson[];
 }): ExpandedChapterLesson[] {
-  const explanationCount = lessons.filter((lesson) => lesson.kind === "explanation").length;
+  const hasExplanation = lessons.some((lesson) => lesson.kind === "explanation");
 
-  if (explanationCount === 0) {
+  if (!hasExplanation) {
     return lessons.map((lesson) => authoredLesson({ lesson }));
   }
 
-  const expanded = lessons.reduce(
-    (state, lesson) => {
-      const expandedLesson = expandContentLesson({ lesson, practiceCount: state.practiceCount });
-
-      return {
-        practiceCount: expandedLesson.practiceCount,
-        rows: [...state.rows, ...expandedLesson.rows],
-      };
-    },
-    { practiceCount: 0, rows: [] as ExpandedChapterLesson[] },
-  );
-
-  const needsFinalQuiz = expanded.practiceCount % 2 === 1;
-
   return [
-    ...expanded.rows,
-    ...(needsFinalQuiz ? [companionLesson("quiz")] : []),
+    ...lessons.flatMap((lesson) => expandContentLesson({ lesson })),
     companionLesson("review"),
   ];
 }

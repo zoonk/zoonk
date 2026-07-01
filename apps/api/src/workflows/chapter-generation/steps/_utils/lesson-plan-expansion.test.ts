@@ -24,24 +24,33 @@ function kinds(lessons: ReturnType<typeof expandChapterLessons>) {
 }
 
 describe(expandChapterLessons, () => {
-  it("adds practice and final quiz before review after one explanation", () => {
+  it("adds practice and quiz before review after one explanation", () => {
     expect(
       kinds(expandChapterLessons({ lessons: explanationLessons(1), targetLanguage: null })),
     ).toStrictEqual(["explanation", "practice", "quiz", "review"]);
   });
 
-  it("adds a quiz after every two explanation practice pairs", () => {
+  it("adds a quiz after every explanation practice pair", () => {
     expect(
       kinds(expandChapterLessons({ lessons: explanationLessons(2), targetLanguage: null })),
-    ).toStrictEqual(["explanation", "practice", "explanation", "practice", "quiz", "review"]);
+    ).toStrictEqual([
+      "explanation",
+      "practice",
+      "quiz",
+      "explanation",
+      "practice",
+      "quiz",
+      "review",
+    ]);
   });
 
-  it("adds a final quiz when the last explanation practice pair is unquizzed", () => {
+  it("keeps each quiz next to the explanation practice pair it checks", () => {
     expect(
       kinds(expandChapterLessons({ lessons: explanationLessons(3), targetLanguage: null })),
     ).toStrictEqual([
       "explanation",
       "practice",
+      "quiz",
       "explanation",
       "practice",
       "quiz",
@@ -52,17 +61,19 @@ describe(expandChapterLessons, () => {
     ]);
   });
 
-  it("keeps adding quizzes after each pair of explanation practice lessons", () => {
+  it("keeps adding quizzes after each explanation practice lesson", () => {
     expect(
       kinds(expandChapterLessons({ lessons: explanationLessons(5), targetLanguage: null })),
     ).toStrictEqual([
       "explanation",
       "practice",
+      "quiz",
       "explanation",
       "practice",
       "quiz",
       "explanation",
       "practice",
+      "quiz",
       "explanation",
       "practice",
       "quiz",
@@ -73,22 +84,25 @@ describe(expandChapterLessons, () => {
     ]);
   });
 
-  it("keeps quiz cadence stable for an even number of explanation practice pairs", () => {
+  it("keeps quiz cadence stable for every explanation practice pair", () => {
     expect(
       kinds(expandChapterLessons({ lessons: explanationLessons(6), targetLanguage: null })),
     ).toStrictEqual([
       "explanation",
       "practice",
+      "quiz",
       "explanation",
       "practice",
       "quiz",
       "explanation",
       "practice",
+      "quiz",
       "explanation",
       "practice",
       "quiz",
       "explanation",
       "practice",
+      "quiz",
       "explanation",
       "practice",
       "quiz",

@@ -5,7 +5,7 @@ const SHARED_EXPECTATIONS = `
 
   A strong lesson plan turns the chapter scope into small, self-contained learner capabilities. Each lesson should teach one clear topic or skill: the core explanation should fit in 1-2 minutes, roughly 700-1,500 characters including spaces. The follow-up practice should fit in 3-4 minutes because it focuses on the same small capability. Coverage and lesson size both matter: splitting overloaded lessons should create more focused lessons, not a thinner chapter.
 
-  The app adds one practice lesson after each explanation, quizzes after every two practices, and a final quiz before review. The generated lesson plan should still return only substantive lessons that teach new content, not practice, quiz, review, summary, or capstone lessons.
+  The app adds one practice lesson and one quiz after each explanation, then a final review. The generated lesson plan should still return only substantive lessons that teach new content, not practice, quiz, review, summary, or capstone lessons.
 
   # What Good Looks Like
 
