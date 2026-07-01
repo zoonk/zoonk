@@ -1,16 +1,39 @@
 import { randomUUID } from "node:crypto";
-import { type Course, type CourseCategory, type CourseUser, prisma } from "@zoonk/db";
+import {
+  type Course,
+  type CourseCategory,
+  type CourseMode,
+  type CourseUser,
+  type GenerationStatus,
+  prisma,
+} from "@zoonk/db";
 
-function courseAttrs(
-  attrs?: Partial<Course>,
-): Omit<Course, "id" | "createdAt" | "updatedAt"> & { description: string } {
+type CourseFixtureLandingPage = {
+  audience: string[];
+  opportunities: string[];
+  outcomes: string[];
+  valueProposition: string;
+};
+
+type CourseFixtureAttrs = Omit<
+  Partial<Course>,
+  "createdAt" | "generationStatus" | "landingPage" | "mode" | "updatedAt"
+> & {
+  createdAt?: Date | string;
+  generationStatus?: GenerationStatus;
+  landingPage?: CourseFixtureLandingPage;
+  mode?: CourseMode;
+  updatedAt?: Date | string;
+};
+
+function courseAttrs(attrs?: CourseFixtureAttrs) {
   const { description, ...rest } = attrs ?? {};
 
   return {
     completedAt: null,
     description: description ?? "Test course description",
     generationRunId: null,
-    generationStatus: "completed",
+    generationStatus: "completed" as const,
     imageUrl: null,
     isPublished: false,
     language: "en",
@@ -26,7 +49,7 @@ function courseAttrs(
   };
 }
 
-export async function courseFixture(attrs?: Partial<Course>) {
+export async function courseFixture(attrs?: CourseFixtureAttrs) {
   const course = await prisma.course.create({ data: courseAttrs(attrs) });
   return course;
 }

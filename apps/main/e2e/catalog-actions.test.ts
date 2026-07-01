@@ -2,12 +2,12 @@ import { randomUUID } from "node:crypto";
 import { type Page } from "@playwright/test";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { courseFixture, courseUserFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { expect, test } from "./fixtures";
 
-async function createTestCourseWithLesson() {
+async function createTestCourseWithLesson({ userId }: { userId?: string } = {}) {
   const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
@@ -46,6 +46,10 @@ async function createTestCourseWithLesson() {
     title: `E2E CA Lesson ${uniqueId}`,
   });
 
+  if (userId) {
+    await courseUserFixture({ courseId: course.id, userId });
+  }
+
   return { chapter, course, lesson };
 }
 
@@ -67,16 +71,18 @@ async function openMoreOptions(page: Page) {
 }
 
 test.describe("Catalog Actions", () => {
-  test("course page shows actions button", async ({ page }) => {
-    const { course } = await createTestCourseWithLesson();
+  test("course page shows actions button", async ({ authenticatedPage, withProgressUser }) => {
+    const page = authenticatedPage;
+    const { course } = await createTestCourseWithLesson({ userId: withProgressUser.id });
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
     await expect(page.getByRole("button", { name: /more options/iu })).toBeVisible();
   });
 
-  test("dropdown opens with feedback item", async ({ page }) => {
-    const { course } = await createTestCourseWithLesson();
+  test("dropdown opens with feedback item", async ({ authenticatedPage, withProgressUser }) => {
+    const page = authenticatedPage;
+    const { course } = await createTestCourseWithLesson({ userId: withProgressUser.id });
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -84,8 +90,9 @@ test.describe("Catalog Actions", () => {
     await expect(page.getByRole("button", { name: /send feedback/iu })).toBeVisible();
   });
 
-  test("feedback dialog opens from dropdown", async ({ page }) => {
-    const { course } = await createTestCourseWithLesson();
+  test("feedback dialog opens from dropdown", async ({ authenticatedPage, withProgressUser }) => {
+    const page = authenticatedPage;
+    const { course } = await createTestCourseWithLesson({ userId: withProgressUser.id });
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -105,8 +112,12 @@ test.describe("Catalog Actions", () => {
     await expect(page.getByRole("button", { name: /more options/iu })).toBeVisible();
   });
 
-  test("dropdown shows feedback items on course page", async ({ page }) => {
-    const { course } = await createTestCourseWithLesson();
+  test("dropdown shows feedback items on course page", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
+    const page = authenticatedPage;
+    const { course } = await createTestCourseWithLesson({ userId: withProgressUser.id });
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -115,8 +126,12 @@ test.describe("Catalog Actions", () => {
     await expect(page.getByRole("menuitemradio", { name: /i didn't like it/iu })).toBeVisible();
   });
 
-  test("clicking liked shows toast confirmation", async ({ page }) => {
-    const { course } = await createTestCourseWithLesson();
+  test("clicking liked shows toast confirmation", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
+    const page = authenticatedPage;
+    const { course } = await createTestCourseWithLesson({ userId: withProgressUser.id });
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -126,8 +141,9 @@ test.describe("Catalog Actions", () => {
     await expect(page.getByText(/thanks for your feedback/iu)).toBeVisible();
   });
 
-  test("clicking liked marks it as selected", async ({ page }) => {
-    const { course } = await createTestCourseWithLesson();
+  test("clicking liked marks it as selected", async ({ authenticatedPage, withProgressUser }) => {
+    const page = authenticatedPage;
+    const { course } = await createTestCourseWithLesson({ userId: withProgressUser.id });
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -140,8 +156,9 @@ test.describe("Catalog Actions", () => {
     );
   });
 
-  test("switching feedback changes selection", async ({ page }) => {
-    const { course } = await createTestCourseWithLesson();
+  test("switching feedback changes selection", async ({ authenticatedPage, withProgressUser }) => {
+    const page = authenticatedPage;
+    const { course } = await createTestCourseWithLesson({ userId: withProgressUser.id });
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -170,8 +187,12 @@ test.describe("Catalog Actions", () => {
     await expect(page.getByRole("menuitemradio", { name: /i didn't like it/iu })).toBeVisible();
   });
 
-  test("send feedback dialog still works after selecting feedback", async ({ page }) => {
-    const { course } = await createTestCourseWithLesson();
+  test("send feedback dialog still works after selecting feedback", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
+    const page = authenticatedPage;
+    const { course } = await createTestCourseWithLesson({ userId: withProgressUser.id });
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 

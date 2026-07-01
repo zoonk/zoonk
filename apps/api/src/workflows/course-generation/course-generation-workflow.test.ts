@@ -6,6 +6,7 @@ import { generateCourseChapters } from "@zoonk/ai/tasks/courses/chapters";
 import { generateCourseDescription } from "@zoonk/ai/tasks/courses/description";
 import { resolveCourseIdentity } from "@zoonk/ai/tasks/courses/identity";
 import { generateCourseIdentitySearchQueries } from "@zoonk/ai/tasks/courses/identity-search";
+import { generateCourseLandingPage } from "@zoonk/ai/tasks/courses/landing-page";
 import { generateContentThumbnailImage } from "@zoonk/core/content/thumbnail";
 import { getCourseSlugForTitle } from "@zoonk/core/courses/slug";
 import { COURSE_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
@@ -30,6 +31,19 @@ vi.mock("@zoonk/ai/tasks/courses/description", () => ({
   generateCourseDescription: vi
     .fn()
     .mockResolvedValue({ data: { description: "Generated course description" } }),
+}));
+
+vi.mock("@zoonk/ai/tasks/courses/landing-page", () => ({
+  generateCourseLandingPage: vi
+    .fn()
+    .mockResolvedValue({
+      data: {
+        audience: ["New learners"],
+        opportunities: ["Use this in real projects"],
+        outcomes: ["Build practical skill"],
+        valueProposition: "A clear path into the subject.",
+      },
+    }),
 }));
 
 vi.mock("@zoonk/ai/tasks/courses/chapters", () => ({
@@ -306,6 +320,13 @@ describe(courseGenerationWorkflow, () => {
 
       expect(course?.generationStatus).toBe("completed");
       expect(course?.description).toBe("Generated course description");
+
+      expect(course?.landingPage).toStrictEqual({
+        audience: ["New learners"],
+        opportunities: ["Use this in real projects"],
+        outcomes: ["Build practical skill"],
+        valueProposition: "A clear path into the subject.",
+      });
     });
 
     it("skips generation for content that already exists", async () => {
@@ -316,6 +337,12 @@ describe(courseGenerationWorkflow, () => {
         description: "Existing description",
         generationStatus: "failed",
         imageUrl: "https://example.com/existing-image.webp",
+        landingPage: {
+          audience: ["Existing audience"],
+          opportunities: ["Existing opportunity"],
+          outcomes: ["Existing outcome"],
+          valueProposition: "Existing value.",
+        },
         organizationId,
         slug,
         title,
@@ -338,6 +365,7 @@ describe(courseGenerationWorkflow, () => {
       await courseGenerationWorkflow(request.id);
 
       expect(generateCourseDescription).not.toHaveBeenCalled();
+      expect(generateCourseLandingPage).not.toHaveBeenCalled();
       expect(generateCourseIdentitySearchQueries).not.toHaveBeenCalled();
       expect(resolveCourseIdentity).not.toHaveBeenCalled();
       expect(generateCourseCategories).not.toHaveBeenCalled();

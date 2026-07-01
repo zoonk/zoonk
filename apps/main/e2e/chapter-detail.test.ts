@@ -13,9 +13,9 @@ import { getSearchInputTop, scrollSearchInputToTop } from "./catalog-search";
 import { expect, test } from "./fixtures";
 import { pressShortcutAndWaitForUrl } from "./keyboard-shortcuts";
 
-const uniqueId = randomUUID();
 const SEARCH_LESSONS_LABEL = /search lessons/iu;
 
+let uniqueId: string;
 let chapterUrl: string;
 let courseUrl: string;
 let courseSlug: string;
@@ -90,6 +90,7 @@ async function openLessonTypeFilterMenu({ page }: { page: Page }) {
 
 test.beforeAll(async () => {
   const org = await getAiOrganization();
+  uniqueId = randomUUID();
 
   courseTitle = `E2E ChDetail Course ${uniqueId}`;
   courseSlug = `e2e-chdetail-course-${uniqueId}`;

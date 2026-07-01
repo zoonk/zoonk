@@ -357,6 +357,287 @@ msgstr "No chapters found"
 msgid "vcaAXp"
 msgstr "{completed, number}/{total, number} done"
 
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-actions.tsx
+#: src/app/(catalog)/courses/page.tsx
+msgid "s-Ncqj"
+msgstr "Explore courses"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-actions.tsx
+msgid "QGiw6K"
+msgstr "Start free chapter"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "8A99N6"
+msgstr "Abstract ideas get a real situation"
+
+#. Short imperative verb label for the first tab in a learning flow: understand, practice, then test. Translate as an action the learner takes, not as a noun.
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "courseLandingComparisonUnderstandTab"
+msgstr "Understand"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "LcPoK0"
+msgstr "Gravity is the force that attracts objects with mass toward one another."
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "wC-aSO"
+msgstr "2h 47m video"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "7C2tU3"
+msgstr "It's why your coffee falls when you knock over the mug."
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "B3Il8E"
+msgstr "Short and practical lessons"
+
+#. Short imperative verb label for the second tab in a learning flow: understand, practice, then test. Translate as an action the learner takes, not as a noun.
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "courseLandingComparisonPracticeTab"
+msgstr "Practice"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "F_F8WX"
+msgstr "Prices rise"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "-EEAVi"
+msgstr "Prices stay flat"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "qG6ALM"
+msgstr "Demand disappears"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "361ky2"
+msgstr "Supply and demand determine prices. Define supply, then define demand."
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "2hewNe"
+msgstr "Worksheet"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "k3LaSh"
+msgstr "A concert has 300 seats and 1,200 people waiting. What happens to ticket prices if no more seats are added?"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "VlR_2v"
+msgstr "Solve a problem"
+
+#. Short imperative verb label for the third tab in a learning flow: understand, practice, then test. Translate as an action the learner takes, not as a noun.
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "courseLandingComparisonTestTab"
+msgstr "Test"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "8Nkyqo"
+msgstr "Inertia"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "2792N9"
+msgstr "Gravity"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "HC8xUj"
+msgstr "Friction"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "clPnhd"
+msgstr "What is inertia?"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "vKGhx1"
+msgstr "Recall quiz"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "cZ39v4"
+msgstr "When a car brakes suddenly, everyone leans forward. What's making that happen?"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "PTjjt2"
+msgstr "Practical example"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "ne7a4s"
+msgstr "Typical course"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
+msgid "SaQXGG"
+msgstr "Zoonk lesson"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-curriculum.tsx
+msgid "BoEpk9"
+msgstr "Introduction"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-curriculum.tsx
+msgid "itC9lG"
+msgstr "Basics"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-curriculum.tsx
+msgid "o5_DJA"
+msgstr "Intermediate"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-curriculum.tsx
+msgid "3Rx6Qo"
+msgstr "Advanced"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-curriculum.tsx
+msgid "OEt4CQ"
+msgstr "Course content"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-curriculum.tsx
+msgid "GG6-cA"
+msgstr "{count, plural, one {# chapter} other {# chapters}}"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-curriculum.tsx
+msgid "3nOnkT"
+msgstr "Start with the basics, then move toward more advanced topics. Open a section to scan the chapters."
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-decision-tabs.tsx
+msgid "hmZz9H"
+msgstr "How"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-decision-tabs.tsx
+msgid "Jq3FDz"
+msgstr "Content"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-decision-tabs.tsx
+msgid "y9RWqI"
+msgstr "What"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-decision-tabs.tsx
+msgid "o8KenS"
+msgstr "Who"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-decision-tabs.tsx
+msgid "ujaB7H"
+msgstr "Where"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-decision-tabs.tsx
+msgid "9RUPaY"
+msgstr "Course questions"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-hero.tsx
+msgid "iWKuOd"
+msgstr "Complete course"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-hero.tsx
+msgid "5xtUUN"
+msgstr "First chapter free"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-hero.tsx
+msgid "D6Uiky"
+msgstr "Beginner to advanced"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-hero.tsx
+msgid "L9JGVa"
+msgstr "Learn at your own pace"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+msgid "kvjzxh"
+msgstr "What you'll learn"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+msgid "nNKgmq"
+msgstr "Curious beginners who want to see if the subject clicks."
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+msgid "6d4U8p"
+msgstr "Who this course is for"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+msgid "hsgfxV"
+msgstr "Where you'll use it"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+msgid "qieSfO"
+msgstr "Learn useful words, then practice them until they become natural."
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+#: src/lib/lessons.ts
+msgid "lqtP-R"
+msgstr "Vocabulary"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+msgid "ZHyORV"
+msgstr "Read short, everyday texts that show how the language is actually used."
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+#: src/lib/lessons.ts
+msgid "MOK_yK"
+msgstr "Reading"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+msgid "Tt4yPU"
+msgstr "Listen to real-life situations and train your ear to understand naturally."
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+#: src/lib/lessons.ts
+msgid "1TOMnj"
+msgstr "Listening"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+msgid "_BizQu"
+msgstr "Understand grammar rules through simple explanations."
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+#: src/lib/lessons.ts
+msgid "QzTY8x"
+msgstr "Grammar"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+msgid "BuBt5e"
+msgstr "Learn pronunciation by comparing sounds to your own language (e.g. Hola → OH-lah)"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+msgid "vuwclE"
+msgstr "Pronunciation"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+msgid "FkGq7Y"
+msgstr "Complex ideas explained in simple language."
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+msgid "-ccXf6"
+msgstr "Everyday language"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+msgid "SUbq96"
+msgstr "See how each concept appears in everyday situations."
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+msgid "PWMkDF"
+msgstr "Real-life examples"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+msgid "9HRhoP"
+msgstr "Apply what you learn to realistic situations, not just definitions."
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+msgid "5gsjXY"
+msgstr "Practice with real problems"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+msgid "NLqVU5"
+msgstr "Practice what you learned with a few quick questions."
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+#: src/lib/lessons.ts
+msgid "OuR_Ij"
+msgstr "Quiz"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+msgid "KWp1o4"
+msgstr "How our lessons work"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+msgid "eO0KtN"
+msgstr "A course, not a credential"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
+msgid "jt8_3X"
+msgstr "The goal of this course is to help you understand the subject and develop useful skills. It does not grant a college degree, professional license, or other officially recognized qualification."
+
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
 msgid "_allXG"
 msgstr "Learn {course} online with practical examples and everyday language. {description}"
@@ -403,10 +684,6 @@ msgstr "Explore all Zoonk courses to learn anything using AI. Find interactive l
 #: src/app/(catalog)/courses/page.tsx
 msgid "P5jxUC"
 msgstr "Online Courses using AI"
-
-#: src/app/(catalog)/courses/page.tsx
-msgid "s-Ncqj"
-msgstr "Explore courses"
 
 #: src/app/(catalog)/courses/page.tsx
 msgid "hUF3bo"
@@ -1355,6 +1632,10 @@ msgid "HbhIvm"
 msgstr "Writing your course description"
 
 #: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "e1myvm"
+msgstr "Writing your course page"
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "aev_pt"
 msgstr "Figuring out the right categories..."
 
@@ -1425,6 +1706,18 @@ msgstr "Summarizing what you'll learn..."
 #: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "9r_4zz"
 msgstr "Writing the overview..."
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "chqN-J"
+msgstr "Framing why this course is useful..."
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "twf4n2"
+msgstr "Writing the course page..."
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "k15wFf"
+msgstr "Shaping the starting point..."
 
 #: src/app/generate/l/[id]/generation-client.tsx
 msgid "WihX6L"
@@ -2079,24 +2372,8 @@ msgid "E1bF_X"
 msgstr "Explanation"
 
 #: src/lib/lessons.ts
-msgid "QzTY8x"
-msgstr "Grammar"
-
-#: src/lib/lessons.ts
-msgid "1TOMnj"
-msgstr "Listening"
-
-#: src/lib/lessons.ts
 msgid "KV-O0y"
 msgstr "Practice"
-
-#: src/lib/lessons.ts
-msgid "OuR_Ij"
-msgstr "Quiz"
-
-#: src/lib/lessons.ts
-msgid "MOK_yK"
-msgstr "Reading"
 
 #: src/lib/lessons.ts
 msgid "_vCXIP"
@@ -2105,10 +2382,6 @@ msgstr "Translation"
 #: src/lib/lessons.ts
 msgid "Ox-Z-K"
 msgstr "Tutorial"
-
-#: src/lib/lessons.ts
-msgid "lqtP-R"
-msgstr "Vocabulary"
 
 #: src/lib/lessons.ts
 msgid "22k1CY"

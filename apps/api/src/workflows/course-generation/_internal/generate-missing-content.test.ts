@@ -6,6 +6,7 @@ import { generateMissingContent } from "./generate-missing-content";
 
 const {
   generateCourseDescriptionMock,
+  generateCourseLandingPageMock,
   generateContentThumbnailImageMock,
   generateCourseCategoriesMock,
   generateCourseChaptersMock,
@@ -15,11 +16,16 @@ const {
   generateCourseCategoriesMock: vi.fn(),
   generateCourseChaptersMock: vi.fn(),
   generateCourseDescriptionMock: vi.fn(),
+  generateCourseLandingPageMock: vi.fn(),
   generateLanguageCourseChaptersMock: vi.fn(),
 }));
 
 vi.mock("@zoonk/ai/tasks/courses/description", () => ({
   generateCourseDescription: generateCourseDescriptionMock,
+}));
+
+vi.mock("@zoonk/ai/tasks/courses/landing-page", () => ({
+  generateCourseLandingPage: generateCourseLandingPageMock,
 }));
 
 vi.mock("@zoonk/core/content/thumbnail", () => ({
@@ -52,6 +58,7 @@ const emptyExisting: ExistingCourseContent = {
   hasCategories: false,
   hasChapters: false,
   imageUrl: null,
+  landingPage: null,
 };
 
 const courseRequestDescription = "Course request description";
@@ -63,6 +70,15 @@ describe(generateMissingContent, () => {
 
   it("generates all content when nothing exists", async () => {
     generateCourseDescriptionMock.mockResolvedValue({ data: { description: "Generated desc" } });
+
+    generateCourseLandingPageMock.mockResolvedValue({
+      data: {
+        audience: ["New learners"],
+        opportunities: ["Use this in real projects"],
+        outcomes: ["Build practical skill"],
+        valueProposition: "A clear path into the subject.",
+      },
+    });
 
     generateContentThumbnailImageMock.mockResolvedValue({
       data: "https://example.com/img.webp",
@@ -82,10 +98,26 @@ describe(generateMissingContent, () => {
     });
 
     expect(result.description).toBe("Generated desc");
+
+    expect(result.landingPage).toStrictEqual({
+      audience: ["New learners"],
+      opportunities: ["Use this in real projects"],
+      outcomes: ["Build practical skill"],
+      valueProposition: "A clear path into the subject.",
+    });
+
     expect(result.imageUrl).toBe("https://example.com/img.webp");
     expect(result.categories).toStrictEqual(["programming"]);
 
     expect(result.chapters).toStrictEqual([{ description: "Ch1 desc", title: "Ch1" }]);
+
+    expect(generateCourseLandingPageMock).toHaveBeenCalledWith({
+      chapters: [{ description: "Ch1 desc", title: "Ch1" }],
+      description: "Generated desc",
+      language: "en",
+      targetLanguage: null,
+      title: "Test Course",
+    });
 
     expect(generateContentThumbnailImageMock).toHaveBeenCalledWith({
       description: courseRequestDescription,
@@ -100,6 +132,12 @@ describe(generateMissingContent, () => {
       hasCategories: true,
       hasChapters: true,
       imageUrl: "https://example.com/existing.webp",
+      landingPage: {
+        audience: ["Existing audience"],
+        opportunities: ["Existing opportunity"],
+        outcomes: ["Existing outcome"],
+        valueProposition: "Existing value.",
+      },
     };
 
     const result = await generateMissingContent({
@@ -109,11 +147,20 @@ describe(generateMissingContent, () => {
     });
 
     expect(result.description).toBe("Existing desc");
+
+    expect(result.landingPage).toStrictEqual({
+      audience: ["Existing audience"],
+      opportunities: ["Existing opportunity"],
+      outcomes: ["Existing outcome"],
+      valueProposition: "Existing value.",
+    });
+
     expect(result.imageUrl).toBe("https://example.com/existing.webp");
     expect(result.categories).toStrictEqual([]);
     expect(result.chapters).toStrictEqual([]);
 
     expect(generateCourseDescriptionMock).not.toHaveBeenCalled();
+    expect(generateCourseLandingPageMock).not.toHaveBeenCalled();
     expect(generateContentThumbnailImageMock).not.toHaveBeenCalled();
     expect(generateCourseCategoriesMock).not.toHaveBeenCalled();
     expect(generateCourseChaptersMock).not.toHaveBeenCalled();
@@ -124,7 +171,7 @@ describe(generateMissingContent, () => {
     expect(skippedSteps.length).toBeGreaterThanOrEqual(4);
   });
 
-  it("returns 'languages' category for language courses without AI call", async () => {
+  it("skips categories and landing page AI calls for language courses", async () => {
     const langCourse: CourseContext = { ...course, targetLanguage: "es" };
 
     generateCourseDescriptionMock.mockResolvedValue({ data: { description: "Lang desc" } });
@@ -143,11 +190,22 @@ describe(generateMissingContent, () => {
     });
 
     expect(result.categories).toStrictEqual(["languages"]);
+    expect(result.landingPage).toBeNull();
     expect(generateCourseCategoriesMock).not.toHaveBeenCalled();
+    expect(generateCourseLandingPageMock).not.toHaveBeenCalled();
   });
 
   it("filters out 'languages' from non-language course categories", async () => {
     generateCourseDescriptionMock.mockResolvedValue({ data: { description: "desc" } });
+
+    generateCourseLandingPageMock.mockResolvedValue({
+      data: {
+        audience: ["Curious learners"],
+        opportunities: ["Apply ideas clearly"],
+        outcomes: ["Explain key ideas"],
+        valueProposition: "A useful path through the topic.",
+      },
+    });
 
     generateContentThumbnailImageMock.mockResolvedValue({
       data: "https://example.com/non-lang.webp",

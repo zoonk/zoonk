@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - Should treat medicine as a regulated profession and avoid implying the course qualifies someone to practice medicine\n      - Must not say learners can become doctors, diagnose patients, prescribe medication, treat patients, or replace medical school because of this course\n      - Should frame opportunities around preparation for medical or health science study, clinical vocabulary, patient-care context, or working better with qualified clinicians\n      - outcomes should focus on foundational medical knowledge, vocabulary, body systems, clinical reasoning context, and readiness for supervised study\n      - Should be in US English\n\n      \n  - Must be written in the specified language\n  - Must include exactly these fields: valueProposition, audience, outcomes, opportunities\n  - valueProposition must be one concise sentence\n  - audience must contain 3-5 short, specific learner profiles or fit statements\n  - audience entries may be concise labels such as \"People preparing for medical school\" when they clearly answer who the course is for\n  - outcomes must contain 4-6 concrete abilities learners can build\n  - opportunities must contain 3-5 realistic career, academic, life, or cultural opportunities\n  - Must be specific to the course topic, not generic education copy\n  - valueProposition must sound natural and concrete, not like an abstract definition of the field\n  - For non-English cases, must not mix in English audience or framing words such as \"learners\", \"students\", \"beginners\", or \"professionals\"; translate them naturally\n  - Must not mention course duration, completion time, salaries, certificates, job guarantees, guaranteed fluency, pricing, subscriptions, or free chapters\n  - Must avoid inflated claims such as \"master\", \"become an expert\", and \"unlock your potential\"\n\n    ",
+  "judgedAt": "2026-07-01T01:04:32.336Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Strong adherence to expectations with clear framing around foundational knowledge and supervised context. Audience, outcomes, and opportunities are specific and well-scoped; valueProposition is concrete and natural without inflated claims.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Well-structured with explicit disclaimer against diagnosing/care, specific audience and outcomes tied to the chapters. ValueProposition is a bit long but concrete and safe.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Concrete, specific, and appropriately framed around preparation and support roles. Outcomes map well to chapters and language stays within safe bounds.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Specific audience profiles and outcomes tightly linked to course content; framing consistently emphasizes supervised study and understanding care. ValueProposition is natural and grounded.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Good specificity and appropriate framing overall. Slight concern: 'how clinical decisions are made in real health-care settings' is fine but 'Clinical shadowing' as an opportunity is borderline reasonable.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Solid content but 'Supervising...clinical teams' as an opportunity overreaches, and 'making informed decisions about health' edges toward self-care framing. Otherwise thorough and specific.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Only 3 audience entries and 4 opportunities meets minimums, but valueProposition is somewhat generic-sounding. Content is specific though slightly abstract in places.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Only 4 audience and 5 outcomes—meets counts, but valueProposition sounds abstract/definitional ('comprehensive understanding...'). Framing is safe but less concrete than others.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Exceptional output that perfectly balances the medical content with strict safety boundaries. It frames outcomes naturally around understanding and contextualizing clinical decisions rather than performing them.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Outstanding framing that realistically targets students, support workers, and caregivers. It carefully avoids implying clinical practice by focusing on following logic, preparing for study, and understanding care.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Very strong alignment with the task constraints. The value proposition is engaging, and the outcomes perfectly translate clinical practice into observational and foundational skills.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Meets all expectations safely and accurately. The framing is appropriate for the medical domain, though the copy is slightly dry and academic compared to the top models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Solid and compliant. It effectively frames the course around preparation and collaboration, though it is slightly wordy in its audience and outcome descriptions.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Meets the core expectations and avoids inflated claims. However, it contains a fragmented phrase in the opportunities list ('Clinical shadowing and supervised health-care settings') which lacks a clear action.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Follows the safety constraints but incorporates the regulatory warning directly into the value proposition ('without treating it as a license...'). This results in awkward, unnatural marketing copy.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Critically fails the negative constraints. By stating learners will 'perform a physical exam' and 'build a differential diagnosis', it explicitly implies the course trains users to act as clinicians and diagnose patients.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Meets the structure exactly and is highly specific to medicine, including terminology, body systems, pathology, pharmacology, evidence, workflows, ethics, and safety. It is especially strong on regulated-practice boundaries by explicitly saying the course is not a license to diagnose or provide care.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Very strong fit with concise, practical positioning and realistic audiences, outcomes, and opportunities. It stays safely framed around understanding clinicians, supervised/academic preparation, vocabulary, evidence, and safety rules without implying the learner can practice medicine.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Clear, specific, and well bounded around preparation, health literacy, caregiver context, and supervised clinical training. It covers the course topic well and avoids regulated-practice claims, though the value proposition is slightly narrower than the full course scope.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Strong, natural US English output with appropriate learner profiles and realistic opportunities focused on study preparation, support roles, and understanding care. It is mostly well scoped, though a few phrases like following diagnoses and treatment plans need the surrounding caregiver/clinician framing to remain clearly non-practicing.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Good structure and strong course specificity, especially around professional training preparation, clinical workflows, evidence, labs, imaging, and pharmacology. It is slightly more inflated in places, such as communicating “fluently” and translating complex records, but it does not directly imply independent medical practice.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Well structured and generally safe, with realistic academic, research, documentation, and health-literacy opportunities. It is somewhat less specific to the full course scope than stronger outputs and uses broader phrasing like “comprehensive understanding” and “participating in informed care decisions.”",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Mostly meets the format and is relevant to the course, with good coverage of terminology, anatomy, pathology, labs, imaging, pharmacology, and clinical workflow. However, “apply core pharmacology ideas to dosing” and “working with charts, lab results, and imaging in clinical teams” are less carefully bounded than expected for a regulated medical field.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Although it has the required fields and covers many course topics, it crosses regulated-practice boundaries. The outcome saying learners can take a complete patient history, perform a physical exam, and build a differential diagnosis, plus references to improving patient care and licensing exams, make it unsafe for the expectations.",
+          "score": 4
+        }
+      ]
+    }
+  ],
+  "taskId": "course-landing-page",
+  "testCaseId": "en-medicine-1"
+}

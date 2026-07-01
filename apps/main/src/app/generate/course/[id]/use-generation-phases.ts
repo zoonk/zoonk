@@ -35,6 +35,7 @@ export function useGenerationPhases(
     preparingCourse: t("Preparing your course"),
     savingCourseInfo: t("Saving your course"),
     writingDescription: t("Writing your course description"),
+    writingLandingPage: t("Writing your course page"),
   };
 
   const phaseOrder = getPhaseOrder();
@@ -104,6 +105,15 @@ export function useGenerationPhases(
       cycleMessage([t("Saving your progress..."), t("Finishing up...")], index),
     writingDescription: (index) =>
       cycleMessage([t("Summarizing what you'll learn..."), t("Writing the overview...")], index),
+    writingLandingPage: (index) =>
+      cycleMessage(
+        [
+          t("Framing why this course is useful..."),
+          t("Writing the course page..."),
+          t("Shaping the starting point..."),
+        ],
+        index,
+      ),
   };
 
   return {
