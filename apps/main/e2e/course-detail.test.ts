@@ -248,9 +248,7 @@ test.beforeAll(async () => {
 });
 
 test.describe("Course Detail Page", () => {
-  test("shows course landing content with title, value proposition, and image", async ({
-    page,
-  }) => {
+  test("shows course landing content with title and value proposition", async ({ page }) => {
     await page.goto(testData.courseWithImageUrl);
 
     await expect(
@@ -258,9 +256,6 @@ test.describe("Course Detail Page", () => {
     ).toBeVisible();
 
     await expect(page.getByText(testData.courseWithImageValueProposition).first()).toBeVisible();
-
-    const courseImage = page.getByRole("img", { name: testData.courseWithImageTitle });
-    await expect(courseImage).toBeVisible();
   });
 
   test("non-existent course shows 404 page", async ({ page }) => {
@@ -330,14 +325,12 @@ test.describe("Course Detail Page", () => {
     await expect(page.getByRole("link", { name: /^start$/iu })).not.toBeVisible();
   });
 
-  test("shows fallback icon when course has no image", async ({ page }) => {
+  test("shows readable landing content when course has no image", async ({ page }) => {
     await page.goto(testData.courseNoImageUrl);
 
     await expect(page.getByRole("heading", { name: testData.courseNoImageTitle })).toBeVisible();
-
-    const fallbackIcon = page.getByRole("img", { name: testData.courseNoImageTitle }).first();
-    await expect(fallbackIcon).toBeVisible();
-    await expect(fallbackIcon).not.toHaveAttribute("src");
+    await expect(page.getByText("Test course description").first()).toBeVisible();
+    await expect(page.getByRole("link", { name: /^Start free chapter$/u })).toBeVisible();
   });
 
   test("shows landing copy before the learner starts", async ({ page }) => {

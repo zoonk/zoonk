@@ -18,13 +18,7 @@ type CourseLandingStartActionProps<Href extends string> = {
  * Keeps the primary start action next to /start discovery without making the
  * row responsible for deciding whether the course has a usable first chapter.
  */
-export async function CourseLandingActions({
-  children,
-  inverted,
-}: {
-  children: ReactNode;
-  inverted: boolean;
-}) {
+export async function CourseLandingActions({ children }: { children: ReactNode }) {
   const t = await getExtracted();
 
   return (
@@ -32,10 +26,7 @@ export async function CourseLandingActions({
       {children}
 
       <Link
-        className={cn(
-          buttonVariants({ size: "lg", variant: inverted ? "inverse-outline" : "outline" }),
-          "w-full sm:w-fit",
-        )}
+        className={cn(buttonVariants({ size: "lg", variant: "outline" }), "w-full sm:w-fit")}
         href="/start"
       >
         <CompassIcon aria-hidden="true" data-icon="inline-start" />
@@ -53,22 +44,17 @@ export async function CourseLandingStartAction<Href extends string>({
   courseId,
   excludedLessonKinds,
   firstChapterHref,
-  inverted,
-}: CourseLandingStartActionProps<Href> & { inverted: boolean }) {
+}: CourseLandingStartActionProps<Href>) {
   const t = await getExtracted();
 
   return (
     <ContinueLessonLink
-      appearance={{
-        className: "w-full flex-none sm:w-fit",
-        size: "lg",
-        variant: inverted ? "inverse" : "default",
-      }}
+      appearance={{ className: "w-full flex-none sm:w-fit", size: "lg", variant: "default" }}
       courseId={courseId}
       excludedLessonKinds={excludedLessonKinds}
       fallbackHref={firstChapterHref}
       showProgress={false}
-      startLabel={t("Start free chapter")}
+      startLabel={t("Try free chapter")}
     />
   );
 }

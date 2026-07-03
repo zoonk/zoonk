@@ -10,8 +10,8 @@ import { COURSE_LANDING_FRAME_CLASS_NAME } from "./course-landing-page-layout";
 
 /**
  * The hero needs to state the course promise and make chapter one feel like the
- * obvious next step. The image stays full-bleed so the page opens with the
- * subject, not a generic card layout.
+ * obvious next step. The image stays separate from the copy so arbitrary course
+ * artwork cannot reduce text contrast or compete with the primary action.
  */
 export async function CourseLandingHero<Href extends string>({
   course,
@@ -25,27 +25,19 @@ export async function CourseLandingHero<Href extends string>({
   heroCopy: string | null;
 }) {
   const t = await getExtracted();
-  const hasHeroImage = Boolean(course.imageUrl);
 
   return (
-    <section
-      className={cn(
-        "relative isolate overflow-hidden py-10 sm:py-16",
-        hasHeroImage ? "bg-black text-white" : "bg-muted/30",
-      )}
-    >
-      <CourseLandingHeroBackdrop course={course} />
-
+    <section className="bg-background">
       <div
         className={cn(
           COURSE_LANDING_FRAME_CLASS_NAME,
-          "relative flex items-center px-4 lg:min-h-135 lg:px-6",
+          "grid gap-8 px-4 py-10 sm:gap-10 sm:py-14 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-center lg:gap-14 lg:px-6 lg:py-18 xl:grid-cols-[minmax(0,1fr)_22rem]",
         )}
       >
         <div className="flex max-w-3xl flex-col gap-6 sm:gap-8">
           <div className="flex flex-col gap-2">
-            <p className="font-mono text-[0.68rem] tracking-[0.28em] text-white/50 uppercase">
-              {t("Complete course")}
+            <p className="text-muted-foreground font-mono text-[0.68rem] tracking-[0.28em] uppercase">
+              {t("Interactive course")}
             </p>
 
             <h1 className="max-w-4xl text-4xl leading-none font-semibold tracking-normal wrap-break-word sm:text-6xl lg:text-7xl">
@@ -53,64 +45,57 @@ export async function CourseLandingHero<Href extends string>({
             </h1>
 
             {heroCopy && (
-              <p
-                className={cn(
-                  "max-w-2xl text-base leading-7 text-pretty sm:text-xl sm:leading-8",
-                  hasHeroImage ? "text-white/80" : "text-muted-foreground",
-                )}
-              >
+              <p className="text-muted-foreground max-w-2xl text-base leading-7 text-pretty sm:text-xl sm:leading-8">
                 {heroCopy}
               </p>
             )}
           </div>
 
-          <CourseLandingActions inverted={hasHeroImage}>
+          <CourseLandingActions>
             {firstChapterHref ? (
               <CourseLandingStartAction
                 courseId={course.id}
                 excludedLessonKinds={excludedLessonKinds}
                 firstChapterHref={firstChapterHref}
-                inverted={hasHeroImage}
               />
             ) : null}
           </CourseLandingActions>
 
-          <CourseLandingProofLine inverted={hasHeroImage} />
+          <CourseLandingProofLine />
         </div>
+
+        <CourseLandingHeroMedia course={course} />
       </div>
     </section>
   );
 }
 
 /**
- * The hero image should support the course story without becoming a separate
- * preview card. Rendering it as the section backdrop keeps the first viewport
- * focused on the title, value proposition, and primary action.
+ * Keeps course artwork visible on larger screens while treating it as
+ * decorative for assistive tech because the adjacent heading already names the
+ * course.
  */
-function CourseLandingHeroBackdrop({ course }: { course: CourseWithDetails }) {
+function CourseLandingHeroMedia({ course }: { course: CourseWithDetails }) {
   if (course.imageUrl) {
     return (
-      <>
+      <div className="bg-muted relative hidden aspect-square w-full overflow-hidden rounded-lg outline -outline-offset-1 outline-black/10 lg:block dark:outline-white/10">
         <Image
-          alt={course.title}
-          className="object-cover object-[72%_center] saturate-90"
+          alt=""
+          className="object-cover"
           fill
-          loading="eager"
-          priority
-          sizes="100vw"
+          loading="lazy"
+          sizes="(min-width: 1280px) 352px, 320px"
           src={course.imageUrl}
+          aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-linear-to-r from-black via-black/80 to-black/20" />
-        <div className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent" />
-      </>
+      </div>
     );
   }
 
   return (
     <div
-      aria-label={course.title}
-      className="text-muted-foreground/40 pointer-events-none absolute inset-y-8 right-4 hidden w-1/3 items-center justify-center md:flex"
-      role="img"
+      aria-hidden="true"
+      className="text-muted-foreground/40 bg-muted/40 hidden aspect-square w-full items-center justify-center rounded-lg lg:flex"
     >
       <NotebookPenIcon aria-hidden="true" className="size-24" />
     </div>
@@ -122,18 +107,13 @@ function CourseLandingHeroBackdrop({ course }: { course: CourseWithDetails }) {
  * another grid to the hero. The detailed proof now lives in the decision tabs
  * below the fold.
  */
-async function CourseLandingProofLine({ inverted }: { inverted: boolean }) {
+async function CourseLandingProofLine() {
   const t = await getExtracted();
 
   const items = [t("First chapter free"), t("Beginner to advanced"), t("Learn at your own pace")];
 
   return (
-    <ul
-      className={cn(
-        "flex max-w-2xl flex-wrap gap-x-4 gap-y-2 pt-1 font-mono text-[0.68rem] tracking-[0.2em] uppercase",
-        inverted ? "text-white/55" : "text-muted-foreground",
-      )}
-    >
+    <ul className="text-muted-foreground flex max-w-2xl flex-wrap gap-x-4 gap-y-2 pt-1 font-mono text-[0.68rem] tracking-[0.2em] uppercase">
       {items.map((item, index) => (
         <li className="flex items-center gap-4" key={item}>
           <span>{item}</span>

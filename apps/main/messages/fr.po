@@ -367,8 +367,8 @@ msgid "s-Ncqj"
 msgstr "Découvrir les cours"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-actions.tsx
-msgid "QGiw6K"
-msgstr "Commencer le chapitre gratuit"
+msgid "Y9LULP"
+msgstr "Essaye le chapitre gratuit"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
 msgid "8A99N6"
@@ -522,8 +522,8 @@ msgid "9RUPaY"
 msgstr "Questions sur le cours"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-hero.tsx
-msgid "iWKuOd"
-msgstr "Cours complet"
+msgid "HgZhb7"
+msgstr "Cours interactif"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-hero.tsx
 msgid "5xtUUN"
