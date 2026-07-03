@@ -506,12 +506,12 @@ msgid "Jq3FDz"
 msgstr "Contenido"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-decision-tabs.tsx
-msgid "y9RWqI"
-msgstr "Qué"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-decision-tabs.tsx
 msgid "o8KenS"
 msgstr "Para quién"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-decision-tabs.tsx
+msgid "y9RWqI"
+msgstr "Qué"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-decision-tabs.tsx
 msgid "ujaB7H"

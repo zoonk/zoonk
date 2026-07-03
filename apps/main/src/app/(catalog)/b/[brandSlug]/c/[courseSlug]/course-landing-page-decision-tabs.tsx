@@ -65,7 +65,7 @@ export async function CourseLandingDecisionTabs({
 
   const contentPanel: CourseLandingDecisionPanel = {
     content: (
-      <div className="mx-auto grid w-full max-w-3xl gap-10">
+      <div className="grid w-full gap-10">
         <CourseLandingCurriculum chapters={chapters} isCurriculumPending={isCurriculumPending} />
         {showCredentialNote && <CourseLandingCredentialNote />}
       </div>
@@ -74,29 +74,37 @@ export async function CourseLandingDecisionTabs({
     label: t("Content"),
   };
 
+  const audiencePanel: CourseLandingDecisionPanel = {
+    content: <CourseLandingAudience items={audience} />,
+    id: "audience",
+    label: t("Who"),
+  };
+
+  const outcomesPanel =
+    hasCourseLandingListItems(outcomes) &&
+    ({
+      content: <CourseLandingOutcomes items={outcomes} />,
+      id: "outcomes",
+      label: t("What"),
+    } satisfies CourseLandingDecisionPanel);
+
+  const opportunitiesPanel =
+    hasCourseLandingListItems(opportunities) &&
+    ({
+      content: <CourseLandingOpportunities items={opportunities} />,
+      id: "uses",
+      label: t("Where"),
+    } satisfies CourseLandingDecisionPanel);
+
   const panels: CourseLandingDecisionPanel[] = isLanguageCourse
-    ? [methodPanel, contentPanel]
-    : [
-        hasCourseLandingListItems(outcomes) &&
-          ({
-            content: <CourseLandingOutcomes items={outcomes} />,
-            id: "outcomes",
-            label: t("What"),
-          } satisfies CourseLandingDecisionPanel),
-        {
-          content: <CourseLandingAudience items={audience} />,
-          id: "audience",
-          label: t("Who"),
-        } satisfies CourseLandingDecisionPanel,
-        hasCourseLandingListItems(opportunities) &&
-          ({
-            content: <CourseLandingOpportunities items={opportunities} />,
-            id: "uses",
-            label: t("Where"),
-          } satisfies CourseLandingDecisionPanel),
-        methodPanel,
+    ? [contentPanel, methodPanel]
+    : getGeneralCourseLandingDecisionPanels({
+        audiencePanel,
         contentPanel,
-      ].filter((panel) => isCourseLandingDecisionPanel(panel));
+        methodPanel,
+        opportunitiesPanel,
+        outcomesPanel,
+      });
 
   return (
     <section className={cn(COURSE_LANDING_FRAME_CLASS_NAME, "px-4 py-3 lg:py-6")}>
@@ -124,6 +132,30 @@ export async function CourseLandingDecisionTabs({
         </div>
       </Tabs>
     </section>
+  );
+}
+
+/**
+ * Keeps the curriculum near the front without forcing a blank "What" tab onto
+ * courses that do not have generated outcomes yet. When outcomes exist, they
+ * stay first and Content follows; otherwise Content becomes the first useful
+ * tab before the required audience panel.
+ */
+function getGeneralCourseLandingDecisionPanels({
+  audiencePanel,
+  contentPanel,
+  methodPanel,
+  opportunitiesPanel,
+  outcomesPanel,
+}: {
+  audiencePanel: CourseLandingDecisionPanel;
+  contentPanel: CourseLandingDecisionPanel;
+  methodPanel: CourseLandingDecisionPanel;
+  opportunitiesPanel: CourseLandingDecisionPanel | false;
+  outcomesPanel: CourseLandingDecisionPanel | false;
+}) {
+  return [outcomesPanel, contentPanel, audiencePanel, opportunitiesPanel, methodPanel].filter(
+    (panel) => isCourseLandingDecisionPanel(panel),
   );
 }
 

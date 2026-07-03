@@ -35,7 +35,7 @@ export async function CourseLandingCurriculum({
   const groups = getCoursePathGroups({ chapters, labels: groupLabels });
 
   return (
-    <section className="mx-auto w-full max-w-3xl">
+    <section className="w-full">
       <div className="mb-8 flex flex-col gap-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <CourseLandingPanelTitle>{t("Course content")}</CourseLandingPanelTitle>

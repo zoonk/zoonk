@@ -363,11 +363,7 @@ test.describe("Course Detail Page", () => {
     await expect(main.getByText("Structure responsive web pages")).toBeVisible();
 
     const questions = main.getByRole("tablist", { name: "Course questions" });
-    await expect(questions.getByText("What", { exact: true })).toBeVisible();
-    await expect(questions.getByText("Who", { exact: true })).toBeVisible();
-    await expect(questions.getByText("Where", { exact: true })).toBeVisible();
-    await expect(questions.getByText("How", { exact: true })).toBeVisible();
-    await expect(questions.getByText("Content", { exact: true })).toBeVisible();
+    await expect(questions.getByRole("tab")).toHaveText(["What", "Content", "Who", "Where", "How"]);
 
     await questions.getByRole("tab", { name: /who/iu }).click();
     await expect(main.getByRole("heading", { name: "Who this course is for" })).toBeVisible();
@@ -421,9 +417,10 @@ test.describe("Course Detail Page", () => {
 
     await expect(questions.getByRole("tab", { name: "What" })).toHaveCount(0);
     await expect(questions.getByRole("tab", { name: "Where" })).toHaveCount(0);
-    await expect(questions.getByRole("tab", { name: "Who" })).toBeVisible();
-    await expect(questions.getByRole("tab", { name: "How" })).toBeVisible();
-    await expect(questions.getByRole("tab", { name: "Content" })).toBeVisible();
+    await expect(questions.getByRole("tab")).toHaveText(["Content", "Who", "How"]);
+
+    await expect(main.getByRole("heading", { name: "Course content" })).toBeVisible();
+    await questions.getByRole("tab", { name: /who/iu }).click();
     await expect(main.getByRole("heading", { name: "Who this course is for" })).toBeVisible();
   });
 
@@ -435,6 +432,11 @@ test.describe("Course Detail Page", () => {
     await expect(main.getByRole("heading", { name: testData.languageCourseTitle })).toBeVisible();
     await expect(main.getByText(testData.languageCourseGeneratedValueProposition)).toHaveCount(0);
 
+    const questions = main.getByRole("tablist", { name: "Course questions" });
+    await expect(questions.getByRole("tab")).toHaveText(["Content", "How"]);
+    await expect(main.getByRole("heading", { name: "Course content" })).toBeVisible();
+
+    await questions.getByRole("tab", { name: /how/iu }).click();
     await expect(main.getByRole("heading", { name: "How our lessons work" })).toBeVisible();
 
     await expect(main.getByText("Vocabulary", { exact: true })).toBeVisible();
