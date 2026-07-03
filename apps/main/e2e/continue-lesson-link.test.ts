@@ -26,7 +26,7 @@ function getContinueActionLink({ label, page }: { label: ContinueActionLabel; pa
  * the lower-commitment copy while still reusing the continue-link routing.
  */
 function getStartFreeChapterLink({ page }: { page: Page }) {
-  return page.getByRole("link", { name: /^start free chapter$/iu });
+  return page.getByRole("link", { name: /^try free chapter$/iu });
 }
 
 /**
@@ -266,7 +266,7 @@ async function createPageWithHiddenLessonKinds({
 }
 
 test.describe("Continue Lesson Link", () => {
-  test("course page shows Start free chapter link for unauthenticated user", async ({ page }) => {
+  test("course page shows Try free chapter link for unauthenticated user", async ({ page }) => {
     const { course } = await createTestCourseWithLesson();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
@@ -275,7 +275,7 @@ test.describe("Continue Lesson Link", () => {
     await expect(startLink).toBeVisible();
   });
 
-  test("course page Start free chapter link navigates to a lesson URL", async ({ page }) => {
+  test("course page Try free chapter link navigates to a lesson URL", async ({ page }) => {
     const { course, chapter, lesson } = await createTestCourseWithLesson();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
@@ -613,8 +613,9 @@ test.describe("Continue Lesson Link", () => {
 
     await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const continueLink = authenticatedPage.getByRole("link", { name: "Continue 50% complete" });
+    const continueLink = authenticatedPage.getByRole("link", { name: "Continue" });
     await expect(continueLink).toBeVisible();
+    await expect(authenticatedPage.getByRole("link", { name: /\d+% complete/iu })).toHaveCount(0);
 
     await expect(continueLink).toHaveAttribute(
       "href",

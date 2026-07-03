@@ -249,7 +249,7 @@ test.describe("Course Progress Indicators", () => {
     ).toBeVisible();
 
     const main = authenticatedPage.getByRole("main");
-    await expect(main.getByRole("link", { name: /start free chapter/iu }).first()).toBeVisible();
+    await expect(main.getByRole("link", { name: /try free chapter/iu }).first()).toBeVisible();
 
     await main
       .getByRole("tablist", { name: "Course questions" })
@@ -282,7 +282,7 @@ test.describe("Course Progress Indicators", () => {
 
     const main = authenticatedPage.getByRole("main");
 
-    await expect(main.getByRole("link", { name: /^Start free chapter$/u })).toBeVisible();
+    await expect(main.getByRole("link", { name: /^Try free chapter$/u })).toBeVisible();
     await expect(main.getByRole("link", { name: /\d+% complete/iu })).toHaveCount(0);
   });
 

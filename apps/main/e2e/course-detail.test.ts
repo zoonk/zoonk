@@ -330,7 +330,7 @@ test.describe("Course Detail Page", () => {
 
     await expect(page.getByRole("heading", { name: testData.courseNoImageTitle })).toBeVisible();
     await expect(page.getByText("Test course description").first()).toBeVisible();
-    await expect(page.getByRole("link", { name: /^Start free chapter$/u })).toBeVisible();
+    await expect(page.getByRole("link", { name: /^Try free chapter$/u })).toBeVisible();
   });
 
   test("shows landing copy before the learner starts", async ({ page }) => {
@@ -342,7 +342,7 @@ test.describe("Course Detail Page", () => {
 
     await expect(main.getByText("First chapter free").first()).toBeVisible();
 
-    await expect(main.getByRole("link", { name: /start free chapter/iu }).first()).toHaveAttribute(
+    await expect(main.getByRole("link", { name: /try free chapter/iu }).first()).toHaveAttribute(
       "href",
       `/b/${AI_ORG_SLUG}/c/${testData.courseWithImageSlug}/ch/${testData.courseWithImageChapterSlug}/l/${testData.courseWithImageLessonSlug}`,
     );
@@ -486,7 +486,7 @@ test.describe("Course Detail Page", () => {
 
     await expect(main.getByRole("heading", { name: courseTitle })).toBeVisible();
 
-    await expect(main.getByRole("link", { name: /start free chapter/iu }).first()).toHaveAttribute(
+    await expect(main.getByRole("link", { name: /try free chapter/iu }).first()).toHaveAttribute(
       "href",
       `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`,
     );
@@ -545,9 +545,7 @@ test.describe("Course Detail Page", () => {
 
       await expect(main.getByRole("heading", { name: courseTitle })).toBeVisible();
 
-      await expect(
-        main.getByRole("link", { name: /start free chapter/iu }).first(),
-      ).toHaveAttribute(
+      await expect(main.getByRole("link", { name: /try free chapter/iu }).first()).toHaveAttribute(
         "href",
         `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${visibleLesson.slug}`,
       );
@@ -582,7 +580,7 @@ test.describe("Course Detail Page", () => {
       main.getByRole("link", { name: new RegExp(testData.courseWithImageChapterTitle, "u") }),
     ).toBeVisible();
 
-    await expect(main.getByRole("link", { name: /start free chapter/iu })).toHaveCount(0);
+    await expect(main.getByRole("link", { name: /try free chapter/iu })).toHaveCount(0);
   });
 });
 
