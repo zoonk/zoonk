@@ -357,6 +357,10 @@ msgstr "No chapters found"
 msgid "vcaAXp"
 msgstr "{completed, number}/{total, number} done"
 
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-curriculum-pending-notice.tsx
+msgid "Pf4uqS"
+msgstr "The intro chapter is ready. We're still creating the full curriculum, so more chapters will appear here soon."
+
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-actions.tsx
 #: src/app/(catalog)/courses/page.tsx
 msgid "s-Ncqj"
@@ -538,8 +542,8 @@ msgid "kvjzxh"
 msgstr "What you'll learn"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-msgid "nNKgmq"
-msgstr "Curious beginners who want to see if the subject clicks."
+msgid "k9VAoq"
+msgstr "Curious beginners who want to see if the subject clicks"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
 msgid "6d4U8p"
@@ -1584,20 +1588,30 @@ msgid "rPgekg"
 msgstr "Back home"
 
 #: src/app/generate/course/[id]/generation-client.tsx
-msgid "u6ROZF"
-msgstr "Creating the {title} course"
+msgid "15FsdE"
+msgstr "Your course is ready"
 
 #: src/app/generate/course/[id]/generation-client.tsx
-msgid "GJKrUK"
-msgstr "This usually takes about 2 minutes"
+#: src/app/generate/l/[id]/generation-client.tsx
+msgid "4Wktrz"
+msgstr "Your lesson is ready"
 
 #: src/app/generate/course/[id]/generation-client.tsx
 msgid "0o41MR"
 msgstr "Taking you to your course..."
 
 #: src/app/generate/course/[id]/generation-client.tsx
-msgid "15FsdE"
-msgstr "Your course is ready"
+#: src/app/generate/l/[id]/generation-client.tsx
+msgid "T2TGxR"
+msgstr "Taking you to your lesson..."
+
+#: src/app/generate/course/[id]/generation-client.tsx
+msgid "u6ROZF"
+msgstr "Creating the {title} course"
+
+#: src/app/generate/course/[id]/generation-client.tsx
+msgid "GJKrUK"
+msgstr "This usually takes about 2 minutes"
 
 #: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "i3JgLB"
@@ -1620,6 +1634,10 @@ msgid "WZpB8D"
 msgstr "Writing chapters"
 
 #: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "vEOpTk"
+msgstr "Planning the introduction"
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "d2xrsv"
 msgstr "Preparing your course"
 
@@ -1628,8 +1646,16 @@ msgid "CFWOGF"
 msgstr "Saving your course"
 
 #: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "XPla-v"
+msgstr "Preparing the introduction"
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "HbhIvm"
 msgstr "Writing your course description"
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "Y4F0xn"
+msgstr "Writing the first lesson"
 
 #: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "e1myvm"
@@ -1692,6 +1718,18 @@ msgid "tXkuD8"
 msgstr "Reviewing the overall flow..."
 
 #: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "8-bhNP"
+msgstr "Finding the best first hook..."
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "xrFhkn"
+msgstr "Writing a friendly guide to the field..."
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "c_e4hk"
+msgstr "Keeping the first chapter easy to start..."
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "4LsE_n"
 msgstr "Creating the course shell..."
 
@@ -1700,12 +1738,32 @@ msgid "3hEaI4"
 msgstr "Preparing the workspace..."
 
 #: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "7Pw3r5"
+msgstr "Saving the intro chapter..."
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "cc6_Yn"
+msgstr "Preparing the first lessons..."
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "a7FJJd"
 msgstr "Summarizing what you'll learn..."
 
 #: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "9r_4zz"
 msgstr "Writing the overview..."
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "QqKzYM"
+msgstr "Writing the first lesson..."
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "XxRMuO"
+msgstr "Adding examples and visuals..."
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "kmuvIN"
+msgstr "Getting the first lesson ready..."
 
 #: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "chqN-J"
@@ -1726,14 +1784,6 @@ msgstr "Creating the {title} lesson"
 #: src/app/generate/l/[id]/generation-client.tsx
 msgid "3vY0Zu"
 msgstr "This usually takes 1-2 minutes"
-
-#: src/app/generate/l/[id]/generation-client.tsx
-msgid "T2TGxR"
-msgstr "Taking you to your lesson..."
-
-#: src/app/generate/l/[id]/generation-client.tsx
-msgid "4Wktrz"
-msgstr "Your lesson is ready"
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgid "cVoRCh"

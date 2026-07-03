@@ -2,8 +2,22 @@ import { describe, expect, it } from "vitest";
 import { calculateWeightedProgress, getPhaseOrder, getPhaseStatus } from "./generation-phases";
 
 describe("course generation phases", () => {
-  it("returns all 10 course phases in workflow order", () => {
+  it("returns non-language phases through first lesson readiness", () => {
     const phases = getPhaseOrder();
+
+    expect(phases).toStrictEqual([
+      "gettingReady",
+      "findingSimilarCourses",
+      "checkingCourseIdentity",
+      "preparingCourse",
+      "planningIntroduction",
+      "savingIntroduction",
+      "writingFirstLesson",
+    ]);
+  });
+
+  it("returns language phases without regular-course introduction phases", () => {
+    const phases = getPhaseOrder({ isLanguageCourse: true });
 
     expect(phases).toStrictEqual([
       "gettingReady",
@@ -49,6 +63,12 @@ describe("course generation phases", () => {
     expect(status).toBe("active");
   });
 
+  it("marks the first-lesson phase as active when streaming intro lesson content", () => {
+    const status = getPhaseStatus("writingFirstLesson", [], "generateExplanationContent");
+
+    expect(status).toBe("active");
+  });
+
   it("marks phase as completed when all its steps are completed", () => {
     const status = getPhaseStatus(
       "preparingCourse",
@@ -69,8 +89,34 @@ describe("course generation phases", () => {
     expect(progress).toBe(0);
   });
 
-  it("returns 100 progress when all steps are complete", () => {
-    const allSteps = [
+  it("returns 100 progress for non-language courses when the first intro lesson is ready", () => {
+    const completedSteps = [
+      "getCourseStartRequest",
+      "generateCourseIdentitySearchQueries",
+      "resolveCourseIdentity",
+      "initializeCourse",
+      "setCourseAsRunning",
+      "generateIntroductionChapter",
+      "addIntroductionChapter",
+      "getChapter",
+      "addLessons",
+      "getLesson",
+      "setLessonAsRunning",
+      "generateExplanationContent",
+      "generateImagePrompts",
+      "generateStepImages",
+      "generateLessonImage",
+      "saveExplanationLesson",
+      "setLessonAsCompleted",
+      "completeIntroductionLesson",
+    ] as const;
+
+    const progress = calculateWeightedProgress([...completedSteps], null);
+    expect(progress).toBe(100);
+  });
+
+  it("returns 100 progress for language courses when full course setup is complete", () => {
+    const completedSteps = [
       "getCourseStartRequest",
       "generateCourseIdentitySearchQueries",
       "resolveCourseIdentity",
@@ -88,7 +134,7 @@ describe("course generation phases", () => {
       "completeCourseSetup",
     ] as const;
 
-    const progress = calculateWeightedProgress([...allSteps], null);
+    const progress = calculateWeightedProgress([...completedSteps], null, undefined, true);
     expect(progress).toBe(100);
   });
 });

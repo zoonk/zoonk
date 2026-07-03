@@ -6,9 +6,15 @@ import { generateCategoriesStep } from "../steps/generate-categories-step";
 import { generateChaptersStep } from "../steps/generate-chapters-step";
 import { generateDescriptionStep } from "../steps/generate-description-step";
 import { generateImageStep } from "../steps/generate-image-step";
+import { generateIntroductionChapterStep } from "../steps/generate-introduction-chapter-step";
 import { generateLandingPageStep } from "../steps/generate-landing-page-step";
+import { getCourseIntroductionLessonsStep } from "../steps/get-introduction-lessons-step";
 import { type CourseContext } from "../steps/initialize-course-step";
 import { type ExistingCourseContent } from "./existing-course-content";
+import {
+  generateIntroductionLessonContent,
+  persistIntroductionChapter,
+} from "./introduction-course-setup";
 
 export type GeneratedContent = {
   description: string;
@@ -32,6 +38,17 @@ type LandingPageStepInput = ExistingCourseStepInput & {
   chapters: CourseChapter[];
   description: string;
 };
+
+type RegularCourseContext = CourseContext & { targetLanguage: null };
+
+/**
+ * Narrows the course context after the language-course guard has returned. The
+ * intro generation step intentionally only accepts regular courses because
+ * language courses use their normal first chapter as the starting point.
+ */
+function getRegularCourseContext(course: CourseContext): RegularCourseContext {
+  return { ...course, targetLanguage: null };
+}
 
 /**
  * Avoids regenerating the short course summary during retry/resume flows. The
@@ -176,15 +193,42 @@ async function categoriesOrSkip({ course, existing }: ExistingCourseStepInput): 
 }
 
 /**
- * Generates a new chapter outline only when the course does not already have
- * chapters. Existing chapter rows are handled separately so retrying setup does
- * not duplicate curriculum content.
+ * Generates and persists the fixed field-guide introduction for regular
+ * courses, then waits for the first intro lesson to be generated. A retry may
+ * find the chapter shell without lessons, and it still needs the plan to fill
+ * those missing rows before a lesson workflow can start.
+ */
+async function introductionOrSkip({ course, existing }: ExistingCourseStepInput): Promise<void> {
+  if (course.targetLanguage) {
+    await streamSkipStep("generateIntroductionChapter");
+    return;
+  }
+
+  if (existing.hasIntroductionLessons) {
+    await streamSkipStep("generateIntroductionChapter");
+    const lessons = await getCourseIntroductionLessonsStep(course.courseId);
+
+    await generateIntroductionLessonContent(lessons);
+    return;
+  }
+
+  const introduction = await generateIntroductionChapterStep(getRegularCourseContext(course));
+
+  const { lessons } = await persistIntroductionChapter({ course, introduction });
+
+  await generateIntroductionLessonContent(lessons);
+}
+
+/**
+ * Generates the main curriculum until a saved main chapter already exists.
+ * Regular-course intro chapters live at position zero and do not count as main
+ * curriculum; language-course chapters do because they have no separate intro.
  */
 async function chaptersOrSkip({
   course,
   existing,
 }: ExistingCourseStepInput): Promise<CourseChapter[]> {
-  if (existing.hasChapters) {
+  if (existing.hasMainCurriculum) {
     await streamSkipStep("generateChapters");
     return [];
   }
@@ -201,7 +245,8 @@ export async function generateMissingContent({
   description,
   existing,
 }: GenerateMissingContentInput): Promise<GeneratedContent> {
-  const [generatedDescription, generatedImageUrl, categories, chapters] = await Promise.all([
+  const [, generatedDescription, generatedImageUrl, categories, chapters] = await Promise.all([
+    introductionOrSkip({ course, existing }),
     descriptionOrSkip({ course, existing }),
     imageOrSkip({ course, description, existing }),
     categoriesOrSkip({ course, existing }),

@@ -2,6 +2,7 @@ import { type CourseChapter } from "@/data/chapters/list-course-chapters";
 import { ChevronDownIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { type CoursePathGroup, getCoursePathGroups } from "./_utils/course-path-groups";
+import { CourseCurriculumPendingNotice } from "./course-curriculum-pending-notice";
 import { CourseLandingPanelTitle } from "./course-landing-page-sections";
 
 /**
@@ -18,7 +19,13 @@ function getChapterRangeLabel({ group }: { group: CoursePathGroup }) {
  * description. Grouped native disclosure sections keep every title available
  * without letting a 70-chapter path swallow the whole landing page.
  */
-export async function CourseLandingCurriculum({ chapters }: { chapters: CourseChapter[] }) {
+export async function CourseLandingCurriculum({
+  chapters,
+  isCurriculumPending,
+}: {
+  chapters: CourseChapter[];
+  isCurriculumPending: boolean;
+}) {
   if (chapters.length === 0) {
     return null;
   }
@@ -41,6 +48,7 @@ export async function CourseLandingCurriculum({ chapters }: { chapters: CourseCh
             "Start with the basics, then move toward more advanced topics. Open a section to scan the chapters.",
           )}
         </p>
+        {isCurriculumPending && <CourseCurriculumPendingNotice />}
       </div>
 
       <div className="bg-muted/30 divide-border/60 divide-y rounded-lg px-5">

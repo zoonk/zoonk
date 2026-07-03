@@ -34,9 +34,11 @@ describe(getOrCreateCourse, () => {
     expect(result.course.courseId).toStrictEqual(expect.any(String));
 
     expect(result.existing).toStrictEqual({
+      chapterCount: 0,
       description: null,
       hasCategories: false,
-      hasChapters: false,
+      hasIntroductionLessons: false,
+      hasMainCurriculum: false,
       imageUrl: null,
       landingPage: null,
     });
@@ -96,7 +98,15 @@ describe(getOrCreateCourse, () => {
 
     const request = await generatableCourseStartRequestFixture({ canonicalTitle: course.title });
 
-    const existingCourse: ExistingCourse = { ...course, _count: { categories: 1, chapters: 3 } };
+    const existingCourse: ExistingCourse = {
+      ...course,
+      _count: { categories: 1, chapters: 3 },
+      chapters: [
+        { _count: { lessons: 1 }, position: 0 },
+        { _count: { lessons: 0 }, position: 1 },
+        { _count: { lessons: 0 }, position: 2 },
+      ],
+    };
 
     const workflowRunId = `run-${randomUUID()}`;
 
@@ -106,9 +116,11 @@ describe(getOrCreateCourse, () => {
     expect(result.course.courseId).toBe(course.id);
 
     expect(result.existing).toStrictEqual({
+      chapterCount: 3,
       description: "Existing description",
       hasCategories: true,
-      hasChapters: true,
+      hasIntroductionLessons: true,
+      hasMainCurriculum: true,
       imageUrl: "https://example.com/img.webp",
       landingPage: null,
     });

@@ -6,22 +6,27 @@ import { type CourseGetPayload } from "@zoonk/db";
 
 export const courseContentInclude = {
   _count: { select: { categories: true, chapters: true } },
+  chapters: { select: { _count: { select: { lessons: true } }, position: true } },
 } as const;
 
 export type CourseWithContentCounts = CourseGetPayload<{ include: typeof courseContentInclude }>;
 
 export type ExistingCourseContent = {
+  chapterCount: number;
   description: string | null;
   imageUrl: string | null;
   hasCategories: boolean;
-  hasChapters: boolean;
+  hasIntroductionLessons: boolean;
+  hasMainCurriculum: boolean;
   landingPage: CourseLandingPageContent | null;
 };
 
 export const EMPTY_EXISTING_CONTENT: ExistingCourseContent = {
+  chapterCount: 0,
   description: null,
   hasCategories: false,
-  hasChapters: false,
+  hasIntroductionLessons: false,
+  hasMainCurriculum: false,
   imageUrl: null,
   landingPage: null,
 };
@@ -42,10 +47,24 @@ function getExistingLandingPage(course: CourseWithContentCounts): CourseLandingP
  * skip.
  */
 export function getExistingCourseContent(course: CourseWithContentCounts): ExistingCourseContent {
+  const chapterCount = course._count.chapters;
+
+  const introductionChapter = course.targetLanguage
+    ? null
+    : (course.chapters.find((chapter) => chapter.position === 0) ?? null);
+
+  const hasIntroductionLessons = Boolean(introductionChapter?._count.lessons);
+
+  const hasMainCurriculum = course.targetLanguage
+    ? chapterCount > 0
+    : course.chapters.some((chapter) => chapter.position > 0);
+
   return {
+    chapterCount,
     description: course.description,
     hasCategories: course._count.categories > 0,
-    hasChapters: course._count.chapters > 0,
+    hasIntroductionLessons,
+    hasMainCurriculum,
     imageUrl: course.imageUrl,
     landingPage: getExistingLandingPage(course),
   };

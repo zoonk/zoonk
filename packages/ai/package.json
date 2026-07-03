@@ -27,6 +27,7 @@
     "./tasks/courses/description": "./src/tasks/courses/course-description.ts",
     "./tasks/courses/identity": "./src/tasks/courses/course-identity.ts",
     "./tasks/courses/identity-search": "./src/tasks/courses/course-identity-search.ts",
+    "./tasks/courses/introduction": "./src/tasks/courses/course-introduction.ts",
     "./tasks/courses/landing-page": "./src/tasks/courses/course-landing-page.ts",
     "./tasks/courses/learn-classification": "./src/tasks/courses/course-learn-classification.ts",
     "./tasks/courses/request-routing": "./src/tasks/courses/course-request-routing.ts",

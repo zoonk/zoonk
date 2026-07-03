@@ -357,6 +357,10 @@ msgstr "Keine Kapitel gefunden"
 msgid "vcaAXp"
 msgstr "{completed, number}/{total, number} erledigt"
 
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-curriculum-pending-notice.tsx
+msgid "Pf4uqS"
+msgstr "Das Einführungskapitel ist fertig. Wir erstellen noch den kompletten Lehrplan, daher werden hier bald mehr Kapitel erscheinen."
+
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-actions.tsx
 #: src/app/(catalog)/courses/page.tsx
 msgid "s-Ncqj"
@@ -538,8 +542,8 @@ msgid "kvjzxh"
 msgstr "Was du lernen wirst"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-msgid "nNKgmq"
-msgstr "Neugierige Anfänger, die sehen wollen, ob das Thema für sie klickt."
+msgid "k9VAoq"
+msgstr "Neugierige Anfänger, die sehen wollen, ob das Thema bei ihnen ankommt"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
 msgid "6d4U8p"
@@ -1584,20 +1588,30 @@ msgid "rPgekg"
 msgstr "Zurück zur Startseite"
 
 #: src/app/generate/course/[id]/generation-client.tsx
+msgid "15FsdE"
+msgstr "Dein Kurs ist bereit"
+
+#: src/app/generate/course/[id]/generation-client.tsx
+#: src/app/generate/l/[id]/generation-client.tsx
+msgid "4Wktrz"
+msgstr "Deine Lektion ist fertig"
+
+#: src/app/generate/course/[id]/generation-client.tsx
+msgid "0o41MR"
+msgstr "Wir leiten dich zu deinem Kurs weiter…"
+
+#: src/app/generate/course/[id]/generation-client.tsx
+#: src/app/generate/l/[id]/generation-client.tsx
+msgid "T2TGxR"
+msgstr "Deine Lektion öffnen..."
+
+#: src/app/generate/course/[id]/generation-client.tsx
 msgid "u6ROZF"
 msgstr "Kurs {title} erstellen"
 
 #: src/app/generate/course/[id]/generation-client.tsx
 msgid "GJKrUK"
 msgstr "Das dauert normalerweise etwa 2 Minuten"
-
-#: src/app/generate/course/[id]/generation-client.tsx
-msgid "0o41MR"
-msgstr "Deinen Kurs öffnen..."
-
-#: src/app/generate/course/[id]/generation-client.tsx
-msgid "15FsdE"
-msgstr "Dein Kurs ist fertig"
 
 #: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "i3JgLB"
@@ -1620,6 +1634,10 @@ msgid "WZpB8D"
 msgstr "Kapitel schreiben..."
 
 #: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "vEOpTk"
+msgstr "Die Einführung wird geplant"
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "d2xrsv"
 msgstr "Deinen Kurs vorbereiten..."
 
@@ -1628,8 +1646,16 @@ msgid "CFWOGF"
 msgstr "Deinen Kurs speichern..."
 
 #: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "XPla-v"
+msgstr "Die Einführung wird vorbereitet"
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "HbhIvm"
 msgstr "Kursbeschreibung schreiben..."
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "Y4F0xn"
+msgstr "Die erste Lektion wird geschrieben"
 
 #: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "e1myvm"
@@ -1692,6 +1718,18 @@ msgid "tXkuD8"
 msgstr "Gesamten Ablauf prüfen..."
 
 #: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "8-bhNP"
+msgstr "Der beste erste Einstieg wird gesucht…"
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "xrFhkn"
+msgstr "Ein freundlicher Leitfaden zum Thema wird geschrieben…"
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "c_e4hk"
+msgstr "Das erste Kapitel einfach zugänglich halten…"
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "4LsE_n"
 msgstr "Kursgerüst erstellen..."
 
@@ -1700,12 +1738,32 @@ msgid "3hEaI4"
 msgstr "Arbeitsbereich vorbereiten..."
 
 #: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "7Pw3r5"
+msgstr "Das Einführungskapitel wird gespeichert…"
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "cc6_Yn"
+msgstr "Die ersten Lektionen werden vorbereitet…"
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "a7FJJd"
 msgstr "Zusammenfassen, was du lernen wirst..."
 
 #: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "9r_4zz"
 msgstr "Überblick schreiben..."
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "QqKzYM"
+msgstr "Die erste Lektion wird geschrieben…"
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "XxRMuO"
+msgstr "Beispiele und Bilder werden hinzugefügt…"
+
+#: src/app/generate/course/[id]/use-generation-phases.ts
+msgid "kmuvIN"
+msgstr "Die erste Lektion wird vorbereitet…"
 
 #: src/app/generate/course/[id]/use-generation-phases.ts
 msgid "chqN-J"
@@ -1726,14 +1784,6 @@ msgstr "Lektion {title} erstellen"
 #: src/app/generate/l/[id]/generation-client.tsx
 msgid "3vY0Zu"
 msgstr "Das dauert normalerweise 1–2 Minuten"
-
-#: src/app/generate/l/[id]/generation-client.tsx
-msgid "T2TGxR"
-msgstr "Deine Lektion öffnen..."
-
-#: src/app/generate/l/[id]/generation-client.tsx
-msgid "4Wktrz"
-msgstr "Deine Lektion ist fertig"
 
 #: src/app/generate/l/[id]/phase-thinking-generators/content.ts
 msgid "cVoRCh"

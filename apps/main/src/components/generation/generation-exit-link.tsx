@@ -16,7 +16,12 @@ export function GenerationExitLink<Href extends string>({
   shortcut?: "Esc";
 }) {
   return (
-    <GenerationShortcutLink href={href} prefetch shortcut={shortcut}>
+    <GenerationShortcutLink
+      className="w-fit max-w-full self-center"
+      href={href}
+      prefetch
+      shortcut={shortcut}
+    >
       {children}
     </GenerationShortcutLink>
   );

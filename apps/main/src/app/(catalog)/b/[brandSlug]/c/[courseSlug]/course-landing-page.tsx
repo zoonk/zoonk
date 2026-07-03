@@ -19,6 +19,7 @@ export function CourseLandingPage({
   course,
   courseSlug,
   excludedLessonKinds,
+  isCurriculumPending,
   landingPage,
 }: {
   brandSlug: string;
@@ -26,6 +27,7 @@ export function CourseLandingPage({
   course: CourseWithDetails;
   courseSlug: string;
   excludedLessonKinds: LessonKind[];
+  isCurriculumPending: boolean;
   landingPage: CourseLandingPageContent | null;
 }) {
   const firstChapter = chapters[0];
@@ -55,6 +57,7 @@ export function CourseLandingPage({
       <CourseLandingDecisionTabs
         audience={landingPage?.audience ?? []}
         chapters={chapters}
+        isCurriculumPending={isCurriculumPending}
         isLanguageCourse={isLanguageCourse}
         opportunities={landingPage?.opportunities ?? []}
         outcomes={landingPage?.outcomes ?? []}

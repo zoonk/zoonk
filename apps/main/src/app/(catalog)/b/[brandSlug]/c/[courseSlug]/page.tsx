@@ -6,8 +6,8 @@ import {
   ContinueLessonLink,
   ContinueLessonLinkSkeleton,
 } from "@/components/catalog/continue-lesson-link";
-import { listCourseChapters } from "@/data/chapters/list-course-chapters";
-import { getCourse } from "@/data/courses/get-course";
+import { type CourseChapter, listCourseChapters } from "@/data/chapters/list-course-chapters";
+import { type CourseWithDetails, getCourse } from "@/data/courses/get-course";
 import { hasCourseProgress } from "@/data/courses/has-course-progress";
 import { getUserHiddenLessonKinds } from "@/data/users/lesson-filter-settings";
 import { getDefaultChapterImage } from "@/lib/catalog/default-images";
@@ -22,6 +22,29 @@ import { Suspense } from "react";
 import { ChapterList } from "./chapter-list";
 import { CourseHeader } from "./course-header";
 import { CourseLandingPage } from "./course-landing-page";
+
+/**
+ * The temporary intro-only state should be shown only while a regular AI course
+ * is still being generated. Completed one-chapter courses and language courses
+ * are legitimate short curricula, so chapter count alone is not enough.
+ */
+function isCurriculumStillGenerating({
+  brandSlug,
+  chapters,
+  course,
+}: {
+  brandSlug: string;
+  chapters: CourseChapter[];
+  course: CourseWithDetails;
+}): boolean {
+  if (brandSlug !== AI_ORG_SLUG || course.targetLanguage || course.generationStatus !== "running") {
+    return false;
+  }
+
+  const onlyChapter = chapters[0];
+
+  return chapters.length === 1 && onlyChapter?.position === 0;
+}
 
 export async function generateMetadata({
   params,
@@ -67,6 +90,7 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
   }
 
   const landingPage = parseCourseLandingPageContent(course.landingPage);
+  const isCurriculumPending = isCurriculumStillGenerating({ brandSlug, chapters, course });
 
   if (!courseHasProgress) {
     return (
@@ -76,6 +100,7 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
         course={course}
         courseSlug={courseSlug}
         excludedLessonKinds={hiddenLessonKinds}
+        isCurriculumPending={isCurriculumPending}
         landingPage={landingPage}
       />
     );
@@ -127,6 +152,7 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
             courseSlug={courseSlug}
             defaultChapterImage={defaultChapterImage}
             hiddenLessonKinds={hiddenLessonKinds}
+            isCurriculumPending={isCurriculumPending}
           />
         </Suspense>
       </Grid>

@@ -1,0 +1,106 @@
+{
+  "modelId": "openai/gpt-5.5",
+  "results": [
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Could slightly improve by replacing the meta sentence “This chapter gives...” with a direct field-focused description, and by adding a bit more about responsible use or operations roles, but the result already satisfies the expectations well.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Should make artificial intelligence feel tangible through examples such as predictions, generation, automation, assistants, search, robotics, creative tools, or decision support\n      - Should not become a technical curriculum on neural networks, transformers, backpropagation, RAG, evaluation, or deployment\n      - Should mention realistic paths such as product features, research, data work, operations, creative tooling, or responsible use without implying guaranteed careers\n\n      \n  - Must be written in the specified language\n  - Must include exactly one chapter object with title and description\n  - Must include 3-5 lessons\n  - Every lesson must be an explanation lesson plan, not a practice, quiz, review, capstone, project, or summary\n  - The chapter and lessons must feel like a quick guide to the field, not the first normal technical chapter\n  - Must make the field feel concrete, useful, and interesting for a true beginner\n  - Must include realistic opportunities, careers, roles, projects, communities, or everyday uses connected to the field\n  - Must stay easy enough for a first encounter and avoid deep prerequisites\n  - Must be specific to the course topic, not generic learning motivation\n  - Must not include lessons about the course itself, the curriculum, the next chapter, the learning path, or how the course goes deeper\n  - Every lesson title must name the subject, a subject-specific concept, a concrete field use, or a field-specific role clearly enough that the course topic is identifiable from the title alone\n  - Generic meta titles such as \"How this course goes deeper\", \"What this course will help you do\", \"Your path forward\", or translated equivalents are a major issue even when the description mentions the course topic\n  - For non-English cases, must not mix in English field, learner, or opportunity labels; translate them naturally\n  - Must not promise salaries, credentials, jobs, fluency, mastery, or guaranteed outcomes\n\n    ",
+        "id": "en-artificial-intelligence-field-guide-1",
+        "userInput": { "courseTitle": "Artificial Intelligence", "language": "en" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Could make microbes and genetics slightly more visible in the lesson set, for example by naming DNA or microrganismos in a title, but the current result already satisfies the expectations well.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Should introduce biology as the study of living systems, from cells and DNA to ecosystems, health, food, environment, or biotechnology\n      - Should include interesting hooks such as cells as tiny factories, evolution, microbes, genetics, ecosystems, medicine, agriculture, or conservation\n      - Should not become a dense foundation chapter about cell organelles, biochemistry, taxonomy, or lab protocols\n\n      \n  - Must be written in the specified language\n  - Must include exactly one chapter object with title and description\n  - Must include 3-5 lessons\n  - Every lesson must be an explanation lesson plan, not a practice, quiz, review, capstone, project, or summary\n  - The chapter and lessons must feel like a quick guide to the field, not the first normal technical chapter\n  - Must make the field feel concrete, useful, and interesting for a true beginner\n  - Must include realistic opportunities, careers, roles, projects, communities, or everyday uses connected to the field\n  - Must stay easy enough for a first encounter and avoid deep prerequisites\n  - Must be specific to the course topic, not generic learning motivation\n  - Must not include lessons about the course itself, the curriculum, the next chapter, the learning path, or how the course goes deeper\n  - Every lesson title must name the subject, a subject-specific concept, a concrete field use, or a field-specific role clearly enough that the course topic is identifiable from the title alone\n  - Generic meta titles such as \"How this course goes deeper\", \"What this course will help you do\", \"Your path forward\", or translated equivalents are a major issue even when the description mentions the course topic\n  - For non-English cases, must not mix in English field, learner, or opportunity labels; translate them naturally\n  - Must not promise salaries, credentials, jobs, fluency, mastery, or guaranteed outcomes\n\n    ",
+        "id": "pt-biologia-guia-do-campo-1",
+        "userInput": { "courseTitle": "Biologia", "language": "pt" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The result does not explicitly acknowledge that quantum mechanics can become mathematically demanding later, which is part of the expectations. A few descriptions also simplify measurement and path ideas in a way that is acceptable for beginners but could be phrased more carefully to avoid sounding overly literal.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "Add a brief, beginner-friendly note that later study may involve substantial mathematics while this chapter focuses on intuition and usefulness. It could also broaden realistic pathways slightly by naming roles such as instrumentation, research support, materials engineering, or science communication, and include additional concrete hooks like spectra or quantum information.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Should make quantum mechanics feel approachable through concrete hooks such as spectra, chips, sensors, lasers, magnetic resonance, clocks, quantum information, or the limits of everyday intuition\n      - Should avoid turning the intro into a math-heavy first chapter about wavefunctions, operators, Hilbert spaces, Schrodinger equations, spin algebra, or measurement postulates\n      - Should be honest that the field can become mathematically demanding later, while keeping this chapter focused on curiosity, usefulness, and mental models\n      - Should mention realistic paths such as physics, chemistry, materials, computing, engineering, instrumentation, research support, or science communication without implying guaranteed research careers\n\n      \n  - Must be written in the specified language\n  - Must include exactly one chapter object with title and description\n  - Must include 3-5 lessons\n  - Every lesson must be an explanation lesson plan, not a practice, quiz, review, capstone, project, or summary\n  - The chapter and lessons must feel like a quick guide to the field, not the first normal technical chapter\n  - Must make the field feel concrete, useful, and interesting for a true beginner\n  - Must include realistic opportunities, careers, roles, projects, communities, or everyday uses connected to the field\n  - Must stay easy enough for a first encounter and avoid deep prerequisites\n  - Must be specific to the course topic, not generic learning motivation\n  - Must not include lessons about the course itself, the curriculum, the next chapter, the learning path, or how the course goes deeper\n  - Every lesson title must name the subject, a subject-specific concept, a concrete field use, or a field-specific role clearly enough that the course topic is identifiable from the title alone\n  - Generic meta titles such as \"How this course goes deeper\", \"What this course will help you do\", \"Your path forward\", or translated equivalents are a major issue even when the description mentions the course topic\n  - For non-English cases, must not mix in English field, learner, or opportunity labels; translate them naturally\n  - Must not promise salaries, credentials, jobs, fluency, mastery, or guaranteed outcomes\n\n    ",
+        "id": "en-quantum-mechanics-approachable-abstraction-1",
+        "userInput": { "courseTitle": "Quantum Mechanics", "language": "en" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Could be improved by mentioning a few more beginner-friendly procedural touchpoints such as filing, service deadlines, hearings, and evidence boundaries, and by including court staff or ordinary people trying to understand legal systems among the roles. The current result still satisfies the core expectations well.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Should introduce civil procedure as the rules and sequence that move disputes through courts, including filing, notice, deadlines, motions, discovery, hearings, evidence boundaries, settlement pressure, or appeals\n      - Should make the field useful to understand without giving legal advice, case strategy, jurisdiction-specific instructions, or promises about bar admission, law school, licensing, or legal employment\n      - Should mention realistic roles and uses such as lawyers, paralegals, court staff, compliance teams, journalists, policy workers, advocates, business owners, or people trying to understand legal systems\n      - Should avoid becoming a dense technical chapter on personal jurisdiction, claim preclusion, pleading standards, discovery sanctions, or appellate preservation\n\n      \n  - Must be written in the specified language\n  - Must include exactly one chapter object with title and description\n  - Must include 3-5 lessons\n  - Every lesson must be an explanation lesson plan, not a practice, quiz, review, capstone, project, or summary\n  - The chapter and lessons must feel like a quick guide to the field, not the first normal technical chapter\n  - Must make the field feel concrete, useful, and interesting for a true beginner\n  - Must include realistic opportunities, careers, roles, projects, communities, or everyday uses connected to the field\n  - Must stay easy enough for a first encounter and avoid deep prerequisites\n  - Must be specific to the course topic, not generic learning motivation\n  - Must not include lessons about the course itself, the curriculum, the next chapter, the learning path, or how the course goes deeper\n  - Every lesson title must name the subject, a subject-specific concept, a concrete field use, or a field-specific role clearly enough that the course topic is identifiable from the title alone\n  - Generic meta titles such as \"How this course goes deeper\", \"What this course will help you do\", \"Your path forward\", or translated equivalents are a major issue even when the description mentions the course topic\n  - For non-English cases, must not mix in English field, learner, or opportunity labels; translate them naturally\n  - Must not promise salaries, credentials, jobs, fluency, mastery, or guaranteed outcomes\n\n    ",
+        "id": "en-civil-procedure-regulated-field-1",
+        "userInput": { "courseTitle": "Civil Procedure", "language": "en" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Could be slightly improved by adding one more everyday example about housing rules or zoning shaping neighborhoods, since those are important urbanism hooks, but the current result already meets the expectations well.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Latin American Spanish\n      - Should introduce urbanismo as a field about how cities shape daily life through housing, transport, public space, zoning, services, climate, safety, inequality, culture, or local participation\n      - Should include concrete everyday hooks such as why a street feels walkable, how transit changes opportunity, why parks matter, how housing rules affect neighborhoods, or how climate risks change planning\n      - Should not collapse the field into architecture alone, generic activism, or abstract public policy slogans\n      - Should mention realistic paths such as planning teams, mobility projects, housing policy, community organizations, local government, maps, data, design, research, or neighborhood advocacy without promising authority or jobs\n\n      \n  - Must be written in the specified language\n  - Must include exactly one chapter object with title and description\n  - Must include 3-5 lessons\n  - Every lesson must be an explanation lesson plan, not a practice, quiz, review, capstone, project, or summary\n  - The chapter and lessons must feel like a quick guide to the field, not the first normal technical chapter\n  - Must make the field feel concrete, useful, and interesting for a true beginner\n  - Must include realistic opportunities, careers, roles, projects, communities, or everyday uses connected to the field\n  - Must stay easy enough for a first encounter and avoid deep prerequisites\n  - Must be specific to the course topic, not generic learning motivation\n  - Must not include lessons about the course itself, the curriculum, the next chapter, the learning path, or how the course goes deeper\n  - Every lesson title must name the subject, a subject-specific concept, a concrete field use, or a field-specific role clearly enough that the course topic is identifiable from the title alone\n  - Generic meta titles such as \"How this course goes deeper\", \"What this course will help you do\", \"Your path forward\", or translated equivalents are a major issue even when the description mentions the course topic\n  - For non-English cases, must not mix in English field, learner, or opportunity labels; translate them naturally\n  - Must not promise salaries, credentials, jobs, fluency, mastery, or guaranteed outcomes\n\n    ",
+        "id": "es-urbanismo-ciudades-vida-cotidiana-1",
+        "userInput": { "courseTitle": "Urbanismo", "language": "es" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Could be improved by mentioning archives or how museums decide what becomes visible more explicitly, since those are especially useful beginner hooks for art history. Everyday visual culture could also be made slightly more concrete beyond posters, streets, screens, and digital cultures.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in French\n      - Should introduce art history as a way to read images, objects, patrons, materials, symbols, markets, museums, archives, politics, religion, technology, or everyday visual culture\n      - Should include beginner-friendly hooks such as noticing what an image asks you to look at, how materials change meaning, why context changes interpretation, or how museums decide what becomes visible\n      - Should not become a long chronological survey of movements, a list of famous artists, or generic advice about appreciating beauty\n      - Should mention realistic paths such as museums, conservation, archives, education, publishing, heritage, curation, research, criticism, design, or cultural work without implying guaranteed careers\n\n      \n  - Must be written in the specified language\n  - Must include exactly one chapter object with title and description\n  - Must include 3-5 lessons\n  - Every lesson must be an explanation lesson plan, not a practice, quiz, review, capstone, project, or summary\n  - The chapter and lessons must feel like a quick guide to the field, not the first normal technical chapter\n  - Must make the field feel concrete, useful, and interesting for a true beginner\n  - Must include realistic opportunities, careers, roles, projects, communities, or everyday uses connected to the field\n  - Must stay easy enough for a first encounter and avoid deep prerequisites\n  - Must be specific to the course topic, not generic learning motivation\n  - Must not include lessons about the course itself, the curriculum, the next chapter, the learning path, or how the course goes deeper\n  - Every lesson title must name the subject, a subject-specific concept, a concrete field use, or a field-specific role clearly enough that the course topic is identifiable from the title alone\n  - Generic meta titles such as \"How this course goes deeper\", \"What this course will help you do\", \"Your path forward\", or translated equivalents are a major issue even when the description mentions the course topic\n  - For non-English cases, must not mix in English field, learner, or opportunity labels; translate them naturally\n  - Must not promise salaries, credentials, jobs, fluency, mastery, or guaranteed outcomes\n\n    ",
+        "id": "fr-histoire-de-lart-humanities-field-1",
+        "userInput": { "courseTitle": "Histoire de l'art", "language": "fr" }
+      }
+    }
+  ],
+  "taskId": "course-introduction"
+}

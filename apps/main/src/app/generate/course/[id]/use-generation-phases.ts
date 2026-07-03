@@ -22,6 +22,7 @@ export function useGenerationPhases(
   completedSteps: CourseWorkflowStepName[],
   currentStep: CourseWorkflowStepName | null,
   startedSteps?: CourseWorkflowStepName[],
+  isLanguageCourse = false,
 ) {
   const t = useExtracted();
 
@@ -32,13 +33,16 @@ export function useGenerationPhases(
     findingSimilarCourses: t("Finding similar courses"),
     gettingReady: t("Getting started"),
     outliningChapters: t("Writing chapters"),
+    planningIntroduction: t("Planning the introduction"),
     preparingCourse: t("Preparing your course"),
     savingCourseInfo: t("Saving your course"),
+    savingIntroduction: t("Preparing the introduction"),
     writingDescription: t("Writing your course description"),
+    writingFirstLesson: t("Writing the first lesson"),
     writingLandingPage: t("Writing your course page"),
   };
 
-  const phaseOrder = getPhaseOrder();
+  const phaseOrder = getPhaseOrder({ isLanguageCourse });
 
   const rawPhases: {
     name: PhaseName;
@@ -54,8 +58,19 @@ export function useGenerationPhases(
 
   const phases = enforcePhaseProgression(rawPhases);
 
-  const progress = calculateWeightedProgress(completedSteps, currentStep, startedSteps);
-  const targetProgress = calculateTargetProgress(completedSteps, currentStep, startedSteps);
+  const progress = calculateWeightedProgress(
+    completedSteps,
+    currentStep,
+    startedSteps,
+    isLanguageCourse,
+  );
+
+  const targetProgress = calculateTargetProgress(
+    completedSteps,
+    currentStep,
+    startedSteps,
+    isLanguageCourse,
+  );
 
   const activePhaseNames = phases
     .filter((phase) => phase.status === "active")
@@ -99,12 +114,32 @@ export function useGenerationPhases(
       itemTemplate: (num) => t("Writing chapter {number}...", { number: String(num) }),
       reviewMessage: t("Reviewing the overall flow..."),
     }),
+    planningIntroduction: (index) =>
+      cycleMessage(
+        [
+          t("Finding the best first hook..."),
+          t("Writing a friendly guide to the field..."),
+          t("Keeping the first chapter easy to start..."),
+        ],
+        index,
+      ),
     preparingCourse: (index) =>
       cycleMessage([t("Creating the course shell..."), t("Preparing the workspace...")], index),
     savingCourseInfo: (index) =>
       cycleMessage([t("Saving your progress..."), t("Finishing up...")], index),
+    savingIntroduction: (index) =>
+      cycleMessage([t("Saving the intro chapter..."), t("Preparing the first lessons...")], index),
     writingDescription: (index) =>
       cycleMessage([t("Summarizing what you'll learn..."), t("Writing the overview...")], index),
+    writingFirstLesson: (index) =>
+      cycleMessage(
+        [
+          t("Writing the first lesson..."),
+          t("Adding examples and visuals..."),
+          t("Getting the first lesson ready..."),
+        ],
+        index,
+      ),
     writingLandingPage: (index) =>
       cycleMessage(
         [

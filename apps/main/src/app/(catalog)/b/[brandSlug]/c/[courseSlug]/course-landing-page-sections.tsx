@@ -48,7 +48,7 @@ export async function CourseLandingOutcomes({ items }: { items: CourseLandingLis
  */
 export async function CourseLandingAudience({ items }: { items: string[] }) {
   const t = await getExtracted();
-  const audienceItems = [t("Curious beginners who want to see if the subject clicks."), ...items];
+  const audienceItems = [t("Curious beginners who want to see if the subject clicks"), ...items];
 
   return (
     <CourseLandingPanelSection>

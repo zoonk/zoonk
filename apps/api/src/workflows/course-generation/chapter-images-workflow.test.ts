@@ -18,25 +18,35 @@ vi.mock("@zoonk/core/content/thumbnail", () => ({
 
 describe(chapterImagesWorkflow, () => {
   let organizationId: string;
-  let course: Awaited<ReturnType<typeof courseFixture>>;
 
   beforeAll(async () => {
     const org = await aiOrganizationFixture();
     organizationId = org.id;
-    course = await courseFixture({ organizationId });
   });
 
-  it("runs chapter image steps independently so one failure does not block the rest", async () => {
-    const [successfulChapter, failedChapter] = await Promise.all([
+  it("loads missing chapter images from the course and runs them independently", async () => {
+    const course = await courseFixture({ organizationId });
+    const existingImageUrl = "https://example.com/chapter/existing.webp";
+
+    const [successfulChapter, failedChapter, existingImageChapter] = await Promise.all([
       chapterFixture({
         courseId: course.id,
         organizationId,
+        position: 0,
         title: `Successful Image Chapter ${randomUUID()}`,
       }),
       chapterFixture({
         courseId: course.id,
         organizationId,
+        position: 1,
         title: `Failed Image Chapter ${randomUUID()}`,
+      }),
+      chapterFixture({
+        courseId: course.id,
+        imageUrl: existingImageUrl,
+        organizationId,
+        position: 2,
+        title: `Existing Image Chapter ${randomUUID()}`,
       }),
     ]);
 
@@ -51,19 +61,24 @@ describe(chapterImagesWorkflow, () => {
       });
     });
 
-    await expect(
-      chapterImagesWorkflow([successfulChapter, failedChapter]),
-    ).resolves.toBeUndefined();
+    await expect(chapterImagesWorkflow(course.id)).resolves.toBeUndefined();
 
-    const [updatedSuccessfulChapter, updatedFailedChapter] = await Promise.all([
-      prisma.chapter.findUnique({ where: { id: successfulChapter.id } }),
-      prisma.chapter.findUnique({ where: { id: failedChapter.id } }),
-    ]);
+    const [updatedSuccessfulChapter, updatedFailedChapter, updatedExistingImageChapter] =
+      await Promise.all([
+        prisma.chapter.findUnique({ where: { id: successfulChapter.id } }),
+        prisma.chapter.findUnique({ where: { id: failedChapter.id } }),
+        prisma.chapter.findUnique({ where: { id: existingImageChapter.id } }),
+      ]);
 
     expect(updatedSuccessfulChapter?.imageUrl).toBe(
       `https://example.com/chapter/${encodeURIComponent(successfulChapter.title)}.webp`,
     );
 
     expect(updatedFailedChapter?.imageUrl).toBeNull();
+    expect(updatedExistingImageChapter?.imageUrl).toBe(existingImageUrl);
+
+    expect(generateContentThumbnailImage).not.toHaveBeenCalledWith(
+      expect.objectContaining({ title: existingImageChapter.title }),
+    );
   });
 });

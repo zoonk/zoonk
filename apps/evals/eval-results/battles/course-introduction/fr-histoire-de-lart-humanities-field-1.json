@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - MUST be in French\n      - Should introduce art history as a way to read images, objects, patrons, materials, symbols, markets, museums, archives, politics, religion, technology, or everyday visual culture\n      - Should include beginner-friendly hooks such as noticing what an image asks you to look at, how materials change meaning, why context changes interpretation, or how museums decide what becomes visible\n      - Should not become a long chronological survey of movements, a list of famous artists, or generic advice about appreciating beauty\n      - Should mention realistic paths such as museums, conservation, archives, education, publishing, heritage, curation, research, criticism, design, or cultural work without implying guaranteed careers\n\n      \n  - Must be written in the specified language\n  - Must include exactly one chapter object with title and description\n  - Must include 3-5 lessons\n  - Every lesson must be an explanation lesson plan, not a practice, quiz, review, capstone, project, or summary\n  - The chapter and lessons must feel like a quick guide to the field, not the first normal technical chapter\n  - Must make the field feel concrete, useful, and interesting for a true beginner\n  - Must include realistic opportunities, careers, roles, projects, communities, or everyday uses connected to the field\n  - Must stay easy enough for a first encounter and avoid deep prerequisites\n  - Must be specific to the course topic, not generic learning motivation\n  - For non-English cases, must not mix in English field, learner, or opportunity labels; translate them naturally\n  - Must not promise salaries, credentials, jobs, fluency, mastery, or guaranteed outcomes\n\n    ",
+  "judgedAt": "2026-07-02T12:06:03.983Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Excellent French output with vivid, concrete hooks (X-rays, pigments, hidden layers) and a strong careers lesson covering diverse realistic paths without promising outcomes. All lessons are explanatory and beginner-friendly, staying tightly on art history.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Well-structured intro chapter in clean French, covering observation, works as traces, style/context, everyday life, and realistic paths. Slightly more abstract than B but hits all expectations cleanly.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Solid beginner-friendly overview with a good careers lesson listing realistic roles. Descriptions are a bit shorter and more generic than B/F but stay on-topic and meet expectations.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Strong beginner framing with concrete hooks and a realistic careers lesson. Slightly repetitive and abstract in places, but overall well-aligned with expectations.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Good introductory chapter with realistic careers mentioned and beginner-friendly framing. The 'change tout' lesson is a bit vague, but overall meets expectations well.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good hooks and a concrete careers lesson, but missing the explicit context/patron/archive angle somewhat. Solid though slightly less rich than top outputs.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Engaging hooks (materials, technology, propaganda, critical eye) but lacks any lesson dedicated to realistic careers, opportunities, or paths — a required element. This is a notable gap.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Missing an explicit careers/opportunities lesson; only briefly name-drops muséographie inside a design lesson. Also more abstract and less beginner-concrete, weakening fit with expectations.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Provides exceptionally concrete, beginner-friendly hooks (e.g., hidden paint layers, the back of the Mona Lisa, x-rays) and explicitly details the required realistic career paths. All lessons are valid explanation lesson plans that act as a quick, practical guide to the field.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Strongly introduces the field by showing how art acts as historical traces and influences everyday culture. It successfully integrates realistic career paths into a valid explanation lesson without turning it into a pure syllabus overview.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Highly engaging and meets all constraints well. Successfully integrates realistic careers and includes excellent beginner hooks about the evolving concept of beauty and the modern recycling of past art.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Meets expectations with good hooks about technological constraints and everyday design. It mentions realistic fields like conservation and museography, though slightly less concretely as career paths compared to the top models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Provides engaging hooks and covers the subject well, focusing heavily on everyday visual culture. However, it entirely misses the 'should' requirement to mention realistic professional paths or roles like museums, conservation, or archives.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Offers strong content and addresses careers well. However, the final lesson ('Ce que la suite du cours va apporter') is a meta-course outline, which violates the strict negative constraint that every lesson must be an explanation lesson plan, not a summary.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Good introduction to the field and its related professions, but it dedicates the final lesson to outlining the rest of the course. This violates the instruction forbidding summary or meta-lessons.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Contains great hooks and career references, but similarly includes a full lesson dedicated to summarizing the upcoming course, violating the rule that all lessons must be explanation lesson plans of the subject.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Répond très bien aux attentes : en français, structuré correctement, clair pour débutants, et centré sur la lecture des images, objets, pouvoirs, croyances, techniques et usages quotidiens. Il inclut aussi des débouchés réalistes comme musées, enseignement, conservation, marché de l’art, médiation, édition, recherche, design et patrimoine sans promettre de résultats.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Très concret et engageant, avec de bons crochets débutants sur le contexte, les commanditaires, les matériaux, les indices visibles et invisibles, et l’art dans le quotidien. Il inclut des métiers et projets réalistes, mais quelques formulations sont un peu dramatisées et certains exemples célèbres dominent légèrement.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Très bon aperçu du champ, avec images, objets, espaces, matériaux, contexte, quotidien visuel et métiers clairement nommés. Les descriptions sont parfois un peu brèves, mais elles restent pertinentes, accessibles et bien alignées avec une introduction rapide à l’histoire de l’art.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Solide et bien adapté : il présente l’histoire de l’art comme lecture d’images, d’objets, de pouvoir, de croyances, de vie quotidienne et de milieux professionnels. Le dernier cours ressemble davantage à une annonce de la suite qu’à une vraie leçon d’explication, mais l’ensemble reste très utile pour débutants.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Bonne introduction en français, avec une structure correcte, des liens au quotidien et des voies concrètes comme restauration, exposition, guide culturel et création de contenu. Il est toutefois un peu plus vague sur les matériaux, les archives, les commanditaires ou les mécanismes d’interprétation, et certains titres restent assez généraux.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Répond globalement aux attentes avec des leçons sur les matériaux, les symboles, la politique, l’économie, le quotidien visuel et des projets ou métiers autour des œuvres. La leçon sur la beauté s’approche davantage d’un thème esthétique générique, mais elle reste reliée aux valeurs culturelles plutôt qu’à une simple appréciation du beau.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Correct, en français et assez spécifique au domaine, avec des liens aux matériaux, à la religion, à la technique, au design, à la conservation et à la muséographie. Il manque cependant de diversité et de clarté sur les parcours réalistes, et certaines formulations sont plus abstraites ou promotionnelles que vraiment explicatives pour un premier contact.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "L’ensemble est clair et en français, avec de bons éléments sur les symboles, la technologie, la politique visuelle et le regard critique au quotidien. Mais il ne mentionne pratiquement pas de parcours, métiers, projets ou communautés réalistes, ce qui viole une attente importante, et le ton des “secrets” ou “messages cachés” est un peu sensationnaliste.",
+          "score": 6
+        }
+      ]
+    }
+  ],
+  "taskId": "course-introduction",
+  "testCaseId": "fr-histoire-de-lart-humanities-field-1"
+}

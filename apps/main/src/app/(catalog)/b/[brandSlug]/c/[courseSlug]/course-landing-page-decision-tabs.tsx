@@ -36,6 +36,7 @@ const PARTIAL_GENERAL_DECISION_PANEL_COUNT = 4;
 export async function CourseLandingDecisionTabs({
   audience,
   chapters,
+  isCurriculumPending,
   isLanguageCourse,
   opportunities,
   outcomes,
@@ -43,6 +44,7 @@ export async function CourseLandingDecisionTabs({
 }: {
   audience: string[];
   chapters: CourseChapter[];
+  isCurriculumPending: boolean;
   isLanguageCourse: boolean;
   opportunities: string[];
   outcomes: string[];
@@ -64,7 +66,7 @@ export async function CourseLandingDecisionTabs({
   const contentPanel: CourseLandingDecisionPanel = {
     content: (
       <div className="mx-auto grid w-full max-w-3xl gap-10">
-        <CourseLandingCurriculum chapters={chapters} />
+        <CourseLandingCurriculum chapters={chapters} isCurriculumPending={isCurriculumPending} />
         {showCredentialNote && <CourseLandingCredentialNote />}
       </div>
     ),

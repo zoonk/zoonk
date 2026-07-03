@@ -6,6 +6,7 @@ import { courseChaptersTask } from "./course-chapters/task";
 import { courseDescriptionTask } from "./course-description/task";
 import { courseIdentitySearchTask } from "./course-identity-search/task";
 import { courseIdentityClassificationTask } from "./course-identity/task";
+import { courseIntroductionTask } from "./course-introduction/task";
 import { courseLandingPageTask } from "./course-landing-page/task";
 import { courseLearnClassificationTask } from "./course-learn-classification/task";
 import { courseRequestRoutingTask } from "./course-request-routing/task";
@@ -48,6 +49,7 @@ export const TASKS: readonly RegisteredTask[] = [
   chapterLessonsTask,
   courseCategoriesTask,
   courseChaptersTask,
+  courseIntroductionTask,
   courseDescriptionTask,
   courseLandingPageTask,
   imageInputSafetyRewriteTask,

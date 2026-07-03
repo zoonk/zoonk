@@ -125,6 +125,7 @@ test.beforeAll(async () => {
   const [courseWithImage, courseNoImage, languageCourse, ptCourse] = await Promise.all([
     courseFixture({
       description: testData.courseWithImageDescription,
+      generationStatus: "running",
       imageUrl: "https://placehold.co/200x200.png",
       isPublished: true,
       landingPage: {
@@ -392,6 +393,7 @@ test.describe("Course Detail Page", () => {
 
     await questions.getByRole("tab", { name: /content/iu }).click();
     await expect(main.getByRole("heading", { name: "Course content" })).toBeVisible();
+    await expect(main.getByText(/still creating the full curriculum/iu)).toBeVisible();
     await expect(main.getByRole("heading", { name: "A course, not a credential" })).toHaveCount(0);
     await expect(main.getByText(testData.courseWithImageChapterTitle).first()).toBeVisible();
   });
@@ -408,6 +410,7 @@ test.describe("Course Detail Page", () => {
     await questions.getByRole("tab", { name: /content/iu }).click();
 
     await expect(main.getByRole("heading", { name: "A course, not a credential" })).toBeVisible();
+    await expect(main.getByText(/still creating the full curriculum/iu)).toHaveCount(0);
   });
 
   test("omits tabs for empty generated landing sections", async ({ page }) => {
@@ -575,6 +578,8 @@ test.describe("Course Detail Page", () => {
     await authenticatedPage.goto(testData.courseWithImageUrl);
 
     const main = authenticatedPage.getByRole("main");
+
+    await expect(main.getByText(/more chapters will appear here soon/iu)).toBeVisible();
 
     await expect(main.getByPlaceholder("Search chapters...")).toBeVisible();
 

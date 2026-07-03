@@ -7,11 +7,15 @@ import { updateCourseStep } from "../steps/update-course-step";
 import { type ExistingCourseContent } from "./existing-course-content";
 import { type GeneratedContent } from "./generate-missing-content";
 
-async function emitSkippedPersistSteps(
-  needsCourseUpdate: boolean,
-  needsCategories: boolean,
-  needsChapters: boolean,
-) {
+async function emitSkippedPersistSteps({
+  needsCategories,
+  needsChapters,
+  needsCourseUpdate,
+}: {
+  needsCategories: boolean;
+  needsChapters: boolean;
+  needsCourseUpdate: boolean;
+}) {
   if (!needsCourseUpdate) {
     await streamSkipStep("updateCourse");
   }
@@ -58,6 +62,25 @@ function needsCourseMetadataUpdate({
   );
 }
 
+/**
+ * Regular courses reserve position zero for the intro chapter forever. Language
+ * courses do not have this generated intro, so their normal curriculum starts at
+ * the current append offset.
+ */
+function getMainChapterPositionOffset({
+  course,
+  existing,
+}: {
+  course: CourseContext;
+  existing: ExistingCourseContent;
+}): number {
+  if (course.targetLanguage) {
+    return existing.chapterCount;
+  }
+
+  return 1;
+}
+
 export async function persistGeneratedContent(
   course: CourseContext,
   content: GeneratedContent,
@@ -67,9 +90,9 @@ export async function persistGeneratedContent(
 
   const needsCategories = !existing.hasCategories && content.categories.length > 0;
 
-  const needsChapters = !existing.hasChapters && content.chapters.length > 0;
+  const needsChapters = !existing.hasMainCurriculum && content.chapters.length > 0;
 
-  await emitSkippedPersistSteps(needsCourseUpdate, needsCategories, needsChapters);
+  await emitSkippedPersistSteps({ needsCategories, needsChapters, needsCourseUpdate });
 
   const metadataOps = [
     needsCourseUpdate &&
@@ -84,7 +107,11 @@ export async function persistGeneratedContent(
 
   const [chapters] = await Promise.all([
     needsChapters
-      ? addChaptersStep({ chapters: content.chapters, course })
+      ? addChaptersStep({
+          chapters: content.chapters,
+          course,
+          positionOffset: getMainChapterPositionOffset({ course, existing }),
+        })
       : Promise.resolve<Chapter[]>([]),
     ...metadataOps,
   ]);
