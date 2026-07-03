@@ -261,6 +261,31 @@ test.describe("Course Progress Indicators", () => {
     await expect(main.getByText(/\d+\/\d+ done/u)).toHaveCount(0);
   });
 
+  test("hides start action percentage when only an unfinished lesson exists", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
+    const { course, lessons } = await createCourseProgressScenario();
+
+    await lessonProgressFixture({
+      completedAt: null,
+      durationSeconds: 0,
+      lessonId: lessons.ch1Lesson1.id,
+      userId: withProgressUser.id,
+    });
+
+    await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
+
+    await expect(
+      authenticatedPage.getByRole("heading", { level: 1, name: course.title }),
+    ).toBeVisible();
+
+    const main = authenticatedPage.getByRole("main");
+
+    await expect(main.getByRole("link", { name: /^Start free chapter$/u })).toBeVisible();
+    await expect(main.getByRole("link", { name: /\d+% complete/iu })).toHaveCount(0);
+  });
+
   test("shows completed status for chapters with all lessons done", async ({
     authenticatedPage,
     withProgressUser,

@@ -58,15 +58,23 @@ function getVisibleProgress({ progress }: { progress?: ContinueLessonProgress | 
 /**
  * The Continue button owns its compact progress suffix. Looking up progress
  * from the scope keeps pages from threading promises through sibling
- * components just to feed this small visual hint.
+ * components just to feed this small visual hint. Landing pages can opt out
+ * because their primary action should stay conversion-focused even when old
+ * lesson progress exists.
  */
 function getContinueLessonProgress({
   excludedLessonKinds,
+  showProgress,
   scope,
 }: {
   excludedLessonKinds: LessonKind[];
+  showProgress: boolean;
   scope: LessonScope;
 }) {
+  if (!showProgress) {
+    return Promise.resolve(null);
+  }
+
   if ("courseId" in scope) {
     return getCourseContinueProgress({ courseId: scope.courseId, excludedLessonKinds });
   }
@@ -115,7 +123,8 @@ function ContinueLessonLinkContent({
 /**
  * Catalog start and continue buttons share this component so every surface uses
  * the same progress-aware target. The optional appearance only changes the
- * button styling for placements like landing-page heroes.
+ * button styling for placements like landing-page heroes, while progress
+ * visibility stays a surface-level display choice.
  */
 export async function ContinueLessonLink<Href extends string, CompletedHref extends string>({
   appearance,
@@ -125,6 +134,7 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
   excludedLessonKinds = EMPTY_EXCLUDED_LESSON_KINDS,
   fallbackHref,
   lessonId,
+  showProgress = true,
   startLabel,
 }: {
   appearance?: ContinueLessonLinkAppearance;
@@ -134,6 +144,7 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
   excludedLessonKinds?: LessonKind[];
   fallbackHref?: Route<Href>;
   lessonId?: string;
+  showProgress?: boolean;
   startLabel?: string;
 }) {
   const t = await getExtracted();
@@ -141,7 +152,7 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
 
   const [data, resolvedProgress] = await Promise.all([
     getContinueLessonTarget({ excludedLessonKinds, scope }),
-    getContinueLessonProgress({ excludedLessonKinds, scope }),
+    getContinueLessonProgress({ excludedLessonKinds, scope, showProgress }),
   ]);
 
   const className = buttonVariants({

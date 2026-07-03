@@ -67,6 +67,7 @@ export async function CourseLandingStartAction<Href extends string>({
       courseId={courseId}
       excludedLessonKinds={excludedLessonKinds}
       fallbackHref={firstChapterHref}
+      showProgress={false}
       startLabel={t("Start free chapter")}
     />
   );
