@@ -1,11 +1,79 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type CourseIntroductionSchema } from "@zoonk/ai/tasks/courses/introduction";
 import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
-import { type Chapter, prisma } from "@zoonk/db";
+import { type Chapter, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { type CourseContext } from "./initialize-course-step";
 
 type IntroductionChapterPlan = CourseIntroductionSchema["chapter"];
+
+/**
+ * Loads the reserved intro shell by structural position. Regular courses use
+ * chapter position zero as the fixed field-guide chapter, so retry recovery must
+ * target that position instead of the generated title or slug.
+ */
+async function getExistingIntroductionChapter(courseId: string): Promise<Chapter | null> {
+  return prisma.chapter.findFirst({
+    orderBy: { position: "asc" },
+    where: { courseId, position: 0 },
+  });
+}
+
+/**
+ * Treats a concurrent insert for the reserved intro position as a successful
+ * retry. The unique constraint guarantees only one workflow can create that
+ * shell, and the loser should continue with the row that already exists.
+ */
+async function getRecoveredIntroductionChapter({
+  courseId,
+  error,
+}: {
+  courseId: string;
+  error: unknown;
+}): Promise<Chapter> {
+  if (!isPrismaUniqueConstraintError(error)) {
+    throw error;
+  }
+
+  const existingChapter = await getExistingIntroductionChapter(courseId);
+
+  if (!existingChapter) {
+    throw error;
+  }
+
+  return existingChapter;
+}
+
+/**
+ * Saves the intro shell and falls back to the existing row when a parallel
+ * workflow attempt wins the database race for the reserved position.
+ */
+async function createIntroductionChapter({
+  course,
+  plan,
+}: {
+  course: CourseContext & { targetLanguage: null };
+  plan: IntroductionChapterPlan;
+}): Promise<Chapter> {
+  try {
+    return await prisma.chapter.create({
+      data: {
+        courseId: course.courseId,
+        description: plan.description,
+        generationStatus: "running",
+        isPublished: true,
+        language: course.language,
+        normalizedTitle: normalizeString(plan.title),
+        organizationId: course.organizationId,
+        position: 0,
+        slug: toSlug(plan.title),
+        title: plan.title,
+      },
+    });
+  } catch (error) {
+    return getRecoveredIntroductionChapter({ courseId: course.courseId, error });
+  }
+}
 
 /**
  * Reuses an existing first chapter when a retry resumes after the intro shell
@@ -19,29 +87,13 @@ async function getOrCreateIntroductionChapter({
   course: CourseContext & { targetLanguage: null };
   plan: IntroductionChapterPlan;
 }): Promise<Chapter> {
-  const existingChapter = await prisma.chapter.findFirst({
-    orderBy: { position: "asc" },
-    where: { courseId: course.courseId, position: 0 },
-  });
+  const existingChapter = await getExistingIntroductionChapter(course.courseId);
 
   if (existingChapter) {
     return existingChapter;
   }
 
-  return prisma.chapter.create({
-    data: {
-      courseId: course.courseId,
-      description: plan.description,
-      generationStatus: "running",
-      isPublished: true,
-      language: course.language,
-      normalizedTitle: normalizeString(plan.title),
-      organizationId: course.organizationId,
-      position: 0,
-      slug: toSlug(plan.title),
-      title: plan.title,
-    },
-  });
+  return createIntroductionChapter({ course, plan });
 }
 
 /**

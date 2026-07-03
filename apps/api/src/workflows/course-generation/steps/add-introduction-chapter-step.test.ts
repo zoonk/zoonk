@@ -89,6 +89,38 @@ describe(addIntroductionChapterStep, () => {
     expect(chapterCount).toBe(1);
   });
 
+  it("reuses the position-zero chapter created by a competing retry after a stale read", async () => {
+    const course = await courseFixture({ organizationId });
+    const competingTitle = `Competing Intro ${randomUUID()}`;
+
+    await chapterFixture({
+      courseId: course.id,
+      generationStatus: "running",
+      organizationId,
+      position: 0,
+      title: competingTitle,
+    });
+
+    const findFirstSpy = vi.spyOn(prisma.chapter, "findFirst").mockResolvedValueOnce(null);
+
+    try {
+      const result = await addIntroductionChapterStep({
+        course: getCourseContext(course),
+        plan: { description: "Generated intro.", title: `Generated Intro ${randomUUID()}` },
+      });
+
+      const chapters = await prisma.chapter.findMany({
+        where: { courseId: course.id, position: 0 },
+      });
+
+      expect(result.title).toBe(competingTitle);
+      expect(chapters).toHaveLength(1);
+      expect(chapters[0]?.id).toBe(result.id);
+    } finally {
+      findFirstSpy.mockRestore();
+    }
+  });
+
   it("throws without streaming error when DB save fails", async () => {
     const course = await courseFixture({ organizationId });
     const brokenContext = { ...getCourseContext(course), courseId: randomUUID() };

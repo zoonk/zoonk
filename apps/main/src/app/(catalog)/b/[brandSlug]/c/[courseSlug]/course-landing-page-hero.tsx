@@ -83,7 +83,7 @@ function CourseLandingHeroMedia({ course }: { course: CourseWithDetails }) {
           alt=""
           className="object-cover"
           fill
-          loading="lazy"
+          loading="eager"
           sizes="(min-width: 1280px) 352px, 320px"
           src={course.imageUrl}
           aria-hidden="true"
