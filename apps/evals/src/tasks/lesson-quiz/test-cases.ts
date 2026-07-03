@@ -23,19 +23,22 @@ EVALUATION CRITERIA:
 
    Learners prefer a varied set of interaction types. A strong quiz uses multiple formats when the content supports them, distributes those formats through the quiz, and still chooses each format because it fits the concept being tested.
 
-   Format diversity matters, but format fit matters more. A strong quiz uses the required formats when the content supports them, without forcing sort-order onto a concept it does not fit.
+   Format diversity matters, but format fit matters more. A strong quiz uses heavier formats only when the content supports them, without forcing match-columns or sort-order onto a concept they do not fit.
 
    Format guidance:
    - Multiple choice: Default for choosing an interpretation, prediction, diagnosis, explanation, or next move in a scenario.
    - Select image: Default when visual inspection, visible comparison, a diagram, or spatial pattern is part of the concept.
-   - Match columns: Use once for connecting related items, such as observations to concepts, symptoms to causes, examples to principles, or tools to roles.
+   - Match columns: Use at most once for connecting related items, such as observations to concepts, symptoms to causes, examples to principles, or tools to roles. Omit match-columns when the scope does not contain a natural set of relationships to match. When used, include no more than 3 pairs, and keep pair text to short labels or brief phrases instead of long sentences.
    - Sort order: Use at most once when one correct order is essential, such as procedural steps, cause-effect chains, historical events, dependency chains, or stages that cannot be swapped. Omit sort-order when the scope does not contain a genuinely ordered concept.
    - Fill blank: Use once for completing a precise relationship, contrast, formula, or term when the missing words themselves matter. It is often memorization-prone, so the single fill-blank must be especially well fit.
 
    PENALIZE when:
    - Formats are used for variety rather than fit
    - A different format would clearly test the concept better
-   - The quiz uses more or fewer than 1 match-columns question
+   - The quiz uses more than 1 match-columns question
+   - A match-columns question uses more than 3 pairs
+   - A match-columns question uses long sentence-like pair text instead of short labels or brief phrases
+   - A match-columns question is forced onto content where a scenario, image, fill-in-the-blank, or ordering question would clearly test understanding better
    - The quiz uses more than 1 sort-order question
    - The quiz uses more or fewer than 1 fill-blank question
    - A fill-blank question tests copied wording, broad conceptual distinctions, or terminology recall that another format could test through application
@@ -50,6 +53,7 @@ EVALUATION CRITERIA:
 
    Do NOT penalize when:
    - Multiple-choice or select-image appears more often than the other formats because those are the default formats
+   - The quiz omits match-columns because the source scope lacks a natural set of relationships to match
    - The quiz omits sort-order because the source scope lacks a necessary, non-ambiguous sequence
    - Select-image options use a few large labels only when the distinction cannot be shown clearly without text
 
@@ -90,6 +94,7 @@ EVALUATION CRITERIA:
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT expect more than one match-columns, sort-order, or fill-blank question.
+- Do NOT require a match-columns question unless the source scope clearly supports one.
 - Do NOT require an exact number of questions beyond the minimum and coverage needs
 - Do NOT check against an imagined "complete" quiz that goes beyond the source lesson scope
 - Do NOT penalize for covering some concepts more than others if every major concept is covered and the balance is reasonable
@@ -100,7 +105,7 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 BINARY CHECKS:
 - "Memorization vs understanding" is checked by: does the question reference the source lesson metadata directly or present a novel scenario? Direct source references = penalize. Novel scenarios = do not penalize.
 - Question count is checked by: at least 5 questions, never more than 15 questions, and no more than the lesson scope warrants.
-- Format choice is checked by fit, diversity, and sequencing. Penalize missing match-columns or fill-blank, overusing heavier formats, forced sort-order for ambiguous sequences, and back-to-back use of the same format.
+- Format choice is checked by fit, diversity, and sequencing. Penalize missing fill-blank, overusing heavier formats, forced match-columns or sort-order for weak-fit concepts, match-columns with more than 3 pairs or long sentence-like pair text, and back-to-back use of the same format.
 `;
 
 export const TEST_CASES = [

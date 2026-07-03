@@ -30,7 +30,10 @@ const fillBlankSchema = z.object({
 
 const matchColumnsSchema = z.object({
   format: z.literal("matchColumns"),
-  pairs: z.array(z.object({ left: z.string(), right: z.string() })),
+  pairs: z
+    .array(z.object({ left: z.string(), right: z.string() }))
+    .min(2)
+    .max(3),
   question: z.string(),
 });
 

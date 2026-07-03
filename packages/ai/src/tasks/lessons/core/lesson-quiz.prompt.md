@@ -20,10 +20,11 @@ The quiz should feel varied, focused, and useful. It should assess transferable 
   - never more than 15 questions
 - Format diversity matters, but format fit matters more:
   - use multiple formats when they genuinely fit the concepts being tested
-  - use exactly 1 matchColumns question
+  - use at most 1 matchColumns question
   - use at most 1 sortOrder question
   - use exactly 1 fillBlank question
   - use multipleChoice and selectImage for ordinary application questions
+  - never force matchColumns just to include every format
   - never force sortOrder just to include every format
 - Plan the format sequence before writing questions. For each question, choose the `format` first, then write the fields for that format. Do not use the same format twice in a row.
 - Write conversationally, like a curious friend posing useful challenges.
@@ -39,7 +40,7 @@ Use `LESSON` to identify the quiz scope. The source lesson includes a title and 
 - Do not test recall of exact wording, examples, metaphors, lesson title, or description.
 - Do not reuse source lesson examples with superficial substitutions. A new scenario should change the setting, evidence, objects, actors, or decision being made enough that the learner must transfer the concept.
 - Default to multipleChoice or selectImage for ordinary quiz questions.
-- Use matchColumns and fillBlank once each, choosing the strongest concept for each format.
+- Use matchColumns only when a compact matching task is clearly stronger than a scenario, ordering, fill-in-the-blank, or image question.
 - Use fillBlank only when a missing word or phrase is the clearest way to test a precise relationship, contrast, formula, or term. Do not use fillBlank for broad conceptual distinctions, copied lesson phrasing, or facts that another format would test through application.
 - Use sortOrder only for a clear sequence where each item must happen before the next, such as a procedure, timeline, dependency chain, lifecycle stage, or cause-effect chain. Do not use sortOrder for optional steps, branching outcomes, alternative endings, unordered checklists, diagnostic criteria, reasoning checklists, or workflows where several orders could be reasonable.
 - Do not let one format dominate when other formats can test the content well.
@@ -53,7 +54,7 @@ Choose the format from what the learner needs to do:
 
 - `multipleChoice`: choose the best interpretation, prediction, diagnosis, explanation, or next move in a scenario.
 - `fillBlank`: complete a precise relationship, contrast, formula, or term when the missing words themselves matter. Use exactly one fillBlank question per quiz.
-- `matchColumns`: connect related items, such as observations to concepts, symptoms to causes, examples to principles, or tools to their roles. Use exactly one matchColumns question per quiz.
+- `matchColumns`: connect related items, such as observations to concepts, symptoms to causes, examples to principles, or tools to their roles. Use at most one matchColumns question per quiz, and omit it when the source scope does not contain a natural set of relationships to match.
 - `sortOrder`: order a sequence where one correct order is essential, such as procedural steps, cause-effect chains, historical events, or stages that cannot be swapped. Use at most one sortOrder question per quiz, and omit it when the source scope does not contain a genuinely ordered concept.
 - `selectImage`: inspect visual evidence, compare visible features, read a diagram, identify a spatial pattern, or choose the image that matches a principle.
 
@@ -77,8 +78,12 @@ Format requirements:
 
 ## matchColumns
 
+- Use only when this format is clearly stronger than a scenario, ordering, fill-in-the-blank, or image question.
 - `question`: Context for the matching task.
-- `pairs`: 3-5 pairs. Left column: real-world items, scenarios, observations, or phenomena. Right column: concepts, principles, causes, or outcomes.
+- `pairs`: 2-3 pairs. Left column: real-world items, scenarios, observations, or phenomena. Right column: concepts, principles, causes, or outcomes.
+- Pair text should be short labels or brief phrases, not long sentences. If the learner needs sentence-length context, choose multipleChoice, selectImage, fillBlank, or sortOrder instead.
+
+Before using matchColumns, ask: "Is there a compact set of relationships where matching is the clearest way to test understanding?" If not, choose multipleChoice, selectImage, fillBlank, or sortOrder instead.
 
 ## sortOrder
 
@@ -123,7 +128,8 @@ Before finalizing, revise the quiz until all are true:
 - Questions can be answered from conceptual understanding, not lesson-specific memory.
 - Scenarios are novel, not source lesson examples with renamed surface details.
 - The quiz uses multiple formats when the concepts support them.
-- The quiz uses exactly 1 matchColumns, no more than 1 sortOrder, and exactly 1 fillBlank.
+- The quiz uses no more than 1 matchColumns, no more than 1 sortOrder, and exactly 1 fillBlank.
+- matchColumns appears only when matching relationships is clearly useful and natural.
 - sortOrder appears only when the order is necessary and non-ambiguous.
 - Questions that do not need matchColumns, sortOrder, or fillBlank use multipleChoice or selectImage.
 - No format appears twice in a row.
