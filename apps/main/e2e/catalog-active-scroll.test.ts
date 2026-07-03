@@ -1,12 +1,13 @@
 import { randomUUID } from "node:crypto";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { courseFixture, courseUserFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Page, expect, test } from "./fixtures";
 
 type ScrollTarget = { title: string; url: string };
+type CourseProgressSetup = "currentChapter" | "none";
 type LessonProgressSetup = "completedPrevious" | "startedOnly";
 
 const ACTIVE_SCROLL_VIEWPORT = { height: 667, width: 375 };
@@ -99,13 +100,15 @@ async function expectSmoothScrollRequest(page: Page) {
  * later opened lesson proves incomplete progress does not move the target.
  */
 async function createScrollableCourseTarget({
+  progressSetup = "currentChapter",
   userId,
 }: {
+  progressSetup?: CourseProgressSetup;
   userId?: string;
 }): Promise<ScrollTarget> {
   const org = await getAiOrganization();
   const uniqueId = randomUUID().slice(0, 8);
-  const activeChapterIndex = userId ? 10 : 0;
+  const activeChapterIndex = userId && progressSetup === "currentChapter" ? 10 : 0;
 
   const course = await courseFixture({
     isPublished: true,
@@ -143,26 +146,36 @@ async function createScrollableCourseTarget({
   const completedLesson = lessons[activeChapterIndex - 1];
   const startedLesson = lessons[activeChapterIndex + 1];
 
-  if (!activeChapter || (userId && (!completedLesson || !startedLesson))) {
+  if (
+    !activeChapter ||
+    (userId && progressSetup === "currentChapter" && (!completedLesson || !startedLesson))
+  ) {
     throw new Error("Active scroll course fixture did not create enough chapters.");
   }
 
-  if (userId && completedLesson && startedLesson) {
-    await Promise.all([
-      lessonProgressFixture({
-        completedAt: new Date(),
-        durationSeconds: 60,
-        lessonId: completedLesson.id,
-        userId,
-      }),
-      lessonProgressFixture({
-        completedAt: null,
-        durationSeconds: null,
-        lessonId: startedLesson.id,
-        userId,
-      }),
-    ]);
-  }
+  const courseUserSetupTasks = userId ? [courseUserFixture({ courseId: course.id, userId })] : [];
+
+  const progressSetupTasks =
+    userId && progressSetup === "currentChapter" && completedLesson && startedLesson
+      ? [
+          lessonProgressFixture({
+            completedAt: new Date(),
+            durationSeconds: 60,
+            lessonId: completedLesson.id,
+            userId,
+          }),
+          lessonProgressFixture({
+            completedAt: null,
+            durationSeconds: null,
+            lessonId: startedLesson.id,
+            userId,
+          }),
+        ]
+      : [];
+
+  const setupTasks = [...courseUserSetupTasks, ...progressSetupTasks];
+
+  await Promise.all(setupTasks);
 
   return { title: activeChapter.title, url: `/b/${AI_ORG_SLUG}/c/${course.slug}` };
 }
@@ -303,18 +316,22 @@ test.describe("Catalog Active Scroll", () => {
   });
 
   test("course page keeps back-to-top when no chapter is active", async ({
-    userWithoutProgress,
+    authenticatedPage,
+    withProgressUser,
   }) => {
-    const target = await createScrollableCourseTarget({});
+    const target = await createScrollableCourseTarget({
+      progressSetup: "none",
+      userId: withProgressUser.id,
+    });
 
-    await userWithoutProgress.emulateMedia({ reducedMotion: "reduce" });
-    await userWithoutProgress.goto(target.url);
-    await expect(userWithoutProgress.getByRole("heading", { level: 1 })).toBeVisible();
+    await authenticatedPage.emulateMedia({ reducedMotion: "reduce" });
+    await authenticatedPage.goto(target.url);
+    await expect(authenticatedPage.getByRole("heading", { level: 1 })).toBeVisible();
 
-    await scrollDown(userWithoutProgress);
+    await scrollDown(authenticatedPage);
 
-    await expect(userWithoutProgress.getByRole("link", { name: /back to top/iu })).toBeVisible();
-    const currentChapterLink = userWithoutProgress.getByRole("link", { name: /current chapter/iu });
+    await expect(authenticatedPage.getByRole("link", { name: /back to top/iu })).toBeVisible();
+    const currentChapterLink = authenticatedPage.getByRole("link", { name: /current chapter/iu });
     await expect(currentChapterLink).toHaveCount(0);
   });
 

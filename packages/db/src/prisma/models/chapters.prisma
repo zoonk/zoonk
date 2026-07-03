@@ -23,7 +23,7 @@ model Chapter {
   sentences        ChapterSentence[]
 
   @@unique([courseId, slug], name: "courseChapterSlug")
+  @@unique([courseId, position], name: "courseChapterPosition")
   @@index([organizationId, normalizedTitle])
-  @@index([courseId, position])
   @@map("chapters")
 }

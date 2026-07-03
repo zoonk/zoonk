@@ -9,16 +9,12 @@ import { savePracticeLessonStep } from "../steps/save-practice-lesson-step";
  * before this practice row. That keeps each practice focused without waiting
  * for explanation content to finish generating.
  */
-export async function practiceLessonWorkflow(
-  context: LessonContext,
-): Promise<{ description: string; title: string }> {
+export async function practiceLessonWorkflow(context: LessonContext): Promise<void> {
   "use workflow";
 
   const content = await generatePracticeContentStep(context);
-  const prompts = getPracticeImagePrompts({ scenario: content.scenario, steps: content.steps });
+  const prompts = getPracticeImagePrompts({ steps: content.steps });
   const { images } = await generateStepImagesStep({ context, preset: "practice", prompts });
 
   await savePracticeLessonStep({ content, context, images });
-
-  return { description: content.scenario.text, title: content.scenario.title };
 }

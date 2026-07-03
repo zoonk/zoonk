@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
-import { createSafeDate } from "@zoonk/testing/fixtures/dates";
+import { createSafeDate, createSameWeekDates } from "@zoonk/testing/fixtures/dates";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { getScoreHistory } from "./get-score-history";
@@ -206,10 +206,7 @@ describe("authenticated users", () => {
       const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
-      // Two days in the same week
-      const day1 = new Date();
-      const day2 = new Date(day1);
-      day2.setDate(day2.getDate() - 1);
+      const [day1, day2] = createSameWeekDates(1);
 
       await prisma.dailyProgress.createMany({
         data: [

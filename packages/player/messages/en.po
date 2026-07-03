@@ -313,10 +313,6 @@ msgid "9lc1oV"
 msgstr "Drag items into the correct order"
 
 #: src/components/step-action-button.tsx
-msgid "PVe26p"
-msgstr "Begin"
-
-#: src/components/step-action-button.tsx
 msgid "RDZVQL"
 msgstr "Check"
 

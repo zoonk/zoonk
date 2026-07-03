@@ -15,18 +15,40 @@ import { useAnimatedProgress } from "@/lib/workflow/use-animated-progress";
 import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
 import { useThinkingMessages } from "@/lib/workflow/use-thinking-messages";
 import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
-import { COURSE_COMPLETION_STEP, type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
+import {
+  COURSE_COMPLETION_STEP,
+  type CourseWorkflowStepName,
+  INTRODUCTION_LESSON_COMPLETION_STEP,
+} from "@zoonk/core/workflows/steps";
 import { type GenerationStatus } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { API_URL } from "@zoonk/utils/url";
 import { useExtracted } from "next-intl";
 import { useGenerationPhases } from "./use-generation-phases";
 
+/**
+ * Regular courses should leave the generation page when the intro lesson is
+ * ready, while language courses have no intro chapter and should keep waiting
+ * for the normal course completion step.
+ */
+function getCourseGenerationCompletionStep({
+  isLanguageCourse,
+}: {
+  isLanguageCourse: boolean;
+}): CourseWorkflowStepName {
+  if (isLanguageCourse) {
+    return COURSE_COMPLETION_STEP;
+  }
+
+  return INTRODUCTION_LESSON_COMPLETION_STEP;
+}
+
 export function GenerationClient({
   courseSlug,
   courseTitle,
   generationRunId,
   generationStatus,
+  isLanguageCourse,
   linkedCourseSlug,
   requestId,
 }: {
@@ -34,13 +56,15 @@ export function GenerationClient({
   courseTitle: string;
   generationRunId: string | null;
   generationStatus: GenerationStatus;
+  isLanguageCourse: boolean;
   linkedCourseSlug: string | null;
   requestId: string;
 }) {
   const t = useExtracted();
+  const completionStep = getCourseGenerationCompletionStep({ isLanguageCourse });
 
   const generation = useWorkflowGeneration<CourseWorkflowStepName>({
-    completionStep: COURSE_COMPLETION_STEP,
+    completionStep,
     initialRunId: generationRunId,
     initialStatus: generationStatus === "running" ? "streaming" : "idle",
     statusUrl: `${API_URL}/v1/workflows/course-generation/status`,
@@ -59,6 +83,7 @@ export function GenerationClient({
     generation.completedSteps,
     generation.currentStep,
     generation.startedSteps,
+    isLanguageCourse,
   );
 
   const isActive = generation.status === "triggering" || generation.status === "streaming";
@@ -76,6 +101,11 @@ export function GenerationClient({
   );
 
   const redirectSlug = generation.completionEntityId ?? linkedCourseSlug ?? courseSlug;
+  const completedTitle = isLanguageCourse ? t("Your course is ready") : t("Your lesson is ready");
+
+  const completedSubtitle = isLanguageCourse
+    ? t("Taking you to your course...")
+    : t("Taking you to your lesson...");
 
   useCompletionRedirect({ status: generation.status, url: `/b/${AI_ORG_SLUG}/c/${redirectSlug}` });
 
@@ -111,8 +141,8 @@ export function GenerationClient({
 
   if (generation.status === "completed") {
     return (
-      <GenerationProgressCompleted subtitle={t("Taking you to your course...")}>
-        {t("Your course is ready")}
+      <GenerationProgressCompleted subtitle={completedSubtitle}>
+        {completedTitle}
       </GenerationProgressCompleted>
     );
   }

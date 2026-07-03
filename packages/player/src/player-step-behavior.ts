@@ -13,7 +13,7 @@ export type PlayerCheckBehavior =
   | "translation";
 
 type PlayerFeedbackBehavior = "inline" | "none" | "screen";
-type PlayerLayoutBehavior = "default" | "hero" | "navigable";
+type PlayerLayoutBehavior = "default" | "navigable";
 type PlayerSceneBehavior = "choice" | "read";
 
 export type PlayerRenderBehavior =
@@ -65,14 +65,6 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     render: "fillBlank",
     scene: "choice",
     validation: "fillBlank",
-  },
-  intro: {
-    check: "none",
-    feedback: "none",
-    layout: "hero",
-    render: "static",
-    scene: "read",
-    validation: "none",
   },
   listening: {
     check: "listening",

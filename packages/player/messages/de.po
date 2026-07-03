@@ -313,10 +313,6 @@ msgid "9lc1oV"
 msgstr "Ziehe die Elemente in die richtige Reihenfolge"
 
 #: src/components/step-action-button.tsx
-msgid "PVe26p"
-msgstr "Beginnen"
-
-#: src/components/step-action-button.tsx
 msgid "RDZVQL"
 msgstr "Prüfen"
 

@@ -8,7 +8,6 @@ import { getWorkflowMetadata } from "workflow";
 import { getOrCreateCourse } from "./_internal/get-or-create-course";
 import { setupCourse } from "./_internal/setup-course";
 import { completeCourseSetupStep } from "./steps/complete-course-setup-step";
-import { type ChapterImageInput } from "./steps/generate-chapter-image-step";
 import {
   assertGeneratableCourseStartRequest,
   getCourseStartRequestStep,
@@ -19,9 +18,8 @@ import { startChapterImagesWorkflowStep } from "./steps/start-chapter-images-wor
 
 /**
  * Runs course setup through final persistence and only then marks the course
- * complete. Chapter generation owns chapter-specific content such as
- * thumbnails, so this course setup step only saves course-level metadata and
- * chapter shells.
+ * complete. The returned chapters are the lesson-generation targets; the
+ * thumbnail workflow loads the current saved chapter list by course id.
  */
 async function setupCourseContent({
   course,
@@ -46,27 +44,11 @@ async function setupCourseContent({
 }
 
 /**
- * Narrows a chapter row to the fields the background image workflow needs.
- * Passing the smaller shape keeps the child workflow argument stable and avoids
- * serializing unrelated chapter metadata.
- */
-function getChapterImageInput(chapter: Chapter): ChapterImageInput {
-  return {
-    description: chapter.description,
-    id: chapter.id,
-    imageUrl: chapter.imageUrl,
-    title: chapter.title,
-  };
-}
-
-/**
  * Starts optional chapter thumbnail generation without letting artwork setup
  * failures change the already-completed course status.
  */
-async function startChapterImagesWithoutFailingCourse(chapters: Chapter[]): Promise<void> {
-  await startChapterImagesWorkflowStep({
-    chapters: chapters.map((chapter) => getChapterImageInput(chapter)),
-  }).catch((error: unknown) => {
+async function startChapterImagesWithoutFailingCourse(courseId: string): Promise<void> {
+  await startChapterImagesWorkflowStep({ courseId }).catch((error: unknown) => {
     logError("Chapter image workflow failed to start after course setup completed", error);
   });
 }
@@ -76,11 +58,17 @@ async function startChapterImagesWithoutFailingCourse(chapters: Chapter[]): Prom
  * The image path only waits for the child workflow to be enqueued, not for the
  * background artwork generation to complete.
  */
-async function generateFirstChapterAndStartChapterImages(chapters: Chapter[]): Promise<void> {
+async function generateFirstChapterAndStartChapterImages({
+  chapters,
+  courseId,
+}: {
+  chapters: Chapter[];
+  courseId: string;
+}): Promise<void> {
   const firstChapter = chapters[0];
 
   const [, chapterResult] = await Promise.allSettled([
-    startChapterImagesWithoutFailingCourse(chapters),
+    startChapterImagesWithoutFailingCourse(courseId),
     firstChapter ? chapterGenerationWorkflow(firstChapter.id) : Promise.resolve(),
   ]);
 
@@ -178,5 +166,8 @@ export async function courseGenerationWorkflow(courseStartRequestId: string): Pr
   // Start chapter generation outside the course error handling.
   // Chapter generation has its own error handling that marks the chapter as failed.
   // We don't want chapter failures to mark the entire course as failed.
-  await generateFirstChapterAndStartChapterImages(chapters);
+  await generateFirstChapterAndStartChapterImages({
+    chapters,
+    courseId: courseSetup.course.courseId,
+  });
 }

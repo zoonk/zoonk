@@ -22,16 +22,6 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
 }
 
 describe(describePlayerStep, () => {
-  it("describes practice scenario as the canonical intro step", () => {
-    const descriptor = describePlayerStep(
-      buildStep({ content: { text: "Hello", title: "Intro", variant: "intro" as const } }),
-    );
-
-    expect(descriptor?.kind).toBe("intro");
-    expect(descriptor?.kind === "intro" ? descriptor.intro.title : null).toBe("Intro");
-    expect(descriptor?.kind === "intro" ? descriptor.intro.text : null).toBe("Hello");
-  });
-
   it("keeps regular static text as the canonical staticText kind", () => {
     const descriptor = describePlayerStep(buildStep());
 

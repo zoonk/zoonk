@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - Should treat French as a language course and focus on communication contexts\n      - Should mention travel, culture, study, or work use cases\n      - Should not promise fluency by the end of the course\n      - Should be in US English\n\n      \n  - Must be written in the specified language\n  - Must include exactly these fields: valueProposition, audience, outcomes, opportunities\n  - valueProposition must be one concise sentence\n  - audience must contain 3-5 short, specific learner profiles or fit statements\n  - audience entries may be concise labels such as \"People preparing for medical school\" when they clearly answer who the course is for\n  - outcomes must contain 4-6 concrete abilities learners can build\n  - opportunities must contain 3-5 realistic career, academic, life, or cultural opportunities\n  - Must be specific to the course topic, not generic education copy\n  - valueProposition must sound natural and concrete, not like an abstract definition of the field\n  - For non-English cases, must not mix in English audience or framing words such as \"learners\", \"students\", \"beginners\", or \"professionals\"; translate them naturally\n  - Must not mention course duration, completion time, salaries, certificates, job guarantees, guaranteed fluency, pricing, subscriptions, or free chapters\n  - Must avoid inflated claims such as \"master\", \"become an expert\", and \"unlock your potential\"\n\n    ",
+  "judgedAt": "2026-07-01T01:04:45.445Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Strong communication focus with travel, family, study, and work contexts. All four fields present with correct counts (5/6/5). Concrete, specific, avoids inflated claims and fluency promises.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Covers travel, study, and work well with concrete outcomes and opportunities. Correct field counts (4/6/4). Natural value proposition without inflated claims.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Very specific and communication-focused with travel, media, professional, and academic contexts. Correct counts (4/5/4). Strong, natural phrasing throughout.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Good communication focus with travel, study, and work contexts. Correct counts (5/6/5). Uses \"everyday fluency\" which slightly brushes fluency territory but doesn't promise it by course end.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Solid coverage of travel, study, and culture with correct counts (5/6/5). Slightly less vivid than top entries but specific and appropriate.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Covers travel, study, work contexts with correct counts (5/5/5). Outcomes are somewhat generic and value prop mentions \"basic\" which is fine, but overall less specific than top entries.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Good specificity and communication focus with travel, academic, cultural, and professional contexts. Correct counts (4/5/4). Solid quality overall.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Communication-focused and generally appropriate with correct counts (4/5/4). Slightly more generic phrasing (\"lifelong learners,\" \"foundational language skills\") and less vivid than others.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "This output perfectly follows all instructions. The audience profiles are short and specific, the outcomes translate the chapter grammar into concrete, real-world abilities, and the value proposition is concise and accurate to the syllabus.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "An excellent response that strictly adheres to the constraints. The outcomes accurately map the provided chapters into highly practical skills, and the value proposition is engaging without making inflated claims.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Flawless alignment with the rubric. The output captures both the beginner fundamentals and the more advanced communication elements of the course perfectly, with concise audience profiles and realistic opportunities.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "A very strong execution that meets expectations well. It slightly undersells the course's advanced topics by describing the overall outcome as just 'simple past and present communication', but the rest of the content is highly accurate.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Follows the constraints well and accurately reflects the specific grammar concepts covered in the course. However, the value proposition is slightly more generic and dry compared to the top models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Meets all core expectations with concise copy. It is scored slightly lower because some outcomes focus heavily on grammatical forms (e.g., 'subjunctive verb forms') rather than the concrete communication abilities those forms enable.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Very well-structured and accurate to the syllabus. However, mentioning 'fluency' in the audience section, even as a learner goal, grazes the negative constraint against promising or guaranteeing fluency.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Fails the formatting constraint for 'short' audience profiles by writing long, 20+ word sentences. It also suffers from scope drift and inflated claims by promising 'argumentation' and reading literature 'without translation', which exceeds the provided chapters.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Best aligned with the French communication course: it clearly covers travel, culture, study/work, everyday interaction, reading, writing, listening, and speaking. The audience, outcomes, and opportunities are specific, realistic, and do not promise fluency or other prohibited benefits.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Very strong and practical, with clear communication contexts across travel, study, work, daily life, and French-speaking communities. It is well matched to the chapter progression, though a few work examples like meetings stretch slightly beyond the most concrete course content.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Highly aligned with the chapters and gives concrete outcomes for greetings, grammar, travel, food, transport, health, past narration, and subjunctive use. It is slightly less polished in audience specificity, with a couple of broader learner descriptions, but it fully satisfies the main requirements.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Clear, realistic, and course-specific, with strong travel, study, work, cultural, and everyday communication use cases. It is somewhat more basic in framing than the provided beginner-to-advanced course scope, especially in the value proposition and professional audience entry.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Meets the required structure and covers travel, culture, academic, and professional opportunities well. Some phrasing is a bit broad or inflated, such as “complex situations” and proficiency exam preparation, but it remains useful and largely on-topic.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Mostly well aligned with practical French communication and includes strong travel, living/study/work, and cultural contexts. However, the phrase “rebuild everyday fluency” is risky against the no-fluency expectation, and the framing leans more toward conversation than the full speaking, reading, writing, and listening scope.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Specific and communication-focused, with good travel, culture, and professional use cases. However, the audience entries are longer than requested, and claims like understanding culture “without translation” and sounding natural to native speakers feel somewhat inflated for the course framing.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Meets the required field counts and includes travel, culture, social, work, and academic contexts. It is less chapter-specific and less natural in places, with outcomes like “correct verb forms” and “logical negations and modifiers” sounding more abstract than practical communication-focused copy.",
+          "score": 6
+        }
+      ]
+    }
+  ],
+  "taskId": "course-landing-page",
+  "testCaseId": "en-french-1"
+}

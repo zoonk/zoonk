@@ -46,6 +46,19 @@ Use these examples as calibration:
 - For vendor platforms, cover the flagship services and architectural patterns that define the platform, not only generic cloud concepts.
 - For hobby or pop-culture topics, cover the canon, community practices, modern resources, and interpretation patterns that serious fans use.
 
+# Dedicated Chapter Boundaries
+
+Split important named topics into standalone chapters when serious learners search for them separately, practitioners treat them as distinct responsibilities, or day-one work would require separate judgment. Do not hide several major topics inside one broad chapter just because they share a theme.
+
+Use this test: if a chapter description lists multiple canonical pillars, specialties, eras, procedures, documents, regulations, tools, or techniques separated by commas, ask whether each item deserves its own searchable chapter. If the answer is yes, split the chapter.
+
+This applies especially to:
+
+- Professional and regulated fields: professional boards, local systems, required documents, reporting duties, controlled substances, legal duties, specialty workflows, common day-one specialties, and safety procedures should appear as dedicated chapters when they are real practitioner responsibilities. In a broad medicine course, for example, do not hide common specialties such as ophthalmology, otorhinolaryngology, urology, orthopedics, trauma care, or musculoskeletal medicine inside broad body-system chapters when they need their own clinical judgment.
+- Engineering and technical fields: core analysis methods, simulation techniques, design workflows, materials, safety validation, and production methods should not be hidden inside broad "tools" or "design" chapters when they are major techniques. Finite element analysis, structural simulation, computational fluid dynamics, crash simulation, materials testing, and reliability analysis are examples of techniques that often deserve standalone chapters in engineering courses when they are central to the subject.
+- Music, history, culture, and other broad canons: major eras, genres, schools, scenes, movements, instrument families, and traditions should be split into meaningful families or periods. A chapter titled only "Jazz", "Rock and pop", "Hip-hop", or "Electronic music" is too broad if its description bundles many major movements that each require depth. A general music course also needs practical technique paths for common instrument families such as voice, keyboard, guitar, bass, percussion, winds, and strings when it claims to take learners from zero to mastery.
+- Modern practice: do not compress multiple current shifts into one chapter. If several modern developments changed the field in different ways, give each important one enough chapter-level space.
+
 # Constraints
 
 - Stay specific to `COURSE_TITLE`. Generic chapters that could fit many unrelated courses are wrong unless the subject itself is broad or cross-disciplinary.
@@ -63,18 +76,25 @@ For hobby and pop-culture topics, skip the navigation chapter unless the course 
 
 # Title Style
 
-Titles should sound like everyday course chapters a learner would want to open, not textbook headings, academic catalog entries, or taxonomy labels.
+Titles should sound like real course chapters a learner would expect to scan, search for, and open. Use the canonical names a serious beginner would see in a normal course outline when those names are the field-standard way to identify the topic.
 
-Prefer relevance-forward titles: name the real topic through what it does, what it changes, where it shows up, or what the learner will be able to handle. Prefer "what this does" over "what this is called."
+Canonical names are not academic clutter when they are the terms learners search for and practitioners use. Prefer the recognizable topic name over a practical paraphrase, metaphor, slogan, or "what this does" title.
 
 Prefer:
 
-- "Cells that divide" over "Cell division and genetic reproduction"
-- "Fungi that recycle the world" over "Protists, fungi, and algae"
-- "Keep track of changes with Git" over "Version control with Git"
-- "Catch bugs before users do" over "Testing JavaScript code"
-- "Data that stays consistent worldwide" over "Globally distributed databases"
-- "When dependencies become a risk" over "Software supply chain security"
+- "Data structures" over "Ways to organize information"
+- "Algorithms" over "Steps that solve problems"
+- "Computer architecture" over "What a computer really does"
+- "Testing JavaScript code" over "Catch bugs before users do"
+- "Software supply chain security" over "When dependencies become a risk"
+- "Cell biology" over "The tiny parts that keep life running"
+- "Civil procedure" over "How a lawsuit moves forward"
+- "Pathology" over "How disease begins"
+- "Brazilian Independence" over "The break with Portugal"
+
+If a close field-standard variant is more natural in `LANGUAGE`, use that. For example, "Controle de constitucionalidade" and "Controle constitucional de leis" can both be recognizable legal titles, but "Quando uma lei pode cair" hides the searchable topic. "Políticas explícitas" is a recognizable Kanban title, but "Regras visíveis para decisões melhores" hides it.
+
+Plain language belongs mostly in the description. Use descriptions to explain what the chapter covers, why it matters, and what practical work appears inside the chapter. Do not force the title to carry that explanation by replacing the canonical topic name.
 
 Do not make titles clickbait, vague, cute, or slogan-like. Avoid motivational titles like "X Without Fear" unless that phrase is the natural name of the topic. The title should still be precise enough that the learner knows what chapter they are opening.
 
@@ -82,7 +102,7 @@ Do not make titles clickbait, vague, cute, or slogan-like. Avoid motivational ti
 
 - Titles and descriptions must be in `LANGUAGE`.
 - Titles should be concise, specific, concrete, natural, and sentence case. Preserve normal capitalization for proper nouns, product names, acronyms, and language-specific conventions. Avoid "I", "II", and "Part 1"; use descriptive subtitles instead.
-- Descriptions should be 1-2 sentences explaining what the chapter covers and, when natural, what it enables.
+- Descriptions should be 1-2 sentences explaining what the chapter covers and, when natural, what it enables. Name the actual scope clearly enough that a learner can tell which topics, tools, cases, mechanisms, or skills belong inside the chapter.
 - Use warm, plain language. Avoid academic vocabulary.
 - Do not use these filler phrases: "explore", "understand", "learn about", "introduction to", "basics of".
 

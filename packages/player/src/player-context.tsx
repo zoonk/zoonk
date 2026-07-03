@@ -4,7 +4,6 @@ import { type LessonKind } from "@zoonk/core/steps/contract/content";
 import { createContext, useContext } from "react";
 import { type PlayerState } from "./player-reducer";
 import { type PlayerScreenModel } from "./player-screen";
-import { describePlayerStep } from "./player-step";
 import { type PlayerActions } from "./use-player-actions";
 
 export type PlayerRoute = string | URL;
@@ -86,43 +85,19 @@ function usePlayerConfig(): PlayerConfigContextValue {
 }
 
 /**
- * Intro steps are the generated setup for practice-style lessons.
- * When a lesson has no explicit description, the first intro gives the info
- * popover a concrete premise instead of falling back to broad lesson copy.
- */
-function getFirstIntroText(state: PlayerState | null): string | null {
-  const descriptor = describePlayerStep(state?.steps[0]);
-
-  if (descriptor?.kind !== "intro") {
-    return null;
-  }
-
-  return descriptor.content.text;
-}
-
-/**
  * Builds the single description string consumed by the header info popover.
- * The order keeps authored lesson goals authoritative, then uses lesson
- * setup data, and only falls back to the broader lesson description when the
- * lesson itself has no useful premise.
+ * Authored lesson goals stay authoritative; broader fallback copy is only used
+ * when the lesson itself has no useful premise.
  */
 function getLessonMetaDescription({
   fallbackDescription,
   lessonDescription,
-  state,
 }: {
   fallbackDescription: string;
   lessonDescription: string | null;
-  state: PlayerState | null;
 }) {
   if (lessonDescription) {
     return lessonDescription;
-  }
-
-  const introText = getFirstIntroText(state);
-
-  if (introText) {
-    return introText;
   }
 
   return fallbackDescription;
@@ -131,12 +106,9 @@ function getLessonMetaDescription({
 export function usePlayerLessonMeta(): PlayerLessonMeta {
   const { fallbackDescription, lessonDescription, ...lessonMeta } = usePlayerConfig().lessonMeta;
 
-  const runtimeContext = useContext(PlayerRuntimeContext);
-  const state = runtimeContext?.state ?? null;
-
   return {
     ...lessonMeta,
-    description: getLessonMetaDescription({ fallbackDescription, lessonDescription, state }),
+    description: getLessonMetaDescription({ fallbackDescription, lessonDescription }),
   };
 }
 

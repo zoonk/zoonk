@@ -23,12 +23,21 @@ export type PhaseName =
   | "findingSimilarCourses"
   | "checkingCourseIdentity"
   | "preparingCourse"
+  | "planningIntroduction"
+  | "savingIntroduction"
+  | "writingFirstLesson"
   | "writingDescription"
   | "creatingCoverImage"
   | "categorizingCourse"
   | "outliningChapters"
+  | "writingLandingPage"
   | "savingCourseInfo";
 
+/**
+ * Keep each AI generation task in its own phase. These phases drive the
+ * thinking messages users see, so grouping model calls hides what the workflow
+ * is generating right now.
+ */
 const PHASE_STEPS = {
   categorizingCourse: ["generateCategories"],
   checkingCourseIdentity: ["resolveCourseIdentity"],
@@ -36,6 +45,7 @@ const PHASE_STEPS = {
   findingSimilarCourses: ["generateCourseIdentitySearchQueries"],
   gettingReady: ["getCourseStartRequest"],
   outliningChapters: ["generateChapters"],
+  planningIntroduction: ["generateIntroductionChapter"],
   preparingCourse: ["initializeCourse", "setCourseAsRunning"],
   savingCourseInfo: [
     "getExistingChapters",
@@ -44,8 +54,21 @@ const PHASE_STEPS = {
     "addChapters",
     "completeCourseSetup",
   ],
+  savingIntroduction: ["addIntroductionChapter", "getChapter", "addLessons"],
   writingDescription: ["generateDescription"],
-} as const satisfies Record<PhaseName, readonly CourseStepName[]>;
+  writingFirstLesson: [
+    "getLesson",
+    "setLessonAsRunning",
+    "generateExplanationContent",
+    "generateImagePrompts",
+    "generateStepImages",
+    "generateLessonImage",
+    "saveExplanationLesson",
+    "setLessonAsCompleted",
+    "completeIntroductionLesson",
+  ],
+  writingLandingPage: ["generateLandingPage"],
+} as const satisfies Record<PhaseName, readonly CourseWorkflowStepName[]>;
 
 type AssignedSteps = (typeof PHASE_STEPS)[PhaseName][number];
 type _ValidateCourse = AssertAllCovered<Exclude<CourseStepName, AssignedSteps>>;
@@ -55,15 +78,48 @@ const PHASE_ORDER: PhaseName[] = [
   "findingSimilarCourses",
   "checkingCourseIdentity",
   "preparingCourse",
+  "planningIntroduction",
+  "savingIntroduction",
+  "writingFirstLesson",
   "writingDescription",
   "creatingCoverImage",
   "categorizingCourse",
   "outliningChapters",
+  "writingLandingPage",
   "savingCourseInfo",
 ];
 
-export function getPhaseOrder(): PhaseName[] {
-  return PHASE_ORDER;
+const INTRODUCTION_PHASES = new Set<PhaseName>([
+  "planningIntroduction",
+  "savingIntroduction",
+  "writingFirstLesson",
+]);
+
+const NON_LANGUAGE_COURSE_PHASES = [
+  "gettingReady",
+  "findingSimilarCourses",
+  "checkingCourseIdentity",
+  "preparingCourse",
+  "planningIntroduction",
+  "savingIntroduction",
+  "writingFirstLesson",
+] satisfies PhaseName[];
+
+/**
+ * Chooses the visible timeline for the two course setup paths. Regular courses
+ * redirect once the first intro lesson is ready, so showing later course setup
+ * phases would make the progress UI describe work the learner no longer waits
+ * for. Language courses keep the older full-course setup timeline, minus the
+ * intro phases that only exist for regular courses.
+ */
+export function getPhaseOrder({
+  isLanguageCourse = false,
+}: { isLanguageCourse?: boolean } = {}): PhaseName[] {
+  if (isLanguageCourse) {
+    return PHASE_ORDER.filter((phase) => !INTRODUCTION_PHASES.has(phase));
+  }
+
+  return [...NON_LANGUAGE_COURSE_PHASES];
 }
 
 export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
@@ -73,9 +129,13 @@ export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
   findingSimilarCourses: SearchIcon,
   gettingReady: SettingsIcon,
   outliningChapters: LayoutListIcon,
+  planningIntroduction: PenLineIcon,
   preparingCourse: SettingsIcon,
   savingCourseInfo: CheckCircleIcon,
+  savingIntroduction: LayoutListIcon,
   writingDescription: PenLineIcon,
+  writingFirstLesson: PenLineIcon,
+  writingLandingPage: PenLineIcon,
 };
 
 const PHASE_WEIGHTS: Record<PhaseName, number> = {
@@ -85,9 +145,13 @@ const PHASE_WEIGHTS: Record<PhaseName, number> = {
   findingSimilarCourses: 2,
   gettingReady: 1,
   outliningChapters: 102,
+  planningIntroduction: 8,
   preparingCourse: 1,
   savingCourseInfo: 1,
+  savingIntroduction: 1,
   writingDescription: 4,
+  writingFirstLesson: 60,
+  writingLandingPage: 8,
 };
 
 export function getActivePhaseDurationMs(activePhaseNames: PhaseName[]): number | undefined {
@@ -109,18 +173,34 @@ const PROGRESS_CONFIG = {
   phaseWeights: PHASE_WEIGHTS,
 };
 
+/**
+ * Reuses the same step assignments and weights while narrowing the ordered
+ * phase list to the course family the learner is waiting on.
+ */
+function getProgressConfig({ isLanguageCourse }: { isLanguageCourse: boolean }) {
+  return { ...PROGRESS_CONFIG, phaseOrder: getPhaseOrder({ isLanguageCourse }) };
+}
+
 export function calculateWeightedProgress(
   completedSteps: CourseWorkflowStepName[],
   currentStep: CourseWorkflowStepName | null,
   startedSteps?: CourseWorkflowStepName[],
+  isLanguageCourse = false,
 ): number {
-  return calculateProgress(completedSteps, currentStep, { ...PROGRESS_CONFIG, startedSteps });
+  return calculateProgress(completedSteps, currentStep, {
+    ...getProgressConfig({ isLanguageCourse }),
+    startedSteps,
+  });
 }
 
 export function calculateTargetProgress(
   completedSteps: CourseWorkflowStepName[],
   currentStep: CourseWorkflowStepName | null,
   startedSteps?: CourseWorkflowStepName[],
+  isLanguageCourse = false,
 ): number {
-  return calculateTarget(completedSteps, currentStep, { ...PROGRESS_CONFIG, startedSteps });
+  return calculateTarget(completedSteps, currentStep, {
+    ...getProgressConfig({ isLanguageCourse }),
+    startedSteps,
+  });
 }

@@ -20,8 +20,8 @@ Cover the full chapter at this small lesson size, even when that means returning
 - The plan covers the chapter's canonical fundamentals, important modern conventions, and required named entities from the domain.
 - Splitting an overloaded lesson preserves the rest of the chapter's coverage instead of spending the whole plan on the first mechanism.
 - Lessons stay inside this chapter's scope and avoid topics that primarily belong to neighboring chapters.
-- Titles are concrete and learner-facing, not dry textbook headings.
-- Descriptions say what the learner will do, trace, compare, build, recognize, or reason through.
+- Titles are concrete, learner-facing, and searchable. Use the canonical names a serious learner would expect when those names are the field-standard way to identify the lesson topic.
+- Descriptions say what the lesson covers and what the learner will do, trace, compare, build, recognize, or reason through.
 
 # Lesson Boundary Rules
 
@@ -44,6 +44,8 @@ Collapse these into one cohesive lesson when they are first introduced:
 - adjacent labels that would use the same example with only slightly different wording
 - glossary-like method, phase, or subtopic lists where each lesson would repeat the same teaching move
 
+Canonical names help learners recognize lessons, but they are not automatic lesson boundaries. Keep related canonical terms together when the learner move is one cohesive task, such as comparing tradeoffs, choosing among related syntax forms, calculating related metrics from the same board, or reading the same kind of evidence.
+
 Split lessons when the learner move is genuinely different:
 
 - different mechanisms that can be explained and used independently
@@ -52,6 +54,8 @@ Split lessons when the learner move is genuinely different:
 - different procedural moves with different effects, deadlines, parties, remedies, or failure modes
 - different real-world decisions or workflows
 - different named people, missions, models, tools, works, cases, or groups when each anchors a distinct comparison, evidence source, or practical decision
+
+Keep compact comparison lessons when the goal is to recognize related variants and compare costs, tradeoffs, or selection criteria. Split those variants only when each one needs its own mechanism-level explanation, implementation practice, or failure-mode analysis.
 
 Do not add overview, summary, checklist, project, or "putting it together" lessons. Every lesson should teach new substance inside this chapter.
 
@@ -76,24 +80,32 @@ When `NEIGHBORING_CHAPTERS` is provided, use it as a scope boundary. A concept b
 ## Lesson Titles
 
 - Keep titles short, specific, and concrete.
-- Prefer active learner-facing framing over academic category names.
-- Name the real thing being learned, not a vague bucket.
+- Use the canonical, searchable name for the specific mechanism, structure, method, artifact, case, source type, procedure, metric, tool, or concept being taught when that name is how the field recognizes the topic.
+- Canonical names are not dry textbook headings when they are the terms learners search for and practitioners use.
+- Accept close field-standard variants in `LANGUAGE`. Do not force exact wording if the title still names the recognized topic.
+- Do not hide canonical terms behind practical paraphrases, metaphors, slogans, or "what this does" titles.
+- Name the real thing being learned, not a vague bucket or an explanation of what the thing does.
+- Combine related canonical terms in one title when that matches the lesson boundary.
 - Avoid "Introduction to", "Overview of", "Basics of", "Part 1", "Part 2", and numbered suffixes.
 
 Examples:
 
-- Bad: "Types of levers"
-- Good: "Picking a lever for heavy loads"
-- Bad: "Landmark model families"
-- Good: "How BERT, GPT, and T5 differ"
-- Bad: "Procedural principles"
-- Good: "Reading a case through its procedural rules"
+- Good: "Function parameters and return values"
+- Bad: "Send data in and get an answer back"
+- Good: "Array methods"
+- Bad: "Use lists without extra loops"
+- Good: "Axon hillock"
+- Bad: "Where a neuron decides to fire"
+- Good: "Lead time and cycle time"
+- Bad: "How long work really takes"
+
+Plain language belongs mostly in the description. Use the description to state what the lesson teaches in plain, searchable terms and what practical work appears inside the lesson. Do not force the title to carry that explanation by replacing the canonical topic name.
 
 ## Lesson Descriptions
 
 - Write 1-2 warm, plain sentences.
 - Use `LANGUAGE`.
-- Explain what the learner will do or be able to reason through.
+- Explain what the lesson teaches and what the learner will do or be able to reason through. Name the actual lesson scope in plain, searchable terms so downstream generation can tell which specific concept, procedure, evidence type, example, or skill belongs inside the lesson.
 - Do not start with "introduces", "presents", "shows", "teaches", "covers", or "explains".
 - Prefer direct wording: "Trace how a function takes input, runs, and gives a value back."
 
@@ -106,6 +118,7 @@ Before returning, validate the plan in this order:
 3. Collapse test: did any mutually defining parts become separate lessons?
 4. Coverage after splitting: are the canonical pillars, modern conventions, and required named entities still present?
 5. Scope: did any lesson primarily belong to a neighboring chapter?
-6. Tone: do titles and descriptions feel concrete, learner-facing, and useful?
+6. Naming: do titles use canonical, searchable names when those names are the field-standard way to identify the lesson topic?
+7. Tone: do titles and descriptions feel concrete, learner-facing, and useful?
 
 If a lesson exists only because a concept label could be named separately, merge it. If a lesson is too large to teach clearly in 1-2 minutes, split it by what the learner needs to do or understand. If a chapter pillar is missing, add or adjust a lesson. Then stop.

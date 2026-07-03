@@ -4,7 +4,7 @@ import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { courseFixture, courseUserFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { expect, test } from "./fixtures";
 
@@ -239,7 +239,7 @@ async function completeChapters({
 }
 
 test.describe("Course Progress Indicators", () => {
-  test("shows zero chapter progress without card indicators", async ({ authenticatedPage }) => {
+  test("shows the course landing page before progress starts", async ({ authenticatedPage }) => {
     const { course } = await createCourseProgressScenario();
 
     await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
@@ -249,11 +249,41 @@ test.describe("Course Progress Indicators", () => {
     ).toBeVisible();
 
     const main = authenticatedPage.getByRole("main");
-    const startLink = main.getByRole("link", { name: "Start 0% complete" });
-    await expect(startLink).toBeVisible();
-    await expect(startLink.getByText("0%", { exact: true })).toBeVisible();
+    await expect(main.getByRole("link", { name: /try free chapter/iu }).first()).toBeVisible();
+
+    await main
+      .getByRole("tablist", { name: "Course questions" })
+      .getByRole("tab", { name: /content/iu })
+      .click();
+
+    await expect(main.getByRole("heading", { name: "Course content" })).toBeVisible();
     await expect(main.getByText(/^completed$/iu)).toHaveCount(0);
     await expect(main.getByText(/\d+\/\d+ done/u)).toHaveCount(0);
+  });
+
+  test("hides start action percentage when only an unfinished lesson exists", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
+    const { course, lessons } = await createCourseProgressScenario();
+
+    await lessonProgressFixture({
+      completedAt: null,
+      durationSeconds: 0,
+      lessonId: lessons.ch1Lesson1.id,
+      userId: withProgressUser.id,
+    });
+
+    await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
+
+    await expect(
+      authenticatedPage.getByRole("heading", { level: 1, name: course.title }),
+    ).toBeVisible();
+
+    const main = authenticatedPage.getByRole("main");
+
+    await expect(main.getByRole("link", { name: /^Try free chapter$/u })).toBeVisible();
+    await expect(main.getByRole("link", { name: /\d+% complete/iu })).toHaveCount(0);
   });
 
   test("shows completed status for chapters with all lessons done", async ({
@@ -262,12 +292,11 @@ test.describe("Course Progress Indicators", () => {
   }) => {
     const { chapter1, chapter2, chapter3, lessons, course } = await createCourseProgressScenario();
 
-    await completeLessons({ lessons: Object.values(lessons), userId: withProgressUser.id });
-
-    await completeChapters({
-      chapters: [chapter1, chapter2, chapter3],
-      userId: withProgressUser.id,
-    });
+    await Promise.all([
+      completeLessons({ lessons: Object.values(lessons), userId: withProgressUser.id }),
+      completeChapters({ chapters: [chapter1, chapter2, chapter3], userId: withProgressUser.id }),
+      courseUserFixture({ courseId: course.id, userId: withProgressUser.id }),
+    ]);
 
     await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
 
@@ -290,10 +319,13 @@ test.describe("Course Progress Indicators", () => {
   }) => {
     const { lessons, course } = await createCourseProgressScenario();
 
-    await completeLessons({
-      lessons: [lessons.ch1Lesson1, lessons.ch2Lesson1],
-      userId: withProgressUser.id,
-    });
+    await Promise.all([
+      completeLessons({
+        lessons: [lessons.ch1Lesson1, lessons.ch2Lesson1],
+        userId: withProgressUser.id,
+      }),
+      courseUserFixture({ courseId: course.id, userId: withProgressUser.id }),
+    ]);
 
     await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
 
@@ -317,10 +349,13 @@ test.describe("Course Progress Indicators", () => {
   }) => {
     const { lessons, course } = await createCourseProgressScenario();
 
-    await completeLessons({
-      lessons: [lessons.ch1Lesson1, lessons.ch1Lesson2, lessons.ch1Lesson3, lessons.ch2Lesson1],
-      userId: withProgressUser.id,
-    });
+    await Promise.all([
+      completeLessons({
+        lessons: [lessons.ch1Lesson1, lessons.ch1Lesson2, lessons.ch1Lesson3, lessons.ch2Lesson1],
+        userId: withProgressUser.id,
+      }),
+      courseUserFixture({ courseId: course.id, userId: withProgressUser.id }),
+    ]);
 
     await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
 
@@ -339,7 +374,10 @@ test.describe("Course Progress Indicators", () => {
   }) => {
     const { completedLesson, chapter, course } = await createCourseWithIncompleteChapter();
 
-    await completeLessons({ lessons: [completedLesson], userId: withProgressUser.id });
+    await Promise.all([
+      completeLessons({ lessons: [completedLesson], userId: withProgressUser.id }),
+      courseUserFixture({ courseId: course.id, userId: withProgressUser.id }),
+    ]);
 
     await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
 
@@ -361,6 +399,7 @@ test.describe("Course Progress Indicators", () => {
     const [context] = await Promise.all([
       browser.newContext({ storageState: user.storageState }),
       completeLessons({ lessons: [visibleLesson], userId: user.id }),
+      courseUserFixture({ courseId: course.id, userId: user.id }),
       prisma.userLearningProfile.create({
         data: { preferences: { hiddenLessonKinds: ["quiz"] }, userId: user.id },
       }),

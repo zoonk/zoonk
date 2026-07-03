@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - MUST be in US English\n      - Should introduce civil procedure as the rules and sequence that move disputes through courts, including filing, notice, deadlines, motions, discovery, hearings, evidence boundaries, settlement pressure, or appeals\n      - Should make the field useful to understand without giving legal advice, case strategy, jurisdiction-specific instructions, or promises about bar admission, law school, licensing, or legal employment\n      - Should mention realistic roles and uses such as lawyers, paralegals, court staff, compliance teams, journalists, policy workers, advocates, business owners, or people trying to understand legal systems\n      - Should avoid becoming a dense technical chapter on personal jurisdiction, claim preclusion, pleading standards, discovery sanctions, or appellate preservation\n\n      \n  - Must be written in the specified language\n  - Must include exactly one chapter object with title and description\n  - Must include 3-5 lessons\n  - Every lesson must be an explanation lesson plan, not a practice, quiz, review, capstone, project, or summary\n  - The chapter and lessons must feel like a quick guide to the field, not the first normal technical chapter\n  - Must make the field feel concrete, useful, and interesting for a true beginner\n  - Must include realistic opportunities, careers, roles, projects, communities, or everyday uses connected to the field\n  - Must stay easy enough for a first encounter and avoid deep prerequisites\n  - Must be specific to the course topic, not generic learning motivation\n  - For non-English cases, must not mix in English field, learner, or opportunity labels; translate them naturally\n  - Must not promise salaries, credentials, jobs, fluency, mastery, or guaranteed outcomes\n\n    ",
+  "judgedAt": "2026-07-02T12:06:02.165Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Excellent quick-guide framing with concrete beginner-friendly content, diverse realistic roles (lawyers, judges, mediators, policy advocates, in-house teams), and clear course preview without promising outcomes. Covers filing, notice, deadlines, discovery, settlement pressure, and appeals appropriately.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Strong quick guide with clear structure, diverse roles including journalists and legal tech, and good coverage of procedural topics. Slightly terse but hits all rubric points without overreach or promises.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Solid overview with concrete examples and role mentions. The phrase 'fluent in courtroom mechanics' edges toward a fluency promise but is mild. Otherwise well-scoped and beginner-friendly.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Clean quick-guide feel, appropriate roles, and beginner-friendly scope. Descriptions are somewhat brief and generic but stay on-topic and avoid promises.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Engaging and specific with good procedural coverage. However, phrases like 'gives lawyers real leverage' and 'command of the machinery' lean toward strategy/mastery framing, and role diversity is limited mostly to legal insiders.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Concise and accessible with good procedural touchpoints, but lacks any mention of realistic roles/careers/uses, which is a required element. Also leans slightly toward strategic 'who wins' framing.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Framing repeatedly emphasizes strategy, leverage, and 'who wins,' which drifts toward case strategy advice. Also uses somewhat sensational language ('forcing secrets') and limited role diversity.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Only 4 lessons is fine, but the chapter description is thin and generic, role mentions are minimal, and it lacks the concrete everyday-usefulness and career/community connections required. Feels more like a teaser than a beginner quick guide.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Fully meets all expectations. It provides an engaging, high-level overview of civil procedure, naturally includes diverse roles like journalists and legal tech teams, and perfectly captures the requested quick-guide tone without using overly technical jargon.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Exceptional output that clearly breaks down the courtroom process and highlights practical concepts alongside relevant roles like mediators and public-interest advocates. It follows all negative constraints flawlessly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Strong output that accurately surveys the field. It covers key procedural concepts, highlights everyday disputes, and includes realistic careers perfectly, though it introduces slightly more jargon in the final lesson than the top models.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Meets expectations and accurately describes civil procedure concepts like discovery and jurisdiction. However, it only briefly touches on roles and opportunities, making it slightly less comprehensive than the top models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "A good overview, but it violates a negative constraint by explicitly using the restricted word \"mastering.\" It also edges close to teaching case strategy rather than just explaining the system.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Features a solid structure and content, but it explicitly promises to help the learner think like someone \"fluent\" in courtroom mechanics, which violates the strict negative constraint against promising fluency.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Violates the negative constraint by mentioning \"mastering\" legal rules. Additionally, it adopts a somewhat cynical tone (\"courtroom game,\" \"share secrets\") that strays from an objective educational overview.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Fails to include realistic opportunities, careers, roles, or everyday uses connected to the field, which was a mandatory instruction. It focuses exclusively on the mechanics of lawsuits.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Best overall fit: it clearly frames civil procedure as the sequence of rules moving cases through court, including filing, notice, deadlines, evidence, settlement pressure, motions, discovery, trial, and judgment. It also includes realistic roles and uses without giving legal advice or promising outcomes; the only minor issue is that the final lesson lists several technical topics, though not in a dense way.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Very strong quick-guide structure that is concrete, beginner-friendly, and covers filing, notice, deadlines, discovery, motions, trials, appeals, settlement pressure, and real-world roles. It is slightly less developed than Model E, but it stays highly aligned with the expectations and avoids legal advice or guarantees.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Strong beginner overview with a clear explanation of civil procedure as the rules for moving lawsuits through court, plus realistic roles such as clerks, mediators, public-interest advocates, and policy workers. It is a little less complete on motions, settlement pressure, appeals, and other case-sequence details, but remains useful and well-scoped.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Good quick guide that explains civil procedure through complaint, deadlines, real disputes, roles, and the life of a lawsuit. It has a minor concern around wording like becoming “fluent in courtroom mechanics,” which edges toward a promised outcome, and it is somewhat less broad on roles and procedural stages than the top entries.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Generally useful and concrete, with discussion of filing, evidence sharing, deadlines, motions, settlement, and roles such as litigators, judges, clerks, and paralegals. However, it leans too much into lawyer strategy, leverage, “mastering,” and wielding the rulebook, which conflicts with the expectation to avoid case-strategy framing and promises of mastery.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Acceptable overview with a clear beginner-friendly tone, some discussion of complaints, evidence, discovery, settlement, jurisdiction, and legal roles. It is less complete on notice, deadlines, motions, appeals, and broader opportunities, and one lesson leans into jurisdiction more than ideal for a quick field guide.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "It explains several core procedural ideas clearly, including civil versus criminal cases, court authority, discovery, deadlines, filing locations, motions, and settlement. The major weakness is that it omits realistic opportunities, careers, roles, communities, or everyday uses connected to the field, which is a required element.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "It includes some relevant topics and roles, but the tone is overly sensational and strategy-focused, with misleading phrasing about forcing opponents to share “secrets” and location often deciding who wins. It also feels less like a neutral beginner guide and more like a dramatic litigation-strategy preview.",
+          "score": 5
+        }
+      ]
+    }
+  ],
+  "taskId": "course-introduction",
+  "testCaseId": "en-civil-procedure-regulated-field-1"
+}

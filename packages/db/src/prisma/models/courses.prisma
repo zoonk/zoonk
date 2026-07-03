@@ -12,6 +12,7 @@ model Course {
   title            String
   normalizedTitle  String               @map("normalized_title")
   description      String?
+  landingPage      Json?                @map("landing_page")
   targetLanguage   String?              @map("target_language") @db.VarChar(10)
   generationStatus GenerationStatus     @default(completed) @map("generation_status")
   generationRunId  String?              @map("generation_run_id")

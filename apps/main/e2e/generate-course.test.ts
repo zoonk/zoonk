@@ -1,4 +1,8 @@
 import { randomUUID } from "node:crypto";
+import {
+  COURSE_COMPLETION_STEP,
+  INTRODUCTION_LESSON_COMPLETION_STEP,
+} from "@zoonk/core/workflows/steps";
 import { type Page, type Route } from "@zoonk/e2e/fixtures";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -21,7 +25,7 @@ import { expect, test } from "./fixtures";
  * - Shows current step label + spinner while streaming
  * - Shows completed steps with checkmarks
  * - Workflow completes when the configured completion step is received
- * - Redirects to course page when workflow completes
+ * - Redirects to the configured completion target when workflow completes
  *
  * NOTE: Some error handling tests (trigger API failures) are not included because
  * the POST trigger request happens too quickly during page load for Playwright's
@@ -149,10 +153,12 @@ async function setupMockApis(page: Page, options: MockApiOptions = {}): Promise<
 async function createPublishedCourseWithLesson({
   generationStatus,
   slug,
+  targetLanguage,
   title,
 }: {
   generationStatus?: "completed" | "running";
   slug: string;
+  targetLanguage?: string;
   title: string;
 }) {
   const org = await getAiOrganization();
@@ -162,6 +168,7 @@ async function createPublishedCourseWithLesson({
     isPublished: true,
     organizationId: org.id,
     slug,
+    ...(targetLanguage ? { targetLanguage } : {}),
     title,
   });
 
@@ -169,11 +176,30 @@ async function createPublishedCourseWithLesson({
     courseId: course.id,
     isPublished: true,
     organizationId: org.id,
+    position: 0,
   });
 
-  await lessonFixture({ chapterId: chapter.id, isPublished: true, organizationId: org.id });
+  const lesson = await lessonFixture({
+    chapterId: chapter.id,
+    isPublished: true,
+    organizationId: org.id,
+    position: 0,
+  });
 
-  return course;
+  return { chapter, course, lesson };
+}
+
+/**
+ * Mirrors the API's `completeIntroductionLesson` entity id. Non-language course
+ * generation now completes from the first intro lesson, so the stream sends the
+ * lesson route suffix rather than only the course slug.
+ */
+function getIntroLessonCompletionTarget({
+  chapter,
+  course,
+  lesson,
+}: Awaited<ReturnType<typeof createPublishedCourseWithLesson>>): string {
+  return `${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`;
 }
 
 test.describe("Generate Course Page", () => {
@@ -229,19 +255,48 @@ test.describe("Generate Course Page", () => {
   });
 
   test.describe("Workflow completion and redirect", () => {
-    test("redirects to linked completed course without starting generation", async ({
+    test("redirects linked completed regular course to the first intro lesson", async ({
       authenticatedPage,
     }) => {
       const courseSlug = `e2e-linked-course-${randomUUID().slice(0, 8)}`;
 
-      const course = await createPublishedCourseWithLesson({
+      const courseContent = await createPublishedCourseWithLesson({
         generationStatus: "completed",
         slug: courseSlug,
         title: "E2E Linked Completed Course",
       });
 
+      const introLessonTarget = getIntroLessonCompletionTarget(courseContent);
+
       const request = await courseStartRequestFixture({
         canonicalTitle: "E2E Linked Completed Request",
+        courseId: courseContent.course.id,
+        generationStatus: "pending",
+        language: "en",
+      });
+
+      await authenticatedPage.route("**/v1/workflows/course-generation/**", async (route) => {
+        throw new Error(`Generation workflow should not start: ${route.request().url()}`);
+      });
+
+      await authenticatedPage.goto(`/generate/course/${request.id}`);
+
+      await authenticatedPage.waitForURL(`/b/ai/c/${introLessonTarget}`, { timeout: 10_000 });
+    });
+
+    test("redirects to the first intro lesson when the linked course is still generating", async ({
+      authenticatedPage,
+    }) => {
+      const courseSlug = `e2e-linked-running-course-${randomUUID().slice(0, 8)}`;
+
+      const { chapter, course, lesson } = await createPublishedCourseWithLesson({
+        generationStatus: "running",
+        slug: courseSlug,
+        title: "E2E Linked Running Course",
+      });
+
+      const request = await courseStartRequestFixture({
+        canonicalTitle: "E2E Linked Running Request",
         courseId: course.id,
         generationStatus: "pending",
         language: "en",
@@ -253,13 +308,44 @@ test.describe("Generate Course Page", () => {
 
       await authenticatedPage.goto(`/generate/course/${request.id}`);
 
-      await authenticatedPage.waitForURL(new RegExp(`/b/ai/c/${courseSlug}`, "u"), {
-        timeout: 10_000,
-      });
+      await authenticatedPage.waitForURL(
+        `/b/ai/c/${courseSlug}/ch/${chapter.slug}/l/${lesson.slug}`,
+        { timeout: 10_000 },
+      );
     });
 
-    test("shows completion state and redirects to course page", async ({ authenticatedPage }) => {
-      const org = await getAiOrganization();
+    test("redirects linked completed language course to the course page", async ({
+      authenticatedPage,
+    }) => {
+      const courseSlug = `e2e-linked-language-course-${randomUUID().slice(0, 8)}`;
+
+      const { course } = await createPublishedCourseWithLesson({
+        generationStatus: "completed",
+        slug: courseSlug,
+        targetLanguage: "es",
+        title: "E2E Linked Completed Language Course",
+      });
+
+      const request = await courseStartRequestFixture({
+        canonicalTitle: "E2E Linked Completed Language Request",
+        courseId: course.id,
+        generationStatus: "pending",
+        language: "en",
+        targetLanguage: "es",
+      });
+
+      await authenticatedPage.route("**/v1/workflows/course-generation/**", async (route) => {
+        throw new Error(`Generation workflow should not start: ${route.request().url()}`);
+      });
+
+      await authenticatedPage.goto(`/generate/course/${request.id}`);
+
+      await authenticatedPage.waitForURL(`/b/ai/c/${courseSlug}`, { timeout: 10_000 });
+    });
+
+    test("shows completion state and redirects to the first intro lesson", async ({
+      authenticatedPage,
+    }) => {
       const title = "E2E Completion Test";
       const slug = `e2e-completion-${randomUUID().slice(0, 8)}`;
 
@@ -269,39 +355,30 @@ test.describe("Generate Course Page", () => {
         language: "en",
       });
 
-      // Create a real course so the redirect after "completion" works
-      const course = await courseFixture({
-        isPublished: true,
-        organizationId: org.id,
-        slug,
-        title,
-      });
+      const courseContent = await createPublishedCourseWithLesson({ slug, title });
 
-      const chapter = await chapterFixture({
-        courseId: course.id,
-        isPublished: true,
-        organizationId: org.id,
-      });
-
-      await lessonFixture({ chapterId: chapter.id, isPublished: true, organizationId: org.id });
+      const introLessonTarget = getIntroLessonCompletionTarget(courseContent);
 
       await setupMockApis(authenticatedPage, {
         assertBearerAuth: true,
         streamMessages: [
           { status: "started", step: "getCourseStartRequest" },
           { status: "completed", step: "getCourseStartRequest" },
-          { status: "started", step: "completeCourseSetup" },
-          { status: "completed", step: "completeCourseSetup" },
+          { status: "started", step: INTRODUCTION_LESSON_COMPLETION_STEP },
+          {
+            entityId: introLessonTarget,
+            status: "completed",
+            step: INTRODUCTION_LESSON_COMPLETION_STEP,
+          },
         ],
       });
 
       await authenticatedPage.goto(`/generate/course/${request.id}`);
 
-      // Should complete and redirect to course page
-      await authenticatedPage.waitForURL(/\/b\/ai\/c\//u, { timeout: 10_000 });
+      await authenticatedPage.waitForURL(`/b/ai/c/${introLessonTarget}`, { timeout: 10_000 });
     });
 
-    test("redirects to the completed workflow course slug", async ({ authenticatedPage }) => {
+    test("redirects to the completed workflow intro lesson", async ({ authenticatedPage }) => {
       const courseSlug = `e2e-identity-course-${randomUUID().slice(0, 8)}`;
 
       const request = await courseStartRequestFixture({
@@ -310,74 +387,107 @@ test.describe("Generate Course Page", () => {
         language: "en",
       });
 
-      await createPublishedCourseWithLesson({
+      const courseContent = await createPublishedCourseWithLesson({
         slug: courseSlug,
         title: "E2E Identity Redirect Course",
       });
+
+      const introLessonTarget = getIntroLessonCompletionTarget(courseContent);
 
       await setupMockApis(authenticatedPage, {
         streamMessages: [
           { status: "started", step: "getCourseStartRequest" },
           { status: "completed", step: "getCourseStartRequest" },
-          { status: "started", step: "completeCourseSetup" },
-          { entityId: courseSlug, status: "completed", step: "completeCourseSetup" },
+          { status: "started", step: INTRODUCTION_LESSON_COMPLETION_STEP },
+          {
+            entityId: introLessonTarget,
+            status: "completed",
+            step: INTRODUCTION_LESSON_COMPLETION_STEP,
+          },
         ],
       });
 
       await authenticatedPage.goto(`/generate/course/${request.id}`);
 
-      await authenticatedPage.waitForURL(new RegExp(`/b/ai/c/${courseSlug}`, "u"), {
-        timeout: 10_000,
-      });
+      await authenticatedPage.waitForURL(`/b/ai/c/${introLessonTarget}`, { timeout: 10_000 });
 
       expect(authenticatedPage.url()).not.toContain(request.id);
     });
 
-    test("redirects to suffixed slug for non-English courses", async ({ authenticatedPage }) => {
-      const title = `E2E Locale Redirect ${randomUUID().slice(0, 8)}`;
-      const suffixedSlug = ensureLocaleSuffix(toSlug(title), "pt");
+    test("redirects language course completion to the course page", async ({
+      authenticatedPage,
+    }) => {
       const org = await getAiOrganization();
+      const title = `E2E Language Completion ${randomUUID().slice(0, 8)}`;
+      const courseSlug = `e2e-language-completion-${randomUUID().slice(0, 8)}`;
 
-      const [request] = await Promise.all([
-        courseStartRequestFixture({
-          canonicalTitle: title,
-          generationStatus: "pending",
-          language: "pt",
-        }),
-        // Use generationStatus "running" so the server-side redirect is skipped
-        // and the client-side redirect (the one we're testing) fires instead.
-        courseFixture({
-          generationStatus: "running",
-          isPublished: true,
-          organizationId: org.id,
-          slug: suffixedSlug,
-          title,
-        }).then(async (course) => {
-          const chapter = await chapterFixture({
-            courseId: course.id,
-            isPublished: true,
-            organizationId: org.id,
-          });
+      const course = await courseFixture({
+        generationStatus: "running",
+        isPublished: true,
+        organizationId: org.id,
+        slug: courseSlug,
+        targetLanguage: "es",
+        title,
+      });
 
-          await lessonFixture({ chapterId: chapter.id, isPublished: true, organizationId: org.id });
-        }),
-      ]);
+      await chapterFixture({ courseId: course.id, isPublished: true, organizationId: org.id });
+
+      const request = await courseStartRequestFixture({
+        canonicalTitle: title,
+        courseId: course.id,
+        generationStatus: "pending",
+        language: "en",
+        targetLanguage: "es",
+      });
 
       await setupMockApis(authenticatedPage, {
         streamMessages: [
           { status: "started", step: "getCourseStartRequest" },
           { status: "completed", step: "getCourseStartRequest" },
-          { status: "started", step: "completeCourseSetup" },
-          { status: "completed", step: "completeCourseSetup" },
+          { status: "started", step: COURSE_COMPLETION_STEP },
+          { entityId: courseSlug, status: "completed", step: COURSE_COMPLETION_STEP },
+        ],
+      });
+
+      await authenticatedPage.goto(`/generate/course/${request.id}`);
+
+      await authenticatedPage.waitForURL(`/b/ai/c/${courseSlug}`, { timeout: 10_000 });
+    });
+
+    test("redirects to suffixed slug intro lesson for non-English courses", async ({
+      authenticatedPage,
+    }) => {
+      const title = `E2E Locale Redirect ${randomUUID().slice(0, 8)}`;
+      const suffixedSlug = ensureLocaleSuffix(toSlug(title), "pt");
+
+      const [request, courseContent] = await Promise.all([
+        courseStartRequestFixture({
+          canonicalTitle: title,
+          generationStatus: "pending",
+          language: "pt",
+        }),
+        createPublishedCourseWithLesson({ generationStatus: "running", slug: suffixedSlug, title }),
+      ]);
+
+      const introLessonTarget = getIntroLessonCompletionTarget(courseContent);
+
+      await setupMockApis(authenticatedPage, {
+        streamMessages: [
+          { status: "started", step: "getCourseStartRequest" },
+          { status: "completed", step: "getCourseStartRequest" },
+          { status: "started", step: INTRODUCTION_LESSON_COMPLETION_STEP },
+          {
+            entityId: introLessonTarget,
+            status: "completed",
+            step: INTRODUCTION_LESSON_COMPLETION_STEP,
+          },
         ],
       });
 
       await authenticatedPage.goto(`/generate/course/${request.id}`);
 
       // Should redirect to the suffixed slug, not the raw canonical slug.
-      await authenticatedPage.waitForURL(new RegExp(`/b/ai/c/${suffixedSlug}`, "u"), {
-        timeout: 10_000,
-      });
+      await authenticatedPage.waitForURL(`/b/ai/c/${introLessonTarget}`, { timeout: 10_000 });
     });
   });
 

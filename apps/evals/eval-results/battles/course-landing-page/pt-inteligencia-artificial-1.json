@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - Should explain artificial intelligence as a practical field with business, technical, and everyday impact\n      - outcomes should not become a list of specific tools or vendor products\n      - opportunities should include realistic professional or academic contexts without guaranteeing a job\n      - Should be in Brazilian Portuguese\n\n      \n  - Must be written in the specified language\n  - Must include exactly these fields: valueProposition, audience, outcomes, opportunities\n  - valueProposition must be one concise sentence\n  - audience must contain 3-5 short, specific learner profiles or fit statements\n  - audience entries may be concise labels such as \"People preparing for medical school\" when they clearly answer who the course is for\n  - outcomes must contain 4-6 concrete abilities learners can build\n  - opportunities must contain 3-5 realistic career, academic, life, or cultural opportunities\n  - Must be specific to the course topic, not generic education copy\n  - valueProposition must sound natural and concrete, not like an abstract definition of the field\n  - For non-English cases, must not mix in English audience or framing words such as \"learners\", \"students\", \"beginners\", or \"professionals\"; translate them naturally\n  - Must not mention course duration, completion time, salaries, certificates, job guarantees, guaranteed fluency, pricing, subscriptions, or free chapters\n  - Must avoid inflated claims such as \"master\", \"become an expert\", and \"unlock your potential\"\n\n    ",
+  "judgedAt": "2026-07-01T01:04:36.082Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Strong coverage across business, technical, and everyday impact with concrete outcomes and realistic opportunities. Audience profiles are specific and varied, valueProposition is concrete without inflated claims. Minor English term 'machine learning' appears but is common in Brazilian tech usage.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Comprehensive and well-structured with specific audience, concrete outcomes tied to chapters, and realistic opportunities. Uses some English terms (LLMs, RAG, machine learning) which are borderline but widely accepted in PT-BR tech context. No inflated claims or forbidden topics.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Solid outputs with concrete outcomes and realistic opportunities spanning professional and everyday contexts. Audience is specific and valueProposition is concrete. Well-aligned with course chapters.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Well-balanced with clear audience segments, concrete outcomes, and diverse opportunities including academic contexts. ValueProposition is natural and specific. Good coverage of business, technical, and everyday impact.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Good everyday and practical framing with concrete outcomes and realistic opportunities. Audience descriptions are a bit vague ('Pessoas que querem entender') but acceptable. ValueProposition is slightly long but concrete.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Only 4 audience entries (within 3-5 range, OK) and solid outcomes. Opportunities are realistic but skew heavily professional/business without academic or everyday variety. ValueProposition is concrete though uses em-dash awkwardly.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Only 4 audience/opportunities entries which is within range. Outcomes are strong and specific. Opportunities skew corporate-only without academic/everyday variety, slightly narrower scope than expectations for 'everyday impact'.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Only 4 audience and 4 opportunities entries (acceptable). Outcomes and opportunities are competent but somewhat generic and less concrete than others. Uses 'sustentável e ética' which is slightly abstract. Missing everyday impact framing.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Flawlessly incorporates technical, business, and everyday impacts. The outcomes and opportunities are highly specific to the provided chapters, capturing the exact technical depth of the syllabus without inflating claims.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Exceptionally balances the syllabus's technical rigor with practical business and everyday applications. The terminology is accurate, natural in Portuguese, and strictly follows all length and formatting constraints.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Strong execution that successfully meets all constraints. It explicitly addresses the everyday impact of AI for curious individuals while maintaining concrete, syllabus-aligned professional outcomes.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Great alignment with the chapters and constraints. It covers academic, business, and everyday contexts effectively, delivering clear and concrete outcomes.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Meets the constraints well, successfully weaving in the everyday impact of AI. However, its outcomes are slightly less technically specific to the rich syllabus compared to the top models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Offers very strong technical and business writing that accurately reflects the course. However, it misses the explicit requirement to include the 'everyday impact' of AI, focusing purely on professional contexts.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Provides highly concrete technical outcomes and opportunities for developers and managers. Like Model B, it has a small gap because it entirely omits the required everyday impact.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Misses the everyday impact requirement. Additionally, its opportunities are somewhat abstract and read more like generic corporate jargon than realistic, concrete scenarios.",
+          "score": 8
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "É muito específico ao curso, cobre dados, modelos, avaliação, governança, implantação e impacto profissional/cotidiano de forma realista. Pequeno ponto fraco: mistura alguns termos em inglês no público, como “machine learning”, “LLMs” e “prompting”, embora sejam termos técnicos comuns.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Atende muito bem à estrutura e cobre o ciclo completo de IA, incluindo formulação, dados, modelos, RAG, avaliação, implantação e governança. As oportunidades são realistas e incluem impacto profissional e cotidiano; a única ressalva é o uso de “hype” em inglês no público.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "É natural em português brasileiro, bem alinhado ao curso e inclui impactos técnicos, de negócio, acadêmicos e do dia a dia. Os outcomes são bons, mas um pouco menos concretos em alguns pontos, como “discutir implantação” em vez de construir ou operar algo mais específico.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "É forte e bem específico, com bons outcomes sobre formulação, dados, modelos, prompts, avaliação e riscos. Fica um pouco mais restrito a contextos profissionais e técnicos, com menos atenção ao impacto cotidiano ou cultural esperado.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Tem linguagem natural, boa cobertura de dados, modelos, prompts, avaliação, riscos e uso responsável, além de oportunidades realistas. É um pouco menos completo sobre implantação, operação e monitoramento, que são partes importantes dos capítulos do curso.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Cobre bem a progressão técnica do curso e inclui oportunidades profissionais e de entendimento cotidiano sobre IA. Perde pontos por misturar vários termos em inglês no público e por ter uma value proposition um pouco mais forte do que o ideal ao prometer transformar um pedido em “sistema de IA funcional”.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "É tecnicamente sólido e específico, com bons outcomes sobre dados, modelos, RAG, avaliação e produção. Porém é mais estreito e corporativo, com pouca presença de impacto cotidiano, acadêmico ou cultural, e algumas oportunidades soam mais como nichos profissionais avançados.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Cumpre a estrutura e está em português brasileiro, com público, outcomes e oportunidades plausíveis. Ainda assim, é menos abrangente e menos concreto em partes importantes do curso, além de usar uma formulação imprecisa para RAG como “recuperação aumentada de dados”.",
+          "score": 7.2
+        }
+      ]
+    }
+  ],
+  "taskId": "course-landing-page",
+  "testCaseId": "pt-inteligencia-artificial-1"
+}

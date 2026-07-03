@@ -8,9 +8,9 @@ import { usePlayerRuntime } from "../player-context";
 
 /**
  * Single source of truth for the step action button
- * (Begin, Check, Continue).
+ * (Check, Continue).
  *
- * Handles every non-navigation action for intro and checked steps.
+ * Handles every non-navigation action for answer and feedback steps.
  *
  * Rendered in two places with different visibility:
  * - Inside the PlayerBottomBar for mobile (visible below lg)
@@ -31,13 +31,9 @@ export function StepActionButton({
     return null;
   }
 
-  const actionByRun = {
-    check: actions.check,
-    continue: actions.continue,
-    navigateNext: actions.navigateNext,
-  } as const;
+  const actionByRun = { check: actions.check, continue: actions.continue } as const;
 
-  const labelByButton = { begin: t("Begin"), check: t("Check"), continue: t("Continue") } as const;
+  const labelByButton = { check: t("Check"), continue: t("Continue") } as const;
 
   const buttonProps = {
     ...props,

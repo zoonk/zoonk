@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Should introduce biology as the study of living systems, from cells and DNA to ecosystems, health, food, environment, or biotechnology\n      - Should include interesting hooks such as cells as tiny factories, evolution, microbes, genetics, ecosystems, medicine, agriculture, or conservation\n      - Should not become a dense foundation chapter about cell organelles, biochemistry, taxonomy, or lab protocols\n\n      \n  - Must be written in the specified language\n  - Must include exactly one chapter object with title and description\n  - Must include 3-5 lessons\n  - Every lesson must be an explanation lesson plan, not a practice, quiz, review, capstone, project, or summary\n  - The chapter and lessons must feel like a quick guide to the field, not the first normal technical chapter\n  - Must make the field feel concrete, useful, and interesting for a true beginner\n  - Must include realistic opportunities, careers, roles, projects, communities, or everyday uses connected to the field\n  - Must stay easy enough for a first encounter and avoid deep prerequisites\n  - Must be specific to the course topic, not generic learning motivation\n  - For non-English cases, must not mix in English field, learner, or opportunity labels; translate them naturally\n  - Must not promise salaries, credentials, jobs, fluency, mastery, or guaranteed outcomes\n\n    ",
+  "judgedAt": "2026-07-02T12:06:02.331Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Excellent beginner-friendly overview with vivid hooks (cell as factory, photosynthesis, DNA connecting species), concrete everyday applications, and realistic career paths without promising outcomes. Stays accessible and specific to biology, in natural Portuguese.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Strong quick-guide feel with concrete hooks, everyday relevance, and diverse realistic career/project settings. Language is natural Brazilian Portuguese and appropriately beginner-friendly without deep prerequisites.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Engaging, beginner-friendly tone with surprising hooks (DNA, cell turnover) and everyday examples. Careers section is a bit light but adequate; stays specific to biology and avoids technical density.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Good coverage of what biology studies, daily life, and careers with natural Portuguese. Slightly longer/denser than ideal for a quick guide but stays accessible and specific.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Solid intro with good hooks (DNA connecting species, medicine, ecosystems) and realistic career glimpses. Concise and beginner-appropriate, though slightly less vivid than the top entries.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Covers required areas including careers and daily uses in natural Portuguese. Somewhat generic and less vivid with hooks compared to top outputs, but meets expectations.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Reasonable overview with DNA and ecosystem hooks plus career mention. However, the final lesson feels more like a summary/roadmap, which risks the 'no summary lesson' rule, and content is somewhat generic.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Has nice hooks (cell as factory/metropolis) but lacks explicit realistic careers, roles, communities, or projects beyond a vague 'cientistas'—missing a key expectation. Also leans slightly toward technical framing.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Beautifully incorporates the requested hooks, such as cells as invisible factories and DNA connecting different species. It perfectly covers daily applications and career paths while maintaining an engaging, beginner-friendly tone without any meta-roadmap lessons.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Exceptional use of vivid hooks and explanations that make the field feel highly concrete. It clearly outlines the real-world applications and careers in biology without becoming dense, meeting all constraints flawlessly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Strong, concise descriptions that perfectly utilize requested hooks like the cell as a microscopic factory. It is slightly less explicit in detailing diverse career paths and roles compared to the top models, but remains an excellent guide.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Meets all expectations with solid explanations of the field, its applications, and career paths. It reads slightly more conventionally and is less creative in its hooks than the top models, but it is highly effective and accurate.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "The lesson content is good, but the chapter description leans too heavily into meta-commentary about the course itself ('antes de começar o curso de verdade'). This borders on generic learning motivation rather than immersing the user directly in the subject.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Contains a final lesson dedicated to outlining the rest of the course. This violates the negative constraint that every lesson must be an explanation of the topic, rather than a summary or course roadmap.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Similar to Model C, it includes a final lesson that acts as a course roadmap rather than an explanation lesson about biology. The rest of the content is solid, but this violates a strict formatting constraint.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Includes a meta-lesson outlining the upcoming course content, which violates the strict constraint against summary/roadmap lessons. The descriptions are also somewhat wordier and less punchy than the alternatives.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Excelente panorama em português brasileiro, com foco claro na Biologia como estudo da vida, conexões entre células, genes, adaptação, ecossistemas, saúde e cotidiano. Inclui usos concretos e caminhos de atuação sem ficar técnico demais; apenas a última lição é um pouco mais de orientação do curso do que explicação do campo.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Muito adequado para iniciantes: apresenta a Biologia de forma ampla, concreta e interessante, conectando saúde, alimentação, clima, biodiversidade e carreiras. Mantém tom leve e panorâmico, embora a última lição funcione mais como roteiro do curso do que como uma lição explicativa independente.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Engajador e muito alinhado aos ganchos esperados, com células, bactérias, código químico, fotossíntese, medicina, comida, ambiente, tecnologia e caminhos profissionais. Fica um pouco mais próximo de tópicos técnicos iniciais em duas lições, mas ainda permanece acessível e panorâmico.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Cumpre muito bem os requisitos: é claro, amplo, fácil para iniciantes e inclui cotidiano, saúde, alimentação, ambiente, biotecnologia e oportunidades profissionais. É um pouco menos vívido nos ganchos do que os melhores, mas é sólido e bem ajustado à proposta.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Boa introdução à Biologia, com DNA, células, medicamentos, alimentos, doenças, laboratórios e conservação ambiental. É adequado e interessante, mas cobre oportunidades e usos práticos com menos variedade e concretude do que os melhores modelos.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "É acessível, interessante e conecta células, DNA, saúde, comida, ambiente e caminhos de atuação. Porém usa a expressão híbrida “jogos e games educativos”, o que fere parcialmente a exigência de não misturar rótulos em inglês em casos não ingleses, e o capítulo soa um pouco motivacional demais em alguns trechos.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Apresenta uma visão correta e simples da vida, DNA, ecossistemas e aplicações da Biologia. Ainda assim, é mais genérico, tem menos exemplos cotidianos concretos e a última lição parece mais um fechamento/roteiro do curso do que uma explicação útil do campo.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Está em português e traz bons ganchos sobre células, ecossistemas, vacinas e biotecnologia. Porém inclui menos oportunidades realistas de carreira, papéis, projetos ou comunidades, e algumas descrições se aproximam mais de uma primeira aula técnica sobre células e processos químicos do que de um guia rápido do campo.",
+          "score": 6.5
+        }
+      ]
+    }
+  ],
+  "taskId": "course-introduction",
+  "testCaseId": "pt-biologia-guia-do-campo-1"
+}

@@ -104,11 +104,12 @@ describe(searchChapters, () => {
   it("limits chapter results to five by default", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const searchTerm = `chapterlimit${uniqueId}`;
+    const course = await courseFixture({ isPublished: true, organizationId: brandOrg.id });
 
     await Promise.all(
       Array.from({ length: 7 }, (_, index) =>
         chapterFixture({
-          courseId: publishedCourse.id,
+          courseId: course.id,
           description: `Limit test chapter ${index}`,
           isPublished: true,
           normalizedTitle: normalizeString(`${searchTerm} ${index}`),

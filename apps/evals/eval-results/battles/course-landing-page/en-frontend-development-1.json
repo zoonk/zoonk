@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - Should position frontend development as practical interface and web-product work\n      - valueProposition should feel concrete and learner-facing, similar to \"Turn your ideas into great websites and apps people will love to use\"\n      - valueProposition should not use abstract phrasing like \"turns ideas into usable web experiences people can interact with\"\n      - audience should include beginners and people collaborating with product/design/engineering teams\n      - outcomes should focus on usable interfaces, responsive pages, accessibility, and improving real web experiences\n      - opportunities should mention realistic work environments without salary or job guarantees\n      - Should be in US English\n\n      \n  - Must be written in the specified language\n  - Must include exactly these fields: valueProposition, audience, outcomes, opportunities\n  - valueProposition must be one concise sentence\n  - audience must contain 3-5 short, specific learner profiles or fit statements\n  - audience entries may be concise labels such as \"People preparing for medical school\" when they clearly answer who the course is for\n  - outcomes must contain 4-6 concrete abilities learners can build\n  - opportunities must contain 3-5 realistic career, academic, life, or cultural opportunities\n  - Must be specific to the course topic, not generic education copy\n  - valueProposition must sound natural and concrete, not like an abstract definition of the field\n  - For non-English cases, must not mix in English audience or framing words such as \"learners\", \"students\", \"beginners\", or \"professionals\"; translate them naturally\n  - Must not mention course duration, completion time, salaries, certificates, job guarantees, guaranteed fluency, pricing, subscriptions, or free chapters\n  - Must avoid inflated claims such as \"master\", \"become an expert\", and \"unlock your potential\"\n\n    ",
+  "judgedAt": "2026-07-01T01:04:24.620Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Concrete learner-facing value proposition, strong beginner audience including collaborators, outcomes hit accessibility/responsive/API work, and realistic opportunities without salary/job guarantees. Well-aligned to the course chapters.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Strong beginner focus, concrete valueProp, outcomes match chapters well. Slight concern with 'preparing for junior frontend interviews' but no explicit job guarantee, and it stays realistic.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Concrete and learner-facing with good audience mix including collaborators and reviewers. Outcomes and opportunities are realistic and on-topic, though slightly less vivid than top entries.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Solid concrete valueProp, beginners included, good collaboration angle. Outcomes and opportunities are realistic and specific to the course.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Good audience and outcomes, but valueProposition is a long enumeration rather than a concise, learner-facing sentence about building things people love to use.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "ValueProp is more of an abstract 'learn to write' framing rather than concrete outcome-oriented. Audience lacks explicit beginners, though career changers are included. Outcomes are solid.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Missing explicit beginners in the audience, only 4 audience entries with heavier focus on transitioning professionals. ValueProp is decent but slightly abstract ('functional, accessible... interfaces that power'). Opportunities are fine.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Uses inflated/abstract language like 'bridging the gap' and 'comprehensive foundation,' lacks explicit beginners, and leans corporate. Outcomes are fine but audience skews away from beginners.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Exceptional alignment. Provides a concrete, natural value proposition that sounds learner-facing. Audience profiles are short, specifically addressing beginners and collaborators, while outcomes and opportunities are highly realistic and perfectly scoped.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Exceptional alignment. The value proposition is natural and highly concrete without using abstract definitions. Audience entries are concise and well-targeted, and outcomes accurately highlight practical abilities like setting up workspaces and writing semantic HTML.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Exceptional quality. The value proposition is concrete and effectively ties in the full end-to-end workflow from the course chapters. Learner profiles are appropriately short, and the outcomes reflect the goal of building usable interfaces perfectly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Strong overall. Audience and outcomes are concise, realistic, and accurate. However, the value proposition reads a bit too much like a syllabus list of topics rather than a natural, cohesive sentence.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Acceptable, but the value proposition reads too much like an abstract definition of the field rather than a concrete, learner-facing benefit. It also lacks a clear, explicit mention of beginners in the audience.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Acceptable, but the value proposition ends on an abstract note ('bridging the gap between structure...'). The audience profiles are also slightly wordy and academic compared to the expectations.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Acceptable, but the audience profiles are phrased somewhat awkwardly as singular personas rather than concise labels or fit statements. The value proposition relies on slightly generic 'Learn to build' phrasing.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Poor fit for the constraints. The audience profiles and outcomes are excessively wordy, directly violating the instruction to provide 'short' learner profiles. The value proposition also leans on generic education copy.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Best overall fit: the value proposition is concise, concrete, and clearly about practical web-product interfaces. Audience, outcomes, and opportunities are specific, realistic, and cover beginners, collaboration, responsive UI, accessibility, forms, APIs, tooling, and performance without inflated claims.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Strong, learner-facing, and well aligned with frontend as practical interface work. It includes beginners and collaborators, realistic opportunities, and concrete outcomes, though the final outcome combines several topics into one broad item.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Very strong and concrete, with a natural value proposition and outcomes focused on usable, responsive, accessible, interactive web work. It leans slightly more toward career preparation and interviews than necessary, but stays realistic and relevant.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Clear, specific, and practical, with a strong audience fit and concrete abilities tied to real frontend work. Opportunities are realistic, though the career-role framing is a bit more prominent than the ideal learner-facing product framing.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Excellent coverage of outcomes and audience, including new developers and collaborators across design, backend, and product contexts. The value proposition is accurate but too long and list-like, making it less concise and natural than the strongest entries.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Domain coverage is strong and realistic, especially around browser behavior, accessibility, performance, and component architecture. However, the audience entries are much longer than the expected short learner profiles, and the overall copy is wordier than ideal.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Mostly accurate and specific, with solid outcomes and realistic work settings. It is weaker on the beginner audience requirement, and the value proposition uses more abstract phrasing like “bridging the gap,” which is less concrete and learner-facing.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "The structure and topic coverage are mostly correct, with useful outcomes around HTML, CSS, JavaScript, APIs, accessibility, and performance. It misses a clear beginner audience, and the value proposition feels less vivid and learner-facing than the better outputs.",
+          "score": 6.8
+        }
+      ]
+    }
+  ],
+  "taskId": "course-landing-page",
+  "testCaseId": "en-frontend-development-1"
+}

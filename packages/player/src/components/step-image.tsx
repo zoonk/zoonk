@@ -3,9 +3,7 @@
 import { type StepImage } from "@zoonk/core/steps/contract/image";
 import Image from "next/image";
 import { useState } from "react";
-import { STEP_FULL_BLEED_IMAGE_SIZES, STEP_IMAGE_SIZES } from "../image-config";
-
-type StepImageFit = "contain" | "cover";
+import { STEP_IMAGE_SIZES } from "../image-config";
 
 function StepImageFallback({ prompt }: { prompt: string }) {
   return (
@@ -19,19 +17,10 @@ function StepImageFallback({ prompt }: { prompt: string }) {
  * Readable lesson steps now own their illustration directly. This component
  * keeps the render/fallback behavior shared between explanation and tutorial
  * steps so a missing upload still leaves the learner with the intended prompt.
- * Images are contained by default so diagrams and screenshots are not clipped,
- * while image-led hero screens can opt into cover cropping when the picture is
- * acting as the full-stage scene.
+ * Images are contained so diagrams and screenshots are not clipped.
  */
-export function StepImageView({
-  fit = "contain",
-  image,
-}: {
-  fit?: StepImageFit;
-  image: StepImage;
-}) {
+export function StepImageView({ image }: { image: StepImage }) {
   const [errorUrl, setErrorUrl] = useState<string | null>(null);
-  const imageSizes = fit === "cover" ? STEP_FULL_BLEED_IMAGE_SIZES : STEP_IMAGE_SIZES;
 
   if (!image.url || errorUrl === image.url) {
     return <StepImageFallback prompt={image.prompt} />;
@@ -41,11 +30,11 @@ export function StepImageView({
     <div className="relative h-full w-full" data-slot="step-image-view">
       <Image
         alt={image.prompt}
-        className={fit === "cover" ? "object-cover" : "object-contain"}
+        className="object-contain"
         fill
         loading="eager"
         onError={() => setErrorUrl(image.url ?? null)}
-        sizes={imageSizes}
+        sizes={STEP_IMAGE_SIZES}
         src={image.url}
       />
     </div>

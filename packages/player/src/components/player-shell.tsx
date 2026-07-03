@@ -98,8 +98,7 @@ export function PlayerShell() {
   const currentResult = getCurrentResult(state);
   const currentStep = getCurrentStep(state);
 
-  const shouldShowStickyBottomBar =
-    screen.showChrome && Boolean(screen.bottomBar) && !screen.stageIsFullBleed;
+  const shouldShowStickyBottomBar = screen.showChrome && Boolean(screen.bottomBar);
 
   const progressValue = getProgressValue(state);
   const upcomingImages = getUpcomingImages(state);
@@ -132,7 +131,6 @@ export function PlayerShell() {
       >
         <PlayerStage
           aria-label={t("Lesson content")}
-          isFullBleed={screen.stageIsFullBleed}
           isStatic={screen.stageIsStatic}
           key={stageResetKey}
           phase={state.phase}

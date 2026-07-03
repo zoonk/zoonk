@@ -24,6 +24,7 @@ import {
   type GridItemTone,
 } from "@zoonk/ui/components/grid";
 import { getExtracted } from "next-intl/server";
+import { CourseCurriculumPendingNotice } from "./course-curriculum-pending-notice";
 
 const CHAPTERS_PER_DIFFICULTY_BAND = 10;
 
@@ -169,6 +170,7 @@ export async function ChapterList({
   courseSlug,
   defaultChapterImage,
   hiddenLessonKinds,
+  isCurriculumPending,
 }: {
   brandSlug: string;
   chapters: CourseChapter[];
@@ -176,6 +178,7 @@ export async function ChapterList({
   courseSlug: string;
   defaultChapterImage: string;
   hiddenLessonKinds: LessonKind[];
+  isCurriculumPending: boolean;
 }) {
   if (chapters.length === 0) {
     return null;
@@ -197,6 +200,7 @@ export async function ChapterList({
 
   return (
     <CatalogGridContent activeItemKey={activeChapterKey} activeLabel={t("Current chapter")}>
+      {isCurriculumPending && <CourseCurriculumPendingNotice />}
       <CatalogGridSearch items={chapters} placeholder={t("Search chapters...")}>
         <CatalogGridEmpty>{t("No chapters found")}</CatalogGridEmpty>
         <GridGroup variant="pane">

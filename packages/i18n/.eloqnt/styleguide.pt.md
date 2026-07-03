@@ -27,6 +27,8 @@
 - "listening": "escuta"
 - "completed": "completou"
 - "we": "a gente"
+- "quiz": "quiz"
+- "language": "idioma"
 
 ## Special Cases
 
@@ -35,3 +37,4 @@
 - When translating exam names, adapt them to Brazilian Portuguese. For example, SAT, AP, Bar, etc aren't relevant to Brazilian audiences. Instead, use concurso público, Enem, vestibular, etc. as appropriate. For example, instead of "SAT prep course", use "curso preparatório para o Enem" or "curso preparatório para concurso público", depending on the context.
 - For belt colors, use feminine forms. For example, "White Belt" = "Faixa Branca", "Yellow Belt" = "Faixa Amarela", etc. If it's color alone in the context of belts, use "Yellow" = "Amarela", "White" = "Branca", etc.
 - Don't use "{verb} você". Instead, use "te {verb}". For example, instead of "We help you learn", use "A gente te ajuda a aprender".
+- When "path" is used in the context of a learning path, use "trilha". For example, "The path starts with the basics" = "A trilha começa com o básico", not "O caminho começa com o básico".

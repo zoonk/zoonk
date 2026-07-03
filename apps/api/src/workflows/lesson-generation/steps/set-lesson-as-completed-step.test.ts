@@ -34,14 +34,14 @@ describe(setLessonAsCompletedStep, () => {
 
     await setLessonAsCompletedStep({
       context,
-      description: "Generated practice scenario",
+      description: "Generated lesson summary",
       imageUrl: "https://example.com/lesson-complete.webp",
       title: "Generated Practice",
     });
 
     const updatedLesson = await prisma.lesson.findUniqueOrThrow({ where: { id: context.id } });
 
-    expect(updatedLesson.description).toBe("Generated practice scenario");
+    expect(updatedLesson.description).toBe("Generated lesson summary");
     expect(updatedLesson.generationStatus).toBe("completed");
     expect(updatedLesson.imageUrl).toBe("https://example.com/lesson-complete.webp");
     expect(updatedLesson.title).toBe("Generated Practice");

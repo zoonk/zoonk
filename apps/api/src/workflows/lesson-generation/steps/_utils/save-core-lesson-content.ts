@@ -64,10 +64,7 @@ export async function saveStaticLessonContent({
   });
 }
 
-/**
- * Saves the scenario intro and multiple-choice questions that make up the
- * stored practice step content.
- */
+/** Saves the generated practice situations as multiple-choice question steps. */
 export async function savePracticeLessonContent({
   content,
   context,
@@ -77,24 +74,10 @@ export async function savePracticeLessonContent({
   context: LessonContext;
   images?: StepImage[];
 }): Promise<void> {
-  assertImageCount({ images, stepCount: content.steps.length + 1 });
-  const scenarioImage = getOptionalStepImage(images, 0);
-
-  const scenarioStep: StepRecord = {
-    content: assertStepContent("static", {
-      ...(scenarioImage ? { image: scenarioImage } : {}),
-      text: content.scenario.text,
-      title: content.scenario.title,
-      variant: "intro",
-    }),
-    isPublished: true,
-    kind: "static",
-    lessonId: context.id,
-    position: 0,
-  };
+  assertImageCount({ images, stepCount: content.steps.length });
 
   const questionSteps: StepRecord[] = content.steps.map((step, index) => {
-    const image = getOptionalStepImage(images, index + 1);
+    const image = getOptionalStepImage(images, index);
 
     return {
       content: assertStepContent("multipleChoice", {
@@ -106,11 +89,11 @@ export async function savePracticeLessonContent({
       isPublished: true,
       kind: "multipleChoice",
       lessonId: context.id,
-      position: index + 1,
+      position: index,
     };
   });
 
-  await prisma.step.createMany({ data: [scenarioStep, ...questionSteps] });
+  await prisma.step.createMany({ data: questionSteps });
 }
 
 /**
