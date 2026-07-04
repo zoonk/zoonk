@@ -101,8 +101,10 @@ export const TEST_CASES: CourseLearnClassificationTestCase[] = [
     prompt: "agentic engineering using claude code",
   }),
   classificationCase({
-    classification: "course",
-    id: "course-observer-method-disconnect-thoughts",
+    classification: "personalized",
+    extra:
+      "- This could mean learning a technique, getting help with a personal mental-state goal, or applying a method to the learner's situation, so it needs clarification before it can become a useful learning path.",
+    id: "personalized-observer-method-disconnect-thoughts",
     prompt: "the observer method to disconnect from thoughts",
   }),
   classificationCase({
@@ -122,8 +124,10 @@ export const TEST_CASES: CourseLearnClassificationTestCase[] = [
       "i want to learn how to apply the neo riemannian theory on guitar through a set of exercises",
   }),
   classificationCase({
-    classification: "course",
-    id: "course-presentations-humour",
+    classification: "personalized",
+    extra:
+      "- This is ambiguous because it could mean preparing a specific presentation, adding humor to a talk, learning a communication style, or getting help with a personal presentation goal.",
+    id: "personalized-presentations-humour",
     prompt: "presentations and humour",
   }),
   classificationCase({
@@ -158,8 +162,10 @@ export const TEST_CASES: CourseLearnClassificationTestCase[] = [
     prompt: "calculation strategies",
   }),
   classificationCase({
-    classification: "course",
-    id: "course-policy-distillation",
+    classification: "personalized",
+    extra:
+      "- Policy distillation is an applied model-work task whose useful path depends on the teacher policy, student policy, environment, objective, data, and metrics.",
+    id: "personalized-policy-distillation",
     prompt: "explain on policy distillation",
   }),
   classificationCase({
@@ -208,9 +214,39 @@ export const TEST_CASES: CourseLearnClassificationTestCase[] = [
     prompt: "how do marketing being a indie hacker, i create softwares, but how sell it?",
   }),
   classificationCase({
-    classification: "course",
-    id: "course-refining-a-model",
+    classification: "personalized",
+    extra:
+      "- Refining a model depends on the model type, current behavior, data, tools, constraints, and success criteria, so it needs context before a useful learning path can be created.",
+    id: "personalized-refining-a-model",
     prompt: "refining a model",
+  }),
+  classificationCase({
+    classification: "personalized",
+    extra:
+      "- Model optimization depends on the current model, metric, bottleneck, data, and deployment goal, so it should not become a reusable Machine Learning Model Optimization course.",
+    id: "personalized-machine-learning-model-optimization",
+    prompt: "Machine Learning Model Optimization",
+  }),
+  classificationCase({
+    classification: "personalized",
+    extra:
+      "- Model evaluation depends on the model, domain, data, metrics, risk, and product goal, so it needs a custom path rather than a reusable course.",
+    id: "personalized-model-evaluation",
+    prompt: "Model Evaluation",
+  }),
+  classificationCase({
+    classification: "personalized",
+    extra:
+      "- Fine-tuning depends on the base model, dataset, objective, tooling, budget, and quality target, so it is a context-heavy applied task.",
+    id: "personalized-fine-tuning",
+    prompt: "Fine-Tuning",
+  }),
+  classificationCase({
+    classification: "personalized",
+    extra:
+      "- Improving JavaScript performance depends on the app, runtime, bottleneck, framework, measurement setup, and performance goal, so it needs context.",
+    id: "personalized-improving-javascript-performance",
+    prompt: "improving javascript performance",
   }),
   classificationCase({
     classification: "personalized",
@@ -375,6 +411,20 @@ export const TEST_CASES: CourseLearnClassificationTestCase[] = [
   }),
   classificationCase({
     classification: "course",
+    extra:
+      "- F1 is a popular aspirational domain, and engineering is a reusable course identity here.",
+    id: "course-f1-engineering",
+    prompt: "F1 Engineering",
+  }),
+  classificationCase({
+    classification: "personalized",
+    extra:
+      "- This is too narrow for a reusable course because F1 team leadership depends on role context, team structure, and learner goals.",
+    id: "personalized-f1-team-leadership",
+    prompt: "F1 Team leadership",
+  }),
+  classificationCase({
+    classification: "course",
     id: "course-historia-do-brasil",
     prompt: "historia do brasil",
   }),
@@ -455,5 +505,40 @@ export const TEST_CASES: CourseLearnClassificationTestCase[] = [
     classification: "course",
     id: "course-grant-writing-for-nonprofits",
     prompt: "grant writing for nonprofits",
+  }),
+  classificationCase({
+    classification: "personalized",
+    extra:
+      "- A banking CEO leadership request has a very narrow audience and should become a custom track, not a reusable Banking CEO Leadership course.",
+    id: "personalized-banking-ceo-leadership",
+    prompt: "banking ceo leadership",
+  }),
+  classificationCase({
+    classification: "personalized",
+    extra:
+      "- This is ambiguous between writing a story and learning how to write one, so it needs personalized clarification.",
+    id: "personalized-write-comedic-short-story",
+    prompt: "Write comedic short story",
+  }),
+  classificationCase({
+    classification: "personalized",
+    extra:
+      "- A comedic short story is a narrow creative artifact rather than a broad reusable course subject.",
+    id: "personalized-comedic-short-story",
+    prompt: "comedic short story",
+  }),
+  classificationCase({
+    classification: "personalized",
+    extra:
+      "- The detailed standard-specific phrasing makes this a specialized track around IFRS S1 and S2, not a broad reusable sustainability reporting course.",
+    id: "personalized-sustainability-reporting-ifrs-s1-s2",
+    prompt: "Sustainability Reporting Essentials: IFRS S1 & S2",
+  }),
+  classificationCase({
+    classification: "personalized",
+    extra:
+      "- Sustainability reporting depends on the learner's role, organization, standards, and reporting goal, so it needs context before it can become a useful learning path.",
+    id: "personalized-sustainability-reporting-essentials",
+    prompt: "Sustainability Reporting Essentials",
   }),
 ];

@@ -21,9 +21,9 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The output classification should be `course`.\n    - Return only the structured classification value; do not invent extra labels.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated classification exactly matches one accepted classification.\n  - Score 6 for any other output, including question requests classified as courses, personalized requests classified as reusable courses, reusable courses classified as personalized, missing classification fields, or extra fields.\n\n  ",
-        "expected": { "classifications": ["course"] },
-        "id": "course-observer-method-disconnect-thoughts-1",
+        "expectations": "\n    - The output classification should be `personalized`.\n    - Return only the structured classification value; do not invent extra labels.\n    - This could mean learning a technique, getting help with a personal mental-state goal, or applying a method to the learner's situation, so it needs clarification before it can become a useful learning path.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated classification exactly matches one accepted classification.\n  - Score 6 for any other output, including question requests classified as courses, personalized requests classified as reusable courses, reusable courses classified as personalized, missing classification fields, or extra fields.\n\n  ",
+        "expected": { "classifications": ["personalized"] },
+        "id": "personalized-observer-method-disconnect-thoughts-1",
         "userInput": {
           "language": "en",
           "prompt": "the observer method to disconnect from thoughts"
@@ -82,9 +82,9 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The output classification should be `course`.\n    - Return only the structured classification value; do not invent extra labels.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated classification exactly matches one accepted classification.\n  - Score 6 for any other output, including question requests classified as courses, personalized requests classified as reusable courses, reusable courses classified as personalized, missing classification fields, or extra fields.\n\n  ",
-        "expected": { "classifications": ["course"] },
-        "id": "course-presentations-humour-1",
+        "expectations": "\n    - The output classification should be `personalized`.\n    - Return only the structured classification value; do not invent extra labels.\n    - This is ambiguous because it could mean preparing a specific presentation, adding humor to a talk, learning a communication style, or getting help with a personal presentation goal.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated classification exactly matches one accepted classification.\n  - Score 6 for any other output, including question requests classified as courses, personalized requests classified as reusable courses, reusable courses classified as personalized, missing classification fields, or extra fields.\n\n  ",
+        "expected": { "classifications": ["personalized"] },
+        "id": "personalized-presentations-humour-1",
         "userInput": { "language": "en", "prompt": "presentations and humour" }
       }
     },
@@ -176,9 +176,9 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The output classification should be `course`.\n    - Return only the structured classification value; do not invent extra labels.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated classification exactly matches one accepted classification.\n  - Score 6 for any other output, including question requests classified as courses, personalized requests classified as reusable courses, reusable courses classified as personalized, missing classification fields, or extra fields.\n\n  ",
-        "expected": { "classifications": ["course"] },
-        "id": "course-policy-distillation-1",
+        "expectations": "\n    - The output classification should be `personalized`.\n    - Return only the structured classification value; do not invent extra labels.\n    - Policy distillation is an applied model-work task whose useful path depends on the teacher policy, student policy, environment, objective, data, and metrics.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated classification exactly matches one accepted classification.\n  - Score 6 for any other output, including question requests classified as courses, personalized requests classified as reusable courses, reusable courses classified as personalized, missing classification fields, or extra fields.\n\n  ",
+        "expected": { "classifications": ["personalized"] },
+        "id": "personalized-policy-distillation-1",
         "userInput": { "language": "en", "prompt": "explain on policy distillation" }
       }
     },
@@ -315,10 +315,62 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The output classification should be `course`.\n    - Return only the structured classification value; do not invent extra labels.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated classification exactly matches one accepted classification.\n  - Score 6 for any other output, including question requests classified as courses, personalized requests classified as reusable courses, reusable courses classified as personalized, missing classification fields, or extra fields.\n\n  ",
-        "expected": { "classifications": ["course"] },
-        "id": "course-refining-a-model-1",
+        "expectations": "\n    - The output classification should be `personalized`.\n    - Return only the structured classification value; do not invent extra labels.\n    - Refining a model depends on the model type, current behavior, data, tools, constraints, and success criteria, so it needs context before a useful learning path can be created.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated classification exactly matches one accepted classification.\n  - Score 6 for any other output, including question requests classified as courses, personalized requests classified as reusable courses, reusable courses classified as personalized, missing classification fields, or extra fields.\n\n  ",
+        "expected": { "classifications": ["personalized"] },
+        "id": "personalized-refining-a-model-1",
         "userInput": { "language": "en", "prompt": "refining a model" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The output classification should be `personalized`.\n    - Return only the structured classification value; do not invent extra labels.\n    - Model optimization depends on the current model, metric, bottleneck, data, and deployment goal, so it should not become a reusable Machine Learning Model Optimization course.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated classification exactly matches one accepted classification.\n  - Score 6 for any other output, including question requests classified as courses, personalized requests classified as reusable courses, reusable courses classified as personalized, missing classification fields, or extra fields.\n\n  ",
+        "expected": { "classifications": ["personalized"] },
+        "id": "personalized-machine-learning-model-optimization-1",
+        "userInput": { "language": "en", "prompt": "Machine Learning Model Optimization" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The output classification should be `personalized`.\n    - Return only the structured classification value; do not invent extra labels.\n    - Model evaluation depends on the model, domain, data, metrics, risk, and product goal, so it needs a custom path rather than a reusable course.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated classification exactly matches one accepted classification.\n  - Score 6 for any other output, including question requests classified as courses, personalized requests classified as reusable courses, reusable courses classified as personalized, missing classification fields, or extra fields.\n\n  ",
+        "expected": { "classifications": ["personalized"] },
+        "id": "personalized-model-evaluation-1",
+        "userInput": { "language": "en", "prompt": "Model Evaluation" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The output classification should be `personalized`.\n    - Return only the structured classification value; do not invent extra labels.\n    - Fine-tuning depends on the base model, dataset, objective, tooling, budget, and quality target, so it is a context-heavy applied task.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated classification exactly matches one accepted classification.\n  - Score 6 for any other output, including question requests classified as courses, personalized requests classified as reusable courses, reusable courses classified as personalized, missing classification fields, or extra fields.\n\n  ",
+        "expected": { "classifications": ["personalized"] },
+        "id": "personalized-fine-tuning-1",
+        "userInput": { "language": "en", "prompt": "Fine-Tuning" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The output classification should be `personalized`.\n    - Return only the structured classification value; do not invent extra labels.\n    - Improving JavaScript performance depends on the app, runtime, bottleneck, framework, measurement setup, and performance goal, so it needs context.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated classification exactly matches one accepted classification.\n  - Score 6 for any other output, including question requests classified as courses, personalized requests classified as reusable courses, reusable courses classified as personalized, missing classification fields, or extra fields.\n\n  ",
+        "expected": { "classifications": ["personalized"] },
+        "id": "personalized-improving-javascript-performance-1",
+        "userInput": { "language": "en", "prompt": "improving javascript performance" }
       }
     },
     {
@@ -436,9 +488,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected classification `course`. Generated classification `personalized`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected classification `course`. Generated classification `personalized`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected classification `course`. Generated classification `personalized`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expectations": "\n    - The output classification should be `course`.\n    - Return only the structured classification value; do not invent extra labels.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated classification exactly matches one accepted classification.\n  - Score 6 for any other output, including question requests classified as courses, personalized requests classified as reusable courses, reusable courses classified as personalized, missing classification fields, or extra fields.\n\n  ",
@@ -784,6 +848,32 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
+        "expectations": "\n    - The output classification should be `course`.\n    - Return only the structured classification value; do not invent extra labels.\n    - F1 is a popular aspirational domain, and engineering is a reusable course identity here.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated classification exactly matches one accepted classification.\n  - Score 6 for any other output, including question requests classified as courses, personalized requests classified as reusable courses, reusable courses classified as personalized, missing classification fields, or extra fields.\n\n  ",
+        "expected": { "classifications": ["course"] },
+        "id": "course-f1-engineering-1",
+        "userInput": { "language": "en", "prompt": "F1 Engineering" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The output classification should be `personalized`.\n    - Return only the structured classification value; do not invent extra labels.\n    - This is too narrow for a reusable course because F1 team leadership depends on role context, team structure, and learner goals.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated classification exactly matches one accepted classification.\n  - Score 6 for any other output, including question requests classified as courses, personalized requests classified as reusable courses, reusable courses classified as personalized, missing classification fields, or extra fields.\n\n  ",
+        "expected": { "classifications": ["personalized"] },
+        "id": "personalized-f1-team-leadership-1",
+        "userInput": { "language": "en", "prompt": "F1 Team leadership" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
         "expectations": "\n    - The output classification should be `course`.\n    - Return only the structured classification value; do not invent extra labels.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated classification exactly matches one accepted classification.\n  - Score 6 for any other output, including question requests classified as courses, personalized requests classified as reusable courses, reusable courses classified as personalized, missing classification fields, or extra fields.\n\n  ",
         "expected": { "classifications": ["course"] },
         "id": "course-historia-do-brasil-1",
@@ -818,9 +908,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected classification `course`. Generated classification `personalized`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected classification `course`. Generated classification `personalized`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected classification `course`. Generated classification `personalized`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expectations": "\n    - The output classification should be `course`.\n    - Return only the structured classification value; do not invent extra labels.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated classification exactly matches one accepted classification.\n  - Score 6 for any other output, including question requests classified as courses, personalized requests classified as reusable courses, reusable courses classified as personalized, missing classification fields, or extra fields.\n\n  ",
@@ -1077,6 +1179,74 @@
         "expected": { "classifications": ["course"] },
         "id": "course-grant-writing-for-nonprofits-1",
         "userInput": { "language": "en", "prompt": "grant writing for nonprofits" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The output classification should be `personalized`.\n    - Return only the structured classification value; do not invent extra labels.\n    - A banking CEO leadership request has a very narrow audience and should become a custom track, not a reusable Banking CEO Leadership course.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated classification exactly matches one accepted classification.\n  - Score 6 for any other output, including question requests classified as courses, personalized requests classified as reusable courses, reusable courses classified as personalized, missing classification fields, or extra fields.\n\n  ",
+        "expected": { "classifications": ["personalized"] },
+        "id": "personalized-banking-ceo-leadership-1",
+        "userInput": { "language": "en", "prompt": "banking ceo leadership" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The output classification should be `personalized`.\n    - Return only the structured classification value; do not invent extra labels.\n    - This is ambiguous between writing a story and learning how to write one, so it needs personalized clarification.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated classification exactly matches one accepted classification.\n  - Score 6 for any other output, including question requests classified as courses, personalized requests classified as reusable courses, reusable courses classified as personalized, missing classification fields, or extra fields.\n\n  ",
+        "expected": { "classifications": ["personalized"] },
+        "id": "personalized-write-comedic-short-story-1",
+        "userInput": { "language": "en", "prompt": "Write comedic short story" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The output classification should be `personalized`.\n    - Return only the structured classification value; do not invent extra labels.\n    - A comedic short story is a narrow creative artifact rather than a broad reusable course subject.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated classification exactly matches one accepted classification.\n  - Score 6 for any other output, including question requests classified as courses, personalized requests classified as reusable courses, reusable courses classified as personalized, missing classification fields, or extra fields.\n\n  ",
+        "expected": { "classifications": ["personalized"] },
+        "id": "personalized-comedic-short-story-1",
+        "userInput": { "language": "en", "prompt": "comedic short story" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The output classification should be `personalized`.\n    - Return only the structured classification value; do not invent extra labels.\n    - The detailed standard-specific phrasing makes this a specialized track around IFRS S1 and S2, not a broad reusable sustainability reporting course.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated classification exactly matches one accepted classification.\n  - Score 6 for any other output, including question requests classified as courses, personalized requests classified as reusable courses, reusable courses classified as personalized, missing classification fields, or extra fields.\n\n  ",
+        "expected": { "classifications": ["personalized"] },
+        "id": "personalized-sustainability-reporting-ifrs-s1-s2-1",
+        "userInput": {
+          "language": "en",
+          "prompt": "Sustainability Reporting Essentials: IFRS S1 & S2"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The output classification should be `personalized`.\n    - Return only the structured classification value; do not invent extra labels.\n    - Sustainability reporting depends on the learner's role, organization, standards, and reporting goal, so it needs context before it can become a useful learning path.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated classification exactly matches one accepted classification.\n  - Score 6 for any other output, including question requests classified as courses, personalized requests classified as reusable courses, reusable courses classified as personalized, missing classification fields, or extra fields.\n\n  ",
+        "expected": { "classifications": ["personalized"] },
+        "id": "personalized-sustainability-reporting-essentials-1",
+        "userInput": { "language": "en", "prompt": "Sustainability Reporting Essentials" }
       }
     }
   ],
