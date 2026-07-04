@@ -38,7 +38,7 @@ msgstr "Sua resposta"
 
 #: src/components/arrange-words-answer-area.tsx
 msgid "7R_rOB"
-msgstr "Toque nas palavras para formar sua resposta"
+msgstr "Toque nas palavras para montar sua resposta"
 
 #: src/components/arrange-words.tsx
 #: src/components/fill-blank-word-bank.tsx
@@ -51,7 +51,7 @@ msgstr "Sair"
 
 #: src/components/completion-auth-branch.tsx
 msgid "FazwRl"
-msgstr "Tente novamente"
+msgstr "Tentar de novo"
 
 #: src/components/completion-auth-branch.tsx
 #: src/components/completion-milestone-actions.tsx
@@ -69,7 +69,7 @@ msgstr "Novo recorde diário"
 
 #: src/components/completion-brain-power-milestone.tsx
 msgid "VaM8Q9"
-msgstr "Você alcançou {brainPower} PM hoje, seu maior Poder Mental em um único dia. Continue estudando todos os dias para superar esse recorde."
+msgstr "Você chegou a {brainPower} PM hoje, seu maior Poder Mental em um só dia. Continue estudando todos os dias para bater esse recorde."
 
 #: src/components/completion-energy-milestone.tsx
 msgid "m2WzLQ"
@@ -77,7 +77,7 @@ msgstr "Energia máxima!"
 
 #: src/components/completion-energy-milestone.tsx
 msgid "Fo6YtA"
-msgstr "Parabéns! Você alcançou Energia máxima. Pratique todos os dias para manter sua Energia em 100%."
+msgstr "Parabéns! Você chegou à Energia máxima. Continue praticando todos os dias para manter sua Energia em 100%."
 
 #: src/components/completion-energy-milestone.tsx
 msgid "J89SkG"
@@ -85,19 +85,19 @@ msgstr "{percentage} de Energia"
 
 #: src/components/completion-energy-milestone.tsx
 msgid "3Jd-mJ"
-msgstr "Seu esforço está valendo a pena. Faça aulas todos os dias para aumentar sua Energia."
+msgstr "Seu esforço está dando resultado. Complete aulas todos os dias para aumentar sua Energia."
 
 #: src/components/completion-energy-milestone.tsx
 msgid "5YVYKd"
-msgstr "1 ano com Energia máxima"
+msgstr "1 ano de Energia máxima"
 
 #: src/components/completion-energy-milestone.tsx
 msgid "1WNk4i"
-msgstr "{days} dias com Energia máxima"
+msgstr "{days} dias de Energia máxima"
 
 #: src/components/completion-energy-milestone.tsx
 msgid "cIxpmv"
-msgstr "Uau, que consistência incrível! Estude todo dia para manter sua Energia em 100%."
+msgstr "Uau, que consistência incrível! Continue estudando todos os dias para manter sua Energia em 100%."
 
 #: src/components/completion-learning-days-milestone.tsx
 msgid "SIXtG5"
@@ -105,7 +105,7 @@ msgstr "{days} dias de estudo"
 
 #: src/components/completion-learning-days-milestone.tsx
 msgid "hjXoGI"
-msgstr "Você completou aulas em {days} dias diferentes. Praticar com frequência te ajuda a lembrar do que você aprende."
+msgstr "Você completou aulas em {days} dias diferentes. Praticar com frequência te ajuda a lembrar o que você aprende."
 
 #: src/components/completion-learning-time-milestone.tsx
 msgid "dZvEPp"
@@ -121,7 +121,7 @@ msgstr "{hours, plural, one {# hora de estudo} other {# horas de estudo}}"
 
 #: src/components/completion-learning-time-milestone.tsx
 msgid "WcAhMT"
-msgstr "Você pode aprender muita coisa praticando alguns minutos por dia."
+msgstr "Você pode aprender muito praticando por alguns minutos por dia."
 
 #: src/components/completion-learning-time-milestone.tsx
 msgid "LzEQnT"
@@ -133,11 +133,11 @@ msgstr "Isso é mais de {days, plural, one {# dia inteiro} other {# dias inteiro
 
 #: src/components/completion-level-milestone.tsx
 msgid "155cHi"
-msgstr "Nível conquistado"
+msgstr "Nível alcançado"
 
 #: src/components/completion-level-milestone.tsx
 msgid "Ar7dNY"
-msgstr "Você alcançou um novo nível: {belt}, nível {level}. Parabéns!"
+msgstr "Você chegou a um novo nível: {belt}, nível {level}. Parabéns!"
 
 #: src/components/completion-level-milestone.tsx
 msgid "Bk6B6r"
@@ -145,7 +145,7 @@ msgstr "Quase lá"
 
 #: src/components/completion-level-milestone.tsx
 msgid "b7ZoLo"
-msgstr "Seu conhecimento está crescendo. Complete {count, plural, one {mais # aula} other {mais # aulas}} para alcançar {belt}, nível {level}."
+msgstr "Seu conhecimento está crescendo. Complete {count, plural, one {mais # aula} other {mais # aulas}} para chegar a {belt}, nível {level}."
 
 #: src/components/completion-milestone-actions.tsx
 msgid "DiIkZH"
@@ -178,7 +178,7 @@ msgstr "Continuar"
 
 #: src/components/completion-score-milestone.tsx
 msgid "e6_3Ke"
-msgstr "{day} é o seu melhor dia"
+msgstr "{day} é seu melhor dia"
 
 #: src/components/completion-score-milestone.tsx
 msgid "PTQ0ah"
@@ -207,7 +207,7 @@ msgstr "Progresso do capítulo"
 
 #: src/components/completion-screen.tsx
 msgid "P768k7"
-msgstr "correto"
+msgstr "corretas"
 
 #: src/components/feedback-answer-blocks.tsx
 msgid "3nOd8f"
@@ -224,23 +224,23 @@ msgstr "Pergunta"
 
 #: src/components/feedback-screen.tsx
 msgid "fpO9TK"
-msgstr "Traduzir:"
+msgstr "Traduza:"
 
 #: src/components/fill-blank-step.tsx
 msgid "SL2Bob"
-msgstr "Espaço {position}: {item}. {result}."
+msgstr "Lacuna {position}: {item}. {result}."
 
 #: src/components/fill-blank-step.tsx
 msgid "wUEGVH"
-msgstr "Espaço {position}: {item}. Toque para remover."
+msgstr "Lacuna {position}: {item}. Toque para remover."
 
 #: src/components/fill-blank-step.tsx
 msgid "FmmJ_j"
-msgstr "Espaço {position}"
+msgstr "Lacuna {position}"
 
 #: src/components/inline-feedback.tsx
 msgid "HvLGEN"
-msgstr "Resultado da resposta"
+msgstr "Comentário sobre a resposta"
 
 #: src/components/lesson-info-popover.tsx
 msgid "RwePAQ"
@@ -248,7 +248,7 @@ msgstr "Informações da aula"
 
 #: src/components/listening-step.tsx
 msgid "aAmWaS"
-msgstr "O que você ouviu?"
+msgstr "O que você ouve?"
 
 #: src/components/listening-step.tsx
 #: src/components/reading-step.tsx
@@ -261,7 +261,7 @@ msgstr "Combine os pares."
 
 #: src/components/match-columns-step.tsx
 msgid "ja1JDt"
-msgstr "Todos os pares foram combinados. Pressione Verificar para continuar."
+msgstr "Todos os pares foram combinados. Toque em Conferir para continuar."
 
 #: src/components/play-audio-button.tsx
 msgid "WGft2H"
@@ -269,11 +269,11 @@ msgstr "Pausar pronúncia"
 
 #: src/components/play-audio-button.tsx
 msgid "lYWSeP"
-msgstr "Tocar pronúncia"
+msgstr "Ouvir pronúncia"
 
 #: src/components/player-choice-scene.tsx
 msgid "akd-cv"
-msgstr "Opções de resposta"
+msgstr "Alternativas de resposta"
 
 #: src/components/player-header.tsx
 msgid "rbrahO"
@@ -298,7 +298,7 @@ msgstr "Resposta correta"
 
 #: src/components/select-image-step.tsx
 msgid "NA6C_-"
-msgstr "Opções de imagem"
+msgstr "Alternativas de imagem"
 
 #: src/components/sort-order-step.tsx
 msgid "p5llOK"
@@ -314,7 +314,7 @@ msgstr "Arraste os itens para a ordem correta"
 
 #: src/components/step-action-button.tsx
 msgid "RDZVQL"
-msgstr "Verificar"
+msgstr "Conferir"
 
 #: src/components/step-navigation-button-group.tsx
 msgid "JJNc3c"
@@ -322,11 +322,11 @@ msgstr "Anterior"
 
 #: src/components/swipe-navigable-step-layout.tsx
 msgid "aNzy1T"
-msgstr "Passo anterior"
+msgstr "Etapa anterior"
 
 #: src/components/swipe-navigable-step-layout.tsx
 msgid "d-qgix"
-msgstr "Próximo passo"
+msgstr "Próxima etapa"
 
 #: src/components/translation-step.tsx
 msgid "MxLxkr"
@@ -334,7 +334,7 @@ msgstr "Traduza esta palavra:"
 
 #: src/components/unauthenticated-progress-prompt.tsx
 msgid "czygLT"
-msgstr "Faça login para salvar o progresso"
+msgstr "Entre para salvar seu progresso"
 
 #: src/components/unauthenticated-progress-prompt.tsx
 msgid "yBJVJw"
@@ -346,7 +346,7 @@ msgstr "O progresso não será salvo"
 
 #: src/components/unauthenticated-progress-prompt.tsx
 msgid "JDumQX"
-msgstr "Você pode testar esta aula sem conta, mas sua pontuação, progresso no curso, níveis e Energia não serão salvos."
+msgstr "Você pode testar esta aula sem uma conta, mas sua pontuação, progresso no curso, níveis e Energia não serão salvos."
 
 #: src/components/unauthenticated-progress-prompt.tsx
 msgid "rxdOwg"
@@ -354,7 +354,7 @@ msgstr "Esta aula não foi salva"
 
 #: src/components/unauthenticated-progress-prompt.tsx
 msgid "Wamgyz"
-msgstr "Faça login antes da próxima aula para manter seu progresso, pontuações, níveis e Energia."
+msgstr "Entre antes da próxima aula para salvar seu progresso, pontuações, níveis e Energia daqui para frente."
 
 #: src/components/verdict-label.tsx
 msgid "xmF49T"
@@ -362,7 +362,7 @@ msgstr "Correto!"
 
 #: src/components/verdict-label.tsx
 msgid "--l7ni"
-msgstr "Quase lá"
+msgstr "Quase"
 
 #: src/components/vocabulary-step.tsx
 msgid "lqtP-R"

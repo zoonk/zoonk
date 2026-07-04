@@ -55,7 +55,7 @@ test.describe("Locale Behavior - Portuguese", () => {
     await expect(nav.getByRole("link", { exact: true, name: "Novo curso" })).toBeVisible();
 
     await expect(page).toHaveURL(/\/$/u);
-    await expect(page.getByRole("heading", { name: /qual é o seu objetivo/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /qual é seu objetivo/iu })).toBeVisible();
   });
 });
 
@@ -102,6 +102,6 @@ test.describe("Locale Navigation", () => {
       .click();
 
     await expect(page).toHaveURL(/\/start$/u);
-    await expect(page.getByRole("heading", { name: /qual é o seu objetivo/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /qual é seu objetivo/iu })).toBeVisible();
   });
 });

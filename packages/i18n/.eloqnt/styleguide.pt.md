@@ -38,3 +38,4 @@
 - For belt colors, use feminine forms. For example, "White Belt" = "Faixa Branca", "Yellow Belt" = "Faixa Amarela", etc. If it's color alone in the context of belts, use "Yellow" = "Amarela", "White" = "Branca", etc.
 - Don't use "{verb} você". Instead, use "te {verb}". For example, instead of "We help you learn", use "A gente te ajuda a aprender".
 - When "path" is used in the context of a learning path, use "trilha". For example, "The path starts with the basics" = "A trilha começa com o básico", not "O caminho começa com o básico".
+- Don't repeat articles and pronouns unnecessarily. For example, instead of "nossos termos de uso e nossa política de privacidade", use "nossos termos de uso e política de privacidade"; instead of "um nome e um email", use "um nome e email"; etc.

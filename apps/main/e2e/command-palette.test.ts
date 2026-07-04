@@ -611,7 +611,7 @@ test.describe("Command Palette - Course Search", () => {
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
-    await dialog.getByPlaceholder(SEARCH_CONTROL_NAME).fill(uniqueId);
+    await dialog.getByRole("combobox", { name: SEARCH_CONTROL_NAME }).fill(uniqueId);
 
     await expect(
       dialog.getByRole("option", { name: new RegExp(`^${ptCourseTitle}`, "u") }),
