@@ -15,7 +15,7 @@ export const getCurrentUserAnalyticsState = cache(async () => {
   const session = await getSession(requestHeaders);
 
   if (!session) {
-    return { analyticsDisabled: false, plan: "free", userId: null };
+    return { analyticsDisabled: false, plan: "free", userId: null, username: null };
   }
 
   const [subscription, user] = await Promise.all([
@@ -24,13 +24,14 @@ export const getCurrentUserAnalyticsState = cache(async () => {
   ]);
 
   if (!user) {
-    return { analyticsDisabled: false, plan: "free", userId: null };
+    return { analyticsDisabled: false, plan: "free", userId: null, username: null };
   }
 
   return {
     analyticsDisabled: user.analyticsDisabled,
     plan: subscription?.plan ?? "free",
     userId: user.id,
+    username: user.username,
   };
 });
 
