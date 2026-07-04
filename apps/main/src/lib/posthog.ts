@@ -2,17 +2,19 @@ import { getPostHogConfig } from "@zoonk/utils/posthog";
 import posthog from "posthog-js";
 
 /**
- * Links browser events to the authenticated Zoonk user and stores the user flag
- * PostHog reports can use to filter internal users out of stats.
+ * Links browser events to the authenticated Zoonk user and keeps durable person
+ * properties current for analytics filters and user lookup.
  */
 export function identifyPostHogUser({
   analyticsDisabled,
   plan,
   userId,
+  username,
 }: {
   analyticsDisabled: boolean;
   plan: string;
   userId: string | null;
+  username: string | null;
 }) {
   if (!getPostHogConfig()) {
     return;
@@ -22,7 +24,7 @@ export function identifyPostHogUser({
     return;
   }
 
-  posthog.identify(userId, { analyticsDisabled, plan });
+  posthog.identify(userId, { analyticsDisabled, plan, userId, username });
 }
 
 /**
