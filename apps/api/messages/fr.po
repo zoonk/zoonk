@@ -12,20 +12,20 @@ msgstr "Connecte-toi à Zoonk"
 
 #: src/app/auth/login/email-login-form.tsx
 msgid "sy-pv5"
-msgstr "Email"
+msgstr "E-mail"
 
 #: src/app/auth/login/email-login-form.tsx
 msgid "apQW0E"
-msgstr "moi@gmail.com"
+msgstr "me@gmail.com"
 
 #: src/app/auth/login/email-login-form.tsx
 msgid "YRe93Y"
-msgstr "Saisis une adresse email valide"
+msgstr "Saisis une adresse e-mail valide"
 
 #: src/app/auth/login/email-login-form.tsx
 #: src/app/auth/login/social-login.tsx
 msgid "pN2p0t"
-msgstr "Une erreur est survenue lors de ta connexion. Réessaie ou contacte hello@zoonk.com"
+msgstr "Impossible de te connecter. Réessaie ou contacte hello@zoonk.com"
 
 #: src/app/auth/login/email-login-form.tsx
 #: src/app/auth/otp/otp-form.tsx
@@ -43,7 +43,7 @@ msgstr "Ou"
 
 #: src/app/auth/login/page.tsx
 msgid "Ju9oB-"
-msgstr "En cliquant sur Continuer, tu acceptes nos <terms>Conditions d'utilisation</terms> et <privacy>Politique de confidentialité</privacy>."
+msgstr "En cliquant sur Continuer, tu acceptes nos <terms>Conditions d’utilisation</terms> et notre <privacy>Politique de confidentialité</privacy>."
 
 #: src/app/auth/login/social-login.tsx
 msgid "FJ6r9E"
@@ -59,15 +59,15 @@ msgstr "Le code saisi est incorrect. Réessaie ou contacte hello@zoonk.com"
 
 #: src/app/auth/otp/otp-form.tsx
 msgid "ChATeO"
-msgstr "Changer d'email"
+msgstr "Changer d’e-mail"
 
 #: src/app/auth/otp/page.tsx
 msgid "zx7CKB"
-msgstr "Vérifie ton email"
+msgstr "Consulte tes e-mails"
 
 #: src/app/auth/otp/page.tsx
 msgid "LZHcmZ"
-msgstr "Saisis le code que nous avons envoyé à {email} :"
+msgstr "Saisis le code envoyé à {email} :"
 
 #: src/app/auth/setup/page.tsx
 msgid "CYqIel"
@@ -75,11 +75,11 @@ msgstr "Complète ton profil"
 
 #: src/app/auth/setup/page.tsx
 msgid "7463XU"
-msgstr "Choisis un nom et un nom d'utilisateur avant de continuer."
+msgstr "Choisis un nom et un nom d’utilisateur avant de continuer."
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "1SvspN"
-msgstr "Vérification..."
+msgstr "Vérification…"
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "9N4_rz"
@@ -91,7 +91,7 @@ msgstr "{username} est déjà pris"
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "vLl7z0"
-msgstr "3 à 30 caractères. Lettres, chiffres et tirets bas seulement."
+msgstr "3 à 30 caractères. Lettres, chiffres et tirets bas uniquement."
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "HAlOn1"
@@ -99,11 +99,11 @@ msgstr "Nom"
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "JCIgkj"
-msgstr "Nom d'utilisateur"
+msgstr "Nom d’utilisateur"
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "XLl_pd"
-msgstr "ton-nomdutilisateur"
+msgstr "ton-nom-utilisateur"
 
 #: src/app/auth/setup/setup-form.tsx
 msgid "yCCLud"
@@ -111,11 +111,11 @@ msgstr "Impossible de configurer ton profil. Réessaie ou contacte hello@zoonk.c
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "1vqX2W"
-msgstr "Impossible de rediriger"
+msgstr "Redirection impossible"
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "83K2kN"
-msgstr "L'URL de destination n'est pas reconnue comme une application Zoonk de confiance."
+msgstr "L’URL de destination n’est pas reconnue comme une application Zoonk de confiance."
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgid "wkO19y"

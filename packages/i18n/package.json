@@ -9,7 +9,8 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@eloqnt/cli": "catalog:"
+    "@eloqnt/cli": "catalog:",
+    "ai-sdk-provider-codex-cli": "1.2.2"
   },
   "devDependencies": {
     "@typescript/native-preview": "catalog:",
