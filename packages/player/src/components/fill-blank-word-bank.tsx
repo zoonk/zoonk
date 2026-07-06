@@ -66,8 +66,8 @@ function getWordTileData({
 }
 
 /**
- * Renders only the fill-blank words learners can still choose. Selected words
- * are removed from the bank and become removable from their blank slot instead.
+ * Keeps every fill-blank option in the bank so used words can become disabled
+ * placeholders instead of causing the remaining options to shift position.
  */
 export function FillBlankWordBank({
   blanks,
@@ -89,16 +89,15 @@ export function FillBlankWordBank({
       className={cn("flex flex-wrap gap-2.5", disabled && "pointer-events-none opacity-50")}
       role="group"
     >
-      {tiles
-        .filter((tile) => !tile.isUsed)
-        .map((tile) => (
-          <WordBankOptionButton
-            disabled={disabled}
-            key={tile.key}
-            onToggle={() => onPlaceWord(tile.option.word)}
-            option={tile.option}
-          />
-        ))}
+      {tiles.map((tile) => (
+        <WordBankOptionButton
+          disabled={disabled}
+          isSelected={tile.isUsed}
+          key={tile.key}
+          onToggle={() => onPlaceWord(tile.option.word)}
+          option={tile.option}
+        />
+      ))}
     </div>
   );
 }

@@ -40,19 +40,17 @@ function getWordBankTile({
 }
 
 /**
- * The word bank should only show words the learner can still choose. Selected
- * words remain removable from the answer area, then reappear here.
+ * The word bank keeps used words in place as disabled placeholders so selecting
+ * a tile does not make the remaining choices jump around.
  */
-function getVisibleWordBankTiles({
+function getWordBankTiles({
   placedWords,
   words,
 }: {
   placedWords: PlacedWord[];
   words: WordBankOption[];
 }): WordBankTile[] {
-  return words
-    .map((option, index) => getWordBankTile({ index, option, placedWords, words }))
-    .filter((tile) => !tile.isUsed);
+  return words.map((option, index) => getWordBankTile({ index, option, placedWords, words }));
 }
 
 function WordBank({
@@ -67,7 +65,7 @@ function WordBank({
   words: WordBankOption[];
 }) {
   const t = useExtracted();
-  const tiles = getVisibleWordBankTiles({ placedWords, words });
+  const tiles = getWordBankTiles({ placedWords, words });
 
   return (
     <div
@@ -78,6 +76,7 @@ function WordBank({
       {tiles.map((tile) => (
         <WordBankOptionButton
           disabled={disabled}
+          isSelected={tile.isUsed}
           key={tile.key}
           onToggle={() => onPlace(tile.option)}
           option={tile.option}
