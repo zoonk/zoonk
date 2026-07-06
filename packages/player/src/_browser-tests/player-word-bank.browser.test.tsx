@@ -85,7 +85,7 @@ describe("player browser integration: word bank steps", () => {
     await expect.element(page.getByText("100%")).toBeInTheDocument();
   });
 
-  it("hides selected arrange-word options without number shortcuts", async () => {
+  it("keeps selected arrange-word options as disabled placeholders", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         kind: "reading",
@@ -113,6 +113,7 @@ describe("player browser integration: word bank steps", () => {
     const answerArea = page.getByRole("group", { name: /your answer/iu });
 
     await expect.element(mundoOption).not.toHaveAttribute("aria-keyshortcuts");
+    await expect.element(mundoOption).toBeEnabled();
 
     fireEvent.keyDown(globalThis.window, { key: "2" });
 
@@ -125,10 +126,7 @@ describe("player browser integration: word bank steps", () => {
     await mundoOption.click();
 
     await expect.element(answerArea.getByRole("button", { name: /mundo/iu })).toBeInTheDocument();
-
-    await expect
-      .element(wordBank.getByRole("button", { exact: true, name: "mundo" }))
-      .not.toBeInTheDocument();
+    await expect.element(mundoOption).toBeDisabled();
 
     await expect
       .element(wordBank.getByRole("button", { exact: true, name: "Hola" }))
@@ -136,12 +134,10 @@ describe("player browser integration: word bank steps", () => {
 
     await answerArea.getByRole("button", { name: /mundo/iu }).click();
 
-    await expect
-      .element(wordBank.getByRole("button", { exact: true, name: "mundo" }))
-      .toBeInTheDocument();
+    await expect.element(mundoOption).toBeEnabled();
   });
 
-  it("hides selected fill-blank options without number shortcuts", async () => {
+  it("keeps selected fill-blank options as disabled placeholders", async () => {
     renderPlayer({
       lesson: buildSerializedLesson({
         steps: [
@@ -167,6 +163,7 @@ describe("player browser integration: word bank steps", () => {
     const catOption = wordBank.getByRole("button", { exact: true, name: "cat" });
 
     await expect.element(catOption).not.toHaveAttribute("aria-keyshortcuts");
+    await expect.element(catOption).toBeEnabled();
 
     fireEvent.keyDown(globalThis.window, { key: "2" });
 
@@ -182,16 +179,11 @@ describe("player browser integration: word bank steps", () => {
 
     await expect.element(selectedBlank).toBeInTheDocument();
     await expect.element(page.getByRole("button", { name: /check/iu })).toBeEnabled();
-
-    await expect
-      .element(wordBank.getByRole("button", { exact: true, name: "cat" }))
-      .not.toBeInTheDocument();
+    await expect.element(catOption).toBeDisabled();
 
     await selectedBlank.click();
 
-    await expect
-      .element(wordBank.getByRole("button", { exact: true, name: "cat" }))
-      .toBeInTheDocument();
+    await expect.element(catOption).toBeEnabled();
 
     await expect.element(page.getByRole("button", { name: /check/iu })).toBeDisabled();
   });

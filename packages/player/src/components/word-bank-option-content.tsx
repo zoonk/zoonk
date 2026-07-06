@@ -4,12 +4,26 @@ import { type ReactNode, useId } from "react";
 import { RomanizationText } from "./romanization-text";
 
 /**
- * Word-bank buttons keep the word, romanization, and pronunciation in one
- * vertical stack so metadata reads as a hint for the word instead of a separate
- * option.
+ * Word-bank buttons keep their content in one stack so selected placeholders
+ * can hide the text while preserving the tile's original width and height.
  */
-function WordBankOptionContent({ children }: { children: ReactNode }) {
-  return <span className="flex min-w-0 flex-col items-center gap-0.5 text-center">{children}</span>;
+function WordBankOptionContent({
+  children,
+  isInvisible = false,
+}: {
+  children: ReactNode;
+  isInvisible?: boolean;
+}) {
+  return (
+    <span
+      className={cn(
+        "flex min-w-0 flex-col items-center gap-0.5 text-center",
+        isInvisible && "invisible",
+      )}
+    >
+      {children}
+    </span>
+  );
 }
 
 /**
@@ -33,37 +47,61 @@ function hasWordBankOptionDescription(option: WordBankOption): boolean {
 }
 
 /**
+ * Word-bank tiles have three visual states: available, globally disabled after
+ * an answer is checked, and selected placeholders that stay visible only to
+ * preserve the bank layout.
+ */
+function getWordBankButtonStateClass({
+  disabled,
+  isSelected,
+}: {
+  disabled: boolean;
+  isSelected: boolean;
+}) {
+  if (isSelected) {
+    return "border-transparent bg-muted/50 opacity-70";
+  }
+
+  if (disabled) {
+    return "opacity-50";
+  }
+
+  return "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]";
+}
+
+/**
  * Shared word-bank button chrome keeps fill-blank, reading, and listening tiles
  * visually identical. The compact centered layout lets short words size to
  * their text plus padding instead of reserving space for unavailable controls.
  */
 export function WordBankOptionButton({
   disabled,
+  isSelected = false,
   onToggle,
   option,
 }: {
   disabled: boolean;
+  isSelected?: boolean;
   onToggle: () => void;
   option: WordBankOption;
 }) {
   const descriptionId = useId();
   const hasDescription = hasWordBankOptionDescription(option);
+  const isDisabled = disabled || isSelected;
 
   return (
     <button
-      aria-describedby={hasDescription ? descriptionId : undefined}
+      aria-describedby={hasDescription && !isSelected ? descriptionId : undefined}
       aria-label={option.word}
       className={cn(
         "border-border flex min-h-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 text-center transition-all duration-150 outline-none",
-        disabled
-          ? "opacity-50"
-          : "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+        getWordBankButtonStateClass({ disabled, isSelected }),
       )}
-      disabled={disabled}
+      disabled={isDisabled}
       onClick={onToggle}
       type="button"
     >
-      <WordBankOptionContent>
+      <WordBankOptionContent isInvisible={isSelected}>
         <span>{option.word}</span>
 
         {hasDescription && (
