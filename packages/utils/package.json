@@ -27,7 +27,6 @@
     "./origin": "./src/origin.ts",
     "./posthog": "./src/posthog.ts",
     "./search": "./src/search.ts",
-    "./settled": "./src/settled.ts",
     "./shuffle": "./src/shuffle.ts",
     "./string": "./src/string.ts",
     "./subscription": "./src/subscription.ts",

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type Browser, type Page } from "@playwright/test";
+import { type Browser } from "@playwright/test";
 import { type LessonKind, prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createOrganization, getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
@@ -12,6 +12,7 @@ import { normalizeString } from "@zoonk/utils/string";
 import { getSearchInputTop, scrollSearchInputToTop } from "./catalog-search";
 import { expect, test } from "./fixtures";
 import { pressShortcutAndWaitForUrl } from "./keyboard-shortcuts";
+import { openLessonTypeFilterMenu } from "./lesson-type-filter";
 
 const SEARCH_LESSONS_LABEL = /search lessons/iu;
 
@@ -71,21 +72,6 @@ async function expectSavedHiddenLessonKinds({
   userId: string;
 }) {
   await expect.poll(() => getSavedHiddenLessonKinds(userId)).toEqual(hiddenLessonKinds);
-}
-
-/**
- * The filter menu is rendered through a portal, so tests should wait for the
- * trigger and the menu label before checking specific checkbox items.
- */
-async function openLessonTypeFilterMenu({ page }: { page: Page }) {
-  const filterButton = page.getByRole("button", { name: /filter lesson types/iu });
-
-  await expect(filterButton).toBeVisible();
-  await expect(filterButton).toBeEnabled();
-  await filterButton.click();
-  await expect(page.getByText(/show lesson types/iu)).toBeVisible();
-
-  return filterButton;
 }
 
 test.beforeAll(async () => {

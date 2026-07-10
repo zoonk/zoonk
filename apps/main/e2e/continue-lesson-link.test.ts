@@ -9,6 +9,7 @@ import { courseFixture, courseUserFixture } from "@zoonk/testing/fixtures/course
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Page, expect, test } from "./fixtures";
+import { openLessonTypeFilterMenu } from "./lesson-type-filter";
 
 type ContinueActionLabel = "Continue" | "Review" | "Start";
 
@@ -528,7 +529,7 @@ test.describe("Continue Lesson Link", () => {
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
 
-    await page.getByRole("button", { name: "Filter lesson types" }).click();
+    await openLessonTypeFilterMenu({ page });
     await expect(page.getByRole("menuitemcheckbox", { name: "Explanation" })).toBeDisabled();
     await expect(page.getByRole("menuitemcheckbox", { name: "Quiz" })).toBeEnabled();
     await page.keyboard.press("Escape");
