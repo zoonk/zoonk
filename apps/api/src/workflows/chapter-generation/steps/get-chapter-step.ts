@@ -1,7 +1,26 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type ChapterStepName } from "@zoonk/core/workflows/steps";
-import { getAiGenerationChapterWhere, prisma } from "@zoonk/db";
+import { type Course, getAiGenerationChapterWhere, prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
+
+/**
+ * Derives the language-generation target from the course format. Non-language
+ * formats ignore stale target values, while language courses must provide a
+ * distinct target before any language-specific lesson work can start.
+ */
+export function getChapterGenerationTargetLanguage(
+  course: Pick<Course, "format" | "language" | "targetLanguage">,
+): string | null {
+  if (course.format !== "language") {
+    return null;
+  }
+
+  if (!course.targetLanguage || course.targetLanguage === course.language) {
+    throw new FatalError("Language course is missing a valid target language");
+  }
+
+  return course.targetLanguage;
+}
 
 async function getChapterForGeneration(chapterId: string) {
   return prisma.chapter.findFirst({
@@ -41,6 +60,8 @@ export async function getChapterStep(chapterId: string): Promise<ChapterContext>
     await stream.error({ reason: "notFound", step: "getChapter" });
     throw new FatalError("Chapter not found");
   }
+
+  getChapterGenerationTargetLanguage(chapter.course);
 
   const neighboringChapters = await getNeighboringChapters(chapter.courseId, chapter.position);
 

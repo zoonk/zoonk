@@ -465,8 +465,8 @@ describe("authenticated users", () => {
     const headers = await signInAs(user.email, user.password);
 
     const course = await courseFixture({
+      format: "question",
       isPublished: true,
-      mode: "quick",
       organizationId: null,
       userId: user.id,
     });

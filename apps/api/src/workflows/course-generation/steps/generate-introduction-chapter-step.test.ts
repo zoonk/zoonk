@@ -15,10 +15,11 @@ const course = {
   courseId: "course-1",
   courseSlug: "test-course",
   courseTitle: "Test Course",
+  format: "core",
   language: "en",
   organizationId: "org-1",
   targetLanguage: null,
-} satisfies CourseContext & { targetLanguage: null };
+} satisfies Extract<CourseContext, { format: "core" }>;
 
 describe(generateIntroductionChapterStep, () => {
   beforeEach(() => {

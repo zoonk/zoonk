@@ -20,12 +20,13 @@ const baseCourse: CourseContext = {
   courseId: "1",
   courseSlug: "test-course",
   courseTitle: "Test Course",
+  format: "core",
   language: "en",
   organizationId: "org-1",
   targetLanguage: null,
 };
 
-const languageCourse: CourseContext = { ...baseCourse, targetLanguage: "es" };
+const languageCourse: CourseContext = { ...baseCourse, format: "language", targetLanguage: "es" };
 
 describe(generateChaptersStep, () => {
   beforeEach(() => {

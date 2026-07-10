@@ -39,17 +39,6 @@ type LandingPageStepInput = ExistingCourseStepInput & {
   description: string;
 };
 
-type RegularCourseContext = CourseContext & { targetLanguage: null };
-
-/**
- * Narrows the course context after the language-course guard has returned. The
- * intro generation step intentionally only accepts regular courses because
- * language courses use their normal first chapter as the starting point.
- */
-function getRegularCourseContext(course: CourseContext): RegularCourseContext {
-  return { ...course, targetLanguage: null };
-}
-
 /**
  * Avoids regenerating the short course summary during retry/resume flows. The
  * saved description is considered the source of truth once it exists.
@@ -77,7 +66,7 @@ async function landingPageOrSkip({
   description,
   existing,
 }: LandingPageStepInput): Promise<CourseLandingPageSchema | null> {
-  if (course.targetLanguage) {
+  if (course.format === "language") {
     await streamSkipStep("generateLandingPage");
     return null;
   }
@@ -109,7 +98,7 @@ function getLandingPage({
     return existing.landingPage;
   }
 
-  if (course.targetLanguage) {
+  if (course.format === "language") {
     return null;
   }
 
@@ -182,7 +171,7 @@ async function categoriesOrSkip({ course, existing }: ExistingCourseStepInput): 
     return [];
   }
 
-  if (course.targetLanguage) {
+  if (course.format === "language") {
     await streamSkipStep("generateCategories");
     return ["languages"];
   }
@@ -199,7 +188,7 @@ async function categoriesOrSkip({ course, existing }: ExistingCourseStepInput): 
  * those missing rows before a lesson workflow can start.
  */
 async function introductionOrSkip({ course, existing }: ExistingCourseStepInput): Promise<void> {
-  if (course.targetLanguage) {
+  if (course.format === "language") {
     await streamSkipStep("generateIntroductionChapter");
     return;
   }
@@ -212,7 +201,7 @@ async function introductionOrSkip({ course, existing }: ExistingCourseStepInput)
     return;
   }
 
-  const introduction = await generateIntroductionChapterStep(getRegularCourseContext(course));
+  const introduction = await generateIntroductionChapterStep(course);
 
   const { lessons } = await persistIntroductionChapter({ course, introduction });
 

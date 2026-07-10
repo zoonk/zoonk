@@ -4,67 +4,108 @@ import { type WorkflowErrorLog, serializeWorkflowError } from "@/workflows/_shar
 import { type CourseWorkflowStepName, WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
-import { getSettledFailureError, settledFailures } from "@zoonk/utils/settled";
+
+/**
+ * Persists the course and linked prompt failures in one transaction only when
+ * this run still owns the course. The conditional course update acquires the
+ * same row lock as generation claims before prompt statuses change, preventing
+ * both mismatched state and a stale retry from failing a newer owner.
+ */
+async function persistCourseFailure({
+  courseId,
+  coursePromptId,
+  workflowRunId,
+}: {
+  courseId: string;
+  coursePromptId: string;
+  workflowRunId: string;
+}): Promise<boolean> {
+  return prisma.$transaction(async (transaction) => {
+    const course = await transaction.course.updateMany({
+      data: { generationRunId: null, generationStatus: "failed" },
+      where: { generationRunId: workflowRunId, generationStatus: "running", id: courseId },
+    });
+
+    if (course.count === 0) {
+      const persistedCourse = await transaction.course.findUniqueOrThrow({
+        where: { id: courseId },
+      });
+
+      return (
+        persistedCourse.generationRunId === null && persistedCourse.generationStatus === "failed"
+      );
+    }
+
+    await transaction.coursePrompt.update({
+      data: { generationRunId: null, generationStatus: "failed" },
+      where: { id: coursePromptId },
+    });
+
+    await transaction.coursePrompt.updateMany({
+      data: { generationRunId: null, generationStatus: "failed" },
+      where: { courseId, generationStatus: { not: "completed" } },
+    });
+
+    return true;
+  });
+}
 
 /**
  * Marks a course-generation run as permanently failed after the workflow has
  * stopped retrying the step that threw. Requests linked by duplicate starts
- * fail with the shared course so no request stays stuck in a running state
- * after the winning workflow gives up.
+ * fail with the shared course, but a stale handler becomes a no-op once a new
+ * workflow owns the course or prompt.
  */
 export async function handleCourseFailureStep(input: {
   courseId: string | null;
-  courseStartRequestId: string;
+  coursePromptId: string;
   error?: WorkflowErrorLog;
+  workflowRunId: string;
 }): Promise<void> {
   "use step";
 
-  const { courseId, courseStartRequestId } = input;
+  const { courseId, coursePromptId } = input;
 
-  logError("[Course Workflow Failure]", { courseId, courseStartRequestId, error: input.error });
+  logError("[Course Workflow Failure]", { courseId, coursePromptId, error: input.error });
 
   await captureWorkflowFailure({
     entity: "course",
-    entityId: courseId ?? courseStartRequestId,
+    entityId: courseId ?? coursePromptId,
     error: input.error,
     workflowName: "courseGenerationWorkflow",
   });
 
   if (courseId) {
-    const results = await Promise.allSettled([
-      prisma.course.update({
-        data: { generationRunId: null, generationStatus: "failed" },
-        where: { id: courseId },
-      }),
-      prisma.courseStartRequest.update({
-        data: { generationRunId: null, generationStatus: "failed" },
-        where: { id: courseStartRequestId },
-      }),
-      prisma.courseStartRequest.updateMany({
-        data: { generationRunId: null, generationStatus: "failed" },
-        where: { courseId, generationStatus: { not: "completed" } },
-      }),
-    ]);
-
-    const failures = settledFailures(results);
-
-    const failureError = getSettledFailureError({
-      failures,
-      message: "Failed to mark course workflow as failed",
-    });
-
-    if (failureError) {
-      logError("[Course Workflow Failure Status Update Failed]", {
-        errors: failures.map((failure) => serializeWorkflowError(failure)),
+    try {
+      const persisted = await persistCourseFailure({
+        courseId,
+        coursePromptId,
+        workflowRunId: input.workflowRunId,
       });
 
-      throw failureError;
+      if (!persisted) {
+        return;
+      }
+    } catch (error) {
+      logError("[Course Workflow Failure Status Update Failed]", {
+        errors: [serializeWorkflowError(error)],
+      });
+
+      throw error;
     }
   } else {
-    await prisma.courseStartRequest.update({
-      data: { generationRunId: null, generationStatus: "failed" },
-      where: { id: courseStartRequestId },
+    const prompt = await prisma.coursePrompt.updateMany({
+      data: { courseId: null, generationRunId: null, generationStatus: "failed" },
+      where: {
+        OR: [{ generationRunId: null }, { generationRunId: input.workflowRunId }],
+        generationStatus: { not: "completed" },
+        id: coursePromptId,
+      },
     });
+
+    if (prompt.count === 0) {
+      return;
+    }
   }
 
   await using stream = createStepStream<CourseWorkflowStepName>();

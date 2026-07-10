@@ -1,8 +1,8 @@
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
+import { CourseStartResult } from "./course-prompt-result";
 import { CourseStartFallback } from "./course-start-fallback";
-import { CourseStartResult } from "./course-start-result";
 
 export async function generateMetadata({
   params,

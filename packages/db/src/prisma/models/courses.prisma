@@ -1,29 +1,29 @@
 model Course {
-  id               String               @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  organizationId   String?              @map("organization_id") @db.Uuid
-  organization     Organization?        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId           String?              @map("user_id") @db.Uuid
-  user             User?                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  mode             CourseMode           @default(full)
-  completedAt      DateTime?            @map("completed_at")
-  isPublished      Boolean              @default(false) @map("is_published")
-  language         String               @db.VarChar(10)
+  id               String             @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  organizationId   String?            @map("organization_id") @db.Uuid
+  organization     Organization?      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId           String?            @map("user_id") @db.Uuid
+  user             User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  format           CourseFormat       @default(core)
+  completedAt      DateTime?          @map("completed_at")
+  isPublished      Boolean            @default(false) @map("is_published")
+  language         String             @db.VarChar(10)
   slug             String
   title            String
-  normalizedTitle  String               @map("normalized_title")
+  normalizedTitle  String             @map("normalized_title")
   description      String?
-  landingPage      Json?                @map("landing_page")
-  targetLanguage   String?              @map("target_language") @db.VarChar(10)
-  generationStatus GenerationStatus     @default(completed) @map("generation_status")
-  generationRunId  String?              @map("generation_run_id")
-  imageUrl         String?              @map("image_url")
-  userCount        Int                  @default(0) @map("user_count")
-  createdAt        DateTime             @default(now()) @map("created_at")
-  updatedAt        DateTime             @default(now()) @updatedAt @map("updated_at")
+  landingPage      Json?              @map("landing_page")
+  targetLanguage   String?            @map("target_language") @db.VarChar(10)
+  generationStatus GenerationStatus   @default(completed) @map("generation_status")
+  generationRunId  String?            @map("generation_run_id")
+  imageUrl         String?            @map("image_url")
+  userCount        Int                @default(0) @map("user_count")
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @default(now()) @updatedAt @map("updated_at")
   categories       CourseCategory[]
   chapters         Chapter[]
   completions      CourseCompletion[]
-  startRequests    CourseStartRequest[]
+  prompts          CoursePrompt[]
   users            CourseUser[]
 
   @@unique([organizationId, slug], name: "orgSlug")
@@ -32,30 +32,31 @@ model Course {
   @@index([organizationId, isPublished, createdAt])
   @@index([isPublished, normalizedTitle])
   @@index([isPublished, language, userCount, id])
-  @@index([userId, mode])
+  @@index([userId, format])
   @@map("courses")
 }
 
-model CourseStartRequest {
-  id               String            @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  courseId         String?           @map("course_id") @db.Uuid
-  course           Course?           @relation(fields: [courseId], references: [id], onDelete: SetNull)
-  language         String            @db.VarChar(10)
+model CoursePrompt {
+  id               String             @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  courseId         String?            @map("course_id") @db.Uuid
+  course           Course?            @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  language         String             @db.VarChar(10)
   prompt           String
-  normalizedPrompt String            @map("normalized_prompt")
-  scope            CourseStartScope
-  courseMode       CourseMode?       @map("course_mode")
-  canonicalTitle   String?           @map("canonical_title")
-  targetLanguage   String?           @map("target_language") @db.VarChar(10)
-  generationStatus GenerationStatus? @map("generation_status")
-  generationRunId  String?           @map("generation_run_id")
-  createdAt        DateTime          @default(now()) @map("created_at")
-  updatedAt        DateTime          @default(now()) @updatedAt @map("updated_at")
+  normalizedPrompt String             @map("normalized_prompt")
+  intent           CoursePromptIntent
+  courseFormat     CourseFormat?      @map("course_format")
+  canonicalTitle   String?            @map("canonical_title")
+  targetLanguage   String?            @map("target_language") @db.VarChar(10)
+  generationStatus GenerationStatus?  @map("generation_status")
+  generationRunId  String?            @map("generation_run_id")
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @default(now()) @updatedAt @map("updated_at")
 
   @@unique([language, normalizedPrompt], name: "languageNormalizedPrompt")
   @@index([courseId])
-  @@index([scope, createdAt])
-  @@map("course_start_requests")
+  @@index([intent, createdAt])
+  @@index([courseFormat, createdAt])
+  @@map("course_prompts")
 }
 
 model CourseCategory {

@@ -23,17 +23,18 @@ describe(addIntroductionChapterStep, () => {
   /**
    * Builds the regular-course context required by the intro chapter step. The
    * step intentionally excludes language courses, so every caller should pass a
-   * context with targetLanguage already narrowed to null.
+   * context with the core format and its null target language.
    */
   function getCourseContext(course: Awaited<ReturnType<typeof courseFixture>>) {
     return {
       courseId: course.id,
       courseSlug: course.slug,
       courseTitle: course.title,
+      format: "core",
       language: course.language,
       organizationId,
       targetLanguage: null,
-    } satisfies CourseContext & { targetLanguage: null };
+    } satisfies Extract<CourseContext, { format: "core" }>;
   }
 
   it("creates a published running introduction chapter at position zero", async () => {

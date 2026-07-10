@@ -13,7 +13,7 @@ import {
 import { addLessonsStep } from "./steps/add-lessons-step";
 import { classifyLessonsStep } from "./steps/classify-lessons-step";
 import { generateLessonsStep } from "./steps/generate-lessons-step";
-import { getChapterStep } from "./steps/get-chapter-step";
+import { getChapterGenerationTargetLanguage, getChapterStep } from "./steps/get-chapter-step";
 import { setChapterAsCompletedStep } from "./steps/set-chapter-as-completed-step";
 import { setChapterAsRunningStep } from "./steps/set-chapter-as-running-step";
 
@@ -25,7 +25,10 @@ async function generateExpandedLessons(
   const plan = await generateLessonsStep(context);
   const lessons = await classifyLessonsStep({ context, plan });
 
-  return expandChapterLessons({ lessons, targetLanguage: context.course.targetLanguage });
+  return expandChapterLessons({
+    lessons,
+    targetLanguage: getChapterGenerationTargetLanguage(context.course),
+  });
 }
 
 /**

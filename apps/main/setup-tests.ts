@@ -14,8 +14,9 @@ vi.mock("next/cache", () => ({
 }));
 
 vi.mock("@zoonk/ai/tasks/courses/canonical-title", { spy: true });
-vi.mock("@zoonk/ai/tasks/courses/learn-classification", { spy: true });
-vi.mock("@zoonk/ai/tasks/courses/request-routing", { spy: true });
+vi.mock("@zoonk/ai/tasks/courses/format", { spy: true });
+vi.mock("@zoonk/ai/tasks/courses/intent", { spy: true });
+vi.mock("@zoonk/ai/tasks/courses/personalization", { spy: true });
 
 beforeEach(() => {
   vi.clearAllMocks();

@@ -36,20 +36,23 @@ enum StepKind {
   vocabulary
 }
 
-enum CourseMode {
+enum CourseFormat {
+  coding
+  core
   exam
-  full
-  overview
-  personalized
-  quick
-}
-
-enum CourseStartScope {
-  exam
+  instrument
   language
   personalized
+  product
+  practical
   question
-  topic
+}
+
+enum CoursePromptIntent {
+  ambiguous
+  exam
+  learn
+  question
   unsafe
 }
 

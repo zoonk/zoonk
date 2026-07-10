@@ -3,7 +3,7 @@ import { z } from "zod";
 const uuidParam = (description: string) => z.uuid().meta({ description });
 
 export const courseGenerationTriggerSchema = z
-  .object({ courseStartRequestId: uuidParam("Course start request ID to generate from") })
+  .object({ coursePromptId: uuidParam("Course prompt ID to generate from") })
   .meta({ id: "CourseGenerationTrigger" });
 
 export const chapterGenerationTriggerSchema = z

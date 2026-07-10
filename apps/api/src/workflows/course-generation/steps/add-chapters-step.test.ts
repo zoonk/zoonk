@@ -21,6 +21,7 @@ describe(addChaptersStep, () => {
       courseId: course.id,
       courseSlug: course.slug,
       courseTitle: course.title,
+      format: "core",
       language: course.language,
       organizationId,
       targetLanguage: null,

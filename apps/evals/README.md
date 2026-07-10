@@ -92,7 +92,7 @@ pnpm evals:export taskId testCaseId
 **Example:**
 
 ```bash
-pnpm evals:export course-request-routing topic-biology
+pnpm evals:export course-intent topic-biology
 ```
 
 This will create a JSON file in `apps/evals/eval-results/[taskId]/comparisons/[testCaseId].json` with:

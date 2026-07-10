@@ -6,7 +6,7 @@ import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { createOrganization, getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseStartRequestFixture } from "@zoonk/testing/fixtures/course-start-requests";
+import { coursePromptFixture } from "@zoonk/testing/fixtures/course-prompts";
 import {
   courseCategoryFixture,
   courseFixture,
@@ -39,7 +39,7 @@ async function mockWorkflowApis(route: Route) {
 
   if (url.includes("/v1/workflows/course-generation/status")) {
     await route.fulfill({
-      body: `data: ${JSON.stringify({ status: "running", step: "getCourseStartRequest" })}\n\n`,
+      body: `data: ${JSON.stringify({ status: "running", step: "getCoursePrompt" })}\n\n`,
       contentType: "text/event-stream",
       status: 200,
     });
@@ -281,7 +281,7 @@ test.describe("Course Detail Page", () => {
       title,
     });
 
-    const request = await courseStartRequestFixture({
+    const request = await coursePromptFixture({
       canonicalTitle: title,
       courseId: course.id,
       generationStatus: "running",

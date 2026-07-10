@@ -1,18 +1,18 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
-import { throwSettledFailures } from "@zoonk/utils/settled";
 
 /**
- * Marks the course and every start request already linked to it as completed.
- * Duplicate workflow starts can link more than one request to the same
- * in-progress course, and they should all resolve when the winning run
- * finishes the shared course.
+ * Marks the course and every linked prompt as completed only while this run
+ * owns the in-progress course. An already-completed course is also successful
+ * so a durable-step retry can re-emit the redirect event after committing,
+ * while an older run cannot complete a course reclaimed by a newer run.
  */
 export async function completeCourseSetupStep(input: {
-  courseStartRequestId: string;
+  coursePromptId: string;
   courseId: string;
   courseSlug: string;
+  workflowRunId: string;
 }): Promise<void> {
   "use step";
 
@@ -20,22 +20,40 @@ export async function completeCourseSetupStep(input: {
 
   await stream.status({ status: "started", step: "completeCourseSetup" });
 
-  const results = await Promise.allSettled([
-    prisma.course.update({
+  const completed = await prisma.$transaction(async (transaction) => {
+    const ownedCourse = await transaction.course.updateMany({
       data: { generationStatus: "completed" },
-      where: { id: input.courseId },
-    }),
-    prisma.courseStartRequest.update({
+      where: {
+        generationRunId: input.workflowRunId,
+        generationStatus: "running",
+        id: input.courseId,
+      },
+    });
+
+    if (ownedCourse.count === 0) {
+      const course = await transaction.course.findUniqueOrThrow({ where: { id: input.courseId } });
+
+      if (course.generationStatus !== "completed") {
+        return false;
+      }
+    }
+
+    await transaction.coursePrompt.update({
       data: { courseId: input.courseId, generationStatus: "completed" },
-      where: { id: input.courseStartRequestId },
-    }),
-    prisma.courseStartRequest.updateMany({
+      where: { id: input.coursePromptId },
+    });
+
+    await transaction.coursePrompt.updateMany({
       data: { generationStatus: "completed" },
       where: { courseId: input.courseId },
-    }),
-  ]);
+    });
 
-  throwSettledFailures({ message: "Failed to complete course setup", results });
+    return true;
+  });
+
+  if (!completed) {
+    return;
+  }
 
   await stream.status({
     entityId: input.courseSlug,

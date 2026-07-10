@@ -29,7 +29,7 @@ describe(generateLessonsStep, () => {
 
     const [course, languageCourse] = await Promise.all([
       courseFixture({ organizationId: organization.id }),
-      courseFixture({ organizationId: organization.id, targetLanguage: "es" }),
+      courseFixture({ format: "language", organizationId: organization.id, targetLanguage: "es" }),
     ]);
 
     const [chapter, languageChapter] = await Promise.all([
@@ -110,6 +110,37 @@ describe(generateLessonsStep, () => {
     const events = getStreamedEvents();
 
     expect(events).not.toContainEqual(expect.objectContaining({ step: "generateLessonKind" }));
+  });
+
+  it("uses format instead of a contradictory target language for non-language courses", async () => {
+    const lessons = [{ description: "Basics", title: "Lesson 1" }];
+
+    const contradictoryContext = {
+      ...context,
+      course: { ...context.course, targetLanguage: "es" },
+    };
+
+    generateChapterLessonsMock.mockResolvedValue({ data: { lessons } });
+
+    const result = await generateLessonsStep(contradictoryContext);
+
+    expect(result).toStrictEqual({ lessons, needsClassification: true });
+    expect(generateChapterLessonsMock).toHaveBeenCalledOnce();
+    expect(generateLanguageChapterLessonsMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects a language course without its dependent target language", async () => {
+    const invalidLanguageContext = {
+      ...languageContext,
+      course: { ...languageContext.course, targetLanguage: null },
+    };
+
+    await expect(generateLessonsStep(invalidLanguageContext)).rejects.toThrow(
+      "Language course is missing a valid target language",
+    );
+
+    expect(generateChapterLessonsMock).not.toHaveBeenCalled();
+    expect(generateLanguageChapterLessonsMock).not.toHaveBeenCalled();
   });
 
   it("throws without streaming error when AI generation fails", async () => {

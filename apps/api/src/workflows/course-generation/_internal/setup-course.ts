@@ -25,12 +25,12 @@ type PersistCourseSetupContentInput = {
  */
 function getGeneratableChapters({
   chapters,
-  targetLanguage,
+  format,
 }: {
   chapters: Chapter[];
-  targetLanguage: string | null;
+  format: CourseContext["format"];
 }): Chapter[] {
-  if (targetLanguage) {
+  if (format === "language") {
     return chapters;
   }
 
@@ -53,7 +53,7 @@ async function getChapters({
 }): Promise<Chapter[]> {
   if (existing.hasMainCurriculum) {
     const chapters = await getCourseChaptersStep(course.courseId);
-    return getGeneratableChapters({ chapters, targetLanguage: course.targetLanguage });
+    return getGeneratableChapters({ chapters, format: course.format });
   }
 
   await streamSkipStep("getExistingChapters");

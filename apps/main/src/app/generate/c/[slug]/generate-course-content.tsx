@@ -1,4 +1,4 @@
-import { getCourseStartRequestByCourseSlug } from "@/data/courses/course-start-request-by-course";
+import { getCoursePromptByCourseSlug } from "@/data/courses/course-prompt-by-course";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { getLocale } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";
@@ -7,7 +7,7 @@ export async function GenerateCourseContent({ params }: { params: Promise<{ slug
   const { slug } = await params;
   const locale = await getLocale();
 
-  const request = await getCourseStartRequestByCourseSlug({ language: locale, slug });
+  const request = await getCoursePromptByCourseSlug({ language: locale, slug });
 
   if (!request) {
     notFound();

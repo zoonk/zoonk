@@ -57,22 +57,22 @@ async function cacheTopicPrompt(rawPrompt: string) {
   const title = `E2E Topic ${uniqueId}`;
   const normalizedPrompt = normalizeString(rawPrompt);
 
-  const request = await prisma.courseStartRequest.upsert({
+  const request = await prisma.coursePrompt.upsert({
     create: {
       canonicalTitle: title,
-      courseMode: "full",
+      courseFormat: "core",
       generationStatus: "pending",
+      intent: "learn",
       language,
       normalizedPrompt,
       prompt: rawPrompt,
-      scope: "topic",
     },
     update: {
       canonicalTitle: title,
-      courseMode: "full",
+      courseFormat: "core",
       generationStatus: "pending",
+      intent: "learn",
       prompt: rawPrompt,
-      scope: "topic",
       targetLanguage: null,
     },
     where: { languageNormalizedPrompt: { language, normalizedPrompt } },
@@ -89,22 +89,22 @@ async function cacheWaitlistedPrompt(rawPrompt: string) {
   const language = "en";
   const normalizedPrompt = normalizeString(rawPrompt);
 
-  const request = await prisma.courseStartRequest.upsert({
+  const request = await prisma.coursePrompt.upsert({
     create: {
       canonicalTitle: rawPrompt,
-      courseMode: "quick",
+      courseFormat: "question",
       generationStatus: null,
+      intent: "question",
       language,
       normalizedPrompt,
       prompt: rawPrompt,
-      scope: "question",
     },
     update: {
       canonicalTitle: rawPrompt,
-      courseMode: "quick",
+      courseFormat: "question",
       generationStatus: null,
+      intent: "question",
       prompt: rawPrompt,
-      scope: "question",
       targetLanguage: null,
     },
     where: { languageNormalizedPrompt: { language, normalizedPrompt } },
@@ -145,16 +145,16 @@ async function cacheExistingCoursePrompt(rawPrompt: string) {
     title: `E2E Existing Chapter ${uniqueId}`,
   });
 
-  await prisma.courseStartRequest.create({
+  await prisma.coursePrompt.create({
     data: {
       canonicalTitle: title,
+      courseFormat: "core",
       courseId: course.id,
-      courseMode: "full",
       generationStatus: "completed",
+      intent: "learn",
       language,
       normalizedPrompt: normalizeString(rawPrompt),
       prompt: rawPrompt,
-      scope: "topic",
     },
   });
 

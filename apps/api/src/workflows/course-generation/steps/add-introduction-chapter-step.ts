@@ -6,6 +6,7 @@ import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { type CourseContext } from "./initialize-course-step";
 
 type IntroductionChapterPlan = CourseIntroductionSchema["chapter"];
+type CoreCourseContext = Extract<CourseContext, { format: "core" }>;
 
 /**
  * Loads the reserved intro shell by structural position. Regular courses use
@@ -52,7 +53,7 @@ async function createIntroductionChapter({
   course,
   plan,
 }: {
-  course: CourseContext & { targetLanguage: null };
+  course: CoreCourseContext;
   plan: IntroductionChapterPlan;
 }): Promise<Chapter> {
   try {
@@ -84,7 +85,7 @@ async function getOrCreateIntroductionChapter({
   course,
   plan,
 }: {
-  course: CourseContext & { targetLanguage: null };
+  course: CoreCourseContext;
   plan: IntroductionChapterPlan;
 }): Promise<Chapter> {
   const existingChapter = await getExistingIntroductionChapter(course.courseId);
@@ -105,7 +106,7 @@ export async function addIntroductionChapterStep({
   course,
   plan,
 }: {
-  course: CourseContext & { targetLanguage: null };
+  course: CoreCourseContext;
   plan: IntroductionChapterPlan;
 }): Promise<Chapter> {
   "use step";

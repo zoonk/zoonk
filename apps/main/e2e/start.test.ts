@@ -95,7 +95,7 @@ test.describe("Start language path", () => {
       throw new Error("Missing generated request id in URL");
     }
 
-    const request = await prisma.courseStartRequest.findUnique({ where: { id: requestId } });
+    const request = await prisma.coursePrompt.findUnique({ where: { id: requestId } });
 
     expect(request?.targetLanguage).toBe("jv");
   });
@@ -120,6 +120,7 @@ test.describe("Start language path", () => {
     const title = `E2E Icelandic ${uniqueId}`;
 
     const course = await courseFixture({
+      format: "language",
       generationStatus: "completed",
       isPublished: true,
       language: "en",

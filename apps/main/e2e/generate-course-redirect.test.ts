@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { type Route } from "@zoonk/e2e/fixtures";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { courseStartRequestFixture } from "@zoonk/testing/fixtures/course-start-requests";
+import { coursePromptFixture } from "@zoonk/testing/fixtures/course-prompts";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
@@ -29,7 +29,7 @@ async function mockWorkflowApis(route: Route) {
   if (url.includes("/v1/workflows/course-generation/status")) {
     // Return a simple in-progress message to show the generation UI
     await route.fulfill({
-      body: `data: ${JSON.stringify({ status: "running", step: "getCourseStartRequest" })}\n\n`,
+      body: `data: ${JSON.stringify({ status: "running", step: "getCoursePrompt" })}\n\n`,
       contentType: "text/event-stream",
       status: 200,
     });
@@ -58,7 +58,7 @@ test.describe("Generate Course Redirect", () => {
       title,
     });
 
-    const request = await courseStartRequestFixture({
+    const request = await coursePromptFixture({
       canonicalTitle: title,
       courseId: course.id,
       generationStatus: "running",
@@ -92,7 +92,7 @@ test.describe("Generate Course Redirect", () => {
       title,
     });
 
-    const request = await courseStartRequestFixture({
+    const request = await coursePromptFixture({
       canonicalTitle: title,
       courseId: course.id,
       generationStatus: "running",

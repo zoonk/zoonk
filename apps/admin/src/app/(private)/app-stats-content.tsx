@@ -1,6 +1,6 @@
 import { Stats } from "@/components/stats";
 import { StatsSection } from "@/components/stats-section";
-import { countCourseStartRequests } from "@/data/course-start-requests/list-course-start-requests";
+import { countCoursePrompts } from "@/data/course-prompts/list-course-prompts";
 import { countContent } from "@/data/stats/count-content";
 import { countCourses } from "@/data/stats/count-courses";
 import { BookOpenIcon, LayersIcon, MessageSquareTextIcon } from "lucide-react";
@@ -9,10 +9,10 @@ import { connection } from "next/server";
 export async function ContentStats() {
   await connection();
 
-  const [totalCourses, content, requestCount] = await Promise.all([
+  const [totalCourses, content, promptCount] = await Promise.all([
     countCourses(),
     countContent(),
-    countCourseStartRequests(),
+    countCoursePrompts(),
   ]);
 
   return (
@@ -47,11 +47,11 @@ export async function ContentStats() {
       />
 
       <Stats
-        help="Course start requests submitted by learners"
-        href="/course-start-requests"
+        help="Course prompts submitted by learners"
+        href="/course-prompts"
         icon={<MessageSquareTextIcon />}
-        title="Course Starts"
-        value={requestCount.toLocaleString()}
+        title="Course Prompts"
+        value={promptCount.toLocaleString()}
       />
     </StatsSection>
   );

@@ -74,7 +74,7 @@ function getMainChapterPositionOffset({
   course: CourseContext;
   existing: ExistingCourseContent;
 }): number {
-  if (course.targetLanguage) {
+  if (course.format === "language") {
     return existing.chapterCount;
   }
 

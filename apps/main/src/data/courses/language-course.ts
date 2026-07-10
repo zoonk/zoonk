@@ -1,11 +1,6 @@
 import "server-only";
 import { type AiCourseHref, getAiCourseHref } from "@/data/courses/course-href";
-import {
-  type Course,
-  type CourseStartRequest,
-  getAiGenerationCourseWhere,
-  prisma,
-} from "@zoonk/db";
+import { type Course, type CoursePrompt, getAiGenerationCourseWhere, prisma } from "@zoonk/db";
 import {
   type TTSSupportedLanguageCode,
   TTS_SUPPORTED_LANGUAGE_CODES,
@@ -17,7 +12,7 @@ type LanguageCourseInput = { language: string; targetLanguage: string };
 
 type CompletedLanguageCourseHrefEntry = readonly [TTSSupportedLanguageCode, AiCourseHref];
 
-type LanguageCourseStartRequestInput = LanguageCourseInput & { title: string };
+type LanguageCoursePromptInput = LanguageCourseInput & { title: string };
 
 export type CompletedLanguageCourseHrefs = Partial<Record<TTSSupportedLanguageCode, AiCourseHref>>;
 
@@ -63,6 +58,7 @@ export async function getCompletedLanguageCourse({
   return prisma.course.findFirst({
     orderBy: { createdAt: "desc" },
     where: getAiGenerationCourseWhere({
+      format: "language",
       generationStatus: "completed",
       isPublished: true,
       language,
@@ -85,6 +81,7 @@ export async function getCompletedLanguageCourseHrefs({
   const courses = await prisma.course.findMany({
     orderBy: { createdAt: "asc" },
     where: getAiGenerationCourseWhere({
+      format: "language",
       generationStatus: "completed",
       isPublished: true,
       language,
@@ -98,48 +95,98 @@ export async function getCompletedLanguageCourseHrefs({
 }
 
 /**
- * Creates the controlled request used by `/start/speak/[language]`. Language
- * courses still use the course-generation workflow, but the workflow input is a
- * language-scoped start request instead of an adapter row.
+ * Confirms that a cached prompt already has every field required by the
+ * controlled language workflow. A matching target can be reused in any
+ * generation state, while incomplete public classifications must be promoted
+ * before the generation page receives them.
  */
-async function getOrCreateLanguageCourseStartRequest({
-  language,
+function isGeneratableLanguageCoursePrompt({
+  coursePrompt,
   targetLanguage,
-  title,
-}: LanguageCourseStartRequestInput): Promise<CourseStartRequest> {
-  const prompt = `Learn ${title}`;
-  const normalizedPrompt = normalizeString(prompt);
-
-  return prisma.courseStartRequest.upsert({
-    create: {
-      canonicalTitle: title,
-      courseMode: "full",
-      generationStatus: "pending",
-      language,
-      normalizedPrompt,
-      prompt,
-      scope: "language",
-      targetLanguage,
-    },
-    update: {},
-    where: { languageNormalizedPrompt: { language, normalizedPrompt } },
-  });
+}: {
+  coursePrompt: CoursePrompt;
+  targetLanguage: string;
+}): boolean {
+  return Boolean(
+    coursePrompt.canonicalTitle &&
+    coursePrompt.courseFormat === "language" &&
+    coursePrompt.generationStatus &&
+    coursePrompt.intent === "learn" &&
+    coursePrompt.targetLanguage === targetLanguage,
+  );
 }
 
 /**
- * Reuses or creates the controlled request the course-generation workflow uses
- * for language courses. The request stores the target language directly, so the
- * generation path no longer needs an adapter row between `/start/speak` and the
- * workflow.
+ * Creates the controlled prompt used by `/start/speak/[language]`. Language
+ * courses still use the course-generation workflow. A public `/start/learn`
+ * visit can reserve the same prompt cache key first, so an unstarted row is
+ * promoted in place while a linked or running row is never repurposed.
  */
-export async function getOrCreateLanguageCourseRequest({
+async function getOrCreateLanguageCoursePrompt({
   language,
   targetLanguage,
   title,
-}: LanguageCourseStartRequestInput) {
+}: LanguageCoursePromptInput): Promise<CoursePrompt> {
+  const prompt = `Learn ${title}`;
+  const normalizedPrompt = normalizeString(prompt);
+
+  const languageCoursePrompt = {
+    canonicalTitle: title,
+    courseFormat: "language" as const,
+    generationStatus: "pending" as const,
+    intent: "learn" as const,
+    language,
+    normalizedPrompt,
+    prompt,
+    targetLanguage,
+  };
+
+  const cachedPrompt = await prisma.coursePrompt.upsert({
+    create: languageCoursePrompt,
+    update: {},
+    where: { languageNormalizedPrompt: { language, normalizedPrompt } },
+  });
+
+  if (isGeneratableLanguageCoursePrompt({ coursePrompt: cachedPrompt, targetLanguage })) {
+    return cachedPrompt;
+  }
+
+  await prisma.coursePrompt.updateMany({
+    data: languageCoursePrompt,
+    where: {
+      courseId: null,
+      generationRunId: null,
+      generationStatus: null,
+      id: cachedPrompt.id,
+      targetLanguage: null,
+    },
+  });
+
+  const languagePrompt = await prisma.coursePrompt.findUniqueOrThrow({
+    where: { id: cachedPrompt.id },
+  });
+
+  if (isGeneratableLanguageCoursePrompt({ coursePrompt: languagePrompt, targetLanguage })) {
+    return languagePrompt;
+  }
+
+  throw new Error("Existing course prompt is incompatible with this language course");
+}
+
+/**
+ * Reuses or creates the controlled prompt the course-generation workflow uses
+ * for language courses. The prompt stores the target language directly, so the
+ * generation path no longer needs an adapter row between `/start/speak` and the
+ * workflow.
+ */
+export async function getOrCreateLanguageCoursePromptRequest({
+  language,
+  targetLanguage,
+  title,
+}: LanguageCoursePromptInput) {
   if (!isTTSSupportedLanguage(targetLanguage)) {
     throw new Error(`Unsupported TTS language: ${targetLanguage}`);
   }
 
-  return getOrCreateLanguageCourseStartRequest({ language, targetLanguage, title });
+  return getOrCreateLanguageCoursePrompt({ language, targetLanguage, title });
 }

@@ -116,7 +116,11 @@ describe(addLessonsStep, () => {
   });
 
   it("expands language lessons when the course has a target language", async () => {
-    const course = await courseFixture({ organizationId, targetLanguage: "es" });
+    const course = await courseFixture({
+      format: "language",
+      organizationId,
+      targetLanguage: "es",
+    });
 
     const chapter = await chapterFixture({
       courseId: course.id,

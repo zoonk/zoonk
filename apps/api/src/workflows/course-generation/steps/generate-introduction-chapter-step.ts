@@ -6,6 +6,8 @@ import {
 import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { type CourseContext } from "./initialize-course-step";
 
+type CoreCourseContext = Extract<CourseContext, { format: "core" }>;
+
 /**
  * Generates the fixed first chapter separately from the full curriculum
  * outline. This keeps the learner-facing introduction focused on a friendly
@@ -13,7 +15,7 @@ import { type CourseContext } from "./initialize-course-step";
  * different goals.
  */
 export async function generateIntroductionChapterStep(
-  course: CourseContext & { targetLanguage: null },
+  course: CoreCourseContext,
 ): Promise<CourseIntroductionSchema> {
   "use step";
 
