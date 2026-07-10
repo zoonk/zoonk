@@ -3,357 +3,134 @@
   "results": [
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "accepted": [
-            "the"
-          ]
-        },
+        "expected": { "accepted": ["the"] },
         "id": "es-en-el-1",
-        "userInput": {
-          "targetLanguage": "es",
-          "userLanguage": "en",
-          "word": "el"
-        }
+        "userInput": { "targetLanguage": "es", "userLanguage": "en", "word": "el" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "accepted": [
-            "cat"
-          ]
-        },
+        "expected": { "accepted": ["cat"] },
         "id": "es-en-gato-1",
-        "userInput": {
-          "targetLanguage": "es",
-          "userLanguage": "en",
-          "word": "gato"
-        }
+        "userInput": { "targetLanguage": "es", "userLanguage": "en", "word": "gato" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "accepted": [
-            "cat"
-          ]
-        },
+        "expected": { "accepted": ["cat"] },
         "id": "ja-en-neko-1",
-        "userInput": {
-          "targetLanguage": "ja",
-          "userLanguage": "en",
-          "word": "猫"
-        }
+        "userInput": { "targetLanguage": "ja", "userLanguage": "en", "word": "猫" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "accepted": [
-            "eat",
-            "to eat"
-          ]
-        },
+        "expected": { "accepted": ["eat", "to eat"] },
         "id": "ja-en-taberu-1",
-        "userInput": {
-          "targetLanguage": "ja",
-          "userLanguage": "en",
-          "word": "食べる"
-        }
+        "userInput": { "targetLanguage": "ja", "userLanguage": "en", "word": "食べる" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "accepted": [
-            "the"
-          ]
-        },
+        "expected": { "accepted": ["the"] },
         "id": "de-en-der-1",
-        "userInput": {
-          "targetLanguage": "de",
-          "userLanguage": "en",
-          "word": "der"
-        }
+        "userInput": { "targetLanguage": "de", "userLanguage": "en", "word": "der" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "accepted": [
-            "dog"
-          ]
-        },
+        "expected": { "accepted": ["dog"] },
         "id": "de-en-hund-1",
-        "userInput": {
-          "targetLanguage": "de",
-          "userLanguage": "en",
-          "word": "Hund"
-        }
+        "userInput": { "targetLanguage": "de", "userLanguage": "en", "word": "Hund" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "accepted": [
-            "gato"
-          ]
-        },
+        "expected": { "accepted": ["gato"] },
         "id": "ko-pt-goyangi-1",
-        "userInput": {
-          "targetLanguage": "ko",
-          "userLanguage": "pt",
-          "word": "고양이"
-        }
+        "userInput": { "targetLanguage": "ko", "userLanguage": "pt", "word": "고양이" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "accepted": [
-            "comer"
-          ]
-        },
+        "expected": { "accepted": ["comer"] },
         "id": "ko-pt-meokda-1",
-        "userInput": {
-          "targetLanguage": "ko",
-          "userLanguage": "pt",
-          "word": "먹다"
-        }
+        "userInput": { "targetLanguage": "ko", "userLanguage": "pt", "word": "먹다" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "accepted": [
-            "gata",
-            "gato"
-          ]
-        },
+        "expected": { "accepted": ["gata", "gato"] },
         "id": "ar-es-qitta-1",
-        "userInput": {
-          "targetLanguage": "ar",
-          "userLanguage": "es",
-          "word": "قطة"
-        }
+        "userInput": { "targetLanguage": "ar", "userLanguage": "es", "word": "قطة" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "accepted": [
-            "en"
-          ]
-        },
+        "expected": { "accepted": ["en"] },
         "id": "ar-es-fi-1",
-        "userInput": {
-          "targetLanguage": "ar",
-          "userLanguage": "es",
-          "word": "في"
-        }
+        "userInput": { "targetLanguage": "ar", "userLanguage": "es", "word": "في" }
       }
     },
     {
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "accepted": [
-            "la casa",
-            "el hogar"
-          ]
-        },
+        "expected": { "accepted": ["la casa", "el hogar"] },
         "id": "ar-es-albayt-1",
-        "userInput": {
-          "targetLanguage": "ar",
-          "userLanguage": "es",
-          "word": "البيت"
-        }
+        "userInput": { "targetLanguage": "ar", "userLanguage": "es", "word": "البيت" }
       }
     }
   ],
