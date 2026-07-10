@@ -5,7 +5,7 @@ import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseFixture, courseUserFixture } from "@zoonk/testing/fixtures/courses";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Page, expect, test } from "./fixtures";
@@ -20,14 +20,6 @@ type ContinueActionLabel = "Continue" | "Review" | "Start";
  */
 function getContinueActionLink({ label, page }: { label: ContinueActionLabel; page: Page }) {
   return page.getByRole("link", { name: getContinueActionName({ label }) });
-}
-
-/**
- * The no-progress course page is now a landing page, so its first action uses
- * the lower-commitment copy while still reusing the continue-link routing.
- */
-function getStartFreeChapterLink({ page }: { page: Page }) {
-  return page.getByRole("link", { name: /^try free chapter$/iu });
 }
 
 /**
@@ -267,21 +259,21 @@ async function createPageWithHiddenLessonKinds({
 }
 
 test.describe("Continue Lesson Link", () => {
-  test("course page shows Try free chapter link for unauthenticated user", async ({ page }) => {
+  test("course page shows Start link for unauthenticated user", async ({ page }) => {
     const { course } = await createTestCourseWithLesson();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const startLink = getStartFreeChapterLink({ page });
+    const startLink = getContinueActionLink({ label: "Start", page });
     await expect(startLink).toBeVisible();
   });
 
-  test("course page Try free chapter link navigates to a lesson URL", async ({ page }) => {
+  test("course page Start link navigates to a lesson URL", async ({ page }) => {
     const { course, chapter, lesson } = await createTestCourseWithLesson();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const startLink = getStartFreeChapterLink({ page });
+    const startLink = getContinueActionLink({ label: "Start", page });
     await expect(startLink).toBeVisible();
     await startLink.click();
 
@@ -317,7 +309,7 @@ test.describe("Continue Lesson Link", () => {
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const startLink = getStartFreeChapterLink({ page });
+    const startLink = getContinueActionLink({ label: "Start", page });
     await expect(startLink).toBeVisible();
 
     await expect(startLink).toHaveAttribute(
@@ -500,15 +492,12 @@ test.describe("Continue Lesson Link", () => {
       hiddenLessonKinds: ["quiz"],
     });
 
-    await Promise.all([
-      courseUserFixture({ courseId: course.id, userId: user.id }),
-      lessonProgressFixture({
-        completedAt: new Date("2024-01-01"),
-        durationSeconds: 60,
-        lessonId: completedLesson.id,
-        userId: user.id,
-      }),
-    ]);
+    await lessonProgressFixture({
+      completedAt: new Date("2024-01-01"),
+      durationSeconds: 60,
+      lessonId: completedLesson.id,
+      userId: user.id,
+    });
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -614,9 +603,8 @@ test.describe("Continue Lesson Link", () => {
 
     await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
-    const continueLink = authenticatedPage.getByRole("link", { name: "Continue" });
+    const continueLink = authenticatedPage.getByRole("link", { name: "Continue 50% complete" });
     await expect(continueLink).toBeVisible();
-    await expect(authenticatedPage.getByRole("link", { name: /\d+% complete/iu })).toHaveCount(0);
 
     await expect(continueLink).toHaveAttribute(
       "href",
