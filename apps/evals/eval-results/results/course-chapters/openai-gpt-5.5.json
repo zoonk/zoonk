@@ -3,14 +3,18 @@
   "results": [
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The closing navigation chapter is strong overall, but its description is a little weak on concrete entry and contribution paths such as first jobs, communities, open-source contribution, or team onboarding. It mentions roles, proof-of-skill evidence, certifications, and staying current, so this does not break the requirement, but it could be more explicit.",
-          "kind": "minorErrors",
-          "score": 9
+          "conclusion": "The modern toolchain is missing version control and collaborative change workflows such as Git, branches, pull requests, code review, and merge-conflict handling. This is a notable junior-practitioner gap. The closing chapter also does not clearly cover contribution and entry paths—jobs, communities, and how to begin contributing to open source—even though it covers roles, portfolio evidence, and staying current.",
+          "kind": "majorErrors",
+          "score": 8
         },
         {
-          "conclusion": "The outline could improve by making the final career/ecosystem chapter explicitly name entry paths and communities, and by clarifying which chapters include small hands-on exercises versus larger projects. Otherwise, it provides a serious, well-sequenced JavaScript path from beginner foundations through browser, Node.js, tooling, security, testing, modern shifts, end-to-end workflows, and career navigation.",
+          "conclusion": "Nearly every description follows the repetitive “Covers…” and “You will…” formula, making the otherwise welcoming outline feel mechanical. The repeated “You will” outcomes can also read as claims about learner performance. Sequencing could be smoother: package management would naturally precede building Node.js servers, while the substantial algorithms and advanced metaprogramming material could come after learners have built more browser applications.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a subject-specific chapter on Git and collaborative JavaScript development, and expand the closing chapter with concrete entry routes and community participation. More small integrated projects between the DOM, Node.js, testing, and tooling chapters would strengthen the progression toward the two excellent end-to-end workflows.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -25,12 +29,12 @@
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Minor accessibility issues: a few advanced English terms such as “lead time distribution”, “aging WIP”, “throughput”, “Forecasting” and tool/vendor names like Trello, Jira, Azure DevOps, GitHub Projects and Linear appear without much Brazilian Portuguese scaffolding. These are mostly acceptable because they are common practitioner terms and the title coverage is strong, but they slightly reduce warmth and legibility for true beginners outside privileged environments.",
+          "conclusion": "The progression is strong overall, but advanced probabilistic forecasting and Monte Carlo appear before core system-design material such as Kanban cadences, STATIK, and the end-to-end workflow. The output also mixes avoidable English into Brazilian Portuguese, such as “lead time distribution,” “aging WIP,” and “Forecasting probabilístico,” and lists several vendors in the digital-tools description.",
           "kind": "minorErrors",
           "score": 9
         },
         {
-          "conclusion": "The curriculum could be improved by adding brief Portuguese glosses beside English-heavy metrics terms, strengthening the closing chapter’s entry-path details with concrete first steps into Kanban practice, and making replenishment/revisão de reposição a little more visible since it is a canonical Kanban cadence.",
+          "conclusion": "Move cadences, STATIK, system design, and the complete service workflow ahead of advanced forecasting. Prefer Brazilian Portuguese formulations such as “previsão probabilística” and provide Portuguese explanations for unavoidable field-standard English terms. The closing chapter could also state entry paths more concretely, such as internal improvement initiatives, junior flow roles, communities of practice, consulting apprenticeships, and evidence from measured service improvements.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -43,14 +47,18 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The curriculum is very strong overall, but it has a few smaller completeness and polish issues. It does not include a standalone chapter on Juizados Especiais, which are a very common Brazilian procedural/practice setting and would be useful for day-one practice. A few broad umbrella chapters could be sharper, especially “Direitos de grupos vulnerabilizados,” which bundles several statute-heavy areas that may deserve clearer internal scope or separate treatment. Some foundational canonical terms such as “hierarquia normativa” and “hermenêutica jurídica” are covered in descriptions but could be more visible in titles for searchability.",
-          "kind": "minorErrors",
-          "score": 8.5
+          "conclusion": "The curriculum is exceptionally broad and well sequenced, but it still omits a few canonical pillars expected in a zero-to-mastery Brazilian Law course. In particular, Juizados Especiais appear only incidentally inside online dispute resolution rather than receiving substantive standalone coverage, and core academic perspectives such as Filosofia do Direito and Sociologia do Direito are absent. Dedicated treatment of constitutional remedies and administrative procedure is also too implicit for their practical importance in Brazil.",
+          "kind": "majorErrors",
+          "score": 8
         },
         {
-          "conclusion": "Consider adding a dedicated chapter on Juizados Especiais cíveis, criminais e da Fazenda Pública, and making “Fontes do direito brasileiro” explicitly include “hierarquia normativa” in the title. The course could also slightly improve sequencing by placing the history/evolution chapter earlier, before the current institutional map, and by clarifying whether umbrella chapters like vulnerable groups teach key statutes in real depth rather than surveying them briefly.",
+          "conclusion": "Descriptions are concrete and useful, but their highly repetitive openings—especially “Cobre” and “Trata”—make the curriculum feel formulaic. A few English labels, such as “Legal design”, “Legal operations” and “compliance”, could be paired with established Portuguese equivalents for greater accessibility, though these terms are commonly used in Brazilian practice.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "The course could be improved by slightly varying description structure and by making the final career chapter more explicit about the competence artifacts appropriate to different legal paths, such as supervised practice records, case analyses, research, drafted instruments and compliance projects—not only a portfolio of legal filings.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -64,13 +72,9 @@
     {
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Only small polish gaps: the curriculum covers Atenção Primária well, but it does not explicitly name the canonical Brazilian specialty “Medicina de família e comunidade”; similarly, adult integrative “Clínica médica/Medicina interna” is mostly distributed across specialty chapters rather than called out as its own bridge chapter. These do not break coverage because the relevant content is largely present.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Could improve by adding or renaming a chapter to explicitly cover “Medicina de família e comunidade” and another integrative “Clínica médica” chapter. The closing navigation chapter could also more explicitly mention internato, CRM registration, supervised clinical hours/case logs, residency matching, specialty societies, and continuing medical education requirements.",
+          "conclusion": "The curriculum could be strengthened by naming concrete practice artifacts more consistently—such as simulated consultations, completed prescriptions, notification forms, discharge summaries, and supervised procedure checklists. The closing chapter could also state more explicitly how specialties differ, which records or supervised clinical hours demonstrate competence, and how physicians maintain certification and continuing education.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -85,14 +89,14 @@
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The closing navigation chapter is strong overall, but its description does not clearly name contribution or entry paths such as jobs, internships, open source, communities, or other ways people actually enter the field. The history chapter also omits mobile computing explicitly, even though it otherwise covers the required evolution arc well. The end-to-end workflow chapter mentions delivery and maintenance but not operation/production operation explicitly.",
+          "conclusion": "The history chapter does not explicitly cover the mobile era and only loosely signals the major hardware/software shifts required by the rubric. The closing navigation chapter covers specialties, evidence of competence, and staying current, but does not clearly include concrete entry and contribution paths such as jobs, internships, open-source work, and communities. Also, some specialized application chapters, including front-end and mobile development, appear before core theory-of-computation material, slightly weakening the core-before-specialization progression.",
           "kind": "minorErrors",
-          "score": 8
+          "score": 8.5
         },
         {
-          "conclusion": "Consider renaming or sharpening a few chapters for scanability and scope precision, such as making cloud-native infrastructure more explicit in the cloud section, and ensuring the model-evaluation chapter title reflects its broader ML problem-framing content. The professional navigation chapter could explicitly include roles, entry paths, proof-of-competence artifacts, and keeping current in the description.",
+          "conclusion": "Strengthen the history description with explicit eras such as mainframes, personal computers, mobile computing, and the transitions in hardware and software. Expand the final chapter to name practical entry routes and contribution pathways. Moving formal languages, computability, and complexity somewhat earlier would produce an even clearer foundations-to-specialization arc.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 9
         }
       ],
       "testCase": {
@@ -104,17 +108,17 @@
     {
       "steps": [
         {
-          "conclusion": "The curriculum is broadly strong and covers the field seriously, but there is one material sequencing problem: the standalone biosafety chapter appears very late, after learners have already encountered hands-on field workflows and especially microbiological culture, isolation, identification, asepsis, and disposal. Those activities depend on biosafety concepts such as risk levels, PPE, containment, sterilization, accident response, and legal duties, so biosafety should come before risky wet-lab and field practice rather than after it.",
+          "conclusion": "The dedicated biosafety chapter is sequenced too late: learners encounter pipetting, biological samples, microbial collection/culture, and fieldwork before receiving the course’s substantive treatment of risk assessment, containment, PPE, transport, waste, and accident response. It should precede practical microbiology and other sample-handling workflows. In addition, the zero-to-mastery arc lacks a later substantive biostatistics chapter: the early coverage stops at means, variation, error, and simple graphs, without statistical inference, confidence intervals, regression, hypothesis testing, effect sizes, or power.",
           "kind": "majorErrors",
-          "score": 8
+          "score": 7.5
         },
         {
-          "conclusion": "The closing chapter is appropriate in spirit, but its description is a little thin on the field-specific artifact that proves competence. It mentions portfolio, internships, graduate study, CFBio/CRBio, and staying current, but it could more clearly name biology-specific evidence such as lab notebooks, datasets, specimen or occurrence records, technical reports, publications, permits, protocols, and validated analyses. Brazilian regulatory/professional details are present but somewhat scattered rather than consolidated.",
+          "conclusion": "“Assortimento independente” is an avoidable English-influenced expression; “segregação independente” is the standard Brazilian Portuguese term. The closing chapter covers roles, entry paths, professional bodies, and staying current, but merely names a portfolio without specifying biology-specific evidence of competence such as field/lab notebooks, protocols, datasets, analysis repositories, technical reports, or documented collections. “Biologia” should normally be lowercase in the final title.",
           "kind": "minorErrors",
           "score": 9
         },
         {
-          "conclusion": "Move biosafety earlier, before microbiology culture and substantial fieldwork. Consider adding or sharpening a dedicated chapter on Brazilian professional practice, permits, documentation, and reporting duties for biological work, including examples such as collection authorization, animal/human ethics review, genetic heritage access, environmental licensing contexts, and CRBio responsibilities. The curriculum could also label a few low-cost beginner practical artifacts more explicitly to reinforce accessibility for learners outside privileged environments.",
+          "conclusion": "Add clearer coverage of major plant lineages and life cycles rather than leaving them implicit in a broad diversity chapter. Renaming “Imagem biológica moderna” to a more searchable title such as “Microscopia avançada e análise de imagens biológicas” would also expose the canonical method more clearly. Otherwise, the curriculum is unusually comprehensive, practical, welcoming, and strong across canonical and modern biology.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -128,19 +132,19 @@
     {
       "steps": [
         {
-          "conclusion": "The curriculum is strong overall, in Brazilian Portuguese, logically sequenced, practical, and includes standalone history/evolution and end-to-end workflow chapters. The main material gap is that the dedicated FEA chapter does not clearly cover composite laminate simulation, crash-structure simulation, or lightweight structural optimization/part design, even though these were explicitly required alongside chassis and suspension structural simulation.",
+          "conclusion": "The required structural-simulation coverage is incomplete. The dedicated finite element analysis chapter covers general FEA concepts and mentions chassis and suspension parts, but it does not explicitly teach composite modeling, crash-structure/impact simulation, or simulation-led lightweight part design. Separate chapters on composites, crash safety, and mass management do not establish the required FEA connection. This is a material gap in an explicit course requirement.",
           "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Several titles and descriptions rely unnecessarily on English terms despite the Brazilian Portuguese requirement, including “Workflow de desenvolvimento de performance,” “assemblies,” “fail-safe,” “driver-in-the-loop,” “make-or-buy,” “spares” and “turnaround.” Some are common industry vocabulary, but Portuguese wording or immediate clarification would make the curriculum more welcoming. The history chapter is also somewhat compressed: its description promises the right scope but does not name key eras and regulatory or safety milestones clearly enough to demonstrate substantial coverage.",
+          "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "A few titles use English where natural Brazilian Portuguese would be clearer, especially “Workflow de desenvolvimento de performance” and “Simulador driver-in-the-loop.” The history chapter is present and relevant, but its description could name more major technical eras and regulation changes explicitly, such as ground effect, turbo eras, active suspension bans, hybrid regulations, halo, and 2022/2026 rules.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Improve the FEA/structural simulation coverage by either expanding the FEA chapter description or adding focused chapters on composite laminate FEA, crashworthiness simulation, and lightweight structural optimization. Also consider renaming “Workflow de desenvolvimento de performance” to “Fluxo de trabalho de desenvolvimento de performance” for more natural Portuguese.",
+          "conclusion": "Expand structural simulation into explicit, substantive coverage of composite laminates and failure criteria, crash boxes and nonlinear impact analysis, chassis and suspension validation, and topology/shape optimization for lightweight parts. Strengthen the history chapter by naming major eras and transitions, such as front- to rear-engined layouts, ground effect, turbo eras, active suspension and its ban, refueling and tire-rule changes, hybrid power units, halo and crash-test evolution, the 2022 ground-effect rules, cost caps, and the 2026 transition. Add more concrete learner artifacts to practical chapters, such as CAD releases, FEA reports, correlation notebooks, setup sheets, test plans and post-session engineering reports.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
@@ -151,14 +155,18 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "A few chapters bundle adjacent services in ways that may reduce depth for some working Google Cloud paths, such as Workflows with Cloud Tasks and Cloud Scheduler, and API management with both Apigee and API Gateway. The closing chapter is mostly appropriate but could be more explicit about concrete entry paths such as jobs, communities, open-source contribution, partner roles, and support/customer environments.",
-          "kind": "minorErrors",
-          "score": 9
+          "conclusion": "None. The curriculum provides a serious beginner-to-advanced progression, includes concrete practice throughout, covers Google Cloud’s major architectural pillars, gives Cloud Spanner standalone treatment, and includes both history and end-to-end workflow chapters.",
+          "kind": "majorErrors",
+          "score": 10
         },
         {
-          "conclusion": "Consider adding or sharpening coverage for a few practitioner-facing services that often appear in real Google Cloud work, such as Cloud Composer / managed Airflow for data orchestration, Backup and DR Service, and Cloud Asset Inventory. The title “RAG and enterprise search on Google Cloud” would be more searchable if it spelled out “Retrieval-augmented generation.”",
+          "conclusion": "A few current-product details need updating. “Cloud Functions” should acknowledge the current Cloud Run functions naming and the relationship between generations. The governance chapter treats Data Catalog as current without noting its deprecation and transition to Dataplex Universal Catalog. The closing chapter mentions certifications and work environments, but entry paths such as jobs, communities, and open-source contribution are not explicit enough.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "Introduce observability before the GKE operations chapter, which currently relies on logging and monitoring concepts taught much later. A dedicated Google Cloud Architecture Framework chapter would also strengthen explicit coverage of architecture principles, tradeoffs, and design review practices.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -171,16 +179,20 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The curriculum is very strong overall, but a few small sequencing choices slightly interrupt the otherwise chronological learning path: analytical chapters on ki, choreography, and anime adaptation appear after the Buu saga rather than being introduced closer to the moments where those concepts first matter. Some side-media chapters are grouped after the main manga/anime run rather than in release chronology, though this does not seriously harm usability.",
-          "kind": "minorErrors",
-          "score": 9
+          "conclusion": "The chronology has a material sequencing error: Dragon Ball Super: Broly belongs directly after the Tournament of Power and before the Moro and Granolah arcs, but it is placed after both. This conflicts with the required chronological progression and can confuse learners about modern canon.",
+          "kind": "majorErrors",
+          "score": 7
         },
         {
-          "conclusion": "The outline could be improved by making a few titles even more searchable for canonical arc names, such as clarifying that “The hunt for the Dragon Balls” corresponds to the Pilaf/first Dragon Ball search era and that “Dragon Ball Super anime beginnings” includes the God of Destruction and Universe 6 material. It could also add a brief note in relevant descriptions about recommended watch/read order when side continuity, movies, and specials are introduced.",
+          "conclusion": "The original manga’s epilogue, including Uub and the final World Martial Arts Tournament, is not clearly covered despite its importance to later continuity. There is also a capitalization typo in “trunks from the future,” which should be “Trunks.”",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "Move the Broly chapter before the Galactic Patrol Prisoner saga, explicitly include the End of Z/Uub material, and clarify coverage of the Super Hero manga prequel/adaptation and the unresolved Black Frieza thread. These changes would make the otherwise broad, welcoming, practical curriculum more complete and chronologically dependable.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8.5
         }
       ],
       "testCase": {
@@ -191,16 +203,20 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "A few chapter titles lean on named tools, missions, or observatories where a more concept-first title would scan better for a broad astronomy curriculum, such as “Python, Astropy y archivos FITS”, “Astrometría de precisión y Gaia”, and “Astronomía infrarroja y JWST”. This is not a serious coverage problem because the concepts are clear and the named resources are relevant, but it slightly reduces title polish.",
+          "conclusion": "The curriculum has a substantial prerequisite gap for a true zero-to-mastery path. It moves from only brief foundations in units, radiation, matter, and mechanics into photometry, spectroscopy, cosmology, compact objects, and numerical simulations without dedicated mathematical/statistical foundations or sufficient thermodynamics, atomic/nuclear physics, and relativity. General relativity appears explicitly only in the late gravitational-wave chapter, even though compact remnants, gravitational lensing, active galactic nuclei, and Friedmann-Lemaître cosmology rely on it earlier. In addition, specialist observing techniques such as interferometry and high-energy astronomy are placed before core object-based astronomy such as the Solar System, stars, and galaxies. The dedicated history chapter, end-to-end observational workflow, practical work, modern developments, and career-navigation chapter otherwise satisfy major requirements.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "A few titles emphasize particular tools or facilities rather than durable concepts, notably “Python, Astropy y archivos FITS” and “Astronomía infrarroja y JWST.” The history description is also somewhat compressed and vague about early modern astronomy, spectroscopy, relativity, and the discovery of cosmic expansion, although those areas are substantially recovered in other chapters as the rubric permits.",
           "kind": "minorErrors",
           "score": 9
         },
         {
-          "conclusion": "The curriculum would be even stronger with a clearer standalone bridge on special and general relativity for astronomy before compact objects, cosmology, and gravitational waves. The history chapter could also explicitly mention spectroscopy, relativity, and the expanding universe in its description to better match the requested historical arc, even though those topics are covered elsewhere.",
+          "conclusion": "Add early chapters on mathematics for astronomy, probability and statistics, and the physical foundations of astrophysics, followed by a dedicated relativity chapter before relativistic objects and cosmology. Move the core Solar System, stellar, galactic, and cosmological sequence ahead of the more specialized wavelength and interferometric techniques, or explicitly frame those techniques after the relevant objects and physics. The history chapter could name the ancient-to-geocentric-to-heliocentric transition, telescopic astronomy, spectroscopy, relativity, expansion, and modern multiwavelength/space observation more clearly.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
@@ -212,19 +228,19 @@
     {
       "steps": [
         {
-          "conclusion": "The curriculum is very strong overall, but it still compresses some major traditions into broad survey-style chapters. Examples include “Música brasileña,” “Música mexicana y centroamericana,” “Músicas del Caribe latino,” and “Música de club y cultura DJ,” which bundle many distinct eras, genres, and practice traditions into one chapter each. It also lacks a clear standalone chapter for pop as a major popular tradition, despite covering many neighboring styles.",
+          "conclusion": "Several explicit curriculum requirements are materially unmet. Major traditions are still compressed into survey-style catch-alls: “Música brasileña” bundles samba, choro, bossa nova, tropicalia, MPB and forró; “Músicas del Caribe latino” combines son, salsa, timba, merengue, bachata and plena; “Tradiciones de China, Japón y Corea” merges several distinct national traditions; and “Música de club y cultura DJ” compresses disco, house, techno, trance, drum and bass and EDM. Likewise, most instrument areas receive only one inventory-heavy chapter, so the practical sequence does not plausibly progress from beginner technique to mastery on an instrument. The closing chapter covers roles, portfolio artifacts and staying current, but does not adequately explain concrete entry paths such as auditions, session work, employment, community ensembles or professional associations.",
           "kind": "majorErrors",
-          "score": 8
+          "score": 7
         },
         {
-          "conclusion": "The closing chapter is broader than a simple portfolio chapter, but it does not clearly cover concrete entry paths into music work such as auditions, gigs, sessions, teaching, local scenes, online release paths, collectives, or industry roles. Some descriptions also rely on dense industry terms or English loanwords that may be less welcoming for true beginners outside privileged environments, though the language is mostly accessible Latin American Spanish.",
+          "conclusion": "Many descriptions are dense lists of unexplained specialist terms, which weakens the welcoming, beginner-legible mission. Examples include “slash chords,” “hooks,” “stems,” “spotting,” “middleware,” “pitching editorial” and “venue”; some are normal professional vocabulary, but they should be translated or briefly contextualized. A few chapters also span too many techniques or instruments to communicate realistic depth, particularly the grouped strings, woodwinds, brass and percussion chapters.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Split the broad regional and electronic-music chapters into more specific traditions or eras, add a substantive pop chapter, and strengthen the final navigation chapter with real ways musicians enter and sustain practice. The course would also benefit from more explicitly named milestone projects across the arc, such as a first ensemble performance, a first recorded demo, a first arrangement, and a first published track.",
+          "conclusion": "Split the bundled regional and popular traditions into meaningful historical eras, genre families or practice areas. Add progressive beginner, intermediate and advanced pathways for at least a chosen primary instrument or voice, with repertoire, technique milestones, ensemble work and assessed performances. Sharpen the final navigation chapter with concrete routes into paid and community practice, expected professional artifacts, mentorship and audition pathways. The otherwise strong production, live-performance, legal, workflow and recent-technology coverage should be retained.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
@@ -235,16 +251,20 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The closing chapter is useful and subject-specific, but it only lightly covers roles, entry paths, proof of competence, and how people keep skills current; it does not fully satisfy the expected 'navigating the field' function for history as a serious academic practice. The final source-work chapter also gestures toward a research argument but could more clearly present an end-to-end historian workflow from question to evidence, interpretation, writing, revision, and sharing.",
-          "kind": "minorErrors",
-          "score": 8.5
+          "conclusion": "The closing chapter does not fully meet the required field-navigation and end-to-end workflow pillars. It lists possible paths and asks learners to build an argument, but it does not explain historian roles and specialties, concrete entry routes, competence artifacts, skill maintenance, or a research workflow from question formation through source collection, validation, synthesis, citation, and delivery. Also, the final contemporary chapter hides the searchable canonical event name “January 8 attacks” in its description behind the broader title “defense of democracy,” triggering the title score cap.",
+          "kind": "majorErrors",
+          "score": 7
         },
         {
-          "conclusion": "Add a more explicit methods/workflow chapter, or sharpen the final chapter, around doing Brazilian history: forming a research question, finding archives and scholarship, evaluating sources, citing evidence, building an argument, and presenting work. The closing chapter could also name concrete roles such as academic historian, archivist, museum/public-history worker, teacher, journalist, and community researcher, along with realistic entry paths and competence artifacts.",
+          "conclusion": "There is a localized chronological reversal: the abolition chapter reaches the Golden Law of 1888 before the curriculum returns to the Paraguayan War of 1864–1870. The Dilma chapter and the following Operation Car Wash chapter also overlap substantially and would benefit from sharper boundaries.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Retitle the final contemporary chapter to name the January 8 attacks directly. Split the last chapter into a concrete historical-research workflow and a subject-specific navigation chapter covering academic history, public history, archives, museums, teaching, and journalism, including entry paths, evidence of competence, and ways practitioners remain current.",
           "kind": "potentialImprovements",
-          "score": 8.5
+          "score": 8
         }
       ],
       "testCase": {
@@ -255,14 +275,18 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The descriptions are clear but often formulaic and list-heavy, with many starting the same way. This slightly reduces warmth and readability for true beginners, though it does not harm coverage or sequencing.",
+          "conclusion": "The curriculum is exceptionally broad and modern, but it does not fully support a true beginner from ordinary-life experience: the Python chapter jumps directly into notebooks, arrays, tables, and datasets without clearly teaching programming fundamentals such as variables, types, conditionals, loops, functions, imports, and debugging. That missing prerequisite can block nearly every practical chapter. Reinforcement learning is also represented only by a conceptual foundations chapter; a mastery curriculum should include core algorithms and practical training, such as value-based and policy-based methods.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Some early sequencing is awkward. Cross-entropy and empirical risk appear before probability and statistics, while optimization appears before problem framing and the main supervised models that make its purpose concrete. Statistical learning theory also interrupts the practical classical-model progression and would be more accessible after learners have encountered more model families.",
           "kind": "minorErrors",
           "score": 9
         },
         {
-          "conclusion": "The closing chapter could more explicitly name the concrete artifacts that prove ML competence, such as reproducible code repositories, deployed demos, model reports, documented datasets, or experiment logs. Some early chapters could also use slightly plainer descriptions to feel less intimidating before the learner has confidence.",
+          "conclusion": "Add a genuine Python programming foundations chapter, move loss functions after the supporting math, and place advanced learning theory later. Expand reinforcement learning into an applied chapter covering algorithms, evaluation, simulation, and modern deep RL. The rest is highly useful: it includes canonical foundations, history, practical projects, modern architectures, LLMs, RAG, fine-tuning, diffusion models, production infrastructure, governance, end-to-end workflows, and field navigation with clear canonical titles.",
           "kind": "potentialImprovements",
           "score": 9
         }

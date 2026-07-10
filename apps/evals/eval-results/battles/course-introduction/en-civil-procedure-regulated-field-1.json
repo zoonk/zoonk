@@ -1,57 +1,75 @@
 {
-  "expectations": "\n      - MUST be in US English\n      - Should introduce civil procedure as the rules and sequence that move disputes through courts, including filing, notice, deadlines, motions, discovery, hearings, evidence boundaries, settlement pressure, or appeals\n      - Should make the field useful to understand without giving legal advice, case strategy, jurisdiction-specific instructions, or promises about bar admission, law school, licensing, or legal employment\n      - Should mention realistic roles and uses such as lawyers, paralegals, court staff, compliance teams, journalists, policy workers, advocates, business owners, or people trying to understand legal systems\n      - Should avoid becoming a dense technical chapter on personal jurisdiction, claim preclusion, pleading standards, discovery sanctions, or appellate preservation\n\n      \n  - Must be written in the specified language\n  - Must include exactly one chapter object with title and description\n  - Must include 3-5 lessons\n  - Every lesson must be an explanation lesson plan, not a practice, quiz, review, capstone, project, or summary\n  - The chapter and lessons must feel like a quick guide to the field, not the first normal technical chapter\n  - Must make the field feel concrete, useful, and interesting for a true beginner\n  - Must include realistic opportunities, careers, roles, projects, communities, or everyday uses connected to the field\n  - Must stay easy enough for a first encounter and avoid deep prerequisites\n  - Must be specific to the course topic, not generic learning motivation\n  - For non-English cases, must not mix in English field, learner, or opportunity labels; translate them naturally\n  - Must not promise salaries, credentials, jobs, fluency, mastery, or guaranteed outcomes\n\n    ",
-  "judgedAt": "2026-07-02T12:06:02.165Z",
+  "expectations": "\n      - MUST be in US English\n      - Should introduce civil procedure as the rules and sequence that move disputes through courts, including filing, notice, deadlines, motions, discovery, hearings, evidence boundaries, settlement pressure, or appeals\n      - Should make the field useful to understand without giving legal advice, case strategy, jurisdiction-specific instructions, or promises about bar admission, law school, licensing, or legal employment\n      - Should mention realistic roles and uses such as lawyers, paralegals, court staff, compliance teams, journalists, policy workers, advocates, business owners, or people trying to understand legal systems\n      - Should avoid becoming a dense technical chapter on personal jurisdiction, claim preclusion, pleading standards, discovery sanctions, or appellate preservation\n\n      \n  - Must be written in the specified language\n  - Must include exactly one chapter object with title and description\n  - Must include 3-5 lessons\n  - Every lesson must be an explanation lesson plan, not a practice, quiz, review, capstone, project, or summary\n  - The chapter and lessons must feel like a quick guide to the field, not the first normal technical chapter\n  - Must make the field feel concrete, useful, and interesting for a true beginner\n  - Must include realistic opportunities, careers, roles, projects, communities, or everyday uses connected to the field\n  - Must stay easy enough for a first encounter and avoid deep prerequisites\n  - Must be specific to the course topic, not generic learning motivation\n  - Must not include lessons about the course itself, the curriculum, the next chapter, the learning path, or how the course goes deeper\n  - Every lesson title must name the subject, a subject-specific concept, a concrete field use, or a field-specific role clearly enough that the course topic is identifiable from the title alone\n  - Generic meta titles such as \"How this course goes deeper\", \"What this course will help you do\", \"Your path forward\", or translated equivalents are a major issue even when the description mentions the course topic\n  - For non-English cases, must not mix in English field, learner, or opportunity labels; translate them naturally\n  - Must not promise salaries, credentials, jobs, fluency, mastery, or guaranteed outcomes\n\n    ",
+  "judgedAt": "2026-07-10T05:45:51.723Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.7",
+      "judgeId": "anthropic/claude-fable-5",
       "rankings": [
         {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Excellent quick-guide framing with concrete beginner-friendly content, diverse realistic roles (lawyers, judges, mediators, policy advocates, in-house teams), and clear course preview without promising outcomes. Covers filing, notice, deadlines, discovery, settlement pressure, and appeals appropriately.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model G",
+          "anonymousId": "Model D",
           "modelId": "openai/gpt-5.5",
-          "reasoning": "Strong quick guide with clear structure, diverse roles including journalists and legal tech, and good coverage of procedural topics. Slightly terse but hits all rubric points without overreach or promises.",
+          "reasoning": "Complete, beginner-friendly guide covering what procedure is, case flow, jurisdiction, discovery, and a strong roles lesson that names lawyers, paralegals, compliance teams, journalists, and advocates. All titles clearly identify the subject, no meta lessons, and no promised outcomes. Stays accessible without drifting into dense doctrine.",
           "score": 9
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "anthropic/claude-sonnet-5",
-          "reasoning": "Solid overview with concrete examples and role mentions. The phrase 'fluent in courtroom mechanics' edges toward a fluency promise but is mild. Otherwise well-scoped and beginner-friendly.",
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Well-structured intro with concrete, subject-specific titles, realistic roles (judges, mediators, legal aid advocates), and no meta or course-referencing lessons. Content stays at intro depth while covering filing, jurisdiction, discovery, and settlement. Only minor gap is slightly less breadth of non-lawyer roles than the best output.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Accurate, on-topic lessons covering process, court authority, discovery, fairness/cost balance, and a solid roles lesson. Titles all name civil procedure concepts and there are no meta lessons or promises. Tone is slightly drier and less vivid for a true beginner than the top output.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Clean intro chapter with specific titles, good coverage of case flow and fairness, and a roles lesson including litigators, mediators, legal-aid teams, and policymakers. No meta lessons, promises, or scope drift. Descriptions are a bit terse and less engaging than the strongest entries.",
           "score": 8
         },
         {
           "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Clean quick-guide feel, appropriate roles, and beginner-friendly scope. Descriptions are somewhat brief and generic but stay on-topic and avoid promises.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "anthropic/claude-opus-4.8",
-          "reasoning": "Engaging and specific with good procedural coverage. However, phrases like 'gives lawyers real leverage' and 'command of the machinery' lean toward strategy/mastery framing, and role diversity is limited mostly to legal insiders.",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Engaging, concrete lessons with no meta content and a good litigator roles lesson. Some titles like 'Forcing the other side to share secrets' are catchy but borderline on identifying the field alone, and the framing leans slightly toward litigation strategy/leverage rather than neutral understanding.",
           "score": 7
         },
         {
-          "anonymousId": "Model D",
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Solid explanation lessons on procedure, jurisdiction, and discovery, but the final lesson's description pivots into 'this course will demystify...' which drifts toward course-referencing content. Roles coverage is thin (only lawyers, judges, clerks), and the chapter title 'The Rules of the Legal Game' doesn't clearly name civil procedure.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
           "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Concise and accessible with good procedural touchpoints, but lacks any mention of realistic roles/careers/uses, which is a required element. Also leans slightly toward strategic 'who wins' framing.",
+          "reasoning": "Interesting, accessible lessons with clear subject-specific titles and no meta content, but it entirely omits the required realistic roles, careers, or uses connected to the field. That missing required element is a significant gap despite otherwise good quality.",
           "score": 5
         },
         {
-          "anonymousId": "Model H",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Framing repeatedly emphasizes strategy, leverage, and 'who wins,' which drifts toward case strategy advice. Also uses somewhat sensational language ('forcing secrets') and limited role diversity.",
-          "score": 4
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Mostly strong content, but the final lesson 'Where This Skill Takes You' is a generic outcome title that doesn't name the subject, and both it and the chapter description explicitly reference how the full course builds skills. Language like 'mastering them gives lawyers real leverage' also edges toward outcome promises.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "First four lessons are appropriate and roles are covered, but the final lesson 'What this course will help you do' is a verbatim example of a forbidden generic meta title about the course itself. The chapter description also references how the rest of the course fits, compounding the violation.",
+          "score": 3
         },
         {
           "anonymousId": "Model B",
-          "modelId": "google/gemini-3.1-flash-lite",
-          "reasoning": "Only 4 lessons is fine, but the chapter description is thin and generic, role mentions are minimal, and it lacks the concrete everyday-usefulness and career/community connections required. Feels more like a teaser than a beginner quick guide.",
-          "score": 5
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Otherwise excellent lesson content and roles coverage, but 'How the full course goes deeper' is essentially the exact forbidden meta title, and its description previews the curriculum with technical terms like joinder and preclusion. The chapter description also references the course, making this a major expectation violation.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Good early lessons and a roles lesson, but 'What this course will walk you through' is a forbidden generic meta title about the curriculum, and its description promises becoming 'fluent in courtroom mechanics,' brushing against the no-fluency-promises rule. These violations outweigh the otherwise solid content.",
+          "score": 3
         }
       ]
     },
@@ -59,105 +77,141 @@
       "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model G",
+          "anonymousId": "Model D",
           "modelId": "openai/gpt-5.5",
-          "reasoning": "Fully meets all expectations. It provides an engaging, high-level overview of civil procedure, naturally includes diverse roles like journalists and legal tech teams, and perfectly captures the requested quick-guide tone without using overly technical jargon.",
+          "reasoning": "Exceptional output. Perfectly adheres to all constraints, providing a clear, engaging overview of the field. Lesson titles are highly specific, correctly use field terminology, and seamlessly integrate roles and real-world context without any meta-course references.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Exceptional output. Meets all expectations with highly explicit, concrete lesson titles that clearly identify the subject. It successfully introduces the field to beginners, mentions realistic roles, and avoids all prohibited meta-content.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Exceptional output. Delivers a fantastic quick-guide feel with appropriate terminology. It strongly integrates the requested roles and careers, and the lesson titles stand on their own while strictly avoiding any curriculum or meta-course commentary.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Exceptional output. Follows all instructions perfectly, providing an accessible yet accurate introduction to civil procedure. The titles are clear, specific to the domain, and avoid any negative constraint violations.",
           "score": 10
         },
         {
           "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Exceptional output that clearly breaks down the courtroom process and highlights practical concepts alongside relevant roles like mediators and public-interest advocates. It follows all negative constraints flawlessly.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Strong output that accurately surveys the field. It covers key procedural concepts, highlights everyday disputes, and includes realistic careers perfectly, though it introduces slightly more jargon in the final lesson than the top models.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3.1-flash-lite",
-          "reasoning": "Meets expectations and accurately describes civil procedure concepts like discovery and jurisdiction. However, it only briefly touches on roles and opportunities, making it slightly less comprehensive than the top models.",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Strong output that accurately captures the intent of the prompt and avoids meta-course lessons. However, the lesson titles are slightly too informal and conversational (e.g., 'forcing the other side to share secrets') compared to the top models, missing an opportunity to use more precise field concepts in the titles.",
           "score": 8
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "anthropic/claude-opus-4.8",
-          "reasoning": "A good overview, but it violates a negative constraint by explicitly using the restricted word \"mastering.\" It also edges close to teaching case strategy rather than just explaining the system.",
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Acceptable, but has notable weaknesses. It lacks explicit mentions of realistic careers, roles, or professional opportunities as required by the prompt, though it successfully avoids violating negative constraints regarding meta-course content.",
           "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Poor output because it violates negative constraints. The final lesson relies on a somewhat generic title ('Connecting the rules to real cases') and its description explicitly discusses what 'This course will demystify', which is heavily penalized.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Unusable. Contains an entire lesson dedicated to 'What this course will help you do', which is a direct and major violation of the negative constraint forbidding generic meta-titles and lessons about the course itself.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Unusable. The final lesson, 'How the full course goes deeper', is a blatant violation of the strict rule against including lessons about the course, the curriculum, or the learning path.",
+          "score": 1
         },
         {
           "anonymousId": "Model F",
           "modelId": "anthropic/claude-sonnet-5",
-          "reasoning": "Features a solid structure and content, but it explicitly promises to help the learner think like someone \"fluent\" in courtroom mechanics, which violates the strict negative constraint against promising fluency.",
-          "score": 6
+          "reasoning": "Unusable. Features a lesson titled 'What this course will walk you through', explicitly breaking the rule against generic meta-titles and lessons explaining the course curriculum.",
+          "score": 1
         },
         {
-          "anonymousId": "Model H",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Violates the negative constraint by mentioning \"mastering\" legal rules. Additionally, it adopts a somewhat cynical tone (\"courtroom game,\" \"share secrets\") that strays from an objective educational overview.",
-          "score": 5
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Fails to include realistic opportunities, careers, roles, or everyday uses connected to the field, which was a mandatory instruction. It focuses exclusively on the mechanics of lawsuits.",
-          "score": 4
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Unusable. Includes a generic meta-title ('Where This Skill Takes You') and discusses how 'This course builds that command' in the description, violating the strict negative constraint against course-referential content.",
+          "score": 1
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.5",
+      "judgeId": "openai/gpt-5.6-sol",
       "rankings": [
         {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Best overall fit: it clearly frames civil procedure as the sequence of rules moving cases through court, including filing, notice, deadlines, evidence, settlement pressure, motions, discovery, trial, and judgment. It also includes realistic roles and uses without giving legal advice or promising outcomes; the only minor issue is that the final lesson lists several technical topics, though not in a dense way.",
-          "score": 9
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Exceptionally clear beginner overview of civil procedure’s sequence, fairness concerns, and practical uses. It includes notice, deadlines, evidence gathering, motions, settlement, trial, appeal, and a broad set of realistic roles without drifting into advice or course meta-content.",
+          "score": 10
         },
         {
-          "anonymousId": "Model G",
+          "anonymousId": "Model D",
           "modelId": "openai/gpt-5.5",
-          "reasoning": "Very strong quick-guide structure that is concrete, beginner-friendly, and covers filing, notice, deadlines, discovery, motions, trials, appeals, settlement pressure, and real-world roles. It is slightly less developed than Model E, but it stays highly aligned with the expectations and avoids legal advice or guarantees.",
-          "score": 9
+          "reasoning": "Provides a concrete map of a lawsuit, explains notice, motions, discovery, settlement, trial, and appeals, and connects the field to varied roles and social uses. The jurisdiction and discovery lessons are somewhat more technical than necessary, but remain accessible and introductory.",
+          "score": 9.4
         },
         {
-          "anonymousId": "Model C",
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Strong, well-organized introduction covering notice, court authority, discovery, deadlines, motions, case management, settlement, trials, and appeals. Its lesson titles are highly specific and it includes realistic professional and public-interest uses, though the overall case sequence is slightly less explicit than in the top outputs.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Engaging and beginner-friendly, with a useful progression from disputes and jurisdiction through discovery, motions, settlement, and trial. It includes many realistic participants and tasks, but gives less attention to deadlines, appeals, and the broader court process than the strongest entries.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The first four lessons are concrete, useful, and connect civil procedure to everyday disputes and varied legal roles. However, the final lesson is explicitly about how the full course goes deeper, uses a prohibited generic meta title, and lists a more technical curriculum rather than introducing the field itself.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model A",
           "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Strong beginner overview with a clear explanation of civil procedure as the rules for moving lawsuits through court, plus realistic roles such as clerks, mediators, public-interest advocates, and policy workers. It is a little less complete on motions, settlement pressure, appeals, and other case-sequence details, but remains useful and well-scoped.",
-          "score": 8
+          "reasoning": "It offers a clear introductory map, everyday examples, and several realistic roles while remaining accessible. The final lesson directly discusses what the course will do and has one of the specifically prohibited generic meta titles; several other titles are also too generic to identify civil procedure independently.",
+          "score": 6.1
         },
         {
           "anonymousId": "Model F",
           "modelId": "anthropic/claude-sonnet-5",
-          "reasoning": "Good quick guide that explains civil procedure through complaint, deadlines, real disputes, roles, and the life of a lawsuit. It has a minor concern around wording like becoming “fluent in courtroom mechanics,” which edges toward a promised outcome, and it is somewhat less broad on roles and procedural stages than the top entries.",
-          "score": 8
+          "reasoning": "The output makes deadlines, real disputes, and legal roles concrete for beginners. Its final lesson is entirely about the course’s learning path, several titles do not identify civil procedure on their own, and the fluency-oriented wording edges toward a promised learning outcome.",
+          "score": 5.7
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "anthropic/claude-opus-4.8",
-          "reasoning": "Generally useful and concrete, with discussion of filing, evidence sharing, deadlines, motions, settlement, and roles such as litigators, judges, clerks, and paralegals. However, it leans too much into lawyer strategy, leverage, “mastering,” and wielding the rulebook, which conflicts with the expectation to avoid case-strategy framing and promises of mastery.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model B",
+          "anonymousId": "Model E",
           "modelId": "google/gemini-3.1-flash-lite",
-          "reasoning": "Acceptable overview with a clear beginner-friendly tone, some discussion of complaints, evidence, discovery, settlement, jurisdiction, and legal roles. It is less complete on notice, deadlines, motions, appeals, and broader opportunities, and one lesson leans into jurisdiction more than ideal for a quick field guide.",
-          "score": 6
+          "reasoning": "This is concise and accessible, with useful introductions to jurisdiction, discovery, settlement pressure, and courtroom roles. It is disproportionately centered on jurisdiction and discovery, provides only a limited view of the lawsuit sequence and opportunities, and ends with course-focused language.",
+          "score": 5.3
         },
         {
-          "anonymousId": "Model D",
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "It explains filing, deadlines, motions, settlement, and several legal roles in an energetic way. However, it repeatedly emphasizes strategic leverage and mastery, includes course-path meta-content, and uses the generic career-style title “Where This Skill Takes You,” contrary to the stated requirements.",
+          "score": 4.4
+        },
+        {
+          "anonymousId": "Model I",
           "modelId": "google/gemini-3.5-flash",
-          "reasoning": "It explains several core procedural ideas clearly, including civil versus criminal cases, court authority, discovery, deadlines, filing locations, motions, and settlement. The major weakness is that it omits realistic opportunities, careers, roles, communities, or everyday uses connected to the field, which is a required element.",
-          "score": 6
+          "reasoning": "The four lessons introduce several recognizable procedural ideas and remain concise. It omits realistic roles and opportunities, lacks a rounded explanation of the case sequence, and makes misleading claims such as suggesting discovery means there are no surprise witnesses.",
+          "score": 4
         },
         {
-          "anonymousId": "Model H",
+          "anonymousId": "Model C",
           "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "It includes some relevant topics and roles, but the tone is overly sensational and strategy-focused, with misleading phrasing about forcing opponents to share “secrets” and location often deciding who wins. It also feels less like a neutral beginner guide and more like a dramatic litigation-strategy preview.",
-          "score": 5
+          "reasoning": "Although it mentions discovery, settlements, motions, and several legal roles, the treatment is sensationalized and overly strategy-focused. Claims that location often decides who wins, discovery forces disclosure of “secrets,” and a valid claim relies entirely on process are misleading, while several titles do not clearly identify civil procedure.",
+          "score": 3.2
         }
       ]
     }

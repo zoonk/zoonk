@@ -1,7 +1,11 @@
 import { type TestCase } from "@/lib/types";
+import { type CourseCanonicalTitleParams } from "@zoonk/ai/tasks/courses/canonical-title";
 import { type CourseCanonicalTitleExpected } from "./scorer";
 
-type CourseCanonicalTitleTestCase = TestCase<CourseCanonicalTitleExpected>;
+type CourseCanonicalTitleTestCase = TestCase<
+  CourseCanonicalTitleExpected,
+  CourseCanonicalTitleParams
+>;
 
 const SCORE_TIERS = `
   - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.

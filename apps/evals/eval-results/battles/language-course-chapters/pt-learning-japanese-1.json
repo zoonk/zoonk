@@ -1,51 +1,93 @@
 {
   "expectations": "\n      - MUST be in Brazilian Portuguese (teaching Japanese)\n      - Should include dedicated chapters for writing systems (hiragana, katakana, kanji)\n      - Should cover Japanese-specific grammar (particles, verb forms, honorifics, counters)\n      - Should cover vocabulary themes and communication scenarios\n\n      \n  - Chapters should follow CEFR progression from A1 (beginner) to C2 (mastery)\n  - ALL chapters must be content-domain chapters: grammar structures, vocabulary themes, or communication scenarios\n  - NO skill-based chapters that are explicitly about practicing a skill in isolation (e.g., \"Pronunciation Practice\", \"Listening Exercises\", \"Writing Workshop\", \"Reading Comprehension\") — those skills are built into every lesson automatically. However, content chapters that USE these skills as a vehicle for teaching language are valid: \"Complex Texts & Critical Analysis\" (advanced vocabulary/comprehension), \"Formal Correspondence\" (grammar/expressions for letters), \"Academic Discourse\" (register/vocabulary). The test: is the chapter about the skill itself, or about language content delivered through that medium?\n  - NO culture chapters that teach about a country/region's history, traditions, or customs as the primary content (e.g., \"History of France\", \"Japanese Festivals\", \"Brazilian Carnival\"). However, vocabulary chapters that teach culture-related words and expressions ARE valid: \"Arts & Entertainment Vocabulary\" (how to discuss art, music, film in the target language), \"Food & Dining\" (restaurant vocabulary, ordering expressions), \"News & Media Language\" (media-related vocabulary/register). The test: is the chapter teaching ABOUT the culture, or teaching language THROUGH cultural topics?\n  - NO career or professional chapters (business language, workplace communication)\n  - NO proficiency exam preparation chapters (DELE, JLPT, DELF, HSK, etc.)\n  - NO literature or media chapters (books, films, songs, poetry)\n  - Should cover grammar structures (verb tenses, nouns, articles, etc.) and vocabulary themes (food, travel, health, etc.)\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Titles should be concise, no filler words\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the chapter content quality\n  - Don't add capstone/final projects, assessments, or exercises\n\n    ",
-  "judgedAt": "2026-02-22T17:44:22.495Z",
+  "judgedAt": "2026-07-10T06:17:47.235Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.6",
+      "judgeId": "anthropic/claude-fable-5",
       "rankings": [
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Model A provides an excellent, comprehensive curriculum with 96 chapters covering A1 through C2 progression. Writing system chapters (Hiragana, Katakana, Kanji with multiple chapters) are well-handled. Japanese-specific grammar is thoroughly covered: particles (は/が, を, に/で, の, focus particles), verb forms (ます, て, dictionary form, passive, causative, causative-passive, potential, volitional, imperative), honorifics (Keigo I & II, plus additional politeness chapters), counters, transitivity pairs, onomatopoeia, and sentence-final particles. The interleaving of grammar and vocabulary/communication chapters is natural. Titles are concise and specific. Descriptions are direct and avoid filler words like 'learn' or 'explore'. No forbidden chapters appear (no skill-based, culture, career, exam prep, or literature chapters). The curriculum covers advanced topics like ambiguity/disambiguation, register alternation, indirection, sino-Japanese vocabulary, and formal written style. One minor issue: 'Polidez Máxima e Fórmulas Ultraformais' seems somewhat redundant with 'Keigo II: Fórmulas Ultraformais', but both have distinct descriptions. Overall, this is the most comprehensive and well-structured curriculum.",
-          "score": 9.2
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model E provides 85 chapters with strong coverage from A1 to C2. Writing system chapters are present (Hiragana, Katakana, two Kanji chapters). Japanese-specific grammar is well-covered: particles, verb forms, passives, causatives, honorifics, conditionals, nominalisation, etc. The interleaving is good. Titles are generally concise. Descriptions mostly avoid filler, though a few could be tighter. No explicitly forbidden chapters appear. The curriculum covers advanced topics like onomatopoeia, idioms, ambiguity, register alternation, and formal writing. However, Kanji coverage is somewhat thin with only 3 chapters (Fundamentos, Compostos Frequentes, Leitura Avançada) compared to Model A's more granular approach. Some chapter titles like 'Fluência e Reformulação' and 'Escrita Natural e Precisa' border on skill-based but their descriptions show they're about language content. The progression is logical and comprehensive.",
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Comprehensive A1–C2 progression in correct PT-BR with dedicated kana and tiered kanji chapters, thorough Japanese-specific grammar (particles, keigo, causative-passive) and rich vocabulary themes. 'Redação Formal' is content-through-medium and acceptable. Only minor weakness is the final 'Domínio Gramatical Completo' review chapter, which is slightly capstone-like.",
           "score": 8.5
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Model D provides 68 chapters with good A1-C2 coverage. Writing system chapters are present (Hiragana, Katakana, multiple Kanji chapters at different levels). Japanese-specific grammar is covered: verb forms, particles, passives, causatives, keigo, conditionals, nominalisation. However, there's a forbidden chapter: 'Comunicação Profissional' (chapter 48) which is explicitly about business language/workplace communication - a career/professional chapter that violates the rules. Also, 'Discurso Elaborado e Registro C2' mentions CEFR level in the title, violating the instruction not to mention CEFR levels. The last chapter 'Keigo Avançado e Protocolo Formal' is fine. Some descriptions use 'Introdução' phrasing indirectly. The interleaving is decent but Kanji chapters cluster a bit. Overall good but penalized for the forbidden career chapter and CEFR mention.",
-          "score": 7
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "Excellent progression with concrete Japanese examples, tiered kanji chapters, keigo, onomatopeia, dialects, and idioms; descriptions are concise and precise. 'Trabalho e Ocupações' is a vocabulary theme rather than a business chapter, so only borderline. No clear rule violations.",
+          "score": 8.5
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Model C provides 82 chapters with comprehensive coverage. Writing system chapters are well-distributed (Hiragana, Katakana, multiple Kanji chapters at various levels). Japanese-specific grammar is thoroughly covered. However, there are several issues: 1) 'Redação Formal' (chapter 67) - while it could be argued as teaching formal expressions/grammar, its description ('estrutura de e-mails, cartas, relatórios e textos acadêmicos') focuses on writing skills/format. 2) 'Texto Complexo e Coesão' (chapter 79) - description mentions 'Análise e produção de textos longos' which borders on skill-based. 3) 'Leis e Regulamentos' (chapter 62) could be seen as a career/professional chapter. 4) 'Domínio Gramatical Completo' (last chapter) is essentially a capstone/review, which is discouraged. 5) 'Dialetos Regionais' is borderline cultural. 6) Some descriptions use 'Introdução' in descriptions. 7) 'Política e Economia' appears as a standalone vocabulary chapter which could be seen as career/professional adjacent. Despite good coverage, these violations accumulate.",
-          "score": 7.2
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Very comprehensive and cleanly organized, covering writing systems, all key Japanese grammar (particles, keigo, causative), abundant vocabulary themes, and communication scenarios through C2. 'Correspondência' fits the allowed content-through-medium pattern. Descriptions are concise with no fluff.",
+          "score": 8.5
         },
         {
-          "anonymousId": "Model F",
+          "anonymousId": "Model M",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Thorough, clean progression from kana through advanced kanji, keigo, modality, and abstract vocabulary with concise no-fluff descriptions. No skill-based, culture, career, exam, or media violations detected. Very solid product fit.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Clean, well-scoped 57-chapter progression covering kana, tiered kanji, all core Japanese grammar, honorifics, and vocabulary themes with concise descriptions. 'Trabalho e Estudos' is borderline but framed as vocabulary. Advanced (C1–C2) coverage is somewhat thinner than the top entries.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
           "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Model F provides 61 chapters with decent coverage. Writing system chapters are present (Hiragana, Katakana, Kanji at multiple levels). Japanese-specific grammar is covered: particles, verb forms, passives, causatives, keigo (split into Sonkeigo and Kenjougo nicely), conditionals. Titles are generally concise. However, several issues: 1) 'Yojijukugo' as a standalone chapter is very niche and borderline. 2) Some descriptions are overly verbose ('Palavras de preenchimento, transições sofisticadas e organizadores lógicos necessários para estabelecer e manter uma fluência de ritmo nativo'). 3) The curriculum feels somewhat thin at 61 chapters for A1-C2 comprehensive coverage - missing some important areas like のだ/んです, たことがある, comparison structures could be more granular. 4) 'Sociedade e Política' could be borderline. 5) No explicit chapter on partículas finais beyond what's embedded elsewhere. The interleaving is decent. Coverage of advanced grammar patterns is lighter than Models A or E.",
+          "reasoning": "Compact but well-sequenced course with kana, leveled kanji, honorifics split into sonkeigo/kenjougo, yojijukugo, and clean vocabulary themes; no rule violations. Advanced-level coverage is lighter than the most complete outputs.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Very comprehensive and pedagogically precise with detailed particle, keigo, and pragmatics coverage and no scope violations. Minor flaw: English term 'Hearsay' in a title breaks the PT-BR requirement, and some chapters are quite granular.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Extremely thorough and accurate with dedicated writing-system chapters, deep grammar coverage, and clean adherence to all constraints. However, ~150 highly granular chapters (four separate conditional chapters, many micro-topics) reduce practical usability as a course outline.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model N",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Clean, well-ordered course with thematic kanji chapters interleaved, keigo split, and solid grammar/vocabulary coverage; 'Trabalho e Profissões' is a permissible vocabulary theme. C1–C2 depth is lighter and 'Estilo Literário e Retórico' is slightly borderline toward literature.",
           "score": 7.5
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model B provides only 50 chapters, which is quite thin for a comprehensive A1-C2 curriculum. Writing system chapters exist but are minimal (Hiragana, Katakana, 3 Kanji chapters). Several issues: 1) 'Variações e Dialetos' (chapter 49) is borderline cultural content. 2) 'Maestria da Fluência' (last chapter) is essentially a capstone, which is forbidden. 3) 'Linguagem Escrita e Clássica' (chapter 48) - classical language borders on literature. 4) Many descriptions are too vague (e.g., 'Nuances sutis entre marcadores gramaticais em frases complexas' for 'Diferenciação de Partículas'). 5) Uses romanized terms instead of Japanese characters in descriptions (sou, you, mitai, etc.), which is less precise. 6) Some titles use filler ('Introdução aos Kanji'). 7) Missing important topics: のだ/んです, transitivity pairs, てしまう/ておく, sequential temporal expressions, many particle-specific chapters. 8) 'Sociedade e Política' is borderline career/professional. The curriculum lacks granularity and comprehensiveness compared to other models.",
-          "score": 5.5
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong grammar coverage with authentic Japanese patterns and good CEFR progression. Several late chapters ('Escrita Natural e Precisa', 'Fluência e Reformulação') lean toward skill-practice framing rather than language content, and kanji coverage is somewhat thin relative to the rest.",
+          "score": 7.5
         },
         {
           "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Comprehensive coverage across grammar, kanji, pragmatics, and vocabulary themes with good progression. 'Ocupações e atividades profissionais' brushes against the no-professional-chapters rule, and some chapters ('Reformulação e precisão') edge toward skill framing; title capitalization is inconsistent.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Clean and violation-free with concise descriptions, but at 50 chapters it is noticeably thinner in vocabulary themes, counters detail, and C1–C2 content than competitors. Final 'Maestria da Fluência' chapter is vague and capstone-like.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Good overall structure and Japanese grammar coverage, but 'Comunicação Profissional' (business vocabulary, corporate email/phone, presentations) directly violates the no career/professional chapters rule. Otherwise solid, with tiered kanji and full CEFR span.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model H",
           "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model G provides 61 chapters but has multiple violations: 1) 'Texto Literário e Jornalístico' (chapter 56) explicitly covers literary texts, which is forbidden. 2) 'Equivalência, Tradução e Estilística' (chapter 55) is about translation strategies, not language content per se. 3) 'Redação Formal e Argumentativa' (chapter 52) borders on writing skills. 4) 'Fluência Avançada e Estratégias de Reparação' (chapter 61) is skill-based. 5) 'Variação Regional e Formas Coloquiais' (chapter 54) includes dialects which is borderline cultural. 6) Some descriptions use filler words ('exercícios de escrita' in Hiragana). 7) The Kanji chapters group together early (chapters 4-6) instead of being interleaved. 8) 'Serviços e Procedimentos Públicos' is somewhat niche. Multiple clear rule violations significantly impact the score despite otherwise decent grammar and vocabulary coverage.",
-          "score": 5.8
+          "reasoning": "Contains multiple violations and quality issues: 'Texto Literário e Jornalístico' breaches the no-literature/media rule, the translation/stylistics chapter drifts out of scope, the hiragana description mentions exercises, and there are typos ('causativo-passatvo', 'registres'). Core grammar coverage is otherwise reasonable.",
+          "score": 5
         }
       ]
     },
@@ -53,93 +95,177 @@
       "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model A",
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Exceptional curriculum that perfectly captures Japanese grammatical nuances (such as transitive/intransitive pairs, aspect, and evidentiality) across a comprehensive A1-C2 progression. Descriptions are highly concise, and the output strictly follows all negative constraints without adding fluff.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model K",
           "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Model A followed every single instruction perfectly. It produced a highly comprehensive (91 chapters) and logically structured curriculum for Japanese, meticulously covering grammar, vocabulary, and communication domains from complete beginner to mastery. It avoided all forbidden topics (culture, career, literature, skill-only chapters) and adhered strictly to the formatting rules, keeping titles and descriptions incredibly concise without any forbidden filler words like 'introdução'.",
+          "reasoning": "Outstanding depth in Japanese linguistics, accurately breaking down keigo, transitive/intransitive verbs, and modality. Adheres perfectly to all constraints and formatting rules with no fluff.",
           "score": 10
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model E also executed the prompt flawlessly. It provided a remarkably extensive Japanese curriculum (88 chapters) that carefully interleaves vocabulary, grammar, and scenarios. The progression is natural and CEFR-aligned without explicitly mentioning the levels. It respected all negative constraints, avoided fluff words entirely, and kept the descriptions highly professional and direct. Ties are allowed for truly equivalent high-quality outputs.",
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Exceptional output with a thorough, well-paced progression for Japanese. Grammar points are highly specific and accurate, and the descriptions are completely free of filler words.",
           "score": 10
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Model C provides a very detailed and well-structured curriculum (78 chapters) that effectively covers Japanese from beginner to advanced levels. However, it violates the negative constraint regarding fluff words by starting descriptions with 'Introdução aos caracteres...' which was explicitly forbidden in the prompt ('NEVER use fluff... introduction to'). Aside from this formatting penalty, the content quality is very good.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model B provides a decent curriculum but at 50 chapters, it feels a bit rushed and less comprehensive for an A1-C2 mastery path compared to the top models. It also violates the formatting rule by using 'Introdução aos Kanji' as a title, and slightly flirts with the forbidden literature constraint by mentioning 'literatura' in chapter 48's description.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Model F outlines a logical progression but also violates the 'no fluff' rule by naming a chapter 'Introdução aos Kanji'. Furthermore, its use of 'Nível 2', 'Nível 3', and 'Nível 4' in titles walks the line of the negative constraint that states progression should be implicit without explicitly pointing out levels in the titles.",
-          "score": 6
+          "anonymousId": "Model M",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Flawless execution. The chapter progression expertly covers all major Japanese grammar milestones up to C2, following all negative constraints while keeping descriptions concise.",
+          "score": 10
         },
         {
           "anonymousId": "Model G",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model G fails to follow a major negative constraint. The prompt explicitly forbids literature and media chapters ('NO literature or media chapters - no film, TV, novels...'). Model G includes a chapter titled 'Texto Literário e Jornalístico' specifically focused on the reading and production of literary texts. It also includes a chapter on 'Tradução', which leans into the forbidden professional/skill domains.",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Very strong curriculum with excellent coverage of Japanese grammar and vocabulary. A minor inclusion of an orthography/punctuation chapter borders slightly on a skill-based lesson, but overall quality remains outstanding.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Solid progression covering essential writing systems, grammar, and vocabulary. Meets all constraints well, though it lacks the extreme granularity of the top-tier responses.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "A well-structured curriculum that hits all required Japanese grammar points. It follows negative constraints and avoids fluff, but it is slightly less exhaustive at the C1/C2 levels than the top models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Strong output with good coverage of Japanese grammar, including transitive/intransitive pairs and honorifics. Meets all expectations but feels slightly less comprehensive at the advanced levels.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "A very solid A1-C2 progression that covers key grammar and vocabulary without fluff. Adheres to all negative constraints effectively.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Good progression and solid grammar coverage overall. However, it lacks an explicit breakdown of some key Japanese nuances (like transitivity) found in the best models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Strong curriculum with concise descriptions. It mentions 'literatura' as a context for advanced grammar, which flirts with the literature constraint, but correctly remains focused on linguistic structures.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model N",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Solid progression that covers required elements well. The inclusion of 'Estilo Literário e Retórico' comes close to the literature constraint but focuses acceptably on language style rather than analyzing specific books.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Directly violates a negative constraint. The inclusion of a 'Comunicação Profissional' chapter teaching business language and workplace communication explicitly breaks the rules.",
           "score": 4
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Model D incurs major penalties for directly violating multiple negative constraints. It includes a chapter titled 'Comunicação Profissional' focused on business vocabulary (meetings, corporate emails), directly violating the rule 'NO career or professional chapters (business language...)'. Additionally, chapter 62 is titled 'Discurso Elaborado e Registro C2', which violates the explicit rule 'Don't mention prompt instructions (like CEFR or A1/B2) in the chapter titles'.",
-          "score": 3
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Directly violates a negative constraint. It includes a chapter on 'Texto Literário e Jornalístico', which explicitly breaks the rule against literature and media chapters.",
+          "score": 4
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.2",
+      "judgeId": "openai/gpt-5.6-sol",
       "rankings": [
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Mais completo e alinhado ao prompt: progressão implícita do básico ao avançado, forte cobertura de gramática específica do japonês (partículas, formas verbais, condicionais, passiva/causativa, keigo, pragmática), cenários comunicativos (restaurante, compras, telefone, saúde etc.) e capítulos dedicados a hiragana/katakana/kanji com boa granularidade. Evita capítulos proibidos (cultura/carreira/mídia/exames) e não cria capítulos de habilidade isolada. Linguagem concisa e majoritariamente sem “fluff”.",
-          "score": 9.6
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Progressão A1–C2 excepcionalmente completa, com capítulos dedicados aos três sistemas de escrita, partículas, formas verbais, contadores, honoríficos, vocabulário e situações comunicativas. Mantém os capítulos centrados em conteúdo linguístico e evita áreas profissionais, provas e projetos.",
+          "score": 9.8
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Muito forte e bem estruturado, cobrindo escrita (hiragana/katakana/kanji), progressão ampla até conteúdos bem avançados (nuance, impessoalidade, conectores formais, mitigação, coesão, alternância de registro). Mantém foco em domínios de conteúdo e cenários; sem capítulos proibidos. Pequenas redundâncias e alguns títulos/descrições que tangenciam “habilidade” (ex.: “Escrita Natural e Precisa”, “Fluência e Reformulação”), mas ainda enquadráveis como registro/uso e pragmática, não como treino de habilidade pura.",
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Cobertura muito ampla e bem sequenciada, incluindo escrita, gramática específica do japonês, temas cotidianos e comunicação avançada. Correspondência, coesão e exposição são tratadas como registros e estruturas linguísticas, não como exercícios isolados.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Currículo abrangente e progressivo, com boa integração de kanji, gramática, vocabulário temático e cenários comunicativos. Algumas descrições avançadas são genéricas e “subjuntividade japonesa” é uma classificação pouco adequada, mas os problemas são pequenos.",
           "score": 9.1
         },
         {
-          "anonymousId": "Model F",
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Apresenta excelente progressão gramatical e comunicativa, com forte cobertura de registros, pragmática e kanji. Os capítulos finais “Escrita Natural e Precisa” e semelhantes se aproximam de prática de habilidade isolada, contrariando parcialmente a restrição.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Muito forte em sistemas de escrita, partículas, conjugação, keigo e nuances pragmáticas, com sequência majoritariamente coerente. A cobertura de temas cotidianos é menos equilibrada, faltando capítulos claros para alguns campos como moradia, roupas e lazer.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model I",
           "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Cobertura sólida de fundamentos e intermediário-avançado (kanji em níveis, partículas/tempos/formas, keigo, conectores, vocabulário temático). Em geral respeita as restrições. Perde pontos por algumas descrições com foco excessivo em “fluência”/marcadores discursivos (quase skill/estratégia), além de granularidade e encadeamento menos refinados que A/E e alguns títulos vagos (“Kanji Nível 2/3/4”).",
+          "reasoning": "Currículo conciso e sólido, com escrita, contadores, formas verbais, honoríficos e diversos temas comunicativos. Há lacunas em obrigação e permissão, e a definição do sonkeigo como usado “exclusivamente” para superiores ou clientes é excessivamente restritiva.",
           "score": 8.3
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Currículo amplo e bem progressivo, inclui hiragana/katakana e múltiplos blocos de kanji, além de boa gama de gramática (formas, passiva/causativa, keigo, conectivos) e vocabulário/cenários. Porém viola restrições com capítulos claramente de carreira/profissional e/ou domínios proibidos: “Leis e Regulamentos” e parte de “Política e Economia” podem ser aceitáveis como vocabulário, mas “Vocabulário Técnico e Científico” e sobretudo “Domínio Gramatical Completo” soam como revisão/capstone. Também há traços de “literária”/“textos clássicos” em alguns itens (ex.: “Kanji raro… textos clássicos e jornais”), aproximando-se de mídia/literatura. Ainda assim, melhor que B/D/G por menor número de violações diretas.",
-          "score": 7.6
-        },
-        {
           "anonymousId": "Model B",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Cobertura razoável dos tópicos centrais (escrita, partículas, tempos, te-form, condicionais, passiva/causativa, honoríficos, vocabulário temático). Entretanto tem problemas relevantes: inclui “Linguagem Escrita e Clássica” (aproxima-se de literatura/clássico), “Variações e Dialetos” (não proibido, mas menos essencial e mal contextualizado), e um capítulo vago/meta (“Maestria da Fluência”) que parece capstone/skill. Também falta granularidade e profundidade para C2 comparado aos melhores.",
-          "score": 6.9
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Base bem montada e cobre muita gramática, cenários e kanji, mas contém violação direta: capítulo de carreira/profissional (“Comunicação Profissional”, com e-mails corporativos etc.), explicitamente proibido. Também algumas descrições mencionam “situações profissionais”. Por isso cai bastante apesar de, fora isso, estar relativamente bem organizado.",
-          "score": 5.8
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Cobertura extensa e tecnicamente detalhada, com boa progressão até estruturas formais e abstratas. “Redação Formal”, “Gramática Literária” e referências recorrentes a textos literários aproximam parte do currículo de áreas explicitamente vedadas.",
+          "score": 8.1
         },
         {
           "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Muito completo em gramática, vocabulário, kanji, pragmática e comunicação avançada. O capítulo dedicado a ocupações e atividades profissionais viola diretamente a proibição de capítulos profissionais, além de haver pequenos problemas de redação como “Ellipsis”.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "Boa progressão, excelente variedade temática e cobertura consistente de kanji, keigo e formas verbais. O capítulo “Trabalho e Ocupações” é uma violação direta, e alguns conteúdos clássicos e jornalísticos tangenciam as restrições de literatura e mídia.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Estrutura clara e eficiente, cobrindo os requisitos centrais com descrições concisas e progressão plausível. “Trabalho e Estudos” inclui ambiente profissional, e os níveis finais ficam relativamente vagos em comparação com os currículos mais fortes.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Mantém foco linguístico e oferece uma progressão funcional de fundamentos a registros avançados. É menos completo em vocabulário e cenários cotidianos, contém formulações imprecisas como tratar a forma て como “gerúndio” e inclui linguagem literária/clássica.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model N",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Cobre bem escrita, gramática japonesa, kanji e vários contextos cotidianos. Perde qualidade pelo capítulo explicitamente profissional “Trabalho e Profissões” e por “Estilo Literário e Retórico”, além de apresentar menos profundidade em algumas formas verbais avançadas.",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "A base gramatical e temática é ampla, com boa presença de kanji e progressão geral. Contudo, “Comunicação Profissional” viola diretamente a rubrica, enquanto capítulos sobre leitura/produção textual e referências literárias introduzem outras incompatibilidades.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model H",
           "modelId": "openai/gpt-5-mini",
-          "reasoning": "Tem boa cobertura e inclui escrita/kanji/gramática/cenários, mas viola múltiplas restrições: (1) capítulo explícito de “Equivalência, Tradução e Estilística” (conteúdo de tradução não pedido e foge do escopo), (2) “Texto Literário e Jornalístico” (literatura/mídia explicitamente proibidas), além de várias descrições com “exercícios de escrita” (skill/atividade). Também há mais ‘fluff’ e alguns erros/typos (ex.: “causativo-passatvo”, “registres/registo”).",
-          "score": 4.9
+          "reasoning": "Embora cubra muitos tópicos importantes, contém várias violações explícitas: exercícios de escrita, redação formal, tradução e um capítulo dedicado a texto literário e jornalístico. Também apresenta erros de redação e terminologia, reduzindo a precisão e a adequação ao produto.",
+          "score": 5.3
         }
       ]
     }

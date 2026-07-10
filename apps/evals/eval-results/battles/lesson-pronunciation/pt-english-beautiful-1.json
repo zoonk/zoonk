@@ -1,57 +1,75 @@
 {
   "expectations": "\nNATIVE LANGUAGE: Portuguese (Brazilian)\nTARGET LANGUAGE: English\n\nWORD: \"beautiful\"\n\nThis is a complex English word with:\n- The \"beau-\" diphthong (sounds like \"byoo\")\n- The unstressed \"-ti-\" syllable\n- The \"-ful\" ending\n\nSOUND CHALLENGES:\n- The \"eau\" combination needs Portuguese-compatible representation\n- The word has 3 syllables with stress on the first\n\nQUALITY CHECK:\n- Should be readable by a Brazilian Portuguese speaker\n- Should indicate stress on the first syllable\n- Should approximate the \"byoo\" sound using Portuguese phonemes\n- Penalize if it uses letters/combinations that don't exist in Portuguese\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Do NOT penalize for using \"v\" instead of \"b\" (or vice versa) in Spanish — they are identical phonemes in Spanish and a native speaker pronounces them the same way\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
-  "judgedAt": "2026-05-24T17:43:55.210Z",
+  "judgedAt": "2026-07-10T18:31:05.499Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.7",
+      "judgeId": "anthropic/claude-opus-4.8",
       "rankings": [
         {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Uses only Portuguese-compatible letters, clear stress on first syllable, hyphenated syllables. 'BIU' approximates 'byoo' well and 'fou' captures the '-ful' ending naturally for Brazilian readers.",
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "BIU-ti-fou uses only Portuguese-friendly letters, marks first-syllable stress, separates syllables, and 'fou' nicely approximates the '-ful' sound with an easily readable diphthong. Complete and natural for a Brazilian reader.",
           "score": 9
         },
         {
-          "anonymousId": "Model H",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Identical to B in quality: native-compatible letters, clear stress marking, good syllabification, and reasonable approximation of all sounds including the final '-ful' as 'fou'.",
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Identical to the strongest output: Portuguese-compatible letters, clear stress, good syllable breaks, and natural '-fou' approximation. Highly readable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Same as the top outputs with clean Portuguese phonemes, stress marking, and a natural approximation of all sounds.",
           "score": 9
         },
         {
           "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Readable for Brazilians with proper stress and syllable breaks. 'fol' is a reasonable approximation of '-ful' though slightly less natural than 'fou' for the dark-L sound.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model D",
           "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Same as A: native-compatible, stress marked, syllables separated. 'fol' is acceptable for '-ful' in Brazilian Portuguese.",
+          "reasoning": "BIU-ti-fol is fully Portuguese-readable with clear stress and syllable breaks; 'fol' is a reasonable approximation of '-ful'. Very solid.",
           "score": 8
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Identical to A and D, with valid Portuguese phonemes, stress on first syllable, and reasonable approximation throughout.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Stress marked and uses native-compatible letters, but 'BIOU' is a slightly awkward/redundant combination compared to simpler 'BIU'. Still readable and the '-fou' ending is good.",
-          "score": 7
         },
         {
           "anonymousId": "Model C",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Uses the American flap-T as 'r' which is a defensible approximation but less faithful to the careful pronunciation. Otherwise well-formed with proper stress and syllabification.",
-          "score": 7
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Identical to the 'fol' variant: Portuguese-compatible, stressed correctly, well-separated, and readable.",
+          "score": 8
         },
         {
           "anonymousId": "Model F",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Like C, substitutes 'r' for the flap-T which is debatable. Combined with 'fol' rather than 'fou', acceptable but slightly weaker overall.",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Same as the 'fol' rendering — natural for Brazilian readers with proper stress and syllable division.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "BIOU-ti-fou is readable in Portuguese but 'BIOU' is slightly awkward and less clean than 'BIU' for the 'byoo' sound. Otherwise stress and structure are correct.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "'BIU-ri-fou' introduces an 'r' flap that reflects US flapping but the middle vowel shifts to 'ri' which slightly distorts the '-ti-' sound; still readable and complete.",
           "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "'BIU-ri-fol' similarly uses the flapped 'r' rendering; acceptable but the vowel/consonant choice drifts from the clearer 'ti' approximation.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "'BIU-ta-fou' changes the middle vowel to 'ta', which weakens the '-ti-' representation and slightly reduces accuracy though still readable.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "'BIU-ra-fou' both flaps the consonant and changes the vowel to 'ra', straying furthest from the actual sounds while still readable in Portuguese.",
+          "score": 5
         }
       ]
     },
@@ -59,105 +77,141 @@
       "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Provides an exceptional phonetic approximation. It brilliantly uses 'ri' to capture the American English flap T and 'fou' to represent the vocalized dark L, making it highly accurate and natural for a Brazilian Portuguese speaker. All formatting constraints are met perfectly.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Provides an exceptional phonetic approximation, cleverly using 'ri' to capture the American English flap T. The use of 'fol' is also a valid and readable choice for the final syllable. All formatting constraints are met perfectly.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Excellent approximation that uses 'ti' for a clear, enunciated 'T' sound and explicitly spells out 'fou' for the final dark L. This is highly readable and meets all task expectations perfectly.",
-          "score": 10
-        },
-        {
           "anonymousId": "Model H",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Excellent approximation that uses 'ti' for a clear, enunciated 'T' sound and explicitly spells out 'fou' for the final dark L. This is highly readable and meets all task expectations perfectly.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Strong and valid phonetic approximation. 'BIU' accurately captures the first syllable, and 'ti-fol' is intuitive for native readers to pronounce. Meets all formatting rules for stress and syllables.",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Excellent phonetic approximation for US English. Using 'ri' perfectly captures the American flap T (which sounds exactly like the tapped 'r' in Portuguese), and 'fou' accurately represents the final syllable while avoiding native spelling interference.",
           "score": 10
         },
         {
           "anonymousId": "Model D",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Strong and valid phonetic approximation. 'BIU' accurately captures the first syllable, and 'ti-fol' is intuitive for native readers to pronounce. Meets all formatting rules for stress and syllables.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Strong and valid phonetic approximation. 'BIU' accurately captures the first syllable, and 'ti-fol' is intuitive for native readers to pronounce. Meets all formatting rules for stress and syllables.",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Exceptional approximation. 'ra' captures the American flap T combined with a schwa sound (like in 'caro' in Portuguese), providing a highly accurate pronunciation guide for a US accent.",
           "score": 10
         },
         {
           "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Very strong output that correctly uses 'ri' to mimic the American flap T. Using 'fol' is also perfectly valid since syllable-final 'l' is vocalized as a 'w' sound in Brazilian Portuguese.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "A solid and standard approximation. 'BIU' and 'fou' are great. Using 'ti' is completely valid, although in many Brazilian dialects it will be pronounced as 'chi', which makes it slightly less accurate to a US accent than using 'ri'.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "A solid and standard approximation. 'BIU' and 'fou' are great. Using 'ti' is completely valid, although in many Brazilian dialects it will be pronounced as 'chi', which makes it slightly less accurate to a US accent than using 'ri'.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "A solid and standard approximation. 'BIU' and 'fou' are great. Using 'ti' is completely valid, although in many Brazilian dialects it will be pronounced as 'chi', which makes it slightly less accurate to a US accent than using 'ri'.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Strong standard approximation. 'BIU' correctly captures the first syllable. The use of 'ti' is acceptable (though it may be palatalized to 'chi' by native readers), and 'fol' works well since native readers will vocalize the final 'L'.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Strong standard approximation. 'BIU' correctly captures the first syllable. The use of 'ti' is acceptable (though it may be palatalized to 'chi' by native readers), and 'fol' works well since native readers will vocalize the final 'L'.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Strong standard approximation. 'BIU' correctly captures the first syllable. The use of 'ti' is acceptable (though it may be palatalized to 'chi' by native readers), and 'fol' works well since native readers will vocalize the final 'L'.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Meets expectations well. 'ta' successfully avoids the 'chi' sound that 'ti' would produce, mapping relatively well to the schwa, though 'ra' would be a closer match for the US flap T.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
           "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Follows the formatting rules for capitalization and hyphens, but 'BIOU' is a poor approximation for the 'byoo' sound. A Brazilian Portuguese speaker would read it with an extra 'O' sound, reducing the accuracy of the pronunciation.",
+          "reasoning": "Acceptable, but has a notable weakness in the first syllable. 'BIOU' introduces an 'O' sound that doesn't exist in the English 'beau-' (/bju:/) syllable, making it less accurate.",
           "score": 6
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.5",
+      "judgeId": "openai/gpt-5.6-sol",
       "rankings": [
         {
           "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Uses Portuguese-compatible spelling, clear hyphenation, and exactly one stressed syllable marked as BIU. The first syllable is a reasonable Brazilian Portuguese approximation of “byoo,” and “fol” is readable though not a perfect rendering of unstressed “-ful.”",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model D",
           "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Equivalent to Model A: readable for Brazilian Portuguese speakers, with correct first-syllable stress and syllable breaks. The overall pronunciation is recognizable, with only some imperfection in the final “-ful” approximation.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Equivalent to Models A and D, meeting the key formatting and stress requirements. “BIU-ti-fol” is natural and recognizable enough, though the final syllable is only an approximation of English “-ful.”",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Uses valid Portuguese spelling, correct stress marking, and good syllable separation. “BIU” works well for the first syllable, while “fou” is readable but somewhat less complete for the English “-ful” ending because it drops the visible final /l/ quality.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Equivalent to Model B: Portuguese-compatible, correctly stressed, and clearly syllabified. The pronunciation would be recognizable, though “fou” is an imperfect approximation of the final “-ful.”",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Has correct stress marking and syllable separation, and uses mostly Portuguese-readable letters. However, “BIOU” is a more awkward and less accurate approximation of the intended “byoo” sound than “BIU,” making the word less natural and potentially confusing.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "The format is good, with stress and syllable breaks, and the spelling is Portuguese-compatible. However, replacing the /t/ sound with “ri” significantly distorts the middle syllable, making the pronunciation less recognizable as “beautiful.”",
-          "score": 5
+          "reasoning": "“BIU-ti-fol” clearly marks first-syllable stress, uses readable Portuguese combinations, and preserves all three syllables. “BIU” is a strong approximation of “byoo,” while “fol” reasonably approximates the reduced final syllable.",
+          "score": 9
         },
         {
           "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Identical to Model A, this is readable for Brazilian Portuguese speakers and correctly marks and separates the stressed first syllable. All major sounds are represented with a recognizable approximation.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Identical to Models A and C, it satisfies the stress, syllable-separation, native-phoneme, and completeness requirements. The resulting pronunciation should be readily recognizable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "“BIU-ti-fou” is fully readable in Brazilian Portuguese, has correct stress marking, and gives a recognizable three-syllable approximation. “Fou” is somewhat less reduced than the English “-ful,” but remains a reasonable native-compatible mapping.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Identical to Model I, it handles “byoo” well and correctly uses capitalization and hyphens. The final “fou” is imperfect but natural and recognizable for a Portuguese speaker.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Identical to Models I and J, it meets the structural and readability requirements and represents all sounds. Its final vowel is less reduced than English schwa but is still a valid approximation.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "“BIU-ta-fou” preserves the initial sound, stress, syllable count, and the important /t/ consonant. However, “ta” substitutes an /a/ vowel for the unstressed English vowel, noticeably reducing accuracy.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The middle and final syllables are reasonable, but Portuguese “BIOU” is likely to be read as “bi-ou,” adding or emphasizing an extra vowel rather than producing “byoo.” This weakens the core first-syllable approximation and can undermine the intended three-syllable structure.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The output is structured and readable, but “ri” replaces the expected /t/ or American flap representation in a way that may be pronounced with a strong Brazilian Portuguese r. That makes the middle syllable substantially less reliable, despite the otherwise good “BIU” and final syllable.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model H",
           "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Uses valid-looking Portuguese spelling with stress and hyphenation, but “ri” incorrectly replaces the expected /t/ sound in the second syllable. Combined with the less complete “fou” ending, this is a noticeably weaker approximation.",
-          "score": 5
+          "reasoning": "Like Model G, it has correct stress and readable syllable breaks, but “ri” can introduce a strong Portuguese r instead of the target consonant. “Fou” remains recognizable, though the middle-syllable error is significant.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "“BIU-ra-fou” correctly handles the stressed opening, but “ra” changes both the consonant realization and the unstressed middle vowel. It remains somewhat recognizable but is the least accurate representation of the required middle syllable.",
+          "score": 4.5
         }
       ]
     }

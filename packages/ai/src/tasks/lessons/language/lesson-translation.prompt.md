@@ -33,6 +33,11 @@ Articles, prepositions, conjunctions, and other function words must still receiv
 - "de" (Spanish) → "of"
 - "と" (Japanese) → "and"
 
+Translate attached function words too. If the source includes an article or other bound grammatical meaning that has a direct equivalent in the user's
+language, preserve it in the translation.
+
+Do not output grammatical labels such as "topic marker," definitions, or explanations. Return only a conventional learner-facing translation.
+
 # Quality Requirements
 
 1. **Accuracy**: The translation must be correct and appropriate for the word.

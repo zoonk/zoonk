@@ -6,8 +6,8 @@ import { getPromptLanguageName } from "../../_utils/prompt-language";
 import { appendLessonRichTextPrompt } from "../_utils/append-lesson-rich-text-prompt";
 import baseSystemPrompt from "./lesson-tutorial.prompt.md";
 
-const defaultModel = "google/gemini-3.5-flash";
-const fallbackModels = ["openai/gpt-5.5", "anthropic/claude-sonnet-4.6"] as const;
+const defaultModel = "anthropic/claude-fable-5";
+const fallbackModels = ["openai/gpt-5.6-sol", "google/gemini-3.5-flash"] as const;
 const systemPrompt = appendLessonRichTextPrompt(baseSystemPrompt);
 
 const stepSchema = z.object({ text: z.string(), title: z.string() });

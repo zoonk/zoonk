@@ -1,57 +1,75 @@
 {
   "expectations": "\nNATIVE LANGUAGE: Spanish (Latin American)\nTARGET LANGUAGE: English\n\nWORD: \"rhythm\"\n\nThis is a difficult English word with:\n- No vowel letters between \"rh\" and \"thm\"\n- The \"th\" sound (doesn't exist in Spanish)\n- Silent \"h\" at the beginning\n- The final \"-thm\" cluster\n\nSOUND CHALLENGES:\n- \"rh\" is pronounced just as \"r\"\n- \"y\" functions as a vowel\n- \"th\" needs Spanish approximation (commonly \"t\", \"d\", or \"z\")\n- The \"-thm\" ending is challenging\n\nQUALITY CHECK:\n- Should be readable by a Spanish speaker\n- Should provide a vowel sound for the \"y\"\n- Should approximate \"th\" with available Spanish sounds\n- Single syllable, so stress marking is straightforward\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Do NOT penalize for using \"v\" instead of \"b\" (or vice versa) in Spanish — they are identical phonemes in Spanish and a native speaker pronounces them the same way\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
-  "judgedAt": "2026-05-24T17:43:30.905Z",
+  "judgedAt": "2026-07-10T18:30:34.514Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.7",
+      "judgeId": "anthropic/claude-opus-4.8",
       "rankings": [
         {
           "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Uses natural Spanish letters with accent for stress clarity, hyphen for syllables, and reasonable approximation of 'th' as 'd'. The accent on RÍ reinforces stress on top of caps, fully readable for a Spanish speaker.",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "RI-dem uses only Spanish-readable letters, marks stress with caps, and approximates 'th' with 'd' plus a vowel for 'y'. Clean and natural for a Spanish speaker.",
           "score": 9
         },
         {
           "anonymousId": "Model D",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Clean Spanish-readable approximation with proper stress capitalization and syllable break. 'RI-dem' captures rhythm well for a Latin American Spanish speaker.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model F",
           "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Identical to D—natural Spanish spelling, clear stress, good 'th' approximation as 'd'. Fully readable and complete.",
+          "reasoning": "Identical to A: RI-dem is fully readable, stress-marked, and completes all sounds naturally.",
           "score": 9
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Same as D and F—solid, readable approximation with proper stress and syllabification.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model H",
+          "anonymousId": "Model E",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Same as D, F, G—appropriate and readable Spanish approximation with correct stress marking.",
+          "reasoning": "Same as A/D, RI-dem is a strong, natural approximation.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Same as A/D/E, RI-dem is clean and effective.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "RI-dam is readable and stress-marked; 'dam' is a reasonable approximation though 'em' arguably closer. Fully valid.",
           "score": 9
         },
         {
           "anonymousId": "Model C",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Reasonable approximation but the syllable break 'RID-em' is slightly less natural in Spanish than 'RI-dem'. Still readable and captures the sounds.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model E",
           "modelId": "openai/gpt-5.5",
-          "reasoning": "Uses 'a' as the vowel for 'y', which is a less accurate approximation than 'e' but still pronounceable in Spanish with clear stress and syllabification.",
+          "reasoning": "Identical to B, valid and readable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Identical to B/C, valid approximation.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "RÍ-dem uses both an accent mark and capitals for stress; the accent is a natural Spanish diacritic but doubling the stress indication is slightly redundant. Still readable.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "RÍ-dam combines accent and caps redundantly, otherwise readable and complete.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "RID-em splits syllables awkwardly, but still readable with Spanish letters and stress marked. Slightly less natural division.",
           "score": 7
         },
         {
-          "anonymousId": "Model B",
+          "anonymousId": "Model I",
           "modelId": "openai/gpt-5.4",
-          "reasoning": "The cluster 'dhm' does not occur in Spanish and would be confusing/unpronounceable for a native Spanish reader, violating the native-phoneme-only requirement.",
-          "score": 3
+          "reasoning": "RI-dhm leaves the '-dhm' cluster without a vowel for 'y', making it hard for a Spanish speaker to pronounce and failing the vowel-provision requirement.",
+          "score": 4
         }
       ]
     },
@@ -59,105 +77,141 @@
       "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model D",
+          "anonymousId": "Model A",
           "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "This output perfectly utilizes the Spanish intervocalic 'd' (which naturally sounds like the voiced English 'th' in rhythm) and splits the syllables naturally for a Spanish speaker. Capitalization correctly indicates the stress.",
+          "reasoning": "Flawlessly applies Spanish phonemes to approximate the English word. Using an intervocalic 'd' correctly prompts a Spanish speaker to naturally produce the [ð] sound, and 'dem' effectively handles the syllabic '-thm' ending.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Flawlessly applies Spanish phonemes to approximate the English word. Using an intervocalic 'd' correctly prompts a Spanish speaker to naturally produce the [ð] sound, and 'dem' effectively handles the syllabic '-thm' ending.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Flawlessly applies Spanish phonemes to approximate the English word. Using an intervocalic 'd' correctly prompts a Spanish speaker to naturally produce the [ð] sound, and 'dem' effectively handles the syllabic '-thm' ending.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Flawlessly applies Spanish phonemes to approximate the English word. Using an intervocalic 'd' correctly prompts a Spanish speaker to naturally produce the [ð] sound, and 'dem' effectively handles the syllabic '-thm' ending.",
           "score": 10
         },
         {
           "anonymousId": "Model F",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "This output perfectly utilizes the Spanish intervocalic 'd' (which naturally sounds like the voiced English 'th' in rhythm) and splits the syllables naturally for a Spanish speaker. Capitalization correctly indicates the stress.",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Perfectly approximates the word using valid Spanish phonotactics. The intervocalic 'd' is an excellent match for the English 'th', and adding an accent mark alongside capitalization is an acceptable stylistic choice.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Excellent approximation. An intervocalic 'd' naturally yields the [ð] sound for Spanish speakers, and using 'a' in 'dam' is a completely valid phonetic representation of the English schwa ending.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Excellent approximation. An intervocalic 'd' naturally yields the [ð] sound for Spanish speakers, and using 'a' in 'dam' is a completely valid phonetic representation of the English schwa ending.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Excellent approximation. An intervocalic 'd' naturally yields the [ð] sound for Spanish speakers, and using 'a' in 'dam' is a completely valid phonetic representation of the English schwa ending.",
           "score": 10
         },
         {
           "anonymousId": "Model G",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "This output perfectly utilizes the Spanish intervocalic 'd' (which naturally sounds like the voiced English 'th' in rhythm) and splits the syllables naturally for a Spanish speaker. Capitalization correctly indicates the stress.",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Excellent approximation that uses highly readable Spanish phonemes. 'dam' accurately maps the schwa sound, and adding the accent mark to the capitalized syllable is perfectly acceptable.",
           "score": 10
         },
         {
           "anonymousId": "Model H",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "This output perfectly utilizes the Spanish intervocalic 'd' (which naturally sounds like the voiced English 'th' in rhythm) and splits the syllables naturally for a Spanish speaker. Capitalization correctly indicates the stress.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Highly accurate and readable approximation. The written accent mark is slightly redundant since capitalization is already used to indicate stress according to the prompt's rules, but it does not harm readability.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model C",
           "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Very strong approximation. However, placing the 'd' at the end of the first syllable ('RID-em') is slightly less natural for Spanish phonotactics than keeping an open first syllable ('RI-dem').",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "A solid approximation that follows all instructions. Using 'a' for the English schwa sound works, though 'e' tends to be slightly closer for a Spanish speaker's relaxed vowel in this specific context.",
+          "reasoning": "Good approximation overall, but splitting the syllables as 'RID-em' weakens the pronunciation. In Latin American Spanish, a syllable-final 'd' is often devoiced or elided, whereas an intervocalic 'd' ('RI-dem') would perfectly mimic the English 'th'.",
           "score": 8
         },
         {
-          "anonymousId": "Model B",
+          "anonymousId": "Model I",
           "modelId": "openai/gpt-5.4",
-          "reasoning": "This model fails the critical requirement to use only combinations that naturally occur in the native language. The ending 'dhm' lacks a vowel and is completely unpronounceable for a Spanish speaker.",
+          "reasoning": "Critically fails the readability and native phonemes constraints. The cluster 'dhm' does not naturally occur in Spanish and is unpronounceable without a vowel, violating the most critical rule.",
           "score": 1
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.5",
+      "judgeId": "openai/gpt-5.6-sol",
       "rankings": [
         {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Uses only Spanish-readable sounds, marks stress clearly on the first syllable, and represents the main sounds with 'd' as a reasonable Spanish approximation for English 'th'. The 'em' ending supplies a pronounceable vowel and keeps the word recognizable.",
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "“RI-dem” is highly readable for a Spanish speaker and reasonably approximates /rɪðəm/: “i” supplies the vowel, “d” maps the English “th,” and “em” preserves the ending. Capitalization clearly marks stress, though the hyphenated two-part rendering differs from the stated single-syllable guidance.",
           "score": 9
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Readable for Spanish speakers and gives a reasonable approximation with 'd' for 'th' and 'em' for the ending. The accent mark is Spanish-standard and stress is still clear, though the formatting is slightly less aligned with the requested capitalization-only convention.",
-          "score": 8.5
-        },
-        {
           "anonymousId": "Model D",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "A clear, Spanish-readable approximation that marks stress and uses 'd' for the English 'th' sound. It is recognizable, though placing 'd' at the start of the second syllable is a slightly less precise rendering of the sound sequence.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model F",
           "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Identical to Model D: clear stress, Spanish-compatible spelling, and a reasonable 'd' approximation for 'th'. Minor weakness is the syllable split, which makes the 'd' sound feel attached to the second syllable.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Identical to Model D: readable and pronounceable for a Spanish speaker, with all major sounds represented. The syllable division is not ideal but still produces a recognizable approximation.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Identical to Model D: good native-language compatibility, clear stress marking, and a reasonable approximation of the difficult 'th' sound. The main limitation is that the hyphenation slightly shifts the consonant placement.",
-          "score": 8.5
+          "reasoning": "This provides the same strong, Spanish-compatible approximation as “RI-dem,” with clear stress and all major sounds represented. Its only notable issue is presenting the word as two syllables despite the task’s single-syllable characterization.",
+          "score": 9
         },
         {
           "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Readable and stress-marked, with 'd' as a reasonable approximation for 'th'. However, 'dam' introduces a stronger /a/ vowel in the ending, making it less close to the English pronunciation than 'dem' or 'em'.",
-          "score": 7.5
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "“RI-dem” is natural for a Spanish speaker to decode and gives a recognizable approximation of the English word. Stress and the difficult “th” sound are handled well, with only a minor mismatch in syllable treatment.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "“RÍ-dem” remains fully readable using a standard Spanish accent mark, while capitalization also satisfies the required stress indication. It approximates the sounds well, although the accent is redundant and the two-syllable presentation conflicts mildly with the supplied guidance.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "The pronunciation is readable, complete, and uses “d” as a reasonable Spanish approximation of English “th.” It clearly marks stress but, like the other “RI-dem” versions, divides a word characterized by the rubric as single-syllable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "“RID-em” uses only familiar Spanish letters, indicates stress, and remains recognizable. Assigning the “d” to the first written syllable is somewhat less natural and less accurate than “RI-dem,” but it still represents the difficult consonant rather than omitting it.",
+          "score": 8
         },
         {
           "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "“RI-dam” is readable and uses a valid “d” approximation for English “th,” with clear stress marking. However, Spanish “a” is a weaker approximation of the unstressed vowel in US English “rhythm” than “e,” making the result less accurate.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "This is a recognizable and easily pronounceable Spanish approximation with all major consonants represented. The “a” in “dam” departs noticeably from the English unstressed vowel, and the hyphenated form also implies two syllables.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "“RÍ-dam” is readable, and both capitalization and the standard Spanish accent make the stress unmistakable. Its final “am” is less faithful to US English than “em,” while the accent adds no necessary information.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "The output uses native Spanish spelling conventions and gives a reasonable “d” substitute for “th.” It remains recognizable, but “dam” approximates the unstressed ending less accurately than “dem” and introduces a two-syllable presentation.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model I",
           "modelId": "openai/gpt-5.4",
-          "reasoning": "Although stress is marked, 'dhm' is not a natural or readable Spanish letter combination and would confuse many Spanish speakers. It also fails to provide a pronounceable vowel in the difficult final cluster, making the approximation much less usable.",
-          "score": 3
+          "reasoning": "Although stress is marked and “i” supplies the main vowel, “dhm” is not a naturally readable Spanish letter cluster. The missing vowel in the ending makes it confusing for a Spanish speaker and violates the critical native-phoneme/readability requirement.",
+          "score": 2
         }
       ]
     }

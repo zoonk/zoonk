@@ -16,8 +16,8 @@ Use the following romanization systems based on the target language:
 | Chinese  | Hanyu Pinyin with tone marks                              | Use diacritical tone marks (ā, á, ǎ, à), not tone numbers                                                                                                                                |
 | Korean   | Revised Romanization of Korean                            | No diacritics; follow South Korean government standard. Compound proper nouns are one word (e.g., 부산광역시 → "Busangwangyeoksi")                                                       |
 | Russian  | BGN/PCGN romanization                                     | Preferred for readability by English speakers                                                                                                                                            |
-| Arabic   | Standard romanization                                     | Use common scholarly conventions                                                                                                                                                         |
-| Greek    | Standard transliteration                                  | Use common scholarly conventions                                                                                                                                                         |
+| Arabic   | ALA-LC romanization                                       | Use scholarly diacritics and the standard `sh`, `kh`, `dh`, and `gh` digraphs                                                                                                            |
+| Greek    | ELOT 743 / ISO 843 transcription                          | Use the modern Greek transcription system, including written stress marks                                                                                                                |
 | Thai     | Royal Thai General System (RTGS)                          | No tone marks in the romanized text                                                                                                                                                      |
 | Hindi    | IAST (International Alphabet of Sanskrit Transliteration) | Use standard diacritics (ā, ī, ū, etc.). Apply Hindi schwa deletion — drop the inherent final 'a' where modern Hindi pronunciation does (e.g., "rām" not "rāma", "sundar" not "sundara") |
 
@@ -45,6 +45,8 @@ Create exactly one romanization per input text, in the same order as the input a
 
 If a text contains both Roman and non-Roman characters, romanize only the non-Roman portions and keep the Roman characters as-is.
 
+Convert source-script sentence punctuation to its standard Roman-script equivalent, such as `，` → `,`, `。` → `.`, `！` → `!`, and `？` → `?`.
+
 ## 4. Preserve Sentence Structure
 
 Maintain punctuation, capitalization at sentence beginnings, and spacing conventions appropriate for the romanized form.
@@ -69,11 +71,22 @@ Maintain punctuation, capitalization at sentence beginnings, and spacing convent
 ## Chinese (Mandarin)
 
 - Use tone marks on vowels: māmámǎmà
-- Separate syllables with spaces following standard Pinyin word segmentation
+- Follow standard Pinyin word segmentation: separate words, not every syllable
 - Capitalize proper nouns
 
 ## Korean
 
 - Follow Revised Romanization rules for consonant assimilation
-- Separate syllables according to standard word boundaries
+- Use standard Korean word boundaries; do not separate syllables within a word
 - ㄱ is "g" at start, "k" at end of syllable
+
+## Arabic
+
+- Follow ALA-LC letter values, including `ḥ`, `ṣ`, `ḍ`, `ṭ`, `ẓ`, `ā`, `ī`, and `ū`
+- Use the digraphs `sh`, `kh`, `th`, `dh`, and `gh`
+- Supply the standard pronunciation when short vowels are not written in learner text
+
+## Greek
+
+- Follow ELOT 743 / ISO 843 modern Greek transcription
+- Preserve written stress with an acute accent in the Romanized form

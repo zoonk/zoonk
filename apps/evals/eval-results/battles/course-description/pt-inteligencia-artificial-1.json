@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - Should define what artificial intelligence is\n      - Should NOT list specific subfields as technical details\n      - Should specify career opportunities\n      - Should be in Brazilian Portuguese\n\n      \n  - Must be **1-3 sentences** maximum\n  - Must be written in the specified language (en, pt, or es)\n  - Must go **straight to the point** — no fluff, fillers, or unnecessary words\n  - Must NEVER use words like \"learn\", \"understand\", \"explore\", \"introduction to\", \"basics of\", \"comprehensive guide to\", \"master\", etc.\n  - Must define **what the topic is**\n  - Must explain **what learners will gain** from the course\n  - Must convey **why this is important**\n  - Must **avoid technical jargon** — write for someone with no prior knowledge\n  - Must focus on outcomes and career opportunities rather than specific tools/technologies\n  - For professional topics: Must specify **career opportunities** and **work environments** (e.g., \"work at tech companies, agencies, or as a freelancer\")\n  - For languages: Must reference CEFR levels (A1 to C2) and communication abilities\n  - For hobbies/pop culture: Should focus on comprehensive coverage without career implications\n  - Should be **concise**, **clear**, and **specific**\n\n    ",
+  "judgedAt": "2026-07-10T05:09:56.909Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-fable-5",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Defines AI in plain language without listing technical subfields, clearly states career opportunities and work environments, and stays within 3 sentences in natural Brazilian Portuguese. Avoids all forbidden words and jargon while conveying outcomes and importance.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Clean definition of AI, no subfield listing, and specific career opportunities across multiple sectors. Concise, jargon-free Brazilian Portuguese that meets all expectations.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Good definition, concrete career roles and work environments, and only two sentences. Mentions of ética and segurança are acceptable, though the second sentence is slightly dense and list-heavy.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Defines AI and specifies careers and environments, but lists subfields as technical details (reconhecimento de padrões, análise preditiva, automação de processos), violating a stated expectation. Otherwise concise and correct Portuguese.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Defines AI and gives strong career specificity, but 'soluções preditivas, agentes autônomos' amounts to listing technical subfields/jargon for a no-prior-knowledge audience. Otherwise well structured.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Uses jargon-heavy phrasing ('arquiteturas de algoritmos', 'modelos computacionais avançados') and lists technical topics, violating the no-subfields and no-jargon expectations. Definition is weak and framed around capabilities rather than what AI is, though careers are specified.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "deepseek/deepseek-v4-flash",
+          "reasoning": "Explicitly lists specific subfields (processamento de linguagem natural, visão computacional, aprendizado de máquina) as technical details, directly violating a core expectation. Definition and career content are otherwise solid.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Uses 'dominará' (master), a forbidden word, and lists subfields like aprendizado de máquina and algoritmos as technical content. Careers are specified, but the double violation makes it the weakest fit.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Model C perfectly follows all instructions. It clearly defines AI without using specific subfields, avoids all forbidden words, explains what learners will gain from the course, highlights career opportunities, and contains no technical jargon.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Model D is extremely strong, hitting all constraints perfectly. It defines the topic clearly, details the course outcomes without jargon, lists career opportunities effectively, and completely avoids forbidden words and subfield mentions.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Model F provides a strong, concise description that avoids forbidden words and specific subfields. However, it is slightly less direct in explaining what the course itself covers compared to the top models, opting instead to state what the knowledge enables.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A meets the core requirements but describes what 'the field covers' rather than directly stating what learners will gain from the course. It successfully avoids technical subfields and forbidden words while correctly listing career options.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Model G is well-written and covers the necessary outcomes and career opportunities. However, it uses the word 'fundamentos', which closely maps to the forbidden concept 'basics of'.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Model E introduces technical jargon like 'arquiteturas de algoritmos' and 'modelos computacionais avançados', which violates the instruction to write for someone with no prior knowledge.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model B commits a severe negative constraint violation by using the forbidden concept 'dominará' (master). It also explicitly lists 'aprendizado de máquina' (machine learning), violating the instruction not to list specific subfields.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "deepseek/deepseek-v4-flash",
+          "reasoning": "Model H lists multiple specific subfields (natural language processing, computer vision, machine learning), directly violating a negative constraint. It also uses 'conceitos fundamentais', which maps to the forbidden phrase 'basics of'.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Define IA de forma acessível, explica resultados práticos do curso e relaciona sua importância a eficiência, qualidade e gestão de riscos. Também indica áreas e ambientes de atuação sem enumerar subcampos técnicos.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "É claro, conciso e cobre definição, aplicações, relevância e ambientes profissionais em vários setores. Fica um pouco atrás por não indicar funções ou cargos profissionais específicos.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Apresenta definição objetiva, relevância, atuação responsável, cargos e ambientes de trabalho em apenas duas frases. Porém, usa “fundamentos”, próximo de uma formulação expressamente desaconselhada, e inclui alguns termos menos acessíveis.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Define o tema e especifica cargos e ambientes profissionais, além de apontar benefícios operacionais. A enumeração de reconhecimento de padrões, análise preditiva e automação acrescenta detalhes técnicos desnecessários, e o ganho formativo fica pouco explícito.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Oferece definição, possíveis resultados profissionais, cargos e ambientes de trabalho. Termos como “soluções preditivas” e “agentes autônomos” são jargão técnico, e a descrição do que o curso proporciona é genérica.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Inclui definição, conteúdo, cargos e setores de atuação, mas é carregado de jargão como “modelos computacionais avançados” e “arquiteturas de algoritmos”. A promessa de previsões precisas é excessiva e a importância do tema não é bem explicada.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "deepseek/deepseek-v4-flash",
+          "reasoning": "Define IA e informa uma função profissional e diversos ambientes de trabalho. Contudo, viola diretamente a orientação de não listar subcampos técnicos ao citar processamento de linguagem natural, visão computacional e aprendizado de máquina.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Explica a relevância e menciona ambientes profissionais, mas enumera áreas técnicas e usa bastante jargão para iniciantes. “Você dominará” também contraria explicitamente a proibição de linguagem como “master”, tornando-o o menos adequado.",
+          "score": 4.5
+        }
+      ]
+    }
+  ],
+  "taskId": "course-description",
+  "testCaseId": "pt-inteligencia-artificial-1"
+}

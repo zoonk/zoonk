@@ -1,0 +1,204 @@
+{
+  "modelId": "google/gemini-3.1-flash-lite",
+  "results": [
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "kind": "explanation" },
+        "id": "pt-explanation-kanban-board-structure-1",
+        "userInput": {
+          "chapterTitle": "Montando um quadro Kanban que mostra o trabalho",
+          "courseTitle": "Kanban",
+          "language": "pt",
+          "lessonDescription": "Monte a estrutura visível mínima do quadro para que o trabalho apareça diante dos olhos. Foque no que cada parte física ou digital representa no dia a dia.",
+          "lessonTitle": "Montando a estrutura visível do quadro"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "kind": "explanation" },
+        "id": "en-explanation-js-function-concept-1",
+        "userInput": {
+          "chapterTitle": "Functions, Arrays, and Objects",
+          "courseTitle": "JavaScript",
+          "language": "en",
+          "lessonDescription": "Break a repeated task into a named block of code and run it when needed. These ideas make code shorter, easier to read, and easier to change later.",
+          "lessonTitle": "Turning repeated code into a function"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "kind": "explanation" },
+        "id": "en-explanation-transformer-attention-1",
+        "userInput": {
+          "chapterTitle": "Transformers",
+          "courseTitle": "Machine Learning",
+          "language": "en",
+          "lessonDescription": "Start with the core operation that made transformers work so well. Trace how a token looks at other tokens and turns those relationships into a new representation.",
+          "lessonTitle": "Following how one token attends to others"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "kind": "explanation" },
+        "id": "pt-explanation-petition-structure-1",
+        "userInput": {
+          "chapterTitle": "Processo Civil",
+          "courseTitle": "Direito",
+          "language": "pt",
+          "lessonDescription": "Monte a estrutura mínima da demanda com clareza sobre fatos, fundamento e resultado pretendido. Uma inicial bem construída evita emendas, indeferimento e perda de foco.",
+          "lessonTitle": "Escrevendo uma petição inicial que se sustenta"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "kind": "explanation" },
+        "id": "es-explanation-exoplanet-transit-1",
+        "userInput": {
+          "chapterTitle": "Exoplanetas",
+          "courseTitle": "Astronomía",
+          "language": "es",
+          "lessonDescription": "Lee la señal más famosa de los exoplanetas directamente en el brillo estelar. Cada detalle de la caída de luz aporta una pista física sobre el planeta y su órbita.",
+          "lessonTitle": "Leyendo un planeta cuando cruza su estrella"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "kind": "explanation" },
+        "id": "en-explanation-indigenous-trade-networks-1",
+        "userInput": {
+          "chapterTitle": "Indigenous Brazil Before Colonization",
+          "courseTitle": "Brazilian History",
+          "language": "en",
+          "lessonDescription": "Track how goods moved across long distances before Europeans arrived. Trade networks linked communities through rivers, trails, and shorelines rather than isolated local worlds.",
+          "lessonTitle": "Following trade across rivers, trails, and coasts"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "kind": "explanation" },
+        "id": "en-edge-etymology-1",
+        "userInput": {
+          "chapterTitle": "History of English",
+          "courseTitle": "English Language History",
+          "language": "en",
+          "lessonDescription": "Discover how English words evolved from Latin, Greek, and Germanic roots",
+          "lessonTitle": "Word Origins and Etymology"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "kind": "tutorial" },
+        "id": "en-tutorial-git-setup-1",
+        "userInput": {
+          "chapterTitle": "Getting Started",
+          "courseTitle": "Git and GitHub",
+          "language": "en",
+          "lessonDescription": "Step-by-step guide to installing and configuring Git on your computer",
+          "lessonTitle": "How to Set Up Git"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "kind": "tutorial" },
+        "id": "en-tutorial-react-app-1",
+        "userInput": {
+          "chapterTitle": "Project Setup",
+          "courseTitle": "React Development",
+          "language": "en",
+          "lessonDescription": "Follow along to create a new React application from scratch",
+          "lessonTitle": "Creating Your First React App"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "kind": "tutorial" },
+        "id": "es-edge-programming-tutorial-spanish-1",
+        "userInput": {
+          "chapterTitle": "Configuración",
+          "courseTitle": "Desarrollo Web",
+          "language": "es",
+          "lessonDescription": "Guía paso a paso para instalar Node.js en tu computadora",
+          "lessonTitle": "Instalando Node.js"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "kind": "tutorial" },
+        "id": "en-tutorial-trello-first-board-1",
+        "userInput": {
+          "chapterTitle": "Getting Started with Trello",
+          "courseTitle": "Trello for Teams",
+          "language": "en",
+          "lessonDescription": "Follow the steps to sign up, create your first board in the Trello web app, and invite teammates from the workspace menu.",
+          "lessonTitle": "Creating Your First Trello Board"
+        }
+      }
+    }
+  ],
+  "taskId": "lesson-kind"
+}

@@ -1,51 +1,87 @@
 {
   "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Guitar tuning follows a specific string order and pitch reference. Penalize if:\n   - String order is incorrect (standard: E-A-D-G-B-E, low to high)\n   - No reference pitch source is mentioned (tuner, app, or reference note)\n\n2. TECHNIQUE CHECK: Penalize if:\n   - Direction to turn tuning pegs is unclear or incorrect\n   - No guidance on whether to tune up or down to pitch\n\n3. VERIFICATION CHECK: Penalize if confirmation of correct pitch is missing for each string.\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n- Do NOT penalize for JSON output format differences (e.g., wrapping the array in an object like `{\"steps\": [...]}` instead of a raw array). This is a schema/parsing concern, not a content quality issue\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the lesson as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
-  "judgedAt": "2026-05-24T18:29:40.339Z",
+  "judgedAt": "2026-07-10T17:26:58.792Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.7",
+      "judgeId": "anthropic/claude-opus-4.8",
       "rankings": [
         {
-          "anonymousId": "Model E",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Excellent coverage of all criteria: string order correct, tuner reference mentioned, clear peg direction (tighten/loosen), verification per string, final recheck, and confirmation strum. Steps use imperative language and are well-grouped without excessive splitting.",
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "Correct E-A-D-G-B-E order, clear peg direction, per-string verification, and helpful tips (tune up to pitch, watch for G vs G#). Ends with a strum confirmation. Excellent completeness without bloat.",
           "score": 9
         },
         {
           "anonymousId": "Model A",
           "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Comprehensive and accurate with correct string order, reference pitch sources, clear peg direction guidance, and verification including a final chord check. Slightly long but each step is coherent and useful.",
+          "reasoning": "Thorough and accurate with correct string order, tuner reference, clear peg direction, and per-string verification plus a final chord test. Slightly verbose but very clear and usable.",
           "score": 9
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Accurate string order, clear tuner setup, explicit peg direction, and good verification with final check. Slightly condenses the middle strings into one step but remains clear and actionable.",
-          "score": 8
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Accurate string order, tuner reference, clear tighten/loosen guidance, per-string verification and a final strum. Well grouped and beginner friendly.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Correct order, reference source, clear peg direction, verification per string, and strum confirmation. Good imperative language and logical grouping.",
+          "score": 9
         },
         {
           "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Correct order and reference, gives tighten/loosen thresholds and per-string confirmation. Clear and accurate, though slightly repetitive.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Accurate order, reference source, clear peg direction with sharp/flat examples, and verification. Groups remaining strings efficiently while still noting each note.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model K",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Correct string order, tuner reference, clear up/down peg direction, and verification step. Concise and well-structured with imperative language throughout.",
+          "reasoning": "Correct order and reference, clear peg direction, per-string confirmation with green indicator, and tune-up tip. Concise and accurate.",
           "score": 8
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Accurate sequence and verification, with peg direction guidance. Splitting each string into two steps (play, then tune) is slightly redundant but not confusing. Solid overall.",
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Correct order, reference options, clear peg guidance and verification per string plus final recheck. Solid though slightly dry.",
           "score": 8
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Correct order and reference pitch options mentioned, with peg direction noted for D string. However, peg direction guidance is less consistent across strings, and some steps feel formulaic/repetitive.",
-          "score": 7
         },
         {
           "anonymousId": "Model C",
           "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Correct string order and verification. However, 'turn the peg away from you to tighten' is ambiguous/potentially incorrect since peg direction varies by string side, and this could mislead beginners. Otherwise solid.",
+          "reasoning": "Correct order and reference with peg direction and verification. However, 'turn the peg away from you to tighten' is oversimplified/potentially inaccurate depending on the tuner side, a minor factual risk.",
           "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Accurate order and reference, per-string tuner confirmation. Mentions peg direction on some but not all strings; otherwise concise and correct.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Correct order and reference with per-string verification, but peg direction (tighten/loosen) guidance is largely absent, a technique-check gap.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Accurate order and reference with verification, but micro-splits into separate 'play' and 'tune' steps for each string, making it needlessly long and repetitive.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Correct and complete but heavily micro-split into check/tune pairs per string, producing 16 steps of repetitive content; usable but bloated and less clear to follow.",
+          "score": 5
         }
       ]
     },
@@ -54,92 +90,164 @@
       "rankings": [
         {
           "anonymousId": "Model D",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "This model perfectly follows all task expectations. It provides clear guidance on tightening and loosening, incorporates the excellent technique tip of tuning 'up' into the pitch for stability, and includes clear verification steps for every single string.",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Flawless execution of the task. It provides perfectly clear guidance on tightening/loosening to adjust pitch, explicitly verifies the centered pitch for every single string, and maintains logical step grouping throughout.",
           "score": 10
         },
         {
           "anonymousId": "Model E",
           "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "This output is extremely clear and exceptionally well-structured. It accurately details how to tighten and loosen for pitch, correctly identifies standard string order, and properly verifies the correct pitch for each individual string.",
+          "reasoning": "Exceptional output. The technique explanations are crystal clear, the sequence is perfectly logical, and it provides explicit verification of the correct pitch for each string.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "Outstanding instructions. It meets all technique and verification requirements perfectly while also including highly valuable domain tips for tuning stability (tuning up to pitch).",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Excellent quality. It provides clear guidance on tightening for flat and loosening for sharp, includes great tuning stability tips, and explicitly confirms the pitch for every string.",
           "score": 10
         },
         {
           "anonymousId": "Model A",
           "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "A very strong response that explains the tuning process and string order clearly. It correctly groups some strings together to save space while still ensuring there is a verification check for each individual note.",
+          "reasoning": "Strong overall performance. It covers all requirements well, though the verification language for the final two strings is slightly brief compared to the earlier steps.",
           "score": 9
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Good overall instructions with correct tightening and loosening guidance. However, it consolidates the final four strings into a single step, which weakens the requirement to explicitly verify the correct pitch for each string.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Acceptable, but it suffers from poor logical grouping. It omits the critical explanation of tightening and loosening to adjust pitch until the fourth string, which would confuse a beginner during the first few steps.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "This model fails to explicitly explain the relationship between tightening/loosening the peg and raising/lowering the pitch. Telling a user to 'turn the peg the other direction' if it goes the wrong way is too vague and violates the technique check.",
-          "score": 5
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "This model provides factually flawed instructions by telling the user to 'turn the peg away from you to tighten it'. Depending on the guitar's headstock configuration, this can be incorrect and lead to broken strings, heavily violating the technique expectations.",
-          "score": 4
-        }
-      ]
-    },
-    {
-      "judgeId": "openai/gpt-5.5",
-      "rankings": [
-        {
-          "anonymousId": "Model E",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Covers standard tuning in the correct low-to-high order, uses a tuner/app reference, and gives clear flat/sharp adjustment guidance. It confirms centered pitch for each string and includes a sensible final recheck; only the final 'strum all six strings' confirmation is a bit imprecise musically.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Very complete and accurate, with correct E-A-D-G-B-E order, tuner/app/reference note options, flat/sharp guidance, and verification for each string. Minor issues are slight over-explanation and a somewhat confusing final E chord notation, but the tuning procedure itself is strong.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Provides a clear tuner-based process, correct string sequence, peg adjustment guidance, and final verification. The remaining strings are partly grouped rather than individually confirmed in detail, but the instruction to repeat the exact process keeps it understandable and accurate.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Correctly tunes each string in order and confirms centered pitch for every string, with a tuner/app/reference pitch mentioned. Peg-turn guidance is less explicit because it mostly says to turn the other direction rather than clearly mapping flat/sharp to tightening/loosening.",
-          "score": 8.2
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Accurate, concise, and in the correct E-A-D-G-B-E sequence, with a tuner/app source and useful tune-up guidance. Some strings lack explicit centered/green confirmation at the individual step level, relying more on the final verification step.",
+          "anonymousId": "Model M",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Meets all core requirements with good verification and technique guidance. However, splitting the plucking, adjusting, and confirming for the first string into three distinct steps disrupts the logical grouping.",
           "score": 8
         },
         {
           "anonymousId": "Model F",
           "modelId": "openai/gpt-5.5",
-          "reasoning": "Has correct order, good reference source coverage, and clear centered/green confirmation for each string. However, guidance on whether to tighten or loosen is only stated once and is not clearly generalized, so the peg-turn technique is weaker than the stronger outputs.",
-          "score": 7.5
+          "reasoning": "Acceptable, but it introduces the crucial tighten/loosen technique guidance late (on the 4th string), leaving beginners without clear direction for the first three strings.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Passes basic checks, but lumping four strings into a single step bypasses the pedagogical value of step-by-step verification required for a beginner tutorial.",
+          "score": 6
         },
         {
           "anonymousId": "Model C",
           "modelId": "google/gemini-3.5-flash",
-          "reasoning": "The sequence, reference source, tune-up advice, and per-string pitch confirmations are mostly strong. The instruction to turn a peg 'away from you' to tighten is not universally correct and could mislead users, which is a significant technique issue despite the otherwise solid procedure.",
-          "score": 7.3
+          "reasoning": "Contains a notable domain inaccuracy. Telling users to 'turn the peg away from you to tighten it' is factually incorrect for many guitar headstocks (e.g., standard 3x3s).",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Fails the technique check. While it implies tuning down if a note goes too far, it misses the fundamental initial guidance explaining that tightening raises pitch and loosening lowers it.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Fails the technique check entirely. It provides no guidance on whether to turn pegs to tighten or loosen based on the pitch.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Fails the technique check. It instructs users to turn the pegs but gives zero direction on tightening or loosening to reach the target pitch.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Fails the technique check with vague guidance ('turn the peg the other direction'). It also arbitrarily micro-splits plucking and tuning into separate steps, making the procedure tedious to read.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "Provides the correct E-A-D-G-B-E order, clear tuner setup, flat/sharp adjustment guidance, and an explicit instruction to loosen below pitch and tune back up. Every string has a centered-pitch confirmation, followed by a useful full recheck.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Correctly tunes all six strings in order, explains tightening versus loosening, and explicitly recommends tuning up into the note. The final all-green verification covers every string, though some individual string steps describe the target less precisely than Model B.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Gives the correct string order, a clear reference source, usable flat/sharp peg guidance, and centered confirmation for every string. It does not explain the preferred practice of approaching each pitch from below.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Accurately covers standard order and confirms each target with a centered tuner reading, including a final recheck. Tightening and loosening are explained for low E but not reinforced generally, and there is no guidance to tune up to pitch.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The detailed low-E procedure clearly explains tightening, loosening, and centered confirmation, then directs the learner to repeat that exact process in correct order. It lacks advice to approach pitches from below, and grouping the last four strings makes their individual verification slightly less explicit.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Correctly presents all strings in order with strong centered or green confirmation for each and a final E-A-D-G-B-E check. It explains basic tightening and loosening but omits tuning-up-to-pitch guidance, and its note examples around A are somewhat incomplete.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Provides thorough tuner guidance, the correct order, clear flat/sharp adjustments, and verification for every string. It omits tuning-up-to-pitch advice, includes a few descriptive rather than action-led steps, and its final chord notation unnecessarily omits the low E while suggesting tuning determines buzzing.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Uses the correct order and provides centered or green confirmation for every string, with tuner and reference-pitch options. Direction guidance appears only in the D-string step and it never explains approaching pitch from below, leaving a key technique underdeveloped.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Correctly tunes and verifies all strings in standard order and advises loosening after overshooting low E. It does not clearly explain what to do when a pitch is flat or provide general tune-up-to-pitch guidance.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Provides correct targets and explicit in-tune confirmation for each string, plus a complete final check. Peg direction is handled only by trial and reversal, while the A-string advice encourages simply turning back after overshooting rather than tuning down below and approaching upward.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Correctly orders and verifies all six strings and gives useful advice to tune upward from below. However, stating that turning the low-E peg “away from you” tightens it is not universally true and conflicts with the later acknowledgment that peg directions vary, creating a meaningful risk of wrong adjustment.",
+          "score": 6.3
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Accurately identifies and verifies every pitch using either a tuner or reference source, with a comprehensive final E-A-D-G-B-E check. Despite its length, it never explains which adjustment raises or lowers pitch or whether to approach the target from below.",
+          "score": 6.1
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Concise and accurate on string order, reference sources, and confirmation of each target pitch. It gives no usable peg-direction guidance and no instruction on tuning up or down to pitch, missing both central technique expectations.",
+          "score": 6
         }
       ]
     }

@@ -15,12 +15,36 @@ export const scoreSchema = z.object({ steps: z.array(stepSchema) });
 type Score = z.infer<typeof scoreSchema>;
 export type ScoreStep = z.infer<typeof stepSchema>;
 
-export type TestCase<TExpected = unknown> = {
+export type TestCase<TExpected = unknown, TInput = Record<string, unknown>> = {
   id: string;
-  userInput: Record<string, unknown>;
-  expectations: string;
+  userInput: TInput;
+  expectations?: string;
   expected?: TExpected;
 };
+
+/**
+ * Judge-based scoring needs a prose rubric, while deterministic scorers can
+ * omit it and rely only on structured expected values. This keeps the runtime
+ * requirement explicit at the boundary that invokes a judge.
+ */
+export function getJudgeExpectations(testCase: TestCase): string {
+  if (!testCase.expectations) {
+    throw new Error(`Test case ${testCase.id} requires expectations for judge-based scoring.`);
+  }
+
+  return testCase.expectations;
+}
+
+/**
+ * Judge mode is available only when every test case supplies the prose rubric
+ * a judge needs. Deterministic tasks intentionally omit that duplicate data.
+ */
+export function hasJudgeExpectations(task: Pick<RegisteredTask, "testCases">): boolean {
+  return (
+    task.testCases.length > 0 && task.testCases.every((testCase) => Boolean(testCase.expectations))
+  );
+}
+
 type TaskResult<T = unknown> = {
   data: T;
   usage: LanguageModelUsage;
@@ -62,7 +86,7 @@ export type Task<TInput = never, TOutput = unknown, TExpected = unknown> = {
   id: string;
   name: string;
   description: string;
-  testCases: TestCase<TExpected>[];
+  testCases: TestCase<TExpected, TInput>[];
   generate: (input: TaskGenerateInput<TInput>) => Promise<TaskResult<TOutput>>;
   score?: TaskScorer<TExpected>;
 };

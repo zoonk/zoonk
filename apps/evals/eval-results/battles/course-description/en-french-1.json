@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - Should define what French proficiency means\n      - Should mention CEFR progression (A1 to C2)\n      - Should explain communication abilities and opportunities\n      - Should be in US English\n\n      \n  - Must be **1-3 sentences** maximum\n  - Must be written in the specified language (en, pt, or es)\n  - Must go **straight to the point** — no fluff, fillers, or unnecessary words\n  - Must NEVER use words like \"learn\", \"understand\", \"explore\", \"introduction to\", \"basics of\", \"comprehensive guide to\", \"master\", etc.\n  - Must define **what the topic is**\n  - Must explain **what learners will gain** from the course\n  - Must convey **why this is important**\n  - Must **avoid technical jargon** — write for someone with no prior knowledge\n  - Must focus on outcomes and career opportunities rather than specific tools/technologies\n  - For professional topics: Must specify **career opportunities** and **work environments** (e.g., \"work at tech companies, agencies, or as a freelancer\")\n  - For languages: Must reference CEFR levels (A1 to C2) and communication abilities\n  - For hobbies/pop culture: Should focus on comprehensive coverage without career implications\n  - Should be **concise**, **clear**, and **specific**\n\n    ",
+  "judgedAt": "2026-07-10T05:09:50.745Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-fable-5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "deepseek/deepseek-v4-flash",
+          "reasoning": "Defines French as a global language, cleanly references CEFR progression from A1 to C2, covers communication contexts and specific careers, and stays within three concise sentences with no forbidden vocabulary.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Clear definition of French, explicit A1 to C2 progression, communication skills across all four modalities, and concrete career opportunities. Concise, jargon-free, and violates no rules.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Defines French's global role, mentions A1 to C2 progression with communication abilities, and lists diverse career paths. Three sentences, no forbidden words, well-targeted for a beginner audience.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Covers definition, A1 to C2 range, four communication skills, and career opportunities in three sentences. Slightly list-heavy and fragmentary in style but fully compliant with expectations.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Mentions A1 to C2, communication abilities, and career opportunities without forbidden words, but never really defines what French is as a topic—it jumps straight to proficiency. Sentence fragments make it feel slightly less polished.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Meets structural requirements with CEFR range and career roles, but 'seamless interaction' and 'facilitates' feel like corporate fluff, and the definition of French itself is thin. Omits listening from the skills list.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Contains a factual error by describing A1 as 'conversational fluency' when A1 is beginner level, misrepresenting the CEFR scale. Career opportunities are implied via contexts rather than explicitly stated, weakening the outcomes focus.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Uses the explicitly forbidden words 'Master' and 'understanding,' a direct rule violation that must be penalized heavily. Otherwise the content covers CEFR levels and careers adequately, but the violations make it non-compliant.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "This model follows all instructions perfectly. It clearly defines French, explains the CEFR progression (A1 to C2) and communication abilities, and highlights concrete career opportunities without using any forbidden words. The tone is professional, direct, and free of fluff.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Very strong response that meets all requirements, including the A1 to C2 progression and communication abilities. It strictly avoids forbidden words and effectively presents what learners will gain and the career opportunities available.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Excellent description that covers the CEFR progression, communication skills, and real-world opportunities. It successfully avoids all negative constraints. It is just slightly more casually phrased ('helping you') compared to top models, but still highly effective.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "deepseek/deepseek-v4-flash",
+          "reasoning": "Meets the core criteria and avoids negative constraint words. However, the phrase 'This course covers' leans slightly into the filler/fluff category that the prompt advises against, keeping it from a perfect score.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Provides a solid overview of proficiency and opportunities, but focuses more on defining 'French language proficiency' rather than defining 'French' as a topic first. Otherwise, it follows all constraints and is well-written.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Fails to clearly define what French is, diving straight into proficiency ranges instead. While it mentions the A1 to C2 scale and communication settings, it lacks the specific career outcomes provided by higher-scoring models.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Begins with a grammatical fragment rather than a clear definition of the topic. While it includes the required elements like CEFR levels and opportunities, the structure is poor and reads more like a list of requirements than a cohesive description.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Fails strictly enforced negative constraints. It uses the forbidden words 'understanding' (a variation of 'understand') and 'master'. This makes the output unusable for the expectations.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Clearly defines French as a global language and frames proficiency through speaking, listening, reading, and writing from A1 to C2. It concisely connects communication gains to everyday use, travel, study, careers, and multinational workplaces.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Strongly covers A1-to-C2 progression, all four communication skills, real conversations, and professional situations. It also gives specific career opportunities, though its definition of proficiency is slightly less direct than Model A’s.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Directly defines proficiency through the four core communication skills and clearly references A1 to C2. It provides useful personal and professional outcomes, but the opening is a sentence fragment and gives less context for why French matters globally.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Clearly presents French’s global importance, CEFR progression, communication abilities, and several career paths. Terms such as “global commerce” and “capabilities” are slightly less plain than ideal, but the description remains accessible and useful.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "deepseek/deepseek-v4-flash",
+          "reasoning": "Concise and clear, with accurate A1-to-C2 progression, communication contexts, and specific career opportunities. It is less specific about the actual communication abilities gained because it does not identify speaking, listening, reading, and writing.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "It defines the proficiency range and provides personal, corporate, and career applications in three concise sentences. However, it omits listening and uses unnecessarily elevated wording such as “facilitates,” “seamless,” and “expertise.”",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "It references A1 to C2 and several relevant settings, but incorrectly equates A1 with conversational fluency and C2 with professional fluency. It also omits speaking as an explicit skill, uses the jargon-like phrase “auditory comprehension,” and does not clearly state career opportunities.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The content otherwise covers CEFR progression, communication abilities, and relevant careers well. However, it directly violates the explicit prohibition on the word “Master,” making it a poor fit despite its substantive strengths.",
+          "score": 4
+        }
+      ]
+    }
+  ],
+  "taskId": "course-description",
+  "testCaseId": "en-french-1"
+}

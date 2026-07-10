@@ -1,0 +1,149 @@
+{
+  "expectations": "\nLANGUAGE: English output required for translations.\n\nTOPIC: Japanese sentences for numbers and counting - using basic number vocabulary.\n\nSOURCE LESSON METADATA: basic number kanji such as 一, 二, 三, 五, 十.\nGenerated sentences should naturally cover this source scope.\n\nDIFFICULTY: Beginner level. Chapter \"Numbers and Basics\" + basic number kanji = foundational vocabulary.\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Sentences drift away from the source lesson scope\n- Counter words are used incorrectly\n- Japanese number readings are wrong in context\n- Translations don't match the Japanese sentences\n\nCONTEXT EXPECTATIONS:\n- Sentences using numbers in practical contexts (counting, telling age, quantities)\n- Natural use of Japanese counters where appropriate\n- Various everyday situations involving numbers\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - Each translation MUST convey the full meaning of its target-language sentence\n   - Preserve tone and register while using natural phrasing in USER_LANGUAGE\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, misleading, or unnatural\n\n2. LESSON SCOPE USAGE (CRITICAL):\n   - Each generated sentence MUST fit the lesson title, description, and source lesson metadata\n   - Important words and phrases implied by the lesson scope should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences drift away from the lesson scope\n   - Penalize if lesson-scope words or phrases are used incorrectly or out of context\n\n3. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n4. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Use appropriate register (formal/informal) for the context\n   - Penalize artificial, contrived, robotic, or textbook-like constructions\n\n5. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if the lesson scope naturally groups those situations together\n\n6. APPROPRIATE DIFFICULTY (CRITICAL):\n   - The model MUST infer difficulty from the chapter title, lesson title, lesson description, and source scope\n   - Beginner context (basic topics + simple source scope) → simple sentences (2-5 words)\n   - Intermediate context → medium sentences (4-8 words)\n   - Advanced context (complex topics + advanced vocabulary) → complex sentences allowed\n   - Penalize SEVERELY if beginner-level context produces complex sentences (compound sentences, subordinate clauses, long constructions)\n   - Penalize if advanced-level context produces only trivially simple sentences\n\n7. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Avoid semantic duplicates that express the same idea with superficial wording changes\n\n8. LANGUAGE SEPARATION (CRITICAL):\n   - Every sentence MUST be written entirely in TARGET_LANGUAGE\n   - Translations and explanations MUST be written in USER_LANGUAGE\n   - Penalize if languages are swapped or if USER_LANGUAGE words appear in a target-language sentence\n\n9. EXPLANATION QUALITY (required for every sentence):\n   - Each explanation MUST be a non-empty string in USER_LANGUAGE; null or empty explanations are invalid\n   - Explain why this specific sentence is structured this way in TARGET_LANGUAGE and how it differs from USER_LANGUAGE\n   - Focus on useful contrasts such as word order, grammar, word choice, false friends, or potentially confusing forms\n   - Grammar claims MUST describe the element's actual role in this sentence\n   - For non-Latin target scripts, every target-language word or phrase mentioned in the explanation MUST be immediately followed by its romanization in parentheses\n   - Do NOT expect a separate romanization field; the task does not generate one\n\n10. CLEAN OUTPUT FIELDS:\n    - The sentence and translation fields MUST contain only their respective text, with no parenthetical explanations, usage notes, grammar hints, or alternative phrasings\n    - Sentences and translations should avoid decorative terminal punctuation because they become word-bank tiles\n    - Penalize unnecessary punctuation on simple greetings, farewells, thanks, statements, labels, or short conversational chunks (e.g., \"Good morning!\" should be \"Good morning\"; \"See you later.\" should be \"See you later\")\n    - Do NOT penalize punctuation that changes meaning or is grammatically required, especially question marks for questions (e.g., \"How are you?\") and required target-language question punctuation (e.g., \"¿Cómo estás?\")\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that fit the lesson scope\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: translation accuracy, lesson-scope usage, grammatical correctness, naturalness, explanation quality, and difficulty appropriateness\n\n    ",
+  "judgedAt": "2026-07-10T18:58:47.126Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.8",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Practical number sentences with correct counters, accurate readings (futari, sanbon, gofun, go-ko), correct translations, and solid explanations with romanization. Beginner-appropriate length and good variety. One minor note: 十円 translation explanation about English word order is slightly imprecise but acceptable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Strong variety with correct counters (nimai, sanbon->satsu for books, go-fun) and accurate translations; explanations describe particles and word order well with romanization. Slight scope stretch with 冊 and 階-free but stays within counting; 二と三で五です is a nice source-scope sentence. Question mark appropriately kept.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Accurate counters, correct readings, natural everyday sentences, and detailed explanations with romanization. A couple sentences (二階/floor counting) drift slightly beyond basic numbers but remain reasonable; translations are accurate and natural.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Correct counters and readings (hitotsu, futari, juppon, sanbiki, nimai) with accurate translations and clear explanations including romanization. However 五つ is romanized as itsutsu correctly but the counter 匹 for cats is slightly beyond core scope; overall solid and beginner-appropriate.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Correct, natural short sentences with accurate counters and readings, good explanations with romanization. Fewer sentences and less variety, but all valid and beginner-appropriate; no errors.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Uses source-scope kanji directly with simple counting phrases; readings and translations are accurate. However several entries are bare number lists rather than sentences, limiting practical counting context, and less variety of real situations.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Outputs are bare single kanji and number lists rather than sentences using numbers in practical contexts; no counters or everyday situations. Accurate but fails the context expectation of practical counting sentences.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Flawlessly meets all instructions. Provides 10 distinct, natural sentences covering varied everyday contexts (counting objects, time, people, money). Explanations correctly provide romanization and grammar context, and formatting is perfectly clean.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Exceptional output. Presents 10 highly diverse contexts applying basic numbers naturally. Adheres perfectly to the beginner difficulty cap, provides accurate translations, and formats explanations flawlessly with proper romanization.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Excellent context diversity and flawless execution. Sentences perfectly align with beginner difficulty while demonstrating counting, time, and quantities. Explanations correctly use romanization in parentheses, and output fields are appropriately clean.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Meets all requirements perfectly. Provides a great variety of natural contexts for using basic Japanese numbers. Explanations are insightful, cleanly formatted, and include proper romanization for all Japanese words.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Strong output with accurate sentences and grammar explanations. However, context diversity is slightly lower with repetitive sentence structures (two time-telling sentences, two item-requesting sentences).",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Acceptable, but struggles with the context expectations. Half of the output consists of bare number lists rather than practical, everyday situations. The sentences that do provide context are somewhat repetitive.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Poor product usefulness. Fails to provide sentences in practical contexts or everyday situations, instead outputting isolated bare numbers. This severe lack of context diversity violates the core instructional goal of the lesson.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Consistently accurate, natural, beginner-friendly sentences covering quantities, people, time, prices, floors, and counting. Explanations are clear, contrast Japanese with English, and reliably romanize referenced Japanese forms.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Strong practical coverage with correct counters, readings, and translations in simple sentence patterns. A few explanations are imprecise, especially the description of word order for 二枚, and 二人です relies on restaurant context for its translation.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Provides varied, useful counting contexts with generally accurate translations and particularly thorough explanations. 水を一つ is somewhat less natural than using a serving or bottle counter, and 二と三で五です is understandable but slightly contrived.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "The sentences are diverse, natural, and mostly accurate, with appropriate use of several common counters. Its explanations contain notable factual errors, including claiming English places the currency word before the number and incorrectly describing what changes pronunciation in 五分.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "All five sentences are simple, grammatical, and accurately translated, with useful basic counter practice. Context diversity is limited by two near-duplicate clock-time examples, and several explanations describe vocabulary without adequately contrasting Japanese structure with English.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The requests using 一つ and 五つ fit the lesson, but half the output consists of number lists or fragments rather than practical sentences. Some explanations are misleading, particularly treating 五つ as a straightforward combination of the reading go and つ.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "The number meanings are mostly correct, but the output is almost entirely isolated vocabulary and lists rather than sentences in everyday counting contexts. It therefore fails the practical sentence and context expectations, and some explanations also mention Japanese forms without the required immediate romanization.",
+          "score": 3
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-sentences",
+  "testCaseId": "en-japanese-numbers-1"
+}

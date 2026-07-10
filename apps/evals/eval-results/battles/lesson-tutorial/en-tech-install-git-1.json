@@ -1,50 +1,86 @@
 {
   "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Git installation involves platform-specific steps. Penalize if:\n   - Steps assume wrong operating system without clarification\n   - Installation verification is missing (checking git version)\n   NOTE: A Windows-focused workflow that mentions Mac/Linux alternatives is a valid approach. Do NOT treat platform specificity as a major error if the guide acknowledges multiple operating systems. A linear step format cannot perfectly branch for all OSes.\n\n2. SAFETY CHECK: Penalize if:\n   - Steps suggest downloading from unofficial sources\n   - PATH configuration is skipped without noting it's handled by installer\n\n3. SPECIFICITY CHECK: Penalize vague instructions like \"install Git\" without specifying what to click, download, or run.\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n- Do NOT penalize for JSON output format differences (e.g., wrapping the array in an object like `{\"steps\": [...]}` instead of a raw array). This is a schema/parsing concern, not a content quality issue\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the lesson as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
-  "judgedAt": "2026-05-24T18:29:39.566Z",
+  "judgedAt": "2026-07-10T17:26:44.638Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.7",
+      "judgeId": "anthropic/claude-opus-4.8",
       "rankings": [
         {
           "anonymousId": "Model A",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Comprehensive coverage including a pre-check, clear OS-specific instructions, and verification. Uses imperative language, logical grouping, and notes both Windows and Mac/Linux paths. Steps are well-sequenced and specific about what to click.",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Accurate cross-platform coverage with official source, clear imperative steps, terminal verification, and a helpful path-related troubleshooting step. Handles all three OSes coherently without confusion.",
           "score": 9
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Clean, well-sequenced steps with imperative language, official source, and clear verification. Covers Windows and macOS adequately. Slightly less detailed on Linux but solid overall.",
-          "score": 9
+          "anonymousId": "Model M",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Strong, accurate cross-platform guide with official source, verification, and a troubleshooting step that explains PATH reloading. The macOS 'drag to Applications' note is slightly off for the standard .pkg installer but minor.",
+          "score": 8
         },
         {
           "anonymousId": "Model C",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Solid procedure with good specificity (64-bit Git for Windows Setup), clear verification, and troubleshooting note. Minor typo ('ordered not found' instead of 'command not found') is a small issue but doesn't derail usefulness.",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Clean, accurate, action-oriented Windows/Mac flow with permission approval, verification, and troubleshooting. Well grouped and clear, though Linux is only mentioned on the download page.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Good coverage including a smart pre-check for existing Git, official source, all three OSes, and clear verification. Imperative and coherent throughout.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Clear, accurate Windows/Mac/Linux download flow with sensible default handling and version verification. Solid but slightly lighter on Linux install specifics and no troubleshooting.",
           "score": 8
         },
         {
           "anonymousId": "Model D",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Concise and accurate with imperative verbs, official source, and verification. Covers Windows and Mac well. Slightly less detailed than top entries but no real flaws.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Thorough and accurate with good verification including troubleshooting. Some steps feel micro-split (separating Install, Finish, Close into distinct steps), making it slightly verbose, but all imperative and clear.",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Accurate and concise with correct sequence and verification. Windows-focused install steps mention macOS/Linux only for terminal, but acceptable per rubric; lacks security-prompt handling.",
           "score": 7
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Accurate and imperative but over-splits steps (separate steps for Install, Finish, opening terminal) without adding much value. Still functional and correct with proper verification.",
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Detailed and accurate with per-OS install steps and verification. Slightly long with some overlapping steps, but coherent and correct.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Accurate Windows-focused with distinct macOS (xcode-select) and Linux install paths, plus verification. Valid multi-OS approach though somewhat fragmented; git-scm doesn't provide direct macOS installer for xcode path, minor stretch.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "Thorough multi-OS guide with pre-check, official source, and verification. Comprehensive but quite long and branchy, which can add complexity; content remains accurate.",
           "score": 7
         },
         {
           "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Accurate, concise, action-oriented with official source, permission handling, and verification. Solid though no troubleshooting and Linux install not detailed.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Correct core flow with verification and official source, but crams download+click into single steps and lacks security-prompt handling. Uses git-scm.com which is fine; adequate but thinner.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Mostly accurate with official source and verification, but contains a typo error 'ordered not found' instead of 'command not found', slightly hurting the troubleshooting instruction.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
           "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Broken output—only two steps, one with text ':' which is unusable. Duplicate title and incomplete content fail the task entirely.",
+          "reasoning": "Severely truncated: only two steps with a placeholder ':' text, no installation, no verification. Unusable against the expectations.",
           "score": 1
         }
       ]
@@ -53,92 +89,164 @@
       "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model A",
+          "anonymousId": "Model H",
           "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Exceptional guide that accurately handles OS differences and stays within all formatting constraints. It includes vital domain-specific knowledge, such as checking for an existing installation and restarting the terminal to refresh system PATH variables.",
+          "reasoning": "Model H provides an exceptionally clear, highly accurate guide that perfectly handles OS differences. Acknowledging that Linux uses a package manager and including a pre-installation verification step makes this a premium instructional flow.",
           "score": 10
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "An excellent, cleanly written guide with perfect pacing and logical step grouping. The platform-specific nuances are integrated seamlessly into the imperative instructions without overwhelming the user.",
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Model A perfectly handles the multi-OS branching within a linear format, correctly noting that Linux users will need to follow displayed instructions rather than an executable installer. The steps are concise, actionable, and logically grouped.",
           "score": 10
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Strong, clear instructions that correctly handle OS differences and formatting limits. It is highly usable, though slightly less comprehensive regarding terminal PATH refresh nuances than the top models.",
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Model L takes a highly literal approach to platform branching by dedicating specific steps to each OS sequentially. While slightly clunky for users to read through irrelevant OS steps, it is factually flawless and accurately uses macOS and Linux command-line tools.",
           "score": 9
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "The instructions are accurate and actionable. However, the step grouping is slightly over-segmented by separating the installer wizard progression (accepting defaults, clicking install, clicking finish) into too many micro-steps.",
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Model B successfully covers all three operating systems and uses strong action-oriented language. The chronological sequence gets slightly tangled when transitioning between Linux terminal commands and Windows/Mac installer screens, but it remains highly useful.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Model F provides excellent, action-oriented instructions for Windows and Mac, gracefully omitting Linux setup to avoid confusing installer instructions. It meets all expectations, providing a clean and actionable user experience.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Model K attempts to handle OS differences and correctly notes that Linux might display \"install instructions\" instead of an installer. However, it creates slight confusion in the following step by unconditionally instructing the user to open a downloaded file.",
           "score": 7
         },
         {
           "anonymousId": "Model C",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "The steps are generally well-paced and correctly formatted. However, it contains a noticeable factual typo ('ordered not found' instead of 'command not found') that could mislead beginners troubleshooting their setup.",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Model C is generally clear and action-oriented but contains a factual error by assuming that selecting Linux on the Git website will download an installer file. Linux users are actually provided with terminal commands.",
           "score": 6
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "This output is overly fragmented into 10 micro-steps, which hurts readability. Arbitrarily splitting the single logical action of typing a command and reading its output into separate steps violates the grouping expectations.",
-          "score": 5
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model D provides well-formatted, imperative instructions but fails to account for Linux platform nuances. It incorrectly assumes Linux users will download an installer file and run a setup wizard, which is a factual error.",
+          "score": 6
         },
         {
           "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model G correctly uses imperative language and logical grouping, but it contains a factual error by instructing Linux users to download an installation file and run a setup wizard. Linux uses package managers instead.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Model M features strong action-oriented steps but incorrectly states that the installer download will start automatically for Linux. Linux distributions require package manager commands rather than an executable installer.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model I provides solid instructions for Windows and macOS, appropriately omitting Linux to avoid complexity. However, it includes a hallucinated error message (\"ordered not found\" instead of \"command not found\"), which could severely confuse a beginner troubleshooting their setup.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "Model J struggles with logical step grouping within a linear format. Instructing macOS and Linux users to \"skip to the next step\"—which happens to be a Windows-specific configuration screen—creates a highly confusing and broken user experience.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model E",
           "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Completely unusable for the expectations. The output is incomplete and contains broken text in the first step.",
+          "reasoning": "Model E completely fails the task by returning a truncated output with only two repetitive steps. It is fundamentally incomplete and unusable.",
           "score": 1
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.5",
+      "judgeId": "openai/gpt-5.6-sol",
       "rankings": [
         {
-          "anonymousId": "Model A",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Best overall: it uses the official Git site, gives clear platform-aware download/install guidance, accepts recommended installer defaults, and verifies with `git --version`. Minor weakness is that Mac/Linux details are less specific than Windows, but the core procedure is accurate and usable.",
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Provides specific, actionable instructions for Windows, macOS, and Linux from the official source, followed by a clear version check and troubleshooting. Platform branches are easy to identify, with only minor redundancy around completing and closing installers.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "Offers accurate, highly practical installation paths for all three major platforms and strong verification guidance. The instruction for Mac and Linux users to “skip to the next step” is slightly confusing because the immediately following step is still Windows-oriented.",
           "score": 9
         },
         {
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Gives concrete, valid installation commands or installer actions for Windows, macOS, Ubuntu/Debian, and Fedora, plus explicit verification. The platform sections appear sequentially without an introductory branching instruction, so users must infer which titled steps to skip.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Uses the official download page, acknowledges all major operating systems, verifies with `git --version`, and addresses command-path failures. Linux installation is less specific than the Windows and macOS flow, relying on instructions displayed by the site.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Covers existing-install detection, official downloads, all major platforms, default installer behavior, and final verification. Linux guidance remains somewhat vague because it tells users to run the command shown on the site rather than providing examples.",
+          "score": 8.4
+        },
+        {
           "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Clear, actionable, and well-sequenced with permission prompts, installer completion, and a strong verification/troubleshooting step. Its main gap is that it treats the process as installer-based and gives little real Linux-specific installation guidance despite mentioning Linux.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Provides a practical official-download workflow, keeps steps clear, and includes verification with `git --version`. It is somewhat generic and implies Linux uses the same installer-style flow, but it remains solid for most users.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Strong sequence with official source, default settings, and installation verification. It acknowledges Linux in the download step but then mostly gives Windows/macOS-style installer and terminal guidance, which limits platform fit.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model D",
           "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Concise and usable for Windows/macOS, with clear installer steps and a proper `git --version` verification. It offers little Linux support and is less explicit about the official source and platform differences than stronger outputs.",
-          "score": 8
+          "reasoning": "Provides a concise, coherent installer workflow with clear Windows and macOS examples and a proper version check. It gives no Linux alternative and does not explicitly clarify that default installer settings handle command-line availability.",
+          "score": 7.3
         },
         {
           "anonymousId": "Model C",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Mostly accurate and actionable, with official-site download, installer steps, and version verification. However, it has a confusing typo in the error message guidance and provides limited Linux coverage, making it weaker than similar alternatives.",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "The Windows and macOS installer flow is clear, actionable, and includes permission prompts, completion checks, and version verification. Although Linux is advertised at the start, the subsequent generic installer workflow does not provide a valid Linux installation path.",
           "score": 7
         },
         {
           "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Clearly directs users to the official site and gives a usable Windows/macOS installer flow with version verification. It lists Linux as a download choice but then assumes a graphical setup wizard and provides no Linux-specific installation instructions.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "The official-source, installer, terminal, and verification instructions are concise and easy to follow for Windows or macOS. Linux is mentioned, but users who receive package-manager instructions rather than an installer cannot follow the subsequent “open the downloaded installer” steps.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Gives useful Windows and macOS download and setup details, followed by the required version check. It omits Linux entirely and incorrectly calls the likely error an “ordered not found” error, which weakens troubleshooting clarity.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "The main Windows-oriented path is detailed and includes verification plus PATH-related troubleshooting. It fails to supply a Linux installation procedure despite selecting Linux earlier, and the suggestion that macOS may require dragging Git into Applications is misleading.",
+          "score": 6.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The workflow is concise and includes the essential official download and `git --version` check. However, it presents Windows-style Next/Install/Finish screens as though they apply to macOS and Linux, making the platform-neutral framing misleading.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
           "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Unusable for the lesson: it only contains an empty placeholder-like step and one navigation step. It omits downloading, installation, PATH/default handling, and verification.",
+          "reasoning": "Contains only a link-opening instruction plus a malformed empty step. It omits downloading, installation, platform guidance, PATH handling, and verification, so it does not fulfill the lesson.",
           "score": 1
         }
       ]

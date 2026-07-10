@@ -1,0 +1,149 @@
+{
+  "expectations": "\nLANGUAGE: English output required for translations.\n\nTOPIC: Spanish sentences for greetings and introductions - using basic greeting vocabulary.\n\nSOURCE LESSON METADATA: basic greeting phrases such as hola, buenos días, buenas noches, adiós, gracias.\nGenerated sentences should naturally cover this source scope.\n\nDIFFICULTY: This is clearly a BEGINNER-level lesson. Chapter \"Basic Greetings and Introductions\" + Lesson \"Greetings and Introductions\" + simple greeting vocabulary = absolute beginner.\n- Sentences MUST be very simple (2-5 words max)\n- No compound sentences, no subordinate clauses\n- Examples of acceptable complexity: \"Hola\", \"Buenos días, María\", \"Gracias\"\n- Examples of UNACCEPTABLE complexity: \"As she entered the coffee shop, she immediately said good afternoon\"\n- Penalize SEVERELY if any sentence has more than 5-6 words or uses complex structures\n- Penalize unnecessary exclamation marks or periods on greeting chunks; keep question marks only for actual questions\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Sentences drift away from the source lesson scope\n- Greetings are used incorrectly (e.g., \"buenas noches\" used for morning)\n- Translations don't match the Spanish sentences\n\nCONTEXT EXPECTATIONS:\n- Sentences should demonstrate natural use of greetings\n- Various social situations (meeting someone, saying goodbye, thanking)\n- Different times of day where appropriate\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - Each translation MUST convey the full meaning of its target-language sentence\n   - Preserve tone and register while using natural phrasing in USER_LANGUAGE\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, misleading, or unnatural\n\n2. LESSON SCOPE USAGE (CRITICAL):\n   - Each generated sentence MUST fit the lesson title, description, and source lesson metadata\n   - Important words and phrases implied by the lesson scope should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences drift away from the lesson scope\n   - Penalize if lesson-scope words or phrases are used incorrectly or out of context\n\n3. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n4. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Use appropriate register (formal/informal) for the context\n   - Penalize artificial, contrived, robotic, or textbook-like constructions\n\n5. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if the lesson scope naturally groups those situations together\n\n6. APPROPRIATE DIFFICULTY (CRITICAL):\n   - The model MUST infer difficulty from the chapter title, lesson title, lesson description, and source scope\n   - Beginner context (basic topics + simple source scope) → simple sentences (2-5 words)\n   - Intermediate context → medium sentences (4-8 words)\n   - Advanced context (complex topics + advanced vocabulary) → complex sentences allowed\n   - Penalize SEVERELY if beginner-level context produces complex sentences (compound sentences, subordinate clauses, long constructions)\n   - Penalize if advanced-level context produces only trivially simple sentences\n\n7. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Avoid semantic duplicates that express the same idea with superficial wording changes\n\n8. LANGUAGE SEPARATION (CRITICAL):\n   - Every sentence MUST be written entirely in TARGET_LANGUAGE\n   - Translations and explanations MUST be written in USER_LANGUAGE\n   - Penalize if languages are swapped or if USER_LANGUAGE words appear in a target-language sentence\n\n9. EXPLANATION QUALITY (required for every sentence):\n   - Each explanation MUST be a non-empty string in USER_LANGUAGE; null or empty explanations are invalid\n   - Explain why this specific sentence is structured this way in TARGET_LANGUAGE and how it differs from USER_LANGUAGE\n   - Focus on useful contrasts such as word order, grammar, word choice, false friends, or potentially confusing forms\n   - Grammar claims MUST describe the element's actual role in this sentence\n   - For non-Latin target scripts, every target-language word or phrase mentioned in the explanation MUST be immediately followed by its romanization in parentheses\n   - Do NOT expect a separate romanization field; the task does not generate one\n\n10. CLEAN OUTPUT FIELDS:\n    - The sentence and translation fields MUST contain only their respective text, with no parenthetical explanations, usage notes, grammar hints, or alternative phrasings\n    - Sentences and translations should avoid decorative terminal punctuation because they become word-bank tiles\n    - Penalize unnecessary punctuation on simple greetings, farewells, thanks, statements, labels, or short conversational chunks (e.g., \"Good morning!\" should be \"Good morning\"; \"See you later.\" should be \"See you later\")\n    - Do NOT penalize punctuation that changes meaning or is grammatically required, especially question marks for questions (e.g., \"How are you?\") and required target-language question punctuation (e.g., \"¿Cómo estás?\")\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that fit the lesson scope\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: translation accuracy, lesson-scope usage, grammatical correctness, naturalness, explanation quality, and difficulty appropriateness\n\n    ",
+  "judgedAt": "2026-07-10T18:58:18.739Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.8",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "All sentences are short (2-4 words), scope-accurate, with correct translations and solid contrastive explanations. Good coverage of greetings, times of day, questions, and introductions with clean punctuation and no duplicates.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Strong variety and all simple sentences within scope, correct translations and good explanations. Slightly drifts with 'de nada' and 'hasta luego' beyond core source vocabulary, but these remain natural greeting/farewell context.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Mostly simple and accurate with good explanations. 'Gracias por tu ayuda' and 'Adiós, nos vemos mañana' add mild complexity/scope drift beyond the basic word list, but stay within 5 words.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Simple sentences with accurate translations and good explanations. 'Adiós, hasta mañana' introduces vocabulary slightly beyond source scope but remains short and natural.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Accurate, clean, and simple with strong explanations, well within beginner difficulty. Fewer sentences and slightly less context variety, but everything provided is high quality.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Accurate translations and helpful explanations, all short sentences. Includes some vocabulary (estoy bien, soy) slightly beyond the strict source list but firmly in greetings/introductions context.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Simple sentences with good explanations, but combining 'Adiós, gracias' and 'Muchas gracias, adiós' feels contrived/unnatural as real greetings, and the two farewell combos are near-thematic duplicates.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "This model perfectly follows all instructions. Sentences are kept strictly to the 2-5 word limit for absolute beginners, terminal punctuation is correctly omitted, and the explanations brilliantly contrast Spanish grammar with English without making incorrect claims.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Exceptional output. The sentences are natural and perfectly suited for the beginner scope. The explanations accurately highlight grammatical differences between Spanish and English.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Very strong and flawless execution of the negative constraints (no terminal punctuation, no long sentences). The only slight drawback is that it provided fewer examples than the top models, but the quality is top-tier.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Follows the formatting and difficulty constraints perfectly. However, it loses some points for making slightly inaccurate linguistic claims about English in its explanations (e.g., implying English 'hello' isn't versatile or that 'goodbye' isn't stressed on the last syllable).",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Good sentence variety and formatting. Like Model G, it contains a slightly flawed explanation by claiming that English 'hello' is not common in casual, everyday conversations.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Follows formatting and scope rules well. The score is lowered because the explanation for 'Hola' makes the bizarre claim that English requires the word 'there' after 'hi' or 'hello'.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Obeys the strict formatting rules and difficulty caps. However, sentences like 'Adiós, gracias' and 'Muchas gracias, adiós' feel slightly contrived and robotic, as if just mashing vocabulary words together.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "All sentences are accurate, natural, within the 2–5-word beginner limit, and cleanly punctuated. It provides excellent coverage of greetings, introductions, questions, thanks, and farewells, with specific and useful explanations.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "This is highly accurate, varied, beginner-appropriate, and consistently well explained. The only minor weakness is an unhelpful comparison suggesting Spanish “hola” is more casually common than English “hello.”",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "The sentences are concise, accurate, varied, and strongly aligned with greetings and introductions. A few explanations slightly overgeneralize usage, such as claiming “hola” works in any situation, but these do not materially harm the lesson.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Every item is short, accurate, natural, and accompanied by a useful explanation. It offers somewhat less contextual and introduction-related variety than the strongest outputs, though no specific number or checklist of contexts is required.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "The output has excellent scope coverage, natural translations, and appropriately simple constructions. Minor explanation issues include implying English requires “there” after a greeting and giving “What do you call yourself?” as the literal sense of “¿Cómo te llamas?” rather than “How.”",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "The sentences and translations are natural, accurate, and remain within the required beginner length. However, the explanations for “Gracias por tu ayuda” and “Adiós, nos vemos mañana” do not adequately explain the full specific sentence or its structural contrast with English.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Most individual phrases are accurate and simple, with generally useful explanations. However, “Adiós, gracias” and “Muchas gracias, adiós” are awkward near-duplicates that combine the same farewell and thanks with only minor reordering, reducing naturalness and variety.",
+          "score": 7.1
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-sentences",
+  "testCaseId": "en-spanish-greetings-1"
+}

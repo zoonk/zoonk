@@ -1,53 +1,37 @@
 const SHARED_EXPECTATIONS = `
 EVALUATION CRITERIA:
 
-1. LESSON SCOPE USAGE (CRITICAL - highest priority):
+1. TRANSLATION ACCURACY (CRITICAL - highest priority):
+   - Each translation MUST convey the full meaning of its target-language sentence
+   - Preserve tone and register while using natural phrasing in USER_LANGUAGE
+   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)
+   - Penalize SEVERELY if translations are incorrect, incomplete, misleading, or unnatural
+
+2. LESSON SCOPE USAGE (CRITICAL):
    - Each generated sentence MUST fit the lesson title, description, and source lesson metadata
    - Important words and phrases implied by the lesson scope should be used in their natural form (conjugated verbs, declined nouns are acceptable)
    - Penalize SEVERELY if sentences drift away from the lesson scope
    - Penalize if lesson-scope words or phrases are used incorrectly or out of context
 
-2. TRANSLATION ACCURACY (CRITICAL):
-   - Each sentence-translation pair MUST be linguistically accurate
-   - The translation must convey the same meaning as the original sentence
-   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)
-   - Penalize SEVERELY if translations are incorrect, incomplete, or misleading
-   - Grammatical structures should be appropriately adapted between languages
-
-3. ROMANIZATION (required field):
-   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the FULL sentence (not just keywords)
-   - Use standard romanization systems (romaji for Japanese, pinyin for Chinese, etc.)
-   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be null
-   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts
-   - Romanization MUST use Latin/Roman characters only - penalize SEVERELY if it copies the original script (e.g., Cyrillic, Hangul, Kana) instead of transliterating
-   - Both lowercase and sentence-case romanization are acceptable - do NOT penalize for capitalization style alone
-
-4. GRAMMATICAL CORRECTNESS:
+3. GRAMMATICAL CORRECTNESS:
    - Sentences must be grammatically correct in the target language
    - Verb conjugations must match the subject
    - Gender agreement must be correct where applicable
    - Word order should follow natural patterns of the target language
    - Penalize for grammar errors, incorrect conjugations, or unnatural constructions
 
-5. SENTENCE NATURALNESS:
+4. SENTENCE NATURALNESS:
    - Sentences should sound natural to native speakers
-   - Avoid overly literal translations or awkward phrasing
    - Use appropriate register (formal/informal) for the context
-   - Penalize if sentences sound robotic, unnatural, or like machine translation
+   - Penalize artificial, contrived, robotic, or textbook-like constructions
 
-6. CONTEXT DIVERSITY:
+5. CONTEXT DIVERSITY:
    - Sentences should present different contexts or situations
    - Avoid repetitive sentence structures
    - Use variety in sentence types (statements, questions, commands where appropriate)
    - Do NOT penalize for covering similar themes if the lesson scope naturally groups those situations together
 
-7. LESSON RELEVANCE:
-   - Sentences should relate to the lesson topic
-   - The contexts should be appropriate for the lesson's educational goals
-   - Avoid straying into unrelated topics
-   - Do NOT require every sentence to explicitly reference the lesson topic - implicit relevance is fine
-
-8. APPROPRIATE DIFFICULTY (CRITICAL):
+6. APPROPRIATE DIFFICULTY (CRITICAL):
    - The model MUST infer difficulty from the chapter title, lesson title, lesson description, and source scope
    - Beginner context (basic topics + simple source scope) → simple sentences (2-5 words)
    - Intermediate context → medium sentences (4-8 words)
@@ -55,24 +39,26 @@ EVALUATION CRITERIA:
    - Penalize SEVERELY if beginner-level context produces complex sentences (compound sentences, subordinate clauses, long constructions)
    - Penalize if advanced-level context produces only trivially simple sentences
 
-9. NO DUPLICATES:
+7. NO DUPLICATES:
    - Each sentence should be unique
    - Avoid near-duplicates (same sentence with minor word changes)
-   - Penalize if essentially the same sentence appears multiple times
+   - Avoid semantic duplicates that express the same idea with superficial wording changes
 
-10. LANGUAGE CORRECTNESS:
-    - Sentences should be in the TARGET language (courseTitle)
-    - Translations should be in the NATIVE language (language code)
-    - Penalize if languages are swapped or mixed incorrectly
+8. LANGUAGE SEPARATION (CRITICAL):
+   - Every sentence MUST be written entirely in TARGET_LANGUAGE
+   - Translations and explanations MUST be written in USER_LANGUAGE
+   - Penalize if languages are swapped or if USER_LANGUAGE words appear in a target-language sentence
 
-11. EXPLANATION QUALITY:
-    - Each sentence should have an "explanation" field (string or null)
-    - Explanations must be written in USER_LANGUAGE (the learner's native language)
-    - Explanations should focus on grammar or word-order patterns, especially those that differ from the learner's native language
-    - Null is acceptable for trivially simple sentences (single-word greetings, very basic structures)
-    - Penalize if explanations are in the wrong language or describe vocabulary meaning instead of grammar patterns
+9. EXPLANATION QUALITY (required for every sentence):
+   - Each explanation MUST be a non-empty string in USER_LANGUAGE; null or empty explanations are invalid
+   - Explain why this specific sentence is structured this way in TARGET_LANGUAGE and how it differs from USER_LANGUAGE
+   - Focus on useful contrasts such as word order, grammar, word choice, false friends, or potentially confusing forms
+   - Grammar claims MUST describe the element's actual role in this sentence
+   - For non-Latin target scripts, every target-language word or phrase mentioned in the explanation MUST be immediately followed by its romanization in parentheses
+   - Do NOT expect a separate romanization field; the task does not generate one
 
-12. WORD-BANK PUNCTUATION:
+10. CLEAN OUTPUT FIELDS:
+    - The sentence and translation fields MUST contain only their respective text, with no parenthetical explanations, usage notes, grammar hints, or alternative phrasings
     - Sentences and translations should avoid decorative terminal punctuation because they become word-bank tiles
     - Penalize unnecessary punctuation on simple greetings, farewells, thanks, statements, labels, or short conversational chunks (e.g., "Good morning!" should be "Good morning"; "See you later." should be "See you later")
     - Do NOT penalize punctuation that changes meaning or is grammatically required, especially question marks for questions (e.g., "How are you?") and required target-language question punctuation (e.g., "¿Cómo estás?")
@@ -83,7 +69,7 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT require a specific number of sentences
 - Do NOT expect sentences to follow any particular template or pattern
 - Different valid sentence constructions exist - assess the quality of what IS provided
-- FOCUS ON: lesson-scope usage, translation accuracy, romanization correctness, grammatical correctness, naturalness, difficulty appropriateness
+- FOCUS ON: translation accuracy, lesson-scope usage, grammatical correctness, naturalness, explanation quality, and difficulty appropriateness
 `;
 
 /**
@@ -102,8 +88,6 @@ LANGUAGE: English output required for translations.
 
 TOPIC: Spanish sentences for greetings and introductions - using basic greeting vocabulary.
 
-SCRIPT: Roman (romanization should be null)
-
 SOURCE LESSON METADATA: basic greeting phrases such as hola, buenos días, buenas noches, adiós, gracias.
 Generated sentences should naturally cover this source scope.
 
@@ -119,7 +103,6 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Sentences drift away from the source lesson scope
 - Greetings are used incorrectly (e.g., "buenas noches" used for morning)
 - Translations don't match the Spanish sentences
-- Romanization contains any text (should be null)
 
 CONTEXT EXPECTATIONS:
 - Sentences should demonstrate natural use of greetings
@@ -149,8 +132,6 @@ LANGUAGE: English output required for translations.
 
 TOPIC: French sentences for food and dining - using food-related vocabulary.
 
-SCRIPT: Roman (romanization should be null)
-
 SOURCE LESSON METADATA: food and dining nouns such as le pain, le fromage, le vin, la soupe, le dessert.
 Generated sentences should naturally cover this source scope.
 
@@ -161,7 +142,6 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Food items are used in unrealistic contexts
 - Gender agreement is incorrect (le/la must match the noun)
 - Translations don't accurately convey the French meaning
-- Romanization contains any text (should be null)
 
 CONTEXT EXPECTATIONS:
 - Sentences about ordering, eating, or discussing food
@@ -190,8 +170,6 @@ LANGUAGE: English output required for translations.
 
 TOPIC: German sentences for family members - using family vocabulary.
 
-SCRIPT: Roman (romanization should be null)
-
 SOURCE LESSON METADATA: family nouns such as die Mutter, der Vater, die Schwester, der Bruder, die Familie.
 Generated sentences should naturally cover this source scope.
 
@@ -202,10 +180,9 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Case endings are incorrect (nominative, accusative, dative contexts)
 - Article-noun agreement is wrong
 - Translations don't accurately convey the German meaning
-- Romanization contains any text (should be null)
 
 CONTEXT EXPECTATIONS:
-- Sentences about family relationships and lessons
+- Sentences about family relationships and everyday situations
 - Talking about or introducing family members
 - Family-related situations and conversations
 
@@ -231,25 +208,16 @@ LANGUAGE: English output required for translations.
 
 TOPIC: Japanese sentences for numbers and counting - using basic number vocabulary.
 
-SCRIPT: Non-Roman (romanization MUST be included)
-
 SOURCE LESSON METADATA: basic number kanji such as 一, 二, 三, 五, 十.
 Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: Beginner level. Chapter "Numbers and Basics" + basic number kanji = foundational vocabulary.
-
-ROMANIZATION REQUIREMENTS:
-- MUST include romaji for all Japanese sentences
-- Standard Hepburn romanization preferred
-- Numbers: 一 (ichi), 二 (ni), 三 (san), 五 (go), 十 (juu)
-- Penalize if romanization is missing or uses non-standard systems
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Sentences drift away from the source lesson scope
 - Counter words are used incorrectly
 - Japanese number readings are wrong in context
 - Translations don't match the Japanese sentences
-- Romanization is missing or incorrect
 
 CONTEXT EXPECTATIONS:
 - Sentences using numbers in practical contexts (counting, telling age, quantities)
@@ -277,24 +245,15 @@ LANGUAGE: English output required for translations.
 
 TOPIC: Korean sentences for colors - using basic color vocabulary.
 
-SCRIPT: Non-Roman (romanization MUST be included)
-
 SOURCE LESSON METADATA: basic color words such as 빨간색, 파란색, 노란색, 초록색, 검은색.
 Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: Beginner level. Chapter "Colors and Descriptions" + basic color words = foundational vocabulary.
 
-ROMANIZATION REQUIREMENTS:
-- MUST include romanized Korean for all sentences
-- Standard Korean romanization (Revised Romanization preferred)
-- Colors: 빨간색 (ppalgansaek), 파란색 (paransaek), 노란색 (noransaek), etc.
-- Penalize if romanization is missing or incorrect
-
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Sentences drift away from the source lesson scope
 - Color words are used grammatically incorrectly
 - Translations don't match the Korean sentences
-- Romanization is missing or uses non-standard systems
 
 CONTEXT EXPECTATIONS:
 - Sentences describing objects by color
@@ -323,8 +282,6 @@ LANGUAGE: Brazilian Portuguese output required for translations (NOT English).
 
 TOPIC: Italian sentences for travel and transportation - using travel vocabulary.
 
-SCRIPT: Roman (romanization should be null)
-
 SOURCE LESSON METADATA: travel and transportation vocabulary such as il treno, l'aereo, la macchina, il biglietto, la stazione.
 Generated sentences should naturally cover this source scope.
 
@@ -335,7 +292,6 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Article contractions are incorrect (e.g., l'aereo not la aereo)
 - Translations are in English instead of Portuguese
 - Gender agreement is incorrect
-- Romanization contains any text (should be null)
 
 CONTEXT EXPECTATIONS:
 - Sentences about traveling, booking tickets, transportation
@@ -365,8 +321,6 @@ LANGUAGE: Brazilian Portuguese output required for translations (NOT English).
 
 TOPIC: Spanish sentences for shopping - using shopping vocabulary.
 
-SCRIPT: Roman (romanization should be null)
-
 SOURCE LESSON METADATA: shopping and price vocabulary such as comprar, la tienda, el precio, caro, barato.
 Generated sentences should naturally cover this source scope.
 
@@ -377,7 +331,6 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Verb conjugation is incorrect (comprar conjugated forms)
 - Adjective gender agreement is wrong (caro/cara, barato/barata)
 - Translations are in English instead of Portuguese
-- Romanization contains any text (should be null)
 
 CONTEXT EXPECTATIONS:
 - Sentences about buying, prices, stores
@@ -406,8 +359,6 @@ LANGUAGE: Latin American Spanish output required for translations (NOT English).
 
 TOPIC: French sentences for weather - using weather vocabulary.
 
-SCRIPT: Roman (romanization should be null)
-
 SOURCE LESSON METADATA: weather nouns and expressions such as le soleil, la pluie, le vent, il fait chaud, il fait froid.
 Generated sentences should naturally cover this source scope.
 
@@ -417,11 +368,10 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Sentences drift away from the source lesson scope
 - Weather expressions are used incorrectly
 - Translations are in English instead of Spanish
-- Romanization contains any text (should be null)
 
 CONTEXT EXPECTATIONS:
 - Sentences describing weather conditions
-- Planning lessons based on weather
+- Planning activities based on weather
 - Natural weather-related conversations
 
 ${SHARED_EXPECTATIONS}
@@ -446,27 +396,18 @@ LANGUAGE: Latin American Spanish output required for translations (NOT English).
 
 TOPIC: Japanese sentences for time expressions - using time-related vocabulary.
 
-SCRIPT: Non-Roman (romanization MUST be included)
-
 SOURCE LESSON METADATA: basic time expressions such as 今日, 明日, 昨日, 朝, 夜.
 Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: Beginner-to-intermediate level. Chapter "Time and Daily Life" + basic time words = foundational vocabulary but with context for short sentences.
 
-ROMANIZATION REQUIREMENTS:
-- MUST include romaji for all Japanese sentences
-- Standard Hepburn romanization preferred
-- Time words: 今日 (kyou), 明日 (ashita), 昨日 (kinou), 朝 (asa), 夜 (yoru)
-- Penalize if romanization is missing or uses non-standard systems
-
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Sentences drift away from the source lesson scope
 - Time expressions are used incorrectly in context
 - Translations are in English instead of Spanish
-- Romanization is missing or incorrect
 
 CONTEXT EXPECTATIONS:
-- Sentences about daily lessons and schedules
+- Sentences about daily routines and schedules
 - References to different times of day
 - Natural Japanese time expressions
 
@@ -493,29 +434,20 @@ LANGUAGE: English output required for translations.
 
 TOPIC: Mandarin Chinese sentences for common verbs - using action verbs.
 
-SCRIPT: Non-Roman (romanization MUST be included)
-
 SOURCE LESSON METADATA: common action verbs such as 吃, 喝, 看, 听, 说.
 Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: Beginner level. Chapter "Essential Verbs" + basic action verbs = foundational vocabulary.
-
-ROMANIZATION REQUIREMENTS:
-- MUST include pinyin for all Chinese sentences
-- Include tone marks or numbers
-- Verbs: 吃 (chī), 喝 (hē), 看 (kàn), 听 (tīng), 说 (shuō)
-- Penalize if romanization is missing or doesn't include tones
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Sentences drift away from the source lesson scope
 - Chinese word order is incorrect
 - Aspect markers are used incorrectly (了, 着, 过)
 - Translations don't match the Chinese sentences
-- Romanization is missing or doesn't include tones
 
 CONTEXT EXPECTATIONS:
 - Sentences demonstrating various uses of these common verbs
-- Daily life lessons (eating, drinking, watching, listening, speaking)
+- Daily life activities (eating, drinking, watching, listening, speaking)
 - Natural Chinese sentence structures
 
 ${SHARED_EXPECTATIONS}
@@ -539,25 +471,16 @@ LANGUAGE: English output required for translations.
 
 TOPIC: Russian sentences for places in the city - using location vocabulary.
 
-SCRIPT: Non-Roman (romanization MUST be included)
-
 SOURCE LESSON METADATA: common city places such as магазин, ресторан, парк, школа, библиотека.
 Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: Beginner-to-intermediate level. Chapter "Around Town" + common location nouns = practical vocabulary that requires preposition usage.
-
-ROMANIZATION REQUIREMENTS:
-- MUST include romanized Russian for all sentences
-- Standard transliteration system
-- Words: магазин (magazin), ресторан (restoran), парк (park), школа (shkola), библиотека (biblioteka)
-- Penalize if romanization is missing or incorrect
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Sentences drift away from the source lesson scope
 - Case endings are incorrect (prepositional for location, accusative for direction)
 - Preposition usage is wrong (в/на)
 - Translations don't match the Russian sentences
-- Romanization is missing or uses non-standard systems
 
 CONTEXT EXPECTATIONS:
 - Sentences about going to places, being at places
@@ -586,25 +509,16 @@ LANGUAGE: English output required for translations.
 
 TOPIC: Arabic sentences for common adjectives - using descriptive vocabulary.
 
-SCRIPT: Non-Roman (romanization MUST be included)
-
 SOURCE LESSON METADATA: common descriptive adjectives such as كبير, صغير, جميل, جديد, قديم.
 Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: Beginner-to-intermediate level. Chapter "Describing Things" + basic adjectives = foundational vocabulary, but Arabic adjective agreement requires some complexity.
-
-ROMANIZATION REQUIREMENTS:
-- MUST include romanized Arabic for all sentences
-- Standard transliteration
-- Words: كبير (kabir), صغير (saghir), جميل (jamil), جديد (jadid), قديم (qadim)
-- Penalize if romanization is missing or incorrect
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Sentences drift away from the source lesson scope
 - Adjective-noun agreement is incorrect (gender, number)
 - Word order is unnatural
 - Translations don't match the Arabic sentences
-- Romanization is missing or uses non-standard systems
 
 CONTEXT EXPECTATIONS:
 - Sentences describing objects, people, or places
@@ -634,8 +548,6 @@ LANGUAGE: English output required for translations.
 
 TOPIC: Portuguese sentences for emotions and feelings - using emotion vocabulary.
 
-SCRIPT: Roman (romanization should be null)
-
 SOURCE LESSON METADATA: emotion and physical-state expressions such as feliz, triste, cansado, com fome, com sede.
 Generated sentences should naturally cover this source scope.
 
@@ -646,7 +558,6 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Estar vs ser usage is incorrect for states (estar feliz, not ser feliz for temporary states)
 - Gender agreement is wrong (cansado/cansada)
 - Translations don't match the Portuguese sentences
-- Romanization contains any text (should be null)
 
 CONTEXT EXPECTATIONS:
 - Sentences expressing how someone feels
@@ -675,8 +586,6 @@ LANGUAGE: Brazilian Portuguese output required for translations (NOT English).
 
 TOPIC: German sentences for daily routines - using routine action vocabulary.
 
-SCRIPT: Roman (romanization should be null)
-
 SOURCE LESSON METADATA: daily routine verbs such as aufstehen, frühstücken, arbeiten, schlafen, essen.
 Generated sentences should naturally cover this source scope.
 
@@ -687,10 +596,9 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Separable prefix verbs are handled incorrectly (aufstehen -> ich stehe auf)
 - Verb conjugation is wrong
 - Translations are in English instead of Portuguese
-- Romanization contains any text (should be null)
 
 CONTEXT EXPECTATIONS:
-- Sentences about daily lessons and schedules
+- Sentences about daily routines and schedules
 - Morning, work, and evening routines
 - Natural German verb usage in context
 
@@ -716,24 +624,15 @@ LANGUAGE: English output required for translations.
 
 TOPIC: Thai sentences for polite expressions - using politeness vocabulary.
 
-SCRIPT: Non-Roman (romanization MUST be included)
-
 SOURCE LESSON METADATA: essential polite expressions such as ขอบคุณ, ขอโทษ, ได้โปรด, สวัสดี, ลาก่อน.
 Generated sentences should naturally cover this source scope.
 
 DIFFICULTY: Beginner level. Chapter "Basic Politeness" + common polite expressions = foundational vocabulary.
 
-ROMANIZATION REQUIREMENTS:
-- MUST include romanized Thai for all sentences
-- Standard transliteration with tone indicators where helpful
-- Words: ขอบคุณ (khob khun), ขอโทษ (kho thot), etc.
-- Penalize if romanization is missing or unclear
-
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Sentences drift away from the source lesson scope
 - Politeness particles are missing where required (ครับ/คะ)
 - Translations don't match the Thai sentences
-- Romanization is missing or inconsistent
 
 VOCABULARY NATURALNESS NOTE:
 - ได้โปรด is inherently formal/pleading in Thai. Since it is part of the source scope, accept it in various polite request contexts (asking for help, directions, favors, etc.)
@@ -766,8 +665,6 @@ LANGUAGE: English output required for translations.
 
 TOPIC: Spanish sentences for advanced grammar - subjunctive mood with complex verb forms and abstract concepts.
 
-SCRIPT: Roman (romanization should be null)
-
 SOURCE LESSON METADATA: advanced subjunctive and concessive expressions such as hubiera sabido, a pesar de que, no obstante, en caso de que, siempre y cuando.
 Generated sentences should naturally cover this source scope.
 
@@ -782,7 +679,6 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Subjunctive mood is used incorrectly
 - Conditional/hypothetical structures are grammatically wrong
 - Translations don't accurately convey the nuanced meaning
-- Romanization contains any text (should be null)
 
 CONTEXT EXPECTATIONS:
 - Sentences demonstrating complex hypothetical scenarios

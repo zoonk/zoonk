@@ -1,50 +1,86 @@
 {
   "expectations": "\nEDGE CASE: SIMPLE LESSON\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. SCOPE CHECK: This is a straightforward task. Assess whether the steps are:\n   - Clear and followable\n   - Appropriate for the actual complexity of saving a document\n\n2. COMPLETENESS CHECK: Steps should include:\n   - The actual save action (via menu or keyboard shortcut)\n   - Some form of verification that save succeeded\n\n3. WHAT IS NOT PADDING:\n   - Teaching multiple ways to save (menu AND keyboard shortcut) is good pedagogy, not padding\n   - Having the user confirm they have content to save is reasonable guidance\n   - Verification steps that teach users what to look for are valuable\n   - Do NOT penalize for thoroughness that helps beginners\n\n4. The number of steps should match what's needed to clearly explain the process. A few steps or several steps can both be appropriate depending on how the author chooses to break down the task.\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n- Do NOT penalize for JSON output format differences (e.g., wrapping the array in an object like `{\"steps\": [...]}` instead of a raw array). This is a schema/parsing concern, not a content quality issue\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the lesson as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
-  "judgedAt": "2026-05-24T18:29:50.400Z",
+  "judgedAt": "2026-07-10T17:26:51.887Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.7",
+      "judgeId": "anthropic/claude-opus-4.8",
       "rankings": [
         {
-          "anonymousId": "Model E",
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Complete, well-sequenced procedure covering save action, dialog handling, naming, and multiple verification points via title bar asterisk. Imperative language throughout and beginner-friendly guidance without padding.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Thorough and clear, teaching both menu and keyboard shortcut with solid verification via title bar. Location step precedes naming which is a slightly unusual order but still followable and correct.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
           "modelId": "openai/gpt-5.5",
-          "reasoning": "Excellent coverage with both keyboard shortcut and dialog handling, clear imperative steps, and proper verification. Concise without being padded, handles both new and existing document scenarios well.",
+          "reasoning": "Clean keyboard-shortcut-first approach with conditional dialog handling and good verification. Correct sequence and imperative language throughout.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "Complete menu-based procedure with format check, verification, and shortcut teaching. All steps imperative and logically ordered; slightly long but not padded.",
           "score": 9
         },
         {
           "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Clear, well-sequenced steps with good verification. Uses imperative language and covers the essential save flow. Slightly less complete than E (no keyboard shortcut) but very solid.",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Concise, accurate keyboard-shortcut approach with proper dialog handling and clear verification via unsaved indicator. Well-grouped and imperative.",
           "score": 8
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Good coverage including both menu and keyboard shortcut. Steps are clear and action-oriented. Minor weakness: keyboard shortcut placed at the end feels slightly disconnected from the main flow, and verification is embedded rather than explicit.",
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Thorough with good verification and both menu and shortcut methods. Clear and well-sequenced; minor length but appropriate for beginners.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Compact and correct with menu save and title bar verification. Solid but naming comes after location in a slightly odd order; still clear.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Clean shortcut-based flow with verification by re-pressing the shortcut, a valid technique. Concise and accurate.",
           "score": 8
         },
         {
           "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Correct menu-based sequence with title bar verification, though name-before-location ordering is slightly reversed from typical dialogs. Still clear and followable.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Correct backstage-menu procedure with naming, location, and shortcut. Verification is embedded in the save step rather than a dedicated confirmation, slightly weaker but adequate.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
           "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Clear steps with good verification. Defaults to Save As which is reasonable for first save. Action-oriented language throughout. Missing keyboard shortcut alternative but otherwise solid.",
+          "reasoning": "Uses Save As instead of Save, which is a valid first-save approach but doesn't teach the simpler Save action for the basic lesson. Otherwise clear and complete with verification.",
           "score": 7
         },
         {
-          "anonymousId": "Model A",
+          "anonymousId": "Model K",
           "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Thorough and clear with good verification. However, defaults entirely to Save As path and adds a file format step that may be excessive. Text fields appear within length limits and steps are well-ordered.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Comprehensive but several text fields likely exceed the 300-character limit (steps 3, 5, 6 are quite long). Content is otherwise accurate and well-sequenced with helpful verification cues.",
+          "reasoning": "Save As approach with file-format step; clear and verified but focuses on Save As rather than the simpler Save, and adds format detail that slightly overcomplicates a basic lesson.",
           "score": 6
         },
         {
-          "anonymousId": "Model B",
+          "anonymousId": "Model A",
           "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Empty output with no content. Completely unusable for the lesson.",
+          "reasoning": "Empty output with no title or text; provides no instructions whatsoever and is completely unusable.",
           "score": 1
         }
       ]
@@ -53,92 +89,164 @@
       "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "This model provides a perfectly linear, easy-to-follow sequence by explicitly teaching the 'Save As' flow, which avoids any confusing conditional steps for beginners. It includes clear, actionable language, concrete examples for file names, and a great verification step.",
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Excellent comprehensive guide. Covers the basic menu method, file location and naming, verification, and teaches the keyboard shortcut as a pedagogical bonus. Uses clear, imperative language and meets all criteria perfectly.",
           "score": 10
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Like Model A, this model wisely uses the 'Save As' path to create a foolproof, linear procedure. It uses strong imperative language, excellent logical grouping, and provides great contextual advice on when to use this specific option.",
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Outstanding thoroughness. Helpful references to unsaved indicators (asterisks) and clear guidance through the Save dialog and verification. Formatting and action-oriented language are flawless.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Excellent pedagogical approach. Identifying unsaved changes before starting is a great tip for beginners, and the steps cover everything from saving to verifying without unnecessary padding.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Strong guide that correctly describes the \"backstage menu\" typical in Office software. Excellent progression from saving to verification, ending with a highly useful shortcut tip.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "Comprehensive and well-structured. Provides great advice on choosing a recognizable file name, checking file formats, and verifying via the title bar.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Clear and concise. Effectively uses the keyboard shortcut as the primary action and correctly guides the user through the save dialog and verification. Fully meets all expectations.",
           "score": 10
         },
         {
           "anonymousId": "Model D",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Highly detailed and thorough. It successfully attempts to teach both the 'Save' and 'Save As' conditional paths, though it slightly drops the conditional framing in later steps. The practical advice on avoiding special characters and checking the address bar is excellent.",
-          "score": 9
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Strong, actionable steps. Good handling of the conditional Save dialog for new files and solid verification step. Language is strictly imperative.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Very detailed and clear. Adding the step to check the file format is a nice touch for office software essentials, and the procedure is flawlessly logical.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Simple, straightforward, and highly effective. Logically groups the save dialog actions and includes clear verification without overcomplicating the task.",
+          "score": 10
         },
         {
           "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Teaching the keyboard shortcut first is a great, practical approach, and the steps handle the conditional nature of saving reasonably well. It loses a point only because it drops the 'if prompted' framing by Step 5, which could confuse users whose document saved instantly.",
-          "score": 9
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Perfectly valid procedure utilizing the 'Save As' function, which is appropriate for initial saves. Clear, logically grouped, and includes good verification.",
+          "score": 10
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "The sequence is generally strong and adheres well to all format requirements. Teaching the keyboard shortcut at the end is good pedagogy, though it feels slightly disjointed as a numbered step in a linear sequence rather than an alternative method.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model C",
+          "anonymousId": "Model G",
           "modelId": "openai/gpt-5.4",
-          "reasoning": "The model meets most basic requirements and uses imperative language well. However, placing the file naming step before folder selection is an unnatural flow for standard save dialogs, and the conditional logic for existing documents is handled clumsily.",
-          "score": 7
+          "reasoning": "Concise and effective. While naming the file before choosing the folder is slightly less standard, it is fully valid within a dialog box. Meets all task expectations.",
+          "score": 10
         },
         {
-          "anonymousId": "Model B",
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Great concise guide. Using the keyboard shortcut a second time to verify the save is a clever pedagogical choice that builds muscle memory.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
           "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "The model produced empty strings for the step text and title, rendering it completely unusable.",
+          "reasoning": "Completely unusable. The output consists of empty strings for both the step text and title.",
           "score": 1
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.5",
+      "judgeId": "openai/gpt-5.6-sol",
       "rankings": [
         {
-          "anonymousId": "Model E",
+          "anonymousId": "Model D",
           "modelId": "openai/gpt-5.5",
-          "reasoning": "Clear, concise, and directly teaches a valid save method with the keyboard shortcut. It handles the first-save dialog, includes naming/location steps, and provides a useful verification check.",
-          "score": 9
+          "reasoning": "Provides a clear shortcut-based procedure, handles both previously saved and new documents, and ends with practical verification. Conditional steps are well phrased and the instructions remain concise and application-neutral.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Clearly teaches both menu and keyboard methods, handles first-time saving, and verifies success through the unsaved indicator. The extra reminder to save regularly is useful beginner guidance rather than padding.",
+          "score": 9.7
         },
         {
           "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Strong menu-based procedure that correctly uses Save, handles both already-saved and new documents, and verifies success via the title bar. The steps are practical and easy for a beginner to follow.",
-          "score": 9
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Offers a compact, accurate shortcut workflow with location, naming, final save, and strong verification. The instruction to simply “follow” a replace prompt is somewhat vague, but the main procedure is highly usable.",
+          "score": 9.4
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Comprehensive and accurate, with good conditional handling for new versus previously saved documents and multiple verification cues. It is slightly more verbose and relies somewhat on asterisks/unsaved indicators that may not appear in every app, but it remains very usable.",
-          "score": 8
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Concise and logically sequenced, with a clear branch for documents that were previously saved. It includes verification for the first-save workflow, though verification for the already-saved branch is less explicit.",
+          "score": 9.2
         },
         {
           "anonymousId": "Model G",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Clear and well-sequenced Save As workflow with a location, filename, save action, and verification. It is most suited to first-time saving and is less robust for a document that was already saved, but the procedure itself is valid.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Covers the standard Save command, first-save prompts, and also teaches the keyboard shortcut, which is pedagogically useful. However, the post-Save steps are not clearly conditional if the file was already saved, and verification is less explicit than in the strongest outputs.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "The steps are mostly clear and include saving plus verification, but the workflow is narrowly framed around Save As and adds a file type step that may be unnecessary or too Word-specific. It is still usable for a first-time save, but less generally aligned with saving the current document.",
-          "score": 7
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Gives a simple, followable menu workflow with naming, location selection, the actual save action, and verification. Choosing the name before the folder is valid, though the conditional save-window branch could be marked more consistently across later steps.",
+          "score": 9
         },
         {
           "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Thoroughly covers menu saving, first-time save details, verification, and keyboard shortcuts in beginner-friendly language. After noting that an existing file saves immediately, it presents the dialog steps unconditionally, which could cause minor confusion.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Provides a detailed and practical workflow with useful first-save branching and an explicit final verification. Some later dialog steps are not clearly conditional, and its emphasis on an asterisk is not equally applicable across all office applications.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Presents a coherent first-time Save As workflow with location, naming, the save action, and title-bar verification. It does not address ordinary saving of an existing document and could lead users to create a new copy when they only need to update the current file.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "The shortcut-first sequence is clear and includes appropriate first-save setup plus title-bar confirmation. Pressing the shortcut again and seeing no dialog is not especially strong evidence of success, making the final verification less useful than an unsaved-status check.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Includes the essential menu action, first-save setup, embedded title-bar verification, and a useful keyboard shortcut. References to a backstage menu, sidebar, and Browse make it more Microsoft-specific than the generic lesson context.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "Covers the complete save process, verifies the filename, and teaches the keyboard shortcut. The file-format detour is unnecessary for this simple lesson, and instructing the learner to make an arbitrary edit solely to save again could alter content needlessly.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Includes the core Save As action and a visible verification point, but assumes Microsoft Word and adds an unnecessary file-format decision. Its final instruction specifically expects `Project_Draft_V1` even though that was only an example name, creating a concrete inconsistency.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model A",
           "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "The output contains no usable instructional content. It omits the save action, verification, and actionable steps entirely.",
+          "reasoning": "Contains no usable instruction, save action, or verification. It does not teach the requested lesson.",
           "score": 1
         }
       ]

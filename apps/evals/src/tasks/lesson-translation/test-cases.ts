@@ -1,337 +1,264 @@
-const SHARED_EXPECTATIONS = `
-EVALUATION CRITERIA:
+import { type TestCase } from "@/lib/types";
+import { type TranslationParams } from "@zoonk/ai/tasks/lessons/language/translation";
+import { type LessonTranslationExpected } from "./scorer";
 
-1. TRANSLATION ACCURACY (CRITICAL - highest priority):
-   - The translation MUST be a correct dictionary meaning for the word
-   - The translation should be contextually appropriate (most common meaning)
-   - Penalize SEVERELY if the translation is incorrect or for a different word
-   - Accept multiple valid translations (e.g., "eat" or "eats" for a verb)
-   - Do NOT require exact wording - accept synonyms that convey the same meaning
+type LessonTranslationTestCase = TestCase<LessonTranslationExpected, TranslationParams>;
 
-2. FUNCTION WORD HANDLING:
-   - Articles (the, a), prepositions (in, on), conjunctions (and, but), and particles MUST still receive translations
-   - Do NOT penalize for translating function words as function words (e.g., "el" → "the" is correct)
-   - Function words may have multiple valid translations depending on context
+type LessonTranslationCaseParams = LessonTranslationExpected &
+  Pick<TranslationParams, "targetLanguage" | "userLanguage" | "word"> & { id: string };
 
-3. BREVITY:
-   - Translations should be concise: one or two words maximum
-   - Do NOT provide full definitions or explanations
-   - Penalize if the translation is a sentence or long phrase instead of a word
+/**
+ * Pairs one standalone source word with every accepted concise dictionary
+ * translation. Structured gold values make correctness deterministic without
+ * duplicating a prose rubric for a judge model.
+ */
+function lessonTranslationCase({
+  accepted,
+  id,
+  targetLanguage,
+  userLanguage,
+  word,
+}: LessonTranslationCaseParams): LessonTranslationTestCase {
+  return { expected: { accepted }, id, userInput: { targetLanguage, userLanguage, word } };
+}
 
-4. NO HALLUCINATION:
-   - The output should contain only the translation field
-   - The translation must correspond to the actual input word, not a related or similar word
-   - Do NOT penalize for minor formatting differences
-
-ANTI-CHECKLIST GUIDANCE (CRITICAL):
-- Do NOT require exact translations - accept any valid dictionary meaning
-- Do NOT penalize for choosing one valid translation over another
-- FOCUS ON: translation accuracy, brevity
-`;
-
-export const TEST_CASES = [
-  {
-    expectations: `
-TARGET LANGUAGE: Spanish
-USER LANGUAGE: English
-
-WORD: "el"
-
-This is a Spanish definite article (masculine singular):
-- Most common translation: "the"
-- This is a function word that must still receive a translation
-
-QUALITY CHECK:
-- Should translate to "the" or equivalent
-- Should NOT be null or empty
-- Tests handling of function words (articles)
-
-${SHARED_EXPECTATIONS}
-    `,
+export const TEST_CASES: LessonTranslationTestCase[] = [
+  lessonTranslationCase({
+    accepted: ["the"],
     id: "es-en-el",
-    userInput: { targetLanguage: "es", userLanguage: "en", word: "el" },
-  },
-  {
-    expectations: `
-TARGET LANGUAGE: Spanish
-USER LANGUAGE: English
-
-WORD: "gato"
-
-This is a common Spanish noun meaning "cat":
-- Clear, unambiguous translation
-- Simple content word
-
-QUALITY CHECK:
-- Should translate to "cat"
-- Tests basic noun translation
-
-${SHARED_EXPECTATIONS}
-    `,
+    targetLanguage: "es",
+    userLanguage: "en",
+    word: "el",
+  }),
+  lessonTranslationCase({
+    accepted: ["cat"],
     id: "es-en-gato",
-    userInput: { targetLanguage: "es", userLanguage: "en", word: "gato" },
-  },
-  {
-    expectations: `
-TARGET LANGUAGE: Spanish
-USER LANGUAGE: English
-
-WORD: "come"
-
-This is a Spanish verb meaning "eats" or "eat" (third person singular present):
-- Valid translations: "eats", "eat", "he/she eats"
-- Accept any of these forms
-
-QUALITY CHECK:
-- Should translate to "eats" or "eat"
-- Tests verb translation
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "es-en-come",
-    userInput: { targetLanguage: "es", userLanguage: "en", word: "come" },
-  },
-  {
-    expectations: `
-TARGET LANGUAGE: Japanese
-USER LANGUAGE: English
-
-WORD: "猫"
-
-This is a Japanese word meaning "cat":
-- Clear, unambiguous translation
-- Uses kanji (non-Roman script)
-
-QUALITY CHECK:
-- Should translate to "cat"
-- Tests non-Roman script word translation
-
-${SHARED_EXPECTATIONS}
-    `,
+    targetLanguage: "es",
+    userLanguage: "en",
+    word: "gato",
+  }),
+  lessonTranslationCase({
+    accepted: ["eating"],
+    id: "es-en-comiendo",
+    targetLanguage: "es",
+    userLanguage: "en",
+    word: "comiendo",
+  }),
+  lessonTranslationCase({
+    accepted: ["cat"],
     id: "ja-en-neko",
-    userInput: { targetLanguage: "ja", userLanguage: "en", word: "猫" },
-  },
-  {
-    expectations: `
-TARGET LANGUAGE: Japanese
-USER LANGUAGE: English
-
-WORD: "食べる"
-
-This is a Japanese verb meaning "to eat":
-- Valid translations: "eat", "to eat"
-- Uses hiragana and kanji (non-Roman script)
-
-QUALITY CHECK:
-- Should translate to "eat" or "to eat"
-- Tests verb translation from non-Roman script
-
-${SHARED_EXPECTATIONS}
-    `,
+    targetLanguage: "ja",
+    userLanguage: "en",
+    word: "猫",
+  }),
+  lessonTranslationCase({
+    accepted: ["eat", "to eat"],
     id: "ja-en-taberu",
-    userInput: { targetLanguage: "ja", userLanguage: "en", word: "食べる" },
-  },
-  {
-    expectations: `
-TARGET LANGUAGE: Japanese
-USER LANGUAGE: English
-
-WORD: "は"
-
-This is a Japanese particle used as a topic marker:
-- Valid translations: varies by context, but common equivalents include "as for" or simply marking it as a topic particle
-- This is a function word that must still receive a translation
-- Accept any reasonable translation that conveys its grammatical role
-
-QUALITY CHECK:
-- Should provide some translation (even if approximate like "as for" or "topic marker")
-- Tests function word handling in non-Roman scripts
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "ja-en-wa",
-    userInput: { targetLanguage: "ja", userLanguage: "en", word: "は" },
-  },
-  {
-    expectations: `
-TARGET LANGUAGE: German
-USER LANGUAGE: English
-
-WORD: "der"
-
-This is a German definite article (masculine nominative):
-- Most common translation: "the"
-- This is a function word that must still receive a translation
-
-QUALITY CHECK:
-- Should translate to "the"
-- Tests function word handling (gendered articles)
-
-${SHARED_EXPECTATIONS}
-    `,
+    targetLanguage: "ja",
+    userLanguage: "en",
+    word: "食べる",
+  }),
+  lessonTranslationCase({
+    accepted: ["the"],
     id: "de-en-der",
-    userInput: { targetLanguage: "de", userLanguage: "en", word: "der" },
-  },
-  {
-    expectations: `
-TARGET LANGUAGE: German
-USER LANGUAGE: English
-
-WORD: "Hund"
-
-This is a common German noun meaning "dog":
-- Clear, unambiguous translation
-- Simple content word
-
-QUALITY CHECK:
-- Should translate to "dog"
-- Tests basic noun translation from German
-
-${SHARED_EXPECTATIONS}
-    `,
+    targetLanguage: "de",
+    userLanguage: "en",
+    word: "der",
+  }),
+  lessonTranslationCase({
+    accepted: ["dog"],
     id: "de-en-hund",
-    userInput: { targetLanguage: "de", userLanguage: "en", word: "Hund" },
-  },
-  {
-    expectations: `
-TARGET LANGUAGE: German
-USER LANGUAGE: English
-
-WORD: "läuft"
-
-This is a German verb meaning "runs" or "walks" (third person singular present of "laufen"):
-- Valid translations: "runs", "walks", "is running", "is walking"
-- Contains umlaut (ä) which is standard in German Roman script
-
-QUALITY CHECK:
-- Should translate to "runs" or "walks" (or similar valid form)
-- Tests handling of words with umlauts
-- Tests verb translation
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "de-en-laeuft",
-    userInput: { targetLanguage: "de", userLanguage: "en", word: "läuft" },
-  },
-  {
-    expectations: `
-TARGET LANGUAGE: Korean
-USER LANGUAGE: Portuguese
-
-WORD: "고양이"
-
-This is a Korean word meaning "cat" (gato in Portuguese):
-- Uses Hangul (non-Roman script)
-- Output should be in Portuguese, not English
-
-QUALITY CHECK:
-- Should translate to "gato" (Portuguese for "cat")
-- Tests non-English output language
-
-${SHARED_EXPECTATIONS}
-    `,
+    targetLanguage: "de",
+    userLanguage: "en",
+    word: "Hund",
+  }),
+  lessonTranslationCase({
+    accepted: ["gato"],
     id: "ko-pt-goyangi",
-    userInput: { targetLanguage: "ko", userLanguage: "pt", word: "고양이" },
-  },
-  {
-    expectations: `
-TARGET LANGUAGE: Korean
-USER LANGUAGE: Portuguese
-
-WORD: "는"
-
-This is a Korean topic-marking particle:
-- Similar to Japanese "は" in function
-- Output should be in Portuguese
-- Accept any reasonable translation of this grammatical particle
-
-QUALITY CHECK:
-- Should provide a Portuguese translation or grammatical description
-- Tests function word handling with non-English output
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "ko-pt-neun",
-    userInput: { targetLanguage: "ko", userLanguage: "pt", word: "는" },
-  },
-  {
-    expectations: `
-TARGET LANGUAGE: Korean
-USER LANGUAGE: Portuguese
-
-WORD: "먹다"
-
-This is a Korean verb meaning "to eat" (comer in Portuguese):
-- Basic verb in dictionary form
-- Output should be in Portuguese
-
-QUALITY CHECK:
-- Should translate to "comer" (Portuguese for "to eat")
-- Tests verb translation with non-English output
-
-${SHARED_EXPECTATIONS}
-    `,
+    targetLanguage: "ko",
+    userLanguage: "pt",
+    word: "고양이",
+  }),
+  lessonTranslationCase({
+    accepted: ["comer"],
     id: "ko-pt-meokda",
-    userInput: { targetLanguage: "ko", userLanguage: "pt", word: "먹다" },
-  },
-  {
-    expectations: `
-TARGET LANGUAGE: Arabic
-USER LANGUAGE: Spanish
-
-WORD: "قطة"
-
-This is an Arabic word meaning "cat" (gato/gata in Spanish):
-- Uses Arabic script (RTL, non-Roman)
-- Output should be in Spanish
-
-QUALITY CHECK:
-- Should translate to "gato" or "gata" (Spanish for "cat")
-- Tests RTL script with Spanish output
-
-${SHARED_EXPECTATIONS}
-    `,
+    targetLanguage: "ko",
+    userLanguage: "pt",
+    word: "먹다",
+  }),
+  lessonTranslationCase({
+    accepted: ["gata", "gato"],
     id: "ar-es-qitta",
-    userInput: { targetLanguage: "ar", userLanguage: "es", word: "قطة" },
-  },
-  {
-    expectations: `
-TARGET LANGUAGE: Arabic
-USER LANGUAGE: Spanish
-
-WORD: "في"
-
-This is an Arabic preposition meaning "in" (en in Spanish):
-- Common function word (preposition)
-- Output should be in Spanish
-
-QUALITY CHECK:
-- Should translate to "en" (Spanish for "in")
-- Tests function word handling with RTL script and Spanish output
-
-${SHARED_EXPECTATIONS}
-    `,
+    targetLanguage: "ar",
+    userLanguage: "es",
+    word: "قطة",
+  }),
+  lessonTranslationCase({
+    accepted: ["en"],
     id: "ar-es-fi",
-    userInput: { targetLanguage: "ar", userLanguage: "es", word: "في" },
-  },
-  {
-    expectations: `
-TARGET LANGUAGE: Arabic
-USER LANGUAGE: Spanish
-
-WORD: "البيت"
-
-This is an Arabic word meaning "the house" (la casa in Spanish):
-- Contains the definite article "ال" (al-) attached to the noun
-- Output should be in Spanish
-
-QUALITY CHECK:
-- Should translate to "la casa" or "casa" or "el hogar" (Spanish for "the house" or "house")
-- Tests handling of attached articles in Arabic with Spanish output
-
-${SHARED_EXPECTATIONS}
-    `,
+    targetLanguage: "ar",
+    userLanguage: "es",
+    word: "في",
+  }),
+  lessonTranslationCase({
+    accepted: ["la casa", "el hogar"],
     id: "ar-es-albayt",
-    userInput: { targetLanguage: "ar", userLanguage: "es", word: "البيت" },
-  },
+    targetLanguage: "ar",
+    userLanguage: "es",
+    word: "البيت",
+  }),
+  lessonTranslationCase({
+    accepted: ["houses", "homes"],
+    id: "de-en-haeuser",
+    targetLanguage: "de",
+    userLanguage: "en",
+    word: "Häuser",
+  }),
+  lessonTranslationCase({
+    accepted: ["pregnant", "expecting"],
+    id: "es-en-embarazada",
+    targetLanguage: "es",
+    userLanguage: "en",
+    word: "embarazada",
+  }),
+  lessonTranslationCase({
+    accepted: ["girl"],
+    id: "es-en-nina",
+    targetLanguage: "es",
+    userLanguage: "en",
+    word: "niña",
+  }),
+  lessonTranslationCase({
+    accepted: ["bookstore", "book store", "bookshop", "book shop"],
+    id: "fr-en-librairie",
+    targetLanguage: "fr",
+    userLanguage: "en",
+    word: "librairie",
+  }),
+  lessonTranslationCase({
+    accepted: ["poison"],
+    id: "de-en-gift",
+    targetLanguage: "de",
+    userLanguage: "en",
+    word: "Gift",
+  }),
+  lessonTranslationCase({
+    accepted: ["relatives"],
+    id: "it-en-parenti",
+    targetLanguage: "it",
+    userLanguage: "en",
+    word: "parenti",
+  }),
+  lessonTranslationCase({
+    accepted: ["bicycle", "bike", "cycle"],
+    id: "pl-en-rower",
+    targetLanguage: "pl",
+    userLanguage: "en",
+    word: "rower",
+  }),
+  lessonTranslationCase({
+    accepted: ["letter"],
+    id: "ja-en-tegami",
+    targetLanguage: "ja",
+    userLanguage: "en",
+    word: "手紙",
+  }),
+  lessonTranslationCase({
+    accepted: ["árbol"],
+    id: "en-es-tree",
+    targetLanguage: "en",
+    userLanguage: "es",
+    word: "tree",
+  }),
+  lessonTranslationCase({
+    accepted: ["coração"],
+    id: "en-pt-heart",
+    targetLanguage: "en",
+    userLanguage: "pt",
+    word: "heart",
+  }),
+  lessonTranslationCase({
+    accepted: ["café"],
+    id: "en-fr-coffee",
+    targetLanguage: "en",
+    userLanguage: "fr",
+    word: "coffee",
+  }),
+  lessonTranslationCase({
+    accepted: ["book"],
+    id: "ru-en-kniga",
+    targetLanguage: "ru",
+    userLanguage: "en",
+    word: "книга",
+  }),
+  lessonTranslationCase({
+    accepted: ["and"],
+    id: "ru-en-i",
+    targetLanguage: "ru",
+    userLanguage: "en",
+    word: "и",
+  }),
+  lessonTranslationCase({
+    accepted: ["agua"],
+    id: "hi-es-paani",
+    targetLanguage: "hi",
+    userLanguage: "es",
+    word: "पानी",
+  }),
+  lessonTranslationCase({
+    accepted: ["sea"],
+    id: "el-en-thalassa",
+    targetLanguage: "el",
+    userLanguage: "en",
+    word: "θάλασσα",
+  }),
+  lessonTranslationCase({
+    accepted: ["dog"],
+    id: "he-en-kelev",
+    targetLanguage: "he",
+    userLanguage: "en",
+    word: "כלב",
+  }),
+  lessonTranslationCase({
+    accepted: ["livro"],
+    id: "zh-pt-shu",
+    targetLanguage: "zh",
+    userLanguage: "pt",
+    word: "书",
+  }),
+  lessonTranslationCase({
+    accepted: ["books"],
+    id: "tr-en-kitaplar",
+    targetLanguage: "tr",
+    userLanguage: "en",
+    word: "kitaplar",
+  }),
+  lessonTranslationCase({
+    accepted: ["my house", "my home", "my place"],
+    id: "tr-en-evim",
+    targetLanguage: "tr",
+    userLanguage: "en",
+    word: "evim",
+  }),
+  lessonTranslationCase({
+    accepted: ["livre"],
+    id: "th-fr-nangsue",
+    targetLanguage: "th",
+    userLanguage: "fr",
+    word: "หนังสือ",
+  }),
+  lessonTranslationCase({
+    accepted: ["chat"],
+    id: "id-fr-kucing",
+    targetLanguage: "id",
+    userLanguage: "fr",
+    word: "kucing",
+  }),
+  lessonTranslationCase({
+    accepted: ["猫", "ねこ", "ネコ"],
+    id: "en-ja-cat",
+    targetLanguage: "en",
+    userLanguage: "ja",
+    word: "cat",
+  }),
 ];

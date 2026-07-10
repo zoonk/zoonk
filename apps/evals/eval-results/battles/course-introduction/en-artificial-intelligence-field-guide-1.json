@@ -1,57 +1,75 @@
 {
-  "expectations": "\n      - MUST be in US English\n      - Should make artificial intelligence feel tangible through examples such as predictions, generation, automation, assistants, search, robotics, creative tools, or decision support\n      - Should not become a technical curriculum on neural networks, transformers, backpropagation, RAG, evaluation, or deployment\n      - Should mention realistic paths such as product features, research, data work, operations, creative tooling, or responsible use without implying guaranteed careers\n\n      \n  - Must be written in the specified language\n  - Must include exactly one chapter object with title and description\n  - Must include 3-5 lessons\n  - Every lesson must be an explanation lesson plan, not a practice, quiz, review, capstone, project, or summary\n  - The chapter and lessons must feel like a quick guide to the field, not the first normal technical chapter\n  - Must make the field feel concrete, useful, and interesting for a true beginner\n  - Must include realistic opportunities, careers, roles, projects, communities, or everyday uses connected to the field\n  - Must stay easy enough for a first encounter and avoid deep prerequisites\n  - Must be specific to the course topic, not generic learning motivation\n  - For non-English cases, must not mix in English field, learner, or opportunity labels; translate them naturally\n  - Must not promise salaries, credentials, jobs, fluency, mastery, or guaranteed outcomes\n\n    ",
-  "judgedAt": "2026-07-02T12:06:06.042Z",
+  "expectations": "\n      - MUST be in US English\n      - Should make artificial intelligence feel tangible through examples such as predictions, generation, automation, assistants, search, robotics, creative tools, or decision support\n      - Should not become a technical curriculum on neural networks, transformers, backpropagation, RAG, evaluation, or deployment\n      - Should mention realistic paths such as product features, research, data work, operations, creative tooling, or responsible use without implying guaranteed careers\n\n      \n  - Must be written in the specified language\n  - Must include exactly one chapter object with title and description\n  - Must include 3-5 lessons\n  - Every lesson must be an explanation lesson plan, not a practice, quiz, review, capstone, project, or summary\n  - The chapter and lessons must feel like a quick guide to the field, not the first normal technical chapter\n  - Must make the field feel concrete, useful, and interesting for a true beginner\n  - Must include realistic opportunities, careers, roles, projects, communities, or everyday uses connected to the field\n  - Must stay easy enough for a first encounter and avoid deep prerequisites\n  - Must be specific to the course topic, not generic learning motivation\n  - Must not include lessons about the course itself, the curriculum, the next chapter, the learning path, or how the course goes deeper\n  - Every lesson title must name the subject, a subject-specific concept, a concrete field use, or a field-specific role clearly enough that the course topic is identifiable from the title alone\n  - Generic meta titles such as \"How this course goes deeper\", \"What this course will help you do\", \"Your path forward\", or translated equivalents are a major issue even when the description mentions the course topic\n  - For non-English cases, must not mix in English field, learner, or opportunity labels; translate them naturally\n  - Must not promise salaries, credentials, jobs, fluency, mastery, or guaranteed outcomes\n\n    ",
+  "judgedAt": "2026-07-10T05:45:56.517Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.7",
+      "judgeId": "anthropic/claude-fable-5",
       "rankings": [
         {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Excellent quick guide feel: concrete examples, addresses limits/judgment, and lists diverse realistic roles without promising outcomes. Stays accessible and specific to AI throughout with 5 explanation lessons.",
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Every lesson title explicitly names artificial intelligence, content is concrete with everyday examples, generative AI, and a responsible-use/roles lesson. No course meta, no technical drift, no promised outcomes. Very clean against all expectations.",
           "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "All titles clearly name AI or generative AI, examples are tangible (spam filters, medical imaging, fraud detection), and roles are covered realistically without promises. No lessons about the course itself and stays beginner-appropriate.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Five well-scoped lessons whose titles all name AI, with concrete everyday uses, generative AI, and a strong roles/projects lesson. No course meta and no technical curriculum drift; tone fits a true beginner.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "All titles name artificial intelligence and content covers uses, limits, generative AI, and realistic roles without course meta or promises. Slightly terse and abstract in tone compared to the top outputs, but fully compliant.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Engaging and concrete with strong everyday examples and a limits lesson; most titles name AI clearly. However, the chapter description and final lesson description both drift into course meta ('what this course sets you up to do next'), a rule the expectations flag.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "All four titles name AI and no lesson is about the course, though the chapter description references the full course. Lesson descriptions are noticeably thinner and less vivid than the stronger outputs.",
+          "score": 7
         },
         {
           "anonymousId": "Model A",
-          "modelId": "anthropic/claude-opus-4.8",
-          "reasoning": "Strong concrete examples (face unlock, spam, maps), acknowledges limits/bias, and maps realistic roles including hobbyists. Well-scoped as a quick guide with 5 explanation lessons and no career promises.",
-          "score": 9
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Mostly strong and concrete, but the final lesson title 'Who builds with AI and where this course goes' embeds course meta directly in a lesson title and its description previews the course, violating the no-course-lesson rule. 'Why pattern-finding changed everything' is also weakly topic-identifiable.",
+          "score": 5
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Solid overview with concrete examples, careful judgment framing, and diverse realistic roles. Tone is beginner-friendly without overpromising; meets all structural requirements well.",
-          "score": 8
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Two titles ('Finding patterns in vast amounts of data', 'Why daily technology relies on predictive models') don't clearly identify AI, one lesson drifts into neural-network mechanics, and the final description previews the course. Multiple expectation violations despite decent examples.",
+          "score": 4
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Good big-picture framing with concrete examples and diverse roles/communities. Slightly less vivid than top entries but stays accessible and avoids technical drift or career guarantees.",
-          "score": 8
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Final lesson 'Thinking like an AI builder' is explicitly a course preview promising you will 'master' tools, a forbidden lesson type and a near-promise of mastery. Two other titles ('Teaching machines to find patterns', 'The hidden algorithms in your daily routine') don't clearly name AI.",
+          "score": 3
         },
         {
           "anonymousId": "Model C",
           "modelId": "anthropic/claude-sonnet-5",
-          "reasoning": "Nice concrete framing with everyday examples and varied roles (medicine, art, climate). Final lesson is more course-preview meta but still an explanation; overall a strong beginner guide.",
-          "score": 8
+          "reasoning": "Contains an explicit lesson about the course itself ('How this course will take you further'), which the expectations forbid outright, and the chapter description also previews the course. Other lessons are decent but one title is only weakly topic-identifiable.",
+          "score": 3
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Concrete and beginner-friendly with good everyday examples and role variety. Slight drift toward 'mastering tools' and 'shaping behavior' edges near outcome-promising but stays acceptable.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model H",
+          "anonymousId": "Model B",
           "modelId": "google/gemini-3.1-flash-lite",
-          "reasoning": "Concrete examples and diverse roles, but leans into 'technical literacy' and 'mechanisms,' and says the course provides foundation for projects. Feels slightly more technical/curriculum-adjacent than a quick outside guide.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Drifts toward technical curriculum (neural networks, next-word/pixel prediction mechanics, building intelligent systems) and lacks the responsible-use or limits angle. Roles lesson is thin and implies building outcomes.",
-          "score": 5
+          "reasoning": "Multiple titles fail to identify the topic ('The power of learning from examples', 'Your role in building the future' is a generic meta title flagged as a major issue). Two lesson descriptions also reference the course's skills and literacy, adding course meta violations.",
+          "score": 3
         }
       ]
     },
@@ -59,105 +77,141 @@
       "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model A",
-          "modelId": "anthropic/claude-opus-4.8",
-          "reasoning": "Exceptional output that perfectly balances accessibility with concrete, everyday examples. The explanation of generation through predicting the next word is highly effective for beginners, and it seamlessly integrates realistic roles without relying on technical jargon.",
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Perfect execution of all instructions. The lesson titles explicitly name AI and avoid generic phrasing. Explanations are concrete, grounded in reality, and strictly avoid meta-course references.",
           "score": 10
         },
         {
           "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Outstanding execution that makes the field feel tangible and highly relevant. It thoughtfully addresses both the capabilities and limitations of AI while smoothly introducing realistic career paths and everyday uses.",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Meets all expectations flawlessly. The titles explicitly identify the field, the examples are tangible and realistic, and the content successfully avoids meta-course references or overpromising.",
           "score": 10
         },
         {
-          "anonymousId": "Model B",
+          "anonymousId": "Model G",
           "modelId": "openai/gpt-5.5",
-          "reasoning": "A strong, clear progression of concepts that avoids deep technical prerequisites while grounding the topic in reality. It meets all expectations effectively, though its storytelling is slightly less vibrant than the top models.",
+          "reasoning": "Exceptional alignment with the prompt. It provides realistic, concrete examples of AI without diving into overly technical jargon, and all lesson titles clearly identify the course topic on their own.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Outstanding response that explores practical applications and limitations of AI. The titles are strictly focused on the field, and it completely avoids forbidden meta-references to the curriculum.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Strong output with clear titles that identify the course topic. However, the chapter description includes a meta-reference to the course itself, which slightly weakens the immersion.",
           "score": 8
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "A solid, straightforward guide that covers all required aspects, including roles, daily applications, and core concepts. The lesson descriptions are slightly repetitive in their structure, but it remains a highly functional introduction.",
-          "score": 8
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Acceptable, but the final lesson's description and the chapter description include meta-references to the course. Additionally, lesson 3's title ('predicting the next word') does not explicitly identify the course topic on its own.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Poor due to a major violation: lesson 5 is entirely about the course curriculum and uses a forbidden meta title ('where this course goes'). Lesson 3 also fails to include the course topic clearly in its title.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Poor because lesson 4 uses a generic, forbidden meta title ('Your role in building the future') and its description heavily focuses on the course curriculum, violating explicit negative constraints.",
+          "score": 4
         },
         {
           "anonymousId": "Model C",
           "modelId": "anthropic/claude-sonnet-5",
-          "reasoning": "Acceptable overall, but the final lesson is purely a meta course-preview rather than an explanation of an AI concept, bordering on a constraint violation. Additionally, focusing on an AI outsmarting game experts is less relatable for a concrete, everyday guide.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "google/gemini-3.1-flash-lite",
-          "reasoning": "Acceptable, but titles like 'Machines That Reason' and framing around 'mimicking human problem-solving' border on inaccurate anthropomorphism. It covers the required topics but feels slightly dramatic rather than grounded.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Acceptable, but it explicitly introduces 'artificial neural networks', brushing against the negative constraint to avoid technical curriculum on neural networks. It is also a bit too brief to provide a fully engaging guide compared to higher-ranked models.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Poor because it explicitly promises the learner they will 'master' the tools and concepts, directly violating the strict negative constraint against promising guaranteed outcomes or mastery. Otherwise, the content would have been solid.",
+          "reasoning": "Poor due to a dedicated meta-lesson ('How this course will take you further'), which violates the strict rule against lessons about the course. Lesson 3's title also fails the identifiability rule.",
           "score": 4
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Very poor because three out of four lesson titles fail to identify the course topic, acting as generic descriptions instead. It also includes a meta-course reference in the final lesson.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Very poor. It directly violates the strict constraint against promising mastery ('master in this course'), includes a meta-course lesson, and two lesson titles fail to clearly identify the course topic.",
+          "score": 2
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.5",
+      "judgeId": "openai/gpt-5.6-sol",
       "rankings": [
         {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Best overall fit: it is beginner-friendly, concrete, and specific to AI through predictions, generation, assistants, fraud checks, and decision support. It also includes realistic roles and responsible-use concerns without drifting into a technical curriculum or promising outcomes.",
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "An excellent beginner-friendly field guide with concrete examples of prediction, generation, everyday tools, responsible use, roles, and realistic projects. All five lessons are explanatory, clearly AI-specific, accessible, and free of course-preview or outcome promises.",
           "score": 10
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Strongly meets the expectations with clear beginner framing, tangible AI examples, and realistic roles. It appropriately includes judgment, bias, and human oversight while staying nontechnical and avoiding guarantees.",
-          "score": 9
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Clear, concrete, and well balanced across pattern finding, generative AI, daily decisions, limitations, and responsible professional roles. Every title explicitly identifies the topic, and the content stays approachable without turning into a technical curriculum.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Strong coverage of predictions, generation, decision support, real-world applications, and varied AI roles in only four coherent lessons. It remains beginner-friendly, though references such as language models and machine learning engineering make it marginally more technical than the very best outputs.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "A polished overview connecting AI capabilities and limitations to daily life, creative work, careers, and responsible governance. It is slightly more abstract and model-focused than the top entries, but still fully appropriate for a first encounter.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The four lessons provide a concise, accessible overview of AI capabilities, everyday uses, roles, projects, and communities. The chapter description unnecessarily previews the full course, and the treatment is less concrete and nuanced than the higher-ranked outputs.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Most lessons are vivid and useful, with strong examples, limitations, and realistic roles. However, the final lesson partially discusses what the course will do next, and the next-word-prediction lesson edges toward a narrower technical explanation rather than a broad field guide.",
+          "score": 7.1
         },
         {
           "anonymousId": "Model A",
-          "modelId": "anthropic/claude-opus-4.8",
-          "reasoning": "Very concrete and engaging, with strong everyday examples, limitations, and realistic ways people work with AI. The lesson on next-word prediction edges slightly toward mechanism, but it remains accessible and not overly technical.",
-          "score": 9
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The first four lessons form a strong, responsible, beginner-friendly AI overview with excellent everyday examples. The final lesson explicitly shifts into where the course goes, violating the prohibition on course and curriculum lessons, including in its title.",
+          "score": 6.5
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Clear, concise, and well aligned with the quick-guide requirement, with concrete AI uses and realistic roles, projects, policy groups, and communities. It is slightly less complete than the top outputs because it does not meaningfully address risks or responsible judgment, but it still fits the rubric well.",
-          "score": 9
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "This output includes useful examples, creative possibilities, and several realistic roles, but multiple titles are too generic to identify AI clearly. It also previews course skills and overstates medical imaging by claiming it spots disease earlier than human eyes.",
+          "score": 5.5
         },
         {
           "anonymousId": "Model C",
           "modelId": "anthropic/claude-sonnet-5",
-          "reasoning": "Mostly effective and beginner-friendly, with concrete examples and realistic roles across data, fairness, medicine, art, and climate science. The final lesson is more of a course preview than a field explanation, which weakens alignment with the requirement that every lesson feel like an explanation lesson plan.",
-          "score": 8
+          "reasoning": "Four lessons offer an engaging introduction to AI uses and roles, but the fifth is entirely a prohibited course-preview lesson with a specifically disallowed style of title. The “outsmarted the experts” lesson is also vague, anthropomorphic, and insufficiently AI-specific from its title alone.",
+          "score": 5.1
         },
         {
-          "anonymousId": "Model H",
-          "modelId": "google/gemini-3.1-flash-lite",
-          "reasoning": "Covers concrete uses and roles, and it avoids explicit guarantees. However, phrases like “Machines That Reason,” “mimic human problem-solving,” and “on their own” risk overstating AI, and the framing leans somewhat toward technical mechanisms rather than a simple quick guide.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "It includes useful everyday examples and current AI applications, but it uses hype-oriented language such as “building the future” and promises learners will “master” tools and concepts. It also gives less attention to realistic limits or responsible use than stronger outputs.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model D",
+          "anonymousId": "Model J",
           "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Meets the structural requirements, but it drifts too far toward a technical curriculum with statistical patterns, predictive models, neural networks, and next-word/pixel mechanics. It also provides limited concrete role detail and implies the course prepares learners to build their own intelligent systems, which is too outcome-oriented for the expectations.",
-          "score": 5
+          "reasoning": "The output gives concrete examples of search, translation, recommendations, and generation, but it moves toward technical mechanics involving massive datasets and artificial neural networks. Several titles are not clearly AI-specific, and the final lesson previews course preparation instead of actually explaining realistic roles or opportunities.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The everyday examples and project areas are useful, but the final lesson is a direct course preview and explicitly promises mastery, both serious expectation violations. Several other lesson titles rely on generic terms such as machines or algorithms rather than clearly naming AI or an unmistakable AI concept.",
+          "score": 4.1
         }
       ]
     }

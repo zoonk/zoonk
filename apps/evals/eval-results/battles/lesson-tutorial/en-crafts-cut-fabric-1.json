@@ -1,50 +1,86 @@
 {
   "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Fabric cutting requires measurement and alignment. Penalize if:\n   - Grain line alignment is ignored (fabric must be cut on grain)\n   - Seam allowance is not mentioned or added\n\n2. TOOL SAFETY: Penalize if:\n   - Sharp tool handling guidance is absent\n   - Fabric is described as being cut while held in air (should be flat on surface)\n\n3. PRECISION CHECK: Penalize if pinning before cutting is skipped or pattern placement is vague.\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n- Do NOT penalize for JSON output format differences (e.g., wrapping the array in an object like `{\"steps\": [...]}` instead of a raw array). This is a schema/parsing concern, not a content quality issue\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the lesson as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
-  "judgedAt": "2026-05-24T18:30:32.451Z",
+  "judgedAt": "2026-07-10T17:27:07.094Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.7",
+      "judgeId": "anthropic/claude-opus-4.8",
       "rankings": [
         {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Covers grain line alignment with selvage, pinning before cutting, fabric flat on table with scissors lifted (not fabric), and verification. Clear imperative steps and logical grouping. Minor gap: no explicit seam allowance mention, but pattern is assumed to include it.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Strong on tool safety (shears grounded, fabric not lifted), grain alignment via selvage measurement, and pinning before cutting. Clear imperative language and logical flow. Doesn't explicitly mention seam allowance but otherwise solid.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Good coverage of grainline measurement, selvage alignment, pinning, and proper shear technique. Imperative and concise. Missing explicit seam allowance reference, and the grainline check comes after pinning which is slightly out of order.",
-          "score": 7
-        },
-        {
           "anonymousId": "Model A",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Detailed and accurate with selvage alignment, pinning, and proper scissor technique. However, gives specific measurements without mentioning seam allowance and uses LaTeX math notation (\\(27 \\times 40\\)) which is awkward for a sewing lesson.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Thorough and well-structured with proper fold/selvage alignment, pinning, fabric-on-table cutting, and tool safety (fabric vs paper scissors). Imperative voice throughout. Slightly long but each step is purposeful. Missing explicit grain line/seam allowance terminology.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model G",
           "modelId": "openai/gpt-5.5",
-          "reasoning": "Comprehensive with explicit grainline alignment and pinning. However, it's overly long with some micro-split steps (selecting size, opening layout as separate steps) that feel like padding. Tool safety mentioned but less emphasis on keeping fabric flat.",
-          "score": 6
+          "reasoning": "Excellent comprehensive procedure with grain alignment, pinning, flat cutting, keeping lower blade on table, and verification of piece count. Sequence is logical and imperative language is consistent.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Strong coverage: tool selection, flat layout, grainline alignment measured both ends, pinning, flat cutting with lower blade grounded, and verification. Clear imperative steps and safety-conscious.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "Very thorough with grainline check, seam allowance handling, notch transfer, flat cutting, and verification. Minor concern about not cutting the fold but overall accurate and well-sequenced.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Detailed and accurate: pressing, selvage, grainline alignment, pinning inside cutting line, flat cutting, notches, and verification. Slight scope creep with rotary cutter but well handled.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Good sequence with grainline positioning, pinning, seam-allowance line mention, flat cutting, and thorough verification including grainline direction. Solid imperative language.",
+          "score": 8
         },
         {
           "anonymousId": "Model C",
           "modelId": "openai/gpt-5.4",
-          "reasoning": "Covers pattern placement, pinning, and cutting with fabric flat, but grain line alignment is only implied via 'matching selvages' without explicit grainline check. No seam allowance mention. Steps are reasonable but less precise than others.",
+          "reasoning": "Covers grain via fold/selvage, measurement placement, pinning, flat cutting, and verification. Grainline arrow not explicitly emphasized but selvage alignment addresses grain adequately.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Includes grainline alignment, seam allowance mention, pinning, flat cutting, and verification. Solid, though 'right sides together' fold is unusual for cutting layout but not incorrect.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Good grainline positioning, pinning, marking, and flat cutting with 'lift scissors not fabric.' However the final verify step says 'Hold up your cut fabric piece' which slightly conflicts with flat-handling emphasis, and no seam allowance mention.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Solid coverage with press, selvage alignment, grainline measurement, pinning, and flat shear cutting. Slightly thin on verification and seam allowance not addressed.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Covers layout, fold, measurement, pinning, fabric scissors, and flat cutting with checks. Relies on measured lines rather than pattern grainline arrow but selvage fold implies grain; no explicit seam allowance.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Practical measured approach with pinning and flat cutting, but omits grainline/selvage alignment entirely, a penalized accuracy gap. Otherwise clear and well-sequenced.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Includes iron, selvage alignment for grain, pinning, and flat cutting. However it omits the pattern entirely (measures rectangles directly) despite lesson specifying following a pattern, and no seam allowance mention.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Emphasizes grainline via equidistant selvage and grounded shears, but instructs holding fabric with non-dominant hand and lacks measurement/seam allowance verification. No marking or measuring step weakens precision.",
           "score": 6
         }
       ]
@@ -53,93 +89,165 @@
       "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Model E provides excellent, concise steps with clear imperative verbs and perfect logical grouping. It accurately covers grain line measurement, pinning, and sharp tool safety (keeping shears flat). It only misses explicitly mentioning seam allowance, though using a pattern implicitly includes it.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Model G thoroughly covers pattern alignment by measuring the grain line to the selvage, includes proper pinning, and details safe scissor handling. It loses a point for omitting an explicit mention of seam allowance and having slightly overly granular step grouping compared to the best output.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "This output includes strong tool safety and pinning instructions. It correctly notes that the grain line must run parallel to the selvage, but it lacks the critical measurement step to ensure perfect alignment. It also fails to mention seam allowance.",
-          "score": 6
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "Exceptional output that perfectly addresses all constraints. It explicitly covers grainline alignment, seam allowance addition, and tool safety (keeping the bottom blade on the table), while providing accurate pinning instructions.",
+          "score": 10
         },
         {
           "anonymousId": "Model F",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Model F includes clear pinning and tool handling guidance (keeping shears grounded). However, it instructs the user to align the pattern's long edge rather than the specific grain line arrow, and it completely misses the seam allowance requirement.",
-          "score": 5
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Strong response that correctly includes grainline alignment and seam allowance checks. Tool safety is addressed, though instructing the user to hold scissors 'perpendicular to the table' is slightly awkward wording for keeping them flat.",
+          "score": 8
         },
         {
           "anonymousId": "Model A",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model A provides good tool handling and pinning guidance, but it fails to follow a pattern as requested in the lesson description, instead instructing the user to mark rectangles directly on the fabric. It also misses the seam allowance requirement.",
-          "score": 4
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Follows a logical sequence with excellent tool safety and grainline instructions. However, it fails to mention or add seam allowance, triggering a required penalty.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Provides solid tool safety and correct grainline alignment steps. It receives a penalty for completely missing the required seam allowance mention.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Clear instructions that correctly address grainline alignment and keeping the shears on the table for safety. Penalized because seam allowance is not mentioned.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Properly mentions grainline and seam allowance. However, it instructs the user to pin across the cutting line and remove pins while cutting, which is a poor practice that causes pattern shifting.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Includes grainline alignment and good tool safety. However, it contains a factual inaccuracy regarding notches ('cut small outward notches... stopping before the seam allowance' is logically contradictory).",
+          "score": 5
         },
         {
           "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Misses the required seam allowance entirely. Additionally, it advises placing pins to easily remove them while cutting, which is a poor technique that can cause the fabric to shift.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
           "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "This model fails to use a pattern properly, instructing the user to draw dimensions directly on the fabric. It ignores grain line alignment entirely and fails to mention seam allowance, though it does include basic tool safety.",
+          "reasoning": "Fails to mention both grainline alignment and seam allowance, triggering two required penalties. Tool safety and general sequence are acceptable.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Penalized for missing explicit grainline arrow alignment and failing to mention seam allowance. Tool safety is adequately addressed.",
           "score": 4
         },
         {
           "anonymousId": "Model C",
           "modelId": "openai/gpt-5.4",
-          "reasoning": "Model C misses explicit grain line alignment and completely omits seam allowance. Additionally, its tool handling guidance is vague and lacks the specific safety instructions (like keeping the shears on the table) found in the stronger outputs.",
+          "reasoning": "Misses both the grainline alignment and seam allowance requirements. The tool handling guidance is also somewhat basic compared to better models.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Misses grainline and seam allowance requirements. The workflow is logically confusing, asking the user to draw measured rectangles and then inexplicably pin a pattern on top of them.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Completely ignores the prompt's instruction to cut 'following a pattern', instead opting to draft measured rectangles. It also misses the seam allowance requirement.",
           "score": 3
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.5",
+      "judgeId": "openai/gpt-5.6-sol",
       "rankings": [
         {
-          "anonymousId": "Model G",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Best overall: it follows a clear measure-place-align-pin-cut sequence, explicitly checks grainline alignment, keeps fabric flat, and verifies the final piece count. Its main gap is that it never mentions or adds seam allowance, which is a critical fabric-cutting requirement.",
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "Explicitly aligns the grainline, pins before cutting, conditionally adds seam allowance, keeps the fabric flat, and gives controlled scissor guidance. The fold-specific assumptions are somewhat narrow, but the procedure is precise and highly usable.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Provides excellent grainline measurement, secure pinning, flat-surface cutting, and slow tool handling in a sound sequence. It acknowledges seam allowance, though the instruction to cut “outward notches” while stopping before it is slightly confusing.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Covers pattern placement, measurement, pinning, seam-allowance lines, flat cutting, and final verification. Grainline alignment is less precisely explained, and sharp-tool safety guidance is limited.",
           "score": 8
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Strong pattern-based workflow with main/cuff pieces, pinning, grainline measurement, and safe cutting on a flat surface. However, the grainline check comes after pinning and lacks an adjustment instruction, and seam allowance is not mentioned.",
-          "score": 7
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Gives a thorough, well-sequenced pattern-cutting workflow with precise grainline alignment, pinning, marking, and flat-surface scissor technique. It never addresses whether seam allowance is included or must be added.",
+          "score": 7.5
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Clear and practical instructions with flat fabric, selvage/grain awareness, measuring, pinning before cutting, and table-supported shears. It does not mention seam allowance and is less explicitly tied to following a pattern or grainline arrow.",
-          "score": 7
+          "anonymousId": "Model M",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Strongly handles measurement, fold placement, grainline alignment, pinning, flat cutting, and verification. It omits seam allowance and offers only modest sharp-tool safety guidance.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Clearly aligns the pattern to the selvage, pins it securely, and emphasizes keeping both shears and fabric on the table. It omits seam allowance and does not verify the pattern dimensions or required piece count.",
+          "score": 6.8
         },
         {
           "anonymousId": "Model F",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Good safety and stability guidance: it aligns to the selvage, pins thoroughly, uses sharp shears, and warns not to lift the fabric. It is weaker on scope because it only produces one piece and does not address seam allowance or all pillowcase fabric pieces.",
-          "score": 6
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Includes grainline alignment, pinning, slow cutting, and keeping the fabric flat. However, it incorrectly treats the space between pattern pieces and fabric edges as seam allowance and then asks users to measure seam allowance from the pattern edge to the fabric edge.",
+          "score": 6.4
         },
         {
           "anonymousId": "Model C",
           "modelId": "openai/gpt-5.4",
-          "reasoning": "Coherent pattern-following process with flat layout, measuring placement, pinning, cutting, and verification. It omits seam allowance and does not explicitly address grainline alignment, making a key precision requirement missing.",
-          "score": 6
+          "reasoning": "The pattern-following sequence is clear and includes measurement, pinning, flat cutting, and useful checks. It does not explicitly align pieces to the fabric grain and never addresses seam allowance or meaningful sharp-tool handling.",
+          "score": 6.1
         },
         {
           "anonymousId": "Model B",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Includes useful measuring, marking, pinning, flat-surface cutting, and scissor handling guidance. It misses grainline alignment and seam allowance, and its piece measurements/layer handling are somewhat confusing for a pillowcase.",
-          "score": 5
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "It includes grainline placement, pinning, flat cutting, and verification. The unsupported standard measurement and direction to cut outside an already traced line can produce an incorrectly sized piece, while seam allowance is not addressed.",
+          "score": 5.8
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "It explicitly handles grainline alignment, pinning, flat cutting, and verification. However, it gives a questionable single-piece pillowcase measurement, does not cover multiple pillowcase pieces, and omits seam allowance.",
-          "score": 5
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "It measures grainline alignment and uses appropriate flat-surface scissor technique. Aligning the grainline only after the pattern has already been pinned is out of sequence, and seam allowance is omitted.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The instructions are actionable and include measuring, pinning, and safe flat-surface cutting. They omit explicit grainline alignment and seam allowance, while the fixed dimensions and claim that folding creates two matching pieces do not clearly fit the stated body-and-cuff result.",
+          "score": 5.2
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "It includes flat preparation, selvage alignment, pinning, and stable scissor use. The fixed dimensions are awkwardly applied to folded fabric, seam allowance is absent, and the claimed two-piece result does not clearly follow from cutting through both folded layers.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "This teaches an envelope-style pillow cover with front and back panels rather than cutting pillowcase pieces from a supplied pattern. It also omits grainline alignment and seam allowance, and its unsupported dimensions make it a poor fit for the lesson.",
+          "score": 2.2
         }
       ]
     }

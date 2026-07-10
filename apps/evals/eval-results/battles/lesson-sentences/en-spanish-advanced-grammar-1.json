@@ -1,0 +1,149 @@
+{
+  "expectations": "\nLANGUAGE: English output required for translations.\n\nTOPIC: Spanish sentences for advanced grammar - subjunctive mood with complex verb forms and abstract concepts.\n\nSOURCE LESSON METADATA: advanced subjunctive and concessive expressions such as hubiera sabido, a pesar de que, no obstante, en caso de que, siempre y cuando.\nGenerated sentences should naturally cover this source scope.\n\nDIFFICULTY: This is clearly an ADVANCED-level lesson. Chapter \"Advanced Grammar\" + Lesson \"Subjunctive Mood in Complex Clauses\" + advanced grammar constructions = advanced level.\n- Sentences SHOULD use complex structures (subordinate clauses, conditional constructions, compound-complex sentences)\n- Longer sentences (8+ words) are expected and appropriate\n- Penalize if sentences are overly simplistic given the advanced vocabulary\n- Advanced grammatical accuracy is critical (subjunctive mood usage must be correct)\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Sentences drift away from the source lesson scope\n- Subjunctive mood is used incorrectly\n- Conditional/hypothetical structures are grammatically wrong\n- Translations don't accurately convey the nuanced meaning\n\nCONTEXT EXPECTATIONS:\n- Sentences demonstrating complex hypothetical scenarios\n- Professional, academic, or sophisticated conversational contexts\n- Proper use of subjunctive triggers (doubt, emotion, hypothetical, concession)\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - Each translation MUST convey the full meaning of its target-language sentence\n   - Preserve tone and register while using natural phrasing in USER_LANGUAGE\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, misleading, or unnatural\n\n2. LESSON SCOPE USAGE (CRITICAL):\n   - Each generated sentence MUST fit the lesson title, description, and source lesson metadata\n   - Important words and phrases implied by the lesson scope should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences drift away from the lesson scope\n   - Penalize if lesson-scope words or phrases are used incorrectly or out of context\n\n3. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n4. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Use appropriate register (formal/informal) for the context\n   - Penalize artificial, contrived, robotic, or textbook-like constructions\n\n5. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if the lesson scope naturally groups those situations together\n\n6. APPROPRIATE DIFFICULTY (CRITICAL):\n   - The model MUST infer difficulty from the chapter title, lesson title, lesson description, and source scope\n   - Beginner context (basic topics + simple source scope) → simple sentences (2-5 words)\n   - Intermediate context → medium sentences (4-8 words)\n   - Advanced context (complex topics + advanced vocabulary) → complex sentences allowed\n   - Penalize SEVERELY if beginner-level context produces complex sentences (compound sentences, subordinate clauses, long constructions)\n   - Penalize if advanced-level context produces only trivially simple sentences\n\n7. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Avoid semantic duplicates that express the same idea with superficial wording changes\n\n8. LANGUAGE SEPARATION (CRITICAL):\n   - Every sentence MUST be written entirely in TARGET_LANGUAGE\n   - Translations and explanations MUST be written in USER_LANGUAGE\n   - Penalize if languages are swapped or if USER_LANGUAGE words appear in a target-language sentence\n\n9. EXPLANATION QUALITY (required for every sentence):\n   - Each explanation MUST be a non-empty string in USER_LANGUAGE; null or empty explanations are invalid\n   - Explain why this specific sentence is structured this way in TARGET_LANGUAGE and how it differs from USER_LANGUAGE\n   - Focus on useful contrasts such as word order, grammar, word choice, false friends, or potentially confusing forms\n   - Grammar claims MUST describe the element's actual role in this sentence\n   - For non-Latin target scripts, every target-language word or phrase mentioned in the explanation MUST be immediately followed by its romanization in parentheses\n   - Do NOT expect a separate romanization field; the task does not generate one\n\n10. CLEAN OUTPUT FIELDS:\n    - The sentence and translation fields MUST contain only their respective text, with no parenthetical explanations, usage notes, grammar hints, or alternative phrasings\n    - Sentences and translations should avoid decorative terminal punctuation because they become word-bank tiles\n    - Penalize unnecessary punctuation on simple greetings, farewells, thanks, statements, labels, or short conversational chunks (e.g., \"Good morning!\" should be \"Good morning\"; \"See you later.\" should be \"See you later\")\n    - Do NOT penalize punctuation that changes meaning or is grammatically required, especially question marks for questions (e.g., \"How are you?\") and required target-language question punctuation (e.g., \"¿Cómo estás?\")\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that fit the lesson scope\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: translation accuracy, lesson-scope usage, grammatical correctness, naturalness, explanation quality, and difficulty appropriateness\n\n    ",
+  "judgedAt": "2026-07-10T18:58:30.513Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.8",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "All ten sentences use correct subjunctive/conditional structures and cover the full source scope (hubiera sabido, a pesar de que, no obstante, en caso de que, siempre y cuando) plus natural extensions. No terminal decorative punctuation, clean fields, and explanations accurately describe each verb's role with helpful English contrasts.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Twelve accurate advanced sentences with correct subjunctive triggers and clean fields without terminal punctuation. Explanations are precise; note that 'a pesar de que fuera' is slightly less idiomatic than indicative but defensible as conceded hypothetical.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Twelve rich, professional advanced sentences covering all scope items with correct subjunctive and concessive usage, clean fields, and accurate explanations. Strong context diversity including questions and relative clauses.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Twelve well-constructed advanced sentences with correct subjunctive use across all scope items and clean fields. Explanations are accurate and contrastive, though a couple lean on peripheral triggers (para que, es posible que) rather than the core concessive set.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Seven grammatically correct sentences covering all scope items with solid explanations. The 'Si fuera necesario, no obstante, cambiaríamos' sentence is somewhat awkward with the mid-clause connector, and coverage is lighter than top outputs.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Five correct sentences with clear explanations, but every sentence and translation carries decorative terminal periods, violating the clean-output field rule repeatedly. Also fewer sentences and misses concessive breadth.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Five correct sentences with good explanations and clean fields. However, 'No obstante que' is a nonstandard/less-idiomatic construction presented as an advanced conjunction, and coverage is minimal compared to fuller outputs.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "This model flawlessly meets all constraints. The sentences perfectly match the advanced scope with excellent complexity, and the model is incredibly consistent at explicitly contrasting Spanish and English grammar in every single explanation. It strictly adhered to the negative constraint regarding terminal punctuation.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "An outstanding output that provides a high volume of long, highly complex sentences matching the advanced lesson scope. The explanations are highly detailed and correctly compare the grammar to English, and the output fields are clean of decorative punctuation.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "This model provides excellent sentences that perfectly incorporate the target advanced vocabulary into complex clauses. The explanations are insightful, contrast well with English, and all formatting constraints were followed.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "A very strong output with appropriate advanced difficulty and no terminal punctuation. It is marked down slightly because the use of 'no obstante' in sentence 3 is slightly awkward as an interjection rather than naturally connecting two clauses.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Provides good explanations and follows the punctuation constraint. However, it relies on some shorter sentences, and sentence 5 is an independent clause rather than a complex one, which slightly drifts from showcasing advanced complex structures.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The sentences fit the scope but lean a bit simple for an advanced lesson. Most notably, it violates the negative constraint by including decorative terminal periods on statements and translations, which is explicitly penalized.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "This model failed a core requirement for the explanations: it completely ignored the instruction to explain how the target language structure differs from the user language (English) in almost all items. The sentences are also on the shorter side for an advanced lesson.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Exceptionally strong range of advanced conditional, concessive, hypothetical, and relative clauses, with accurate translations and consistently natural professional contexts. Subjunctive forms and their triggers are handled precisely, with only a few explanations offering less explicit Spanish–English contrast than ideal.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Broad, sophisticated coverage of the source expressions with accurate translations and especially useful contrastive explanations. The use of “fuera” after “a pesar de que” is defensible but somewhat marked given that the translation presents the report’s incompleteness as an established fact.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Provides diverse, natural advanced clauses and generally excellent explanations that explicitly compare Spanish with English. A few choices are slightly weak—particularly the rationale for “esté” after “a pesar de que,” the contextless initial “No obstante,” and the mildly awkward English phrase “return it to me with gas.”",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Strong overall command of counterfactual, concessive, conditional, and desiderative subjunctive structures, with accurate translations and useful explanations. Some contexts are comparatively elementary, and claims such as “ojalá” always introducing an unreal wish are overly broad.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "All five examples directly cover the source scope and are grammatically sound, with clear Spanish–English contrasts. The contexts are somewhat basic for an advanced lesson, one translation is awkward (“Even though we might have”), and every sentence and translation includes unnecessary terminal punctuation.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Most sentences and translations are correct and appropriately complex, but several notable issues reduce reliability. “No obstante” is inserted unnaturally without a clear contrast, the factual reading of “estuviera cansada” is poorly aligned with its explanation, and “hubiera vivido” is incorrectly labeled as imperfect rather than pluperfect subjunctive.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "The core conditional and subjunctive constructions are mostly correct, but the set is less polished and less pedagogically complete than the others. Several explanations fail to explain a concrete Spanish–English difference, while “No obstante que” is regionally marked and the translations “go on a hike to the mountain” and “let me know in advance to reserve” are unnatural or ambiguous.",
+          "score": 6.5
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-sentences",
+  "testCaseId": "en-spanish-advanced-grammar-1"
+}

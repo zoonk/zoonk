@@ -1,6 +1,7 @@
 import { AppBreadcrumb, HomeLinkBreadcrumb, TaskPageBreadcrumb } from "@/components/breadcrumb";
 import { getBattleLeaderboard } from "@/lib/battle-loader";
 import { getModelsWithCompleteOutputs } from "@/lib/output-loader";
+import { hasJudgeExpectations } from "@/lib/types";
 import { getModelsWithResults, getSortedModels } from "@/lib/utils";
 import { RUNS_PER_TEST_CASE, getTaskById } from "@/tasks";
 import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
@@ -28,11 +29,21 @@ export default async function TaskPage({ params }: { params: Promise<{ taskId: s
     notFound();
   }
 
+  const supportsJudgeMode = hasJudgeExpectations(task);
+
+  const battleEntriesPromise = supportsJudgeMode
+    ? getBattleLeaderboard(taskId)
+    : Promise.resolve([]);
+
+  const modelsReadyForBattlePromise = supportsJudgeMode
+    ? getModelsWithCompleteOutputs(taskId, task.testCases.length)
+    : Promise.resolve([]);
+
   const [sortedModels, modelsWithResults, battleEntries, modelsReadyForBattle] = await Promise.all([
     getSortedModels(taskId),
     getModelsWithResults(taskId),
-    getBattleLeaderboard(taskId),
-    getModelsWithCompleteOutputs(taskId, task.testCases.length),
+    battleEntriesPromise,
+    modelsReadyForBattlePromise,
   ]);
 
   const canRunBattle = modelsReadyForBattle.length >= 2;
@@ -54,28 +65,31 @@ export default async function TaskPage({ params }: { params: Promise<{ taskId: s
           </ContainerDescription>
         </ContainerHeaderGroup>
 
-        <div className="flex items-center gap-2">
-          <Link
-            className={buttonVariants({ variant: "outline" })}
-            href={`/tasks/${taskId}/battles`}
-          >
-            <MessageSquareTextIcon className="size-4" />
-            View Judge Comments
-          </Link>
+        {supportsJudgeMode && (
+          <div className="flex items-center gap-2">
+            <Link
+              className={buttonVariants({ variant: "outline" })}
+              href={`/tasks/${taskId}/battles`}
+            >
+              <MessageSquareTextIcon className="size-4" />
+              View Judge Comments
+            </Link>
 
-          <form action={runBattleModeAction}>
-            <input name="taskId" type="hidden" value={taskId} />
-            <SubmitButton disabled={!canRunBattle} icon={<SwordsIcon />}>
-              Run Battle Mode
-            </SubmitButton>
-          </form>
-        </div>
+            <form action={runBattleModeAction}>
+              <input name="taskId" type="hidden" value={taskId} />
+              <SubmitButton disabled={!canRunBattle} icon={<SwordsIcon />}>
+                Run Battle Mode
+              </SubmitButton>
+            </form>
+          </div>
+        )}
       </ContainerHeader>
 
       <ContainerBody>
         <LeaderboardTabs
           battleEntries={battleEntries}
           results={modelsWithResults}
+          supportsJudgeMode={supportsJudgeMode}
           taskId={taskId}
         />
 

@@ -1,10 +1,10 @@
 import { type TestCase } from "@/lib/types";
-import { type CourseIntent } from "@zoonk/ai/tasks/courses/intent";
+import { type CourseIntent, type CourseIntentParams } from "@zoonk/ai/tasks/courses/intent";
 import { type CourseIntentExpected } from "./scorer";
 
 type ExpectedIntent = CourseIntent | readonly CourseIntent[];
 
-type CourseIntentTestCase = TestCase<CourseIntentExpected>;
+type CourseIntentTestCase = TestCase<CourseIntentExpected, CourseIntentParams>;
 
 const SCORE_TIERS = `
   - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.

@@ -1,0 +1,131 @@
+{
+  "expectations": "\n      - MUST be in Latin American Spanish\n\n      \n  # Goal\n\n  Evaluate whether the result is a usable lesson plan for the requested chapter.\n\n  A strong lesson plan turns the chapter scope into small, self-contained learner capabilities. Each lesson should teach one clear topic or skill: the core explanation should fit in 1-2 minutes, roughly 700-1,500 characters including spaces. The follow-up practice should fit in 3-4 minutes because it focuses on the same small capability. Coverage and lesson size both matter: splitting overloaded lessons should create more focused lessons, not a thinner chapter.\n\n  The app adds one practice lesson and one quiz after each explanation, then a final review. The generated lesson plan should still return only substantive lessons that teach new content, not practice, quiz, review, summary, or capstone lessons.\n\n  # What Good Looks Like\n\n  - Lessons are compact and practice-sized: each one teaches a distinct mechanism, decision, artifact, workflow, evidence type, practical task, or structural role as one self-contained unit.\n  - Each lesson can be explained clearly in 1-2 minutes, roughly 700-1,500 characters including spaces. If it would need several explanations, it should be split into multiple lessons.\n  - Related concepts that are mutually defining stay together in one lesson only when splitting them would force the same explanation and practice to repeat.\n  - The plan covers the chapter's canonical fundamentals, important modern practice, and required named entities from the domain.\n  - Splitting an overloaded lesson preserves the rest of the chapter's coverage instead of spending the whole plan on the first mechanism.\n  - Lessons stay inside this chapter's scope and avoid concepts that primarily belong to neighboring chapters.\n  - Titles are concrete, learner-facing, and searchable. Use the canonical names a serious learner would expect when those names are the field-standard way to identify the lesson topic.\n  - Descriptions explain what the lesson teaches and what the learner will do or be able to reason through. They should name the actual lesson scope in plain, searchable terms.\n  - Concepts are specific enough to guide content generation, but they are raw material inside a lesson, not automatic lesson candidates.\n\n  # Major Failures\n\n  ## Overloaded Lessons\n\n  Overloaded lessons are the main failure this eval must now catch. They happen when the output hides too much inside one umbrella lesson, producing explanations and practices that take too long for learners to complete.\n\n  A lesson may briefly mention neighboring pieces for context. Do not treat that as a reason to merge several distinct lesson targets. Merge only when the learner cannot understand or practice one part without learning the other part's core mechanism too.\n\n  Penalize as a major failure when the output:\n\n  - combines multiple independent chapter pillars into one lesson\n  - makes one lesson responsible for several mechanisms, workflows, decisions, structures, or roles that can be learned without re-teaching each other\n  - hides a sequence of distinct parts inside one title, such as \"trace X from input to output,\" when each part has a different function or recognition task\n  - depends on vague wording to fit a lesson that would actually need more than 1-2 minutes to explain clearly\n  - uses vague umbrella titles to avoid making necessary lesson boundaries\n  - creates lessons that would need several separate explanations to teach clearly\n\n  Score caps:\n\n  - Clear overloaded umbrella lesson: `majorErrors` score must be 7.5 or lower.\n  - Repeated overloaded lessons across the output: `majorErrors` score must be 6.5 or lower.\n  - A lesson that would plausibly create a 7+ minute explanation or a 10+ minute practice because it combines several independently teachable concepts: `majorErrors` score must be 6.5 or lower.\n\n  ## False Granularity\n\n  False granularity is the opposite boundary failure. It happens when the output looks comprehensive because it split the chapter into many tiny lessons, but those lessons would repeat the same explanation.\n\n  Use this test: if the explanation or practice for lesson A must teach lesson B's core idea for lesson A to make sense, A and B should probably be one lesson.\n\n  Canonical/searchable names do not make every named concept an automatic lesson. Judge whether the generated lesson would produce a distinct explanation and practice, not whether the title contains a recognizable term.\n\n  Penalize as a major failure when the output:\n\n  - splits one simple input -> process -> result chain into separate lessons when all parts use the same example and practice move\n  - splits small first-exposure parts that define each other, such as variable/name/value/output, function declaration/call/parameter/return, or loop/condition/body\n  - creates many adjacent lessons that would use the same example with slightly different labels\n  - turns every method, subtopic, phase, or label into its own lesson even though the learner experience would be repetitive\n  - rewards glossary completeness over teachable lesson boundaries\n\n  Do not confuse false granularity with valid domain decomposition. Adjacent lessons can be separate when they teach different evidence types, interpretive tasks, mechanisms, source categories, workflows, or real-world decisions. Examples that can be valid:\n\n  - history lessons that use artifacts, landscapes, languages, trade goods, rituals, warfare, and diplomacy for different kinds of historical reasoning\n  - astronomy lessons that separate detection methods, signal validation, physical inference, atmospheric characterization, habitability, missions, and telescope capabilities\n  - law lessons that separate procedural moves with different legal effects, deadlines, parties, remedies, or courts\n  - technical lessons that separate mechanisms only when each can be practiced without re-teaching the neighboring mechanism\n  - compact comparison lessons that group related variants, metrics, methods, or syntax forms around one learner move, such as comparing tradeoffs, choosing the right tool, or reading the same kind of evidence\n\n  Named-entity lessons are not automatically false granularity. They are valid when the named people, sites, missions, models, cases, tools, or works anchor a distinct comparison, interpretation, evidence source, or practical decision. Penalize them as false granularity only when the lesson is mostly a memorization list or would repeat the same teaching move as a neighboring lesson.\n\n  Score caps:\n\n  - Clear false-granularity cluster: `majorErrors` score must be 7.5 or lower.\n  - Repeated false granularity across the output, after excluding valid domain decomposition: `majorErrors` score must be 6.5 or lower.\n  - Glossary-expanded syllabus where many lessons are too small to stand as distinct self-contained units: `majorErrors` score must be 6.5 or lower.\n\n  ## Coverage, Accuracy, and Scope\n\n  Penalize as major failures when the output:\n\n  - drops important chapter pillars because the lessons became smaller\n  - misses canonical chapter pillars or modern practices a serious learner needs\n  - omits important named entities in domains built around specific people, tools, missions, models, works, groups, cases, or landmark systems\n  - includes factual, historical, legal, scientific, technical, or linguistic errors\n  - drifts into neighboring-chapter material as lesson topics rather than brief context\n  - uses mostly bloated textbook headings, generic category labels, or abstract inventory titles that do not identify a teachable lesson target\n\n  ## Canonical Lesson Titles and Descriptions\n\n  Lesson titles should preserve canonical/searchable names for the specific mechanism, structure, method, artifact, case, source type, procedure, metric, tool, or concept being taught. Canonical names are not \"dry textbook headings\" when they are the terms learners search for and practitioners use.\n\n  Accept close field-standard variants in the requested language. Do not require exact wording when the title still names the recognized topic.\n\n  Penalize as a major style issue when the output hides canonical terms behind practical paraphrases, metaphors, slogans, or \"what this does\" titles. A learner scanning or searching for a standard topic should be able to recognize the lesson from the title.\n\n  Examples:\n\n  - \"Function parameters and return values\" is better than \"Send data in and get an answer back\"\n  - \"Array methods\" is better than \"Use lists without extra loops\"\n  - \"Axon hillock\" is better than \"Where a neuron decides to fire\"\n  - \"Lead time and cycle time\" is better than \"How long work really takes\"\n  - \"Tutelas provisórias\" is better than \"Pedidos urgentes antes da sentença\"\n  - \"Transcrição\" is better than \"Copiar informação para RNA\"\n  - \"Transit method\" is better than \"Watch a planet dim a star\"\n  - \"Self-attention\" is better than \"Let tokens look at each other\"\n\n  Score caps:\n\n  - If 3 or more lesson titles hide important canonical/searchable terms that belong in those titles, the `majorErrors` score must be 7 or lower even when descriptions mention the terms and the lesson boundaries are otherwise sound.\n  - If 1-2 important lesson titles hide canonical/searchable terms, the `majorErrors` score must be 8 or lower.\n  - Descriptions recovering the canonical term do not remove the title problem because learners scan and search lesson titles first.\n\n  Descriptions should name the actual lesson scope clearly enough that downstream generation can tell which specific concept, procedure, evidence type, example, or skill belongs inside the lesson. A description that only says what the learner will feel, broadly do, or \"understand\" is too vague if it does not name the lesson's concrete scope in plain, searchable terms.\n\n  # Minor Issues\n\n  Treat these as minor unless they make the lesson plan hard to use:\n\n  - isolated awkward title wording\n  - concept titles that are slightly broad, abstract, verbose, or compound\n  - a compact comparison lesson that names several closely related variants when it only teaches recognition, tradeoffs, or selection criteria\n  - lesson sizes that are uneven or mechanically uniform when the boundaries are otherwise sound\n  - small progression or phrasing issues\n  - small scope-adjacent mentions that do not become lesson topics\n\n  # Scoring Order\n\n  First check whether the output preserves the requested chapter coverage. Then check whether the lesson boundaries would produce short, distinct, non-repetitive lessons. Do not reward extra length, exhaustive lists, or high concept count by themselves, but also do not reward a short plan that became short by dropping core chapter pillars.\n\n  If the output has no concrete major failures, the `majorErrors` conclusion should be \"None\" and the score should be 10.\n\n    ",
+  "judgedAt": "2026-07-10T11:04:00.132Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-fable-5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Complete coverage of all five methods, false positives, biases, and completeness/occurrence rates, with canonical searchable titles (BLS, coronografía, tercera ley de Kepler) and key named entities (Kepler, TESS, Gaia, HARPS, ESPRESSO, OGLE, KMTNet, SPHERE, GPI). Each lesson targets one distinct mechanism or interpretive task with concrete practice-sized scope; the two microlensing lessons and two imaging lessons are valid domain decomposition, not false granularity.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Very thorough plan covering all pillars plus valid modern additions like TTV, SNR thresholds, and mission comparisons (Kepler/K2/TESS, Gaia), with well-bounded, distinct lessons and canonical titles. Minor issues: the opening 'Baricentro y bamboleo' lesson slightly overlaps the later RV and astrometry lessons, and there is a small typo ('medicición').",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Strong, well-decomposed coverage with canonical titles, impact parameter, validation, density, and named missions (Kepler, TESS, Gaia). Main weakness is overlap between lessons 14 and 15, which both center on detection biases/selection effects and would partially repeat the same comparison, plus a somewhat generic intro lesson.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Clean, compact plan covering all five methods, false positives, density, biases, and a missions lesson naming Kepler, TESS, and Gaia, with clear boundaries and searchable titles. Slightly thinner than the best plans (no impact parameter/geometry, no Kepler's-third-law orbit estimation as a distinct capability), and the intro lesson is somewhat light on teachable content.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Well-bounded lessons covering all methods, validation, biases, and multi-method characterization with canonical titles and good descriptions. However, it omits key named entities—Kepler and TESS are never mentioned despite being central to transit detection—which is a coverage gap in a domain built around landmark missions.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The eight lessons are individually well-sized and correctly titled, but the plan is thin: it drops false positives/validation, mass-radius-density combination, and all named missions (Kepler, TESS, Gaia), which are canonical pillars of this chapter. Orbit estimation via Kepler's third law is also barely addressed despite the chapter explicitly requiring orbit estimation practice.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "This output is exceptional. It provides a highly authentic, canonical curriculum that breaks down the detection methods into distinct, mathematically and observationally rigorous lessons. The inclusion of topics like transit timing variations (TTV), differential photometry, and SNR demonstrates excellent domain accuracy without falling into false granularity.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "This output is also exceptional and ties for the top spot. It perfectly decomposes the complex interpretive tasks of exoplanet astronomy, separating distinct mechanisms like phase folding, transit depth versus duration, and selection biases. The titles are highly searchable and field-standard.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "A very strong, perfectly scoped lesson plan. It avoids false granularity while cleanly covering all requested topics, including light curves, mass, radius, and orbit estimation. It is slightly less technically ambitious than the top models but perfectly meets all structural and content expectations.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This is an acceptable, concise plan that correctly identifies the core mechanisms. However, it is a bit too thin and misses some of the specific task requests, such as estimating the orbit (Kepler's third law) and combining mass and size for density.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "The plan covers the necessary material but suffers from structural weaknesses. It includes an overview/introductory lesson at the start, violating the instruction to only return substantive mechanism lessons, and its breakdown of transits borders on false granularity by separating light curves from geometry and duration.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "This output includes significant structural failures. It begins with an unteachable overview lesson and ends with a mission-memorization lesson, violating the rule against summary or capstone lessons. It also suffers from false granularity in its breakdown of the transit method.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Cobertura excepcional de todos los métodos solicitados, lectura de curvas, inferencia de radio, masa y órbita, validación, completitud y tasas de ocurrencia. Las lecciones tienen límites claros, títulos canónicos y prácticas diferenciadas; no presenta fallas importantes.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Plan sólido y bien secuenciado que cubre los pilares del capítulo, las misiones principales y las inferencias planetarias esenciales. La separación entre sesgos de selección y completitud resulta algo redundante y la práctica moderna de búsqueda de señales queda menos desarrollada que en A.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Ofrece cobertura amplia y moderna, con TTV, señal-ruido, misiones, astrometría relativa y todos los métodos requeridos. Algunas lecciones están sobrecargadas, especialmente la que reúne período, semiamplitud, masa mínima y excentricidad, y hay pequeños problemas de redacción.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Cubre todos los métodos principales con títulos claros y una progresión accesible, además de incluir misiones relevantes. Sin embargo, combina radio y período en una sola lección, trata la órbita y la completitud de manera insuficiente y simplifica de forma imprecisa la anomalía planetaria de microlente como un “pico secundario”.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Incluye los métodos canónicos, validación y combinación de mediciones, pero varias lecciones agrupan capacidades independientes, especialmente geometría orbital y la integración final de señales. También contiene la expresión científicamente incorrecta “oscurecimiento del centro estelar” y omite un tratamiento concreto de completitud y eficiencia de detección.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Es claro y compacto, pero demasiado reducido para preservar la cobertura solicitada. Omite falsos positivos y validación, completitud, geometría de tránsito, estimación del semieje mayor, misiones relevantes y suficiente práctica de interpretación de curvas y órbitas.",
+          "score": 4
+        }
+      ]
+    }
+  ],
+  "taskId": "chapter-lessons",
+  "testCaseId": "es-astronomia-deteccion-de-exoplanetas-1"
+}

@@ -3,194 +3,357 @@
   "results": [
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "\nTARGET LANGUAGE: Spanish\nUSER LANGUAGE: English\n\nWORD: \"el\"\n\nThis is a Spanish definite article (masculine singular):\n- Most common translation: \"the\"\n- This is a function word that must still receive a translation\n\nQUALITY CHECK:\n- Should translate to \"the\" or equivalent\n- Should NOT be null or empty\n- Tests handling of function words (articles)\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - The translation MUST be a correct dictionary meaning for the word\n   - The translation should be contextually appropriate (most common meaning)\n   - Penalize SEVERELY if the translation is incorrect or for a different word\n   - Accept multiple valid translations (e.g., \"eat\" or \"eats\" for a verb)\n   - Do NOT require exact wording - accept synonyms that convey the same meaning\n\n2. FUNCTION WORD HANDLING:\n   - Articles (the, a), prepositions (in, on), conjunctions (and, but), and particles MUST still receive translations\n   - Do NOT penalize for translating function words as function words (e.g., \"el\" → \"the\" is correct)\n   - Function words may have multiple valid translations depending on context\n\n3. BREVITY:\n   - Translations should be concise: one or two words maximum\n   - Do NOT provide full definitions or explanations\n   - Penalize if the translation is a sentence or long phrase instead of a word\n\n4. NO HALLUCINATION:\n   - The output should contain only the translation field\n   - The translation must correspond to the actual input word, not a related or similar word\n   - Do NOT penalize for minor formatting differences\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact translations - accept any valid dictionary meaning\n- Do NOT penalize for choosing one valid translation over another\n- FOCUS ON: translation accuracy, brevity\n\n    ",
-        "id": "es-en-el-1",
-        "userInput": { "targetLanguage": "es", "userLanguage": "en", "word": "el" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "\nTARGET LANGUAGE: Spanish\nUSER LANGUAGE: English\n\nWORD: \"gato\"\n\nThis is a common Spanish noun meaning \"cat\":\n- Clear, unambiguous translation\n- Simple content word\n\nQUALITY CHECK:\n- Should translate to \"cat\"\n- Tests basic noun translation\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - The translation MUST be a correct dictionary meaning for the word\n   - The translation should be contextually appropriate (most common meaning)\n   - Penalize SEVERELY if the translation is incorrect or for a different word\n   - Accept multiple valid translations (e.g., \"eat\" or \"eats\" for a verb)\n   - Do NOT require exact wording - accept synonyms that convey the same meaning\n\n2. FUNCTION WORD HANDLING:\n   - Articles (the, a), prepositions (in, on), conjunctions (and, but), and particles MUST still receive translations\n   - Do NOT penalize for translating function words as function words (e.g., \"el\" → \"the\" is correct)\n   - Function words may have multiple valid translations depending on context\n\n3. BREVITY:\n   - Translations should be concise: one or two words maximum\n   - Do NOT provide full definitions or explanations\n   - Penalize if the translation is a sentence or long phrase instead of a word\n\n4. NO HALLUCINATION:\n   - The output should contain only the translation field\n   - The translation must correspond to the actual input word, not a related or similar word\n   - Do NOT penalize for minor formatting differences\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact translations - accept any valid dictionary meaning\n- Do NOT penalize for choosing one valid translation over another\n- FOCUS ON: translation accuracy, brevity\n\n    ",
-        "id": "es-en-gato-1",
-        "userInput": { "targetLanguage": "es", "userLanguage": "en", "word": "gato" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Could use \"eats\" instead of \"eat\" to more specifically reflect the third-person singular present form, though \"eat\" is explicitly accepted by the expectations.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "\nTARGET LANGUAGE: Spanish\nUSER LANGUAGE: English\n\nWORD: \"come\"\n\nThis is a Spanish verb meaning \"eats\" or \"eat\" (third person singular present):\n- Valid translations: \"eats\", \"eat\", \"he/she eats\"\n- Accept any of these forms\n\nQUALITY CHECK:\n- Should translate to \"eats\" or \"eat\"\n- Tests verb translation\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - The translation MUST be a correct dictionary meaning for the word\n   - The translation should be contextually appropriate (most common meaning)\n   - Penalize SEVERELY if the translation is incorrect or for a different word\n   - Accept multiple valid translations (e.g., \"eat\" or \"eats\" for a verb)\n   - Do NOT require exact wording - accept synonyms that convey the same meaning\n\n2. FUNCTION WORD HANDLING:\n   - Articles (the, a), prepositions (in, on), conjunctions (and, but), and particles MUST still receive translations\n   - Do NOT penalize for translating function words as function words (e.g., \"el\" → \"the\" is correct)\n   - Function words may have multiple valid translations depending on context\n\n3. BREVITY:\n   - Translations should be concise: one or two words maximum\n   - Do NOT provide full definitions or explanations\n   - Penalize if the translation is a sentence or long phrase instead of a word\n\n4. NO HALLUCINATION:\n   - The output should contain only the translation field\n   - The translation must correspond to the actual input word, not a related or similar word\n   - Do NOT penalize for minor formatting differences\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact translations - accept any valid dictionary meaning\n- Do NOT penalize for choosing one valid translation over another\n- FOCUS ON: translation accuracy, brevity\n\n    ",
-        "id": "es-en-come-1",
-        "userInput": { "targetLanguage": "es", "userLanguage": "en", "word": "come" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "\nTARGET LANGUAGE: Japanese\nUSER LANGUAGE: English\n\nWORD: \"猫\"\n\nThis is a Japanese word meaning \"cat\":\n- Clear, unambiguous translation\n- Uses kanji (non-Roman script)\n\nQUALITY CHECK:\n- Should translate to \"cat\"\n- Tests non-Roman script word translation\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - The translation MUST be a correct dictionary meaning for the word\n   - The translation should be contextually appropriate (most common meaning)\n   - Penalize SEVERELY if the translation is incorrect or for a different word\n   - Accept multiple valid translations (e.g., \"eat\" or \"eats\" for a verb)\n   - Do NOT require exact wording - accept synonyms that convey the same meaning\n\n2. FUNCTION WORD HANDLING:\n   - Articles (the, a), prepositions (in, on), conjunctions (and, but), and particles MUST still receive translations\n   - Do NOT penalize for translating function words as function words (e.g., \"el\" → \"the\" is correct)\n   - Function words may have multiple valid translations depending on context\n\n3. BREVITY:\n   - Translations should be concise: one or two words maximum\n   - Do NOT provide full definitions or explanations\n   - Penalize if the translation is a sentence or long phrase instead of a word\n\n4. NO HALLUCINATION:\n   - The output should contain only the translation field\n   - The translation must correspond to the actual input word, not a related or similar word\n   - Do NOT penalize for minor formatting differences\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact translations - accept any valid dictionary meaning\n- Do NOT penalize for choosing one valid translation over another\n- FOCUS ON: translation accuracy, brevity\n\n    ",
-        "id": "ja-en-neko-1",
-        "userInput": { "targetLanguage": "ja", "userLanguage": "en", "word": "猫" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "\nTARGET LANGUAGE: Japanese\nUSER LANGUAGE: English\n\nWORD: \"食べる\"\n\nThis is a Japanese verb meaning \"to eat\":\n- Valid translations: \"eat\", \"to eat\"\n- Uses hiragana and kanji (non-Roman script)\n\nQUALITY CHECK:\n- Should translate to \"eat\" or \"to eat\"\n- Tests verb translation from non-Roman script\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - The translation MUST be a correct dictionary meaning for the word\n   - The translation should be contextually appropriate (most common meaning)\n   - Penalize SEVERELY if the translation is incorrect or for a different word\n   - Accept multiple valid translations (e.g., \"eat\" or \"eats\" for a verb)\n   - Do NOT require exact wording - accept synonyms that convey the same meaning\n\n2. FUNCTION WORD HANDLING:\n   - Articles (the, a), prepositions (in, on), conjunctions (and, but), and particles MUST still receive translations\n   - Do NOT penalize for translating function words as function words (e.g., \"el\" → \"the\" is correct)\n   - Function words may have multiple valid translations depending on context\n\n3. BREVITY:\n   - Translations should be concise: one or two words maximum\n   - Do NOT provide full definitions or explanations\n   - Penalize if the translation is a sentence or long phrase instead of a word\n\n4. NO HALLUCINATION:\n   - The output should contain only the translation field\n   - The translation must correspond to the actual input word, not a related or similar word\n   - Do NOT penalize for minor formatting differences\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact translations - accept any valid dictionary meaning\n- Do NOT penalize for choosing one valid translation over another\n- FOCUS ON: translation accuracy, brevity\n\n    ",
-        "id": "ja-en-taberu-1",
-        "userInput": { "targetLanguage": "ja", "userLanguage": "en", "word": "食べる" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "\nTARGET LANGUAGE: Japanese\nUSER LANGUAGE: English\n\nWORD: \"は\"\n\nThis is a Japanese particle used as a topic marker:\n- Valid translations: varies by context, but common equivalents include \"as for\" or simply marking it as a topic particle\n- This is a function word that must still receive a translation\n- Accept any reasonable translation that conveys its grammatical role\n\nQUALITY CHECK:\n- Should provide some translation (even if approximate like \"as for\" or \"topic marker\")\n- Tests function word handling in non-Roman scripts\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - The translation MUST be a correct dictionary meaning for the word\n   - The translation should be contextually appropriate (most common meaning)\n   - Penalize SEVERELY if the translation is incorrect or for a different word\n   - Accept multiple valid translations (e.g., \"eat\" or \"eats\" for a verb)\n   - Do NOT require exact wording - accept synonyms that convey the same meaning\n\n2. FUNCTION WORD HANDLING:\n   - Articles (the, a), prepositions (in, on), conjunctions (and, but), and particles MUST still receive translations\n   - Do NOT penalize for translating function words as function words (e.g., \"el\" → \"the\" is correct)\n   - Function words may have multiple valid translations depending on context\n\n3. BREVITY:\n   - Translations should be concise: one or two words maximum\n   - Do NOT provide full definitions or explanations\n   - Penalize if the translation is a sentence or long phrase instead of a word\n\n4. NO HALLUCINATION:\n   - The output should contain only the translation field\n   - The translation must correspond to the actual input word, not a related or similar word\n   - Do NOT penalize for minor formatting differences\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact translations - accept any valid dictionary meaning\n- Do NOT penalize for choosing one valid translation over another\n- FOCUS ON: translation accuracy, brevity\n\n    ",
-        "id": "ja-en-wa-1",
-        "userInput": { "targetLanguage": "ja", "userLanguage": "en", "word": "は" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "\nTARGET LANGUAGE: German\nUSER LANGUAGE: English\n\nWORD: \"der\"\n\nThis is a German definite article (masculine nominative):\n- Most common translation: \"the\"\n- This is a function word that must still receive a translation\n\nQUALITY CHECK:\n- Should translate to \"the\"\n- Tests function word handling (gendered articles)\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - The translation MUST be a correct dictionary meaning for the word\n   - The translation should be contextually appropriate (most common meaning)\n   - Penalize SEVERELY if the translation is incorrect or for a different word\n   - Accept multiple valid translations (e.g., \"eat\" or \"eats\" for a verb)\n   - Do NOT require exact wording - accept synonyms that convey the same meaning\n\n2. FUNCTION WORD HANDLING:\n   - Articles (the, a), prepositions (in, on), conjunctions (and, but), and particles MUST still receive translations\n   - Do NOT penalize for translating function words as function words (e.g., \"el\" → \"the\" is correct)\n   - Function words may have multiple valid translations depending on context\n\n3. BREVITY:\n   - Translations should be concise: one or two words maximum\n   - Do NOT provide full definitions or explanations\n   - Penalize if the translation is a sentence or long phrase instead of a word\n\n4. NO HALLUCINATION:\n   - The output should contain only the translation field\n   - The translation must correspond to the actual input word, not a related or similar word\n   - Do NOT penalize for minor formatting differences\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact translations - accept any valid dictionary meaning\n- Do NOT penalize for choosing one valid translation over another\n- FOCUS ON: translation accuracy, brevity\n\n    ",
-        "id": "de-en-der-1",
-        "userInput": { "targetLanguage": "de", "userLanguage": "en", "word": "der" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "\nTARGET LANGUAGE: German\nUSER LANGUAGE: English\n\nWORD: \"Hund\"\n\nThis is a common German noun meaning \"dog\":\n- Clear, unambiguous translation\n- Simple content word\n\nQUALITY CHECK:\n- Should translate to \"dog\"\n- Tests basic noun translation from German\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - The translation MUST be a correct dictionary meaning for the word\n   - The translation should be contextually appropriate (most common meaning)\n   - Penalize SEVERELY if the translation is incorrect or for a different word\n   - Accept multiple valid translations (e.g., \"eat\" or \"eats\" for a verb)\n   - Do NOT require exact wording - accept synonyms that convey the same meaning\n\n2. FUNCTION WORD HANDLING:\n   - Articles (the, a), prepositions (in, on), conjunctions (and, but), and particles MUST still receive translations\n   - Do NOT penalize for translating function words as function words (e.g., \"el\" → \"the\" is correct)\n   - Function words may have multiple valid translations depending on context\n\n3. BREVITY:\n   - Translations should be concise: one or two words maximum\n   - Do NOT provide full definitions or explanations\n   - Penalize if the translation is a sentence or long phrase instead of a word\n\n4. NO HALLUCINATION:\n   - The output should contain only the translation field\n   - The translation must correspond to the actual input word, not a related or similar word\n   - Do NOT penalize for minor formatting differences\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact translations - accept any valid dictionary meaning\n- Do NOT penalize for choosing one valid translation over another\n- FOCUS ON: translation accuracy, brevity\n\n    ",
-        "id": "de-en-hund-1",
-        "userInput": { "targetLanguage": "de", "userLanguage": "en", "word": "Hund" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "\nTARGET LANGUAGE: German\nUSER LANGUAGE: English\n\nWORD: \"läuft\"\n\nThis is a German verb meaning \"runs\" or \"walks\" (third person singular present of \"laufen\"):\n- Valid translations: \"runs\", \"walks\", \"is running\", \"is walking\"\n- Contains umlaut (ä) which is standard in German Roman script\n\nQUALITY CHECK:\n- Should translate to \"runs\" or \"walks\" (or similar valid form)\n- Tests handling of words with umlauts\n- Tests verb translation\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - The translation MUST be a correct dictionary meaning for the word\n   - The translation should be contextually appropriate (most common meaning)\n   - Penalize SEVERELY if the translation is incorrect or for a different word\n   - Accept multiple valid translations (e.g., \"eat\" or \"eats\" for a verb)\n   - Do NOT require exact wording - accept synonyms that convey the same meaning\n\n2. FUNCTION WORD HANDLING:\n   - Articles (the, a), prepositions (in, on), conjunctions (and, but), and particles MUST still receive translations\n   - Do NOT penalize for translating function words as function words (e.g., \"el\" → \"the\" is correct)\n   - Function words may have multiple valid translations depending on context\n\n3. BREVITY:\n   - Translations should be concise: one or two words maximum\n   - Do NOT provide full definitions or explanations\n   - Penalize if the translation is a sentence or long phrase instead of a word\n\n4. NO HALLUCINATION:\n   - The output should contain only the translation field\n   - The translation must correspond to the actual input word, not a related or similar word\n   - Do NOT penalize for minor formatting differences\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact translations - accept any valid dictionary meaning\n- Do NOT penalize for choosing one valid translation over another\n- FOCUS ON: translation accuracy, brevity\n\n    ",
-        "id": "de-en-laeuft-1",
-        "userInput": { "targetLanguage": "de", "userLanguage": "en", "word": "läuft" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "\nTARGET LANGUAGE: Korean\nUSER LANGUAGE: Portuguese\n\nWORD: \"고양이\"\n\nThis is a Korean word meaning \"cat\" (gato in Portuguese):\n- Uses Hangul (non-Roman script)\n- Output should be in Portuguese, not English\n\nQUALITY CHECK:\n- Should translate to \"gato\" (Portuguese for \"cat\")\n- Tests non-English output language\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - The translation MUST be a correct dictionary meaning for the word\n   - The translation should be contextually appropriate (most common meaning)\n   - Penalize SEVERELY if the translation is incorrect or for a different word\n   - Accept multiple valid translations (e.g., \"eat\" or \"eats\" for a verb)\n   - Do NOT require exact wording - accept synonyms that convey the same meaning\n\n2. FUNCTION WORD HANDLING:\n   - Articles (the, a), prepositions (in, on), conjunctions (and, but), and particles MUST still receive translations\n   - Do NOT penalize for translating function words as function words (e.g., \"el\" → \"the\" is correct)\n   - Function words may have multiple valid translations depending on context\n\n3. BREVITY:\n   - Translations should be concise: one or two words maximum\n   - Do NOT provide full definitions or explanations\n   - Penalize if the translation is a sentence or long phrase instead of a word\n\n4. NO HALLUCINATION:\n   - The output should contain only the translation field\n   - The translation must correspond to the actual input word, not a related or similar word\n   - Do NOT penalize for minor formatting differences\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact translations - accept any valid dictionary meaning\n- Do NOT penalize for choosing one valid translation over another\n- FOCUS ON: translation accuracy, brevity\n\n    ",
-        "id": "ko-pt-goyangi-1",
-        "userInput": { "targetLanguage": "ko", "userLanguage": "pt", "word": "고양이" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "The translation is in Portuguese and correctly identifies the word as a particle, but it is somewhat too generic because it does not specify that 는 is a topic-marking particle.",
-          "kind": "minorErrors",
-          "score": 8.5
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
         },
         {
-          "conclusion": "A more useful concise rendering would be “partícula de tópico” or “quanto a”, which better captures the function of 는 while staying brief.",
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 10
         }
       ],
       "testCase": {
-        "expectations": "\nTARGET LANGUAGE: Korean\nUSER LANGUAGE: Portuguese\n\nWORD: \"는\"\n\nThis is a Korean topic-marking particle:\n- Similar to Japanese \"は\" in function\n- Output should be in Portuguese\n- Accept any reasonable translation of this grammatical particle\n\nQUALITY CHECK:\n- Should provide a Portuguese translation or grammatical description\n- Tests function word handling with non-English output\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - The translation MUST be a correct dictionary meaning for the word\n   - The translation should be contextually appropriate (most common meaning)\n   - Penalize SEVERELY if the translation is incorrect or for a different word\n   - Accept multiple valid translations (e.g., \"eat\" or \"eats\" for a verb)\n   - Do NOT require exact wording - accept synonyms that convey the same meaning\n\n2. FUNCTION WORD HANDLING:\n   - Articles (the, a), prepositions (in, on), conjunctions (and, but), and particles MUST still receive translations\n   - Do NOT penalize for translating function words as function words (e.g., \"el\" → \"the\" is correct)\n   - Function words may have multiple valid translations depending on context\n\n3. BREVITY:\n   - Translations should be concise: one or two words maximum\n   - Do NOT provide full definitions or explanations\n   - Penalize if the translation is a sentence or long phrase instead of a word\n\n4. NO HALLUCINATION:\n   - The output should contain only the translation field\n   - The translation must correspond to the actual input word, not a related or similar word\n   - Do NOT penalize for minor formatting differences\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact translations - accept any valid dictionary meaning\n- Do NOT penalize for choosing one valid translation over another\n- FOCUS ON: translation accuracy, brevity\n\n    ",
-        "id": "ko-pt-neun-1",
-        "userInput": { "targetLanguage": "ko", "userLanguage": "pt", "word": "는" }
+        "expected": {
+          "accepted": [
+            "the"
+          ]
+        },
+        "id": "es-en-el-1",
+        "userInput": {
+          "targetLanguage": "es",
+          "userLanguage": "en",
+          "word": "el"
+        }
       }
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expectations": "\nTARGET LANGUAGE: Korean\nUSER LANGUAGE: Portuguese\n\nWORD: \"먹다\"\n\nThis is a Korean verb meaning \"to eat\" (comer in Portuguese):\n- Basic verb in dictionary form\n- Output should be in Portuguese\n\nQUALITY CHECK:\n- Should translate to \"comer\" (Portuguese for \"to eat\")\n- Tests verb translation with non-English output\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - The translation MUST be a correct dictionary meaning for the word\n   - The translation should be contextually appropriate (most common meaning)\n   - Penalize SEVERELY if the translation is incorrect or for a different word\n   - Accept multiple valid translations (e.g., \"eat\" or \"eats\" for a verb)\n   - Do NOT require exact wording - accept synonyms that convey the same meaning\n\n2. FUNCTION WORD HANDLING:\n   - Articles (the, a), prepositions (in, on), conjunctions (and, but), and particles MUST still receive translations\n   - Do NOT penalize for translating function words as function words (e.g., \"el\" → \"the\" is correct)\n   - Function words may have multiple valid translations depending on context\n\n3. BREVITY:\n   - Translations should be concise: one or two words maximum\n   - Do NOT provide full definitions or explanations\n   - Penalize if the translation is a sentence or long phrase instead of a word\n\n4. NO HALLUCINATION:\n   - The output should contain only the translation field\n   - The translation must correspond to the actual input word, not a related or similar word\n   - Do NOT penalize for minor formatting differences\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact translations - accept any valid dictionary meaning\n- Do NOT penalize for choosing one valid translation over another\n- FOCUS ON: translation accuracy, brevity\n\n    ",
+        "expected": {
+          "accepted": [
+            "cat"
+          ]
+        },
+        "id": "es-en-gato-1",
+        "userInput": {
+          "targetLanguage": "es",
+          "userLanguage": "en",
+          "word": "gato"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "accepted": [
+            "cat"
+          ]
+        },
+        "id": "ja-en-neko-1",
+        "userInput": {
+          "targetLanguage": "ja",
+          "userLanguage": "en",
+          "word": "猫"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "accepted": [
+            "eat",
+            "to eat"
+          ]
+        },
+        "id": "ja-en-taberu-1",
+        "userInput": {
+          "targetLanguage": "ja",
+          "userLanguage": "en",
+          "word": "食べる"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "accepted": [
+            "the"
+          ]
+        },
+        "id": "de-en-der-1",
+        "userInput": {
+          "targetLanguage": "de",
+          "userLanguage": "en",
+          "word": "der"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "accepted": [
+            "dog"
+          ]
+        },
+        "id": "de-en-hund-1",
+        "userInput": {
+          "targetLanguage": "de",
+          "userLanguage": "en",
+          "word": "Hund"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "accepted": [
+            "gato"
+          ]
+        },
+        "id": "ko-pt-goyangi-1",
+        "userInput": {
+          "targetLanguage": "ko",
+          "userLanguage": "pt",
+          "word": "고양이"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "accepted": [
+            "comer"
+          ]
+        },
         "id": "ko-pt-meokda-1",
-        "userInput": { "targetLanguage": "ko", "userLanguage": "pt", "word": "먹다" }
+        "userInput": {
+          "targetLanguage": "ko",
+          "userLanguage": "pt",
+          "word": "먹다"
+        }
       }
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expectations": "\nTARGET LANGUAGE: Arabic\nUSER LANGUAGE: Spanish\n\nWORD: \"قطة\"\n\nThis is an Arabic word meaning \"cat\" (gato/gata in Spanish):\n- Uses Arabic script (RTL, non-Roman)\n- Output should be in Spanish\n\nQUALITY CHECK:\n- Should translate to \"gato\" or \"gata\" (Spanish for \"cat\")\n- Tests RTL script with Spanish output\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - The translation MUST be a correct dictionary meaning for the word\n   - The translation should be contextually appropriate (most common meaning)\n   - Penalize SEVERELY if the translation is incorrect or for a different word\n   - Accept multiple valid translations (e.g., \"eat\" or \"eats\" for a verb)\n   - Do NOT require exact wording - accept synonyms that convey the same meaning\n\n2. FUNCTION WORD HANDLING:\n   - Articles (the, a), prepositions (in, on), conjunctions (and, but), and particles MUST still receive translations\n   - Do NOT penalize for translating function words as function words (e.g., \"el\" → \"the\" is correct)\n   - Function words may have multiple valid translations depending on context\n\n3. BREVITY:\n   - Translations should be concise: one or two words maximum\n   - Do NOT provide full definitions or explanations\n   - Penalize if the translation is a sentence or long phrase instead of a word\n\n4. NO HALLUCINATION:\n   - The output should contain only the translation field\n   - The translation must correspond to the actual input word, not a related or similar word\n   - Do NOT penalize for minor formatting differences\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact translations - accept any valid dictionary meaning\n- Do NOT penalize for choosing one valid translation over another\n- FOCUS ON: translation accuracy, brevity\n\n    ",
+        "expected": {
+          "accepted": [
+            "gata",
+            "gato"
+          ]
+        },
         "id": "ar-es-qitta-1",
-        "userInput": { "targetLanguage": "ar", "userLanguage": "es", "word": "قطة" }
+        "userInput": {
+          "targetLanguage": "ar",
+          "userLanguage": "es",
+          "word": "قطة"
+        }
       }
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expectations": "\nTARGET LANGUAGE: Arabic\nUSER LANGUAGE: Spanish\n\nWORD: \"في\"\n\nThis is an Arabic preposition meaning \"in\" (en in Spanish):\n- Common function word (preposition)\n- Output should be in Spanish\n\nQUALITY CHECK:\n- Should translate to \"en\" (Spanish for \"in\")\n- Tests function word handling with RTL script and Spanish output\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - The translation MUST be a correct dictionary meaning for the word\n   - The translation should be contextually appropriate (most common meaning)\n   - Penalize SEVERELY if the translation is incorrect or for a different word\n   - Accept multiple valid translations (e.g., \"eat\" or \"eats\" for a verb)\n   - Do NOT require exact wording - accept synonyms that convey the same meaning\n\n2. FUNCTION WORD HANDLING:\n   - Articles (the, a), prepositions (in, on), conjunctions (and, but), and particles MUST still receive translations\n   - Do NOT penalize for translating function words as function words (e.g., \"el\" → \"the\" is correct)\n   - Function words may have multiple valid translations depending on context\n\n3. BREVITY:\n   - Translations should be concise: one or two words maximum\n   - Do NOT provide full definitions or explanations\n   - Penalize if the translation is a sentence or long phrase instead of a word\n\n4. NO HALLUCINATION:\n   - The output should contain only the translation field\n   - The translation must correspond to the actual input word, not a related or similar word\n   - Do NOT penalize for minor formatting differences\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact translations - accept any valid dictionary meaning\n- Do NOT penalize for choosing one valid translation over another\n- FOCUS ON: translation accuracy, brevity\n\n    ",
+        "expected": {
+          "accepted": [
+            "en"
+          ]
+        },
         "id": "ar-es-fi-1",
-        "userInput": { "targetLanguage": "ar", "userLanguage": "es", "word": "في" }
+        "userInput": {
+          "targetLanguage": "ar",
+          "userLanguage": "es",
+          "word": "في"
+        }
       }
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expectations": "\nTARGET LANGUAGE: Arabic\nUSER LANGUAGE: Spanish\n\nWORD: \"البيت\"\n\nThis is an Arabic word meaning \"the house\" (la casa in Spanish):\n- Contains the definite article \"ال\" (al-) attached to the noun\n- Output should be in Spanish\n\nQUALITY CHECK:\n- Should translate to \"la casa\" or \"casa\" or \"el hogar\" (Spanish for \"the house\" or \"house\")\n- Tests handling of attached articles in Arabic with Spanish output\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - The translation MUST be a correct dictionary meaning for the word\n   - The translation should be contextually appropriate (most common meaning)\n   - Penalize SEVERELY if the translation is incorrect or for a different word\n   - Accept multiple valid translations (e.g., \"eat\" or \"eats\" for a verb)\n   - Do NOT require exact wording - accept synonyms that convey the same meaning\n\n2. FUNCTION WORD HANDLING:\n   - Articles (the, a), prepositions (in, on), conjunctions (and, but), and particles MUST still receive translations\n   - Do NOT penalize for translating function words as function words (e.g., \"el\" → \"the\" is correct)\n   - Function words may have multiple valid translations depending on context\n\n3. BREVITY:\n   - Translations should be concise: one or two words maximum\n   - Do NOT provide full definitions or explanations\n   - Penalize if the translation is a sentence or long phrase instead of a word\n\n4. NO HALLUCINATION:\n   - The output should contain only the translation field\n   - The translation must correspond to the actual input word, not a related or similar word\n   - Do NOT penalize for minor formatting differences\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact translations - accept any valid dictionary meaning\n- Do NOT penalize for choosing one valid translation over another\n- FOCUS ON: translation accuracy, brevity\n\n    ",
+        "expected": {
+          "accepted": [
+            "la casa",
+            "el hogar"
+          ]
+        },
         "id": "ar-es-albayt-1",
-        "userInput": { "targetLanguage": "ar", "userLanguage": "es", "word": "البيت" }
+        "userInput": {
+          "targetLanguage": "ar",
+          "userLanguage": "es",
+          "word": "البيت"
+        }
       }
     }
   ],

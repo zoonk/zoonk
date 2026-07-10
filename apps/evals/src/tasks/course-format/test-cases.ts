@@ -1,10 +1,10 @@
 import { type TestCase } from "@/lib/types";
-import { type CourseFormat } from "@zoonk/ai/tasks/courses/format";
+import { type CourseFormat, type CourseFormatParams } from "@zoonk/ai/tasks/courses/format";
 import { type CourseFormatExpected } from "./scorer";
 
 type ExpectedCourseFormat = CourseFormat | readonly CourseFormat[];
 
-type CourseFormatTestCase = TestCase<CourseFormatExpected>;
+type CourseFormatTestCase = TestCase<CourseFormatExpected, CourseFormatParams>;
 
 const SCORE_TIERS = `
   - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.

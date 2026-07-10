@@ -1,0 +1,131 @@
+{
+  "expectations": "\n      - MUST be in Brazilian Portuguese\n\n      \n  # Goal\n\n  Evaluate whether the result is a usable lesson plan for the requested chapter.\n\n  A strong lesson plan turns the chapter scope into small, self-contained learner capabilities. Each lesson should teach one clear topic or skill: the core explanation should fit in 1-2 minutes, roughly 700-1,500 characters including spaces. The follow-up practice should fit in 3-4 minutes because it focuses on the same small capability. Coverage and lesson size both matter: splitting overloaded lessons should create more focused lessons, not a thinner chapter.\n\n  The app adds one practice lesson and one quiz after each explanation, then a final review. The generated lesson plan should still return only substantive lessons that teach new content, not practice, quiz, review, summary, or capstone lessons.\n\n  # What Good Looks Like\n\n  - Lessons are compact and practice-sized: each one teaches a distinct mechanism, decision, artifact, workflow, evidence type, practical task, or structural role as one self-contained unit.\n  - Each lesson can be explained clearly in 1-2 minutes, roughly 700-1,500 characters including spaces. If it would need several explanations, it should be split into multiple lessons.\n  - Related concepts that are mutually defining stay together in one lesson only when splitting them would force the same explanation and practice to repeat.\n  - The plan covers the chapter's canonical fundamentals, important modern practice, and required named entities from the domain.\n  - Splitting an overloaded lesson preserves the rest of the chapter's coverage instead of spending the whole plan on the first mechanism.\n  - Lessons stay inside this chapter's scope and avoid concepts that primarily belong to neighboring chapters.\n  - Titles are concrete, learner-facing, and searchable. Use the canonical names a serious learner would expect when those names are the field-standard way to identify the lesson topic.\n  - Descriptions explain what the lesson teaches and what the learner will do or be able to reason through. They should name the actual lesson scope in plain, searchable terms.\n  - Concepts are specific enough to guide content generation, but they are raw material inside a lesson, not automatic lesson candidates.\n\n  # Major Failures\n\n  ## Overloaded Lessons\n\n  Overloaded lessons are the main failure this eval must now catch. They happen when the output hides too much inside one umbrella lesson, producing explanations and practices that take too long for learners to complete.\n\n  A lesson may briefly mention neighboring pieces for context. Do not treat that as a reason to merge several distinct lesson targets. Merge only when the learner cannot understand or practice one part without learning the other part's core mechanism too.\n\n  Penalize as a major failure when the output:\n\n  - combines multiple independent chapter pillars into one lesson\n  - makes one lesson responsible for several mechanisms, workflows, decisions, structures, or roles that can be learned without re-teaching each other\n  - hides a sequence of distinct parts inside one title, such as \"trace X from input to output,\" when each part has a different function or recognition task\n  - depends on vague wording to fit a lesson that would actually need more than 1-2 minutes to explain clearly\n  - uses vague umbrella titles to avoid making necessary lesson boundaries\n  - creates lessons that would need several separate explanations to teach clearly\n\n  Score caps:\n\n  - Clear overloaded umbrella lesson: `majorErrors` score must be 7.5 or lower.\n  - Repeated overloaded lessons across the output: `majorErrors` score must be 6.5 or lower.\n  - A lesson that would plausibly create a 7+ minute explanation or a 10+ minute practice because it combines several independently teachable concepts: `majorErrors` score must be 6.5 or lower.\n\n  ## False Granularity\n\n  False granularity is the opposite boundary failure. It happens when the output looks comprehensive because it split the chapter into many tiny lessons, but those lessons would repeat the same explanation.\n\n  Use this test: if the explanation or practice for lesson A must teach lesson B's core idea for lesson A to make sense, A and B should probably be one lesson.\n\n  Canonical/searchable names do not make every named concept an automatic lesson. Judge whether the generated lesson would produce a distinct explanation and practice, not whether the title contains a recognizable term.\n\n  Penalize as a major failure when the output:\n\n  - splits one simple input -> process -> result chain into separate lessons when all parts use the same example and practice move\n  - splits small first-exposure parts that define each other, such as variable/name/value/output, function declaration/call/parameter/return, or loop/condition/body\n  - creates many adjacent lessons that would use the same example with slightly different labels\n  - turns every method, subtopic, phase, or label into its own lesson even though the learner experience would be repetitive\n  - rewards glossary completeness over teachable lesson boundaries\n\n  Do not confuse false granularity with valid domain decomposition. Adjacent lessons can be separate when they teach different evidence types, interpretive tasks, mechanisms, source categories, workflows, or real-world decisions. Examples that can be valid:\n\n  - history lessons that use artifacts, landscapes, languages, trade goods, rituals, warfare, and diplomacy for different kinds of historical reasoning\n  - astronomy lessons that separate detection methods, signal validation, physical inference, atmospheric characterization, habitability, missions, and telescope capabilities\n  - law lessons that separate procedural moves with different legal effects, deadlines, parties, remedies, or courts\n  - technical lessons that separate mechanisms only when each can be practiced without re-teaching the neighboring mechanism\n  - compact comparison lessons that group related variants, metrics, methods, or syntax forms around one learner move, such as comparing tradeoffs, choosing the right tool, or reading the same kind of evidence\n\n  Named-entity lessons are not automatically false granularity. They are valid when the named people, sites, missions, models, cases, tools, or works anchor a distinct comparison, interpretation, evidence source, or practical decision. Penalize them as false granularity only when the lesson is mostly a memorization list or would repeat the same teaching move as a neighboring lesson.\n\n  Score caps:\n\n  - Clear false-granularity cluster: `majorErrors` score must be 7.5 or lower.\n  - Repeated false granularity across the output, after excluding valid domain decomposition: `majorErrors` score must be 6.5 or lower.\n  - Glossary-expanded syllabus where many lessons are too small to stand as distinct self-contained units: `majorErrors` score must be 6.5 or lower.\n\n  ## Coverage, Accuracy, and Scope\n\n  Penalize as major failures when the output:\n\n  - drops important chapter pillars because the lessons became smaller\n  - misses canonical chapter pillars or modern practices a serious learner needs\n  - omits important named entities in domains built around specific people, tools, missions, models, works, groups, cases, or landmark systems\n  - includes factual, historical, legal, scientific, technical, or linguistic errors\n  - drifts into neighboring-chapter material as lesson topics rather than brief context\n  - uses mostly bloated textbook headings, generic category labels, or abstract inventory titles that do not identify a teachable lesson target\n\n  ## Canonical Lesson Titles and Descriptions\n\n  Lesson titles should preserve canonical/searchable names for the specific mechanism, structure, method, artifact, case, source type, procedure, metric, tool, or concept being taught. Canonical names are not \"dry textbook headings\" when they are the terms learners search for and practitioners use.\n\n  Accept close field-standard variants in the requested language. Do not require exact wording when the title still names the recognized topic.\n\n  Penalize as a major style issue when the output hides canonical terms behind practical paraphrases, metaphors, slogans, or \"what this does\" titles. A learner scanning or searching for a standard topic should be able to recognize the lesson from the title.\n\n  Examples:\n\n  - \"Function parameters and return values\" is better than \"Send data in and get an answer back\"\n  - \"Array methods\" is better than \"Use lists without extra loops\"\n  - \"Axon hillock\" is better than \"Where a neuron decides to fire\"\n  - \"Lead time and cycle time\" is better than \"How long work really takes\"\n  - \"Tutelas provisórias\" is better than \"Pedidos urgentes antes da sentença\"\n  - \"Transcrição\" is better than \"Copiar informação para RNA\"\n  - \"Transit method\" is better than \"Watch a planet dim a star\"\n  - \"Self-attention\" is better than \"Let tokens look at each other\"\n\n  Score caps:\n\n  - If 3 or more lesson titles hide important canonical/searchable terms that belong in those titles, the `majorErrors` score must be 7 or lower even when descriptions mention the terms and the lesson boundaries are otherwise sound.\n  - If 1-2 important lesson titles hide canonical/searchable terms, the `majorErrors` score must be 8 or lower.\n  - Descriptions recovering the canonical term do not remove the title problem because learners scan and search lesson titles first.\n\n  Descriptions should name the actual lesson scope clearly enough that downstream generation can tell which specific concept, procedure, evidence type, example, or skill belongs inside the lesson. A description that only says what the learner will feel, broadly do, or \"understand\" is too vague if it does not name the lesson's concrete scope in plain, searchable terms.\n\n  # Minor Issues\n\n  Treat these as minor unless they make the lesson plan hard to use:\n\n  - isolated awkward title wording\n  - concept titles that are slightly broad, abstract, verbose, or compound\n  - a compact comparison lesson that names several closely related variants when it only teaches recognition, tradeoffs, or selection criteria\n  - lesson sizes that are uneven or mechanically uniform when the boundaries are otherwise sound\n  - small progression or phrasing issues\n  - small scope-adjacent mentions that do not become lesson topics\n\n  # Scoring Order\n\n  First check whether the output preserves the requested chapter coverage. Then check whether the lesson boundaries would produce short, distinct, non-repetitive lessons. Do not reward extra length, exhaustive lists, or high concept count by themselves, but also do not reward a short plan that became short by dropping core chapter pillars.\n\n  If the output has no concrete major failures, the `majorErrors` conclusion should be \"None\" and the score should be 10.\n\n    ",
+  "judgedAt": "2026-07-10T11:04:26.359Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-fable-5",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Excellent coverage of every chapter pillar (petição inicial through sentença), including valid extras like alteração do pedido, julgamento parcial, and inspeção judicial, all as compact, distinct, canonically titled lessons. Descriptions are concrete and searchable with correct CPC references. Only minor gap: the 485/487 terminativa-vs-definitiva classification is not an explicit lesson.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Comprehensive, well-bounded plan covering all pillars with separate, practice-sized lessons for each prova type, saneamento, réplica, alegações finais, and three distinct sentença lessons — all canonical titles and concrete descriptions. Only minor omissions (inspeção judicial, alteração do pedido) and a slightly small 'valor da causa e documentos' lesson.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Solid, correctly sized lessons with canonical titles and accurate CPC references covering the main pillars, with each meio de prova taught separately. Misses réplica/providências preliminares as an explicit lesson and descriptions are thinner than the best outputs, but boundaries are sound throughout.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Reasonable lesson boundaries and coverage including réplica and saneamento, but descriptions are noticeably vaguer and less concrete than competitors. Contains a small terminology slip ('dispositivo que condena ou absolve' — criminal wording in civil procedure) and the coisa julgada lesson drifts slightly beyond the chapter's endpoint at sentença.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Coverage is decent but the plan repeatedly overloads lessons: petição inicial merges requisitos/pedidos/documentos, contestação merges preliminares and mérito, testemunhal and pericial are combined, and sentença merges estrutura, limites and coisa julgada. The 'Meios de prova' overview also overlaps redundantly with the individual prova lessons, triggering the repeated-overload cap.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Multiple clear umbrella lessons: all meios de prova compressed into one lesson (thinning a core chapter pillar), providências preliminares merged with julgamento conforme o estado, and sentença combined with resolução de mérito and coisa julgada. Titles and language are fine, but the repeated overloaded lessons and reduced prova depth make it the weakest plan.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "This model provides an exceptional breakdown of civil procedure. The lesson boundaries perfectly isolate distinct procedural mechanics, deadlines, and evidence types into self-contained units. Titles are highly canonical, and the descriptions accurately guide the specific legal rules to be taught without any false granularity or overloaded lessons.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "This model also delivers a stellar, highly usable lesson plan. It properly decomposes the procedural phases, types of judicial decisions, and distinct means of proof into practice-sized lessons. Titles are standard and searchable, and the coverage of the requested chapter is exhaustive.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "A very strong and concise plan that correctly separates distinct concepts like the types of early dismissal, forms of defense, and individual means of proof. It misses a few minor transitional steps (like 'providências preliminares') compared to the top models, but all generated lessons are well-scoped and highly effective.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "An acceptable plan that covers most of the chapter, but it exhibits some mild scope issues. It combines 'prova testemunhal' and 'depoimento pessoal'—which involve different rules, subjects, and evidentiary goals—into one lesson, and it completely skips the concept of 'improcedência liminar'.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "This model suffers from clear overloaded lessons. Combining 'prova testemunhal' and 'prova pericial' in a single lesson forces the merging of entirely different workflows (witness rosters and hearings vs. expert appointments and written reports). It also overloads its early dismissal lesson by combining amendments, rejection of the petition, and summary dismissal of merit.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "This output contains severe overloaded lessons. Grouping 'documental, testemunhal, pericial, inspeção judicial e depoimento pessoal' into a single lesson creates a massive unit that would take vastly longer than 1-2 minutes to explain. It relies on textbook-style umbrella categories rather than teachable, practice-sized boundaries.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Plano muito completo, preciso e bem decomposto, cobrindo o fluxo, as defesas, o saneamento, diversos meios de prova e os limites da sentença. Inclui práticas atuais, como videoconferência e registro audiovisual, embora algumas lições sobre pedidos e audiência sejam um pouco densas.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Apresenta excelente cobertura e lições geralmente focadas, com separação especialmente boa entre espécies de prova e aspectos da sentença. Há pequenos agrupamentos discutíveis, como valor da causa com documentos indispensáveis, mas o plano permanece altamente utilizável.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "As lições são compactas, canônicas e bem delimitadas, cobrindo todos os pilares expressamente pedidos. Porém, faltam etapas importantes do fluxo, sobretudo citação, réplica e providências preliminares, além de maior precisão nos requisitos da inicial.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "A cobertura é ampla e juridicamente sólida, incluindo documentos eletrônicos e vários meios de prova. Contudo, há sobrecarga recorrente em contestação, controle da inicial, meios de prova e sentença, além de sobreposição entre a visão geral das provas e lições posteriores.",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Cobre o capítulo de forma razoavelmente completa, mas concentra conteúdo demais em meios de prova, providências preliminares e sentença. Também classifica prescrição como preliminar do art. 337 do CPC, erro jurídico relevante, e deixa a citação pouco desenvolvida.",
+          "score": 5.7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Tem títulos claros e cobre os pilares básicos, mas omite improcedência liminar, citação e partes relevantes do julgamento conforme o estado do processo. Há ainda formulações imprecisas, como “ordem rígida” da audiência e dispositivo que “condena ou absolve”, linguagem inadequada à generalidade do processo civil.",
+          "score": 4.7
+        }
+      ]
+    }
+  ],
+  "taskId": "chapter-lessons",
+  "testCaseId": "pt-direito-processo-civil-procedimento-comum-1"
+}

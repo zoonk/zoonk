@@ -1,0 +1,143 @@
+{
+  "modelId": "openai/gpt-5.6-terra",
+  "results": [
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "romanizations": [
+            { "accepted": ["konnichiwa"] },
+            { "accepted": ["Tōkyō Tawā"] },
+            { "accepted": ["ogenki desu ka"] }
+          ]
+        },
+        "id": "ja-basic-phrases-1",
+        "userInput": {
+          "targetLanguage": "ja",
+          "texts": ["こんにちは", "東京タワー", "お元気ですか"]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "romanizations": [
+            { "accepted": ["nǐ hǎo"] },
+            { "accepted": ["xièxie"] },
+            { "accepted": ["Zhōngguó rén", "Zhōngguórén"] }
+          ]
+        },
+        "id": "zh-basic-phrases-1",
+        "userInput": { "targetLanguage": "zh", "texts": ["你好", "谢谢", "中国人"] }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "romanizations": [
+            { "accepted": ["annyeonghaseyo"] },
+            { "accepted": ["gamsahamnida"] },
+            { "accepted": ["Daehanminguk"] }
+          ]
+        },
+        "id": "ko-basic-phrases-1",
+        "userInput": { "targetLanguage": "ko", "texts": ["안녕하세요", "감사합니다", "대한민국"] }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "romanizations": [
+            { "accepted": ["Zdravstvuyte"] },
+            { "accepted": ["Spasibo"] },
+            { "accepted": ["Moskva"] }
+          ]
+        },
+        "id": "ru-basic-phrases-1",
+        "userInput": { "targetLanguage": "ru", "texts": ["Здравствуйте", "Спасибо", "Москва"] }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "romanizations": [
+            { "accepted": ["sawatdi"] },
+            { "accepted": ["khop khun", "khopkhun"] },
+            { "accepted": ["Krung Thep", "Krungthep"] }
+          ]
+        },
+        "id": "th-basic-phrases-1",
+        "userInput": { "targetLanguage": "th", "texts": ["สวัสดี", "ขอบคุณ", "กรุงเทพ"] }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "romanizations": [
+            { "accepted": ["watashi wa gakusei desu"] },
+            { "accepted": ["Tōkyō wa ōkii toshi desu"] },
+            {
+              "accepted": [
+                "mainichi nihongo o benkyō shite imasu",
+                "mainichi nihongo o benkyō shiteimasu"
+              ]
+            }
+          ]
+        },
+        "id": "ja-full-sentences-1",
+        "userInput": {
+          "targetLanguage": "ja",
+          "texts": ["私は学生です", "東京は大きい都市です", "毎日日本語を勉強しています"]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "romanizations": [
+            { "accepted": ["namaste"] },
+            { "accepted": ["dhanyavād"] },
+            { "accepted": ["Bhārat"] }
+          ]
+        },
+        "id": "hi-basic-words-1",
+        "userInput": { "targetLanguage": "hi", "texts": ["नमस्ते", "धन्यवाद", "भारत"] }
+      }
+    }
+  ],
+  "taskId": "lesson-romanization"
+}
