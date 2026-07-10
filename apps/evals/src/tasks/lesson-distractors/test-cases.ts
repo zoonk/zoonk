@@ -1,3 +1,6 @@
+import { type TestCase } from "@/lib/types";
+import { type LessonDistractorsParams } from "@zoonk/ai/tasks/lessons/language/distractors";
+
 const SHARED_EXPECTATIONS = `
 CONTEXT: distractors are shown to learners as wrong answer options in translation, reading, and listening lessons.
 
@@ -42,7 +45,7 @@ ANY SHAPE:
 - Do NOT penalize multi-word options when they are safe, natural, and in the correct language.
 `;
 
-export const TEST_CASES = [
+export const TEST_CASES: TestCase<unknown, LessonDistractorsParams>[] = [
   {
     expectations: `
 EXPECTED BEHAVIOR:

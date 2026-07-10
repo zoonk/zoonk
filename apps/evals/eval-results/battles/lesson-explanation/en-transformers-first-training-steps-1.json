@@ -1,0 +1,149 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: This lesson is about the first stability safeguards in transformer training. Penalize if:\n   - AdamW, warmup, and gradient clipping are collapsed into one indistinct trick\n   - Gradient clipping is treated as replacing the optimizer or learning-rate schedule\n\n2. BOUNDARY CHECK: The main arc should keep AdamW, warmup/decay, and gradient clipping central. Do not penalize brief supporting safeguards such as pre-normalization, initialization, batch size, or mixed precision when they explain transformer stability and do not replace the central trio. Penalize if label smoothing or attention dropout becomes the primary teaching move instead of sibling context.\n\n3. REAL-WORLD ANCHOR CHECK: ChatGPT, ChatGPT-style models, or another recognizable deployed LLM product/system is a valid real-world anchor. Do not penalize it as a generic category when the anchor clearly connects training stability to a product learners recognize.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: The explanation must be technically correct for the topic. Penalize invented mechanisms, wrong cause-effect chains, or misleading simplifications.\n\n2. REQUIRED STRUCTURE: The output must contain exactly two top-level fields:\n   - explanation[]: an array of explanation steps, each with title and text\n   - anchor: { title, text } (no visual)\n\n3. LESSON DELIVERY: The lesson must actually deliver on LESSON_TITLE and LESSON_DESCRIPTION. The learner should finish with a full working understanding of what the topic is, how it works, how it is used/measured/written/recognized in practice when relevant, why it matters when relevant, and what the important terms, formulas, structures, rules, caveats, or limits mean. Penalize lessons that stay friendly but surface-level, or technically dense but hard to understand.\n\n4. BEGINNER + EXPERT FIT: The lesson should feel like a precise expert explaining the topic to a smart non-expert friend. It should use everyday language without dumbing down the topic. Penalize:\n   - Academic phrasing that makes a simple idea feel harder than it is\n   - \"Friendly\" explanations that omit the expert essentials required by the lesson scope\n   - Dense explanations that contain the right terms but do not explain them in plain language\n   - Formal terms, formulas, or code snippets that appear without enough plain-language explanation\n\n5. MECHANISM + FORMAL DETAIL: The lesson must include the real mechanism, structure, relationship, calculation, rule, or procedure required by the title and description. Penalize:\n   - Skipping formulas, variables, code shapes, uncertainty, exceptions, limits, or precise terms that an expert would expect for this lesson scope\n   - Including those details without explaining what the parts mean\n   - Using an analogy, vibe, story, or visual scene as a substitute for the actual mechanism\n\n6. LESSON BOUNDARY: The lesson must stay focused on the selected LESSON_TITLE and leave sibling angles in OTHER_EXPLANATION_LESSON_TITLES for those other lessons. Penalize explanations that spend their main teaching energy on a sibling lesson instead of the chosen one.\n\n7. EXPLANATION FLOW: There is no required opening pattern, cold open, or story arc. The explanation[] array should choose the clearest order for this topic and connect ideas so the learner can follow how the topic works. Penalize:\n   - Stacked definitions that do not connect to each other\n   - Scenic or subjective prose that does not help explain the concept\n   - Missing the practical payoff when the lesson calls for why this matters\n   - Naming terms before giving enough context to understand them, when that makes the lesson harder to follow\n\n8. STEP QUALITY: Each step.text is 1-3 short sentences of prose. Step titles are short, unique, and useful for understanding what the step teaches. Penalize:\n   - Long paragraphs\n   - Titles that are only props, moods, vague story beats, or generic labels\n   - Repetition between steps\n\n9. CONCRETENESS: The lesson should use concrete examples, measurements, cases, code-shaped details, or realistic situations when they make the mechanism easier to understand. Penalize:\n   - Vague prose that never makes the mechanism concrete\n   - Examples that are only atmospheric decoration\n   - Lessons about \"how it's written\" that never describe the structure or code detail clearly enough to understand\n\n10. STATIC + RICH TEXT DELIVERY: The lesson should stay entirely within explanation steps plus the closing anchor. It may use inline LaTeX, display LaTeX, bold, italic, and inline code with single backticks. Penalize:\n   - Quiz-like interruptions, option lists, or explicit \"guess before continuing\" instructions\n   - Steps that stop to ask the learner to choose instead of explaining\n   - Rhetorical-question-only steps that replace a real explanation\n   - Markdown headings, lists, tables, links, or large code fences inside a step\n   - Malformed LaTeX or unsupported formatting that would show raw clutter to the learner\n\n11. ANCHOR QUALITY: anchor has no visual. It answers why the topic is useful and where it shows up outside the lesson by naming one specific real-world instance — a named product (e.g., Instagram, WhatsApp), recognizable product family (e.g., ChatGPT-style models), named technology/service/system, named mission/instrument, named event/figure/case/place, or concrete physical action the learner has actually done — and what it does there. Penalize:\n   - Abstract \"this is why it matters\" wrap-ups\n   - Metaphors or vague generalities\n   - Classroom demonstrations, lab videos, school apparatus, research instruments, or professional workflows that do not name the product, service, system, or public-world outcome they enable\n   - Category-list anchors that name a type of use instead of a vivid instance (\"a star, a lamp, or a gas cloud\"; \"many apps\"; \"some medical devices\")\n   - Generic placeholders standing in for a specific real thing (\"a real app\", \"a real court case\", \"an exoplanet\", \"every time a button does X in three places\")\n\n12. STYLE: Clear, short, concrete, beginner-friendly, and precise. Penalize academic tone, atmospheric storytelling, filler lines, subjectivity that does not teach, and redundancy across steps and anchor.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require a fixed number of steps. Complex topics need more; simple topics fewer. Both are fine as long as the lesson is delivered\n- Do NOT require a cold open, story arc, single scene, or specific opening style\n- Do NOT require specific title wording, a particular choice of product or event, or a specific visual kind. The anchor must name some specific real thing, but any reasonable choice is fine — do not penalize the model for picking Instagram over WhatsApp, or one named case over another\n- Do NOT penalize anchors that use a widely recognized product family tied to a named product, such as \"ChatGPT-style models\", when the learner can clearly recognize the real-world surface\n- Do NOT penalize direct explanatory writing when it is clear, plain, concrete, and complete\n- Do NOT penalize density when the density comes from necessary expert content explained in everyday language\n- Do NOT focus on JSON wrapping or formatting trivia. Evaluate the content and structural fit\n- ONLY penalize for: wrong top-level structure, factual errors, failing to deliver LESSON_TITLE and LESSON_DESCRIPTION, missing beginner/expert balance, missing required mechanism/detail, drifting into sibling lessons, unclear flow, unsupported formatting, weak real-world anchor, or broken writing constraints\n\n    ",
+  "judgedAt": "2026-07-10T17:44:48.328Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.8",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Precise mechanism for all three tools with correct formulas (adaptive step, decoupled decay, norm clipping) explained in plain language. Keeps the central trio distinct, connects the danger of early steps to warmup accurately, and closes with a clean 'three different jobs' payoff. Anchor names GPT-3/Llama training curves concretely. LaTeX is clean.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Excellent flow from gradient descent to Adam to AdamW to warmup/decay to clipping, with clear per-weight-vs-global-vs-spike distinctions and a strong 'why none replaces the others' closer. Formulas are correct and explained. Anchor names GPT/BERT/Llama concretely.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Strong technical accuracy with correct AdamW, weight-decay, and clipping formulas, plus a valuable step distinguishing learning-rate decay from weight decay. Clear separation of roles and practical warning signs. Anchor names Hugging Face Trainer/BERT concretely.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Accurate coverage of the trio with correct AdamW formula and clipping rule, explained in plain terms, and explicit 'none replaces the others' step. Anchor names Gmail Smart Compose concretely. Solid but slightly less vivid than the top entries; one formula uses an escaped newline artifact.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Thorough and accurate, keeping the trio distinct with correct formulas and useful practical settings and diagnostics. Anchor names Hugging Face/BERT concretely. Slightly long at 13 steps with some overlap between the loop and settings steps, but content is strong.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Content is accurate and covers the trio distinctly with a good worked clipping example, but the clipping formula step is garbled with 'equiv' tokens and stray line breaks that would render as raw clutter for learners. That LaTeX breakage is a real formatting penalty.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Correct high-level distinctions but the thinnest at only 5 steps and relies on a car-parts metaphor rather than explaining the mechanism fully; warmup/decay is barely covered (decay not really explained). Uses \\theta for the clip threshold ambiguously. Less mechanism depth than the field.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "This response is exceptional. It perfectly balances beginner-friendly phrasing with expert-level detail, providing accurate formulas for AdamW, decoupled weight decay, and gradient clipping. It explicitly explains why none of the tools replace the others and includes great practical insights like unscaling mixed-precision gradients.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "This is an exceptional lesson that uses display math effectively to show the exact AdamW update formula. It clearly defines what each tool controls, explains the gradient clipping mechanism mathematically, and uses a strong, specific real-world anchor (Gmail Smart Compose).",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "A strong response that delivers a highly readable conceptual and mathematical explanation of all three safeguards. It loses minor points for omitting the learning-rate multiplier in the decoupled weight decay formula, but its breakdown of what goes wrong and how each tool fixes it is excellent.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "This output is acceptable and has a great narrative flow, but it misses crucial formal details. While it includes the base Adam formula, it skips the actual math for decoupled weight decay and the gradient clipping rescaling equation, making it slightly too surface-level for the expert requirements.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "An acceptable lesson with good practical advice on training loops, starting settings, and diagnosing symptoms. However, it fails the formal detail requirement by using vague placeholders like 'AdamStep' and skipping the exact clipping formula.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "This response is poor because it completely omits the required mathematical mechanisms. By skipping the formulas for the AdamW update and gradient clipping rescaling, it violates the negative constraint against missing formal details an expert would expect.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "This response is unusable due to severely broken text and malformed LaTeX in the gradient clipping step. The catastrophic formatting (`\\n\\nequiv \\n\\ng\\n\\nequiv`) makes the core mechanism completely illegible to a learner.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Exceptionally complete and precise: it clearly distinguishes AdamW’s adaptive updates and decoupled weight decay, the warmup/decay schedule, and global-norm clipping, with correct formulas and training-loop order. Monitoring guidance and the specific Hugging Face BERT anchor make the lesson practical without drifting from the core trio.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Thorough, beginner-friendly, and strongly practical, including the optimizer mechanism, clipping rule, schedule behavior, loop order, starting settings, and diagnostic symptoms. The simplified `AdamStep` notation is slightly ambiguous, but the surrounding explanation makes the intended mechanism clear.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "A concise but complete lesson with correct formulas, clear role separation, a practical recipe, and a concrete Gmail Smart Compose anchor. The literal `\\u000a` formatting artifact in the formula step slightly weakens the rich-text delivery.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "The conceptual explanation is strong and directly compares the three safeguards, with a useful numerical clipping example and monitoring advice. However, the clipping formula is badly malformed, and the unnamed support-reply chat model is weaker than the required specific real-world anchor.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "The central comparison is clear and accessible, and it correctly presents clipping as a separate safeguard rather than a replacement for AdamW or scheduling. It contains misleading wording such as “Adam is the W part,” overstates that omitting any safeguard necessarily causes failure, and gives less formal detail for clipping.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "It provides a coherent three-part mechanism and a useful clipping formula, but it inaccurately calls Adam’s second-moment estimate a variance and omits the learning-rate factor from its stated decoupled weight-decay subtraction. The anchor also makes unsupported claims about published GPT-3 and Llama curves and clipping behavior.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "It keeps the required trio central and explains their broad roles, but the lesson is too surface-level for the requested working understanding: AdamW’s adaptive mechanism and learning-rate decay are barely developed, and clipping lacks a precise rule. The claim that GPT-4 uses this exact combination is not publicly established, while several instability claims are overstated.",
+          "score": 4
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-explanation",
+  "testCaseId": "en-transformers-first-training-steps-1"
+}

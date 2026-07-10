@@ -1,0 +1,149 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: This lesson is about raids, captives, and what conflict was trying to achieve. Penalize if:\n   - Raids are reduced to random violence or simple looting\n   - Captives are treated as incidental rather than part of the meaning and aim of warfare\n\n2. BOUNDARY CHECK: The main arc should stay on raids, captives, and conflict aims. Brief context about honor, memory, alliance, or revenge is fine when it explains why raids or captives mattered. Penalize if revenge logic, colonial stereotypes, or war leadership becomes the primary lesson instead of support for raids and captives.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: The explanation must be technically correct for the topic. Penalize invented mechanisms, wrong cause-effect chains, or misleading simplifications.\n\n2. REQUIRED STRUCTURE: The output must contain exactly two top-level fields:\n   - explanation[]: an array of explanation steps, each with title and text\n   - anchor: { title, text } (no visual)\n\n3. LESSON DELIVERY: The lesson must actually deliver on LESSON_TITLE and LESSON_DESCRIPTION. The learner should finish with a full working understanding of what the topic is, how it works, how it is used/measured/written/recognized in practice when relevant, why it matters when relevant, and what the important terms, formulas, structures, rules, caveats, or limits mean. Penalize lessons that stay friendly but surface-level, or technically dense but hard to understand.\n\n4. BEGINNER + EXPERT FIT: The lesson should feel like a precise expert explaining the topic to a smart non-expert friend. It should use everyday language without dumbing down the topic. Penalize:\n   - Academic phrasing that makes a simple idea feel harder than it is\n   - \"Friendly\" explanations that omit the expert essentials required by the lesson scope\n   - Dense explanations that contain the right terms but do not explain them in plain language\n   - Formal terms, formulas, or code snippets that appear without enough plain-language explanation\n\n5. MECHANISM + FORMAL DETAIL: The lesson must include the real mechanism, structure, relationship, calculation, rule, or procedure required by the title and description. Penalize:\n   - Skipping formulas, variables, code shapes, uncertainty, exceptions, limits, or precise terms that an expert would expect for this lesson scope\n   - Including those details without explaining what the parts mean\n   - Using an analogy, vibe, story, or visual scene as a substitute for the actual mechanism\n\n6. LESSON BOUNDARY: The lesson must stay focused on the selected LESSON_TITLE and leave sibling angles in OTHER_EXPLANATION_LESSON_TITLES for those other lessons. Penalize explanations that spend their main teaching energy on a sibling lesson instead of the chosen one.\n\n7. EXPLANATION FLOW: There is no required opening pattern, cold open, or story arc. The explanation[] array should choose the clearest order for this topic and connect ideas so the learner can follow how the topic works. Penalize:\n   - Stacked definitions that do not connect to each other\n   - Scenic or subjective prose that does not help explain the concept\n   - Missing the practical payoff when the lesson calls for why this matters\n   - Naming terms before giving enough context to understand them, when that makes the lesson harder to follow\n\n8. STEP QUALITY: Each step.text is 1-3 short sentences of prose. Step titles are short, unique, and useful for understanding what the step teaches. Penalize:\n   - Long paragraphs\n   - Titles that are only props, moods, vague story beats, or generic labels\n   - Repetition between steps\n\n9. CONCRETENESS: The lesson should use concrete examples, measurements, cases, code-shaped details, or realistic situations when they make the mechanism easier to understand. Penalize:\n   - Vague prose that never makes the mechanism concrete\n   - Examples that are only atmospheric decoration\n   - Lessons about \"how it's written\" that never describe the structure or code detail clearly enough to understand\n\n10. STATIC + RICH TEXT DELIVERY: The lesson should stay entirely within explanation steps plus the closing anchor. It may use inline LaTeX, display LaTeX, bold, italic, and inline code with single backticks. Penalize:\n   - Quiz-like interruptions, option lists, or explicit \"guess before continuing\" instructions\n   - Steps that stop to ask the learner to choose instead of explaining\n   - Rhetorical-question-only steps that replace a real explanation\n   - Markdown headings, lists, tables, links, or large code fences inside a step\n   - Malformed LaTeX or unsupported formatting that would show raw clutter to the learner\n\n11. ANCHOR QUALITY: anchor has no visual. It answers why the topic is useful and where it shows up outside the lesson by naming one specific real-world instance — a named product (e.g., Instagram, WhatsApp), recognizable product family (e.g., ChatGPT-style models), named technology/service/system, named mission/instrument, named event/figure/case/place, or concrete physical action the learner has actually done — and what it does there. Penalize:\n   - Abstract \"this is why it matters\" wrap-ups\n   - Metaphors or vague generalities\n   - Classroom demonstrations, lab videos, school apparatus, research instruments, or professional workflows that do not name the product, service, system, or public-world outcome they enable\n   - Category-list anchors that name a type of use instead of a vivid instance (\"a star, a lamp, or a gas cloud\"; \"many apps\"; \"some medical devices\")\n   - Generic placeholders standing in for a specific real thing (\"a real app\", \"a real court case\", \"an exoplanet\", \"every time a button does X in three places\")\n\n12. STYLE: Clear, short, concrete, beginner-friendly, and precise. Penalize academic tone, atmospheric storytelling, filler lines, subjectivity that does not teach, and redundancy across steps and anchor.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require a fixed number of steps. Complex topics need more; simple topics fewer. Both are fine as long as the lesson is delivered\n- Do NOT require a cold open, story arc, single scene, or specific opening style\n- Do NOT require specific title wording, a particular choice of product or event, or a specific visual kind. The anchor must name some specific real thing, but any reasonable choice is fine — do not penalize the model for picking Instagram over WhatsApp, or one named case over another\n- Do NOT penalize anchors that use a widely recognized product family tied to a named product, such as \"ChatGPT-style models\", when the learner can clearly recognize the real-world surface\n- Do NOT penalize direct explanatory writing when it is clear, plain, concrete, and complete\n- Do NOT penalize density when the density comes from necessary expert content explained in everyday language\n- Do NOT focus on JSON wrapping or formatting trivia. Evaluate the content and structural fit\n- ONLY penalize for: wrong top-level structure, factual errors, failing to deliver LESSON_TITLE and LESSON_DESCRIPTION, missing beginner/expert balance, missing required mechanism/detail, drifting into sibling lessons, unclear flow, unsupported formatting, weak real-world anchor, or broken writing constraints\n\n    ",
+  "judgedAt": "2026-07-10T17:44:51.761Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.8",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Strong balance keeping raids, captives, and conflict aims central while treating revenge, alliances, and sources as support. Clear plain-language mechanism, critical source handling, and a concrete named anchor (Kuhikugu). Steps are tight and non-repetitive.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Well-focused on raids, captives, alliances, and defense with careful source treatment and a specific Kuhikugu anchor. Steps connect logically and stay concise; captives-as-meaning is handled well. Slightly less depth on captive ritual specifics but overall excellent.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Accurate, nuanced, and stays on raids/captives/aims while noting ritual meaning and source caution. Named Kuhikugu anchor is concrete. A couple steps lean slightly wordy but content quality is high.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Delivers raids, captives, alliances with a vivid Hans Staden anchor and strong mechanism. Slight overweighting of revenge framing and a typo ('a earlier'), plus the opening flatly says war 'wasn't about territory' which is a bit reductive, but captives stay central.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Comprehensive and accurate with a named Kuhikugu anchor, but drifts into a full leadership step that belongs to a sibling lesson, and is long with some overlap. Captives and raids are well covered otherwise.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Good captive-centered focus and clear mechanism, but the anchor is a generic 'a museum display' rather than a specific named instance, which violates the anchor requirement. Revenge-cycle framing is prominent but stays supportive.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Concise and mostly accurate, but the LiDAR anchor overclaims ('prove sophisticated regional defense networks') and is more atmospheric than a specific named instance. Thinner coverage of using sources carefully and captive variation; some overstated confidence.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "This model perfectly balances the task expectations. It clearly explains the mechanisms of raids, revenge, alliances, and captivity, and then skillfully uses fortified sites, early accounts, and oral memory to examine these practices without drifting into sibling lessons. The anchor correctly names a specific, real-world archaeological site.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "This model is exceptional and practically tied with Model A. It delivers a concise, tightly structured lesson that covers all prompt requirements. It successfully integrates the source analysis into the warfare discussion and uses a valid, specific real-world anchor.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "This model also provides an excellent, well-paced explanation of the topics and sources required by the description. It correctly names a specific location in the anchor and avoids scope drift, fully earning a top score.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "This model offers a very strong explanation and does a brilliant job using Hans Staden as a concrete example of an early written account. However, it is penalized because its anchor uses a generic category ('Some coastal defense mounds') instead of a specific, named instance as required.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "The lesson flows well but rushes the source analysis required by the description, squeezing oral history and written accounts into a single passing mention. Additionally, the anchor leans heavily on a research workflow (LiDAR planes) rather than a specific named place or product.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "While the content is factually accurate, this model suffers from scope drift. By dedicating half of its 14 steps purely to the nature of the sources and adding a step on leadership, it spends too much teaching energy on sibling lessons rather than keeping the focus on warfare and captives.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "This model provides a clear but somewhat surface-level explanation that glosses over the required source analysis (fortified sites, oral memory, early accounts). It also uses a generic placeholder for the anchor ('a museum display') instead of naming a specific real-world instance.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "The lesson stays tightly focused on raids, alliances, captive taking, defense, and regional variation while clearly explaining how each kind of evidence should be weighed. It is especially strong in treating captives as an aim of warfare rather than an incidental result, with only minor room for more detail about the political meanings of captivity.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "This is a comprehensive, accessible account that concretely explains raids, revenge, alliances, varied captive outcomes, fortifications, and source criticism. The leadership step drifts slightly toward a sibling lesson, and a few claims such as captives being displayed as proof of victory are less carefully grounded.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "This output is notably careful about regional variation, uncertainty, source limits, and the coexistence of practical and ritual aims. It gives less concrete attention to how raids worked and how taking captives functioned as a conflict objective, so the central mechanism is somewhat less developed than in the top two.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "The lesson is concise, accurate, and well balanced across political aims, alliances, captive outcomes, fortifications, oral memory, and early accounts. Raids and captive taking are identified but not explained as concretely as they could be, leaving the central conflict mechanism slightly thin.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "The output makes raids and captives central and provides useful discussion of Hans Staden and source comparison. However, it overgeneralizes warfare as mostly unrelated to territory, presents revenge rules too uniformly, and makes questionable claims about raised defensive platforms and unspecified coastal mounds.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "This is focused and understandable, with a clear account of revenge cycles, captive taking, shifting alliances, and evidence. Its broad claims about coastal Tupi warfare, the absolute statement that no group fought alone, and the generic, potentially misleading museum-artifact anchor substantially weaken accuracy and nuance.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Although it correctly frames warfare as organized rather than random, it repeatedly turns regionally specific patterns into universal claims. It incorrectly excludes captive labor, offers the questionable idea that execution absorbed an enemy’s strength, misuses *tabas* as a fortification category, and overstates earthworks as proof of regional defense networks.",
+          "score": 3.2
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-explanation",
+  "testCaseId": "en-brazilian-history-raid-purpose-1"
+}

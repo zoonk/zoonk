@@ -1,0 +1,149 @@
+{
+  "expectations": "\nLANGUAGE: Brazilian Portuguese output required for translations (NOT English).\n\nTOPIC: Spanish sentences for shopping - using shopping vocabulary.\n\nSOURCE LESSON METADATA: shopping and price vocabulary such as comprar, la tienda, el precio, caro, barato.\nGenerated sentences should naturally cover this source scope.\n\nDIFFICULTY: Intermediate level. Chapter \"Shopping and Commerce\" + verbs and adjectives = intermediate vocabulary.\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Sentences drift away from the source lesson scope\n- Verb conjugation is incorrect (comprar conjugated forms)\n- Adjective gender agreement is wrong (caro/cara, barato/barata)\n- Translations are in English instead of Portuguese\n\nCONTEXT EXPECTATIONS:\n- Sentences about buying, prices, stores\n- Shopping conversations and situations\n- Natural commercial interactions\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - Each translation MUST convey the full meaning of its target-language sentence\n   - Preserve tone and register while using natural phrasing in USER_LANGUAGE\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, misleading, or unnatural\n\n2. LESSON SCOPE USAGE (CRITICAL):\n   - Each generated sentence MUST fit the lesson title, description, and source lesson metadata\n   - Important words and phrases implied by the lesson scope should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences drift away from the lesson scope\n   - Penalize if lesson-scope words or phrases are used incorrectly or out of context\n\n3. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n4. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Use appropriate register (formal/informal) for the context\n   - Penalize artificial, contrived, robotic, or textbook-like constructions\n\n5. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if the lesson scope naturally groups those situations together\n\n6. APPROPRIATE DIFFICULTY (CRITICAL):\n   - The model MUST infer difficulty from the chapter title, lesson title, lesson description, and source scope\n   - Beginner context (basic topics + simple source scope) → simple sentences (2-5 words)\n   - Intermediate context → medium sentences (4-8 words)\n   - Advanced context (complex topics + advanced vocabulary) → complex sentences allowed\n   - Penalize SEVERELY if beginner-level context produces complex sentences (compound sentences, subordinate clauses, long constructions)\n   - Penalize if advanced-level context produces only trivially simple sentences\n\n7. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Avoid semantic duplicates that express the same idea with superficial wording changes\n\n8. LANGUAGE SEPARATION (CRITICAL):\n   - Every sentence MUST be written entirely in TARGET_LANGUAGE\n   - Translations and explanations MUST be written in USER_LANGUAGE\n   - Penalize if languages are swapped or if USER_LANGUAGE words appear in a target-language sentence\n\n9. EXPLANATION QUALITY (required for every sentence):\n   - Each explanation MUST be a non-empty string in USER_LANGUAGE; null or empty explanations are invalid\n   - Explain why this specific sentence is structured this way in TARGET_LANGUAGE and how it differs from USER_LANGUAGE\n   - Focus on useful contrasts such as word order, grammar, word choice, false friends, or potentially confusing forms\n   - Grammar claims MUST describe the element's actual role in this sentence\n   - For non-Latin target scripts, every target-language word or phrase mentioned in the explanation MUST be immediately followed by its romanization in parentheses\n   - Do NOT expect a separate romanization field; the task does not generate one\n\n10. CLEAN OUTPUT FIELDS:\n    - The sentence and translation fields MUST contain only their respective text, with no parenthetical explanations, usage notes, grammar hints, or alternative phrasings\n    - Sentences and translations should avoid decorative terminal punctuation because they become word-bank tiles\n    - Penalize unnecessary punctuation on simple greetings, farewells, thanks, statements, labels, or short conversational chunks (e.g., \"Good morning!\" should be \"Good morning\"; \"See you later.\" should be \"See you later\")\n    - Do NOT penalize punctuation that changes meaning or is grammatically required, especially question marks for questions (e.g., \"How are you?\") and required target-language question punctuation (e.g., \"¿Cómo estás?\")\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that fit the lesson scope\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: translation accuracy, lesson-scope usage, grammatical correctness, naturalness, explanation quality, and difficulty appropriateness\n\n    ",
+  "judgedAt": "2026-07-10T18:58:38.953Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.8",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "All sentences fit the shopping scope with correct conjugations and gender agreement (caro, barato). Translations are natural Brazilian Portuguese and explanations offer useful contrasts (false friend tenda, más vs mas). Minor: the 'bueno comes after noun' claim is slightly loose but not wrong here.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Strong scope coverage, correct grammar and gender agreement, natural translations. Explanations are accurate and highlight helpful contrasts including feminine barata/la falda. Very solid throughout.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Wide variety, all grammatically correct and natural, good scope fit including payment contexts. The 'Tengo pouco dinheiro seria incorreto' explanation is awkwardly phrased (mixing languages to illustrate an error) but explanations are largely accurate.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Good scope and correct grammar throughout. Slight issue: 'El precio del café es bajo' translated as 'está baixo' (mixing es/está sense) is minor; the caro word-order explanation is somewhat muddled but overall useful.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Covers scope well with correct conjugations and agreements. 'Comparamos' explanation is slightly confusing and 'efectivo' false-cognate note is helpful. Generally accurate and natural.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Correct grammar, natural translations, good scope. However the claim that 'quiero' involves 'e changing to ie' as ditongação is a real diphthongization but phrased as if a spelling change; the 'j aspirated' note is a pronunciation aside, acceptable. Fewer sentences but solid.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Correct and natural with good scope fit. Some sentences drift slightly (libro) but stay commercial. Explanations are accurate though a couple are thin. Solid overall.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Flawlessly matches the intermediate difficulty with sentences between 4 and 8 words. Explanations are exceptionally detailed, highlighting phonetics and orthography, while translations and formatting rules are perfectly followed.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Perfectly adheres to the intermediate length constraints and provided vocabulary. It offers highly natural shopping contexts, accurate translations, and well-formed explanations without violating punctuation rules.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Strong performance with accurate translations, correct grammar, and solid explanations. It has a very minor gap in difficulty consistency by including one 3-word sentence that leans towards beginner level.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Generally meets expectations with appropriate vocabulary and good explanations. However, it inaccurately translates the demonstrative 'ese' as 'aquele' instead of 'esse', and includes a slightly brief 3-word sentence.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Acceptable output, but it struggles with difficulty constraints by including multiple 3-word sentences. It also loosely translates 'ese' as 'aquele', losing the target language's demonstrative distinction.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Fails the critical difficulty expectation by heavily relying on beginner-level sentences (2-3 words). An intermediate context requires medium-length sentences, making this output a poor fit.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Severely violates the intermediate difficulty requirement by providing too many simplistic 2-3 word sentences. It ignores the expectation for medium-length sentence structures.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Todas as frases são naturais, gramaticalmente corretas, bem traduzidas e têm extensão adequada ao nível intermediário. As explicações trazem contrastes úteis com o português, e os contextos cobrem preços, comparação, lojas e pagamento com boa variedade.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Apresenta traduções precisas, boa concordância e frases variadas dentro do escopo de compras e preços. As explicações são claras e úteis; apenas algumas construções, como “El precio es bueno”, são um pouco menos idiomáticas que alternativas mais naturais.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Oferece excelente diversidade de interações comerciais, com traduções corretas e linguagem natural em ambos os idiomas. Algumas frases são simples para o nível intermediário e certas explicações são tautológicas ou pouco informativas, mas o conjunto é muito útil.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "As frases têm dificuldade apropriada, boa diversidade e uso natural do vocabulário central da lição. Há pequenos problemas: “es bajo” vira “está baixo”, introduzindo uma nuance temporal, e a explicação sobre a posição de “caro” afirma uma diferença que logo reconhece também existir em português.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "O conjunto é correto, natural e diretamente relacionado a compras, preços e lojas, com boa extensão para o nível proposto. A explicação chama incorretamente “esta” de pronome em “Esta camiseta”, onde funciona como determinante, e “tienda barata” soa um pouco menos natural.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Traz boa variedade comercial, traduções precisas e explicações úteis sobre concordância, demonstrativos e formas de pagamento. Contudo, várias frases são curtas demais para o nível intermediário, e a explicação de “Comparamos” é confusa e não aborda a ambiguidade real entre presente e pretérito em espanhol.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "As frases e traduções são corretas, limpas e mantêm bom foco em lojas, preços e concordância de adjetivos. A explicação de “cuánto” é factualmente errada, pois o português possui o equivalente direto “quanto” antes do verbo, e outra explicação recorre a diferenças vagas de pronúncia e estrutura.",
+          "score": 7.6
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-sentences",
+  "testCaseId": "pt-spanish-shopping-1"
+}

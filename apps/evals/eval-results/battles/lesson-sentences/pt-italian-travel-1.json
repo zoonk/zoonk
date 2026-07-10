@@ -1,0 +1,149 @@
+{
+  "expectations": "\nLANGUAGE: Brazilian Portuguese output required for translations (NOT English).\n\nTOPIC: Italian sentences for travel and transportation - using travel vocabulary.\n\nSOURCE LESSON METADATA: travel and transportation vocabulary such as il treno, l'aereo, la macchina, il biglietto, la stazione.\nGenerated sentences should naturally cover this source scope.\n\nDIFFICULTY: Intermediate level. Chapter \"Getting Around\" + travel/transport vocabulary = practical intermediate topic.\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Sentences drift away from the source lesson scope\n- Article contractions are incorrect (e.g., l'aereo not la aereo)\n- Translations are in English instead of Portuguese\n- Gender agreement is incorrect\n\nCONTEXT EXPECTATIONS:\n- Sentences about traveling, booking tickets, transportation\n- Natural travel-related conversations\n- Various modes of transportation\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - Each translation MUST convey the full meaning of its target-language sentence\n   - Preserve tone and register while using natural phrasing in USER_LANGUAGE\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, misleading, or unnatural\n\n2. LESSON SCOPE USAGE (CRITICAL):\n   - Each generated sentence MUST fit the lesson title, description, and source lesson metadata\n   - Important words and phrases implied by the lesson scope should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences drift away from the lesson scope\n   - Penalize if lesson-scope words or phrases are used incorrectly or out of context\n\n3. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n4. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Use appropriate register (formal/informal) for the context\n   - Penalize artificial, contrived, robotic, or textbook-like constructions\n\n5. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if the lesson scope naturally groups those situations together\n\n6. APPROPRIATE DIFFICULTY (CRITICAL):\n   - The model MUST infer difficulty from the chapter title, lesson title, lesson description, and source scope\n   - Beginner context (basic topics + simple source scope) → simple sentences (2-5 words)\n   - Intermediate context → medium sentences (4-8 words)\n   - Advanced context (complex topics + advanced vocabulary) → complex sentences allowed\n   - Penalize SEVERELY if beginner-level context produces complex sentences (compound sentences, subordinate clauses, long constructions)\n   - Penalize if advanced-level context produces only trivially simple sentences\n\n7. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Avoid semantic duplicates that express the same idea with superficial wording changes\n\n8. LANGUAGE SEPARATION (CRITICAL):\n   - Every sentence MUST be written entirely in TARGET_LANGUAGE\n   - Translations and explanations MUST be written in USER_LANGUAGE\n   - Penalize if languages are swapped or if USER_LANGUAGE words appear in a target-language sentence\n\n9. EXPLANATION QUALITY (required for every sentence):\n   - Each explanation MUST be a non-empty string in USER_LANGUAGE; null or empty explanations are invalid\n   - Explain why this specific sentence is structured this way in TARGET_LANGUAGE and how it differs from USER_LANGUAGE\n   - Focus on useful contrasts such as word order, grammar, word choice, false friends, or potentially confusing forms\n   - Grammar claims MUST describe the element's actual role in this sentence\n   - For non-Latin target scripts, every target-language word or phrase mentioned in the explanation MUST be immediately followed by its romanization in parentheses\n   - Do NOT expect a separate romanization field; the task does not generate one\n\n10. CLEAN OUTPUT FIELDS:\n    - The sentence and translation fields MUST contain only their respective text, with no parenthetical explanations, usage notes, grammar hints, or alternative phrasings\n    - Sentences and translations should avoid decorative terminal punctuation because they become word-bank tiles\n    - Penalize unnecessary punctuation on simple greetings, farewells, thanks, statements, labels, or short conversational chunks (e.g., \"Good morning!\" should be \"Good morning\"; \"See you later.\" should be \"See you later\")\n    - Do NOT penalize punctuation that changes meaning or is grammatically required, especially question marks for questions (e.g., \"How are you?\") and required target-language question punctuation (e.g., \"¿Cómo estás?\")\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that fit the lesson scope\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: translation accuracy, lesson-scope usage, grammatical correctness, naturalness, explanation quality, and difficulty appropriateness\n\n    ",
+  "judgedAt": "2026-07-10T18:58:23.909Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.8",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "All Italian correct with proper contractions (alla, l'aereo, dalla), natural travel sentences, accurate Portuguese translations, and clean fields with no terminal punctuation. Explanations are contrastive and correct; intermediate difficulty fits well.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Excellent Italian and translations with strong contrastive explanations covering contractions and prepositions. Only minor issue is slight length lean, but well within intermediate scope and clean.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Correct Italian, natural sentences, and accurate translations with good explanations (in orario, davanti all'albergo). Clean fields; solid intermediate difficulty with good variety.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Strong lesson-scope coverage with correct Italian and accurate Portuguese; clean fields and good contrastive explanations. Some sentences lean short (2-4 words) but acceptable for intermediate.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Correct Italian and translations with good scope coverage; clean fields. Explanations are useful though occasionally loose, and difficulty is on the simpler side but acceptable.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Mostly accurate, but explanation for L'aereo wrongly claims 'lo' becomes l' before vowel—aereo is masculine taking 'il', so this is a grammar error in the explanation. Otherwise clean and natural.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good Italian and translations, but sentences and translations retain terminal periods on statements (e.g., 'parte dalla stazione centrale.'), which should be avoided for word-bank tiles. Otherwise strong content and explanations.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "This model perfectly meets all task instructions. Sentences properly match the intermediate difficulty with varied structures and hit all required travel vocabulary. The explanations are highly accurate, and the output correctly avoids terminal punctuation on statements.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "The model provides highly natural sentences covering the required scope, with excellent, contrastive explanations. Formatting and punctuation rules are followed correctly. Sentence length leans slightly shorter but still appropriately fits the intermediate requirement.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This output features excellent sentence variety, accurate vocabulary usage, and great grammar explanations. However, it violates the clean output fields rule by including decorative terminal periods on all statements.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "The model follows the punctuation rules and provides accurate translations with decent explanations. However, half of the sentences are only 3 words long, which leans too heavily toward beginner difficulty rather than the requested intermediate level.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "This output provides accurate Italian phrases and good explanations without terminal punctuation on statements. Similar to Model C, it relies too heavily on simple 3-word sentences, failing to consistently hit the intermediate difficulty target.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "The sentences are somewhat brief and feature less natural phrasing like 'con la macchina' instead of 'in macchina'. Furthermore, the explanations contain linguistic inaccuracies, such as incorrectly claiming Portuguese doesn't use a definite article in the phrase 'compro a passagem'.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "The output suffers from notable flaws in its explanations. It confusingly cites the ungrammatical phrase 'da stazione' instead of 'dalla stazione' and mentions the phrase 'per prendere' when the generated sentence only contains 'prendere'.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Consistently accurate, natural Italian with faithful Brazilian Portuguese translations and strong travel-focused variety. Sentences fit the intermediate length well, explanations are useful, and the fields are clean; only a couple of explanatory comparisons are slightly imprecise.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "All sentences stay tightly within transportation and ticket-booking contexts, with accurate translations and clear grammar contrasts in Portuguese. Difficulty, naturalness, contractions, and clean punctuation are handled very well, with no substantive errors.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Provides varied, practical transportation scenarios with accurate grammar, agreement, translations, and generally strong explanations. The unnecessary periods in statement fields violate the clean-output guidance, and a few explanations or Portuguese phrasings are mildly awkward.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Offers broad travel-context coverage, accurate core vocabulary, and helpful Portuguese explanations. Several sentences are below the expected intermediate complexity, and “Prendo la macchina” rendered as “Eu vou de carro” is somewhat less direct than the Italian meaning.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Mostly accurate and useful, with suitable transport vocabulary and correct Portuguese translations. “Andiamo con la macchina” is less idiomatic than “andiamo in macchina,” while the claim that the article is mandatory in a way unlike Portuguese is overstated; the set also has limited contextual variety.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "The content is grammatically sound, in scope, and supported by generally accurate explanations. However, most sentences are notably too elementary for the stated intermediate level, and translations such as “Il treno arriva” as “está chegando” introduce a small contextual nuance not explicit in the source.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Five sentences are strong, concise travel examples, but the first has a critical translation problem: “in treno” means traveling by train, not that the station is a train station. Its explanation also incorrectly says transport modes commonly take an article despite the sentence using “in treno” without one, and another explanation confusingly refers to “il” before showing “l'aereo.”",
+          "score": 5.8
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-sentences",
+  "testCaseId": "pt-italian-travel-1"
+}

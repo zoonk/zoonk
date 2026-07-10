@@ -5,8 +5,13 @@ import { z } from "zod";
 import { getLanguagePromptContext } from "../../_utils/prompt-language";
 import systemPrompt from "./lesson-translation.prompt.md";
 
-const defaultModel = "openai/gpt-5.4";
-const fallbackModels = ["google/gemini-3.5-flash", "deepseek/deepseek-v4-pro"] as const;
+const defaultModel = "google/gemini-3.1-flash-lite";
+
+const fallbackModels = [
+  "deepseek/deepseek-v4-flash",
+  "openai/gpt-5.6-luna",
+  "anthropic/claude-haiku-4.5",
+] as const;
 
 const schema = z.object({ translation: z.string().min(1) });
 

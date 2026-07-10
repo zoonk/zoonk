@@ -1,57 +1,75 @@
 {
   "expectations": "\nNATIVE LANGUAGE: English (US)\nTARGET LANGUAGE: Spanish\n\nWORD: \"ferrocarril\"\n\nThis Spanish word (railroad) features:\n- Four syllables\n- Double \"rr\" (rolled/trilled r)\n- The Spanish \"j\" sound is not present but the \"rr\" is challenging\n- Stress on the final syllable\n\nSOUND CHALLENGES:\n- The \"rr\" requires a trill that doesn't exist in English\n- Two instances of \"r\" sounds (single and double)\n- Stress on final syllable \"-rril\"\n\nQUALITY CHECK:\n- Should be readable by an English speaker\n- Should indicate stress on the last syllable\n- Should provide some approximation for the rolled \"rr\"\n- Should separate syllables clearly for this four-syllable word\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Do NOT penalize for using \"v\" instead of \"b\" (or vice versa) in Spanish — they are identical phonemes in Spanish and a native speaker pronounces them the same way\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
-  "judgedAt": "2026-05-24T17:43:46.945Z",
+  "judgedAt": "2026-07-10T18:30:19.104Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.7",
+      "judgeId": "anthropic/claude-opus-4.8",
       "rankings": [
         {
-          "anonymousId": "Model H",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Uses 'RREEL' which signals the trilled rr approximation while keeping English-readable letters, hyphenated syllables, and stress capitalized on the final syllable. Best handles the rr challenge noted in the task.",
-          "score": 9
-        },
-        {
           "anonymousId": "Model A",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Clean four-syllable breakdown with stress capitalized on the final syllable using only English letters. Doesn't specifically approximate the trilled rr but is readable and complete.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Identical to other 'feh-roh-kah-REEL' outputs: readable, properly hyphenated, stress marked correctly. No special rr approximation.",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Uses only English-friendly letters, four syllables separated with hyphens, stress marked correctly on final syllable. Reads naturally for an English speaker, though the trilled rr isn't specially approximated (single r used).",
           "score": 8
         },
         {
           "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Same as the other identical outputs—correct syllabification, stress, and English-compatible letters, without explicit rr trill cue.",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Identical to A: English-readable, hyphenated syllables, stress on REEL. Solid all-around, no special rr trill hint but reasonable.",
           "score": 8
         },
         {
           "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Equivalent to peers: well-formed, stress capitalized, hyphens present, English-readable. Lacks rr emphasis.",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Same as the majority output; clean, readable, correctly stressed and syllabified.",
           "score": 8
         },
         {
           "anonymousId": "Model F",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Equivalent to peers: correct stress and syllable breaks using native letters. No rr approximation indicator.",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Same clean output with correct stress and syllable breaks, readable by English speakers.",
           "score": 8
         },
         {
           "anonymousId": "Model G",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Equivalent to peers: clean and readable with proper stress and hyphens. No rr trill marker.",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Equivalent to the majority solution; meets all core criteria with minor lack of rr emphasis.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Same standard output, correct and readable, no notable weaknesses beyond untrilled rr.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Identical to the majority; correct stress, syllables, and readability.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Same as others; meets all core expectations cleanly.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Equivalent quality to the majority output, correct and readable.",
           "score": 8
         },
         {
           "anonymousId": "Model C",
           "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Mostly correct but uses 'ro' instead of 'roh', which is a minor inconsistency in vowel rendering compared to the other syllables. Still readable with proper stress and hyphenation.",
+          "reasoning": "Very similar but 'ro' second syllable slightly less clear than 'roh'; still English-readable with correct stress and syllable breaks. Minor readability dip.",
           "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Uses 'RREEL' which introduces a double 'rr' that is not a natural English letter combination and could confuse a native English reader, slightly violating native-phoneme readability.",
+          "score": 6
         }
       ]
     },
@@ -60,103 +78,139 @@
       "rankings": [
         {
           "anonymousId": "Model A",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Excellent native language compatibility, clear syllable separation, and correct stress on the final syllable. The rolled 'r' sounds are reasonably approximated with standard English 'r' sounds.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Excellent native language compatibility, clear syllable separation, and correct stress on the final syllable. The rolled 'r' sounds are reasonably approximated with standard English 'r' sounds.",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Excellent phonetic transcription. It accurately captures the four syllables, places the stress correctly on the final syllable, and uses natural English letter combinations to approximate the sounds.",
           "score": 10
         },
         {
           "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Excellent native language compatibility, clear syllable separation, and correct stress on the final syllable. The rolled 'r' sounds are reasonably approximated with standard English 'r' sounds.",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Excellent phonetic transcription. It accurately captures the four syllables, places the stress correctly on the final syllable, and uses natural English letter combinations to approximate the sounds.",
           "score": 10
         },
         {
           "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Excellent native language compatibility, clear syllable separation, and correct stress on the final syllable. The rolled 'r' sounds are reasonably approximated with standard English 'r' sounds.",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Excellent phonetic transcription. It accurately captures the four syllables, places the stress correctly on the final syllable, and uses natural English letter combinations to approximate the sounds.",
           "score": 10
         },
         {
           "anonymousId": "Model F",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Excellent native language compatibility, clear syllable separation, and correct stress on the final syllable. The rolled 'r' sounds are reasonably approximated with standard English 'r' sounds.",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Excellent phonetic transcription. It accurately captures the four syllables, places the stress correctly on the final syllable, and uses natural English letter combinations to approximate the sounds.",
           "score": 10
         },
         {
           "anonymousId": "Model G",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Excellent native language compatibility, clear syllable separation, and correct stress on the final syllable. The rolled 'r' sounds are reasonably approximated with standard English 'r' sounds.",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Excellent phonetic transcription. It accurately captures the four syllables, places the stress correctly on the final syllable, and uses natural English letter combinations to approximate the sounds.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Excellent phonetic transcription. It accurately captures the four syllables, places the stress correctly on the final syllable, and uses natural English letter combinations to approximate the sounds.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Excellent phonetic transcription. It accurately captures the four syllables, places the stress correctly on the final syllable, and uses natural English letter combinations to approximate the sounds.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Excellent phonetic transcription. It accurately captures the four syllables, places the stress correctly on the final syllable, and uses natural English letter combinations to approximate the sounds.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Excellent phonetic transcription. It accurately captures the four syllables, places the stress correctly on the final syllable, and uses natural English letter combinations to approximate the sounds.",
           "score": 10
         },
         {
           "anonymousId": "Model C",
           "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Strong phonetic transcription with correct stress and syllable breaks. The use of 'ro' is acceptable, though 'roh' slightly reduces ambiguity for English readers to ensure the long 'o' sound.",
-          "score": 9
+          "reasoning": "Excellent phonetic transcription. 'ro' and 'roh' are both valid phonetic approximations for US English speakers, successfully meeting all requirements.",
+          "score": 10
         },
         {
-          "anonymousId": "Model H",
+          "anonymousId": "Model B",
           "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Correct stress and syllable separation, but 'RREEL' introduces an awkward consonant cluster for an English reader. It also inconsistently applies this approach by leaving the first rolled 'r' in 'roh' as a single letter.",
+          "reasoning": "Strong attempt. The use of 'RREEL' aims to fulfill the suggestion to approximate the rolled 'rr'. However, starting a syllable with 'rr' violates the critical rule of only using natural letter combinations that exist in English.",
           "score": 8
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.5",
+      "judgeId": "openai/gpt-5.6-sol",
       "rankings": [
         {
           "anonymousId": "Model A",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Clear four-syllable English-readable respelling with hyphens and final-syllable stress marked correctly. It represents all major sounds, though the rolled/double rr is only approximated with a normal English r.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Clear four-syllable English-readable respelling with hyphens and final-syllable stress marked correctly. It represents all major sounds, though the rolled/double rr is only approximated with a normal English r.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model D",
           "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Clear four-syllable English-readable respelling with hyphens and final-syllable stress marked correctly. It represents all major sounds, though the rolled/double rr is only approximated with a normal English r.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Clear four-syllable English-readable respelling with hyphens and final-syllable stress marked correctly. It represents all major sounds, though the rolled/double rr is only approximated with a normal English r.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Clear four-syllable English-readable respelling with hyphens and final-syllable stress marked correctly. It represents all major sounds, though the rolled/double rr is only approximated with a normal English r.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Clear four-syllable English-readable respelling with hyphens and final-syllable stress marked correctly. It represents all major sounds, though the rolled/double rr is only approximated with a normal English r.",
+          "reasoning": "Clear four-syllable hyphenation, final-syllable capitalization, and an accessible English approximation make the word recognizable. The ordinary English r sounds do not strongly cue the Spanish trill, but they remain reasonable native-phoneme approximations.",
           "score": 8
         },
         {
           "anonymousId": "Model C",
           "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "It has correct syllable separation and final stress, and is mostly readable for a US English speaker. The “ro” spelling is slightly less explicit than “roh,” and like the others it does not really indicate the rolled rr beyond a normal English r.",
-          "score": 7.5
+          "reasoning": "The four syllables and final stress are marked correctly, and “ro” is a readable English spelling equivalent in practice to “roh.” Its English r approximations are recognizable but do not explicitly convey the trill.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Clear four-syllable hyphenation, final-syllable capitalization, and an accessible English approximation make the word recognizable. The ordinary English r sounds do not strongly cue the Spanish trill, but they remain reasonable native-phoneme approximations.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Clear four-syllable hyphenation, final-syllable capitalization, and an accessible English approximation make the word recognizable. The ordinary English r sounds do not strongly cue the Spanish trill, but they remain reasonable native-phoneme approximations.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Clear four-syllable hyphenation, final-syllable capitalization, and an accessible English approximation make the word recognizable. The ordinary English r sounds do not strongly cue the Spanish trill, but they remain reasonable native-phoneme approximations.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Clear four-syllable hyphenation, final-syllable capitalization, and an accessible English approximation make the word recognizable. The ordinary English r sounds do not strongly cue the Spanish trill, but they remain reasonable native-phoneme approximations.",
+          "score": 8
         },
         {
           "anonymousId": "Model H",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Clear four-syllable hyphenation, final-syllable capitalization, and an accessible English approximation make the word recognizable. The ordinary English r sounds do not strongly cue the Spanish trill, but they remain reasonable native-phoneme approximations.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Clear four-syllable hyphenation, final-syllable capitalization, and an accessible English approximation make the word recognizable. The ordinary English r sounds do not strongly cue the Spanish trill, but they remain reasonable native-phoneme approximations.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Clear four-syllable hyphenation, final-syllable capitalization, and an accessible English approximation make the word recognizable. The ordinary English r sounds do not strongly cue the Spanish trill, but they remain reasonable native-phoneme approximations.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Clear four-syllable hyphenation, final-syllable capitalization, and an accessible English approximation make the word recognizable. The ordinary English r sounds do not strongly cue the Spanish trill, but they remain reasonable native-phoneme approximations.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
           "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "It marks final stress and keeps four syllables, and “RREEL” does make an attempt to signal the rolled rr. However, initial “RR” in an English respelling is awkward and less naturally readable, and the earlier rr sound is still only rendered as a normal r.",
+          "reasoning": "It correctly separates four syllables and marks final stress, while the doubled r attempts to signal the trill. However, syllable-initial “RREEL” is not a natural English phonetic spelling and may confuse readers rather than reliably produce a trill.",
           "score": 7
         }
       ]

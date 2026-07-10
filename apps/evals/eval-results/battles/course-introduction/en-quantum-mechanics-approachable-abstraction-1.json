@@ -1,57 +1,75 @@
 {
-  "expectations": "\n      - MUST be in US English\n      - Should make quantum mechanics feel approachable through concrete hooks such as spectra, chips, sensors, lasers, magnetic resonance, clocks, quantum information, or the limits of everyday intuition\n      - Should avoid turning the intro into a math-heavy first chapter about wavefunctions, operators, Hilbert spaces, Schrodinger equations, spin algebra, or measurement postulates\n      - Should be honest that the field can become mathematically demanding later, while keeping this chapter focused on curiosity, usefulness, and mental models\n      - Should mention realistic paths such as physics, chemistry, materials, computing, engineering, instrumentation, research support, or science communication without implying guaranteed research careers\n\n      \n  - Must be written in the specified language\n  - Must include exactly one chapter object with title and description\n  - Must include 3-5 lessons\n  - Every lesson must be an explanation lesson plan, not a practice, quiz, review, capstone, project, or summary\n  - The chapter and lessons must feel like a quick guide to the field, not the first normal technical chapter\n  - Must make the field feel concrete, useful, and interesting for a true beginner\n  - Must include realistic opportunities, careers, roles, projects, communities, or everyday uses connected to the field\n  - Must stay easy enough for a first encounter and avoid deep prerequisites\n  - Must be specific to the course topic, not generic learning motivation\n  - For non-English cases, must not mix in English field, learner, or opportunity labels; translate them naturally\n  - Must not promise salaries, credentials, jobs, fluency, mastery, or guaranteed outcomes\n\n    ",
-  "judgedAt": "2026-07-02T12:06:10.625Z",
+  "expectations": "\n      - MUST be in US English\n      - Should make quantum mechanics feel approachable through concrete hooks such as spectra, chips, sensors, lasers, magnetic resonance, clocks, quantum information, or the limits of everyday intuition\n      - Should avoid turning the intro into a math-heavy first chapter about wavefunctions, operators, Hilbert spaces, Schrodinger equations, spin algebra, or measurement postulates\n      - Should be honest that the field can become mathematically demanding later, while keeping this chapter focused on curiosity, usefulness, and mental models\n      - Should mention realistic paths such as physics, chemistry, materials, computing, engineering, instrumentation, research support, or science communication without implying guaranteed research careers\n\n      \n  - Must be written in the specified language\n  - Must include exactly one chapter object with title and description\n  - Must include 3-5 lessons\n  - Every lesson must be an explanation lesson plan, not a practice, quiz, review, capstone, project, or summary\n  - The chapter and lessons must feel like a quick guide to the field, not the first normal technical chapter\n  - Must make the field feel concrete, useful, and interesting for a true beginner\n  - Must include realistic opportunities, careers, roles, projects, communities, or everyday uses connected to the field\n  - Must stay easy enough for a first encounter and avoid deep prerequisites\n  - Must be specific to the course topic, not generic learning motivation\n  - Must not include lessons about the course itself, the curriculum, the next chapter, the learning path, or how the course goes deeper\n  - Every lesson title must name the subject, a subject-specific concept, a concrete field use, or a field-specific role clearly enough that the course topic is identifiable from the title alone\n  - Generic meta titles such as \"How this course goes deeper\", \"What this course will help you do\", \"Your path forward\", or translated equivalents are a major issue even when the description mentions the course topic\n  - For non-English cases, must not mix in English field, learner, or opportunity labels; translate them naturally\n  - Must not promise salaries, credentials, jobs, fluency, mastery, or guaranteed outcomes\n\n    ",
+  "judgedAt": "2026-07-10T05:45:58.947Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.7",
+      "judgeId": "anthropic/claude-fable-5",
       "rankings": [
         {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-opus-4.8",
-          "reasoning": "Excellent concrete hooks (lasers, LEDs, MRI, transistors, sensors, secure communication), honest preview of deeper tools without math-dumping, and realistic mention of researchers/engineers/communities. Well-structured 5 lessons, all explanatory, curiosity-focused.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Strong concrete hooks (lasers, semiconductors, MRI, LEDs, atomic clocks) and realistic career paths across physics/chemistry/materials/computing. Final lesson previews wavefunctions/uncertainty but frames them as future concepts, staying honest without becoming math-heavy.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-sonnet-5",
-          "reasoning": "Clear beginner tone, concrete hooks (phones, hospital scanners, GPS), and realistic project/career/community mentions. Five well-scoped explanation lessons that stay curiosity-focused.",
-          "score": 8
-        },
-        {
           "anonymousId": "Model H",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Solid beginner overview with concrete applications (lasers, chips, imaging, solar) and realistic roles across disciplines. Slightly generic and briefer, but hits the expectations cleanly.",
-          "score": 8
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Five approachable explanation lessons, every title clearly names quantum mechanics or a quantum concept, and concrete hooks (interference, chips, LEDs, solar cells) plus a realistic careers lesson without overpromising. No course-meta content and no math-heavy drift.",
+          "score": 9
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Approachable, honest about scope, includes real technologies (lasers, MRI, solar cells) and realistic roles. Slightly generic in places but meets the rubric well.",
-          "score": 7
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Strong beginner framing with concrete hooks (lasers, MRI, atomic clocks) and a good opportunities lesson covering researchers, engineers, and makers. All titles are subject-specific and there is no course-meta lesson; tone stays curious without guarantees.",
+          "score": 9
         },
         {
           "anonymousId": "Model F",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Has concrete hooks (chips, MRI, fiber optics) but overpromises with 'unbreakable encryption' and 'simulating new medicines in minutes,' bordering on guaranteed outcomes. Only 4 lessons, minimal career variety, and no honest note about later math.",
-          "score": 5
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Four solid explanation lessons with clearly quantum-specific titles, concrete technology hooks, and a realistic roles/projects lesson including hands-on ideas like spectroscopy and simulations. No meta content or overpromising; slightly denser prose than ideal for a first encounter.",
+          "score": 9
         },
         {
           "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "All four lessons are topic-specific, math-free, and grounded in concrete uses; careers and roles appear naturally in the technology lesson. Slightly thinner on opportunities and community aspects than the top outputs, but no violations.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Concrete and engaging hooks, but two of four titles don't clearly identify the quantum topic, and phrases like 'unbreakable encryption' and 'simulating new medicines in minutes' verge on hype/overclaiming. Descriptions are also quite thin for lesson plans.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model J",
           "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Concrete hooks are present but careers lesson is narrow and leans on 'new medicines/secure networks/advanced computers' as if promised outcomes. Only 4 lessons, thin on realistic diverse paths and no honesty about later demands.",
-          "score": 5
+          "reasoning": "Approachable and concrete with a dedicated careers lesson, but the titles 'Why microscopic things follow different rules' and 'Careers building the next generation of technology' are too generic to identify the quantum topic on their own. Content is otherwise solid but brief.",
+          "score": 6
         },
         {
           "anonymousId": "Model A",
           "modelId": "google/gemini-3.1-flash-lite",
-          "reasoning": "Final lesson explicitly says the course provides 'the mathematical and conceptual toolkit,' drifting toward the math-heavy framing the rubric warns against. Careers coverage is thin and generic, and only 4 lessons with limited concrete-life connection.",
+          "reasoning": "Good hooks (entanglement, transistors, lasers), but the final lesson explicitly says 'This course provides the mathematical and conceptual toolkit,' drifting into course-meta territory, and its title 'Navigating the quantum frontier' is vague. Career/opportunity coverage is also light.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "First four lessons are excellent and topic-specific, but the fifth lesson 'How the full course builds your picture' is a lesson about the course itself, which the rubric flags as a major issue. That violation drags down an otherwise strong output.",
           "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Approachable, concrete lessons on daily life and careers, but the final lesson 'Where this course will take you next' is an explicit course-path meta lesson, a major rubric violation. Everything else meets expectations well.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Vivid, concrete lessons on superposition, technology, and real projects, but 'How this course takes you deeper' is nearly identical to the banned meta title example, a major violation. The chapter description also leans on continuing the course.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Otherwise well-written and concrete, but the final lesson title 'How the full course goes deeper' matches the rubric's explicitly banned example almost verbatim, and its description previews the curriculum. This is the most direct violation among the outputs.",
+          "score": 3
         }
       ]
     },
@@ -59,105 +77,141 @@
       "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "This model hits every expectation flawlessly. It beautifully integrates concrete hooks like MRI and atomic clocks, lists realistic career paths, and perfectly balances keeping the intro conceptual while explicitly acknowledging the formal, mathematical framework (wave functions, states) coming later.",
-          "score": 10
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "This model provides excellent, highly identifiable lesson titles that all explicitly mention the course topic. It strictly avoids meta-lessons and includes great concrete hooks, though it misses the optional instruction to warn about future math.",
+          "score": 8
         },
         {
-          "anonymousId": "Model H",
+          "anonymousId": "Model K",
           "modelId": "openai/gpt-5.5",
-          "reasoning": "Outstanding alignment with the prompt. It provides excellent concrete hooks, realistic careers, and clearly satisfies the requirement to warn learners that equations and mathematically precise tools will be introduced deeper in the course.",
-          "score": 10
+          "reasoning": "The lesson titles and descriptions are engaging, fully identifiable, and avoid all negative constraints regarding meta-lessons. Like other top models, it misses the 'should' instruction to mention that the field becomes mathematically demanding later.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Strong alignment with the requirements, providing clear, topic-specific lesson titles without any meta-lessons. It relies well on concrete applications but misses the optional math warning.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Follows most rules well and avoids meta-lessons. However, the lesson title 'Why particles can act like waves' is slightly less uniquely identifiable outside of context compared to the top models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Avoids meta-lessons, but fails the strict title constraint on multiple lessons. Titles like 'Building the next generation of supercomputers' are too generic and do not clearly identify the course topic on their own.",
+          "score": 5
         },
         {
           "anonymousId": "Model C",
           "modelId": "anthropic/claude-sonnet-5",
-          "reasoning": "Very strong output that correctly sets a conceptual tone while acknowledging the upcoming \"equations and formal rules.\" It includes great everyday hooks and realistic paths, though slightly less detailed than the top models.",
-          "score": 9
+          "reasoning": "Nicely includes the math warning in the chapter description, but violates a major negative constraint. Lesson 5 is a meta-lesson about where the course takes you next, which is strictly forbidden.",
+          "score": 4
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-3.1-flash-lite",
-          "reasoning": "Solid output that successfully includes concrete hooks and explicitly mentions the \"mathematical and conceptual toolkit\" needed later. It merges the course preview and career paths into one lesson, which is efficient but slightly less comprehensive.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model G",
+          "anonymousId": "Model D",
           "modelId": "anthropic/claude-opus-4.8",
-          "reasoning": "Features great structure, hooks, and community references. However, it misses an explicit mention of the field becoming mathematically demanding, opting instead for vaguer phrasing about \"tools that make them precise.\"",
-          "score": 7
+          "reasoning": "Fails the strict negative constraint against meta-lessons. Lesson 5 ('How this course takes you deeper') is explicitly called out as a major issue in the prompt.",
+          "score": 4
         },
         {
           "anonymousId": "Model B",
           "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Provides a strong conceptual overview and good career paths, but fails to explicitly warn about the mathematical rigor coming later. It only refers to upcoming \"language and ideas,\" missing the required nuance.",
-          "score": 7
+          "reasoning": "Violates a major negative constraint by including a meta-lesson ('How the full course builds your picture'). This is explicitly forbidden in the expectations.",
+          "score": 4
         },
         {
-          "anonymousId": "Model E",
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Violates the strict rule against meta-lessons by including a lesson explicitly titled 'How the full course goes deeper'.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Lesson 4 acts as a meta-lesson about the course's mathematical toolkit, violating the negative constraint against lessons about the course curriculum.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model J",
           "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Misses the required warning about the mathematical demands of the field entirely. The lesson concepts are otherwise acceptable but lack the depth and structural completeness of the higher-ranked models.",
-          "score": 5
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Completely misses the mathematical warning and introduces unnecessary hype. Claiming quantum computers can simulate \"complex new medicines in minutes\" violates the instruction to keep opportunities realistic and avoid overpromising.",
+          "reasoning": "Fails the title identifiability constraint heavily. Titles like 'Careers building the next generation of technology' and 'Particles that link across space' are too generic and do not uniquely identify quantum mechanics.",
           "score": 4
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.5",
+      "judgeId": "openai/gpt-5.6-sol",
       "rankings": [
         {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Best overall fit: it is a clear quick-guide chapter, uses concrete hooks like lasers, semiconductors, MRI, LEDs, atomic clocks, sensors, chips, and quantum computing, and includes realistic roles and projects. It also honestly signals that the course will become more technical later without making this chapter math-heavy.",
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Highly accurate, approachable, and concrete, with strong examples spanning chips, lasers, solar cells, materials, sensors, and realistic multidisciplinary roles. Every lesson title is clearly quantum-specific; the main omission is acknowledging that later study becomes mathematically demanding.",
           "score": 9
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-opus-4.8",
-          "reasoning": "Strong, approachable, and concrete, with good everyday examples and realistic communities/projects around quantum computers, sensors, and secure communication. It is slightly less explicit about later mathematical difficulty, but it stays beginner-friendly and avoids guaranteed outcomes.",
-          "score": 8.5
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "A clear beginner-friendly tour with especially concrete explanations of chips, lasers, MRI, sensors, spectroscopy, and realistic projects. It avoids hype and technical overload, though it does not explicitly note the field’s later mathematical demands.",
+          "score": 8.8
         },
         {
-          "anonymousId": "Model H",
+          "anonymousId": "Model K",
           "modelId": "openai/gpt-5.5",
-          "reasoning": "Very solid quick guide with clear beginner framing, concrete technologies, and realistic fields such as chemistry, engineering, materials, sensors, and computing. It mentions later equations/tools appropriately, though it is a bit less vivid and opportunity-rich than the very best output.",
+          "reasoning": "Broad, engaging, and consistently specific to quantum mechanics, with strong technology hooks, central questions, and realistic roles across several fields. A few statements about measurement and multiple paths are simplified, and the later mathematical difficulty is not acknowledged.",
           "score": 8.5
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-sonnet-5",
-          "reasoning": "Engaging and well-framed as a pre-technical overview, with useful hooks to devices, scanners, chips, materials, lasers, and quantum computers. It includes careers/projects/communities and avoids math, though some examples are a little broad rather than sharply explained.",
-          "score": 8.5
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Concise, accurate overall, and well structured around probabilities, superposition, measurement, technology, and multidisciplinary applications. It is slightly more formal for a first encounter, presents one interpretation of measurement too definitively, and does not mention later mathematical demands.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The first four lessons form an excellent, concrete introduction and the output honestly signals that later material becomes technical. However, the fifth lesson is explicitly about how the course goes deeper, which is a major prohibited meta-curriculum element.",
+          "score": 6.8
         },
         {
           "anonymousId": "Model B",
           "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Meets the structure and gives a clear, beginner-friendly overview with concrete technologies and realistic career paths. It is somewhat more generic in the final lesson and less explicit about the field becoming mathematically demanding later.",
-          "score": 8
+          "reasoning": "Accurate and approachable, with useful examples and realistic roles across physics, engineering, materials, chemistry, and computing. Its final lesson is a generic description of how the full course develops, directly violating the prohibition on course-path lessons.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "It offers accessible concepts, everyday technology, and realistic project and career examples. The chapter framing and entire final lesson discuss where the course goes next, while some claims about observation and everyday technologies are oversimplified.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "The technology examples are vivid and the treatment remains beginner-friendly, with some mention of researchers, engineers, and communities. Its final lesson is explicitly about how the course takes the learner deeper, several titles are too generic, and measurement is presented too simplistically.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "It includes concrete uses and relevant technology roles without adding a prohibited course-preview lesson. However, describing electrons as solid points of energy and entanglement as instant influence is inaccurate, and several titles are not clearly quantum-specific on their own.",
+          "score": 5.1
         },
         {
           "anonymousId": "Model A",
           "modelId": "google/gemini-3.1-flash-lite",
-          "reasoning": "The structure is valid and it includes useful hooks like transistors, lasers, medical equipment, computing, and materials science. However, it has a misleading entanglement claim, overstates “unhackable” communication, and leans more into quantum weirdness than balanced beginner mental models.",
-          "score": 6
+          "reasoning": "The output includes useful examples such as transistors, lasers, materials, and computing, but its career treatment is thin and the final lesson becomes course-focused. It also mischaracterizes entanglement as one particle instantly affecting another and overstates quantum communication as unhackable.",
+          "score": 4.6
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "It is concise, beginner-oriented, and includes concrete uses like MRI and phone chips plus some career connections. Significant accuracy issues hurt it, especially “instantly influence each other from far away” and the odd claim that particles act as “solid points of energy.”",
-          "score": 5
-        },
-        {
-          "anonymousId": "Model F",
+          "anonymousId": "Model G",
           "modelId": "google/gemini-3.5-flash",
-          "reasoning": "It has some concrete hooks such as chips, MRI, lasers, and fiber optics, but it is overly sensational and less realistic. Claims about “unbreakable encryption” and quantum computers simulating complex medicines in minutes are overpromising, and the opportunity/career framing is thin.",
-          "score": 4
+          "reasoning": "It is concise and concrete, mentioning chips, MRI, lasers, engineering, and research. Major scientific and product-quality problems include “unbreakable” encryption, medicine simulations completed in minutes, overly absolute claims about observation, and limited realistic opportunity coverage.",
+          "score": 3.9
         }
       ]
     }

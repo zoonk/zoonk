@@ -1,56 +1,74 @@
 {
   "expectations": "\nNATIVE LANGUAGE: English (US)\nTARGET LANGUAGE: Portuguese\n\nWORD: \"parabéns\"\n\nThis Portuguese word (congratulations) features:\n- Three syllables\n- Nasal ending \"-ens\"\n- The Portuguese \"r\" sound (different from English)\n- Stress on the last syllable\n\nSOUND CHALLENGES:\n- The nasal \"-ens\" ending is challenging for English speakers\n- The \"a\" vowels are open\n- Portuguese \"r\" between vowels\n\nQUALITY CHECK:\n- Should be readable by an English speaker\n- Should indicate stress on the final syllable\n- Should approximate the nasal ending\n- Accept various representations of the nasal sound\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Do NOT penalize for using \"v\" instead of \"b\" (or vice versa) in Spanish — they are identical phonemes in Spanish and a native speaker pronounces them the same way\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
-  "judgedAt": "2026-05-24T17:43:33.745Z",
+  "judgedAt": "2026-07-10T18:30:36.717Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.7",
+      "judgeId": "anthropic/claude-opus-4.8",
       "rankings": [
         {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Uses English-readable letters, hyphenated syllables, caps on final stress, and 'AYNG' approximates the nasal diphthong well with 'S' for the final consonant. Strong overall approximation.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Identical to E with same strengths: readable English spelling, proper stress, syllable breaks, and good nasal approximation via 'AYNGS'.",
-          "score": 9
-        },
-        {
           "anonymousId": "Model A",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Readable, stress marked, hyphenated. 'BENGS' approximates the nasal but the 'e' is less open than the actual 'a' vowel; still reasonable.",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Uses English-readable letters, hyphen syllable breaks, and CAPS stress on final syllable. The 'NGZ' ending nicely approximates the nasal '-ens' with a slight voiced hint; fully readable and complete.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "All English-friendly letters, correct hyphenation and final-syllable stress. 'BAYNGS' approximates the nasal ending well with the 'ng'; strong and readable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Identical approach to F with 'BAYNGS'—native letters, clear stress, good nasal approximation via 'ng'. Solid and complete.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Readable, hyphenated, stress marked correctly. 'BAYNS' is a reasonable but slightly weaker nasal approximation than the 'ng' variants, still fully acceptable.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Same as B: clean, native letters, correct stress and syllable breaks. 'BAYNS' approximates the nasal ending adequately though less nasally than 'ng'.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Equivalent to B/D with 'BAYNS'—readable, correctly stressed and hyphenated, reasonable nasal approximation.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Identical 'BAYNS' rendering—valid English letters, proper stress and syllable division, acceptable nasal approximation.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Same 'BAYNS' output—fully readable, correct stress marking and hyphenation, adequate sound coverage.",
           "score": 8
         },
         {
           "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Same as A — clean, readable, properly stressed and syllabified. Slightly less accurate vowel approximation than 'AYN'.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model F",
           "modelId": "openai/gpt-5.4",
-          "reasoning": "Same as A and C; meets all criteria with minor vowel approximation quibble.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Readable with proper stress and syllables; 'AYNS' captures the vowel but loses some of the nasal quality compared to 'AYNGS'. Still acceptable.",
+          "reasoning": "'BENGS' uses native letters with hyphens and stress, and 'ng' captures the nasal. However 'BEN' may read with a closed 'e' rather than the open 'a' vowel, slightly less accurate.",
           "score": 7
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Equivalent to B — good vowel, slightly weaker nasal representation without the 'NG'. Acceptable but less ideal.",
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Identical to C with 'BENGS'—good nasal via 'ng' but the 'e' vowel is less faithful to the open 'a' sound of parabéns.",
           "score": 7
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Good vowel and nasal approximation, but ending with 'Z' is inaccurate since Portuguese 'parabéns' ends in an /s/ sound, not /z/. Minor accuracy issue.",
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Same 'BENGS' rendering—readable and properly stressed with nasal 'ng', but the 'e' vowel choice slightly misrepresents the open vowel.",
           "score": 7
         }
       ]
@@ -60,103 +78,139 @@
       "rankings": [
         {
           "anonymousId": "Model B",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Provides an excellent phonetic approximation that perfectly follows the rules for stress capitalization and syllable separation. 'BAYNS' accurately captures both the vowel sound and the diphthong nature of the nasal '-ens' ending for an English reader.",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Excellent phonetic approximation that accurately captures the nasal diphthong and unvoiced final consonant. It perfectly follows all formatting rules, including syllable separation and stress marking.",
           "score": 10
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Provides an excellent phonetic approximation that perfectly follows the rules for stress capitalization and syllable separation. 'BAYNGS' effectively captures the nasal diphthong by using 'NG', a common and accurate strategy for teaching Portuguese nasals to English speakers.",
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Excellent phonetic approximation that accurately captures the nasal diphthong and unvoiced final consonant. It perfectly follows all formatting rules, including syllable separation and stress marking.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Excellent phonetic approximation. Using \"NGS\" is a highly effective, native-compatible way to guide English speakers to produce the Portuguese nasal vowel. The output perfectly follows all formatting rules.",
           "score": 10
         },
         {
           "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Excellent phonetic approximation that accurately captures the nasal diphthong and unvoiced final consonant. It perfectly follows all formatting rules, including syllable separation and stress marking.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Excellent phonetic approximation. Using \"NGS\" is a highly effective, native-compatible way to guide English speakers to produce the Portuguese nasal vowel. The output perfectly follows all formatting rules.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model J",
           "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Provides an excellent phonetic approximation that perfectly follows the rules for stress capitalization and syllable separation. 'BAYNS' accurately captures both the vowel sound and the diphthong nature of the nasal '-ens' ending for an English reader.",
+          "reasoning": "Excellent phonetic approximation that accurately captures the nasal diphthong and unvoiced final consonant. It perfectly follows all formatting rules, including syllable separation and stress marking.",
           "score": 10
         },
         {
-          "anonymousId": "Model H",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Provides an excellent phonetic approximation that perfectly follows the rules for stress capitalization and syllable separation. 'BAYNGS' effectively captures the nasal diphthong by using 'NG', a common and accurate strategy for teaching Portuguese nasals to English speakers.",
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Excellent phonetic approximation that accurately captures the nasal diphthong and unvoiced final consonant. It perfectly follows all formatting rules, including syllable separation and stress marking.",
           "score": 10
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Correctly separates syllables, marks stress, and uses native English phonemes. However, 'BENGS' uses a short 'e' sound, missing the diphthong /j/ glide present in the Portuguese '-ens' ending. It remains an acceptable approximation.",
-          "score": 8
         },
         {
           "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Correctly separates syllables, marks stress, and uses native English phonemes. However, 'BENGS' uses a short 'e' sound, missing the diphthong /j/ glide present in the Portuguese '-ens' ending. It remains an acceptable approximation.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model F",
           "modelId": "openai/gpt-5.4",
-          "reasoning": "Correctly separates syllables, marks stress, and uses native English phonemes. However, 'BENGS' uses a short 'e' sound, missing the diphthong /j/ glide present in the Portuguese '-ens' ending. It remains an acceptable approximation.",
-          "score": 8
+          "reasoning": "The formatting perfectly follows all rules, providing a highly readable pronunciation. \"BENGS\" is a solid approximation for the nasal sound, though it slightly misses the diphthong glide compared to representations like \"BAYNS\".",
+          "score": 9
         },
         {
-          "anonymousId": "Model D",
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The formatting perfectly follows all rules, providing a highly readable pronunciation. \"BENGS\" is a solid approximation for the nasal sound, though it slightly misses the diphthong glide compared to representations like \"BAYNS\".",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "The formatting perfectly follows all rules, providing a highly readable pronunciation. \"BENGS\" is a solid approximation for the nasal sound, though it slightly misses the diphthong glide compared to representations like \"BAYNS\".",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
           "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Approximates the nasal vowel well, but incorrectly uses a voiced 'Z' for the final consonant. In standard Brazilian Portuguese, a word-final 's' spoken in isolation is unvoiced (/s/ or /sh/).",
-          "score": 6
+          "reasoning": "The formatting perfectly follows all instructions, including capitalization for stress and hyphens for syllables. However, explicitly using \"Z\" encourages a voiced final consonant, whereas the word-final \"s\" in Portuguese is unvoiced in isolation.",
+          "score": 8
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.5",
+      "judgeId": "openai/gpt-5.6-sol",
       "rankings": [
         {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Uses only US English-readable spelling, separates syllables, and clearly marks final stress. “BAYNGS” is a strong approximation of the nasal final syllable, though it adds an English-like velar nasal quality.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Identical to Model E: readable for US English speakers, with correct syllable breaks and final-syllable stress. The nasal ending is well approximated with “NGS,” with only minor imperfection from the English-style nasal consonant.",
-          "score": 9
-        },
-        {
           "anonymousId": "Model B",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Readable, hyphenated, and correctly stresses the final syllable. “BAYNS” gives a recognizable approximation of the nasal “-éns” ending, though it represents nasalization less strongly than an “ng” style spelling.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Identical to Model B: it is English-readable, complete, and marks final stress correctly. “BAYNS” is a reasonable approximation of Portuguese “-éns,” with a small limitation in conveying nasalization.",
-          "score": 8.5
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "“pah-rah-BAYNS” is readable for US English speakers, clearly separates three syllables, and marks final stress correctly. “BAYNS” gives a strong, recognizable approximation of the nasal Portuguese ending.",
+          "score": 9
         },
         {
           "anonymousId": "Model D",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Correctly uses English-readable syllables and final-syllable stress, and “BAYNGZ” captures nasalization reasonably well. The final “Z” is a bit less faithful to the expected final “s” sound in Brazilian Portuguese, but it remains very recognizable.",
-          "score": 8
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This correctly uses three hyphenated syllables and capitalizes only the stressed final syllable. The English-friendly “BAYNS” closely approximates the nasal ending without unusual symbols.",
+          "score": 9
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Meets the core formatting expectations with hyphens and final stress, and “BENGS” gives some nasal quality. However, the vowel quality is less close to Portuguese “-éns” than “BAYNS/BAYNGS,” making the final syllable a weaker approximation.",
-          "score": 7.5
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "The pronunciation is clear, complete, and naturally decodable by an English speaker. It indicates final stress and uses “BAYNS” as a reasonable approximation of the nasalized final syllable.",
+          "score": 9
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Identical to Model A: readable and properly stress-marked, with all main sounds represented. The “BENGS” ending is acceptable but somewhat less natural for the Portuguese nasal “-éns.”",
-          "score": 7.5
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "This meets the stress, syllable-separation, readability, and completeness requirements. Its final “BAYNS” is a close English-based rendering, though the nasal vowel cannot be represented perfectly.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "The three syllables and final stress are presented correctly and accessibly. “BAYNS” is a strong approximation that should produce a recognizable Brazilian Portuguese pronunciation.",
+          "score": 9
         },
         {
           "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "“pah-rah-BAYNGS” clearly marks the right stress and makes the nasal quality explicit. The added “ng” is somewhat heavier than the actual nasalized ending, but it remains readable and recognizable.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This is well structured, with three syllables and exactly one capitalized stressed syllable. “BAYNGS” communicates nasality effectively, although it may prompt an overly strong English velar nasal sound.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The syllables, final stress, and vowel glide are represented well, and the result remains recognizable. However, “NGZ” is a less natural English letter combination and encourages both an overly strong “ng” and a voiced final sound.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
           "modelId": "openai/gpt-5.4",
-          "reasoning": "Identical to Models A and C: it is formatted well and understandable for English speakers. Its main weakness is that “BENGS” is a less precise approximation of the final nasal syllable than the stronger alternatives.",
+          "reasoning": "This correctly shows three syllables and final stress, and “BENGS” offers a readable nasal approximation. It is less accurate than “BAYNS” because it tends to lose the vowel glide and produces a stronger English “ng” sound.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The formatting and stress marking are correct, and all major parts of the word are represented. The final “BENGS” is recognizable but gives a flatter vowel and a more pronounced “ng” than the Brazilian Portuguese ending.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "This is readable and properly hyphenated, with stress clearly placed on the last syllable. Its “BENGS” approximation is serviceable, but it misses some of the final vowel glide and overstates the consonantal nasal.",
           "score": 7.5
         }
       ]

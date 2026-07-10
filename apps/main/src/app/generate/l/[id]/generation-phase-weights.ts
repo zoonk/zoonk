@@ -36,7 +36,7 @@ export function getPhaseWeights(kind: GeneratedLessonKind): Record<PhaseName, nu
       ...ZERO_WEIGHTS,
       addingPronunciation: 65,
       addingRomanization: 4,
-      buildingWordList: 6,
+      buildingWordList: 22,
       creatingExercises: 5,
       gettingStarted: 1,
       recordingAudio: 6,

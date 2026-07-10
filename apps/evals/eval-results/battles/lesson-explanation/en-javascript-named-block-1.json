@@ -1,0 +1,149 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: This lesson is about what makes repeated code become one reusable function. Penalize if:\n   - Declaring a function is confused with calling it\n   - The function name, parameters, or body are treated as optional decoration instead of the structure that defines the reusable block\n\n2. BOUNDARY CHECK: The core arc should stay on the reusable block itself. Penalize if the explanation spends its main teaching move on sibling angles like function calls or return values.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: The explanation must be technically correct for the topic. Penalize invented mechanisms, wrong cause-effect chains, or misleading simplifications.\n\n2. REQUIRED STRUCTURE: The output must contain exactly two top-level fields:\n   - explanation[]: an array of explanation steps, each with title and text\n   - anchor: { title, text } (no visual)\n\n3. LESSON DELIVERY: The lesson must actually deliver on LESSON_TITLE and LESSON_DESCRIPTION. The learner should finish with a full working understanding of what the topic is, how it works, how it is used/measured/written/recognized in practice when relevant, why it matters when relevant, and what the important terms, formulas, structures, rules, caveats, or limits mean. Penalize lessons that stay friendly but surface-level, or technically dense but hard to understand.\n\n4. BEGINNER + EXPERT FIT: The lesson should feel like a precise expert explaining the topic to a smart non-expert friend. It should use everyday language without dumbing down the topic. Penalize:\n   - Academic phrasing that makes a simple idea feel harder than it is\n   - \"Friendly\" explanations that omit the expert essentials required by the lesson scope\n   - Dense explanations that contain the right terms but do not explain them in plain language\n   - Formal terms, formulas, or code snippets that appear without enough plain-language explanation\n\n5. MECHANISM + FORMAL DETAIL: The lesson must include the real mechanism, structure, relationship, calculation, rule, or procedure required by the title and description. Penalize:\n   - Skipping formulas, variables, code shapes, uncertainty, exceptions, limits, or precise terms that an expert would expect for this lesson scope\n   - Including those details without explaining what the parts mean\n   - Using an analogy, vibe, story, or visual scene as a substitute for the actual mechanism\n\n6. LESSON BOUNDARY: The lesson must stay focused on the selected LESSON_TITLE and leave sibling angles in OTHER_EXPLANATION_LESSON_TITLES for those other lessons. Penalize explanations that spend their main teaching energy on a sibling lesson instead of the chosen one.\n\n7. EXPLANATION FLOW: There is no required opening pattern, cold open, or story arc. The explanation[] array should choose the clearest order for this topic and connect ideas so the learner can follow how the topic works. Penalize:\n   - Stacked definitions that do not connect to each other\n   - Scenic or subjective prose that does not help explain the concept\n   - Missing the practical payoff when the lesson calls for why this matters\n   - Naming terms before giving enough context to understand them, when that makes the lesson harder to follow\n\n8. STEP QUALITY: Each step.text is 1-3 short sentences of prose. Step titles are short, unique, and useful for understanding what the step teaches. Penalize:\n   - Long paragraphs\n   - Titles that are only props, moods, vague story beats, or generic labels\n   - Repetition between steps\n\n9. CONCRETENESS: The lesson should use concrete examples, measurements, cases, code-shaped details, or realistic situations when they make the mechanism easier to understand. Penalize:\n   - Vague prose that never makes the mechanism concrete\n   - Examples that are only atmospheric decoration\n   - Lessons about \"how it's written\" that never describe the structure or code detail clearly enough to understand\n\n10. STATIC + RICH TEXT DELIVERY: The lesson should stay entirely within explanation steps plus the closing anchor. It may use inline LaTeX, display LaTeX, bold, italic, and inline code with single backticks. Penalize:\n   - Quiz-like interruptions, option lists, or explicit \"guess before continuing\" instructions\n   - Steps that stop to ask the learner to choose instead of explaining\n   - Rhetorical-question-only steps that replace a real explanation\n   - Markdown headings, lists, tables, links, or large code fences inside a step\n   - Malformed LaTeX or unsupported formatting that would show raw clutter to the learner\n\n11. ANCHOR QUALITY: anchor has no visual. It answers why the topic is useful and where it shows up outside the lesson by naming one specific real-world instance — a named product (e.g., Instagram, WhatsApp), recognizable product family (e.g., ChatGPT-style models), named technology/service/system, named mission/instrument, named event/figure/case/place, or concrete physical action the learner has actually done — and what it does there. Penalize:\n   - Abstract \"this is why it matters\" wrap-ups\n   - Metaphors or vague generalities\n   - Classroom demonstrations, lab videos, school apparatus, research instruments, or professional workflows that do not name the product, service, system, or public-world outcome they enable\n   - Category-list anchors that name a type of use instead of a vivid instance (\"a star, a lamp, or a gas cloud\"; \"many apps\"; \"some medical devices\")\n   - Generic placeholders standing in for a specific real thing (\"a real app\", \"a real court case\", \"an exoplanet\", \"every time a button does X in three places\")\n\n12. STYLE: Clear, short, concrete, beginner-friendly, and precise. Penalize academic tone, atmospheric storytelling, filler lines, subjectivity that does not teach, and redundancy across steps and anchor.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require a fixed number of steps. Complex topics need more; simple topics fewer. Both are fine as long as the lesson is delivered\n- Do NOT require a cold open, story arc, single scene, or specific opening style\n- Do NOT require specific title wording, a particular choice of product or event, or a specific visual kind. The anchor must name some specific real thing, but any reasonable choice is fine — do not penalize the model for picking Instagram over WhatsApp, or one named case over another\n- Do NOT penalize anchors that use a widely recognized product family tied to a named product, such as \"ChatGPT-style models\", when the learner can clearly recognize the real-world surface\n- Do NOT penalize direct explanatory writing when it is clear, plain, concrete, and complete\n- Do NOT penalize density when the density comes from necessary expert content explained in everyday language\n- Do NOT focus on JSON wrapping or formatting trivia. Evaluate the content and structural fit\n- ONLY penalize for: wrong top-level structure, factual errors, failing to deliver LESSON_TITLE and LESSON_DESCRIPTION, missing beginner/expert balance, missing required mechanism/detail, drifting into sibling lessons, unclear flow, unsupported formatting, weak real-world anchor, or broken writing constraints\n\n    ",
+  "judgedAt": "2026-07-10T17:44:51.943Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.8",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Complete arc: spot repeated job, name the result, separate changing from constant, build with parameters, return, replace with calls, boundary, avoid overgeneralizing, verify. Stays focused on extraction, real code, and concrete tax example. Anchor names Starbucks pricing screen specifically. Excellent step titles and beginner/expert balance.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Strong, focused delivery: identify duplicated blocks, name the job, find what changes vs stays, decide return, assemble, replace with calls, and inside/outside rule. Concrete tax code, plain language, good anchor naming Amazon cart. Slightly less coverage of boundary nuance than A but very solid.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Excellent focused arc using a realistic formatPrice example (cents to label), clean separation of shared work vs parameter, return, calls with concrete outputs, and boundary/avoid-forcing steps. Anchor names a shopping-site cart/checkout use, though slightly generic ('a shopping site'). Very strong beginner/expert fit.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Thorough and well-sequenced: duplication, name the job, keep rule inside, parameters, arguments, return, calls, separate rule from data, and a summary check. Concrete tax code and clear titles. Anchor names Shopify specifically. Minor redundancy between separate-rule steps but overall strong.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Solid coverage of the extraction move with concrete tax code and Etsy anchor, but spends notable energy on the call/argument mechanics (return, supply values, JavaScript puts 50 into price) which lean toward sibling lessons. Still stays mostly on topic and delivers the reusable-block idea.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Clear and concrete with a greet example, but drifts: two full steps (Return the useful result, Print versus return) plus argument-focused content lean heavily into sibling lessons on return values and calls rather than the extraction boundary. Good writing but boundary penalty applies.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Correct and clean tax example with proper structure and Shopify anchor, but shortest and thinnest—only six steps that skip explicit return-versus-print reasoning and give lighter treatment of naming and boundary choices. Solid but surface-level compared to top entries.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "This model flawlessly executes the task. It starts with a concrete code example of duplication, walks step-by-step through naming the job, isolating the parameters, returning the value, and explicitly discusses the boundary rules of what stays inside the function.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "The lesson is highly concrete, beginner-friendly, and perfectly tackles the boundary choice of fixed versus changing values. It receives a tiny deduction for a minor factual slip in the first step (referring to two lines of code as 'three lines').",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "This output provides a very strong explanation of the flexibility trade-off and boundary decisions required by the prompt. However, it misses the opportunity to show the actual duplicated code in the first step, making the initial problem slightly abstract.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "The lesson structure is solid and the anchor is specific. However, it slightly violates the lesson boundary by spending a full step explaining how parameters act as variables, which belongs in the 'Parameters and arguments' sibling lesson.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "The core lesson features an exceptionally practical and realistic JavaScript example (formatting prices). Unfortunately, the anchor uses a generic placeholder ('a shopping site') rather than a named product, which violates a strict negative constraint.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "This model explains the concepts decently but lacks concrete duplicated code to ground the initial refactoring step. It also drifts into the sibling lesson of how arguments are passed ('JavaScript puts 50 into price') rather than focusing strictly on the extraction process.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "This output has significant weaknesses. The anchor uses a generic placeholder ('Add to cart') rather than a specific product, and creates a confusing disconnect by pairing a shopping-cart anchor with a name-greeting code example. It also spends too much time re-teaching the sibling topic of return values.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Exceptionally complete extraction arc: it identifies the repeated job, separates changing inputs from shared logic, shows a full function, returns the result, replaces copies, and discusses boundaries and verification. The Starbucks anchor is specific and clearly connects reuse to a real product surface.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Clear, concise, and technically accurate, with strong explanations of names, parameters, arguments, the body, return behavior, and function boundaries. The Etsy anchor is specific; the only small gap is that the complete declaration and body are split across snippets rather than assembled once.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Provides a strong working understanding of extraction and clearly distinguishes the reusable rule from call-specific data. It is slightly repetitive and never presents the entire completed function in one snippet, but the mechanism and Shopify use case remain clear.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "A particularly concrete example that shows the complete function and carefully separates formatting logic from page-specific effects. Its main weakness is the anchor’s generic “shopping site” rather than a named product or similarly specific real-world instance.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Accurately demonstrates naming the job, selecting parameters, retaining constants, returning a result, and replacing duplicates. It is less thorough about recognizing semantically different repeated code, but it delivers the central lesson cleanly with a specific Shopify anchor.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "The extraction procedure and complete code example are strong, and the Amazon anchor is specific. However, it inconsistently refers to the shown two statements as three lines and gives an overly absolute rule that anything currently unchanged should be baked into the function, despite parameterizing the unchanged tax rate.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "It explains naming and parameter selection well, but its main extracted example logs rather than returns, pushing much of the lesson toward calls and print-versus-return instead of one cohesive reusable calculation. Calling a print-only function a “dead end” is misleading because side-effect functions can still be reusable, and the anchor is generic rather than named.",
+          "score": 6.3
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-explanation",
+  "testCaseId": "en-javascript-named-block-1"
+}

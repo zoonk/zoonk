@@ -1,50 +1,86 @@
 {
   "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Tire removal requires specific safety sequences. Penalize if:\n   - Loosening lug nuts is described AFTER the car is fully jacked up (must loosen while on ground)\n   - Jack placement doesn't mention finding the correct jack point\n\n2. SAFETY CHECK: Penalize if:\n   - No mention of engaging parking brake or using wheel chocks\n   - Steps allow working under an unsupported vehicle\n\n3. TOOL SPECIFICITY: Penalize if steps don't specify which tools are used for each action (lug wrench, jack, etc.).\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n- Do NOT penalize for JSON output format differences (e.g., wrapping the array in an object like `{\"steps\": [...]}` instead of a raw array). This is a schema/parsing concern, not a content quality issue\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the lesson as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
-  "judgedAt": "2026-05-24T18:29:38.888Z",
+  "judgedAt": "2026-07-10T17:26:39.540Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.7",
+      "judgeId": "anthropic/claude-opus-4.8",
       "rankings": [
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Comprehensive and correctly sequenced: loosens lug nuts on the ground, locates jack point, includes parking brake, chocks, and tool specificity. Verification steps and safety warnings are well-integrated without being excessive.",
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "Complete correct sequence with lug nuts loosened on ground, jack point identification, parking brake, chocks, and tool specificity. Excellent verification cues and safety warnings throughout without over-fragmenting.",
           "score": 9
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Correct sequence with parking brake, chocks, jack point identification, and tools specified. Slightly less detail on safety stability check but solid and clear throughout.",
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Correct sequence, all safety elements present (parking brake, chock, jack point), tool-specific, with good verification points. Concise and clear.",
           "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Correct order, includes parking brake, wheel wedges, jack point identification, and tool specificity. Clear and well-grouped with safety notes.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Thorough and accurate with all safety and sequence requirements met; loosening on ground, jack point, chocks, tools. Slightly over-split (separate steps for one lug nut then the rest) but still clear.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Accurate, safe, tool-specific with jack point and chocks; loosens on ground. Very granular (14 steps) but each reads naturally and adds verification value.",
+          "score": 8
         },
         {
           "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Correct sequence, jack point emphasis, chocks, tools specified, includes verification. Missing explicit parking brake? It does mention 'set the parking brake' in step one, so safety is covered. Solid.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Correct sequence with jack point, chocks, tools, and loosening on ground. First step has placeholder-like duplicated text ('Park on Firm, Level Ground' as text repeated), a minor formatting glitch, but content otherwise strong.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Correct order, safety and jack point covered, tool-specific with verification cues. Solid and clear throughout.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Correct sequence, jack point, chocks, tools all present with good verification. However uses rocks as chock alternative acceptable; solid quality overall.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Correct sequence with lug nuts loosened on ground, parking brake, jack point. However, no wheel chocks mentioned, only parking brake, which is a minor safety gap but generally acceptable.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Correct sequence and jack point mention, parking brake set. Missing wheel chocks entirely, and suggests laying flat tire under vehicle only 3 inches up—minor. Safety slightly weaker.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
           "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Correct sequence with parking brake, chocks, jack point on metal frame, and explicit safety warning about not going under the vehicle. Tools specified appropriately.",
+          "reasoning": "Correct sequence, parking brake, chocks, jack point, tool-specific. Solid but fewer steps; adequate coverage of safety and accuracy.",
           "score": 8
         },
         {
           "anonymousId": "Model E",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Correct sequence with parking brake and jack point identification, tools specified. Missing wheel chocks which is a minor safety gap but otherwise solid.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Correct order with chocks, jack point identification, and safety warning. However, parking brake is not explicitly mentioned, which is a notable safety omission.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Correct sequence and parking brake engaged, but no wheel chocks mentioned and laying the tire under the vehicle edge is questionable safety advice. Tools specified.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model C",
           "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Placeholder output only; provides no actual content and is unusable.",
+          "reasoning": "Placeholder output with no actual content. Completely unusable.",
           "score": 1
         }
       ]
@@ -53,92 +89,164 @@
       "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model B",
+          "anonymousId": "Model L",
           "modelId": "openai/gpt-5.4",
-          "reasoning": "Perfect execution of the task. The steps are logically grouped, fully accurate, and effectively integrate verification points to confirm success for each action, which the rubric explicitly praises.",
+          "reasoning": "Provides exceptionally clear, logically grouped steps that perfectly meet all accuracy and safety requirements. The consistent use of verification points (e.g., checking if the car rolls) makes it an outstanding instructional guide.",
           "score": 10
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Exceptional procedural accuracy and logical step grouping. It includes highly practical insights, such as lifting the car slightly higher to accommodate the fully inflated spare tire.",
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Features excellent logical grouping and concise, action-oriented instructions. It thoroughly addresses all safety, accuracy, and tool specificity requirements without unnecessary bloat.",
           "score": 10
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Strong, safe instructions that accurately cover all prerequisites and tool usages. The explicit safety warning about keeping your body out from under the raised vehicle is a great addition.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Very solid instructions that meet all safety and accuracy checks. It also includes an excellent real-world safety tip to place the removed flat tire under the edge of the vehicle.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Meets all core expectations and safety checks, correctly mentioning wheel wedges and jack placement. Minor deduction because the initial steps rely on slightly more descriptive phrasing rather than punchy, direct imperatives.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Mechanically accurate and safe, but penalized for arbitrary micro-splitting (16 steps total). Separating the loosening of one lug nut from the rest, and breaking the jacking process into four distinct steps, violates the logical grouping criteria.",
-          "score": 6
         },
         {
           "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "A strong output that meets all safety and procedural requirements perfectly. It includes helpful verification checks and groups the actions logically for a smooth user experience.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "Highly detailed and accurate, meeting all core requirements with a strong safety emphasis. The steps are slightly more granular than necessary, but remain very clear and actionable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Delivers safe, well-structured instructions with clear tool specificity and good verification points. It effectively guides the user, though the overall step count is slightly high.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Meets all accuracy and safety checks, appropriately utilizing wheel wedges to secure the vehicle. The instructions are clear and perfectly adhere to formatting and tool specificity rules.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "A solid, straightforward procedure that correctly sequences loosening the lug nuts before jacking. It lacks the helpful verification points seen in top models but covers the essentials well.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Accurately captures the correct sequence and tool usage with clear imperative language. The instructions are completely functional but somewhat basic compared to higher-ranked outputs.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Correctly outlines the procedure and meets all core safety requirements. However, the first step crams too many distinct setup actions into a single dense paragraph.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Contains accurate content and includes strong verification points. However, it unnecessarily micro-splits the initial setup actions (hazards, parking, brake, transmission) into disjointed steps, violating grouping guidelines.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Provides helpful verifications but heavily violates logical grouping guidelines by micro-splitting actions. Separating the loosening of one lug nut from the rest is a highly arbitrary and confusing division.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Includes correct procedural steps but contains a glaring formatting error with a duplicate, incomplete first step. This lack of polish significantly degrades the overall quality.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model E",
           "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Unusable output consisting entirely of placeholder text.",
+          "reasoning": "Outputs placeholder text instead of actual instructions, rendering it completely unusable.",
           "score": 1
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.5",
+      "judgeId": "openai/gpt-5.6-sol",
       "rankings": [
         {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Best overall: it gives a safe, correct sequence with parking brake, chocks, tool use, lug nuts loosened while the tire is on the ground, and the jack point located before lifting. Steps are actionable, well grouped, and include useful verification without introducing risky actions.",
-          "score": 9.5
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Comprehensive, correctly sequenced, and highly safety-conscious, with parking brake, chocking, approved jack-point identification, stability checks, and an explicit warning against going under the vehicle. Tool use and success confirmations are consistently clear without factual problems.",
+          "score": 9.8
         },
         {
           "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Provides an accurate and practical sequence with strong tool specificity, correct ground-level lug loosening, approved jack-point guidance, and clear instability warnings. Chock placement could be slightly more precise about blocking both rolling directions, but this is minor on specified level ground.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model H",
           "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Strong and concise, with correct sequencing, parking brake, chocks, jack point placement, tool-specific lug nut removal, and a clear warning not to put your body under the raised vehicle. Minor weakness: chock placement is less precise than ideal, and it omits some setup detail such as gathering tools or moving away from traffic.",
+          "reasoning": "Strong, concise procedure that includes both the parking brake and chocks, identifies the designated reinforced jack point, and warns against putting the body under the raised vehicle. Loosening the nuts by a full turn and lifting six inches are somewhat more than necessary but remain workable.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Clear, well-sequenced instructions with appropriate tools, wheel wedges, correct jack-point identification, and monitoring for tipping or shifting. It lacks an explicit under-vehicle warning, though it never instructs the learner to work underneath.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "Detailed and safe overall, with correct lug-nut sequencing, wheel blocking, jack-point guidance, and jack stability checks. Advising use of body weight on the wrench and placing the tire under the vehicle edge are common practices but could be phrased more cautiously.",
           "score": 9
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Very complete and accurate, with excellent safety coverage, correct lug-nut-before-jacking sequence, correct jack point guidance, and strong tool specificity. The main concern is the instruction to gently push the vehicle while it is on the jack, which is a questionable stability check and could create risk.",
-          "score": 8.5
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "The substantive procedure is accurate, tool-specific, and safety-focused, including chocks, an approved jack point, and a warning not to go underneath. The duplicated opening “Park Safely” step is a noticeable product-quality and flow defect.",
+          "score": 8.8
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Correctly sequences the core procedure, specifies the lug wrench and jack, and mentions the parking brake, hazards, and designated jack point. It is weaker on safety because it does not mention wheel chocks or a warning against getting under the raised vehicle, but it does not directly instruct unsafe under-vehicle work.",
-          "score": 8
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Correctly loosens the lug nuts on the ground, identifies the designated jack point, and uses the parking brake before lifting. It is practical and tool-specific, though it provides fewer stability checks and no explicit warning against going under the raised vehicle.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Correctly uses wheel chocks, loosens nuts before lifting, checks the manual for the jack point, and explicitly warns against putting the body under the vehicle. It omits the parking brake, but the required alternative of wheel chocking is present; shifting the transmission would still improve security.",
+          "score": 8.6
         },
         {
           "anonymousId": "Model D",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Covers the main procedure accurately, including chocks, lug-nut loosening on the ground, finding the jack point, and avoiding placing body parts under the vehicle. It is slightly weaker because it omits the parking brake and has somewhat vague chock placement, though the core process remains usable.",
-          "score": 8
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Accurate and concise, with parking-brake use, ground-level lug loosening, proper tool naming, and designated jack-point guidance. It would be stronger with wheel chocks or a stability/under-vehicle warning, but it does not direct any unsafe under-car work.",
+          "score": 8.5
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "The basic sequence is correct, including loosening lug nuts before lifting and using the designated jack point. However, it has thinner safety coverage with no hazards or chocks, and the suggestion to place the removed tire under the edge of the vehicle is potentially awkward or risky in this lesson context.",
-          "score": 7
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Includes the main safety prerequisites and correct sequence, with useful jack alignment and stability checks. Some action steps do not explicitly name the tool used, especially loosening the nuts and operating the jack, reducing tool specificity.",
+          "score": 8.3
         },
         {
           "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "The procedure otherwise has strong safety coverage, correct lug-nut sequencing, and specific tool use. Describing the jack point as being “behind the flat tire” is not generally correct for rear wheels, although the manual-check caveat partly mitigates the risk.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Most of the sequence and tool guidance is accurate, including parking brake, chocks, ground-level lug loosening, and correct jack-point identification. However, instructing the learner to push the vehicle while it is supported only by the jack is a significant safety hazard that could dislodge or tip the jack.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model E",
           "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "This output provides no usable procedure, safety guidance, tools, or sequence for removing a flat tire. It fails the lesson expectations entirely.",
+          "reasoning": "The placeholder content provides no usable procedure, safety guidance, tool instructions, or tire-removal actions. It does not address the lesson.",
           "score": 1
         }
       ]

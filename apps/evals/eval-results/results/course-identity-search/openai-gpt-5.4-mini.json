@@ -5,12 +5,12 @@
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The list is somewhat redundant, with several near-duplicate variants such as frontend/front end/front-end combined with engineering, web, and development. It also does not include standalone \"client side\" as its own query, though it does include \"client side development\" and \"client-side\".",
+          "conclusion": "The list has some redundant longer variants, particularly the repeated engineering/development and hyphenation combinations, but these are explicitly minor issues and remain plausible retrieval terms.",
           "kind": "minorErrors",
-          "score": 8.5
+          "score": 9
         },
         {
-          "conclusion": "Add a standalone \"client side\" query to better satisfy the recall target, and consider trimming some redundant longer variants if concision is prioritized.",
+          "conclusion": "Add standalone \"client side\" and optionally \"client-side\" queries to improve recall for titles using only that phrasing; otherwise the required frontend/front end variants are well covered.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -19,7 +19,7 @@
         "expectations": "\n      - Must include \"frontend\" and \"front end\"\n      - Could include \"front-end\"\n      - Should include \"client side\"\n      - Must not include generic \"engineering\" or \"development\" by itself\n\n      \n  - Must return concise database search strings in the \"queries\" array\n  - This is candidate retrieval, not final identity classification\n  - Must optimize for recall so the next identity task can inspect plausible database candidates\n  - Must include important title terms, abbreviations, expanded forms, translations, native-script terms, and canonical names when they apply\n  - Must preserve retrieval-critical qualifiers such as jurisdiction, target language, named framework, named exam, or named certification\n  - Exact-title repeats and redundant longer phrases are minor issues, not major failures\n  - Broad, narrower, or adjacent but plausible candidate-retrieval terms are minor issues at worst; the identity task decides whether candidates are actually the same course\n  - Must not use generic filler words by themselves, such as \"course\", \"introduction\", \"basics\", \"learn\", \"development\", \"engineering\", or \"programming\"\n  - Must not pad the list with weak terms that are unlikely to appear in a course title\n  - If the output omits an explicitly required recall-critical key, the majorErrors score must be 6.5 or lower\n\n    ",
         "id": "en-frontend-engineering-1",
         "userInput": {
-          "suggestion": {
+          "proposedCourse": {
             "description": "Build client-side product interfaces.",
             "language": "en",
             "targetLanguage": null,
@@ -32,12 +32,12 @@
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Includes some mildly weak or adjacent query phrases such as \"browser interfaces\" and the engineering variants, which may be less likely to appear as exact course titles. There is also some redundancy among hyphenated and non-hyphenated variants, but this is minor for candidate retrieval.",
+          "conclusion": "Several hyphenation variants and longer phrases are redundant, especially the repeated development, scripting, and interface variants, though this only mildly reduces concision and may aid recall.",
           "kind": "minorErrors",
-          "score": 8.5
+          "score": 9
         },
         {
-          "conclusion": "Could improve recall with a few additional plausible title variants such as \"web frontend\", \"web front end\", or \"client side web development\" while keeping the list concise.",
+          "conclusion": "Could add concise title-like variants such as \"frontend web development\" or \"client-side web development\" while trimming weaker description-derived phrases such as \"browser-based interfaces.\"",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -46,7 +46,7 @@
         "expectations": "\n      - Must include \"frontend\" and \"front end\"\n      - Could include \"front-end\"\n      - Must include \"client side\"\n      - Must not include generic \"development\" by itself\n\n      \n  - Must return concise database search strings in the \"queries\" array\n  - This is candidate retrieval, not final identity classification\n  - Must optimize for recall so the next identity task can inspect plausible database candidates\n  - Must include important title terms, abbreviations, expanded forms, translations, native-script terms, and canonical names when they apply\n  - Must preserve retrieval-critical qualifiers such as jurisdiction, target language, named framework, named exam, or named certification\n  - Exact-title repeats and redundant longer phrases are minor issues, not major failures\n  - Broad, narrower, or adjacent but plausible candidate-retrieval terms are minor issues at worst; the identity task decides whether candidates are actually the same course\n  - Must not use generic filler words by themselves, such as \"course\", \"introduction\", \"basics\", \"learn\", \"development\", \"engineering\", or \"programming\"\n  - Must not pad the list with weak terms that are unlikely to appear in a course title\n  - If the output omits an explicitly required recall-critical key, the majorErrors score must be 6.5 or lower\n\n    ",
         "id": "en-client-side-development-1",
         "userInput": {
-          "suggestion": {
+          "proposedCourse": {
             "description": "Build browser-based interfaces for product experiences.",
             "language": "en",
             "targetLanguage": null,
@@ -59,21 +59,21 @@
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The result includes several narrower library/tool terms that do not appear in the proposed title or description, such as \"pandas\", \"numpy\", \"scikit-learn\", \"matplotlib\", \"seaborn\", \"jupyter\", and \"jupyter notebook\". These reduce query quality and look like padded candidate terms, though they do not break the required recall behavior. There is also some minor redundancy between \"python data science\" and \"python for data science\".",
+          "conclusion": "The list includes narrower library terms such as \"pandas\" and \"numpy\" despite those libraries not appearing in the title or description. Terms such as \"scipy,\" \"matplotlib,\" \"seaborn,\" \"ai,\" and \"artificial intelligence\" also weakly pad the candidate search beyond the course's stated identity.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "The query list would be stronger if it removed unmentioned library/tool-only terms and added a small number of recall-oriented variants such as \"py data science\" or \"data analytics with python\" while keeping the focus on Python and data science/data analysis.",
+          "conclusion": "Keep the strong Python and data-science/data-analysis variants, but remove unsupported library-specific and AI terms to make the retrieval list more concise and targeted.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8.5
         }
       ],
       "testCase": {
         "expectations": "\n      - Must include \"python\"\n      - Could include \"py\"\n      - Could include \"data science\", \"data analysis\", or \"data analytics\" as candidate-retrieval terms\n      - Must not score \"data science\", \"data analysis\", or \"data analytics\" as major errors; those candidates are for the identity task to reject if needed\n      - Should avoid narrower library terms like \"pandas\", \"NumPy\", or \"scikit-learn\" unless they appear in the proposed course title or description\n      - If the output omits \"python\", the majorErrors score must be 6.5 or lower\n\n      \n  - Must return concise database search strings in the \"queries\" array\n  - This is candidate retrieval, not final identity classification\n  - Must optimize for recall so the next identity task can inspect plausible database candidates\n  - Must include important title terms, abbreviations, expanded forms, translations, native-script terms, and canonical names when they apply\n  - Must preserve retrieval-critical qualifiers such as jurisdiction, target language, named framework, named exam, or named certification\n  - Exact-title repeats and redundant longer phrases are minor issues, not major failures\n  - Broad, narrower, or adjacent but plausible candidate-retrieval terms are minor issues at worst; the identity task decides whether candidates are actually the same course\n  - Must not use generic filler words by themselves, such as \"course\", \"introduction\", \"basics\", \"learn\", \"development\", \"engineering\", or \"programming\"\n  - Must not pad the list with weak terms that are unlikely to appear in a course title\n  - If the output omits an explicitly required recall-critical key, the majorErrors score must be 6.5 or lower\n\n    ",
         "id": "en-python-for-data-science-1",
         "userInput": {
-          "suggestion": {
+          "proposedCourse": {
             "description": "Use Python to analyze data and build practical models.",
             "language": "en",
             "targetLanguage": null,
@@ -84,23 +84,27 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Includes one likely weak/unmotivated term, \"apprendimento automatico\", which is Italian rather than Portuguese or an explicitly required recall term. This is only a minor issue because it does not interfere with the required recall-critical queries.",
-          "kind": "minorErrors",
-          "score": 9
+          "conclusion": "The explicitly required recall-critical query \"ML\" is missing; lowercase \"ml\" does not literally satisfy that requirement. Under the stated cap, the major-error score cannot exceed 6.5.",
+          "kind": "majorErrors",
+          "score": 6.5
         },
         {
-          "conclusion": "Could add additional plausible Portuguese variants such as \"aprendizagem automática\" or shortened forms without \"de\" to improve recall further.",
+          "conclusion": "The preferred Portuguese variant \"aprendizagem de máquina\" is omitted. The included Italian and Spanish translations are plausible recall-oriented terms, so they are not major problems.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add accented canonical forms, especially \"aprendizado de máquina\", \"aprendizagem de máquina\", \"apprendimento automatico\", and \"aprendizaje automático\", while keeping the queries concise.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8.5
         }
       ],
       "testCase": {
         "expectations": "\n      - Must include \"machine learning\"\n      - Must include \"ML\"\n      - Should include \"aprendizagem de máquina\"\n      - Could include \"aprendizado de máquina\" even though the exact title is already searched\n\n      \n  - Must return concise database search strings in the \"queries\" array\n  - This is candidate retrieval, not final identity classification\n  - Must optimize for recall so the next identity task can inspect plausible database candidates\n  - Must include important title terms, abbreviations, expanded forms, translations, native-script terms, and canonical names when they apply\n  - Must preserve retrieval-critical qualifiers such as jurisdiction, target language, named framework, named exam, or named certification\n  - Exact-title repeats and redundant longer phrases are minor issues, not major failures\n  - Broad, narrower, or adjacent but plausible candidate-retrieval terms are minor issues at worst; the identity task decides whether candidates are actually the same course\n  - Must not use generic filler words by themselves, such as \"course\", \"introduction\", \"basics\", \"learn\", \"development\", \"engineering\", or \"programming\"\n  - Must not pad the list with weak terms that are unlikely to appear in a course title\n  - If the output omits an explicitly required recall-critical key, the majorErrors score must be 6.5 or lower\n\n    ",
         "id": "pt-aprendizado-de-maquina-1",
         "userInput": {
-          "suggestion": {
+          "proposedCourse": {
             "description": "Modelos que aprendem com dados.",
             "language": "pt",
             "targetLanguage": null,
@@ -113,12 +117,12 @@
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Contains some redundant near-duplicates based only on capitalization, such as \"toefl iBT\"/\"TOEFL iBT\", \"toefl pbt\"/\"TOEFL PBT\", and duplicate expanded-form variants. The Portuguese phrase \"inglês proficiência\" is less natural than the expected \"proficiência em inglês\".",
+          "conclusion": "The queries omit applicable Portuguese retrieval terms such as \"proficiência em inglês\" and \"prova de proficiência em inglês,\" slightly reducing recall for Portuguese course titles.",
           "kind": "minorErrors",
-          "score": 8.5
+          "score": 9
         },
         {
-          "conclusion": "Could improve recall by adding natural Portuguese retrieval strings such as \"proficiência em inglês\", \"preparação TOEFL\", and \"exame TOEFL\", while removing capitalization-only duplicates to keep the query list concise.",
+          "conclusion": "Could add concise plausible variants such as \"TOEFL iBT\" and \"preparação TOEFL\" to broaden candidate retrieval without adding generic filler.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -127,7 +131,7 @@
         "expectations": "\n      - Must include \"english\" or \"inglês\"\n      - Should include \"english proficiency\" or \"proficiência em inglês\"\n      - Should include \"Test of English as a Foreign Language\"\n      - Could include exam formats such as \"iBT\" if paired with stronger English/TOEFL recall\n      - If the output omits English-language recall and only returns exam-specific names, formats, or versions, the majorErrors score must be 7.5 or lower\n\n      \n  - Must return concise database search strings in the \"queries\" array\n  - This is candidate retrieval, not final identity classification\n  - Must optimize for recall so the next identity task can inspect plausible database candidates\n  - Must include important title terms, abbreviations, expanded forms, translations, native-script terms, and canonical names when they apply\n  - Must preserve retrieval-critical qualifiers such as jurisdiction, target language, named framework, named exam, or named certification\n  - Exact-title repeats and redundant longer phrases are minor issues, not major failures\n  - Broad, narrower, or adjacent but plausible candidate-retrieval terms are minor issues at worst; the identity task decides whether candidates are actually the same course\n  - Must not use generic filler words by themselves, such as \"course\", \"introduction\", \"basics\", \"learn\", \"development\", \"engineering\", or \"programming\"\n  - Must not pad the list with weak terms that are unlikely to appear in a course title\n  - If the output omits an explicitly required recall-critical key, the majorErrors score must be 6.5 or lower\n\n    ",
         "id": "pt-toefl-english-1",
         "userInput": {
-          "suggestion": {
+          "proposedCourse": {
             "description": "Preparação para uma prova de proficiência em inglês.",
             "language": "pt",
             "targetLanguage": "en",
@@ -138,23 +142,23 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Missing the recommended expanded exam name \"Hanyu Shuiping Kaoshi\". The list also includes a minor case-only duplicate with \"HSK\" and \"hsk\".",
-          "kind": "minorErrors",
-          "score": 8.5
+          "conclusion": "Missing an explicitly required Traditional Chinese native-script query such as \"漢語\" or \"普通話\". This recall-critical omission triggers the stated major-error cap. Additionally, the required abbreviation appears only as lowercase \"hsk\", not the specified \"HSK\" form.",
+          "kind": "majorErrors",
+          "score": 6.5
         },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Add \"Hanyu Shuiping Kaoshi\" and optionally the Traditional variant \"普通話\" to further improve recall for Chinese-language course titles and exam-related database records.",
+          "conclusion": "Add the expanded exam name \"Hanyu Shuiping Kaoshi\" as requested, ideally alongside \"HSK\" and a Chinese canonical form such as \"汉语水平考试\".",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8.5
         }
       ],
       "testCase": {
         "expectations": "\n      - Must include \"mandarin\"\n      - Must include \"chinese\"\n      - Must include at least one Simplified Chinese native-script term such as \"中文\", \"汉语\", or \"普通话\"\n      - Must include at least one Traditional Chinese native-script term such as \"漢語\" or \"普通話\"\n      - Must include \"HSK\"\n      - Should include \"Hanyu Shuiping Kaoshi\"\n      - Must not stop at eight queries when more strong Chinese-language variants are relevant\n      - Must not include unrelated Asian languages such as Japanese or Korean\n\n      \n  - Must return concise database search strings in the \"queries\" array\n  - This is candidate retrieval, not final identity classification\n  - Must optimize for recall so the next identity task can inspect plausible database candidates\n  - Must include important title terms, abbreviations, expanded forms, translations, native-script terms, and canonical names when they apply\n  - Must preserve retrieval-critical qualifiers such as jurisdiction, target language, named framework, named exam, or named certification\n  - Exact-title repeats and redundant longer phrases are minor issues, not major failures\n  - Broad, narrower, or adjacent but plausible candidate-retrieval terms are minor issues at worst; the identity task decides whether candidates are actually the same course\n  - Must not use generic filler words by themselves, such as \"course\", \"introduction\", \"basics\", \"learn\", \"development\", \"engineering\", or \"programming\"\n  - Must not pad the list with weak terms that are unlikely to appear in a course title\n  - If the output omits an explicitly required recall-critical key, the majorErrors score must be 6.5 or lower\n\n    ",
         "id": "en-mandarin-chinese-1",
         "userInput": {
-          "suggestion": {
+          "proposedCourse": {
             "description": "Learn Mandarin Chinese pronunciation, characters, and everyday communication.",
             "language": "en",
             "targetLanguage": "zh",
@@ -166,9 +170,13 @@
     {
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Could add a slightly more specific variant such as \"Formula 1 racing\" or \"Formula One racing\", but the current queries already cover the required key forms and plausible adjacent retrieval terms.",
+          "conclusion": "The list includes some redundant phrase extensions and very broad terms such as \"motorsport\" and \"motorsports,\" which may retrieve many weak candidates, though these are at most minor issues for recall-oriented retrieval.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Could add the canonical phrase \"Formula One World Championship\" and trim one or two redundant broad variants while retaining \"f1,\" \"formula 1,\" and \"formula one.\"",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -177,7 +185,7 @@
         "expectations": "\n      - Must include \"formula 1\" and \"formula one\"\n      - Could include \"F1\" even though the exact title is already searched\n      - Could include adjacent racing terms, but missing \"formula one\" is the serious recall failure\n      - Must not include unrelated formula/math queries\n      - If the output omits \"formula one\", the majorErrors score must be 6.5 or lower\n\n      \n  - Must return concise database search strings in the \"queries\" array\n  - This is candidate retrieval, not final identity classification\n  - Must optimize for recall so the next identity task can inspect plausible database candidates\n  - Must include important title terms, abbreviations, expanded forms, translations, native-script terms, and canonical names when they apply\n  - Must preserve retrieval-critical qualifiers such as jurisdiction, target language, named framework, named exam, or named certification\n  - Exact-title repeats and redundant longer phrases are minor issues, not major failures\n  - Broad, narrower, or adjacent but plausible candidate-retrieval terms are minor issues at worst; the identity task decides whether candidates are actually the same course\n  - Must not use generic filler words by themselves, such as \"course\", \"introduction\", \"basics\", \"learn\", \"development\", \"engineering\", or \"programming\"\n  - Must not pad the list with weak terms that are unlikely to appear in a course title\n  - If the output omits an explicitly required recall-critical key, the majorErrors score must be 6.5 or lower\n\n    ",
         "id": "en-f1-1",
         "userInput": {
-          "suggestion": {
+          "proposedCourse": {
             "description": "Teams, drivers, strategy, and race weekends.",
             "language": "en",
             "targetLanguage": null,
@@ -189,22 +197,14 @@
     {
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "The query list includes a few lower-value or somewhat redundant terms, especially \"standard library\" without a C++ qualifier and \"cplusplus programming\", which may retrieve less targeted candidates. These are minor because the required recall-critical variants are present.",
-          "kind": "minorErrors",
-          "score": 8.5
-        },
-        {
-          "conclusion": "Could add common C++ retrieval variants such as \"STL\" or \"C++ STL\" and trim weaker broad variants while keeping the required \"c++\", \"cpp\", and \"c plus plus\" terms.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "\n      - Must include \"c++\"\n      - Must include \"cpp\" and \"c plus plus\"\n      - Must not include \"c\" by itself or \"c programming\"\n      - Must not include generic \"programming\" by itself\n      - If the output omits \"c++\", the majorErrors score must be 6.5 or lower\n      - If the output omits either \"cpp\" or \"c plus plus\", the majorErrors score must be 7.5 or lower\n\n      \n  - Must return concise database search strings in the \"queries\" array\n  - This is candidate retrieval, not final identity classification\n  - Must optimize for recall so the next identity task can inspect plausible database candidates\n  - Must include important title terms, abbreviations, expanded forms, translations, native-script terms, and canonical names when they apply\n  - Must preserve retrieval-critical qualifiers such as jurisdiction, target language, named framework, named exam, or named certification\n  - Exact-title repeats and redundant longer phrases are minor issues, not major failures\n  - Broad, narrower, or adjacent but plausible candidate-retrieval terms are minor issues at worst; the identity task decides whether candidates are actually the same course\n  - Must not use generic filler words by themselves, such as \"course\", \"introduction\", \"basics\", \"learn\", \"development\", \"engineering\", or \"programming\"\n  - Must not pad the list with weak terms that are unlikely to appear in a course title\n  - If the output omits an explicitly required recall-critical key, the majorErrors score must be 6.5 or lower\n\n    ",
         "id": "en-c-plus-plus-programming-1",
         "userInput": {
-          "suggestion": {
+          "proposedCourse": {
             "description": "Learn modern C++ syntax, memory, and standard library fundamentals.",
             "language": "en",
             "targetLanguage": null,
@@ -218,16 +218,16 @@
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Could add a plural variant such as \"California legal systems\" or another title-adjacent phrase like \"California legal rules\" to slightly improve recall, but the required jurisdictional and recall-critical terms are already covered.",
+          "conclusion": "Consider replacing the awkwardly ordered \"state law california\" with the more title-like \"california state law\" to improve retrieval likelihood.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 9.5
         }
       ],
       "testCase": {
         "expectations": "\n      - Must include \"california law\"\n      - Should include \"california legal system\" and \"california legal\"\n      - Must preserve the California jurisdiction\n      - Must not include \"brazilian law\" or jurisdiction-free \"law\" as a likely duplicate\n\n      \n  - Must return concise database search strings in the \"queries\" array\n  - This is candidate retrieval, not final identity classification\n  - Must optimize for recall so the next identity task can inspect plausible database candidates\n  - Must include important title terms, abbreviations, expanded forms, translations, native-script terms, and canonical names when they apply\n  - Must preserve retrieval-critical qualifiers such as jurisdiction, target language, named framework, named exam, or named certification\n  - Exact-title repeats and redundant longer phrases are minor issues, not major failures\n  - Broad, narrower, or adjacent but plausible candidate-retrieval terms are minor issues at worst; the identity task decides whether candidates are actually the same course\n  - Must not use generic filler words by themselves, such as \"course\", \"introduction\", \"basics\", \"learn\", \"development\", \"engineering\", or \"programming\"\n  - Must not pad the list with weak terms that are unlikely to appear in a course title\n  - If the output omits an explicitly required recall-critical key, the majorErrors score must be 6.5 or lower\n\n    ",
         "id": "en-ca-law-1",
         "userInput": {
-          "suggestion": {
+          "proposedCourse": {
             "description": "Legal systems and rules in California.",
             "language": "en",
             "targetLanguage": null,

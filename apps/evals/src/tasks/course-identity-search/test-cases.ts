@@ -23,7 +23,7 @@ export const TEST_CASES = [
     `,
     id: "en-frontend-engineering",
     userInput: {
-      suggestion: {
+      proposedCourse: {
         description: "Build client-side product interfaces.",
         language: "en",
         targetLanguage: null,
@@ -42,7 +42,7 @@ export const TEST_CASES = [
     `,
     id: "en-client-side-development",
     userInput: {
-      suggestion: {
+      proposedCourse: {
         description: "Build browser-based interfaces for product experiences.",
         language: "en",
         targetLanguage: null,
@@ -63,7 +63,7 @@ export const TEST_CASES = [
     `,
     id: "en-python-for-data-science",
     userInput: {
-      suggestion: {
+      proposedCourse: {
         description: "Use Python to analyze data and build practical models.",
         language: "en",
         targetLanguage: null,
@@ -82,7 +82,7 @@ export const TEST_CASES = [
     `,
     id: "pt-aprendizado-de-maquina",
     userInput: {
-      suggestion: {
+      proposedCourse: {
         description: "Modelos que aprendem com dados.",
         language: "pt",
         targetLanguage: null,
@@ -102,7 +102,7 @@ export const TEST_CASES = [
     `,
     id: "pt-toefl-english",
     userInput: {
-      suggestion: {
+      proposedCourse: {
         description: "Preparação para uma prova de proficiência em inglês.",
         language: "pt",
         targetLanguage: "en",
@@ -125,7 +125,7 @@ export const TEST_CASES = [
     `,
     id: "en-mandarin-chinese",
     userInput: {
-      suggestion: {
+      proposedCourse: {
         description:
           "Learn Mandarin Chinese pronunciation, characters, and everyday communication.",
         language: "en",
@@ -146,7 +146,7 @@ export const TEST_CASES = [
     `,
     id: "en-f1",
     userInput: {
-      suggestion: {
+      proposedCourse: {
         description: "Teams, drivers, strategy, and race weekends.",
         language: "en",
         targetLanguage: null,
@@ -167,7 +167,7 @@ export const TEST_CASES = [
     `,
     id: "en-c-plus-plus-programming",
     userInput: {
-      suggestion: {
+      proposedCourse: {
         description: "Learn modern C++ syntax, memory, and standard library fundamentals.",
         language: "en",
         targetLanguage: null,
@@ -186,7 +186,7 @@ export const TEST_CASES = [
     `,
     id: "en-ca-law",
     userInput: {
-      suggestion: {
+      proposedCourse: {
         description: "Legal systems and rules in California.",
         language: "en",
         targetLanguage: null,

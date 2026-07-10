@@ -1,50 +1,86 @@
 {
   "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Bread dough preparation requires specific techniques. Penalize if:\n   - Ingredient order matters and is wrong (yeast activation before mixing with flour)\n   - Kneading technique or duration guidance is missing\n\n2. TEXTURE CHECK: Penalize if:\n   - No description of what the dough should look/feel like at each stage\n   - Proofing instructions are missing or lack time/visual cues\n\n3. TEMPERATURE CHECK: Penalize if water temperature for yeast is not specified (critical for yeast activation).\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n- Do NOT penalize for JSON output format differences (e.g., wrapping the array in an object like `{\"steps\": [...]}` instead of a raw array). This is a schema/parsing concern, not a content quality issue\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the lesson as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
-  "judgedAt": "2026-05-24T18:29:37.170Z",
+  "judgedAt": "2026-07-10T17:27:11.976Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.7",
+      "judgeId": "anthropic/claude-opus-4.8",
       "rankings": [
         {
-          "anonymousId": "Model E",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Excellent coverage with explicit water temperature (35-40°C), yeast activation before flour mixing, detailed kneading duration and technique, and clear visual/texture cues at each stage. Portuguese is correct and titles/text appear within limits. Strong procedural accuracy and verification points.",
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Complete sequence with specific water temp (35-40°C), proper yeast activation, kneading duration, texture cues at each stage, and windowpane test. Imperative verbs throughout and correct ingredient order with s019 salt separation. Well-grouped steps.",
           "score": 9
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Strong output with specific temperature (35°C), correct sequence (yeast activation first), clear kneading duration and windowpane test. Includes texture descriptions throughout. Minor note about salt placement is reasonable. Well-structured and accurate.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Solid procedure with correct sequence, kneading guidance (10 min), and good texture/visual cues. Water temperature described qualitatively ('morna ao toque, não quente') but lacks specific degrees, which the expectations flag as critical. Otherwise well-executed.",
-          "score": 7
         },
         {
           "anonymousId": "Model A",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Good sequence with yeast activation first, specific kneading duration (10 min), windowpane test, and visual cues. Water temperature specified at ~38°C. Clear imperative language and texture descriptions throughout. Strong overall.",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Excellent accuracy: specific 35°C water, salt placed away from yeast, 10-min kneading, windowpane test, and clear texture descriptions. Imperative language and correct sequence throughout.",
           "score": 9
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Correct sequence and good kneading instructions with windowpane test. Texture cues present. However, water temperature is only described as 'morna' without a specific temperature, missing the critical temperature specification.",
-          "score": 7
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "Strong: specific ~35°C temp, salt/yeast separation, 10-min knead, membrane test, and proofing with time and visual cue. Rich texture guidance and clear imperatives.",
+          "score": 9
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Comprehensive with temperature range (35-40°C), correct order, kneading duration, and windowpane test. However, 16 steps with some micro-splitting (separate steps for salt, fat, mixing, adjusting texture) borders on excessive granularity, though each step is still clear.",
-          "score": 7
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Solid concise procedure with specific temps referenced, yeast activation, 10-min knead, gluten development, and poke/point test. Good texture cues and imperative verbs; slightly less detailed on water temp value.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Complete with 38°C water, proper activation, knead duration, windowpane test, and proofing with visual cue. Good texture guidance and imperatives throughout.",
+          "score": 8
         },
         {
           "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Good sequence with 37°C water, salt distribution, activation check, 10-min knead, and poke test. Minor LaTeX formatting artifact (\\(200ml\\)) is a small blemish but content is accurate.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Well-structured with 35-40°C water, activation verification, 10-min knead, and proofing setup. Good texture cues and imperative language; correct ingredient order.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Thorough with 35-40°C water, salt away from yeast, activation, texture adjustment, 8-10 min knead, and windowpane test. Very detailed micro-splitting but steps read clearly.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Complete with 35-40°C temp, activation with visual cue, 10-min knead, ponto check, and covering to rise. Uses generic quantities ('conforme a receita') but sequence and texture cues are solid.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
           "modelId": "openai/gpt-5.4",
-          "reasoning": "Sixteen steps with heavy micro-splitting (separate steps for water, yeast, sugar, salt, fat, each kneading motion). Water temperature only described qualitatively without specific degrees. Sequence is acceptable but the fragmentation reduces clarity and usefulness.",
+          "reasoning": "Correct sequence and detailed texture cues throughout, but water temperature lacks a specific value—only 'morna ao toque.' The task flags missing water temp specification as a penalty.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Good imperative steps and activation cues but water temperature is not given a specific value (only 'morna ao toque'), and no windowpane/final test detail beyond poke. Missing temp spec is penalized.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Concise and accurate with activation, 10-min knead, and windowpane test, but water temperature lacks any specific value—only 'água morna.' Missing critical temp specification.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Reasonable sequence and texture cues but water temperature is only 'morna, não quente' with no specific value, and detail is thinner than peers. Missing temp spec penalized.",
           "score": 5
         }
       ]
@@ -53,93 +89,165 @@
       "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Model A follows all instructions perfectly, providing excellent logical grouping and action-oriented language. It meets all topic-specific checks, including the precise temperature specification for yeast and visual cues for the proofing stage ('até que dobre de volume'), which other models missed.",
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "This output perfectly meets all criteria. It specifies the correct water temperature (35°C), clearly describes textures at each stage, and critically, provides exact proofing instructions with both time and visual cues ('1 hora, até dobrar de tamanho'). The sequence and imperative language are flawless.",
           "score": 10
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "This model provides strong, well-grouped steps with good action-oriented language and texture checks. However, it receives a slight penalty for lacking time or visual cues for the dough's resting/proofing stage, as explicitly required by the rubric.",
-          "score": 8
-        },
-        {
           "anonymousId": "Model E",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Model E gives excellent temperature guidance and effective verification tests for kneading. Like other models tied at this score, it misses the specific time or visual cues required for the proofing stage.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "The model has great procedural accuracy, helpful setup instructions, and strong windowpane test descriptions. It loses points only for omitting the time or visual cue for the dough's final resting phase.",
-          "score": 8
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "An exceptional response that strictly adheres to the prompt's constraints. It includes the critical temperature check (38°C), detailed texture descriptions like the windowpane test, and crucially provides the required visual cue for proofing ('até que dobre de volume').",
+          "score": 10
         },
         {
           "anonymousId": "Model B",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Model B provides solid kneading instructions but misses two critical checks. It fails to clarify the water temperature beyond the word 'morna' (lacking 'warm to touch' or degrees), and it completely omits the proofing/resting instructions at the end.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "This model suffers from severe micro-splitting, breaking down the continuous physical motions of kneading (push, fold, turn) into entirely separate steps. This directly violates the logical step grouping criteria.",
-          "score": 4
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Provides strong instructions with an exact temperature range (35°C-40°C) and excellent texture checkpoints throughout the process. However, it receives a slight penalty for mentioning the dough is ready to rest but failing to provide the time or visual cues for the proofing stage, as required by the rubric.",
+          "score": 8
         },
         {
           "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Features highly accurate procedural steps, explicit temperature ranges, and great visual indicators for dough elasticity. The only gap is the absence of time or visual cues for the dough's proofing phase at the end, leading to a minor penalty based on the strict negative constraints.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Follows the correct sequence perfectly, activating the yeast first and verifying its frothy texture. It includes a specific temperature reference (35°C) and robust kneading checks, but misses the mandatory time or visual cues for the final proofing step.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Clear, actionable steps that specify a precise water temperature (37°C) and use strong imperative language with helpful texture verifications. It is penalized slightly because the stated proofing instructions at the end lack the required time or visual cues.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Well-structured and actionable with correct temperature guidance and good texture descriptions, such as the thin membrane test. It falls slightly short of a perfect score because it states the dough is ready to rise but omits the required proofing time and visual cues.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model M",
           "modelId": "openai/gpt-5.5",
-          "reasoning": "Model F over-complicates the sequence with excessive micro-splitting, separating the addition of each individual ingredient (flour, salt, yeast, fat) into its own disjointed step. It also lacks visual cues for the proofing stage.",
+          "reasoning": "Thorough and logically grouped steps with good temperature control and excellent texture descriptions for every stage. It correctly sequences yeast activation before mixing, but loses a couple of points because it omits the required time and visual cues for the final proofing step.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Offers solid procedural instructions with good texture descriptions and correct sequencing. However, the temperature guidance is slightly vague without specific degrees, and it fails to provide the required time or visual cues for the proofing stage, warranting a moderate penalty.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Uses good imperative language, logical step grouping, and correctly sequences the yeast activation. It is penalized for lacking a specific numeric temperature for the water (relying only on 'morna ao toque') and for missing the time and visual cues for the proofing stage.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Displays accurate sequencing and good action-oriented language throughout the kneading process. However, it only specifies 'morna, não quente' for the water without a precise temperature, and completely lacks the necessary time and visual cues for the proofing stage.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Provides acceptable basic steps but misses key details mandated by the rubric. The temperature guidance lacks specificity, and more importantly, it entirely omits any mention of proofing instructions or cues, violating the strict texture check rules.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The weakest output, presenting significant issues against the strict rubric. It fails the critical temperature check by only stating 'água morna' with no further clarification, and it completely omits the required proofing instructions and visual cues.",
           "score": 4
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.5",
+      "judgeId": "openai/gpt-5.6-sol",
       "rankings": [
         {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Atende muito bem ao tema: ativa o fermento antes da mistura, especifica temperatura da água, orienta sova com técnica e duração, e inclui testes de textura. Também traz descanso com cue visual de dobrar de volume, embora sem tempo aproximado.",
-          "score": 9
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "Apresenta sequência correta, temperatura exata, ativação verificável, textura em cada fase e sova com duração e teste de membrana. Também inclui fermentação por 1 hora até dobrar de volume; apenas a indicação de cheiro “levemente azedo” é um pouco imprecisa.",
+          "score": 9.7
         },
         {
           "anonymousId": "Model E",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Sequência correta, temperatura da água bem especificada e boas verificações de ativação, textura e ponto da massa. A etapa de descanso é apenas preparada, sem tempo ou cue visual de crescimento, o que deixa uma lacuna em proofing.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Muito bom em ativação, temperatura, mistura, sova e teste de elasticidade, com linguagem prática e clara. Falta uma instrução real de descanso/proofing com tempo ou sinal visual, ficando apenas como próxima etapa.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Traz temperatura adequada, ativação, ajustes de textura e boa técnica/duração de sova. É menos autossuficiente por usar quantidades genéricas e também não inclui proofing propriamente dito com tempo ou cue visual.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "A sequência é correta e há boa orientação de mistura, sova e textura, incluindo preparação para fermentação. Porém não especifica temperatura numérica da água, apenas “morna”, e o descanso final não traz tempo nem cue visual.",
-          "score": 7
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Procedimento muito completo e preciso, com 38°C, ativação antes da farinha, sova por 10 minutos e teste do ponto de véu. A fermentação tem excelente pista visual, embora não ofereça uma estimativa de tempo.",
+          "score": 9.2
         },
         {
           "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Traz quantidades adequadas, faixa de temperatura, confirmação da ativação e orientação clara de sova e textura. Prepara a massa coberta para descansar, mas deixa tempo e critério visual da fermentação para uma etapa futura.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "É preciso na temperatura, na ordem dos ingredientes e na técnica de sova, além de oferecer ótimas referências táteis e teste de véu. Contudo, encerra antes de realmente orientar o descanso e o crescimento da massa.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Oferece uma sequência clara e flexível, com temperatura numérica, ativação verificável, sova por 10 minutos e bons sinais de textura. Coloca e cobre a massa para crescer, mas não informa duração nem sinal visual para concluir a fermentação.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "É especialmente forte no ajuste de textura, na ativação do fermento e na descrição detalhada da sova e do teste de elasticidade. Apesar de indicar que a bola está pronta para crescer, não fornece instruções efetivas de fermentação.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Inclui faixa de temperatura, verificação da ativação, técnica e duração corretas de sova e teste de elasticidade. A proporção inicial de 240 ml para 500 g de farinha tende a produzir massa muito seca, embora a instrução de acrescentar água gradualmente reduza o problema; também falta a fermentação.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "É conciso e acionável, com ativação antes da mistura, boa duração de sova e referências úteis de textura. A temperatura é apenas qualitativa e não há instrução de fermentação com tempo ou crescimento visual.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Descreve muito bem a evolução da textura e detalha a técnica de sova por 8 a 10 minutos. Não fornece faixa térmica numérica, adiciona o sal diretamente à mistura ativada e termina antes de orientar o crescimento da massa.",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "A ordem geral é válida, e a ativação, a sova por 10 minutos e o ponto final estão bem explicados. Faltam temperatura mais específica, quantidades orientadoras e qualquer instrução para a fermentação posterior.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model H",
           "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "As etapas de ativação, mistura e sova são claras e bem sequenciadas, com bons sinais de textura e teste final. No entanto, não especifica a temperatura da água e omite qualquer instrução de proofing/descanso.",
-          "score": 6.5
+          "reasoning": "A mistura, a sova e o teste de membrana são claros, com bons sinais visuais e táteis. Porém, não especifica adequadamente a temperatura da água e encerra sem preparar ou orientar a fermentação da massa.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Apresenta boa ordem, ativação visível e sova com duração e sinais de conclusão. A água não recebe faixa térmica numérica, a hidratação de 250 ml para 500 g tende a ser baixa e não há tempo nem pista visual para a fermentação.",
+          "score": 6.2
         },
         {
           "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Inclui bastante orientação tátil e visual e cobre a sova com duração, mas não especifica temperatura da água. Também adiciona sal diretamente à mistura ativada antes da farinha, o que é menos adequado, e termina sem instruções claras de descanso/proofing.",
-          "score": 6
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "A temperatura, a ativação e a técnica de sova estão corretamente apresentadas. Entretanto, 200 ml de água para 500 g de farinha é uma hidratação muito baixa e contradiz a previsão de uma massa grudenta, além de a fermentação ficar sem tempo ou critério visual.",
+          "score": 5.3
         }
       ]
     }

@@ -20,7 +20,7 @@ function getCodexPath() {
 export default function defineEloqntConfig(options: EloqntProjectOptions = {}) {
   return defineConfig({
     messages: { format: "po", locales: "infer", path: "./messages", sourceLocale: "en" },
-    model: codexCli("gpt-5.5", { codexPath: getCodexPath() }),
+    model: codexCli("gpt-5.6-sol", { codexPath: getCodexPath() }),
     srcPath: options.srcPath ?? "./src",
   });
 }

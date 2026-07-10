@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { logInfo } from "@zoonk/utils/logger";
+import { toError } from "@zoonk/utils/error";
+import { logError, logInfo } from "@zoonk/utils/logger";
 import { getBattleLeaderboard } from "./battle-loader";
 import { generateBattleRankings } from "./battle-score";
 import {
@@ -8,16 +9,23 @@ import {
   getModelsWithCompleteOutputs,
   getOutputForTestCase,
 } from "./output-loader";
-import { type BattleMatchup, type ModelOutputs, type RegisteredTask, type TestCase } from "./types";
+import {
+  type BattleMatchup,
+  type ModelOutputs,
+  type RegisteredTask,
+  type TestCase,
+  getJudgeExpectations,
+  hasJudgeExpectations,
+} from "./types";
 
 const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
 const BATTLES_DIR = path.join(EVAL_RESULTS_DIR, "battles");
 
 // Battle judges - easy to extend
 const BATTLE_JUDGES_CONFIG: readonly string[] = [
-  "anthropic/claude-opus-4.7",
+  "anthropic/claude-opus-4.8",
   "google/gemini-3.1-pro-preview",
-  "openai/gpt-5.5",
+  "openai/gpt-5.6-sol",
 ];
 
 async function ensureBattlesDir(taskId: string) {
@@ -112,6 +120,41 @@ function hasNewModels(existingMatchup: BattleMatchup, currentModelIds: string[])
 type ModelOutput = { modelId: string; output: string };
 type Mapping = { anonymousId: string; modelId: string }[];
 type AnonymizedOutput = { anonymousId: string; output: string }[];
+type JudgeRunResult = { failures: Error[]; judgments: BattleMatchup["judgments"] };
+
+/**
+ * Narrows settled results before their values are collected. Battle mode uses
+ * the same helper for judge and test-case waves so fulfilled work is preserved
+ * without duplicating status branches inside array transformations.
+ */
+function isFulfilled<T>(result: PromiseSettledResult<T>): result is PromiseFulfilledResult<T> {
+  return result.status === "fulfilled";
+}
+
+/**
+ * Narrows rejected results so unknown promise rejection values can be
+ * normalized into real Error instances before they are logged or aggregated.
+ */
+function isRejected<T>(result: PromiseSettledResult<T>): result is PromiseRejectedResult {
+  return result.status === "rejected";
+}
+
+/**
+ * Keeps every successful result from a settled parallel wave. A failed judge
+ * must not erase other judges that completed and can be persisted for the next
+ * incremental battle run.
+ */
+function getFulfilledValues<T>(results: PromiseSettledResult<T>[]): T[] {
+  return results.filter((result) => isFulfilled(result)).map((result) => result.value);
+}
+
+/**
+ * Converts all rejected values from a settled wave into Error instances so an
+ * AggregateError can retain every failure instead of reporting only the first.
+ */
+function getRejectedErrors<T>(results: PromiseSettledResult<T>[]): Error[] {
+  return results.filter((result) => isRejected(result)).map((result) => toError(result.reason));
+}
 
 function collectModelOutputsForTestCase(
   testCaseId: string,
@@ -153,36 +196,72 @@ function getAnonymizationForBattle(
   return { anonymizedOutputs, mapping };
 }
 
+/**
+ * Runs one judge independently so the enclosing settled wave can retain both
+ * the judge identity and any rankings it successfully produced.
+ */
+async function runJudge(params: {
+  judgeId: string;
+  anonymizedOutputs: AnonymizedOutput;
+  expectations: string;
+  userPrompt: string;
+  mapping: Mapping;
+}): Promise<BattleMatchup["judgments"][number]> {
+  const { judgeId, anonymizedOutputs, expectations, userPrompt, mapping } = params;
+
+  return {
+    judgeId,
+    rankings: await generateBattleRankings({
+      anonymizedOutputs,
+      expectations,
+      judgeId,
+      mapping,
+      userPrompt,
+    }),
+  };
+}
+
+/**
+ * Lets all configured judges finish even when one fails. Successful judgments
+ * are returned separately from failures so the caller can save partial work
+ * before surfacing an incomplete matchup.
+ */
 async function runJudges(params: {
   judgesToRun: readonly string[];
   anonymizedOutputs: AnonymizedOutput;
   expectations: string;
   userPrompt: string;
   mapping: Mapping;
-}): Promise<BattleMatchup["judgments"]> {
+}): Promise<JudgeRunResult> {
   const { judgesToRun, anonymizedOutputs, expectations, userPrompt, mapping } = params;
 
-  return Promise.all(
-    judgesToRun.map(async (judgeId) => ({
-      judgeId,
-      rankings: await generateBattleRankings({
-        anonymizedOutputs,
-        expectations,
-        judgeId,
-        mapping,
-        userPrompt,
-      }),
-    })),
+  const results = await Promise.allSettled(
+    judgesToRun.map((judgeId) =>
+      runJudge({ anonymizedOutputs, expectations, judgeId, mapping, userPrompt }),
+    ),
   );
+
+  return { failures: getRejectedErrors(results), judgments: getFulfilledValues(results) };
 }
 
-async function runBattleForTestCase(
-  task: RegisteredTask,
-  testCase: TestCase,
-  allOutputs: Map<string, ModelOutputs>,
-  existingMatchup: BattleMatchup | null,
-): Promise<BattleMatchup> {
+/**
+ * Builds and persists one matchup while retaining any judge results that
+ * succeeded. Failed judges remain missing in the saved matchup so the existing
+ * incremental path retries only those judges on the next run.
+ */
+async function runBattleForTestCase({
+  allOutputs,
+  existingMatchup,
+  task,
+  testCase,
+}: {
+  allOutputs: Map<string, ModelOutputs>;
+  existingMatchup: BattleMatchup | null;
+  task: RegisteredTask;
+  testCase: TestCase;
+}): Promise<BattleMatchup> {
   const testCaseId = `${testCase.id}-1`;
+  const expectations = getJudgeExpectations(testCase);
 
   const { outputs: modelOutputs, userPrompt } = collectModelOutputsForTestCase(
     testCaseId,
@@ -211,31 +290,76 @@ async function runBattleForTestCase(
     return effectiveExisting;
   }
 
-  const newJudgments = await runJudges({
+  const judgeResults = await runJudges({
     anonymizedOutputs,
-    expectations: testCase.expectations,
+    expectations,
     judgesToRun,
     mapping,
     userPrompt,
   });
 
   const allJudgments = effectiveExisting
-    ? [...effectiveExisting.judgments, ...newJudgments]
-    : newJudgments;
+    ? [...effectiveExisting.judgments, ...judgeResults.judgments]
+    : judgeResults.judgments;
 
   const matchup: BattleMatchup = {
-    expectations: testCase.expectations,
+    expectations,
     judgedAt: new Date().toISOString(),
     judgments: allJudgments,
     taskId: task.id,
     testCaseId,
   };
 
-  await saveMatchup(matchup);
+  if (judgeResults.judgments.length > 0) {
+    await saveMatchup(matchup);
+  }
+
+  if (judgeResults.failures.length > 0) {
+    judgeResults.failures.forEach((error) =>
+      logError(`Battle judge failed for ${testCaseId}:`, error),
+    );
+
+    throw new AggregateError(
+      judgeResults.failures,
+      `${judgeResults.failures.length} battle judge(s) failed for ${testCaseId}; no completed judgment was discarded.`,
+    );
+  }
+
   return matchup;
 }
 
+/**
+ * Runs one test case and logs completion only after its matchup is safely
+ * persisted. Keeping this unit named leaves the outer settled wave declarative.
+ */
+async function runBattleTestCase({
+  completeOutputs,
+  task,
+  testCase,
+}: {
+  completeOutputs: Map<string, ModelOutputs>;
+  task: RegisteredTask;
+  testCase: TestCase;
+}): Promise<BattleMatchup> {
+  const testCaseId = `${testCase.id}-1`;
+  const existingMatchup = await loadExistingMatchup(task.id, testCaseId);
+
+  const result = await runBattleForTestCase({
+    allOutputs: completeOutputs,
+    existingMatchup,
+    task,
+    testCase,
+  });
+
+  logInfo(`Battle complete for ${testCaseId}`);
+  return result;
+}
+
 export async function runBattleMode(task: RegisteredTask): Promise<void> {
+  if (!hasJudgeExpectations(task)) {
+    throw new Error(`Task ${task.id} does not define expectations for judge mode.`);
+  }
+
   logInfo(`\n=== Starting Battle Mode for task: ${task.name} ===\n`);
 
   const totalTestCases = task.testCases.length;
@@ -266,22 +390,18 @@ export async function runBattleMode(task: RegisteredTask): Promise<void> {
   }
 
   // Run battles for each test case (incremental - only runs missing judges)
-  const totalBattles = task.testCases.length;
-  let completedBattles = 0;
-
-  await Promise.all(
-    task.testCases.map(async (testCase) => {
-      const testCaseId = `${testCase.id}-1`;
-      const existingMatchup = await loadExistingMatchup(task.id, testCaseId);
-      const result = await runBattleForTestCase(task, testCase, completeOutputs, existingMatchup);
-
-      completedBattles += 1;
-      const remaining = totalBattles - completedBattles;
-      logInfo(`Battle complete for ${testCaseId}, ${remaining} remaining`);
-
-      return result;
-    }),
+  const battleResults = await Promise.allSettled(
+    task.testCases.map((testCase) => runBattleTestCase({ completeOutputs, task, testCase })),
   );
+
+  const battleFailures = getRejectedErrors(battleResults);
+
+  if (battleFailures.length > 0) {
+    throw new AggregateError(
+      battleFailures,
+      `${battleFailures.length} battle test case(s) failed; no completed matchup was discarded.`,
+    );
+  }
 
   const leaderboard = await getBattleLeaderboard(task.id);
 

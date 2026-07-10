@@ -1,0 +1,149 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: This lesson is about measuring hydrogen spectral lines from positions and angles, then turning those readings into wavelengths. Penalize if:\n   - Spectral lines are treated as decorative colors instead of measured wavelengths\n   - Diffraction angles, wavelength, or uncertainty are described with a wrong cause-effect chain\n\n2. REAL-WORLD ANCHOR CHECK: The anchor must not end at a lab video, school spectroscope, classroom demo, or \"next time you see this in a lab\" framing. It should connect the measured-spectrum idea to a product, technology, system, or public-world result a normal learner can recognize, such as phone/display color tuning, LED or laser manufacturing, medical or environmental spectroscopy, or identifying hydrogen in named telescope observations.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: The explanation must be technically correct for the topic. Penalize invented mechanisms, wrong cause-effect chains, or misleading simplifications.\n\n2. REQUIRED STRUCTURE: The output must contain exactly two top-level fields:\n   - explanation[]: an array of explanation steps, each with title and text\n   - anchor: { title, text } (no visual)\n\n3. LESSON DELIVERY: The lesson must actually deliver on LESSON_TITLE and LESSON_DESCRIPTION. The learner should finish with a full working understanding of what the topic is, how it works, how it is used/measured/written/recognized in practice when relevant, why it matters when relevant, and what the important terms, formulas, structures, rules, caveats, or limits mean. Penalize lessons that stay friendly but surface-level, or technically dense but hard to understand.\n\n4. BEGINNER + EXPERT FIT: The lesson should feel like a precise expert explaining the topic to a smart non-expert friend. It should use everyday language without dumbing down the topic. Penalize:\n   - Academic phrasing that makes a simple idea feel harder than it is\n   - \"Friendly\" explanations that omit the expert essentials required by the lesson scope\n   - Dense explanations that contain the right terms but do not explain them in plain language\n   - Formal terms, formulas, or code snippets that appear without enough plain-language explanation\n\n5. MECHANISM + FORMAL DETAIL: The lesson must include the real mechanism, structure, relationship, calculation, rule, or procedure required by the title and description. Penalize:\n   - Skipping formulas, variables, code shapes, uncertainty, exceptions, limits, or precise terms that an expert would expect for this lesson scope\n   - Including those details without explaining what the parts mean\n   - Using an analogy, vibe, story, or visual scene as a substitute for the actual mechanism\n\n6. LESSON BOUNDARY: The lesson must stay focused on the selected LESSON_TITLE and leave sibling angles in OTHER_EXPLANATION_LESSON_TITLES for those other lessons. Penalize explanations that spend their main teaching energy on a sibling lesson instead of the chosen one.\n\n7. EXPLANATION FLOW: There is no required opening pattern, cold open, or story arc. The explanation[] array should choose the clearest order for this topic and connect ideas so the learner can follow how the topic works. Penalize:\n   - Stacked definitions that do not connect to each other\n   - Scenic or subjective prose that does not help explain the concept\n   - Missing the practical payoff when the lesson calls for why this matters\n   - Naming terms before giving enough context to understand them, when that makes the lesson harder to follow\n\n8. STEP QUALITY: Each step.text is 1-3 short sentences of prose. Step titles are short, unique, and useful for understanding what the step teaches. Penalize:\n   - Long paragraphs\n   - Titles that are only props, moods, vague story beats, or generic labels\n   - Repetition between steps\n\n9. CONCRETENESS: The lesson should use concrete examples, measurements, cases, code-shaped details, or realistic situations when they make the mechanism easier to understand. Penalize:\n   - Vague prose that never makes the mechanism concrete\n   - Examples that are only atmospheric decoration\n   - Lessons about \"how it's written\" that never describe the structure or code detail clearly enough to understand\n\n10. STATIC + RICH TEXT DELIVERY: The lesson should stay entirely within explanation steps plus the closing anchor. It may use inline LaTeX, display LaTeX, bold, italic, and inline code with single backticks. Penalize:\n   - Quiz-like interruptions, option lists, or explicit \"guess before continuing\" instructions\n   - Steps that stop to ask the learner to choose instead of explaining\n   - Rhetorical-question-only steps that replace a real explanation\n   - Markdown headings, lists, tables, links, or large code fences inside a step\n   - Malformed LaTeX or unsupported formatting that would show raw clutter to the learner\n\n11. ANCHOR QUALITY: anchor has no visual. It answers why the topic is useful and where it shows up outside the lesson by naming one specific real-world instance — a named product (e.g., Instagram, WhatsApp), recognizable product family (e.g., ChatGPT-style models), named technology/service/system, named mission/instrument, named event/figure/case/place, or concrete physical action the learner has actually done — and what it does there. Penalize:\n   - Abstract \"this is why it matters\" wrap-ups\n   - Metaphors or vague generalities\n   - Classroom demonstrations, lab videos, school apparatus, research instruments, or professional workflows that do not name the product, service, system, or public-world outcome they enable\n   - Category-list anchors that name a type of use instead of a vivid instance (\"a star, a lamp, or a gas cloud\"; \"many apps\"; \"some medical devices\")\n   - Generic placeholders standing in for a specific real thing (\"a real app\", \"a real court case\", \"an exoplanet\", \"every time a button does X in three places\")\n\n12. STYLE: Clear, short, concrete, beginner-friendly, and precise. Penalize academic tone, atmospheric storytelling, filler lines, subjectivity that does not teach, and redundancy across steps and anchor.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require a fixed number of steps. Complex topics need more; simple topics fewer. Both are fine as long as the lesson is delivered\n- Do NOT require a cold open, story arc, single scene, or specific opening style\n- Do NOT require specific title wording, a particular choice of product or event, or a specific visual kind. The anchor must name some specific real thing, but any reasonable choice is fine — do not penalize the model for picking Instagram over WhatsApp, or one named case over another\n- Do NOT penalize anchors that use a widely recognized product family tied to a named product, such as \"ChatGPT-style models\", when the learner can clearly recognize the real-world surface\n- Do NOT penalize direct explanatory writing when it is clear, plain, concrete, and complete\n- Do NOT penalize density when the density comes from necessary expert content explained in everyday language\n- Do NOT focus on JSON wrapping or formatting trivia. Evaluate the content and structural fit\n- ONLY penalize for: wrong top-level structure, factual errors, failing to deliver LESSON_TITLE and LESSON_DESCRIPTION, missing beginner/expert balance, missing required mechanism/detail, drifting into sibling lessons, unclear flow, unsupported formatting, weak real-world anchor, or broken writing constraints\n\n    ",
+  "judgedAt": "2026-07-10T17:45:10.424Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.8",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Complete mechanism: angle reading, grating equation, order, worked example, uncertainty propagation, and comparison to Balmer values. Anchor names Sloan Digital Sky Survey and connects to redshift/galaxy distance, a strong public-world anchor. Clean LaTeX, tight steps, correct physics.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Thorough and accurate: central line, two-sided measurement, position-to-angle, grating equation with variable definitions, worked example, and detailed uncertainty propagation. Anchor names Hubble and the Orion Nebula H-alpha, a vivid recognizable instance. Slightly long but all content is necessary and well-explained.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Very complete and technically correct: geometry, angle, grating equation, order, worked example, and full uncertainty propagation. Anchor mentions the spectroscope measuring a lamp and comparing to the Sun's light, but the Sun is generic and the framing leans on the lab apparatus rather than a fully vivid named instance.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Accurate and clear with good flow, grating equation, order, worked example, and uncertainty concept. Uses bold correctly. Anchor connects bench spectra to astronomers identifying hydrogen in distant stars, which is decent though slightly generic (no named instrument/mission). Uncertainty treated qualitatively rather than with propagation formula.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Rigorous physics with full uncertainty propagation and good structure; anchor names Sloan Digital Sky Survey well. However, the text is riddled with raw control/escape characters (\\u0002) before many LaTeX expressions, which would show as clutter to the learner — a formatting defect penalized under static rich-text delivery.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Covers grating equation, order, two-sided reading, and uncertainty propagation, but omits a full worked wavelength example and never reaches the payoff of comparing to known hydrogen lines. Anchor names James Webb and exoplanet atmospheres, a strong recognizable instance. Less complete delivery of the measurement-to-wavelength chain.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Only a single explanation step; fails to deliver the lesson entirely and contains raw ANSI escape codes around λ. No mechanism, no example, no uncertainty. Anchor is acceptable but the body is unusable.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Exceptional output. It perfectly satisfies all prompt requirements, including the conversion of positions to angles, rigorous uncertainty propagation, and excellent step-by-step flow. The anchor vividly connects the specific mechanism to Hubble and the Orion Nebula.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Strong and technically rigorous. It excellently covers the required mechanism of positions, angles, and uncertainty propagation. However, the anchor relies heavily on a laboratory framing before pivoting to a generic mention of the Sun, making it slightly weaker than Model C.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Acceptable but incomplete. It features a great real-world anchor (James Webb) and accurate formal details for the diffraction equation and uncertainty. However, it skips the required conversion from physical positions to angles requested in the lesson description.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Acceptable but incomplete. It uses a strong anchor (Sloan Digital Sky Survey) and explains the concepts clearly. Like Model D, it misses the explicit position-to-angle conversion, and its uncertainty formula slightly simplifies by omitting the diffraction order 'm'.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Poor. While the text is beginner-friendly, it lacks the formal mathematical detail required for uncertainty and position measurement. Furthermore, its anchor relies on a generic category of 'distant stars' rather than a specific real-world instance.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Unusable. The explanation contains raw, unprintable control characters (\\u0002) inserted throughout the text, which violates the formatting constraints and introduces severe raw clutter.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Unusable. The model completely fails to deliver the lesson by providing only a single step. Additionally, it uses raw ANSI escape codes for formatting instead of the allowed markdown or LaTeX.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Entrega o procedimento completo: referência central, posições dos dois lados, conversão geométrica para ângulo, equação da rede, ordem, exemplo numérico e propagação de incerteza. É claro, tecnicamente consistente e termina com um caso específico e reconhecível do Hubble na Nebulosa de Órion.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "É uma explicação forte e bem organizada, com fórmulas corretas, exemplo concreto, leitura simétrica e tratamento explícito da incerteza. Perde pouco porque o exemplo de 647 ± 2 nm fica incompatível com 656 nm sem discutir essa discrepância, e o vínculo com o Sol é menos específico que o melhor anchor.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "O conteúdo é excepcionalmente completo, incluindo incertezas de posição, distância, rede e ângulo, além de um anchor específico no Sloan Digital Sky Survey. Contudo, caracteres de controle aparecem repetidamente no texto e nas fórmulas, criando sério risco de exibição quebrada e prejudicando a qualidade do produto.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Explica bem a leitura angular, a equação da rede, as ordens, o cálculo e a incerteza, com um bom anchor no Sloan Digital Sky Survey. Porém, não ensina a transformar posições lineares em ângulos, parte explícita da lição, e a fórmula de incerteza omite o fator de ordem `1/m` fora do caso particular de primeira ordem.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "É acessível e cobre rede, ordem, cálculo e apresentação com margem, mas o tratamento da incerteza é superficial e o valor numérico de ±2 nm não condiz bem com a incerteza angular fornecida. A instrução de medir os dois lados e simplesmente “dividir por dois” é ambígua, e o anchor permanece genérico em vez de nomear um sistema ou caso específico.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Inclui a equação essencial, o espaçamento da rede, leituras bilaterais e propagação angular, mas não cobre posições lineares, exemplo completo nem como registrar e comparar o resultado. Também generaliza incorretamente que a primeira ordem é mais brilhante e a segunda necessariamente mais fraca, enquanto o anchor exagera ao falar em composição “exata” de exoplanetas.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "A única etapa apenas apresenta a ideia, sem ângulos, ordens, equação da rede, procedimento, cálculo ou incerteza. Além disso, contém formatação de controle quebrada e o anchor termina em um espectrômetro de bancada, justamente o tipo de enquadramento laboratorial insuficiente para o uso real exigido.",
+          "score": 2
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-explanation",
+  "testCaseId": "pt-fisica-quantica-linhas-hidrogenio-1"
+}

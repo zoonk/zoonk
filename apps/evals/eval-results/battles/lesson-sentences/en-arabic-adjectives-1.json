@@ -1,0 +1,149 @@
+{
+  "expectations": "\nLANGUAGE: English output required for translations.\n\nTOPIC: Arabic sentences for common adjectives - using descriptive vocabulary.\n\nSOURCE LESSON METADATA: common descriptive adjectives such as كبير, صغير, جميل, جديد, قديم.\nGenerated sentences should naturally cover this source scope.\n\nDIFFICULTY: Beginner-to-intermediate level. Chapter \"Describing Things\" + basic adjectives = foundational vocabulary, but Arabic adjective agreement requires some complexity.\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Sentences drift away from the source lesson scope\n- Adjective-noun agreement is incorrect (gender, number)\n- Word order is unnatural\n- Translations don't match the Arabic sentences\n\nCONTEXT EXPECTATIONS:\n- Sentences describing objects, people, or places\n- Comparative contexts where natural\n- Natural Arabic descriptive constructions\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - Each translation MUST convey the full meaning of its target-language sentence\n   - Preserve tone and register while using natural phrasing in USER_LANGUAGE\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, misleading, or unnatural\n\n2. LESSON SCOPE USAGE (CRITICAL):\n   - Each generated sentence MUST fit the lesson title, description, and source lesson metadata\n   - Important words and phrases implied by the lesson scope should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences drift away from the lesson scope\n   - Penalize if lesson-scope words or phrases are used incorrectly or out of context\n\n3. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n4. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Use appropriate register (formal/informal) for the context\n   - Penalize artificial, contrived, robotic, or textbook-like constructions\n\n5. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if the lesson scope naturally groups those situations together\n\n6. APPROPRIATE DIFFICULTY (CRITICAL):\n   - The model MUST infer difficulty from the chapter title, lesson title, lesson description, and source scope\n   - Beginner context (basic topics + simple source scope) → simple sentences (2-5 words)\n   - Intermediate context → medium sentences (4-8 words)\n   - Advanced context (complex topics + advanced vocabulary) → complex sentences allowed\n   - Penalize SEVERELY if beginner-level context produces complex sentences (compound sentences, subordinate clauses, long constructions)\n   - Penalize if advanced-level context produces only trivially simple sentences\n\n7. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Avoid semantic duplicates that express the same idea with superficial wording changes\n\n8. LANGUAGE SEPARATION (CRITICAL):\n   - Every sentence MUST be written entirely in TARGET_LANGUAGE\n   - Translations and explanations MUST be written in USER_LANGUAGE\n   - Penalize if languages are swapped or if USER_LANGUAGE words appear in a target-language sentence\n\n9. EXPLANATION QUALITY (required for every sentence):\n   - Each explanation MUST be a non-empty string in USER_LANGUAGE; null or empty explanations are invalid\n   - Explain why this specific sentence is structured this way in TARGET_LANGUAGE and how it differs from USER_LANGUAGE\n   - Focus on useful contrasts such as word order, grammar, word choice, false friends, or potentially confusing forms\n   - Grammar claims MUST describe the element's actual role in this sentence\n   - For non-Latin target scripts, every target-language word or phrase mentioned in the explanation MUST be immediately followed by its romanization in parentheses\n   - Do NOT expect a separate romanization field; the task does not generate one\n\n10. CLEAN OUTPUT FIELDS:\n    - The sentence and translation fields MUST contain only their respective text, with no parenthetical explanations, usage notes, grammar hints, or alternative phrasings\n    - Sentences and translations should avoid decorative terminal punctuation because they become word-bank tiles\n    - Penalize unnecessary punctuation on simple greetings, farewells, thanks, statements, labels, or short conversational chunks (e.g., \"Good morning!\" should be \"Good morning\"; \"See you later.\" should be \"See you later\")\n    - Do NOT penalize punctuation that changes meaning or is grammatically required, especially question marks for questions (e.g., \"How are you?\") and required target-language question punctuation (e.g., \"¿Cómo estás?\")\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that fit the lesson scope\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: translation accuracy, lesson-scope usage, grammatical correctness, naturalness, explanation quality, and difficulty appropriateness\n\n    ",
+  "judgedAt": "2026-07-10T18:58:43.518Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.8",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Ten sentences all grammatically correct with proper gender agreement, natural word order, accurate translations, and clean fields with proper question mark usage. Explanations include romanization for all Arabic words and cover useful contrasts; good variety including a question and person description.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Eight correct sentences with accurate agreement, natural constructions, and strong explanations including romanization. One minor note: 'المدينة القديمة جميلة' is slightly more complex but still fits intermediate level; overall clean and reliable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Ten well-formed sentences with correct agreement and natural phrasing, good variety with questions, and romanization throughout. Slight looseness in translation choices ('young', 'nice') but explanations justify them appropriately.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Eight correct, natural sentences with proper agreement and clean fields. Explanations lack romanization for the Arabic script terms mentioned, which the rubric requires for non-Latin scripts.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Grammatically correct with romanization and accurate translations, but includes compound sentences with subordinating conjunctions ('الفندق كبير وجديد', 'الغرفة صغيرة وجميلة') which push beyond the beginner-to-intermediate difficulty expected for basic adjectives.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Only five sentences but all correct with proper agreement, natural phrasing, accurate translations, and romanization throughout. Solid quality though less coverage/variety than top entries.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Sentences are correct and include romanization, but some fields drift ('A small car', 'The old door' as noun phrases rather than descriptive sentences) and explanations are otherwise sound. Fewer sentences and less natural full-sentence framing.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Exceptional output that perfectly adheres to the strict romanization requirement in the explanations. The sentences fit the difficulty and scope flawlessly, and the explanations consistently and explicitly contrast Arabic grammar with English.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Exceptional output with perfect romanization and clean output fields. It provides excellent context diversity and consistently points out useful differences between Arabic and English grammar in the explanations.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Strong output that follows the romanization rules and generates clean, accurate sentences. It misses a minor detail by not explicitly contrasting the Arabic structure with English in every single explanation.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Strong output with flawless romanization and highly accurate grammar. While the Arabic grammar explanations are solid, it falls slightly short by rarely explicitly contrasting the structures with the user's language.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Strong output that follows all romanization and formatting rules carefully. However, it includes two noun phrases instead of full sentences, which slightly misses the scope's expectation for complete descriptive sentences.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Acceptable overall, but it has notable weaknesses in following instructions. It fails to consistently romanize target-language words in parentheses within the explanations, missing a strict requirement.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Poor output due to a significant expectation violation. It completely ignores the explicit requirement to provide romanization in parentheses immediately following any target-language word mentioned in the explanations.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "All sentences are natural, accurate, appropriately simple, and well aligned with common descriptive adjectives. Explanations correctly address agreement, nominal sentences, and word order while consistently romanizing cited Arabic, with useful contextual translation choices such as “young” and “nice.”",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "The five examples are fully accurate, natural, and pedagogically well targeted, with correct gender agreement and precise translations. Every explanation is useful and consistently supplies romanization for cited Arabic; the only minor limitation is less contextual and structural variety than the top output.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "This is a strong, varied set covering gender agreement, possession, questions, demonstratives, and coordinated descriptions, with accurate translations and compliant romanization. The explanation for الفندق كبير وجديد somewhat misleadingly treats the predicate adjectives as if their position contrasted directly with English attributive adjective order.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "The Arabic sentences and translations are accurate, natural, varied, and well suited to the lesson level. However, several explanations cite Arabic phrases without the immediately required romanization, creating a repeated explanation-format violation.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "The target sentences are accurate and provide excellent variety across objects, places, a person, and a question. Two explanations make serious definiteness errors by claiming that كبير and قديمة carry ال in predicative sentences when they visibly do not, and a few cited Arabic forms also lack immediate romanization.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Translations and agreement are mostly correct, and the explanations provide useful beginner-level guidance with some romanization. Nevertheless, several citations use a hyphen rather than the required immediate parenthetical romanization, two outputs are noun-phrase fragments rather than full sentences, and “adjectives always come after the noun” is overbroad.",
+          "score": 6.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "All Arabic examples and English translations are accurate, simple, and on scope, with correct gender agreement. However, every explanation cites Arabic without any romanization, systematically violating a required explanation rule, and the explanations are also highly repetitive.",
+          "score": 5.9
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-sentences",
+  "testCaseId": "en-arabic-adjectives-1"
+}

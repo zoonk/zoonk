@@ -1,0 +1,149 @@
+{
+  "expectations": "\nLANGUAGE: English output required for translations.\n\nTOPIC: German sentences for family members - using family vocabulary.\n\nSOURCE LESSON METADATA: family nouns such as die Mutter, der Vater, die Schwester, der Bruder, die Familie.\nGenerated sentences should naturally cover this source scope.\n\nDIFFICULTY: Beginner level. Chapter \"Family and Relationships\" + basic family nouns = foundational vocabulary.\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Sentences drift away from the source lesson scope\n- Case endings are incorrect (nominative, accusative, dative contexts)\n- Article-noun agreement is wrong\n- Translations don't accurately convey the German meaning\n\nCONTEXT EXPECTATIONS:\n- Sentences about family relationships and everyday situations\n- Talking about or introducing family members\n- Family-related situations and conversations\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - Each translation MUST convey the full meaning of its target-language sentence\n   - Preserve tone and register while using natural phrasing in USER_LANGUAGE\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, misleading, or unnatural\n\n2. LESSON SCOPE USAGE (CRITICAL):\n   - Each generated sentence MUST fit the lesson title, description, and source lesson metadata\n   - Important words and phrases implied by the lesson scope should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences drift away from the lesson scope\n   - Penalize if lesson-scope words or phrases are used incorrectly or out of context\n\n3. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n4. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Use appropriate register (formal/informal) for the context\n   - Penalize artificial, contrived, robotic, or textbook-like constructions\n\n5. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if the lesson scope naturally groups those situations together\n\n6. APPROPRIATE DIFFICULTY (CRITICAL):\n   - The model MUST infer difficulty from the chapter title, lesson title, lesson description, and source scope\n   - Beginner context (basic topics + simple source scope) → simple sentences (2-5 words)\n   - Intermediate context → medium sentences (4-8 words)\n   - Advanced context (complex topics + advanced vocabulary) → complex sentences allowed\n   - Penalize SEVERELY if beginner-level context produces complex sentences (compound sentences, subordinate clauses, long constructions)\n   - Penalize if advanced-level context produces only trivially simple sentences\n\n7. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Avoid semantic duplicates that express the same idea with superficial wording changes\n\n8. LANGUAGE SEPARATION (CRITICAL):\n   - Every sentence MUST be written entirely in TARGET_LANGUAGE\n   - Translations and explanations MUST be written in USER_LANGUAGE\n   - Penalize if languages are swapped or if USER_LANGUAGE words appear in a target-language sentence\n\n9. EXPLANATION QUALITY (required for every sentence):\n   - Each explanation MUST be a non-empty string in USER_LANGUAGE; null or empty explanations are invalid\n   - Explain why this specific sentence is structured this way in TARGET_LANGUAGE and how it differs from USER_LANGUAGE\n   - Focus on useful contrasts such as word order, grammar, word choice, false friends, or potentially confusing forms\n   - Grammar claims MUST describe the element's actual role in this sentence\n   - For non-Latin target scripts, every target-language word or phrase mentioned in the explanation MUST be immediately followed by its romanization in parentheses\n   - Do NOT expect a separate romanization field; the task does not generate one\n\n10. CLEAN OUTPUT FIELDS:\n    - The sentence and translation fields MUST contain only their respective text, with no parenthetical explanations, usage notes, grammar hints, or alternative phrasings\n    - Sentences and translations should avoid decorative terminal punctuation because they become word-bank tiles\n    - Penalize unnecessary punctuation on simple greetings, farewells, thanks, statements, labels, or short conversational chunks (e.g., \"Good morning!\" should be \"Good morning\"; \"See you later.\" should be \"See you later\")\n    - Do NOT penalize punctuation that changes meaning or is grammatically required, especially question marks for questions (e.g., \"How are you?\") and required target-language question punctuation (e.g., \"¿Cómo estás?\")\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that fit the lesson scope\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: translation accuracy, lesson-scope usage, grammatical correctness, naturalness, explanation quality, and difficulty appropriateness\n\n    ",
+  "judgedAt": "2026-07-10T18:58:37.318Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.8",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "All six sentences are grammatically correct, beginner-appropriate (2-5 words), stay in family scope, and translations are accurate. Explanations correctly describe roles (verb-first questions, gender agreement, verb-second). Clean output with no unnecessary punctuation. Very strong across the board.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Six accurate, simple sentences all within family scope with correct case/gender explanations (einen/eine accusative, dein masculine). Translations natural and clean. Slight repetition of 'Das ist' pattern but variety is otherwise good.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Mostly strong and accurate, but 'Mein Bruder ist zwölf Jahre alt' pushes past beginner brevity, and the last sentence 'Ich habe einen Bruder und eine Schwester' is a compound coordinate structure long for beginner. The Geschwister explanation mentions a word not in the sentence.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Ten accurate, correct beginner sentences with good case explanations (einen/eine accusative). Slight semantic near-duplication (Meine Schwester ist hier / heißt Anna, multiple 'Das ist' and 'zu Hause'). Overall solid and clean.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Grammatically accurate including accusative examples (den Vater, die Mutter), correct explanations. However 'Ich besuche die Mutter' and 'Sie sieht den Vater' are slightly unnatural/impersonal for a family lesson (would normally use possessives), a minor naturalness ding. Otherwise strong and varied.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Mostly accurate and beginner-appropriate, but the Eltern explanation contains a questionable claim about no singular parent form, and 'Meine Schwester ist älter' explanation wrongly says 'älter comes before the noun' when it is a predicate adjective after the verb. Minor grammar-claim errors.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Sentences are accurate and simple, but the claim 'Like in American English, Familie is a singular collective noun' is a confusing/incorrect contrast, and only five sentences with adequate variety. Explanations otherwise reasonable.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model D provides excellent, natural sentences that perfectly fit the beginner difficulty and scope. The explanations are highly educational, accurate, and draw excellent contrasts between English and German grammar. It correctly follows all formatting rules, including omitting terminal periods.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Model F delivers flawless sentences that utilize the source vocabulary naturally. The explanations accurately describe the grammar taking place and correctly highlight differences between German and English. Formatting rules are perfectly followed.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Model B provides a robust set of natural, appropriately scoped sentences. The explanations are accurate and helpful for beginners, successfully pointing out word order, gender agreements, and fixed phrases. It perfectly follows the clean output constraints.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Model A generates strong sentences that fit the beginner scope well and follows formatting rules perfectly. However, explanation #6 contains a flawed contrast, falsely implying that English does not put the verb first in the question 'Is your father...?'",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Model C provides grammatically correct sentences and correctly follows all formatting constraints. It loses a few points for naturalness on sentences 9 and 10; saying 'I am visiting the mother' or 'She sees the father' is syntactically valid but pragmatically unnatural for everyday family conversations.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Model G has notable weaknesses in sentence naturalness and explanation quality. Sentence 7 ('Ich habe eine Mutter') is an unnatural conversational statement, and explanation #8 focuses on the word 'Geschwister', which does not even appear in the target sentence, violating the prompt's explanation constraints.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Model E fails because explanation #5 contains a severe factual error. It claims the adjective 'älter' comes before the noun, but in the sentence provided ('Meine Schwester ist älter'), it functions as a predicate adjective at the very end of the sentence.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "All sentences are grammatically correct, accurately translated, beginner-appropriate, and closely focused on core family vocabulary. The explanations consistently address gender, articles, case, or word order, with only minor repetition and slightly textbook-like phrasing.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "The six sentences are natural, varied, within the expected 2–5-word range, and accurately translated. A few explanations are imprecise, especially calling the possessive determiner an article and presenting verb-first question order as if it contrasts with English.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "This is a clean, accurate set of short family-focused sentences with useful explanations of gender, accusative case, and question order. Translating “Das ist” as “That is” is defensible, though less natural for introductions, and some explanations offer limited explicit contrast with English.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The sentences are simple, grammatical, varied, and accurately translated, with strong explanations of possessives, accusative case, and German tense usage. Some contexts are less directly about relationships, and the collective-noun explanation is less useful than the grammar guidance elsewhere.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Most of the set is accurate, concise, and supported by sound explanations, including correct accusative forms. However, “Ich besuche die Mutter” and “Sie sieht den Vater” sound unnatural without context or possessives, reducing product usefulness and naturalness.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "The sentences and translations are generally accurate, natural, and appropriately simple. Two explanations contain clear sentence-specific errors: “Ich habe einen Bruder” does not use mein, and älter appears after ist rather than before a noun.",
+          "score": 6.7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Most translations and basic gender explanations are correct, but “Ich habe eine Mutter” is pragmatically unnatural and the explanation for Familie discusses die although the sentence uses meine. Two sentences also exceed the strict beginner 2–5-word target, including a seven-word coordinated construction.",
+          "score": 5.8
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-sentences",
+  "testCaseId": "en-german-family-1"
+}

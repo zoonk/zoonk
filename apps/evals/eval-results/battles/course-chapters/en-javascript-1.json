@@ -1,0 +1,77 @@
+{
+  "expectations": "\n      - MUST be in US English\n\n      \n  - Mission context: this curriculum is for learners OUTSIDE privileged environments — people who doubt they can become serious practitioners. Chapters should feel welcoming and legible, not gate-kept by academic vocabulary\n  - MAJOR ERROR: the curriculum must be a serious arc from zero knowledge to mastery, not a shallow tour or a list of disconnected topics\n  - MAJOR ERROR: chapters must follow a logical learning progression. Each chapter should depend only on earlier chapters and ordinary life experience a true beginner can reasonably have\n  - MAJOR ERROR: the opening chapters must teach the natural foundations a true beginner needs first\n  - MAJOR ERROR: practical work must appear throughout the course once prerequisites support it. A curriculum that stays purely theoretical or avoids projects, tools, cases, techniques, artifacts, and workflows is incomplete\n  - MAJOR ERROR: opening with a showcase project, specialist case, lab technique, advanced tool, or dramatic scenario before the learner has the prerequisites is wrong even when the example is real and concrete\n  - For chronological subjects, the chapter order must follow the real chronology. For skill-based subjects, it must follow the real skill progression. For science and engineering, observable foundations should come before specialist techniques\n  - Foundational chapters are allowed and often necessary, but they must teach concrete concepts, vocabulary, chronology, notation, mental models, or simple skills the learner will use later — not just describe the field from the outside\n  - Chapter count is a RESULT of coverage, not a target. Do not penalize or reward specific counts when coverage is justified. Evaluate whether every canonical pillar of the field has at least one chapter — if any pillar is missing, the curriculum is incomplete regardless of count. Broad fields, large platforms, and large fictional canons can legitimately need many chapters. Penalize duplicate, padded, or poorly sequenced chapters, not length by itself\n  - MAJOR ERROR: trading breadth for recency. Modern topics must ADD coverage without REPLACING canonical foundations. For example, a machine learning curriculum that covers transformers/LLMs/RAG/diffusion/fine-tuning but drops reinforcement learning, time-series forecasting, recommender systems, or causal inference is incomplete — those are canonical ML pillars. A medicine curriculum that covers telemedicine and modern EMRs but drops anatomy, physiology, pathology, or pharmacology is incomplete. If covering everything needs more chapters, more chapters is the correct answer\n  - Must cover BOTH academic AND practical pillars:\n    - Academic pillars: theory, foundations, history, canonical body of knowledge\n    - Modern toolchain: what working practitioners in this field actually use this year\n    - End-to-end workflow: at least one chapter walking through how real work in the field gets delivered start to finish\n    - Last-decade shifts: what's been added to the field in the past 10 years that a textbook wouldn't have covered 10 years ago (new regulations, new platforms, new techniques, AI changes, etc.)\n  - MAJOR ERROR: for broad fields, professions, sciences, engineering subjects, and serious practices, missing a standalone history/evolution chapter is an academic-pillar gap unless the course itself is already chronological history or the subject is a narrow tool/hobby where history would be padding\n  - MAJOR ERROR: for fields, professions, and serious practices, missing a standalone end-to-end workflow chapter is a practical-pillar gap. The workflow should show real work from problem/request/question through decisions, execution, validation, delivery, operation, maintenance, or follow-up, depending on the field\n  - For regulated professions and fields with safety duties, local rules, required documents, reporting duties, professional responsibility, and safety practice are curriculum pillars. A generic ethics chapter is not enough when practitioners need separate procedures and judgment\n  - The \"junior practitioner test\": if a junior would be embarrassed on day 1 of real practice because a topic is missing, that topic must exist as its own chapter\n  - Cover core pillars before specialized or frontier topics\n  - Stay tightly focused on the course title. Generic cross-disciplinary chapters that could be copied unchanged into many unrelated courses are a major error unless the topic IS the subject of the course\n  - MAJOR ERROR: meta-chapters that describe, taxonomize, or survey the field from the outside instead of teaching it\n  - MAJOR ERROR: survey chapters that list many areas as bullet points without teaching any of them — each topic that matters deserves its own chapter with real depth\n  - MAJOR ERROR: catch-all \"recent developments\" chapters. Titles like \"Catch up with the last decade of X\", \"What's new in X\", \"Recent developments in X\", \"The last decade of X\", or \"Modern X\" that bundle multiple distinct modern techniques into a single chapter are a major error. Each modern shift (transformers, LLMs, RAG, diffusion, fine-tuning for ML; CRISPR, sequencing, single-cell biology, spatial omics, synthetic biology for Biology; LGPD/GDPR, digital filing for Law; telemedicine, EMRs for Medicine; etc.) deserves its own substantive chapter\n  - Avoid overlap. If two chapters would naturally share most of their lessons, they should be merged or their scopes sharpened\n  - Prefer concept names over vendor names in chapter titles/descriptions (e.g., \"Package management\" instead of a specific tool name). Foundational tools that ARE the subject of the course are an allowed exception. Vendor name usage in non-vendor courses is a minor issue, never a major error\n  - For courses covering a field, profession, or serious practice, a \"navigating the field\" closing chapter is expected. It must cover ROLES AND SPECIALTIES (what kinds of practitioners exist and what they do differently), CONTRIBUTION/ENTRY PATHS (how people actually join — jobs, residencies, open source, communities), the ARTIFACT THAT PROVES COMPETENCE in this field (code repos, case records, clinical hours, recordings), and HOW PRACTITIONERS KEEP SKILLS CURRENT. A narrow \"Build a Portfolio\" or \"Build a Project\" closing chapter is a major error — a portfolio is just one small part of navigating a field. The closing chapter must be specific to the subject, not generic career advice\n  - For hobby / pop-culture topics, no closing navigation chapter is expected\n  - Titles: concise, specific, concrete, natural, learner-facing, and sentence case. Preserve normal capitalization for proper nouns, product names, acronyms, and language-specific conventions. Chapter titles should use the canonical names a serious learner would expect in a normal course outline, especially for searchable field pillars, methods, tools, eras, genres, regulations, standards, and named concepts. Canonical titles such as \"Algorithms\", \"Data structures\", \"Operating systems\", \"Cell biology\", \"Civil procedure\", \"Backpropagation\", \"Retrieval-augmented generation\", or their natural translated equivalents are good when those are the real chapter topics\n  - MAJOR STYLE ISSUE: hiding canonical terms behind practical paraphrases, metaphors, slogans, or \"what it does\" titles. If a learner scanning or searching for a standard topic would not recognize the chapter because the title avoids the expected term, the title is not good enough. For example, \"Informação guardada em bits\" is worse than a title that names \"Representação de dados\"; \"O que um computador faz de verdade\" is worse than a title that names the actual pillar such as \"Arquitetura de computadores\" or \"Organização de computadores\"; \"Catch bugs before users do\" is worse than \"Testing JavaScript code\"\n  - SCORE CAP: if 3 or more chapter titles hide important canonical/searchable terms that belong in those titles, the majorErrors score must be 7 or lower even when descriptions mention the terms and the underlying coverage is strong. If 1-2 important titles hide canonical/searchable terms, the majorErrors score must be 8 or lower. Descriptions recovering the term do not remove the title problem because users scan and search chapter titles first\n  - MAJOR STYLE ISSUE: titles that read like academic catalog entries only because they are bloated, comma-separated inventories, abstract noun stacks, or title-case headlines. Do not penalize a concise canonical course title as \"academic\" just because it uses the standard term for the topic. Avoid vague, cute, clickbait, or slogan-like titles such as \"X Without Fear\" unless that phrase is the natural name of the topic. Avoid \"I / II / Part 1\" — use descriptive subtitles instead\n  - Descriptions: 1–2 sentences describing what the chapter covers and, when natural, what it enables. Descriptions should explain the chapter's content clearly enough that a learner can tell which canonical topics, tools, cases, mechanisms, or skills belong inside it. A description that only says what the learner will feel or broadly do is too vague if it does not name the actual scope\n  - Description filler issue: descriptions should not rely on filler phrases like \"explore\", \"understand\", \"learn about\", \"introduction to\", or \"basics of\". Repeated filler phrasing, or descriptions that use these words instead of naming concrete scope, is a minor issue.\n  - Warm, plain language throughout. Avoid academic vocabulary\n  - Language output must follow the language parameter. For `en`: US English. For `pt`: Brazilian Portuguese. For `es`: Latin American Spanish\n  - Titles and descriptions must not leak prompt instructions or make claims about the learner's performance\n  - Don't evaluate output format — focus on chapter content quality only\n\n    ",
+  "judgedAt": "2026-07-10T04:51:19.170Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-fable-5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Comprehensive zero-to-mastery arc with excellent sequencing: foundations first, modern ES features integrated into the right early chapters, and every pillar present — history, data structures/algorithms, end-to-end workflow, AI-assisted development, security, supply chain, CI/CD, observability, and a proper closing navigation chapter covering roles, proof artifacts, and staying current. Titles are consistently canonical and searchable, and descriptions name concrete scope. Only trivial issues (vendor names in a couple of descriptions), making this the strongest output.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Very strong coverage nearly matching Model A, with a dedicated history chapter, dual end-to-end workflow chapters, dependency security, AI-assisted development, and a solid closing navigation chapter. Weaknesses are sequencing quirks — 'Modern JavaScript syntax' at chapter 16 bundles destructuring/spread/optional chaining that learners need earlier, history lands awkwardly mid-basics — plus missing a few areas A covers (real-time/WebSockets, CI/CD, observability) and repetitive 'Covers...' description phrasing.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Coherent and welcoming progression with the required history, workflow, AI, and career chapters, but 'Modern browser APIs' is a catch-all bundling Web Workers, service workers, PWAs, WebSockets, and media APIs into one chapter — exactly the prohibited pattern. Coverage is notably shallower for a mastery arc: no data structures/algorithms, iterators/generators, SSR/hydration, serverless, WebAssembly, state management, or standalone accessibility, and the history chapter title hides the term a learner would search for.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Model C provides an exceptionally well-paced, cohesive curriculum that perfectly balances depth with approachability for a beginner audience. It fulfills all requirements, including history, an end-to-end workflow, and a specialized career navigation chapter, while keeping descriptions active, concrete, and highly engaging.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Model A is also outstanding, offering a highly comprehensive and granular journey through the JavaScript ecosystem. It hits every major pillar, includes excellent action-oriented descriptions, and properly includes both the practical workflow and the closing navigation chapters.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Model B provides a solid and logical progression that includes all the required foundational and practical pillars. However, it suffers from a minor but noticeable style issue: almost every description rigidly follows the exact same 'Covers [X]... You will [Y]' template, which makes the curriculum feel mechanically generated rather than welcoming.",
+          "score": 8
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "The strongest zero-to-mastery arc, with clear canonical titles, excellent sequencing, extensive practical work, a standalone history chapter, modern shifts, and a genuinely end-to-end delivery workflow. Minor gaps include no explicit treatment of `this`, call/apply/bind and a closing chapter that does not clearly explain contribution or entry pathways.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "A strong, practical progression with unusually good core-language coverage, including `this`, algorithms, browser work, Node.js, modern tooling, security, and two end-to-end workflows. Its history chapter arrives somewhat late, several professional pillars such as CI/CD and observability receive limited standalone treatment, and the closing chapter is weak on concrete entry and contribution paths.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "The course is welcoming and logically sequenced, with solid foundations, practical projects, history, current tooling, an end-to-end workflow, and career guidance. However, it omits or compresses important pillars such as data structures and algorithms, accessibility, authentication, and advanced language mechanisms, while catch-all chapters like “Modern browser APIs” and “Code quality, CI, and observability” prevent adequate depth.",
+          "score": 6.5
+        }
+      ]
+    }
+  ],
+  "taskId": "course-chapters",
+  "testCaseId": "en-javascript-1"
+}

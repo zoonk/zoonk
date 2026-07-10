@@ -1,0 +1,167 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: Questions, options, and feedback must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n0. PRODUCTION-SHAPED SOURCE: Test cases provide one compact lesson title/description scope like production quiz generation. The quiz should cover the best learner-sized assessment for that single lesson.\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never saw this specific source lesson metadata should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the lesson said\"\n   - Reference specific wording from the source lesson title or description\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner has not seen. Penalize questions that:\n   - Reuse source lesson examples with only superficial substitutions, such as changing names while keeping the same object, evidence type, or situation\n   - Ask about facts that are not reasonably supported by the source lesson scope\n   - Test vocabulary definitions rather than concept application\n\n   IMPORTANT - \"Novel\" means a different conceptual context, not just swapping a superficial detail. For technical subjects, using a different specific instance of the same error type still tests the same concept and is acceptable. For non-technical examples, prefer changing the setting, evidence, objects, actors, or decision being made. What matters is that the learner must APPLY understanding, not recall a specific example.\n\n   DOMAIN TERMINOLOGY: Using standard domain terminology is acceptable and even desirable, even if the source lesson metadata did not use those exact terms. Do NOT penalize for introducing correct field-standard vocabulary. Only penalize when questions test recall of source-specific phrasing.\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   Learners prefer a varied set of interaction types. A strong quiz uses multiple formats when the content supports them, distributes those formats through the quiz, and still chooses each format because it fits the concept being tested.\n\n   Format diversity matters, but format fit matters more. A strong quiz uses heavier formats only when the content supports them, without forcing match-columns or sort-order onto a concept they do not fit.\n\n   Format guidance:\n   - Multiple choice: Default for choosing an interpretation, prediction, diagnosis, explanation, or next move in a scenario.\n   - Select image: Default when visual inspection, visible comparison, a diagram, or spatial pattern is part of the concept.\n   - Match columns: Use at most once for connecting related items, such as observations to concepts, symptoms to causes, examples to principles, or tools to roles. Omit match-columns when the scope does not contain a natural set of relationships to match. When used, include no more than 3 pairs, and keep pair text to short labels or brief phrases instead of long sentences.\n   - Sort order: Use at most once when one correct order is essential, such as procedural steps, cause-effect chains, historical events, dependency chains, or stages that cannot be swapped. Omit sort-order when the scope does not contain a genuinely ordered concept.\n   - Fill blank: Use once for completing a precise relationship, contrast, formula, or term when the missing words themselves matter. It is often memorization-prone, so the single fill-blank must be especially well fit.\n\n   PENALIZE when:\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n   - The quiz uses more than 1 match-columns question\n   - A match-columns question uses more than 3 pairs\n   - A match-columns question uses long sentence-like pair text instead of short labels or brief phrases\n   - A match-columns question is forced onto content where a scenario, image, fill-in-the-blank, or ordering question would clearly test understanding better\n   - The quiz uses more than 1 sort-order question\n   - The quiz uses more or fewer than 1 fill-blank question\n   - A fill-blank question tests copied wording, broad conceptual distinctions, or terminology recall that another format could test through application\n   - A sort-order question contains optional steps, branching outcomes, alternative endings, unordered checklists, diagnostic criteria, reasoning checklists, or workflows where several orders could be reasonable\n   - The sort-order answer would still be defensible if neighboring items were swapped\n   - A select-image question requires inspecting a full board, full dashboard, full workflow, many columns, many cards, tiny labels, or several simultaneous visual clues\n   - A select-image question uses text when the distinction could be shown visually without labels\n   - A select-image question is chosen for content that needs a complex or text-heavy image to be fair\n   - A select-image option would be hard to understand on a small phone screen\n   - One format dominates even though other formats could test the content well\n   - The same format appears twice in a row\n\n   Do NOT penalize when:\n   - Multiple-choice or select-image appears more often than the other formats because those are the default formats\n   - The quiz omits match-columns because the source scope lacks a natural set of relationships to match\n   - The quiz omits sort-order because the source scope lacks a necessary, non-ambiguous sequence\n   - Select-image options use a few large labels only when the distinction cannot be shown clearly without text\n\n4. FEEDBACK QUALITY: For formats that include feedback fields in the schema, feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n   Do NOT penalize match-columns questions for lacking feedback because the match-columns schema has no feedback field.\n\n5. FACTUAL ACCURACY: All questions and answers must be correct for the lesson's domain. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the source lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\n8. COVERAGE AND QUESTION COUNT: The quiz must contain enough questions to cover the source lesson scope without exhausting the learner. Penalize:\n   - Fewer than 5 questions\n   - More than 15 questions\n   - A quiz that ignores a major concept, mechanism, caveat, or practical distinction from the source lesson scope\n   - Complex scopes compressed into only 5 questions when more are needed to cover the taught ideas, edge cases, and linked mechanisms\n   - Simple scopes expanded into too many narrow or repetitive questions\n\n   Target ranges:\n   - 5-7 questions for a simple lesson scope\n   - 8-12 questions for a dense lesson scope\n   - 13-15 questions only when the lesson scope is unusually dense\n\n   Do NOT penalize for producing more than 5 questions when the extra questions cover real concepts from the source lesson scope and stay within the learner-friendly range.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect more than one match-columns, sort-order, or fill-blank question.\n- Do NOT require a match-columns question unless the source scope clearly supports one.\n- Do NOT require an exact number of questions beyond the minimum and coverage needs\n- Do NOT check against an imagined \"complete\" quiz that goes beyond the source lesson scope\n- Do NOT penalize for covering some concepts more than others if every major concept is covered and the balance is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, inappropriate format choices, poor format diversity, too few questions, too many questions, or missing major concepts\n- Different valid quiz designs exist - assess the quality of what IS provided\n\nBINARY CHECKS:\n- \"Memorization vs understanding\" is checked by: does the question reference the source lesson metadata directly or present a novel scenario? Direct source references = penalize. Novel scenarios = do not penalize.\n- Question count is checked by: at least 5 questions, never more than 15 questions, and no more than the lesson scope warrants.\n- Format choice is checked by fit, diversity, and sequencing. Penalize missing fill-blank, overusing heavier formats, forced match-columns or sort-order for weak-fit concepts, match-columns with more than 3 pairs or long sentence-like pair text, and back-to-back use of the same format.\n\n\nSPECIFIC EXPECTATION: This scope contains classification and judgment criteria for deciding whether transactions should be recorded. Do not require or reward a sort-order question for ordering the criteria, because entity separation, evidence, monetary measurement, and effect identification can be checked in different defensible orders. A sort-order question is only acceptable if it tests a genuinely fixed accounting sequence.\n    ",
+  "judgedAt": "2026-07-10T18:09:55.812Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.8",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Covers all four lesson concepts (entity separation, registrable events, monetary measurement, accounting effect) with novel scenarios, strong feedback, and excellent format diversity (MC, fill-blank, match-columns with 3 short pairs, select-image). Exactly one fill-blank, no forced sort-order, and select-image uses concrete visual cues appropriate for phones. Best overall balance and coverage.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Broad coverage of all four concepts with strong novel scenarios and clear feedback. However it includes a sort-order for the classification criteria, which the specific expectation explicitly warns against since the criteria can be checked in defensible orders; also match-columns has 4 pairs (exceeds the 3-pair cap).",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Good novel scenarios, correct facts, solid feedback and format variety with exactly one fill-blank and clean select-image diagrams. Weakness: heavily focused on 'accounting effect' concept while underemphasizing entity separation and evidence/measurement lessons, so coverage is unbalanced.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Strong application scenarios, good feedback, one well-fit fill-blank, valid match-columns with 3 short pairs. Coverage skews toward accounting effects and monetary measurement, largely omitting entity separation and the registrable-event criteria; select-image prompts are somewhat descriptive but workable.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Novel scenarios with good feedback and reasonable variety, but the fill-blank tests the accounting equation (PL = ativos − passivos), which is arguably beyond the lesson scope and terminology-recall prone. Coverage concentrates on effect classification, underserving entity separation and evidence concepts.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Novel scenarios and good conceptual feedback; match-columns has 3 short pairs, one fill-blank. Coverage is decent but leans toward accounting-effect classification and omits explicit entity-separation/personal-vs-business scenarios; formats are fine but less varied.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Feedback is strong but questions drift toward advanced content (permuta pura diagram, debt settlement with discount and gains) that may exceed the introductory lesson scope. The fill-blank tests the accounting equation identity, terminology-recall prone. Coverage misses entity separation entirely.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Introduces heavy terminology (fato permutativo, débito/crédito, livro diário, regime de competência) beyond the lesson scope, and includes a sort-order about débito/crédito bookkeeping steps that goes well past the taught criteria. Numeric questions are more math than concept, and entity separation is ignored.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Exceptional coverage of all four source lessons, successfully testing concepts like entity separation and evidence requirements using novel, practical scenarios. The only notable weakness is the match-columns question, which violates formatting rules by using 4 pairs with long sentence-like text.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Excellent conceptual coverage across all source lessons using strong novel scenarios. However, it explicitly violates the negative constraint in the specific expectations by using a sort-order question for the classification criteria, and its match-columns question exceeds the 3-pair limit.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Good use of novel scenarios and formats, including a clever visual representation of balance sheet changes in the select-image question. However, it ignores a major concept from the scope (Lesson 1: entity separation), heavily over-indexing on the accounting effects.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Provides strong, clear scenarios for testing accounting effects and uses the fill-in-the-blank format beautifully for application rather than rote memorization. Like Model C, it fails to cover the entity separation concept (Lesson 1) entirely, missing a major piece of the scope.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Feedback is clear and the questions test understanding of accounting effects well. However, it misses almost the entirety of Lessons 2 and 3, failing to comprehensively test the judgment criteria for whether a transaction should be recorded.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "The formats are well-chosen and compliant, with a solid mix of multiple-choice and visual questions. Unfortunately, it completely ignores Lessons 1, 2, and 3, reducing the entire scope to just identifying accounting effects.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Tests the accounting effects accurately with some varied formats. It shares the same critical flaw as other lower-ranked models by missing Lessons 1, 2, and 3 entirely, and the fill-in-the-blank question tests rote memorization of an equation.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Questions are factually correct for a general accounting class, but it completely ignores the first three source lessons. Furthermore, it introduces out-of-scope technical jargon (debits/credits) and includes an unprompted sort-order question about accounting workflows.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Cobre os quatro eixos do escopo com bons cenários, variedade bem distribuída e feedback explicativo, sem impor uma ordem artificial aos critérios. Perde pontos porque o match-columns tem quatro pares e porque um contrato apenas assinado não é necessariamente registrável sem evidência de execução ou efeito patrimonial.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Tem a cobertura mais explícita de separação da entidade, evidência, mensuração confiável e efeitos contábeis, com cenários claros e feedback útil. Contudo, usa quatro pares no match-columns e, principalmente, força exatamente a ordenação dos critérios que a expectativa declara não ter sequência obrigatória.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Aplica corretamente a distinção entre intenção e evento registrável e explora diversos efeitos patrimoniais com boa precisão e formatos variados. Ainda assim, praticamente não avalia separação entre empresa e pessoas nem mensuração monetária confiável, e a quitação com desconto adiciona complexidade além do necessário.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Apresenta cenários claros, bons feedbacks e formatos adequados, incluindo uma decisão válida sobre contrato ainda não iniciado. Porém, concentra quase todo o quiz em efeitos patrimoniais e deixa sem avaliação direta a separação da entidade, a qualidade da evidência e a mensuração confiável.",
+          "score": 5.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "É tecnicamente sólido na classificação de efeitos contábeis, com feedback excelente e boa distribuição de formatos. Entretanto, ignora três partes centrais do escopo: distinguir fatos pessoais, avaliar evidência de um evento e rejeitar mensurações sem base confiável.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Oferece boa variedade e aplicações úteis sobre caixa, direitos, dívidas, receitas e patrimônio, com um fill-blank bem contextualizado. A cobertura fica quase totalmente restrita aos efeitos contábeis, e a questão sobre “parcela” de empréstimo é ambígua porque ela pode incluir juros, embora o feedback a trate como principal puro.",
+          "score": 4.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "As seis questões são claras, corretas e bem formatadas para testar efeitos patrimoniais em situações práticas. Contudo, o quiz cobre somente a etapa de classificação dos efeitos e omite os demais critérios essenciais para decidir se um acontecimento deve ser registrado.",
+          "score": 4.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Demonstra boa precisão técnica sobre competência e dinâmica patrimonial, mas usa tom mais acadêmico e introduz débito, crédito e classificações além do escopo fornecido. Também omite os critérios de entidade, evidência e mensuração, enquanto acrescenta uma ordenação técnica e uma opção visual excessivamente textual.",
+          "score": 4
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-quiz",
+  "testCaseId": "pt-accounting-recordable-transactions-production-quiz-1"
+}

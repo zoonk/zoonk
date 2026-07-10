@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - Should define what web development is\n      - Should NOT list technical tools/technologies (HTML, CSS, JavaScript, etc.)\n      - Should specify career opportunities\n      - Should be in Latin American Spanish\n\n      \n  - Must be **1-3 sentences** maximum\n  - Must be written in the specified language (en, pt, or es)\n  - Must go **straight to the point** — no fluff, fillers, or unnecessary words\n  - Must NEVER use words like \"learn\", \"understand\", \"explore\", \"introduction to\", \"basics of\", \"comprehensive guide to\", \"master\", etc.\n  - Must define **what the topic is**\n  - Must explain **what learners will gain** from the course\n  - Must convey **why this is important**\n  - Must **avoid technical jargon** — write for someone with no prior knowledge\n  - Must focus on outcomes and career opportunities rather than specific tools/technologies\n  - For professional topics: Must specify **career opportunities** and **work environments** (e.g., \"work at tech companies, agencies, or as a freelancer\")\n  - For languages: Must reference CEFR levels (A1 to C2) and communication abilities\n  - For hobbies/pop culture: Should focus on comprehensive coverage without career implications\n  - Should be **concise**, **clear**, and **specific**\n\n    ",
+  "judgedAt": "2026-07-10T05:09:54.287Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-fable-5",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "deepseek/deepseek-v4-flash",
+          "reasoning": "Defines web development plainly, avoids all tools and jargon, and specifies career paths (empresas de tecnología, agencias, freelancer). Concise 3 sentences in natural Latin American Spanish with no forbidden words. Essentially meets every expectation.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Clear beginner-friendly definition, no tools or jargon, and explicit career opportunities including independent work. Concise and outcome-focused with clean Spanish.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Solid definition, career opportunities, and no tool listing. Slightly more descriptive detail (interfaces, lógica) but stays accessible; a touch less crisp than the top outputs.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Compact two-sentence description covering definition, skills gained, and broad career opportunities without tools or jargon. Slightly abstract wording ('experiencias web seguras y de calidad') but fully compliant.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Defines the topic and lists career opportunities, but 'lógica del servidor' and 'gestión de datos' lean into technical jargon for a no-prior-knowledge audience. Otherwise well-structured Spanish within limits.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Good definition with career opportunities, but wordy and includes semi-technical phrasing ('infraestructura interna que procesa y almacena los datos'). Less concise than expected though still within three sentences.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Covers definition and careers, but the second sentence lists technical concepts (arquitectura, diseño responsivo, bases de datos, optimización de rendimiento) that read as jargon for beginners and drift toward tool/technology listing. Otherwise correct structure and Spanish.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Heavy technical jargon ('técnicas de maquetación', 'interactividad del lado del cliente', 'arquitectura de servidores', 'escalables') violates the no-jargon and no-technical-listing expectations. Careers are covered, but accessibility for beginners is poor.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "This model perfectly follows all instructions. It defines the topic clearly, explicitly conveys its importance ('un pilar fundamental de la economía digital actual'), and flawlessly avoids jargon by explaining frontend and backend concepts in plain language for beginners. It also provides excellent career outcomes.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "A very strong and concise output. It successfully avoids technical jargon, explains what the learner will gain, states career opportunities, and touches on the importance of the field ('para resolver necesidades reales').",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "deepseek/deepseek-v4-flash",
+          "reasoning": "This model provides a very clear, jargon-free description that perfectly matches the requested tone. However, it lacks a strong, explicit statement conveying why the topic is important compared to the higher-ranked models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Strong description that hits the career opportunities and avoids most jargon. It effectively explains the outcomes, though it slightly lacks a broad statement on the importance of the field.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Acceptable, but phrasing like 'Desarrolla habilidades para' borders on the forbidden educational fluff (e.g., 'learn', 'understand'). It also misses an explicit explanation of why the topic is important.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Meets most structural requirements and lists career opportunities, but it introduces some technical jargon ('lógica del servidor') which violates the instruction to write for someone with no prior knowledge.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "While the career opportunities and structure are good, this output contains notable technical jargon ('diseño responsivo', 'lógica del servidor', 'bases de datos'), which violates the negative constraint to avoid jargon.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "This model fails the negative constraint to avoid technical jargon by using terms like 'maquetación', 'lado del cliente', 'arquitectura de servidores', and 'escalables'. This makes it unsuitable for an audience with no prior knowledge.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Define el desarrollo web con lenguaje claro y resume habilidades concretas, resultados laborales y entornos de trabajo en solo dos oraciones. Evita herramientas específicas y casi todo el vocabulario técnico, aunque la importancia se comunica de forma implícita.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Es claro, conciso y orientado a resolver necesidades reales, lo que comunica la importancia del tema. También menciona oportunidades en empresas, agencias y trabajo independiente, con apenas algunos términos algo abstractos.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "deepseek/deepseek-v4-flash",
+          "reasoning": "Ofrece una definición sencilla y accesible, además de señalar salidas laborales y ambientes de trabajo. Explica menos claramente qué capacidades se obtienen y por qué el campo es importante.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Define bien el tema, comunica resultados como accesibilidad y seguridad, y especifica varios entornos laborales. Expresiones como “lógica” e “interfaces” añaden algo de jerga, y enumera contenidos más que capacidades adquiridas.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Incluye definición, relevancia económica y oportunidades profesionales en distintos ambientes. Sin embargo, usa bastante jerga —como “interfaz de usuario”, “infraestructura interna” y procesamiento de datos— para un público sin experiencia.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Cumple con la definición y menciona roles y ambientes profesionales, además de resultados funcionales y seguros. Pierde claridad por términos técnicos como “lógica del servidor” y “gestión de datos”, y la importancia del tema queda poco desarrollada.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Define el campo y presenta entornos laborales adecuados, pero dedica una oración completa a una lista de áreas técnicas. Términos como arquitectura, diseño responsivo, bases de datos y optimización contradicen el requisito de evitar jerga y enfocarse en resultados.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Aunque menciona un rol profesional y varios ambientes de trabajo, está dominado por jerga técnica como maquetación, lado del cliente, servidores y aplicaciones escalables. No resulta apropiado para principiantes y explica poco la importancia general del tema.",
+          "score": 4.5
+        }
+      ]
+    }
+  ],
+  "taskId": "course-description",
+  "testCaseId": "es-desarrollo-web-1"
+}

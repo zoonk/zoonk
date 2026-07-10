@@ -1,39 +1,57 @@
 {
-  "expectations": "\nLANGUAGE REQUIREMENT: Questions, options, and feedback must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n0. PRODUCTION-SHAPED SOURCE: Test cases provide compact lesson title/description scopes like production quiz generation. The quiz should cover the best learner-sized assessment for that scope, not invent a question for every source lesson.\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never saw this specific source lesson metadata should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the lesson said\"\n   - Reference specific wording from the source lesson titles or descriptions\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner has not seen. Penalize questions that:\n   - Reuse source lesson examples with only superficial substitutions, such as changing names while keeping the same object, evidence type, or situation\n   - Ask about facts that are not reasonably supported by the source lesson scope\n   - Test vocabulary definitions rather than concept application\n\n   IMPORTANT - \"Novel\" means a different conceptual context, not just swapping a superficial detail. For technical subjects, using a different specific instance of the same error type still tests the same concept and is acceptable. For non-technical examples, prefer changing the setting, evidence, objects, actors, or decision being made. What matters is that the learner must APPLY understanding, not recall a specific example.\n\n   DOMAIN TERMINOLOGY: Using standard domain terminology is acceptable and even desirable, even if the source lesson metadata did not use those exact terms. Do NOT penalize for introducing correct field-standard vocabulary. Only penalize when questions test recall of source-specific phrasing.\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   Learners prefer a varied set of interaction types. A strong quiz uses multiple formats when the content supports them, distributes those formats through the quiz, and still chooses each format because it fits the concept being tested.\n\n   Format diversity is a core requirement:\n   - Every quiz should use all 5 formats\n   - Every quiz should use exactly 1 match-columns question\n   - Every quiz should use exactly 1 sort-order question\n   - Every quiz should use exactly 1 fill-blank question\n   - All remaining questions should be multiple-choice or select-image\n\n   Format guidance:\n   - Multiple choice: Default for choosing an interpretation, prediction, diagnosis, explanation, or next move in a scenario.\n   - Select image: Default when visual inspection, visible comparison, a diagram, or spatial pattern is part of the concept.\n   - Match columns: Use once for connecting related items, such as observations to concepts, symptoms to causes, examples to principles, or tools to roles.\n   - Sort order: Use once when one correct order is essential, such as procedural steps, cause-effect chains, or stages that cannot be swapped.\n   - Fill blank: Use once for completing a precise relationship, contrast, formula, or term when the missing words themselves matter. It is often memorization-prone, so the single fill-blank must be especially well fit.\n\n   PENALIZE when:\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n   - Any format is missing\n   - The quiz uses more or fewer than 1 match-columns question\n   - The quiz uses more or fewer than 1 sort-order question\n   - The quiz uses more or fewer than 1 fill-blank question\n   - Any extra question after the single match-columns, sort-order, and fill-blank questions is not multiple-choice or select-image\n   - A fill-blank question tests copied wording, broad conceptual distinctions, or terminology recall that another format could test through application\n   - A sort-order question contains optional steps, branching outcomes, alternative endings, unordered checklists, or workflows where several orders could be reasonable\n   - One format dominates even though other formats could test the content well\n   - The same format appears twice in a row\n\n   Do NOT penalize when:\n   - Multiple-choice or select-image appears more often than the other formats because those are the default formats\n   - The quiz uses all five formats with exactly one match-columns, sort-order, and fill-blank question, and each one fits the concept it tests\n\n4. FEEDBACK QUALITY: For formats that include feedback fields in the schema, feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n   Do NOT penalize match-columns questions for lacking feedback because the match-columns schema has no feedback field.\n\n5. FACTUAL ACCURACY: All questions and answers must be correct for the lesson's domain. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the source lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\n8. COVERAGE AND QUESTION COUNT: The quiz must contain enough questions to cover the source lesson scope without exhausting the learner. Penalize:\n   - Fewer than 5 questions\n   - More than 15 questions\n   - A quiz that ignores a major concept, mechanism, caveat, or practical distinction from the source lesson scope\n   - Complex scopes compressed into only 5 questions when more are needed to cover the taught ideas, edge cases, and linked mechanisms\n   - Simple scopes expanded into too many narrow or repetitive questions\n\n   Target ranges:\n   - 5-7 questions for a simple lesson scope\n   - 8-12 questions for broader multi-concept scopes\n   - 13-15 questions only for genuinely dense source material\n\n   Do NOT penalize for producing more than 5 questions when the extra questions cover real concepts from the source lesson scope and stay within the learner-friendly range.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect more than one match-columns, sort-order, or fill-blank question.\n- Do NOT require an exact number of questions beyond the minimum and coverage needs\n- Do NOT check against an imagined \"complete\" quiz that goes beyond the source lesson scope\n- Do NOT penalize for covering some concepts more than others if every major concept is covered and the balance is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, inappropriate format choices, poor format diversity, too few questions, too many questions, or missing major concepts\n- Different valid quiz designs exist - assess the quality of what IS provided\n\nBINARY CHECKS:\n- \"Memorization vs understanding\" is checked by: does the question reference the source lesson metadata directly or present a novel scenario? Direct source references = penalize. Novel scenarios = do not penalize.\n- Question count is checked by: at least 5 questions, never more than 15 questions, and no more than the lesson scope warrants.\n- Format choice is checked by fit, diversity, and sequencing. Penalize missing formats, any format distribution other than exactly one match-columns, exactly one sort-order, exactly one fill-blank, and all remaining questions as multiple-choice or select-image, plus bad-fit formats and back-to-back use of the same format.\n\n    ",
-  "judgedAt": "2026-05-23T18:18:36.197Z",
+  "expectations": "\nLANGUAGE REQUIREMENT: Questions, options, and feedback must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n0. PRODUCTION-SHAPED SOURCE: Test cases provide one compact lesson title/description scope like production quiz generation. The quiz should cover the best learner-sized assessment for that single lesson.\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never saw this specific source lesson metadata should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the lesson said\"\n   - Reference specific wording from the source lesson title or description\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner has not seen. Penalize questions that:\n   - Reuse source lesson examples with only superficial substitutions, such as changing names while keeping the same object, evidence type, or situation\n   - Ask about facts that are not reasonably supported by the source lesson scope\n   - Test vocabulary definitions rather than concept application\n\n   IMPORTANT - \"Novel\" means a different conceptual context, not just swapping a superficial detail. For technical subjects, using a different specific instance of the same error type still tests the same concept and is acceptable. For non-technical examples, prefer changing the setting, evidence, objects, actors, or decision being made. What matters is that the learner must APPLY understanding, not recall a specific example.\n\n   DOMAIN TERMINOLOGY: Using standard domain terminology is acceptable and even desirable, even if the source lesson metadata did not use those exact terms. Do NOT penalize for introducing correct field-standard vocabulary. Only penalize when questions test recall of source-specific phrasing.\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   Learners prefer a varied set of interaction types. A strong quiz uses multiple formats when the content supports them, distributes those formats through the quiz, and still chooses each format because it fits the concept being tested.\n\n   Format diversity matters, but format fit matters more. A strong quiz uses heavier formats only when the content supports them, without forcing match-columns or sort-order onto a concept they do not fit.\n\n   Format guidance:\n   - Multiple choice: Default for choosing an interpretation, prediction, diagnosis, explanation, or next move in a scenario.\n   - Select image: Default when visual inspection, visible comparison, a diagram, or spatial pattern is part of the concept.\n   - Match columns: Use at most once for connecting related items, such as observations to concepts, symptoms to causes, examples to principles, or tools to roles. Omit match-columns when the scope does not contain a natural set of relationships to match. When used, include no more than 3 pairs, and keep pair text to short labels or brief phrases instead of long sentences.\n   - Sort order: Use at most once when one correct order is essential, such as procedural steps, cause-effect chains, historical events, dependency chains, or stages that cannot be swapped. Omit sort-order when the scope does not contain a genuinely ordered concept.\n   - Fill blank: Use once for completing a precise relationship, contrast, formula, or term when the missing words themselves matter. It is often memorization-prone, so the single fill-blank must be especially well fit.\n\n   PENALIZE when:\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n   - The quiz uses more than 1 match-columns question\n   - A match-columns question uses more than 3 pairs\n   - A match-columns question uses long sentence-like pair text instead of short labels or brief phrases\n   - A match-columns question is forced onto content where a scenario, image, fill-in-the-blank, or ordering question would clearly test understanding better\n   - The quiz uses more than 1 sort-order question\n   - The quiz uses more or fewer than 1 fill-blank question\n   - A fill-blank question tests copied wording, broad conceptual distinctions, or terminology recall that another format could test through application\n   - A sort-order question contains optional steps, branching outcomes, alternative endings, unordered checklists, diagnostic criteria, reasoning checklists, or workflows where several orders could be reasonable\n   - The sort-order answer would still be defensible if neighboring items were swapped\n   - A select-image question requires inspecting a full board, full dashboard, full workflow, many columns, many cards, tiny labels, or several simultaneous visual clues\n   - A select-image question uses text when the distinction could be shown visually without labels\n   - A select-image question is chosen for content that needs a complex or text-heavy image to be fair\n   - A select-image option would be hard to understand on a small phone screen\n   - One format dominates even though other formats could test the content well\n   - The same format appears twice in a row\n\n   Do NOT penalize when:\n   - Multiple-choice or select-image appears more often than the other formats because those are the default formats\n   - The quiz omits match-columns because the source scope lacks a natural set of relationships to match\n   - The quiz omits sort-order because the source scope lacks a necessary, non-ambiguous sequence\n   - Select-image options use a few large labels only when the distinction cannot be shown clearly without text\n\n4. FEEDBACK QUALITY: For formats that include feedback fields in the schema, feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n   Do NOT penalize match-columns questions for lacking feedback because the match-columns schema has no feedback field.\n\n5. FACTUAL ACCURACY: All questions and answers must be correct for the lesson's domain. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the source lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\n8. COVERAGE AND QUESTION COUNT: The quiz must contain enough questions to cover the source lesson scope without exhausting the learner. Penalize:\n   - Fewer than 5 questions\n   - More than 15 questions\n   - A quiz that ignores a major concept, mechanism, caveat, or practical distinction from the source lesson scope\n   - Complex scopes compressed into only 5 questions when more are needed to cover the taught ideas, edge cases, and linked mechanisms\n   - Simple scopes expanded into too many narrow or repetitive questions\n\n   Target ranges:\n   - 5-7 questions for a simple lesson scope\n   - 8-12 questions for a dense lesson scope\n   - 13-15 questions only when the lesson scope is unusually dense\n\n   Do NOT penalize for producing more than 5 questions when the extra questions cover real concepts from the source lesson scope and stay within the learner-friendly range.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect more than one match-columns, sort-order, or fill-blank question.\n- Do NOT require a match-columns question unless the source scope clearly supports one.\n- Do NOT require an exact number of questions beyond the minimum and coverage needs\n- Do NOT check against an imagined \"complete\" quiz that goes beyond the source lesson scope\n- Do NOT penalize for covering some concepts more than others if every major concept is covered and the balance is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, inappropriate format choices, poor format diversity, too few questions, too many questions, or missing major concepts\n- Different valid quiz designs exist - assess the quality of what IS provided\n\nBINARY CHECKS:\n- \"Memorization vs understanding\" is checked by: does the question reference the source lesson metadata directly or present a novel scenario? Direct source references = penalize. Novel scenarios = do not penalize.\n- Question count is checked by: at least 5 questions, never more than 15 questions, and no more than the lesson scope warrants.\n- Format choice is checked by fit, diversity, and sequencing. Penalize missing fill-blank, overusing heavier formats, forced match-columns or sort-order for weak-fit concepts, match-columns with more than 3 pairs or long sentence-like pair text, and back-to-back use of the same format.\n\n    ",
+  "judgedAt": "2026-07-10T18:09:45.643Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.7",
+      "judgeId": "anthropic/claude-opus-4.8",
       "rankings": [
-        {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Has all 5 formats with exactly one match-columns, sort-order, and fill-blank. Questions test application in novel scenarios with strong feedback explaining why. Good coverage of all four lesson concepts (observation/inference, field notes, drawing, media evidence).",
-          "score": 9
-        },
         {
           "anonymousId": "Model E",
           "modelId": "openai/gpt-5.5",
-          "reasoning": "All 5 formats present with correct distribution (1 each of match/sort/fill, rest MC/select-image). Questions are novel scenarios with thoughtful feedback. Strong coverage across all lessons; sort-order on transforming curiosity into investigable question fits well.",
+          "reasoning": "Covers all four lessons: observation vs inference vs question, field notes context, drawing structures, and photos/videos/sounds as evidence. Excellent format diversity with well-fit choices, strong feedback explaining reasoning, novel scenarios throughout. The most comprehensive coverage of the source scope with proper single fill-blank, one match, and mostly MC/select-image.",
           "score": 9
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Has all 5 formats but match-columns includes 5 pairs with repeated categories (two observations, two inferences), which is acceptable. Strong novel scenarios and feedback. Good coverage across all concepts with varied contexts.",
-          "score": 8
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Broad coverage across all four lessons with good novel scenarios and format diversity, but has a critical flaw: the first MC option has an empty feedback field and a duplicated/malformed distractor ('Falta indicar a cor... ...' twice). Otherwise strong feedback and fitting formats.",
+          "score": 7
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Uses all 5 formats with correct distribution. Questions are application-focused with good feedback. However, select-image questions only have 2 options each, which is weak for that format. Otherwise solid coverage and quality.",
-          "score": 7
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "High-quality, well-crafted questions with genuinely novel application scenarios and strong feedback, but scope is heavily concentrated on drawing (lesson 3) with no coverage of observation/inference/question separation or field-note metadata or photo/video/sound evidence. Missing major concepts caps the score.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Good format fit and clear novel scenarios with solid feedback, but nearly all questions focus on drawing structures; lessons 1, 2, and largely 4 are uncovered. Missing major concepts limits usefulness despite polished execution.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Well-written with strong feedback and good format diversity, but concentrated entirely on drawing (lesson 3), missing observation/inference separation, field-note context, and photo/video/sound evidence. Also the fill-blank uses four blanks bordering on recall of multiple terms.",
+          "score": 5
         },
         {
           "anonymousId": "Model B",
           "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Missing one format—only 6 questions and lacks variety in the select-image (only 3 options) and overall has fewer questions than the scope warrants for 4 distinct lessons. Still uses all 5 formats with proper distribution and good feedback quality. Coverage is somewhat thin on field notes specifics.",
-          "score": 7
+          "reasoning": "Solid feedback and reasonable formats, but scope is limited to drawing only; misses the other three lessons. The sort-order steps are somewhat swappable (ângulo vs esboço), and coverage gap is significant.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Good novel scenarios and clear feedback, but only covers drawing structures and uses two select-image questions plus no match-columns; the fill-blank tests source phrasing 'vista observada.' Notably narrow coverage and format issues including select-image dominance.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Focuses entirely on drawing, ignoring observation/inference, field notes, and photo/video/sound evidence. The fill-blank leans toward recall of source terms and the sort-order steps are partly swappable; coverage is the weakest relative to the four-lesson scope.",
+          "score": 4
         }
       ]
     },
@@ -43,67 +61,103 @@
         {
           "anonymousId": "Model E",
           "modelId": "openai/gpt-5.5",
-          "reasoning": "Model E provides an excellent quiz with novel scenarios and perfect format distribution. It notably succeeds with the sort-order question by testing a strict cognitive chain of thought rather than an unordered checklist. The image prompts are correctly localized in Portuguese, and the feedback consistently explains the 'why' behind correct and incorrect options.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Model D offers strong conceptual application, highly effective feedback, and the best fill-in-the-blank question by contrasting the functional uses of a photo versus a drawing. However, it loses points because the sort-order question presents an unordered checklist of field note tasks where multiple sequences (e.g., photographing before drawing) would be equally valid.",
+          "reasoning": "This output successfully covers all four source lessons with excellent, novel application scenarios that test deep conceptual understanding. It demonstrates great format diversity without back-to-back repetition and uses feedback effectively. The only minor flaw is using 4 pairs in the match-columns question, exceeding the strict 3-pair limit.",
           "score": 8
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Model A correctly follows the format distribution rules, uses novel contexts, and successfully translates image prompts into Portuguese. Like Model D, it is penalized for using the sort-order format on an unordered checklist of field activities. Its feedback is also slightly less comprehensive in explaining the 'why' behind incorrect options.",
-          "score": 7
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "This model covers all four source lessons, but it contains several technical execution errors. It includes a multiple-choice option with empty feedback, uses the multiple-choice format back-to-back (Q6 and Q7), and includes 4 pairs in the match-columns question.",
+          "score": 5
         },
         {
           "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "The quiz presents clear, novel scenarios and adheres very well to format constraints (including omitting match-columns and sort-order correctly, and using only 1 blank in the fill-blank). However, it suffers from a catastrophic coverage failure by completely ignoring three of the four source lessons to focus solely on drawing.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model A",
           "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Model C features highly creative scenarios and an exceptional sort-order question that brilliantly justifies its sequence by framing it around a fleeting, dynamic event. Unfortunately, it heavily violates a negative constraint by writing the select-image options (prompts) in English, failing the language requirement.",
+          "reasoning": "The questions use good novel application scenarios and follow format sequencing rules well. Unfortunately, the quiz completely ignores three of the four source lessons, resulting in a severe coverage violation that fails to assess most of the required scope.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "While the application scenarios are well-written and format diversity is handled nicely without back-to-back errors, the quiz fails significantly on coverage. It focuses exclusively on the drawing lesson and completely ignores the other three major concepts provided in the source.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "This model features good conceptual scenarios and avoids back-to-back format repetitions. However, it completely misses the mark on coverage by ignoring three of the four provided lessons, focusing entirely on the drawing metadata.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "The output features strong application to novel scenarios and good format sequencing. However, it receives a heavy penalty for ignoring 75% of the source material, as all questions focus exclusively on the single drawing lesson.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Fails significantly on coverage by ignoring three of the four source lessons. Furthermore, stretching a single lesson into 8 questions results in highly repetitive testing, and the fill-in-the-blank question is overloaded with 4 blanks, violating best practices.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "É o único quiz realmente forte na cobertura integrada dos quatro eixos: observação versus inferência, anotações de campo, desenho e mídias como evidência. Os cenários, feedbacks e alternância de formatos são excelentes, mas a associação tem quatro pares — acima do máximo de três — e textos relativamente longos.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Cobre todos os conceitos principais com aplicações variadas e, em geral, respostas corretas e feedback explicativo. Perde qualidade pela associação com quatro pares, uma alternativa duplicada com feedback vazio, duas múltiplas escolhas seguidas e uma ordenação cujas etapas poderiam ser trocadas sem prejuízo.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Apresenta cenários claros e aplicados sobre proporção, posição, vista observada, assimetria e registro de dúvidas, com boa alternância de formatos. Contudo, limita todo o quiz ao desenho de organismos e ignora observação versus inferência, anotações de campo e registros por foto, vídeo ou som.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "As questões são concisas, conceituais e bem distribuídas entre múltipla escolha, imagem e preenchimento, com feedback útil. A cobertura, porém, fica quase inteiramente restrita ao desenho e deixa de fora três grandes partes do capítulo.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Avalia bem vista, proporção, posição, rótulos e incerteza, inclusive com uma associação natural de três pares. Ainda assim, funciona apenas como quiz da lição sobre desenho, não do escopo completo do capítulo.",
           "score": 5
         },
         {
           "anonymousId": "Model B",
           "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Model B also violates the language requirement by using English for the image generation prompts. Furthermore, its fill-in-the-blank question tests rote memorization of terms rather than a meaningful relationship, and its sort-order question applies an arbitrary sequence to unordered field tasks.",
-          "score": 4
-        }
-      ]
-    },
-    {
-      "judgeId": "openai/gpt-5.5",
-      "rankings": [
+          "reasoning": "Os cenários sobre desenho são úteis e os feedbacks geralmente explicam o raciocínio, mas o preenchimento é abstrato e a ordenação impõe uma sequência parcialmente arbitrária. Além disso, toda a avaliação ignora observação e inferência, anotações de campo e evidências audiovisuais.",
+          "score": 4.5
+        },
         {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Quiz forte, em português, com boa variedade de formatos e exatamente um match-columns, sort-order e fill-blank. As perguntas aplicam os conceitos em cenários novos e cobrem bem observação/inferência, anotações de campo, desenho e evidências por mídia; a principal lacuna é tratar pouco a preservação de arquivos originais.",
-          "score": 9
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Explora vários aspectos do desenho de campo com clareza, bons feedbacks e formatos variados. Porém, oito questões tornam esse único subtema repetitivo, a ordenação contém etapas intercambiáveis e três dos quatro grandes eixos do capítulo não são avaliados.",
+          "score": 4
         },
         {
           "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Muito alinhado ao escopo, com cenários aplicados, bom feedback e cobertura ampla dos principais conceitos. O ponto mais fraco é o sort-order, cuja sequência é um pouco arbitrária e poderia ter ordens razoáveis alternativas, mas o restante é bem adequado.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Cumpre bem os requisitos de idioma, formatos e feedback, com perguntas claras e aplicadas. Tem pequenas fragilidades no match-columns com categorias repetidas e no sort-order, que também não tem uma ordem totalmente essencial, mas cobre o escopo de forma útil.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Tem boa estrutura geral, usa todos os formatos corretamente e apresenta feedback majoritariamente explicativo. Porém viola o requisito de idioma nos prompts de select-image em inglês, e algumas questões, especialmente o fill-blank e o sort-order, são mais próximas de recordação ou sequência arbitrária do que de aplicação forte.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model C",
           "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Aplica vários conceitos em cenários novos e usa a distribuição de formatos exigida, mas há violações claras de idioma em prompts de select-image em inglês. Também há mais problemas de ajuste, como sort-order com ordem discutível e algumas escolhas que exigem detalhes ou terminologia além do necessário para o escopo.",
-          "score": 6.5
+          "reasoning": "O quiz cobre apenas desenho biológico e usa linguagem mais formal, além de apresentar como regras absolutas algumas preferências, como evitar todo sombreamento e buscar “proporção exata”. A ordenação é pouco necessária, a associação usa explicações longas e faltam completamente os demais conceitos centrais do capítulo.",
+          "score": 3.5
         }
       ]
     }

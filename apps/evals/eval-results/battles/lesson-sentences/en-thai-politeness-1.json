@@ -1,0 +1,149 @@
+{
+  "expectations": "\nLANGUAGE: English output required for translations.\n\nTOPIC: Thai sentences for polite expressions - using politeness vocabulary.\n\nSOURCE LESSON METADATA: essential polite expressions such as ขอบคุณ, ขอโทษ, ได้โปรด, สวัสดี, ลาก่อน.\nGenerated sentences should naturally cover this source scope.\n\nDIFFICULTY: Beginner level. Chapter \"Basic Politeness\" + common polite expressions = foundational vocabulary.\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Sentences drift away from the source lesson scope\n- Politeness particles are missing where required (ครับ/คะ)\n- Translations don't match the Thai sentences\n\nVOCABULARY NATURALNESS NOTE:\n- ได้โปรด is inherently formal/pleading in Thai. Since it is part of the source scope, accept it in various polite request contexts (asking for help, directions, favors, etc.)\n- Only penalize ได้โปรด usage if it appears in completely inappropriate situations (e.g., casual greetings between friends)\n- Prefer contexts where the formality of ได้โปรด fits naturally (urgent requests, formal situations, asking strangers for help)\n\nCONTEXT EXPECTATIONS:\n- Sentences demonstrating polite interactions\n- Social situations requiring courtesy\n- Natural Thai politeness conventions\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - Each translation MUST convey the full meaning of its target-language sentence\n   - Preserve tone and register while using natural phrasing in USER_LANGUAGE\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, misleading, or unnatural\n\n2. LESSON SCOPE USAGE (CRITICAL):\n   - Each generated sentence MUST fit the lesson title, description, and source lesson metadata\n   - Important words and phrases implied by the lesson scope should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences drift away from the lesson scope\n   - Penalize if lesson-scope words or phrases are used incorrectly or out of context\n\n3. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n4. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Use appropriate register (formal/informal) for the context\n   - Penalize artificial, contrived, robotic, or textbook-like constructions\n\n5. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if the lesson scope naturally groups those situations together\n\n6. APPROPRIATE DIFFICULTY (CRITICAL):\n   - The model MUST infer difficulty from the chapter title, lesson title, lesson description, and source scope\n   - Beginner context (basic topics + simple source scope) → simple sentences (2-5 words)\n   - Intermediate context → medium sentences (4-8 words)\n   - Advanced context (complex topics + advanced vocabulary) → complex sentences allowed\n   - Penalize SEVERELY if beginner-level context produces complex sentences (compound sentences, subordinate clauses, long constructions)\n   - Penalize if advanced-level context produces only trivially simple sentences\n\n7. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Avoid semantic duplicates that express the same idea with superficial wording changes\n\n8. LANGUAGE SEPARATION (CRITICAL):\n   - Every sentence MUST be written entirely in TARGET_LANGUAGE\n   - Translations and explanations MUST be written in USER_LANGUAGE\n   - Penalize if languages are swapped or if USER_LANGUAGE words appear in a target-language sentence\n\n9. EXPLANATION QUALITY (required for every sentence):\n   - Each explanation MUST be a non-empty string in USER_LANGUAGE; null or empty explanations are invalid\n   - Explain why this specific sentence is structured this way in TARGET_LANGUAGE and how it differs from USER_LANGUAGE\n   - Focus on useful contrasts such as word order, grammar, word choice, false friends, or potentially confusing forms\n   - Grammar claims MUST describe the element's actual role in this sentence\n   - For non-Latin target scripts, every target-language word or phrase mentioned in the explanation MUST be immediately followed by its romanization in parentheses\n   - Do NOT expect a separate romanization field; the task does not generate one\n\n10. CLEAN OUTPUT FIELDS:\n    - The sentence and translation fields MUST contain only their respective text, with no parenthetical explanations, usage notes, grammar hints, or alternative phrasings\n    - Sentences and translations should avoid decorative terminal punctuation because they become word-bank tiles\n    - Penalize unnecessary punctuation on simple greetings, farewells, thanks, statements, labels, or short conversational chunks (e.g., \"Good morning!\" should be \"Good morning\"; \"See you later.\" should be \"See you later\")\n    - Do NOT penalize punctuation that changes meaning or is grammatically required, especially question marks for questions (e.g., \"How are you?\") and required target-language question punctuation (e.g., \"¿Cómo estás?\")\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that fit the lesson scope\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: translation accuracy, lesson-scope usage, grammatical correctness, naturalness, explanation quality, and difficulty appropriateness\n\n    ",
+  "judgedAt": "2026-07-10T18:58:26.186Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.8",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Simple, beginner-appropriate sentences all within the source scope (สวัสดี, ขอบคุณ, ขอโทษ, ได้โปรด, ลาก่อน). Politeness particles present, translations accurate and clean, romanizations in explanations. ได้โปรดรอ is natural; slight note that ช่วยพูดช้าๆ drifts a bit beyond core scope but still polite request.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Covers full scope with correct particles, accurate clean translations, good explanations with romanization. Two sentences carry question marks (appropriate for questions) but one ends with '?' after a required question—fine. สวัสดี...แล้วพบกันใหม่ slightly compound but short. Solid beginner output.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Mostly clean single-word/short phrases fitting scope, good explanations. However ได้โปรด alone as a bare 'Please' is not a full sentence, and สบายดีไหม/ไม่เป็นไร drift beyond source scope. Still beginner-appropriate and accurate.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Good particles and accurate translations, but several sentences drift beyond source scope (ขอ, เชิญนั่ง, ด้วยความยินดี, ไม่เป็นไร) and one uses a question mark on a longer question. Generally natural and beginner-level but scope creep is notable.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Clean, simple beginner sentences all within scope with accurate translations and romanized explanations. Fewer sentences but all correct; ได้โปรดช่วยผม natural. Strong and safe though slightly thin.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Covers scope with correct particles and accurate translations. However ได้โปรดรอสักครู่ has a romanization typo (raaw for รอ) and several phrases push toward intermediate length; still mostly appropriate and natural.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Multiple sentences violate beginner difficulty with compound/subordinate constructions (ลาก่อนแล้วพบกันใหม่, ขอโทษที่มาสาย, สวัสดี ยินดีที่ได้รู้จัก) and translations carry terminal periods on greetings/thanks, violating clean-field rules. Scope partly drifts too.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "This model provides an excellent variety of contexts that perfectly fit the beginner difficulty level (2-5 words). It successfully covers all source words while introducing natural phrasing for everyday situations, and romanizations are correctly formatted in the explanations. It misses a politeness particle on one formal announcement-style phrase, but overall product quality is exceptional.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Strong context diversity and accurate coverage of the source lesson metadata. It correctly avoids terminal punctuation in the English translations and provides great explanations with romanization. However, it drops polite particles in two sentences (S7 and S8) which are ideally expected in a basic politeness lesson.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "This model perfectly follows the instruction to include politeness particles in every sentence and outputs very natural phrases. However, it relies heavily on near-duplicates (S1/S2 and S3/S4) that only swap the male and female particles, which violates the negative constraint against repetitive sentence structures.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "The model generates appropriate beginner-level sentences and formats the output cleanly. Like Model A, it suffers from using near-duplicates (S1 and S7) and also misses a politeness particle on S3.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "This model only provides 6 sentences, reducing its usefulness as a full lesson. It misses politeness particles on two sentences, and combining the formal male pronoun 'ผม' without finishing the request with 'ครับ' (S5) is slightly unnatural.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "While most sentences are acceptable, S4 translates 'Please' as a standalone 'ได้โปรด'. In Thai, this word functions as a pre-verb auxiliary and cannot be used by itself as a complete sentence, representing an accuracy error.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This model fails several critical instructions. It omits required politeness particles on almost all of its sentences, making them sound inappropriately blunt for a politeness lesson. Additionally, it violates the clean-output rule by including terminal punctuation on simple statements and greetings.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Provides accurate translations, natural Thai politeness, varied social contexts, and consistently useful explanations with romanization. Nearly all items remain beginner-friendly, though the restroom question is slightly longer and more complex than the ideal range.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Strong coverage of all core expressions with accurate translations, appropriate particles, and clear contrastive explanations. Several greeting, thanks, apology, and request pairs are somewhat repetitive, and “Hello, teacher” is slightly unnatural in US English.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Concise, accurate, and tightly focused on the source vocabulary at an appropriate beginner level. The bare farewell and request would be more conventionally courteous with final particles, and some explanations offer limited grammatical contrast.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Translations are accurate, particles are generally handled well, and the sentences stay simple and relevant. Male/female versions of greetings and thanks are direct near-duplicates, while a few explanations are awkward or less specific to the exact sentence.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Covers the full core vocabulary with accurate translations and generally sound explanations. It includes a duplicate thank-you item and two constructions that are noticeably longer than the expected beginner range, reducing variety and difficulty fit.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Most expressions are accurate, simple, and relevant, with suitable politeness particles. However, ได้โปรด is presented as an isolated fragment, สบายดีไหม drifts somewhat from the specified vocabulary, and some explanations omit analysis of particles actually used in the sentence.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Although most translations convey the intended meanings, several sentences omit expected politeness particles and are too long or compound for this beginner lesson. The farewell construction is awkward, some explanations make questionable claims, and decorative translation punctuation is used throughout.",
+          "score": 4.5
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-sentences",
+  "testCaseId": "en-thai-politeness-1"
+}

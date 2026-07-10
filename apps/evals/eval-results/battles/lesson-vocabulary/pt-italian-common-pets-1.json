@@ -1,62 +1,80 @@
 {
-  "expectations": "\nLANGUAGE: Brazilian Portuguese output required (NOT English).\n\nTOPIC: Italian vocabulary for common pets - focused specifically on household pets and basic pet care terms.\n\nTOPIC SCOPE: This is a narrow, focused lesson. Valid vocabulary categories include common household pets and basic pet-related terms (care items, accessories).\n- Do NOT expect farm animals, wild animals, or zoo animals - those belong in separate lessons\n- Do NOT penalize for omitting any specific terms - assess only what IS provided\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Pet names are mistranslated (il cane=cachorro/cao, il gatto=gato, etc.)\n- Translations are semantically imprecise (e.g., translating a word for \"puppy/cub\" as \"pet\")\n- Non-standard loanwords are used (e.g., using English \"pet\" as standalone Italian vocabulary)\n- Vocabulary includes farm or wild animals (this lesson is specifically about pets)\n- Output is in English instead of Portuguese\n- Italian articles are missing from nouns (il cane, il gatto, not cane, gatto)\n- Grammatical gender is incorrect (masculine article with feminine noun or vice versa)\n\n\nEVALUATION CRITERIA:\n\n1. TOPIC-APPROPRIATE COVERAGE: The vocabulary list should cover the narrow lesson topic appropriately.\n   - Include words directly relevant to the specific lesson focus\n   - A narrow topic (like \"Ordering Coffee\") needs fewer words than a broad one\n   - Do NOT penalize for vocabulary count - focus on relevance and quality\n   - Do NOT expect exhaustive coverage of the broader domain (e.g., don't expect all food words for a coffee-ordering lesson)\n\n2. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - Each word-translation pair MUST be linguistically accurate\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - The translation must match the EXACT meaning - not a broader category or related concept\n   - If a translation is incorrect or semantically imprecise, this is a SEVERE error\n   - Grammatical gender must be correct (masculine nouns with masculine articles, feminine with feminine)\n\n3. TOPIC FOCUS (STRICT BOUNDARY ENFORCEMENT): Words must be INSIDE the lesson's specific scope. Penalize SEVERELY if:\n   - Vocabulary includes words from adjacent but separate topics (e.g., adjectives when the lesson is about nouns)\n   - Words drift to related but out-of-scope categories (e.g., wild animals for a pets lesson)\n   - The output includes vocabulary that belongs in a DIFFERENT lesson on a related topic\n   - Words are \"helpful additions\" that expand beyond the defined lesson boundary\n\n4. VOCABULARY QUALITY: Words should be practical and commonly used. Penalize if:\n   - Words are obscure, archaic, or rarely used in everyday speech\n   - Words include profanity, slurs, or offensive content\n   - Words use non-standard loanwords that are not common in the target language\n\n5. LANGUAGE CORRECTNESS: Output language must match NATIVE_LANGUAGE code.\n   - Translations should be in the learner's native language\n   - Words being tested should be in the target language\n   - Penalize if languages are mixed incorrectly\n\n6. GRAMMATICAL GENDER AND ARTICLES:\n   - For languages with grammatical gender, nouns MUST include articles\n   - German: \"die Mutter\", \"der Vater\", \"das Kind\" (not \"Mutter\", \"Vater\", \"Kind\")\n   - French: \"le pain\", \"la maison\" (not \"pain\", \"maison\")\n   - Spanish: \"el gato\", \"la casa\" (not \"gato\", \"casa\")\n   - Portuguese: \"o livro\", \"a mesa\" (not \"livro\", \"mesa\")\n   - Italian: \"il gatto\", \"la casa\" (not \"gatto\", \"casa\")\n   - Penalize if nouns are shown without their articles in gendered languages\n   - Penalize if the grammatical gender is WRONG (e.g., masculine article with feminine noun)\n\n7. NO DUPLICATES: The `word` field is the unique identifier - duplicates are determined by the word field ONLY, not translations. Penalize if:\n   - The same word appears multiple times in the `word` field (even with different translations)\n   - Near-duplicates exist (same word with minor formatting differences)\n   - Semantic duplicates exist (same concept repeated with different phrasing)\n   - A word appears twice because it has multiple valid translations (should appear once with most common translation)\n\n8. CLEAN WORD FIELD - NO PARENTHETICAL CONTENT: The word field must contain ONLY the vocabulary word. Penalize SEVERELY if:\n   - The word field contains parenthetical disambiguation like \"el café (la bebida)\"\n   - The word field contains usage notes, alternative meanings, or pronunciation hints in parentheses\n   - Any text in parentheses appears in the word field (this breaks text-to-speech)\n\n9. NO OVER-ENUMERATION OF VARIANTS: Vocabulary should be representative, not exhaustive. Penalize if:\n   - Multiple variants of the same base item are listed when 1-2 would suffice\n   - The list appears inflated with excessive sub-types of a single category\n   - A base concept is represented by 5+ specific variants instead of the base term plus 1-2 examples\n   - The vocabulary count seems artificially high due to listing every possible variant\n   NOTE: This does NOT mean penalize for having many words - penalize only when those words are redundant variants of the same concept. Distinct vocabulary items are fine.\n   NOTE: Distinct practical choices within a category are NOT over-enumeration. For example, different milk types (whole, skim, almond, oat) are genuinely different menu options a learner needs to know - not redundant variants of \"milk.\"\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific word choices - accept ANY valid vocabulary relevant to the topic\n- Do NOT penalize for not including words you might expect - only penalize for actual errors\n- Do NOT require specific vocabulary items by name\n- Do NOT expect a specific number of words - narrow topics naturally have fewer words\n- FOCUS ON: translation accuracy, topic relevance, no duplicates, clean word fields\n- Different valid vocabulary selections exist - assess the quality of what IS provided\n\n    ",
-  "judgedAt": "2026-05-24T18:16:00.803Z",
+  "expectations": "\nLANGUAGE: Brazilian Portuguese output required (NOT English).\n\nTOPIC: Italian vocabulary for common pets - focused specifically on household pets and basic pet care terms.\n\nTOPIC SCOPE: This is a narrow, focused lesson. Valid vocabulary categories include common household pets and basic pet-related terms (care items, accessories).\n- Do NOT expect farm animals, wild animals, or zoo animals - those belong in separate lessons\n- Do NOT penalize for omitting any specific terms - assess only what IS provided\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Pet names are mistranslated (il cane=cachorro/cao, il gatto=gato, etc.)\n- Translations are semantically imprecise (e.g., translating a word for \"puppy/cub\" as \"pet\")\n- Non-standard loanwords are used (e.g., using English \"pet\" as standalone Italian vocabulary)\n- Vocabulary includes farm or wild animals (this lesson is specifically about pets)\n- Output is in English instead of Portuguese\n- Italian articles are missing from nouns (il cane, il gatto, not cane, gatto)\n- Grammatical gender is incorrect (masculine article with feminine noun or vice versa)\n\n\nEVALUATION CRITERIA:\n\n1. TOPIC-APPROPRIATE COVERAGE: The vocabulary list should cover the narrow lesson topic appropriately.\n   - Include words directly relevant to the specific lesson focus\n   - A narrow topic (like \"Ordering Coffee\") needs fewer words than a broad one\n   - Do NOT penalize for vocabulary count - focus on relevance and quality\n   - Do NOT expect exhaustive coverage of the broader domain (e.g., don't expect all food words for a coffee-ordering lesson)\n\n2. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - Each word-translation pair MUST be linguistically accurate\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - The translation must match the EXACT meaning - not a broader category or related concept\n   - If a translation is incorrect or semantically imprecise, this is a SEVERE error\n   - Grammatical gender must be correct (masculine nouns with masculine articles, feminine with feminine)\n\n3. TOPIC FOCUS (STRICT BOUNDARY ENFORCEMENT): Words must be INSIDE the lesson's specific scope. Penalize SEVERELY if:\n   - Vocabulary includes words from adjacent but separate topics (e.g., adjectives when the lesson is about nouns)\n   - Words drift to related but out-of-scope categories (e.g., wild animals for a pets lesson)\n   - The output includes vocabulary that belongs in a DIFFERENT lesson on a related topic\n   - Words are \"helpful additions\" that expand beyond the defined lesson boundary\n\n4. VOCABULARY QUALITY: Words should be practical and commonly used. Penalize if:\n   - Words are obscure, archaic, or rarely used in everyday speech\n   - Words include profanity, slurs, or offensive content\n   - Words use non-standard loanwords that are not common in the target language\n\n5. LANGUAGE CORRECTNESS: Output language must match NATIVE_LANGUAGE code.\n   - Translations should be in the learner's native language\n   - Words being tested should be in the target language\n   - Penalize if languages are mixed incorrectly\n\n6. GRAMMATICAL GENDER AND ARTICLES:\n   - For languages with grammatical gender, nouns MUST include articles\n   - German: \"die Mutter\", \"der Vater\", \"das Kind\" (not \"Mutter\", \"Vater\", \"Kind\")\n   - French: \"le pain\", \"la maison\" (not \"pain\", \"maison\")\n   - Spanish: \"el gato\", \"la casa\" (not \"gato\", \"casa\")\n   - Portuguese: \"o livro\", \"a mesa\" (not \"livro\", \"mesa\")\n   - Italian: \"il gatto\", \"la casa\" (not \"gatto\", \"casa\")\n   - Penalize if nouns are shown without their articles in gendered languages\n   - Penalize if the grammatical gender is WRONG (e.g., masculine article with feminine noun)\n\n7. NO DUPLICATES: The `word` field is the unique identifier - duplicates are determined by the word field ONLY, not translations. Penalize if:\n   - The same word appears multiple times in the `word` field (even with different translations)\n   - Near-duplicates exist (same word with minor formatting differences)\n   - Semantic duplicates exist (same concept repeated with different phrasing)\n   - A word appears twice because it has multiple valid translations (should appear once with most common translation)\n\n8. CLEAN WORD FIELD - NO PARENTHETICAL CONTENT: The word field must contain ONLY the vocabulary word. Penalize SEVERELY if:\n   - The word field contains parenthetical disambiguation like \"el café (la bebida)\"\n   - The word field contains usage notes, alternative meanings, or pronunciation hints in parentheses\n   - Any text in parentheses appears in the word field (this breaks text-to-speech)\n\n9. CLEAN WORD FIELD - ONLY MEANINGFUL PUNCTUATION: Penalize unnecessary punctuation because vocabulary can become word-bank tiles.\n   - Simple greetings, farewells, thanks, short phrases, and conversational chunks should not include decorative terminal punctuation\n   - Examples: \"Good morning\" is better than \"Good morning!\"; \"See you later\" is better than \"See you later.\"\n   - Do NOT penalize punctuation that changes meaning or is grammatically required, especially question marks for question phrases\n\n10. NO OVER-ENUMERATION OF VARIANTS: Vocabulary should be representative, not exhaustive. Penalize if:\n   - Multiple variants of the same base item are listed when 1-2 would suffice\n   - The list appears inflated with excessive sub-types of a single category\n   - A base concept is represented by 5+ specific variants instead of the base term plus 1-2 examples\n   - The vocabulary count seems artificially high due to listing every possible variant\n   NOTE: This does NOT mean penalize for having many words - penalize only when those words are redundant variants of the same concept. Distinct vocabulary items are fine.\n   NOTE: Distinct practical choices within a category are NOT over-enumeration. For example, different milk types (whole, skim, almond, oat) are genuinely different menu options a learner needs to know - not redundant variants of \"milk.\"\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific word choices - accept ANY valid vocabulary relevant to the topic\n- Do NOT penalize for not including words you might expect - only penalize for actual errors\n- Do NOT require specific vocabulary items by name\n- Do NOT expect a specific number of words - narrow topics naturally have fewer words\n- FOCUS ON: translation accuracy, topic relevance, no duplicates, clean word fields\n- Different valid vocabulary selections exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-07-10T19:11:42.216Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.7",
+      "judgeId": "anthropic/claude-opus-4.8",
       "rankings": [
         {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "All translations accurate with correct Italian articles and gender. Stays on topic (pets + care items), no duplicates, clean word fields. 'il cucciolo' correctly translated as 'filhote'.",
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "All pet names accurate with correct genders and articles; distinguishes il collare (coleira) from il guinzaglio (guia) correctly. Care terms all in scope, no duplicates, clean word fields. La passeggiata (passeio) is borderline but acceptable pet-care term.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Accurate translations, correct genders, distinguishes collare/guinzaglio properly. Includes il vaccino and animale domestico which are reasonable pet-care terms. Clean fields, no duplicates.",
           "score": 9
         },
         {
           "anonymousId": "Model G",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Clean, accurate list of pets and care items with correct articles and genders. No duplicates or scope drift. Solid coverage without over-enumeration.",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Accurate pets and care items, correct genders, clean word fields, no duplicates. Le crocchette=ração seca is precise, il trasportino a good pet term. Fully in scope.",
           "score": 9
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "All accurate translations with correct articles/genders, distinguishes collare and guinzaglio, all pets and care items in scope. No duplicates, clean fields.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Accurate translations, correct genders, distinguishes collare/guinzaglio and le crocchette=ração. All in scope, clean fields, no duplicates.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "Accurate pets and care items, but labels il guinzaglio (leash/guia) as 'a coleira' which is imprecise—collare is the collar. Otherwise clean and in scope with correct genders.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Accurate and clean, all in scope. Same imprecision: il guinzaglio labeled 'a coleira' (should be guia/collare). Otherwise solid, no duplicates.",
+          "score": 7
         },
         {
           "anonymousId": "Model D",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Accurate translations with correct articles. Stays within pet scope with appropriate care items. Clean fields and no duplicates.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Comprehensive and accurate, all translations correct with proper articles. Stays on pets/care topic. Slightly long but items are distinct, not redundant variants.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Accurate translations and articles. Minor imprecision: 'la ciotola' translated as 'comedouro' is acceptable but 'tigela' is more standard. Otherwise clean and on-topic.",
-          "score": 8
+          "reasoning": "Mostly accurate with collare/guinzaglio correctly split. However il cucciolo=filhote is a puppy/cub term flagged as a semantic pitfall risk, though translated correctly here. In scope, clean fields.",
+          "score": 7
         },
         {
           "anonymousId": "Model F",
-          "modelId": "deepseek/deepseek-v4-pro",
-          "reasoning": "Translates 'il guinzaglio' as 'a coleira' which is imprecise—guinzaglio is the leash/guia, while collare is the collar. Otherwise accurate and on-topic.",
-          "score": 6
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Accurate translations, correct genders, clean fields. Il pesce rosso=peixinho dourado precise, collare/guinzaglio distinguished. Fully in scope, no duplicates.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Largely accurate and clean, but il padrone=o dono drifts to owner rather than pet vocabulary, and count is inflated though items are mostly distinct. Genders correct, collare/guinzaglio split.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "One entry has 'il guinzaglio' placed in the translation field instead of Portuguese—a clear language/field error. La vaccinazione and l'addestramento drift slightly. Otherwise accurate.",
+          "score": 5
         },
         {
           "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Same error as F: 'il guinzaglio' translated as 'a coleira' (should be guia/leash). Otherwise clean and on-topic but the mistranslation is a notable accuracy issue.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model C",
           "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Drifts beyond noun scope by including many verbs (passeggiare, nutrire, etc.) and body parts (zampa, coda, pelo). While useful, this expands beyond the focused pet vocabulary lesson into adjacent territory.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model I",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Contains a clear error: 'il guinzaglio' has the Italian word in the translation field instead of Portuguese. This is a language correctness failure that breaks the learning pair.",
+          "reasoning": "Includes verbs (passeggiare, nutrire, adottare) and body parts (zampa, coda, pelo) which are out-of-scope adjacent categories, plus il cibo mapped to ração. Severe scope drift penalty despite accurate translations.",
           "score": 4
         }
       ]
@@ -65,117 +83,153 @@
       "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model H",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Model H perfectly follows all instructions. The vocabulary provides highly relevant nouns encompassing pets, care items, and accessories. All translations are precise, and correct articles are consistently included.",
-          "score": 10
-        },
-        {
           "anonymousId": "Model A",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Model A provides an excellent selection of pets and accessories. The use of \"le crocchette\" for pet food is highly idiomatic and natural, and all translations are completely accurate with proper articles.",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "Provides an excellent, highly relevant list of household pets and basic care items. All nouns include the correct Italian definite articles and translations are perfectly accurate.",
           "score": 10
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Model G perfectly hits the expected topic scope with accurate translations. Proper Italian articles are included for all nouns, and the list of care items is highly relevant to the lesson.",
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Excellent vocabulary selection that fits the exact scope of the lesson. Includes a good variety of practical pet care terms with correct articles and accurate translations.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Provides a solid, accurate list of vocabulary perfectly aligned with the lesson topic. Translations and grammatical gender usage are flawless.",
           "score": 10
         },
         {
           "anonymousId": "Model D",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Model D provides a strong, accurate list of vocabulary that is perfectly aligned with the lesson's scope. Translations are correct, and all nouns include the necessary Italian articles.",
+          "reasoning": "Strong, focused vocabulary list containing appropriate pet and care terms. Grammatical rules are respected, and the translations are highly precise.",
           "score": 10
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Model B is entirely accurate and strictly follows the topic boundaries. Translations are correct, including well-chosen terms like \"comedouro\", and correct grammatical gender is applied throughout.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Model C contains accurate terminology but includes several verbs, whereas the topic scope strongly implies a noun-focused lesson (pets, care items, accessories). Mixing parts of speech represents a scope drift, leading to a penalty.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Model E contains a severe semantic mistranslation, pairing \"a coleira\" (collar) with \"il guinzaglio\" (leash). This directly violates the critical translation accuracy constraint.",
-          "score": 4
         },
         {
           "anonymousId": "Model F",
-          "modelId": "deepseek/deepseek-v4-pro",
-          "reasoning": "Model F incorrectly translates \"a coleira\" (collar) as \"il guinzaglio\" (leash). This is a severe translation accuracy error that significantly impacts the product quality.",
-          "score": 4
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Vocabulary accurately reflects common household pets and relevant accessories. Articles are correctly applied, and Portuguese translations are natural and correct.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Highly comprehensive and precise vocabulary list. Introduces practical terms like 'crocchette' and 'trasportino' with spot-on translations and correct Italian articles.",
+          "score": 10
         },
         {
           "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Perfectly adheres to the lesson constraints, offering a clean, accurate list of pet-related nouns with their proper definite articles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Exceptional fit for the prompt, offering relevant pet vocabulary and care terms. The language correctness and formatting are flawless.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Flawless execution. The vocabulary is practical, accurately translated, strictly focused on the core topic, and correctly uses grammatical gender.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Offers an extensive and highly practical list of pets and care items without over-enumerating. All terms are correctly formatted with Italian articles and accurate translations.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "While most of the vocabulary is correct, it suffers from scope drift by including animal body parts (zampa, coda, pelo) and verbs (passeggiare, abbaiare, etc.). The lesson instructions strictly define the topic boundary, and mixing nouns with verbs/unrelated sub-topics warrants a penalty.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
           "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Model I fails to translate one of the items entirely, presenting \"il guinzaglio\" in both the translation and target word fields. Leaving a word untranslated violates the language correctness and translation constraints.",
-          "score": 3
+          "reasoning": "Contains a severe translation error: 'il guinzaglio' is copied into the Portuguese translation field instead of being translated. Translation accuracy is a critical grading priority.",
+          "score": 4
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.5",
+      "judgeId": "openai/gpt-5.6-sol",
       "rankings": [
         {
           "anonymousId": "Model G",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Lista muito bem focada em animais de estimação comuns e itens básicos de cuidado, sem duplicatas ou desvios relevantes. As traduções estão corretas e todos os substantivos italianos aparecem com artigos adequados.",
-          "score": 9.5
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Lista muito precisa, prática e estritamente centrada em animais domésticos e acessórios de cuidado. Os artigos, gêneros e traduções estão corretos, com boa precisão em “le crocchette” como “ração seca”.",
+          "score": 10
         },
         {
-          "anonymousId": "Model H",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Cobertura ampla, prática e ainda dentro do escopo de pets e cuidados básicos, com artigos e gêneros corretos. Há alguns termos um pouco mais amplos, como “il padrone” e “l'animale domestico”, mas continuam relevantes e não prejudicam muito.",
-          "score": 9.2
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Vocabulário bem selecionado, preciso e estritamente ligado a pets e acessórios/cuidados. As traduções e artigos estão corretos; “le crocchette” como “ração” é aceitável, embora mais específico como ração seca.",
-          "score": 9
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Cobertura equilibrada de animais e cuidados, sem duplicatas ou desvios temáticos. As traduções são corretas, incluindo a distinção entre “il collare” e “il guinzaglio”.",
+          "score": 9.8
         },
         {
           "anonymousId": "Model D",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Lista focada e útil, com traduções corretas e bons termos de cuidados básicos. Usa alguns termos genéricos como “il pesce”, “l'uccello” e “il cibo”, mas eles ainda cabem no contexto de animais de estimação.",
-          "score": 8.8
+          "reasoning": "Vocabulário relevante e linguisticamente correto, com artigos e gêneros adequados. Termos como “il cucciolo”, “la cuccia” e os acessórios estão bem traduzidos e dentro do escopo.",
+          "score": 9.8
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Boa seleção de animais e itens de cuidado, com artigos corretos e sem desvios de escopo. Pequenas imprecisões existem, como “la ciotola” traduzido como “o comedouro” em vez de “a tigela”, mas o conjunto é sólido.",
-          "score": 8.2
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Lista limpa, focada e consistente, com traduções corretas e distinção adequada entre coleira e guia. “Il cibo per animali” como “ração” é natural no contexto brasileiro, embora um pouco menos literal.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Apresenta animais domésticos e termos básicos de cuidado com boa precisão e sem itens indevidos. Algumas traduções, como “cama para animais” e “ração”, são contextuais em vez de totalmente literais, mas continuam adequadas.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Lista ampla, prática e majoritariamente precisa, sem redundância excessiva. “Il padrone” é pertinente, mas um pouco mais periférico ao foco em animais e itens de cuidado do que as seleções dos modelos superiores.",
+          "score": 9.4
         },
         {
           "anonymousId": "Model I",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "A maioria dos itens é relevante e corretamente traduzida, com bons animais domésticos e termos de cuidado. Porém há um erro grave de idioma/tradução em “il guinzaglio”, cuja tradução foi deixada em italiano, o que prejudica bastante a qualidade.",
-          "score": 6.6
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "A lista é curta, focada e quase toda correta, mas contém um erro semântico importante: “il guinzaglio” significa “a guia”, não “a coleira”. Como a precisão de tradução é crítica, esse erro pesa bastante.",
-          "score": 6.3
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Quase todos os pares são corretos e diretamente úteis para o tema. “Le crocchette” significa mais precisamente ração seca ou grãos de ração, portanto “ração” perde uma pequena nuance.",
+          "score": 9.1
         },
         {
           "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Mantém excelente foco e usa corretamente artigos e gêneros. “La ciotola” significa literalmente tigela, de modo que “comedouro” é uma tradução funcional, mas semanticamente menos exata.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "A maior parte da lista é correta, relevante e bem formada. Contudo, “il guinzaglio” foi deixado em italiano no campo de tradução, violando de forma clara a exigência de português brasileiro.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
           "modelId": "deepseek/deepseek-v4-pro",
-          "reasoning": "Tem vários itens adequados e traduções corretas, mas também erra gravemente “il guinzaglio” como “a coleira”. Além disso, alguns termos são mais genéricos, como “l'acqua” e “il cibo”, embora ainda relacionados a cuidados.",
-          "score": 6.1
+          "reasoning": "A lista é relevante e quase toda correta, mas traduz “il guinzaglio” como “coleira”; o significado correto é “guia”. Esse erro em um termo básico de cuidado é grave e pode ensinar uma distinção errada.",
+          "score": 5.8
         },
         {
           "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Tem boa seleção temática e estrutura limpa, porém também traduz incorretamente “il guinzaglio” como “coleira” em vez de “guia”. Como a precisão de cada par é o critério principal, esse erro reduz bastante a qualidade.",
+          "score": 5.8
+        },
+        {
+          "anonymousId": "Model E",
           "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Inclui muitos itens corretos, mas se afasta do escopo estreito ao adicionar várias ações, sons de animais e partes do corpo, que parecem pertencer a lições adjacentes. Também traduz “il cibo” como “a ração”, que é semanticamente impreciso, pois significa apenas “a comida”.",
-          "score": 5.5
+          "reasoning": "“Il cibo” significa comida, não especificamente ração, constituindo uma imprecisão importante. A lista também se afasta do foco estreito ao incluir várias partes do corpo, sons e verbos, além da redundância conceitual entre filhote e gatinho.",
+          "score": 4
         }
       ]
     }

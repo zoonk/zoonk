@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - Should define what frontend development is (creating user interfaces)\n      - Should NOT list technical tools/technologies (HTML, CSS, JavaScript, etc.)\n      - Should specify career opportunities\n      - Should be in US English\n\n      \n  - Must be **1-3 sentences** maximum\n  - Must be written in the specified language (en, pt, or es)\n  - Must go **straight to the point** — no fluff, fillers, or unnecessary words\n  - Must NEVER use words like \"learn\", \"understand\", \"explore\", \"introduction to\", \"basics of\", \"comprehensive guide to\", \"master\", etc.\n  - Must define **what the topic is**\n  - Must explain **what learners will gain** from the course\n  - Must convey **why this is important**\n  - Must **avoid technical jargon** — write for someone with no prior knowledge\n  - Must focus on outcomes and career opportunities rather than specific tools/technologies\n  - For professional topics: Must specify **career opportunities** and **work environments** (e.g., \"work at tech companies, agencies, or as a freelancer\")\n  - For languages: Must reference CEFR levels (A1 to C2) and communication abilities\n  - For hobbies/pop culture: Should focus on comprehensive coverage without career implications\n  - Should be **concise**, **clear**, and **specific**\n\n    ",
+  "judgedAt": "2026-07-10T05:09:53.938Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-fable-5",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Defines frontend development clearly in plain language, specifies careers and work environments, and avoids technical jargon entirely. Concise three sentences with no forbidden words and no tool listings.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Clear definition, accessible language, and specific career opportunities across companies, agencies, and independent work. Slight buzzwords ('seamless digital experiences') but overall tight and jargon-free.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Compact two-sentence description covering definition, learner gains, and diverse career paths. Minor density in the second sentence but no jargon violations or forbidden words.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Meets all requirements with a clear definition, outcome statement, and specific roles and work environments. Tone is slightly stiff and impersonal ('Proficiency enables the creation') compared to top outputs.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Good definition and career specifics, but 'clean UI structure' introduces an acronym/jargon for a no-prior-knowledge audience, and the fragment sentence structure is slightly awkward.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "deepseek/deepseek-v4-flash",
+          "reasoning": "Solid definition and career coverage, but 'performant' is technical jargon inappropriate for beginners. Otherwise concise and compliant.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Covers definition, gains, and detailed career roles, but 'user interface engineering' and role titles like 'UI developer' lean into jargon for a novice audience. Slightly buzzword-heavy.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Longest output with filler phrasing ('progressing from foundational concepts to advanced techniques') that violates the straight-to-the-point requirement, plus jargon like 'performant.' Career coverage is strong but the verbosity weakens it.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Perfectly meets all constraints. It is clear, concise, jargon-free, specifies appropriate career environments, and directly explains what the topic is and the skills learners will gain.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "deepseek/deepseek-v4-flash",
+          "reasoning": "Excellent adherence to all instructions. It defines the topic well using the requested terminology and cleanly maps out the outcomes and career opportunities without listing specific technical tools.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Very strong response that accurately defines the topic and hits all career and outcome requirements. However, it uses a slight sentence fragment ('Covers responsive...'), which makes it marginally less polished than the top models.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Effectively defines the topic, explains importance, and outlines career paths without jargon. The sudden shift to the imperative tense ('Build responsive...') reads slightly like marketing copy rather than a direct statement of learner gains, but it is still highly effective.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Meets most expectations and clearly outlines career opportunities. However, it uses the phrase 'user interface engineering,' which borders on technical jargon for a beginner audience with no prior knowledge.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Satisfies the constraints well but suffers from slightly repetitive phrasing ('interactive elements... interact with directly'). It also abstractly describes what the course 'focuses on' rather than explicitly stating what the learner will gain.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Successfully avoids forbidden words and tools, and includes the required career contexts. However, the tone is overly academic and passive ('Proficiency enables the creation...'), making it less approachable for complete beginners.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Violates the negative constraint to avoid fluff and fillers. The phrase 'progressing from foundational concepts to advanced techniques' is unnecessary filler that detracts from the 'straight to the point' requirement.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Clearly defines frontend development, states practical outcomes, and names both career opportunities and work environments without listing technologies. It is concise, grammatical, and beginner-friendly, though “responsive” and “accessible” are mildly specialized terms.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Provides a concise definition, useful course outcomes, and several relevant work environments, including freelance work. “High-performing” and “development practices” are somewhat vague, and the employed career roles could be more specific.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Accurately defines the field, explains its value to user experience, and identifies frontend developer opportunities across companies, agencies, and freelance work. The sentence fragment beginning with “Covers” and the abbreviation “UI” slightly reduce clarity for beginners.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "deepseek/deepseek-v4-flash",
+          "reasoning": "Defines frontend development as building user interfaces and connects course outcomes to user engagement and relevant careers. “Performant” is technical jargon, and the freelance career phrasing is slightly awkward.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Directly describes the field, relevant outcomes, and opportunities in companies, agencies, or independent work. The second and third sentences are fragments, and terms such as “responsiveness” may be unclear to complete beginners.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Covers the definition, importance, learner outcomes, career role, and work environments without naming specific technologies. It is less direct than the stronger options and includes unnecessary course-progression language plus jargon such as “performant interfaces.”",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Explains the topic, useful skills, job titles, and multiple professional work environments. However, phrases such as “specialization,” “user interface engineering,” and “seamless digital experiences” introduce avoidable jargon and abstraction.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Includes outcomes, job titles, and relevant work environments in three concise sentences. The definition says frontend development “defines” an interface rather than creates it, while “proficiency,” “UI developer,” and the final sentence fragment reduce beginner clarity and polish.",
+          "score": 6.8
+        }
+      ]
+    }
+  ],
+  "taskId": "course-description",
+  "testCaseId": "en-frontend-development-1"
+}

@@ -1,0 +1,149 @@
+{
+  "expectations": "\nLANGUAGE: Latin American Spanish output required for translations (NOT English).\n\nTOPIC: Japanese sentences for time expressions - using time-related vocabulary.\n\nSOURCE LESSON METADATA: basic time expressions such as 今日, 明日, 昨日, 朝, 夜.\nGenerated sentences should naturally cover this source scope.\n\nDIFFICULTY: Beginner-to-intermediate level. Chapter \"Time and Daily Life\" + basic time words = foundational vocabulary but with context for short sentences.\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Sentences drift away from the source lesson scope\n- Time expressions are used incorrectly in context\n- Translations are in English instead of Spanish\n\nCONTEXT EXPECTATIONS:\n- Sentences about daily routines and schedules\n- References to different times of day\n- Natural Japanese time expressions\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - Each translation MUST convey the full meaning of its target-language sentence\n   - Preserve tone and register while using natural phrasing in USER_LANGUAGE\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, misleading, or unnatural\n\n2. LESSON SCOPE USAGE (CRITICAL):\n   - Each generated sentence MUST fit the lesson title, description, and source lesson metadata\n   - Important words and phrases implied by the lesson scope should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences drift away from the lesson scope\n   - Penalize if lesson-scope words or phrases are used incorrectly or out of context\n\n3. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n4. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Use appropriate register (formal/informal) for the context\n   - Penalize artificial, contrived, robotic, or textbook-like constructions\n\n5. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if the lesson scope naturally groups those situations together\n\n6. APPROPRIATE DIFFICULTY (CRITICAL):\n   - The model MUST infer difficulty from the chapter title, lesson title, lesson description, and source scope\n   - Beginner context (basic topics + simple source scope) → simple sentences (2-5 words)\n   - Intermediate context → medium sentences (4-8 words)\n   - Advanced context (complex topics + advanced vocabulary) → complex sentences allowed\n   - Penalize SEVERELY if beginner-level context produces complex sentences (compound sentences, subordinate clauses, long constructions)\n   - Penalize if advanced-level context produces only trivially simple sentences\n\n7. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Avoid semantic duplicates that express the same idea with superficial wording changes\n\n8. LANGUAGE SEPARATION (CRITICAL):\n   - Every sentence MUST be written entirely in TARGET_LANGUAGE\n   - Translations and explanations MUST be written in USER_LANGUAGE\n   - Penalize if languages are swapped or if USER_LANGUAGE words appear in a target-language sentence\n\n9. EXPLANATION QUALITY (required for every sentence):\n   - Each explanation MUST be a non-empty string in USER_LANGUAGE; null or empty explanations are invalid\n   - Explain why this specific sentence is structured this way in TARGET_LANGUAGE and how it differs from USER_LANGUAGE\n   - Focus on useful contrasts such as word order, grammar, word choice, false friends, or potentially confusing forms\n   - Grammar claims MUST describe the element's actual role in this sentence\n   - For non-Latin target scripts, every target-language word or phrase mentioned in the explanation MUST be immediately followed by its romanization in parentheses\n   - Do NOT expect a separate romanization field; the task does not generate one\n\n10. CLEAN OUTPUT FIELDS:\n    - The sentence and translation fields MUST contain only their respective text, with no parenthetical explanations, usage notes, grammar hints, or alternative phrasings\n    - Sentences and translations should avoid decorative terminal punctuation because they become word-bank tiles\n    - Penalize unnecessary punctuation on simple greetings, farewells, thanks, statements, labels, or short conversational chunks (e.g., \"Good morning!\" should be \"Good morning\"; \"See you later.\" should be \"See you later\")\n    - Do NOT penalize punctuation that changes meaning or is grammatically required, especially question marks for questions (e.g., \"How are you?\") and required target-language question punctuation (e.g., \"¿Cómo estás?\")\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that fit the lesson scope\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: translation accuracy, lesson-scope usage, grammatical correctness, naturalness, explanation quality, and difficulty appropriateness\n\n    ",
+  "judgedAt": "2026-07-10T18:58:32.676Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.8",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "All sentences use core time vocabulary correctly with accurate Spanish translations and solid explanations covering particle contrasts. Romanization is provided but without kana (only romaji in parentheses), a minor deviation from the strict requirement to follow each target word with romanization—still acceptable. Good difficulty level and variety including questions.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Strong, natural sentences with accurate translations and excellent explanations noting register and Latin American phrasing. Includes 今夜 and 毎朝 which are slightly beyond the listed source scope but remain within time expressions. Romanization uses romaji only, lacking kana; some sentences are slightly compound but appropriate for beginner-intermediate.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Accurate translations and explanations with full furigana plus romanization, best meeting the romanization requirement. Some sentences add extra time detail (七時に, 六時に) that slightly extends scope but stays coherent; a couple are a bit long for beginner level. Overall high quality and clean.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Correct sentences and accurate translations well within scope; explanations are clear and pedagogical. Romanization uses romaji only in parentheses without kana. Difficulty is appropriate and includes a question; translations like 'En la noche' are natural.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Mostly accurate but has an error: 朝ごはんを食べます translated as 'Como el desayuno' omits the morning-time meaning, and the explanation wrongly claims で marks instrument when を is used. 明日は雨です translated 'Hoy está lloviendo' mixes today/tomorrow—actually says 今日は雨です, translation okay but 東京 goes slightly beyond scope. Some accuracy slips.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Correct and natural sentences with good explanations and full romanization. Fewer sentences (six) but all valid and within scope; translations accurate. Solid though less coverage variety than top models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Accurate sentences within scope with clear explanations and correct grammar notes. Only five sentences and romaji-only romanization, but quality is high and translations natural.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Flawless execution. The sentences are highly natural, and the explanations brilliantly contrast the use of the particle 'ni' with specific times versus relative times like 'hoy', which is a crucial beginner concept. All formatting rules are strictly followed.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Excellent quality overall. The model provides very natural phrasing in both Japanese and Spanish, completely adheres to the clean output rules, and formats the romanization perfectly in the explanations.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Very strong output. The sentences are appropriate and accurately translated. Adding the hiragana reading alongside the romanization in parentheses is a great pedagogical touch, though phrasing like '今日、朝' is slightly less cohesive than combined forms.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Solid execution with clean formatting and clear grammar explanations. The model perfectly adheres to all constraints, including punctuation rules and romanization formatting.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good variety of sentences and accurate translations. However, including Spanish translations inside the romanization parentheses (e.g., '(shimasu - hacer)') slightly clutters the strictly requested formatting.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Acceptable sentences, but the explanations suffer from unnatural code-switching. Using '日本語 (nihongo)' as the subject of a Spanish sentence instead of saying 'el japonés' is awkward and poorly phrased for the user.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Violates the explicit romanization formatting rule. By placing the target-language words inside the parentheses (e.g., '(雨です, ame desu)'), it fails to place the romanization immediately after the mentioned Japanese word.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Excellent coverage of core and closely related time expressions, with natural Japanese, accurate Latin American Spanish translations, and consistently useful romanized explanations. Minor Spanish phrasing such as «Hoy es día libre» could be more idiomatic, but meaning remains clear.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Strong, varied set of concise daily-life sentences with accurate grammar, appropriate difficulty, and high-quality explanations. The main weakness is translating 寝ます as «te duermes» rather than the more precise «te acuestas» in the final question.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Accurate, natural, beginner-friendly sentences that stay tightly within daily schedules and time vocabulary. Some forms and translations, especially 今日の夜 and repeated «en la noche», are valid but slightly less idiomatic than available alternatives.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Provides broad contextual coverage, accurate translations, and especially detailed explanations with romanization. A few Japanese expressions, such as 今日、朝七時 and repeated 今日の夜 or 昨日の夜, are somewhat less natural, and some sentences are slightly more elaborate than necessary.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "The sentences are concise, grammatical, relevant, and supported by clear Spanish explanations. Omitting a comma or time particle in forms such as 朝コーヒーを飲みます and 夜本を読みます makes them less polished and potentially harder for beginners to parse.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Mostly accurate and appropriately simple, with useful distinctions between 明日 and 朝. However, 朝、ご飯を食べます is misleadingly translated as «Como arroz por la mañana» rather than referring more generally to eating breakfast/a meal, and 今日の朝 is less idiomatic than 今朝.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "The output remains on topic and most Japanese sentences are usable, but several explanations and translations are flawed. It incorrectly discusses a nonexistent で in 朝ごはんを食べます, gives the unnatural «Como el desayuno», and makes inaccurate claims about Spanish word order and 雨です.",
+          "score": 5.3
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-sentences",
+  "testCaseId": "es-japanese-time-1"
+}

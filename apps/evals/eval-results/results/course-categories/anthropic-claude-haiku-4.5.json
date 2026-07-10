@@ -8,7 +8,151 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n      - MUST include 'math'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n\n    ",
+        "expected": { "categories": ["arts"] },
+        "id": "en-watercolor-painting-1",
+        "userInput": { "courseTitle": "Watercolor Painting Techniques" }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Expected categories `business`. Generated categories `business`, `economics`. Unexpected `economics`.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected categories `business`. Generated categories `business`, `economics`. Unexpected `economics`.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected categories `business`. Generated categories `business`, `economics`. Unexpected `economics`.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": { "categories": ["business"] },
+        "id": "en-small-business-operations-1",
+        "userInput": { "courseTitle": "Small Business Operations Management" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["communication"] },
+        "id": "en-public-speaking-1",
+        "userInput": { "courseTitle": "Public Speaking Fundamentals" }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Expected categories `culture`. Generated categories `culture`, `communication`. Unexpected `communication`.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected categories `culture`. Generated categories `culture`, `communication`. Unexpected `communication`.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected categories `culture`. Generated categories `culture`, `communication`. Unexpected `communication`.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": { "categories": ["culture"] },
+        "id": "en-japanese-cultural-traditions-1",
+        "userInput": { "courseTitle": "Japanese Cultural Traditions and Etiquette" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["economics"] },
+        "id": "en-microeconomics-1",
+        "userInput": { "courseTitle": "Microeconomics: Supply, Demand, and Market Equilibrium" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["engineering"] },
+        "id": "pt-structural-engineering-1",
+        "userInput": { "courseTitle": "Engenharia Estrutural: Projeto de Vigas de Concreto Armado" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["geography"] },
+        "id": "es-world-geography-1",
+        "userInput": { "courseTitle": "Geografía Mundial: Países, Capitales y Regiones Físicas" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["health"] },
+        "id": "en-first-aid-cpr-1",
+        "userInput": { "courseTitle": "First Aid and CPR" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["history"] },
+        "id": "es-historia-de-roma-1",
+        "userInput": { "courseTitle": "Historia de Roma" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["law"] },
+        "id": "pt-contract-law-1",
+        "userInput": { "courseTitle": "Direito Contratual: Formação, Inadimplemento e Remédios" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["math"] },
         "id": "en-calculus-1",
         "userInput": { "courseTitle": "Calculus" }
       }
@@ -20,53 +164,259 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n      - MUST include 'history'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n\n    ",
-        "id": "es-historia-de-roma-1",
-        "userInput": { "courseTitle": "Historia de Roma" }
+        "expected": { "categories": ["science"] },
+        "id": "en-organic-chemistry-1",
+        "userInput": { "courseTitle": "Organic Chemistry: Reactions and Molecular Structure" }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Expected categories `society`. Generated categories `society`, `culture`. Unexpected `culture`.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected categories `society`. Generated categories `society`, `culture`. Unexpected `culture`.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected categories `society`. Generated categories `society`, `culture`. Unexpected `culture`.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": { "categories": ["society"] },
+        "id": "en-sociology-1",
+        "userInput": { "courseTitle": "Sociology: Social Institutions and Inequality" }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Expected categories `tech`. Generated categories `tech`, `engineering`. Unexpected `engineering`.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected categories `tech`. Generated categories `tech`, `engineering`. Unexpected `engineering`.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected categories `tech`. Generated categories `tech`, `engineering`. Unexpected `engineering`.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": { "categories": ["tech"] },
+        "id": "en-linux-system-administration-1",
+        "userInput": { "courseTitle": "Linux System Administration" }
       }
     },
     {
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "The result includes an unnecessary secondary category: 'communication' is not clearly central to the likely learning goals of a course titled 'Spanish Literature'. Based on the title and expectations, 'arts' and/or 'culture' fit well, but 'communication' appears anchored more to the language surface term 'Spanish' than to the course's primary domain. This slightly reduces precision in category assignment.",
-          "kind": "minorErrors",
-          "score": 8.5
-        },
-        {
-          "conclusion": "The categorization would be stronger if it limited the output to the most central domains, likely 'arts' as primary and optionally 'culture' as secondary. Removing 'communication' would better satisfy the rule to add secondary categories only when central to course goals.",
-          "kind": "potentialImprovements",
-          "score": 8.5
-        }
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n      - SHOULD include 'arts' and/or 'culture'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n\n    ",
-        "id": "en-spanish-literature-strict-rule-1",
-        "userInput": { "courseTitle": "Spanish Literature" }
+        "expected": { "categories": ["business", "communication"] },
+        "id": "en-business-communication-1",
+        "userInput": {
+          "courseTitle": "Business Communication: Writing Proposals and Presenting to Clients"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["economics", "engineering"] },
+        "id": "en-engineering-economics-1",
+        "userInput": {
+          "courseTitle": "Engineering Economics: Cost Analysis for Infrastructure Projects"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["arts", "science"] },
+        "id": "en-art-conservation-science-1",
+        "userInput": {
+          "courseTitle": "Art Conservation Science: Pigment Chemistry and Painting Restoration"
+        }
       }
     },
     {
       "steps": [
         {
-          "conclusion": "None. The selected category is from the allowed fixed set, and there is no major factual or instruction-breaking error severe enough to make the result unusable. While the choice may be debatable given the expectation to include culture and/or society, classifying 'Linguistics' under 'communication' is still plausibly related to the subject and not a severe failure.",
+          "conclusion": "Expected categories `health`, `math`. Generated categories `health`, `math`, `science`. Unexpected `science`.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8.67
         },
         {
-          "conclusion": "The response likely misses the stated expectation that the course SHOULD include 'culture' and/or 'society'. For a course titled 'Linguistics', 'society' and possibly 'culture' are strong candidates, and returning only 'communication' does not align especially well with anchoring on likely learning goals of language as a social/cultural phenomenon. It also does not provide a secondary category despite the prompt suggesting one when central.",
+          "conclusion": "Expected categories `health`, `math`. Generated categories `health`, `math`, `science`. Unexpected `science`.",
           "kind": "minorErrors",
-          "score": 7.8
+          "score": 8.67
         },
         {
-          "conclusion": "A better answer would likely include 'society' as the primary or secondary category, and possibly 'culture' if the course framing supports it, since the expectations explicitly call for culture and/or society. The categorization could also more clearly reflect the functional domain of linguistics beyond general communication.",
+          "conclusion": "Expected categories `health`, `math`. Generated categories `health`, `math`, `science`. Unexpected `science`.",
           "kind": "potentialImprovements",
-          "score": 7.6
+          "score": 8.67
         }
       ],
       "testCase": {
-        "expectations": "\n      - SHOULD include 'culture' and/or 'society'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n\n    ",
-        "id": "en-linguistics-1",
-        "userInput": { "courseTitle": "Linguistics" }
+        "expected": { "categories": ["health", "math"] },
+        "id": "en-public-health-statistics-1",
+        "userInput": {
+          "courseTitle": "Statistics for Public Health: Rates, Risk Ratios, and Confidence Intervals"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["geography", "tech"] },
+        "id": "en-geographic-information-systems-1",
+        "userInput": { "courseTitle": "Geographic Information Systems: Spatial Analysis with QGIS" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["law", "tech"] },
+        "id": "en-cybersecurity-law-1",
+        "userInput": { "courseTitle": "Cybersecurity Law: Technical Controls and Legal Compliance" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["arts", "history"] },
+        "id": "en-history-of-painting-1",
+        "userInput": { "courseTitle": "History of Painting: Renaissance to Impressionism" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["culture", "geography", "society"] },
+        "id": "en-cultural-geography-1",
+        "userInput": { "courseTitle": "Cultural Geography: Migration, Place, and Social Identity" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["math"] },
+        "id": "en-law-of-sines-1",
+        "userInput": { "courseTitle": "The Law of Sines and Cosines" }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Expected categories `economics`. Generated categories `economics`, `business`. Unexpected `business`.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected categories `economics`. Generated categories `economics`, `business`. Unexpected `business`.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected categories `economics`. Generated categories `economics`, `business`. Unexpected `business`.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": { "categories": ["economics"] },
+        "id": "en-business-cycles-1",
+        "userInput": {
+          "courseTitle": "Business Cycles: Recessions, Inflation, and Monetary Policy"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Expected categories `arts`. Generated categories `arts`, `culture`. Unexpected `culture`.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected categories `arts`. Generated categories `arts`, `culture`. Unexpected `culture`.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected categories `arts`. Generated categories `arts`, `culture`. Unexpected `culture`.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": { "categories": ["arts"] },
+        "id": "en-science-fiction-illustration-1",
+        "userInput": { "courseTitle": "Science Fiction Illustration: Characters and Alien Worlds" }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Expected categories `tech`. Generated categories `tech`, `engineering`. Unexpected `engineering`.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected categories `tech`. Generated categories `tech`, `engineering`. Unexpected `engineering`.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected categories `tech`. Generated categories `tech`, `engineering`. Unexpected `engineering`.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": { "categories": ["tech"] },
+        "id": "en-art-of-debugging-1",
+        "userInput": { "courseTitle": "The Art of Debugging Software" }
       }
     }
   ],

@@ -1,0 +1,149 @@
+{
+  "expectations": "\nLANGUAGE: English output required for translations.\n\nTOPIC: Portuguese sentences for emotions and feelings - using emotion vocabulary.\n\nSOURCE LESSON METADATA: emotion and physical-state expressions such as feliz, triste, cansado, com fome, com sede.\nGenerated sentences should naturally cover this source scope.\n\nDIFFICULTY: Beginner level. Chapter \"How Are You Feeling?\" + basic emotion/state vocabulary = foundational topic.\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Sentences drift away from the source lesson scope\n- Estar vs ser usage is incorrect for states (estar feliz, not ser feliz for temporary states)\n- Gender agreement is wrong (cansado/cansada)\n- Translations don't match the Portuguese sentences\n\nCONTEXT EXPECTATIONS:\n- Sentences expressing how someone feels\n- Various situations causing different emotions\n- Natural emotional expressions in Portuguese\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - Each translation MUST convey the full meaning of its target-language sentence\n   - Preserve tone and register while using natural phrasing in USER_LANGUAGE\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, misleading, or unnatural\n\n2. LESSON SCOPE USAGE (CRITICAL):\n   - Each generated sentence MUST fit the lesson title, description, and source lesson metadata\n   - Important words and phrases implied by the lesson scope should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences drift away from the lesson scope\n   - Penalize if lesson-scope words or phrases are used incorrectly or out of context\n\n3. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n4. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Use appropriate register (formal/informal) for the context\n   - Penalize artificial, contrived, robotic, or textbook-like constructions\n\n5. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if the lesson scope naturally groups those situations together\n\n6. APPROPRIATE DIFFICULTY (CRITICAL):\n   - The model MUST infer difficulty from the chapter title, lesson title, lesson description, and source scope\n   - Beginner context (basic topics + simple source scope) → simple sentences (2-5 words)\n   - Intermediate context → medium sentences (4-8 words)\n   - Advanced context (complex topics + advanced vocabulary) → complex sentences allowed\n   - Penalize SEVERELY if beginner-level context produces complex sentences (compound sentences, subordinate clauses, long constructions)\n   - Penalize if advanced-level context produces only trivially simple sentences\n\n7. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Avoid semantic duplicates that express the same idea with superficial wording changes\n\n8. LANGUAGE SEPARATION (CRITICAL):\n   - Every sentence MUST be written entirely in TARGET_LANGUAGE\n   - Translations and explanations MUST be written in USER_LANGUAGE\n   - Penalize if languages are swapped or if USER_LANGUAGE words appear in a target-language sentence\n\n9. EXPLANATION QUALITY (required for every sentence):\n   - Each explanation MUST be a non-empty string in USER_LANGUAGE; null or empty explanations are invalid\n   - Explain why this specific sentence is structured this way in TARGET_LANGUAGE and how it differs from USER_LANGUAGE\n   - Focus on useful contrasts such as word order, grammar, word choice, false friends, or potentially confusing forms\n   - Grammar claims MUST describe the element's actual role in this sentence\n   - For non-Latin target scripts, every target-language word or phrase mentioned in the explanation MUST be immediately followed by its romanization in parentheses\n   - Do NOT expect a separate romanization field; the task does not generate one\n\n10. CLEAN OUTPUT FIELDS:\n    - The sentence and translation fields MUST contain only their respective text, with no parenthetical explanations, usage notes, grammar hints, or alternative phrasings\n    - Sentences and translations should avoid decorative terminal punctuation because they become word-bank tiles\n    - Penalize unnecessary punctuation on simple greetings, farewells, thanks, statements, labels, or short conversational chunks (e.g., \"Good morning!\" should be \"Good morning\"; \"See you later.\" should be \"See you later\")\n    - Do NOT penalize punctuation that changes meaning or is grammatically required, especially question marks for questions (e.g., \"How are you?\") and required target-language question punctuation (e.g., \"¿Cómo estás?\")\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that fit the lesson scope\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: translation accuracy, lesson-scope usage, grammatical correctness, naturalness, explanation quality, and difficulty appropriateness\n\n    ",
+  "judgedAt": "2026-07-10T18:58:30.466Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.8",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "All sentences correctly use estar with proper gender agreement and accurate translations, staying tightly on emotion/state scope. Difficulty is appropriately beginner (mostly 2-4 words); the longest 'Depois do trabalho, estou cansado' is a mild stretch but acceptable. Explanations are accurate and clean output fields.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Strong set with correct estar usage, gender agreement, and accurate natural translations, all within scope. Sentences are appropriately short for beginner. Explanations are accurate and helpful; minor: 'I'm' apostrophes fine.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Accurate estar usage, correct translations, and clean scope coverage with beginner-appropriate lengths. Explanations are solid though occasionally verbose. 'Estou feliz por você' slightly beyond core state vocab but still emotion-related.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Correct grammar, gender agreement, and accurate translations well within scope at beginner length. Explanations are accurate and clean. Fewer sentences but all high quality.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Mostly accurate and on-scope with correct estar and gender agreement. However the explanation for 'Por que você está triste?' wrongly claims 'está' comes before 'você' when it does not, a factual grammar error.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Introduces 'com frio' (cold), which drifts beyond the source scope of feliz/triste/cansado/fome/sede. Several sentences are longer compound constructions ('depois do trabalho') pushing beyond beginner brevity, though grammar is correct.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Includes out-of-scope items like 'contente' and reflexive 'se sentindo', plus 'Fico feliz quando você está aqui' is a subordinate-clause compound sentence violating beginner difficulty. 'A gente está cansada' has debatable gender agreement. Explanations are engaging but scope/difficulty violations hurt.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Provides an excellent variety of contexts while strictly adhering to the beginner length constraints. The explanations are highly insightful and accurately contrast Portuguese structures with English. The output perfectly aligns with all formatting and scope instructions.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Delivers highly natural sentences with outstanding explanations, such as detailing why 'muita fome' is used instead of 'very hungry'. The context diversity is excellent, though one sentence slightly exceeds the target 2-5 word length for beginners.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Produces a perfectly clean and accurate set of sentences that fit the beginner scope and length constraints perfectly. The explanations are solid and contrast well with English. It ranks slightly below the top models only because it offers slightly less subject and context diversity.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Offers a good variety of sentences with accurate translations and clean formatting. The explanations are generally strong, though one explanation is slightly clunky in its comparison of English and Portuguese syntax. It meets expectations well.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Features good context diversity and strictly follows the formatting rules. However, it incorrectly claims in one explanation that English uses the auxiliary 'do' to ask 'Are you hungry?', which is a factual error regarding English copula inversion.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "The translations and explanations are accurate and the output formatting is clean. However, it noticeably fails the context diversity guideline, starting eight of the ten sentences with the exact same 'Estou...' structure.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Directly triggers a severe penalty by including a complex sentence with a subordinate clause ('Fico feliz quando você está aqui') in an absolute beginner context. Additionally, its explanation for 'a gente está cansada' misses a crucial gender agreement nuance.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Consistently accurate, natural, beginner-appropriate sentences with strong explanations of estar, gender agreement, and com fome/com sede. It also offers good variety in subjects, states, and question forms without meaningful errors.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "All sentences and translations are accurate, in scope, and appropriately short, with useful beginner-level grammar explanations. The hunger examples are somewhat repetitive, and the claim that questions require raised intonation is slightly oversimplified.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "The set is accurate, varied, natural, and well matched to the beginner lesson, including several core emotions and physical states. One explanation incorrectly says está comes before você in “Por que você está triste?”, despite the sentence showing the opposite order.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Translations, agreement, and use of estar are generally excellent, with useful variation through negation, questions, and different subjects. Several happiness and hunger examples are near-duplicates, and the explanation invoking English auxiliary do is misleading for a question formed with “are.”",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Every sentence is grammatically sound, naturally translated, and clearly within the lesson scope, with generally helpful explanations. However, the set is notably repetitive, including near-duplicate first-person happy/sad, tired/very tired, and singular/plural hunger examples.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The Portuguese and translations are accurate, and the explanations handle estar com and gender agreement well. Several sentences exceed the expected 2–5-word beginner range, especially the eight-word after-work sentence, while “com frio” modestly expands beyond the listed source vocabulary.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Most individual sentences are natural and correctly translated, with useful Brazilian Portuguese notes. However, the set drifts into more advanced constructions and vocabulary such as a gente, se sentindo, fico, and a subordinate quando clause, making it poorly calibrated to the required foundational 2–5-word difficulty; “A gente está cansada” is also context-dependent and awkward without a clear female referent.",
+          "score": 5.8
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-sentences",
+  "testCaseId": "en-portuguese-emotions-1"
+}

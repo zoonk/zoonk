@@ -1,0 +1,241 @@
+{
+  "generatedAt": "2026-07-10T17:17:59.740Z",
+  "modelId": "google/gemini-3.1-flash-lite",
+  "outputs": [
+    {
+      "duration": 1045.3687089979649,
+      "inputTokens": 114,
+      "output": "{\n  \"categories\": [\n    \"arts\"\n  ]\n}",
+      "outputTokens": 6,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-watercolor-painting-1",
+      "userPrompt": "\n    COURSE_TITLE: Watercolor Painting Techniques\n  "
+    },
+    {
+      "duration": 945.6097500026226,
+      "inputTokens": 115,
+      "output": "{\n  \"categories\": [\n    \"business\"\n  ]\n}",
+      "outputTokens": 6,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-small-business-operations-1",
+      "userPrompt": "\n    COURSE_TITLE: Small Business Operations Management\n  "
+    },
+    {
+      "duration": 879.261375002563,
+      "inputTokens": 114,
+      "output": "{\n  \"categories\": [\n    \"communication\"\n  ]\n}",
+      "outputTokens": 11,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-public-speaking-1",
+      "userPrompt": "\n    COURSE_TITLE: Public Speaking Fundamentals\n  "
+    },
+    {
+      "duration": 890.8951249942183,
+      "inputTokens": 117,
+      "output": "{\n  \"categories\": [\n    \"culture\"\n  ]\n}",
+      "outputTokens": 17,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-japanese-cultural-traditions-1",
+      "userPrompt": "\n    COURSE_TITLE: Japanese Cultural Traditions and Etiquette\n  "
+    },
+    {
+      "duration": 814.3647920042276,
+      "inputTokens": 121,
+      "output": "{\n  \"categories\": [\n    \"economics\"\n  ]\n}",
+      "outputTokens": 11,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-microeconomics-1",
+      "userPrompt": "\n    COURSE_TITLE: Microeconomics: Supply, Demand, and Market Equilibrium\n  "
+    },
+    {
+      "duration": 826.3727499991655,
+      "inputTokens": 126,
+      "output": "{\n  \"categories\": [\n    \"engineering\"\n  ]\n}",
+      "outputTokens": 17,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "pt-structural-engineering-1",
+      "userPrompt": "\n    COURSE_TITLE: Engenharia Estrutural: Projeto de Vigas de Concreto Armado\n  "
+    },
+    {
+      "duration": 904.9556660056114,
+      "inputTokens": 126,
+      "output": "{\n  \"categories\": [\n    \"geography\"\n  ]\n}",
+      "outputTokens": 7,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "es-world-geography-1",
+      "userPrompt": "\n    COURSE_TITLE: Geografía Mundial: Países, Capitales y Regiones Físicas\n  "
+    },
+    {
+      "duration": 880.4011249989271,
+      "inputTokens": 115,
+      "output": "{\n  \"categories\": [\n    \"health\"\n  ]\n}",
+      "outputTokens": 6,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-first-aid-cpr-1",
+      "userPrompt": "\n    COURSE_TITLE: First Aid and CPR\n  "
+    },
+    {
+      "duration": 1038.8679170012474,
+      "inputTokens": 114,
+      "output": "{\n  \"categories\": [\n    \"history\"\n  ]\n}",
+      "outputTokens": 17,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "es-historia-de-roma-1",
+      "userPrompt": "\n    COURSE_TITLE: Historia de Roma\n  "
+    },
+    {
+      "duration": 815.4747909978032,
+      "inputTokens": 127,
+      "output": "{\n  \"categories\": [\n    \"law\"\n  ]\n}",
+      "outputTokens": 11,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "pt-contract-law-1",
+      "userPrompt": "\n    COURSE_TITLE: Direito Contratual: Formação, Inadimplemento e Remédios\n  "
+    },
+    {
+      "duration": 899.6527500003576,
+      "inputTokens": 112,
+      "output": "{\n  \"categories\": [\n    \"math\"\n  ]\n}",
+      "outputTokens": 11,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-calculus-1",
+      "userPrompt": "\n    COURSE_TITLE: Calculus\n  "
+    },
+    {
+      "duration": 1036.6478329971433,
+      "inputTokens": 118,
+      "output": "{\n  \"categories\": [\n    \"science\"\n  ]\n}",
+      "outputTokens": 11,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-organic-chemistry-1",
+      "userPrompt": "\n    COURSE_TITLE: Organic Chemistry: Reactions and Molecular Structure\n  "
+    },
+    {
+      "duration": 869.7317499965429,
+      "inputTokens": 117,
+      "output": "{\n  \"categories\": [\n    \"society\"\n  ]\n}",
+      "outputTokens": 17,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-sociology-1",
+      "userPrompt": "\n    COURSE_TITLE: Sociology: Social Institutions and Inequality\n  "
+    },
+    {
+      "duration": 814.0732080042362,
+      "inputTokens": 114,
+      "output": "{\n  \"categories\": [\n    \"tech\"\n  ]\n}",
+      "outputTokens": 17,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-linux-system-administration-1",
+      "userPrompt": "\n    COURSE_TITLE: Linux System Administration\n  "
+    },
+    {
+      "duration": 807.7960000038147,
+      "inputTokens": 121,
+      "output": "{\n  \"categories\": [\n    \"business\",\n    \"communication\"\n  ]\n}",
+      "outputTokens": 9,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-business-communication-1",
+      "userPrompt": "\n    COURSE_TITLE: Business Communication: Writing Proposals and Presenting to Clients\n  "
+    },
+    {
+      "duration": 873.9441249966621,
+      "inputTokens": 119,
+      "output": "{\n  \"categories\": [\n    \"engineering\",\n    \"economics\"\n  ]\n}",
+      "outputTokens": 14,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-engineering-economics-1",
+      "userPrompt": "\n    COURSE_TITLE: Engineering Economics: Cost Analysis for Infrastructure Projects\n  "
+    },
+    {
+      "duration": 870.9955829977989,
+      "inputTokens": 121,
+      "output": "{\n  \"categories\": [\n    \"science\",\n    \"arts\"\n  ]\n}",
+      "outputTokens": 14,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-art-conservation-science-1",
+      "userPrompt": "\n    COURSE_TITLE: Art Conservation Science: Pigment Chemistry and Painting Restoration\n  "
+    },
+    {
+      "duration": 935.5728750005364,
+      "inputTokens": 125,
+      "output": "{\n  \"categories\": [\n    \"health\",\n    \"math\"\n  ]\n}",
+      "outputTokens": 22,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-public-health-statistics-1",
+      "userPrompt": "\n    COURSE_TITLE: Statistics for Public Health: Rates, Risk Ratios, and Confidence Intervals\n  "
+    },
+    {
+      "duration": 936.0018330067396,
+      "inputTokens": 120,
+      "output": "{\n  \"categories\": [\n    \"geography\",\n    \"tech\"\n  ]\n}",
+      "outputTokens": 23,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-geographic-information-systems-1",
+      "userPrompt": "\n    COURSE_TITLE: Geographic Information Systems: Spatial Analysis with QGIS\n  "
+    },
+    {
+      "duration": 1036.4497500061989,
+      "inputTokens": 119,
+      "output": "{\n  \"categories\": [\n    \"law\",\n    \"tech\"\n  ]\n}",
+      "outputTokens": 14,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-cybersecurity-law-1",
+      "userPrompt": "\n    COURSE_TITLE: Cybersecurity Law: Technical Controls and Legal Compliance\n  "
+    },
+    {
+      "duration": 865.7977500036359,
+      "inputTokens": 119,
+      "output": "{\n  \"categories\": [\n    \"arts\",\n    \"history\"\n  ]\n}",
+      "outputTokens": 14,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-history-of-painting-1",
+      "userPrompt": "\n    COURSE_TITLE: History of Painting: Renaissance to Impressionism\n  "
+    },
+    {
+      "duration": 820.562125004828,
+      "inputTokens": 121,
+      "output": "{\n  \"categories\": [\n    \"geography\",\n    \"culture\"\n  ]\n}",
+      "outputTokens": 10,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-cultural-geography-1",
+      "userPrompt": "\n    COURSE_TITLE: Cultural Geography: Migration, Place, and Social Identity\n  "
+    },
+    {
+      "duration": 868.8012090027332,
+      "inputTokens": 119,
+      "output": "{\n  \"categories\": [\n    \"math\"\n  ]\n}",
+      "outputTokens": 17,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-law-of-sines-1",
+      "userPrompt": "\n    COURSE_TITLE: The Law of Sines and Cosines\n  "
+    },
+    {
+      "duration": 870.1535829976201,
+      "inputTokens": 122,
+      "output": "{\n  \"categories\": [\n    \"economics\"\n  ]\n}",
+      "outputTokens": 17,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-business-cycles-1",
+      "userPrompt": "\n    COURSE_TITLE: Business Cycles: Recessions, Inflation, and Monetary Policy\n  "
+    },
+    {
+      "duration": 897.6016659960151,
+      "inputTokens": 119,
+      "output": "{\n  \"categories\": [\n    \"arts\",\n    \"culture\"\n  ]\n}",
+      "outputTokens": 14,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-science-fiction-illustration-1",
+      "userPrompt": "\n    COURSE_TITLE: Science Fiction Illustration: Characters and Alien Worlds\n  "
+    },
+    {
+      "duration": 1032.6872920021415,
+      "inputTokens": 117,
+      "output": "{\n  \"categories\": [\n    \"tech\",\n    \"engineering\"\n  ]\n}",
+      "outputTokens": 14,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-art-of-debugging-1",
+      "userPrompt": "\n    COURSE_TITLE: The Art of Debugging Software\n  "
+    }
+  ],
+  "taskId": "course-categories"
+}

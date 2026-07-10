@@ -10,10 +10,12 @@ export function LeaderboardTabs({
   taskId,
   results,
   battleEntries,
+  supportsJudgeMode,
 }: {
   taskId: string;
   results: TaskEvalResults[];
   battleEntries: BattleLeaderboardEntry[];
+  supportsJudgeMode: boolean;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -21,6 +23,10 @@ export function LeaderboardTabs({
 
   const hasRegularResults = results.length > 0;
   const hasBattleResults = battleEntries.length > 0;
+
+  if (!supportsJudgeMode) {
+    return hasRegularResults ? <Leaderboard results={results} taskId={taskId} /> : null;
+  }
 
   if (!(hasRegularResults || hasBattleResults)) {
     return null;

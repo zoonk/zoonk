@@ -1,57 +1,75 @@
 {
-  "expectations": "\n      - MUST be in Latin American Spanish\n      - Should introduce urbanismo as a field about how cities shape daily life through housing, transport, public space, zoning, services, climate, safety, inequality, culture, or local participation\n      - Should include concrete everyday hooks such as why a street feels walkable, how transit changes opportunity, why parks matter, how housing rules affect neighborhoods, or how climate risks change planning\n      - Should not collapse the field into architecture alone, generic activism, or abstract public policy slogans\n      - Should mention realistic paths such as planning teams, mobility projects, housing policy, community organizations, local government, maps, data, design, research, or neighborhood advocacy without promising authority or jobs\n\n      \n  - Must be written in the specified language\n  - Must include exactly one chapter object with title and description\n  - Must include 3-5 lessons\n  - Every lesson must be an explanation lesson plan, not a practice, quiz, review, capstone, project, or summary\n  - The chapter and lessons must feel like a quick guide to the field, not the first normal technical chapter\n  - Must make the field feel concrete, useful, and interesting for a true beginner\n  - Must include realistic opportunities, careers, roles, projects, communities, or everyday uses connected to the field\n  - Must stay easy enough for a first encounter and avoid deep prerequisites\n  - Must be specific to the course topic, not generic learning motivation\n  - For non-English cases, must not mix in English field, learner, or opportunity labels; translate them naturally\n  - Must not promise salaries, credentials, jobs, fluency, mastery, or guaranteed outcomes\n\n    ",
-  "judgedAt": "2026-07-02T12:06:04.742Z",
+  "expectations": "\n      - MUST be in Latin American Spanish\n      - Should introduce urbanismo as a field about how cities shape daily life through housing, transport, public space, zoning, services, climate, safety, inequality, culture, or local participation\n      - Should include concrete everyday hooks such as why a street feels walkable, how transit changes opportunity, why parks matter, how housing rules affect neighborhoods, or how climate risks change planning\n      - Should not collapse the field into architecture alone, generic activism, or abstract public policy slogans\n      - Should mention realistic paths such as planning teams, mobility projects, housing policy, community organizations, local government, maps, data, design, research, or neighborhood advocacy without promising authority or jobs\n\n      \n  - Must be written in the specified language\n  - Must include exactly one chapter object with title and description\n  - Must include 3-5 lessons\n  - Every lesson must be an explanation lesson plan, not a practice, quiz, review, capstone, project, or summary\n  - The chapter and lessons must feel like a quick guide to the field, not the first normal technical chapter\n  - Must make the field feel concrete, useful, and interesting for a true beginner\n  - Must include realistic opportunities, careers, roles, projects, communities, or everyday uses connected to the field\n  - Must stay easy enough for a first encounter and avoid deep prerequisites\n  - Must be specific to the course topic, not generic learning motivation\n  - Must not include lessons about the course itself, the curriculum, the next chapter, the learning path, or how the course goes deeper\n  - Every lesson title must name the subject, a subject-specific concept, a concrete field use, or a field-specific role clearly enough that the course topic is identifiable from the title alone\n  - Generic meta titles such as \"How this course goes deeper\", \"What this course will help you do\", \"Your path forward\", or translated equivalents are a major issue even when the description mentions the course topic\n  - For non-English cases, must not mix in English field, learner, or opportunity labels; translate them naturally\n  - Must not promise salaries, credentials, jobs, fluency, mastery, or guaranteed outcomes\n\n    ",
+  "judgedAt": "2026-07-10T05:45:55.226Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.7",
+      "judgeId": "anthropic/claude-fable-5",
       "rankings": [
         {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-opus-4.8",
-          "reasoning": "Excellent concrete hooks (banquetas, cruces peatonales, kids going to school), broad career mentions including collectives and officials, and clear framing as a pre-course overview. Uses Latin American Spanish naturally (banqueta, coche) and covers many rubric areas.",
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Excellent Latin American Spanish (e.g., 'banqueta'), five explanation lessons with clearly subject-specific titles, strong concrete hooks (street width, transit access, green space and climate), and a realistic roles lesson without promises. No meta or course references at all.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Five well-scoped explanation lessons with topic-identifiable titles, vivid everyday hooks (walkability, location of services, urban heat), and a realistic careers/paths lesson mentioning municipalities, design studios, data, and neighborhood organizations. No meta content or promises.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Clean structure with five subject-specific lesson titles, concrete examples (density, sidewalk widening, bike lanes), a trade-offs lesson showing maps/data/participation, and a realistic roles lesson. Fully free of course-meta references and outcome promises.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Four strong explanation lessons whose titles all clearly name urbanism concepts (streets, maps and data, professionals), with concrete hooks and realistic paths without promises. Slightly less coverage than the five-lesson leaders but equally clean.",
           "score": 9
         },
         {
           "anonymousId": "Model H",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Strong coverage of housing, transit, public space, climate, and inequality with concrete daily hooks. Careers span mapping, mobility, participation, research. Clean Latin American Spanish and appropriate beginner scope.",
-          "score": 9
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Concrete and engaging content including the specific '15-minute city' concept, and no meta lessons or promises. However, several titles ('Cómo el entorno decide cómo te mueves', 'El trabajo de planificar el futuro común') are weak at identifying the field on their own, and careers coverage is thin.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Good beginner-friendly lessons covering the field, daily life, key ideas, and roles, but the chapter description drifts into course-meta ('El curso completo te llevará paso a paso...'). Some titles like 'La ciudad en la vida diaria' are only loosely field-identifying.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Reasonable topic-specific titles and decent hooks about public space and pedestrian streets, but the final lesson description injects course-meta ('qué herramientas usarás en este curso'). Content is thinner and less concrete than the top outputs, with limited realistic-path detail.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Decent opening lessons, but the final lesson is largely about the course ('este curso te dará las herramientas') and edges toward promised outcomes ('Al dominar los principios'). Titles like 'Mucho más que arquitectura' and 'Tu papel en el futuro de la ciudad' don't clearly identify the field on their own.",
+          "score": 5
         },
         {
           "anonymousId": "Model D",
           "modelId": "anthropic/claude-sonnet-5",
-          "reasoning": "Clear beginner framing with concrete hooks (bus stops, tree-lined streets, neighborhood kids) and realistic roles including negotiating with neighbors. Well-structured as an intro chapter without overpromising.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Solid concrete examples and mentions data, participation, health, sustainability among realistic paths. Good beginner framing though slightly more abstract in places than the top entries.",
-          "score": 8
+          "reasoning": "First four lessons are concrete and beginner-friendly, but the fifth lesson 'Qué encontrarás en este curso' is an explicit course-meta lesson, a major violation, and the chapter description also references the course. Otherwise solid content undermined by this issue.",
+          "score": 4
         },
         {
           "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Good panoramic intro with concrete daily impacts and realistic career paths in planning, mobility, housing, community. Slightly generic in places but hits most rubric points cleanly.",
-          "score": 8
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Strong, vivid everyday hooks and a good roles lesson, but the final lesson 'Hacia dónde te lleva este curso' is a prohibited course-meta lesson describing the curriculum. The chapter description also frames itself relative to the course.",
+          "score": 4
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Concrete hooks with benches, sidewalks, and street redesign. Mentions planners, architects, and activists. Slightly thinner on zoning/climate/inequality but stays beginner-friendly and specific.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Reasonable hooks like 15-minute city and sidewalk width, but only briefly touches careers and lacks depth on housing, participation, or inequality. Adequate but shallow.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3.1-flash-lite",
-          "reasoning": "Somewhat abstract with phrases like 'organismo vivo' and 'escala humana' without much concreteness. Career mention is thin, and it leans on slogans more than everyday hooks.",
-          "score": 5
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Good field framing and concrete hooks in the first four lessons, but the fifth lesson 'Cómo este curso te ayudará a mirar mejor la ciudad' is a clear meta lesson about the course, and the chapter description also promises the course will give tools. Major expectation violation.",
+          "score": 4
         }
       ]
     },
@@ -59,105 +77,141 @@
       "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model H",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Exceptional output. Fully embraces Latin American Spanish with terms like 'banqueta' and 'bus'. Integrates highly concrete everyday hooks and realistic career paths without overpromising, perfectly matching the beginner-friendly explanation format.",
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Perfectly meets all requirements with highly concrete everyday hooks and realistic paths. Avoids any meta-lessons, and every title clearly identifies the topic for a true beginner.",
           "score": 10
         },
         {
-          "anonymousId": "Model E",
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Outstanding alignment with the prompt's constraints, including excellent hooks and realistic career mentions without promising jobs. Titles are perfectly recognizable as urbanism, and it contains zero meta-lessons.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Exceptional execution that uses engaging, concrete concepts like mapping and street design. It avoids meta-lessons completely while keeping all titles strong and independently identifiable.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Flawless adherence to guidelines, using urbanism concepts clearly in every title. It provides a beginner-friendly overview of the field without relying on meta-course commentary.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
           "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Meets all task expectations with a highly comprehensive overview of the field, relatable hooks, and realistic career paths. The lessons are perfectly formatted as explanations without relying on meta-course overviews, though the chapter description is slightly lengthy.",
-          "score": 9
+          "reasoning": "Solid output that successfully avoids meta-lessons and provides good everyday hooks. It scores slightly lower than top models because some lesson titles, like 'Ideas que hacen funcionar una ciudad', are mildly generic.",
+          "score": 8
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Strong output with excellent Latin American localization and concrete examples of how urbanism affects daily life. The realistic paths are well-integrated, though the final lesson leans slightly into a meta-course overview.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-opus-4.8",
-          "reasoning": "Excellent use of concrete hooks and natural Latin American Spanish. It effectively connects urban design to daily routines and mentions realistic roles. The final lesson acts slightly like a course syllabus, but it fits the introductory vibe well.",
-          "score": 9
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Provides good concepts like the 15-minute city and avoids meta-lessons entirely. However, titles like 'Más allá de calles y edificios' fail the requirement to be identifiable as the course topic from the title alone.",
+          "score": 6
         },
         {
           "anonymousId": "Model D",
           "modelId": "anthropic/claude-sonnet-5",
-          "reasoning": "Strong output that makes the field accessible and highlights realistic roles. The localization is neutral rather than distinctly Latin American, and the final lesson is a meta-overview of the course, keeping it slightly below the top models.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Acceptable, but relies slightly on buzzwords like 'la ciudad de los 15 minutos' rather than purely everyday beginner hooks. Localization is mostly neutral ('acera'), and the career paths are less diverse than requested.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "An acceptable introduction to the topic, but it feels a bit superficial compared to the others. The career paths are somewhat limited, and the localization lacks a distinct Latin American flavor.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3.1-flash-lite",
-          "reasoning": "Poor output due to a direct violation of negative constraints. It explicitly promises mastery ('Al dominar los principios...'), which was strictly forbidden. Otherwise, the content is decent but less localized.",
+          "reasoning": "Contains a dedicated meta-lesson ('Qué encontrarás en este curso') which directly violates the strict negative constraint against lessons about the curriculum.",
           "score": 4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Includes a meta-lesson about the learning path ('Hacia dónde te lleva este curso'), triggering a major issue penalty as defined by the expectations.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Embeds meta-course commentary about tools used in the course within the description of lesson 4, violating the rule against learning path references.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Dedicates the final lesson entirely to how the course will help the learner, explicitly violating the major negative constraint against meta-lessons.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-flash-lite",
+          "reasoning": "Contains a meta-lesson about the course and explicitly promises mastery ('Al dominar los principios'), violating multiple major negative constraints.",
+          "score": 3
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.5",
+      "judgeId": "openai/gpt-5.6-sol",
       "rankings": [
         {
-          "anonymousId": "Model H",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Cumple de forma muy completa: presenta el urbanismo como lectura y acción sobre vivienda, movilidad, espacio público, normas, servicios, clima, seguridad y vida comunitaria. Incluye ganchos cotidianos concretos y caminos realistas como planes barriales, mapas, vivienda, gestión ambiental, participación, diseño e investigación sin prometer resultados.",
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Ofrece una introducción completa y concreta que conecta vivienda, movilidad, servicios, calles, normas, datos, participación y clima. Incluye funciones y proyectos realistas, con títulos específicos y sin contenido metacurricular.",
           "score": 10
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Muy sólido y específico: conecta calles, vivienda, transporte, servicios, seguridad, convivencia, ambiente, datos y participación con la vida diaria. Incluye ejemplos cotidianos claros y oportunidades realistas, aunque el cierre sobre el curso es un poco más genérico que los mejores.",
-          "score": 9
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Presenta el urbanismo como un campo interdisciplinario y muestra usos muy concretos de mapas, datos, movilidad, vivienda y adaptación climática. Las oportunidades profesionales y comunitarias son realistas, variadas y apropiadas para principiantes.",
+          "score": 9.8
         },
         {
-          "anonymousId": "Model E",
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Explica con claridad cómo calles, transporte, servicios y áreas verdes afectan la seguridad, el acceso, la salud y el clima. El cierre ofrece una gama sólida de ámbitos, organizaciones y proyectos urbanos sin hacer promesas indebidas.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Es accesible, específico y rico en ejemplos cotidianos sobre calles, distancias, transporte, parques y oportunidades. También muestra colaboración profesional y comunitaria de forma realista, aunque incorpora menos herramientas como mapas o normas que los primeros puestos.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
           "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Ofrece una buena vista panorámica del campo, con vivienda, transporte, espacio público, ambiente, economía, convivencia y trabajo comunitario. Es concreto y útil para principiantes, aunque la descripción es algo extensa y menos enfocada en riesgos climáticos o desigualdad específica.",
-          "score": 9
+          "reasoning": "Cubre bien la vida cotidiana, conceptos urbanos y caminos reales en planeación, movilidad, vivienda, gobierno y trabajo comunitario. Pierde calidad por la frase metacurricular sobre lo que hará “el curso completo” y por algunos títulos menos específicos.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Incluye buenos ganchos sobre proximidad, caminabilidad, vivienda, movilidad y cambio climático, y deja claro que el campo va más allá de la arquitectura. Sin embargo, ofrece menos variedad de roles y herramientas, algunos títulos son genéricos y afirmar que los urbanistas “resuelven crisis” resulta algo excesivo.",
+          "score": 7.6
         },
         {
           "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Los ejemplos de espacio público y rediseño peatonal son concretos, y menciona planificadores, arquitectos y activismo vecinal. Su alcance es más estrecho, generaliza sobre las ciudades “más modernas” y la última lección deriva parcialmente hacia las herramientas del curso.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Las primeras cuatro lecciones forman una guía urbana fuerte, concreta y amplia, con buenos ejemplos cotidianos y áreas de aplicación. La quinta es una lección explícitamente metacurricular con un título genérico sobre cómo ayudará el curso, una infracción importante de las expectativas.",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model E",
           "modelId": "anthropic/claude-opus-4.8",
-          "reasoning": "Es claro, atractivo y muy cotidiano, con buenos ejemplos de banquetas, cruces, mapas, densidad, movilidad y participación. Pierde algo de precisión al decir que el urbanismo “decide” y se enfoca más en diseño que en políticas, servicios, clima o desigualdad.",
-          "score": 8
+          "reasoning": "Tiene ejemplos cotidianos atractivos y presenta varios actores urbanos y formas de participación. No obstante, dedica una lección completa al recorrido del curso, usa un título metacurricular prohibido y en ocasiones simplifica en exceso quién “decide” la ciudad.",
+          "score": 5.6
         },
         {
           "anonymousId": "Model D",
           "modelId": "anthropic/claude-sonnet-5",
-          "reasoning": "Funciona bien como introducción rápida y usa ejemplos cotidianos de parques, calles, paradas y rutinas. Sin embargo, cubre menos dimensiones del urbanismo —como vivienda, servicios, desigualdad, clima o datos— y tiende a presentar el campo como diseño de lugares más que como un sistema amplio.",
-          "score": 7
+          "reasoning": "Las lecciones centrales introducen bien las calles, el transporte, la rutina diaria y algunos roles urbanos. La última lección trata únicamente de lo que ofrece el curso, y otros títulos como “Una idea sorprendente” no identifican suficientemente el tema por sí solos.",
+          "score": 5.2
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Es una introducción clara y breve, con buenos ganchos sobre caminabilidad, transporte, vivienda y cambio climático. Aun así, ofrece pocas rutas realistas de participación o trabajo y queda algo más abstracto y limitado en alcance que las mejores respuestas.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Incluye ejemplos accesibles sobre parques, aceras, transporte público y roles como planificadores o activistas vecinales. Pero es más estrecho, algo normativo sobre “urbes más modernas”, y cubre poco vivienda, servicios, reglas urbanas, clima o desigualdad.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model C",
+          "anonymousId": "Model A",
           "modelId": "google/gemini-3.1-flash-lite",
-          "reasoning": "Está en español y evita reducir el urbanismo solo a arquitectura, pero es más abstracto y menos concreto que los demás. Además, promete “dominar” principios y ofrece pocas oportunidades o caminos realistas vinculados al campo.",
-          "score": 5
+          "reasoning": "Aclara que el urbanismo no es solo arquitectura e incluye caminabilidad, transporte y áreas verdes. Aun así, varios títulos son vagos, parte del contenido es abstracto o discutible, y la última lección es metacurricular, promete herramientas y usa el lenguaje de “dominar” principios.",
+          "score": 4.8
         }
       ]
     }

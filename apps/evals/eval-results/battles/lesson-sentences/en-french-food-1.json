@@ -1,0 +1,149 @@
+{
+  "expectations": "\nLANGUAGE: English output required for translations.\n\nTOPIC: French sentences for food and dining - using food-related vocabulary.\n\nSOURCE LESSON METADATA: food and dining nouns such as le pain, le fromage, le vin, la soupe, le dessert.\nGenerated sentences should naturally cover this source scope.\n\nDIFFICULTY: Beginner-to-intermediate level. Chapter \"Food and Meals\" + common food nouns = beginner vocabulary, but dining contexts allow slightly longer sentences.\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Sentences drift away from the source lesson scope\n- Food items are used in unrealistic contexts\n- Gender agreement is incorrect (le/la must match the noun)\n- Translations don't accurately convey the French meaning\n\nCONTEXT EXPECTATIONS:\n- Sentences about ordering, eating, or discussing food\n- Restaurant or home dining situations\n- Natural food-related conversations\n\n\nEVALUATION CRITERIA:\n\n1. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - Each translation MUST convey the full meaning of its target-language sentence\n   - Preserve tone and register while using natural phrasing in USER_LANGUAGE\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, misleading, or unnatural\n\n2. LESSON SCOPE USAGE (CRITICAL):\n   - Each generated sentence MUST fit the lesson title, description, and source lesson metadata\n   - Important words and phrases implied by the lesson scope should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences drift away from the lesson scope\n   - Penalize if lesson-scope words or phrases are used incorrectly or out of context\n\n3. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n4. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Use appropriate register (formal/informal) for the context\n   - Penalize artificial, contrived, robotic, or textbook-like constructions\n\n5. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if the lesson scope naturally groups those situations together\n\n6. APPROPRIATE DIFFICULTY (CRITICAL):\n   - The model MUST infer difficulty from the chapter title, lesson title, lesson description, and source scope\n   - Beginner context (basic topics + simple source scope) → simple sentences (2-5 words)\n   - Intermediate context → medium sentences (4-8 words)\n   - Advanced context (complex topics + advanced vocabulary) → complex sentences allowed\n   - Penalize SEVERELY if beginner-level context produces complex sentences (compound sentences, subordinate clauses, long constructions)\n   - Penalize if advanced-level context produces only trivially simple sentences\n\n7. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Avoid semantic duplicates that express the same idea with superficial wording changes\n\n8. LANGUAGE SEPARATION (CRITICAL):\n   - Every sentence MUST be written entirely in TARGET_LANGUAGE\n   - Translations and explanations MUST be written in USER_LANGUAGE\n   - Penalize if languages are swapped or if USER_LANGUAGE words appear in a target-language sentence\n\n9. EXPLANATION QUALITY (required for every sentence):\n   - Each explanation MUST be a non-empty string in USER_LANGUAGE; null or empty explanations are invalid\n   - Explain why this specific sentence is structured this way in TARGET_LANGUAGE and how it differs from USER_LANGUAGE\n   - Focus on useful contrasts such as word order, grammar, word choice, false friends, or potentially confusing forms\n   - Grammar claims MUST describe the element's actual role in this sentence\n   - For non-Latin target scripts, every target-language word or phrase mentioned in the explanation MUST be immediately followed by its romanization in parentheses\n   - Do NOT expect a separate romanization field; the task does not generate one\n\n10. CLEAN OUTPUT FIELDS:\n    - The sentence and translation fields MUST contain only their respective text, with no parenthetical explanations, usage notes, grammar hints, or alternative phrasings\n    - Sentences and translations should avoid decorative terminal punctuation because they become word-bank tiles\n    - Penalize unnecessary punctuation on simple greetings, farewells, thanks, statements, labels, or short conversational chunks (e.g., \"Good morning!\" should be \"Good morning\"; \"See you later.\" should be \"See you later\")\n    - Do NOT penalize punctuation that changes meaning or is grammatically required, especially question marks for questions (e.g., \"How are you?\") and required target-language question punctuation (e.g., \"¿Cómo estás?\")\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that fit the lesson scope\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: translation accuracy, lesson-scope usage, grammatical correctness, naturalness, explanation quality, and difficulty appropriateness\n\n    ",
+  "judgedAt": "2026-07-10T18:58:26.895Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.8",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "All sentences fit dining scope, use core food nouns naturally, and are grammatically correct with accurate translations. Explanations are useful contrast-focused; no terminal punctuation on statements (only question marks kept). Difficulty is appropriately short/beginner.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Strong scope fit, accurate translations, and helpful explanations at correct beginner difficulty. Minor quibble: 'la soupe' explained as 'specific serving' where 'chaude' agreement is the real point, and one explanation ('la' for specific serving) is slightly off, but overall very solid.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Concise, accurate, well-scoped beginner sentences with clean fields and correct grammar. Explanations are accurate and contrast-focused. Slightly fewer sentences but all high quality.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Good scope and accuracy, natural sentences, and clean fields. 'J'ai faim' drifts slightly from food-noun scope but remains dining-relevant; explanations are strong and useful.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Mostly accurate and well-scoped. One explanation references 'La carte' though the sentence is 'Vous avez du fromage?', a mismatch. 'La soupe est avec du fromage' is slightly unnatural phrasing but acceptable.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Accurate translations and correct grammar, but some sentences trend longer/compound ('Le pain et le fromage sont sur la table', 'Le dessert arrive après le repas'), pushing beyond beginner brevity. Explanations are solid.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Accurate and natural but sentences retain terminal periods on statements (violating clean-field/word-bank rule) and tend longer/compound. 'carte des vins' drifts slightly from source nouns though still dining-relevant.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Model E perfectly follows all instructions, including the strict negative constraint to omit terminal periods on statements. The sentences flawlessly match the vocabulary scope, and the explanations are exceptionally strong, highlighting key structural contrasts between French and English (e.g., 'j'ai faim' vs 'I am hungry', 'comme dessert').",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Model A also perfectly follows all instructions. It successfully drops terminal punctuation on statements while retaining required question marks, keeps sentences within the beginner-to-intermediate difficulty scope, and provides excellent contrast-focused explanations.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Model C meets all expectations flawlessly. It strictly follows the clean output field rules for punctuation, utilizes the exact target vocabulary, and provides highly useful explanations that clarify grammatical differences between the target and user languages.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Model F delivers an excellent set of sentences that perfectly match the difficulty and vocabulary scope. The output correctly avoids terminal punctuation on statements, and the explanations consistently draw clear comparisons to English grammar.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Model G provides highly natural, restaurant-appropriate sentences that align perfectly with the source scope. It adheres strictly to the punctuation constraints and provides robust explanations for each sentence.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Model D follows the punctuation constraints and provides good explanations, but it includes slightly unnatural phrasing in sentence 3 ('La soupe est avec du fromage' is awkwardly constructed compared to 'La soupe au fromage'). This minor lack of naturalness brings the score down slightly.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model B provides great sentences and explanations but fails to follow the strict 'Clean Output Fields' instruction. It includes unnecessary terminal periods on all of its statements, directly violating the requirement to avoid decorative terminal punctuation.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "All sentences are accurate, natural, appropriately concise, and strongly aligned with food ordering and dining. The translations and sentence-specific explanations are consistently useful, with clean fields and correct article and gender guidance.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "The set provides highly accurate translations, natural beginner-level French, good structural variety, and clear English explanations. The final explanation is slightly overgeneralized about article repetition, but it is correct for the sentence shown.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "This is a strong, varied restaurant-focused set with accurate translations and clean formatting. The explanation for “Le pain est frais” incorrectly frames “frais” as directly following the noun when it is actually a predicate adjective after “est,” and “Sans fromage, merci” lacks some context.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "The sentences and translations are natural, accurate, and well matched to the lesson, with useful coverage of core vocabulary. Some explanations overgeneralize or do not describe the actual sentence contrast, especially the article discussion for “Le pain est délicieux” and the claim that French uses “comme” rather than “pour.”",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "The output is grammatically sound, accurate, and appropriately varied across food and restaurant contexts. A few explanations mischaracterize predicate adjective placement, and “Le dessert arrive après le repas” is less natural or precise than saying it follows the main course.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The French and translations are generally accurate and natural, with solid restaurant vocabulary and useful grammar notes. However, unnecessary terminal periods repeatedly violate the clean-field expectation, while the cheese explanation is more cultural than contrastive and the “carte des vins” explanation is somewhat imprecise.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Most entries are accurate, concise, and useful for dining situations, with clean formatting and good vocabulary coverage. “La soupe est avec du fromage” is notably unnatural French, and a few explanations are irrelevant or grammatically imprecise, such as discussing “la carte” in the cheese question and misdescribing predicate adjective placement.",
+          "score": 7.2
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-sentences",
+  "testCaseId": "en-french-food-1"
+}

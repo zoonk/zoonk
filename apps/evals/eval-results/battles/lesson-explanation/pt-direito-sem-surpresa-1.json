@@ -1,0 +1,149 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: This lesson is about due process, contradiction, and defense preventing procedural surprise. Penalize if:\n   - The parties are shown as learning decisive information only after the judge acts\n   - Contraditório or ampla defesa are reduced to empty formalities instead of a real chance to know and respond\n\n2. BOUNDARY CHECK: The core arc should stay on avoiding surprise in the process. Brief mentions of procedure, request limits, deadlines, evidence, or reasoning are fine when they explain how the parties know, respond, and influence before a decision. Penalize if the explanation becomes a broad survey of civil-procedure principles or spends its main energy on who can start the case or equality between the parties.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: The explanation must be technically correct for the topic. Penalize invented mechanisms, wrong cause-effect chains, or misleading simplifications.\n\n2. REQUIRED STRUCTURE: The output must contain exactly two top-level fields:\n   - explanation[]: an array of explanation steps, each with title and text\n   - anchor: { title, text } (no visual)\n\n3. LESSON DELIVERY: The lesson must actually deliver on LESSON_TITLE and LESSON_DESCRIPTION. The learner should finish with a full working understanding of what the topic is, how it works, how it is used/measured/written/recognized in practice when relevant, why it matters when relevant, and what the important terms, formulas, structures, rules, caveats, or limits mean. Penalize lessons that stay friendly but surface-level, or technically dense but hard to understand.\n\n4. BEGINNER + EXPERT FIT: The lesson should feel like a precise expert explaining the topic to a smart non-expert friend. It should use everyday language without dumbing down the topic. Penalize:\n   - Academic phrasing that makes a simple idea feel harder than it is\n   - \"Friendly\" explanations that omit the expert essentials required by the lesson scope\n   - Dense explanations that contain the right terms but do not explain them in plain language\n   - Formal terms, formulas, or code snippets that appear without enough plain-language explanation\n\n5. MECHANISM + FORMAL DETAIL: The lesson must include the real mechanism, structure, relationship, calculation, rule, or procedure required by the title and description. Penalize:\n   - Skipping formulas, variables, code shapes, uncertainty, exceptions, limits, or precise terms that an expert would expect for this lesson scope\n   - Including those details without explaining what the parts mean\n   - Using an analogy, vibe, story, or visual scene as a substitute for the actual mechanism\n\n6. LESSON BOUNDARY: The lesson must stay focused on the selected LESSON_TITLE and leave sibling angles in OTHER_EXPLANATION_LESSON_TITLES for those other lessons. Penalize explanations that spend their main teaching energy on a sibling lesson instead of the chosen one.\n\n7. EXPLANATION FLOW: There is no required opening pattern, cold open, or story arc. The explanation[] array should choose the clearest order for this topic and connect ideas so the learner can follow how the topic works. Penalize:\n   - Stacked definitions that do not connect to each other\n   - Scenic or subjective prose that does not help explain the concept\n   - Missing the practical payoff when the lesson calls for why this matters\n   - Naming terms before giving enough context to understand them, when that makes the lesson harder to follow\n\n8. STEP QUALITY: Each step.text is 1-3 short sentences of prose. Step titles are short, unique, and useful for understanding what the step teaches. Penalize:\n   - Long paragraphs\n   - Titles that are only props, moods, vague story beats, or generic labels\n   - Repetition between steps\n\n9. CONCRETENESS: The lesson should use concrete examples, measurements, cases, code-shaped details, or realistic situations when they make the mechanism easier to understand. Penalize:\n   - Vague prose that never makes the mechanism concrete\n   - Examples that are only atmospheric decoration\n   - Lessons about \"how it's written\" that never describe the structure or code detail clearly enough to understand\n\n10. STATIC + RICH TEXT DELIVERY: The lesson should stay entirely within explanation steps plus the closing anchor. It may use inline LaTeX, display LaTeX, bold, italic, and inline code with single backticks. Penalize:\n   - Quiz-like interruptions, option lists, or explicit \"guess before continuing\" instructions\n   - Steps that stop to ask the learner to choose instead of explaining\n   - Rhetorical-question-only steps that replace a real explanation\n   - Markdown headings, lists, tables, links, or large code fences inside a step\n   - Malformed LaTeX or unsupported formatting that would show raw clutter to the learner\n\n11. ANCHOR QUALITY: anchor has no visual. It answers why the topic is useful and where it shows up outside the lesson by naming one specific real-world instance — a named product (e.g., Instagram, WhatsApp), recognizable product family (e.g., ChatGPT-style models), named technology/service/system, named mission/instrument, named event/figure/case/place, or concrete physical action the learner has actually done — and what it does there. Penalize:\n   - Abstract \"this is why it matters\" wrap-ups\n   - Metaphors or vague generalities\n   - Classroom demonstrations, lab videos, school apparatus, research instruments, or professional workflows that do not name the product, service, system, or public-world outcome they enable\n   - Category-list anchors that name a type of use instead of a vivid instance (\"a star, a lamp, or a gas cloud\"; \"many apps\"; \"some medical devices\")\n   - Generic placeholders standing in for a specific real thing (\"a real app\", \"a real court case\", \"an exoplanet\", \"every time a button does X in three places\")\n\n12. STYLE: Clear, short, concrete, beginner-friendly, and precise. Penalize academic tone, atmospheric storytelling, filler lines, subjectivity that does not teach, and redundancy across steps and anchor.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require a fixed number of steps. Complex topics need more; simple topics fewer. Both are fine as long as the lesson is delivered\n- Do NOT require a cold open, story arc, single scene, or specific opening style\n- Do NOT require specific title wording, a particular choice of product or event, or a specific visual kind. The anchor must name some specific real thing, but any reasonable choice is fine — do not penalize the model for picking Instagram over WhatsApp, or one named case over another\n- Do NOT penalize anchors that use a widely recognized product family tied to a named product, such as \"ChatGPT-style models\", when the learner can clearly recognize the real-world surface\n- Do NOT penalize direct explanatory writing when it is clear, plain, concrete, and complete\n- Do NOT penalize density when the density comes from necessary expert content explained in everyday language\n- Do NOT focus on JSON wrapping or formatting trivia. Evaluate the content and structural fit\n- ONLY penalize for: wrong top-level structure, factual errors, failing to deliver LESSON_TITLE and LESSON_DESCRIPTION, missing beginner/expert balance, missing required mechanism/detail, drifting into sibling lessons, unclear flow, unsupported formatting, weak real-world anchor, or broken writing constraints\n\n    ",
+  "judgedAt": "2026-07-10T17:45:02.577Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.8",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Excellent coverage: clarifies that influence isn't the same as winning, notes ampla defesa excludes illicit means, distinguishes new-fundamento surprise from mere loss, and covers deferred contraditório with art. 9. Anchor names PJe concretely and stays on avoiding surprise. Steps are tight, unique, and factually precise.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Strong, well-sequenced lesson covering the three-part contraditório, decisão surpresa, arts. 9/10, of-ofício matters, deferred contraditório, and a clear identification test. Concrete prescription example. Anchor is a named system (PJe) but slightly generic as an instance; still solid.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Clear, plain-language flow from due process to decisão surpresa with the three-part test and a concrete 'falta de interesse de agir' case. Anchor references STJ anulação, which is real though not a specific named case. Solid and accurate.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Comprehensive and accurate, correctly handling of-ofício matters, the three-question test, when it is NOT surprise, and the anulação consequence. Anchor cites art. 10 in superior courts, concrete enough. A couple steps push slightly toward exhaustive but all on-topic.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Thorough and accurate with strong distinctions (contraditório vs ampla defesa, lei nova não é surpresa, deferred contraditório) and a concrete anchor about a prefeitura fining a merchant. Slightly long and dedicates real energy to distinguishing the two garantias, but stays on the surprise arc.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Accurate and well-organized: three-part contraditório, art. 10, defeat-isn't-surprise, exceptions via art. 9, of-ofício debate. Anchor names PJe with concrete prescription scenario. Good beginner/expert fit; slightly less vivid examples than top entries.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Correct core (contraditório info/reação/influência, ampla defesa, decisão surpresa, of-ofício) but thinner with only five steps and less mechanism. The final due-process step drifts toward 'mesmas chances de participar,' brushing the sibling equality lesson, and the anchor is somewhat generic.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Exceptionally clear and engaging explanation that perfectly breaks down the 3-part test requested in the prompt. The anchor correctly uses a named real-world instance (STJ), and the beginner-expert balance is outstanding.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Provides a highly accurate explanation that effectively covers the required mechanism. The anchor is particularly clever and practical, tying the abstract legal concept to a concrete UI action ('manifestar-se') in a named software system (PJe).",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Delivers a well-structured lesson with an excellent cold open example. The anchor correctly names specific courts (STJ/STF), and the explanation directly hits the three elements of modern contradictory required by the prompt.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Meets all expectations with a solid explanation and a valid named anchor (PJe). It accurately covers the three requirements of modern contradictory, though the step titles and prose are slightly more academic than the top models.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Good coverage of the topic and uses a valid real-world anchor (PJe). The explanation is accurate and hits the 3-part test well, though the flow is slightly more repetitive across the initial steps compared to higher-ranked outputs.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Violates the negative constraint for the anchor by using a generic placeholder ('um tribunal superior') instead of a specific named instance. Additionally, the explanation is quite brief and glosses over the specific 3-part identification test requested in the description.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Violates the anchor rule by using a generic placeholder ('uma prefeitura') instead of naming a specific real-world instance. While the content is accurate, the explanation is slightly bloated and takes too long to reach the core mechanism of decision surprise.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.6-sol",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Entrega o mecanismo completo com excelente precisão: conhecimento, resposta, influência, limites da ampla defesa, art. 10, contraditório diferido e efeito da nulidade com prejuízo. O exemplo de prescrição e a âncora no PJe tornam a regra fácil de reconhecer na prática.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Explicação clara, concreta e tecnicamente sólida, relacionando corretamente devido processo, contraditório, ampla defesa e os arts. 9º e 10 do CPC. Inclui exemplo, teste prático, exceção urgente e consequências, com apenas pequenas simplificações.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "É abrangente e especialmente forte ao distinguir contraditório de ampla defesa, explicar poder de influência e mostrar o que conta como fundamento novo. Perde um pouco por ser mais extenso e por trazer detalhes periféricos, como defesa pessoal e autoridade competente, além de uma âncora menos diretamente centrada em decisão surpresa.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Apresenta uma sequência eficiente, linguagem acessível e os elementos essenciais, incluindo exceções legais, matérias de ofício e a diferença entre derrota e surpresa. Faltam apenas maior desenvolvimento das consequências do vício e alguns limites práticos, sem comprometer a compreensão central.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "É concreto e detalhado, com bom teste de identificação, referência ao art. 10 e explicação da possível anulação. Contudo, generaliza ao dizer que toda incompetência pode ser reconhecida de ofício e trata de modo excessivamente categórico tanto a previsibilidade quanto a anulação.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Explica bem os três componentes do contraditório e oferece um exemplo útil, mas simplifica demais ao sugerir que qualquer argumento não levantado pelas partes gera automaticamente surpresa. Também faltam exceções, distinção entre novo fundamento e mera interpretação jurídica diferente, e maior cuidado com a consequência da nulidade.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Acerta a ideia central de informação, reação e influência, mas permanece superficial e não traz o art. 10, teste prático, exceções ou limites importantes. A afirmação de que o juiz sempre deve ouvir ambas as partes antes da decisão ignora hipóteses de contraditório diferido, e a âncora não nomeia uma instância suficientemente específica.",
+          "score": 5.8
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-explanation",
+  "testCaseId": "pt-direito-sem-surpresa-1"
+}

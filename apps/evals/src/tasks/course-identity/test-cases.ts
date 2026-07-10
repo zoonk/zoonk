@@ -1,24 +1,29 @@
-const SHARED_EXPECTATIONS = `
-  - Must choose "useExisting" only when a candidate clearly covers the same learner goal
-  - Must choose "createNew" when candidates are broader, narrower, siblings, ambiguous, or jurisdictionally different
-  - If using an existing course, courseSlug must exactly match the correct candidate slug
-  - If creating new, courseSlug must be null
-  - Ignore the reason field when scoring this eval
-  - If both decision and courseSlug match the expected values, the score must be 10
-  - If only one of decision or courseSlug matches the expected value, the score must be 7
-  - If neither decision nor courseSlug matches the expected values, the score must be the lowest possible score
-  - False positives are major errors because they redirect learners to the wrong course
-`;
+import { type TestCase } from "@/lib/types";
+import { type CourseIdentityParams } from "@zoonk/ai/tasks/courses/identity";
+import { type CourseIdentityExpected } from "./scorer";
 
-export const TEST_CASES = [
-  {
-    expectations: `
-      - Must choose "useExisting"
-      - Must choose courseSlug "frontend-development"
-      - "Frontend Engineering" and "Frontend Development" are synonyms for the same course
+type CourseIdentityTestCase = TestCase<CourseIdentityExpected, CourseIdentityParams>;
 
-      ${SHARED_EXPECTATIONS}
-    `,
+/**
+ * Attaches the exact structured identity result used by the deterministic
+ * scorer without maintaining a duplicate prose rubric for a judge model.
+ */
+function identityCase({
+  courseSlug,
+  decision,
+  id,
+  userInput,
+}: CourseIdentityExpected & {
+  id: string;
+  userInput: CourseIdentityParams;
+}): CourseIdentityTestCase {
+  return { expected: { courseSlug, decision }, id, userInput };
+}
+
+export const TEST_CASES: CourseIdentityTestCase[] = [
+  identityCase({
+    courseSlug: "frontend-development",
+    decision: "useExisting",
     id: "en-frontend-engineering",
     userInput: {
       candidates: [
@@ -44,15 +49,10 @@ export const TEST_CASES = [
         title: "Frontend Engineering",
       },
     },
-  },
-  {
-    expectations: `
-      - Must choose "useExisting"
-      - Must choose courseSlug "python"
-      - "Introduction to Python" is a level/package variant of "Python"
-
-      ${SHARED_EXPECTATIONS}
-    `,
+  }),
+  identityCase({
+    courseSlug: "python",
+    decision: "useExisting",
     id: "en-introduction-to-python",
     userInput: {
       candidates: [
@@ -71,17 +71,10 @@ export const TEST_CASES = [
         title: "Introduction to Python",
       },
     },
-  },
-  {
-    expectations: `
-      - Must choose "useExisting"
-      - Must choose courseSlug "python"
-      - "Python for Data Science" should consolidate into the existing Python course for dedupe
-      - Must prefer the Python candidate over the application-domain Data Science candidate
-      - Must not choose narrower tool candidates such as Pandas
-
-      ${SHARED_EXPECTATIONS}
-    `,
+  }),
+  identityCase({
+    courseSlug: "python",
+    decision: "useExisting",
     id: "en-python-for-data-science",
     userInput: {
       candidates: [
@@ -114,15 +107,10 @@ export const TEST_CASES = [
         title: "Python for Data Science",
       },
     },
-  },
-  {
-    expectations: `
-      - Must choose "useExisting"
-      - Must choose courseSlug "machine-learning-pt"
-      - The suggested Portuguese title and the candidate English title refer to the same Portuguese course
-
-      ${SHARED_EXPECTATIONS}
-    `,
+  }),
+  identityCase({
+    courseSlug: "machine-learning-pt",
+    decision: "useExisting",
     id: "pt-aprendizado-de-maquina",
     userInput: {
       candidates: [
@@ -141,17 +129,10 @@ export const TEST_CASES = [
         title: "Aprendizado de máquina",
       },
     },
-  },
-  {
-    expectations: `
-      - Must choose "createNew"
-      - courseSlug must be null
-      - "Aprendizado de Máquina" is a narrower standalone field, not the same course as "Inteligência Artificial"
-      - Must not use a broader umbrella course just because no explicit Machine Learning candidate is present
-      - Must ignore unrelated broad catalog candidates such as Ciência de Dados, Ciência da Computação, and other popular courses
-
-      ${SHARED_EXPECTATIONS}
-    `,
+  }),
+  identityCase({
+    courseSlug: null,
+    decision: "createNew",
     id: "pt-aprendizado-de-maquina-not-inteligencia-artificial",
     userInput: {
       candidates: [
@@ -323,15 +304,10 @@ export const TEST_CASES = [
         title: "Aprendizado de Máquina",
       },
     },
-  },
-  {
-    expectations: `
-      - Must choose "createNew"
-      - courseSlug must be null
-      - "Deep Learning" is a narrower independent field, not the same course as "Machine Learning"
-
-      ${SHARED_EXPECTATIONS}
-    `,
+  }),
+  identityCase({
+    courseSlug: null,
+    decision: "createNew",
     id: "en-deep-learning-not-machine-learning",
     userInput: {
       candidates: [
@@ -350,15 +326,10 @@ export const TEST_CASES = [
         title: "Deep Learning",
       },
     },
-  },
-  {
-    expectations: `
-      - Must choose "createNew"
-      - courseSlug must be null
-      - "React" has its own identity and should not map to "JavaScript"
-
-      ${SHARED_EXPECTATIONS}
-    `,
+  }),
+  identityCase({
+    courseSlug: null,
+    decision: "createNew",
     id: "en-react-not-javascript",
     userInput: {
       candidates: [
@@ -377,16 +348,10 @@ export const TEST_CASES = [
         title: "React",
       },
     },
-  },
-  {
-    expectations: `
-      - Must choose "createNew"
-      - courseSlug must be null
-      - "Administração Pública" is broader than "Direito Administrativo", so the existing candidate does not cover the same learner goal
-      - The proposed description sounds legalistic, but the course title should still prevent merging the broader public administration course into the narrower administrative law course
-
-      ${SHARED_EXPECTATIONS}
-    `,
+  }),
+  identityCase({
+    courseSlug: null,
+    decision: "createNew",
     id: "pt-administracao-publica-not-direito-administrativo",
     userInput: {
       candidates: [
@@ -407,15 +372,10 @@ export const TEST_CASES = [
         title: "Administração Pública",
       },
     },
-  },
-  {
-    expectations: `
-      - Must choose "useExisting"
-      - Must choose courseSlug "ingles-pt"
-      - TOEFL preparation belongs to the English language course
-
-      ${SHARED_EXPECTATIONS}
-    `,
+  }),
+  identityCase({
+    courseSlug: "ingles-pt",
+    decision: "useExisting",
     id: "pt-toefl-english",
     userInput: {
       candidates: [
@@ -434,16 +394,10 @@ export const TEST_CASES = [
         title: "TOEFL",
       },
     },
-  },
-  {
-    expectations: `
-      - Must choose "useExisting"
-      - Must choose courseSlug "matematica-pt"
-      - ENEM math preparation belongs to the Mathematics course
-      - Must not create a separate prep-exam course when the underlying subject course exists
-
-      ${SHARED_EXPECTATIONS}
-    `,
+  }),
+  identityCase({
+    courseSlug: "matematica-pt",
+    decision: "useExisting",
     id: "pt-matematica-para-enem",
     userInput: {
       candidates: [
@@ -462,15 +416,10 @@ export const TEST_CASES = [
         title: "Matemática para o ENEM",
       },
     },
-  },
-  {
-    expectations: `
-      - Must choose "createNew"
-      - courseSlug must be null
-      - English literature is about literature, not learning the English language
-
-      ${SHARED_EXPECTATIONS}
-    `,
+  }),
+  identityCase({
+    courseSlug: null,
+    decision: "createNew",
     id: "en-english-literature-not-language",
     userInput: {
       candidates: [
@@ -489,15 +438,10 @@ export const TEST_CASES = [
         title: "English Literature",
       },
     },
-  },
-  {
-    expectations: `
-      - Must choose "createNew"
-      - courseSlug must be null
-      - "California Law" and "Brazilian Law" differ by jurisdiction
-
-      ${SHARED_EXPECTATIONS}
-    `,
+  }),
+  identityCase({
+    courseSlug: null,
+    decision: "createNew",
     id: "en-california-law-not-brazilian-law",
     userInput: {
       candidates: [
@@ -516,15 +460,10 @@ export const TEST_CASES = [
         title: "California Law",
       },
     },
-  },
-  {
-    expectations: `
-      - Must choose "createNew"
-      - courseSlug must be null
-      - "Matrix" alone is ambiguous and should not map to the movie candidate
-
-      ${SHARED_EXPECTATIONS}
-    `,
+  }),
+  identityCase({
+    courseSlug: null,
+    decision: "createNew",
     id: "en-matrix-ambiguous",
     userInput: {
       candidates: [
@@ -543,15 +482,10 @@ export const TEST_CASES = [
         title: "Matrix",
       },
     },
-  },
-  {
-    expectations: `
-      - Must choose "useExisting"
-      - Must choose courseSlug "calculus"
-      - "Differential Calculus" is consolidated into the broader Calculus course
-
-      ${SHARED_EXPECTATIONS}
-    `,
+  }),
+  identityCase({
+    courseSlug: "calculus",
+    decision: "useExisting",
     id: "en-differential-calculus",
     userInput: {
       candidates: [
@@ -577,5 +511,5 @@ export const TEST_CASES = [
         title: "Differential Calculus",
       },
     },
-  },
+  }),
 ];

@@ -1,62 +1,80 @@
 {
-  "expectations": "\nLANGUAGE: Latin American Spanish output required (NOT English).\n\nTOPIC: Japanese vocabulary for basic colors - focused specifically on the primary and most common colors.\n\nTOPIC SCOPE: This is a narrow, focused lesson about colors. Valid vocabulary includes any color names (primary, common, or less common colors like gold, silver, navy, etc.).\n- Do NOT penalize for including less common colors - any valid color name is acceptable\n- Do NOT penalize for omitting any specific colors - assess only what IS provided\n\nSCOPE BOUNDARY: Penalize SEVERELY if:\n- Color-modifying adjectives are included (words meaning bright, dark, light, vivid, pale, deep, etc.)\n- Color-related phrases or compound words are included\n- Any vocabulary that describes HOW a color appears rather than WHAT the color is\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Color names are mistranslated (赤=rojo, 青=azul, etc.)\n- Vocabulary drifts to color-related adjectives or phrases\n- Output is in English instead of Spanish\n\n\nEVALUATION CRITERIA:\n\n1. TOPIC-APPROPRIATE COVERAGE: The vocabulary list should cover the narrow lesson topic appropriately.\n   - Include words directly relevant to the specific lesson focus\n   - A narrow topic (like \"Ordering Coffee\") needs fewer words than a broad one\n   - Do NOT penalize for vocabulary count - focus on relevance and quality\n   - Do NOT expect exhaustive coverage of the broader domain (e.g., don't expect all food words for a coffee-ordering lesson)\n\n2. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - Each word-translation pair MUST be linguistically accurate\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - The translation must match the EXACT meaning - not a broader category or related concept\n   - If a translation is incorrect or semantically imprecise, this is a SEVERE error\n   - Grammatical gender must be correct (masculine nouns with masculine articles, feminine with feminine)\n\n3. TOPIC FOCUS (STRICT BOUNDARY ENFORCEMENT): Words must be INSIDE the lesson's specific scope. Penalize SEVERELY if:\n   - Vocabulary includes words from adjacent but separate topics (e.g., adjectives when the lesson is about nouns)\n   - Words drift to related but out-of-scope categories (e.g., wild animals for a pets lesson)\n   - The output includes vocabulary that belongs in a DIFFERENT lesson on a related topic\n   - Words are \"helpful additions\" that expand beyond the defined lesson boundary\n\n4. VOCABULARY QUALITY: Words should be practical and commonly used. Penalize if:\n   - Words are obscure, archaic, or rarely used in everyday speech\n   - Words include profanity, slurs, or offensive content\n   - Words use non-standard loanwords that are not common in the target language\n\n5. LANGUAGE CORRECTNESS: Output language must match NATIVE_LANGUAGE code.\n   - Translations should be in the learner's native language\n   - Words being tested should be in the target language\n   - Penalize if languages are mixed incorrectly\n\n6. GRAMMATICAL GENDER AND ARTICLES:\n   - For languages with grammatical gender, nouns MUST include articles\n   - German: \"die Mutter\", \"der Vater\", \"das Kind\" (not \"Mutter\", \"Vater\", \"Kind\")\n   - French: \"le pain\", \"la maison\" (not \"pain\", \"maison\")\n   - Spanish: \"el gato\", \"la casa\" (not \"gato\", \"casa\")\n   - Portuguese: \"o livro\", \"a mesa\" (not \"livro\", \"mesa\")\n   - Italian: \"il gatto\", \"la casa\" (not \"gatto\", \"casa\")\n   - Penalize if nouns are shown without their articles in gendered languages\n   - Penalize if the grammatical gender is WRONG (e.g., masculine article with feminine noun)\n\n7. NO DUPLICATES: The `word` field is the unique identifier - duplicates are determined by the word field ONLY, not translations. Penalize if:\n   - The same word appears multiple times in the `word` field (even with different translations)\n   - Near-duplicates exist (same word with minor formatting differences)\n   - Semantic duplicates exist (same concept repeated with different phrasing)\n   - A word appears twice because it has multiple valid translations (should appear once with most common translation)\n\n8. CLEAN WORD FIELD - NO PARENTHETICAL CONTENT: The word field must contain ONLY the vocabulary word. Penalize SEVERELY if:\n   - The word field contains parenthetical disambiguation like \"el café (la bebida)\"\n   - The word field contains usage notes, alternative meanings, or pronunciation hints in parentheses\n   - Any text in parentheses appears in the word field (this breaks text-to-speech)\n\n9. NO OVER-ENUMERATION OF VARIANTS: Vocabulary should be representative, not exhaustive. Penalize if:\n   - Multiple variants of the same base item are listed when 1-2 would suffice\n   - The list appears inflated with excessive sub-types of a single category\n   - A base concept is represented by 5+ specific variants instead of the base term plus 1-2 examples\n   - The vocabulary count seems artificially high due to listing every possible variant\n   NOTE: This does NOT mean penalize for having many words - penalize only when those words are redundant variants of the same concept. Distinct vocabulary items are fine.\n   NOTE: Distinct practical choices within a category are NOT over-enumeration. For example, different milk types (whole, skim, almond, oat) are genuinely different menu options a learner needs to know - not redundant variants of \"milk.\"\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific word choices - accept ANY valid vocabulary relevant to the topic\n- Do NOT penalize for not including words you might expect - only penalize for actual errors\n- Do NOT require specific vocabulary items by name\n- Do NOT expect a specific number of words - narrow topics naturally have fewer words\n- FOCUS ON: translation accuracy, topic relevance, no duplicates, clean word fields\n- Different valid vocabulary selections exist - assess the quality of what IS provided\n\n    ",
-  "judgedAt": "2026-05-24T18:16:15.500Z",
+  "expectations": "\nLANGUAGE: Latin American Spanish output required (NOT English).\n\nTOPIC: Japanese vocabulary for basic colors - focused specifically on the primary and most common colors.\n\nTOPIC SCOPE: This is a narrow, focused lesson about colors. Valid vocabulary includes any color names (primary, common, or less common colors like gold, silver, navy, etc.).\n- Do NOT penalize for including less common colors - any valid color name is acceptable\n- Do NOT penalize for omitting any specific colors - assess only what IS provided\n\nSCOPE BOUNDARY: Penalize SEVERELY if:\n- Color-modifying adjectives are included (words meaning bright, dark, light, vivid, pale, deep, etc.)\n- Color-related phrases or compound words are included\n- Any vocabulary that describes HOW a color appears rather than WHAT the color is\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Color names are mistranslated (赤=rojo, 青=azul, etc.)\n- Vocabulary drifts to color-related adjectives or phrases\n- Output is in English instead of Spanish\n\n\nEVALUATION CRITERIA:\n\n1. TOPIC-APPROPRIATE COVERAGE: The vocabulary list should cover the narrow lesson topic appropriately.\n   - Include words directly relevant to the specific lesson focus\n   - A narrow topic (like \"Ordering Coffee\") needs fewer words than a broad one\n   - Do NOT penalize for vocabulary count - focus on relevance and quality\n   - Do NOT expect exhaustive coverage of the broader domain (e.g., don't expect all food words for a coffee-ordering lesson)\n\n2. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - Each word-translation pair MUST be linguistically accurate\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - The translation must match the EXACT meaning - not a broader category or related concept\n   - If a translation is incorrect or semantically imprecise, this is a SEVERE error\n   - Grammatical gender must be correct (masculine nouns with masculine articles, feminine with feminine)\n\n3. TOPIC FOCUS (STRICT BOUNDARY ENFORCEMENT): Words must be INSIDE the lesson's specific scope. Penalize SEVERELY if:\n   - Vocabulary includes words from adjacent but separate topics (e.g., adjectives when the lesson is about nouns)\n   - Words drift to related but out-of-scope categories (e.g., wild animals for a pets lesson)\n   - The output includes vocabulary that belongs in a DIFFERENT lesson on a related topic\n   - Words are \"helpful additions\" that expand beyond the defined lesson boundary\n\n4. VOCABULARY QUALITY: Words should be practical and commonly used. Penalize if:\n   - Words are obscure, archaic, or rarely used in everyday speech\n   - Words include profanity, slurs, or offensive content\n   - Words use non-standard loanwords that are not common in the target language\n\n5. LANGUAGE CORRECTNESS: Output language must match NATIVE_LANGUAGE code.\n   - Translations should be in the learner's native language\n   - Words being tested should be in the target language\n   - Penalize if languages are mixed incorrectly\n\n6. GRAMMATICAL GENDER AND ARTICLES:\n   - For languages with grammatical gender, nouns MUST include articles\n   - German: \"die Mutter\", \"der Vater\", \"das Kind\" (not \"Mutter\", \"Vater\", \"Kind\")\n   - French: \"le pain\", \"la maison\" (not \"pain\", \"maison\")\n   - Spanish: \"el gato\", \"la casa\" (not \"gato\", \"casa\")\n   - Portuguese: \"o livro\", \"a mesa\" (not \"livro\", \"mesa\")\n   - Italian: \"il gatto\", \"la casa\" (not \"gatto\", \"casa\")\n   - Penalize if nouns are shown without their articles in gendered languages\n   - Penalize if the grammatical gender is WRONG (e.g., masculine article with feminine noun)\n\n7. NO DUPLICATES: The `word` field is the unique identifier - duplicates are determined by the word field ONLY, not translations. Penalize if:\n   - The same word appears multiple times in the `word` field (even with different translations)\n   - Near-duplicates exist (same word with minor formatting differences)\n   - Semantic duplicates exist (same concept repeated with different phrasing)\n   - A word appears twice because it has multiple valid translations (should appear once with most common translation)\n\n8. CLEAN WORD FIELD - NO PARENTHETICAL CONTENT: The word field must contain ONLY the vocabulary word. Penalize SEVERELY if:\n   - The word field contains parenthetical disambiguation like \"el café (la bebida)\"\n   - The word field contains usage notes, alternative meanings, or pronunciation hints in parentheses\n   - Any text in parentheses appears in the word field (this breaks text-to-speech)\n\n9. CLEAN WORD FIELD - ONLY MEANINGFUL PUNCTUATION: Penalize unnecessary punctuation because vocabulary can become word-bank tiles.\n   - Simple greetings, farewells, thanks, short phrases, and conversational chunks should not include decorative terminal punctuation\n   - Examples: \"Good morning\" is better than \"Good morning!\"; \"See you later\" is better than \"See you later.\"\n   - Do NOT penalize punctuation that changes meaning or is grammatically required, especially question marks for question phrases\n\n10. NO OVER-ENUMERATION OF VARIANTS: Vocabulary should be representative, not exhaustive. Penalize if:\n   - Multiple variants of the same base item are listed when 1-2 would suffice\n   - The list appears inflated with excessive sub-types of a single category\n   - A base concept is represented by 5+ specific variants instead of the base term plus 1-2 examples\n   - The vocabulary count seems artificially high due to listing every possible variant\n   NOTE: This does NOT mean penalize for having many words - penalize only when those words are redundant variants of the same concept. Distinct vocabulary items are fine.\n   NOTE: Distinct practical choices within a category are NOT over-enumeration. For example, different milk types (whole, skim, almond, oat) are genuinely different menu options a learner needs to know - not redundant variants of \"milk.\"\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific word choices - accept ANY valid vocabulary relevant to the topic\n- Do NOT penalize for not including words you might expect - only penalize for actual errors\n- Do NOT require specific vocabulary items by name\n- Do NOT expect a specific number of words - narrow topics naturally have fewer words\n- FOCUS ON: translation accuracy, topic relevance, no duplicates, clean word fields\n- Different valid vocabulary selections exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-07-10T19:11:39.226Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.7",
+      "judgeId": "anthropic/claude-opus-4.8",
       "rankings": [
         {
           "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "All translations accurate, clean word fields, no duplicates, all within color scope including valid less-common colors (gold, silver). Strong coverage with no errors.",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "All 12 color names are accurate, in Spanish, clean word fields with no articles issue (colors are commonly used as bare adjectives). Includes celeste (水色) and correct オレンジ色 pairing. Strong, clean, all within scope.",
           "score": 9
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "deepseek/deepseek-v4-pro",
-          "reasoning": "All accurate translations, clean word fields, all within scope. Solid representative list of colors with no issues.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "All accurate translations, clean word fields, all within scope. Solid representative list of colors.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model F",
+          "anonymousId": "Model A",
           "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Accurate translations, clean word fields, all colors within scope. Good balanced list.",
+          "reasoning": "11 accurate color translations in Latin American Spanish, clean word fields, no duplicates or out-of-scope items. Solid and consistent.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "11 accurate colors, clean fields, all in scope. No issues.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "11 accurate colors, clean word fields, no scope violations. Strong output.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "11 accurate colors, clean, all within scope. Equivalent quality.",
           "score": 9
         },
         {
           "anonymousId": "Model E",
           "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "All accurate including 水色=celeste. Clean word fields, all colors, no issues.",
+          "reasoning": "12 accurate colors including celeste (水色), clean word fields, all in scope. Very solid.",
           "score": 9
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Accurate translations, clean fields, all within scope. Slightly smaller list but quality is high.",
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "13 accurate colors including gold (金色) and silver (銀色), which are explicitly allowed. Clean fields, all in scope.",
           "score": 9
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "9 accurate colors, clean and all in scope. Fewer entries but no errors; narrow topic is acceptable.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Includes '色' (color) translated as 'color', which is not a color name and drifts out of the lesson scope. Also uses slash 'café/marrón' variant in the translation field. Otherwise accurate.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Adds definite articles ('el rojo') to all colors, which is unnecessary since colors function as adjectives; borderline but arguably acceptable for noun-form colors. Accurate translations, clean word fields.",
+          "score": 7
         },
         {
           "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Same article-added approach ('el rojo') as F; accurate and clean word fields. Equivalent to F.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model L",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Accurate color translations but uses 'el' articles for color names; in Spanish color nouns typically don't require articles in vocabulary lists, though it's not incorrect. Clean fields, all in scope.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Same as I - articles added to all colors. Otherwise accurate and on-topic.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Includes 色 (color) which is not itself a color but the general noun—mild scope drift. Also 'café/marrón' uses a slash in translation field which is slightly messy. Otherwise accurate.",
+          "reasoning": "Same 'el' article style, accurate colors, clean fields. Equivalent to F and I.",
           "score": 7
         }
       ]
@@ -65,117 +83,153 @@
       "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "The output is excellent. It provides accurate Japanese noun forms for basic colors and correctly includes the Spanish definite articles ('el rojo', 'el azul') as required by the grammatical gender rule. The vocabulary uses highly appropriate Latin American Spanish localization ('el café').",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model I",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Flawless output. It accurately translates the Japanese color nouns and strictly follows the grammatical gender rule by including Spanish definite articles ('el rojo'). The Latin American localization is also spot-on with terms like 'el café'.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Provides accurate Japanese color vocabulary and uses 'café' which is excellent for the Latin American Spanish locale. However, it fails the strict rule requiring articles for nouns in gendered languages ('rojo' instead of 'el rojo').",
-          "score": 6
-        },
-        {
           "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Accurate vocabulary list that includes a good variety of colors and appropriately uses 'café' for Latin American Spanish. However, it violates the grammatical gender rule by omitting the definite articles for the Spanish nouns.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Provides a perfectly valid and accurate selection of basic colors. However, it drops points for failing the strict grammatical gender rule, as it omits the required Spanish definite articles for these nouns ('rojo' instead of 'el rojo').",
-          "score": 6
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "This model provides an exceptional list that perfectly captures the Latin American Spanish target audience by including terms like 'café', 'anaranjado', and 'celeste'. The translations are highly accurate, and the vocabulary scope matches the lesson perfectly without any errors.",
+          "score": 10
         },
         {
           "anonymousId": "Model D",
-          "modelId": "deepseek/deepseek-v4-pro",
-          "reasoning": "The vocabulary is accurate and appropriate for the topic. However, it fails the explicit grammatical rule to include articles for nouns ('rojo' instead of 'el rojo'). It also uses 'marrón' which is acceptable, though 'café' is more common in Latin American Spanish.",
-          "score": 6
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Excellent vocabulary selection that expands the basic list appropriately with useful colors like 'dorado' and 'plateado'. It correctly uses 'café' for the Latin American target and keeps the word fields completely clean.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "A perfectly calibrated list covering all the core basic colors. It accurately localizes to Latin American Spanish by using 'café' and 'rosado' while maintaining flawless Japanese translations.",
+          "score": 10
         },
         {
           "anonymousId": "Model E",
           "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Provides an accurate list of colors, including valid additions like 'celeste'. However, it must be penalized for omitting the Spanish definite articles required for gendered nouns ('rojo' instead of 'el rojo').",
-          "score": 6
+          "reasoning": "A strong and comprehensive list that includes 'celeste' (very common in Latin America). It uses 'marrón' instead of 'café', which is entirely valid in several Latin American regions, and provides perfect Japanese accuracy.",
+          "score": 10
         },
         {
-          "anonymousId": "Model G",
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "This model strictly adheres to the grammatical gender rule by correctly applying the masculine article 'el' to the colors acting as nouns (including 'el naranja' for the color). The Latin American terminology and Japanese translations are flawless.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Effectively adheres to the grammatical gender rule by providing the correct masculine articles for colors as nouns. The translations are accurate and the scope is perfectly focused.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Properly identifies colors as masculine nouns in Spanish by adding 'el'. The core list is highly accurate and appropriate for the lesson topic.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
           "modelId": "openai/gpt-5.4",
-          "reasoning": "Accurate Japanese translations for basic colors. Like many others, it receives a penalty for omitting the required Spanish definite articles for nouns. The use of 'marrón' is acceptable, but 'café' is generally preferred in Latin American Spanish.",
-          "score": 6
+          "reasoning": "A clean, accurate, and perfectly scoped list of core colors. It uses 'marrón', which is a valid regional variant, and follows all formatting and linguistic constraints.",
+          "score": 10
         },
         {
           "anonymousId": "Model H",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "Provides a solid, accurate list of fundamental colors. The Japanese noun forms correctly match the translations, and the list remains perfectly within scope.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Delivers an accurate and clean vocabulary list that meets all expectations. The translations are precise and the formatting is flawless.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Provides a slightly shorter list but explicitly follows the rule that omitting specific colors (like brown) is not penalized. All provided translations are perfectly accurate and formatted correctly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
           "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Fails the rule requiring definite articles for Spanish nouns. Additionally, it includes the word 'color' (色) which is not a specific color name, slightly drifting out of the strict topic scope, and uses a slashed translation ('café/marrón') which is poor formatting.",
-          "score": 4
+          "reasoning": "The vocabulary is highly accurate, but providing multiple options separated by a slash ('café/marrón') in a single translation field is slightly messy for flashcard formatting. Including the meta-word 'color' (色) is also slightly borderline for a list of specific colors.",
+          "score": 9
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.5",
+      "judgeId": "openai/gpt-5.6-sol",
       "rankings": [
         {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Excelente lista de colores en japonés con traducciones correctas al español latinoamericano. Incluye colores comunes y un color adicional válido como 水色 = celeste, sin salirse del tema ni duplicar.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Lista amplia, precisa y totalmente enfocada en nombres de colores. Las inclusiones de dorado y plateado son válidas según el alcance, y no hay errores de traducción ni contenido fuera de tema.",
-          "score": 10
-        },
-        {
           "anonymousId": "Model F",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Muy buena selección de colores comunes, con traducciones correctas y naturales para español latinoamericano como café y rosado. No presenta duplicados ni términos fuera del alcance.",
-          "score": 9.5
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Lista precisa y bien enfocada en colores, sin errores de japonés ni duplicados. “Marrón” es válido, aunque algo menos regionalmente latinoamericano que “café” en muchos contextos.",
-          "score": 9.5
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "deepseek/deepseek-v4-pro",
-          "reasoning": "Cubre colores comunes con traducciones correctas y vocabulario limpio. La única observación menor es el uso de “marrón”, válido pero menos marcadamente latinoamericano que “café” en algunas regiones.",
-          "score": 9.5
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Todas las entradas son colores válidos y están correctamente traducidas. Es una lista más compacta, pero sigue siendo adecuada para una lección estrecha de colores básicos y no contiene errores.",
-          "score": 9.5
+          "modelId": "google/gemini-3.5-flash",
+          "reasoning": "Todas las correspondencias son precisas, prácticas y están estrictamente limitadas a nombres de colores. Además, presenta los colores como sustantivos españoles con el artículo masculino correcto y usa vocabulario natural en Latinoamérica.",
+          "score": 10
         },
         {
           "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "La selección es completamente pertinente y las traducciones son exactas. Incluye correctamente los artículos de los sustantivos de color, sin duplicados ni contenido fuera del tema.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model L",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Las traducciones son correctas y el vocabulario está bien enfocado en colores. El uso sistemático de artículos como “el rojo” es gramaticalmente aceptable, pero menos limpio como traducción directa de vocabulario que simplemente “rojo”.",
-          "score": 9
+          "reasoning": "Ofrece únicamente colores comunes con traducciones precisas y artículos gramaticalmente correctos. Los campos están limpios y no hay duplicados ni desviaciones temáticas.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Todos los colores y sus traducciones son válidos, comunes y adecuados para el español latinoamericano. La única debilidad sistemática es que presenta como formas desnudas los sustantivos españoles, sin los artículos exigidos por la rúbrica.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Las traducciones son precisas, incluidas オレンジ色 y 水色, y todo el vocabulario permanece dentro del tema. Sin embargo, omite los artículos españoles en todos los sustantivos de color.",
+          "score": 7
         },
         {
           "anonymousId": "Model C",
-          "modelId": "google/gemini-3.5-flash",
-          "reasoning": "El contenido es preciso y relevante, con colores comunes correctamente traducidos. Al igual que Model I, los artículos en todas las traducciones son aceptables pero hacen las tarjetas un poco menos directas; “el rosado” también es válido aunque menos estándar que “rosa/rosado” solo.",
-          "score": 9
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "La lista es clara, práctica y lingüísticamente correcta, con marrón como traducción válida de 茶色. Incumple de manera sistemática el requisito de incluir artículos con los sustantivos españoles.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Todos los elementos son nombres de colores válidos; dorado y plateado están expresamente permitidos por el alcance. No obstante, faltan los artículos españoles requeridos en toda la lista.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Contiene solo colores válidos y traducciones exactas, incluido celeste para 水色. Su debilidad es la omisión general de los artículos de los sustantivos españoles.",
+          "score": 7
         },
         {
           "anonymousId": "Model H",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "La mayoría de los colores están correctamente traducidos, incluidos dorado y plateado. Sin embargo, incluye 色 = “color”, que no es un nombre de color sino un término relacionado fuera del alcance estricto, y “café/marrón” es menos limpio como una sola traducción.",
+          "modelId": "deepseek/deepseek-v4-pro",
+          "reasoning": "La selección es pertinente y todas las parejas japonés-español son correctas. Como en otras listas de formas desnudas, faltan los artículos exigidos para los sustantivos en español.",
           "score": 7
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "La lista cubre colores comunes sin errores de traducción, duplicados ni contenido ajeno. Pierde calidad únicamente por omitir sistemáticamente los artículos españoles.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Aunque es algo más breve, no debe penalizarse por cantidad y todos los colores incluidos son correctos y relevantes. Al igual que otras respuestas, no incorpora los artículos requeridos con los sustantivos españoles.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Casi todas las parejas son exactas y dorado y plateado son colores permitidos. Sin embargo, 色 significa “color” y no es el nombre de un color específico, lo que cruza el límite estricto del tema; además, faltan artículos y “café/marrón” sobreenumera alternativas en una sola traducción.",
+          "score": 4
         }
       ]
     }

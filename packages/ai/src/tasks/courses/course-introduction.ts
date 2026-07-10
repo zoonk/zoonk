@@ -5,8 +5,13 @@ import { type ReasoningEffort, buildProviderOptions } from "../../provider-optio
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./course-introduction.prompt.md";
 
-const defaultModel = "openai/gpt-5.5";
-const fallbackModels = ["anthropic/claude-opus-4.8", "openai/gpt-5.4"] as const;
+const defaultModel = "openai/gpt-5.6-sol";
+
+const fallbackModels = [
+  "openai/gpt-5.5",
+  "anthropic/claude-opus-4.8",
+  "openai/gpt-5.6-luna",
+] as const;
 
 const INTRODUCTION_LESSON_MIN_COUNT = 3;
 const INTRODUCTION_LESSON_MAX_COUNT = 5;

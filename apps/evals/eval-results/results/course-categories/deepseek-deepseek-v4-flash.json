@@ -1,0 +1,340 @@
+{
+  "modelId": "deepseek/deepseek-v4-flash",
+  "results": [
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["arts"] },
+        "id": "en-watercolor-painting-1",
+        "userInput": { "courseTitle": "Watercolor Painting Techniques" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["business"] },
+        "id": "en-small-business-operations-1",
+        "userInput": { "courseTitle": "Small Business Operations Management" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["communication"] },
+        "id": "en-public-speaking-1",
+        "userInput": { "courseTitle": "Public Speaking Fundamentals" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["culture"] },
+        "id": "en-japanese-cultural-traditions-1",
+        "userInput": { "courseTitle": "Japanese Cultural Traditions and Etiquette" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["economics"] },
+        "id": "en-microeconomics-1",
+        "userInput": { "courseTitle": "Microeconomics: Supply, Demand, and Market Equilibrium" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["engineering"] },
+        "id": "pt-structural-engineering-1",
+        "userInput": { "courseTitle": "Engenharia Estrutural: Projeto de Vigas de Concreto Armado" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["geography"] },
+        "id": "es-world-geography-1",
+        "userInput": { "courseTitle": "Geografía Mundial: Países, Capitales y Regiones Físicas" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["health"] },
+        "id": "en-first-aid-cpr-1",
+        "userInput": { "courseTitle": "First Aid and CPR" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["history"] },
+        "id": "es-historia-de-roma-1",
+        "userInput": { "courseTitle": "Historia de Roma" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["law"] },
+        "id": "pt-contract-law-1",
+        "userInput": { "courseTitle": "Direito Contratual: Formação, Inadimplemento e Remédios" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["math"] },
+        "id": "en-calculus-1",
+        "userInput": { "courseTitle": "Calculus" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["science"] },
+        "id": "en-organic-chemistry-1",
+        "userInput": { "courseTitle": "Organic Chemistry: Reactions and Molecular Structure" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["society"] },
+        "id": "en-sociology-1",
+        "userInput": { "courseTitle": "Sociology: Social Institutions and Inequality" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["tech"] },
+        "id": "en-linux-system-administration-1",
+        "userInput": { "courseTitle": "Linux System Administration" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["business", "communication"] },
+        "id": "en-business-communication-1",
+        "userInput": {
+          "courseTitle": "Business Communication: Writing Proposals and Presenting to Clients"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["economics", "engineering"] },
+        "id": "en-engineering-economics-1",
+        "userInput": {
+          "courseTitle": "Engineering Economics: Cost Analysis for Infrastructure Projects"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["arts", "science"] },
+        "id": "en-art-conservation-science-1",
+        "userInput": {
+          "courseTitle": "Art Conservation Science: Pigment Chemistry and Painting Restoration"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["health", "math"] },
+        "id": "en-public-health-statistics-1",
+        "userInput": {
+          "courseTitle": "Statistics for Public Health: Rates, Risk Ratios, and Confidence Intervals"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Expected categories `geography`, `tech`. Generated categories `geography`. Missing `tech`.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected categories `geography`, `tech`. Generated categories `geography`. Missing `tech`.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected categories `geography`, `tech`. Generated categories `geography`. Missing `tech`.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": { "categories": ["geography", "tech"] },
+        "id": "en-geographic-information-systems-1",
+        "userInput": { "courseTitle": "Geographic Information Systems: Spatial Analysis with QGIS" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["law", "tech"] },
+        "id": "en-cybersecurity-law-1",
+        "userInput": { "courseTitle": "Cybersecurity Law: Technical Controls and Legal Compliance" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["arts", "history"] },
+        "id": "en-history-of-painting-1",
+        "userInput": { "courseTitle": "History of Painting: Renaissance to Impressionism" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["culture", "geography", "society"] },
+        "id": "en-cultural-geography-1",
+        "userInput": { "courseTitle": "Cultural Geography: Migration, Place, and Social Identity" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["math"] },
+        "id": "en-law-of-sines-1",
+        "userInput": { "courseTitle": "The Law of Sines and Cosines" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["economics"] },
+        "id": "en-business-cycles-1",
+        "userInput": {
+          "courseTitle": "Business Cycles: Recessions, Inflation, and Monetary Policy"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["arts"] },
+        "id": "en-science-fiction-illustration-1",
+        "userInput": { "courseTitle": "Science Fiction Illustration: Characters and Alien Worlds" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "categories": ["tech"] },
+        "id": "en-art-of-debugging-1",
+        "userInput": { "courseTitle": "The Art of Debugging Software" }
+      }
+    }
+  ],
+  "taskId": "course-categories"
+}

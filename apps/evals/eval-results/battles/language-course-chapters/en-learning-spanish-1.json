@@ -1,51 +1,93 @@
 {
   "expectations": "\n      - MUST be in US English (teaching Spanish)\n      - Should cover Spanish-specific grammar structures (ser vs estar, subjunctive, preterite vs imperfect, etc.)\n      - Should cover vocabulary themes relevant to everyday Spanish (food, travel, family, etc.)\n      - Should cover communication scenarios (greetings, ordering food, asking directions, etc.)\n\n      \n  - Chapters should follow CEFR progression from A1 (beginner) to C2 (mastery)\n  - ALL chapters must be content-domain chapters: grammar structures, vocabulary themes, or communication scenarios\n  - NO skill-based chapters that are explicitly about practicing a skill in isolation (e.g., \"Pronunciation Practice\", \"Listening Exercises\", \"Writing Workshop\", \"Reading Comprehension\") — those skills are built into every lesson automatically. However, content chapters that USE these skills as a vehicle for teaching language are valid: \"Complex Texts & Critical Analysis\" (advanced vocabulary/comprehension), \"Formal Correspondence\" (grammar/expressions for letters), \"Academic Discourse\" (register/vocabulary). The test: is the chapter about the skill itself, or about language content delivered through that medium?\n  - NO culture chapters that teach about a country/region's history, traditions, or customs as the primary content (e.g., \"History of France\", \"Japanese Festivals\", \"Brazilian Carnival\"). However, vocabulary chapters that teach culture-related words and expressions ARE valid: \"Arts & Entertainment Vocabulary\" (how to discuss art, music, film in the target language), \"Food & Dining\" (restaurant vocabulary, ordering expressions), \"News & Media Language\" (media-related vocabulary/register). The test: is the chapter teaching ABOUT the culture, or teaching language THROUGH cultural topics?\n  - NO career or professional chapters (business language, workplace communication)\n  - NO proficiency exam preparation chapters (DELE, JLPT, DELF, HSK, etc.)\n  - NO literature or media chapters (books, films, songs, poetry)\n  - Should cover grammar structures (verb tenses, nouns, articles, etc.) and vocabulary themes (food, travel, health, etc.)\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Titles should be concise, no filler words\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the chapter content quality\n  - Don't add capstone/final projects, assessments, or exercises\n\n    ",
-  "judgedAt": "2026-02-22T17:44:01.392Z",
+  "judgedAt": "2026-07-10T06:17:54.803Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.6",
+      "judgeId": "anthropic/claude-fable-5",
       "rankings": [
         {
           "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model A provides an exceptionally well-structured curriculum of 78 chapters that covers A1 through C2 comprehensively. Strengths: (1) Excellent interleaving of grammar and vocabulary/communication chapters throughout, creating a natural learning flow. (2) Spanish-specific grammar is thoroughly covered: ser vs estar, preterite vs imperfect, subjunctive in multiple chapters (present, dependent clauses, adverbial clauses, mood contrasts, past, perfect forms), por vs para, se constructions, conditional sentences, etc. (3) Advanced/C2 content is particularly strong with chapters on aspect/temporal nuance, derivation/expressive morphology, copulas and meaning, periphrasis, certainty/evidentiality, concession/contrast, advanced hypotheticals, figurative meaning/pragmatics, formal style, regional variation, high-precision grammar, lexical precision, automaticity, and low-frequency structures. (4) No forbidden chapter types appear — no skill-based, culture, career, exam prep, or literature chapters. (5) Titles are concise and professional. (6) Descriptions are direct, no fluff words like 'learn' or 'explore.' (7) The progression from fundamentals to mastery is logical and well-paced. Minor issues: Some titles could be slightly more specific (e.g., 'Core Sentence Building' is a bit vague), but descriptions clarify well. The curriculum doesn't have a dedicated 'Education' vocabulary chapter, but this is minor. Overall, this is the most comprehensive and well-designed curriculum.",
-          "score": 9.2
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Clean, well-scoped 55-chapter course with clear A1→C2 progression, strong coverage of Spanish-specific grammar (ser/estar, preterite vs imperfect, subjunctive sequence, por/para), vocabulary themes, and communication scenarios. Titles and descriptions are concise with no fluff, and there are no skill, culture, career, exam, or media violations. Only tiny nitpick is the 'Occupations & Daily Tasks' chapter brushing near professional territory, but it remains a vocabulary theme.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "Comprehensive, well-sequenced curriculum with excellent Latin American tailoring (voseo, regional varieties, diminutives/augmentatives) and full grammar/vocab/communication coverage through C2. Descriptions are concrete with Spanish examples and no fluff, and all chapters are content-domain. Very minor risk of borderline items ('Specialized & Technical Vocabulary') but they read as vocabulary themes.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Extremely thorough and consistently content-domain, with strong Latin American features (voseo chapter, regional variation) and clean, concise descriptions. Progression is coherent from A1 basics to C2 nuance. The ~150-chapter granularity (e.g., 'Ellipsis', 'Absolute Constructions' as standalone chapters) is excessive for product usability, though not a rubric violation.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Well-structured progression covering required grammar structures, vocabulary themes, and communication scenarios, with a dedicated voseo/regional-variation section fitting Latin American Spanish. Descriptions are concise and violation-free. 'Economics & Finance' with contracts/investments slightly leans toward professional content but stays vocabulary-framed.",
+          "score": 8
         },
         {
           "anonymousId": "Model E",
           "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Model E provides an extremely comprehensive curriculum with 115 chapters, the most granular of all models. Strengths: (1) Very fine-grained breakdown — separating spelling-change preterites, irregular yo forms, stem-changing verbs into individual chapters shows excellent pedagogical thinking. (2) Excellent interleaving of grammar and vocabulary throughout. (3) Subjunctive coverage is outstanding with 10+ chapters covering every aspect (wishes/influence, emotions/judgments, doubt/denial, adjective clauses, time clauses, purpose/conditions, concession, imperfect, sequence of tenses, present perfect, pluperfect, infinitive vs subjunctive). (4) Spanish-specific content is thorough: ser vs estar, por vs para, personal 'a', poder vs saber, gustar-type verbs, voseo. (5) Advanced content is strong: modality/evidentiality, nominalization, collocations, figurative language, stance/hedging, argumentation, regional variation. (6) No forbidden chapter types. (7) Descriptions are mostly concise and direct. Minor issues: (1) 'Names, Email & Phone Numbers' feels like a thin chapter. (2) Orthography chapters ('Accent Marks' and 'Punctuation & Formatting') are borderline — they could be seen as skill-based, though they teach language content. (3) 'Measurements & Technical Quantities' feels somewhat niche. (4) Some descriptions use slightly casual tone ('what's happening now'). (5) The sheer number of chapters (115) might indicate over-granularity in places, but this is a minor concern for a comprehensive curriculum. The orthography chapters are a slight concern but they are about language rules, not skills per se.",
-          "score": 8.8
+          "reasoning": "Very complete grammar and communication coverage with detailed, accurate Spanish content and good CEFR sequencing. Minor issues: mentions vosotros commands despite the Latin American target, and two-sentence descriptions run slightly longer than needed. No category violations.",
+          "score": 8
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Model D provides a very comprehensive curriculum with 88 chapters. Strengths: (1) Thorough grammar coverage with good granularity (separate chapters for regular/irregular preterite, separate object pronoun chapters, etc.). (2) Good vocabulary coverage including environment/ecology, politics/society, science/innovation, economics/finance. (3) Spanish-specific grammar well covered: ser vs estar, gustar, preterite vs imperfect, subjunctive in multiple chapters, por vs para, etc. (4) Good interleaving of grammar and vocabulary. (5) Descriptions are generally concise and direct. Concerns: (1) 'Economics & Finance' and 'Politics & Society' and 'Science & Innovation' border on career/professional territory — though they could be justified as vocabulary domains. (2) 'Specialized Vocabulary: Legal & Medical' is explicitly professional/career-focused vocabulary, which is borderline forbidden ('NO career/professional chapters'). (3) 'Housing & Neighborhood' is fine but somewhat duplicative with earlier 'Home & Daily Life.' (4) Some descriptions use 'discussing' which is slightly filler-ish but acceptable. (5) The C2-level content could be stronger — there's less coverage of truly advanced structures like nominalization, cleft sentences, evidentiality compared to Models A and E. The specialized legal/medical vocabulary chapter is the most concerning issue.",
-          "score": 8.2
+          "anonymousId": "Model M",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Solid, clean progression from greetings through subjunctive mastery with good balance of grammar, vocabulary, and communication chapters and concise descriptions. Mild redundancy across three idiom-related chapters and a somewhat capstone-flavored final 'Mastery in Context' chapter are the main weaknesses.",
+          "score": 8
         },
         {
-          "anonymousId": "Model C",
+          "anonymousId": "Model N",
           "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Model C provides a solid curriculum with 67 chapters. Strengths: (1) Good basic structure covering A1 through C2. (2) Spanish-specific grammar is well covered: ser vs estar (including advanced uses), preterite vs imperfect, subjunctive in multiple chapters, por vs para. (3) Good vocabulary variety. (4) Mostly clean titles and descriptions. (5) No clearly forbidden chapter types. Concerns: (1) 'Spontaneous Conversation & Fluency' at the end is borderline skill-based — it's about fluency strategies rather than content domains. (2) 'Narrating Stories & Experiences' is fine as a communication scenario. (3) With only 67 chapters, the coverage feels less comprehensive than Models A, E, or D, particularly at the C2 level. (4) Some chapters feel somewhat thin on advanced grammar — the subjunctive coverage, while present, is less detailed than other models. (5) 'Abstract & Academic Vocabulary' is fine but somewhat vague. (6) The descriptions are generally good but some could be more specific. Overall a solid but not exceptional curriculum.",
-          "score": 7.8
+          "reasoning": "Well-ordered CEFR progression with all core Spanish grammar contrasts and everyday vocabulary/communication themes, and concise descriptions. Slightly thinner C2 depth than the strongest outputs and a small drift mentioning Iberian varieties for a Latin American course.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Concise, violation-free 62-chapter course with correct grammar sequencing and appropriate vocabulary themes (including a valid Arts & Entertainment vocabulary chapter). However, coverage is thinner at advanced levels and misses some staples (gustar, question formation), and 'WEIRDO' is US-classroom jargon in a title.",
+          "score": 7
         },
         {
           "anonymousId": "Model G",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Model G provides 62 chapters with decent coverage. Strengths: (1) Good basic progression from beginner to advanced. (2) Spanish-specific grammar covered: ser/estar (including advanced nuances), preterite vs imperfect, subjunctive, por vs para, conditional sentences. (3) Interesting inclusion of 'Verbs of Change' (ponerse, volverse, hacerse, llegar a ser) which is a valuable Spanish-specific topic. (4) 'Pronominal Verbs' is a good advanced topic. Concerns: (1) 'Arts & Entertainment' — the prompt says 'NO literature or media chapters — no film, TV, novels, poetry, news media analysis.' The description mentions 'Fine arts, theater, cinema genres, and musical vocabulary.' This is borderline — it's teaching vocabulary for discussing these topics, not the media itself, but it's risky. (2) 'Science & Innovation' and 'Social Issues & Community' and 'Abstract Concepts & Ideologies' are vocabulary chapters but feel somewhat broad. (3) The WEIRDO acronym in 'Subjunctive with WEIRDO' is a teaching methodology reference that feels out of place in a chapter title. (4) C2 coverage is somewhat thin — fewer advanced grammar and nuance chapters compared to top models. (5) Only 62 chapters means less comprehensive coverage overall. (6) The interleaving is decent but could be better structured.",
-          "score": 7.4
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Comprehensive and well-progressed, but a couple of chapters edge toward skill-based framing ('Summarizing & Synthesizing Information', 'Spontaneous Conversation & Fluency' with 'fluency strategies'), and it references Spain/dialects despite the Latin American target. Otherwise accurate content with concise descriptions.",
+          "score": 7
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model B provides 78 chapters with broad coverage. Strengths: (1) Good vocabulary coverage across many domains. (2) Grammar structures are covered. (3) Decent interleaving. Concerns: (1) 'Translation Strategies & Interpreting Basics' is a skill-based chapter that doesn't belong — this teaches translation as a skill, not language content. This is a clear violation. (2) 'Literary & Rhetorical Styles (registers, tone, stylistic devices)' — while 'registers and tone' are valid, 'Literary styles' and 'rhetorical devices' border on the forbidden literature/media category. (3) 'Administrative & Official Language (forms, notices, bureaucracy)' borders on career/professional content. (4) 'Academic & Technical Vocabulary Building' uses 'building' which is slightly skill-focused in framing. (5) 'Storytelling & Narrative Tenses' is fine as a communication scenario. (6) The grammar coverage is adequate but the grouping is sometimes odd — 'Passive Voice and Passive Se' and then 'Impersonal Se & Passive-like Constructions' as separate chapters with significant overlap. (7) Some descriptions use filler-ish language. The Translation chapter is the most serious violation as it's clearly a skill-based chapter.",
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong grammar depth with Latin American awareness (leísmo, dialect-neutral choices) and good progression. Weaknesses: 'Automaticity in Complex Structures' reads as skill-practice rather than content, and the 'without genre labeling' phrasing is an odd prompt-leak artifact; vocabulary/communication themes are somewhat lighter than grammar.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "No category violations and an impressively complete grammar spine, but the ~130 chapters become heavily linguistics-academic in the upper half ('Presupposition, entailment', 'Meaning in Context'), which hurts product usefulness for a language-learning app. Granularity feels exhaustive rather than well-curated.",
           "score": 7
         },
         {
           "anonymousId": "Model F",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model F provides only 55 chapters, making it the least comprehensive. Strengths: (1) Clean, concise titles. (2) Good basic progression. (3) No obviously forbidden skill-based chapters. Concerns: (1) Only 55 chapters is insufficient for A1 to C2 mastery — this is notably less comprehensive than other models. (2) 'Philosophy & Logic' seems like a culture/content chapter rather than a language-learning chapter — it's about teaching philosophical concepts rather than language through philosophy. (3) C2 coverage is quite thin — very few chapters address advanced grammar nuances, complex sentence structures, or mastery-level language features. (4) The subjunctive coverage is limited to about 5 chapters, missing important areas like subjunctive in adjective clauses and sequence of tenses. (5) No chapter on se constructions beyond basic passive voice. (6) Missing important topics: no chapter on double object pronouns, no dedicated chapter on discourse markers/cohesion (only 'Conjunctions & Connectors'), no chapter on word formation. (7) 'Government & Civic Terminology' is a vocabulary domain but could be seen as borderline. (8) Missing reflexive verbs as a separate chapter — they're combined with daily routines, which may not give enough depth. Overall, this curriculum has notable gaps and insufficient advanced content.",
-          "score": 6.5
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Content is accurate and in-scope, but ~160 chapters with redundant grammar/application pairs ('Assumptions & Consequences', 'Recent Events & Reactions') create significant bloat, and the closing 'Mastery Integration'/'Native-Like Control' chapters read as capstone summaries rather than content chapters. Curation quality is notably weaker than peers.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "CEFR progression is broken: ~25 vocabulary/communication chapters precede A1 grammar basics like present-tense regular verbs. Titles are inconsistent and cluttered with parentheses, 'Translation Strategies & Interpreting Basics' is scope drift toward a professional skill, and 'Literary & Rhetorical Styles' flirts with the literature ban. Content itself is otherwise reasonable.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "The first chapter description is written in Spanish, directly violating the US English requirement. The remaining 55 chapters are clean and reasonably sequenced but the course is compressed with thin C2 coverage (a single catch-all mastery chapter). The language violation plus limited depth place it near the bottom.",
+          "score": 5
         }
       ]
     },
@@ -53,93 +95,177 @@
       "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model A is exceptional. It provides an incredibly comprehensive, highly granular curriculum (81 chapters) that perfectly progresses from A1 to C2. It accurately captures the complexities of Spanish grammar (such as leísmo, clitics, dequeísmo, and evidentiality). The titles are perfectly concise, the descriptions are straight to the point, and it strictly follows all negative constraints (no skill-based chapters, no fluff, no professional/business chapters).",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Model E is also exceptional and ties for first place. It provides a massive, extensively detailed curriculum (104 chapters) that beautifully interleaves grammar and vocabulary. The descriptions are punchy and fluff-free, titles are clean, and it fully adheres to all negative constraints. Its coverage of C2 level nuances (such as aspect periphrases, stance marking, and nominalization) is outstanding.",
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Flawless CEFR progression with an exceptional range of C1/C2 topics. Strict adherence to title and description constraints with absolutely zero fluff or filler verbs.",
           "score": 10
         },
         {
           "anonymousId": "Model F",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model F provides a very solid curriculum. It follows all negative constraints, avoiding fluff, skill-based chapters, and professional topics. The titles are concise and descriptions are well-written. It scores slightly lower than A and E simply because it is less extensive (59 chapters), meaning it rushes through the CEFR levels a bit more quickly, but it is still a high-quality output.",
-          "score": 8.5
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Outstanding A1-C2 progression and deep domain coverage. Cleverly navigates advanced contexts without violating the career/professional constraints.",
+          "score": 10
         },
         {
-          "anonymousId": "Model G",
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Extremely comprehensive curriculum with excellent C1/C2 topics. Carefully frames advanced subjects in general contexts to abide by all negative constraints.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Exceptional breadth and detail spanning the entire CEFR spectrum. Descriptions are crisp, concise, and effectively capture content domains without fluff.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "Excellent progression and completely accurate. Titles and descriptions are concise, direct, and adhere perfectly to all formatting and content constraints.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Very clean and concise chapter list. Follows all rules perfectly and provides a well-structured progression of grammar and vocabulary.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model N",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Highly accurate and concise. Flawlessly applies the negative constraints while delivering a strong curriculum structure.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model J",
           "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Model G is well-structured and adheres to the negative constraints successfully. However, it uses a classroom mnemonic ('WEIRDO') in one of its titles, which makes it slightly less professional than the top models. Like Model F, it is also a bit less comprehensive than the top models, but it remains a very good curriculum overall.",
+          "reasoning": "Strong, fluff-free descriptions and titles. Consistently follows constraints without drifting into skill-based or professional topics.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Great progression and solid adherence to negative constraints. Titles and descriptions are effective, though slightly less concise than the top-tier models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Comprehensive and well-structured, meeting all content constraints. However, the descriptions use multiple full sentences, making them slightly wordier than the strictly concise format requested.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "A solid, well-formatted curriculum that adheres to all constraints. It is slightly less comprehensive in scope than the highest-rated models, but execution is strong.",
           "score": 8
         },
         {
           "anonymousId": "Model C",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Model C provides a good curriculum, but it violates a negative constraint regarding fluff. The prompt explicitly banned the use of phrases like 'Introduction to' in the descriptions or titles, but Model C includes a chapter titled 'Present Subjunctive: Introduction' and begins its description with 'Introduction to the present subjunctive'. Otherwise, the progression and content are solid.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model B",
           "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model B struggles with the formatting constraints for titles. The prompt explicitly instructed to avoid verbose titles and keep details in the description, but Model B frequently uses colons and parentheses to cram details into the titles (e.g., 'Word Formation: prefixes, suffixes, compounding'). Additionally, it includes a chapter on 'Translation Strategies & Interpreting Basics', which violates the rule against skill-based chapters.",
+          "reasoning": "Good overall structure but explicitly violates the constraint against skill-based chapters by including 'Translation Strategies & Interpreting Basics'. Titles are also occasionally wordy.",
           "score": 6
         },
         {
-          "anonymousId": "Model D",
+          "anonymousId": "Model G",
           "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Model D has multiple prompt violations. It violates the fluff constraint by using 'Introduction to' in its subjunctive chapter. More importantly, it violates the negative constraint against career/professional chapters by including 'Economics & Finance' (teaching business transactions) and 'Specialized Vocabulary: Legal & Medical'. It also includes skill-based chapters like 'Summarizing & Synthesizing Information' and 'Spontaneous Conversation & Fluency'.",
-          "score": 5
+          "reasoning": "Violates negative constraints by including a chapter explicitly intended for 'formal professional contexts' (Legal & Medical) and skill-based chapters like 'Summarizing & Synthesizing Information'.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "Violates a severe formatting constraint ('MUST be in US English') by writing the very first chapter's description entirely in Spanish.",
+          "score": 4
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.2",
+      "judgeId": "openai/gpt-5.6-sol",
       "rankings": [
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Most comprehensive and Spanish-specific progression from beginner through near-native topics without obvious forbidden chapter types. Strong coverage of key contrasts (ser/estar, preterite vs imperfect, por/para), robust subjunctive sequencing, clitics, discourse cohesion, register, variation, and advanced syntax/pragmatics. Chapters stay content-domain focused and titles/descriptions are generally concise and non-fluffy. Minor issues: a couple chapters edge toward skill framing (“Punctuation & Meaning”, “Automaticity…”) but still tied to language form/usage; overall best adherence and depth.",
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Exceptionally comprehensive progression from basic exchanges and everyday vocabulary to advanced grammar, pragmatics, register, and Latin American variation. Chapters remain language-content focused, with no clear career, exam, literature, or isolated-skill chapters.",
           "score": 9.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Provides unusually thorough and accurate coverage of Spanish grammar, everyday scenarios, vocabulary domains, and advanced discourse in a coherent progression. The main weakness is excessive length and fragmentation, which reduces concision and makes some late chapters feel overlapping.",
+          "score": 9.2
         },
         {
           "anonymousId": "Model E",
           "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Excellent breadth and very clean sequencing with fine granularity (separate preterite spelling changes/irregulars, multiple subjunctive trigger chapters, reported speech split, strong pragmatics/register). Largely avoids forbidden domains and keeps descriptions tight with minimal fluff. Main violation: includes explicit skill-based orthography chapters (“Orthography: Accent Marks”, “Orthography: Punctuation & Formatting”), which are disallowed for Spanish per prompt’s no skill-based chapters; otherwise extremely strong.",
-          "score": 8.9
+          "reasoning": "Strong progression with excellent treatment of Spanish-specific grammar, practical communication, and Latin American usage. It becomes highly repetitive and over-segmented, with a few vague end-stage titles such as “Mastery Integration,” but largely stays within valid language content.",
+          "score": 9
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Solid, fairly comprehensive curriculum with good Spanish-specific grammar (ser/estar, gustar, preterite/imperfect, subjunctive, si-clauses, perfect tenses, passive, reported speech) plus useful vocabulary/scenarios. However, includes a forbidden career/professional chapter (“Work & Occupations”). Also somewhat less extensive at the top end than A/E (less on advanced cohesion, clitics/word order nuances), though it does reach advanced vocabulary and precision.",
-          "score": 7.6
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "A focused, well-sequenced curriculum covering core scenarios, major grammar contrasts, advanced pragmatics, and regional variation. “Automaticity in Complex Structures” is framed more as skill development than a content domain, and everyday vocabulary breadth is slightly narrower than the top outputs.",
+          "score": 8.8
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Good overall coverage and progression with many core grammar points and scenarios. But it contains multiple clear forbidden career/professional or professional-register chapters (e.g., “Work & Occupations”, “Economics & Finance”, “Specialized Vocabulary: Legal & Medical”, and some administrative/professional-leaning housing/contract content). Also includes some culture-adjacent/proverb/slang emphasis; still mostly language-focused, but the professional-domain violations are significant.",
-          "score": 6.6
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Broad, coherent coverage of everyday communication, grammar, vocabulary, discourse, and Latin American variation. The later economics, research, and public-affairs material is somewhat specialized and the curriculum is overlong, though it is generally framed as language content rather than professional training.",
+          "score": 8.7
         },
         {
           "anonymousId": "Model F",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Decent mid-sized sequence with core grammar and some advanced topics, but includes forbidden professional content (“Occupations & Daily Tasks”) and a media chapter (“Media & Digital Communication”), which conflicts with the no media chapters rule (even if framed as vocabulary). Also less comprehensive and less granular than higher-ranked models (limited treatment of discourse, clitics, regional variation, advanced relatives, etc.).",
-          "score": 6.1
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Covers the expected grammar, practical situations, vocabulary themes, and regional Latin American forms in substantial depth. Extensive duplication and paired chapters make it much less concise, while vague endpoints such as “Mastery Integration” and “Native-Like Control” weaken content specificity.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Concise and well ordered, with solid treatment of everyday scenarios, core tense contrasts, the subjunctive, advanced syntax, and pragmatic nuance. Its upper-level coverage is less systematic than the strongest outputs, but the arts chapter is valid vocabulary-focused content rather than cultural or media study.",
+          "score": 8.3
         },
         {
           "anonymousId": "Model B",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Strong grammar inventory and plenty of topics, but contains several major forbidden or problematic chapters: explicit career/professional content (“Work & Occupations”, plus “Administrative & Official Language”), explicit literature/media-related content (“Literary & Rhetorical Styles”), and “Translation Strategies & Interpreting Basics” (not part of Spanish acquisition scope as defined; veers into meta-skill/career). Also some titles/descriptions are more verbose and less tightly constrained than A/E.",
-          "score": 5.4
+          "modelId": "anthropic/claude-fable-5",
+          "reasoning": "Excellent coverage and progression, including strong everyday communication, Spanish-specific grammar, and Latin American regional variation. The explicit “Work & Occupations” chapter violates the prohibition on career or professional chapters, preventing a top score.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "A clear, concise sequence with strong coverage of essential grammar, everyday vocabulary, communication scenarios, and advanced register. “Occupations & Daily Tasks” is a prohibited professional chapter, and “Formal Argumentation & Rhetoric” partly drifts toward practicing writing and debate techniques.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "anthropic/claude-sonnet-5",
+          "reasoning": "Offers good progression and broad coverage of required grammar, vocabulary, and practical communication, with appropriate Latin American regional material. The explicit “Work & Occupations” chapter violates the career restriction, and some advanced chapters are repetitive or overly broad.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model N",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Covers the principal Spanish grammar structures and useful everyday themes with a generally sensible beginner-to-advanced progression. It includes a prohibited “Work & Occupations” chapter, gives less attention to practical communication scenarios, and partially drifts toward Iberian Spanish despite the Latin American target.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "anthropic/claude-opus-4.8",
+          "reasoning": "The curriculum is otherwise concise and covers most expected grammar, vocabulary, and communication areas. Its first description is in Spanish rather than US English, and “Work & Occupations” directly violates the career-chapter prohibition.",
+          "score": 6
         },
         {
           "anonymousId": "Model G",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Reasonable beginner-to-advanced arc with key grammar, but includes forbidden media/literature-adjacent content (“Arts & Entertainment”) and uses an instructional mnemonic label in a title (“Subjunctive with WEIRDO”), which is off-style and not professional. Also lacks some granularity/coverage compared with top models and includes more topic drift into broad domains (science/innovation, abstract ideologies) without as clear a language-content framing.",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Coverage and sequencing are substantial, but several explicit violations undermine task fit: work and occupations, economics/business transactions, professional specialized registers, and literary Spanish. “Summarizing & Synthesizing Information” and “Spontaneous Conversation & Fluency” are also framed primarily as isolated skills rather than language-content domains.",
           "score": 5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Although broad, it places many elementary grammar chapters after a long vocabulary block, weakening CEFR progression. It also includes prohibited work content and clear skill-oriented or disallowed chapters such as translation/interpreting and literary styles, with several non-concise titles.",
+          "score": 4.8
         }
       ]
     }

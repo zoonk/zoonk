@@ -11,6 +11,7 @@ import {
   type ScoredTaskResults,
   type TaskEvalResults,
   type TestCase,
+  getJudgeExpectations,
 } from "./types";
 
 const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
@@ -61,7 +62,7 @@ async function scoreOutput({
   const scoreResult = task.score
     ? await task.score({ output: output.output, testCase } as never)
     : await generateScore({
-        expectations: testCase.expectations,
+        expectations: getJudgeExpectations(testCase),
         output: output.output,
         prompt: output.userPrompt,
       });

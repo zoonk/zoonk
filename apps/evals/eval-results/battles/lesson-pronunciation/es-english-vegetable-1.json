@@ -1,57 +1,75 @@
 {
   "expectations": "\nNATIVE LANGUAGE: Spanish (Latin American)\nTARGET LANGUAGE: English\n\nWORD: \"vegetable\"\n\nThis English word features:\n- The \"v\" sound (often becomes \"b\" in Spanish)\n- The soft \"g\" before \"e\"\n- Reduced vowels in unstressed syllables\n- Four syllables, often reduced\n\nSOUND CHALLENGES:\n- Spanish doesn't distinguish \"v\" from \"b\"\n- The \"-table\" ending has a reduced vowel\n- Stress is on the first syllable\n\nQUALITY CHECK:\n- Should be readable by a Spanish speaker\n- Should indicate stress on first syllable\n- May use \"b\" for \"v\" sound (acceptable in Spanish approximation)\n- Should handle the soft \"g\" sound\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Do NOT penalize for using \"v\" instead of \"b\" (or vice versa) in Spanish — they are identical phonemes in Spanish and a native speaker pronounces them the same way\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
-  "judgedAt": "2026-05-24T17:43:42.921Z",
+  "judgedAt": "2026-07-10T18:30:47.119Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.7",
+      "judgeId": "anthropic/claude-opus-4.8",
       "rankings": [
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "VECH-ta-bol captures the actual English reduced pronunciation /ˈvɛdʒtəbəl/ well with stress on first syllable, hyphenated syllables, and Spanish-readable letters. The 'ch' approximates the 'j' sound reasonably for Spanish speakers.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Identical to A: VECH-ta-bol accurately reflects the reduced 3-syllable English pronunciation with proper stress and Spanish-readable orthography.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model H",
+          "anonymousId": "Model B",
           "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Same as A and D: VECH-ta-bol is a strong approximation using Spanish phonemes, correctly marking stress and using hyphens.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "BECH-ta-bol is equally valid since v/b are identical in Spanish; it captures the reduced pronunciation with proper stress and syllabification.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Same as C: BECH-ta-bol is a valid Spanish-readable approximation with proper stress marking and hyphenation.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Identical to C and F: valid approximation with correct stress and readable Spanish orthography.",
+          "reasoning": "VECH-ta-bol captures the reduced 'vej-tuh-bul' pronunciation well, uses only Spanish-readable letters, marks stress on first syllable, and separates syllables. 'v' and 'b' are fine in Spanish. Solid approximation.",
           "score": 9
         },
         {
           "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Identical to B: VECH-ta-bol. All Spanish-readable, stress marked, syllables separated, faithful to the reduced English pronunciation.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Identical to B and E. Strong readable Spanish approximation with correct stress and syllabification.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Same as B/E/F. Reasonable and readable approximation with proper stress marking.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Same VECH-ta-bol output; strong across all criteria with only Spanish letters and clear stress.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "BECH-ta-bal uses 'b' for 'v' which is explicitly acceptable in Spanish; readable and well-stressed. The final 'bal' is a slightly less accurate vowel than 'bol' but still reasonable.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "BECH-ta-bol uses 'b' for 'v' (acceptable) with the good reduced ending; readable, stressed, syllabified. Equivalent quality to the VECH versions since v/b are identical in Spanish.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Same as G: BECH-ta-bol, fully Spanish-readable, correct stress and syllable breaks, faithful reduced pronunciation.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Same as G/I: BECH-ta-bol, strong approximation using acceptable 'b' for 'v', proper stress and syllabification.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
           "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "VE-che-ta-bol uses the full four-syllable form rather than the typical reduced three-syllable pronunciation, but still readable in Spanish with proper stress and hyphens. Slightly less natural to actual English pronunciation.",
+          "reasoning": "VE-che-ta-bol keeps too many full syllables and doesn't reduce 'vegetable' to its natural three-beat pronunciation; still readable and stressed but less accurate to the reduced word.",
           "score": 7
         },
         {
-          "anonymousId": "Model B",
+          "anonymousId": "Model D",
           "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "VE-ye-tah-bol uses 'y' for the soft 'g' which in Spanish produces a 'y' sound rather than the English 'j' affricate—a weaker approximation. Stress and hyphenation are present but the sound mapping is less accurate.",
-          "score": 5
+          "reasoning": "VE-ye-tah-bol uses 'y' for the soft 'g' which is a weaker approximation and doesn't reflect the 'j'/'ch' sound; also underrepresents the actual English pronunciation, though readable and stressed.",
+          "score": 6
         }
       ]
     },
@@ -59,104 +77,140 @@
       "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Exceptional output. Perfectly captures the common 3-syllable US English pronunciation of the word using intuitive Spanish phonology. The use of \"CH\" accurately approximates the English soft \"g\" sound, and stress is correctly marked.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Exceptional output. Captures the standard 3-syllable pronunciation using intuitive Spanish phonology. \"CH\" is a great approximation for the soft \"g\", and using \"B\" is perfectly acceptable since \"B\" and \"V\" are phonetically identical in Spanish.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Exceptional output. Perfectly captures the common 3-syllable US English pronunciation of the word using intuitive Spanish phonology. The use of \"CH\" accurately approximates the English soft \"g\" sound, and stress is correctly marked.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "Exceptional output. Captures the standard 3-syllable pronunciation using intuitive Spanish phonology. \"CH\" is a great approximation for the soft \"g\", and using \"B\" is perfectly acceptable since \"B\" and \"V\" are phonetically identical in Spanish.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Exceptional output. Captures the standard 3-syllable pronunciation using intuitive Spanish phonology. \"CH\" is a great approximation for the soft \"g\", and using \"B\" is perfectly acceptable since \"B\" and \"V\" are phonetically identical in Spanish.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model H",
+          "anonymousId": "Model B",
           "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Exceptional output. Perfectly captures the common 3-syllable US English pronunciation of the word using intuitive Spanish phonology. The use of \"CH\" accurately approximates the English soft \"g\" sound, and stress is correctly marked.",
+          "reasoning": "Excellent phonetic approximation. It correctly reduces the word to the three syllables typical of US English, uses native Spanish orthography, and properly indicates stress on the first syllable.",
           "score": 10
         },
         {
           "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Excellent phonetic approximation. It correctly reduces the word to the three syllables typical of US English, uses native Spanish orthography, and properly indicates stress on the first syllable.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Excellent phonetic approximation. It correctly reduces the word to the three syllables typical of US English, uses native Spanish orthography, and properly indicates stress on the first syllable.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Excellent phonetic approximation. It correctly reduces the word to the three syllables typical of US English, uses native Spanish orthography, and properly indicates stress on the first syllable.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Excellent phonetic approximation. It correctly reduces the word to the three syllables typical of US English, uses native Spanish orthography, and properly indicates stress on the first syllable.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Excellent phonetic approximation. It uses the three-syllable reduction typical of US English and marks the stress correctly. Using 'b' for the English 'v' is completely valid and natural for a Spanish reader.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Excellent phonetic approximation. It uses the three-syllable reduction typical of US English and marks the stress correctly. Using 'b' for the English 'v' is completely valid and natural for a Spanish reader.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Excellent phonetic approximation. It uses the three-syllable reduction typical of US English and marks the stress correctly. Using 'b' for the English 'v' is completely valid and natural for a Spanish reader.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "Excellent phonetic approximation that captures the standard three-syllable pronunciation. Using 'bal' is a perfectly acceptable and readable approximation for the final schwa sound.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
           "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Strong output. Effectively uses a 4-syllable pronunciation variant that is valid for the target word. The phonemes are highly readable for a Spanish speaker, with stress properly placed.",
+          "reasoning": "Good phonetic approximation that uses valid Spanish orthography. However, it preserves four syllables instead of using the standard three-syllable reduction ('VECH-ta-bol') typical of natural US English.",
           "score": 8
         },
         {
-          "anonymousId": "Model B",
+          "anonymousId": "Model D",
           "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "Acceptable but has notable weaknesses. Writing \"tah\" relies on an English phonetic convention to represent an open vowel, which is unnatural for Spanish readers where \"h\" is silent. Additionally, \"ye\" is a slightly weaker approximation for the soft \"g\" than \"ch\".",
+          "reasoning": "Acceptable approximation, but it uses four syllables instead of the standard three. Furthermore, 'tah' introduces a silent 'h' ending which is not standard in native Spanish orthography.",
           "score": 6
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.5",
+      "judgeId": "openai/gpt-5.6-sol",
       "rankings": [
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.4",
-          "reasoning": "Uses only Spanish-readable spelling, marks first-syllable stress, and separates syllables clearly. “CH” is a reasonable native approximation for the English soft g /dʒ/, and the result is recognizable, though it reduces the word to three syllables.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Equivalent in quality to the VECH version, with “B” acceptable for Spanish speakers since Spanish does not distinguish /v/ and /b/. It marks stress and syllables well, and “CH” reasonably approximates the soft g, though it uses a reduced three-syllable form.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-opus-4.7",
-          "reasoning": "Uses only Spanish-compatible letters, clear hyphenation, and correct first-syllable stress. The “CH” approximation makes the soft g recognizable, with the main limitation being the three-syllable reduction.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.5",
-          "reasoning": "The use of “B” for English “v” is acceptable for Latin American Spanish pronunciation, and the output is readable with clear stress marking. “CH” approximates the soft g well enough, though the syllable count is reduced.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Readable for a Spanish speaker, with proper stress marking and syllable breaks. It gives a recognizable approximation using “B” and “CH,” but does not reflect the possible four-syllable pronunciation.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model H",
+          "anonymousId": "Model B",
           "modelId": "google/gemini-3.5-flash",
-          "reasoning": "Clearly marks stress on the first syllable and uses native Spanish spelling conventions. The soft g is reasonably handled with “CH,” but the word is simplified to three syllables.",
-          "score": 8
+          "reasoning": "“VECH-ta-bol” uses Spanish-compatible spelling, clearly marks first-syllable stress, and gives a recognizable reduced three-syllable pronunciation. “Ch” is a reasonable native approximation for the English soft-g sound.",
+          "score": 9
         },
         {
           "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Identical to Model B: readable for a Spanish speaker, correctly stress-marked, syllabified, and phonetically recognizable. Its substitutions are reasonable native-language approximations.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.6-luna",
+          "reasoning": "Identical to Model B: it satisfies the native-phoneme, stress, separation, and completeness requirements well. The reduced middle and final vowels remain recognizable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.6-terra",
+          "reasoning": "Identical to Model B: the spelling is natural to pronounce in Spanish and approximates the English word effectively. Stress and syllable boundaries are unambiguous.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Identical to Model B: it is readable, complete, and uses a reasonable “ch” approximation for the English affricate. The first-syllable stress is correctly shown.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "“BECH-ta-bol” is as effective as the versions beginning with V because Spanish does not phonemically distinguish b and v. It otherwise has clear stress, good syllable separation, and a recognizable sound shape.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Identical to Model G: using B for English V is explicitly acceptable, while the rest is readable and complete. The pronunciation should be readily recognizable when spoken.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Identical to Model G: it uses only familiar Spanish spelling patterns and clearly marks the intended stress. Its consonant and reduced-vowel approximations are reasonable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.6-sol",
+          "reasoning": "“BECH-ta-bal” meets the critical native-spelling, stress, and syllable-separation requirements. The final “a” is a reasonable schwa approximation, though it is slightly less conventionally suggestive of the English ending than “bol.”",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
           "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Uses native Spanish phonemes, marks first-syllable stress, and gives a four-syllable form, which fits part of the expectation. However, “VE-che” can sound less like the common English /VEJ/ onset than “VECH,” making the overall approximation slightly less natural.",
+          "reasoning": "The output is readable, marks stress correctly, and uses a reasonable “ch” approximation. However, “VE-che” inserts a fully pronounced extra vowel after the affricate, making it less faithful to the usual reduced US English pronunciation.",
           "score": 7
         },
         {
-          "anonymousId": "Model B",
+          "anonymousId": "Model D",
           "modelId": "openai/gpt-5.4-mini",
-          "reasoning": "It is readable and marks stress and syllables, but “ye” is a weaker approximation of the English soft g /dʒ/ than “ch” for many Spanish speakers. The added “tah” spelling is also a bit awkward, though still pronounceable because Spanish “h” is silent.",
+          "reasoning": "The Spanish y sound can reasonably approximate the English soft-g sound, and stress is clearly indicated. Still, the added vowel in “VE-ye” and the unnatural word-final h in “tah” make the result less accurate and less orthographically natural.",
           "score": 6
         }
       ]

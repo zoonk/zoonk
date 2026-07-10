@@ -6,8 +6,8 @@ import { getPromptLanguageName } from "../../_utils/prompt-language";
 import { type SourceLesson, formatSourceLessonForPrompt } from "../_utils/source-lessons";
 import systemPrompt from "./lesson-quiz.prompt.md";
 
-const defaultModel = "openai/gpt-5.5";
-const fallbackModels = ["google/gemini-3.1-pro-preview"] as const;
+const defaultModel = "openai/gpt-5.6-sol";
+const fallbackModels = ["anthropic/claude-opus-4.8", "openai/gpt-5.5"] as const;
 const maximumQuestions = 15;
 const minimumQuestions = 5;
 

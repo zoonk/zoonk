@@ -31,7 +31,7 @@ export function calculateScore(steps: ScoreStep[]): number {
 export function createFixedScore({ conclusion, score }: { conclusion: string; score: number }) {
   const steps: ScoreStep[] = SCORE_STEP_KINDS.map((kind) => ({ conclusion, kind, score }));
 
-  return { score: calculateScore(steps), steps };
+  return { score, steps };
 }
 
 /**
@@ -62,7 +62,7 @@ export async function generateScore(params: {
   `;
 
   const { output: result } = await generateText({
-    model: "openai/gpt-5.5",
+    model: "openai/gpt-5.6-sol",
     output: Output.object({ schema: scoreSchema }),
     prompt: evalPrompt,
     system: systemPrompt,
