@@ -15,11 +15,6 @@ import Link from "next/link";
 
 type ContinueLessonProgressContent = { ariaLabel: string; text: string };
 
-type ContinueLessonLinkAppearance = Pick<
-  NonNullable<Parameters<typeof buttonVariants>[0]>,
-  "size" | "variant"
-> & { className?: string };
-
 const EMPTY_EXCLUDED_LESSON_KINDS: LessonKind[] = [];
 
 function getScope(props: {
@@ -58,23 +53,15 @@ function getVisibleProgress({ progress }: { progress?: ContinueLessonProgress | 
 /**
  * The Continue button owns its compact progress suffix. Looking up progress
  * from the scope keeps pages from threading promises through sibling
- * components just to feed this small visual hint. Landing pages can opt out
- * because their primary action should stay conversion-focused even when old
- * lesson progress exists.
+ * components just to feed this small visual hint.
  */
 function getContinueLessonProgress({
   excludedLessonKinds,
-  showProgress,
   scope,
 }: {
   excludedLessonKinds: LessonKind[];
-  showProgress: boolean;
   scope: LessonScope;
 }) {
-  if (!showProgress) {
-    return Promise.resolve(null);
-  }
-
   if ("courseId" in scope) {
     return getCourseContinueProgress({ courseId: scope.courseId, excludedLessonKinds });
   }
@@ -120,47 +107,30 @@ function ContinueLessonLinkContent({
   );
 }
 
-/**
- * Catalog start and continue buttons share this component so every surface uses
- * the same progress-aware target. The optional appearance only changes the
- * button styling for placements like landing-page heroes, while progress
- * visibility stays a surface-level display choice.
- */
 export async function ContinueLessonLink<Href extends string, CompletedHref extends string>({
-  appearance,
   chapterId,
   completedHref,
   courseId,
   excludedLessonKinds = EMPTY_EXCLUDED_LESSON_KINDS,
   fallbackHref,
   lessonId,
-  showProgress = true,
-  startLabel,
 }: {
-  appearance?: ContinueLessonLinkAppearance;
   chapterId?: string;
   completedHref?: Route<CompletedHref>;
   courseId?: string;
   excludedLessonKinds?: LessonKind[];
   fallbackHref?: Route<Href>;
   lessonId?: string;
-  showProgress?: boolean;
-  startLabel?: string;
 }) {
   const t = await getExtracted();
   const scope = getScope({ chapterId, courseId, lessonId });
 
   const [data, resolvedProgress] = await Promise.all([
     getContinueLessonTarget({ excludedLessonKinds, scope }),
-    getContinueLessonProgress({ excludedLessonKinds, scope, showProgress }),
+    getContinueLessonProgress({ excludedLessonKinds, scope }),
   ]);
 
-  const className = buttonVariants({
-    className: cn("min-w-0 flex-1 gap-2", appearance?.className),
-    size: appearance?.size,
-    variant: appearance?.variant,
-  });
-
+  const className = cn(buttonVariants(), "min-w-0 flex-1 gap-2");
   const visibleProgress = getVisibleProgress({ progress: resolvedProgress });
 
   const progressContent = visibleProgress
@@ -169,8 +139,6 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
         text: `${visibleProgress.percentComplete}%`,
       }
     : null;
-
-  const initialLabel = startLabel ?? t("Start");
 
   /**
    * Some catalog pages can compute a safe first-child route, while others may
@@ -196,7 +164,7 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
    * routing rules here.
    */
   if (!data) {
-    return renderFallback({ label: initialLabel });
+    return renderFallback({ label: t("Start") });
   }
 
   const getLabel = () => {
@@ -208,7 +176,7 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
       return t("Continue");
     }
 
-    return initialLabel;
+    return t("Start");
   };
 
   const label = getLabel();

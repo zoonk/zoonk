@@ -361,287 +361,6 @@ msgstr "{completed, number}/{total, number} concluídos"
 msgid "Pf4uqS"
 msgstr "O capítulo de introdução está pronto. A gente ainda está criando o currículo completo, então mais capítulos vão aparecer aqui em breve."
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-actions.tsx
-#: src/app/(catalog)/courses/page.tsx
-msgid "s-Ncqj"
-msgstr "Explorar cursos"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-actions.tsx
-msgid "Y9LULP"
-msgstr "Experimente um capítulo grátis"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "8A99N6"
-msgstr "Ideias abstratas viram situações reais"
-
-#. Short imperative verb label for the first tab in a learning flow: understand, practice, then test. Translate as an action the learner takes, not as a noun.
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "courseLandingComparisonUnderstandTab"
-msgstr "Entenda"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "LcPoK0"
-msgstr "A gravidade é a força que atrai objetos com massa uns para os outros."
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "wC-aSO"
-msgstr "Vídeo de 2h 47min"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "7C2tU3"
-msgstr "É por isso que o café cai quando você derruba a caneca."
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "B3Il8E"
-msgstr "Aulas curtas e práticas"
-
-#. Short imperative verb label for the second tab in a learning flow: understand, practice, then test. Translate as an action the learner takes, not as a noun.
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "courseLandingComparisonPracticeTab"
-msgstr "Pratique"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "F_F8WX"
-msgstr "Os preços sobem"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "-EEAVi"
-msgstr "Os preços ficam estáveis"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "qG6ALM"
-msgstr "A demanda desaparece"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "361ky2"
-msgstr "Oferta e demanda determinam os preços. Defina oferta e depois demanda."
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "2hewNe"
-msgstr "Atividade"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "k3LaSh"
-msgstr "Um show tem 300 lugares e 1.200 pessoas na fila. O que acontece com o preço dos ingressos se nenhum lugar novo for adicionado?"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "VlR_2v"
-msgstr "Resolver um problema"
-
-#. Short imperative verb label for the third tab in a learning flow: understand, practice, then test. Translate as an action the learner takes, not as a noun.
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "courseLandingComparisonTestTab"
-msgstr "Teste"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "8Nkyqo"
-msgstr "Inércia"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "2792N9"
-msgstr "Gravidade"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "HC8xUj"
-msgstr "Atrito"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "clPnhd"
-msgstr "O que é inércia?"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "vKGhx1"
-msgstr "Quiz de revisão"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "cZ39v4"
-msgstr "Quando um carro freia de repente, todo mundo se inclina para a frente. O que faz isso acontecer?"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "PTjjt2"
-msgstr "Exemplo prático"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "ne7a4s"
-msgstr "Curso comum"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-comparison.tsx
-msgid "SaQXGG"
-msgstr "Aula do Zoonk"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-curriculum.tsx
-msgid "BoEpk9"
-msgstr "Introdução"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-curriculum.tsx
-msgid "itC9lG"
-msgstr "Básico"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-curriculum.tsx
-msgid "o5_DJA"
-msgstr "Intermediário"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-curriculum.tsx
-msgid "3Rx6Qo"
-msgstr "Avançado"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-curriculum.tsx
-msgid "OEt4CQ"
-msgstr "Conteúdo do curso"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-curriculum.tsx
-msgid "GG6-cA"
-msgstr "{count, plural, one {# capítulo} other {# capítulos}}"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-curriculum.tsx
-msgid "3nOnkT"
-msgstr "Comece pelo básico e avance para temas mais avançados. Abra uma seção para ver os capítulos."
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-decision-tabs.tsx
-msgid "hmZz9H"
-msgstr "Como"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-decision-tabs.tsx
-msgid "Jq3FDz"
-msgstr "Conteúdo"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-decision-tabs.tsx
-msgid "o8KenS"
-msgstr "Para quem"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-decision-tabs.tsx
-msgid "y9RWqI"
-msgstr "O quê"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-decision-tabs.tsx
-msgid "ujaB7H"
-msgstr "Onde"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-decision-tabs.tsx
-msgid "9RUPaY"
-msgstr "Dúvidas do curso"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-hero.tsx
-msgid "HgZhb7"
-msgstr "Curso interativo"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-hero.tsx
-msgid "5xtUUN"
-msgstr "Primeiro capítulo grátis"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-hero.tsx
-msgid "D6Uiky"
-msgstr "Do básico ao avançado"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-hero.tsx
-msgid "L9JGVa"
-msgstr "Estude no seu ritmo"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-msgid "kvjzxh"
-msgstr "O que você vai aprender"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-msgid "k9VAoq"
-msgstr "Iniciantes curiosos que querem ver se o assunto faz sentido"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-msgid "6d4U8p"
-msgstr "Para quem é este curso"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-msgid "hsgfxV"
-msgstr "Onde você vai usar isso"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-msgid "qieSfO"
-msgstr "Aprenda palavras úteis e pratique até elas ficarem naturais."
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-#: src/lib/lessons.ts
-msgid "lqtP-R"
-msgstr "Vocabulário"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-msgid "ZHyORV"
-msgstr "Leia textos curtos do dia a dia que mostram como o idioma é usado de verdade."
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-#: src/lib/lessons.ts
-msgid "MOK_yK"
-msgstr "Leitura"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-msgid "Tt4yPU"
-msgstr "Escute situações da vida real e treine seu ouvido para entender com naturalidade."
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-#: src/lib/lessons.ts
-msgid "1TOMnj"
-msgstr "Escuta"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-msgid "_BizQu"
-msgstr "Entenda regras de gramática com explicações simples."
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-#: src/lib/lessons.ts
-msgid "QzTY8x"
-msgstr "Gramática"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-msgid "BuBt5e"
-msgstr "Aprenda a pronúncia comparando sons com o seu próprio idioma (ex.: Hi → Rai)"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-msgid "vuwclE"
-msgstr "Pronúncia"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-msgid "FkGq7Y"
-msgstr "Ideias complexas explicadas em linguagem simples."
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-msgid "-ccXf6"
-msgstr "Linguagem do dia a dia"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-msgid "SUbq96"
-msgstr "Veja como cada conceito aparece em situações do dia a dia."
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-msgid "PWMkDF"
-msgstr "Exemplos da vida real"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-msgid "9HRhoP"
-msgstr "Use o que você aprende em situações realistas, não só em definições."
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-msgid "5gsjXY"
-msgstr "Pratique com problemas reais"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-msgid "NLqVU5"
-msgstr "Pratique o que você aprendeu com algumas perguntas rápidas."
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-#: src/lib/lessons.ts
-msgid "OuR_Ij"
-msgstr "Quiz"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-msgid "KWp1o4"
-msgstr "Como nossas aulas funcionam"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-msgid "eO0KtN"
-msgstr "Um curso, não uma credencial"
-
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-landing-page-sections.tsx
-msgid "jt8_3X"
-msgstr "O objetivo deste curso é te ajudar a entender o assunto e desenvolver habilidades úteis. Ele não concede diploma universitário, licença profissional nem outra qualificação reconhecida oficialmente."
-
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
 msgid "_allXG"
 msgstr "Aprenda {course} online com exemplos práticos e linguagem do dia a dia. {description}"
@@ -688,6 +407,10 @@ msgstr "Explore todos os cursos do Zoonk para aprender qualquer coisa com IA. En
 #: src/app/(catalog)/courses/page.tsx
 msgid "P5jxUC"
 msgstr "Cursos online com IA"
+
+#: src/app/(catalog)/courses/page.tsx
+msgid "s-Ncqj"
+msgstr "Explorar cursos"
 
 #: src/app/(catalog)/courses/page.tsx
 msgid "hUF3bo"
@@ -2422,8 +2145,24 @@ msgid "E1bF_X"
 msgstr "Explicação"
 
 #: src/lib/lessons.ts
+msgid "QzTY8x"
+msgstr "Gramática"
+
+#: src/lib/lessons.ts
+msgid "1TOMnj"
+msgstr "Escuta"
+
+#: src/lib/lessons.ts
 msgid "KV-O0y"
 msgstr "Prática"
+
+#: src/lib/lessons.ts
+msgid "OuR_Ij"
+msgstr "Quiz"
+
+#: src/lib/lessons.ts
+msgid "MOK_yK"
+msgstr "Leitura"
 
 #: src/lib/lessons.ts
 msgid "_vCXIP"
@@ -2432,6 +2171,10 @@ msgstr "Tradução"
 #: src/lib/lessons.ts
 msgid "Ox-Z-K"
 msgstr "Tutorial"
+
+#: src/lib/lessons.ts
+msgid "lqtP-R"
+msgstr "Vocabulário"
 
 #: src/lib/lessons.ts
 msgid "22k1CY"
