@@ -68,7 +68,7 @@ export function GenerationClient({
     initialRunId: generationRunId,
     initialStatus: generationStatus === "running" ? "streaming" : "idle",
     statusUrl: `${API_URL}/v1/workflows/course-generation/status`,
-    triggerBody: { courseStartRequestId: requestId },
+    triggerBody: { coursePromptId: requestId },
     triggerUrl: `${API_URL}/v1/workflows/course-generation/trigger`,
   });
 

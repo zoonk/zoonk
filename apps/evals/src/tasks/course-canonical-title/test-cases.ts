@@ -45,7 +45,7 @@ function titleExpectations({
   return `
     - The title should be ${acceptedTitleLabel}.
     - The output must contain only the title field.
-    - The title should not include level words such as intro, beginner, advanced, 101, basics, or fundamentals unless they are part of an official name.
+    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.
     ${extra ?? ""}
     ${SCORE_TIERS}
   `;
@@ -114,6 +114,18 @@ export const TEST_CASES: CourseCanonicalTitleTestCase[] = [
     prompt: "beginner astronomy course",
   }),
   titleCase({
+    expectedTitle: "Sustainability Reporting",
+    id: "sustainability-reporting-essentials",
+    language: "en",
+    prompt: "Sustainability Reporting Essentials",
+  }),
+  titleCase({
+    expectedTitle: "Biology",
+    id: "advanced-biology",
+    language: "en",
+    prompt: "advanced biology",
+  }),
+  titleCase({
     expectedTitle: "JavaScript",
     id: "javascript-basics-to-mastery",
     language: "en",
@@ -164,6 +176,12 @@ export const TEST_CASES: CourseCanonicalTitleTestCase[] = [
     prompt: "java thread pools",
   }),
   titleCase({
+    expectedTitle: "Java Loops",
+    id: "java-loops",
+    language: "en",
+    prompt: "java loops",
+  }),
+  titleCase({
     acceptedTitles: ["Model Refinement", "Model Refining", "Refining a Model"],
     expectedTitle: "Model Refinement",
     id: "refining-a-model",
@@ -188,6 +206,7 @@ export const TEST_CASES: CourseCanonicalTitleTestCase[] = [
       "Military Decision-Making Process",
       "Military Decision Making Process",
       "Army Military Decision Making Process",
+      "Army Military Decision-Making Process",
     ],
     expectedTitle: "Army MDMP Process",
     id: "army-mdmp",
@@ -410,6 +429,7 @@ export const TEST_CASES: CourseCanonicalTitleTestCase[] = [
       "Cybersecurity Awareness and Phishing Prevention",
       "Online Safety and Phishing Awareness",
       "Phishing Attack Prevention and Detection",
+      "Online Fraud Prevention",
     ],
     expectedTitle: "Online Safety",
     extra: `
@@ -465,6 +485,8 @@ export const TEST_CASES: CourseCanonicalTitleTestCase[] = [
       "Methamphetamine Production Safety and Prevention",
       "Home Chemistry Safety",
       "Chemical Safety and Substance Use Prevention",
+      "Methamphetamine Awareness and Prevention",
+      "Methamphetamine Hazards and Substance-Use Prevention",
     ],
     expectedTitle: "Chemical Safety",
     extra: `
@@ -540,5 +562,31 @@ export const TEST_CASES: CourseCanonicalTitleTestCase[] = [
     id: "en-sql",
     language: "en",
     prompt: "sql from zero",
+  }),
+  titleCase({
+    acceptedTitles: ["Matemáticas: Fracciones a Álgebra", "Fracciones a Álgebra"],
+    expectedTitle: "Matemáticas: Fracciones a Álgebra",
+    id: "en-fracciones-a-algebra",
+    language: "es",
+    prompt: "matematicas, operaciones de fracciones a algebra",
+  }),
+  titleCase({
+    acceptedTitles: ["Matemáticas: Fracciones", "Fracciones"],
+    expectedTitle: "Matemáticas: Fracciones",
+    id: "es-fracciones",
+    language: "es",
+    prompt: "matematicas fracciones y mas",
+  }),
+  titleCase({
+    expectedTitle: "JavaScript",
+    id: "pt-javascript",
+    language: "pt",
+    prompt: "escrever código em javascript e afins",
+  }),
+  titleCase({
+    expectedTitle: "Mathematics and Physics",
+    id: "university-math-physics",
+    language: "en",
+    prompt: "University Mathematics and Physics",
   }),
 ];

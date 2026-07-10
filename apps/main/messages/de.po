@@ -719,7 +719,7 @@ msgstr "Kurs starten"
 
 #: src/app/(catalog)/p/[courseId]/page.tsx
 #: src/app/(catalog)/start/exam/page.tsx
-#: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
 #: src/app/(catalog)/start/start-content.tsx
 msgid "e61Jf3"
 msgstr "Demnächst verfügbar"
@@ -729,13 +729,13 @@ msgid "dtRj3N"
 msgstr "Personalisierte Kurse kommen bald."
 
 #: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
-#: src/app/(catalog)/start/learn/[prompt]/course-mode-waitlist-form.tsx
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
 #: src/components/feedback/contact-form.tsx
 msgid "hJZwTS"
 msgstr "E‑Mail‑Adresse"
 
 #: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
-#: src/app/(catalog)/start/learn/[prompt]/course-mode-waitlist-form.tsx
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
 #: src/components/feedback/contact-form.tsx
 msgid "OiSL94"
 msgstr "meineemail@gmail.com"
@@ -757,7 +757,7 @@ msgid "E_0Y4u"
 msgstr "Sag uns, für welchen Test, welche Zertifizierung oder Schulprüfung du dich interessierst"
 
 #: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
-#: src/app/(catalog)/start/learn/[prompt]/course-mode-waitlist-form.tsx
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
 msgid "6eV4UR"
 msgstr "Wir konnten dich nicht zur Warteliste hinzufügen. Bitte versuche es erneut."
 
@@ -766,7 +766,7 @@ msgid "W78DIe"
 msgstr "Du stehst auf der Liste. Wir melden uns, sobald die Prüfungsvorbereitung bereit ist."
 
 #: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
-#: src/app/(catalog)/start/learn/[prompt]/course-mode-waitlist-form.tsx
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
 msgid "ipGe-B"
 msgstr "Benachrichtige mich"
 
@@ -782,7 +782,31 @@ msgstr "Online‑KI‑Prüfungsvorbereitung"
 msgid "CzV5fE"
 msgstr "Die Prüfungsvorbereitung ist noch nicht verfügbar. Sag uns, wofür du lernst, und wir benachrichtigen dich, wenn sie startet."
 
-#: src/app/(catalog)/start/learn/[prompt]/course-mode-waitlist-form.tsx
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
+msgid "8Zy06C"
+msgstr "Diese Option ist noch nicht verfügbar"
+
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
+msgid "TV5hlz"
+msgstr "Trag dich auf die Warteliste ein und wir benachrichtigen dich, wenn du <strong>{title}</strong> mit Zoonk lernen kannst."
+
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
+msgid "cPhKTw"
+msgstr "Nicht verfügbar"
+
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
+msgid "5DZYgN"
+msgstr "Wir können diesen Kurs nicht erstellen"
+
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
+msgid "m6ju4Q"
+msgstr "Zoonk kann bei Anfragen zu unsicheren, illegalen oder schädlichen Aktivitäten nicht helfen. Versuch stattdessen ein anderes Thema."
+
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
+msgid "PDFZz6"
+msgstr "Probier ein anderes Ziel"
+
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
 msgid "hCixWc"
 msgstr "Du stehst auf der Liste. Wir schicken dir eine E‑Mail, sobald sie verfügbar ist."
 
@@ -798,30 +822,6 @@ msgstr "Wir prüfen dein Lernziel. Das kann ein paar Sekunden dauern."
 #: src/app/(settings)/subscription/plan-list.tsx
 msgid "47FYwb"
 msgstr "Abbrechen"
-
-#: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
-msgid "8Zy06C"
-msgstr "Diese Option ist noch nicht verfügbar"
-
-#: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
-msgid "TV5hlz"
-msgstr "Trag dich auf die Warteliste ein und wir benachrichtigen dich, wenn du <strong>{title}</strong> mit Zoonk lernen kannst."
-
-#: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
-msgid "cPhKTw"
-msgstr "Nicht verfügbar"
-
-#: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
-msgid "5DZYgN"
-msgstr "Wir können diesen Kurs nicht erstellen"
-
-#: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
-msgid "m6ju4Q"
-msgstr "Zoonk kann bei Anfragen zu unsicheren, illegalen oder schädlichen Aktivitäten nicht helfen. Versuch stattdessen ein anderes Thema."
-
-#: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
-msgid "PDFZz6"
-msgstr "Probier ein anderes Ziel"
 
 #: src/app/(catalog)/start/learn/[prompt]/page.tsx
 msgid "CaU_nf"
@@ -1583,7 +1583,7 @@ msgstr "Deinen Fortschritt speichern..."
 msgid "JUr8Er"
 msgstr "Abschließen..."
 
-#: src/app/generate/course/[id]/generate-course-start-request-content.tsx
+#: src/app/generate/course/[id]/generate-course-prompt-content.tsx
 msgid "rPgekg"
 msgstr "Zurück zur Startseite"
 

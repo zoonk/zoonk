@@ -16,7 +16,7 @@ import {
 } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseStartRequestFixture } from "@zoonk/testing/fixtures/course-start-requests";
+import { coursePromptFixture } from "@zoonk/testing/fixtures/course-prompts";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
@@ -183,68 +183,118 @@ describe(courseGenerationWorkflow, () => {
       const nonExistentId = randomUUID();
 
       await expect(courseGenerationWorkflow(nonExistentId)).rejects.toThrow(
-        "Course start request not found",
+        "Course prompt not found",
       );
 
       expect(generateCourseDescription).not.toHaveBeenCalled();
     });
 
-    it("returns when request status is 'running' without streaming completion", async () => {
-      const request = await courseStartRequestFixture({
-        canonicalTitle: `Running Request ${randomUUID()}`,
+    it("resumes when the current workflow already owns a running request", async () => {
+      vi.mocked(generateCourseDescription).mockClear();
+      vi.mocked(getOrCreateCourse).mockClear();
+
+      const title = `Running Request ${randomUUID()}`;
+
+      const course = await courseFixture({
+        generationRunId: "test-run-id",
+        generationStatus: "running",
+        organizationId,
+        slug: getCourseSlugForTitle({ language: "en", title }),
+        title,
+      });
+
+      await prisma.course.update({ data: { description: null }, where: { id: course.id } });
+
+      const request = await coursePromptFixture({
+        canonicalTitle: title,
+        courseId: course.id,
+        generationRunId: "test-run-id",
         generationStatus: "running",
       });
 
       await courseGenerationWorkflow(request.id);
 
-      const dbRequest = await prisma.courseStartRequest.findUnique({ where: { id: request.id } });
+      const dbRequest = await prisma.coursePrompt.findUnique({ where: { id: request.id } });
 
-      expect(dbRequest?.generationStatus).toBe("running");
-      expect(generateCourseDescription).not.toHaveBeenCalled();
+      expect(dbRequest?.generationStatus).toBe("completed");
+
+      expect(getOrCreateCourse).toHaveBeenCalledWith(
+        expect.objectContaining({ coursePromptId: request.id, workflowRunId: "test-run-id" }),
+      );
+
+      expect(generateCourseDescription).toHaveBeenCalledWith({ language: "en", title });
 
       const completionEvent = getStreamedEvents().find(
         (event) => event.step === COURSE_COMPLETION_STEP && event.status === "completed",
       );
 
-      expect(completionEvent).toBeUndefined();
+      expect(completionEvent?.entityId).toBe(course.slug);
     });
 
-    it("streams completion when request status is 'completed'", async () => {
-      const request = await courseStartRequestFixture({
-        canonicalTitle: `Completed Request ${randomUUID()}`,
+    it("reconciles an already completed request through the course state gate", async () => {
+      vi.mocked(generateCourseDescription).mockClear();
+      vi.mocked(getOrCreateCourse).mockClear();
+
+      const title = `Completed Request ${randomUUID()}`;
+
+      const course = await courseFixture({
+        generationRunId: "completed-run-id",
+        generationStatus: "completed",
+        organizationId,
+        slug: getCourseSlugForTitle({ language: "en", title }),
+        title,
+      });
+
+      const request = await coursePromptFixture({
+        canonicalTitle: title,
+        courseId: course.id,
+        generationRunId: "completed-run-id",
         generationStatus: "completed",
       });
 
       await courseGenerationWorkflow(request.id);
 
-      const dbRequest = await prisma.courseStartRequest.findUnique({ where: { id: request.id } });
+      const dbRequest = await prisma.coursePrompt.findUnique({ where: { id: request.id } });
 
       expect(dbRequest?.generationStatus).toBe("completed");
+
+      expect(getOrCreateCourse).toHaveBeenCalledWith(
+        expect.objectContaining({ coursePromptId: request.id, workflowRunId: "test-run-id" }),
+      );
+
       expect(generateCourseDescription).not.toHaveBeenCalled();
 
       const completionEvent = getStreamedEvents().find(
         (event) => event.step === COURSE_COMPLETION_STEP && event.status === "completed",
       );
 
-      expect(completionEvent).toBeDefined();
+      expect(completionEvent?.entityId).toBe(course.slug);
     });
 
     it("returns when existing course status is 'running' without streaming completion", async () => {
       const title = `Existing Running Course ${randomUUID()}`;
       const slug = getCourseSlugForTitle({ language: "en", title });
+      const generationRunId = `existing-${randomUUID()}`;
 
-      await courseFixture({ generationStatus: "running", organizationId, slug, title });
+      await courseFixture({
+        generationRunId,
+        generationStatus: "running",
+        organizationId,
+        slug,
+        title,
+      });
 
-      const request = await courseStartRequestFixture({
+      const request = await coursePromptFixture({
         canonicalTitle: title,
         generationStatus: "pending",
       });
 
       await courseGenerationWorkflow(request.id);
 
-      const dbRequest = await prisma.courseStartRequest.findUnique({ where: { id: request.id } });
+      const dbRequest = await prisma.coursePrompt.findUnique({ where: { id: request.id } });
 
-      expect(dbRequest?.generationStatus).toBe("pending");
+      expect(dbRequest?.generationRunId).toBe(generationRunId);
+      expect(dbRequest?.generationStatus).toBe("running");
       expect(dbRequest?.courseId).not.toBeNull();
       expect(generateCourseDescription).not.toHaveBeenCalled();
 
@@ -261,14 +311,14 @@ describe(courseGenerationWorkflow, () => {
 
       await courseFixture({ generationStatus: "completed", organizationId, slug, title });
 
-      const request = await courseStartRequestFixture({
+      const request = await coursePromptFixture({
         canonicalTitle: title,
         generationStatus: "pending",
       });
 
       await courseGenerationWorkflow(request.id);
 
-      const dbRequest = await prisma.courseStartRequest.findUnique({ where: { id: request.id } });
+      const dbRequest = await prisma.coursePrompt.findUnique({ where: { id: request.id } });
 
       expect(dbRequest?.courseId).not.toBeNull();
       expect(dbRequest?.generationStatus).toBe("completed");
@@ -280,6 +330,52 @@ describe(courseGenerationWorkflow, () => {
 
       expect(completionEvent).toBeDefined();
     });
+
+    it.each(["running", "completed", "failed"] as const)(
+      "rejects a cached %s language course with a different target without mutating it",
+      async (generationStatus) => {
+        const language = `x${randomUUID().slice(0, 8)}`;
+        const title = `Mismatched Language Course ${randomUUID()}`;
+        const slug = getCourseSlugForTitle({ language, title });
+        const unrelatedGenerationRunId = `unrelated-${randomUUID()}`;
+
+        const unrelatedCourse = await courseFixture({
+          format: "language",
+          generationRunId: unrelatedGenerationRunId,
+          generationStatus,
+          language,
+          organizationId,
+          slug,
+          targetLanguage: "fr",
+          title,
+        });
+
+        const request = await coursePromptFixture({
+          canonicalTitle: title,
+          courseFormat: "language",
+          courseId: unrelatedCourse.id,
+          generationStatus: "pending",
+          language,
+          targetLanguage: "es",
+        });
+
+        await expect(courseGenerationWorkflow(request.id)).rejects.toThrow(
+          "Recovered course does not match the prompt identity",
+        );
+
+        const [persistedCourse, persistedPrompt] = await Promise.all([
+          prisma.course.findUniqueOrThrow({ where: { id: unrelatedCourse.id } }),
+          prisma.coursePrompt.findUniqueOrThrow({ where: { id: request.id } }),
+        ]);
+
+        expect(persistedCourse.generationRunId).toBe(unrelatedGenerationRunId);
+        expect(persistedCourse.generationStatus).toBe(generationStatus);
+        expect(persistedCourse.targetLanguage).toBe("fr");
+        expect(persistedPrompt.courseId).toBeNull();
+        expect(persistedPrompt.generationRunId).toBeNull();
+        expect(persistedPrompt.generationStatus).toBe("failed");
+      },
+    );
   });
 
   describe("happy path", () => {
@@ -287,7 +383,7 @@ describe(courseGenerationWorkflow, () => {
       const title = `Intro Chapter Course ${randomUUID()}`;
       const slug = getCourseSlugForTitle({ language: "en", title });
 
-      const request = await courseStartRequestFixture({
+      const request = await coursePromptFixture({
         canonicalTitle: title,
         generationStatus: "pending",
       });
@@ -371,7 +467,7 @@ describe(courseGenerationWorkflow, () => {
 
       vi.mocked(generateCourseChapters).mockReturnValueOnce(chapterOutline.promise);
 
-      const request = await courseStartRequestFixture({
+      const request = await coursePromptFixture({
         canonicalTitle: title,
         generationStatus: "pending",
       });
@@ -418,7 +514,7 @@ describe(courseGenerationWorkflow, () => {
       vi.mocked(lessonGenerationWorkflow).mockReturnValueOnce(firstIntroLesson.promise);
       vi.mocked(generateCourseChapters).mockReturnValueOnce(chapterOutline.promise);
 
-      const request = await courseStartRequestFixture({
+      const request = await coursePromptFixture({
         canonicalTitle: title,
         generationStatus: "pending",
       });
@@ -474,14 +570,16 @@ describe(courseGenerationWorkflow, () => {
       const title = `Language Course ${randomUUID()}`;
 
       const existingCourse = await courseFixture({
+        format: "language",
         generationStatus: "failed",
         organizationId,
         targetLanguage: "es",
         title,
       });
 
-      const request = await courseStartRequestFixture({
+      const request = await coursePromptFixture({
         canonicalTitle: title,
+        courseFormat: "language",
         courseId: existingCourse.id,
         generationStatus: "pending",
         language: "en",
@@ -490,7 +588,7 @@ describe(courseGenerationWorkflow, () => {
 
       await courseGenerationWorkflow(request.id);
 
-      const updatedRequest = await prisma.courseStartRequest.findUniqueOrThrow({
+      const updatedRequest = await prisma.coursePrompt.findUniqueOrThrow({
         where: { id: request.id },
       });
 
@@ -546,7 +644,7 @@ describe(courseGenerationWorkflow, () => {
         },
       });
 
-      const request = await courseStartRequestFixture({
+      const request = await coursePromptFixture({
         canonicalTitle: title,
         courseId: existingCourse.id,
         generationStatus: "failed",
@@ -594,7 +692,7 @@ describe(courseGenerationWorkflow, () => {
       });
 
       const [request] = await Promise.all([
-        courseStartRequestFixture({
+        coursePromptFixture({
           canonicalTitle: title,
           courseId: existingCourse.id,
           generationStatus: "failed",
@@ -637,7 +735,7 @@ describe(courseGenerationWorkflow, () => {
       const title = `Error Course ${randomUUID()}`;
       const slug = getCourseSlugForTitle({ language: "en", title });
 
-      const request = await courseStartRequestFixture({
+      const request = await coursePromptFixture({
         canonicalTitle: title,
         generationStatus: "pending",
       });
@@ -646,7 +744,7 @@ describe(courseGenerationWorkflow, () => {
 
       const course = await prisma.course.findFirst({ where: { slug } });
 
-      const dbRequest = await prisma.courseStartRequest.findUnique({ where: { id: request.id } });
+      const dbRequest = await prisma.coursePrompt.findUnique({ where: { id: request.id } });
 
       expect(course?.generationStatus).toBe("failed");
       expect(course?.generationRunId).toBeNull();
@@ -665,14 +763,14 @@ describe(courseGenerationWorkflow, () => {
 
       const title = `Init Fail Course ${randomUUID()}`;
 
-      const request = await courseStartRequestFixture({
+      const request = await coursePromptFixture({
         canonicalTitle: title,
         generationStatus: "pending",
       });
 
       await expect(courseGenerationWorkflow(request.id)).rejects.toThrow();
 
-      const dbRequest = await prisma.courseStartRequest.findUnique({ where: { id: request.id } });
+      const dbRequest = await prisma.coursePrompt.findUnique({ where: { id: request.id } });
 
       expect(dbRequest?.generationStatus).toBe("failed");
 
@@ -695,7 +793,7 @@ describe(courseGenerationWorkflow, () => {
       const title = `Chapter Image Error Course ${randomUUID()}`;
       const slug = getCourseSlugForTitle({ language: "en", title });
 
-      const request = await courseStartRequestFixture({
+      const request = await coursePromptFixture({
         canonicalTitle: title,
         generationStatus: "pending",
       });

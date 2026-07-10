@@ -5,8 +5,8 @@ import { type ReasoningEffort, buildProviderOptions } from "../../provider-optio
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./course-canonical-title.prompt.md";
 
-const defaultModel = "openai/gpt-5.4-mini";
-const fallbackModels = ["google/gemini-3.1-flash-lite", "deepseek/deepseek-v4-flash"] as const;
+const defaultModel = "google/gemini-3.1-flash-lite";
+const fallbackModels = ["openai/gpt-5.6-luna", "deepseek/deepseek-v4-flash"] as const;
 
 const schema = z.object({ title: z.string() });
 

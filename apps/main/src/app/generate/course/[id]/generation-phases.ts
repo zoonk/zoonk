@@ -43,7 +43,7 @@ const PHASE_STEPS = {
   checkingCourseIdentity: ["resolveCourseIdentity"],
   creatingCoverImage: ["generateImage"],
   findingSimilarCourses: ["generateCourseIdentitySearchQueries"],
-  gettingReady: ["getCourseStartRequest"],
+  gettingReady: ["getCoursePrompt"],
   outliningChapters: ["generateChapters"],
   planningIntroduction: ["generateIntroductionChapter"],
   preparingCourse: ["initializeCourse", "setCourseAsRunning"],

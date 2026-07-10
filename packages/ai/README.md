@@ -5,5 +5,5 @@ This package contains functions for AI-powered features in Zoonk. We're using th
 ## Usage
 
 ```tsx
-import { routeCourseRequest } from "@zoonk/ai/tasks/courses/request-routing";
+import { classifyCourseIntent } from "@zoonk/ai/tasks/courses/intent";
 ```

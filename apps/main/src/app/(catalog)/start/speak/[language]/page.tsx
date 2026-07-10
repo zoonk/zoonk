@@ -1,7 +1,7 @@
 import { getAiCourseHref } from "@/data/courses/course-href";
 import {
   getCompletedLanguageCourse,
-  getOrCreateLanguageCourseRequest,
+  getOrCreateLanguageCoursePromptRequest,
 } from "@/data/courses/language-course";
 import { getLanguageName, isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { getLocale } from "next-intl/server";
@@ -32,7 +32,7 @@ export default async function StartSpeakLanguage({ params }: PageProps<"/start/s
 
   const title = getLanguageName({ targetLanguage, userLanguage: locale });
 
-  const request = await getOrCreateLanguageCourseRequest({
+  const request = await getOrCreateLanguageCoursePromptRequest({
     language: locale,
     targetLanguage,
     title,

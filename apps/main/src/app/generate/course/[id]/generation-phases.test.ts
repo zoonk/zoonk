@@ -91,7 +91,7 @@ describe("course generation phases", () => {
 
   it("returns 100 progress for non-language courses when the first intro lesson is ready", () => {
     const completedSteps = [
-      "getCourseStartRequest",
+      "getCoursePrompt",
       "generateCourseIdentitySearchQueries",
       "resolveCourseIdentity",
       "initializeCourse",
@@ -117,7 +117,7 @@ describe("course generation phases", () => {
 
   it("returns 100 progress for language courses when full course setup is complete", () => {
     const completedSteps = [
-      "getCourseStartRequest",
+      "getCoursePrompt",
       "generateCourseIdentitySearchQueries",
       "resolveCourseIdentity",
       "initializeCourse",

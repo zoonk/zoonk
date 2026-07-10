@@ -48,14 +48,15 @@ function getExistingLandingPage(course: CourseWithContentCounts): CourseLandingP
  */
 export function getExistingCourseContent(course: CourseWithContentCounts): ExistingCourseContent {
   const chapterCount = course._count.chapters;
+  const isLanguageCourse = course.format === "language";
 
-  const introductionChapter = course.targetLanguage
+  const introductionChapter = isLanguageCourse
     ? null
     : (course.chapters.find((chapter) => chapter.position === 0) ?? null);
 
   const hasIntroductionLessons = Boolean(introductionChapter?._count.lessons);
 
-  const hasMainCurriculum = course.targetLanguage
+  const hasMainCurriculum = isLanguageCourse
     ? chapterCount > 0
     : course.chapters.some((chapter) => chapter.position > 0);
 

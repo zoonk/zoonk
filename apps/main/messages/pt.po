@@ -719,7 +719,7 @@ msgstr "Começar um curso"
 
 #: src/app/(catalog)/p/[courseId]/page.tsx
 #: src/app/(catalog)/start/exam/page.tsx
-#: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
 #: src/app/(catalog)/start/start-content.tsx
 msgid "e61Jf3"
 msgstr "Em breve"
@@ -729,13 +729,13 @@ msgid "dtRj3N"
 msgstr "Cursos personalizados chegam em breve."
 
 #: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
-#: src/app/(catalog)/start/learn/[prompt]/course-mode-waitlist-form.tsx
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
 #: src/components/feedback/contact-form.tsx
 msgid "hJZwTS"
 msgstr "Email"
 
 #: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
-#: src/app/(catalog)/start/learn/[prompt]/course-mode-waitlist-form.tsx
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
 #: src/components/feedback/contact-form.tsx
 msgid "OiSL94"
 msgstr "meuemail@gmail.com"
@@ -757,7 +757,7 @@ msgid "E_0Y4u"
 msgstr "Conte qual prova, certificação ou exame escolar importa para você."
 
 #: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
-#: src/app/(catalog)/start/learn/[prompt]/course-mode-waitlist-form.tsx
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
 msgid "6eV4UR"
 msgstr "Não conseguimos te colocar na lista de espera. Tente de novo."
 
@@ -766,7 +766,7 @@ msgid "W78DIe"
 msgstr "Você entrou na lista. A gente te avisa quando a preparação para provas estiver pronta."
 
 #: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
-#: src/app/(catalog)/start/learn/[prompt]/course-mode-waitlist-form.tsx
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
 msgid "ipGe-B"
 msgstr "Me avise"
 
@@ -782,7 +782,31 @@ msgstr "Estudar para concursos e provas com IA"
 msgid "CzV5fE"
 msgstr "A preparação para provas ainda não está disponível. Conte para qual prova está estudando e a gente te avisa quando for lançada."
 
-#: src/app/(catalog)/start/learn/[prompt]/course-mode-waitlist-form.tsx
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
+msgid "8Zy06C"
+msgstr "Esta opção ainda não está disponível"
+
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
+msgid "TV5hlz"
+msgstr "Entre na lista de espera e a gente te avisa quando você puder aprender <strong>{title}</strong> com o Zoonk."
+
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
+msgid "cPhKTw"
+msgstr "Indisponível"
+
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
+msgid "5DZYgN"
+msgstr "Não podemos criar este curso"
+
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
+msgid "m6ju4Q"
+msgstr "O Zoonk não pode ajudar com pedidos que envolvem atividades inseguras, ilegais ou prejudiciais. Tente outro assunto."
+
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
+msgid "PDFZz6"
+msgstr "Tentar outra meta"
+
+#: src/app/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
 msgid "hCixWc"
 msgstr "Você entrou na lista. A gente te envia um email quando estiver disponível."
 
@@ -798,30 +822,6 @@ msgstr "A gente está analisando sua meta de estudo. Isso pode levar alguns segu
 #: src/app/(settings)/subscription/plan-list.tsx
 msgid "47FYwb"
 msgstr "Cancelar"
-
-#: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
-msgid "8Zy06C"
-msgstr "Esta opção ainda não está disponível"
-
-#: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
-msgid "TV5hlz"
-msgstr "Entre na lista de espera e a gente te avisa quando você puder aprender <strong>{title}</strong> com o Zoonk."
-
-#: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
-msgid "cPhKTw"
-msgstr "Indisponível"
-
-#: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
-msgid "5DZYgN"
-msgstr "Não podemos criar este curso"
-
-#: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
-msgid "m6ju4Q"
-msgstr "O Zoonk não pode ajudar com pedidos que envolvem atividades inseguras, ilegais ou prejudiciais. Tente outro assunto."
-
-#: src/app/(catalog)/start/learn/[prompt]/course-start-result.tsx
-msgid "PDFZz6"
-msgstr "Tentar outra meta"
 
 #: src/app/(catalog)/start/learn/[prompt]/page.tsx
 msgid "CaU_nf"
@@ -1583,7 +1583,7 @@ msgstr "Salvando seu progresso…"
 msgid "JUr8Er"
 msgstr "Finalizando…"
 
-#: src/app/generate/course/[id]/generate-course-start-request-content.tsx
+#: src/app/generate/course/[id]/generate-course-prompt-content.tsx
 msgid "rPgekg"
 msgstr "Voltar para o início"
 

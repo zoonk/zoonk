@@ -10,7 +10,8 @@ import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { type CourseGetPayload, getAiGenerationCourseWhere, prisma } from "@zoonk/db";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { courseContentInclude } from "../_internal/existing-course-content";
-import { type GeneratableCourseStartRequest } from "./get-course-start-request-step";
+import { assertCourseMatchesPromptIdentity } from "../_utils/course-identity-validation";
+import { type GeneratableCoursePrompt } from "./get-course-prompt-step";
 
 const IDENTITY_SEARCH_STEP = "generateCourseIdentitySearchQueries";
 const IDENTITY_CLASSIFICATION_STEP = "resolveCourseIdentity";
@@ -23,9 +24,8 @@ type CourseIdentityStream = ReturnType<typeof createStepStream<CourseWorkflowSte
 
 /**
  * Keeps optional query clauses type-safe after the conditional array pattern.
- * The resolver builds many small Prisma clauses from title, prompt, target
- * language, and AI-generated search phrases, and falsey clauses mean "this
- * signal is not available for the current request."
+ * The resolver builds small Prisma clauses from title, prompt, and AI-generated
+ * search phrases, and falsey clauses mean that signal is unavailable.
  */
 function isCourseWhereInput(value: CourseWhereInput | false | null): value is CourseWhereInput {
   return Boolean(value);
@@ -57,10 +57,10 @@ function toIdentityCandidate(course: ExistingCourse): CourseIdentityCandidate {
 }
 
 /**
- * Converts a course start request into the model input shape. Keeping this mapper
+ * Converts a course prompt into the model input shape. Keeping this mapper
  * local to the workflow prevents the AI package from depending on Prisma types.
  */
-function toIdentityRequest(request: GeneratableCourseStartRequest): CourseIdentityProposedCourse {
+function toIdentityRequest(request: GeneratableCoursePrompt): CourseIdentityProposedCourse {
   return {
     description: null,
     language: request.language,
@@ -109,16 +109,51 @@ function getCandidateWhereClauses({
   request,
 }: {
   searchTexts: string[];
-  request: GeneratableCourseStartRequest;
+  request: GeneratableCoursePrompt;
 }): CourseWhereInput[] {
-  const clauses: (CourseWhereInput | null)[] = [
-    request.targetLanguage ? { targetLanguage: request.targetLanguage } : null,
-    ...searchTexts.flatMap((text) =>
-      getSearchTextWhereClauses({ language: request.language, text }),
-    ),
-  ];
+  const clauses = searchTexts.flatMap((text) =>
+    getSearchTextWhereClauses({ language: request.language, text }),
+  );
 
   return clauses.filter((clause): clause is CourseWhereInput => isCourseWhereInput(clause));
+}
+
+/**
+ * Builds the mandatory database identity shared by cached and searched course
+ * lookups. Language targets are never an optional recall signal because two
+ * learned languages cannot represent the same generated course.
+ */
+function getCourseIdentityWhere(request: GeneratableCoursePrompt): CourseWhereInput {
+  return {
+    format: request.courseFormat,
+    language: request.language,
+    targetLanguage: request.targetLanguage,
+  };
+}
+
+/**
+ * Combines format identity with the amount of fuzzy title search each format
+ * needs. A language target is already the complete reusable-course identity,
+ * while core courses still need at least one usable title or alias clause.
+ */
+function getCandidateSearchWhere({
+  request,
+  whereClauses,
+}: {
+  request: GeneratableCoursePrompt;
+  whereClauses: CourseWhereInput[];
+}): CourseWhereInput | null {
+  const identityWhere = getCourseIdentityWhere(request);
+
+  if (request.courseFormat === "language") {
+    return identityWhere;
+  }
+
+  if (whereClauses.length === 0) {
+    return null;
+  }
+
+  return { ...identityWhere, OR: whereClauses };
 }
 
 /**
@@ -138,18 +173,19 @@ async function findCandidateCourses({
   request,
   searchTexts,
 }: {
-  request: GeneratableCourseStartRequest;
+  request: GeneratableCoursePrompt;
   searchTexts: string[];
 }): Promise<ExistingCourse[]> {
   const whereClauses = getCandidateWhereClauses({ request, searchTexts });
+  const where = getCandidateSearchWhere({ request, whereClauses });
 
-  if (whereClauses.length === 0) {
+  if (!where) {
     return [];
   }
 
   return prisma.course.findMany({
     include: courseContentInclude,
-    where: getAiGenerationCourseWhere({ OR: whereClauses, language: request.language }),
+    where: getAiGenerationCourseWhere(where),
   });
 }
 
@@ -163,7 +199,7 @@ function getDirectMatch({
   request,
 }: {
   candidates: ExistingCourse[];
-  request: GeneratableCourseStartRequest;
+  request: GeneratableCoursePrompt;
 }): ExistingCourse | null {
   const slug = getCourseSlugForTitle({ language: request.language, title: request.canonicalTitle });
   const normalizedTitle = normalizeString(request.canonicalTitle);
@@ -173,7 +209,7 @@ function getDirectMatch({
     candidates.find((course) => course.normalizedTitle === normalizedTitle) ??
     candidates.find(
       (course) =>
-        Boolean(request.targetLanguage) && course.targetLanguage === request.targetLanguage,
+        request.courseFormat === "language" && course.targetLanguage === request.targetLanguage,
     ) ??
     null
   );
@@ -184,14 +220,14 @@ function getDirectMatch({
  * keeps repeat attempts cheap: once a request is resolved, future generation
  * requests use the saved course id directly.
  */
-async function getCachedCourse(courseId: string | null): Promise<ExistingCourse | null> {
-  if (!courseId) {
+async function getCachedCourse(request: GeneratableCoursePrompt): Promise<ExistingCourse | null> {
+  if (!request.courseId) {
     return null;
   }
 
   return prisma.course.findFirst({
     include: courseContentInclude,
-    where: getAiGenerationCourseWhere({ id: courseId }),
+    where: getAiGenerationCourseWhere({ ...getCourseIdentityWhere(request), id: request.courseId }),
   });
 }
 
@@ -201,12 +237,12 @@ async function getCachedCourse(courseId: string | null): Promise<ExistingCourse 
  */
 async function linkRequestToCourse({
   courseId,
-  requestId,
+  promptId,
 }: {
   courseId: string;
-  requestId: string;
+  promptId: string;
 }): Promise<void> {
-  await prisma.courseStartRequest.update({ data: { courseId }, where: { id: requestId } });
+  await prisma.coursePrompt.update({ data: { courseId }, where: { id: promptId } });
 }
 
 /**
@@ -255,7 +291,7 @@ async function generateSearchQueriesWithStatus({
   request,
   stream,
 }: {
-  request: GeneratableCourseStartRequest;
+  request: GeneratableCoursePrompt;
   stream: CourseIdentityStream;
 }): ReturnType<typeof generateCourseIdentitySearchQueries> {
   await stream.status({ status: "started", step: IDENTITY_SEARCH_STEP });
@@ -280,7 +316,7 @@ async function resolveIdentityWithStatus({
   stream,
 }: {
   candidates: ExistingCourse[];
-  request: GeneratableCourseStartRequest;
+  request: GeneratableCoursePrompt;
   stream: CourseIdentityStream;
 }): ReturnType<typeof resolveCourseIdentity> {
   await stream.status({ status: "started", step: IDENTITY_CLASSIFICATION_STEP });
@@ -296,20 +332,21 @@ async function resolveIdentityWithStatus({
 }
 
 /**
- * Resolves whether the course start request should use an existing AI-catalog
+ * Resolves whether the course prompt should use an existing AI-catalog
  * course. Deterministic links run first, AI search expands candidate recall,
  * and the final classifier only chooses among explicit database rows.
  */
 export async function resolveCourseIdentityStep(
-  request: GeneratableCourseStartRequest,
+  request: GeneratableCoursePrompt,
 ): Promise<ExistingCourse | null> {
   "use step";
 
   await using stream = createStepStream<CourseWorkflowStepName>();
 
-  const cachedCourse = await getCachedCourse(request.courseId);
+  const cachedCourse = await getCachedCourse(request);
 
   if (cachedCourse) {
+    assertCourseMatchesPromptIdentity({ course: cachedCourse, prompt: request });
     await streamSkippedIdentityAiSteps(stream);
     return cachedCourse;
   }
@@ -322,9 +359,17 @@ export async function resolveCourseIdentityStep(
   const directMatch = getDirectMatch({ candidates: deterministicCandidates, request });
 
   if (directMatch) {
-    await linkRequestToCourse({ courseId: directMatch.id, requestId: request.id });
+    assertCourseMatchesPromptIdentity({ course: directMatch, prompt: request });
+    await linkRequestToCourse({ courseId: directMatch.id, promptId: request.id });
     await streamSkippedIdentityAiSteps(stream);
     return directMatch;
+  }
+
+  // A language target is the complete reusable identity. If its exact query
+  // found nothing, title aliases cannot discover a different valid course.
+  if (request.courseFormat === "language") {
+    await streamSkippedIdentityAiSteps(stream);
+    return null;
   }
 
   const search = await generateSearchQueriesWithStatus({ request, stream });
@@ -346,7 +391,8 @@ export async function resolveCourseIdentityStep(
       : null;
 
   if (selectedCourse) {
-    await linkRequestToCourse({ courseId: selectedCourse.id, requestId: request.id });
+    assertCourseMatchesPromptIdentity({ course: selectedCourse, prompt: request });
+    await linkRequestToCourse({ courseId: selectedCourse.id, promptId: request.id });
   }
 
   return selectedCourse;

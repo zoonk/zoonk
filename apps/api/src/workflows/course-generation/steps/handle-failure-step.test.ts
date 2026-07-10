@@ -1,9 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
-import { getRejectedAggregateError } from "@/workflows/_test-utils/rejected-error";
 import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseStartRequestFixture } from "@zoonk/testing/fixtures/course-start-requests";
+import { coursePromptFixture } from "@zoonk/testing/fixtures/course-prompts";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -29,18 +28,22 @@ describe(handleCourseFailureStep, () => {
         organizationId,
         title: `Fail Course ${randomUUID()}`,
       }),
-      courseStartRequestFixture({
+      coursePromptFixture({
         canonicalTitle: `Fail Request ${randomUUID()}`,
         generationRunId: "old-run",
         generationStatus: "running",
       }),
     ]);
 
-    await handleCourseFailureStep({ courseId: course.id, courseStartRequestId: request.id });
+    await handleCourseFailureStep({
+      courseId: course.id,
+      coursePromptId: request.id,
+      workflowRunId: "old-run",
+    });
 
     const [updatedCourse, updatedRequest] = await Promise.all([
       prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
-      prisma.courseStartRequest.findUniqueOrThrow({ where: { id: request.id } }),
+      prisma.coursePrompt.findUniqueOrThrow({ where: { id: request.id } }),
     ]);
 
     expect(updatedCourse.generationStatus).toBe("failed");
@@ -64,13 +67,13 @@ describe(handleCourseFailureStep, () => {
     });
 
     const [primaryRequest, linkedRequest] = await Promise.all([
-      courseStartRequestFixture({
+      coursePromptFixture({
         canonicalTitle: `Primary Fail Request ${randomUUID()}`,
         courseId: course.id,
         generationRunId: "old-run",
         generationStatus: "running",
       }),
-      courseStartRequestFixture({
+      coursePromptFixture({
         canonicalTitle: `Linked Fail Request ${randomUUID()}`,
         courseId: course.id,
         generationRunId: "other-run",
@@ -78,9 +81,13 @@ describe(handleCourseFailureStep, () => {
       }),
     ]);
 
-    await handleCourseFailureStep({ courseId: course.id, courseStartRequestId: primaryRequest.id });
+    await handleCourseFailureStep({
+      courseId: course.id,
+      coursePromptId: primaryRequest.id,
+      workflowRunId: "old-run",
+    });
 
-    const updatedLinkedRequest = await prisma.courseStartRequest.findUniqueOrThrow({
+    const updatedLinkedRequest = await prisma.coursePrompt.findUniqueOrThrow({
       where: { id: linkedRequest.id },
     });
 
@@ -88,32 +95,168 @@ describe(handleCourseFailureStep, () => {
     expect(updatedLinkedRequest.generationRunId).toBeNull();
   });
 
-  it("throws all status update failures", async () => {
-    const promise = handleCourseFailureStep({
-      courseId: randomUUID(),
-      courseStartRequestId: randomUUID(),
+  it("re-emits failure when the durable step retries after committing", async () => {
+    const workflowRunId = `run-${randomUUID()}`;
+
+    const course = await courseFixture({
+      generationRunId: workflowRunId,
+      generationStatus: "running",
+      organizationId,
     });
 
-    const error = await getRejectedAggregateError(promise);
+    const prompt = await coursePromptFixture({
+      courseId: course.id,
+      generationRunId: workflowRunId,
+      generationStatus: "running",
+    });
 
-    expect(error.errors).toHaveLength(2);
+    const input = { courseId: course.id, coursePromptId: prompt.id, workflowRunId };
+
+    await handleCourseFailureStep(input);
+    await handleCourseFailureStep(input);
+
+    const failureEvents = getStreamedEvents().filter(
+      (event) => event.status === "error" && event.step === "workflowError",
+    );
+
+    expect(failureEvents).toHaveLength(2);
   });
 
-  it("marks only request as failed when courseId is null", async () => {
-    const request = await courseStartRequestFixture({
+  it("rolls back failure state when a linked state update fails", async () => {
+    const course = await courseFixture({
+      generationRunId: "active-run",
+      generationStatus: "running",
+      organizationId,
+      title: `Rollback Fail Course ${randomUUID()}`,
+    });
+
+    const linkedRequest = await coursePromptFixture({
+      canonicalTitle: `Rollback Fail Request ${randomUUID()}`,
+      courseId: course.id,
+      generationRunId: "active-run",
+      generationStatus: "running",
+    });
+
+    await expect(
+      handleCourseFailureStep({
+        courseId: course.id,
+        coursePromptId: randomUUID(),
+        workflowRunId: "active-run",
+      }),
+    ).rejects.toThrow();
+
+    const [persistedCourse, persistedLinkedRequest] = await Promise.all([
+      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+      prisma.coursePrompt.findUniqueOrThrow({ where: { id: linkedRequest.id } }),
+    ]);
+
+    expect(persistedCourse.generationRunId).toBe("active-run");
+    expect(persistedCourse.generationStatus).toBe("running");
+    expect(persistedLinkedRequest.generationRunId).toBe("active-run");
+    expect(persistedLinkedRequest.generationStatus).toBe("running");
+  });
+
+  it("marks only request as failed and clears a stale course link when courseId is null", async () => {
+    const course = await courseFixture({ organizationId });
+
+    const request = await coursePromptFixture({
       canonicalTitle: `No Course Fail ${randomUUID()}`,
+      courseId: course.id,
       generationRunId: "old-run",
       generationStatus: "running",
     });
 
-    await handleCourseFailureStep({ courseId: null, courseStartRequestId: request.id });
+    await handleCourseFailureStep({
+      courseId: null,
+      coursePromptId: request.id,
+      workflowRunId: "old-run",
+    });
 
-    const updatedRequest = await prisma.courseStartRequest.findUniqueOrThrow({
+    const updatedRequest = await prisma.coursePrompt.findUniqueOrThrow({
       where: { id: request.id },
     });
 
     expect(updatedRequest.generationStatus).toBe("failed");
     expect(updatedRequest.generationRunId).toBeNull();
+    expect(updatedRequest.courseId).toBeNull();
+  });
+
+  it("does not fail a course reclaimed by a newer workflow", async () => {
+    const currentWorkflowRunId = `current-${randomUUID()}`;
+
+    const course = await courseFixture({
+      generationRunId: currentWorkflowRunId,
+      generationStatus: "running",
+      organizationId,
+    });
+
+    const prompt = await coursePromptFixture({
+      courseId: course.id,
+      generationRunId: currentWorkflowRunId,
+      generationStatus: "running",
+    });
+
+    await handleCourseFailureStep({
+      courseId: course.id,
+      coursePromptId: prompt.id,
+      workflowRunId: `stale-${randomUUID()}`,
+    });
+
+    const [persistedCourse, persistedPrompt] = await Promise.all([
+      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+      prisma.coursePrompt.findUniqueOrThrow({ where: { id: prompt.id } }),
+    ]);
+
+    expect(persistedCourse.generationRunId).toBe(currentWorkflowRunId);
+    expect(persistedCourse.generationStatus).toBe("running");
+    expect(persistedPrompt.generationRunId).toBe(currentWorkflowRunId);
+    expect(persistedPrompt.generationStatus).toBe("running");
+  });
+
+  it("does not fail a prompt claimed after an initialization failure", async () => {
+    const currentWorkflowRunId = `current-${randomUUID()}`;
+
+    const prompt = await coursePromptFixture({
+      generationRunId: currentWorkflowRunId,
+      generationStatus: "running",
+    });
+
+    await handleCourseFailureStep({
+      courseId: null,
+      coursePromptId: prompt.id,
+      workflowRunId: `stale-${randomUUID()}`,
+    });
+
+    const persistedPrompt = await prisma.coursePrompt.findUniqueOrThrow({
+      where: { id: prompt.id },
+    });
+
+    expect(persistedPrompt.generationRunId).toBe(currentWorkflowRunId);
+    expect(persistedPrompt.generationStatus).toBe("running");
+  });
+
+  it("does not downgrade a completed prompt without a run id", async () => {
+    const course = await courseFixture({ organizationId });
+
+    const prompt = await coursePromptFixture({
+      courseId: course.id,
+      generationRunId: null,
+      generationStatus: "completed",
+    });
+
+    await handleCourseFailureStep({
+      courseId: null,
+      coursePromptId: prompt.id,
+      workflowRunId: `stale-${randomUUID()}`,
+    });
+
+    const persistedPrompt = await prisma.coursePrompt.findUniqueOrThrow({
+      where: { id: prompt.id },
+    });
+
+    expect(persistedPrompt.courseId).toBe(course.id);
+    expect(persistedPrompt.generationRunId).toBeNull();
+    expect(persistedPrompt.generationStatus).toBe("completed");
   });
 });
 

@@ -187,6 +187,7 @@ describe(chapterGenerationWorkflow, () => {
 
     it("skips derived language lessons when starting the initial generated lesson batch", async () => {
       const languageCourse = await courseFixture({
+        format: "language",
         organizationId,
         targetLanguage: "es",
         title: `Language Course ${randomUUID()}`,

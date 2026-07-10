@@ -1,99 +1,74 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { getCourseSlugForTitle } from "@zoonk/core/courses/slug";
 import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
-import { type Course, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
+import {
+  type Course,
+  type TransactionClient,
+  isPrismaUniqueConstraintError,
+  prisma,
+} from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
+import { FatalError } from "workflow";
 import {
   type ExistingCourseContent,
   courseContentInclude,
   getExistingCourseContent,
 } from "../_internal/existing-course-content";
-import { type GeneratableCourseStartRequest } from "./get-course-start-request-step";
+import { assertCourseMatchesPromptIdentity } from "../_utils/course-identity-validation";
+import { type GeneratableCoursePrompt } from "./get-course-prompt-step";
 
-export type CourseContext = {
+type CourseContextBase = {
   courseId: string;
   courseSlug: string;
   courseTitle: string;
   language: string;
   organizationId: string;
-  targetLanguage: string | null;
 };
 
-export type InitializedCourse = {
-  course: CourseContext;
-  existing: ExistingCourseContent | null;
-  generationStatus: Course["generationStatus"];
-};
+export type CourseContext =
+  | (CourseContextBase & { format: "core"; targetLanguage: null })
+  | (CourseContextBase & { format: "language"; targetLanguage: string });
 
-/**
- * Links the request to the new course and marks it as running. The course id is
- * required because later starts reuse the in-progress course instead of creating
- * another one.
- */
-async function updateStartRequestToRunning({
-  courseId,
-  requestId,
-  workflowRunId,
-}: {
-  courseId: string;
-  requestId: string;
-  workflowRunId: string;
-}): Promise<void> {
-  await prisma.courseStartRequest.update({
-    data: { courseId, generationRunId: workflowRunId, generationStatus: "running" },
-    where: { id: requestId },
-  });
-}
-
-/**
- * Links a request to a course discovered after a unique-key race. Completed
- * courses can satisfy the request immediately; every other state means this
- * workflow or the already-running workflow should keep the request in a running
- * state until the course finishes or fails.
- */
-async function updateStartRequestForRecoveredCourse({
-  courseId,
-  generationStatus,
-  requestId,
-  workflowRunId,
-}: {
-  courseId: string;
-  generationStatus: Course["generationStatus"];
-  requestId: string;
-  workflowRunId: string;
-}): Promise<void> {
-  await prisma.courseStartRequest.update({
-    data:
-      generationStatus === "completed"
-        ? { courseId, generationStatus: "completed" }
-        : { courseId, generationRunId: workflowRunId, generationStatus: "running" },
-    where: { id: requestId },
-  });
-}
+export type InitializedCourse = { course: CourseContext; existing: ExistingCourseContent | null };
 
 /**
  * Converts a persisted course row into the stable workflow context shape.
- * The workflow keeps the request title/language as the learner-facing
- * request while using the database course id and slug as the durable target.
+ * The prompt title and language remain the learner-facing request while the
+ * persisted course owns the generation format and its dependent target.
  */
 export function getCourseContext({
   course,
   organizationId,
-  request,
+  prompt,
 }: {
-  course: Pick<Course, "id" | "slug">;
+  course: Pick<Course, "format" | "id" | "language" | "slug" | "targetLanguage">;
   organizationId: string;
-  request: Pick<GeneratableCourseStartRequest, "canonicalTitle" | "language" | "targetLanguage">;
+  prompt: GeneratableCoursePrompt;
 }): CourseContext {
-  return {
+  assertCourseMatchesPromptIdentity({ course, prompt });
+
+  const context = {
     courseId: course.id,
     courseSlug: course.slug,
-    courseTitle: request.canonicalTitle,
-    language: request.language,
+    courseTitle: prompt.canonicalTitle,
+    language: prompt.language,
     organizationId,
-    targetLanguage: request.targetLanguage,
   };
+
+  if (course.format === "core" && course.targetLanguage === null) {
+    return { ...context, format: "core", targetLanguage: null };
+  }
+
+  if (
+    course.format === "language" &&
+    course.targetLanguage &&
+    course.targetLanguage !== course.language
+  ) {
+    return { ...context, format: "language", targetLanguage: course.targetLanguage };
+  }
+
+  throw new FatalError("Course format does not match its language configuration");
 }
 
 /**
@@ -102,29 +77,56 @@ export function getCourseContext({
  */
 async function createCourseEntity({
   organizationId,
-  request,
+  prompt,
+  transaction,
   workflowRunId,
 }: {
   organizationId: string;
-  request: GeneratableCourseStartRequest;
+  prompt: GeneratableCoursePrompt;
+  transaction: TransactionClient;
   workflowRunId: string;
 }): Promise<Course> {
-  const slug = getCourseSlugForTitle({ language: request.language, title: request.canonicalTitle });
-  const normalizedTitle = normalizeString(request.canonicalTitle);
+  const slug = getCourseSlugForTitle({ language: prompt.language, title: prompt.canonicalTitle });
+  const normalizedTitle = normalizeString(prompt.canonicalTitle);
 
-  return prisma.course.create({
+  return transaction.course.create({
     data: {
+      format: prompt.courseFormat,
       generationRunId: workflowRunId,
       generationStatus: "running",
       isPublished: true,
-      language: request.language,
-      mode: request.courseMode ?? "full",
+      language: prompt.language,
       normalizedTitle,
       organizationId,
       slug,
-      targetLanguage: request.targetLanguage,
-      title: request.canonicalTitle,
+      targetLanguage: prompt.targetLanguage,
+      title: prompt.canonicalTitle,
     },
+  });
+}
+
+/**
+ * Runs course creation and prompt linking atomically so Workflow can safely
+ * retry after a database or response failure without leaving partial state.
+ */
+async function createCourseAndLinkPrompt({
+  organizationId,
+  prompt,
+  workflowRunId,
+}: {
+  organizationId: string;
+  prompt: GeneratableCoursePrompt;
+  workflowRunId: string;
+}): Promise<Course> {
+  return prisma.$transaction(async (transaction) => {
+    const course = await createCourseEntity({ organizationId, prompt, transaction, workflowRunId });
+
+    await transaction.coursePrompt.update({
+      data: { courseId: course.id, generationRunId: workflowRunId, generationStatus: "running" },
+      where: { id: prompt.id },
+    });
+
+    return course;
   });
 }
 
@@ -136,10 +138,12 @@ async function createCourseEntity({
 async function getRecoveredCourse({
   error,
   organizationId,
+  prompt,
   slug,
 }: {
   error: unknown;
   organizationId: string;
+  prompt: GeneratableCoursePrompt;
   slug: string;
 }) {
   if (!isPrismaUniqueConstraintError(error)) {
@@ -155,6 +159,8 @@ async function getRecoveredCourse({
     throw error;
   }
 
+  assertCourseMatchesPromptIdentity({ course, prompt });
+
   return course;
 }
 
@@ -166,55 +172,37 @@ async function getRecoveredCourse({
  */
 async function createOrRecoverCourse({
   organizationId,
-  request,
+  prompt,
   workflowRunId,
 }: {
   organizationId: string;
-  request: GeneratableCourseStartRequest;
+  prompt: GeneratableCoursePrompt;
   workflowRunId: string;
 }): Promise<InitializedCourse> {
-  const slug = getCourseSlugForTitle({ language: request.language, title: request.canonicalTitle });
+  const slug = getCourseSlugForTitle({ language: prompt.language, title: prompt.canonicalTitle });
 
   try {
-    const course = await createCourseEntity({ organizationId, request, workflowRunId });
+    const course = await createCourseAndLinkPrompt({ organizationId, prompt, workflowRunId });
 
-    await updateStartRequestToRunning({
-      courseId: course.id,
-      requestId: request.id,
-      workflowRunId,
-    });
-
-    return {
-      course: getCourseContext({ course, organizationId, request }),
-      existing: null,
-      generationStatus: course.generationStatus,
-    };
+    return { course: getCourseContext({ course, organizationId, prompt }), existing: null };
   } catch (error) {
-    const course = await getRecoveredCourse({ error, organizationId, slug });
-
-    await updateStartRequestForRecoveredCourse({
-      courseId: course.id,
-      generationStatus: course.generationStatus,
-      requestId: request.id,
-      workflowRunId,
-    });
+    const course = await getRecoveredCourse({ error, organizationId, prompt, slug });
 
     return {
-      course: getCourseContext({ course, organizationId, request }),
+      course: getCourseContext({ course, organizationId, prompt }),
       existing: getExistingCourseContent(course),
-      generationStatus: course.generationStatus,
     };
   }
 }
 
 /**
- * Initializes the course target for a start request. The normal path creates the
- * course and links the request; the duplicate-start path links to the row
- * that won the unique slug race so the workflow can stop or resume based on
- * that course's current generation status.
+ * Initializes the course target for a prompt. The normal path creates and
+ * links the course atomically. The duplicate-start path only returns the row
+ * that won the unique slug race; the next step locks that row before it links
+ * the prompt and decides whether this workflow can resume generation.
  */
 export async function initializeCourseStep(input: {
-  request: GeneratableCourseStartRequest;
+  request: GeneratableCoursePrompt;
   workflowRunId: string;
 }): Promise<InitializedCourse> {
   "use step";
@@ -227,7 +215,11 @@ export async function initializeCourseStep(input: {
 
   const aiOrg = await prisma.organization.findUniqueOrThrow({ where: { slug: AI_ORG_SLUG } });
 
-  const course = await createOrRecoverCourse({ organizationId: aiOrg.id, request, workflowRunId });
+  const course = await createOrRecoverCourse({
+    organizationId: aiOrg.id,
+    prompt: request,
+    workflowRunId,
+  });
 
   await stream.status({ status: "completed", step: "initializeCourse" });
 

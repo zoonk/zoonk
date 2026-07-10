@@ -4,12 +4,13 @@ import { courseCanonicalTitleTask } from "./course-canonical-title/task";
 import { courseCategoriesTask } from "./course-categories/task";
 import { courseChaptersTask } from "./course-chapters/task";
 import { courseDescriptionTask } from "./course-description/task";
+import { courseFormatTask } from "./course-format/task";
 import { courseIdentitySearchTask } from "./course-identity-search/task";
 import { courseIdentityClassificationTask } from "./course-identity/task";
+import { courseIntentTask } from "./course-intent/task";
 import { courseIntroductionTask } from "./course-introduction/task";
 import { courseLandingPageTask } from "./course-landing-page/task";
-import { courseLearnClassificationTask } from "./course-learn-classification/task";
-import { courseRequestRoutingTask } from "./course-request-routing/task";
+import { coursePersonalizationTask } from "./course-personalization/task";
 import { imageInputSafetyRewriteTask } from "./image-prompt-safety-rewrite/task";
 import { languageChapterLessonsTask } from "./language-chapter-lessons/task";
 import { languageCourseChaptersTask } from "./language-course-chapters/task";
@@ -43,8 +44,9 @@ export const TASKS: readonly RegisteredTask[] = [
   lessonVocabularyTask,
   courseIdentitySearchTask,
   courseIdentityClassificationTask,
-  courseRequestRoutingTask,
-  courseLearnClassificationTask,
+  courseIntentTask,
+  coursePersonalizationTask,
+  courseFormatTask,
   courseCanonicalTitleTask,
   chapterLessonsTask,
   courseCategoriesTask,

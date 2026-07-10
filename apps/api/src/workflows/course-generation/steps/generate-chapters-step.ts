@@ -5,7 +5,7 @@ import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { type CourseContext } from "./initialize-course-step";
 
 function generateChapters(course: CourseContext) {
-  if (course.targetLanguage) {
+  if (course.format === "language") {
     return generateLanguageCourseChapters({
       targetLanguage: course.targetLanguage,
       userLanguage: course.language,

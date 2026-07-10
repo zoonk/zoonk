@@ -69,6 +69,7 @@ const course: CourseContext = {
   courseId: "1",
   courseSlug: "test-course",
   courseTitle: "Test Course",
+  format: "core",
   language: "en",
   organizationId: "org-1",
   targetLanguage: null,
@@ -377,7 +378,7 @@ describe(generateMissingContent, () => {
   });
 
   it("skips categories and landing page AI calls for language courses", async () => {
-    const langCourse: CourseContext = { ...course, targetLanguage: "es" };
+    const langCourse: CourseContext = { ...course, format: "language", targetLanguage: "es" };
 
     generateCourseDescriptionMock.mockResolvedValue({ data: { description: "Lang desc" } });
 

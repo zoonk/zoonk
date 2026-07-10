@@ -3,7 +3,7 @@ import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { courseStartRequestFixture } from "@zoonk/testing/fixtures/course-start-requests";
+import { coursePromptFixture } from "@zoonk/testing/fixtures/course-prompts";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 
 /**
@@ -13,8 +13,8 @@ import { createAuthenticatedApiContext } from "./helpers/auth";
  * workflow and exposes its status stream. A completed request exercises the
  * same route path while making the workflow finish after its completion event.
  */
-async function createCompletedCourseStartRequest(title: string) {
-  return courseStartRequestFixture({ canonicalTitle: title, generationStatus: "completed" });
+async function createCompletedCoursePrompt(title: string) {
+  return coursePromptFixture({ canonicalTitle: title, generationStatus: "completed" });
 }
 
 test.describe("Course Generation Workflow API", () => {
@@ -33,12 +33,12 @@ test.describe("Course Generation Workflow API", () => {
   test("starts workflow without a session", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
-    const startRequest = await createCompletedCourseStartRequest(`E2E Public Course ${uniqueId}`);
+    const startRequest = await createCompletedCoursePrompt(`E2E Public Course ${uniqueId}`);
 
     const apiContext = await request.newContext({ baseURL });
 
     const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
-      data: { courseStartRequestId: startRequest.id },
+      data: { coursePromptId: startRequest.id },
     });
 
     expect(response.status()).toBe(200);
@@ -55,18 +55,18 @@ test.describe("Course Generation Workflow API", () => {
   test("rejects language course requests with the same user and target language", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
-    const startRequest = await courseStartRequestFixture({
+    const startRequest = await coursePromptFixture({
       canonicalTitle: `E2E Same Language Course ${uniqueId}`,
+      courseFormat: "language",
       generationStatus: "completed",
       language: "en",
-      scope: "language",
       targetLanguage: "en",
     });
 
     const apiContext = await request.newContext({ baseURL });
 
     const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
-      data: { courseStartRequestId: startRequest.id },
+      data: { coursePromptId: startRequest.id },
     });
 
     expect(response.status()).toBe(400);
@@ -79,7 +79,7 @@ test.describe("Course Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("returns validation error when courseStartRequestId is missing", async () => {
+  test("returns validation error when coursePromptId is missing", async () => {
     const { apiContext } = await createAuthenticatedApiContext({
       baseURL,
       prefix: "course-validation-missing",
@@ -97,14 +97,14 @@ test.describe("Course Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("returns validation error when courseStartRequestId is invalid type", async () => {
+  test("returns validation error when coursePromptId is invalid type", async () => {
     const { apiContext } = await createAuthenticatedApiContext({
       baseURL,
       prefix: "course-validation-type",
     });
 
     const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
-      data: { courseStartRequestId: "invalid" },
+      data: { coursePromptId: "invalid" },
     });
 
     expect(response.status()).toBe(400);
@@ -117,14 +117,14 @@ test.describe("Course Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("returns validation error when courseStartRequestId is invalid number", async () => {
+  test("returns validation error when coursePromptId is invalid number", async () => {
     const { apiContext } = await createAuthenticatedApiContext({
       baseURL,
       prefix: "course-validation-negative",
     });
 
     const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
-      data: { courseStartRequestId: -1 },
+      data: { coursePromptId: -1 },
     });
 
     expect(response.status()).toBe(400);
@@ -137,10 +137,10 @@ test.describe("Course Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("starts workflow for valid course start request", async () => {
+  test("starts workflow for valid course prompt", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
-    const startRequest = await createCompletedCourseStartRequest(`E2E Workflow Test ${uniqueId}`);
+    const startRequest = await createCompletedCoursePrompt(`E2E Workflow Test ${uniqueId}`);
 
     const { apiContext } = await createAuthenticatedApiContext({
       baseURL,
@@ -148,7 +148,7 @@ test.describe("Course Generation Workflow API", () => {
     });
 
     const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
-      data: { courseStartRequestId: startRequest.id },
+      data: { coursePromptId: startRequest.id },
     });
 
     expect(response.status()).toBe(200);
@@ -179,7 +179,7 @@ test.describe("Course Generation Workflow API", () => {
   test("returns SSE stream for valid runId", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
-    const startRequest = await createCompletedCourseStartRequest(`E2E Status Test ${uniqueId}`);
+    const startRequest = await createCompletedCoursePrompt(`E2E Status Test ${uniqueId}`);
 
     const { apiContext } = await createAuthenticatedApiContext({
       baseURL,
@@ -188,7 +188,7 @@ test.describe("Course Generation Workflow API", () => {
 
     // First trigger the workflow to get a runId
     const triggerResponse = await apiContext.post("/v1/workflows/course-generation/trigger", {
-      data: { courseStartRequestId: startRequest.id },
+      data: { coursePromptId: startRequest.id },
     });
 
     const triggerBody = await triggerResponse.json();

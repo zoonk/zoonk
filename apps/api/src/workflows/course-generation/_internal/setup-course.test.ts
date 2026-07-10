@@ -82,6 +82,7 @@ describe(setupCourse, () => {
       courseId: course.id,
       courseSlug: course.slug,
       courseTitle: course.title,
+      format: "core",
       language: "en",
       organizationId,
       targetLanguage: null,

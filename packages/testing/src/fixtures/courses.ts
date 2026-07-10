@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import {
   type Course,
   type CourseCategory,
-  type CourseMode,
+  type CourseFormat,
   type CourseUser,
   type GenerationStatus,
   prisma,
@@ -17,12 +17,12 @@ type CourseFixtureLandingPage = {
 
 type CourseFixtureAttrs = Omit<
   Partial<Course>,
-  "createdAt" | "generationStatus" | "landingPage" | "mode" | "updatedAt"
+  "createdAt" | "format" | "generationStatus" | "landingPage" | "updatedAt"
 > & {
   createdAt?: Date | string;
+  format?: CourseFormat;
   generationStatus?: GenerationStatus;
   landingPage?: CourseFixtureLandingPage;
-  mode?: CourseMode;
   updatedAt?: Date | string;
 };
 
@@ -32,12 +32,12 @@ function courseAttrs(attrs?: CourseFixtureAttrs) {
   return {
     completedAt: null,
     description: description ?? "Test course description",
+    format: "core" as const,
     generationRunId: null,
     generationStatus: "completed" as const,
     imageUrl: null,
     isPublished: false,
     language: "en",
-    mode: "full" as const,
     normalizedTitle: "test course",
     organizationId: null,
     slug: `test-course-${randomUUID()}`,

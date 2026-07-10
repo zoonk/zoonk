@@ -1,13 +1,13 @@
 import { Suspense } from "react";
 import {
-  GenerateCourseStartRequestContent,
-  GenerateCourseStartRequestFallback,
-} from "./generate-course-start-request-content";
+  GenerateCoursePromptContent,
+  GenerateCoursePromptFallback,
+} from "./generate-course-prompt-content";
 
 export default function GenerateCoursePage(props: PageProps<"/generate/course/[id]">) {
   return (
-    <Suspense fallback={<GenerateCourseStartRequestFallback />}>
-      <GenerateCourseStartRequestContent params={props.params} />
+    <Suspense fallback={<GenerateCoursePromptFallback />}>
+      <GenerateCoursePromptContent params={props.params} />
     </Suspense>
   );
 }

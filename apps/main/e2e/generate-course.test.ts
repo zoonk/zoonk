@@ -6,7 +6,7 @@ import {
 import { type Page, type Route } from "@zoonk/e2e/fixtures";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseStartRequestFixture } from "@zoonk/testing/fixtures/course-start-requests";
+import { coursePromptFixture } from "@zoonk/testing/fixtures/course-prompts";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
@@ -151,11 +151,13 @@ async function setupMockApis(page: Page, options: MockApiOptions = {}): Promise<
  * route still needs a published course with playable content.
  */
 async function createPublishedCourseWithLesson({
+  format,
   generationStatus,
   slug,
   targetLanguage,
   title,
 }: {
+  format?: "core" | "language";
   generationStatus?: "completed" | "running";
   slug: string;
   targetLanguage?: string;
@@ -164,6 +166,7 @@ async function createPublishedCourseWithLesson({
   const org = await getAiOrganization();
 
   const course = await courseFixture({
+    ...(format ? { format } : {}),
     ...(generationStatus ? { generationStatus } : {}),
     isPublished: true,
     organizationId: org.id,
@@ -204,7 +207,7 @@ function getIntroLessonCompletionTarget({
 
 test.describe("Generate Course Page", () => {
   test("starts course generation for unauthenticated users", async ({ page }) => {
-    const request = await courseStartRequestFixture({
+    const request = await coursePromptFixture({
       canonicalTitle: "E2E Unauth Course Generation",
       generationStatus: "pending",
       language: "en",
@@ -212,7 +215,7 @@ test.describe("Generate Course Page", () => {
 
     await setupMockApis(page, {
       statusDelayMs: 2500,
-      streamMessages: [{ status: "started", step: "getCourseStartRequest" }],
+      streamMessages: [{ status: "started", step: "getCoursePrompt" }],
     });
 
     await page.goto(`/generate/course/${request.id}`);
@@ -225,7 +228,7 @@ test.describe("Generate Course Page", () => {
   test.describe("Initial triggering state", () => {
     test("shows triggering state immediately on page load", async ({ authenticatedPage }) => {
       // Create a unique request to avoid PPR caching issues with seeded data
-      const request = await courseStartRequestFixture({
+      const request = await coursePromptFixture({
         canonicalTitle: "E2E Triggering Test",
         generationStatus: "running",
         language: "en",
@@ -233,7 +236,7 @@ test.describe("Generate Course Page", () => {
 
       // Set up route mocking before navigation
       await setupMockApis(authenticatedPage, {
-        streamMessages: [{ status: "started", step: "getCourseStartRequest" }],
+        streamMessages: [{ status: "started", step: "getCoursePrompt" }],
       });
 
       // Navigate directly to the generate page with the unique request
@@ -268,7 +271,7 @@ test.describe("Generate Course Page", () => {
 
       const introLessonTarget = getIntroLessonCompletionTarget(courseContent);
 
-      const request = await courseStartRequestFixture({
+      const request = await coursePromptFixture({
         canonicalTitle: "E2E Linked Completed Request",
         courseId: courseContent.course.id,
         generationStatus: "pending",
@@ -295,7 +298,7 @@ test.describe("Generate Course Page", () => {
         title: "E2E Linked Running Course",
       });
 
-      const request = await courseStartRequestFixture({
+      const request = await coursePromptFixture({
         canonicalTitle: "E2E Linked Running Request",
         courseId: course.id,
         generationStatus: "pending",
@@ -320,14 +323,16 @@ test.describe("Generate Course Page", () => {
       const courseSlug = `e2e-linked-language-course-${randomUUID().slice(0, 8)}`;
 
       const { course } = await createPublishedCourseWithLesson({
+        format: "language",
         generationStatus: "completed",
         slug: courseSlug,
         targetLanguage: "es",
         title: "E2E Linked Completed Language Course",
       });
 
-      const request = await courseStartRequestFixture({
+      const request = await coursePromptFixture({
         canonicalTitle: "E2E Linked Completed Language Request",
+        courseFormat: "language",
         courseId: course.id,
         generationStatus: "pending",
         language: "en",
@@ -349,7 +354,7 @@ test.describe("Generate Course Page", () => {
       const title = "E2E Completion Test";
       const slug = `e2e-completion-${randomUUID().slice(0, 8)}`;
 
-      const request = await courseStartRequestFixture({
+      const request = await coursePromptFixture({
         canonicalTitle: title,
         generationStatus: "pending",
         language: "en",
@@ -362,8 +367,8 @@ test.describe("Generate Course Page", () => {
       await setupMockApis(authenticatedPage, {
         assertBearerAuth: true,
         streamMessages: [
-          { status: "started", step: "getCourseStartRequest" },
-          { status: "completed", step: "getCourseStartRequest" },
+          { status: "started", step: "getCoursePrompt" },
+          { status: "completed", step: "getCoursePrompt" },
           { status: "started", step: INTRODUCTION_LESSON_COMPLETION_STEP },
           {
             entityId: introLessonTarget,
@@ -381,7 +386,7 @@ test.describe("Generate Course Page", () => {
     test("redirects to the completed workflow intro lesson", async ({ authenticatedPage }) => {
       const courseSlug = `e2e-identity-course-${randomUUID().slice(0, 8)}`;
 
-      const request = await courseStartRequestFixture({
+      const request = await coursePromptFixture({
         canonicalTitle: "E2E Identity Redirect Request",
         generationStatus: "pending",
         language: "en",
@@ -396,8 +401,8 @@ test.describe("Generate Course Page", () => {
 
       await setupMockApis(authenticatedPage, {
         streamMessages: [
-          { status: "started", step: "getCourseStartRequest" },
-          { status: "completed", step: "getCourseStartRequest" },
+          { status: "started", step: "getCoursePrompt" },
+          { status: "completed", step: "getCoursePrompt" },
           { status: "started", step: INTRODUCTION_LESSON_COMPLETION_STEP },
           {
             entityId: introLessonTarget,
@@ -422,6 +427,7 @@ test.describe("Generate Course Page", () => {
       const courseSlug = `e2e-language-completion-${randomUUID().slice(0, 8)}`;
 
       const course = await courseFixture({
+        format: "language",
         generationStatus: "running",
         isPublished: true,
         organizationId: org.id,
@@ -432,8 +438,9 @@ test.describe("Generate Course Page", () => {
 
       await chapterFixture({ courseId: course.id, isPublished: true, organizationId: org.id });
 
-      const request = await courseStartRequestFixture({
+      const request = await coursePromptFixture({
         canonicalTitle: title,
+        courseFormat: "language",
         courseId: course.id,
         generationStatus: "pending",
         language: "en",
@@ -442,8 +449,8 @@ test.describe("Generate Course Page", () => {
 
       await setupMockApis(authenticatedPage, {
         streamMessages: [
-          { status: "started", step: "getCourseStartRequest" },
-          { status: "completed", step: "getCourseStartRequest" },
+          { status: "started", step: "getCoursePrompt" },
+          { status: "completed", step: "getCoursePrompt" },
           { status: "started", step: COURSE_COMPLETION_STEP },
           { entityId: courseSlug, status: "completed", step: COURSE_COMPLETION_STEP },
         ],
@@ -461,11 +468,7 @@ test.describe("Generate Course Page", () => {
       const suffixedSlug = ensureLocaleSuffix(toSlug(title), "pt");
 
       const [request, courseContent] = await Promise.all([
-        courseStartRequestFixture({
-          canonicalTitle: title,
-          generationStatus: "pending",
-          language: "pt",
-        }),
+        coursePromptFixture({ canonicalTitle: title, generationStatus: "pending", language: "pt" }),
         createPublishedCourseWithLesson({ generationStatus: "running", slug: suffixedSlug, title }),
       ]);
 
@@ -473,8 +476,8 @@ test.describe("Generate Course Page", () => {
 
       await setupMockApis(authenticatedPage, {
         streamMessages: [
-          { status: "started", step: "getCourseStartRequest" },
-          { status: "completed", step: "getCourseStartRequest" },
+          { status: "started", step: "getCoursePrompt" },
+          { status: "completed", step: "getCoursePrompt" },
           { status: "started", step: INTRODUCTION_LESSON_COMPLETION_STEP },
           {
             entityId: introLessonTarget,
@@ -493,7 +496,7 @@ test.describe("Generate Course Page", () => {
 
   test.describe("Error handling", () => {
     test("shows error when stream returns error status", async ({ authenticatedPage }) => {
-      const request = await courseStartRequestFixture({
+      const request = await coursePromptFixture({
         canonicalTitle: "E2E Error Handling Test",
         generationStatus: "pending",
         language: "en",
@@ -501,8 +504,8 @@ test.describe("Generate Course Page", () => {
 
       await setupMockApis(authenticatedPage, {
         streamMessages: [
-          { status: "started", step: "getCourseStartRequest" },
-          { reason: "notFound", status: "error", step: "getCourseStartRequest" },
+          { status: "started", step: "getCoursePrompt" },
+          { reason: "notFound", status: "error", step: "getCoursePrompt" },
         ],
       });
 

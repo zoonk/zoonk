@@ -4,11 +4,12 @@ import { resolveCourseIdentity } from "@zoonk/ai/tasks/courses/identity";
 import { generateCourseIdentitySearchQueries } from "@zoonk/ai/tasks/courses/identity-search";
 import { getCourseSlugForTitle } from "@zoonk/core/courses/slug";
 import { prisma } from "@zoonk/db";
-import { generatableCourseStartRequestFixture } from "@zoonk/testing/fixtures/course-start-requests";
+import { generatableCoursePromptFixture } from "@zoonk/testing/fixtures/course-prompts";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { normalizeString } from "@zoonk/utils/string";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { assertGeneratableCoursePrompt } from "./get-course-prompt-step";
 import { resolveCourseIdentityStep } from "./resolve-course-identity-step";
 
 vi.mock("@zoonk/ai/tasks/courses/identity-search", () => ({
@@ -49,9 +50,11 @@ describe(resolveCourseIdentityStep, () => {
   });
 
   it("returns null without calling the classifier when no candidate course exists", async () => {
-    const request = await generatableCourseStartRequestFixture({
+    const request = await generatableCoursePromptFixture({
       canonicalTitle: `No Candidate ${randomUUID()}`,
     });
+
+    assertGeneratableCoursePrompt(request);
 
     const result = await resolveCourseIdentityStep(request);
 
@@ -77,12 +80,14 @@ describe(resolveCourseIdentityStep, () => {
 
     const [course, request] = await Promise.all([
       courseFixture({ organizationId, slug, title }),
-      generatableCourseStartRequestFixture({ canonicalTitle: title, language: "en" }),
+      generatableCoursePromptFixture({ canonicalTitle: title, language: "en" }),
     ]);
+
+    assertGeneratableCoursePrompt(request);
 
     const result = await resolveCourseIdentityStep(request);
 
-    const linkedRequest = await prisma.courseStartRequest.findUniqueOrThrow({
+    const linkedRequest = await prisma.coursePrompt.findUniqueOrThrow({
       where: { id: request.id },
     });
 
@@ -99,11 +104,10 @@ describe(resolveCourseIdentityStep, () => {
         slug: `frontend-development-${randomUUID()}`,
         title: "Frontend Development",
       }),
-      generatableCourseStartRequestFixture({
-        canonicalTitle: "Frontend Engineering",
-        language: "en",
-      }),
+      generatableCoursePromptFixture({ canonicalTitle: "Frontend Engineering", language: "en" }),
     ]);
+
+    assertGeneratableCoursePrompt(request);
 
     vi.mocked(resolveCourseIdentity).mockResolvedValueOnce({
       data: { courseSlug: course.slug, decision: "useExisting", reason: "same discipline" },
@@ -121,7 +125,7 @@ describe(resolveCourseIdentityStep, () => {
 
     const result = await resolveCourseIdentityStep(request);
 
-    const linkedRequest = await prisma.courseStartRequest.findUniqueOrThrow({
+    const linkedRequest = await prisma.coursePrompt.findUniqueOrThrow({
       where: { id: request.id },
     });
 
@@ -140,7 +144,7 @@ describe(resolveCourseIdentityStep, () => {
 
   it("leaves the request unlinked when AI says the candidate is different", async () => {
     const [request] = await Promise.all([
-      generatableCourseStartRequestFixture({ canonicalTitle: "Machine Learning", language: "en" }),
+      generatableCoursePromptFixture({ canonicalTitle: "Machine Learning", language: "en" }),
       courseFixture({
         normalizedTitle: normalizeString("Deep Learning"),
         organizationId,
@@ -148,6 +152,8 @@ describe(resolveCourseIdentityStep, () => {
         title: "Deep Learning",
       }),
     ]);
+
+    assertGeneratableCoursePrompt(request);
 
     vi.mocked(resolveCourseIdentity).mockResolvedValueOnce({
       data: { courseSlug: null, decision: "createNew", reason: "different scope" },
@@ -165,7 +171,7 @@ describe(resolveCourseIdentityStep, () => {
 
     const result = await resolveCourseIdentityStep(request);
 
-    const linkedRequest = await prisma.courseStartRequest.findUniqueOrThrow({
+    const linkedRequest = await prisma.coursePrompt.findUniqueOrThrow({
       where: { id: request.id },
     });
 
@@ -175,7 +181,7 @@ describe(resolveCourseIdentityStep, () => {
 
   it("does not split AI search phrases into loose standalone word matches", async () => {
     const [request] = await Promise.all([
-      generatableCourseStartRequestFixture({ canonicalTitle: "Unique Topic", language: "en" }),
+      generatableCoursePromptFixture({ canonicalTitle: "Unique Topic", language: "en" }),
       courseFixture({
         normalizedTitle: normalizeString("Science"),
         organizationId,
@@ -183,6 +189,8 @@ describe(resolveCourseIdentityStep, () => {
         title: "Science",
       }),
     ]);
+
+    assertGeneratableCoursePrompt(request);
 
     vi.mocked(generateCourseIdentitySearchQueries).mockResolvedValueOnce({
       data: { queries: ["data science"] },
@@ -199,10 +207,7 @@ describe(resolveCourseIdentityStep, () => {
 
   it("ignores short AI search terms that would create noisy substring matches", async () => {
     const [request] = await Promise.all([
-      generatableCourseStartRequestFixture({
-        canonicalTitle: "Aprendizado de Máquina",
-        language: "pt",
-      }),
+      generatableCoursePromptFixture({ canonicalTitle: "Aprendizado de Máquina", language: "pt" }),
       courseFixture({
         language: "pt",
         normalizedTitle: normalizeString("Inteligência Artificial"),
@@ -211,6 +216,8 @@ describe(resolveCourseIdentityStep, () => {
         title: "Inteligência Artificial",
       }),
     ]);
+
+    assertGeneratableCoursePrompt(request);
 
     vi.mocked(generateCourseIdentitySearchQueries).mockResolvedValueOnce({
       data: { queries: ["ia"] },
@@ -232,16 +239,111 @@ describe(resolveCourseIdentityStep, () => {
       title: "Cached Course",
     });
 
-    const request = await generatableCourseStartRequestFixture({
+    const request = await generatableCoursePromptFixture({
       canonicalTitle: `Cached Request ${randomUUID()}`,
       courseId: course.id,
     });
+
+    assertGeneratableCoursePrompt(request);
 
     const result = await resolveCourseIdentityStep(request);
 
     expect(result?.id).toBe(course.id);
     expect(resolveCourseIdentity).not.toHaveBeenCalled();
     expect(generateCourseIdentitySearchQueries).not.toHaveBeenCalled();
+  });
+
+  it("ignores a cached and title-matched language course with a different target", async () => {
+    const language = `x${randomUUID().slice(0, 8)}`;
+    const title = `Cached Language Course ${randomUUID()}`;
+    const slug = getCourseSlugForTitle({ language, title });
+
+    const course = await courseFixture({
+      format: "language",
+      language,
+      organizationId,
+      slug,
+      targetLanguage: "fr",
+      title,
+    });
+
+    const request = await generatableCoursePromptFixture({
+      canonicalTitle: title,
+      courseFormat: "language",
+      courseId: course.id,
+      language,
+      targetLanguage: "es",
+    });
+
+    assertGeneratableCoursePrompt(request);
+
+    const result = await resolveCourseIdentityStep(request);
+
+    expect(result).toBeNull();
+    expect(generateCourseIdentitySearchQueries).not.toHaveBeenCalled();
+    expect(resolveCourseIdentity).not.toHaveBeenCalled();
+  });
+
+  it("reuses a language course by target when its title does not match", async () => {
+    const language = `x${randomUUID().slice(0, 8)}`;
+
+    const course = await courseFixture({
+      format: "language",
+      language,
+      organizationId,
+      slug: `spanish-language-${randomUUID()}`,
+      targetLanguage: "es",
+      title: `Complete Spanish ${randomUUID()}`,
+    });
+
+    const request = await generatableCoursePromptFixture({
+      canonicalTitle: `Speak Castilian ${randomUUID()}`,
+      courseFormat: "language",
+      language,
+      targetLanguage: "es",
+    });
+
+    assertGeneratableCoursePrompt(request);
+
+    const result = await resolveCourseIdentityStep(request);
+
+    const linkedRequest = await prisma.coursePrompt.findUniqueOrThrow({
+      where: { id: request.id },
+    });
+
+    expect(result?.id).toBe(course.id);
+    expect(linkedRequest.courseId).toBe(course.id);
+    expect(generateCourseIdentitySearchQueries).not.toHaveBeenCalled();
+    expect(resolveCourseIdentity).not.toHaveBeenCalled();
+  });
+
+  it("ignores a core course whose target language contradicts its format", async () => {
+    const title = `Contradictory Core Course ${randomUUID()}`;
+    const slug = getCourseSlugForTitle({ language: "en", title });
+
+    await courseFixture({
+      format: "core",
+      language: "en",
+      organizationId,
+      slug,
+      targetLanguage: "es",
+      title,
+    });
+
+    const request = await generatableCoursePromptFixture({
+      canonicalTitle: title,
+      courseFormat: "core",
+      language: "en",
+      targetLanguage: null,
+    });
+
+    assertGeneratableCoursePrompt(request);
+
+    const result = await resolveCourseIdentityStep(request);
+
+    expect(result).toBeNull();
+    expect(generateCourseIdentitySearchQueries).toHaveBeenCalledOnce();
+    expect(resolveCourseIdentity).not.toHaveBeenCalled();
   });
 
   it("uses AI search queries before classifying cross-language title matches", async () => {
@@ -253,12 +355,14 @@ describe(resolveCourseIdentityStep, () => {
         slug: `machine-learning-${randomUUID()}-pt`,
         title: "Machine Learning",
       }),
-      generatableCourseStartRequestFixture({
+      generatableCoursePromptFixture({
         canonicalTitle: "Aprendizado de máquina",
         language: "pt",
         prompt: `Aprendizado de máquina ${randomUUID()}`,
       }),
     ]);
+
+    assertGeneratableCoursePrompt(request);
 
     vi.mocked(generateCourseIdentitySearchQueries).mockResolvedValueOnce({
       data: { queries: ["machine learning"] },

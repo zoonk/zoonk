@@ -1,17 +1,12 @@
-import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { serializeWorkflowError } from "@/workflows/_shared/workflow-error";
 import { chapterGenerationWorkflow } from "@/workflows/chapter-generation/chapter-generation-workflow";
-import { COURSE_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
 import { type Chapter } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
 import { getWorkflowMetadata } from "workflow";
 import { getOrCreateCourse } from "./_internal/get-or-create-course";
 import { setupCourse } from "./_internal/setup-course";
 import { completeCourseSetupStep } from "./steps/complete-course-setup-step";
-import {
-  assertGeneratableCourseStartRequest,
-  getCourseStartRequestStep,
-} from "./steps/get-course-start-request-step";
+import { assertGeneratableCoursePrompt, getCoursePromptStep } from "./steps/get-course-prompt-step";
 import { handleCourseFailureStep } from "./steps/handle-failure-step";
 import { resolveCourseIdentityStep } from "./steps/resolve-course-identity-step";
 import { startChapterImagesWorkflowStep } from "./steps/start-chapter-images-workflow-step";
@@ -24,20 +19,23 @@ import { startChapterImagesWorkflowStep } from "./steps/start-chapter-images-wor
 async function setupCourseContent({
   course,
   description,
-  courseStartRequestId,
+  coursePromptId,
   existing,
+  workflowRunId,
 }: {
   course: Awaited<ReturnType<typeof getOrCreateCourse>>["course"];
   description: string | null;
-  courseStartRequestId: string;
+  coursePromptId: string;
   existing: Awaited<ReturnType<typeof getOrCreateCourse>>["existing"];
+  workflowRunId: string;
 }): Promise<Chapter[]> {
   const chapters = await setupCourse(course, description, existing);
 
   await completeCourseSetupStep({
     courseId: course.courseId,
+    coursePromptId,
     courseSlug: course.courseSlug,
-    courseStartRequestId,
+    workflowRunId,
   });
 
   return chapters;
@@ -77,54 +75,28 @@ async function generateFirstChapterAndStartChapterImages({
   }
 }
 
-export async function courseGenerationWorkflow(courseStartRequestId: string): Promise<void> {
+export async function courseGenerationWorkflow(coursePromptId: string): Promise<void> {
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
 
-  const request = await getCourseStartRequestStep(courseStartRequestId);
+  const prompt = await getCoursePromptStep(coursePromptId);
 
-  assertGeneratableCourseStartRequest(request);
+  assertGeneratableCoursePrompt(prompt);
 
-  // Skip if actively running to avoid conflicts with another workflow instance.
-  if (request.generationStatus === "running") {
-    return;
-  }
+  const existingCourse = await resolveCourseIdentityStep(prompt);
 
-  // Already completed — stream the completion step so the client can redirect.
-  if (request.generationStatus === "completed") {
-    await streamSkipStep(COURSE_COMPLETION_STEP);
-    return;
-  }
-
-  const existingCourse = await resolveCourseIdentityStep(request);
-
-  // Skip running courses to avoid conflicts with another workflow instance.
-  if (existingCourse?.generationStatus === "running") {
-    return;
-  }
-
-  // Already completed — stream the completion step so the client can redirect.
-  if (existingCourse?.generationStatus === "completed") {
-    await completeCourseSetupStep({
-      courseId: existingCourse.id,
-      courseSlug: existingCourse.slug,
-      courseStartRequestId,
-    });
-
-    return;
-  }
-
-  const courseSetup = await getOrCreateCourse(
+  const courseSetup = await getOrCreateCourse({
+    coursePromptId,
     existingCourse,
-    request,
-    courseStartRequestId,
+    prompt,
     workflowRunId,
-  ).catch(async (error: unknown) => {
+  }).catch(async (error: unknown) => {
     await handleCourseFailureStep({
-      courseId: existingCourse?.id ?? null,
-      courseStartRequestId,
+      courseId: null,
+      coursePromptId,
       error: serializeWorkflowError(error),
+      workflowRunId,
     });
 
     logError(`[workflow ${workflowRunId}] Course initialization failed`, error);
@@ -139,8 +111,9 @@ export async function courseGenerationWorkflow(courseStartRequestId: string): Pr
   if (courseSetup.status === "completed") {
     await completeCourseSetupStep({
       courseId: courseSetup.course.courseId,
+      coursePromptId,
       courseSlug: courseSetup.course.courseSlug,
-      courseStartRequestId,
+      workflowRunId,
     });
 
     return;
@@ -148,14 +121,16 @@ export async function courseGenerationWorkflow(courseStartRequestId: string): Pr
 
   const chapters = await setupCourseContent({
     course: courseSetup.course,
-    courseStartRequestId,
+    coursePromptId,
     description: null,
     existing: courseSetup.existing,
+    workflowRunId,
   }).catch(async (error: unknown) => {
     await handleCourseFailureStep({
       courseId: courseSetup.course.courseId,
-      courseStartRequestId,
+      coursePromptId,
       error: serializeWorkflowError(error),
+      workflowRunId,
     });
 
     logError(`[workflow ${workflowRunId}] Course generation failed`, error);

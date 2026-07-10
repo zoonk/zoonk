@@ -97,7 +97,7 @@ export type LessonStepName = (typeof LESSON_STEPS)[number];
 export const LESSON_COMPLETION_STEP: LessonStepName = "setLessonAsCompleted";
 
 const COURSE_STEPS = [
-  "getCourseStartRequest",
+  "getCoursePrompt",
   "generateCourseIdentitySearchQueries",
   "resolveCourseIdentity",
   "initializeCourse",

@@ -16,7 +16,7 @@ import { startIntroductionLessonsStep } from "../steps/start-introduction-lesson
 
 const INITIAL_LESSON_GENERATION_TARGET_COUNT = 3;
 
-type IntroductionCourseContext = CourseContext & { targetLanguage: null };
+type IntroductionCourseContext = Extract<CourseContext, { format: "core" }>;
 
 /**
  * Keeps the intro chapter helper scoped to regular courses even if a future
@@ -27,7 +27,7 @@ type IntroductionCourseContext = CourseContext & { targetLanguage: null };
 function assertIntroductionCourseContext(
   course: CourseContext,
 ): asserts course is IntroductionCourseContext {
-  if (course.targetLanguage) {
+  if (course.format !== "core") {
     throw new Error("Introduction chapters are only generated for regular courses.");
   }
 }

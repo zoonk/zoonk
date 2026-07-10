@@ -18,6 +18,7 @@ export const coursesData = [
   {
     description:
       "Proficiency in Spanish from beginner (A1) to advanced (C2), covering conversation, reading, writing, and listening comprehension. Enables communication in personal and professional contexts across Spanish-speaking countries.",
+    format: "language" as const,
     imageUrl:
       "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/spanish-G8NTOu5F2vUzMSaJ7oa2hgKrzAQtGr.webp",
     isPublished: true,
