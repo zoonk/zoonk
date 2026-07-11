@@ -1,7 +1,7 @@
 import "server-only";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
+import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./language-chapter-lessons.prompt.md";
 
@@ -28,7 +28,7 @@ export async function generateLanguageChapterLessons({
   targetLanguage,
   model = defaultModel,
   useFallback = true,
-  reasoningEffort,
+  reasoning,
 }: {
   chapterDescription: string;
   chapterTitle: string;
@@ -36,7 +36,7 @@ export async function generateLanguageChapterLessons({
   targetLanguage: string;
   model?: string;
   useFallback?: boolean;
-  reasoningEffort?: ReasoningEffort;
+  reasoning?: Reasoning;
 }) {
   const targetLanguageName = getPromptLanguageName({ language: targetLanguage, userLanguage });
   const userLanguageName = getPromptLanguageName({ language: userLanguage });
@@ -48,12 +48,7 @@ export async function generateLanguageChapterLessons({
     TARGET_LANGUAGE: ${targetLanguageName}
   `;
 
-  const providerOptions = buildProviderOptions({
-    fallbackModels,
-    model,
-    reasoningEffort,
-    useFallback,
-  });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
   const { output, usage } = await generateText({
     instructions: systemPrompt,
@@ -61,6 +56,7 @@ export async function generateLanguageChapterLessons({
     output: Output.object({ schema }),
     prompt: userPrompt,
     providerOptions,
+    reasoning,
   });
 
   return { data: output, systemPrompt, usage, userPrompt };

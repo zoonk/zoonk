@@ -2,12 +2,11 @@ import { describe, expect, it } from "vitest";
 import { buildImageProviderOptions, buildProviderOptions } from "./provider-options";
 
 describe(buildProviderOptions, () => {
-  it("adds provider order and reasoning effort for fallback-enabled models", () => {
+  it("adds provider order for fallback-enabled models", () => {
     expect(
       buildProviderOptions({
         fallbackModels: ["google/gemini-3-flash", "anthropic/claude-haiku-4.5"],
         model: "openai/gpt-5.4",
-        reasoningEffort: "high",
         useFallback: true,
       }),
     ).toStrictEqual({
@@ -15,7 +14,6 @@ describe(buildProviderOptions, () => {
         models: ["google/gemini-3-flash", "anthropic/claude-haiku-4.5"],
         order: ["openai", "azure", "google", "anthropic", "vertex"],
       },
-      openai: { reasoningEffort: "high" },
     });
   });
 

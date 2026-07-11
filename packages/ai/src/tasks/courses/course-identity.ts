@@ -1,7 +1,7 @@
 import "server-only";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
+import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import classificationPrompt from "./course-identity.prompt.md";
 
 const defaultModel = "google/gemini-3.1-flash-lite";
@@ -35,7 +35,7 @@ export type CourseIdentityParams = {
   proposedCourse: CourseIdentityProposedCourse;
   model?: string;
   useFallback?: boolean;
-  reasoningEffort?: ReasoningEffort;
+  reasoning?: Reasoning;
 };
 
 /**
@@ -74,17 +74,12 @@ export async function resolveCourseIdentity({
   candidates,
   model = defaultModel,
   proposedCourse,
-  reasoningEffort,
+  reasoning,
   useFallback = true,
 }: CourseIdentityParams) {
   const userPrompt = buildIdentityUserPrompt({ candidates, proposedCourse });
 
-  const providerOptions = buildProviderOptions({
-    fallbackModels,
-    model,
-    reasoningEffort,
-    useFallback,
-  });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
   const { output, usage } = await generateText({
     instructions: classificationPrompt,
@@ -92,6 +87,7 @@ export async function resolveCourseIdentity({
     output: Output.object({ schema: identitySchema }),
     prompt: userPrompt,
     providerOptions,
+    reasoning,
   });
 
   return {

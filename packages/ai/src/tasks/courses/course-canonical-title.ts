@@ -1,7 +1,7 @@
 import "server-only";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
+import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./course-canonical-title.prompt.md";
 
@@ -22,7 +22,7 @@ export type CourseCanonicalTitleParams = {
   prompt: string;
   model?: string;
   useFallback?: boolean;
-  reasoningEffort?: ReasoningEffort;
+  reasoning?: Reasoning;
 };
 
 /**
@@ -34,7 +34,7 @@ export async function generateCanonicalCourseTitle({
   language,
   model = defaultModel,
   prompt,
-  reasoningEffort,
+  reasoning,
   useFallback = true,
 }: CourseCanonicalTitleParams) {
   const promptLanguage = getPromptLanguageName({ language });
@@ -44,12 +44,7 @@ export async function generateCanonicalCourseTitle({
     USER_INPUT: ${prompt}
   `;
 
-  const providerOptions = buildProviderOptions({
-    fallbackModels,
-    model,
-    reasoningEffort,
-    useFallback,
-  });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
   const { output, usage } = await generateText({
     instructions: systemPrompt,
@@ -57,6 +52,7 @@ export async function generateCanonicalCourseTitle({
     output: Output.object({ schema }),
     prompt: userPrompt,
     providerOptions,
+    reasoning,
     temperature: 0,
   });
 
