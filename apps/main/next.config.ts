@@ -1,5 +1,6 @@
 import createMDX from "@next/mdx";
 import { withSentryConfig } from "@sentry/nextjs";
+import { NEXT_INTL_PO_FORMAT } from "@zoonk/i18n/next-intl/po-format";
 import { getPublicAppSecurityHeaders } from "@zoonk/next/security/headers";
 import { withBotId } from "botid/next/config";
 import { type NextConfig } from "next";
@@ -61,7 +62,7 @@ const withNextIntl = createNextIntlPlugin({
   experimental: {
     extract: { path: "./messages" },
     messages: {
-      format: "po",
+      format: NEXT_INTL_PO_FORMAT,
       locales: "infer",
       path: ["./messages", "../../packages/player/messages"],
       precompile: true,

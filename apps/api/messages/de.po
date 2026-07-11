@@ -4,127 +4,156 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: next-intl\n"
-"X-Crowdin-SourceKey: msgstr\n"
 
 #: src/app/auth/layout.tsx
-msgid "dVItHD"
+msgctxt "dVItHD"
+msgid "Sign in to Zoonk"
 msgstr "Bei Zoonk anmelden"
 
 #: src/app/auth/login/email-login-form.tsx
-msgid "sy-pv5"
+msgctxt "sy-pv5"
+msgid "Email"
 msgstr "E-Mail"
 
 #: src/app/auth/login/email-login-form.tsx
-msgid "apQW0E"
+msgctxt "apQW0E"
+msgid "me@gmail.com"
 msgstr "me@gmail.com"
 
 #: src/app/auth/login/email-login-form.tsx
-msgid "YRe93Y"
+msgctxt "YRe93Y"
+msgid "Enter a valid email address"
 msgstr "Gib eine gültige E-Mail‑Adresse ein"
 
 #: src/app/auth/login/email-login-form.tsx
 #: src/app/auth/login/social-login.tsx
-msgid "pN2p0t"
+msgctxt "pN2p0t"
+msgid "There was an error signing you in. Please try again or contact hello@zoonk.com"
 msgstr "Beim Anmelden ist ein Fehler aufgetreten. Bitte versuche es erneut oder kontaktiere hello@zoonk.com"
 
 #: src/app/auth/login/email-login-form.tsx
 #: src/app/auth/otp/otp-form.tsx
 #: src/app/auth/setup/setup-form.tsx
-msgid "acrOoz"
+msgctxt "acrOoz"
+msgid "Continue"
 msgstr "Weiter"
 
 #: src/app/auth/login/page.tsx
-msgid "eN8MTJ"
+msgctxt "eN8MTJ"
+msgid "Sign in or create an account"
 msgstr "Anmelden oder ein Konto erstellen"
 
 #: src/app/auth/login/page.tsx
-msgid "4wpUNc"
+msgctxt "4wpUNc"
+msgid "Or"
 msgstr "Oder"
 
 #: src/app/auth/login/page.tsx
-msgid "Ju9oB-"
+msgctxt "Ju9oB-"
+msgid "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
 msgstr "Indem du auf Weiter klickst, stimmst du unseren <terms>Nutzungsbedingungen</terms> und der <privacy>Datenschutzrichtlinie</privacy> zu."
 
 #: src/app/auth/login/social-login.tsx
-msgid "FJ6r9E"
+msgctxt "FJ6r9E"
+msgid "Continue with Google"
 msgstr "Weiter mit Google"
 
 #: src/app/auth/login/social-login.tsx
-msgid "BmecBA"
+msgctxt "BmecBA"
+msgid "Continue with Apple"
 msgstr "Weiter mit Apple"
 
 #: src/app/auth/otp/otp-form.tsx
-msgid "HkHvQv"
+msgctxt "HkHvQv"
+msgid "The code you entered is incorrect. Please try again or contact hello@zoonk.com"
 msgstr "Der eingegebene Code ist falsch. Bitte versuche es erneut oder kontaktiere hello@zoonk.com"
 
 #: src/app/auth/otp/otp-form.tsx
-msgid "ChATeO"
+msgctxt "ChATeO"
+msgid "Change email"
 msgstr "E‑Mail ändern"
 
 #: src/app/auth/otp/page.tsx
-msgid "zx7CKB"
+msgctxt "zx7CKB"
+msgid "Check your email"
 msgstr "Schau in dein Postfach"
 
 #: src/app/auth/otp/page.tsx
-msgid "LZHcmZ"
+msgctxt "LZHcmZ"
+msgid "Enter the code we sent to {email}:"
 msgstr "Gib den Code ein, den wir an {email} gesendet haben:"
 
 #: src/app/auth/setup/page.tsx
-msgid "CYqIel"
+msgctxt "CYqIel"
+msgid "Complete your profile"
 msgstr "Vervollständige dein Profil"
 
 #: src/app/auth/setup/page.tsx
-msgid "7463XU"
+msgctxt "7463XU"
+msgid "Choose a name and username before continuing."
 msgstr "Wähle einen Namen und einen Benutzernamen, bevor du fortfährst."
 
 #: src/app/auth/setup/setup-form.tsx
-msgid "1SvspN"
+msgctxt "1SvspN"
+msgid "Checking..."
 msgstr "Wird geprüft..."
 
 #: src/app/auth/setup/setup-form.tsx
-msgid "9N4_rz"
+msgctxt "9N4_rz"
+msgid "{username} is available"
 msgstr "{username} ist verfügbar"
 
 #: src/app/auth/setup/setup-form.tsx
-msgid "R76cpj"
+msgctxt "R76cpj"
+msgid "{username} is already taken"
 msgstr "{username} ist bereits vergeben"
 
 #: src/app/auth/setup/setup-form.tsx
-msgid "vLl7z0"
+msgctxt "vLl7z0"
+msgid "3-30 characters. Letters, numbers, and underscores only."
 msgstr "3–30 Zeichen. Nur Buchstaben, Zahlen und Unterstriche."
 
 #: src/app/auth/setup/setup-form.tsx
-msgid "HAlOn1"
+msgctxt "HAlOn1"
+msgid "Name"
 msgstr "Name"
 
 #: src/app/auth/setup/setup-form.tsx
-msgid "JCIgkj"
+msgctxt "JCIgkj"
+msgid "Username"
 msgstr "Benutzername"
 
 #: src/app/auth/setup/setup-form.tsx
-msgid "XLl_pd"
+msgctxt "XLl_pd"
+msgid "your-username"
 msgstr "dein-benutzername"
 
 #: src/app/auth/setup/setup-form.tsx
-msgid "yCCLud"
+msgctxt "yCCLud"
+msgid "Failed to set up your profile. Please try again or contact hello@zoonk.com"
 msgstr "Dein Profil konnte nicht eingerichtet werden. Bitte versuche es erneut oder kontaktiere hello@zoonk.com"
 
 #: src/app/auth/untrusted-origin/page.tsx
-msgid "1vqX2W"
+msgctxt "1vqX2W"
+msgid "Unable to redirect"
 msgstr "Weiterleitung nicht möglich"
 
 #: src/app/auth/untrusted-origin/page.tsx
-msgid "83K2kN"
+msgctxt "83K2kN"
+msgid "The destination URL is not recognized as a trusted Zoonk application."
 msgstr "Die Ziel-URL wird nicht als vertrauenswürdige Zoonk-Anwendung erkannt."
 
 #: src/app/auth/untrusted-origin/page.tsx
-msgid "wkO19y"
+msgctxt "wkO19y"
+msgid "Security warning"
 msgstr "Sicherheitshinweis"
 
 #: src/app/auth/untrusted-origin/page.tsx
-msgid "585u5Z"
+msgctxt "585u5Z"
+msgid "For your safety, we cannot redirect you to an unrecognized destination."
 msgstr "Zu deiner Sicherheit können wir dich nicht zu einer unbekannten Zieladresse weiterleiten."
 
 #: src/app/auth/untrusted-origin/page.tsx
-msgid "-e4BVR"
+msgctxt "-e4BVR"
+msgid "Continue to Zoonk"
 msgstr "Weiter zu Zoonk"
