@@ -1,6 +1,6 @@
 import { openai } from "@ai-sdk/openai";
 import { type TTSVoice } from "@zoonk/utils/languages";
-import { experimental_generateSpeech as generateSpeech } from "ai";
+import { generateSpeech } from "ai";
 import { type AudioResult } from "./generate-language-audio";
 
 const MODEL = openai.speech("gpt-4o-mini-tts");

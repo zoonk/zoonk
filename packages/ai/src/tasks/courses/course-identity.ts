@@ -87,11 +87,11 @@ export async function resolveCourseIdentity({
   });
 
   const { output, usage } = await generateText({
+    instructions: classificationPrompt,
     model,
     output: Output.object({ schema: identitySchema }),
     prompt: userPrompt,
     providerOptions,
-    system: classificationPrompt,
   });
 
   return {

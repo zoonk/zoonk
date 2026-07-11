@@ -70,11 +70,11 @@ export async function generateStepImagePrompts({
   });
 
   const { output, usage } = await generateText({
+    instructions: systemPrompt,
     model,
     output: Output.object({ schema: buildSchema(steps.length) }),
     prompt: userPrompt,
     providerOptions,
-    system: systemPrompt,
   });
 
   return { data: output, systemPrompt, usage, userPrompt };

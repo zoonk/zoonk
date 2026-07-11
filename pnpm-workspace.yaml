@@ -37,7 +37,7 @@ catalog:
   "@typescript/native": npm:typescript@7.0.2
   typescript: npm:@typescript/typescript6@6.0.2
   "@vercel/analytics": 2.0.1
-  ai: 6.0.203
+  ai: 7.0.22
   babel-plugin-react-compiler: 1.0.0
   botid: 1.5.11
   jsdom: 29.1.1
