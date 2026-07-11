@@ -164,7 +164,7 @@ function getGoogleTag() {
  * TypeScript consumer in the app believe those fields always exist.
  */
 function getGoogleTagScope(): GoogleTagScope {
-  return globalThis as GoogleTagScope;
+  return globalThis;
 }
 
 /**

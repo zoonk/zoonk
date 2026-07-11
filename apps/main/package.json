@@ -14,7 +14,7 @@
     "start": "next start",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "next typegen && tsgo --noEmit"
+    "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
     "@next/third-parties": "catalog:",
@@ -50,7 +50,7 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@typescript/native-preview": "catalog:",
+    "@typescript/native": "catalog:",
     "@zoonk/e2e": "workspace:*",
     "@zoonk/i18n": "workspace:*",
     "@zoonk/next": "workspace:*",
@@ -60,6 +60,7 @@
     "jsdom": "catalog:",
     "raw-loader": "catalog:",
     "tsx": "catalog:",
+    "typescript": "catalog:",
     "vitest": "catalog:"
   }
 }

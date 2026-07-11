@@ -95,7 +95,7 @@ async function findChapterSearchMatches({
     where,
   });
 
-  return chapters as ChapterSearchRow[];
+  return chapters;
 }
 
 /**

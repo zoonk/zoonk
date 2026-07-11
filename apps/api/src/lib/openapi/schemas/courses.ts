@@ -7,7 +7,7 @@ export const courseSearchQuerySchema = z
       .string()
       .min(2, "Language code must be at least 2 characters")
       .optional()
-      .meta({ description: "Language code for sorting preference", example: "en" }),
+      .meta({ description: "Language code for sorting preference", examples: ["en"] }),
     limit: z.coerce
       .number()
       .int()
@@ -19,7 +19,7 @@ export const courseSearchQuerySchema = z
     query: z
       .string()
       .min(1, "Search query is required")
-      .meta({ description: "Search query", example: "javascript" }),
+      .meta({ description: "Search query", examples: ["javascript"] }),
   })
   .meta({ id: "CourseSearchQuery" });
 

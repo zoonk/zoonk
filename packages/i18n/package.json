@@ -6,14 +6,14 @@
     "./define-eloqnt-config": "./src/define-eloqnt-config.ts"
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@eloqnt/cli": "catalog:",
     "ai-sdk-provider-codex-cli": "1.2.2"
   },
   "devDependencies": {
-    "@typescript/native-preview": "catalog:",
+    "@typescript/native": "catalog:",
     "@zoonk/tsconfig": "workspace:*"
   }
 }

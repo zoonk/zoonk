@@ -35,7 +35,7 @@ const languageMockState = vi.hoisted(() => ({
   distractors: Object.fromEntries([
     ["水", ["火", "土"]],
     ["猫", ["犬", "鳥"]],
-  ]) as Record<string, string[]>,
+  ]),
   words: [
     { translation: "cat", word: "猫" },
     { translation: "water", word: "水" },

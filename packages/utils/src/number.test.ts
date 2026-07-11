@@ -58,9 +58,9 @@ describe(formatMetricPercent, () => {
   });
 
   it("keeps one decimal only when needed", () => {
-    expect(
-      formatMetricPercent({ format: createFormatter("en-US"), value: 88.515_376_853_753_7 }),
-    ).toBe("88.5%");
+    expect(formatMetricPercent({ format: createFormatter("en-US"), value: 88.5153768537537 })).toBe(
+      "88.5%",
+    );
   });
 });
 

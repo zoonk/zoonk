@@ -27,6 +27,7 @@
     "./origin": "./src/origin.ts",
     "./posthog": "./src/posthog.ts",
     "./search": "./src/search.ts",
+    "./sentry": "./src/sentry.ts",
     "./shuffle": "./src/shuffle.ts",
     "./string": "./src/string.ts",
     "./subscription": "./src/subscription.ts",
@@ -37,7 +38,7 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "0.8.10",
@@ -45,7 +46,7 @@
   },
   "devDependencies": {
     "@types/negotiator": "0.6.4",
-    "@typescript/native-preview": "catalog:",
+    "@typescript/native": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
     "vitest": "catalog:"
   }

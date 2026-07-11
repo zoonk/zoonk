@@ -42,7 +42,7 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@ai-sdk/gateway": "3.0.129",
@@ -53,7 +53,7 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "@typescript/native-preview": "catalog:",
+    "@typescript/native": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
     "vitest": "catalog:"
   },

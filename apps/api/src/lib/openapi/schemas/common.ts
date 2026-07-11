@@ -3,7 +3,7 @@ import { z } from "zod";
 export const errorSchema = z
   .object({
     error: z.object({
-      code: z.string().meta({ description: "Error code", example: "VALIDATION_ERROR" }),
+      code: z.string().meta({ description: "Error code", examples: ["VALIDATION_ERROR"] }),
       details: z.unknown().optional().meta({ description: "Additional error details" }),
       message: z.string().meta({ description: "Error message" }),
     }),

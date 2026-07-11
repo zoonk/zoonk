@@ -20,7 +20,7 @@ export const lessonPreloadTriggerSchema = z
 
 export const workflowTriggerResponseSchema = z
   .object({
-    message: z.string().meta({ example: "Workflow started" }),
+    message: z.string().meta({ examples: ["Workflow started"] }),
     runId: z.string().meta({ description: "Workflow run ID for status tracking" }),
   })
   .meta({ id: "WorkflowTriggerResponse" });

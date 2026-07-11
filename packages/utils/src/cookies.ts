@@ -39,8 +39,7 @@ export async function setCookie(
     parts.push(`max-age=${expires * 24 * 60 * 60}`);
   }
 
-  parts.push(`path=${path}`);
-  parts.push(`samesite=${sameSite}`);
+  parts.push(`path=${path}`, `samesite=${sameSite}`);
 
   // eslint-disable-next-line unicorn/no-document-cookie -- Fallback for older browsers
   document.cookie = parts.join("; ");

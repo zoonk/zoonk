@@ -34,7 +34,8 @@ catalog:
   "@types/node": ^24
   "@types/react": ^19.2.17
   "@types/react-dom": ^19.2.3
-  "@typescript/native-preview": 7.0.0-dev.20260612.1
+  "@typescript/native": npm:typescript@7.0.2
+  typescript: npm:@typescript/typescript6@6.0.2
   "@vercel/analytics": 2.0.1
   ai: 6.0.203
   babel-plugin-react-compiler: 1.0.0

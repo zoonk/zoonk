@@ -15,7 +15,7 @@
     "start": "next start -p 4000",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "next typegen && tsgo --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "workflow:inspect": "workflow inspect runs",
     "workflow:web": "workflow web"
   },
@@ -44,13 +44,14 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@typescript/native-preview": "catalog:",
+    "@typescript/native": "catalog:",
     "@zoonk/e2e": "workspace:*",
     "@zoonk/i18n": "workspace:*",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "babel-plugin-react-compiler": "catalog:",
     "raw-loader": "catalog:",
+    "typescript": "catalog:",
     "vitest": "catalog:",
     "zod-openapi": "5.4.6"
   }

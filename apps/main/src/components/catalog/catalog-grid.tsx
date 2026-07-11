@@ -3,11 +3,12 @@
 import { GridContent, GridEmpty, GridGroupItem, GridItem } from "@zoonk/ui/components/grid";
 import { Input } from "@zoonk/ui/components/input";
 import { cn } from "@zoonk/ui/lib/utils";
+import { SEARCH_QUERY_THROTTLE_MS } from "@zoonk/utils/search";
 import { normalizeString } from "@zoonk/utils/string";
 import { SearchIcon } from "lucide-react";
 import { type Route } from "next";
 import Link from "next/link";
-import { useQueryState } from "nuqs";
+import { throttle, useQueryState } from "nuqs";
 import { type ReactNode, useMemo } from "react";
 import { CatalogGridBackToTop } from "./catalog-grid-back-to-top";
 import { CatalogGridContext, useCatalogGridContext } from "./catalog-grid-context";
@@ -84,8 +85,8 @@ export function CatalogGridSearch({
 }) {
   const [search, setSearch] = useQueryState("q", {
     defaultValue: "",
+    limitUrlUpdates: throttle(SEARCH_QUERY_THROTTLE_MS),
     shallow: true,
-    throttleMs: 300,
   });
 
   const { filteredIds, isFilterActive } = useMemo(() => {
