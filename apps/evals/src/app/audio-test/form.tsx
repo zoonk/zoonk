@@ -14,6 +14,7 @@ import { TTS_VOICES } from "@zoonk/utils/languages";
 import { Loader2 } from "lucide-react";
 import { useState, useTransition } from "react";
 import { generateAudioAction } from "./actions";
+import { AUDIO_MODEL_OPTIONS, DEFAULT_AUDIO_MODEL_VALUE } from "./models";
 
 export function AudioTestForm() {
   const [isPending, startTransition] = useTransition();
@@ -59,8 +60,24 @@ export function AudioTestForm() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <Label htmlFor="voice">Voice</Label>
-          <Select defaultValue="Kore" name="voice">
+          <Label htmlFor="model">Model</Label>
+          <Select defaultValue={DEFAULT_AUDIO_MODEL_VALUE} disabled={isPending} name="model">
+            <SelectTrigger className="w-full" id="model">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {AUDIO_MODEL_OPTIONS.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="voice">Gemini voice</Label>
+          <Select defaultValue="Kore" disabled={isPending} name="voice">
             <SelectTrigger id="voice">
               <SelectValue />
             </SelectTrigger>
