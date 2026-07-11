@@ -3,17 +3,24 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./define-eloqnt-config": "./src/define-eloqnt-config.ts"
+    "./define-eloqnt-config": "./src/define-eloqnt-config.ts",
+    "./next-intl/po-format": "./src/next-intl/po-format.ts"
   },
   "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@eloqnt/cli": "catalog:",
-    "ai-sdk-provider-codex-cli": "1.2.2"
+    "ai-sdk-provider-codex-cli": "1.2.2",
+    "next-intl": "catalog:",
+    "po-parser": "2.1.1"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "@typescript/native": "catalog:",
-    "@zoonk/tsconfig": "workspace:*"
+    "@zoonk/tsconfig": "workspace:*",
+    "vitest": "catalog:"
   }
 }

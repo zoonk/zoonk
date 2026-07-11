@@ -4,370 +4,457 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: next-intl\n"
-"X-Crowdin-SourceKey: msgstr\n"
 
 #: src/components/alphabet-step.tsx
-msgid "w0J_gv"
+msgctxt "w0J_gv"
+msgid "Alphabet"
 msgstr "Alfabeto"
 
 #: src/components/arrange-words-answer-area.tsx
 #: src/components/fill-blank-step.tsx
 #: src/components/sort-order-step.tsx
-msgid "6NoIUl"
+msgctxt "6NoIUl"
+msgid "Correct"
 msgstr "Correcto"
 
 #: src/components/arrange-words-answer-area.tsx
 #: src/components/fill-blank-step.tsx
 #: src/components/sort-order-step.tsx
-msgid "Ypr9T5"
+msgctxt "Ypr9T5"
+msgid "Incorrect"
 msgstr "Incorrecto"
 
 #: src/components/arrange-words-answer-area.tsx
 #: src/components/sort-order-step.tsx
-msgid "hFFOe-"
+msgctxt "hFFOe-"
+msgid "{item}. {result}."
 msgstr "{item}. {result}."
 
 #: src/components/arrange-words-answer-area.tsx
-msgid "vPyO9S"
+msgctxt "vPyO9S"
+msgid "Position {position}: {item}. Tap to remove."
 msgstr "Posición {position}: {item}. Toca para quitar."
 
 #: src/components/arrange-words-answer-area.tsx
 #: src/components/select-image-step.tsx
-msgid "1nJY2_"
+msgctxt "1nJY2_"
+msgid "Your answer"
 msgstr "Tu respuesta"
 
 #: src/components/arrange-words-answer-area.tsx
-msgid "7R_rOB"
+msgctxt "7R_rOB"
+msgid "Tap words to build your answer"
 msgstr "Toca las palabras para formar tu respuesta"
 
 #: src/components/arrange-words.tsx
 #: src/components/fill-blank-word-bank.tsx
-msgid "e7WNdK"
+msgctxt "e7WNdK"
+msgid "Word bank"
 msgstr "Banco de palabras"
 
 #: src/components/completion-auth-branch.tsx
-msgid "E2sGaF"
+msgctxt "E2sGaF"
+msgid "Exit"
 msgstr "Salir"
 
 #: src/components/completion-auth-branch.tsx
-msgid "FazwRl"
+msgctxt "FazwRl"
+msgid "Try again"
 msgstr "Inténtalo de nuevo"
 
 #: src/components/completion-auth-branch.tsx
 #: src/components/completion-milestone-actions.tsx
 #: src/components/step-navigation-button-group.tsx
-msgid "9-Ddtu"
+msgctxt "9-Ddtu"
+msgid "Next"
 msgstr "Siguiente"
 
 #: src/components/completion-auth-branch.tsx
-msgid "odXlk8"
+msgctxt "odXlk8"
+msgid "Log in"
 msgstr "Iniciar sesión"
 
 #: src/components/completion-brain-power-milestone.tsx
-msgid "fS3hB9"
+msgctxt "fS3hB9"
+msgid "New daily best"
 msgstr "Nuevo récord diario"
 
 #: src/components/completion-brain-power-milestone.tsx
-msgid "VaM8Q9"
+msgctxt "VaM8Q9"
+msgid "You reached {brainPower} BP today, your highest Brain Power in a single day. Keep learning every day to set a new best."
 msgstr "Hoy alcanzaste {brainPower} PM, tu mayor Poder Mental en un solo día. Sigue estudiando cada día para marcar un nuevo récord."
 
 #: src/components/completion-energy-milestone.tsx
-msgid "m2WzLQ"
+msgctxt "m2WzLQ"
+msgid "Max Energy!"
 msgstr "¡Energía al máximo!"
 
 #: src/components/completion-energy-milestone.tsx
-msgid "Fo6YtA"
+msgctxt "Fo6YtA"
+msgid "Congrats! You reached max Energy. Keep practicing every day to keep your Energy at 100%."
 msgstr "¡Felicidades! Alcanzaste el máximo de Energía. Sigue practicando cada día para mantener tu Energía al 100 %."
 
 #: src/components/completion-energy-milestone.tsx
-msgid "J89SkG"
+msgctxt "J89SkG"
+msgid "{percentage} Energy"
 msgstr "{percentage} de Energía"
 
 #: src/components/completion-energy-milestone.tsx
-msgid "3Jd-mJ"
+msgctxt "3Jd-mJ"
+msgid "Your effort is paying off. Complete lessons every day to increase your Energy."
 msgstr "Tu esfuerzo está dando resultado. Completa lecciones cada día para aumentar tu Energía."
 
 #: src/components/completion-energy-milestone.tsx
-msgid "5YVYKd"
+msgctxt "5YVYKd"
+msgid "1 year of max Energy"
 msgstr "1 año de Energía al máximo"
 
 #: src/components/completion-energy-milestone.tsx
-msgid "1WNk4i"
+msgctxt "1WNk4i"
+msgid "{days} days of max Energy"
 msgstr "{days} días de Energía al máximo"
 
 #: src/components/completion-energy-milestone.tsx
-msgid "cIxpmv"
+msgctxt "cIxpmv"
+msgid "Wow, what incredible consistency! Keep studying every day to keep your Energy at 100%."
 msgstr "¡Guau, qué constancia tan increíble! Sigue estudiando cada día para mantener tu Energía al 100 %."
 
 #: src/components/completion-learning-days-milestone.tsx
-msgid "SIXtG5"
+msgctxt "SIXtG5"
+msgid "{days} learning days"
 msgstr "{days} días de estudio"
 
 #: src/components/completion-learning-days-milestone.tsx
-msgid "hjXoGI"
+msgctxt "hjXoGI"
+msgid "You've completed lessons on {days} different days. Practicing often helps you remember what you learn."
 msgstr "Completaste lecciones en {days} días diferentes. Practicar a menudo te ayuda a recordar lo que aprendes."
 
 #: src/components/completion-learning-time-milestone.tsx
-msgid "dZvEPp"
+msgctxt "dZvEPp"
+msgid "{minutes} minutes of learning"
 msgstr "{minutes} minutos de estudio"
 
 #: src/components/completion-learning-time-milestone.tsx
-msgid "kw1W3C"
+msgctxt "kw1W3C"
+msgid "1 full day of learning"
 msgstr "1 día completo de estudio"
 
 #: src/components/completion-learning-time-milestone.tsx
-msgid "BlVoPr"
+msgctxt "BlVoPr"
+msgid "{hours, plural, one {# hour of learning} other {# hours of learning}}"
 msgstr "{hours, plural, one {# hora de estudio} other {# horas de estudio}}"
 
 #: src/components/completion-learning-time-milestone.tsx
-msgid "WcAhMT"
+msgctxt "WcAhMT"
+msgid "You can learn a lot by practicing for a few minutes a day."
 msgstr "Puedes aprender mucho practicando unos minutos al día."
 
 #: src/components/completion-learning-time-milestone.tsx
-msgid "LzEQnT"
+msgctxt "LzEQnT"
+msgid "That's a full day of focused practice."
 msgstr "Eso es un día completo de práctica concentrada."
 
 #: src/components/completion-learning-time-milestone.tsx
-msgid "PpK3hX"
+msgctxt "PpK3hX"
+msgid "That's more than {days, plural, one {# full day} other {# full days}} of focused practice."
 msgstr "Eso es más de {days, plural, one {# día completo} other {# días completos}} de práctica concentrada."
 
 #: src/components/completion-level-milestone.tsx
-msgid "155cHi"
+msgctxt "155cHi"
+msgid "Level achieved"
 msgstr "Nivel alcanzado"
 
 #: src/components/completion-level-milestone.tsx
-msgid "Ar7dNY"
+msgctxt "Ar7dNY"
+msgid "You reached a new level: {belt}, level {level}. Congrats!"
 msgstr "Alcanzaste un nuevo nivel: {belt}, nivel {level}. ¡Felicidades!"
 
 #: src/components/completion-level-milestone.tsx
-msgid "Bk6B6r"
+msgctxt "Bk6B6r"
+msgid "Almost there"
 msgstr "Ya casi"
 
 #: src/components/completion-level-milestone.tsx
-msgid "b7ZoLo"
+msgctxt "b7ZoLo"
+msgid "Your knowledge is growing. Complete {count, plural, one {# more lesson} other {# more lessons}} to reach {belt}, level {level}."
 msgstr "Tu conocimiento está creciendo. Completa {count, plural, one {# lección más} other {# lecciones más}} para llegar a {belt}, nivel {level}."
 
 #: src/components/completion-milestone-actions.tsx
-msgid "DiIkZH"
+msgctxt "DiIkZH"
+msgid "Next Chapter"
 msgstr "Capítulo siguiente"
 
 #: src/components/completion-milestone-actions.tsx
-msgid "w0D7HC"
+msgctxt "w0D7HC"
+msgid "Review Course"
 msgstr "Repasar curso"
 
 #: src/components/completion-milestone-actions.tsx
-msgid "wm_M34"
+msgctxt "wm_M34"
+msgid "Review Chapter"
 msgstr "Repasar capítulo"
 
 #: src/components/completion-progress-milestone-screen.tsx
-msgid "iSioEh"
+msgctxt "iSioEh"
+msgid "Learn about Energy"
 msgstr "Aprende sobre Energía"
 
 #: src/components/completion-progress-milestone-screen.tsx
-msgid "DC0WoT"
+msgctxt "DC0WoT"
+msgid "Learn about Score"
 msgstr "Aprende sobre la puntuación"
 
 #: src/components/completion-progress-milestone-screen.tsx
-msgid "Q0R3MU"
+msgctxt "Q0R3MU"
+msgid "Learn about levels"
 msgstr "Aprende sobre los niveles"
 
 #: src/components/completion-progress-milestone-screen.tsx
 #: src/components/step-action-button.tsx
-msgid "acrOoz"
+msgctxt "acrOoz"
+msgid "Continue"
 msgstr "Continuar"
 
 #: src/components/completion-score-milestone.tsx
-msgid "e6_3Ke"
+msgctxt "e6_3Ke"
+msgid "{day} is your best day"
 msgstr "{day} es tu mejor día"
 
 #: src/components/completion-score-milestone.tsx
-msgid "PTQ0ah"
+msgctxt "PTQ0ah"
+msgid "You usually get {percentage} of answers right on {day}, your highest average of the week."
 msgstr "Sueles acertar el {percentage} de las respuestas los {day}, tu promedio más alto de la semana."
 
 #: src/components/completion-screen.tsx
-msgid "95stPq"
+msgctxt "95stPq"
+msgid "Completed"
 msgstr "Completada"
 
 #: src/components/completion-screen.tsx
-msgid "2wDWd0"
+msgctxt "2wDWd0"
+msgid "Course Complete"
 msgstr "Curso completado"
 
 #: src/components/completion-screen.tsx
-msgid "t2VOpl"
+msgctxt "t2VOpl"
+msgid "Chapter Complete"
 msgstr "Capítulo completado"
 
 #: src/components/completion-screen.tsx
 #: src/components/in-play-sticky-header.tsx
-msgid "qXzoF7"
+msgctxt "qXzoF7"
+msgid "Lesson {current} of {total}"
 msgstr "Lección {current} de {total}"
 
 #: src/components/completion-screen.tsx
-msgid "9wxMoj"
+msgctxt "9wxMoj"
+msgid "Chapter progress"
 msgstr "Progreso del capítulo"
 
 #: src/components/completion-screen.tsx
-msgid "P768k7"
+msgctxt "P768k7"
+msgid "correct"
 msgstr "correctas"
 
 #: src/components/feedback-answer-blocks.tsx
-msgid "3nOd8f"
+msgctxt "3nOd8f"
+msgid "Your answer:"
 msgstr "Tu respuesta:"
 
 #: src/components/feedback-answer-blocks.tsx
 #: src/components/inline-feedback.tsx
-msgid "QAJ_Tl"
+msgctxt "QAJ_Tl"
+msgid "Correct answer:"
 msgstr "Respuesta correcta:"
 
 #: src/components/feedback-screen.tsx
-msgid "kgOBET"
+msgctxt "kgOBET"
+msgid "Question"
 msgstr "Pregunta"
 
 #: src/components/feedback-screen.tsx
-msgid "fpO9TK"
+msgctxt "fpO9TK"
+msgid "Translate:"
 msgstr "Traduce:"
 
 #: src/components/fill-blank-step.tsx
-msgid "SL2Bob"
+msgctxt "SL2Bob"
+msgid "Blank {position}: {item}. {result}."
 msgstr "Espacio {position}: {item}. {result}."
 
 #: src/components/fill-blank-step.tsx
-msgid "wUEGVH"
+msgctxt "wUEGVH"
+msgid "Blank {position}: {item}. Tap to remove."
 msgstr "Espacio {position}: {item}. Toca para quitar."
 
 #: src/components/fill-blank-step.tsx
-msgid "FmmJ_j"
+msgctxt "FmmJ_j"
+msgid "Blank {position}"
 msgstr "Espacio {position}"
 
 #: src/components/inline-feedback.tsx
-msgid "HvLGEN"
+msgctxt "HvLGEN"
+msgid "Answer feedback"
 msgstr "Comentarios sobre la respuesta"
 
 #: src/components/lesson-info-popover.tsx
-msgid "RwePAQ"
+msgctxt "RwePAQ"
+msgid "Lesson info"
 msgstr "Información de la lección"
 
 #: src/components/listening-step.tsx
-msgid "aAmWaS"
+msgctxt "aAmWaS"
+msgid "What do you hear?"
 msgstr "¿Qué escuchas?"
 
 #: src/components/listening-step.tsx
 #: src/components/reading-step.tsx
-msgid "19nXyC"
+msgctxt "19nXyC"
+msgid "Translate this sentence:"
 msgstr "Traduce esta oración:"
 
 #: src/components/match-columns-step.tsx
-msgid "fV1MzK"
+msgctxt "fV1MzK"
+msgid "Match the pairs."
 msgstr "Une las parejas."
 
 #: src/components/match-columns-step.tsx
-msgid "ja1JDt"
+msgctxt "ja1JDt"
+msgid "All pairs matched. Press Check to continue."
 msgstr "Todas las parejas están unidas. Pulsa Revisar para continuar."
 
 #: src/components/play-audio-button.tsx
-msgid "WGft2H"
+msgctxt "WGft2H"
+msgid "Pause pronunciation"
 msgstr "Pausar pronunciación"
 
 #: src/components/play-audio-button.tsx
-msgid "lYWSeP"
+msgctxt "lYWSeP"
+msgid "Play pronunciation"
 msgstr "Reproducir pronunciación"
 
 #: src/components/player-choice-scene.tsx
-msgid "akd-cv"
+msgctxt "akd-cv"
+msgid "Answer options"
 msgstr "Opciones de respuesta"
 
 #: src/components/player-header.tsx
-msgid "rbrahO"
+msgctxt "rbrahO"
+msgid "Close"
 msgstr "Cerrar"
 
 #: src/components/player-progress-bar.tsx
-msgid "dYp90P"
+msgctxt "dYp90P"
+msgid "Lesson progress"
 msgstr "Progreso de la lección"
 
 #: src/components/player-shell.tsx
-msgid "ZHEKO0"
+msgctxt "ZHEKO0"
+msgid "Lesson content"
 msgstr "Contenido de la lección"
 
 #: src/components/player-shell.tsx
 #: src/components/swipe-navigable-step-layout.tsx
-msgid "41rDiT"
+msgctxt "41rDiT"
+msgid "Lesson controls"
 msgstr "Controles de la lección"
 
 #: src/components/select-image-step.tsx
-msgid "mhiTW7"
+msgctxt "mhiTW7"
+msgid "Correct answer"
 msgstr "Respuesta correcta"
 
 #: src/components/select-image-step.tsx
-msgid "NA6C_-"
+msgctxt "NA6C_-"
+msgid "Image options"
 msgstr "Opciones de imagen"
 
 #: src/components/sort-order-step.tsx
-msgid "p5llOK"
+msgctxt "p5llOK"
+msgid "Sort items"
 msgstr "Ordenar elementos"
 
 #: src/components/sort-order-step.tsx
-msgid "VA8c_A"
+msgctxt "VA8c_A"
+msgid "Correct order:"
 msgstr "Orden correcto:"
 
 #: src/components/sort-order-step.tsx
-msgid "9lc1oV"
+msgctxt "9lc1oV"
+msgid "Drag items into the correct order"
 msgstr "Arrastra los elementos al orden correcto"
 
 #: src/components/step-action-button.tsx
-msgid "RDZVQL"
+msgctxt "RDZVQL"
+msgid "Check"
 msgstr "Revisar"
 
 #: src/components/step-navigation-button-group.tsx
-msgid "JJNc3c"
+msgctxt "JJNc3c"
+msgid "Previous"
 msgstr "Anterior"
 
 #: src/components/swipe-navigable-step-layout.tsx
-msgid "aNzy1T"
+msgctxt "aNzy1T"
+msgid "Previous step"
 msgstr "Paso anterior"
 
 #: src/components/swipe-navigable-step-layout.tsx
-msgid "d-qgix"
+msgctxt "d-qgix"
+msgid "Next step"
 msgstr "Siguiente paso"
 
 #: src/components/translation-step.tsx
-msgid "MxLxkr"
+msgctxt "MxLxkr"
+msgid "Translate this word:"
 msgstr "Traduce esta palabra:"
 
 #: src/components/unauthenticated-progress-prompt.tsx
-msgid "czygLT"
+msgctxt "czygLT"
+msgid "Log in to save progress"
 msgstr "Inicia sesión para guardar tu progreso"
 
 #: src/components/unauthenticated-progress-prompt.tsx
-msgid "yBJVJw"
+msgctxt "yBJVJw"
+msgid "Continue without saving"
 msgstr "Continuar sin guardar"
 
 #: src/components/unauthenticated-progress-prompt.tsx
-msgid "O781mu"
+msgctxt "O781mu"
+msgid "Progress won't be saved"
 msgstr "No se guardará el progreso"
 
 #: src/components/unauthenticated-progress-prompt.tsx
-msgid "JDumQX"
+msgctxt "JDumQX"
+msgid "You can try this lesson without an account, but your score, course progress, levels, and Energy won't be saved."
 msgstr "Puedes probar esta lección sin una cuenta, pero no se guardarán tu puntuación, el progreso del curso, los niveles ni la Energía."
 
 #: src/components/unauthenticated-progress-prompt.tsx
-msgid "rxdOwg"
+msgctxt "rxdOwg"
+msgid "This lesson wasn't saved"
 msgstr "Esta lección no se guardó"
 
 #: src/components/unauthenticated-progress-prompt.tsx
-msgid "Wamgyz"
+msgctxt "Wamgyz"
+msgid "Log in before your next lesson to keep future progress, scores, levels, and Energy."
 msgstr "Inicia sesión antes de tu próxima lección para conservar tu progreso, puntuaciones, niveles y Energía en el futuro."
 
 #: src/components/verdict-label.tsx
-msgid "xmF49T"
+msgctxt "xmF49T"
+msgid "Correct!"
 msgstr "¡Correcto!"
 
 #: src/components/verdict-label.tsx
-msgid "--l7ni"
+msgctxt "--l7ni"
+msgid "Not quite"
 msgstr "Casi"
 
 #: src/components/vocabulary-step.tsx
-msgid "lqtP-R"
+msgctxt "lqtP-R"
+msgid "Vocabulary"
 msgstr "Vocabulario"
 
 #: src/use-belt-label.ts
-msgid "znY9eW"
+msgctxt "znY9eW"
+msgid "{color, select, white {White Belt} yellow {Yellow Belt} orange {Orange Belt} green {Green Belt} blue {Blue Belt} purple {Purple Belt} brown {Brown Belt} red {Red Belt} gray {Gray Belt} black {Black Belt} other {Belt}}"
 msgstr "{color, select, white {Cinturón blanco} yellow {Cinturón amarillo} orange {Cinturón naranja} green {Cinturón verde} blue {Cinturón azul} purple {Cinturón morado} brown {Cinturón marrón} red {Cinturón rojo} gray {Cinturón gris} black {Cinturón negro} other {Cinturón}}"
