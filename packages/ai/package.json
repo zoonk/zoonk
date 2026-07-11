@@ -5,6 +5,7 @@
   "exports": {
     "./gateway": "./src/gateway.ts",
     "./provider-options": "./src/provider-options.ts",
+    "./speech-models": "./src/tasks/audio/speech-models.ts",
     "./tasks/lessons/core/explanation": "./src/tasks/lessons/core/lesson-explanation.ts",
     "./tasks/lessons/core/practice": "./src/tasks/lessons/core/lesson-practice.ts",
     "./tasks/lessons/core/quiz": "./src/tasks/lessons/core/lesson-quiz.ts",
@@ -46,8 +47,8 @@
   },
   "dependencies": {
     "@ai-sdk/gateway": "4.0.16",
+    "@ai-sdk/google": "4.0.12",
     "@ai-sdk/openai": "4.0.11",
-    "@google/genai": "2.8.0",
     "@zoonk/utils": "workspace:*",
     "ai": "catalog:"
   },
