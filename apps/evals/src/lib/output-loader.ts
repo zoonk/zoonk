@@ -99,7 +99,7 @@ export const loadModelOutputs = cache(
   },
 );
 
-export type OutputStatus = "complete" | "partial" | "missing";
+type OutputStatus = "complete" | "partial" | "missing";
 export type OutputProgress = {
   completedOutputs: number;
   status: OutputStatus;
