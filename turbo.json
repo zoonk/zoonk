@@ -32,11 +32,23 @@
     "//#quality:fix": { "dependsOn": ["//#lint:fix", "//#format:fix"] },
     "build": {
       "dependsOn": ["db:generate", "db:deploy", "^build"],
-      "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**", "messages/**"]
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "!.next/dev/**",
+        "messages/**",
+        "src/app/.well-known/workflow/**"
+      ]
     },
     "build:e2e": {
       "dependsOn": ["db:generate", "^build:e2e"],
-      "outputs": [".next-e2e/**", "!.next-e2e/cache/**", "!.next-e2e/dev/**", "messages/**"]
+      "outputs": [
+        ".next-e2e/**",
+        "!.next-e2e/cache/**",
+        "!.next-e2e/dev/**",
+        "messages/**",
+        "src/app/.well-known/workflow/**"
+      ]
     },
     "db:deploy": { "cache": false },
     "db:generate": {

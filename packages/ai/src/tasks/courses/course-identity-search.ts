@@ -55,11 +55,11 @@ export async function generateCourseIdentitySearchQueries({
   });
 
   const { output, usage } = await generateText({
+    instructions: searchPrompt,
     model,
     output: Output.object({ schema: searchSchema }),
     prompt: userPrompt,
     providerOptions,
-    system: searchPrompt,
   });
 
   return { data: output, systemPrompt: searchPrompt, usage, userPrompt };

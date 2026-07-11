@@ -56,3 +56,4 @@ messages/*.d.json.ts
 
 # workflow
 */.well-known/workflow
+/.swc

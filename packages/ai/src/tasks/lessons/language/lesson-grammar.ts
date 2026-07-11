@@ -79,11 +79,11 @@ export async function generateLessonGrammar({
   });
 
   const { output, usage } = await generateText({
+    instructions: systemPrompt,
     model,
     output: Output.object({ schema }),
     prompt: userPrompt,
     providerOptions,
-    system: systemPrompt,
   });
 
   return { data: output, systemPrompt, usage, userPrompt };

@@ -62,10 +62,10 @@ export async function generateScore(params: {
   `;
 
   const { output: result } = await generateText({
+    instructions: systemPrompt,
     model: "openai/gpt-5.6-sol",
     output: Output.object({ schema: scoreSchema }),
     prompt: evalPrompt,
-    system: systemPrompt,
   });
 
   return { score: calculateScore(result.steps), steps: result.steps };

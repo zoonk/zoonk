@@ -67,10 +67,10 @@ async function generateBattleRankingResult({
 }): Promise<BattleRankingResult> {
   const generationResult = await safeAsync(() =>
     generateText({
+      instructions: battleSystemPrompt,
       model: judgeId,
       output: Output.object({ schema: battleRankingSchema }),
       prompt,
-      system: battleSystemPrompt,
     }),
   );
 
@@ -92,11 +92,11 @@ async function generateBattleRankingResult({
     finishReason,
     judgeModelId: judgeId,
     rawFinishReason,
-    responseId: generation.response.id,
+    responseId: generation.finalStep.response.id,
   });
 
   logError(error.message, {
-    providerMetadata: generation.providerMetadata,
+    providerMetadata: generation.finalStep.providerMetadata,
     textLength: generation.text.length,
     usage: generation.usage,
     warnings: generation.warnings,

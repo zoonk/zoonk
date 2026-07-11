@@ -52,11 +52,11 @@ export async function generateCanonicalCourseTitle({
   });
 
   const { output, usage } = await generateText({
+    instructions: systemPrompt,
     model,
     output: Output.object({ schema }),
     prompt: userPrompt,
     providerOptions,
-    system: systemPrompt,
     temperature: 0,
   });
 

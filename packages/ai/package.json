@@ -45,8 +45,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/gateway": "3.0.129",
-    "@ai-sdk/openai": "3.0.71",
+    "@ai-sdk/gateway": "4.0.16",
+    "@ai-sdk/openai": "4.0.11",
     "@google/genai": "2.8.0",
     "@zoonk/utils": "workspace:*",
     "ai": "catalog:"
