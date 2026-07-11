@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { cache } from "react";
+import { getTestCaseRunProgress } from "./test-case-runs";
 import {
   type ModelOutputs,
   type OutputEntry,
@@ -98,25 +99,44 @@ export const loadModelOutputs = cache(
   },
 );
 
-export type OutputStatus = "complete" | "partial" | "missing";
+type OutputStatus = "complete" | "partial" | "missing";
+export type OutputProgress = {
+  completedOutputs: number;
+  status: OutputStatus;
+  totalOutputs: number;
+};
 
-export async function getOutputStatus(
-  taskId: string,
-  modelId: string,
-  totalTestCases: number,
-): Promise<{ status: OutputStatus; completedTestCases: number; totalTestCases: number }> {
-  const outputs = await loadModelOutputs(taskId, modelId);
-  const completedTestCases = outputs?.outputs.length ?? 0;
+/**
+ * Reports progress against the runs required by the current task registry.
+ * Saved files can contain additional runs or removed test cases, so their raw
+ * array length cannot determine whether generation is complete.
+ */
+export async function getOutputStatus({
+  modelId,
+  runsPerTestCase,
+  task,
+}: {
+  modelId: string;
+  runsPerTestCase: number;
+  task: Pick<RegisteredTask, "id" | "testCases">;
+}): Promise<OutputProgress> {
+  const outputs = await loadModelOutputs(task.id, modelId);
 
-  if (completedTestCases === 0) {
-    return { completedTestCases, status: "missing", totalTestCases };
+  const { completedRuns: completedOutputs, totalRuns: totalOutputs } = getTestCaseRunProgress({
+    completedRunIds: outputs?.outputs.map((output) => output.testCaseId) ?? [],
+    runsPerTestCase,
+    testCases: task.testCases,
+  });
+
+  if (completedOutputs === 0) {
+    return { completedOutputs, status: "missing", totalOutputs };
   }
 
-  if (completedTestCases < totalTestCases) {
-    return { completedTestCases, status: "partial", totalTestCases };
+  if (completedOutputs < totalOutputs) {
+    return { completedOutputs, status: "partial", totalOutputs };
   }
 
-  return { completedTestCases, status: "complete", totalTestCases };
+  return { completedOutputs, status: "complete", totalOutputs };
 }
 
 export async function getAllOutputsForTask(taskId: string): Promise<Map<string, ModelOutputs>> {
@@ -145,20 +165,48 @@ export async function getAllOutputsForTask(taskId: string): Promise<Map<string, 
   return outputsMap;
 }
 
-export async function getModelsWithCompleteOutputs(
-  taskId: string,
-  totalTestCases: number,
-): Promise<string[]> {
-  const allOutputs = await getAllOutputsForTask(taskId);
-  const completeModels: string[] = [];
+/**
+ * Returns one model id only when it has every run required for the current
+ * operation. Callers choose the run count because generation uses the
+ * configured count, while battle mode intentionally compares only run one.
+ */
+function getCompleteModelId({
+  modelId,
+  outputs,
+  runsPerTestCase,
+  testCases,
+}: {
+  modelId: string;
+  outputs: ModelOutputs;
+  runsPerTestCase: number;
+  testCases: Pick<TestCase, "id">[];
+}): string[] {
+  const { completedRuns, totalRuns } = getTestCaseRunProgress({
+    completedRunIds: outputs.outputs.map((output) => output.testCaseId),
+    runsPerTestCase,
+    testCases,
+  });
 
-  for (const [modelId, outputs] of allOutputs) {
-    if (outputs.outputs.length >= totalTestCases) {
-      completeModels.push(modelId);
-    }
-  }
+  return totalRuns > 0 && completedRuns === totalRuns ? [modelId] : [];
+}
 
-  return completeModels;
+/**
+ * Checks exact required run ids for every model before enabling comparisons.
+ * Battle mode currently compares run one, while generation progress can use a
+ * different run count without changing this completeness rule.
+ */
+export async function getModelsWithCompleteOutputs({
+  runsPerTestCase,
+  task,
+}: {
+  runsPerTestCase: number;
+  task: Pick<RegisteredTask, "id" | "testCases">;
+}): Promise<string[]> {
+  const allOutputs = await getAllOutputsForTask(task.id);
+
+  return [...allOutputs.entries()].flatMap(([modelId, outputs]) =>
+    getCompleteModelId({ modelId, outputs, runsPerTestCase, testCases: task.testCases }),
+  );
 }
 
 export function getOutputForTestCase(

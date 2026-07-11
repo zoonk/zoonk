@@ -1,7 +1,7 @@
 import { AppBreadcrumb, HomeLinkBreadcrumb, TaskPageBreadcrumb } from "@/components/breadcrumb";
 import { getBattleLeaderboard } from "@/lib/battle-loader";
 import { getModelsWithCompleteOutputs } from "@/lib/output-loader";
-import { hasJudgeExpectations } from "@/lib/types";
+import { supportsJudgeMode } from "@/lib/types";
 import { getModelsWithResults, getSortedModels } from "@/lib/utils";
 import { RUNS_PER_TEST_CASE, getTaskById } from "@/tasks";
 import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
@@ -29,14 +29,14 @@ export default async function TaskPage({ params }: { params: Promise<{ taskId: s
     notFound();
   }
 
-  const supportsJudgeMode = hasJudgeExpectations(task);
+  const judgeModeSupported = supportsJudgeMode(task);
 
-  const battleEntriesPromise = supportsJudgeMode
+  const battleEntriesPromise = judgeModeSupported
     ? getBattleLeaderboard(taskId)
     : Promise.resolve([]);
 
-  const modelsReadyForBattlePromise = supportsJudgeMode
-    ? getModelsWithCompleteOutputs(taskId, task.testCases.length)
+  const modelsReadyForBattlePromise = judgeModeSupported
+    ? getModelsWithCompleteOutputs({ runsPerTestCase: 1, task })
     : Promise.resolve([]);
 
   const [sortedModels, modelsWithResults, battleEntries, modelsReadyForBattle] = await Promise.all([
@@ -65,7 +65,7 @@ export default async function TaskPage({ params }: { params: Promise<{ taskId: s
           </ContainerDescription>
         </ContainerHeaderGroup>
 
-        {supportsJudgeMode && (
+        {judgeModeSupported && (
           <div className="flex items-center gap-2">
             <Link
               className={buttonVariants({ variant: "outline" })}
@@ -89,7 +89,7 @@ export default async function TaskPage({ params }: { params: Promise<{ taskId: s
         <LeaderboardTabs
           battleEntries={battleEntries}
           results={modelsWithResults}
-          supportsJudgeMode={supportsJudgeMode}
+          supportsJudgeMode={judgeModeSupported}
           taskId={taskId}
         />
 

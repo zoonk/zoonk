@@ -1,28 +1,41 @@
-import { getTotalTestCases } from "@/tasks";
+import { RUNS_PER_TEST_CASE, getTaskById } from "@/tasks";
 import { getTaskResults } from "./eval-runner";
 import { EVAL_MODELS } from "./models";
 import { getOutputStatus } from "./output-loader";
+import { getTestCaseRunProgress } from "./test-case-runs";
 import { type TaskEvalResults } from "./types";
 
 export type ModelStatus = "completed" | "outputsReady" | "incomplete" | "notStarted";
 
+/**
+ * Classifies a model against the task's currently required run ids so saved
+ * results from old runs or removed cases cannot hide newly added test cases.
+ */
 export async function getModelStatus(taskId: string, modelId: string): Promise<ModelStatus> {
-  const totalTestCases = getTotalTestCases(taskId);
+  const task = getTaskById(taskId);
+
+  if (!task) {
+    return "notStarted";
+  }
 
   const [results, outputStatus] = await Promise.all([
     getTaskResults(taskId, modelId),
-    getOutputStatus(taskId, modelId, totalTestCases),
+    getOutputStatus({ modelId, runsPerTestCase: RUNS_PER_TEST_CASE, task }),
   ]);
 
-  const resultsCount = results?.results.length ?? 0;
+  const { completedRuns, totalRuns } = getTestCaseRunProgress({
+    completedRunIds: results?.results.map((result) => result.testCase.id) ?? [],
+    runsPerTestCase: RUNS_PER_TEST_CASE,
+    testCases: task.testCases,
+  });
 
   // Has eval results
-  if (resultsCount >= totalTestCases && totalTestCases > 0) {
+  if (completedRuns === totalRuns && totalRuns > 0) {
     return "completed";
   }
 
   // Has partial eval results
-  if (resultsCount > 0 && resultsCount < totalTestCases) {
+  if (completedRuns > 0) {
     return "incomplete";
   }
 

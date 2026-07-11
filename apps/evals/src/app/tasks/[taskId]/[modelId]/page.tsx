@@ -11,7 +11,7 @@ import {
   getOutputStatus,
   loadModelOutputs,
 } from "@/lib/output-loader";
-import { TASKS } from "@/tasks";
+import { RUNS_PER_TEST_CASE, TASKS } from "@/tasks";
 import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
 import {
   ContainerBody,
@@ -43,7 +43,7 @@ export default async function TaskModelPage({ params }: PageProps<"/tasks/[taskI
   const [results, modelOutputs, outputStatus] = await Promise.all([
     getTaskResults(taskId, modelId),
     loadModelOutputs(taskId, modelId),
-    getOutputStatus(taskId, modelId, task.testCases.length),
+    getOutputStatus({ modelId, runsPerTestCase: RUNS_PER_TEST_CASE, task }),
   ]);
 
   const generatedOutputs = modelOutputs

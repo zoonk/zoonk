@@ -1,6 +1,6 @@
 import { ModelStatusBadge } from "@/components/model-status-badge";
 import { type ModelConfig } from "@/lib/models";
-import { type OutputStatus } from "@/lib/output-loader";
+import { type OutputProgress } from "@/lib/output-loader";
 import { Button } from "@zoonk/ui/components/button";
 import {
   Card,
@@ -22,7 +22,7 @@ export function TaskModelActionsCard({
 }: {
   model: ModelConfig;
   modelId: string;
-  outputStatus: { status: OutputStatus; completedTestCases: number; totalTestCases: number };
+  outputStatus: OutputProgress;
   taskId: string;
 }) {
   const hasOutputs = outputStatus.status !== "missing";
@@ -50,7 +50,7 @@ export function TaskModelActionsCard({
 
           {hasOutputs && (
             <span className="text-muted-foreground text-sm">
-              {outputStatus.completedTestCases}/{outputStatus.totalTestCases} outputs generated
+              {outputStatus.completedOutputs}/{outputStatus.totalOutputs} outputs generated
             </span>
           )}
         </div>

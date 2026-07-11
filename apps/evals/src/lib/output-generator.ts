@@ -2,6 +2,7 @@ import { RUNS_PER_TEST_CASE } from "@/tasks";
 import { logError, logInfo } from "@zoonk/utils/logger";
 import { getGatewayModelId, getModelById } from "./models";
 import { loadModelOutputs, saveModelOutputs } from "./output-loader";
+import { getTestCaseRunId } from "./test-case-runs";
 import { type ModelOutputs, type OutputEntry, type RegisteredTask, type TestCase } from "./types";
 
 /**
@@ -40,7 +41,7 @@ async function generateOutputForTestCase(
 
   const duration = performance.now() - startTime;
 
-  const testCaseId = `${testCase.id}-${runNumber}`;
+  const testCaseId = getTestCaseRunId({ runNumber, testCaseId: testCase.id });
 
   return {
     duration,
@@ -58,7 +59,7 @@ function shouldSkipTestCase(
   baseTestCaseId: string,
   runNumber: number,
 ): boolean {
-  const runId = `${baseTestCaseId}-${runNumber}`;
+  const runId = getTestCaseRunId({ runNumber, testCaseId: baseTestCaseId });
   return existingOutputs.some((output) => output.testCaseId === runId);
 }
 

@@ -65,9 +65,3 @@ export const RUNS_PER_TEST_CASE = 1;
 export function getTaskById(taskId: string): RegisteredTask | null {
   return TASKS.find((t) => t.id === taskId) ?? null;
 }
-
-export function getTotalTestCases(taskId: string): number {
-  const task = getTaskById(taskId);
-  const totalTestCases = task?.testCases.length ?? 0;
-  return totalTestCases * RUNS_PER_TEST_CASE;
-}

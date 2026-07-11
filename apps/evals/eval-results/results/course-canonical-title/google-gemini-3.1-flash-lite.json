@@ -8,55 +8,10 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The title should be `The Observer Method` or `Observer Method` or `Observer Method for Disconnecting from Thoughts` or `Observer Method for Thought Disconnection`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
-        "expected": {
-          "acceptedTitles": [
-            "The Observer Method",
-            "Observer Method",
-            "Observer Method for Disconnecting from Thoughts",
-            "Observer Method for Thought Disconnection"
-          ]
-        },
-        "id": "observer-method-disconnect-thoughts-1",
-        "userInput": {
-          "language": "en",
-          "prompt": "the observer method to disconnect from thoughts"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Expected one of: `The Observer Method`, `Observer Method`, `Observer Method for Disconnecting from Thoughts`, `Observer Method for Thought Disconnection`. Generated title `Observer Method for Thought Detachment`.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected one of: `The Observer Method`, `Observer Method`, `Observer Method for Disconnecting from Thoughts`, `Observer Method for Thought Disconnection`. Generated title `Observer Method for Thought Detachment`.",
-          "kind": "minorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected one of: `The Observer Method`, `Observer Method`, `Observer Method for Disconnecting from Thoughts`, `Observer Method for Thought Disconnection`. Generated title `Observer Method for Thought Detachment`.",
-          "kind": "potentialImprovements",
-          "score": 6
-        }
-      ],
-      "testCase": {
-        "expectations": "\n    - The title should be `The Observer Method` or `Observer Method` or `Observer Method for Disconnecting from Thoughts` or `Observer Method for Thought Disconnection`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
-        "expected": {
-          "acceptedTitles": [
-            "The Observer Method",
-            "Observer Method",
-            "Observer Method for Disconnecting from Thoughts",
-            "Observer Method for Thought Disconnection"
-          ]
-        },
-        "id": "observer-method-disconnect-thoughts-2",
-        "userInput": {
-          "language": "en",
-          "prompt": "the observer method to disconnect from thoughts"
-        }
+        "expectations": "\n    - The title should be `Artificial Intelligence`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Artificial Intelligence"] },
+        "id": "ai-artificial-intelligence-1",
+        "userInput": { "language": "en", "prompt": "AI" }
       }
     },
     {
@@ -66,20 +21,377 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The title should be `The Observer Method` or `Observer Method` or `Observer Method for Disconnecting from Thoughts` or `Observer Method for Thought Disconnection`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
-        "expected": {
-          "acceptedTitles": [
-            "The Observer Method",
-            "Observer Method",
-            "Observer Method for Disconnecting from Thoughts",
-            "Observer Method for Thought Disconnection"
-          ]
+        "expectations": "\n    - The title should be `Artificial Intelligence`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Artificial Intelligence"] },
+        "id": "ai-artificial-intelligence-2",
+        "userInput": { "language": "en", "prompt": "AI" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `Artificial Intelligence`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Artificial Intelligence"] },
+        "id": "ai-artificial-intelligence-3",
+        "userInput": { "language": "en", "prompt": "AI" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `Machine Learning`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Machine Learning"] },
+        "id": "ml-machine-learning-1",
+        "userInput": { "language": "en", "prompt": "ml" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `Machine Learning`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Machine Learning"] },
+        "id": "ml-machine-learning-2",
+        "userInput": { "language": "en", "prompt": "ml" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `Machine Learning`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Machine Learning"] },
+        "id": "ml-machine-learning-3",
+        "userInput": { "language": "en", "prompt": "ml" }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Expected one of: `Machine Learning`. Generated title `Artificial Intelligence and Machine Learning`.",
+          "kind": "majorErrors",
+          "score": 6
         },
-        "id": "observer-method-disconnect-thoughts-3",
-        "userInput": {
-          "language": "en",
-          "prompt": "the observer method to disconnect from thoughts"
+        {
+          "conclusion": "Expected one of: `Machine Learning`. Generated title `Artificial Intelligence and Machine Learning`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Machine Learning`. Generated title `Artificial Intelligence and Machine Learning`.",
+          "kind": "potentialImprovements",
+          "score": 6
         }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `Machine Learning`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Machine Learning"] },
+        "id": "ai-ml-machine-learning-1",
+        "userInput": { "language": "en", "prompt": "ai ml" }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Expected one of: `Machine Learning`. Generated title `Artificial Intelligence and Machine Learning`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Machine Learning`. Generated title `Artificial Intelligence and Machine Learning`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Machine Learning`. Generated title `Artificial Intelligence and Machine Learning`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `Machine Learning`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Machine Learning"] },
+        "id": "ai-ml-machine-learning-2",
+        "userInput": { "language": "en", "prompt": "ai ml" }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Expected one of: `Machine Learning`. Generated title `Artificial Intelligence and Machine Learning`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Machine Learning`. Generated title `Artificial Intelligence and Machine Learning`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected one of: `Machine Learning`. Generated title `Artificial Intelligence and Machine Learning`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `Machine Learning`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Machine Learning"] },
+        "id": "ai-ml-machine-learning-3",
+        "userInput": { "language": "en", "prompt": "ai ml" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `Artificial Intelligence`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Artificial Intelligence"] },
+        "id": "ai-for-beginners-1",
+        "userInput": { "language": "en", "prompt": "ai for beginners" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `Artificial Intelligence`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Artificial Intelligence"] },
+        "id": "ai-for-beginners-2",
+        "userInput": { "language": "en", "prompt": "ai for beginners" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `Artificial Intelligence`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Artificial Intelligence"] },
+        "id": "ai-for-beginners-3",
+        "userInput": { "language": "en", "prompt": "ai for beginners" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `Large Language Models`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Large Language Models"] },
+        "id": "ai-llms-1",
+        "userInput": { "language": "en", "prompt": "ai llms" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `Large Language Models`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Large Language Models"] },
+        "id": "ai-llms-2",
+        "userInput": { "language": "en", "prompt": "ai llms" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `Large Language Models`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Large Language Models"] },
+        "id": "ai-llms-3",
+        "userInput": { "language": "en", "prompt": "ai llms" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `IA para Professores` or `Inteligência Artificial para Professores`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": {
+          "acceptedTitles": ["IA para Professores", "Inteligência Artificial para Professores"]
+        },
+        "id": "ia-para-professores-1",
+        "userInput": { "language": "pt", "prompt": "ia para professores" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `IA para Professores` or `Inteligência Artificial para Professores`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": {
+          "acceptedTitles": ["IA para Professores", "Inteligência Artificial para Professores"]
+        },
+        "id": "ia-para-professores-2",
+        "userInput": { "language": "pt", "prompt": "ia para professores" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `IA para Professores` or `Inteligência Artificial para Professores`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": {
+          "acceptedTitles": ["IA para Professores", "Inteligência Artificial para Professores"]
+        },
+        "id": "ia-para-professores-3",
+        "userInput": { "language": "pt", "prompt": "ia para professores" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `Inteligência Artificial`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Inteligência Artificial"] },
+        "id": "ia-inteligencia-artificial-1",
+        "userInput": { "language": "pt", "prompt": "ia" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `Inteligência Artificial`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Inteligência Artificial"] },
+        "id": "ia-inteligencia-artificial-2",
+        "userInput": { "language": "pt", "prompt": "ia" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `Inteligência Artificial`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Inteligência Artificial"] },
+        "id": "ia-inteligencia-artificial-3",
+        "userInput": { "language": "pt", "prompt": "ia" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `Python`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Python"] },
+        "id": "python-programming-1",
+        "userInput": { "language": "en", "prompt": "python programming" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `Python`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Python"] },
+        "id": "python-programming-2",
+        "userInput": { "language": "en", "prompt": "python programming" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `Python`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Python"] },
+        "id": "python-programming-3",
+        "userInput": { "language": "en", "prompt": "python programming" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `Inteligência Artificial`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Inteligência Artificial"] },
+        "id": "carreira-em-ia-1",
+        "userInput": { "language": "pt", "prompt": "carreira em ia" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `Inteligência Artificial`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Inteligência Artificial"] },
+        "id": "carreira-em-ia-2",
+        "userInput": { "language": "pt", "prompt": "carreira em ia" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The title should be `Inteligência Artificial`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Inteligência Artificial"] },
+        "id": "carreira-em-ia-3",
+        "userInput": { "language": "pt", "prompt": "carreira em ia" }
       }
     },
     {
@@ -584,8 +896,8 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The title should be `Java Loops`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
-        "expected": { "acceptedTitles": ["Java Loops"] },
+        "expectations": "\n    - The title should be `Java Loops` or `Java: Loops`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Java Loops", "Java: Loops"] },
         "id": "java-loops-1",
         "userInput": { "language": "en", "prompt": "java loops" }
       }
@@ -597,8 +909,8 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The title should be `Java Loops`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
-        "expected": { "acceptedTitles": ["Java Loops"] },
+        "expectations": "\n    - The title should be `Java Loops` or `Java: Loops`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Java Loops", "Java: Loops"] },
         "id": "java-loops-2",
         "userInput": { "language": "en", "prompt": "java loops" }
       }
@@ -610,8 +922,8 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The title should be `Java Loops`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
-        "expected": { "acceptedTitles": ["Java Loops"] },
+        "expectations": "\n    - The title should be `Java Loops` or `Java: Loops`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Java Loops", "Java: Loops"] },
         "id": "java-loops-3",
         "userInput": { "language": "en", "prompt": "java loops" }
       }
@@ -809,8 +1121,8 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The title should be `Go Concurrency`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
-        "expected": { "acceptedTitles": ["Go Concurrency"] },
+        "expectations": "\n    - The title should be `Go Concurrency` or `Concurrency in Go`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Go Concurrency", "Concurrency in Go"] },
         "id": "go-concurrent-1",
         "userInput": { "language": "en", "prompt": "go concurrent" }
       }
@@ -822,8 +1134,8 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The title should be `Go Concurrency`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
-        "expected": { "acceptedTitles": ["Go Concurrency"] },
+        "expectations": "\n    - The title should be `Go Concurrency` or `Concurrency in Go`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Go Concurrency", "Concurrency in Go"] },
         "id": "go-concurrent-2",
         "userInput": { "language": "en", "prompt": "go concurrent" }
       }
@@ -835,8 +1147,8 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The title should be `Go Concurrency`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
-        "expected": { "acceptedTitles": ["Go Concurrency"] },
+        "expectations": "\n    - The title should be `Go Concurrency` or `Concurrency in Go`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["Go Concurrency", "Concurrency in Go"] },
         "id": "go-concurrent-3",
         "userInput": { "language": "en", "prompt": "go concurrent" }
       }
@@ -848,8 +1160,15 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The title should be `AI for Kitchen Chefs` or `AI for Chefs`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
-        "expected": { "acceptedTitles": ["AI for Kitchen Chefs", "AI for Chefs"] },
+        "expectations": "\n    - The title should be `AI for Kitchen Chefs` or `AI for Chefs` or `Artificial Intelligence for Kitchen Chefs` or `Artificial Intelligence for Chefs`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": {
+          "acceptedTitles": [
+            "AI for Kitchen Chefs",
+            "AI for Chefs",
+            "Artificial Intelligence for Kitchen Chefs",
+            "Artificial Intelligence for Chefs"
+          ]
+        },
         "id": "ai-for-kitchen-chefs-1",
         "userInput": { "language": "en", "prompt": "ai for kitchen chefs" }
       }
@@ -861,8 +1180,15 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The title should be `AI for Kitchen Chefs` or `AI for Chefs`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
-        "expected": { "acceptedTitles": ["AI for Kitchen Chefs", "AI for Chefs"] },
+        "expectations": "\n    - The title should be `AI for Kitchen Chefs` or `AI for Chefs` or `Artificial Intelligence for Kitchen Chefs` or `Artificial Intelligence for Chefs`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": {
+          "acceptedTitles": [
+            "AI for Kitchen Chefs",
+            "AI for Chefs",
+            "Artificial Intelligence for Kitchen Chefs",
+            "Artificial Intelligence for Chefs"
+          ]
+        },
         "id": "ai-for-kitchen-chefs-2",
         "userInput": { "language": "en", "prompt": "ai for kitchen chefs" }
       }
@@ -874,8 +1200,15 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The title should be `AI for Kitchen Chefs` or `AI for Chefs`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
-        "expected": { "acceptedTitles": ["AI for Kitchen Chefs", "AI for Chefs"] },
+        "expectations": "\n    - The title should be `AI for Kitchen Chefs` or `AI for Chefs` or `Artificial Intelligence for Kitchen Chefs` or `Artificial Intelligence for Chefs`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": {
+          "acceptedTitles": [
+            "AI for Kitchen Chefs",
+            "AI for Chefs",
+            "Artificial Intelligence for Kitchen Chefs",
+            "Artificial Intelligence for Chefs"
+          ]
+        },
         "id": "ai-for-kitchen-chefs-3",
         "userInput": { "language": "en", "prompt": "ai for kitchen chefs" }
       }
@@ -1394,45 +1727,6 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The title should be `Artificial Intelligence` or `AI`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
-        "expected": { "acceptedTitles": ["Artificial Intelligence", "AI"] },
-        "id": "ai-1",
-        "userInput": { "language": "en", "prompt": "ai" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "\n    - The title should be `Artificial Intelligence` or `AI`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
-        "expected": { "acceptedTitles": ["Artificial Intelligence", "AI"] },
-        "id": "ai-2",
-        "userInput": { "language": "en", "prompt": "ai" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "\n    - The title should be `Artificial Intelligence` or `AI`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
-        "expected": { "acceptedTitles": ["Artificial Intelligence", "AI"] },
-        "id": "ai-3",
-        "userInput": { "language": "en", "prompt": "ai" }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
         "expectations": "\n    - The title should be `Engenharia de Fórmula 1` or `Engenharia de F1`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
         "expected": { "acceptedTitles": ["Engenharia de Fórmula 1", "Engenharia de F1"] },
         "id": "engenharia-f1-1",
@@ -1928,8 +2222,8 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The title should be `The Science of Happiness`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
-        "expected": { "acceptedTitles": ["The Science of Happiness"] },
+        "expectations": "\n    - The title should be `The Science of Happiness` or `Science of Happiness`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["The Science of Happiness", "Science of Happiness"] },
         "id": "science-of-happiness-1",
         "userInput": { "language": "en", "prompt": "the science of happiness" }
       }
@@ -1941,8 +2235,8 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The title should be `The Science of Happiness`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
-        "expected": { "acceptedTitles": ["The Science of Happiness"] },
+        "expectations": "\n    - The title should be `The Science of Happiness` or `Science of Happiness`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["The Science of Happiness", "Science of Happiness"] },
         "id": "science-of-happiness-2",
         "userInput": { "language": "en", "prompt": "the science of happiness" }
       }
@@ -1954,8 +2248,8 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The title should be `The Science of Happiness`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
-        "expected": { "acceptedTitles": ["The Science of Happiness"] },
+        "expectations": "\n    - The title should be `The Science of Happiness` or `Science of Happiness`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expected": { "acceptedTitles": ["The Science of Happiness", "Science of Happiness"] },
         "id": "science-of-happiness-3",
         "userInput": { "language": "en", "prompt": "the science of happiness" }
       }
@@ -2588,9 +2882,13 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The title should be `Rust Ownership` or `Rust Ownership, Borrowing, and Lifetimes`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    - It may include borrowing if phrased concisely, but should not become a broad Rust course.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expectations": "\n    - The title should be `Rust Ownership` or `Rust Ownership, Borrowing, and Lifetimes` or `Rust: Ownership, Borrowing, and Lifetimes`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    - It may include borrowing if phrased concisely, but should not become a broad Rust course.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
         "expected": {
-          "acceptedTitles": ["Rust Ownership", "Rust Ownership, Borrowing, and Lifetimes"]
+          "acceptedTitles": [
+            "Rust Ownership",
+            "Rust Ownership, Borrowing, and Lifetimes",
+            "Rust: Ownership, Borrowing, and Lifetimes"
+          ]
         },
         "id": "en-rust-ownership-borrowing-1",
         "userInput": { "language": "en", "prompt": "rust ownership borrowing lifetimes" }
@@ -2603,9 +2901,13 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The title should be `Rust Ownership` or `Rust Ownership, Borrowing, and Lifetimes`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    - It may include borrowing if phrased concisely, but should not become a broad Rust course.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expectations": "\n    - The title should be `Rust Ownership` or `Rust Ownership, Borrowing, and Lifetimes` or `Rust: Ownership, Borrowing, and Lifetimes`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    - It may include borrowing if phrased concisely, but should not become a broad Rust course.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
         "expected": {
-          "acceptedTitles": ["Rust Ownership", "Rust Ownership, Borrowing, and Lifetimes"]
+          "acceptedTitles": [
+            "Rust Ownership",
+            "Rust Ownership, Borrowing, and Lifetimes",
+            "Rust: Ownership, Borrowing, and Lifetimes"
+          ]
         },
         "id": "en-rust-ownership-borrowing-2",
         "userInput": { "language": "en", "prompt": "rust ownership borrowing lifetimes" }
@@ -2618,9 +2920,13 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The title should be `Rust Ownership` or `Rust Ownership, Borrowing, and Lifetimes`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    - It may include borrowing if phrased concisely, but should not become a broad Rust course.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expectations": "\n    - The title should be `Rust Ownership` or `Rust Ownership, Borrowing, and Lifetimes` or `Rust: Ownership, Borrowing, and Lifetimes`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    - It may include borrowing if phrased concisely, but should not become a broad Rust course.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
         "expected": {
-          "acceptedTitles": ["Rust Ownership", "Rust Ownership, Borrowing, and Lifetimes"]
+          "acceptedTitles": [
+            "Rust Ownership",
+            "Rust Ownership, Borrowing, and Lifetimes",
+            "Rust: Ownership, Borrowing, and Lifetimes"
+          ]
         },
         "id": "en-rust-ownership-borrowing-3",
         "userInput": { "language": "en", "prompt": "rust ownership borrowing lifetimes" }
@@ -2828,9 +3134,13 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The title should be `Matemáticas: Fracciones a Álgebra` or `Fracciones a Álgebra`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expectations": "\n    - The title should be `Matemáticas: Fracciones a Álgebra` or `Fracciones a Álgebra` or `Operaciones de Fracciones a Álgebra`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
         "expected": {
-          "acceptedTitles": ["Matemáticas: Fracciones a Álgebra", "Fracciones a Álgebra"]
+          "acceptedTitles": [
+            "Matemáticas: Fracciones a Álgebra",
+            "Fracciones a Álgebra",
+            "Operaciones de Fracciones a Álgebra"
+          ]
         },
         "id": "en-fracciones-a-algebra-1",
         "userInput": {
@@ -2846,9 +3156,13 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The title should be `Matemáticas: Fracciones a Álgebra` or `Fracciones a Álgebra`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expectations": "\n    - The title should be `Matemáticas: Fracciones a Álgebra` or `Fracciones a Álgebra` or `Operaciones de Fracciones a Álgebra`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
         "expected": {
-          "acceptedTitles": ["Matemáticas: Fracciones a Álgebra", "Fracciones a Álgebra"]
+          "acceptedTitles": [
+            "Matemáticas: Fracciones a Álgebra",
+            "Fracciones a Álgebra",
+            "Operaciones de Fracciones a Álgebra"
+          ]
         },
         "id": "en-fracciones-a-algebra-2",
         "userInput": {
@@ -2864,9 +3178,13 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The title should be `Matemáticas: Fracciones a Álgebra` or `Fracciones a Álgebra`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
+        "expectations": "\n    - The title should be `Matemáticas: Fracciones a Álgebra` or `Fracciones a Álgebra` or `Operaciones de Fracciones a Álgebra`.\n    - The output must contain only the title field.\n    - The title should not include level words such as intro, beginner, advanced, 101, basics, essentials, or fundamentals unless they are part of an official name.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated title exactly matches one accepted title after case, whitespace, and trailing-punctuation normalization.\n  - Score 6 for any other output, including forbidden unsafe titles, level-marker variants, missing title fields, extra fields, or titles that only seem semantically close.\n\n  ",
         "expected": {
-          "acceptedTitles": ["Matemáticas: Fracciones a Álgebra", "Fracciones a Álgebra"]
+          "acceptedTitles": [
+            "Matemáticas: Fracciones a Álgebra",
+            "Fracciones a Álgebra",
+            "Operaciones de Fracciones a Álgebra"
+          ]
         },
         "id": "en-fracciones-a-algebra-3",
         "userInput": {

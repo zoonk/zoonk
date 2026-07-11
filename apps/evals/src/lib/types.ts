@@ -36,12 +36,15 @@ export function getJudgeExpectations(testCase: TestCase): string {
 }
 
 /**
- * Judge mode is available only when every test case supplies the prose rubric
- * a judge needs. Deterministic tasks intentionally omit that duplicate data.
+ * Keeps judge mode exclusive to tasks that rely on model-based scoring. A custom
+ * scorer is the source of truth for deterministic scoring, even when older test
+ * cases still contain prose expectations that were originally written for a judge.
  */
-export function hasJudgeExpectations(task: Pick<RegisteredTask, "testCases">): boolean {
+export function supportsJudgeMode(task: Pick<RegisteredTask, "score" | "testCases">): boolean {
   return (
-    task.testCases.length > 0 && task.testCases.every((testCase) => Boolean(testCase.expectations))
+    !task.score &&
+    task.testCases.length > 0 &&
+    task.testCases.every((testCase) => Boolean(testCase.expectations))
   );
 }
 

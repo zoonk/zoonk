@@ -6,7 +6,12 @@ import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./course-canonical-title.prompt.md";
 
 const defaultModel = "google/gemini-3.1-flash-lite";
-const fallbackModels = ["openai/gpt-5.6-luna", "deepseek/deepseek-v4-flash"] as const;
+
+const fallbackModels = [
+  "openai/gpt-5.6-luna",
+  "openai/gpt-5.6-terra",
+  "openai/gpt-5.6-sol",
+] as const;
 
 const schema = z.object({ title: z.string() });
 
@@ -52,6 +57,7 @@ export async function generateCanonicalCourseTitle({
     prompt: userPrompt,
     providerOptions,
     system: systemPrompt,
+    temperature: 0,
   });
 
   return { data: output, systemPrompt, usage, userPrompt };

@@ -109,7 +109,7 @@ When writing React components, use compound components. Always read this before 
 
 ## Testing
 
-- Default to TDD: write a failing test first, run it to confirm it fails for the right reason, then write the code to make it pass
+- Default to TDD: write a failing test first, run it to confirm it fails for the right reason, then write the code to make it pass. Exception is for internal apps like `admin`, `evals`, and `blog`. Don't write tests for those
 - Don't write unit tests for React components, prefer E2E tests. React unit tests require mocking and test implementation details, making tests fail if we change implementation
 - Add unit tests for pure functions, helpers, and utils
 - Extract pure functions with non-trivial logic (validation, transformation, regex) from component files into their own file (e.g., `_utils/`). This follows the single-concern principle and enables direct unit testing without exporting internals from component files
