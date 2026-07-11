@@ -17,7 +17,7 @@ function getTaskGenerateInput({ modelId, testCase }: { modelId: string; testCase
   return {
     ...testCase.userInput,
     model: gatewayModelId,
-    reasoningEffort: model?.reasoningEffort,
+    reasoning: model?.reasoning,
     useFallback: false,
   };
 }

@@ -1,7 +1,7 @@
 import "server-only";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
+import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { type CourseChapter } from "./course-chapters";
 import systemPrompt from "./course-landing-page.prompt.md";
@@ -25,7 +25,7 @@ export type CourseLandingPageParams = {
   description?: string | null;
   language: string;
   model?: string;
-  reasoningEffort?: ReasoningEffort;
+  reasoning?: Reasoning;
   targetLanguage?: string | null;
   title: string;
   useFallback?: boolean;
@@ -57,7 +57,7 @@ export async function generateCourseLandingPage({
   description,
   language,
   model = defaultModel,
-  reasoningEffort,
+  reasoning,
   targetLanguage,
   title,
   useFallback = true,
@@ -76,12 +76,7 @@ export async function generateCourseLandingPage({
     TARGET_LANGUAGE: ${targetLanguageName}
   `;
 
-  const providerOptions = buildProviderOptions({
-    fallbackModels,
-    model,
-    reasoningEffort,
-    useFallback,
-  });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
   const { output, usage } = await generateText({
     instructions: systemPrompt,
@@ -89,6 +84,7 @@ export async function generateCourseLandingPage({
     output: Output.object({ schema }),
     prompt: userPrompt,
     providerOptions,
+    reasoning,
   });
 
   return { data: output, systemPrompt, usage, userPrompt };

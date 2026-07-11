@@ -1,7 +1,7 @@
 import "server-only";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
+import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./step-image-prompts.prompt.md";
 
@@ -28,7 +28,7 @@ type StepImagePromptsParams = {
   steps: { title: string; text: string }[];
   model?: string;
   useFallback?: boolean;
-  reasoningEffort?: ReasoningEffort;
+  reasoning?: Reasoning;
 };
 
 /**
@@ -45,7 +45,7 @@ export async function generateStepImagePrompts({
   steps,
   model = defaultModel,
   useFallback = true,
-  reasoningEffort,
+  reasoning,
 }: StepImagePromptsParams) {
   const formattedSteps = steps
     .map((step, index) => `${index}. ${step.title}: ${step.text}`)
@@ -62,12 +62,7 @@ export async function generateStepImagePrompts({
     STEPS: ${formattedSteps}
   `;
 
-  const providerOptions = buildProviderOptions({
-    fallbackModels,
-    model,
-    reasoningEffort,
-    useFallback,
-  });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
   const { output, usage } = await generateText({
     instructions: systemPrompt,
@@ -75,6 +70,7 @@ export async function generateStepImagePrompts({
     output: Output.object({ schema: buildSchema(steps.length) }),
     prompt: userPrompt,
     providerOptions,
+    reasoning,
   });
 
   return { data: output, systemPrompt, usage, userPrompt };

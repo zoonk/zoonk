@@ -1,5 +1,5 @@
 import "server-only";
-import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
+import { type Reasoning, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { type DistractorShape } from "@zoonk/utils/distractors";
 import { Output, generateText } from "ai";
 import { z } from "zod";
@@ -21,7 +21,7 @@ export type LessonDistractorsParams = {
   shape: DistractorShape;
   translation?: LessonDistractorTranslation;
   model?: string;
-  reasoningEffort?: ReasoningEffort;
+  reasoning?: Reasoning;
   useFallback?: boolean;
 };
 
@@ -62,17 +62,12 @@ export async function generateLessonDistractors({
   shape,
   translation,
   model = defaultModel,
-  reasoningEffort,
+  reasoning,
   useFallback = true,
 }: LessonDistractorsParams) {
   const languageName = getPromptLanguageName({ language });
 
-  const providerOptions = buildProviderOptions({
-    fallbackModels,
-    model,
-    reasoningEffort,
-    useFallback,
-  });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
   const userPrompt = [
     `INPUT: ${input}`,
@@ -87,6 +82,7 @@ export async function generateLessonDistractors({
     output: Output.object({ schema }),
     prompt: userPrompt,
     providerOptions,
+    reasoning,
   });
 
   return { data: output, systemPrompt, usage, userPrompt };

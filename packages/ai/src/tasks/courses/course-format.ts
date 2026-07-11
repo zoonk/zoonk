@@ -1,7 +1,7 @@
 import "server-only";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
+import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./course-format.prompt.md";
 
@@ -33,7 +33,7 @@ export type CourseFormatParams = {
   prompt: string;
   model?: string;
   useFallback?: boolean;
-  reasoningEffort?: ReasoningEffort;
+  reasoning?: Reasoning;
 };
 
 /**
@@ -45,7 +45,7 @@ export async function classifyCourseFormat({
   language,
   model = defaultModel,
   prompt,
-  reasoningEffort,
+  reasoning,
   useFallback = true,
 }: CourseFormatParams) {
   const promptLanguage = getPromptLanguageName({ language });
@@ -55,12 +55,7 @@ export async function classifyCourseFormat({
     USER_INPUT: ${prompt}
   `;
 
-  const providerOptions = buildProviderOptions({
-    fallbackModels,
-    model,
-    reasoningEffort,
-    useFallback,
-  });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
   const { output, usage } = await generateText({
     instructions: systemPrompt,
@@ -68,6 +63,7 @@ export async function classifyCourseFormat({
     output: Output.object({ schema }),
     prompt: userPrompt,
     providerOptions,
+    reasoning,
   });
 
   return { data: output, systemPrompt, usage, userPrompt };

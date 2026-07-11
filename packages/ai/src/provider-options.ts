@@ -1,7 +1,7 @@
 import { type GatewayProviderOptions } from "@ai-sdk/gateway";
-import { type OpenAILanguageModelResponsesOptions } from "@ai-sdk/openai";
+import { type LanguageModelCallOptions } from "ai";
 
-export type ReasoningEffort = "auto" | "low" | "medium" | "high";
+export type Reasoning = NonNullable<LanguageModelCallOptions["reasoning"]>;
 export type ImageGenerationQuality = "auto" | "low" | "medium" | "high";
 
 const providerOrderByModelPrefix = {
@@ -12,10 +12,7 @@ const providerOrderByModelPrefix = {
 
 type SupportedModelPrefix = keyof typeof providerOrderByModelPrefix;
 
-type ProviderOptionsResult = {
-  gateway: Pick<GatewayProviderOptions, "models" | "order">;
-  openai?: Pick<OpenAILanguageModelResponsesOptions, "reasoningEffort">;
-};
+type ProviderOptionsResult = { gateway: Pick<GatewayProviderOptions, "models" | "order"> };
 
 type ImageProviderOptionsResult = {
   gateway: Pick<GatewayProviderOptions, "models">;
@@ -84,27 +81,17 @@ export function buildImageProviderOptions({
 
 /**
  * Builds the shared provider options object for text-generation tasks.
- * This exists so fallback models, gateway routing, and provider-specific
- * reasoning settings stay consistent across every task in this package.
+ * This exists so fallback models and gateway routing stay consistent across
+ * every task in this package.
  */
 export function buildProviderOptions({
   model,
   useFallback,
   fallbackModels,
-  reasoningEffort,
 }: {
   model: string;
   useFallback: boolean;
   fallbackModels: readonly string[];
-  reasoningEffort?: ReasoningEffort;
 }): ProviderOptionsResult {
-  const options: ProviderOptionsResult = {
-    gateway: buildGatewayProviderOptions({ fallbackModels, model, useFallback }),
-  };
-
-  if (reasoningEffort && reasoningEffort !== "auto") {
-    options.openai = { reasoningEffort };
-  }
-
-  return options;
+  return { gateway: buildGatewayProviderOptions({ fallbackModels, model, useFallback }) };
 }
