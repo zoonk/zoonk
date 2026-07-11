@@ -7,7 +7,7 @@
     "build": "next build",
     "dev": "next dev -p 3200",
     "start": "next start -p 3200",
-    "typecheck": "next typegen && tsgo --noEmit"
+    "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
     "@zoonk/core": "workspace:*",
@@ -26,8 +26,9 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@typescript/native-preview": "catalog:",
+    "@typescript/native": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
-    "babel-plugin-react-compiler": "catalog:"
+    "babel-plugin-react-compiler": "catalog:",
+    "typescript": "catalog:"
   }
 }

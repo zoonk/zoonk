@@ -761,6 +761,7 @@ test.describe("Command Palette - Accessibility", () => {
 
     const input = page.getByPlaceholder(/search/iu);
 
+    // oxlint-disable-next-line unicorn/prefer-number-coercion -- Computed font size includes a CSS unit such as "16px", so Number would return NaN.
     const fontSize = await input.evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize));
 
     expect(fontSize).toBeGreaterThanOrEqual(16);

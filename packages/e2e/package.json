@@ -12,7 +12,7 @@
     "./fixtures/users": "./src/fixtures/users.ts"
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@zoonk/db": "workspace:*",
@@ -21,7 +21,7 @@
   "devDependencies": {
     "@playwright/test": "1.60.0",
     "@types/node": "catalog:",
-    "@typescript/native-preview": "catalog:",
+    "@typescript/native": "catalog:",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*"
   }

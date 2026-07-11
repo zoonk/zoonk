@@ -1,5 +1,6 @@
 import { captureRouterTransitionStart, init } from "@sentry/nextjs";
 import { getPostHogConfig } from "@zoonk/utils/posthog";
+import { getSentryDataCollection } from "@zoonk/utils/sentry";
 import { initBotId } from "botid/client/core";
 import posthog from "posthog-js";
 
@@ -7,9 +8,9 @@ const postHogConfig = getPostHogConfig();
 
 if (process.env.NODE_ENV === "production") {
   init({
+    dataCollection: getSentryDataCollection(),
     dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
     enableLogs: true,
-    sendDefaultPii: false,
     tracesSampleRate: 0.1,
   });
 }

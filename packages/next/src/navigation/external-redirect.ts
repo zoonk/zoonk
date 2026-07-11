@@ -7,6 +7,6 @@ import { redirect } from "next/navigation";
  * helper to centralize the necessary type assertion with documentation.
  */
 export function externalRedirect(url: string): never {
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- external URLs require this assertion
+  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion typescript/no-unsafe-type-assertion -- standalone package types cannot see the consuming app's generated Route union
   return redirect(url as never);
 }

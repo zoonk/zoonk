@@ -49,9 +49,13 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
     }),
   );
 
-  const handleMessage = useEffectEvent((msg: StepStreamMessage<TStep>) =>
-    handleStepStreamMessage({ completionStep, dispatch, entityId, message: msg }),
-  );
+  /**
+   * Forwards each server event through the reducer with the latest completion target and entity.
+   * `useSSE` owns the Effect Event boundary, so this callback should remain a regular event handler.
+   */
+  function handleMessage(message: StepStreamMessage<TStep>) {
+    handleStepStreamMessage({ completionStep, dispatch, entityId, message });
+  }
 
   /**
    * Status streams are best-effort browser connections. Mobile browsers can
@@ -59,7 +63,7 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
    * so a transport failure should resume the same run instead of being shown as
    * a failed generation.
    */
-  const reconnectStream = useEffectEvent(() => {
+  function reconnectStream() {
     if (state.reconnectCount >= MAX_STREAM_RECONNECTS) {
       dispatch({ error: null, errorKind: "connection", type: "setError" });
       return;
@@ -68,7 +72,7 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
     setTimeout(() => {
       dispatch({ type: "reconnect" });
     }, 1000);
-  });
+  }
 
   /**
    * When the SSE stream closes, check whether we received the expected completion
@@ -77,7 +81,7 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
    * instead of showing an error — the workflow library supports resumable streaming
    * via `startIndex`, so the next connection picks up where the previous one ended.
    */
-  const handleComplete = useEffectEvent(() => {
+  function handleComplete() {
     /**
      * If status is already "completed", handleStepStreamMessage already confirmed
      * both the completion step AND the entityId matched. No need to re-check
@@ -92,9 +96,14 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
     }
 
     reconnectStream();
-  });
+  }
 
-  const handleError = useEffectEvent(() => reconnectStream());
+  /**
+   * Transport errors use the same bounded retry path as streams that end before completion.
+   */
+  function handleError() {
+    reconnectStream();
+  }
 
   /**
    * Include `_rc` (reconnect count) in the URL so that when `reconnectCount`

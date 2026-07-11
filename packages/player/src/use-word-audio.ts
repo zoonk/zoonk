@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useEffectEvent, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import {
   type AudioBlobCache,
   clearAudioObjectUrlCache,
@@ -174,6 +174,7 @@ export function useWordAudio(options?: UseWordAudioOptions): {
 } {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioBlobCacheRef = useRef<AudioBlobCache>(new Map());
+  const onEndedRef = useRef(options?.onEnded);
   const preloadKey = getUniqueAudioUrls(options?.preloadUrls).join("\n");
 
   const releaseAudioSource = useCallback((audio: HTMLAudioElement) => {
@@ -182,7 +183,13 @@ export function useWordAudio(options?: UseWordAudioOptions): {
     audio.load();
   }, []);
 
-  const handleEnded = useEffectEvent(() => {
+  // The media listener is installed once on a lazily created audio element. Keeping the latest
+  // consumer callback in a ref avoids rebuilding that element when its owner re-renders.
+  useEffect(() => {
+    onEndedRef.current = options?.onEnded;
+  }, [options?.onEnded]);
+
+  const handleEnded = useCallback(() => {
     const audio = audioRef.current;
 
     if (!audio) {
@@ -194,8 +201,8 @@ export function useWordAudio(options?: UseWordAudioOptions): {
     // browser media state before the next tap assigns a fresh source.
     releaseAudioSource(audio);
 
-    options?.onEnded?.();
-  });
+    onEndedRef.current?.();
+  }, [releaseAudioSource]);
 
   const getAudio = useCallback(() => {
     const existingAudio = audioRef.current;
@@ -209,7 +216,7 @@ export function useWordAudio(options?: UseWordAudioOptions): {
     audioRef.current = audio;
 
     return audio;
-  }, []);
+  }, [handleEnded]);
 
   const play = useCallback(
     async (url: string | null) => {

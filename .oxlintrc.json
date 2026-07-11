@@ -82,6 +82,10 @@
     "react/forbid-component-props": "off",
     "react/jsx-filename-extension": ["error", { "extensions": ["tsx"] }],
     "react/jsx-handler-names": "off",
+    "react/jsx-no-literals": [
+      "error",
+      { "allowedStrings": [".", "@", "Enter", "Esc", "R", "zoonk.com"] }
+    ],
     "react/jsx-props-no-spreading": "off",
     "react/jsx-pascal-case": ["error", { "allowAllCaps": true }],
     // no need with react compiler
@@ -109,6 +113,7 @@
     "unicorn/no-array-for-each": "off",
     "unicorn/no-array-reduce": "off",
     "unicorn/import-style": "off",
+    "unicorn/max-nested-calls": ["error", { "max": 5 }],
     "unicorn/no-null": "off",
     "unicorn/prefer-bigint-literals": "off",
     "unicorn/prefer-native-coercion-functions": "off",
@@ -149,9 +154,11 @@
       "rules": {
         "eslint/max-lines": "off",
         "eslint/no-magic-numbers": "off",
+        "react/jsx-no-literals": "off",
         "typescript/no-unsafe-type-assertion": "off"
       }
     },
+    { "files": ["apps/admin/**/*.tsx"], "rules": { "react/jsx-no-literals": "off" } },
     {
       "files": ["**/i18n/request.ts"],
       "rules": {
@@ -171,7 +178,14 @@
         "unicorn/prefer-top-level-await": "off"
       }
     },
-    { "files": ["**/e2e/**"], "rules": { "react/rules-of-hooks": "off" } },
+    {
+      "files": ["**/e2e/**"],
+      "rules": {
+        "react/jsx-no-literals": "off",
+        "react/rules-of-hooks": "off",
+        "unicorn/max-nested-calls": "off"
+      }
+    },
     {
       "files": ["*.test.ts", "*.test.tsx"],
       "rules": {
@@ -181,18 +195,30 @@
         "eslint/no-empty-function": "off",
         "eslint/no-magic-numbers": "off",
         "import/no-namespace": "off",
+        "react/jsx-no-literals": "off",
         "typescript/no-explicit-any": "off",
         "typescript/no-non-null-assertion": "off",
+        "typescript/no-unnecessary-type-assertion": "off",
         "typescript/no-unsafe-argument": "off",
         "typescript/no-unsafe-assignment": "off",
         "typescript/no-unsafe-call": "off",
         "typescript/no-unsafe-member-access": "off",
         "typescript/no-unsafe-type-assertion": "off",
         "unicorn/custom-error-definition": "off",
+        "unicorn/max-nested-calls": "off",
         "unicorn/prefer-dom-node-text-content": "off",
         "vitest/require-hook": "error",
         "vitest/require-top-level-describe": "error"
       }
+    },
+    {
+      "files": [
+        "**/opengraph-image.tsx",
+        "apps/*/src/app/auth/callback/route.ts",
+        "apps/*/src/instrumentation.ts",
+        "apps/*/src/instrumentation-client.ts"
+      ],
+      "rules": { "unicorn/prefer-export-from": "off" }
     },
     {
       "files": ["packages/ui/src/components/**/*.tsx"],
@@ -200,6 +226,7 @@
         "eslint/max-lines": "off",
         "eslint/no-magic-numbers": "off",
         "import/no-namespace": "off",
+        "react/jsx-no-literals": "off",
         "react/no-array-index-key": "off"
       }
     },

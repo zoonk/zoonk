@@ -1,8 +1,9 @@
 "use client";
 
 import { Input } from "@zoonk/ui/components/input";
+import { SEARCH_QUERY_THROTTLE_MS } from "@zoonk/utils/search";
 import { Search } from "lucide-react";
-import { useQueryState } from "nuqs";
+import { throttle, useQueryState } from "nuqs";
 
 /**
  * Admin list pages share the same query-param backed search behavior. Keeping
@@ -12,8 +13,8 @@ import { useQueryState } from "nuqs";
 export function AdminSearch({ placeholder }: { placeholder: string }) {
   const [search, setSearch] = useQueryState("search", {
     defaultValue: "",
+    limitUrlUpdates: throttle(SEARCH_QUERY_THROTTLE_MS),
     shallow: false,
-    throttleMs: 300,
   });
 
   return (

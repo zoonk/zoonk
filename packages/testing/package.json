@@ -17,6 +17,9 @@
     "./fixtures/users": "./src/fixtures/users.ts",
     "./fixtures/words": "./src/fixtures/words.ts"
   },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
     "@zoonk/auth": "workspace:*",
     "@zoonk/db": "workspace:*",
@@ -24,7 +27,7 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "@typescript/native-preview": "catalog:",
+    "@typescript/native": "catalog:",
     "@zoonk/tsconfig": "workspace:*"
   }
 }

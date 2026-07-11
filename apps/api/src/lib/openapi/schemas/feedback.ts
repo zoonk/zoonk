@@ -8,5 +8,5 @@ export const feedbackSubmissionSchema = z
   .meta({ id: "FeedbackSubmission" });
 
 export const feedbackResponseSchema = z
-  .object({ message: z.string().meta({ example: "Feedback received" }) })
+  .object({ message: z.string().meta({ examples: ["Feedback received"] }) })
   .meta({ id: "FeedbackResponse" });

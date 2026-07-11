@@ -25,10 +25,11 @@ import {
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
 import { toast } from "@zoonk/ui/components/sonner";
+import { SEARCH_QUERY_THROTTLE_MS } from "@zoonk/utils/search";
 import { normalizeString } from "@zoonk/utils/string";
 import { ListFilterIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useQueryState } from "nuqs";
+import { throttle, useQueryState } from "nuqs";
 import { type ReactNode, useRef, useState, useTransition } from "react";
 import { updateHiddenLessonKindsAction } from "./lesson-list-actions";
 
@@ -62,8 +63,8 @@ export function LessonListFilters({
 
   const [search, setSearch] = useQueryState("q", {
     defaultValue: "",
+    limitUrlUpdates: throttle(SEARCH_QUERY_THROTTLE_MS),
     shallow: true,
-    throttleMs: 300,
   });
 
   const [hiddenLessonKinds, setHiddenLessonKinds] = useState(initialHiddenLessonKinds);
