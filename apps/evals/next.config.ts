@@ -1,6 +1,7 @@
 import { type NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["*.local"],
   devIndicators: false,
   experimental: { typedEnv: true },
   images: {

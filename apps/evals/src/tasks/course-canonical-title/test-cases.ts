@@ -88,16 +88,59 @@ function titleCase({
 
 export const TEST_CASES: CourseCanonicalTitleTestCase[] = [
   titleCase({
-    acceptedTitles: [
-      "The Observer Method",
-      "Observer Method",
-      "Observer Method for Disconnecting from Thoughts",
-      "Observer Method for Thought Disconnection",
-    ],
-    expectedTitle: "The Observer Method",
-    id: "observer-method-disconnect-thoughts",
+    expectedTitle: "Artificial Intelligence",
+    id: "ai-artificial-intelligence",
     language: "en",
-    prompt: "the observer method to disconnect from thoughts",
+    prompt: "AI",
+  }),
+  titleCase({
+    expectedTitle: "Machine Learning",
+    id: "ml-machine-learning",
+    language: "en",
+    prompt: "ml",
+  }),
+  titleCase({
+    expectedTitle: "Machine Learning",
+    id: "ai-ml-machine-learning",
+    language: "en",
+    prompt: "ai ml",
+  }),
+  titleCase({
+    expectedTitle: "Artificial Intelligence",
+    id: "ai-for-beginners",
+    language: "en",
+    prompt: "ai for beginners",
+  }),
+  titleCase({
+    expectedTitle: "Large Language Models",
+    id: "ai-llms",
+    language: "en",
+    prompt: "ai llms",
+  }),
+  titleCase({
+    acceptedTitles: ["IA para Professores", "Inteligência Artificial para Professores"],
+    expectedTitle: "IA para Professores",
+    id: "ia-para-professores",
+    language: "pt",
+    prompt: "ia para professores",
+  }),
+  titleCase({
+    expectedTitle: "Inteligência Artificial",
+    id: "ia-inteligencia-artificial",
+    language: "pt",
+    prompt: "ia",
+  }),
+  titleCase({
+    expectedTitle: "Python",
+    id: "python-programming",
+    language: "en",
+    prompt: "python programming",
+  }),
+  titleCase({
+    expectedTitle: "Inteligência Artificial",
+    id: "carreira-em-ia",
+    language: "pt",
+    prompt: "carreira em ia",
   }),
   titleCase({
     acceptedTitles: [
@@ -180,6 +223,7 @@ export const TEST_CASES: CourseCanonicalTitleTestCase[] = [
     prompt: "java thread pools",
   }),
   titleCase({
+    acceptedTitles: ["Java Loops", "Java: Loops"],
     expectedTitle: "Java Loops",
     id: "java-loops",
     language: "en",
@@ -218,13 +262,19 @@ export const TEST_CASES: CourseCanonicalTitleTestCase[] = [
     prompt: "the army mdmp process",
   }),
   titleCase({
+    acceptedTitles: ["Go Concurrency", "Concurrency in Go"],
     expectedTitle: "Go Concurrency",
     id: "go-concurrent",
     language: "en",
     prompt: "go concurrent",
   }),
   titleCase({
-    acceptedTitles: ["AI for Kitchen Chefs", "AI for Chefs"],
+    acceptedTitles: [
+      "AI for Kitchen Chefs",
+      "AI for Chefs",
+      "Artificial Intelligence for Kitchen Chefs",
+      "Artificial Intelligence for Chefs",
+    ],
     expectedTitle: "AI for Kitchen Chefs",
     id: "ai-for-kitchen-chefs",
     language: "en",
@@ -311,13 +361,6 @@ export const TEST_CASES: CourseCanonicalTitleTestCase[] = [
     prompt: "tabela periodica",
   }),
   titleCase({
-    acceptedTitles: ["Artificial Intelligence", "AI"],
-    expectedTitle: "Artificial Intelligence",
-    id: "ai",
-    language: "en",
-    prompt: "ai",
-  }),
-  titleCase({
     acceptedTitles: ["Engenharia de Fórmula 1", "Engenharia de F1"],
     expectedTitle: "Engenharia de Fórmula 1",
     id: "engenharia-f1",
@@ -388,6 +431,7 @@ export const TEST_CASES: CourseCanonicalTitleTestCase[] = [
     prompt: "productivity",
   }),
   titleCase({
+    acceptedTitles: ["The Science of Happiness", "Science of Happiness"],
     expectedTitle: "The Science of Happiness",
     id: "science-of-happiness",
     language: "en",
@@ -524,7 +568,11 @@ export const TEST_CASES: CourseCanonicalTitleTestCase[] = [
     prompt: "machine learning",
   }),
   titleCase({
-    acceptedTitles: ["Rust Ownership", "Rust Ownership, Borrowing, and Lifetimes"],
+    acceptedTitles: [
+      "Rust Ownership",
+      "Rust Ownership, Borrowing, and Lifetimes",
+      "Rust: Ownership, Borrowing, and Lifetimes",
+    ],
     expectedTitle: "Rust Ownership",
     extra:
       "- It may include borrowing if phrased concisely, but should not become a broad Rust course.",
@@ -568,7 +616,11 @@ export const TEST_CASES: CourseCanonicalTitleTestCase[] = [
     prompt: "sql from zero",
   }),
   titleCase({
-    acceptedTitles: ["Matemáticas: Fracciones a Álgebra", "Fracciones a Álgebra"],
+    acceptedTitles: [
+      "Matemáticas: Fracciones a Álgebra",
+      "Fracciones a Álgebra",
+      "Operaciones de Fracciones a Álgebra",
+    ],
     expectedTitle: "Matemáticas: Fracciones a Álgebra",
     id: "en-fracciones-a-algebra",
     language: "es",

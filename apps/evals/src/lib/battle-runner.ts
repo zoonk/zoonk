@@ -9,13 +9,14 @@ import {
   getModelsWithCompleteOutputs,
   getOutputForTestCase,
 } from "./output-loader";
+import { getTestCaseRunId } from "./test-case-runs";
 import {
   type BattleMatchup,
   type ModelOutputs,
   type RegisteredTask,
   type TestCase,
   getJudgeExpectations,
-  hasJudgeExpectations,
+  supportsJudgeMode,
 } from "./types";
 
 const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
@@ -260,7 +261,7 @@ async function runBattleForTestCase({
   task: RegisteredTask;
   testCase: TestCase;
 }): Promise<BattleMatchup> {
-  const testCaseId = `${testCase.id}-1`;
+  const testCaseId = getTestCaseRunId({ runNumber: 1, testCaseId: testCase.id });
   const expectations = getJudgeExpectations(testCase);
 
   const { outputs: modelOutputs, userPrompt } = collectModelOutputsForTestCase(
@@ -341,7 +342,7 @@ async function runBattleTestCase({
   task: RegisteredTask;
   testCase: TestCase;
 }): Promise<BattleMatchup> {
-  const testCaseId = `${testCase.id}-1`;
+  const testCaseId = getTestCaseRunId({ runNumber: 1, testCaseId: testCase.id });
   const existingMatchup = await loadExistingMatchup(task.id, testCaseId);
 
   const result = await runBattleForTestCase({
@@ -356,16 +357,14 @@ async function runBattleTestCase({
 }
 
 export async function runBattleMode(task: RegisteredTask): Promise<void> {
-  if (!hasJudgeExpectations(task)) {
-    throw new Error(`Task ${task.id} does not define expectations for judge mode.`);
+  if (!supportsJudgeMode(task)) {
+    throw new Error(`Task ${task.id} does not support judge mode.`);
   }
 
   logInfo(`\n=== Starting Battle Mode for task: ${task.name} ===\n`);
 
-  const totalTestCases = task.testCases.length;
-
   // Get all models with complete outputs
-  const completeModels = await getModelsWithCompleteOutputs(task.id, totalTestCases);
+  const completeModels = await getModelsWithCompleteOutputs({ runsPerTestCase: 1, task });
 
   if (completeModels.length < 2) {
     throw new Error(
