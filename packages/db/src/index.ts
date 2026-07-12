@@ -39,6 +39,7 @@ export type {
   Sentence,
   Subscription,
   StepKind,
+  User,
   UserProgress,
   Word,
   WordPronunciation,
