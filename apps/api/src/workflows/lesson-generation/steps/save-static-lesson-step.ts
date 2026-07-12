@@ -1,8 +1,8 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type StepImage } from "@zoonk/core/steps/contract/image";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
-import { prisma } from "@zoonk/db";
 import { type StaticLessonStep } from "./_utils/generated-lesson-content";
+import { replaceLessonSteps } from "./_utils/replace-lesson-steps";
 import { saveStaticLessonContent } from "./_utils/save-core-lesson-content";
 import { type LessonContext } from "./get-lesson-step";
 
@@ -24,8 +24,10 @@ async function saveStaticLessonStep({
   await using stream = createStepStream<LessonStepName>();
   await stream.status({ status: "started", step });
 
-  await prisma.step.deleteMany({ where: { lessonId: context.id } });
-  await saveStaticLessonContent({ context, images, steps });
+  await replaceLessonSteps({
+    lessonId: context.id,
+    saveSteps: (transaction) => saveStaticLessonContent({ context, images, steps, transaction }),
+  });
 
   await stream.status({ status: "completed", step });
 }

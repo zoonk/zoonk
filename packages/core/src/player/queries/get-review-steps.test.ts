@@ -684,6 +684,7 @@ describe(getReviewValidationData, () => {
         isPublished: true,
         kind: "static",
         lessonId: quizLesson.id,
+        position: 1,
       }),
     ]);
   });

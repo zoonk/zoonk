@@ -4,6 +4,7 @@ import { assertStepContent } from "@zoonk/core/steps/contract/content";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
+import { replaceLessonSteps } from "./_utils/replace-lesson-steps";
 import { type LessonContext } from "./get-lesson-step";
 
 /**
@@ -60,25 +61,26 @@ export async function saveTranslationLessonStep(context: LessonContext): Promise
     throw new FatalError("Translation save needs vocabulary words");
   }
 
-  await prisma.$transaction(async (tx) => {
-    await tx.step.deleteMany({ where: { lessonId: translationLesson.id } });
+  await replaceLessonSteps({
+    lessonId: translationLesson.id,
+    saveSteps: async (transaction) => {
+      await transaction.step.createMany({
+        data: wordSteps.map((step, position) => ({
+          chapterWordId: step.chapterWordId,
+          content: assertStepContent("translation", {}),
+          isPublished: true,
+          kind: "translation" as const,
+          lessonId: translationLesson.id,
+          position,
+          wordId: step.wordId,
+        })),
+      });
 
-    await tx.step.createMany({
-      data: wordSteps.map((step, position) => ({
-        chapterWordId: step.chapterWordId,
-        content: assertStepContent("translation", {}),
-        isPublished: true,
-        kind: "translation" as const,
-        lessonId: translationLesson.id,
-        position,
-        wordId: step.wordId,
-      })),
-    });
-
-    await tx.lesson.update({
-      data: { generationRunId: null, generationStatus: "completed" },
-      where: { id: translationLesson.id },
-    });
+      await transaction.lesson.update({
+        data: { generationRunId: null, generationStatus: "completed" },
+        where: { id: translationLesson.id },
+      });
+    },
   });
 
   await stream.status({ status: "completed", step: "saveTranslationLesson" });

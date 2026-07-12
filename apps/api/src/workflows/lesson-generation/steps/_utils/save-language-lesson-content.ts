@@ -1,6 +1,6 @@
 import { type LessonGrammarSchema } from "@zoonk/ai/tasks/lessons/language/grammar";
 import { assertStepContent } from "@zoonk/core/steps/contract/content";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient } from "@zoonk/db";
 import { type LessonContext } from "../get-lesson-step";
 import { type GrammarLessonContent } from "./generated-lesson-content";
 import { type StepRecord, getOptionalQuestion } from "./save-lesson-content-helpers";
@@ -12,12 +12,14 @@ export async function saveGrammarLessonContent({
   content,
   context,
   romanizations = null,
+  transaction,
 }: {
   content: GrammarLessonContent;
   context: LessonContext;
   romanizations?: Record<string, string> | null;
+  transaction: TransactionClient;
 }): Promise<void> {
-  await prisma.step.createMany({
+  await transaction.step.createMany({
     data: buildGrammarSteps({ content: content.grammarContent, context, romanizations }),
   });
 }

@@ -50,7 +50,7 @@ model Step {
   updatedAt         DateTime         @default(now()) @updatedAt @map("updated_at")
   attempts          StepAttempt[]
 
-  @@index([lessonId, position])
+  @@unique([lessonId, position], name: "lessonStepPosition")
   @@index([lessonId, kind, position])
   @@index([wordId])
   @@index([sentenceId])
