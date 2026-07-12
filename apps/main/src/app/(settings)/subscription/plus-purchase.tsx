@@ -4,6 +4,7 @@ import { trackSubscriptionCheckoutStarted } from "@/lib/track-events";
 import { authClient } from "@zoonk/core/auth/client";
 import { Badge } from "@zoonk/ui/components/badge";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { CyclingText } from "@zoonk/ui/components/cycling-text";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type PriceInfo, formatPrice } from "@zoonk/utils/currency";
 import { logError } from "@zoonk/utils/logger";
@@ -29,6 +30,33 @@ const STRIPE_LOCALE_OVERRIDES: Readonly<Record<string, StripeLocaleOverride | un
   fr: "fr",
   pt: "pt-BR",
 };
+
+/**
+ * Keeps every comparison as its own translation message while letting the UI
+ * render them through one shared animation instead of duplicating markup and
+ * Tailwind classes for every new example.
+ */
+function useValueComparisons() {
+  const t = useExtracted();
+
+  return [
+    t("a pizza"),
+    t("a couple of beers"),
+    t("a toy"),
+    t("a movie ticket"),
+    t("a fancy coffee"),
+    t("a sad airport sandwich"),
+    t("a takeaway lunch"),
+    t("a paperback"),
+    t("a houseplant"),
+    t("a phone case"),
+    t("a video game skin"),
+    t("a candle you don't need"),
+    t("a forgotten subscription"),
+    t("socks with tiny avocados"),
+    t("a planner you'll definitely use"),
+  ] as const;
+}
 
 /**
  * Keeps the purchase rail focused on the one decision this page now offers.
@@ -81,6 +109,7 @@ function AvailablePlusPurchase({
   const locale = useLocale();
   const price = getSelectedPrice({ monthlyPrice, period, yearlyPrice });
   const yearlySavings = getYearlySavings({ monthlyPrice, yearlyPrice });
+  const valueComparisons = useValueComparisons();
   const isLoading = requestState === "loading";
   const priceLabel = price ? formatPrice(price.amount, price.currency, locale) : null;
   const periodLabel = period === "monthly" ? t("per month") : t("per year");
@@ -162,11 +191,25 @@ function AvailablePlusPurchase({
         {period === "yearly" && savingsLabel && (
           <p className="text-success text-sm font-medium">{savingsLabel}</p>
         )}
-
-        <p className="text-muted-foreground pt-2 text-sm">
-          {t("One course or ten. The price stays the same.")}
-        </p>
       </div>
+
+      {monthlyPrice && (
+        <div className="border-y py-4">
+          <p className="text-muted-foreground text-sm">
+            {t("Investing in your future is cheaper than")}
+          </p>
+
+          <div className="relative h-14 overflow-hidden">
+            <span className="sr-only">{valueComparisons[0]}</span>
+            <CyclingText
+              aria-hidden="true"
+              className="absolute inset-0 flex items-start text-xl leading-tight font-semibold tracking-tight"
+            >
+              {valueComparisons}
+            </CyclingText>
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-col gap-3">
         {viewerState.status === "guest" ? (

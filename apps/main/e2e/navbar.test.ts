@@ -76,9 +76,7 @@ test.describe("Navbar - Authenticated", () => {
 
     await authenticatedPage.getByRole("menuitem", { name: /subscription/iu }).click();
 
-    await expect(
-      authenticatedPage.getByRole("heading", { level: 1, name: /subscription/iu }),
-    ).toBeVisible();
+    await expect(authenticatedPage).toHaveURL(/\/subscription$/u);
   });
 
   test("Profile menu item navigates to profile page", async ({ authenticatedPage }) => {

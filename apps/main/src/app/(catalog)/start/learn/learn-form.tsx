@@ -1,6 +1,7 @@
 "use client";
 
 import { trackLearnForm } from "@/lib/track-events";
+import { CyclingText } from "@zoonk/ui/components/cycling-text";
 import { InputGroup, InputGroupInput } from "@zoonk/ui/components/input-group";
 import { Label } from "@zoonk/ui/components/label";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -9,7 +10,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useId, useTransition } from "react";
 
 const PROMPT_MAX_LENGTH = 128;
-const CYCLE_DURATION_MS = 3200;
 
 /**
  * Owns the interactive course goal input and records the form visibility event
@@ -71,15 +71,9 @@ export function LearnForm({ placeholders }: { placeholders: string[] }) {
             aria-hidden="true"
             className="pointer-events-none absolute inset-y-0 left-3 flex items-center transition-opacity duration-200 peer-not-placeholder-shown:opacity-0"
           >
-            {placeholders.map((subject, index) => (
-              <span
-                key={subject}
-                className="text-muted-foreground animate-placeholder-cycle absolute text-sm whitespace-nowrap"
-                style={{ animationDelay: `${index * CYCLE_DURATION_MS}ms` }}
-              >
-                {subject}
-              </span>
-            ))}
+            <CyclingText className="text-muted-foreground absolute text-sm whitespace-nowrap">
+              {placeholders}
+            </CyclingText>
           </div>
         </div>
       </InputGroup>

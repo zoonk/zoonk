@@ -1346,6 +1346,81 @@ msgid "Any subject · Unlimited courses and lessons"
 msgstr "Any subject · Unlimited courses and lessons"
 
 #: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "7mu984"
+msgid "a pizza"
+msgstr "a pizza"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "7zwF6P"
+msgid "a couple of beers"
+msgstr "a couple of beers"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "laL9nz"
+msgid "a toy"
+msgstr "a toy"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "-YDRpS"
+msgid "a movie ticket"
+msgstr "a movie ticket"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "7OCABC"
+msgid "a fancy coffee"
+msgstr "a fancy coffee"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "W_mEgT"
+msgid "a sad airport sandwich"
+msgstr "a sad airport sandwich"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "U4mRWb"
+msgid "a takeaway lunch"
+msgstr "a takeaway lunch"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "oFYJsq"
+msgid "a paperback"
+msgstr "a paperback"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "RrMczR"
+msgid "a houseplant"
+msgstr "a houseplant"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "VavHK6"
+msgid "a phone case"
+msgstr "a phone case"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "zou80J"
+msgid "a video game skin"
+msgstr "a video game skin"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "VPo2Kz"
+msgid "a candle you don't need"
+msgstr "a candle you don't need"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "ByGaLp"
+msgid "a forgotten subscription"
+msgstr "a forgotten subscription"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "0nJSUm"
+msgid "socks with tiny avocados"
+msgstr "socks with tiny avocados"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "hys3oO"
+msgid "a planner you'll definitely use"
+msgstr "a planner you'll definitely use"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
 msgctxt "Rw82_V"
 msgid "per month"
 msgstr "per month"
@@ -1392,9 +1467,9 @@ msgid "Price shown at checkout"
 msgstr "Price shown at checkout"
 
 #: src/app/(settings)/subscription/plus-purchase.tsx
-msgctxt "x_Grve"
-msgid "One course or ten. The price stays the same."
-msgstr "One course or ten. The price stays the same."
+msgctxt "DWdUaF"
+msgid "Investing in your future is cheaper than"
+msgstr "Investing in your future is cheaper than"
 
 #: src/app/(settings)/subscription/plus-purchase.tsx
 msgctxt "5MmaRi"
