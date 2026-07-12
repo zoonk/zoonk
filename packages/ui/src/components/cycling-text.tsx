@@ -3,7 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ComponentProps, useState } from "react";
 
-type CyclingTextProps = Omit<ComponentProps<"span">, "children" | "onAnimationIteration"> & {
+type CyclingTextProps = Omit<ComponentProps<"span">, "children" | "onAnimationEnd"> & {
   children: readonly string[];
 };
 
@@ -18,10 +18,11 @@ export function CyclingText({ children, className, ...props }: CyclingTextProps)
   const visibleIndex = children.length === 0 ? 0 : activeIndex % children.length;
 
   /**
-   * Changes the content at the animation boundary, when the shared keyframe is
-   * fully transparent, so the next item fades in through the same single span.
+   * Changes the content only after the finite animation has ended at zero
+   * opacity. The keyed span then starts a fresh animation for the next item,
+   * without relying on React to commit during an active iteration boundary.
    */
-  function handleAnimationIteration() {
+  function handleAnimationEnd() {
     setActiveIndex((currentIndex) => {
       if (!hasMultipleItems) {
         return 0;
@@ -35,7 +36,8 @@ export function CyclingText({ children, className, ...props }: CyclingTextProps)
     <span
       className={cn(hasMultipleItems && "animate-text-cycle motion-reduce:animate-none", className)}
       data-slot="cycling-text"
-      onAnimationIteration={handleAnimationIteration}
+      key={visibleIndex}
+      onAnimationEnd={handleAnimationEnd}
       {...props}
     >
       {children[visibleIndex]}
