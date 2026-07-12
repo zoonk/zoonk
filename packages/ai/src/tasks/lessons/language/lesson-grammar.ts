@@ -5,7 +5,7 @@ import { z } from "zod";
 import { getLanguagePromptContext } from "../../_utils/prompt-language";
 import systemPrompt from "./lesson-grammar.prompt.md";
 
-const defaultModel = "openai/gpt-5.6-sol";
+const defaultModel = "openai/gpt-5.5";
 const fallbackModels = ["anthropic/claude-opus-4.8", "google/gemini-3.5-flash"] as const;
 
 const explanationSchema = z.object({ text: z.string(), title: z.string() });

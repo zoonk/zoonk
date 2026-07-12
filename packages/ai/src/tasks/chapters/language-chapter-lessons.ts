@@ -5,7 +5,7 @@ import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./language-chapter-lessons.prompt.md";
 
-const defaultModel = "openai/gpt-5.6-sol";
+const defaultModel = "openai/gpt-5.5";
 const fallbackModels = ["google/gemini-3.1-pro-preview", "anthropic/claude-sonnet-4.6"] as const;
 
 const schema = z.object({
