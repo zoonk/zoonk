@@ -2,24 +2,25 @@ import "server-only";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { type TTSVoice } from "@zoonk/utils/languages";
 import { logError } from "@zoonk/utils/logger";
-import { generateSpeech } from "ai";
 import { getPromptLanguageName } from "../_utils/prompt-language";
+import { convertWavToMp3 } from "./convert-wav-to-mp3";
 import alphabetSymbolPrompt from "./generate-language-audio-alphabet-symbol.prompt.md";
 import promptTemplate from "./generate-language-audio.prompt.md";
 import { type SpeechModelName, speechModels } from "./speech-models";
-import { type AudioFormat, getSpeechProvider } from "./speech-provider";
+import { generateSpeechWithProvider } from "./speech-provider";
 
 const DEFAULT_VOICE: TTSVoice = "Kore";
 const defaultModel = speechModels.google;
 const fallbackModels = [speechModels.openai] as const;
+const MAX_ATTEMPTS_PER_PROVIDER = 2;
 
-/* oxlint-disable-next-line no-magic-numbers -- 850 KiB is the prompt-leak failure threshold observed in generated audio files. */
-const MAX_AUDIO_BYTES = 850 * 1024;
+/* oxlint-disable-next-line no-magic-numbers -- 850 KiB fits an 18-second 24 kHz mono WAV. */
+const MAX_PROVIDER_AUDIO_BYTES = 850 * 1024;
 
 const READ_ALOUD_TEMPLATE =
   "The following text is {{LANGUAGE}}. Speak clearly at a moderate pace suitable for language learners. Enunciate each word precisely; read it aloud in {{LANGUAGE}}.";
 
-export type AudioResult = { audio: Uint8Array; format: AudioFormat };
+export type AudioResult = { audio: Uint8Array; format: "mp3" };
 export type LanguageAudioUsage = "alphabetSymbol";
 
 const usagePrompts = { alphabetSymbol: alphabetSymbolPrompt } satisfies Record<
@@ -28,10 +29,11 @@ const usagePrompts = { alphabetSymbol: alphabetSymbolPrompt } satisfies Record<
 >;
 
 /**
- * Skips prompt guidance for normal English word and sentence audio because the
- * extra instructions exist to prevent non-English words from being read with
- * English pronunciation. Usage-specific audio, such as alphabet symbols, still
- * gets guidance because the text may not be a normal word.
+ * Skips task-level guidance for normal English word and sentence audio because
+ * the extra instructions exist to prevent non-English words from being read
+ * with English pronunciation. Usage-specific audio still gets its task prompt,
+ * and the provider supplies the minimal guidance Gemini needs to stay in speech
+ * mode.
  */
 function shouldBuildInstructions({
   languageCode,
@@ -75,11 +77,14 @@ function buildInstructions({
 }
 
 /**
- * Uses only the requested model when a task chooses one explicitly. Tasks that
- * omit a model retain the shared Gemini-first, OpenAI-fallback behavior.
+ * Tries each selected provider twice because transport retries cannot observe
+ * semantic failures discovered only after decoded-signal validation. Tasks
+ * without an explicit model alternate Gemini and OpenAI so either provider can
+ * recover from the other's malformed, silent, or unavailable output.
  */
 function getSpeechModels(model?: SpeechModelName): readonly SpeechModelName[] {
-  return model ? [model] : [defaultModel, ...fallbackModels];
+  const providerOrder = model ? [model] : [defaultModel, ...fallbackModels];
+  return Array.from({ length: MAX_ATTEMPTS_PER_PROVIDER }, () => providerOrder).flat();
 }
 
 /**
@@ -88,18 +93,20 @@ function getSpeechModels(model?: SpeechModelName): readonly SpeechModelName[] {
  * bypassing the prompt-leak safeguard when tasks choose different models.
  */
 function assertExpectedAudioSize({ audio, model }: { audio: Uint8Array; model: SpeechModelName }) {
-  if (audio.byteLength <= MAX_AUDIO_BYTES) {
+  if (audio.byteLength <= MAX_PROVIDER_AUDIO_BYTES) {
     return;
   }
 
   throw new Error(
-    `${model} returned oversized audio: ${audio.byteLength} bytes. Expected at most ${MAX_AUDIO_BYTES} bytes.`,
+    `${model} returned oversized audio: ${audio.byteLength} bytes. Expected at most ${MAX_PROVIDER_AUDIO_BYTES} bytes.`,
   );
 }
 
 /**
- * Generates one speech result through the AI SDK after the provider resolver
- * has selected the correct SDK model, output format, and compatible voice.
+ * Generates WAV and converts it to the one upload format inside the retry
+ * boundary. Malformed or silent audio therefore follows the same provider
+ * fallback path as transport and API failures, regardless of which provider
+ * produced it.
  */
 async function generateWithModel({
   instructions,
@@ -112,25 +119,22 @@ async function generateWithModel({
   text: string;
   voice: TTSVoice;
 }): Promise<AudioResult> {
-  const provider = getSpeechProvider({ model, voice });
-
-  const { audio } = await generateSpeech({
+  const wavAudio = await generateSpeechWithProvider({
     ...(instructions ? { instructions } : {}),
-    model: provider.model,
-    outputFormat: provider.format,
+    model,
     text,
-    voice: provider.voice,
+    voice,
   });
 
-  assertExpectedAudioSize({ audio: audio.uint8Array, model });
+  assertExpectedAudioSize({ audio: wavAudio, model });
 
-  return { audio: audio.uint8Array, format: provider.format };
+  const mp3Audio = await convertWavToMp3({ audio: wavAudio, model });
+  return { audio: mp3Audio, format: "mp3" };
 }
 
 /**
- * Tries provider-qualified models in order. AI SDK handles retries for each
- * model; this layer only owns cross-provider fallback when no model was chosen
- * explicitly by the calling task.
+ * Tries provider-qualified models in order. Each adapter owns transient request
+ * retries; this layer owns cross-provider and post-decode quality retries.
  */
 async function generateWithFallback({
   instructions,

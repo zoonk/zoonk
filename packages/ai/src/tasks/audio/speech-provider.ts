@@ -1,49 +1,98 @@
 import { createGoogle } from "@ai-sdk/google";
 import { openai } from "@ai-sdk/openai";
 import { type TTSVoice } from "@zoonk/utils/languages";
-import { type SpeechModel } from "ai";
+import { type SpeechModel, generateSpeech } from "ai";
 import { type SpeechModelName, speechModels } from "./speech-models";
 
-export type AudioFormat = "opus" | "wav";
-
-type SpeechProvider = { format: AudioFormat; model: SpeechModel; voice: string };
+type SpeechProvider = { model: SpeechModel; voice: string };
 
 const google = createGoogle({ apiKey: process.env.GEMINI_API_KEY });
+const GEMINI_DEFAULT_INSTRUCTIONS = "Read the supplied transcript aloud. Return audio only.";
 
 /**
- * Removes the provider prefix after the typed model registry has already
- * established which provider owns the model. Provider SDKs expect the bare
- * model id, while task callers use provider-qualified names consistently with
- * the rest of the AI package.
+ * Removes the provider prefix after the typed registry has established which
+ * provider owns the model. Provider SDKs expect bare identifiers while task
+ * callers use provider-qualified names consistently across the AI package.
  */
-function getProviderModelId(model: SpeechModelName): string {
+function getSpeechModelId(model: SpeechModelName): string {
   const separatorIndex = model.indexOf("/");
   return model.slice(separatorIndex + 1);
 }
 
 /**
- * Resolves a provider-qualified model name into the AI SDK speech model and
- * provider-specific output settings. Gemini only returns PCM, which the Google
- * provider wraps as WAV, while OpenAI can return Opus directly. OpenAI voices
- * do not map one-to-one to Gemini voices, so its stable fallback voice remains
- * `marin` regardless of the requested Gemini voice.
+ * Adds minimal read-aloud guidance only when Gemini has no richer task prompt.
+ * Gemini otherwise treats some short transcripts, such as `Hello`, as a text
+ * request and rejects them before producing audio. OpenAI does not need this.
  */
-export function getSpeechProvider({
+function getSpeechInstructions({
+  instructions,
+  model,
+}: {
+  instructions?: string;
+  model: SpeechModelName;
+}): string | undefined {
+  if (instructions) {
+    return instructions;
+  }
+
+  if (model === speechModels.google) {
+    return GEMINI_DEFAULT_INSTRUCTIONS;
+  }
+
+  return undefined;
+}
+
+/**
+ * Resolves a provider-qualified name into the corresponding AI SDK model and
+ * voice. Both providers return WAV so the task can apply one validation and
+ * encoding pipeline without codec-specific branches.
+ */
+function getSpeechProvider({
   model,
   voice,
 }: {
   model: SpeechModelName;
   voice: TTSVoice;
 }): SpeechProvider {
-  const modelId = getProviderModelId(model);
+  const modelId = getSpeechModelId(model);
 
   if (model === speechModels.google) {
-    return { format: "wav", model: google.speech(modelId), voice };
+    return { model: google.speech(modelId), voice };
   }
 
   if (model === speechModels.openai) {
-    return { format: "opus", model: openai.speech(modelId), voice: "marin" };
+    return { model: openai.speech(modelId), voice: "marin" };
   }
 
   throw new Error("Unsupported speech model");
+}
+
+/**
+ * Generates WAV through either AI SDK provider. WAV adds only a small header to
+ * the PCM samples while keeping the intermediate self-describing and avoiding
+ * provider-specific parsing in the task layer.
+ */
+export async function generateSpeechWithProvider({
+  instructions,
+  model,
+  text,
+  voice,
+}: {
+  instructions?: string;
+  model: SpeechModelName;
+  text: string;
+  voice: TTSVoice;
+}): Promise<Uint8Array> {
+  const provider = getSpeechProvider({ model, voice });
+  const speechInstructions = getSpeechInstructions({ instructions, model });
+
+  const { audio } = await generateSpeech({
+    ...(speechInstructions ? { instructions: speechInstructions } : {}),
+    model: provider.model,
+    outputFormat: "wav",
+    text,
+    voice: provider.voice,
+  });
+
+  return audio.uint8Array;
 }
