@@ -3,7 +3,7 @@ import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
 import { aggregateScoreByPeriod } from "@zoonk/utils/aggregation";
 import { formatLabel } from "@zoonk/utils/chart";
-import { type HistoryPeriod, calculateDateRanges } from "@zoonk/utils/date-ranges";
+import { type HistoryPeriod, calculateFullPeriodDateRanges } from "@zoonk/utils/date-ranges";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
@@ -136,7 +136,7 @@ const cachedGetScoreHistory = cache(
     }
 
     const userId = session.user.id;
-    const { current, previous } = calculateDateRanges(period, offset);
+    const { current, previous } = calculateFullPeriodDateRanges({ offset, period });
 
     const [currentResult, previousResult] = await Promise.all([
       fetchDailyData(userId, current.start, current.end),
