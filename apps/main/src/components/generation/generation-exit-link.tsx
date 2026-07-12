@@ -1,22 +1,33 @@
 import { type Route } from "next";
 import { GenerationShortcutLink } from "./generation-shortcut-link";
 
+const generationExitLinkWidths = { content: "w-fit max-w-full self-start", full: "w-full" };
+
+type GenerationExitLinkWidth = keyof typeof generationExitLinkWidths;
+
 /**
- * Gives learners a quiet way out of generated-content waiting states. Keeping
- * this wrapper small lets generation screens opt into keyboard shortcuts
- * without duplicating button styling at each call site.
+ * Gives learners a quiet way out of generated-content waiting states. The
+ * width variant keeps page-level exit actions compact while preserving the
+ * full-width action layout used by empty states.
  */
 export function GenerationExitLink<Href extends string>({
   children,
   href,
   shortcut,
+  width = "full",
 }: {
   children: React.ReactNode;
   href: Route<Href>;
   shortcut?: "Esc";
+  width?: GenerationExitLinkWidth;
 }) {
   return (
-    <GenerationShortcutLink href={href} prefetch shortcut={shortcut}>
+    <GenerationShortcutLink
+      className={generationExitLinkWidths[width]}
+      href={href}
+      prefetch
+      shortcut={shortcut}
+    >
       {children}
     </GenerationShortcutLink>
   );
