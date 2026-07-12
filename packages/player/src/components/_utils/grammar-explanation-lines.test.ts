@@ -17,6 +17,17 @@ describe(getGrammarExplanationSentenceLines, () => {
       "This matters!",
     ]);
   });
+
+  it("does not split at punctuation inside inline code", () => {
+    expect(
+      getGrammarExplanationSentenceLines(
+        "Para fazer perguntas de sim ou não no passado, use `Did` + sujeito + verbo na forma base. O passado já está indicado por `Did`, então não use o verbo principal no passado: diga `Did she go?`, e não `Did she went?`.",
+      ),
+    ).toStrictEqual([
+      "Para fazer perguntas de sim ou não no passado, use `Did` + sujeito + verbo na forma base.",
+      "O passado já está indicado por `Did`, então não use o verbo principal no passado: diga `Did she go?`, e não `Did she went?`.",
+    ]);
+  });
 });
 
 describe(isInitialGrammarExplanationStep, () => {
