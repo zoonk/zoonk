@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   calculateDateRanges,
+  calculateFullPeriodDateRanges,
   formatPeriodLabel,
   getDefaultStartDate,
   validatePeriod,
@@ -159,6 +160,22 @@ describe(calculateDateRanges, () => {
     expect(ranges.current.end).toStrictEqual(eod(2026, 11, 31));
     expect(ranges.previous.start).toStrictEqual(new Date(0));
     expect(ranges.previous.end).toStrictEqual(new Date(0));
+
+    vi.useRealTimers();
+  });
+});
+
+describe(calculateFullPeriodDateRanges, () => {
+  it("returns the full previous month for an active month", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(Date.UTC(2026, 2, 15)));
+
+    const ranges = calculateFullPeriodDateRanges({ offset: 0, period: "month" });
+
+    expect(ranges.current.start).toStrictEqual(new Date(Date.UTC(2026, 2, 1)));
+    expect(ranges.current.end).toStrictEqual(eod(2026, 2, 31));
+    expect(ranges.previous.start).toStrictEqual(new Date(Date.UTC(2026, 1, 1)));
+    expect(ranges.previous.end).toStrictEqual(eod(2026, 1, 28));
 
     vi.useRealTimers();
   });

@@ -2,7 +2,7 @@ import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { createSafeDate, createSameWeekDates } from "@zoonk/testing/fixtures/dates";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { getScoreHistory } from "./get-score-history";
 
 describe("unauthenticated users", () => {
@@ -13,6 +13,10 @@ describe("unauthenticated users", () => {
 });
 
 describe("authenticated users", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("returns null when user has no DailyProgress records", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
@@ -101,37 +105,51 @@ describe("authenticated users", () => {
       expect(result?.average).toBe(85);
     });
 
-    it("calculates comparison with previous month", async () => {
+    it("compares with the same full previous month shown by period navigation", async () => {
       const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
-      const currentMonth = createSafeDate(0);
-      const lastMonth = createSafeDate(1, 14);
+      vi.useFakeTimers({ toFake: ["Date"] });
+      vi.setSystemTime(new Date("2026-03-15T12:00:00.000Z"));
+
+      const currentMonth = new Date("2026-03-15T00:00:00.000Z");
+      const previousMonthFirstDay = new Date("2026-02-15T00:00:00.000Z");
+      const previousMonthSecondDay = new Date("2026-02-16T00:00:00.000Z");
 
       await prisma.dailyProgress.createMany({
         data: [
           {
-            correctAnswers: 9,
+            correctAnswers: 3,
             date: currentMonth,
             dayOfWeek: currentMonth.getDay(),
             incorrectAnswers: 1,
             userId: user.id,
           },
           {
-            correctAnswers: 7,
-            date: lastMonth,
-            dayOfWeek: lastMonth.getDay(),
+            correctAnswers: 1,
+            date: previousMonthFirstDay,
+            dayOfWeek: previousMonthFirstDay.getDay(),
             incorrectAnswers: 3,
+            userId: user.id,
+          },
+          {
+            correctAnswers: 3,
+            date: previousMonthSecondDay,
+            dayOfWeek: previousMonthSecondDay.getDay(),
+            incorrectAnswers: 1,
             userId: user.id,
           },
         ],
       });
 
-      const result = await getScoreHistory({ headers, period: "month" });
+      const [currentResult, previousResult] = await Promise.all([
+        getScoreHistory({ headers, period: "month" }),
+        getScoreHistory({ headers, offset: 1, period: "month" }),
+      ]);
 
-      expect(result).not.toBeNull();
-      expect(result?.average).toBe(90);
-      expect(result?.previousAverage).toBe(70);
+      expect(currentResult?.average).toBe(75);
+      expect(previousResult?.average).toBe(50);
+      expect(currentResult?.previousAverage).toBe(previousResult?.average);
     });
 
     it("navigates to previous month with offset", async () => {

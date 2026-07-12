@@ -2,7 +2,7 @@ import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { createSafeDate, createSameWeekDates } from "@zoonk/testing/fixtures/dates";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { getEnergyHistory } from "./get-energy-history";
 
 describe("unauthenticated users", () => {
@@ -13,6 +13,10 @@ describe("unauthenticated users", () => {
 });
 
 describe("authenticated users", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("returns null when user has no DailyProgress records", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
@@ -94,30 +98,48 @@ describe("authenticated users", () => {
       expect(result?.currentEnergy).toBe(46);
     });
 
-    it("calculates comparison with previous month", async () => {
+    it("compares with the same full previous month shown by period navigation", async () => {
       const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
-      const currentMonth = createSafeDate(0);
-      const lastMonth = createSafeDate(1, 14);
+      vi.useFakeTimers({ toFake: ["Date"] });
+      vi.setSystemTime(new Date("2026-03-15T12:00:00.000Z"));
+
+      const currentMonth = new Date("2026-03-15T00:00:00.000Z");
+      const previousMonthFirstDay = new Date("2026-02-15T00:00:00.000Z");
+      const previousMonthSecondDay = new Date("2026-02-16T00:00:00.000Z");
 
       await prisma.dailyProgress.createMany({
         data: [
           {
             date: currentMonth,
             dayOfWeek: currentMonth.getDay(),
-            energyAtEnd: 80,
+            energyAtEnd: 97.8,
             userId: user.id,
           },
-          { date: lastMonth, dayOfWeek: lastMonth.getDay(), energyAtEnd: 60, userId: user.id },
+          {
+            date: previousMonthFirstDay,
+            dayOfWeek: previousMonthFirstDay.getDay(),
+            energyAtEnd: 24,
+            userId: user.id,
+          },
+          {
+            date: previousMonthSecondDay,
+            dayOfWeek: previousMonthSecondDay.getDay(),
+            energyAtEnd: 99.6,
+            userId: user.id,
+          },
         ],
       });
 
-      const result = await getEnergyHistory({ headers, period: "month" });
+      const [currentResult, previousResult] = await Promise.all([
+        getEnergyHistory({ headers, period: "month" }),
+        getEnergyHistory({ headers, offset: 1, period: "month" }),
+      ]);
 
-      expect(result).not.toBeNull();
-      expect(result?.average).toBe(80);
-      expect(result?.previousAverage).toBe(60);
+      expect(currentResult?.average).toBe(97.8);
+      expect(previousResult?.average).toBe(61.8);
+      expect(currentResult?.previousAverage).toBe(previousResult?.average);
     });
 
     it("navigates to previous month with offset", async () => {

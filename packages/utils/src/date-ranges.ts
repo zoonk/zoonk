@@ -98,9 +98,11 @@ function getYearDateRanges(now: Date, offset: number): DateRanges {
   };
 }
 
-function getAllDateRanges(): DateRanges {
-  const now = new Date();
-
+/**
+ * Keeps the all-time range anchored to the same request timestamp used by the
+ * other calendar range calculations.
+ */
+function getAllDateRanges(now: Date): DateRanges {
   return {
     current: {
       end: endOfDay(new Date(Date.UTC(now.getUTCFullYear(), DECEMBER_INDEX, LAST_DAY_OF_DECEMBER))),
@@ -136,14 +138,54 @@ function clampPreviousEnd(ranges: DateRanges, now: Date): DateRanges {
   };
 }
 
-export function calculateDateRanges(period: HistoryPeriod, offset: number): DateRanges {
+/**
+ * Uses one timestamp for both full and period-to-date ranges so a request at a
+ * UTC calendar boundary cannot calculate its current and previous ranges from
+ * different months or years.
+ */
+function getFullPeriodDateRanges({
+  now,
+  offset,
+  period,
+}: {
+  now: Date;
+  offset: number;
+  period: HistoryPeriod;
+}): DateRanges {
   if (period === "all") {
-    return getAllDateRanges();
+    return getAllDateRanges(now);
   }
 
+  return getRangesForPeriod(period, now, offset);
+}
+
+/**
+ * Returns complete calendar periods so an average can use the same previous
+ * range that users see when they navigate back in a history chart.
+ */
+export function calculateFullPeriodDateRanges({
+  offset,
+  period,
+}: {
+  offset: number;
+  period: HistoryPeriod;
+}): DateRanges {
+  return getFullPeriodDateRanges({ now: new Date(), offset, period });
+}
+
+/**
+ * Keeps cumulative metric comparisons fair while a calendar period is still
+ * in progress by limiting the previous range to the same elapsed duration.
+ */
+export function calculateDateRanges(period: HistoryPeriod, offset: number): DateRanges {
   const now = new Date();
-  const ranges = getRangesForPeriod(period, now, offset);
-  return offset === 0 ? clampPreviousEnd(ranges, now) : ranges;
+  const ranges = getFullPeriodDateRanges({ now, offset, period });
+
+  if (period === "all" || offset !== 0) {
+    return ranges;
+  }
+
+  return clampPreviousEnd(ranges, now);
 }
 
 export function getDefaultStartDate(startDateIso?: string): Date {
