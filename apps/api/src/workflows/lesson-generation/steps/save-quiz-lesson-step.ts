@@ -1,6 +1,6 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
-import { prisma } from "@zoonk/db";
+import { replaceLessonSteps } from "./_utils/replace-lesson-steps";
 import {
   type QuizQuestionWithUrls,
   saveQuizLessonContent,
@@ -23,8 +23,10 @@ export async function saveQuizLessonStep({
   await using stream = createStepStream<LessonStepName>();
   await stream.status({ status: "started", step: "saveQuizLesson" });
 
-  await prisma.step.deleteMany({ where: { lessonId: context.id } });
-  await saveQuizLessonContent({ context, questions });
+  await replaceLessonSteps({
+    lessonId: context.id,
+    saveSteps: (transaction) => saveQuizLessonContent({ context, questions, transaction }),
+  });
 
   await stream.status({ status: "completed", step: "saveQuizLesson" });
 }

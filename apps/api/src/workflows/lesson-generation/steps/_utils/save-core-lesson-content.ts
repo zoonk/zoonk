@@ -1,7 +1,7 @@
 import { type QuizQuestion } from "@zoonk/ai/tasks/lessons/core/quiz";
 import { assertStepContent } from "@zoonk/core/steps/contract/content";
 import { type StepImage } from "@zoonk/core/steps/contract/image";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient } from "@zoonk/db";
 import { type LessonContext } from "../get-lesson-step";
 import { type GeneratedLessonContent, type StaticLessonStep } from "./generated-lesson-content";
 import { type StepRecord, addOptionIds } from "./save-lesson-content-helpers";
@@ -37,14 +37,16 @@ export async function saveStaticLessonContent({
   context,
   images,
   steps,
+  transaction,
 }: {
   context: LessonContext;
   images?: StepImage[];
   steps: StaticLessonStep[];
+  transaction: TransactionClient;
 }): Promise<void> {
   assertImageCount({ images, stepCount: steps.length });
 
-  await prisma.step.createMany({
+  await transaction.step.createMany({
     data: steps.map((step, position) => {
       const image = getOptionalStepImage(images, position);
 
@@ -69,10 +71,12 @@ export async function savePracticeLessonContent({
   content,
   context,
   images,
+  transaction,
 }: {
   content: Extract<GeneratedLessonContent, { kind: "practice" }>;
   context: LessonContext;
   images?: StepImage[];
+  transaction: TransactionClient;
 }): Promise<void> {
   assertImageCount({ images, stepCount: content.steps.length });
 
@@ -93,7 +97,7 @@ export async function savePracticeLessonContent({
     };
   });
 
-  await prisma.step.createMany({ data: questionSteps });
+  await transaction.step.createMany({ data: questionSteps });
 }
 
 /**
@@ -102,11 +106,13 @@ export async function savePracticeLessonContent({
 export async function saveQuizLessonContent({
   context,
   questions,
+  transaction,
 }: {
   context: LessonContext;
   questions: QuizQuestionWithUrls[];
+  transaction: TransactionClient;
 }): Promise<void> {
-  await prisma.step.createMany({
+  await transaction.step.createMany({
     data: questions.map((question, position) => ({
       content: buildQuizStepContent(question),
       isPublished: true,

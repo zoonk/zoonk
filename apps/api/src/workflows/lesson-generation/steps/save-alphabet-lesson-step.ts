@@ -1,8 +1,8 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { assertStepContent } from "@zoonk/core/steps/contract/content";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
-import { prisma } from "@zoonk/db";
 import { type AlphabetLessonContent } from "./_utils/generated-lesson-content";
+import { replaceLessonSteps } from "./_utils/replace-lesson-steps";
 import { type LessonContext } from "./get-lesson-step";
 
 const MAX_MATCHING_PAIRS = 8;
@@ -132,18 +132,21 @@ export async function saveAlphabetLessonStep({
   await using stream = createStepStream<LessonStepName>();
   await stream.status({ status: "started", step: "saveAlphabetLesson" });
 
-  await prisma.step.deleteMany({ where: { lessonId: context.id } });
-
   const steps = buildAlphabetLessonSteps({ audioUrls, content });
 
-  await prisma.step.createMany({
-    data: steps.map((step, position) => ({
-      content: step.content,
-      isPublished: true,
-      kind: step.kind,
-      lessonId: context.id,
-      position,
-    })),
+  await replaceLessonSteps({
+    lessonId: context.id,
+    saveSteps: async (transaction) => {
+      await transaction.step.createMany({
+        data: steps.map((step, position) => ({
+          content: step.content,
+          isPublished: true,
+          kind: step.kind,
+          lessonId: context.id,
+          position,
+        })),
+      });
+    },
   });
 
   await stream.status({ status: "completed", step: "saveAlphabetLesson" });

@@ -7,6 +7,8 @@ import { sanitizeDistractors } from "@zoonk/utils/distractors";
 import { normalizePunctuation } from "@zoonk/utils/string";
 import { collectVocabularyTargetWords } from "./_utils/collect-vocabulary-target-words";
 import { fetchExistingWordCasing } from "./_utils/fetch-existing-word-casing";
+import { replaceLessonSteps } from "./_utils/replace-lesson-steps";
+import { type StepRecord } from "./_utils/save-lesson-content-helpers";
 import { upsertWordWithPronunciation } from "./_utils/upsert-word-with-pronunciation";
 import { type LessonContext } from "./get-lesson-step";
 
@@ -48,8 +50,6 @@ export async function saveVocabularyLessonStep({
   await using stream = createStepStream<LessonStepName>();
   await stream.status({ status: "started", step: "saveVocabularyLesson" });
 
-  await prisma.step.deleteMany({ where: { lessonId: context.id } });
-
   const allTargetWords = collectVocabularyTargetWords({ distractors, words });
 
   const existingCasing = await fetchExistingWordCasing({
@@ -61,7 +61,7 @@ export async function saveVocabularyLessonStep({
   const canonicalWords = new Set(words.map((word) => word.word));
   const distractorWords = allTargetWords.filter((word) => !canonicalWords.has(word));
 
-  await Promise.all(
+  const wordSteps = await Promise.all(
     words.map((word, position) =>
       saveOneVocabularyWord({
         context,
@@ -96,6 +96,13 @@ export async function saveVocabularyLessonStep({
     }),
   );
 
+  await replaceLessonSteps({
+    lessonId: context.id,
+    saveSteps: async (transaction) => {
+      await transaction.step.createMany({ data: wordSteps });
+    },
+  });
+
   await stream.status({ status: "completed", step: "saveVocabularyLesson" });
 }
 
@@ -116,7 +123,7 @@ async function saveOneVocabularyWord(params: {
   userLanguage: string;
   word: VocabularyWord;
   wordAudioUrls: Record<string, string>;
-}): Promise<void> {
+}): Promise<StepRecord> {
   const dbWord = params.existingCasing[params.word.word.toLowerCase()] ?? params.word.word;
   const romanization = params.romanizations[params.word.word] ?? null;
 
@@ -153,15 +160,13 @@ async function saveOneVocabularyWord(params: {
     where: { chapterWordSource: { sourceLessonId: params.context.id, wordId } },
   });
 
-  await prisma.step.create({
-    data: {
-      chapterWordId: chapterWord.id,
-      content: assertStepContent("vocabulary", {}),
-      isPublished: true,
-      kind: "vocabulary",
-      lessonId: params.context.id,
-      position: params.position,
-      wordId,
-    },
-  });
+  return {
+    chapterWordId: chapterWord.id,
+    content: assertStepContent("vocabulary", {}),
+    isPublished: true,
+    kind: "vocabulary",
+    lessonId: params.context.id,
+    position: params.position,
+    wordId,
+  };
 }

@@ -5,6 +5,8 @@ import { prisma } from "@zoonk/db";
 import { sanitizeDistractors } from "@zoonk/utils/distractors";
 import { emptyToNull, normalizePunctuation } from "@zoonk/utils/string";
 import { type ReadingLessonContent } from "./_utils/generated-lesson-content";
+import { replaceLessonSteps } from "./_utils/replace-lesson-steps";
+import { type StepRecord } from "./_utils/save-lesson-content-helpers";
 import { saveReadingTargetWords } from "./_utils/save-reading-target-words";
 import { type WordMetadataEntry } from "./generate-sentence-word-metadata-step";
 import { type LessonContext } from "./get-lesson-step";
@@ -45,36 +47,42 @@ export async function saveReadingLessonStep(params: {
   await using stream = createStepStream<LessonStepName>();
   await stream.status({ status: "started", step: "saveReadingLesson" });
 
-  await prisma.step.deleteMany({ where: { lessonId: params.context.id } });
-
-  await Promise.all(
-    params.sentences.map((readingSentence, position) =>
-      saveOneSentence({
-        context: params.context,
-        distractors: params.distractors,
-        organizationId,
-        position,
-        readingSentence,
-        sentenceAudioUrls: params.sentenceAudioUrls,
-        sentenceRomanizations: params.sentenceRomanizations,
-        targetLanguage,
-        translationDistractors: params.translationDistractors,
-        userLanguage: params.context.language,
-      }),
+  const [sentenceSteps] = await Promise.all([
+    Promise.all(
+      params.sentences.map((readingSentence, position) =>
+        saveOneSentence({
+          context: params.context,
+          distractors: params.distractors,
+          organizationId,
+          position,
+          readingSentence,
+          sentenceAudioUrls: params.sentenceAudioUrls,
+          sentenceRomanizations: params.sentenceRomanizations,
+          targetLanguage,
+          translationDistractors: params.translationDistractors,
+          userLanguage: params.context.language,
+        }),
+      ),
     ),
-  );
+    saveReadingTargetWords({
+      chapterId: params.context.chapterId,
+      distractors: params.distractors,
+      organizationId,
+      pronunciations: params.pronunciations,
+      sentences: params.sentences,
+      sourceLessonId: params.context.id,
+      targetLanguage,
+      userLanguage: params.context.language,
+      wordAudioUrls: params.wordAudioUrls,
+      wordMetadata: params.wordMetadata,
+    }),
+  ]);
 
-  await saveReadingTargetWords({
-    chapterId: params.context.chapterId,
-    distractors: params.distractors,
-    organizationId,
-    pronunciations: params.pronunciations,
-    sentences: params.sentences,
-    sourceLessonId: params.context.id,
-    targetLanguage,
-    userLanguage: params.context.language,
-    wordAudioUrls: params.wordAudioUrls,
-    wordMetadata: params.wordMetadata,
+  await replaceLessonSteps({
+    lessonId: params.context.id,
+    saveSteps: async (transaction) => {
+      await transaction.step.createMany({ data: sentenceSteps });
+    },
   });
 
   await stream.status({ status: "completed", step: "saveReadingLesson" });
@@ -96,7 +104,7 @@ async function saveOneSentence(params: {
   targetLanguage: string;
   translationDistractors: Record<string, string[]>;
   userLanguage: string;
-}): Promise<void> {
+}): Promise<StepRecord> {
   const sentence = normalizePunctuation(params.readingSentence.sentence);
   const translation = normalizePunctuation(params.readingSentence.translation);
 
@@ -153,15 +161,13 @@ async function saveOneSentence(params: {
     where: { chapterSentenceSource: { sentenceId: record.id, sourceLessonId: params.context.id } },
   });
 
-  await prisma.step.create({
-    data: {
-      chapterSentenceId: chapterSentence.id,
-      content: assertStepContent("reading", {}),
-      isPublished: true,
-      kind: "reading",
-      lessonId: params.context.id,
-      position: params.position,
-      sentenceId: record.id,
-    },
-  });
+  return {
+    chapterSentenceId: chapterSentence.id,
+    content: assertStepContent("reading", {}),
+    isPublished: true,
+    kind: "reading",
+    lessonId: params.context.id,
+    position: params.position,
+    sentenceId: record.id,
+  };
 }
