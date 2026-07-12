@@ -3,35 +3,11 @@ import { type PriceInfo } from "@zoonk/utils/currency";
 type PlanPrices = { monthlyPrice: PriceInfo | null; yearlyPrice: PriceInfo | null };
 
 /**
- * The yearly tab needs one honest savings claim even though each paid tier has
- * its own Stripe prices. Showing the largest proven same-currency discount
- * lets the tab stay compact without implying savings when price data is
- * missing, mismatched, or not actually discounted.
+ * The single Plus offer can make a yearly-savings claim only when Stripe proves
+ * that its monthly and yearly prices use the same currency and the annual total
+ * is genuinely lower. Missing or incomparable prices produce no claim.
  */
-export function getLargestYearlySavings(plans: PlanPrices[]): PriceInfo | null {
-  const savings = plans
-    .map((plan) => getYearlySavings(plan))
-    .filter((yearlySavings) => isPriceInfo(yearlySavings));
-
-  const displayCurrency = savings[0]?.currency;
-
-  if (!displayCurrency) {
-    return null;
-  }
-
-  const comparableSavings = savings.filter(
-    (yearlySavings) => yearlySavings.currency === displayCurrency,
-  );
-
-  return comparableSavings.toSorted(compareSavingsDescending)[0] ?? null;
-}
-
-/**
- * Stripe can return fallback prices in a different currency than the preferred
- * locale price. Comparing different currencies would create a fake savings
- * amount, so this only returns a discount when both prices share a currency.
- */
-function getYearlySavings({ monthlyPrice, yearlyPrice }: PlanPrices): PriceInfo | null {
+export function getYearlySavings({ monthlyPrice, yearlyPrice }: PlanPrices): PriceInfo | null {
   if (!monthlyPrice || !yearlyPrice) {
     return null;
   }
@@ -47,20 +23,4 @@ function getYearlySavings({ monthlyPrice, yearlyPrice }: PlanPrices): PriceInfo 
   }
 
   return { amount: savedAmount, currency: yearlyPrice.currency };
-}
-
-/**
- * This type guard keeps the public helper free to use nullable intermediate
- * results while still returning a concrete PriceInfo object to the component.
- */
-function isPriceInfo(value: PriceInfo | null): value is PriceInfo {
-  return value !== null;
-}
-
-/**
- * Sorting by amount puts the strongest annual-savings claim first, which is
- * the number shown in the compact yearly-tab badge.
- */
-function compareSavingsDescending(a: PriceInfo, b: PriceInfo): number {
-  return b.amount - a.amount;
 }

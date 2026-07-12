@@ -6,6 +6,7 @@ import { assertAdmin } from "@/lib/admin-guard";
 import { type Subscription, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
+import { type SubscriptionPlanName, isSubscriptionPlanName } from "@zoonk/utils/subscription";
 import { revalidatePath } from "next/cache";
 
 export async function changePlanAction(formData: FormData) {
@@ -14,7 +15,7 @@ export async function changePlanAction(formData: FormData) {
   const userId = parseFormField(formData, "userId");
   const plan = parseFormField(formData, "plan");
 
-  if (!userId || !plan) {
+  if (!(userId && plan && isSubscriptionPlanName(plan))) {
     throw new Error("Invalid form data");
   }
 
@@ -47,7 +48,7 @@ async function saveManualPlanChange({
   userId,
 }: {
   existing: Subscription | null;
-  plan: string;
+  plan: SubscriptionPlanName;
   userId: string;
 }) {
   if (plan === "free") {
