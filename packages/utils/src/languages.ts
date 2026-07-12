@@ -82,6 +82,86 @@ export const TTS_SUPPORTED_LANGUAGE_CODES = [
 
 export type TTSSupportedLanguageCode = (typeof TTS_SUPPORTED_LANGUAGE_CODES)[number];
 
+/**
+ * ISO 639-1 codes supported by OpenAI TTS. OpenAI documents its TTS language
+ * support as following Whisper, while Gemini covers the broader course list.
+ * Source: https://developers.openai.com/api/docs/guides/text-to-speech#supported-languages
+ */
+export const OPENAI_TTS_SUPPORTED_LANGUAGE_CODES = [
+  "af",
+  "ar",
+  "hy",
+  "az",
+  "be",
+  "bs",
+  "bg",
+  "ca",
+  "zh",
+  "hr",
+  "cs",
+  "da",
+  "nl",
+  "en",
+  "et",
+  "fi",
+  "fr",
+  "gl",
+  "de",
+  "el",
+  "he",
+  "hi",
+  "hu",
+  "is",
+  "id",
+  "it",
+  "ja",
+  "kn",
+  "kk",
+  "ko",
+  "lv",
+  "lt",
+  "mk",
+  "ms",
+  "mr",
+  "mi",
+  "ne",
+  "no",
+  "fa",
+  "pl",
+  "pt",
+  "ro",
+  "ru",
+  "sr",
+  "sk",
+  "sl",
+  "es",
+  "sw",
+  "sv",
+  "tl",
+  "ta",
+  "th",
+  "tr",
+  "uk",
+  "ur",
+  "vi",
+  "cy",
+] as const;
+
+const OPENAI_TTS_SUPPORTED_LANGUAGE_SET: ReadonlySet<string> = new Set(
+  OPENAI_TTS_SUPPORTED_LANGUAGE_CODES,
+);
+
+/**
+ * Distinguishes languages that can safely use OpenAI in the automatic TTS
+ * provider order. Languages outside this list must remain on Gemini so a
+ * fallback never sends unsupported text to OpenAI.
+ */
+export function isOpenAITTSSupportedLanguage(
+  code: unknown,
+): code is (typeof OPENAI_TTS_SUPPORTED_LANGUAGE_CODES)[number] {
+  return typeof code === "string" && OPENAI_TTS_SUPPORTED_LANGUAGE_SET.has(code);
+}
+
 const TTS_SUPPORTED_LANGUAGE_SET: ReadonlySet<string> = new Set(TTS_SUPPORTED_LANGUAGE_CODES);
 
 export function isTTSSupportedLanguage(

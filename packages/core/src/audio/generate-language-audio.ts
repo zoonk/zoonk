@@ -1,6 +1,7 @@
 import "server-only";
 import { type SpeechModelName } from "@zoonk/ai/speech-models";
 import {
+  type LanguageAudioTextType,
   type LanguageAudioUsage,
   generateLanguageAudio as generateAudio,
 } from "@zoonk/ai/tasks/audio";
@@ -14,6 +15,7 @@ export async function generateLanguageAudio({
   model,
   orgSlug,
   text,
+  textType,
   usage,
   voice,
 }: {
@@ -21,6 +23,7 @@ export async function generateLanguageAudio({
   model?: SpeechModelName;
   orgSlug?: string;
   text: string;
+  textType?: LanguageAudioTextType;
   usage?: LanguageAudioUsage;
   voice?: TTSVoice;
 }): Promise<SafeReturn<string>> {
@@ -28,6 +31,7 @@ export async function generateLanguageAudio({
     language,
     ...(model ? { model } : {}),
     text,
+    ...(textType ? { textType } : {}),
     voice,
     ...(usage ? { usage } : {}),
   });

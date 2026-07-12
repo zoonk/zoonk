@@ -58,13 +58,46 @@ describe(generateLanguageAudio, () => {
     });
   });
 
-  it("converts default Gemini WAV to MP3", async () => {
+  it("uses OpenAI for English words", async () => {
+    generateSpeechWithProviderMock.mockResolvedValue(openAIWavAudio);
+    convertWavToMp3Mock.mockResolvedValue(openAIMp3Audio);
+
+    const result = await generateLanguageAudio({ language: "en", text: "fruit" });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toStrictEqual({ audio: openAIMp3Audio, format: "mp3" });
+
+    expect(generateSpeechWithProviderMock).toHaveBeenCalledExactlyOnceWith({
+      model: "openai/gpt-4o-mini-tts",
+      text: "fruit",
+      voice: "Kore",
+    });
+
+    expect(convertWavToMp3Mock).toHaveBeenCalledExactlyOnceWith({
+      audio: openAIWavAudio,
+      model: "openai/gpt-4o-mini-tts",
+    });
+  });
+
+  it("falls back to Gemini when OpenAI fails for English words", async () => {
+    generateSpeechWithProviderMock
+      .mockRejectedValueOnce(new Error("OpenAI unavailable"))
+      .mockResolvedValueOnce(googleWavAudio);
+
+    convertWavToMp3Mock.mockResolvedValue(googleMp3Audio);
+
     const result = await generateLanguageAudio({ language: "en", text: "fruit" });
 
     expect(result.error).toBeNull();
     expect(result.data).toStrictEqual({ audio: googleMp3Audio, format: "mp3" });
 
-    expect(generateSpeechWithProviderMock).toHaveBeenCalledExactlyOnceWith({
+    expect(generateSpeechWithProviderMock).toHaveBeenNthCalledWith(1, {
+      model: "openai/gpt-4o-mini-tts",
+      text: "fruit",
+      voice: "Kore",
+    });
+
+    expect(generateSpeechWithProviderMock).toHaveBeenNthCalledWith(2, {
       model: "google/gemini-2.5-flash-preview-tts",
       text: "fruit",
       voice: "Kore",
@@ -76,34 +109,78 @@ describe(generateLanguageAudio, () => {
     });
   });
 
-  it("falls back to OpenAI WAV when Gemini fails", async () => {
+  it("falls back to Gemini when OpenAI fails for supported non-English sentences", async () => {
+    generateSpeechWithProviderMock
+      .mockRejectedValueOnce(new Error("OpenAI unavailable"))
+      .mockResolvedValueOnce(googleWavAudio);
+
+    convertWavToMp3Mock.mockResolvedValue(googleMp3Audio);
+
+    const result = await generateLanguageAudio({
+      language: "es",
+      text: "La fruta es deliciosa.",
+      textType: "sentence",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toStrictEqual({ audio: googleMp3Audio, format: "mp3" });
+
+    expect(generateSpeechWithProviderMock).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ model: "openai/gpt-4o-mini-tts" }),
+    );
+
+    expect(generateSpeechWithProviderMock).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ model: "google/gemini-2.5-flash-preview-tts" }),
+    );
+  });
+
+  it("falls back to OpenAI when Gemini fails for supported non-English words", async () => {
     generateSpeechWithProviderMock
       .mockRejectedValueOnce(new Error("Gemini unavailable"))
       .mockResolvedValueOnce(openAIWavAudio);
 
     convertWavToMp3Mock.mockResolvedValue(openAIMp3Audio);
 
-    const result = await generateLanguageAudio({ language: "en", text: "fruit" });
+    const result = await generateLanguageAudio({ language: "nl", text: "fruit" });
 
     expect(result.error).toBeNull();
     expect(result.data).toStrictEqual({ audio: openAIMp3Audio, format: "mp3" });
 
-    expect(generateSpeechWithProviderMock).toHaveBeenNthCalledWith(1, {
-      model: "google/gemini-2.5-flash-preview-tts",
-      text: "fruit",
-      voice: "Kore",
+    expect(generateSpeechWithProviderMock).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ model: "google/gemini-2.5-flash-preview-tts" }),
+    );
+
+    expect(generateSpeechWithProviderMock).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ model: "openai/gpt-4o-mini-tts" }),
+    );
+  });
+
+  it("never uses OpenAI for unsupported languages", async () => {
+    generateSpeechWithProviderMock.mockRejectedValue(new Error("Gemini unavailable"));
+
+    const result = await generateLanguageAudio({
+      language: "am",
+      text: "ሰላም ነው።",
+      textType: "sentence",
     });
 
-    expect(generateSpeechWithProviderMock).toHaveBeenNthCalledWith(2, {
-      model: "openai/gpt-4o-mini-tts",
-      text: "fruit",
-      voice: "Kore",
-    });
+    expect(result.data).toBeNull();
+    expect(result.error?.message).toBe("Gemini unavailable");
+    expect(generateSpeechWithProviderMock).toHaveBeenCalledTimes(2);
 
-    expect(convertWavToMp3Mock).toHaveBeenCalledExactlyOnceWith({
-      audio: openAIWavAudio,
-      model: "openai/gpt-4o-mini-tts",
-    });
+    expect(generateSpeechWithProviderMock).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ model: "google/gemini-2.5-flash-preview-tts" }),
+    );
+
+    expect(generateSpeechWithProviderMock).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ model: "google/gemini-2.5-flash-preview-tts" }),
+    );
   });
 
   it("keeps prompt instructions for non-English audio", async () => {
@@ -115,49 +192,49 @@ describe(generateLanguageAudio, () => {
     expect(call?.instructions).toContain("Some words may look like English words");
   });
 
-  it("falls back before conversion when Gemini returns oversized WAV", async () => {
+  it("falls back before conversion when OpenAI returns oversized English WAV", async () => {
     generateSpeechWithProviderMock
       .mockResolvedValueOnce(new Uint8Array(850 * 1024 + 1))
-      .mockResolvedValueOnce(openAIWavAudio);
+      .mockResolvedValueOnce(googleWavAudio);
 
-    convertWavToMp3Mock.mockResolvedValue(openAIMp3Audio);
+    convertWavToMp3Mock.mockResolvedValue(googleMp3Audio);
 
     const result = await generateLanguageAudio({ language: "en", text: "fruit" });
 
     expect(result.error).toBeNull();
-    expect(result.data).toStrictEqual({ audio: openAIMp3Audio, format: "mp3" });
+    expect(result.data).toStrictEqual({ audio: googleMp3Audio, format: "mp3" });
     expect(generateSpeechWithProviderMock).toHaveBeenCalledTimes(2);
 
     expect(convertWavToMp3Mock).toHaveBeenCalledExactlyOnceWith({
-      audio: openAIWavAudio,
-      model: "openai/gpt-4o-mini-tts",
+      audio: googleWavAudio,
+      model: "google/gemini-2.5-flash-preview-tts",
     });
   });
 
-  it("falls back when Gemini returns silent WAV", async () => {
+  it("falls back when OpenAI returns silent English WAV", async () => {
     const silentWavAudio = new Uint8Array([13, 14, 15]);
 
     generateSpeechWithProviderMock
       .mockResolvedValueOnce(silentWavAudio)
-      .mockResolvedValueOnce(openAIWavAudio);
+      .mockResolvedValueOnce(googleWavAudio);
 
     convertWavToMp3Mock
-      .mockRejectedValueOnce(new Error("google returned silent audio"))
-      .mockResolvedValueOnce(openAIMp3Audio);
+      .mockRejectedValueOnce(new Error("openai returned silent audio"))
+      .mockResolvedValueOnce(googleMp3Audio);
 
     const result = await generateLanguageAudio({ language: "en", text: "fruit" });
 
     expect(result.error).toBeNull();
-    expect(result.data).toStrictEqual({ audio: openAIMp3Audio, format: "mp3" });
+    expect(result.data).toStrictEqual({ audio: googleMp3Audio, format: "mp3" });
 
     expect(convertWavToMp3Mock).toHaveBeenNthCalledWith(1, {
       audio: silentWavAudio,
-      model: "google/gemini-2.5-flash-preview-tts",
+      model: "openai/gpt-4o-mini-tts",
     });
 
     expect(convertWavToMp3Mock).toHaveBeenNthCalledWith(2, {
-      audio: openAIWavAudio,
-      model: "openai/gpt-4o-mini-tts",
+      audio: googleWavAudio,
+      model: "google/gemini-2.5-flash-preview-tts",
     });
   });
 

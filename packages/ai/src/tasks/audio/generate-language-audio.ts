@@ -1,6 +1,6 @@
 import "server-only";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { type TTSVoice } from "@zoonk/utils/languages";
+import { type TTSVoice, isOpenAITTSSupportedLanguage } from "@zoonk/utils/languages";
 import { logError } from "@zoonk/utils/logger";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { convertWavToMp3 } from "./convert-wav-to-mp3";
@@ -10,8 +10,6 @@ import { type SpeechModelName, speechModels } from "./speech-models";
 import { generateSpeechWithProvider } from "./speech-provider";
 
 const DEFAULT_VOICE: TTSVoice = "Kore";
-const defaultModel = speechModels.google;
-const fallbackModels = [speechModels.openai] as const;
 const MAX_ATTEMPTS_PER_PROVIDER = 2;
 
 /* oxlint-disable-next-line no-magic-numbers -- 850 KiB fits an 18-second 24 kHz mono WAV. */
@@ -21,6 +19,7 @@ const READ_ALOUD_TEMPLATE =
   "The following text is {{LANGUAGE}}. Speak clearly at a moderate pace suitable for language learners. Enunciate each word precisely; read it aloud in {{LANGUAGE}}.";
 
 export type AudioResult = { audio: Uint8Array; format: "mp3" };
+export type LanguageAudioTextType = "sentence" | "word";
 export type LanguageAudioUsage = "alphabetSymbol";
 
 const usagePrompts = { alphabetSymbol: alphabetSymbolPrompt } satisfies Record<
@@ -77,13 +76,51 @@ function buildInstructions({
 }
 
 /**
- * Tries each selected provider twice because transport retries cannot observe
- * semantic failures discovered only after decoded-signal validation. Tasks
- * without an explicit model alternate Gemini and OpenAI so either provider can
- * recover from the other's malformed, silent, or unavailable output.
+ * Chooses the automatic provider order from language support and content type.
+ * English always prefers OpenAI. Other supported languages prefer OpenAI for
+ * sentences and Gemini for words, while Gemini-only languages never reach
+ * OpenAI.
  */
-function getSpeechModels(model?: SpeechModelName): readonly SpeechModelName[] {
-  const providerOrder = model ? [model] : [defaultModel, ...fallbackModels];
+function getDefaultProviderOrder({
+  languageCode,
+  textType,
+}: {
+  languageCode?: string;
+  textType: LanguageAudioTextType;
+}): readonly SpeechModelName[] {
+  if (languageCode === "en") {
+    return [speechModels.openai, speechModels.google];
+  }
+
+  if (!isOpenAITTSSupportedLanguage(languageCode)) {
+    return [speechModels.google];
+  }
+
+  if (textType === "sentence") {
+    return [speechModels.openai, speechModels.google];
+  }
+
+  return [speechModels.google, speechModels.openai];
+}
+
+/**
+ * Tries every selected provider twice because transport retries cannot observe
+ * semantic failures discovered only after decoded-signal validation. Explicit
+ * model requests keep their existing two attempts for the audio test tool.
+ */
+function getSpeechModels({
+  languageCode,
+  model,
+  textType,
+}: {
+  languageCode?: string;
+  model?: SpeechModelName;
+  textType: LanguageAudioTextType;
+}): readonly SpeechModelName[] {
+  const providerOrder = model
+    ? [model]
+    : getDefaultProviderOrder({ ...(languageCode ? { languageCode } : {}), textType });
+
   return Array.from({ length: MAX_ATTEMPTS_PER_PROVIDER }, () => providerOrder).flat();
 }
 
@@ -177,19 +214,22 @@ async function generateWithFallback({
 }
 
 /**
- * Generates audio for the given text using Gemini TTS as the primary
- * provider and OpenAI TTS as a fallback unless the task requests one model.
+ * Generates audio with a language-aware provider order. Callers only need to
+ * identify sentences because words are the default used by vocabulary and
+ * alphabet generation. An explicit model bypasses automatic provider choice.
  */
 export async function generateLanguageAudio({
   language,
   model,
   text,
+  textType = "word",
   usage,
   voice = DEFAULT_VOICE,
 }: {
   language?: string;
   model?: SpeechModelName;
   text: string;
+  textType?: LanguageAudioTextType;
   usage?: LanguageAudioUsage;
   voice?: TTSVoice;
 }): Promise<SafeReturn<AudioResult>> {
@@ -198,7 +238,11 @@ export async function generateLanguageAudio({
   return safeAsync(() =>
     generateWithFallback({
       ...(instructions ? { instructions } : {}),
-      models: getSpeechModels(model),
+      models: getSpeechModels({
+        ...(language ? { languageCode: language } : {}),
+        ...(model ? { model } : {}),
+        textType,
+      }),
       text,
       voice,
     }),

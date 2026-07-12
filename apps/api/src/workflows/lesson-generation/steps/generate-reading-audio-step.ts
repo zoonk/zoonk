@@ -54,6 +54,7 @@ export async function generateReadingAudioStep({
         language: targetLanguage,
         orgSlug: organization.slug,
         text: entry.sentence,
+        textType: "sentence",
       }),
     ),
   );
