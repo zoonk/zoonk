@@ -87,7 +87,9 @@ export async function GenerateCoursePromptContent({ params }: { params: Promise<
           isLanguageCourse={isLanguageCourse}
           requestId={id}
         />
-        <GenerationExitLink href="/">{t("Back home")}</GenerationExitLink>
+        <GenerationExitLink href="/" width="content">
+          {t("Back home")}
+        </GenerationExitLink>
       </ContainerBody>
     </Container>
   );
