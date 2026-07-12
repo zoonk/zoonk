@@ -1,5 +1,20 @@
 import { describe, expect, it } from "vitest";
-import { getLanguageName, isTTSSupportedLanguage, needsRomanization } from "./languages";
+import {
+  getLanguageName,
+  isOpenAITTSSupportedLanguage,
+  isTTSSupportedLanguage,
+  needsRomanization,
+} from "./languages";
+
+describe(isOpenAITTSSupportedLanguage, () => {
+  it("returns true for a language supported by OpenAI TTS", () => {
+    expect(isOpenAITTSSupportedLanguage("es")).toBe(true);
+  });
+
+  it("returns false for a Gemini-only language", () => {
+    expect(isOpenAITTSSupportedLanguage("am")).toBe(false);
+  });
+});
 
 describe(isTTSSupportedLanguage, () => {
   it("returns true for a valid language code", () => {

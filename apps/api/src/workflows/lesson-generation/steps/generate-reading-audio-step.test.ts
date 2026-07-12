@@ -60,6 +60,7 @@ describe(generateReadingAudioStep, () => {
       language: "ja",
       orgSlug: "ai",
       text: newSentence,
+      textType: "sentence",
     });
   });
 });
