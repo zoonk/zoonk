@@ -1,16 +1,24 @@
 import { getCurrentUserAnalyticsDisabled } from "@/data/users/get-current-user-analytics-disabled";
 import { getStripePrices } from "@zoonk/core/auth/stripe-prices";
 import { getActiveSubscription } from "@zoonk/core/auth/subscription";
+import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { countryToCurrency } from "@zoonk/utils/currency";
+import { TTS_SUPPORTED_LANGUAGE_CODES } from "@zoonk/utils/languages";
 import { getCountryFromAcceptLanguage } from "@zoonk/utils/locale";
-import { SUBSCRIPTION_PLANS, isWebManagedSubscriptionProvider } from "@zoonk/utils/subscription";
+import {
+  PLUS_PLAN,
+  type SubscriptionProvider,
+  isWebManagedSubscriptionProvider,
+} from "@zoonk/utils/subscription";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { headers } from "next/headers";
 import { ManagedSubscription } from "./managed-subscription";
-import { PlanList } from "./plan-list";
+import { PlusPurchase, type PlusViewerState } from "./plus-purchase";
 import { SubscriptionConversionTracker } from "./subscription-conversion-tracker";
+
+const LEARNABLE_LANGUAGE_COUNT = TTS_SUPPORTED_LANGUAGE_CODES.length - 1;
 
 export async function SubscriptionPlans({
   searchParams,
@@ -23,35 +31,121 @@ export async function SubscriptionPlans({
   const format = await getFormatter();
   const stripeCheckoutCompleted = query.stripe_checkout === "complete";
 
-  const countryCode =
-    requestHeaders.get("x-vercel-ip-country") ??
-    getCountryFromAcceptLanguage(requestHeaders.get("accept-language"));
-
+  const countryCode = getBillingCountryCode(requestHeaders);
   const currency = countryToCurrency(countryCode);
+  const lookupKeys = getPlusLookupKeys();
 
-  const lookupKeys: string[] = SUBSCRIPTION_PLANS.flatMap((plan) =>
-    [plan.lookupKey, plan.annualLookupKey].filter((key) => key !== null),
-  );
-
-  const [subscription, priceMap, analyticsDisabled] = await Promise.all([
-    getCurrentSubscription(requestHeaders),
+  const [session, subscription, priceMap, analyticsDisabled] = await Promise.all([
+    getSession(requestHeaders),
+    getCurrentPlusSubscription(requestHeaders),
     getStripePrices(lookupKeys, currency),
     getCurrentUserAnalyticsDisabled(),
   ]);
 
-  const titles: Record<string, string> = {
-    free: t("Free"),
-    max: t("Max"),
-    plus: t("Plus"),
-    pro: t("Pro"),
-  };
-
-  const currentPlan = subscription?.plan ?? null;
-
   const cancelDate = getSubscriptionDate({ date: subscription?.cancelAt ?? null, format });
 
+  const cancelMessage = cancelDate
+    ? t("Your subscription will end on {date}.", { date: cancelDate })
+    : null;
+
+  if (subscription && !isWebManagedSubscriptionProvider(subscription.provider)) {
+    return (
+      <ProviderManagedSubscription
+        analyticsDisabled={analyticsDisabled}
+        provider={subscription.provider}
+        stripeCheckoutCompleted={stripeCheckoutCompleted}
+        subscription={subscription}
+      />
+    );
+  }
+
+  const { monthlyPrice, yearlyPrice } = getPlusPrices(priceMap);
+
+  const viewerState = getPlusViewerState({
+    cancelMessage,
+    isAuthenticated: Boolean(session),
+    isSubscribed: Boolean(subscription),
+  });
+
+  return (
+    <>
+      {session && (
+        <SubscriptionConversionTracker
+          activeSubscriptionId={subscription?.id ?? null}
+          analyticsDisabled={analyticsDisabled}
+          plan={subscription?.plan ?? "free"}
+          stripeCheckoutCompleted={stripeCheckoutCompleted}
+        />
+      )}
+
+      <section
+        aria-label={t("Zoonk Plus benefits and pricing")}
+        className="grid w-full border-y lg:grid-cols-[minmax(0,3fr)_minmax(18rem,2fr)]"
+      >
+        <ul className="divide-y">
+          <li className="grid gap-2 px-1 py-6 sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] sm:gap-8 sm:px-4 sm:py-8">
+            <h2 className="text-lg font-semibold tracking-tight">{t("Know what to learn next")}</h2>
+            <p className="text-muted-foreground leading-relaxed">
+              {t(
+                "Tell Zoonk your goal. AI builds a clear, step-by-step course around what you need to learn.",
+              )}
+            </p>
+          </li>
+
+          <li className="grid gap-2 px-1 py-6 sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] sm:gap-8 sm:px-4 sm:py-8">
+            <h2 className="text-lg font-semibold tracking-tight">
+              {t("Keep learning until you get there")}
+            </h2>
+            <p className="text-muted-foreground leading-relaxed">
+              {t(
+                "Take as many courses and lessons as you need. Everything is included in one subscription.",
+              )}
+            </p>
+          </li>
+
+          <li className="grid gap-2 px-1 py-6 sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] sm:gap-8 sm:px-4 sm:py-8">
+            <h2 className="text-lg font-semibold tracking-tight">{t("Speak a new language")}</h2>
+            <p className="text-muted-foreground leading-relaxed">
+              {t(
+                "Choose from {count, plural, one {# language} other {# languages}} and build the vocabulary, listening, grammar, and pronunciation to use it with confidence.",
+                { count: LEARNABLE_LANGUAGE_COUNT },
+              )}
+            </p>
+          </li>
+        </ul>
+
+        <PlusPurchase
+          monthlyPrice={monthlyPrice}
+          viewerState={viewerState}
+          yearlyPrice={yearlyPrice}
+        />
+      </section>
+    </>
+  );
+}
+
+/**
+ * Provider-owned subscriptions keep the established management view and its
+ * provider-specific dates, links, and support guidance instead of entering the
+ * new Stripe sales flow.
+ */
+async function ProviderManagedSubscription({
+  analyticsDisabled,
+  provider,
+  stripeCheckoutCompleted,
+  subscription,
+}: {
+  analyticsDisabled: boolean;
+  provider: Exclude<SubscriptionProvider, "stripe">;
+  stripeCheckoutCompleted: boolean;
+  subscription: NonNullable<Awaited<ReturnType<typeof getCurrentPlusSubscription>>>;
+}) {
+  const t = await getExtracted();
+  const format = await getFormatter();
+  const cancelDate = getSubscriptionDate({ date: subscription.cancelAt, format });
+
   const periodEndDate = getSubscriptionDate({
-    date: subscription?.cancelAt ? null : (subscription?.periodEnd ?? null),
+    date: subscription.cancelAt ? null : subscription.periodEnd,
     format,
   });
 
@@ -63,79 +157,97 @@ export async function SubscriptionPlans({
     ? t("Current billing period ends on {date}.", { date: periodEndDate })
     : null;
 
-  const activeStripeSubscriptionId = subscription?.provider === "stripe" ? subscription.id : null;
-
-  if (subscription && !isWebManagedSubscriptionProvider(subscription.provider)) {
-    return (
-      <>
-        <SubscriptionConversionTracker
-          activeSubscriptionId={activeStripeSubscriptionId}
-          analyticsDisabled={analyticsDisabled}
-          plan={currentPlan ?? "free"}
-          stripeCheckoutCompleted={stripeCheckoutCompleted}
-        />
-        <ManagedSubscription
-          cancelMessage={cancelMessage}
-          periodMessage={periodMessage}
-          planTitle={titles[subscription.plan] ?? subscription.plan}
-          provider={subscription.provider}
-        />
-      </>
-    );
-  }
-
-  const plans = SUBSCRIPTION_PLANS.map((plan) => {
-    const monthlyPrice = plan.lookupKey ? (priceMap.get(plan.lookupKey) ?? null) : null;
-    const yearlyPrice = plan.annualLookupKey ? (priceMap.get(plan.annualLookupKey) ?? null) : null;
-
-    return {
-      annualLookupKey: plan.annualLookupKey,
-      lookupKey: plan.lookupKey,
-      monthlyPrice,
-      name: plan.name,
-      tier: plan.tier,
-      yearlyPrice,
-    };
-  });
-
-  const descriptions: Record<string, string> = {
-    free: t("First chapter included"),
-    max: t("Personalized lessons, smartest AI"),
-    plus: t("Unlimited lessons"),
-    pro: t("Personalized lessons, fast AI"),
-  };
-
   return (
     <>
       <SubscriptionConversionTracker
-        activeSubscriptionId={activeStripeSubscriptionId}
+        activeSubscriptionId={null}
         analyticsDisabled={analyticsDisabled}
-        plan={currentPlan ?? "free"}
+        plan={subscription.plan}
         stripeCheckoutCompleted={stripeCheckoutCompleted}
       />
-      <PlanList
+      <ManagedSubscription
         cancelMessage={cancelMessage}
-        currentPlan={currentPlan}
-        descriptions={descriptions}
-        plans={plans}
-        titles={titles}
+        periodMessage={periodMessage}
+        planTitle={t("Plus")}
+        provider={provider}
       />
     </>
   );
 }
 
 /**
- * Better Auth still decides which row is currently active. Once we know that
- * row, Prisma can read the extra provider field we added around Better Auth's schema.
+ * Billing uses Vercel's country header when available and falls back to the
+ * request language so guests see the same localized prices as signed-in users.
  */
-async function getCurrentSubscription(requestHeaders: Headers) {
+function getBillingCountryCode(requestHeaders: Headers) {
+  return (
+    requestHeaders.get("x-vercel-ip-country") ??
+    getCountryFromAcceptLanguage(requestHeaders.get("accept-language"))
+  );
+}
+
+/**
+ * Plus is the only purchasable plan, so pricing never needs to fetch or reason
+ * about a second paid option.
+ */
+function getPlusLookupKeys() {
+  return [PLUS_PLAN.lookupKey, PLUS_PLAN.annualLookupKey];
+}
+
+/**
+ * Resolves the two displayed Plus prices without making the client understand
+ * Stripe lookup keys.
+ */
+function getPlusPrices(priceMap: Awaited<ReturnType<typeof getStripePrices>>) {
+  const monthlyPrice = priceMap.get(PLUS_PLAN.lookupKey) ?? null;
+  const yearlyPrice = priceMap.get(PLUS_PLAN.annualLookupKey) ?? null;
+
+  return { monthlyPrice, yearlyPrice };
+}
+
+/**
+ * The public offer needs one explicit state so its client boundary cannot infer
+ * authentication from missing subscription data. Scheduled cancellations stay
+ * separate because they no longer need another cancel action.
+ */
+function getPlusViewerState({
+  cancelMessage,
+  isAuthenticated,
+  isSubscribed,
+}: {
+  cancelMessage: string | null;
+  isAuthenticated: boolean;
+  isSubscribed: boolean;
+}): PlusViewerState {
+  if (isSubscribed && cancelMessage) {
+    return { message: cancelMessage, status: "ending" };
+  }
+
+  if (isSubscribed) {
+    return { status: "active" };
+  }
+
+  if (isAuthenticated) {
+    return { status: "free" };
+  }
+
+  return { status: "guest" };
+}
+
+/**
+ * Better Auth decides which row is currently active. Prisma then loads the
+ * provider only when that row belongs to Plus, the sole paid plan.
+ */
+async function getCurrentPlusSubscription(requestHeaders: Headers) {
   const activeSubscription = await getActiveSubscription(requestHeaders);
 
   if (!activeSubscription) {
     return null;
   }
 
-  return prisma.subscription.findUnique({ where: { id: activeSubscription.id } });
+  return prisma.subscription.findUnique({
+    where: { id: activeSubscription.id, plan: PLUS_PLAN.name },
+  });
 }
 
 /**
@@ -158,30 +270,34 @@ function getSubscriptionDate({
 
 export function SubscriptionPlansSkeleton() {
   return (
-    <div className="flex w-full max-w-2xl flex-col gap-4">
-      <Skeleton className="h-9 w-48" />
-
-      <div className="flex flex-col gap-3">
-        {Array.from({ length: SUBSCRIPTION_PLANS.length }, (_, i) => (
-          <PlanRowSkeleton key={i} />
+    <div
+      aria-hidden="true"
+      className="grid w-full border-y lg:grid-cols-[minmax(0,3fr)_minmax(18rem,2fr)]"
+    >
+      <div className="divide-y">
+        {Array.from({ length: 3 }, (_, index) => (
+          <div
+            className="grid gap-3 px-1 py-6 sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] sm:gap-8 sm:px-4 sm:py-8"
+            key={index}
+          >
+            <Skeleton className="h-5 w-40" />
+            <div className="flex flex-col gap-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+            </div>
+          </div>
         ))}
       </div>
 
-      <Skeleton className="h-9 w-32 sm:self-end" />
-    </div>
-  );
-}
-
-function PlanRowSkeleton() {
-  return (
-    <div className="flex items-center gap-3 rounded-xl border p-4">
-      <div className="flex flex-1 flex-col gap-1">
-        <Skeleton className="h-4 w-20" />
-        <Skeleton className="h-4 w-48" />
+      <div className="bg-muted/40 order-first flex min-h-72 flex-col gap-6 border-b px-5 py-6 sm:px-8 sm:py-8 lg:order-last lg:border-b-0 lg:border-l">
+        <div className="flex justify-between">
+          <Skeleton className="h-5 w-14" />
+          <Skeleton className="h-5 w-28" />
+        </div>
+        <Skeleton className="h-9 w-full rounded-4xl" />
+        <Skeleton className="h-10 w-36" />
+        <Skeleton className="mt-auto h-10 w-full rounded-4xl" />
       </div>
-
-      <Skeleton className="h-4 w-16" />
-      <Skeleton className="size-4 rounded-full" />
     </div>
   );
 }

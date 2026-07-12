@@ -167,7 +167,6 @@ msgstr "Perfil"
 
 #: src/app/(catalog)/_components/user-dropdown-menu.tsx
 #: src/app/(settings)/_components/settings-pills.tsx
-#: src/app/(settings)/subscription/page.tsx
 msgctxt "R_6nsx"
 msgid "Subscription"
 msgstr "Suscripción"
@@ -658,7 +657,6 @@ msgid "We're checking your learning goal. This may take a few seconds."
 msgstr "Estamos revisando tu objetivo de estudio. Esto puede tardar unos segundos."
 
 #: src/app/(catalog)/start/learn/[prompt]/course-start-fallback.tsx
-#: src/app/(settings)/subscription/plan-list.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
 msgstr "Cancelar"
@@ -1318,90 +1316,220 @@ msgid "Contact support"
 msgstr "Contactar con soporte"
 
 #: src/app/(settings)/subscription/page.tsx
-msgctxt "TKk9oj"
-msgid "Compare plans and manage your Zoonk subscription. See pricing, switch plans, or update billing."
-msgstr "Compara planes y gestiona tu suscripción a Zoonk. Consulta precios, cambia de plan o actualiza la facturación."
+msgctxt "vhHDTm"
+msgid "Learn anything with AI. Create as many courses and take as many lessons as you want with Zoonk Plus."
+msgstr "Aprende cualquier cosa con IA. Crea todos los cursos y toma todas las lecciones que quieras con Zoonk Plus."
 
 #: src/app/(settings)/subscription/page.tsx
-msgctxt "NBEnVd"
-msgid "Compare plans and manage your subscription."
-msgstr "Compara planes y gestiona tu suscripción."
+msgctxt "zSNNck"
+msgid "Zoonk Plus: Unlimited courses and lessons"
+msgstr "Zoonk Plus: cursos y lecciones ilimitados"
 
-#: src/app/(settings)/subscription/plan-list.tsx
-msgctxt "PJfdJl"
-msgid "Save up to {amount}"
-msgstr "Ahorra hasta {amount}"
+#: src/app/(settings)/subscription/page.tsx
+msgctxt "hIdQeQ"
+msgid "Zoonk Plus"
+msgstr "Zoonk Plus"
 
-#: src/app/(settings)/subscription/plan-list.tsx
-msgctxt "KAb0Yr"
-msgid "Switch to {plan}"
-msgstr "Cambiar a {plan}"
+#: src/app/(settings)/subscription/page.tsx
+msgctxt "H0FbIJ"
+msgid "Learn anything. It’s all included."
+msgstr "Aprende cualquier cosa. Todo está incluido."
 
-#: src/app/(settings)/subscription/plan-list.tsx
-msgctxt "0Azlrb"
-msgid "Manage"
-msgstr "Gestionar"
+#: src/app/(settings)/subscription/page.tsx
+msgctxt "r3ly6I"
+msgid "Pass the test. Get a better job. Speak a language. Whatever you want to achieve, Plus gives you unlimited courses and lessons to help you get there."
+msgstr "Aprueba el examen. Consigue un trabajo mejor. Habla otro idioma. Sea cual sea tu meta, Plus te ofrece cursos y lecciones ilimitados para ayudarte a alcanzarla."
 
-#: src/app/(settings)/subscription/plan-list.tsx
-msgctxt "_gko4g"
-msgid "Upgrade to {plan}"
-msgstr "Mejorar a {plan}"
+#: src/app/(settings)/subscription/page.tsx
+msgctxt "LUhQqS"
+msgid "Any subject · Unlimited courses and lessons"
+msgstr "Cualquier tema · Cursos y lecciones sin límites"
 
-#: src/app/(settings)/subscription/plan-list.tsx
-msgctxt "wYsv4Z"
-msgid "Monthly"
-msgstr "Mensual"
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "7mu984"
+msgid "a pizza"
+msgstr "una pizza"
 
-#: src/app/(settings)/subscription/plan-list.tsx
-msgctxt "dqD39h"
-msgid "Yearly"
-msgstr "Anual"
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "7zwF6P"
+msgid "a couple of beers"
+msgstr "un par de cervezas"
 
-#: src/app/(settings)/subscription/plan-list.tsx
-msgctxt "s1ZXI0"
-msgid "Unable to update your subscription. Contact us at hello@zoonk.com"
-msgstr "No se pudo actualizar tu suscripción. Escríbenos a contacto@zoonk.com"
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "laL9nz"
+msgid "a toy"
+msgstr "un juguete"
 
-#: src/app/(settings)/subscription/plan-list.tsx
-msgctxt "2EsPdm"
-msgid "/yr"
-msgstr "/año"
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "-YDRpS"
+msgid "a movie ticket"
+msgstr "una entrada de cine"
 
-#: src/app/(settings)/subscription/plan-list.tsx
-msgctxt "0jIMEb"
-msgid "/mo"
-msgstr "/mes"
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "7OCABC"
+msgid "a fancy coffee"
+msgstr "un café sofisticado"
 
-#: src/app/(settings)/subscription/plan-list.tsx
-#: src/app/(settings)/subscription/subscription-plans.tsx
-msgctxt "tf1lIh"
-msgid "Free"
-msgstr "Gratis"
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "W_mEgT"
+msgid "a sad airport sandwich"
+msgstr "un triste sándwich de aeropuerto"
 
-#: src/app/(settings)/subscription/plan-list.tsx
-msgctxt "ZBALng"
-msgid "Current plan"
-msgstr "Plan actual"
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "U4mRWb"
+msgid "a takeaway lunch"
+msgstr "una comida para llevar"
 
-#: src/app/(settings)/subscription/plan-list.tsx
-msgctxt "fF376U"
-msgid "Current"
-msgstr "Actual"
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "oFYJsq"
+msgid "a paperback"
+msgstr "un libro de bolsillo"
 
-#: src/app/(settings)/subscription/subscription-plans.tsx
-msgctxt "kkjl2v"
-msgid "Max"
-msgstr "Max"
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "RrMczR"
+msgid "a houseplant"
+msgstr "una planta de interior"
 
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "VavHK6"
+msgid "a phone case"
+msgstr "una funda para el móvil"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "zou80J"
+msgid "a video game skin"
+msgstr "un aspecto para un videojuego"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "VPo2Kz"
+msgid "a candle you don't need"
+msgstr "una vela que no necesitas"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "ByGaLp"
+msgid "a forgotten subscription"
+msgstr "una suscripción olvidada"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "0nJSUm"
+msgid "socks with tiny avocados"
+msgstr "unos calcetines con aguacates diminutos"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "hys3oO"
+msgid "a planner you'll definitely use"
+msgstr "una agenda que esta vez sí vas a usar"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "Rw82_V"
+msgid "per month"
+msgstr "al mes"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "qxHg3H"
+msgid "per year"
+msgstr "al año"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "h9kFux"
+msgid "Save {amount} every year"
+msgstr "Ahorra {amount} al año"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
 #: src/app/(settings)/subscription/subscription-plans.tsx
 msgctxt "lOdoIb"
 msgid "Plus"
 msgstr "Plus"
 
-#: src/app/(settings)/subscription/subscription-plans.tsx
-msgctxt "R_eOkj"
-msgid "Pro"
-msgstr "Pro"
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "gl_57d"
+msgid "Everything included"
+msgstr "Todo incluido"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "u2XWYU"
+msgid "Billing period"
+msgstr "Periodo de facturación"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "wYsv4Z"
+msgid "Monthly"
+msgstr "Mensual"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "dqD39h"
+msgid "Yearly"
+msgstr "Anual"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "Lxn0Fm"
+msgid "Price shown at checkout"
+msgstr "El precio se muestra al pagar"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "DWdUaF"
+msgid "Investing in your future is cheaper than"
+msgstr "Invertir en tu futuro cuesta menos que"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "5MmaRi"
+msgid "Log in to unlock unlimited learning"
+msgstr "Inicia sesión para estudiar sin límites"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "tuK7B0"
+msgid "Unlock unlimited learning with Zoonk Plus"
+msgstr "Desbloquea el estudio ilimitado con Zoonk Plus"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "nzee-0"
+msgid "Unlock unlimited learning"
+msgstr "Estudia sin límites"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "pTtXdP"
+msgid "No per-course fees. Cancel anytime."
+msgstr "Sin cargos por curso. Cancela cuando quieras."
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "qQDa8p"
+msgid "Unable to start checkout. Contact us at hello@zoonk.com"
+msgstr "No pudimos iniciar el pago. Escríbenos a contacto@zoonk.com"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "3a5wL8"
+msgid "Active"
+msgstr "Activa"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "CrGYez"
+msgid "Subscription ending"
+msgstr "Suscripción por finalizar"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "gHje-q"
+msgid "Plus is active"
+msgstr "Plus está activo"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "mpXxXt"
+msgid "Your access is still active"
+msgstr "Tu acceso sigue activo"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "RpDCa-"
+msgid "Keep moving toward your goals with unlimited courses and lessons."
+msgstr "Sigue avanzando hacia tus metas con cursos y lecciones sin límites."
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "UWVETE"
+msgid "Cancel subscription"
+msgstr "Cancelar suscripción"
+
+#: src/app/(settings)/subscription/plus-purchase.tsx
+msgctxt "kjXmSN"
+msgid "Unable to manage your subscription. Contact us at hello@zoonk.com"
+msgstr "No pudimos gestionar tu suscripción. Escríbenos a contacto@zoonk.com"
 
 #: src/app/(settings)/subscription/subscription-plans.tsx
 msgctxt "9o8O4m"
@@ -1409,29 +1537,44 @@ msgid "Your subscription will end on {date}."
 msgstr "Tu suscripción terminará el {date}."
 
 #: src/app/(settings)/subscription/subscription-plans.tsx
+msgctxt "J9LvW5"
+msgid "Zoonk Plus benefits and pricing"
+msgstr "Ventajas y precios de Zoonk Plus"
+
+#: src/app/(settings)/subscription/subscription-plans.tsx
+msgctxt "77EecF"
+msgid "Know what to learn next"
+msgstr "Ten claro qué aprender después"
+
+#: src/app/(settings)/subscription/subscription-plans.tsx
+msgctxt "i8pqha"
+msgid "Tell Zoonk your goal. AI builds a clear, step-by-step course around what you need to learn."
+msgstr "Cuéntale a Zoonk cuál es tu meta. La IA crea un curso claro y paso a paso basado en lo que necesitas aprender."
+
+#: src/app/(settings)/subscription/subscription-plans.tsx
+msgctxt "TF2txT"
+msgid "Keep learning until you get there"
+msgstr "Sigue estudiando hasta lograrlo"
+
+#: src/app/(settings)/subscription/subscription-plans.tsx
+msgctxt "_IEZtT"
+msgid "Take as many courses and lessons as you need. Everything is included in one subscription."
+msgstr "Haz tantos cursos y lecciones como necesites. Todo está incluido en una sola suscripción."
+
+#: src/app/(settings)/subscription/subscription-plans.tsx
+msgctxt "m7oPjz"
+msgid "Speak a new language"
+msgstr "Habla un idioma nuevo"
+
+#: src/app/(settings)/subscription/subscription-plans.tsx
+msgctxt "TTl6JE"
+msgid "Choose from {count, plural, one {# language} other {# languages}} and build the vocabulary, listening, grammar, and pronunciation to use it with confidence."
+msgstr "Elige entre {count, plural, one {# idioma} other {# idiomas}} y mejora tu vocabulario, escucha, gramática y pronunciación para hablarlo con confianza."
+
+#: src/app/(settings)/subscription/subscription-plans.tsx
 msgctxt "vaN1qz"
 msgid "Current billing period ends on {date}."
 msgstr "El periodo de facturación actual termina el {date}."
-
-#: src/app/(settings)/subscription/subscription-plans.tsx
-msgctxt "EV_gJ6"
-msgid "First chapter included"
-msgstr "Primer capítulo incluido"
-
-#: src/app/(settings)/subscription/subscription-plans.tsx
-msgctxt "mqHNd6"
-msgid "Personalized lessons, smartest AI"
-msgstr "Lecciones personalizadas, IA más inteligente"
-
-#: src/app/(settings)/subscription/subscription-plans.tsx
-msgctxt "SC0MFR"
-msgid "Unlimited lessons"
-msgstr "Lecciones ilimitadas"
-
-#: src/app/(settings)/subscription/subscription-plans.tsx
-msgctxt "eaOADK"
-msgid "Personalized lessons, fast AI"
-msgstr "Lecciones personalizadas, IA rápida"
 
 #: src/app/(settings)/support/page.tsx
 #: src/app/(settings)/support/support-content.tsx

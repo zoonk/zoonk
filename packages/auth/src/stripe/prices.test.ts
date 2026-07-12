@@ -52,15 +52,15 @@ describe(getStripePrices, () => {
     mockList.mockResolvedValue({
       data: [
         { currency: "usd", currency_options: {}, lookup_key: "plus_monthly", unit_amount: 999 },
-        { currency: "usd", currency_options: {}, lookup_key: "pro_monthly", unit_amount: 1999 },
+        { currency: "usd", currency_options: {}, lookup_key: "plus_yearly", unit_amount: 9999 },
       ],
     });
 
-    const result = await getStripePrices(["plus_monthly", "pro_monthly"], "usd");
+    const result = await getStripePrices(["plus_monthly", "plus_yearly"], "usd");
 
     expect(result.size).toBe(2);
     expect(result.get("plus_monthly")?.amount).toBe(999);
-    expect(result.get("pro_monthly")?.amount).toBe(1999);
+    expect(result.get("plus_yearly")?.amount).toBe(9999);
   });
 
   it("skips prices without lookup_key", async () => {

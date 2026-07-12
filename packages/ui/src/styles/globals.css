@@ -65,8 +65,8 @@
   --animate-breathe: breathe 2s ease-in-out infinite;
   --animate-dot-pulse: dot-pulse 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
   --animate-shimmer-text: shimmer-text 3s ease-in-out infinite;
-  --animate-placeholder-cycle: placeholder-cycle 64s both infinite;
   --animate-pulse-scale: pulse-scale 300ms ease-out;
+  --animate-text-cycle: text-cycle 3.2s both;
 }
 
 :root {
@@ -336,17 +336,16 @@
   }
 }
 
-@keyframes placeholder-cycle {
+@keyframes text-cycle {
   0% {
     opacity: 0;
   }
-  0.3125% {
+  6.25% {
     opacity: 1;
   }
-  4.6875% {
+  93.75% {
     opacity: 1;
   }
-  5%,
   100% {
     opacity: 0;
   }

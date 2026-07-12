@@ -22,7 +22,7 @@ test.describe("Settings Navbar", () => {
     await page.goto("/language");
     await page.getByRole("link", { name: /subscription/iu }).click();
 
-    await expect(page.getByRole("heading", { level: 1, name: /subscription/iu })).toBeVisible();
+    await expect(page).toHaveURL(/\/subscription$/u);
   });
 
   test("Language pill navigates to language page", async ({ page }) => {

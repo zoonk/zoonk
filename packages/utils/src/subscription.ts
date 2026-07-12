@@ -1,69 +1,24 @@
-const PLAN_NAMES = ["free", "plus", "pro", "max"] as const;
-type PlanName = (typeof PLAN_NAMES)[number];
-
 const SUBSCRIPTION_PROVIDERS = ["stripe", "google", "apple", "zoonk"] as const;
 export type SubscriptionProvider = (typeof SUBSCRIPTION_PROVIDERS)[number];
 
-const PLAN_LOOKUP_KEYS: Record<Exclude<PlanName, "free">, { monthly: string; yearly: string }> = {
-  max: { monthly: "max_monthly", yearly: "max_yearly" },
-  plus: { monthly: "plus_monthly", yearly: "plus_yearly" },
-  pro: { monthly: "pro_monthly", yearly: "pro_yearly" },
-};
+const FREE_PLAN = { annualLookupKey: null, lookupKey: null, name: "free" } as const;
 
-type SubscriptionPlan = {
-  annualLookupKey: string | null;
-  lookupKey: string | null;
-  name: PlanName;
-  tier: number;
-};
+export const PLUS_PLAN = {
+  annualLookupKey: "plus_yearly",
+  lookupKey: "plus_monthly",
+  name: "plus",
+} as const;
 
-type PaidPlan = { annualLookupKey: string; lookupKey: string; name: PlanName; tier: number };
+export const PAID_PLANS = [PLUS_PLAN] as const;
+export const SUBSCRIPTION_PLANS = [FREE_PLAN, ...PAID_PLANS] as const;
+export type SubscriptionPlanName = (typeof SUBSCRIPTION_PLANS)[number]["name"];
 
-export const FREE_PLAN: SubscriptionPlan = {
-  annualLookupKey: null,
-  lookupKey: null,
-  name: "free",
-  tier: 0,
-};
-
-const HIDDEN_PLANS = new Set(
-  (process.env.HIDDEN_SUBSCRIPTION_PLANS ?? "").split(",").filter(Boolean),
-);
-
-const ALL_PAID_PLANS: readonly PaidPlan[] = [
-  {
-    annualLookupKey: PLAN_LOOKUP_KEYS.plus.yearly,
-    lookupKey: PLAN_LOOKUP_KEYS.plus.monthly,
-    name: "plus",
-    tier: 1,
-  },
-  {
-    annualLookupKey: PLAN_LOOKUP_KEYS.pro.yearly,
-    lookupKey: PLAN_LOOKUP_KEYS.pro.monthly,
-    name: "pro",
-    tier: 2,
-  },
-  {
-    annualLookupKey: PLAN_LOOKUP_KEYS.max.yearly,
-    lookupKey: PLAN_LOOKUP_KEYS.max.monthly,
-    name: "max",
-    tier: 3,
-  },
-];
-
-export const PAID_PLANS: readonly PaidPlan[] = ALL_PAID_PLANS.filter(
-  (plan) => !HIDDEN_PLANS.has(plan.name),
-);
-
-const ALL_SUBSCRIPTION_PLANS: readonly SubscriptionPlan[] = [FREE_PLAN, ...ALL_PAID_PLANS];
-export const SUBSCRIPTION_PLANS: readonly SubscriptionPlan[] = [FREE_PLAN, ...PAID_PLANS];
-
-export function getPlanTier(planName: string | null): number {
-  if (!planName) {
-    return 0;
-  }
-
-  return ALL_SUBSCRIPTION_PLANS.find((plan) => plan.name === planName)?.tier ?? 0;
+/**
+ * Admin plan changes use the same Free and Plus source of truth as checkout so
+ * a crafted form submission cannot create an unsupported subscription plan.
+ */
+export function isSubscriptionPlanName(plan: string): plan is SubscriptionPlanName {
+  return SUBSCRIPTION_PLANS.some((subscriptionPlan) => subscriptionPlan.name === plan);
 }
 
 /**

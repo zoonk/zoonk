@@ -318,7 +318,7 @@ test.describe("Command Palette - Authenticated", () => {
 
     // Verify user sees subscription page
     await expect(
-      authenticatedPage.getByRole("heading", { level: 1, name: /subscription/iu }),
+      authenticatedPage.getByRole("heading", { level: 1, name: /learn anything/iu }),
     ).toBeVisible();
   });
 

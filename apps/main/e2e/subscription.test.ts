@@ -8,7 +8,7 @@ import { expect, test } from "./fixtures";
 type TestSubscriptionProvider = "apple" | "google" | "stripe" | "zoonk";
 
 type StripeSubscriptionActionPath =
-  | "/api/auth/subscription/billing-portal"
+  | "/api/auth/subscription/cancel"
   | "/api/auth/subscription/upgrade";
 
 /**
@@ -114,87 +114,57 @@ async function captureStripeActionRequest({
 }
 
 /**
- * Drive checkout through the visible plan controls because the locale is added
- * by the client-side Better Auth call, not by the server-rendered plan page.
+ * Drive checkout through the single visible Plus action because the locale is
+ * added by the client-side Better Auth call, not by the server-rendered page.
  */
 async function requestPlusCheckout({ page }: { page: Page }) {
   const requestBody = captureStripeActionRequest({ page, path: "/api/auth/subscription/upgrade" });
 
-  await page.getByRole("radio", { name: /^plus\b/iu }).click();
-  await page.getByRole("button", { name: /plus/iu }).click();
+  await page.getByRole("button", { name: /zoonk plus/iu }).click();
 
   return requestBody;
 }
 
 test.describe("Subscription Page - Unauthenticated", () => {
-  test("shows login prompt with link to login page", async ({ page }) => {
+  test("shows the Plus offer and requires login before subscribing", async ({ page }) => {
     await page.goto("/subscription");
-    await expect(page.getByRole("alert").filter({ hasText: /logged in/iu })).toBeVisible();
 
-    const loginLink = page.getByRole("link", { name: /login/iu });
-    await expect(loginLink).toBeVisible();
-    await expect(loginLink).toHaveAttribute("href", "/login");
+    await expect(page.getByRole("heading", { level: 1, name: /learn anything/iu })).toBeVisible();
+
+    await expect(page.getByRole("heading", { name: /know what to learn next/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /speak a new language/iu })).toBeVisible();
+
+    await expect(
+      page.getByRole("heading", { name: /keep learning until you get there/iu }),
+    ).toBeVisible();
+
+    const loginLink = page.getByRole("link", { name: /log in to unlock unlimited learning/iu });
+    await expect(loginLink).toHaveAttribute("href", "/login?next=%2Fsubscription");
+    await expect(page.getByRole("button", { name: /monthly/iu })).toBeVisible();
+    await expect(page.getByRole("button", { name: /yearly/iu })).toBeVisible();
+    await expect(page.getByRole("radio")).toHaveCount(0);
   });
 });
 
 test.describe("Subscription Page - No Subscription", () => {
-  test("displays all four plans as radio options", async ({ authenticatedPage }) => {
+  test("shows one Plus offer with a direct subscribe action", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/subscription");
 
     await expect(
-      authenticatedPage.getByRole("heading", { level: 1, name: /subscription/iu }),
+      authenticatedPage.getByRole("heading", { level: 1, name: /learn anything/iu }),
     ).toBeVisible();
 
-    await expect(authenticatedPage.getByRole("radio", { name: /free/iu })).toBeVisible();
-    await expect(authenticatedPage.getByRole("radio", { name: /plus/iu })).toBeVisible();
-    await expect(authenticatedPage.getByRole("radio", { name: /pro/iu })).toBeVisible();
-    await expect(authenticatedPage.getByRole("radio", { name: /max/iu })).toBeVisible();
-  });
-
-  test("has Free plan selected by default when no subscription", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/subscription");
-
-    await expect(authenticatedPage.getByRole("radio", { name: /free/iu })).toBeChecked();
-    await expect(authenticatedPage.getByLabel(/current plan/iu)).toBeVisible();
-  });
-
-  test("shows monthly/yearly toggle", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/subscription");
-
-    await expect(authenticatedPage.getByRole("tab", { name: /monthly/iu })).toBeVisible();
-    await expect(authenticatedPage.getByRole("tab", { name: /yearly/iu })).toBeVisible();
-  });
-
-  test("hides action button when on free plan with free selected", async ({
-    authenticatedPage,
-  }) => {
-    await authenticatedPage.goto("/subscription");
-
-    await expect(authenticatedPage.getByRole("radio", { name: /free/iu })).toBeChecked();
-    await expect(authenticatedPage.getByRole("button", { name: /manage/iu })).not.toBeVisible();
-  });
-
-  test("shows Upgrade button when selecting a paid plan", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/subscription");
-
-    await authenticatedPage.getByRole("radio", { name: /plus/iu }).click();
-
     await expect(
-      authenticatedPage.getByRole("button", { name: /upgrade to plus/iu }),
+      authenticatedPage.getByRole("button", { name: /unlock unlimited learning/iu }),
     ).toBeVisible();
-  });
 
-  test("changes CTA label when selecting different plans", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/subscription");
+    await expect(authenticatedPage.getByRole("button", { name: /monthly/iu })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
 
-    await authenticatedPage.getByRole("radio", { name: /max/iu }).click();
-    await expect(authenticatedPage.getByRole("button", { name: /upgrade to max/iu })).toBeVisible();
-
-    await authenticatedPage.getByRole("radio", { name: /free/iu }).click();
-
-    await expect(
-      authenticatedPage.getByRole("button", { name: /upgrade to max/iu }),
-    ).not.toBeVisible();
+    await expect(authenticatedPage.getByRole("button", { name: /yearly/iu })).toBeVisible();
+    await expect(authenticatedPage.getByRole("radio")).toHaveCount(0);
   });
 });
 
@@ -248,75 +218,31 @@ test.describe("Subscription Page - Stripe Locale", () => {
 });
 
 test.describe("Subscription Page - With Plus Subscription", () => {
-  test("has current plan selected by default and shows Current badge", async ({
-    browser,
-    baseURL,
-  }) => {
+  test("shows a direct cancellation action", async ({ browser, baseURL }) => {
     const email = await createUserWithSubscription(baseURL!, "plus");
     const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
 
     await page.goto("/subscription");
 
-    await expect(page.getByRole("radio", { name: /plus/iu })).toBeChecked();
-    await expect(page.getByLabel(/current plan/iu)).toBeVisible();
-    await expect(page.getByRole("button", { name: /manage/iu })).toBeVisible();
+    await expect(page.getByText(/plus is active/iu)).toBeVisible();
+    await expect(page.getByRole("button", { name: /cancel subscription/iu })).toBeVisible();
+    await expect(page.getByRole("radio")).toHaveCount(0);
 
     await browserContext.close();
   });
 
-  test("shows Upgrade when selecting a higher plan", async ({ browser, baseURL }) => {
+  test("starts cancellation and shows a loading state", async ({ browser, baseURL }) => {
     const email = await createUserWithSubscription(baseURL!, "plus");
     const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
 
     await page.goto("/subscription");
 
-    await page.getByRole("radio", { name: /pro/iu }).click();
-    await expect(page.getByRole("button", { name: /upgrade to pro/iu })).toBeVisible();
+    const requestBody = captureStripeActionRequest({ page, path: "/api/auth/subscription/cancel" });
 
-    await browserContext.close();
-  });
-
-  test("shows Cancel when selecting Free plan", async ({ browser, baseURL }) => {
-    const email = await createUserWithSubscription(baseURL!, "plus");
-    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
-
-    await page.goto("/subscription");
-
-    await page.getByRole("radio", { name: /free/iu }).click();
-    await expect(page.getByRole("button", { name: /cancel/iu })).toBeVisible();
-
-    await browserContext.close();
-  });
-
-  test("CTA button shows loading state when clicked", async ({ browser, baseURL }) => {
-    const email = await createUserWithSubscription(baseURL!, "plus");
-    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
-
-    await page.goto("/subscription");
-
-    const manageButton = page.getByRole("button", { name: /manage/iu });
-    await manageButton.click();
-    await expect(manageButton).toBeDisabled();
-
-    await browserContext.close();
-  });
-});
-
-test.describe("Subscription Page - With Max Subscription", () => {
-  test("shows Switch to for lower paid plans and Cancel for Free", async ({ browser, baseURL }) => {
-    const email = await createUserWithSubscription(baseURL!, "max");
-    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
-
-    await page.goto("/subscription");
-
-    await expect(page.getByRole("radio", { name: /max/iu })).toBeChecked();
-    await expect(page.getByLabel(/current plan/iu)).toBeVisible();
-
-    await page.getByRole("radio", { name: /plus/iu }).click();
-    await expect(page.getByRole("button", { name: /switch to plus/iu })).toBeVisible();
-
-    await page.getByRole("radio", { name: /free/iu }).click();
-    await expect(page.getByRole("button", { name: /cancel/iu })).toBeVisible();
+    const cancelButton = page.getByRole("button", { name: /cancel subscription/iu });
+    await cancelButton.click();
+    await expect(cancelButton).toBeDisabled();
+    await expect(requestBody).resolves.toMatchObject({ returnUrl: "/subscription" });
 
     await browserContext.close();
   });
@@ -382,6 +308,7 @@ test.describe("Subscription Page - With Cancelled Subscription", () => {
 
     await page.goto("/subscription");
     await expect(page.getByText(/subscription will end on/iu)).toBeVisible();
+    await expect(page.getByRole("button", { name: /cancel subscription/iu })).not.toBeVisible();
 
     await browserContext.close();
   });
