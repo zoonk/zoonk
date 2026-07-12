@@ -3,6 +3,22 @@ import { type LessonKind } from "@zoonk/core/steps/contract/content";
 import { describePlayerStep } from "../../player-step";
 
 const FALLBACK_SENTENCE_PATTERN = /[^.!?。！？]+[.!?。！？]+(?:["')\]”’]+)?|[^.!?。！？]+$/gu;
+const INLINE_CODE_PATTERN = /`[^`]*`/gu;
+const SENTENCE_PUNCTUATION_PATTERN = /[.!?。！？]/gu;
+
+/**
+ * Hides sentence punctuation inside supported inline-code markers before text
+ * is segmented. Grammar explanations often contrast examples such as
+ * `Did she go?` and `Did she went?`; those question marks belong to the code
+ * examples and must not split the markers that the rich-text renderer needs.
+ * Spaces preserve every original index so segments can still slice the source
+ * text without changing any learner-facing content.
+ */
+function getSentenceSegmentationText(text: string) {
+  return text.replaceAll(INLINE_CODE_PATTERN, (inlineCode) =>
+    inlineCode.replaceAll(SENTENCE_PUNCTUATION_PATTERN, " "),
+  );
+}
 
 /**
  * Removes layout-only whitespace from generated prose before each sentence is
@@ -34,9 +50,11 @@ function getSegmenterSentenceLines(text: string): string[] | null {
     return null;
   }
 
+  const segmentationText = getSentenceSegmentationText(text);
+
   return Array.from(
-    new SentenceSegmenter(undefined, { granularity: "sentence" }).segment(text),
-    ({ segment }) => segment,
+    new SentenceSegmenter(undefined, { granularity: "sentence" }).segment(segmentationText),
+    ({ index, segment }) => text.slice(index, index + segment.length),
   );
 }
 
@@ -46,7 +64,10 @@ function getSegmenterSentenceLines(text: string): string[] | null {
  * explanation display, not saved lesson content.
  */
 function getFallbackSentenceLines(text: string) {
-  return text.match(FALLBACK_SENTENCE_PATTERN) ?? [text];
+  const segmentationText = getSentenceSegmentationText(text);
+  const matches = segmentationText.matchAll(FALLBACK_SENTENCE_PATTERN);
+
+  return Array.from(matches, (match) => text.slice(match.index, match.index + match[0].length));
 }
 
 /**
