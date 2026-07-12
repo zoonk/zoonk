@@ -16,6 +16,7 @@ import {
   HomeIcon,
   LayersIcon,
   MessageSquareTextIcon,
+  TrophyIcon,
   Users,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -25,6 +26,7 @@ const menuItems = [
   { icon: HomeIcon, label: "Home", url: "/" },
   { icon: BarChart3Icon, label: "Stats", url: "/stats" },
   { icon: Users, label: "Users", url: "/users" },
+  { icon: TrophyIcon, label: "Leaderboard", url: "/leaderboard" },
   { icon: CreditCardIcon, label: "Subscriptions", url: "/subscriptions" },
   { icon: BookOpen, label: "Courses", url: "/courses" },
   { icon: MessageSquareTextIcon, label: "Course Prompts", url: "/course-prompts" },

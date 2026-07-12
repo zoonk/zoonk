@@ -7,43 +7,20 @@ import { getAvgLessonsPerLearner } from "@/data/stats/get-avg-lessons-per-learne
 import { getCompletionRate } from "@/data/stats/get-completion-rate";
 import { getTotalLearningTime } from "@/data/stats/get-total-learning-time";
 import { formatDuration } from "@/lib/format-duration";
+import { getRollingUtcDateWindowStarts } from "@/lib/rolling-date-windows";
 import { BookOpenIcon, CheckCircleIcon, ClockIcon, LayersIcon, TargetIcon } from "lucide-react";
 import { connection } from "next/server";
 
 const DAYS_7 = 7;
 
-/**
- * Dashboard comparisons use whole UTC dates because the source table stores a
- * date-only learning day instead of a timestamp.
- */
-function startOfUtcToday(now: Date) {
-  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
-}
-
-/**
- * Date math is kept in one helper so the current and previous 7-day windows
- * stay the same length when the dashboard card builds its comparison.
- */
-function addUtcDays({ date, days }: { date: Date; days: number }) {
-  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + days));
-}
-
-/**
- * The current 7-day window includes today and the 6 preceding calendar days;
- * the previous window is the 7 calendar days immediately before that.
- */
-function getActiveLearnerWindows(now: Date) {
-  const today = startOfUtcToday(now);
-  const currentPeriodStart = addUtcDays({ date: today, days: 1 - DAYS_7 });
-  const previousPeriodStart = addUtcDays({ date: currentPeriodStart, days: -DAYS_7 });
-
-  return { currentPeriodStart, previousPeriodStart };
-}
-
 export async function EngagementStats() {
   await connection();
   const now = new Date();
-  const { currentPeriodStart, previousPeriodStart } = getActiveLearnerWindows(now);
+
+  const { currentPeriodStart, previousPeriodStart } = getRollingUtcDateWindowStarts({
+    days: DAYS_7,
+    now,
+  });
 
   const [
     activeLearners,
