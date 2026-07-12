@@ -11,6 +11,7 @@ EVALUATION CRITERIA:
    - Stressed syllable should be marked with CAPITAL letters
    - For multi-syllable words, exactly one syllable should be capitalized
    - For single-syllable words, the entire word may be capitalized
+   - For inputs with multiple independently spoken words or forms, each segment may mark its own stressed syllable
    - Penalize if stress is not indicated at all
    - Do NOT penalize for different but valid stress placements if linguistically acceptable
 
@@ -36,6 +37,14 @@ EVALUATION CRITERIA:
    - All sounds in the word should be represented
    - Silent letters should be appropriately handled (omitted from pronunciation)
    - Penalize if significant sounds are missing from the pronunciation
+
+7. OUTPUT INTEGRITY (CRITICAL):
+   - The value inside the required \`pronunciation\` field must be one concise plain-text pronunciation guide
+   - Every spoken segment in the input must appear exactly once and in the same order
+   - Penalize SEVERELY if the value embeds JSON, arrays, objects, property names, labels, code fences, explanations, translations, or alternative answers
+   - Penalize SEVERELY if the value repeats field names, placeholders, separators, syllables, or other text in a runaway sequence
+   - The guide must be proportionate to the input and must not become a paragraph or long repeated string
+   - A legitimate multi-word expression or separated input still requires one flat string and must NOT be penalized merely for containing multiple spoken segments
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for using different but valid phonetic representations
@@ -388,5 +397,49 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "es-english-go",
     userInput: { targetLanguage: "en", userLanguage: "es", word: "go" },
+  },
+  {
+    expectations: `
+NATIVE LANGUAGE: Portuguese (Brazilian)
+TARGET LANGUAGE: English
+
+WORD: "take — took"
+
+This input contains two English verb forms separated for contrast:
+- Each form must be transcribed exactly once and in the original order
+- The result must remain one flat pronunciation string
+- Each independently spoken form may mark its own stress
+
+OUTPUT INTEGRITY:
+- Penalize SEVERELY if the pronunciation value contains a nested array, object, property name, label, explanation, or alternative answer
+- Penalize SEVERELY if either form, a separator, or placeholder text repeats in a runaway sequence
+- Do not require an exact phonetic spelling; assess whether both forms are recognizable to a Brazilian Portuguese speaker
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-english-take-took",
+    userInput: { targetLanguage: "en", userLanguage: "pt", word: "take — took" },
+  },
+  {
+    expectations: `
+NATIVE LANGUAGE: Spanish (Latin American)
+TARGET LANGUAGE: English
+
+WORD: "wake up"
+
+This is one legitimate multi-word phrasal verb:
+- Both spoken words must be transcribed exactly once and in order
+- The result must remain one concise, flat pronunciation string rather than an array or one object per word
+- The space in the source does not make this multiple vocabulary entries
+
+OUTPUT INTEGRITY:
+- Penalize SEVERELY if the pronunciation value contains nested JSON, property names, labels, explanations, or repeated placeholder text
+- Do not penalize the guide for marking stress in both independently spoken words
+- Do not require an exact phonetic spelling; assess whether the full expression is recognizable to a Latin American Spanish speaker
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "es-english-wake-up",
+    userInput: { targetLanguage: "en", userLanguage: "es", word: "wake up" },
   },
 ];

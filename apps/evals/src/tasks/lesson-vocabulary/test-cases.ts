@@ -64,6 +64,14 @@ EVALUATION CRITERIA:
    NOTE: This does NOT mean penalize for having many words - penalize only when those words are redundant variants of the same concept. Distinct vocabulary items are fine.
    NOTE: Distinct practical choices within a category are NOT over-enumeration. For example, different milk types (whole, skim, almond, oat) are genuinely different menu options a learner needs to know - not redundant variants of "milk."
 
+11. ONE GRAMMATICAL FORM PER ENTRY: Each word-translation pair must represent one independently teachable form or expression. Penalize SEVERELY if:
+   - A field combines a base form with an inflected form, such as an infinitive plus its past-tense form
+   - A field combines singular and plural forms, multiple conjugations, or alternative forms
+   - Multiple forms are joined with a dash, arrow, slash, comma, parentheses, labels, or similar notation
+   - The word uses one form while the translation bundles multiple corresponding forms, or vice versa
+   - A tense- or inflection-focused lesson includes a reference form in addition to the grammatical form named by the lesson focus
+   NOTE: A legitimate multi-word expression, phrasal verb, or article-plus-noun phrase is one vocabulary item and must NOT be penalized merely for containing spaces.
+
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for specific word choices - accept ANY valid vocabulary relevant to the topic
 - Do NOT penalize for not including words you might expect - only penalize for actual errors
@@ -216,6 +224,57 @@ ${SHARED_EXPECTATIONS}
       lessonTitle: "Colores Básicos",
       targetLanguage: "ja",
       userLanguage: "es",
+    },
+  },
+  {
+    expectations: `
+LANGUAGE: Brazilian Portuguese output required (NOT English).
+
+TOPIC: English vocabulary in the simple past for completed travel actions, focused specifically on common irregular verbs used to recount a trip.
+
+FORM REQUIREMENTS - Penalize SEVERELY if:
+- A \`word\` contains both the English base form and simple-past form
+- A \`translation\` contains both the Portuguese infinitive and completed-action form
+- Any entry bundles multiple verb forms with punctuation or labels instead of returning the simple-past form named by the lesson
+- Do NOT penalize a natural multi-word verb expression when the whole phrase is one simple-past vocabulary item
+- Do NOT require any specific verbs; assess whether each selected entry uses one accurate simple-past form
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-english-irregular-past-travel",
+    userInput: {
+      chapterTitle: "Passado Simples em Viagens",
+      lessonDescription:
+        "Formas no passado simples de verbos irregulares comuns para contar ações concluídas durante uma viagem",
+      lessonTitle: "Ações Irregulares Concluídas",
+      targetLanguage: "en",
+      userLanguage: "pt",
+    },
+  },
+  {
+    expectations: `
+LANGUAGE: English output required.
+
+TOPIC: Common Spanish third-person singular preterite forms of irregular verbs used in everyday narratives. The grammatical form is the lesson boundary; it is not limited to one activity category.
+
+FORM REQUIREMENTS - Penalize SEVERELY if:
+- A \`word\` contains both a Spanish infinitive and its preterite form
+- A \`translation\` contains both an English base form and past-tense form
+- Any entry bundles multiple conjugations or alternatives instead of returning the third-person singular preterite form named by the lesson
+- Do NOT penalize a reflexive or multi-word expression when the whole phrase is one preterite vocabulary item
+- Do NOT penalize a common irregular form merely because it needs sentence context to identify the specific event in the day
+- Do NOT require any specific verbs; assess whether each selected entry uses one accurate third-person singular preterite form
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "en-spanish-irregular-preterite-day",
+    userInput: {
+      chapterTitle: "Recounting a Completed Day",
+      lessonDescription:
+        "Third-person singular preterite forms of common irregular Spanish verbs for recounting what someone did and experienced during a completed day",
+      lessonTitle: "Common Irregular Preterite Forms",
+      targetLanguage: "es",
+      userLanguage: "en",
     },
   },
 ];

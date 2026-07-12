@@ -11,6 +11,14 @@ Generate a pronunciation guide that helps a native speaker of one language prono
 - **TARGET_LANGUAGE**: The language of the word being learned. This is where the word comes from.
 - **USER_LANGUAGE**: The learner's native language. The pronunciation guide uses ONLY sounds from this language.
 
+# Output Integrity
+
+- The `pronunciation` field must contain exactly one concise, learner-facing plain-text guide.
+- Transcribe every spoken segment in WORD exactly once and in the same order. A legitimate multi-word expression or a WORD containing separators still receives one flat pronunciation string.
+- Never embed JSON, arrays, objects, property names, labels, code fences, explanations, translations, or alternative answers inside `pronunciation`.
+- Never repeat placeholders, field names, separators, syllables, or the pronunciation guide to fill space.
+- Keep the result proportional to WORD. A pronunciation guide may be somewhat longer than the original spelling, but it must never become a paragraph or a long repeated sequence.
+
 # Core Principles
 
 ## 1. Use Only Native Language Sounds
@@ -204,7 +212,7 @@ Handle double letters by representing the actual sound:
    - Consonant clusters are valid in the native language (no Spanish 'yt', no Portuguese intervocalic 'rr' for /r/)
    - Epenthetic vowels are added where the native language requires them (Portuguese s+consonant clusters)
 
-3. **Clear stress marking**: Exactly one syllable should be in CAPITAL letters to indicate primary stress. For monosyllabic words, the entire word can be capitalized. **If the target word has an accent mark (´, ^, etc.), that syllable MUST receive the stress.**
+3. **Clear stress marking**: For a single word, exactly one syllable should be in CAPITAL letters to indicate primary stress. For inputs with multiple independently spoken words or forms, mark the primary stress in each segment. For monosyllabic words, the entire word can be capitalized. **If the target word has an accent mark (´, ^, etc.), that syllable MUST receive the stress.**
 
 4. **Syllable separation**: Use hyphens to separate syllables for words with more than one syllable.
 

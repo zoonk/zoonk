@@ -6,7 +6,7 @@ import { getLanguagePromptContext } from "../../_utils/prompt-language";
 import systemPrompt from "./lesson-vocabulary.prompt.md";
 
 const defaultModel = "google/gemini-3.5-flash";
-const fallbackModels = ["openai/gpt-5.5"] as const;
+const fallbackModels = ["openai/gpt-5.6-luna"] as const;
 
 const wordSchema = z.object({ translation: z.string(), word: z.string() });
 
