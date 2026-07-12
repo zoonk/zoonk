@@ -582,6 +582,9 @@ importers:
       '@ai-sdk/openai':
         specifier: 4.0.11
         version: 4.0.11(zod@4.4.3)
+      '@audio/decode-wav':
+        specifier: 1.4.2
+        version: 1.4.2
       '@zoonk/utils':
         specifier: workspace:*
         version: link:../utils
@@ -591,6 +594,9 @@ importers:
       server-only:
         specifier: 'catalog:'
         version: 0.0.1
+      wasm-media-encoders:
+        specifier: 0.7.0
+        version: 0.7.0
       zod:
         specifier: 'catalog:'
         version: 4.4.3
@@ -1145,6 +1151,10 @@ packages:
 
   '@asamuzakjp/nwsapi@2.3.9':
     resolution: {integrity: sha512-n8GuYSrI9bF7FFZ/SjhwevlHc8xaVlb/7HmHelnc/PZXBD2ZR49NnN9sMMuDdEGPeeRQ5d0hqlSlEpgCX3Wl0Q==}
+
+  '@audio/decode-wav@1.4.2':
+    resolution: {integrity: sha512-jcj7QrJtud8axqTiCT2/18xm5sRyYtkg4zJ4zLnVlHlL6SerRbumJwpY9hlLUsbkxXcJ4cIHbHQ/0ia2Cq+CTA==}
+    engines: {node: '>=18'}
 
   '@aws-crypto/crc32@5.2.0':
     resolution: {integrity: sha512-nLbCWqQNgUiwwtFsen1AdzAtvuLRsQS8rYgMuxCrdKf9kOssamGLuPwyTY9wyYblNr9+1XM8v6zoDTPPSIeANg==}
@@ -7359,6 +7369,10 @@ packages:
     resolution: {integrity: sha512-3hu+tD8YzSLGuFYtPRb48vdhKMi0KQV5sn+uWr8+7dMEq/2G/dtLrdDinkLjqq5TIbIBjYJ4Ax/n3YiaW7QM8A==}
     engines: {node: 20 || >=22}
 
+  wasm-media-encoders@0.7.0:
+    resolution: {integrity: sha512-Sp4wUasgxOK/IFfNhpon6LQQgYGwtpxyV4isjGIe1rvhnJL3w2KYr4f+CdqDNtGPDcgCDRY+uBanVfSx6Si0WQ==}
+    engines: {node: '>= 10'}
+
   watchpack@2.5.2:
     resolution: {integrity: sha512-6i/00NBjP4yGPs+caKSyRfpTF/8Torsu0MOW3mMzIbhgISFder8i7xbqgHlLMwJrdiN8ndBV3UA1/AfzPSr+jg==}
     engines: {node: '>=10.13.0'}
@@ -7641,6 +7655,8 @@ snapshots:
   '@asamuzakjp/generational-cache@1.0.1': {}
 
   '@asamuzakjp/nwsapi@2.3.9': {}
+
+  '@audio/decode-wav@1.4.2': {}
 
   '@aws-crypto/crc32@5.2.0':
     dependencies:
@@ -13868,6 +13884,10 @@ snapshots:
       xml-name-validator: 5.0.0
 
   walk-up-path@4.0.0: {}
+
+  wasm-media-encoders@0.7.0:
+    dependencies:
+      '@swc/helpers': 0.5.15
 
   watchpack@2.5.2:
     dependencies:
