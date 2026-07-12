@@ -39,7 +39,7 @@ export function ChapterHeader({
       <MediaCardContent>
         <MediaCardBreadcrumb className="hidden sm:block">
           <Link
-            className="hover:text-foreground truncate transition-colors"
+            className="hover:text-foreground block truncate transition-colors"
             href={`/b/${brandSlug}/c/${courseSlug}`}
           >
             {chapter.course.title}
