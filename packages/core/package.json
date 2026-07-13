@@ -70,7 +70,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@vercel/blob": "2.4.0",
+    "@vercel/blob": "2.6.1",
     "@zoonk/ai": "workspace:*",
     "@zoonk/auth": "workspace:*",
     "@zoonk/db": "workspace:*",

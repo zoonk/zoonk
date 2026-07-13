@@ -32,15 +32,15 @@
     "next": "catalog:",
     "next-intl": "catalog:",
     "posthog-js": "catalog:",
-    "posthog-node": "5.37.0",
+    "posthog-node": "5.41.0",
     "react": "catalog:",
     "react-dom": "catalog:",
     "server-only": "catalog:",
-    "workflow": "5.0.0-beta.30",
+    "workflow": "5.0.0-beta.31",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@scalar/nextjs-api-reference": "0.11.3",
+    "@scalar/nextjs-api-reference": "0.11.9",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
@@ -53,6 +53,6 @@
     "raw-loader": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:",
-    "zod-openapi": "5.4.6"
+    "zod-openapi": "6.0.0"
   }
 }
