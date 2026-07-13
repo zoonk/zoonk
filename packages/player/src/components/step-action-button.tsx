@@ -4,7 +4,9 @@ import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { type PointerEvent } from "react";
 import { usePlayerRuntime } from "../player-context";
+import { renderPlayerShortcutHintKey, showPlayerShortcutHint } from "../player-shortcut-hint";
 
 /**
  * Single source of truth for the step action button
@@ -22,7 +24,7 @@ import { usePlayerRuntime } from "../player-context";
 export function StepActionButton({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof Button>, "children" | "onClick" | "size">) {
+}: Omit<React.ComponentProps<typeof Button>, "children" | "onClick" | "onPointerUp" | "size">) {
   const t = useExtracted();
   const { actions, screen } = usePlayerRuntime();
   const model = screen.bottomBar;
@@ -31,22 +33,41 @@ export function StepActionButton({
     return null;
   }
 
+  const { button, disabled, run } = model;
   const actionByRun = { check: actions.check, continue: actions.continue } as const;
 
   const labelByButton = { check: t("Check"), continue: t("Continue") } as const;
+
+  /**
+   * Enter submits a pending selection, but Continue is a separate progression
+   * action. Limiting the tip to Check keeps this coachmark aligned with the
+   * exact shortcut discovery moment the learner just missed.
+   */
+  function handleActionPointerUp(event: PointerEvent<HTMLButtonElement>) {
+    if (run === "check") {
+      showPlayerShortcutHint({
+        event,
+        hint: "checkAnswer",
+        message: t.rich("Press <kbd>Enter</kbd> to check your answer.", {
+          kbd: renderPlayerShortcutHintKey,
+        }),
+      });
+    }
+  }
 
   const buttonProps = {
     ...props,
     "aria-keyshortcuts": "Enter",
     className: cn("w-full", className),
-    disabled: model.disabled,
-    onClick: actionByRun[model.run],
+    disabled,
+    onClick: actionByRun[run],
+    onPointerUp: handleActionPointerUp,
     size: "lg" as const,
   };
 
   return (
     <Button {...buttonProps}>
-      {labelByButton[model.button]}
+      {labelByButton[button]}
       <ShortcutKbd tone="inverse">Enter</ShortcutKbd>
     </Button>
   );

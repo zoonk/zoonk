@@ -1,4 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
+import { type PointerEvent } from "react";
+import { getNumberKeyShortcut } from "../player-shortcuts";
 import { ResultKbd } from "./result-kbd";
 
 export function OptionCard({
@@ -7,6 +9,7 @@ export function OptionCard({
   index,
   isDimmed,
   isSelected,
+  onPointerUp,
   onSelect,
   resultState,
 }: {
@@ -15,13 +18,14 @@ export function OptionCard({
   index: number;
   isDimmed?: boolean;
   isSelected: boolean;
+  onPointerUp?: (event: PointerEvent<HTMLButtonElement>) => void;
   onSelect: () => void;
   resultState: "correct" | "incorrect" | null;
 }) {
   return (
     <button
       aria-checked={isSelected}
-      aria-keyshortcuts={String(index + 1)}
+      aria-keyshortcuts={getNumberKeyShortcut(index) ?? undefined}
       className={cn(
         "focus-visible:border-ring focus-visible:ring-ring/50 flex w-full items-center gap-3 rounded-xl border px-4 py-3.5 text-left transition-all duration-150 outline-none focus-visible:ring-[3px]",
         !disabled && !isSelected && "border-border hover:bg-accent",
@@ -34,6 +38,7 @@ export function OptionCard({
       )}
       disabled={disabled}
       onClick={onSelect}
+      onPointerUp={onPointerUp}
       role="radio"
       type="button"
     >
