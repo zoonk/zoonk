@@ -12,6 +12,7 @@ const e2eAliases: Record<string, string> = isE2E
   : {};
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["*.local"],
   devIndicators: false,
   distDir: isE2E ? ".next-e2e" : ".next",
   experimental: { authInterrupts: true, typedEnv: true },
