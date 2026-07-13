@@ -4,6 +4,16 @@ export type GenerationStatus = "idle" | "triggering" | "streaming" | "completed"
 
 export type GenerationErrorKind = "connection" | "generation";
 
+/**
+ * The generation page's internal idle state means its automatic trigger is
+ * waiting for the client to mount, not that the learner needs to take action.
+ * Keeping that state visible prevents a blank page before the trigger and
+ * status stream connections begin.
+ */
+export function isGenerationInProgress(status: GenerationStatus): boolean {
+  return status === "idle" || status === "triggering" || status === "streaming";
+}
+
 export type GenerationState<TStep extends string = string> = {
   completedSteps: TStep[];
   currentStep: TStep | null;

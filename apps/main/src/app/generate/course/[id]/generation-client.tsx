@@ -11,6 +11,7 @@ import {
   GenerationTimelineTitle,
 } from "@/components/generation/generation-progress";
 import { WorkflowGenerationError } from "@/components/generation/workflow-generation-error";
+import { isGenerationInProgress } from "@/lib/workflow/generation-store";
 import { useAnimatedProgress } from "@/lib/workflow/use-animated-progress";
 import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
 import { useThinkingMessages } from "@/lib/workflow/use-thinking-messages";
@@ -86,7 +87,7 @@ export function GenerationClient({
     isLanguageCourse,
   );
 
-  const isActive = generation.status === "triggering" || generation.status === "streaming";
+  const isActive = isGenerationInProgress(generation.status);
 
   const displayProgress = useAnimatedProgress({
     estimatedDurationMs: activePhaseDurationMs,

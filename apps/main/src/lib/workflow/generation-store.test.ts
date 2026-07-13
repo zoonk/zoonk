@@ -6,6 +6,7 @@ import {
   generationReducer,
   handleStepStreamMessage,
   initialGenerationState,
+  isGenerationInProgress,
 } from "./generation-store";
 
 /**
@@ -15,6 +16,16 @@ import {
 function applyActions(actions: GenerationAction[], initial: GenerationState) {
   return actions.reduce((state, action) => generationReducer(state, action), initial);
 }
+
+describe(isGenerationInProgress, () => {
+  it("keeps auto-triggered generation visible before and during the workflow connection", () => {
+    expect(isGenerationInProgress("idle")).toBe(true);
+    expect(isGenerationInProgress("triggering")).toBe(true);
+    expect(isGenerationInProgress("streaming")).toBe(true);
+    expect(isGenerationInProgress("completed")).toBe(false);
+    expect(isGenerationInProgress("error")).toBe(false);
+  });
+});
 
 describe(generationReducer, () => {
   describe("stepCompleted", () => {

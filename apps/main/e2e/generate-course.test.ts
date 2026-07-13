@@ -37,6 +37,7 @@ const TEST_RUN_ID = "test-run-id-12345";
 
 type MockApiOptions = {
   assertBearerAuth?: boolean;
+  triggerResponseGate?: Promise<unknown>;
   triggerResponse?: { runId?: string; error?: string; status?: number };
   streamMessages?: { entityId?: string; reason?: string; step: string; status: string }[];
   streamError?: boolean;
@@ -70,6 +71,7 @@ function createRouteHandler(options: MockApiOptions) {
   const {
     assertBearerAuth = false,
     statusDelayMs = 0,
+    triggerResponseGate,
     triggerResponse = { runId: TEST_RUN_ID },
     streamMessages = [],
     streamError = false,
@@ -84,6 +86,8 @@ function createRouteHandler(options: MockApiOptions) {
       if (assertBearerAuth) {
         expectBearerAuthorization(route);
       }
+
+      await triggerResponseGate;
 
       if (triggerResponse.error) {
         await route.fulfill({
@@ -226,6 +230,43 @@ test.describe("Generate Course Page", () => {
   });
 
   test.describe("Initial triggering state", () => {
+    test("shows active generation feedback while the workflow is still starting", async ({
+      authenticatedPage,
+    }) => {
+      const request = await coursePromptFixture({
+        canonicalTitle: "E2E Immediate Generation Feedback",
+        generationStatus: "pending",
+        language: "en",
+      });
+
+      const triggerResponse = Promise.withResolvers<null>();
+
+      await setupMockApis(authenticatedPage, { triggerResponseGate: triggerResponse.promise });
+
+      const triggerRequest = authenticatedPage.waitForRequest(
+        (pageRequest) =>
+          pageRequest.method() === "POST" &&
+          pageRequest.url().includes("/v1/workflows/course-generation/trigger"),
+      );
+
+      try {
+        await authenticatedPage.goto(`/generate/course/${request.id}`);
+        await triggerRequest;
+
+        await expect(
+          authenticatedPage.getByRole("heading", {
+            name: "Creating the E2E Immediate Generation Feedback course",
+          }),
+        ).toBeVisible();
+
+        await expect(
+          authenticatedPage.getByText("Getting started...", { exact: true }),
+        ).toBeVisible();
+      } finally {
+        triggerResponse.resolve(null);
+      }
+    });
+
     test("shows triggering state immediately on page load", async ({ authenticatedPage }) => {
       // Create a unique request to avoid PPR caching issues with seeded data
       const request = await coursePromptFixture({
