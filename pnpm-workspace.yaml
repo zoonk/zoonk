@@ -26,7 +26,6 @@ catalog:
   "@next/mdx": 16.2.10
   "@next/third-parties": 16.2.10
   "@sentry/nextjs": 10.65.0
-  "@tabler/icons-react": 3.44.0
   "@tailwindcss/postcss": 4.3.2
   "@testing-library/react": 16.3.2
   "@types/mdx": 2.0.14

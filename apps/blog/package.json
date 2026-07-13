@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@next/third-parties": "catalog:",
-    "@tabler/icons-react": "catalog:",
     "@vercel/analytics": "catalog:",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",

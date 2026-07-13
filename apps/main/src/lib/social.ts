@@ -1,66 +1,66 @@
 import {
-  IconBrandBluesky,
-  IconBrandFacebook,
-  IconBrandGithub,
-  IconBrandInstagram,
-  IconBrandLinkedin,
-  IconBrandReddit,
-  IconBrandThreads,
-  IconBrandTiktok,
-  IconBrandX,
-  IconBrandYoutube,
-} from "@tabler/icons-react";
+  BlueskyBrandIcon,
+  FacebookBrandIcon,
+  GithubBrandIcon,
+  InstagramBrandIcon,
+  LinkedinBrandIcon,
+  RedditBrandIcon,
+  ThreadsBrandIcon,
+  TiktokBrandIcon,
+  XBrandIcon,
+  YoutubeBrandIcon,
+} from "@zoonk/ui/components/brand-icons";
 
 /* oxlint-disable-next-line eslint/sort-keys */
 const PROFILES = {
   x: {
     en: { handle: "@zoonkcom", url: "https://x.com/zoonkcom" },
-    icon: IconBrandX,
+    icon: XBrandIcon,
     pt: { handle: "@zoonkbr", url: "https://x.com/zoonkbr" },
   },
   linkedin: {
     en: { handle: "@zoonk", url: "https://www.linkedin.com/company/zoonk" },
-    icon: IconBrandLinkedin,
+    icon: LinkedinBrandIcon,
     pt: { handle: "@zoonk", url: "https://www.linkedin.com/company/zoonk" },
   },
   instagram: {
     en: { handle: "@zoonkcom", url: "https://www.instagram.com/zoonkcom" },
-    icon: IconBrandInstagram,
+    icon: InstagramBrandIcon,
     pt: { handle: "@zoonkbr", url: "https://www.instagram.com/zoonkbr" },
   },
   github: {
     en: { handle: "@zoonk", url: "https://github.com/zoonk" },
-    icon: IconBrandGithub,
+    icon: GithubBrandIcon,
     pt: { handle: "@zoonk", url: "https://github.com/zoonk" },
   },
   threads: {
     en: { handle: "@zoonkcom", url: "https://www.threads.net/@zoonkcom" },
-    icon: IconBrandThreads,
+    icon: ThreadsBrandIcon,
     pt: { handle: "@zoonkbr", url: "https://www.threads.net/@zoonkbr" },
   },
   reddit: {
     en: { handle: "r/zoonk", url: "https://www.reddit.com/r/zoonk" },
-    icon: IconBrandReddit,
+    icon: RedditBrandIcon,
     pt: { handle: "r/ZoonkBrasil", url: "https://www.reddit.com/r/ZoonkBrasil" },
   },
   bluesky: {
     en: { handle: "@zoonk", url: "https://bsky.app/profile/zoonk.bsky.social" },
-    icon: IconBrandBluesky,
+    icon: BlueskyBrandIcon,
     pt: { handle: "@zoonkbr", url: "https://bsky.app/profile/zoonkbr.bsky.social" },
   },
   youtube: {
     en: { handle: "@zoonkcom", url: "https://www.youtube.com/@zoonkcom" },
-    icon: IconBrandYoutube,
+    icon: YoutubeBrandIcon,
     pt: { handle: "@zoonkbr", url: "https://www.youtube.com/@zoonkbr" },
   },
   tiktok: {
     en: { handle: "@zoonkcom", url: "https://www.tiktok.com/@zoonkcom" },
-    icon: IconBrandTiktok,
+    icon: TiktokBrandIcon,
     pt: { handle: "@zoonkbr", url: "https://www.tiktok.com/@zoonkbr" },
   },
   facebook: {
     en: { handle: "@zoonkcom", url: "https://www.facebook.com/zoonkcom" },
-    icon: IconBrandFacebook,
+    icon: FacebookBrandIcon,
     pt: { handle: "@zoonkbr", url: "https://www.facebook.com/zoonkbr" },
   },
 } as const;

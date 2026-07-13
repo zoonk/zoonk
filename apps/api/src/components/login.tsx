@@ -1,4 +1,8 @@
-import { IconBrandAppleFilled, IconBrandGoogleFilled, type IconProps } from "@tabler/icons-react";
+import {
+  AppleBrandIcon,
+  type BrandIconComponent,
+  GoogleBrandIcon,
+} from "@zoonk/ui/components/brand-icons";
 import { Button } from "@zoonk/ui/components/button";
 import { Input, InputError } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
@@ -38,7 +42,7 @@ export function LoginSocial({ children, className }: React.ComponentProps<"div">
 
 type LoginWithProviderProps = React.ComponentProps<"button"> & {
   isLoading?: boolean;
-  icon?: React.ForwardRefExoticComponent<IconProps>;
+  icon?: BrandIconComponent;
 };
 
 function LoginWithProvider({
@@ -59,7 +63,7 @@ function LoginWithProvider({
 
 export function LoginWithGoogle({ children, ...props }: LoginWithProviderProps) {
   return (
-    <LoginWithProvider icon={IconBrandGoogleFilled} {...props}>
+    <LoginWithProvider icon={GoogleBrandIcon} {...props}>
       {children}
     </LoginWithProvider>
   );
@@ -67,7 +71,7 @@ export function LoginWithGoogle({ children, ...props }: LoginWithProviderProps) 
 
 export function LoginWithApple({ children, ...props }: LoginWithProviderProps) {
   return (
-    <LoginWithProvider icon={IconBrandAppleFilled} {...props}>
+    <LoginWithProvider icon={AppleBrandIcon} {...props}>
       {children}
     </LoginWithProvider>
   );
