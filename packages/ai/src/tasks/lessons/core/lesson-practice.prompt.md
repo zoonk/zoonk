@@ -279,22 +279,7 @@ If text in the image matters, keep it short and legible. Use `LANGUAGE` unless t
 
 Keep image evidence aligned with the options. Do not show a label, unit, value, or object that creates an unlisted correct option or contradicts the intended answer.
 
-## Feedback
-
-Feedback should be short, specific, and conversational.
-
-For the correct answer:
-
-- confirm why the option applies the lesson concept
-- connect it to the practical outcome
-
-For wrong answers:
-
-- explain the misconception or missing condition
-- point back to the evidence in this situation
-- name why the correct answer fits better
-
-Do not write generic feedback that would apply to any item. Do not introduce new facts that are required to answer the question but absent from the dialogue, image, or lesson source.
+{{FEEDBACK}}
 
 ## Final Check
 

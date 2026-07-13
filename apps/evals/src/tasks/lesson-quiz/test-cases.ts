@@ -57,10 +57,12 @@ EVALUATION CRITERIA:
    - The quiz omits sort-order because the source scope lacks a necessary, non-ambiguous sequence
    - Select-image options use a few large labels only when the distinction cannot be shown clearly without text
 
-4. FEEDBACK QUALITY: For formats that include feedback fields in the schema, feedback must explain reasoning, not just state correct/incorrect. Good feedback:
-   - For correct answers: Explains WHY it's right plus an additional insight
-   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right
-   Penalize feedback that only says "Correct!" or "That's wrong."
+4. FEEDBACK QUALITY: For formats that include feedback fields in the schema, feedback must teach the reasoning, not just state correct/incorrect.
+   - For per-option feedback in multiple-choice and select-image questions, correct-option feedback must explain why it follows from the specific evidence and concept. Every wrong option's feedback must complete the full correction in the same message: explain why the selected option is wrong, explicitly identify the correct option or an unmistakable paraphrase, and teach why the correct option follows by connecting the evidence to the concept and practical result.
+   - Explanations must use plain language and concrete facts from the scenario before relying on domain labels. When it naturally clarifies the distinction, explain what condition would have made the selected option correct and contrast it with what actually happened. Do not require this counterfactual in every response.
+   - Per-option feedback should act as a brief teaching moment. Use a relatable everyday consequence, familiar observation, practical decision, or real-world artifact when it naturally clarifies the same reasoning. The existing scenario can provide this bridge; do not require a forced analogy or unrelated second example.
+   - For one question-level feedback field in fill-blank and sort-order questions, explain why the correct completion or sequence works. Do not require it to discuss one selected distractor because the same feedback serves every possible attempt.
+   Penalize per-option feedback that only dismisses the selected option, only names the correct answer without explaining why it follows, leaves the correct-answer reasoning to the correct option's separate feedback, substitutes compressed jargon or category shorthand for a concrete explanation, or only says "Correct!" or "That's wrong."
    Do NOT penalize match-columns questions for lacking feedback because the match-columns schema has no feedback field.
 
 5. FACTUAL ACCURACY: All questions and answers must be correct for the lesson's domain. Penalize:
@@ -115,7 +117,7 @@ LANGUAGE REQUIREMENT: Questions, options, and feedback must be in Brazilian Port
 
 ${SHARED_EXPECTATIONS}
 
-SPECIFIC EXPECTATION: This scope contains classification and judgment criteria for deciding whether transactions should be recorded. Do not require or reward a sort-order question for ordering the criteria, because entity separation, evidence, monetary measurement, and effect identification can be checked in different defensible orders. A sort-order question is only acceptable if it tests a genuinely fixed accounting sequence.
+SPECIFIC EXPECTATION: Assess whether the quiz covers the classification and judgment described in the lesson source: how a transaction affects the named accounting categories and how that effect informs whether and how the record should appear. Do not require accounting criteria or concepts that are not stated in the lesson title or description. Do not require or reward a sort-order question because this scope does not define a fixed sequence.
     `,
     id: "pt-accounting-recordable-transactions-production-quiz",
     userInput: {

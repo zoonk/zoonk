@@ -1,14 +1,22 @@
 {
-  "modelId": "openai/gpt-5.5",
+  "modelId": "openai/gpt-5.6-luna",
   "results": [
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "The quiz is accurate, scenario-based, well scoped, and uses a strong mix of appropriately fitted formats. It could be improved slightly by changing the first question from the potentially broad “Como esse fato afeta o patrimônio?” to “Quais categorias contábeis são afetadas?” and by making the correct option in the merchandise-sale question explicitly mention both the decrease in inventory and recognition of the cost as an expense, rather than leaving that detail mainly to the feedback.",
+          "conclusion": "The quiz undercovers a major part of the stated scope. It assesses effects on cash, goods, debts, equity, revenue, and expenses, but never correctly applies “direitos” in a scenario; receivables appear only inside an incorrect option. More importantly, it mostly asks learners to classify effects and does not directly test how those effects determine whether and how a transaction should be recorded. Several wrong-option feedback messages also fail the explicit full-correction requirement—for example, some reject an expense, receivable, or debt interpretation without clearly giving the complete correct classification and its practical recording consequence.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The fill-blank feedback adds the caveat “desde que não exista outro efeito compensatório,” which may blur the basic relationship being taught: recognized revenue increases equity and recognized expense decreases it, even when a transaction has other components. The match-columns wording “efeito patrimonial mais provável” is unnecessarily tentative because the stated transactions have determinate effects.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "Add an applied credit transaction, such as a service performed now and collected later, to test the increase in receivables, revenue, and equity. Also add a scenario asking the learner to choose the actual form of the record—or decide that no accounting record is warranted—based on the classified effect. Rewrite every incorrect-option feedback so it explicitly states the full correct effect and explains why that is the record that should appear.",
           "kind": "potentialImprovements",
-          "score": 9.5
+          "score": 8
         }
       ],
       "testCase": {
@@ -28,11 +36,15 @@
     {
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "The quiz is strong overall. It could be slightly more challenging by including one scenario where two records both have useful features but differ in a subtler evidential flaw, rather than relying mostly on clearly decorative or invented alternatives.",
+          "conclusion": "The fill-blank question largely reproduces the lesson’s rule and tests recall of the words “observado” and “vista,” rather than applying the distinction in a novel situation; this is a weak fit under the explicit fill-blank guidance. Also, feedback for the decorative conch image explains its flaws but does not identify the correct record as explicitly as required. In Question 4, “corrigido primeiro” implies an unsupported priority; “qual é a principal correção necessária?” would be clearer.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "Replace the fill-blank with a precise, scenario-grounded relationship whose missing terms genuinely matter. The quiz could also assess label placement and identification of important parts more directly, since these are currently covered mostly indirectly. Otherwise, the six-question quiz has good scope coverage, appropriate variety, novel scenarios, accurate content, and strong Brazilian Portuguese feedback.",
           "kind": "potentialImprovements",
-          "score": 9.5
+          "score": 9
         }
       ],
       "testCase": {
@@ -53,12 +65,12 @@
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The first select-image question largely duplicates the sort-order question and represents the distinction through text-heavy labeled arrows rather than meaningful visual inspection, making the format feel somewhat forced. Also, the match-columns clue “SYN, SYN-ACK, ACK” assumes TCP-handshake detail beyond the stated lifecycle scope.",
+          "conclusion": "Two incorrect-option feedback messages in the final question do not provide the full correction required by the rubric. The TLS distractor explains only why the second report is not TLS, while the rendering distractor does not explicitly identify the first report as a DNS failure. Each should clearly state both correct diagnoses and connect them to the evidence.",
           "kind": "minorErrors",
-          "score": 9
+          "score": 8.5
         },
         {
-          "conclusion": "Replace the duplicated lifecycle diagram question with a genuinely visual debugging artifact or a novel scenario requiring learners to locate a failed stage. Use a scope-aligned TCP clue such as “connection established before TLS begins” unless handshake packet flags were explicitly taught.",
+          "conclusion": "The fill-in-the-blank is accurate and format-appropriate, but its unrelated HTML/CSS/JavaScript distractors make it relatively easy and vocabulary-oriented. More plausible networking distractors or a concrete connection-debugging context would better test understanding. The lifecycle explanation could also briefly note that real browsers often overlap downloading, parsing, resource fetching, and rendering even though the question uses their conceptual dependency order.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -80,19 +92,19 @@
     {
       "steps": [
         {
-          "conclusion": "Question 4 contains an internally impossible scenario if desktop and mobile are the full traffic mix. With desktop activation at 65%, mobile at 35%, and mobile exceeding 50% of traffic, the weighted overall activation rate must be below 50%, not unchanged at 50%. This factual contradiction weakens an otherwise valid segmentation question.",
+          "conclusion": "Question 2 is invalid and factually inconsistent. Both the first funnel (60 to 30) and second funnel (100 to 50) have a 50% stepwise dropoff, yet only the first is marked correct. Its feedback even admits that the second also has a 50% dropoff while incorrectly calling the first larger. If “largest” means absolute users lost, the second funnel loses 50 users and would instead be correct. This ambiguity materially undermines the question.",
           "kind": "majorErrors",
           "score": 6.5
         },
         {
-          "conclusion": "The fill-blank describes dropoff as people who “leave,” but funnel dropoff more precisely means users who do not complete the next step within the defined observation window; they need not visibly leave. Also, the strong-acquisition image question uses an unbenchmarked “tall” new-user bar, so acquisition strength is somewhat schematic rather than analytically established.",
+          "conclusion": "The required fill-blank is poorly fitted because it mainly asks learners to recall the definitions of “dropoff rate” and “conversion rate,” rather than apply the relationship in a decision or calculation. Questions 6 and 7 are also consecutive multiple-choice questions, contrary to the explicit sequencing guidance. In Question 1, feedback for the 4.5% option mistakenly begins with “15%,” although the remainder gives the correct calculation.",
           "kind": "minorErrors",
-          "score": 8.5
+          "score": 8
         },
         {
-          "conclusion": "Revise Question 4 with mathematically consistent traffic weights or simply state that the aggregate stayed flat while device segments moved in opposite directions. Adding explicit measurement windows or rate labels to funnel and retention visuals would also improve practical analytics rigor.",
+          "conclusion": "Revise Question 2 to specify proportional versus absolute dropoff and use options with genuinely different values. The fill-blank could complete a precise numerical relationship, such as conversion rate plus dropoff rate equaling 100% for the same funnel transition. Reordering one of the adjacent multiple-choice questions would also improve format distribution.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8.5
         }
       ],
       "testCase": {
@@ -111,16 +123,20 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The fill-in-the-blank item is somewhat terminology-driven rather than scenario-based, and its first blank is not uniquely constrained: “fuente original,” “origen común,” “cadena informativa,” and even a shared “autoridad” could express the intended dependency. This creates avoidable grading ambiguity in a format that requires precise words.",
-          "kind": "minorErrors",
-          "score": 9
+          "conclusion": "Question 5 is materially ambiguous: both the keyed option and the option showing four official decrees demonstrate the same relevant archival absence—the perspectives of the expelled families. The feedback for the latter even confirms that official documents represent only an institutional perspective, so marking it incorrect undermines the answer key.",
+          "kind": "majorErrors",
+          "score": 6.8
         },
         {
-          "conclusion": "Make the fill-in-the-blank relationship more exact and uniquely completable, ideally by grounding it in a compact case of copied documents. The image questions could also specify the key visual evidence slightly more explicitly—for example, showing that both independent records actually indicate the same outage time—while keeping the images phone-friendly.",
+          "conclusion": "The second select-image question is not well suited to visual inspection because learners must identify document provenance through labels; a multiple-choice scenario would test the concept more directly. The fill-blank also leans toward recalling the exact term “proporcional,” accepts no natural synonyms such as “acorde” or “ajustada,” and has weak distractors, making it easier and more terminology-based than the otherwise application-focused quiz.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "After fixing Question 5, strengthen the fill-blank so the missing language expresses a precise relationship rather than one source-derived keyword, and reserve select-image for distinctions that can genuinely be recognized visually on a small screen.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8.5
         }
       ],
       "testCase": {

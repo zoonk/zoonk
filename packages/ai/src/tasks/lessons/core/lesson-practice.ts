@@ -3,13 +3,14 @@ import { type Reasoning, buildProviderOptions } from "@zoonk/ai/provider-options
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
+import { insertLessonFeedbackPrompt } from "../_utils/append-lesson-feedback-prompt";
 import { appendLessonRichTextPrompt } from "../_utils/append-lesson-rich-text-prompt";
 import { type SourceLesson, formatSourceLessonForPrompt } from "../_utils/source-lessons";
 import baseSystemPrompt from "./lesson-practice.prompt.md";
 
-const defaultModel = "openai/gpt-5.5";
+const defaultModel = "openai/gpt-5.6-sol";
 const fallbackModels = ["anthropic/claude-sonnet-5", "openai/gpt-5.6-sol"] as const;
-const systemPrompt = appendLessonRichTextPrompt(baseSystemPrompt);
+const systemPrompt = insertLessonFeedbackPrompt(appendLessonRichTextPrompt(baseSystemPrompt));
 
 const practiceOptionSchema = z.object({
   feedback: z.string(),

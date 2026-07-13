@@ -3,16 +3,19 @@ import { type Reasoning, buildProviderOptions } from "@zoonk/ai/provider-options
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
+import { insertLessonFeedbackPrompt } from "../_utils/append-lesson-feedback-prompt";
 import { type SourceLesson, formatSourceLessonForPrompt } from "../_utils/source-lessons";
-import systemPrompt from "./lesson-quiz.prompt.md";
+import baseSystemPrompt from "./lesson-quiz.prompt.md";
 
-const defaultModel = "openai/gpt-5.5";
+const defaultModel = "openai/gpt-5.6-sol";
 
 const fallbackModels = [
   "anthropic/claude-opus-4.8",
-  "openai/gpt-5.6-sol",
+  "openai/gpt-5.5",
   "google/gemini-3.1-pro-preview",
 ] as const;
+
+const systemPrompt = insertLessonFeedbackPrompt(baseSystemPrompt);
 
 const maximumQuestions = 15;
 const minimumQuestions = 5;
