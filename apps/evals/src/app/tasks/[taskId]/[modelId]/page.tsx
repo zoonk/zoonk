@@ -71,6 +71,12 @@ export default async function TaskModelPage({ params }: PageProps<"/tasks/[taskI
 
       <ContainerBody>
         <TaskModelActionsCard
+          exportEntries={
+            generatedOutputs?.outputs.map((output) => ({
+              input: output.testCase.userInput,
+              output: output.output,
+            })) ?? []
+          }
           model={model}
           modelId={modelId}
           outputStatus={outputStatus}

@@ -13,13 +13,16 @@ import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { PlayIcon, SparklesIcon } from "lucide-react";
 import Link from "next/link";
 import { generateOutputsAction, runEvalAction } from "./actions";
+import { type OutputExportEntry, OutputsExport } from "./outputs-export";
 
 export function TaskModelActionsCard({
+  exportEntries,
   model,
   modelId,
   outputStatus,
   taskId,
 }: {
+  exportEntries: OutputExportEntry[];
   model: ModelConfig;
   modelId: string;
   outputStatus: OutputProgress;
@@ -69,6 +72,8 @@ export function TaskModelActionsCard({
               Change Model
             </Button>
           </Link>
+
+          <OutputsExport entries={exportEntries} />
         </div>
       </CardContent>
     </Card>

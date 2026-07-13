@@ -6,7 +6,7 @@ import { getPromptLanguageName } from "../../_utils/prompt-language";
 import { appendLessonRichTextPrompt } from "../_utils/append-lesson-rich-text-prompt";
 import baseSystemPrompt from "./lesson-explanation.prompt.md";
 
-const defaultModel = "openai/gpt-5.5";
+const defaultModel = "openai/gpt-5.6-sol";
 const fallbackModels = ["anthropic/claude-sonnet-5", "openai/gpt-5.6-sol"] as const;
 const systemPrompt = appendLessonRichTextPrompt(baseSystemPrompt);
 

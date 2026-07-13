@@ -5,10 +5,10 @@ import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./language-course-chapters.prompt.md";
 
-const defaultModel = "openai/gpt-5.5";
+const defaultModel = "openai/gpt-5.6-sol";
 
 const fallbackModels = [
-  "openai/gpt-5.6-terra",
+  "openai/gpt-5.5",
   "anthropic/claude-fable-5",
   "google/gemini-3.1-pro-preview",
 ] as const;

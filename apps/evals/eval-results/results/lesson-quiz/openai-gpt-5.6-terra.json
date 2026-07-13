@@ -1,14 +1,22 @@
 {
-  "modelId": "openai/gpt-5.5",
+  "modelId": "openai/gpt-5.6-terra",
   "results": [
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "The quiz is accurate, scenario-based, well scoped, and uses a strong mix of appropriately fitted formats. It could be improved slightly by changing the first question from the potentially broad “Como esse fato afeta o patrimônio?” to “Quais categorias contábeis são afetadas?” and by making the correct option in the merchandise-sale question explicitly mention both the decrease in inventory and recognition of the cost as an expense, rather than leaving that detail mainly to the feedback.",
+          "conclusion": "The credit sale question is materially incomplete: selling merchandise normally increases receivables and revenue while also decreasing merchandise inventory and recognizing the related expense. Asking broadly what the store records while treating only the first half as the answer misrepresents the transaction’s full effect. The loan-installment question is also ambiguous because an installment may include interest, which would create an expense rather than reducing debt by the entire cash payment. In addition, the quiz mostly classifies recordable transactions and does not adequately assess the lesson’s central judgment about whether and how an event should appear in the accounting records.",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "The fill-blank primarily elicits the category label “receita,” making it closer to terminology recall than scenario-based judgment. The match-columns item is a reasonable classification exercise, but it is very elementary and adds limited evidence of conceptual understanding. Some wording also shifts loosely between “patrimônio” and “patrimônio líquido,” which could confuse learners about whether total assets or equity is meant.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Revise the credit-sale scenario to assess the complete effect or explicitly state that only the customer-side entry is being considered. Specify that the loan payment is entirely principal, or include interest and test its separate treatment. Add a scenario requiring learners to decide whether an event has a recordable patrimonial effect and how it should be represented, and make the fill-blank test a precise accounting relationship rather than simple category recall.",
           "kind": "potentialImprovements",
-          "score": 9.5
+          "score": 8
         }
       ],
       "testCase": {
@@ -27,12 +35,20 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "The quiz is strong overall. It could be slightly more challenging by including one scenario where two records both have useful features but differ in a subtler evidential flaw, rather than relying mostly on clearly decorative or invented alternatives.",
+          "conclusion": "Question 1 has a notable scenario-answer mismatch: the context never says a spot (“mancha”) was observed, yet the keyed option and feedback treat it as visible evidence. Because the lesson emphasizes recording observations without inventing details, this unsupported feature weakens correctness and makes the intended answer somewhat ambiguous.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "In Question 1, the feedback for the list option begins with “Uma foto pode ajudar,” even though that option contains no photo. Also, Question 5 is very easy because the stem states the exact number and location of the spines and the correct image prompt repeats them almost verbatim, so it tests simple matching more than robust application.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Revise Question 1 to mention the visible spot in the context or remove it from the answer. Make Question 5 more interpretive—for example, present a field note or observation from which the learner must infer the correct spatial placement rather than repeating the target description exactly. Otherwise, the quiz has strong Portuguese localization, suitable coverage, good format diversity and sequencing, and generally instructive feedback.",
           "kind": "potentialImprovements",
-          "score": 9.5
+          "score": 9
         }
       ],
       "testCase": {
@@ -53,12 +69,12 @@
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The first select-image question largely duplicates the sort-order question and represents the distinction through text-heavy labeled arrows rather than meaningful visual inspection, making the format feel somewhat forced. Also, the match-columns clue “SYN, SYN-ACK, ACK” assumes TCP-handshake detail beyond the stated lifecycle scope.",
+          "conclusion": "One wrong-option feedback message in the TLS trace question is incomplete. For the “200 OK, then TLS handshake complete” option, it explains why that ordering is impossible but does not explicitly give the correct ordering: TCP connection, TLS completion, HTTP request, then response.",
           "kind": "minorErrors",
           "score": 9
         },
         {
-          "conclusion": "Replace the duplicated lifecycle diagram question with a genuinely visual debugging artifact or a novel scenario requiring learners to locate a failed stage. Use a scope-aligned TCP clue such as “connection established before TLS begins” unless handshake packet flags were explicitly taught.",
+          "conclusion": "The sort-order question could represent the lesson’s lifecycle more precisely by making response download a distinct step between receiving the response and parsing. Separating parsing from rendering would also make the full sequence clearer.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -80,17 +96,17 @@
     {
       "steps": [
         {
-          "conclusion": "Question 4 contains an internally impossible scenario if desktop and mobile are the full traffic mix. With desktop activation at 65%, mobile at 35%, and mobile exceeding 50% of traffic, the weighted overall activation rate must be below 50%, not unchanged at 50%. This factual contradiction weakens an otherwise valid segmentation question.",
+          "conclusion": "Question 4 contains a material mathematical contradiction. If Android and iPhone are the exhaustive platform segments and each remains near 18% conversion, their weighted overall conversion must also remain near 18%; a change in acquisition-channel mix cannot make the aggregate 14%. The scenario should instead state that conversion stayed stable within each acquisition channel while the low-converting channel gained share, or provide platform-by-channel rates that make the composition effect possible.",
           "kind": "majorErrors",
-          "score": 6.5
+          "score": 7
         },
         {
-          "conclusion": "The fill-blank describes dropoff as people who “leave,” but funnel dropoff more precisely means users who do not complete the next step within the defined observation window; they need not visibly leave. Also, the strong-acquisition image question uses an unbenchmarked “tall” new-user bar, so acquisition strength is somewhat schematic rather than analytically established.",
+          "conclusion": "The match-columns item treats “Week-0 activation rate” as an early signal of later value without establishing that it predicts that later outcome. Activation can be a leading indicator, but only when a meaningful relationship to the later result has been supported. This slightly weakens the lesson’s emphasis on not confusing clues with causes.",
           "kind": "minorErrors",
-          "score": 8.5
+          "score": 9
         },
         {
-          "conclusion": "Revise Question 4 with mathematically consistent traffic weights or simply state that the aggregate stayed flat while device segments moved in opposite directions. Adding explicit measurement windows or rate labels to funnel and retention visuals would also improve practical analytics rigor.",
+          "conclusion": "Question 1 could test deeper application by asking the learner to choose the appropriate denominator for a product decision rather than primarily performing simple arithmetic. The quiz could also qualify leading indicators more consistently as predictive clues rather than inherently reliable predictors. Otherwise, the eight-question set has strong scope coverage, suitable format variety, clear novel scenarios, and generally instructive feedback.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -113,12 +129,12 @@
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The fill-in-the-blank item is somewhat terminology-driven rather than scenario-based, and its first blank is not uniquely constrained: “fuente original,” “origen común,” “cadena informativa,” and even a shared “autoridad” could express the intended dependency. This creates avoidable grading ambiguity in a format that requires precise words.",
+          "conclusion": "Question 1 does not state what the merchant's letter says, so its independence is established but its actual corroboration is not; the letter could confirm, contradict, or be irrelevant to the newspaper account. Question 3 is also a weak fit for select-image because the decisive evidence is textual provenance (different creators and origins), not something learners can determine by visually inspecting the photographs; this would work better as multiple choice or with concise source labels accompanying genuinely visual evidence.",
           "kind": "minorErrors",
-          "score": 9
+          "score": 8
         },
         {
-          "conclusion": "Make the fill-in-the-blank relationship more exact and uniquely completable, ideally by grounding it in a compact case of copied documents. The image questions could also specify the key visual evidence slightly more explicitly—for example, showing that both independent records actually indicate the same outage time—while keeping the images phone-friendly.",
+          "conclusion": "Clarify Question 4 by stating explicitly how much of the street is visibly occupied, making the 150–250 estimate and the rejection of 80 less dependent on interpretation. Otherwise, the quiz has strong coverage, appropriate length and diversity, novel scenarios, and consistently instructional Spanish feedback.",
           "kind": "potentialImprovements",
           "score": 9
         }

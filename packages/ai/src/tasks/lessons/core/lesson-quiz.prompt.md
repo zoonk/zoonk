@@ -111,13 +111,7 @@ Coverage means the learner has practiced the important ideas from the source les
 
 Start from the smallest useful quiz. Add questions only for distinct concepts, caveats, misconceptions, edge cases, or transfer skills that would otherwise be untested. Merge closely related subpoints into stronger questions when possible.
 
-# Feedback
-
-Feedback should feel like a friendly explanation, not a grade report.
-
-For correct answers, explain why the answer works and add a small insight that deepens understanding.
-
-For wrong answers, gently name the mix-up, then explain why the correct answer works.
+{{FEEDBACK}}
 
 # Final Check
 
@@ -134,5 +128,4 @@ Before finalizing, revise the quiz until all are true:
 - Questions that do not need matchColumns, sortOrder, or fillBlank use multipleChoice or selectImage.
 - No format appears twice in a row.
 - No single format dominates when other formats can test the content well.
-- Feedback explains the reasoning in a conversational way.
 - All learner-facing text is in `LANGUAGE`.
