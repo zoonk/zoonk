@@ -4,6 +4,6 @@
   "type": "module",
   "devDependencies": {
     "@oxlint/plugins": "1.73.0",
-    "@tailwindcss/node": "4.3.0"
+    "@tailwindcss/node": "4.3.2"
   }
 }

@@ -26,18 +26,18 @@
   },
   "devDependencies": {
     "@eloqnt/cli": "catalog:",
-    "@playwright/test": "1.60.0",
+    "@playwright/test": "1.61.1",
     "@types/node": "catalog:",
     "@typescript/native": "catalog:",
-    "knip": "6.16.1",
+    "knip": "6.26.0",
     "oxfmt": "0.58.0",
     "oxlint": "1.73.0",
     "oxlint-tsgolint": "0.24.0",
-    "turbo": "2.9.18",
+    "turbo": "2.10.4",
     "typescript": "catalog:"
   },
   "engines": {
     "node": "^24"
   },
-  "packageManager": "pnpm@11.6.0"
+  "packageManager": "pnpm@11.11.0"
 }
