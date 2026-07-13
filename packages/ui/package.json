@@ -53,7 +53,6 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
-    "@tabler/icons-react": "catalog:",
     "lucide-react": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:"

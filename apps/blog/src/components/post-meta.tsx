@@ -30,7 +30,7 @@ export function PostMeta({ date, authorId }: PostMetaProps) {
                 aria-label={link.label}
                 className="hover:text-foreground transition-colors"
               >
-                <link.icon size={14} stroke={1.5} />
+                <link.icon size={14} />
               </a>
             ))}
           </span>

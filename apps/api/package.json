@@ -21,7 +21,6 @@
   },
   "dependencies": {
     "@sentry/nextjs": "catalog:",
-    "@tabler/icons-react": "catalog:",
     "@zoonk/ai": "workspace:*",
     "@zoonk/core": "workspace:*",
     "@zoonk/db": "workspace:*",

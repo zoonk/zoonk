@@ -1,27 +1,27 @@
 import {
-  IconBrandBluesky,
-  IconBrandFacebook,
-  IconBrandGithub,
-  IconBrandInstagram,
-  IconBrandLinkedin,
-  IconBrandReddit,
-  IconBrandThreads,
-  IconBrandTiktok,
-  IconBrandX,
-  IconBrandYoutube,
-} from "@tabler/icons-react";
+  BlueskyBrandIcon,
+  FacebookBrandIcon,
+  GithubBrandIcon,
+  InstagramBrandIcon,
+  LinkedinBrandIcon,
+  RedditBrandIcon,
+  ThreadsBrandIcon,
+  TiktokBrandIcon,
+  XBrandIcon,
+  YoutubeBrandIcon,
+} from "@zoonk/ui/components/brand-icons";
 
 const SOCIAL_LINKS = [
-  { icon: IconBrandX, label: "X", url: "https://x.com/zoonkcom" },
-  { icon: IconBrandLinkedin, label: "LinkedIn", url: "https://www.linkedin.com/company/zoonk" },
-  { icon: IconBrandGithub, label: "GitHub", url: "https://github.com/zoonk" },
-  { icon: IconBrandInstagram, label: "Instagram", url: "https://www.instagram.com/zoonkcom" },
-  { icon: IconBrandYoutube, label: "YouTube", url: "https://www.youtube.com/@zoonkcom" },
-  { icon: IconBrandBluesky, label: "Bluesky", url: "https://bsky.app/profile/zoonk.bsky.social" },
-  { icon: IconBrandThreads, label: "Threads", url: "https://www.threads.net/@zoonkcom" },
-  { icon: IconBrandReddit, label: "Reddit", url: "https://www.reddit.com/r/zoonk" },
-  { icon: IconBrandTiktok, label: "TikTok", url: "https://www.tiktok.com/@zoonkcom" },
-  { icon: IconBrandFacebook, label: "Facebook", url: "https://www.facebook.com/zoonkcom" },
+  { icon: XBrandIcon, label: "X", url: "https://x.com/zoonkcom" },
+  { icon: LinkedinBrandIcon, label: "LinkedIn", url: "https://www.linkedin.com/company/zoonk" },
+  { icon: GithubBrandIcon, label: "GitHub", url: "https://github.com/zoonk" },
+  { icon: InstagramBrandIcon, label: "Instagram", url: "https://www.instagram.com/zoonkcom" },
+  { icon: YoutubeBrandIcon, label: "YouTube", url: "https://www.youtube.com/@zoonkcom" },
+  { icon: BlueskyBrandIcon, label: "Bluesky", url: "https://bsky.app/profile/zoonk.bsky.social" },
+  { icon: ThreadsBrandIcon, label: "Threads", url: "https://www.threads.net/@zoonkcom" },
+  { icon: RedditBrandIcon, label: "Reddit", url: "https://www.reddit.com/r/zoonk" },
+  { icon: TiktokBrandIcon, label: "TikTok", url: "https://www.tiktok.com/@zoonkcom" },
+  { icon: FacebookBrandIcon, label: "Facebook", url: "https://www.facebook.com/zoonkcom" },
 ];
 
 /** Social media icon links displayed in the footer on all pages. */
@@ -37,7 +37,7 @@ export function SocialLinks() {
           aria-label={link.label}
           className="text-muted-foreground hover:text-foreground transition-colors"
         >
-          <link.icon size={16} stroke={1.5} />
+          <link.icon size={16} />
         </a>
       ))}
     </nav>

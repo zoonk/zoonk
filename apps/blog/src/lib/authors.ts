@@ -1,6 +1,10 @@
-import { type Icon, IconBrandLinkedin, IconBrandX } from "@tabler/icons-react";
+import {
+  type BrandIconComponent,
+  LinkedinBrandIcon,
+  XBrandIcon,
+} from "@zoonk/ui/components/brand-icons";
 
-type AuthorSocial = { icon: Icon; label: string; url: string };
+type AuthorSocial = { icon: BrandIconComponent; label: string; url: string };
 
 type Author = { name: string; social: AuthorSocial[] };
 
@@ -13,8 +17,8 @@ const AUTHORS: Record<string, Author> = {
   will: {
     name: "Will Ceolin",
     social: [
-      { icon: IconBrandX, label: "X", url: "https://x.com/ceolinwill" },
-      { icon: IconBrandLinkedin, label: "LinkedIn", url: "https://linkedin.com/in/ceolinwill" },
+      { icon: XBrandIcon, label: "X", url: "https://x.com/ceolinwill" },
+      { icon: LinkedinBrandIcon, label: "LinkedIn", url: "https://linkedin.com/in/ceolinwill" },
     ],
   },
 };

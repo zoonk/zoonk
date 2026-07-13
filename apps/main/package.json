@@ -19,7 +19,6 @@
   "dependencies": {
     "@next/third-parties": "catalog:",
     "@sentry/nextjs": "catalog:",
-    "@tabler/icons-react": "catalog:",
     "@vercel/analytics": "catalog:",
     "@zoonk/ai": "workspace:*",
     "@zoonk/core": "workspace:*",
