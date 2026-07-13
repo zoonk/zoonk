@@ -331,16 +331,25 @@ test.describe("Chapter Detail Page", () => {
     await expect(page).toHaveURL(new RegExp(`${chapterUrl}/l/${lessonSlugs.first}`, "u"));
   });
 
-  test("non-existent chapter shows 404 page", async ({ page }) => {
+  test("non-existent chapter invites the learner to create the course", async ({ page }) => {
     await page.goto(`/b/${AI_ORG_SLUG}/c/${courseSlug}/ch/nonexistent-chapter-${uniqueId}`);
 
-    await expect(page.getByText(/not found|404/iu)).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "You found a course that hasn't been written yet" }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("link", { name: "Create this course" })).toHaveAttribute(
+      "href",
+      "/start/learn",
+    );
   });
 
   test("unpublished chapter shows 404 page", async ({ page }) => {
     await page.goto(`/b/${AI_ORG_SLUG}/c/${courseSlug}/ch/${unpublishedChapterSlug}`);
 
-    await expect(page.getByText(/not found|404/iu)).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "You found a course that hasn't been written yet" }),
+    ).toBeVisible();
   });
 });
 
