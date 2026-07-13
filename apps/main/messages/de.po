@@ -434,6 +434,26 @@ msgctxt "Pf4uqS"
 msgid "The intro chapter is ready. We're still creating the full curriculum, so more chapters will appear here soon."
 msgstr "Das Einführungskapitel ist fertig. Wir erstellen noch den kompletten Lehrplan, daher werden hier bald mehr Kapitel erscheinen."
 
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/not-found.tsx
+msgctxt "KjYOfT"
+msgid "You found a course that hasn't been written yet"
+msgstr "Du hast einen Kurs gefunden, der noch nicht erstellt wurde"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/not-found.tsx
+msgctxt "0DbJhZ"
+msgid "Tell us what you want to learn. We'll turn it into a clear, step-by-step course made for you."
+msgstr "Sag uns, was du lernen möchtest. Wir machen daraus einen klaren Kurs für dich – Schritt für Schritt."
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/not-found.tsx
+msgctxt "1SogB9"
+msgid "Create this course"
+msgstr "Diesen Kurs erstellen"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/not-found.tsx
+msgctxt "eN72ct"
+msgid "An open book becoming a learning path"
+msgstr "Ein offenes Buch, das sich in einen Lernweg verwandelt"
+
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
 msgctxt "_allXG"
 msgid "Learn {course} online with practical examples and everyday language. {description}"

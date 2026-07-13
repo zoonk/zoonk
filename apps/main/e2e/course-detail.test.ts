@@ -144,10 +144,21 @@ test.describe("Course Detail Page", () => {
     await expect(courseImage).toBeVisible();
   });
 
-  test("non-existent course shows 404 page", async ({ page }) => {
+  test("non-existent course invites the learner to create it", async ({ page }) => {
     await page.goto(`/b/${AI_ORG_SLUG}/c/nonexistent-course`);
 
-    await expect(page.getByText(/not found|404/iu)).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "You found a course that hasn't been written yet" }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByRole("img", { name: "An open book becoming a learning path" }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("link", { name: "Create this course" })).toHaveAttribute(
+      "href",
+      "/start/learn",
+    );
   });
 
   test("redirects to generate page when course has no chapters", async ({ authenticatedPage }) => {
