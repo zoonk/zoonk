@@ -134,8 +134,8 @@ describe(calculateWeightedProgress, () => {
 });
 
 describe(calculateTargetProgress, () => {
-  it("returns 0 when no steps completed and no active phases", () => {
-    expect(calculateTargetProgress([], null, testConfig)).toBe(0);
+  it("targets the first phase before the workflow reports its first step", () => {
+    expect(calculateTargetProgress([], null, testConfig)).toBe(20);
   });
 
   it("returns 100 when all steps completed", () => {
@@ -194,9 +194,14 @@ function makePhase(status: PhaseStatus) {
 }
 
 describe(enforcePhaseProgression, () => {
-  it("does not change when all phases are pending", () => {
+  it("starts the first phase when the workflow has not reported a step yet", () => {
     const input = [makePhase("pending"), makePhase("pending"), makePhase("pending")];
-    expect(enforcePhaseProgression(input)).toStrictEqual(input);
+
+    expect(enforcePhaseProgression(input)).toStrictEqual([
+      makePhase("active"),
+      makePhase("pending"),
+      makePhase("pending"),
+    ]);
   });
 
   it("does not change linear [completed, active, pending]", () => {

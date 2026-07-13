@@ -47,6 +47,23 @@ function shouldPromote<T extends { status: PhaseStatus }>(phase: T, index: numbe
   return phases[index - 1]?.status === "completed";
 }
 
+/**
+ * Generation pages auto-start their workflows, so an all-pending timeline is
+ * only waiting for the first server event. Starting the first phase
+ * optimistically gives learners immediate feedback while the real stream is
+ * connecting, and the first event naturally replaces this provisional state.
+ */
+function startFirstPhase<T extends { status: PhaseStatus }>(phases: T[]): T[] {
+  const firstPhase = phases[0];
+  const hasReportedProgress = phases.some((phase) => phase.status !== "pending");
+
+  if (!firstPhase || hasReportedProgress) {
+    return phases;
+  }
+
+  return [{ ...firstPhase, status: "active" }, ...phases.slice(1)];
+}
+
 function clampLastPhase<T extends { status: PhaseStatus }>(phases: T[]): T[] {
   const allPredecessorsCompleted = phases.slice(0, -1).every((item) => item.status === "completed");
 
@@ -64,10 +81,12 @@ function clampLastPhase<T extends { status: PhaseStatus }>(phases: T[]): T[] {
 }
 
 export function enforcePhaseProgression<T extends { status: PhaseStatus }>(phases: T[]): T[] {
+  const started = startFirstPhase(phases);
+
   // Promotion doesn't cascade (pending -> active, not completed), so
   // each element only needs the original previous element's status.
-  const promoted = phases.map((phase, index) =>
-    shouldPromote(phase, index, phases) ? { ...phase, status: "active" as const } : phase,
+  const promoted = started.map((phase, index) =>
+    shouldPromote(phase, index, started) ? { ...phase, status: "active" as const } : phase,
   );
 
   return clampLastPhase(promoted);
