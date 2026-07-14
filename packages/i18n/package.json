@@ -19,8 +19,8 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "@typescript/native": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
+    "typescript": "catalog:",
     "vitest": "catalog:"
   }
 }

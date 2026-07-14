@@ -21,8 +21,8 @@
   "devDependencies": {
     "@playwright/test": "1.61.1",
     "@types/node": "catalog:",
-    "@typescript/native": "catalog:",
     "@zoonk/testing": "workspace:*",
-    "@zoonk/tsconfig": "workspace:*"
+    "@zoonk/tsconfig": "workspace:*",
+    "typescript": "catalog:"
   }
 }

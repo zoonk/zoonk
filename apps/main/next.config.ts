@@ -17,14 +17,16 @@ const e2eAliases: Record<string, string> = isE2E
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["*.local"],
-  devIndicators: false,
   // Use separate build directories so E2E and production builds don't conflict
   distDir: isE2E ? ".next-e2e" : ".next",
   experimental: {
     appNewScrollHandler: true,
     authInterrupts: true,
     staleTimes: { dynamic: 300 },
+    turbopackFileSystemCacheForBuild: true,
+    turbopackRustReactCompiler: true,
     typedEnv: true,
+    useTypeScriptCli: true,
   },
   headers: getPublicAppSecurityHeaders,
   images: {

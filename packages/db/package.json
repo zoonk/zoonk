@@ -29,11 +29,11 @@
   },
   "devDependencies": {
     "@types/pg": "8.20.0",
-    "@typescript/native": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
     "dotenv": "17.4.2",
     "prisma": "7.8.0",
-    "tsx": "catalog:"
+    "tsx": "catalog:",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "server-only": "catalog:"

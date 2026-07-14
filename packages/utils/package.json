@@ -46,8 +46,8 @@
   },
   "devDependencies": {
     "@types/negotiator": "0.6.4",
-    "@typescript/native": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
+    "typescript": "catalog:",
     "vitest": "catalog:"
   }
 }

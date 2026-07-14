@@ -14,8 +14,8 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@typescript/native": "catalog:",
-    "@zoonk/tsconfig": "workspace:*"
+    "@zoonk/tsconfig": "workspace:*",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "next": "catalog:",
