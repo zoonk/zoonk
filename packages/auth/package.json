@@ -32,8 +32,8 @@
   "devDependencies": {
     "@types/node": "catalog:",
     "@types/react": "catalog:",
-    "@typescript/native": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
+    "typescript": "catalog:",
     "vitest": "catalog:"
   },
   "peerDependencies": {

@@ -32,7 +32,6 @@
   "devDependencies": {
     "@testing-library/react": "catalog:",
     "@types/react": "catalog:",
-    "@typescript/native": "catalog:",
     "@vitejs/plugin-react": "6.0.3",
     "@vitest/browser-playwright": "4.1.10",
     "@zoonk/i18n": "workspace:*",
@@ -40,6 +39,7 @@
     "jsdom": "catalog:",
     "playwright": "1.61.1",
     "tsx": "catalog:",
+    "typescript": "catalog:",
     "vitest": "catalog:"
   },
   "peerDependencies": {

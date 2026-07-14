@@ -3,7 +3,11 @@ import { type NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["*.local"],
-  devIndicators: false,
+  experimental: {
+    turbopackFileSystemCacheForBuild: true,
+    turbopackRustReactCompiler: true,
+    useTypeScriptCli: true,
+  },
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
   reactCompiler: true,
 };
