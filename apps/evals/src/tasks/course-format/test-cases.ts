@@ -9,12 +9,12 @@ type CourseFormatTestCase = TestCase<CourseFormatExpected, CourseFormatParams>;
 const SCORE_TIERS = `
   - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.
   - Score 10 when the generated courseFormat exactly matches one accepted courseFormat.
-  - Score 6 for any other output, including core courses classified as coding, product courses classified as practical, coding courses classified as core, language courses classified as core, missing courseFormat fields, or extra fields.
+  - Score 6 for any other output, including core courses classified as coding, coding courses classified as core, language courses classified as core, missing courseFormat fields, or extra fields.
 `;
 
 /**
  * Narrows accepted course formats when a case intentionally allows more than one
- * product-valid answer for an ambiguous shared-learning prompt.
+ * valid answer for an ambiguous shared-learning prompt.
  */
 function isCourseFormatList(format: ExpectedCourseFormat): format is readonly CourseFormat[] {
   return Array.isArray(format);
@@ -106,7 +106,7 @@ export const TEST_CASES: CourseFormatTestCase[] = [
   courseFormatCase({
     courseFormat: "practical",
     extra:
-      "- GitHub Actions is developer workflow automation, not a programming language, framework, or product course.",
+      "- GitHub Actions is developer workflow automation, not a programming language or framework course.",
     id: "github-actions",
     prompt: "github actions",
   }),
@@ -198,10 +198,10 @@ export const TEST_CASES: CourseFormatTestCase[] = [
     id: "historia-do-brasil",
     prompt: "historia do brasil",
   }),
-  courseFormatCase({ courseFormat: "product", id: "iphone-16e", prompt: "iphone 16e" }),
+  courseFormatCase({ courseFormat: "practical", id: "iphone-16e", prompt: "iphone 16e" }),
   courseFormatCase({ courseFormat: "core", id: "vendas", prompt: "vendas" }),
-  courseFormatCase({ courseFormat: "product", id: "excel", prompt: "excel" }),
-  courseFormatCase({ courseFormat: "product", id: "photoshop", prompt: "photoshop" }),
+  courseFormatCase({ courseFormat: "practical", id: "excel", prompt: "excel" }),
+  courseFormatCase({ courseFormat: "practical", id: "photoshop", prompt: "photoshop" }),
   courseFormatCase({ courseFormat: "core", id: "time-management", prompt: "time management" }),
   courseFormatCase({ courseFormat: "core", id: "philosophy", prompt: "philosophy" }),
   courseFormatCase({ courseFormat: "core", id: "ethics", prompt: "ethics" }),
@@ -261,8 +261,8 @@ export const TEST_CASES: CourseFormatTestCase[] = [
   }),
   courseFormatCase({ courseFormat: "coding", id: "python", prompt: "Python" }),
   courseFormatCase({ courseFormat: "practical", id: "morse-code", prompt: "Morse code" }),
-  courseFormatCase({ courseFormat: "product", id: "arch-linux", prompt: "arch linux" }),
-  courseFormatCase({ courseFormat: "product", id: "github", prompt: "github" }),
+  courseFormatCase({ courseFormat: "practical", id: "arch-linux", prompt: "arch linux" }),
+  courseFormatCase({ courseFormat: "practical", id: "github", prompt: "github" }),
   courseFormatCase({
     courseFormat: "core",
     id: "mechanical-engineering",

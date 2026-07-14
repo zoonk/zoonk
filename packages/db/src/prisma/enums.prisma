@@ -43,7 +43,6 @@ enum CourseFormat {
   instrument
   language
   personalized
-  product
   practical
   question
 }

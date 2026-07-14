@@ -356,7 +356,6 @@ describe("course-prompt", () => {
   it.each([
     { courseFormat: "coding" },
     { courseFormat: "instrument" },
-    { courseFormat: "product" },
     { courseFormat: "practical" },
   ] as const)(
     "persists waitlist state for learn $courseFormat prompts",
