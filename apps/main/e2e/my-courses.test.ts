@@ -11,7 +11,7 @@ test.describe("My Courses", () => {
       page.getByText(/keep your courses and progress in one place by logging in to your account/iu),
     ).toBeVisible();
 
-    const loginLink = page.getByRole("link", { name: /log in to your account/iu });
+    const loginLink = page.getByRole("link", { name: /log in/iu });
 
     await expect(loginLink).toHaveAttribute("href", "/login?next=%2Fmy");
     await expect(page.getByText(/no courses yet/iu)).toHaveCount(0);
