@@ -11,8 +11,7 @@ says a shared course can serve it.
 - `coding`: Programming topics where learners directly read, write, trace, or debug programming syntax, including languages, frameworks, libraries, and language-specific topics.
 - `instrument`: Learning to play a musical instrument or a reusable
   instrument-performance skill.
-- `product`: Whole named products, branded tools, product versions, platforms, apps, devices, or services that should later be linked to a brand/product record, excluding explicitly named developer or software automation features and workflows.
-- `practical`: Manual crafts, recipe-led cooking, technique-centered making, bounded communication codes or signal alphabets, prompt-driven or no-code creation, and bounded tool or automation workflows, whether branded or unbranded.
+- `practical`: Whole named products, branded tools, product versions, platforms, apps, devices, services, manual crafts, recipe-led cooking, technique-centered making, bounded communication codes or signal alphabets, prompt-driven or no-code creation, and bounded tool or automation workflows.
 
 ## Subject And Teaching Shape
 
@@ -35,10 +34,8 @@ Use the first rule whose condition is true:
 1. Use `language` only when `USER_INPUT` itself identifies a specific natural human language as the learning subject: a language name or regional variety, or a target language paired with a source or bridge language. The language or spelling of the text is not evidence.
 2. Use `coding` when working directly with programming or query syntax is the learning medium.
 3. Use `instrument` for musical-instrument performance or a reusable vocal or instrument-performance skill.
-4. Use `practical` when `USER_INPUT` explicitly names a developer or software automation, CI/CD, release, deployment, repository, or software-operations feature or workflow, even when branded.
-5. Use `product` when `USER_INPUT` names a whole product, platform, app, device, operating system, software distribution, or service. Never infer a workflow from a bare product name.
-6. Use `practical` for an explicitly named craft or craft output, culinary subject, prompt-driven or no-code creation method, bounded tool workflow, or bounded communication code or signal alphabet learned through recognition, encoding, decoding, transmission, or recall drills.
-7. Use `core` for everything else that supports conceptual chapters. `core` is the fallback for fields, concepts, places, formal methods, and unfamiliar or foreign-looking terms that do not satisfy another label's full definition.
+4. Use `practical` for a whole named product, platform, app, device, operating system, software distribution, or service; an explicitly named craft or craft output; a culinary subject; a prompt-driven or no-code creation method; a bounded tool or automation workflow; or a bounded communication code or signal alphabet learned through recognition, encoding, decoding, transmission, or recall drills.
+5. Use `core` for everything else that supports conceptual chapters. `core` is the fallback for fields, concepts, places, formal methods, and unfamiliar or foreign-looking terms that do not satisfy another label's full definition.
 
 ## language
 
@@ -97,43 +94,15 @@ improvisation, and beginner bass.
 Use `core` for music theory, music history, audio physics, or conceptual music
 topics that are not about performing on an instrument.
 
-Use `product` for branded production tools such as Ableton Live unless the
+Use `practical` for branded production tools such as Ableton Live unless the
 prompt is about playing an instrument.
-
-## product
-
-First resolve whether the learner named the whole product or a narrower workflow inside it. A specifically named developer or software automation, CI/CD, release, deployment, repository, or software-operations capability is `practical`, even when it has a branded proper name. Specific workflow scope wins over product branding.
-
-For example, Bitbucket is `product`, while Bitbucket Pipelines is `practical`.
-
-Use `product` for named products, product versions, branded tools, product
-families, platforms, apps, devices, operating systems, software distributions,
-or services, whether commercial or open source.
-
-Examples include iPhone 16e, Excel, Microsoft Excel, Photoshop, Figma, Blender,
-Ableton Live, Google Cloud, Salesforce, Notion, ChatGPT, and TurboTax.
-
-A bare product or platform name remains `product`. Do not infer a narrower workflow or feature from how the product is commonly used.
-
-Use `product` even when the product would otherwise be a practical tool,
-because product courses need brand and product linkage.
-
-Do not use `product` for generic product categories, unbranded tools, manual
-crafts, broad skills, or conceptual fields. Use `practical` for spreadsheets,
-photo editing, video editing, CAD tools, project management tools, and similar
-generic tool categories when no named product is present.
-
-Use `practical` for explicitly named branded or unbranded CI/CD workflows, release automation, repository automation, and deployment workflows.
-
-Do not use `product` for programming languages, frameworks, libraries, or
-language-specific programming topics. Use `coding` for Java, Python, React,
-Next.js, Ruby on Rails, Django, and similar language or framework topics.
 
 ## practical
 
 Use `practical` for reusable applied subjects in these families:
 
-- unbranded software and operational tool workflows such as spreadsheet
+- named products, product versions, branded tools, product families, platforms, apps, devices, operating systems, software distributions, and services, whether commercial or open source, such as iPhone 16e, Excel, Photoshop, Figma, Blender, Ableton Live, Google Cloud, Salesforce, Notion, ChatGPT, and TurboTax
+- software and operational tool workflows such as spreadsheet
   formulas, CAD drafting tasks, project-management board setup, and database
   admin tasks
 - developer workflow and automation skills such as release pipelines, CI/CD

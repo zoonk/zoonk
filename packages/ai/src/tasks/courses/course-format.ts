@@ -14,14 +14,7 @@ const fallbackModels = [
   "anthropic/claude-haiku-4.5",
 ] as const;
 
-const courseFormatSchema = z.enum([
-  "core",
-  "language",
-  "coding",
-  "instrument",
-  "product",
-  "practical",
-]);
+const courseFormatSchema = z.enum(["core", "language", "coding", "instrument", "practical"]);
 
 const schema = z.object({ courseFormat: courseFormatSchema });
 
