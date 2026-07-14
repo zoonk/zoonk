@@ -563,6 +563,7 @@ msgid "Start learning something new today."
 msgstr "Empieza a aprender algo nuevo hoy."
 
 #: src/app/(catalog)/my/user-course-list.tsx
+#: src/app/(catalog)/start/learn/learn-form.tsx
 msgctxt "9m9h0p"
 msgid "Start a course"
 msgstr "Empezar un curso"

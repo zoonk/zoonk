@@ -2,9 +2,16 @@
 
 import { trackLearnForm } from "@/lib/track-events";
 import { CyclingText } from "@zoonk/ui/components/cycling-text";
-import { InputGroup, InputGroupInput } from "@zoonk/ui/components/input-group";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@zoonk/ui/components/input-group";
 import { Label } from "@zoonk/ui/components/label";
+import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
+import { ArrowUpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useTransition } from "react";
@@ -76,6 +83,19 @@ export function LearnForm({ placeholders }: { placeholders: string[] }) {
             </CyclingText>
           </div>
         </div>
+
+        <InputGroupAddon align="inline-end">
+          <InputGroupButton
+            aria-busy={isPending}
+            aria-label={t("Start a course")}
+            disabled={isPending}
+            size="icon-sm"
+            type="submit"
+            variant="default"
+          >
+            {isPending ? <Spinner /> : <ArrowUpIcon aria-hidden="true" />}
+          </InputGroupButton>
+        </InputGroupAddon>
       </InputGroup>
     </form>
   );

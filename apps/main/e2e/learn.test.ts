@@ -171,6 +171,33 @@ test.describe("Learn Form", () => {
     await expect(input).toBeFocused();
   });
 
+  test("submits by button and shows its pending state while the prompt is routing", async ({
+    page,
+  }) => {
+    const cached = await cacheWaitlistedPrompt(`e2e pending topic ${randomUUID()}`);
+
+    await page.goto("/start/learn");
+
+    const pendingNavigation = Promise.withResolvers<null>();
+
+    await page.route("**/start/learn/**", async (route) => {
+      await pendingNavigation.promise;
+      await route.continue();
+    });
+
+    try {
+      await page.getByRole("textbox").fill(cached.prompt);
+      const submitButton = page.getByRole("button", { name: /start a course/iu });
+
+      await submitButton.click();
+
+      await expect(submitButton).toBeDisabled();
+      await expect(submitButton.getByRole("status", { name: "Loading" })).toBeVisible();
+    } finally {
+      pendingNavigation.resolve(null);
+    }
+  });
+
   test("clicking a suggested subject starts topic course generation", async ({
     authenticatedPage,
   }) => {
