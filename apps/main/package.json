@@ -9,7 +9,7 @@
     "dev": "next dev",
     "e2e": "env $(cat ../../packages/db/.env.e2e | xargs) playwright test",
     "e2e:ui": "env $(cat ../../packages/db/.env.e2e | xargs) playwright test --ui",
-    "i18n:lint": "eloqnt lint",
+    "i18n:lint": "eloqnt lint --strict",
     "i18n": "eloqnt translate",
     "start": "next start",
     "test": "vitest run",
