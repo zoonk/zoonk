@@ -533,6 +533,21 @@ msgid "My Courses"
 msgstr "Mis cursos"
 
 #: src/app/(catalog)/my/page.tsx
+msgctxt "88WJDU"
+msgid "Log in to track your courses"
+msgstr "Inicia sesión para seguir tus cursos"
+
+#: src/app/(catalog)/my/page.tsx
+msgctxt "4J8O50"
+msgid "Keep your courses and progress in one place by logging in to your account."
+msgstr "Inicia sesión en tu cuenta para tener tus cursos y tu progreso en un solo lugar."
+
+#: src/app/(catalog)/my/page.tsx
+msgctxt "odXlk8"
+msgid "Log in"
+msgstr "Inicia sesión"
+
+#: src/app/(catalog)/my/page.tsx
 msgctxt "Dr13kE"
 msgid "Continue where you left off"
 msgstr "Continúa donde lo dejaste"
