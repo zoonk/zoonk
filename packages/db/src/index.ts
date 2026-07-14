@@ -20,7 +20,6 @@ if (process.env.NODE_ENV !== "production") {
 
 /** @public */
 export type {
-  ContentReview,
   Chapter,
   ChapterCompletion,
   ChapterSentence,
