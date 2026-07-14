@@ -70,7 +70,10 @@ function WordBank({
   return (
     <div
       aria-label={t("Word bank")}
-      className={cn("flex flex-wrap gap-2.5", disabled && "pointer-events-none opacity-50")}
+      className={cn(
+        "mt-auto flex flex-wrap gap-2.5 pt-6 sm:pt-8 lg:mt-0 lg:pt-0",
+        disabled && "pointer-events-none opacity-50",
+      )}
       role="group"
     >
       {tiles.map((tile) => (
@@ -204,7 +207,7 @@ export function ArrangeWordsInteraction({
   );
 
   return (
-    <InteractiveStepLayout>
+    <InteractiveStepLayout className="my-0 flex-1 lg:my-auto lg:flex-none">
       {children}
 
       <ArrangeWordsAnswerArea

@@ -1,4 +1,5 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { cn } from "@zoonk/ui/lib/utils";
 import {
   type PlayerRuntimeContextValue,
   usePlayerNavigation,
@@ -59,6 +60,22 @@ function hasEmbeddedDesktopAction({ step }: { step?: SerializedStep }) {
   }
 
   return false;
+}
+
+/**
+ * Reading and listening steps need the full stage height on smaller screens so
+ * their word bank can stay above the bottom controls while a multi-line answer
+ * grows into the space between them. Desktop restores the compact centered
+ * layout because its action is already part of the content column.
+ */
+function getStepContentLayoutClass({ step }: { step?: SerializedStep }) {
+  const descriptor = describePlayerStep(step);
+
+  if (descriptor?.kind === "reading" || descriptor?.kind === "listening") {
+    return "min-h-0 flex-1 lg:my-auto lg:flex-none";
+  }
+
+  return "my-auto";
 }
 
 export function StageContent() {
@@ -135,7 +152,12 @@ export function StageContent() {
 
     if (showInlineAction) {
       return (
-        <div className="my-auto flex w-full flex-col gap-6">
+        <div
+          className={cn(
+            "flex w-full flex-col gap-6",
+            getStepContentLayoutClass({ step: currentStep }),
+          )}
+        >
           {stepContent}
           <DesktopInlineAction />
         </div>
