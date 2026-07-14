@@ -58,7 +58,7 @@ export default async function MyCourses() {
               href="/login?next=%2Fmy"
               prefetch={false}
             >
-              {t("Log in to your account")}
+              {t("Log in")}
             </Link>
           </EmptyContent>
         </Empty>

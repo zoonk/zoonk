@@ -543,9 +543,9 @@ msgid "Keep your courses and progress in one place by logging in to your account
 msgstr "Connecte-toi à ton compte pour retrouver tes cours et ta progression au même endroit."
 
 #: src/app/(catalog)/my/page.tsx
-msgctxt "tncgXz"
-msgid "Log in to your account"
-msgstr "Connecte-toi à ton compte"
+msgctxt "odXlk8"
+msgid "Log in"
+msgstr "Se connecter"
 
 #: src/app/(catalog)/my/page.tsx
 msgctxt "Dr13kE"
