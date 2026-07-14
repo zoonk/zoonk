@@ -150,7 +150,7 @@ const PHASE_WEIGHTS: Record<PhaseName, number> = {
   savingCourseInfo: 1,
   savingIntroduction: 1,
   writingDescription: 4,
-  writingFirstLesson: 60,
+  writingFirstLesson: 110,
   writingLandingPage: 8,
 };
 
