@@ -1,12 +1,22 @@
 "use client";
 
 import { type LessonKind } from "@zoonk/core/steps/contract/content";
-import { createContext, useContext } from "react";
+import { type ReactNode, createContext, useContext } from "react";
 import { type PlayerState } from "./player-reducer";
 import { type PlayerScreenModel } from "./player-screen";
 import { type PlayerActions } from "./use-player-actions";
 
-export type PlayerRoute = string | URL;
+export type PlayerRoute = string;
+
+export type PlayerLinkComponentProps = {
+  "aria-keyshortcuts"?: string;
+  children: ReactNode;
+  className?: string;
+  href: PlayerRoute;
+  prefetch?: boolean;
+};
+
+export type PlayerLinkComponent = (props: PlayerLinkComponentProps) => ReactNode;
 
 export type PlayerViewer = {
   completionFooter?: React.ReactNode;
@@ -65,6 +75,7 @@ type PlayerLessonMetaInput = Omit<PlayerLessonMeta, "description"> & {
 type PlayerConfigContextValue = {
   lessonMeta: PlayerLessonMetaInput;
   escape: () => void;
+  linkComponent: PlayerLinkComponent;
   milestone: PlayerMilestone | null;
   navigation: PlayerNavigation;
   next: () => void;
@@ -110,6 +121,14 @@ export function usePlayerLessonMeta(): PlayerLessonMeta {
     ...lessonMeta,
     description: getLessonMetaDescription({ fallbackDescription, lessonDescription }),
   };
+}
+
+/**
+ * Lets the consuming app provide its own routing-aware link while the shared
+ * player remains independent from any app-specific locale configuration.
+ */
+export function usePlayerLinkComponent(): PlayerLinkComponent {
+  return usePlayerConfig().linkComponent;
 }
 
 export function usePlayerMilestone(): PlayerMilestone | null {

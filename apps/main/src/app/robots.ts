@@ -3,7 +3,11 @@ import { type MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: { allow: "/", disallow: ["/auth/", "/generate/", "/login", "/p/"], userAgent: "*" },
+    rules: {
+      allow: "/",
+      disallow: ["/auth/", "/generate/", "/*/generate/", "/login", "/*/login", "/p/", "/*/p/"],
+      userAgent: "*",
+    },
     sitemap: [
       `${SITE_URL}/sitemap.xml`,
       `${SITE_URL}/sitemaps/courses/sitemap/0.xml`,

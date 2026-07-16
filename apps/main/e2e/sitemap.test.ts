@@ -9,7 +9,10 @@ test.describe("robots.txt", () => {
     const body = await response.text();
     expect(body).toContain("Disallow: /auth/");
     expect(body).toContain("Disallow: /login");
+    expect(body).toContain("Disallow: /*/login");
     expect(body).toContain("Disallow: /generate/");
+    expect(body).toContain("Disallow: /*/generate/");
+    expect(body).toContain("Disallow: /*/p/");
     expect(body).toContain("Sitemap:");
   });
 });
@@ -21,7 +24,10 @@ test.describe("sitemap.xml", () => {
 
     const body = await response.text();
     expect(body).toContain("https://www.zoonk.com");
-    expect(body).not.toContain("https://www.zoonk.com/courses");
+    expect(body).toContain("<loc>https://www.zoonk.com/courses</loc>");
+    expect(body).toContain("<loc>https://www.zoonk.com/pt/courses</loc>");
+    expect(body).toContain("<loc>https://www.zoonk.com/courses/science</loc>");
+    expect(body).toContain("<loc>https://www.zoonk.com/pt/courses/science</loc>");
   });
 });
 

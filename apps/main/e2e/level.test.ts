@@ -1,5 +1,5 @@
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { getProgressInsightDateLabel } from "../src/app/(progress)/_components/progress-insight-date-label";
+import { getProgressInsightDateLabel } from "../src/app/[lang]/(progress)/_components/progress-insight-date-label";
 import { expect, test } from "./fixtures";
 
 test.describe("Level Page", () => {

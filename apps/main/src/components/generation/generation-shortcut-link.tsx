@@ -1,12 +1,10 @@
 "use client";
 
+import { type AppRoute, Link, useRouter } from "@/i18n/navigation";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd, type ShortcutKbdTone } from "@zoonk/ui/components/kbd";
 import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type Route } from "next";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 type GenerationShortcutLinkVariant = "default" | "outline";
 type GenerationShortcut = "Enter" | "Esc" | "N";
@@ -47,7 +45,7 @@ function useShortcutNavigation<Href extends string>({
   href,
   shortcutKey,
 }: {
-  href: Route<Href>;
+  href: AppRoute<Href>;
   shortcutKey?: string;
 }) {
   const router = useRouter();
@@ -80,7 +78,7 @@ export function GenerationShortcutLink<Href extends string>({
 }: {
   children: React.ReactNode;
   className?: string;
-  href: Route<Href>;
+  href: AppRoute<Href>;
   prefetch?: boolean;
   rel?: string;
   shortcut?: GenerationShortcut;

@@ -86,6 +86,7 @@ describe(listSitemapChapters, () => {
       brandSlug: org.slug,
       chapterSlug: chapter.slug,
       courseSlug: course.slug,
+      language: "es",
       updatedAt: expect.any(Date),
     });
   });

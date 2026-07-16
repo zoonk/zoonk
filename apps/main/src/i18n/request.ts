@@ -1,17 +1,16 @@
 import { playerMessages } from "@zoonk/player/messages";
-import { LOCALE_COOKIE, getLocaleFromRequest } from "@zoonk/utils/locale";
+import { hasLocale } from "next-intl";
 import { getRequestConfig } from "next-intl/server";
-import { cookies, headers } from "next/headers";
+import { notFound } from "next/navigation";
+import { lang } from "next/root-params";
+import { routing } from "./routing";
 
 export default getRequestConfig(async ({ locale: overrideLocale }) => {
-  const store = await cookies();
-  const headerStore = await headers();
+  const locale = hasLocale(routing.locales, overrideLocale) ? overrideLocale : await lang();
 
-  const locale = getLocaleFromRequest({
-    acceptLanguage: headerStore.get("accept-language"),
-    cookieLocale: store.get(LOCALE_COOKIE)?.value,
-    overrideLocale,
-  });
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
 
   const [playerTranslations, appTranslations] = await Promise.all([
     playerMessages(locale),

@@ -1,4 +1,4 @@
-import { type Route } from "next";
+import { type AppRoute } from "@/i18n/navigation";
 import { GenerationShortcutLink } from "./generation-shortcut-link";
 
 const generationExitLinkWidths = { content: "w-fit max-w-full self-start", full: "w-full" };
@@ -17,7 +17,7 @@ export function GenerationExitLink<Href extends string>({
   width = "full",
 }: {
   children: React.ReactNode;
-  href: Route<Href>;
+  href: AppRoute<Href>;
   shortcut?: "Esc";
   width?: GenerationExitLinkWidth;
 }) {

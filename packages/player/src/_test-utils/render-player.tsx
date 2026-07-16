@@ -3,6 +3,7 @@
 import { render } from "@testing-library/react";
 import { type CompletionInput } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import Link from "next/link";
 import { type PlayerProgressSnapshot } from "../completion-milestones";
 import { PlayerShell } from "../components/player-shell";
 import {
@@ -87,6 +88,7 @@ export function renderPlayer({
       lessonDescription={lessonDescription}
       lessonProgress={lessonProgress}
       lessonTitle={lessonTitle}
+      linkComponent={Link}
       milestone={milestone}
       navigation={navigation}
       onComplete={onComplete}

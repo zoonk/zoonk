@@ -256,7 +256,7 @@ test.describe("Course Start Routing", () => {
   test("redirects cached topic prompts to the generation page", async ({ page }) => {
     await mockCourseGenerationWorkflow(page);
 
-    const cached = await cacheTopicPrompt(`e2e direct topic ${randomUUID()}`);
+    const cached = await cacheTopicPrompt(`e2e direct Python 3.12 topic ${randomUUID()}`);
 
     await page.goto(`/start/learn/${encodeURIComponent(cached.prompt)}`);
 

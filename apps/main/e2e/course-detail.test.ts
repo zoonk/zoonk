@@ -49,6 +49,8 @@ const testData: {
   courseWithImageTitle: string;
   courseWithImageUrl: string;
   ptCourseUrl: string;
+  regionalCourseTitle: string;
+  regionalCourseUrl: string;
 } = {
   courseNoImageTitle: "",
   courseNoImageUrl: "",
@@ -56,6 +58,8 @@ const testData: {
   courseWithImageTitle: "",
   courseWithImageUrl: "",
   ptCourseUrl: "",
+  regionalCourseTitle: "",
+  regionalCourseUrl: "",
 };
 
 test.beforeAll(async () => {
@@ -66,8 +70,9 @@ test.beforeAll(async () => {
   testData.courseWithImageDescription = `Description for image course ${uniqueId}`;
   testData.courseNoImageTitle = `E2E No Image Course ${uniqueId}`;
   const ptCourseTitle = `E2E Curso PT ${uniqueId}`;
+  testData.regionalCourseTitle = `E2E Regional Course ${uniqueId}`;
 
-  const [courseWithImage, courseNoImage, ptCourse] = await Promise.all([
+  const [courseWithImage, courseNoImage, ptCourse, regionalCourse] = await Promise.all([
     courseFixture({
       description: testData.courseWithImageDescription,
       imageUrl: "https://placehold.co/200x200.png",
@@ -93,6 +98,14 @@ test.beforeAll(async () => {
       organizationId: org.id,
       slug: `e2e-pt-course-${uniqueId}`,
       title: ptCourseTitle,
+    }),
+    courseFixture({
+      isPublished: true,
+      language: "pt-BR",
+      normalizedTitle: normalizeString(testData.regionalCourseTitle),
+      organizationId: org.id,
+      slug: `e2e-regional-course-${uniqueId}`,
+      title: testData.regionalCourseTitle,
     }),
   ]);
 
@@ -123,11 +136,21 @@ test.beforeAll(async () => {
       slug: `e2e-pt-ch-${uniqueId}`,
       title: `Capítulo PT ${uniqueId}`,
     }),
+    chapterFixture({
+      courseId: regionalCourse.id,
+      isPublished: true,
+      language: "pt-BR",
+      organizationId: org.id,
+      position: 0,
+      slug: `e2e-regional-ch-${uniqueId}`,
+      title: `Regional Chapter ${uniqueId}`,
+    }),
   ]);
 
   testData.courseWithImageUrl = `/b/${AI_ORG_SLUG}/c/${courseWithImage.slug}`;
   testData.courseNoImageUrl = `/b/${AI_ORG_SLUG}/c/${courseNoImage.slug}`;
   testData.ptCourseUrl = `/b/${AI_ORG_SLUG}/c/${ptCourse.slug}`;
+  testData.regionalCourseUrl = `/b/${AI_ORG_SLUG}/c/${regionalCourse.slug}`;
 });
 
 test.describe("Course Detail Page", () => {
@@ -230,6 +253,16 @@ test.describe("Course Detail Page", () => {
     const fallbackIcon = page.getByRole("img", { name: testData.courseNoImageTitle }).first();
     await expect(fallbackIcon).toBeVisible();
     await expect(fallbackIcon).not.toHaveAttribute("src");
+  });
+
+  test("renders metadata for a course with a regional language tag", async ({ page }) => {
+    await page.goto(testData.regionalCourseUrl);
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: testData.regionalCourseTitle }),
+    ).toBeVisible();
+
+    await expect(page).toHaveTitle(`Learn ${testData.regionalCourseTitle} | Zoonk`);
   });
 });
 

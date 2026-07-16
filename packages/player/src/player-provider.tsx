@@ -11,6 +11,7 @@ import { type PlayerProgressSnapshot } from "./completion-milestones";
 import {
   PlayerConfigContext,
   type PlayerLessonProgress,
+  type PlayerLinkComponent,
   type PlayerMilestone,
   type PlayerNavigation,
   PlayerRuntimeContext,
@@ -36,6 +37,7 @@ export function PlayerProvider({
   lessonDescription,
   lessonProgress,
   lessonTitle,
+  linkComponent,
   milestone,
   navigation,
   onComplete,
@@ -53,6 +55,7 @@ export function PlayerProvider({
   lessonDescription: string;
   lessonProgress: PlayerLessonProgress;
   lessonTitle: string;
+  linkComponent: PlayerLinkComponent;
   milestone: PlayerMilestone | null;
   navigation: PlayerNavigation;
   onComplete: (input: CompletionInput) => void;
@@ -115,6 +118,7 @@ export function PlayerProvider({
         lessonTitle,
         title: lesson.title,
       },
+      linkComponent,
       milestone,
       navigation,
       next: handleNext,
@@ -130,6 +134,7 @@ export function PlayerProvider({
       lessonDescription,
       lessonProgress,
       lessonTitle,
+      linkComponent,
       milestone,
       navigation,
       onEscape,

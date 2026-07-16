@@ -19,7 +19,15 @@ export async function countSitemapChapters(): Promise<number> {
 
 export async function listSitemapChapters(
   page: number,
-): Promise<{ brandSlug: string; chapterSlug: string; courseSlug: string; updatedAt: Date }[]> {
+): Promise<
+  {
+    brandSlug: string;
+    chapterSlug: string;
+    courseSlug: string;
+    language: string;
+    updatedAt: Date;
+  }[]
+> {
   const chapters = await prisma.chapter.findMany({
     include: { course: { include: { organization: true } } },
     orderBy: { id: "asc" },
@@ -32,6 +40,7 @@ export async function listSitemapChapters(
     brandSlug: chapter.course.organization?.slug ?? "",
     chapterSlug: chapter.slug,
     courseSlug: chapter.course.slug,
+    language: chapter.course.language,
     updatedAt: chapter.updatedAt,
   }));
 }

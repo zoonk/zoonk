@@ -5,7 +5,7 @@ import { optimizeImage } from "@zoonk/core/images/optimize";
 import { safeAsync } from "@zoonk/utils/error";
 import { ImageResponse } from "next/og";
 
-const ROOT_OPEN_GRAPH_IMAGE_PATH = "src/app/opengraph-image.png";
+const ROOT_OPEN_GRAPH_IMAGE_PATH = "src/app/[lang]/opengraph-image.png";
 const DESCRIPTION_LINE_HEIGHT = 1.35;
 const DESCRIPTION_LINE_COUNT = 5;
 const DESCRIPTION_FONT_SIZE = 30;

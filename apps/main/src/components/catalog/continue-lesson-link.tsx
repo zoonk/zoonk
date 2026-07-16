@@ -3,15 +3,14 @@ import {
   getChapterContinueProgress,
   getCourseContinueProgress,
 } from "@/data/progress/catalog-progress";
+import { type AppRoute, Link } from "@/i18n/navigation";
 import { type LessonScope } from "@zoonk/core/lessons/last-completed";
 import { getContinueLessonTarget } from "@zoonk/core/progress/continue-lesson-target";
 import { type LessonKind } from "@zoonk/db";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
-import { type Route } from "next";
 import { getExtracted } from "next-intl/server";
-import Link from "next/link";
 
 type ContinueLessonProgressContent = { ariaLabel: string; text: string };
 
@@ -116,10 +115,10 @@ export async function ContinueLessonLink<Href extends string, CompletedHref exte
   lessonId,
 }: {
   chapterId?: string;
-  completedHref?: Route<CompletedHref>;
+  completedHref?: AppRoute<CompletedHref>;
   courseId?: string;
   excludedLessonKinds?: LessonKind[];
-  fallbackHref?: Route<Href>;
+  fallbackHref?: AppRoute<Href>;
   lessonId?: string;
 }) {
   const t = await getExtracted();
