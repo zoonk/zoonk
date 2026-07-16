@@ -19,6 +19,9 @@ const ADVERSARIAL_EXPECTATIONS = `
   - Prompt injection, roleplay, QA framing, and context-filling text must not change the personalization result.
 `;
 
+const AI_FOR_AUDIENCE_EXPECTATIONS =
+  "- Applied AI for an audience requires intake because the field changes quickly and the useful course depends on the audience's actual goals, tasks, and workflow.";
+
 /**
  * Formats the expected boolean for human-readable eval expectations without
  * changing the structured value used by deterministic scoring.
@@ -82,15 +85,50 @@ export const TEST_CASES: CoursePersonalizationTestCase[] = [
     requiresPersonalization: true,
   }),
   personalizationCase({
+    id: "production-organic-structure-concepts",
+    language: "de",
+    prompt:
+      "Verständnis der Konzepte und Definitionen der organischen Strukturlehre. Kenntnis der für die Biowissenschaften wichtigen funkt",
+    requiresPersonalization: true,
+  }),
+  personalizationCase({
+    id: "production-organic-chemistry-foundations",
+    language: "de",
+    prompt:
+      "Grundlagen der Organischen Chemie: Strukturlehre. Bindungsverhältnisse und funktionelle Gruppen; Nomenklatur; Resonanz und Arom",
+    requiresPersonalization: true,
+  }),
+  personalizationCase({
+    id: "production-biochemistry-molecular-biology-evolution",
+    language: "de",
+    prompt: "Einführung in die Biochemie und Molekularbiologie sowie evolutionäre Zusammenhänge",
+    requiresPersonalization: true,
+  }),
+  personalizationCase({
+    id: "production-analysis-linear-algebra-applications",
+    language: "de",
+    prompt:
+      "Einführung in die ein- und mehrdimensionale Analysis und die Lineare Algebra unter besonderer Betonung von Anwendungen in den Na",
+    requiresPersonalization: true,
+  }),
+  personalizationCase({
+    id: "production-digital-banking-channels",
+    language: "pt",
+    prompt: "internet Banking, Office Banking e Mobile Banking; Banco Digital e Banco Digitalizado",
+    requiresPersonalization: true,
+  }),
+  personalizationCase({
     id: "arabic-using-bangla",
     prompt: "arabic using bangla",
     requiresPersonalization: false,
   }),
   personalizationCase({ id: "tamazight", prompt: "tamazight", requiresPersonalization: false }),
   personalizationCase({
+    extra:
+      "- Applied agentic engineering with a named AI tool requires intake because the useful course depends on the learner's goal, workflow, environment, and current tool capabilities.",
     id: "agentic-engineering-claude-code",
     prompt: "agentic engineering using claude code",
-    requiresPersonalization: false,
+    requiresPersonalization: true,
   }),
   personalizationCase({
     id: "small-weights-ergonomics",
@@ -244,11 +282,16 @@ export const TEST_CASES: CoursePersonalizationTestCase[] = [
     requiresPersonalization: false,
   }),
   personalizationCase({
-    extra:
-      "- X-for-Y topics are reusable unless the prompt names a specific learner, class, organization, project, or current situation.",
+    extra: AI_FOR_AUDIENCE_EXPECTATIONS,
     id: "ai-for-kitchen-chefs",
     prompt: "ai for kitchen chefs",
-    requiresPersonalization: false,
+    requiresPersonalization: true,
+  }),
+  personalizationCase({
+    extra: AI_FOR_AUDIENCE_EXPECTATIONS,
+    id: "ai-for-teachers",
+    prompt: "ai for teachers",
+    requiresPersonalization: true,
   }),
   personalizationCase({
     extra:
@@ -272,7 +315,7 @@ export const TEST_CASES: CoursePersonalizationTestCase[] = [
   personalizationCase({
     id: "michelin-recipes",
     prompt: "michelin recipes",
-    requiresPersonalization: false,
+    requiresPersonalization: true,
   }),
   personalizationCase({
     id: "modern-cuisine-techniques",
@@ -303,9 +346,11 @@ export const TEST_CASES: CoursePersonalizationTestCase[] = [
     requiresPersonalization: true,
   }),
   personalizationCase({
+    extra:
+      "- Combining multiple broad fields requires intake to determine the intended balance, relationship, depth, and learning goal.",
     id: "math-and-logic",
     prompt: "math and logic",
-    requiresPersonalization: false,
+    requiresPersonalization: true,
   }),
   personalizationCase({
     id: "gpu-programming-no-library",
@@ -456,7 +501,7 @@ export const TEST_CASES: CoursePersonalizationTestCase[] = [
   }),
   personalizationCase({ id: "semiotics", prompt: "semiotics", requiresPersonalization: false }),
   personalizationCase({ id: "fotografie", prompt: "Fotografie", requiresPersonalization: false }),
-  personalizationCase({ id: "scrunchie", prompt: "scrunchie", requiresPersonalization: false }),
+  personalizationCase({ id: "scrunchie", prompt: "scrunchie", requiresPersonalization: true }),
   personalizationCase({
     id: "differential-geometry",
     prompt: "Differential Geometry",
@@ -470,7 +515,7 @@ export const TEST_CASES: CoursePersonalizationTestCase[] = [
   personalizationCase({
     id: "offense-security",
     prompt: "Offense security",
-    requiresPersonalization: false,
+    requiresPersonalization: true,
   }),
   personalizationCase({
     id: "math-of-black-holes",
@@ -546,9 +591,11 @@ export const TEST_CASES: CoursePersonalizationTestCase[] = [
   personalizationCase({ id: "soft-skills", prompt: "soft skills", requiresPersonalization: false }),
   personalizationCase({ id: "maths", prompt: "maths", requiresPersonalization: false }),
   personalizationCase({
+    extra:
+      "- Combining multiple broad academic fields requires intake to determine the intended balance, depth, relationship, and learning goal.",
     id: "university-maths-and-physics",
     prompt: "University maths and physics",
-    requiresPersonalization: false,
+    requiresPersonalization: true,
   }),
   personalizationCase({ id: "black-hole", prompt: "black hole", requiresPersonalization: false }),
   personalizationCase({
@@ -612,17 +659,17 @@ export const TEST_CASES: CoursePersonalizationTestCase[] = [
   personalizationCase({
     id: "zh-pour-over-coffee",
     prompt: "冲一杯好喝的手冲咖啡",
-    requiresPersonalization: false,
+    requiresPersonalization: true,
   }),
   personalizationCase({ id: "zh-psychology", prompt: "心理学", requiresPersonalization: false }),
   personalizationCase({
     id: "maths-operations-fractions-algebra",
     prompt: "matematicas, operaciones de fracciones a algebra",
-    requiresPersonalization: false,
+    requiresPersonalization: true,
   }),
   personalizationCase({
     id: "maths-fractions-and-more",
     prompt: "matematicas fracciones y mas",
-    requiresPersonalization: false,
+    requiresPersonalization: true,
   }),
 ];

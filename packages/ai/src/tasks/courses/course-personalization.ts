@@ -54,6 +54,7 @@ export async function classifyCoursePersonalization({
     prompt: userPrompt,
     providerOptions,
     reasoning,
+    temperature: 0,
   });
 
   return { data: output, systemPrompt, usage, userPrompt };
