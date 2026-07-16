@@ -28,6 +28,7 @@ export async function generateMetadata({
   return {
     ...(await getCategoryMeta({ category })),
     alternates: { canonical: getLocalizedUrl({ href: `/courses/${category}`, language: lang }) },
+    robots: { follow: true, index: true },
   };
 }
 

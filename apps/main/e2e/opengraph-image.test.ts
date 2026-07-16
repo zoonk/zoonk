@@ -11,11 +11,14 @@ import { type Page, expect, test } from "./fixtures";
 const OPEN_GRAPH_IMAGE_SIZE = { height: 630, width: 1200 };
 
 /**
- * Playwright workers do not run through Next.js's environment loader, so load
- * the app's `.env` file before resolving the same base URL used during builds.
+ * Local Playwright workers do not run through Next.js's environment loader, so
+ * load the app's `.env` only when CI has not already provided the build domain.
  */
 function getExpectedMetadataBase() {
-  process.loadEnvFile();
+  if (!process.env.NEXT_PUBLIC_APP_DOMAIN && !process.env.VERCEL_URL) {
+    process.loadEnvFile();
+  }
+
   return getBaseUrl();
 }
 
@@ -53,6 +56,14 @@ async function expectGeneratedOpenGraphImage({
  */
 async function getOpenGraphImageUrl({ page, path }: { page: Page; path: string }) {
   await page.goto(path);
+
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => document.querySelector<HTMLMetaElement>("meta[property='og:image']")?.content ?? "",
+      ),
+    )
+    .not.toBe("");
 
   const imageUrl = await page.evaluate(
     () => document.querySelector<HTMLMetaElement>("meta[property='og:image']")?.content ?? "",

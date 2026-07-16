@@ -35,13 +35,14 @@ async function expectCanonicalUrl({
  */
 async function expectIndexable({ page, path }: { page: Page; path: string }) {
   await page.goto(path);
-  await page.waitForLoadState("networkidle");
 
-  const robots = await page.evaluate(
-    () => document.querySelector<HTMLMetaElement>("meta[name='robots']")?.content ?? "",
-  );
-
-  expect(robots).toBe("index, follow");
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => document.querySelector<HTMLMetaElement>("meta[name='robots']")?.content ?? "",
+      ),
+    )
+    .toBe("index, follow");
 }
 
 test("marks course discovery pages as indexable", async ({ page }) => {
