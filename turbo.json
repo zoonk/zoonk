@@ -35,6 +35,7 @@
         ".next/**",
         "!.next/cache/**",
         "!.next/dev/**",
+        "next-env.d.ts",
         "messages/**",
         "src/app/.well-known/workflow/**"
       ]
@@ -45,6 +46,7 @@
         ".next-e2e/**",
         "!.next-e2e/cache/**",
         "!.next-e2e/dev/**",
+        "next-env.d.ts",
         "messages/**",
         "src/app/.well-known/workflow/**"
       ]
@@ -67,6 +69,9 @@
       "dependsOn": ["db:generate", "^db:setup:test"],
       "persistent": true
     },
-    "typecheck": { "dependsOn": ["db:generate", "^typecheck"], "outputs": [".next/types/**"] }
+    "typecheck": {
+      "dependsOn": ["db:generate", "^typecheck"],
+      "outputs": [".next/types/**", "next-env.d.ts"]
+    }
   }
 }

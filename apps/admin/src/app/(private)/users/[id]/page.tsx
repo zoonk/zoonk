@@ -78,7 +78,7 @@ export default async function UserDetailPage({ params }: PageProps<"/users/[id]"
         </ContainerHeaderGroup>
       </ContainerHeader>
 
-      <ContainerBody className="max-w-4xl gap-8">
+      <ContainerBody className="gap-8">
         <Suspense fallback={<HeaderSkeleton />}>
           <UserHeader userId={userId} />
         </Suspense>
