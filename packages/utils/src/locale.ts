@@ -4,13 +4,28 @@ import Negotiator from "negotiator";
 export const SUPPORTED_LOCALES = ["en", "es", "pt", "fr", "de"] as const;
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 
-const DEFAULT_LOCALE: SupportedLocale = "en";
+export const DEFAULT_LOCALE: SupportedLocale = "en";
 const DEFAULT_COUNTRY = "US";
 
 export const LOCALE_COOKIE = "ZOONK_LOCALE";
 
 export function isValidLocale(value: string): value is SupportedLocale {
   return SUPPORTED_LOCALES.some((locale) => locale === value);
+}
+
+/**
+ * Stored content languages can include regional tags such as `pt-BR`, while
+ * app routes only support base locales such as `pt`. Falling back to English
+ * keeps unsupported content languages on a real route instead of inventing an
+ * invalid locale prefix.
+ */
+export function getSupportedLocaleFromLanguage(language: string): SupportedLocale {
+  try {
+    const locale = new Intl.Locale(language).language;
+    return isValidLocale(locale) ? locale : DEFAULT_LOCALE;
+  } catch {
+    return DEFAULT_LOCALE;
+  }
 }
 
 /**

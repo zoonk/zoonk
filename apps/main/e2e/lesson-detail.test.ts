@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { createOrganization, getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -585,18 +586,20 @@ test.describe("Lesson Player Page", () => {
     });
   });
 
-  test("close link has correct href", async ({ page }) => {
+  test("close link preserves the active language", async ({ authenticatedPage }) => {
     const { chapter, course, lesson } = await createTestLesson({ generationStatus: "completed" });
+    const chapterPath = `/b/ai/c/${course.slug}/ch/${chapter.slug}`;
 
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
-    await continueWithoutSaving(page);
+    await setLocale(authenticatedPage, "pt");
+    await authenticatedPage.goto(`${chapterPath}/l/${lesson.slug}`);
 
-    const closeLink = page.getByRole("link", { name: /close/iu });
-
-    await expect(closeLink).toHaveAttribute(
-      "href",
-      new RegExp(`/b/ai/c/${course.slug}/ch/${chapter.slug}$`, "u"),
+    await expect(authenticatedPage).toHaveURL(
+      new RegExp(`/pt${chapterPath}/l/${lesson.slug}$`, "u"),
     );
+
+    const closeLink = authenticatedPage.getByRole("link", { name: /fechar/iu });
+
+    await expect(closeLink).toHaveAttribute("href", `/pt${chapterPath}`);
   });
 
   test("pending lessons show the create state and link details", async ({ page }) => {

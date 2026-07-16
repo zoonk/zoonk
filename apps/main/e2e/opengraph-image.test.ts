@@ -4,10 +4,23 @@ import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { getBaseUrl } from "@zoonk/utils/origin";
 import { normalizeString } from "@zoonk/utils/string";
 import { type Page, expect, test } from "./fixtures";
 
 const OPEN_GRAPH_IMAGE_SIZE = { height: 630, width: 1200 };
+
+/**
+ * Local Playwright workers do not run through Next.js's environment loader, so
+ * load the app's `.env` only when CI has not already provided the build domain.
+ */
+function getExpectedMetadataBase() {
+  if (!process.env.NEXT_PUBLIC_APP_DOMAIN && !process.env.VERCEL_URL) {
+    process.loadEnvFile();
+  }
+
+  return getBaseUrl();
+}
 
 /**
  * The generated route returns PNG bytes, so this reads the PNG header directly
@@ -41,16 +54,40 @@ async function expectGeneratedOpenGraphImage({
  * Next fingerprints generated metadata routes, so tests need to read the
  * concrete image URL from the page head instead of guessing the file route.
  */
-async function getOpenGraphImagePath({ page, path }: { page: Page; path: string }) {
+async function getOpenGraphImageUrl({ page, path }: { page: Page; path: string }) {
   await page.goto(path);
+
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => document.querySelector<HTMLMetaElement>("meta[property='og:image']")?.content ?? "",
+      ),
+    )
+    .not.toBe("");
 
   const imageUrl = await page.evaluate(
     () => document.querySelector<HTMLMetaElement>("meta[property='og:image']")?.content ?? "",
   );
 
-  const url = new URL(imageUrl, "http://localhost");
+  return new URL(imageUrl, "http://localhost");
+}
+
+/**
+ * Metadata image routes include a build fingerprint, so callers need the full
+ * path and query string when requesting the generated image from the test app.
+ */
+async function getOpenGraphImagePath({ page, path }: { page: Page; path: string }) {
+  const url = await getOpenGraphImageUrl({ page, path });
   return `${url.pathname}${url.search}`;
 }
+
+test("uses the current app origin for the shared open graph image", async ({ page, request }) => {
+  const imageUrl = await getOpenGraphImageUrl({ page, path: "/" });
+
+  expect(imageUrl.origin).toBe(getExpectedMetadataBase());
+
+  await expectGeneratedOpenGraphImage({ path: `${imageUrl.pathname}${imageUrl.search}`, request });
+});
 
 test("generates route-specific open graph images for catalog pages", async ({ page, request }) => {
   const uniqueId = randomUUID().slice(0, 8);

@@ -1,5 +1,26 @@
+import { type Locator, type Page } from "@playwright/test";
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
+import { type SupportedLocale } from "@zoonk/utils/locale";
 import { expect, test } from "./fixtures";
+
+/**
+ * Change the language and wait for the proxy to finish canonicalizing the
+ * locale-prefixed target before making assertions against the new page.
+ */
+async function selectLanguage({
+  expectedPath,
+  locale,
+  page,
+  selector,
+}: {
+  expectedPath: string;
+  locale: SupportedLocale;
+  page: Page;
+  selector: Locator;
+}) {
+  await selector.selectOption(locale);
+  await expect(page).toHaveURL((url) => url.pathname === expectedPath);
+}
 
 test.describe("Language settings page", () => {
   test("displays language selector with current locale", async ({ page }) => {
@@ -17,11 +38,7 @@ test.describe("Language settings page", () => {
 
     const selector = page.getByRole("combobox", { name: /update language/iu });
 
-    // Start listening for the reload before triggering it
-    const reloadPromise = page.waitForEvent("load");
-    await selector.selectOption("es");
-    await reloadPromise;
-
+    await selectLanguage({ expectedPath: "/es/language", locale: "es", page, selector });
     await expect(page.getByRole("heading", { level: 1, name: /^idioma$/iu })).toBeVisible();
   });
 
@@ -30,11 +47,7 @@ test.describe("Language settings page", () => {
 
     const selector = page.getByRole("combobox", { name: /update language/iu });
 
-    // Start listening for the reload before triggering it
-    const reloadPromise = page.waitForEvent("load");
-    await selector.selectOption("pt");
-    await reloadPromise;
-
+    await selectLanguage({ expectedPath: "/pt/language", locale: "pt", page, selector });
     await expect(page.getByRole("heading", { level: 1, name: /^idioma$/iu })).toBeVisible();
 
     await expect(
@@ -50,10 +63,7 @@ test.describe("Language settings page", () => {
 
     const selector = page.getByRole("combobox", { name: /update language/iu });
 
-    const reloadPromise = page.waitForEvent("load");
-    await selector.selectOption("fr");
-    await reloadPromise;
-
+    await selectLanguage({ expectedPath: "/fr/language", locale: "fr", page, selector });
     await expect(page.getByRole("heading", { level: 1, name: /^langue$/iu })).toBeVisible();
   });
 
@@ -62,16 +72,24 @@ test.describe("Language settings page", () => {
 
     const selector = page.getByRole("combobox", { name: /update language/iu });
 
-    const reloadPromise = page.waitForEvent("load");
-    await selector.selectOption("de");
-    await reloadPromise;
-
+    await selectLanguage({ expectedPath: "/de/language", locale: "de", page, selector });
     await expect(page.getByRole("heading", { level: 1, name: /^sprache$/iu })).toBeVisible();
+  });
+
+  test("removes the prefix when switching back to English", async ({ page }) => {
+    await setLocale(page, "pt");
+    await page.goto("/language");
+
+    const selector = page.getByRole("combobox", { name: /alterar idioma/iu });
+    await selectLanguage({ expectedPath: "/language", locale: "en", page, selector });
+    await expect(page.getByRole("heading", { level: 1, name: /^language$/iu })).toBeVisible();
   });
 
   test("renders French privacy policy", async ({ page }) => {
     await setLocale(page, "fr");
     await page.goto("/privacy");
+
+    await expect(page).toHaveURL(/\/fr\/privacy$/u);
 
     await expect(
       page.getByRole("heading", { level: 1, name: /^politique de confidentialité$/iu }),
@@ -81,6 +99,8 @@ test.describe("Language settings page", () => {
   test("renders German terms of service", async ({ page }) => {
     await setLocale(page, "de");
     await page.goto("/terms");
+
+    await expect(page).toHaveURL(/\/de\/terms$/u);
 
     await expect(
       page.getByRole("heading", { level: 1, name: /^nutzungsbedingungen$/iu }),

@@ -5,2537 +5,2537 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: next-intl\n"
 
-#: src/app/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
 msgctxt "xmcVZ0"
 msgid "Search"
 msgstr "Suche"
 
-#: src/app/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
 msgctxt "PSiLeL"
 msgid "Search courses, chapters, or pages..."
 msgstr "Kurse, Kapitel oder Seiten durchsuchen..."
 
-#: src/app/(catalog)/_components/command-palette.tsx
-#: src/app/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/user-dropdown-menu.tsx
 msgctxt "I-38K2"
 msgid "My courses"
 msgstr "Meine Kurse"
 
-#: src/app/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
 msgctxt "Oj9Phc"
 msgid "Manage subscription"
 msgstr "Abo verwalten"
 
-#: src/app/(catalog)/_components/command-palette.tsx
-#: src/app/(settings)/_components/locale-switcher.tsx
-#: src/app/(settings)/language/page.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(settings)/_components/locale-switcher.tsx
+#: src/app/[lang]/(settings)/language/page.tsx
 msgctxt "OhXwmw"
 msgid "Update language"
 msgstr "Sprache ändern"
 
-#: src/app/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
 msgctxt "O7ozeo"
 msgid "Update profile"
 msgstr "Profil aktualisieren"
 
-#: src/app/(catalog)/_components/command-palette.tsx
-#: src/app/(catalog)/_components/logout-dropdown-item.tsx
-#: src/app/(settings)/_components/settings-navbar.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/logout-dropdown-item.tsx
+#: src/app/[lang]/(settings)/_components/settings-navbar.tsx
 msgctxt "C81_uG"
 msgid "Logout"
 msgstr "Abmelden"
 
-#: src/app/(catalog)/_components/command-palette.tsx
-#: src/app/(catalog)/_components/logout-dropdown-item.tsx
-#: src/app/(progress)/_components/progress-empty-state.tsx
-#: src/app/(settings)/_components/protected-section.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/logout-dropdown-item.tsx
+#: src/app/[lang]/(progress)/_components/progress-empty-state.tsx
+#: src/app/[lang]/(settings)/_components/protected-section.tsx
 msgctxt "AyGauy"
 msgid "Login"
 msgstr "Anmelden"
 
-#: src/app/(catalog)/_components/command-palette.tsx
-#: src/app/(settings)/_components/locale-switcher.tsx
-#: src/app/(settings)/_components/settings-pills.tsx
-#: src/app/(settings)/language/page.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(settings)/_components/locale-switcher.tsx
+#: src/app/[lang]/(settings)/_components/settings-pills.tsx
+#: src/app/[lang]/(settings)/language/page.tsx
 msgctxt "y1Z3or"
 msgid "Language"
 msgstr "Sprache"
 
-#: src/app/(catalog)/_components/command-palette.tsx
-#: src/app/(catalog)/_components/navbar-links.tsx
-#: src/app/(progress)/_components/progress-navbar.tsx
-#: src/app/(settings)/_components/settings-navbar.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/navbar-links.tsx
+#: src/app/[lang]/(progress)/_components/progress-navbar.tsx
+#: src/app/[lang]/(settings)/_components/settings-navbar.tsx
 msgctxt "U3l-Q9"
 msgid "Home page"
 msgstr "Startseite"
 
-#: src/app/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
 msgctxt "jboh4c"
 msgid "Start a new course"
 msgstr "Neuen Kurs starten"
 
-#: src/app/(catalog)/_components/command-palette.tsx
-#: src/app/(catalog)/start/start-content.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/start/start-content.tsx
 msgctxt "rS0suY"
 msgid "Speak a language"
 msgstr "Eine Sprache sprechen"
 
-#: src/app/(catalog)/_components/command-palette.tsx
-#: src/app/(catalog)/start/start-content.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/start/start-content.tsx
 msgctxt "L6kaJv"
 msgid "Learn something"
 msgstr "Etwas lernen"
 
-#: src/app/(catalog)/_components/command-palette.tsx
-#: src/app/(catalog)/start/exam/page.tsx
-#: src/app/(catalog)/start/start-content.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/start/exam/page.tsx
+#: src/app/[lang]/(catalog)/start/start-content.tsx
 msgctxt "3wvH7G"
 msgid "Pass an exam"
 msgstr "Prüfung bestehen"
 
-#: src/app/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
 msgctxt "CxfKLC"
 msgid "Pages"
 msgstr "Seiten"
 
-#: src/app/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
 msgctxt "dXSivY"
 msgid "My account"
 msgstr "Mein Konto"
 
-#: src/app/(catalog)/_components/command-palette.tsx
-#: src/app/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/user-dropdown-menu.tsx
 msgctxt "tv5FG3"
 msgid "Blog"
 msgstr "Blog"
 
-#: src/app/(catalog)/_components/command-palette.tsx
-#: src/app/(catalog)/_components/user-dropdown-menu.tsx
-#: src/app/(settings)/_components/settings-pills.tsx
-#: src/app/(settings)/support/page.tsx
-#: src/app/(settings)/support/support-content.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(settings)/_components/settings-pills.tsx
+#: src/app/[lang]/(settings)/support/page.tsx
+#: src/app/[lang]/(settings)/support/support-content.tsx
 msgctxt "fFZ0Wd"
 msgid "Feedback & Support"
 msgstr "Feedback & Support"
 
-#: src/app/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
 msgctxt "SENRqu"
 msgid "Help"
 msgstr "Hilfe"
 
-#: src/app/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
 msgctxt "R85gsW"
 msgid "Courses"
 msgstr "Kurse"
 
-#: src/app/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
 msgctxt "Do1Pfd"
 msgid "Chapters"
 msgstr "Kapitel"
 
-#: src/app/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
 msgctxt "hX5PAb"
 msgid "No results found"
 msgstr "Keine Ergebnisse gefunden"
 
-#: src/app/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
 msgctxt "OXAZiT"
 msgid "Create a course about {term}"
 msgstr "Kurs über {term} erstellen"
 
-#: src/app/(catalog)/_components/navbar-links.tsx
+#: src/app/[lang]/(catalog)/_components/navbar-links.tsx
 msgctxt "onRJrc"
 msgid "Course page"
 msgstr "Kursseite"
 
-#: src/app/(catalog)/_components/navbar-links.tsx
+#: src/app/[lang]/(catalog)/_components/navbar-links.tsx
 msgctxt "m826WB"
 msgid "New course"
 msgstr "Neuer Kurs"
 
-#: src/app/(catalog)/_components/user-avatar-menu.tsx
+#: src/app/[lang]/(catalog)/_components/user-avatar-menu.tsx
 msgctxt "6b2CRH"
 msgid "User menu"
 msgstr "Benutzermenü"
 
-#: src/app/(catalog)/_components/user-dropdown-menu.tsx
-#: src/app/(settings)/_components/settings-pills.tsx
-#: src/app/(settings)/profile/page.tsx
+#: src/app/[lang]/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(settings)/_components/settings-pills.tsx
+#: src/app/[lang]/(settings)/profile/page.tsx
 msgctxt "itPgxd"
 msgid "Profile"
 msgstr "Profil"
 
-#: src/app/(catalog)/_components/user-dropdown-menu.tsx
-#: src/app/(settings)/_components/settings-pills.tsx
+#: src/app/[lang]/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(settings)/_components/settings-pills.tsx
 msgctxt "R_6nsx"
 msgid "Subscription"
 msgstr "Abo"
 
-#: src/app/(catalog)/(home)/best-day.tsx
-#: src/app/(progress)/score/score-insights.tsx
+#: src/app/[lang]/(catalog)/(home)/best-day.tsx
+#: src/app/[lang]/(progress)/score/score-insights.tsx
 msgctxt "HHFpcy"
 msgid "Best day"
 msgstr "Bester Tag"
 
-#: src/app/(catalog)/(home)/best-day.tsx
-#: src/app/(progress)/energy/energy-insights.tsx
-#: src/app/(progress)/score/score-insights.tsx
+#: src/app/[lang]/(catalog)/(home)/best-day.tsx
+#: src/app/[lang]/(progress)/energy/energy-insights.tsx
+#: src/app/[lang]/(progress)/score/score-insights.tsx
 msgctxt "auPwZG"
 msgid "{day} with {percentage}"
 msgstr "{day} mit {percentage}"
 
-#: src/app/(catalog)/(home)/best-day.tsx
-#: src/app/(catalog)/(home)/best-time.tsx
-#: src/app/(catalog)/(home)/score.tsx
+#: src/app/[lang]/(catalog)/(home)/best-day.tsx
+#: src/app/[lang]/(catalog)/(home)/best-time.tsx
+#: src/app/[lang]/(catalog)/(home)/score.tsx
 msgctxt "zml1_y"
 msgid "Past 3 months"
 msgstr "Letzte 3 Monate"
 
-#: src/app/(catalog)/(home)/best-time.tsx
-#: src/app/(progress)/score/score-insights.tsx
+#: src/app/[lang]/(catalog)/(home)/best-time.tsx
+#: src/app/[lang]/(progress)/score/score-insights.tsx
 msgctxt "00_IyC"
 msgid "Night"
 msgstr "Nacht"
 
-#: src/app/(catalog)/(home)/best-time.tsx
-#: src/app/(progress)/score/score-insights.tsx
+#: src/app/[lang]/(catalog)/(home)/best-time.tsx
+#: src/app/[lang]/(progress)/score/score-insights.tsx
 msgctxt "_kzk_m"
 msgid "Morning"
 msgstr "Morgen"
 
-#: src/app/(catalog)/(home)/best-time.tsx
-#: src/app/(progress)/score/score-insights.tsx
+#: src/app/[lang]/(catalog)/(home)/best-time.tsx
+#: src/app/[lang]/(progress)/score/score-insights.tsx
 msgctxt "mF-J9o"
 msgid "Afternoon"
 msgstr "Nachmittag"
 
-#: src/app/(catalog)/(home)/best-time.tsx
-#: src/app/(progress)/score/score-insights.tsx
+#: src/app/[lang]/(catalog)/(home)/best-time.tsx
+#: src/app/[lang]/(progress)/score/score-insights.tsx
 msgctxt "mPEpnN"
 msgid "Evening"
 msgstr "Abend"
 
-#: src/app/(catalog)/(home)/best-time.tsx
-#: src/app/(progress)/score/score-insights.tsx
+#: src/app/[lang]/(catalog)/(home)/best-time.tsx
+#: src/app/[lang]/(progress)/score/score-insights.tsx
 msgctxt "dFW9lU"
 msgid "Best time"
 msgstr "Beste Zeit"
 
-#: src/app/(catalog)/(home)/best-time.tsx
-#: src/app/(progress)/score/score-insights.tsx
+#: src/app/[lang]/(catalog)/(home)/best-time.tsx
+#: src/app/[lang]/(progress)/score/score-insights.tsx
 msgctxt "r0R6ZG"
 msgid "{period} with {percentage}"
 msgstr "{period} mit {percentage}"
 
-#: src/app/(catalog)/(home)/continue-learning-card.tsx
+#: src/app/[lang]/(catalog)/(home)/continue-learning-card.tsx
 msgctxt "NubPSk"
 msgid "Next: {lesson}"
 msgstr "Als Nächstes: {lesson}"
 
-#: src/app/(catalog)/(home)/continue-learning-card.tsx
+#: src/app/[lang]/(catalog)/(home)/continue-learning-card.tsx
 #: src/components/catalog/continue-lesson-link.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Weiter"
 
-#: src/app/(catalog)/(home)/continue-learning.tsx
+#: src/app/[lang]/(catalog)/(home)/continue-learning.tsx
 msgctxt "0X-xfW"
 msgid "Continue learning"
 msgstr "Weiterlernen"
 
-#: src/app/(catalog)/(home)/energy.tsx
+#: src/app/[lang]/(catalog)/(home)/energy.tsx
 msgctxt "soDmlG"
 msgid "Keep learning to increase it"
 msgstr "Lerne weiter, um sie zu steigern"
 
-#: src/app/(catalog)/(home)/energy.tsx
+#: src/app/[lang]/(catalog)/(home)/energy.tsx
 msgctxt "WgeB0r"
 msgid "Keep learning to maintain it"
 msgstr "Lerne weiter, um sie zu halten"
 
-#: src/app/(catalog)/(home)/energy.tsx
-#: src/app/(progress)/_components/metric-pills.tsx
-#: src/app/(progress)/energy/page.tsx
+#: src/app/[lang]/(catalog)/(home)/energy.tsx
+#: src/app/[lang]/(progress)/_components/metric-pills.tsx
+#: src/app/[lang]/(progress)/energy/page.tsx
 msgctxt "cVpmV7"
 msgid "Energy"
 msgstr "Energie"
 
-#: src/app/(catalog)/(home)/energy.tsx
+#: src/app/[lang]/(catalog)/(home)/energy.tsx
 msgctxt "AV5XNu"
 msgid "Your energy is {percentage}"
 msgstr "Deine Energie liegt bei {percentage}"
 
-#: src/app/(catalog)/(home)/learning-days.tsx
-#: src/app/(progress)/level/level-insights.tsx
+#: src/app/[lang]/(catalog)/(home)/learning-days.tsx
+#: src/app/[lang]/(progress)/level/level-insights.tsx
 msgctxt "8F6teD"
 msgid "Learning days"
 msgstr "Lerntage"
 
-#: src/app/(catalog)/(home)/learning-days.tsx
+#: src/app/[lang]/(catalog)/(home)/learning-days.tsx
 msgctxt "QbNcMh"
 msgid "At least one completed lesson"
 msgstr "Mindestens eine abgeschlossene Lektion"
 
-#: src/app/(catalog)/(home)/learning-time.tsx
+#: src/app/[lang]/(catalog)/(home)/learning-time.tsx
 msgctxt "F6B8A3"
 msgid "Time spent in lessons"
 msgstr "In Lektionen verbrachte Zeit"
 
-#: src/app/(catalog)/(home)/level.tsx
-#: src/app/(progress)/level/level-stats.tsx
+#: src/app/[lang]/(catalog)/(home)/level.tsx
+#: src/app/[lang]/(progress)/level/level-stats.tsx
 msgctxt "pgt3eW"
 msgid "Max level reached"
 msgstr "Höchstes Level erreicht"
 
-#: src/app/(catalog)/(home)/level.tsx
-#: src/app/(progress)/level/level-stats.tsx
+#: src/app/[lang]/(catalog)/(home)/level.tsx
+#: src/app/[lang]/(progress)/level/level-stats.tsx
 msgctxt "8N9BRu"
 msgid "{value} BP to next level"
 msgstr "{value} BP bis zum nächsten Level"
 
-#: src/app/(catalog)/(home)/level.tsx
-#: src/app/(progress)/_components/metric-pills.tsx
-#: src/app/(progress)/level/page.tsx
+#: src/app/[lang]/(catalog)/(home)/level.tsx
+#: src/app/[lang]/(progress)/_components/metric-pills.tsx
+#: src/app/[lang]/(progress)/level/page.tsx
 msgctxt "y1Qr81"
 msgid "Level"
 msgstr "Level"
 
-#: src/app/(catalog)/(home)/level.tsx
-#: src/app/(progress)/level/level-stats.tsx
+#: src/app/[lang]/(catalog)/(home)/level.tsx
+#: src/app/[lang]/(progress)/level/level-stats.tsx
 msgctxt "s0KB2i"
 msgid "{belt} - Level {level}"
 msgstr "{belt} – Level {level}"
 
-#: src/app/(catalog)/(home)/page.tsx
+#: src/app/[lang]/(catalog)/(home)/page.tsx
 msgctxt "a50ZRn"
 msgid "Zoonk is an AI learning platform and study app to create courses about any topic using AI. Study for your exams or learn new skills."
 msgstr "Zoonk ist eine KI-Lernplattform und Lern-App, mit der du zu jedem Thema Kurse per KI erstellen kannst. Lerne für Prüfungen oder erwirb neue Fähigkeiten."
 
-#: src/app/(catalog)/(home)/page.tsx
+#: src/app/[lang]/(catalog)/(home)/page.tsx
 msgctxt "leBFvu"
 msgid "Zoonk: Study App with AI"
 msgstr "Zoonk: Lern‑App mit KI"
 
-#: src/app/(catalog)/(home)/progress.tsx
-#: src/app/generate/ch/[id]/generation-client.tsx
-#: src/app/generate/course/[id]/generation-client.tsx
-#: src/app/generate/l/[id]/generation-client.tsx
+#: src/app/[lang]/(catalog)/(home)/progress.tsx
+#: src/app/[lang]/generate/ch/[id]/generation-client.tsx
+#: src/app/[lang]/generate/course/[id]/generation-client.tsx
+#: src/app/[lang]/generate/l/[id]/generation-client.tsx
 msgctxt "sIMS7i"
 msgid "Progress"
 msgstr "Fortschritt"
 
-#: src/app/(catalog)/(home)/score.tsx
-#: src/app/(progress)/_components/metric-pills.tsx
-#: src/app/(progress)/score/page.tsx
+#: src/app/[lang]/(catalog)/(home)/score.tsx
+#: src/app/[lang]/(progress)/_components/metric-pills.tsx
+#: src/app/[lang]/(progress)/score/page.tsx
 msgctxt "oLkLww"
 msgid "Score"
 msgstr "Punktestand"
 
-#: src/app/(catalog)/(home)/score.tsx
+#: src/app/[lang]/(catalog)/(home)/score.tsx
 msgctxt "_lCW0j"
 msgid "{percentage} correct answers"
 msgstr "{percentage} richtige Antworten"
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
 msgctxt "QhvU1f"
 msgid "Create this chapter"
 msgstr "Dieses Kapitel erstellen"
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
 msgctxt "YQGe0H"
 msgid "This chapter is part of the course, but it hasn't been created yet. Create it to see all of its lessons."
 msgstr "Dieses Kapitel ist Teil des Kurses, wurde aber noch nicht erstellt. Erstelle es, um alle Lektionen zu sehen."
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
 msgctxt "3IOFp2"
 msgid "Create chapter"
 msgstr "Kapitel erstellen"
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
-#: src/app/generate/ch/[id]/generate-chapter-content.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-not-generated.tsx
+#: src/app/[lang]/generate/ch/[id]/generate-chapter-content.tsx
 msgctxt "qrEiLa"
 msgid "Back to course"
 msgstr "Zurück zum Kurs"
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
 msgctxt "Ap-oRa"
 msgid "Could not apply lesson filters. Please try again."
 msgstr "Filter für Lektionen konnten nicht angewendet werden. Bitte versuche es erneut."
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
 msgctxt "d6tcJn"
 msgid "Filter lesson types"
 msgstr "Lektionstypen filtern"
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
 msgctxt "kxP9GJ"
 msgid "Types"
 msgstr "Typen"
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
 msgctxt "wi5osl"
 msgid "Show lesson types"
 msgstr "Lektionstypen anzeigen"
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-filters.tsx
 msgctxt "OhgOkH"
 msgid "Clear filter"
 msgstr "Filter löschen"
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgctxt "orGV_i"
 msgid "Current lesson"
 msgstr "Aktuelle Lektion"
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgctxt "ssvp3R"
 msgid "Search lessons..."
 msgstr "Lektionen suchen..."
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgctxt "FuT9vz"
 msgid "No lessons found"
 msgstr "Keine Lektionen gefunden"
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
 msgctxt "95stPq"
 msgid "Completed"
 msgstr "Abgeschlossen"
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
 msgctxt "xTTP0x"
 msgid "Not started"
 msgstr "Nicht begonnen"
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
 msgctxt "iRubpl"
 msgid "Current chapter"
 msgstr "Aktuelles Kapitel"
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
 msgctxt "3SOcGR"
 msgid "Search chapters..."
 msgstr "Kapitel suchen..."
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
 msgctxt "8udPa-"
 msgid "No chapters found"
 msgstr "Keine Kapitel gefunden"
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
 msgctxt "vcaAXp"
 msgid "{completed, number}/{total, number} done"
 msgstr "{completed, number}/{total, number} erledigt"
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/course-curriculum-pending-notice.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-curriculum-pending-notice.tsx
 msgctxt "Pf4uqS"
 msgid "The intro chapter is ready. We're still creating the full curriculum, so more chapters will appear here soon."
 msgstr "Das Einführungskapitel ist fertig. Wir erstellen noch den kompletten Lehrplan, daher werden hier bald mehr Kapitel erscheinen."
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/not-found.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/not-found.tsx
 msgctxt "KjYOfT"
 msgid "You found a course that hasn't been written yet"
 msgstr "Du hast einen Kurs gefunden, der noch nicht erstellt wurde"
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/not-found.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/not-found.tsx
 msgctxt "0DbJhZ"
 msgid "Tell us what you want to learn. We'll turn it into a clear, step-by-step course made for you."
 msgstr "Sag uns, was du lernen möchtest. Wir machen daraus einen klaren Kurs für dich – Schritt für Schritt."
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/not-found.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/not-found.tsx
 msgctxt "1SogB9"
 msgid "Create this course"
 msgstr "Diesen Kurs erstellen"
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/not-found.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/not-found.tsx
 msgctxt "eN72ct"
 msgid "An open book becoming a learning path"
 msgstr "Ein offenes Buch, das sich in einen Lernweg verwandelt"
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
 msgctxt "_allXG"
 msgid "Learn {course} online with practical examples and everyday language. {description}"
 msgstr "Lerne {course} online mit praxisnahen Beispielen und einfacher Sprache. {description}"
 
-#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+#: src/app/[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
 msgctxt "gyGolN"
 msgid "Learn {course}"
 msgstr "Lerne {course}"
 
-#: src/app/(catalog)/courses/category-pills.tsx
+#: src/app/[lang]/(catalog)/courses/category-pills.tsx
 msgctxt "tuZsq-"
 msgid "Course categories"
 msgstr "Kurskategorien"
 
-#: src/app/(catalog)/courses/category-pills.tsx
-#: src/app/(progress)/_components/period-tabs.tsx
+#: src/app/[lang]/(catalog)/courses/category-pills.tsx
+#: src/app/[lang]/(progress)/_components/period-tabs.tsx
 msgctxt "zQvVDJ"
 msgid "All"
 msgstr "Alle"
 
-#: src/app/(catalog)/courses/course-list-client.tsx
+#: src/app/[lang]/(catalog)/courses/course-list-client.tsx
 msgctxt "Wc7aau"
 msgid "No courses available yet."
 msgstr "Noch keine Kurse verfügbar."
 
-#: src/app/(catalog)/courses/course-list-client.tsx
+#: src/app/[lang]/(catalog)/courses/course-list-client.tsx
 msgctxt "zJxO2f"
 msgid "No courses"
 msgstr "Keine Kurse"
 
-#: src/app/(catalog)/courses/course-list-client.tsx
+#: src/app/[lang]/(catalog)/courses/course-list-client.tsx
 msgctxt "T0mfNV"
 msgid "Loading more courses…"
 msgstr "Lade mehr Kurse…"
 
-#: src/app/(catalog)/courses/course-list-client.tsx
+#: src/app/[lang]/(catalog)/courses/course-list-client.tsx
 #: src/components/generation/workflow-generation-error.tsx
 msgctxt "W_5hwr"
 msgid "Something went wrong. Please try again."
 msgstr "Etwas ist schiefgelaufen. Bitte versuche es erneut."
 
-#: src/app/(catalog)/courses/course-list-client.tsx
+#: src/app/[lang]/(catalog)/courses/course-list-client.tsx
 #: src/components/generation/workflow-generation-error.tsx
 msgctxt "FazwRl"
 msgid "Try again"
 msgstr "Erneut versuchen"
 
-#: src/app/(catalog)/courses/page.tsx
+#: src/app/[lang]/(catalog)/courses/page.tsx
 msgctxt "WgPMAP"
 msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons to learn subjects like science, math, technology, and more."
 msgstr "Entdecke alle Zoonk‑Kurse, um mit KI alles Mögliche zu lernen. Finde interaktive Lektionen zu Themen wie Naturwissenschaften, Mathe, Technik und mehr."
 
-#: src/app/(catalog)/courses/page.tsx
+#: src/app/[lang]/(catalog)/courses/page.tsx
 msgctxt "P5jxUC"
 msgid "Online Courses using AI"
 msgstr "Online‑Kurse mit KI"
 
-#: src/app/(catalog)/courses/page.tsx
+#: src/app/[lang]/(catalog)/courses/page.tsx
 msgctxt "s-Ncqj"
 msgid "Explore courses"
 msgstr "Kurse entdecken"
 
-#: src/app/(catalog)/courses/page.tsx
+#: src/app/[lang]/(catalog)/courses/page.tsx
 msgctxt "hUF3bo"
 msgid "Start learning something new today"
 msgstr "Fang noch heute an, etwas Neues zu lernen"
 
-#: src/app/(catalog)/my/page.tsx
+#: src/app/[lang]/(catalog)/my/page.tsx
 msgctxt "riE3I5"
 msgid "View all the courses you started on Zoonk. Continue where you left off and track your progress across interactive lessons."
 msgstr "Sieh dir alle Kurse an, die du auf Zoonk begonnen hast. Mach dort weiter, wo du aufgehört hast, und verfolge deinen Fortschritt in interaktiven Lektionen."
 
-#: src/app/(catalog)/my/page.tsx
+#: src/app/[lang]/(catalog)/my/page.tsx
 msgctxt "eeNr_Y"
 msgid "My Courses"
 msgstr "Meine Kurse"
 
-#: src/app/(catalog)/my/page.tsx
+#: src/app/[lang]/(catalog)/my/page.tsx
 msgctxt "88WJDU"
 msgid "Log in to track your courses"
 msgstr "Melde dich an, um deine Kurse zu verfolgen"
 
-#: src/app/(catalog)/my/page.tsx
+#: src/app/[lang]/(catalog)/my/page.tsx
 msgctxt "4J8O50"
 msgid "Keep your courses and progress in one place by logging in to your account."
 msgstr "Melde dich an, um deine Kurse und Fortschritte an einem Ort zu verwalten."
 
-#: src/app/(catalog)/my/page.tsx
+#: src/app/[lang]/(catalog)/my/page.tsx
 msgctxt "odXlk8"
 msgid "Log in"
 msgstr "Anmelden"
 
-#: src/app/(catalog)/my/page.tsx
+#: src/app/[lang]/(catalog)/my/page.tsx
 msgctxt "Dr13kE"
 msgid "Continue where you left off"
 msgstr "Mach dort weiter, wo du aufgehört hast"
 
-#: src/app/(catalog)/my/user-course-list.tsx
+#: src/app/[lang]/(catalog)/my/user-course-list.tsx
 msgctxt "BDHWkf"
 msgid "No courses yet"
 msgstr "Noch keine Kurse"
 
-#: src/app/(catalog)/my/user-course-list.tsx
+#: src/app/[lang]/(catalog)/my/user-course-list.tsx
 msgctxt "azX41u"
 msgid "Start learning something new today."
 msgstr "Fang noch heute an, etwas Neues zu lernen."
 
-#: src/app/(catalog)/my/user-course-list.tsx
-#: src/app/(catalog)/start/learn/learn-form.tsx
+#: src/app/[lang]/(catalog)/my/user-course-list.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-form.tsx
 msgctxt "9m9h0p"
 msgid "Start a course"
 msgstr "Kurs starten"
 
-#: src/app/(catalog)/p/[courseId]/page.tsx
-#: src/app/(catalog)/start/exam/page.tsx
-#: src/app/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
-#: src/app/(catalog)/start/start-content.tsx
+#: src/app/[lang]/(catalog)/p/[courseId]/page.tsx
+#: src/app/[lang]/(catalog)/start/exam/page.tsx
+#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
+#: src/app/[lang]/(catalog)/start/start-content.tsx
 msgctxt "e61Jf3"
 msgid "Coming soon"
 msgstr "Demnächst verfügbar"
 
-#: src/app/(catalog)/p/[courseId]/page.tsx
+#: src/app/[lang]/(catalog)/p/[courseId]/page.tsx
 msgctxt "dtRj3N"
 msgid "Personalized courses are coming soon."
 msgstr "Personalisierte Kurse kommen bald."
 
-#: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
-#: src/app/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
+#: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
+#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
 #: src/components/feedback/contact-form.tsx
 msgctxt "hJZwTS"
 msgid "Email address"
 msgstr "E‑Mail‑Adresse"
 
-#: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
-#: src/app/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
+#: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
+#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
 #: src/components/feedback/contact-form.tsx
 msgctxt "OiSL94"
 msgid "myemail@gmail.com"
 msgstr "meineemail@gmail.com"
 
-#: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
+#: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
 msgctxt "45yKj9"
 msgid "We'll use this email to notify you when exam prep is ready."
 msgstr "Wir nutzen diese E‑Mail, um dich zu benachrichtigen, wenn die Prüfungsvorbereitung verfügbar ist."
 
-#: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
+#: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
 msgctxt "Xy7a7A"
 msgid "Exam"
 msgstr "Prüfung"
 
-#: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
+#: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
 msgctxt "cDZwI_"
 msgid "TOEFL, SAT, CFA, CPA..."
 msgstr "TOEFL, SAT, CFA, CPA..."
 
-#: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
+#: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
 msgctxt "E_0Y4u"
 msgid "Tell us the test, certification, or school exam you care about."
 msgstr "Sag uns, für welchen Test, welche Zertifizierung oder Schulprüfung du dich interessierst"
 
-#: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
-#: src/app/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
+#: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
+#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
 msgctxt "6eV4UR"
 msgid "We couldn't add you to the waitlist. Please try again."
 msgstr "Wir konnten dich nicht zur Warteliste hinzufügen. Bitte versuche es erneut."
 
-#: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
+#: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
 msgctxt "W78DIe"
 msgid "You're on the list. We'll let you know when exam prep is ready."
 msgstr "Du stehst auf der Liste. Wir melden uns, sobald die Prüfungsvorbereitung bereit ist."
 
-#: src/app/(catalog)/start/exam/exam-waitlist-form.tsx
-#: src/app/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
+#: src/app/[lang]/(catalog)/start/exam/exam-waitlist-form.tsx
+#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
 msgctxt "ipGe-B"
 msgid "Notify me"
 msgstr "Benachrichtige mich"
 
-#: src/app/(catalog)/start/exam/page.tsx
+#: src/app/[lang]/(catalog)/start/exam/page.tsx
 msgctxt "gs2Dwu"
 msgid "Online AI exam prep for certifications and tests. Hands-on explanation and practice questions to help you pass your exam."
 msgstr "Online‑KI‑Prüfungsvorbereitung für Zertifikate und Tests. Praktische Erklärungen und Übungsfragen, damit du die Prüfung bestehst."
 
-#: src/app/(catalog)/start/exam/page.tsx
+#: src/app/[lang]/(catalog)/start/exam/page.tsx
 msgctxt "z8OyvL"
 msgid "Online AI Exam Prep"
 msgstr "Online‑KI‑Prüfungsvorbereitung"
 
-#: src/app/(catalog)/start/exam/page.tsx
+#: src/app/[lang]/(catalog)/start/exam/page.tsx
 msgctxt "CzV5fE"
 msgid "Exam prep is not available yet. Tell us what you're preparing for and we'll notify you when it launches."
 msgstr "Die Prüfungsvorbereitung ist noch nicht verfügbar. Sag uns, wofür du lernst, und wir benachrichtigen dich, wenn sie startet."
 
-#: src/app/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
+#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
 msgctxt "8Zy06C"
 msgid "This option isn't available yet"
 msgstr "Diese Option ist noch nicht verfügbar"
 
-#: src/app/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
+#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
 msgctxt "TV5hlz"
 msgid "Join the waitlist and we'll let you know when you can learn <strong>{title}</strong> with Zoonk."
 msgstr "Trag dich auf die Warteliste ein und wir benachrichtigen dich, wenn du <strong>{title}</strong> mit Zoonk lernen kannst."
 
-#: src/app/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
+#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
 msgctxt "cPhKTw"
 msgid "Not available"
 msgstr "Nicht verfügbar"
 
-#: src/app/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
+#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
 msgctxt "5DZYgN"
 msgid "We can't create this course"
 msgstr "Wir können diesen Kurs nicht erstellen"
 
-#: src/app/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
+#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
 msgctxt "m6ju4Q"
 msgid "Zoonk can't help with requests that involve unsafe, illegal, or harmful activity. Try a different subject instead."
 msgstr "Zoonk kann bei Anfragen zu unsicheren, illegalen oder schädlichen Aktivitäten nicht helfen. Versuch stattdessen ein anderes Thema."
 
-#: src/app/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
+#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-result.tsx
 msgctxt "PDFZz6"
 msgid "Try another goal"
 msgstr "Probier ein anderes Ziel"
 
-#: src/app/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
+#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-prompt-waitlist-form.tsx
 msgctxt "hCixWc"
 msgid "You're on the list. We'll email you when it's available."
 msgstr "Du stehst auf der Liste. Wir schicken dir eine E‑Mail, sobald sie verfügbar ist."
 
-#: src/app/(catalog)/start/learn/[prompt]/course-start-fallback.tsx
+#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-start-fallback.tsx
 msgctxt "UdDpuW"
 msgid "Finding the best way to help"
 msgstr "Wir suchen den besten Weg, dir zu helfen"
 
-#: src/app/(catalog)/start/learn/[prompt]/course-start-fallback.tsx
+#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-start-fallback.tsx
 msgctxt "1A36NM"
 msgid "We're checking your learning goal. This may take a few seconds."
 msgstr "Wir prüfen dein Lernziel. Das kann ein paar Sekunden dauern."
 
-#: src/app/(catalog)/start/learn/[prompt]/course-start-fallback.tsx
+#: src/app/[lang]/(catalog)/start/learn/[prompt]/course-start-fallback.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/app/(catalog)/start/learn/[prompt]/page.tsx
+#: src/app/[lang]/(catalog)/start/learn/[prompt]/page.tsx
 msgctxt "CaU_nf"
 msgid "Discover personalized courses and resources to learn {prompt}. Zoonk uses AI to create interactive lessons tailored to you."
 msgstr "Entdecke personalisierte Kurse und Materialien, um {prompt} zu lernen. Zoonk nutzt KI, um interaktive Lektionen auf dich zuzuschneiden."
 
-#: src/app/(catalog)/start/learn/[prompt]/page.tsx
+#: src/app/[lang]/(catalog)/start/learn/[prompt]/page.tsx
 msgctxt "X2b6pH"
 msgid "Learn {prompt} with AI"
 msgstr "Lerne {prompt} mit KI"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "l450Bl"
 msgid "Computer Science"
 msgstr "Informatik"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "ElyVN0"
 msgid "Psychology"
 msgstr "Psychologie"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 #: src/lib/categories/category.ts
 msgctxt "KOuDOE"
 msgid "Economics"
 msgstr "Volkswirtschaft"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "cHCwbF"
 msgid "Photography"
 msgstr "Fotografie"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "zE1J_t"
 msgid "Philosophy"
 msgstr "Philosophie"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "y68y7h"
 msgid "Data Science"
 msgstr "Datenwissenschaft"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "1qsU2j"
 msgid "Creative Writing"
 msgstr "Kreatives Schreiben"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "RGkBg_"
 msgid "Biology"
 msgstr "Biologie"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "oiUZCZ"
 msgid "Graphic Design"
 msgstr "Grafikdesign"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 #: src/lib/categories/category.ts
 msgctxt "djJp6c"
 msgid "History"
 msgstr "Geschichte"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "O9mDkA"
 msgid "Marketing"
 msgstr "Marketing"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "9zLpJ_"
 msgid "What do you want to learn?"
 msgstr "Was möchtest du lernen?"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "zfDq-e"
 msgid "Quantum physics"
 msgstr "Quantenphysik"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "oqfOwA"
 msgid "Ancient philosophy"
 msgstr "Antike Philosophie"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "Osb4bp"
 msgid "Machine learning"
 msgstr "Maschinelles Lernen"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "OdZ_n1"
 msgid "Creative writing"
 msgstr "Kreatives Schreiben"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "N9FWiz"
 msgid "Molecular biology"
 msgstr "Molekularbiologie"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "XFPrU4"
 msgid "Behavioral economics"
 msgstr "Verhaltensökonomie"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "-0gz_i"
 msgid "Organic chemistry"
 msgstr "Organische Chemie"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "1axOcX"
 msgid "UFOs"
 msgstr "UFOs"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "e7q85h"
 msgid "Dinosaur extinction"
 msgstr "Aussterben der Dinosaurier"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "MO2lwh"
 msgid "How volcanoes work"
 msgstr "Wie Vulkane funktionieren"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "ZzbdHP"
 msgid "World history"
 msgstr "Weltgeschichte"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "XfC6Cs"
 msgid "Cognitive psychology"
 msgstr "Kognitive Psychologie"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "X5XXVF"
 msgid "Linear algebra"
 msgstr "Lineare Algebra"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "5gOFKJ"
 msgid "Black holes"
 msgstr "Schwarze Löcher"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "eQHeGX"
 msgid "How the internet works"
 msgstr "Wie das Internet funktioniert"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "QOSGzc"
 msgid "Roman Empire"
 msgstr "Römisches Reich"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "gyEihl"
 msgid "Deep sea creatures"
 msgstr "Tiefseewesen"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "0MqSJ1"
 msgid "Solar system"
 msgstr "Sonnensystem"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "5qPAxv"
 msgid "Artificial intelligence"
 msgstr "Künstliche Intelligenz"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "3WiAG4"
 msgid "Harry Potter"
 msgstr "Harry Potter"
 
-#: src/app/(catalog)/start/learn/learn-content.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "NvSCuG"
 msgid "Suggested subjects"
 msgstr "Vorgeschlagene Themen"
 
-#: src/app/(catalog)/start/learn/learn-form.tsx
+#: src/app/[lang]/(catalog)/start/learn/learn-form.tsx
 msgctxt "uCb1nG"
 msgid "Enter a subject"
 msgstr "Thema eingeben"
 
-#: src/app/(catalog)/start/learn/page.tsx
+#: src/app/[lang]/(catalog)/start/learn/page.tsx
 msgctxt "JlJVf1"
 msgid "Tell Zoonk what you want to learn and get a course created with AI. Start learning any subject with interactive lessons."
 msgstr "Sag Zoonk, was du lernen willst, und erhalte mit KI erstellte Kurse. Starte interaktive Lektionen zu jedem Thema."
 
-#: src/app/(catalog)/start/learn/page.tsx
+#: src/app/[lang]/(catalog)/start/learn/page.tsx
 msgctxt "Zs1QEq"
 msgid "Learn Anything with AI"
 msgstr "Lerne alles mit KI"
 
-#: src/app/(catalog)/start/page.tsx
+#: src/app/[lang]/(catalog)/start/page.tsx
 msgctxt "UFOGo9"
 msgid "Start online courses to learn languages and more on Zoonk. Practice language learning, learn English or Spanish, and create AI-powered courses for any subject."
 msgstr "Beginne Online‑Kurse auf Zoonk, um Sprachen und mehr zu lernen. Übe Sprachen, lerne Englisch oder Spanisch und erstelle KI‑gestützte Kurse zu jedem Thema."
 
-#: src/app/(catalog)/start/page.tsx
+#: src/app/[lang]/(catalog)/start/page.tsx
 msgctxt "rqpQgj"
 msgid "Online Courses to Learn Languages and More"
 msgstr "Online‑Kurse zum Sprachenlernen und mehr"
 
-#: src/app/(catalog)/start/speak/page.tsx
+#: src/app/[lang]/(catalog)/start/speak/page.tsx
 msgctxt "K4jMHW"
 msgid "Online language courses with AI. Learn a language with pronunciation tips, vocabulary, reading, and listening practice."
 msgstr "Online‑Sprachkurse mit KI. Lerne mit Aussprachetipps, Vokabeln, Lese‑ und Hören‑Übungen."
 
-#: src/app/(catalog)/start/speak/page.tsx
+#: src/app/[lang]/(catalog)/start/speak/page.tsx
 msgctxt "Ht6aMH"
 msgid "Learn a language online with AI"
 msgstr "Lerne online eine Sprache mit KI"
 
-#: src/app/(catalog)/start/speak/page.tsx
+#: src/app/[lang]/(catalog)/start/speak/page.tsx
 msgctxt "lSAK6U"
 msgid "What language do you want to learn?"
 msgstr "Welche Sprache möchtest du lernen?"
 
-#: src/app/(catalog)/start/speak/page.tsx
+#: src/app/[lang]/(catalog)/start/speak/page.tsx
 msgctxt "ptPPVk"
 msgid "No languages found"
 msgstr "Keine Sprachen gefunden"
 
-#: src/app/(catalog)/start/speak/page.tsx
+#: src/app/[lang]/(catalog)/start/speak/page.tsx
 msgctxt "L820yz"
 msgid "Search languages"
 msgstr "Sprachen suchen"
 
-#: src/app/(catalog)/start/start-content.tsx
+#: src/app/[lang]/(catalog)/start/start-content.tsx
 msgctxt "ah2CR6"
 msgid "Learn a language with pronunciation tips, vocabulary, reading, and listening practice."
 msgstr "Lerne mit Aussprachetipps, Vokabeln, Lese‑ und Hören‑Übungen."
 
-#: src/app/(catalog)/start/start-content.tsx
+#: src/app/[lang]/(catalog)/start/start-content.tsx
 msgctxt "_E8OKF"
 msgid "Turn any subject into a clear course you can follow step by step, with practical examples and no fluff."
 msgstr "Mach aus jedem Thema einen klaren Kurs, dem du Schritt für Schritt folgen kannst – mit praktischen Beispielen und ohne Schnickschnack."
 
-#: src/app/(catalog)/start/start-content.tsx
+#: src/app/[lang]/(catalog)/start/start-content.tsx
 msgctxt "IF6NT-"
 msgid "We'll prepare a study path to help you pass an entrance exam, certification, or school test."
 msgstr "Wir erstellen einen Lernplan, damit du eine Aufnahmeprüfung, Zertifizierung oder Schulprüfung bestehst."
 
-#: src/app/(catalog)/start/start-content.tsx
+#: src/app/[lang]/(catalog)/start/start-content.tsx
 msgctxt "AaFZIp"
 msgid "What's your goal?"
 msgstr "Was ist dein Ziel?"
 
-#: src/app/(progress)/_components/metric-comparison.tsx
+#: src/app/[lang]/(progress)/_components/metric-comparison.tsx
 msgctxt "pev_fB"
 msgid "vs last month"
 msgstr "vs. letzten Monat"
 
-#: src/app/(progress)/_components/metric-comparison.tsx
+#: src/app/[lang]/(progress)/_components/metric-comparison.tsx
 msgctxt "R9qHBU"
 msgid "vs last 6 months"
 msgstr "vs. letzten 6 Monaten"
 
-#: src/app/(progress)/_components/metric-comparison.tsx
-#: src/app/(progress)/_components/progress-insight-period-label.ts
+#: src/app/[lang]/(progress)/_components/metric-comparison.tsx
+#: src/app/[lang]/(progress)/_components/progress-insight-period-label.ts
 msgctxt "s-lPP3"
 msgid "All time"
 msgstr "Gesamt"
 
-#: src/app/(progress)/_components/metric-comparison.tsx
+#: src/app/[lang]/(progress)/_components/metric-comparison.tsx
 msgctxt "YFV6dH"
 msgid "vs last year"
 msgstr "vs. letztes Jahr"
 
-#: src/app/(progress)/_components/period-navigation.tsx
+#: src/app/[lang]/(progress)/_components/period-navigation.tsx
 msgctxt "hCCWuZ"
 msgid "Previous period"
 msgstr "Vorheriger Zeitraum"
 
-#: src/app/(progress)/_components/period-navigation.tsx
+#: src/app/[lang]/(progress)/_components/period-navigation.tsx
 msgctxt "I2z5s_"
 msgid "Next period"
 msgstr "Nächster Zeitraum"
 
-#: src/app/(progress)/_components/period-tabs.tsx
+#: src/app/[lang]/(progress)/_components/period-tabs.tsx
 msgctxt "PIaUh-"
 msgid "Period selection"
 msgstr "Zeitauswahl"
 
-#: src/app/(progress)/_components/period-tabs.tsx
+#: src/app/[lang]/(progress)/_components/period-tabs.tsx
 msgctxt "TBovrx"
 msgid "Month"
 msgstr "Monat"
 
-#: src/app/(progress)/_components/period-tabs.tsx
+#: src/app/[lang]/(progress)/_components/period-tabs.tsx
 msgctxt "NPrFLC"
 msgid "6 Months"
 msgstr "6 Monate"
 
-#: src/app/(progress)/_components/period-tabs.tsx
+#: src/app/[lang]/(progress)/_components/period-tabs.tsx
 msgctxt "IFo1oo"
 msgid "Year"
 msgstr "Jahr"
 
-#: src/app/(progress)/_components/progress-chart-layout.tsx
+#: src/app/[lang]/(progress)/_components/progress-chart-layout.tsx
 msgctxt "OlW5Z8"
 msgid "No data available for this period"
 msgstr "Für diesen Zeitraum sind keine Daten verfügbar"
 
-#: src/app/(progress)/_components/progress-empty-state.tsx
+#: src/app/[lang]/(progress)/_components/progress-empty-state.tsx
 msgctxt "FVh2Tr"
 msgid "Start learning to track your progress"
 msgstr "Beginne zu lernen, um deinen Fortschritt zu verfolgen"
 
-#: src/app/(progress)/_components/progress-empty-state.tsx
+#: src/app/[lang]/(progress)/_components/progress-empty-state.tsx
 msgctxt "Y1zzQt"
 msgid "Log in to track your progress"
 msgstr "Melde dich an, um deinen Fortschritt zu verfolgen"
 
-#: src/app/(progress)/_components/progress-insight-period-label.ts
+#: src/app/[lang]/(progress)/_components/progress-insight-period-label.ts
 msgctxt "J3fNDZ"
 msgid "This month"
 msgstr "Dieser Monat"
 
-#: src/app/(progress)/_components/progress-insight-period-label.ts
+#: src/app/[lang]/(progress)/_components/progress-insight-period-label.ts
 msgctxt "eWUXBX"
 msgid "Past 6 months"
 msgstr "Letzte 6 Monate"
 
-#: src/app/(progress)/_components/progress-insight-period-label.ts
+#: src/app/[lang]/(progress)/_components/progress-insight-period-label.ts
 msgctxt "lPShsT"
 msgid "This year"
 msgstr "Dieses Jahr"
 
-#: src/app/(progress)/energy/energy-chart-client.tsx
+#: src/app/[lang]/(progress)/energy/energy-chart-client.tsx
 msgctxt "M-JIpD"
 msgid "Energy chart"
 msgstr "Energie‑Diagramm"
 
-#: src/app/(progress)/energy/energy-chart-client.tsx
-#: src/app/(progress)/score/score-chart-client.tsx
+#: src/app/[lang]/(progress)/energy/energy-chart-client.tsx
+#: src/app/[lang]/(progress)/score/score-chart-client.tsx
 msgctxt "rGSqvt"
 msgid "Avg"
 msgstr "Durchschn."
 
-#: src/app/(progress)/energy/energy-explanation.tsx
+#: src/app/[lang]/(progress)/energy/energy-explanation.tsx
 msgctxt "TLPAMC"
 msgid "What is Energy?"
 msgstr "Was ist Energie?"
 
-#: src/app/(progress)/energy/energy-explanation.tsx
+#: src/app/[lang]/(progress)/energy/energy-explanation.tsx
 msgctxt "OvOWOR"
 msgid "Energy is a 0% to 100% score for your recent learning consistency and accuracy."
 msgstr "Energie ist ein Wert von 0–100 %, der zeigt, wie regelmäßig und genau du in letzter Zeit gelernt hast."
 
-#: src/app/(progress)/energy/energy-explanation.tsx
+#: src/app/[lang]/(progress)/energy/energy-explanation.tsx
 msgctxt "K3jN6p"
 msgid "How do I improve Energy?"
 msgstr "Wie verbessere ich meine Energie?"
 
-#: src/app/(progress)/energy/energy-explanation.tsx
+#: src/app/[lang]/(progress)/energy/energy-explanation.tsx
 msgctxt "pssms6"
 msgid "Answer questions correctly and keep learning regularly. Correct answers raise Energy; wrong answers and days away from studying lower it."
 msgstr "Beantworte Fragen richtig und lerne regelmäßig. Richtige Antworten erhöhen die Energie; falsche Antworten und Tage ohne Lernen senken sie."
 
-#: src/app/(progress)/energy/energy-explanation.tsx
+#: src/app/[lang]/(progress)/energy/energy-explanation.tsx
 msgctxt "-8Qx8X"
 msgid "Why is Energy important?"
 msgstr "Warum ist Energie wichtig?"
 
-#: src/app/(progress)/energy/energy-explanation.tsx
+#: src/app/[lang]/(progress)/energy/energy-explanation.tsx
 msgctxt "UfEfhq"
 msgid "Energy is like heart rate in a health app: it shows your current learning rhythm. Missing a day doesn't reset your progress; you recover as soon as you start learning again."
 msgstr "Energie ist wie der Herzschlag in einer Gesundheits-App: Sie zeigt deinen aktuellen Lernrhythmus. Wenn du einen Tag aussetzt, wird dein Fortschritt nicht zurückgesetzt; du erholst dich, sobald du wieder lernst."
 
-#: src/app/(progress)/energy/energy-insights.tsx
+#: src/app/[lang]/(progress)/energy/energy-insights.tsx
 msgctxt "XxS-he"
 msgid "Highest energy day"
 msgstr "Tag mit höchster Energie"
 
-#: src/app/(progress)/energy/energy-insights.tsx
+#: src/app/[lang]/(progress)/energy/energy-insights.tsx
 msgctxt "aaiQkv"
 msgid "Full energy"
 msgstr "Volle Energie"
 
-#: src/app/(progress)/energy/energy-stats.tsx
+#: src/app/[lang]/(progress)/energy/energy-stats.tsx
 msgctxt "zLCmVM"
 msgid "Current Energy"
 msgstr "Aktuelle Energie"
 
-#: src/app/(progress)/energy/energy-stats.tsx
+#: src/app/[lang]/(progress)/energy/energy-stats.tsx
 msgctxt "e9DcQa"
 msgid "{percentage} average"
 msgstr "{percentage} im Schnitt"
 
-#: src/app/(progress)/energy/page.tsx
+#: src/app/[lang]/(progress)/energy/page.tsx
 msgctxt "AZMpf3"
 msgid "Energy is a 0% to 100% score based on recent activity and accuracy."
 msgstr "Energie ist ein 0%–100%‑Wert basierend auf jüngster Aktivität und Genauigkeit."
 
-#: src/app/(progress)/energy/page.tsx
+#: src/app/[lang]/(progress)/energy/page.tsx
 msgctxt "rsIaGW"
 msgid "A 0% to 100% score for recent activity and accuracy"
 msgstr "Ein 0%–100%‑Wert für jüngste Aktivität und Genauigkeit"
 
-#: src/app/(progress)/level/level-chart-client.tsx
+#: src/app/[lang]/(progress)/level/level-chart-client.tsx
 msgctxt "GA8RuL"
 msgid "Brain Power chart"
 msgstr "Brain-Power-Diagramm"
 
-#: src/app/(progress)/level/level-chart-client.tsx
+#: src/app/[lang]/(progress)/level/level-chart-client.tsx
 msgctxt "XdkaHc"
 msgid "{value} BP"
 msgstr "{value} BP"
 
-#: src/app/(progress)/level/level-chart-client.tsx
+#: src/app/[lang]/(progress)/level/level-chart-client.tsx
 msgctxt "tDbspx"
 msgid "Total Brain Power earned: {total}"
 msgstr "Insgesamt erreichte Brain Power: {total}"
 
-#: src/app/(progress)/level/level-explanation.tsx
+#: src/app/[lang]/(progress)/level/level-explanation.tsx
 msgctxt "EMy5Vs"
 msgid "What is Brain Power?"
 msgstr "Was ist Brain Power?"
 
-#: src/app/(progress)/level/level-explanation.tsx
+#: src/app/[lang]/(progress)/level/level-explanation.tsx
 msgctxt "MIjvOA"
 msgid "Brain Power (BP) is the total learning credit you have earned. Each completed lesson adds {brainPower} BP."
 msgstr "Brain Power (BP) ist das gesamte Lernguthaben, das du erarbeitet hast. Jede abgeschlossene Lektion fügt {brainPower} BP hinzu."
 
-#: src/app/(progress)/level/level-explanation.tsx
+#: src/app/[lang]/(progress)/level/level-explanation.tsx
 msgctxt "jzKXJS"
 msgid "How do I increase Brain Power?"
 msgstr "Wie erhöhe ich Brain Power?"
 
-#: src/app/(progress)/level/level-explanation.tsx
+#: src/app/[lang]/(progress)/level/level-explanation.tsx
 msgctxt "Gzq1tT"
 msgid "Complete lessons. Brain Power never goes down, even when your Energy drops or you take a break."
 msgstr "Schließe Lektionen ab. Brain Power sinkt nie, auch wenn deine Energie abnimmt oder du eine Pause machst."
 
-#: src/app/(progress)/level/level-explanation.tsx
+#: src/app/[lang]/(progress)/level/level-explanation.tsx
 msgctxt "JGLOtn"
 msgid "Why is Brain Power important?"
 msgstr "Warum ist Brain Power wichtig?"
 
-#: src/app/(progress)/level/level-explanation.tsx
+#: src/app/[lang]/(progress)/level/level-explanation.tsx
 msgctxt "tC6vNz"
 msgid "It is like steps in a health app: a record of how much you have learned. It also works like martial arts for your mind: build Brain Power to advance from white belt to black belt."
 msgstr "Sie ist wie Schritte in einer Gesundheits-App: ein Protokoll dessen, wie viel du gelernt hast. Sie funktioniert auch wie Kampfkunst für deinen Geist: Baue Geisteskraft auf, um vom weißen Gürtel zum schwarzem Gürtel aufzusteigen"
 
-#: src/app/(progress)/level/level-insights.tsx
+#: src/app/[lang]/(progress)/level/level-insights.tsx
 msgctxt "elq-tg"
 msgid "Highest BP"
 msgstr "Höchster BP-Wert"
 
-#: src/app/(progress)/level/level-insights.tsx
+#: src/app/[lang]/(progress)/level/level-insights.tsx
 msgctxt "BW4bMl"
 msgid "{date} with {value} BP"
 msgstr "{date} mit {value} BP"
 
-#: src/app/(progress)/level/level-progression.tsx
+#: src/app/[lang]/(progress)/level/level-progression.tsx
 msgctxt "WfaE4H"
 msgid "{belt}, Level {level} of 10. Maximum level achieved."
 msgstr "{belt}, Level {level} von 10. Maximales Level erreicht."
 
-#: src/app/(progress)/level/level-progression.tsx
+#: src/app/[lang]/(progress)/level/level-progression.tsx
 msgctxt "2Y-P4e"
 msgid "{belt}, Level {level} of 10. {bp} Brain Power until next level."
 msgstr "{belt}, Level {level} von 10. Noch {bp} Brain Power bis zum nächsten Level."
 
-#: src/app/(progress)/level/level-progression.tsx
+#: src/app/[lang]/(progress)/level/level-progression.tsx
 msgctxt "n_mgOm"
 msgid "Belt Progression"
 msgstr "Gürtel-Fortschritt"
 
-#: src/app/(progress)/level/level-progression.tsx
+#: src/app/[lang]/(progress)/level/level-progression.tsx
 msgctxt "ZKbTsS"
 msgid "{current}/10"
 msgstr "{current}/10"
 
-#: src/app/(progress)/level/level-progression.tsx
+#: src/app/[lang]/(progress)/level/level-progression.tsx
 msgctxt "-Sn2yd"
 msgid "{belt}: Level {current} of 10"
 msgstr "{belt}: Level {current} von 10"
 
-#: src/app/(progress)/level/level-stats.tsx
+#: src/app/[lang]/(progress)/level/level-stats.tsx
 msgctxt "v5yNm3"
 msgid "Total Brain Power"
 msgstr "Gesamte Brain Power"
 
-#: src/app/(progress)/level/level-stats.tsx
+#: src/app/[lang]/(progress)/level/level-stats.tsx
 msgctxt "_Q0taG"
 msgid "BP"
 msgstr "BP"
 
-#: src/app/(progress)/level/level-stats.tsx
+#: src/app/[lang]/(progress)/level/level-stats.tsx
 msgctxt "u_oEJA"
 msgid "{value} BP earned"
 msgstr "{value} BP erreicht"
 
-#: src/app/(progress)/level/page.tsx
+#: src/app/[lang]/(progress)/level/page.tsx
 msgctxt "4-USpX"
 msgid "Track your level progress and see how you advance."
 msgstr "Verfolge deinen Fortschritt in den Stufen und sieh, wie du vorankommst."
 
-#: src/app/(progress)/level/page.tsx
+#: src/app/[lang]/(progress)/level/page.tsx
 msgctxt "L9hqMH"
 msgid "Track your level progress"
 msgstr "Verfolge deinen Level-Fortschritt"
 
-#: src/app/(progress)/score/page.tsx
+#: src/app/[lang]/(progress)/score/page.tsx
 msgctxt "qHWZBu"
 msgid "Track your score over time and see your best days and times."
 msgstr "Verfolge deine Punktzahl im Zeitverlauf und sieh deine besten Tage und Zeiten."
 
-#: src/app/(progress)/score/page.tsx
+#: src/app/[lang]/(progress)/score/page.tsx
 msgctxt "GWkswX"
 msgid "Track your score and progress trends"
 msgstr "Verfolge deine Punktzahl und Entwicklungstrends"
 
-#: src/app/(progress)/score/score-chart-client.tsx
+#: src/app/[lang]/(progress)/score/score-chart-client.tsx
 msgctxt "J-05ol"
 msgid "Score chart"
 msgstr "Punktzahlen-Diagramm"
 
-#: src/app/(progress)/score/score-explanation.tsx
+#: src/app/[lang]/(progress)/score/score-explanation.tsx
 msgctxt "bIZaXJ"
 msgid "What is Score?"
 msgstr "Was ist die Punktzahl?"
 
-#: src/app/(progress)/score/score-explanation.tsx
+#: src/app/[lang]/(progress)/score/score-explanation.tsx
 msgctxt "JA-N5Z"
 msgid "Score is the percentage of questions you answered correctly during this period."
 msgstr "Die Punktzahl ist der Prozentsatz der Fragen, die du in diesem Zeitraum richtig beantwortet hast."
 
-#: src/app/(progress)/score/score-explanation.tsx
+#: src/app/[lang]/(progress)/score/score-explanation.tsx
 msgctxt "z9kvhA"
 msgid "How do I improve Score?"
 msgstr "Wie verbessere ich meine Punktzahl?"
 
-#: src/app/(progress)/score/score-explanation.tsx
+#: src/app/[lang]/(progress)/score/score-explanation.tsx
 msgctxt "7_C9do"
 msgid "Review mistakes and retry lessons. As you answer more questions correctly, your Score goes up."
 msgstr "Wiederhole Fehler und versuche Lektionen erneut. Wenn du mehr Fragen richtig beantwortest, steigt deine Punktzahl."
 
-#: src/app/(progress)/score/score-explanation.tsx
+#: src/app/[lang]/(progress)/score/score-explanation.tsx
 msgctxt "WqH8eP"
 msgid "Why is Score important?"
 msgstr "Warum ist die Punktzahl wichtig?"
 
-#: src/app/(progress)/score/score-explanation.tsx
+#: src/app/[lang]/(progress)/score/score-explanation.tsx
 msgctxt "E0saoA"
 msgid "Score shows accuracy, not activity. Best day and best time help you find when you learn most effectively."
 msgstr "Die Punktzahl zeigt Genauigkeit, nicht Aktivität. Bester Tag und beste Zeit helfen dir zu erkennen, wann du am effektivsten lernst."
 
-#: src/app/(settings)/_components/protected-section.tsx
+#: src/app/[lang]/(settings)/_components/protected-section.tsx
 msgctxt "yOFm9C"
 msgid "You need to be logged in to access this page."
 msgstr "Du musst eingeloggt sein, um auf diese Seite zuzugreifen."
 
-#: src/app/(settings)/language/page.tsx
+#: src/app/[lang]/(settings)/language/page.tsx
 msgctxt "2WHx14"
 msgid "Update your app language to learn in English, Portuguese, Spanish, French, or other supported languages."
 msgstr "Ändere die App‑Sprache, um auf Englisch, Portugiesisch, Spanisch, Französisch oder anderen unterstützten Sprachen zu lernen."
 
-#: src/app/(settings)/language/page.tsx
+#: src/app/[lang]/(settings)/language/page.tsx
 msgctxt "aNLa1G"
 msgid "Choose the app language you prefer for this device."
 msgstr "Wähle die App‑Sprache, die du auf diesem Gerät bevorzugst."
 
-#: src/app/(settings)/profile/page.tsx
+#: src/app/[lang]/(settings)/profile/page.tsx
 msgctxt "dSVD13"
 msgid "Update your name and username on Zoonk."
 msgstr "Aktualisiere deinen Namen und Benutzernamen auf Zoonk."
 
-#: src/app/(settings)/profile/page.tsx
+#: src/app/[lang]/(settings)/profile/page.tsx
 msgctxt "wjIStY"
 msgid "Your name and username as they appear to others."
 msgstr "Dein Name und Benutzername, wie sie anderen angezeigt werden."
 
-#: src/app/(settings)/profile/profile-form.tsx
+#: src/app/[lang]/(settings)/profile/profile-form.tsx
 msgctxt "1SvspN"
 msgid "Checking..."
 msgstr "Wird geprüft..."
 
-#: src/app/(settings)/profile/profile-form.tsx
+#: src/app/[lang]/(settings)/profile/profile-form.tsx
 msgctxt "9N4_rz"
 msgid "{username} is available"
 msgstr "{username} ist verfügbar"
 
-#: src/app/(settings)/profile/profile-form.tsx
+#: src/app/[lang]/(settings)/profile/profile-form.tsx
 msgctxt "R76cpj"
 msgid "{username} is already taken"
 msgstr "{username} ist bereits vergeben"
 
-#: src/app/(settings)/profile/profile-form.tsx
+#: src/app/[lang]/(settings)/profile/profile-form.tsx
 msgctxt "vLl7z0"
 msgid "3-30 characters. Letters, numbers, and underscores only."
 msgstr "3–30 Zeichen. Nur Buchstaben, Zahlen und Unterstriche."
 
-#: src/app/(settings)/profile/profile-form.tsx
+#: src/app/[lang]/(settings)/profile/profile-form.tsx
 msgctxt "HAlOn1"
 msgid "Name"
 msgstr "Name"
 
-#: src/app/(settings)/profile/profile-form.tsx
+#: src/app/[lang]/(settings)/profile/profile-form.tsx
 msgctxt "yNHZ-a"
 msgid "Your profile has been updated successfully!"
 msgstr "Dein Profil wurde erfolgreich aktualisiert!"
 
-#: src/app/(settings)/profile/profile-form.tsx
+#: src/app/[lang]/(settings)/profile/profile-form.tsx
 msgctxt "VT-G_7"
 msgid "This name will be visible to other users."
 msgstr "Dieser Name ist für andere Nutzer sichtbar."
 
-#: src/app/(settings)/profile/profile-form.tsx
+#: src/app/[lang]/(settings)/profile/profile-form.tsx
 msgctxt "wYCHCR"
 msgid "Failed to update your profile. Please try again or contact hello@zoonk.com"
 msgstr "Profilaktualisierung fehlgeschlagen. Bitte versuche es erneut oder kontaktiere hello@zoonk.com"
 
-#: src/app/(settings)/profile/profile-form.tsx
+#: src/app/[lang]/(settings)/profile/profile-form.tsx
 msgctxt "JCIgkj"
 msgid "Username"
 msgstr "Benutzername"
 
-#: src/app/(settings)/profile/profile-form.tsx
+#: src/app/[lang]/(settings)/profile/profile-form.tsx
 msgctxt "X0ha1a"
 msgid "Save changes"
 msgstr "Änderungen speichern"
 
-#: src/app/(settings)/subscription/managed-subscription.tsx
+#: src/app/[lang]/(settings)/subscription/managed-subscription.tsx
 msgctxt "3iCRcP"
 msgid "Manage in App Store"
 msgstr "Im App Store verwalten"
 
-#: src/app/(settings)/subscription/managed-subscription.tsx
+#: src/app/[lang]/(settings)/subscription/managed-subscription.tsx
 msgctxt "tiFovn"
 msgid "Manage in Google Play"
 msgstr "In Google Play verwalten"
 
-#: src/app/(settings)/subscription/managed-subscription.tsx
+#: src/app/[lang]/(settings)/subscription/managed-subscription.tsx
 msgctxt "Tp4wJB"
 msgid "This subscription is managed through the App Store. To change or cancel it, use Apple's subscription settings."
 msgstr "Dieses Abonnement wird über den App Store verwaltet. Ändere oder kündige es über die Apple‑Abonnement‑Einstellungen."
 
-#: src/app/(settings)/subscription/managed-subscription.tsx
+#: src/app/[lang]/(settings)/subscription/managed-subscription.tsx
 msgctxt "unNUPf"
 msgid "This subscription is managed through Google Play. To change or cancel it, use Google Play."
 msgstr "Dieses Abonnement wird über Google Play verwaltet. Ändere oder kündige es über Google Play."
 
-#: src/app/(settings)/subscription/managed-subscription.tsx
+#: src/app/[lang]/(settings)/subscription/managed-subscription.tsx
 msgctxt "P0ZHma"
 msgid "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it."
 msgstr "Dieses Abonnement wird von Zoonk verwaltet. Kontaktiere den Support, wenn du Hilfe beim Ändern oder Kündigen brauchst."
 
-#: src/app/(settings)/subscription/managed-subscription.tsx
+#: src/app/[lang]/(settings)/subscription/managed-subscription.tsx
 msgctxt "5CI3KH"
 msgid "Contact support"
 msgstr "Support kontaktieren"
 
-#: src/app/(settings)/subscription/page.tsx
+#: src/app/[lang]/(settings)/subscription/page.tsx
 msgctxt "vhHDTm"
 msgid "Learn anything with AI. Create as many courses and take as many lessons as you want with Zoonk Plus."
 msgstr "Lerne alles mit KI. Erstelle mit Zoonk Plus so viele Kurse und absolviere so viele Lektionen, wie du möchtest."
 
-#: src/app/(settings)/subscription/page.tsx
+#: src/app/[lang]/(settings)/subscription/page.tsx
 msgctxt "zSNNck"
 msgid "Zoonk Plus: Unlimited courses and lessons"
 msgstr "Zoonk Plus: Unbegrenzt viele Kurse und Lektionen"
 
-#: src/app/(settings)/subscription/page.tsx
+#: src/app/[lang]/(settings)/subscription/page.tsx
 msgctxt "hIdQeQ"
 msgid "Zoonk Plus"
 msgstr "Zoonk Plus"
 
-#: src/app/(settings)/subscription/page.tsx
+#: src/app/[lang]/(settings)/subscription/page.tsx
 msgctxt "H0FbIJ"
 msgid "Learn anything. It’s all included."
 msgstr "Lerne alles, was du willst. Alles ist inklusive."
 
-#: src/app/(settings)/subscription/page.tsx
+#: src/app/[lang]/(settings)/subscription/page.tsx
 msgctxt "r3ly6I"
 msgid "Pass the test. Get a better job. Speak a language. Whatever you want to achieve, Plus gives you unlimited courses and lessons to help you get there."
 msgstr "Bestehe die Prüfung. Finde einen besseren Job. Sprich eine neue Sprache. Was auch immer du erreichen möchtest: Plus bietet dir unbegrenzt viele Kurse und Lektionen, die dich ans Ziel bringen."
 
-#: src/app/(settings)/subscription/page.tsx
+#: src/app/[lang]/(settings)/subscription/page.tsx
 msgctxt "LUhQqS"
 msgid "Any subject · Unlimited courses and lessons"
 msgstr "Jedes Thema · Unbegrenzt Kurse und Lektionen"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "7mu984"
 msgid "a pizza"
 msgstr "eine Pizza"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "7zwF6P"
 msgid "a couple of beers"
 msgstr "ein paar Bier"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "laL9nz"
 msgid "a toy"
 msgstr "ein Spielzeug"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "-YDRpS"
 msgid "a movie ticket"
 msgstr "eine Kinokarte"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "7OCABC"
 msgid "a fancy coffee"
 msgstr "ein schicker Kaffee"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "W_mEgT"
 msgid "a sad airport sandwich"
 msgstr "ein trauriges Flughafen-Sandwich"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "U4mRWb"
 msgid "a takeaway lunch"
 msgstr "ein Mittagessen zum Mitnehmen"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "oFYJsq"
 msgid "a paperback"
 msgstr "ein Taschenbuch"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "RrMczR"
 msgid "a houseplant"
 msgstr "eine Zimmerpflanze"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "VavHK6"
 msgid "a phone case"
 msgstr "eine Handyhülle"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "zou80J"
 msgid "a video game skin"
 msgstr "ein Skin für ein Videospiel"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "VPo2Kz"
 msgid "a candle you don't need"
 msgstr "eine Kerze, die du nicht brauchst"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "ByGaLp"
 msgid "a forgotten subscription"
 msgstr "ein vergessenes Abo"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "0nJSUm"
 msgid "socks with tiny avocados"
 msgstr "Socken mit winzigen Avocados"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "hys3oO"
 msgid "a planner you'll definitely use"
 msgstr "ein Planer, den du ganz bestimmt benutzen wirst"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "Rw82_V"
 msgid "per month"
 msgstr "pro Monat"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "qxHg3H"
 msgid "per year"
 msgstr "pro Jahr"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "h9kFux"
 msgid "Save {amount} every year"
 msgstr "Spare jedes Jahr {amount}"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
-#: src/app/(settings)/subscription/subscription-plans.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
 msgctxt "lOdoIb"
 msgid "Plus"
 msgstr "Plus"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "gl_57d"
 msgid "Everything included"
 msgstr "Alles inklusive"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "u2XWYU"
 msgid "Billing period"
 msgstr "Abrechnungszeitraum"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "wYsv4Z"
 msgid "Monthly"
 msgstr "Monatlich"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "dqD39h"
 msgid "Yearly"
 msgstr "Jährlich"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "Lxn0Fm"
 msgid "Price shown at checkout"
 msgstr "Preis wird beim Bezahlen angezeigt"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "DWdUaF"
 msgid "Investing in your future is cheaper than"
 msgstr "In deine Zukunft zu investieren ist günstiger als"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "5MmaRi"
 msgid "Log in to unlock unlimited learning"
 msgstr "Melde dich an und lerne unbegrenzt"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "tuK7B0"
 msgid "Unlock unlimited learning with Zoonk Plus"
 msgstr "Lerne unbegrenzt mit Zoonk Plus"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "nzee-0"
 msgid "Unlock unlimited learning"
 msgstr "Unbegrenzt lernen"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "pTtXdP"
 msgid "No per-course fees. Cancel anytime."
 msgstr "Keine Gebühren pro Kurs. Jederzeit kündbar."
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "qQDa8p"
 msgid "Unable to start checkout. Contact us at hello@zoonk.com"
 msgstr "Der Bezahlvorgang konnte nicht gestartet werden. Kontaktiere uns unter hello@zoonk.com"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "3a5wL8"
 msgid "Active"
 msgstr "Aktiv"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "CrGYez"
 msgid "Subscription ending"
 msgstr "Abo läuft aus"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "gHje-q"
 msgid "Plus is active"
 msgstr "Plus ist aktiv"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "mpXxXt"
 msgid "Your access is still active"
 msgstr "Dein Zugriff ist weiterhin aktiv"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "RpDCa-"
 msgid "Keep moving toward your goals with unlimited courses and lessons."
 msgstr "Komm deinen Zielen mit unbegrenzt vielen Kursen und Lektionen näher."
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "UWVETE"
 msgid "Cancel subscription"
 msgstr "Abo kündigen"
 
-#: src/app/(settings)/subscription/plus-purchase.tsx
+#: src/app/[lang]/(settings)/subscription/plus-purchase.tsx
 msgctxt "kjXmSN"
 msgid "Unable to manage your subscription. Contact us at hello@zoonk.com"
 msgstr "Dein Abo konnte nicht verwaltet werden. Kontaktiere uns unter hello@zoonk.com"
 
-#: src/app/(settings)/subscription/subscription-plans.tsx
+#: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
 msgctxt "9o8O4m"
 msgid "Your subscription will end on {date}."
 msgstr "Dein Abonnement endet am {date}."
 
-#: src/app/(settings)/subscription/subscription-plans.tsx
+#: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
 msgctxt "J9LvW5"
 msgid "Zoonk Plus benefits and pricing"
 msgstr "Vorteile und Preise von Zoonk Plus"
 
-#: src/app/(settings)/subscription/subscription-plans.tsx
+#: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
 msgctxt "77EecF"
 msgid "Know what to learn next"
 msgstr "Wisse immer, was du als Nächstes lernen solltest"
 
-#: src/app/(settings)/subscription/subscription-plans.tsx
+#: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
 msgctxt "i8pqha"
 msgid "Tell Zoonk your goal. AI builds a clear, step-by-step course around what you need to learn."
 msgstr "Sag Zoonk, was du erreichen möchtest. Die KI erstellt einen klaren Kurs, der dir Schritt für Schritt genau das vermittelt, was du dafür brauchst."
 
-#: src/app/(settings)/subscription/subscription-plans.tsx
+#: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
 msgctxt "TF2txT"
 msgid "Keep learning until you get there"
 msgstr "Lerne weiter, bis du dein Ziel erreichst"
 
-#: src/app/(settings)/subscription/subscription-plans.tsx
+#: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
 msgctxt "_IEZtT"
 msgid "Take as many courses and lessons as you need. Everything is included in one subscription."
 msgstr "Belege so viele Kurse und Lektionen, wie du brauchst. Alles ist in einem Abo enthalten."
 
-#: src/app/(settings)/subscription/subscription-plans.tsx
+#: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
 msgctxt "m7oPjz"
 msgid "Speak a new language"
 msgstr "Sprich eine neue Sprache"
 
-#: src/app/(settings)/subscription/subscription-plans.tsx
+#: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
 msgctxt "TTl6JE"
 msgid "Choose from {count, plural, one {# language} other {# languages}} and build the vocabulary, listening, grammar, and pronunciation to use it with confidence."
 msgstr "Wähle aus {count, plural, one {# Sprache} other {# Sprachen}} und verbessere Wortschatz, Hören, Grammatik und Aussprache, damit du sie sicher anwenden kannst."
 
-#: src/app/(settings)/subscription/subscription-plans.tsx
+#: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
 msgctxt "vaN1qz"
 msgid "Current billing period ends on {date}."
 msgstr "Der aktuelle Abrechnungszeitraum endet am {date}."
 
-#: src/app/(settings)/support/page.tsx
-#: src/app/(settings)/support/support-content.tsx
+#: src/app/[lang]/(settings)/support/page.tsx
+#: src/app/[lang]/(settings)/support/support-content.tsx
 msgctxt "B5MLC7"
 msgid "Share feedback, ask questions, or get help with your account and courses."
 msgstr "Teile Feedback, stelle Fragen oder erhalte Hilfe zu deinem Konto und deinen Kursen."
 
-#: src/app/(settings)/support/support-content.tsx
+#: src/app/[lang]/(settings)/support/support-content.tsx
 msgctxt "cDAb4a"
 msgid "GitHub Discussions"
 msgstr "GitHub Discussions"
 
-#: src/app/(settings)/support/support-content.tsx
+#: src/app/[lang]/(settings)/support/support-content.tsx
 msgctxt "7h49qt"
 msgid "Connect with the community and get answers"
 msgstr "Vernetze dich mit der Community und erhalte Antworten"
 
-#: src/app/(settings)/support/support-content.tsx
+#: src/app/[lang]/(settings)/support/support-content.tsx
 msgctxt "YdQxfw"
 msgid "Contact Support"
 msgstr "Support kontaktieren"
 
-#: src/app/(settings)/support/support-content.tsx
+#: src/app/[lang]/(settings)/support/support-content.tsx
 msgctxt "dQIo6c"
 msgid "Email us at hello@zoonk.com"
 msgstr "Schreib uns an hello@zoonk.com"
 
-#: src/app/(settings)/support/support-content.tsx
+#: src/app/[lang]/(settings)/support/support-content.tsx
 msgctxt "l1XTI5"
 msgid "Follow us"
 msgstr "Folge uns"
 
-#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
 msgctxt "rCpmYD"
 msgid "Create this lesson"
 msgstr "Diese Lektion erstellen"
 
-#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
 msgctxt "AtnLyn"
 msgid "This lesson is part of the course, but it hasn't been created yet. Create it to start learning."
 msgstr "Diese Lektion ist Teil des Kurses, wurde aber noch nicht erstellt. Erstelle sie, um mit dem Lernen zu beginnen."
 
-#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
-#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgctxt "ZzznjM"
 msgid "Create lesson"
 msgstr "Lektion erstellen"
 
-#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
-#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
-#: src/app/generate/l/[id]/generate-lesson-content.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
+#: src/app/[lang]/generate/l/[id]/generate-lesson-content.tsx
 msgctxt "_N8rYN"
 msgid "Back to chapter"
 msgstr "Zurück zum Kapitel"
 
-#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
 msgctxt "ZnMcrz"
 msgid "Unlock the rest of this course"
 msgstr "Den Rest dieses Kurses freischalten"
 
-#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgctxt "A_uNk-"
 msgid "Create lessons before reviewing"
 msgstr "Erstelle Lektionen, bevor du mit der Überprüfung beginnst"
 
-#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgctxt "Qy4EsI"
 msgid "Nothing to review yet"
 msgstr "Noch nichts zu wiederholen"
 
-#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgctxt "4w9Y_P"
 msgid "Review unlocks after the earlier lessons in this chapter have been created."
 msgstr "Die Überprüfung wird freigeschaltet, nachdem die vorherigen Lektionen in diesem Kapitel erstellt wurden."
 
-#: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
+#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgctxt "9AOq2-"
 msgid "There are no practice questions to review yet."
 msgstr "Es gibt noch keine Übungsfragen zum Wiederholen."
 
-#: src/app/generate/ch/[id]/generation-client.tsx
+#: src/app/[lang]/generate/ch/[id]/generation-client.tsx
 msgctxt "txNTbP"
 msgid "Creating the {title} chapter"
 msgstr "Kapitel {title} wird erstellt"
 
-#: src/app/generate/ch/[id]/generation-client.tsx
+#: src/app/[lang]/generate/ch/[id]/generation-client.tsx
 msgctxt "kiZUDf"
 msgid "This usually takes about a minute"
 msgstr "Das dauert normalerweise etwa eine Minute"
 
-#: src/app/generate/ch/[id]/generation-client.tsx
+#: src/app/[lang]/generate/ch/[id]/generation-client.tsx
 msgctxt "5c2xtK"
 msgid "Taking you to your chapter..."
 msgstr "Wir leiten dich zu deinem Kapitel..."
 
-#: src/app/generate/ch/[id]/generation-client.tsx
+#: src/app/[lang]/generate/ch/[id]/generation-client.tsx
 msgctxt "45uo73"
 msgid "Your lessons are ready"
 msgstr "Deine Lektionen sind bereit"
 
-#: src/app/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
 msgctxt "gnxL73"
 msgid "Choosing lesson types"
 msgstr "Lektionstypen auswählen"
 
-#: src/app/generate/ch/[id]/use-generation-phases.ts
-#: src/app/generate/course/[id]/use-generation-phases.ts
-#: src/app/generate/l/[id]/use-phase-labels.ts
+#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
 msgctxt "EKtClK"
 msgid "Getting started"
 msgstr "Erste Schritte"
 
-#: src/app/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
 msgctxt "SF9AtA"
 msgid "Preparing lessons"
 msgstr "Lektionen vorbereiten"
 
-#: src/app/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
 msgctxt "L7nQzn"
 msgid "Saving your lessons"
 msgstr "Lektionen speichern"
 
-#: src/app/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
 msgctxt "Sbsm52"
 msgid "Checking how each lesson should be taught..."
 msgstr "Prüfe, wie jede Lektion vermittelt werden soll..."
 
-#: src/app/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
 msgctxt "0xCLwv"
 msgid "Choosing type for lesson {number}..."
 msgstr "Wähle Typ für Lektion {number}..."
 
-#: src/app/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
 msgctxt "Vbn5Wz"
 msgid "Reviewing the lesson mix..."
 msgstr "Überprüfe die Zusammenstellung der Lektionen..."
 
-#: src/app/generate/ch/[id]/use-generation-phases.ts
-#: src/app/generate/course/[id]/use-generation-phases.ts
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "5342HA"
 msgid "Getting started..."
 msgstr "Los geht's..."
 
-#: src/app/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
 msgctxt "nwGJ65"
 msgid "Exploring your topic..."
 msgstr "Dein Thema erkunden..."
 
-#: src/app/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
 msgctxt "VKFa_t"
 msgid "Mapping out the learning path..."
 msgstr "Lernpfad planen..."
 
-#: src/app/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
 msgctxt "zQWv1_"
 msgid "Writing lesson {number}..."
 msgstr "Lektion {number} schreiben..."
 
-#: src/app/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
 msgctxt "HWSnYS"
 msgid "Reviewing the flow so far..."
 msgstr "Bisherigen Ablauf prüfen..."
 
-#: src/app/generate/ch/[id]/use-generation-phases.ts
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "txvxwS"
 msgid "Saving your progress..."
 msgstr "Deinen Fortschritt speichern..."
 
-#: src/app/generate/ch/[id]/use-generation-phases.ts
-#: src/app/generate/course/[id]/use-generation-phases.ts
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "JUr8Er"
 msgid "Finishing up..."
 msgstr "Abschließen..."
 
-#: src/app/generate/course/[id]/generate-course-prompt-content.tsx
+#: src/app/[lang]/generate/course/[id]/generate-course-prompt-content.tsx
 msgctxt "rPgekg"
 msgid "Back home"
 msgstr "Zurück zur Startseite"
 
-#: src/app/generate/course/[id]/generation-client.tsx
+#: src/app/[lang]/generate/course/[id]/generation-client.tsx
 msgctxt "15FsdE"
 msgid "Your course is ready"
 msgstr "Dein Kurs ist bereit"
 
-#: src/app/generate/course/[id]/generation-client.tsx
-#: src/app/generate/l/[id]/generation-client.tsx
+#: src/app/[lang]/generate/course/[id]/generation-client.tsx
+#: src/app/[lang]/generate/l/[id]/generation-client.tsx
 msgctxt "4Wktrz"
 msgid "Your lesson is ready"
 msgstr "Deine Lektion ist fertig"
 
-#: src/app/generate/course/[id]/generation-client.tsx
+#: src/app/[lang]/generate/course/[id]/generation-client.tsx
 msgctxt "0o41MR"
 msgid "Taking you to your course..."
 msgstr "Wir leiten dich zu deinem Kurs weiter…"
 
-#: src/app/generate/course/[id]/generation-client.tsx
-#: src/app/generate/l/[id]/generation-client.tsx
+#: src/app/[lang]/generate/course/[id]/generation-client.tsx
+#: src/app/[lang]/generate/l/[id]/generation-client.tsx
 msgctxt "T2TGxR"
 msgid "Taking you to your lesson..."
 msgstr "Deine Lektion öffnen..."
 
-#: src/app/generate/course/[id]/generation-client.tsx
+#: src/app/[lang]/generate/course/[id]/generation-client.tsx
 msgctxt "u6ROZF"
 msgid "Creating the {title} course"
 msgstr "Kurs {title} erstellen"
 
-#: src/app/generate/course/[id]/generation-client.tsx
+#: src/app/[lang]/generate/course/[id]/generation-client.tsx
 msgctxt "GJKrUK"
 msgid "This usually takes about 2 minutes"
 msgstr "Das dauert normalerweise etwa 2 Minuten"
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "i3JgLB"
 msgid "Categorizing your course"
 msgstr "Deinen Kurs kategorisieren..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "WOe-OA"
 msgid "Checking for duplicates"
 msgstr "Nach Duplikaten suchen..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "Gjutu-"
 msgid "Creating the cover image"
 msgstr "Titelbild erstellen..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "SQFyKH"
 msgid "Finding similar courses"
 msgstr "Ähnliche Kurse finden..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "WZpB8D"
 msgid "Writing chapters"
 msgstr "Kapitel schreiben..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "vEOpTk"
 msgid "Planning the introduction"
 msgstr "Die Einführung wird geplant"
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "d2xrsv"
 msgid "Preparing your course"
 msgstr "Deinen Kurs vorbereiten..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "CFWOGF"
 msgid "Saving your course"
 msgstr "Deinen Kurs speichern..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "XPla-v"
 msgid "Preparing the introduction"
 msgstr "Die Einführung wird vorbereitet"
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "HbhIvm"
 msgid "Writing your course description"
 msgstr "Kursbeschreibung schreiben..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "Y4F0xn"
 msgid "Writing the first lesson"
 msgstr "Die erste Lektion wird geschrieben"
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "e1myvm"
 msgid "Writing your course page"
 msgstr "Deine Kursseite wird erstellt"
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "aev_pt"
 msgid "Figuring out the right categories..."
 msgstr "Passende Kategorien finden..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "EKAN6s"
 msgid "Tagging your course..."
 msgstr "Kurs taggen..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "JJrUOR"
 msgid "Comparing nearby courses..."
 msgstr "Ähnliche Kurse vergleichen..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "uw23V-"
 msgid "Checking whether this course already exists..."
 msgstr "Prüfen, ob dieser Kurs schon existiert..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "qFmZfG"
 msgid "Avoiding duplicate courses..."
 msgstr "Doppelte Kurse vermeiden..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "lxBtcx"
 msgid "Designing the cover..."
 msgstr "Titelbild gestalten..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "W8n2i3"
 msgid "Picking the right look..."
 msgstr "Passendes Design wählen..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "At4rk1"
 msgid "Adding finishing touches..."
 msgstr "Letzte Anpassungen vornehmen..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "NgONb4"
 msgid "Searching for matching topics..."
 msgstr "Passende Themen suchen..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "Auz1tl"
 msgid "Looking for alternate names..."
 msgstr "Alternative Namen suchen..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "Gt_VNO"
 msgid "Expanding the course search..."
 msgstr "Kurssuche erweitern..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "AEG3Ol"
 msgid "Planning the course structure..."
 msgstr "Kursstruktur planen..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "OW9vMd"
 msgid "Writing chapter {number}..."
 msgstr "Kapitel {number} schreiben..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "tXkuD8"
 msgid "Reviewing the overall flow..."
 msgstr "Gesamten Ablauf prüfen..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "8-bhNP"
 msgid "Finding the best first hook..."
 msgstr "Der beste erste Einstieg wird gesucht…"
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "xrFhkn"
 msgid "Writing a friendly guide to the field..."
 msgstr "Ein freundlicher Leitfaden zum Thema wird geschrieben…"
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "c_e4hk"
 msgid "Keeping the first chapter easy to start..."
 msgstr "Das erste Kapitel einfach zugänglich halten…"
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "4LsE_n"
 msgid "Creating the course shell..."
 msgstr "Kursgerüst erstellen..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "3hEaI4"
 msgid "Preparing the workspace..."
 msgstr "Arbeitsbereich vorbereiten..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "7Pw3r5"
 msgid "Saving the intro chapter..."
 msgstr "Das Einführungskapitel wird gespeichert…"
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "cc6_Yn"
 msgid "Preparing the first lessons..."
 msgstr "Die ersten Lektionen werden vorbereitet…"
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "a7FJJd"
 msgid "Summarizing what you'll learn..."
 msgstr "Zusammenfassen, was du lernen wirst..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "9r_4zz"
 msgid "Writing the overview..."
 msgstr "Überblick schreiben..."
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "QqKzYM"
 msgid "Writing the first lesson..."
 msgstr "Die erste Lektion wird geschrieben…"
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "XxRMuO"
 msgid "Adding examples and visuals..."
 msgstr "Beispiele und Bilder werden hinzugefügt…"
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "kmuvIN"
 msgid "Getting the first lesson ready..."
 msgstr "Die erste Lektion wird vorbereitet…"
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "chqN-J"
 msgid "Framing why this course is useful..."
 msgstr "Warum dieser Kurs nützlich ist…"
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "twf4n2"
 msgid "Writing the course page..."
 msgstr "Kursseite wird erstellt…"
 
-#: src/app/generate/course/[id]/use-generation-phases.ts
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "k15wFf"
 msgid "Shaping the starting point..."
 msgstr "Der Einstieg wird festgelegt…"
 
-#: src/app/generate/l/[id]/generation-client.tsx
+#: src/app/[lang]/generate/l/[id]/generation-client.tsx
 msgctxt "WihX6L"
 msgid "Creating the {title} lesson"
 msgstr "Lektion {title} erstellen"
 
-#: src/app/generate/l/[id]/generation-client.tsx
+#: src/app/[lang]/generate/l/[id]/generation-client.tsx
 msgctxt "3vY0Zu"
 msgid "This usually takes 1-2 minutes"
 msgstr "Das dauert normalerweise 1–2 Minuten"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "cVoRCh"
 msgid "Preparing options..."
 msgstr "Optionen werden vorbereitet…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "BBwnPG"
 msgid "Adding more options..."
 msgstr "Weitere Optionen werden hinzugefügt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "4wkMNX"
 msgid "Getting answer options ready..."
 msgstr "Antwortoptionen werden vorbereitet…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "WsjFV2"
 msgid "Preparing the word bank..."
 msgstr "Wortliste wird vorbereitet…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "6xEJTk"
 msgid "Designing practice exercises..."
 msgstr "Übungsaufgaben werden gestaltet…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "6hjA6_"
 msgid "Creating examples to try..."
 msgstr "Beispiele werden erstellt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "KddvJw"
 msgid "Writing fill-in-the-blanks..."
 msgstr "Lückentexte werden geschrieben…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "C05-tM"
 msgid "Building interactive tasks..."
 msgstr "Interaktive Aufgaben werden erstellt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "JGNN92"
 msgid "Drawing an illustration..."
 msgstr "Illustration wird gezeichnet…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "a08k7g"
 msgid "Generating the images..."
 msgstr "Bilder werden erzeugt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "bJVUNz"
 msgid "Adding some color..."
 msgstr "Farbe wird hinzugefügt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "Yoev2R"
 msgid "Refining the details..."
 msgstr "Details werden verfeinert…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "xBaVAH"
 msgid "Finishing the artwork..."
 msgstr "Artwork wird fertiggestellt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "W2b0tx"
 msgid "Designing the lesson thumbnail..."
 msgstr "Vorschaubild wird entworfen…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "fRAHqN"
 msgid "Creating the lesson thumbnail..."
 msgstr "Vorschaubild wird erstellt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "elwtxf"
 msgid "Refining the lesson thumbnail..."
 msgstr "Vorschaubild wird verfeinert…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "uDzgwu"
 msgid "Writing example sentences..."
 msgstr "Beispielsätze werden geschrieben…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "SHIHyL"
 msgid "Creating reading passages..."
 msgstr "Lesetexte werden erstellt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "0Zum4g"
 msgid "Putting words in context..."
 msgstr "Wörter werden in Kontext gesetzt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "jixTNM"
 msgid "Building natural sentences..."
 msgstr "Natürliche Sätze werden formuliert…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "txIcop"
 msgid "Loading lesson data..."
 msgstr "Lektionsdaten werden geladen…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "l486Kx"
 msgid "Checking what we need..."
 msgstr "Anforderungen werden geprüft…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "EAqAX_"
 msgid "Thinking about what to illustrate..."
 msgstr "Illustrationsideen werden überlegt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "2Tovpk"
 msgid "Planning each image..."
 msgstr "Jedes Bild wird geplant…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "sQsQbH"
 msgid "Choosing the right scenes..."
 msgstr "Passende Szenen werden ausgewählt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "iUUJom"
 msgid "Planning the illustrations..."
 msgstr "Illustrationen werden geplant…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "BszFlm"
 msgid "Saving your lesson..."
 msgstr "Lektion wird gespeichert…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "bC9979"
 msgid "Almost done..."
 msgstr "Fast fertig…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "5Jyenk"
 msgid "Getting ready for the next step..."
 msgstr "Nächster Schritt wird vorbereitet…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "r8xznK"
 msgid "Researching the topic..."
 msgstr "Thema wird recherchiert…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "K_JznZ"
 msgid "Writing the explanation..."
 msgstr "Erklärung wird geschrieben…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "19fPwV"
 msgid "Making it clear..."
 msgstr "Klarheit wird geschaffen…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "65JXIy"
 msgid "Putting together the lesson..."
 msgstr "Lektion wird zusammengestellt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "nwi1Ym"
 msgid "Crafting the content..."
 msgstr "Inhalte werden ausgearbeitet…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "-QrqeN"
 msgid "Writing the explanation first..."
 msgstr "Erklärung wird zuerst geschrieben…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "epxxAx"
 msgid "Building the foundation..."
 msgstr "Fundament wird aufgebaut…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "GyThaR"
 msgid "Preparing background context..."
 msgstr "Hintergrundkontext wird vorbereitet…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/content.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "0AWsLH"
 msgid "Explaining the topic..."
 msgstr "Thema wird erklärt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "KL34l5"
 msgid "Adding romanization for grammar..."
 msgstr "Romanisierung für Grammatik wird hinzugefügt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "GILb0l"
 msgid "Converting grammar text to Latin script..."
 msgstr "Grammatik wird in lateinische Schrift umgewandelt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "OFH7dE"
 msgid "Making grammar content easier to read..."
 msgstr "Grammatik wird leichter lesbar gemacht…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "VADOBa"
 msgid "Looking up how each word sounds..."
 msgstr "Aussprache jedes Wortes wird nachgeschlagen…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "WnqJeL"
 msgid "Mapping out the pronunciation..."
 msgstr "Ausspracheplan wird erstellt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "HDNFHk"
 msgid "Checking how to say each word..."
 msgstr "Aussprache jedes Wortes wird geprüft…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "_Fl7bm"
 msgid "Finding the right sounds..."
 msgstr "Richtige Laute werden gefunden…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "DLZ9fl"
 msgid "Converting to Latin script..."
 msgstr "Text wird in lateinische Schrift umgewandelt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "boocfl"
 msgid "Adding reading aids..."
 msgstr "Lesehilfen werden hinzugefügt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "AQMVYX"
 msgid "Making it easier to read..."
 msgstr "Lesen wird erleichtert…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "ud2yWh"
 msgid "Writing out the sounds..."
 msgstr "Laute werden ausgeschrieben…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "kxBeWt"
 msgid "Adding romanization for vocabulary..."
 msgstr "Romanisierung für Vokabular wird hinzugefügt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "Ch9BcP"
 msgid "Converting vocabulary to Latin script..."
 msgstr "Wortschatz wird in lateinische Schrift umgewandelt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "1aPaHZ"
 msgid "Making vocabulary easier to read..."
 msgstr "Vokabular wird leichter lesbar gemacht…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "zYx0UG"
 msgid "Adding pronunciation for each word..."
 msgstr "Aussprache für jedes Wort wird hinzugefügt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "VQ3-C2"
 msgid "Noting how each word sounds..."
 msgstr "Klang jedes Wortes wird notiert…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "YWB-K_"
 msgid "Detailing the word sounds..."
 msgstr "Wortlaute werden festgehalten…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "L6f1Zq"
 msgid "Recording pronunciation info..."
 msgstr "Ausspracheinformationen werden erfasst…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "i-rNdh"
 msgid "Picking the key vocabulary..."
 msgstr "Schlüsselvokabeln werden ausgewählt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "IdWf9_"
 msgid "Choosing words to practice..."
 msgstr "Wörter zum Üben werden ausgewählt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "UFDKHM"
 msgid "Finding the most useful words..."
 msgstr "Nützlichste Wörter werden gefunden…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "YgG70c"
 msgid "Selecting important terms..."
 msgstr "Wichtige Begriffe werden ausgewählt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "6BQo6o"
 msgid "Translating individual words..."
 msgstr "Einzelne Wörter werden übersetzt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "k0Q_Ph"
 msgid "Looking up each term..."
 msgstr "Jeder Begriff wird nachgeschlagen…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "hZLCkp"
 msgid "Finding word meanings..."
 msgstr "Wortbedeutungen werden gefunden…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "SC0o7J"
 msgid "Building the vocabulary guide..."
 msgstr "Vokabelhilfe wird erstellt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "5InW8H"
 msgid "Recording the audio..."
 msgstr "Audio wird aufgenommen…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "4xvh9e"
 msgid "Getting the pronunciation right..."
 msgstr "Aussprache wird geprüft…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "oB01Wc"
 msgid "Preparing the voice..."
 msgstr "Stimme wird vorbereitet…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "ScA7Xm"
 msgid "Making it sound natural..."
 msgstr "Natürlicher Klang wird erzeugt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "1vO-bV"
 msgid "Recording vocabulary audio..."
 msgstr "Vokabel-Audio wird aufgenommen…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "jV2zI1"
 msgid "Getting the sound for each word..."
 msgstr "Klang jedes Wortes wird geholt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "FahI7K"
 msgid "Preparing vocabulary audio..."
 msgstr "Vokabel-Audio wird vorbereitet…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "JfNFGM"
 msgid "Making words listenable..."
 msgstr "Wörter werden hörbar gemacht…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "muXaEm"
 msgid "Recording pronunciation for each word..."
 msgstr "Aussprache für jedes Wort wird aufgenommen…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "QDv0wS"
 msgid "Getting the audio for each term..."
 msgstr "Audio für jeden Begriff wird geholt…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "OJkDgV"
 msgid "Preparing word-by-word audio..."
 msgstr "Wort-für-Wort-Audio wird vorbereitet…"
 
-#: src/app/generate/l/[id]/phase-thinking-generators/language.ts
+#: src/app/[lang]/generate/l/[id]/phase-thinking-generators/language.ts
 msgctxt "C2ELVi"
 msgid "Making each word listenable..."
 msgstr "Jedes Wort wird hörbar gemacht…"
 
-#: src/app/generate/l/[id]/use-phase-labels.ts
+#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
 msgctxt "58heST"
 msgid "Adding grammar romanization"
 msgstr "Grammatik-Romanisierung hinzufügen"
 
-#: src/app/generate/l/[id]/use-phase-labels.ts
+#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
 msgctxt "TlrPFF"
 msgid "Adding pronunciation"
 msgstr "Aussprache hinzufügen"
 
-#: src/app/generate/l/[id]/use-phase-labels.ts
+#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
 msgctxt "V0mPLK"
 msgid "Adding romanization"
 msgstr "Romanisierung hinzufügen"
 
-#: src/app/generate/l/[id]/use-phase-labels.ts
+#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
 msgctxt "HXMA75"
 msgid "Adding vocabulary romanization"
 msgstr "Vokabel-Romanisierung hinzufügen"
 
-#: src/app/generate/l/[id]/use-phase-labels.ts
+#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
 msgctxt "4OjRPB"
 msgid "Adding word pronunciation"
 msgstr "Wort-Aussprache hinzufügen"
 
-#: src/app/generate/l/[id]/use-phase-labels.ts
+#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
 msgctxt "RXfSEl"
 msgid "Building word list"
 msgstr "Wortliste erstellen"
 
-#: src/app/generate/l/[id]/use-phase-labels.ts
+#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
 msgctxt "viluaR"
 msgid "Preparing options"
 msgstr "Optionen vorbereiten"
 
-#: src/app/generate/l/[id]/use-phase-labels.ts
+#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
 msgctxt "c7xJGQ"
 msgid "Creating exercises"
 msgstr "Übungen erstellen"
 
-#: src/app/generate/l/[id]/use-phase-labels.ts
+#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
 msgctxt "aKNA_b"
 msgid "Creating images"
 msgstr "Bilder erstellen"
 
-#: src/app/generate/l/[id]/use-phase-labels.ts
+#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
 msgctxt "WI2yui"
 msgid "Creating lesson thumbnail"
 msgstr "Lektionsvorschau erstellen"
 
-#: src/app/generate/l/[id]/use-phase-labels.ts
+#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
 msgctxt "mIpv67"
 msgid "Creating sentences"
 msgstr "Sätze erstellen"
 
-#: src/app/generate/l/[id]/use-phase-labels.ts
+#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
 msgctxt "0zeST_"
 msgid "Looking up words"
 msgstr "Wörter nachschlagen"
 
-#: src/app/generate/l/[id]/use-phase-labels.ts
+#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
 msgctxt "v7HGj3"
 msgid "Planning the images"
 msgstr "Bilder planen"
 
-#: src/app/generate/l/[id]/use-phase-labels.ts
+#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
 msgctxt "T00GEW"
 msgid "Recording audio"
 msgstr "Audio aufnehmen"
 
-#: src/app/generate/l/[id]/use-phase-labels.ts
+#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
 msgctxt "v2DAdY"
 msgid "Recording vocabulary audio"
 msgstr "Vokabel-Audio aufnehmen"
 
-#: src/app/generate/l/[id]/use-phase-labels.ts
+#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
 msgctxt "j-pO55"
 msgid "Recording word audio"
 msgstr "Wort-Audio aufnehmen"
 
-#: src/app/generate/l/[id]/use-phase-labels.ts
+#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
 msgctxt "2ZPUqg"
 msgid "Saving your lesson"
 msgstr "Deine Lektion speichern"
 
-#: src/app/generate/l/[id]/use-phase-labels.ts
+#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
 msgctxt "v4iFHN"
 msgid "Writing the content"
 msgstr "Inhalte schreiben"
 
-#: src/app/generate/l/[id]/use-phase-labels.ts
+#: src/app/[lang]/generate/l/[id]/use-phase-labels.ts
 msgctxt "ZA0_P-"
 msgid "Writing the explanation"
 msgstr "Erklärung schreiben"
 
-#: src/app/generate/layout.tsx
+#: src/app/[lang]/generate/layout.tsx
 msgctxt "_tq5fR"
 msgid "Creating content"
 msgstr "Inhalte erstellen"
 
-#: src/app/privacy/page.tsx
+#: src/app/[lang]/privacy/page.tsx
 msgctxt "afKQHy"
 msgid "Read Zoonk's privacy policy to understand how we use and protect your personal information."
 msgstr "Lies Zoonks Datenschutzerklärung, um zu verstehen, wie wir deine persönlichen Daten verwenden und schützen."
 
-#: src/app/privacy/page.tsx
+#: src/app/[lang]/privacy/page.tsx
 msgctxt "vx0nkZ"
 msgid "Privacy Policy"
 msgstr "Datenschutzerklärung"
 
-#: src/app/terms/page.tsx
+#: src/app/[lang]/terms/page.tsx
 msgctxt "DaGtoz"
 msgid "Read Zoonk's terms of use to understand the rules and conditions for using our platform and services"
 msgstr "Lies Zoonks Nutzungsbedingungen, um die Regeln und Bedingungen für die Nutzung unserer Plattform und Dienste zu verstehen"
 
-#: src/app/terms/page.tsx
+#: src/app/[lang]/terms/page.tsx
 msgctxt "UhkSyx"
 msgid "Terms of Use"
 msgstr "Nutzungsbedingungen"

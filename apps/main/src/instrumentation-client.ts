@@ -28,6 +28,9 @@ initBotId({
   protect: [
     { method: "POST", path: "/api/auth/*" },
     { method: "GET", path: "/start/learn/*" },
+    // BotID sees localized browser paths before the proxy rewrites them.
+    { method: "GET", path: "/*/start/learn/*" },
     { method: "GET", path: "/generate/*" },
+    { method: "GET", path: "/*/generate/*" },
   ],
 });

@@ -3,6 +3,7 @@ import {
   getCountryFromAcceptLanguage,
   getLocaleFromHeaders,
   getLocaleFromRequest,
+  getSupportedLocaleFromLanguage,
   isValidLocale,
 } from "./locale";
 
@@ -65,6 +66,20 @@ describe(getLocaleFromHeaders, () => {
 
   it("matches German from regional browser preferences", () => {
     expect(getLocaleFromHeaders("de-DE,de;q=0.9,en;q=0.8")).toBe("de");
+  });
+});
+
+describe(getSupportedLocaleFromLanguage, () => {
+  it("keeps supported base languages", () => {
+    expect(getSupportedLocaleFromLanguage("pt")).toBe("pt");
+  });
+
+  it("uses the base language from regional language tags", () => {
+    expect(getSupportedLocaleFromLanguage("pt-BR")).toBe("pt");
+  });
+
+  it("falls back to English for unsupported languages", () => {
+    expect(getSupportedLocaleFromLanguage("it")).toBe("en");
   });
 });
 

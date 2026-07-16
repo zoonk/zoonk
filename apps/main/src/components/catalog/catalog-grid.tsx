@@ -1,13 +1,12 @@
 "use client";
 
+import { type AppRoute, Link } from "@/i18n/navigation";
 import { GridContent, GridEmpty, GridGroupItem, GridItem } from "@zoonk/ui/components/grid";
 import { Input } from "@zoonk/ui/components/input";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SEARCH_QUERY_THROTTLE_MS } from "@zoonk/utils/search";
 import { normalizeString } from "@zoonk/utils/string";
 import { SearchIcon } from "lucide-react";
-import { type Route } from "next";
-import Link from "next/link";
 import { throttle, useQueryState } from "nuqs";
 import { type ReactNode, useMemo } from "react";
 import { CatalogGridBackToTop } from "./catalog-grid-back-to-top";
@@ -191,7 +190,7 @@ export function CatalogGridItem<Href extends string>({
 }: {
   children: ReactNode;
   className?: string;
-  href: Route<Href>;
+  href: AppRoute<Href>;
   id: CatalogGridItemKey;
   prefetch?: boolean;
 }) {

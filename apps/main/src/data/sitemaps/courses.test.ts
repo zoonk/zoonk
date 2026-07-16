@@ -31,6 +31,7 @@ describe(listSitemapCourses, () => {
     expect(found).toStrictEqual({
       brandSlug: org.slug,
       courseSlug: course.slug,
+      language: "pt",
       updatedAt: expect.any(Date),
     });
   });

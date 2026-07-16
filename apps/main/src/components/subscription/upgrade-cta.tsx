@@ -1,4 +1,5 @@
 import { GenerationShortcutLink } from "@/components/generation/generation-shortcut-link";
+import { type AppRoute } from "@/i18n/navigation";
 import {
   Empty,
   EmptyContent,
@@ -8,7 +9,6 @@ import {
   EmptyTitle,
 } from "@zoonk/ui/components/empty";
 import { SparklesIcon } from "lucide-react";
-import { type Route } from "next";
 import { getExtracted } from "next-intl/server";
 import { SubscriptionGateTracker } from "./subscription-gate-tracker";
 
@@ -18,7 +18,7 @@ export async function UpgradeCTA<Href extends string>({
   description,
   title,
 }: {
-  backHref: Route<Href>;
+  backHref: AppRoute<Href>;
   backLabel: string;
   description?: string;
   title?: string;

@@ -1,6 +1,6 @@
 import { countSitemapChapters, listSitemapChapters } from "@/data/sitemaps/chapters";
 import { SITEMAP_BATCH_SIZE } from "@/data/sitemaps/courses";
-import { SITE_URL } from "@zoonk/utils/url";
+import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { type MetadataRoute } from "next";
 
 export async function generateSitemaps() {
@@ -15,8 +15,8 @@ export default async function sitemap(props: {
   const id = Number(await props.id);
   const chapters = await listSitemapChapters(id);
 
-  return chapters.map(({ brandSlug, chapterSlug, courseSlug, updatedAt }) => ({
+  return chapters.map(({ brandSlug, chapterSlug, courseSlug, language, updatedAt }) => ({
     lastModified: updatedAt,
-    url: `${SITE_URL}/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}`,
+    url: getLocalizedUrl({ href: `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}`, language }),
   }));
 }

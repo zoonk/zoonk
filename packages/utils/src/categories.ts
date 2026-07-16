@@ -1,4 +1,4 @@
-const COURSE_CATEGORIES = [
+export const COURSE_CATEGORIES = [
   "arts",
   "business",
   "communication",

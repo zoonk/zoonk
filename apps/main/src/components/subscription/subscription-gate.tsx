@@ -1,6 +1,6 @@
 import "server-only";
+import { type AppRoute } from "@/i18n/navigation";
 import { hasActiveSubscription } from "@zoonk/core/auth/subscription";
-import { type Route } from "next";
 import { headers } from "next/headers";
 import { UpgradeCTA } from "./upgrade-cta";
 
@@ -14,7 +14,7 @@ export async function SubscriptionGate<Href extends string>({
   bypass,
   children,
 }: {
-  backHref: Route<Href>;
+  backHref: AppRoute<Href>;
   backLabel: string;
   bypass?: boolean;
   children: React.ReactNode;

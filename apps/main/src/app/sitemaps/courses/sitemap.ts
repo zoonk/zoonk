@@ -3,7 +3,7 @@ import {
   countSitemapCourses,
   listSitemapCourses,
 } from "@/data/sitemaps/courses";
-import { SITE_URL } from "@zoonk/utils/url";
+import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { type MetadataRoute } from "next";
 
 export async function generateSitemaps() {
@@ -18,8 +18,8 @@ export default async function sitemap(props: {
   const id = Number(await props.id);
   const courses = await listSitemapCourses(id);
 
-  return courses.map(({ brandSlug, courseSlug, updatedAt }) => ({
+  return courses.map(({ brandSlug, courseSlug, language, updatedAt }) => ({
     lastModified: updatedAt,
-    url: `${SITE_URL}/b/${brandSlug}/c/${courseSlug}`,
+    url: getLocalizedUrl({ href: `/b/${brandSlug}/c/${courseSlug}`, language }),
   }));
 }
