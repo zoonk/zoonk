@@ -12,6 +12,7 @@ import { Suspense } from "react";
 import { CourseList, CourseListSkeleton } from "./course-list";
 
 export const metadata: Metadata = { title: "Courses" };
+export const prefetch = "allow-runtime";
 
 export default function CoursesPage({ searchParams }: PageProps<"/courses">) {
   return (

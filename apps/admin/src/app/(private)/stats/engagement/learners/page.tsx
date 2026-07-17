@@ -12,6 +12,7 @@ import { LearnerMilestoneThresholdForm } from "./learner-milestone-threshold-for
 import { LearnerMilestoneUsers, LearnerMilestoneUsersSkeleton } from "./learner-milestone-users";
 
 export const metadata: Metadata = { title: "Learner Milestones" };
+export const prefetch = "allow-runtime";
 
 /**
  * The route keeps a useful analytics shell while its milestone definition is

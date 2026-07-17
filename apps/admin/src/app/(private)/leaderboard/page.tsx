@@ -11,6 +11,7 @@ import { Suspense } from "react";
 import { BrainPowerLeaderboard, BrainPowerLeaderboardSkeleton } from "./brain-power-leaderboard";
 
 export const metadata: Metadata = { title: "Brain Power Leaderboard" };
+export const prefetch = "allow-runtime";
 
 /**
  * The leaderboard gives admins one focused view of recent learning activity,

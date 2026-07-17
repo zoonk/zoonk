@@ -12,6 +12,7 @@ import { Suspense } from "react";
 import { CoursePromptList, CoursePromptListSkeleton } from "./course-prompt-list";
 
 export const metadata: Metadata = { title: "Course Prompts" };
+export const prefetch = "allow-runtime";
 
 /**
  * Shows the durable routing decisions created by course-start entry points.

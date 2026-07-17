@@ -7,6 +7,7 @@ import { EngagementMetrics, EngagementMetricsSkeleton } from "./engagement-metri
 import { LearnerMilestones, LearnerMilestonesSkeleton } from "./learner-milestones";
 
 export const metadata: Metadata = { title: "Engagement & Learning" };
+export const prefetch = "allow-runtime";
 
 /**
  * Stable analytics chrome stays in the App Shell while period metrics and

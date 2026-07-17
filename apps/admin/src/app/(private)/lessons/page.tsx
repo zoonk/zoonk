@@ -15,6 +15,7 @@ import { GeneratedLessonList, GeneratedLessonListSkeleton } from "./generated-le
 import { GeneratedLessonStatusFilter } from "./generated-lesson-status-filter";
 
 export const metadata: Metadata = { title: "Generated Lessons" };
+export const prefetch = "allow-runtime";
 
 /**
  * This page gives admins a terminal-state log for lesson generation so they can

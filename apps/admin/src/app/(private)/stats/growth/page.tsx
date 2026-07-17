@@ -6,6 +6,7 @@ import { getStatsPeriod } from "../_utils/stats-period";
 import { GrowthMetrics, GrowthMetricsSkeleton } from "./growth-metrics";
 
 export const metadata: Metadata = { title: "Growth & Sustainability" };
+export const prefetch = "allow-runtime";
 
 /**
  * Stable analytics chrome stays in the App Shell while URL-backed controls and
