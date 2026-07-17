@@ -9,9 +9,22 @@ import {
   AccordionTrigger,
 } from "@zoonk/ui/components/accordion";
 import { Badge } from "@zoonk/ui/components/badge";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { RankingItem } from "./ranking-item";
 
 type TestCaseEntry = { testCaseId: string; score: number; reasoning: string; anonymousId: string };
+
+/**
+ * Matches the empty-state footprint without assuming how many judges or model
+ * rankings have been persisted in mutable battle result files.
+ */
+export function BattleMatchupListSkeleton() {
+  return (
+    <div aria-hidden="true" className="py-8">
+      <Skeleton className="mx-auto h-6 w-48 rounded" />
+    </div>
+  );
+}
 
 /**
  * Some judges output bare anonymous letters (e.g. "C") as modelId

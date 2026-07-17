@@ -1,11 +1,11 @@
 import {
   AppBreadcrumb,
+  AppBreadcrumbItemSkeleton,
   BattlesPageBreadcrumb,
   HomeLinkBreadcrumb,
   TaskLinkBreadcrumb,
 } from "@/components/breadcrumb";
 import { getBattleMatchups } from "@/lib/battle-loader";
-import { getTaskById } from "@/tasks";
 import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
 import {
   ContainerBody,
@@ -14,25 +14,46 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import { notFound } from "next/navigation";
-import { BattleMatchupList } from "./battle-matchup-list";
+import { Suspense } from "react";
+import { type TaskRouteParams, getTaskRoute } from "../_utils/task-route";
+import { BattleMatchupList, BattleMatchupListSkeleton } from "./battle-matchup-list";
 
-export default async function BattlesPage({ params }: { params: Promise<{ taskId: string }> }) {
-  const { taskId } = await params;
-  const task = getTaskById(taskId);
+type BattlesRouteProps = { params: TaskRouteParams };
 
-  if (!task) {
-    notFound();
-  }
+/**
+ * Streams the task label independently while the Home and Battles breadcrumb
+ * items remain available in the shared route shell.
+ */
+async function BattlesTaskBreadcrumb({ params }: BattlesRouteProps) {
+  const { task, taskId } = await getTaskRoute(params);
 
+  return <TaskLinkBreadcrumb taskId={taskId} taskName={task.name} />;
+}
+
+/**
+ * Reads mutable battle files behind the page body's Suspense boundary so the
+ * stable title and navigation never wait on filesystem work.
+ */
+async function BattleResults({ params }: BattlesRouteProps) {
+  const { taskId } = await getTaskRoute(params);
   const matchups = await getBattleMatchups(taskId);
 
+  return <BattleMatchupList matchups={matchups} />;
+}
+
+/**
+ * Prefetches the stable battles page structure and limits runtime streaming to
+ * the URL-dependent task label and its current result list.
+ */
+export default function BattlesPage({ params }: BattlesRouteProps) {
   return (
     <main className="flex flex-col gap-4">
       <AppBreadcrumb>
         <HomeLinkBreadcrumb />
         <BreadcrumbSeparator />
-        <TaskLinkBreadcrumb taskId={taskId} taskName={task.name} />
+        <Suspense fallback={<AppBreadcrumbItemSkeleton />}>
+          <BattlesTaskBreadcrumb params={params} />
+        </Suspense>
         <BreadcrumbSeparator />
         <BattlesPageBreadcrumb />
       </AppBreadcrumb>
@@ -47,7 +68,9 @@ export default async function BattlesPage({ params }: { params: Promise<{ taskId
       </ContainerHeader>
 
       <ContainerBody>
-        <BattleMatchupList matchups={matchups} />
+        <Suspense fallback={<BattleMatchupListSkeleton />}>
+          <BattleResults params={params} />
+        </Suspense>
       </ContainerBody>
     </main>
   );

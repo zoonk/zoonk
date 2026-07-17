@@ -2,6 +2,7 @@ import { type NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["*.local"],
+  cacheComponents: true,
   experimental: {
     turbopackFileSystemCacheForBuild: true,
     turbopackRustReactCompiler: true,
@@ -15,6 +16,7 @@ const nextConfig: NextConfig = {
     ],
   },
   pageExtensions: ["ts", "tsx"],
+  partialPrefetching: true,
   reactCompiler: true,
   turbopack: {
     rules: {
