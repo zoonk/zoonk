@@ -15,7 +15,7 @@ import {
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { Suspense } from "react";
-import { type TaskRouteParams, getTaskRoute } from "../_utils/task-route";
+import { type TaskRouteParams, getTaskRouteFromParams } from "../_utils/task-route";
 import { BattleMatchupList, BattleMatchupListSkeleton } from "./battle-matchup-list";
 
 type BattlesRouteProps = { params: TaskRouteParams };
@@ -25,7 +25,7 @@ type BattlesRouteProps = { params: TaskRouteParams };
  * items remain available in the shared route shell.
  */
 async function BattlesTaskBreadcrumb({ params }: BattlesRouteProps) {
-  const { task, taskId } = await getTaskRoute(params);
+  const { task, taskId } = await getTaskRouteFromParams(params);
 
   return <TaskLinkBreadcrumb taskId={taskId} taskName={task.name} />;
 }
@@ -35,7 +35,7 @@ async function BattlesTaskBreadcrumb({ params }: BattlesRouteProps) {
  * stable title and navigation never wait on filesystem work.
  */
 async function BattleResults({ params }: BattlesRouteProps) {
-  const { taskId } = await getTaskRoute(params);
+  const { taskId } = await getTaskRouteFromParams(params);
   const matchups = await getBattleMatchups(taskId);
 
   return <BattleMatchupList matchups={matchups} />;

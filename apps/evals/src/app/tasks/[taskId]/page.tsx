@@ -24,7 +24,7 @@ import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { MessageSquareTextIcon, SwordsIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
-import { type TaskRouteParams, getTaskRoute } from "./_utils/task-route";
+import { type TaskRouteParams, getTaskRouteFromParams } from "./_utils/task-route";
 import { runBattleModeAction } from "./actions";
 import { LeaderboardTabs, LeaderboardTabsSkeleton } from "./leaderboard-tabs";
 import { ModelCard, ModelCardSkeleton } from "./model-card";
@@ -36,7 +36,7 @@ type TaskRouteProps = { params: TaskRouteParams };
  * remains part of the prefetched App Shell.
  */
 async function TaskBreadcrumb({ params }: TaskRouteProps) {
-  const { task } = await getTaskRoute(params);
+  const { task } = await getTaskRouteFromParams(params);
 
   return <TaskPageBreadcrumb taskName={task.name} />;
 }
@@ -65,7 +65,7 @@ function TaskHeaderActionsSkeleton() {
  * work cannot delay the rest of the header.
  */
 async function TaskHeaderActions({ params }: TaskRouteProps) {
-  const { task, taskId } = await getTaskRoute(params);
+  const { task, taskId } = await getTaskRouteFromParams(params);
   const modelsReadyForBattle = await getModelsWithCompleteOutputs({ runsPerTestCase: 1, task });
   const canRunBattle = modelsReadyForBattle.length >= 2;
 
@@ -91,7 +91,7 @@ async function TaskHeaderActions({ params }: TaskRouteProps) {
  * stream through its own boundary instead of holding back the title.
  */
 async function TaskHeader({ params }: TaskRouteProps) {
-  const { task } = await getTaskRoute(params);
+  const { task } = await getTaskRouteFromParams(params);
 
   const judgeModeSupported = supportsJudgeMode(task);
 
@@ -119,7 +119,7 @@ async function TaskHeader({ params }: TaskRouteProps) {
  * and model grid remain independently interactive.
  */
 async function TaskLeaderboard({ params }: TaskRouteProps) {
-  const { task, taskId } = await getTaskRoute(params);
+  const { task, taskId } = await getTaskRouteFromParams(params);
   const judgeModeSupported = supportsJudgeMode(task);
 
   const battleEntriesPromise = judgeModeSupported
@@ -146,7 +146,7 @@ async function TaskLeaderboard({ params }: TaskRouteProps) {
  * mutable eval files and should not be frozen into the shared App Shell.
  */
 async function TaskModelGrid({ params }: TaskRouteProps) {
-  const { taskId } = await getTaskRoute(params);
+  const { taskId } = await getTaskRouteFromParams(params);
   const sortedModels = await getSortedModels(taskId);
 
   return (
