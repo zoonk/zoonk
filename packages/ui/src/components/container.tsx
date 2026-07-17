@@ -136,11 +136,17 @@ export function ContainerBody({ children, className }: ContainerBodyProps) {
 
 export type ContainerHeaderSkeletonProps = { className?: string };
 
+/**
+ * Mirrors the real header primitives so streamed titles replace the fallback
+ * without changing the header's height, padding, or sibling spacing.
+ */
 export function ContainerHeaderSkeleton({ className }: ContainerHeaderSkeletonProps) {
   return (
-    <header className={cn("flex flex-col gap-1", className)}>
-      <Skeleton className="mb-1 h-6 w-1/2" />
-      <Skeleton className="h-4 w-1/3" />
-    </header>
+    <ContainerHeader aria-hidden="true" className={className}>
+      <ContainerHeaderGroup className="min-w-0 flex-1">
+        <Skeleton className="h-4.5 w-1/2 rounded" />
+        <Skeleton className="h-5 w-3/4 rounded" />
+      </ContainerHeaderGroup>
+    </ContainerHeader>
   );
 }
