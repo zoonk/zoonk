@@ -36,12 +36,8 @@ type TaskModelRouteProps = { params: TaskModelRouteParams };
  * Resolves the task and model URL once for the breadcrumb, header, and body so
  * each Suspense region shares identical validation and decoded model data.
  */
-const getTaskModelRoute = cache(async (params: TaskModelRouteParams) => {
-  const [{ modelId: rawModelId }, { task, taskId }] = await Promise.all([
-    params,
-    getTaskRoute(params),
-  ]);
-
+const getTaskModelRoute = cache(async (taskId: string, rawModelId: string) => {
+  const { task } = await getTaskRoute(taskId);
   const modelId = decodeURIComponent(rawModelId);
   const model = EVAL_MODELS.find((item) => item.id === modelId);
 
@@ -51,6 +47,16 @@ const getTaskModelRoute = cache(async (params: TaskModelRouteParams) => {
 
   return { model, modelId, task, taskId };
 });
+
+/**
+ * Resolves Next's Promise-based route params before passing stable primitive
+ * cache keys to the shared task and model lookup.
+ */
+async function getTaskModelRouteFromParams(params: TaskModelRouteParams) {
+  const { modelId, taskId } = await params;
+
+  return getTaskModelRoute(taskId, modelId);
+}
 
 /**
  * Keeps the two URL-dependent breadcrumb positions visible while their task
@@ -71,7 +77,7 @@ function TaskModelBreadcrumbSkeleton() {
  * model names from different route states.
  */
 async function TaskModelBreadcrumb({ params }: TaskModelRouteProps) {
-  const { model, task } = await getTaskModelRoute(params);
+  const { model, task } = await getTaskModelRouteFromParams(params);
 
   return (
     <>
@@ -87,7 +93,7 @@ async function TaskModelBreadcrumb({ params }: TaskModelRouteProps) {
  * rest of the model page shell remains available.
  */
 async function TaskModelHeader({ params }: TaskModelRouteProps) {
-  const { task } = await getTaskModelRoute(params);
+  const { task } = await getTaskModelRouteFromParams(params);
 
   return (
     <ContainerHeader>
@@ -105,8 +111,8 @@ async function TaskModelHeader({ params }: TaskModelRouteProps) {
  * Reads results, generated outputs, and progress in parallel because none of
  * those mutable files depends on another to render the model body.
  */
-const getTaskModelContent = cache(async (params: TaskModelRouteParams) => {
-  const { model, modelId, task, taskId } = await getTaskModelRoute(params);
+const getTaskModelContent = cache(async (taskId: string, rawModelId: string) => {
+  const { model, modelId, task } = await getTaskModelRoute(taskId, rawModelId);
 
   const [results, modelOutputs, outputStatus] = await Promise.all([
     getTaskResults(taskId, modelId),
@@ -122,12 +128,22 @@ const getTaskModelContent = cache(async (params: TaskModelRouteParams) => {
 });
 
 /**
+ * Resolves the model route once per consumer before reusing the primitive-keyed
+ * content cache across the action and results Suspense regions.
+ */
+async function getTaskModelContentFromParams(params: TaskModelRouteParams) {
+  const { modelId, taskId } = await params;
+
+  return getTaskModelContent(taskId, modelId);
+}
+
+/**
  * Keeps the guaranteed action card independent from the optional output or
  * result section so its fallback always has a matching resolved element.
  */
 async function TaskModelActions({ params }: TaskModelRouteProps) {
   const { generatedOutputs, model, modelId, outputStatus, taskId } =
-    await getTaskModelContent(params);
+    await getTaskModelContentFromParams(params);
 
   return (
     <TaskModelActionsCard
@@ -150,7 +166,7 @@ async function TaskModelActions({ params }: TaskModelRouteProps) {
  * generated-only outputs, or no secondary section at all.
  */
 async function TaskModelResults({ params }: TaskModelRouteProps) {
-  const { generatedOutputs, results } = await getTaskModelContent(params);
+  const { generatedOutputs, results } = await getTaskModelContentFromParams(params);
 
   if (results) {
     return <EvalResults results={results} />;
