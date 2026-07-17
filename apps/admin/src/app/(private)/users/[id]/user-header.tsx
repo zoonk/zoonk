@@ -7,6 +7,8 @@ import { RevokeSessionsDialog } from "./revoke-sessions-dialog";
 import { UnbanUserDialog } from "./unban-user-dialog";
 
 export async function UserHeader({ userId }: { userId: string }) {
+  "use cache: private";
+
   const user = await getUser(userId);
 
   if (!user) {

@@ -14,6 +14,7 @@ import {
 } from "./incomplete-subscription-list";
 
 export const metadata: Metadata = { title: "Incomplete Subscriptions" };
+export const prefetch = "allow-runtime";
 
 /**
  * This route gives support a focused queue of checkout records that did not

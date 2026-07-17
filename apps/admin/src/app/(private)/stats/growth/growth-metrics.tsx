@@ -5,22 +5,16 @@ import { getDailySignups } from "@/data/stats/get-daily-signups";
 import { getNewSignups } from "@/data/stats/get-new-signups";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { buildChartData } from "@zoonk/utils/chart";
-import { calculateDateRanges, validatePeriod } from "@zoonk/utils/date-ranges";
-import { validateOffset } from "@zoonk/utils/number";
 import { CreditCardIcon, TargetIcon, UsersIcon } from "lucide-react";
 import { AdminMetricCard, AdminMetricCardSkeleton } from "../_components/admin-metric-card";
 import { AdminTrendChart } from "../_components/admin-trend-chart";
+import { type StatsPeriod } from "../_utils/stats-period";
 import { SubscribersTable } from "./subscribers-table";
 
-export async function GrowthMetrics({
-  searchParams,
-}: {
-  searchParams: Promise<{ period?: string; offset?: string }>;
-}) {
-  const { period: rawPeriod, offset: rawOffset } = await searchParams;
-  const period = validatePeriod(rawPeriod ?? "month");
-  const offset = validateOffset(rawOffset);
-  const { current, previous } = calculateDateRanges(period, offset);
+export async function GrowthMetrics({ statsPeriod }: { statsPeriod: StatsPeriod }) {
+  "use cache: private";
+
+  const { current, period, previous } = statsPeriod;
 
   const [
     currentSignups,

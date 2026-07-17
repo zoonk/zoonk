@@ -7,9 +7,20 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@zoonk/ui/components/pagination";
+import Link from "next/link";
+
+type AdminPaginationPath =
+  | "/course-prompts"
+  | "/courses"
+  | "/leaderboard"
+  | "/lessons"
+  | "/stats/engagement/learners"
+  | "/subscriptions"
+  | "/users";
 
 type PaginationQueryParams = Record<string, string | undefined>;
 type PaginationEntry = [string, string | undefined] | undefined;
+type PaginationHref = `${AdminPaginationPath}?${string}`;
 
 /**
  * Pagination links need to carry page state plus route-specific filters, such
@@ -22,12 +33,12 @@ function buildPageUrl({
   queryParams,
   search,
 }: {
-  basePath: string;
+  basePath: AdminPaginationPath;
   limit: number;
   pageNumber: number;
   queryParams?: PaginationQueryParams;
   search?: string;
-}): string {
+}): PaginationHref {
   const rawEntries: PaginationEntry[] = [
     ...Object.entries(queryParams ?? {}),
     ["page", pageNumber.toString()],
@@ -63,20 +74,56 @@ function addEllipsesToPages(pageNumbers: number[]): (number | "ellipsis")[] {
   });
 }
 
+/**
+ * Every available page is prefetched so pagination can switch URL-backed admin
+ * data without waiting for a server round trip after the click.
+ */
+function AdminPaginationPageLink({
+  basePath,
+  currentPage,
+  limit,
+  pageNumber,
+  queryParams,
+  search,
+}: {
+  basePath: AdminPaginationPath;
+  currentPage: number;
+  limit: number;
+  pageNumber: number;
+  queryParams?: PaginationQueryParams;
+  search?: string;
+}) {
+  const isActive = pageNumber === currentPage;
+
+  const href = isActive
+    ? undefined
+    : buildPageUrl({ basePath, limit, pageNumber, queryParams, search });
+
+  return (
+    <PaginationLink
+      href={href ?? "#"}
+      isActive={isActive}
+      render={href ? <Link href={href} prefetch /> : undefined}
+    >
+      {pageNumber}
+    </PaginationLink>
+  );
+}
+
 export function AdminPagination({
   basePath,
-  page,
   limit,
-  totalPages,
-  search,
+  page,
   queryParams,
+  search,
+  totalPages,
 }: {
-  basePath: string;
-  page: number;
+  basePath: AdminPaginationPath;
   limit: number;
-  totalPages: number;
-  search?: string;
+  page: number;
   queryParams?: PaginationQueryParams;
+  search?: string;
+  totalPages: number;
 }) {
   if (totalPages <= 1) {
     return null;
@@ -87,6 +134,14 @@ export function AdminPagination({
   const visiblePages = getVisiblePageNumbers(page, totalPages);
   const pagesWithEllipses = addEllipsesToPages(visiblePages);
 
+  const previousHref = isFirstPage
+    ? undefined
+    : buildPageUrl({ basePath, limit, pageNumber: page - 1, queryParams, search });
+
+  const nextHref = isLastPage
+    ? undefined
+    : buildPageUrl({ basePath, limit, pageNumber: page + 1, queryParams, search });
+
   return (
     <Pagination>
       <PaginationContent>
@@ -94,11 +149,8 @@ export function AdminPagination({
           <PaginationPrevious
             aria-disabled={isFirstPage}
             className={isFirstPage ? "pointer-events-none opacity-50" : ""}
-            href={
-              isFirstPage
-                ? "#"
-                : buildPageUrl({ basePath, limit, pageNumber: page - 1, queryParams, search })
-            }
+            href={previousHref ?? "#"}
+            render={previousHref ? <Link href={previousHref} prefetch /> : undefined}
           />
         </PaginationItem>
 
@@ -108,22 +160,14 @@ export function AdminPagination({
             {pageOrEllipsis === "ellipsis" ? (
               <PaginationEllipsis />
             ) : (
-              <PaginationLink
-                href={
-                  pageOrEllipsis === page
-                    ? "#"
-                    : buildPageUrl({
-                        basePath,
-                        limit,
-                        pageNumber: pageOrEllipsis,
-                        queryParams,
-                        search,
-                      })
-                }
-                isActive={pageOrEllipsis === page}
-              >
-                {pageOrEllipsis}
-              </PaginationLink>
+              <AdminPaginationPageLink
+                basePath={basePath}
+                currentPage={page}
+                limit={limit}
+                pageNumber={pageOrEllipsis}
+                queryParams={queryParams}
+                search={search}
+              />
             )}
           </PaginationItem>
         ))}
@@ -132,11 +176,8 @@ export function AdminPagination({
           <PaginationNext
             aria-disabled={isLastPage}
             className={isLastPage ? "pointer-events-none opacity-50" : ""}
-            href={
-              isLastPage
-                ? "#"
-                : buildPageUrl({ basePath, limit, pageNumber: page + 1, queryParams, search })
-            }
+            href={nextHref ?? "#"}
+            render={nextHref ? <Link href={nextHref} prefetch /> : undefined}
           />
         </PaginationItem>
       </PaginationContent>

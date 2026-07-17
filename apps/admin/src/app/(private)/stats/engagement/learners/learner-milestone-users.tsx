@@ -12,7 +12,7 @@ import {
  * The user list is the slowest part of the drill-down page, so it streams after
  * the page title and threshold controls are already available.
  */
-export async function LearnerMilestoneUsers({
+export function LearnerMilestoneUsers({
   emptyMessage,
   kind,
   params,
@@ -24,6 +24,40 @@ export async function LearnerMilestoneUsers({
   threshold: number;
 }) {
   const { limit, offset, page } = parseSearchParams(params);
+
+  return (
+    <CachedLearnerMilestoneUsers
+      emptyMessage={emptyMessage}
+      kind={kind}
+      limit={limit}
+      offset={offset}
+      page={page}
+      threshold={threshold}
+    />
+  );
+}
+
+/**
+ * The normalized milestone and pagination values remain stable across both
+ * phases of runtime prefetching, unlike the raw search-parameter object.
+ */
+async function CachedLearnerMilestoneUsers({
+  emptyMessage,
+  kind,
+  limit,
+  offset,
+  page,
+  threshold,
+}: {
+  emptyMessage: string;
+  kind: LearnerMilestoneKind;
+  limit: number;
+  offset: number;
+  page: number;
+  threshold: number;
+}) {
+  "use cache: private";
+
   const { total, users } = await listLearnerMilestoneUsers(kind, threshold, limit, offset);
   const totalPages = Math.ceil(total / limit);
 

@@ -20,6 +20,7 @@ import { type Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = { title: "Stats" };
+export const prefetch = "allow-runtime";
 
 const sections = [
   {
@@ -56,7 +57,7 @@ export default function StatsPage() {
       <ContainerBody>
         <ItemGroup>
           {sections.map((section) => (
-            <Item key={section.href} render={<Link href={section.href} />}>
+            <Item key={section.href} render={<Link href={section.href} prefetch />}>
               <ItemMedia variant="icon">
                 <section.icon />
               </ItemMedia>

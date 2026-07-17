@@ -11,6 +11,7 @@ import { Suspense } from "react";
 import { AppStats, AppStatsFallback } from "./app-stats";
 
 export const metadata: Metadata = { title: "Zoonk Admin" };
+export const prefetch = "allow-runtime";
 
 export default function Home() {
   return (

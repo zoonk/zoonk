@@ -9,12 +9,12 @@ import { getTotalLearningTime } from "@/data/stats/get-total-learning-time";
 import { formatDuration } from "@/lib/format-duration";
 import { getRollingUtcDateWindowStarts } from "@/lib/rolling-date-windows";
 import { BookOpenIcon, CheckCircleIcon, ClockIcon, LayersIcon, TargetIcon } from "lucide-react";
-import { connection } from "next/server";
 
 const DAYS_7 = 7;
 
 export async function EngagementStats() {
-  await connection();
+  "use cache: private";
+
   const now = new Date();
 
   const { currentPeriodStart, previousPeriodStart } = getRollingUtcDateWindowStarts({

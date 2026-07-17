@@ -1,3 +1,4 @@
+import { AdminTableSkeleton, AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
 import { AdminPagination } from "@/components/pagination";
 import {
   type IncompleteSubscription,
@@ -16,7 +17,6 @@ import {
 } from "@zoonk/ui/components/table";
 import Link from "next/link";
 
-const SKELETON_ROW_COUNT = 5;
 const TABLE_COLUMN_COUNT = 7;
 
 /**
@@ -30,6 +30,25 @@ export async function IncompleteSubscriptionList({
 }) {
   const params = await searchParams;
   const { limit, offset, page } = parseSearchParams(params);
+
+  return <CachedIncompleteSubscriptionList limit={limit} offset={offset} page={page} />;
+}
+
+/**
+ * Pagination primitives form a stable cache key so runtime prefetching can
+ * resolve the support queue before its link is clicked.
+ */
+async function CachedIncompleteSubscriptionList({
+  limit,
+  offset,
+  page,
+}: {
+  limit: number;
+  offset: number;
+  page: number;
+}) {
+  "use cache: private";
+
   const { subscriptions, total } = await listIncompleteSubscriptions({ limit, offset });
   const totalPages = Math.ceil(total / limit);
 
@@ -74,18 +93,15 @@ export function IncompleteSubscriptionListSkeleton() {
     <div className="flex flex-col gap-4">
       <Skeleton className="h-4 w-44" />
 
-      <div className="overflow-x-auto rounded-lg border">
+      <AdminTableSkeleton className="overflow-x-auto">
         <Table>
           <IncompleteSubscriptionTableHeader />
 
-          <TableBody>
-            {Array.from({ length: SKELETON_ROW_COUNT }, (_, index) => (
-              // oxlint-disable-next-line react/no-array-index-key -- Skeleton rows are static placeholders.
-              <IncompleteSubscriptionSkeletonRow key={index} />
-            ))}
-          </TableBody>
+          <AdminTableSkeletonRows>
+            <IncompleteSubscriptionSkeletonRow />
+          </AdminTableSkeletonRows>
         </Table>
-      </div>
+      </AdminTableSkeleton>
     </div>
   );
 }
@@ -167,7 +183,7 @@ function IncompleteSubscriptionRow({ subscription }: { subscription: IncompleteS
   return (
     <TableRow>
       <TableCell>
-        <Link className="block" href={`/users/${subscription.user.id}`}>
+        <Link className="block" href={`/users/${subscription.user.id}`} prefetch>
           <span className="font-medium">{subscription.user.name || "—"}</span>
           <span className="text-muted-foreground block text-xs">{subscription.user.email}</span>
         </Link>

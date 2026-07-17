@@ -17,6 +17,8 @@ import {
  * by the most recent completion so support can scan recent learning context.
  */
 export async function UserCourses({ userId }: { userId: string }) {
+  "use cache: private";
+
   const courses = await listUserCompletedLessonCourses({ userId });
 
   return (

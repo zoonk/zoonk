@@ -8,27 +8,16 @@ import { getPeriodLearningTime } from "@/data/stats/get-period-learning-time";
 import { formatDuration } from "@/lib/format-duration";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { buildChartData } from "@zoonk/utils/chart";
-import { calculateDateRanges, validatePeriod } from "@zoonk/utils/date-ranges";
-import { validateOffset } from "@zoonk/utils/number";
 import { BookOpenIcon, CheckCircleIcon, ClockIcon, TargetIcon, TimerIcon } from "lucide-react";
 import { AdminMetricCard, AdminMetricCardSkeleton } from "../_components/admin-metric-card";
 import { AdminTrendChart } from "../_components/admin-trend-chart";
+import { type StatsPeriod } from "../_utils/stats-period";
 import { LessonBreakdownTable } from "./lesson-breakdown-table";
 
-export async function EngagementMetrics({
-  searchParams,
-}: {
-  searchParams: {
-    completedLessons?: string | string[];
-    learningDays?: string | string[];
-    offset?: string | string[];
-    period?: string | string[];
-  };
-}) {
-  const { period: rawPeriod, offset: rawOffset } = searchParams;
-  const period = validatePeriod(String(rawPeriod ?? "month"));
-  const offset = validateOffset(rawOffset);
-  const { current, previous } = calculateDateRanges(period, offset);
+export async function EngagementMetrics({ statsPeriod }: { statsPeriod: StatsPeriod }) {
+  "use cache: private";
+
+  const { current, period, previous } = statsPeriod;
 
   const [
     currentActiveLearners,

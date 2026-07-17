@@ -92,6 +92,7 @@ For detailed UX guidelines (interactions, animation, layout, accessibility), see
 - When writing comments, use `/** ... */` for functions, so we can get JSDoc tooltips
 - When refactoring code, double check if the remaining or replaced logic still makes sense. For example, it's pointless to just reassign a type or const like `type ExistingCourse = Course` or `const existingCourse = course`. Just use the original type or const instead of creating an alias that adds no value
 - Never move independent async work out of an existing Promise.all because it can create a waterfall. Preserving or increasing parallelism is required, even if one branch does not use every result. Treat newly serialized async reads as a performance regression unless there is a concrete dependency between them. You should always avoid waterfalls
+- Run browser-launching test commands such as Playwright, Cypress, Puppeteer, Selenium, or repository E2E scripts with escalated sandbox permissions on the first attempt. Chromium-based browsers require Mach services that are blocked by the workspace sandbox, so do not first run these commands inside the sandbox; send the exact command to Auto-review for approval instead
 
 ## Prisma Queries
 

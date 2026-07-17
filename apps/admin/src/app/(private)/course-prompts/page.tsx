@@ -1,4 +1,4 @@
-import { AdminSearch } from "@/components/admin-search";
+import { AdminSearch, AdminSearchSkeleton } from "@/components/admin-search";
 import {
   Container,
   ContainerBody,
@@ -12,6 +12,7 @@ import { Suspense } from "react";
 import { CoursePromptList, CoursePromptListSkeleton } from "./course-prompt-list";
 
 export const metadata: Metadata = { title: "Course Prompts" };
+export const prefetch = "allow-runtime";
 
 /**
  * Shows the durable routing decisions created by course-start entry points.
@@ -32,7 +33,7 @@ export default function CoursePromptsPage({ searchParams }: PageProps<"/course-p
       </ContainerHeader>
 
       <ContainerBody>
-        <Suspense fallback={<div className="h-10" />}>
+        <Suspense fallback={<AdminSearchSkeleton />}>
           <AdminSearch placeholder="Search by prompt, title, intent, format, or course..." />
         </Suspense>
 

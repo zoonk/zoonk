@@ -1,3 +1,4 @@
+import { AdminTableSkeleton, AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
 import { AdminPagination } from "@/components/pagination";
 import {
   type ListedCoursePrompt,
@@ -15,7 +16,6 @@ import {
   TableRow,
 } from "@zoonk/ui/components/table";
 
-const SKELETON_ROW_COUNT = 5;
 const TABLE_COLUMN_COUNT = 7;
 
 /**
@@ -28,6 +28,27 @@ export async function CoursePromptList({
   searchParams: PageProps<"/course-prompts">["searchParams"];
 }) {
   const { page, limit, offset, search } = parseSearchParams(await searchParams);
+
+  return <CachedCoursePromptList limit={limit} offset={offset} page={page} search={search} />;
+}
+
+/**
+ * Normalized pagination values provide a stable private-cache key while the
+ * cached result keeps prompt data ready for runtime-prefetched navigation.
+ */
+async function CachedCoursePromptList({
+  limit,
+  offset,
+  page,
+  search,
+}: {
+  limit: number;
+  offset: number;
+  page: number;
+  search?: string;
+}) {
+  "use cache: private";
+
   const { prompts, total } = await listCoursePrompts({ limit, offset, search });
   const totalPages = Math.ceil(total / limit);
 
@@ -71,18 +92,15 @@ export function CoursePromptListSkeleton() {
     <div className="flex flex-col gap-4">
       <Skeleton className="h-4 w-40" />
 
-      <div className="overflow-x-auto rounded-lg border">
+      <AdminTableSkeleton className="overflow-x-auto">
         <Table>
           <CoursePromptTableHeader />
 
-          <TableBody>
-            {Array.from({ length: SKELETON_ROW_COUNT }, (_, index) => (
-              // oxlint-disable-next-line react/no-array-index-key -- Skeleton rows are fixed placeholders.
-              <CoursePromptSkeletonRow key={index} />
-            ))}
-          </TableBody>
+          <AdminTableSkeletonRows>
+            <CoursePromptSkeletonRow />
+          </AdminTableSkeletonRows>
         </Table>
-      </div>
+      </AdminTableSkeleton>
     </div>
   );
 }

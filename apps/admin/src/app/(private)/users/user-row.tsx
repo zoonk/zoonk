@@ -15,7 +15,7 @@ export function UserRow({
   return (
     <TableRow>
       <TableCell>
-        <Link className="block" href={`/users/${user.id}`}>
+        <Link className="block" href={`/users/${user.id}`} prefetch>
           <span className="font-medium">{user.name || "—"}</span>
           <span className="text-muted-foreground block text-xs">{user.email}</span>
         </Link>
