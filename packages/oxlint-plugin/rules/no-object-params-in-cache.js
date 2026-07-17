@@ -11,13 +11,18 @@ const OBJECT_TYPE_REFERENCES = new Set([
   "WeakSet",
 ]);
 
-/**
- * Destructuring proves that a cache parameter receives one object even when no TypeScript
- * annotation is present, so this syntax can always be reported safely.
- */
-function isObjectPattern(param) {
-  return param.type === "ObjectPattern";
-}
+const ARRAY_TYPE_REFERENCES = new Set(["Array", "ReadonlyArray"]);
+const COMPOSITE_TYPE_NODES = new Set(["TSIntersectionType", "TSUnionType"]);
+
+const OBJECT_TYPE_NODES = new Set([
+  "TSArrayType",
+  "TSConstructorType",
+  "TSFunctionType",
+  "TSMappedType",
+  "TSObjectKeyword",
+  "TSTupleType",
+  "TSTypeLiteral",
+]);
 
 /**
  * Only simple type-reference names can match local aliases, built-in object types, or configured
@@ -60,42 +65,99 @@ function isNextRouteParams(typeNode) {
 }
 
 /**
- * Local aliases preserve readable public types but can hide reference-valued cache parameters from
- * a syntax-only rule. Following those aliases catches the object shape without guessing about
- * imported aliases that may resolve to primitive unions.
+ * A tuple rest annotation describes separate runtime arguments. Unwrapping optional, named, and
+ * nested rest elements lets the rule inspect each cache key instead of treating the tuple itself as
+ * one object.
  */
-function isObjectType({ exceptions, typeAliases, typeNode, visitedAliases = new Set() }) {
-  if (
-    typeNode.type === "TSArrayType" ||
-    typeNode.type === "TSConstructorType" ||
-    typeNode.type === "TSFunctionType" ||
-    typeNode.type === "TSMappedType" ||
-    typeNode.type === "TSObjectKeyword" ||
-    typeNode.type === "TSTupleType" ||
-    typeNode.type === "TSTypeLiteral"
-  ) {
-    return true;
+function getTupleCacheArgument(element) {
+  if (element.type === "TSNamedTupleMember") {
+    return getTupleCacheArgument(element.elementType);
   }
 
+  if (element.type === "TSOptionalType") {
+    return { spreadsArguments: false, typeNode: element.typeAnnotation };
+  }
+
+  if (element.type === "TSRestType") {
+    return { spreadsArguments: true, typeNode: element.typeAnnotation };
+  }
+
+  return { spreadsArguments: false, typeNode: element };
+}
+
+/**
+ * Parentheses and the readonly modifier change TypeScript syntax without changing whether the
+ * runtime value is reference-valued. Returning their inner type keeps that normalization out of
+ * the main classifier.
+ */
+function getTransparentType(typeNode) {
   if (typeNode.type === "TSParenthesizedType") {
+    return typeNode.typeAnnotation;
+  }
+
+  if (typeNode.type === "TSTypeOperator" && typeNode.operator === "readonly") {
+    return typeNode.typeAnnotation;
+  }
+
+  return null;
+}
+
+/**
+ * Rest parameter annotations describe a collection, while React receives each collected value as
+ * its own cache key. This returns null for non-collection syntax so normal object classification can
+ * continue.
+ */
+function getSpreadObjectResult({
+  exceptions,
+  spreadsArguments,
+  typeAliases,
+  typeNode,
+  visitedAliases,
+}) {
+  if (!spreadsArguments) {
+    return null;
+  }
+
+  if (typeNode.type === "TSArrayType") {
     return isObjectType({
       exceptions,
       typeAliases,
-      typeNode: typeNode.typeAnnotation,
+      typeNode: typeNode.elementType,
       visitedAliases,
     });
   }
 
-  if (typeNode.type === "TSUnionType" || typeNode.type === "TSIntersectionType") {
-    return typeNode.types.some((member) =>
-      isObjectType({ exceptions, typeAliases, typeNode: member, visitedAliases }),
+  if (typeNode.type === "TSTupleType") {
+    return typeNode.elementTypes.some((element) =>
+      isTupleCacheArgumentObject({ element, exceptions, typeAliases, visitedAliases }),
     );
   }
 
-  if (isNextRouteParams(typeNode)) {
-    return true;
+  const name = getTypeReferenceName(typeNode);
+
+  if (!name || !ARRAY_TYPE_REFERENCES.has(name)) {
+    return null;
   }
 
+  const elementType = typeNode.typeArguments?.params[0];
+
+  return elementType
+    ? isObjectType({ exceptions, typeAliases, typeNode: elementType, visitedAliases })
+    : false;
+}
+
+/**
+ * Named types may be known reference-valued built-ins or local aliases. Imported unknown types stay
+ * unreported because this syntax-only rule cannot safely distinguish object types from primitive
+ * unions defined in another module.
+ */
+function isTypeReferenceObject({
+  exceptions,
+  spreadsArguments,
+  typeAliases,
+  typeNode,
+  visitedAliases,
+}) {
   if (typeNode.type !== "TSTypeReference" || isAllowedTypeReference({ exceptions, typeNode })) {
     return false;
   }
@@ -118,9 +180,81 @@ function isObjectType({ exceptions, typeAliases, typeNode, visitedAliases = new 
 
   return isObjectType({
     exceptions,
+    spreadsArguments,
     typeAliases,
     typeNode: aliasedType,
     visitedAliases: new Set([...visitedAliases, name]),
+  });
+}
+
+/**
+ * React compares each runtime cache argument by identity. Following local aliases and TypeScript
+ * wrappers reveals reference-valued keys while spread annotations are inspected as the separate
+ * arguments they produce.
+ */
+function isObjectType({
+  exceptions,
+  spreadsArguments = false,
+  typeAliases,
+  typeNode,
+  visitedAliases = new Set(),
+}) {
+  const transparentType = getTransparentType(typeNode);
+
+  if (transparentType) {
+    return isObjectType({
+      exceptions,
+      spreadsArguments,
+      typeAliases,
+      typeNode: transparentType,
+      visitedAliases,
+    });
+  }
+
+  if (COMPOSITE_TYPE_NODES.has(typeNode.type)) {
+    return typeNode.types.some((member) =>
+      isObjectType({ exceptions, spreadsArguments, typeAliases, typeNode: member, visitedAliases }),
+    );
+  }
+
+  const spreadObjectResult = getSpreadObjectResult({
+    exceptions,
+    spreadsArguments,
+    typeAliases,
+    typeNode,
+    visitedAliases,
+  });
+
+  if (spreadObjectResult !== null) {
+    return spreadObjectResult;
+  }
+
+  if (OBJECT_TYPE_NODES.has(typeNode.type) || isNextRouteParams(typeNode)) {
+    return true;
+  }
+
+  return isTypeReferenceObject({
+    exceptions,
+    spreadsArguments,
+    typeAliases,
+    typeNode,
+    visitedAliases,
+  });
+}
+
+/**
+ * Tuple elements may be optional, named, or themselves variadic. Normalizing one element before
+ * classification keeps the tuple traversal declarative and preserves nested rest semantics.
+ */
+function isTupleCacheArgumentObject({ element, exceptions, typeAliases, visitedAliases }) {
+  const cacheArgument = getTupleCacheArgument(element);
+
+  return isObjectType({
+    exceptions,
+    spreadsArguments: cacheArgument.spreadsArguments,
+    typeAliases,
+    typeNode: cacheArgument.typeNode,
+    visitedAliases,
   });
 }
 
@@ -154,7 +288,7 @@ function getParamName(param) {
  */
 function isParamViolation({ exceptions, param, typeAliases }) {
   // Destructured object pattern like ({ orgSlug }) is always a violation
-  if (isObjectPattern(param)) {
+  if (param.type === "ObjectPattern") {
     return true;
   }
 
@@ -165,14 +299,12 @@ function isParamViolation({ exceptions, param, typeAliases }) {
     return false;
   }
 
-  const parameterType = typeAnnotation.typeAnnotation;
-
-  const cacheArgumentType =
-    param.type === "RestElement" && parameterType.type === "TSArrayType"
-      ? parameterType.elementType
-      : parameterType;
-
-  return isObjectType({ exceptions, typeAliases, typeNode: cacheArgumentType });
+  return isObjectType({
+    exceptions,
+    spreadsArguments: param.type === "RestElement",
+    typeAliases,
+    typeNode: typeAnnotation.typeAnnotation,
+  });
 }
 
 export default defineRule({
@@ -180,6 +312,7 @@ export default defineRule({
     let exceptions;
     let cacheImported;
     let cacheLocalName;
+    let paramsToCheck;
     let typeAliases;
 
     return {
@@ -192,7 +325,20 @@ export default defineRule({
 
         cacheImported = false;
         cacheLocalName = "cache";
+        paramsToCheck = [];
         typeAliases = new Map();
+      },
+
+      after() {
+        for (const param of paramsToCheck) {
+          if (isParamViolation({ exceptions, param, typeAliases })) {
+            context.report({
+              data: { name: getParamName(param) },
+              loc: param.loc,
+              messageId: "noObjectParams",
+            });
+          }
+        }
       },
 
       TSTypeAliasDeclaration(node) {
@@ -236,16 +382,7 @@ export default defineRule({
 
         for (const param of firstArg.params) {
           const paramToCheck = param.type === "AssignmentPattern" ? param.left : param;
-
-          const shouldReport = isParamViolation({ exceptions, param: paramToCheck, typeAliases });
-
-          if (shouldReport) {
-            context.report({
-              data: { name: getParamName(paramToCheck) },
-              loc: paramToCheck.loc,
-              messageId: "noObjectParams",
-            });
-          }
+          paramsToCheck.push(paramToCheck);
         }
       },
     };
