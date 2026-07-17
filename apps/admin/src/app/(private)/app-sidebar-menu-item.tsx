@@ -18,7 +18,7 @@ export function AppSidebarMenuItem<T extends string>({
 }) {
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton isActive={isActive} render={<Link href={url} />}>
+      <SidebarMenuButton isActive={isActive} render={<Link href={url} prefetch />}>
         <Icon aria-hidden="true" />
         <span>{label}</span>
       </SidebarMenuButton>

@@ -2,11 +2,11 @@ import { countContent } from "@/data/stats/count-content";
 import { getDailyContentCreated } from "@/data/stats/get-daily-content-created";
 import { getPeriodContentCreated } from "@/data/stats/get-period-content-created";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { type HistoryPeriod, calculateDateRanges, validatePeriod } from "@zoonk/utils/date-ranges";
-import { validateOffset } from "@zoonk/utils/number";
+import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 import { BookOpenIcon, LayersIcon } from "lucide-react";
 import { Suspense } from "react";
 import { AdminMetricCard, AdminMetricCardSkeleton } from "../_components/admin-metric-card";
+import { type StatsPeriod } from "../_utils/stats-period";
 import { CompletedLessonsByKindTable } from "./completed-lessons-by-kind-table";
 import { ContentChart } from "./content-chart-filter";
 import { ContentTotalsTable } from "./content-totals-table";
@@ -24,15 +24,10 @@ async function ContentChartSection({
   return <ContentChart dailyContent={dailyContent} period={period} />;
 }
 
-export async function ContentMetrics({
-  searchParams,
-}: {
-  searchParams: Promise<{ period?: string; offset?: string }>;
-}) {
-  const { period: rawPeriod, offset: rawOffset } = await searchParams;
-  const period = validatePeriod(rawPeriod ?? "month");
-  const offset = validateOffset(rawOffset);
-  const { current, previous } = calculateDateRanges(period, offset);
+export async function ContentMetrics({ statsPeriod }: { statsPeriod: StatsPeriod }) {
+  "use cache: private";
+
+  const { current, period, previous } = statsPeriod;
 
   const [currentCreated, previousCreated, totals] = await Promise.all([
     getPeriodContentCreated(current.start, current.end),

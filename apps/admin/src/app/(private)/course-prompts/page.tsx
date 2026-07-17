@@ -1,4 +1,4 @@
-import { AdminSearch } from "@/components/admin-search";
+import { AdminSearch, AdminSearchSkeleton } from "@/components/admin-search";
 import {
   Container,
   ContainerBody,
@@ -32,7 +32,7 @@ export default function CoursePromptsPage({ searchParams }: PageProps<"/course-p
       </ContainerHeader>
 
       <ContainerBody>
-        <Suspense fallback={<div className="h-10" />}>
+        <Suspense fallback={<AdminSearchSkeleton />}>
           <AdminSearch placeholder="Search by prompt, title, intent, format, or course..." />
         </Suspense>
 

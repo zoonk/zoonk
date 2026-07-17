@@ -13,8 +13,9 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import Link from "next/link";
-import { Fragment } from "react";
+import { Fragment, Suspense } from "react";
 import { AdminPeriodTabs } from "./admin-period-tabs";
 
 type StatsBreadcrumbItem = { href?: string; label: string };
@@ -30,11 +31,11 @@ function StatsBreadcrumb({ items }: { items: StatsBreadcrumbItem[] }) {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink render={<Link href="/" />}>Dashboard</BreadcrumbLink>
+          <BreadcrumbLink render={<Link href="/" prefetch />}>Dashboard</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink render={<Link href="/stats" />}>Stats</BreadcrumbLink>
+          <BreadcrumbLink render={<Link href="/stats" prefetch />}>Stats</BreadcrumbLink>
         </BreadcrumbItem>
 
         {items.map((item, index) => {
@@ -48,7 +49,9 @@ function StatsBreadcrumb({ items }: { items: StatsBreadcrumbItem[] }) {
                 {isLastItem || !item.href ? (
                   <BreadcrumbPage>{item.label}</BreadcrumbPage>
                 ) : (
-                  <BreadcrumbLink render={<Link href={item.href} />}>{item.label}</BreadcrumbLink>
+                  <BreadcrumbLink render={<Link href={item.href} prefetch />}>
+                    {item.label}
+                  </BreadcrumbLink>
                 )}
               </BreadcrumbItem>
             </Fragment>
@@ -89,7 +92,11 @@ export function StatsPageLayout({
 
           {showControls ? (
             <div className="flex flex-wrap items-center justify-between gap-3 pt-3">
-              {showPeriodTabs ? <AdminPeriodTabs /> : null}
+              {showPeriodTabs ? (
+                <Suspense fallback={<StatsPeriodTabsSkeleton />}>
+                  <AdminPeriodTabs />
+                </Suspense>
+              ) : null}
               {navigation}
             </div>
           ) : null}
@@ -98,5 +105,62 @@ export function StatsPageLayout({
 
       <ContainerBody>{children}</ContainerBody>
     </Container>
+  );
+}
+
+/**
+ * Stats routes need a complete prerendered shell while their URL-dependent
+ * controls and metrics wait for request data. This keeps that loading shell
+ * consistent across every analytics page instead of duplicating it per route.
+ */
+export function StatsPageSkeleton({
+  breadcrumbItems,
+  children,
+  showPeriodControls = true,
+  title,
+}: {
+  breadcrumbItems?: StatsBreadcrumbItem[];
+  children: React.ReactNode;
+  showPeriodControls?: boolean;
+  title: string;
+}) {
+  return (
+    <StatsPageLayout
+      breadcrumbItems={breadcrumbItems}
+      navigation={showPeriodControls ? <StatsPeriodNavigationSkeleton /> : undefined}
+      showPeriodTabs={showPeriodControls}
+      title={title}
+    >
+      {children}
+    </StatsPageLayout>
+  );
+}
+
+/**
+ * Period tabs read the current URL in a client component, so this local
+ * fallback keeps that small hook from making the whole analytics shell wait.
+ */
+function StatsPeriodTabsSkeleton() {
+  return (
+    <div className="flex gap-1">
+      <Skeleton className="h-8 w-16 rounded-4xl" />
+      <Skeleton className="h-8 w-20 rounded-4xl" />
+      <Skeleton className="h-8 w-14 rounded-4xl" />
+      <Skeleton className="h-8 w-12 rounded-4xl" />
+    </div>
+  );
+}
+
+/**
+ * The selected date label depends on URL data and a cached clock read. This
+ * reserves only that control while runtime prefetching resolves it.
+ */
+export function StatsPeriodNavigationSkeleton() {
+  return (
+    <div className="flex items-center gap-2">
+      <Skeleton className="size-9 rounded-4xl" />
+      <Skeleton className="h-5 w-32" />
+      <Skeleton className="size-9 rounded-4xl" />
+    </div>
   );
 }

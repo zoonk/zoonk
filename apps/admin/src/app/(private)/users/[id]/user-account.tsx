@@ -5,6 +5,8 @@ import { updateUserAnalyticsDisabledAction } from "./_actions/update-user-analyt
 import { DetailField } from "./detail-field";
 
 export async function UserAccount({ userId }: { userId: string }) {
+  "use cache: private";
+
   const user = await getUser(userId);
 
   if (!user) {

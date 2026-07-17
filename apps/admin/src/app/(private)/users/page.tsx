@@ -1,4 +1,4 @@
-import { AdminSearch } from "@/components/admin-search";
+import { AdminSearch, AdminSearchSkeleton } from "@/components/admin-search";
 import {
   Container,
   ContainerBody,
@@ -9,7 +9,7 @@ import {
 } from "@zoonk/ui/components/container";
 import { type Metadata } from "next";
 import { Suspense } from "react";
-import { UserList } from "./user-list";
+import { UserList, UserListSkeleton } from "./user-list";
 
 export const metadata: Metadata = { title: "Users" };
 
@@ -24,11 +24,11 @@ export default function UsersPage({ searchParams }: PageProps<"/users">) {
       </ContainerHeader>
 
       <ContainerBody>
-        <Suspense fallback={<div className="h-10" />}>
+        <Suspense fallback={<AdminSearchSkeleton />}>
           <AdminSearch placeholder="Search by name, username, or email..." />
         </Suspense>
 
-        <Suspense>
+        <Suspense fallback={<UserListSkeleton />}>
           <UserList searchParams={searchParams} />
         </Suspense>
       </ContainerBody>

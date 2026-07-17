@@ -2,6 +2,7 @@ import { type LearnerMilestoneKind } from "@/lib/learner-milestone-filters";
 import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
+import Form from "next/form";
 
 /**
  * The drill-down page keeps the threshold editable so admins can move from one
@@ -17,7 +18,7 @@ export function LearnerMilestoneThresholdForm({
   threshold: number;
 }) {
   return (
-    <form
+    <Form
       action="/stats/engagement/learners"
       className="flex max-w-md flex-col gap-3 sm:flex-row sm:items-end"
     >
@@ -28,6 +29,7 @@ export function LearnerMilestoneThresholdForm({
         <Input
           defaultValue={threshold}
           id="milestone-threshold"
+          key={threshold}
           min={1}
           name="threshold"
           type="number"
@@ -37,6 +39,6 @@ export function LearnerMilestoneThresholdForm({
       <Button type="submit" variant="outline">
         Apply
       </Button>
-    </form>
+    </Form>
   );
 }

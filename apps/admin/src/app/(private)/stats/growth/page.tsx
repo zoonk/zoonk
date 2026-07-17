@@ -1,32 +1,67 @@
-import { calculateDateRanges, formatPeriodLabel, validatePeriod } from "@zoonk/utils/date-ranges";
-import { validateOffset } from "@zoonk/utils/number";
 import { type Metadata } from "next";
 import { Suspense } from "react";
 import { AdminPeriodNavigation } from "../_components/admin-period-navigation";
-import { StatsPageLayout } from "../_components/stats-page-layout";
+import { StatsPageLayout, StatsPeriodNavigationSkeleton } from "../_components/stats-page-layout";
+import { getStatsPeriod } from "../_utils/stats-period";
 import { GrowthMetrics, GrowthMetricsSkeleton } from "./growth-metrics";
 
 export const metadata: Metadata = { title: "Growth & Sustainability" };
 
-export default async function GrowthPage({ searchParams }: PageProps<"/stats/growth">) {
-  const { period: rawPeriod, offset: rawOffset } = await searchParams;
-  const period = validatePeriod(String(rawPeriod ?? "month"));
-  const offset = validateOffset(rawOffset);
-  const { current } = calculateDateRanges(period, offset);
-  const periodLabel = formatPeriodLabel(current.start, current.end, period, "en");
-
+/**
+ * Stable analytics chrome stays in the App Shell while URL-backed controls and
+ * cached metrics resolve in independent boundaries.
+ */
+export default function GrowthPage({ searchParams }: PageProps<"/stats/growth">) {
   return (
     <StatsPageLayout
       navigation={
-        period === "all" ? null : (
-          <AdminPeriodNavigation hasNext={offset > 0} periodLabel={periodLabel} />
-        )
+        <Suspense fallback={<StatsPeriodNavigationSkeleton />}>
+          <GrowthPeriodNavigation searchParams={searchParams} />
+        </Suspense>
       }
       title="Growth & Sustainability"
     >
-      <Suspense fallback={<GrowthMetricsSkeleton />} key={`${period}-${offset}`}>
-        <GrowthMetrics searchParams={searchParams} />
+      <Suspense fallback={<GrowthMetricsSkeleton />}>
+        <GrowthMetricsRegion searchParams={searchParams} />
       </Suspense>
     </StatsPageLayout>
+  );
+}
+
+/**
+ * Runtime prefetching can resolve the selected period before navigation while
+ * the shared title and breadcrumbs remain available from the route shell.
+ */
+async function GrowthPeriodNavigation({
+  searchParams,
+}: Pick<PageProps<"/stats/growth">, "searchParams">) {
+  const { offset, period, periodLabel } = await getStatsPeriod(searchParams);
+
+  return period === "all" ? null : (
+    <AdminPeriodNavigation
+      basePath="/stats/growth"
+      offset={offset}
+      period={period}
+      periodLabel={periodLabel}
+    />
+  );
+}
+
+/**
+ * The URL and cached calendar range resolve before the private analytics query.
+ * The keyed inner boundary resets only the metric body when the period changes.
+ */
+async function GrowthMetricsRegion({
+  searchParams,
+}: Pick<PageProps<"/stats/growth">, "searchParams">) {
+  const statsPeriod = await getStatsPeriod(searchParams);
+
+  return (
+    <Suspense
+      fallback={<GrowthMetricsSkeleton />}
+      key={`${statsPeriod.period}-${statsPeriod.offset}`}
+    >
+      <GrowthMetrics statsPeriod={statsPeriod} />
+    </Suspense>
   );
 }

@@ -5,10 +5,9 @@ import { countUsers } from "@/data/stats/count-users";
 import { getActivationRate } from "@/data/stats/get-activation-rate";
 import { getConversionRate } from "@/data/stats/get-conversion-rate";
 import { CreditCardIcon, TargetIcon, UsersIcon } from "lucide-react";
-import { connection } from "next/server";
 
 export async function GrowthStats() {
-  await connection();
+  "use cache: private";
 
   const [totalUsers, subscribersByPlan, activation, conversion] = await Promise.all([
     countUsers(),

@@ -51,7 +51,7 @@ export function Stats({
 
   if (href) {
     return (
-      <Link className="hover:bg-muted/50 rounded-lg p-2 transition-colors" href={href}>
+      <Link className="hover:bg-muted/50 rounded-lg p-2 transition-colors" href={href} prefetch>
         {content}
       </Link>
     );

@@ -5,6 +5,8 @@ export const metadata: Metadata = {
   title: { default: "Zoonk Admin", template: "%s | Zoonk Admin" },
 };
 
+export const prefetch = "allow-runtime";
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en">

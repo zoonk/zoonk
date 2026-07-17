@@ -4,6 +4,8 @@ import { ChangePlanDialog } from "./change-plan-dialog";
 import { DetailField } from "./detail-field";
 
 export async function UserSubscription({ userId }: { userId: string }) {
+  "use cache: private";
+
   const subscription = await getUserSubscription(userId);
   const canChangePlan = !subscription || subscription.provider === "zoonk";
   const providerLabel = subscription ? getSubscriptionProviderLabel(subscription.provider) : "—";

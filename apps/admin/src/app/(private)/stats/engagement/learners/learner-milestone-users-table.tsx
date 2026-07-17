@@ -1,3 +1,4 @@
+import { AdminTableSkeleton, AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
 import { type LearnerMilestoneUser } from "@/data/stats/get-learner-milestones";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import {
@@ -10,8 +11,6 @@ import {
   TableRow,
 } from "@zoonk/ui/components/table";
 import Link from "next/link";
-
-const SKELETON_ROW_COUNT = 5;
 
 /**
  * The table focuses on the metrics that explain why each learner matched the
@@ -50,18 +49,15 @@ export function LearnerMilestoneUsersTable({
  */
 export function LearnerMilestoneUsersTableSkeleton() {
   return (
-    <div className="rounded-lg border">
+    <AdminTableSkeleton>
       <Table>
         <LearnerMilestoneUsersTableHeader />
 
-        <TableBody>
-          {Array.from({ length: SKELETON_ROW_COUNT }, (_, index) => (
-            // oxlint-disable-next-line react/no-array-index-key -- Skeleton rows are static placeholders.
-            <LearnerMilestoneSkeletonRow key={index} />
-          ))}
-        </TableBody>
+        <AdminTableSkeletonRows>
+          <LearnerMilestoneSkeletonRow />
+        </AdminTableSkeletonRows>
       </Table>
-    </div>
+    </AdminTableSkeleton>
   );
 }
 
@@ -124,7 +120,7 @@ function LearnerMilestoneUserRow({ user }: { user: LearnerMilestoneUser }) {
   return (
     <TableRow>
       <TableCell>
-        <Link className="block" href={`/users/${user.id}`}>
+        <Link className="block" href={`/users/${user.id}`} prefetch>
           <span className="font-medium">{user.name || "—"}</span>
           <span className="text-muted-foreground block text-xs">{user.email}</span>
         </Link>

@@ -12,6 +12,7 @@ import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { BookCheckIcon, CalendarDaysIcon } from "lucide-react";
+import Form from "next/form";
 import Link from "next/link";
 import { AdminMetricCard, AdminMetricCardSkeleton } from "../_components/admin-metric-card";
 
@@ -26,11 +27,7 @@ type EngagementSearchParams = {
  * Learner milestones are all-time threshold questions, so they live as a quiet
  * engagement subsection with URL-backed inputs and linked counts.
  */
-export async function LearnerMilestones({
-  searchParams,
-}: {
-  searchParams: EngagementSearchParams;
-}) {
+export function LearnerMilestones({ searchParams }: { searchParams: EngagementSearchParams }) {
   const completedLessonsThreshold = parseLearnerMilestoneThreshold({
     defaultValue: DEFAULT_COMPLETED_LESSONS_THRESHOLD,
     value: searchParams.completedLessons,
@@ -40,6 +37,33 @@ export async function LearnerMilestones({
     defaultValue: DEFAULT_LEARNING_DAYS_THRESHOLD,
     value: searchParams.learningDays,
   });
+
+  return (
+    <CachedLearnerMilestones
+      completedLessonsThreshold={completedLessonsThreshold}
+      learningDaysThreshold={learningDaysThreshold}
+      offset={getFirstSearchParamValue(searchParams.offset)}
+      period={getFirstSearchParamValue(searchParams.period)}
+    />
+  );
+}
+
+/**
+ * Parsed thresholds and scalar period state provide deterministic private-cache
+ * keys while keeping the milestone result available before navigation.
+ */
+async function CachedLearnerMilestones({
+  completedLessonsThreshold,
+  learningDaysThreshold,
+  offset,
+  period,
+}: {
+  completedLessonsThreshold: number;
+  learningDaysThreshold: number;
+  offset?: string;
+  period?: string;
+}) {
+  "use cache: private";
 
   const summary = await getLearnerMilestoneSummary(
     completedLessonsThreshold,
@@ -51,8 +75,8 @@ export async function LearnerMilestones({
       <LearnerMilestoneForm
         completedLessonsThreshold={completedLessonsThreshold}
         learningDaysThreshold={learningDaysThreshold}
-        offset={searchParams.offset}
-        period={searchParams.period}
+        offset={offset}
+        period={period}
       />
 
       <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
@@ -75,6 +99,14 @@ export async function LearnerMilestones({
 }
 
 /**
+ * Analytics controls use one value per key, so repeated query values collapse
+ * to the first value before they cross the private-cache boundary.
+ */
+function getFirstSearchParamValue(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+/**
  * The threshold form updates the engagement page with a plain GET request, so
  * admins can bookmark or share the exact thresholds they are inspecting.
  */
@@ -90,7 +122,7 @@ function LearnerMilestoneForm({
   period?: string | string[];
 }) {
   return (
-    <form action="/stats/engagement" className="flex flex-col gap-4">
+    <Form action="/stats/engagement" className="flex flex-col gap-4">
       <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-col gap-1">
           <h3 className="text-base font-semibold tracking-tight">Learner Milestones</h3>
@@ -122,7 +154,7 @@ function LearnerMilestoneForm({
           name="learningDays"
         />
       </div>
-    </form>
+    </Form>
   );
 }
 
@@ -144,7 +176,14 @@ function MilestoneThresholdField({
   return (
     <div className="flex min-w-0 flex-col gap-2">
       <Label htmlFor={id}>{label}</Label>
-      <Input defaultValue={defaultValue} id={id} min={1} name={name} type="number" />
+      <Input
+        defaultValue={defaultValue}
+        id={id}
+        key={defaultValue}
+        min={1}
+        name={name}
+        type="number"
+      />
     </div>
   );
 }
@@ -184,6 +223,7 @@ function LearnerMilestoneCard({
     <Link
       className="hover:bg-muted/50 rounded-lg p-2 transition-colors"
       href={buildLearnerMilestoneUsersHref({ kind, threshold })}
+      prefetch
     >
       <AdminMetricCard
         description="Open user list"

@@ -1,5 +1,6 @@
 import { type GeneratedLessonStatus, generatedLessonStatuses } from "@/lib/generated-lesson-status";
 import { Button } from "@zoonk/ui/components/button";
+import Link from "next/link";
 
 const statusLabels: Record<GeneratedLessonStatus, string> = {
   completed: "Completed",
@@ -27,10 +28,10 @@ export function GeneratedLessonStatusFilter({
           key={item}
           nativeButton={false}
           render={
-            // oxlint-disable-next-line jsx-a11y/anchor-has-content -- render prop receives Button children
-            <a
+            <Link
               aria-current={status === item ? "page" : undefined}
               href={buildStatusHref({ search, status: item })}
+              prefetch
             />
           }
           size="sm"
@@ -53,7 +54,7 @@ function buildStatusHref({
 }: {
   search?: string;
   status: GeneratedLessonStatus;
-}): string {
+}): `/lessons?${string}` {
   const entries: StatusQueryEntry[] = [["status", status], search ? ["search", search] : undefined];
 
   const params = new URLSearchParams(entries.filter((entry) => isQueryEntry(entry)));

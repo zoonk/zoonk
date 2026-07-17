@@ -26,6 +26,8 @@ const ENERGY_FORMATTER = new Intl.NumberFormat("en", {
  * completion stats so support can answer learning-history questions in one view.
  */
 export async function UserLesson({ userId }: { userId: string }) {
+  "use cache: private";
+
   const [user, learningStats] = await Promise.all([
     getUser(userId),
     getUserLearningStats({ userId }),

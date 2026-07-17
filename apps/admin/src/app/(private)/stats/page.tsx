@@ -56,7 +56,7 @@ export default function StatsPage() {
       <ContainerBody>
         <ItemGroup>
           {sections.map((section) => (
-            <Item key={section.href} render={<Link href={section.href} />}>
+            <Item key={section.href} render={<Link href={section.href} prefetch />}>
               <ItemMedia variant="icon">
                 <section.icon />
               </ItemMedia>

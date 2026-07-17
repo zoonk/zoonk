@@ -1,6 +1,7 @@
 "use client";
 
 import { Input } from "@zoonk/ui/components/input";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { SEARCH_QUERY_THROTTLE_MS } from "@zoonk/utils/search";
 import { Search } from "lucide-react";
 import { throttle, useQueryState } from "nuqs";
@@ -29,4 +30,12 @@ export function AdminSearch({ placeholder }: { placeholder: string }) {
       />
     </div>
   );
+}
+
+/**
+ * Search state comes from the request URL during prerendering, so list pages
+ * reserve the input's exact height until the client control can render.
+ */
+export function AdminSearchSkeleton() {
+  return <Skeleton className="h-10 w-full" />;
 }

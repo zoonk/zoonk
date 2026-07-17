@@ -28,7 +28,7 @@ function UserBreadcrumb() {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink render={<Link href="/users" />}>Users</BreadcrumbLink>
+          <BreadcrumbLink render={<Link href="/users" prefetch />}>Users</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
@@ -63,13 +63,11 @@ function SectionSkeleton() {
   );
 }
 
-export default async function UserDetailPage({ params }: PageProps<"/users/[id]">) {
-  const { id: userId } = await params;
-
-  if (!isUuid(userId)) {
-    notFound();
-  }
-
+/**
+ * The account shell and breadcrumb do not depend on the dynamic user id, so
+ * they remain available while the requested account content streams in.
+ */
+export default function UserDetailPage({ params }: PageProps<"/users/[id]">) {
   return (
     <Container>
       <ContainerHeader variant="sidebar">
@@ -79,26 +77,62 @@ export default async function UserDetailPage({ params }: PageProps<"/users/[id]"
       </ContainerHeader>
 
       <ContainerBody className="gap-8">
-        <Suspense fallback={<HeaderSkeleton />}>
-          <UserHeader userId={userId} />
-        </Suspense>
-
-        <Suspense fallback={<SectionSkeleton />}>
-          <UserAccount userId={userId} />
-        </Suspense>
-
-        <Suspense fallback={<SectionSkeleton />}>
-          <UserSubscription userId={userId} />
-        </Suspense>
-
-        <Suspense fallback={<SectionSkeleton />}>
-          <UserLesson userId={userId} />
-        </Suspense>
-
-        <Suspense fallback={<SectionSkeleton />}>
-          <UserCourses userId={userId} />
+        <Suspense fallback={<UserDetailSkeleton />}>
+          <UserDetailContent params={params} />
         </Suspense>
       </ContainerBody>
     </Container>
+  );
+}
+
+/**
+ * Parameter validation must happen after the dynamic route value resolves and
+ * before any independent account query receives the user id.
+ */
+async function UserDetailContent({ params }: Pick<PageProps<"/users/[id]">, "params">) {
+  const { id: userId } = await params;
+
+  if (!isUuid(userId)) {
+    notFound();
+  }
+
+  return (
+    <>
+      <Suspense fallback={<HeaderSkeleton />}>
+        <UserHeader userId={userId} />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <UserAccount userId={userId} />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <UserSubscription userId={userId} />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <UserLesson userId={userId} />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <UserCourses userId={userId} />
+      </Suspense>
+    </>
+  );
+}
+
+/**
+ * The dynamic-route fallback mirrors every independently streamed account
+ * section so the page remains stable until the user id is available.
+ */
+function UserDetailSkeleton() {
+  return (
+    <>
+      <HeaderSkeleton />
+      <SectionSkeleton />
+      <SectionSkeleton />
+      <SectionSkeleton />
+      <SectionSkeleton />
+    </>
   );
 }

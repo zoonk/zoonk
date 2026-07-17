@@ -4,10 +4,9 @@ import { countCoursePrompts } from "@/data/course-prompts/list-course-prompts";
 import { countContent } from "@/data/stats/count-content";
 import { countCourses } from "@/data/stats/count-courses";
 import { BookOpenIcon, LayersIcon, MessageSquareTextIcon } from "lucide-react";
-import { connection } from "next/server";
 
 export async function ContentStats() {
-  await connection();
+  "use cache: private";
 
   const [totalCourses, content, promptCount] = await Promise.all([
     countCourses(),

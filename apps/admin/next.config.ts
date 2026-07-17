@@ -4,6 +4,7 @@ const CACHE_IMAGE_DAYS = 30;
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["*.local"],
+  cacheComponents: true,
   experimental: {
     authInterrupts: true,
     serverActions: { bodySizeLimit: "10mb" },
@@ -21,6 +22,7 @@ const nextConfig: NextConfig = {
       new URL("https://*.githubusercontent.com/**"),
     ],
   },
+  partialPrefetching: true,
   reactCompiler: true,
   typedRoutes: false,
   typescript: { ignoreBuildErrors: true },

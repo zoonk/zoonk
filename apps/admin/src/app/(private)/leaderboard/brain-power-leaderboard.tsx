@@ -1,3 +1,4 @@
+import { AdminTableSkeleton, AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
 import { AdminPagination } from "@/components/pagination";
 import {
   type BrainPowerLeader,
@@ -18,7 +19,6 @@ import {
 import Link from "next/link";
 
 const LEADERBOARD_DAYS = 7;
-const SKELETON_ROW_COUNT = 5;
 const TABLE_COLUMN_COUNT = 4;
 
 /**
@@ -32,6 +32,24 @@ export async function BrainPowerLeaderboard({
 }) {
   const params = await searchParams;
   const { limit, offset, page } = parseSearchParams(params);
+
+  return <CachedBrainPowerLeaderboard limit={limit} offset={offset} page={page} />;
+}
+
+/**
+ * Parsed pagination values and the minute cache lifetime keep the rolling
+ * leaderboard deterministic and available to runtime prefetching.
+ */
+async function CachedBrainPowerLeaderboard({
+  limit,
+  offset,
+  page,
+}: {
+  limit: number;
+  offset: number;
+  page: number;
+}) {
+  "use cache: private";
 
   const { currentPeriodStart } = getRollingUtcDateWindowStarts({
     days: LEADERBOARD_DAYS,
@@ -85,18 +103,15 @@ export function BrainPowerLeaderboardSkeleton() {
     <div className="flex flex-col gap-4">
       <Skeleton className="h-4 w-56" />
 
-      <div className="overflow-x-auto rounded-lg border">
+      <AdminTableSkeleton className="overflow-x-auto">
         <Table>
           <BrainPowerLeaderboardHeader />
 
-          <TableBody>
-            {Array.from({ length: SKELETON_ROW_COUNT }, (_, index) => (
-              // oxlint-disable-next-line react/no-array-index-key -- Skeleton rows are static placeholders.
-              <BrainPowerLeaderboardSkeletonRow key={index} />
-            ))}
-          </TableBody>
+          <AdminTableSkeletonRows>
+            <BrainPowerLeaderboardSkeletonRow />
+          </AdminTableSkeletonRows>
         </Table>
-      </div>
+      </AdminTableSkeleton>
     </div>
   );
 }
@@ -143,7 +158,7 @@ function BrainPowerLeaderboardRow({ leader }: { leader: BrainPowerLeader }) {
         {leader.rank.toLocaleString()}
       </TableCell>
       <TableCell>
-        <Link className="block" href={`/users/${leader.user.id}`}>
+        <Link className="block" href={`/users/${leader.user.id}`} prefetch>
           <span className="font-medium">{leader.user.name || "—"}</span>
           <span className="text-muted-foreground block text-xs">{leader.user.email}</span>
         </Link>

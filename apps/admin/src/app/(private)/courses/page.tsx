@@ -1,4 +1,4 @@
-import { AdminSearch } from "@/components/admin-search";
+import { AdminSearch, AdminSearchSkeleton } from "@/components/admin-search";
 import {
   Container,
   ContainerBody,
@@ -9,7 +9,7 @@ import {
 } from "@zoonk/ui/components/container";
 import { type Metadata } from "next";
 import { Suspense } from "react";
-import { CourseList } from "./course-list";
+import { CourseList, CourseListSkeleton } from "./course-list";
 
 export const metadata: Metadata = { title: "Courses" };
 
@@ -24,11 +24,11 @@ export default function CoursesPage({ searchParams }: PageProps<"/courses">) {
       </ContainerHeader>
 
       <ContainerBody>
-        <Suspense fallback={<div className="h-10" />}>
+        <Suspense fallback={<AdminSearchSkeleton />}>
           <AdminSearch placeholder="Search by title..." />
         </Suspense>
 
-        <Suspense>
+        <Suspense fallback={<CourseListSkeleton />}>
           <CourseList searchParams={searchParams} />
         </Suspense>
       </ContainerBody>
