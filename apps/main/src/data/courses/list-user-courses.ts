@@ -8,25 +8,8 @@ import { cache } from "react";
 type UserCourse = Course & { organization: Organization | null };
 
 /**
- * My Courses is a resume surface, not raw start history. Opening a lesson
- * creates a lesson_progress row with completedAt null, so the list must require
- * at least one completed lesson in the same course before showing it.
- */
-function getCompletedUserCourseWhere({ userId }: { userId: string }) {
-  return {
-    course: {
-      OR: [{ organization: { kind: "brand" } }, { organizationId: null }],
-      chapters: {
-        some: { lessons: { some: { progress: { some: { completedAt: { not: null }, userId } } } } },
-      },
-    },
-    userId,
-  };
-}
-
-/**
- * The My Courses page only shows courses where the learner has real completion
- * progress, while preserving the existing course metadata needed by the list UI.
+ * The My Courses page lists every main-app course associated with the learner
+ * through CourseUser, including courses where they have not completed a lesson.
  */
 export const listUserCourses = cache(
   async (headers?: Headers): Promise<SafeReturn<UserCourse[]>> => {
@@ -42,7 +25,10 @@ export const listUserCourses = cache(
       prisma.courseUser.findMany({
         include: { course: { include: { organization: true } } },
         orderBy: { startedAt: "desc" },
-        where: getCompletedUserCourseWhere({ userId }),
+        where: {
+          course: { OR: [{ organization: { kind: "brand" } }, { organizationId: null }] },
+          userId,
+        },
       }),
     );
 
