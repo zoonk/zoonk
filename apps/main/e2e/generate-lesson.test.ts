@@ -458,6 +458,10 @@ test.describe("Generate Lesson Page - With Subscription", () => {
     await expect(authenticatedPage.getByText(/your lesson is ready/iu)).toBeVisible();
     await expect(authenticatedPage.getByText(/taking you to your lesson/iu)).toBeVisible();
 
+    expect(await authenticatedPage.getByRole("link", { name: /back to chapter/iu }).count()).toBe(
+      0,
+    );
+
     await authenticatedPage.waitForURL(
       new RegExp(`/b/${AI_ORG_SLUG}/c/.+/ch/.+/l/${lesson.slug}`, "u"),
       { timeout: 10_000 },

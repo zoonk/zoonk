@@ -101,22 +101,21 @@ export async function GenerateLessonContent({
     lesson.generationStatus !== "completed" && isGeneratedCompanionLessonKind(lesson.kind) ? (
       <GeneratedCompanionRedirect lesson={lesson} locale={locale} />
     ) : (
-      <>
-        <GenerationClient
-          chapterSlug={lesson.chapter.slug}
-          courseSlug={lesson.chapter.course.slug}
-          generationRunId={lesson.generationRunId}
-          initialStatus={initialStatus}
-          invalidateContent={invalidateGeneratedLesson}
-          lessonId={id}
-          lessonKind={lesson.kind}
-          lessonSlug={lesson.slug}
-          lessonTitle={lessonMeta.title}
-        />
+      <GenerationClient
+        chapterSlug={lesson.chapter.slug}
+        courseSlug={lesson.chapter.course.slug}
+        generationRunId={lesson.generationRunId}
+        initialStatus={initialStatus}
+        invalidateContent={invalidateGeneratedLesson}
+        lessonId={id}
+        lessonKind={lesson.kind}
+        lessonSlug={lesson.slug}
+        lessonTitle={lessonMeta.title}
+      >
         <GenerationExitLink href={backHref} shortcut="Esc" width="content">
           {backLabel}
         </GenerationExitLink>
-      </>
+      </GenerationClient>
     );
 
   return (

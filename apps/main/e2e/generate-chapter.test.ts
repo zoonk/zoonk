@@ -230,6 +230,7 @@ test.describe("Generate Chapter Page - With Subscription", () => {
 
     await expect(authenticatedPage.getByText(/your lessons are ready/iu)).toBeVisible();
     await expect(authenticatedPage.getByText(/taking you to your chapter/iu)).toBeVisible();
+    expect(await authenticatedPage.getByRole("link", { name: /back to course/iu }).count()).toBe(0);
 
     await authenticatedPage.waitForURL(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`, {
       timeout: 10_000,
