@@ -80,20 +80,7 @@ export async function submitLessonCompletion(input: {
       where: { completedAt: null, lessonId: input.lessonId, userId: input.userId },
     });
 
-    const { courseId } = await syncDurableCurriculumCompletion(tx, {
-      lessonId: input.lessonId,
-      userId: input.userId,
-    });
-
-    // CourseUser + userCount (only on first completion per course)
-    const { count } = await tx.courseUser.createMany({
-      data: [{ courseId, userId: input.userId }],
-      skipDuplicates: true,
-    });
-
-    if (count > 0) {
-      await tx.course.update({ data: { userCount: { increment: 1 } }, where: { id: courseId } });
-    }
+    await syncDurableCurriculumCompletion(tx, { lessonId: input.lessonId, userId: input.userId });
 
     // Find existing UserProgress to apply decay
     const existingProgress = await tx.userProgress.findUnique({ where: { userId: input.userId } });

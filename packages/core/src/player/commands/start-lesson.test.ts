@@ -18,11 +18,12 @@ async function authenticateFixtureUser() {
 }
 
 describe(startLesson, () => {
+  let course: Awaited<ReturnType<typeof courseFixture>>;
   let lesson: Awaited<ReturnType<typeof lessonFixture>>;
 
   beforeAll(async () => {
     const org = await organizationFixture();
-    const course = await courseFixture({ organizationId: org.id });
+    course = await courseFixture({ organizationId: org.id });
     const chapter = await chapterFixture({ courseId: course.id, organizationId: org.id });
     lesson = await lessonFixture({ chapterId: chapter.id, kind: "quiz", organizationId: org.id });
   });
@@ -40,6 +41,21 @@ describe(startLesson, () => {
     expect(progress?.completedAt).toBeNull();
     expect(progress?.durationSeconds).toBeNull();
     expect(progress?.startedAt).toBeInstanceOf(Date);
+  });
+
+  it("enrolls the learner in the course when the lesson starts", async () => {
+    const userId = await authenticateFixtureUser();
+    const courseBefore = await prisma.course.findUniqueOrThrow({ where: { id: course.id } });
+
+    await startLesson(lesson.id);
+
+    const [courseUser, courseAfter] = await Promise.all([
+      prisma.courseUser.findUnique({ where: { courseUser: { courseId: course.id, userId } } }),
+      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+    ]);
+
+    expect(courseUser).not.toBeNull();
+    expect(courseAfter.userCount).toBe(courseBefore.userCount + 1);
   });
 
   it("idempotent: second call preserves original startedAt", async () => {
@@ -62,15 +78,20 @@ describe(startLesson, () => {
 
   it("idempotent: concurrent calls create one progress row", async () => {
     const userId = await authenticateFixtureUser();
+    const courseBefore = await prisma.course.findUniqueOrThrow({ where: { id: course.id } });
 
     await Promise.all([startLesson(lesson.id), startLesson(lesson.id)]);
 
-    const progress = await prisma.lessonProgress.findMany({
-      where: { lessonId: lesson.id, userId },
-    });
+    const [progress, courseUsers, courseAfter] = await Promise.all([
+      prisma.lessonProgress.findMany({ where: { lessonId: lesson.id, userId } }),
+      prisma.courseUser.findMany({ where: { courseId: course.id, userId } }),
+      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+    ]);
 
     expect(progress).toHaveLength(1);
     expect(progress[0]?.completedAt).toBeNull();
+    expect(courseUsers).toHaveLength(1);
+    expect(courseAfter.userCount).toBe(courseBefore.userCount + 1);
   });
 
   it("does not overwrite a completed record", async () => {

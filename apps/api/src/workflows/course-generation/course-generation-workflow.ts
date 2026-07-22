@@ -6,6 +6,7 @@ import { getWorkflowMetadata } from "workflow";
 import { getOrCreateCourse } from "./_internal/get-or-create-course";
 import { setupCourse } from "./_internal/setup-course";
 import { completeCourseSetupStep } from "./steps/complete-course-setup-step";
+import { enrollCourseUserStep } from "./steps/enroll-course-user-step";
 import { assertGeneratableCoursePrompt, getCoursePromptStep } from "./steps/get-course-prompt-step";
 import { handleCourseFailureStep } from "./steps/handle-failure-step";
 import { resolveCourseIdentityStep } from "./steps/resolve-course-identity-step";
@@ -78,7 +79,19 @@ async function startChapterImagesAndGenerateFirstLanguageChapter({
   }
 }
 
-export async function courseGenerationWorkflow(coursePromptId: string): Promise<void> {
+/**
+ * Generates or resumes a course and enrolls the authenticated requester once
+ * the workflow resolves the concrete course. Enrollment runs before completed
+ * or running courses return so reused courses are added to the learner's
+ * library too.
+ */
+export async function courseGenerationWorkflow({
+  coursePromptId,
+  userId,
+}: {
+  coursePromptId: string;
+  userId: string | null;
+}): Promise<void> {
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
@@ -106,6 +119,10 @@ export async function courseGenerationWorkflow(coursePromptId: string): Promise<
 
     throw error;
   });
+
+  if (userId) {
+    await enrollCourseUserStep({ courseId: courseSetup.course.courseId, userId });
+  }
 
   if (courseSetup.status === "running") {
     return;
