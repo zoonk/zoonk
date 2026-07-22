@@ -108,7 +108,7 @@ function DesktopNavigationToolbar({
             aria-label={t("Previous step")}
             aria-keyshortcuts="ArrowLeft"
             hint="navigatePrevious"
-            hintMessage={t.rich("Press <kbd>←</kbd> to go back.", {
+            hintMessage={t.rich("Keyboard shortcut: press <kbd>←</kbd> to go back.", {
               kbd: renderPlayerShortcutHintKey,
             })}
             onClick={onNavigatePrev}
@@ -131,7 +131,7 @@ function DesktopNavigationToolbar({
           aria-label={t("Next step")}
           aria-keyshortcuts="ArrowRight"
           hint="navigateNext"
-          hintMessage={t.rich("Press <kbd>→</kbd> to continue.", {
+          hintMessage={t.rich("Keyboard shortcut: press <kbd>→</kbd> to continue.", {
             kbd: renderPlayerShortcutHintKey,
           })}
           onClick={onNavigateNext}

@@ -48,7 +48,7 @@ export function StepActionButton({
       showPlayerShortcutHint({
         event,
         hint: "checkAnswer",
-        message: t.rich("Press <kbd>Enter</kbd> to check your answer.", {
+        message: t.rich("Keyboard shortcut: press <kbd>Enter</kbd> to check your answer.", {
           kbd: renderPlayerShortcutHintKey,
         }),
       });

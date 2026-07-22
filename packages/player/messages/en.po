@@ -53,9 +53,9 @@ msgid "Word bank"
 msgstr "Word bank"
 
 #: src/components/choice-step-layout.tsx
-msgctxt "qjehBi"
-msgid "Press <kbd>{shortcut}</kbd> to choose this answer."
-msgstr "Press <kbd>{shortcut}</kbd> to choose this answer."
+msgctxt "usfevO"
+msgid "Keyboard shortcut: press <kbd>{shortcut}</kbd> to choose this answer."
+msgstr "Keyboard shortcut: press <kbd>{shortcut}</kbd> to choose this answer."
 
 #: src/components/completion-auth-branch.tsx
 msgctxt "E2sGaF"
@@ -339,9 +339,9 @@ msgid "Play pronunciation"
 msgstr "Play pronunciation"
 
 #: src/components/play-audio-button.tsx
-msgctxt "XHsJo3"
-msgid "Press <kbd>{shortcut}</kbd> to play audio."
-msgstr "Press <kbd>{shortcut}</kbd> to play audio."
+msgctxt "RPYE-D"
+msgid "Keyboard shortcut: press <kbd>{shortcut}</kbd> to play audio."
+msgstr "Keyboard shortcut: press <kbd>{shortcut}</kbd> to play audio."
 
 #: src/components/player-choice-scene.tsx
 msgctxt "akd-cv"
@@ -400,21 +400,21 @@ msgid "Check"
 msgstr "Check"
 
 #: src/components/step-action-button.tsx
-msgctxt "2VjMZp"
-msgid "Press <kbd>Enter</kbd> to check your answer."
-msgstr "Press <kbd>Enter</kbd> to check your answer."
+msgctxt "ZnWuU7"
+msgid "Keyboard shortcut: press <kbd>Enter</kbd> to check your answer."
+msgstr "Keyboard shortcut: press <kbd>Enter</kbd> to check your answer."
 
 #: src/components/step-navigation-button-group.tsx
 #: src/components/swipe-navigable-step-layout.tsx
-msgctxt "XHEfA9"
-msgid "Press <kbd>←</kbd> to go back."
-msgstr "Press <kbd>←</kbd> to go back."
+msgctxt "kp9T44"
+msgid "Keyboard shortcut: press <kbd>←</kbd> to go back."
+msgstr "Keyboard shortcut: press <kbd>←</kbd> to go back."
 
 #: src/components/step-navigation-button-group.tsx
 #: src/components/swipe-navigable-step-layout.tsx
-msgctxt "nvVP6A"
-msgid "Press <kbd>→</kbd> to continue."
-msgstr "Press <kbd>→</kbd> to continue."
+msgctxt "egQWyS"
+msgid "Keyboard shortcut: press <kbd>→</kbd> to continue."
+msgstr "Keyboard shortcut: press <kbd>→</kbd> to continue."
 
 #: src/components/step-navigation-button-group.tsx
 msgctxt "JJNc3c"

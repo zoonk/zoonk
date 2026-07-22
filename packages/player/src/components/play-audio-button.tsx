@@ -88,7 +88,7 @@ export function PlayAudioButton({
       showPlayerShortcutHint({
         event,
         hint: "promptAudio",
-        message: t.rich("Press <kbd>{shortcut}</kbd> to play audio.", {
+        message: t.rich("Keyboard shortcut: press <kbd>{shortcut}</kbd> to play audio.", {
           kbd: renderPlayerShortcutHintKey,
           shortcut: keyboardShortcut.toUpperCase(),
         }),

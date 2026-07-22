@@ -69,7 +69,7 @@ function ChoiceStepLayoutContent({
     showPlayerShortcutHint({
       event,
       hint: "multipleChoiceNumber",
-      message: t.rich("Press <kbd>{shortcut}</kbd> to choose this answer.", {
+      message: t.rich("Keyboard shortcut: press <kbd>{shortcut}</kbd> to choose this answer.", {
         kbd: renderPlayerShortcutHintKey,
         shortcut,
       }),

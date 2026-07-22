@@ -35,7 +35,9 @@ export function StepNavigationButtonGroup({
     showPlayerShortcutHint({
       event,
       hint: "navigatePrevious",
-      message: t.rich("Press <kbd>←</kbd> to go back.", { kbd: renderPlayerShortcutHintKey }),
+      message: t.rich("Keyboard shortcut: press <kbd>←</kbd> to go back.", {
+        kbd: renderPlayerShortcutHintKey,
+      }),
     });
   }
 
@@ -47,7 +49,9 @@ export function StepNavigationButtonGroup({
     showPlayerShortcutHint({
       event,
       hint: "navigateNext",
-      message: t.rich("Press <kbd>→</kbd> to continue.", { kbd: renderPlayerShortcutHintKey }),
+      message: t.rich("Keyboard shortcut: press <kbd>→</kbd> to continue.", {
+        kbd: renderPlayerShortcutHintKey,
+      }),
     });
   }
 
