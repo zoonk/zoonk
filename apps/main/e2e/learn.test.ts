@@ -203,10 +203,10 @@ test.describe("Learn Form", () => {
   }) => {
     await mockCourseGenerationWorkflow(authenticatedPage);
     await authenticatedPage.goto("/start/learn");
+    await authenticatedPage.waitForLoadState("networkidle");
 
     const suggestions = authenticatedPage.getByRole("navigation", { name: /suggested subjects/iu });
-    const firstLink = suggestions.getByRole("link").first();
-    const subject = await firstLink.textContent();
+    const subject = await suggestions.getByRole("link").first().textContent();
 
     if (!subject) {
       throw new Error("No subject link text found");
@@ -214,7 +214,7 @@ test.describe("Learn Form", () => {
 
     const cached = await cacheTopicPrompt(subject);
 
-    await firstLink.click();
+    await suggestions.getByRole("link", { exact: true, name: subject }).click();
 
     await expect(authenticatedPage).toHaveURL(
       new RegExp(`/generate/course/${cached.request.id}$`, "u"),

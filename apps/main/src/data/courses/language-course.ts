@@ -146,9 +146,9 @@ async function getOrCreateLanguageCoursePrompt({
     targetLanguage,
   };
 
-  const cachedPrompt = await prisma.coursePrompt.upsert({
-    create: languageCoursePrompt,
-    update: {},
+  await prisma.coursePrompt.createMany({ data: languageCoursePrompt, skipDuplicates: true });
+
+  const cachedPrompt = await prisma.coursePrompt.findUniqueOrThrow({
     where: { languageNormalizedPrompt: { language, normalizedPrompt } },
   });
 

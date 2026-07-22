@@ -186,6 +186,23 @@ describe(getCompletedLanguageCourseHrefs, () => {
 });
 
 describe(getOrCreateLanguageCoursePromptRequest, () => {
+  it("creates one controlled prompt when the first requests arrive concurrently", async () => {
+    const input = getLanguageCoursePromptInput();
+    const prompt = `Learn ${input.title}`;
+
+    const requests = await Promise.all(
+      Array.from({ length: 10 }, () => getOrCreateLanguageCoursePromptRequest(input)),
+    );
+
+    expect(new Set(requests.map((request) => request.id)).size).toBe(1);
+
+    const promptCount = await prisma.coursePrompt.count({
+      where: { language: input.language, normalizedPrompt: normalizeString(prompt) },
+    });
+
+    expect(promptCount).toBe(1);
+  });
+
   it("promotes one unstarted public prompt when controlled requests arrive concurrently", async () => {
     const input = getLanguageCoursePromptInput();
     const prompt = `Learn ${input.title}`;
