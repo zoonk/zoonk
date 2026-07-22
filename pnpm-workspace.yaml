@@ -54,3 +54,6 @@ catalog:
   zod: 4.4.3
 
 minimumReleaseAge: 0
+
+overrides:
+  "ai-sdk-provider-codex-cli>@openai/codex": "-"
