@@ -1,12 +1,13 @@
 import "server-only";
 import { isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
+import { enrollUserInCourse } from "../../courses/enroll-user-in-course";
 import { getSession } from "../../users/get-user-session";
 
 /**
- * The player shell calls this as soon as a learner opens a lesson so the
- * completion write can later distinguish "started" from "never seen". A
- * session-derived user id keeps this analytics write scoped to the current
- * learner, while the upsert preserves existing progress on repeat visits.
+ * Records that the current learner started a lesson and enrolls them in its
+ * course. Both writes are idempotent because lesson starts can be repeated or
+ * concurrent, while the session-derived user id keeps both operations scoped to
+ * the current learner.
  */
 export async function startLesson(lessonId: string): Promise<void> {
   const session = await getSession();
@@ -15,12 +16,22 @@ export async function startLesson(lessonId: string): Promise<void> {
     return;
   }
 
+  const userId = session.user.id;
+
   try {
-    await prisma.lessonProgress.upsert({
-      create: { lessonId, userId: session.user.id },
-      update: {},
-      where: { userLesson: { lessonId, userId: session.user.id } },
+    const lesson = await prisma.lesson.findUniqueOrThrow({
+      include: { chapter: true },
+      where: { id: lessonId },
     });
+
+    await Promise.all([
+      prisma.lessonProgress.upsert({
+        create: { lessonId, userId },
+        update: {},
+        where: { userLesson: { lessonId, userId } },
+      }),
+      enrollUserInCourse({ courseId: lesson.chapter.courseId, userId }),
+    ]);
   } catch (error) {
     if (isPrismaUniqueConstraintError(error)) {
       return;

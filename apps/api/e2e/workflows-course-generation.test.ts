@@ -4,6 +4,7 @@ import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { coursePromptFixture } from "@zoonk/testing/fixtures/course-prompts";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 
 /**
@@ -158,6 +159,50 @@ test.describe("Course Generation Workflow API", () => {
     expect(body.message).toBe("Workflow started");
     expect(body.runId).toBeDefined();
     expect(typeof body.runId).toBe("string");
+
+    await apiContext.dispose();
+  });
+
+  test("enrolls the authenticated learner in the generated course", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const organization = await getAiOrganization();
+
+    const course = await courseFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      organizationId: organization.id,
+      slug: `e2e-enrolled-course-${uniqueId}`,
+      title: `E2E Enrolled Course ${uniqueId}`,
+    });
+
+    const coursePrompt = await coursePromptFixture({
+      canonicalTitle: course.title,
+      courseId: course.id,
+      generationStatus: "completed",
+    });
+
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "course-enrollment",
+    });
+
+    const response = await apiContext.post("/v1/workflows/course-generation/trigger", {
+      data: { coursePromptId: coursePrompt.id },
+    });
+
+    expect(response.status()).toBe(200);
+
+    await expect(async () => {
+      const [courseUser, updatedCourse] = await Promise.all([
+        prisma.courseUser.findUnique({
+          where: { courseUser: { courseId: course.id, userId: user.id } },
+        }),
+        prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+      ]);
+
+      expect(courseUser).not.toBeNull();
+      expect(updatedCourse.userCount).toBe(1);
+    }).toPass({ timeout: 10_000 });
 
     await apiContext.dispose();
   });

@@ -1,5 +1,6 @@
 import { errors } from "@/lib/api-errors";
 import { parseBody } from "@/lib/body-parser";
+import { getRequestUserId } from "@/lib/get-request-user-id";
 import { courseGenerationTriggerSchema } from "@/lib/openapi/schemas/workflows";
 import { courseGenerationWorkflow } from "@/workflows/course-generation/course-generation-workflow";
 import { getCoursePromptGenerationError } from "@zoonk/core/courses/prompt-generation";
@@ -14,9 +15,10 @@ export async function POST(request: NextRequest) {
     return errors.validation(parsed.error);
   }
 
-  const coursePrompt = await prisma.coursePrompt.findUnique({
-    where: { id: parsed.data.coursePromptId },
-  });
+  const [coursePrompt, userId] = await Promise.all([
+    prisma.coursePrompt.findUnique({ where: { id: parsed.data.coursePromptId } }),
+    getRequestUserId(request.headers),
+  ]);
 
   if (!coursePrompt) {
     return errors.notFound();
@@ -28,7 +30,9 @@ export async function POST(request: NextRequest) {
     return errors.badRequest(generationError);
   }
 
-  const run = await start(courseGenerationWorkflow, [parsed.data.coursePromptId]);
+  const run = await start(courseGenerationWorkflow, [
+    { coursePromptId: parsed.data.coursePromptId, userId },
+  ]);
 
   return NextResponse.json({ message: "Workflow started", runId: run.runId });
 }

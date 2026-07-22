@@ -582,7 +582,7 @@ describe(submitLessonCompletion, () => {
     expect(result.newTotalBp).toBe(10);
   });
 
-  it("creates CourseUser and increments userCount on first lesson completion", async () => {
+  it("does not enroll the learner when completing a lesson", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -603,42 +603,10 @@ describe(submitLessonCompletion, () => {
       where: { courseUser: { courseId: course.id, userId } },
     });
 
-    expect(courseUser).not.toBeNull();
+    expect(courseUser).toBeNull();
 
     const courseAfter = await prisma.course.findUniqueOrThrow({ where: { id: course.id } });
-    expect(courseAfter.userCount).toBe(courseBefore.userCount + 1);
-  });
-
-  it("does not duplicate CourseUser or increment userCount on re-completion", async () => {
-    const user = await userFixture();
-    const userId = user.id;
-
-    const baseInput = {
-      durationSeconds: 10,
-      lessonId: lesson.id,
-
-      localDate: todayLocalDate(),
-      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
-      startedAt: new Date(Date.now() - 10_000),
-      stepResults: [stepResult(true)],
-      userId,
-    };
-
-    await submitLessonCompletion(baseInput);
-    const courseAfterFirst = await prisma.course.findUniqueOrThrow({ where: { id: course.id } });
-
-    await submitLessonCompletion(baseInput);
-    const courseAfterSecond = await prisma.course.findUniqueOrThrow({ where: { id: course.id } });
-
-    // userCount should not increment on second completion
-    expect(courseAfterSecond.userCount).toBe(courseAfterFirst.userCount);
-
-    // Only one CourseUser record should exist
-    const courseUsers = await prisma.courseUser.findMany({
-      where: { courseId: course.id, userId },
-    });
-
-    expect(courseUsers).toHaveLength(1);
+    expect(courseAfter.userCount).toBe(courseBefore.userCount);
   });
 
   it("1-day gap: no decay, no gap records", async () => {

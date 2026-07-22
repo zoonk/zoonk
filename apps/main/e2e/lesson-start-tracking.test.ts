@@ -77,7 +77,7 @@ async function createTestLesson() {
 
   const url = `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`;
 
-  return { lesson, url };
+  return { course, lesson, url };
 }
 
 test.describe("Lesson Start Tracking", () => {
@@ -85,7 +85,7 @@ test.describe("Lesson Start Tracking", () => {
     baseURL,
     browser,
   }) => {
-    const [email, { lesson, url }] = await Promise.all([
+    const [email, { course, lesson, url }] = await Promise.all([
       createUniqueUser(baseURL!),
       createTestLesson(),
     ]);
@@ -96,24 +96,32 @@ test.describe("Lesson Start Tracking", () => {
     expect(user).not.toBeNull();
     const userId = user!.id;
 
-    const before = await prisma.lessonProgress.findUnique({
-      where: { userLesson: { lessonId: lesson.id, userId } },
-    });
+    const [progressBefore, courseUserBefore] = await Promise.all([
+      prisma.lessonProgress.findUnique({ where: { userLesson: { lessonId: lesson.id, userId } } }),
+      prisma.courseUser.findUnique({ where: { courseUser: { courseId: course.id, userId } } }),
+    ]);
 
-    expect(before).toBeNull();
+    expect(progressBefore).toBeNull();
+    expect(courseUserBefore).toBeNull();
 
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
     // after() runs asynchronously — use toPass retry pattern
     await expect(async () => {
-      const progress = await prisma.lessonProgress.findUnique({
-        where: { userLesson: { lessonId: lesson.id, userId } },
-      });
+      const [progress, courseUser, updatedCourse] = await Promise.all([
+        prisma.lessonProgress.findUnique({
+          where: { userLesson: { lessonId: lesson.id, userId } },
+        }),
+        prisma.courseUser.findUnique({ where: { courseUser: { courseId: course.id, userId } } }),
+        prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+      ]);
 
       expect(progress).not.toBeNull();
       expect(progress?.completedAt).toBeNull();
       expect(progress?.durationSeconds).toBeNull();
+      expect(courseUser).not.toBeNull();
+      expect(updatedCourse.userCount).toBe(1);
     }).toPass({ timeout: 5000 });
 
     await browserContext.close();
