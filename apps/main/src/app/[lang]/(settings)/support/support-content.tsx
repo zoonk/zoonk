@@ -1,4 +1,4 @@
-import { FeedbackDialog } from "@/components/feedback/feedback-dialog";
+import { ContactForm, ContactFormSkeleton } from "@/components/feedback/contact-form";
 import { getSession } from "@/data/users/get-session";
 import { getSocialProfiles } from "@/lib/social";
 import { buttonVariants } from "@zoonk/ui/components/button";
@@ -10,66 +10,23 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemGroup,
-  ItemMedia,
-  ItemSeparator,
-  ItemTitle,
-} from "@zoonk/ui/components/item";
-import { Mail, MessagesSquare } from "lucide-react";
+import { ItemSeparator } from "@zoonk/ui/components/item";
 import { getExtracted, getLocale } from "next-intl/server";
 import { Suspense } from "react";
 
-type ContactSupportItemProps = { description: string; disabled?: boolean; title: string };
-
 /**
- * Keeps the support row identical while session data resolves so the cold-path
- * fallback does not shift the surrounding static support content.
+ * Adds the signed-in learner's email without holding back the rest of the support page.
  */
-function ContactSupportItem({ description, disabled, title }: ContactSupportItemProps) {
-  return (
-    <Item
-      render={<button aria-busy={disabled || undefined} disabled={disabled} type="button" />}
-      size="sm"
-    >
-      <ItemMedia className="bg-muted size-10 rounded-full" variant="icon">
-        <Mail aria-hidden="true" />
-      </ItemMedia>
-
-      <ItemContent>
-        <ItemTitle>{title}</ItemTitle>
-        <ItemDescription>{description}</ItemDescription>
-      </ItemContent>
-    </Item>
-  );
-}
-
-/**
- * Adds the signed-in learner's email only after the private session cache has
- * resolved, leaving the rest of the support page available immediately.
- */
-async function ContactSupport(props: ContactSupportItemProps) {
+async function ContactSupport() {
   const session = await getSession();
 
-  return (
-    <FeedbackDialog defaultEmail={session?.user.email}>
-      <ContactSupportItem {...props} />
-    </FeedbackDialog>
-  );
+  return <ContactForm defaultEmail={session?.user.email} />;
 }
 
 export async function SupportContent() {
   const t = await getExtracted();
   const locale = await getLocale();
   const socials = getSocialProfiles(locale);
-
-  const contactSupportProps = {
-    description: t("Email us at hello@zoonk.com"),
-    title: t("Contact Support"),
-  };
 
   return (
     <Container>
@@ -82,32 +39,11 @@ export async function SupportContent() {
         </ContainerHeaderGroup>
       </ContainerHeader>
 
-      <ItemGroup>
-        <Item
-          render={
-            // oxlint-disable-next-line jsx-a11y/anchor-has-content -- render prop
-            <a
-              href="https://github.com/zoonk/zoonk/discussions"
-              rel="noopener noreferrer"
-              target="_blank"
-            />
-          }
-          size="sm"
-        >
-          <ItemMedia className="bg-muted size-10 rounded-full" variant="icon">
-            <MessagesSquare aria-hidden="true" />
-          </ItemMedia>
-
-          <ItemContent>
-            <ItemTitle>{t("GitHub Discussions")}</ItemTitle>
-            <ItemDescription>{t("Connect with the community and get answers")}</ItemDescription>
-          </ItemContent>
-        </Item>
-
-        <Suspense fallback={<ContactSupportItem {...contactSupportProps} disabled />}>
-          <ContactSupport {...contactSupportProps} />
+      <ContainerBody className="lg:max-w-md">
+        <Suspense fallback={<ContactFormSkeleton />}>
+          <ContactSupport />
         </Suspense>
-      </ItemGroup>
+      </ContainerBody>
 
       <ItemSeparator />
 

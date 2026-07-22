@@ -1631,26 +1631,6 @@ msgid "Share feedback, ask questions, or get help with your account and courses.
 msgstr "Partage tes retours, pose tes questions ou obtiens de l’aide pour ton compte et tes cours."
 
 #: src/app/[lang]/(settings)/support/support-content.tsx
-msgctxt "dQIo6c"
-msgid "Email us at hello@zoonk.com"
-msgstr "Écris-nous à hello@zoonk.com"
-
-#: src/app/[lang]/(settings)/support/support-content.tsx
-msgctxt "YdQxfw"
-msgid "Contact Support"
-msgstr "Contacter l’assistance"
-
-#: src/app/[lang]/(settings)/support/support-content.tsx
-msgctxt "cDAb4a"
-msgid "GitHub Discussions"
-msgstr "Discussions GitHub"
-
-#: src/app/[lang]/(settings)/support/support-content.tsx
-msgctxt "7h49qt"
-msgid "Connect with the community and get answers"
-msgstr "Échange avec la communauté et obtiens des réponses"
-
-#: src/app/[lang]/(settings)/support/support-content.tsx
 msgctxt "l1XTI5"
 msgid "Follow us"
 msgstr "Suis-nous"
