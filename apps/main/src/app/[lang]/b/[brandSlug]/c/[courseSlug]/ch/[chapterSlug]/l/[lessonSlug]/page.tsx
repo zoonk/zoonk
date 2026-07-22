@@ -16,7 +16,6 @@ import {
   getSourceLessonForGeneratedCompanion,
   isGeneratedCompanionLessonKind,
 } from "@zoonk/core/lessons/generated-companions";
-import { preparePlayerLessonData } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type PlayerLesson } from "@zoonk/core/player/queries/get-lesson";
 import { getPlayerResourceIds } from "@zoonk/core/player/queries/get-player-resource-ids";
 import { Container, ContainerBody } from "@zoonk/ui/components/container";
@@ -24,10 +23,14 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { io } from "next/cache";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { fetchReviewLessonData, getPlayerLesson, getPlayerResources } from "./lesson-data-loaders";
+import {
+  fetchReviewLessonData,
+  getPlayerLesson,
+  getPlayerResources,
+  preparePlayerLesson,
+} from "./lesson-data-loaders";
 import { LessonNotGenerated } from "./lesson-not-generated";
 import { LessonPlayerClient } from "./lesson-player-client";
 import { buildLessonProgressMeta, getNextChapterTarget } from "./lesson-player-model";
@@ -267,9 +270,7 @@ async function LessonContent({ params }: Pick<Props, "params">) {
     getPlayerResources({ ...resourceIds, lessonId: lesson.id }),
   ]);
 
-  await io();
-
-  const serialized = preparePlayerLessonData({
+  const serialized = await preparePlayerLesson({
     chapterSentences: resources.chapterSentences,
     chapterWords: resources.chapterWords,
     distractorWords: resources.distractorWords,

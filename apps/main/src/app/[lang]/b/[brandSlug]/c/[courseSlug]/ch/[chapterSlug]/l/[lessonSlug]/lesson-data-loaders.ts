@@ -4,6 +4,10 @@ import {
   getUserProgressCacheTag,
 } from "@/data/cache-tags";
 import { getSession } from "@/data/users/get-session";
+import {
+  type PreparePlayerLessonInput,
+  preparePlayerLessonData,
+} from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { getChapterDistractorWordsForResources } from "@zoonk/core/player/queries/get-chapter-distractor-words";
 import { getChapterSentenceWords } from "@zoonk/core/player/queries/get-chapter-sentence-words";
 import { getChapterSentencesForIds } from "@zoonk/core/player/queries/get-chapter-sentences";
@@ -50,6 +54,16 @@ export async function getPlayerResources(input: {
   ]);
 
   return { chapterSentences, chapterWords, distractorWords, sentenceWords };
+}
+
+/**
+ * Keeps the player's server-side shuffle private to this browser while letting
+ * runtime prefetching prepare the complete lesson before navigation.
+ */
+export async function preparePlayerLesson(input: PreparePlayerLessonInput) {
+  "use cache: private";
+
+  return preparePlayerLessonData(input);
 }
 
 /**

@@ -100,7 +100,7 @@ type PreparePlayerLessonSource = {
   title: string | null;
 };
 
-type PreparePlayerLessonInput = {
+export type PreparePlayerLessonInput = {
   lesson: PreparePlayerLessonSource;
   chapterSentences: ChapterSentenceInput[];
   chapterWords: ChapterWordInput[];
