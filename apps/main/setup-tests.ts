@@ -1,6 +1,7 @@
 // oxlint-disable jest/prefer-ending-with-an-expect
 
 import { AsyncLocalStorage } from "node:async_hooks";
+import { type getSession as getCoreSession } from "@zoonk/core/users/session/get";
 import { type cookies, type draftMode, headers } from "next/headers";
 import { beforeEach, vi } from "vitest";
 
@@ -10,9 +11,22 @@ type NextHeadersModule = {
   headers: typeof headers;
 };
 
+type CoreSessionModule = { getSession: typeof getCoreSession };
+
 globalThis.AsyncLocalStorage ??= AsyncLocalStorage;
 
 vi.mock("server-only");
+
+vi.mock("@zoonk/core/users/session/get", async (importOriginal) => {
+  const original = await importOriginal<CoreSessionModule>();
+
+  /** Passes mocked request headers into the real session resolver during main-app tests. */
+  async function getSession(requestHeaders?: Headers) {
+    return original.getSession(requestHeaders ?? (await headers()));
+  }
+
+  return { getSession };
+});
 
 vi.mock("next/headers", async (importOriginal) => {
   const original = await importOriginal<NextHeadersModule>();
