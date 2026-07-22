@@ -1,8 +1,8 @@
 import { errors } from "@/lib/api-errors";
 import { parseBody } from "@/lib/body-parser";
 import { courseGenerationTriggerSchema } from "@/lib/openapi/schemas/workflows";
-import { getCoursePromptGenerationError } from "@/workflows/course-generation/_utils/course-prompt-validation";
 import { courseGenerationWorkflow } from "@/workflows/course-generation/course-generation-workflow";
+import { getCoursePromptGenerationError } from "@zoonk/core/courses/prompt-generation";
 import { prisma } from "@zoonk/db";
 import { type NextRequest, NextResponse } from "next/server";
 import { start } from "workflow/api";

@@ -1,8 +1,8 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
+import { getCoursePromptGenerationError } from "@zoonk/core/courses/prompt-generation";
 import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { type CoursePrompt, type GenerationStatus, prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
-import { getCoursePromptGenerationError } from "../_utils/course-prompt-validation";
 
 type GeneratableCoursePromptBase = CoursePrompt & {
   canonicalTitle: string;

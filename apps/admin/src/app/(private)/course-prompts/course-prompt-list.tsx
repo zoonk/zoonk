@@ -15,6 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@zoonk/ui/components/table";
+import Link from "next/link";
 
 const TABLE_COLUMN_COUNT = 7;
 
@@ -178,8 +179,10 @@ function CoursePromptRow({ prompt }: { prompt: ListedCoursePrompt }) {
   return (
     <TableRow>
       <TableCell className="max-w-xl min-w-80 whitespace-normal">
-        <p className="font-medium">{prompt.prompt}</p>
-        <p className="text-muted-foreground text-xs uppercase">{prompt.language}</p>
+        <Link className="block" href={`/course-prompts/${prompt.id}`} prefetch>
+          <span className="font-medium">{prompt.prompt}</span>
+          <span className="text-muted-foreground block text-xs uppercase">{prompt.language}</span>
+        </Link>
       </TableCell>
       <TableCell>
         <Badge className="capitalize" variant="secondary">
@@ -206,7 +209,9 @@ function CoursePromptRow({ prompt }: { prompt: ListedCoursePrompt }) {
       </TableCell>
       <TableCell className="max-w-sm whitespace-normal">
         {prompt.course ? (
-          <span>{prompt.course.title}</span>
+          <Link href={`/courses/${prompt.course.id}`} prefetch>
+            {prompt.course.title}
+          </Link>
         ) : (
           <span className="text-muted-foreground">No linked course</span>
         )}

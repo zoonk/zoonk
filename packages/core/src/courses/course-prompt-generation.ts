@@ -3,24 +3,28 @@ import { type CoursePrompt } from "@zoonk/db";
 const SAME_LANGUAGE_COURSE_ERROR = "Language course source and target languages must be different";
 const UNSUPPORTED_COURSE_PROMPT_ERROR = "Course prompt is not generatable";
 
+type CoursePromptGenerationInput = Pick<
+  CoursePrompt,
+  "canonicalTitle" | "courseFormat" | "generationStatus" | "intent" | "language" | "targetLanguage"
+>;
+
 /**
  * Language courses are only useful when the learner language and learned
- * language differ. The main app prevents selecting the current locale, but the
- * API and workflow need the same rule because prompts can be started outside
- * that page.
+ * language differ. Every entry point uses this shared check so an admin edit
+ * cannot create a prompt that the generation workflow must reject later.
  */
 function isSameLanguageCourseRequest(
-  prompt: Pick<CoursePrompt, "courseFormat" | "language" | "targetLanguage">,
+  prompt: Pick<CoursePromptGenerationInput, "courseFormat" | "language" | "targetLanguage">,
 ): boolean {
   return prompt.courseFormat === "language" && prompt.targetLanguage === prompt.language;
 }
 
 /**
  * Explains why a persisted prompt cannot enter course generation. The database
- * also stores redirect, waitlist, unsafe, and invalid language records, so the
- * API route and workflow step share this check before creating courses.
+ * also stores redirect, waitlist, unsafe, and invalid language records, so API
+ * callers and admin mutations must share this check before requesting generation.
  */
-export function getCoursePromptGenerationError(prompt: CoursePrompt): string | null {
+export function getCoursePromptGenerationError(prompt: CoursePromptGenerationInput): string | null {
   if (!(prompt.canonicalTitle && prompt.generationStatus)) {
     return UNSUPPORTED_COURSE_PROMPT_ERROR;
   }
