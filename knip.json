@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/knip/schema.json",
-  "ignore": ["**/*.d.**.ts", ".agents/**", ".claude/**"],
+  "ignore": ["**/*.d.**.ts", ".agents/**"],
   "ignoreIssues": { "**/.next/**/types/routes.d.ts": ["types"] },
   "ignoreWorkspaces": ["packages/e2e!", "packages/testing!"],
   "ignoreBinaries": ["stripe", "build-and-start", "turbo!"],
@@ -19,10 +19,10 @@
       "entry": [".eloqnt/config.ts"],
       "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts", "!**/_test-utils/**!"]
     },
-    "apps/blog": { "project": ["src/**/*.{ts,tsx}!"] },
+    "apps/blog": { "project": ["src/**/*.{ts,tsx,mdx}!"] },
     "apps/main": {
       "entry": [".eloqnt/config.ts", "src/app/*/privacy/*.mdx", "src/app/*/terms/*.mdx"],
-      "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts"]
+      "project": ["src/**/*.{ts,tsx,mdx,css}!", "e2e/**/*.ts"]
     },
     "packages/core": { "project": ["src/**/*.ts!"] },
     "packages/db": {

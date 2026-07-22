@@ -24,7 +24,7 @@
     "@zoonk/core": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
-    "katex": "0.17.0",
+    "katex": "0.18.1",
     "react": "catalog:",
     "react-dom": "catalog:",
     "web-haptics": "0.0.6"
@@ -32,7 +32,7 @@
   "devDependencies": {
     "@testing-library/react": "catalog:",
     "@types/react": "catalog:",
-    "@vitejs/plugin-react": "6.0.3",
+    "@vitejs/plugin-react": "6.0.4",
     "@vitest/browser-playwright": "4.1.10",
     "@zoonk/i18n": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",

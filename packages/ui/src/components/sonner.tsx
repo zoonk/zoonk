@@ -18,7 +18,7 @@ function isValidTheme(theme: string): theme is ValidTheme {
   return VALID_THEMES.some((item) => item === theme);
 }
 
-const Toaster = ({ ...props }: ToasterProps) => {
+function Toaster({ ...props }: ToasterProps) {
   const { theme = "system" } = useTheme();
   const validTheme: ValidTheme = isValidTheme(theme) ? theme : "system";
 
@@ -45,7 +45,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       {...props}
     />
   );
-};
+}
 
 export { toast } from "sonner";
 export { Toaster };

@@ -31,15 +31,15 @@
     "next": "catalog:",
     "next-intl": "catalog:",
     "posthog-js": "catalog:",
-    "posthog-node": "5.42.0",
+    "posthog-node": "5.46.0",
     "react": "catalog:",
     "react-dom": "catalog:",
     "server-only": "catalog:",
-    "workflow": "5.0.0-beta.34",
+    "workflow": "5.0.0-beta.36",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@scalar/nextjs-api-reference": "0.11.9",
+    "@scalar/nextjs-api-reference": "0.11.11",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
