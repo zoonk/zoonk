@@ -346,11 +346,15 @@ export const TEST_CASES: CoursePersonalizationTestCase[] = [
     requiresPersonalization: true,
   }),
   personalizationCase({
-    extra:
-      "- Combining multiple broad fields requires intake to determine the intended balance, relationship, depth, and learning goal.",
     id: "math-and-logic",
     prompt: "math and logic",
-    requiresPersonalization: true,
+    requiresPersonalization: false,
+  }),
+  personalizationCase({
+    id: "analysis-and-linear-algebra",
+    language: "de",
+    prompt: "Analysis und lineare Algebra",
+    requiresPersonalization: false,
   }),
   personalizationCase({
     id: "gpu-programming-no-library",
@@ -591,10 +595,13 @@ export const TEST_CASES: CoursePersonalizationTestCase[] = [
   personalizationCase({ id: "soft-skills", prompt: "soft skills", requiresPersonalization: false }),
   personalizationCase({ id: "maths", prompt: "maths", requiresPersonalization: false }),
   personalizationCase({
-    extra:
-      "- Combining multiple broad academic fields requires intake to determine the intended balance, depth, relationship, and learning goal.",
     id: "university-maths-and-physics",
     prompt: "University maths and physics",
+    requiresPersonalization: false,
+  }),
+  personalizationCase({
+    id: "university-maths-physics-and-chemistry",
+    prompt: "University maths, physics, and chemistry",
     requiresPersonalization: true,
   }),
   personalizationCase({ id: "black-hole", prompt: "black hole", requiresPersonalization: false }),

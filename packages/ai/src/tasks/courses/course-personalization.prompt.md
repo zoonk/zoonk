@@ -71,7 +71,7 @@ Return `true` when the request prescribes a custom course instead of naming one 
 
 This includes:
 
-- two or more distinct broad fields presented as co-equal course subjects without a defined balance or relationship
+- three or more distinct fields presented as co-equal course subjects
 - a custom progression from one named topic to another
 - an open-ended scope, including translated equivalents of `and more`, `and beyond`, or `etc.`
 - three or more independently teachable concepts, modules, channels, methods, or comparisons presented as required coverage
@@ -90,7 +90,7 @@ Do not treat one recognized consolidated field as several fields. A standard sub
 
 Any clearly truncated catalog fragment or prescribed list of three or more components is sufficient by itself for `true`. An introduction that combines three or more fields, subfields, or relationships also returns `true` even when written as one sentence.
 
-A short request that joins two ordinary broad academic fields as co-equal subjects returns `true`, including when it adds an adult, college, or university level label. A level label does not define the fields' balance or relationship.
+A short request that joins exactly two fields as co-equal subjects returns `false`, including when it adds an adult, college, or university level label. Two topics can define one reusable course without intake. Three or more co-equal fields return `true` because their balance and relationship require a custom scope.
 
 A subject or foundations title followed by three or more required coverage items is a custom scope even when every item belongs to the same coherent field. Count coverage split across sentences, colons, semicolons, commas, or repeated conjunctions.
 
@@ -101,6 +101,7 @@ Contrasts:
 - `Foundations of environmental systems: climate, water, soils; policy and industrial applications...` requires personalization.
 - `Foundations of materials: bonding; crystal defects; phase changes; thermodyn` requires personalization because the prescribed list ends in a partial word.
 - `Introduction to ecology, genetics, and evolutionary relationships` requires personalization.
+- `biology and chemistry` is reusable because it joins exactly two fields.
 - `unified gauge theory` is reusable because the complete phrase is one scientific theory title.
 
 ## 5. Learner-specific or situation-specific course
