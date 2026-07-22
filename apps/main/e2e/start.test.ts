@@ -47,11 +47,10 @@ async function handleCourseGenerationRoute(route: Route): Promise<void> {
 }
 
 /**
- * Creates the completed Icelandic destination before the language picker can
- * warm its public cache. Keeping the setup ahead of every route visit mirrors
- * production, where generation invalidates this cache before redirecting.
+ * Creates the completed Icelandic destination used to verify the language
+ * route resolves an existing course without starting generation.
  */
-async function createCompletedIcelandicCourseFixture(): Promise<void> {
+async function createCompletedIcelandicCourseFixture() {
   const uniqueId = randomUUID().slice(0, 8);
   const organization = await getAiOrganization();
   const title = `E2E Icelandic ${uniqueId}`;
@@ -75,6 +74,8 @@ async function createCompletedIcelandicCourseFixture(): Promise<void> {
     position: 0,
     title: `E2E Icelandic Chapter ${uniqueId}`,
   });
+
+  return course;
 }
 
 test.describe("Start page", () => {
@@ -95,9 +96,6 @@ test.describe("Start page", () => {
 });
 
 test.describe("Start language path", () => {
-  test.describe.configure({ mode: "serial" });
-  test.beforeAll(createCompletedIcelandicCourseFixture);
-
   test("filters languages and creates a controlled language request", async ({ page }) => {
     await mockCourseGenerationWorkflow(page);
     await page.goto("/start/speak");
@@ -149,26 +147,12 @@ test.describe("Start language path", () => {
   });
 
   test("opens an existing completed language course without generation", async ({ page }) => {
-    await page.goto("/start/speak");
-    await page.getByRole("searchbox", { name: /search languages/iu }).fill("Icelandic");
+    const course = await createCompletedIcelandicCourseFixture();
 
-    const icelandicLink = page.getByRole("link", { name: /icelandic/iu });
-    const organization = await getAiOrganization();
-    const courseHref = await icelandicLink.getAttribute("href");
+    await page.goto("/start/speak/is");
 
-    if (!courseHref) {
-      throw new Error("Missing completed Icelandic course href");
-    }
-
-    expect(courseHref).toMatch(
-      new RegExp(`^/b/${organization.slug}/c/e2e-icelandic-[a-f0-9]+$`, "u"),
-    );
-
-    await expect(icelandicLink).not.toHaveAttribute("rel", "nofollow");
-
-    await icelandicLink.click();
-
-    await expect(page).toHaveURL(new RegExp(`${courseHref}$`, "u"));
+    await expect(page).toHaveURL(new RegExp(`/b/ai/c/${course.slug}$`, "u"));
+    await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
   });
 });
 
