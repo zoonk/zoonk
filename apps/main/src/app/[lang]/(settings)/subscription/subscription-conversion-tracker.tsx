@@ -2,7 +2,7 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { trackGoogleAdsSubscriptionConversion } from "@/lib/track-events";
-import { useCallback, useEffect } from "react";
+import { useEffect, useEffectEvent } from "react";
 
 const STRIPE_CHECKOUT_PARAM = "stripe_checkout";
 const HANDLED_SUBSCRIPTION_KEY_PREFIX = "zoonk-google-ads-subscription";
@@ -27,7 +27,7 @@ export function SubscriptionConversionTracker({
   stripeCheckoutCompleted: boolean;
 }) {
   const router = useRouter();
-  const refresh = useCallback(() => router.refresh(), [router]);
+  const refreshSubscription = useEffectEvent(() => router.refresh());
 
   useEffect(() => {
     if (!stripeCheckoutCompleted) {
@@ -35,7 +35,7 @@ export function SubscriptionConversionTracker({
     }
 
     if (!activeSubscriptionId) {
-      refreshSubscriptionState(refresh);
+      refreshSubscriptionState(refreshSubscription);
       return;
     }
 
@@ -50,7 +50,7 @@ export function SubscriptionConversionTracker({
 
     markSubscriptionConversionHandled(activeSubscriptionId);
     removeStripeCheckoutParamFromCurrentUrl();
-  }, [activeSubscriptionId, analyticsDisabled, plan, refresh, stripeCheckoutCompleted]);
+  }, [activeSubscriptionId, analyticsDisabled, plan, stripeCheckoutCompleted]);
 
   return null;
 }

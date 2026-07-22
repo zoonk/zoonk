@@ -1,10 +1,6 @@
-import { type LessonScope, findLastCompleted } from "@zoonk/core/lessons/last-completed";
-import { type LessonKind } from "@zoonk/db";
-import { cache } from "react";
-import { getNextChapterInCourse } from "../lessons/get-next-chapter-in-course";
-import { getLessonKindExclusionCacheArgs } from "../lessons/lesson-kind-exclusions";
-import { getSession } from "../users/get-user-session";
-import { type NextLessonState, getNextLessonStateForUser } from "./get-next-lesson-state";
+import { type LessonScope } from "../lessons/lesson-scope";
+import { type NextLessonState } from "./get-next-lesson-state";
+import { type PublishedCourseChapter } from "./progress-queries";
 
 type ContinueLessonTargetBase = {
   brandSlug: string | null;
@@ -21,116 +17,65 @@ type ContinueLessonTarget = ContinueLessonTargetBase & {
 };
 
 type ContinueChapterTarget = ContinueLessonTargetBase & { canPrefetch: false; completed: false };
-type LessonScopeKind = "chapterId" | "courseId" | "lessonId";
-type LessonScopeParts = { id: string; kind: LessonScopeKind };
 
-/**
- * React cache needs stable positional values. Splitting the scope union into a
- * key and id lets the sidebar CTA and catalog active shortcut share one
- * progress lookup when they resolve the same course, chapter, or lesson.
- */
-function getLessonScopeParts(scope: LessonScope): LessonScopeParts {
-  if ("courseId" in scope) {
-    return { id: scope.courseId, kind: "courseId" };
-  }
+export type ContinueTarget = ContinueChapterTarget | ContinueLessonTarget;
 
-  if ("chapterId" in scope) {
-    return { id: scope.chapterId, kind: "chapterId" };
-  }
-
-  return { id: scope.lessonId, kind: "lessonId" };
-}
-
-/**
- * Rebuilds the public scope union from cached primitive arguments so the
- * learner-aware continuation code can stay object-shaped and readable.
- */
-function getLessonScopeFromParts({ id, kind }: LessonScopeParts): LessonScope {
-  if (kind === "courseId") {
-    return { courseId: id };
-  }
-
-  if (kind === "chapterId") {
-    return { chapterId: id };
-  }
-
-  return { lessonId: id };
-}
-
-/**
- * Resolves the lesson destination that start/continue/review buttons should
- * use for a learner. This stays separate from structural course navigation
- * because it folds in session state, durable completions, and prefetch safety.
- */
-const cachedGetContinueLessonTarget = cache(
-  async (
-    scopeKind: LessonScopeKind,
-    scopeId: string,
-    headers?: Headers,
-    ...excludedLessonKinds: LessonKind[]
-  ): Promise<ContinueChapterTarget | ContinueLessonTarget | null> => {
-    const scope = getLessonScopeFromParts({ id: scopeId, kind: scopeKind });
-
-    const session = await getSession(headers);
-    const userId = session?.user.id;
-
-    const lastCompleted = userId
-      ? await findLastCompleted(userId, scope, { excludedLessonKinds })
-      : null;
-
-    const state = await getNextLessonStateForUser({
-      after: lastCompleted
-        ? {
-            chapterPosition: lastCompleted.chapterPosition,
-            lessonId: lastCompleted.lessonId,
-            lessonPosition: lastCompleted.lessonPosition,
-          }
-        : undefined,
-      excludedLessonKinds,
-      scope,
-      userId,
-    });
-
-    if (!state) {
-      return null;
-    }
-
-    const pendingChapterTarget = await getPendingChapterTarget({ scope, state });
-
-    if (pendingChapterTarget) {
-      return pendingChapterTarget;
-    }
-
-    return {
-      brandSlug: state.brandSlug,
-      canPrefetch: state.canPrefetch,
-      chapterSlug: state.chapterSlug,
-      completed: state.completed,
-      courseSlug: state.courseSlug,
-      hasStarted: state.hasStarted,
-      lessonPosition: state.lessonPosition,
-      lessonSlug: state.lessonSlug,
-    };
-  },
-);
-
-export function getContinueLessonTarget({
-  excludedLessonKinds,
-  headers,
-  scope,
-}: {
-  excludedLessonKinds?: LessonKind[];
-  headers?: Headers;
+export type ContinueLessonTargetInput = {
+  chapters: PublishedCourseChapter[];
   scope: LessonScope;
-}): Promise<ContinueChapterTarget | ContinueLessonTarget | null> {
-  const { id, kind } = getLessonScopeParts(scope);
+  state: NextLessonState | null;
+};
 
-  return cachedGetContinueLessonTarget(
-    kind,
-    id,
-    headers,
-    ...getLessonKindExclusionCacheArgs({ excludedLessonKinds }),
-  );
+export type ActiveCatalogTarget = { chapterSlug: string; lessonSlug?: string };
+
+/**
+ * The catalog's quiet current-item shortcut only appears after the learner has
+ * completed something. Deriving it from the continuation result lets the app
+ * reuse the same cached query leaves and pure continuation rules for both
+ * catalog controls.
+ */
+export function toActiveCatalogTarget(target: ContinueTarget | null): ActiveCatalogTarget | null {
+  if (!target?.hasStarted) {
+    return null;
+  }
+
+  if ("lessonSlug" in target) {
+    return { chapterSlug: target.chapterSlug, lessonSlug: target.lessonSlug };
+  }
+
+  return { chapterSlug: target.chapterSlug };
+}
+
+/**
+ * Maps already-resolved curriculum and progress state to the destination that
+ * start, continue, and review buttons should use. Authentication, permissions,
+ * caching, and data loading stay in the app adapter that builds this input.
+ */
+export function getContinueLessonTarget({
+  chapters,
+  scope,
+  state,
+}: ContinueLessonTargetInput): ContinueTarget | null {
+  if (!state) {
+    return null;
+  }
+
+  const pendingChapterTarget = getPendingChapterTarget({ chapters, scope, state });
+
+  if (pendingChapterTarget) {
+    return pendingChapterTarget;
+  }
+
+  return {
+    brandSlug: state.brandSlug,
+    canPrefetch: state.canPrefetch,
+    chapterSlug: state.chapterSlug,
+    completed: state.completed,
+    courseSlug: state.courseSlug,
+    hasStarted: state.hasStarted,
+    lessonPosition: state.lessonPosition,
+    lessonSlug: state.lessonSlug,
+  };
 }
 
 /**
@@ -138,21 +83,20 @@ export function getContinueLessonTarget({
  * published chapter still has no lesson shells. In that state the course CTA
  * should continue to the chapter page, not review the completed lesson.
  */
-async function getPendingChapterTarget({
+function getPendingChapterTarget({
+  chapters,
   scope,
   state,
 }: {
+  chapters: PublishedCourseChapter[];
   scope: LessonScope;
   state: NextLessonState;
-}): Promise<ContinueChapterTarget | null> {
+}): ContinueChapterTarget | null {
   if (!("courseId" in scope) || !state.completed || state.scopeDurablyCompleted) {
     return null;
   }
 
-  const nextChapter = await getNextChapterInCourse({
-    chapterPosition: state.chapterPosition,
-    courseId: state.courseId,
-  });
+  const nextChapter = chapters.find((chapter) => chapter.chapterPosition > state.chapterPosition);
 
   if (!nextChapter) {
     return null;

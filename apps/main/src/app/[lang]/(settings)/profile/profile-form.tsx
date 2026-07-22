@@ -15,6 +15,7 @@ import {
 } from "@zoonk/ui/components/field";
 import { Input } from "@zoonk/ui/components/input";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@zoonk/ui/components/input-group";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
@@ -144,5 +145,26 @@ export function ProfileForm({
         {t("Save changes")}
       </SubmitButton>
     </form>
+  );
+}
+
+/**
+ * Keeps each profile field in place while the learner's private defaults load.
+ */
+export function ProfileFormSkeleton() {
+  return (
+    <div className="flex flex-col gap-6 lg:max-w-md">
+      <div className="flex flex-col gap-2">
+        <Skeleton className="h-4 w-12" />
+        <Skeleton className="h-9 w-full" />
+        <Skeleton className="h-4 w-64 max-w-full" />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Skeleton className="h-4 w-20" />
+        <Skeleton className="h-9 w-full" />
+        <Skeleton className="h-4 w-72 max-w-full" />
+      </div>
+      <Skeleton className="h-9 w-32" />
+    </div>
   );
 }

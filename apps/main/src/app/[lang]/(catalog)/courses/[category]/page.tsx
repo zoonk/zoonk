@@ -9,12 +9,15 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import { type CourseCategory, isValidCategory } from "@zoonk/utils/categories";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { COURSE_CATEGORIES, isValidCategory } from "@zoonk/utils/categories";
 import { type Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { CourseListClient } from "../course-list-client";
+
+type CategoryParamsProps = Pick<PageProps<"/[lang]/courses/[category]">, "params">;
 
 export async function generateMetadata({
   params,
@@ -32,7 +35,17 @@ export async function generateMetadata({
   };
 }
 
-async function CategoryCourseListContent({ category }: { category: CourseCategory }) {
+/**
+ * Resolves the category inside the grid boundary so the surrounding catalog
+ * frame can prerender without binding its shell to one request URL.
+ */
+async function CategoryCourseListContent({ params }: CategoryParamsProps) {
+  const { category } = await params;
+
+  if (!isValidCategory(category)) {
+    notFound();
+  }
+
   const locale = await getLocale();
   const courses = await listCourses({ category, language: locale });
 
@@ -46,7 +59,11 @@ async function CategoryCourseListContent({ category }: { category: CourseCategor
   );
 }
 
-export default async function CategoryCourses({ params }: PageProps<"/[lang]/courses/[category]">) {
+/**
+ * Resolves translated category copy independently from the course query so both
+ * sections can stream as soon as their own work finishes.
+ */
+async function CategoryHeader({ params }: CategoryParamsProps) {
   const { category } = await params;
 
   if (!isValidCategory(category)) {
@@ -56,16 +73,38 @@ export default async function CategoryCourses({ params }: PageProps<"/[lang]/cou
   const header = await getCategoryHeader(category);
 
   return (
+    <ContainerHeader>
+      <ContainerHeaderGroup>
+        <ContainerTitle>{header.title}</ContainerTitle>
+        <ContainerDescription>{header.description}</ContainerDescription>
+      </ContainerHeaderGroup>
+    </ContainerHeader>
+  );
+}
+
+/** Pre-renders every category from the shared fixed taxonomy. */
+export function generateStaticParams() {
+  return COURSE_CATEGORIES.map((category) => ({ category }));
+}
+
+export default function CategoryCourses(props: PageProps<"/[lang]/courses/[category]">) {
+  return (
     <Container variant="grid">
-      <ContainerHeader>
-        <ContainerHeaderGroup>
-          <ContainerTitle>{header.title}</ContainerTitle>
-          <ContainerDescription>{header.description}</ContainerDescription>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
+      <Suspense
+        fallback={
+          <ContainerHeader>
+            <ContainerHeaderGroup>
+              <Skeleton className="h-7 w-48" />
+              <Skeleton className="h-4 w-64" />
+            </ContainerHeaderGroup>
+          </ContainerHeader>
+        }
+      >
+        <CategoryHeader params={props.params} />
+      </Suspense>
 
       <Suspense fallback={<CatalogGridSkeleton count={8} />}>
-        <CategoryCourseListContent category={category} />
+        <CategoryCourseListContent params={props.params} />
       </Suspense>
     </Container>
   );

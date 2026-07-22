@@ -1,26 +1,21 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { deduplicateNormalizedTexts } from "@zoonk/utils/string";
-import { getChapterSentencesForIds } from "./get-chapter-sentences";
-import { getChapterWordsForIds } from "./get-chapter-words";
+import { type PlayerChapterSentence } from "./get-chapter-sentences";
+import { type PlayerChapterWord } from "./get-chapter-words";
 
 /**
- * Target-language distractors are stored on chapter resources. Loading them by
- * exact resource IDs lets review and derived lessons render the same word bank
- * that generation saved for the source step.
+ * Resolves distractors from chapter resources the caller already loaded. This
+ * lets app-level player bundles reuse their base rows instead of querying the
+ * same word and sentence IDs again for each derived resource bank.
  */
-export async function getChapterDistractorWords({
-  chapterSentenceIds,
-  chapterWordIds,
+export async function getChapterDistractorWordsForResources({
+  chapterSentences,
+  chapterWords,
 }: {
-  chapterSentenceIds: string[];
-  chapterWordIds: string[];
+  chapterSentences: PlayerChapterSentence[];
+  chapterWords: PlayerChapterWord[];
 }) {
-  const [chapterWords, chapterSentences] = await Promise.all([
-    getChapterWordsForIds({ chapterWordIds }),
-    getChapterSentencesForIds({ chapterSentenceIds }),
-  ]);
-
   const chapterWord = chapterWords[0];
   const chapterSentence = chapterSentences[0];
 

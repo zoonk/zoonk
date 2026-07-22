@@ -1,7 +1,8 @@
 import { getBpHistory } from "@/data/progress/get-bp-history";
-import { getSession } from "@zoonk/core/users/session/get";
+import { getSession } from "@/data/users/get-session";
 import { validatePeriod } from "@zoonk/utils/date-ranges";
 import { getLocale } from "next-intl/server";
+import { Suspense } from "react";
 import { ProgressChartSkeleton } from "../_components/progress-chart-skeleton";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
 import { ProgressExplanationSkeleton } from "../_components/progress-explanation-skeleton";
@@ -57,11 +58,13 @@ export async function LevelContent({
         periodTotal={data.periodTotal}
       />
 
-      <LevelInsights
-        period={validPeriod}
-        periodEnd={data.periodEnd}
-        periodStart={data.periodStart}
-      />
+      <Suspense fallback={<LevelInsightsSkeleton />}>
+        <LevelInsights
+          period={validPeriod}
+          periodEnd={data.periodEnd}
+          periodStart={data.periodStart}
+        />
+      </Suspense>
 
       <LevelProgression currentBelt={data.currentBelt} />
 

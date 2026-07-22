@@ -46,6 +46,38 @@ async function handleCourseGenerationRoute(route: Route): Promise<void> {
   await route.continue();
 }
 
+/**
+ * Creates the completed Icelandic destination used to verify the language
+ * route resolves an existing course without starting generation.
+ */
+async function createCompletedIcelandicCourseFixture() {
+  const uniqueId = randomUUID().slice(0, 8);
+  const organization = await getAiOrganization();
+  const title = `E2E Icelandic ${uniqueId}`;
+
+  const course = await courseFixture({
+    format: "language",
+    generationStatus: "completed",
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString(title),
+    organizationId: organization.id,
+    slug: `e2e-icelandic-${uniqueId}`,
+    targetLanguage: "is",
+    title,
+  });
+
+  await chapterFixture({
+    courseId: course.id,
+    isPublished: true,
+    organizationId: organization.id,
+    position: 0,
+    title: `E2E Icelandic Chapter ${uniqueId}`,
+  });
+
+  return course;
+}
+
 test.describe("Start page", () => {
   test("shows goal cards and opens the learn path", async ({ page }) => {
     await page.goto("/start");
@@ -115,42 +147,12 @@ test.describe("Start language path", () => {
   });
 
   test("opens an existing completed language course without generation", async ({ page }) => {
-    const uniqueId = randomUUID().slice(0, 8);
-    const org = await getAiOrganization();
-    const title = `E2E Icelandic ${uniqueId}`;
+    const course = await createCompletedIcelandicCourseFixture();
 
-    const course = await courseFixture({
-      format: "language",
-      generationStatus: "completed",
-      isPublished: true,
-      language: "en",
-      normalizedTitle: normalizeString(title),
-      organizationId: org.id,
-      slug: `e2e-icelandic-${uniqueId}`,
-      targetLanguage: "is",
-      title,
-    });
+    await page.goto("/start/speak/is");
 
-    await chapterFixture({
-      courseId: course.id,
-      isPublished: true,
-      organizationId: org.id,
-      position: 0,
-      title: `E2E Icelandic Chapter ${uniqueId}`,
-    });
-
-    await page.goto("/start/speak");
-    await page.getByRole("searchbox", { name: /search languages/iu }).fill("Icelandic");
-
-    const courseHref = `/b/${org.slug}/c/${course.slug}`;
-    const icelandicLink = page.getByRole("link", { name: /icelandic/iu });
-
-    await expect(icelandicLink).toHaveAttribute("href", courseHref);
-    await expect(icelandicLink).not.toHaveAttribute("rel", "nofollow");
-
-    await icelandicLink.click();
-
-    await expect(page).toHaveURL(new RegExp(`${courseHref}$`, "u"));
+    await expect(page).toHaveURL(new RegExp(`/b/ai/c/${course.slug}$`, "u"));
+    await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
   });
 });
 

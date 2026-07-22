@@ -1,11 +1,11 @@
 import { prisma } from "@zoonk/db";
-import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { signInAsCurrentUser } from "../../../test-utils/auth";
 import { getBestTime } from "./get-best-time";
 
 type StepAttemptParams = {
@@ -68,7 +68,7 @@ async function createTestStep(orgId: string) {
 
 describe("unauthenticated users", () => {
   it("returns null", async () => {
-    const result = await getBestTime({ headers: new Headers() });
+    const result = await getBestTime();
     expect(result).toBeNull();
   });
 });
@@ -76,18 +76,18 @@ describe("unauthenticated users", () => {
 describe("authenticated users", () => {
   it("returns null when user has no StepAttempt records", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
-    const result = await getBestTime({ headers });
+    const result = await getBestTime();
     expect(result).toBeNull();
   });
 
   it("returns best time when user has data for multiple periods", async () => {
     const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
 
-    const [headers, step] = await Promise.all([
-      signInAs(user.email, user.password),
+    const [step] = await Promise.all([
       createTestStep(org.id),
+      signInAsCurrentUser({ email: user.email, password: user.password }),
     ]);
 
     const userId = user.id;
@@ -100,7 +100,7 @@ describe("authenticated users", () => {
       createStepAttempts({ hourOfDay: 15, stepId, userId }, 8, 2),
     ]);
 
-    const result = await getBestTime({ headers });
+    const result = await getBestTime();
 
     expect(result).not.toBeNull();
     expect(result?.period).toBe(1); // Morning
@@ -110,9 +110,9 @@ describe("authenticated users", () => {
   it("excludes records older than 90 days", async () => {
     const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
 
-    const [headers, step] = await Promise.all([
-      signInAs(user.email, user.password),
+    const [step] = await Promise.all([
       createTestStep(org.id),
+      signInAsCurrentUser({ email: user.email, password: user.password }),
     ]);
 
     const now = new Date();
@@ -129,7 +129,7 @@ describe("authenticated users", () => {
       createStepAttempts({ answeredAt: oldDate, hourOfDay: 15, stepId, userId }, 10, 0),
     ]);
 
-    const result = await getBestTime({ headers });
+    const result = await getBestTime();
 
     expect(result).not.toBeNull();
     expect(result?.period).toBe(1); // Morning
@@ -139,9 +139,9 @@ describe("authenticated users", () => {
   it("uses period with most answers as tiebreaker", async () => {
     const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
 
-    const [headers, step] = await Promise.all([
-      signInAs(user.email, user.password),
+    const [step] = await Promise.all([
       createTestStep(org.id),
+      signInAsCurrentUser({ email: user.email, password: user.password }),
     ]);
 
     const userId = user.id;
@@ -154,7 +154,7 @@ describe("authenticated users", () => {
       createStepAttempts({ hourOfDay: 15, stepId, userId }, 18, 2),
     ]);
 
-    const result = await getBestTime({ headers });
+    const result = await getBestTime();
 
     expect(result).not.toBeNull();
     expect(result?.period).toBe(2); // Afternoon (more answers)
@@ -164,9 +164,9 @@ describe("authenticated users", () => {
   it("returns correct score calculation", async () => {
     const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
 
-    const [headers, step] = await Promise.all([
-      signInAs(user.email, user.password),
+    const [step] = await Promise.all([
       createTestStep(org.id),
+      signInAsCurrentUser({ email: user.email, password: user.password }),
     ]);
 
     const userId = user.id;
@@ -175,7 +175,7 @@ describe("authenticated users", () => {
     // 17 correct, 3 incorrect = 85%
     await createStepAttempts({ hourOfDay: 21, stepId, userId }, 17, 3);
 
-    const result = await getBestTime({ headers });
+    const result = await getBestTime();
 
     expect(result).not.toBeNull();
     expect(result?.period).toBe(3); // Evening
@@ -185,9 +185,9 @@ describe("authenticated users", () => {
   it("correctly maps hours to periods", async () => {
     const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
 
-    const [headers, step] = await Promise.all([
-      signInAs(user.email, user.password),
+    const [step] = await Promise.all([
       createTestStep(org.id),
+      signInAsCurrentUser({ email: user.email, password: user.password }),
     ]);
 
     const userId = user.id;
@@ -196,7 +196,7 @@ describe("authenticated users", () => {
     // Night (hour 3): 100%
     await createStepAttempts({ hourOfDay: 3, stepId, userId }, 1, 0);
 
-    const result = await getBestTime({ headers });
+    const result = await getBestTime();
 
     expect(result).not.toBeNull();
     expect(result?.period).toBe(0); // Night
@@ -206,9 +206,9 @@ describe("authenticated users", () => {
   it("filters by custom date range when startDate is provided", async () => {
     const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
 
-    const [headers, step] = await Promise.all([
-      signInAs(user.email, user.password),
+    const [step] = await Promise.all([
       createTestStep(org.id),
+      signInAsCurrentUser({ email: user.email, password: user.password }),
     ]);
 
     const now = new Date();
@@ -228,7 +228,7 @@ describe("authenticated users", () => {
     ]);
 
     // Filter to only include data from the past week
-    const result = await getBestTime({ headers, startDate: oneWeekAgo });
+    const result = await getBestTime({ startDate: oneWeekAgo });
 
     expect(result).not.toBeNull();
     expect(result?.period).toBe(1); // Morning (only recent data)
@@ -238,9 +238,9 @@ describe("authenticated users", () => {
   it("excludes later records when endDate is provided", async () => {
     const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
 
-    const [headers, step] = await Promise.all([
-      signInAs(user.email, user.password),
+    const [step] = await Promise.all([
       createTestStep(org.id),
+      signInAsCurrentUser({ email: user.email, password: user.password }),
     ]);
 
     const userId = user.id;
@@ -263,7 +263,6 @@ describe("authenticated users", () => {
 
     const result = await getBestTime({
       endDate: new Date("2025-01-31T23:59:59.999Z"),
-      headers,
       startDate: new Date("2025-01-01T00:00:00Z"),
     });
 

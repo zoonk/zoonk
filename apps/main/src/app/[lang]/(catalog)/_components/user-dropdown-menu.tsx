@@ -1,6 +1,6 @@
+import { getSession } from "@/data/users/get-session";
 import { Link } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
-import { getSession } from "@zoonk/core/users/session/get";
 import {
   DropdownMenuContent,
   DropdownMenuItem,
@@ -21,14 +21,14 @@ export async function UserDropdownMenu() {
   ];
 
   const resourcesMenu = [
-    { key: t("Blog"), ...getMenu("blog") },
-    { key: t("Feedback & Support"), ...getMenu("support") },
+    { key: t("Blog"), prefetch: false, ...getMenu("blog") },
+    { key: t("Feedback & Support"), prefetch: true, ...getMenu("support") },
   ];
 
   return (
     <DropdownMenuContent align="end" className="w-56">
       {catalogMenu.map((menu) => (
-        <DropdownMenuItem key={menu.key} render={<Link href={menu.url} />}>
+        <DropdownMenuItem key={menu.key} render={<Link href={menu.url} prefetch />}>
           <menu.icon aria-hidden="true" />
           {menu.key}
         </DropdownMenuItem>
@@ -37,7 +37,7 @@ export async function UserDropdownMenu() {
       <DropdownMenuSeparator />
 
       {accountMenu.map((menu) => (
-        <DropdownMenuItem key={menu.key} render={<Link href={menu.url} />}>
+        <DropdownMenuItem key={menu.key} render={<Link href={menu.url} prefetch />}>
           <menu.icon aria-hidden="true" />
           {menu.key}
         </DropdownMenuItem>
@@ -46,7 +46,7 @@ export async function UserDropdownMenu() {
       <DropdownMenuSeparator />
 
       {resourcesMenu.map((menu) => (
-        <DropdownMenuItem key={menu.key} render={<Link href={menu.url} />}>
+        <DropdownMenuItem key={menu.key} render={<Link href={menu.url} prefetch={menu.prefetch} />}>
           <menu.icon aria-hidden="true" />
           {menu.key}
         </DropdownMenuItem>

@@ -28,6 +28,7 @@ export function GenerationClient({
   courseSlug,
   generationRunId,
   initialStatus,
+  invalidateContent,
   lessonId,
   lessonKind,
   lessonSlug,
@@ -37,6 +38,7 @@ export function GenerationClient({
   courseSlug: string;
   generationRunId: string | null;
   initialStatus: GenerationStatus;
+  invalidateContent: () => Promise<void>;
   lessonId: string;
   lessonKind: GeneratedLessonKind;
   lessonSlug: string;
@@ -82,6 +84,7 @@ export function GenerationClient({
   );
 
   useCompletionRedirect({
+    beforeRedirect: invalidateContent,
     status: generation.status,
     url: `/b/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`,
   });

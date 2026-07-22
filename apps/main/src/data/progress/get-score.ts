@@ -1,24 +1,28 @@
 import "server-only";
-import { getSession } from "@zoonk/core/users/session/get";
+import { getUserProgressCacheTag } from "@/data/cache-tags";
+import { getSession } from "@/data/users/get-session";
 import { prisma } from "@zoonk/db";
 import { DEFAULT_PROGRESS_LOOKBACK_DAYS } from "@zoonk/utils/date-ranges";
 import { safeAsync } from "@zoonk/utils/error";
-import { cache } from "react";
+import { cacheTag } from "next/cache";
 
 type ScoreData = { score: number };
 
-function getDateRange(
-  startDateIso?: string,
-  endDateIso?: string,
-): { startDate: Date; endDate: Date } {
-  if (startDateIso && endDateIso) {
-    return { endDate: new Date(endDateIso), startDate: new Date(startDateIso) };
+type ScoreParams = { endDate?: Date; startDate?: Date };
+
+/**
+ * Keeps the rolling default inside the query scope so omitted dates share one
+ * cache key instead of creating a unique timestamp key on every request.
+ */
+function getDateRange({ endDate, startDate }: ScoreParams): { startDate: Date; endDate: Date } {
+  if (startDate && endDate) {
+    return { endDate, startDate };
   }
 
-  const endDate = new Date();
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - DEFAULT_PROGRESS_LOOKBACK_DAYS);
-  return { endDate, startDate };
+  const resolvedEndDate = new Date();
+  const resolvedStartDate = new Date();
+  resolvedStartDate.setDate(resolvedStartDate.getDate() - DEFAULT_PROGRESS_LOOKBACK_DAYS);
+  return { endDate: resolvedEndDate, startDate: resolvedStartDate };
 }
 
 function calculateScoreFromTotals(correct: number, incorrect: number): number | null {
@@ -31,49 +35,38 @@ function calculateScoreFromTotals(correct: number, incorrect: number): number | 
   return (correct / total) * 100;
 }
 
-const cachedGetScore = cache(
-  async (
-    startDateIso?: string,
-    endDateIso?: string,
-    headers?: Headers,
-  ): Promise<ScoreData | null> => {
-    const session = await getSession(headers);
+async function findScore({
+  endDate,
+  startDate,
+  userId,
+}: ScoreParams & { userId: string }): Promise<ScoreData | null> {
+  "use cache";
 
-    if (!session) {
-      return null;
-    }
+  cacheTag(getUserProgressCacheTag(userId));
 
-    const userId = session.user.id;
-    const { startDate, endDate } = getDateRange(startDateIso, endDateIso);
+  const dateRange = getDateRange({ endDate, startDate });
 
-    const { data: result, error } = await safeAsync(() =>
-      prisma.dailyProgress.aggregate({
-        _sum: { correctAnswers: true, incorrectAnswers: true },
-        where: { date: { gte: startDate, lte: endDate }, userId },
-      }),
-    );
+  const result = await prisma.dailyProgress.aggregate({
+    _sum: { correctAnswers: true, incorrectAnswers: true },
+    where: { date: { gte: dateRange.startDate, lte: dateRange.endDate }, userId },
+  });
 
-    if (error || !result) {
-      return null;
-    }
-
-    const score = calculateScoreFromTotals(
-      result._sum.correctAnswers ?? 0,
-      result._sum.incorrectAnswers ?? 0,
-    );
-
-    return score === null ? null : { score };
-  },
-);
-
-export function getScore(params?: {
-  headers?: Headers;
-  startDate?: Date;
-  endDate?: Date;
-}): Promise<ScoreData | null> {
-  return cachedGetScore(
-    params?.startDate?.toISOString(),
-    params?.endDate?.toISOString(),
-    params?.headers,
+  const score = calculateScoreFromTotals(
+    result._sum.correctAnswers ?? 0,
+    result._sum.incorrectAnswers ?? 0,
   );
+
+  return score === null ? null : { score };
+}
+
+/** Returns the authenticated learner's score for the selected period. */
+export async function getScore(params: ScoreParams = {}): Promise<ScoreData | null> {
+  const session = await getSession();
+
+  if (!session) {
+    return null;
+  }
+
+  const { data } = await safeAsync(() => findScore({ ...params, userId: session.user.id }));
+  return data ?? null;
 }

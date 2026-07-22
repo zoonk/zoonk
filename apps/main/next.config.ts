@@ -17,11 +17,13 @@ const e2eAliases: Record<string, string> = isE2E
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["*.local"],
+  cacheComponents: true,
   // Use separate build directories so E2E and production builds don't conflict
   distDir: isE2E ? ".next-e2e" : ".next",
   experimental: {
     appNewScrollHandler: true,
     authInterrupts: true,
+    exposeTestingApiInProductionBuild: isE2E,
     staleTimes: { dynamic: 300 },
     turbopackFileSystemCacheForBuild: true,
     turbopackRustReactCompiler: true,
@@ -40,6 +42,7 @@ const nextConfig: NextConfig = {
   },
   logging: { browserToTerminal: true },
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
+  partialPrefetching: true,
   reactCompiler: true,
   async redirects() {
     return [

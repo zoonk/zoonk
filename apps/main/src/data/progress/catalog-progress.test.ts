@@ -1,37 +1,30 @@
-import { signInAs } from "@zoonk/testing/fixtures/auth";
+import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
-import {
-  getCatalogChapterProgress,
-  getCatalogLessonProgress,
-  getChapterContinueProgress,
-  getCourseContinueProgress,
-} from "./catalog-progress";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { signInAsCurrentUser } from "../../../test-utils/auth";
+import { getCatalogChapterProgress, getCatalogLessonProgress } from "./catalog-progress";
+import { getChapterContinueProgress, getCourseContinueProgress } from "./continue-progress";
 
-const catalogContext = await createAuthenticatedCatalogContext();
+const catalogContext = await createCatalogContext();
 
-/**
- * Catalog progress functions accept request headers for tests, matching the
- * lower-level progress helpers they wrap while keeping server components on
- * the default `next/headers` path.
- */
-async function createAuthenticatedCatalogContext() {
+/** Creates the shared authenticated user and organization for catalog progress tests. */
+async function createCatalogContext() {
   const [organization, user] = await Promise.all([organizationFixture(), userFixture()]);
-  const headers = await signInAs(user.email, user.password);
 
-  return { headers, organization, user };
+  return { organization, user };
 }
 
-/**
- * React cache can hold the no-argument session lookup for the current test
- * worker, so all catalog progress tests share one authenticated learner while
- * still creating their own course data.
- */
-function getAuthenticatedCatalogContext() {
+/** Exposes the shared fixture user through the current request before each data read. */
+async function getAuthenticatedCatalogContext() {
+  await signInAsCurrentUser({
+    email: catalogContext.user.email,
+    password: catalogContext.user.password,
+  });
+
   return catalogContext;
 }
 
@@ -109,8 +102,22 @@ async function completeLessons({ lessonIds, userId }: { lessonIds: string[]; use
 }
 
 describe("catalog progress data", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("degrades optional progress query failures to an empty list", async () => {
+    await getAuthenticatedCatalogContext();
+    const queryError = new Error("Progress query failed");
+    vi.spyOn(prisma, "$queryRaw").mockRejectedValueOnce(queryError);
+
+    await expect(
+      getCatalogLessonProgress({ chapterId: crypto.randomUUID() }),
+    ).resolves.toStrictEqual([]);
+  });
+
   it("returns lesson progress rows for the chapter grid", async () => {
-    const { headers, organization, user } = getAuthenticatedCatalogContext();
+    const { organization, user } = await getAuthenticatedCatalogContext();
     const { chapter1 } = await createPublishedCourseChapters({ organizationId: organization.id });
 
     const [completedLesson, pendingLesson] = await createPublishedLessons({
@@ -125,16 +132,14 @@ describe("catalog progress data", () => {
 
     await completeLessons({ lessonIds: [completedLesson.id], userId: user.id });
 
-    await expect(
-      getCatalogLessonProgress({ chapterId: chapter1.id, headers }),
-    ).resolves.toStrictEqual([
+    await expect(getCatalogLessonProgress({ chapterId: chapter1.id })).resolves.toStrictEqual([
       { isCompleted: true, lessonId: completedLesson.id },
       { isCompleted: false, lessonId: pendingLesson.id },
     ]);
   });
 
   it("returns chapter progress rows for the course grid", async () => {
-    const { headers, organization, user } = getAuthenticatedCatalogContext();
+    const { organization, user } = await getAuthenticatedCatalogContext();
 
     const { chapter1, chapter2, chapter3, course } = await createPublishedCourseChapters({
       organizationId: organization.id,
@@ -154,9 +159,7 @@ describe("catalog progress data", () => {
 
     await completeLessons({ lessonIds: [chapter1Lesson.id, chapter2Lesson.id], userId: user.id });
 
-    await expect(
-      getCatalogChapterProgress({ courseId: course.id, headers }),
-    ).resolves.toStrictEqual([
+    await expect(getCatalogChapterProgress({ courseId: course.id })).resolves.toStrictEqual([
       { chapterId: chapter1.id, completedLessons: 1, totalLessons: 2 },
       { chapterId: chapter2.id, completedLessons: 1, totalLessons: 1 },
       { chapterId: chapter3.id, completedLessons: 0, totalLessons: 0 },
@@ -164,7 +167,7 @@ describe("catalog progress data", () => {
   });
 
   it("returns exact chapter continue percentages", async () => {
-    const { headers, organization, user } = getAuthenticatedCatalogContext();
+    const { organization, user } = await getAuthenticatedCatalogContext();
     const { chapter1 } = await createPublishedCourseChapters({ organizationId: organization.id });
 
     const [completedLesson] = await createPublishedLessons({
@@ -179,13 +182,13 @@ describe("catalog progress data", () => {
 
     await completeLessons({ lessonIds: [completedLesson.id], userId: user.id });
 
-    await expect(
-      getChapterContinueProgress({ chapterId: chapter1.id, headers }),
-    ).resolves.toStrictEqual({ percentComplete: 33 });
+    await expect(getChapterContinueProgress({ chapterId: chapter1.id })).resolves.toStrictEqual({
+      percentComplete: 33,
+    });
   });
 
   it("returns exact course continue percentages when every chapter is generated", async () => {
-    const { headers, organization, user } = getAuthenticatedCatalogContext();
+    const { organization, user } = await getAuthenticatedCatalogContext();
 
     const { chapter1, chapter2, chapter3, course } = await createPublishedCourseChapters({
       organizationId: organization.id,
@@ -209,13 +212,13 @@ describe("catalog progress data", () => {
       userId: user.id,
     });
 
-    await expect(
-      getCourseContinueProgress({ courseId: course.id, headers }),
-    ).resolves.toStrictEqual({ percentComplete: 57 });
+    await expect(getCourseContinueProgress({ courseId: course.id })).resolves.toStrictEqual({
+      percentComplete: 57,
+    });
   });
 
   it("estimates course continue percentages while later chapters are pending", async () => {
-    const { headers, organization, user } = getAuthenticatedCatalogContext();
+    const { organization, user } = await getAuthenticatedCatalogContext();
 
     const { chapter1, chapter2, course } = await createPublishedCourseChapters({
       chapter3GenerationStatus: "pending",
@@ -236,13 +239,13 @@ describe("catalog progress data", () => {
 
     await completeLessons({ lessonIds: [chapter1Lesson.id, chapter2Lesson.id], userId: user.id });
 
-    await expect(
-      getCourseContinueProgress({ courseId: course.id, headers }),
-    ).resolves.toStrictEqual({ percentComplete: 25 });
+    await expect(getCourseContinueProgress({ courseId: course.id })).resolves.toStrictEqual({
+      percentComplete: 25,
+    });
   });
 
   it("applies hidden lesson-kind filters across catalog and continue progress", async () => {
-    const { headers, organization, user } = getAuthenticatedCatalogContext();
+    const { organization, user } = await getAuthenticatedCatalogContext();
 
     const { chapter1, course } = await createPublishedCourseChapters({
       organizationId: organization.id,
@@ -268,23 +271,19 @@ describe("catalog progress data", () => {
     await completeLessons({ lessonIds: [visibleLesson.id], userId: user.id });
 
     await expect(
-      getCatalogLessonProgress({ chapterId: chapter1.id, excludedLessonKinds: ["quiz"], headers }),
+      getCatalogLessonProgress({ chapterId: chapter1.id, excludedLessonKinds: ["quiz"] }),
     ).resolves.toStrictEqual([{ isCompleted: true, lessonId: visibleLesson.id }]);
 
     await expect(
-      getCatalogChapterProgress({ courseId: course.id, excludedLessonKinds: ["quiz"], headers }),
+      getCatalogChapterProgress({ courseId: course.id, excludedLessonKinds: ["quiz"] }),
     ).resolves.toContainEqual({ chapterId: chapter1.id, completedLessons: 1, totalLessons: 1 });
 
     await expect(
-      getChapterContinueProgress({
-        chapterId: chapter1.id,
-        excludedLessonKinds: ["quiz"],
-        headers,
-      }),
+      getChapterContinueProgress({ chapterId: chapter1.id, excludedLessonKinds: ["quiz"] }),
     ).resolves.toStrictEqual({ percentComplete: 100 });
 
     await expect(
-      getCourseContinueProgress({ courseId: course.id, excludedLessonKinds: ["quiz"], headers }),
+      getCourseContinueProgress({ courseId: course.id, excludedLessonKinds: ["quiz"] }),
     ).resolves.toStrictEqual({ percentComplete: 100 });
   });
 });

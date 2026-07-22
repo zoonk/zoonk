@@ -12,6 +12,8 @@ import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { SubscriptionPlans, SubscriptionPlansSkeleton } from "./subscription-plans";
 
+export const prefetch = "allow-runtime";
+
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 

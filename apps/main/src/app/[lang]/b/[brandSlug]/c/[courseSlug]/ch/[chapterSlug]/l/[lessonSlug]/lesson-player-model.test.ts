@@ -1,5 +1,36 @@
 import { describe, expect, it } from "vitest";
-import { buildLessonPlayerModel, buildLessonProgressMeta } from "./lesson-player-model";
+import {
+  buildLessonPlayerModel,
+  buildLessonProgressMeta,
+  getNextChapterTarget,
+} from "./lesson-player-model";
+
+describe(getNextChapterTarget, () => {
+  it("selects the next chapter from the ordered published course chapters", () => {
+    expect(
+      getNextChapterTarget({
+        brandSlug: "brand",
+        chapterId: "chapter-1",
+        courseChapters: [
+          { id: "chapter-1", slug: "chapter-one" },
+          { id: "chapter-3", slug: "chapter-three" },
+        ],
+        courseSlug: "course",
+      }),
+    ).toStrictEqual({ brandSlug: "brand", chapterSlug: "chapter-three", courseSlug: "course" });
+  });
+
+  it("returns null when there is no later published chapter", () => {
+    expect(
+      getNextChapterTarget({
+        brandSlug: "brand",
+        chapterId: "chapter-1",
+        courseChapters: [{ id: "chapter-1", slug: "chapter-one" }],
+        courseSlug: "course",
+      }),
+    ).toBeNull();
+  });
+});
 
 describe(buildLessonProgressMeta, () => {
   it("counts visible lesson position and remaining curriculum from ordered published lists", () => {

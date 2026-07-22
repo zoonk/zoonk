@@ -1,26 +1,38 @@
 import { prisma } from "@zoonk/db";
-import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { signInAsCurrentUser } from "../../../test-utils/auth";
 import { getPlayerProgressSnapshot } from "./get-player-progress-snapshot";
 
 describe("unauthenticated users", () => {
   it("returns null", async () => {
-    const result = await getPlayerProgressSnapshot({ headers: new Headers() });
+    const result = await getPlayerProgressSnapshot();
 
     expect(result).toBeNull();
   });
 });
 
 describe("authenticated users", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("returns null when an optional progress query fails", async () => {
+    const user = await userFixture();
+    await signInAsCurrentUser({ email: user.email, password: user.password });
+    const queryError = new Error("Progress query failed");
+    vi.spyOn(prisma.userProgress, "findUnique").mockRejectedValueOnce(queryError);
+
+    const result = await getPlayerProgressSnapshot({ now: new Date("2026-01-10T12:00:00Z") });
+
+    expect(result).toBeNull();
+  });
+
   it("returns a zero snapshot when the user has no progress yet", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
-    const result = await getPlayerProgressSnapshot({
-      headers,
-      now: new Date("2026-01-10T12:00:00Z"),
-    });
+    const result = await getPlayerProgressSnapshot({ now: new Date("2026-01-10T12:00:00Z") });
 
     expect(result).toStrictEqual({
       bestDayScores: [],
@@ -32,13 +44,14 @@ describe("authenticated users", () => {
       todayCompletedLessons: 0,
       todayEnergyAtEnd: null,
       todayInteractiveLessons: 0,
+      totalBrainPower: 0,
       totalLearningSeconds: 0,
     });
   });
 
   it("returns decayed energy, today progress, previous daily BP record, and full-energy days", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     await Promise.all([
       prisma.userProgress.create({
@@ -88,10 +101,7 @@ describe("authenticated users", () => {
       }),
     ]);
 
-    const result = await getPlayerProgressSnapshot({
-      headers,
-      now: new Date("2026-01-10T12:00:00Z"),
-    });
+    const result = await getPlayerProgressSnapshot({ now: new Date("2026-01-10T12:00:00Z") });
 
     expect(result).toStrictEqual({
       bestDayScores: [
@@ -107,6 +117,7 @@ describe("authenticated users", () => {
       todayCompletedLessons: 1,
       todayEnergyAtEnd: 99,
       todayInteractiveLessons: 1,
+      totalBrainPower: 120,
       totalLearningSeconds: 1020,
     });
   });

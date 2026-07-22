@@ -29,6 +29,7 @@ export function GenerationClient({
   courseSlug,
   generationRunId,
   initialStatus,
+  invalidateContent,
 }: {
   chapterId: string;
   chapterSlug: string;
@@ -36,6 +37,7 @@ export function GenerationClient({
   courseSlug: string;
   generationRunId: string | null;
   initialStatus: GenerationStatus;
+  invalidateContent: () => Promise<void>;
 }) {
   const t = useExtracted();
 
@@ -76,6 +78,7 @@ export function GenerationClient({
   );
 
   useCompletionRedirect({
+    beforeRedirect: invalidateContent,
     status: generation.status,
     url: `/b/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}`,
   });

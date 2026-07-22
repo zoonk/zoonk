@@ -6,7 +6,14 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { chapterSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { chapterWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, it } from "vitest";
-import { getChapterSentenceWordsForIds } from "./get-chapter-sentence-words";
+import { getChapterSentenceWords } from "./get-chapter-sentence-words";
+import { getChapterSentencesForIds } from "./get-chapter-sentences";
+
+/** Loads source sentences before exercising the app-facing word-bank helper. */
+async function getChapterSentenceWordsForIds(chapterSentenceIds: string[]) {
+  const chapterSentences = await getChapterSentencesForIds(chapterSentenceIds);
+  return getChapterSentenceWords(chapterSentences);
+}
 
 describe(getChapterSentenceWordsForIds, () => {
   let org: Awaited<ReturnType<typeof organizationFixture>>;
@@ -56,9 +63,7 @@ describe(getChapterSentenceWordsForIds, () => {
       chapterWordFixture({ sourceLessonId: newLesson.id, wordId: word2.id }),
     ]);
 
-    const result = await getChapterSentenceWordsForIds({
-      chapterSentenceIds: [chapterSentence.id],
-    });
+    const result = await getChapterSentenceWordsForIds([chapterSentence.id]);
 
     expect(result).toHaveLength(2);
 
@@ -68,12 +73,12 @@ describe(getChapterSentenceWordsForIds, () => {
   });
 
   it("returns empty array when no ids are requested", async () => {
-    const result = await getChapterSentenceWordsForIds({ chapterSentenceIds: [] });
+    const result = await getChapterSentenceWordsForIds([]);
     expect(result).toStrictEqual([]);
   });
 
   it("returns empty array for non-existent chapter sentence", async () => {
-    const result = await getChapterSentenceWordsForIds({ chapterSentenceIds: [randomUUID()] });
+    const result = await getChapterSentenceWordsForIds([randomUUID()]);
     expect(result).toStrictEqual([]);
   });
 
@@ -99,9 +104,7 @@ describe(getChapterSentenceWordsForIds, () => {
       sourceLessonId: newLesson.id,
     });
 
-    const result = await getChapterSentenceWordsForIds({
-      chapterSentenceIds: [chapterSentence.id],
-    });
+    const result = await getChapterSentenceWordsForIds([chapterSentence.id]);
 
     expect(result).toStrictEqual([]);
   });
@@ -126,9 +129,7 @@ describe(getChapterSentenceWordsForIds, () => {
       chapterWordFixture({ sourceLessonId: newLesson.id, wordId: word.id }),
     ]);
 
-    const result = await getChapterSentenceWordsForIds({
-      chapterSentenceIds: [chapterSentence.id],
-    });
+    const result = await getChapterSentenceWordsForIds([chapterSentence.id]);
 
     expect(result).toHaveLength(1);
     expect(result[0]?.word.word).toBe(word.word);
@@ -164,9 +165,7 @@ describe(getChapterSentenceWordsForIds, () => {
     ]);
 
     // extractUniqueSentenceWords lowercases to "hola...", but Word record has "Hola..."
-    const result = await getChapterSentenceWordsForIds({
-      chapterSentenceIds: [chapterSentence.id],
-    });
+    const result = await getChapterSentenceWordsForIds([chapterSentence.id]);
 
     const match = result.find((item) => item.word.word.toLowerCase() === wordText.toLowerCase());
     expect(match).toBeDefined();
@@ -203,9 +202,7 @@ describe(getChapterSentenceWordsForIds, () => {
       chapterWordFixture({ sourceLessonId: newLesson.id, wordId: word.id }),
     ]);
 
-    const result = await getChapterSentenceWordsForIds({
-      chapterSentenceIds: [chapterSentence1.id, chapterSentence2.id],
-    });
+    const result = await getChapterSentenceWordsForIds([chapterSentence1.id, chapterSentence2.id]);
 
     const matchingWords = result.filter((item) => item.word.word === word.word);
     expect(matchingWords).toHaveLength(1);
@@ -244,9 +241,7 @@ describe(getChapterSentenceWordsForIds, () => {
       }),
     ]);
 
-    const result = await getChapterSentenceWordsForIds({
-      chapterSentenceIds: [chapterSentence.id],
-    });
+    const result = await getChapterSentenceWordsForIds([chapterSentence.id]);
 
     expect(result).toStrictEqual([]);
   });

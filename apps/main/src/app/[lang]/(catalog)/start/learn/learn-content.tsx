@@ -6,6 +6,16 @@ import { LearnForm } from "./learn-form";
 const VISIBLE_SUGGESTIONS = 5;
 
 /**
+ * Rotates suggestion copy on a shared schedule so the start page stays varied
+ * without producing unstable values while Next.js builds its static shell.
+ */
+async function getShuffledItems({ items, limit }: { items: string[]; limit?: number }) {
+  "use cache";
+
+  return shuffle(items).slice(0, limit);
+}
+
+/**
  * Renders the open-ended subject entry after learners choose the "learn
  * something" path from the start goal picker.
  */
@@ -26,7 +36,33 @@ export async function LearnContent() {
     t("Marketing"),
   ];
 
-  const suggestions = shuffle(allSuggestions).slice(0, VISIBLE_SUGGESTIONS);
+  const placeholderOptions = [
+    t("Quantum physics"),
+    t("Ancient philosophy"),
+    t("Machine learning"),
+    t("Creative writing"),
+    t("Molecular biology"),
+    t("Behavioral economics"),
+    t("Organic chemistry"),
+    t("UFOs"),
+    t("Dinosaur extinction"),
+    t("How volcanoes work"),
+    t("World history"),
+    t("Cognitive psychology"),
+    t("Linear algebra"),
+    t("Black holes"),
+    t("How the internet works"),
+    t("Roman Empire"),
+    t("Deep sea creatures"),
+    t("Solar system"),
+    t("Artificial intelligence"),
+    t("Harry Potter"),
+  ];
+
+  const [suggestions, placeholders] = await Promise.all([
+    getShuffledItems({ items: allSuggestions, limit: VISIBLE_SUGGESTIONS }),
+    getShuffledItems({ items: placeholderOptions }),
+  ]);
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-8 p-4 pb-28 md:gap-10">
@@ -34,30 +70,7 @@ export async function LearnContent() {
         {t("What do you want to learn?")}
       </h1>
 
-      <LearnForm
-        placeholders={shuffle([
-          t("Quantum physics"),
-          t("Ancient philosophy"),
-          t("Machine learning"),
-          t("Creative writing"),
-          t("Molecular biology"),
-          t("Behavioral economics"),
-          t("Organic chemistry"),
-          t("UFOs"),
-          t("Dinosaur extinction"),
-          t("How volcanoes work"),
-          t("World history"),
-          t("Cognitive psychology"),
-          t("Linear algebra"),
-          t("Black holes"),
-          t("How the internet works"),
-          t("Roman Empire"),
-          t("Deep sea creatures"),
-          t("Solar system"),
-          t("Artificial intelligence"),
-          t("Harry Potter"),
-        ])}
-      />
+      <LearnForm placeholders={placeholders} />
 
       <nav
         aria-label={t("Suggested subjects")}

@@ -1,13 +1,13 @@
 import { prisma } from "@zoonk/db";
-import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { createSafeDate } from "@zoonk/testing/fixtures/dates";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { signInAsCurrentUser } from "../../../test-utils/auth";
 import { getBpHistory } from "./get-bp-history";
 
 describe("unauthenticated users", () => {
   it("returns null", async () => {
-    const result = await getBpHistory({ headers: new Headers(), period: "month" });
+    const result = await getBpHistory({ period: "month" });
     expect(result).toBeNull();
   });
 });
@@ -15,16 +15,16 @@ describe("unauthenticated users", () => {
 describe("authenticated users", () => {
   it("returns null when user has no DailyProgress records", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
-    const result = await getBpHistory({ headers, period: "month" });
+    const result = await getBpHistory({ period: "month" });
     expect(result).toBeNull();
   });
 
   describe("month period", () => {
     it("returns daily data points with BP values", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const today = createSafeDate(0);
       const yesterday = createSafeDate(0, 1);
@@ -36,7 +36,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getBpHistory({ headers, period: "month" });
+      const result = await getBpHistory({ period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.dataPoints.length).toBe(2);
@@ -45,7 +45,7 @@ describe("authenticated users", () => {
 
     it("calculates period total correctly", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const today = createSafeDate(0);
       const yesterday = createSafeDate(0, 1);
@@ -62,7 +62,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getBpHistory({ headers, period: "month" });
+      const result = await getBpHistory({ period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.periodTotal).toBe(500);
@@ -70,7 +70,7 @@ describe("authenticated users", () => {
 
     it("includes current belt level", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       await prisma.userProgress.upsert({
         create: { totalBrainPower: 5000, userId: user.id },
@@ -84,7 +84,7 @@ describe("authenticated users", () => {
         data: { brainPowerEarned: 100, date, dayOfWeek: date.getDay(), userId: user.id },
       });
 
-      const result = await getBpHistory({ headers, period: "month" });
+      const result = await getBpHistory({ period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.totalBp).toBe(5000);
@@ -93,7 +93,7 @@ describe("authenticated users", () => {
 
     it("calculates comparison with previous month", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const currentMonth = createSafeDate(0);
       const lastMonth = createSafeDate(1, 14);
@@ -115,7 +115,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getBpHistory({ headers, period: "month" });
+      const result = await getBpHistory({ period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.periodTotal).toBe(200);
@@ -124,7 +124,7 @@ describe("authenticated users", () => {
 
     it("navigates to previous month with offset", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const currentMonth = createSafeDate(0);
       const lastMonth = createSafeDate(1);
@@ -146,7 +146,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getBpHistory({ headers, offset: 1, period: "month" });
+      const result = await getBpHistory({ offset: 1, period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.periodTotal).toBe(150);
@@ -157,7 +157,7 @@ describe("authenticated users", () => {
   describe("6months period", () => {
     it("returns weekly aggregated data points", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const today = createSafeDate(0);
       const oneWeekAgo = createSafeDate(0, 7);
@@ -174,7 +174,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getBpHistory({ headers, period: "6months" });
+      const result = await getBpHistory({ period: "6months" });
 
       expect(result).not.toBeNull();
       expect(result?.dataPoints.length).toBeGreaterThanOrEqual(1);
@@ -185,7 +185,7 @@ describe("authenticated users", () => {
   describe("year period", () => {
     it("returns monthly aggregated data points", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const today = createSafeDate(0);
       const yesterday = createSafeDate(0, 1);
@@ -202,7 +202,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getBpHistory({ headers, period: "year" });
+      const result = await getBpHistory({ period: "year" });
 
       expect(result).not.toBeNull();
       expect(result?.dataPoints.length).toBe(1);
@@ -213,7 +213,7 @@ describe("authenticated users", () => {
   describe("all period", () => {
     it("returns yearly aggregated data points", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const today = createSafeDate(0);
 
@@ -221,7 +221,7 @@ describe("authenticated users", () => {
         data: { brainPowerEarned: 200, date: today, dayOfWeek: today.getDay(), userId: user.id },
       });
 
-      const result = await getBpHistory({ headers, period: "all" });
+      const result = await getBpHistory({ period: "all" });
 
       expect(result).not.toBeNull();
       expect(result?.dataPoints.length).toBeGreaterThanOrEqual(1);
@@ -232,7 +232,7 @@ describe("authenticated users", () => {
   describe("navigation flags", () => {
     it("hasPreviousPeriod is true when historical data exists", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const currentMonth = createSafeDate(0);
       const twoMonthsAgo = createSafeDate(2);
@@ -254,7 +254,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getBpHistory({ headers, period: "month" });
+      const result = await getBpHistory({ period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.hasPreviousPeriod).toBe(true);
@@ -262,7 +262,7 @@ describe("authenticated users", () => {
 
     it("hasNextPeriod is false when on current period (offset=0)", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const date = createSafeDate(0);
 
@@ -270,7 +270,7 @@ describe("authenticated users", () => {
         data: { brainPowerEarned: 100, date, dayOfWeek: date.getDay(), userId: user.id },
       });
 
-      const result = await getBpHistory({ headers, period: "month" });
+      const result = await getBpHistory({ period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.hasNextPeriod).toBe(false);
@@ -278,7 +278,7 @@ describe("authenticated users", () => {
 
     it("hasNextPeriod is true when offset > 0", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const lastMonth = createSafeDate(1);
 
@@ -291,7 +291,7 @@ describe("authenticated users", () => {
         },
       });
 
-      const result = await getBpHistory({ headers, offset: 1, period: "month" });
+      const result = await getBpHistory({ offset: 1, period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.hasNextPeriod).toBe(true);

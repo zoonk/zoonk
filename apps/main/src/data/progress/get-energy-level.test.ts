@@ -1,12 +1,12 @@
 import { prisma } from "@zoonk/db";
-import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { signInAsCurrentUser } from "../../../test-utils/auth";
 import { getEnergyLevel } from "./get-energy-level";
 
 describe("unauthenticated users", () => {
   it("returns null", async () => {
-    const result = await getEnergyLevel(new Headers());
+    const result = await getEnergyLevel();
     expect(result).toBeNull();
   });
 });
@@ -14,37 +14,37 @@ describe("unauthenticated users", () => {
 describe("authenticated users", () => {
   it("returns null when user has no progress record", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
-    const result = await getEnergyLevel(headers);
+    const result = await getEnergyLevel();
     expect(result).toBeNull();
   });
 
   it("returns null for zeroed placeholder progress", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     await prisma.userProgress.create({ data: { userId: user.id } });
 
-    const result = await getEnergyLevel(headers);
+    const result = await getEnergyLevel();
     expect(result).toBeNull();
   });
 
   it("returns energy unchanged when lastActiveAt is today", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     await prisma.userProgress.create({
       data: { currentEnergy: 85.5, lastActiveAt: new Date(), userId: user.id },
     });
 
-    const result = await getEnergyLevel(headers);
+    const result = await getEnergyLevel();
     expect(result).toStrictEqual({ currentEnergy: 85.5 });
   });
 
   it("applies decay when lastActiveAt is 5 days ago", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     // Anchor to UTC midnight so a midnight rollover can't shift the day count
     const today = new Date();
@@ -59,13 +59,13 @@ describe("authenticated users", () => {
       data: { currentEnergy: 50, lastActiveAt: fiveDaysAgo, userId: user.id },
     });
 
-    const result = await getEnergyLevel(headers);
+    const result = await getEnergyLevel();
     expect(result).toStrictEqual({ currentEnergy: 46 });
   });
 
   it("clamps decayed energy at 0", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     const today = new Date();
 
@@ -79,7 +79,7 @@ describe("authenticated users", () => {
       data: { currentEnergy: 20, lastActiveAt: longAgo, userId: user.id },
     });
 
-    const result = await getEnergyLevel(headers);
+    const result = await getEnergyLevel();
     expect(result).toStrictEqual({ currentEnergy: 0 });
   });
 });

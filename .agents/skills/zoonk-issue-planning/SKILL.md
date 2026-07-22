@@ -1,6 +1,6 @@
 ---
 name: zoonk-issue-planning
-description: "Break down implementation plans into small, manageable GitHub issues. Use when you have a plan and want to create GitHub issues instead of implementing immediately. Outputs a structured breakdown with epic, sub-issues, and dependencies for review."
+description: "Break down explicit implementation plans into small, manageable GitHub issues. Use only when the user asks to plan or split work into multiple issues, epics, sub-issues, or dependencies. Do not use for ordinary single-issue creation. Outputs a structured breakdown for review without turning issue bodies into implementation plans."
 license: MIT
 metadata:
   author: zoonk
@@ -12,6 +12,16 @@ metadata:
 Break down implementation plans into small, well-organized GitHub issues. This skill focuses on the **planning process** — determining what issues to create, how to organize them, and what dependencies exist.
 
 For actually **creating** issues in GitHub, see [zoonk-github-issues](./../zoonk-github-issues/SKILL.md).
+
+## Keep Issues Problem-First
+
+Treat the implementation breakdown and the GitHub issue body as different artifacts.
+
+- Use the planning process internally to decide issue boundaries, dependencies, likely size, and required confidence.
+- Write each GitHub issue around the story or problem, why it matters, and the desired outcome.
+- Do not paste the implementation plan into the issue body. Omit proposed architecture, file lists, commands, delivery phases, tests, verification checklists, and task sequencing unless the user explicitly asks for an implementation specification.
+- Treat a motivating example as evidence of a broader problem, not automatically as the issue's complete scope.
+- Keep epic bodies especially high-level. Put independently actionable implementation work in sub-issues when the user asks to create them.
 
 ## When to Use This Skill
 
@@ -67,9 +77,11 @@ When specs reference each other, use **file names**, not numbers:
 
 GitHub issue numbers are assigned when issues are created - you cannot know them in advance during the planning phase.
 
-### Tests Are Always Included
+### Tests Stay With the Work
 
-Every issue that adds functionality MUST include its tests in the same issue. Never create separate "testing" issues.
+Every implementation task that adds functionality includes its tests. Never create separate "testing" issues.
+
+Do not add a testing section to a problem/story issue by default. Testing belongs in the later implementation plan or task execution unless test behavior is itself part of the reported problem or the user explicitly asks for a detailed specification.
 
 **Good:**
 
@@ -79,9 +91,9 @@ Every issue that adds functionality MUST include its tests in the same issue. Ne
 
 - "Add course search endpoint" + "Add tests for course search endpoint"
 
-### Verification Is Part of Every Issue
+### Verification Is Implicit
 
-Every issue implicitly includes verification. Don't create separate "verify X works" issues. An issue isn't complete until it's verified to work.
+Every implementation implicitly includes verification. Don't create separate "verify X works" issues, and don't add a generic verification checklist to issue bodies. Record specific externally observable success conditions only when they clarify the desired product outcome.
 
 ### One Endpoint = One Issue
 
@@ -250,6 +262,8 @@ Leave unblocked. Dependencies can be added later if needed.
 
 ## Output Format
 
+Use the formats below as planning artifacts for user review, not as text to paste into GitHub issue bodies. When creating the issues, reduce each body to its problem/story and desired outcome unless the user explicitly requests implementation-level detail.
+
 After planning, present issues in this format for review:
 
 ### Simple Format (Single Epic)
@@ -358,7 +372,7 @@ Allow users to control which notifications they receive
 
 ## What This Skill Does NOT Do
 
-- **Write specifications**: Issues get title + short description only
+- **Write implementation specifications by default**: Issues get a problem-focused title and concise story, context, and desired outcome
 - **Create issues**: Use [zoonk-github-issues](./../zoonk-github-issues/SKILL.md) for that
 - **Estimate time**: Focus on scope, not duration
 - **Assign issues**: That happens after creation

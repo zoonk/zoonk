@@ -6,19 +6,19 @@ import { getDefaultStartDate } from "@zoonk/utils/date-ranges";
  * cards from drifting apart when their selected-period contract changes.
  */
 export function getProgressDateFilter({
-  endDateIso,
-  startDateIso,
+  endDate,
+  startDate,
 }: {
-  endDateIso?: string;
-  startDateIso?: string;
+  endDate?: Date;
+  startDate?: Date;
 }) {
-  const startDate = getDefaultStartDate(startDateIso);
+  const resolvedStartDate = startDate ?? getDefaultStartDate();
 
-  if (endDateIso) {
-    return { gte: startDate, lte: new Date(endDateIso) };
+  if (endDate) {
+    return { gte: resolvedStartDate, lte: endDate };
   }
 
-  return { gte: startDate };
+  return { gte: resolvedStartDate };
 }
 
 export type ProgressDateFilter = ReturnType<typeof getProgressDateFilter>;

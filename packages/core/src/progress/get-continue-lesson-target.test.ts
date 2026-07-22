@@ -1,12 +1,23 @@
 import { type LessonKind, prisma } from "@zoonk/db";
-import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, it } from "vitest";
-import { getContinueLessonTarget } from "./get-continue-lesson-target";
+import { type LessonScope } from "../lessons/lesson-scope";
+import {
+  type ContinueTarget,
+  getContinueLessonTarget,
+  toActiveCatalogTarget,
+} from "./get-continue-lesson-target";
+import { getLastCompletedLessonAnchor, getNextLessonState } from "./get-next-lesson-state";
+import {
+  hasDurableCourseCompletion,
+  listDurableChapterCompletionIds,
+  listPublishedCourseChapters,
+  listPublishedLessonProgressRows,
+} from "./progress-queries";
 
 type CourseTree = {
   chapter: Awaited<ReturnType<typeof chapterFixture>>;
@@ -22,6 +33,42 @@ type TwoChapterCourseTree = {
   secondChapter: Awaited<ReturnType<typeof chapterFixture>>;
   secondLesson: Awaited<ReturnType<typeof lessonFixture>>;
 };
+
+/**
+ * Runs the explicit read-leaf and pure-selector pipeline used by app adapters.
+ * Keeping it in one helper makes each behavior case focus on the curriculum
+ * state it creates while still exercising the new public contract.
+ */
+async function resolveContinueTarget({
+  excludedLessonKinds,
+  scope,
+  userId,
+}: {
+  excludedLessonKinds?: LessonKind[];
+  scope: LessonScope;
+  userId: string | null;
+}): Promise<ContinueTarget | null> {
+  const courseId = "courseId" in scope ? scope.courseId : null;
+
+  const [chapters, courseCompleted, durableChapterCompletionIds, rows] = await Promise.all([
+    courseId ? listPublishedCourseChapters({ courseId }) : Promise.resolve([]),
+    courseId ? hasDurableCourseCompletion({ courseId, userId }) : Promise.resolve(false),
+    listDurableChapterCompletionIds({ excludedLessonKinds, scope, userId }),
+    listPublishedLessonProgressRows({ excludedLessonKinds, scope, userId }),
+  ]);
+
+  const after = getLastCompletedLessonAnchor({ rows });
+
+  const state = getNextLessonState({
+    after,
+    courseCompleted,
+    durableChapterCompletionIds,
+    rows,
+    scope,
+  });
+
+  return getContinueLessonTarget({ chapters, scope, state });
+}
 
 describe(getContinueLessonTarget, () => {
   let organization: Awaited<ReturnType<typeof organizationFixture>>;
@@ -121,10 +168,8 @@ describe(getContinueLessonTarget, () => {
   it("returns first lesson when unauthenticated", async () => {
     const { chapter, course, lessons } = await createCourseTree();
 
-    const result = await getContinueLessonTarget({
-      headers: new Headers(),
-      scope: { courseId: course.id },
-    });
+    const scope = { courseId: course.id } as const;
+    const result = await resolveContinueTarget({ scope, userId: null });
 
     expect(result).toStrictEqual({
       brandSlug: organization.slug,
@@ -143,10 +188,8 @@ describe(getContinueLessonTarget, () => {
       lessonStatuses: ["pending", "completed"],
     });
 
-    const result = await getContinueLessonTarget({
-      headers: new Headers(),
-      scope: { courseId: course.id },
-    });
+    const scope = { courseId: course.id } as const;
+    const result = await resolveContinueTarget({ scope, userId: null });
 
     expect(result).toStrictEqual({
       brandSlug: organization.slug,
@@ -171,9 +214,8 @@ describe(getContinueLessonTarget, () => {
       userId: user.id,
     });
 
-    const headers = await signInAs(user.email, user.password);
-
-    const result = await getContinueLessonTarget({ headers, scope: { courseId: tree.course.id } });
+    const scope = { courseId: tree.course.id } as const;
+    const result = await resolveContinueTarget({ scope, userId: user.id });
 
     expect(result).toStrictEqual({
       brandSlug: organization.slug,
@@ -187,6 +229,82 @@ describe(getContinueLessonTarget, () => {
     });
   });
 
+  it("ignores an opened lesson in a later chapter when completed progress has an earlier target", async () => {
+    const [user, tree] = await Promise.all([userFixture(), createTwoChapterCourseTree()]);
+
+    const nextFirstChapterLesson = await lessonFixture({
+      chapterId: tree.firstChapter.id,
+      generationStatus: "completed",
+      isPublished: true,
+      organizationId: organization.id,
+      position: 1,
+    });
+
+    await Promise.all([
+      lessonProgressFixture({
+        completedAt: new Date("2024-01-01T10:00:00Z"),
+        durationSeconds: 60,
+        lessonId: tree.firstLesson.id,
+        userId: user.id,
+      }),
+      lessonProgressFixture({
+        completedAt: null,
+        durationSeconds: null,
+        lessonId: tree.secondLesson.id,
+        startedAt: new Date("2024-01-02T10:00:00Z"),
+        userId: user.id,
+      }),
+    ]);
+
+    const scope = { courseId: tree.course.id } as const;
+    const result = await resolveContinueTarget({ scope, userId: user.id });
+
+    expect(result).toStrictEqual({
+      brandSlug: organization.slug,
+      canPrefetch: true,
+      chapterSlug: tree.firstChapter.slug,
+      completed: false,
+      courseSlug: tree.course.slug,
+      hasStarted: true,
+      lessonPosition: 1,
+      lessonSlug: nextFirstChapterLesson.slug,
+    });
+
+    expect(toActiveCatalogTarget(result)).toStrictEqual({
+      chapterSlug: tree.firstChapter.slug,
+      lessonSlug: nextFirstChapterLesson.slug,
+    });
+  });
+
+  it("does not show an active target for opened-only progress", async () => {
+    const [user, tree] = await Promise.all([userFixture(), createCourseTree()]);
+    const [firstLesson, openedLesson] = tree.lessons;
+
+    await lessonProgressFixture({
+      completedAt: null,
+      durationSeconds: null,
+      lessonId: openedLesson?.id ?? "",
+      startedAt: new Date("2024-01-02T10:00:00Z"),
+      userId: user.id,
+    });
+
+    const scope = { chapterId: tree.chapter.id } as const;
+    const result = await resolveContinueTarget({ scope, userId: user.id });
+
+    expect(result).toStrictEqual({
+      brandSlug: organization.slug,
+      canPrefetch: true,
+      chapterSlug: tree.chapter.slug,
+      completed: false,
+      courseSlug: tree.course.slug,
+      hasStarted: false,
+      lessonPosition: 0,
+      lessonSlug: firstLesson?.slug,
+    });
+
+    expect(toActiveCatalogTarget(result)).toBeNull();
+  });
+
   it("continues from the furthest visible completion when a newer hidden lesson is completed", async () => {
     const [user, tree] = await Promise.all([
       userFixture(),
@@ -198,8 +316,7 @@ describe(getContinueLessonTarget, () => {
 
     const [completedLesson, nextVisibleLesson, hiddenCompletedLesson] = tree.lessons;
 
-    const [headers] = await Promise.all([
-      signInAs(user.email, user.password),
+    await Promise.all([
       lessonProgressFixture({
         completedAt: new Date("2024-01-01"),
         durationSeconds: 60,
@@ -214,11 +331,9 @@ describe(getContinueLessonTarget, () => {
       }),
     ]);
 
-    const result = await getContinueLessonTarget({
-      excludedLessonKinds: ["quiz"],
-      headers,
-      scope: { courseId: tree.course.id },
-    });
+    const excludedLessonKinds: LessonKind[] = ["quiz"];
+    const scope = { courseId: tree.course.id } as const;
+    const result = await resolveContinueTarget({ excludedLessonKinds, scope, userId: user.id });
 
     expect(result).toStrictEqual({
       brandSlug: organization.slug,
@@ -243,21 +358,16 @@ describe(getContinueLessonTarget, () => {
 
     const [completedLesson, hiddenLesson, nextVisibleLesson] = tree.lessons;
 
-    const [headers] = await Promise.all([
-      signInAs(user.email, user.password),
-      lessonProgressFixture({
-        completedAt: new Date("2024-01-01"),
-        durationSeconds: 60,
-        lessonId: completedLesson?.id ?? "",
-        userId: user.id,
-      }),
-    ]);
-
-    const result = await getContinueLessonTarget({
-      excludedLessonKinds: ["quiz"],
-      headers,
-      scope: { courseId: tree.course.id },
+    await lessonProgressFixture({
+      completedAt: new Date("2024-01-01"),
+      durationSeconds: 60,
+      lessonId: completedLesson?.id ?? "",
+      userId: user.id,
     });
+
+    const excludedLessonKinds: LessonKind[] = ["quiz"];
+    const scope = { courseId: tree.course.id } as const;
+    const result = await resolveContinueTarget({ excludedLessonKinds, scope, userId: user.id });
 
     expect(result).toStrictEqual({
       brandSlug: organization.slug,
@@ -292,9 +402,8 @@ describe(getContinueLessonTarget, () => {
       }),
     ]);
 
-    const headers = await signInAs(user.email, user.password);
-
-    const result = await getContinueLessonTarget({ headers, scope: { courseId: tree.course.id } });
+    const scope = { courseId: tree.course.id } as const;
+    const result = await resolveContinueTarget({ scope, userId: user.id });
 
     expect(result).toStrictEqual({
       brandSlug: organization.slug,
@@ -313,9 +422,8 @@ describe(getContinueLessonTarget, () => {
 
     await prisma.courseCompletion.create({ data: { courseId: tree.course.id, userId: user.id } });
 
-    const headers = await signInAs(user.email, user.password);
-
-    const result = await getContinueLessonTarget({ headers, scope: { courseId: tree.course.id } });
+    const scope = { courseId: tree.course.id } as const;
+    const result = await resolveContinueTarget({ scope, userId: user.id });
 
     expect(result).toStrictEqual({
       brandSlug: organization.slug,
@@ -352,9 +460,8 @@ describe(getContinueLessonTarget, () => {
       }),
     ]);
 
-    const headers = await signInAs(user.email, user.password);
-
-    const result = await getContinueLessonTarget({ headers, scope: { courseId: tree.course.id } });
+    const scope = { courseId: tree.course.id } as const;
+    const result = await resolveContinueTarget({ scope, userId: user.id });
 
     expect(result).toStrictEqual({
       brandSlug: organization.slug,
@@ -404,9 +511,8 @@ describe(getContinueLessonTarget, () => {
       userId: user.id,
     });
 
-    const headers = await signInAs(user.email, user.password);
-
-    const result = await getContinueLessonTarget({ headers, scope: { courseId: course.id } });
+    const scope = { courseId: course.id } as const;
+    const result = await resolveContinueTarget({ scope, userId: user.id });
 
     expect(result).toStrictEqual({
       brandSlug: organization.slug,
@@ -429,12 +535,8 @@ describe(getContinueLessonTarget, () => {
       userId: user.id,
     });
 
-    const headers = await signInAs(user.email, user.password);
-
-    const result = await getContinueLessonTarget({
-      headers,
-      scope: { chapterId: tree.chapter.id },
-    });
+    const scope = { chapterId: tree.chapter.id } as const;
+    const result = await resolveContinueTarget({ scope, userId: user.id });
 
     expect(result).toStrictEqual({
       brandSlug: organization.slug,
@@ -471,12 +573,8 @@ describe(getContinueLessonTarget, () => {
       }),
     ]);
 
-    const headers = await signInAs(user.email, user.password);
-
-    const result = await getContinueLessonTarget({
-      headers,
-      scope: { chapterId: tree.chapter.id },
-    });
+    const scope = { chapterId: tree.chapter.id } as const;
+    const result = await resolveContinueTarget({ scope, userId: user.id });
 
     expect(result).toStrictEqual({
       brandSlug: organization.slug,
@@ -501,12 +599,8 @@ describe(getContinueLessonTarget, () => {
       userId: user.id,
     });
 
-    const headers = await signInAs(user.email, user.password);
-
-    const result = await getContinueLessonTarget({
-      headers,
-      scope: { lessonId: lesson?.id ?? "" },
-    });
+    const scope = { lessonId: lesson?.id ?? "" } as const;
+    const result = await resolveContinueTarget({ scope, userId: user.id });
 
     expect(result).toStrictEqual({
       brandSlug: organization.slug,

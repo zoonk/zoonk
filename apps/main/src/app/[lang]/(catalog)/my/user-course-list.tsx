@@ -25,9 +25,9 @@ import Image from "next/image";
 
 export async function UserCourseList() {
   const t = await getExtracted();
-  const { data: courses } = await listUserCourses();
+  const courses = await listUserCourses();
 
-  if (!courses || courses.length === 0) {
+  if (courses.length === 0) {
     return (
       <Empty>
         <EmptyHeader>

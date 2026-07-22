@@ -2,10 +2,10 @@ import {
   type ContinueLessonProgress,
   getChapterContinueProgress,
   getCourseContinueProgress,
-} from "@/data/progress/catalog-progress";
+} from "@/data/progress/continue-progress";
+import { getContinueLessonTarget } from "@/data/progress/get-catalog-target";
 import { type AppRoute, Link } from "@/i18n/navigation";
-import { type LessonScope } from "@zoonk/core/lessons/last-completed";
-import { getContinueLessonTarget } from "@zoonk/core/progress/continue-lesson-target";
+import { type LessonScope } from "@zoonk/core/lessons/scope";
 import { type LessonKind } from "@zoonk/db";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";

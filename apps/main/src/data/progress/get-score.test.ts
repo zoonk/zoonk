@@ -1,12 +1,12 @@
 import { prisma } from "@zoonk/db";
-import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { signInAsCurrentUser } from "../../../test-utils/auth";
 import { getScore } from "./get-score";
 
 describe("unauthenticated users", () => {
   it("returns null", async () => {
-    const result = await getScore({ headers: new Headers() });
+    const result = await getScore();
     expect(result).toBeNull();
   });
 });
@@ -14,15 +14,15 @@ describe("unauthenticated users", () => {
 describe("authenticated users", () => {
   it("returns null when user has no DailyProgress records", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
-    const result = await getScore({ headers });
+    const result = await getScore();
     expect(result).toBeNull();
   });
 
   it("returns score when user has DailyProgress records", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     const today = new Date();
     const yesterday = new Date(today);
@@ -47,7 +47,7 @@ describe("authenticated users", () => {
       ],
     });
 
-    const result = await getScore({ headers });
+    const result = await getScore();
 
     // Total: 25 correct, 5 incorrect = 25/30 = 83.33...%
     expect(result).not.toBeNull();
@@ -56,7 +56,7 @@ describe("authenticated users", () => {
 
   it("excludes records older than 3 months", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     const today = new Date();
     const oldDate = new Date(today);
@@ -81,7 +81,7 @@ describe("authenticated users", () => {
       ],
     });
 
-    const result = await getScore({ headers });
+    const result = await getScore();
 
     // Should only count today's data: 10/10 = 100%
     expect(result).not.toBeNull();
@@ -90,7 +90,7 @@ describe("authenticated users", () => {
 
   it("filters by custom date range when startDate and endDate are provided", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     const now = new Date();
     const oneWeekAgo = new Date(now);
@@ -125,7 +125,7 @@ describe("authenticated users", () => {
     });
 
     // Filter to only include data from the past week
-    const result = await getScore({ endDate: now, headers, startDate: oneWeekAgo });
+    const result = await getScore({ endDate: now, startDate: oneWeekAgo });
 
     // Should include: now (10/10) + oneWeekAgo (5/10) = 15/20 = 75%
     expect(result).not.toBeNull();

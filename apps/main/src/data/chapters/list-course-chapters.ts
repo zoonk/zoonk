@@ -1,17 +1,21 @@
 import "server-only";
+import { getCourseCurriculumCacheTag } from "@/data/cache-tags";
 import { getPublishedChapterWhere, prisma } from "@zoonk/db";
-import { cache } from "react";
+import { cacheTag } from "next/cache";
 
-const cachedListCourseChapters = cache(async (courseId: string) =>
-  prisma.chapter.findMany({
+/**
+ * Shares the published course outline across catalog and player reads. Course
+ * generation expires this entry when the workflow finishes adding chapters.
+ */
+export async function listCourseChapters({ courseId }: { courseId: string }) {
+  "use cache";
+  cacheTag(getCourseCurriculumCacheTag(courseId));
+
+  return prisma.chapter.findMany({
     include: { _count: { select: { lessons: { where: { isPublished: true } } } } },
     orderBy: { position: "asc" },
     where: getPublishedChapterWhere({ chapterWhere: { courseId } }),
-  }),
-);
-
-export function listCourseChapters(params: { courseId: string }) {
-  return cachedListCourseChapters(params.courseId);
+  });
 }
 
 export type CourseChapter = Awaited<ReturnType<typeof listCourseChapters>>[number];

@@ -1,13 +1,18 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
-import { cache } from "react";
+import { type ChapterWordGetPayload, prisma } from "@zoonk/db";
+
+export type PlayerChapterWord = ChapterWordGetPayload<{
+  include: { word: { include: { pronunciations: true } } };
+}>;
 
 /**
  * Player steps point at exact chapter-word resources. Loading by those IDs
  * keeps derived translation and review lessons tied to the generated
  * translation and distractor row instead of guessing from lesson kind/order.
  */
-const cachedGetChapterWordsForIds = cache(async (...chapterWordIds: string[]) => {
+export async function getChapterWordsForIds(
+  chapterWordIds: string[],
+): Promise<PlayerChapterWord[]> {
   if (chapterWordIds.length === 0) {
     return [];
   }
@@ -28,8 +33,4 @@ const cachedGetChapterWordsForIds = cache(async (...chapterWordIds: string[]) =>
     },
     where: { id: { in: chapterWordIds } },
   });
-});
-
-export function getChapterWordsForIds(params: { chapterWordIds: string[] }) {
-  return cachedGetChapterWordsForIds(...params.chapterWordIds);
 }

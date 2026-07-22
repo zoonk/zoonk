@@ -1,43 +1,39 @@
 import "server-only";
-import { ErrorCode } from "@/lib/app-error";
-import { getSession } from "@zoonk/core/users/session/get";
+import { COURSE_LIST_CACHE_TAG, getUserProgressCacheTag } from "@/data/cache-tags";
+import { getSession } from "@/data/users/get-session";
 import { type Course, type Organization, prisma } from "@zoonk/db";
-import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { cache } from "react";
+import { cacheTag } from "next/cache";
 
 type UserCourse = Course & { organization: Organization | null };
 
 /**
- * The My Courses page lists every main-app course associated with the learner
- * through CourseUser, including courses where they have not completed a lesson.
+ * Shares the learner's CourseUser-backed list until course metadata or their
+ * progress changes. CourseUser rows do not depend on lesson completion here.
  */
-export const listUserCourses = cache(
-  async (headers?: Headers): Promise<SafeReturn<UserCourse[]>> => {
-    const session = await getSession(headers);
+async function findUserCourses(userId: string): Promise<UserCourse[]> {
+  "use cache";
 
-    if (!session) {
-      return { data: null, error: new AppError(ErrorCode.unauthorized) };
-    }
+  cacheTag(COURSE_LIST_CACHE_TAG, getUserProgressCacheTag(userId));
 
-    const userId = session.user.id;
+  const rows = await prisma.courseUser.findMany({
+    include: { course: { include: { organization: true } } },
+    orderBy: { startedAt: "desc" },
+    where: {
+      course: { OR: [{ organization: { kind: "brand" } }, { organizationId: null }] },
+      userId,
+    },
+  });
 
-    const { data, error } = await safeAsync(() =>
-      prisma.courseUser.findMany({
-        include: { course: { include: { organization: true } } },
-        orderBy: { startedAt: "desc" },
-        where: {
-          course: { OR: [{ organization: { kind: "brand" } }, { organizationId: null }] },
-          userId,
-        },
-      }),
-    );
+  return rows.map((row) => row.course);
+}
 
-    if (error) {
-      return { data: null, error };
-    }
+/** Returns no user-specific courses when the catalog is rendered for a signed-out visitor. */
+export async function listUserCourses(): Promise<UserCourse[]> {
+  const session = await getSession();
 
-    const courses = data.map((cu) => cu.course);
+  if (!session) {
+    return [];
+  }
 
-    return { data: courses, error: null };
-  },
-);
+  return findUserCourses(session.user.id);
+}

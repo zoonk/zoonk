@@ -9,7 +9,25 @@ import {
   wordPronunciationFixture,
 } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, it } from "vitest";
-import { getChapterDistractorWords } from "./get-chapter-distractor-words";
+import { getChapterDistractorWordsForResources } from "./get-chapter-distractor-words";
+import { getChapterSentencesForIds } from "./get-chapter-sentences";
+import { getChapterWordsForIds } from "./get-chapter-words";
+
+/** Loads the base rows exactly as the app-level player resource cache does. */
+async function getChapterDistractorWords({
+  chapterSentenceIds,
+  chapterWordIds,
+}: {
+  chapterSentenceIds: string[];
+  chapterWordIds: string[];
+}) {
+  const [chapterWords, chapterSentences] = await Promise.all([
+    getChapterWordsForIds(chapterWordIds),
+    getChapterSentencesForIds(chapterSentenceIds),
+  ]);
+
+  return getChapterDistractorWordsForResources({ chapterSentences, chapterWords });
+}
 
 describe(getChapterDistractorWords, () => {
   let org: Awaited<ReturnType<typeof organizationFixture>>;

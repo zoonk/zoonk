@@ -66,4 +66,29 @@ describe(useAutoSave, () => {
 
     expect(onSave).toHaveBeenCalledWith("user edit");
   });
+
+  it("does not start a duplicate save when the callback changes during a pending request", async () => {
+    const firstOnSave = vi.fn().mockReturnValue(new Promise(() => {}));
+    const nextOnSave = vi.fn().mockResolvedValue({ error: null });
+
+    const { result, rerender } = renderHook(
+      ({ onSave }: { onSave: (value: string) => Promise<{ error: string | null }> }) =>
+        useAutoSave({ initialValue: "original", onSave }),
+      { initialProps: { onSave: firstOnSave } },
+    );
+
+    act(() => {
+      result.current.setValue("user edit");
+    });
+
+    await act(async () => {
+      vi.advanceTimersByTime(600);
+    });
+
+    expect(firstOnSave).toHaveBeenCalledOnce();
+
+    rerender({ onSave: nextOnSave });
+
+    expect(nextOnSave).not.toHaveBeenCalled();
+  });
 });

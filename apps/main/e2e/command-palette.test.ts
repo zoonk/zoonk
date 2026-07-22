@@ -3,6 +3,7 @@ import { type Locator } from "@playwright/test";
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
+import { coursePromptFixture } from "@zoonk/testing/fixtures/course-prompts";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { normalizeString } from "@zoonk/utils/string";
 import { type Page, expect, test } from "./fixtures";
@@ -330,14 +331,19 @@ test.describe("Command Palette - Authenticated", () => {
     await openCommandPalette(logoutPage);
     await expect(logoutPage.getByRole("dialog").getByText(/^logout$/iu)).toBeVisible();
 
-    // Click logout - this triggers a hard navigation
-    await logoutPage
-      .getByRole("dialog")
-      .getByText(/^logout$/iu)
-      .click();
+    // Logout returns to the same URL, so wait for the new main document rather
+    // than a URL change that could resolve before sign-out starts.
+    await Promise.all([
+      logoutPage.waitForEvent("framenavigated", {
+        predicate: (frame) => frame === logoutPage.mainFrame(),
+      }),
+      logoutPage
+        .getByRole("dialog")
+        .getByText(/^logout$/iu)
+        .click(),
+    ]);
 
-    await logoutPage.waitForURL(/\/$/u);
-    await logoutPage.waitForLoadState("networkidle");
+    await expect(logoutPage.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
 
     // Verify user is logged out - command palette should show Login option
     await openCommandPalette(logoutPage);
@@ -510,6 +516,16 @@ test.describe("Command Palette - Course Search", () => {
     const uniqueId = randomUUID().slice(0, 8);
     const prompt = `E2E Empty Search ${uniqueId}`;
 
+    await coursePromptFixture({
+      canonicalTitle: prompt,
+      courseFormat: "question",
+      generationStatus: null,
+      intent: "question",
+      language: "en",
+      normalizedPrompt: normalizeString(prompt),
+      prompt,
+    });
+
     await page.goto("/");
     await openCommandPalette(page);
 
@@ -524,6 +540,10 @@ test.describe("Command Palette - Course Search", () => {
     await createCourseLink.click();
 
     await expect(page).toHaveURL(new RegExp(`/start/learn/${encodeURIComponent(prompt)}$`, "u"));
+
+    await expect(
+      page.getByRole("heading", { name: /this option isn't available yet/iu }),
+    ).toBeVisible();
   });
 
   test("handles rapid typing correctly", async ({ page }) => {

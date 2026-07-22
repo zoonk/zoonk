@@ -1,6 +1,6 @@
 import { type UnsupportedCoursePrompt, resolveCoursePrompt } from "@/data/courses/course-prompt";
+import { getSession } from "@/data/users/get-session";
 import { Link, redirect } from "@/i18n/navigation";
-import { getSession } from "@zoonk/core/users/session/get";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { getExtracted, getLocale } from "next-intl/server";
 import {

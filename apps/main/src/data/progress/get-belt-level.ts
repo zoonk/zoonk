@@ -1,27 +1,20 @@
 import "server-only";
 import { hasUserLearningProgress } from "@zoonk/core/progress/user-progress";
-import { getSession } from "@zoonk/core/users/session/get";
-import { prisma } from "@zoonk/db";
+import { type UserProgress } from "@zoonk/db";
 import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
-import { safeAsync } from "@zoonk/utils/error";
-import { cache } from "react";
+import { getUserProgress } from "./get-user-progress";
 
-export const getBeltLevel = cache(async (headers?: Headers): Promise<BeltLevelResult | null> => {
-  const session = await getSession(headers);
-
-  if (!session) {
-    return null;
-  }
-
-  const userId = session.user.id;
-
-  const { data: progress, error } = await safeAsync(() =>
-    prisma.userProgress.findUnique({ where: { userId } }),
-  );
-
-  if (error || !hasUserLearningProgress(progress)) {
+/** Converts a durable progress row into the belt shown by learner-facing UI. */
+function toBeltLevel(progress: UserProgress | null): BeltLevelResult | null {
+  if (!hasUserLearningProgress(progress)) {
     return null;
   }
 
   return calculateBeltLevel(Number(progress.totalBrainPower));
-});
+}
+
+/** Returns the current belt for the authenticated learner. */
+export async function getBeltLevel(): Promise<BeltLevelResult | null> {
+  const progress = await getUserProgress();
+  return toBeltLevel(progress);
+}

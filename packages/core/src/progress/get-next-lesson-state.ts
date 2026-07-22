@@ -1,12 +1,6 @@
-import "server-only";
 import { type LessonKind } from "@zoonk/db";
+import { type LessonScope } from "../lessons/lesson-scope";
 import {
-  hasDurableCourseCompletion,
-  listDurableChapterCompletionIds,
-  listDurableLessonCompletionIds,
-} from "./_utils/durable-completion-queries";
-import {
-  type NextLessonStateAnchor,
   canPrefetchLesson,
   getFirstIncompleteLesson,
   getForwardLesson,
@@ -18,10 +12,15 @@ import {
 } from "./_utils/next-lesson-state-helpers";
 import {
   type EffectiveLessonProgressRow,
-  type PublishedLessonProgressScope,
   toEffectiveLessonProgressRows,
 } from "./_utils/published-lesson-progress";
-import { listPublishedLessonProgressRows } from "./_utils/published-lesson-progress-queries";
+import { type PublishedLessonProgressRow } from "./progress-queries";
+
+export type NextLessonStateAnchor = {
+  chapterPosition: number;
+  lessonId: string;
+  lessonPosition: number;
+};
 
 export type NextLessonState = {
   lessonId: string;
@@ -44,46 +43,58 @@ export type NextLessonState = {
   scopeDurablyCompleted: boolean;
 };
 
+export type NextLessonStateInput = {
+  after?: NextLessonStateAnchor;
+  courseCompleted: boolean;
+  durableChapterCompletionIds: string[];
+  rows: PublishedLessonProgressRow[];
+  scope: LessonScope;
+};
+
+/**
+ * Finds the furthest completed lesson in the already loaded published tree.
+ * The progress rows use the same scope, visibility, and lesson-kind filters as
+ * continuation, so deriving the anchor here avoids a second overlapping query.
+ */
+export function getLastCompletedLessonAnchor({
+  rows,
+}: {
+  rows: PublishedLessonProgressRow[];
+}): NextLessonStateAnchor | undefined {
+  const completedRow = toEffectiveLessonProgressRows({ rows }).findLast(
+    (row) => row.isEffectivelyCompleted,
+  );
+
+  if (!completedRow) {
+    return undefined;
+  }
+
+  return {
+    chapterPosition: completedRow.chapterPosition,
+    lessonId: completedRow.lessonId,
+    lessonPosition: completedRow.lessonPosition,
+  };
+}
+
 /**
  * Continue-learning surfaces and catalog buttons need the same answer to
  * "where should this learner go next?" Returning that richer internal state
  * once lets the public button helper and the home feed stay in sync.
  */
-export async function getNextLessonStateForUser({
+export function getNextLessonState({
   after,
-  excludedLessonKinds,
+  courseCompleted,
+  durableChapterCompletionIds,
+  rows,
   scope,
-  userId,
-}: {
-  after?: NextLessonStateAnchor;
-  excludedLessonKinds?: LessonKind[];
-  scope: PublishedLessonProgressScope;
-  userId?: string;
-}): Promise<NextLessonState | null> {
-  const rows = await listPublishedLessonProgressRows({ excludedLessonKinds, scope, userId });
-
+}: NextLessonStateInput): NextLessonState | null {
   if (rows.length === 0) {
     return null;
   }
 
-  const [durableLessonIds, durableChapterIds, courseCompleted] = await Promise.all([
-    listDurableLessonCompletionIds({
-      lessonIds: [...new Set(rows.map((row) => row.lessonId))],
-      userId,
-    }),
-    listDurableChapterCompletionIds({
-      chapterIds: [...new Set(rows.map((row) => row.chapterId))],
-      userId,
-    }),
-    "courseId" in scope
-      ? hasDurableCourseCompletion({ courseId: scope.courseId, userId })
-      : Promise.resolve(false),
-  ]);
+  const durableChapterIds = new Set(durableChapterCompletionIds);
 
-  const effectiveRows = toEffectiveLessonProgressRows({
-    durablyCompletedLessonIds: durableLessonIds,
-    rows,
-  });
+  const effectiveRows = toEffectiveLessonProgressRows({ rows });
 
   const hasStarted = getHasStartedState({
     courseCompleted,
@@ -190,13 +201,13 @@ function buildCompletedScopeState({
  * Open lesson navigation can be prefetched once playable content is ready.
  * Pending lessons still return a concrete player target without prefetching.
  */
-async function buildOpenLessonState({
+function buildOpenLessonState({
   hasStarted,
   lesson,
 }: {
   hasStarted: boolean;
   lesson: EffectiveLessonProgressRow;
-}) {
+}): NextLessonState {
   if (hasPendingLessonContent({ row: lesson })) {
     return toPendingLessonState({
       completed: false,
@@ -255,7 +266,7 @@ function toPendingLessonState({
   lesson: EffectiveLessonProgressRow;
   lessonHasPendingContent: boolean;
   scopeDurablyCompleted: boolean;
-}) {
+}): NextLessonState {
   return {
     brandSlug: lesson.brandSlug,
     canPrefetch: false,

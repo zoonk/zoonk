@@ -52,9 +52,9 @@ describe(getChapterSentencesForIds, () => {
       chapterSentenceFixture({ sentenceId: sentence2.id, sourceLessonId: lesson.id }),
     ]);
 
-    const result = await getChapterSentencesForIds({
-      chapterSentenceIds: chapterSentences.map((chapterSentence) => chapterSentence.id),
-    });
+    const result = await getChapterSentencesForIds(
+      chapterSentences.map((chapterSentence) => chapterSentence.id),
+    );
 
     expect(result).toHaveLength(2);
 
@@ -89,7 +89,7 @@ describe(getChapterSentencesForIds, () => {
       userLanguage: "en",
     });
 
-    const result = await getChapterSentencesForIds({ chapterSentenceIds: [chapterSentence.id] });
+    const result = await getChapterSentencesForIds([chapterSentence.id]);
 
     expect(result).toHaveLength(1);
 
@@ -108,12 +108,12 @@ describe(getChapterSentencesForIds, () => {
   });
 
   it("returns empty array when no ids are requested", async () => {
-    const result = await getChapterSentencesForIds({ chapterSentenceIds: [] });
+    const result = await getChapterSentencesForIds([]);
     expect(result).toStrictEqual([]);
   });
 
   it("returns empty array for non-existent chapter sentence", async () => {
-    const result = await getChapterSentencesForIds({ chapterSentenceIds: [randomUUID()] });
+    const result = await getChapterSentencesForIds([randomUUID()]);
     expect(result).toStrictEqual([]);
   });
 });

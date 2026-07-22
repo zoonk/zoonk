@@ -1,40 +1,38 @@
-import { ErrorCode } from "@/lib/app-error";
 import { prisma } from "@zoonk/db";
-import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { courseFixture, courseUserFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { signInAsCurrentUser } from "../../../test-utils/auth";
 import { listUserCourses } from "./list-user-courses";
 
 describe("unauthenticated users", () => {
-  it("returns Unauthorized", async () => {
-    const result = await listUserCourses(new Headers());
+  it("returns an empty array", async () => {
+    const courses = await listUserCourses();
 
-    expect(result.error?.message).toBe(ErrorCode.unauthorized);
-    expect(result.data).toBeNull();
+    expect(courses).toStrictEqual([]);
   });
 });
 
 describe("authenticated users", () => {
   let organization: Awaited<ReturnType<typeof organizationFixture>>;
   let user: Awaited<ReturnType<typeof userFixture>>;
-  let headers: Headers;
 
   beforeAll(async () => {
     [organization, user] = await Promise.all([organizationFixture(), userFixture()]);
+  });
 
-    headers = await signInAs(user.email, user.password);
+  beforeEach(async () => {
+    await signInAsCurrentUser({ email: user.email, password: user.password });
   });
 
   it("returns empty array when user has no courses", async () => {
     const newUser = await userFixture();
-    const newHeaders = await signInAs(newUser.email, newUser.password);
+    await signInAsCurrentUser({ email: newUser.email, password: newUser.password });
 
-    const result = await listUserCourses(newHeaders);
+    const courses = await listUserCourses();
 
-    expect(result.error).toBeNull();
-    expect(result.data).toStrictEqual([]);
+    expect(courses).toStrictEqual([]);
   });
 
   it("includes courses where the user has not completed a lesson", async () => {
@@ -42,27 +40,22 @@ describe("authenticated users", () => {
 
     await courseUserFixture({ courseId: course.id, userId: user.id });
 
-    const result = await listUserCourses(headers);
+    const courses = await listUserCourses();
 
-    expect(result.error).toBeNull();
-    expect(result.data).toBeDefined();
-    expect(result.data?.some((item) => item.id === course.id)).toBe(true);
+    expect(courses.some((item) => item.id === course.id)).toBe(true);
   });
 
   it("includes the organization in the response", async () => {
     const testUser = await userFixture();
-    const testHeaders = await signInAs(testUser.email, testUser.password);
+    await signInAsCurrentUser({ email: testUser.email, password: testUser.password });
 
     const course = await courseFixture({ isPublished: true, organizationId: organization.id });
 
     await courseUserFixture({ courseId: course.id, userId: testUser.id });
 
-    const result = await listUserCourses(testHeaders);
+    const courses = await listUserCourses();
 
-    expect(result.error).toBeNull();
-    expect(result.data).toBeDefined();
-
-    const returnedCourse = result.data?.find((item) => item.id === course.id);
+    const returnedCourse = courses.find((item) => item.id === course.id);
     expect(returnedCourse?.organization).toBeDefined();
     expect(returnedCourse?.organization?.id).toBe(organization.id);
     expect(returnedCourse?.organization?.slug).toBe(organization.slug);
@@ -70,7 +63,7 @@ describe("authenticated users", () => {
 
   it("orders courses by startedAt descending (most recent first)", async () => {
     const testUser = await userFixture();
-    const testHeaders = await signInAs(testUser.email, testUser.password);
+    await signInAsCurrentUser({ email: testUser.email, password: testUser.password });
 
     const [course1, course2, course3] = await Promise.all([
       courseFixture({ isPublished: true, organizationId: organization.id }),
@@ -78,7 +71,6 @@ describe("authenticated users", () => {
       courseFixture({ isPublished: true, organizationId: organization.id }),
     ]);
 
-    // Create course users with specific timestamps
     const now = new Date();
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
     const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
@@ -91,18 +83,17 @@ describe("authenticated users", () => {
       ],
     });
 
-    const result = await listUserCourses(testHeaders);
+    const courses = await listUserCourses();
 
-    expect(result.error).toBeNull();
-    expect(result.data).toHaveLength(3);
+    expect(courses).toHaveLength(3);
 
-    const courseIds = result.data?.map((item) => item.id);
+    const courseIds = courses.map((item) => item.id);
     expect(courseIds).toStrictEqual([course2.id, course3.id, course1.id]);
   });
 
   it("excludes courses from non-brand organizations", async () => {
     const testUser = await userFixture();
-    const testHeaders = await signInAs(testUser.email, testUser.password);
+    await signInAsCurrentUser({ email: testUser.email, password: testUser.password });
 
     const [brandOrg, schoolOrg] = await Promise.all([
       organizationFixture({ kind: "brand" }),
@@ -119,16 +110,15 @@ describe("authenticated users", () => {
       courseUserFixture({ courseId: schoolCourse.id, userId: testUser.id }),
     ]);
 
-    const result = await listUserCourses(testHeaders);
+    const courses = await listUserCourses();
 
-    expect(result.error).toBeNull();
-    expect(result.data?.some((item) => item.id === brandCourse.id)).toBe(true);
-    expect(result.data?.some((item) => item.id === schoolCourse.id)).toBe(false);
+    expect(courses.some((item) => item.id === brandCourse.id)).toBe(true);
+    expect(courses.some((item) => item.id === schoolCourse.id)).toBe(false);
   });
 
   it("includes personal courses with null organization", async () => {
     const testUser = await userFixture();
-    const testHeaders = await signInAs(testUser.email, testUser.password);
+    await signInAsCurrentUser({ email: testUser.email, password: testUser.password });
 
     const personalCourse = await courseFixture({
       isPublished: true,
@@ -138,16 +128,15 @@ describe("authenticated users", () => {
 
     await courseUserFixture({ courseId: personalCourse.id, userId: testUser.id });
 
-    const result = await listUserCourses(testHeaders);
+    const courses = await listUserCourses();
 
-    expect(result.error).toBeNull();
-    expect(result.data?.some((item) => item.id === personalCourse.id)).toBe(true);
+    expect(courses.some((item) => item.id === personalCourse.id)).toBe(true);
   });
 
   it("does not return other users courses", async () => {
     const [otherUser, testUser] = await Promise.all([userFixture(), userFixture()]);
 
-    const testHeaders = await signInAs(testUser.email, testUser.password);
+    await signInAsCurrentUser({ email: testUser.email, password: testUser.password });
 
     const [otherUserCourse, testUserCourse] = await Promise.all([
       courseFixture({ isPublished: true, organizationId: organization.id }),
@@ -159,10 +148,9 @@ describe("authenticated users", () => {
       courseUserFixture({ courseId: testUserCourse.id, userId: testUser.id }),
     ]);
 
-    const result = await listUserCourses(testHeaders);
+    const courses = await listUserCourses();
 
-    expect(result.error).toBeNull();
-    expect(result.data?.some((item) => item.id === testUserCourse.id)).toBe(true);
-    expect(result.data?.some((item) => item.id === otherUserCourse.id)).toBe(false);
+    expect(courses.some((item) => item.id === testUserCourse.id)).toBe(true);
+    expect(courses.some((item) => item.id === otherUserCourse.id)).toBe(false);
   });
 });

@@ -8,7 +8,8 @@ import {
 } from "@zoonk/ui/components/container";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { LocaleSwitcher } from "../_components/locale-switcher";
+import { Suspense } from "react";
+import { LocaleSwitcher, LocaleSwitcherSkeleton } from "../_components/locale-switcher";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
@@ -36,7 +37,9 @@ export default async function Language() {
       </ContainerHeader>
 
       <ContainerBody>
-        <LocaleSwitcher />
+        <Suspense fallback={<LocaleSwitcherSkeleton />}>
+          <LocaleSwitcher />
+        </Suspense>
       </ContainerBody>
     </Container>
   );

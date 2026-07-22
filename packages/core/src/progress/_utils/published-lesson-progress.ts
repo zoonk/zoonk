@@ -1,39 +1,4 @@
-export type PublishedLessonProgressScope =
-  | { chapterId: string }
-  | { courseId: string }
-  | { lessonId: string };
-
-export type PublishedLessonProgressRow = {
-  brandSlug: string | null;
-  chapterId: string;
-  chapterPosition: number;
-  chapterSlug: string;
-  chapterTitle: string;
-  completedLessons: number;
-  courseId: string;
-  courseSlug: string;
-  lessonDescription: string | null;
-  lessonGenerationStatus: "completed" | "failed" | "pending" | "running";
-  lessonId: string;
-  lessonKind:
-    | "alphabet"
-    | "custom"
-    | "explanation"
-    | "grammar"
-    | "listening"
-    | "practice"
-    | "quiz"
-    | "reading"
-    | "review"
-    | "translation"
-    | "tutorial"
-    | "vocabulary";
-  lessonPosition: number;
-  lessonSlug: string;
-  lessonTitle: string | null;
-  pendingLessons: number;
-  totalLessons: number;
-};
+import { type PublishedLessonProgressRow } from "../progress-queries";
 
 export type EffectiveLessonProgressRow = PublishedLessonProgressRow & {
   isDurablyCompleted: boolean;
@@ -41,22 +6,18 @@ export type EffectiveLessonProgressRow = PublishedLessonProgressRow & {
 };
 
 /**
- * Direct lesson counts still matter for incomplete lessons, while durable
- * lesson completion takes over once the learner has already earned that lesson.
- * This helper merges both signals into one per-lesson state.
+ * A completed lesson-progress row is the durable lesson signal. Naming the
+ * derived flags once keeps every progress selector aligned without issuing a
+ * second query against the same lesson-progress table.
  */
 export function toEffectiveLessonProgressRows({
-  durablyCompletedLessonIds,
   rows,
 }: {
-  durablyCompletedLessonIds: Set<string>;
   rows: PublishedLessonProgressRow[];
 }): EffectiveLessonProgressRow[] {
   return rows.map((row) => {
-    const isDurablyCompleted = durablyCompletedLessonIds.has(row.lessonId);
-
-    const isEffectivelyCompleted =
-      isDurablyCompleted || (row.totalLessons > 0 && row.completedLessons >= row.totalLessons);
+    const isDurablyCompleted = row.completedLessons > 0;
+    const isEffectivelyCompleted = row.totalLessons > 0 && row.completedLessons >= row.totalLessons;
 
     return { ...row, isDurablyCompleted, isEffectivelyCompleted };
   });

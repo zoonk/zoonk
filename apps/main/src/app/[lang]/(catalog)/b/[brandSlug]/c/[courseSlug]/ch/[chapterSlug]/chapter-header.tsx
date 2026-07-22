@@ -41,6 +41,7 @@ export function ChapterHeader({
           <Link
             className="hover:text-foreground block truncate transition-colors"
             href={`/b/${brandSlug}/c/${courseSlug}`}
+            prefetch
           >
             {chapter.course.title}
           </Link>

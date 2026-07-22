@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getStripePrices } from "./prices";
 
 const { mockList } = vi.hoisted(() => ({ mockList: vi.fn() }));
@@ -14,9 +14,22 @@ describe(getStripePrices, () => {
     vi.clearAllMocks();
   });
 
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   it("returns empty map for empty lookup keys", async () => {
     const result = await getStripePrices([], "usd");
     expect(result.size).toBe(0);
+  });
+
+  it("does not contact Stripe during E2E tests", async () => {
+    vi.stubEnv("E2E_TESTING", "true");
+
+    const result = await getStripePrices(["plus_monthly"], "usd");
+
+    expect(result.size).toBe(0);
+    expect(mockList).not.toHaveBeenCalled();
   });
 
   it("returns prices with currency options when available", async () => {
@@ -70,5 +83,12 @@ describe(getStripePrices, () => {
 
     const result = await getStripePrices(["plus_monthly"], "usd");
     expect(result.size).toBe(0);
+  });
+
+  it("lets callers handle provider failures outside their cache boundary", async () => {
+    const providerError = new Error("Stripe unavailable");
+    mockList.mockRejectedValueOnce(providerError);
+
+    await expect(getStripePrices(["plus_monthly"], "usd")).rejects.toBe(providerError);
   });
 });

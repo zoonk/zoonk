@@ -142,7 +142,10 @@ export async function submitPlayerCompletion(params: {
 
   const validationData =
     lesson.kind === "review"
-      ? await getReviewValidationData({ lessonId: lesson.id, stepIds: [...submittedStepIds] })
+      ? await getReviewValidationData({
+          chapterId: lesson.chapterId,
+          stepIds: [...submittedStepIds],
+        })
       : getRegularLessonValidationData({
           lessonKind: lesson.kind,
           steps: lesson.steps,

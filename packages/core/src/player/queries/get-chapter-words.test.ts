@@ -56,9 +56,7 @@ describe(getChapterWordsForIds, () => {
       chapterWordFixture({ sourceLessonId: lesson.id, wordId: word2.id }),
     ]);
 
-    const result = await getChapterWordsForIds({
-      chapterWordIds: chapterWords.map((chapterWord) => chapterWord.id),
-    });
+    const result = await getChapterWordsForIds(chapterWords.map((chapterWord) => chapterWord.id));
 
     expect(result).toHaveLength(2);
 
@@ -95,7 +93,7 @@ describe(getChapterWordsForIds, () => {
       }),
     ]);
 
-    const result = await getChapterWordsForIds({ chapterWordIds: [chapterWord.id] });
+    const result = await getChapterWordsForIds([chapterWord.id]);
 
     expect(result).toHaveLength(1);
 
@@ -116,12 +114,12 @@ describe(getChapterWordsForIds, () => {
   });
 
   it("returns empty array when no ids are requested", async () => {
-    const result = await getChapterWordsForIds({ chapterWordIds: [] });
+    const result = await getChapterWordsForIds([]);
     expect(result).toStrictEqual([]);
   });
 
   it("returns empty array for non-existent chapter word", async () => {
-    const result = await getChapterWordsForIds({ chapterWordIds: [randomUUID()] });
+    const result = await getChapterWordsForIds([randomUUID()]);
     expect(result).toStrictEqual([]);
   });
 
@@ -152,7 +150,7 @@ describe(getChapterWordsForIds, () => {
       wordPronunciationFixture({ pronunciation: "BAN-co", userLanguage: "pt", wordId: word.id }),
     ]);
 
-    const result = await getChapterWordsForIds({ chapterWordIds: [chapterWord.id] });
+    const result = await getChapterWordsForIds([chapterWord.id]);
 
     // Should only include the English pronunciation (matching userLanguage
     // on the ChapterWord), not the Portuguese one

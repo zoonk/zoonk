@@ -73,12 +73,6 @@ function MobileChapterNavbarLinks({ courseHref }: MobileChapterNavTarget) {
 }
 
 export function NavbarLinksSkeleton() {
-  const mobileChapterNavTarget = getMobileChapterNavTarget(usePathname());
-
-  if (mobileChapterNavTarget) {
-    return null;
-  }
-
   return (
     <>
       <Skeleton className="size-9 rounded-full" />

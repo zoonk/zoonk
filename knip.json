@@ -21,7 +21,7 @@
     },
     "apps/blog": { "project": ["src/**/*.{ts,tsx}!"] },
     "apps/main": {
-      "entry": [".eloqnt/config.ts", "src/app/privacy/*.mdx", "src/app/terms/*.mdx"],
+      "entry": [".eloqnt/config.ts", "src/app/*/privacy/*.mdx", "src/app/*/terms/*.mdx"],
       "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts"]
     },
     "packages/core": { "project": ["src/**/*.ts!"] },

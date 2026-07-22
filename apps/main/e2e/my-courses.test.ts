@@ -4,7 +4,7 @@ test.describe("My Courses", () => {
   test("signed-out learners are prompted to log in to track their courses", async ({ page }) => {
     await page.goto("/my");
 
-    await expect(page.getByRole("heading", { name: /my courses/iu })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: /my courses/iu })).toBeVisible();
     await expect(page.getByText(/log in to track your courses/iu)).toBeVisible();
 
     await expect(

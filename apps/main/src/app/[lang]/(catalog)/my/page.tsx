@@ -1,5 +1,5 @@
+import { getSession } from "@/data/users/get-session";
 import { Link } from "@/i18n/navigation";
-import { getSession } from "@zoonk/core/users/session/get";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Container,
@@ -33,38 +33,45 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function MyCourses() {
-  const sessionPromise = getSession();
+/**
+ * Selects the signed-in course list or the login prompt inside the page's body
+ * boundary so the shared title remains part of the prerendered shell.
+ */
+async function MyCoursesBody() {
   const t = await getExtracted();
-  const session = await sessionPromise;
+  const session = await getSession();
 
   if (!session) {
     return (
-      <Container className="min-h-0 flex-1 px-4" variant="centered">
-        <Empty className="p-0">
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <LogInIcon aria-hidden="true" />
-            </EmptyMedia>
-            <EmptyTitle>{t("Log in to track your courses")}</EmptyTitle>
-            <EmptyDescription>
-              {t("Keep your courses and progress in one place by logging in to your account.")}
-            </EmptyDescription>
-          </EmptyHeader>
+      <Empty className="min-h-[calc(100dvh-12rem)] p-0">
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <LogInIcon aria-hidden="true" />
+          </EmptyMedia>
+          <EmptyTitle>{t("Log in to track your courses")}</EmptyTitle>
+          <EmptyDescription>
+            {t("Keep your courses and progress in one place by logging in to your account.")}
+          </EmptyDescription>
+        </EmptyHeader>
 
-          <EmptyContent>
-            <Link
-              className={buttonVariants({ variant: "outline" })}
-              href="/login?next=%2Fmy"
-              prefetch={false}
-            >
-              {t("Log in")}
-            </Link>
-          </EmptyContent>
-        </Empty>
-      </Container>
+        <EmptyContent>
+          <Link
+            className={buttonVariants({ variant: "outline" })}
+            href="/login?next=%2Fmy"
+            prefetch={false}
+          >
+            {t("Log in")}
+          </Link>
+        </EmptyContent>
+      </Empty>
     );
   }
+
+  return <UserCourseList />;
+}
+
+export default async function MyCourses() {
+  const t = await getExtracted();
 
   return (
     <Container variant="list">
@@ -76,7 +83,7 @@ export default async function MyCourses() {
       </ContainerHeader>
 
       <Suspense fallback={<UserCourseListSkeleton />}>
-        <UserCourseList />
+        <MyCoursesBody />
       </Suspense>
     </Container>
   );

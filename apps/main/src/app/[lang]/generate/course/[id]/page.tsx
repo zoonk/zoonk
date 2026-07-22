@@ -4,6 +4,8 @@ import {
   GenerateCoursePromptFallback,
 } from "./generate-course-prompt-content";
 
+export const prefetch = "force-disabled";
+
 export default function GenerateCoursePage(props: PageProps<"/[lang]/generate/course/[id]">) {
   return (
     <Suspense fallback={<GenerateCoursePromptFallback />}>

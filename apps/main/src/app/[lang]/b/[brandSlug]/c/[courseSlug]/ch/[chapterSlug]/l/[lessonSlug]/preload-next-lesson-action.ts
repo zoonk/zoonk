@@ -1,8 +1,8 @@
 "use server";
 
 import { triggerPreloadTarget } from "@/data/progress/trigger-preload-target";
+import { getSession } from "@/data/users/get-session";
 import { getNextPreloadTargets } from "@zoonk/core/player/commands/get-next-lesson-preload-target";
-import { getSession } from "@zoonk/core/users/session/get";
 import { logError } from "@zoonk/utils/logger";
 import { headers } from "next/headers";
 import { after } from "next/server";
@@ -49,8 +49,7 @@ async function triggerNextPreload(input: NextPreloadInput): Promise<void> {
  * checks so this cannot be used as a generic generation proxy.
  */
 export async function preloadNextLesson(lessonId: string): Promise<void> {
-  const reqHeaders = await headers();
-  const session = await getSession(reqHeaders);
+  const [reqHeaders, session] = await Promise.all([headers(), getSession()]);
 
   if (!session) {
     return;

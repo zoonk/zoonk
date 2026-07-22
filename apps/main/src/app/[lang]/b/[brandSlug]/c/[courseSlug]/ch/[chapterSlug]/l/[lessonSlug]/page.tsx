@@ -1,46 +1,70 @@
+import { GeneratedCourseCacheRefresher } from "@/components/catalog/generated-course-cache-refresher";
 import { UpgradeCTA } from "@/components/subscription/upgrade-cta";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
-import { getLesson as getCatalogLesson } from "@/data/lessons/get-lesson";
+import { type CatalogLesson, getLesson as getCatalogLesson } from "@/data/lessons/get-lesson";
+import { getNextLessonInCourse } from "@/data/lessons/get-next-lesson-in-course";
 import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
 import { getPlayerProgressSnapshot } from "@/data/progress/get-player-progress-snapshot";
+import { hasActiveSubscription } from "@/data/subscriptions/get-active-subscription";
+import { getSession } from "@/data/users/get-session";
 import { redirect } from "@/i18n/navigation";
 import { getLessonDisplayMeta, getLessonSeoMeta } from "@/lib/lessons";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
-import { hasActiveSubscription } from "@zoonk/core/auth/subscription";
 import { getLessonAccessRequirement } from "@zoonk/core/lessons/access";
 import { isStandaloneGeneratedLessonKind } from "@zoonk/core/lessons/generated-companion-kinds";
 import {
   getSourceLessonForGeneratedCompanion,
   isGeneratedCompanionLessonKind,
 } from "@zoonk/core/lessons/generated-companions";
-import { getNextChapterInCourse } from "@zoonk/core/lessons/next-chapter-in-course";
-import { getNextLessonInCourse } from "@zoonk/core/lessons/next-in-course";
-import { startLesson } from "@zoonk/core/player/commands/start-lesson";
-import { preparePlayerLessonData } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { getChapterDistractorWords } from "@zoonk/core/player/queries/get-chapter-distractor-words";
-import { getChapterSentenceWordsForIds } from "@zoonk/core/player/queries/get-chapter-sentence-words";
-import { getChapterSentencesForIds } from "@zoonk/core/player/queries/get-chapter-sentences";
-import { getChapterWordsForIds } from "@zoonk/core/player/queries/get-chapter-words";
-import { getLesson as getPlayerLesson } from "@zoonk/core/player/queries/get-lesson";
+import { type PlayerLesson } from "@zoonk/core/player/queries/get-lesson";
 import { getPlayerResourceIds } from "@zoonk/core/player/queries/get-player-resource-ids";
-import { getTotalBrainPower } from "@zoonk/core/player/queries/get-total-brain-power";
-import { getSession } from "@zoonk/core/users/session/get";
 import { Container, ContainerBody } from "@zoonk/ui/components/container";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { headers } from "next/headers";
 import { notFound } from "next/navigation";
-import { after } from "next/server";
-import { fetchReviewLessonData } from "./lesson-data-loaders";
+import { Suspense } from "react";
+import {
+  fetchReviewLessonData,
+  getPlayerLesson,
+  getPlayerResources,
+  preparePlayerLesson,
+} from "./lesson-data-loaders";
 import { LessonNotGenerated } from "./lesson-not-generated";
 import { LessonPlayerClient } from "./lesson-player-client";
-import { buildLessonProgressMeta } from "./lesson-player-model";
+import { buildLessonProgressMeta, getNextChapterTarget } from "./lesson-player-model";
 import { ReviewLessonEmpty } from "./review-lesson-empty";
 
 type Props = PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">;
-type LessonShell = NonNullable<Awaited<ReturnType<typeof getCatalogLesson>>>;
-type PlayerLesson = NonNullable<Awaited<ReturnType<typeof getPlayerLesson>>>;
+
+export const prefetch = "allow-runtime";
+
+/**
+ * Preserves the player's spatial frame on a cold navigation while lesson data
+ * streams. Runtime-prefetched navigations resolve this fallback before click.
+ */
+function LessonPlayerSkeleton() {
+  return (
+    <main className="flex min-h-dvh flex-col">
+      <header className="flex items-center justify-between px-3 py-1.5 sm:p-4">
+        <Skeleton className="size-9 rounded-full" />
+        <Skeleton className="h-4 w-24" />
+      </header>
+
+      <Skeleton className="h-0.5 w-full rounded-none" />
+
+      <section className="flex flex-1 flex-col items-center justify-center gap-4 p-4">
+        <Skeleton className="h-6 w-3/4 max-w-md" />
+        <Skeleton className="h-4 w-1/2 max-w-sm" />
+      </section>
+
+      <div className="p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <Skeleton className="h-10 w-full rounded-4xl" />
+      </div>
+    </main>
+  );
+}
 
 /**
  * Stops the player route before expensive player queries when the lesson sits
@@ -56,7 +80,7 @@ async function getLessonAccessGate({
   brandSlug: string;
   chapterSlug: string;
   courseSlug: string;
-  lesson: LessonShell;
+  lesson: CatalogLesson;
 }) {
   const requirement = getLessonAccessRequirement({ lesson });
 
@@ -67,7 +91,7 @@ async function getLessonAccessGate({
   const backHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}` as const;
   const t = await getExtracted();
 
-  const hasSubscription = await hasActiveSubscription(await headers());
+  const hasSubscription = await hasActiveSubscription();
 
   if (hasSubscription) {
     return null;
@@ -151,7 +175,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function LessonPage({ params }: Props) {
+/**
+ * Loads the runtime-specific lesson inside the page's explicit streaming
+ * boundary so Cache Components can prerender the route shell.
+ */
+async function LessonContent({ params }: Pick<Props, "params">) {
   const { brandSlug, chapterSlug, courseSlug, lang: locale, lessonSlug } = await params;
 
   const lessonShell = await getCatalogLesson({ brandSlug, chapterSlug, courseSlug, lessonSlug });
@@ -174,20 +202,14 @@ export default async function LessonPage({ params }: Props) {
   const [
     session,
     lesson,
-    nextChapter,
     nextLesson,
     reviewLessonData,
-    totalBrainPower,
     progressSnapshot,
     chapterLessons,
     courseChapters,
   ] = await Promise.all([
     getSession(),
-    getPlayerLesson({ lessonId: lessonShell.id }),
-    getNextChapterInCourse({
-      chapterPosition: lessonShell.chapter.position,
-      courseId: lessonShell.chapter.course.id,
-    }),
+    getPlayerLesson(lessonShell.id),
     getNextLessonInCourse({
       chapterId: lessonShell.chapter.id,
       chapterPosition: lessonShell.chapter.position,
@@ -195,7 +217,6 @@ export default async function LessonPage({ params }: Props) {
       lessonPosition: lessonShell.position,
     }),
     fetchReviewLessonData(lessonShell.id),
-    getTotalBrainPower(),
     getPlayerProgressSnapshot(),
     listChapterLessons({ chapterId: lessonShell.chapter.id }),
     listCourseChapters({ courseId: lessonShell.chapter.course.id }),
@@ -239,31 +260,24 @@ export default async function LessonPage({ params }: Props) {
     );
   }
 
-  const lessonMeta = await getLessonDisplayMeta(lesson);
   const reviewSteps = reviewLessonData?.steps ?? null;
 
   const steps = reviewSteps ?? lesson.steps;
   const resourceIds = getPlayerResourceIds({ steps });
 
-  const [distractorWords, chapterWords, chapterSentences, sentenceWords] = await Promise.all([
-    getChapterDistractorWords(resourceIds),
-    getChapterWordsForIds({ chapterWordIds: resourceIds.chapterWordIds }),
-    getChapterSentencesForIds({ chapterSentenceIds: resourceIds.chapterSentenceIds }),
-    getChapterSentenceWordsForIds({ chapterSentenceIds: resourceIds.chapterSentenceIds }),
+  const [lessonMeta, resources] = await Promise.all([
+    getLessonDisplayMeta(lesson),
+    getPlayerResources({ ...resourceIds, lessonId: lesson.id }),
   ]);
 
-  const serialized = preparePlayerLessonData({
-    chapterSentences,
-    chapterWords,
-    distractorWords,
+  const serialized = await preparePlayerLesson({
+    chapterSentences: resources.chapterSentences,
+    chapterWords: resources.chapterWords,
+    distractorWords: resources.distractorWords,
     lesson,
-    sentenceWords,
+    sentenceWords: resources.sentenceWords,
     steps,
   });
-
-  if (session) {
-    after(() => startLesson({ lessonId: lesson.id, userId: session.user.id }));
-  }
 
   const lessonProgress = buildLessonProgressMeta({
     chapterId: lessonShell.chapter.id,
@@ -272,27 +286,48 @@ export default async function LessonPage({ params }: Props) {
     lessonId: lessonShell.id,
   });
 
+  const nextChapter = getNextChapterTarget({
+    brandSlug,
+    chapterId: lessonShell.chapter.id,
+    courseChapters,
+    courseSlug,
+  });
+
   return (
-    <LessonPlayerClient
-      lesson={serialized}
-      brandSlug={brandSlug}
-      chapterPosition={lessonShell.chapter.position}
-      chapterTitle={lessonShell.chapter.title}
-      courseTitle={lessonShell.chapter.course.title}
-      courseSlug={courseSlug}
-      chapterSlug={chapterSlug}
-      isAuthenticated={Boolean(session)}
-      lessonDescription={lessonMeta.description}
-      lessonProgress={lessonProgress}
-      lessonPosition={lessonShell.position}
-      lessonSlug={lessonSlug}
-      lessonTitle={lessonMeta.title}
-      nextChapter={nextChapter}
-      nextLesson={nextLesson}
-      progressSnapshot={progressSnapshot}
-      totalBrainPower={totalBrainPower}
-      userEmail={session?.user.email}
-      userName={session?.user.name ?? null}
-    />
+    <>
+      {lessonShell.chapter.course.generationStatus === "running" && (
+        <GeneratedCourseCacheRefresher courseId={lessonShell.chapter.course.id} />
+      )}
+
+      <LessonPlayerClient
+        lesson={serialized}
+        brandSlug={brandSlug}
+        chapterPosition={lessonShell.chapter.position}
+        chapterTitle={lessonShell.chapter.title}
+        courseTitle={lessonShell.chapter.course.title}
+        courseSlug={courseSlug}
+        chapterSlug={chapterSlug}
+        isAuthenticated={Boolean(session)}
+        lessonDescription={lessonMeta.description}
+        lessonProgress={lessonProgress}
+        lessonPosition={lessonShell.position}
+        lessonSlug={lessonSlug}
+        lessonTitle={lessonMeta.title}
+        nextChapter={nextChapter}
+        nextLesson={nextLesson}
+        progressSnapshot={progressSnapshot}
+        totalBrainPower={progressSnapshot?.totalBrainPower ?? 0}
+        userEmail={session?.user.email}
+        userName={session?.user.name ?? null}
+      />
+    </>
+  );
+}
+
+export default function LessonPage({ params }: Props) {
+  return (
+    <Suspense fallback={<LessonPlayerSkeleton />}>
+      <LessonContent params={params} />
+    </Suspense>
   );
 }

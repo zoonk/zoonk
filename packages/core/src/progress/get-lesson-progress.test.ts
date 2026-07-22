@@ -1,11 +1,34 @@
-import { signInAs } from "@zoonk/testing/fixtures/auth";
+import { type LessonKind } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, it } from "vitest";
-import { getLessonProgress } from "./get-lesson-progress";
+import { type LessonProgressInput, getLessonProgress } from "./get-lesson-progress";
+import { listPublishedLessonProgressRows } from "./progress-queries";
+
+/**
+ * Loads the published row input consumed by the pure lesson selector while
+ * keeping scope, identity, and lesson-kind filtering explicit in each case.
+ */
+async function loadLessonProgressInput({
+  chapterId,
+  excludedLessonKinds,
+  userId,
+}: {
+  chapterId: string;
+  excludedLessonKinds?: LessonKind[];
+  userId: string;
+}): Promise<LessonProgressInput> {
+  const rows = await listPublishedLessonProgressRows({
+    excludedLessonKinds,
+    scope: { chapterId },
+    userId,
+  });
+
+  return { rows };
+}
 
 describe(getLessonProgress, () => {
   let organization: Awaited<ReturnType<typeof organizationFixture>>;
@@ -25,10 +48,8 @@ describe(getLessonProgress, () => {
     });
   }
 
-  it("returns empty array when unauthenticated", async () => {
-    const chapter = await createPublishedChapter();
-
-    const result = await getLessonProgress({ chapterId: chapter.id, headers: new Headers() });
+  it("returns an empty array for an empty published chapter", () => {
+    const result = getLessonProgress({ rows: [] });
 
     expect(result).toStrictEqual([]);
   });
@@ -58,8 +79,8 @@ describe(getLessonProgress, () => {
       userId: user.id,
     });
 
-    const headers = await signInAs(user.email, user.password);
-    const result = await getLessonProgress({ chapterId: chapter.id, headers });
+    const input = await loadLessonProgressInput({ chapterId: chapter.id, userId: user.id });
+    const result = getLessonProgress(input);
 
     expect(result).toStrictEqual([
       { isCompleted: true, lessonId: completedLesson.id },
@@ -84,8 +105,8 @@ describe(getLessonProgress, () => {
       userId: user.id,
     });
 
-    const headers = await signInAs(user.email, user.password);
-    const result = await getLessonProgress({ chapterId: chapter.id, headers });
+    const input = await loadLessonProgressInput({ chapterId: chapter.id, userId: user.id });
+    const result = getLessonProgress(input);
 
     expect(result).toStrictEqual([{ isCompleted: false, lessonId: lesson.id }]);
   });
@@ -123,8 +144,8 @@ describe(getLessonProgress, () => {
       }),
     ]);
 
-    const headers = await signInAs(user.email, user.password);
-    const result = await getLessonProgress({ chapterId: chapter.id, headers });
+    const input = await loadLessonProgressInput({ chapterId: chapter.id, userId: user.id });
+    const result = getLessonProgress(input);
 
     expect(result).toStrictEqual([{ isCompleted: true, lessonId: publishedLesson.id }]);
   });
@@ -149,21 +170,20 @@ describe(getLessonProgress, () => {
       }),
     ]);
 
-    const [headers] = await Promise.all([
-      signInAs(user.email, user.password),
-      lessonProgressFixture({
-        completedAt: new Date(),
-        durationSeconds: 60,
-        lessonId: visibleLesson.id,
-        userId: user.id,
-      }),
-    ]);
+    await lessonProgressFixture({
+      completedAt: new Date(),
+      durationSeconds: 60,
+      lessonId: visibleLesson.id,
+      userId: user.id,
+    });
 
-    const result = await getLessonProgress({
+    const input = await loadLessonProgressInput({
       chapterId: chapter.id,
       excludedLessonKinds: ["quiz"],
-      headers,
+      userId: user.id,
     });
+
+    const result = getLessonProgress(input);
 
     expect(result).toStrictEqual([{ isCompleted: true, lessonId: visibleLesson.id }]);
   });
@@ -192,8 +212,8 @@ describe(getLessonProgress, () => {
       position: 1,
     });
 
-    const headers = await signInAs(user.email, user.password);
-    const result = await getLessonProgress({ chapterId: chapter.id, headers });
+    const input = await loadLessonProgressInput({ chapterId: chapter.id, userId: user.id });
+    const result = getLessonProgress(input);
 
     expect(result).toStrictEqual([
       { isCompleted: true, lessonId: completedLesson.id },

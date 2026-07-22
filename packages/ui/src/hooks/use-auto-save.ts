@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { type SaveStatusType } from "../components/save-status";
 import { toast } from "../components/sonner";
 import { useDebounce } from "./use-debounce";
@@ -27,6 +27,7 @@ export function useAutoSave({
   const lastSavedValue = useRef(initialValue);
   const statusTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const saveRequestRef = useRef(0);
+  const save = useEffectEvent((valueToSave: string) => onSave(valueToSave));
 
   if (initialValue !== prevInitialValue) {
     setPrevInitialValue(initialValue);
@@ -55,7 +56,7 @@ export function useAutoSave({
       }
     }, SAVING_STATUS_DELAY_MS);
 
-    onSave(valueToSave)
+    save(valueToSave)
       .then((result) => {
         clearTimeout(savingTimeout);
 
@@ -94,7 +95,7 @@ export function useAutoSave({
         toast.error(message);
         setStatus("unsaved");
       });
-  }, [debouncedValue, onSave]);
+  }, [debouncedValue]);
 
   useEffect(
     () => () => {

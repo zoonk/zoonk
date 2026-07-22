@@ -1,12 +1,12 @@
 import { prisma } from "@zoonk/db";
-import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { signInAsCurrentUser } from "../../../test-utils/auth";
 import { getLevelInsights } from "./get-level-insights";
 
 describe("unauthenticated users", () => {
   it("returns null", async () => {
-    const result = await getLevelInsights({ headers: new Headers() });
+    const result = await getLevelInsights();
     expect(result).toBeNull();
   });
 });
@@ -14,15 +14,15 @@ describe("unauthenticated users", () => {
 describe("authenticated users", () => {
   it("returns null when user has no DailyProgress records", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
-    const result = await getLevelInsights({ headers });
+    const result = await getLevelInsights();
     expect(result).toBeNull();
   });
 
   it("returns the most recent highest BP day and learning days for the period", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     await prisma.dailyProgress.createMany({
       data: [
@@ -62,7 +62,6 @@ describe("authenticated users", () => {
 
     const result = await getLevelInsights({
       endDate: new Date("2025-01-31T23:59:59.999Z"),
-      headers,
       startDate: new Date("2025-01-01T00:00:00Z"),
     });
 

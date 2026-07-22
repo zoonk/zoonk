@@ -1,4 +1,5 @@
 import "server-only";
+import { LANGUAGE_COURSE_LIST_CACHE_TAG } from "@/data/cache-tags";
 import { type AiCourseHref, getAiCourseHref } from "@/data/courses/course-href";
 import { type Course, type CoursePrompt, getAiGenerationCourseWhere, prisma } from "@zoonk/db";
 import {
@@ -7,6 +8,7 @@ import {
   isTTSSupportedLanguage,
 } from "@zoonk/utils/languages";
 import { normalizeString } from "@zoonk/utils/string";
+import { cacheTag } from "next/cache";
 
 type LanguageCourseInput = { language: string; targetLanguage: string };
 
@@ -78,6 +80,9 @@ export async function getCompletedLanguageCourseHrefs({
 }: {
   language: string;
 }): Promise<CompletedLanguageCourseHrefs> {
+  "use cache";
+  cacheTag(LANGUAGE_COURSE_LIST_CACHE_TAG);
+
   const courses = await prisma.course.findMany({
     orderBy: { createdAt: "asc" },
     where: getAiGenerationCourseWhere({
@@ -141,9 +146,9 @@ async function getOrCreateLanguageCoursePrompt({
     targetLanguage,
   };
 
-  const cachedPrompt = await prisma.coursePrompt.upsert({
-    create: languageCoursePrompt,
-    update: {},
+  await prisma.coursePrompt.createMany({ data: languageCoursePrompt, skipDuplicates: true });
+
+  const cachedPrompt = await prisma.coursePrompt.findUniqueOrThrow({
     where: { languageNormalizedPrompt: { language, normalizedPrompt } },
   });
 

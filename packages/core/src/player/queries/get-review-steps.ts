@@ -1,19 +1,12 @@
 import "server-only";
-import { type LessonKind, getPublishedStepWhere, prisma } from "@zoonk/db";
+import { type LessonKind, type StepGetPayload, getPublishedStepWhere, prisma } from "@zoonk/db";
 import { shuffle } from "@zoonk/utils/shuffle";
 import { ANSWERABLE_STEP_KINDS } from "../contracts/validate-answers";
 
 const REVIEW_TARGET_COUNT = 10;
 const EXCLUDED_LESSON_KINDS: LessonKind[] = ["review"];
 
-async function getReviewChapterId(lessonId: string) {
-  const lesson = await prisma.lesson.findUnique({
-    select: { chapterId: true },
-    where: { id: lessonId },
-  });
-
-  return lesson?.chapterId ?? null;
-}
+export type ReviewStep = StepGetPayload<{ include: { sentence: true; word: true } }>;
 
 function reviewableStepFilter(chapterId: string) {
   return getPublishedStepWhere({
@@ -36,18 +29,12 @@ function reviewableStepFilter(chapterId: string) {
  * If there's no userId, all steps are random fillers.
  */
 export async function getReviewSteps({
-  lessonId,
+  chapterId,
   userId,
 }: {
-  lessonId: string;
+  chapterId: string;
   userId: string | null;
-}) {
-  const chapterId = await getReviewChapterId(lessonId);
-
-  if (!chapterId) {
-    return [];
-  }
-
+}): Promise<ReviewStep[]> {
   const lessonStepFilter = reviewableStepFilter(chapterId);
 
   if (!userId) {
@@ -106,15 +93,9 @@ export async function getReviewSteps({
  * completion should require the capped target count, not every eligible step in
  * the chapter.
  */
-export async function getReviewValidationData(params: { lessonId: string; stepIds: string[] }) {
-  const chapterId = await getReviewChapterId(params.lessonId);
-
-  if (!chapterId) {
-    return { expectedStepCount: 0, steps: [] };
-  }
-
+export async function getReviewValidationData(params: { chapterId: string; stepIds: string[] }) {
   const submittedStepIds = params.stepIds.slice(0, REVIEW_TARGET_COUNT);
-  const stepFilter = reviewableStepFilter(chapterId);
+  const stepFilter = reviewableStepFilter(params.chapterId);
 
   const [eligibleStepCount, steps] = await Promise.all([
     prisma.step.count({ where: stepFilter }),

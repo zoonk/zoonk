@@ -6,11 +6,11 @@ import {
 import { CatalogGridImage } from "@/components/catalog/catalog-grid-image";
 import { getCatalogActiveItemKey } from "@/components/catalog/catalog-item-target";
 import { getCatalogLessonProgress } from "@/data/progress/catalog-progress";
+import { getActiveCatalogTarget } from "@/data/progress/get-catalog-target";
+import { getSession } from "@/data/users/get-session";
 import { getDefaultLessonImage } from "@/lib/catalog/default-images";
-import { getLessonDisplayMeta, getLessonKindLabels } from "@/lib/lessons";
+import { type LessonDisplayMeta, getLessonDisplayMeta, getLessonKindLabels } from "@/lib/lessons";
 import { getFilterableLessonKinds } from "@/lib/lessons/lesson-kind-filters";
-import { getActiveCatalogTarget } from "@zoonk/core/progress/active-catalog-target";
-import { getSession } from "@zoonk/core/users/session/get";
 import { type Lesson, type LessonKind } from "@zoonk/db";
 import {
   GridGroup,
@@ -27,7 +27,7 @@ import { getLessonKindTone } from "./_utils/lesson-kind-tones";
 import { LessonListFilters } from "./lesson-list-filters";
 import { LessonListPosition } from "./lesson-list-position";
 
-type LessonRow = { display: Awaited<ReturnType<typeof getLessonDisplayMeta>>; lesson: Lesson };
+type LessonRow = { display: LessonDisplayMeta; lesson: Lesson };
 
 /**
  * Lesson rows only need a binary completion state, so the visual stays quieter
@@ -142,11 +142,11 @@ export async function LessonList({
   }
 
   const t = await getExtracted();
-  const session = await getSession();
 
-  const [completionData, activeTarget] = await Promise.all([
-    getCatalogLessonProgress({ chapterId, excludedLessonKinds: hiddenLessonKinds }),
+  const [activeTarget, completionData, session] = await Promise.all([
     getActiveCatalogTarget({ excludedLessonKinds: hiddenLessonKinds, scope: { chapterId } }),
+    getCatalogLessonProgress({ chapterId, excludedLessonKinds: hiddenLessonKinds }),
+    getSession(),
   ]);
 
   const lessonKindLabels = await getLessonKindLabels();

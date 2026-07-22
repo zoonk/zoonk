@@ -1,13 +1,16 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
-import { cache } from "react";
+import { type ChapterSentenceGetPayload, prisma } from "@zoonk/db";
+
+export type PlayerChapterSentence = ChapterSentenceGetPayload<{ include: { sentence: true } }>;
 
 /**
  * Player steps point at exact chapter-sentence resources. Loading by those IDs
  * makes listening, reading, and review payloads use the generated translation
  * and distractor row attached to the step.
  */
-const cachedGetChapterSentencesForIds = cache(async (...chapterSentenceIds: string[]) => {
+export async function getChapterSentencesForIds(
+  chapterSentenceIds: string[],
+): Promise<PlayerChapterSentence[]> {
   if (chapterSentenceIds.length === 0) {
     return [];
   }
@@ -16,8 +19,4 @@ const cachedGetChapterSentencesForIds = cache(async (...chapterSentenceIds: stri
     include: { sentence: true },
     where: { id: { in: chapterSentenceIds } },
   });
-});
-
-export function getChapterSentencesForIds(params: { chapterSentenceIds: string[] }) {
-  return cachedGetChapterSentencesForIds(...params.chapterSentenceIds);
 }

@@ -1,35 +1,43 @@
 import "server-only";
 import { hasUserLearningProgress } from "@zoonk/core/progress/user-progress";
-import { getSession } from "@zoonk/core/users/session/get";
-import { prisma } from "@zoonk/db";
+import { type UserProgress } from "@zoonk/db";
 import { computeDecayedEnergy } from "@zoonk/utils/energy";
-import { safeAsync } from "@zoonk/utils/error";
-import { cache } from "react";
+import { getUserProgress } from "./get-user-progress";
 
-export const getEnergyLevel = cache(
-  async (headers?: Headers): Promise<{ currentEnergy: number } | null> => {
-    const session = await getSession(headers);
+type EnergyLevelData = { currentEnergy: number };
 
-    if (!session) {
-      return null;
-    }
+/**
+ * Captures the approximate time used for daily Energy decay. Keeping this
+ * producer local makes its default cache-window drift part of Energy behavior
+ * instead of exposing a generic cached clock to unrelated features.
+ */
+async function getEnergyCalculationDate(): Promise<Date> {
+  "use cache";
 
-    const userId = session.user.id;
+  return new Date();
+}
 
-    const { data: progress, error } = await safeAsync(() =>
-      prisma.userProgress.findUnique({ where: { userId } }),
-    );
+/**
+ * Calculates time-sensitive energy from a durable progress row and an explicit timestamp.
+ */
+function toEnergyLevel({
+  now,
+  progress,
+}: {
+  now: Date;
+  progress: UserProgress | null;
+}): EnergyLevelData | null {
+  if (!hasUserLearningProgress(progress)) {
+    return null;
+  }
 
-    if (error || !hasUserLearningProgress(progress)) {
-      return null;
-    }
+  return {
+    currentEnergy: computeDecayedEnergy(progress.currentEnergy, progress.lastActiveAt, now),
+  };
+}
 
-    return {
-      currentEnergy: computeDecayedEnergy(
-        progress.currentEnergy,
-        progress.lastActiveAt,
-        new Date(),
-      ),
-    };
-  },
-);
+/** Returns the current Energy level for the authenticated learner. */
+export async function getEnergyLevel(): Promise<EnergyLevelData | null> {
+  const [now, progress] = await Promise.all([getEnergyCalculationDate(), getUserProgress()]);
+  return toEnergyLevel({ now, progress });
+}

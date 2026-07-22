@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useReducer, useRef } from "react";
+import { useEffect, useEffectEvent, useReducer } from "react";
 
 export type ThinkingMessageGenerator = (index: number) => string;
 
@@ -86,10 +86,11 @@ export function useThinkingMessages<TPhase extends string>(
   activePhases: TPhase[],
 ): Record<string, string> {
   const [state, dispatch] = useReducer(thinkingReducer, INITIAL_STATE);
-  const activePhasesRef = useRef(activePhases);
-  activePhasesRef.current = activePhases;
-
   const hasActive = activePhases.length > 0;
+
+  const advanceMessages = useEffectEvent(() => {
+    dispatch({ phases: activePhases, type: "advance" });
+  });
 
   useEffect(() => {
     if (!hasActive) {
@@ -98,7 +99,7 @@ export function useThinkingMessages<TPhase extends string>(
     }
 
     const timeout = setTimeout(() => {
-      dispatch({ phases: activePhasesRef.current, type: "advance" });
+      advanceMessages();
     }, getRandomInterval());
 
     return () => {

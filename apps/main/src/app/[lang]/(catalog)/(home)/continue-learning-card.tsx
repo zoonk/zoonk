@@ -37,7 +37,7 @@ function getHrefs(item: ContinueLearningItem) {
   if (!course.organization) {
     const href = `/p/${course.id}` as const;
 
-    return { chapterHref: href, courseHref: href, headerHref: href, prefetch: false };
+    return { chapterHref: href, courseHref: href, headerHref: href, prefetch: true };
   }
 
   const courseHref = `/b/${course.organization.slug}/c/${course.slug}` as const;

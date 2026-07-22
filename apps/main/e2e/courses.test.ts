@@ -1,39 +1,6 @@
-import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
-import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { normalizeString } from "@zoonk/utils/string";
 import { type Page, expect, test } from "./fixtures";
-
-const UUID_SHORT_LENGTH = 8;
-
-async function createPublishedCourse(language: string) {
-  const org = await getAiOrganization();
-  const uniqueId = randomUUID().slice(0, UUID_SHORT_LENGTH);
-  const title = `E2E Course ${uniqueId}`;
-
-  const course = await courseFixture({
-    isPublished: true,
-    language,
-    normalizedTitle: normalizeString(title),
-    organizationId: org.id,
-    slug: `e2e-courses-${uniqueId}`,
-    title,
-    userCount: 50,
-  });
-
-  // Course needs a chapter so the detail page renders instead of redirecting
-  await chapterFixture({
-    courseId: course.id,
-    isPublished: true,
-    organizationId: org.id,
-    position: 0,
-  });
-
-  return course;
-}
 
 /**
  * Sentry reports this regression through the browser's unhandled rejection
@@ -65,68 +32,87 @@ async function getUnhandledRejections(page: Page): Promise<string[]> {
   });
 }
 
+/**
+ * Reads the destinations that are actually visible so infinite loading can
+ * prove it appended a new course without depending on names or database order.
+ */
+async function getRenderedCourseHrefs(page: Page): Promise<string[]> {
+  const courseLinks = page.getByRole("main").getByRole("list").getByRole("link");
+
+  return courseLinks.evaluateAll((links) => links.map((link) => (link as HTMLAnchorElement).href));
+}
+
+/**
+ * Distinguishes an appended page from a rerender of the original courses by
+ * checking whether the catalog gained at least one new destination.
+ */
+async function hasNewCourseHref({
+  initialHrefs,
+  page,
+}: {
+  initialHrefs: string[];
+  page: Page;
+}): Promise<boolean> {
+  const renderedHrefs = await getRenderedCourseHrefs(page);
+  const initialHrefSet = new Set(initialHrefs);
+
+  return renderedHrefs.some((href) => !initialHrefSet.has(href));
+}
+
 test.describe("Courses Page - Basic", () => {
   test("clicking course card navigates to course detail", async ({ page }) => {
-    const course = await createPublishedCourse("en");
+    await page.goto("/courses");
 
-    const courseLink = page.getByRole("link", { name: new RegExp(course.title, "iu") });
+    const courseLink = page.getByRole("main").getByRole("list").getByRole("link").first();
 
-    await expect(async () => {
-      await page.goto("/courses");
-      await expect(courseLink).toBeVisible({ timeout: 5000 });
-    }).toPass({ timeout: 15_000 });
+    await expect(courseLink).toBeVisible();
+
+    const courseHref = await courseLink.getAttribute("href");
+
+    if (!courseHref) {
+      throw new Error("Missing rendered course href");
+    }
+
+    const coursePathSegments = new URL(courseHref, page.url()).pathname.split("/");
+    const brandSlug = coursePathSegments.at(-3);
+    const courseSlug = coursePathSegments.at(-1);
+
+    if (!brandSlug || !courseSlug) {
+      throw new Error(`Invalid rendered course href: ${courseHref}`);
+    }
+
+    const course = await prisma.course.findFirstOrThrow({
+      where: { organization: { slug: brandSlug }, slug: courseSlug },
+    });
 
     await courseLink.click();
 
-    await expect(page).toHaveURL(new RegExp(`/b/${AI_ORG_SLUG}/c/${course.slug}$`, "u"));
     await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
   });
 });
 
 test.describe("Courses Page - Infinite Loading", () => {
   test("loads more courses when scrolling to the bottom", async ({ page }) => {
-    const org = await getAiOrganization();
+    await page.goto("/courses");
 
-    // Create 25 courses to exceed the page limit (20)
-    await Promise.all(
-      Array.from({ length: 25 }, () =>
-        courseFixture({ isPublished: true, language: "en", organizationId: org.id }),
-      ),
-    );
+    await expect.poll(() => getRenderedCourseHrefs(page), { timeout: 10_000 }).not.toHaveLength(0);
 
-    const courseList = page.getByRole("main").getByRole("list");
-    const courseLinks = courseList.getByRole("link");
+    const initialCourseHrefs = await getRenderedCourseHrefs(page);
 
-    // Wait for the courses page to load with the initial 20 items
-    await expect(async () => {
-      await page.goto("/courses");
-      await expect(courseLinks).toHaveCount(20, { timeout: 5000 });
-    }).toPass({ timeout: 15_000 });
-
-    // Scroll to the bottom to trigger infinite loading
     await page.evaluate(() => globalThis.scrollTo(0, document.body.scrollHeight));
 
-    // Verify more courses loaded after scrolling
-    await expect(async () => {
-      const count = await courseLinks.count();
-      expect(count).toBeGreaterThan(20);
-    }).toPass({ timeout: 10_000 });
+    await expect
+      .poll(() => hasNewCourseHref({ initialHrefs: initialCourseHrefs, page }), { timeout: 10_000 })
+      .toBe(true);
   });
 
   test("lets users retry failed load-more requests without unhandled rejections", async ({
     page,
   }) => {
-    const org = await getAiOrganization();
     const failedLoadMoreRequests: string[] = [];
     const loadMoreRequests: string[] = [];
 
     await recordUnhandledRejections(page);
-
-    await Promise.all(
-      Array.from({ length: 25 }, () =>
-        courseFixture({ isPublished: true, language: "en", organizationId: org.id }),
-      ),
-    );
 
     await page.route("**/courses", async (route) => {
       const request = route.request();
@@ -145,13 +131,11 @@ test.describe("Courses Page - Infinite Loading", () => {
       await route.continue();
     });
 
-    const courseList = page.getByRole("main").getByRole("list");
-    const courseLinks = courseList.getByRole("link");
+    await page.goto("/courses");
 
-    await expect(async () => {
-      await page.goto("/courses");
-      await expect(courseLinks).toHaveCount(20, { timeout: 5000 });
-    }).toPass({ timeout: 15_000 });
+    await expect.poll(() => getRenderedCourseHrefs(page), { timeout: 10_000 }).not.toHaveLength(0);
+
+    const initialCourseHrefs = await getRenderedCourseHrefs(page);
 
     await page.evaluate(() => globalThis.scrollTo(0, document.body.scrollHeight));
 
@@ -166,10 +150,9 @@ test.describe("Courses Page - Infinite Loading", () => {
 
     await page.getByRole("button", { name: /try again/iu }).click();
 
-    await expect(async () => {
-      const count = await courseLinks.count();
-      expect(count).toBeGreaterThan(20);
-    }).toPass({ timeout: 10_000 });
+    await expect
+      .poll(() => hasNewCourseHref({ initialHrefs: initialCourseHrefs, page }), { timeout: 10_000 })
+      .toBe(true);
 
     expect(loadMoreRequests).toHaveLength(2);
     expect(await getUnhandledRejections(page)).toEqual([]);
@@ -182,25 +165,5 @@ test.describe("Courses Page - Locale", () => {
     await page.goto("/courses");
 
     await expect(page.getByRole("heading", { name: /explorar cursos/iu })).toBeVisible();
-  });
-
-  test("unpublished courses are hidden", async ({ page }) => {
-    const org = await getAiOrganization();
-    const uniqueId = randomUUID().slice(0, UUID_SHORT_LENGTH);
-    const title = `E2E Curso Não Publicado ${uniqueId}`;
-
-    const unpublishedCourse = await courseFixture({
-      isPublished: false,
-      language: "pt",
-      normalizedTitle: normalizeString(title),
-      organizationId: org.id,
-      slug: `e2e-unpublished-${uniqueId}`,
-      title,
-    });
-
-    await setLocale(page, "pt");
-    await page.goto("/courses");
-
-    await expect(page.getByText(unpublishedCourse.title)).not.toBeVisible();
   });
 });

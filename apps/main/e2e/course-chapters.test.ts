@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -142,6 +143,52 @@ test.beforeAll(async () => {
 });
 
 test.describe("Course Chapters List", () => {
+  test("shows the completed curriculum without a manual refresh", async ({ page }) => {
+    const org = await getAiOrganization();
+    const uniqueId = randomUUID();
+
+    const course = await courseFixture({
+      generationStatus: "running",
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-refresh-course-${uniqueId}`,
+      title: `E2E Refresh Course ${uniqueId}`,
+    });
+
+    const introTitle = `E2E Intro Chapter ${uniqueId}`;
+    const mainChapterTitle = `E2E Main Chapter ${uniqueId}`;
+
+    await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 0,
+      slug: `e2e-refresh-intro-${uniqueId}`,
+      title: introTitle,
+    });
+
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
+
+    await expect(page.getByRole("link", { name: new RegExp(introTitle, "u") })).toBeVisible();
+    await expect(page.getByText(/still creating the full curriculum/iu)).toBeVisible();
+
+    await Promise.all([
+      chapterFixture({
+        courseId: course.id,
+        isPublished: true,
+        organizationId: org.id,
+        position: 1,
+        slug: `e2e-refresh-main-${uniqueId}`,
+        title: mainChapterTitle,
+      }),
+      prisma.course.update({ data: { generationStatus: "completed" }, where: { id: course.id } }),
+    ]);
+
+    await expect(page.getByRole("link", { name: new RegExp(mainChapterTitle, "u") })).toBeVisible({
+      timeout: 15_000,
+    });
+  });
+
   test("displays chapter rows", async ({ page }) => {
     await page.goto(courseUrl);
 
