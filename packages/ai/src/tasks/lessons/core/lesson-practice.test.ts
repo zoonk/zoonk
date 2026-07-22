@@ -28,11 +28,11 @@ describe(generateLessonPractice, () => {
             dialogue: "Apply the contract rule.",
             imagePrompt: "A rental contract beside a broken pipe.",
             options: [
-              { feedback: "Correct.", isCorrect: true, text: "Contact the owner" },
+              { feedback: "", isCorrect: true, text: "Contact the owner" },
               { feedback: "Not supported.", isCorrect: false, text: "Charge the tenant" },
               { feedback: "Not supported.", isCorrect: false, text: "Split the cost" },
               { feedback: "Not supported.", isCorrect: false, text: "Ignore the clause" },
-              { feedback: "Also correct.", isCorrect: true, text: "Contact the owner" },
+              { feedback: "Correct.", isCorrect: true, text: "Contact the owner" },
             ],
             question: "Who should arrange the repair?",
           },
@@ -62,10 +62,10 @@ describe(generateLessonPractice, () => {
 
     expect(result.data.situations.map((situation) => situation.options)).toStrictEqual([
       [
-        { feedback: "Correct.", isCorrect: true, text: "Contact the owner" },
         { feedback: "Not supported.", isCorrect: false, text: "Charge the tenant" },
         { feedback: "Not supported.", isCorrect: false, text: "Split the cost" },
         { feedback: "Not supported.", isCorrect: false, text: "Ignore the clause" },
+        { feedback: "Correct.", isCorrect: true, text: "Contact the owner" },
       ],
       [
         { feedback: "Correct.", isCorrect: true, text: "Match labels" },

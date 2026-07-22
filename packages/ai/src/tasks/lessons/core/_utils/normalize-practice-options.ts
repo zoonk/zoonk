@@ -11,9 +11,18 @@ function getComparableOptionText(text: string): string {
 }
 
 /**
+ * Prefers duplicate options that can explain the result after submission.
+ */
+function hasVisibleFeedback(option: PracticeOption): boolean {
+  return option.feedback.length > 0;
+}
+
+/**
  * Keeps one copy of a repeated answer. When the model disagrees about whether
  * identical labels are correct, the correct copy preserves the answer rather
  * than accidentally turning the normalized question into an impossible one.
+ * Among copies with the same correctness, usable feedback wins so normalization
+ * does not discard a complete option in favor of one the final schema rejects.
  * Whitespace-only labels have no preferred copy because they should be removed.
  */
 function shouldKeepOption({
@@ -33,10 +42,14 @@ function shouldKeepOption({
     (candidate) => getComparableOptionText(candidate.text) === comparableText,
   );
 
-  const [firstOption] = repeatedOptions;
-  const preferredOption = repeatedOptions.find((candidate) => candidate.isCorrect);
+  const correctOptions = repeatedOptions.filter((candidate) => candidate.isCorrect);
+  const equallyCorrectOptions = correctOptions.length > 0 ? correctOptions : repeatedOptions;
 
-  return preferredOption ? option === preferredOption : option === firstOption;
+  const preferredOption =
+    equallyCorrectOptions.find((candidate) => hasVisibleFeedback(candidate)) ??
+    equallyCorrectOptions[0];
+
+  return option === preferredOption;
 }
 
 /**
