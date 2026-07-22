@@ -421,6 +421,9 @@ test.describe("Generate Course Page", () => {
 
       await authenticatedPage.goto(`/generate/course/${request.id}`);
 
+      await expect(authenticatedPage.getByText(/taking you to your first lesson/iu)).toBeVisible();
+      expect(await authenticatedPage.getByRole("link", { name: /back home/iu }).count()).toBe(0);
+
       await authenticatedPage.waitForURL(`/b/ai/c/${introLessonTarget}`, { timeout: 10_000 });
     });
 

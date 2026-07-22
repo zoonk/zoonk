@@ -91,10 +91,11 @@ export async function GenerateCoursePromptContent({
           generationStatus={request.generationStatus}
           isLanguageCourse={isLanguageCourse}
           requestId={id}
-        />
-        <GenerationExitLink href="/" width="content">
-          {t("Back home")}
-        </GenerationExitLink>
+        >
+          <GenerationExitLink href="/" width="content">
+            {t("Back home")}
+          </GenerationExitLink>
+        </GenerationClient>
       </ContainerBody>
     </Container>
   );

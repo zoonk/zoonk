@@ -1802,10 +1802,9 @@ msgid "Taking you to your course..."
 msgstr "Wir leiten dich zu deinem Kurs weiter…"
 
 #: src/app/[lang]/generate/course/[id]/generation-client.tsx
-#: src/app/[lang]/generate/l/[id]/generation-client.tsx
-msgctxt "T2TGxR"
-msgid "Taking you to your lesson..."
-msgstr "Deine Lektion öffnen..."
+msgctxt "RMDr0s"
+msgid "Taking you to your first lesson…"
+msgstr "Deine erste Lektion wird gleich geöffnet…"
 
 #: src/app/[lang]/generate/course/[id]/generation-client.tsx
 msgctxt "u6ROZF"
@@ -2021,6 +2020,11 @@ msgstr "Lektion {title} erstellen"
 msgctxt "3vY0Zu"
 msgid "This usually takes 1-2 minutes"
 msgstr "Das dauert normalerweise 1–2 Minuten"
+
+#: src/app/[lang]/generate/l/[id]/generation-client.tsx
+msgctxt "T2TGxR"
+msgid "Taking you to your lesson..."
+msgstr "Deine Lektion öffnen..."
 
 #: src/app/[lang]/generate/l/[id]/phase-thinking-generators/content.ts
 msgctxt "cVoRCh"

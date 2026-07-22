@@ -20,12 +20,14 @@ import { CHAPTER_COMPLETION_STEP, type ChapterWorkflowStepName } from "@zoonk/co
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { API_URL } from "@zoonk/utils/url";
 import { useExtracted } from "next-intl";
+import { type ReactNode } from "react";
 import { useGenerationPhases } from "./use-generation-phases";
 
 export function GenerationClient({
   chapterId,
   chapterSlug,
   chapterTitle,
+  children,
   courseSlug,
   generationRunId,
   initialStatus,
@@ -34,6 +36,7 @@ export function GenerationClient({
   chapterId: string;
   chapterSlug: string;
   chapterTitle: string;
+  children: ReactNode;
   courseSlug: string;
   generationRunId: string | null;
   initialStatus: GenerationStatus;
@@ -85,31 +88,34 @@ export function GenerationClient({
 
   if (isActive) {
     return (
-      <GenerationTimeline>
-        <GenerationTimelineHeader>
-          <GenerationTimelineTitle>
-            {t("Creating the {title} chapter", { title: chapterTitle })}
-          </GenerationTimelineTitle>
-          <GenerationTimelineSubtitle>
-            {t("This usually takes about a minute")}
-          </GenerationTimelineSubtitle>
-          <GenerationTimelineProgress label={t("Progress")} value={displayProgress} />
-        </GenerationTimelineHeader>
+      <>
+        <GenerationTimeline>
+          <GenerationTimelineHeader>
+            <GenerationTimelineTitle>
+              {t("Creating the {title} chapter", { title: chapterTitle })}
+            </GenerationTimelineTitle>
+            <GenerationTimelineSubtitle>
+              {t("This usually takes about a minute")}
+            </GenerationTimelineSubtitle>
+            <GenerationTimelineProgress label={t("Progress")} value={displayProgress} />
+          </GenerationTimelineHeader>
 
-        <GenerationTimelineSteps>
-          {phases.map((phase, index) => (
-            <GenerationTimelineStep
-              detail={thinkingMessages[phase.name]}
-              icon={phase.icon}
-              isLast={index === phases.length - 1}
-              key={phase.name}
-              status={phase.status}
-            >
-              {phase.label}
-            </GenerationTimelineStep>
-          ))}
-        </GenerationTimelineSteps>
-      </GenerationTimeline>
+          <GenerationTimelineSteps>
+            {phases.map((phase, index) => (
+              <GenerationTimelineStep
+                detail={thinkingMessages[phase.name]}
+                icon={phase.icon}
+                isLast={index === phases.length - 1}
+                key={phase.name}
+                status={phase.status}
+              >
+                {phase.label}
+              </GenerationTimelineStep>
+            ))}
+          </GenerationTimelineSteps>
+        </GenerationTimeline>
+        {children}
+      </>
     );
   }
 
@@ -123,13 +129,16 @@ export function GenerationClient({
 
   if (generation.status === "error") {
     return (
-      <WorkflowGenerationError
-        error={generation.error}
-        errorKind={generation.errorKind}
-        onRetry={generation.retry}
-      />
+      <>
+        <WorkflowGenerationError
+          error={generation.error}
+          errorKind={generation.errorKind}
+          onRetry={generation.retry}
+        />
+        {children}
+      </>
     );
   }
 
-  return null;
+  return children;
 }
