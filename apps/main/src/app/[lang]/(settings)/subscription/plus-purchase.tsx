@@ -114,10 +114,12 @@ function AvailablePlusPurchase({
   const priceLabel = price ? formatPrice(price.amount, price.currency, locale) : null;
   const periodLabel = period === "monthly" ? t("per month") : t("per year");
 
-  const savingsLabel = yearlySavings
-    ? t("Save {amount} every year", {
-        amount: formatPrice(yearlySavings.amount, yearlySavings.currency, locale),
-      })
+  const yearlySavingsAmount = yearlySavings
+    ? formatPrice(yearlySavings.amount, yearlySavings.currency, locale)
+    : null;
+
+  const savingsLabel = yearlySavingsAmount
+    ? t("Save {amount} every year", { amount: yearlySavingsAmount })
     : null;
 
   /**
@@ -167,7 +169,7 @@ function AvailablePlusPurchase({
 
         <Button
           aria-pressed={period === "yearly"}
-          className="flex-1"
+          className="flex-1 gap-2"
           disabled={!yearlyPrice}
           onClick={() => setPeriod("yearly")}
           size="sm"
@@ -175,6 +177,14 @@ function AvailablePlusPurchase({
           variant={period === "yearly" ? "secondary" : "ghost"}
         >
           {t("Yearly")}
+          {yearlySavingsAmount && (
+            <>
+              <Badge aria-hidden="true" className="font-mono" variant="success">
+                −{yearlySavingsAmount}
+              </Badge>
+              <span className="sr-only">{savingsLabel}</span>
+            </>
+          )}
         </Button>
       </div>
 
@@ -188,9 +198,11 @@ function AvailablePlusPurchase({
           <p className="text-muted-foreground text-sm">{t("Price shown at checkout")}</p>
         )}
 
-        {period === "yearly" && savingsLabel && (
-          <p className="text-success text-sm font-medium">{savingsLabel}</p>
-        )}
+        <div className="min-h-5">
+          {period === "yearly" && savingsLabel && (
+            <p className="text-success text-sm font-medium">{savingsLabel}</p>
+          )}
+        </div>
       </div>
 
       {monthlyPrice && (
