@@ -251,9 +251,21 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expectations": "\n    - The output requiresPersonalization should be `false`.\n    - Return only the structured requiresPersonalization boolean; do not invent extra fields.\n    - Applied technical topics are reusable when the learner has not named a specific model, dataset, project, organization, or current system.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated requiresPersonalization value exactly matches the expected boolean.\n  - Score 6 for any other output, including personalized prompts classified as shared, shared prompts classified as personalized, missing requiresPersonalization fields, non-boolean values, or extra fields.\n\n  ",
@@ -549,21 +561,9 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
-          "kind": "minorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected requiresPersonalization `false`. Generated requiresPersonalization `true`.",
-          "kind": "potentialImprovements",
-          "score": 6
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "\n    - The output requiresPersonalization should be `false`.\n    - Return only the structured requiresPersonalization boolean; do not invent extra fields.\n    - X-for-Y topics are reusable unless the prompt names a specific learner, class, organization, project, or current situation.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated requiresPersonalization value exactly matches the expected boolean.\n  - Score 6 for any other output, including personalized prompts classified as shared, shared prompts classified as personalized, missing requiresPersonalization fields, non-boolean values, or extra fields.\n\n  ",
@@ -673,10 +673,23 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The output requiresPersonalization should be `true`.\n    - Return only the structured requiresPersonalization boolean; do not invent extra fields.\n    - Combining multiple broad fields requires intake to determine the intended balance, relationship, depth, and learning goal.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated requiresPersonalization value exactly matches the expected boolean.\n  - Score 6 for any other output, including personalized prompts classified as shared, shared prompts classified as personalized, missing requiresPersonalization fields, non-boolean values, or extra fields.\n\n  ",
-        "expected": { "requiresPersonalization": true },
+        "expectations": "\n    - The output requiresPersonalization should be `false`.\n    - Return only the structured requiresPersonalization boolean; do not invent extra fields.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated requiresPersonalization value exactly matches the expected boolean.\n  - Score 6 for any other output, including personalized prompts classified as shared, shared prompts classified as personalized, missing requiresPersonalization fields, non-boolean values, or extra fields.\n\n  ",
+        "expected": { "requiresPersonalization": false },
         "id": "math-and-logic-1",
         "userInput": { "language": "en", "prompt": "math and logic" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The output requiresPersonalization should be `false`.\n    - Return only the structured requiresPersonalization boolean; do not invent extra fields.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated requiresPersonalization value exactly matches the expected boolean.\n  - Score 6 for any other output, including personalized prompts classified as shared, shared prompts classified as personalized, missing requiresPersonalization fields, non-boolean values, or extra fields.\n\n  ",
+        "expected": { "requiresPersonalization": false },
+        "id": "analysis-and-linear-algebra-1",
+        "userInput": { "language": "de", "prompt": "Analysis und lineare Algebra" }
       }
     },
     {
@@ -1119,21 +1132,9 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
-          "kind": "minorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected requiresPersonalization `true`. Generated requiresPersonalization `false`.",
-          "kind": "potentialImprovements",
-          "score": 6
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "\n    - The output requiresPersonalization should be `true`.\n    - Return only the structured requiresPersonalization boolean; do not invent extra fields.\n    - Current or versioned reporting standards are high-context enough that a useful course needs follow-up context about the learner's reporting situation.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated requiresPersonalization value exactly matches the expected boolean.\n  - Score 6 for any other output, including personalized prompts classified as shared, shared prompts classified as personalized, missing requiresPersonalization fields, non-boolean values, or extra fields.\n\n  ",
@@ -1586,10 +1587,23 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n    - The output requiresPersonalization should be `true`.\n    - Return only the structured requiresPersonalization boolean; do not invent extra fields.\n    - Combining multiple broad academic fields requires intake to determine the intended balance, depth, relationship, and learning goal.\n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated requiresPersonalization value exactly matches the expected boolean.\n  - Score 6 for any other output, including personalized prompts classified as shared, shared prompts classified as personalized, missing requiresPersonalization fields, non-boolean values, or extra fields.\n\n  ",
-        "expected": { "requiresPersonalization": true },
+        "expectations": "\n    - The output requiresPersonalization should be `false`.\n    - Return only the structured requiresPersonalization boolean; do not invent extra fields.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated requiresPersonalization value exactly matches the expected boolean.\n  - Score 6 for any other output, including personalized prompts classified as shared, shared prompts classified as personalized, missing requiresPersonalization fields, non-boolean values, or extra fields.\n\n  ",
+        "expected": { "requiresPersonalization": false },
         "id": "university-maths-and-physics-1",
         "userInput": { "language": "en", "prompt": "University maths and physics" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n    - The output requiresPersonalization should be `true`.\n    - Return only the structured requiresPersonalization boolean; do not invent extra fields.\n    \n    \n  - Deterministic scoring: use the same score for majorErrors, minorErrors, and potentialImprovements.\n  - Score 10 when the generated requiresPersonalization value exactly matches the expected boolean.\n  - Score 6 for any other output, including personalized prompts classified as shared, shared prompts classified as personalized, missing requiresPersonalization fields, non-boolean values, or extra fields.\n\n  ",
+        "expected": { "requiresPersonalization": true },
+        "id": "university-maths-physics-and-chemistry-1",
+        "userInput": { "language": "en", "prompt": "University maths, physics, and chemistry" }
       }
     },
     {
