@@ -53,9 +53,9 @@ msgid "Word bank"
 msgstr "Banque de mots"
 
 #: src/components/choice-step-layout.tsx
-msgctxt "qjehBi"
-msgid "Press <kbd>{shortcut}</kbd> to choose this answer."
-msgstr "Appuie sur <kbd>{shortcut}</kbd> pour choisir cette réponse."
+msgctxt "usfevO"
+msgid "Keyboard shortcut: press <kbd>{shortcut}</kbd> to choose this answer."
+msgstr "Raccourci clavier : appuie sur <kbd>{shortcut}</kbd> pour choisir cette réponse."
 
 #: src/components/completion-auth-branch.tsx
 msgctxt "E2sGaF"
@@ -339,9 +339,9 @@ msgid "Play pronunciation"
 msgstr "Écouter la prononciation"
 
 #: src/components/play-audio-button.tsx
-msgctxt "XHsJo3"
-msgid "Press <kbd>{shortcut}</kbd> to play audio."
-msgstr "Appuie sur <kbd>{shortcut}</kbd> pour écouter l’audio."
+msgctxt "RPYE-D"
+msgid "Keyboard shortcut: press <kbd>{shortcut}</kbd> to play audio."
+msgstr "Raccourci clavier : appuie sur <kbd>{shortcut}</kbd> pour lancer l’audio."
 
 #: src/components/player-choice-scene.tsx
 msgctxt "akd-cv"
@@ -400,21 +400,21 @@ msgid "Check"
 msgstr "Vérifier"
 
 #: src/components/step-action-button.tsx
-msgctxt "2VjMZp"
-msgid "Press <kbd>Enter</kbd> to check your answer."
-msgstr "Appuie sur <kbd>Entrée</kbd> pour vérifier ta réponse."
+msgctxt "ZnWuU7"
+msgid "Keyboard shortcut: press <kbd>Enter</kbd> to check your answer."
+msgstr "Raccourci clavier : appuie sur <kbd>Entrée</kbd> pour vérifier ta réponse."
 
 #: src/components/step-navigation-button-group.tsx
 #: src/components/swipe-navigable-step-layout.tsx
-msgctxt "XHEfA9"
-msgid "Press <kbd>←</kbd> to go back."
-msgstr "Appuie sur <kbd>←</kbd> pour revenir en arrière."
+msgctxt "kp9T44"
+msgid "Keyboard shortcut: press <kbd>←</kbd> to go back."
+msgstr "Raccourci clavier : appuie sur <kbd>←</kbd> pour revenir en arrière."
 
 #: src/components/step-navigation-button-group.tsx
 #: src/components/swipe-navigable-step-layout.tsx
-msgctxt "nvVP6A"
-msgid "Press <kbd>→</kbd> to continue."
-msgstr "Appuie sur <kbd>→</kbd> pour continuer."
+msgctxt "egQWyS"
+msgid "Keyboard shortcut: press <kbd>→</kbd> to continue."
+msgstr "Raccourci clavier : appuie sur <kbd>→</kbd> pour continuer."
 
 #: src/components/step-navigation-button-group.tsx
 msgctxt "JJNc3c"
