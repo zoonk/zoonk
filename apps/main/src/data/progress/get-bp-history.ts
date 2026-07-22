@@ -1,12 +1,17 @@
 import "server-only";
-import { getSession } from "@zoonk/core/users/session/get";
-import { prisma } from "@zoonk/db";
+import { getSession } from "@/data/users/get-session";
 import { aggregateByPeriod } from "@zoonk/utils/aggregation";
 import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { formatLabel } from "@zoonk/utils/chart";
-import { type HistoryPeriod, calculateDateRanges } from "@zoonk/utils/date-ranges";
+import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 import { safeAsync } from "@zoonk/utils/error";
-import { cache } from "react";
+import { getDateRanges } from "./_utils/history-date-ranges";
+import {
+  type DailyProgressHistoryRow,
+  hasEarlierDailyProgress,
+  listDailyProgressRows,
+} from "./daily-progress-queries";
+import { getUserProgress } from "./get-user-progress";
 
 export type BpDataPoint = { date: Date; bp: number; label: string };
 
@@ -24,25 +29,38 @@ type BpHistoryData = {
 
 type RawDataPoint = { date: Date; bp: number };
 
-async function fetchDailyBpData(
-  userId: string,
-  start: Date,
-  end: Date,
-): Promise<{ data: RawDataPoint[] | null; error: unknown }> {
-  const result = await safeAsync(() =>
-    prisma.dailyProgress.findMany({
-      orderBy: { date: "asc" },
-      where: { date: { gte: start, lte: end }, userId },
-    }),
-  );
+type BpHistoryParams = { period: HistoryPeriod; offset?: number; locale?: string };
 
-  if (result.error || !result.data) {
-    return { data: null, error: result.error };
-  }
+type BpHistoryQueryData = {
+  currentData: RawDataPoint[];
+  hasEarlierData: boolean;
+  previousData: RawDataPoint[];
+};
 
+/**
+ * Extracts the Brain Power metric from a canonical DailyProgress history row.
+ */
+function toRawBpDataPoint(row: DailyProgressHistoryRow): RawDataPoint {
+  return { bp: row.brainPowerEarned, date: row.date };
+}
+
+/**
+ * Converts shared query results into the small Brain Power input consumed by
+ * chart aggregation, keeping database access separate from metric behavior.
+ */
+function toBpHistoryQueryData({
+  currentRows,
+  hasEarlierData,
+  previousRows,
+}: {
+  currentRows: DailyProgressHistoryRow[];
+  hasEarlierData: boolean;
+  previousRows: DailyProgressHistoryRow[];
+}): BpHistoryQueryData {
   return {
-    data: result.data.map((row) => ({ bp: row.brainPowerEarned, date: row.date })),
-    error: null,
+    currentData: currentRows.map((row) => toRawBpDataPoint(row)),
+    hasEarlierData,
+    previousData: previousRows.map((row) => toRawBpDataPoint(row)),
   };
 }
 
@@ -75,82 +93,99 @@ function sumBp(dataPoints: RawDataPoint[]): number {
   return dataPoints.reduce((acc, point) => acc + point.bp, 0);
 }
 
-function getPreviousPeriodTotal(previousData: RawDataPoint[] | null): number | null {
-  if (!previousData || previousData.length === 0) {
+function getPreviousPeriodTotal(previousData: RawDataPoint[]): number | null {
+  if (previousData.length === 0) {
     return null;
   }
 
   return sumBp(previousData);
 }
 
-async function hasEarlierData(userId: string, beforeDate: Date): Promise<boolean> {
-  const { data } = await safeAsync(() =>
-    prisma.dailyProgress.findFirst({ where: { date: { lt: beforeDate }, userId } }),
-  );
+/**
+ * Converts cached query primitives into the localized chart contract. Keeping
+ * this transformation pure avoids separate cache entries for each locale.
+ */
+function buildBpHistory({
+  currentEnd,
+  currentStart,
+  locale,
+  offset,
+  period,
+  queryData,
+  totalBp,
+}: {
+  currentEnd: Date;
+  currentStart: Date;
+  locale: string;
+  offset: number;
+  period: HistoryPeriod;
+  queryData: BpHistoryQueryData;
+  totalBp: number;
+}): BpHistoryData | null {
+  if (queryData.currentData.length === 0) {
+    return null;
+  }
 
-  return Boolean(data);
+  const processedData = processBpData(queryData.currentData, period);
+
+  const dataPoints: BpDataPoint[] = processedData.map((row) => ({
+    bp: row.bp,
+    date: row.date,
+    label: formatLabel(row.date, period, locale),
+  }));
+
+  return {
+    currentBelt: calculateBeltLevel(totalBp),
+    dataPoints,
+    hasNextPeriod: offset > 0,
+    hasPreviousPeriod: queryData.hasEarlierData,
+    periodEnd: currentEnd,
+    periodStart: currentStart,
+    periodTotal: sumBp(queryData.currentData),
+    previousPeriodTotal: getPreviousPeriodTotal(queryData.previousData),
+    totalBp,
+  };
 }
 
-const cachedGetBpHistory = cache(
-  async (
-    period: HistoryPeriod,
-    offset: number,
-    locale: string,
-    headers?: Headers,
-  ): Promise<BpHistoryData | null> => {
-    const session = await getSession(headers);
+/**
+ * Composes cached progress reads into the Brain Power history view.
+ */
+async function loadBpHistory({
+  locale = "en",
+  offset = 0,
+  period,
+}: BpHistoryParams): Promise<BpHistoryData | null> {
+  const { current, previous } = await getDateRanges({ offset, period });
 
-    if (!session) {
-      return null;
-    }
+  const [currentRows, previousRows, hasEarlierData, progress] = await Promise.all([
+    listDailyProgressRows({ endDate: current.end, startDate: current.start }),
+    listDailyProgressRows({ endDate: previous.end, startDate: previous.start }),
+    hasEarlierDailyProgress({ answersOnly: false, beforeDate: current.start }),
+    getUserProgress(),
+  ]);
 
-    const userId = session.user.id;
-    const { current, previous } = calculateDateRanges(period, offset);
+  const queryData = toBpHistoryQueryData({ currentRows, hasEarlierData, previousRows });
 
-    const [currentResult, previousResult, progressResult] = await Promise.all([
-      fetchDailyBpData(userId, current.start, current.end),
-      fetchDailyBpData(userId, previous.start, previous.end),
-      safeAsync(() => prisma.userProgress.findUnique({ where: { userId } })),
-    ]);
+  return buildBpHistory({
+    currentEnd: current.end,
+    currentStart: current.start,
+    locale,
+    offset,
+    period,
+    queryData,
+    totalBp: Number(progress?.totalBrainPower ?? 0),
+  });
+}
 
-    if (currentResult.error || !currentResult.data || currentResult.data.length === 0) {
-      return null;
-    }
+/**
+ * Optional history UI degrades transient data failures to null here, outside
+ * the regular cache, so a later render can retry instead of reusing a fallback.
+ */
+export async function getBpHistory(params: BpHistoryParams): Promise<BpHistoryData | null> {
+  const { data } = await safeAsync(async () => {
+    const session = await getSession();
+    return session ? loadBpHistory(params) : null;
+  });
 
-    const processedData = processBpData(currentResult.data, period);
-
-    const dataPoints: BpDataPoint[] = processedData.map((row) => ({
-      bp: row.bp,
-      date: row.date,
-      label: formatLabel(row.date, period, locale),
-    }));
-
-    const totalBp = Number(progressResult.data?.totalBrainPower ?? 0);
-
-    return {
-      currentBelt: calculateBeltLevel(totalBp),
-      dataPoints,
-      hasNextPeriod: offset > 0,
-      hasPreviousPeriod: await hasEarlierData(userId, current.start),
-      periodEnd: current.end,
-      periodStart: current.start,
-      periodTotal: sumBp(currentResult.data),
-      previousPeriodTotal: getPreviousPeriodTotal(previousResult.data),
-      totalBp,
-    };
-  },
-);
-
-export function getBpHistory(params: {
-  period: HistoryPeriod;
-  offset?: number;
-  locale?: string;
-  headers?: Headers;
-}): Promise<BpHistoryData | null> {
-  return cachedGetBpHistory(
-    params.period,
-    params.offset ?? 0,
-    params.locale ?? "en",
-    params.headers,
-  );
+  return data;
 }

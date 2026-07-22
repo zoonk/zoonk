@@ -1,7 +1,8 @@
 import "server-only";
-import { getSession } from "@zoonk/core/users/session/get";
+import { getUserProgressCacheTag } from "@/data/cache-tags";
+import { getSession } from "@/data/users/get-session";
 import { prisma } from "@zoonk/db";
-import { cache } from "react";
+import { cacheTag } from "next/cache";
 import { getCompletedLessonDayWhere } from "./_utils/completed-lesson-day-where";
 import { getProgressDateFilter } from "./_utils/progress-date-filter";
 
@@ -13,6 +14,8 @@ type LevelInsightsData = {
   totalLearningSeconds: number;
 };
 
+type LevelInsightsParams = { endDate?: Date; startDate?: Date };
+
 /**
  * A period can have progress rows without any BP earned, for example when only
  * energy decay rows exist. In that case the learning-day and learning-time cards
@@ -20,16 +23,16 @@ type LevelInsightsData = {
  */
 function buildLevelInsights({
   highestBpDay,
+  hasPeriodProgress,
   learningDays,
-  periodProgress,
   totalLearningSeconds,
 }: {
+  hasPeriodProgress: boolean;
   highestBpDay: { brainPowerEarned: number; date: Date } | null;
   learningDays: number;
-  periodProgress: { date: Date } | null;
   totalLearningSeconds: number;
 }): LevelInsightsData | null {
-  if (!periodProgress) {
+  if (!hasPeriodProgress) {
     return null;
   }
 
@@ -42,55 +45,45 @@ function buildLevelInsights({
   };
 }
 
-const cachedGetLevelInsights = cache(
-  async (
-    startDateIso?: string,
-    endDateIso?: string,
-    headers?: Headers,
-  ): Promise<LevelInsightsData | null> => {
-    const session = await getSession(headers);
+async function findLevelInsights({
+  endDate,
+  startDate,
+  userId,
+}: LevelInsightsParams & { userId: string }): Promise<LevelInsightsData | null> {
+  "use cache";
 
-    if (!session) {
-      return null;
-    }
+  cacheTag(getUserProgressCacheTag(userId));
 
-    const userId = session.user.id;
-    const dateFilter = getProgressDateFilter({ endDateIso, startDateIso });
+  const dateFilter = getProgressDateFilter({ endDate, startDate });
 
-    const [periodProgress, highestBpDay, learningDays, totalLearningTime] = await Promise.all([
-      prisma.dailyProgress.findFirst({ where: { date: dateFilter, userId } }),
-      prisma.dailyProgress.findFirst({
-        orderBy: [{ brainPowerEarned: "desc" }, { date: "desc" }],
-        where: { brainPowerEarned: { gt: 0 }, date: dateFilter, userId },
-      }),
-      prisma.dailyProgress.count({ where: getCompletedLessonDayWhere({ dateFilter, userId }) }),
-      prisma.dailyProgress.aggregate({
-        _sum: { timeSpentSeconds: true },
-        where: { date: dateFilter, userId },
-      }),
-    ]);
+  const [periodProgress, highestBpDay, learningDays, totalLearningTime] = await Promise.all([
+    prisma.dailyProgress.findFirst({ where: { date: dateFilter, userId } }),
+    prisma.dailyProgress.findFirst({
+      orderBy: [{ brainPowerEarned: "desc" }, { date: "desc" }],
+      where: { brainPowerEarned: { gt: 0 }, date: dateFilter, userId },
+    }),
+    prisma.dailyProgress.count({ where: getCompletedLessonDayWhere({ dateFilter, userId }) }),
+    prisma.dailyProgress.aggregate({
+      _sum: { timeSpentSeconds: true },
+      where: { date: dateFilter, userId },
+    }),
+  ]);
 
-    return buildLevelInsights({
-      highestBpDay,
-      learningDays,
-      periodProgress,
-      totalLearningSeconds: totalLearningTime._sum.timeSpentSeconds ?? 0,
-    });
-  },
-);
+  return buildLevelInsights({
+    hasPeriodProgress: Boolean(periodProgress),
+    highestBpDay,
+    learningDays,
+    totalLearningSeconds: totalLearningTime._sum.timeSpentSeconds ?? 0,
+  });
+}
 
 /**
  * Level insight cards share the selected period window with the Brain Power
  * chart. The optional params keep the helper usable for rolling summaries too.
  */
-export function getLevelInsights(params?: {
-  endDate?: Date;
-  headers?: Headers;
-  startDate?: Date;
-}): Promise<LevelInsightsData | null> {
-  return cachedGetLevelInsights(
-    params?.startDate?.toISOString(),
-    params?.endDate?.toISOString(),
-    params?.headers,
-  );
+export async function getLevelInsights(
+  params: LevelInsightsParams = {},
+): Promise<LevelInsightsData | null> {
+  const session = await getSession();
+  return session ? findLevelInsights({ ...params, userId: session.user.id }) : null;
 }

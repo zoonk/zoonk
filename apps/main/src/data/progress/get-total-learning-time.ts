@@ -1,34 +1,26 @@
 import "server-only";
-import { getSession } from "@zoonk/core/users/session/get";
+import { getUserProgressCacheTag } from "@/data/cache-tags";
+import { getSession } from "@/data/users/get-session";
 import { prisma } from "@zoonk/db";
-import { cache } from "react";
+import { cacheTag } from "next/cache";
 
 type TotalLearningTimeData = { totalLearningSeconds: number };
 
-const cachedGetTotalLearningTime = cache(
-  async (headers?: Headers): Promise<TotalLearningTimeData | null> => {
-    const session = await getSession(headers);
+async function findTotalLearningTime(userId: string): Promise<TotalLearningTimeData> {
+  "use cache";
 
-    if (!session) {
-      return null;
-    }
+  cacheTag(getUserProgressCacheTag(userId));
 
-    const result = await prisma.dailyProgress.aggregate({
-      _sum: { timeSpentSeconds: true },
-      where: { userId: session.user.id },
-    });
+  const result = await prisma.dailyProgress.aggregate({
+    _sum: { timeSpentSeconds: true },
+    where: { userId },
+  });
 
-    return { totalLearningSeconds: result._sum.timeSpentSeconds ?? 0 };
-  },
-);
+  return { totalLearningSeconds: result._sum.timeSpentSeconds ?? 0 };
+}
 
-/**
- * The homepage needs the learner's lifetime lesson time. DailyProgress is the
- * same durable aggregate used by admin stats, and completion writes cap each
- * increment before updating this row.
- */
-export function getTotalLearningTime(params?: {
-  headers?: Headers;
-}): Promise<TotalLearningTimeData | null> {
-  return cachedGetTotalLearningTime(params?.headers);
+/** Returns the authenticated learner's lifetime learning duration. */
+export async function getTotalLearningTime(): Promise<TotalLearningTimeData | null> {
+  const session = await getSession();
+  return session ? findTotalLearningTime(session.user.id) : null;
 }

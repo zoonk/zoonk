@@ -16,7 +16,11 @@ import {
 import { PlayerShell } from "@zoonk/player/shell";
 import { useCallback, useEffect, useRef } from "react";
 import { getPlayerViewer } from "./get-player-viewer";
-import { type LessonProgressMeta, buildLessonPlayerModel } from "./lesson-player-model";
+import {
+  type LessonProgressMeta,
+  type NextChapterTarget,
+  buildLessonPlayerModel,
+} from "./lesson-player-model";
 import { preloadNextLesson } from "./preload-next-lesson-action";
 import { submitCompletion } from "./submit-completion-action";
 import { useTrackLessonStarted } from "./use-track-lesson-started";
@@ -35,7 +39,7 @@ type LessonPlayerClientProps = {
   lessonPosition: number;
   lessonSlug: string;
   lessonTitle: string;
-  nextChapter: { brandSlug: string; chapterSlug: string; courseSlug: string } | null;
+  nextChapter: NextChapterTarget | null;
   nextLesson: { chapterSlug: string; lessonSlug: string; lessonTitle: string | null } | null;
   progressSnapshot: PlayerProgressSnapshot | null;
   totalBrainPower: number;
@@ -95,7 +99,14 @@ export function LessonPlayerClient({
     hasTrackedSecondStep.current = false;
   }, [lesson.id]);
 
-  useTrackLessonStarted({ chapterPosition, courseSlug, lesson, lessonPosition, lessonSlug });
+  useTrackLessonStarted({
+    chapterPosition,
+    courseSlug,
+    isAuthenticated,
+    lesson,
+    lessonPosition,
+    lessonSlug,
+  });
 
   const handleComplete = useCallback(
     (input: CompletionInput) => {

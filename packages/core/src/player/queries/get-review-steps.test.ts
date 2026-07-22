@@ -98,7 +98,10 @@ describe(getReviewSteps, () => {
         ),
     );
 
-    const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: newUser.id });
+    const result = await getReviewSteps({
+      chapterId: newLesson.lesson.chapterId,
+      userId: newUser.id,
+    });
 
     // Should have 10 total (3 mistakes + 7 fillers)
     expect(result).toHaveLength(REVIEW_TARGET_COUNT);
@@ -160,7 +163,10 @@ describe(getReviewSteps, () => {
         ]),
     );
 
-    const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: newUser.id });
+    const result = await getReviewSteps({
+      chapterId: newLesson.lesson.chapterId,
+      userId: newUser.id,
+    });
 
     // Should have 10 total (5 mistakes + 5 fillers)
     expect(result).toHaveLength(REVIEW_TARGET_COUNT);
@@ -222,7 +228,10 @@ describe(getReviewSteps, () => {
         ]),
     );
 
-    const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: newUser.id });
+    const result = await getReviewSteps({
+      chapterId: newLesson.lesson.chapterId,
+      userId: newUser.id,
+    });
 
     const resultIds = result.map((step) => step.id);
 
@@ -279,7 +288,10 @@ describe(getReviewSteps, () => {
       }),
     ]);
 
-    const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: newUser.id });
+    const result = await getReviewSteps({
+      chapterId: newLesson.lesson.chapterId,
+      userId: newUser.id,
+    });
 
     // Should only have the 11 tier 1 steps, not the tier 2 step
     const resultIds = result.map((step) => step.id);
@@ -315,7 +327,10 @@ describe(getReviewSteps, () => {
       }),
     ]);
 
-    const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: newUser.id });
+    const result = await getReviewSteps({
+      chapterId: newLesson.lesson.chapterId,
+      userId: newUser.id,
+    });
 
     // The step should only appear once
     const occurrences = result.filter((step) => step.id === newLesson.steps[0]!.id);
@@ -349,7 +364,7 @@ describe(getReviewSteps, () => {
       position: 0,
     });
 
-    const result = await getReviewSteps({ lessonId: isolated.lesson.id, userId: null });
+    const result = await getReviewSteps({ chapterId: isolated.lesson.chapterId, userId: null });
 
     expect(result).toHaveLength(3);
 
@@ -368,7 +383,7 @@ describe(getReviewSteps, () => {
       position: 10,
     });
 
-    const result = await getReviewSteps({ lessonId: isolated.lesson.id, userId: null });
+    const result = await getReviewSteps({ chapterId: isolated.lesson.chapterId, userId: null });
 
     expect(result).toHaveLength(3);
 
@@ -388,7 +403,7 @@ describe(getReviewSteps, () => {
       position: 10,
     });
 
-    const result = await getReviewSteps({ lessonId: isolated.lesson.id, userId: null });
+    const result = await getReviewSteps({ chapterId: isolated.lesson.chapterId, userId: null });
 
     expect(result).toHaveLength(3);
 
@@ -420,7 +435,10 @@ describe(getReviewSteps, () => {
         ),
     );
 
-    const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: newUser.id });
+    const result = await getReviewSteps({
+      chapterId: newLesson.lesson.chapterId,
+      userId: newUser.id,
+    });
 
     // Should have exactly REVIEW_TARGET_COUNT (10) unique steps
     expect(result).toHaveLength(REVIEW_TARGET_COUNT);
@@ -435,7 +453,7 @@ describe(getReviewSteps, () => {
   });
 
   it("returns random steps for unauthenticated user (userId null)", async () => {
-    const result = await getReviewSteps({ lessonId: lesson.id, userId: null });
+    const result = await getReviewSteps({ chapterId: lesson.chapterId, userId: null });
 
     // Shared lesson has 12 interactive steps, so result should be exactly 10
     expect(result).toHaveLength(REVIEW_TARGET_COUNT);
@@ -448,7 +466,7 @@ describe(getReviewSteps, () => {
   it("returns random steps for user with no attempts", async () => {
     const newUser = await userFixture();
 
-    const result = await getReviewSteps({ lessonId: lesson.id, userId: newUser.id });
+    const result = await getReviewSteps({ chapterId: lesson.chapterId, userId: newUser.id });
 
     // No attempts means all steps are fillers, capped at REVIEW_TARGET_COUNT
     expect(result).toHaveLength(REVIEW_TARGET_COUNT);
@@ -461,7 +479,7 @@ describe(getReviewSteps, () => {
   it("handles lesson with fewer than 10 interactive steps", async () => {
     const newLesson = await createLessonWithSteps(org.id, 5);
 
-    const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: null });
+    const result = await getReviewSteps({ chapterId: newLesson.lesson.chapterId, userId: null });
 
     // Should return all 5 available steps (less than target)
     expect(result).toHaveLength(5);
@@ -470,13 +488,13 @@ describe(getReviewSteps, () => {
   it("returns empty array when lesson has no eligible interactive steps", async () => {
     const newLesson = await createLessonWithSteps(org.id, 0);
 
-    const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: null });
+    const result = await getReviewSteps({ chapterId: newLesson.lesson.chapterId, userId: null });
 
     expect(result).toHaveLength(0);
   });
 
   it("excludes unpublished steps", async () => {
-    const result = await getReviewSteps({ lessonId: lesson.id, userId: null });
+    const result = await getReviewSteps({ chapterId: lesson.chapterId, userId: null });
 
     const resultIds = result.map((step) => step.id);
     expect(resultIds).not.toContain(unpublishedStepId);
@@ -531,7 +549,10 @@ describe(getReviewSteps, () => {
         ]),
     );
 
-    const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: newUser.id });
+    const result = await getReviewSteps({
+      chapterId: newLesson.lesson.chapterId,
+      userId: newUser.id,
+    });
 
     // Exactly 10 tier 1 hits the >= threshold, so tier 2 should be excluded
     expect(result).toHaveLength(10);
@@ -576,7 +597,10 @@ describe(getReviewSteps, () => {
       }),
     ]);
 
-    const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: newUser.id });
+    const result = await getReviewSteps({
+      chapterId: newLesson.lesson.chapterId,
+      userId: newUser.id,
+    });
 
     // Should have 10 steps (1 prioritized + 9 fillers)
     expect(result).toHaveLength(REVIEW_TARGET_COUNT);
@@ -610,7 +634,10 @@ describe(getReviewSteps, () => {
         ),
     );
 
-    const result = await getReviewSteps({ lessonId: newLesson.lesson.id, userId: newUser.id });
+    const result = await getReviewSteps({
+      chapterId: newLesson.lesson.chapterId,
+      userId: newUser.id,
+    });
 
     // 5 prioritized + 5 fillers = 10, all unique
     expect(result).toHaveLength(REVIEW_TARGET_COUNT);
@@ -691,7 +718,7 @@ describe(getReviewValidationData, () => {
 
   it("excludes steps from review lessons", async () => {
     const { steps } = await getReviewValidationData({
-      lessonId: lesson.id,
+      chapterId: lesson.chapterId,
       stepIds: [quizStep.id, reviewStep.id],
     });
 
@@ -703,7 +730,7 @@ describe(getReviewValidationData, () => {
 
   it("excludes static steps", async () => {
     const { steps } = await getReviewValidationData({
-      lessonId: lesson.id,
+      chapterId: lesson.chapterId,
       stepIds: [quizStep.id, staticStep.id],
     });
 
@@ -738,7 +765,7 @@ describe(getReviewValidationData, () => {
     ]);
 
     const { steps } = await getReviewValidationData({
-      lessonId: lesson.id,
+      chapterId: lesson.chapterId,
       stepIds: [readingStep.id],
     });
 

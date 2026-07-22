@@ -164,13 +164,15 @@ function getFullPeriodDateRanges({
  * range that users see when they navigate back in a history chart.
  */
 export function calculateFullPeriodDateRanges({
+  now = new Date(),
   offset,
   period,
 }: {
+  now?: Date;
   offset: number;
   period: HistoryPeriod;
 }): DateRanges {
-  return getFullPeriodDateRanges({ now: new Date(), offset, period });
+  return getFullPeriodDateRanges({ now, offset, period });
 }
 
 /**

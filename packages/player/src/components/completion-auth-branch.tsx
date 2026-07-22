@@ -142,6 +142,7 @@ function UnauthenticatedContent({
           <PlayerLink
             className={cn(buttonVariants({ size: "lg" }), "min-w-0 flex-1")}
             href={loginHref}
+            prefetch={false}
           >
             {t("Log in")}
           </PlayerLink>
@@ -153,7 +154,11 @@ function UnauthenticatedContent({
       )}
 
       {!nextLessonHref && (
-        <PlayerLink className={cn(buttonVariants({ size: "lg" }), "w-full")} href={loginHref}>
+        <PlayerLink
+          className={cn(buttonVariants({ size: "lg" }), "w-full")}
+          href={loginHref}
+          prefetch={false}
+        >
           {t("Log in")}
         </PlayerLink>
       )}

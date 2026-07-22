@@ -1,7 +1,8 @@
 import { errors } from "@/lib/api-errors";
+import { getRequestUserId } from "@/lib/get-request-user-id";
 import { courseCompletionQuerySchema } from "@/lib/openapi/schemas/progress";
+import { readCourseCompletion } from "@/lib/progress-reads";
 import { parseQueryParams } from "@/lib/query-params";
-import { getChapterProgress } from "@zoonk/core/progress/chapters";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -13,7 +14,8 @@ export async function GET(request: Request) {
   }
 
   const { courseId } = parsed.data;
-  const chapters = await getChapterProgress({ courseId, headers: request.headers });
+  const userId = await getRequestUserId(request.headers);
+  const chapters = await readCourseCompletion({ courseId, userId });
 
   return NextResponse.json({ chapters });
 }

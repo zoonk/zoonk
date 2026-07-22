@@ -1,34 +1,31 @@
 import "server-only";
+import { getSession } from "@/data/users/get-session";
 import {
   getHiddenLessonKindsFromPreferences,
   getUpdatedLessonFilterSettings,
 } from "@/lib/lessons/lesson-kind-filters";
-import { getSession } from "@zoonk/core/users/session/get";
 import { type LessonKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { logError } from "@zoonk/utils/logger";
+import { cacheTag, updateTag } from "next/cache";
 
-/**
- * The chapter lesson list reads hidden kinds from the learner profile so the
- * same filters follow the signed-in learner across devices and browser sessions.
- */
-export async function getUserHiddenLessonKinds(headers?: Headers): Promise<LessonKind[]> {
-  const session = await getSession(headers);
+/** Gives one learner's persisted lesson visibility settings a dedicated tag. */
+function getLessonFilterSettingsCacheTag(userId: string): string {
+  return `lesson-filter-settings:${userId}`;
+}
 
-  if (!session) {
-    return [];
-  }
+async function findUserHiddenLessonKinds(userId: string): Promise<LessonKind[]> {
+  "use cache";
 
-  const { data, error } = await safeAsync(() =>
-    prisma.userLearningProfile.findUnique({ where: { userId: session.user.id } }),
-  );
+  cacheTag(getLessonFilterSettingsCacheTag(userId));
 
-  if (error) {
-    logError("Error loading hidden lesson kinds:", error);
-    return [];
-  }
+  const profile = await prisma.userLearningProfile.findUnique({ where: { userId } });
+  return getHiddenLessonKindsFromPreferences(profile?.preferences);
+}
 
-  return getHiddenLessonKindsFromPreferences(data?.preferences);
+/** Resolves lesson visibility for the authenticated learner. */
+export async function getUserHiddenLessonKinds(): Promise<LessonKind[]> {
+  const session = await getSession();
+  return session ? findUserHiddenLessonKinds(session.user.id) : [];
 }
 
 /**
@@ -46,8 +43,10 @@ export async function updateUserHiddenLessonKinds({
     return { error: null, saved: false };
   }
 
+  const userId = session.user.id;
+
   const { data: profile, error: loadError } = await safeAsync(() =>
-    prisma.userLearningProfile.findUnique({ where: { userId: session.user.id } }),
+    prisma.userLearningProfile.findUnique({ where: { userId } }),
   );
 
   if (loadError) {
@@ -61,11 +60,15 @@ export async function updateUserHiddenLessonKinds({
 
   const { error } = await safeAsync(() =>
     prisma.userLearningProfile.upsert({
-      create: { preferences, userId: session.user.id },
+      create: { preferences, userId },
       update: { preferences },
-      where: { userId: session.user.id },
+      where: { userId },
     }),
   );
+
+  if (!error) {
+    updateTag(getLessonFilterSettingsCacheTag(userId));
+  }
 
   return { error, saved: !error };
 }

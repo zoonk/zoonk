@@ -1,12 +1,12 @@
 import { prisma } from "@zoonk/db";
-import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { signInAsCurrentUser } from "../../../test-utils/auth";
 import { getEnergyInsights } from "./get-energy-insights";
 
 describe("unauthenticated users", () => {
   it("returns null", async () => {
-    const result = await getEnergyInsights({ headers: new Headers() });
+    const result = await getEnergyInsights();
     expect(result).toBeNull();
   });
 });
@@ -14,15 +14,15 @@ describe("unauthenticated users", () => {
 describe("authenticated users", () => {
   it("returns null when user has no DailyProgress records", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
-    const result = await getEnergyInsights({ headers });
+    const result = await getEnergyInsights();
     expect(result).toBeNull();
   });
 
   it("returns the most recent highest energy day and full energy days for the period", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     await prisma.dailyProgress.createMany({
       data: [
@@ -35,7 +35,6 @@ describe("authenticated users", () => {
 
     const result = await getEnergyInsights({
       endDate: new Date("2025-01-31T23:59:59.999Z"),
-      headers,
       startDate: new Date("2025-01-01T00:00:00Z"),
     });
 

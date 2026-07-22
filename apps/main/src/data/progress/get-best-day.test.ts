@@ -1,12 +1,12 @@
 import { prisma } from "@zoonk/db";
-import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { signInAsCurrentUser } from "../../../test-utils/auth";
 import { getBestDay } from "./get-best-day";
 
 describe("unauthenticated users", () => {
   it("returns null", async () => {
-    const result = await getBestDay({ headers: new Headers() });
+    const result = await getBestDay();
     expect(result).toBeNull();
   });
 });
@@ -14,15 +14,15 @@ describe("unauthenticated users", () => {
 describe("authenticated users", () => {
   it("returns null when user has no DailyProgress records", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
-    const result = await getBestDay({ headers });
+    const result = await getBestDay();
     expect(result).toBeNull();
   });
 
   it("returns best day when user has data for multiple days", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     await prisma.dailyProgress.createMany({
       data: [
@@ -43,7 +43,7 @@ describe("authenticated users", () => {
       ],
     });
 
-    const result = await getBestDay({ headers, startDate: new Date("2025-01-01T00:00:00Z") });
+    const result = await getBestDay({ startDate: new Date("2025-01-01T00:00:00Z") });
 
     expect(result).not.toBeNull();
     expect(result?.dayOfWeek).toBe(0); // Sunday
@@ -52,7 +52,7 @@ describe("authenticated users", () => {
 
   it("excludes records older than 90 days", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     const today = new Date();
     const oldDate = new Date(today);
@@ -77,7 +77,7 @@ describe("authenticated users", () => {
       ],
     });
 
-    const result = await getBestDay({ headers });
+    const result = await getBestDay();
 
     expect(result).not.toBeNull();
     expect(result?.score).toBe(80);
@@ -85,7 +85,7 @@ describe("authenticated users", () => {
 
   it("uses day with most answers as tiebreaker", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     await prisma.dailyProgress.createMany({
       data: [
@@ -113,7 +113,7 @@ describe("authenticated users", () => {
       ],
     });
 
-    const result = await getBestDay({ headers, startDate: new Date("2025-01-01T00:00:00Z") });
+    const result = await getBestDay({ startDate: new Date("2025-01-01T00:00:00Z") });
 
     expect(result).not.toBeNull();
     expect(result?.dayOfWeek).toBe(0); // Sunday (more answers than Monday due to two Sundays)
@@ -122,7 +122,7 @@ describe("authenticated users", () => {
 
   it("excludes later records when endDate is provided", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     await prisma.dailyProgress.createMany({
       data: [
@@ -145,7 +145,6 @@ describe("authenticated users", () => {
 
     const result = await getBestDay({
       endDate: new Date("2025-01-31T23:59:59.999Z"),
-      headers,
       startDate: new Date("2025-01-01T00:00:00Z"),
     });
 
@@ -156,7 +155,7 @@ describe("authenticated users", () => {
 
   it("returns correct score calculation", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     const today = new Date();
 
@@ -170,7 +169,7 @@ describe("authenticated users", () => {
       },
     });
 
-    const result = await getBestDay({ headers });
+    const result = await getBestDay();
 
     expect(result).not.toBeNull();
     expect(result?.score).toBe(85);

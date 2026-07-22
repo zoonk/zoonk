@@ -25,6 +25,7 @@ import { type GenerationStatus } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { API_URL } from "@zoonk/utils/url";
 import { useExtracted } from "next-intl";
+import { invalidateGeneratedCourse } from "./invalidate-generated-course";
 import { useGenerationPhases } from "./use-generation-phases";
 
 /**
@@ -101,14 +102,21 @@ export function GenerationClient({
     isActive ? activePhaseNames : [],
   );
 
-  const redirectSlug = generation.completionEntityId ?? linkedCourseSlug ?? courseSlug;
+  const redirectHref = `/b/${AI_ORG_SLUG}/c/${
+    generation.completionEntityId ?? linkedCourseSlug ?? courseSlug
+  }`;
+
   const completedTitle = isLanguageCourse ? t("Your course is ready") : t("Your lesson is ready");
 
   const completedSubtitle = isLanguageCourse
     ? t("Taking you to your course...")
     : t("Taking you to your lesson...");
 
-  useCompletionRedirect({ status: generation.status, url: `/b/${AI_ORG_SLUG}/c/${redirectSlug}` });
+  useCompletionRedirect({
+    beforeRedirect: () => invalidateGeneratedCourse(redirectHref),
+    status: generation.status,
+    url: redirectHref,
+  });
 
   if (isActive) {
     return (

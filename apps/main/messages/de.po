@@ -765,11 +765,6 @@ msgid "Marketing"
 msgstr "Marketing"
 
 #: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "9zLpJ_"
-msgid "What do you want to learn?"
-msgstr "Was möchtest du lernen?"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "zfDq-e"
 msgid "Quantum physics"
 msgstr "Quantenphysik"
@@ -870,6 +865,11 @@ msgid "Harry Potter"
 msgstr "Harry Potter"
 
 #: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
+msgctxt "9zLpJ_"
+msgid "What do you want to learn?"
+msgstr "Was möchtest du lernen?"
+
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "NvSCuG"
 msgid "Suggested subjects"
 msgstr "Vorgeschlagene Themen"
@@ -899,6 +899,28 @@ msgctxt "rqpQgj"
 msgid "Online Courses to Learn Languages and More"
 msgstr "Online‑Kurse zum Sprachenlernen und mehr"
 
+#: src/app/[lang]/(catalog)/start/speak/[language]/page.tsx
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
+msgctxt "d2xrsv"
+msgid "Preparing your course"
+msgstr "Deinen Kurs vorbereiten..."
+
+#: src/app/[lang]/(catalog)/start/speak/[language]/page.tsx
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
+msgctxt "uw23V-"
+msgid "Checking whether this course already exists..."
+msgstr "Prüfen, ob dieser Kurs schon existiert..."
+
+#: src/app/[lang]/(catalog)/start/speak/language-list-content.tsx
+msgctxt "ptPPVk"
+msgid "No languages found"
+msgstr "Keine Sprachen gefunden"
+
+#: src/app/[lang]/(catalog)/start/speak/language-list-content.tsx
+msgctxt "L820yz"
+msgid "Search languages"
+msgstr "Sprachen suchen"
+
 #: src/app/[lang]/(catalog)/start/speak/page.tsx
 msgctxt "K4jMHW"
 msgid "Online language courses with AI. Learn a language with pronunciation tips, vocabulary, reading, and listening practice."
@@ -913,16 +935,6 @@ msgstr "Lerne online eine Sprache mit KI"
 msgctxt "lSAK6U"
 msgid "What language do you want to learn?"
 msgstr "Welche Sprache möchtest du lernen?"
-
-#: src/app/[lang]/(catalog)/start/speak/page.tsx
-msgctxt "ptPPVk"
-msgid "No languages found"
-msgstr "Keine Sprachen gefunden"
-
-#: src/app/[lang]/(catalog)/start/speak/page.tsx
-msgctxt "L820yz"
-msgid "Search languages"
-msgstr "Sprachen suchen"
 
 #: src/app/[lang]/(catalog)/start/start-content.tsx
 msgctxt "ah2CR6"
@@ -1570,7 +1582,7 @@ msgstr "Dein Abo konnte nicht verwaltet werden. Kontaktiere uns unter hello@zoon
 #: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
 msgctxt "9o8O4m"
 msgid "Your subscription will end on {date}."
-msgstr "Dein Abonnement endet am {date}."
+msgstr "Dein Abo endet am {date}."
 
 #: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
 msgctxt "J9LvW5"
@@ -1585,7 +1597,7 @@ msgstr "Wisse immer, was du als Nächstes lernen solltest"
 #: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
 msgctxt "i8pqha"
 msgid "Tell Zoonk your goal. AI builds a clear, step-by-step course around what you need to learn."
-msgstr "Sag Zoonk, was du erreichen möchtest. Die KI erstellt einen klaren Kurs, der dir Schritt für Schritt genau das vermittelt, was du dafür brauchst."
+msgstr "Sag Zoonk, was dein Ziel ist. Die KI erstellt einen klaren Kurs, der dir Schritt für Schritt genau das vermittelt, was du lernen musst."
 
 #: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
 msgctxt "TF2txT"
@@ -1595,7 +1607,7 @@ msgstr "Lerne weiter, bis du dein Ziel erreichst"
 #: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
 msgctxt "_IEZtT"
 msgid "Take as many courses and lessons as you need. Everything is included in one subscription."
-msgstr "Belege so viele Kurse und Lektionen, wie du brauchst. Alles ist in einem Abo enthalten."
+msgstr "Mach so viele Kurse und Lektionen, wie du brauchst. Alles ist in einem Abo enthalten."
 
 #: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
 msgctxt "m7oPjz"
@@ -1605,18 +1617,28 @@ msgstr "Sprich eine neue Sprache"
 #: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
 msgctxt "TTl6JE"
 msgid "Choose from {count, plural, one {# language} other {# languages}} and build the vocabulary, listening, grammar, and pronunciation to use it with confidence."
-msgstr "Wähle aus {count, plural, one {# Sprache} other {# Sprachen}} und verbessere Wortschatz, Hören, Grammatik und Aussprache, damit du sie sicher anwenden kannst."
+msgstr "Wähle aus {count, plural, one {# Sprache} other {# Sprachen}} und verbessere deinen Wortschatz, dein Hörverständnis, deine Grammatik und deine Aussprache, damit du die Sprache sicher sprechen kannst."
 
 #: src/app/[lang]/(settings)/subscription/subscription-plans.tsx
 msgctxt "vaN1qz"
 msgid "Current billing period ends on {date}."
-msgstr "Der aktuelle Abrechnungszeitraum endet am {date}."
+msgstr "Dein aktueller Abrechnungszeitraum endet am {date}."
 
 #: src/app/[lang]/(settings)/support/page.tsx
 #: src/app/[lang]/(settings)/support/support-content.tsx
 msgctxt "B5MLC7"
 msgid "Share feedback, ask questions, or get help with your account and courses."
 msgstr "Teile Feedback, stelle Fragen oder erhalte Hilfe zu deinem Konto und deinen Kursen."
+
+#: src/app/[lang]/(settings)/support/support-content.tsx
+msgctxt "dQIo6c"
+msgid "Email us at hello@zoonk.com"
+msgstr "Schreib uns an hello@zoonk.com"
+
+#: src/app/[lang]/(settings)/support/support-content.tsx
+msgctxt "YdQxfw"
+msgid "Contact Support"
+msgstr "Support kontaktieren"
 
 #: src/app/[lang]/(settings)/support/support-content.tsx
 msgctxt "cDAb4a"
@@ -1627,16 +1649,6 @@ msgstr "GitHub Discussions"
 msgctxt "7h49qt"
 msgid "Connect with the community and get answers"
 msgstr "Vernetze dich mit der Community und erhalte Antworten"
-
-#: src/app/[lang]/(settings)/support/support-content.tsx
-msgctxt "YdQxfw"
-msgid "Contact Support"
-msgstr "Support kontaktieren"
-
-#: src/app/[lang]/(settings)/support/support-content.tsx
-msgctxt "dQIo6c"
-msgid "Email us at hello@zoonk.com"
-msgstr "Schreib uns an hello@zoonk.com"
 
 #: src/app/[lang]/(settings)/support/support-content.tsx
 msgctxt "l1XTI5"
@@ -1856,11 +1868,6 @@ msgid "Planning the introduction"
 msgstr "Die Einführung wird geplant"
 
 #: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "d2xrsv"
-msgid "Preparing your course"
-msgstr "Deinen Kurs vorbereiten..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "CFWOGF"
 msgid "Saving your course"
 msgstr "Deinen Kurs speichern..."
@@ -1899,11 +1906,6 @@ msgstr "Kurs taggen..."
 msgctxt "JJrUOR"
 msgid "Comparing nearby courses..."
 msgstr "Ähnliche Kurse vergleichen..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "uw23V-"
-msgid "Checking whether this course already exists..."
-msgstr "Prüfen, ob dieser Kurs schon existiert..."
 
 #: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "qFmZfG"

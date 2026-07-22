@@ -1,22 +1,23 @@
 "use server";
 
+import { getUserProgressCacheTag } from "@/data/cache-tags";
+import { getSession } from "@/data/users/get-session";
 import { submitPlayerCompletion } from "@zoonk/core/player/commands/submit-player-completion";
 import {
   type CompletionInput,
   completionInputSchema,
 } from "@zoonk/core/player/contracts/completion-input-schema";
-import { getSession } from "@zoonk/core/users/session/get";
 import { logError } from "@zoonk/utils/logger";
-import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
-import { after } from "next/server";
+import { revalidatePath, updateTag } from "next/cache";
+import { getAuthorizedPlayerLesson } from "./authorize-player-lesson";
 
 /**
- * Validates and persists a lesson completion in the background.
+ * Validates and persists a lesson completion before invalidating progress UI.
  *
  * The client computes metrics (BP, energy, belt) locally for instant display.
- * This server action handles the authoritative validation and DB persistence
- * via `after()`, so the response returns immediately after the auth check.
+ * It intentionally doesn't await this action, so the player stays responsive
+ * while the server finishes the authoritative write and then clears stale
+ * catalog and progress data from the client cache.
  */
 export async function submitCompletion(rawInput: CompletionInput): Promise<void> {
   const parsed = completionInputSchema.safeParse(rawInput);
@@ -27,28 +28,23 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
 
   const input = parsed.data;
 
-  const reqHeaders = await headers();
-  const session = await getSession(reqHeaders);
+  const [lesson, session] = await Promise.all([
+    getAuthorizedPlayerLesson(input.lessonId),
+    getSession(),
+  ]);
 
-  if (!session) {
+  if (!lesson || !session) {
     return;
   }
 
   const userId = session.user.id;
 
-  // Revalidate outside after() so the signal is included in the RSC response.
-  // This tells the client Router Cache to purge the localized catalog layout,
-  // whose Continue links are derived from lesson progress and can otherwise
-  // keep pointing at the old lesson.
-  // Placing it inside after() would run it after the response is sent,
-  // meaning the client never receives the invalidation signal.
-  revalidatePath("/[lang]/(catalog)", "layout");
-
-  after(async () => {
-    try {
-      await submitPlayerCompletion({ input, userId });
-    } catch (error) {
-      logError("[submitCompletion] Failed to persist lesson completion:", error);
-    }
-  });
+  try {
+    await submitPlayerCompletion({ input, userId });
+    updateTag(getUserProgressCacheTag(userId));
+    revalidatePath("/[lang]/(catalog)", "layout");
+    revalidatePath("/[lang]/(progress)", "layout");
+  } catch (error) {
+    logError("[submitCompletion] Failed to persist lesson completion:", error);
+  }
 }

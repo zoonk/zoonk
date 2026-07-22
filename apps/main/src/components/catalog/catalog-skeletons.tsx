@@ -1,5 +1,4 @@
-import { CatalogDetailLayout } from "@/components/catalog/catalog-detail-layout";
-import { Grid, type GridGroupVariant, GridSkeleton, GridToolbar } from "@zoonk/ui/components/grid";
+import { type GridGroupVariant, GridSkeleton, GridToolbar } from "@zoonk/ui/components/grid";
 import { MediaCardSkeleton } from "@zoonk/ui/components/media-card";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 
@@ -28,30 +27,18 @@ export function CatalogGridSkeleton({
   );
 }
 
-const DEFAULT_LIST_COUNT = 5;
-
-export function CatalogPageSkeleton({
-  listCount = DEFAULT_LIST_COUNT,
-  showSearch = true,
-}: {
-  listCount?: number;
-  showSearch?: boolean;
-}) {
+/**
+ * Keeps the catalog identity and actions stable while a course or chapter
+ * sidebar streams independently from its item grid.
+ */
+export function CatalogSidebarSkeleton() {
   return (
-    <CatalogDetailLayout
-      sidebar={
-        <>
-          <MediaCardSkeleton variant="sidebar" />
-          <GridToolbar>
-            <Skeleton className="h-10 flex-1 rounded-full" />
-            <Skeleton className="size-10 rounded-full" />
-          </GridToolbar>
-        </>
-      }
-    >
-      <Grid variant="pane">
-        <CatalogGridSkeleton count={listCount} groupVariant="pane" search={showSearch} />
-      </Grid>
-    </CatalogDetailLayout>
+    <>
+      <MediaCardSkeleton variant="sidebar" />
+      <GridToolbar>
+        <Skeleton className="h-10 flex-1 rounded-full" />
+        <Skeleton className="size-10 rounded-full" />
+      </GridToolbar>
+    </>
   );
 }

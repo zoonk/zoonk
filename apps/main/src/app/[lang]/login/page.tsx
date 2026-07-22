@@ -1,8 +1,11 @@
 import { OneTimeTokenLoginRedirect } from "@zoonk/core/auth/ott/login";
 import { getSafeAppRelativePath } from "@zoonk/core/auth/ott/redirect";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
+import { Suspense } from "react";
 
 type Props = PageProps<"/[lang]/login">;
+
+export const prefetch = "force-disabled";
 
 /**
  * Builds the callback path sent to central auth. Keeping the return target on
@@ -17,7 +20,11 @@ function getCallbackPath(nextPath: string | null) {
   return `/auth/callback?next=${encodeURIComponent(nextPath)}`;
 }
 
-export default async function LoginPage({ searchParams }: Props) {
+/**
+ * Resolves the return target inside Suspense so the page can prerender its
+ * loading shell without reading request-specific query parameters.
+ */
+async function LoginRedirect({ searchParams }: Pick<Props, "searchParams">) {
   const { next } = await searchParams;
   const callbackPath = getCallbackPath(getSafeAppRelativePath(next));
 
@@ -26,5 +33,13 @@ export default async function LoginPage({ searchParams }: Props) {
       <OneTimeTokenLoginRedirect callbackPath={callbackPath} />
       <FullPageLoading />
     </>
+  );
+}
+
+export default function LoginPage({ searchParams }: Props) {
+  return (
+    <Suspense fallback={<FullPageLoading />}>
+      <LoginRedirect searchParams={searchParams} />
+    </Suspense>
   );
 }

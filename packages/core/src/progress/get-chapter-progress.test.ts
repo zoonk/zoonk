@@ -1,12 +1,40 @@
-import { prisma } from "@zoonk/db";
-import { signInAs } from "@zoonk/testing/fixtures/auth";
+import { type LessonKind, prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, it } from "vitest";
-import { getChapterProgress } from "./get-chapter-progress";
+import { type ChapterProgressInput, getChapterProgress } from "./get-chapter-progress";
+import {
+  listDurableChapterCompletionIds,
+  listPublishedCourseChapters,
+  listPublishedLessonProgressRows,
+} from "./progress-queries";
+
+/**
+ * Loads the explicit async inputs consumed by the pure chapter selector so
+ * integration cases exercise the same parallel read pipeline as the apps.
+ */
+async function loadChapterProgressInput({
+  courseId,
+  excludedLessonKinds,
+  userId,
+}: {
+  courseId: string;
+  excludedLessonKinds?: LessonKind[];
+  userId: string;
+}): Promise<ChapterProgressInput> {
+  const scope = { courseId };
+
+  const [chapters, durableChapterCompletionIds, rows] = await Promise.all([
+    listPublishedCourseChapters({ courseId }),
+    listDurableChapterCompletionIds({ excludedLessonKinds, scope, userId }),
+    listPublishedLessonProgressRows({ excludedLessonKinds, scope, userId }),
+  ]);
+
+  return { chapters, durableChapterCompletionIds, rows };
+}
 
 describe(getChapterProgress, () => {
   let organization: Awaited<ReturnType<typeof organizationFixture>>;
@@ -15,9 +43,9 @@ describe(getChapterProgress, () => {
     organization = await organizationFixture();
   });
 
-  it("returns empty array when unauthenticated", async () => {
-    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
-    const result = await getChapterProgress({ courseId: course.id, headers: new Headers() });
+  it("returns an empty array for an empty published course", () => {
+    const result = getChapterProgress({ chapters: [], durableChapterCompletionIds: [], rows: [] });
+
     expect(result).toStrictEqual([]);
   });
 
@@ -41,8 +69,8 @@ describe(getChapterProgress, () => {
       position: 0,
     });
 
-    const headers = await signInAs(user.email, user.password);
-    const result = await getChapterProgress({ courseId: course.id, headers });
+    const input = await loadChapterProgressInput({ courseId: course.id, userId: user.id });
+    const result = getChapterProgress(input);
     expect(result).toStrictEqual([{ chapterId: chapter.id, completedLessons: 0, totalLessons: 1 }]);
   });
 
@@ -81,8 +109,8 @@ describe(getChapterProgress, () => {
       userId: user.id,
     });
 
-    const headers = await signInAs(user.email, user.password);
-    const result = await getChapterProgress({ courseId: course.id, headers });
+    const input = await loadChapterProgressInput({ courseId: course.id, userId: user.id });
+    const result = getChapterProgress(input);
     expect(result).toStrictEqual([{ chapterId: chapter.id, completedLessons: 1, totalLessons: 2 }]);
 
     await lessonProgressFixture({
@@ -92,7 +120,8 @@ describe(getChapterProgress, () => {
       userId: user.id,
     });
 
-    const result2 = await getChapterProgress({ courseId: course.id, headers });
+    const updatedInput = await loadChapterProgressInput({ courseId: course.id, userId: user.id });
+    const result2 = getChapterProgress(updatedInput);
 
     expect(result2).toStrictEqual([
       { chapterId: chapter.id, completedLessons: 2, totalLessons: 2 },
@@ -143,8 +172,8 @@ describe(getChapterProgress, () => {
       userId: user.id,
     });
 
-    const headers = await signInAs(user.email, user.password);
-    const result = await getChapterProgress({ courseId: course.id, headers });
+    const input = await loadChapterProgressInput({ courseId: course.id, userId: user.id });
+    const result = getChapterProgress(input);
 
     expect(result).toStrictEqual([
       { chapterId: chapter1.id, completedLessons: 1, totalLessons: 1 },
@@ -180,8 +209,8 @@ describe(getChapterProgress, () => {
       userId: user.id,
     });
 
-    const headers = await signInAs(user.email, user.password);
-    const result = await getChapterProgress({ courseId: course.id, headers });
+    const input = await loadChapterProgressInput({ courseId: course.id, userId: user.id });
+    const result = getChapterProgress(input);
     expect(result).toStrictEqual([{ chapterId: chapter.id, completedLessons: 0, totalLessons: 1 }]);
   });
 
@@ -220,8 +249,8 @@ describe(getChapterProgress, () => {
       userId: user.id,
     });
 
-    const headers = await signInAs(user.email, user.password);
-    const result = await getChapterProgress({ courseId: course.id, headers });
+    const input = await loadChapterProgressInput({ courseId: course.id, userId: user.id });
+    const result = getChapterProgress(input);
     expect(result).toStrictEqual([{ chapterId: chapter.id, completedLessons: 1, totalLessons: 1 }]);
   });
 
@@ -255,21 +284,20 @@ describe(getChapterProgress, () => {
       }),
     ]);
 
-    const [headers] = await Promise.all([
-      signInAs(user.email, user.password),
-      lessonProgressFixture({
-        completedAt: new Date(),
-        durationSeconds: 60,
-        lessonId: visibleLesson.id,
-        userId: user.id,
-      }),
-    ]);
+    await lessonProgressFixture({
+      completedAt: new Date(),
+      durationSeconds: 60,
+      lessonId: visibleLesson.id,
+      userId: user.id,
+    });
 
-    const result = await getChapterProgress({
+    const input = await loadChapterProgressInput({
       courseId: course.id,
       excludedLessonKinds: ["quiz"],
-      headers,
+      userId: user.id,
     });
+
+    const result = getChapterProgress(input);
 
     expect(result).toStrictEqual([{ chapterId: chapter.id, completedLessons: 1, totalLessons: 1 }]);
   });
@@ -288,8 +316,8 @@ describe(getChapterProgress, () => {
       position: 0,
     });
 
-    const headers = await signInAs(user.email, user.password);
-    const result = await getChapterProgress({ courseId: course.id, headers });
+    const input = await loadChapterProgressInput({ courseId: course.id, userId: user.id });
+    const result = getChapterProgress(input);
     expect(result).toStrictEqual([{ chapterId: chapter.id, completedLessons: 0, totalLessons: 0 }]);
   });
 
@@ -313,8 +341,8 @@ describe(getChapterProgress, () => {
       position: 0,
     });
 
-    const headers = await signInAs(user.email, user.password);
-    const result = await getChapterProgress({ courseId: course.id, headers });
+    const input = await loadChapterProgressInput({ courseId: course.id, userId: user.id });
+    const result = getChapterProgress(input);
     expect(result).toStrictEqual([{ chapterId: chapter.id, completedLessons: 0, totalLessons: 1 }]);
   });
 
@@ -353,8 +381,8 @@ describe(getChapterProgress, () => {
       userId: user.id,
     });
 
-    const headers = await signInAs(user.email, user.password);
-    const result = await getChapterProgress({ courseId: course.id, headers });
+    const input = await loadChapterProgressInput({ courseId: course.id, userId: user.id });
+    const result = getChapterProgress(input);
 
     expect(result).toStrictEqual([{ chapterId: chapter.id, completedLessons: 1, totalLessons: 2 }]);
   });
@@ -389,8 +417,8 @@ describe(getChapterProgress, () => {
 
     await prisma.chapterCompletion.create({ data: { chapterId: chapter.id, userId: user.id } });
 
-    const headers = await signInAs(user.email, user.password);
-    const result = await getChapterProgress({ courseId: course.id, headers });
+    const input = await loadChapterProgressInput({ courseId: course.id, userId: user.id });
+    const result = getChapterProgress(input);
 
     expect(result).toStrictEqual([{ chapterId: chapter.id, completedLessons: 2, totalLessons: 2 }]);
   });

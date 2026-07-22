@@ -1,14 +1,13 @@
-import { getCompletedLanguageCourseHrefs } from "@/data/courses/language-course";
 import { type Metadata } from "next";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
+import { Suspense } from "react";
 import {
   StartSurface,
   StartSurfaceContent,
   StartSurfaceHeader,
   StartSurfaceTitle,
 } from "../_components/start-surface";
-import { LanguageList } from "./language-list";
-import { getLanguageOptions } from "./language-options";
+import { LanguageListContent, LanguageListSkeleton } from "./language-list-content";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
@@ -25,11 +24,8 @@ export async function generateMetadata(): Promise<Metadata> {
  * Shows every TTS-supported language as a searchable list so learners can start
  * a controlled language course without going through open-ended prompting.
  */
-export default async function StartSpeak() {
-  const locale = await getLocale();
+export default async function StartSpeak({ params }: PageProps<"/[lang]/start/speak">) {
   const t = await getExtracted();
-  const completedLanguageCourseHrefs = await getCompletedLanguageCourseHrefs({ language: locale });
-  const languages = getLanguageOptions({ completedLanguageCourseHrefs, locale });
 
   return (
     <StartSurface>
@@ -39,11 +35,9 @@ export default async function StartSpeak() {
         </StartSurfaceContent>
       </StartSurfaceHeader>
 
-      <LanguageList
-        emptyLabel={t("No languages found")}
-        languages={languages}
-        searchPlaceholder={t("Search languages")}
-      />
+      <Suspense fallback={<LanguageListSkeleton />}>
+        <LanguageListContent params={params} />
+      </Suspense>
     </StartSurface>
   );
 }

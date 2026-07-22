@@ -10,6 +10,7 @@ import {
 } from "@zoonk/ui/components/empty";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { getExtracted } from "next-intl/server";
+import { Suspense } from "react";
 
 /**
  * Streams a neutral loading state while the server resolves the prompt's route
@@ -34,9 +35,11 @@ export async function CourseStartFallback() {
       </EmptyHeader>
 
       <EmptyContent>
-        <Link className={buttonVariants({ size: "sm", variant: "outline" })} href="/start/learn">
-          {t("Cancel")}
-        </Link>
+        <Suspense fallback={null}>
+          <Link className={buttonVariants({ size: "sm", variant: "outline" })} href="/start/learn">
+            {t("Cancel")}
+          </Link>
+        </Suspense>
       </EmptyContent>
     </Empty>
   );

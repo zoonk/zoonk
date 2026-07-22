@@ -1,8 +1,6 @@
-import { type LessonScope } from "@zoonk/core/lessons/last-completed";
-import {
-  type ActiveCatalogTarget,
-  getActiveCatalogTarget,
-} from "@zoonk/core/progress/active-catalog-target";
+import { getActiveCatalogTarget } from "@/data/progress/get-catalog-target";
+import { type LessonScope } from "@zoonk/core/lessons/scope";
+import { type ActiveCatalogTarget } from "@zoonk/core/progress/continue-lesson-target";
 import { type LessonKind } from "@zoonk/db";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { ArrowDownIcon } from "lucide-react";

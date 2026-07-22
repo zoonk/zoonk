@@ -1,7 +1,6 @@
 import "server-only";
+import { hasActiveSubscription } from "@/data/subscriptions/get-active-subscription";
 import { type AppRoute } from "@/i18n/navigation";
-import { hasActiveSubscription } from "@zoonk/core/auth/subscription";
-import { headers } from "next/headers";
 import { UpgradeCTA } from "./upgrade-cta";
 
 /**
@@ -23,7 +22,7 @@ export async function SubscriptionGate<Href extends string>({
     return children;
   }
 
-  const hasSubscription = await hasActiveSubscription(await headers());
+  const hasSubscription = await hasActiveSubscription();
 
   if (!hasSubscription) {
     return <UpgradeCTA backHref={backHref} backLabel={backLabel} />;

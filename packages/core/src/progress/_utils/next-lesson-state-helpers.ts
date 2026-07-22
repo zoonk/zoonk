@@ -1,13 +1,6 @@
-import {
-  type EffectiveLessonProgressRow,
-  type PublishedLessonProgressScope,
-} from "./published-lesson-progress";
-
-export type NextLessonStateAnchor = {
-  chapterPosition: number;
-  lessonId: string;
-  lessonPosition: number;
-};
+import { type LessonScope } from "../../lessons/lesson-scope";
+import { type NextLessonStateAnchor } from "../get-next-lesson-state";
+import { type EffectiveLessonProgressRow } from "./published-lesson-progress";
 
 /**
  * Catalog buttons only distinguish "start" from "continue" after at least one
@@ -44,7 +37,7 @@ export function isScopeCompleted({
   courseCompleted: boolean;
   durableChapterIds: Set<string>;
   rows: EffectiveLessonProgressRow[];
-  scope: PublishedLessonProgressScope;
+  scope: LessonScope;
 }) {
   if ("lessonId" in scope) {
     return rows.every((row) => row.isEffectivelyCompleted);
@@ -83,7 +76,7 @@ export function getScopeDurablyCompleted({
   courseCompleted: boolean;
   durableChapterIds: Set<string>;
   rows: EffectiveLessonProgressRow[];
-  scope: PublishedLessonProgressScope;
+  scope: LessonScope;
 }) {
   if ("lessonId" in scope) {
     return rows.every((row) => row.isDurablyCompleted);

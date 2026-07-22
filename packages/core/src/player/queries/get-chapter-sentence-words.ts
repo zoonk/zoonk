@@ -1,18 +1,14 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { extractUniqueSentenceWords } from "@zoonk/utils/string";
-import { cache } from "react";
-import { getChapterSentencesForIds } from "./get-chapter-sentences";
+import { type PlayerChapterSentence } from "./get-chapter-sentences";
 
 /**
- * Sentence word banks are derived from the exact chapter-sentence rows attached
- * to the current playable steps. The matching chapter-word rows must come from
- * the same source lessons that introduced those sentences so contextual
- * translations stay aligned.
+ * Derives a sentence word bank from rows the caller already loaded. The player
+ * bundles sentence resources at the app boundary, so accepting those rows
+ * prevents a second database read while preserving the standalone ID helper.
  */
-const cachedGetChapterSentenceWordsForIds = cache(async (...chapterSentenceIds: string[]) => {
-  const chapterSentences = await getChapterSentencesForIds({ chapterSentenceIds });
-
+export async function getChapterSentenceWords(chapterSentences: PlayerChapterSentence[]) {
   const firstSentence = chapterSentences[0];
 
   if (!firstSentence) {
@@ -37,8 +33,4 @@ const cachedGetChapterSentenceWordsForIds = cache(async (...chapterSentenceIds: 
       word: { word: { in: uniqueWords, mode: "insensitive" } },
     },
   });
-});
-
-export function getChapterSentenceWordsForIds(params: { chapterSentenceIds: string[] }) {
-  return cachedGetChapterSentenceWordsForIds(...params.chapterSentenceIds);
 }

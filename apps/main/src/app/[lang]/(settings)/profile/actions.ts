@@ -1,10 +1,12 @@
 "use server";
 
+import { getUserSessionCacheTag } from "@/data/cache-tags";
+import { getSession } from "@/data/users/get-session";
 import { auth } from "@zoonk/core/auth";
-import { getSession } from "@zoonk/core/users/session/get";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
 import { logError } from "@zoonk/utils/logger";
+import { updateTag } from "next/cache";
 import { headers } from "next/headers";
 
 export async function profileFormAction(_prevState: unknown, formData: FormData) {
@@ -16,7 +18,7 @@ export async function profileFormAction(_prevState: unknown, formData: FormData)
   }
 
   const reqHeaders = await headers();
-  const session = await getSession(reqHeaders);
+  const session = await getSession();
   const usernameChanged = session?.user.username !== username;
 
   const body: { name: string; username?: string } = { name };
@@ -30,6 +32,10 @@ export async function profileFormAction(_prevState: unknown, formData: FormData)
   if (error) {
     logError("Error updating profile:", error);
     return { name, status: "error" as const, username };
+  }
+
+  if (session) {
+    updateTag(getUserSessionCacheTag(session.user.id));
   }
 
   return { name, status: "success" as const, username };

@@ -3,6 +3,7 @@
 import { getPathname, usePathname } from "@/i18n/navigation";
 import { Field, FieldContent, FieldLabel } from "@zoonk/ui/components/field";
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { LOCALE_LABELS, SUPPORTED_LOCALES, isValidLocale } from "@zoonk/utils/locale";
 import { useExtracted, useLocale } from "next-intl";
 
@@ -45,6 +46,20 @@ export function LocaleSwitcher() {
             </NativeSelectOption>
           ))}
         </NativeSelect>
+      </FieldContent>
+    </Field>
+  );
+}
+
+/**
+ * Keeps the language setting's space stable while the current pathname becomes available on the client.
+ */
+export function LocaleSwitcherSkeleton() {
+  return (
+    <Field>
+      <FieldContent>
+        <Skeleton className="h-4 w-20" />
+        <Skeleton className="h-9 w-full sm:w-70" />
       </FieldContent>
     </Field>
   );

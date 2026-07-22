@@ -1,5 +1,5 @@
+import { getSession } from "@/data/users/get-session";
 import { Link } from "@/i18n/navigation";
-import { getSession } from "@zoonk/core/users/session/get";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ProtectedSection as ProtectedSectionPattern } from "@zoonk/ui/patterns/auth/protected";

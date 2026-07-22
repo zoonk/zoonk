@@ -1,6 +1,9 @@
+import "server-only";
+import { COURSE_LIST_CACHE_TAG, getUserProgressCacheTag } from "@/data/cache-tags";
+import { getSession } from "@/data/users/get-session";
 import { getLessonKindExclusionSql } from "@zoonk/core/lessons/kind-exclusions";
 import { type LessonKind, prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
+import { cacheTag } from "next/cache";
 
 /**
  * The continue-learning feed only needs the learner's most recent completion
@@ -26,24 +29,20 @@ export type ContinueLearningRow = {
  */
 const SQL_LIMIT = 10;
 
-/**
- * Historical completions should keep a course eligible for continue-learning.
- * This query anchors on the learner's most recent completion per course, then
- * lets later helpers resolve the actual current destination from the current
- * published curriculum.
- */
-export async function listRecentContinueLearningRows({
+async function findRecentContinueLearningRows({
   excludedLessonKinds,
   userId,
 }: {
   excludedLessonKinds?: LessonKind[];
   userId: string;
 }): Promise<ContinueLearningRow[]> {
+  "use cache";
+
+  cacheTag(COURSE_LIST_CACHE_TAG, getUserProgressCacheTag(userId));
+
   const lessonKindFilter = getLessonKindExclusionSql({ excludedLessonKinds });
 
-  const { data, error } = await safeAsync(
-    () =>
-      prisma.$queryRaw<ContinueLearningRow[]>`
+  return prisma.$queryRaw<ContinueLearningRow[]>`
         WITH last_per_course AS (
           SELECT DISTINCT ON (ch.course_id)
             ch.course_id,
@@ -82,12 +81,21 @@ export async function listRecentContinueLearningRows({
         FROM last_per_course lpc
         ORDER BY lpc.completed_at DESC
         LIMIT ${SQL_LIMIT}
-      `,
-  );
+      `;
+}
 
-  if (error || !data) {
-    return [];
-  }
+/**
+ * Historical completions keep a course eligible for continue-learning while
+ * the current session remains the only source of learner identity.
+ */
+export async function listRecentContinueLearningRows({
+  excludedLessonKinds,
+}: {
+  excludedLessonKinds?: LessonKind[];
+}): Promise<ContinueLearningRow[]> {
+  const session = await getSession();
 
-  return data;
+  return session
+    ? findRecentContinueLearningRows({ excludedLessonKinds, userId: session.user.id })
+    : [];
 }

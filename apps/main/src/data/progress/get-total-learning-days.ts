@@ -1,36 +1,26 @@
 import "server-only";
-import { getSession } from "@zoonk/core/users/session/get";
+import { getUserProgressCacheTag } from "@/data/cache-tags";
+import { getSession } from "@/data/users/get-session";
 import { prisma } from "@zoonk/db";
-import { cache } from "react";
+import { cacheTag } from "next/cache";
 import { getCompletedLessonDayWhere } from "./_utils/completed-lesson-day-where";
 
 type TotalLearningDaysData = { learningDays: number };
 
-const cachedGetTotalLearningDays = cache(
-  async (headers?: Headers): Promise<TotalLearningDaysData | null> => {
-    const session = await getSession(headers);
+async function findTotalLearningDays(userId: string): Promise<TotalLearningDaysData> {
+  "use cache";
 
-    if (!session) {
-      return null;
-    }
+  cacheTag(getUserProgressCacheTag(userId));
 
-    const userId = session.user.id;
+  const learningDays = await prisma.dailyProgress.count({
+    where: getCompletedLessonDayWhere({ userId }),
+  });
 
-    const learningDays = await prisma.dailyProgress.count({
-      where: getCompletedLessonDayWhere({ userId }),
-    });
+  return { learningDays };
+}
 
-    return { learningDays };
-  },
-);
-
-/**
- * The homepage needs the lifetime learning-day total. DailyProgress rows are
- * already owned by the signed-in user, so counting completed rows gives the
- * all-time total without deriving an account-created date boundary.
- */
-export function getTotalLearningDays(params?: {
-  headers?: Headers;
-}): Promise<TotalLearningDaysData | null> {
-  return cachedGetTotalLearningDays(params?.headers);
+/** Returns the authenticated learner's lifetime learning-day total. */
+export async function getTotalLearningDays(): Promise<TotalLearningDaysData | null> {
+  const session = await getSession();
+  return session ? findTotalLearningDays(session.user.id) : null;
 }

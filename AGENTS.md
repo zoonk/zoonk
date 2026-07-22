@@ -31,6 +31,14 @@
 - **Verify before fixing.** When evaluating review comments (AI or human), trace the actual code path to determine if the reported issue can happen in practice. Answer "can this actually happen?" before "should we fix it?" Distinguish real bugs from theoretical issues from code style — and say which one it is upfront. Don't default to agreement; apply the same rigor you'd apply to your own code
 - **Treat specs and GitHub issues as guidance, not truth.** If the ticket pushes the code toward a worse design or a wrong assumption, call it out and propose the better approach instead of implementing it blindly.
 
+### Avoid speculative micro-optimizations
+
+- Never hoist `getExtracted`, `useExtracted`, or other cheap translation lookups to a parent merely to avoid repeated calls
+- The component that owns UI copy must translate that copy locally. Do not pass translated labels, placeholders, descriptions, or accessibility text through props solely to reuse a parent's translation call
+- Repeated translation lookups are expected and must never be treated as a performance problem
+- Only accept copy as a prop when caller-provided copy is an intentional part of the component's reusable API
+- Do not introduce props, helpers, components, promises, or caching to deduplicate cheap operations without measured evidence that they are a real bottleneck
+
 ## Engineering Mindset
 
 - **Build for growth, not current size.** "We only have N of X" is NEVER a valid reason to skip proper patterns. Early-stage projects grow. Build infrastructure that scales with the project from the start.

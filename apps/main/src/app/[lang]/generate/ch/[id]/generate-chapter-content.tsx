@@ -1,5 +1,11 @@
 import { GenerationExitLink } from "@/components/generation/generation-exit-link";
 import { SubscriptionGate } from "@/components/subscription/subscription-gate";
+import {
+  getChapterCacheTag,
+  getChapterLessonsCacheTag,
+  getChapterRouteCacheTag,
+  getCourseCurriculumCacheTag,
+} from "@/data/cache-tags";
 import { getChapterForGeneration } from "@/data/chapters/get-chapter-for-generation";
 import { getInitialGenerationPageStatus } from "@/lib/workflow/get-initial-generation-page-status";
 import { Container, ContainerBody } from "@zoonk/ui/components/container";
@@ -7,6 +13,7 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { getExtracted } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { invalidateGeneratedContent } from "../../invalidate-generated-content";
 import { GenerationClient } from "./generation-client";
 
 export async function GenerateChapterContent({ params }: { params: Promise<{ id: string }> }) {
@@ -27,6 +34,24 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
     isReadyForRedirect: chapter._count.lessons > 0,
   });
 
+  const generatedChapterCacheTags = [
+    getCourseCurriculumCacheTag(chapter.course.id),
+    getChapterCacheTag(chapter.id),
+    getChapterLessonsCacheTag(chapter.id),
+    getChapterRouteCacheTag({
+      brandSlug: AI_ORG_SLUG,
+      chapterSlug: chapter.slug,
+      courseSlug: chapter.course.slug,
+    }),
+  ];
+
+  /** Invalidates only the chapter resolved by this server-rendered generation page. */
+  async function invalidateGeneratedChapter() {
+    "use server";
+
+    invalidateGeneratedContent(generatedChapterCacheTags);
+  }
+
   return (
     <Container variant="narrow">
       <ContainerBody>
@@ -38,6 +63,7 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
             courseSlug={chapter.course.slug}
             generationRunId={chapter.generationRunId}
             initialStatus={initialStatus}
+            invalidateContent={invalidateGeneratedChapter}
           />
           <GenerationExitLink href={backHref} shortcut="Esc" width="content">
             {backLabel}

@@ -1,6 +1,6 @@
 ---
 name: zoonk-github-issues
-description: "Create and manage GitHub issues with advanced features: issue types, dependencies, and sub-issues. Use this skill after planning issues with zoonk-issue-planning."
+description: "Create and manage problem-first GitHub issues, issue types, dependencies, and sub-issues. Use for creating or updating issues. Default issue bodies to the story/problem and desired outcome; use zoonk-issue-planning only when the user explicitly asks for an implementation breakdown, epic structure, sub-issues, or dependencies."
 license: MIT
 metadata:
   author: zoonk
@@ -11,7 +11,39 @@ metadata:
 
 Create and manage GitHub issues with advanced features: issue types, dependencies, and sub-issues.
 
-For **planning** what issues to create, see [zoonk-issue-planning](./../zoonk-issue-planning/SKILL.md).
+Use [zoonk-issue-planning](./../zoonk-issue-planning/SKILL.md) only when the user explicitly asks to plan or split work into multiple issues.
+
+## Write Problem-First Issues
+
+Treat a GitHub issue as the durable record of **what is wrong or needed and why it matters**, not as the implementation plan.
+
+For an ordinary issue request, default to:
+
+```markdown
+## Problem
+
+Describe the current experience, who it affects, and why it matters.
+
+## Desired outcome
+
+Describe how the experience should improve without prescribing the implementation.
+```
+
+Add evidence, examples, or reproduction steps only when they help establish the problem. A motivating example is evidence; do not narrow the issue to that example unless the user does.
+
+Do not add these sections by default:
+
+- Scope or non-goals
+- Implementation approach or architecture
+- File and package lists
+- Acceptance criteria that restate implementation tasks
+- Testing or verification plans
+- Commands to run
+- Delivery phases, dependencies, or sub-issue plans
+
+Add implementation detail only when the user explicitly asks for a technical task, implementation specification, plan, or issue breakdown. Even then, keep the parent epic problem-focused and place independently actionable implementation work in sub-issues.
+
+For bug reports, include observed behavior, expected behavior, and concise reproduction evidence. Do not speculate about the fix unless diagnosis is part of the user's request and has been verified.
 
 ## Quick Start
 
@@ -317,6 +349,10 @@ get_issue_id() {
 
 ## Common Mistakes
 
+- Turning a motivating example into the issue's entire scope instead of identifying the underlying story or problem
+- Copying an implementation plan into the issue body when the user only asked to record a problem
+- Adding testing, verification, acceptance, delivery, or architecture sections without an explicit request for a technical specification
+- Prescribing shared packages, files, APIs, or labels before the implementation boundary has been decided
 - Use GitHub sub-issues feature, which automatically lists sub-issues, no need to list all sub-issues manually in the issue body
 - Similarly, when we add issue dependencies, it automatically adds that dependency to the UI, so you don't need to add `Parent: #ISSUE_NUMBER` - GitHub already does that when you add the relationship
 - Plus, you shouldn't add references to our temporary files to the GitHub issue body like this: `specs, see /tasks/specs/whatever`. Instead write the full spec to the issue body

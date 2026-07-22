@@ -48,12 +48,16 @@ export { CourseFormat, CoursePromptIntent } from "./generated/prisma/client";
 
 export type { ChapterCreateManyInput } from "./generated/prisma/models/Chapter";
 export type { ChapterGetPayload } from "./generated/prisma/models/Chapter";
+export type { ChapterSentenceGetPayload } from "./generated/prisma/models/ChapterSentence";
+export type { ChapterWordGetPayload } from "./generated/prisma/models/ChapterWord";
 export type {
   CoursePromptGetPayload,
   CoursePromptWhereInput,
 } from "./generated/prisma/models/CoursePrompt";
 export type { CourseGetPayload } from "./generated/prisma/models/Course";
 export type { LessonCreateManyInput } from "./generated/prisma/models/Lesson";
+export type { LessonGetPayload } from "./generated/prisma/models/Lesson";
+export type { StepGetPayload } from "./generated/prisma/models/Step";
 
 export { prisma };
 export const sql = Prisma.sql;

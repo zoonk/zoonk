@@ -1,11 +1,11 @@
 import { prisma } from "@zoonk/db";
-import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeAll, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { signInAsCurrentUser } from "../../../test-utils/auth";
 import { MAX_CONTINUE_LEARNING_ITEMS, getContinueLearning } from "./get-continue-learning";
 
 async function createCourseWithLessons(organizationId: string) {
@@ -40,7 +40,7 @@ async function createCourseWithLessons(organizationId: string) {
 
 describe("unauthenticated users", () => {
   it("returns empty array", async () => {
-    const result = await getContinueLearning(new Headers());
+    const result = await getContinueLearning();
     expect(result).toStrictEqual([]);
   });
 });
@@ -52,17 +52,30 @@ describe("authenticated users", () => {
     organization = await organizationFixture();
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("returns empty array when user has no completions", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
-    const result = await getContinueLearning(headers);
+    const result = await getContinueLearning();
     expect(result).toStrictEqual([]);
+  });
+
+  it("degrades optional feed query failures to an empty list", async () => {
+    const user = await userFixture();
+    await signInAsCurrentUser({ email: user.email, password: user.password });
+    const queryError = new Error("Continue-learning query failed");
+    vi.spyOn(prisma, "$queryRaw").mockRejectedValueOnce(queryError);
+
+    await expect(getContinueLearning()).resolves.toStrictEqual([]);
   });
 
   it("ignores courses where the user started but did not complete a lesson", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     const { course, lesson1 } = await createCourseWithLessons(organization.id);
 
@@ -76,14 +89,14 @@ describe("authenticated users", () => {
       }),
     ]);
 
-    const result = await getContinueLearning(headers);
+    const result = await getContinueLearning();
 
     expect(result).toStrictEqual([]);
   });
 
   it("returns courses with next lesson info based on completions", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     const { lesson1, lesson2, chapter, course } = await createCourseWithLessons(organization.id);
 
@@ -94,7 +107,7 @@ describe("authenticated users", () => {
       userId: user.id,
     });
 
-    const result = await getContinueLearning(headers);
+    const result = await getContinueLearning();
 
     expect(result).toHaveLength(1);
 
@@ -112,8 +125,8 @@ describe("authenticated users", () => {
       courseFixture({ isPublished: true, organizationId: organization.id }),
     ]);
 
-    const [headers, chapter] = await Promise.all([
-      signInAs(user.email, user.password),
+    const [, chapter] = await Promise.all([
+      signInAsCurrentUser({ email: user.email, password: user.password }),
       chapterFixture({
         courseId: course.id,
         isPublished: true,
@@ -161,7 +174,7 @@ describe("authenticated users", () => {
       }),
     ]);
 
-    const result = await getContinueLearning(headers);
+    const result = await getContinueLearning();
 
     expect(result).toHaveLength(1);
 
@@ -177,7 +190,7 @@ describe("authenticated users", () => {
 
   it("does not reopen a durably completed lesson after new lessons are added", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
     const userId = user.id;
 
     const course = await courseFixture({ isPublished: true, organizationId: organization.id });
@@ -225,7 +238,7 @@ describe("authenticated users", () => {
       }),
     ]);
 
-    const result = await getContinueLearning(headers);
+    const result = await getContinueLearning();
 
     expect(result).toHaveLength(1);
 
@@ -243,7 +256,7 @@ describe("authenticated users", () => {
 
   it("orders by most recent completion", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     const data1 = await createCourseWithLessons(organization.id);
     const data2 = await createCourseWithLessons(organization.id);
@@ -265,7 +278,7 @@ describe("authenticated users", () => {
       }),
     ]);
 
-    const result = await getContinueLearning(headers);
+    const result = await getContinueLearning();
 
     expect(result).toHaveLength(2);
     expect(result[0]).toMatchObject({ course: { id: data2.course.id }, status: "completed" });
@@ -274,7 +287,7 @@ describe("authenticated users", () => {
 
   it("limits to max items", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     const courses = await Promise.all(
       Array.from({ length: MAX_CONTINUE_LEARNING_ITEMS + 1 }, () =>
@@ -295,14 +308,14 @@ describe("authenticated users", () => {
       ),
     );
 
-    const result = await getContinueLearning(headers);
+    const result = await getContinueLearning();
 
     expect(result).toHaveLength(MAX_CONTINUE_LEARNING_ITEMS);
   });
 
   it("filters out completed courses", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     const { lesson1, lesson2 } = await createCourseWithLessons(organization.id);
 
@@ -321,14 +334,14 @@ describe("authenticated users", () => {
       }),
     ]);
 
-    const result = await getContinueLearning(headers);
+    const result = await getContinueLearning();
 
     expect(result).toStrictEqual([]);
   });
 
   it("filters out durably completed courses even when a new chapter is added later", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     const course = await courseFixture({ isPublished: true, organizationId: organization.id });
 
@@ -372,14 +385,14 @@ describe("authenticated users", () => {
       prisma.courseCompletion.create({ data: { courseId: course.id, userId: user.id } }),
     ]);
 
-    const result = await getContinueLearning(headers);
+    const result = await getContinueLearning();
 
     expect(result).toStrictEqual([]);
   });
 
   it("finds lesson in next chapter when current chapter is complete", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     const course = await courseFixture({ isPublished: true, organizationId: organization.id });
 
@@ -422,7 +435,7 @@ describe("authenticated users", () => {
       userId: user.id,
     });
 
-    const result = await getContinueLearning(headers);
+    const result = await getContinueLearning();
 
     expect(result).toHaveLength(1);
 
@@ -435,7 +448,7 @@ describe("authenticated users", () => {
 
   it("excludes courses from non-brand organizations", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     const schoolOrg = await organizationFixture({ kind: "school" });
     const { lesson1, lesson2 } = await createCourseWithLessons(schoolOrg.id);
@@ -455,14 +468,14 @@ describe("authenticated users", () => {
       }),
     ]);
 
-    const result = await getContinueLearning(headers);
+    const result = await getContinueLearning();
 
     expect(result).toStrictEqual([]);
   });
 
   it("returns null organization for personal courses", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     const course = await courseFixture({
       format: "question",
@@ -502,7 +515,7 @@ describe("authenticated users", () => {
       userId: user.id,
     });
 
-    const result = await getContinueLearning(headers);
+    const result = await getContinueLearning();
 
     expect(result).toHaveLength(1);
 
@@ -515,7 +528,7 @@ describe("authenticated users", () => {
 
   it("returns pending item when next lesson has no generated lessons", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     const course = await courseFixture({ isPublished: true, organizationId: organization.id });
 
@@ -548,7 +561,7 @@ describe("authenticated users", () => {
       userId: user.id,
     });
 
-    const result = await getContinueLearning(headers);
+    const result = await getContinueLearning();
 
     expect(result).toHaveLength(1);
 
@@ -562,7 +575,7 @@ describe("authenticated users", () => {
 
   it("returns the pending tree-next lesson before a later generated lesson", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     const course = await courseFixture({ isPublished: true, organizationId: organization.id });
 
@@ -605,7 +618,7 @@ describe("authenticated users", () => {
       userId: user.id,
     });
 
-    const result = await getContinueLearning(headers);
+    const result = await getContinueLearning();
 
     expect(result).toHaveLength(1);
 
@@ -619,7 +632,7 @@ describe("authenticated users", () => {
 
   it("returns the next pending lesson target after the completed lesson", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     const course = await courseFixture({ isPublished: true, organizationId: organization.id });
 
@@ -661,7 +674,7 @@ describe("authenticated users", () => {
       userId: user.id,
     });
 
-    const result = await getContinueLearning(headers);
+    const result = await getContinueLearning();
 
     expect(result).toHaveLength(1);
 
@@ -675,7 +688,7 @@ describe("authenticated users", () => {
 
   it("returns pending item linking to chapter when no next published lesson", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     const course = await courseFixture({ isPublished: true, organizationId: organization.id });
 
@@ -708,7 +721,7 @@ describe("authenticated users", () => {
       userId: user.id,
     });
 
-    const result = await getContinueLearning(headers);
+    const result = await getContinueLearning();
 
     expect(result).toHaveLength(1);
 

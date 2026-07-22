@@ -2,23 +2,26 @@
 
 import { trackLessonStarted } from "@/lib/track-events";
 import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { useEffect } from "react";
+import { startTransition, useEffect } from "react";
+import { recordLessonStart } from "./start-lesson-action";
 
 type LessonStartedTrackingInput = {
   chapterPosition: number;
   courseSlug: string;
+  isAuthenticated: boolean;
   lesson: SerializedLesson;
   lessonPosition: number;
   lessonSlug: string;
 };
 
 /**
- * Counts the lesson-start funnel event when a playable lesson mounts. The
- * effect synchronizes the mounted player screen with external analytics.
+ * Synchronizes a mounted playable lesson with external analytics and persisted
+ * progress. This must run after mount so route prefetching remains read-only.
  */
 export function useTrackLessonStarted({
   chapterPosition,
   courseSlug,
+  isAuthenticated,
   lesson,
   lessonPosition,
   lessonSlug,
@@ -36,9 +39,16 @@ export function useTrackLessonStarted({
       lessonSlug,
       stepCount: lesson.steps.length,
     });
+
+    if (isAuthenticated) {
+      startTransition(() => {
+        void recordLessonStart(lesson.id);
+      });
+    }
   }, [
     chapterPosition,
     courseSlug,
+    isAuthenticated,
     lesson.id,
     lesson.kind,
     lessonPosition,

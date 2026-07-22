@@ -3,6 +3,8 @@ import { getExtracted } from "next-intl/server";
 
 type LessonDisplayInput = { kind: LessonKind; title: string | null; description: string | null };
 
+export type LessonDisplayMeta = { description: string; title: string };
+
 type LessonSeoInput = LessonDisplayInput & {
   chapter: { title: string; course: { title: string } };
   position: number;
@@ -37,9 +39,7 @@ export async function getLessonKindLabels(): Promise<Record<LessonKind, string>>
  * store generated titles or descriptions. The app renders those labels from
  * current translations so copy can change without regenerating curriculum rows.
  */
-export async function getLessonDisplayMeta(
-  lesson: LessonDisplayInput,
-): Promise<{ description: string; title: string }> {
+export async function getLessonDisplayMeta(lesson: LessonDisplayInput): Promise<LessonDisplayMeta> {
   const labels = await getLessonKindLabels();
   const t = await getExtracted();
 

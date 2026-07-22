@@ -1,4 +1,4 @@
-import { getSession } from "@zoonk/core/users/session/get";
+import { getSession } from "@/data/users/get-session";
 import { Avatar, AvatarFallback, AvatarImage } from "@zoonk/ui/components/avatar";
 import { User } from "lucide-react";
 

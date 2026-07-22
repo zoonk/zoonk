@@ -1,14 +1,13 @@
-import { type LessonKind } from "@zoonk/db";
-import { getSession } from "../users/get-user-session";
-import {
-  listDurableChapterCompletionIds,
-  listDurableLessonCompletionIds,
-} from "./_utils/durable-completion-queries";
 import { toEffectiveLessonProgressRows } from "./_utils/published-lesson-progress";
-import {
-  listPublishedChaptersForCourse,
-  listPublishedLessonProgressRows,
-} from "./_utils/published-lesson-progress-queries";
+import { type PublishedCourseChapter, type PublishedLessonProgressRow } from "./progress-queries";
+
+export type ChapterProgress = { chapterId: string; completedLessons: number; totalLessons: number };
+
+export type ChapterProgressInput = {
+  chapters: PublishedCourseChapter[];
+  durableChapterCompletionIds: string[];
+  rows: PublishedLessonProgressRow[];
+};
 
 /**
  * Course pages need one stable chapter-level answer even when new lessons are
@@ -16,24 +15,22 @@ import {
  * chapter still derives its count from the
  * current published lessons in that chapter.
  */
-function getChapterProgressRows({
-  chapterIds,
-  durableChapterIds,
+export function getChapterProgress({
+  chapters,
+  durableChapterCompletionIds,
   rows,
-}: {
-  chapterIds: { chapterId: string }[];
-  durableChapterIds: Set<string>;
-  rows: ReturnType<typeof toEffectiveLessonProgressRows>;
-}) {
-  const rowsByChapter = new Map<string, typeof rows>();
+}: ChapterProgressInput): ChapterProgress[] {
+  const durableChapterIds = new Set(durableChapterCompletionIds);
+  const effectiveRows = toEffectiveLessonProgressRows({ rows });
+  const rowsByChapter = new Map<string, typeof effectiveRows>();
 
-  for (const row of rows) {
+  for (const row of effectiveRows) {
     const chapterRows = rowsByChapter.get(row.chapterId) ?? [];
     chapterRows.push(row);
     rowsByChapter.set(row.chapterId, chapterRows);
   }
 
-  return chapterIds.map(({ chapterId }) => {
+  return chapters.map(({ chapterId }) => {
     const chapterRows = rowsByChapter.get(chapterId) ?? [];
     const totalLessons = chapterRows.length;
 
@@ -46,51 +43,5 @@ function getChapterProgressRows({
       completedLessons: chapterRows.filter((row) => row.isEffectivelyCompleted).length,
       totalLessons,
     };
-  });
-}
-
-/**
- * This query powers the chapter list progress on the course page.
- * We count every published lesson in a published chapter because the catalog
- * should only show a chapter as complete once every listed lesson is done.
- * A lesson without completion progress is therefore still part of the total,
- * but it does not count as completed yet.
- */
-export async function getChapterProgress({
-  courseId,
-  excludedLessonKinds,
-  headers,
-}: {
-  courseId: string;
-  excludedLessonKinds?: LessonKind[];
-  headers?: Headers;
-}): Promise<{ chapterId: string; completedLessons: number; totalLessons: number }[]> {
-  const session = await getSession(headers);
-  const userId = session?.user.id;
-
-  if (!userId) {
-    return [];
-  }
-
-  const [chapterIds, rows] = await Promise.all([
-    listPublishedChaptersForCourse({ courseId }),
-    listPublishedLessonProgressRows({ excludedLessonKinds, scope: { courseId }, userId }),
-  ]);
-
-  const [durableLessonIds, durableChapterIds] = await Promise.all([
-    listDurableLessonCompletionIds({
-      lessonIds: [...new Set(rows.map((row) => row.lessonId))],
-      userId,
-    }),
-    listDurableChapterCompletionIds({
-      chapterIds: chapterIds.map((chapter) => chapter.chapterId),
-      userId,
-    }),
-  ]);
-
-  return getChapterProgressRows({
-    chapterIds,
-    durableChapterIds,
-    rows: toEffectiveLessonProgressRows({ durablyCompletedLessonIds: durableLessonIds, rows }),
   });
 }

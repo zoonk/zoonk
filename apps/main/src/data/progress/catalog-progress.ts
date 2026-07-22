@@ -1,234 +1,81 @@
 import "server-only";
-import {
-  getLessonKindExclusionCacheArgs,
-  getLessonKindExclusionWhere,
-} from "@zoonk/core/lessons/kind-exclusions";
+import { getSession } from "@/data/users/get-session";
 import { getChapterProgress } from "@zoonk/core/progress/chapters";
 import { getLessonProgress } from "@zoonk/core/progress/lessons";
-import {
-  type LessonKind,
-  getPublishedChapterWhere,
-  getPublishedLessonWhere,
-  prisma,
-} from "@zoonk/db";
+import { type LessonKind } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { cache } from "react";
 import {
-  type CourseContinueProgressChapter,
-  calculateCourseContinueProgressPercent,
-  calculateProgressPercent,
-} from "./_utils/continue-progress-percent";
+  listDurableChapterCompletionIds,
+  listPublishedCourseChapters,
+  listPublishedLessonProgressRows,
+} from "./progress-queries";
 
-export type ContinueLessonProgress = { percentComplete: number };
-
-/**
- * Course and chapter page components can independently ask for chapter-card
- * progress. React cache keeps repeated reads for the same course inside one
- * server render from issuing duplicate progress queries.
- */
-const cachedCatalogChapterProgress = cache(
-  async (courseId: string, headers: Headers | undefined, ...excludedLessonKinds: LessonKind[]) =>
-    getChapterProgress({ courseId, excludedLessonKinds, headers }),
-);
-
-export function getCatalogChapterProgress({
-  courseId,
-  excludedLessonKinds = [],
-  headers,
-}: {
-  courseId: string;
-  excludedLessonKinds?: LessonKind[];
-  headers?: Headers;
-}) {
-  return cachedCatalogChapterProgress(
-    courseId,
-    headers,
-    ...getLessonKindExclusionCacheArgs({ excludedLessonKinds }),
-  );
-}
+type CatalogProgressInput = { excludedLessonKinds?: LessonKind[] };
 
 /**
- * The Continue button and lesson grid both need the same lesson completion
- * rows on chapter pages. Caching by chapter id keeps those sibling Suspense
- * boundaries independent without paying for the query twice in one render.
+ * Builds lesson progress from independently cached query leaves. The public
+ * wrapper never accepts a user id, so only the trusted session can select
+ * personalized rows stored by the application cache.
  */
-const cachedCatalogLessonProgress = cache(
-  async (chapterId: string, headers: Headers | undefined, ...excludedLessonKinds: LessonKind[]) =>
-    getLessonProgress({ chapterId, excludedLessonKinds, headers }),
-);
-
-export function getCatalogLessonProgress({
+async function loadCatalogLessonProgress({
   chapterId,
   excludedLessonKinds = [],
-  headers,
-}: {
-  chapterId: string;
-  excludedLessonKinds?: LessonKind[];
-  headers?: Headers;
-}) {
-  return cachedCatalogLessonProgress(
-    chapterId,
-    headers,
-    ...getLessonKindExclusionCacheArgs({ excludedLessonKinds }),
-  );
-}
+}: CatalogProgressInput & { chapterId: string }) {
+  const session = await getSession();
 
-/**
- * A chapter counts as complete on the course CTA when every visible lesson is
- * complete. Reusing the same filtered chapter rows as the cards prevents a
- * hidden lesson type from keeping the course progress suffix stuck behind the
- * lesson set the learner chose not to see.
- */
-const cachedCourseContinueProgress = cache(
-  async (
-    courseId: string,
-    headers: Headers | undefined,
-    ...excludedLessonKinds: LessonKind[]
-  ): Promise<ContinueLessonProgress | null> => {
-    const [chapterProgressRows, chapters] = await Promise.all([
-      cachedCatalogChapterProgress(courseId, headers, ...excludedLessonKinds),
-      listPublishedCourseChaptersForProgress({ courseId }),
-    ]);
-
-    const progressRowsByChapterId = new Map(chapterProgressRows.map((row) => [row.chapterId, row]));
-
-    const progressChapters = chapters.map((chapter) =>
-      getCourseContinueProgressChapter({ chapter, progressRowsByChapterId }),
-    );
-
-    return toContinueLessonProgress({
-      percentComplete: calculateCourseContinueProgressPercent({ chapters: progressChapters }),
-    });
-  },
-);
-
-export function getCourseContinueProgress({
-  courseId,
-  excludedLessonKinds = [],
-  headers,
-}: {
-  courseId: string;
-  excludedLessonKinds?: LessonKind[];
-  headers?: Headers;
-}) {
-  return cachedCourseContinueProgress(
-    courseId,
-    headers,
-    ...getLessonKindExclusionCacheArgs({ excludedLessonKinds }),
-  );
-}
-
-/**
- * Chapter-level progress still counts lessons because chapter pages list the
- * concrete lesson rows. Reusing cached lesson progress keeps this aligned with
- * the status badges rendered by the lesson grid.
- */
-const cachedChapterContinueProgress = cache(
-  async (
-    chapterId: string,
-    headers: Headers | undefined,
-    ...excludedLessonKinds: LessonKind[]
-  ): Promise<ContinueLessonProgress | null> => {
-    const [progressRows, totalItems] = await Promise.all([
-      cachedCatalogLessonProgress(chapterId, headers, ...excludedLessonKinds),
-      countPublishedChapterLessons({ chapterId, excludedLessonKinds }),
-    ]);
-
-    return toContinueLessonProgress({
-      percentComplete: calculateProgressPercent({
-        completedItems: progressRows.filter((row) => row.isCompleted).length,
-        totalItems,
-      }),
-    });
-  },
-);
-
-export function getChapterContinueProgress({
-  chapterId,
-  excludedLessonKinds = [],
-  headers,
-}: {
-  chapterId: string;
-  excludedLessonKinds?: LessonKind[];
-  headers?: Headers;
-}) {
-  return cachedChapterContinueProgress(
-    chapterId,
-    headers,
-    ...getLessonKindExclusionCacheArgs({ excludedLessonKinds }),
-  );
-}
-
-/**
- * The UI only needs a visible percentage. Returning null lets callers keep the
- * existing no-progress fallback when there is no useful denominator.
- */
-function toContinueLessonProgress({
-  percentComplete,
-}: {
-  percentComplete: number | null;
-}): ContinueLessonProgress | null {
-  if (percentComplete === null) {
-    return null;
+  if (!session) {
+    return [];
   }
 
-  return { percentComplete };
+  const scope = { chapterId } as const;
+  const rows = await listPublishedLessonProgressRows({ excludedLessonKinds, scope });
+
+  return getLessonProgress({ rows });
 }
 
 /**
- * Course estimates need chapter generation status in addition to the lesson
- * progress rows, because pending chapters may not have lesson rows yet.
+ * Optional lesson progress degrades to an empty list outside the cached query
+ * leaves, allowing the next request to retry a transient database failure.
  */
-async function listPublishedCourseChaptersForProgress({ courseId }: { courseId: string }) {
-  const { data } = await safeAsync(() =>
-    prisma.chapter.findMany({
-      orderBy: { position: "asc" },
-      where: getPublishedChapterWhere({ chapterWhere: { courseId } }),
-    }),
-  );
-
+export async function getCatalogLessonProgress(
+  input: CatalogProgressInput & { chapterId: string },
+) {
+  const { data } = await safeAsync(() => loadCatalogLessonProgress(input));
   return data ?? [];
 }
 
 /**
- * The course estimate consumes one row per published chapter, so chapters with
- * no visible lessons still contribute their generation status and zero counts.
+ * Builds chapter progress from one parallel wave of canonical app queries.
+ * Curriculum and learner updates invalidate those leaves independently.
  */
-function getCourseContinueProgressChapter({
-  chapter,
-  progressRowsByChapterId,
-}: {
-  chapter: Awaited<ReturnType<typeof listPublishedCourseChaptersForProgress>>[number];
-  progressRowsByChapterId: Map<string, { completedLessons: number; totalLessons: number }>;
-}): CourseContinueProgressChapter {
-  const progress = progressRowsByChapterId.get(chapter.id);
+async function loadCatalogChapterProgress({
+  courseId,
+  excludedLessonKinds = [],
+}: CatalogProgressInput & { courseId: string }) {
+  const session = await getSession();
 
-  return {
-    completedLessons: progress?.completedLessons ?? 0,
-    generationStatus: chapter.generationStatus,
-    totalLessons: progress?.totalLessons ?? 0,
-  };
+  if (!session) {
+    return [];
+  }
+
+  const scope = { courseId } as const;
+
+  const [chapters, durableChapterCompletionIds, rows] = await Promise.all([
+    listPublishedCourseChapters({ courseId }),
+    listDurableChapterCompletionIds({ excludedLessonKinds, scope }),
+    listPublishedLessonProgressRows({ excludedLessonKinds, scope }),
+  ]);
+
+  return getChapterProgress({ chapters, durableChapterCompletionIds, rows });
 }
 
 /**
- * Chapter progress uses the visible lesson total so the Continue button and
- * lesson grid agree about the same generated lesson set.
+ * Optional chapter progress degrades to an empty list outside the cached query
+ * leaves, allowing the next request to retry a transient database failure.
  */
-async function countPublishedChapterLessons({
-  chapterId,
-  excludedLessonKinds,
-}: {
-  chapterId: string;
-  excludedLessonKinds: LessonKind[];
-}) {
-  const { data } = await safeAsync(() =>
-    prisma.lesson.count({
-      where: getPublishedLessonWhere({
-        chapterWhere: { id: chapterId },
-        lessonWhere: getLessonKindExclusionWhere({ excludedLessonKinds }),
-      }),
-    }),
-  );
-
-  return data ?? 0;
+export async function getCatalogChapterProgress(
+  input: CatalogProgressInput & { courseId: string },
+) {
+  const { data } = await safeAsync(() => loadCatalogChapterProgress(input));
+  return data ?? [];
 }

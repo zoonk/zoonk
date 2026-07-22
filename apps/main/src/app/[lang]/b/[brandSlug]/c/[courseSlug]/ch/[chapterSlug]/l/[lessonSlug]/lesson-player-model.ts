@@ -1,6 +1,8 @@
 type NextLesson = { chapterSlug: string; lessonSlug: string; lessonTitle: string | null };
-type NextChapter = { brandSlug: string; chapterSlug: string; courseSlug: string };
 type OrderedItem = { id: string };
+type OrderedChapter = OrderedItem & { slug: string };
+
+export type NextChapterTarget = { brandSlug: string; chapterSlug: string; courseSlug: string };
 
 export type LessonProgressMeta = {
   currentLessonNumber: number;
@@ -15,6 +17,32 @@ const DEFAULT_LESSON_PROGRESS: LessonProgressMeta = {
   remainingLessonsInChapter: 0,
   totalLessonsInChapter: 1,
 };
+
+/**
+ * Selects the next published chapter from the ordered course outline already
+ * loaded by the lesson page. This keeps structural selection pure and avoids a
+ * second database query for data that is already available to the caller.
+ */
+export function getNextChapterTarget({
+  brandSlug,
+  chapterId,
+  courseChapters,
+  courseSlug,
+}: {
+  brandSlug: string;
+  chapterId: string;
+  courseChapters: readonly OrderedChapter[];
+  courseSlug: string;
+}): NextChapterTarget | null {
+  const chapterIndex = courseChapters.findIndex((chapter) => chapter.id === chapterId);
+  const nextChapter = courseChapters[chapterIndex + 1];
+
+  if (chapterIndex === -1 || !nextChapter) {
+    return null;
+  }
+
+  return { brandSlug, chapterSlug: nextChapter.slug, courseSlug };
+}
 
 /**
  * Converts an ordered curriculum list into the human position learners expect.
@@ -155,7 +183,7 @@ function getNextChapterHref({
   brandSlug: string;
   chapterSlug: string;
   courseSlug: string;
-  nextChapter: NextChapter | null;
+  nextChapter: NextChapterTarget | null;
   nextLesson: NextLesson | null;
 }) {
   if (nextLesson?.chapterSlug === chapterSlug) {
@@ -192,7 +220,7 @@ export function buildLessonPlayerModel({
   courseSlug: string;
   lessonSlug: string;
   lessonProgress?: LessonProgressMeta;
-  nextChapter?: NextChapter | null;
+  nextChapter?: NextChapterTarget | null;
   nextLesson: NextLesson | null;
 }) {
   const chapterHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}` as const;

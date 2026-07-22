@@ -8,7 +8,7 @@ import { CatalogGridImage } from "@/components/catalog/catalog-grid-image";
 import { getCatalogActiveItemKey } from "@/components/catalog/catalog-item-target";
 import { type CourseChapter } from "@/data/chapters/list-course-chapters";
 import { getCatalogChapterProgress } from "@/data/progress/catalog-progress";
-import { getActiveCatalogTarget } from "@zoonk/core/progress/active-catalog-target";
+import { getActiveCatalogTarget } from "@/data/progress/get-catalog-target";
 import { type LessonKind } from "@zoonk/db";
 import {
   GridGroup,
@@ -186,9 +186,9 @@ export async function ChapterList({
 
   const t = await getExtracted();
 
-  const [completionData, activeTarget] = await Promise.all([
-    getCatalogChapterProgress({ courseId, excludedLessonKinds: hiddenLessonKinds }),
+  const [activeTarget, completionData] = await Promise.all([
     getActiveCatalogTarget({ excludedLessonKinds: hiddenLessonKinds, scope: { courseId } }),
+    getCatalogChapterProgress({ courseId, excludedLessonKinds: hiddenLessonKinds }),
   ]);
 
   const completionMap = new Map(completionData.map((row) => [row.chapterId, row]));

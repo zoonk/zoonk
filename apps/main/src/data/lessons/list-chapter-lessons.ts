@@ -1,15 +1,18 @@
 import "server-only";
+import { getChapterLessonsCacheTag } from "@/data/cache-tags";
 import { type Lesson, getPublishedLessonWhere, prisma } from "@zoonk/db";
-import { cache } from "react";
+import { cacheTag } from "next/cache";
 
-const cachedListChapterLessons = cache(
-  async (chapterId: string): Promise<Lesson[]> =>
-    prisma.lesson.findMany({
-      orderBy: { position: "asc" },
-      where: getPublishedLessonWhere({ lessonWhere: { chapterId } }),
-    }),
-);
+/**
+ * Shares a chapter's published lessons across catalog and player reads. Chapter
+ * and lesson generation expire this entry after adding new lesson rows.
+ */
+export async function listChapterLessons({ chapterId }: { chapterId: string }): Promise<Lesson[]> {
+  "use cache";
+  cacheTag(getChapterLessonsCacheTag(chapterId));
 
-export function listChapterLessons(params: { chapterId: string }): Promise<Lesson[]> {
-  return cachedListChapterLessons(params.chapterId);
+  return prisma.lesson.findMany({
+    orderBy: { position: "asc" },
+    where: getPublishedLessonWhere({ lessonWhere: { chapterId } }),
+  });
 }

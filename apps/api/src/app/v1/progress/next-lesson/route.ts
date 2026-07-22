@@ -1,8 +1,9 @@
 import { errors } from "@/lib/api-errors";
+import { getRequestUserId } from "@/lib/get-request-user-id";
 import { nextLessonQuerySchema } from "@/lib/openapi/schemas/progress";
+import { readNextLessonTarget } from "@/lib/progress-reads";
 import { parseQueryParams } from "@/lib/query-params";
-import { type LessonScope } from "@zoonk/core/lessons/last-completed";
-import { getContinueLessonTarget } from "@zoonk/core/progress/continue-lesson-target";
+import { type LessonScope } from "@zoonk/core/lessons/scope";
 import { NextResponse } from "next/server";
 
 function getScope(params: {
@@ -31,7 +32,8 @@ export async function GET(request: Request) {
 
   const { chapterId, courseId, lessonId } = parsed.data;
   const scope = getScope({ chapterId, courseId, lessonId });
-  const result = await getContinueLessonTarget({ headers: request.headers, scope });
+  const userId = await getRequestUserId(request.headers);
+  const result = await readNextLessonTarget({ scope, userId });
 
   if (!result) {
     return NextResponse.json({ completed: false, hasStarted: false });

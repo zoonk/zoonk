@@ -1,7 +1,6 @@
-import { getNextChapterInCourse } from "@zoonk/core/lessons/next-chapter-in-course";
-import { getNextLessonInCourse } from "@zoonk/core/lessons/next-in-course";
-import { type Chapter, type Lesson, type LessonKind } from "@zoonk/db";
-import { type ContinueLearningState } from "./continue-learning-next-state";
+import { getContinueLessonTarget } from "@zoonk/core/progress/continue-lesson-target";
+import { type Chapter, type Lesson } from "@zoonk/db";
+import { type ContinueLearningProgressState } from "./continue-learning-next-state";
 import { type ContinueLearningRow } from "./continue-learning-queries";
 
 export type PendingTarget = {
@@ -10,108 +9,37 @@ export type PendingTarget = {
 };
 
 /**
- * Once a course is still active but the shared next-state reports it as
- * completed, the feed needs a chapter-or-lesson target instead of a completed
- * lesson deep link. This helper only resolves those fallback targets for the
- * rows that actually need them.
+ * Converts the pure continuation selector's empty-chapter destination into the
+ * richer card payload already loaded with the course outline. A completed
+ * review lesson is not pending and therefore does not produce a feed card.
  */
-export async function listPendingTargets({
-  excludedLessonKinds,
-  rows,
-  states,
-}: {
-  excludedLessonKinds?: LessonKind[];
-  rows: ContinueLearningRow[];
-  states: ContinueLearningState[];
-}) {
-  return Promise.all(
-    rows.map((row, idx) =>
-      listPendingTarget({ excludedLessonKinds, row, state: states[idx] ?? null }),
-    ),
-  );
-}
-
-/**
- * Pending fallback targets only matter when the shared next-state says the
- * course is complete for now but not durably completed overall. Every other
- * state can be rendered directly from the current lesson data.
- */
-function shouldLoadPendingTarget({ state }: { state: ContinueLearningState }) {
-  return Boolean(state?.completed && !state.scopeDurablyCompleted);
-}
-
-/**
- * This tiny orchestration helper keeps the Promise.all callback declarative and
- * avoids embedding branching logic directly inside the array mapping step.
- */
-async function listPendingTarget({
-  excludedLessonKinds,
+export function getPendingTarget({
+  progressState,
   row,
-  state,
 }: {
-  excludedLessonKinds?: LessonKind[];
+  progressState: ContinueLearningProgressState;
   row: ContinueLearningRow;
-  state: ContinueLearningState;
-}) {
-  if (!shouldLoadPendingTarget({ state })) {
+}): PendingTarget | null {
+  const target = getContinueLessonTarget({
+    chapters: progressState.chapters,
+    scope: { courseId: row.courseId },
+    state: progressState.state,
+  });
+
+  if (!target || "lessonSlug" in target) {
     return null;
   }
 
-  return findPendingTarget({ excludedLessonKinds, row });
-}
+  const chapter = progressState.chapters.find(
+    (candidate) => candidate.chapterSlug === target.chapterSlug,
+  );
 
-/**
- * When a course has no actionable next lesson, the feed should still point
- * the learner to the next lesson player if one exists, otherwise to the next
- * chapter. That keeps the card useful even while generation is pending.
- */
-async function findPendingTarget({
-  excludedLessonKinds,
-  row,
-}: {
-  excludedLessonKinds?: LessonKind[];
-  row: ContinueLearningRow;
-}): Promise<PendingTarget | null> {
-  const nextLesson = await getNextLessonInCourse({
-    chapterId: row.chapterId,
-    chapterPosition: row.chapterPosition,
-    courseId: row.courseId,
-    excludedLessonKinds,
-    lessonPosition: row.lessonPosition,
-  });
-
-  if (nextLesson) {
-    return {
-      chapter: {
-        id: nextLesson.chapterId,
-        slug: nextLesson.chapterSlug,
-        title: nextLesson.chapterTitle,
-      },
-      lesson: {
-        description: nextLesson.lessonDescription,
-        id: nextLesson.lessonId,
-        kind: nextLesson.lessonKind,
-        slug: nextLesson.lessonSlug,
-        title: nextLesson.lessonTitle,
-      },
-    };
-  }
-
-  const nextChapter = await getNextChapterInCourse({
-    chapterPosition: row.chapterPosition,
-    courseId: row.courseId,
-  });
-
-  if (!nextChapter) {
+  if (!chapter) {
     return null;
   }
 
   return {
-    chapter: {
-      id: nextChapter.chapterId,
-      slug: nextChapter.chapterSlug,
-      title: nextChapter.chapterTitle,
-    },
+    chapter: { id: chapter.chapterId, slug: chapter.chapterSlug, title: chapter.chapterTitle },
     lesson: null,
   };
 }

@@ -86,7 +86,7 @@ function StartWarningActions({
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <PlayerLink className={cn(buttonVariants(), "w-full")} href={loginHref}>
+      <PlayerLink className={cn(buttonVariants(), "w-full")} href={loginHref} prefetch={false}>
         {t("Log in to save progress")}
       </PlayerLink>
 

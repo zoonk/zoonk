@@ -1,13 +1,13 @@
 import { prisma } from "@zoonk/db";
-import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { createSafeDate, createSameWeekDates } from "@zoonk/testing/fixtures/dates";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { signInAsCurrentUser } from "../../../test-utils/auth";
 import { getEnergyHistory } from "./get-energy-history";
 
 describe("unauthenticated users", () => {
   it("returns null", async () => {
-    const result = await getEnergyHistory({ headers: new Headers(), period: "month" });
+    const result = await getEnergyHistory({ period: "month" });
     expect(result).toBeNull();
   });
 });
@@ -19,16 +19,16 @@ describe("authenticated users", () => {
 
   it("returns null when user has no DailyProgress records", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
-    const result = await getEnergyHistory({ headers, period: "month" });
+    const result = await getEnergyHistory({ period: "month" });
     expect(result).toBeNull();
   });
 
   describe("month period", () => {
     it("returns daily data points for current month", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       // Use createSafeDate to avoid month boundary issues (always mid-month)
       const today = createSafeDate(0);
@@ -41,7 +41,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getEnergyHistory({ headers, period: "month" });
+      const result = await getEnergyHistory({ period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.dataPoints.length).toBeGreaterThanOrEqual(1);
@@ -50,7 +50,7 @@ describe("authenticated users", () => {
 
     it("calculates average correctly", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       // Use createSafeDate to avoid month boundary issues
       const today = createSafeDate(0);
@@ -63,7 +63,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getEnergyHistory({ headers, period: "month" });
+      const result = await getEnergyHistory({ period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.average).toBe(75);
@@ -71,7 +71,7 @@ describe("authenticated users", () => {
 
     it("includes current energy from the user progress row", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const today = new Date();
 
@@ -91,7 +91,7 @@ describe("authenticated users", () => {
         data: { date, dayOfWeek: date.getDay(), energyAtEnd: 75, userId: user.id },
       });
 
-      const result = await getEnergyHistory({ headers, period: "month" });
+      const result = await getEnergyHistory({ period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.average).toBe(75);
@@ -100,7 +100,7 @@ describe("authenticated users", () => {
 
     it("compares with the same full previous month shown by period navigation", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       vi.useFakeTimers({ toFake: ["Date"] });
       vi.setSystemTime(new Date("2026-03-15T12:00:00.000Z"));
@@ -133,8 +133,8 @@ describe("authenticated users", () => {
       });
 
       const [currentResult, previousResult] = await Promise.all([
-        getEnergyHistory({ headers, period: "month" }),
-        getEnergyHistory({ headers, offset: 1, period: "month" }),
+        getEnergyHistory({ period: "month" }),
+        getEnergyHistory({ offset: 1, period: "month" }),
       ]);
 
       expect(currentResult?.average).toBe(97.8);
@@ -144,7 +144,7 @@ describe("authenticated users", () => {
 
     it("navigates to previous month with offset", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const currentMonth = createSafeDate(0);
       const lastMonth = createSafeDate(1);
@@ -161,7 +161,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getEnergyHistory({ headers, offset: 1, period: "month" });
+      const result = await getEnergyHistory({ offset: 1, period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.average).toBe(60);
@@ -172,7 +172,7 @@ describe("authenticated users", () => {
   describe("6months period", () => {
     it("returns weekly aggregated data points", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       // Use createSafeDate for stable dates within the period
       const today = createSafeDate(0);
@@ -185,7 +185,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getEnergyHistory({ headers, period: "6months" });
+      const result = await getEnergyHistory({ period: "6months" });
 
       expect(result).not.toBeNull();
       expect(result?.dataPoints.length).toBeGreaterThanOrEqual(1);
@@ -195,7 +195,7 @@ describe("authenticated users", () => {
   describe("year period", () => {
     it("returns monthly aggregated data points", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const currentMonth = createSafeDate(0);
       const lastMonth = createSafeDate(1);
@@ -212,7 +212,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getEnergyHistory({ headers, period: "year" });
+      const result = await getEnergyHistory({ period: "year" });
 
       expect(result).not.toBeNull();
       expect(result?.dataPoints.length).toBeGreaterThanOrEqual(1);
@@ -222,7 +222,7 @@ describe("authenticated users", () => {
   describe("all period", () => {
     it("returns yearly aggregated data points", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const today = createSafeDate(0);
 
@@ -230,7 +230,7 @@ describe("authenticated users", () => {
         data: { date: today, dayOfWeek: today.getDay(), energyAtEnd: 85, userId: user.id },
       });
 
-      const result = await getEnergyHistory({ headers, period: "all" });
+      const result = await getEnergyHistory({ period: "all" });
 
       expect(result).not.toBeNull();
       expect(result?.dataPoints.length).toBeGreaterThanOrEqual(1);
@@ -241,7 +241,7 @@ describe("authenticated users", () => {
   describe("navigation flags", () => {
     it("hasPreviousPeriod is true when historical data exists", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const currentMonth = createSafeDate(0);
       const twoMonthsAgo = createSafeDate(2);
@@ -263,7 +263,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getEnergyHistory({ headers, period: "month" });
+      const result = await getEnergyHistory({ period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.hasPreviousPeriod).toBe(true);
@@ -271,7 +271,7 @@ describe("authenticated users", () => {
 
     it("hasNextPeriod is false when on current period (offset=0)", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const today = createSafeDate(0);
 
@@ -279,7 +279,7 @@ describe("authenticated users", () => {
         data: { date: today, dayOfWeek: today.getDay(), energyAtEnd: 80, userId: user.id },
       });
 
-      const result = await getEnergyHistory({ headers, period: "month" });
+      const result = await getEnergyHistory({ period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.hasNextPeriod).toBe(false);
@@ -287,7 +287,7 @@ describe("authenticated users", () => {
 
     it("hasNextPeriod is true when offset > 0", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const lastMonth = createSafeDate(1);
 
@@ -295,7 +295,7 @@ describe("authenticated users", () => {
         data: { date: lastMonth, dayOfWeek: lastMonth.getDay(), energyAtEnd: 70, userId: user.id },
       });
 
-      const result = await getEnergyHistory({ headers, offset: 1, period: "month" });
+      const result = await getEnergyHistory({ offset: 1, period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.hasNextPeriod).toBe(true);
@@ -306,7 +306,7 @@ describe("authenticated users", () => {
     it("fills gaps between data points with -1 decay per day", async () => {
       const user = await userFixture();
 
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       // Use createSafeDate to avoid month boundary issues
       // day1 is 4 days before day5, both in the same month
@@ -320,7 +320,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getEnergyHistory({ headers, period: "month" });
+      const result = await getEnergyHistory({ period: "month" });
 
       if (!result) {
         throw new Error("Expected result");
@@ -343,7 +343,7 @@ describe("authenticated users", () => {
     it("decay never goes below 0", async () => {
       const user = await userFixture();
 
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       // Use createSafeDate to avoid month boundary issues
       // day1 is 5 days before day6, both in the same month
@@ -357,7 +357,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getEnergyHistory({ headers, period: "month" });
+      const result = await getEnergyHistory({ period: "month" });
 
       if (!result) {
         throw new Error("Expected result");
@@ -379,7 +379,7 @@ describe("authenticated users", () => {
     it("average includes decayed values", async () => {
       const user = await userFixture();
 
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       // Use createSafeDate to avoid month boundary issues
       // day1 is 2 days before day3, both in the same month
@@ -393,7 +393,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getEnergyHistory({ headers, period: "month" });
+      const result = await getEnergyHistory({ period: "month" });
 
       expect(result).not.toBeNull();
 
@@ -403,7 +403,7 @@ describe("authenticated users", () => {
 
     it("applies decay and aggregates by week for 6months period", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       // Use createSameWeekDates to guarantee both dates are in the same Mon-Sun week
       const [day1, day3] = createSameWeekDates(2);
@@ -415,7 +415,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getEnergyHistory({ headers, period: "6months" });
+      const result = await getEnergyHistory({ period: "6months" });
 
       expect(result).not.toBeNull();
 
@@ -428,7 +428,7 @@ describe("authenticated users", () => {
     it("applies decay and aggregates by month for year period", async () => {
       const user = await userFixture();
 
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       // Use createSafeDate to ensure dates are in the same month
       // day1 is 3 days before day4
@@ -442,7 +442,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getEnergyHistory({ headers, period: "year" });
+      const result = await getEnergyHistory({ period: "year" });
 
       expect(result).not.toBeNull();
 

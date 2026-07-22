@@ -58,7 +58,7 @@ describe(getLesson, () => {
   });
 
   it("returns lesson with steps", async () => {
-    const result = await getLesson({ lessonId: lesson.id });
+    const result = await getLesson(lesson.id);
 
     expect(result).not.toBeNull();
     expect(result?.id).toBe(lesson.id);
@@ -69,7 +69,7 @@ describe(getLesson, () => {
   });
 
   it("orders steps by position ascending", async () => {
-    const result = await getLesson({ lessonId: lesson.id });
+    const result = await getLesson(lesson.id);
 
     expect(result?.steps[0]?.id).toBe(step1.id);
     expect(result?.steps[0]?.position).toBe(0);
@@ -78,7 +78,7 @@ describe(getLesson, () => {
   });
 
   it("returns generation status", async () => {
-    const result = await getLesson({ lessonId: lesson.id });
+    const result = await getLesson(lesson.id);
 
     expect(result?.generationStatus).toBe("completed");
   });
@@ -93,26 +93,26 @@ describe(getLesson, () => {
       position: 1,
     });
 
-    const result = await getLesson({ lessonId: draftLesson.id });
+    const result = await getLesson(draftLesson.id);
 
     expect(result).toBeNull();
   });
 
   it("returns null for non-existent lesson", async () => {
-    const result = await getLesson({ lessonId: randomUUID() });
+    const result = await getLesson(randomUUID());
 
     expect(result).toBeNull();
   });
 
   it("includes step content and visual information", async () => {
-    const result = await getLesson({ lessonId: lesson.id });
+    const result = await getLesson(lesson.id);
 
     expect(result?.steps[0]?.content).toStrictEqual({ text: "Step 1 content", title: "Step 1" });
     expect(result?.steps[0]?.kind).toBe("static");
   });
 
   it("returns language and organizationId on the lesson", async () => {
-    const result = await getLesson({ lessonId: lesson.id });
+    const result = await getLesson(lesson.id);
 
     expect(result?.language).toBe("en");
     expect(result?.organizationId).toBe(org.id);
@@ -139,7 +139,7 @@ describe(getLesson, () => {
 
     await stepFixture({ isPublished: true, lessonId: wordLesson.id, position: 0, wordId: word.id });
 
-    const result = await getLesson({ lessonId: wordLesson.id });
+    const result = await getLesson(wordLesson.id);
 
     expect(result?.steps[0]?.word).toMatchObject({
       audioUrl: "https://example.com/audio.mp3",
@@ -175,7 +175,7 @@ describe(getLesson, () => {
       sentenceId: sentence.id,
     });
 
-    const result = await getLesson({ lessonId: sentLesson.id });
+    const result = await getLesson(sentLesson.id);
 
     expect(result?.steps[0]?.sentence).toMatchObject({
       audioUrl: "https://example.com/sent-audio.mp3",
@@ -186,7 +186,7 @@ describe(getLesson, () => {
   });
 
   it("returns null word and sentence for steps without relations", async () => {
-    const result = await getLesson({ lessonId: lesson.id });
+    const result = await getLesson(lesson.id);
 
     expect(result?.steps[0]?.word).toBeNull();
     expect(result?.steps[0]?.sentence).toBeNull();
@@ -224,7 +224,7 @@ describe(getLesson, () => {
       }),
     ]);
 
-    const result = await getLesson({ lessonId: pubLesson.id });
+    const result = await getLesson(pubLesson.id);
 
     expect(result?.steps).toHaveLength(2);
     expect(result?.steps[0]?.id).toBe(pubStep1.id);
@@ -248,7 +248,7 @@ describe(getLesson, () => {
       position: 0,
     });
 
-    const result = await getLesson({ lessonId: draftLesson.id });
+    const result = await getLesson(draftLesson.id);
 
     expect(result?.steps).toHaveLength(0);
   });

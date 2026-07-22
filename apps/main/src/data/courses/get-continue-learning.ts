@@ -1,8 +1,7 @@
 import "server-only";
 import { type NextLessonInCourse } from "@zoonk/core/lessons/next-in-course";
-import { getSession } from "@zoonk/core/users/session/get";
 import { type Chapter, type Course, type LessonKind, type Organization } from "@zoonk/db";
-import { cache } from "react";
+import { safeAsync } from "@zoonk/utils/error";
 import { getUserHiddenLessonKinds } from "../users/lesson-filter-settings";
 import {
   type ContinueLearningCandidate,
@@ -263,39 +262,36 @@ function toContinueLearningItem({
 }
 
 /**
- * The cacheable continue-learning loader now reads like a pipeline: fetch
- * recent course anchors, enrich them with current navigation state, and then
- * convert those candidates into the final cards shown on the home feed.
+ * Continue-learning reads like a pipeline: fetch recent course anchors, enrich
+ * them with current navigation state, and convert them into the home feed cards.
+ * Each identity-dependent query derives the learner from the trusted session
+ * source rather than accepting a caller-provided user id.
  */
-export const getContinueLearning = cache(
-  async (headers?: Headers): Promise<ContinueLearningItem[]> => {
-    const session = await getSession(headers);
+async function loadContinueLearning(): Promise<ContinueLearningItem[]> {
+  const hiddenLessonKinds = await getUserHiddenLessonKinds();
+  const rows = await listRecentContinueLearningRows({ excludedLessonKinds: hiddenLessonKinds });
 
-    if (!session) {
-      return [];
-    }
+  if (rows.length === 0) {
+    return [];
+  }
 
-    const userId = session.user.id;
-    const hiddenLessonKinds = await getUserHiddenLessonKinds(headers);
+  const candidates = await listContinueLearningCandidates({
+    excludedLessonKinds: hiddenLessonKinds,
+    rows,
+  });
 
-    const rows = await listRecentContinueLearningRows({
-      excludedLessonKinds: hiddenLessonKinds,
-      userId,
-    });
+  return candidates
+    .map((candidate) => toContinueLearningItem({ candidate }))
+    .filter((item): item is ContinueLearningItem => item !== null)
+    .slice(0, MAX_CONTINUE_LEARNING_ITEMS);
+}
 
-    if (rows.length === 0) {
-      return [];
-    }
-
-    const candidates = await listContinueLearningCandidates({
-      excludedLessonKinds: hiddenLessonKinds,
-      rows,
-      userId,
-    });
-
-    return candidates
-      .map((candidate) => toContinueLearningItem({ candidate }))
-      .filter((item): item is ContinueLearningItem => item !== null)
-      .slice(0, MAX_CONTINUE_LEARNING_ITEMS);
-  },
-);
+/**
+ * Continue-learning is optional home-page progress UI. Query errors are caught
+ * outside the cached leaves so a transient outage is never persisted as an
+ * empty cache entry and never turns the entire catalog page into an error.
+ */
+export async function getContinueLearning(): Promise<ContinueLearningItem[]> {
+  const { data } = await safeAsync(loadContinueLearning);
+  return data ?? [];
+}

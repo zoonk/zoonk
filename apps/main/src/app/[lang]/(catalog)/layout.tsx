@@ -1,5 +1,5 @@
 import { CATALOG_TOP_TARGET_ID } from "@/components/catalog/catalog-top-target";
-import { getSession } from "@zoonk/core/users/session/get";
+import { getSession } from "@/data/users/get-session";
 import { AvatarSkeleton } from "@zoonk/ui/components/avatar";
 import { Navbar } from "@zoonk/ui/components/navbar";
 import { Suspense } from "react";
@@ -20,11 +20,11 @@ export default function CatalogLayout({ children }: LayoutProps<"/[lang]">) {
           <NavbarLinksWithAuth />
         </Suspense>
 
-        <NavbarUserSlot>
-          <Suspense fallback={<AvatarSkeleton />}>
+        <Suspense fallback={<AvatarSkeleton />}>
+          <NavbarUserSlot>
             <UserAvatarMenu />
-          </Suspense>
-        </NavbarUserSlot>
+          </NavbarUserSlot>
+        </Suspense>
       </Navbar>
 
       <div aria-hidden="true" className="scroll-mt-20" id={CATALOG_TOP_TARGET_ID} />

@@ -268,6 +268,7 @@ function CreateCourseEmptyState({ onSelect, query }: { onSelect: () => void; que
           })}
           href={getLearnPromptHref(prompt)}
           onClick={onSelect}
+          prefetch={false}
         >
           <PlusIcon aria-hidden="true" />
           <span className="min-w-0 wrap-break-word">

@@ -1,13 +1,13 @@
 import { prisma } from "@zoonk/db";
-import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { createSafeDate, createSameWeekDates } from "@zoonk/testing/fixtures/dates";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { signInAsCurrentUser } from "../../../test-utils/auth";
 import { getScoreHistory } from "./get-score-history";
 
 describe("unauthenticated users", () => {
   it("returns null", async () => {
-    const result = await getScoreHistory({ headers: new Headers(), period: "month" });
+    const result = await getScoreHistory({ period: "month" });
     expect(result).toBeNull();
   });
 });
@@ -19,15 +19,15 @@ describe("authenticated users", () => {
 
   it("returns null when user has no DailyProgress records", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
-    const result = await getScoreHistory({ headers, period: "month" });
+    const result = await getScoreHistory({ period: "month" });
     expect(result).toBeNull();
   });
 
   it("returns null when user has records but no answers", async () => {
     const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     const date = new Date();
 
@@ -41,14 +41,14 @@ describe("authenticated users", () => {
       },
     });
 
-    const result = await getScoreHistory({ headers, period: "month" });
+    const result = await getScoreHistory({ period: "month" });
     expect(result).toBeNull();
   });
 
   describe("month period", () => {
     it("returns daily data points for current month", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const today = createSafeDate(0, 0);
       const yesterday = createSafeDate(0, 1);
@@ -74,7 +74,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getScoreHistory({ headers, period: "month" });
+      const result = await getScoreHistory({ period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.dataPoints.length).toBe(2);
@@ -84,7 +84,7 @@ describe("authenticated users", () => {
 
     it("calculates score as percentage correctly", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const today = new Date();
 
@@ -98,7 +98,7 @@ describe("authenticated users", () => {
         },
       });
 
-      const result = await getScoreHistory({ headers, period: "month" });
+      const result = await getScoreHistory({ period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.dataPoints[0]?.score).toBe(85);
@@ -107,7 +107,7 @@ describe("authenticated users", () => {
 
     it("compares with the same full previous month shown by period navigation", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       vi.useFakeTimers({ toFake: ["Date"] });
       vi.setSystemTime(new Date("2026-03-15T12:00:00.000Z"));
@@ -143,8 +143,8 @@ describe("authenticated users", () => {
       });
 
       const [currentResult, previousResult] = await Promise.all([
-        getScoreHistory({ headers, period: "month" }),
-        getScoreHistory({ headers, offset: 1, period: "month" }),
+        getScoreHistory({ period: "month" }),
+        getScoreHistory({ offset: 1, period: "month" }),
       ]);
 
       expect(currentResult?.average).toBe(75);
@@ -154,7 +154,7 @@ describe("authenticated users", () => {
 
     it("navigates to previous month with offset", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const currentMonth = createSafeDate(0);
       const lastMonth = createSafeDate(1);
@@ -178,7 +178,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getScoreHistory({ headers, offset: 1, period: "month" });
+      const result = await getScoreHistory({ offset: 1, period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.average).toBe(60);
@@ -189,7 +189,7 @@ describe("authenticated users", () => {
   describe("6months period", () => {
     it("returns weekly aggregated data points", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const today = new Date();
       const oneWeekAgo = new Date(today);
@@ -214,7 +214,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getScoreHistory({ headers, period: "6months" });
+      const result = await getScoreHistory({ period: "6months" });
 
       expect(result).not.toBeNull();
       expect(result?.dataPoints.length).toBeGreaterThanOrEqual(1);
@@ -222,7 +222,7 @@ describe("authenticated users", () => {
 
     it("aggregates weekly scores correctly", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const [day1, day2] = createSameWeekDates(1);
 
@@ -245,7 +245,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getScoreHistory({ headers, period: "6months" });
+      const result = await getScoreHistory({ period: "6months" });
 
       expect(result).not.toBeNull();
       // Week aggregate: (8+6)/(10+10) = 14/20 = 70%
@@ -256,7 +256,7 @@ describe("authenticated users", () => {
   describe("year period", () => {
     it("returns monthly aggregated data points", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const currentMonth = createSafeDate(0);
       const lastMonth = createSafeDate(1);
@@ -280,7 +280,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getScoreHistory({ headers, period: "year" });
+      const result = await getScoreHistory({ period: "year" });
 
       expect(result).not.toBeNull();
       expect(result?.dataPoints.length).toBeGreaterThanOrEqual(1);
@@ -290,7 +290,7 @@ describe("authenticated users", () => {
   describe("all period", () => {
     it("returns yearly aggregated data points", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const today = createSafeDate(0);
 
@@ -304,7 +304,7 @@ describe("authenticated users", () => {
         },
       });
 
-      const result = await getScoreHistory({ headers, period: "all" });
+      const result = await getScoreHistory({ period: "all" });
 
       expect(result).not.toBeNull();
       expect(result?.dataPoints.length).toBeGreaterThanOrEqual(1);
@@ -315,7 +315,7 @@ describe("authenticated users", () => {
   describe("navigation flags", () => {
     it("hasPreviousPeriod is true when historical data exists", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const currentMonth = createSafeDate(0);
       const twoMonthsAgo = createSafeDate(2);
@@ -339,15 +339,41 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getScoreHistory({ headers, period: "month" });
+      const result = await getScoreHistory({ period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.hasPreviousPeriod).toBe(true);
     });
 
+    it("ignores earlier progress that has no answered questions", async () => {
+      const user = await userFixture();
+      await signInAsCurrentUser({ email: user.email, password: user.password });
+
+      const currentMonth = createSafeDate(0);
+      const twoMonthsAgo = createSafeDate(2);
+
+      await prisma.dailyProgress.createMany({
+        data: [
+          {
+            correctAnswers: 8,
+            date: currentMonth,
+            dayOfWeek: currentMonth.getDay(),
+            incorrectAnswers: 2,
+            userId: user.id,
+          },
+          { date: twoMonthsAgo, dayOfWeek: twoMonthsAgo.getDay(), userId: user.id },
+        ],
+      });
+
+      const result = await getScoreHistory({ period: "month" });
+
+      expect(result).not.toBeNull();
+      expect(result?.hasPreviousPeriod).toBe(false);
+    });
+
     it("hasNextPeriod is false when on current period (offset=0)", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       await prisma.dailyProgress.create({
         data: {
@@ -359,7 +385,7 @@ describe("authenticated users", () => {
         },
       });
 
-      const result = await getScoreHistory({ headers, period: "month" });
+      const result = await getScoreHistory({ period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.hasNextPeriod).toBe(false);
@@ -367,7 +393,7 @@ describe("authenticated users", () => {
 
     it("hasNextPeriod is true when offset > 0", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const lastMonth = createSafeDate(1);
 
@@ -381,7 +407,7 @@ describe("authenticated users", () => {
         },
       });
 
-      const result = await getScoreHistory({ headers, offset: 1, period: "month" });
+      const result = await getScoreHistory({ offset: 1, period: "month" });
 
       expect(result).not.toBeNull();
       expect(result?.hasNextPeriod).toBe(true);
@@ -391,7 +417,7 @@ describe("authenticated users", () => {
   describe("days with no answers", () => {
     it("excludes days with zero answers from calculations", async () => {
       const user = await userFixture();
-      const headers = await signInAs(user.email, user.password);
+      await signInAsCurrentUser({ email: user.email, password: user.password });
 
       const today = createSafeDate(0, 0);
       const yesterday = createSafeDate(0, 1);
@@ -415,7 +441,7 @@ describe("authenticated users", () => {
         ],
       });
 
-      const result = await getScoreHistory({ headers, period: "month" });
+      const result = await getScoreHistory({ period: "month" });
 
       expect(result).not.toBeNull();
       // Only today should be counted (100%)

@@ -23,8 +23,9 @@ catalog:
   "@eloqnt/cli": 0.5.0
   "@mdx-js/loader": 3.1.1
   "@mdx-js/react": 3.1.1
-  "@next/mdx": 16.3.0-preview.6
-  "@next/third-parties": 16.3.0-preview.6
+  "@next/mdx": 16.3.0-preview.7
+  "@next/playwright": 16.3.0-preview.7
+  "@next/third-parties": 16.3.0-preview.7
   "@sentry/nextjs": 10.65.0
   "@tailwindcss/postcss": 4.3.2
   "@testing-library/react": 16.3.2
@@ -38,13 +39,13 @@ catalog:
   botid: 1.5.11
   jsdom: 29.1.1
   lucide-react: 1.24.0
-  next: 16.3.0-preview.6
-  next-intl: 4.13.2
+  next: 16.3.0-preview.7
+  next-intl: 4.13.3
   nuqs: 2.9.0
   posthog-js: 1.400.1
   raw-loader: 4.0.2
-  react: 19.2.7
-  react-dom: 19.2.7
+  react: 19.2.8
+  react-dom: 19.2.8
   recharts: 3.9.2
   server-only: 0.0.1
   sharp: 0.34.5

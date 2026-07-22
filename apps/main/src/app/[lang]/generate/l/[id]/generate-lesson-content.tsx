@@ -1,5 +1,11 @@
 import { GenerationExitLink } from "@/components/generation/generation-exit-link";
 import { SubscriptionGate } from "@/components/subscription/subscription-gate";
+import {
+  getChapterLessonsCacheTag,
+  getCourseCurriculumCacheTag,
+  getLessonCacheTag,
+  getLessonRouteCacheTag,
+} from "@/data/cache-tags";
 import { getLessonForGeneration } from "@/data/lessons/get-lesson-for-generation";
 import { redirect } from "@/i18n/navigation";
 import { getLessonDisplayMeta } from "@/lib/lessons";
@@ -15,6 +21,7 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { getExtracted } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { invalidateGeneratedContent } from "../../invalidate-generated-content";
 import { GenerationClient } from "./generation-client";
 import { isGeneratedLessonKind } from "./generation-phase-config";
 
@@ -71,6 +78,25 @@ export async function GenerateLessonContent({
       !hasIncompleteCompanion,
   });
 
+  const generatedLessonCacheTags = [
+    getCourseCurriculumCacheTag(lesson.chapter.course.id),
+    getChapterLessonsCacheTag(lesson.chapter.id),
+    getLessonCacheTag(lesson.id),
+    getLessonRouteCacheTag({
+      brandSlug: AI_ORG_SLUG,
+      chapterSlug: lesson.chapter.slug,
+      courseSlug: lesson.chapter.course.slug,
+      lessonSlug: lesson.slug,
+    }),
+  ];
+
+  /** Invalidates only the lesson resolved by this server-rendered generation page. */
+  async function invalidateGeneratedLesson() {
+    "use server";
+
+    invalidateGeneratedContent(generatedLessonCacheTags);
+  }
+
   const content =
     lesson.generationStatus !== "completed" && isGeneratedCompanionLessonKind(lesson.kind) ? (
       <GeneratedCompanionRedirect lesson={lesson} locale={locale} />
@@ -81,6 +107,7 @@ export async function GenerateLessonContent({
           courseSlug={lesson.chapter.course.slug}
           generationRunId={lesson.generationRunId}
           initialStatus={initialStatus}
+          invalidateContent={invalidateGeneratedLesson}
           lessonId={id}
           lessonKind={lesson.kind}
           lessonSlug={lesson.slug}

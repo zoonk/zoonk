@@ -1,9 +1,21 @@
 import "server-only";
-import { getPublishedLessonWhere, getPublishedStepWhere, prisma } from "@zoonk/db";
-import { cache } from "react";
+import {
+  type LessonGetPayload,
+  getPublishedLessonWhere,
+  getPublishedStepWhere,
+  prisma,
+} from "@zoonk/db";
 
-const cachedGetLesson = cache(async (lessonId: string) =>
-  prisma.lesson.findFirst({
+export type PlayerLesson = LessonGetPayload<{
+  include: { steps: { include: { sentence: true; word: true } } };
+}>;
+
+/**
+ * Loads a published lesson together with only the published steps the player
+ * can render, preserving their generated order and attached resources.
+ */
+export function getLesson(lessonId: string): Promise<PlayerLesson | null> {
+  return prisma.lesson.findFirst({
     include: {
       steps: {
         include: { sentence: true, word: true },
@@ -12,9 +24,5 @@ const cachedGetLesson = cache(async (lessonId: string) =>
       },
     },
     where: getPublishedLessonWhere({ lessonWhere: { id: lessonId } }),
-  }),
-);
-
-export function getLesson(params: { lessonId: string }) {
-  return cachedGetLesson(params.lessonId);
+  });
 }

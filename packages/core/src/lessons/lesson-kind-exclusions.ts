@@ -3,18 +3,6 @@ import { type LessonKind, type Sql, sql } from "@zoonk/db";
 export type LessonKindExclusion = { excludedLessonKinds?: LessonKind[] };
 
 /**
- * React cache keys compare array arguments by identity, so hidden-kind filters
- * need to become sorted primitive arguments before they reach cached loaders.
- * Dedupe keeps logically identical filters such as ["quiz", "quiz"] and
- * ["quiz"] sharing the same cache entry.
- */
-export function getLessonKindExclusionCacheArgs({
-  excludedLessonKinds,
-}: LessonKindExclusion): LessonKind[] {
-  return [...new Set(excludedLessonKinds)].toSorted();
-}
-
-/**
  * Converts user-hidden lesson kinds into the Prisma fragment shared by lesson
  * navigation queries. Returning an empty object when nothing is hidden keeps
  * callers from adding separate branches around every published-lesson filter.

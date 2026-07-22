@@ -1,7 +1,11 @@
-import { type NextLessonInCourse, getNextLessonInCourse } from "@zoonk/core/lessons/next-in-course";
-import { type LessonKind, prisma } from "@zoonk/db";
-import { type ContinueLearningState, listNextLessonStates } from "./continue-learning-next-state";
-import { type PendingTarget, listPendingTargets } from "./continue-learning-pending-targets";
+import { type NextLessonInCourse } from "@zoonk/core/lessons/next-in-course";
+import { type LessonKind } from "@zoonk/db";
+import {
+  type ContinueLearningProgressState,
+  type ContinueLearningState,
+  listNextLessonStates,
+} from "./continue-learning-next-state";
+import { type PendingTarget, getPendingTarget } from "./continue-learning-pending-targets";
 import { type ContinueLearningRow } from "./continue-learning-queries";
 
 export type ContinueLearningCandidate = {
@@ -12,252 +16,62 @@ export type ContinueLearningCandidate = {
   state: ContinueLearningState;
 };
 
-type BlockedSequentialTargetIds = { chapterIds: Set<string>; lessonIds: Set<string> };
-
-type SequentialTargetIds = { chapterIds: string[]; lessonIds: string[] };
-
-/**
- * The feed needs several derived signals per course anchor: the sequential
- * next lesson, the durable-completion-aware next state, whether that
- * sequential target belongs to a durably completed chapter, and any pending
- * fallback destination. Loading all of that in one helper keeps the main feed
- * function focused on choosing the final card for each course.
- */
-export async function listContinueLearningCandidates({
-  excludedLessonKinds,
-  rows,
-  userId,
+/** Compares structural positions even when the historical lesson is no longer published. */
+function isAfterCompletionAnchor({
+  candidate,
+  row,
 }: {
-  excludedLessonKinds?: LessonKind[];
-  rows: ContinueLearningRow[];
-  userId: string;
-}): Promise<ContinueLearningCandidate[]> {
-  const [sequentialNextLessons, nextStates] = await Promise.all([
-    listSequentialNextLessons({ excludedLessonKinds, rows }),
-    listNextLessonStates({ excludedLessonKinds, rows, userId }),
-  ]);
-
-  const [blockedSequentialTargetIds, pendingTargets] = await Promise.all([
-    listBlockedSequentialTargetIds({ sequentialNextLessons, userId }),
-    listPendingTargets({ excludedLessonKinds, rows, states: nextStates }),
-  ]);
-
-  return rows.map((row, idx) =>
-    toContinueLearningCandidate({
-      blockedSequentialTargetIds,
-      pendingTarget: pendingTargets[idx] ?? null,
-      row,
-      sequentialNext: sequentialNextLessons[idx] ?? null,
-      state: nextStates[idx] ?? null,
-    }),
-  );
-}
-
-/**
- * The feed preserves the familiar "continue to the next lesson" behavior by
- * first resolving the structural next lesson after the learner's most recent
- * completion in each course.
- */
-async function listSequentialNextLessons({
-  excludedLessonKinds,
-  rows,
-}: {
-  excludedLessonKinds?: LessonKind[];
-  rows: ContinueLearningRow[];
-}) {
-  return Promise.all(
-    rows.map((row) =>
-      getNextLessonInCourse({
-        chapterId: row.chapterId,
-        chapterPosition: row.chapterPosition,
-        courseId: row.courseId,
-        excludedLessonKinds,
-        lessonPosition: row.lessonPosition,
-      }),
-    ),
-  );
-}
-
-/**
- * Candidate assembly is a pure merge of already-loaded signals. Keeping this
- * object construction in one place avoids rebuilding the same blocked-state
- * logic inline inside the main list loader.
- */
-function toContinueLearningCandidate(input: {
-  blockedSequentialTargetIds: BlockedSequentialTargetIds;
-  pendingTarget: PendingTarget | null;
+  candidate: ContinueLearningProgressState["rows"][number];
   row: ContinueLearningRow;
-  sequentialNext: NextLessonInCourse | null;
-  state: ContinueLearningState;
-}): ContinueLearningCandidate {
+}) {
+  return (
+    candidate.chapterPosition > row.chapterPosition ||
+    (candidate.chapterPosition === row.chapterPosition &&
+      candidate.lessonPosition > row.lessonPosition)
+  );
+}
+
+/** Finds the first current curriculum row after the historical completion anchor. */
+function getSequentialNextLesson({
+  progressState,
+  row,
+}: {
+  progressState: ContinueLearningProgressState;
+  row: ContinueLearningRow;
+}): NextLessonInCourse | null {
+  const nextRow = progressState.rows.find((candidate) =>
+    isAfterCompletionAnchor({ candidate, row }),
+  );
+
+  if (!nextRow) {
+    return null;
+  }
+
   return {
-    isSequentialNextBlocked: isSequentialTargetBlocked({
-      blockedSequentialTargetIds: input.blockedSequentialTargetIds,
-      sequentialNext: input.sequentialNext,
-    }),
-    pendingTarget: input.pendingTarget,
-    row: input.row,
-    sequentialNext: input.sequentialNext,
-    state: input.state,
+    chapterId: nextRow.chapterId,
+    chapterPosition: nextRow.chapterPosition,
+    chapterSlug: nextRow.chapterSlug,
+    chapterTitle: nextRow.chapterTitle,
+    lessonDescription: nextRow.lessonDescription,
+    lessonGenerationStatus: nextRow.lessonGenerationStatus,
+    lessonId: nextRow.lessonId,
+    lessonKind: nextRow.lessonKind,
+    lessonPosition: nextRow.lessonPosition,
+    lessonSlug: nextRow.lessonSlug,
+    lessonTitle: nextRow.lessonTitle,
   };
 }
 
 /**
- * A structural sequential target only makes sense while that lesson and chapter
- * are still genuinely open for the learner. Once either scope has durable
- * completion, the shared next-state is the more trustworthy source of truth.
- */
-async function listBlockedSequentialTargetIds({
-  sequentialNextLessons,
-  userId,
-}: {
-  sequentialNextLessons: (NextLessonInCourse | null)[];
-  userId: string;
-}): Promise<BlockedSequentialTargetIds> {
-  const targetIds = getSequentialTargetIds({ sequentialNextLessons });
-
-  if (hasNoSequentialTargetIds({ targetIds })) {
-    return getEmptyBlockedSequentialTargetIds();
-  }
-
-  const [chapterCompletions, lessonCompletions] = await Promise.all([
-    listBlockedSequentialChapterIds({ chapterIds: targetIds.chapterIds, userId }),
-    listBlockedSequentialLessonIds({ lessonIds: targetIds.lessonIds, userId }),
-  ]);
-
-  return {
-    chapterIds: toBlockedChapterIdSet({ chapterCompletions }),
-    lessonIds: toBlockedLessonIdSet({ lessonCompletions }),
-  };
-}
-
-/**
- * Sequential navigation only cares about ids from real next targets. Extracting
- * them once up front keeps the completion queries small and makes the blocking
- * rule easier to read.
- */
-function getSequentialTargetIds({
-  sequentialNextLessons,
-}: {
-  sequentialNextLessons: (NextLessonInCourse | null)[];
-}): SequentialTargetIds {
-  return {
-    chapterIds: getUniqueSequentialChapterIds({ sequentialNextLessons }),
-    lessonIds: getUniqueSequentialLessonIds({ sequentialNextLessons }),
-  };
-}
-
-/**
- * Chapter-level durable completion should prevent a sequential lesson from
- * reopening content inside that chapter.
- */
-function getUniqueSequentialChapterIds({
-  sequentialNextLessons,
-}: {
-  sequentialNextLessons: (NextLessonInCourse | null)[];
-}) {
-  return [...new Set(sequentialNextLessons.flatMap((next) => (next ? [next.chapterId] : [])))];
-}
-
-/**
- * Lesson-level durable completion is the guard for completed lessons that
- * remain completed after the catalog changes around them.
- */
-function getUniqueSequentialLessonIds({
-  sequentialNextLessons,
-}: {
-  sequentialNextLessons: (NextLessonInCourse | null)[];
-}) {
-  return [...new Set(sequentialNextLessons.flatMap((next) => (next ? [next.lessonId] : [])))];
-}
-
-/**
- * The loader can skip all durable-completion queries when there are no
- * sequential targets at all.
- */
-function hasNoSequentialTargetIds({ targetIds }: { targetIds: SequentialTargetIds }) {
-  return targetIds.chapterIds.length === 0 && targetIds.lessonIds.length === 0;
-}
-
-/**
- * Returning the same empty shape keeps the no-target branch obvious and avoids
- * inline object literals inside the main query helper.
- */
-function getEmptyBlockedSequentialTargetIds(): BlockedSequentialTargetIds {
-  return { chapterIds: new Set<string>(), lessonIds: new Set<string>() };
-}
-
-/**
- * Chapter completions are loaded in bulk so continue-learning does not need
- * one database query per course card.
- */
-async function listBlockedSequentialChapterIds({
-  chapterIds,
-  userId,
-}: {
-  chapterIds: string[];
-  userId: string;
-}) {
-  if (chapterIds.length === 0) {
-    return [];
-  }
-
-  return prisma.chapterCompletion.findMany({ where: { chapterId: { in: chapterIds }, userId } });
-}
-
-/**
- * Completed lessons are loaded alongside chapter completions so they do not
- * win the sequential branch again.
- */
-async function listBlockedSequentialLessonIds({
-  lessonIds,
-  userId,
-}: {
-  lessonIds: string[];
-  userId: string;
-}) {
-  if (lessonIds.length === 0) {
-    return [];
-  }
-
-  return prisma.lessonProgress.findMany({
-    where: { completedAt: { not: null }, lessonId: { in: lessonIds }, userId },
-  });
-}
-
-/**
- * Converting rows to sets in dedicated helpers keeps the main bulk loader
- * focused on orchestration instead of low-level collection details.
- */
-function toBlockedChapterIdSet({
-  chapterCompletions,
-}: {
-  chapterCompletions: { chapterId: string }[];
-}) {
-  return new Set(chapterCompletions.map((completion) => completion.chapterId));
-}
-
-/**
- * Completed lesson rows become a fast membership check for the selection pass.
- */
-function toBlockedLessonIdSet({
-  lessonCompletions,
-}: {
-  lessonCompletions: { lessonId: string }[];
-}) {
-  return new Set(lessonCompletions.map((completion) => completion.lessonId));
-}
-
-/**
- * A sequential target is only valid when both its lesson and chapter are still
- * open for the learner. Otherwise continue-learning should trust the shared
- * durable-aware next-state instead.
+ * Durable completion prevents a structural next lesson from reopening content
+ * the learner has already earned. Those ids come from the same progress-state
+ * leaves, so no second completion query is necessary.
  */
 function isSequentialTargetBlocked({
-  blockedSequentialTargetIds,
+  progressState,
   sequentialNext,
 }: {
-  blockedSequentialTargetIds: BlockedSequentialTargetIds;
+  progressState: ContinueLearningProgressState;
   sequentialNext: NextLessonInCourse | null;
 }) {
   if (!sequentialNext) {
@@ -265,7 +79,72 @@ function isSequentialTargetBlocked({
   }
 
   return (
-    blockedSequentialTargetIds.chapterIds.has(sequentialNext.chapterId) ||
-    blockedSequentialTargetIds.lessonIds.has(sequentialNext.lessonId)
+    progressState.durableChapterCompletionIds.includes(sequentialNext.chapterId) ||
+    progressState.rows.some(
+      (row) => row.lessonId === sequentialNext.lessonId && row.completedLessons > 0,
+    )
+  );
+}
+
+/**
+ * Merges already loaded structural and learner state into the one shape used by
+ * the feed item selector. No database work occurs during this assembly pass.
+ */
+function toContinueLearningCandidate({
+  progressState,
+  row,
+}: {
+  progressState: ContinueLearningProgressState;
+  row: ContinueLearningRow;
+}): ContinueLearningCandidate {
+  const sequentialNext = getSequentialNextLesson({ progressState, row });
+
+  return {
+    isSequentialNextBlocked: isSequentialTargetBlocked({ progressState, sequentialNext }),
+    pendingTarget: getPendingTarget({ progressState, row }),
+    row,
+    sequentialNext,
+    state: progressState.state,
+  };
+}
+
+/**
+ * Candidate state is loaded from the same input rows, so a missing indexed
+ * result indicates an orchestration bug rather than an empty learner state.
+ */
+function getRequiredProgressState({
+  index,
+  progressStates,
+}: {
+  index: number;
+  progressStates: ContinueLearningProgressState[];
+}) {
+  const progressState = progressStates[index];
+
+  if (!progressState) {
+    throw new Error("Missing continue-learning progress state");
+  }
+
+  return progressState;
+}
+
+/**
+ * Loads durable-aware state once, then derives every structural target from
+ * those ordered rows without issuing a second lesson query per course.
+ */
+export async function listContinueLearningCandidates({
+  excludedLessonKinds,
+  rows,
+}: {
+  excludedLessonKinds?: LessonKind[];
+  rows: ContinueLearningRow[];
+}): Promise<ContinueLearningCandidate[]> {
+  const progressStates = await listNextLessonStates({ excludedLessonKinds, rows });
+
+  return rows.map((row, index) =>
+    toContinueLearningCandidate({
+      progressState: getRequiredProgressState({ index, progressStates }),
+      row,
+    }),
   );
 }

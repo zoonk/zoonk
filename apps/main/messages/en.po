@@ -765,11 +765,6 @@ msgid "Marketing"
 msgstr "Marketing"
 
 #: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
-msgctxt "9zLpJ_"
-msgid "What do you want to learn?"
-msgstr "What do you want to learn?"
-
-#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "zfDq-e"
 msgid "Quantum physics"
 msgstr "Quantum physics"
@@ -870,6 +865,11 @@ msgid "Harry Potter"
 msgstr "Harry Potter"
 
 #: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
+msgctxt "9zLpJ_"
+msgid "What do you want to learn?"
+msgstr "What do you want to learn?"
+
+#: src/app/[lang]/(catalog)/start/learn/learn-content.tsx
 msgctxt "NvSCuG"
 msgid "Suggested subjects"
 msgstr "Suggested subjects"
@@ -899,6 +899,28 @@ msgctxt "rqpQgj"
 msgid "Online Courses to Learn Languages and More"
 msgstr "Online Courses to Learn Languages and More"
 
+#: src/app/[lang]/(catalog)/start/speak/[language]/page.tsx
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
+msgctxt "d2xrsv"
+msgid "Preparing your course"
+msgstr "Preparing your course"
+
+#: src/app/[lang]/(catalog)/start/speak/[language]/page.tsx
+#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
+msgctxt "uw23V-"
+msgid "Checking whether this course already exists..."
+msgstr "Checking whether this course already exists..."
+
+#: src/app/[lang]/(catalog)/start/speak/language-list-content.tsx
+msgctxt "ptPPVk"
+msgid "No languages found"
+msgstr "No languages found"
+
+#: src/app/[lang]/(catalog)/start/speak/language-list-content.tsx
+msgctxt "L820yz"
+msgid "Search languages"
+msgstr "Search languages"
+
 #: src/app/[lang]/(catalog)/start/speak/page.tsx
 msgctxt "K4jMHW"
 msgid "Online language courses with AI. Learn a language with pronunciation tips, vocabulary, reading, and listening practice."
@@ -913,16 +935,6 @@ msgstr "Learn a language online with AI"
 msgctxt "lSAK6U"
 msgid "What language do you want to learn?"
 msgstr "What language do you want to learn?"
-
-#: src/app/[lang]/(catalog)/start/speak/page.tsx
-msgctxt "ptPPVk"
-msgid "No languages found"
-msgstr "No languages found"
-
-#: src/app/[lang]/(catalog)/start/speak/page.tsx
-msgctxt "L820yz"
-msgid "Search languages"
-msgstr "Search languages"
 
 #: src/app/[lang]/(catalog)/start/start-content.tsx
 msgctxt "ah2CR6"
@@ -1619,6 +1631,16 @@ msgid "Share feedback, ask questions, or get help with your account and courses.
 msgstr "Share feedback, ask questions, or get help with your account and courses."
 
 #: src/app/[lang]/(settings)/support/support-content.tsx
+msgctxt "dQIo6c"
+msgid "Email us at hello@zoonk.com"
+msgstr "Email us at hello@zoonk.com"
+
+#: src/app/[lang]/(settings)/support/support-content.tsx
+msgctxt "YdQxfw"
+msgid "Contact Support"
+msgstr "Contact Support"
+
+#: src/app/[lang]/(settings)/support/support-content.tsx
 msgctxt "cDAb4a"
 msgid "GitHub Discussions"
 msgstr "GitHub Discussions"
@@ -1627,16 +1649,6 @@ msgstr "GitHub Discussions"
 msgctxt "7h49qt"
 msgid "Connect with the community and get answers"
 msgstr "Connect with the community and get answers"
-
-#: src/app/[lang]/(settings)/support/support-content.tsx
-msgctxt "YdQxfw"
-msgid "Contact Support"
-msgstr "Contact Support"
-
-#: src/app/[lang]/(settings)/support/support-content.tsx
-msgctxt "dQIo6c"
-msgid "Email us at hello@zoonk.com"
-msgstr "Email us at hello@zoonk.com"
 
 #: src/app/[lang]/(settings)/support/support-content.tsx
 msgctxt "l1XTI5"
@@ -1856,11 +1868,6 @@ msgid "Planning the introduction"
 msgstr "Planning the introduction"
 
 #: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "d2xrsv"
-msgid "Preparing your course"
-msgstr "Preparing your course"
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "CFWOGF"
 msgid "Saving your course"
 msgstr "Saving your course"
@@ -1899,11 +1906,6 @@ msgstr "Tagging your course..."
 msgctxt "JJrUOR"
 msgid "Comparing nearby courses..."
 msgstr "Comparing nearby courses..."
-
-#: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
-msgctxt "uw23V-"
-msgid "Checking whether this course already exists..."
-msgstr "Checking whether this course already exists..."
 
 #: src/app/[lang]/generate/course/[id]/use-generation-phases.ts
 msgctxt "qFmZfG"

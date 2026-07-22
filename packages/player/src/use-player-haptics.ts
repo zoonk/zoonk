@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useEffectEvent, useRef } from "react";
+import { type HapticInput } from "web-haptics";
 import { useWebHaptics } from "web-haptics/react";
 import { type PlayerHapticSnapshot, getPlayerHapticSequence } from "./player-haptics";
 
@@ -15,6 +16,10 @@ export function usePlayerHaptics({ current }: { current: PlayerHapticSnapshot })
   const { trigger } = useWebHaptics();
   const previousRef = useRef(current);
 
+  const triggerHaptic = useEffectEvent((haptic: HapticInput) => {
+    void trigger(haptic);
+  });
+
   useEffect(() => {
     const previous = previousRef.current;
     previousRef.current = current;
@@ -22,7 +27,7 @@ export function usePlayerHaptics({ current }: { current: PlayerHapticSnapshot })
     const sequence = getPlayerHapticSequence({ current, previous });
 
     for (const haptic of sequence) {
-      void trigger(haptic);
+      triggerHaptic(haptic);
     }
-  }, [current, trigger]);
+  }, [current]);
 }

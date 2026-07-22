@@ -1,19 +1,18 @@
+import { getActiveSubscription } from "@/data/subscriptions/get-active-subscription";
+import { getBillingCountryCode } from "@/data/subscriptions/get-billing-country-code";
+import { type StripePriceMap, getStripePrices } from "@/data/subscriptions/get-stripe-prices";
 import { getCurrentUserAnalyticsDisabled } from "@/data/users/get-current-user-analytics-disabled";
-import { getStripePrices } from "@zoonk/core/auth/stripe-prices";
-import { getActiveSubscription } from "@zoonk/core/auth/subscription";
-import { getSession } from "@zoonk/core/users/session/get";
-import { prisma } from "@zoonk/db";
+import { getSession } from "@/data/users/get-session";
+import { type Subscription, prisma } from "@zoonk/db";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { countryToCurrency } from "@zoonk/utils/currency";
 import { TTS_SUPPORTED_LANGUAGE_CODES } from "@zoonk/utils/languages";
-import { getCountryFromAcceptLanguage } from "@zoonk/utils/locale";
 import {
   PLUS_PLAN,
   type SubscriptionProvider,
   isWebManagedSubscriptionProvider,
 } from "@zoonk/utils/subscription";
 import { getExtracted, getFormatter } from "next-intl/server";
-import { headers } from "next/headers";
 import { ManagedSubscription } from "./managed-subscription";
 import { PlusPurchase, type PlusViewerState } from "./plus-purchase";
 import { SubscriptionConversionTracker } from "./subscription-conversion-tracker";
@@ -25,23 +24,18 @@ export async function SubscriptionPlans({
 }: {
   searchParams: PageProps<"/[lang]/subscription">["searchParams"];
 }) {
-  const requestHeaders = await headers();
-  const query = await searchParams;
   const t = await getExtracted();
   const format = await getFormatter();
-  const stripeCheckoutCompleted = query.stripe_checkout === "complete";
 
-  const countryCode = getBillingCountryCode(requestHeaders);
-  const currency = countryToCurrency(countryCode);
-  const lookupKeys = getPlusLookupKeys();
-
-  const [session, subscription, priceMap, analyticsDisabled] = await Promise.all([
-    getSession(requestHeaders),
-    getCurrentPlusSubscription(requestHeaders),
-    getStripePrices(lookupKeys, currency),
+  const [query, session, subscription, priceMap, analyticsDisabled] = await Promise.all([
+    searchParams,
+    getSession(),
+    getCurrentPlusSubscription(),
+    getLocalizedPlusPriceMap(),
     getCurrentUserAnalyticsDisabled(),
   ]);
 
+  const stripeCheckoutCompleted = query.stripe_checkout === "complete";
   const cancelDate = getSubscriptionDate({ date: subscription?.cancelAt ?? null, format });
 
   const cancelMessage = cancelDate
@@ -138,7 +132,7 @@ async function ProviderManagedSubscription({
   analyticsDisabled: boolean;
   provider: Exclude<SubscriptionProvider, "stripe">;
   stripeCheckoutCompleted: boolean;
-  subscription: NonNullable<Awaited<ReturnType<typeof getCurrentPlusSubscription>>>;
+  subscription: Subscription;
 }) {
   const t = await getExtracted();
   const format = await getFormatter();
@@ -176,17 +170,6 @@ async function ProviderManagedSubscription({
 }
 
 /**
- * Billing uses Vercel's country header when available and falls back to the
- * request language so guests see the same localized prices as signed-in users.
- */
-function getBillingCountryCode(requestHeaders: Headers) {
-  return (
-    requestHeaders.get("x-vercel-ip-country") ??
-    getCountryFromAcceptLanguage(requestHeaders.get("accept-language"))
-  );
-}
-
-/**
  * Plus is the only purchasable plan, so pricing never needs to fetch or reason
  * about a second paid option.
  */
@@ -195,10 +178,24 @@ function getPlusLookupKeys() {
 }
 
 /**
+ * Country detection is private request data, but Stripe prices are public.
+ * Keeping the public fetch outside the private function preserves price reuse
+ * while starting the country-to-price dependency alongside the other reads.
+ */
+async function getLocalizedPlusPriceMap() {
+  const countryCode = await getBillingCountryCode();
+
+  return getStripePrices({
+    currency: countryToCurrency(countryCode),
+    lookupKeys: getPlusLookupKeys(),
+  });
+}
+
+/**
  * Resolves the two displayed Plus prices without making the client understand
  * Stripe lookup keys.
  */
-function getPlusPrices(priceMap: Awaited<ReturnType<typeof getStripePrices>>) {
+function getPlusPrices(priceMap: StripePriceMap) {
   const monthlyPrice = priceMap.get(PLUS_PLAN.lookupKey) ?? null;
   const yearlyPrice = priceMap.get(PLUS_PLAN.annualLookupKey) ?? null;
 
@@ -238,8 +235,8 @@ function getPlusViewerState({
  * Better Auth decides which row is currently active. Prisma then loads the
  * provider only when that row belongs to Plus, the sole paid plan.
  */
-async function getCurrentPlusSubscription(requestHeaders: Headers) {
-  const activeSubscription = await getActiveSubscription(requestHeaders);
+async function getCurrentPlusSubscription(): Promise<Subscription | null> {
+  const activeSubscription = await getActiveSubscription();
 
   if (!activeSubscription) {
     return null;
