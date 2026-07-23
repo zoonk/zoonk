@@ -9,6 +9,13 @@ describe(countryToCurrency, () => {
     expect(countryToCurrency("JP")).toBe("jpy");
     expect(countryToCurrency("DE")).toBe("eur");
     expect(countryToCurrency("IN")).toBe("inr");
+    expect(countryToCurrency("IS")).toBe("isk");
+    expect(countryToCurrency("UY")).toBe("uyu");
+    expect(countryToCurrency("BG")).toBe("eur");
+    expect(countryToCurrency("ME")).toBe("eur");
+    expect(countryToCurrency("SM")).toBe("eur");
+    expect(countryToCurrency("VA")).toBe("eur");
+    expect(countryToCurrency("XK")).toBe("eur");
   });
 
   it("handles lowercase country codes", () => {
@@ -16,7 +23,8 @@ describe(countryToCurrency, () => {
     expect(countryToCurrency("br")).toBe("brl");
   });
 
-  it("falls back to usd for unknown countries", () => {
+  it("falls back to usd for unsupported and unknown countries", () => {
+    expect(countryToCurrency("AR")).toBe("usd");
     expect(countryToCurrency("XX")).toBe("usd");
     expect(countryToCurrency("ZZ")).toBe("usd");
     expect(countryToCurrency("")).toBe("usd");
