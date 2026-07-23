@@ -201,13 +201,13 @@ test.describe("Command Palette - Unauthenticated", () => {
     await expect(page.getByRole("dialog")).not.toBeVisible();
   });
 
-  test("shows Pages group with Home and start goals", async ({ page }) => {
+  test("shows Pages group with Home, Courses, and start goals", async ({ page }) => {
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByRole("group", { name: "Pages" })).toBeVisible();
     await expect(dialog.getByText(/home page/iu)).toBeVisible();
-    await expect(dialog.getByRole("option", { name: /^courses$/iu })).not.toBeVisible();
+    await expect(dialog.getByRole("option", { name: /^courses$/iu })).toBeVisible();
     await expect(dialog.getByText(/start a new course/iu)).toBeVisible();
     await expect(dialog.getByText(/speak a language/iu)).toBeVisible();
     await expect(dialog.getByText(/learn something/iu)).toBeVisible();
@@ -247,6 +247,18 @@ test.describe("Command Palette - Unauthenticated", () => {
 
     await expect(page).toHaveURL(/\/$/u);
     await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
+  });
+
+  test("selecting Courses shows courses content", async ({ page }) => {
+    await openCommandPalette(page);
+
+    await page
+      .getByRole("dialog")
+      .getByRole("option", { name: /^courses$/iu })
+      .click();
+
+    await expect(page).toHaveURL(/\/courses$/u);
+    await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
   });
 
   test("selecting Start a new course shows the goal picker", async ({ page }) => {
@@ -677,12 +689,12 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     await expectActiveOption(page, /home page/iu);
 
     // Also wait for the second option to be present before navigating
-    const learnOption = dialog.getByRole("option", { name: /start a new course/iu });
-    await expect(learnOption).toBeVisible();
+    const coursesOption = dialog.getByRole("option", { name: /^courses$/iu });
+    await expect(coursesOption).toBeVisible();
 
-    // Press ArrowDown - "Start a new course" should now be selected
+    // Press ArrowDown - "Courses" should now be selected
     await page.keyboard.press("ArrowDown");
-    await expectActiveOption(page, /start a new course/iu);
+    await expectActiveOption(page, /^courses$/iu);
 
     // Press ArrowUp - "Home page" should be selected again
     await page.keyboard.press("ArrowUp");

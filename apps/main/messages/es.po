@@ -70,6 +70,12 @@ msgid "Home page"
 msgstr "Página de inicio"
 
 #: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/navbar-links.tsx
+msgctxt "R85gsW"
+msgid "Courses"
+msgstr "Cursos"
+
+#: src/app/[lang]/(catalog)/_components/command-palette.tsx
 msgctxt "jboh4c"
 msgid "Start a new course"
 msgstr "Empezar un curso nuevo"
@@ -122,11 +128,6 @@ msgstr "Comentarios y ayuda"
 msgctxt "SENRqu"
 msgid "Help"
 msgstr "Ayuda"
-
-#: src/app/[lang]/(catalog)/_components/command-palette.tsx
-msgctxt "R85gsW"
-msgid "Courses"
-msgstr "Cursos"
 
 #: src/app/[lang]/(catalog)/_components/command-palette.tsx
 msgctxt "Do1Pfd"

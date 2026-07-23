@@ -398,15 +398,12 @@ test.describe("Chapter Navbar - Mobile", () => {
 });
 
 test.describe("Chapter Navbar - Desktop", () => {
-  test("keeps catalog actions without the Courses link", async ({ page }) => {
+  test("keeps the full catalog navbar", async ({ page }) => {
     await page.goto(chapterUrl);
 
     const catalogNavbar = page.getByRole("navigation").first();
 
-    await expect(
-      catalogNavbar.getByRole("link", { exact: true, name: "Courses" }),
-    ).not.toBeVisible();
-
+    await expect(catalogNavbar.getByRole("link", { exact: true, name: "Courses" })).toBeVisible();
     await expect(catalogNavbar.getByRole("button", { name: /search/iu })).toBeVisible();
     await expect(catalogNavbar.getByRole("link", { name: /course page/iu })).not.toBeVisible();
     await expect(page.getByRole("main").getByRole("link", { name: courseTitle })).toBeVisible();

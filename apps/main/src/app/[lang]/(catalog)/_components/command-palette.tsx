@@ -199,6 +199,11 @@ function usePaletteGroups({
         items: [
           createNavigationPaletteItem({ id: "home", label: t("Home page"), menu: getMenu("home") }),
           createNavigationPaletteItem({
+            id: "courses",
+            label: t("Courses"),
+            menu: getMenu("courses"),
+          }),
+          createNavigationPaletteItem({
             id: "start",
             label: t("Start a new course"),
             menu: getMenu("start"),

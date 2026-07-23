@@ -24,15 +24,24 @@ test.describe("Navbar - Unauthenticated", () => {
     await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
   });
 
-  test("Courses page stays directly available without a navbar link", async ({ page }) => {
+  test("Courses link navigates to courses page", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
+
+    await page.getByRole("navigation").getByRole("link", { exact: true, name: "Courses" }).click();
+
+    await expect(page).toHaveURL(/\/courses$/u);
+    await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
+  });
+
+  test("Courses link is active on courses page", async ({ page }) => {
     await page.goto("/courses");
 
     const coursesLink = page
       .getByRole("navigation")
       .getByRole("link", { exact: true, name: "Courses" });
 
-    await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
-    await expect(coursesLink).not.toBeVisible();
+    await expect(coursesLink).toHaveAttribute("aria-current", "page");
   });
 
   test("New course link is active on start page", async ({ page }) => {
