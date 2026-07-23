@@ -2,7 +2,7 @@
 
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { type SaveStatusType } from "../components/save-status";
-import { toast } from "../components/sonner";
+import { showErrorToast } from "../components/toast";
 import { useDebounce } from "./use-debounce";
 
 const AUTO_SAVE_DEBOUNCE_MS = 500;
@@ -66,7 +66,7 @@ export function useAutoSave({
         }
 
         if (result.error) {
-          toast.error(result.error);
+          showErrorToast(result.error);
           setStatus("unsaved");
         } else {
           lastSavedValue.current = valueToSave;
@@ -92,7 +92,7 @@ export function useAutoSave({
         }
 
         const message = error instanceof Error ? error.message : "Failed to save";
-        toast.error(message);
+        showErrorToast(message);
         setStatus("unsaved");
       });
   }, [debouncedValue]);

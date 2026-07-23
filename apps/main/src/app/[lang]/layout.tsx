@@ -1,5 +1,5 @@
 import { routing } from "@/i18n/routing";
-import { Toaster } from "@zoonk/ui/components/sonner";
+import { Toaster } from "@zoonk/ui/components/toast";
 import { getBaseUrl } from "@zoonk/utils/origin";
 import { type Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";

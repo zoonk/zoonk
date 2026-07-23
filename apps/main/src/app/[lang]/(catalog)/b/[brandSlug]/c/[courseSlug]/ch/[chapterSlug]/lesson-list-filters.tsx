@@ -24,7 +24,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
-import { toast } from "@zoonk/ui/components/sonner";
+import { showErrorToast } from "@zoonk/ui/components/toast";
 import { SEARCH_QUERY_THROTTLE_MS } from "@zoonk/utils/search";
 import { normalizeString } from "@zoonk/utils/string";
 import { ListFilterIcon, XIcon } from "lucide-react";
@@ -109,7 +109,7 @@ export function LessonListFilters({
 
       if (result.status === "error" && saveRequestId.current === currentSaveRequestId) {
         setHiddenLessonKinds(previousHiddenLessonKinds);
-        toast.error(t("Could not apply lesson filters. Please try again."));
+        showErrorToast(t("Could not apply lesson filters. Please try again."));
       }
     });
   }
