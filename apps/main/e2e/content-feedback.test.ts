@@ -92,6 +92,19 @@ async function openCompletedLessonFeedback(page: Page) {
   }).toPass();
 }
 
+/**
+ * Targets the named feedback dialog so an active toast with the same dialog
+ * role cannot make the hydration-safe dialog helper skip the trigger click.
+ */
+async function openFeedbackDialog(page: Page) {
+  const feedbackButton = page.getByRole("button", { name: /send feedback/iu });
+  const dialog = page.getByRole("dialog", { name: /^feedback$/iu });
+
+  await openDialog(feedbackButton, dialog);
+
+  return dialog;
+}
+
 test.describe("Content Feedback", () => {
   test.beforeEach(async ({ authenticatedPage }) => {
     await openCompletedLessonFeedback(authenticatedPage);
@@ -115,10 +128,7 @@ test.describe("Content Feedback", () => {
 
   test("submit with valid data shows success message", async ({ authenticatedPage }) => {
     const feedbackSubmission = await mockFeedbackSubmission(authenticatedPage);
-
-    const feedbackButton = authenticatedPage.getByRole("button", { name: /send feedback/iu });
-    const dialog = authenticatedPage.getByRole("dialog");
-    await openDialog(feedbackButton, dialog);
+    const dialog = await openFeedbackDialog(authenticatedPage);
 
     const emailInput = dialog.getByRole("textbox", { name: /email address/iu });
     const messageInput = dialog.getByRole("textbox", { name: /^message$/iu });
@@ -141,9 +151,7 @@ test.describe("Content Feedback", () => {
   });
 
   test("submit with invalid email shows validation error", async ({ authenticatedPage }) => {
-    const feedbackButton = authenticatedPage.getByRole("button", { name: /send feedback/iu });
-    const dialog = authenticatedPage.getByRole("dialog");
-    await openDialog(feedbackButton, dialog);
+    const dialog = await openFeedbackDialog(authenticatedPage);
 
     const emailInput = dialog.getByRole("textbox", { name: /email address/iu });
     const messageInput = dialog.getByRole("textbox", { name: /^message$/iu });
@@ -162,9 +170,7 @@ test.describe("Content Feedback", () => {
   });
 
   test("submit failure shows error message", async ({ authenticatedPage }) => {
-    const feedbackButton = authenticatedPage.getByRole("button", { name: /send feedback/iu });
-    const dialog = authenticatedPage.getByRole("dialog");
-    await openDialog(feedbackButton, dialog);
+    const dialog = await openFeedbackDialog(authenticatedPage);
 
     const emailInput = dialog.getByRole("textbox", { name: /email address/iu });
     const messageInput = dialog.getByRole("textbox", { name: /^message$/iu });
@@ -188,10 +194,7 @@ test.describe("Content Feedback - Authenticated", () => {
     withProgressUser,
   }) => {
     await openCompletedLessonFeedback(authenticatedPage);
-
-    const feedbackButton = authenticatedPage.getByRole("button", { name: /send feedback/iu });
-    const dialog = authenticatedPage.getByRole("dialog");
-    await openDialog(feedbackButton, dialog);
+    const dialog = await openFeedbackDialog(authenticatedPage);
 
     const emailInput = dialog.getByRole("textbox", { name: /email address/iu });
 
