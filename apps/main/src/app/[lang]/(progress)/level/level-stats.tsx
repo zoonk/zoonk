@@ -6,6 +6,12 @@ import { type HistoryPeriod, formatPeriodLabel } from "@zoonk/utils/date-ranges"
 import { formatWholeNumber } from "@zoonk/utils/number";
 import { getExtracted, getFormatter, getLocale } from "next-intl/server";
 import { MetricComparison } from "../_components/metric-comparison";
+import {
+  ProgressHeadline,
+  ProgressHeadlineLabel,
+  ProgressHeadlineRow,
+  ProgressHeadlineValue,
+} from "../_components/progress-headline";
 
 export async function LevelStats({
   currentBelt,
@@ -36,13 +42,13 @@ export async function LevelStats({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-1">
-        <span className="text-muted-foreground text-sm">{t("Total Brain Power")}</span>
-        <div className="flex items-baseline gap-2">
-          <span className="text-5xl font-bold tracking-tight tabular-nums">{formattedTotalBp}</span>
+      <ProgressHeadline>
+        <ProgressHeadlineLabel>{t("Total Brain Power")}</ProgressHeadlineLabel>
+        <ProgressHeadlineRow className="gap-2">
+          <ProgressHeadlineValue>{formattedTotalBp}</ProgressHeadlineValue>
           <span className="text-muted-foreground text-lg">{t("BP")}</span>
-        </div>
-      </div>
+        </ProgressHeadlineRow>
+      </ProgressHeadline>
 
       <div className="flex items-center gap-3">
         <BeltIndicator color={currentBelt.color} label={beltLabel} size="lg" />
@@ -60,12 +66,12 @@ export async function LevelStats({
         </div>
       </div>
 
-      <div className="flex flex-col gap-1">
-        <span className="text-muted-foreground text-sm">{periodLabel}</span>
-        <div className="flex items-baseline gap-3">
-          <span className="text-2xl font-semibold tracking-tight tabular-nums">
+      <ProgressHeadline>
+        <ProgressHeadlineLabel>{periodLabel}</ProgressHeadlineLabel>
+        <ProgressHeadlineRow>
+          <ProgressHeadlineValue className="text-2xl font-semibold">
             {t("{value} BP earned", { value: formattedPeriodTotal })}
-          </span>
+          </ProgressHeadlineValue>
           {previousPeriodTotal !== null && (
             <MetricComparison
               current={periodTotal}
@@ -73,8 +79,8 @@ export async function LevelStats({
               previous={previousPeriodTotal}
             />
           )}
-        </div>
-      </div>
+        </ProgressHeadlineRow>
+      </ProgressHeadline>
     </div>
   );
 }
@@ -82,13 +88,13 @@ export async function LevelStats({
 export function LevelStatsSkeleton() {
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-1">
+      <ProgressHeadline>
         <Skeleton className="h-4 w-28" />
-        <div className="flex items-baseline gap-2">
+        <ProgressHeadlineRow className="gap-2">
           <Skeleton className="h-12 w-32" />
           <Skeleton className="h-5 w-8" />
-        </div>
-      </div>
+        </ProgressHeadlineRow>
+      </ProgressHeadline>
 
       <div className="flex items-center gap-3">
         <Skeleton className="size-6 rounded-full" />
@@ -98,13 +104,13 @@ export function LevelStatsSkeleton() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-1">
+      <ProgressHeadline>
         <Skeleton className="h-4 w-24" />
-        <div className="flex items-baseline gap-3">
+        <ProgressHeadlineRow>
           <Skeleton className="h-7 w-28" />
           <Skeleton className="h-5 w-32" />
-        </div>
-      </div>
+        </ProgressHeadlineRow>
+      </ProgressHeadline>
     </div>
   );
 }

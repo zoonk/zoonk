@@ -1,152 +1,88 @@
 import { getProgressDayCountLabel } from "@/components/progress/progress-day-count-label";
-import { getEnergyInsights } from "@/data/progress/get-energy-insights";
 import {
-  FeatureCard,
-  FeatureCardBody,
-  FeatureCardHeader,
-  FeatureCardHeaderContent,
-  FeatureCardIcon,
-  FeatureCardLabel,
-  FeatureCardSubtitle,
-  FeatureCardTitle,
-} from "@zoonk/ui/components/feature";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
+  ProgressMetricCard,
+  ProgressMetricCardIcon,
+  ProgressMetricCardLabel,
+  ProgressMetricCardLabelSkeleton,
+  ProgressMetricCardValue,
+  ProgressMetricCardValueSkeleton,
+} from "@/components/progress/progress-metric-card";
+import { type EnergyInsightsData } from "@/data/progress/get-energy-insights";
 import { formatMetricPercent } from "@zoonk/utils/number";
-import { CalendarDays, ZapIcon } from "lucide-react";
-import { getExtracted, getFormatter, getLocale } from "next-intl/server";
-import { getProgressInsightDateLabel } from "../_components/progress-insight-date-label";
-import { getProgressInsightPeriodLabel } from "../_components/progress-insight-period-label";
+import { GaugeIcon, ZapIcon } from "lucide-react";
+import { getExtracted, getFormatter } from "next-intl/server";
+import { ProgressInsightGrid } from "../_components/progress-insight-grid";
 
 /**
- * Energy insights mirror the score-page card pattern while answering energy
- * questions that are more useful than another chart value.
+ * Energy insights answer two stable lifetime questions without repeating the
+ * live value or introducing a date-control hierarchy.
  */
-export async function EnergyInsights({
-  period,
-  periodEnd,
-  periodStart,
-}: {
-  period: HistoryPeriod;
-  periodEnd: Date;
-  periodStart: Date;
-}) {
-  const locale = await getLocale();
-  const insights = await getEnergyInsights({ endDate: periodEnd, startDate: periodStart });
-
+export function EnergyInsights({ insights }: { insights: EnergyInsightsData | null }) {
   if (!insights) {
     return null;
   }
 
-  const periodLabel = await getProgressInsightPeriodLabel({ period });
-
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <HighestEnergyDayCard
-        date={insights.highestEnergyDay.date}
-        energy={insights.highestEnergyDay.energy}
-        locale={locale}
-        periodLabel={periodLabel}
-      />
-
-      <FullEnergyCard count={insights.fullEnergyDays} periodLabel={periodLabel} />
-    </div>
+    <ProgressInsightGrid>
+      <AverageEnergyCard averageEnergy={insights.averageEnergy} />
+      <FullEnergyCard count={insights.fullEnergyDays} />
+    </ProgressInsightGrid>
   );
 }
 
 /**
- * The highest-energy card highlights the exact calendar day, with ties resolved
- * by the data helper so the UI only formats the winning row.
+ * Full-energy days remain useful at zero because they show how often the
+ * learner has reached the maximum across their complete history.
  */
-async function HighestEnergyDayCard({
-  date,
-  energy,
-  locale,
-  periodLabel,
-}: {
-  date: Date;
-  energy: number;
-  locale: string;
-  periodLabel: string;
-}) {
-  const t = await getExtracted();
-  const format = await getFormatter();
-
-  const formattedDate = getProgressInsightDateLabel({ date, locale });
-  const formattedEnergy = formatMetricPercent({ format, value: energy });
-
-  return (
-    <FeatureCard aria-labelledby="energy-highest-day-label">
-      <FeatureCardHeader className="text-energy">
-        <FeatureCardHeaderContent>
-          <FeatureCardIcon>
-            <CalendarDays />
-          </FeatureCardIcon>
-          <FeatureCardLabel id="energy-highest-day-label">
-            {t("Highest energy day")}
-          </FeatureCardLabel>
-        </FeatureCardHeaderContent>
-      </FeatureCardHeader>
-
-      <FeatureCardBody>
-        <FeatureCardTitle>
-          {t("{day} with {percentage}", { day: formattedDate, percentage: formattedEnergy })}
-        </FeatureCardTitle>
-        <FeatureCardSubtitle>{periodLabel}</FeatureCardSubtitle>
-      </FeatureCardBody>
-    </FeatureCard>
-  );
-}
-
-/**
- * Full-energy days are useful even at zero because they tell the learner how
- * often they kept Energy capped during the selected window.
- */
-async function FullEnergyCard({ count, periodLabel }: { count: number; periodLabel: string }) {
+async function FullEnergyCard({ count }: { count: number }) {
   const t = await getExtracted();
   const countLabel = await getProgressDayCountLabel({ count });
 
   return (
-    <FeatureCard aria-labelledby="energy-full-energy-label">
-      <FeatureCardHeader className="text-energy">
-        <FeatureCardHeaderContent>
-          <FeatureCardIcon>
-            <ZapIcon />
-          </FeatureCardIcon>
-          <FeatureCardLabel id="energy-full-energy-label">{t("Full energy")}</FeatureCardLabel>
-        </FeatureCardHeaderContent>
-      </FeatureCardHeader>
-
-      <FeatureCardBody>
-        <FeatureCardTitle>{countLabel}</FeatureCardTitle>
-        <FeatureCardSubtitle>{periodLabel}</FeatureCardSubtitle>
-      </FeatureCardBody>
-    </FeatureCard>
+    <ProgressMetricCard aria-labelledby="energy-full-energy-label" className="text-energy">
+      <ProgressMetricCardIcon>
+        <ZapIcon />
+      </ProgressMetricCardIcon>
+      <ProgressMetricCardLabel id="energy-full-energy-label">
+        {t("Full energy")}
+      </ProgressMetricCardLabel>
+      <ProgressMetricCardValue>{countLabel}</ProgressMetricCardValue>
+    </ProgressMetricCard>
   );
 }
 
-/**
- * Keep the loading layout the same size as the loaded insight cards so the
- * progress page does not jump when server data resolves.
- */
+/** Average Energy summarizes every stored learner day as one compact percent. */
+async function AverageEnergyCard({ averageEnergy }: { averageEnergy: number }) {
+  const t = await getExtracted();
+  const format = await getFormatter();
+  const formattedAverage = formatMetricPercent({ format, value: averageEnergy });
+
+  return (
+    <ProgressMetricCard aria-labelledby="energy-average-label" className="text-energy">
+      <ProgressMetricCardIcon>
+        <GaugeIcon />
+      </ProgressMetricCardIcon>
+      <ProgressMetricCardLabel id="energy-average-label">
+        {t("Average Energy")}
+      </ProgressMetricCardLabel>
+      <ProgressMetricCardValue>{formattedAverage}</ProgressMetricCardValue>
+    </ProgressMetricCard>
+  );
+}
+
+/** Mirrors the final compact two-card layout while lifetime metrics stream. */
 export function EnergyInsightsSkeleton() {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <FeatureCard className="w-full">
-        <Skeleton className="h-5 w-36" />
-        <FeatureCardBody className="gap-1">
-          <Skeleton className="h-4 w-full max-w-44" />
-          <Skeleton className="h-3 w-full max-w-28" />
-        </FeatureCardBody>
-      </FeatureCard>
+    <ProgressInsightGrid>
+      <ProgressMetricCard aria-hidden="true" className="w-full">
+        <ProgressMetricCardLabelSkeleton className="w-32" />
+        <ProgressMetricCardValueSkeleton className="max-w-20" />
+      </ProgressMetricCard>
 
-      <FeatureCard className="w-full">
-        <Skeleton className="h-5 w-24" />
-        <FeatureCardBody className="gap-1">
-          <Skeleton className="h-4 w-full max-w-28" />
-          <Skeleton className="h-3 w-full max-w-28" />
-        </FeatureCardBody>
-      </FeatureCard>
-    </div>
+      <ProgressMetricCard aria-hidden="true" className="w-full">
+        <ProgressMetricCardLabelSkeleton className="w-24" />
+        <ProgressMetricCardValueSkeleton className="max-w-28" />
+      </ProgressMetricCard>
+    </ProgressInsightGrid>
   );
 }

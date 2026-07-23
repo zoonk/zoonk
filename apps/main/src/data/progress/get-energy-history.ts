@@ -1,225 +1,179 @@
 import "server-only";
+import { getRequestTimeZone } from "@/data/_utils/get-request-time-zone";
+import { getUserProgressCacheTag } from "@/data/cache-tags";
 import { getSession } from "@/data/users/get-session";
-import { type TimePeriod, aggregateByPeriod } from "@zoonk/utils/aggregation";
-import { formatLabel } from "@zoonk/utils/chart";
-import { type HistoryPeriod, calculateFullPeriodDateRanges } from "@zoonk/utils/date-ranges";
+import { hasUserLearningProgress } from "@zoonk/core/progress/user-progress";
+import { type UserProgress, prisma } from "@zoonk/db";
+import {
+  type ContributionCalendarDateRange,
+  getContributionCalendarDateKey,
+  getContributionCalendarDateRange,
+  getContributionCalendarDates,
+} from "@zoonk/utils/contribution-calendar";
 import { computeDecayedEnergy } from "@zoonk/utils/energy";
 import { safeAsync } from "@zoonk/utils/error";
-import { fillGapsWithDecay } from "./_fill-gaps";
-import {
-  type DailyProgressHistoryRow,
-  hasEarlierDailyProgress,
-  listDailyProgressRows,
-} from "./daily-progress-queries";
-import { getUserProgress } from "./get-user-progress";
+import { cacheTag } from "next/cache";
 
-export type EnergyPeriod = HistoryPeriod;
+export type EnergyHistoryDay = { date: Date; energy: number | null };
 
-export type EnergyDataPoint = { date: Date; energy: number; label: string };
+type EnergyHistoryData = { currentEnergy: number; days: EnergyHistoryDay[] };
 
-type EnergyHistoryData = {
-  dataPoints: EnergyDataPoint[];
-  average: number;
-  currentEnergy: number;
-  previousAverage: number | null;
-  periodStart: Date;
-  periodEnd: Date;
-  hasPreviousPeriod: boolean;
-  hasNextPeriod: boolean;
-};
+type EnergyHistoryRow = Awaited<ReturnType<typeof listEnergyHistoryRows>>[number];
 
-function calculateAverage(dataPoints: { energy: number }[]): number {
-  if (dataPoints.length === 0) {
-    return 0;
-  }
+type EnergyHistoryContext = ContributionCalendarDateRange & { now: Date };
 
-  const sum = dataPoints.reduce((acc, point) => acc + point.energy, 0);
-  return sum / dataPoints.length;
-}
+type EnergyHistoryDateQuery = ContributionCalendarDateRange & { userId: string };
 
-type RawDataPoint = { date: Date; energy: number };
-
-type EnergyHistoryParams = { period: EnergyPeriod; offset?: number; locale?: string };
-
-type EnergyHistoryQueryData = {
-  currentData: RawDataPoint[];
-  hasEarlierData: boolean;
-  previousData: RawDataPoint[];
-};
-
-type EnergyProgressState = { currentEnergy: number; lastActiveAt: Date } | null;
+type EnergyHistoryQueryData = { progress: UserProgress | null; rows: EnergyHistoryRow[] };
 
 /**
- * Captures one approximate timestamp for both Energy decay and its calendar
- * ranges. Caching this domain result keeps the route prerenderable and avoids
- * computing related boundaries from different timestamps.
+ * The Energy calendar needs complete DailyProgress rows so stored zero values
+ * remain distinguishable from dates that have no Energy record.
  */
-async function getEnergyHistoryDateRanges({
-  offset,
-  period,
-}: {
-  offset: number;
-  period: EnergyPeriod;
-}) {
+function listEnergyHistoryRows({ endDate, startDate, userId }: EnergyHistoryDateQuery) {
+  return prisma.dailyProgress.findMany({
+    orderBy: { date: "asc" },
+    where: { date: { gte: startDate, lte: endDate }, userId },
+  });
+}
+
+/**
+ * Capturing one approximate timestamp keeps Energy decay and the calendar
+ * boundary consistent while allowing tests to provide an exact clock.
+ */
+async function getCurrentEnergyHistoryContext(timeZone: string): Promise<EnergyHistoryContext> {
   "use cache";
 
   const now = new Date();
-  return { now, ...calculateFullPeriodDateRanges({ now, offset, period }) };
-}
-
-function aggregateEnergy(dataPoints: RawDataPoint[], period: TimePeriod): RawDataPoint[] {
-  return aggregateByPeriod(dataPoints, (point) => point.energy, "average", period).map((item) => ({
-    date: item.date,
-    energy: item.value,
-  }));
-}
-
-function getPreviousAverage(previousData: RawDataPoint[], period: EnergyPeriod): number | null {
-  if (previousData.length === 0) {
-    return null;
-  }
-
-  const processed = processEnergyData(previousData, period);
-  return processed.length > 0 ? calculateAverage(processed) : null;
-}
-
-/** Extracts the Energy metric from a canonical DailyProgress history row. */
-function toRawEnergyDataPoint(row: DailyProgressHistoryRow): RawDataPoint {
-  return { date: row.date, energy: row.energyAtEnd };
+  return { now, ...getContributionCalendarDateRange({ now, timeZone }) };
 }
 
 /**
- * Converts shared query results into the small Energy input consumed by chart
- * aggregation, keeping database access separate from metric behavior.
+ * Request timezone lookup stays outside the shared cache while its IANA name
+ * provides a stable cache argument for Energy decay and the calendar boundary.
  */
-function toEnergyHistoryQueryData({
-  currentRows,
-  hasEarlierData,
-  previousRows,
-}: {
-  currentRows: DailyProgressHistoryRow[];
-  hasEarlierData: boolean;
-  previousRows: DailyProgressHistoryRow[];
-}): EnergyHistoryQueryData {
-  return {
-    currentData: currentRows.map((row) => toRawEnergyDataPoint(row)),
-    hasEarlierData,
-    previousData: previousRows.map((row) => toRawEnergyDataPoint(row)),
-  };
+async function getCurrentEnergyHistoryRequestContext(): Promise<EnergyHistoryContext> {
+  return getCurrentEnergyHistoryContext(await getRequestTimeZone());
 }
 
 /**
- * Converts cached query primitives into the localized chart contract. Energy
- * decay is evaluated outside the persistent cache so time can advance without
- * requiring a progress mutation.
+ * Energy history and the durable current value share one progress cache tag so
+ * a lesson completion invalidates the complete page dataset together.
+ */
+async function findEnergyHistoryQueryData({
+  endDate,
+  startDate,
+  userId,
+}: EnergyHistoryDateQuery): Promise<EnergyHistoryQueryData> {
+  "use cache";
+
+  cacheTag(getUserProgressCacheTag(userId));
+
+  const [rows, progress] = await Promise.all([
+    listEnergyHistoryRows({ endDate, startDate, userId }),
+    prisma.userProgress.findUnique({ where: { userId } }),
+  ]);
+
+  return { progress, rows };
+}
+
+/**
+ * A map keeps recorded 0% Energy distinct from an absent date while the full
+ * calendar fills dates that predate learning with null.
+ */
+function buildEnergyByDate(rows: EnergyHistoryRow[]): Map<string, number> {
+  return new Map(
+    rows.map((row) => [getContributionCalendarDateKey(row.date), row.energyAtEnd] as const),
+  );
+}
+
+/** Builds one visible Energy square from its date and optional stored value. */
+function buildEnergyHistoryDay({
+  date,
+  energyByDate,
+}: {
+  date: Date;
+  energyByDate: Map<string, number>;
+}): EnergyHistoryDay {
+  return { date, energy: energyByDate.get(getContributionCalendarDateKey(date)) ?? null };
+}
+
+/**
+ * The calendar renders the same stable 53-week window as Activity and ends on
+ * the current calendar date in the learner's request timezone.
+ */
+function buildEnergyHistoryDays({
+  endDate,
+  rows,
+  startDate,
+}: {
+  endDate: Date;
+  rows: EnergyHistoryRow[];
+  startDate: Date;
+}): EnergyHistoryDay[] {
+  const energyByDate = buildEnergyByDate(rows);
+  const dates = getContributionCalendarDates({ endDate, startDate });
+
+  return dates.map((date) => buildEnergyHistoryDay({ date, energyByDate }));
+}
+
+/**
+ * Converts cached persistence rows into live Energy. A learner with durable
+ * progress keeps the page even when every stored day predates the visible
+ * calendar, while a zeroed signup placeholder still receives the empty state.
  */
 function buildEnergyHistory({
-  currentEnd,
-  currentStart,
-  locale,
+  endDate,
   now,
-  offset,
-  period,
   progress,
-  queryData,
+  rows,
+  startDate,
 }: {
-  currentEnd: Date;
-  currentStart: Date;
-  locale: string;
+  endDate: Date;
   now: Date;
-  offset: number;
-  period: EnergyPeriod;
-  progress: EnergyProgressState;
-  queryData: EnergyHistoryQueryData;
+  progress: UserProgress | null;
+  rows: EnergyHistoryRow[];
+  startDate: Date;
 }): EnergyHistoryData | null {
-  if (queryData.currentData.length === 0) {
+  if (rows.length === 0 && !hasUserLearningProgress(progress)) {
     return null;
   }
 
-  const currentData = processEnergyData(queryData.currentData, period);
-
-  const dataPoints: EnergyDataPoint[] = currentData.map((row) => ({
-    date: row.date,
-    energy: row.energy,
-    label: formatLabel(row.date, period, locale),
-  }));
-
   return {
-    average: calculateAverage(currentData),
     currentEnergy: progress
       ? computeDecayedEnergy(progress.currentEnergy, progress.lastActiveAt, now)
       : 0,
-    dataPoints,
-    hasNextPeriod: offset > 0,
-    hasPreviousPeriod: queryData.hasEarlierData,
-    periodEnd: currentEnd,
-    periodStart: currentStart,
-    previousAverage: getPreviousAverage(queryData.previousData, period),
+    days: buildEnergyHistoryDays({ endDate, rows, startDate }),
   };
 }
 
 /**
- * Composes cached progress reads into the Energy history view.
+ * Returns live current Energy plus the signed-in learner's bounded daily
+ * history. Optional request timing keeps boundary tests deterministic.
  */
-async function loadEnergyHistory({
-  locale = "en",
-  offset = 0,
-  period,
-}: EnergyHistoryParams): Promise<EnergyHistoryData | null> {
-  const { current, now, previous } = await getEnergyHistoryDateRanges({ offset, period });
-
-  const [currentRows, previousRows, hasEarlierData, progress] = await Promise.all([
-    listDailyProgressRows({ endDate: current.end, startDate: current.start }),
-    listDailyProgressRows({ endDate: previous.end, startDate: previous.start }),
-    hasEarlierDailyProgress({ answersOnly: false, beforeDate: current.start }),
-    getUserProgress(),
-  ]);
-
-  const queryData = toEnergyHistoryQueryData({ currentRows, hasEarlierData, previousRows });
-
-  return buildEnergyHistory({
-    currentEnd: current.end,
-    currentStart: current.start,
-    locale,
-    now,
-    offset,
-    period,
-    progress: progress
-      ? { currentEnergy: progress.currentEnergy, lastActiveAt: progress.lastActiveAt }
-      : null,
-    queryData,
-  });
-}
-
-/**
- * Optional history UI degrades transient data failures to null here, outside
- * the regular cache, so a later render can retry instead of reusing a fallback.
- */
-export async function getEnergyHistory(
-  params: EnergyHistoryParams,
-): Promise<EnergyHistoryData | null> {
+export async function getEnergyHistory({
+  now,
+  timeZone,
+}: { now?: Date; timeZone?: string } = {}): Promise<EnergyHistoryData | null> {
   const { data } = await safeAsync(async () => {
-    const session = await getSession();
-    return session ? loadEnergyHistory(params) : null;
+    const contextPromise = now
+      ? Promise.resolve({ now, ...getContributionCalendarDateRange({ now, timeZone }) })
+      : getCurrentEnergyHistoryRequestContext();
+
+    const [context, session] = await Promise.all([contextPromise, getSession()]);
+
+    if (!session) {
+      return null;
+    }
+
+    const queryData = await findEnergyHistoryQueryData({
+      endDate: context.endDate,
+      startDate: context.startDate,
+      userId: session.user.id,
+    });
+
+    return buildEnergyHistory({ ...context, ...queryData });
   });
 
   return data;
-}
-
-function processEnergyData(rawData: RawDataPoint[], period: EnergyPeriod): RawDataPoint[] {
-  const withDecay = fillGapsWithDecay(rawData);
-
-  if (period === "all") {
-    return aggregateEnergy(withDecay, "year");
-  }
-
-  if (period === "6months") {
-    return aggregateEnergy(withDecay, "week");
-  }
-
-  if (period === "year") {
-    return aggregateEnergy(withDecay, "month");
-  }
-
-  return withDecay;
 }

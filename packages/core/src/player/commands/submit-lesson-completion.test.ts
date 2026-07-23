@@ -87,7 +87,7 @@ describe(submitLessonCompletion, () => {
     expect(attempts[0]?.dayOfWeek).toBe(1);
   });
 
-  it("creates LessonProgress with completedAt and durationSeconds", async () => {
+  it("creates LessonProgress with completion date, timestamp, and duration", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -108,6 +108,7 @@ describe(submitLessonCompletion, () => {
 
     expect(progress).not.toBeNull();
     expect(progress?.completedAt).not.toBeNull();
+    expect(progress?.completedDate).toStrictEqual(parseLocalDate(todayLocalDate()));
     expect(progress?.durationSeconds).toBe(15);
   });
 
@@ -530,6 +531,7 @@ describe(submitLessonCompletion, () => {
     });
 
     expect(secondProgress.completedAt).toStrictEqual(firstProgress.completedAt);
+    expect(secondProgress.completedDate).toStrictEqual(firstProgress.completedDate);
     expect(secondProgress.durationSeconds).toBe(10);
   });
 
@@ -677,11 +679,12 @@ describe(submitLessonCompletion, () => {
     });
 
     expect(progress?.completedAt).not.toBeNull();
+    expect(progress?.completedDate).toStrictEqual(parseLocalDate(todayLocalDate()));
     expect(progress?.durationSeconds).toBe(20);
     expect(progress?.startedAt).toStrictEqual(startRecord?.startedAt);
   });
 
-  it("stores DailyProgress date from localDate, not server UTC", async () => {
+  it("stores the learner-local date on daily and lesson progress", async () => {
     const user = await userFixture();
     const userId = user.id;
 
@@ -704,15 +707,19 @@ describe(submitLessonCompletion, () => {
       userId,
     });
 
-    const daily = await prisma.dailyProgress.findFirst({ where: { userId } });
+    const [daily, lessonProgress] = await Promise.all([
+      prisma.dailyProgress.findFirst({ where: { userId } }),
+      prisma.lessonProgress.findUnique({ where: { userLesson: { lessonId: lesson.id, userId } } }),
+    ]);
 
     expect(daily).not.toBeNull();
 
-    expect(daily?.date).toStrictEqual(
-      new Date(
-        Date.UTC(yesterday.getUTCFullYear(), yesterday.getUTCMonth(), yesterday.getUTCDate()),
-      ),
+    const expectedLocalDate = new Date(
+      Date.UTC(yesterday.getUTCFullYear(), yesterday.getUTCMonth(), yesterday.getUTCDate()),
     );
+
+    expect(daily?.date).toStrictEqual(expectedLocalDate);
+    expect(lessonProgress?.completedDate).toStrictEqual(expectedLocalDate);
   });
 
   it("rejects localDate too far in the future", async () => {

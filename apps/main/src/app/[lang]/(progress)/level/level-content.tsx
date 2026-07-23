@@ -4,6 +4,7 @@ import { validatePeriod } from "@zoonk/utils/date-ranges";
 import { getLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { ProgressChartSkeleton } from "../_components/progress-chart-skeleton";
+import { ProgressContent } from "../_components/progress-content";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
 import { ProgressExplanationSkeleton } from "../_components/progress-explanation-skeleton";
 import { LevelChart } from "./level-chart";
@@ -37,7 +38,7 @@ export async function LevelContent({
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <ProgressContent>
       <LevelStats
         currentBelt={data.currentBelt}
         period={validPeriod}
@@ -69,18 +70,18 @@ export async function LevelContent({
       <LevelProgression currentBelt={data.currentBelt} />
 
       <LevelExplanation />
-    </div>
+    </ProgressContent>
   );
 }
 
 export function LevelContentSkeleton() {
   return (
-    <div className="flex flex-col gap-8">
+    <ProgressContent>
       <LevelStatsSkeleton />
       <ProgressChartSkeleton />
       <LevelInsightsSkeleton />
       <LevelProgressionSkeleton />
       <ProgressExplanationSkeleton />
-    </div>
+    </ProgressContent>
   );
 }

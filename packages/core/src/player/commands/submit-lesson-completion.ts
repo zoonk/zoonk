@@ -62,6 +62,7 @@ export async function submitLessonCompletion(input: {
     await tx.lessonProgress.upsert({
       create: {
         completedAt: now,
+        completedDate: today,
         durationSeconds: input.durationSeconds,
         lessonId: input.lessonId,
         startedAt: input.startedAt,
@@ -73,10 +74,10 @@ export async function submitLessonCompletion(input: {
 
     // A review completion is fresh practice, not a new first-completion event.
     // Only start-only rows should cross the completed boundary here; completed rows
-    // keep their original timestamp and duration so continue links and completion
-    // metrics do not move backward when a learner revisits an earlier lesson.
+    // keep their original timestamp, learner-local date, and duration so
+    // completion metrics do not move backward when a learner revisits a lesson.
     await tx.lessonProgress.updateMany({
-      data: { completedAt: now, durationSeconds: input.durationSeconds },
+      data: { completedAt: now, completedDate: today, durationSeconds: input.durationSeconds },
       where: { completedAt: null, lessonId: input.lessonId, userId: input.userId },
     });
 

@@ -87,12 +87,19 @@ async function seedUserProgress(prisma: PrismaClient, users: SeedUsers, now: Dat
   ]);
 }
 
-async function seedStepAttempts(
-  prisma: PrismaClient,
-  org: Organization,
-  users: SeedUsers,
-  now: Date,
-) {
+async function seedStepAttempts({
+  now,
+  org,
+  prisma,
+  today,
+  users,
+}: {
+  now: Date;
+  org: Organization;
+  prisma: PrismaClient;
+  today: Date;
+  users: SeedUsers;
+}) {
   const lesson = await prisma.lesson.findFirst({
     where: { language: "en", organizationId: org.id, slug: "what-is-machine-learning" },
   });
@@ -130,6 +137,7 @@ async function seedStepAttempts(
   await prisma.lessonProgress.upsert({
     create: {
       completedAt: now,
+      completedDate: today,
       durationSeconds: 180,
       lessonId: lesson.id,
       startedAt: new Date(now.getTime() - 3 * 60 * 1000),
@@ -162,5 +170,5 @@ export async function seedProgress(
     ),
   );
 
-  await seedStepAttempts(prisma, org, users, now);
+  await seedStepAttempts({ now, org, prisma, today, users });
 }

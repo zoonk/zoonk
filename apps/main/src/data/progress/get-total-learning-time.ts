@@ -6,7 +6,8 @@ import { cacheTag } from "next/cache";
 
 type TotalLearningTimeData = { totalLearningSeconds: number };
 
-async function findTotalLearningTime(userId: string): Promise<TotalLearningTimeData> {
+/** Returns the lifetime learning duration for an explicit learner identity. */
+export async function getTotalLearningTimeForUser(userId: string): Promise<TotalLearningTimeData> {
   "use cache";
 
   cacheTag(getUserProgressCacheTag(userId));
@@ -22,5 +23,5 @@ async function findTotalLearningTime(userId: string): Promise<TotalLearningTimeD
 /** Returns the authenticated learner's lifetime learning duration. */
 export async function getTotalLearningTime(): Promise<TotalLearningTimeData | null> {
   const session = await getSession();
-  return session ? findTotalLearningTime(session.user.id) : null;
+  return session ? getTotalLearningTimeForUser(session.user.id) : null;
 }

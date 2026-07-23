@@ -57,7 +57,7 @@ test.describe("Level Page", () => {
       await expect(authenticatedPage.getByRole("progressbar")).toBeVisible();
     });
 
-    test("displays current-month level insight values", async ({ baseURL, browser }) => {
+    test("keeps only the current-month Brain Power insight", async ({ baseURL, browser }) => {
       const user = await createE2EUser(baseURL!, { orgRole: "member", withProgress: true });
       const browserContext = await browser.newContext({ storageState: user.storageState });
       const page = await browserContext.newPage();
@@ -65,17 +65,13 @@ test.describe("Level Page", () => {
       await page.goto("/level");
 
       const highestBpCard = page.getByRole("article", { name: /highest bp/iu });
-      const learningDaysCard = page.getByRole("article", { name: /learning days/iu });
-      const learningTimeCard = page.getByRole("article", { name: /learning time/iu });
 
       const todayLabel = getProgressInsightDateLabel({ date: new Date(), locale: "en" });
 
       await expect(highestBpCard).toContainText(`${todayLabel} with 250 BP`);
       await expect(highestBpCard).toContainText("This month");
-      await expect(learningDaysCard).toContainText("1 day");
-      await expect(learningDaysCard).toContainText("This month");
-      await expect(learningTimeCard).toContainText("2 min");
-      await expect(learningTimeCard).toContainText("This month");
+      await expect(page.getByRole("article", { name: /learning days/iu })).not.toBeVisible();
+      await expect(page.getByRole("article", { name: /learning time/iu })).not.toBeVisible();
 
       await browserContext.close();
     });

@@ -6,11 +6,13 @@ model LessonProgress {
   lesson          Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   startedAt       DateTime  @default(now()) @map("started_at")
   completedAt     DateTime? @map("completed_at")
+  completedDate   DateTime? @map("completed_date") @db.Date
   durationSeconds Int?      @map("duration_seconds")
 
   @@unique([userId, lessonId], name: "userLesson")
   @@index([lessonId])
   @@index([userId, completedAt])
+  @@index([userId, completedDate])
   @@index([startedAt])
   @@map("lesson_progress")
 }

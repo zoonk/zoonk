@@ -1,27 +1,18 @@
 import { getEnergyHistory } from "@/data/progress/get-energy-history";
+import { getEnergyInsights } from "@/data/progress/get-energy-insights";
 import { getSession } from "@/data/users/get-session";
-import { validatePeriod } from "@zoonk/utils/date-ranges";
-import { getLocale } from "next-intl/server";
-import { Suspense } from "react";
-import { ProgressChartSkeleton } from "../_components/progress-chart-skeleton";
+import { ProgressContent } from "../_components/progress-content";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
 import { ProgressExplanationSkeleton } from "../_components/progress-explanation-skeleton";
-import { EnergyChart } from "./energy-chart";
+import { EnergyChart, EnergyChartSkeleton } from "./energy-chart";
 import { EnergyExplanation } from "./energy-explanation";
 import { EnergyInsights, EnergyInsightsSkeleton } from "./energy-insights";
 import { EnergyStats, EnergyStatsSkeleton } from "./energy-stats";
 
-export async function EnergyContent({
-  searchParams,
-}: {
-  searchParams: Promise<{ offset?: string; period?: string }>;
-}) {
-  const { offset = "0", period = "month" } = await searchParams;
-  const validPeriod = validatePeriod(period);
-  const locale = await getLocale();
-
-  const [data, session] = await Promise.all([
-    getEnergyHistory({ locale, offset: Number(offset), period: validPeriod }),
+export async function EnergyContent() {
+  const [data, insights, session] = await Promise.all([
+    getEnergyHistory(),
+    getEnergyInsights(),
     getSession(),
   ]);
 
@@ -36,46 +27,25 @@ export async function EnergyContent({
   }
 
   return (
-    <div className="flex flex-col gap-8">
-      <EnergyStats
-        average={data.average}
-        currentEnergy={data.currentEnergy}
-        period={validPeriod}
-        periodEnd={data.periodEnd}
-        periodStart={data.periodStart}
-        previousAverage={data.previousAverage}
-      />
+    <ProgressContent>
+      <EnergyStats currentEnergy={data.currentEnergy} />
 
-      <EnergyChart
-        average={data.average}
-        dataPoints={data.dataPoints}
-        hasNext={data.hasNextPeriod}
-        hasPrevious={data.hasPreviousPeriod}
-        period={validPeriod}
-        periodEnd={data.periodEnd}
-        periodStart={data.periodStart}
-      />
+      <EnergyChart days={data.days} />
 
-      <Suspense fallback={<EnergyInsightsSkeleton />}>
-        <EnergyInsights
-          period={validPeriod}
-          periodEnd={data.periodEnd}
-          periodStart={data.periodStart}
-        />
-      </Suspense>
+      <EnergyInsights insights={insights} />
 
       <EnergyExplanation />
-    </div>
+    </ProgressContent>
   );
 }
 
 export function EnergyContentSkeleton() {
   return (
-    <div className="flex flex-col gap-8">
+    <ProgressContent>
       <EnergyStatsSkeleton />
-      <ProgressChartSkeleton />
+      <EnergyChartSkeleton />
       <EnergyInsightsSkeleton />
       <ProgressExplanationSkeleton />
-    </div>
+    </ProgressContent>
   );
 }

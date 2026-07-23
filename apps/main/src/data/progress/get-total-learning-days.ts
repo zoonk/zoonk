@@ -7,7 +7,8 @@ import { getCompletedLessonDayWhere } from "./_utils/completed-lesson-day-where"
 
 type TotalLearningDaysData = { learningDays: number };
 
-async function findTotalLearningDays(userId: string): Promise<TotalLearningDaysData> {
+/** Returns the lifetime learning-day total for an explicit learner identity. */
+export async function getTotalLearningDaysForUser(userId: string): Promise<TotalLearningDaysData> {
   "use cache";
 
   cacheTag(getUserProgressCacheTag(userId));
@@ -22,5 +23,5 @@ async function findTotalLearningDays(userId: string): Promise<TotalLearningDaysD
 /** Returns the authenticated learner's lifetime learning-day total. */
 export async function getTotalLearningDays(): Promise<TotalLearningDaysData | null> {
   const session = await getSession();
-  return session ? findTotalLearningDays(session.user.id) : null;
+  return session ? getTotalLearningDaysForUser(session.user.id) : null;
 }

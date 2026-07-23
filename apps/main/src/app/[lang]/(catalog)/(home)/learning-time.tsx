@@ -8,15 +8,15 @@ import { FeatureCardIndicator, FeatureCardLink } from "@zoonk/ui/components/feat
 import { getExtracted } from "next-intl/server";
 
 /**
- * The homepage places lifetime learning time next to learning days because both
- * describe the learner's all-time lesson activity behind their level progress.
+ * The homepage links lifetime learning time to the Activity page so its
+ * detailed calendar and related totals stay together.
  */
 export async function LearningTime({ totalLearningSeconds }: { totalLearningSeconds: number }) {
   const t = await getExtracted();
-  const levelMenu = getMenu("level");
+  const activityMenu = getMenu("activity");
 
   return (
-    <FeatureCardLink render={<Link href={levelMenu.url} prefetch />}>
+    <FeatureCardLink render={<Link href={activityMenu.url} prefetch />}>
       <TotalLearningTimeCard
         labelId="home-total-learning-time-label"
         subtitle={t("Time spent in lessons")}

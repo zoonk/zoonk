@@ -1,7 +1,7 @@
 "use client";
 
-import { type EnergyPeriod } from "@/data/progress/get-energy-history";
 import { Button } from "@zoonk/ui/components/button";
+import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 import { useExtracted } from "next-intl";
 import { useQueryState } from "nuqs";
 
@@ -12,7 +12,7 @@ export function PeriodTabs() {
 
   const [, setOffset] = useQueryState("offset", { shallow: false });
 
-  function handlePeriodChange(newPeriod: EnergyPeriod) {
+  function handlePeriodChange(newPeriod: HistoryPeriod) {
     void setOffset(null);
     void setPeriod(newPeriod);
   }

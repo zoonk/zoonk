@@ -9,6 +9,43 @@ import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
 
 test.describe("Instant navigation", () => {
+  test("shows fully prefetched Activity without a fallback", async ({ authenticatedPage }) => {
+    await authenticatedPage.goto("/");
+    await authenticatedPage.waitForLoadState("networkidle");
+
+    const activityLink = authenticatedPage.getByRole("link", { name: /lessons completed/iu });
+    await expect(activityLink).toBeVisible();
+
+    await instant(authenticatedPage, async () => {
+      await activityLink.click();
+
+      await expect(authenticatedPage).toHaveURL(/\/activity$/u);
+
+      const activityChart = authenticatedPage.getByRole("figure", { name: /learning activity/iu });
+
+      expect(await activityChart.isVisible()).toBe(true);
+    });
+  });
+
+  test("shows fully prefetched Energy without a fallback", async ({ authenticatedPage }) => {
+    await authenticatedPage.goto("/");
+    await authenticatedPage.waitForLoadState("networkidle");
+
+    const progressSection = authenticatedPage.getByRole("region", { name: /^progress$/iu });
+    const energyLink = progressSection.getByRole("link", { name: /energy/iu });
+    await expect(energyLink).toBeVisible();
+
+    await instant(authenticatedPage, async () => {
+      await energyLink.click();
+
+      await expect(authenticatedPage).toHaveURL(/\/energy$/u);
+
+      const energyChart = authenticatedPage.getByRole("figure", { name: /energy history/iu });
+
+      expect(await energyChart.isVisible()).toBe(true);
+    });
+  });
+
   test("shows the cached learn page during navigation", async ({ page }) => {
     await page.goto("/start");
     await page.waitForLoadState("networkidle");

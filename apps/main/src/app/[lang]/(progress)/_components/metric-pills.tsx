@@ -10,47 +10,26 @@ export function MetricPillLinks() {
   const segment = useSelectedLayoutSegment();
   const t = useExtracted();
 
-  const energy = getMenu("energy");
-  const level = getMenu("level");
-  const score = getMenu("score");
+  const items = [
+    { label: t("Activity"), segment: "activity", ...getMenu("activity") },
+    { label: t("Energy"), segment: "energy", ...getMenu("energy") },
+    { label: t("Level"), segment: "level", ...getMenu("level") },
+    { label: t("Score"), segment: "score", ...getMenu("score") },
+  ];
 
-  return (
-    <>
-      <Link
-        className={buttonVariants({
-          size: "sm",
-          variant: segment === "energy" ? "default" : "outline",
-        })}
-        href={energy.url}
-        prefetch
-      >
-        <energy.icon aria-hidden className="size-4" />
-        {t("Energy")}
-      </Link>
-
-      <Link
-        className={buttonVariants({
-          size: "sm",
-          variant: segment === "level" ? "default" : "outline",
-        })}
-        href={level.url}
-        prefetch
-      >
-        <level.icon aria-hidden className="size-4" />
-        {t("Level")}
-      </Link>
-
-      <Link
-        className={buttonVariants({
-          size: "sm",
-          variant: segment === "score" ? "default" : "outline",
-        })}
-        href={score.url}
-        prefetch
-      >
-        <score.icon aria-hidden className="size-4" />
-        {t("Score")}
-      </Link>
-    </>
-  );
+  return items.map((item) => (
+    <Link
+      aria-current={segment === item.segment ? "page" : undefined}
+      className={buttonVariants({
+        size: "sm",
+        variant: segment === item.segment ? "default" : "outline",
+      })}
+      href={item.url}
+      key={item.segment}
+      prefetch
+    >
+      <item.icon aria-hidden className="size-4" />
+      {item.label}
+    </Link>
+  ));
 }

@@ -3,6 +3,12 @@ import { type HistoryPeriod, formatPeriodLabel } from "@zoonk/utils/date-ranges"
 import { formatMetricPercent } from "@zoonk/utils/number";
 import { getFormatter, getLocale } from "next-intl/server";
 import { MetricComparison } from "../_components/metric-comparison";
+import {
+  ProgressHeadline,
+  ProgressHeadlineLabel,
+  ProgressHeadlineRow,
+  ProgressHeadlineValue,
+} from "../_components/progress-headline";
 
 export async function ScoreStats({
   average,
@@ -24,30 +30,28 @@ export async function ScoreStats({
   const periodLabel = formatPeriodLabel(periodStart, periodEnd, period, locale);
 
   return (
-    <div className="flex flex-col gap-1">
-      <span className="text-muted-foreground text-sm">{periodLabel}</span>
+    <ProgressHeadline>
+      <ProgressHeadlineLabel>{periodLabel}</ProgressHeadlineLabel>
 
-      <div className="flex items-baseline gap-3">
-        <span className="text-score text-5xl font-bold tracking-tight tabular-nums">
-          {formattedAverage}
-        </span>
+      <ProgressHeadlineRow>
+        <ProgressHeadlineValue className="text-score">{formattedAverage}</ProgressHeadlineValue>
 
         {previousAverage !== null && (
           <MetricComparison current={average} period={period} previous={previousAverage} />
         )}
-      </div>
-    </div>
+      </ProgressHeadlineRow>
+    </ProgressHeadline>
   );
 }
 
 export function ScoreStatsSkeleton() {
   return (
-    <div className="flex flex-col gap-1">
+    <ProgressHeadline>
       <Skeleton className="h-4 w-28" />
-      <div className="flex items-baseline gap-3">
+      <ProgressHeadlineRow>
         <Skeleton className="h-12 w-28" />
         <Skeleton className="h-5 w-32" />
-      </div>
-    </div>
+      </ProgressHeadlineRow>
+    </ProgressHeadline>
   );
 }

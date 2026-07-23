@@ -22,11 +22,11 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function EnergyPage({ searchParams }: PageProps<"/[lang]/energy">) {
+export default async function EnergyPage() {
   const t = await getExtracted();
 
   return (
-    <Container variant="narrow">
+    <Container className="max-w-2xl lg:max-w-2xl" variant="narrow">
       <ContainerHeader>
         <ContainerHeaderGroup>
           <ContainerTitle>{t("Energy")}</ContainerTitle>
@@ -38,7 +38,7 @@ export default async function EnergyPage({ searchParams }: PageProps<"/[lang]/en
 
       <ContainerBody>
         <Suspense fallback={<EnergyContentSkeleton />}>
-          <EnergyContent searchParams={searchParams} />
+          <EnergyContent />
         </Suspense>
       </ContainerBody>
     </Container>

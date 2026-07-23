@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { getExtracted } from "next-intl/server";
+import { ProgressContent } from "./progress-content";
 
 export async function ProgressEmptyState({
   isAuthenticated,
@@ -12,7 +13,7 @@ export async function ProgressEmptyState({
   const t = await getExtracted();
 
   return (
-    <div className="flex flex-col gap-8">
+    <ProgressContent>
       <div className="text-muted-foreground flex h-64 flex-col items-center justify-center gap-4 rounded-xl border border-dashed p-4">
         {isAuthenticated ? (
           t("Start learning to track your progress")
@@ -26,6 +27,6 @@ export async function ProgressEmptyState({
         )}
       </div>
       {children}
-    </div>
+    </ProgressContent>
   );
 }
