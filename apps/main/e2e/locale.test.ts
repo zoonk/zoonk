@@ -36,7 +36,7 @@ test.describe("Locale Behavior - English", () => {
 
     const nav = page.getByRole("navigation");
 
-    await expect(nav.getByRole("link", { exact: true, name: "Courses" })).not.toBeVisible();
+    await expect(nav.getByRole("link", { exact: true, name: "Courses" })).toBeVisible();
     await expect(nav.getByRole("link", { exact: true, name: "New course" })).toBeVisible();
 
     await expect(page).toHaveURL(/\/$/u);
@@ -58,7 +58,7 @@ test.describe("Locale Behavior - Portuguese", () => {
 
     const nav = page.getByRole("navigation");
 
-    await expect(nav.getByRole("link", { exact: true, name: "Cursos" })).not.toBeVisible();
+    await expect(nav.getByRole("link", { exact: true, name: "Cursos" })).toBeVisible();
     await expect(nav.getByRole("link", { exact: true, name: "Novo curso" })).toBeVisible();
 
     await expect(page).toHaveURL(/\/pt$/u);
@@ -99,6 +99,21 @@ test.describe("Locale Detection", () => {
 });
 
 test.describe("Locale Navigation", () => {
+  test("clicking courses navbar link keeps user in Portuguese", async ({ page }) => {
+    await setLocale(page, "pt");
+    await page.goto("/");
+
+    const coursesLink = page
+      .getByRole("navigation")
+      .getByRole("link", { exact: true, name: "Cursos" });
+
+    await expect(coursesLink).toHaveAttribute("href", "/pt/courses");
+    await coursesLink.click();
+
+    await expect(page).toHaveURL(/\/pt\/courses$/u);
+    await expect(page.getByRole("heading", { name: /explorar cursos/iu })).toBeVisible();
+  });
+
   test("clicking start navbar link keeps user in Portuguese", async ({ page }) => {
     await setLocale(page, "pt");
     await page.goto("/courses");

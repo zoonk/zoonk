@@ -30,6 +30,7 @@ function getVariant(href: string, pathname: string): "outline" | "secondary" | "
 }
 
 const homeMenu = getMenu("home");
+const coursesMenu = getMenu("courses");
 const startMenu = getMenu("start");
 const MOBILE_CHAPTER_NAV_CLASS = "sm:hidden";
 const DESKTOP_CHAPTER_NAV_CLASS = "hidden sm:inline-flex";
@@ -76,6 +77,7 @@ export function NavbarLinksSkeleton() {
   return (
     <>
       <Skeleton className="size-9 rounded-full" />
+      <Skeleton className="size-9 rounded-full sm:h-9 sm:w-24" />
       <Skeleton className="size-9 rounded-full" />
       <Skeleton className="ml-auto size-9 rounded-full sm:h-9 sm:w-20" />
     </>
@@ -89,6 +91,7 @@ export function NavbarLinks({ isLoggedIn }: { isLoggedIn: boolean }) {
   const desktopClassName = mobileChapterNavTarget ? DESKTOP_CHAPTER_NAV_CLASS : undefined;
 
   const homeVariant = getVariant(homeMenu.url, pathname);
+  const coursesVariant = getVariant(coursesMenu.url, pathname);
   const startVariant = getVariant(startMenu.url, pathname);
 
   return (
@@ -105,6 +108,19 @@ export function NavbarLinks({ isLoggedIn }: { isLoggedIn: boolean }) {
       >
         <homeMenu.icon aria-hidden="true" />
         <span className="sr-only">{t("Home page")}</span>
+      </Link>
+
+      <Link
+        aria-current={coursesVariant === "default" ? "page" : undefined}
+        className={cn(
+          buttonVariants({ size: "adaptive", variant: coursesVariant }),
+          desktopClassName,
+        )}
+        href={coursesMenu.url}
+        prefetch
+      >
+        <coursesMenu.icon aria-hidden="true" />
+        <span className="sr-only sm:not-sr-only">{t("Courses")}</span>
       </Link>
 
       <CommandPalette className={desktopClassName} isLoggedIn={isLoggedIn} />
