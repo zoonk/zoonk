@@ -134,25 +134,3 @@ export function UnauthenticatedStartWarningScreen({
     </PlayerContentFrame>
   );
 }
-
-/**
- * Shows the honest post-completion signed-out message. The completed attempt
- * was not persisted, so this prompt points learners to log in before their
- * next lesson instead of promising that the current result can still be saved.
- */
-export function UnauthenticatedCompletionPrompt() {
-  const t = useExtracted();
-
-  return (
-    <ProgressPromptFrame className="gap-4">
-      <ProgressPromptCopy>
-        <ProgressPromptTitle className="text-xl">
-          {t("This lesson wasn't saved")}
-        </ProgressPromptTitle>
-        <ProgressPromptDescription>
-          {t("Log in before your next lesson to keep future progress, scores, levels, and Energy.")}
-        </ProgressPromptDescription>
-      </ProgressPromptCopy>
-    </ProgressPromptFrame>
-  );
-}

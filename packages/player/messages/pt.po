@@ -57,27 +57,22 @@ msgctxt "usfevO"
 msgid "Keyboard shortcut: press <kbd>{shortcut}</kbd> to choose this answer."
 msgstr "Atalho de teclado: pressione <kbd>{shortcut}</kbd> para escolher esta resposta."
 
-#: src/components/completion-auth-branch.tsx
+#: src/components/completion-actions.tsx
 msgctxt "E2sGaF"
 msgid "Exit"
 msgstr "Sair"
 
-#: src/components/completion-auth-branch.tsx
+#: src/components/completion-actions.tsx
 msgctxt "FazwRl"
 msgid "Try again"
 msgstr "Tentar de novo"
 
-#: src/components/completion-auth-branch.tsx
+#: src/components/completion-actions.tsx
 #: src/components/completion-milestone-actions.tsx
 #: src/components/step-navigation-button-group.tsx
 msgctxt "9-Ddtu"
 msgid "Next"
 msgstr "Próxima"
-
-#: src/components/completion-auth-branch.tsx
-msgctxt "odXlk8"
-msgid "Log in"
-msgstr "Entrar"
 
 #: src/components/completion-brain-power-milestone.tsx
 msgctxt "fS3hB9"
@@ -455,16 +450,6 @@ msgstr "O progresso não será salvo"
 msgctxt "JDumQX"
 msgid "You can try this lesson without an account, but your score, course progress, levels, and Energy won't be saved."
 msgstr "Você pode testar esta aula sem uma conta, mas sua pontuação, progresso no curso, níveis e Energia não serão salvos."
-
-#: src/components/unauthenticated-progress-prompt.tsx
-msgctxt "rxdOwg"
-msgid "This lesson wasn't saved"
-msgstr "Esta aula não foi salva"
-
-#: src/components/unauthenticated-progress-prompt.tsx
-msgctxt "Wamgyz"
-msgid "Log in before your next lesson to keep future progress, scores, levels, and Energy."
-msgstr "Entre antes da próxima aula para salvar seu progresso, pontuações, níveis e Energia daqui para frente."
 
 #: src/components/verdict-label.tsx
 msgctxt "xmF49T"

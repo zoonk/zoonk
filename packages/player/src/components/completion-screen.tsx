@@ -13,7 +13,7 @@ import {
   usePlayerMilestone,
   usePlayerViewer,
 } from "../player-context";
-import { AuthBranch } from "./completion-auth-branch";
+import { CompletionActions } from "./completion-actions";
 import { PlayerSupportingText } from "./player-supporting-text";
 import { PlayerContentFrame } from "./step-layouts";
 
@@ -234,19 +234,7 @@ export function CompletionScreenContent({
 }) {
   const t = useExtracted();
   const milestone = usePlayerMilestone();
-  const { completionFooter, isAuthenticated } = usePlayerViewer();
-
-  if (!isAuthenticated) {
-    return (
-      <CompletionScreen className="min-h-[60vh] justify-center">
-        <AuthBranch
-          chapterHref={chapterHref}
-          nextLessonHref={nextLessonHref}
-          onRestart={onRestart}
-        />
-      </CompletionScreen>
-    );
-  }
+  const { completionFooter } = usePlayerViewer();
 
   if (milestone) {
     return (
@@ -254,7 +242,7 @@ export function CompletionScreenContent({
         <CompletionMilestoneContext milestone={milestone} />
 
         <div className="flex w-full flex-col gap-3">
-          <AuthBranch
+          <CompletionActions
             chapterHref={chapterHref}
             nextLessonHref={nextLessonHref}
             onRestart={onRestart}
@@ -285,7 +273,11 @@ export function CompletionScreenContent({
 
       <CompletionLessonContext />
 
-      <AuthBranch chapterHref={chapterHref} nextLessonHref={nextLessonHref} onRestart={onRestart} />
+      <CompletionActions
+        chapterHref={chapterHref}
+        nextLessonHref={nextLessonHref}
+        onRestart={onRestart}
+      />
 
       {completionFooter}
     </CompletionScreen>

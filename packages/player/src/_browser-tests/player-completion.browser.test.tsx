@@ -370,7 +370,7 @@ describe("player browser integration: completion", () => {
     await expect.element(completionScreen.getByText(/belt/iu)).not.toBeInTheDocument();
   });
 
-  it("shows guest lesson completion login prompt without rewards and falls back to /login", async () => {
+  it("shows guests the same completion summary and actions", async () => {
     renderPlayer({
       lesson: buildCompletionQuizLesson(),
       lessonProgress: {
@@ -381,7 +381,6 @@ describe("player browser integration: completion", () => {
       },
       lessonTitle: "Guest Hidden Lesson",
       navigation: buildNavigation({ loginHref: undefined, nextLessonHref: "/lesson/play" }),
-      totalBrainPower: 240,
       viewer: {
         completionFooter: <p>Guest completion footer</p>,
         isAuthenticated: false,
@@ -411,37 +410,35 @@ describe("player browser integration: completion", () => {
 
     const completionScreen = page.getByRole("status");
 
-    const loginLink = completionScreen.getByRole("link", { name: /^log in$/iu });
-
     const nextLink = completionScreen.getByRole("link", { name: "Next" });
 
     await expect
       .element(completionScreen.getByText(/this lesson wasn't saved/iu))
-      .toBeInTheDocument();
+      .not.toBeInTheDocument();
 
     await expect
       .element(completionScreen.getByText(/log in before your next lesson/iu))
-      .toBeInTheDocument();
-
-    await expect.element(completionScreen.getByText("100%")).not.toBeInTheDocument();
-    await expect.element(completionScreen.getByText(/completed/iu)).not.toBeInTheDocument();
-    await expect.element(completionScreen.getByText("Guest Hidden Lesson")).not.toBeInTheDocument();
-    await expect.element(completionScreen.getByText("Lesson 2 of 5")).not.toBeInTheDocument();
-
-    await expect
-      .element(completionScreen.getByRole("progressbar", { name: /chapter progress/iu }))
       .not.toBeInTheDocument();
 
-    await expect.element(completionScreen.getByText(/level achieved/iu)).not.toBeInTheDocument();
+    await expect.element(completionScreen.getByText("100%")).toBeInTheDocument();
+    await expect.element(completionScreen.getByText("Guest Hidden Lesson")).toBeInTheDocument();
+    await expect.element(completionScreen.getByText("Lesson 2 of 5")).toBeInTheDocument();
 
-    await expect
-      .element(completionScreen.getByText("Guest completion footer"))
-      .not.toBeInTheDocument();
+    const chapterProgress = completionScreen.getByRole("progressbar", {
+      name: /chapter progress/iu,
+    });
+
+    await expect.element(chapterProgress).toBeInTheDocument();
+    await expect.element(chapterProgress).toHaveAttribute("aria-valuenow", "40");
+
+    await expect.element(completionScreen.getByText("Guest completion footer")).toBeInTheDocument();
 
     await expect.element(nextLink).toBeInTheDocument();
     await expect.element(nextLink).toHaveAttribute("href", "/lesson/play");
-    await expect.element(loginLink).toBeInTheDocument();
-    await expect.element(loginLink).toHaveAttribute("href", "/login");
+
+    await expect
+      .element(completionScreen.getByRole("link", { name: /^log in$/iu }))
+      .not.toBeInTheDocument();
 
     await expect
       .element(completionScreen.getByRole("link", { name: /exit/iu }))
@@ -538,7 +535,7 @@ describe("player browser integration: completion", () => {
       .toBeInTheDocument();
   });
 
-  it("ignores structural milestones for guest completion", async () => {
+  it("shows structural milestones for guest completion", async () => {
     renderPlayer({
       lesson: buildCompletionQuizLesson(),
       milestone: { kind: "chapter", nextHref: "/next-chapter", reviewHref: "/review-chapter" },
@@ -551,22 +548,22 @@ describe("player browser integration: completion", () => {
 
     const completionScreen = page.getByRole("status");
 
-    const loginLink = completionScreen.getByRole("link", { name: /^log in$/iu });
-
     await expect
       .element(completionScreen.getByText(/this lesson wasn't saved/iu))
-      .toBeInTheDocument();
+      .not.toBeInTheDocument();
 
-    await expect.element(loginLink).toHaveAttribute("href", "/sign-in");
-
-    await expect.element(completionScreen.getByText(/chapter complete/iu)).not.toBeInTheDocument();
+    await expect.element(completionScreen.getByText(/chapter complete/iu)).toBeInTheDocument();
 
     await expect
       .element(completionScreen.getByRole("link", { name: /review chapter/iu }))
-      .not.toBeInTheDocument();
+      .toBeInTheDocument();
 
     await expect
       .element(completionScreen.getByRole("link", { name: /next chapter/iu }))
+      .toBeInTheDocument();
+
+    await expect
+      .element(completionScreen.getByRole("link", { name: /^log in$/iu }))
       .not.toBeInTheDocument();
   });
 });
