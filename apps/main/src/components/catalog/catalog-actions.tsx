@@ -18,7 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
-import { toast } from "@zoonk/ui/components/sonner";
+import { showSuccessToast } from "@zoonk/ui/components/toast";
 import {
   EllipsisVerticalIcon,
   MessageSquareIcon,
@@ -45,7 +45,7 @@ export function CatalogActions({
 
     setFeedback(value);
     trackFeedback({ ...feedbackTarget, feedback: value });
-    toast.success(t("Thanks for your feedback"));
+    showSuccessToast(t("Thanks for your feedback"));
   }
 
   return (

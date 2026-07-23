@@ -1,7 +1,7 @@
 "use client";
 
 import { Kbd } from "@zoonk/ui/components/kbd";
-import { toast } from "@zoonk/ui/components/sonner";
+import { showToast } from "@zoonk/ui/components/toast";
 import { type PointerEvent, type ReactNode } from "react";
 import { getLocalDate } from "./player-date";
 import { type PlayerShortcutHint, claimPlayerShortcutHint } from "./player-shortcut-hint-storage";
@@ -78,16 +78,10 @@ export function showPlayerShortcutHint({
     return;
   }
 
-  toast(message, {
-    duration: SHORTCUT_HINT_DURATION_MS,
+  showToast({
     id: SHORTCUT_HINT_TOAST_ID,
-    position: "bottom-center",
-    style: {
-      left: 0,
-      marginInline: "auto",
-      maxWidth: "calc(100vw - 2rem)",
-      right: 0,
-      width: "fit-content",
-    },
+    timeout: SHORTCUT_HINT_DURATION_MS,
+    title: message,
+    variant: "centered",
   });
 }

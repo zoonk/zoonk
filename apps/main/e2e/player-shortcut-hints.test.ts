@@ -159,11 +159,12 @@ async function createShortcutHintLessons() {
 }
 
 /**
- * Sonner renders each notification as a semantic list item, while the visible
- * key remains a separate text fragment so learners can scan the shortcut.
+ * Base UI exposes each notification as a dialog that keyboard users can reach
+ * from its notification region, while the visible key remains a separate text
+ * fragment so learners can scan the shortcut.
  */
 function getShortcutHint({ page, shortcut }: { page: Page; shortcut: string }) {
-  return page.getByRole("listitem").filter({ has: page.getByText(shortcut, { exact: true }) });
+  return page.getByRole("dialog").filter({ has: page.getByText(shortcut, { exact: true }) });
 }
 
 /**

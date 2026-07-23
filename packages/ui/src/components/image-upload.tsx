@@ -5,7 +5,7 @@ import { LoaderCircleIcon } from "lucide-react";
 import { createContext, useCallback, useContext, useMemo, useRef, useTransition } from "react";
 import { cn } from "../lib/utils";
 import { Skeleton } from "./skeleton";
-import { toast } from "./sonner";
+import { showErrorToast, showSuccessToast } from "./toast";
 
 type ImageUploadContextValue = {
   currentImageUrl: string | null;
@@ -91,11 +91,11 @@ function ImageUploadProvider({
   const resolvedMessages = { ...DEFAULT_MESSAGES, ...messages };
 
   const handleInvalidType = useCallback(() => {
-    toast.error(resolvedMessages.invalidType);
+    showErrorToast(resolvedMessages.invalidType);
   }, [resolvedMessages.invalidType]);
 
   const handleTooLarge = useCallback(() => {
-    toast.error(resolvedMessages.tooLarge);
+    showErrorToast(resolvedMessages.tooLarge);
   }, [resolvedMessages.tooLarge]);
 
   const handleFileSelect = useCallback(
@@ -124,9 +124,9 @@ function ImageUploadProvider({
         const { error } = await onUpload(formData);
 
         if (error) {
-          toast.error(error);
+          showErrorToast(error);
         } else {
-          toast.success(resolvedMessages.uploadSuccess);
+          showSuccessToast(resolvedMessages.uploadSuccess);
           onSuccess?.();
         }
       });
@@ -155,9 +155,9 @@ function ImageUploadProvider({
       const { error } = await onRemove();
 
       if (error) {
-        toast.error(error);
+        showErrorToast(error);
       } else {
-        toast.success(resolvedMessages.removeSuccess);
+        showSuccessToast(resolvedMessages.removeSuccess);
         onSuccess?.();
       }
     });

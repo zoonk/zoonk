@@ -115,7 +115,7 @@ test.describe("Catalog Actions", () => {
     await expect(page.getByRole("menuitemradio", { name: /i didn't like it/iu })).toBeVisible();
   });
 
-  test("clicking liked shows toast confirmation", async ({ page }) => {
+  test("clicking liked shows a dismissible toast confirmation", async ({ page }) => {
     const { course } = await createTestCourseWithLesson();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
@@ -124,6 +124,12 @@ test.describe("Catalog Actions", () => {
     await page.getByRole("menuitemradio", { name: /i liked it/iu }).click();
 
     await expect(page.getByText(/thanks for your feedback/iu)).toBeVisible();
+
+    const toast = page.getByRole("dialog");
+
+    await page.keyboard.press("F6");
+    await toast.getByRole("button", { name: /close toast/iu }).click();
+    await expect(toast).not.toBeVisible();
   });
 
   test("clicking liked marks it as selected", async ({ page }) => {
