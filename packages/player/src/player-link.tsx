@@ -1,6 +1,5 @@
 "use client";
 
-import { Suspense } from "react";
 import {
   type PlayerLinkComponentProps,
   type PlayerRoute,
@@ -10,16 +9,11 @@ import {
 type PlayerLinkProps = Omit<PlayerLinkComponentProps, "href"> & { href: PlayerRoute };
 
 /**
- * Locale-aware links can briefly suspend while resolving the current pathname,
- * so each player link catches that work locally instead of replacing the whole
- * player shell. Ordinary destinations still prefetch unless callers opt out.
+ * Keeps player destinations route-typed while using the host app's navigation
+ * component. Destinations prefetch unless callers explicitly opt out.
  */
 export function PlayerLink({ href, prefetch = true, ...props }: PlayerLinkProps) {
   const LinkComponent = usePlayerLinkComponent();
 
-  return (
-    <Suspense fallback={null}>
-      <LinkComponent {...props} href={href} prefetch={prefetch} />
-    </Suspense>
-  );
+  return <LinkComponent {...props} href={href} prefetch={prefetch} />;
 }
