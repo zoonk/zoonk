@@ -73,8 +73,8 @@ catalogs:
       specifier: 16.3.0-preview.8
       version: 16.3.0-preview.8
     next-intl:
-      specifier: 4.13.3
-      version: 4.13.3
+      specifier: 4.13.4
+      version: 4.13.4
     nuqs:
       specifier: 2.9.1
       version: 2.9.1
@@ -230,7 +230,7 @@ importers:
         version: 16.3.0-preview.8(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next-intl:
         specifier: 'catalog:'
-        version: 4.13.3(@swc/helpers@0.5.23)(next@16.3.0-preview.8(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
+        version: 4.13.4(@swc/helpers@0.5.23)(next@16.3.0-preview.8(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
       posthog-js:
         specifier: 'catalog:'
         version: 1.406.2
@@ -437,7 +437,7 @@ importers:
         version: 16.3.0-preview.8(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next-intl:
         specifier: 'catalog:'
-        version: 4.13.3(@swc/helpers@0.5.23)(next@16.3.0-preview.8(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
+        version: 4.13.4(@swc/helpers@0.5.23)(next@16.3.0-preview.8(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
       nuqs:
         specifier: 'catalog:'
         version: 2.9.1(next@16.3.0-preview.8(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
@@ -743,7 +743,7 @@ importers:
         version: 2.1.1(zod@4.4.3)
       next-intl:
         specifier: 'catalog:'
-        version: 4.13.3(@swc/helpers@0.5.23)(next@16.3.0-preview.8(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
+        version: 4.13.4(@swc/helpers@0.5.23)(next@16.3.0-preview.8(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
       po-parser:
         specifier: 2.1.1
         version: 2.1.1
@@ -787,7 +787,7 @@ importers:
         version: 16.3.0-preview.8(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next-intl:
         specifier: 'catalog:'
-        version: 4.13.3(@swc/helpers@0.5.23)(next@16.3.0-preview.8(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
+        version: 4.13.4(@swc/helpers@0.5.23)(next@16.3.0-preview.8(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
       react:
         specifier: 'catalog:'
         version: 19.2.8
@@ -851,7 +851,7 @@ importers:
         version: 16.3.0-preview.8(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@26.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next-intl:
         specifier: 'catalog:'
-        version: 4.13.3(@swc/helpers@0.5.23)(next@16.3.0-preview.8(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@26.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
+        version: 4.13.4(@swc/helpers@0.5.23)(next@16.3.0-preview.8(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@26.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
       react:
         specifier: 'catalog:'
         version: 19.2.8
@@ -5436,8 +5436,8 @@ packages:
     resolution: {integrity: sha512-IKXpvIzjnC9XTAUbVBcMfGS0EPaIXtW6v+zr+RRp+hqULEpo0owZax6wyRwPOJbWbzjYspQwusTsfVr0ifh4uQ==}
     engines: {node: '>=0.10.0'}
 
-  icu-minify@4.13.3:
-    resolution: {integrity: sha512-dCbcvYH4YBgR+SgCtnXGIquuc6JkS7e4n+5mmgseQ5z81KJIWbs5ucBjnrE72HFct6Ddr2yWjX6o1j8DT7MI5w==}
+  icu-minify@4.13.4:
+    resolution: {integrity: sha512-yK6HyPLGlQjqm8fTKtnBpM77z7vl7JdDBN2EXLvmgAu/b7XaOHWZb73M3ISl9ahBTehBv7RYeqqWSHfk1v2YcA==}
 
   ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
@@ -6173,11 +6173,11 @@ packages:
   next-intl-swc-plugin-extractor@0.0.0-canary-9f1cde4:
     resolution: {integrity: sha512-amr9tzbCMfIWOa25CLYx5/BNm7P2xRSJ7kz2YmdR6DSaCOzGUO9hb82prgHHBsLW25Y+TtbauEGyTVYCG4uKUA==}
 
-  next-intl-swc-plugin-extractor@4.13.3:
-    resolution: {integrity: sha512-Oy86w/VRwqOu6sHEXwthEGhgnQszS79e47i3Kkzv4r+Yfz9ilZMSen8Sp8vtAwuc1nAZPrN13IbsLC5jmc9fVQ==}
+  next-intl-swc-plugin-extractor@4.13.4:
+    resolution: {integrity: sha512-uN1+NMUYbG6YkO3q+rjc2bvAPX9nQ23owemvHJAyW0pRbQjVDwvNhmrV5qaak0oQc/9okbK17KLT49AoMGhVEQ==}
 
-  next-intl@4.13.3:
-    resolution: {integrity: sha512-+bAjmPLsRFG/YAN1ged7wVCbuYvYjEW06ApBRdM7VbtNfXYN1iBFNh28Bi1sX5xGSFvAsGCBC1K2Zjtvn1AMvQ==}
+  next-intl@4.13.4:
+    resolution: {integrity: sha512-jhPAT0u0lahIK6E4gVdZAehugWCosBhLG8sV7xMzgSVoJpxHObP+Fiu+z2FfkEW0XPPtr7uEXoUlLEfhxhNMTg==}
     peerDependencies:
       next: ^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0
@@ -7321,8 +7321,8 @@ packages:
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
 
-  use-intl@4.13.3:
-    resolution: {integrity: sha512-e1qMU4PokNEU7K1TtKROSl3Sv7JLsKh7GyNjuhKZVB444Qfv0qHjet59IZF6GtYE+VwGbhgWqDWfGTnuDPe2Bg==}
+  use-intl@4.13.4:
+    resolution: {integrity: sha512-wRhU5zyPNgu845++EJ8ckQsi89b22QUop7NlGxNXpsnKSwEJr7WErAkdAYeVQgFTmDWsa8e2NI1e14XbWz9Ecw==}
     peerDependencies:
       react: ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0
 
@@ -12029,7 +12029,7 @@ snapshots:
     dependencies:
       safer-buffer: 2.1.2
 
-  icu-minify@4.13.3:
+  icu-minify@4.13.4:
     dependencies:
       '@formatjs/icu-messageformat-parser': 3.5.15
 
@@ -12813,54 +12813,54 @@ snapshots:
 
   next-intl-swc-plugin-extractor@0.0.0-canary-9f1cde4: {}
 
-  next-intl-swc-plugin-extractor@4.13.3: {}
+  next-intl-swc-plugin-extractor@4.13.4: {}
 
-  next-intl@4.13.3(@swc/helpers@0.5.23)(next@16.3.0-preview.8(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2):
+  next-intl@4.13.4(@swc/helpers@0.5.23)(next@16.3.0-preview.8(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2):
     dependencies:
       '@formatjs/intl-localematcher': 0.8.13
       '@parcel/watcher': 2.6.0
       '@swc/core': 1.15.46(@swc/helpers@0.5.23)
-      icu-minify: 4.13.3
+      icu-minify: 4.13.4
       negotiator: 1.0.0
       next: 16.3.0-preview.8(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      next-intl-swc-plugin-extractor: 4.13.3
+      next-intl-swc-plugin-extractor: 4.13.4
       po-parser: 2.1.1
       react: 19.2.8
-      use-intl: 4.13.3(react@19.2.8)
+      use-intl: 4.13.4(react@19.2.8)
     optionalDependencies:
       typescript: 7.0.2
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  next-intl@4.13.3(@swc/helpers@0.5.23)(next@16.3.0-preview.8(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@26.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2):
+  next-intl@4.13.4(@swc/helpers@0.5.23)(next@16.3.0-preview.8(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@26.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2):
     dependencies:
       '@formatjs/intl-localematcher': 0.8.13
       '@parcel/watcher': 2.6.0
       '@swc/core': 1.15.46(@swc/helpers@0.5.23)
-      icu-minify: 4.13.3
+      icu-minify: 4.13.4
       negotiator: 1.0.0
       next: 16.3.0-preview.8(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@26.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      next-intl-swc-plugin-extractor: 4.13.3
+      next-intl-swc-plugin-extractor: 4.13.4
       po-parser: 2.1.1
       react: 19.2.8
-      use-intl: 4.13.3(react@19.2.8)
+      use-intl: 4.13.4(react@19.2.8)
     optionalDependencies:
       typescript: 7.0.2
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  next-intl@4.13.3(@swc/helpers@0.5.23)(next@16.3.0-preview.8(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2):
+  next-intl@4.13.4(@swc/helpers@0.5.23)(next@16.3.0-preview.8(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@7.0.2):
     dependencies:
       '@formatjs/intl-localematcher': 0.8.13
       '@parcel/watcher': 2.6.0
       '@swc/core': 1.15.46(@swc/helpers@0.5.23)
-      icu-minify: 4.13.3
+      icu-minify: 4.13.4
       negotiator: 1.0.0
       next: 16.3.0-preview.8(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      next-intl-swc-plugin-extractor: 4.13.3
+      next-intl-swc-plugin-extractor: 4.13.4
       po-parser: 2.1.1
       react: 19.2.8
-      use-intl: 4.13.3(react@19.2.8)
+      use-intl: 4.13.4(react@19.2.8)
     optionalDependencies:
       typescript: 7.0.2
     transitivePeerDependencies:
@@ -14252,11 +14252,11 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
-  use-intl@4.13.3(react@19.2.8):
+  use-intl@4.13.4(react@19.2.8):
     dependencies:
       '@formatjs/fast-memoize': 3.1.7
       '@schummar/icu-type-parser': 1.21.5
-      icu-minify: 4.13.3
+      icu-minify: 4.13.4
       intl-messageformat: 11.2.12
       react: 19.2.8
 
