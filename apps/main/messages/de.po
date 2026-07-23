@@ -179,7 +179,6 @@ msgid "Best day"
 msgstr "Bester Tag"
 
 #: src/app/[lang]/(catalog)/(home)/best-day.tsx
-#: src/app/[lang]/(progress)/energy/energy-insights.tsx
 #: src/app/[lang]/(progress)/score/score-insights.tsx
 msgctxt "auPwZG"
 msgid "{day} with {percentage}"
@@ -228,6 +227,13 @@ msgctxt "r0R6ZG"
 msgid "{period} with {percentage}"
 msgstr "{period} mit {percentage}"
 
+#: src/app/[lang]/(catalog)/(home)/completed-lessons.tsx
+#: src/app/[lang]/(progress)/_components/metric-comparison.tsx
+#: src/app/[lang]/(progress)/_components/progress-insight-period-label.ts
+msgctxt "s-lPP3"
+msgid "All time"
+msgstr "Gesamt"
+
 #: src/app/[lang]/(catalog)/(home)/continue-learning-card.tsx
 msgctxt "NubPSk"
 msgid "Next: {lesson}"
@@ -265,12 +271,6 @@ msgstr "Energie"
 msgctxt "AV5XNu"
 msgid "Your energy is {percentage}"
 msgstr "Deine Energie liegt bei {percentage}"
-
-#: src/app/[lang]/(catalog)/(home)/learning-days.tsx
-#: src/app/[lang]/(progress)/level/level-insights.tsx
-msgctxt "8F6teD"
-msgid "Learning days"
-msgstr "Lerntage"
 
 #: src/app/[lang]/(catalog)/(home)/learning-days.tsx
 msgctxt "QbNcMh"
@@ -968,15 +968,15 @@ msgid "vs last 6 months"
 msgstr "vs. letzten 6 Monaten"
 
 #: src/app/[lang]/(progress)/_components/metric-comparison.tsx
-#: src/app/[lang]/(progress)/_components/progress-insight-period-label.ts
-msgctxt "s-lPP3"
-msgid "All time"
-msgstr "Gesamt"
-
-#: src/app/[lang]/(progress)/_components/metric-comparison.tsx
 msgctxt "YFV6dH"
 msgid "vs last year"
 msgstr "vs. letztes Jahr"
+
+#: src/app/[lang]/(progress)/_components/metric-pills.tsx
+#: src/app/[lang]/(progress)/activity/page.tsx
+msgctxt "ZmlNQ3"
+msgid "Activity"
+msgstr "Aktivität"
 
 #: src/app/[lang]/(progress)/_components/period-navigation.tsx
 msgctxt "hCCWuZ"
@@ -1038,16 +1038,82 @@ msgctxt "lPShsT"
 msgid "This year"
 msgstr "Dieses Jahr"
 
-#: src/app/[lang]/(progress)/energy/energy-chart-client.tsx
-msgctxt "M-JIpD"
-msgid "Energy chart"
-msgstr "Energie‑Diagramm"
+#: src/app/[lang]/(progress)/activity/activity-chart.tsx
+msgctxt "yK5WcZ"
+msgid "{count, plural, =0 {# lesson completions on {date}} one {# lesson completion on {date}} other {# lesson completions on {date}}}"
+msgstr "{count, plural, =0 {# abgeschlossene Lektionen am {date}} one {# abgeschlossene Lektion am {date}} other {# abgeschlossene Lektionen am {date}}}"
 
-#: src/app/[lang]/(progress)/energy/energy-chart-client.tsx
-#: src/app/[lang]/(progress)/score/score-chart-client.tsx
-msgctxt "rGSqvt"
-msgid "Avg"
-msgstr "Durchschn."
+#: src/app/[lang]/(progress)/activity/activity-chart.tsx
+msgctxt "AfqNLd"
+msgid "Learning activity"
+msgstr "Lernaktivität"
+
+#: src/app/[lang]/(progress)/activity/activity-chart.tsx
+#: src/app/[lang]/(progress)/energy/energy-chart.tsx
+msgctxt "o0vS8L"
+msgid "Past 12 months"
+msgstr "Letzte 12 Monate"
+
+#: src/app/[lang]/(progress)/activity/activity-chart.tsx
+msgctxt "mU3mx4"
+msgid "Lesson activity intensity from less to more"
+msgstr "Intensität der Lernaktivität von niedrig bis hoch"
+
+#: src/app/[lang]/(progress)/activity/activity-chart.tsx
+msgctxt "mFYgAX"
+msgid "Less"
+msgstr "Weniger"
+
+#: src/app/[lang]/(progress)/activity/activity-chart.tsx
+msgctxt "I5NMJ8"
+msgid "More"
+msgstr "Mehr"
+
+#: src/app/[lang]/(progress)/activity/activity-stats.tsx
+#: src/components/progress/completed-lessons-card.tsx
+msgctxt "JhwQKn"
+msgid "Lessons completed"
+msgstr "Abgeschlossene Lektionen"
+
+#: src/app/[lang]/(progress)/activity/page.tsx
+msgctxt "ONB1Ju"
+msgid "Track your completed lessons, learning days, and learning time."
+msgstr "Behalte deine abgeschlossenen Lektionen, Lerntage und Lernzeit im Blick."
+
+#: src/app/[lang]/(progress)/activity/page.tsx
+msgctxt "mjwoLD"
+msgid "See your learning activity over time"
+msgstr "Sieh dir deine Lernaktivität im Zeitverlauf an"
+
+#: src/app/[lang]/(progress)/energy/energy-chart.tsx
+msgctxt "1cw6GI"
+msgid "No Energy recorded on {date}"
+msgstr "Keine Energie für {date} erfasst"
+
+#: src/app/[lang]/(progress)/energy/energy-chart.tsx
+msgctxt "GThwd0"
+msgid "{percentage} Energy on {date}"
+msgstr "{percentage} Energie am {date}"
+
+#: src/app/[lang]/(progress)/energy/energy-chart.tsx
+msgctxt "TfctoK"
+msgid "Energy history"
+msgstr "Energieverlauf"
+
+#: src/app/[lang]/(progress)/energy/energy-chart.tsx
+msgctxt "jPmToJ"
+msgid "Energy intensity from low to high"
+msgstr "Energieintensität von niedrig bis hoch"
+
+#: src/app/[lang]/(progress)/energy/energy-chart.tsx
+msgctxt "477I0g"
+msgid "Low"
+msgstr "Niedrig"
+
+#: src/app/[lang]/(progress)/energy/energy-chart.tsx
+msgctxt "AxMhQr"
+msgid "High"
+msgstr "Hoch"
 
 #: src/app/[lang]/(progress)/energy/energy-explanation.tsx
 msgctxt "TLPAMC"
@@ -1080,24 +1146,19 @@ msgid "Energy is like heart rate in a health app: it shows your current learning
 msgstr "Energie ist wie der Herzschlag in einer Gesundheits-App: Sie zeigt deinen aktuellen Lernrhythmus. Wenn du einen Tag aussetzt, wird dein Fortschritt nicht zurückgesetzt; du erholst dich, sobald du wieder lernst."
 
 #: src/app/[lang]/(progress)/energy/energy-insights.tsx
-msgctxt "XxS-he"
-msgid "Highest energy day"
-msgstr "Tag mit höchster Energie"
-
-#: src/app/[lang]/(progress)/energy/energy-insights.tsx
 msgctxt "aaiQkv"
 msgid "Full energy"
 msgstr "Volle Energie"
+
+#: src/app/[lang]/(progress)/energy/energy-insights.tsx
+msgctxt "F9mA1x"
+msgid "Average Energy"
+msgstr "Durchschnittliche Energie"
 
 #: src/app/[lang]/(progress)/energy/energy-stats.tsx
 msgctxt "zLCmVM"
 msgid "Current Energy"
 msgstr "Aktuelle Energie"
-
-#: src/app/[lang]/(progress)/energy/energy-stats.tsx
-msgctxt "e9DcQa"
-msgid "{percentage} average"
-msgstr "{percentage} im Schnitt"
 
 #: src/app/[lang]/(progress)/energy/page.tsx
 msgctxt "AZMpf3"
@@ -1228,6 +1289,11 @@ msgstr "Verfolge deine Punktzahl und Entwicklungstrends"
 msgctxt "J-05ol"
 msgid "Score chart"
 msgstr "Punktzahlen-Diagramm"
+
+#: src/app/[lang]/(progress)/score/score-chart-client.tsx
+msgctxt "rGSqvt"
+msgid "Avg"
+msgstr "Durchschn."
 
 #: src/app/[lang]/(progress)/score/score-explanation.tsx
 msgctxt "bIZaXJ"
@@ -2666,6 +2732,11 @@ msgctxt "JqiqNj"
 msgid "Something went wrong"
 msgstr "Etwas ist schiefgelaufen"
 
+#: src/components/progress/learning-days-card.tsx
+msgctxt "8F6teD"
+msgid "Learning days"
+msgstr "Lerntage"
+
 #: src/components/progress/progress-day-count-label.ts
 msgctxt "r9koty"
 msgid "{count, plural, =0 {# days} one {# day} other {# days}}"
@@ -2695,6 +2766,11 @@ msgstr "{hours, plural, one {# Std.} other {# Std.}}"
 msgctxt "Frd5VU"
 msgid "{hours, plural, one {# hr} other {# hr}} {minutes, plural, one {# min} other {# min}}"
 msgstr "{hours, plural, one {# Std.} other {# Std.}} {minutes, plural, one {# Min.} other {# Min.}}"
+
+#: src/components/progress/progress-lesson-count-label.ts
+msgctxt "sNh2SZ"
+msgid "{count, plural, =0 {# lessons} one {# lesson} other {# lessons}}"
+msgstr "{count, plural, =0 {# Lektionen} one {# Lektion} other {# Lektionen}}"
 
 #: src/components/progress/total-learning-time-card.tsx
 msgctxt "-V74AY"

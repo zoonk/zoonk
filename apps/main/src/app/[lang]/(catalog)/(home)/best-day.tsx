@@ -1,17 +1,16 @@
-import { Link } from "@/i18n/navigation";
 import {
-  FeatureCard,
-  FeatureCardBody,
-  FeatureCardHeader,
-  FeatureCardHeaderContent,
-  FeatureCardIcon,
-  FeatureCardIndicator,
-  FeatureCardLabel,
-  FeatureCardLink,
-  FeatureCardSubtitle,
-  FeatureCardTitle,
-} from "@zoonk/ui/components/feature";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
+  ProgressMetricCard,
+  ProgressMetricCardIcon,
+  ProgressMetricCardLabel,
+  ProgressMetricCardLabelSkeleton,
+  ProgressMetricCardSubtitle,
+  ProgressMetricCardSubtitleSkeleton,
+  ProgressMetricCardTrailing,
+  ProgressMetricCardValue,
+  ProgressMetricCardValueSkeleton,
+} from "@/components/progress/progress-metric-card";
+import { Link } from "@/i18n/navigation";
+import { FeatureCardIndicator, FeatureCardLink } from "@zoonk/ui/components/feature";
 import { EPOCH_YEAR, FIRST_SUNDAY_OFFSET } from "@zoonk/utils/date";
 import { formatMetricPercent } from "@zoonk/utils/number";
 import { CalendarDays } from "lucide-react";
@@ -30,37 +29,29 @@ export async function BestDay({ score, dayOfWeek }: { score: number; dayOfWeek: 
 
   return (
     <FeatureCardLink render={<Link href="/score" prefetch />}>
-      <FeatureCard>
-        <FeatureCardHeader className="text-score">
-          <FeatureCardHeaderContent>
-            <FeatureCardIcon>
-              <CalendarDays />
-            </FeatureCardIcon>
-            <FeatureCardLabel>{t("Best day")}</FeatureCardLabel>
-          </FeatureCardHeaderContent>
+      <ProgressMetricCard className="text-score">
+        <ProgressMetricCardIcon>
+          <CalendarDays />
+        </ProgressMetricCardIcon>
+        <ProgressMetricCardLabel>{t("Best day")}</ProgressMetricCardLabel>
+        <ProgressMetricCardTrailing>
           <FeatureCardIndicator />
-        </FeatureCardHeader>
-
-        <FeatureCardBody>
-          <FeatureCardTitle className="first-letter:uppercase">
-            {t("{day} with {percentage}", { day: dayName, percentage: formattedScore })}
-          </FeatureCardTitle>
-          <FeatureCardSubtitle>{t("Past 3 months")}</FeatureCardSubtitle>
-        </FeatureCardBody>
-      </FeatureCard>
+        </ProgressMetricCardTrailing>
+        <ProgressMetricCardValue className="first-letter:uppercase">
+          {t("{day} with {percentage}", { day: dayName, percentage: formattedScore })}
+        </ProgressMetricCardValue>
+        <ProgressMetricCardSubtitle>{t("Past 3 months")}</ProgressMetricCardSubtitle>
+      </ProgressMetricCard>
     </FeatureCardLink>
   );
 }
 
 export function BestDaySkeleton() {
   return (
-    <FeatureCard className="w-full">
-      <Skeleton className="h-5 w-24" />
-
-      <FeatureCardBody className="gap-1">
-        <Skeleton className="h-4 w-full max-w-40" />
-        <Skeleton className="h-3 w-full max-w-28" />
-      </FeatureCardBody>
-    </FeatureCard>
+    <ProgressMetricCard aria-hidden="true" className="w-full">
+      <ProgressMetricCardLabelSkeleton className="w-24" />
+      <ProgressMetricCardValueSkeleton className="max-w-40" />
+      <ProgressMetricCardSubtitleSkeleton className="max-w-28" />
+    </ProgressMetricCard>
   );
 }

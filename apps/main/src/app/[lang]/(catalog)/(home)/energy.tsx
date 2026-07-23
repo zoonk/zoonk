@@ -1,18 +1,17 @@
+import {
+  ProgressMetricCard,
+  ProgressMetricCardIcon,
+  ProgressMetricCardLabel,
+  ProgressMetricCardLabelSkeleton,
+  ProgressMetricCardSubtitle,
+  ProgressMetricCardSubtitleSkeleton,
+  ProgressMetricCardTrailing,
+  ProgressMetricCardValue,
+  ProgressMetricCardValueSkeleton,
+} from "@/components/progress/progress-metric-card";
 import { Link } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
-import {
-  FeatureCard,
-  FeatureCardBody,
-  FeatureCardHeader,
-  FeatureCardHeaderContent,
-  FeatureCardIcon,
-  FeatureCardIndicator,
-  FeatureCardLabel,
-  FeatureCardLink,
-  FeatureCardSubtitle,
-  FeatureCardTitle,
-} from "@zoonk/ui/components/feature";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { FeatureCardIndicator, FeatureCardLink } from "@zoonk/ui/components/feature";
 import { formatMetricPercent } from "@zoonk/utils/number";
 import { getExtracted, getFormatter } from "next-intl/server";
 
@@ -27,37 +26,29 @@ export async function Energy({ energy }: { energy: number }) {
 
   return (
     <FeatureCardLink render={<Link href={energyMenu.url} prefetch />}>
-      <FeatureCard>
-        <FeatureCardHeader className="text-energy">
-          <FeatureCardHeaderContent>
-            <FeatureCardIcon>
-              <energyMenu.icon />
-            </FeatureCardIcon>
-            <FeatureCardLabel>{t("Energy")}</FeatureCardLabel>
-          </FeatureCardHeaderContent>
+      <ProgressMetricCard aria-labelledby="home-energy-label" className="text-energy">
+        <ProgressMetricCardIcon>
+          <energyMenu.icon />
+        </ProgressMetricCardIcon>
+        <ProgressMetricCardLabel id="home-energy-label">{t("Energy")}</ProgressMetricCardLabel>
+        <ProgressMetricCardTrailing>
           <FeatureCardIndicator />
-        </FeatureCardHeader>
-
-        <FeatureCardBody>
-          <FeatureCardTitle>
-            {t("Your energy is {percentage}", { percentage: formattedEnergy })}
-          </FeatureCardTitle>
-          <FeatureCardSubtitle>{description}</FeatureCardSubtitle>
-        </FeatureCardBody>
-      </FeatureCard>
+        </ProgressMetricCardTrailing>
+        <ProgressMetricCardValue>
+          {t("Your energy is {percentage}", { percentage: formattedEnergy })}
+        </ProgressMetricCardValue>
+        <ProgressMetricCardSubtitle>{description}</ProgressMetricCardSubtitle>
+      </ProgressMetricCard>
     </FeatureCardLink>
   );
 }
 
 export function EnergySkeleton() {
   return (
-    <FeatureCard className="w-full">
-      <Skeleton className="h-5 w-28" />
-
-      <FeatureCardBody className="gap-1">
-        <Skeleton className="h-4 w-full max-w-40" />
-        <Skeleton className="h-3 w-full max-w-28" />
-      </FeatureCardBody>
-    </FeatureCard>
+    <ProgressMetricCard aria-hidden="true" className="w-full">
+      <ProgressMetricCardLabelSkeleton className="w-28" />
+      <ProgressMetricCardValueSkeleton className="max-w-40" />
+      <ProgressMetricCardSubtitleSkeleton className="max-w-28" />
+    </ProgressMetricCard>
   );
 }

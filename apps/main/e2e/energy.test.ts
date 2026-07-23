@@ -1,6 +1,9 @@
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { getProgressInsightDateLabel } from "../src/app/[lang]/(progress)/_components/progress-insight-date-label";
+import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
+
+const DAYS_OUTSIDE_CHART = 400;
 
 test.describe("Energy Page", () => {
   test.describe("Unauthenticated Users", () => {
@@ -16,9 +19,7 @@ test.describe("Energy Page", () => {
   });
 
   test.describe("Authenticated Users", () => {
-    test("navigates from home and sees energy details with comparison", async ({
-      authenticatedPage,
-    }) => {
+    test("navigates from home and sees current Energy", async ({ authenticatedPage }) => {
       await authenticatedPage.goto("/");
 
       // Wait for Progress section to load (indicates Suspense resolved)
@@ -36,111 +37,93 @@ test.describe("Energy Page", () => {
       // User sees the energy page heading
       await expect(authenticatedPage.getByRole("heading", { name: /^energy$/iu })).toBeVisible();
 
-      // User sees comparison to previous month (proves dynamic data loaded)
-      await expect(authenticatedPage.getByText(/vs last month/iu)).toBeVisible();
-    });
-
-    test("displays current energy and selected-period average", async ({ authenticatedPage }) => {
-      await authenticatedPage.goto("/energy");
-
       await expect(authenticatedPage.getByText(/current energy/iu)).toBeVisible();
-      await expect(authenticatedPage.getByText(/% average/iu)).toBeVisible();
     });
 
-    test("displays current-month energy insight values", async ({ baseURL, browser }) => {
-      const user = await createE2EUser(baseURL!, { orgRole: "member", withProgress: true });
+    test("shows the Energy calendar and all-time metrics without date controls", async ({
+      baseURL,
+      browser,
+    }) => {
+      const user = await createE2EUser(baseURL!, { orgRole: "member" });
+      const now = new Date();
+      const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+      const historicalDate = new Date(today.getTime() - DAYS_OUTSIDE_CHART * MS_PER_DAY);
+
+      await Promise.all([
+        userProgressFixture({ currentEnergy: 73, lastActiveAt: now, userId: user.id }),
+        dailyProgressFixtureMany([
+          { date: historicalDate, energyAtEnd: 100, userId: user.id },
+          { date: today, energyAtEnd: 50, userId: user.id },
+        ]),
+      ]);
+
       const browserContext = await browser.newContext({ storageState: user.storageState });
       const page = await browserContext.newPage();
 
       try {
         await page.goto("/energy");
 
-        const highestEnergyCard = page.getByRole("article", { name: /highest energy day/iu });
+        const averageEnergyCard = page.getByRole("article", { name: /average energy/iu });
         const fullEnergyCard = page.getByRole("article", { name: /full energy/iu });
-        const todayLabel = getProgressInsightDateLabel({ date: new Date(), locale: "en" });
+        const energyChart = page.getByRole("figure", { name: /energy history/iu });
+        const recordedEnergyDay = energyChart.getByRole("button", { name: /^50% energy on /iu });
 
-        await expect(highestEnergyCard).toContainText(`${todayLabel} with 100%`);
-        await expect(highestEnergyCard).toContainText("This month");
+        await expect(page.getByText(/current energy/iu)).toBeVisible();
+        await expect(page.getByText(/^73%$/u)).toBeVisible();
+        await expect(averageEnergyCard).toContainText("75%");
         await expect(fullEnergyCard).toContainText("1 day");
-        await expect(fullEnergyCard).toContainText("This month");
+        await expect(energyChart).toBeVisible();
+        await expect(recordedEnergyDay).toBeVisible();
+        await recordedEnergyDay.hover();
+        await expect(page.getByText(/^50% energy on /iu)).toBeVisible();
+
+        await expect(energyChart.getByRole("button", { name: /^100% energy on /iu })).toHaveCount(
+          0,
+        );
+
+        await expect(page.getByRole("navigation", { name: /period selection/iu })).toHaveCount(0);
+
+        await expect(
+          page.getByRole("button", { name: /previous period|next period/iu }),
+        ).toHaveCount(0);
       } finally {
         await browserContext.close();
       }
     });
 
-    test("switching to 6 months shows different comparison text", async ({ authenticatedPage }) => {
-      await authenticatedPage.goto("/energy");
+    test("keeps lifetime Energy visible when the calendar year is empty", async ({
+      baseURL,
+      browser,
+    }) => {
+      const user = await createE2EUser(baseURL!, { orgRole: "member" });
+      const now = new Date();
+      const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+      const historicalDate = new Date(today.getTime() - DAYS_OUTSIDE_CHART * MS_PER_DAY);
 
-      // Verify we start with month comparison
-      await expect(authenticatedPage.getByText(/vs last month/iu)).toBeVisible();
+      await Promise.all([
+        userProgressFixture({
+          currentEnergy: 73,
+          lastActiveAt: now,
+          totalBrainPower: 100n,
+          userId: user.id,
+        }),
+        dailyProgressFixtureMany([{ date: historicalDate, energyAtEnd: 100, userId: user.id }]),
+      ]);
 
-      // Switch to 6 months
-      await authenticatedPage.getByRole("button", { name: /6 months/iu }).click();
+      const browserContext = await browser.newContext({ storageState: user.storageState });
+      const page = await browserContext.newPage();
 
-      // Comparison text changes to reference 6 months
-      await expect(authenticatedPage.getByText(/vs last 6 months/iu)).toBeVisible();
+      try {
+        await page.goto("/energy");
 
-      // The month comparison should no longer be visible
-      await expect(authenticatedPage.getByText(/vs last month/iu)).not.toBeVisible();
-    });
-
-    test("switching to year shows different comparison text", async ({ authenticatedPage }) => {
-      await authenticatedPage.goto("/energy");
-
-      // Switch directly to year
-      await authenticatedPage.getByRole("button", { name: /year/iu }).click();
-
-      // Comparison text references year
-      await expect(authenticatedPage.getByText(/vs last year/iu)).toBeVisible();
-
-      // Other comparison texts should not be visible
-      await expect(authenticatedPage.getByText(/vs last month/iu)).not.toBeVisible();
-      await expect(authenticatedPage.getByText(/vs last 6 months/iu)).not.toBeVisible();
-    });
-
-    test("switching to all hides comparison text", async ({ authenticatedPage }) => {
-      await authenticatedPage.goto("/energy");
-
-      // Verify we start with month comparison
-      await expect(authenticatedPage.getByText(/vs last month/iu)).toBeVisible();
-
-      // Switch to all
-      await authenticatedPage.getByRole("button", { name: /^all$/iu }).click();
-
-      // No comparison text should be visible
-      await expect(authenticatedPage.getByText(/vs last month/iu)).not.toBeVisible();
-      await expect(authenticatedPage.getByText(/vs last 6 months/iu)).not.toBeVisible();
-      await expect(authenticatedPage.getByText(/vs last year/iu)).not.toBeVisible();
-
-      // Page still shows data
-      await expect(authenticatedPage.getByRole("heading", { name: /^energy$/iu })).toBeVisible();
-    });
-
-    test("resets offset when switching periods", async ({ authenticatedPage }) => {
-      await authenticatedPage.goto("/energy");
-
-      // Verify we see the comparison initially
-      await expect(authenticatedPage.getByText(/vs last month/iu)).toBeVisible();
-
-      // Navigate back in time by clicking previous period
-      const prevButton = authenticatedPage.getByRole("button", { name: /previous period/iu });
-
-      await prevButton.click();
-      await authenticatedPage.waitForURL(/offset=1/u);
-
-      // Now switch to "6 Months" - should reset offset and show data
-      await authenticatedPage.getByRole("button", { name: /6 months/iu }).click();
-
-      // URL should not contain offset anymore (or should be reset to 0)
-      await expect(authenticatedPage).not.toHaveURL(/offset=1/u);
-
-      // Should see the comparison for 6 months (not "Start learning" message)
-      await expect(authenticatedPage.getByText(/vs last 6 months/iu)).toBeVisible();
-
-      // Should NOT see the "start learning" prompt
-      await expect(
-        authenticatedPage.getByText(/start learning to track your progress/iu),
-      ).not.toBeVisible();
+        await expect(page.getByText(/^73%$/u)).toBeVisible();
+        await expect(page.getByRole("article", { name: /average energy/iu })).toContainText("100%");
+        await expect(page.getByRole("article", { name: /full energy/iu })).toContainText("1 day");
+        await expect(page.getByRole("figure", { name: /energy history/iu })).toBeVisible();
+        await expect(page.getByText(/start learning to track your progress/iu)).toHaveCount(0);
+      } finally {
+        await browserContext.close();
+      }
     });
 
     test("displays energy explanation sections", async ({ authenticatedPage }) => {

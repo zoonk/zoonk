@@ -3,64 +3,42 @@ import { getUserProgressCacheTag } from "@/data/cache-tags";
 import { getSession } from "@/data/users/get-session";
 import { prisma } from "@zoonk/db";
 import { cacheTag } from "next/cache";
-import { getProgressDateFilter } from "./_utils/progress-date-filter";
 
-type HighestEnergyDayData = { date: Date; energy: number };
-type EnergyInsightsData = { fullEnergyDays: number; highestEnergyDay: HighestEnergyDayData };
-
-type EnergyInsightsParams = { endDate?: Date; startDate?: Date };
+export type EnergyInsightsData = { averageEnergy: number; fullEnergyDays: number };
 
 /**
- * The page needs compact card data, not raw DailyProgress rows. Returning null
- * only when no period row exists keeps a zero full-energy count visible for
- * learners who had progress but did not reach 100%.
+ * Returning null only when no Energy rows exist keeps a zero full-energy count
+ * visible for learners whose lifetime average is still meaningful.
  */
 function buildEnergyInsights({
+  averageEnergy,
   fullEnergyDays,
-  highestEnergyDay,
 }: {
+  averageEnergy: number | null;
   fullEnergyDays: number;
-  highestEnergyDay: { date: Date; energyAtEnd: number } | null;
 }): EnergyInsightsData | null {
-  if (!highestEnergyDay) {
-    return null;
-  }
-
-  return {
-    fullEnergyDays,
-    highestEnergyDay: { date: highestEnergyDay.date, energy: highestEnergyDay.energyAtEnd },
-  };
+  return averageEnergy === null ? null : { averageEnergy, fullEnergyDays };
 }
 
-async function findEnergyInsights({
-  endDate,
-  startDate,
-  userId,
-}: EnergyInsightsParams & { userId: string }): Promise<EnergyInsightsData | null> {
+/**
+ * The two cards are lifetime summaries, so neither query applies the default
+ * progress lookback or any chart-window boundary.
+ */
+async function findEnergyInsights(userId: string): Promise<EnergyInsightsData | null> {
   "use cache";
 
   cacheTag(getUserProgressCacheTag(userId));
 
-  const dateFilter = getProgressDateFilter({ endDate, startDate });
-
-  const [highestEnergyDay, fullEnergyDays] = await Promise.all([
-    prisma.dailyProgress.findFirst({
-      orderBy: [{ energyAtEnd: "desc" }, { date: "desc" }],
-      where: { date: dateFilter, userId },
-    }),
-    prisma.dailyProgress.count({ where: { date: dateFilter, energyAtEnd: { gte: 100 }, userId } }),
+  const [energyAggregate, fullEnergyDays] = await Promise.all([
+    prisma.dailyProgress.aggregate({ _avg: { energyAtEnd: true }, where: { userId } }),
+    prisma.dailyProgress.count({ where: { energyAtEnd: { gte: 100 }, userId } }),
   ]);
 
-  return buildEnergyInsights({ fullEnergyDays, highestEnergyDay });
+  return buildEnergyInsights({ averageEnergy: energyAggregate._avg.energyAtEnd, fullEnergyDays });
 }
 
-/**
- * Energy insight cards share the score-page date contract: callers may provide
- * an explicit history window, otherwise the query uses the default lookback.
- */
-export async function getEnergyInsights(
-  params: EnergyInsightsParams = {},
-): Promise<EnergyInsightsData | null> {
+/** Returns the signed-in learner's lifetime Energy summary cards. */
+export async function getEnergyInsights(): Promise<EnergyInsightsData | null> {
   const session = await getSession();
-  return session ? findEnergyInsights({ ...params, userId: session.user.id }) : null;
+  return session ? findEnergyInsights(session.user.id) : null;
 }

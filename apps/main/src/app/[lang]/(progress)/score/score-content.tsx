@@ -4,6 +4,7 @@ import { validatePeriod } from "@zoonk/utils/date-ranges";
 import { getLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { ProgressChartSkeleton } from "../_components/progress-chart-skeleton";
+import { ProgressContent } from "../_components/progress-content";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
 import { ProgressExplanationSkeleton } from "../_components/progress-explanation-skeleton";
 import { ScoreChart } from "./score-chart";
@@ -36,7 +37,7 @@ export async function ScoreContent({
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <ProgressContent>
       <ScoreStats
         average={data.average}
         period={validPeriod}
@@ -64,17 +65,17 @@ export async function ScoreContent({
       </Suspense>
 
       <ScoreExplanation />
-    </div>
+    </ProgressContent>
   );
 }
 
 export function ScoreContentSkeleton() {
   return (
-    <div className="flex flex-col gap-8">
+    <ProgressContent>
       <ScoreStatsSkeleton />
       <ProgressChartSkeleton />
       <ScoreInsightsSkeleton />
       <ProgressExplanationSkeleton />
-    </div>
+    </ProgressContent>
   );
 }

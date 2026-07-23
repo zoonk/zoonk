@@ -20,7 +20,7 @@ describe("authenticated users", () => {
     expect(result).toBeNull();
   });
 
-  it("returns the most recent highest BP day and learning days for the period", async () => {
+  it("returns the most recent highest BP day for the period", async () => {
     const user = await userFixture();
     await signInAsCurrentUser({ email: user.email, password: user.password });
 
@@ -65,14 +65,30 @@ describe("authenticated users", () => {
       startDate: new Date("2025-01-01T00:00:00Z"),
     });
 
-    expect(result).not.toBeNull();
+    expect(result).toStrictEqual({
+      highestBpDay: { brainPower: 75, date: new Date("2025-01-10T00:00:00Z") },
+    });
+  });
 
-    expect(result?.highestBpDay).toStrictEqual({
-      brainPower: 75,
-      date: new Date("2025-01-10T00:00:00Z"),
+  it("returns null when the period has no Brain Power", async () => {
+    const user = await userFixture();
+    await signInAsCurrentUser({ email: user.email, password: user.password });
+
+    await prisma.dailyProgress.create({
+      data: {
+        date: new Date("2025-01-05T00:00:00Z"),
+        dayOfWeek: 0,
+        staticCompleted: 1,
+        timeSpentSeconds: 60,
+        userId: user.id,
+      },
     });
 
-    expect(result?.learningDays).toBe(3);
-    expect(result?.totalLearningSeconds).toBe(180);
+    const result = await getLevelInsights({
+      endDate: new Date("2025-01-31T23:59:59.999Z"),
+      startDate: new Date("2025-01-01T00:00:00Z"),
+    });
+
+    expect(result).toBeNull();
   });
 });

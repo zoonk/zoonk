@@ -3,48 +3,28 @@ import { getUserProgressCacheTag } from "@/data/cache-tags";
 import { getSession } from "@/data/users/get-session";
 import { prisma } from "@zoonk/db";
 import { cacheTag } from "next/cache";
-import { getCompletedLessonDayWhere } from "./_utils/completed-lesson-day-where";
 import { getProgressDateFilter } from "./_utils/progress-date-filter";
 
 type HighestBpDayData = { brainPower: number; date: Date };
 
-type LevelInsightsData = {
-  highestBpDay: HighestBpDayData | null;
-  learningDays: number;
-  totalLearningSeconds: number;
-};
+type LevelInsightsData = { highestBpDay: HighestBpDayData };
 
 type LevelInsightsParams = { endDate?: Date; startDate?: Date };
 
 /**
- * A period can have progress rows without any BP earned, for example when only
- * energy decay rows exist. In that case the learning-day and learning-time cards
- * can still report zero while the highest-BP card stays hidden.
+ * Level owns the strongest Brain Power day, while general learning totals live
+ * on Activity. Returning null for periods without earned BP keeps Level from
+ * rendering an empty insight section for decay-only progress rows.
  */
-function buildLevelInsights({
-  highestBpDay,
-  hasPeriodProgress,
-  learningDays,
-  totalLearningSeconds,
-}: {
-  hasPeriodProgress: boolean;
-  highestBpDay: { brainPowerEarned: number; date: Date } | null;
-  learningDays: number;
-  totalLearningSeconds: number;
-}): LevelInsightsData | null {
-  if (!hasPeriodProgress) {
-    return null;
-  }
-
-  return {
-    highestBpDay: highestBpDay
-      ? { brainPower: highestBpDay.brainPowerEarned, date: highestBpDay.date }
-      : null,
-    learningDays,
-    totalLearningSeconds,
-  };
+function buildLevelInsights(
+  highestBpDay: { brainPowerEarned: number; date: Date } | null,
+): LevelInsightsData | null {
+  return highestBpDay
+    ? { highestBpDay: { brainPower: highestBpDay.brainPowerEarned, date: highestBpDay.date } }
+    : null;
 }
 
+/** Loads the strongest Brain Power day in the requested period. */
 async function findLevelInsights({
   endDate,
   startDate,
@@ -56,29 +36,16 @@ async function findLevelInsights({
 
   const dateFilter = getProgressDateFilter({ endDate, startDate });
 
-  const [periodProgress, highestBpDay, learningDays, totalLearningTime] = await Promise.all([
-    prisma.dailyProgress.findFirst({ where: { date: dateFilter, userId } }),
-    prisma.dailyProgress.findFirst({
-      orderBy: [{ brainPowerEarned: "desc" }, { date: "desc" }],
-      where: { brainPowerEarned: { gt: 0 }, date: dateFilter, userId },
-    }),
-    prisma.dailyProgress.count({ where: getCompletedLessonDayWhere({ dateFilter, userId }) }),
-    prisma.dailyProgress.aggregate({
-      _sum: { timeSpentSeconds: true },
-      where: { date: dateFilter, userId },
-    }),
-  ]);
-
-  return buildLevelInsights({
-    hasPeriodProgress: Boolean(periodProgress),
-    highestBpDay,
-    learningDays,
-    totalLearningSeconds: totalLearningTime._sum.timeSpentSeconds ?? 0,
+  const highestBpDay = await prisma.dailyProgress.findFirst({
+    orderBy: [{ brainPowerEarned: "desc" }, { date: "desc" }],
+    where: { brainPowerEarned: { gt: 0 }, date: dateFilter, userId },
   });
+
+  return buildLevelInsights(highestBpDay);
 }
 
 /**
- * Level insight cards share the selected period window with the Brain Power
+ * The strongest-day insight shares the selected period with the Brain Power
  * chart. The optional params keep the helper usable for rolling summaries too.
  */
 export async function getLevelInsights(

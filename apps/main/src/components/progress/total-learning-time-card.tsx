@@ -1,14 +1,14 @@
 import {
-  FeatureCard,
-  FeatureCardBody,
-  FeatureCardHeader,
-  FeatureCardHeaderContent,
-  FeatureCardIcon,
-  FeatureCardLabel,
-  FeatureCardSubtitle,
-  FeatureCardTitle,
-} from "@zoonk/ui/components/feature";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
+  ProgressMetricCard,
+  ProgressMetricCardIcon,
+  ProgressMetricCardLabel,
+  ProgressMetricCardLabelSkeleton,
+  ProgressMetricCardSubtitle,
+  ProgressMetricCardSubtitleSkeleton,
+  ProgressMetricCardTrailing,
+  ProgressMetricCardValue,
+  ProgressMetricCardValueSkeleton,
+} from "@/components/progress/progress-metric-card";
 import { ClockIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
@@ -24,8 +24,8 @@ export async function TotalLearningTimeCard({
   totalLearningSeconds,
   trailing,
 }: {
-  labelId?: string;
-  subtitle: string;
+  labelId: string;
+  subtitle?: string;
   totalLearningSeconds: number;
   trailing?: ReactNode;
 }) {
@@ -33,22 +33,15 @@ export async function TotalLearningTimeCard({
   const timeLabel = await getProgressLearningTimeLabel({ totalSeconds: totalLearningSeconds });
 
   return (
-    <FeatureCard aria-labelledby={labelId}>
-      <FeatureCardHeader>
-        <FeatureCardHeaderContent>
-          <FeatureCardIcon>
-            <ClockIcon />
-          </FeatureCardIcon>
-          <FeatureCardLabel id={labelId}>{t("Learning time")}</FeatureCardLabel>
-        </FeatureCardHeaderContent>
-        {trailing}
-      </FeatureCardHeader>
-
-      <FeatureCardBody>
-        <FeatureCardTitle>{timeLabel}</FeatureCardTitle>
-        <FeatureCardSubtitle>{subtitle}</FeatureCardSubtitle>
-      </FeatureCardBody>
-    </FeatureCard>
+    <ProgressMetricCard aria-labelledby={labelId}>
+      <ProgressMetricCardIcon>
+        <ClockIcon />
+      </ProgressMetricCardIcon>
+      <ProgressMetricCardLabel id={labelId}>{t("Learning time")}</ProgressMetricCardLabel>
+      {trailing && <ProgressMetricCardTrailing>{trailing}</ProgressMetricCardTrailing>}
+      <ProgressMetricCardValue>{timeLabel}</ProgressMetricCardValue>
+      {subtitle && <ProgressMetricCardSubtitle>{subtitle}</ProgressMetricCardSubtitle>}
+    </ProgressMetricCard>
   );
 }
 
@@ -58,13 +51,10 @@ export async function TotalLearningTimeCard({
  */
 export function TotalLearningTimeCardSkeleton() {
   return (
-    <FeatureCard className="w-full">
-      <Skeleton className="h-5 w-36" />
-
-      <FeatureCardBody className="gap-1">
-        <Skeleton className="h-4 w-full max-w-20" />
-        <Skeleton className="h-3 w-full max-w-36" />
-      </FeatureCardBody>
-    </FeatureCard>
+    <ProgressMetricCard aria-hidden="true" className="w-full">
+      <ProgressMetricCardLabelSkeleton className="w-36" />
+      <ProgressMetricCardValueSkeleton className="max-w-20" />
+      <ProgressMetricCardSubtitleSkeleton className="max-w-36" />
+    </ProgressMetricCard>
   );
 }

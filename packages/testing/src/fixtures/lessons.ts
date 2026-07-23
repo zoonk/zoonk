@@ -48,8 +48,33 @@ export async function lessonFixture(attrs?: Partial<Lesson> & { lessonId?: strin
   return lesson;
 }
 
+/**
+ * Existing fixture callers provide completion timestamps, so their UTC date is
+ * a sensible default while timezone-boundary tests can pass an exact local day.
+ */
+function getLessonProgressCompletedDate({
+  completedAt,
+  completedDate,
+}: {
+  completedAt: Date | null;
+  completedDate?: Date | null;
+}): Date | null {
+  if (completedDate !== undefined) {
+    return completedDate;
+  }
+
+  if (!completedAt) {
+    return null;
+  }
+
+  return new Date(
+    Date.UTC(completedAt.getUTCFullYear(), completedAt.getUTCMonth(), completedAt.getUTCDate()),
+  );
+}
+
 export async function lessonProgressFixture(
-  attrs: Omit<LessonProgress, "id" | "startedAt" | "lessonId"> & {
+  attrs: Omit<LessonProgress, "completedDate" | "id" | "startedAt" | "lessonId"> & {
+    completedDate?: Date | null;
     lessonId?: string;
     startedAt?: Date;
   },
@@ -57,6 +82,7 @@ export async function lessonProgressFixture(
   const lessonProgress = await prisma.lessonProgress.create({
     data: {
       completedAt: attrs.completedAt,
+      completedDate: getLessonProgressCompletedDate(attrs),
       durationSeconds: attrs.durationSeconds,
       lessonId: attrs.lessonId ?? "",
       startedAt: attrs.startedAt,

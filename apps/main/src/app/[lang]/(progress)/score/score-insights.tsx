@@ -1,21 +1,21 @@
+import {
+  ProgressMetricCard,
+  ProgressMetricCardIcon,
+  ProgressMetricCardLabel,
+  ProgressMetricCardLabelSkeleton,
+  ProgressMetricCardSubtitle,
+  ProgressMetricCardSubtitleSkeleton,
+  ProgressMetricCardValue,
+  ProgressMetricCardValueSkeleton,
+} from "@/components/progress/progress-metric-card";
 import { getBestDay } from "@/data/progress/get-best-day";
 import { getBestTime } from "@/data/progress/get-best-time";
-import {
-  FeatureCard,
-  FeatureCardBody,
-  FeatureCardHeader,
-  FeatureCardHeaderContent,
-  FeatureCardIcon,
-  FeatureCardLabel,
-  FeatureCardSubtitle,
-  FeatureCardTitle,
-} from "@zoonk/ui/components/feature";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { EPOCH_YEAR, FIRST_SUNDAY_OFFSET } from "@zoonk/utils/date";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 import { formatMetricPercent } from "@zoonk/utils/number";
 import { CalendarDays, Clock } from "lucide-react";
 import { getExtracted, getFormatter, getLocale } from "next-intl/server";
+import { ProgressInsightGrid } from "../_components/progress-insight-grid";
 import { getProgressInsightPeriodLabel } from "../_components/progress-insight-period-label";
 
 export async function ScoreInsights({
@@ -41,7 +41,7 @@ export async function ScoreInsights({
   const periodLabel = await getProgressInsightPeriodLabel({ period });
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <ProgressInsightGrid>
       {bestDayData && (
         <BestDayCard
           dayOfWeek={bestDayData.dayOfWeek}
@@ -58,7 +58,7 @@ export async function ScoreInsights({
           score={bestTimeData.score}
         />
       )}
-    </div>
+    </ProgressInsightGrid>
   );
 }
 
@@ -82,23 +82,16 @@ async function BestDayCard({
   const formattedScore = formatMetricPercent({ format, value: score });
 
   return (
-    <FeatureCard>
-      <FeatureCardHeader className="text-score">
-        <FeatureCardHeaderContent>
-          <FeatureCardIcon>
-            <CalendarDays />
-          </FeatureCardIcon>
-          <FeatureCardLabel>{t("Best day")}</FeatureCardLabel>
-        </FeatureCardHeaderContent>
-      </FeatureCardHeader>
-
-      <FeatureCardBody>
-        <FeatureCardTitle className="first-letter:uppercase">
-          {t("{day} with {percentage}", { day: dayName, percentage: formattedScore })}
-        </FeatureCardTitle>
-        <FeatureCardSubtitle>{periodLabel}</FeatureCardSubtitle>
-      </FeatureCardBody>
-    </FeatureCard>
+    <ProgressMetricCard className="text-score">
+      <ProgressMetricCardIcon>
+        <CalendarDays />
+      </ProgressMetricCardIcon>
+      <ProgressMetricCardLabel>{t("Best day")}</ProgressMetricCardLabel>
+      <ProgressMetricCardValue className="first-letter:uppercase">
+        {t("{day} with {percentage}", { day: dayName, percentage: formattedScore })}
+      </ProgressMetricCardValue>
+      <ProgressMetricCardSubtitle>{periodLabel}</ProgressMetricCardSubtitle>
+    </ProgressMetricCard>
   );
 }
 
@@ -121,44 +114,33 @@ async function BestTimeCard({
   const formattedScore = formatMetricPercent({ format, value: score });
 
   return (
-    <FeatureCard>
-      <FeatureCardHeader className="text-score">
-        <FeatureCardHeaderContent>
-          <FeatureCardIcon>
-            <Clock />
-          </FeatureCardIcon>
-          <FeatureCardLabel>{t("Best time")}</FeatureCardLabel>
-        </FeatureCardHeaderContent>
-      </FeatureCardHeader>
-
-      <FeatureCardBody>
-        <FeatureCardTitle className="first-letter:uppercase">
-          {t("{period} with {percentage}", { percentage: formattedScore, period: periodName })}
-        </FeatureCardTitle>
-        <FeatureCardSubtitle>{periodLabel}</FeatureCardSubtitle>
-      </FeatureCardBody>
-    </FeatureCard>
+    <ProgressMetricCard className="text-score">
+      <ProgressMetricCardIcon>
+        <Clock />
+      </ProgressMetricCardIcon>
+      <ProgressMetricCardLabel>{t("Best time")}</ProgressMetricCardLabel>
+      <ProgressMetricCardValue className="first-letter:uppercase">
+        {t("{period} with {percentage}", { percentage: formattedScore, period: periodName })}
+      </ProgressMetricCardValue>
+      <ProgressMetricCardSubtitle>{periodLabel}</ProgressMetricCardSubtitle>
+    </ProgressMetricCard>
   );
 }
 
 export function ScoreInsightsSkeleton() {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <FeatureCard className="w-full">
-        <Skeleton className="h-5 w-24" />
-        <FeatureCardBody className="gap-1">
-          <Skeleton className="h-4 w-full max-w-40" />
-          <Skeleton className="h-3 w-full max-w-28" />
-        </FeatureCardBody>
-      </FeatureCard>
+    <ProgressInsightGrid>
+      <ProgressMetricCard aria-hidden="true" className="w-full">
+        <ProgressMetricCardLabelSkeleton className="w-24" />
+        <ProgressMetricCardValueSkeleton className="max-w-40" />
+        <ProgressMetricCardSubtitleSkeleton className="max-w-28" />
+      </ProgressMetricCard>
 
-      <FeatureCard className="w-full">
-        <Skeleton className="h-5 w-24" />
-        <FeatureCardBody className="gap-1">
-          <Skeleton className="h-4 w-full max-w-40" />
-          <Skeleton className="h-3 w-full max-w-28" />
-        </FeatureCardBody>
-      </FeatureCard>
-    </div>
+      <ProgressMetricCard aria-hidden="true" className="w-full">
+        <ProgressMetricCardLabelSkeleton className="w-24" />
+        <ProgressMetricCardValueSkeleton className="max-w-40" />
+        <ProgressMetricCardSubtitleSkeleton className="max-w-28" />
+      </ProgressMetricCard>
+    </ProgressInsightGrid>
   );
 }

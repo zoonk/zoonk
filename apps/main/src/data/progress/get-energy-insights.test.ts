@@ -20,30 +20,25 @@ describe("authenticated users", () => {
     expect(result).toBeNull();
   });
 
-  it("returns the most recent highest energy day and full energy days for the period", async () => {
-    const user = await userFixture();
+  it("returns all-time average Energy and full-energy days for only the learner", async () => {
+    const [user, otherUser] = await Promise.all([userFixture(), userFixture()]);
     await signInAsCurrentUser({ email: user.email, password: user.password });
 
     await prisma.dailyProgress.createMany({
       data: [
-        { date: new Date("2025-01-05T00:00:00Z"), dayOfWeek: 0, energyAtEnd: 100, userId: user.id },
-        { date: new Date("2025-01-10T00:00:00Z"), dayOfWeek: 5, energyAtEnd: 88, userId: user.id },
-        { date: new Date("2025-01-15T00:00:00Z"), dayOfWeek: 3, energyAtEnd: 100, userId: user.id },
-        { date: new Date("2025-02-01T00:00:00Z"), dayOfWeek: 6, energyAtEnd: 100, userId: user.id },
+        { date: new Date("2020-01-05T00:00:00Z"), dayOfWeek: 0, energyAtEnd: 100, userId: user.id },
+        { date: new Date("2025-01-10T00:00:00Z"), dayOfWeek: 5, energyAtEnd: 50, userId: user.id },
+        {
+          date: new Date("2025-01-10T00:00:00Z"),
+          dayOfWeek: 5,
+          energyAtEnd: 100,
+          userId: otherUser.id,
+        },
       ],
     });
 
-    const result = await getEnergyInsights({
-      endDate: new Date("2025-01-31T23:59:59.999Z"),
-      startDate: new Date("2025-01-01T00:00:00Z"),
-    });
+    const result = await getEnergyInsights();
 
-    expect(result).not.toBeNull();
-    expect(result?.fullEnergyDays).toBe(2);
-
-    expect(result?.highestEnergyDay).toStrictEqual({
-      date: new Date("2025-01-15T00:00:00Z"),
-      energy: 100,
-    });
+    expect(result).toStrictEqual({ averageEnergy: 75, fullEnergyDays: 1 });
   });
 });

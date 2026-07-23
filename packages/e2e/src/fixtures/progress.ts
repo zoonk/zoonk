@@ -230,6 +230,7 @@ export async function createE2EProgressData(userId: string): Promise<void> {
     prisma.lessonProgress.create({
       data: {
         completedAt: new Date(now.getTime() - 60 * 1000),
+        completedDate: today,
         durationSeconds: COMPLETED_LESSON_DURATION_SECONDS,
         lessonId: completedLesson.id,
         startedAt: new Date(now.getTime() - COMPLETED_LESSON_START_OFFSET_SECONDS * 1000),

@@ -30,6 +30,7 @@ export function ProgressNavbarSkeleton() {
     <nav className="bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-10 pt-4 backdrop-blur">
       <div className="flex gap-2 px-4">
         <Skeleton className="size-9 rounded-md" />
+        <Skeleton className="h-9 w-24 rounded-md" />
         <Skeleton className="h-9 w-20 rounded-md" />
         <Skeleton className="h-9 w-24 rounded-md" />
         <Skeleton className="h-9 w-20 rounded-md" />

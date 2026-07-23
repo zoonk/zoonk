@@ -97,9 +97,10 @@ describe(startLesson, () => {
   it("does not overwrite a completed record", async () => {
     const userId = await authenticateFixtureUser();
     const completedAt = new Date();
+    const completedDate = new Date("2025-01-01T00:00:00.000Z");
 
     await prisma.lessonProgress.create({
-      data: { completedAt, durationSeconds: 30, lessonId: lesson.id, userId },
+      data: { completedAt, completedDate, durationSeconds: 30, lessonId: lesson.id, userId },
     });
 
     await startLesson(lesson.id);
@@ -109,6 +110,7 @@ describe(startLesson, () => {
     });
 
     expect(progress?.completedAt).toStrictEqual(completedAt);
+    expect(progress?.completedDate).toStrictEqual(completedDate);
     expect(progress?.durationSeconds).toBe(30);
   });
 

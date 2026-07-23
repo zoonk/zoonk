@@ -7,6 +7,7 @@
     "./belt-level": "./src/belt-level.ts",
     "./categories": "./src/categories.ts",
     "./chart": "./src/chart.ts",
+    "./contribution-calendar": "./src/contribution-calendar.ts",
     "./brain-power": "./src/brain-power.ts",
     "./date": "./src/date.ts",
     "./cookies": "./src/cookies.ts",

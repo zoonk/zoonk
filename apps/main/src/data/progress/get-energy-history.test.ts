@@ -1,454 +1,117 @@
-import { prisma } from "@zoonk/db";
-import { createSafeDate, createSameWeekDates } from "@zoonk/testing/fixtures/dates";
+import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { signInAsCurrentUser } from "../../../test-utils/auth";
 import { getEnergyHistory } from "./get-energy-history";
 
+const NOW = new Date("2025-01-10T12:00:00Z");
+
 describe("unauthenticated users", () => {
   it("returns null", async () => {
-    const result = await getEnergyHistory({ period: "month" });
+    const result = await getEnergyHistory({ now: NOW });
+
     expect(result).toBeNull();
   });
 });
 
 describe("authenticated users", () => {
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
-  it("returns null when user has no DailyProgress records", async () => {
+  it("returns null without recorded learning progress", async () => {
     const user = await userFixture();
     await signInAsCurrentUser({ email: user.email, password: user.password });
 
-    const result = await getEnergyHistory({ period: "month" });
+    await userProgressFixture({
+      currentEnergy: 0,
+      lastActiveAt: NOW,
+      totalBrainPower: 0n,
+      userId: user.id,
+    });
+
+    const result = await getEnergyHistory({ now: NOW });
+
     expect(result).toBeNull();
   });
 
-  describe("month period", () => {
-    it("returns daily data points for current month", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
+  it("keeps current Energy visible when lifetime history predates the calendar", async () => {
+    const user = await userFixture();
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
-      // Use createSafeDate to avoid month boundary issues (always mid-month)
-      const today = createSafeDate(0);
-      const yesterday = createSafeDate(0, 1);
+    await Promise.all([
+      userProgressFixture({
+        currentEnergy: 73,
+        lastActiveAt: NOW,
+        totalBrainPower: 100n,
+        userId: user.id,
+      }),
+      dailyProgressFixtureMany([
+        { date: new Date("2020-01-01T00:00:00Z"), energyAtEnd: 100, userId: user.id },
+      ]),
+    ]);
 
-      await prisma.dailyProgress.createMany({
-        data: [
-          { date: today, dayOfWeek: today.getDay(), energyAtEnd: 85.5, userId: user.id },
-          { date: yesterday, dayOfWeek: yesterday.getDay(), energyAtEnd: 80, userId: user.id },
-        ],
-      });
+    const result = await getEnergyHistory({ now: NOW, timeZone: "Pacific/Kiritimati" });
 
-      const result = await getEnergyHistory({ period: "month" });
-
-      expect(result).not.toBeNull();
-      expect(result?.dataPoints.length).toBeGreaterThanOrEqual(1);
-      expect(result?.average).toBeCloseTo(82.75, 1);
-    });
-
-    it("calculates average correctly", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      // Use createSafeDate to avoid month boundary issues
-      const today = createSafeDate(0);
-      const yesterday = createSafeDate(0, 1);
-
-      await prisma.dailyProgress.createMany({
-        data: [
-          { date: today, dayOfWeek: today.getDay(), energyAtEnd: 100, userId: user.id },
-          { date: yesterday, dayOfWeek: yesterday.getDay(), energyAtEnd: 50, userId: user.id },
-        ],
-      });
-
-      const result = await getEnergyHistory({ period: "month" });
-
-      expect(result).not.toBeNull();
-      expect(result?.average).toBe(75);
-    });
-
-    it("includes current energy from the user progress row", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      const today = new Date();
-
-      const todayMidnight = new Date(
-        Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
-      );
-
-      const fiveDaysAgo = new Date(todayMidnight.getTime() - 5 * 86_400_000);
-
-      await prisma.userProgress.create({
-        data: { currentEnergy: 50, lastActiveAt: fiveDaysAgo, userId: user.id },
-      });
-
-      const date = createSafeDate(0);
-
-      await prisma.dailyProgress.create({
-        data: { date, dayOfWeek: date.getDay(), energyAtEnd: 75, userId: user.id },
-      });
-
-      const result = await getEnergyHistory({ period: "month" });
-
-      expect(result).not.toBeNull();
-      expect(result?.average).toBe(75);
-      expect(result?.currentEnergy).toBe(46);
-    });
-
-    it("compares with the same full previous month shown by period navigation", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      vi.useFakeTimers({ toFake: ["Date"] });
-      vi.setSystemTime(new Date("2026-03-15T12:00:00.000Z"));
-
-      const currentMonth = new Date("2026-03-15T00:00:00.000Z");
-      const previousMonthFirstDay = new Date("2026-02-15T00:00:00.000Z");
-      const previousMonthSecondDay = new Date("2026-02-16T00:00:00.000Z");
-
-      await prisma.dailyProgress.createMany({
-        data: [
-          {
-            date: currentMonth,
-            dayOfWeek: currentMonth.getDay(),
-            energyAtEnd: 97.8,
-            userId: user.id,
-          },
-          {
-            date: previousMonthFirstDay,
-            dayOfWeek: previousMonthFirstDay.getDay(),
-            energyAtEnd: 24,
-            userId: user.id,
-          },
-          {
-            date: previousMonthSecondDay,
-            dayOfWeek: previousMonthSecondDay.getDay(),
-            energyAtEnd: 99.6,
-            userId: user.id,
-          },
-        ],
-      });
-
-      const [currentResult, previousResult] = await Promise.all([
-        getEnergyHistory({ period: "month" }),
-        getEnergyHistory({ offset: 1, period: "month" }),
-      ]);
-
-      expect(currentResult?.average).toBe(97.8);
-      expect(previousResult?.average).toBe(61.8);
-      expect(currentResult?.previousAverage).toBe(previousResult?.average);
-    });
-
-    it("navigates to previous month with offset", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      const currentMonth = createSafeDate(0);
-      const lastMonth = createSafeDate(1);
-
-      await prisma.dailyProgress.createMany({
-        data: [
-          {
-            date: currentMonth,
-            dayOfWeek: currentMonth.getDay(),
-            energyAtEnd: 80,
-            userId: user.id,
-          },
-          { date: lastMonth, dayOfWeek: lastMonth.getDay(), energyAtEnd: 60, userId: user.id },
-        ],
-      });
-
-      const result = await getEnergyHistory({ offset: 1, period: "month" });
-
-      expect(result).not.toBeNull();
-      expect(result?.average).toBe(60);
-      expect(result?.hasNextPeriod).toBe(true);
-    });
+    expect(result?.currentEnergy).toBe(73);
+    expect(result?.days).toHaveLength(371);
+    expect(result?.days.every((day) => day.energy === null)).toBe(true);
+    expect(result?.days.at(-1)?.date).toStrictEqual(new Date("2025-01-11T00:00:00Z"));
   });
 
-  describe("6months period", () => {
-    it("returns weekly aggregated data points", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
+  it("returns live current Energy and a bounded daily calendar", async () => {
+    const [user, otherUser] = await Promise.all([userFixture(), userFixture()]);
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
-      // Use createSafeDate for stable dates within the period
-      const today = createSafeDate(0);
-      const oneWeekAgo = createSafeDate(0, 7);
+    await Promise.all([
+      userProgressFixture({ currentEnergy: 73, lastActiveAt: NOW, userId: user.id }),
+      dailyProgressFixtureMany([
+        { date: new Date("2024-01-01T00:00:00Z"), energyAtEnd: 100, userId: user.id },
+        { date: new Date("2025-01-05T00:00:00Z"), energyAtEnd: 50, userId: user.id },
+        { date: new Date("2025-01-08T00:00:00Z"), energyAtEnd: 0, userId: user.id },
+        { date: new Date("2025-01-06T00:00:00Z"), energyAtEnd: 100, userId: otherUser.id },
+      ]),
+    ]);
 
-      await prisma.dailyProgress.createMany({
-        data: [
-          { date: today, dayOfWeek: today.getDay(), energyAtEnd: 80, userId: user.id },
-          { date: oneWeekAgo, dayOfWeek: oneWeekAgo.getDay(), energyAtEnd: 70, userId: user.id },
-        ],
-      });
+    const result = await getEnergyHistory({ now: NOW });
 
-      const result = await getEnergyHistory({ period: "6months" });
+    expect(result?.currentEnergy).toBe(73);
+    expect(result?.days).toHaveLength(370);
 
-      expect(result).not.toBeNull();
-      expect(result?.dataPoints.length).toBeGreaterThanOrEqual(1);
+    expect(result?.days.at(0)).toStrictEqual({
+      date: new Date("2024-01-07T00:00:00Z"),
+      energy: null,
     });
+
+    expect(
+      result?.days.find((day) => day.date.getTime() === new Date("2025-01-05T00:00:00Z").getTime()),
+    ).toStrictEqual({ date: new Date("2025-01-05T00:00:00Z"), energy: 50 });
+
+    expect(
+      result?.days.find((day) => day.date.getTime() === new Date("2025-01-08T00:00:00Z").getTime()),
+    ).toStrictEqual({ date: new Date("2025-01-08T00:00:00Z"), energy: 0 });
+
+    expect(
+      result?.days.find((day) => day.date.getTime() === new Date("2025-01-06T00:00:00Z").getTime()),
+    ).toStrictEqual({ date: new Date("2025-01-06T00:00:00Z"), energy: null });
+
+    expect(result?.days.some((day) => day.date < new Date("2024-01-07T00:00:00Z"))).toBe(false);
   });
 
-  describe("year period", () => {
-    it("returns monthly aggregated data points", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
+  it("includes the learner's next UTC-date Energy near the server day boundary", async () => {
+    const user = await userFixture();
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
-      const currentMonth = createSafeDate(0);
-      const lastMonth = createSafeDate(1);
+    await Promise.all([
+      userProgressFixture({ currentEnergy: 80, lastActiveAt: NOW, userId: user.id }),
+      dailyProgressFixtureMany([
+        { date: new Date("2025-01-11T00:00:00Z"), energyAtEnd: 80, userId: user.id },
+      ]),
+    ]);
 
-      await prisma.dailyProgress.createMany({
-        data: [
-          {
-            date: currentMonth,
-            dayOfWeek: currentMonth.getDay(),
-            energyAtEnd: 85,
-            userId: user.id,
-          },
-          { date: lastMonth, dayOfWeek: lastMonth.getDay(), energyAtEnd: 75, userId: user.id },
-        ],
-      });
+    const result = await getEnergyHistory({ now: NOW, timeZone: "Pacific/Kiritimati" });
 
-      const result = await getEnergyHistory({ period: "year" });
+    expect(result?.days).toHaveLength(371);
 
-      expect(result).not.toBeNull();
-      expect(result?.dataPoints.length).toBeGreaterThanOrEqual(1);
-    });
-  });
-
-  describe("all period", () => {
-    it("returns yearly aggregated data points", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      const today = createSafeDate(0);
-
-      await prisma.dailyProgress.create({
-        data: { date: today, dayOfWeek: today.getDay(), energyAtEnd: 85, userId: user.id },
-      });
-
-      const result = await getEnergyHistory({ period: "all" });
-
-      expect(result).not.toBeNull();
-      expect(result?.dataPoints.length).toBeGreaterThanOrEqual(1);
-      expect(result?.previousAverage).toBeNull();
-    });
-  });
-
-  describe("navigation flags", () => {
-    it("hasPreviousPeriod is true when historical data exists", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      const currentMonth = createSafeDate(0);
-      const twoMonthsAgo = createSafeDate(2);
-
-      await prisma.dailyProgress.createMany({
-        data: [
-          {
-            date: currentMonth,
-            dayOfWeek: currentMonth.getDay(),
-            energyAtEnd: 80,
-            userId: user.id,
-          },
-          {
-            date: twoMonthsAgo,
-            dayOfWeek: twoMonthsAgo.getDay(),
-            energyAtEnd: 60,
-            userId: user.id,
-          },
-        ],
-      });
-
-      const result = await getEnergyHistory({ period: "month" });
-
-      expect(result).not.toBeNull();
-      expect(result?.hasPreviousPeriod).toBe(true);
-    });
-
-    it("hasNextPeriod is false when on current period (offset=0)", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      const today = createSafeDate(0);
-
-      await prisma.dailyProgress.create({
-        data: { date: today, dayOfWeek: today.getDay(), energyAtEnd: 80, userId: user.id },
-      });
-
-      const result = await getEnergyHistory({ period: "month" });
-
-      expect(result).not.toBeNull();
-      expect(result?.hasNextPeriod).toBe(false);
-    });
-
-    it("hasNextPeriod is true when offset > 0", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      const lastMonth = createSafeDate(1);
-
-      await prisma.dailyProgress.create({
-        data: { date: lastMonth, dayOfWeek: lastMonth.getDay(), energyAtEnd: 70, userId: user.id },
-      });
-
-      const result = await getEnergyHistory({ offset: 1, period: "month" });
-
-      expect(result).not.toBeNull();
-      expect(result?.hasNextPeriod).toBe(true);
-    });
-  });
-
-  describe("daily decay for month period", () => {
-    it("fills gaps between data points with -1 decay per day", async () => {
-      const user = await userFixture();
-
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      // Use createSafeDate to avoid month boundary issues
-      // day1 is 4 days before day5, both in the same month
-      const day1 = createSafeDate(0, 4);
-      const day5 = createSafeDate(0);
-
-      await prisma.dailyProgress.createMany({
-        data: [
-          { date: day1, dayOfWeek: day1.getDay(), energyAtEnd: 75, userId: user.id },
-          { date: day5, dayOfWeek: day5.getDay(), energyAtEnd: 76, userId: user.id },
-        ],
-      });
-
-      const result = await getEnergyHistory({ period: "month" });
-
-      if (!result) {
-        throw new Error("Expected result");
-      }
-
-      // Should have 5 data points: day1 + 3 decayed days + day5
-      const { dataPoints } = result;
-      expect(dataPoints).toHaveLength(5);
-
-      // First and last should be actual data
-      expect(dataPoints[0]?.energy).toBe(75);
-      expect(dataPoints[4]?.energy).toBe(76);
-
-      // Middle days should have decayed values
-      expect(dataPoints[1]?.energy).toBe(74);
-      expect(dataPoints[2]?.energy).toBe(73);
-      expect(dataPoints[3]?.energy).toBe(72);
-    });
-
-    it("decay never goes below 0", async () => {
-      const user = await userFixture();
-
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      // Use createSafeDate to avoid month boundary issues
-      // day1 is 5 days before day6, both in the same month
-      const day1 = createSafeDate(0, 5);
-      const day6 = createSafeDate(0);
-
-      await prisma.dailyProgress.createMany({
-        data: [
-          { date: day1, dayOfWeek: day1.getDay(), energyAtEnd: 3, userId: user.id },
-          { date: day6, dayOfWeek: day6.getDay(), energyAtEnd: 50, userId: user.id },
-        ],
-      });
-
-      const result = await getEnergyHistory({ period: "month" });
-
-      if (!result) {
-        throw new Error("Expected result");
-      }
-
-      // Should have 6 data points: day1 + 4 decayed days + day6
-      const { dataPoints } = result;
-      expect(dataPoints).toHaveLength(6);
-
-      // Day 1: 3, Day 2: 2, Day 3: 1, Day 4: 0, Day 5: 0 (not negative), Day 6: 50
-      expect(dataPoints[0]?.energy).toBe(3);
-      expect(dataPoints[1]?.energy).toBe(2);
-      expect(dataPoints[2]?.energy).toBe(1);
-      expect(dataPoints[3]?.energy).toBe(0);
-      expect(dataPoints[4]?.energy).toBe(0);
-      expect(dataPoints[5]?.energy).toBe(50);
-    });
-
-    it("average includes decayed values", async () => {
-      const user = await userFixture();
-
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      // Use createSafeDate to avoid month boundary issues
-      // day1 is 2 days before day3, both in the same month
-      const day1 = createSafeDate(0, 2);
-      const day3 = createSafeDate(0);
-
-      await prisma.dailyProgress.createMany({
-        data: [
-          { date: day1, dayOfWeek: day1.getDay(), energyAtEnd: 90, userId: user.id },
-          { date: day3, dayOfWeek: day3.getDay(), energyAtEnd: 95, userId: user.id },
-        ],
-      });
-
-      const result = await getEnergyHistory({ period: "month" });
-
-      expect(result).not.toBeNull();
-
-      // Day1=90, day2=89, day3=95 → avg = (90+89+95)/3 = 91.33
-      expect(result?.average).toBeCloseTo(91.33, 1);
-    });
-
-    it("applies decay and aggregates by week for 6months period", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      // Use createSameWeekDates to guarantee both dates are in the same Mon-Sun week
-      const [day1, day3] = createSameWeekDates(2);
-
-      await prisma.dailyProgress.createMany({
-        data: [
-          { date: day1, dayOfWeek: day1.getDay(), energyAtEnd: 80, userId: user.id },
-          { date: day3, dayOfWeek: day3.getDay(), energyAtEnd: 90, userId: user.id },
-        ],
-      });
-
-      const result = await getEnergyHistory({ period: "6months" });
-
-      expect(result).not.toBeNull();
-
-      // All 3 days are in the same week:
-      // Day1=80, day2=79 (decayed), day3=90
-      // Weekly average: (80 + 79 + 90) / 3 = 83
-      expect(result?.average).toBeCloseTo(83, 0);
-    });
-
-    it("applies decay and aggregates by month for year period", async () => {
-      const user = await userFixture();
-
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      // Use createSafeDate to ensure dates are in the same month
-      // day1 is 3 days before day4
-      const day1 = createSafeDate(0, 3);
-      const day4 = createSafeDate(0);
-
-      await prisma.dailyProgress.createMany({
-        data: [
-          { date: day1, dayOfWeek: day1.getDay(), energyAtEnd: 100, userId: user.id },
-          { date: day4, dayOfWeek: day4.getDay(), energyAtEnd: 100, userId: user.id },
-        ],
-      });
-
-      const result = await getEnergyHistory({ period: "year" });
-
-      expect(result).not.toBeNull();
-
-      // Monthly average should include decayed days 2 and 3:
-      // Day1=100, day2=99, day3=98, day4=100 → avg = (100+99+98+100)/4 = 99.25
-      expect(result?.average).toBeCloseTo(99.25, 1);
+    expect(result?.days.at(-1)).toStrictEqual({
+      date: new Date("2025-01-11T00:00:00Z"),
+      energy: 80,
     });
   });
 });

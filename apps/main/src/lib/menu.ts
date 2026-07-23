@@ -1,6 +1,7 @@
 import {
   BookOpenTextIcon,
   Brain,
+  ChartNoAxesColumnIncreasingIcon,
   Gem,
   GraduationCapIcon,
   Home,
@@ -18,6 +19,7 @@ import {
 } from "lucide-react";
 
 const menu = {
+  activity: { icon: ChartNoAxesColumnIncreasingIcon, url: "/activity" },
   blog: { icon: Newspaper, url: "/blog" },
   courses: { icon: LayoutGrid, url: "/courses" },
   energy: { icon: ZapIcon, url: "/energy" },
