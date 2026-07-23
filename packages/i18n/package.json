@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@eloqnt/cli": "catalog:",
-    "ai-sdk-provider-codex-cli": "2.1.1",
+    "ai-sdk-provider-codex-cli": "2.1.2",
     "next-intl": "catalog:",
     "po-parser": "2.1.1"
   },
