@@ -12,7 +12,8 @@ describe(getEnergyCalendarIntensity, () => {
     { energy: 51, expectedIntensity: 3 },
     { energy: 75, expectedIntensity: 3 },
     { energy: 76, expectedIntensity: 4 },
-    { energy: 100, expectedIntensity: 4 },
+    { energy: 99, expectedIntensity: 4 },
+    { energy: 100, expectedIntensity: 5 },
   ])("maps $energy Energy to level $expectedIntensity", ({ energy, expectedIntensity }) => {
     expect(getEnergyCalendarIntensity(energy)).toBe(expectedIntensity);
   });

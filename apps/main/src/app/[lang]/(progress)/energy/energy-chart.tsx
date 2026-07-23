@@ -36,6 +36,7 @@ const ENERGY_INTENSITY_CLASSES = [
   "bg-energy/20",
   "bg-energy/40",
   "bg-energy/60",
+  "bg-energy/80",
   "bg-energy",
 ] as const;
 
