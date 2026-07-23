@@ -4,7 +4,6 @@ import {
   type PlayerRuntimeContextValue,
   usePlayerNavigation,
   usePlayerRuntime,
-  usePlayerViewer,
 } from "../player-context";
 import {
   getActiveCompletionMilestone,
@@ -84,8 +83,6 @@ export function StageContent() {
   const { chapterHref, energyHref, levelHref, loginHref, nextLessonHref, scoreHref } =
     usePlayerNavigation();
 
-  const { isAuthenticated } = usePlayerViewer();
-
   const activeCompletionMilestone = getActiveCompletionMilestone(state);
   const completionResult = getCompletionResult(state);
   const currentResult = getCurrentResult(state);
@@ -102,7 +99,7 @@ export function StageContent() {
   }
 
   if (screen.kind === "completed") {
-    if (isAuthenticated && activeCompletionMilestone) {
+    if (activeCompletionMilestone) {
       return (
         <CompletionProgressMilestoneScreen
           energyHref={energyHref}
