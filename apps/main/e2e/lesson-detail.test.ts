@@ -548,6 +548,32 @@ test.describe("Lesson Player Page", () => {
     ).toBeVisible();
   });
 
+  test("formats lesson progress using the app locale", async ({ browser, withProgressUser }) => {
+    const { chapter, course, lesson, uniqueId } = await createTestLesson({
+      generationStatus: "completed",
+      stepCount: 2,
+    });
+
+    const browserContext = await browser.newContext({
+      locale: "en-US",
+      storageState: withProgressUser.storageState,
+    });
+
+    const page = await browserContext.newPage();
+
+    try {
+      await page.goto(`/de/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+      await expect(page.getByRole("heading", { name: `Step ${uniqueId} #0` })).toBeVisible();
+
+      await expect(page.getByRole("progressbar", { name: "Lektionsfortschritt" })).toHaveAttribute(
+        "aria-valuetext",
+        new Intl.NumberFormat("de", { style: "percent" }).format(0.5),
+      );
+    } finally {
+      await browserContext.close();
+    }
+  });
+
   test("authenticated users without subscription see upgrade CTA for later chapters", async ({
     authenticatedPage,
   }) => {

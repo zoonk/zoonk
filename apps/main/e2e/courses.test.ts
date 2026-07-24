@@ -177,4 +177,38 @@ test.describe("Courses Page - Locale", () => {
 
     await expect(page.getByRole("heading", { name: /explorar cursos/iu })).toBeVisible();
   });
+
+  test("sorts categories using the active app locale", async ({ browser }) => {
+    const browserContext = await browser.newContext({
+      locale: "cs-CZ",
+      viewport: { height: 720, width: 800 },
+    });
+
+    const page = await browserContext.newPage();
+    const hydrationErrors: Error[] = [];
+
+    page.on("pageerror", (error) => hydrationErrors.push(error));
+
+    try {
+      await page.goto("/de/courses");
+      await expect(page.getByRole("button", { name: "Scroll right" })).toBeVisible();
+      expect(hydrationErrors).toEqual([]);
+
+      const labels = await page
+        .getByRole("navigation", { name: "Kurskategorien" })
+        .getByRole("link")
+        .allTextContents();
+
+      const categoryLabels = labels.slice(1);
+      const germanCollator = new Intl.Collator("de");
+
+      const expectedLabels = categoryLabels.toSorted((first, second) =>
+        germanCollator.compare(first, second),
+      );
+
+      expect(categoryLabels).toStrictEqual(expectedLabels);
+    } finally {
+      await browserContext.close();
+    }
+  });
 });

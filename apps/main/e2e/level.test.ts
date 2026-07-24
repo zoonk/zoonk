@@ -10,16 +10,22 @@ import { expect, test } from "./fixtures";
 async function createLevelTestPage({
   baseURL,
   browser,
+  browserLocale,
   totalBrainPower,
 }: {
   baseURL: string;
   browser: Browser;
+  browserLocale?: string;
   totalBrainPower: bigint;
 }) {
   const user = await createE2EUser(baseURL, { orgRole: "member" });
   await userProgressFixture({ totalBrainPower, userId: user.id });
 
-  const browserContext = await browser.newContext({ storageState: user.storageState });
+  const browserContext = await browser.newContext({
+    locale: browserLocale,
+    storageState: user.storageState,
+  });
+
   const page = await browserContext.newPage();
 
   return { browserContext, page };
@@ -67,6 +73,30 @@ test.describe("Level Page", () => {
         await expect(page.getByRole("navigation", { name: /period selection/iu })).toHaveCount(0);
         await expect(page.getByRole("figure", { name: /brain power chart/iu })).toHaveCount(0);
         await expect(page.getByRole("article", { name: /highest bp/iu })).toHaveCount(0);
+      } finally {
+        await browserContext.close();
+      }
+    });
+
+    test("formats level progress using the app locale", async ({ baseURL, browser }) => {
+      const { browserContext, page } = await createLevelTestPage({
+        baseURL: baseURL!,
+        browser,
+        browserLocale: "en-US",
+        totalBrainPower: 15_000n,
+      });
+
+      try {
+        await page.goto("/de/level");
+
+        const levelProgress = page.getByRole("progressbar", {
+          name: /500 bp bis zum nächsten level/iu,
+        });
+
+        await expect(levelProgress).toHaveAttribute(
+          "aria-valuetext",
+          new Intl.NumberFormat("de", { style: "percent" }).format(0.5),
+        );
       } finally {
         await browserContext.close();
       }
