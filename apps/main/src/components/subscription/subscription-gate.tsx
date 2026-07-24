@@ -4,8 +4,8 @@ import { type AppRoute } from "@/i18n/navigation";
 import { UpgradeCTA } from "./upgrade-cta";
 
 /**
- * Keeps generation pages on one subscription check and one upgrade message, so
- * chapter and lesson generation explain the free limit consistently.
+ * Keeps generation pages on one subscription check and one Plus message, so
+ * chapter and lesson generation present the offer consistently.
  */
 export async function SubscriptionGate<Href extends string>({
   backHref,

@@ -14,8 +14,7 @@ import { SubscriptionGateTracker } from "./subscription-gate-tracker";
 
 /**
  * Preserves one tracked subscription action while allowing a calling page to
- * provide durable context that is more useful than the generic generation
- * limit message.
+ * provide durable context that is more useful than the generic Plus message.
  */
 export async function UpgradeCTA<Href extends string>({
   backHref,
@@ -38,10 +37,10 @@ export async function UpgradeCTA<Href extends string>({
             <SparklesIcon />
           </EmptyMedia>
 
-          <EmptyTitle>{t("Upgrade to create")}</EmptyTitle>
+          <EmptyTitle>{t("Keep learning with Plus")}</EmptyTitle>
 
           <EmptyDescription>
-            {t("You’ve reached your free lesson limit. Upgrade for unlimited lessons")}
+            {t("Plus gives you unlimited courses and lessons for whatever you want to learn.")}
           </EmptyDescription>
         </EmptyHeader>
       )}
@@ -52,7 +51,7 @@ export async function UpgradeCTA<Href extends string>({
         </GenerationShortcutLink>
 
         <GenerationShortcutLink href="/subscription" prefetch shortcut="Enter">
-          {t("Upgrade")}
+          {t("Get Zoonk Plus")}
         </GenerationShortcutLink>
       </EmptyContent>
     </Empty>

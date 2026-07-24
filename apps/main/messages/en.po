@@ -1668,10 +1668,9 @@ msgid "Back to chapter"
 msgstr "Back to chapter"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
-#: src/components/subscription/upgrade-cta.tsx
-msgctxt "ZMU6iN"
-msgid "You’ve reached your free lesson limit. Upgrade for unlimited lessons"
-msgstr "You’ve reached your free lesson limit. Upgrade for unlimited lessons"
+msgctxt "qmXr1f"
+msgid "This lesson is included with Plus."
+msgstr "This lesson is included with Plus."
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgctxt "4w9Y_P"
@@ -2711,14 +2710,19 @@ msgid "Learning time"
 msgstr "Learning time"
 
 #: src/components/subscription/upgrade-cta.tsx
-msgctxt "IS_YjO"
-msgid "Upgrade to create"
-msgstr "Upgrade to create"
+msgctxt "NU-lfu"
+msgid "Keep learning with Plus"
+msgstr "Keep learning with Plus"
 
 #: src/components/subscription/upgrade-cta.tsx
-msgctxt "0h_lPM"
-msgid "Upgrade"
-msgstr "Upgrade"
+msgctxt "X4sblx"
+msgid "Plus gives you unlimited courses and lessons for whatever you want to learn."
+msgstr "Plus gives you unlimited courses and lessons for whatever you want to learn."
+
+#: src/components/subscription/upgrade-cta.tsx
+msgctxt "LeTnGY"
+msgid "Get Zoonk Plus"
+msgstr "Get Zoonk Plus"
 
 #: src/lib/belt-colors.ts
 msgctxt "znY9eW"
