@@ -24,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
  * Shows every TTS-supported language as a searchable list so learners can start
  * a controlled language course without going through open-ended prompting.
  */
-export default async function StartSpeak({ params }: PageProps<"/[lang]/start/speak">) {
+export default async function StartSpeak() {
   const t = await getExtracted();
 
   return (
@@ -36,7 +36,7 @@ export default async function StartSpeak({ params }: PageProps<"/[lang]/start/sp
       </StartSurfaceHeader>
 
       <Suspense fallback={<LanguageListSkeleton />}>
-        <LanguageListContent params={params} />
+        <LanguageListContent />
       </Suspense>
     </StartSurface>
   );

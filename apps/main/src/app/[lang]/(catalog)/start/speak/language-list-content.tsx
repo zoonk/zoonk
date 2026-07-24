@@ -1,6 +1,7 @@
 import { getCompletedLanguageCourseHrefs } from "@/data/courses/language-course";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { getExtracted } from "next-intl/server";
+import { lang } from "next/root-params";
 import { LanguageList } from "./language-list";
 import { getLanguageOptions } from "./language-options";
 
@@ -34,13 +35,13 @@ export function LanguageListSkeleton() {
 }
 
 /**
- * Resolves the URL locale and its completed-course destinations below the
+ * Resolves the request locale and its completed-course destinations below the
  * page's Suspense boundary so the picker heading remains in the shared shell.
+ * Reading the root parameter directly keeps it available during runtime-prefetch
+ * cache warming, where the full params promise is intentionally deferred.
  */
-export async function LanguageListContent({
-  params,
-}: Pick<PageProps<"/[lang]/start/speak">, "params">) {
-  const { lang: locale } = await params;
+export async function LanguageListContent() {
+  const locale = await lang();
   const t = await getExtracted({ locale });
   const completedLanguageCourseHrefs = await getCompletedLanguageCourseHrefs({ language: locale });
   const languages = getLanguageOptions({ completedLanguageCourseHrefs, locale });
