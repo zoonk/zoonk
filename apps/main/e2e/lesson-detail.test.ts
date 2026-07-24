@@ -82,6 +82,20 @@ async function continueWithoutSaving(page: Page) {
 }
 
 /**
+ * Lesson metadata streams after the initial document, so SEO assertions need
+ * to poll the rendered head instead of reading it immediately after navigation.
+ */
+async function expectRobotsMeta({ page, value }: { page: Page; value: string }) {
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => document.querySelector<HTMLMetaElement>("meta[name='robots']")?.content ?? "",
+      ),
+    )
+    .toBe(value);
+}
+
+/**
  * Practice lessons can be generated from explanation metadata before those
  * explanations finish generating, so the player empty state should point at
  * the practice lesson itself instead of sending learners to an explanation row.
@@ -90,6 +104,7 @@ async function createPracticeWithPendingExplanation() {
   const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
+  const sourceTitle = `E2E Blocked Player Explanation ${uniqueId}`;
 
   const course = await courseFixture({
     isPublished: true,
@@ -115,21 +130,22 @@ async function createPracticeWithPendingExplanation() {
       organizationId: org.id,
       position: 0,
       slug: `e2e-blocked-player-explanation-${uniqueId}`,
-      title: `E2E Blocked Player Explanation ${uniqueId}`,
+      title: sourceTitle,
     }),
     lessonFixture({
       chapterId: chapter.id,
+      description: null,
       generationStatus: "pending",
       isPublished: true,
       kind: "practice",
       organizationId: org.id,
       position: 1,
       slug: `e2e-blocked-player-practice-${uniqueId}`,
-      title: `E2E Blocked Player Practice ${uniqueId}`,
+      title: null,
     }),
   ]);
 
-  return { chapter, course, practice };
+  return { chapter, course, practice, sourceTitle };
 }
 
 async function createPendingCompanionLesson({
@@ -234,13 +250,14 @@ async function createEmptyReviewLesson() {
     }),
     lessonFixture({
       chapterId: chapter.id,
+      description: null,
       generationStatus: "completed",
       isPublished: true,
       kind: "review",
       organizationId: org.id,
       position: 1,
       slug: `e2e-review-empty-review-${uniqueId}`,
-      title: `E2E Review Empty Review ${uniqueId}`,
+      title: null,
     }),
   ]);
 
@@ -545,17 +562,17 @@ test.describe("Lesson Player Page", () => {
 
     await authenticatedPage.goto(lessonHref);
 
-    await expect(authenticatedPage.getByText(/unlock the rest of this course/iu)).toBeVisible();
-
     await expect(
-      authenticatedPage.getByText(/you.ve reached your free lesson limit/iu),
+      authenticatedPage.getByRole("heading", { level: 1, name: lessonTitle }),
     ).toBeVisible();
 
-    await expect(authenticatedPage.getByRole("heading", { name: lessonTitle })).not.toBeVisible();
+    await expect(authenticatedPage.getByText(`E2E lesson description ${uniqueId}`)).toBeVisible();
 
     await expect(
-      authenticatedPage.getByText(`E2E lesson description ${uniqueId}`),
-    ).not.toBeVisible();
+      authenticatedPage.getByText(
+        "You’ve reached your free lesson limit. Upgrade for unlimited lessons",
+      ),
+    ).toBeVisible();
 
     const backLink = authenticatedPage.getByRole("link", { name: /back to chapter/iu });
     const upgradeLink = authenticatedPage.getByRole("link", { name: /upgrade/iu });
@@ -603,12 +620,21 @@ test.describe("Lesson Player Page", () => {
   });
 
   test("pending lessons show the create state and link details", async ({ page }) => {
-    const { lesson, chapter, course } = await createTestLesson({ generationStatus: "pending" });
+    const { lesson, chapter, course, lessonTitle, uniqueId } = await createTestLesson({
+      generationStatus: "pending",
+    });
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await expect(page.getByText(/create this lesson/iu)).toBeVisible();
-    await expect(page.getByText(/create it to start learning/iu)).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: lessonTitle })).toBeVisible();
+    await expect(page.getByText(`E2E lesson description ${uniqueId}`)).toBeVisible();
+
+    await expect(
+      page.getByText(
+        "This lesson is part of the course, but it hasn't been created yet. Create it to start learning.",
+      ),
+    ).toBeVisible();
+
     const generateLink = page.getByRole("link", { name: /create lesson/iu });
 
     await expect(generateLink).toBeVisible();
@@ -643,11 +669,19 @@ test.describe("Lesson Player Page", () => {
   test("pending practice lessons link to their own generation page", async ({
     authenticatedPage,
   }) => {
-    const { chapter, course, practice } = await createPracticeWithPendingExplanation();
+    const { chapter, course, practice, sourceTitle } = await createPracticeWithPendingExplanation();
 
     await authenticatedPage.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${practice.slug}`);
 
-    await expect(authenticatedPage.getByText("Create this lesson")).toBeVisible();
+    await expect(
+      authenticatedPage.getByRole("heading", { level: 1, name: sourceTitle }),
+    ).toBeVisible();
+
+    await expect(
+      authenticatedPage.getByText(
+        `Apply ${sourceTitle} through a visual real-world problem with short decisions.`,
+      ),
+    ).toBeVisible();
 
     await expect(
       authenticatedPage.getByText(
@@ -695,7 +729,18 @@ test.describe("Lesson Player Page", () => {
 
     await authenticatedPage.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${review.slug}`);
 
-    await expect(authenticatedPage.getByText("Create lessons before reviewing")).toBeVisible();
+    await expect(authenticatedPage).toHaveTitle(new RegExp(`${chapter.title} Review`, "u"));
+    await expectRobotsMeta({ page: authenticatedPage, value: "index, follow" });
+
+    await expect(
+      authenticatedPage.getByRole("heading", { level: 1, name: chapter.title }),
+    ).toBeVisible();
+
+    await expect(
+      authenticatedPage.getByText(
+        `Review everything you learned about ${chapter.title} with a comprehensive quiz.`,
+      ),
+    ).toBeVisible();
 
     await expect(
       authenticatedPage.getByText(
@@ -797,7 +842,14 @@ test.describe("Lesson Player Page", () => {
 
     await page.goto(`/b/${org.slug}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await expect(page.getByText(/create this lesson/iu)).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: lesson.title! })).toBeVisible();
+
+    await expect(
+      page.getByText(
+        "This lesson is part of the course, but it hasn't been created yet. Create it to start learning.",
+      ),
+    ).toBeVisible();
+
     await expect(page.getByRole("link", { name: /create lesson/iu })).not.toBeVisible();
   });
 
@@ -822,17 +874,27 @@ test.describe("Lesson Player Page", () => {
     await expect(page.getByText(/not found|404/iu)).toBeVisible();
   });
 
-  test("page title contains lesson title", async ({ page }) => {
-    const { chapter, course, lesson, lessonTitle } = await createTestLesson({
+  test("uses stored lesson metadata and permits indexing", async ({ page }) => {
+    const { chapter, course, lesson, lessonTitle, uniqueId } = await createTestLesson({
       generationStatus: "completed",
     });
 
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+    await page.goto(`/pt/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await expect(page).toHaveTitle(new RegExp(lessonTitle, "u"));
+    await expect(page).toHaveTitle(new RegExp(`Explicação sobre ${lessonTitle}`, "u"));
+
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () => document.querySelector<HTMLMetaElement>("meta[name='description']")?.content ?? "",
+        ),
+      )
+      .toBe(`E2E lesson description ${uniqueId}`);
+
+    await expectRobotsMeta({ page, value: "index, follow" });
   });
 
-  test("page title describes lessons without a stored title", async ({ authenticatedPage }) => {
+  test("page title uses the source topic for an indexable companion lesson", async ({ page }) => {
     const org = await getAiOrganization();
     const uniqueId = randomUUID().slice(0, 8);
 
@@ -851,34 +913,69 @@ test.describe("Lesson Player Page", () => {
       title: `E2E Titleless Chapter ${uniqueId}`,
     });
 
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
+    const sourceTitle = `E2E Source Topic ${uniqueId}`;
+
+    const [sourceLesson, lesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "explanation",
+        organizationId: org.id,
+        position: 0,
+        slug: `e2e-source-explanation-${uniqueId}`,
+        title: sourceTitle,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        description: null,
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "quiz",
+        organizationId: org.id,
+        position: 1,
+        slug: `e2e-titleless-quiz-${uniqueId}`,
+        title: null,
+      }),
+    ]);
+
+    await Promise.all([
+      stepFixture({
+        content: {
+          text: `Source explanation step ${uniqueId}`,
+          title: `Source explanation ${uniqueId}`,
+          variant: "text",
+        },
+        isPublished: true,
+        lessonId: sourceLesson.id,
+      }),
+      stepFixture({
+        content: {
+          text: `Titleless quiz step ${uniqueId}`,
+          title: `Titleless quiz ${uniqueId}`,
+          variant: "text",
+        },
+        isPublished: true,
+        lessonId: lesson.id,
+      }),
+    ]);
+
+    await page.goto(`/pt/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+
+    await expect(page).toHaveTitle(new RegExp(`Quiz sobre ${sourceTitle}`, "u"));
+
+    await expect(page).not.toHaveTitle(/Quiz Quiz/u);
+  });
+
+  test("permits indexing for lessons in later chapters", async ({ page }) => {
+    const { chapter, course, lesson } = await createTestLesson({
+      chapterPosition: 1,
       generationStatus: "completed",
-      isPublished: true,
-      kind: "quiz",
-      organizationId: org.id,
-      position: 2,
-      slug: `e2e-titleless-quiz-${uniqueId}`,
-      title: null,
     });
 
-    await stepFixture({
-      content: {
-        text: `Titleless quiz step ${uniqueId}`,
-        title: `Titleless quiz ${uniqueId}`,
-        variant: "text",
-      },
-      isPublished: true,
-      lessonId: lesson.id,
-    });
+    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await authenticatedPage.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
-
-    await expect(authenticatedPage).toHaveTitle(
-      new RegExp(`${chapter.title} Quiz ${lesson.position + 1}`, "u"),
-    );
-
-    await expect(authenticatedPage).not.toHaveTitle(/Quiz Quiz/u);
+    await expectRobotsMeta({ page, value: "index, follow" });
   });
 
   test("unpublished lesson shows 404 page", async ({ page }) => {

@@ -12,16 +12,19 @@ import { SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { SubscriptionGateTracker } from "./subscription-gate-tracker";
 
+/**
+ * Preserves one tracked subscription action while allowing a calling page to
+ * provide durable context that is more useful than the generic generation
+ * limit message.
+ */
 export async function UpgradeCTA<Href extends string>({
   backHref,
   backLabel,
-  description,
-  title,
+  children,
 }: {
   backHref: AppRoute<Href>;
   backLabel: string;
-  description?: string;
-  title?: string;
+  children?: React.ReactNode;
 }) {
   const t = await getExtracted();
 
@@ -29,17 +32,19 @@ export async function UpgradeCTA<Href extends string>({
     <Empty className="border-0">
       <SubscriptionGateTracker />
 
-      <EmptyHeader align="start">
-        <EmptyMedia variant="icon">
-          <SparklesIcon />
-        </EmptyMedia>
+      {children ?? (
+        <EmptyHeader align="start">
+          <EmptyMedia variant="icon">
+            <SparklesIcon />
+          </EmptyMedia>
 
-        <EmptyTitle>{title ?? t("Upgrade to create")}</EmptyTitle>
+          <EmptyTitle>{t("Upgrade to create")}</EmptyTitle>
 
-        <EmptyDescription>
-          {description ?? t("You’ve reached your free lesson limit. Upgrade for unlimited lessons")}
-        </EmptyDescription>
-      </EmptyHeader>
+          <EmptyDescription>
+            {t("You’ve reached your free lesson limit. Upgrade for unlimited lessons")}
+          </EmptyDescription>
+        </EmptyHeader>
+      )}
 
       <EmptyContent align="stretch">
         <GenerationShortcutLink href={backHref} prefetch shortcut="Esc" variant="outline">

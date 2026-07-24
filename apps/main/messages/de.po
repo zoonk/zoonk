@@ -1708,11 +1708,6 @@ msgid "Follow us"
 msgstr "Folge uns"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
-msgctxt "rCpmYD"
-msgid "Create this lesson"
-msgstr "Diese Lektion erstellen"
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
 msgctxt "AtnLyn"
 msgid "This lesson is part of the course, but it hasn't been created yet. Create it to start learning."
 msgstr "Diese Lektion ist Teil des Kurses, wurde aber noch nicht erstellt. Erstelle sie, um mit dem Lernen zu beginnen."
@@ -1731,19 +1726,10 @@ msgid "Back to chapter"
 msgstr "Zurück zum Kapitel"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
-msgctxt "ZnMcrz"
-msgid "Unlock the rest of this course"
-msgstr "Den Rest dieses Kurses freischalten"
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
-msgctxt "A_uNk-"
-msgid "Create lessons before reviewing"
-msgstr "Erstelle Lektionen, bevor du mit der Überprüfung beginnst"
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
-msgctxt "Qy4EsI"
-msgid "Nothing to review yet"
-msgstr "Noch nichts zu wiederholen"
+#: src/components/subscription/upgrade-cta.tsx
+msgctxt "ZMU6iN"
+msgid "You’ve reached your free lesson limit. Upgrade for unlimited lessons"
+msgstr "Du hast dein Limit für kostenlose Lektionen erreicht. Upgrade für unbegrenzte Lektionen"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgctxt "4w9Y_P"
@@ -2788,11 +2774,6 @@ msgid "Upgrade to create"
 msgstr "Zum Erstellen upgraden"
 
 #: src/components/subscription/upgrade-cta.tsx
-msgctxt "ZMU6iN"
-msgid "You’ve reached your free lesson limit. Upgrade for unlimited lessons"
-msgstr "Du hast dein Limit für kostenlose Lektionen erreicht. Upgrade für unbegrenzte Lektionen"
-
-#: src/components/subscription/upgrade-cta.tsx
 msgctxt "0h_lPM"
 msgid "Upgrade"
 msgstr "Upgrade"
@@ -3063,11 +3044,11 @@ msgid "Learn new words in {topic} with flashcards — see each word, its transla
 msgstr "Lerne neue Wörter in {topic} mit Karteikarten — sieh jedes Wort, seine Übersetzung und die Aussprache."
 
 #: src/lib/lessons.ts
-msgctxt "oCxmX9"
-msgid "{chapter} {kind} {position}"
-msgstr "{chapter} {kind} {position}"
+msgctxt "PhpBBE"
+msgid "{chapter}: {kind, select, alphabet {Alphabet} custom {Custom lesson} explanation {Explanation} grammar {Grammar} listening {Listening} practice {Practice} quiz {Quiz} reading {Reading} review {Review} translation {Translation} tutorial {Tutorial} vocabulary {Vocabulary} other {Lesson}} {position}"
+msgstr "{chapter}: {kind, select, alphabet {Alphabet} custom {Eigene Lektion} explanation {Erklärung} grammar {Grammatik} listening {Hören} practice {Übung} quiz {Quiz} reading {Lesen} review {Wiederholung} translation {Übersetzung} tutorial {Tutorial} vocabulary {Wortschatz} other {Lektion}} {position}"
 
 #: src/lib/lessons.ts
-msgctxt "qHbgYB"
-msgid "{lesson} - {course}"
-msgstr "{lesson} - {course}"
+msgctxt "EuLBDj"
+msgid "{kind, select, alphabet {{lesson} Alphabet} custom {{lesson} Custom lesson} explanation {{lesson} Explanation} grammar {{lesson} Grammar} listening {{lesson} Listening} practice {{lesson} Practice} quiz {{lesson} Quiz} reading {{lesson} Reading} review {{lesson} Review} translation {{lesson} Translation} tutorial {{lesson} Tutorial} vocabulary {{lesson} Vocabulary} other {{lesson}}} - {course}"
+msgstr "{kind, select, alphabet {Alphabet: {lesson}} custom {Eigene Lektion: {lesson}} explanation {Erklärung zu {lesson}} grammar {Grammatik: {lesson}} listening {Hörübung: {lesson}} practice {Übung zu {lesson}} quiz {Quiz zu {lesson}} reading {Leseübung: {lesson}} review {Wiederholung zu {lesson}} translation {Übersetzung von {lesson}} tutorial {Tutorial zu {lesson}} vocabulary {Wortschatz: {lesson}} other {{lesson}}} – {course}"

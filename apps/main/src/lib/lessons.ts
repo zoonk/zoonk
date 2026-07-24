@@ -117,17 +117,29 @@ async function getSeoDescription(kind: LessonKind, topic: string): Promise<strin
   return descriptions[kind];
 }
 
-export async function getLessonSeoMeta(
-  lesson: LessonSeoInput,
-): Promise<{ title: string; description: string }> {
-  const title = await getSeoTitle({ lesson });
+/**
+ * Chooses the topic a learner would use to identify a lesson. Generated
+ * companions inherit their source lesson, while the single review lesson uses
+ * its chapter because review rows intentionally store no title.
+ */
+function getLessonTopic({
+  lesson,
+  sourceTitle,
+}: {
+  lesson: LessonSeoInput;
+  sourceTitle: string | null;
+}): string | null {
+  const lessonTitle = lesson.title?.trim();
 
-  const description = await getSeoLessonDescription({
-    lesson,
-    lessonTitle: lesson.title ?? lesson.chapter.title,
-  });
+  if (lessonTitle) {
+    return lessonTitle;
+  }
 
-  return { description, title };
+  if (sourceTitle?.trim()) {
+    return sourceTitle.trim();
+  }
+
+  return lesson.kind === "review" ? lesson.chapter.title : null;
 }
 
 /**
@@ -145,21 +157,35 @@ async function getUntitledLessonSeoTitle({
   kind: LessonKind;
   position: number;
 }) {
-  const labels = await getLessonKindLabels();
   const t = await getExtracted();
 
-  return t("{chapter} {kind} {position}", {
-    chapter: chapterTitle,
-    kind: labels[kind],
-    position: String(position + 1),
-  });
+  return t(
+    "{chapter}: {kind, select, alphabet {Alphabet} custom {Custom lesson} explanation {Explanation} grammar {Grammar} listening {Listening} practice {Practice} quiz {Quiz} reading {Reading} review {Review} translation {Translation} tutorial {Tutorial} vocabulary {Vocabulary} other {Lesson}} {position}",
+    { chapter: chapterTitle, kind, position: String(position + 1) },
+  );
 }
 
-async function getSeoTitle({ lesson }: { lesson: LessonSeoInput }): Promise<string> {
-  if (lesson.title) {
+/**
+ * Uses the lesson kind to give every titled page a natural, localized browser
+ * title. Generated companions use their source topic, while authored lessons
+ * use their own stored title.
+ */
+async function getSeoTitle({
+  lesson,
+  sourceTitle,
+}: {
+  lesson: LessonSeoInput;
+  sourceTitle: string | null;
+}): Promise<string> {
+  const lessonTopic = getLessonTopic({ lesson, sourceTitle });
+
+  if (lessonTopic) {
     const t = await getExtracted();
 
-    return t("{lesson} - {course}", { course: lesson.chapter.course.title, lesson: lesson.title });
+    return t(
+      "{kind, select, alphabet {{lesson} Alphabet} custom {{lesson} Custom lesson} explanation {{lesson} Explanation} grammar {{lesson} Grammar} listening {{lesson} Listening} practice {{lesson} Practice} quiz {{lesson} Quiz} reading {{lesson} Reading} review {{lesson} Review} translation {{lesson} Translation} tutorial {{lesson} Tutorial} vocabulary {{lesson} Vocabulary} other {{lesson}}} - {course}",
+      { course: lesson.chapter.course.title, kind: lesson.kind, lesson: lessonTopic },
+    );
   }
 
   return getUntitledLessonSeoTitle({
@@ -169,6 +195,63 @@ async function getSeoTitle({ lesson }: { lesson: LessonSeoInput }): Promise<stri
   });
 }
 
+/**
+ * Provides useful visible copy before lesson content is available. Authored
+ * lessons keep their exact title, while structural lessons use the closest
+ * authored source topic so learners know what the page will cover.
+ */
+export async function getLessonPageMeta({
+  lesson,
+  sourceTitle,
+}: {
+  lesson: LessonSeoInput;
+  sourceTitle: string | null;
+}): Promise<LessonDisplayMeta> {
+  const lessonTopic = getLessonTopic({ lesson, sourceTitle });
+
+  const title =
+    lessonTopic ??
+    (await getUntitledLessonSeoTitle({
+      chapterTitle: lesson.chapter.title,
+      kind: lesson.kind,
+      position: lesson.position,
+    }));
+
+  const description = await getSeoLessonDescription({
+    lesson,
+    lessonTitle: lessonTopic ?? lesson.chapter.title,
+  });
+
+  return { description, title };
+}
+
+/**
+ * Builds accurate search metadata from authored lesson copy and, for generated
+ * companions, the specific source topic that owns their interactive content.
+ */
+export async function getLessonSeoMeta({
+  lesson,
+  sourceTitle,
+}: {
+  lesson: LessonSeoInput;
+  sourceTitle: string | null;
+}): Promise<{ title: string; description: string }> {
+  const lessonTopic = getLessonTopic({ lesson, sourceTitle });
+  const title = await getSeoTitle({ lesson, sourceTitle });
+
+  const description = await getSeoLessonDescription({
+    lesson,
+    lessonTitle: lessonTopic ?? lesson.chapter.title,
+  });
+
+  return { description, title };
+}
+
+/**
+ * Prefers the stored description for authored content and only generates
+ * kind-specific copy for structural companion rows that intentionally store no
+ * description.
+ */
 async function getSeoLessonDescription({
   lesson,
   lessonTitle,
@@ -176,7 +259,7 @@ async function getSeoLessonDescription({
   lesson: { kind: LessonKind; description: string | null };
   lessonTitle: string;
 }): Promise<string> {
-  if (lesson.kind === "custom" && lesson.description) {
+  if (lesson.description) {
     return lesson.description;
   }
 
