@@ -6,7 +6,7 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { HorizontalScroll, HorizontalScrollContent } from "@zoonk/ui/components/horizontal-scroll";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type CourseCategory } from "@zoonk/utils/categories";
-import { useExtracted } from "next-intl";
+import { useExtracted, useLocale } from "next-intl";
 import { useSelectedLayoutSegment } from "next/navigation";
 
 export function CategoryPillsSkeleton() {
@@ -29,6 +29,7 @@ export function CategoryPills({
 }) {
   const segment = useSelectedLayoutSegment();
   const t = useExtracted();
+  const locale = useLocale();
 
   return (
     <HorizontalScroll>
@@ -45,7 +46,7 @@ export function CategoryPills({
         </Link>
 
         {categories
-          .toSorted((a, b) => a.label.localeCompare(b.label))
+          .toSorted((a, b) => a.label.localeCompare(b.label, locale))
           .map((category) => {
             const Icon = CATEGORY_ICONS[category.key];
 

@@ -230,6 +230,41 @@ test.describe("Generate Course Page", () => {
   });
 
   test.describe("Initial triggering state", () => {
+    test("hydrates localized progress values consistently", async ({ browser }) => {
+      const request = await coursePromptFixture({
+        canonicalTitle: "E2E Localized Progress",
+        generationStatus: "pending",
+        language: "de",
+      });
+
+      const browserContext = await browser.newContext({ locale: "de-DE" });
+      const localizedPage = await browserContext.newPage();
+      const hydrationErrors: Error[] = [];
+
+      localizedPage.on("pageerror", (error) => hydrationErrors.push(error));
+
+      await setupMockApis(localizedPage, {
+        statusDelayMs: 2500,
+        streamMessages: [{ status: "started", step: "getCoursePrompt" }],
+      });
+
+      const triggerRequest = localizedPage.waitForRequest(
+        (pageRequest) =>
+          pageRequest.method() === "POST" &&
+          pageRequest.url().includes("/v1/workflows/course-generation/trigger"),
+      );
+
+      try {
+        await localizedPage.goto(`/de/generate/course/${request.id}`);
+        await triggerRequest;
+        await expect(localizedPage.getByRole("progressbar")).toBeVisible();
+
+        expect(hydrationErrors).toEqual([]);
+      } finally {
+        await browserContext.close();
+      }
+    });
+
     test("shows active generation feedback while the workflow is still starting", async ({
       authenticatedPage,
     }) => {

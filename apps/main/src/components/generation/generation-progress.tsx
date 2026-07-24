@@ -5,6 +5,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { Progress, ProgressLabel, ProgressValue } from "@zoonk/ui/components/progress";
 import { cn } from "@zoonk/ui/lib/utils";
 import { AlertCircleIcon, CheckIcon, type LucideIcon } from "lucide-react";
+import { useLocale } from "next-intl";
 import { type ReactNode, useEffect, useRef } from "react";
 
 type PhaseStatus = "pending" | "active" | "completed";
@@ -37,10 +38,17 @@ function GenerationTimelineTitle({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * Uses the app locale for percentage formatting so the server and browser
+ * render identical progress text even when their default locales differ.
+ */
 function GenerationTimelineProgress({ label, value }: { label: string; value: number }) {
+  const locale = useLocale();
+
   return (
     <Progress
       className="**:data-[slot=progress-indicator]:duration-700 **:data-[slot=progress-indicator]:ease-out **:data-[slot=progress-track]:h-2"
+      locale={locale}
       value={value}
     >
       <ProgressLabel className="sr-only">{label}</ProgressLabel>

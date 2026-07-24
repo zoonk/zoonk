@@ -10,7 +10,7 @@ import {
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { formatWholeNumber } from "@zoonk/utils/number";
-import { getExtracted, getFormatter } from "next-intl/server";
+import { getExtracted, getFormatter, getLocale } from "next-intl/server";
 import { ProgressHeadline, ProgressHeadlineValue } from "../_components/progress-headline";
 
 /**
@@ -29,6 +29,7 @@ function getLevelProgressPercentage(currentBelt: BeltLevelDetails): number {
 export async function LevelStats({ currentBelt }: { currentBelt: BeltLevelDetails }) {
   const t = await getExtracted();
   const format = await getFormatter();
+  const locale = await getLocale();
 
   const beltLabel = await getBeltLabel({ color: currentBelt.color });
   const formattedBpPerLevel = formatWholeNumber({ format, value: currentBelt.bpPerLevel });
@@ -48,7 +49,7 @@ export async function LevelStats({ currentBelt }: { currentBelt: BeltLevelDetail
         </div>
       </ProgressHeadline>
 
-      <ProgressRoot className="gap-y-2" value={progressPercentage}>
+      <ProgressRoot className="gap-y-2" locale={locale} value={progressPercentage}>
         <ProgressLabel>
           {currentBelt.isMaxLevel
             ? t("Max level reached")
