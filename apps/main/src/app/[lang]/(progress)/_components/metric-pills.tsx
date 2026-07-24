@@ -15,6 +15,7 @@ export function MetricPillLinks() {
     { label: t("Energy"), segment: "energy", ...getMenu("energy") },
     { label: t("Level"), segment: "level", ...getMenu("level") },
     { label: t("Score"), segment: "score", ...getMenu("score") },
+    { label: t("Patterns"), segment: "patterns", ...getMenu("patterns") },
   ];
 
   return items.map((item) => (

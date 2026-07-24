@@ -34,8 +34,8 @@ export function getCompletionMilestoneKey({
     return `learning-time:${milestone.seconds}`;
   }
 
-  if (milestone.kind === "score") {
-    return `score:best-day:${localDate}`;
+  if (milestone.kind === "patterns") {
+    return `patterns:best-day:${localDate}`;
   }
 
   if (milestone.status === "achieved") {

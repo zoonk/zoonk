@@ -15,6 +15,8 @@ import { formatMetricPercent } from "@zoonk/utils/number";
 import { Clock } from "lucide-react";
 import { getExtracted, getFormatter } from "next-intl/server";
 
+const HOME_BEST_TIME_LABEL_ID = "home-best-time-label";
+
 export async function BestTime({ score, period }: { score: number; period: number }) {
   const t = await getExtracted();
   const format = await getFormatter();
@@ -26,12 +28,17 @@ export async function BestTime({ score, period }: { score: number; period: numbe
   const formattedScore = formatMetricPercent({ format, value: score });
 
   return (
-    <FeatureCardLink render={<Link href="/score" prefetch />}>
+    <FeatureCardLink
+      aria-labelledby={HOME_BEST_TIME_LABEL_ID}
+      render={<Link href="/patterns" prefetch />}
+    >
       <ProgressMetricCard className="text-score">
         <ProgressMetricCardIcon>
           <Clock />
         </ProgressMetricCardIcon>
-        <ProgressMetricCardLabel>{t("Best time")}</ProgressMetricCardLabel>
+        <ProgressMetricCardLabel id={HOME_BEST_TIME_LABEL_ID}>
+          {t("Best time")}
+        </ProgressMetricCardLabel>
         <ProgressMetricCardTrailing>
           <FeatureCardIndicator />
         </ProgressMetricCardTrailing>

@@ -15,6 +15,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useId, useTransition } from "react";
+import { LEARN_TITLE_ID } from "./learn-title";
 
 const PROMPT_MAX_LENGTH = 128;
 
@@ -48,7 +49,7 @@ export function LearnForm({ placeholders }: { placeholders: string[] }) {
   }
 
   return (
-    <form aria-labelledby="learn-title" className="w-full" onSubmit={handleSubmit}>
+    <form aria-labelledby={LEARN_TITLE_ID} className="w-full" onSubmit={handleSubmit}>
       <Label className="sr-only" htmlFor={queryId}>
         {t("Enter a subject")}
       </Label>

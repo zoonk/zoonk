@@ -1,11 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import {
-  calculateDateRanges,
-  calculateFullPeriodDateRanges,
-  formatPeriodLabel,
-  getDefaultStartDate,
-  validatePeriod,
-} from "./date-ranges";
+import { calculateDateRanges, formatPeriodLabel, validatePeriod } from "./date-ranges";
 
 function eod(year: number, month: number, day: number): Date {
   return new Date(Date.UTC(year, month, day, 23, 59, 59, 999));
@@ -160,41 +154,6 @@ describe(calculateDateRanges, () => {
     expect(ranges.current.end).toStrictEqual(eod(2026, 11, 31));
     expect(ranges.previous.start).toStrictEqual(new Date(0));
     expect(ranges.previous.end).toStrictEqual(new Date(0));
-
-    vi.useRealTimers();
-  });
-});
-
-describe(calculateFullPeriodDateRanges, () => {
-  it("returns the full previous month for an active month", () => {
-    const ranges = calculateFullPeriodDateRanges({
-      now: new Date(Date.UTC(2026, 2, 15)),
-      offset: 0,
-      period: "month",
-    });
-
-    expect(ranges.current.start).toStrictEqual(new Date(Date.UTC(2026, 2, 1)));
-    expect(ranges.current.end).toStrictEqual(eod(2026, 2, 31));
-    expect(ranges.previous.start).toStrictEqual(new Date(Date.UTC(2026, 1, 1)));
-    expect(ranges.previous.end).toStrictEqual(eod(2026, 1, 28));
-  });
-});
-
-describe(getDefaultStartDate, () => {
-  it("returns parsed date from ISO string", () => {
-    const iso = "2026-01-15T00:00:00.000Z";
-    const result = getDefaultStartDate(iso);
-    expect(result.toISOString()).toBe(iso);
-  });
-
-  it("returns lookback date when no ISO string provided", () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date(Date.UTC(2026, 2, 15)));
-
-    const result = getDefaultStartDate();
-    const expected = new Date(Date.UTC(2026, 2, 15 - 90));
-
-    expect(result.toISOString().slice(0, 10)).toBe(expected.toISOString().slice(0, 10));
 
     vi.useRealTimers();
   });

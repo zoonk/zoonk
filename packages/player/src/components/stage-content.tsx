@@ -80,7 +80,7 @@ function getStepContentLayoutClass({ step }: { step?: SerializedStep }) {
 export function StageContent() {
   const { actions, screen, state } = usePlayerRuntime();
 
-  const { chapterHref, energyHref, levelHref, loginHref, nextLessonHref, scoreHref } =
+  const { chapterHref, energyHref, levelHref, loginHref, nextLessonHref, patternsHref } =
     usePlayerNavigation();
 
   const activeCompletionMilestone = getActiveCompletionMilestone(state);
@@ -106,7 +106,7 @@ export function StageContent() {
           levelHref={levelHref}
           milestone={activeCompletionMilestone}
           onContinue={actions.continue}
-          scoreHref={scoreHref}
+          patternsHref={patternsHref}
         />
       );
     }

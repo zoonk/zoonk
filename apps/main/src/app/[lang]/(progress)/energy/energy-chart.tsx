@@ -31,6 +31,8 @@ import { getExtracted, getFormatter, getLocale } from "next-intl/server";
 import { getProgressInsightDateFormatter } from "../_components/progress-insight-date-label";
 import { getEnergyCalendarIntensity } from "./_utils/energy-calendar-intensity";
 
+const ENERGY_HISTORY_TITLE_ID = "energy-history-title";
+
 const ENERGY_INTENSITY_CLASSES = [
   "bg-muted",
   "bg-energy/20",
@@ -155,9 +157,9 @@ export async function EnergyChart({ days }: { days: EnergyHistoryDay[] }) {
   );
 
   return (
-    <ContributionCalendar aria-labelledby="energy-history-title">
+    <ContributionCalendar aria-labelledby={ENERGY_HISTORY_TITLE_ID}>
       <ContributionCalendarCaption>
-        <ContributionCalendarTitle id="energy-history-title">
+        <ContributionCalendarTitle id={ENERGY_HISTORY_TITLE_ID}>
           {t("Energy history")}
         </ContributionCalendarTitle>
         <ContributionCalendarDescription>{t("Past 12 months")}</ContributionCalendarDescription>

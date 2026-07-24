@@ -20,9 +20,9 @@ import {
 } from "./_utils/completion-level-milestone";
 import { type BestDayScore } from "./_utils/completion-milestone-thresholds";
 import {
-  type ScoreCompletionMilestone,
+  type PatternsCompletionMilestone,
   getBestDayMilestone,
-} from "./_utils/completion-score-milestone";
+} from "./_utils/completion-patterns-milestone";
 import {
   type PlayerCompletionMilestoneKey,
   getUnseenMilestones,
@@ -61,7 +61,7 @@ export type PlayerCompletionMilestone =
   | LearningDaysCompletionMilestone
   | LearningTimeCompletionMilestone
   | LevelCompletionMilestone
-  | ScoreCompletionMilestone;
+  | PatternsCompletionMilestone;
 
 /**
  * Null milestones are a natural result of independent checks. This guard keeps

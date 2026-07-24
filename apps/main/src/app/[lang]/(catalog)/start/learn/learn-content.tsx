@@ -2,6 +2,7 @@ import { Link } from "@/i18n/navigation";
 import { shuffle } from "@zoonk/utils/shuffle";
 import { getExtracted } from "next-intl/server";
 import { LearnForm } from "./learn-form";
+import { LEARN_TITLE_ID } from "./learn-title";
 
 const VISIBLE_SUGGESTIONS = 5;
 
@@ -66,7 +67,7 @@ export async function LearnContent() {
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-8 p-4 pb-28 md:gap-10">
-      <h1 className="text-center text-4xl font-bold tracking-tight md:text-5xl" id="learn-title">
+      <h1 className="text-center text-4xl font-bold tracking-tight md:text-5xl" id={LEARN_TITLE_ID}>
         {t("What do you want to learn?")}
       </h1>
 

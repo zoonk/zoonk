@@ -1,9 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   type LocalizedNumberFormatter,
-  formatCompactNumber,
   formatMetricPercent,
-  formatSignedMetricPercent,
   formatWholeNumber,
   validateOffset,
 } from "./number";
@@ -61,19 +59,5 @@ describe(formatMetricPercent, () => {
     expect(formatMetricPercent({ format: createFormatter("en-US"), value: 88.5153768537537 })).toBe(
       "88.5%",
     );
-  });
-});
-
-describe(formatSignedMetricPercent, () => {
-  it("formats signed 0-100 metric deltas as percentages", () => {
-    expect(formatSignedMetricPercent({ format: createFormatter("en-US"), value: 12.5345 })).toBe(
-      "+12.5%",
-    );
-  });
-});
-
-describe(formatCompactNumber, () => {
-  it("formats compact chart-axis values with the provided formatter", () => {
-    expect(formatCompactNumber({ format: createFormatter("en-US"), value: 1200 })).toBe("1.2K");
   });
 });

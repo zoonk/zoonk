@@ -19,6 +19,7 @@
 - Use `[condition && value, ...].filter(Boolean)` instead of `let` + `.push()` for conditional arrays
 - **Never use `let` + reassignment to compute a value.** Extract a helper function with early returns instead (e.g., `function getLabel() { if (x) return a; return b; }`). For objects, use helper functions that return the result (e.g., `const { a, b } = await getOrCreate(...)`). See `getComparisonLabel` in `metric-comparison.tsx` for the pattern
 - Use meaningful variable names and avoid abbreviations
+- Define repeated accessibility IDs used by `id`, `aria-labelledby`, or similar attributes once as a `*_ID` constant; share the constant across files when the relationship crosses component boundaries
 - When defining functions with two or more parameters, use a single object parameter with named fields instead of positional arguments. Named fields are self-documenting at the call site, order-independent, and safer against accidental swaps. Positional params are fine for single-argument functions, framework callbacks with well-known signatures (e.g., `map(item, index)`), and functions wrapped with React `cache` (object params create a new identity on every call, breaking memoization)
 - For workflow orchestration, prefer linear wave-based flows (core-workflow style) with `Promise.allSettled` over branching orchestration unless branching is strictly required
 - Use linear, declarative code over nested conditionals and imperative code

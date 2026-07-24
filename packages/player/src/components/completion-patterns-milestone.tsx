@@ -8,13 +8,13 @@ import { type PlayerCompletionMilestone } from "../completion-milestones";
 import { CompletionMilestoneMark, CompletionMilestoneTitle } from "./completion-milestone-shell";
 import { PlayerSupportingText } from "./player-supporting-text";
 
-type ScoreMilestone = Extract<PlayerCompletionMilestone, { kind: "score" }>;
+type PatternsMilestone = Extract<PlayerCompletionMilestone, { kind: "patterns" }>;
 
 /**
- * Score milestones use a trophy mark because this screen highlights the
+ * Patterns milestones use a trophy mark because this screen highlights the
  * learner's strongest weekday for answer accuracy.
  */
-export function ScoreMilestoneIndicator() {
+export function PatternsMilestoneIndicator() {
   return (
     <CompletionMilestoneMark>
       <span className="bg-score/10 text-score flex size-10 items-center justify-center rounded-full">
@@ -35,10 +35,10 @@ function getWeekdayName({ dayOfWeek, locale }: { dayOfWeek: number; locale: stri
 }
 
 /**
- * Names the learner's best weekday and repeats the score-page percentage so
+ * Names the learner's best weekday and repeats the Patterns-page percentage so
  * the milestone feels connected to the page it links to.
  */
-export function ScoreMilestoneCopy({ milestone }: { milestone: ScoreMilestone }) {
+export function PatternsMilestoneCopy({ milestone }: { milestone: PatternsMilestone }) {
   const t = useExtracted();
   const format = useFormatter();
   const locale = useLocale();

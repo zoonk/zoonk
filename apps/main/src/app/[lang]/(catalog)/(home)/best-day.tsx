@@ -16,6 +16,8 @@ import { formatMetricPercent } from "@zoonk/utils/number";
 import { CalendarDays } from "lucide-react";
 import { getExtracted, getFormatter, getLocale } from "next-intl/server";
 
+const HOME_BEST_DAY_LABEL_ID = "home-best-day-label";
+
 export async function BestDay({ score, dayOfWeek }: { score: number; dayOfWeek: number }) {
   const t = await getExtracted();
   const format = await getFormatter();
@@ -28,12 +30,17 @@ export async function BestDay({ score, dayOfWeek }: { score: number; dayOfWeek: 
   const formattedScore = formatMetricPercent({ format, value: score });
 
   return (
-    <FeatureCardLink render={<Link href="/score" prefetch />}>
+    <FeatureCardLink
+      aria-labelledby={HOME_BEST_DAY_LABEL_ID}
+      render={<Link href="/patterns" prefetch />}
+    >
       <ProgressMetricCard className="text-score">
         <ProgressMetricCardIcon>
           <CalendarDays />
         </ProgressMetricCardIcon>
-        <ProgressMetricCardLabel>{t("Best day")}</ProgressMetricCardLabel>
+        <ProgressMetricCardLabel id={HOME_BEST_DAY_LABEL_ID}>
+          {t("Best day")}
+        </ProgressMetricCardLabel>
         <ProgressMetricCardTrailing>
           <FeatureCardIndicator />
         </ProgressMetricCardTrailing>

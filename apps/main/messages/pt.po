@@ -173,13 +173,11 @@ msgid "Subscription"
 msgstr "Assinatura"
 
 #: src/app/[lang]/(catalog)/(home)/best-day.tsx
-#: src/app/[lang]/(progress)/score/score-insights.tsx
 msgctxt "HHFpcy"
 msgid "Best day"
 msgstr "Melhor dia"
 
 #: src/app/[lang]/(catalog)/(home)/best-day.tsx
-#: src/app/[lang]/(progress)/score/score-insights.tsx
 msgctxt "auPwZG"
 msgid "{day} with {percentage}"
 msgstr "{day} com {percentage}"
@@ -192,44 +190,40 @@ msgid "Past 3 months"
 msgstr "Últimos 3 meses"
 
 #: src/app/[lang]/(catalog)/(home)/best-time.tsx
-#: src/app/[lang]/(progress)/score/score-insights.tsx
+#: src/app/[lang]/(progress)/patterns/day-rhythm.tsx
 msgctxt "00_IyC"
 msgid "Night"
 msgstr "Madrugada"
 
 #: src/app/[lang]/(catalog)/(home)/best-time.tsx
-#: src/app/[lang]/(progress)/score/score-insights.tsx
+#: src/app/[lang]/(progress)/patterns/day-rhythm.tsx
 msgctxt "_kzk_m"
 msgid "Morning"
 msgstr "Manhã"
 
 #: src/app/[lang]/(catalog)/(home)/best-time.tsx
-#: src/app/[lang]/(progress)/score/score-insights.tsx
+#: src/app/[lang]/(progress)/patterns/day-rhythm.tsx
 msgctxt "mF-J9o"
 msgid "Afternoon"
 msgstr "Tarde"
 
 #: src/app/[lang]/(catalog)/(home)/best-time.tsx
-#: src/app/[lang]/(progress)/score/score-insights.tsx
+#: src/app/[lang]/(progress)/patterns/day-rhythm.tsx
 msgctxt "mPEpnN"
 msgid "Evening"
 msgstr "Noite"
 
 #: src/app/[lang]/(catalog)/(home)/best-time.tsx
-#: src/app/[lang]/(progress)/score/score-insights.tsx
 msgctxt "dFW9lU"
 msgid "Best time"
 msgstr "Melhor horário"
 
 #: src/app/[lang]/(catalog)/(home)/best-time.tsx
-#: src/app/[lang]/(progress)/score/score-insights.tsx
 msgctxt "r0R6ZG"
 msgid "{period} with {percentage}"
 msgstr "{period} com {percentage}"
 
 #: src/app/[lang]/(catalog)/(home)/completed-lessons.tsx
-#: src/app/[lang]/(progress)/_components/metric-comparison.tsx
-#: src/app/[lang]/(progress)/_components/progress-insight-period-label.ts
 msgctxt "s-lPP3"
 msgid "All time"
 msgstr "Todo o período"
@@ -302,7 +296,6 @@ msgid "Level"
 msgstr "Nível"
 
 #: src/app/[lang]/(catalog)/(home)/level.tsx
-#: src/app/[lang]/(progress)/level/level-stats.tsx
 msgctxt "s0KB2i"
 msgid "{belt} - Level {level}"
 msgstr "{belt} - Nível {level}"
@@ -471,7 +464,6 @@ msgid "Course categories"
 msgstr "Categorias de cursos"
 
 #: src/app/[lang]/(catalog)/courses/category-pills.tsx
-#: src/app/[lang]/(progress)/_components/period-tabs.tsx
 msgctxt "zQvVDJ"
 msgid "All"
 msgstr "Todos"
@@ -962,61 +954,17 @@ msgctxt "AaFZIp"
 msgid "What's your goal?"
 msgstr "Qual é seu objetivo?"
 
-#: src/app/[lang]/(progress)/_components/metric-comparison.tsx
-msgctxt "pev_fB"
-msgid "vs last month"
-msgstr "vs mês passado"
-
-#: src/app/[lang]/(progress)/_components/metric-comparison.tsx
-msgctxt "R9qHBU"
-msgid "vs last 6 months"
-msgstr "vs últimos 6 meses"
-
-#: src/app/[lang]/(progress)/_components/metric-comparison.tsx
-msgctxt "YFV6dH"
-msgid "vs last year"
-msgstr "vs ano passado"
-
 #: src/app/[lang]/(progress)/_components/metric-pills.tsx
 #: src/app/[lang]/(progress)/activity/page.tsx
 msgctxt "ZmlNQ3"
 msgid "Activity"
 msgstr "Atividade"
 
-#: src/app/[lang]/(progress)/_components/period-navigation.tsx
-msgctxt "hCCWuZ"
-msgid "Previous period"
-msgstr "Período anterior"
-
-#: src/app/[lang]/(progress)/_components/period-navigation.tsx
-msgctxt "I2z5s_"
-msgid "Next period"
-msgstr "Próximo período"
-
-#: src/app/[lang]/(progress)/_components/period-tabs.tsx
-msgctxt "PIaUh-"
-msgid "Period selection"
-msgstr "Seleção de período"
-
-#: src/app/[lang]/(progress)/_components/period-tabs.tsx
-msgctxt "TBovrx"
-msgid "Month"
-msgstr "Mês"
-
-#: src/app/[lang]/(progress)/_components/period-tabs.tsx
-msgctxt "NPrFLC"
-msgid "6 Months"
-msgstr "6 meses"
-
-#: src/app/[lang]/(progress)/_components/period-tabs.tsx
-msgctxt "IFo1oo"
-msgid "Year"
-msgstr "Ano"
-
-#: src/app/[lang]/(progress)/_components/progress-chart-layout.tsx
-msgctxt "OlW5Z8"
-msgid "No data available for this period"
-msgstr "Nenhum dado disponível neste período"
+#: src/app/[lang]/(progress)/_components/metric-pills.tsx
+#: src/app/[lang]/(progress)/patterns/page.tsx
+msgctxt "BCauSf"
+msgid "Patterns"
+msgstr "Padrões"
 
 #: src/app/[lang]/(progress)/_components/progress-empty-state.tsx
 msgctxt "FVh2Tr"
@@ -1027,21 +975,6 @@ msgstr "Comece a estudar para acompanhar seu progresso"
 msgctxt "Y1zzQt"
 msgid "Log in to track your progress"
 msgstr "Entre para acompanhar seu progresso"
-
-#: src/app/[lang]/(progress)/_components/progress-insight-period-label.ts
-msgctxt "J3fNDZ"
-msgid "This month"
-msgstr "Este mês"
-
-#: src/app/[lang]/(progress)/_components/progress-insight-period-label.ts
-msgctxt "eWUXBX"
-msgid "Past 6 months"
-msgstr "Últimos 6 meses"
-
-#: src/app/[lang]/(progress)/_components/progress-insight-period-label.ts
-msgctxt "lPShsT"
-msgid "This year"
-msgstr "Este ano"
 
 #: src/app/[lang]/(progress)/activity/activity-chart.tsx
 msgctxt "yK5WcZ"
@@ -1175,85 +1108,35 @@ msgctxt "rsIaGW"
 msgid "A 0% to 100% score for recent activity and accuracy"
 msgstr "Uma nota de 0% a 100% para atividade e precisão recentes"
 
-#: src/app/[lang]/(progress)/level/level-chart-client.tsx
-msgctxt "GA8RuL"
-msgid "Brain Power chart"
-msgstr "Gráfico de Poder Mental"
-
-#: src/app/[lang]/(progress)/level/level-chart-client.tsx
-msgctxt "XdkaHc"
-msgid "{value} BP"
-msgstr "{value} PM"
-
-#: src/app/[lang]/(progress)/level/level-chart-client.tsx
-msgctxt "tDbspx"
-msgid "Total Brain Power earned: {total}"
-msgstr "Poder Mental total ganho: {total}"
+#: src/app/[lang]/(progress)/level/level-explanation.tsx
+msgctxt "gaXaWV"
+msgid "How levels work"
+msgstr "Como os níveis funcionam"
 
 #: src/app/[lang]/(progress)/level/level-explanation.tsx
-msgctxt "EMy5Vs"
-msgid "What is Brain Power?"
-msgstr "O que é Poder Mental?"
-
-#: src/app/[lang]/(progress)/level/level-explanation.tsx
-msgctxt "MIjvOA"
-msgid "Brain Power (BP) is the total learning credit you have earned. Each completed lesson adds {brainPower} BP."
-msgstr "Poder Mental (PM) é o total de aprendizado que você acumulou. Cada aula concluída adiciona {brainPower} PM."
-
-#: src/app/[lang]/(progress)/level/level-explanation.tsx
-msgctxt "jzKXJS"
-msgid "How do I increase Brain Power?"
-msgstr "Como aumento o Poder Mental?"
-
-#: src/app/[lang]/(progress)/level/level-explanation.tsx
-msgctxt "Gzq1tT"
-msgid "Complete lessons. Brain Power never goes down, even when your Energy drops or you take a break."
-msgstr "Complete aulas. O Poder Mental nunca diminui, mesmo quando sua Energia cai ou você faz uma pausa."
-
-#: src/app/[lang]/(progress)/level/level-explanation.tsx
-msgctxt "JGLOtn"
-msgid "Why is Brain Power important?"
-msgstr "Por que o Poder Mental é importante?"
-
-#: src/app/[lang]/(progress)/level/level-explanation.tsx
-msgctxt "tC6vNz"
-msgid "It is like steps in a health app: a record of how much you have learned. It also works like martial arts for your mind: build Brain Power to advance from white belt to black belt."
-msgstr "É como passos em um app de saúde: um registro de quanto você aprendeu. Também funciona como artes marciais para a sua mente: ganhe Poder Mental para avançar da faixa branca até a faixa preta."
-
-#: src/app/[lang]/(progress)/level/level-insights.tsx
-msgctxt "elq-tg"
-msgid "Highest BP"
-msgstr "Maior PM"
-
-#: src/app/[lang]/(progress)/level/level-insights.tsx
-msgctxt "BW4bMl"
-msgid "{date} with {value} BP"
-msgstr "{date} com {value} PM"
-
-#: src/app/[lang]/(progress)/level/level-progression.tsx
-msgctxt "WfaE4H"
-msgid "{belt}, Level {level} of 10. Maximum level achieved."
-msgstr "{belt}, Nível {level} de 10. Nível máximo alcançado."
-
-#: src/app/[lang]/(progress)/level/level-progression.tsx
-msgctxt "2Y-P4e"
-msgid "{belt}, Level {level} of 10. {bp} Brain Power until next level."
-msgstr "{belt}, Nível {level} de 10. Faltam {bp} de Poder Mental para o próximo nível."
+msgctxt "Ekt8hM"
+msgid "Complete lessons to earn {brainPower} BP. Brain Power never goes down, so every lesson moves you closer to the next level."
+msgstr "Complete aulas para ganhar {brainPower} PM. O Poder Mental nunca diminui, então cada aula te deixa mais perto do próximo nível."
 
 #: src/app/[lang]/(progress)/level/level-progression.tsx
 msgctxt "n_mgOm"
 msgid "Belt Progression"
 msgstr "Progressão de faixas"
 
-#: src/app/[lang]/(progress)/level/level-progression.tsx
-msgctxt "ZKbTsS"
-msgid "{current}/10"
-msgstr "{current}/10"
+#: src/app/[lang]/(progress)/level/level-stats.tsx
+msgctxt "TeeyjQ"
+msgid "{belt} · Level {level}"
+msgstr "{belt} · Nível {level}"
 
-#: src/app/[lang]/(progress)/level/level-progression.tsx
-msgctxt "-Sn2yd"
-msgid "{belt}: Level {current} of 10"
-msgstr "{belt}: Nível {current} de 10"
+#: src/app/[lang]/(progress)/level/level-stats.tsx
+msgctxt "U78NhE"
+msgid "Complete"
+msgstr "Concluído"
+
+#: src/app/[lang]/(progress)/level/level-stats.tsx
+msgctxt "fRknQ6"
+msgid "{current} of {total} BP"
+msgstr "{current} de {total} PM"
 
 #: src/app/[lang]/(progress)/level/level-stats.tsx
 msgctxt "v5yNm3"
@@ -1261,44 +1144,113 @@ msgid "Total Brain Power"
 msgstr "Poder Mental total"
 
 #: src/app/[lang]/(progress)/level/level-stats.tsx
-msgctxt "_Q0taG"
-msgid "BP"
-msgstr "PM"
-
-#: src/app/[lang]/(progress)/level/level-stats.tsx
-msgctxt "u_oEJA"
-msgid "{value} BP earned"
-msgstr "{value} PM ganhos"
+msgctxt "XdkaHc"
+msgid "{value} BP"
+msgstr "{value} PM"
 
 #: src/app/[lang]/(progress)/level/page.tsx
-msgctxt "4-USpX"
-msgid "Track your level progress and see how you advance."
-msgstr "Acompanhe seu progresso de nível e veja como você avança."
+msgctxt "uZploX"
+msgid "See your current level and what comes next."
+msgstr "Veja seu nível atual e o que vem depois."
 
-#: src/app/[lang]/(progress)/level/page.tsx
-msgctxt "L9hqMH"
-msgid "Track your level progress"
-msgstr "Acompanhe seu progresso de nível"
+#: src/app/[lang]/(progress)/patterns/day-rhythm.tsx
+#: src/app/[lang]/(progress)/score/score-chart-client.tsx
+msgctxt "q9WSEF"
+msgid "{count, plural, one {# answer} other {# answers}}"
+msgstr "{count, plural, one {# resposta} other {# respostas}}"
+
+#: src/app/[lang]/(progress)/patterns/day-rhythm.tsx
+#: src/app/[lang]/(progress)/patterns/weekday-rhythm.tsx
+msgctxt "pafDXI"
+msgid "No answers"
+msgstr "Nenhuma resposta"
+
+#: src/app/[lang]/(progress)/patterns/day-rhythm.tsx
+msgctxt "g0f6D5"
+msgid "Throughout the day"
+msgstr "Ao longo do dia"
+
+#: src/app/[lang]/(progress)/patterns/day-rhythm.tsx
+msgctxt "T2RcYA"
+msgid "Accuracy by time of day over the past 90 days"
+msgstr "Precisão por horário nos últimos 90 dias"
+
+#: src/app/[lang]/(progress)/patterns/page.tsx
+msgctxt "eBJm5e"
+msgid "See when you perform best over the past 90 days."
+msgstr "Veja quando você se sai melhor nos últimos 90 dias."
+
+#: src/app/[lang]/(progress)/patterns/page.tsx
+msgctxt "RKvjug"
+msgid "See when you perform best"
+msgstr "Veja quando você se sai melhor"
+
+#: src/app/[lang]/(progress)/patterns/weekday-rhythm.tsx
+msgctxt "CQLx_3"
+msgid "{day}: {score} across {count, plural, one {# answer} other {# answers}}"
+msgstr "{day}: {score} em {count, plural, one {# resposta} other {# respostas}}"
+
+#: src/app/[lang]/(progress)/patterns/weekday-rhythm.tsx
+msgctxt "YSFJk-"
+msgid "{day}: No answers"
+msgstr "{day}: nenhuma resposta"
+
+#: src/app/[lang]/(progress)/patterns/weekday-rhythm.tsx
+msgctxt "u8s7op"
+msgid "You do better {weekday, select, sunday {on Sundays} monday {on Mondays} tuesday {on Tuesdays} wednesday {on Wednesdays} thursday {on Thursdays} friday {on Fridays} saturday {on Saturdays} other {on your best weekday}}"
+msgstr "Você se sai melhor {weekday, select, sunday {aos domingos} monday {às segundas-feiras} tuesday {às terças-feiras} wednesday {às quartas-feiras} thursday {às quintas-feiras} friday {às sextas-feiras} saturday {aos sábados} other {no seu melhor dia da semana}}"
+
+#: src/app/[lang]/(progress)/patterns/weekday-rhythm.tsx
+msgctxt "CW-JJR"
+msgid "{day} performance"
+msgstr "Desempenho de {day}"
+
+#: src/app/[lang]/(progress)/patterns/weekday-rhythm.tsx
+#: src/app/[lang]/(progress)/score/score-chart-client.tsx
+msgctxt "i2_Jga"
+msgid "{score} across {count, plural, one {# answer} other {# answers}}"
+msgstr "{score} em {count, plural, one {# resposta} other {# respostas}}"
+
+#: src/app/[lang]/(progress)/patterns/weekday-rhythm.tsx
+msgctxt "9SzqD3"
+msgid "Weekly rhythm"
+msgstr "Ritmo semanal"
+
+#: src/app/[lang]/(progress)/patterns/weekday-rhythm.tsx
+msgctxt "gTx9DY"
+msgid "Accuracy by weekday over the past 90 days"
+msgstr "Precisão por dia da semana nos últimos 90 dias"
 
 #: src/app/[lang]/(progress)/score/page.tsx
-msgctxt "qHWZBu"
-msgid "Track your score over time and see your best days and times."
-msgstr "Acompanhe sua pontuação ao longo do tempo e veja seus melhores dias e horários."
+msgctxt "-JqpHp"
+msgid "See your answer accuracy and weekly trend over the past 90 days."
+msgstr "Veja a precisão das suas respostas e a tendência semanal nos últimos 90 dias."
 
 #: src/app/[lang]/(progress)/score/page.tsx
-msgctxt "GWkswX"
-msgid "Track your score and progress trends"
-msgstr "Acompanhe sua pontuação e tendências de progresso"
+msgctxt "jmWl8S"
+msgid "See how accurately you answer questions"
+msgstr "Veja com que precisão você responde às perguntas"
 
 #: src/app/[lang]/(progress)/score/score-chart-client.tsx
-msgctxt "J-05ol"
-msgid "Score chart"
-msgstr "Gráfico de pontuação"
+msgctxt "33eat_"
+msgid "Weekly score trend"
+msgstr "Tendência semanal da pontuação"
 
 #: src/app/[lang]/(progress)/score/score-chart-client.tsx
-msgctxt "rGSqvt"
-msgid "Avg"
-msgstr "Média"
+msgctxt "22eTjk"
+msgid "Weekly score"
+msgstr "Pontuação semanal"
+
+#: src/app/[lang]/(progress)/score/score-chart-client.tsx
+#: src/app/[lang]/(progress)/score/score-stats.tsx
+msgctxt "ZOWtIg"
+msgid "Past 90 days"
+msgstr "Últimos 90 dias"
+
+#: src/app/[lang]/(progress)/score/score-chart-client.tsx
+msgctxt "l-oCrn"
+msgid "{label}: {score} across {count, plural, one {# answer} other {# answers}}"
+msgstr "{label}: {score} em {count, plural, one {# resposta} other {# respostas}}"
 
 #: src/app/[lang]/(progress)/score/score-explanation.tsx
 msgctxt "bIZaXJ"
@@ -1306,29 +1258,19 @@ msgid "What is Score?"
 msgstr "O que é Pontuação?"
 
 #: src/app/[lang]/(progress)/score/score-explanation.tsx
-msgctxt "JA-N5Z"
-msgid "Score is the percentage of questions you answered correctly during this period."
-msgstr "Pontuação é a porcentagem de perguntas que você respondeu corretamente neste período."
+msgctxt "TiNLLD"
+msgid "Score is the percentage of questions you answered correctly over the past 90 days. Every answer counts equally, so harder lessons can lower your Score for a while. That’s part of learning."
+msgstr "A pontuação é a porcentagem de perguntas que você respondeu corretamente nos últimos 90 dias. Todas as respostas têm o mesmo peso, então aulas mais difíceis podem diminuir sua pontuação por um tempo. Isso faz parte do estudo."
 
-#: src/app/[lang]/(progress)/score/score-explanation.tsx
-msgctxt "z9kvhA"
-msgid "How do I improve Score?"
-msgstr "Como melhoro a Pontuação?"
+#: src/app/[lang]/(progress)/score/score-stats.tsx
+msgctxt "b-bOob"
+msgid "Score summary"
+msgstr "Resumo da pontuação"
 
-#: src/app/[lang]/(progress)/score/score-explanation.tsx
-msgctxt "7_C9do"
-msgid "Review mistakes and retry lessons. As you answer more questions correctly, your Score goes up."
-msgstr "Revise erros e refaça aulas. Conforme você responde mais perguntas corretamente, sua Pontuação aumenta."
-
-#: src/app/[lang]/(progress)/score/score-explanation.tsx
-msgctxt "WqH8eP"
-msgid "Why is Score important?"
-msgstr "Por que a Pontuação é importante?"
-
-#: src/app/[lang]/(progress)/score/score-explanation.tsx
-msgctxt "E0saoA"
-msgid "Score shows accuracy, not activity. Best day and best time help you find when you learn most effectively."
-msgstr "A Pontuação mostra precisão, não atividade. Melhor dia e melhor horário te ajudam a descobrir quando você aprende melhor."
+#: src/app/[lang]/(progress)/score/score-stats.tsx
+msgctxt "WCq9Lo"
+msgid "{correct} of {total, plural, one {# answer} other {# answers}} correct"
+msgstr "{correct} de {total, plural, one {# resposta correta} other {# respostas corretas}}"
 
 #: src/app/[lang]/(settings)/_components/protected-section.tsx
 msgctxt "yOFm9C"

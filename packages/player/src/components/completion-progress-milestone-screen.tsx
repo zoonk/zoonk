@@ -26,7 +26,7 @@ import {
   CompletionMilestoneCopy,
   CompletionMilestoneScreen,
 } from "./completion-milestone-shell";
-import { ScoreMilestoneCopy, ScoreMilestoneIndicator } from "./completion-score-milestone";
+import { PatternsMilestoneCopy, PatternsMilestoneIndicator } from "./completion-patterns-milestone";
 
 /**
  * Routes each milestone kind to the copy that explains the specific progress
@@ -49,8 +49,8 @@ function CompletionMilestoneCopyContent({ milestone }: { milestone: PlayerComple
     return <LearningTimeMilestoneCopy milestone={milestone} />;
   }
 
-  if (milestone.kind === "score") {
-    return <ScoreMilestoneCopy milestone={milestone} />;
+  if (milestone.kind === "patterns") {
+    return <PatternsMilestoneCopy milestone={milestone} />;
   }
 
   return <BrainPowerMilestoneCopy milestone={milestone} />;
@@ -76,8 +76,8 @@ function CompletionMilestoneIndicator({ milestone }: { milestone: PlayerCompleti
     return <LearningTimeMilestoneIndicator />;
   }
 
-  if (milestone.kind === "score") {
-    return <ScoreMilestoneIndicator />;
+  if (milestone.kind === "patterns") {
+    return <PatternsMilestoneIndicator />;
   }
 
   return <BrainPowerMilestoneIndicator />;
@@ -91,19 +91,19 @@ function getMilestoneHref({
   energyHref,
   levelHref,
   milestone,
-  scoreHref,
+  patternsHref,
 }: {
   energyHref?: PlayerRoute;
   levelHref?: PlayerRoute;
   milestone: PlayerCompletionMilestone;
-  scoreHref?: PlayerRoute;
+  patternsHref?: PlayerRoute;
 }) {
   if (milestone.kind === "energy") {
     return energyHref;
   }
 
-  if (milestone.kind === "score") {
-    return scoreHref;
+  if (milestone.kind === "patterns") {
+    return patternsHref;
   }
 
   return levelHref;
@@ -112,19 +112,15 @@ function getMilestoneHref({
 /**
  * Labels the secondary link with the metric-specific page it opens.
  */
-function CompletionMilestoneLearnLinkLabel({
-  milestone,
-}: {
-  milestone: PlayerCompletionMilestone;
-}) {
+function CompletionMilestoneLinkLabel({ milestone }: { milestone: PlayerCompletionMilestone }) {
   const t = useExtracted();
 
   if (milestone.kind === "energy") {
     return <>{t("Learn about Energy")}</>;
   }
 
-  if (milestone.kind === "score") {
-    return <>{t("Learn about Score")}</>;
+  if (milestone.kind === "patterns") {
+    return <>{t("See your patterns")}</>;
   }
 
   return <>{t("Learn about levels")}</>;
@@ -138,14 +134,14 @@ function CompletionMilestoneLearnLink({
   energyHref,
   levelHref,
   milestone,
-  scoreHref,
+  patternsHref,
 }: {
   energyHref?: PlayerRoute;
   levelHref?: PlayerRoute;
   milestone: PlayerCompletionMilestone;
-  scoreHref?: PlayerRoute;
+  patternsHref?: PlayerRoute;
 }) {
-  const href = getMilestoneHref({ energyHref, levelHref, milestone, scoreHref });
+  const href = getMilestoneHref({ energyHref, levelHref, milestone, patternsHref });
 
   if (!href) {
     return null;
@@ -153,7 +149,7 @@ function CompletionMilestoneLearnLink({
 
   return (
     <PlayerLink className={cn(buttonVariants({ variant: "outline" }), "w-full")} href={href}>
-      <CompletionMilestoneLearnLinkLabel milestone={milestone} />
+      <CompletionMilestoneLinkLabel milestone={milestone} />
     </PlayerLink>
   );
 }
@@ -167,13 +163,13 @@ export function CompletionProgressMilestoneScreen({
   levelHref,
   milestone,
   onContinue,
-  scoreHref,
+  patternsHref,
 }: {
   energyHref?: PlayerRoute;
   levelHref?: PlayerRoute;
   milestone: PlayerCompletionMilestone;
   onContinue: () => void;
-  scoreHref?: PlayerRoute;
+  patternsHref?: PlayerRoute;
 }) {
   const t = useExtracted();
 
@@ -194,7 +190,7 @@ export function CompletionProgressMilestoneScreen({
           energyHref={energyHref}
           levelHref={levelHref}
           milestone={milestone}
-          scoreHref={scoreHref}
+          patternsHref={patternsHref}
         />
       </CompletionMilestoneActions>
     </CompletionMilestoneScreen>

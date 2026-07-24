@@ -1,6 +1,29 @@
+import { type Browser } from "@playwright/test";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { getProgressInsightDateLabel } from "../src/app/[lang]/(progress)/_components/progress-insight-date-label";
+import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { expect, test } from "./fixtures";
+
+/**
+ * Creates an isolated learner at an exact Brain Power total so Level assertions
+ * describe belt rules directly instead of depending on shared seed progress.
+ */
+async function createLevelTestPage({
+  baseURL,
+  browser,
+  totalBrainPower,
+}: {
+  baseURL: string;
+  browser: Browser;
+  totalBrainPower: bigint;
+}) {
+  const user = await createE2EUser(baseURL, { orgRole: "member" });
+  await userProgressFixture({ totalBrainPower, userId: user.id });
+
+  const browserContext = await browser.newContext({ storageState: user.storageState });
+  const page = await browserContext.newPage();
+
+  return { browserContext, page };
+}
 
 test.describe("Level Page", () => {
   test.describe("Unauthenticated Users", () => {
@@ -8,151 +31,68 @@ test.describe("Level Page", () => {
       await page.goto("/level");
 
       await expect(page.getByText(/log in to track your progress/iu)).toBeVisible();
-
       await expect(page.getByRole("link", { name: /login/iu })).toHaveAttribute("href", "/login");
     });
   });
 
   test.describe("Authenticated Users", () => {
-    test("navigates from home and sees level details with comparison", async ({
-      authenticatedPage,
+    test("shows the current level and the progress that moves learning forward", async ({
+      baseURL,
+      browser,
     }) => {
-      await authenticatedPage.goto("/");
+      const { browserContext, page } = await createLevelTestPage({
+        baseURL: baseURL!,
+        browser,
+        totalBrainPower: 15_000n,
+      });
 
-      // Wait for Progress section to load (indicates Suspense resolved)
-      await expect(authenticatedPage.getByText(/^progress$/iu)).toBeVisible();
+      try {
+        await page.goto("/level");
 
-      // User clicks level card on home page (use flexible matcher for belt name)
-      await authenticatedPage
-        .getByRole("link")
-        .filter({ has: authenticatedPage.getByText(/belt - level \d+/iu) })
-        .click();
+        await expect(page.getByRole("heading", { level: 1, name: /^level$/iu })).toBeVisible();
+        await expect(page.getByText(/^orange belt · level 8$/iu)).toBeVisible();
+        await expect(page.getByText(/^500 bp to next level$/iu)).toBeVisible();
+        await expect(page.getByText(/^15,000 bp$/iu)).toBeVisible();
 
-      await expect(authenticatedPage).toHaveURL(/\/level/u);
+        const levelProgress = page.getByRole("progressbar", { name: /500 bp to next level/iu });
 
-      await expect(
-        authenticatedPage.getByRole("heading", { level: 1, name: /^level$/iu }),
-      ).toBeVisible();
+        await expect(levelProgress).toBeVisible();
+        await expect(levelProgress).toHaveAttribute("aria-valuenow", "50");
+        await expect(levelProgress).toContainText("500 of 1,000 BP");
 
-      await expect(authenticatedPage.getByText(/vs last month/iu)).toBeVisible();
+        await expect(page.getByRole("heading", { name: /belt progression/iu })).toBeVisible();
+        await expect(page.getByRole("heading", { name: /how levels work/iu })).toBeVisible();
+        await expect(page.getByText(/brain power never goes down/iu)).toBeVisible();
+
+        await expect(page.getByRole("navigation", { name: /period selection/iu })).toHaveCount(0);
+        await expect(page.getByRole("figure", { name: /brain power chart/iu })).toHaveCount(0);
+        await expect(page.getByRole("article", { name: /highest bp/iu })).toHaveCount(0);
+      } finally {
+        await browserContext.close();
+      }
     });
 
-    test("displays total BP and current belt level", async ({ authenticatedPage }) => {
-      await authenticatedPage.goto("/level");
+    test("shows a completed milestone at the maximum level", async ({ baseURL, browser }) => {
+      const { browserContext, page } = await createLevelTestPage({
+        baseURL: baseURL!,
+        browser,
+        totalBrainPower: 3_067_500n,
+      });
 
-      await expect(authenticatedPage.getByText(/total brain power/iu).first()).toBeVisible();
+      try {
+        await page.goto("/level");
 
-      await expect(authenticatedPage.getByText(/bp/iu).first()).toBeVisible();
+        await expect(page.getByText(/^black belt · level 10$/iu)).toBeVisible();
+        await expect(page.getByText(/^max level reached$/iu)).toBeVisible();
 
-      await expect(authenticatedPage.getByText(/orange belt - level/iu)).toBeVisible();
+        const levelProgress = page.getByRole("progressbar", { name: /max level reached/iu });
 
-      await expect(authenticatedPage.getByText(/bp to next level/iu)).toBeVisible();
-    });
-
-    test("displays belt progression visualization", async ({ authenticatedPage }) => {
-      await authenticatedPage.goto("/level");
-
-      await expect(authenticatedPage.getByText(/belt progression/iu)).toBeVisible();
-
-      await expect(authenticatedPage.getByRole("progressbar")).toBeVisible();
-    });
-
-    test("keeps only the current-month Brain Power insight", async ({ baseURL, browser }) => {
-      const user = await createE2EUser(baseURL!, { orgRole: "member", withProgress: true });
-      const browserContext = await browser.newContext({ storageState: user.storageState });
-      const page = await browserContext.newPage();
-
-      await page.goto("/level");
-
-      const highestBpCard = page.getByRole("article", { name: /highest bp/iu });
-
-      const todayLabel = getProgressInsightDateLabel({ date: new Date(), locale: "en" });
-
-      await expect(highestBpCard).toContainText(`${todayLabel} with 250 BP`);
-      await expect(highestBpCard).toContainText("This month");
-      await expect(page.getByRole("article", { name: /learning days/iu })).not.toBeVisible();
-      await expect(page.getByRole("article", { name: /learning time/iu })).not.toBeVisible();
-
-      await browserContext.close();
-    });
-
-    test("switching to 6 months shows different comparison text", async ({ authenticatedPage }) => {
-      await authenticatedPage.goto("/level");
-
-      await expect(authenticatedPage.getByText(/vs last month/iu)).toBeVisible();
-
-      await authenticatedPage.getByRole("button", { name: /6 months/iu }).click();
-
-      await expect(authenticatedPage.getByText(/vs last 6 months/iu)).toBeVisible();
-
-      await expect(authenticatedPage.getByText(/vs last month/iu)).not.toBeVisible();
-    });
-
-    test("switching to year shows different comparison text", async ({ authenticatedPage }) => {
-      await authenticatedPage.goto("/level");
-
-      await authenticatedPage.getByRole("button", { name: /year/iu }).click();
-
-      await expect(authenticatedPage.getByText(/vs last year/iu)).toBeVisible();
-
-      await expect(authenticatedPage.getByText(/vs last month/iu)).not.toBeVisible();
-
-      await expect(authenticatedPage.getByText(/vs last 6 months/iu)).not.toBeVisible();
-    });
-
-    test("switching to all hides comparison text", async ({ authenticatedPage }) => {
-      await authenticatedPage.goto("/level");
-
-      // Verify we start with month comparison
-      await expect(authenticatedPage.getByText(/vs last month/iu)).toBeVisible();
-
-      // Switch to all
-      await authenticatedPage.getByRole("button", { name: /^all$/iu }).click();
-
-      // No comparison text should be visible
-      await expect(authenticatedPage.getByText(/vs last month/iu)).not.toBeVisible();
-      await expect(authenticatedPage.getByText(/vs last 6 months/iu)).not.toBeVisible();
-      await expect(authenticatedPage.getByText(/vs last year/iu)).not.toBeVisible();
-
-      // Page still shows data
-      await expect(
-        authenticatedPage.getByRole("heading", { level: 1, name: /^level$/iu }),
-      ).toBeVisible();
-    });
-
-    test("resets offset when switching periods", async ({ authenticatedPage }) => {
-      await authenticatedPage.goto("/level");
-
-      await expect(authenticatedPage.getByText(/vs last month/iu)).toBeVisible();
-
-      const prevButton = authenticatedPage.getByRole("button", { name: /previous period/iu });
-
-      await prevButton.click();
-      await authenticatedPage.waitForURL(/offset=1/u);
-
-      await authenticatedPage.getByRole("button", { name: /6 months/iu }).click();
-
-      await expect(authenticatedPage).not.toHaveURL(/offset=1/u);
-
-      await expect(authenticatedPage.getByText(/vs last 6 months/iu)).toBeVisible();
-    });
-
-    test("displays brain power explanation sections", async ({ authenticatedPage }) => {
-      await authenticatedPage.goto("/level");
-
-      await expect(
-        authenticatedPage.getByRole("heading", { name: /what is brain power/iu }),
-      ).toBeVisible();
-
-      await expect(
-        authenticatedPage.getByRole("heading", { name: /how do i increase brain power/iu }),
-      ).toBeVisible();
-
-      await expect(
-        authenticatedPage.getByRole("heading", { name: /why is brain power important/iu }),
-      ).toBeVisible();
-
-      await expect(authenticatedPage.getByText(/never goes down/iu)).toBeVisible();
+        await expect(levelProgress).toHaveAttribute("aria-valuenow", "100");
+        await expect(levelProgress).toContainText("Complete");
+        await expect(levelProgress).not.toContainText("0 of 100,000 BP");
+      } finally {
+        await browserContext.close();
+      }
     });
   });
 

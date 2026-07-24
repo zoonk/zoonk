@@ -162,7 +162,7 @@ function ImageOptionCard({
       </span>
 
       {!resultState && isSelected && (
-        <span className="bg-info absolute top-2 right-2 flex size-7 items-center justify-center rounded-full text-white">
+        <span className="bg-info text-background absolute top-2 right-2 flex size-7 items-center justify-center rounded-full">
           <CircleCheck aria-hidden="true" className="size-4" />
         </span>
       )}

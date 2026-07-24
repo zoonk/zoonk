@@ -281,12 +281,14 @@ test.describe("Home Page - Progress Section", () => {
   test("authenticated user with progress sees best day", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/");
 
-    await expect(authenticatedPage.getByText(/^progress$/iu)).toBeVisible();
-    await expect(authenticatedPage.getByText(/best day/iu)).toBeVisible();
+    const progressSection = authenticatedPage.getByRole("region", { name: /^progress$/iu });
+    const bestDayLink = progressSection.getByRole("link", { name: /best day/iu });
+
+    await expect(bestDayLink).toHaveAttribute("href", "/patterns");
 
     // Use regex to match any day of week with percentage (e.g., "Sunday with 76.1%")
     await expect(
-      authenticatedPage.getByText(
+      bestDayLink.getByText(
         /(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday) with \d+(?:\.\d+)?%/iu,
       ),
     ).toBeVisible();
@@ -295,12 +297,14 @@ test.describe("Home Page - Progress Section", () => {
   test("authenticated user with progress sees best time", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/");
 
-    await expect(authenticatedPage.getByText(/^progress$/iu)).toBeVisible();
-    await expect(authenticatedPage.getByText(/best time/iu)).toBeVisible();
+    const progressSection = authenticatedPage.getByRole("region", { name: /^progress$/iu });
+    const bestTimeLink = progressSection.getByRole("link", { name: /best time/iu });
+
+    await expect(bestTimeLink).toHaveAttribute("href", "/patterns");
 
     // Use regex to match time period with percentage (e.g., "Morning with 90%" or "Morning with 90.5%")
     await expect(
-      authenticatedPage.getByText(/(?:morning|afternoon|evening|night) with \d+(?:\.\d+)?%/iu),
+      bestTimeLink.getByText(/(?:morning|afternoon|evening|night) with \d+(?:\.\d+)?%/iu),
     ).toBeVisible();
   });
 

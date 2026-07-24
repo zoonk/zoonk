@@ -130,7 +130,7 @@ export function buildNavigation(overrides: Partial<PlayerNavigation> = {}): Play
     levelHref: "/level",
     loginHref: "/login",
     nextLessonHref: "/lesson/play",
-    scoreHref: "/score",
+    patternsHref: "/patterns",
     ...overrides,
   };
 }

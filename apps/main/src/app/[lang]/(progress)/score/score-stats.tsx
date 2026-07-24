@@ -1,57 +1,44 @@
+import { type ScorePerformance } from "@/data/progress/_utils/score-performance";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { type HistoryPeriod, formatPeriodLabel } from "@zoonk/utils/date-ranges";
-import { formatMetricPercent } from "@zoonk/utils/number";
-import { getFormatter, getLocale } from "next-intl/server";
-import { MetricComparison } from "../_components/metric-comparison";
+import { formatMetricPercent, formatWholeNumber } from "@zoonk/utils/number";
+import { getExtracted, getFormatter } from "next-intl/server";
 import {
   ProgressHeadline,
   ProgressHeadlineLabel,
-  ProgressHeadlineRow,
   ProgressHeadlineValue,
 } from "../_components/progress-headline";
 
-export async function ScoreStats({
-  average,
-  period,
-  periodEnd,
-  periodStart,
-  previousAverage,
-}: {
-  average: number;
-  period: HistoryPeriod;
-  periodEnd: Date;
-  periodStart: Date;
-  previousAverage: number | null;
-}) {
+/**
+ * Leads Score with one weighted 90-day accuracy and its denominator so learners
+ * can judge the percentage with the answer volume that produced it.
+ */
+export async function ScoreStats({ performance }: { performance: ScorePerformance }) {
+  const t = await getExtracted();
   const format = await getFormatter();
-  const locale = await getLocale();
-
-  const formattedAverage = formatMetricPercent({ format, value: average });
-  const periodLabel = formatPeriodLabel(periodStart, periodEnd, period, locale);
+  const formattedScore = formatMetricPercent({ format, value: performance.score });
+  const formattedCorrect = formatWholeNumber({ format, value: performance.correctAnswers });
 
   return (
-    <ProgressHeadline>
-      <ProgressHeadlineLabel>{periodLabel}</ProgressHeadlineLabel>
-
-      <ProgressHeadlineRow>
-        <ProgressHeadlineValue className="text-score">{formattedAverage}</ProgressHeadlineValue>
-
-        {previousAverage !== null && (
-          <MetricComparison current={average} period={period} previous={previousAverage} />
-        )}
-      </ProgressHeadlineRow>
+    <ProgressHeadline aria-label={t("Score summary")} role="region">
+      <ProgressHeadlineLabel>{t("Past 90 days")}</ProgressHeadlineLabel>
+      <ProgressHeadlineValue className="text-score">{formattedScore}</ProgressHeadlineValue>
+      <span className="text-muted-foreground text-sm tabular-nums">
+        {t("{correct} of {total, plural, one {# answer} other {# answers}} correct", {
+          correct: formattedCorrect,
+          total: performance.totalAnswers,
+        })}
+      </span>
     </ProgressHeadline>
   );
 }
 
+/** Mirrors the fixed Score headline and denominator while private data streams. */
 export function ScoreStatsSkeleton() {
   return (
-    <ProgressHeadline>
-      <Skeleton className="h-4 w-28" />
-      <ProgressHeadlineRow>
-        <Skeleton className="h-12 w-28" />
-        <Skeleton className="h-5 w-32" />
-      </ProgressHeadlineRow>
+    <ProgressHeadline aria-hidden="true">
+      <Skeleton className="h-4 w-24" />
+      <Skeleton className="h-12 w-28" />
+      <Skeleton className="h-4 w-44" />
     </ProgressHeadline>
   );
 }

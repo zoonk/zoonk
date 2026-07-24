@@ -15,6 +15,8 @@ import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
 import { ContinueLearningCard } from "./continue-learning-card";
 
+const CONTINUE_LEARNING_TITLE_ID = "continue-learning-title";
+
 function ContinueLearningItem({ children, itemCount }: { children: ReactNode; itemCount: number }) {
   if (itemCount === 1) {
     return <div className="w-full">{children}</div>;
@@ -64,8 +66,11 @@ export async function ContinueLearningList() {
   ));
 
   return (
-    <section aria-labelledby="continue-learning-title" className="flex flex-col gap-3 py-4 md:py-6">
-      <FeatureCardSectionTitle className="px-4" id="continue-learning-title">
+    <section
+      aria-labelledby={CONTINUE_LEARNING_TITLE_ID}
+      className="flex flex-col gap-3 py-4 md:py-6"
+    >
+      <FeatureCardSectionTitle className="px-4" id={CONTINUE_LEARNING_TITLE_ID}>
         {t("Continue learning")}
       </FeatureCardSectionTitle>
 

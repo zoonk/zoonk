@@ -265,7 +265,7 @@ export function buildLessonPlayerModel({
       levelHref: "/level",
       loginHref: getLoginHref({ currentLessonHref }),
       nextLessonHref,
-      scoreHref: "/score",
+      patternsHref: "/patterns",
     },
     onNextHref: nextLessonHref ?? nextChapterHref,
   };

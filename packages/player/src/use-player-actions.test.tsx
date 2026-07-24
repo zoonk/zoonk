@@ -156,7 +156,7 @@ describe(usePlayerActions, () => {
     ).toStrictEqual(progressSnapshot);
   });
 
-  it("does not show score milestones when stored progress has no server best-day history", () => {
+  it("does not show Patterns milestones when stored progress has no server best-day history", () => {
     const localDate = "2026-06-08";
 
     rememberCompletionProgress({
@@ -193,7 +193,7 @@ describe(usePlayerActions, () => {
     });
 
     expect(milestones).not.toContainEqual(
-      expect.objectContaining({ kind: "score", status: "bestDay" }),
+      expect.objectContaining({ kind: "patterns", status: "bestDay" }),
     );
   });
 

@@ -1,452 +1,178 @@
 import { prisma } from "@zoonk/db";
-import { createSafeDate, createSameWeekDates } from "@zoonk/testing/fixtures/dates";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { signInAsCurrentUser } from "../../../test-utils/auth";
+import { getScore } from "./get-score";
 import { getScoreHistory } from "./get-score-history";
 
-describe("unauthenticated users", () => {
-  it("returns null", async () => {
-    const result = await getScoreHistory({ period: "month" });
-    expect(result).toBeNull();
-  });
-});
-
-describe("authenticated users", () => {
+describe(getScoreHistory, () => {
   afterEach(() => {
     vi.useRealTimers();
   });
 
-  it("returns null when user has no DailyProgress records", async () => {
-    const user = await userFixture();
-    await signInAsCurrentUser({ email: user.email, password: user.password });
-
-    const result = await getScoreHistory({ period: "month" });
-    expect(result).toBeNull();
+  it("returns null for unauthenticated users", async () => {
+    await expect(getScoreHistory()).resolves.toBeNull();
   });
 
-  it("returns null when user has records but no answers", async () => {
+  it("returns null when the learner has no answered questions", async () => {
     const user = await userFixture();
     await signInAsCurrentUser({ email: user.email, password: user.password });
 
-    const date = new Date();
+    await prisma.dailyProgress.create({
+      data: { date: new Date(), dayOfWeek: new Date().getDay(), userId: user.id },
+    });
+
+    await expect(getScoreHistory()).resolves.toBeNull();
+  });
+
+  it("uses weighted totals for the rolling score and each weekly trend point", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-07-23T12:00:00.000Z"));
+
+    const user = await userFixture();
+    await signInAsCurrentUser({ email: user.email, password: user.password });
+
+    await prisma.dailyProgress.createMany({
+      data: [
+        {
+          correctAnswers: 0,
+          date: new Date("2026-04-23T00:00:00.000Z"),
+          dayOfWeek: 4,
+          incorrectAnswers: 100,
+          userId: user.id,
+        },
+        {
+          correctAnswers: 1,
+          date: new Date("2026-07-13T00:00:00.000Z"),
+          dayOfWeek: 1,
+          userId: user.id,
+        },
+        {
+          date: new Date("2026-07-14T00:00:00.000Z"),
+          dayOfWeek: 2,
+          incorrectAnswers: 9,
+          userId: user.id,
+        },
+        {
+          correctAnswers: 8,
+          date: new Date("2026-07-20T00:00:00.000Z"),
+          dayOfWeek: 1,
+          incorrectAnswers: 2,
+          userId: user.id,
+        },
+      ],
+    });
+
+    const result = await getScoreHistory({ locale: "en" });
+
+    expect(result).toMatchObject({
+      correctAnswers: 9,
+      incorrectAnswers: 11,
+      periodEnd: new Date("2026-07-23T00:00:00.000Z"),
+      periodStart: new Date("2026-04-25T00:00:00.000Z"),
+      score: 45,
+      totalAnswers: 20,
+    });
+
+    expect(result?.dataPoints).toStrictEqual([
+      expect.objectContaining({
+        correctAnswers: 1,
+        date: new Date("2026-07-13T00:00:00.000Z"),
+        incorrectAnswers: 9,
+        score: 10,
+        totalAnswers: 10,
+      }),
+      expect.objectContaining({
+        correctAnswers: 8,
+        date: new Date("2026-07-20T00:00:00.000Z"),
+        incorrectAnswers: 2,
+        score: 80,
+        totalAnswers: 10,
+      }),
+    ]);
+  });
+
+  it("localizes weekly trend labels without changing the score window", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-07-23T12:00:00.000Z"));
+
+    const user = await userFixture();
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
     await prisma.dailyProgress.create({
       data: {
-        correctAnswers: 0,
-        date,
-        dayOfWeek: date.getDay(),
-        incorrectAnswers: 0,
+        correctAnswers: 4,
+        date: new Date("2026-07-20T00:00:00.000Z"),
+        dayOfWeek: 1,
+        incorrectAnswers: 1,
         userId: user.id,
       },
     });
 
-    const result = await getScoreHistory({ period: "month" });
-    expect(result).toBeNull();
+    const [english, portuguese] = await Promise.all([
+      getScoreHistory({ locale: "en" }),
+      getScoreHistory({ locale: "pt" }),
+    ]);
+
+    expect(english?.dataPoints[0]?.label).not.toBe(portuguese?.dataPoints[0]?.label);
+    expect(english?.periodStart).toStrictEqual(portuguese?.periodStart);
+    expect(english?.score).toBe(portuguese?.score);
   });
 
-  describe("month period", () => {
-    it("returns daily data points for current month", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
+  it("keeps the headline and history on the same 90 local dates ahead of UTC", async () => {
+    const now = new Date("2026-07-23T12:30:00.000Z");
+    const timeZone = "Pacific/Kiritimati";
+    const user = await userFixture();
+    await signInAsCurrentUser({ email: user.email, password: user.password });
 
-      const today = createSafeDate(0, 0);
-      const yesterday = createSafeDate(0, 1);
-
-      await prisma.dailyProgress.createMany({
-        data: [
-          {
-            correctAnswers: 8,
-            date: today,
-            dayOfWeek: today.getDay(),
-
-            incorrectAnswers: 2,
-            userId: user.id,
-          },
-          {
-            correctAnswers: 6,
-            date: yesterday,
-            dayOfWeek: yesterday.getDay(),
-
-            incorrectAnswers: 4,
-            userId: user.id,
-          },
-        ],
-      });
-
-      const result = await getScoreHistory({ period: "month" });
-
-      expect(result).not.toBeNull();
-      expect(result?.dataPoints.length).toBe(2);
-      // Day 1: 6/10 = 60%, Day 2: 8/10 = 80% → avg = 70%
-      expect(result?.average).toBe(70);
-    });
-
-    it("calculates score as percentage correctly", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      const today = new Date();
-
-      await prisma.dailyProgress.create({
-        data: {
-          correctAnswers: 17,
-          date: today,
-          dayOfWeek: today.getDay(),
-          incorrectAnswers: 3,
+    await prisma.dailyProgress.createMany({
+      data: [
+        {
+          correctAnswers: 10,
+          date: new Date("2026-04-25T00:00:00.000Z"),
+          dayOfWeek: 6,
           userId: user.id,
         },
-      });
-
-      const result = await getScoreHistory({ period: "month" });
-
-      expect(result).not.toBeNull();
-      expect(result?.dataPoints[0]?.score).toBe(85);
-      expect(result?.average).toBe(85);
-    });
-
-    it("compares with the same full previous month shown by period navigation", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      vi.useFakeTimers({ toFake: ["Date"] });
-      vi.setSystemTime(new Date("2026-03-15T12:00:00.000Z"));
-
-      const currentMonth = new Date("2026-03-15T00:00:00.000Z");
-      const previousMonthFirstDay = new Date("2026-02-15T00:00:00.000Z");
-      const previousMonthSecondDay = new Date("2026-02-16T00:00:00.000Z");
-
-      await prisma.dailyProgress.createMany({
-        data: [
-          {
-            correctAnswers: 3,
-            date: currentMonth,
-            dayOfWeek: currentMonth.getDay(),
-            incorrectAnswers: 1,
-            userId: user.id,
-          },
-          {
-            correctAnswers: 1,
-            date: previousMonthFirstDay,
-            dayOfWeek: previousMonthFirstDay.getDay(),
-            incorrectAnswers: 3,
-            userId: user.id,
-          },
-          {
-            correctAnswers: 3,
-            date: previousMonthSecondDay,
-            dayOfWeek: previousMonthSecondDay.getDay(),
-            incorrectAnswers: 1,
-            userId: user.id,
-          },
-        ],
-      });
-
-      const [currentResult, previousResult] = await Promise.all([
-        getScoreHistory({ period: "month" }),
-        getScoreHistory({ offset: 1, period: "month" }),
-      ]);
-
-      expect(currentResult?.average).toBe(75);
-      expect(previousResult?.average).toBe(50);
-      expect(currentResult?.previousAverage).toBe(previousResult?.average);
-    });
-
-    it("navigates to previous month with offset", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      const currentMonth = createSafeDate(0);
-      const lastMonth = createSafeDate(1);
-
-      await prisma.dailyProgress.createMany({
-        data: [
-          {
-            correctAnswers: 9,
-            date: currentMonth,
-            dayOfWeek: currentMonth.getDay(),
-            incorrectAnswers: 1,
-            userId: user.id,
-          },
-          {
-            correctAnswers: 6,
-            date: lastMonth,
-            dayOfWeek: lastMonth.getDay(),
-            incorrectAnswers: 4,
-            userId: user.id,
-          },
-        ],
-      });
-
-      const result = await getScoreHistory({ offset: 1, period: "month" });
-
-      expect(result).not.toBeNull();
-      expect(result?.average).toBe(60);
-      expect(result?.hasNextPeriod).toBe(true);
-    });
-  });
-
-  describe("6months period", () => {
-    it("returns weekly aggregated data points", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      const today = new Date();
-      const oneWeekAgo = new Date(today);
-      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-      await prisma.dailyProgress.createMany({
-        data: [
-          {
-            correctAnswers: 8,
-            date: today,
-            dayOfWeek: today.getDay(),
-            incorrectAnswers: 2,
-            userId: user.id,
-          },
-          {
-            correctAnswers: 7,
-            date: oneWeekAgo,
-            dayOfWeek: oneWeekAgo.getDay(),
-            incorrectAnswers: 3,
-            userId: user.id,
-          },
-        ],
-      });
-
-      const result = await getScoreHistory({ period: "6months" });
-
-      expect(result).not.toBeNull();
-      expect(result?.dataPoints.length).toBeGreaterThanOrEqual(1);
-    });
-
-    it("aggregates weekly scores correctly", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      const [day1, day2] = createSameWeekDates(1);
-
-      await prisma.dailyProgress.createMany({
-        data: [
-          {
-            correctAnswers: 8,
-            date: day1,
-            dayOfWeek: day1.getDay(),
-            incorrectAnswers: 2,
-            userId: user.id,
-          },
-          {
-            correctAnswers: 6,
-            date: day2,
-            dayOfWeek: day2.getDay(),
-            incorrectAnswers: 4,
-            userId: user.id,
-          },
-        ],
-      });
-
-      const result = await getScoreHistory({ period: "6months" });
-
-      expect(result).not.toBeNull();
-      // Week aggregate: (8+6)/(10+10) = 14/20 = 70%
-      expect(result?.average).toBe(70);
-    });
-  });
-
-  describe("year period", () => {
-    it("returns monthly aggregated data points", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      const currentMonth = createSafeDate(0);
-      const lastMonth = createSafeDate(1);
-
-      await prisma.dailyProgress.createMany({
-        data: [
-          {
-            correctAnswers: 9,
-            date: currentMonth,
-            dayOfWeek: currentMonth.getDay(),
-            incorrectAnswers: 1,
-            userId: user.id,
-          },
-          {
-            correctAnswers: 8,
-            date: lastMonth,
-            dayOfWeek: lastMonth.getDay(),
-            incorrectAnswers: 2,
-            userId: user.id,
-          },
-        ],
-      });
-
-      const result = await getScoreHistory({ period: "year" });
-
-      expect(result).not.toBeNull();
-      expect(result?.dataPoints.length).toBeGreaterThanOrEqual(1);
-    });
-  });
-
-  describe("all period", () => {
-    it("returns yearly aggregated data points", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      const today = createSafeDate(0);
-
-      await prisma.dailyProgress.create({
-        data: {
-          correctAnswers: 9,
-          date: today,
-          dayOfWeek: today.getDay(),
-          incorrectAnswers: 1,
+        {
+          correctAnswers: 1,
+          date: new Date("2026-04-26T00:00:00.000Z"),
+          dayOfWeek: 0,
           userId: user.id,
         },
-      });
-
-      const result = await getScoreHistory({ period: "all" });
-
-      expect(result).not.toBeNull();
-      expect(result?.dataPoints.length).toBeGreaterThanOrEqual(1);
-      expect(result?.previousAverage).toBeNull();
-    });
-  });
-
-  describe("navigation flags", () => {
-    it("hasPreviousPeriod is true when historical data exists", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      const currentMonth = createSafeDate(0);
-      const twoMonthsAgo = createSafeDate(2);
-
-      await prisma.dailyProgress.createMany({
-        data: [
-          {
-            correctAnswers: 8,
-            date: currentMonth,
-            dayOfWeek: currentMonth.getDay(),
-            incorrectAnswers: 2,
-            userId: user.id,
-          },
-          {
-            correctAnswers: 6,
-            date: twoMonthsAgo,
-            dayOfWeek: twoMonthsAgo.getDay(),
-            incorrectAnswers: 4,
-            userId: user.id,
-          },
-        ],
-      });
-
-      const result = await getScoreHistory({ period: "month" });
-
-      expect(result).not.toBeNull();
-      expect(result?.hasPreviousPeriod).toBe(true);
-    });
-
-    it("ignores earlier progress that has no answered questions", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      const currentMonth = createSafeDate(0);
-      const twoMonthsAgo = createSafeDate(2);
-
-      await prisma.dailyProgress.createMany({
-        data: [
-          {
-            correctAnswers: 8,
-            date: currentMonth,
-            dayOfWeek: currentMonth.getDay(),
-            incorrectAnswers: 2,
-            userId: user.id,
-          },
-          { date: twoMonthsAgo, dayOfWeek: twoMonthsAgo.getDay(), userId: user.id },
-        ],
-      });
-
-      const result = await getScoreHistory({ period: "month" });
-
-      expect(result).not.toBeNull();
-      expect(result?.hasPreviousPeriod).toBe(false);
-    });
-
-    it("hasNextPeriod is false when on current period (offset=0)", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      await prisma.dailyProgress.create({
-        data: {
-          correctAnswers: 8,
-          date: new Date(),
-          dayOfWeek: new Date().getDay(),
-          incorrectAnswers: 2,
+        {
+          correctAnswers: 2,
+          date: new Date("2026-07-24T00:00:00.000Z"),
+          dayOfWeek: 5,
           userId: user.id,
         },
-      });
-
-      const result = await getScoreHistory({ period: "month" });
-
-      expect(result).not.toBeNull();
-      expect(result?.hasNextPeriod).toBe(false);
-    });
-
-    it("hasNextPeriod is true when offset > 0", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
-
-      const lastMonth = createSafeDate(1);
-
-      await prisma.dailyProgress.create({
-        data: {
-          correctAnswers: 7,
-          date: lastMonth,
-          dayOfWeek: lastMonth.getDay(),
-          incorrectAnswers: 3,
+        {
+          date: new Date("2026-07-25T00:00:00.000Z"),
+          dayOfWeek: 6,
+          incorrectAnswers: 10,
           userId: user.id,
         },
-      });
-
-      const result = await getScoreHistory({ offset: 1, period: "month" });
-
-      expect(result).not.toBeNull();
-      expect(result?.hasNextPeriod).toBe(true);
+      ],
     });
-  });
 
-  describe("days with no answers", () => {
-    it("excludes days with zero answers from calculations", async () => {
-      const user = await userFixture();
-      await signInAsCurrentUser({ email: user.email, password: user.password });
+    const [headline, history] = await Promise.all([
+      getScore({ now, timeZone }),
+      getScoreHistory({ locale: "en", now, timeZone }),
+    ]);
 
-      const today = createSafeDate(0, 0);
-      const yesterday = createSafeDate(0, 1);
+    expect(headline).toStrictEqual({
+      correctAnswers: 3,
+      incorrectAnswers: 0,
+      score: 100,
+      totalAnswers: 3,
+    });
 
-      await prisma.dailyProgress.createMany({
-        data: [
-          {
-            correctAnswers: 10,
-            date: today,
-            dayOfWeek: today.getDay(),
-            incorrectAnswers: 0,
-            userId: user.id,
-          },
-          {
-            correctAnswers: 0,
-            date: yesterday,
-            dayOfWeek: yesterday.getDay(),
-            incorrectAnswers: 0,
-            userId: user.id,
-          },
-        ],
-      });
-
-      const result = await getScoreHistory({ period: "month" });
-
-      expect(result).not.toBeNull();
-      // Only today should be counted (100%)
-      expect(result?.dataPoints.length).toBe(1);
-      expect(result?.average).toBe(100);
+    expect(history).toMatchObject({
+      correctAnswers: 3,
+      incorrectAnswers: 0,
+      periodEnd: new Date("2026-07-24T00:00:00.000Z"),
+      periodStart: new Date("2026-04-26T00:00:00.000Z"),
+      score: 100,
+      totalAnswers: 3,
     });
   });
 });

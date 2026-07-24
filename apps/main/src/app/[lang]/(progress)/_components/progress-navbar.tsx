@@ -34,6 +34,7 @@ export function ProgressNavbarSkeleton() {
         <Skeleton className="h-9 w-20 rounded-md" />
         <Skeleton className="h-9 w-24 rounded-md" />
         <Skeleton className="h-9 w-20 rounded-md" />
+        <Skeleton className="h-9 w-24 rounded-md" />
       </div>
     </nav>
   );

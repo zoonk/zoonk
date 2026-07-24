@@ -70,37 +70,6 @@ export function aggregateByPeriod<T extends { date: Date }>(
     .toSorted((a, b) => a.date.getTime() - b.date.getTime());
 }
 
-type ScoreDataPoint = { date: Date; correct: number; incorrect: number };
-
-export function aggregateScoreByPeriod(
-  dataPoints: ScoreDataPoint[],
-  calculateScore: (correct: number, incorrect: number) => number,
-  period: TimePeriod,
-): { date: Date; score: number }[] {
-  const { getKey, getNormalizedDate } = PERIOD_CONFIGS[period];
-  const map = new Map<string, { correct: number; incorrect: number; date: Date }>();
-
-  for (const point of dataPoints) {
-    const key = getKey(point.date);
-    const existing = map.get(key);
-
-    if (existing) {
-      existing.correct += point.correct;
-      existing.incorrect += point.incorrect;
-    } else {
-      map.set(key, {
-        correct: point.correct,
-        date: getNormalizedDate(point.date),
-        incorrect: point.incorrect,
-      });
-    }
-  }
-
-  return [...map.values()]
-    .map((item) => ({ date: item.date, score: calculateScore(item.correct, item.incorrect) }))
-    .toSorted((a, b) => a.date.getTime() - b.date.getTime());
-}
-
 export type ScoredRow = { key: number; correct: number; incorrect: number };
 
 export function findBestByScore(rows: ScoredRow[]): { key: number; score: number } | null {

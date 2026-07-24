@@ -1,35 +1,18 @@
-import { getBpHistory } from "@/data/progress/get-bp-history";
+import { getBeltLevel } from "@/data/progress/get-belt-level";
 import { getSession } from "@/data/users/get-session";
-import { validatePeriod } from "@zoonk/utils/date-ranges";
-import { getLocale } from "next-intl/server";
-import { Suspense } from "react";
-import { ProgressChartSkeleton } from "../_components/progress-chart-skeleton";
 import { ProgressContent } from "../_components/progress-content";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
-import { ProgressExplanationSkeleton } from "../_components/progress-explanation-skeleton";
-import { LevelChart } from "./level-chart";
-import { LevelExplanation } from "./level-explanation";
-import { LevelInsights, LevelInsightsSkeleton } from "./level-insights";
+import { LevelExplanation, LevelExplanationSkeleton } from "./level-explanation";
 import { LevelProgression, LevelProgressionSkeleton } from "./level-progression";
 import { LevelStats, LevelStatsSkeleton } from "./level-stats";
 
-export async function LevelContent({
-  searchParams,
-}: {
-  searchParams: Promise<{ offset?: string; period?: string }>;
-}) {
-  const { offset = "0", period = "month" } = await searchParams;
-  const validPeriod = validatePeriod(period);
-  const locale = await getLocale();
-
-  const [data, session] = await Promise.all([
-    getBpHistory({ locale, offset: Number(offset), period: validPeriod }),
-    getSession(),
-  ]);
+/** Loads only the durable progress and identity needed to explain the learner's level. */
+export async function LevelContent() {
+  const [currentBelt, session] = await Promise.all([getBeltLevel(), getSession()]);
 
   const isAuthenticated = Boolean(session);
 
-  if (!(data && isAuthenticated)) {
+  if (!(currentBelt && isAuthenticated)) {
     return (
       <ProgressEmptyState isAuthenticated={isAuthenticated}>
         <LevelExplanation />
@@ -39,49 +22,20 @@ export async function LevelContent({
 
   return (
     <ProgressContent>
-      <LevelStats
-        currentBelt={data.currentBelt}
-        period={validPeriod}
-        periodEnd={data.periodEnd}
-        periodStart={data.periodStart}
-        periodTotal={data.periodTotal}
-        previousPeriodTotal={data.previousPeriodTotal}
-        totalBp={data.totalBp}
-      />
-
-      <LevelChart
-        dataPoints={data.dataPoints}
-        hasNext={data.hasNextPeriod}
-        hasPrevious={data.hasPreviousPeriod}
-        period={validPeriod}
-        periodEnd={data.periodEnd}
-        periodStart={data.periodStart}
-        periodTotal={data.periodTotal}
-      />
-
-      <Suspense fallback={<LevelInsightsSkeleton />}>
-        <LevelInsights
-          period={validPeriod}
-          periodEnd={data.periodEnd}
-          periodStart={data.periodStart}
-        />
-      </Suspense>
-
-      <LevelProgression currentBelt={data.currentBelt} />
-
+      <LevelStats currentBelt={currentBelt} />
+      <LevelProgression currentBelt={currentBelt} />
       <LevelExplanation />
     </ProgressContent>
   );
 }
 
+/** Preserves the simplified Level page hierarchy while its server data is loading. */
 export function LevelContentSkeleton() {
   return (
     <ProgressContent>
       <LevelStatsSkeleton />
-      <ProgressChartSkeleton />
-      <LevelInsightsSkeleton />
       <LevelProgressionSkeleton />
-      <ProgressExplanationSkeleton />
+      <LevelExplanationSkeleton />
     </ProgressContent>
   );
 }

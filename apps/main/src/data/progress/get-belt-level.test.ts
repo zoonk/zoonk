@@ -37,6 +37,7 @@ describe("authenticated users", () => {
       isMaxLevel: false,
       level: 8,
       progressInLevel: 500,
+      totalBrainPower: 15_000,
     });
   });
 
