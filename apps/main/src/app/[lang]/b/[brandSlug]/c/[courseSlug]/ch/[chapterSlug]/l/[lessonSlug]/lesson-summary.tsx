@@ -8,7 +8,7 @@ import { cn } from "@zoonk/ui/lib/utils";
  * Groups the lesson name and description as the primary page context without
  * adding a card or decorative container around the unavailable state.
  */
-export function LessonSummary({ children, className, ...props }: React.ComponentProps<"header">) {
+function LessonSummary({ children, className, ...props }: React.ComponentProps<"header">) {
   return (
     <header
       className={cn("flex w-full max-w-sm flex-col items-start gap-2 text-left", className)}
@@ -24,7 +24,7 @@ export function LessonSummary({ children, className, ...props }: React.Component
  * Gives unavailable lesson pages one semantic page heading so people and
  * crawlers encounter the lesson topic before the access or generation action.
  */
-export function LessonSummaryTitle({ children, className, ...props }: React.ComponentProps<"h1">) {
+function LessonSummaryTitle({ children, className, ...props }: React.ComponentProps<"h1">) {
   return (
     <h1
       className={cn("text-xl leading-tight font-semibold tracking-tight text-pretty", className)}
@@ -40,11 +40,7 @@ export function LessonSummaryTitle({ children, className, ...props }: React.Comp
  * Keeps authored or derived lesson details visually quieter than the title
  * while remaining readable enough to explain what the lesson will teach.
  */
-export function LessonSummaryDescription({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"p">) {
+function LessonSummaryDescription({ children, className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
       className={cn("text-muted-foreground text-sm/relaxed text-pretty", className)}
