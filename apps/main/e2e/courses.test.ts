@@ -89,6 +89,17 @@ test.describe("Courses Page - Basic", () => {
 
     await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
   });
+
+  test("empty category lets users create a course about that category", async ({ page }) => {
+    await page.goto("/courses/law");
+
+    const createCourseLink = page.getByRole("link", { name: "Create a course about Law" });
+
+    await expect(createCourseLink).toBeVisible();
+    await createCourseLink.click();
+
+    await expect(page).toHaveURL(/\/start\/learn$/u);
+  });
 });
 
 test.describe("Courses Page - Infinite Loading", () => {

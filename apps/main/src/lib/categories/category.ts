@@ -24,7 +24,11 @@ export async function getCategories(): Promise<CategoryInfo[]> {
   ];
 }
 
-async function getCategoryLabel(category: CourseCategory): Promise<string> {
+/**
+ * Resolves route category slugs to their translated display labels so UI copy
+ * never exposes internal values such as "tech" instead of "Technology".
+ */
+export async function getCategoryLabel(category: CourseCategory): Promise<string> {
   const categories = await getCategories();
 
   return categories.find((cat) => cat.key === category)?.label ?? "";

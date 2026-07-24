@@ -1,6 +1,6 @@
 import { CatalogGridSkeleton } from "@/components/catalog/catalog-skeletons";
 import { LIST_COURSES_LIMIT, listCourses } from "@/data/courses/list-courses";
-import { getCategoryHeader, getCategoryMeta } from "@/lib/categories/category";
+import { getCategoryHeader, getCategoryLabel, getCategoryMeta } from "@/lib/categories/category";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import {
   Container,
@@ -48,10 +48,11 @@ async function CategoryCourseListContent({ params }: CategoryParamsProps) {
 
   const locale = await getLocale();
   const courses = await listCourses({ category, language: locale });
+  const categoryLabel = await getCategoryLabel(category);
 
   return (
     <CourseListClient
-      category={category}
+      category={{ key: category, label: categoryLabel }}
       initialCourses={courses}
       language={locale}
       limit={LIST_COURSES_LIMIT}
