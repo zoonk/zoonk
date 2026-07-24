@@ -477,14 +477,19 @@ msgid "All"
 msgstr "Alle"
 
 #: src/app/[lang]/(catalog)/courses/course-list-client.tsx
+msgctxt "zJxO2f"
+msgid "No courses"
+msgstr "Keine Kurse"
+
+#: src/app/[lang]/(catalog)/courses/course-list-client.tsx
 msgctxt "Wc7aau"
 msgid "No courses available yet."
 msgstr "Noch keine Kurse verfügbar."
 
 #: src/app/[lang]/(catalog)/courses/course-list-client.tsx
-msgctxt "zJxO2f"
-msgid "No courses"
-msgstr "Keine Kurse"
+msgctxt "qm3Qo4"
+msgid "Create a course about {category}"
+msgstr "Erstelle einen Kurs über {category}"
 
 #: src/app/[lang]/(catalog)/courses/course-list-client.tsx
 msgctxt "T0mfNV"
