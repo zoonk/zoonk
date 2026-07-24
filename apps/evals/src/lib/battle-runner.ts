@@ -24,7 +24,7 @@ const BATTLES_DIR = path.join(EVAL_RESULTS_DIR, "battles");
 
 // Battle judges - easy to extend
 const BATTLE_JUDGES_CONFIG: readonly string[] = [
-  "anthropic/claude-opus-4.8",
+  "anthropic/claude-opus-5",
   "google/gemini-3.1-pro-preview",
   "openai/gpt-5.6-sol",
 ];

@@ -10,8 +10,8 @@ export type ModelConfig = {
 
 export const EVAL_MODELS: ModelConfig[] = [
   { id: "anthropic/claude-fable-5", inputCost: 10, name: "claude-fable-5", outputCost: 50 },
+  { id: "anthropic/claude-opus-5", inputCost: 5, name: "claude-opus-5", outputCost: 25 },
   { id: "anthropic/claude-opus-4.8", inputCost: 5, name: "claude-opus-4.8", outputCost: 25 },
-  { id: "anthropic/claude-opus-4.7", inputCost: 5, name: "claude-opus-4.7", outputCost: 25 },
   { id: "anthropic/claude-sonnet-5", inputCost: 3, name: "claude-sonnet-5", outputCost: 15 },
   { id: "anthropic/claude-sonnet-4.6", inputCost: 3, name: "claude-sonnet-4.6", outputCost: 15 },
   { id: "anthropic/claude-haiku-4.5", inputCost: 1, name: "claude-haiku-4.5", outputCost: 5 },
