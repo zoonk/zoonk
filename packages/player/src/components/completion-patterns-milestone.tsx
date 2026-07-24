@@ -10,6 +10,18 @@ import { PlayerSupportingText } from "./player-supporting-text";
 
 type PatternsMilestone = Extract<PlayerCompletionMilestone, { kind: "patterns" }>;
 
+const WEEKDAY_KEYS = [
+  "sunday",
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+] as const;
+
+type WeekdayKey = (typeof WEEKDAY_KEYS)[number] | "other";
+
 /**
  * Patterns milestones use a trophy mark because this screen highlights the
  * learner's strongest weekday for answer accuracy.
@@ -35,6 +47,14 @@ function getWeekdayName({ dayOfWeek, locale }: { dayOfWeek: number; locale: stri
 }
 
 /**
+ * Passes a stable weekday enum into ICU messages so each translation can keep
+ * weekday-specific prepositions and articles inside its own select branches.
+ */
+function getWeekdayKey(dayOfWeek: number): WeekdayKey {
+  return WEEKDAY_KEYS[dayOfWeek] ?? "other";
+}
+
+/**
  * Names the learner's best weekday and repeats the Patterns-page percentage so
  * the milestone feels connected to the page it links to.
  */
@@ -43,6 +63,7 @@ export function PatternsMilestoneCopy({ milestone }: { milestone: PatternsMilest
   const format = useFormatter();
   const locale = useLocale();
   const dayName = getWeekdayName({ dayOfWeek: milestone.dayOfWeek, locale });
+  const weekdayKey = getWeekdayKey(milestone.dayOfWeek);
   const formattedScore = formatMetricPercent({ format, value: milestone.score });
 
   return (
@@ -52,8 +73,8 @@ export function PatternsMilestoneCopy({ milestone }: { milestone: PatternsMilest
       </CompletionMilestoneTitle>
       <PlayerSupportingText>
         {t(
-          "You usually get {percentage} of answers right on {day}, your highest average of the week.",
-          { day: dayName, percentage: formattedScore },
+          "You average {percentage} {day, select, sunday {on Sunday} monday {on Monday} tuesday {on Tuesday} wednesday {on Wednesday} thursday {on Thursday} friday {on Friday} saturday {on Saturday} other {on your best day}}, better than on any other day. Think about what works well then—you may be able to use it throughout the week.",
+          { day: weekdayKey, percentage: formattedScore },
         )}
       </PlayerSupportingText>
     </>

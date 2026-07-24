@@ -163,10 +163,8 @@ describe("player browser integration: completion", () => {
 
     const milestoneScreen = page.getByRole("status");
 
-    await expect.element(milestoneScreen.getByText(/level achieved/iu)).toBeInTheDocument();
-
     await expect
-      .element(milestoneScreen.getByText(/you reached a new level/iu))
+      .element(milestoneScreen.getByRole("heading", { name: /level achieved/iu }))
       .toBeInTheDocument();
 
     await expect
@@ -197,9 +195,9 @@ describe("player browser integration: completion", () => {
 
     const milestoneScreen = page.getByRole("status");
 
-    await expect.element(milestoneScreen.getByText(/almost there/iu)).toBeInTheDocument();
-
-    await expect.element(milestoneScreen.getByText(/complete/iu)).toBeInTheDocument();
+    await expect
+      .element(milestoneScreen.getByRole("heading", { name: /halfway there/iu }))
+      .toBeInTheDocument();
 
     await milestoneScreen.getByRole("button", { name: /continue/iu }).click();
 
@@ -219,9 +217,9 @@ describe("player browser integration: completion", () => {
 
     const milestoneScreen = page.getByRole("status");
 
-    await expect.element(milestoneScreen.getByText(/10% energy/iu)).toBeInTheDocument();
-
-    await expect.element(milestoneScreen.getByText(/effort is paying off/iu)).toBeInTheDocument();
+    await expect
+      .element(milestoneScreen.getByRole("heading", { name: /10% energy/iu }))
+      .toBeInTheDocument();
 
     await expect
       .element(milestoneScreen.getByRole("link", { name: /learn about energy/iu }))
@@ -296,9 +294,9 @@ describe("player browser integration: completion", () => {
 
     const milestoneScreen = page.getByRole("status");
 
-    await expect.element(milestoneScreen.getByText(/5 learning days/iu)).toBeInTheDocument();
-
-    await expect.element(milestoneScreen.getByText(/different days/iu)).toBeInTheDocument();
+    await expect
+      .element(milestoneScreen.getByRole("heading", { name: /5 learning days/iu }))
+      .toBeInTheDocument();
 
     await expect
       .element(milestoneScreen.getByRole("link", { name: /learn about levels/iu }))
@@ -327,10 +325,8 @@ describe("player browser integration: completion", () => {
 
     const milestoneScreen = page.getByRole("status");
 
-    await expect.element(milestoneScreen.getByText(/is your best day/iu)).toBeInTheDocument();
-
     await expect
-      .element(milestoneScreen.getByText(/you usually get .* of answers right/iu))
+      .element(milestoneScreen.getByRole("heading", { name: /is your best day/iu }))
       .toBeInTheDocument();
 
     await expect

@@ -61,34 +61,16 @@ function LearningTimeMilestoneTitle({ seconds }: { seconds: number }) {
 }
 
 /**
- * Adds the day equivalent once the learner reaches 24 hours, matching the
- * progress-page idea that long learning time is easier to feel in full days.
+ * Connects accumulated learning time to the value of regular practice without
+ * repeating the duration already shown in the milestone title.
  */
-function LearningTimeMilestoneDescription({ seconds }: { seconds: number }) {
+function LearningTimeMilestoneDescription() {
   const t = useExtracted();
-  const hours = Math.round(seconds / SECONDS_PER_MINUTE / MINUTES_PER_HOUR);
-
-  if (hours < HOURS_PER_DAY) {
-    return (
-      <PlayerSupportingText>
-        {t("You can learn a lot by practicing for a few minutes a day.")}
-      </PlayerSupportingText>
-    );
-  }
-
-  if (hours === HOURS_PER_DAY) {
-    return (
-      <PlayerSupportingText>{t("That's a full day of focused practice.")}</PlayerSupportingText>
-    );
-  }
-
-  const fullDays = Math.floor(hours / HOURS_PER_DAY);
 
   return (
     <PlayerSupportingText>
       {t(
-        "That's more than {days, plural, one {# full day} other {# full days}} of focused practice.",
-        { days: fullDays },
+        "All that time spent learning adds up. Even short, regular sessions can help new ideas stick.",
       )}
     </PlayerSupportingText>
   );
@@ -102,7 +84,7 @@ export function LearningTimeMilestoneCopy({ milestone }: { milestone: LearningTi
   return (
     <>
       <LearningTimeMilestoneTitle seconds={milestone.seconds} />
-      <LearningTimeMilestoneDescription seconds={milestone.seconds} />
+      <LearningTimeMilestoneDescription />
     </>
   );
 }

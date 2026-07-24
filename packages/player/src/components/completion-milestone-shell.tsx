@@ -53,7 +53,10 @@ export function CompletionMilestoneMark({
 export function CompletionMilestoneCopy({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex max-w-md flex-col items-center gap-3 text-center", className)}
+      className={cn(
+        "flex max-w-md flex-col items-center gap-3 text-center text-balance",
+        className,
+      )}
       data-slot="completion-milestone-copy"
       {...props}
     />
@@ -71,7 +74,7 @@ export function CompletionMilestoneTitle({
 }: React.ComponentProps<"h2">) {
   return (
     <h2
-      className={cn("text-3xl font-semibold tracking-tight sm:text-4xl", className)}
+      className={cn("text-3xl font-semibold tracking-tight text-pretty sm:text-4xl", className)}
       data-slot="completion-milestone-title"
       {...props}
     >
