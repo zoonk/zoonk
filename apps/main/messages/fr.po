@@ -1708,11 +1708,6 @@ msgid "Follow us"
 msgstr "Suis-nous"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
-msgctxt "rCpmYD"
-msgid "Create this lesson"
-msgstr "Créer cette leçon"
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-not-generated.tsx
 msgctxt "AtnLyn"
 msgid "This lesson is part of the course, but it hasn't been created yet. Create it to start learning."
 msgstr "Cette leçon fait partie du cours, mais elle n’a pas encore été créée. Crée-la pour commencer à apprendre."
@@ -1731,19 +1726,10 @@ msgid "Back to chapter"
 msgstr "Retour au chapitre"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
-msgctxt "ZnMcrz"
-msgid "Unlock the rest of this course"
-msgstr "Déverrouiller le reste de ce cours"
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
-msgctxt "A_uNk-"
-msgid "Create lessons before reviewing"
-msgstr "Crée les leçons avant de les réviser"
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
-msgctxt "Qy4EsI"
-msgid "Nothing to review yet"
-msgstr "Rien à réviser pour l’instant"
+#: src/components/subscription/upgrade-cta.tsx
+msgctxt "ZMU6iN"
+msgid "You’ve reached your free lesson limit. Upgrade for unlimited lessons"
+msgstr "Tu as atteint ta limite de leçons gratuites. Passe à l’offre supérieure pour des leçons illimitées"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgctxt "4w9Y_P"
@@ -2788,11 +2774,6 @@ msgid "Upgrade to create"
 msgstr "Passe à l’offre supérieure pour créer"
 
 #: src/components/subscription/upgrade-cta.tsx
-msgctxt "ZMU6iN"
-msgid "You’ve reached your free lesson limit. Upgrade for unlimited lessons"
-msgstr "Tu as atteint ta limite de leçons gratuites. Passe à l’offre supérieure pour des leçons illimitées"
-
-#: src/components/subscription/upgrade-cta.tsx
 msgctxt "0h_lPM"
 msgid "Upgrade"
 msgstr "Passer à l’offre supérieure"
@@ -3063,11 +3044,11 @@ msgid "Learn new words in {topic} with flashcards — see each word, its transla
 msgstr "Apprends de nouveaux mots en {topic} avec des cartes mémoire — vois chaque mot, sa traduction et sa prononciation."
 
 #: src/lib/lessons.ts
-msgctxt "oCxmX9"
-msgid "{chapter} {kind} {position}"
-msgstr "{chapter} {kind} {position}"
+msgctxt "PhpBBE"
+msgid "{chapter}: {kind, select, alphabet {Alphabet} custom {Custom lesson} explanation {Explanation} grammar {Grammar} listening {Listening} practice {Practice} quiz {Quiz} reading {Reading} review {Review} translation {Translation} tutorial {Tutorial} vocabulary {Vocabulary} other {Lesson}} {position}"
+msgstr "{chapter} : {kind, select, alphabet {Alphabet} custom {Leçon personnalisée} explanation {Explication} grammar {Grammaire} listening {Écoute} practice {Entraînement} quiz {Quiz} reading {Lecture} review {Révision} translation {Traduction} tutorial {Tutoriel} vocabulary {Vocabulaire} other {Leçon}} {position}"
 
 #: src/lib/lessons.ts
-msgctxt "qHbgYB"
-msgid "{lesson} - {course}"
-msgstr "{lesson} - {course}"
+msgctxt "EuLBDj"
+msgid "{kind, select, alphabet {{lesson} Alphabet} custom {{lesson} Custom lesson} explanation {{lesson} Explanation} grammar {{lesson} Grammar} listening {{lesson} Listening} practice {{lesson} Practice} quiz {{lesson} Quiz} reading {{lesson} Reading} review {{lesson} Review} translation {{lesson} Translation} tutorial {{lesson} Tutorial} vocabulary {{lesson} Vocabulary} other {{lesson}}} - {course}"
+msgstr "{kind, select, alphabet {Alphabet : {lesson}} custom {Leçon personnalisée : {lesson}} explanation {Explication de {lesson}} grammar {Grammaire : {lesson}} listening {Exercice d’écoute : {lesson}} practice {Entraînement sur {lesson}} quiz {Quiz sur {lesson}} reading {Exercice de lecture : {lesson}} review {Révision de {lesson}} translation {Traduction de {lesson}} tutorial {Tutoriel sur {lesson}} vocabulary {Vocabulaire : {lesson}} other {{lesson}}} - {course}"

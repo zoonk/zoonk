@@ -296,12 +296,10 @@ test.describe("Continue Lesson Link", () => {
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await expect(page.getByText(/create this lesson/iu)).toBeVisible();
+    const createLessonLink = page.getByRole("link", { name: /create lesson/iu });
 
-    await expect(page.getByRole("link", { name: /create lesson/iu })).toHaveAttribute(
-      "href",
-      `/generate/l/${lesson.id}`,
-    );
+    await expect(createLessonLink).toBeVisible();
+    await expect(createLessonLink).toHaveAttribute("href", `/generate/l/${lesson.id}`);
   });
 
   test("course page falls back to first chapter when no playable step data", async ({ page }) => {

@@ -2,6 +2,7 @@ import { GeneratedCourseCacheRefresher } from "@/components/catalog/generated-co
 import { UpgradeCTA } from "@/components/subscription/upgrade-cta";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { type CatalogLesson, getLesson as getCatalogLesson } from "@/data/lessons/get-lesson";
+import { getLessonSeoSource } from "@/data/lessons/get-lesson-seo-source";
 import { getNextLessonInCourse } from "@/data/lessons/get-next-lesson-in-course";
 import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
 import { getPlayerProgressSnapshot } from "@/data/progress/get-player-progress-snapshot";
@@ -9,6 +10,7 @@ import { hasActiveSubscription } from "@/data/subscriptions/get-active-subscript
 import { getSession } from "@/data/users/get-session";
 import { redirect } from "@/i18n/navigation";
 import { getLessonDisplayMeta, getLessonSeoMeta } from "@/lib/lessons";
+import { isLessonSeoIndexable } from "@/lib/lessons/seo";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { getLessonAccessRequirement } from "@zoonk/core/lessons/access";
 import { isStandaloneGeneratedLessonKind } from "@zoonk/core/lessons/generated-companion-kinds";
@@ -34,6 +36,7 @@ import {
 import { LessonNotGenerated } from "./lesson-not-generated";
 import { LessonPlayerClient } from "./lesson-player-client";
 import { buildLessonProgressMeta, getNextChapterTarget } from "./lesson-player-model";
+import { LessonPageSummary, LessonSummaryStatus } from "./lesson-summary";
 import { ReviewLessonEmpty } from "./review-lesson-empty";
 
 type Props = PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">;
@@ -100,11 +103,13 @@ async function getLessonAccessGate({
   return (
     <Container className="min-h-dvh" variant="narrow">
       <ContainerBody className="justify-center sm:flex-1">
-        <UpgradeCTA
-          backHref={backHref}
-          backLabel={t("Back to chapter")}
-          title={t("Unlock the rest of this course")}
-        />
+        <UpgradeCTA backHref={backHref} backLabel={t("Back to chapter")}>
+          <LessonPageSummary lesson={lesson} />
+
+          <LessonSummaryStatus>
+            {t("You’ve reached your free lesson limit. Upgrade for unlimited lessons")}
+          </LessonSummaryStatus>
+        </UpgradeCTA>
       </ContainerBody>
     </Container>
   );
@@ -163,15 +168,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {};
   }
 
+  const sourceLesson = await getLessonSeoSource(lessonShell);
+  const sourceTitle = sourceLesson?.title?.trim() || null;
+
   return {
-    ...(await getLessonSeoMeta(lessonShell)),
+    ...(await getLessonSeoMeta({ lesson: lessonShell, sourceTitle })),
     alternates: {
       canonical: getLocalizedUrl({
         href: `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`,
         language: lessonShell.chapter.course.language,
       }),
     },
-    robots: { follow: true, index: false },
+    robots: {
+      follow: true,
+      index: isLessonSeoIndexable({
+        description: lessonShell.description,
+        kind: lessonShell.kind,
+        sourceTitle,
+        title: lessonShell.title,
+      }),
+    },
   };
 }
 
@@ -244,7 +260,9 @@ async function LessonContent({ params }: Pick<Props, "params">) {
           chapterSlug={chapterSlug}
           courseSlug={courseSlug}
           generationLessonId={generationLessonId}
-        />
+        >
+          <LessonPageSummary lesson={lessonShell} />
+        </LessonNotGenerated>
       </main>
     );
   }
@@ -255,7 +273,9 @@ async function LessonContent({ params }: Pick<Props, "params">) {
 
     return (
       <main className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center p-4">
-        <ReviewLessonEmpty generationLessonId={generationLessonId} />
+        <ReviewLessonEmpty generationLessonId={generationLessonId}>
+          <LessonPageSummary lesson={lessonShell} />
+        </ReviewLessonEmpty>
       </main>
     );
   }
