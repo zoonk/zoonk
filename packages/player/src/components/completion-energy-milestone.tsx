@@ -33,7 +33,7 @@ function EnergyThresholdCopy({
         <CompletionMilestoneTitle>{t("Max Energy!")}</CompletionMilestoneTitle>
         <PlayerSupportingText>
           {t(
-            "Congrats! You reached max Energy. Keep practicing every day to keep your Energy at 100%.",
+            "You've been learning regularly and answering accurately. Stay consistent to keep your Energy at 100%.",
           )}
         </PlayerSupportingText>
       </>
@@ -48,7 +48,9 @@ function EnergyThresholdCopy({
         })}
       </CompletionMilestoneTitle>
       <PlayerSupportingText>
-        {t("Your effort is paying off. Complete lessons every day to increase your Energy.")}
+        {t(
+          "You're building good momentum. Learning regularly and getting answers right will keep your Energy moving up.",
+        )}
       </PlayerSupportingText>
     </>
   );
@@ -82,7 +84,7 @@ function FullEnergyDaysCopy({
       <FullEnergyDaysTitle days={milestone.days} />
       <PlayerSupportingText>
         {t(
-          "Wow, what incredible consistency! Keep studying every day to keep your Energy at 100%.",
+          "You're building real consistency. Learning every day helps keep your mind active and improve your performance.",
         )}
       </PlayerSupportingText>
     </>

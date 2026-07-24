@@ -80,9 +80,9 @@ msgid "New daily best"
 msgstr "Neuer Tagesrekord"
 
 #: src/components/completion-brain-power-milestone.tsx
-msgctxt "VaM8Q9"
-msgid "You reached {brainPower} BP today, your highest Brain Power in a single day. Keep learning every day to set a new best."
-msgstr "Du hast heute {brainPower} BP erreicht, deine höchste Brain Power an einem Tag. Lern jeden Tag weiter, um einen neuen Rekord zu setzen."
+msgctxt "0TbCx0"
+msgid "You earned {brainPower} BP today, more than on any other day. Keep it up—this effort will pay off."
+msgstr "Du hast heute {brainPower} BP verdient, mehr als an jedem anderen Tag. Weiter so—deine Mühe wird sich auszahlen."
 
 #: src/components/completion-energy-milestone.tsx
 msgctxt "m2WzLQ"
@@ -90,9 +90,9 @@ msgid "Max Energy!"
 msgstr "Maximale Energie!"
 
 #: src/components/completion-energy-milestone.tsx
-msgctxt "Fo6YtA"
-msgid "Congrats! You reached max Energy. Keep practicing every day to keep your Energy at 100%."
-msgstr "Glückwunsch! Du hast maximale Energie erreicht. Übe jeden Tag, um deine Energie bei 100% zu halten."
+msgctxt "WwRCBI"
+msgid "You've been learning regularly and answering accurately. Stay consistent to keep your Energy at 100%."
+msgstr "Du lernst regelmäßig und beantwortest Fragen richtig. Bleib dran, damit deine Energie bei 100 % bleibt."
 
 #: src/components/completion-energy-milestone.tsx
 msgctxt "J89SkG"
@@ -100,9 +100,9 @@ msgid "{percentage} Energy"
 msgstr "{percentage} Energie"
 
 #: src/components/completion-energy-milestone.tsx
-msgctxt "3Jd-mJ"
-msgid "Your effort is paying off. Complete lessons every day to increase your Energy."
-msgstr "Dein Einsatz zahlt sich aus. Schließe jeden Tag Lektionen ab, um deine Energie zu steigern."
+msgctxt "pQ9XJb"
+msgid "You're building good momentum. Learning regularly and getting answers right will keep your Energy moving up."
+msgstr "Du kommst gut voran. Wenn du regelmäßig lernst und Fragen richtig beantwortest, steigt deine Energie weiter."
 
 #: src/components/completion-energy-milestone.tsx
 msgctxt "5YVYKd"
@@ -115,9 +115,9 @@ msgid "{days} days of max Energy"
 msgstr "{days} Tage volle Energie"
 
 #: src/components/completion-energy-milestone.tsx
-msgctxt "cIxpmv"
-msgid "Wow, what incredible consistency! Keep studying every day to keep your Energy at 100%."
-msgstr "Wow, was für eine unglaubliche Ausdauer! Lern weiter jeden Tag, damit deine Energie bei 100% bleibt."
+msgctxt "wl6CDc"
+msgid "You're building real consistency. Learning every day helps keep your mind active and improve your performance."
+msgstr "Du bleibst richtig gut dran. Tägliches Lernen hält deinen Geist aktiv und hilft dir, dich zu verbessern."
 
 #: src/components/completion-learning-days-milestone.tsx
 msgctxt "SIXtG5"
@@ -125,9 +125,9 @@ msgid "{days} learning days"
 msgstr "{days} Lerntage"
 
 #: src/components/completion-learning-days-milestone.tsx
-msgctxt "hjXoGI"
-msgid "You've completed lessons on {days} different days. Practicing often helps you remember what you learn."
-msgstr "Du hast an {days} verschiedenen Tagen Lektionen abgeschlossen. Wenn du oft übst, kannst du dir das Gelernte besser merken."
+msgctxt "_M8z1y"
+msgid "You're making learning part of your routine. Regular practice helps you remember more of what you learn."
+msgstr "Lernen wird für dich zur Gewohnheit. Regelmäßiges Üben hilft dir, dir mehr von dem zu merken, was du lernst."
 
 #: src/components/completion-learning-time-milestone.tsx
 msgctxt "dZvEPp"
@@ -145,19 +145,9 @@ msgid "{hours, plural, one {# hour of learning} other {# hours of learning}}"
 msgstr "{hours, plural, one {# Stunde gelernt} other {# Stunden gelernt}}"
 
 #: src/components/completion-learning-time-milestone.tsx
-msgctxt "WcAhMT"
-msgid "You can learn a lot by practicing for a few minutes a day."
-msgstr "Du kannst viel lernen, wenn du täglich ein paar Minuten übst."
-
-#: src/components/completion-learning-time-milestone.tsx
-msgctxt "LzEQnT"
-msgid "That's a full day of focused practice."
-msgstr "Das ist ein ganzer Tag konzentriertes Üben."
-
-#: src/components/completion-learning-time-milestone.tsx
-msgctxt "PpK3hX"
-msgid "That's more than {days, plural, one {# full day} other {# full days}} of focused practice."
-msgstr "Das sind mehr als {days, plural, one {# voller Tag} other {# volle Tage}} konzentriertes Üben."
+msgctxt "YYZPzp"
+msgid "All that time spent learning adds up. Even short, regular sessions can help new ideas stick."
+msgstr "Die ganze Zeit, die du mit Lernen verbringst, zahlt sich aus. Selbst kurze, regelmäßige Einheiten helfen dir, neue Ideen im Gedächtnis zu behalten."
 
 #: src/components/completion-level-milestone.tsx
 msgctxt "155cHi"
@@ -165,19 +155,19 @@ msgid "Level achieved"
 msgstr "Level erreicht"
 
 #: src/components/completion-level-milestone.tsx
-msgctxt "Ar7dNY"
-msgid "You reached a new level: {belt}, level {level}. Congrats!"
-msgstr "Du hast ein neues Level erreicht: {belt}, Level {level}. Glückwunsch!"
+msgctxt "WheDiX"
+msgid "Your effort is paying off—you've reached {belt}, level {level}. Keep it up—every lesson adds to your Brain Power."
+msgstr "Deine Mühe zahlt sich aus—du hast {belt}, Level {level}, erreicht. Weiter so—jede Lektion steigert deine Brain Power."
 
 #: src/components/completion-level-milestone.tsx
-msgctxt "Bk6B6r"
-msgid "Almost there"
-msgstr "Fast geschafft"
+msgctxt "VfEqvB"
+msgid "Halfway there"
+msgstr "Halb geschafft"
 
 #: src/components/completion-level-milestone.tsx
-msgctxt "b7ZoLo"
-msgid "Your knowledge is growing. Complete {count, plural, one {# more lesson} other {# more lessons}} to reach {belt}, level {level}."
-msgstr "Dein Wissen wächst. Schließe {count, plural, one {noch # Lektion} other {noch # Lektionen}} ab, um {belt}, Level {level}, zu erreichen."
+msgctxt "LrDO2N"
+msgid "You're halfway to {belt}, level {level}. {count, plural, one {One more lesson will get you there} other {# more lessons will get you there}}."
+msgstr "Du bist auf halbem Weg zu {belt}, Level {level}. {count, plural, one {Noch eine Lektion, dann hast du es geschafft} other {Noch # Lektionen, dann hast du es geschafft}}."
 
 #: src/components/completion-milestone-actions.tsx
 msgctxt "DiIkZH"
@@ -200,9 +190,9 @@ msgid "{day} is your best day"
 msgstr "{day} ist dein bester Tag"
 
 #: src/components/completion-patterns-milestone.tsx
-msgctxt "PTQ0ah"
-msgid "You usually get {percentage} of answers right on {day}, your highest average of the week."
-msgstr "An {day} hast du normalerweise {percentage} der Antworten richtig – dein bester Durchschnitt in dieser Woche."
+msgctxt "bim3gG"
+msgid "You average {percentage} {day, select, sunday {on Sunday} monday {on Monday} tuesday {on Tuesday} wednesday {on Wednesday} thursday {on Thursday} friday {on Friday} saturday {on Saturday} other {on your best day}}, better than on any other day. Think about what works well then—you may be able to use it throughout the week."
+msgstr "Du erreichst im Schnitt {percentage} {day, select, sunday {sonntags} monday {montags} tuesday {dienstags} wednesday {mittwochs} thursday {donnerstags} friday {freitags} saturday {samstags} other {an deinem besten Tag}}, mehr als an jedem anderen Tag. Überlege, was dann besonders gut funktioniert—vielleicht kannst du es die ganze Woche über nutzen."
 
 #: src/components/completion-progress-milestone-screen.tsx
 msgctxt "iSioEh"

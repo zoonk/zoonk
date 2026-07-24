@@ -39,8 +39,7 @@ export function LearningDaysMilestoneCopy({ milestone }: { milestone: LearningDa
       </CompletionMilestoneTitle>
       <PlayerSupportingText>
         {t(
-          "You've completed lessons on {days} different days. Practicing often helps you remember what you learn.",
-          { days: formattedDays },
+          "You're making learning part of your routine. Regular practice helps you remember more of what you learn.",
         )}
       </PlayerSupportingText>
     </>

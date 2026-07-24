@@ -35,10 +35,10 @@ function AchievedLevelCopy({
     <>
       <CompletionMilestoneTitle>{t("Level achieved")}</CompletionMilestoneTitle>
       <PlayerSupportingText>
-        {t("You reached a new level: {belt}, level {level}. Congrats!", {
-          belt: beltLabel,
-          level: String(milestone.belt.level),
-        })}
+        {t(
+          "Your effort is paying off—you've reached {belt}, level {level}. Keep it up—every lesson adds to your Brain Power.",
+          { belt: beltLabel, level: String(milestone.belt.level) },
+        )}
       </PlayerSupportingText>
     </>
   );
@@ -54,10 +54,10 @@ function HalfwayLevelCopy({
 
   return (
     <>
-      <CompletionMilestoneTitle>{t("Almost there")}</CompletionMilestoneTitle>
+      <CompletionMilestoneTitle>{t("Halfway there")}</CompletionMilestoneTitle>
       <PlayerSupportingText>
         {t(
-          "Your knowledge is growing. Complete {count, plural, one {# more lesson} other {# more lessons}} to reach {belt}, level {level}.",
+          "You're halfway to {belt}, level {level}. {count, plural, one {One more lesson will get you there} other {# more lessons will get you there}}.",
           {
             belt: beltLabel,
             count: milestone.remainingLessons,
