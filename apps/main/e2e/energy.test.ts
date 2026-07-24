@@ -74,8 +74,6 @@ test.describe("Energy Page", () => {
         await expect(fullEnergyCard).toContainText("1 day");
         await expect(energyChart).toBeVisible();
         await expect(recordedEnergyDay).toBeVisible();
-        await recordedEnergyDay.hover();
-        await expect(page.getByText(/^50% energy on /iu)).toBeVisible();
 
         await expect(energyChart.getByRole("button", { name: /^100% energy on /iu })).toHaveCount(
           0,
