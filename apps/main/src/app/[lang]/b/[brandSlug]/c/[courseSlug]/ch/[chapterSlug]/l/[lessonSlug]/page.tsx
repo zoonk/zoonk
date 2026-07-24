@@ -106,9 +106,7 @@ async function getLessonAccessGate({
         <UpgradeCTA backHref={backHref} backLabel={t("Back to chapter")}>
           <LessonPageSummary lesson={lesson} />
 
-          <LessonSummaryStatus>
-            {t("You’ve reached your free lesson limit. Upgrade for unlimited lessons")}
-          </LessonSummaryStatus>
+          <LessonSummaryStatus>{t("This lesson is included with Plus.")}</LessonSummaryStatus>
         </UpgradeCTA>
       </ContainerBody>
     </Container>

@@ -1668,10 +1668,9 @@ msgid "Back to chapter"
 msgstr "Volver al capítulo"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
-#: src/components/subscription/upgrade-cta.tsx
-msgctxt "ZMU6iN"
-msgid "You’ve reached your free lesson limit. Upgrade for unlimited lessons"
-msgstr "Llegaste al límite de lecciones gratis. Mejora tu plan para tener lecciones ilimitadas"
+msgctxt "qmXr1f"
+msgid "This lesson is included with Plus."
+msgstr "Esta lección está incluida con Plus."
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/review-lesson-empty.tsx
 msgctxt "4w9Y_P"
@@ -2711,14 +2710,19 @@ msgid "Learning time"
 msgstr "Tiempo de estudio"
 
 #: src/components/subscription/upgrade-cta.tsx
-msgctxt "IS_YjO"
-msgid "Upgrade to create"
-msgstr "Mejora tu plan para crear"
+msgctxt "NU-lfu"
+msgid "Keep learning with Plus"
+msgstr "Sigue estudiando con Plus"
 
 #: src/components/subscription/upgrade-cta.tsx
-msgctxt "0h_lPM"
-msgid "Upgrade"
-msgstr "Mejorar plan"
+msgctxt "X4sblx"
+msgid "Plus gives you unlimited courses and lessons for whatever you want to learn."
+msgstr "Plus te ofrece cursos y lecciones ilimitados sobre lo que quieras aprender."
+
+#: src/components/subscription/upgrade-cta.tsx
+msgctxt "LeTnGY"
+msgid "Get Zoonk Plus"
+msgstr "Obtén Zoonk Plus"
 
 #: src/lib/belt-colors.ts
 msgctxt "znY9eW"

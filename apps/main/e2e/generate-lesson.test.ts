@@ -298,10 +298,15 @@ test.describe("Generate Lesson Page - Unauthenticated", () => {
     const { lesson } = await createPendingLesson({ chapterPosition: 1 });
     await page.goto(`/generate/l/${lesson.id}`);
 
-    await expect(page.getByText(/^upgrade to create$/iu)).toBeVisible();
-    await expect(page.getByText(/you.ve reached your free lesson limit/iu)).toBeVisible();
+    await expect(page.getByText(/^keep learning with plus$/iu)).toBeVisible();
 
-    const upgradeLink = page.getByRole("link", { name: /upgrade/iu });
+    await expect(
+      page.getByText(
+        "Plus gives you unlimited courses and lessons for whatever you want to learn.",
+      ),
+    ).toBeVisible();
+
+    const upgradeLink = page.getByRole("link", { name: /get zoonk plus/iu });
     await expect(upgradeLink).toBeVisible();
     await expect(upgradeLink).toHaveAttribute("href", /\/subscription/u);
   });
@@ -312,9 +317,9 @@ test.describe("Generate Lesson Page - No Subscription", () => {
     const { lesson } = await createPendingLesson({ chapterPosition: 1 });
     await authenticatedPage.goto(`/generate/l/${lesson.id}`);
 
-    await expect(authenticatedPage.getByText(/^upgrade to create$/iu)).toBeVisible();
+    await expect(authenticatedPage.getByText(/^keep learning with plus$/iu)).toBeVisible();
 
-    const upgradeLink = authenticatedPage.getByRole("link", { name: /upgrade/iu });
+    const upgradeLink = authenticatedPage.getByRole("link", { name: /get zoonk plus/iu });
     await expect(upgradeLink).toBeVisible();
     await expect(upgradeLink).toHaveAttribute("href", /\/subscription/u);
   });
@@ -333,7 +338,7 @@ test.describe("Generate Lesson Page - No Subscription", () => {
 
     await authenticatedPage.goto(`/generate/l/${lesson.id}`);
 
-    await expect(authenticatedPage.getByText(/^upgrade to create$/iu)).toBeVisible();
+    await expect(authenticatedPage.getByText(/^keep learning with plus$/iu)).toBeVisible();
   });
 });
 
@@ -350,7 +355,7 @@ test.describe("Generate Lesson Page - First Chapter Free", () => {
 
     await page.goto(`/generate/l/${lesson.id}`);
 
-    await expect(page.getByText(/^upgrade to create$/iu)).toHaveCount(0);
+    await expect(page.getByText(/^keep learning with plus$/iu)).toHaveCount(0);
 
     await expect(page.getByRole("heading", { name: lesson.title ?? "" })).toBeVisible();
   });
@@ -367,7 +372,7 @@ test.describe("Generate Lesson Page - First Chapter Free", () => {
 
     await authenticatedPage.goto(`/generate/l/${lesson.id}`);
 
-    await expect(authenticatedPage.getByText(/^upgrade to create$/iu)).toHaveCount(0);
+    await expect(authenticatedPage.getByText(/^keep learning with plus$/iu)).toHaveCount(0);
 
     await expect(
       authenticatedPage.getByRole("heading", { name: lesson.title ?? "" }),
@@ -600,7 +605,7 @@ test.describe("Generate Lesson Page - Running Later Lesson Requires Subscription
 
     await page.goto(`/generate/l/${lesson.id}`);
 
-    await expect(page.getByText(/^upgrade to create$/iu)).toBeVisible();
+    await expect(page.getByText(/^keep learning with plus$/iu)).toBeVisible();
   });
 });
 
