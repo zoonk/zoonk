@@ -1,9 +1,8 @@
 import { getBeltLevel } from "@/data/progress/get-belt-level";
-import { getBestDay } from "@/data/progress/get-best-day";
-import { getBestTime } from "@/data/progress/get-best-time";
 import { getEnergyLevel } from "@/data/progress/get-energy-level";
 import { getLearningActivityTotals } from "@/data/progress/get-learning-activity-totals";
 import { getScore } from "@/data/progress/get-score";
+import { getScorePatterns } from "@/data/progress/get-score-patterns";
 import { FeatureCardSectionTitle } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { getExtracted } from "next-intl/server";
@@ -21,15 +20,13 @@ const PROGRESS_TITLE_ID = "progress-title";
 export async function Progress() {
   const t = await getExtracted();
 
-  const [energyData, beltData, activityTotals, scoreData, bestDayData, bestTimeData] =
-    await Promise.all([
-      getEnergyLevel(),
-      getBeltLevel(),
-      getLearningActivityTotals(),
-      getScore(),
-      getBestDay(),
-      getBestTime(),
-    ]);
+  const [energyData, beltData, activityTotals, scoreData, scorePatterns] = await Promise.all([
+    getEnergyLevel(),
+    getBeltLevel(),
+    getLearningActivityTotals(),
+    getScore(),
+    getScorePatterns(),
+  ]);
 
   return (
     <section aria-labelledby={PROGRESS_TITLE_ID} className="flex flex-col gap-3 py-4 md:py-6">
@@ -59,9 +56,19 @@ export async function Progress() {
 
         {scoreData && <Score score={scoreData.score} />}
 
-        {bestDayData && <BestDay dayOfWeek={bestDayData.dayOfWeek} score={bestDayData.score} />}
+        {scorePatterns?.strongestWeekday && (
+          <BestDay
+            dayOfWeek={scorePatterns.strongestWeekday.dayOfWeek}
+            score={scorePatterns.strongestWeekday.score}
+          />
+        )}
 
-        {bestTimeData && <BestTime period={bestTimeData.period} score={bestTimeData.score} />}
+        {scorePatterns?.strongestTime && (
+          <BestTime
+            period={scorePatterns.strongestTime.period}
+            score={scorePatterns.strongestTime.score}
+          />
+        )}
       </div>
     </section>
   );

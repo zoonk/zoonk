@@ -12,9 +12,9 @@ import {
   getStrongestScorePerformance,
 } from "./_utils/score-performance";
 
-export type WeekdayScorePerformance = ScorePerformance & { dayOfWeek: number };
+type WeekdayScorePerformance = ScorePerformance & { dayOfWeek: number };
 
-export type TimeScorePerformance = ScorePerformance & { period: number };
+type TimeScorePerformance = ScorePerformance & { period: number };
 
 export type ScorePatternsData = {
   strongestTime: TimeScorePerformance | null;

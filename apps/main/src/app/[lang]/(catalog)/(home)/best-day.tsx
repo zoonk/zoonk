@@ -34,7 +34,7 @@ export async function BestDay({ score, dayOfWeek }: { score: number; dayOfWeek: 
       aria-labelledby={HOME_BEST_DAY_LABEL_ID}
       render={<Link href="/patterns" prefetch />}
     >
-      <ProgressMetricCard aria-labelledby={HOME_BEST_DAY_LABEL_ID} className="text-score">
+      <ProgressMetricCard className="text-score">
         <ProgressMetricCardIcon>
           <CalendarDays />
         </ProgressMetricCardIcon>

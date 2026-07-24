@@ -32,7 +32,7 @@ export async function BestTime({ score, period }: { score: number; period: numbe
       aria-labelledby={HOME_BEST_TIME_LABEL_ID}
       render={<Link href="/patterns" prefetch />}
     >
-      <ProgressMetricCard aria-labelledby={HOME_BEST_TIME_LABEL_ID} className="text-score">
+      <ProgressMetricCard className="text-score">
         <ProgressMetricCardIcon>
           <Clock />
         </ProgressMetricCardIcon>
